@@ -156,18 +156,24 @@ class EnhancedBattleVisualizer:
         arena_height_tiles = 32
         tile_ownership = {}  # (x, y) -> set of player_ids
         
-        # Mark blue zones
+        # Mark blue zones (excluding blocked tiles)
         for x1, y1, x2, y2 in blue_zones:
             for x in range(int(x1), int(x2)):
                 for y in range(int(y1), int(y2)):
+                    # Skip blocked tiles entirely - don't add them to tile_ownership
+                    if battle_state.arena.is_blocked_tile(x, y):
+                        continue
                     if (x, y) not in tile_ownership:
                         tile_ownership[(x, y)] = set()
                     tile_ownership[(x, y)].add(0)  # Blue player
         
-        # Mark red zones
+        # Mark red zones (excluding blocked tiles)
         for x1, y1, x2, y2 in red_zones:
             for x in range(int(x1), int(x2)):
                 for y in range(int(y1), int(y2)):
+                    # Skip blocked tiles entirely - don't add them to tile_ownership
+                    if battle_state.arena.is_blocked_tile(x, y):
+                        continue
                     if (x, y) not in tile_ownership:
                         tile_ownership[(x, y)] = set()
                     tile_ownership[(x, y)].add(1)  # Red player
