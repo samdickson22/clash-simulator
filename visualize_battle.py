@@ -1,0 +1,933 @@
+#!/usr/bin/env python3
+"""
+Real-time Battle Visualization
+
+Shows the battlefield with:
+- Arena layout with river and towers
+- Unit positions and movement
+- Health bars and stats
+- Real-time battle progression
+"""
+
+import pygame
+import sys
+import time
+import json
+import os
+import math
+from typing import Dict, List, Tuple
+from src.clasher.engine import BattleEngine
+from src.clasher.arena import Position
+
+# Initialize Pygame
+pygame.init()
+
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 100, 100)
+BLUE = (100, 100, 255)
+GREEN = (100, 255, 100)
+GRAY = (128, 128, 128)
+DARK_GRAY = (64, 64, 64)
+YELLOW = (255, 255, 100)
+PURPLE = (255, 100, 255)
+CYAN = (100, 255, 255)
+ORANGE = (255, 165, 0)
+
+# Screen settings
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 900
+# Make tiles square: 18 wide × 32 tall
+TILE_SIZE = 22  # Square tiles
+ARENA_WIDTH = 18 * TILE_SIZE   # 396 pixels
+ARENA_HEIGHT = 32 * TILE_SIZE  # 704 pixels
+ARENA_X = 50
+ARENA_Y = 50
+
+class BattleVisualizer:
+    def __init__(self):
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption("Clash Royale Battle Visualization")
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.Font(None, 24)
+        self.small_font = pygame.font.Font(None, 18)
+        self.large_font = pygame.font.Font(None, 32)
+        
+        # Load hitbox data (these are radii in tile units)
+        try:
+            with open('hitboxes.json', 'r') as f:
+                self.hitboxes = json.load(f)
+        except FileNotFoundError:
+            print("Warning: hitboxes.json not found, using default values")
+            self.hitboxes = {
+                "Knight": 0.5, "Archers": 0.5, "King's Tower": 1.4, "Princess Tower": 1.0
+            }
+        
+        # Battle setup
+        self.engine = BattleEngine()
+        self.battle = self.engine.create_battle()
+        
+        # Visualization settings - square tiles
+        self.tile_size = TILE_SIZE  # Square tiles
+        self.tile_width = TILE_SIZE
+        self.tile_height = TILE_SIZE
+        
+        # Auto-deploy for testing
+        self.setup_test_battle()
+        
+    def setup_test_battle(self):
+        """Setup a test battle with units"""
+        print("Setting up test battle with corrected arena dimensions...")
+        
+        # Give players more elixir for testing
+        self.battle.players[0].elixir = 10.0
+        self.battle.players[1].elixir = 10.0
+        
+        # Deploy some units for visualization using corrected positions
+        deployments = [
+            # Player 0 (Blue - bottom half, y < 15)
+            (0, 'Knight', Position(8.5, 12), "P0 Knight center"),
+            (0, 'Archers', Position(4, 8), "P0 Archers left"),
+            (0, 'Archers', Position(13, 8), "P0 Archers right"),
+            
+            # Player 1 (Red - top half, y > 16)  
+            (1, 'Knight', Position(8.5, 20), "P1 Knight center"),
+            (1, 'Archers', Position(4, 24), "P1 Archers left"),
+            (1, 'Archers', Position(13, 24), "P1 Archers right"),
+        ]
+        
+        for player_id, card, pos, desc in deployments:
+            result = self.battle.deploy_card(player_id, card, pos)
+            print(f"  {desc}: {result}")
+            # Reset elixir for testing
+            self.battle.players[player_id].elixir = 10.0
+        
+        # Enable coordinate display for debugging
+        self.show_coords = True
+    
+    def world_to_screen(self, x: float, y: float) -> Tuple[int, int]:
+        """Convert world coordinates to screen coordinates"""
+        screen_x = int(ARENA_X + x * self.tile_size)
+        screen_y = int(ARENA_Y + y * self.tile_size)
+        return screen_x, screen_y
+    
+    def draw_arena(self):
+        """Draw the arena background with correct Clash Royale dimensions"""
+        # Arena background
+        arena_rect = pygame.Rect(ARENA_X, ARENA_Y, ARENA_WIDTH, ARENA_HEIGHT)
+        pygame.draw.rect(self.screen, GREEN, arena_rect)
+        pygame.draw.rect(self.screen, BLACK, arena_rect, 2)
+        
+        # Add deployment zone tints
+        self.draw_deployment_zones()
+        
+        # River is 2 tiles tall, centered at y=15-16 (middle of 32-tile arena)
+        river_y1 = ARENA_Y + 15 * self.tile_size
+        river_y2 = ARENA_Y + 17 * self.tile_size
+        river_rect = pygame.Rect(ARENA_X, river_y1, ARENA_WIDTH, river_y2 - river_y1)
+        pygame.draw.rect(self.screen, CYAN, river_rect)
+        pygame.draw.rect(self.screen, (0, 150, 200), river_rect, 2)
+        
+        # Bridges are 3 tiles wide
+        bridge_width = 3 * self.tile_size
+        bridge_height = river_y2 - river_y1
+        
+        # Left bridge at x=2,3,4 (3 tiles wide, centered at x=3)
+        left_bridge_x = ARENA_X + 2 * self.tile_size
+        left_bridge_rect = pygame.Rect(left_bridge_x, river_y1, bridge_width, bridge_height)
+        pygame.draw.rect(self.screen, DARK_GRAY, left_bridge_rect)
+        pygame.draw.rect(self.screen, BLACK, left_bridge_rect, 2)
+        
+        # Right bridge at x=14,15,16 (3 tiles wide, centered at x=15)
+        right_bridge_x = ARENA_X + 14 * self.tile_size
+        right_bridge_rect = pygame.Rect(right_bridge_x, river_y1, bridge_width, bridge_height)
+        pygame.draw.rect(self.screen, DARK_GRAY, right_bridge_rect)
+        pygame.draw.rect(self.screen, BLACK, right_bridge_rect, 2)
+        
+        # Mark unplayable areas (outer tiles on top/bottom rows)
+        # Top row: only middle 6 tiles (x=6-11) are playable
+        for x in range(18):
+            if x < 6 or x > 11:  # Unplayable tiles
+                unplay_rect = pygame.Rect(ARENA_X + x * self.tile_size, ARENA_Y, 
+                                        self.tile_size, self.tile_size)
+                pygame.draw.rect(self.screen, (180, 180, 180), unplay_rect)
+                pygame.draw.rect(self.screen, DARK_GRAY, unplay_rect, 1)
+        
+        # Bottom row: only middle 6 tiles (x=6-11) are playable  
+        for x in range(18):
+            if x < 6 or x > 11:  # Unplayable tiles
+                unplay_rect = pygame.Rect(ARENA_X + x * self.tile_size, 
+                                        ARENA_Y + 31 * self.tile_size,
+                                        self.tile_size, self.tile_size)
+                pygame.draw.rect(self.screen, (180, 180, 180), unplay_rect)
+                pygame.draw.rect(self.screen, DARK_GRAY, unplay_rect, 1)
+        
+        # Draw square tile grid
+        for x in range(19):  # 0-18 vertical lines for 18 columns
+            line_x = ARENA_X + x * self.tile_size
+            pygame.draw.line(self.screen, (0, 150, 0), 
+                           (line_x, ARENA_Y), (line_x, ARENA_Y + ARENA_HEIGHT), 1)
+        
+        for y in range(33):  # 0-32 horizontal lines for 32 rows
+            line_y = ARENA_Y + y * self.tile_size
+            pygame.draw.line(self.screen, (0, 150, 0),
+                           (ARENA_X, line_y), (ARENA_X + ARENA_WIDTH, line_y), 1)
+        
+        # Add coordinate labels for clarity
+        if hasattr(self, 'show_coords') and self.show_coords:
+            for y in range(0, 32, 4):
+                coord_text = self.small_font.render(str(y), True, BLACK)
+                self.screen.blit(coord_text, (ARENA_X - 25, ARENA_Y + y * self.tile_size))
+            
+            for x in range(0, 18, 3):
+                coord_text = self.small_font.render(str(x), True, BLACK)
+                self.screen.blit(coord_text, (ARENA_X + x * self.tile_size, ARENA_Y - 20))
+    
+    def draw_deployment_zones(self):
+        """Draw colored tints for deployment zones"""
+        if not hasattr(self, 'battle') or not self.battle:
+            return
+            
+        # Get deployment zones for both players
+        blue_zones = self.battle.arena.get_deploy_zones(0, self.battle)
+        red_zones = self.battle.arena.get_deploy_zones(1, self.battle)
+        
+        # Create a grid to track which tiles belong to which player
+        tile_ownership = {}  # (x, y) -> set of player_ids
+        
+        # Mark blue zones (excluding blocked tiles)
+        for x1, y1, x2, y2 in blue_zones:
+            for x in range(int(x1), int(x2)):
+                for y in range(int(y1), int(y2)):
+                    # Skip blocked tiles entirely - don't add them to tile_ownership
+                    if self.battle.arena.is_blocked_tile(x, y):
+                        continue
+                    if (x, y) not in tile_ownership:
+                        tile_ownership[(x, y)] = set()
+                    tile_ownership[(x, y)].add(0)  # Blue player
+        
+        # Mark red zones (excluding blocked tiles)
+        for x1, y1, x2, y2 in red_zones:
+            for x in range(int(x1), int(x2)):
+                for y in range(int(y1), int(y2)):
+                    # Skip blocked tiles entirely - don't add them to tile_ownership
+                    if self.battle.arena.is_blocked_tile(x, y):
+                        continue
+                    if (x, y) not in tile_ownership:
+                        tile_ownership[(x, y)] = set()
+                    tile_ownership[(x, y)].add(1)  # Red player
+        
+        # Draw tints based on ownership
+        for (tile_x, tile_y), owners in tile_ownership.items():
+            # Skip blocked tiles - they will be drawn gray instead
+            if self.battle.arena.is_blocked_tile(tile_x, tile_y):
+                continue
+                
+            # Skip if both players can deploy (no tint)
+            if len(owners) > 1:
+                continue
+                
+            # Determine tint color - same for all playable areas
+            if 0 in owners:  # Blue only
+                tint_color = (100, 150, 255, 120)  # More visible blue tint
+            elif 1 in owners:  # Red only
+                tint_color = (255, 150, 100, 120)  # More visible red tint
+            else:
+                continue
+            
+            # Draw the tint
+            screen_x = ARENA_X + tile_x * TILE_SIZE
+            screen_y = ARENA_Y + tile_y * TILE_SIZE
+            
+            tint_rect = pygame.Rect(screen_x, screen_y, TILE_SIZE, TILE_SIZE)
+            s = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+            s.fill(tint_color)
+            self.screen.blit(s, tint_rect)
+        
+        # Draw blocked tiles in gray (no red/blue tints)
+        for tile_x in range(18):  # Arena width
+            for tile_y in range(32):  # Arena height
+                if self.battle.arena.is_blocked_tile(tile_x, tile_y):
+                    screen_x = ARENA_X + tile_x * TILE_SIZE
+                    screen_y = ARENA_Y + tile_y * TILE_SIZE
+                    
+                    # Draw gray blocked tile
+                    blocked_rect = pygame.Rect(screen_x, screen_y, TILE_SIZE, TILE_SIZE)
+                    s = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+                    s.fill((128, 128, 128, 160))  # Semi-transparent gray
+                    self.screen.blit(s, blocked_rect)
+                    
+                    # Add darker border to make it more visible
+                    pygame.draw.rect(self.screen, (64, 64, 64), blocked_rect, 1)
+    
+    def draw_towers(self):
+        """Draw tower positions"""
+        tower_positions = [
+            # Player 0 towers (blue) - bottom
+            (9.0, 2.5, "King", BLUE),     # King tower centered at x=9 (middle of 18-wide arena)
+            (3.5, 6.5, "Left", BLUE), 
+            (14.5, 6.5, "Right", BLUE),   # Right tower at x=14.5 for better symmetry
+            # Player 1 towers (red) - top
+            (9.0, 29.5, "King", RED),     # King tower centered at x=9
+            (3.5, 25.5, "Left", RED),
+            (14.5, 25.5, "Right", RED)    # Right tower at x=14.5 for better symmetry
+        ]
+        
+        for x, y, tower_type, color in tower_positions:
+            screen_x, screen_y = self.world_to_screen(x, y)
+            
+            # Draw tower with circular hitbox visualization using actual hitbox data
+            # Get radius from hitboxes.json (these are radius values in tile units)
+            if tower_type == "King":
+                hitbox_radius_tiles = self.hitboxes.get("King's Tower", 1.4)  # Default 1.4 tile radius
+                visual_radius_tiles = hitbox_radius_tiles * 0.6  # Visual is smaller than hitbox
+            else:
+                hitbox_radius_tiles = self.hitboxes.get("Princess Tower", 1.0)  # Default 1.0 tile radius
+                visual_radius_tiles = hitbox_radius_tiles * 0.6  # Visual is smaller than hitbox
+            
+            # Convert tile radius to screen pixels
+            tower_radius = int(hitbox_radius_tiles * self.tile_size)
+            visual_radius = int(visual_radius_tiles * self.tile_size)
+            
+            # Draw hitbox circle (light color)
+            hitbox_color = (color[0]//2, color[1]//2, color[2]//2, 100)  # Semi-transparent
+            pygame.draw.circle(self.screen, color, (screen_x, screen_y), tower_radius, 2)
+            
+            # Draw tower visual (filled circle)
+            pygame.draw.circle(self.screen, color, (screen_x, screen_y), visual_radius)
+            pygame.draw.circle(self.screen, BLACK, (screen_x, screen_y), visual_radius, 2)
+            
+            # Find tower entity for health
+            for entity in self.battle.entities.values():
+                if (hasattr(entity, 'card_stats') and entity.card_stats and 
+                    abs(entity.position.x - x) < 1 and abs(entity.position.y - y) < 1):
+                    
+                    # Health bar above tower
+                    health_ratio = entity.hitpoints / entity.max_hitpoints
+                    bar_width = tower_radius * 2
+                    bar_height = 4
+                    bar_x = screen_x - bar_width // 2
+                    bar_y = screen_y - tower_radius - 8
+                    
+                    # Health bar background
+                    pygame.draw.rect(self.screen, BLACK, 
+                                   (bar_x-1, bar_y-1, bar_width+2, bar_height+2))
+                    # Health bar fill
+                    health_color = GREEN if health_ratio > 0.6 else YELLOW if health_ratio > 0.3 else RED
+                    pygame.draw.rect(self.screen, health_color,
+                                   (bar_x, bar_y, int(bar_width * health_ratio), bar_height))
+                    
+                    # HP text below tower
+                    hp_text = self.small_font.render(f"{int(entity.hitpoints)}", True, BLACK)
+                    hp_rect = hp_text.get_rect(center=(screen_x, screen_y + tower_radius + 12))
+                    self.screen.blit(hp_text, hp_rect)
+                    
+                    # Tower type label
+                    type_text = self.small_font.render(tower_type[:4], True, BLACK)
+                    type_rect = type_text.get_rect(center=(screen_x, screen_y))
+                    self.screen.blit(type_text, type_rect)
+                    break
+    
+    def draw_entities(self):
+        """Draw all entities (troops, projectiles, etc.)"""
+        for entity in self.battle.entities.values():
+            if not entity.is_alive:
+                continue
+            
+            # Skip towers (drawn separately)
+            if (hasattr(entity, 'card_stats') and entity.card_stats and 
+                entity.card_stats.name in ['Tower', 'KingTower']):
+                continue
+            
+            screen_x, screen_y = self.world_to_screen(entity.position.x, entity.position.y)
+            
+            # Determine color and shape based on player and type
+            color = BLUE if entity.player_id == 0 else RED
+            
+            # Get entity type
+            entity_name = "Unknown"
+            if hasattr(entity, 'card_stats') and entity.card_stats:
+                entity_name = entity.card_stats.name
+            
+            # All units have circular hitboxes - use actual hitbox data from JSON
+            # Get hitbox radius from hitboxes.json (radius in tile units)
+            hitbox_radius_tiles = self.hitboxes.get(entity_name, 0.5)  # Default 0.5 tile radius
+            visual_radius_tiles = hitbox_radius_tiles * 0.7  # Visual is smaller than hitbox
+            
+            # Convert tile radius to screen pixels
+            hitbox_radius = int(hitbox_radius_tiles * self.tile_size)
+            visual_radius = int(visual_radius_tiles * self.tile_size)
+            
+            # Draw hitbox circle
+            pygame.draw.circle(self.screen, color, (screen_x, screen_y), hitbox_radius, 2)
+            
+            # Draw visual based on entity type
+            if entity_name == "Knight":
+                # Draw visual (square inside circle for distinction)
+                pygame.draw.rect(self.screen, color, 
+                               (screen_x - visual_radius//2, screen_y - visual_radius//2, 
+                                visual_radius, visual_radius))
+                pygame.draw.rect(self.screen, BLACK,
+                               (screen_x - visual_radius//2, screen_y - visual_radius//2, 
+                                visual_radius, visual_radius), 2)
+            elif entity_name in ["Archers", "Archer"]:
+                # Draw visual (triangle inside circle)
+                points = [
+                    (screen_x, screen_y - visual_radius),
+                    (screen_x - visual_radius, screen_y + visual_radius//2),
+                    (screen_x + visual_radius, screen_y + visual_radius//2)
+                ]
+                pygame.draw.polygon(self.screen, color, points)
+                pygame.draw.polygon(self.screen, BLACK, points, 2)
+            else:
+                # Generic units: circular visual
+                pygame.draw.circle(self.screen, color, (screen_x, screen_y), visual_radius)
+                pygame.draw.circle(self.screen, BLACK, (screen_x, screen_y), visual_radius, 2)
+                # Draw visual circle
+                pygame.draw.circle(self.screen, color, (screen_x, screen_y), visual_radius)
+                pygame.draw.circle(self.screen, BLACK, (screen_x, screen_y), visual_radius, 2)
+            
+            # Health bar positioned above hitbox
+            if hasattr(entity, 'hitpoints') and hasattr(entity, 'max_hitpoints'):
+                health_ratio = entity.hitpoints / entity.max_hitpoints
+                # Use actual hitbox radius to position health bar properly
+                bar_y_offset = hitbox_radius + 4
+                
+                bar_width = int(self.tile_size * 0.8)
+                bar_height = 3
+                bar_x = screen_x - bar_width // 2
+                bar_y = screen_y - bar_y_offset
+                
+                # Health bar background
+                pygame.draw.rect(self.screen, BLACK,
+                               (bar_x-1, bar_y-1, bar_width+2, bar_height+2))
+                # Health bar fill
+                health_color = GREEN if health_ratio > 0.6 else YELLOW if health_ratio > 0.3 else RED
+                pygame.draw.rect(self.screen, health_color,
+                               (bar_x, bar_y, int(bar_width * health_ratio), bar_height))
+            
+            # Draw sight range circle (semi-transparent)
+            if hasattr(entity, 'sight_range') and entity.sight_range:
+                sight_radius = int(entity.sight_range * self.tile_size)
+                # Draw sight range as a dotted circle
+                for angle in range(0, 360, 15):  # Draw dotted circle
+                    x = screen_x + int(sight_radius * math.cos(math.radians(angle)))
+                    y = screen_y + int(sight_radius * math.sin(math.radians(angle)))
+                    pygame.draw.circle(self.screen, (color[0]//2, color[1]//2, color[2]//2), (x, y), 3)
+            
+            # Target line (if has target) - make it thicker and more visible
+            if hasattr(entity, 'target_id') and entity.target_id:
+                target = self.battle.entities.get(entity.target_id)
+                if target and target.is_alive:
+                    target_x, target_y = self.world_to_screen(target.position.x, target.position.y)
+                    # Draw thin target line to final target (tower)
+                    pygame.draw.line(self.screen, YELLOW, 
+                                   (screen_x, screen_y), (target_x, target_y), 1)
+                    
+                    # Draw thick pathfinding target line (where they're actually going)
+                    if hasattr(entity, '_get_pathfind_target'):
+                        pathfind_target = entity._get_pathfind_target(target)
+                        pf_x, pf_y = self.world_to_screen(pathfind_target.x, pathfind_target.y)
+                        pygame.draw.line(self.screen, RED, 
+                                       (screen_x, screen_y), (pf_x, pf_y), 3)
+                        # Draw circle at pathfind target
+                        pygame.draw.circle(self.screen, RED, (pf_x, pf_y), 8, 2)
+                    # Draw arrow head
+                    dx = target_x - screen_x
+                    dy = target_y - screen_y
+                    length = math.sqrt(dx*dx + dy*dy)
+                    if length > 0:
+                        # Normalize and create arrow head
+                        dx /= length
+                        dy /= length
+                        arrow_len = 10
+                        arrow_x = target_x - dx * arrow_len
+                        arrow_y = target_y - dy * arrow_len
+                        # Arrow sides
+                        side1_x = arrow_x - dy * 5
+                        side1_y = arrow_y + dx * 5
+                        side2_x = arrow_x + dy * 5
+                        side2_y = arrow_y - dx * 5
+                        pygame.draw.polygon(self.screen, YELLOW, 
+                                          [(target_x, target_y), (side1_x, side1_y), (side2_x, side2_y)])
+            
+            # Entity label
+            label = self.small_font.render(entity_name[:3], True, BLACK)
+            label_rect = label.get_rect(center=(screen_x, screen_y + 25))
+            self.screen.blit(label, label_rect)
+    
+    def draw_ui(self):
+        """Draw UI elements"""
+        # Panel background
+        panel_rect = pygame.Rect(ARENA_X + ARENA_WIDTH + 20, ARENA_Y, 400, ARENA_HEIGHT)
+        pygame.draw.rect(self.screen, WHITE, panel_rect)
+        pygame.draw.rect(self.screen, BLACK, panel_rect, 2)
+        
+        ui_x = panel_rect.x + 10
+        ui_y = panel_rect.y + 10
+        line_height = 25
+        
+        # Title
+        title = self.large_font.render("Battle Status", True, BLACK)
+        self.screen.blit(title, (ui_x, ui_y))
+        ui_y += 40
+        
+        # Time and tick
+        time_text = self.font.render(f"Time: {self.battle.time:.1f}s", True, BLACK)
+        self.screen.blit(time_text, (ui_x, ui_y))
+        ui_y += line_height
+        
+        tick_text = self.font.render(f"Tick: {self.battle.tick}", True, BLACK)
+        self.screen.blit(tick_text, (ui_x, ui_y))
+        ui_y += line_height * 2
+        
+        # Player stats
+        for i, player in enumerate(self.battle.players):
+            color = BLUE if i == 0 else RED
+            player_text = self.font.render(f"Player {i}:", True, color)
+            self.screen.blit(player_text, (ui_x, ui_y))
+            ui_y += line_height
+            
+            elixir_text = self.font.render(f"  Elixir: {player.elixir:.1f}/10", True, BLACK)
+            self.screen.blit(elixir_text, (ui_x, ui_y))
+            ui_y += line_height
+            
+            crowns_text = self.font.render(f"  Crowns: {player.get_crown_count()}", True, BLACK)
+            self.screen.blit(crowns_text, (ui_x, ui_y))
+            ui_y += line_height
+            
+            towers_text = self.font.render(f"  King: {int(player.king_tower_hp)}", True, BLACK)
+            self.screen.blit(towers_text, (ui_x, ui_y))
+            ui_y += line_height
+            
+            towers_text2 = self.font.render(f"  Towers: {int(player.left_tower_hp)}/{int(player.right_tower_hp)}", True, BLACK)
+            self.screen.blit(towers_text2, (ui_x, ui_y))
+            ui_y += line_height * 2
+        
+        # Entity count
+        alive_entities = sum(1 for e in self.battle.entities.values() if e.is_alive)
+        entities_text = self.font.render(f"Entities: {alive_entities}", True, BLACK)
+        self.screen.blit(entities_text, (ui_x, ui_y))
+        ui_y += line_height
+        
+        # Troops breakdown
+        troops = {}
+        for entity in self.battle.entities.values():
+            if (entity.is_alive and hasattr(entity, 'card_stats') and 
+                entity.card_stats and entity.card_stats.name not in ['Tower', 'KingTower']):
+                name = entity.card_stats.name
+                player = entity.player_id
+                key = f"P{player} {name}"
+                troops[key] = troops.get(key, 0) + 1
+        
+        if troops:
+            troops_title = self.font.render("Active Troops:", True, BLACK)
+            self.screen.blit(troops_title, (ui_x, ui_y))
+            ui_y += line_height
+            
+            for troop, count in troops.items():
+                troop_text = self.small_font.render(f"  {troop}: {count}", True, BLACK)
+                self.screen.blit(troop_text, (ui_x, ui_y))
+                ui_y += 20
+        
+        # Game state
+        ui_y += line_height
+        if self.battle.game_over:
+            winner_text = self.font.render(f"WINNER: Player {self.battle.winner}!", True, GREEN)
+            self.screen.blit(winner_text, (ui_x, ui_y))
+        elif self.battle.double_elixir:
+            elixir_text = self.font.render("DOUBLE ELIXIR!", True, PURPLE)
+            self.screen.blit(elixir_text, (ui_x, ui_y))
+        
+        # Controls
+        ui_y = panel_rect.bottom - 120
+        controls_title = self.font.render("Controls:", True, BLACK)
+        self.screen.blit(controls_title, (ui_x, ui_y))
+        ui_y += line_height
+        
+        controls = [
+            "SPACE: Pause/Resume",
+            "R: Reset Battle", 
+            "1-5: Speed (1x to 5x)",
+            "ESC: Exit"
+        ]
+        
+        for control in controls:
+            control_text = self.small_font.render(control, True, BLACK)
+            self.screen.blit(control_text, (ui_x, ui_y))
+            ui_y += 20
+    
+    def handle_events(self):
+        """Handle pygame events"""
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return False
+                elif event.key == pygame.K_SPACE:
+                    self.paused = not getattr(self, 'paused', False)
+                elif event.key == pygame.K_r:
+                    # Reset battle
+                    self.engine = BattleEngine()
+                    self.battle = self.engine.create_battle()
+                    self.setup_test_battle()
+                elif event.key >= pygame.K_1 and event.key <= pygame.K_5:
+                    # Set speed multiplier
+                    self.speed = event.key - pygame.K_0
+                elif event.key == pygame.K_i:
+                    # Toggle investigation mode
+                    self.investigation_mode = not getattr(self, 'investigation_mode', False)
+                    if self.investigation_mode:
+                        print("🔍 Investigation mode ON - taking screenshots every 30 ticks")
+                        self.investigation_counter = 0
+                        # Create investigation folder
+                        import datetime
+                        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                        self.investigation_folder = f"investigation/{timestamp}"
+                        os.makedirs(self.investigation_folder, exist_ok=True)
+                    else:
+                        print("🔍 Investigation mode OFF")
+                elif event.key == pygame.K_s:
+                    # Take single screenshot
+                    import datetime
+                    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                    filename = f"manual_screenshot_{timestamp}.png"
+                    self.take_screenshot(filename)
+                elif event.key == pygame.K_p:
+                    # Take pathfinding debug screenshot
+                    self.take_pathfinding_debug_screenshot()
+        
+        return True
+    
+    def take_screenshot(self, filename: str = "battle_screenshot.png"):
+        """Take a screenshot of the current battle state"""
+        pygame.image.save(self.screen, filename)
+        print(f"📸 Screenshot saved as: {filename}")
+        return filename
+    
+    def take_pathfinding_debug_screenshot(self):
+        """Take a screenshot with pathfinding debug info overlaid"""
+        # Draw pathfinding debug info
+        for entity in self.battle.entities.values():
+            if hasattr(entity, '_get_pathfind_target') and hasattr(entity, 'target_id'):
+                if entity.target_id:
+                    target = self.battle.entities.get(entity.target_id)
+                    if target:
+                        # Get what the pathfinding target would be
+                        pathfind_target = entity._get_pathfind_target(target.position)
+                        
+                        # Draw pathfinding target as bright green circle
+                        screen_x, screen_y = self.world_to_screen(pathfind_target.x, pathfind_target.y)
+                        pygame.draw.circle(self.screen, (0, 255, 0), (screen_x, screen_y), 15, 3)
+                        
+                        # Draw line from entity to pathfind target
+                        entity_x, entity_y = self.world_to_screen(entity.position.x, entity.position.y)
+                        pygame.draw.line(self.screen, (0, 255, 0), (entity_x, entity_y), (screen_x, screen_y), 2)
+                        
+                        # Add text showing pathfind target type
+                        current_side = 0 if entity.position.y < 16.0 else 1
+                        target_side = 0 if target.position.y < 16.0 else 1
+                        need_to_cross = current_side != target_side
+                        distance_to_target = entity.position.distance_to(target.position)
+                        on_bridge = (abs(entity.position.x - 3.0) <= 1.5 or abs(entity.position.x - 15.0) <= 1.5) and abs(entity.position.y - 16.0) <= 1.0
+                        
+                        debug_text = ""
+                        if distance_to_target <= entity.sight_range:
+                            debug_text = "DIRECT"
+                        elif on_bridge:
+                            debug_text = "TO_TOWER"  
+                        elif need_to_cross:
+                            debug_text = "TO_BRIDGE"
+                        else:
+                            debug_text = "DIRECT"
+                            
+                        text_surface = self.font.render(debug_text, True, (0, 255, 0))
+                        self.screen.blit(text_surface, (screen_x + 20, screen_y - 10))
+        
+        pygame.display.flip()
+        
+        # Take screenshot
+        import datetime
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"pathfinding_debug_{timestamp}.png"
+        self.take_screenshot(filename)
+    
+    def run_replay_mode(self):
+        """Run battle and screenshot every tick until first attack"""
+        print("🎮 Starting Battle Replay Mode")
+        print("📸 Will screenshot every tick until first attack occurs")
+        
+        # Create replay folder with timestamp
+        import datetime
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        replay_folder = f"replay/{timestamp}"
+        os.makedirs(replay_folder, exist_ok=True)
+        
+        print(f"📁 Replay folder: {replay_folder}")
+        
+        tick = 0
+        attack_detected = False
+        
+        # Track initial HP of all entities to detect attacks
+        initial_hp = {}
+        for entity_id, entity in self.battle.entities.items():
+            if hasattr(entity, 'hitpoints'):
+                initial_hp[entity_id] = entity.hitpoints
+        
+        while not attack_detected and tick < 200:  # Max 200 ticks safety limit
+            # Step the battle
+            old_hp = {}
+            for entity_id, entity in self.battle.entities.items():
+                if hasattr(entity, 'hitpoints'):
+                    old_hp[entity_id] = entity.hitpoints
+            
+            self.battle.step(speed_factor=1.0)
+            
+            # Check for attacks (HP changes)
+            for entity_id, entity in self.battle.entities.items():
+                if entity_id in old_hp and hasattr(entity, 'hitpoints'):
+                    if entity.hitpoints < old_hp[entity_id]:
+                        attack_detected = True
+                        print(f"⚔️  Attack detected at tick {tick}! {entity.card_stats.name if entity.card_stats else 'Entity'} took {old_hp[entity_id] - entity.hitpoints} damage")
+                        break
+            
+            # Draw and screenshot
+            self.screen.fill(WHITE)
+            self.draw_arena()
+            self.draw_towers()
+            self.draw_entities()
+            self.draw_ui()
+            
+            # Add tick counter to screen
+            tick_text = self.large_font.render(f"Tick: {tick}", True, BLACK)
+            self.screen.blit(tick_text, (10, 10))
+            
+            pygame.display.flip()
+            
+            # Save screenshot
+            screenshot_path = f"{replay_folder}/tick_{tick:04d}.png"
+            pygame.image.save(self.screen, screenshot_path)
+            
+            tick += 1
+            
+            # Small delay to see progress
+            time.sleep(0.1)
+        
+        print(f"📸 Replay complete! {tick} screenshots saved to {replay_folder}")
+        print(f"🎬 To view replay: open files tick_0000.png through tick_{tick-1:04d}.png")
+        
+        # Keep window open briefly
+        time.sleep(2)
+        pygame.quit()
+        
+        return replay_folder
+    
+    def run_and_screenshot(self):
+        """Run battle for a few steps and take screenshot"""
+        print("🎮 Starting Battle Visualization (Auto-Screenshot Mode)")
+        
+        # Run for a few ticks to get interesting state
+        for i in range(50):
+            self.battle.step(speed_factor=1.0)
+            
+            # Draw everything every 10 ticks to show progression
+            if i % 10 == 0:
+                self.screen.fill(WHITE)
+                self.draw_arena()
+                self.draw_towers() 
+                self.draw_entities()
+                self.draw_ui()
+                pygame.display.flip()
+                
+                if i == 30:  # Take screenshot at tick 30
+                    screenshot_file = self.take_screenshot()
+        
+        # Final screenshot
+        self.screen.fill(WHITE)
+        self.draw_arena()
+        self.draw_towers()
+        self.draw_entities() 
+        self.draw_ui()
+        pygame.display.flip()
+        
+        final_screenshot = self.take_screenshot("final_battle_state.png")
+        
+        # Keep window open briefly to show result
+        time.sleep(2)
+        pygame.quit()
+        
+        return final_screenshot
+    
+    def run_auto_investigation(self, max_ticks=15):
+        """Automatic investigation mode - runs battle and takes screenshots automatically"""
+        print("🔍 Starting automatic pathfinding investigation...")
+        print(f"Will capture ticks 0-{max_ticks} and terminate automatically")
+        
+        # Create investigation folder
+        import datetime
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        investigation_folder = f"investigation/{timestamp}"
+        os.makedirs(investigation_folder, exist_ok=True)
+        print(f"📁 Screenshots will be saved to: {investigation_folder}")
+        
+        # Take screenshots for ticks 0-15 only
+        tick = 0
+        
+        # Take initial screenshot before any ticks
+        self.screen.fill(WHITE)
+        self.draw_arena()
+        self.draw_towers()
+        self.draw_entities()
+        self.draw_ui()
+        
+        # Add tick info
+        tick_text = self.large_font.render(f"Tick: {tick}", True, BLACK)
+        self.screen.blit(tick_text, (10, 10))
+        
+        pygame.display.flip()
+        
+        # Take screenshot
+        filename = f"{investigation_folder}/tick_{tick:04d}_initial.png"
+        pygame.image.save(self.screen, filename)
+        print(f"📸 Screenshot: tick_{tick:04d}_initial.png")
+        
+        while tick < 15:
+            # Step battle
+            self.battle.step(speed_factor=1.0)
+            tick += 1
+            
+            # Always take screenshot for ticks 1-15
+            should_screenshot = True
+            step_info = f"step_{tick}"
+            
+            if should_screenshot:
+                # Draw everything
+                self.screen.fill(WHITE)
+                self.draw_arena()
+                self.draw_towers()
+                self.draw_entities()
+                self.draw_ui()
+                
+                # Add tick info
+                tick_text = self.large_font.render(f"Tick: {tick}", True, BLACK)
+                self.screen.blit(tick_text, (10, 10))
+                
+                pygame.display.flip()
+                
+                # Take screenshot
+                filename = f"{investigation_folder}/tick_{tick:04d}_{step_info}.png"
+                pygame.image.save(self.screen, filename)
+                print(f"📸 Screenshot: tick_{tick:04d}_{step_info}.png")
+            
+            # Handle pygame events to prevent window from becoming unresponsive
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    break
+        
+        print(f"✅ Investigation complete! Screenshots saved to {investigation_folder}")
+        pygame.quit()
+        return investigation_folder
+    
+    def run(self):
+        """Main visualization loop"""
+        print("🎮 Starting Battle Visualization")
+        print("Controls:")
+        print("  SPACE: Pause/Resume")
+        print("  R: Reset Battle")
+        print("  1-5: Speed multiplier (1x to 5x)")
+        print("  I: Toggle investigation mode (auto screenshots)")
+        print("  S: Take manual screenshot")
+        print("  P: Take pathfinding debug screenshot")
+        print("  ESC: Exit")
+        
+        self.paused = False
+        self.speed = 1
+        running = True
+        
+        while running:
+            # Handle events
+            running = self.handle_events()
+            
+            # Update battle
+            if not self.paused and not self.battle.game_over:
+                for _ in range(self.speed):
+                    self.battle.step(speed_factor=1.0)
+                    
+                # Investigation mode - take screenshots at intervals
+                if getattr(self, 'investigation_mode', False):
+                    if not hasattr(self, 'investigation_counter'):
+                        self.investigation_counter = 0
+                    self.investigation_counter += self.speed
+                    
+                    # Take screenshot every 30 ticks
+                    if self.investigation_counter >= 30:
+                        self.investigation_counter = 0
+                        # Draw everything first
+                        self.screen.fill(WHITE)
+                        self.draw_arena()
+                        self.draw_towers()
+                        self.draw_entities()
+                        self.draw_ui()
+                        pygame.display.flip()
+                        
+                        # Take investigation screenshot
+                        tick = getattr(self.battle, 'tick', 0)
+                        filename = f"{self.investigation_folder}/tick_{tick:04d}.png"
+                        self.take_screenshot(filename)
+            
+            # Draw everything
+            self.screen.fill(WHITE)
+            self.draw_arena()
+            self.draw_towers()
+            self.draw_entities()
+            self.draw_ui()
+            
+            # Show pause indicator
+            if self.paused:
+                pause_text = self.large_font.render("PAUSED", True, RED)
+                pause_rect = pause_text.get_rect(center=(SCREEN_WIDTH//2, 30))
+                self.screen.blit(pause_text, pause_rect)
+            
+            # Show speed indicator
+            if self.speed > 1:
+                speed_text = self.font.render(f"Speed: {self.speed}x", True, PURPLE)
+                speed_rect = speed_text.get_rect(topleft=(10, 10))
+                self.screen.blit(speed_text, speed_rect)
+            
+            pygame.display.flip()
+            self.clock.tick(60)  # 60 FPS display
+        
+        pygame.quit()
+
+def main():
+    """Run the battle visualization"""
+    try:
+        visualizer = BattleVisualizer()
+        
+        # Check command line arguments
+        if len(sys.argv) > 1:
+            if sys.argv[1] == "screenshot":
+                screenshot_file = visualizer.run_and_screenshot()
+                return screenshot_file
+            elif sys.argv[1] == "replay":
+                replay_folder = visualizer.run_replay_mode()
+                return replay_folder
+            elif sys.argv[1] == "investigate":
+                investigation_folder = visualizer.run_auto_investigation()
+                return investigation_folder
+        else:
+            visualizer.run()
+            return None
+    except KeyboardInterrupt:
+        print("\nVisualization stopped by user")
+        return None
+    except Exception as e:
+        print(f"Error in visualization: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+if __name__ == "__main__":
+    main()

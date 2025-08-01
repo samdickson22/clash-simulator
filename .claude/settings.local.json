@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(python3 -m pytest tests/ -v)",
+      "Bash(python3:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git clone:*)",
+      "Bash(pip3 install:*)",
+      "Bash(ls:*)",
+      "WebFetch(domain:clash.world)",
+      "Bash(find:*)",
+      "Bash(python:*)",
+      "Bash(grep:*)",
+      "Bash(timeout:*)",
+      "Bash(touch:*)"
+    ],
+    "deny": []
+  },
+  "$schema": "https://json.schemastore.org/claude-code-settings.json"
+}

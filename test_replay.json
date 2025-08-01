@@ -1,0 +1,1132 @@
+[
+  {
+    "tick": 0,
+    "time": 0.0,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.0,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824.0,
+        "left_tower_hp": 3631.0,
+        "right_tower_hp": 3631.0,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.0,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824.0,
+        "left_tower_hp": 3631.0,
+        "right_tower_hp": 3631.0,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  },
+  {
+    "tick": 1,
+    "time": 0.033,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.011785714285714,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.011785714285714,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  },
+  {
+    "tick": 2,
+    "time": 0.066,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.023571428571428,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.023571428571428,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  },
+  {
+    "tick": 3,
+    "time": 0.099,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.0353571428571415,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.0353571428571415,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  },
+  {
+    "tick": 4,
+    "time": 0.132,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.047142857142855,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.047142857142855,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  },
+  {
+    "tick": 5,
+    "time": 0.165,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.058928571428569,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.058928571428569,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  },
+  {
+    "tick": 6,
+    "time": 0.198,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.070714285714283,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.070714285714283,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  },
+  {
+    "tick": 7,
+    "time": 0.231,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.082499999999997,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.082499999999997,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  },
+  {
+    "tick": 8,
+    "time": 0.264,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.094285714285711,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.094285714285711,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  },
+  {
+    "tick": 9,
+    "time": 0.29700000000000004,
+    "entities": {
+      "1": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "2": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 6.5
+        },
+        "player_id": 0,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "3": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 2.5
+        },
+        "player_id": 0,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      },
+      "4": {
+        "type": "Building",
+        "position": {
+          "x": 3.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "5": {
+        "type": "Building",
+        "position": {
+          "x": 14.5,
+          "y": 25.5
+        },
+        "player_id": 1,
+        "hitpoints": 3631,
+        "max_hitpoints": 3631,
+        "is_alive": true,
+        "damage": 129,
+        "range": 7.5
+      },
+      "6": {
+        "type": "Building",
+        "position": {
+          "x": 9.0,
+          "y": 29.5
+        },
+        "player_id": 1,
+        "hitpoints": 4824,
+        "max_hitpoints": 4824,
+        "is_alive": true,
+        "damage": 109,
+        "range": 7.0
+      }
+    },
+    "players": [
+      {
+        "elixir": 5.106071428571425,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      },
+      {
+        "elixir": 5.106071428571425,
+        "hand": [
+          "Knight",
+          "Archer",
+          "Giant",
+          "Minions"
+        ],
+        "king_tower_hp": 4824,
+        "left_tower_hp": 3631,
+        "right_tower_hp": 3631,
+        "crowns": 0
+      }
+    ],
+    "events": []
+  }
+]
