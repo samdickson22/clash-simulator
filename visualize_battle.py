@@ -139,8 +139,8 @@ class BattleVisualizer:
         pygame.draw.rect(self.screen, DARK_GRAY, left_bridge_rect)
         pygame.draw.rect(self.screen, BLACK, left_bridge_rect, 2)
         
-        # Right bridge at x=14,15,16 (3 tiles wide, centered at x=15)
-        right_bridge_x = ARENA_X + 14 * self.tile_size
+        # Right bridge at x=13,14,15 (3 tiles wide, centered at x=14)
+        right_bridge_x = ARENA_X + 13 * self.tile_size
         right_bridge_rect = pygame.Rect(right_bridge_x, river_y1, bridge_width, bridge_height)
         pygame.draw.rect(self.screen, DARK_GRAY, right_bridge_rect)
         pygame.draw.rect(self.screen, BLACK, right_bridge_rect, 2)
@@ -416,41 +416,46 @@ class BattleVisualizer:
                     y = screen_y + int(sight_radius * math.sin(math.radians(angle)))
                     pygame.draw.circle(self.screen, (color[0]//2, color[1]//2, color[2]//2), (x, y), 3)
             
-            # Target line (if has target) - make it thicker and more visible
+            # Red arrow - shows what troop is currently fixated on
             if hasattr(entity, 'target_id') and entity.target_id:
                 target = self.battle.entities.get(entity.target_id)
                 if target and target.is_alive:
-                    target_x, target_y = self.world_to_screen(target.position.x, target.position.y)
-                    # Draw thin target line to final target (tower)
-                    pygame.draw.line(self.screen, YELLOW, 
-                                   (screen_x, screen_y), (target_x, target_y), 1)
+                    distance_to_target = entity.position.distance_to(target.position)
                     
-                    # Draw thick pathfinding target line (where they're actually going)
-                    if hasattr(entity, '_get_pathfind_target'):
-                        pathfind_target = entity._get_pathfind_target(target)
-                        pf_x, pf_y = self.world_to_screen(pathfind_target.x, pathfind_target.y)
-                        pygame.draw.line(self.screen, RED, 
-                                       (screen_x, screen_y), (pf_x, pf_y), 3)
-                        # Draw circle at pathfind target
-                        pygame.draw.circle(self.screen, RED, (pf_x, pf_y), 8, 2)
-                    # Draw arrow head
-                    dx = target_x - screen_x
-                    dy = target_y - screen_y
-                    length = math.sqrt(dx*dx + dy*dy)
-                    if length > 0:
-                        # Normalize and create arrow head
-                        dx /= length
-                        dy /= length
-                        arrow_len = 10
-                        arrow_x = target_x - dx * arrow_len
-                        arrow_y = target_y - dy * arrow_len
-                        # Arrow sides
-                        side1_x = arrow_x - dy * 5
-                        side1_y = arrow_y + dx * 5
-                        side2_x = arrow_x + dy * 5
-                        side2_y = arrow_y - dx * 5
-                        pygame.draw.polygon(self.screen, YELLOW, 
-                                          [(target_x, target_y), (side1_x, side1_y), (side2_x, side2_y)])
+                    # Set arrow color based on troop team
+                    arrow_color = BLUE if entity.player_id == 0 else RED
+                    
+                    # Determine what to point the arrow at based on what troop is fixated on
+                    if distance_to_target <= entity.sight_range:
+                        # Can see target - arrow points directly to what it's fixated on (troop or tower)
+                        arrow_target_x, arrow_target_y = self.world_to_screen(target.position.x, target.position.y)
+                    else:
+                        # Can't see target - check if pathfinding to bridge/waypoint or just walking forward
+                        if hasattr(entity, '_get_pathfind_target'):
+                            pathfind_target = entity._get_pathfind_target(target)
+                            
+                            # If pathfinding target is different from just walking forward, show it
+                            forward_y = entity.position.y + (3.0 if entity.player_id == 0 else -3.0)
+                            forward_pos = (entity.position.x, forward_y)
+                            pathfind_pos = (pathfind_target.x, pathfind_target.y)
+                            
+                            # Check if pathfinding target is significantly different from forward direction
+                            if abs(pathfind_pos[0] - forward_pos[0]) > 1.0 or abs(pathfind_pos[1] - forward_pos[1]) > 1.0:
+                                # Arrow points to specific pathfinding target (bridge, waypoint, etc.)
+                                arrow_target_x, arrow_target_y = self.world_to_screen(pathfind_target.x, pathfind_target.y)
+                            else:
+                                # Arrow points forward (generic search)
+                                arrow_target_x, arrow_target_y = self.world_to_screen(forward_pos[0], forward_pos[1])
+                        else:
+                            # No pathfinding - just point forward
+                            forward_y = entity.position.y + (3.0 if entity.player_id == 0 else -3.0)
+                            arrow_target_x, arrow_target_y = self.world_to_screen(entity.position.x, forward_y)
+                    
+                    # Draw the arrow
+                    pygame.draw.line(self.screen, arrow_color, 
+                                   (screen_x, screen_y), (arrow_target_x, arrow_target_y), 3)
+                    # Draw circle at target
+                    pygame.draw.circle(self.screen, arrow_color, (arrow_target_x, arrow_target_y), 8, 2)
             
             # Entity label
             label = self.small_font.render(entity_name[:3], True, BLACK)
@@ -616,7 +621,7 @@ class BattleVisualizer:
                     target = self.battle.entities.get(entity.target_id)
                     if target:
                         # Get what the pathfinding target would be
-                        pathfind_target = entity._get_pathfind_target(target.position)
+                        pathfind_target = entity._get_pathfind_target(target, self.battle)
                         
                         # Draw pathfinding target as bright green circle
                         screen_x, screen_y = self.world_to_screen(pathfind_target.x, pathfind_target.y)
@@ -631,7 +636,7 @@ class BattleVisualizer:
                         target_side = 0 if target.position.y < 16.0 else 1
                         need_to_cross = current_side != target_side
                         distance_to_target = entity.position.distance_to(target.position)
-                        on_bridge = (abs(entity.position.x - 3.0) <= 1.5 or abs(entity.position.x - 15.0) <= 1.5) and abs(entity.position.y - 16.0) <= 1.0
+                        on_bridge = (abs(entity.position.x - 3.0) <= 1.5 or abs(entity.position.x - 14.0) <= 1.5) and abs(entity.position.y - 16.0) <= 1.0
                         
                         debug_text = ""
                         if distance_to_target <= entity.sight_range:

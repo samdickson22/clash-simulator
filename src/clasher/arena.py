@@ -30,7 +30,7 @@ class TileGrid:
     
     # Bridge positions across river (3 tiles wide each)
     LEFT_BRIDGE = Position(3.5, 16.0)   # Left bridge center of center tile (tiles 2,3,4 -> center at 3.5)
-    RIGHT_BRIDGE = Position(15.5, 16.0) # Right bridge center of center tile (tiles 14,15,16 -> center at 15.5)
+    RIGHT_BRIDGE = Position(14.5, 16.0) # Right bridge center of center tile (tiles 13,14,15 -> center at 14.5)
     
     # River spans y=15-16 (2 tiles tall)
     RIVER_Y1 = 15.0
@@ -75,9 +75,9 @@ class TileGrid:
         
         # Check if it's in the river (y=15-16), unless it's on a bridge
         if self.RIVER_Y1 <= pos.y <= self.RIVER_Y2:
-            # Check if on bridge (3 tiles wide each)
-            on_left_bridge = 2 <= pos.x <= 4   # Left bridge spans x=2-4
-            on_right_bridge = 14 <= pos.x <= 16  # Right bridge spans x=14-16
+            # Check if on bridge (3 tiles wide each, allowing fractional positions within tiles)
+            on_left_bridge = 2.0 <= pos.x < 5.0   # Left bridge spans tiles 2,3,4 (x=2.0 to x=4.999...)
+            on_right_bridge = 13.0 <= pos.x < 16.0  # Right bridge spans tiles 13,14,15 (x=13.0 to x=15.999...)
             return on_left_bridge or on_right_bridge
         
         return True

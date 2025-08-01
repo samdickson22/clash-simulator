@@ -210,7 +210,64 @@ class Troop(Entity):
             if self.is_air_unit or (battle_state and battle_state.arena.is_walkable(new_position)):
                 self.position.x += move_x
                 self.position.y += move_y
-            # If not walkable, the unit will be stuck and pathfinding should route around
+            else:
+                # If direct path is blocked, try to find a way around the obstacle
+                alternative_move = self._find_alternative_move(move_x, move_y, battle_state)
+                if alternative_move:
+                    alt_x, alt_y = alternative_move
+                    self.position.x += alt_x
+                    self.position.y += alt_y
+                # If no alternative found, unit remains stuck (this should be rare)
+    
+    def _find_alternative_move(self, original_move_x: float, original_move_y: float, battle_state) -> Optional[tuple]:
+        """Find an alternative movement direction when the direct path is blocked.
+        Returns (move_x, move_y) tuple or None if no alternative found."""
+        
+        if not battle_state:
+            return None
+        
+        # Try different angles around the blocked direction
+        import math
+        
+        # Calculate the original angle
+        original_angle = math.atan2(original_move_y, original_move_x)
+        move_distance = math.sqrt(original_move_x * original_move_x + original_move_y * original_move_y)
+        
+        # Try angles offset by 45°, 90°, -45°, -90° from the original direction
+        angle_offsets = [math.pi/4, math.pi/2, -math.pi/4, -math.pi/2, 3*math.pi/4, -3*math.pi/4]
+        
+        for angle_offset in angle_offsets:
+            # Calculate new direction
+            new_angle = original_angle + angle_offset
+            new_move_x = math.cos(new_angle) * move_distance
+            new_move_y = math.sin(new_angle) * move_distance
+            
+            # Check if this alternative direction is walkable
+            alt_position = Position(self.position.x + new_move_x, self.position.y + new_move_y)
+            
+            if battle_state.arena.is_walkable(alt_position):
+                return (new_move_x, new_move_y)
+        
+        # If no angular alternatives work, try smaller steps in perpendicular directions
+        # This helps units "slide" along walls
+        perpendicular_directions = [
+            (original_move_y, -original_move_x),  # 90° rotation
+            (-original_move_y, original_move_x)   # -90° rotation
+        ]
+        
+        for perp_x, perp_y in perpendicular_directions:
+            # Normalize to same distance
+            perp_distance = math.sqrt(perp_x * perp_x + perp_y * perp_y)
+            if perp_distance > 0:
+                perp_x = (perp_x / perp_distance) * move_distance
+                perp_y = (perp_y / perp_distance) * move_distance
+                
+                # Try this perpendicular direction
+                perp_position = Position(self.position.x + perp_x, self.position.y + perp_y)
+                if battle_state.arena.is_walkable(perp_position):
+                    return (perp_x, perp_y)
+        
+        return None  # No alternative found
     
     def _get_pathfind_target(self, target_entity: 'Entity', battle_state=None) -> Position:
         """Get pathfinding target using priority system with advanced post-tower-destruction logic:
@@ -286,14 +343,14 @@ class Troop(Entity):
         final_target = target_entity.position
         
         # We need to cross the river - use bridge logic
-        # Determine which bridge to use (left at x=3.5, right at x=15.5)
+        # Determine which bridge to use (left at x=3.5, right at x=14.5)
         left_bridge_dist = abs(self.position.x - 3.5)
-        right_bridge_dist = abs(self.position.x - 15.5)
+        right_bridge_dist = abs(self.position.x - 14.5)
         
         if left_bridge_dist < right_bridge_dist:
             bridge_x = 3.5  # Left bridge center of center tile
         else:
-            bridge_x = 15.5  # Right bridge center of center tile
+            bridge_x = 14.5  # Right bridge center of center tile
         
         # Bridge center is at the actual center of the bridge structure
         bridge_y = 16.0  # Dead center of the bridge spanning the river
@@ -324,14 +381,25 @@ class Troop(Entity):
         """Advanced pathfinding logic after first tower is destroyed"""
         final_target = target_entity.position
         
-        # Always use center bridge (middle of arena at x=9)
-        center_bridge = Position(9.0, 16.0)  # Center of arena at river
+        # Choose the nearest actual bridge (left at x=3.5 or right at x=14.5)
+        left_bridge = Position(3.5, 16.0)
+        right_bridge = Position(14.5, 16.0)
         
-        # Check if we're on the center bridge
-        on_center_bridge = (abs(self.position.x - 9.0) <= 1.0 and 
-                           abs(self.position.y - 16.0) <= 1.0)
+        # Determine which bridge is closer
+        dist_to_left = self.position.distance_to(left_bridge)
+        dist_to_right = self.position.distance_to(right_bridge)
         
-        if on_center_bridge:
+        if dist_to_left <= dist_to_right:
+            chosen_bridge = left_bridge
+        else:
+            chosen_bridge = right_bridge
+        
+        # Check if we're on either bridge
+        on_left_bridge = (abs(self.position.x - 3.5) <= 1.5 and abs(self.position.y - 16.0) <= 1.0)
+        on_right_bridge = (abs(self.position.x - 14.5) <= 1.5 and abs(self.position.y - 16.0) <= 1.0)
+        on_bridge = on_left_bridge or on_right_bridge
+        
+        if on_bridge:
             # On center bridge - decide whether to cross or target what's visible
             
             # Check if target is a building (tower or other structure)
@@ -346,11 +414,17 @@ class Troop(Entity):
                 else:
                     # Building not in sight - cross the bridge and move forward
                     if self.player_id == 0:  # Blue player crossing to red side
-                        # Move forward across arena towards red buildings
-                        return Position(9.0, 20.0)  # Cross bridge towards red side first
+                        # Move forward from bridge towards red side
+                        if on_left_bridge:
+                            return Position(3.5, 20.0)  # Forward from left bridge
+                        else:
+                            return Position(14.5, 20.0)  # Forward from right bridge
                     else:  # Red player crossing to blue side
-                        # Move forward across arena towards blue buildings
-                        return Position(9.0, 12.0)  # Cross bridge towards blue side first
+                        # Move forward from bridge towards blue side
+                        if on_left_bridge:
+                            return Position(3.5, 12.0)  # Forward from left bridge
+                        else:
+                            return Position(14.5, 12.0)  # Forward from right bridge
             else:
                 # Target is a troop - if in line of sight, go directly
                 distance_to_target = self.position.distance_to(final_target)
@@ -359,12 +433,37 @@ class Troop(Entity):
                 else:
                     # Cross bridge to get closer to target
                     if self.player_id == 0:
-                        return Position(9.0, 20.0)  # Move across bridge towards red side
+                        if on_left_bridge:
+                            return Position(3.5, 20.0)  # Move from left bridge towards red side
+                        else:
+                            return Position(14.5, 20.0)  # Move from right bridge towards red side
                     else:
-                        return Position(9.0, 12.0)  # Move across bridge towards blue side
+                        if on_left_bridge:
+                            return Position(3.5, 12.0)  # Move from left bridge towards blue side
+                        else:
+                            return Position(14.5, 12.0)  # Move from right bridge towards blue side
         else:
-            # Not on center bridge yet - go to center bridge
-            return center_bridge
+            # Not on bridge yet - check if we need to route around river
+            # Direct path to bridge might cross river, so use intermediate waypoint
+            
+            # Check if we're on the same side as the chosen bridge
+            if chosen_bridge.x == 3.5:  # Left bridge
+                # For left bridge, approach from left side on land
+                bridge_approach = Position(3.5, 14.0) if self.player_id == 0 else Position(3.5, 18.0)
+            else:  # Right bridge
+                # For right bridge, approach from right side on land  
+                bridge_approach = Position(14.5, 14.0) if self.player_id == 0 else Position(14.5, 18.0)
+            
+            # Check if we can reach the bridge approach position directly
+            approach_distance = self.position.distance_to(bridge_approach)
+            bridge_distance = self.position.distance_to(chosen_bridge)
+            
+            # Always use approach waypoint if we're not already close to the bridge
+            # This prevents diagonal paths through the river
+            if bridge_distance > 2.0:  # If more than 2 tiles away from bridge
+                return bridge_approach
+            else:
+                return chosen_bridge
 
 
 @dataclass

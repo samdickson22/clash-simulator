@@ -211,22 +211,42 @@ class RandomSimulator:
                 health_color = GREEN if health_ratio > 0.6 else YELLOW if health_ratio > 0.3 else RED
                 pygame.draw.rect(self.screen, health_color, (bar_x, bar_y, int(bar_width * health_ratio), bar_height))
             
-            # Draw targeting lines
+            # Draw red arrow - shows what troop is currently fixated on
             if hasattr(entity, 'target_id') and entity.target_id:
                 target = self.battle.entities.get(entity.target_id)
                 if target:
-                    target_x, target_y = self.world_to_screen(target.position.x, target.position.y)
+                    distance_to_target = entity.position.distance_to(target.position)
                     
-                    # Thin yellow line to final target
-                    pygame.draw.line(self.screen, YELLOW, (screen_x, screen_y), (target_x, target_y), 1)
+                    # Determine what to point the arrow at based on what troop is fixated on
+                    if distance_to_target <= entity.sight_range:
+                        # Can see target - arrow points directly to what it's fixated on (troop or tower)
+                        arrow_target_x, arrow_target_y = self.world_to_screen(target.position.x, target.position.y)
+                    else:
+                        # Can't see target - check if pathfinding to bridge/waypoint or just walking forward
+                        if hasattr(entity, '_get_pathfind_target'):
+                            pathfind_target = entity._get_pathfind_target(target)
+                            
+                            # If pathfinding target is different from just walking forward, show it
+                            forward_y = entity.position.y + (3.0 if entity.player_id == 0 else -3.0)
+                            forward_pos = (entity.position.x, forward_y)
+                            pathfind_pos = (pathfind_target.x, pathfind_target.y)
+                            
+                            # Check if pathfinding target is significantly different from forward direction
+                            if abs(pathfind_pos[0] - forward_pos[0]) > 1.0 or abs(pathfind_pos[1] - forward_pos[1]) > 1.0:
+                                # Arrow points to specific pathfinding target (bridge, waypoint, etc.)
+                                arrow_target_x, arrow_target_y = self.world_to_screen(pathfind_target.x, pathfind_target.y)
+                            else:
+                                # Arrow points forward (generic search)
+                                arrow_target_x, arrow_target_y = self.world_to_screen(forward_pos[0], forward_pos[1])
+                        else:
+                            # No pathfinding - just point forward
+                            forward_y = entity.position.y + (3.0 if entity.player_id == 0 else -3.0)
+                            arrow_target_x, arrow_target_y = self.world_to_screen(entity.position.x, forward_y)
                     
-                    # Thick red pathfinding line
-                    if hasattr(entity, '_get_pathfind_target'):
-                        pathfind_target = entity._get_pathfind_target(target)
-                        pf_x, pf_y = self.world_to_screen(pathfind_target.x, pathfind_target.y)
-                        pygame.draw.line(self.screen, RED, (screen_x, screen_y), (pf_x, pf_y), 3)
-                        # Circle at pathfind target
-                        pygame.draw.circle(self.screen, RED, (pf_x, pf_y), 6, 2)
+                    # Draw the arrow
+                    pygame.draw.line(self.screen, RED, (screen_x, screen_y), (arrow_target_x, arrow_target_y), 3)
+                    # Circle at target
+                    pygame.draw.circle(self.screen, RED, (arrow_target_x, arrow_target_y), 6, 2)
 
     def draw_ui(self):
         """Draw UI information"""

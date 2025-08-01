@@ -135,7 +135,7 @@ class EnhancedBattleVisualizer:
         pygame.draw.rect(self.screen, self.colors['bridge_dark'], left_bridge, 2)
         
         # Right bridge  
-        bridge_x = self.arena_rect.x + self.arena_rect.width * 0.75 - bridge_width//2
+        bridge_x = self.arena_rect.x + self.arena_rect.width * 0.69 - bridge_width//2
         right_bridge = pygame.Rect(bridge_x, river_y - river_height//2, bridge_width, river_height)
         pygame.draw.rect(self.screen, self.colors['bridge'], right_bridge)
         pygame.draw.rect(self.screen, self.colors['bridge_dark'], right_bridge, 2)
