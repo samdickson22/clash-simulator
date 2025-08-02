@@ -134,6 +134,10 @@ class TileGrid:
         if tile_pos in self.BLOCKED_TILES:
             return False
         
+        # Check if position overlaps with living tower area (troops cannot deploy on towers)
+        if not is_spell and self.is_tower_tile(pos, battle_state):
+            return False
+        
         # Most spells can be deployed anywhere on the battlefield
         # However, rolling projectiles (Log, Barbarian Barrel) follow troop deployment rules
         if is_spell:
@@ -183,3 +187,80 @@ class TileGrid:
             tile_x * self.tile_size + self.tile_size / 2,
             tile_y * self.tile_size + self.tile_size / 2
         )
+    
+    def is_tower_tile(self, pos: Position, battle_state=None) -> bool:
+        """Check if position overlaps with any living tower's occupied area"""
+        # Princess towers: 3x3 area (1.5 tiles radius from center)
+        # King towers: 4x4 area (2.0 tiles radius from center)
+        
+        # Check all tower positions
+        towers = [
+            (self.BLUE_LEFT_TOWER, 1.5, 0),    # Princess tower, 3x3
+            (self.BLUE_RIGHT_TOWER, 1.5, 0),   # Princess tower, 3x3  
+            (self.BLUE_KING_TOWER, 2.0, 0),    # King tower, 4x4
+            (self.RED_LEFT_TOWER, 1.5, 1),     # Princess tower, 3x3
+            (self.RED_RIGHT_TOWER, 1.5, 1),    # Princess tower, 3x3
+            (self.RED_KING_TOWER, 2.0, 1)      # King tower, 4x4
+        ]
+        
+        for tower_pos, radius, player_id in towers:
+            # Check if tower is still alive (if battle_state provided)
+            if battle_state:
+                tower_alive = self._is_tower_alive(tower_pos, player_id, battle_state)
+                if not tower_alive:
+                    continue  # Skip dead towers
+            
+            # Check if position is within tower's area
+            dx = abs(pos.x - tower_pos.x)
+            dy = abs(pos.y - tower_pos.y)
+            
+            if dx <= radius and dy <= radius:
+                return True
+        
+        return False
+    
+    def _is_tower_alive(self, tower_pos: Position, player_id: int, battle_state) -> bool:
+        """Check if tower at given position is still alive"""
+        if not battle_state:
+            return True  # Assume alive if no battle state
+        
+        # Find tower entity at this position
+        for entity in battle_state.entities.values():
+            if (hasattr(entity, 'position') and 
+                entity.position.x == tower_pos.x and 
+                entity.position.y == tower_pos.y and
+                getattr(entity, 'player_id', -1) == player_id):
+                return entity.is_alive
+        
+        return False  # Tower not found, assume dead
+    
+    def get_tower_blocked_x_ranges(self, y: float, battle_state=None) -> List[Tuple[float, float]]:
+        """Get X coordinate ranges blocked by towers at a specific Y coordinate"""
+        blocked_ranges = []
+        
+        # Check all towers
+        towers = [
+            (self.BLUE_LEFT_TOWER, 1.5, 0),    # Princess tower, 3x3
+            (self.BLUE_RIGHT_TOWER, 1.5, 0),   # Princess tower, 3x3  
+            (self.BLUE_KING_TOWER, 2.0, 0),    # King tower, 4x4
+            (self.RED_LEFT_TOWER, 1.5, 1),     # Princess tower, 3x3
+            (self.RED_RIGHT_TOWER, 1.5, 1),    # Princess tower, 3x3
+            (self.RED_KING_TOWER, 2.0, 1)      # King tower, 4x4
+        ]
+        
+        for tower_pos, radius, player_id in towers:
+            # Check if tower is still alive
+            if battle_state:
+                tower_alive = self._is_tower_alive(tower_pos, player_id, battle_state)
+                if not tower_alive:
+                    continue
+            
+            # Check if Y coordinate intersects with tower area
+            dy = abs(y - tower_pos.y)
+            if dy <= radius:
+                # Y coordinate overlaps with tower, add X range to blocked list
+                x_min = tower_pos.x - radius
+                x_max = tower_pos.x + radius
+                blocked_ranges.append((x_min, x_max))
+        
+        return blocked_ranges

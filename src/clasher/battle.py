@@ -135,6 +135,11 @@ class BattleState:
         if not self.arena.can_deploy_at(position, player_id, self, is_spell, spell_obj):
             return False
         
+        # Special deployment validation for Royal Recruits (center 6 tiles only)
+        if card_name in ['RoyalRecruits', 'RoyalRecruits_Chess']:
+            if not (6 <= position.x <= 11):
+                return False  # Royal Recruits can only be deployed in center 6 tiles
+        
         # Play the card
         if not player.play_card(card_name, card_stats):
             return False
@@ -165,7 +170,7 @@ class BattleState:
         
         # Check if this is a swarm card (spawns multiple units)
         summon_count = getattr(card_stats, 'summon_count', None) or 1
-        summon_radius = getattr(card_stats, 'summon_radius', None) or 500  # Default 0.5 tiles
+        summon_radius = getattr(card_stats, 'summon_radius', None) or 0.5  # Default 0.5 tiles
         
         # Check for mixed swarms (like Goblin Gang)
         second_count = getattr(card_stats, 'summon_character_second_count', None) or 0
@@ -217,12 +222,18 @@ class BattleState:
         
         total_units = count + second_count
         
+        # Check for special deployment patterns
+        is_royal_recruits = card_stats.name in ['RoyalRecruits', 'RoyalRecruits_Chess']
+        
         # Check if this is a mixed swarm with front/back positioning (like Goblin Gang)
         has_front_back = (count > 0 and second_count > 0 and 
                          getattr(card_stats, 'summon_character_data', None) and
                          getattr(card_stats, 'summon_character_second_data', None))
         
-        if has_front_back:
+        if is_royal_recruits:
+            # Royal Recruits spawn in a horizontal line across battlefield
+            self._spawn_royal_recruits_line(center_pos, player_id, card_stats, count)
+        elif has_front_back:
             # Spawn in front/back formation for mixed swarms
             self._spawn_front_back_formation(center_pos, player_id, card_stats, count, second_count, second_data, radius)
         else:
@@ -356,6 +367,126 @@ class BattleState:
             
             self._spawn_unit_at_position(back_pos, player_id, back_card_stats)
     
+    def _spawn_royal_recruits_line(self, center_pos: Position, player_id: int, card_stats: CardStats, count: int) -> None:
+        """Spawn Royal Recruits in a horizontal line across the battlefield, avoiding towers"""
+        # Royal Recruits: 6 units spaced 2.5 tiles apart, center at deploy position
+        spacing = 2.5  # tiles between each recruit
+        
+        # Get tower-blocked X ranges for this Y coordinate
+        blocked_ranges = self.arena.get_tower_blocked_x_ranges(center_pos.y, self)
+        
+        # Calculate initial line positions
+        total_width = (count - 1) * spacing
+        leftmost_x = center_pos.x - (total_width / 2)
+        
+        # Generate all recruit X positions
+        recruit_positions = []
+        for i in range(count):
+            recruit_x = leftmost_x + (i * spacing)
+            recruit_positions.append(recruit_x)
+        
+        # Check if any positions would overlap with towers
+        needs_adjustment = False
+        for recruit_x in recruit_positions:
+            for x_min, x_max in blocked_ranges:
+                if x_min <= recruit_x <= x_max:
+                    needs_adjustment = True
+                    break
+            if needs_adjustment:
+                break
+        
+        # If line overlaps with towers, find alternative positioning
+        if needs_adjustment:
+            recruit_positions = self._find_safe_recruit_positions(center_pos, count, spacing, blocked_ranges)
+        
+        # Ensure all positions are within arena bounds
+        recruit_positions = [max(0.5, min(17.5, x)) for x in recruit_positions]
+        
+        # Spawn each recruit
+        for recruit_x in recruit_positions:
+            recruit_pos = Position(recruit_x, center_pos.y)
+            recruit_pos = self._snap_to_valid_position(recruit_pos, player_id)
+            self._spawn_unit_at_position(recruit_pos, player_id, card_stats)
+    
+    def _find_safe_recruit_positions(self, center_pos: Position, count: int, spacing: float, blocked_ranges: List[Tuple[float, float]]) -> List[float]:
+        """Find safe X positions for Royal Recruits that avoid tower collisions"""
+        
+        # Create list of all blocked X coordinates
+        blocked_x_coords = set()
+        for x_min, x_max in blocked_ranges:
+            # Add all positions in blocked range with 0.5 precision
+            x = x_min
+            while x <= x_max:
+                blocked_x_coords.add(round(x * 2) / 2)  # Round to nearest 0.5
+                x += 0.5
+        
+        # Find all safe X positions across the arena
+        safe_positions = []
+        for x_half in range(1, 36):  # 0.5 to 17.5 in 0.5 increments
+            x = x_half / 2.0
+            if x not in blocked_x_coords and 0.5 <= x <= 17.5:
+                safe_positions.append(x)
+        
+        # If we have enough safe positions, try to maintain spacing
+        if len(safe_positions) >= count:
+            # Try to find positions with good spacing starting from center
+            selected_positions = []
+            
+            # Find safe position closest to center
+            center_candidates = [pos for pos in safe_positions if abs(pos - center_pos.x) <= 1.0]
+            if not center_candidates:
+                center_candidates = safe_positions
+            
+            center_safe = min(center_candidates, key=lambda x: abs(x - center_pos.x))
+            selected_positions.append(center_safe)
+            
+            # For remaining positions, try to maintain spacing while staying safe
+            while len(selected_positions) < count:
+                best_candidate = None
+                best_score = float('inf')
+                
+                for candidate in safe_positions:
+                    if candidate in selected_positions:
+                        continue
+                    
+                    # Score based on distance from ideal spacing positions
+                    min_spacing_score = float('inf')
+                    for existing_pos in selected_positions:
+                        spacing_distance = abs(abs(candidate - existing_pos) - spacing)
+                        min_spacing_score = min(min_spacing_score, spacing_distance)
+                    
+                    # Prefer positions that maintain good spacing
+                    if min_spacing_score < best_score:
+                        best_score = min_spacing_score
+                        best_candidate = candidate
+                
+                if best_candidate is not None:
+                    selected_positions.append(best_candidate)
+                else:
+                    # If no good candidate, just pick the first available
+                    for pos in safe_positions:
+                        if pos not in selected_positions:
+                            selected_positions.append(pos)
+                            break
+            
+            positions = selected_positions
+        else:
+            # Not enough safe positions, use what we have
+            positions = safe_positions[:count]
+        
+        # Ensure we have exactly the right count
+        while len(positions) < count:
+            # Add fallback positions at arena edges
+            for x in [0.5, 1.0, 17.0, 17.5, 16.5, 16.0]:
+                if x not in positions and x not in blocked_x_coords:
+                    positions.append(x)
+                    if len(positions) >= count:
+                        break
+        
+        # Sort and return exact count
+        positions.sort()
+        return positions[:count]
+    
     def _spawn_unit_at_position(self, position: Position, player_id: int, card_stats: CardStats) -> None:
         """Spawn a single unit at a specific position"""
         # Get unit properties
@@ -389,8 +520,8 @@ class BattleState:
     
     def _snap_to_valid_position(self, position: Position, player_id: int) -> Position:
         """Snap position to nearest valid playable area"""
-        # Check if position is already valid
-        if self.arena.is_walkable(position):
+        # Check if position is already valid (walkable and not on a tower)
+        if self.arena.is_walkable(position) and not self.arena.is_tower_tile(position, self):
             return position
         
         # Try to find nearest valid position within reasonable distance
@@ -409,8 +540,8 @@ class BattleState:
                 if not self.arena.is_valid_position(test_pos):
                     continue
                 
-                # Check if walkable
-                if self.arena.is_walkable(test_pos):
+                # Check if walkable and not on tower
+                if self.arena.is_walkable(test_pos) and not self.arena.is_tower_tile(test_pos, self):
                     distance = position.distance_to(test_pos)
                     if distance < min_distance:
                         min_distance = distance
@@ -423,8 +554,8 @@ class BattleState:
             clamped_y = max(0.5, min(31.5, position.y))
             clamped_pos = Position(clamped_x, clamped_y)
             
-            # If clamped position is walkable, use it
-            if self.arena.is_walkable(clamped_pos):
+            # If clamped position is walkable and not on tower, use it
+            if self.arena.is_walkable(clamped_pos) and not self.arena.is_tower_tile(clamped_pos, self):
                 best_position = clamped_pos
             else:
                 # Fallback: move towards arena center until we find walkable area
@@ -438,7 +569,8 @@ class BattleState:
                     fallback_pos = Position(fallback_x, fallback_y)
                     
                     if (self.arena.is_valid_position(fallback_pos) and 
-                        self.arena.is_walkable(fallback_pos)):
+                        self.arena.is_walkable(fallback_pos) and
+                        not self.arena.is_tower_tile(fallback_pos, self)):
                         best_position = fallback_pos
                         break
         
