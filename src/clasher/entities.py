@@ -521,6 +521,8 @@ class Troop(Entity):
 
 @dataclass
 class Building(Entity):
+    speed: float = 0.0  # Buildings don't move
+    
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update building - only attack, no movement"""
         if not self.is_alive:

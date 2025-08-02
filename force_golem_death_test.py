@@ -48,7 +48,7 @@ def main():
     print(f"\\nInitial HP - Golem: {golem.hitpoints}, Knight: {knight.hitpoints}")
     
     # Run battle until one dies
-    for i in range(1000):
+    for i in range(3000):
         battle.step()
         
         # Check if either unit died

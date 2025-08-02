@@ -123,7 +123,7 @@ class TileGrid:
         
         return zones
     
-    def can_deploy_at(self, pos: Position, player_id: int, battle_state=None) -> bool:
+    def can_deploy_at(self, pos: Position, player_id: int, battle_state=None, is_spell=False) -> bool:
         """Check if position is valid for deployment"""
         # Check basic bounds
         if not self.is_valid_position(pos):
@@ -133,6 +133,10 @@ class TileGrid:
         tile_pos = (int(pos.x), int(pos.y))
         if tile_pos in self.BLOCKED_TILES:
             return False
+        
+        # Spells can be deployed anywhere on the battlefield
+        if is_spell:
+            return True
         
         # Special restriction: only middle 6 tiles (x=6-11) playable on rows 0 and 31
         if pos.y == 0 or pos.y == 31:

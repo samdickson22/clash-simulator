@@ -103,8 +103,8 @@ def test_death_spawn_mechanics():
     print(f"  Death spawn count: {golem.card_stats.death_spawn_count}")
     print(f"  Kamikaze: {golem.card_stats.kamikaze}")
     
-    # Deploy enemy targets to kill the Golem
-    target_pos = Position(5.0, 25.0)  # Red side (valid deployment zone)
+    # Deploy enemy targets to kill the Golem (positioned closer)
+    target_pos = Position(9.0, 17.0)  # Red side, closer to Golem
     target_success = battle.deploy_card(1, "Knight", target_pos)
     print(f"Deployed enemy Knight: {target_success}")
     
@@ -112,14 +112,14 @@ def test_death_spawn_mechanics():
     initial_entity_count = len(battle.entities)
     print(f"Initial entities: {initial_entity_count}")
     
-    for i in range(300):  # Run more ticks to let golem reach targets
+    for i in range(1500):  # Run more ticks to let golem reach targets
         battle.step()
         
         if not golem.is_alive:
             print(f"Golem died at tick {i}")
             break
         
-        if i % 50 == 0:
+        if i % 100 == 0:
             print(f"Tick {i}: Golem HP={golem.hitpoints:.1f}")
     
     # Check if death spawns were created

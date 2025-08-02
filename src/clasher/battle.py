@@ -124,7 +124,8 @@ class BattleState:
         if not card_stats or not player.can_play_card(card_name, card_stats):
             return False
         
-        if not self.arena.can_deploy_at(position, player_id, self):
+        is_spell = card_name in SPELL_REGISTRY
+        if not self.arena.can_deploy_at(position, player_id, self, is_spell):
             return False
         
         # Play the card
