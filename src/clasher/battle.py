@@ -73,15 +73,21 @@ class BattleState:
             level=1   # Base level stats (no scaling needed)
         )
         
-        # Player 0 towers (blue)
-        self._spawn_entity(Building, self.arena.BLUE_LEFT_TOWER, 0, tower_stats)
-        self._spawn_entity(Building, self.arena.BLUE_RIGHT_TOWER, 0, tower_stats)
-        self._spawn_entity(Building, self.arena.BLUE_KING_TOWER, 0, king_stats)
+        # Player 0 towers (blue) - create new Position objects to avoid sharing references
+        blue_left = Position(self.arena.BLUE_LEFT_TOWER.x, self.arena.BLUE_LEFT_TOWER.y)
+        blue_right = Position(self.arena.BLUE_RIGHT_TOWER.x, self.arena.BLUE_RIGHT_TOWER.y)
+        blue_king = Position(self.arena.BLUE_KING_TOWER.x, self.arena.BLUE_KING_TOWER.y)
+        self._spawn_entity(Building, blue_left, 0, tower_stats)
+        self._spawn_entity(Building, blue_right, 0, tower_stats)
+        self._spawn_entity(Building, blue_king, 0, king_stats)
         
-        # Player 1 towers (red)
-        self._spawn_entity(Building, self.arena.RED_LEFT_TOWER, 1, tower_stats)
-        self._spawn_entity(Building, self.arena.RED_RIGHT_TOWER, 1, tower_stats)
-        self._spawn_entity(Building, self.arena.RED_KING_TOWER, 1, king_stats)
+        # Player 1 towers (red) - create new Position objects to avoid sharing references
+        red_left = Position(self.arena.RED_LEFT_TOWER.x, self.arena.RED_LEFT_TOWER.y)
+        red_right = Position(self.arena.RED_RIGHT_TOWER.x, self.arena.RED_RIGHT_TOWER.y)
+        red_king = Position(self.arena.RED_KING_TOWER.x, self.arena.RED_KING_TOWER.y)
+        self._spawn_entity(Building, red_left, 1, tower_stats)
+        self._spawn_entity(Building, red_right, 1, tower_stats)
+        self._spawn_entity(Building, red_king, 1, king_stats)
     
     def step(self, speed_factor: float = 1.0) -> None:
         """Advance battle by one tick"""

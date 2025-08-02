@@ -75,9 +75,11 @@ class ProjectileSpell(Spell):
     def _get_launch_position(self, battle_state: 'BattleState', player_id: int) -> Position:
         """Get launch position for projectile"""
         if player_id == 0:
-            return battle_state.arena.BLUE_KING_TOWER
+            tower_pos = battle_state.arena.BLUE_KING_TOWER
+            return Position(tower_pos.x, tower_pos.y)
         else:
-            return battle_state.arena.RED_KING_TOWER
+            tower_pos = battle_state.arena.RED_KING_TOWER
+            return Position(tower_pos.x, tower_pos.y)
 
 
 @dataclass
