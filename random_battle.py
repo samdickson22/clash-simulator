@@ -8,6 +8,8 @@ sys.path.append('src')
 from visualize_battle import BattleVisualizer
 from clasher.arena import Position
 from clasher.data import CardDataLoader
+import json
+import os
 
 class RandomBattleSimulator(BattleVisualizer):
     def __init__(self):
@@ -22,15 +24,22 @@ class RandomBattleSimulator(BattleVisualizer):
         # Get all available cards (troops, buildings, spells)
         self.available_cards = list(self.cards.keys())
         
-        # Remove tower cards that shouldn't be deployed
-        excluded_cards = ['Tower', 'KingTower']
+        # Remove cards that shouldn't be in hands/deck (case-sensitive)
+        # Also exclude any "tower troop" variants (tidType == TID_TYPE_TOWER_TROOP)
+        excluded_cards = {
+            'Tower', 'KingTower', 'GoblinRocketSilo', 'MergeMaiden',
+            'King_CannonTowers', 'King_KnifeTowers', 'King_PrincessTowers',
+            'TriWizards', 'TriWizard'  # remove multi-unit special cycles per request
+        }
         self.available_cards = [card for card in self.available_cards if card not in excluded_cards]
         
-        # Initialize players with full decks containing all available cards
-        for player in self.battle.players:
-            player.deck = self.available_cards.copy()
-            # Start with 4 random cards from full deck
-            player.hand = random.sample(self.available_cards, min(4, len(self.available_cards)))
+        # Initialize per-player cycle structures (filled by assign_random_decks_to_players)
+        self.player_cycles = {0: [], 1: []}
+        self.player_cycle_indices = {0: 0, 1: 0}
+        
+        # Load curated decks and assign randomly per player, then build cycle from that deck
+        self.decks = self.load_curated_decks()
+        self.assign_random_decks_to_players()
         
         # Get all playable tiles
         self.playable_tiles = self.get_all_playable_tiles()
@@ -62,86 +71,128 @@ class RandomBattleSimulator(BattleVisualizer):
         return random.random() < 0.1  # 10% chance per frame when not paused
 
     def play_card_at_full_elixir(self, player_id: int):
-        """Play a random card when player reaches 10 elixir"""
+        """Play the next card in cycle when a player reaches 10 elixir."""
         player = self.battle.players[player_id]
-        
-        # Only play if at full elixir and has cards in hand
-        if player.elixir >= 10.0 and player.hand:
-            # Choose random card from hand
-            card_name = random.choice(player.hand)
-            
-            # Get card stats
-            card_stats = self.cards.get(card_name)
-            if not card_stats:
-                return
-            
-            # Check if player can afford it (should always be true at 10 elixir)
-            if player.elixir >= card_stats.mana_cost:
-                # Choose random playable tile
-                position = random.choice(self.playable_tiles)
-                
-                # Deploy
-                success = self.battle.deploy_card(player_id, card_name, position)
-                if success:
-                    player_name = "Blue" if player_id == 0 else "Red"
-                    card_type = card_stats.card_type if card_stats else "Unknown"
-                    print(f"💰 {player_name} auto-played {card_name} ({card_type}) at ({position.x:.1f}, {position.y:.1f}) - Cost: {card_stats.mana_cost}")
+        if player.elixir < 10.0:
+            return
+        # Ensure full hand from cycle
+        self.ensure_player_has_full_hand(player_id)
+        if not player.hand:
+            return
+
+        # The next card to play is the first in hand to respect cycle order
+        excluded = {
+            'Tower', 'KingTower', 'GoblinRocketSilo', 'MergeMaiden',
+            'King_CannonTowers', 'King_KnifeTowers', 'King_PrincessTowers',
+            'TriWizards', 'TriWizard'
+        }
+        # Skip excluded if present for any reason
+        while player.hand and player.hand[0] in excluded:
+            player.hand.pop(0)
+            self.ensure_player_has_full_hand(player_id)
+        if not player.hand:
+            return
+
+        card_name = player.hand[0]
+        card_stats = self.cards.get(card_name)
+        if not card_stats:
+            player.hand.pop(0)
+            self.ensure_player_has_full_hand(player_id)
+            return
+
+        if player.elixir < card_stats.mana_cost:
+            return
+
+        # Choose random playable tile
+        position = random.choice(self.playable_tiles)
+
+        success = self.battle.deploy_card(player_id, card_name, position)
+        if success:
+            # Simulate cycle: remove from hand and refill
+            player.hand.pop(0)
+            self.ensure_player_has_full_hand(player_id)
+
+            player_name = "Blue" if player_id == 0 else "Red"
+            card_type = card_stats.card_type if card_stats else "Unknown"
+            print(f"💰 {player_name} auto-played {card_name} ({card_type}) at ({position.x:.1f}, {position.y:.1f}) - Cost: {card_stats.mana_cost}")
+
+    def _draw_next_from_cycle(self, player_id: int) -> str:
+        """Get next card in the player's fixed shuffled cycle."""
+        cycle = self.player_cycles[player_id]
+        if not cycle:
+            return None
+        idx = self.player_cycle_indices[player_id]
+        card = cycle[idx % len(cycle)]
+        self.player_cycle_indices[player_id] = (idx + 1) % len(cycle)
+        return card
 
     def ensure_player_has_full_hand(self, player_id: int):
-        """Ensure player has 4 cards in hand, filling with random cards from deck"""
+        """Ensure player has 4 cards in hand, filling from the player's fixed cycle order."""
         player = self.battle.players[player_id]
-        
-        # Fill hand to 4 cards with random cards from deck
+        # Maintain a 4-card hand by drawing from the cycle (no randomness)
         while len(player.hand) < 4:
-            if player.deck:
-                # Choose random card from deck that's not already in hand
-                available_cards = [card for card in player.deck if card not in player.hand]
-                if available_cards:
-                    random_card = random.choice(available_cards)
-                    player.hand.append(random_card)
-                else:
-                    # If all deck cards are in hand, add a completely random card
-                    random_card = random.choice(self.available_cards)
-                    if random_card not in player.deck:
-                        player.deck.append(random_card)
-                    player.hand.append(random_card)
+            next_card = self._draw_next_from_cycle(player_id)
+            if next_card is None:
+                break
+            if next_card not in player.hand:
+                player.hand.append(next_card)
             else:
-                # If deck is empty, add random cards
-                random_card = random.choice(self.available_cards)
-                player.deck.append(random_card)
-                player.hand.append(random_card)
+                # If duplicate in hand, advance until we get something different or give up after len(cycle)
+                attempts = 0
+                while attempts < len(self.player_cycles[player_id]) and next_card in player.hand:
+                    next_card = self._draw_next_from_cycle(player_id)
+                    attempts += 1
+                if next_card and next_card not in player.hand:
+                    player.hand.append(next_card)
 
     def deploy_random_card(self):
-        """Deploy a completely random card at a completely random playable tile"""
-        # Choose completely random card
-        card_name = random.choice(self.available_cards)
-        
-        # Choose completely random playable tile
-        position = random.choice(self.playable_tiles)
-        
+        """Deploy the next card in a player's fixed shuffled cycle at a random playable tile."""
         # Choose random player (50/50 chance)
         player_id = random.choice([0, 1])
-        
+
+        # Ensure player has a full hand from their cycle
+        self.ensure_player_has_full_hand(player_id)
+
+        player = self.battle.players[player_id]
+        if not player.hand:
+            return
+
+        # Take the first card in hand to simulate cycle play (like top of hand)
+        card_name = player.hand[0]
+
+        # Guards for exclusions
+        excluded = {
+            'Tower', 'KingTower', 'GoblinRocketSilo', 'MergeMaiden',
+            'King_CannonTowers', 'King_KnifeTowers', 'King_PrincessTowers',
+            'TriWizards', 'TriWizard'
+        }
+        if card_name in excluded:
+            # Remove it from hand if it got in somehow and refill
+            player.hand.pop(0)
+            self.ensure_player_has_full_hand(player_id)
+            return
+
+        # Choose completely random playable tile
+        position = random.choice(self.playable_tiles)
+
         # Check if player can afford the card
         card_stats = self.cards.get(card_name)
         if not card_stats:
+            # Drop and refill from cycle if stats missing
+            player.hand.pop(0)
+            self.ensure_player_has_full_hand(player_id)
             return
-            
-        # Check if player has this card in their deck/hand
-        if card_name not in self.battle.players[player_id].deck:
-            # Add to deck if not present (for random battle chaos)
-            self.battle.players[player_id].deck.append(card_name)
-        
-        # Ensure player has full hand
-        self.ensure_player_has_full_hand(player_id)
-        
-        # Check if player can afford it
-        if self.battle.players[player_id].elixir < card_stats.mana_cost:
+
+        if player.elixir < card_stats.mana_cost:
             return  # Not enough elixir
-        
+
         # Deploy
         success = self.battle.deploy_card(player_id, card_name, position)
         if success:
+            # Simulate cycling: remove the played card from hand and refill from the player's cycle
+            player.hand.pop(0)
+            self.ensure_player_has_full_hand(player_id)
+
             player_name = "Blue" if player_id == 0 else "Red"
             card_type = card_stats.card_type if card_stats else "Unknown"
             print(f"⚔️  {player_name} deployed {card_name} ({card_type}) at ({position.x:.1f}, {position.y:.1f}) - Cost: {card_stats.mana_cost}")
@@ -190,11 +241,8 @@ class RandomBattleSimulator(BattleVisualizer):
                         from clasher.battle import BattleState
                         self.battle = BattleState()
                         self.game_time = 0.0
-                        # Reinitialize players with full decks
-                        for player in self.battle.players:
-                            player.deck = self.available_cards.copy()
-                            # Start with 4 random cards from full deck
-                            player.hand = random.sample(self.available_cards, min(4, len(self.available_cards)))
+                        # Reassign random curated decks and rebuild cycles
+                        self.assign_random_decks_to_players()
                         # Regenerate playable tiles for new battle
                         self.playable_tiles = self.get_all_playable_tiles()
                     elif event.key >= pygame.K_1 and event.key <= pygame.K_5:
@@ -323,6 +371,8 @@ class RandomBattleSimulator(BattleVisualizer):
         # Call parent UI drawing
         super().draw_ui()
         
+        import pygame
+        
         # Add additional UI for random battle
         ui_x = 920
         ui_y = 500
@@ -345,6 +395,29 @@ class RandomBattleSimulator(BattleVisualizer):
         
         ui_y += 10
         
+        # Player deck names only
+        header = self.font.render("Player Decks", True, (0, 0, 0))
+        self.screen.blit(header, (ui_x, ui_y))
+        ui_y += line_height
+
+        # Blue player
+        p0_color = (60, 100, 255)
+        blue_name = "Blue Player"
+        deck_name0 = self._chosen_deck_names.get(0, "Custom Deck")
+        title_text = f"{blue_name}: {deck_name0}"
+        self.screen.blit(self.font.render(title_text, True, p0_color), (ui_x, ui_y))
+        ui_y += line_height
+
+        # Red player
+        p1_color = (255, 100, 100)
+        red_name = "Red Player"
+        deck_name1 = self._chosen_deck_names.get(1, "Custom Deck")
+        title_text = f"{red_name}: {deck_name1}"
+        self.screen.blit(self.font.render(title_text, True, p1_color), (ui_x, ui_y))
+        ui_y += line_height
+
+        ui_y += 10
+        
         # Timing verification
         timing_text = self.small_font.render("Timing Check:", True, (0, 0, 0))
         self.screen.blit(timing_text, (ui_x, ui_y))
@@ -356,6 +429,183 @@ class RandomBattleSimulator(BattleVisualizer):
         
         timing_info2 = self.small_font.render("Battle: 30 FPS, Display: 60 FPS", True, (64, 64, 64))
         self.screen.blit(timing_info2, (ui_x, ui_y))
+
+    def load_curated_decks(self):
+        """Load curated decks from decks.json, filter invalid/excluded cards, and store reasons if skipped."""
+        path = os.path.join(os.getcwd(), "decks.json")
+        if not os.path.exists(path):
+            return []
+
+        try:
+            with open(path, "r") as f:
+                data = json.load(f)
+        except Exception:
+            return []
+
+        decks = data.get("decks", [])
+        # Exclusions matching simulator constraints
+        excluded = {
+            'Tower', 'KingTower', 'GoblinRocketSilo', 'MergeMaiden',
+            'King_CannonTowers', 'King_KnifeTowers', 'King_PrincessTowers',
+            'TriWizards', 'TriWizard', 'ThreeMusketeers'
+        }
+
+        # Comprehensive alias map for names commonly seen in meta lists
+        alias = {
+            "The Log": "Log",
+            "Log": "Log",
+            "Hog Rider": "HogRider",
+            "Hog": "HogRider",
+            "X-Bow": "Xbow",
+            "Mini P.E.K.K.A": "MiniPekka",
+            "Mini P.E.K.K.A.": "MiniPekka",
+            "Mini Pekka": "MiniPekka",
+            "P.E.K.K.A": "Pekka",
+            "P.E.K.K.A.": "Pekka",
+            "Royal Delivery": "RoyalDelivery",
+            "Royal Ghost": "RoyalGhost",
+            "Skeleton Barrel": "SkeletonBarrel",
+            "Giant Snowball": "GiantSnowball",
+            "Wall Breakers": "Wallbreakers",
+            "Electro Wizard": "ElectroWizard",
+            "Ice Wizard": "IceWizard",
+            "Dart Goblin": "DartGoblin",
+            "Magic Archer": "MagicArcher",
+            "Mega Knight": "MegaKnight",
+            "Inferno Dragon": "InfernoDragon",
+            "Electro Dragon": "ElectroDragon",
+            "Archer Queen": "ArcherQueen",
+            "Barbarian Barrel": "BarbarianBarrel",
+            "Bomb Tower": "BombTower",
+            "Ice Golem": "IceGolem",
+            "Ice Spirit": "IceSpirit",
+            "Electro Spirit": "ElectroSpirit",
+            "Royal Hogs": "RoyalHogs",
+            "Cannon Cart": "CannonCart",  # just in case
+            "Skeleton King": "SkeletonKing",
+            "Tomb Stone": "Tombstone",
+            # Additions based on resolution report
+            # Canonical mappings to your dataset internal IDs
+            "Archers": "Archer",
+            "Ice Spirit": "IceSpirits",
+            "IceSpirit": "IceSpirits",
+            "Fire Spirit": "FireSpirits",
+            "FireSpirit": "FireSpirits",
+            "Ice Golem": "IceGolemite",
+            "IceGolem": "IceGolemite",
+            "Dart Goblin": "BlowdartGoblin",
+            "DartGoblin": "BlowdartGoblin",
+            "Giant Snowball": "Snowball",
+            "GiantSnowball": "Snowball",
+            "Barbarian Barrel": "BarbLog",
+            "BarbarianBarrel": "BarbLog",
+            "Skeleton Barrel": "SkeletonBalloon",
+            "SkeletonBarrel": "SkeletonBalloon",
+            "Royal Ghost": "Ghost",
+            "RoyalGhost": "Ghost",
+            # Proxy mappings requested
+            "Bandit": "Assassin",
+            "Lumberjack": "AxeMan",
+            # Keepers / already matching internal keys
+            "Skeletons": "Skeletons",
+            "Princess": "Princess",
+            "InfernoTower": "InfernoTower",
+            "BattleRam": "BattleRam",
+            "Wallbreakers": "Wallbreakers",
+            "SpearGoblins": "SpearGoblins",
+            "RoyalRecruits": "RoyalRecruits",
+            "RoyalGiant": "RoyalGiant",
+            "MagicArcher": "EliteArcher",  # optional proxy to resolve those decks
+            "Guards": "SkeletonWarriors"   # optional proxy to resolve those decks
+        }
+
+        normalized = []
+        self._skipped_decks_debug = []  # keep for debugging
+        for deck in decks:
+            cards = deck.get("cards", [])
+            filtered = []
+            skipped = []
+            for c in cards:
+                name = alias.get(c, c)
+                if name in excluded:
+                    skipped.append((c, "excluded"))
+                    continue
+                if name not in self.cards:
+                    skipped.append((c, "unknown"))
+                    continue
+                filtered.append(name)
+            # Accept only if exactly 8 valid cards
+            if len(filtered) == 8:
+                normalized.append({
+                    "name": deck.get("name", "Deck"),
+                    "cards": filtered
+                })
+            else:
+                self._skipped_decks_debug.append({
+                    "name": deck.get("name", "Deck"),
+                    "reason": f"only {len(filtered)}/8 valid",
+                    "skipped": skipped,
+                    "after_alias": filtered
+                })
+        # Print diagnostics
+        try:
+            print("==== Curated Decks Resolution Report ====")
+            print(f"Total decks in JSON: {len(decks)}")
+            print(f"Resolved decks: {len(normalized)}")
+            for d in normalized:
+                print(f"  ✓ {d['name']}: {', '.join(d['cards'])}")
+            unresolved = len(self._skipped_decks_debug)
+            print(f"Unresolved decks: {unresolved}")
+            for d in self._skipped_decks_debug:
+                print(f"  ✗ {d['name']} -> {d['reason']}")
+                if d.get("skipped"):
+                    print("     Problem cards:")
+                    for original, why in d["skipped"]:
+                        print(f"       - {original} ({why})")
+                if d.get("after_alias") is not None:
+                    print(f"     After alias valid subset ({len(d['after_alias'])}): {', '.join(d['after_alias'])}")
+            print("==== End Decks Resolution Report ====")
+        except Exception as e:
+            print(f"[Deck Debug] Failed to print resolution report: {e}")
+        return normalized
+
+    def assign_random_decks_to_players(self):
+        """Pick a random curated deck for each player and build a fixed cycle, storing the chosen name for UI."""
+        # Fallback: if no curated decks available, do nothing (keep previous behavior)
+        if not self.decks:
+            # Build cycles from available_cards as fallback
+            self.player_cycles = {0: [], 1: []}
+            self.player_cycle_indices = {0: 0, 1: 0}
+            self._chosen_deck_names = {0: "Custom Deck", 1: "Custom Deck"}
+            for pid, player in enumerate(self.battle.players):
+                pool = list(self.available_cards)
+                random.shuffle(pool)
+                self.player_cycles[pid] = pool
+                self.player_cycle_indices[pid] = 0
+                player.deck = pool.copy()
+                player.hand = player.deck[:4] if len(player.deck) >= 4 else player.deck.copy()
+            return
+
+        self.player_cycles = {0: [], 1: []}
+        self.player_cycle_indices = {0: 0, 1: 0}
+        self._chosen_deck_names = {0: "", 1: ""}
+
+        for pid, player in enumerate(self.battle.players):
+            chosen = random.choice(self.decks)
+            deck = chosen["cards"][:]  # 8 cards
+            # Build a repeated cycle from this fixed deck by shuffling a copy once
+            cycle = deck[:]  # curated 8
+            random.shuffle(cycle)  # randomize starting order
+            self.player_cycles[pid] = cycle
+            self.player_cycle_indices[pid] = 0
+            player.deck = deck[:]  # deck contents for debug
+            player.hand = cycle[:4]  # first four in cycle
+            self._chosen_deck_names[pid] = chosen.get("name", "Deck")
+            # Print assignment for debugging
+            try:
+                print(f"[Deck Assignment] Player {pid} assigned '{self._chosen_deck_names[pid]}' -> {', '.join(deck)}")
+            except Exception:
+                pass
 
 if __name__ == "__main__":
     simulator = RandomBattleSimulator()

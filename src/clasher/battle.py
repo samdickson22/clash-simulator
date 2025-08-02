@@ -137,13 +137,25 @@ class BattleState:
             spell = SPELL_REGISTRY[card_name]
             spell.cast(self, player_id, position)
         else:
-            # Spawn troop/building entity
-            self._spawn_troop(position, player_id, card_stats)
+            # Spawn troop or building based on card type (robust to missing/None fields)
+            card_type = getattr(card_stats, "card_type", None)
+            card_type_str = str(card_type).lower() if card_type is not None else ""
+            if card_type_str == "building":
+                self._spawn_entity(Building, position, player_id, card_stats)
+            else:
+                self._spawn_troop(position, player_id, card_stats)
         
         return True
     
     def _spawn_troop(self, position: Position, player_id: int, card_stats: CardStats) -> None:
         """Spawn a troop entity"""
+        # Guard: if this card is actually a building, route to building spawner
+        ctype = getattr(card_stats, "card_type", None)
+        ctype_str = str(ctype).lower() if ctype is not None else ""
+        if ctype_str == "building":
+            self._spawn_entity(Building, position, player_id, card_stats)
+            return
+        
         # Get speed value (tiles/min from card stats)
         speed = card_stats.speed or 60.0  # Default to 60 tiles/min if not specified
         
