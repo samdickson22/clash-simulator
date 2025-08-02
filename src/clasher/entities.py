@@ -2,6 +2,10 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Optional, List, Dict, Any
 from enum import Enum
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .battle import BattleState
 
 from .arena import Position
 from .data import CardStats
@@ -142,19 +146,34 @@ class Entity(ABC):
         return False
 
 
-@dataclass 
+@dataclass
 class Troop(Entity):
     speed: float = 1.0
     target_type: TargetType = TargetType.BOTH
+    
+    # Charging mechanics
+    is_charging: bool = False
+    has_charged: bool = False  # Track if first charge attack has been used
+    charge_target_position: Optional[Position] = None
+    distance_traveled: float = 0.0  # Track distance traveled for charging
+    initial_position: Position = None  # Store initial position for distance calculation
     
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update troop - move and attack"""
         if not self.is_alive:
             return
         
+        # Store initial position for distance tracking
+        if self.initial_position is None:
+            self.initial_position = Position(self.position.x, self.position.y)
+        
         # Update attack cooldown
         if self.attack_cooldown > 0:
             self.attack_cooldown -= dt
+        
+        # Handle charging mechanics based on distance traveled
+        if self.card_stats.charge_range and not self.has_charged:
+            self._update_charging_state(battle_state)
         
         # Always re-evaluate targets every tick to switch to higher priority enemies
         current_target = None
@@ -176,9 +195,43 @@ class Troop(Entity):
             if distance > self.range:
                 self._move_towards_target(current_target, dt, battle_state)
             elif self.attack_cooldown <= 0:
-                # Attack
-                current_target.take_damage(self.damage)
+                # Attack with special charging damage if applicable
+                attack_damage = self._get_attack_damage()
+                current_target.take_damage(attack_damage)
                 self.attack_cooldown = self.card_stats.hit_speed / 1000.0 if self.card_stats.hit_speed else 1.0
+                self._on_attack()  # Handle post-attack mechanics
+    
+    def _get_attack_damage(self) -> float:
+        """Get the appropriate damage value based on charging state"""
+        if self.card_stats.charge_range and not self.has_charged and self.is_charging:
+            # Use special damage for first charge attack
+            return float(self.card_stats.damage_special or self.damage)
+        return float(self.damage)
+    
+    def _on_attack(self) -> None:
+        """Handle post-attack mechanics like charging state reset"""
+        if self.card_stats.charge_range and not self.has_charged and self.is_charging:
+            self.has_charged = True
+            self.is_charging = False
+            self.charge_target_position = None
+            # Reset to normal speed if charge speed multiplier was applied
+            if self.card_stats.charge_speed_multiplier:
+                self.speed = self.card_stats.speed or 60.0
+    
+    def _update_charging_state(self, battle_state: 'BattleState') -> None:
+        """Update charging state - check if troop should start charging based on distance traveled"""
+        # Calculate distance traveled from initial position
+        if self.initial_position:
+            distance_traveled = self.position.distance_to(self.initial_position)
+            charge_distance_tiles = self.card_stats.charge_range / 1000.0 if self.card_stats.charge_range else 0.0
+            
+            # Start charging after traveling the required distance
+            if distance_traveled >= charge_distance_tiles and not self.is_charging and not self.has_charged:
+                self.is_charging = True
+                # Apply charge speed multiplier if available
+                if self.card_stats.charge_speed_multiplier:
+                    speed_multiplier = 1.0 + (self.card_stats.charge_speed_multiplier / 100.0)
+                    self.speed = (self.card_stats.speed or 60.0) * speed_multiplier
     
     def _move_towards_target(self, target_entity: 'Entity', dt: float, battle_state=None) -> None:
         """Move towards target entity with 3-priority pathfinding system"""

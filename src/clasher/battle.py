@@ -1,11 +1,13 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 import time
+import math
+import random
 
 from .entities import Entity, Troop, Building
 from .player import PlayerState
 from .arena import TileGrid, Position
-from .data import CardDataLoader, CardStats, SPEED_VALUES
+from .data import CardDataLoader, CardStats
 from .spells import SPELL_REGISTRY
 
 
@@ -193,8 +195,14 @@ class BattleState:
         return entity
     
     def _cleanup_dead_entities(self) -> None:
-        """Remove dead entities from the game"""
+        """Remove dead entities from the game and handle death spawns"""
         dead_ids = [eid for eid, entity in self.entities.items() if not entity.is_alive]
+        
+        # Handle death spawns before removing entities
+        for eid in dead_ids:
+            entity = self.entities[eid]
+            if isinstance(entity, Troop) and entity.card_stats.death_spawn_character:
+                self._spawn_death_units(entity)
         
         # Update player state for dead towers before removing entities
         for eid in dead_ids:
@@ -228,6 +236,53 @@ class BattleState:
         # Remove dead entities
         for eid in dead_ids:
             del self.entities[eid]
+    
+    def _spawn_death_units(self, troop: Troop) -> None:
+        """Spawn death units when a troop dies"""
+        death_spawn_name = troop.card_stats.death_spawn_character
+        death_spawn_count = troop.card_stats.death_spawn_count or 1
+        
+        # Get death spawn card stats
+        death_spawn_stats = self.card_loader.get_card(death_spawn_name)
+        
+        # If death spawn card doesn't exist, create minimal stats from the troop's death spawn data
+        if not death_spawn_stats and hasattr(troop.card_stats, 'death_spawn_character_data') and troop.card_stats.death_spawn_character_data:
+            # Create basic card stats for the death spawn unit
+            death_spawn_stats = CardStats(
+                name=death_spawn_name,
+                id=0,
+                mana_cost=0,
+                rarity="Common",
+                hitpoints=troop.card_stats.death_spawn_character_data.get("hitpoints", 100),
+                damage=troop.card_stats.death_spawn_character_data.get("damage", 10),
+                speed=float(troop.card_stats.death_spawn_character_data.get("speed", 60)),
+                range=troop.card_stats.death_spawn_character_data.get("range", 1000) / 1000.0,
+                sight_range=troop.card_stats.death_spawn_character_data.get("sightRange", 5000) / 1000.0,
+                hit_speed=troop.card_stats.death_spawn_character_data.get("hitSpeed", 1000),
+                deploy_time=troop.card_stats.death_spawn_character_data.get("deployTime", 1000),
+                load_time=troop.card_stats.death_spawn_character_data.get("loadTime", 1000),
+                collision_radius=troop.card_stats.death_spawn_character_data.get("collisionRadius", 500) / 1000.0,
+                attacks_ground=troop.card_stats.death_spawn_character_data.get("attacksGround", True),
+                attacks_air=False,
+                targets_only_buildings=(troop.card_stats.death_spawn_character_data.get("tidTarget") == "TID_TARGETS_BUILDINGS"),
+                target_type=troop.card_stats.death_spawn_character_data.get("tidTarget")
+            )
+        
+        if not death_spawn_stats:
+            return
+        
+        # Spawn multiple units in a small radius around the death position
+        spawn_radius = 0.5  # tiles
+        
+        for _ in range(death_spawn_count):
+            # Random position around the death location
+            angle = random.random() * 2 * 3.14159
+            distance = random.random() * spawn_radius
+            spawn_x = troop.position.x + distance * math.cos(angle)
+            spawn_y = troop.position.y + distance * math.sin(angle)
+            
+            # Create and spawn the death unit
+            self._spawn_troop(Position(spawn_x, spawn_y), troop.player_id, death_spawn_stats)
     
     def _check_win_conditions(self) -> None:
         """Check if game should end"""

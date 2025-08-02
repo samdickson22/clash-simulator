@@ -40,6 +40,28 @@ class CardStats:
     targets_only_buildings: bool = False  # True for Giant, Balloon, etc.
     target_type: Optional[str] = None  # Raw tidTarget value
     
+    # Charging mechanics
+    charge_range: Optional[int] = None  # Game units
+    charge_speed_multiplier: Optional[int] = None  # Percentage multiplier
+    damage_special: Optional[int] = None  # Special damage for first hit
+    
+    # Death spawn mechanics
+    death_spawn_character: Optional[str] = None
+    death_spawn_count: Optional[int] = None
+    kamikaze: bool = False
+    death_spawn_character_data: Optional[Dict[str, Any]] = None
+    
+    # Buff mechanics
+    buff_data: Optional[Dict[str, Any]] = None
+    hit_speed_multiplier: Optional[int] = None  # Percentage
+    speed_multiplier: Optional[int] = None  # Percentage
+    spawn_speed_multiplier: Optional[int] = None  # Percentage
+    
+    # Special timing mechanics
+    special_load_time: Optional[int] = None  # milliseconds
+    special_range: Optional[int] = None  # Game units
+    special_min_range: Optional[int] = None  # Game units
+    
     # Spell-specific
     projectile_data: Optional[Dict[str, Any]] = None
     
@@ -168,6 +190,28 @@ class CardDataLoader:
                 target_type=char_data.get("tidTarget"),
                 targets_only_buildings=(char_data.get("tidTarget") == "TID_TARGETS_BUILDINGS"),
                 
+                # Charging mechanics
+                charge_range=char_data.get("chargeRange"),
+                charge_speed_multiplier=char_data.get("chargeSpeedMultiplier"),
+                damage_special=char_data.get("damageSpecial"),
+                
+                # Death spawn mechanics
+                death_spawn_character=char_data.get("deathSpawnCharacterData", {}).get("name") if char_data.get("deathSpawnCharacterData") else None,
+                death_spawn_count=char_data.get("deathSpawnCount"),
+                kamikaze=char_data.get("kamikaze", False),
+                death_spawn_character_data=char_data.get("deathSpawnCharacterData"),
+                
+                # Buff mechanics
+                buff_data=char_data.get("buffData"),
+                hit_speed_multiplier=char_data.get("hitSpeedMultiplier"),
+                speed_multiplier=char_data.get("speedMultiplier"),
+                spawn_speed_multiplier=char_data.get("spawnSpeedMultiplier"),
+                
+                # Special timing mechanics
+                special_load_time=char_data.get("specialLoadTime"),
+                special_range=char_data.get("specialRange"),
+                special_min_range=char_data.get("specialMinRange"),
+                
                 # Spell data
                 projectile_data=spell.get("projectileData"),
                 
@@ -245,11 +289,3 @@ class CardDataLoader:
                 print(f"  Deploy Time: {card.deploy_time}ms")
             if card.load_time:
                 print(f"  Load Time: {card.load_time}ms")
-
-
-SPEED_VALUES = {
-    "Slow": 0.7,
-    "Medium": 1.0, 
-    "Fast": 1.4,
-    "VeryFast": 1.8
-}
