@@ -34,6 +34,11 @@ class CardStats:
     summon_radius: Optional[float] = None  # tiles
     summon_deploy_delay: Optional[int] = None  # milliseconds
     
+    # Mixed swarm properties (like Goblin Gang)
+    summon_character_second_count: Optional[int] = None
+    summon_character_second_data: Optional[Dict[str, Any]] = None
+    summon_character_data: Optional[Dict[str, Any]] = None  # Store primary unit data for name extraction
+    
     # Targeting
     attacks_ground: Optional[bool] = None
     attacks_air: Optional[bool] = None
@@ -183,6 +188,11 @@ class CardDataLoader:
                 summon_count=spell.get("summonNumber"),
                 summon_radius=converted_summon_radius,
                 summon_deploy_delay=spell.get("summonDeployDelay"),
+                
+                # Mixed swarm properties
+                summon_character_second_count=spell.get("summonCharacterSecondCount"),
+                summon_character_second_data=spell.get("summonCharacterSecondData"),
+                summon_character_data=spell.get("summonCharacterData"),  # Store primary unit data
                 
                 # Targeting
                 attacks_ground=char_data.get("attacksGround"),
