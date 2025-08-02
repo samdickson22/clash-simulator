@@ -1,3 +1,6 @@
+# Outdated and probably wrong readme
+
+
 # 🏆 Clash Royale Battle Engine
 
 A blazing-fast, feature-complete Clash Royale battle simulation engine built in Python. Designed for reinforcement learning research and game AI development.
