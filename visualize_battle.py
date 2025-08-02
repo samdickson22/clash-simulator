@@ -345,12 +345,74 @@ class BattleVisualizer:
             # Determine color and shape based on player and type
             color = BLUE if entity.player_id == 0 else RED
             
-            # Get entity type
+            # Get entity type and handle special cases
             entity_name = "Unknown"
+            entity_type = type(entity).__name__
             if hasattr(entity, 'card_stats') and entity.card_stats:
                 entity_name = entity.card_stats.name
             
-            # All units have circular hitboxes - use actual hitbox data from JSON
+            # Special handling for spell entities
+            if entity_type == "AreaEffect":
+                # Draw area effect spell (circle on ground with timer)
+                area_radius = int(entity.radius * self.tile_size)
+                # Draw effect area
+                pygame.draw.circle(self.screen, (255, 255, 0, 100), (screen_x, screen_y), area_radius, 3)
+                # Draw timer indicator
+                time_ratio = 1.0 - (entity.time_alive / entity.duration) if entity.duration > 0 else 0
+                timer_color = (255, int(255 * time_ratio), 0)
+                pygame.draw.circle(self.screen, timer_color, (screen_x, screen_y), 5)
+                # Draw spell name
+                spell_name = getattr(entity, 'spell_name', 'AREA')
+                text_surface = self.small_font.render(spell_name.upper(), True, BLACK)
+                text_rect = text_surface.get_rect(center=(screen_x, screen_y - 15))
+                self.screen.blit(text_surface, text_rect)
+                continue
+            elif entity_type in ["Projectile", "SpawnProjectile"]:
+                # Draw projectile (moving missile)
+                projectile_radius = 4
+                # Draw projectile trail
+                if hasattr(entity, 'target_position'):
+                    start_x, start_y = self.world_to_screen(entity.position.x, entity.position.y)
+                    end_x, end_y = self.world_to_screen(entity.target_position.x, entity.target_position.y)
+                    pygame.draw.line(self.screen, (255, 255, 255, 128), (start_x, start_y), (end_x, end_y), 1)
+                # Draw projectile
+                pygame.draw.circle(self.screen, color, (screen_x, screen_y), projectile_radius)
+                pygame.draw.circle(self.screen, BLACK, (screen_x, screen_y), projectile_radius, 1)
+                # Add actual spell name
+                spell_name = getattr(entity, 'spell_name', 'PROJECTILE')
+                spell_text = self.small_font.render(spell_name.upper(), True, BLACK)
+                text_rect = spell_text.get_rect(center=(screen_x, screen_y - 15))
+                self.screen.blit(spell_text, text_rect)
+                continue
+            elif entity_type == "RollingProjectile":
+                # Draw rolling projectile (rectangular hitbox, rolls forward)
+                # Draw rectangular rolling area
+                width = int(entity.rolling_radius * 2 * self.tile_size)
+                height = int(entity.radius_y * 2 * self.tile_size)
+                rect = pygame.Rect(screen_x - width//2, screen_y - height//2, width, height)
+                pygame.draw.rect(self.screen, color, rect)
+                pygame.draw.rect(self.screen, BLACK, rect, 2)
+                
+                # Show spawn delay countdown or rolling state
+                if entity.time_alive < entity.spawn_delay:
+                    countdown = entity.spawn_delay - entity.time_alive
+                    status_text = f"{countdown:.1f}s"
+                else:
+                    status_text = "ROLLING"
+                
+                # Add spell name and status
+                spell_name = getattr(entity, 'spell_name', 'ROLLING')
+                spell_text = self.small_font.render(f"{spell_name.upper()}", True, BLACK)
+                status_surface = self.small_font.render(status_text, True, BLACK)
+                
+                spell_rect = spell_text.get_rect(center=(screen_x, screen_y - 20))
+                status_rect = status_surface.get_rect(center=(screen_x, screen_y - 5))
+                
+                self.screen.blit(spell_text, spell_rect)
+                self.screen.blit(status_surface, status_rect)
+                continue
+            
+            # Regular entities: All units have circular hitboxes - use actual hitbox data from JSON
             # Get hitbox radius from hitboxes.json (radius in tile units)
             hitbox_radius_tiles = self.hitboxes.get(entity_name, 0.5)  # Default 0.5 tile radius
             visual_radius_tiles = hitbox_radius_tiles * 0.7  # Visual is smaller than hitbox

@@ -339,8 +339,13 @@ class RandomBattleSimulator(BattleVisualizer):
             else:
                 # For projectiles and other entities without card stats
                 if hasattr(entity, 'target_position'):
-                    card_name = "Projectile"
+                    # Use actual spell name if available
+                    card_name = getattr(entity, 'spell_name', 'Projectile')
                     color = (255, 255, 0)  # Yellow for projectiles
+                elif hasattr(entity, 'spell_name'):
+                    # For area effects and other spell entities
+                    card_name = entity.spell_name
+                    color = (255, 0, 255)  # Magenta for area effects
                 else:
                     color = (128, 128, 128)  # Gray for unknown
             

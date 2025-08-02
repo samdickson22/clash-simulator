@@ -131,7 +131,8 @@ class BattleState:
             return False
         
         is_spell = card_name in SPELL_REGISTRY
-        if not self.arena.can_deploy_at(position, player_id, self, is_spell):
+        spell_obj = SPELL_REGISTRY.get(card_name) if is_spell else None
+        if not self.arena.can_deploy_at(position, player_id, self, is_spell, spell_obj):
             return False
         
         # Play the card

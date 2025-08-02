@@ -64,11 +64,21 @@ class Entity(ABC):
     
     def can_attack_target(self, target: 'Entity') -> bool:
         """Check if this entity can attack the target"""
-        if not target.is_alive or target.player_id == self.player_id:
+        if not self._is_valid_target(target):
             return False
         
         distance = self.position.distance_to(target.position)
         return distance <= self.range
+    
+    def _is_valid_target(self, entity: 'Entity') -> bool:
+        """Check if entity can be targeted (excludes spell entities)"""
+        # Spell entities cannot be targeted by troops
+        spell_entity_types = {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect'}
+        if type(entity).__name__ in spell_entity_types:
+            return False
+        
+        # Must be alive and enemy
+        return entity.is_alive and entity.player_id != self.player_id
     
     def get_nearest_target(self, entities: Dict[int, 'Entity']) -> Optional['Entity']:
         """Find nearest valid target with priority rules"""
@@ -90,8 +100,8 @@ class Entity(ABC):
                          (getattr(self.card_stats, 'target_type', None) in ['TID_TARGETS_AIR_AND_GROUND', 'TID_TARGETS_AIR']))
         
         for entity in entities.values():
-            # Only check if entity is valid enemy (alive and different player)
-            if not entity.is_alive or entity.player_id == self.player_id:
+            # Only check if entity is valid target (excludes spell entities)
+            if not self._is_valid_target(entity):
                 continue
                 
             distance = self.position.distance_to(entity.position)
@@ -594,3 +604,255 @@ class Aura(Entity):
         """Update aura - apply effects to nearby friendly units"""
         if not self.is_alive:
             return
+
+
+@dataclass
+class AreaEffect(Entity):
+    """Area effect spells that stay on the ground for a duration"""
+    duration: float = 4.0
+    freeze_effect: bool = False
+    radius: float = 3.0
+    time_alive: float = 0.0
+    affected_entities: set = field(default_factory=set)
+    
+    def update(self, dt: float, battle_state: 'BattleState') -> None:
+        """Update area effect - apply effects and check duration"""
+        if not self.is_alive:
+            return
+        
+        self.time_alive += dt
+        
+        # Check if duration expired
+        if self.time_alive >= self.duration:
+            self.is_alive = False
+            return
+        
+        # Apply effects to entities in radius
+        for entity in battle_state.entities.values():
+            if entity.player_id == self.player_id or not entity.is_alive or entity == self:
+                continue
+            
+            distance = entity.position.distance_to(self.position)
+            if distance <= self.radius:
+                # Apply freeze effect
+                if self.freeze_effect and entity.id not in self.affected_entities:
+                    if hasattr(entity, 'speed'):
+                        entity.original_speed = getattr(entity, 'original_speed', entity.speed)
+                        entity.speed = 0
+                    if hasattr(entity, 'attack_cooldown'):
+                        entity.attack_cooldown = max(entity.attack_cooldown, 1.0)  # Delay attacks
+                    self.affected_entities.add(entity.id)
+                
+                # Apply damage over time (small damage each tick)
+                if self.damage > 0:
+                    entity.take_damage(self.damage * dt)  # Damage per second
+            else:
+                # Remove freeze effect if entity leaves area
+                if self.freeze_effect and entity.id in self.affected_entities:
+                    if hasattr(entity, 'original_speed'):
+                        entity.speed = entity.original_speed
+                    self.affected_entities.discard(entity.id)
+
+
+@dataclass
+class SpawnProjectile(Projectile):
+    """Projectile that spawns units when it reaches target"""
+    spawn_count: int = 3
+    spawn_character: str = "Goblin"
+    spawn_character_data: dict = None
+    
+    def update(self, dt: float, battle_state: 'BattleState') -> None:
+        """Update projectile - move towards target and spawn units on impact"""
+        if not self.is_alive:
+            return
+        
+        # Move towards target
+        distance = self.position.distance_to(self.target_position)
+        if distance <= self.travel_speed * dt:
+            # Reached target - spawn units and deal splash damage
+            self._spawn_units(battle_state)
+            self._deal_splash_damage(battle_state)
+            self.is_alive = False
+        else:
+            self._move_towards(self.target_position, dt)
+    
+    def _spawn_units(self, battle_state: 'BattleState') -> None:
+        """Spawn units at target position"""
+        import math
+        import random
+        
+        if not self.spawn_character_data:
+            return
+        
+        # Create card stats from spawn character data
+        from .data import CardStats
+        spawn_stats = CardStats(
+            name=self.spawn_character,
+            id=0,
+            mana_cost=0,
+            rarity="Common",
+            hitpoints=self.spawn_character_data.get("hitpoints", 100),
+            damage=self.spawn_character_data.get("damage", 10),
+            speed=float(self.spawn_character_data.get("speed", 60)),
+            range=self.spawn_character_data.get("range", 1000) / 1000.0,
+            sight_range=self.spawn_character_data.get("sightRange", 5000) / 1000.0,
+            hit_speed=self.spawn_character_data.get("hitSpeed", 1000),
+            deploy_time=self.spawn_character_data.get("deployTime", 1000),
+            load_time=self.spawn_character_data.get("loadTime", 1000),
+            collision_radius=self.spawn_character_data.get("collisionRadius", 500) / 1000.0,
+            attacks_ground=self.spawn_character_data.get("attacksGround", True),
+            attacks_air=False,
+            targets_only_buildings=False,
+            target_type=self.spawn_character_data.get("tidTarget")
+        )
+        
+        # Spawn units in a small radius around target
+        spawn_radius = 1.0  # tiles
+        
+        for _ in range(self.spawn_count):
+            # Random position around the target location
+            angle = random.random() * 2 * math.pi
+            distance = random.random() * spawn_radius
+            spawn_x = self.target_position.x + distance * math.cos(angle)
+            spawn_y = self.target_position.y + distance * math.sin(angle)
+            
+            # Create and spawn the unit
+            battle_state._spawn_troop(Position(spawn_x, spawn_y), self.player_id, spawn_stats)
+
+
+@dataclass
+class RollingProjectile(Entity):
+    """Rolling projectiles that spawn at location and roll forward (Log, Barbarian Barrel)"""
+    travel_speed: float = 200.0
+    projectile_range: float = 10.0  # tiles
+    spawn_delay: float = 0.65  # seconds
+    spawn_character: str = None
+    spawn_character_data: dict = None
+    radius_y: float = 0.6  # Height of rolling hitbox
+    
+    def __post_init__(self):
+        super().__post_init__()
+        # Use range field from Entity as rolling radius
+        self.rolling_radius = self.range
+    
+    # State tracking
+    time_alive: float = 0.0
+    distance_traveled: float = 0.0
+    hit_entities: set = field(default_factory=set)  # Track entities hit (can only hit once)
+    has_spawned_character: bool = False
+    
+    def update(self, dt: float, battle_state: 'BattleState') -> None:
+        """Update rolling projectile - wait for spawn delay, then roll forward"""
+        if not self.is_alive:
+            return
+        
+        self.time_alive += dt
+        
+        # Wait for spawn delay before starting to roll
+        if self.time_alive < self.spawn_delay:
+            return
+        
+        # Roll forward at constant speed
+        roll_distance = self.travel_speed / 60.0 * dt  # Convert tiles/min to tiles/sec
+        self.distance_traveled += roll_distance
+        
+        # Determine roll direction (towards enemy side)
+        if self.player_id == 0:  # Blue player rolls towards red side (positive Y)
+            self.position.y += roll_distance
+        else:  # Red player rolls towards blue side (negative Y)
+            self.position.y -= roll_distance
+        
+        # Check if reached max range
+        if self.distance_traveled >= self.projectile_range:
+            # Spawn character if applicable (Barbarian Barrel)
+            if self.spawn_character and not self.has_spawned_character:
+                self._spawn_character(battle_state)
+            self.is_alive = False
+            return
+        
+        # Deal damage to entities in rectangular hitbox
+        self._deal_rolling_damage(battle_state)
+    
+    def _deal_rolling_damage(self, battle_state: 'BattleState') -> None:
+        """Deal damage to ground units in rolling path (rectangular hitbox)"""
+        for entity in battle_state.entities.values():
+            if (entity.player_id == self.player_id or 
+                not entity.is_alive or 
+                entity.id in self.hit_entities or
+                entity == self):
+                continue
+            
+            # Skip air units (Log only hits ground)
+            if getattr(entity, 'is_air_unit', False):
+                continue
+            
+            # Check if entity is in rectangular rolling hitbox
+            dx = abs(entity.position.x - self.position.x)
+            dy = abs(entity.position.y - self.position.y)
+            
+            if dx <= self.rolling_radius and dy <= self.radius_y:
+                # Hit the entity
+                entity.take_damage(self.damage)
+                self.hit_entities.add(entity.id)
+                
+                # Apply knockback effect (Log pushes units backward)
+                self._apply_knockback(entity)
+    
+    def _apply_knockback(self, entity: 'Entity') -> None:
+        """Apply knockback effect - pushes unit away from Log and resets attack"""
+        # Reset attack cooldown (stunned briefly)
+        if hasattr(entity, 'attack_cooldown'):
+            entity.attack_cooldown = max(entity.attack_cooldown, 0.5)
+        
+        # Physical knockback - push unit away from Log's rolling direction
+        knockback_distance = 1.5  # tiles
+        
+        # Determine knockback direction based on Log's movement direction
+        if self.player_id == 0:  # Blue player Log rolling toward red side
+            # Push units further toward red side (positive Y)
+            entity.position.y += knockback_distance
+        else:  # Red player Log rolling toward blue side  
+            # Push units further toward blue side (negative Y)
+            entity.position.y -= knockback_distance
+        
+        # Slight random horizontal displacement for realism
+        import random
+        horizontal_variance = random.uniform(-0.3, 0.3)
+        entity.position.x += horizontal_variance
+        
+        # Ensure unit doesn't get pushed out of arena bounds
+        entity.position.x = max(0.5, min(17.5, entity.position.x))  # Keep within arena width
+        entity.position.y = max(0.5, min(31.5, entity.position.y))  # Keep within arena height
+    
+    def _spawn_character(self, battle_state: 'BattleState') -> None:
+        """Spawn character at end of roll (Barbarian Barrel)"""
+        if not self.spawn_character_data:
+            return
+        
+        import math
+        from .data import CardStats
+        
+        # Create card stats from spawn character data
+        spawn_stats = CardStats(
+            name=self.spawn_character,
+            id=0,
+            mana_cost=0,
+            rarity="Common",
+            hitpoints=self.spawn_character_data.get("hitpoints", 100),
+            damage=self.spawn_character_data.get("damage", 10),
+            speed=float(self.spawn_character_data.get("speed", 60)),
+            range=self.spawn_character_data.get("range", 1000) / 1000.0,
+            sight_range=self.spawn_character_data.get("sightRange", 5000) / 1000.0,
+            hit_speed=self.spawn_character_data.get("hitSpeed", 1000),
+            deploy_time=self.spawn_character_data.get("deployTime", 1000),
+            load_time=self.spawn_character_data.get("loadTime", 1000),
+            collision_radius=self.spawn_character_data.get("collisionRadius", 500) / 1000.0,
+            attacks_ground=self.spawn_character_data.get("attacksGround", True),
+            attacks_air=False,
+            targets_only_buildings=False,
+            target_type=self.spawn_character_data.get("tidTarget")
+        )
+        
+        # Spawn character at current position
+        battle_state._spawn_troop(Position(self.position.x, self.position.y), self.player_id, spawn_stats)
+        self.has_spawned_character = True

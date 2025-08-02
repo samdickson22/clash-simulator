@@ -123,7 +123,7 @@ class TileGrid:
         
         return zones
     
-    def can_deploy_at(self, pos: Position, player_id: int, battle_state=None, is_spell=False) -> bool:
+    def can_deploy_at(self, pos: Position, player_id: int, battle_state=None, is_spell=False, spell_obj=None) -> bool:
         """Check if position is valid for deployment"""
         # Check basic bounds
         if not self.is_valid_position(pos):
@@ -134,9 +134,16 @@ class TileGrid:
         if tile_pos in self.BLOCKED_TILES:
             return False
         
-        # Spells can be deployed anywhere on the battlefield
+        # Most spells can be deployed anywhere on the battlefield
+        # However, rolling projectiles (Log, Barbarian Barrel) follow troop deployment rules
         if is_spell:
-            return True
+            # Check if this is a rolling projectile spell that requires deployment territory validation
+            if self._is_rolling_projectile_spell(spell_obj):
+                # Rolling projectiles must follow troop deployment rules
+                pass  # Continue to deployment zone validation below
+            else:
+                # Regular spells can be deployed anywhere
+                return True
         
         # Special restriction: only middle 6 tiles (x=6-11) playable on rows 0 and 31
         if pos.y == 0 or pos.y == 31:
@@ -156,6 +163,15 @@ class TileGrid:
             return True
             
         return False
+    
+    def _is_rolling_projectile_spell(self, spell_obj) -> bool:
+        """Check if spell is a rolling projectile that requires territory validation"""
+        if not spell_obj:
+            return False
+        
+        # Import here to avoid circular imports
+        from .spells import RollingProjectileSpell
+        return isinstance(spell_obj, RollingProjectileSpell)
     
     def world_to_tile(self, x: float, y: float) -> Tuple[int, int]:
         """Convert world coordinates to tile coordinates"""

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, List, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
-from .entities import Entity, Projectile, Troop
+from .entities import Entity, Projectile, Troop, AreaEffect, SpawnProjectile, RollingProjectile
 from .arena import Position
 
 if TYPE_CHECKING:
@@ -68,6 +68,9 @@ class ProjectileSpell(Spell):
             splash_radius=self.radius
         )
         
+        # Add spell name for visualization
+        projectile.spell_name = self.name
+        
         battle_state.entities[battle_state.next_entity_id] = projectile
         battle_state.next_entity_id += 1
         return True
@@ -80,6 +83,75 @@ class ProjectileSpell(Spell):
         else:
             tower_pos = battle_state.arena.RED_KING_TOWER
             return Position(tower_pos.x, tower_pos.y)
+
+
+@dataclass
+class AreaEffectSpell(Spell):
+    """Spells that create area effects on the ground with duration"""
+    duration: float = 4.0  # seconds
+    freeze_effect: bool = False
+    
+    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+        """Create area effect at target position"""
+        # Create area effect entity
+        area_effect = AreaEffect(
+            id=battle_state.next_entity_id,
+            position=Position(target_pos.x, target_pos.y),
+            player_id=player_id,
+            card_stats=None,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=self.damage,
+            range=self.radius,
+            sight_range=self.radius,
+            duration=self.duration,
+            freeze_effect=self.freeze_effect,
+            radius=self.radius
+        )
+        
+        # Add spell name for visualization
+        area_effect.spell_name = self.name
+        
+        battle_state.entities[battle_state.next_entity_id] = area_effect
+        battle_state.next_entity_id += 1
+        return True
+
+
+@dataclass
+class SpawnProjectileSpell(ProjectileSpell):
+    """Projectile spells that spawn units when they land"""
+    spawn_count: int = 3
+    spawn_character: str = "Goblin"
+    spawn_character_data: dict = None
+    
+    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+        """Fire a projectile that spawns units on impact"""
+        launch_pos = self._get_launch_position(battle_state, player_id)
+        
+        projectile = SpawnProjectile(
+            id=battle_state.next_entity_id,
+            position=launch_pos,
+            player_id=player_id,
+            card_stats=None,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=self.damage,
+            range=0,
+            sight_range=0,
+            target_position=Position(target_pos.x, target_pos.y),
+            travel_speed=self.travel_speed,
+            splash_radius=self.radius,
+            spawn_count=self.spawn_count,
+            spawn_character=self.spawn_character,
+            spawn_character_data=self.spawn_character_data
+        )
+        
+        # Add spell name for visualization
+        projectile.spell_name = self.name
+        
+        battle_state.entities[battle_state.next_entity_id] = projectile
+        battle_state.next_entity_id += 1
+        return True
 
 
 @dataclass
@@ -202,60 +274,132 @@ class HealSpell(Spell):
         return targets_hit > 0
 
 
-# Predefined spells
+@dataclass
+class RollingProjectileSpell(Spell):
+    """Spells that spawn at location and roll forward (Log, Barbarian Barrel)"""
+    travel_speed: float = 200.0
+    projectile_range: float = 10.0  # tiles
+    spawn_delay: float = 0.65  # seconds
+    spawn_character: str = None  # For Barbarian Barrel
+    spawn_character_data: dict = None
+    radius_y: float = 0.6  # Height of rolling hitbox
+    
+    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+        """Spawn rolling projectile at target position"""
+        # Create rolling projectile entity
+        rolling_projectile = RollingProjectile(
+            id=battle_state.next_entity_id,
+            position=Position(target_pos.x, target_pos.y),
+            player_id=player_id,
+            card_stats=None,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=self.damage,
+            range=self.radius,  # Use radius as range for rolling width
+            sight_range=0,
+            travel_speed=self.travel_speed,
+            projectile_range=self.projectile_range,
+            spawn_delay=self.spawn_delay,
+            spawn_character=self.spawn_character,
+            spawn_character_data=self.spawn_character_data,
+            radius_y=self.radius_y
+        )
+        
+        # Add spell name for visualization
+        rolling_projectile.spell_name = self.name
+        
+        battle_state.entities[battle_state.next_entity_id] = rolling_projectile
+        battle_state.next_entity_id += 1
+        return True
+
+
+# Predefined spells based on JSON schemas
 ARROWS = DirectDamageSpell("Arrows", 3, radius=400.0, damage=144)
-FIREBALL = ProjectileSpell("Fireball", 4, radius=250.0, damage=572, travel_speed=600.0) 
+FIREBALL = ProjectileSpell("Fireball", 4, radius=250.0, damage=572, travel_speed=600.0/60.0) 
 ZAP = DirectDamageSpell("Zap", 2, radius=250.0, damage=159)
 LIGHTNING = DirectDamageSpell("Lightning", 6, radius=350.0, damage=864)
 
-# Missing spells implementation
+# Projectile spells that travel across arena (speeds converted from tiles/min to tiles/sec)
+ROCKET = ProjectileSpell("Rocket", 6, radius=2000.0/1000.0, damage=580, travel_speed=350.0/60.0)
+GOBLIN_BARREL = SpawnProjectileSpell(
+    "GoblinBarrel", 3, 
+    radius=1500.0/1000.0, 
+    damage=0, 
+    travel_speed=400.0/60.0,
+    spawn_count=3,
+    spawn_character="Goblin",
+    spawn_character_data={
+        "hitpoints": 79,
+        "damage": 47,
+        "speed": 120,
+        "range": 500,
+        "sightRange": 5500,
+        "hitSpeed": 1100,
+        "loadTime": 700,
+        "deployTime": 1000,
+        "collisionRadius": 500,
+        "attacksGround": True,
+        "tidTarget": "TID_TARGETS_GROUND"
+    }
+)
+
+# Area effect spells that stay on ground
+FREEZE = AreaEffectSpell("Freeze", 4, radius=3000.0/1000.0, damage=45, duration=4.0, freeze_effect=True)
 RAGE = BuffSpell("Rage", 2, radius=3000.0, damage=0, buff_duration=6.0, speed_multiplier=1.5, damage_multiplier=1.4)
-ROCKET = ProjectileSpell("Rocket", 5, radius=250.0, damage=1056, travel_speed=1000.0)
-GOBLIN_BARREL = ProjectileSpell("GoblinBarrel", 3, radius=200.0, damage=0, travel_speed=800.0)
-FREEZE = FreezeSpell("Freeze", 4, radius=3000.0, damage=0, freeze_duration=3.0)
 MIRROR = DirectDamageSpell("Mirror", 3, radius=0.0, damage=0)  # Special case - handled in battle logic
 POISON = DirectDamageSpell("Poison", 4, radius=3000.0, damage=78)  # Damage over time
 GRAVEYARD = DirectDamageSpell("Graveyard", 5, radius=3000.0, damage=0)  # Summons skeletons
-LOG = ProjectileSpell("Log", 2, radius=250.0, damage=240, travel_speed=1200.0)
+LOG = ProjectileSpell("Log", 2, radius=250.0, damage=240, travel_speed=1200.0/60.0)
 TORNADO = DirectDamageSpell("Tornado", 3, radius=3000.0, damage=0)  # Pulls enemies
 EARTHQUAKE = DirectDamageSpell("Earthquake", 3, radius=3000.0, damage=332)  # Damages buildings
-BARB_LOG = ProjectileSpell("BarbLog", 2, radius=250.0, damage=240, travel_speed=1200.0)
+BARB_LOG = ProjectileSpell("BarbLog", 2, radius=250.0, damage=240, travel_speed=1200.0/60.0)
 HEAL = HealSpell("Heal", 3, radius=3000.0, damage=0, heal_amount=400.0)
 SNOWBALL = DirectDamageSpell("Snowball", 2, radius=250.0, damage=0)  # Freezes single target
 ROYAL_DELIVERY = DirectDamageSpell("RoyalDelivery", 4, radius=0.0, damage=0)  # Special case
 GLOBAL_CLONE = DirectDamageSpell("GlobalClone", 3, radius=0.0, damage=0)  # Special case
-GOBLIN_PARTY_ROCKET = ProjectileSpell("GoblinPartyRocket", 4, radius=250.0, damage=0, travel_speed=1000.0)
+GOBLIN_PARTY_ROCKET = ProjectileSpell("GoblinPartyRocket", 4, radius=250.0, damage=0, travel_speed=1000.0/60.0)
 WARM_SPELL = DirectDamageSpell("WarmSpell", 0, radius=0.0, damage=0)  # Special case
 GLOBAL_LIGHTNING = DirectDamageSpell("GlobalLightning", 6, radius=3000.0, damage=1440)
 DARK_MAGIC = DirectDamageSpell("DarkMagic", 4, radius=3000.0, damage=0)  # Special effect
 GOBLIN_CURSE = DirectDamageSpell("GoblinCurse", 3, radius=3000.0, damage=0)  # Special effect
 MERGE_MAIDEN = DirectDamageSpell("MergeMaiden", 4, radius=0.0, damage=0)  # Special case
 
-SPELL_REGISTRY = {
-    "Arrows": ARROWS,
-    "Fireball": FIREBALL, 
-    "Zap": ZAP,
-    "Lightning": LIGHTNING,
-    "Rage": RAGE,
-    "Rocket": ROCKET,
-    "GoblinBarrel": GOBLIN_BARREL,
-    "Freeze": FREEZE,
-    "Mirror": MIRROR,
-    "Poison": POISON,
-    "Graveyard": GRAVEYARD,
-    "Log": LOG,
-    "Tornado": TORNADO,
-    "Earthquake": EARTHQUAKE,
-    "BarbLog": BARB_LOG,
-    "Heal": HEAL,
-    "Snowball": SNOWBALL,
-    "RoyalDelivery": ROYAL_DELIVERY,
-    "Clone": CloneSpell("Clone", 3, radius=3000.0, damage=0),
-    "GlobalClone": GLOBAL_CLONE,
-    "GoblinPartyRocket": GOBLIN_PARTY_ROCKET,
-    "WarmSpell": WARM_SPELL,
-    "GlobalLightning": GLOBAL_LIGHTNING,
-    "DarkMagic": DARK_MAGIC,
-    "GoblinCurse": GOBLIN_CURSE,
-    "MergeMaiden": MERGE_MAIDEN
-}
+# Load spells dynamically from JSON
+def _load_dynamic_spell_registry():
+    """Load spells dynamically from gamedata.json."""
+    try:
+        from .dynamic_spells import load_dynamic_spells
+        return load_dynamic_spells()
+    except Exception as e:
+        print(f"Warning: Could not load dynamic spells: {e}")
+        # Fallback to static spells
+        return {
+            "Arrows": ARROWS,
+            "Fireball": FIREBALL, 
+            "Zap": ZAP,
+            "Lightning": LIGHTNING,
+            "Rage": RAGE,
+            "Rocket": ROCKET,
+            "GoblinBarrel": GOBLIN_BARREL,
+            "Freeze": FREEZE,
+            "Mirror": MIRROR,
+            "Poison": POISON,
+            "Graveyard": GRAVEYARD,
+            "Log": LOG,
+            "Tornado": TORNADO,
+            "Earthquake": EARTHQUAKE,
+            "BarbLog": BARB_LOG,
+            "Heal": HEAL,
+            "Snowball": SNOWBALL,
+            "RoyalDelivery": ROYAL_DELIVERY,
+            "Clone": CloneSpell("Clone", 3, radius=3000.0, damage=0),
+            "GlobalClone": GLOBAL_CLONE,
+            "GoblinPartyRocket": GOBLIN_PARTY_ROCKET,
+            "WarmSpell": WARM_SPELL,
+            "GlobalLightning": GLOBAL_LIGHTNING,
+            "DarkMagic": DARK_MAGIC,
+            "GoblinCurse": GOBLIN_CURSE,
+            "MergeMaiden": MERGE_MAIDEN
+        }
+
+SPELL_REGISTRY = _load_dynamic_spell_registry()
