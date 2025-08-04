@@ -5,3 +5,6 @@ new_references/
 *.png
 *.jpg
 __pycache__
+.claude
+.cursorindexingignore
+.pytest_cache
