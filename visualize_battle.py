@@ -370,17 +370,33 @@ class BattleVisualizer:
             elif entity_type in ["Projectile", "SpawnProjectile"]:
                 # Draw projectile (moving missile)
                 projectile_radius = 4
+                
+                # Draw AoE radius at target position (like AreaEffect spells)
+                if hasattr(entity, 'target_position') and hasattr(entity, 'splash_radius') and entity.splash_radius > 0:
+                    target_screen_x, target_screen_y = self.world_to_screen(entity.target_position.x, entity.target_position.y)
+                    aoe_radius_pixels = int(entity.splash_radius * self.tile_size)
+                    # Draw AoE circle at target location (same style as AreaEffect)
+                    pygame.draw.circle(self.screen, (255, 255, 0, 100), (target_screen_x, target_screen_y), aoe_radius_pixels, 3)
+                    # Draw smaller target marker in center
+                    pygame.draw.circle(self.screen, (255, 200, 0), (target_screen_x, target_screen_y), 3)
+                
                 # Draw projectile trail
                 if hasattr(entity, 'target_position'):
                     start_x, start_y = self.world_to_screen(entity.position.x, entity.position.y)
                     end_x, end_y = self.world_to_screen(entity.target_position.x, entity.target_position.y)
                     pygame.draw.line(self.screen, (255, 255, 255, 128), (start_x, start_y), (end_x, end_y), 1)
+                
                 # Draw projectile
                 pygame.draw.circle(self.screen, color, (screen_x, screen_y), projectile_radius)
                 pygame.draw.circle(self.screen, BLACK, (screen_x, screen_y), projectile_radius, 1)
-                # Add actual spell name
-                spell_name = getattr(entity, 'spell_name', 'PROJECTILE')
-                spell_text = self.small_font.render(spell_name.upper(), True, BLACK)
+                
+                # Add projectile source name
+                source_name = getattr(entity, 'source_name', getattr(entity, 'spell_name', 'PROJECTILE'))
+                display_text = f"{source_name.upper()}"
+                if hasattr(entity, 'splash_radius') and entity.splash_radius > 0:
+                    display_text += f" ({entity.splash_radius:.1f}R)"
+                
+                spell_text = self.small_font.render(display_text, True, BLACK)
                 text_rect = spell_text.get_rect(center=(screen_x, screen_y - 15))
                 self.screen.blit(spell_text, text_rect)
                 continue
@@ -449,6 +465,33 @@ class BattleVisualizer:
                 # Draw visual circle
                 pygame.draw.circle(self.screen, color, (screen_x, screen_y), visual_radius)
                 pygame.draw.circle(self.screen, BLACK, (screen_x, screen_y), visual_radius, 2)
+            
+            # Draw AoE radius for ground troops with area damage (only for 0.5 seconds after attack)
+            if (entity_type in ["Troop", "Building"] and 
+                hasattr(entity, 'card_stats') and entity.card_stats):
+                area_damage_radius = getattr(entity.card_stats, 'area_damage_radius', None)
+                projectile_speed = getattr(entity.card_stats, 'projectile_speed', None)
+                
+                # Only show AoE for true melee units (not ranged units like Princess)
+                # Exclude units that have projectile_speed (they're ranged units)
+                is_melee_with_aoe = (area_damage_radius and area_damage_radius > 0 and 
+                                    (not projectile_speed or projectile_speed == 0))
+                
+                if is_melee_with_aoe and hasattr(entity, 'last_attack_time'):
+                    # Only show AoE circle for 0.5 seconds after attack
+                    time_since_attack = self.battle.time - entity.last_attack_time
+                    if 0 <= time_since_attack <= 0.5:
+                        # Convert from game units to tiles to pixels
+                        aoe_radius_tiles = area_damage_radius / 1000.0
+                        aoe_radius_pixels = int(aoe_radius_tiles * self.tile_size)
+                        
+                        # Fade the circle over time (bright at start, fade to transparent)
+                        alpha = int(255 * (1.0 - time_since_attack / 0.5))
+                        
+                        # Draw AoE circle (red for ground troops)
+                        pygame.draw.circle(self.screen, (255, 100, 100), (screen_x, screen_y), aoe_radius_pixels, 3)
+                        # Draw smaller center marker
+                        pygame.draw.circle(self.screen, (200, 50, 50), (screen_x, screen_y), 3)
             
             # Health bar positioned above hitbox
             if hasattr(entity, 'hitpoints') and hasattr(entity, 'max_hitpoints'):

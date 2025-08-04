@@ -67,7 +67,8 @@ class CardStats:
     special_range: Optional[int] = None  # Game units
     special_min_range: Optional[int] = None  # Game units
     
-    # Spell-specific
+    # Projectile mechanics
+    projectile_speed: Optional[int] = None  # units per minute
     projectile_data: Optional[Dict[str, Any]] = None
     
     # Evolution data
@@ -222,8 +223,8 @@ class CardDataLoader:
                 special_range=char_data.get("specialRange"),
                 special_min_range=char_data.get("specialMinRange"),
                 
-                # Spell data
-                projectile_data=spell.get("projectileData"),
+                # Projectile data (from character data or spell data)
+                projectile_data=char_data.get("projectileData") or spell.get("projectileData"),
                 
                 # Evolution
                 has_evolution=bool(spell.get("evolvedSpellsData")),

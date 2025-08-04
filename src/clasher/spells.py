@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, List, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
-from .entities import Entity, Projectile, Troop, AreaEffect, SpawnProjectile, RollingProjectile
+from .entities import Entity, Projectile, Troop, AreaEffect, SpawnProjectile, RollingProjectile, TimedExplosive, Graveyard
 from .arena import Position
 
 if TYPE_CHECKING:
@@ -21,11 +21,28 @@ class Spell(ABC):
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
         """Cast the spell at target position"""
         pass
+    
+    def _hitbox_overlaps_with_area(self, entity: 'Entity', area_center: Position) -> bool:
+        """Check if entity's hitbox overlaps with spell area using collision detection"""
+        # Get entity collision radius (default to 0.5 tiles if not specified or None)
+        if entity.card_stats and hasattr(entity.card_stats, 'collision_radius') and entity.card_stats.collision_radius is not None:
+            entity_radius = entity.card_stats.collision_radius
+        else:
+            entity_radius = 0.5
+        
+        # Calculate distance between area center and entity center
+        distance = entity.position.distance_to(area_center)
+        
+        # Check if spell area overlaps with entity hitbox
+        return distance <= (self.radius + entity_radius)
 
 
 @dataclass
 class DirectDamageSpell(Spell):
     """Spells that deal instant damage in an area"""
+    stun_duration: float = 0.0
+    slow_duration: float = 0.0  
+    slow_multiplier: float = 1.0
     
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
         """Deal damage to all enemies in radius"""
@@ -35,9 +52,16 @@ class DirectDamageSpell(Spell):
             if entity.player_id == player_id or not entity.is_alive:
                 continue
             
-            distance = entity.position.distance_to(target_pos)
-            if distance <= self.radius:
+            # Use hitbox-based collision detection for more accurate damage
+            if self._hitbox_overlaps_with_area(entity, target_pos):
                 entity.take_damage(self.damage)
+                
+                # Apply status effects
+                if self.stun_duration > 0:
+                    entity.apply_stun(self.stun_duration)
+                if self.slow_duration > 0:
+                    entity.apply_slow(self.slow_duration, self.slow_multiplier)
+                
                 targets_hit += 1
         
         return targets_hit > 0
@@ -313,11 +337,93 @@ class RollingProjectileSpell(Spell):
         return True
 
 
+@dataclass
+class TornadoSpell(Spell):
+    """Spell that pulls enemies towards center and deals damage over time"""
+    pull_force: float = 3.0  # tiles per second
+    damage_per_second: float = 35.0
+    duration: float = 3.0
+    
+    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+        """Create tornado effect that pulls enemies and deals damage"""
+        # Create area effect with pull mechanics
+        tornado = AreaEffect(
+            id=battle_state.next_entity_id,
+            position=Position(target_pos.x, target_pos.y),
+            player_id=player_id,
+            card_stats=None,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=self.damage_per_second,
+            range=self.radius,
+            sight_range=self.radius,
+            duration=self.duration,
+            freeze_effect=False,
+            radius=self.radius
+        )
+        
+        # Add tornado-specific properties
+        tornado.spell_name = self.name
+        tornado.pull_force = self.pull_force
+        tornado.is_tornado = True
+        
+        battle_state.entities[battle_state.next_entity_id] = tornado
+        battle_state.next_entity_id += 1
+        return True
+
+
+@dataclass
+class GraveyardSpell(Spell):
+    """Spell that spawns skeletons periodically in an area"""
+    spawn_interval: float = 0.5
+    max_skeletons: int = 20
+    duration: float = 10.0
+    skeleton_data: dict = None
+    
+    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+        """Create graveyard that spawns skeletons"""
+        graveyard = Graveyard(
+            id=battle_state.next_entity_id,
+            position=Position(target_pos.x, target_pos.y),
+            player_id=player_id,
+            card_stats=None,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=0,
+            range=self.radius,
+            sight_range=self.radius,
+            spawn_interval=self.spawn_interval,
+            max_skeletons=self.max_skeletons,
+            spawn_radius=self.radius,
+            duration=self.duration,
+            skeleton_data=self.skeleton_data or {
+                "hitpoints": 67,
+                "damage": 67,
+                "speed": 60,
+                "range": 500,
+                "sightRange": 5500,
+                "hitSpeed": 1000,
+                "deployTime": 1000,
+                "loadTime": 1000,
+                "collisionRadius": 300,
+                "attacksGround": True,
+                "tidTarget": "TID_TARGETS_GROUND"
+            }
+        )
+        
+        # Add spell name for visualization
+        graveyard.spell_name = self.name
+        
+        battle_state.entities[battle_state.next_entity_id] = graveyard
+        battle_state.next_entity_id += 1
+        return True
+
+
 # Predefined spells based on JSON schemas
 ARROWS = DirectDamageSpell("Arrows", 3, radius=400.0, damage=144)
 FIREBALL = ProjectileSpell("Fireball", 4, radius=250.0, damage=572, travel_speed=600.0/60.0) 
-ZAP = DirectDamageSpell("Zap", 2, radius=250.0, damage=159)
-LIGHTNING = DirectDamageSpell("Lightning", 6, radius=350.0, damage=864)
+ZAP = DirectDamageSpell("Zap", 2, radius=250.0, damage=159, stun_duration=0.5)
+LIGHTNING = DirectDamageSpell("Lightning", 6, radius=350.0, damage=864, stun_duration=0.5)
 
 # Projectile spells that travel across arena (speeds converted from tiles/min to tiles/sec)
 ROCKET = ProjectileSpell("Rocket", 6, radius=2000.0/1000.0, damage=580, travel_speed=350.0/60.0)
@@ -348,13 +454,13 @@ FREEZE = AreaEffectSpell("Freeze", 4, radius=3000.0/1000.0, damage=45, duration=
 RAGE = BuffSpell("Rage", 2, radius=3000.0, damage=0, buff_duration=6.0, speed_multiplier=1.5, damage_multiplier=1.4)
 MIRROR = DirectDamageSpell("Mirror", 3, radius=0.0, damage=0)  # Special case - handled in battle logic
 POISON = DirectDamageSpell("Poison", 4, radius=3000.0, damage=78)  # Damage over time
-GRAVEYARD = DirectDamageSpell("Graveyard", 5, radius=3000.0, damage=0)  # Summons skeletons
+GRAVEYARD = GraveyardSpell("Graveyard", 5, radius=2.5, damage=0, spawn_interval=0.5, max_skeletons=20, duration=10.0)
 LOG = ProjectileSpell("Log", 2, radius=250.0, damage=240, travel_speed=1200.0/60.0)
-TORNADO = DirectDamageSpell("Tornado", 3, radius=3000.0, damage=0)  # Pulls enemies
-EARTHQUAKE = DirectDamageSpell("Earthquake", 3, radius=3000.0, damage=332)  # Damages buildings
-BARB_LOG = ProjectileSpell("BarbLog", 2, radius=250.0, damage=240, travel_speed=1200.0/60.0)
-HEAL = HealSpell("Heal", 3, radius=3000.0, damage=0, heal_amount=400.0)
-SNOWBALL = DirectDamageSpell("Snowball", 2, radius=250.0, damage=0)  # Freezes single target
+TORNADO = TornadoSpell("Tornado", 3, radius=3000.0/1000.0, damage=0, pull_force=3.0, damage_per_second=35.0, duration=3.0)
+EARTHQUAKE = DirectDamageSpell("Earthquake", 3, radius=3000.0/1000.0, damage=332, slow_duration=3.0, slow_multiplier=0.5)
+BARB_LOG = ProjectileSpell("BarbLog", 2, radius=250.0/1000.0, damage=240, travel_speed=1200.0/60.0)
+HEAL = HealSpell("Heal", 3, radius=3000.0/1000.0, damage=0, heal_amount=400.0)
+SNOWBALL = DirectDamageSpell("Snowball", 2, radius=250.0/1000.0, damage=0, slow_duration=2.5, slow_multiplier=0.65)
 ROYAL_DELIVERY = DirectDamageSpell("RoyalDelivery", 4, radius=0.0, damage=0)  # Special case
 GLOBAL_CLONE = DirectDamageSpell("GlobalClone", 3, radius=0.0, damage=0)  # Special case
 GOBLIN_PARTY_ROCKET = ProjectileSpell("GoblinPartyRocket", 4, radius=250.0, damage=0, travel_speed=1000.0/60.0)

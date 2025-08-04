@@ -1,0 +1,2789 @@
+diff --git a/debug_failing_cards.py b/debug_failing_cards.py
+deleted file mode 100644
+index 8ba1132..0000000
+--- a/debug_failing_cards.py
++++ /dev/null
+@@ -1,81 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Debug which cards are failing and why
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-from clasher.battle import BattleState
+-from clasher.arena import Position
+-from clasher.data import CardDataLoader
+-
+-def debug_failing_cards():
+-    """Debug why certain cards are failing to deploy"""
+-    
+-    print("=== Debugging Failing Cards ===")
+-    
+-    # Create battle state
+-    battle = BattleState()
+-    
+-    # Load cards
+-    card_loader = CardDataLoader()
+-    cards = card_loader.load_cards()
+-    
+-    # Give player full elixir
+-    battle.players[0].elixir = 20.0
+-    
+-    # Cards that failed in the test
+-    failing_cards = ['Archer', 'Minions', 'SkeletonArmy', 'RoyalRecruits', 'GoblinGang', 'ThreeMusketeers', 'Wallbreakers']
+-    
+-    for card_name in failing_cards:
+-        print(f"\n--- Debugging {card_name} ---")
+-        
+-        # Check if card exists in data
+-        if card_name not in cards:
+-            print(f"❌ {card_name} not found in card database")
+-            continue
+-        
+-        card_stats = cards[card_name]
+-        print(f"✅ {card_name} found in database")
+-        print(f"   Mana cost: {card_stats.mana_cost}")
+-        print(f"   Card type: {card_stats.card_type}")
+-        print(f"   Summon count: {getattr(card_stats, 'summon_count', None)}")
+-        print(f"   Second count: {getattr(card_stats, 'summon_character_second_count', None)}")
+-        
+-        # Check if player can afford it
+-        if battle.players[0].elixir < card_stats.mana_cost:
+-            print(f"❌ Not enough elixir: {battle.players[0].elixir}/{card_stats.mana_cost}")
+-            continue
+-        
+-        # Check if card is in hand
+-        battle.players[0].hand = [card_name, 'Knight', 'Fireball', 'Arrows']
+-        if card_name not in battle.players[0].hand:
+-            print(f"❌ {card_name} not in hand")
+-            continue
+-        
+-        print(f"✅ {card_name} in hand and affordable")
+-        
+-        # Check deployment position
+-        deploy_pos = Position(9, 8)  # Blue territory
+-        
+-        # Try to deploy
+-        original_entities = len(battle.entities)
+-        success = battle.deploy_card(0, card_name, deploy_pos)
+-        new_entities = len(battle.entities)
+-        
+-        if success:
+-            spawned_count = new_entities - original_entities
+-            print(f"✅ {card_name} deployed successfully: {spawned_count} entities spawned")
+-        else:
+-            print(f"❌ {card_name} deployment failed")
+-            
+-            # Additional debugging
+-            can_play = battle.players[0].can_play_card(card_name, card_stats)
+-            print(f"   Can play card: {can_play}")
+-            
+-            can_deploy_here = battle.arena.can_deploy_at(deploy_pos, 0, battle, False, None)
+-            print(f"   Can deploy at position: {can_deploy_here}")
+-
+-if __name__ == "__main__":
+-    debug_failing_cards()
+\ No newline at end of file
+diff --git a/debug_position_validation.py b/debug_position_validation.py
+deleted file mode 100644
+index 3b30e29..0000000
+--- a/debug_position_validation.py
++++ /dev/null
+@@ -1,59 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Debug position validation issues
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-from clasher.battle import BattleState
+-from clasher.arena import Position
+-
+-def debug_position_validation():
+-    """Debug why position (9, 8) is causing units to spawn at boundaries"""
+-    
+-    print("=== Debugging Position Validation ===")
+-    
+-    battle = BattleState()
+-    deploy_pos = Position(9, 8)
+-    player_id = 0
+-    
+-    print(f"Testing deploy position: ({deploy_pos.x}, {deploy_pos.y})")
+-    
+-    # Test arena validation
+-    print(f"is_valid_position: {battle.arena.is_valid_position(deploy_pos)}")
+-    print(f"is_walkable: {battle.arena.is_walkable(deploy_pos)}")
+-    print(f"can_deploy_at: {battle.arena.can_deploy_at(deploy_pos, player_id, battle, False, None)}")
+-    
+-    # Test deployment zones
+-    zones = battle.arena.get_deploy_zones(player_id, battle)
+-    print(f"Deployment zones for player {player_id}: {zones}")
+-    
+-    # Check if position is in any zone
+-    in_zone = False
+-    for x1, y1, x2, y2 in zones:
+-        if x1 <= deploy_pos.x < x2 and y1 <= deploy_pos.y < y2:
+-            in_zone = True
+-            print(f"Position is in zone: ({x1}, {y1}) to ({x2}, {y2})")
+-            break
+-    
+-    if not in_zone:
+-        print("Position is NOT in any deployment zone")
+-    
+-    # Test snap_to_valid_position
+-    snapped_pos = battle._snap_to_valid_position(deploy_pos, player_id)
+-    print(f"Snapped position: ({snapped_pos.x}, {snapped_pos.y})")
+-    print(f"Distance moved: {deploy_pos.distance_to(snapped_pos):.2f}")
+-    
+-    # Test a few positions around the deploy position
+-    print("\nTesting nearby positions:")
+-    for x_offset in [-1, 0, 1]:
+-        for y_offset in [-1, 0, 1]:
+-            test_pos = Position(deploy_pos.x + x_offset, deploy_pos.y + y_offset)
+-            walkable = battle.arena.is_walkable(test_pos)
+-            valid = battle.arena.is_valid_position(test_pos)
+-            can_deploy = battle.arena.can_deploy_at(test_pos, player_id, battle, False, None)
+-            print(f"  ({test_pos.x}, {test_pos.y}): valid={valid}, walkable={walkable}, can_deploy={can_deploy}")
+-
+-if __name__ == "__main__":
+-    debug_position_validation()
+\ No newline at end of file
+diff --git a/debug_royal_recruits_count.py b/debug_royal_recruits_count.py
+deleted file mode 100644
+index d610c3b..0000000
+--- a/debug_royal_recruits_count.py
++++ /dev/null
+@@ -1,70 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Debug Royal Recruits counting issue in the main test
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-from clasher.battle import BattleState
+-from clasher.arena import Position
+-from clasher.data import CardDataLoader
+-from clasher.entities import Building
+-
+-def debug_royal_recruits_count():
+-    """Debug why Royal Recruits shows 4 units instead of 6 in main test"""
+-    
+-    print("=== Debugging Royal Recruits Count Issue ===")
+-    
+-    # Create battle state  
+-    battle = BattleState()
+-    
+-    # Load cards
+-    card_loader = CardDataLoader()
+-    cards = card_loader.load_cards()
+-    
+-    # Give player full elixir
+-    battle.players[0].elixir = 50.0
+-    
+-    card_name = 'RoyalRecruits'
+-    battle.players[0].hand = [card_name, 'Knight', 'Fireball', 'Arrows']
+-    
+-    # Clear previous entities
+-    battle.entities = {k: v for k, v in battle.entities.items() if isinstance(v, Building)}
+-    
+-    deploy_pos = Position(9, 8)  # Same as main test
+-    print(f"Deploy position: ({deploy_pos.x}, {deploy_pos.y})")
+-    
+-    success = battle.deploy_card(0, card_name, deploy_pos)
+-    print(f"Deployment success: {success}")
+-    
+-    if success:
+-        # Count all Royal Recruits entities
+-        all_recruits = []
+-        for entity in battle.entities.values():
+-            if (hasattr(entity, 'card_stats') and entity.card_stats and 
+-                entity.card_stats.name == card_name and
+-                getattr(entity, 'player_id', -1) == 0):
+-                all_recruits.append(entity)
+-        
+-        print(f"Total Royal Recruits spawned: {len(all_recruits)}")
+-        
+-        # Check which ones are within 4.0 tile radius (main test filter)
+-        within_radius = []
+-        for entity in all_recruits:
+-            distance = entity.position.distance_to(deploy_pos)
+-            print(f"  Unit at ({entity.position.x:.2f}, {entity.position.y:.2f}): distance = {distance:.2f}")
+-            if distance <= 4.0:
+-                within_radius.append(entity)
+-        
+-        print(f"Units within 4.0 tile radius: {len(within_radius)}")
+-        print(f"This explains why main test counted {len(within_radius)} instead of {len(all_recruits)}")
+-        
+-        # Suggest solution
+-        print(f"\nSolution: Royal Recruits spawn in a line up to 12.5 tiles wide")
+-        print(f"Need to either:")
+-        print(f"1. Increase radius filter to 7+ tiles for Royal Recruits")
+-        print(f"2. Use different counting logic for special formations")
+-
+-if __name__ == "__main__":
+-    debug_royal_recruits_count()
+\ No newline at end of file
+diff --git a/debug_royal_recruits_positioning.py b/debug_royal_recruits_positioning.py
+deleted file mode 100644
+index 5bf6862..0000000
+--- a/debug_royal_recruits_positioning.py
++++ /dev/null
+@@ -1,68 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Debug Royal Recruits positioning algorithm
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-from clasher.battle import BattleState
+-from clasher.arena import Position
+-
+-def debug_royal_recruits_positioning():
+-    """Debug the safe positioning algorithm for Royal Recruits"""
+-    
+-    print("=== Debugging Royal Recruits Positioning Algorithm ===")
+-    
+-    # Create battle state
+-    battle = BattleState()
+-    
+-    # Test the positioning algorithm directly
+-    center_pos = Position(9.0, 6.5)  # Y intersects with princess towers
+-    count = 6
+-    spacing = 2.5
+-    
+-    print(f"Center position: ({center_pos.x}, {center_pos.y})")
+-    print(f"Count: {count}, Spacing: {spacing}")
+-    
+-    # Get blocked ranges
+-    blocked_ranges = battle.arena.get_tower_blocked_x_ranges(center_pos.y, battle)
+-    print(f"Blocked X ranges: {blocked_ranges}")
+-    
+-    # Test the safe positioning function
+-    positions = battle._find_safe_recruit_positions(center_pos, count, spacing, blocked_ranges)
+-    print(f"Generated positions: {positions}")
+-    
+-    # Check for duplicates
+-    unique_positions = set(positions)
+-    if len(unique_positions) != len(positions):
+-        print(f"❌ Found {len(positions) - len(unique_positions)} duplicate positions!")
+-        position_counts = {}
+-        for pos in positions:
+-            position_counts[pos] = position_counts.get(pos, 0) + 1
+-        print(f"Position counts: {position_counts}")
+-    else:
+-        print("✅ All positions are unique")
+-    
+-    # Test different scenarios
+-    print(f"\n--- Testing different Y coordinates ---")
+-    
+-    test_cases = [
+-        (2.5, "King tower level"),
+-        (6.5, "Princess tower level"), 
+-        (10.0, "Safe middle area"),
+-        (25.5, "Enemy princess towers"),
+-        (29.5, "Enemy king tower")
+-    ]
+-    
+-    for y, description in test_cases:
+-        print(f"\nY={y} ({description}):")
+-        test_pos = Position(9.0, y)
+-        blocked = battle.arena.get_tower_blocked_x_ranges(y, battle)
+-        positions = battle._find_safe_recruit_positions(test_pos, 6, 2.5, blocked)
+-        print(f"  Blocked ranges: {blocked}")
+-        print(f"  Positions: {positions}")
+-        print(f"  Unique: {len(set(positions)) == len(positions)}")
+-
+-if __name__ == "__main__":
+-    debug_royal_recruits_positioning()
+\ No newline at end of file
+diff --git a/debug_royal_recruits_test.py b/debug_royal_recruits_test.py
+deleted file mode 100644
+index 2c0c066..0000000
+--- a/debug_royal_recruits_test.py
++++ /dev/null
+@@ -1,100 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Debug Royal Recruits test issue
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-from clasher.battle import BattleState
+-from clasher.arena import Position
+-from clasher.data import CardDataLoader
+-from clasher.entities import Building
+-
+-def debug_royal_recruits_test():
+-    """Debug why Royal Recruits test shows 8 units instead of 6"""
+-    
+-    print("=== Debugging Royal Recruits Test Issue ===")
+-    
+-    # Create battle state exactly like the main test
+-    battle = BattleState()
+-    
+-    # Load cards
+-    card_loader = CardDataLoader()
+-    cards = card_loader.load_cards()
+-    
+-    # Give player full elixir
+-    battle.players[0].elixir = 50.0
+-    
+-    card_name = 'RoyalRecruits'
+-    expected_count = 6
+-    
+-    print(f"Testing {card_name} (expecting {expected_count} units)")
+-    
+-    # Add card to hand
+-    battle.players[0].hand = [card_name, 'Knight', 'Fireball', 'Arrows']
+-    
+-    # Count entities before (just like main test does it wrong!)
+-    print(f"Entities before deployment: {len(battle.entities)}")
+-    for eid, entity in battle.entities.items():
+-        print(f"  {eid}: {type(entity).__name__} at ({entity.position.x:.2f}, {entity.position.y:.2f})")
+-    
+-    # Deploy the card
+-    deploy_pos = Position(9, 8)  # Blue territory
+-    success = battle.deploy_card(0, card_name, deploy_pos)
+-    
+-    print(f"Deployment success: {success}")
+-    print(f"Entities after deployment: {len(battle.entities)}")
+-    
+-    if success:
+-        # List all entities
+-        print(f"All entities after deployment:")
+-        royal_recruits_entities = []
+-        for eid, entity in battle.entities.items():
+-            print(f"  {eid}: {type(entity).__name__} at ({entity.position.x:.2f}, {entity.position.y:.2f}) player={getattr(entity, 'player_id', 'N/A')}")
+-            if hasattr(entity, 'card_stats') and entity.card_stats:
+-                print(f"       Card: {entity.card_stats.name}")
+-                if (entity.card_stats.name == card_name and 
+-                    getattr(entity, 'player_id', -1) == 0):
+-                    royal_recruits_entities.append(entity)
+-        
+-        print(f"Total Royal Recruits found: {len(royal_recruits_entities)}")
+-        
+-        # Apply the exact same filter as main test
+-        spawned_units = []
+-        search_radius = 7.0  # Royal Recruits special radius
+-        
+-        for entity in battle.entities.values():
+-            if (hasattr(entity, 'card_stats') and entity.card_stats and 
+-                entity.position.distance_to(deploy_pos) <= search_radius and
+-                getattr(entity, 'player_id', -1) == 0):
+-                # Exclude towers
+-                pos = entity.position
+-                is_tower = (
+-                    (pos.x == 3.5 and pos.y == 2.5) or   # Blue left tower
+-                    (pos.x == 14.5 and pos.y == 2.5) or  # Blue right tower  
+-                    (pos.x == 9.0 and pos.y == 2.5) or   # Blue king tower
+-                    (pos.x == 3.5 and pos.y == 29.5) or  # Red left tower
+-                    (pos.x == 14.5 and pos.y == 29.5) or # Red right tower
+-                    (pos.x == 9.0 and pos.y == 29.5)     # Red king tower
+-                )
+-                if not is_tower:
+-                    distance = entity.position.distance_to(deploy_pos)
+-                    print(f"    COUNTED: {entity.card_stats.name} at distance {distance:.2f}")
+-                    spawned_units.append(entity)
+-        
+-        print(f"Units counted by main test logic: {len(spawned_units)}")
+-        
+-        # Check what non-RoyalRecruits entities are being counted
+-        non_recruits = []
+-        for unit in spawned_units:
+-            if unit.card_stats.name != card_name:
+-                non_recruits.append(unit)
+-        
+-        if non_recruits:
+-            print(f"WARNING: {len(non_recruits)} non-RoyalRecruits units being counted:")
+-            for unit in non_recruits:
+-                print(f"  - {unit.card_stats.name} at ({unit.position.x:.2f}, {unit.position.y:.2f})")
+-
+-if __name__ == "__main__":
+-    debug_royal_recruits_test()
+\ No newline at end of file
+diff --git a/debug_specific_cards.py b/debug_specific_cards.py
+deleted file mode 100644
+index 8f08f86..0000000
+--- a/debug_specific_cards.py
++++ /dev/null
+@@ -1,102 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Debug specific failing cards in detail
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-from clasher.battle import BattleState
+-from clasher.arena import Position
+-from clasher.data import CardDataLoader
+-from clasher.entities import Building
+-
+-def debug_specific_cards():
+-    """Debug specific cards that are showing 0 units"""
+-    
+-    print("=== Debugging Specific Failing Cards ===")
+-    
+-    # Create battle state
+-    battle = BattleState()
+-    
+-    # Load cards
+-    card_loader = CardDataLoader()
+-    cards = card_loader.load_cards()
+-    
+-    # Give player full elixir
+-    battle.players[0].elixir = 50.0
+-    
+-    # Cards showing 0 units in test
+-    failing_cards = ['Archer', 'Minions', 'SkeletonArmy', 'ThreeMusketeers']
+-    
+-    for card_name in failing_cards:
+-        print(f"\n--- Debugging {card_name} ---")
+-        
+-        if card_name not in cards:
+-            print(f"❌ {card_name} not found")
+-            continue
+-        
+-        card_stats = cards[card_name]
+-        print(f"Card details:")
+-        print(f"  Name: {card_stats.name}")
+-        print(f"  Mana cost: {card_stats.mana_cost}")
+-        print(f"  Card type: {card_stats.card_type}")
+-        print(f"  Summon count: {getattr(card_stats, 'summon_count', None)}")
+-        print(f"  Summon radius: {getattr(card_stats, 'summon_radius', None)}")
+-        print(f"  Second count: {getattr(card_stats, 'summon_character_second_count', None)}")
+-        
+-        # Clear previous units
+-        battle.entities = {k: v for k, v in battle.entities.items() 
+-                         if isinstance(v, Building)}
+-        battle.players[0].elixir = 50.0
+-        battle.players[0].hand = [card_name, 'Knight', 'Fireball', 'Arrows']
+-        
+-        # Count entities before
+-        entities_before = len(battle.entities)
+-        print(f"Entities before: {entities_before}")
+-        
+-        # Deploy the card
+-        deploy_pos = Position(9, 8)  # Blue territory
+-        print(f"Deploying at position: ({deploy_pos.x}, {deploy_pos.y})")
+-        
+-        success = battle.deploy_card(0, card_name, deploy_pos)
+-        print(f"Deployment success: {success}")
+-        
+-        # Count entities after
+-        entities_after = len(battle.entities)
+-        print(f"Entities after: {entities_after}")
+-        print(f"New entities: {entities_after - entities_before}")
+-        
+-        if success:
+-            # List all entities and their positions
+-            print(f"All entities after deployment:")
+-            for eid, entity in battle.entities.items():
+-                print(f"  {eid}: {type(entity).__name__} at ({entity.position.x:.2f}, {entity.position.y:.2f}) player={getattr(entity, 'player_id', 'N/A')}")
+-                if hasattr(entity, 'card_stats') and entity.card_stats:
+-                    print(f"       Card: {entity.card_stats.name}")
+-            
+-            # Check units within range using our test logic
+-            spawned_units = []
+-            for entity in battle.entities.values():
+-                if (hasattr(entity, 'card_stats') and entity.card_stats and 
+-                    entity.position.distance_to(deploy_pos) <= 4.0 and
+-                    getattr(entity, 'player_id', -1) == 0):
+-                    # Exclude towers
+-                    pos = entity.position
+-                    is_tower = (
+-                        (pos.x == 3.5 and pos.y == 2.5) or   # Blue left tower
+-                        (pos.x == 14.5 and pos.y == 2.5) or  # Blue right tower  
+-                        (pos.x == 9.0 and pos.y == 2.5) or   # Blue king tower
+-                        (pos.x == 3.5 and pos.y == 29.5) or  # Red left tower
+-                        (pos.x == 14.5 and pos.y == 29.5) or # Red right tower
+-                        (pos.x == 9.0 and pos.y == 29.5)     # Red king tower
+-                    )
+-                    if not is_tower:
+-                        spawned_units.append(entity)
+-                        distance = entity.position.distance_to(deploy_pos)
+-                        print(f"    COUNTED: {entity.card_stats.name} at distance {distance:.2f}")
+-            
+-            print(f"Units counted by test logic: {len(spawned_units)}")
+-
+-if __name__ == "__main__":
+-    debug_specific_cards()
+\ No newline at end of file
+diff --git a/find_all_swarm_cards.py b/find_all_swarm_cards.py
+deleted file mode 100644
+index abe5eb2..0000000
+--- a/find_all_swarm_cards.py
++++ /dev/null
+@@ -1,152 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Find all cards with summonNumber to identify all swarm cards
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-import json
+-from clasher.data import CardDataLoader
+-
+-def find_all_swarm_cards():
+-    """Find all cards with summonNumber in the JSON data"""
+-    
+-    print("=== Finding All Swarm Cards ===")
+-    
+-    try:
+-        # Load raw JSON data
+-        with open('gamedata.json', 'r') as f:
+-            data = json.load(f)
+-        
+-        # Get all items
+-        all_items = data.get('items', {}).get('spells', [])
+-        
+-        swarm_cards = []
+-        
+-        for item in all_items:
+-            summon_number = item.get('summonNumber')
+-            if summon_number and summon_number > 1:  # Only cards that spawn multiple units
+-                card_info = {
+-                    'name': item.get('name'),
+-                    'summonNumber': summon_number,
+-                    'tidType': item.get('tidType'),
+-                    'card_type': None,
+-                    'summonCharacterData': item.get('summonCharacterData', {}),
+-                    'summonCharacterSecondCount': item.get('summonCharacterSecondCount'),
+-                    'summonCharacterSecondData': item.get('summonCharacterSecondData', {}),
+-                    'manaCost': item.get('manaCost'),
+-                    'rarity': item.get('rarity')
+-                }
+-                
+-                # Determine card type
+-                tid_type = item.get('tidType')
+-                if tid_type == "TID_CARD_TYPE_CHARACTER":
+-                    card_info['card_type'] = "Troop"
+-                elif tid_type == "TID_CARD_TYPE_SPELL":
+-                    card_info['card_type'] = "Spell"
+-                elif tid_type == "TID_CARD_TYPE_BUILDING":
+-                    card_info['card_type'] = "Building"
+-                
+-                swarm_cards.append(card_info)
+-        
+-        # Sort by card type and name
+-        swarm_cards.sort(key=lambda x: (x['card_type'] or 'Unknown', x['name']))
+-        
+-        print(f"Found {len(swarm_cards)} swarm cards:")
+-        
+-        current_type = None
+-        for card in swarm_cards:
+-            if card['card_type'] != current_type:
+-                current_type = card['card_type']
+-                print(f"\n--- {current_type} Cards ---")
+-            
+-            name = card['name']
+-            count = card['summonNumber']
+-            second_count = card['summonCharacterSecondCount'] or 0
+-            cost = card['manaCost']
+-            rarity = card['rarity']
+-            
+-            primary_unit = card['summonCharacterData'].get('name', 'N/A')
+-            secondary_unit = card['summonCharacterSecondData'].get('name', 'N/A') if second_count > 0 else 'None'
+-            
+-            print(f"  {name}: {count} units ({cost} elixir, {rarity})")
+-            print(f"    Primary: {primary_unit}")
+-            if second_count > 0:
+-                print(f"    Secondary: {secondary_unit} (x{second_count})")
+-        
+-        return swarm_cards
+-        
+-    except Exception as e:
+-        print(f"Error loading JSON: {e}")
+-        return []
+-
+-def test_swarm_cards_in_game():
+-    """Test which swarm cards are loaded in the game"""
+-    
+-    print(f"\n=== Testing Swarm Cards in Game ===")
+-    
+-    # Load cards through the game system
+-    card_loader = CardDataLoader()
+-    cards = card_loader.load_cards()
+-    
+-    # Find cards with summon_count > 1
+-    swarm_cards_in_game = []
+-    
+-    for card_name, card_stats in cards.items():
+-        summon_count = getattr(card_stats, 'summon_count', None) or 1
+-        if summon_count > 1:
+-            second_count = getattr(card_stats, 'summon_character_second_count', None) or 0
+-            total_units = summon_count + second_count
+-            
+-            swarm_cards_in_game.append({
+-                'name': card_name,
+-                'card_type': card_stats.card_type,
+-                'summon_count': summon_count,
+-                'second_count': second_count,
+-                'total_units': total_units,
+-                'mana_cost': card_stats.mana_cost,
+-                'rarity': card_stats.rarity,
+-                'has_second_data': bool(getattr(card_stats, 'summon_character_second_data', None)),
+-                'has_primary_data': bool(getattr(card_stats, 'summon_character_data', None))
+-            })
+-    
+-    # Sort by card type and name
+-    swarm_cards_in_game.sort(key=lambda x: (x['card_type'] or 'Unknown', x['name']))
+-    
+-    print(f"Found {len(swarm_cards_in_game)} swarm cards loaded in game:")
+-    
+-    current_type = None
+-    for card in swarm_cards_in_game:
+-        if card['card_type'] != current_type:
+-            current_type = card['card_type']
+-            print(f"\n--- {current_type} Cards ---")
+-        
+-        name = card['name']
+-        primary_count = card['summon_count']
+-        second_count = card['second_count']
+-        total = card['total_units']
+-        cost = card['mana_cost']
+-        rarity = card['rarity']
+-        
+-        formation_type = "Mixed" if second_count > 0 else "Single"
+-        has_data = "✅" if card['has_primary_data'] else "❌"
+-        
+-        print(f"  {name}: {primary_count}+{second_count}={total} units ({cost} elixir, {rarity}) [{formation_type}] {has_data}")
+-    
+-    return swarm_cards_in_game
+-
+-if __name__ == "__main__":
+-    json_swarms = find_all_swarm_cards()
+-    game_swarms = test_swarm_cards_in_game()
+-    
+-    # Compare to see if any are missing
+-    print(f"\n=== Comparison ===")
+-    json_names = {card['name'] for card in json_swarms}
+-    game_names = {card['name'] for card in game_swarms}
+-    
+-    missing_from_game = json_names - game_names
+-    if missing_from_game:
+-        print(f"Missing from game: {missing_from_game}")
+-    else:
+-        print("✅ All swarm cards from JSON are loaded in game")
+\ No newline at end of file
+diff --git a/src/clasher/__pycache__/arena.cpython-312.pyc b/src/clasher/__pycache__/arena.cpython-312.pyc
+index 9db332d..f224816 100644
+Binary files a/src/clasher/__pycache__/arena.cpython-312.pyc and b/src/clasher/__pycache__/arena.cpython-312.pyc differ
+diff --git a/src/clasher/__pycache__/battle.cpython-312.pyc b/src/clasher/__pycache__/battle.cpython-312.pyc
+index d1a575b..ac772bd 100644
+Binary files a/src/clasher/__pycache__/battle.cpython-312.pyc and b/src/clasher/__pycache__/battle.cpython-312.pyc differ
+diff --git a/src/clasher/__pycache__/data.cpython-312.pyc b/src/clasher/__pycache__/data.cpython-312.pyc
+index 9a5c14b..faac914 100644
+Binary files a/src/clasher/__pycache__/data.cpython-312.pyc and b/src/clasher/__pycache__/data.cpython-312.pyc differ
+diff --git a/src/clasher/__pycache__/entities.cpython-312.pyc b/src/clasher/__pycache__/entities.cpython-312.pyc
+index bee983e..d104e79 100644
+Binary files a/src/clasher/__pycache__/entities.cpython-312.pyc and b/src/clasher/__pycache__/entities.cpython-312.pyc differ
+diff --git a/src/clasher/__pycache__/spells.cpython-312.pyc b/src/clasher/__pycache__/spells.cpython-312.pyc
+index 6e71828..4139568 100644
+Binary files a/src/clasher/__pycache__/spells.cpython-312.pyc and b/src/clasher/__pycache__/spells.cpython-312.pyc differ
+diff --git a/src/clasher/arena.py b/src/clasher/arena.py
+index e35de72..4162e7c 100644
+--- a/src/clasher/arena.py
++++ b/src/clasher/arena.py
+@@ -75,9 +75,10 @@ class TileGrid:
+         
+         # Check if it's in the river (y=15-16), unless it's on a bridge
+         if self.RIVER_Y1 <= pos.y <= self.RIVER_Y2:
+-            # Check if on bridge (3 tiles wide each, allowing fractional positions within tiles)
+-            on_left_bridge = 2.0 <= pos.x < 5.0   # Left bridge spans tiles 2,3,4 (x=2.0 to x=4.999...)
+-            on_right_bridge = 13.0 <= pos.x < 16.0  # Right bridge spans tiles 13,14,15 (x=13.0 to x=15.999...)
++            # Check if on bridge (3 tiles wide each, with small buffer to prevent edge-sticking)
++            # Adding 0.1 tile buffer to prevent troops from getting stuck at exact boundaries
++            on_left_bridge = 1.9 <= pos.x <= 5.1   # Left bridge spans tiles 2,3,4 with buffer
++            on_right_bridge = 12.9 <= pos.x <= 16.1  # Right bridge spans tiles 13,14,15 with buffer
+             return on_left_bridge or on_right_bridge
+         
+         return True
+diff --git a/src/clasher/battle.py b/src/clasher/battle.py
+index af487c1..35987cc 100644
+--- a/src/clasher/battle.py
++++ b/src/clasher/battle.py
+@@ -4,7 +4,7 @@ import time
+ import math
+ import random
+ 
+-from .entities import Entity, Troop, Building
++from .entities import Entity, Troop, Building, TimedExplosive
+ from .player import PlayerState
+ from .arena import TileGrid, Position
+ from .data import CardDataLoader, CardStats
+@@ -54,6 +54,7 @@ class BattleState:
+             hit_speed=800,   # From JSON: "hitSpeed": 800
+             attacks_air=True,  # Towers can attack air units
+             target_type="TID_TARGETS_AIR_AND_GROUND",  # From JSON: "tidTarget": "TID_TARGETS_AIR_AND_GROUND"
++            projectile_speed=600,  # From JSON: projectileData "speed": 600
+             level=11  # Standard tournament level
+         )
+         
+@@ -70,6 +71,7 @@ class BattleState:
+             hit_speed=1000,     # King tower attacks once per second (1000ms)
+             attacks_air=True,   # King tower can attack air units
+             target_type="TID_TARGETS_AIR_AND_GROUND",  # Explicit air targeting
++            projectile_speed=600,  # Same as Princess Tower
+             level=1   # Base level stats (no scaling needed)
+         )
+         
+@@ -639,6 +641,8 @@ class BattleState:
+             entity = self.entities[eid]
+             if isinstance(entity, Troop) and entity.card_stats.death_spawn_character:
+                 self._spawn_death_units(entity)
++            elif isinstance(entity, Building) and entity.card_stats.death_spawn_character:
++                self._spawn_building_death_units(entity)
+         
+         # Update player state for dead towers before removing entities
+         for eid in dead_ids:
+@@ -720,6 +724,56 @@ class BattleState:
+             # Create and spawn the death unit
+             self._spawn_troop(Position(spawn_x, spawn_y), troop.player_id, death_spawn_stats)
+     
++    def _spawn_building_death_units(self, building: Building) -> None:
++        """Spawn death units when a building dies (like Bomb Tower death bomb)"""
++        death_spawn_name = building.card_stats.death_spawn_character
++        death_spawn_count = building.card_stats.death_spawn_count or 1
++        
++        # Get death spawn card stats - for buildings, usually need to create from data
++        death_spawn_stats = None
++        if hasattr(building.card_stats, 'death_spawn_character_data') and building.card_stats.death_spawn_character_data:
++            death_spawn_data = building.card_stats.death_spawn_character_data
++            
++            # Create stats for the death bomb/explosive
++            death_spawn_stats = CardStats(
++                name=death_spawn_name,
++                id=0,
++                mana_cost=0,
++                rarity="Common",
++                hitpoints=1,  # Death bombs are fragile
++                damage=death_spawn_data.get("deathDamage", 87),  # Use deathDamage instead of damage
++                range=death_spawn_data.get("radius", 1500) / 1000.0 if death_spawn_data.get("radius") else 1.5,
++                collision_radius=death_spawn_data.get("collisionRadius", 450) / 1000.0,
++                deploy_time=death_spawn_data.get("deployTime", 3000),  # Fuse timer
++                attacks_ground=(death_spawn_data.get("tidTarget") in ["TID_TARGETS_GROUND", "TID_TARGETS_AIR_AND_GROUND"]),
++                attacks_air=(death_spawn_data.get("tidTarget") in ["TID_TARGETS_AIR", "TID_TARGETS_AIR_AND_GROUND"]),
++                target_type=death_spawn_data.get("tidTarget"),
++                area_damage_radius=int(death_spawn_data.get("radius", 1500)) if death_spawn_data.get("radius") else 1500
++            )
++        
++        if not death_spawn_stats:
++            return
++        
++        # Spawn the death bomb at the building's position
++        for _ in range(death_spawn_count):
++            # Create a timed explosive entity
++            explosive = TimedExplosive(
++                id=self.next_entity_id,
++                position=Position(building.position.x, building.position.y),
++                player_id=building.player_id,
++                card_stats=death_spawn_stats,
++                hitpoints=death_spawn_stats.hitpoints or 1,
++                max_hitpoints=death_spawn_stats.hitpoints or 1,
++                damage=death_spawn_stats.damage or 87,
++                range=death_spawn_stats.range or 1.5,
++                sight_range=death_spawn_stats.range or 1.5,
++                fuse_time=death_spawn_stats.deploy_time / 1000.0 if death_spawn_stats.deploy_time else 3.0,
++                explosion_radius=death_spawn_stats.area_damage_radius / 1000.0 if death_spawn_stats.area_damage_radius else 1.5
++            )
++            
++            self.entities[explosive.id] = explosive
++            self.next_entity_id += 1
++    
+     def _check_win_conditions(self) -> None:
+         """Check if game should end"""
+         # Update player tower HP from entities
+diff --git a/src/clasher/data.py b/src/clasher/data.py
+index 54ee930..002d3c3 100644
+--- a/src/clasher/data.py
++++ b/src/clasher/data.py
+@@ -28,6 +28,7 @@ class CardStats:
+     load_time: Optional[int] = None  # milliseconds
+     deploy_time: Optional[int] = None  # milliseconds
+     collision_radius: Optional[float] = None  # tiles
++    area_damage_radius: Optional[int] = None  # game units
+     
+     # Deployment properties
+     summon_count: Optional[int] = None
+@@ -55,6 +56,10 @@ class CardStats:
+     death_spawn_count: Optional[int] = None
+     kamikaze: bool = False
+     death_spawn_character_data: Optional[Dict[str, Any]] = None
++    death_damage: Optional[int] = None  # Damage dealt by death spawn (from deathSpawnCharacterData.deathDamage)
++    
++    # Building lifetime mechanics
++    life_time: Optional[float] = None  # seconds - buildings decay over this time
+     
+     # Buff mechanics
+     buff_data: Optional[Dict[str, Any]] = None
+@@ -67,7 +72,9 @@ class CardStats:
+     special_range: Optional[int] = None  # Game units
+     special_min_range: Optional[int] = None  # Game units
+     
+-    # Spell-specific
++    # Projectile mechanics
++    projectile_speed: Optional[int] = None  # units per minute
++    projectile_splash_radius: Optional[int] = None  # game units
+     projectile_data: Optional[Dict[str, Any]] = None
+     
+     # Evolution data
+@@ -87,6 +94,7 @@ class CardStats:
+         multiplier = 1.1 ** (level - 1)
+         return int(stat_value * multiplier)
+     
++    
+     @property
+     def scaled_hitpoints(self) -> Optional[int]:
+         """Get hitpoints scaled to current level"""
+@@ -183,6 +191,9 @@ class CardDataLoader:
+                 load_time=load_time,
+                 deploy_time=char_data.get("deployTime"),
+                 collision_radius=converted_collision_radius,
++                area_damage_radius=char_data.get("areaDamageRadius"),
++                projectile_speed=self._extract_projectile_speed(char_data),
++                projectile_splash_radius=self._extract_projectile_splash_radius(char_data),
+                 
+                 # Deployment
+                 summon_count=spell.get("summonNumber"),
+@@ -210,6 +221,10 @@ class CardDataLoader:
+                 death_spawn_count=char_data.get("deathSpawnCount"),
+                 kamikaze=char_data.get("kamikaze", False),
+                 death_spawn_character_data=char_data.get("deathSpawnCharacterData"),
++                death_damage=char_data.get("deathSpawnCharacterData", {}).get("deathDamage") if char_data.get("deathSpawnCharacterData") else None,
++                
++                # Building lifetime mechanics
++                life_time=char_data.get("lifeTime", 0) / 1000.0 if char_data.get("lifeTime") else None,
+                 
+                 # Buff mechanics
+                 buff_data=char_data.get("buffData"),
+@@ -235,6 +250,43 @@ class CardDataLoader:
+         self._cards = cards
+         return cards
+     
++    def _extract_projectile_splash_radius(self, char_data: Dict[str, Any]) -> Optional[int]:
++        """Extract projectile splash radius from character data"""
++        if not char_data:
++            return None
++        
++        # Check if character has projectile data
++        projectile_data = char_data.get("projectileData")
++        if projectile_data and isinstance(projectile_data, dict):
++            # Look for radius in projectile data (direct splash)
++            radius = projectile_data.get("radius")
++            if radius and radius > 0:
++                return radius
++            
++            # Look for radius in spawnProjectileData (for complex projectiles like Firecracker)
++            spawn_projectile_data = projectile_data.get("spawnProjectileData")
++            if spawn_projectile_data and isinstance(spawn_projectile_data, dict):
++                spawn_radius = spawn_projectile_data.get("radius")
++                if spawn_radius and spawn_radius > 0:
++                    return spawn_radius
++        
++        return None
++    
++    def _extract_projectile_speed(self, char_data: Dict[str, Any]) -> Optional[int]:
++        """Extract projectile speed from character data"""
++        if not char_data:
++            return None
++        
++        # Check if character has projectile data
++        projectile_data = char_data.get("projectileData")
++        if projectile_data and isinstance(projectile_data, dict):
++            # Look for speed in projectile data
++            speed = projectile_data.get("speed")
++            if speed and speed > 0:
++                return speed
++        
++        return None
++    
+     def get_card(self, name: str) -> Optional[CardStats]:
+         """Get card stats by name"""
+         if not self._cards:
+diff --git a/src/clasher/entities.py b/src/clasher/entities.py
+index 2139b17..e7f79c0 100644
+--- a/src/clasher/entities.py
++++ b/src/clasher/entities.py
+@@ -1,85 +1,138 @@
+-from abc import ABC, abstractmethod
+ from dataclasses import dataclass, field
+-from typing import Optional, List, Dict, Any
++from typing import Dict, List, Optional, TYPE_CHECKING
+ from enum import Enum
+-from typing import TYPE_CHECKING
++import random
++import math
+ 
+ if TYPE_CHECKING:
++    from .arena import Position
+     from .battle import BattleState
+-
+-from .arena import Position
+-from .data import CardStats
+-
+-
+-class EntityType(Enum):
+-    TROOP = "troop"
+-    BUILDING = "building"
+-    PROJECTILE = "projectile"
+-    AURA = "aura"
++    from .data import CardStats
++else:
++    from clasher.arena import Position
+ 
+ 
+ class TargetType(Enum):
+     GROUND = "ground"
+-    AIR = "air" 
++    AIR = "air"
+     BOTH = "both"
+ 
+ 
+ @dataclass
+-class Entity(ABC):
++class Entity:
+     id: int
+-    position: Position
++    position: 'Position'
+     player_id: int
+-    card_stats: CardStats
+-    
+-    # Combat stats
++    card_stats: 'CardStats'
+     hitpoints: float
+     max_hitpoints: float
+     damage: float
+     range: float
+     sight_range: float
+-    
+-    # Timing
++    is_alive: bool = True
+     attack_cooldown: float = 0.0
+-    load_time: float = 0.0
+-    
+-    # State
+     target_id: Optional[int] = None
+-    is_alive: bool = True
+-    is_air_unit: bool = False  # True for flying troops like Minions, Balloon, Dragon
+-    
+-    def __post_init__(self) -> None:
+-        if self.max_hitpoints == 0:
+-            self.max_hitpoints = self.hitpoints
+     
+-    @abstractmethod
+-    def update(self, dt: float, battle_state: 'BattleState') -> None:
+-        """Update entity state each tick"""
+-        pass
++    # Attack visualization
++    last_attack_time: float = -1.0  # Time when last attack occurred (for AoE flash)
+     
+-    def take_damage(self, amount: float) -> None:
+-        """Apply damage to entity"""
+-        self.hitpoints = max(0, self.hitpoints - amount)
+-        if self.hitpoints <= 0:
+-            self.is_alive = False
++    @property
++    def is_air_unit(self) -> bool:
++        """Check if this entity is an air unit based on name"""
++        air_units = {
++            'Balloon', 'Minions', 'Minion Horde', 'Baby Dragon', 'Inferno Dragon',
++            'Lava Hound', 'Lava Pups', 'Flying Machine', 'Bats', 'Mega Minion',
++            'Electro Dragon', 'Fire Spirits', 'Heal Spirit', 'Ice Spirit',
++            'Skeleton Dragons'
++        }
++        return self.card_stats.name in air_units if self.card_stats else False
+     
+     def can_attack_target(self, target: 'Entity') -> bool:
+         """Check if this entity can attack the target"""
+-        if not self._is_valid_target(target):
++        # Check if target is in different player team
++        if target.player_id == self.player_id:
+             return False
+-        
+-        distance = self.position.distance_to(target.position)
+-        return distance <= self.range
++        return True
+     
+-    def _is_valid_target(self, entity: 'Entity') -> bool:
+-        """Check if entity can be targeted (excludes spell entities)"""
+-        # Spell entities cannot be targeted by troops
+-        spell_entity_types = {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect'}
+-        if type(entity).__name__ in spell_entity_types:
+-            return False
+-        
+-        # Must be alive and enemy
+-        return entity.is_alive and entity.player_id != self.player_id
++    def update(self, dt: float, battle_state: 'BattleState') -> None:
++        """Update entity logic - override in subclasses"""
++        pass
+     
++    def _deal_attack_damage(self, primary_target: 'Entity', damage: float, battle_state: 'BattleState') -> None:
++        """Deal damage to target, with splash damage if applicable"""
++        if not primary_target.is_alive:
++            return
++        
++        # Record attack time for AoE visualization
++        self.last_attack_time = battle_state.time
++        
++        # Get area damage radius from different possible sources
++        area_damage_radius = None
++        if hasattr(self.card_stats, 'area_damage_radius') and self.card_stats.area_damage_radius:
++            area_damage_radius = self.card_stats.area_damage_radius / 1000.0
++        elif hasattr(self.card_stats, 'projectile_splash_radius') and self.card_stats.projectile_splash_radius:
++            area_damage_radius = self.card_stats.projectile_splash_radius / 1000.0
++        
++        # Deal damage to primary target
++        primary_target.hitpoints -= damage
++        if primary_target.hitpoints <= 0:
++            primary_target.hitpoints = 0
++            primary_target.is_alive = False
++        
++        # Deal splash damage if this unit has area damage
++        if area_damage_radius and area_damage_radius > 0:
++            # Find all entities within splash radius
++            for entity in battle_state.entities.values():
++                if entity == primary_target or entity.player_id == self.player_id:
++                    continue
++                
++                # Check distance using hitbox overlap detection
++                entity_distance = primary_target.position.distance_to(entity.position)
++                
++                # Calculate combined radius for overlap check
++                primary_radius = getattr(primary_target.card_stats, 'collision_radius', 0.5) or 0.5
++                entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
++                combined_radius = primary_radius + entity_radius
++                
++                # Check if splash radius overlaps with entity hitbox
++                if entity_distance <= (area_damage_radius + entity_radius):
++                    entity.hitpoints -= damage
++                    if entity.hitpoints <= 0:
++                        entity.hitpoints = 0
++                        entity.is_alive = False
++    
++    def _create_projectile(self, target: 'Entity', battle_state: 'BattleState') -> None:
++        """Create a projectile towards the target"""
++        # Get projectile data from card stats
++        projectile_data = getattr(self.card_stats, 'projectile_data', None) if self.card_stats else None
++        if not projectile_data:
++            # Direct attack without projectile
++            self._deal_attack_damage(target, self.damage, battle_state)
++            return
++        
++        # Create projectile entity
++        projectile_damage = projectile_data.get('damage', self.damage)
++        projectile_speed = projectile_data.get('speed', 500) / 60.0  # Convert from per-minute to per-second
++        splash_radius = projectile_data.get('radius', 0) / 1000.0 if projectile_data.get('radius') else 0.0
++        
++        projectile = Projectile(
++            id=battle_state._next_entity_id(),
++            position=Position(self.position.x, self.position.y),
++            player_id=self.player_id,
++            card_stats=self.card_stats,
++            hitpoints=1,
++            max_hitpoints=1,
++            damage=projectile_damage,
++            range=self.range,
++            sight_range=1.0,
++            target_position=Position(target.position.x, target.position.y),
++            travel_speed=projectile_speed,
++            splash_radius=splash_radius,
++            source_name=self.card_stats.name if self.card_stats else "Unknown"
++        )
++        
++        battle_state.entities[projectile.id] = projectile
++
+     def get_nearest_target(self, entities: Dict[int, 'Entity']) -> Optional['Entity']:
+         """Find nearest valid target with priority rules"""
+         nearest = None
+@@ -101,32 +154,34 @@ class Entity(ABC):
+         
+         for entity in entities.values():
+             # Only check if entity is valid target (excludes spell entities)
+-            if not self._is_valid_target(entity):
++            if not self.can_attack_target(entity) or not entity.is_alive:
+                 continue
+-                
+-            distance = self.position.distance_to(entity.position)
+             
+-            # Check air targeting rules
++            # Check air/ground targeting
+             if entity.is_air_unit and not can_attack_air:
+-                continue  # Skip air units if we can't attack air
++                continue  # Can't attack air units
++            
++            distance = self.position.distance_to(entity.position)
++            
++            # Only consider targets within sight range
++            if distance > self.sight_range:
++                continue
+             
+-            # Only consider targets within sight range for troops vs troops
++            # If this unit only targets buildings, skip troops
++            if targets_only_buildings and not isinstance(entity, Building):
++                continue
++            
++            # Categorize targets
+             if isinstance(entity, Building):
+                 building_targets.append((entity, distance))
+             else:
+-                # For troop targets, only consider if within sight range
+-                if distance <= self.sight_range:
+-                    # Skip troops if we only target buildings
+-                    if not targets_only_buildings:
+-                        troop_targets.append((entity, distance))
+-        
+-        # Choose targets based on targeting rules
+-        if targets_only_buildings:
+-            targets = building_targets  # Only consider buildings
+-        else:
+-            targets = troop_targets if troop_targets else building_targets  # Troops first, then buildings
++                troop_targets.append((entity, distance))
+         
+-        for entity, distance in targets:
++        # Priority system: Troops first (if any), then buildings
++        all_targets = troop_targets + building_targets
++        
++        # Find closest target
++        for entity, distance in all_targets:
+             if distance < min_distance:
+                 min_distance = distance
+                 nearest = entity
+@@ -173,6 +228,9 @@ class Troop(Entity):
+         if not self.is_alive:
+             return
+         
++        # Update status effect timers
++        self._update_status_effects(dt)
++        
+         # Store initial position for distance tracking
+         if self.initial_position is None:
+             self.initial_position = Position(self.position.x, self.position.y)
+@@ -207,14 +265,13 @@ class Troop(Entity):
+             elif self.attack_cooldown <= 0:
+                 # Attack with special charging damage if applicable
+                 attack_damage = self._get_attack_damage()
+-                current_target.take_damage(attack_damage)
++                self._deal_attack_damage(current_target, attack_damage, battle_state)
+                 self.attack_cooldown = self.card_stats.hit_speed / 1000.0 if self.card_stats.hit_speed else 1.0
+                 self._on_attack()  # Handle post-attack mechanics
+     
+     def _get_attack_damage(self) -> float:
+-        """Get the appropriate damage value based on charging state"""
+-        if self.card_stats.charge_range and not self.has_charged and self.is_charging:
+-            # Use special damage for first charge attack
++        """Get attack damage, considering charging mechanics"""
++        if self.is_charging and self.card_stats.damage_special:
+             return float(self.card_stats.damage_special or self.damage)
+         return float(self.damage)
+     
+@@ -315,186 +372,67 @@ class Troop(Entity):
+         # This helps units "slide" along walls
+         perpendicular_directions = [
+             (original_move_y, -original_move_x),  # 90° rotation
+-            (-original_move_y, original_move_x)   # -90° rotation
++            (-original_move_y, original_move_x),  # -90° rotation
+         ]
+         
+         for perp_x, perp_y in perpendicular_directions:
+-            # Normalize to same distance
++            # Normalize and scale down
+             perp_distance = math.sqrt(perp_x * perp_x + perp_y * perp_y)
+             if perp_distance > 0:
+-                perp_x = (perp_x / perp_distance) * move_distance
+-                perp_y = (perp_y / perp_distance) * move_distance
++                scale = move_distance * 0.5  # Half speed for sliding
++                slide_x = (perp_x / perp_distance) * scale
++                slide_y = (perp_y / perp_distance) * scale
+                 
+-                # Try this perpendicular direction
+-                perp_position = Position(self.position.x + perp_x, self.position.y + perp_y)
+-                if battle_state.arena.is_walkable(perp_position):
+-                    return (perp_x, perp_y)
++                slide_position = Position(self.position.x + slide_x, self.position.y + slide_y)
++                if battle_state.arena.is_walkable(slide_position):
++                    return (slide_x, slide_y)
+         
+-        return None  # No alternative found
++        return None
+     
+-    def _get_pathfind_target(self, target_entity: 'Entity', battle_state=None) -> Position:
+-        """Get pathfinding target using priority system with advanced post-tower-destruction logic:
+-        Air units: 1) Targets in FOV, 2) Towers (fly directly over river)
+-        Ground units: 
+-        - Before first tower destroyed: 1) Troops in sight range, 2) Bridge center, 3) Princess towers
+-        - After first tower destroyed: 1) Troops in FOV, 2) Center bridge, 3) Cross bridge if clear, 4) Target buildings
+-        """
+-        from .battle import BattleState
+-        
+-        final_target = target_entity.position
+-        
+-        # Air units bypass bridge pathfinding - they fly directly to targets
+-        if self.is_air_unit:
+-            distance_to_target = self.position.distance_to(final_target)
+-            is_troop = not isinstance(target_entity, Building)
+-            
+-            # Priority 1: If target is a troop within sight range, go directly
+-            if is_troop and distance_to_target <= self.sight_range:
+-                return final_target
+-            
+-            # Priority 2: Go directly to any target (towers, etc.) - air units ignore bridges
+-            return final_target
+-        
+-        # Ground units use bridge pathfinding
+-        # Check if we need to cross the river (river at y=16)
+-        current_side = 0 if self.position.y < 16.0 else 1
+-        target_side = 0 if final_target.y < 16.0 else 1
+-        need_to_cross = current_side != target_side
+-        
+-        # Priority 1: If target is a troop within sight range, go directly
+-        distance_to_target = self.position.distance_to(final_target)
+-        is_troop = not isinstance(target_entity, Building)
+-        
+-        # For troop targets within sight range, still check if we need bridge pathfinding
+-        if is_troop and distance_to_target <= self.sight_range:
+-            # If we don't need to cross the river, go directly
+-            if not need_to_cross:
+-                return final_target
+-            # If we need to cross, continue with bridge logic even for troops
+-        
+-        # If we don't need to cross, go directly to target
+-        if not need_to_cross:
+-            return final_target
+-        
+-        # Check if first tower has been destroyed to determine pathfinding mode
+-        first_tower_destroyed = self._is_first_tower_destroyed(battle_state)
+-        
+-        if first_tower_destroyed:
+-            return self._get_advanced_pathfind_target(target_entity)
+-        else:
+-            return self._get_basic_pathfind_target(target_entity)
+-    
+-    def _is_first_tower_destroyed(self, battle_state) -> bool:
+-        """Check if the first tower (any princess tower) has been destroyed"""
+-        if not battle_state:
+-            return False
+-            
+-        # Check if any princess towers are destroyed by looking at player tower HP
+-        total_princess_towers_alive = 0
+-        
+-        for player in battle_state.players:
+-            if player.left_tower_hp > 0:
+-                total_princess_towers_alive += 1
+-            if player.right_tower_hp > 0:
+-                total_princess_towers_alive += 1
+-        
+-        # If we have less than 4 princess towers alive, at least one has been destroyed
+-        return total_princess_towers_alive < 4
+-    
+-    def _get_basic_pathfind_target(self, target_entity: 'Entity') -> Position:
+-        """Original pathfinding logic before first tower is destroyed"""
+-        final_target = target_entity.position
+-        
+-        # We need to cross the river - use bridge logic
+-        # Determine which bridge to use (left at x=3.5, right at x=14.5)
+-        left_bridge_dist = abs(self.position.x - 3.5)
+-        right_bridge_dist = abs(self.position.x - 14.5)
+-        
+-        if left_bridge_dist < right_bridge_dist:
+-            bridge_x = 3.5  # Left bridge center of center tile
+-        else:
+-            bridge_x = 14.5  # Right bridge center of center tile
+-        
+-        # Bridge center is at the actual center of the bridge structure
+-        bridge_y = 16.0  # Dead center of the bridge spanning the river
+-        bridge_center = Position(bridge_x, bridge_y)
+-        
+-        # Check if we're on the bridge (within 1.5 tiles of bridge center)
+-        # Bridge is 3 tiles wide, pathfinder targets center of center tile
+-        on_bridge = (abs(self.position.x - bridge_x) <= 1.5 and 
+-                    abs(self.position.y - 16.0) <= 1.0)
+-        
+-        if on_bridge:
+-            # Priority 3: On bridge - go to appropriate princess tower
+-            if self.player_id == 0:  # Blue player going to red side
+-                if bridge_x == 3.5:  # Left bridge -> left tower
+-                    return Position(3.5, 25.5)  # RED_LEFT_TOWER
+-                else:  # Right bridge -> right tower  
+-                    return Position(14.5, 25.5)  # RED_RIGHT_TOWER
+-            else:  # Red player going to blue side
+-                if bridge_x == 3.5:  # Left bridge -> left tower
+-                    return Position(3.5, 6.5)  # BLUE_LEFT_TOWER
+-                else:  # Right bridge -> right tower
+-                    return Position(14.5, 6.5)  # BLUE_RIGHT_TOWER
+-        else:
+-            # Priority 2: Behind bridge - go to bridge center
+-            return bridge_center
+-    
+-    def _get_advanced_pathfind_target(self, target_entity: 'Entity') -> Position:
+-        """Advanced pathfinding logic after first tower is destroyed"""
+-        final_target = target_entity.position
+-        
+-        # Choose the nearest actual bridge (left at x=3.5 or right at x=14.5)
++    def _choose_optimal_bridge(self, target_entity: 'Entity', battle_state) -> Position:
++        """Choose the optimal bridge to reach the target"""
+         left_bridge = Position(3.5, 16.0)
+         right_bridge = Position(14.5, 16.0)
+         
+-        # Determine which bridge is closer
+-        dist_to_left = self.position.distance_to(left_bridge)
+-        dist_to_right = self.position.distance_to(right_bridge)
++        # Choose bridge based on which is closer to target
++        left_distance = target_entity.position.distance_to(left_bridge)
++        right_distance = target_entity.position.distance_to(right_bridge)
+         
+-        if dist_to_left <= dist_to_right:
+-            chosen_bridge = left_bridge
++        return left_bridge if left_distance < right_distance else right_bridge
++    
++    def _get_pathfind_target(self, target_entity: 'Entity', battle_state=None) -> Position:
++        """Get pathfinding target using priority system with advanced post-tower-destruction logic:
++        1. Direct path to target (if possible)
++        2. Bridge crossing (if needed to reach target)
++        3. Direct path to nearest bridge"""
++        
++        # Priority 1: Direct path to target (if on same side or no obstacles)
++        if battle_state and battle_state.arena.is_walkable(target_entity.position):
++            # Check if we're on the same side of the river
++            my_side = "bottom" if self.position.y < 15.0 else "top"
++            target_side = "bottom" if target_entity.position.y < 15.0 else "top"
++            
++            if my_side == target_side:
++                return target_entity.position
++        
++        # Priority 2: Bridge crossing needed - choose optimal bridge
++        if battle_state:
++            chosen_bridge = self._choose_optimal_bridge(target_entity, battle_state)
+         else:
+-            chosen_bridge = right_bridge
++            chosen_bridge = Position(9.0, 16.0)  # Default center
+         
+-        # Check if we're on either bridge
+-        on_left_bridge = (abs(self.position.x - 3.5) <= 1.5 and abs(self.position.y - 16.0) <= 1.0)
+-        on_right_bridge = (abs(self.position.x - 14.5) <= 1.5 and abs(self.position.y - 16.0) <= 1.0)
+-        on_bridge = on_left_bridge or on_right_bridge
++        # Check if we're already on a bridge and need to cross to the other side
++        on_bridge = (15.0 <= self.position.y <= 17.0 and 
++                    ((2.0 <= self.position.x <= 5.0) or (13.0 <= self.position.x <= 16.0)))
+         
+         if on_bridge:
+-            # On center bridge - decide whether to cross or target what's visible
+-            
+-            # Check if target is a building (tower or other structure)
+-            is_building = isinstance(target_entity, Building)
+-            
+-            if is_building:
+-                # Check if we can see the building (it's in line of sight)
+-                distance_to_target = self.position.distance_to(final_target)
+-                if distance_to_target <= self.sight_range:
+-                    # Building is in line of sight - go directly to it
+-                    return final_target
+-                else:
+-                    # Building not in sight - cross the bridge and move forward
+-                    if self.player_id == 0:  # Blue player crossing to red side
+-                        # Move forward from bridge towards red side
+-                        if on_left_bridge:
+-                            return Position(3.5, 20.0)  # Forward from left bridge
+-                        else:
+-                            return Position(14.5, 20.0)  # Forward from right bridge
+-                    else:  # Red player crossing to blue side
+-                        # Move forward from bridge towards blue side
+-                        if on_left_bridge:
+-                            return Position(3.5, 12.0)  # Forward from left bridge
+-                        else:
+-                            return Position(14.5, 12.0)  # Forward from right bridge
+-            else:
+-                # Target is a troop - if in line of sight, go directly
+-                distance_to_target = self.position.distance_to(final_target)
+-                if distance_to_target <= self.sight_range:
+-                    return final_target
+-                else:
+-                    # Cross bridge to get closer to target
++            # We're on a bridge - determine where to go
++            # Check which bridge we're on
++            on_left_bridge = 2.0 <= self.position.x <= 5.0
++            
++            # Target the land on the opposite side
++            if battle_state:
++                if chosen_bridge.y != self.position.y:  # Different Y means crossing bridge
+                     if self.player_id == 0:
+                         if on_left_bridge:
+                             return Position(3.5, 20.0)  # Move from left bridge towards red side
+@@ -527,17 +465,36 @@ class Troop(Entity):
+                 return bridge_approach
+             else:
+                 return chosen_bridge
++    
++    def _update_status_effects(self, dt: float) -> None:
++        """Update status effect timers"""
++        # Update stun timer
++        if hasattr(self, 'stun_timer') and getattr(self, 'stun_timer', 0) > 0:
++            self.stun_timer = max(0, self.stun_timer - dt)
++            if self.stun_timer <= 0:
++                self.is_stunned = False
++        
++        # Update slow timer
++        if hasattr(self, 'slow_timer') and getattr(self, 'slow_timer', 0) > 0:
++            self.slow_timer = max(0, self.slow_timer - dt)
++            if self.slow_timer <= 0 and hasattr(self, 'original_speed'):
++                self.speed = self.original_speed
+ 
+ 
+ @dataclass
+ class Building(Entity):
+     speed: float = 0.0  # Buildings don't move
++    time_alive: float = 0.0  # Track how long building has been alive
+     
+     def update(self, dt: float, battle_state: 'BattleState') -> None:
+-        """Update building - only attack, no movement"""
++        """Update building - attack and handle lifetime"""
+         if not self.is_alive:
+             return
+         
++        # Track time alive and handle lifetime decay
++        self.time_alive += dt
++        self._handle_lifetime_decay()
++        
+         # Update attack cooldown
+         if self.attack_cooldown > 0:
+             self.attack_cooldown -= dt
+@@ -545,8 +502,32 @@ class Building(Entity):
+         # Find and attack target
+         target = self.get_nearest_target(battle_state.entities)
+         if target and self.can_attack_target(target) and self.attack_cooldown <= 0:
+-            target.take_damage(self.damage)
++            self._deal_attack_damage(target, self.damage, battle_state)
+             self.attack_cooldown = self.card_stats.hit_speed / 1000.0 if self.card_stats.hit_speed else 1.0
++    
++    def _handle_lifetime_decay(self) -> None:
++        """Handle gradual HP decay for buildings with limited lifetime"""
++        if not self.card_stats or not hasattr(self.card_stats, 'life_time') or not self.card_stats.life_time:
++            return
++        
++        # Calculate what HP should be based on time alive
++        life_time = self.card_stats.life_time
++        if self.time_alive >= life_time:
++            # Building should be dead
++            self.hitpoints = 0
++            self.is_alive = False
++        else:
++            # Gradually reduce HP over time
++            time_percent = self.time_alive / life_time
++            target_hp = self.max_hitpoints * (1.0 - time_percent)
++            
++            # Only reduce HP, don't increase it (in case it was damaged)
++            if self.hitpoints > target_hp:
++                self.hitpoints = target_hp
++                
++                # Ensure minimum 1 HP until lifetime expires
++                if self.hitpoints < 1 and self.time_alive < life_time:
++                    self.hitpoints = 1
+ 
+ 
+ @dataclass
+@@ -554,6 +535,7 @@ class Projectile(Entity):
+     target_position: Position = field(default_factory=lambda: Position(0, 0))
+     travel_speed: float = 5.0
+     splash_radius: float = 0.0
++    source_name: str = "Unknown"  # Name of unit that fired this projectile
+     
+     def update(self, dt: float, battle_state: 'BattleState') -> None:
+         """Update projectile - move towards target"""
+@@ -584,39 +566,35 @@ class Projectile(Entity):
+             self.position.y += move_y
+     
+     def _deal_splash_damage(self, battle_state: 'BattleState') -> None:
+-        """Deal damage to entities in splash radius"""
++        """Deal splash damage at target position"""
+         for entity in battle_state.entities.values():
+             if entity.player_id == self.player_id or not entity.is_alive:
+                 continue
+             
+-            distance = entity.position.distance_to(self.target_position)
+-            if distance <= self.splash_radius:
+-                entity.take_damage(self.damage)
+-
+-
+-@dataclass 
+-class Aura(Entity):
+-    radius: float = 3.0
+-    effect_type: str = "damage_boost"
+-    effect_value: float = 0.0
+-    
+-    def update(self, dt: float, battle_state: 'BattleState') -> None:
+-        """Update aura - apply effects to nearby friendly units"""
+-        if not self.is_alive:
+-            return
++            # Check distance using hitbox overlap detection
++            entity_distance = self.target_position.distance_to(entity.position)
++            
++            # Calculate combined radius for overlap check
++            entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
++            
++            # Check if splash radius overlaps with entity hitbox
++            if entity_distance <= (self.splash_radius + entity_radius):
++                entity.hitpoints -= self.damage
++                if entity.hitpoints <= 0:
++                    entity.hitpoints = 0
++                    entity.is_alive = False
+ 
+ 
+ @dataclass
+ class AreaEffect(Entity):
+-    """Area effect spells that stay on the ground for a duration"""
+-    duration: float = 4.0
+-    freeze_effect: bool = False
++    """Spell that affects an area over time (like Poison)"""
+     radius: float = 3.0
++    duration: float = 8.0
++    damage_per_second: float = 20.0
+     time_alive: float = 0.0
+-    affected_entities: set = field(default_factory=set)
+     
+     def update(self, dt: float, battle_state: 'BattleState') -> None:
+-        """Update area effect - apply effects and check duration"""
++        """Update area effect - deal damage over time"""
+         if not self.is_alive:
+             return
+         
+@@ -627,115 +605,188 @@ class AreaEffect(Entity):
+             self.is_alive = False
+             return
+         
+-        # Apply effects to entities in radius
++        # Deal damage to all entities in radius
++        damage_this_tick = self.damage_per_second * dt
+         for entity in battle_state.entities.values():
+-            if entity.player_id == self.player_id or not entity.is_alive or entity == self:
++            if entity.player_id == self.player_id or not entity.is_alive:
+                 continue
+             
+-            distance = entity.position.distance_to(self.position)
+-            if distance <= self.radius:
+-                # Apply freeze effect
+-                if self.freeze_effect and entity.id not in self.affected_entities:
+-                    if hasattr(entity, 'speed'):
+-                        entity.original_speed = getattr(entity, 'original_speed', entity.speed)
+-                        entity.speed = 0
+-                    if hasattr(entity, 'attack_cooldown'):
+-                        entity.attack_cooldown = max(entity.attack_cooldown, 1.0)  # Delay attacks
+-                    self.affected_entities.add(entity.id)
+-                
+-                # Apply damage over time (small damage each tick)
+-                if self.damage > 0:
+-                    entity.take_damage(self.damage * dt)  # Damage per second
+-            else:
+-                # Remove freeze effect if entity leaves area
+-                if self.freeze_effect and entity.id in self.affected_entities:
+-                    if hasattr(entity, 'original_speed'):
+-                        entity.speed = entity.original_speed
+-                    self.affected_entities.discard(entity.id)
++            # Check distance using hitbox overlap detection
++            entity_distance = self.position.distance_to(entity.position)
++            
++            # Calculate combined radius for overlap check
++            entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
++            
++            # Check if spell radius overlaps with entity hitbox
++            if entity_distance <= (self.radius + entity_radius):
++                entity.hitpoints -= damage_this_tick
++                if entity.hitpoints <= 0:
++                    entity.hitpoints = 0
++                    entity.is_alive = False
+ 
+ 
+-@dataclass
+-class SpawnProjectile(Projectile):
+-    """Projectile that spawns units when it reaches target"""
+-    spawn_count: int = 3
+-    spawn_character: str = "Goblin"
+-    spawn_character_data: dict = None
++@dataclass 
++class SpawnBuilding(Building):
++    """Building that spawns troops periodically"""
++    spawn_character: str = "Barbarian"
++    spawn_interval: float = 14.0  # seconds
++    spawn_timer: float = 0.0
++    spawn_count: int = 1
++    spawned_units: int = 0
++    max_spawned_units: int = 6  # Lifetime limit
+     
+     def update(self, dt: float, battle_state: 'BattleState') -> None:
+-        """Update projectile - move towards target and spawn units on impact"""
++        """Update spawn building - spawn troops and attack"""
++        # Call parent update for attacks and lifetime
++        super().update(dt, battle_state)
++        
+         if not self.is_alive:
+             return
+         
+-        # Move towards target
+-        distance = self.position.distance_to(self.target_position)
+-        if distance <= self.travel_speed * dt:
+-            # Reached target - spawn units and deal splash damage
+-            self._spawn_units(battle_state)
+-            self._deal_splash_damage(battle_state)
+-            self.is_alive = False
+-        else:
+-            self._move_towards(self.target_position, dt)
++        # Update spawn timer
++        self.spawn_timer += dt
++        
++        # Check if it's time to spawn
++        if self.spawn_timer >= self.spawn_interval and self.spawned_units < self.max_spawned_units:
++            self._spawn_troops(battle_state)
++            self.spawn_timer = 0.0
+     
+-    def _spawn_units(self, battle_state: 'BattleState') -> None:
+-        """Spawn units at target position"""
+-        import math
++    def _spawn_troops(self, battle_state: 'BattleState') -> None:
++        """Spawn troops around the building"""
++        # Try to load spawn character from card data
++        spawn_stats = battle_state.card_loader.get_card(self.spawn_character)
++        if not spawn_stats:
++            return
++        
++        # Find valid spawn positions around the building
++        for _ in range(self.spawn_count):
++            spawn_pos = self._find_spawn_position(battle_state)
++            if spawn_pos:
++                battle_state._spawn_troop(spawn_pos, self.player_id, spawn_stats)
++                self.spawned_units += 1
++    
++    def _find_spawn_position(self, battle_state: 'BattleState') -> Optional[Position]:
++        """Find a valid position to spawn troops around the building"""
+         import random
++        import math
+         
+-        if not self.spawn_character_data:
++        # Try positions in a circle around the building
++        for _ in range(8):  # Try up to 8 positions
++            angle = random.random() * 2 * math.pi
++            distance = 1.0 + random.random()  # 1-2 tiles away
++            
++            spawn_x = self.position.x + distance * math.cos(angle)
++            spawn_y = self.position.y + distance * math.sin(angle)
++            
++            # Ensure position is within arena bounds
++            spawn_x = max(0.5, min(17.5, spawn_x))
++            spawn_y = max(0.5, min(31.5, spawn_y))
++            
++            spawn_pos = Position(spawn_x, spawn_y)
++            
++            # Check if position is walkable and in deployment zone
++            if (battle_state.arena.is_walkable(spawn_pos) and 
++                battle_state.arena.can_deploy_at(spawn_pos, self.player_id, battle_state)):
++                return spawn_pos
++        
++        return None
++
++
++@dataclass
++class Graveyard(AreaEffect):
++    """Graveyard spell that spawns skeletons over time"""
++    spawn_count: int = 20
++    spawn_interval: float = 0.5
++    spawn_timer: float = 0.0
++    
++    def update(self, dt: float, battle_state: 'BattleState') -> None:
++        """Update graveyard - spawn skeletons periodically"""
++        if not self.is_alive:
+             return
+         
+-        # Create card stats from spawn character data
+-        from .data import CardStats
+-        spawn_stats = CardStats(
+-            name=self.spawn_character,
+-            id=0,
+-            mana_cost=0,
+-            rarity="Common",
+-            hitpoints=self.spawn_character_data.get("hitpoints", 100),
+-            damage=self.spawn_character_data.get("damage", 10),
+-            speed=float(self.spawn_character_data.get("speed", 60)),
+-            range=self.spawn_character_data.get("range", 1000) / 1000.0,
+-            sight_range=self.spawn_character_data.get("sightRange", 5000) / 1000.0,
+-            hit_speed=self.spawn_character_data.get("hitSpeed", 1000),
+-            deploy_time=self.spawn_character_data.get("deployTime", 1000),
+-            load_time=self.spawn_character_data.get("loadTime", 1000),
+-            collision_radius=self.spawn_character_data.get("collisionRadius", 500) / 1000.0,
+-            attacks_ground=self.spawn_character_data.get("attacksGround", True),
+-            attacks_air=False,
+-            targets_only_buildings=False,
+-            target_type=self.spawn_character_data.get("tidTarget")
+-        )
++        self.time_alive += dt
++        
++        # Check if duration expired
++        if self.time_alive >= self.duration:
++            self.is_alive = False
++            return
+         
+-        # Spawn units in a small radius around target
+-        spawn_radius = 1.0  # tiles
++        # Handle skeleton spawning
++        spawn_timer = getattr(self, 'spawn_timer', 0.0)
++        skeletons_spawned = getattr(self, 'skeletons_spawned', 0)
+         
+-        for _ in range(self.spawn_count):
+-            # Random position around the target location
++        spawn_timer += dt
++        
++        # Check if it's time to spawn a skeleton
++        if spawn_timer >= self.spawn_interval and skeletons_spawned < self.spawn_count:
++            # Spawn skeleton at random position within graveyard radius
++            import random
++            import math
++            
++            # Random position within circle
+             angle = random.random() * 2 * math.pi
+-            distance = random.random() * spawn_radius
+-            spawn_x = self.target_position.x + distance * math.cos(angle)
+-            spawn_y = self.target_position.y + distance * math.sin(angle)
++            distance = random.random() * self.radius
++            spawn_x = self.position.x + distance * math.cos(angle)
++            spawn_y = self.position.y + distance * math.sin(angle)
++            
++            # Ensure spawn position is valid
++            spawn_x = max(0.5, min(17.5, spawn_x))
++            spawn_y = max(0.5, min(31.5, spawn_y))
++            spawn_pos = Position(spawn_x, spawn_y)
++            
++            # Create skeleton troop
++            from .data import CardStats
++            skeleton_stats = CardStats(
++                name="Skeleton",
++                id=0,
++                mana_cost=0,
++                rarity="Common",
++                card_type="Troop",
++                hitpoints=60,
++                damage=60,
++                speed=60,
++                range=1.0,
++                sight_range=5.0,
++                hit_speed=1000,
++                deploy_time=1000,
++                load_time=1000,
++                collision_radius=0.5,
++                attacks_ground=True,
++                attacks_air=False,
++                target_type="TID_TARGETS_GROUND"
++            )
+             
+-            # Create and spawn the unit
+-            battle_state._spawn_troop(Position(spawn_x, spawn_y), self.player_id, spawn_stats)
++            skeleton = Troop(
++                id=battle_state.next_entity_id,
++                position=spawn_pos,
++                player_id=self.player_id,
++                card_stats=skeleton_stats,
++                hitpoints=60,
++                max_hitpoints=60,
++                damage=60,
++                range=1.0,
++                sight_range=5.0,
++                speed=60  # tiles/min
++            )
++            
++            battle_state.entities[skeleton.id] = skeleton
++            battle_state.next_entity_id += 1
++            
++            # Update counters
++            self.spawn_timer = 0.0
++            if not hasattr(self, 'skeletons_spawned'):
++                self.skeletons_spawned = 0
++            self.skeletons_spawned += 1
++        else:
++            self.spawn_timer = spawn_timer
+ 
+ 
+ @dataclass
+ class RollingProjectile(Entity):
+-    """Rolling projectiles that spawn at location and roll forward (Log, Barbarian Barrel)"""
+-    travel_speed: float = 200.0
+-    projectile_range: float = 10.0  # tiles
+-    spawn_delay: float = 0.65  # seconds
+-    spawn_character: str = None
+-    spawn_character_data: dict = None
+-    radius_y: float = 0.6  # Height of rolling hitbox
+-    
+-    def __post_init__(self):
+-        super().__post_init__()
+-        # Use range field from Entity as rolling radius
+-        self.rolling_radius = self.range
+-    
+-    # State tracking
++    """Rolling projectiles like Log and Barbarian Barrel"""
++    travel_speed: float = 200.0  # tiles/min
++    projectile_range: float = 10.6  # tiles
++    spawn_delay: float = 1.0  # seconds before starting to roll  
+     time_alive: float = 0.0
+     distance_traveled: float = 0.0
+     hit_entities: set = field(default_factory=set)  # Track entities hit (can only hit once)
+@@ -767,72 +818,63 @@ class RollingProjectile(Entity):
+             # Spawn character if applicable (Barbarian Barrel)
+             if self.spawn_character and not self.has_spawned_character:
+                 self._spawn_character(battle_state)
++            
+             self.is_alive = False
+             return
+         
+-        # Deal damage to entities in rectangular hitbox
+-        self._deal_rolling_damage(battle_state)
++        # Check for collisions with enemy entities
++        self._check_collisions(battle_state)
+     
+-    def _deal_rolling_damage(self, battle_state: 'BattleState') -> None:
+-        """Deal damage to ground units in rolling path (rectangular hitbox)"""
++    def _check_collisions(self, battle_state: 'BattleState') -> None:
++        """Check for collisions with enemy entities and deal damage"""
+         for entity in battle_state.entities.values():
+             if (entity.player_id == self.player_id or 
+                 not entity.is_alive or 
+-                entity.id in self.hit_entities or
+-                entity == self):
++                entity.id in self.hit_entities):
+                 continue
+             
+-            # Skip air units (Log only hits ground)
+-            if getattr(entity, 'is_air_unit', False):
+-                continue
++            # Calculate distance to entity
++            distance = self.position.distance_to(entity.position)
+             
+-            # Check if entity is in rectangular rolling hitbox
+-            dx = abs(entity.position.x - self.position.x)
+-            dy = abs(entity.position.y - self.position.y)
++            # Use collision radii for hit detection
++            self_radius = getattr(self.card_stats, 'collision_radius', 0.5) or 0.5
++            entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
++            combined_radius = self_radius + entity_radius
+             
+-            if dx <= self.rolling_radius and dy <= self.radius_y:
++            if distance <= combined_radius:
+                 # Hit the entity
+-                entity.take_damage(self.damage)
++                entity.hitpoints -= self.damage
++                if entity.hitpoints <= 0:
++                    entity.hitpoints = 0
++                    entity.is_alive = False
++                
++                # Mark entity as hit (can only be hit once per rolling projectile)
+                 self.hit_entities.add(entity.id)
+                 
+-                # Apply knockback effect (Log pushes units backward)
+-                self._apply_knockback(entity)
++                # Apply knockback effect for ground troops
++                if not entity.is_air_unit and hasattr(entity, 'position'):
++                    self._apply_knockback(entity)
+     
+     def _apply_knockback(self, entity: 'Entity') -> None:
+-        """Apply knockback effect - pushes unit away from Log and resets attack"""
+-        # Reset attack cooldown (stunned briefly)
+-        if hasattr(entity, 'attack_cooldown'):
+-            entity.attack_cooldown = max(entity.attack_cooldown, 0.5)
+-        
+-        # Physical knockback - push unit away from Log's rolling direction
+-        knockback_distance = 1.5  # tiles
++        """Apply knockback effect to ground troops"""
++        knockback_distance = 4.0  # tiles
+         
+-        # Determine knockback direction based on Log's movement direction
+-        if self.player_id == 0:  # Blue player Log rolling toward red side
+-            # Push units further toward red side (positive Y)
++        # Determine knockback direction (same as rolling direction)
++        if self.player_id == 0:  # Blue player - knockback towards red side
+             entity.position.y += knockback_distance
+-        else:  # Red player Log rolling toward blue side  
+-            # Push units further toward blue side (negative Y)
++        else:  # Red player - knockback towards blue side
+             entity.position.y -= knockback_distance
+         
+-        # Slight random horizontal displacement for realism
+-        import random
+-        horizontal_variance = random.uniform(-0.3, 0.3)
+-        entity.position.x += horizontal_variance
+-        
+-        # Ensure unit doesn't get pushed out of arena bounds
+-        entity.position.x = max(0.5, min(17.5, entity.position.x))  # Keep within arena width
+-        entity.position.y = max(0.5, min(31.5, entity.position.y))  # Keep within arena height
++        # Ensure entity stays within arena bounds
++        entity.position.y = max(0.5, min(31.5, entity.position.y))
+     
+     def _spawn_character(self, battle_state: 'BattleState') -> None:
+-        """Spawn character at end of roll (Barbarian Barrel)"""
+-        if not self.spawn_character_data:
++        """Spawn character when projectile expires (Barbarian Barrel only)"""
++        if not hasattr(self, 'spawn_character_data') or not self.spawn_character_data:
+             return
+         
+-        import math
++        # Create card stats for spawned character
+         from .data import CardStats
+-        
+-        # Create card stats from spawn character data
+         spawn_stats = CardStats(
+             name=self.spawn_character,
+             id=0,
+@@ -856,3 +898,42 @@ class RollingProjectile(Entity):
+         # Spawn character at current position
+         battle_state._spawn_troop(Position(self.position.x, self.position.y), self.player_id, spawn_stats)
+         self.has_spawned_character = True
++
++
++@dataclass
++class TimedExplosive(Entity):
++    """Timed explosive entity for death bombs (Bomb Tower, Giant Skeleton)"""
++    fuse_time: float = 3.0  # seconds until explosion
++    explosion_radius: float = 1.5  # tiles
++    time_alive: float = 0.0
++    
++    def update(self, dt: float, battle_state: 'BattleState') -> None:
++        """Update timed explosive - count down and explode"""
++        if not self.is_alive:
++            return
++        
++        self.time_alive += dt
++        
++        # Check if it's time to explode
++        if self.time_alive >= self.fuse_time:
++            self._explode(battle_state)
++            self.is_alive = False
++    
++    def _explode(self, battle_state: 'BattleState') -> None:
++        """Deal area damage when exploding"""
++        for entity in battle_state.entities.values():
++            if entity.player_id == self.player_id or not entity.is_alive:
++                continue
++            
++            # Check distance using hitbox overlap detection
++            entity_distance = self.position.distance_to(entity.position)
++            
++            # Calculate combined radius for overlap check
++            entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
++            
++            # Check if explosion radius overlaps with entity hitbox
++            if entity_distance <= (self.explosion_radius + entity_radius):
++                entity.hitpoints -= self.damage
++                if entity.hitpoints <= 0:
++                    entity.hitpoints = 0
++                    entity.is_alive = False
+\ No newline at end of file
+diff --git a/src/clasher/spells.py b/src/clasher/spells.py
+index 841dcb7..aeed02e 100644
+--- a/src/clasher/spells.py
++++ b/src/clasher/spells.py
+@@ -2,7 +2,7 @@ from dataclasses import dataclass
+ from typing import Dict, List, TYPE_CHECKING
+ from abc import ABC, abstractmethod
+ 
+-from .entities import Entity, Projectile, Troop, AreaEffect, SpawnProjectile, RollingProjectile
++from .entities import Entity, Projectile, Troop, AreaEffect, RollingProjectile
+ from .arena import Position
+ 
+ if TYPE_CHECKING:
+@@ -26,6 +26,9 @@ class Spell(ABC):
+ @dataclass
+ class DirectDamageSpell(Spell):
+     """Spells that deal instant damage in an area"""
++    stun_duration: float = 0.0  # seconds
++    slow_effect: bool = False
++    pull_effect: bool = False
+     
+     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+         """Deal damage to all enemies in radius"""
+@@ -37,10 +40,47 @@ class DirectDamageSpell(Spell):
+             
+             distance = entity.position.distance_to(target_pos)
+             if distance <= self.radius:
++                # Deal damage
+                 entity.take_damage(self.damage)
++                
++                # Apply stun effect
++                if self.stun_duration > 0:
++                    if hasattr(entity, 'attack_cooldown'):
++                        entity.attack_cooldown = max(entity.attack_cooldown, self.stun_duration)
++                    entity.is_stunned = True
++                    entity.stun_timer = self.stun_duration
++                
++                # Apply slow effect
++                if self.slow_effect:
++                    if hasattr(entity, 'speed'):
++                        entity.original_speed = getattr(entity, 'original_speed', entity.speed)
++                        entity.speed = entity.speed * 0.3  # 70% speed reduction
++                        entity.slow_timer = 3.0  # 3 second slow
++                
++                # Apply pull effect (Tornado)
++                if self.pull_effect:
++                    self._apply_pull_effect(entity, target_pos)
++                
+                 targets_hit += 1
+         
+         return targets_hit > 0
++    
++    def _apply_pull_effect(self, entity, center_pos: Position):
++        """Pull entity toward center position"""
++        # Calculate direction from entity to center
++        dx = center_pos.x - entity.position.x
++        dy = center_pos.y - entity.position.y
++        distance = (dx**2 + dy**2)**0.5
++        
++        if distance > 0.1:  # Avoid division by zero
++            # Normalize direction and apply pull
++            pull_strength = 3.0  # tiles
++            entity.position.x += (dx / distance) * pull_strength
++            entity.position.y += (dy / distance) * pull_strength
++            
++            # Ensure entity stays in bounds
++            entity.position.x = max(0.5, min(17.5, entity.position.x))
++            entity.position.y = max(0.5, min(31.5, entity.position.y))
+ 
+ 
+ @dataclass  
+@@ -274,6 +314,43 @@ class HealSpell(Spell):
+         return targets_hit > 0
+ 
+ 
++@dataclass
++class GraveyardSpell(Spell):
++    """Graveyard spell that spawns skeletons over time"""
++    skeleton_count: int = 12
++    spawn_duration: float = 10.0
++    spawn_radius: float = 3.0
++    
++    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
++        """Create graveyard area effect that spawns skeletons"""
++        # Create area effect for graveyard
++        graveyard_effect = AreaEffect(
++            id=battle_state.next_entity_id,
++            position=Position(target_pos.x, target_pos.y),
++            player_id=player_id,
++            card_stats=None,
++            hitpoints=1,
++            max_hitpoints=1,
++            damage=0,
++            range=0,
++            sight_range=0,
++            duration=self.spawn_duration,
++            freeze_effect=False,
++            radius=self.spawn_radius
++        )
++        
++        # Add graveyard-specific properties
++        graveyard_effect.is_graveyard = True
++        graveyard_effect.skeleton_count = self.skeleton_count
++        graveyard_effect.skeletons_spawned = 0
++        graveyard_effect.spawn_timer = 0.0
++        graveyard_effect.spawn_interval = self.spawn_duration / self.skeleton_count
++        
++        battle_state.entities[battle_state.next_entity_id] = graveyard_effect
++        battle_state.next_entity_id += 1
++        return True
++
++
+ @dataclass
+ class RollingProjectileSpell(Spell):
+     """Spells that spawn at location and roll forward (Log, Barbarian Barrel)"""
+@@ -314,13 +391,13 @@ class RollingProjectileSpell(Spell):
+ 
+ 
+ # Predefined spells based on JSON schemas
+-ARROWS = DirectDamageSpell("Arrows", 3, radius=400.0, damage=144)
+-FIREBALL = ProjectileSpell("Fireball", 4, radius=250.0, damage=572, travel_speed=600.0/60.0) 
+-ZAP = DirectDamageSpell("Zap", 2, radius=250.0, damage=159)
+-LIGHTNING = DirectDamageSpell("Lightning", 6, radius=350.0, damage=864)
++ARROWS = DirectDamageSpell("Arrows", 3, radius=4.0, damage=144)
++FIREBALL = ProjectileSpell("Fireball", 4, radius=2.5, damage=269, travel_speed=600.0/60.0) 
++ZAP = DirectDamageSpell("Zap", 2, radius=2.5, damage=159, stun_duration=0.5)
++LIGHTNING = DirectDamageSpell("Lightning", 6, radius=3.5, damage=864, stun_duration=0.5)
+ 
+ # Projectile spells that travel across arena (speeds converted from tiles/min to tiles/sec)
+-ROCKET = ProjectileSpell("Rocket", 6, radius=2000.0/1000.0, damage=580, travel_speed=350.0/60.0)
++ROCKET = ProjectileSpell("Rocket", 6, radius=2.0, damage=580, travel_speed=350.0/60.0)
+ GOBLIN_BARREL = SpawnProjectileSpell(
+     "GoblinBarrel", 3, 
+     radius=1500.0/1000.0, 
+@@ -345,16 +422,16 @@ GOBLIN_BARREL = SpawnProjectileSpell(
+ 
+ # Area effect spells that stay on ground
+ FREEZE = AreaEffectSpell("Freeze", 4, radius=3000.0/1000.0, damage=45, duration=4.0, freeze_effect=True)
+-RAGE = BuffSpell("Rage", 2, radius=3000.0, damage=0, buff_duration=6.0, speed_multiplier=1.5, damage_multiplier=1.4)
++RAGE = BuffSpell("Rage", 2, radius=3.0, damage=0, buff_duration=6.0, speed_multiplier=1.5, damage_multiplier=1.4)
+ MIRROR = DirectDamageSpell("Mirror", 3, radius=0.0, damage=0)  # Special case - handled in battle logic
+-POISON = DirectDamageSpell("Poison", 4, radius=3000.0, damage=78)  # Damage over time
+-GRAVEYARD = DirectDamageSpell("Graveyard", 5, radius=3000.0, damage=0)  # Summons skeletons
+-LOG = ProjectileSpell("Log", 2, radius=250.0, damage=240, travel_speed=1200.0/60.0)
+-TORNADO = DirectDamageSpell("Tornado", 3, radius=3000.0, damage=0)  # Pulls enemies
+-EARTHQUAKE = DirectDamageSpell("Earthquake", 3, radius=3000.0, damage=332)  # Damages buildings
+-BARB_LOG = ProjectileSpell("BarbLog", 2, radius=250.0, damage=240, travel_speed=1200.0/60.0)
+-HEAL = HealSpell("Heal", 3, radius=3000.0, damage=0, heal_amount=400.0)
+-SNOWBALL = DirectDamageSpell("Snowball", 2, radius=250.0, damage=0)  # Freezes single target
++POISON = DirectDamageSpell("Poison", 4, radius=3.0, damage=78)  # Damage over time
++GRAVEYARD = GraveyardSpell("Graveyard", 5, radius=3.0, damage=0, skeleton_count=12)
++LOG = RollingProjectileSpell("Log", 2, radius=2.5, damage=240, travel_speed=1200.0/60.0, projectile_range=10.0)
++TORNADO = DirectDamageSpell("Tornado", 3, radius=3.0, damage=0, pull_effect=True)  # Pulls enemies
++EARTHQUAKE = DirectDamageSpell("Earthquake", 3, radius=3.0, damage=332)  # Damages buildings
++BARB_LOG = ProjectileSpell("BarbLog", 2, radius=2.5, damage=240, travel_speed=1200.0/60.0)
++HEAL = HealSpell("Heal", 3, radius=3.0, damage=0, heal_amount=400.0)
++SNOWBALL = DirectDamageSpell("Snowball", 2, radius=2.5, damage=0, slow_effect=True)  # Slows enemies
+ ROYAL_DELIVERY = DirectDamageSpell("RoyalDelivery", 4, radius=0.0, damage=0)  # Special case
+ GLOBAL_CLONE = DirectDamageSpell("GlobalClone", 3, radius=0.0, damage=0)  # Special case
+ GOBLIN_PARTY_ROCKET = ProjectileSpell("GoblinPartyRocket", 4, radius=250.0, damage=0, travel_speed=1000.0/60.0)
+diff --git a/test_all_swarm_cards.py b/test_all_swarm_cards.py
+deleted file mode 100644
+index 55c2f5b..0000000
+--- a/test_all_swarm_cards.py
++++ /dev/null
+@@ -1,272 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Test all swarm cards to ensure they work correctly
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-from clasher.battle import BattleState
+-from clasher.arena import Position
+-from clasher.data import CardDataLoader
+-
+-def test_swarm_card_sample():
+-    """Test a representative sample of swarm cards"""
+-    
+-    print("=== Testing Sample of All Swarm Cards ===")
+-    
+-    # Create battle state
+-    battle = BattleState()
+-    
+-    # Load cards
+-    card_loader = CardDataLoader()
+-    cards = card_loader.load_cards()
+-    
+-    # Give player full elixir
+-    battle.players[0].elixir = 50.0  # Extra elixir for expensive cards
+-    
+-    # Test cases: representative sample of different swarm types
+-    test_cases = [
+-        # Small swarms (2-3 units)
+-        ('Skeletons', 3, "Small swarm"),
+-        ('Archer', 2, "Archers (2 units)"),
+-        ('Minions', 3, "Flying swarm"),
+-        
+-        # Medium swarms (4-6 units) 
+-        ('Goblins', 4, "Medium swarm"),
+-        ('Barbarians', 5, "Heavy units"),
+-        ('MinionHorde', 6, "Large flying swarm"),
+-        
+-        # Large swarms (7+ units)
+-        ('SkeletonArmy', 15, "Massive swarm"),
+-        ('RoyalRecruits', 6, "Shield units"),
+-        
+-        # Mixed swarm
+-        ('GoblinGang', 6, "Mixed melee/ranged"),
+-        
+-        # Special cases
+-        ('ThreeMusketeers', 3, "Heavy ranged"),
+-        ('Wallbreakers', 2, "Kamikaze units"),
+-    ]
+-    
+-    successful_tests = 0
+-    failed_tests = 0
+-    
+-    for card_name, expected_count, description in test_cases:
+-        print(f"\n--- Testing {card_name} ({description}) ---")
+-        
+-        if card_name not in cards:
+-            print(f"❌ {card_name} not available in game")
+-            failed_tests += 1
+-            continue
+-        
+-        card_stats = cards[card_name]
+-        
+-        # Add card to hand
+-        battle.players[0].hand = [card_name, 'Knight', 'Fireball', 'Arrows']
+-        
+-        # Clear previous entities (keep towers and buildings)
+-        entities_before = len(battle.entities)
+-        
+-        # Deploy the card
+-        deploy_pos = Position(9, 8)  # Blue territory
+-        success = battle.deploy_card(0, card_name, deploy_pos)
+-        
+-        if success:
+-            # Count new entities spawned near deploy position
+-            spawned_units = []
+-            
+-            # Special case for Royal Recruits (line formation spans wide area)
+-            search_radius = 7.0 if card_name in ['RoyalRecruits', 'RoyalRecruits_Chess'] else 4.0
+-            
+-            for entity in battle.entities.values():
+-                # Only count troops/units spawned near the deploy position
+-                if (hasattr(entity, 'card_stats') and entity.card_stats and 
+-                    entity.position.distance_to(deploy_pos) <= search_radius and
+-                    getattr(entity, 'player_id', -1) == 0):  # Player 0's units
+-                    # Exclude towers by checking if they're at tower positions
+-                    pos = entity.position
+-                    is_tower = (
+-                        (pos.x == 3.5 and pos.y == 6.5) or   # Blue left tower
+-                        (pos.x == 14.5 and pos.y == 6.5) or  # Blue right tower  
+-                        (pos.x == 9.0 and pos.y == 2.5) or   # Blue king tower
+-                        (pos.x == 3.5 and pos.y == 25.5) or  # Red left tower
+-                        (pos.x == 14.5 and pos.y == 25.5) or # Red right tower
+-                        (pos.x == 9.0 and pos.y == 29.5)     # Red king tower
+-                    )
+-                    if not is_tower:
+-                        spawned_units.append(entity)
+-            
+-            spawned_count = len(spawned_units)
+-            
+-            print(f"✅ {card_name} deployed: {spawned_count} units")
+-            
+-            # Verify count
+-            if spawned_count == expected_count:
+-                print(f"✅ Correct count: {spawned_count}/{expected_count}")
+-                successful_tests += 1
+-            else:
+-                print(f"❌ Wrong count: {spawned_count}/{expected_count}")
+-                failed_tests += 1
+-            
+-            # Check unit positioning
+-            all_valid = True
+-            for unit in spawned_units:
+-                pos = unit.position
+-                if not (battle.arena.is_valid_position(pos) and battle.arena.is_walkable(pos)):
+-                    all_valid = False
+-                    break
+-            
+-            if all_valid:
+-                print(f"✅ All units in valid positions")
+-            else:
+-                print(f"❌ Some units in invalid positions")
+-            
+-            # Show formation details for special cases
+-            if card_name in ['RoyalRecruits', 'RoyalRecruits_Chess']:
+-                # Check horizontal line formation
+-                positions = [(unit.position.x, unit.position.y) for unit in spawned_units]
+-                positions.sort()
+-                
+-                if len(positions) >= 2:
+-                    # Check if all units are on same Y coordinate (horizontal line)
+-                    y_coords = [pos[1] for pos in positions]
+-                    if len(set(y_coords)) == 1:
+-                        print(f"✅ Units in horizontal line")
+-                        
+-                        # Check spacing
+-                        spacings = []
+-                        for i in range(1, len(positions)):
+-                            spacing = positions[i][0] - positions[i-1][0]
+-                            spacings.append(spacing)
+-                        
+-                        if spacings:
+-                            avg_spacing = sum(spacings) / len(spacings)
+-                            print(f"✅ Average spacing: {avg_spacing:.1f} tiles")
+-                    else:
+-                        print(f"❌ Units not in horizontal line")
+-            
+-            # Show unit types for mixed swarms
+-            elif card_name == 'GoblinGang':
+-                unit_types = {}
+-                for unit in spawned_units:
+-                    unit_name = unit.card_stats.name
+-                    unit_types[unit_name] = unit_types.get(unit_name, 0) + 1
+-                
+-                print(f"Unit composition: {dict(unit_types)}")
+-                expected_composition = {'Goblin_Stab': 3, 'SpearGoblin': 3}
+-                if unit_types == expected_composition:
+-                    print(f"✅ Correct mixed composition")
+-                else:
+-                    print(f"❌ Wrong mixed composition")
+-            
+-            # Clear non-tower entities for next test
+-            from clasher.entities import Building
+-            battle.entities = {k: v for k, v in battle.entities.items() 
+-                             if isinstance(v, Building)}  # Keep only towers
+-            
+-            # Reset elixir for next test
+-            battle.players[0].elixir = 50.0
+-        else:
+-            print(f"❌ {card_name} deployment failed")
+-            failed_tests += 1
+-    
+-    print(f"\n=== Test Summary ===")
+-    total_tests = successful_tests + failed_tests
+-    print(f"Successful: {successful_tests}/{total_tests}")
+-    print(f"Failed: {failed_tests}/{total_tests}")
+-    
+-    if failed_tests == 0:
+-        print("✅ All swarm cards working correctly!")
+-    else:
+-        print("❌ Some swarm cards need attention")
+-
+-def test_edge_case_swarms():
+-    """Test edge cases like very large swarms"""
+-    
+-    print(f"\n=== Testing Edge Case Swarms ===")
+-    
+-    # Create battle state
+-    battle = BattleState()
+-    
+-    # Load cards
+-    card_loader = CardDataLoader()
+-    cards = card_loader.load_cards()
+-    
+-    # Give player full elixir
+-    battle.players[0].elixir = 50.0
+-    
+-    # Test large swarms that might have positioning issues
+-    edge_cases = [
+-        ('SkeletonArmy', 15, "Massive 15-unit swarm"),
+-        ('RoyalRecruits_Chess', 8, "8-unit chess variant"),
+-    ]
+-    
+-    for card_name, expected_count, description in edge_cases:
+-        print(f"\n--- {description} ---")
+-        
+-        if card_name not in cards:
+-            print(f"❌ {card_name} not available")
+-            continue
+-        
+-        battle.players[0].hand = [card_name, 'Knight', 'Fireball', 'Arrows']
+-        
+-        deploy_pos = Position(9, 8)
+-        success = battle.deploy_card(0, card_name, deploy_pos)
+-        
+-        if success:
+-            # Count and analyze spawned units  
+-            spawned_units = []
+-            for entity in battle.entities.values():
+-                if (hasattr(entity, 'card_stats') and entity.card_stats and 
+-                    entity.position.distance_to(deploy_pos) <= 5.0 and
+-                    getattr(entity, 'player_id', -1) == 0):  # Player 0's units
+-                    # Exclude towers by checking if they're at tower positions
+-                    pos = entity.position
+-                    is_tower = (
+-                        (pos.x == 3.5 and pos.y == 6.5) or   # Blue left tower
+-                        (pos.x == 14.5 and pos.y == 6.5) or  # Blue right tower  
+-                        (pos.x == 9.0 and pos.y == 2.5) or   # Blue king tower
+-                        (pos.x == 3.5 and pos.y == 25.5) or  # Red left tower
+-                        (pos.x == 14.5 and pos.y == 25.5) or # Red right tower
+-                        (pos.x == 9.0 and pos.y == 29.5)     # Red king tower
+-                    )
+-                    if not is_tower:
+-                        spawned_units.append(entity)
+-            
+-            print(f"✅ Spawned {len(spawned_units)} units")
+-            
+-            # Check for overlapping positions
+-            positions = [(unit.position.x, unit.position.y) for unit in spawned_units]
+-            unique_positions = set(positions)
+-            
+-            if len(unique_positions) == len(positions):
+-                print(f"✅ No overlapping positions")
+-            else:
+-                overlaps = len(positions) - len(unique_positions)
+-                print(f"⚠️  {overlaps} overlapping positions")
+-            
+-            # Check spread
+-            if spawned_units:
+-                distances = [unit.position.distance_to(deploy_pos) for unit in spawned_units]
+-                max_distance = max(distances)
+-                avg_distance = sum(distances) / len(distances)
+-                print(f"Spread: max {max_distance:.2f}, avg {avg_distance:.2f} tiles")
+-            
+-            # Check all positions are valid
+-            invalid_count = 0
+-            for unit in spawned_units:
+-                pos = unit.position
+-                if not (battle.arena.is_valid_position(pos) and battle.arena.is_walkable(pos)):
+-                    invalid_count += 1
+-            
+-            if invalid_count == 0:
+-                print(f"✅ All positions valid")
+-            else:
+-                print(f"❌ {invalid_count} invalid positions")
+-        else:
+-            print(f"❌ Deployment failed")
+-
+-if __name__ == "__main__":
+-    test_swarm_card_sample()
+-    test_edge_case_swarms()
+\ No newline at end of file
+diff --git a/test_royal_recruits.py b/test_royal_recruits.py
+deleted file mode 100644
+index f1a5aee..0000000
+--- a/test_royal_recruits.py
++++ /dev/null
+@@ -1,151 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Test Royal Recruits horizontal line deployment
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-from clasher.battle import BattleState
+-from clasher.arena import Position
+-from clasher.data import CardDataLoader
+-from clasher.entities import Building
+-
+-def test_royal_recruits_deployment():
+-    """Test Royal Recruits special horizontal line deployment"""
+-    
+-    print("=== Testing Royal Recruits Deployment ===")
+-    
+-    # Create battle state
+-    battle = BattleState()
+-    
+-    # Load cards
+-    card_loader = CardDataLoader()
+-    cards = card_loader.load_cards()
+-    
+-    # Give player full elixir
+-    battle.players[0].elixir = 50.0
+-    
+-    # Test Royal Recruits deployment
+-    card_name = 'RoyalRecruits'
+-    if card_name not in cards:
+-        print(f"❌ {card_name} not found in database")
+-        return
+-    
+-    card_stats = cards[card_name]
+-    print(f"Card: {card_stats.name}")
+-    print(f"Summon count: {getattr(card_stats, 'summon_count', None)}")
+-    print(f"Expected: 6 units in horizontal line, spaced 2.5 tiles apart")
+-    
+-    # Test 1: Deploy in center (should work)
+-    print(f"\n--- Test 1: Deploy at center (9, 8) ---")
+-    battle.players[0].hand = [card_name, 'Knight', 'Fireball', 'Arrows']
+-    battle.entities = {k: v for k, v in battle.entities.items() if isinstance(v, Building)}
+-    
+-    deploy_pos = Position(9, 8)  # Center of allowed zone
+-    success = battle.deploy_card(0, card_name, deploy_pos)
+-    
+-    if success:
+-        # Analyze spawned units
+-        spawned_units = []
+-        for entity in battle.entities.values():
+-            if (hasattr(entity, 'card_stats') and entity.card_stats and 
+-                getattr(entity, 'player_id', -1) == 0 and
+-                entity.card_stats.name == card_name):
+-                spawned_units.append(entity)
+-        
+-        print(f"✅ Deployed successfully: {len(spawned_units)} units")
+-        
+-        # Check positions
+-        positions = [(unit.position.x, unit.position.y) for unit in spawned_units]
+-        positions.sort()  # Sort by x coordinate
+-        
+-        print(f"Unit positions (x, y):")
+-        for i, (x, y) in enumerate(positions):
+-            print(f"  Unit {i+1}: ({x:.2f}, {y:.2f})")
+-        
+-        # Check spacing
+-        if len(positions) >= 2:
+-            spacings = []
+-            for i in range(1, len(positions)):
+-                spacing = positions[i][0] - positions[i-1][0]
+-                spacings.append(spacing)
+-            
+-            avg_spacing = sum(spacings) / len(spacings)
+-            print(f"Average spacing: {avg_spacing:.2f} tiles (expected: 2.5)")
+-            
+-            if 2.4 <= avg_spacing <= 2.6:
+-                print("✅ Correct spacing")
+-            else:
+-                print("❌ Incorrect spacing")
+-        
+-        # Check line formation (all units should have same Y coordinate)
+-        y_coords = [pos[1] for pos in positions]
+-        if len(set(y_coords)) == 1:
+-            print("✅ All units in horizontal line")
+-        else:
+-            print("❌ Units not in horizontal line")
+-        
+-        # Check if line is centered on deploy position
+-        if positions:
+-            leftmost_x = positions[0][0]
+-            rightmost_x = positions[-1][0]
+-            line_center = (leftmost_x + rightmost_x) / 2
+-            center_offset = abs(line_center - deploy_pos.x)
+-            print(f"Line center: {line_center:.2f}, Deploy center: {deploy_pos.x}, Offset: {center_offset:.2f}")
+-            
+-            if center_offset <= 0.1:
+-                print("✅ Line correctly centered on deploy position")
+-            else:
+-                print("❌ Line not centered on deploy position")
+-    else:
+-        print("❌ Deployment failed")
+-    
+-    # Test 2: Deploy outside center 6 tiles (should fail)
+-    print(f"\n--- Test 2: Deploy outside center 6 tiles (5, 8) ---")
+-    battle.entities = {k: v for k, v in battle.entities.items() if isinstance(v, Building)}
+-    battle.players[0].elixir = 50.0
+-    battle.players[0].hand = [card_name, 'Knight', 'Fireball', 'Arrows']
+-    
+-    invalid_pos = Position(5, 8)  # Outside center 6 tiles (6-11)
+-    success = battle.deploy_card(0, card_name, invalid_pos)
+-    
+-    if success:
+-        print("❌ Deployment should have failed outside center 6 tiles")
+-    else:
+-        print("✅ Deployment correctly failed outside center 6 tiles")
+-    
+-    # Test 3: Deploy at edge of center zone (should work)
+-    print(f"\n--- Test 3: Deploy at edge of center zone (6, 8) ---")
+-    battle.entities = {k: v for k, v in battle.entities.items() if isinstance(v, Building)}
+-    battle.players[0].elixir = 50.0
+-    battle.players[0].hand = [card_name, 'Knight', 'Fireball', 'Arrows']
+-    
+-    edge_pos = Position(6, 8)  # Edge of center 6 tiles
+-    success = battle.deploy_card(0, card_name, edge_pos)
+-    
+-    if success:
+-        spawned_units = []
+-        for entity in battle.entities.values():
+-            if (hasattr(entity, 'card_stats') and entity.card_stats and 
+-                getattr(entity, 'player_id', -1) == 0 and
+-                entity.card_stats.name == card_name):
+-                spawned_units.append(entity)
+-        
+-        print(f"✅ Deployed at edge: {len(spawned_units)} units")
+-        
+-        # Check that no units are outside arena bounds
+-        out_of_bounds = 0
+-        for unit in spawned_units:
+-            if unit.position.x < 0.5 or unit.position.x > 17.5:
+-                out_of_bounds += 1
+-        
+-        if out_of_bounds == 0:
+-            print("✅ All units within arena bounds")
+-        else:
+-            print(f"❌ {out_of_bounds} units outside arena bounds")
+-    else:
+-        print("❌ Deployment failed at valid edge position")
+-
+-if __name__ == "__main__":
+-    test_royal_recruits_deployment()
+\ No newline at end of file
+diff --git a/test_tower_collision.py b/test_tower_collision.py
+deleted file mode 100644
+index 06bc4b7..0000000
+--- a/test_tower_collision.py
++++ /dev/null
+@@ -1,125 +0,0 @@
+-#!/usr/bin/env python3
+-"""
+-Test tower collision detection for troop deployments
+-"""
+-
+-import sys
+-sys.path.append('src')
+-
+-from clasher.battle import BattleState
+-from clasher.arena import Position
+-from clasher.data import CardDataLoader
+-
+-def test_tower_collision_detection():
+-    """Test that troops cannot be deployed on tower tiles"""
+-    
+-    print("=== Testing Tower Collision Detection ===")
+-    
+-    # Create battle state
+-    battle = BattleState()
+-    
+-    # Load cards
+-    card_loader = CardDataLoader()
+-    cards = card_loader.load_cards()
+-    
+-    # Give player full elixir
+-    battle.players[0].elixir = 50.0
+-    
+-    # Test regular troop deployment
+-    card_name = 'Knight'
+-    if card_name not in cards:
+-        print(f"❌ {card_name} not found")
+-        return
+-    
+-    battle.players[0].hand = [card_name, 'Fireball', 'Arrows', 'Skeletons']
+-    
+-    # Test 1: Try to deploy on Blue King Tower (4x4 area around 9, 2.5)
+-    print(f"\n--- Test 1: Deploy {card_name} on Blue King Tower ---")
+-    king_tower_pos = Position(9.0, 2.5)  # Exact center
+-    success = battle.deploy_card(0, card_name, king_tower_pos)
+-    
+-    if success:
+-        print("❌ Deployment should have failed on king tower")
+-    else:
+-        print("✅ Deployment correctly failed on king tower")
+-    
+-    # Test 2: Try to deploy on Blue Left Princess Tower (3x3 area around 3.5, 6.5)
+-    print(f"\n--- Test 2: Deploy {card_name} on Blue Left Princess Tower ---")
+-    princess_tower_pos = Position(3.5, 6.5)  # Exact center
+-    success = battle.deploy_card(0, card_name, princess_tower_pos)
+-    
+-    if success:
+-        print("❌ Deployment should have failed on princess tower")
+-    else:
+-        print("✅ Deployment correctly failed on princess tower")
+-    
+-    # Test 3: Try to deploy near tower edge (should fail)
+-    print(f"\n--- Test 3: Deploy {card_name} on tower edge ---")
+-    tower_edge_pos = Position(4.5, 6.5)  # Edge of 3x3 princess tower area
+-    success = battle.deploy_card(0, card_name, tower_edge_pos)
+-    
+-    if success:
+-        print("❌ Deployment should have failed on tower edge")
+-    else:
+-        print("✅ Deployment correctly failed on tower edge")
+-    
+-    # Test 4: Deploy just outside tower area (should succeed)
+-    print(f"\n--- Test 4: Deploy {card_name} just outside tower area ---")
+-    safe_pos = Position(6.0, 6.5)  # Just outside 3x3 princess tower area
+-    success = battle.deploy_card(0, card_name, safe_pos)
+-    
+-    if success:
+-        print("✅ Deployment succeeded in safe area")
+-    else:
+-        print("❌ Deployment should have succeeded in safe area")
+-    
+-    # Test 5: Check blocked ranges for Royal Recruits
+-    print(f"\n--- Test 5: Check blocked X ranges for Royal Recruits ---")
+-    
+-    # Test at different Y coordinates
+-    test_y_coords = [2.5, 6.5, 8.0, 25.5, 29.5]
+-    
+-    for y in test_y_coords:
+-        blocked_ranges = battle.arena.get_tower_blocked_x_ranges(y, battle)
+-        print(f"Y={y}: Blocked X ranges: {blocked_ranges}")
+-    
+-    # Test 6: Royal Recruits deployment near towers
+-    print(f"\n--- Test 6: Royal Recruits deployment tests ---")
+-    
+-    card_name = 'RoyalRecruits'
+-    if card_name in cards:
+-        battle.players[0].hand = [card_name, 'Fireball', 'Arrows', 'Skeletons']
+-        battle.players[0].elixir = 50.0
+-        
+-        # Try to deploy at Y coordinate that intersects with princess towers
+-        recruit_pos = Position(9.0, 6.5)  # Y=6.5 intersects with princess towers
+-        success = battle.deploy_card(0, card_name, recruit_pos)
+-        
+-        if success:
+-            print("✅ Royal Recruits deployed successfully with tower avoidance")
+-            
+-            # Check where recruits actually spawned
+-            recruits = []
+-            for entity in battle.entities.values():
+-                if (hasattr(entity, 'card_stats') and entity.card_stats and 
+-                    entity.card_stats.name == card_name and
+-                    getattr(entity, 'player_id', -1) == 0):
+-                    recruits.append(entity)
+-            
+-            print(f"Royal Recruits positions:")
+-            for i, recruit in enumerate(recruits):
+-                pos = recruit.position
+-                print(f"  Recruit {i+1}: ({pos.x:.2f}, {pos.y:.2f})")
+-                
+-                # Check if any recruit is on a tower
+-                if battle.arena.is_tower_tile(pos, battle):
+-                    print(f"    ❌ Recruit {i+1} is on a tower!")
+-                else:
+-                    print(f"    ✅ Recruit {i+1} is in safe position")
+-        else:
+-            print("❌ Royal Recruits deployment failed")
+-    else:
+-        print("❌ RoyalRecruits not found in cards")
+-
+-if __name__ == "__main__":
+-    test_tower_collision_detection()
+\ No newline at end of file
+diff --git a/visualize_battle.py b/visualize_battle.py
+index 5713553..1dffb9f 100644
+--- a/visualize_battle.py
++++ b/visualize_battle.py
+@@ -370,17 +370,33 @@ class BattleVisualizer:
+             elif entity_type in ["Projectile", "SpawnProjectile"]:
+                 # Draw projectile (moving missile)
+                 projectile_radius = 4
++                
++                # Draw AoE radius at target position (like AreaEffect spells)
++                if hasattr(entity, 'target_position') and hasattr(entity, 'splash_radius') and entity.splash_radius > 0:
++                    target_screen_x, target_screen_y = self.world_to_screen(entity.target_position.x, entity.target_position.y)
++                    aoe_radius_pixels = int(entity.splash_radius * self.tile_size)
++                    # Draw AoE circle at target location (same style as AreaEffect)
++                    pygame.draw.circle(self.screen, (255, 255, 0, 100), (target_screen_x, target_screen_y), aoe_radius_pixels, 3)
++                    # Draw smaller target marker in center
++                    pygame.draw.circle(self.screen, (255, 200, 0), (target_screen_x, target_screen_y), 3)
++                
+                 # Draw projectile trail
+                 if hasattr(entity, 'target_position'):
+                     start_x, start_y = self.world_to_screen(entity.position.x, entity.position.y)
+                     end_x, end_y = self.world_to_screen(entity.target_position.x, entity.target_position.y)
+                     pygame.draw.line(self.screen, (255, 255, 255, 128), (start_x, start_y), (end_x, end_y), 1)
++                
+                 # Draw projectile
+                 pygame.draw.circle(self.screen, color, (screen_x, screen_y), projectile_radius)
+                 pygame.draw.circle(self.screen, BLACK, (screen_x, screen_y), projectile_radius, 1)
+-                # Add actual spell name
+-                spell_name = getattr(entity, 'spell_name', 'PROJECTILE')
+-                spell_text = self.small_font.render(spell_name.upper(), True, BLACK)
++                
++                # Add projectile source name
++                source_name = getattr(entity, 'source_name', getattr(entity, 'spell_name', 'PROJECTILE'))
++                display_text = f"{source_name.upper()}"
++                if hasattr(entity, 'splash_radius') and entity.splash_radius > 0:
++                    display_text += f" ({entity.splash_radius:.1f}R)"
++                
++                spell_text = self.small_font.render(display_text, True, BLACK)
+                 text_rect = spell_text.get_rect(center=(screen_x, screen_y - 15))
+                 self.screen.blit(spell_text, text_rect)
+                 continue
+@@ -450,6 +466,33 @@ class BattleVisualizer:
+                 pygame.draw.circle(self.screen, color, (screen_x, screen_y), visual_radius)
+                 pygame.draw.circle(self.screen, BLACK, (screen_x, screen_y), visual_radius, 2)
+             
++            # Draw AoE radius for ground troops with area damage (only for 0.5 seconds after attack)
++            if (entity_type in ["Troop", "Building"] and 
++                hasattr(entity, 'card_stats') and entity.card_stats):
++                area_damage_radius = getattr(entity.card_stats, 'area_damage_radius', None)
++                projectile_speed = getattr(entity.card_stats, 'projectile_speed', None)
++                
++                # Only show AoE for true melee units (not ranged units like Princess)
++                # Exclude units that have projectile_speed (they're ranged units)
++                is_melee_with_aoe = (area_damage_radius and area_damage_radius > 0 and 
++                                    (not projectile_speed or projectile_speed == 0))
++                
++                if is_melee_with_aoe and hasattr(entity, 'last_attack_time'):
++                    # Only show AoE circle for 0.5 seconds after attack
++                    time_since_attack = self.battle.time - entity.last_attack_time
++                    if 0 <= time_since_attack <= 0.5:
++                        # Convert from game units to tiles to pixels
++                        aoe_radius_tiles = area_damage_radius / 1000.0
++                        aoe_radius_pixels = int(aoe_radius_tiles * self.tile_size)
++                        
++                        # Fade the circle over time (bright at start, fade to transparent)
++                        alpha = int(255 * (1.0 - time_since_attack / 0.5))
++                        
++                        # Draw AoE circle (red for ground troops)
++                        pygame.draw.circle(self.screen, (255, 100, 100), (screen_x, screen_y), aoe_radius_pixels, 3)
++                        # Draw smaller center marker
++                        pygame.draw.circle(self.screen, (200, 50, 50), (screen_x, screen_y), 3)
++            
+             # Health bar positioned above hitbox
+             if hasattr(entity, 'hitpoints') and hasattr(entity, 'max_hitpoints'):
+                 health_ratio = entity.hitpoints / entity.max_hitpoints

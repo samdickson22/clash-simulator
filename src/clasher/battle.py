@@ -46,14 +46,16 @@ class BattleState:
             id=0,
             mana_cost=0,
             rarity="",
-            hitpoints=1400,  # Level 1 from JSON: "hitpoints": 1400
-            damage=50,       # Level 1 from JSON: projectileData "damage": 50
+            hitpoints=1400,  # Level 1 base stats - will be scaled to level 11
+            damage=50,       # Level 1 base stats - will be scaled to level 11
             range=7.5,       # From JSON: "range": 7500 (7.5 tiles)
             sight_range=7.5, # From JSON: "sightRange": 7500 (7.5 tiles)
             load_time=800,
             hit_speed=800,   # From JSON: "hitSpeed": 800
             attacks_air=True,  # Towers can attack air units
             target_type="TID_TARGETS_AIR_AND_GROUND",  # From JSON: "tidTarget": "TID_TARGETS_AIR_AND_GROUND"
+            projectile_speed=600,  # From JSON: projectileData "speed": 600
+            projectile_data={'speed': 600, 'damage': 50},  # Tower projectile data (will be scaled to level 11)
             level=11  # Standard tournament level
         )
         
@@ -70,6 +72,8 @@ class BattleState:
             hit_speed=1000,     # King tower attacks once per second (1000ms)
             attacks_air=True,   # King tower can attack air units
             target_type="TID_TARGETS_AIR_AND_GROUND",  # Explicit air targeting
+            projectile_speed=600,  # Same as Princess Tower
+            projectile_data={'speed': 600, 'damage': 109},  # King tower projectile data (base level 1)
             level=1   # Base level stats (no scaling needed)
         )
         

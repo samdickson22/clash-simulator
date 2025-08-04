@@ -47,6 +47,13 @@ class Entity(ABC):
     is_alive: bool = True
     is_air_unit: bool = False  # True for flying troops like Minions, Balloon, Dragon
     
+    # Status effects
+    stun_timer: float = 0.0
+    slow_timer: float = 0.0
+    slow_multiplier: float = 1.0
+    original_speed: Optional[float] = None
+    last_attack_time: float = 0.0  # For visualization tracking
+    
     def __post_init__(self) -> None:
         if self.max_hitpoints == 0:
             self.max_hitpoints = self.hitpoints
@@ -61,6 +68,75 @@ class Entity(ABC):
         self.hitpoints = max(0, self.hitpoints - amount)
         if self.hitpoints <= 0:
             self.is_alive = False
+    
+    def _deal_attack_damage(self, primary_target: 'Entity', damage: float, battle_state: 'BattleState') -> None:
+        """Deal damage to target, with splash damage if applicable"""
+        if not primary_target.is_alive:
+            return
+        
+        # Record attack time for AoE visualization
+        self.last_attack_time = battle_state.time
+        
+        # Get area damage radius from different possible sources
+        area_damage_radius = None
+        if hasattr(self.card_stats, 'area_damage_radius') and self.card_stats.area_damage_radius:
+            area_damage_radius = self.card_stats.area_damage_radius / 1000.0
+        elif hasattr(self.card_stats, 'projectile_splash_radius') and self.card_stats.projectile_splash_radius:
+            area_damage_radius = self.card_stats.projectile_splash_radius / 1000.0
+        
+        # Deal damage to primary target
+        primary_target.take_damage(damage)
+        
+        # Deal splash damage if this unit has area damage
+        if area_damage_radius and area_damage_radius > 0:
+            # Find all entities within splash radius
+            for entity in battle_state.entities.values():
+                if entity == primary_target or entity.player_id == self.player_id:
+                    continue
+                
+                # Check distance using hitbox overlap detection
+                entity_distance = primary_target.position.distance_to(entity.position)
+                
+                # Calculate combined radius for overlap check
+                primary_radius = getattr(primary_target.card_stats, 'collision_radius', 0.5) or 0.5
+                entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
+                
+                # Check if splash radius overlaps with entity hitbox
+                if entity_distance <= (area_damage_radius + entity_radius):
+                    entity.take_damage(damage)
+    
+    def apply_stun(self, duration: float) -> None:
+        """Apply stun effect for specified duration"""
+        self.stun_timer = max(self.stun_timer, duration)
+        
+    def apply_slow(self, duration: float, multiplier: float) -> None:
+        """Apply slow effect for specified duration"""
+        if hasattr(self, 'speed') and self.original_speed is None:
+            self.original_speed = self.speed
+        self.slow_timer = max(self.slow_timer, duration)
+        self.slow_multiplier = min(self.slow_multiplier, multiplier)
+        if hasattr(self, 'speed'):
+            self.speed = self.original_speed * self.slow_multiplier
+    
+    def update_status_effects(self, dt: float) -> None:
+        """Update status effect timers"""
+        # Update stun timer
+        if self.stun_timer > 0:
+            self.stun_timer -= dt
+        
+        # Update slow timer and restore speed when expired
+        if self.slow_timer > 0:
+            self.slow_timer -= dt
+            if self.slow_timer <= 0:
+                # Restore original speed
+                if hasattr(self, 'speed') and self.original_speed is not None:
+                    self.speed = self.original_speed
+                    self.original_speed = None
+                self.slow_multiplier = 1.0
+    
+    def is_stunned(self) -> bool:
+        """Check if entity is currently stunned"""
+        return self.stun_timer > 0
     
     def can_attack_target(self, target: 'Entity') -> bool:
         """Check if this entity can attack the target"""
@@ -173,13 +249,23 @@ class Troop(Entity):
         if not self.is_alive:
             return
         
+        # Update status effects first
+        self.update_status_effects(dt)
+        
+        # If stunned, can't move or attack
+        if self.is_stunned():
+            return
+        
         # Store initial position for distance tracking
         if self.initial_position is None:
             self.initial_position = Position(self.position.x, self.position.y)
         
-        # Update attack cooldown
+        # Update attack cooldown and track time for visualization
         if self.attack_cooldown > 0:
             self.attack_cooldown -= dt
+        
+        # Update last attack time for visualization tracking
+        self.last_attack_time += dt
         
         # Handle charging mechanics based on distance traveled
         if self.card_stats.charge_range and not self.has_charged:
@@ -205,10 +291,16 @@ class Troop(Entity):
             if distance > self.range:
                 self._move_towards_target(current_target, dt, battle_state)
             elif self.attack_cooldown <= 0:
-                # Attack with special charging damage if applicable
-                attack_damage = self._get_attack_damage()
-                current_target.take_damage(attack_damage)
+                # Check if this troop uses projectiles
+                if self._uses_projectiles():
+                    self._create_projectile(current_target, battle_state)
+                else:
+                    # Direct attack with special charging damage if applicable
+                    attack_damage = self._get_attack_damage()
+                    self._deal_attack_damage(current_target, attack_damage, battle_state)
+                
                 self.attack_cooldown = self.card_stats.hit_speed / 1000.0 if self.card_stats.hit_speed else 1.0
+                self.last_attack_time = 0.0  # Reset for visualization
                 self._on_attack()  # Handle post-attack mechanics
     
     def _get_attack_damage(self) -> float:
@@ -217,6 +309,50 @@ class Troop(Entity):
             # Use special damage for first charge attack
             return float(self.card_stats.damage_special or self.damage)
         return float(self.damage)
+    
+    def _uses_projectiles(self) -> bool:
+        """Check if this troop uses projectiles for attacks"""
+        return (self.card_stats and 
+                hasattr(self.card_stats, 'projectile_data') and 
+                self.card_stats.projectile_data is not None)
+    
+    def _create_projectile(self, target: 'Entity', battle_state: 'BattleState') -> None:
+        """Create a projectile towards the target"""
+        if not self.card_stats or not self.card_stats.projectile_data:
+            # Fallback to direct attack if no projectile data
+            attack_damage = self._get_attack_damage()
+            target.take_damage(attack_damage)
+            return
+        
+        # Get projectile properties
+        projectile_data = self.card_stats.projectile_data
+        projectile_damage = self.damage  # Use entity's scaled damage instead of base projectile damage
+        projectile_speed = projectile_data.get('speed', 500) / 60.0  # Convert from per-minute to per-second
+        splash_radius = projectile_data.get('radius', 0) / 1000.0 if projectile_data.get('radius') else 0.0
+        
+        # Use charging damage if applicable
+        if self.is_charging and self.card_stats.damage_special:
+            projectile_damage = self.card_stats.damage_special
+        
+        # Create projectile entity
+        projectile = Projectile(
+            id=battle_state.next_entity_id,
+            position=Position(self.position.x, self.position.y),
+            player_id=self.player_id,
+            card_stats=self.card_stats,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=projectile_damage,
+            range=self.range,
+            sight_range=1.0,
+            target_position=Position(target.position.x, target.position.y),
+            travel_speed=projectile_speed,
+            splash_radius=splash_radius,
+            source_name=self.card_stats.name if self.card_stats else "Unknown"
+        )
+        
+        battle_state.entities[projectile.id] = projectile
+        battle_state.next_entity_id += 1
     
     def _on_attack(self) -> None:
         """Handle post-attack mechanics like charging state reset"""
@@ -538,15 +674,71 @@ class Building(Entity):
         if not self.is_alive:
             return
         
-        # Update attack cooldown
+        # Update status effects
+        self.update_status_effects(dt)
+        
+        # If stunned, can't attack
+        if self.is_stunned():
+            return
+        
+        # Update attack cooldown and track time for visualization
         if self.attack_cooldown > 0:
             self.attack_cooldown -= dt
+        
+        # Update last attack time for visualization tracking
+        self.last_attack_time += dt
         
         # Find and attack target
         target = self.get_nearest_target(battle_state.entities)
         if target and self.can_attack_target(target) and self.attack_cooldown <= 0:
-            target.take_damage(self.damage)
+            # Check if this building uses projectiles
+            if self._uses_projectiles():
+                self._create_projectile(target, battle_state)
+            else:
+                # Direct attack
+                self._deal_attack_damage(target, self.damage, battle_state)
+            
             self.attack_cooldown = self.card_stats.hit_speed / 1000.0 if self.card_stats.hit_speed else 1.0
+            self.last_attack_time = 0.0  # Reset for visualization
+    
+    def _uses_projectiles(self) -> bool:
+        """Check if this building uses projectiles for attacks"""
+        return (self.card_stats and 
+                hasattr(self.card_stats, 'projectile_data') and 
+                self.card_stats.projectile_data is not None)
+    
+    def _create_projectile(self, target: 'Entity', battle_state: 'BattleState') -> None:
+        """Create a projectile towards the target"""
+        if not self.card_stats or not self.card_stats.projectile_data:
+            # Fallback to direct attack if no projectile data
+            target.take_damage(self.damage)
+            return
+        
+        # Get projectile properties
+        projectile_data = self.card_stats.projectile_data
+        projectile_damage = self.damage  # Use entity's scaled damage instead of base projectile damage
+        projectile_speed = projectile_data.get('speed', 500) / 60.0  # Convert from per-minute to per-second
+        splash_radius = projectile_data.get('radius', 0) / 1000.0 if projectile_data.get('radius') else 0.0
+        
+        # Create projectile entity
+        projectile = Projectile(
+            id=battle_state.next_entity_id,
+            position=Position(self.position.x, self.position.y),
+            player_id=self.player_id,
+            card_stats=self.card_stats,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=projectile_damage,
+            range=self.range,
+            sight_range=1.0,
+            target_position=Position(target.position.x, target.position.y),
+            travel_speed=projectile_speed,
+            splash_radius=splash_radius,
+            source_name=self.card_stats.name if self.card_stats else "Unknown"
+        )
+        
+        battle_state.entities[projectile.id] = projectile
+        battle_state.next_entity_id += 1
 
 
 @dataclass
@@ -554,6 +746,7 @@ class Projectile(Entity):
     target_position: Position = field(default_factory=lambda: Position(0, 0))
     travel_speed: float = 5.0
     splash_radius: float = 0.0
+    source_name: str = "Unknown"  # Name of unit that fired this projectile
     
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update projectile - move towards target"""
@@ -584,14 +777,28 @@ class Projectile(Entity):
             self.position.y += move_y
     
     def _deal_splash_damage(self, battle_state: 'BattleState') -> None:
-        """Deal damage to entities in splash radius"""
+        """Deal damage to entities in splash radius using hitbox overlap detection"""
         for entity in battle_state.entities.values():
             if entity.player_id == self.player_id or not entity.is_alive:
                 continue
             
-            distance = entity.position.distance_to(self.target_position)
-            if distance <= self.splash_radius:
+            # Use hitbox-based collision detection for more accurate splash damage
+            if self._hitbox_overlaps_with_splash(entity):
                 entity.take_damage(self.damage)
+    
+    def _hitbox_overlaps_with_splash(self, entity: 'Entity') -> bool:
+        """Check if entity's hitbox overlaps with splash damage radius"""
+        # Get entity collision radius (default to 0.5 tiles if not specified or None)
+        if entity.card_stats and hasattr(entity.card_stats, 'collision_radius') and entity.card_stats.collision_radius is not None:
+            entity_radius = entity.card_stats.collision_radius
+        else:
+            entity_radius = 0.5
+        
+        # Calculate distance between projectile impact and entity center
+        distance = entity.position.distance_to(self.target_position)
+        
+        # Check if splash radius overlaps with entity hitbox
+        return distance <= (self.splash_radius + entity_radius)
 
 
 @dataclass 
@@ -615,6 +822,10 @@ class AreaEffect(Entity):
     time_alive: float = 0.0
     affected_entities: set = field(default_factory=set)
     
+    # Tornado-specific properties
+    pull_force: float = 0.0
+    is_tornado: bool = False
+    
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update area effect - apply effects and check duration"""
         if not self.is_alive:
@@ -632,8 +843,14 @@ class AreaEffect(Entity):
             if entity.player_id == self.player_id or not entity.is_alive or entity == self:
                 continue
             
-            distance = entity.position.distance_to(self.position)
-            if distance <= self.radius:
+            # Use hitbox-based collision detection  
+            if self._hitbox_overlaps_with_radius(entity):
+                distance = entity.position.distance_to(self.position)
+                
+                # Apply tornado pull effect
+                if self.is_tornado and self.pull_force > 0:
+                    self._apply_tornado_pull(entity, distance, dt)
+                
                 # Apply freeze effect
                 if self.freeze_effect and entity.id not in self.affected_entities:
                     if hasattr(entity, 'speed'):
@@ -652,6 +869,46 @@ class AreaEffect(Entity):
                     if hasattr(entity, 'original_speed'):
                         entity.speed = entity.original_speed
                     self.affected_entities.discard(entity.id)
+    
+    def _apply_tornado_pull(self, entity: 'Entity', distance: float, dt: float) -> None:
+        """Pull entity towards tornado center"""
+        if distance == 0:
+            return
+        
+        # Calculate pull vector towards tornado center
+        dx = self.position.x - entity.position.x
+        dy = self.position.y - entity.position.y
+        
+        # Normalize and apply pull force
+        pull_distance = self.pull_force * dt
+        
+        # Don't pull past the center
+        if pull_distance > distance:
+            pull_distance = distance * 0.9  # Stop just short of center
+        
+        pull_x = (dx / distance) * pull_distance
+        pull_y = (dy / distance) * pull_distance
+        
+        # Apply pull movement (air units can be pulled anywhere, ground units need walkable space)
+        new_position = Position(entity.position.x + pull_x, entity.position.y + pull_y)
+        
+        if getattr(entity, 'is_air_unit', False) or battle_state.arena.is_walkable(new_position):
+            entity.position.x += pull_x
+            entity.position.y += pull_y
+    
+    def _hitbox_overlaps_with_radius(self, entity: 'Entity') -> bool:
+        """Check if entity's hitbox overlaps with area effect radius"""
+        # Get entity collision radius (default to 0.5 tiles if not specified or None)
+        if entity.card_stats and hasattr(entity.card_stats, 'collision_radius') and entity.card_stats.collision_radius is not None:
+            entity_radius = entity.card_stats.collision_radius
+        else:
+            entity_radius = 0.5
+        
+        # Calculate distance between area center and entity center
+        distance = entity.position.distance_to(self.position)
+        
+        # Check if area radius overlaps with entity hitbox
+        return distance <= (self.radius + entity_radius)
 
 
 @dataclass
@@ -786,11 +1043,8 @@ class RollingProjectile(Entity):
             if getattr(entity, 'is_air_unit', False):
                 continue
             
-            # Check if entity is in rectangular rolling hitbox
-            dx = abs(entity.position.x - self.position.x)
-            dy = abs(entity.position.y - self.position.y)
-            
-            if dx <= self.rolling_radius and dy <= self.radius_y:
+            # Check if entity is in rectangular rolling hitbox with entity collision radius
+            if self._hitbox_overlaps_with_rolling_path(entity):
                 # Hit the entity
                 entity.take_damage(self.damage)
                 self.hit_entities.add(entity.id)
@@ -824,6 +1078,21 @@ class RollingProjectile(Entity):
         entity.position.x = max(0.5, min(17.5, entity.position.x))  # Keep within arena width
         entity.position.y = max(0.5, min(31.5, entity.position.y))  # Keep within arena height
     
+    def _hitbox_overlaps_with_rolling_path(self, entity: 'Entity') -> bool:
+        """Check if entity's hitbox overlaps with rolling projectile path"""
+        # Get entity collision radius (default to 0.5 tiles if not specified or None)
+        if entity.card_stats and hasattr(entity.card_stats, 'collision_radius') and entity.card_stats.collision_radius is not None:
+            entity_radius = entity.card_stats.collision_radius
+        else:
+            entity_radius = 0.5
+        
+        # Calculate distance components
+        dx = abs(entity.position.x - self.position.x)
+        dy = abs(entity.position.y - self.position.y)
+        
+        # Check if entity hitbox overlaps with rectangular rolling area
+        return dx <= (self.rolling_radius + entity_radius) and dy <= (self.radius_y + entity_radius)
+    
     def _spawn_character(self, battle_state: 'BattleState') -> None:
         """Spawn character at end of roll (Barbarian Barrel)"""
         if not self.spawn_character_data:
@@ -856,3 +1125,188 @@ class RollingProjectile(Entity):
         # Spawn character at current position
         battle_state._spawn_troop(Position(self.position.x, self.position.y), self.player_id, spawn_stats)
         self.has_spawned_character = True
+
+
+@dataclass
+class TimedExplosive(Entity):
+    """Entity that explodes after a countdown timer (death bombs, balloon bombs)"""
+    explosion_timer: float = 3.0
+    explosion_radius: float = 1.5
+    explosion_damage: float = 600.0
+    time_alive: float = 0.0
+    
+    def update(self, dt: float, battle_state: 'BattleState') -> None:
+        """Update timed explosive - countdown and explode"""
+        if not self.is_alive:
+            return
+            
+        self.time_alive += dt
+        
+        # Check if timer expired
+        if self.time_alive >= self.explosion_timer:
+            self._explode(battle_state)
+            self.is_alive = False
+    
+    def _explode(self, battle_state: 'BattleState') -> None:
+        """Deal explosion damage to entities in radius using hitbox collision"""
+        for entity in battle_state.entities.values():
+            if entity.player_id == self.player_id or not entity.is_alive or entity == self:
+                continue
+            
+            # Use hitbox-based collision detection for explosion
+            if self._hitbox_overlaps_with_explosion(entity):
+                entity.take_damage(self.explosion_damage)
+    
+    def _hitbox_overlaps_with_explosion(self, entity: 'Entity') -> bool:
+        """Check if entity's hitbox overlaps with explosion radius"""
+        # Get entity collision radius (default to 0.5 tiles if not specified or None)
+        if entity.card_stats and hasattr(entity.card_stats, 'collision_radius') and entity.card_stats.collision_radius is not None:
+            entity_radius = entity.card_stats.collision_radius
+        else:
+            entity_radius = 0.5
+        
+        # Calculate distance between explosion center and entity center
+        distance = entity.position.distance_to(self.position)
+        
+        # Check if explosion radius overlaps with entity hitbox
+        return distance <= (self.explosion_radius + entity_radius)
+
+
+@dataclass
+class Graveyard(Entity):
+    """Entity that periodically spawns skeletons in an area"""
+    spawn_interval: float = 0.5
+    max_skeletons: int = 20
+    spawn_radius: float = 2.5
+    duration: float = 10.0
+    skeleton_data: dict = None
+    time_alive: float = 0.0
+    time_since_spawn: float = 0.0
+    skeletons_spawned: int = 0
+    
+    def update(self, dt: float, battle_state: 'BattleState') -> None:
+        """Update graveyard - spawn skeletons periodically"""
+        if not self.is_alive:
+            return
+            
+        self.time_alive += dt
+        self.time_since_spawn += dt
+        
+        # Check if duration expired
+        if self.time_alive >= self.duration:
+            self.is_alive = False
+            return
+        
+        # Spawn skeleton if it's time and haven't reached max
+        if (self.time_since_spawn >= self.spawn_interval and 
+            self.skeletons_spawned < self.max_skeletons):
+            self._spawn_skeleton(battle_state)
+            self.time_since_spawn = 0.0
+            self.skeletons_spawned += 1
+    
+    def _spawn_skeleton(self, battle_state: 'BattleState') -> None:
+        """Spawn a skeleton at random position in radius"""
+        import math
+        import random
+        
+        if not self.skeleton_data:
+            return
+        
+        from .data import CardStats
+        
+        # Create skeleton stats
+        skeleton_stats = CardStats(
+            name="Skeleton",
+            id=0,
+            mana_cost=0,
+            rarity="Common",
+            hitpoints=self.skeleton_data.get("hitpoints", 67),
+            damage=self.skeleton_data.get("damage", 67),
+            speed=float(self.skeleton_data.get("speed", 60)),
+            range=self.skeleton_data.get("range", 500) / 1000.0,
+            sight_range=self.skeleton_data.get("sightRange", 5500) / 1000.0,
+            hit_speed=self.skeleton_data.get("hitSpeed", 1000),
+            deploy_time=self.skeleton_data.get("deployTime", 1000),
+            load_time=self.skeleton_data.get("loadTime", 1000),
+            collision_radius=self.skeleton_data.get("collisionRadius", 300) / 1000.0,
+            attacks_ground=self.skeleton_data.get("attacksGround", True),
+            attacks_air=False,
+            targets_only_buildings=False,
+            target_type=self.skeleton_data.get("tidTarget")
+        )
+        
+        # Random position within spawn radius
+        angle = random.random() * 2 * math.pi
+        distance = random.random() * self.spawn_radius
+        spawn_x = self.position.x + distance * math.cos(angle)
+        spawn_y = self.position.y + distance * math.sin(angle)
+        
+        # Spawn the skeleton
+        battle_state._spawn_troop(Position(spawn_x, spawn_y), self.player_id, skeleton_stats)
+
+
+@dataclass
+class SpawnBuilding(Building):
+    """Building that periodically generates troops"""
+    spawn_interval: float = 14.0
+    spawn_character: str = "Barbarian"
+    spawn_character_data: dict = None
+    time_since_spawn: float = 0.0
+    
+    def update(self, dt: float, battle_state: 'BattleState') -> None:
+        """Update spawn building - attack and spawn troops"""
+        # Call parent update for normal building behavior
+        super().update(dt, battle_state)
+        
+        if not self.is_alive:
+            return
+        
+        # Update spawn timer
+        self.time_since_spawn += dt
+        
+        # Spawn troop if it's time
+        if self.time_since_spawn >= self.spawn_interval:
+            self._spawn_troop(battle_state)
+            self.time_since_spawn = 0.0
+    
+    def _spawn_troop(self, battle_state: 'BattleState') -> None:
+        """Spawn a troop near the building"""
+        if not self.spawn_character_data:
+            return
+        
+        from .data import CardStats
+        
+        # Create spawn character stats
+        spawn_stats = CardStats(
+            name=self.spawn_character,
+            id=0,
+            mana_cost=0,
+            rarity="Common",
+            hitpoints=self.spawn_character_data.get("hitpoints", 100),
+            damage=self.spawn_character_data.get("damage", 10),
+            speed=float(self.spawn_character_data.get("speed", 60)),
+            range=self.spawn_character_data.get("range", 1000) / 1000.0,
+            sight_range=self.spawn_character_data.get("sightRange", 5500) / 1000.0,
+            hit_speed=self.spawn_character_data.get("hitSpeed", 1000),
+            deploy_time=self.spawn_character_data.get("deployTime", 1000),
+            load_time=self.spawn_character_data.get("loadTime", 1000),
+            collision_radius=self.spawn_character_data.get("collisionRadius", 500) / 1000.0,
+            attacks_ground=self.spawn_character_data.get("attacksGround", True),
+            attacks_air=False,
+            targets_only_buildings=False,
+            target_type=self.spawn_character_data.get("tidTarget")
+        )
+        
+        # Spawn near the building (offset by 1 tile)
+        spawn_positions = [
+            Position(self.position.x + 1.0, self.position.y),
+            Position(self.position.x - 1.0, self.position.y),
+            Position(self.position.x, self.position.y + 1.0),
+            Position(self.position.x, self.position.y - 1.0)
+        ]
+        
+        # Find first valid spawn position
+        for spawn_pos in spawn_positions:
+            if battle_state.arena.is_walkable(spawn_pos):
+                battle_state._spawn_troop(spawn_pos, self.player_id, spawn_stats)
+                break
