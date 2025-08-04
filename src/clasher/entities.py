@@ -179,6 +179,10 @@ class Entity(ABC):
             # Only check if entity is valid target (excludes spell entities)
             if not self._is_valid_target(entity):
                 continue
+
+            # Additional safety: never target spell entities explicitly by class types
+            if isinstance(entity, (Projectile, SpawnProjectile, RollingProjectile, AreaEffect)):
+                continue
                 
             distance = self.position.distance_to(entity.position)
             
@@ -334,24 +338,65 @@ class Troop(Entity):
         if self.is_charging and self.card_stats.damage_special:
             projectile_damage = self.card_stats.damage_special
         
-        # Create projectile entity
-        projectile = Projectile(
-            id=battle_state.next_entity_id,
-            position=Position(self.position.x, self.position.y),
-            player_id=self.player_id,
-            card_stats=self.card_stats,
-            hitpoints=1,
-            max_hitpoints=1,
-            damage=projectile_damage,
-            range=self.range,
-            sight_range=1.0,
-            target_position=Position(target.position.x, target.position.y),
-            travel_speed=projectile_speed,
-            splash_radius=splash_radius,
-            source_name=self.card_stats.name if self.card_stats else "Unknown"
-        )
+        # Check if this is Bowler (create rolling projectile)
+        if self.card_stats.name == "Bowler":
+            # Calculate direction to target for angled throwing
+            dx = target.position.x - self.position.x
+            dy = target.position.y - self.position.y
+            distance = (dx * dx + dy * dy) ** 0.5
+            
+            # Normalize direction and calculate end position
+            if distance > 0:
+                direction_x = dx / distance
+                direction_y = dy / distance
+                end_x = self.position.x + direction_x * 7.5  # Roll 7.5 tiles in target direction
+                end_y = self.position.y + direction_y * 7.5
+            else:
+                # Fallback if target is at same position
+                end_x = self.position.x
+                end_y = self.position.y + 7.5  # Roll forward
+            
+            # Create rolling projectile (Bowler boulder) with target direction
+            rolling_projectile = RollingProjectile(
+                id=battle_state.next_entity_id,
+                position=Position(self.position.x, self.position.y),
+                player_id=self.player_id,
+                card_stats=self.card_stats,
+                hitpoints=1,
+                max_hitpoints=1,
+                damage=projectile_damage,
+                range=splash_radius,  # Use splash radius as rolling width
+                sight_range=0,
+                travel_speed=projectile_speed * 60.0,  # Convert back to tiles/min for RollingProjectile
+                projectile_range=7.5,  # 7500 game units = 7.5 tiles
+                spawn_delay=0.0,  # No spawn delay for Bowler
+                spawn_character=None,  # Bowler doesn't spawn units
+                spawn_character_data=None,
+                target_direction_x=direction_x if distance > 0 else 0.0,
+                target_direction_y=direction_y if distance > 0 else 1.0
+            )
+            
+            battle_state.entities[rolling_projectile.id] = rolling_projectile
+        else:
+            # Create regular projectile
+            projectile = Projectile(
+                id=battle_state.next_entity_id,
+                position=Position(self.position.x, self.position.y),
+                player_id=self.player_id,
+                card_stats=self.card_stats,
+                hitpoints=1,
+                max_hitpoints=1,
+                damage=projectile_damage,
+                range=self.range,
+                sight_range=1.0,
+                target_position=Position(target.position.x, target.position.y),
+                travel_speed=projectile_speed,
+                splash_radius=splash_radius,
+                source_name=self.card_stats.name if self.card_stats else "Unknown"
+            )
+            
+            battle_state.entities[projectile.id] = projectile
         
-        battle_state.entities[projectile.id] = projectile
         battle_state.next_entity_id += 1
     
     def _on_attack(self) -> None:
@@ -892,7 +937,7 @@ class AreaEffect(Entity):
         # Apply pull movement (air units can be pulled anywhere, ground units need walkable space)
         new_position = Position(entity.position.x + pull_x, entity.position.y + pull_y)
         
-        if getattr(entity, 'is_air_unit', False) or battle_state.arena.is_walkable(new_position):
+        if getattr(entity, 'is_air_unit', False) or BattleState.arena.is_walkable(new_position):
             entity.position.x += pull_x
             entity.position.y += pull_y
     
@@ -986,6 +1031,9 @@ class RollingProjectile(Entity):
     spawn_character: str = None
     spawn_character_data: dict = None
     radius_y: float = 0.6  # Height of rolling hitbox
+    # Optional custom direction (unit vector); used by Bowler boulder
+    target_direction_x: Optional[float] = None
+    target_direction_y: Optional[float] = None
     
     def __post_init__(self):
         super().__post_init__()
@@ -1013,11 +1061,17 @@ class RollingProjectile(Entity):
         roll_distance = self.travel_speed / 60.0 * dt  # Convert tiles/min to tiles/sec
         self.distance_traveled += roll_distance
         
-        # Determine roll direction (towards enemy side)
-        if self.player_id == 0:  # Blue player rolls towards red side (positive Y)
-            self.position.y += roll_distance
-        else:  # Red player rolls towards blue side (negative Y)
-            self.position.y -= roll_distance
+        # Determine roll direction
+        if self.target_direction_x is not None and self.target_direction_y is not None:
+            # Use custom direction (for Bowler)
+            self.position.x += self.target_direction_x * roll_distance
+            self.position.y += self.target_direction_y * roll_distance
+        else:
+            # Default direction (towards enemy side for Log/Barbarian Barrel)
+            if self.player_id == 0:  # Blue player rolls towards red side (positive Y)
+                self.position.y += roll_distance
+            else:  # Red player rolls towards blue side (negative Y)
+                self.position.y -= roll_distance
         
         # Check if reached max range
         if self.distance_traveled >= self.projectile_range:
@@ -1054,6 +1108,10 @@ class RollingProjectile(Entity):
     
     def _apply_knockback(self, entity: 'Entity') -> None:
         """Apply knockback effect - pushes unit away from Log and resets attack"""
+        # Buildings cannot be knocked back or stunned; they only take damage
+        if isinstance(entity, Building):
+            return
+
         # Reset attack cooldown (stunned briefly)
         if hasattr(entity, 'attack_cooldown'):
             entity.attack_cooldown = max(entity.attack_cooldown, 0.5)
@@ -1061,13 +1119,18 @@ class RollingProjectile(Entity):
         # Physical knockback - push unit away from Log's rolling direction
         knockback_distance = 1.5  # tiles
         
-        # Determine knockback direction based on Log's movement direction
-        if self.player_id == 0:  # Blue player Log rolling toward red side
-            # Push units further toward red side (positive Y)
-            entity.position.y += knockback_distance
-        else:  # Red player Log rolling toward blue side  
-            # Push units further toward blue side (negative Y)
-            entity.position.y -= knockback_distance
+        # Determine knockback direction based on movement direction
+        if self.target_direction_x is not None and self.target_direction_y is not None:
+            # Push along projectile's travel vector (Bowler angled push)
+            entity.position.x += self.target_direction_x * knockback_distance
+            entity.position.y += self.target_direction_y * knockback_distance
+        else:
+            if self.player_id == 0:  # Blue player Log rolling toward red side
+                # Push units further toward red side (positive Y)
+                entity.position.y += knockback_distance
+            else:  # Red player Log rolling toward blue side
+                # Push units further toward blue side (negative Y)
+                entity.position.y -= knockback_distance
         
         # Slight random horizontal displacement for realism
         import random

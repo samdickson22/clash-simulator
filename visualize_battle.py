@@ -308,7 +308,7 @@ class BattleVisualizer:
                     bar_width = tower_radius * 2
                     bar_height = 4
                     bar_x = screen_x - bar_width // 2
-                    bar_y = screen_y - tower_radius - 8
+                    bar_y = screen_y - tower_radius - 12
                     
                     # Health bar background
                     pygame.draw.rect(self.screen, BLACK, 
@@ -493,11 +493,11 @@ class BattleVisualizer:
                         # Draw smaller center marker
                         pygame.draw.circle(self.screen, (200, 50, 50), (screen_x, screen_y), 3)
             
-            # Health bar positioned above hitbox
+            # Health bar ABOVE the name tag (always above the unit)
             if hasattr(entity, 'hitpoints') and hasattr(entity, 'max_hitpoints'):
                 health_ratio = entity.hitpoints / entity.max_hitpoints
-                # Use actual hitbox radius to position health bar properly
-                bar_y_offset = hitbox_radius + 4
+                # Place bar above the unit's hitbox; name tag remains below
+                bar_y_offset = hitbox_radius + 25  # a bit more spacing above the unit
                 
                 bar_width = int(self.tile_size * 0.8)
                 bar_height = 3
@@ -506,11 +506,11 @@ class BattleVisualizer:
                 
                 # Health bar background
                 pygame.draw.rect(self.screen, BLACK,
-                               (bar_x-1, bar_y-1, bar_width+2, bar_height+2))
+                                 (bar_x-1, bar_y-1, bar_width+2, bar_height+2))
                 # Health bar fill
                 health_color = GREEN if health_ratio > 0.6 else YELLOW if health_ratio > 0.3 else RED
                 pygame.draw.rect(self.screen, health_color,
-                               (bar_x, bar_y, int(bar_width * health_ratio), bar_height))
+                                 (bar_x, bar_y, int(bar_width * health_ratio), bar_height))
             
             # Draw sight range circle (semi-transparent)
             if hasattr(entity, 'sight_range') and entity.sight_range:
@@ -562,7 +562,7 @@ class BattleVisualizer:
                     # Draw circle at target
                     pygame.draw.circle(self.screen, arrow_color, (arrow_target_x, arrow_target_y), 8, 2)
             
-            # Entity label
+            # Entity label (name tag) - draw below the unit
             label = self.small_font.render(entity_name[:3], True, BLACK)
             label_rect = label.get_rect(center=(screen_x, screen_y + 25))
             self.screen.blit(label, label_rect)
