@@ -215,7 +215,7 @@ class RandomBattleSimulator(BattleVisualizer):
         self.paused = False
         self.speed = 1
         running = True
-        
+        print("Running")
         # Real-time battle stepping at exactly 30 FPS (33.33ms per step)
         battle_accumulator = 0.0
         battle_timestep = 1.0 / 30.0  # Exactly 30 FPS for battle logic
