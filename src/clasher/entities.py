@@ -79,11 +79,13 @@ class Entity(ABC):
 
     def on_spawn(self) -> None:
         """Called when entity is spawned in battle"""
+        print(f"[Lifecycle] on_spawn {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
         for mechanic in self.mechanics:
             mechanic.on_spawn(self)
 
     def on_death(self) -> None:
         """Called when entity dies"""
+        print(f"[Lifecycle] on_death {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
         for mechanic in self.mechanics:
             mechanic.on_death(self)
     
@@ -294,7 +296,7 @@ class Troop(Entity):
         self.last_attack_time += dt
         
         # Handle charging mechanics based on distance traveled
-        if self.card_stats.charge_range and not self.has_charged:
+        if getattr(self.card_stats, 'charge_range', None) and not self.has_charged:
             self._update_charging_state(battle_state)
         
         # Always re-evaluate targets every tick to switch to higher priority enemies
@@ -317,31 +319,31 @@ class Troop(Entity):
             if distance > self.range:
                 self._move_towards_target(current_target, dt, battle_state)
             elif self.attack_cooldown <= 0:
+                # Call on_attack_start for all mechanics
+                for mechanic in self.mechanics:
+                    mechanic.on_attack_start(self, current_target)
+
                 # Check if this troop uses projectiles
                 if self._uses_projectiles():
                     self._create_projectile(current_target, battle_state)
                 else:
-                    # Call on_attack_start for all mechanics
-                    for mechanic in self.mechanics:
-                        mechanic.on_attack_start(self, current_target)
-
                     # Direct attack with special charging damage if applicable
                     attack_damage = self._get_attack_damage()
                     self._deal_attack_damage(current_target, attack_damage, battle_state)
 
-                    # Call on_attack_hit for all mechanics
-                    for mechanic in self.mechanics:
-                        mechanic.on_attack_hit(self, current_target)
+                # Call on_attack_hit for all mechanics
+                for mechanic in self.mechanics:
+                    mechanic.on_attack_hit(self, current_target)
 
-                self.attack_cooldown = self.card_stats.hit_speed / 1000.0 if self.card_stats.hit_speed else 1.0
+                self.attack_cooldown = (getattr(self.card_stats, 'hit_speed', None) or 1000) / 1000.0
                 self.last_attack_time = 0.0  # Reset for visualization
                 self._on_attack()  # Handle post-attack mechanics
     
     def _get_attack_damage(self) -> float:
         """Get the appropriate damage value based on charging state"""
-        if self.card_stats.charge_range and not self.has_charged and self.is_charging:
+        if getattr(self.card_stats, 'charge_range', None) and not self.has_charged and self.is_charging:
             # Use special damage for first charge attack
-            return float(self.card_stats.damage_special or self.damage)
+            return float((getattr(self.card_stats, 'damage_special', None) or self.damage))
         return float(self.damage)
     
     def _uses_projectiles(self) -> bool:
@@ -722,6 +724,7 @@ class Troop(Entity):
 @dataclass
 class Building(Entity):
     speed: float = 0.0  # Buildings don't move
+    lifetime_elapsed: float = 0.0
     
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update building - only attack, no movement"""
@@ -734,6 +737,15 @@ class Building(Entity):
         # Call on_tick for all mechanics
         for mechanic in self.mechanics:
             mechanic.on_tick(self, dt * 1000)  # Convert to ms
+
+        # Lifetime handling: decay HP proportional to elapsed time
+        lifetime_ms = getattr(self.card_stats, 'lifetime_ms', None)
+        if lifetime_ms and lifetime_ms > 0:
+            decay = (self.max_hitpoints / float(lifetime_ms)) * (dt * 1000.0)
+            if decay > 0:
+                self.take_damage(decay)
+                if not self.is_alive:
+                    return
 
         # If stunned, can't attack
         if self.is_stunned():
@@ -777,7 +789,15 @@ class Building(Entity):
         """Create a projectile towards the target"""
         if not self.card_stats or not self.card_stats.projectile_data:
             # Fallback to direct attack if no projectile data
+            # Call on_attack_start for all mechanics
+            for mechanic in self.mechanics:
+                mechanic.on_attack_start(self, target)
+
             target.take_damage(self.damage)
+
+            # Call on_attack_hit for all mechanics
+            for mechanic in self.mechanics:
+                mechanic.on_attack_hit(self, target)
             return
         
         # Get projectile properties

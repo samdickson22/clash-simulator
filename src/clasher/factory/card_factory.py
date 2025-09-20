@@ -115,7 +115,7 @@ def _create_building_stats(entry: Dict[str, Any]) -> Optional[BuildingStats]:
         hit_speed_ms=char_data.get("hitSpeed"),
         sight_range_tiles=char_data.get("sightRange", 0) / 1000.0,
         collision_radius_tiles=char_data.get("collisionRadius", 0) / 1000.0,
-        lifetime_ms=char_data.get("lifetime"),
+        lifetime_ms=char_data.get("lifeTime") or char_data.get("lifetime"),
         deploy_time_ms=char_data.get("deployTime", 1000)
     )
 

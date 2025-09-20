@@ -20,25 +20,32 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
     char_data = entry.get("summonCharacterData", {}) or entry.get("summonSpellData", {})
 
     # Death effects
-    if char_data.get("deathSpawnCharacter"):
+    # DeathDamage directly on unit
+    if char_data.get("deathDamage") and char_data.get("deathRadius"):
         death_damage = char_data.get("deathDamage", 0)
         death_radius = char_data.get("deathRadius", 0)
+        print(f"[Detect] DeathDamage for {entry.get('name')} radius={death_radius} dmg={death_damage}")
+        mechanics.append(DeathDamage(
+            radius_tiles=death_radius / 1000.0,
+            damage=death_damage
+        ))
 
-        if death_damage > 0 and death_radius > 0:
-            mechanics.append(DeathDamage(
-                radius_tiles=death_radius / 1000.0,
-                damage=death_damage
-            ))
-
-        if char_data.get("deathSpawnCharacter"):
+    # DeathSpawn into another unit (e.g., Golem, Balloon -> Bomb unit)
+    if char_data.get("deathSpawnCharacterData"):
+        spawn_data = char_data["deathSpawnCharacterData"]
+        unit_name = spawn_data.get("name") or char_data.get("deathSpawnCharacter")
+        count = char_data.get("deathSpawnCount", 1)
+        if unit_name:
+            print(f"[Detect] DeathSpawn for {entry.get('name')} -> {count}x {unit_name}")
             mechanics.append(DeathSpawn(
-                unit_name=char_data["deathSpawnCharacter"],
-                count=char_data.get("deathSpawnCount", 1),
+                unit_name=unit_name,
+                count=count,
                 radius_tiles=0.5
             ))
 
     # Shield mechanics
     if char_data.get("shieldHitpoints"):
+        print(f"[Detect] Shield for {entry.get('name')} hp={char_data['shieldHitpoints']}")
         mechanics.append(Shield(
             shield_hp=char_data["shieldHitpoints"]
         ))
@@ -59,6 +66,7 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
                 (4000, 800),   # After 4 seconds (max damage)
             ]
 
+        print(f"[Detect] DamageRamp for {entry.get('name')}")
         mechanics.append(DamageRamp(
             stages=stages,
             per_target=True
@@ -80,7 +88,8 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
         ))
 
     # Crown tower scaling (mostly for spells)
-    if entry.get("crownTowerDamagePercent"):
+    if entry.get("crownTowerDamagePercent") is not None:
+        print(f"[Detect] CrownTowerScaling for {entry.get('name')} scale={entry['crownTowerDamagePercent']}")
         mechanics.append(CrownTowerScaling(
             damage_multiplier=entry["crownTowerDamagePercent"] / 100.0
         ))
@@ -88,20 +97,26 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
     # Knockback mechanics (Log, Bowler)
     if char_data.get("knockbackData") or entry.get("name") in ["Log", "Bowler"]:
         knockback_distance = 1.5 if entry.get("name") == "Log" else 1.0
+        print(f"[Detect] KnockbackOnHit for {entry.get('name')}")
         mechanics.append(KnockbackOnHit(
             knockback_distance=knockback_distance,
             knockback_chance=1.0
         ))
 
-    # Periodic spawning (Witch, Night Witch)
-    if char_data.get("spawnSpeedData"):
-        spawn_data = char_data["spawnSpeedData"]
-        unit_name = spawn_data.get("characterName", "Skeleton")
-        interval_ms = spawn_data.get("interval", 3000)
+    # Periodic spawning (Witch, Night Witch) – align to common JSON keys
+    # Prefer direct fields spawnNumber/spawnPauseTime/spawnCharacterData on character data
+    if char_data.get("spawnPauseTime") is not None and (
+        char_data.get("spawnNumber") or char_data.get("spawnCharacterData")
+    ):
+        unit_name = (char_data.get("spawnCharacterData") or {}).get("name", "Skeleton")
+        interval_ms = char_data.get("spawnPauseTime", 3000)
+        count = char_data.get("spawnNumber", 1)
 
+        print(f"[Detect] PeriodicSpawner for {entry.get('name')} unit={unit_name} interval={interval_ms} count={count}")
         mechanics.append(PeriodicSpawner(
             unit_name=unit_name,
             spawn_interval_ms=interval_ms,
+            count=count,
             spawn_radius_tiles=1.5
         ))
 

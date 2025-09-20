@@ -32,6 +32,9 @@ class CardStats:
     deploy_time: Optional[int] = None  # milliseconds
     collision_radius: Optional[float] = None  # tiles
     
+    # Building lifetime (ms) – only for buildings
+    lifetime_ms: Optional[int] = None
+    
     # Deployment properties
     summon_count: Optional[int] = None
     summon_radius: Optional[float] = None  # tiles
@@ -41,6 +44,11 @@ class CardStats:
     summon_character_second_count: Optional[int] = None
     summon_character_second_data: Optional[Dict[str, Any]] = None
     summon_character_data: Optional[Dict[str, Any]] = None  # Store primary unit data for name extraction
+    
+    # Periodic spawner properties (e.g., Witch, Night Witch)
+    spawner_spawn_number: Optional[int] = None
+    spawner_spawn_pause_time: Optional[int] = None  # milliseconds between waves
+    spawner_spawn_character_data: Optional[Dict[str, Any]] = None
     
     # Targeting
     attacks_ground: Optional[bool] = None
@@ -188,6 +196,9 @@ class CardDataLoader:
                 load_time=load_time,
                 deploy_time=char_data.get("deployTime"),
                 collision_radius=converted_collision_radius,
+                
+                # Building lifetime
+                lifetime_ms=char_data.get("lifeTime"),
 
                 # Deployment
                 summon_count=spell.get("summonNumber"),
@@ -198,6 +209,11 @@ class CardDataLoader:
                 summon_character_second_count=spell.get("summonCharacterSecondCount"),
                 summon_character_second_data=spell.get("summonCharacterSecondData"),
                 summon_character_data=spell.get("summonCharacterData"),  # Store primary unit data
+                
+                # Periodic spawner properties (from character data)
+                spawner_spawn_number=char_data.get("spawnNumber"),
+                spawner_spawn_pause_time=char_data.get("spawnPauseTime"),
+                spawner_spawn_character_data=char_data.get("spawnCharacterData"),
 
                 # Targeting
                 attacks_ground=char_data.get("attacksGround"),

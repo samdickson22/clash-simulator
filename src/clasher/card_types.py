@@ -124,6 +124,14 @@ class CardStatsCompat:
             self.deploy_time = card_def.troop_stats.deploy_time_ms
             self.load_time = card_def.troop_stats.load_time_ms
             self.summon_count = card_def.troop_stats.summon_count
+        elif card_def.building_stats:
+            # Building-specific fields
+            self.hit_speed = card_def.building_stats.hit_speed_ms
+            self.deploy_time = card_def.building_stats.deploy_time_ms
+            self.load_time = None
+            self.summon_count = None
+            # Lifetime in ms
+            self.lifetime_ms = card_def.building_stats.lifetime_ms
 
         # Legacy properties
         self.card_type = card_def.kind.capitalize()

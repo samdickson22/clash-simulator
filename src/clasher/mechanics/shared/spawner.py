@@ -14,6 +14,7 @@ class PeriodicSpawner(BaseMechanic):
     """Mechanic that periodically spawns units"""
     unit_name: str
     spawn_interval_ms: int
+    count: int = 1
     max_spawns: int = -1  # -1 for unlimited
     spawn_radius_tiles: float = 1.0
 
@@ -32,6 +33,7 @@ class PeriodicSpawner(BaseMechanic):
         if (self.time_since_spawn_ms >= self.spawn_interval_ms and
                 (self.max_spawns == -1 or self.spawns_created < self.max_spawns)):
 
+            print(f"[Mechanic] PeriodicSpawner tick on {getattr(entity.card_stats, 'name', 'Unknown')} interval={self.spawn_interval_ms}ms count={self.count}")
             self._spawn_unit(entity)
             self.time_since_spawn_ms = 0
             self.spawns_created += 1
@@ -66,12 +68,16 @@ class PeriodicSpawner(BaseMechanic):
                 target_type="TID_TARGETS_GROUND"
             )
 
-        # Random position around the spawner
-        angle = random.random() * 2 * math.pi
-        distance = random.random() * self.spawn_radius_tiles
-        spawn_x = entity.position.x + distance * math.cos(angle)
-        spawn_y = entity.position.y + distance * math.sin(angle)
-
-        # Create and spawn the unit
         from ...arena import Position
-        battle_state._spawn_troop(Position(spawn_x, spawn_y), entity.player_id, spawn_stats)
+        print(f"[Mechanic] Spawning {self.count}x {self.unit_name} around {getattr(entity.card_stats, 'name', 'Unknown')}")
+
+        # Spawn 'count' units around the spawner
+        for _ in range(max(1, self.count)):
+            # Random position around the spawner
+            angle = random.random() * 2 * math.pi
+            distance = random.random() * self.spawn_radius_tiles
+            spawn_x = entity.position.x + distance * math.cos(angle)
+            spawn_y = entity.position.y + distance * math.sin(angle)
+
+            # Create and spawn the unit
+            battle_state._spawn_troop(Position(spawn_x, spawn_y), entity.player_id, spawn_stats)

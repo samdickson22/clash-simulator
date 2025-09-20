@@ -9,6 +9,7 @@ from .player import PlayerState
 from .arena import TileGrid, Position
 from .data import CardDataLoader, CardStats
 from .spells import SPELL_REGISTRY
+from .mechanics.shared.death_effects import DeathSpawn
 
 
 @dataclass
@@ -37,6 +38,11 @@ class BattleState:
     def __post_init__(self) -> None:
         """Initialize battle state"""
         self.card_loader.load_cards()
+        # Preload factory card definitions to enable mechanic detection/prints
+        try:
+            self.card_loader.load_card_definitions()
+        except Exception as e:
+            print(f"[Warn] load_card_definitions failed: {e}")
         self._create_towers()
     
     def _create_towers(self) -> None:
@@ -129,7 +135,8 @@ class BattleState:
     def deploy_card(self, player_id: int, card_name: str, position: Position) -> bool:
         """Deploy a card at the given position"""
         player = self.players[player_id]
-        card_stats = self.card_loader.get_card(card_name)
+        # Prefer legacy stats for full compatibility; fall back to compat wrapper
+        card_stats = self.card_loader.get_card(card_name) or self.card_loader.get_card_compat(card_name)
         
         if not card_stats or not player.can_play_card(card_name, card_stats):
             return False
@@ -193,10 +200,12 @@ class BattleState:
         # Get speed value (tiles/min from card stats)
         speed = card_stats.speed or 60.0  # Default to 60 tiles/min if not specified
         
-        # Determine if this is an air unit
+        # Determine if this is an air unit (based on target_type or known list)
         air_units = ['Minions', 'MinionHorde', 'Balloon', 'SkeletonBalloon', 'BabyDragon', 
                     'InfernoDragon', 'ElectroDragon', 'SkeletonDragons', 'MegaMinion']
-        is_air_unit = card_stats.name in air_units
+        is_air_unit = (getattr(card_stats, 'name', '') in air_units) or (
+            getattr(card_stats, 'target_type', '') == 'TID_TARGETS_AIR'
+        )
         
         # Use level-scaled stats for hitpoints and damage
         scaled_hp = card_stats.scaled_hitpoints or 100
@@ -216,8 +225,27 @@ class BattleState:
             is_air_unit=is_air_unit
         )
         
+        # Set battle reference
+        troop.battle_state = self
+        
+        # Attach mechanics from factory definition if available
+        try:
+            defn_name = getattr(card_stats, 'name', None)
+            card_def = self.card_loader.get_card_definition(defn_name) if defn_name else None
+            if card_def and getattr(card_def, 'mechanics', None):
+                troop.mechanics = list(card_def.mechanics)
+                for mech in troop.mechanics:
+                    mech.on_attach(troop)
+                if troop.mechanics:
+                    print(f"[Attach] {defn_name}: {len(troop.mechanics)} mechanic(s)")
+        except Exception as e:
+            print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
+        
         self.entities[self.next_entity_id] = troop
         self.next_entity_id += 1
+        
+        # Fire spawn hooks
+        troop.on_spawn()
     
     def _spawn_swarm_troops(self, center_pos: Position, player_id: int, card_stats: CardStats, count: int, radius: float, second_count: int = 0, second_data: dict = None) -> None:
         """Spawn multiple troop entities in a circle around center position"""
@@ -303,8 +331,30 @@ class BattleState:
             is_air_unit=is_air_unit
         )
         
+        # Attach mechanics if using compat wrapper with card_definition
+        if hasattr(card_stats, 'card_definition') and card_stats.card_definition:
+            troop.mechanics = list(card_stats.card_definition.mechanics)
+        # Set battle reference
+        troop.battle_state = self
+        
+        # Attach mechanics from factory definition if available
+        try:
+            defn_name = getattr(card_stats, 'name', None)
+            card_def = self.card_loader.get_card_definition(defn_name) if defn_name else None
+            if card_def and getattr(card_def, 'mechanics', None):
+                troop.mechanics = list(card_def.mechanics)
+                for mech in troop.mechanics:
+                    mech.on_attach(troop)
+                if troop.mechanics:
+                    print(f"[Attach] {defn_name}: {len(troop.mechanics)} mechanic(s)")
+        except Exception as e:
+            print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
+        
         self.entities[self.next_entity_id] = troop
         self.next_entity_id += 1
+        
+        # Fire spawn hooks
+        troop.on_spawn()
     
     def _spawn_front_back_formation(self, center_pos: Position, player_id: int, card_stats: CardStats, front_count: int, back_count: int, back_data: dict, radius: float) -> None:
         """Spawn units in front/back formation (melee in front, ranged in back)"""
@@ -633,6 +683,14 @@ class BattleState:
         # Add battle_state reference for mechanics
         entity.battle_state = self
 
+        # Attach mechanics if using compat wrapper with card_definition
+        if hasattr(card_stats, 'card_definition') and getattr(card_stats, 'card_definition'):
+            entity.mechanics = list(card_stats.card_definition.mechanics)
+            for mech in entity.mechanics:
+                mech.on_attach(entity)
+            if entity.mechanics:
+                print(f"[Attach] {getattr(card_stats, 'name', 'Building')}: {len(entity.mechanics)} mechanic(s)")
+
         self.entities[self.next_entity_id] = entity
         self.next_entity_id += 1
 
@@ -644,11 +702,13 @@ class BattleState:
         """Remove dead entities from the game and handle death spawns"""
         dead_ids = [eid for eid, entity in self.entities.items() if not entity.is_alive]
         
-        # Handle death spawns before removing entities
+        # Handle death spawns before removing entities (skip if handled by mechanics)
         for eid in dead_ids:
             entity = self.entities[eid]
-            if isinstance(entity, Troop) and entity.card_stats.death_spawn_character:
-                self._spawn_death_units(entity)
+            if isinstance(entity, Troop) and getattr(entity.card_stats, 'death_spawn_character', None):
+                has_mechanic_spawn = any(isinstance(m, DeathSpawn) for m in getattr(entity, 'mechanics', []))
+                if not has_mechanic_spawn:
+                    self._spawn_death_units(entity)
         
         # Update player state for dead towers before removing entities
         for eid in dead_ids:

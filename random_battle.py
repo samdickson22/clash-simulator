@@ -195,7 +195,7 @@ class RandomBattleSimulator(BattleVisualizer):
 
             player_name = "Blue" if player_id == 0 else "Red"
             card_type = card_stats.card_type if card_stats else "Unknown"
-            print(f"⚔️  {player_name} deployed {card_name} ({card_type}) at ({position.x:.1f}, {position.y:.1f}) - Cost: {card_stats.mana_cost}")
+            # print(f"⚔️  {player_name} deployed {card_name} ({card_type}) at ({position.x:.1f}, {position.y:.1f}) - Cost: {card_stats.mana_cost}")
 
     def run(self):
         """Main loop with proper real-time battle stepping"""
