@@ -617,7 +617,7 @@ class BattleState:
         # Use level-scaled stats for hitpoints and damage
         scaled_hp = card_stats.scaled_hitpoints or 100
         scaled_damage = card_stats.scaled_damage or 10
-        
+
         entity = entity_class(
             id=self.next_entity_id,
             position=position,
@@ -629,9 +629,15 @@ class BattleState:
             range=card_stats.range or 100,
             sight_range=card_stats.sight_range or 500
         )
-        
+
+        # Add battle_state reference for mechanics
+        entity.battle_state = self
+
         self.entities[self.next_entity_id] = entity
         self.next_entity_id += 1
+
+        # Call on_spawn for all mechanics
+        entity.on_spawn()
         return entity
     
     def _cleanup_dead_entities(self) -> None:

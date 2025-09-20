@@ -1,6 +1,9 @@
 from dataclasses import dataclass
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import json
+
+from .card_types import CardDefinition, CardStatsCompat
+from .factory.card_factory import card_from_gamedata, create_card_definition
 
 
 @dataclass
@@ -103,44 +106,45 @@ class CardDataLoader:
     def __init__(self, data_file: str = "gamedata.json"):
         self.data_file = data_file
         self._cards: Dict[str, CardStats] = {}
+        self._card_definitions: Dict[str, CardDefinition] = {}
         
     def load_cards(self) -> Dict[str, CardStats]:
-        """Load card data from gamedata.json"""
+        """Load card data from gamedata.json using legacy system"""
         with open(self.data_file, 'r') as f:
             data = json.load(f)
-        
+
         cards = {}
-        
+
         for spell in data.get("items", {}).get("spells", []):
             card_name = spell.get("name", "")
             card_id = spell.get("id", 0)
             mana_cost = spell.get("manaCost", 0)
             rarity = spell.get("rarity", "")
-            
+
             # Check multiple sources for character data
             char_data = spell.get("summonCharacterData", {})
             if not char_data:
                 char_data = spell.get("summonSpellData", {})
-            
+
             hitpoints = char_data.get("hitpoints")
             damage = char_data.get("damage")
             range_val = char_data.get("range")
             sight_range = char_data.get("sightRange")
-            speed = char_data.get("speed") 
+            speed = char_data.get("speed")
             load_time = char_data.get("loadTime")
             count = char_data.get("count")
-            
+
             # Handle projectile data for spell cards
             projectile_data = char_data.get("projectileData", {})
             if projectile_data and not damage:
                 damage = projectile_data.get("damage")
-            
+
             # Direct spell data (like Arrows, Fireball)
             if not damage and spell.get("damage"):
                 damage = spell.get("damage")
             if not range_val and spell.get("radius"):
                 range_val = spell.get("radius")
-            
+
             # Convert game units to proper units
             # Distances: game units ÷ 1000 = tiles
             # Speed: raw value = tiles/min
@@ -149,7 +153,7 @@ class CardDataLoader:
             converted_collision_radius = char_data.get("collisionRadius", 0) / 1000.0 if char_data.get("collisionRadius") else None
             converted_summon_radius = spell.get("summonRadius", 0) / 1000.0 if spell.get("summonRadius") else None
             converted_speed = float(speed) if speed else None  # Already in tiles/min
-            
+
             # Determine card type
             card_type = None
             tid_type = spell.get("tidType")
@@ -159,21 +163,21 @@ class CardDataLoader:
                 card_type = "Spell"
             elif tid_type == "TID_CARD_TYPE_BUILDING":
                 card_type = "Building"
-            
+
             card = CardStats(
                 # Basic info
                 name=card_name,
                 id=card_id,
                 mana_cost=mana_cost,
                 rarity=rarity,
-                
+
                 # Metadata
                 icon_file=spell.get("iconFile"),
                 unlock_arena=spell.get("unlockArena"),
                 tribe=spell.get("tribe"),
                 english_name=spell.get("englishName"),
                 card_type=card_type,
-                
+
                 # Combat stats
                 hitpoints=hitpoints,
                 damage=damage,
@@ -184,63 +188,100 @@ class CardDataLoader:
                 load_time=load_time,
                 deploy_time=char_data.get("deployTime"),
                 collision_radius=converted_collision_radius,
-                
+
                 # Deployment
                 summon_count=spell.get("summonNumber"),
                 summon_radius=converted_summon_radius,
                 summon_deploy_delay=spell.get("summonDeployDelay"),
-                
+
                 # Mixed swarm properties
                 summon_character_second_count=spell.get("summonCharacterSecondCount"),
                 summon_character_second_data=spell.get("summonCharacterSecondData"),
                 summon_character_data=spell.get("summonCharacterData"),  # Store primary unit data
-                
+
                 # Targeting
                 attacks_ground=char_data.get("attacksGround"),
                 attacks_air=char_data.get("attacksAir"),
                 target_type=char_data.get("tidTarget"),
                 targets_only_buildings=(char_data.get("tidTarget") == "TID_TARGETS_BUILDINGS"),
-                
+
                 # Charging mechanics
                 charge_range=char_data.get("chargeRange"),
                 charge_speed_multiplier=char_data.get("chargeSpeedMultiplier"),
                 damage_special=char_data.get("damageSpecial"),
-                
+
                 # Death spawn mechanics
                 death_spawn_character=char_data.get("deathSpawnCharacterData", {}).get("name") if char_data.get("deathSpawnCharacterData") else None,
                 death_spawn_count=char_data.get("deathSpawnCount"),
                 kamikaze=char_data.get("kamikaze", False),
                 death_spawn_character_data=char_data.get("deathSpawnCharacterData"),
-                
+
                 # Buff mechanics
                 buff_data=char_data.get("buffData"),
                 hit_speed_multiplier=char_data.get("hitSpeedMultiplier"),
                 speed_multiplier=char_data.get("speedMultiplier"),
                 spawn_speed_multiplier=char_data.get("spawnSpeedMultiplier"),
-                
+
                 # Special timing mechanics
                 special_load_time=char_data.get("specialLoadTime"),
                 special_range=char_data.get("specialRange"),
                 special_min_range=char_data.get("specialMinRange"),
-                
+
                 # Projectile data (from character data or spell data)
                 projectile_data=char_data.get("projectileData") or spell.get("projectileData"),
-                
+
                 # Evolution
                 has_evolution=bool(spell.get("evolvedSpellsData")),
                 evolution_data=spell.get("evolvedSpellsData")
             )
-            
+
             cards[card_name] = card
-        
+
         self._cards = cards
         return cards
+
+    def load_card_definitions(self) -> Dict[str, CardDefinition]:
+        """Load card definitions using the new factory system"""
+        with open(self.data_file, 'r') as f:
+            data = json.load(f)
+
+        card_definitions = {}
+
+        for spell in data.get("items", {}).get("spells", []):
+            card_name = spell.get("name", "")
+            if card_name and not card_name.startswith("King_"):  # Skip King towers and other non-playable cards
+                # Ensure required fields exist
+                if "manaCost" not in spell:
+                    continue  # Skip cards without mana cost
+
+                try:
+                    card_def = card_from_gamedata(spell)
+                    card_definitions[card_name] = card_def
+                except Exception as e:
+                    print(f"Warning: Could not load card definition for {card_name}: {e}")
+                    continue
+
+        self._card_definitions = card_definitions
+        return card_definitions
     
     def get_card(self, name: str) -> Optional[CardStats]:
-        """Get card stats by name"""
+        """Get card stats by name (legacy system)"""
         if not self._cards:
             self.load_cards()
         return self._cards.get(name)
+
+    def get_card_definition(self, name: str) -> Optional[CardDefinition]:
+        """Get card definition by name (new factory system)"""
+        if not self._card_definitions:
+            self.load_card_definitions()
+        return self._card_definitions.get(name)
+
+    def get_card_compat(self, name: str) -> Optional[CardStatsCompat]:
+        """Get card in legacy-compatible format"""
+        card_def = self.get_card_definition(name)
+        if card_def:
+            return CardStatsCompat.from_card_definition(card_def)
+        return None
     
     def print_card_summary(self, name: str) -> None:
         """Print a detailed summary of a card's attributes"""

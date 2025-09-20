@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 from .arena import Position
 from .data import CardStats
+from .card_types import Mechanic
 
 
 class EntityType(Enum):
@@ -53,10 +54,16 @@ class Entity(ABC):
     slow_multiplier: float = 1.0
     original_speed: Optional[float] = None
     last_attack_time: float = 0.0  # For visualization tracking
-    
+
+    # Mechanics system
+    mechanics: List[Mechanic] = field(default_factory=list)
+
     def __post_init__(self) -> None:
         if self.max_hitpoints == 0:
             self.max_hitpoints = self.hitpoints
+        # Call on_attach for all mechanics
+        for mechanic in self.mechanics:
+            mechanic.on_attach(self)
     
     @abstractmethod
     def update(self, dt: float, battle_state: 'BattleState') -> None:
@@ -66,8 +73,19 @@ class Entity(ABC):
     def take_damage(self, amount: float) -> None:
         """Apply damage to entity"""
         self.hitpoints = max(0, self.hitpoints - amount)
-        if self.hitpoints <= 0:
+        if self.hitpoints <= 0 and self.is_alive:
             self.is_alive = False
+            self.on_death()  # Trigger death mechanics
+
+    def on_spawn(self) -> None:
+        """Called when entity is spawned in battle"""
+        for mechanic in self.mechanics:
+            mechanic.on_spawn(self)
+
+    def on_death(self) -> None:
+        """Called when entity dies"""
+        for mechanic in self.mechanics:
+            mechanic.on_death(self)
     
     def _deal_attack_damage(self, primary_target: 'Entity', damage: float, battle_state: 'BattleState') -> None:
         """Deal damage to target, with splash damage if applicable"""
@@ -255,7 +273,11 @@ class Troop(Entity):
         
         # Update status effects first
         self.update_status_effects(dt)
-        
+
+        # Call on_tick for all mechanics
+        for mechanic in self.mechanics:
+            mechanic.on_tick(self, dt * 1000)  # Convert to ms
+
         # If stunned, can't move or attack
         if self.is_stunned():
             return
@@ -299,10 +321,18 @@ class Troop(Entity):
                 if self._uses_projectiles():
                     self._create_projectile(current_target, battle_state)
                 else:
+                    # Call on_attack_start for all mechanics
+                    for mechanic in self.mechanics:
+                        mechanic.on_attack_start(self, current_target)
+
                     # Direct attack with special charging damage if applicable
                     attack_damage = self._get_attack_damage()
                     self._deal_attack_damage(current_target, attack_damage, battle_state)
-                
+
+                    # Call on_attack_hit for all mechanics
+                    for mechanic in self.mechanics:
+                        mechanic.on_attack_hit(self, current_target)
+
                 self.attack_cooldown = self.card_stats.hit_speed / 1000.0 if self.card_stats.hit_speed else 1.0
                 self.last_attack_time = 0.0  # Reset for visualization
                 self._on_attack()  # Handle post-attack mechanics
@@ -697,10 +727,14 @@ class Building(Entity):
         """Update building - only attack, no movement"""
         if not self.is_alive:
             return
-        
+
         # Update status effects
         self.update_status_effects(dt)
-        
+
+        # Call on_tick for all mechanics
+        for mechanic in self.mechanics:
+            mechanic.on_tick(self, dt * 1000)  # Convert to ms
+
         # If stunned, can't attack
         if self.is_stunned():
             return
@@ -719,9 +753,17 @@ class Building(Entity):
             if self._uses_projectiles():
                 self._create_projectile(target, battle_state)
             else:
+                # Call on_attack_start for all mechanics
+                for mechanic in self.mechanics:
+                    mechanic.on_attack_start(self, target)
+
                 # Direct attack
                 self._deal_attack_damage(target, self.damage, battle_state)
-            
+
+                # Call on_attack_hit for all mechanics
+                for mechanic in self.mechanics:
+                    mechanic.on_attack_hit(self, target)
+
             self.attack_cooldown = self.card_stats.hit_speed / 1000.0 if self.card_stats.hit_speed else 1.0
             self.last_attack_time = 0.0  # Reset for visualization
     
