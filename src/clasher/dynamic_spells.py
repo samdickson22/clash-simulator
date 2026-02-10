@@ -7,7 +7,8 @@ import json
 from typing import Dict, Any, Type
 from .spells import (
     Spell, DirectDamageSpell, ProjectileSpell, SpawnProjectileSpell, 
-    AreaEffectSpell, BuffSpell, CloneSpell, HealSpell, RollingProjectileSpell
+    AreaEffectSpell, BuffSpell, CloneSpell, HealSpell, RollingProjectileSpell,
+    GraveyardSpell, TornadoSpell, FreezeSpell
 )
 
 def determine_spell_type(spell_data: Dict[str, Any]) -> Type[Spell]:
@@ -44,6 +45,15 @@ def determine_spell_type(spell_data: Dict[str, Any]) -> Type[Spell]:
     # Check for area effects
     if 'areaEffectObjectData' in spell_data:
         area_data = spell_data['areaEffectObjectData']
+        
+        # Graveyard: area effect with spawn interval
+        if area_data.get('spawnInterval'):
+            return GraveyardSpell
+        
+        # Tornado: area effect with pull force / buffData that slows
+        if spell_data.get('name') == 'Tornado' or area_data.get('pullForce'):
+            return TornadoSpell
+        
         life_duration = area_data.get('lifeDuration', 0)
         
         # Special clone detection
@@ -156,6 +166,36 @@ def create_spell_from_json(spell_data: Dict[str, Any]) -> Spell:
             damage=area_data.get('damage', 0),
             duration=area_data.get('lifeDuration', 4000) / 1000.0,  # Convert to seconds
             freeze_effect='buffData' in area_data and 'speedMultiplier' in area_data.get('buffData', {})
+        )
+    
+    elif spell_type == GraveyardSpell:
+        area_data = spell_data['areaEffectObjectData']
+        return GraveyardSpell(
+            name=name,
+            mana_cost=mana_cost,
+            radius=area_data.get('radius', 4000) / 1000.0,
+            damage=0,
+            spawn_interval=area_data.get('spawnInterval', 500) / 1000.0,
+            max_skeletons=area_data.get('maxSpawnCount', 20),
+            duration=area_data.get('lifeDuration', 10000) / 1000.0,
+            skeleton_data=area_data.get('spawnCharacterData', {
+                "hitpoints": 67, "damage": 67, "speed": 60,
+                "range": 500, "sightRange": 5500, "hitSpeed": 1000,
+                "deployTime": 1000, "loadTime": 1000, "collisionRadius": 300,
+                "attacksGround": True, "tidTarget": "TID_TARGETS_GROUND"
+            })
+        )
+    
+    elif spell_type == TornadoSpell:
+        area_data = spell_data.get('areaEffectObjectData', {})
+        return TornadoSpell(
+            name=name,
+            mana_cost=mana_cost,
+            radius=area_data.get('radius', 3000) / 1000.0,
+            damage=0,
+            pull_force=area_data.get('pullForce', 3.0) if area_data.get('pullForce') else 3.0,
+            damage_per_second=area_data.get('damage', 35),
+            duration=area_data.get('lifeDuration', 3000) / 1000.0,
         )
     
     elif spell_type == DirectDamageSpell:

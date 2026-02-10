@@ -169,7 +169,7 @@ class Entity(ABC):
     def _is_valid_target(self, entity: 'Entity') -> bool:
         """Check if entity can be targeted (excludes spell entities)"""
         # Spell entities cannot be targeted by troops
-        spell_entity_types = {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect'}
+        spell_entity_types = {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect', 'Graveyard', 'TimedExplosive'}
         if type(entity).__name__ in spell_entity_types:
             return False
         
