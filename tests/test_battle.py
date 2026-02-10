@@ -64,8 +64,8 @@ class TestEngine:
         assert battle.players[0].elixir > 5.0
 
     def test_double_elixir_activation(self, battle):
-        # Fast forward to 2 minutes
-        for _ in range(3640):  # 120s / 0.033
+        # Fast forward to 3 minutes (180s)
+        for _ in range(5455):  # 180s / 0.033
             battle.step()
         assert battle.double_elixir
 

@@ -97,7 +97,9 @@ class BattleState:
         blue_king = Position(self.arena.BLUE_KING_TOWER.x, self.arena.BLUE_KING_TOWER.y)
         self._spawn_entity(Building, blue_left, 0, tower_stats)
         self._spawn_entity(Building, blue_right, 0, tower_stats)
-        self._spawn_entity(Building, blue_king, 0, king_stats)
+        king_0 = self._spawn_entity(Building, blue_king, 0, king_stats)
+        if king_0:
+            king_0.is_king_tower = True
 
         # Player 1 towers (red) - create new Position objects to avoid sharing references
         red_left = Position(self.arena.RED_LEFT_TOWER.x, self.arena.RED_LEFT_TOWER.y)
@@ -105,7 +107,9 @@ class BattleState:
         red_king = Position(self.arena.RED_KING_TOWER.x, self.arena.RED_KING_TOWER.y)
         self._spawn_entity(Building, red_left, 1, tower_stats)
         self._spawn_entity(Building, red_right, 1, tower_stats)
-        self._spawn_entity(Building, red_king, 1, king_stats)
+        king_1 = self._spawn_entity(Building, red_king, 1, king_stats)
+        if king_1:
+            king_1.is_king_tower = True
 
     def step(self, speed_factor: float = 1.0) -> None:
         """Advance battle by one tick"""
@@ -117,13 +121,17 @@ class BattleState:
         self.tick += 1
 
         # Update elixir modes
-        if self.time >= 120.0 and not self.double_elixir:
+        # 0:00-3:00 regular, 3:00-4:00 double, 4:00-5:00 triple/overtime
+        if self.time >= 240.0 and not self.triple_elixir:
+            self.triple_elixir = True
+            self.double_elixir = True
+        elif self.time >= 180.0 and not self.double_elixir:
             self.double_elixir = True
 
         # Regenerate elixir
         base_regen = 2.8
         if self.triple_elixir:
-            base_regen = 0.9
+            base_regen = 0.93
         elif self.double_elixir:
             base_regen = 1.4
 
@@ -745,9 +753,11 @@ class BattleState:
                     elif (pos.x == self.arena.BLUE_LEFT_TOWER.x and
                           pos.y == self.arena.BLUE_LEFT_TOWER.y):
                         player.left_tower_hp = 0
+                        self._activate_king_tower(entity.player_id)
                     elif (pos.x == self.arena.BLUE_RIGHT_TOWER.x and
                           pos.y == self.arena.BLUE_RIGHT_TOWER.y):
                         player.right_tower_hp = 0
+                        self._activate_king_tower(entity.player_id)
                 else:  # Red player
                     if (pos.x == self.arena.RED_KING_TOWER.x and
                         pos.y == self.arena.RED_KING_TOWER.y):
@@ -755,12 +765,31 @@ class BattleState:
                     elif (pos.x == self.arena.RED_LEFT_TOWER.x and
                           pos.y == self.arena.RED_LEFT_TOWER.y):
                         player.left_tower_hp = 0
+                        self._activate_king_tower(entity.player_id)
                     elif (pos.x == self.arena.RED_RIGHT_TOWER.x and
                           pos.y == self.arena.RED_RIGHT_TOWER.y):
                         player.right_tower_hp = 0
+                        self._activate_king_tower(entity.player_id)
 
-        # Dead entities remain in dict (is_alive=False) for reference;
-        # step() already skips dead entities in updates.
+        # Remove dead non-tower entities to prevent unbounded growth
+        for eid in dead_ids:
+            entity = self.entities[eid]
+            if not isinstance(entity, Building) or not self._is_tower(entity):
+                del self.entities[eid]
+
+    def _activate_king_tower(self, player_id: int) -> None:
+        """Activate king tower for a player (when princess tower destroyed or king hit)"""
+        self.players[player_id].king_tower_active = True
+        for entity in self.entities.values():
+            if (isinstance(entity, Building) and entity.player_id == player_id 
+                and entity.is_king_tower and entity.is_alive):
+                entity.king_tower_active = True
+
+    def _is_tower(self, entity: Entity) -> bool:
+        """Check if entity is a Princess or King tower."""
+        return (isinstance(entity, Building) and
+                entity.card_stats and
+                entity.card_stats.name in ('Tower', 'KingTower'))
 
     def _spawn_death_units(self, troop: Troop) -> None:
         """Spawn death units when a troop dies"""

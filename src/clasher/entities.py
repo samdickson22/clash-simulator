@@ -725,6 +725,14 @@ class Troop(Entity):
 class Building(Entity):
     speed: float = 0.0  # Buildings don't move
     lifetime_elapsed: float = 0.0
+    is_king_tower: bool = False  # King towers don't attack until activated
+    king_tower_active: bool = False  # Set to True when king tower is activated
+    
+    def take_damage(self, amount: float) -> None:
+        """Override to activate king tower when directly hit"""
+        if self.is_king_tower and not self.king_tower_active and amount > 0:
+            self.king_tower_active = True
+        super().take_damage(amount)
     
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update building - only attack, no movement"""
@@ -746,6 +754,10 @@ class Building(Entity):
                 self.take_damage(decay)
                 if not self.is_alive:
                     return
+
+        # King towers don't attack until activated
+        if self.is_king_tower and not self.king_tower_active:
+            return
 
         # If stunned, can't attack
         if self.is_stunned():
