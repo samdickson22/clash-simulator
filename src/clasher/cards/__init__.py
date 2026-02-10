@@ -8,6 +8,7 @@ CARD_MECHANICS = {
     'HogRider': [HogRiderJump],
     'Sparky': [SparkyChargeUp],
     'Bandit': [BanditDash],
+    'Assassin': [BanditDash],      # Internal name for Bandit
     'Fisherman': [FishermanHook],
     'Miner': [MinerTunnel],
 }

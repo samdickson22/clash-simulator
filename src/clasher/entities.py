@@ -845,6 +845,7 @@ class Projectile(Entity):
     travel_speed: float = 5.0
     splash_radius: float = 0.0
     source_name: str = "Unknown"  # Name of unit that fired this projectile
+    crown_tower_damage_percent: float = 0.0  # e.g. -70 means 30% of normal to towers
     
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update projectile - move towards target"""
@@ -882,7 +883,14 @@ class Projectile(Entity):
             
             # Use hitbox-based collision detection for more accurate splash damage
             if self._hitbox_overlaps_with_splash(entity):
-                entity.take_damage(self.damage)
+                dmg = self.damage
+                # Apply crown tower damage reduction for spells hitting buildings
+                if self.crown_tower_damage_percent != 0 and isinstance(entity, Building):
+                    tower_names = ('Tower', 'KingTower', 'PrincessTower')
+                    if entity.card_stats and getattr(entity.card_stats, 'name', '') in tower_names:
+                        multiplier = (100 + self.crown_tower_damage_percent) / 100.0
+                        dmg = dmg * multiplier
+                entity.take_damage(dmg)
     
     def _hitbox_overlaps_with_splash(self, entity: 'Entity') -> bool:
         """Check if entity's hitbox overlaps with splash damage radius"""

@@ -71,6 +71,7 @@ class DirectDamageSpell(Spell):
 class ProjectileSpell(Spell):
     """Spells that fire projectiles"""
     travel_speed: float = 500.0
+    crown_tower_damage_percent: float = 0.0  # e.g. -70 means 30% to towers
     
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
         """Fire a projectile toward target position"""
@@ -89,7 +90,8 @@ class ProjectileSpell(Spell):
             sight_range=0,
             target_position=target_pos,
             travel_speed=self.travel_speed,
-            splash_radius=self.radius
+            splash_radius=self.radius,
+            crown_tower_damage_percent=self.crown_tower_damage_percent
         )
         
         # Add spell name for visualization
@@ -460,8 +462,29 @@ TORNADO = TornadoSpell("Tornado", 3, radius=3000.0/1000.0, damage=0, pull_force=
 EARTHQUAKE = DirectDamageSpell("Earthquake", 3, radius=3000.0/1000.0, damage=332, slow_duration=3.0, slow_multiplier=0.5)
 BARB_LOG = RollingProjectileSpell("BarbLog", 2, radius=250.0/1000.0, damage=240, travel_speed=1200.0/60.0, projectile_range=6.5, spawn_character="Barbarian", radius_y=0.6)
 HEAL = HealSpell("Heal", 3, radius=3000.0/1000.0, damage=0, heal_amount=400.0)
-SNOWBALL = DirectDamageSpell("Snowball", 2, radius=250.0/1000.0, damage=0, slow_duration=2.5, slow_multiplier=0.65)
-ROYAL_DELIVERY = DirectDamageSpell("RoyalDelivery", 4, radius=0.0, damage=0)  # Special case
+SNOWBALL = DirectDamageSpell("Snowball", 2, radius=2500.0/1000.0, damage=70, slow_duration=2.5, slow_multiplier=0.65)
+class RoyalDeliverySpell(DirectDamageSpell):
+    """Royal Delivery: area damage + spawns a Royal Recruit"""
+    spawn_character_name: str = "DeliveryRecruit"
+
+    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+        # Deal area damage first
+        super().cast(battle_state, player_id, target_pos)
+        # Spawn a Royal Recruit at the target position
+        from .data import CardStats
+        recruit_stats = CardStats(
+            name="DeliveryRecruit",
+            id=0, mana_cost=0, rarity="Common",
+            hitpoints=214, damage=52, speed=60.0,
+            range=1.6, sight_range=5.5, hit_speed=1300,
+            deploy_time=1000, load_time=800, collision_radius=0.5,
+            attacks_ground=True, attacks_air=False,
+            targets_only_buildings=False, target_type="TID_TARGETS_GROUND"
+        )
+        battle_state._spawn_troop(Position(target_pos.x, target_pos.y), player_id, recruit_stats)
+        return True
+
+ROYAL_DELIVERY = RoyalDeliverySpell("RoyalDelivery", 3, radius=3000.0/1000.0, damage=171)
 GLOBAL_CLONE = DirectDamageSpell("GlobalClone", 3, radius=0.0, damage=0)  # Special case
 GOBLIN_PARTY_ROCKET = ProjectileSpell("GoblinPartyRocket", 4, radius=250.0, damage=0, travel_speed=1000.0/60.0)
 WARM_SPELL = DirectDamageSpell("WarmSpell", 0, radius=0.0, damage=0)  # Special case

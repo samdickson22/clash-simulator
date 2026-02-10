@@ -8,7 +8,7 @@ from typing import Dict, Any, Type
 from .spells import (
     Spell, DirectDamageSpell, ProjectileSpell, SpawnProjectileSpell, 
     AreaEffectSpell, BuffSpell, CloneSpell, HealSpell, RollingProjectileSpell,
-    GraveyardSpell, TornadoSpell, FreezeSpell
+    GraveyardSpell, TornadoSpell, FreezeSpell, RoyalDeliverySpell
 )
 
 def determine_spell_type(spell_data: Dict[str, Any]) -> Type[Spell]:
@@ -136,12 +136,14 @@ def create_spell_from_json(spell_data: Dict[str, Any]) -> Spell:
                 slow_multiplier=slow_mult,
             )
         
+        crown_tower_pct = proj_data.get('crownTowerDamagePercent', 0) or 0
         return ProjectileSpell(
             name=name,
             mana_cost=mana_cost,
             radius=radius,
             damage=damage,
             travel_speed=travel_speed,
+            crown_tower_damage_percent=float(crown_tower_pct),
         )
     
     elif spell_type == SpawnProjectileSpell:

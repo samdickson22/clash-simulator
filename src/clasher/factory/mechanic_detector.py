@@ -90,8 +90,11 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
     # Crown tower scaling (mostly for spells)
     if entry.get("crownTowerDamagePercent") is not None:
         pass  # print(f"[Detect] CrownTowerScaling for {entry.get('name')} scale={entry['crownTowerDamagePercent']}")
+        # crownTowerDamagePercent is negative (e.g. -70 means 35% of normal damage)
+        raw = entry["crownTowerDamagePercent"]
+        multiplier = (100 + raw) / 100.0 if raw < 0 else raw / 100.0
         mechanics.append(CrownTowerScaling(
-            damage_multiplier=entry["crownTowerDamagePercent"] / 100.0
+            damage_multiplier=multiplier
         ))
 
     # Knockback mechanics (Log, Bowler)

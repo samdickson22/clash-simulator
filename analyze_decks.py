@@ -12,8 +12,8 @@ from pathlib import Path
 import sys
 sys.path.append(str(Path(__file__).parent / "src"))
 
-from src.clasher.data import CardDataLoader
-from src.clasher.card_types import CardDefinition, CardStatsCompat
+from clasher.data import CardDataLoader
+from clasher.card_types import CardDefinition, CardStatsCompat
 
 
 def print_card_analysis(card_name: str, card_def: CardDefinition, loader: CardDataLoader):
