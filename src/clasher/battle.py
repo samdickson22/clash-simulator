@@ -10,6 +10,7 @@ from .arena import TileGrid, Position
 from .data import CardDataLoader, CardStats
 from .spells import SPELL_REGISTRY
 from .mechanics.shared.death_effects import DeathSpawn
+from .name_map import resolve_name
 
 
 @dataclass
@@ -122,9 +123,11 @@ class BattleState:
         for player in self.players:
             player.regenerate_elixir(dt, base_regen)
         
-        # Update all entities
-        for entity in list(self.entities.values()):
-            entity.update(dt, self)
+        # Update all entities (snapshot keys to avoid dict-changed-size errors)
+        for eid in list(self.entities.keys()):
+            entity = self.entities.get(eid)
+            if entity and entity.is_alive:
+                entity.update(dt, self)
         
         # Remove dead entities
         self._cleanup_dead_entities()
@@ -135,14 +138,17 @@ class BattleState:
     def deploy_card(self, player_id: int, card_name: str, position: Position) -> bool:
         """Deploy a card at the given position"""
         player = self.players[player_id]
+        # Resolve alias for data lookup
+        internal_name = resolve_name(card_name)
         # Prefer legacy stats for full compatibility; fall back to compat wrapper
         card_stats = self.card_loader.get_card(card_name) or self.card_loader.get_card_compat(card_name)
         
         if not card_stats or not player.can_play_card(card_name, card_stats):
             return False
         
-        is_spell = card_name in SPELL_REGISTRY
-        spell_obj = SPELL_REGISTRY.get(card_name) if is_spell else None
+        # Check spell registry with both deck name and internal name
+        is_spell = card_name in SPELL_REGISTRY or internal_name in SPELL_REGISTRY
+        spell_obj = SPELL_REGISTRY.get(card_name) or SPELL_REGISTRY.get(internal_name) if is_spell else None
         if not self.arena.can_deploy_at(position, player_id, self, is_spell, spell_obj):
             return False
         
@@ -156,8 +162,8 @@ class BattleState:
             return False
         
         # Check if it's a spell
-        if card_name in SPELL_REGISTRY:
-            spell = SPELL_REGISTRY[card_name]
+        if card_name in SPELL_REGISTRY or internal_name in SPELL_REGISTRY:
+            spell = SPELL_REGISTRY.get(card_name) or SPELL_REGISTRY.get(internal_name)
             spell.cast(self, player_id, position)
         else:
             # Spawn troop or building based on card type (robust to missing/None fields)
@@ -808,22 +814,23 @@ class BattleState:
                 self.overtime = True
                 self.triple_elixir = True
             
-            # First tower destroyed wins in overtime
-            player0_crowns = self.players[0].get_crown_count()
-            player1_crowns = self.players[1].get_crown_count()
+            # Crowns = enemy towers destroyed
+            # P0's crowns = P1's destroyed towers, and vice versa
+            p0_crowns = self.players[1].get_crown_count()  # P0 earned by destroying P1's towers
+            p1_crowns = self.players[0].get_crown_count()  # P1 earned by destroying P0's towers
             
-            if player0_crowns > player1_crowns:
+            if p0_crowns > p1_crowns:
                 self.game_over = True
                 self.winner = 0
-            elif player1_crowns > player0_crowns:
+            elif p1_crowns > p0_crowns:
                 self.game_over = True
                 self.winner = 1
             
             # After 6 minutes, crown count determines winner
             if self.time >= 360.0:
-                if player0_crowns > player1_crowns:
+                if p0_crowns > p1_crowns:
                     self.winner = 0
-                elif player1_crowns > player0_crowns:
+                elif p1_crowns > p0_crowns:
                     self.winner = 1
                 else:
                     self.winner = None  # Draw

@@ -95,12 +95,43 @@ def create_spell_from_json(spell_data: Dict[str, Any]) -> Spell:
     
     if spell_type == ProjectileSpell:
         proj_data = spell_data['projectileData']
+        damage = proj_data.get('damage', 0)
+        radius = proj_data.get('radius', 0) / 1000.0
+        travel_speed = proj_data.get('speed', 500) / 60.0
+        
+        # Check for slow/stun on impact via targetBuffData
+        target_buff = proj_data.get('targetBuffData', {})
+        buff_time_ms = proj_data.get('buffTime', 0)
+        stun_dur = 0.0
+        slow_dur = 0.0
+        slow_mult = 1.0
+        if target_buff:
+            speed_m = target_buff.get('speedMultiplier', 0)
+            hit_m = target_buff.get('hitSpeedMultiplier', 0)
+            if speed_m == -100 and hit_m == -100:
+                stun_dur = buff_time_ms / 1000.0
+            elif speed_m < 0:
+                slow_dur = buff_time_ms / 1000.0
+                slow_mult = max(0.0, 1.0 + speed_m / 100.0)
+        
+        # If has slow/stun, create as DirectDamageSpell (instant on impact)
+        if stun_dur > 0 or slow_dur > 0:
+            return DirectDamageSpell(
+                name=name,
+                mana_cost=mana_cost,
+                radius=radius,
+                damage=damage,
+                stun_duration=stun_dur,
+                slow_duration=slow_dur,
+                slow_multiplier=slow_mult,
+            )
+        
         return ProjectileSpell(
             name=name,
             mana_cost=mana_cost,
-            radius=proj_data.get('radius', 0) / 1000.0,
-            damage=proj_data.get('damage', 0),
-            travel_speed=proj_data.get('speed', 500) / 60.0  # Convert to tiles/sec
+            radius=radius,
+            damage=damage,
+            travel_speed=travel_speed,
         )
     
     elif spell_type == SpawnProjectileSpell:
@@ -128,11 +159,29 @@ def create_spell_from_json(spell_data: Dict[str, Any]) -> Spell:
         )
     
     elif spell_type == DirectDamageSpell:
+        stun_duration = 0.0
+        slow_duration = 0.0
+        slow_multiplier = 1.0
+        
         # For area effects with short duration, get damage from area data
         if 'areaEffectObjectData' in spell_data:
             area_data = spell_data['areaEffectObjectData']
             damage = area_data.get('damage', 0)
             radius = area_data.get('radius', 0) / 1000.0
+            
+            # Detect stun from buffData (Zap pattern: speedMultiplier=-100)
+            buff_data = area_data.get('buffData', {})
+            buff_time_ms = area_data.get('buffTime', 0)
+            if buff_data:
+                speed_mult = buff_data.get('speedMultiplier', 0)
+                hit_speed_mult = buff_data.get('hitSpeedMultiplier', 0)
+                if speed_mult == -100 and hit_speed_mult == -100:
+                    # Full freeze/stun
+                    stun_duration = buff_time_ms / 1000.0
+                elif speed_mult < 0:
+                    # Slow effect
+                    slow_duration = buff_time_ms / 1000.0
+                    slow_multiplier = max(0.0, 1.0 + speed_mult / 100.0)
         else:
             damage = spell_data.get('damage', 0)
         
@@ -140,7 +189,10 @@ def create_spell_from_json(spell_data: Dict[str, Any]) -> Spell:
             name=name,
             mana_cost=mana_cost,
             radius=radius,
-            damage=damage
+            damage=damage,
+            stun_duration=stun_duration,
+            slow_duration=slow_duration,
+            slow_multiplier=slow_multiplier,
         )
     
     elif spell_type == CloneSpell:

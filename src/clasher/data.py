@@ -281,16 +281,24 @@ class CardDataLoader:
         return card_definitions
     
     def get_card(self, name: str) -> Optional[CardStats]:
-        """Get card stats by name (legacy system)"""
+        """Get card stats by name (legacy system), with alias resolution"""
         if not self._cards:
             self.load_cards()
-        return self._cards.get(name)
+        card = self._cards.get(name)
+        if card is None:
+            from .name_map import resolve_name
+            card = self._cards.get(resolve_name(name))
+        return card
 
     def get_card_definition(self, name: str) -> Optional[CardDefinition]:
-        """Get card definition by name (new factory system)"""
+        """Get card definition by name (new factory system), with alias resolution"""
         if not self._card_definitions:
             self.load_card_definitions()
-        return self._card_definitions.get(name)
+        defn = self._card_definitions.get(name)
+        if defn is None:
+            from .name_map import resolve_name
+            defn = self._card_definitions.get(resolve_name(name))
+        return defn
 
     def get_card_compat(self, name: str) -> Optional[CardStatsCompat]:
         """Get card in legacy-compatible format"""

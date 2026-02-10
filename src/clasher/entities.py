@@ -110,7 +110,7 @@ class Entity(ABC):
         # Deal splash damage if this unit has area damage
         if area_damage_radius and area_damage_radius > 0:
             # Find all entities within splash radius
-            for entity in battle_state.entities.values():
+            for entity in list(battle_state.entities.values()):
                 if entity == primary_target or entity.player_id == self.player_id:
                     continue
                 
@@ -864,7 +864,7 @@ class Projectile(Entity):
     
     def _deal_splash_damage(self, battle_state: 'BattleState') -> None:
         """Deal damage to entities in splash radius using hitbox overlap detection"""
-        for entity in battle_state.entities.values():
+        for entity in list(battle_state.entities.values()):
             if entity.player_id == self.player_id or not entity.is_alive:
                 continue
             
@@ -915,7 +915,7 @@ class AreaEffect(Entity):
             return
         
         # Apply effects to entities in radius
-        for entity in battle_state.entities.values():
+        for entity in list(battle_state.entities.values()):
             if entity.player_id == self.player_id or not entity.is_alive or entity == self:
                 continue
             
@@ -1117,7 +1117,7 @@ class RollingProjectile(Entity):
     
     def _deal_rolling_damage(self, battle_state: 'BattleState') -> None:
         """Deal damage to ground units in rolling path (rectangular hitbox)"""
-        for entity in battle_state.entities.values():
+        for entity in list(battle_state.entities.values()):
             if (entity.player_id == self.player_id or 
                 not entity.is_alive or 
                 entity.id in self.hit_entities or
@@ -1243,7 +1243,7 @@ class TimedExplosive(Entity):
     
     def _explode(self, battle_state: 'BattleState') -> None:
         """Deal explosion damage to entities in radius using hitbox collision"""
-        for entity in battle_state.entities.values():
+        for entity in list(battle_state.entities.values()):
             if entity.player_id == self.player_id or not entity.is_alive or entity == self:
                 continue
             
