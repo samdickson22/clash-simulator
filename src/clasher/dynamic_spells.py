@@ -296,6 +296,11 @@ def load_dynamic_spells() -> Dict[str, Spell]:
         spell = create_spell_from_json(spell_data)
         spell_registry[spell.name] = spell
     
+    # Override RoyalDelivery with custom implementation (damage + recruit spawn)
+    spell_registry['RoyalDelivery'] = RoyalDeliverySpell(
+        "RoyalDelivery", 3, radius=3000.0/1000.0, damage=171
+    )
+    
     return spell_registry
 
 
