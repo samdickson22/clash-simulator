@@ -12,7 +12,7 @@ class Shield(BaseMechanic):
     def on_attach(self, entity) -> None:
         """Initialize shield and hook into damage system"""
         self.current_shield = self.shield_hp
-        print(f"[Mechanic] Shield attached to {getattr(entity.card_stats, 'name', 'Unknown')} hp={self.shield_hp}")
+        pass  # print(f"[Mechanic] Shield attached to {getattr(entity.card_stats, 'name', 'Unknown')} hp={self.shield_hp}")
 
         # Store original take_damage method and replace with shielded version
         entity._original_take_damage = entity.take_damage
@@ -20,7 +20,7 @@ class Shield(BaseMechanic):
 
     def _shielded_take_damage(self, entity, amount: float) -> None:
         """Handle damage with shield absorption"""
-        print(f"[Mechanic] Shield before={self.current_shield} incoming={amount}")
+        pass  # print(f"[Mechanic] Shield before={self.current_shield} incoming={amount}")
         if self.current_shield > 0:
             # Calculate how much damage shield can absorb
             absorbed = min(amount, self.current_shield)

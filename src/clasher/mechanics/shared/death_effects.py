@@ -22,7 +22,7 @@ class DeathDamage(BaseMechanic):
 
         battle_state = entity.battle_state
 
-        print(f"[Mechanic] DeathDamage triggered by {getattr(entity.card_stats, 'name', 'Unknown')} at ({entity.position.x:.1f},{entity.position.y:.1f}) radius={self.radius_tiles} dmg={self.damage}")
+        pass  # print(f"[Mechanic] DeathDamage triggered by {getattr(entity.card_stats, 'name', 'Unknown')} at ({entity.position.x:.1f},{entity.position.y:.1f}) radius={self.radius_tiles} dmg={self.damage}")
 
         # Deal area damage at death position
         for target in battle_state.entities.values():
@@ -51,7 +51,7 @@ class DeathSpawn(BaseMechanic):
 
         battle_state = entity.battle_state
 
-        print(f"[Mechanic] DeathSpawn triggered by {getattr(entity.card_stats, 'name', 'Unknown')} -> {self.count}x {self.unit_name}")
+        pass  # print(f"[Mechanic] DeathSpawn triggered by {getattr(entity.card_stats, 'name', 'Unknown')} -> {self.count}x {self.unit_name}")
 
         # Try to get death spawn stats from card loader
         death_spawn_stats = battle_state.card_loader.get_card(self.unit_name)

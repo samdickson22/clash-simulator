@@ -50,7 +50,7 @@ class BattleState:
         try:
             self.card_loader.load_card_definitions()
         except Exception as e:
-            print(f"[Warn] load_card_definitions failed: {e}")
+            pass  # print(f"[Warn] load_card_definitions failed: {e}")
         self._create_towers()
 
     def _create_towers(self) -> None:
@@ -248,9 +248,9 @@ class BattleState:
                 for mech in troop.mechanics:
                     mech.on_attach(troop)
                 if troop.mechanics:
-                    print(f"[Attach] {defn_name}: {len(troop.mechanics)} mechanic(s)")
+                    pass  # print(f"[Attach] {defn_name}: {len(troop.mechanics)} mechanic(s)")
         except Exception as e:
-            print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
+            pass  # print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
 
         self.entities[self.next_entity_id] = troop
         self.next_entity_id += 1
@@ -355,9 +355,9 @@ class BattleState:
                 for mech in troop.mechanics:
                     mech.on_attach(troop)
                 if troop.mechanics:
-                    print(f"[Attach] {defn_name}: {len(troop.mechanics)} mechanic(s)")
+                    pass  # print(f"[Attach] {defn_name}: {len(troop.mechanics)} mechanic(s)")
         except Exception as e:
-            print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
+            pass  # print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
 
         self.entities[self.next_entity_id] = troop
         self.next_entity_id += 1
@@ -696,7 +696,7 @@ class BattleState:
             for mech in entity.mechanics:
                 mech.on_attach(entity)
             if entity.mechanics:
-                print(f"[Attach] {getattr(card_stats, 'name', 'Building')}: {len(entity.mechanics)} mechanic(s)")
+                pass  # print(f"[Attach] {getattr(card_stats, 'name', 'Building')}: {len(entity.mechanics)} mechanic(s)")
         else:
             # Try to attach mechanics from factory card definition
             try:
@@ -707,9 +707,9 @@ class BattleState:
                     for mech in entity.mechanics:
                         mech.on_attach(entity)
                     if entity.mechanics:
-                        print(f"[Attach] {defn_name}: {len(entity.mechanics)} mechanic(s)")
+                        pass  # print(f"[Attach] {defn_name}: {len(entity.mechanics)} mechanic(s)")
             except Exception as e:
-                print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
+                pass  # print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
 
         self.entities[self.next_entity_id] = entity
         self.next_entity_id += 1
