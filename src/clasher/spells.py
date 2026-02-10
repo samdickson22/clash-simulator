@@ -455,10 +455,10 @@ RAGE = BuffSpell("Rage", 2, radius=3000.0, damage=0, buff_duration=6.0, speed_mu
 MIRROR = DirectDamageSpell("Mirror", 3, radius=0.0, damage=0)  # Special case - handled in battle logic
 POISON = DirectDamageSpell("Poison", 4, radius=3000.0, damage=78)  # Damage over time
 GRAVEYARD = GraveyardSpell("Graveyard", 5, radius=2.5, damage=0, spawn_interval=0.5, max_skeletons=20, duration=10.0)
-LOG = ProjectileSpell("Log", 2, radius=250.0, damage=240, travel_speed=1200.0/60.0)
+LOG = RollingProjectileSpell("Log", 2, radius=250.0/1000.0, damage=240, travel_speed=1200.0/60.0, projectile_range=11.1, radius_y=0.6)
 TORNADO = TornadoSpell("Tornado", 3, radius=3000.0/1000.0, damage=0, pull_force=3.0, damage_per_second=35.0, duration=3.0)
 EARTHQUAKE = DirectDamageSpell("Earthquake", 3, radius=3000.0/1000.0, damage=332, slow_duration=3.0, slow_multiplier=0.5)
-BARB_LOG = ProjectileSpell("BarbLog", 2, radius=250.0/1000.0, damage=240, travel_speed=1200.0/60.0)
+BARB_LOG = RollingProjectileSpell("BarbLog", 2, radius=250.0/1000.0, damage=240, travel_speed=1200.0/60.0, projectile_range=6.5, spawn_character="Barbarian", radius_y=0.6)
 HEAL = HealSpell("Heal", 3, radius=3000.0/1000.0, damage=0, heal_amount=400.0)
 SNOWBALL = DirectDamageSpell("Snowball", 2, radius=250.0/1000.0, damage=0, slow_duration=2.5, slow_multiplier=0.65)
 ROYAL_DELIVERY = DirectDamageSpell("RoyalDelivery", 4, radius=0.0, damage=0)  # Special case

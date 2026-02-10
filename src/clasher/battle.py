@@ -759,9 +759,8 @@ class BattleState:
                           pos.y == self.arena.RED_RIGHT_TOWER.y):
                         player.right_tower_hp = 0
 
-        # Remove dead entities
-        for eid in dead_ids:
-            del self.entities[eid]
+        # Dead entities remain in dict (is_alive=False) for reference;
+        # step() already skips dead entities in updates.
 
     def _spawn_death_units(self, troop: Troop) -> None:
         """Spawn death units when a troop dies"""

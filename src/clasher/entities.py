@@ -968,7 +968,8 @@ class AreaEffect(Entity):
         # Apply pull movement (air units can be pulled anywhere, ground units need walkable space)
         new_position = Position(entity.position.x + pull_x, entity.position.y + pull_y)
         
-        if getattr(entity, 'is_air_unit', False) or BattleState.arena.is_walkable(new_position):
+        bs = getattr(self, 'battle_state', None) or getattr(entity, 'battle_state', None)
+        if getattr(entity, 'is_air_unit', False) or (bs and bs.arena.is_walkable(new_position)) or (not bs):
             entity.position.x += pull_x
             entity.position.y += pull_y
     
@@ -1189,7 +1190,24 @@ class RollingProjectile(Entity):
     
     def _spawn_character(self, battle_state: 'BattleState') -> None:
         """Spawn character at end of roll (Barbarian Barrel)"""
-        if not self.spawn_character_data:
+        if not self.spawn_character_data and not self.spawn_character:
+            return
+        
+        # If we have a character name but no data, create default stats
+        if not self.spawn_character_data and self.spawn_character:
+            from .data import CardStats as CS
+            from .arena import Position as Pos
+            spawn_stats = CS(
+                name=self.spawn_character,
+                id=0, mana_cost=0, rarity="Common",
+                hitpoints=742, damage=120, speed=60.0,
+                range=0.7, sight_range=5.5, hit_speed=1500,
+                deploy_time=1000, load_time=1000, collision_radius=0.5,
+                attacks_ground=True, attacks_air=False,
+                targets_only_buildings=False, target_type="TID_TARGETS_GROUND"
+            )
+            battle_state._spawn_troop(Pos(self.position.x, self.position.y), self.player_id, spawn_stats)
+            self.has_spawned_character = True
             return
         
         import math
