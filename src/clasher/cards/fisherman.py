@@ -67,7 +67,7 @@ class FishermanHook(BaseMechanic):
         """Apply pull and stun effects to hooked target"""
         # Buildings cannot be hooked
         from ...entities import Building
-        if isinstance(target, Building):
+        if target.__class__.__name__ == 'Building':
             return
 
         # Calculate pull direction (towards fisherman)

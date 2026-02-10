@@ -22,7 +22,7 @@ class HogRiderJump(BaseMechanic):
 
     def on_tick(self, entity, dt_ms: int) -> None:
         """Handle jumping logic"""
-        if not isinstance(entity, Troop):
+        if entity.__class__.__name__ not in ('Troop',):
             return
 
         # Check if we're approaching the river (y=16)
