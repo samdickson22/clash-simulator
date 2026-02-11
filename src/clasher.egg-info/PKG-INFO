@@ -1,9 +1,0 @@
-Metadata-Version: 2.4
-Name: clasher
-Version: 0.1.0
-Summary: Fast Clash Royale battle engine simulator
-Requires-Python: >=3.10
-Requires-Dist: mypy>=1.0.0
-Requires-Dist: pytest>=7.0.0
-Requires-Dist: numba>=0.56.0
-Requires-Dist: msgspec>=0.18.0

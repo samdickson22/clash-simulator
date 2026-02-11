@@ -16,11 +16,8 @@ import json
 import os
 import math
 from typing import Dict, List, Tuple
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
-
-from clasher.engine import BattleEngine
-from clasher.arena import Position
+from src.clasher.engine import BattleEngine
+from src.clasher.arena import Position
 
 # Initialize Pygame
 pygame.init()

@@ -20,7 +20,6 @@ class PlayerState:
     king_tower_hp: float = 4824.0      # King tower HP
     left_tower_hp: float = 3631.0      # Level 11 Princess tower HP (1400 * 2.594)  
     right_tower_hp: float = 3631.0     # Level 11 Princess tower HP (1400 * 2.594)
-    king_tower_active: bool = False     # King tower activates when hit or princess tower destroyed
     
     def __post_init__(self) -> None:
         """Initialize cycle queue with remaining deck cards"""

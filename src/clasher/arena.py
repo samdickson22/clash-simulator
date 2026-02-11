@@ -134,15 +134,39 @@ class TileGrid:
         if tile_pos in self.BLOCKED_TILES:
             return False
         
-        # Spells can be deployed anywhere within bounds
-        if is_spell:
-            return True
-        
         # Check if position overlaps with living tower area (troops cannot deploy on towers)
-        if self.is_tower_tile(pos, battle_state):
+        if not is_spell and self.is_tower_tile(pos, battle_state):
             return False
         
-        return True
+        # Most spells can be deployed anywhere on the battlefield
+        # However, rolling projectiles (Log, Barbarian Barrel) follow troop deployment rules
+        if is_spell:
+            # Check if this is a rolling projectile spell that requires deployment territory validation
+            if self._is_rolling_projectile_spell(spell_obj):
+                # Rolling projectiles must follow troop deployment rules
+                pass  # Continue to deployment zone validation below
+            else:
+                # Regular spells can be deployed anywhere
+                return True
+        
+        # Special restriction: only middle 6 tiles (x=6-11) playable on rows 0 and 31
+        if pos.y == 0 or pos.y == 31:
+            if not (6 <= pos.x <= 11):
+                return False
+        
+        # Check deployment zones (including expanded zones after tower destruction)
+        zones = self.get_deploy_zones(player_id, battle_state)
+        for x1, y1, x2, y2 in zones:
+            if x1 <= pos.x < x2 and y1 <= pos.y < y2:
+                return True
+        
+        # Special case: allow middle 6 tiles on edge rows for respective players
+        if player_id == 0 and pos.y == 0 and 6 <= pos.x <= 11:
+            return True
+        elif player_id == 1 and pos.y == 31 and 6 <= pos.x <= 11:
+            return True
+            
+        return False
     
     def _is_rolling_projectile_spell(self, spell_obj) -> bool:
         """Check if spell is a rolling projectile that requires territory validation"""
@@ -171,12 +195,12 @@ class TileGrid:
         
         # Check all tower positions
         towers = [
-            (self.BLUE_LEFT_TOWER, 1.0, 0),    # Princess tower, 2x2
-            (self.BLUE_RIGHT_TOWER, 1.0, 0),   # Princess tower, 2x2  
-            (self.BLUE_KING_TOWER, 1.5, 0),    # King tower, 3x3
-            (self.RED_LEFT_TOWER, 1.0, 1),     # Princess tower, 2x2
-            (self.RED_RIGHT_TOWER, 1.0, 1),    # Princess tower, 2x2
-            (self.RED_KING_TOWER, 1.5, 1)      # King tower, 3x3
+            (self.BLUE_LEFT_TOWER, 1.5, 0),    # Princess tower, 3x3
+            (self.BLUE_RIGHT_TOWER, 1.5, 0),   # Princess tower, 3x3  
+            (self.BLUE_KING_TOWER, 2.0, 0),    # King tower, 4x4
+            (self.RED_LEFT_TOWER, 1.5, 1),     # Princess tower, 3x3
+            (self.RED_RIGHT_TOWER, 1.5, 1),    # Princess tower, 3x3
+            (self.RED_KING_TOWER, 2.0, 1)      # King tower, 4x4
         ]
         
         for tower_pos, radius, player_id in towers:
@@ -190,7 +214,7 @@ class TileGrid:
             dx = abs(pos.x - tower_pos.x)
             dy = abs(pos.y - tower_pos.y)
             
-            if dx < radius and dy < radius:
+            if dx <= radius and dy <= radius:
                 return True
         
         return False

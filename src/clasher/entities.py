@@ -93,13 +93,13 @@ class Entity(ABC):
 
     def on_spawn(self) -> None:
         """Called when entity is spawned in battle"""
-        pass  # print(f"[Lifecycle] on_spawn {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
+        print(f"[Lifecycle] on_spawn {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
         for mechanic in self.mechanics:
             mechanic.on_spawn(self)
 
     def on_death(self) -> None:
         """Called when entity dies"""
-        pass  # print(f"[Lifecycle] on_death {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
+        print(f"[Lifecycle] on_death {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
         for mechanic in self.mechanics:
             mechanic.on_death(self)
     
@@ -229,7 +229,7 @@ class Entity(ABC):
     def _is_valid_target(self, entity: 'Entity') -> bool:
         """Check if entity can be targeted (excludes spell entities)"""
         # Spell entities cannot be targeted by troops
-        spell_entity_types = {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect', 'Graveyard', 'TimedExplosive'}
+        spell_entity_types = {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect'}
         if type(entity).__name__ in spell_entity_types:
             return False
 
@@ -864,14 +864,6 @@ class Troop(Entity):
 class Building(Entity):
     speed: float = 0.0  # Buildings don't move
     lifetime_elapsed: float = 0.0
-    is_king_tower: bool = False  # King towers don't attack until activated
-    king_tower_active: bool = False  # Set to True when king tower is activated
-    
-    def take_damage(self, amount: float) -> None:
-        """Override to activate king tower when directly hit"""
-        if self.is_king_tower and not self.king_tower_active and amount > 0:
-            self.king_tower_active = True
-        super().take_damage(amount)
     
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update building - only attack, no movement"""
@@ -900,10 +892,6 @@ class Building(Entity):
                 self.take_damage(decay)
                 if not self.is_alive:
                     return
-
-        # King towers don't attack until activated
-        if self.is_king_tower and not self.king_tower_active:
-            return
 
         # If stunned, can't attack
         if self.is_stunned():
@@ -1417,24 +1405,7 @@ class RollingProjectile(Entity):
     
     def _spawn_character(self, battle_state: 'BattleState') -> None:
         """Spawn character at end of roll (Barbarian Barrel)"""
-        if not self.spawn_character_data and not self.spawn_character:
-            return
-        
-        # If we have a character name but no data, create default stats
-        if not self.spawn_character_data and self.spawn_character:
-            from .data import CardStats as CS
-            from .arena import Position as Pos
-            spawn_stats = CS(
-                name=self.spawn_character,
-                id=0, mana_cost=0, rarity="Common",
-                hitpoints=742, damage=120, speed=60.0,
-                range=0.7, sight_range=5.5, hit_speed=1500,
-                deploy_time=1000, load_time=1000, collision_radius=0.5,
-                attacks_ground=True, attacks_air=False,
-                targets_only_buildings=False, target_type="TID_TARGETS_GROUND"
-            )
-            battle_state._spawn_troop(Pos(self.position.x, self.position.y), self.player_id, spawn_stats)
-            self.has_spawned_character = True
+        if not self.spawn_character_data:
             return
         
         import math

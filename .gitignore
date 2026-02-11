@@ -9,5 +9,4 @@ __pycache__
 .cursorindexingignore
 .pytest_cache
 .venv
-logs/src/clasher.egg-info/
-.venv/
+logs/

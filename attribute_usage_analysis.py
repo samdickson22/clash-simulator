@@ -9,9 +9,7 @@ from pathlib import Path
 import sys
 sys.path.append(str(Path(__file__).parent / "src"))
 
-import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
-from clasher.data import CardDataLoader
+from src.clasher.data import CardDataLoader
 
 def analyze_attribute_usage():
     """Analyze which card attributes are loaded vs used in battle"""

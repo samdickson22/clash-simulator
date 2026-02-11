@@ -24,7 +24,7 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
     if char_data.get("deathDamage") and char_data.get("deathRadius"):
         death_damage = char_data.get("deathDamage", 0)
         death_radius = char_data.get("deathRadius", 0)
-        pass  # print(f"[Detect] DeathDamage for {entry.get('name')} radius={death_radius} dmg={death_damage}")
+        print(f"[Detect] DeathDamage for {entry.get('name')} radius={death_radius} dmg={death_damage}")
         mechanics.append(DeathDamage(
             radius_tiles=death_radius / 1000.0,
             damage=death_damage
@@ -36,7 +36,7 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
         unit_name = spawn_data.get("name") or char_data.get("deathSpawnCharacter")
         count = char_data.get("deathSpawnCount", 1)
         if unit_name:
-            pass  # print(f"[Detect] DeathSpawn for {entry.get('name')} -> {count}x {unit_name}")
+            print(f"[Detect] DeathSpawn for {entry.get('name')} -> {count}x {unit_name}")
             mechanics.append(DeathSpawn(
                 unit_name=unit_name,
                 count=count,
@@ -46,7 +46,7 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
 
     # Shield mechanics
     if char_data.get("shieldHitpoints"):
-        pass  # print(f"[Detect] Shield for {entry.get('name')} hp={char_data['shieldHitpoints']}")
+        print(f"[Detect] Shield for {entry.get('name')} hp={char_data['shieldHitpoints']}")
         mechanics.append(Shield(
             shield_hp=char_data["shieldHitpoints"]
         ))
@@ -67,7 +67,7 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
             (4000, stage3),
         ]
 
-        pass  # print(f"[Detect] DamageRamp for {entry.get('name')}")
+        print(f"[Detect] DamageRamp for {entry.get('name')}")
         mechanics.append(DamageRamp(
             stages=stages,
             per_target=True
@@ -90,18 +90,15 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
 
     # Crown tower scaling (mostly for spells)
     if entry.get("crownTowerDamagePercent") is not None:
-        pass  # print(f"[Detect] CrownTowerScaling for {entry.get('name')} scale={entry['crownTowerDamagePercent']}")
-        # crownTowerDamagePercent is negative (e.g. -70 means 35% of normal damage)
-        raw = entry["crownTowerDamagePercent"]
-        multiplier = (100 + raw) / 100.0 if raw < 0 else raw / 100.0
+        print(f"[Detect] CrownTowerScaling for {entry.get('name')} scale={entry['crownTowerDamagePercent']}")
         mechanics.append(CrownTowerScaling(
-            damage_multiplier=multiplier
+            damage_multiplier=entry["crownTowerDamagePercent"] / 100.0
         ))
 
     # Knockback mechanics (Log, Bowler)
     if char_data.get("knockbackData") or entry.get("name") in ["Log", "Bowler"]:
         knockback_distance = 1.5 if entry.get("name") == "Log" else 1.0
-        pass  # print(f"[Detect] KnockbackOnHit for {entry.get('name')}")
+        print(f"[Detect] KnockbackOnHit for {entry.get('name')}")
         mechanics.append(KnockbackOnHit(
             knockback_distance=knockback_distance,
             knockback_chance=1.0
@@ -116,7 +113,7 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
         interval_ms = char_data.get("spawnPauseTime", 3000)
         count = char_data.get("spawnNumber", 1)
 
-        pass  # print(f"[Detect] PeriodicSpawner for {entry.get('name')} unit={unit_name} interval={interval_ms} count={count}")
+        print(f"[Detect] PeriodicSpawner for {entry.get('name')} unit={unit_name} interval={interval_ms} count={count}")
         mechanics.append(PeriodicSpawner(
             unit_name=unit_name,
             spawn_interval_ms=interval_ms,
