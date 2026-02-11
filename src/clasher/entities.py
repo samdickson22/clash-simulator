@@ -281,7 +281,15 @@ class Entity(ABC):
             
             # Only consider targets within sight range for troops vs troops
             if isinstance(entity, Building):
-                building_targets.append((entity, distance))
+                # Crown towers are always valid objectives, but non-tower buildings
+                # should only pull aggro when actually in sight range.
+                building_name = getattr(getattr(entity, "card_stats", None), "name", "")
+                is_crown_tower = (
+                    building_name in {"Tower", "KingTower"}
+                    or bool(getattr(entity, "_is_king_tower", False))
+                )
+                if is_crown_tower or distance <= self.sight_range:
+                    building_targets.append((entity, distance))
             else:
                 # For troop targets, only consider if within sight range
                 if distance <= self.sight_range:
@@ -744,9 +752,11 @@ class Troop(Entity):
         final_target = target_entity.position
 
         # We need to cross the river - use bridge logic
-        # Determine which bridge to use (left at x=3.5, right at x=14.5)
-        left_bridge_dist = abs(self.position.x - 3.5)
-        right_bridge_dist = abs(self.position.x - 14.5)
+        # Determine which bridge gives the shorter total route to target.
+        left_bridge = Position(3.5, 16.0)
+        right_bridge = Position(14.5, 16.0)
+        left_bridge_dist = self.position.distance_to(left_bridge) + left_bridge.distance_to(final_target)
+        right_bridge_dist = self.position.distance_to(right_bridge) + right_bridge.distance_to(final_target)
 
         if left_bridge_dist < right_bridge_dist:
             bridge_x = 3.5  # Left bridge center of center tile
@@ -786,9 +796,9 @@ class Troop(Entity):
         left_bridge = Position(3.5, 16.0)
         right_bridge = Position(14.5, 16.0)
 
-        # Determine which bridge is closer
-        dist_to_left = self.position.distance_to(left_bridge)
-        dist_to_right = self.position.distance_to(right_bridge)
+        # Determine which bridge gives the shorter total route to target.
+        dist_to_left = self.position.distance_to(left_bridge) + left_bridge.distance_to(final_target)
+        dist_to_right = self.position.distance_to(right_bridge) + right_bridge.distance_to(final_target)
 
         if dist_to_left <= dist_to_right:
             chosen_bridge = left_bridge

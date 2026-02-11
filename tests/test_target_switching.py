@@ -8,9 +8,16 @@ from clasher.entities import Building, TargetType, Troop
 from clasher.factory.dynamic_factory import building_from_values, troop_from_values
 
 
-def _make_building(entity_id: int, x: float, y: float) -> Building:
+def _make_building(
+    entity_id: int,
+    x: float,
+    y: float,
+    *,
+    name: str = "Building",
+    player_id: int = 1,
+) -> Building:
     stats = building_from_values(
-        name=f"Building{entity_id}",
+        name=name,
         hitpoints=1200,
         damage=80,
         range_tiles=6.0,
@@ -24,7 +31,7 @@ def _make_building(entity_id: int, x: float, y: float) -> Building:
     return Building(
         id=entity_id,
         position=Position(x, y),
-        player_id=1,
+        player_id=player_id,
         card_stats=stats,
         hitpoints=1200,
         max_hitpoints=1200,
@@ -76,3 +83,20 @@ def test_switches_to_in_sight_closer_building():
 
     assert troop._should_switch_target(current_target, new_target) is True
 
+
+def test_building_targeting_troop_ignores_out_of_sight_bridge_cannon():
+    troop = _make_building_targeting_troop(x=14.5, y=17.0, sight_range=5.0)
+    cannon = _make_building(entity_id=10, x=3.5, y=18.0, name="Cannon", player_id=1)
+    king = _make_building(entity_id=11, x=9.0, y=29.5, name="KingTower", player_id=1)
+
+    target = troop.get_nearest_target({10: cannon, 11: king})
+    assert target is king
+
+
+def test_building_targeting_troop_can_still_acquire_in_sight_defensive_building():
+    troop = _make_building_targeting_troop(x=14.5, y=17.0, sight_range=5.0)
+    cannon = _make_building(entity_id=10, x=12.0, y=18.0, name="Cannon", player_id=1)
+    king = _make_building(entity_id=11, x=9.0, y=29.5, name="KingTower", player_id=1)
+
+    target = troop.get_nearest_target({10: cannon, 11: king})
+    assert target is cannon
