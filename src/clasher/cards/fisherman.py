@@ -38,7 +38,7 @@ class FishermanHook(BaseMechanic):
         for target in entity.battle_state.entities.values():
             if (target.player_id == entity.player_id or
                     not target.is_alive or
-                    isinstance(target, (entity.__class__.__base__))):  # Skip projectiles/areas
+                    type(target).__name__ in {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect', 'Graveyard'}):
                 continue
 
             distance = entity.position.distance_to(target.position)
@@ -66,8 +66,8 @@ class FishermanHook(BaseMechanic):
     def _apply_hook_effects(self, entity, target) -> None:
         """Apply pull and stun effects to hooked target"""
         # Buildings cannot be hooked
-        from ...entities import Building
-        if target.__class__.__name__ == 'Building':
+        from ..entities import Building
+        if isinstance(target, Building):
             return
 
         # Calculate pull direction (towards fisherman)

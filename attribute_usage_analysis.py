@@ -18,7 +18,7 @@ def analyze_attribute_usage():
     print("🔍 CARD ATTRIBUTE USAGE ANALYSIS")
     print("=" * 80)
 
-    # Load cards using the legacy system (what random_battle.py actually uses)
+    # Load cards using the compatibility system (what gameplay relies on)
     loader = CardDataLoader()
     legacy_cards = loader.load_cards()
 
@@ -26,7 +26,7 @@ def analyze_attribute_usage():
     new_cards = loader.load_card_definitions()
 
     print(f"📊 Data Sources:")
-    print(f"  • Legacy CardStats: {len(legacy_cards)} cards")
+    print(f"  • Compat CardStats: {len(legacy_cards)} cards")
     print(f"  • New CardDefinition: {len(new_cards)} cards")
     print()
 
@@ -39,7 +39,7 @@ def analyze_attribute_usage():
         print(f"🃏 SAMPLE ANALYSIS: {sample_card_name}")
         print("-" * 40)
 
-        print(f"\n📦 LOADED ATTRIBUTES (Legacy CardStats):")
+        print(f"\n📦 LOADED ATTRIBUTES (Compat CardStats):")
         legacy_attrs = [attr for attr in dir(legacy_card) if not attr.startswith('_') and not callable(getattr(legacy_card, attr))]
         print(f"  Total: {len(legacy_attrs)} attributes")
         print(f"  Combat: hitpoints={legacy_card.hitpoints}, damage={legacy_card.damage}, range={legacy_card.range}")
@@ -120,7 +120,7 @@ def analyze_attribute_usage():
     for attr, usage in sorted(used_in_battle.items()):
         print(f"  {attr}: {usage}")
 
-    print(f"\n⚠️  LOADED BUT UNUSED (Legacy System):")
+    print(f"\n⚠️  LOADED BUT UNUSED (Compat System):")
     for attr, reason in sorted(loaded_but_unused.items()):
         print(f"  {attr}: {reason}")
 
@@ -132,7 +132,7 @@ def analyze_attribute_usage():
     total_legacy = len(used_in_battle) + len(loaded_but_unused)
     total_new = len(new_system_unused)
 
-    print(f"  Legacy System: {len(used_in_battle)}/{total_legacy} attributes used ({len(used_in_battle)/total_legacy*100:.1f}%)")
+    print(f"  Compat System: {len(used_in_battle)}/{total_legacy} attributes used ({len(used_in_battle)/total_legacy*100:.1f}%)")
     print(f"  New Compositional System: 0/{total_new} components used (0.0%)")
 
     print(f"\n🎯 KEY OPPORTUNITIES:")

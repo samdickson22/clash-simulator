@@ -4,6 +4,7 @@ import math
 import random
 
 from ..mechanic_base import BaseMechanic
+from ...factory.dynamic_factory import troop_from_values
 
 if TYPE_CHECKING:
     from ...battle import BattleState
@@ -43,6 +44,7 @@ class DeathSpawn(BaseMechanic):
     unit_name: str
     count: int
     radius_tiles: float = 0.5
+    unit_data: dict | None = None
 
     def on_death(self, entity) -> None:
         """Spawn units around death position"""
@@ -53,30 +55,59 @@ class DeathSpawn(BaseMechanic):
 
         pass  # print(f"[Mechanic] DeathSpawn triggered by {getattr(entity.card_stats, 'name', 'Unknown')} -> {self.count}x {self.unit_name}")
 
-        # Try to get death spawn stats from card loader
-        death_spawn_stats = battle_state.card_loader.get_card(self.unit_name)
+        from ...arena import Position
+        from ...entities import TimedExplosive
+        from ...factory.dynamic_factory import troop_from_character_data
 
-        # If not found, create minimal stats
+        # Bomb-style death spawns (e.g., BalloonBomb, BombTowerBomb) become timed explosives.
+        if self.unit_data and self.unit_data.get("deathDamage") is not None and not self.unit_data.get("hitpoints"):
+            explosion_damage = self.unit_data.get("deathDamage", 0)
+            explosion_timer = max(0.1, (self.unit_data.get("deployTime", 1000) or 1000) / 1000.0)
+            explosion_radius = max(0.5, (self.unit_data.get("collisionRadius", 1000) or 1000) / 1000.0)
+            spawn_data = self.unit_data.get("deathSpawnCharacterData") or {}
+            spawn_name = spawn_data.get("name") or self.unit_data.get("deathSpawnCharacter")
+            spawn_count = int(self.unit_data.get("deathSpawnCount", 0) or 0)
+            for _ in range(self.count):
+                explosive = TimedExplosive(
+                    id=battle_state.next_entity_id,
+                    position=Position(entity.position.x, entity.position.y),
+                    player_id=entity.player_id,
+                    card_stats=entity.card_stats,
+                    hitpoints=1,
+                    max_hitpoints=1,
+                    damage=0,
+                    range=0,
+                    sight_range=0,
+                    explosion_timer=explosion_timer,
+                    explosion_radius=explosion_radius,
+                    explosion_damage=explosion_damage,
+                    death_spawn_name=spawn_name,
+                    death_spawn_count=spawn_count,
+                    death_spawn_data=spawn_data or None,
+                )
+                battle_state.entities[explosive.id] = explosive
+                battle_state.next_entity_id += 1
+            return
+
+        # Try to get death spawn stats from card loader.
+        death_spawn_stats = battle_state.card_loader.get_card(self.unit_name)
+        if not death_spawn_stats and self.unit_data:
+            death_spawn_stats = troop_from_character_data(
+                self.unit_name,
+                self.unit_data,
+                elixir=0,
+                rarity=self.unit_data.get("rarity", "Common"),
+            )
         if not death_spawn_stats:
-            from ...data import CardStats
-            death_spawn_stats = CardStats(
-                name=self.unit_name,
-                id=0,
-                mana_cost=0,
-                rarity="Common",
+            death_spawn_stats = troop_from_values(
+                self.unit_name,
                 hitpoints=100,
                 damage=25,
-                speed=60.0,
-                range=1.0,
-                sight_range=5.0,
-                hit_speed=1000,
-                load_time=1000,
-                deploy_time=1000,
-                collision_radius=0.5,
-                attacks_ground=True,
-                attacks_air=False,
-                targets_only_buildings=False,
-                target_type="TID_TARGETS_GROUND"
+                speed_tiles_per_min=60.0,
+                range_tiles=1.0,
+                sight_range_tiles=5.0,
+                hit_speed_ms=1000,
+                collision_radius_tiles=0.5,
             )
 
         # Spawn units in a small radius around the death position
@@ -87,6 +118,4 @@ class DeathSpawn(BaseMechanic):
             spawn_x = entity.position.x + distance * math.cos(angle)
             spawn_y = entity.position.y + distance * math.sin(angle)
 
-            # Create and spawn the unit
-            from ...arena import Position
             battle_state._spawn_troop(Position(spawn_x, spawn_y), entity.player_id, death_spawn_stats)

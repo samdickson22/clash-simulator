@@ -8,8 +8,8 @@ if TYPE_CHECKING:
     from .battle import BattleState
 
 from .arena import Position
-from .data import CardStats
-from .card_types import Mechanic
+from .card_types import CardStatsCompat, Mechanic
+from .factory.dynamic_factory import troop_from_character_data, troop_from_values
 
 
 class EntityType(Enum):
@@ -30,7 +30,7 @@ class Entity(ABC):
     id: int
     position: Position
     player_id: int
-    card_stats: CardStats
+    card_stats: CardStatsCompat
     
     # Combat stats
     hitpoints: float
@@ -42,6 +42,7 @@ class Entity(ABC):
     # Timing
     attack_cooldown: float = 0.0
     load_time: float = 0.0
+    deploy_delay_remaining: float = 0.0
     
     # State
     target_id: Optional[int] = None
@@ -53,6 +54,8 @@ class Entity(ABC):
     slow_timer: float = 0.0
     slow_multiplier: float = 1.0
     original_speed: Optional[float] = None
+    attack_speed_debuff_multiplier: float = 1.0
+    attack_speed_buff_multiplier: float = 1.0
     last_attack_time: float = 0.0  # For visualization tracking
 
     # Mechanics system
@@ -72,6 +75,17 @@ class Entity(ABC):
     
     def take_damage(self, amount: float) -> None:
         """Apply damage to entity"""
+        for mechanic in getattr(self, "mechanics", []):
+            guard = getattr(mechanic, "take_damage_during_dash", None)
+            if callable(guard):
+                should_take_damage = guard(self, amount)
+                if not should_take_damage:
+                    return
+
+        # King tower activation when hit directly.
+        if type(self).__name__ == "Building" and getattr(getattr(self, "card_stats", None), "name", None) == "KingTower":
+            if amount > 0:
+                self._tower_active = True
         self.hitpoints = max(0, self.hitpoints - amount)
         if self.hitpoints <= 0 and self.is_alive:
             self.is_alive = False
@@ -128,6 +142,16 @@ class Entity(ABC):
     def apply_stun(self, duration: float) -> None:
         """Apply stun effect for specified duration"""
         self.stun_timer = max(self.stun_timer, duration)
+        # Stun resets/restarts attack timing for units already in the attack loop.
+        hit_interval = self.get_attack_interval_seconds()
+        if hit_interval > 0:
+            self.attack_cooldown = max(self.attack_cooldown, hit_interval)
+
+        # Allow card mechanics to react to stun (e.g., Sparky charge reset).
+        for mechanic in getattr(self, "mechanics", []):
+            handler = getattr(mechanic, "handle_stun", None)
+            if callable(handler):
+                handler(self)
         
     def apply_slow(self, duration: float, multiplier: float) -> None:
         """Apply slow effect for specified duration"""
@@ -135,6 +159,7 @@ class Entity(ABC):
             self.original_speed = self.speed
         self.slow_timer = max(self.slow_timer, duration)
         self.slow_multiplier = min(self.slow_multiplier, multiplier)
+        self.attack_speed_debuff_multiplier = min(self.attack_speed_debuff_multiplier, multiplier)
         if hasattr(self, 'speed'):
             self.speed = self.original_speed * self.slow_multiplier
     
@@ -153,6 +178,35 @@ class Entity(ABC):
                     self.speed = self.original_speed
                     self.original_speed = None
                 self.slow_multiplier = 1.0
+                self.attack_speed_debuff_multiplier = 1.0
+
+        # Handle temporary buffs that adjust speed/damage
+        if getattr(self, '_buff_active', False):
+            if hasattr(self, 'battle_state'):
+                if self.battle_state.time >= getattr(self, '_buff_end_time', 0):
+                    if hasattr(self, '_original_speed') and self._original_speed is not None:
+                        if hasattr(self, 'speed'):
+                            self.speed = self._original_speed
+                        self._original_speed = None
+                    if hasattr(self, '_original_damage') and self._original_damage is not None:
+                        self.damage = self._original_damage
+                        self._original_damage = None
+                    self.attack_speed_buff_multiplier = 1.0
+                    self._buff_active = False
+                    self._buff_end_time = None
+
+    def get_attack_rate_multiplier(self) -> float:
+        """Effective attack-rate multiplier (<=1 slow, >1 buffs)."""
+        multiplier = self.attack_speed_debuff_multiplier * self.attack_speed_buff_multiplier
+        return max(0.0, multiplier)
+
+    def get_attack_interval_seconds(self) -> float:
+        """Current time between attacks after attack-speed modifiers."""
+        hit_speed_ms = getattr(getattr(self, "card_stats", None), "hit_speed", None)
+        if not hit_speed_ms:
+            return 1.0
+        rate_multiplier = max(0.05, self.get_attack_rate_multiplier())
+        return (hit_speed_ms / 1000.0) / rate_multiplier
     
     def is_stunned(self) -> bool:
         """Check if entity is currently stunned"""
@@ -162,9 +216,15 @@ class Entity(ABC):
         """Check if this entity can attack the target"""
         if not self._is_valid_target(target):
             return False
+
+        if target.is_air_unit and not self._can_attack_air():
+            return False
+        if (not target.is_air_unit) and not self._can_attack_ground():
+            return False
         
         distance = self.position.distance_to(target.position)
-        return distance <= self.range
+        target_radius = getattr(target.card_stats, "collision_radius", 0.5) or 0.5
+        return distance <= (self.range + target_radius)
     
     def _is_valid_target(self, entity: 'Entity') -> bool:
         """Check if entity can be targeted (excludes spell entities)"""
@@ -172,7 +232,14 @@ class Entity(ABC):
         spell_entity_types = {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect', 'Graveyard', 'TimedExplosive'}
         if type(entity).__name__ in spell_entity_types:
             return False
-        
+
+        # Stealthed entities cannot be targeted until their cloak expires
+        stealth_until = getattr(entity, '_stealth_until', 0)
+        if stealth_until and hasattr(entity, 'battle_state'):
+            current_ms = int(entity.battle_state.time * 1000)
+            if stealth_until > current_ms:
+                return False
+
         # Must be alive and enemy
         return entity.is_alive and entity.player_id != self.player_id
     
@@ -191,9 +258,8 @@ class Entity(ABC):
                                 getattr(self.card_stats, 'targets_only_buildings', False))
         
         # Check what this unit can attack
-        can_attack_air = (hasattr(self, 'card_stats') and 
-                         self.card_stats and 
-                         (getattr(self.card_stats, 'target_type', None) in ['TID_TARGETS_AIR_AND_GROUND', 'TID_TARGETS_AIR']))
+        can_attack_air = self._can_attack_air()
+        can_attack_ground = self._can_attack_ground()
         
         for entity in entities.values():
             # Only check if entity is valid target (excludes spell entities)
@@ -209,6 +275,8 @@ class Entity(ABC):
             # Check air targeting rules
             if entity.is_air_unit and not can_attack_air:
                 continue  # Skip air units if we can't attack air
+            if (not entity.is_air_unit) and not can_attack_ground:
+                continue  # Skip ground units if we can't attack ground
             
             # Only consider targets within sight range for troops vs troops
             if isinstance(entity, Building):
@@ -235,6 +303,8 @@ class Entity(ABC):
     
     def _should_switch_target(self, current_target: 'Entity', new_target: 'Entity') -> bool:
         """Determine if we should switch from current target to new target"""
+        if getattr(self.card_stats, 'targets_only_buildings', False) and not isinstance(new_target, Building):
+            return False
         # Always switch to troops in sight range (higher priority than buildings)
         is_current_building = isinstance(current_target, Building)
         is_new_troop = not isinstance(new_target, Building)
@@ -255,6 +325,32 @@ class Entity(ABC):
         
         return False
 
+    def _can_attack_air(self) -> bool:
+        """Return True if this entity can attack air units."""
+        card_stats = getattr(self, "card_stats", None)
+        if not card_stats:
+            return True
+        target_type = getattr(card_stats, "target_type", None)
+        if target_type in {"TID_TARGETS_AIR", "TID_TARGETS_AIR_AND_GROUND"}:
+            return True
+        return bool(getattr(card_stats, "attacks_air", False))
+
+    def _can_attack_ground(self) -> bool:
+        """Return True if this entity can attack ground units."""
+        card_stats = getattr(self, "card_stats", None)
+        if not card_stats:
+            return True
+        target_type = getattr(card_stats, "target_type", None)
+        if target_type in {
+            "TID_TARGETS_GROUND",
+            "TID_TARGETS_AIR_AND_GROUND",
+            "TID_TARGETS_BUILDINGS",
+            "TID_TARGETS_GROUND_AND_BUILDINGS",
+            "TID_TARGETS_BUILDINGS_AND_GROUND",
+        }:
+            return True
+        return bool(getattr(card_stats, "attacks_ground", True))
+
 
 @dataclass
 class Troop(Entity):
@@ -271,6 +367,10 @@ class Troop(Entity):
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update troop - move and attack"""
         if not self.is_alive:
+            return
+
+        if self.deploy_delay_remaining > 0:
+            self.deploy_delay_remaining = max(0.0, self.deploy_delay_remaining - dt)
             return
         
         # Update status effects first
@@ -290,7 +390,7 @@ class Troop(Entity):
         
         # Update attack cooldown and track time for visualization
         if self.attack_cooldown > 0:
-            self.attack_cooldown -= dt
+            self.attack_cooldown -= dt * self.get_attack_rate_multiplier()
         
         # Update last attack time for visualization tracking
         self.last_attack_time += dt
@@ -316,7 +416,8 @@ class Troop(Entity):
         if current_target:
             # Move towards target if out of range
             distance = self.position.distance_to(current_target.position)
-            if distance > self.range:
+            target_radius = getattr(current_target.card_stats, "collision_radius", 0.5) or 0.5
+            if distance > (self.range + target_radius):
                 self._move_towards_target(current_target, dt, battle_state)
             elif self.attack_cooldown <= 0:
                 # Call on_attack_start for all mechanics
@@ -335,7 +436,7 @@ class Troop(Entity):
                 for mechanic in self.mechanics:
                     mechanic.on_attack_hit(self, current_target)
 
-                self.attack_cooldown = (getattr(self.card_stats, 'hit_speed', None) or 1000) / 1000.0
+                self.attack_cooldown = self.get_attack_interval_seconds()
                 self.last_attack_time = 0.0  # Reset for visualization
                 self._on_attack()  # Handle post-attack mechanics
     
@@ -343,11 +444,17 @@ class Troop(Entity):
         """Get the appropriate damage value based on charging state"""
         if getattr(self.card_stats, 'charge_range', None) and not self.has_charged and self.is_charging:
             # Use special damage for first charge attack
-            return float((getattr(self.card_stats, 'damage_special', None) or self.damage))
+            return float(
+                (getattr(self.card_stats, 'scaled_damage_special', None)
+                 or getattr(self.card_stats, 'damage_special', None)
+                 or self.damage)
+            )
         return float(self.damage)
     
     def _uses_projectiles(self) -> bool:
         """Check if this troop uses projectiles for attacks"""
+        if getattr(self, '_force_melee_attack', False):
+            return False
         return (self.card_stats and 
                 hasattr(self.card_stats, 'projectile_data') and 
                 self.card_stats.projectile_data is not None)
@@ -365,10 +472,34 @@ class Troop(Entity):
         projectile_damage = self.damage  # Use entity's scaled damage instead of base projectile damage
         projectile_speed = projectile_data.get('speed', 500) / 60.0  # Convert from per-minute to per-second
         splash_radius = projectile_data.get('radius', 0) / 1000.0 if projectile_data.get('radius') else 0.0
+        target_buff_data = projectile_data.get("targetBuffData") or {}
+        slow_duration = projectile_data.get("buffTime", 0) / 1000.0
+        slow_multiplier = 1.0 + (target_buff_data.get("speedMultiplier", 0) / 100.0)
+        stun_duration = 0.0
+        if (
+            target_buff_data.get("speedMultiplier") == -100
+            and target_buff_data.get("hitSpeedMultiplier") == -100
+            and slow_duration > 0
+        ):
+            stun_duration = slow_duration
+            slow_duration = 0.0
+            slow_multiplier = 1.0
+        tid_target = projectile_data.get("tidTarget", "TID_TARGETS_AIR_AND_GROUND")
+        hits_air = "AIR" in tid_target
+        hits_ground = ("GROUND" in tid_target) or ("BUILDINGS" in tid_target)
+        if tid_target == "TID_TARGETS_GROUND":
+            hits_air = False
+            hits_ground = True
+        crown_tower_damage_multiplier = max(
+            0.0, 1.0 + (projectile_data.get("crownTowerDamagePercent", 0) / 100.0)
+        )
         
         # Use charging damage if applicable
         if self.is_charging and self.card_stats.damage_special:
-            projectile_damage = self.card_stats.damage_special
+            projectile_damage = (
+                getattr(self.card_stats, "scaled_damage_special", None)
+                or self.card_stats.damage_special
+            )
         
         # Check if this is Bowler (create rolling projectile)
         if self.card_stats.name == "Bowler":
@@ -404,6 +535,7 @@ class Troop(Entity):
                 spawn_delay=0.0,  # No spawn delay for Bowler
                 spawn_character=None,  # Bowler doesn't spawn units
                 spawn_character_data=None,
+                knockback_distance=projectile_data.get("pushback", 1000) / 1000.0,
                 target_direction_x=direction_x if distance > 0 else 0.0,
                 target_direction_y=direction_y if distance > 0 else 1.0
             )
@@ -424,7 +556,14 @@ class Troop(Entity):
                 target_position=Position(target.position.x, target.position.y),
                 travel_speed=projectile_speed,
                 splash_radius=splash_radius,
-                source_name=self.card_stats.name if self.card_stats else "Unknown"
+                source_name=self.card_stats.name if self.card_stats else "Unknown",
+                stun_duration=stun_duration,
+                slow_duration=slow_duration,
+                slow_multiplier=max(0.0, slow_multiplier),
+                knockback_distance=projectile_data.get("pushback", 0) / 1000.0,
+                hits_air=hits_air,
+                hits_ground=hits_ground,
+                crown_tower_damage_multiplier=crown_tower_damage_multiplier,
             )
             
             battle_state.entities[projectile.id] = projectile
@@ -485,7 +624,7 @@ class Troop(Entity):
             new_position = Position(self.position.x + move_x, self.position.y + move_y)
 
             # Air units ignore walkability checks, ground units must check
-            if self.is_air_unit or (battle_state and battle_state.arena.is_walkable(new_position)):
+            if self.is_air_unit or (battle_state and battle_state.is_ground_position_walkable(new_position, self)):
                 self.position.x += move_x
                 self.position.y += move_y
             else:
@@ -519,7 +658,7 @@ class Troop(Entity):
             # Check if this alternative direction is walkable
             alt_position = Position(self.position.x + new_move_x, self.position.y + new_move_y)
 
-            if battle_state.arena.is_walkable(alt_position):
+            if battle_state.is_ground_position_walkable(alt_position, self):
                 return (new_move_x, new_move_y)
 
         return None
@@ -739,6 +878,13 @@ class Building(Entity):
         if not self.is_alive:
             return
 
+        if self.deploy_delay_remaining > 0:
+            self.deploy_delay_remaining = max(0.0, self.deploy_delay_remaining - dt)
+            return
+
+        if getattr(self, "_is_king_tower", False) and not getattr(self, "_tower_active", True):
+            return
+
         # Update status effects
         self.update_status_effects(dt)
 
@@ -765,30 +911,31 @@ class Building(Entity):
         
         # Update attack cooldown and track time for visualization
         if self.attack_cooldown > 0:
-            self.attack_cooldown -= dt
+            self.attack_cooldown -= dt * self.get_attack_rate_multiplier()
         
         # Update last attack time for visualization tracking
         self.last_attack_time += dt
         
         # Find and attack target
         target = self.get_nearest_target(battle_state.entities)
+        self.target_id = target.id if target else None
         if target and self.can_attack_target(target) and self.attack_cooldown <= 0:
+            # Call on_attack_start for all mechanics
+            for mechanic in self.mechanics:
+                mechanic.on_attack_start(self, target)
+
             # Check if this building uses projectiles
             if self._uses_projectiles():
                 self._create_projectile(target, battle_state)
             else:
-                # Call on_attack_start for all mechanics
-                for mechanic in self.mechanics:
-                    mechanic.on_attack_start(self, target)
-
                 # Direct attack
                 self._deal_attack_damage(target, self.damage, battle_state)
 
-                # Call on_attack_hit for all mechanics
-                for mechanic in self.mechanics:
-                    mechanic.on_attack_hit(self, target)
+            # Call on_attack_hit for all mechanics
+            for mechanic in self.mechanics:
+                mechanic.on_attack_hit(self, target)
 
-            self.attack_cooldown = self.card_stats.hit_speed / 1000.0 if self.card_stats.hit_speed else 1.0
+            self.attack_cooldown = self.get_attack_interval_seconds()
             self.last_attack_time = 0.0  # Reset for visualization
     
     def _uses_projectiles(self) -> bool:
@@ -817,6 +964,27 @@ class Building(Entity):
         projectile_damage = self.damage  # Use entity's scaled damage instead of base projectile damage
         projectile_speed = projectile_data.get('speed', 500) / 60.0  # Convert from per-minute to per-second
         splash_radius = projectile_data.get('radius', 0) / 1000.0 if projectile_data.get('radius') else 0.0
+        target_buff_data = projectile_data.get("targetBuffData") or {}
+        slow_duration = projectile_data.get("buffTime", 0) / 1000.0
+        slow_multiplier = 1.0 + (target_buff_data.get("speedMultiplier", 0) / 100.0)
+        stun_duration = 0.0
+        if (
+            target_buff_data.get("speedMultiplier") == -100
+            and target_buff_data.get("hitSpeedMultiplier") == -100
+            and slow_duration > 0
+        ):
+            stun_duration = slow_duration
+            slow_duration = 0.0
+            slow_multiplier = 1.0
+        tid_target = projectile_data.get("tidTarget", "TID_TARGETS_AIR_AND_GROUND")
+        hits_air = "AIR" in tid_target
+        hits_ground = ("GROUND" in tid_target) or ("BUILDINGS" in tid_target)
+        if tid_target == "TID_TARGETS_GROUND":
+            hits_air = False
+            hits_ground = True
+        crown_tower_damage_multiplier = max(
+            0.0, 1.0 + (projectile_data.get("crownTowerDamagePercent", 0) / 100.0)
+        )
         
         # Create projectile entity
         projectile = Projectile(
@@ -832,7 +1000,14 @@ class Building(Entity):
             target_position=Position(target.position.x, target.position.y),
             travel_speed=projectile_speed,
             splash_radius=splash_radius,
-            source_name=self.card_stats.name if self.card_stats else "Unknown"
+            source_name=self.card_stats.name if self.card_stats else "Unknown",
+            stun_duration=stun_duration,
+            slow_duration=slow_duration,
+            slow_multiplier=max(0.0, slow_multiplier),
+            knockback_distance=projectile_data.get("pushback", 0) / 1000.0,
+            hits_air=hits_air,
+            hits_ground=hits_ground,
+            crown_tower_damage_multiplier=crown_tower_damage_multiplier,
         )
         
         battle_state.entities[projectile.id] = projectile
@@ -845,7 +1020,13 @@ class Projectile(Entity):
     travel_speed: float = 5.0
     splash_radius: float = 0.0
     source_name: str = "Unknown"  # Name of unit that fired this projectile
-    crown_tower_damage_percent: float = 0.0  # e.g. -70 means 30% of normal to towers
+    stun_duration: float = 0.0
+    slow_duration: float = 0.0
+    slow_multiplier: float = 1.0
+    knockback_distance: float = 0.0
+    hits_air: bool = True
+    hits_ground: bool = True
+    crown_tower_damage_multiplier: float = 1.0
     
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update projectile - move towards target"""
@@ -880,17 +1061,39 @@ class Projectile(Entity):
         for entity in list(battle_state.entities.values()):
             if entity.player_id == self.player_id or not entity.is_alive:
                 continue
+
+            is_air = getattr(entity, 'is_air_unit', False)
+            if is_air and not self.hits_air:
+                continue
+            if (not is_air) and not self.hits_ground:
+                continue
             
             # Use hitbox-based collision detection for more accurate splash damage
             if self._hitbox_overlaps_with_splash(entity):
-                dmg = self.damage
-                # Apply crown tower damage reduction for spells hitting buildings
-                if self.crown_tower_damage_percent != 0 and isinstance(entity, Building):
-                    tower_names = ('Tower', 'KingTower', 'PrincessTower')
-                    if entity.card_stats and getattr(entity.card_stats, 'name', '') in tower_names:
-                        multiplier = (100 + self.crown_tower_damage_percent) / 100.0
-                        dmg = dmg * multiplier
-                entity.take_damage(dmg)
+                damage = self.damage
+                if isinstance(entity, Building) and getattr(entity.card_stats, 'name', None) in {"Tower", "KingTower"}:
+                    damage *= self.crown_tower_damage_multiplier
+                entity.take_damage(damage)
+                if self.stun_duration > 0:
+                    entity.apply_stun(self.stun_duration)
+                if self.slow_duration > 0 and self.slow_multiplier < 1.0:
+                    entity.apply_slow(self.slow_duration, self.slow_multiplier)
+                if self.knockback_distance > 0 and not isinstance(entity, Building):
+                    self._apply_knockback(entity, battle_state)
+
+    def _apply_knockback(self, entity: 'Entity', battle_state: 'BattleState') -> None:
+        """Push entity away from impact center."""
+        dx = entity.position.x - self.target_position.x
+        dy = entity.position.y - self.target_position.y
+        distance = math.hypot(dx, dy)
+        if distance == 0:
+            return
+        new_position = Position(
+            entity.position.x + (dx / distance) * self.knockback_distance,
+            entity.position.y + (dy / distance) * self.knockback_distance,
+        )
+        if getattr(entity, "is_air_unit", False) or battle_state.is_ground_position_walkable(new_position, entity):
+            entity.position = new_position
     
     def _hitbox_overlaps_with_splash(self, entity: 'Entity') -> bool:
         """Check if entity's hitbox overlaps with splash damage radius"""
@@ -914,9 +1117,13 @@ class AreaEffect(Entity):
     """Area effect spells that stay on the ground for a duration"""
     duration: float = 4.0
     freeze_effect: bool = False
+    speed_multiplier: float = 1.0
     radius: float = 3.0
     time_alive: float = 0.0
-    affected_entities: set = field(default_factory=set)
+    hits_air: bool = True
+    hits_ground: bool = True
+    crown_tower_damage_multiplier: float = 1.0
+    building_damage_multiplier: float = 1.0
     
     # Tornado-specific properties
     pull_force: float = 0.0
@@ -938,6 +1145,12 @@ class AreaEffect(Entity):
         for entity in list(battle_state.entities.values()):
             if entity.player_id == self.player_id or not entity.is_alive or entity == self:
                 continue
+
+            is_air = getattr(entity, 'is_air_unit', False)
+            if is_air and not self.hits_air:
+                continue
+            if (not is_air) and not self.hits_ground:
+                continue
             
             # Use hitbox-based collision detection  
             if self._hitbox_overlaps_with_radius(entity):
@@ -945,28 +1158,24 @@ class AreaEffect(Entity):
                 
                 # Apply tornado pull effect
                 if self.is_tornado and self.pull_force > 0:
-                    self._apply_tornado_pull(entity, distance, dt)
+                    self._apply_tornado_pull(entity, distance, dt, battle_state)
                 
-                # Apply freeze effect
-                if self.freeze_effect and entity.id not in self.affected_entities:
-                    if hasattr(entity, 'speed'):
-                        entity.original_speed = getattr(entity, 'original_speed', entity.speed)
-                        entity.speed = 0
-                    if hasattr(entity, 'attack_cooldown'):
-                        entity.attack_cooldown = max(entity.attack_cooldown, 1.0)  # Delay attacks
-                    self.affected_entities.add(entity.id)
+                if self.freeze_effect:
+                    entity.apply_stun(max(dt, 0.1))
+                    entity.apply_slow(max(dt, 0.1), 0.0)
+                elif self.speed_multiplier < 1.0:
+                    entity.apply_slow(max(dt, 0.25), self.speed_multiplier)
                 
                 # Apply damage over time (small damage each tick)
                 if self.damage > 0:
-                    entity.take_damage(self.damage * dt)  # Damage per second
-            else:
-                # Remove freeze effect if entity leaves area
-                if self.freeze_effect and entity.id in self.affected_entities:
-                    if hasattr(entity, 'original_speed'):
-                        entity.speed = entity.original_speed
-                    self.affected_entities.discard(entity.id)
-    
-    def _apply_tornado_pull(self, entity: 'Entity', distance: float, dt: float) -> None:
+                    damage = self.damage * dt
+                    if isinstance(entity, Building):
+                        damage *= self.building_damage_multiplier
+                        if getattr(entity.card_stats, 'name', None) in {"Tower", "KingTower"}:
+                            damage *= self.crown_tower_damage_multiplier
+                    entity.take_damage(damage)
+
+    def _apply_tornado_pull(self, entity: 'Entity', distance: float, dt: float, battle_state: 'BattleState') -> None:
         """Pull entity towards tornado center"""
         if distance == 0:
             return
@@ -988,8 +1197,7 @@ class AreaEffect(Entity):
         # Apply pull movement (air units can be pulled anywhere, ground units need walkable space)
         new_position = Position(entity.position.x + pull_x, entity.position.y + pull_y)
         
-        bs = getattr(self, 'battle_state', None) or getattr(entity, 'battle_state', None)
-        if getattr(entity, 'is_air_unit', False) or (bs and bs.arena.is_walkable(new_position)) or (not bs):
+        if getattr(entity, 'is_air_unit', False) or battle_state.is_ground_position_walkable(new_position, entity):
             entity.position.x += pull_x
             entity.position.y += pull_y
     
@@ -1014,10 +1222,16 @@ class SpawnProjectile(Projectile):
     spawn_count: int = 3
     spawn_character: str = "Goblin"
     spawn_character_data: dict = None
+    activation_delay: float = 0.0
+    time_alive: float = 0.0
     
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update projectile - move towards target and spawn units on impact"""
         if not self.is_alive:
+            return
+
+        self.time_alive += dt
+        if self.time_alive < self.activation_delay:
             return
         
         # Move towards target
@@ -1038,26 +1252,11 @@ class SpawnProjectile(Projectile):
         if not self.spawn_character_data:
             return
         
-        # Create card stats from spawn character data
-        from .data import CardStats
-        spawn_stats = CardStats(
-            name=self.spawn_character,
-            id=0,
-            mana_cost=0,
-            rarity="Common",
-            hitpoints=self.spawn_character_data.get("hitpoints", 100),
-            damage=self.spawn_character_data.get("damage", 10),
-            speed=float(self.spawn_character_data.get("speed", 60)),
-            range=self.spawn_character_data.get("range", 1000) / 1000.0,
-            sight_range=self.spawn_character_data.get("sightRange", 5000) / 1000.0,
-            hit_speed=self.spawn_character_data.get("hitSpeed", 1000),
-            deploy_time=self.spawn_character_data.get("deployTime", 1000),
-            load_time=self.spawn_character_data.get("loadTime", 1000),
-            collision_radius=self.spawn_character_data.get("collisionRadius", 500) / 1000.0,
-            attacks_ground=self.spawn_character_data.get("attacksGround", True),
-            attacks_air=False,
-            targets_only_buildings=False,
-            target_type=self.spawn_character_data.get("tidTarget")
+        spawn_stats = troop_from_character_data(
+            self.spawn_character,
+            self.spawn_character_data,
+            elixir=0,
+            rarity=self.spawn_character_data.get("rarity", "Common"),
         )
         
         # Spawn units in a small radius around target
@@ -1083,6 +1282,7 @@ class RollingProjectile(Entity):
     spawn_character: str = None
     spawn_character_data: dict = None
     radius_y: float = 0.6  # Height of rolling hitbox
+    knockback_distance: float = 1.5
     # Optional custom direction (unit vector); used by Bowler boulder
     target_direction_x: Optional[float] = None
     target_direction_y: Optional[float] = None
@@ -1138,7 +1338,9 @@ class RollingProjectile(Entity):
     
     def _deal_rolling_damage(self, battle_state: 'BattleState') -> None:
         """Deal damage to ground units in rolling path (rectangular hitbox)"""
-        for entity in list(battle_state.entities.values()):
+        # Create a copy of entities list to avoid RuntimeError when dictionary changes during iteration
+        entities_copy = list(battle_state.entities.values())
+        for entity in entities_copy:
             if (entity.player_id == self.player_id or 
                 not entity.is_alive or 
                 entity.id in self.hit_entities or
@@ -1156,9 +1358,9 @@ class RollingProjectile(Entity):
                 self.hit_entities.add(entity.id)
                 
                 # Apply knockback effect (Log pushes units backward)
-                self._apply_knockback(entity)
-    
-    def _apply_knockback(self, entity: 'Entity') -> None:
+                self._apply_knockback(entity, battle_state)
+
+    def _apply_knockback(self, entity: 'Entity', battle_state: 'BattleState') -> None:
         """Apply knockback effect - pushes unit away from Log and resets attack"""
         # Buildings cannot be knocked back or stunned; they only take damage
         if isinstance(entity, Building):
@@ -1169,29 +1371,34 @@ class RollingProjectile(Entity):
             entity.attack_cooldown = max(entity.attack_cooldown, 0.5)
         
         # Physical knockback - push unit away from Log's rolling direction
-        knockback_distance = 1.5  # tiles
+        knockback_distance = self.knockback_distance  # tiles
         
         # Determine knockback direction based on movement direction
         if self.target_direction_x is not None and self.target_direction_y is not None:
             # Push along projectile's travel vector (Bowler angled push)
-            entity.position.x += self.target_direction_x * knockback_distance
-            entity.position.y += self.target_direction_y * knockback_distance
+            candidate_x = entity.position.x + self.target_direction_x * knockback_distance
+            candidate_y = entity.position.y + self.target_direction_y * knockback_distance
         else:
             if self.player_id == 0:  # Blue player Log rolling toward red side
                 # Push units further toward red side (positive Y)
-                entity.position.y += knockback_distance
+                candidate_x = entity.position.x
+                candidate_y = entity.position.y + knockback_distance
             else:  # Red player Log rolling toward blue side
                 # Push units further toward blue side (negative Y)
-                entity.position.y -= knockback_distance
+                candidate_x = entity.position.x
+                candidate_y = entity.position.y - knockback_distance
         
         # Slight random horizontal displacement for realism
         import random
         horizontal_variance = random.uniform(-0.3, 0.3)
-        entity.position.x += horizontal_variance
-        
-        # Ensure unit doesn't get pushed out of arena bounds
-        entity.position.x = max(0.5, min(17.5, entity.position.x))  # Keep within arena width
-        entity.position.y = max(0.5, min(31.5, entity.position.y))  # Keep within arena height
+        candidate_x += horizontal_variance
+
+        # Keep within arena bounds
+        candidate_x = max(0.5, min(17.5, candidate_x))
+        candidate_y = max(0.5, min(31.5, candidate_y))
+        candidate = Position(candidate_x, candidate_y)
+        if battle_state.is_ground_position_walkable(candidate, entity):
+            entity.position = candidate
     
     def _hitbox_overlaps_with_rolling_path(self, entity: 'Entity') -> bool:
         """Check if entity's hitbox overlaps with rolling projectile path"""
@@ -1231,27 +1438,12 @@ class RollingProjectile(Entity):
             return
         
         import math
-        from .data import CardStats
-        
-        # Create card stats from spawn character data
-        spawn_stats = CardStats(
-            name=self.spawn_character,
-            id=0,
-            mana_cost=0,
-            rarity="Common",
-            hitpoints=self.spawn_character_data.get("hitpoints", 100),
-            damage=self.spawn_character_data.get("damage", 10),
-            speed=float(self.spawn_character_data.get("speed", 60)),
-            range=self.spawn_character_data.get("range", 1000) / 1000.0,
-            sight_range=self.spawn_character_data.get("sightRange", 5000) / 1000.0,
-            hit_speed=self.spawn_character_data.get("hitSpeed", 1000),
-            deploy_time=self.spawn_character_data.get("deployTime", 1000),
-            load_time=self.spawn_character_data.get("loadTime", 1000),
-            collision_radius=self.spawn_character_data.get("collisionRadius", 500) / 1000.0,
-            attacks_ground=self.spawn_character_data.get("attacksGround", True),
-            attacks_air=False,
-            targets_only_buildings=False,
-            target_type=self.spawn_character_data.get("tidTarget")
+
+        spawn_stats = troop_from_character_data(
+            self.spawn_character,
+            self.spawn_character_data,
+            elixir=0,
+            rarity=self.spawn_character_data.get("rarity", "Common"),
         )
         
         # Spawn character at current position
@@ -1265,6 +1457,9 @@ class TimedExplosive(Entity):
     explosion_timer: float = 3.0
     explosion_radius: float = 1.5
     explosion_damage: float = 600.0
+    death_spawn_name: Optional[str] = None
+    death_spawn_count: int = 0
+    death_spawn_data: Optional[dict] = None
     time_alive: float = 0.0
     
     def update(self, dt: float, battle_state: 'BattleState') -> None:
@@ -1288,6 +1483,44 @@ class TimedExplosive(Entity):
             # Use hitbox-based collision detection for explosion
             if self._hitbox_overlaps_with_explosion(entity):
                 entity.take_damage(self.explosion_damage)
+
+        # Optional chained death spawn (e.g. Skeleton Barrel container -> Skeletons).
+        if self.death_spawn_name and self.death_spawn_count > 0:
+            self._spawn_death_units(battle_state)
+
+    def _spawn_death_units(self, battle_state: 'BattleState') -> None:
+        """Spawn units around this explosive when configured."""
+        import math
+        import random
+
+        from .factory.dynamic_factory import troop_from_character_data, troop_from_values
+
+        spawn_stats = battle_state.card_loader.get_card(self.death_spawn_name)
+        if not spawn_stats and self.death_spawn_data:
+            spawn_stats = troop_from_character_data(
+                self.death_spawn_name,
+                self.death_spawn_data,
+                elixir=0,
+                rarity=self.death_spawn_data.get("rarity", "Common"),
+            )
+        if not spawn_stats:
+            spawn_stats = troop_from_values(
+                self.death_spawn_name,
+                hitpoints=100,
+                damage=25,
+                speed_tiles_per_min=60.0,
+                range_tiles=1.0,
+                sight_range_tiles=5.0,
+                hit_speed_ms=1000,
+                collision_radius_tiles=0.5,
+            )
+
+        for _ in range(self.death_spawn_count):
+            angle = random.random() * 2 * math.pi
+            distance = random.random() * 0.7
+            spawn_x = self.position.x + distance * math.cos(angle)
+            spawn_y = self.position.y + distance * math.sin(angle)
+            battle_state._spawn_troop(Position(spawn_x, spawn_y), self.player_id, spawn_stats)
     
     def _hitbox_overlaps_with_explosion(self, entity: 'Entity') -> bool:
         """Check if entity's hitbox overlaps with explosion radius"""
@@ -1344,27 +1577,12 @@ class Graveyard(Entity):
         if not self.skeleton_data:
             return
         
-        from .data import CardStats
-        
         # Create skeleton stats
-        skeleton_stats = CardStats(
-            name="Skeleton",
-            id=0,
-            mana_cost=0,
-            rarity="Common",
-            hitpoints=self.skeleton_data.get("hitpoints", 67),
-            damage=self.skeleton_data.get("damage", 67),
-            speed=float(self.skeleton_data.get("speed", 60)),
-            range=self.skeleton_data.get("range", 500) / 1000.0,
-            sight_range=self.skeleton_data.get("sightRange", 5500) / 1000.0,
-            hit_speed=self.skeleton_data.get("hitSpeed", 1000),
-            deploy_time=self.skeleton_data.get("deployTime", 1000),
-            load_time=self.skeleton_data.get("loadTime", 1000),
-            collision_radius=self.skeleton_data.get("collisionRadius", 300) / 1000.0,
-            attacks_ground=self.skeleton_data.get("attacksGround", True),
-            attacks_air=False,
-            targets_only_buildings=False,
-            target_type=self.skeleton_data.get("tidTarget")
+        skeleton_stats = troop_from_character_data(
+            "Skeleton",
+            self.skeleton_data,
+            elixir=0,
+            rarity=self.skeleton_data.get("rarity", "Common"),
         )
         
         # Random position within spawn radius
@@ -1375,5 +1593,3 @@ class Graveyard(Entity):
         
         # Spawn the skeleton
         battle_state._spawn_troop(Position(spawn_x, spawn_y), self.player_id, skeleton_stats)
-
-

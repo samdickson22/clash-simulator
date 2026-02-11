@@ -180,7 +180,8 @@ def card_from_gamedata(entry: Dict[str, Any]) -> CardDefinition:
         attack=_create_attack_behavior(entry),
         mechanics=tuple(mechanics),
         effects=tuple(effects),
-        tags=_extract_tags(entry)
+        tags=_extract_tags(entry),
+        raw=entry
     )
 
     return card_def
@@ -196,7 +197,8 @@ def create_card_definition(
     spell_stats: Optional[SpellStats] = None,
     mechanics: Optional[list[Mechanic]] = None,
     effects: Optional[list[Effect]] = None,
-    tags: Optional[set[str]] = None
+    tags: Optional[set[str]] = None,
+    raw: Optional[Dict[str, Any]] = None
 ) -> CardDefinition:
     """Create a CardDefinition with given parameters"""
     return CardDefinition(
@@ -210,5 +212,6 @@ def create_card_definition(
         spell_stats=spell_stats,
         mechanics=tuple(mechanics or []),
         effects=tuple(effects or []),
-        tags=frozenset(tags or set())
+        tags=frozenset(tags or set()),
+        raw=raw or {}
     )

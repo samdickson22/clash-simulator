@@ -17,12 +17,12 @@ class RandomBattleSimulator(BattleVisualizer):
         
         # Random deployment settings
         self.card_loader = CardDataLoader()
-        self.cards = self.card_loader.load_cards()
+        self.card_definitions = self.card_loader.load_card_definitions()
         self.deploy_cooldown = 0.5  # Faster deployment for more chaos
         self.game_time = 0.0
         
         # Get all available cards (troops, buildings, spells)
-        self.available_cards = list(self.cards.keys())
+        self.available_cards = list(self.card_definitions.keys())
         
         # Remove cards that shouldn't be in hands/deck (case-sensitive)
         # Also exclude any "tower troop" variants (tidType == TID_TYPE_TOWER_TROOP)
@@ -45,7 +45,7 @@ class RandomBattleSimulator(BattleVisualizer):
         self.playable_tiles = self.get_all_playable_tiles()
         
         print(f"🎮 Random Battle Simulator Started!")
-        print(f"📋 Total cards in game: {len(self.cards)}")
+        print(f"📋 Total cards in game: {len(self.card_definitions)}")
         print(f"📋 Available cards for deployment: {len(self.available_cards)} total")
         print(f"🎯 Playable tiles: {len(self.playable_tiles)} total")
         print(f"⚡ Deploy cooldown: {self.deploy_cooldown}s")
@@ -94,13 +94,13 @@ class RandomBattleSimulator(BattleVisualizer):
             return
 
         card_name = player.hand[0]
-        card_stats = self.cards.get(card_name)
-        if not card_stats:
+        card_def = self.card_definitions.get(card_name)
+        if not card_def:
             player.hand.pop(0)
             self.ensure_player_has_full_hand(player_id)
             return
 
-        if player.elixir < card_stats.mana_cost:
+        if player.elixir < card_def.elixir:
             return
 
         # Choose random playable tile
@@ -113,8 +113,8 @@ class RandomBattleSimulator(BattleVisualizer):
             self.ensure_player_has_full_hand(player_id)
 
             player_name = "Blue" if player_id == 0 else "Red"
-            card_type = card_stats.card_type if card_stats else "Unknown"
-            print(f"💰 {player_name} auto-played {card_name} ({card_type}) at ({position.x:.1f}, {position.y:.1f}) - Cost: {card_stats.mana_cost}")
+            card_type = card_def.kind.capitalize() if card_def else "Unknown"
+            print(f"💰 {player_name} auto-played {card_name} ({card_type}) at ({position.x:.1f}, {position.y:.1f}) - Cost: {card_def.elixir}")
 
     def _draw_next_from_cycle(self, player_id: int) -> str:
         """Get next card in the player's fixed shuffled cycle."""
@@ -176,14 +176,14 @@ class RandomBattleSimulator(BattleVisualizer):
         position = random.choice(self.playable_tiles)
 
         # Check if player can afford the card
-        card_stats = self.cards.get(card_name)
-        if not card_stats:
+        card_def = self.card_definitions.get(card_name)
+        if not card_def:
             # Drop and refill from cycle if stats missing
             player.hand.pop(0)
             self.ensure_player_has_full_hand(player_id)
             return
 
-        if player.elixir < card_stats.mana_cost:
+        if player.elixir < card_def.elixir:
             return  # Not enough elixir
 
         # Deploy
@@ -194,8 +194,8 @@ class RandomBattleSimulator(BattleVisualizer):
             self.ensure_player_has_full_hand(player_id)
 
             player_name = "Blue" if player_id == 0 else "Red"
-            card_type = card_stats.card_type if card_stats else "Unknown"
-            # print(f"⚔️  {player_name} deployed {card_name} ({card_type}) at ({position.x:.1f}, {position.y:.1f}) - Cost: {card_stats.mana_cost}")
+            card_type = card_def.kind.capitalize() if card_def else "Unknown"
+            # print(f"⚔️  {player_name} deployed {card_name} ({card_type}) at ({position.x:.1f}, {position.y:.1f}) - Cost: {card_def.elixir}")
 
     def run(self):
         """Main loop with proper real-time battle stepping"""
@@ -535,7 +535,7 @@ class RandomBattleSimulator(BattleVisualizer):
                 if name in excluded:
                     skipped.append((c, "excluded"))
                     continue
-                if name not in self.cards:
+                if name not in self.card_definitions:
                     skipped.append((c, "unknown"))
                     continue
                 filtered.append(name)
@@ -576,20 +576,8 @@ class RandomBattleSimulator(BattleVisualizer):
 
     def assign_random_decks_to_players(self):
         """Pick a random curated deck for each player and build a fixed cycle, storing the chosen name for UI."""
-        # Fallback: if no curated decks available, do nothing (keep previous behavior)
         if not self.decks:
-            # Build cycles from available_cards as fallback
-            self.player_cycles = {0: [], 1: []}
-            self.player_cycle_indices = {0: 0, 1: 0}
-            self._chosen_deck_names = {0: "Custom Deck", 1: "Custom Deck"}
-            for pid, player in enumerate(self.battle.players):
-                pool = list(self.available_cards)
-                random.shuffle(pool)
-                self.player_cycles[pid] = pool
-                self.player_cycle_indices[pid] = 0
-                player.deck = pool.copy()
-                player.hand = player.deck[:4] if len(player.deck) >= 4 else player.deck.copy()
-            return
+            raise RuntimeError("Curated decks required for random battle; no decks resolved from card factory data.")
 
         self.player_cycles = {0: [], 1: []}
         self.player_cycle_indices = {0: 0, 1: 0}

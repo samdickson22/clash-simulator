@@ -3,11 +3,20 @@ from typing import Dict, List, Optional, Tuple
 import time
 import math
 import random
+import copy
+import json
 
 from .entities import Entity, Troop, Building
 from .player import PlayerState
 from .arena import TileGrid, Position
-from .data import CardDataLoader, CardStats
+from .card_aliases import resolve_card_name
+from .data import CardDataLoader
+from .card_types import CardStatsCompat
+from .factory.dynamic_factory import (
+    building_from_values,
+    troop_from_character_data,
+    troop_from_values,
+)
 from .spells import SPELL_REGISTRY
 from .mechanics.shared.death_effects import DeathSpawn
 from .name_map import resolve_name
@@ -36,13 +45,19 @@ class BattleState:
     double_elixir: bool = False
     triple_elixir: bool = False
     overtime: bool = False
+    sudden_death: bool = False
     game_over: bool = False
     winner: Optional[int] = None
-
+    overtime_start_time: float = 240.0
+    sudden_death_start_time: float = 300.0
+    tiebreaker_time: float = 360.0
+    
     # Data
     card_loader: CardDataLoader = field(default_factory=CardDataLoader)
     next_entity_id: int = 1
-
+    _starting_total_tower_hp: Dict[int, float] = field(default_factory=dict, init=False)
+    _sudden_death_crowns: Tuple[int, int] = field(default=(0, 0), init=False)
+    
     def __post_init__(self) -> None:
         """Initialize battle state"""
         self.card_loader.load_cards()
@@ -52,43 +67,59 @@ class BattleState:
         except Exception as e:
             pass  # print(f"[Warn] load_card_definitions failed: {e}")
         self._create_towers()
-
+        self._starting_total_tower_hp = {
+            0: self.players[0].king_tower_hp + self.players[0].left_tower_hp + self.players[0].right_tower_hp,
+            1: self.players[1].king_tower_hp + self.players[1].left_tower_hp + self.players[1].right_tower_hp,
+        }
+    
     def _create_towers(self) -> None:
         """Create tower entities for both players"""
-        tower_stats = CardStats(
+        princess_data = self._load_princess_tower_character_data()
+        princess_hitpoints = princess_data.get("hitpoints", 1400) if princess_data else 1400
+        princess_range_tiles = (princess_data.get("range", 7500) / 1000.0) if princess_data else 7.5
+        princess_sight_tiles = (princess_data.get("sightRange", 7500) / 1000.0) if princess_data else 7.5
+        princess_hit_speed_ms = princess_data.get("hitSpeed", 800) if princess_data else 800
+        princess_deploy_ms = princess_data.get("deployTime", 800) if princess_data else 800
+        princess_collision_tiles = (princess_data.get("collisionRadius", 1000) / 1000.0) if princess_data else 1.0
+        princess_projectile = princess_data.get("projectileData", {}) if princess_data else {}
+        princess_damage = princess_projectile.get("damage", 50)
+        princess_projectile_speed = princess_projectile.get("speed", 600)
+        princess_target_type = princess_data.get("tidTarget", "TID_TARGETS_AIR_AND_GROUND") if princess_data else "TID_TARGETS_AIR_AND_GROUND"
+
+        tower_stats = building_from_values(
             name="Tower",
-            id=0,
-            mana_cost=0,
-            rarity="",
-            hitpoints=1400,  # Level 1 base stats - will be scaled to level 11
-            damage=50,       # Level 1 base stats - will be scaled to level 11
-            range=7.5,       # From JSON: "range": 7500 (7.5 tiles)
-            sight_range=7.5, # From JSON: "sightRange": 7500 (7.5 tiles)
-            load_time=800,
-            hit_speed=800,   # From JSON: "hitSpeed": 800
-            attacks_air=True,  # Towers can attack air units
-            target_type="TID_TARGETS_AIR_AND_GROUND",  # From JSON: "tidTarget": "TID_TARGETS_AIR_AND_GROUND"
-            projectile_speed=600,  # From JSON: projectileData "speed": 600
-            projectile_data={'speed': 600, 'damage': 50},  # Tower projectile data (will be scaled to level 11)
-            level=11  # Standard tournament level
+            hitpoints=princess_hitpoints,
+            damage=princess_damage,
+            range_tiles=princess_range_tiles,
+            sight_range_tiles=princess_sight_tiles,
+            hit_speed_ms=princess_hit_speed_ms,
+            deploy_time_ms=princess_deploy_ms,
+            collision_radius_tiles=princess_collision_tiles,
+            lifetime_ms=None,
+            elixir=0,
+            rarity="Common",
+            projectile_speed=princess_projectile_speed,
+            projectile_damage=princess_damage,
+            target_type=princess_target_type,
+            raw_overrides={"level": 11},
         )
 
-        king_stats = CardStats(
+        king_stats = building_from_values(
             name="KingTower",
-            id=0,
-            mana_cost=0,
-            rarity="",
-            hitpoints=4824,     # King tower HP
-            damage=109,         # King tower damage
-            range=7.0,          # King tower range (7 tiles)
-            sight_range=7.0,    # King tower sight range
-            load_time=1000,
-            hit_speed=1000,     # King tower attacks once per second (1000ms)
-            attacks_air=True,   # King tower can attack air units
-            target_type="TID_TARGETS_AIR_AND_GROUND",  # Explicit air targeting
-            projectile_speed=600,  # Same as Princess Tower
-            projectile_data={'speed': 600, 'damage': 109},  # King tower projectile data (base level 1)
-            level=1   # Base level stats (no scaling needed)
+            hitpoints=4824,
+            damage=109,
+            range_tiles=7.0,
+            sight_range_tiles=7.0,
+            hit_speed_ms=1000,
+            deploy_time_ms=1000,
+            collision_radius_tiles=1.0,
+            lifetime_ms=None,
+            elixir=0,
+            rarity="Common",
+            projectile_speed=600,
+            projectile_damage=109,
+            target_type="TID_TARGETS_AIR_AND_GROUND",
+            raw_overrides={"level": 1},
         )
 
         # Player 0 towers (blue) - create new Position objects to avoid sharing references
@@ -107,10 +138,22 @@ class BattleState:
         red_king = Position(self.arena.RED_KING_TOWER.x, self.arena.RED_KING_TOWER.y)
         self._spawn_entity(Building, red_left, 1, tower_stats)
         self._spawn_entity(Building, red_right, 1, tower_stats)
-        king_1 = self._spawn_entity(Building, red_king, 1, king_stats)
-        if king_1:
-            king_1.is_king_tower = True
+        self._spawn_entity(Building, red_king, 1, king_stats)
 
+    def _load_princess_tower_character_data(self) -> Optional[dict]:
+        """Load Princess Tower baseline stats from support-card data in gamedata."""
+        try:
+            with open(self.card_loader.data_file, "r") as f:
+                spells = json.load(f).get("items", {}).get("spells", [])
+            for entry in spells:
+                if entry.get("name") == "King_PrincessTowers":
+                    data = entry.get("statCharacterData")
+                    if isinstance(data, dict):
+                        return data
+        except Exception:
+            return None
+        return None
+    
     def step(self, speed_factor: float = 1.0) -> None:
         """Advance battle by one tick"""
         if self.game_over:
@@ -121,13 +164,13 @@ class BattleState:
         self.tick += 1
 
         # Update elixir modes
-        # 0:00-3:00 regular, 3:00-4:00 double, 4:00-5:00 triple/overtime
+        if self.time >= 180.0 and not self.double_elixir:
+            self.double_elixir = True
+        if self.time >= self.overtime_start_time and not self.overtime:
+            self.overtime = True
         if self.time >= 240.0 and not self.triple_elixir:
             self.triple_elixir = True
-            self.double_elixir = True
-        elif self.time >= 180.0 and not self.double_elixir:
-            self.double_elixir = True
-
+        
         # Regenerate elixir
         base_regen = 2.8
         if self.triple_elixir:
@@ -137,13 +180,14 @@ class BattleState:
 
         for player in self.players:
             player.regenerate_elixir(dt, base_regen)
+        
+        # Update all entities
+        for entity in list(self.entities.values()):
+            entity.update(dt, self)
 
-        # Update all entities (snapshot keys to avoid dict-changed-size errors)
-        for eid in list(self.entities.keys()):
-            entity = self.entities.get(eid)
-            if entity and entity.is_alive:
-                entity.update(dt, self)
-
+        # Resolve simple body collision to reduce unit stacking.
+        self._resolve_troop_collisions()
+        
         # Remove dead entities
         self._cleanup_dead_entities()
 
@@ -153,32 +197,46 @@ class BattleState:
     def deploy_card(self, player_id: int, card_name: str, position: Position) -> bool:
         """Deploy a card at the given position"""
         player = self.players[player_id]
-        # Resolve alias for data lookup
-        internal_name = resolve_name(card_name)
-        # Prefer legacy stats for full compatibility; fall back to compat wrapper
-        card_stats = self.card_loader.get_card(card_name) or self.card_loader.get_card_compat(card_name)
+        resolved_name = resolve_card_name(card_name, self.card_loader.load_card_definitions())
+        # Fetch card stats from the factory-backed loader
+        card_stats = self.card_loader.get_card(resolved_name)
 
         if not card_stats or not player.can_play_card(card_name, card_stats):
             return False
 
-        # Check spell registry with both deck name and internal name
-        is_spell = card_name in SPELL_REGISTRY or internal_name in SPELL_REGISTRY
-        spell_obj = SPELL_REGISTRY.get(card_name) or SPELL_REGISTRY.get(internal_name) if is_spell else None
-        if not self.arena.can_deploy_at(position, player_id, self, is_spell, spell_obj):
-            return False
+        is_spell = resolved_name in SPELL_REGISTRY
+        spell_obj = SPELL_REGISTRY.get(resolved_name) if is_spell else None
+        # Miner can be deployed almost anywhere (except blocked/tower tiles).
+        if resolved_name == "Miner":
+            tile_pos = (int(position.x), int(position.y))
+            if not self.arena.is_valid_position(position):
+                return False
+            if tile_pos in self.arena.BLOCKED_TILES:
+                return False
+            if self.arena.is_tower_tile(position, self):
+                return False
+        else:
+            if not self.arena.can_deploy_at(position, player_id, self, is_spell, spell_obj):
+                return False
 
         # Special deployment validation for Royal Recruits (center 6 tiles only)
-        if card_name in ['RoyalRecruits', 'RoyalRecruits_Chess']:
+        if resolved_name in ['RoyalRecruits', 'RoyalRecruits_Chess']:
             if not (6 <= position.x <= 11):
                 return False  # Royal Recruits can only be deployed in center 6 tiles
+
+        if not is_spell:
+            # Buildings are solid obstacles; do not allow overlapping deployment.
+            probe_radius = getattr(card_stats, "collision_radius", 0.5) or 0.5
+            if self.is_position_occupied_by_building(position, probe_radius):
+                return False
 
         # Play the card
         if not player.play_card(card_name, card_stats):
             return False
 
         # Check if it's a spell
-        if card_name in SPELL_REGISTRY or internal_name in SPELL_REGISTRY:
-            spell = SPELL_REGISTRY.get(card_name) or SPELL_REGISTRY.get(internal_name)
+        if resolved_name in SPELL_REGISTRY:
+            spell = SPELL_REGISTRY[resolved_name]
             spell.cast(self, player_id, position)
         else:
             # Spawn troop or building based on card type (robust to missing/None fields)
@@ -190,8 +248,8 @@ class BattleState:
                 self._spawn_troop(position, player_id, card_stats)
 
         return True
-
-    def _spawn_troop(self, position: Position, player_id: int, card_stats: CardStats) -> None:
+    
+    def _spawn_troop(self, position: Position, player_id: int, card_stats: CardStatsCompat) -> None:
         """Spawn a troop entity (handles both single troops and swarms)"""
         # Guard: if this card is actually a building, route to building spawner
         ctype = getattr(card_stats, "card_type", None)
@@ -215,8 +273,8 @@ class BattleState:
         else:
             # Spawn single unit at exact position
             self._spawn_single_troop(position, player_id, card_stats)
-
-    def _spawn_single_troop(self, position: Position, player_id: int, card_stats: CardStats) -> None:
+    
+    def _spawn_single_troop(self, position: Position, player_id: int, card_stats: CardStatsCompat) -> None:
         """Spawn a single troop entity"""
         # Get speed value (tiles/min from card stats)
         speed = card_stats.speed or 60.0  # Default to 60 tiles/min if not specified
@@ -244,6 +302,9 @@ class BattleState:
             is_air_unit=is_air_unit
         )
 
+        troop.deploy_delay_remaining = max(0.0, (getattr(card_stats, "deploy_time", 0) or 0) / 1000.0)
+        troop.attack_cooldown = max(troop.attack_cooldown, (getattr(card_stats, "load_time", 0) or 0) / 1000.0)
+        
         # Set battle reference
         troop.battle_state = self
 
@@ -252,7 +313,7 @@ class BattleState:
             defn_name = getattr(card_stats, 'name', None)
             card_def = self.card_loader.get_card_definition(defn_name) if defn_name else None
             if card_def and getattr(card_def, 'mechanics', None):
-                troop.mechanics = list(card_def.mechanics)
+                troop.mechanics = [copy.deepcopy(m) for m in card_def.mechanics]
                 for mech in troop.mechanics:
                     mech.on_attach(troop)
                 if troop.mechanics:
@@ -265,8 +326,8 @@ class BattleState:
 
         # Fire spawn hooks
         troop.on_spawn()
-
-    def _spawn_swarm_troops(self, center_pos: Position, player_id: int, card_stats: CardStats, count: int, radius: float, second_count: int = 0, second_data: dict = None) -> None:
+    
+    def _spawn_swarm_troops(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, count: int, radius: float, second_count: int = 0, second_data: dict = None) -> None:
         """Spawn multiple troop entities in a circle around center position"""
         import math
         import random
@@ -300,8 +361,8 @@ class BattleState:
 
                 for i in range(second_count):
                     self._spawn_unit_at_angle(center_pos, player_id, second_card_stats, count + i, total_units, radius)
-
-    def _spawn_unit_at_angle(self, center_pos: Position, player_id: int, card_stats: CardStats, index: int, total_count: int, radius: float) -> None:
+    
+    def _spawn_unit_at_angle(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, index: int, total_count: int, radius: float) -> None:
         """Spawn a single unit at a specific angle in the swarm formation"""
         import math
         import random
@@ -348,9 +409,12 @@ class BattleState:
             is_air_unit=is_air_unit
         )
 
+        troop.deploy_delay_remaining = max(0.0, (getattr(card_stats, "deploy_time", 0) or 0) / 1000.0)
+        troop.attack_cooldown = max(troop.attack_cooldown, (getattr(card_stats, "load_time", 0) or 0) / 1000.0)
+        
         # Attach mechanics if using compat wrapper with card_definition
         if hasattr(card_stats, 'card_definition') and card_stats.card_definition:
-            troop.mechanics = list(card_stats.card_definition.mechanics)
+            troop.mechanics = [copy.deepcopy(m) for m in card_stats.card_definition.mechanics]
         # Set battle reference
         troop.battle_state = self
 
@@ -359,7 +423,7 @@ class BattleState:
             defn_name = getattr(card_stats, 'name', None)
             card_def = self.card_loader.get_card_definition(defn_name) if defn_name else None
             if card_def and getattr(card_def, 'mechanics', None):
-                troop.mechanics = list(card_def.mechanics)
+                troop.mechanics = [copy.deepcopy(m) for m in card_def.mechanics]
                 for mech in troop.mechanics:
                     mech.on_attach(troop)
                 if troop.mechanics:
@@ -372,8 +436,8 @@ class BattleState:
 
         # Fire spawn hooks
         troop.on_spawn()
-
-    def _spawn_front_back_formation(self, center_pos: Position, player_id: int, card_stats: CardStats, front_count: int, back_count: int, back_data: dict, radius: float) -> None:
+    
+    def _spawn_front_back_formation(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, front_count: int, back_count: int, back_data: dict, radius: float) -> None:
         """Spawn units in front/back formation (melee in front, ranged in back)"""
         import math
         import random
@@ -437,8 +501,8 @@ class BattleState:
             back_pos = self._snap_to_valid_position(back_pos, player_id)
 
             self._spawn_unit_at_position(back_pos, player_id, back_card_stats)
-
-    def _spawn_royal_recruits_line(self, center_pos: Position, player_id: int, card_stats: CardStats, count: int) -> None:
+    
+    def _spawn_royal_recruits_line(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, count: int) -> None:
         """Spawn Royal Recruits in a horizontal line across the battlefield, avoiding towers"""
         # Royal Recruits: 6 units spaced 2.5 tiles apart, center at deploy position
         spacing = 2.5  # tiles between each recruit
@@ -557,8 +621,8 @@ class BattleState:
         # Sort and return exact count
         positions.sort()
         return positions[:count]
-
-    def _spawn_unit_at_position(self, position: Position, player_id: int, card_stats: CardStats) -> None:
+    
+    def _spawn_unit_at_position(self, position: Position, player_id: int, card_stats: CardStatsCompat) -> None:
         """Spawn a single unit at a specific position"""
         # Get unit properties
         speed = card_stats.speed or 60.0
@@ -584,9 +648,24 @@ class BattleState:
             is_air_unit=is_air_unit
         )
 
+        troop.deploy_delay_remaining = max(0.0, (getattr(card_stats, "deploy_time", 0) or 0) / 1000.0)
+        troop.attack_cooldown = max(troop.attack_cooldown, (getattr(card_stats, "load_time", 0) or 0) / 1000.0)
+        troop.battle_state = self
+
+        try:
+            defn_name = getattr(card_stats, 'name', None)
+            card_def = self.card_loader.get_card_definition(defn_name) if defn_name else None
+            if card_def and getattr(card_def, 'mechanics', None):
+                troop.mechanics = [copy.deepcopy(m) for m in card_def.mechanics]
+                for mech in troop.mechanics:
+                    mech.on_attach(troop)
+        except Exception as e:
+            print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
+
         self.entities[self.next_entity_id] = troop
         self.next_entity_id += 1
-
+        troop.on_spawn()
+    
     def _snap_to_valid_position(self, position: Position, player_id: int) -> Position:
         """Snap position to nearest valid playable area"""
         # Check if position is already valid (walkable and not on a tower)
@@ -644,40 +723,26 @@ class BattleState:
                         break
 
         return best_position
+    
+    def _create_card_stats_from_data(self, unit_data: dict, name: str) -> CardStatsCompat:
+        """Create CardStatsCompat from raw unit data (for secondary units in mixed swarms)."""
+        if unit_data:
+            rarity = unit_data.get("rarity", "Common")
+            return troop_from_character_data(name, unit_data, elixir=0, rarity=rarity)
 
-    def _create_card_stats_from_data(self, unit_data: dict, name: str) -> CardStats:
-        """Create CardStats from raw unit data (for secondary units in mixed swarms)"""
-        # Handle projectile damage for ranged units (like Spear Goblins)
-        base_damage = unit_data.get("damage", 10)
-        projectile_data = unit_data.get("projectileData", {})
-        if projectile_data and "damage" in projectile_data:
-            base_damage = projectile_data["damage"]
-
-        return CardStats(
-            name=name,
-            id=0,  # Temporary ID
-            mana_cost=0,  # Secondary units don't have mana cost
-            rarity=unit_data.get("rarity", "Common"),
-            card_type="Troop",
-
-            # Combat stats
-            hitpoints=unit_data.get("hitpoints", 100),
-            damage=base_damage,
-            range=(unit_data.get("range", 1000) / 1000.0) if unit_data.get("range") else 1.0,
-            sight_range=(unit_data.get("sightRange", 5000) / 1000.0) if unit_data.get("sightRange") else 5.0,
-            speed=unit_data.get("speed", 60),
-            hit_speed=unit_data.get("hitSpeed", 1000),
-            load_time=unit_data.get("loadTime", 1000),
-            deploy_time=unit_data.get("deployTime", 1000),
-            collision_radius=(unit_data.get("collisionRadius", 500) / 1000.0) if unit_data.get("collisionRadius") else 0.5,
-
-            # Targeting
-            attacks_ground=unit_data.get("attacksGround", True),
-            attacks_air=unit_data.get("attacksAir", False),
-            target_type=unit_data.get("tidTarget", "TID_TARGETS_GROUND")
+        # Fallback minimal definition if no data is provided
+        return troop_from_values(
+            name,
+            hitpoints=100,
+            damage=10,
+            speed_tiles_per_min=60.0,
+            range_tiles=1.0,
+            sight_range_tiles=5.0,
+            hit_speed_ms=1000,
+            collision_radius_tiles=0.5,
         )
-
-    def _spawn_entity(self, entity_class, position: Position, player_id: int, card_stats: CardStats) -> Entity:
+    
+    def _spawn_entity(self, entity_class, position: Position, player_id: int, card_stats: CardStatsCompat) -> Entity:
         """Spawn any type of entity"""
         # Use level-scaled stats for hitpoints and damage
         scaled_hp = card_stats.scaled_hitpoints or 100
@@ -695,12 +760,15 @@ class BattleState:
             sight_range=card_stats.sight_range or 500
         )
 
+        entity.deploy_delay_remaining = max(0.0, (getattr(card_stats, "deploy_time", 0) or 0) / 1000.0)
+        entity.attack_cooldown = max(entity.attack_cooldown, (getattr(card_stats, "load_time", 0) or 0) / 1000.0)
+
         # Add battle_state reference for mechanics
         entity.battle_state = self
 
         # Attach mechanics if using compat wrapper with card_definition
         if hasattr(card_stats, 'card_definition') and getattr(card_stats, 'card_definition'):
-            entity.mechanics = list(card_stats.card_definition.mechanics)
+            entity.mechanics = [copy.deepcopy(m) for m in card_stats.card_definition.mechanics]
             for mech in entity.mechanics:
                 mech.on_attach(entity)
             if entity.mechanics:
@@ -721,6 +789,13 @@ class BattleState:
 
         self.entities[self.next_entity_id] = entity
         self.next_entity_id += 1
+
+        if isinstance(entity, Building) and getattr(card_stats, "name", "") == "KingTower":
+            entity._tower_active = False
+            entity._is_king_tower = True
+        elif isinstance(entity, Building):
+            entity._tower_active = True
+            entity._is_king_tower = False
 
         # Call on_spawn for all mechanics
         entity.on_spawn()
@@ -753,11 +828,11 @@ class BattleState:
                     elif (pos.x == self.arena.BLUE_LEFT_TOWER.x and
                           pos.y == self.arena.BLUE_LEFT_TOWER.y):
                         player.left_tower_hp = 0
-                        self._activate_king_tower(entity.player_id)
-                    elif (pos.x == self.arena.BLUE_RIGHT_TOWER.x and
+                        self._activate_king_tower(0)
+                    elif (pos.x == self.arena.BLUE_RIGHT_TOWER.x and 
                           pos.y == self.arena.BLUE_RIGHT_TOWER.y):
                         player.right_tower_hp = 0
-                        self._activate_king_tower(entity.player_id)
+                        self._activate_king_tower(0)
                 else:  # Red player
                     if (pos.x == self.arena.RED_KING_TOWER.x and
                         pos.y == self.arena.RED_KING_TOWER.y):
@@ -765,13 +840,13 @@ class BattleState:
                     elif (pos.x == self.arena.RED_LEFT_TOWER.x and
                           pos.y == self.arena.RED_LEFT_TOWER.y):
                         player.left_tower_hp = 0
-                        self._activate_king_tower(entity.player_id)
-                    elif (pos.x == self.arena.RED_RIGHT_TOWER.x and
+                        self._activate_king_tower(1)
+                    elif (pos.x == self.arena.RED_RIGHT_TOWER.x and 
                           pos.y == self.arena.RED_RIGHT_TOWER.y):
                         player.right_tower_hp = 0
-                        self._activate_king_tower(entity.player_id)
-
-        # Remove dead non-tower entities to prevent unbounded growth
+                        self._activate_king_tower(1)
+        
+        # Remove dead entities
         for eid in dead_ids:
             entity = self.entities[eid]
             if not isinstance(entity, Building) or not self._is_tower(entity):
@@ -795,36 +870,30 @@ class BattleState:
         """Spawn death units when a troop dies"""
         death_spawn_name = troop.card_stats.death_spawn_character
         death_spawn_count = troop.card_stats.death_spawn_count or 1
-
-        # Get death spawn card stats
+        
+        # Get death spawn card stats using the factory-driven loader
         death_spawn_stats = self.card_loader.get_card(death_spawn_name)
 
-        # If death spawn card doesn't exist, create minimal stats from the troop's death spawn data
-        if not death_spawn_stats and hasattr(troop.card_stats, 'death_spawn_character_data') and troop.card_stats.death_spawn_character_data:
-            # Create basic card stats for the death spawn unit
-            death_spawn_stats = CardStats(
-                name=death_spawn_name,
-                id=0,
-                mana_cost=0,
+        if not death_spawn_stats and getattr(troop.card_stats, 'death_spawn_character_data', None):
+            death_spawn_stats = troop_from_character_data(
+                death_spawn_name,
+                troop.card_stats.death_spawn_character_data,
+                elixir=0,
                 rarity="Common",
-                hitpoints=troop.card_stats.death_spawn_character_data.get("hitpoints", 100),
-                damage=troop.card_stats.death_spawn_character_data.get("damage", 10),
-                speed=float(troop.card_stats.death_spawn_character_data.get("speed", 60)),
-                range=troop.card_stats.death_spawn_character_data.get("range", 1000) / 1000.0,
-                sight_range=troop.card_stats.death_spawn_character_data.get("sightRange", 5000) / 1000.0,
-                hit_speed=troop.card_stats.death_spawn_character_data.get("hitSpeed", 1000),
-                deploy_time=troop.card_stats.death_spawn_character_data.get("deployTime", 1000),
-                load_time=troop.card_stats.death_spawn_character_data.get("loadTime", 1000),
-                collision_radius=troop.card_stats.death_spawn_character_data.get("collisionRadius", 500) / 1000.0,
-                attacks_ground=troop.card_stats.death_spawn_character_data.get("attacksGround", True),
-                attacks_air=False,
-                targets_only_buildings=(troop.card_stats.death_spawn_character_data.get("tidTarget") == "TID_TARGETS_BUILDINGS"),
-                target_type=troop.card_stats.death_spawn_character_data.get("tidTarget")
             )
 
         if not death_spawn_stats:
-            return
-
+            death_spawn_stats = troop_from_values(
+                death_spawn_name,
+                hitpoints=100,
+                damage=25,
+                speed_tiles_per_min=60.0,
+                range_tiles=1.0,
+                sight_range_tiles=5.0,
+                hit_speed_ms=1000,
+                collision_radius_tiles=0.5,
+            )
+        
         # Spawn multiple units in a small radius around the death position
         spawn_radius = 0.5  # tiles
 
@@ -849,33 +918,36 @@ class BattleState:
                 self.game_over = True
                 self.winner = 1 - i
                 return
+        
+        player0_crowns = self.players[0].get_crown_count()
+        player1_crowns = self.players[1].get_crown_count()
 
-        # Check overtime conditions (5 minutes)
-        if self.time >= 300.0:
-            if not self.overtime:
-                self.overtime = True
-                self.triple_elixir = True
-
-            # Crowns = enemy towers destroyed
-            # P0's crowns = P1's destroyed towers, and vice versa
-            p0_crowns = self.players[1].get_crown_count()  # P0 earned by destroying P1's towers
-            p1_crowns = self.players[0].get_crown_count()  # P1 earned by destroying P0's towers
-
-            if p0_crowns > p1_crowns:
+        # End of 5:00 match timer. If tied, enter sudden death.
+        if self.time >= self.sudden_death_start_time and not self.sudden_death:
+            if player0_crowns != player1_crowns:
                 self.game_over = True
-                self.winner = 0
-            elif p1_crowns > p0_crowns:
-                self.game_over = True
-                self.winner = 1
+                self.winner = 0 if player0_crowns > player1_crowns else 1
+                return
+            self.sudden_death = True
+            self._sudden_death_crowns = (player0_crowns, player1_crowns)
 
-            # After 6 minutes, crown count determines winner
-            if self.time >= 360.0:
-                if p0_crowns > p1_crowns:
+        # Sudden death: first crown advantage wins instantly.
+        if self.sudden_death:
+            if player0_crowns != player1_crowns:
+                self.game_over = True
+                self.winner = 0 if player0_crowns > player1_crowns else 1
+                return
+
+            # Long-running tie fallback: tiebreaker by total tower HP damage dealt.
+            if self.time >= self.tiebreaker_time:
+                p0_damage = self._tower_damage_dealt_by_player(0)
+                p1_damage = self._tower_damage_dealt_by_player(1)
+                if p0_damage > p1_damage:
                     self.winner = 0
-                elif p1_crowns > p0_crowns:
+                elif p1_damage > p0_damage:
                     self.winner = 1
                 else:
-                    self.winner = None  # Draw
+                    self.winner = None
                 self.game_over = True
 
     def _update_tower_hp(self) -> None:
@@ -919,10 +991,95 @@ class BattleState:
                     "crowns": p.get_crown_count(),
                     "king_hp": p.king_tower_hp,
                     "left_hp": p.left_tower_hp,
-                    "right_hp": p.right_tower_hp
+                    "right_hp": p.right_tower_hp,
+                    "next_card": p.get_next_card(),
                 }
                 for p in self.players
             ],
             "game_over": self.game_over,
             "winner": self.winner
         }
+
+    def _get_king_tower_entity(self, player_id: int) -> Optional[Building]:
+        king_pos = self.arena.BLUE_KING_TOWER if player_id == 0 else self.arena.RED_KING_TOWER
+        for entity in self.entities.values():
+            if isinstance(entity, Building) and entity.player_id == player_id:
+                if entity.position.x == king_pos.x and entity.position.y == king_pos.y:
+                    return entity
+        return None
+
+    def _activate_king_tower(self, player_id: int) -> None:
+        king = self._get_king_tower_entity(player_id)
+        if king is not None:
+            king._tower_active = True
+
+    def _tower_damage_dealt_by_player(self, player_id: int) -> float:
+        enemy_id = 1 - player_id
+        current_enemy_hp = (
+            self.players[enemy_id].king_tower_hp
+            + self.players[enemy_id].left_tower_hp
+            + self.players[enemy_id].right_tower_hp
+        )
+        start_enemy_hp = self._starting_total_tower_hp.get(enemy_id, current_enemy_hp)
+        return max(0.0, start_enemy_hp - current_enemy_hp)
+
+    def is_position_occupied_by_building(
+        self,
+        position: Position,
+        mover_radius: float = 0.5,
+        ignore_building_id: Optional[int] = None,
+    ) -> bool:
+        """Return True when a position overlaps any live building footprint."""
+        for entity in self.entities.values():
+            if not isinstance(entity, Building) or not entity.is_alive:
+                continue
+            if ignore_building_id is not None and entity.id == ignore_building_id:
+                continue
+            building_radius = getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
+            if position.distance_to(entity.position) < (building_radius + mover_radius) * 0.95:
+                return True
+        return False
+
+    def is_ground_position_walkable(
+        self,
+        position: Position,
+        mover: Optional[Entity] = None,
+    ) -> bool:
+        """Ground movement validator including arena terrain and building footprints."""
+        if not self.arena.is_walkable(position):
+            return False
+        mover_radius = 0.5
+        if mover is not None:
+            mover_radius = getattr(mover.card_stats, "collision_radius", 0.5) or 0.5
+        return not self.is_position_occupied_by_building(position, mover_radius)
+
+    def _resolve_troop_collisions(self) -> None:
+        """Simple separation pass to reduce troop stacking."""
+        troops = [e for e in self.entities.values() if isinstance(e, Troop) and e.is_alive]
+        for i in range(len(troops)):
+            a = troops[i]
+            if getattr(a, "is_air_unit", False):
+                continue
+            ra = max(0.2, getattr(a.card_stats, "collision_radius", 0.5) or 0.5)
+            for j in range(i + 1, len(troops)):
+                b = troops[j]
+                if getattr(b, "is_air_unit", False):
+                    continue
+                rb = max(0.2, getattr(b.card_stats, "collision_radius", 0.5) or 0.5)
+                dx = b.position.x - a.position.x
+                dy = b.position.y - a.position.y
+                dist = math.hypot(dx, dy)
+                same_team = a.player_id == b.player_id
+                min_dist = (ra + rb) * (0.8 if same_team else 0.65)
+                if dist == 0:
+                    dist = 0.001
+                    dx, dy = 0.001, 0.0
+                if dist < min_dist:
+                    overlap = (min_dist - dist) / 2.0
+                    ux, uy = dx / dist, dy / dist
+                    new_a = Position(a.position.x - ux * overlap, a.position.y - uy * overlap)
+                    new_b = Position(b.position.x + ux * overlap, b.position.y + uy * overlap)
+                    if self.is_ground_position_walkable(new_a, a):
+                        a.position = new_a
+                    if self.is_ground_position_walkable(new_b, b):
+                        b.position = new_b
