@@ -9,7 +9,7 @@ from dataclasses import dataclass
 import io
 from pathlib import Path
 import time
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any, Tuple
 
 import numpy as np
 import torch
@@ -49,6 +49,12 @@ class RolloutWorkerTask:
     seed: int
 
 
+_WORKER_MODEL: Optional[MaskedPolicyValueNet] = None
+_WORKER_ENV: Optional[SelfPlayBattleEnv] = None
+_WORKER_CONFIG: Optional[Tuple[Any, ...]] = None
+_WORKER_THREADS_SET: bool = False
+
+
 @contextmanager
 def maybe_silence_stdio(enabled: bool):
     if not enabled:
@@ -61,13 +67,13 @@ def maybe_silence_stdio(enabled: bool):
 
 
 def tensorize_obs(obs, device: torch.device):
-    board = torch.tensor(obs.board, dtype=torch.float32, device=device).unsqueeze(0)
-    hud = torch.tensor(obs.hud, dtype=torch.float32, device=device).unsqueeze(0)
+    board = torch.as_tensor(obs.board, dtype=torch.float32, device=device).unsqueeze(0)
+    hud = torch.as_tensor(obs.hud, dtype=torch.float32, device=device).unsqueeze(0)
     return board, hud
 
 
 def tensorize_mask(mask: np.ndarray, device: torch.device) -> torch.Tensor:
-    return torch.tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
+    return torch.as_tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
 
 
 def collect_rollout(
@@ -87,49 +93,59 @@ def collect_rollout(
     for _ in range(rollout_steps):
         step_data: Dict[int, Dict[str, object]] = {}
         actions: Dict[int, int] = {}
+        obs0 = env.get_observation(0)
+        obs1 = env.get_observation(1)
+        mask0 = env.get_action_mask(0)
+        mask1 = env.get_action_mask(1)
+        board_t = torch.as_tensor(
+            np.stack([obs0.board, obs1.board]),
+            dtype=torch.float32,
+            device=device,
+        )
+        hud_t = torch.as_tensor(
+            np.stack([obs0.hud, obs1.hud]),
+            dtype=torch.float32,
+            device=device,
+        )
+        mask_t = torch.as_tensor(
+            np.stack([mask0, mask1]),
+            dtype=torch.bool,
+            device=device,
+        )
 
-        for player_id in (0, 1):
-            obs = env.get_observation(player_id)
-            mask = env.get_action_mask(player_id)
+        action_t, log_prob_t, value_t, _ = model.act(
+            board_t,
+            hud_t,
+            mask_t,
+            deterministic=False,
+        )
+        action_arr = action_t.detach().cpu().numpy()
+        log_prob_arr = log_prob_t.detach().cpu().numpy()
+        value_arr = value_t.detach().cpu().numpy()
 
-            board_t, hud_t = tensorize_obs(obs, device)
-            mask_t = tensorize_mask(mask, device)
-
-            action_t, log_prob_t, value_t, _ = model.act(
-                board_t,
-                hud_t,
-                mask_t,
-                deterministic=False,
-            )
-
-            action = int(action_t.item())
-            actions[player_id] = action
-            step_data[player_id] = {
-                "board": obs.board,
-                "hud": obs.hud,
-                "mask": mask,
-                "action": action,
-                "old_log_prob": float(log_prob_t.item()),
-                "value": float(value_t.item()),
-            }
+        actions[0] = int(action_arr[0])
+        actions[1] = int(action_arr[1])
+        step_data[0] = {
+            "board": obs0.board,
+            "hud": obs0.hud,
+            "mask": mask0,
+            "action": actions[0],
+            "old_log_prob": float(log_prob_arr[0]),
+            "value": float(value_arr[0]),
+        }
+        step_data[1] = {
+            "board": obs1.board,
+            "hud": obs1.hud,
+            "mask": mask1,
+            "action": actions[1],
+            "old_log_prob": float(log_prob_arr[1]),
+            "value": float(value_arr[1]),
+        }
 
         with maybe_silence_stdio(quiet_engine):
             rewards, done, _ = env.step(actions)
 
         for player_id in (0, 1):
-            if done:
-                next_value = 0.0
-            else:
-                next_obs = env.get_observation(player_id)
-                next_mask = env.get_action_mask(player_id)
-                with torch.no_grad():
-                    next_board_t, next_hud_t = tensorize_obs(next_obs, device)
-                    next_mask_t = tensorize_mask(next_mask, device)
-                    logits, value, _ = model(next_board_t, next_hud_t)
-                    dist = model.distribution(logits, next_mask_t)
-                    _ = dist.entropy()  # force mask validation in debug scenarios
-                    next_value = float(value.item())
-
             pdata = step_data[player_id]
             transitions.append(
                 Transition(
@@ -142,7 +158,7 @@ def collect_rollout(
                     value=pdata["value"],
                     reward=float(rewards[player_id]),
                     done=done,
-                    next_value=next_value,
+                    next_value=0.0,
                 )
             )
 
@@ -150,6 +166,7 @@ def collect_rollout(
             with maybe_silence_stdio(quiet_engine):
                 env.reset()
 
+    _fill_next_values(transitions, env=env, model=model, device=device)
     return transitions
 
 
@@ -166,33 +183,52 @@ def split_rollout_steps(total_steps: int, num_workers: int) -> List[int]:
 
 
 def _collect_rollout_worker(task: RolloutWorkerTask) -> List[Transition]:
+    global _WORKER_MODEL, _WORKER_ENV, _WORKER_CONFIG, _WORKER_THREADS_SET
     # Rollout workers are intentionally CPU-only because env stepping and action
     # masking are CPU-bound in the current pipeline.
     torch_device = torch.device("cpu")
-    torch.manual_seed(task.seed)
-    np.random.seed(task.seed)
-
-    model = MaskedPolicyValueNet(
-        board_channels=task.board_channels,
-        hud_size=task.hud_size,
-        num_actions=task.num_actions,
-        hidden_size=task.hidden_size,
-        recurrent=False,
-    ).to(torch_device)
-    model.load_state_dict(task.model_state_dict)
-
-    env = SelfPlayBattleEnv(
-        decision_interval_ticks=task.decision_interval_ticks,
-        max_ticks=task.max_ticks,
-        decks_path=task.decks_path,
-        seed=task.seed,
-        mirror_match=task.mirror_match,
-        canonical_perspective=True,
+    if not _WORKER_THREADS_SET:
+        # Avoid CPU thread oversubscription with many actor processes.
+        torch.set_num_threads(1)
+        _WORKER_THREADS_SET = True
+    config = (
+        task.board_channels,
+        task.hud_size,
+        task.num_actions,
+        task.hidden_size,
+        task.decision_interval_ticks,
+        task.max_ticks,
+        task.decks_path,
+        task.mirror_match,
     )
+    if _WORKER_MODEL is None or _WORKER_ENV is None or _WORKER_CONFIG != config:
+        torch.manual_seed(task.seed)
+        np.random.seed(task.seed)
+        _WORKER_MODEL = MaskedPolicyValueNet(
+            board_channels=task.board_channels,
+            hud_size=task.hud_size,
+            num_actions=task.num_actions,
+            hidden_size=task.hidden_size,
+            recurrent=False,
+        ).to(torch_device)
+        _WORKER_ENV = SelfPlayBattleEnv(
+            decision_interval_ticks=task.decision_interval_ticks,
+            max_ticks=task.max_ticks,
+            decks_path=task.decks_path,
+            seed=task.seed,
+            mirror_match=task.mirror_match,
+            canonical_perspective=True,
+        )
+        with maybe_silence_stdio(task.quiet_engine):
+            _WORKER_ENV.reset()
+        _WORKER_CONFIG = config
 
-    with maybe_silence_stdio(task.quiet_engine):
-        env.reset()
-
+    model = _WORKER_MODEL
+    env = _WORKER_ENV
+    assert model is not None
+    assert env is not None
+    model.load_state_dict(task.model_state_dict)
+    model.eval()
     return collect_rollout(
         env=env,
         model=model,
@@ -279,6 +315,57 @@ def collect_rollout_parallel(
     return transitions
 
 
+def _fill_next_values(
+    transitions: List[Transition],
+    env: SelfPlayBattleEnv,
+    model: MaskedPolicyValueNet,
+    device: torch.device,
+) -> None:
+    idx_by_player: Dict[int, List[int]] = {0: [], 1: []}
+    for idx, tr in enumerate(transitions):
+        idx_by_player[tr.player_id].append(idx)
+
+    bootstrap_value: Dict[int, float] = {0: 0.0, 1: 0.0}
+    if env.battle is not None and not env.battle.game_over:
+        next_obs0 = env.get_observation(0)
+        next_obs1 = env.get_observation(1)
+        next_mask0 = env.get_action_mask(0)
+        next_mask1 = env.get_action_mask(1)
+        with torch.no_grad():
+            next_board_t = torch.as_tensor(
+                np.stack([next_obs0.board, next_obs1.board]),
+                dtype=torch.float32,
+                device=device,
+            )
+            next_hud_t = torch.as_tensor(
+                np.stack([next_obs0.hud, next_obs1.hud]),
+                dtype=torch.float32,
+                device=device,
+            )
+            next_mask_t = torch.as_tensor(
+                np.stack([next_mask0, next_mask1]),
+                dtype=torch.bool,
+                device=device,
+            )
+            logits, value, _ = model(next_board_t, next_hud_t)
+            dist = model.distribution(logits, next_mask_t)
+            _ = dist.entropy()  # sanity-check masks in debug scenarios
+            values = value.detach().cpu().numpy()
+            bootstrap_value[0] = float(values[0])
+            bootstrap_value[1] = float(values[1])
+
+    for player_id in (0, 1):
+        indices = idx_by_player[player_id]
+        for offset, idx in enumerate(indices):
+            tr = transitions[idx]
+            if tr.done:
+                tr.next_value = 0.0
+            elif offset + 1 < len(indices):
+                tr.next_value = transitions[indices[offset + 1]].value
+            else:
+                tr.next_value = bootstrap_value[player_id]
+
+
 def compute_gae(
     transitions: List[Transition],
     gamma: float,
@@ -317,13 +404,18 @@ def ppo_update(
 ) -> Dict[str, float]:
     model.train()
 
-    boards = torch.tensor(np.stack([t.board for t in transitions]), dtype=torch.float32, device=device)
-    hud = torch.tensor(np.stack([t.hud for t in transitions]), dtype=torch.float32, device=device)
-    action_masks = torch.tensor(np.stack([t.action_mask for t in transitions]), dtype=torch.bool, device=device)
-    actions = torch.tensor([t.action for t in transitions], dtype=torch.long, device=device)
-    old_log_probs = torch.tensor([t.old_log_prob for t in transitions], dtype=torch.float32, device=device)
-    advantages_t = torch.tensor(advantages, dtype=torch.float32, device=device)
-    returns_t = torch.tensor(returns, dtype=torch.float32, device=device)
+    boards_np = np.stack([t.board for t in transitions])
+    hud_np = np.stack([t.hud for t in transitions])
+    action_masks_np = np.stack([t.action_mask for t in transitions])
+    actions_np = np.asarray([t.action for t in transitions], dtype=np.int64)
+    old_log_probs_np = np.asarray([t.old_log_prob for t in transitions], dtype=np.float32)
+    boards = torch.as_tensor(boards_np, dtype=torch.float32, device=device)
+    hud = torch.as_tensor(hud_np, dtype=torch.float32, device=device)
+    action_masks = torch.as_tensor(action_masks_np, dtype=torch.bool, device=device)
+    actions = torch.as_tensor(actions_np, dtype=torch.long, device=device)
+    old_log_probs = torch.as_tensor(old_log_probs_np, dtype=torch.float32, device=device)
+    advantages_t = torch.as_tensor(advantages, dtype=torch.float32, device=device)
+    returns_t = torch.as_tensor(returns, dtype=torch.float32, device=device)
 
     advantages_t = (advantages_t - advantages_t.mean()) / (advantages_t.std(unbiased=False) + 1e-8)
 
@@ -572,6 +664,10 @@ def main() -> None:
             update_elapsed = time.perf_counter() - update_start
 
             mean_reward = float(np.mean([t.reward for t in transitions]))
+            decisions_per_sec = (len(transitions) / 2.0) / max(1e-6, rollout_elapsed)
+            approx_games_per_min = (
+                decisions_per_sec / (args.max_ticks / args.decision_interval) * 60.0
+            )
             print(
                 f"update={update:04d} "
                 f"mean_reward={mean_reward:+.4f} "
@@ -580,7 +676,9 @@ def main() -> None:
                 f"value={stats['value_loss']:.4f} "
                 f"entropy={stats['entropy']:.4f} "
                 f"rollout_s={rollout_elapsed:.2f} "
-                f"update_s={update_elapsed:.2f}"
+                f"update_s={update_elapsed:.2f} "
+                f"dps={decisions_per_sec:.1f} "
+                f"gpm~={approx_games_per_min:.1f}"
             )
 
             if update % args.save_every == 0 or update == args.updates:

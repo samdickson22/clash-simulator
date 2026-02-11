@@ -72,6 +72,42 @@ for _ in range(1000):
         break
 ```
 
+### PPO Self-Play (Fast Path)
+```bash
+# uv-managed env
+uv sync
+
+# CPU rollout workers + MPS learner (stable default)
+PYTHONPATH=src uv run python -m clasher.rl.train_selfplay \
+  --num-workers 6 \
+  --device mps \
+  --quiet-engine \
+  --rollout-steps 768 \
+  --save-every 5 \
+  --checkpoint-dir checkpoints/selfplay_run \
+  --resume-latest
+
+# Async actors + learner overlap (higher throughput)
+PYTHONPATH=src uv run python -m clasher.rl.train_selfplay_async \
+  --num-actors 6 \
+  --device mps \
+  --quiet-engine \
+  --actor-rollout-steps 128 \
+  --transitions-per-update 3072 \
+  --batch-size 1024 \
+  --save-every 5 \
+  --checkpoint-dir checkpoints/selfplay_async \
+  --resume-latest
+```
+
+### Watch Latest Policy
+```bash
+CKPT=$(ls -1t checkpoints/selfplay_run/policy_update_*.pt | head -n 1)
+PYTHONPATH=src uv run python -m clasher.rl.watch_policy_battle \
+  --checkpoint "$CKPT" \
+  --device mps
+```
+
 ### Turbo Benchmarking  
 ```python
 from src.clasher.replay import TurboEngine
