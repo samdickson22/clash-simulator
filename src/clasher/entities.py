@@ -319,11 +319,17 @@ class Entity(ABC):
         # Don't switch if current target is closer and same type
         current_distance = self.position.distance_to(current_target.position)
         new_distance = self.position.distance_to(new_target.position)
-        
+
+        # Building-to-building retargets should only happen when the new building
+        # is actually in aggro/sight range; otherwise troops can snap across lanes.
+        if isinstance(current_target, Building) and isinstance(new_target, Building):
+            if new_distance > self.sight_range:
+                return False
+
         # If both are same type (both troops or both buildings), keep closer one
         if isinstance(current_target, Building) == isinstance(new_target, Building):
             return new_distance < current_distance
-        
+
         return False
 
     def _can_attack_air(self) -> bool:
