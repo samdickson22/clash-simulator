@@ -43,6 +43,10 @@ class DirectDamageSpell(Spell):
     stun_duration: float = 0.0
     slow_duration: float = 0.0  
     slow_multiplier: float = 1.0
+    knockback_distance: float = 0.0
+    hits_air: bool = True
+    hits_ground: bool = True
+    crown_tower_damage_multiplier: float = 1.0
     
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
         """Deal damage to all enemies in radius"""
@@ -51,16 +55,38 @@ class DirectDamageSpell(Spell):
         for entity in battle_state.entities.values():
             if entity.player_id == player_id or not entity.is_alive:
                 continue
+
+            is_air = getattr(entity, "is_air_unit", False)
+            if is_air and not self.hits_air:
+                continue
+            if (not is_air) and not self.hits_ground:
+                continue
             
             # Use hitbox-based collision detection for more accurate damage
             if self._hitbox_overlaps_with_area(entity, target_pos):
-                entity.take_damage(self.damage)
+                damage = self.damage
+                if type(entity).__name__ == "Building":
+                    name = getattr(getattr(entity, "card_stats", None), "name", None)
+                    if name in {"Tower", "KingTower"}:
+                        damage *= self.crown_tower_damage_multiplier
+                entity.take_damage(damage)
                 
                 # Apply status effects
                 if self.stun_duration > 0:
                     entity.apply_stun(self.stun_duration)
                 if self.slow_duration > 0:
                     entity.apply_slow(self.slow_duration, self.slow_multiplier)
+                if self.knockback_distance > 0 and type(entity).__name__ != "Building":
+                    dx = entity.position.x - target_pos.x
+                    dy = entity.position.y - target_pos.y
+                    distance = (dx ** 2 + dy ** 2) ** 0.5
+                    if distance > 0:
+                        new_pos = Position(
+                            entity.position.x + (dx / distance) * self.knockback_distance,
+                            entity.position.y + (dy / distance) * self.knockback_distance,
+                        )
+                        if getattr(entity, "is_air_unit", False) or battle_state.is_ground_position_walkable(new_pos, entity):
+                            entity.position = new_pos
                 
                 targets_hit += 1
         
@@ -71,6 +97,13 @@ class DirectDamageSpell(Spell):
 class ProjectileSpell(Spell):
     """Spells that fire projectiles"""
     travel_speed: float = 500.0
+    stun_duration: float = 0.0
+    slow_duration: float = 0.0
+    slow_multiplier: float = 1.0
+    knockback_distance: float = 0.0
+    hits_air: bool = True
+    hits_ground: bool = True
+    crown_tower_damage_multiplier: float = 1.0
     
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
         """Fire a projectile toward target position"""
@@ -89,7 +122,14 @@ class ProjectileSpell(Spell):
             sight_range=0,
             target_position=target_pos,
             travel_speed=self.travel_speed,
-            splash_radius=self.radius
+            splash_radius=self.radius,
+            stun_duration=self.stun_duration,
+            slow_duration=self.slow_duration,
+            slow_multiplier=self.slow_multiplier,
+            knockback_distance=self.knockback_distance,
+            hits_air=self.hits_air,
+            hits_ground=self.hits_ground,
+            crown_tower_damage_multiplier=self.crown_tower_damage_multiplier,
         )
         
         # Add spell name for visualization
@@ -114,6 +154,11 @@ class AreaEffectSpell(Spell):
     """Spells that create area effects on the ground with duration"""
     duration: float = 4.0  # seconds
     freeze_effect: bool = False
+    speed_multiplier: float = 1.0
+    hits_air: bool = True
+    hits_ground: bool = True
+    crown_tower_damage_multiplier: float = 1.0
+    building_damage_multiplier: float = 1.0
     
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
         """Create area effect at target position"""
@@ -130,7 +175,12 @@ class AreaEffectSpell(Spell):
             sight_range=self.radius,
             duration=self.duration,
             freeze_effect=self.freeze_effect,
-            radius=self.radius
+            speed_multiplier=self.speed_multiplier,
+            radius=self.radius,
+            hits_air=self.hits_air,
+            hits_ground=self.hits_ground,
+            crown_tower_damage_multiplier=self.crown_tower_damage_multiplier,
+            building_damage_multiplier=self.building_damage_multiplier,
         )
         
         # Add spell name for visualization
@@ -179,6 +229,42 @@ class SpawnProjectileSpell(ProjectileSpell):
 
 
 @dataclass
+class RoyalDeliverySpell(Spell):
+    """Delayed impact spell that deals area damage and spawns a recruit."""
+    impact_delay: float = 2.0
+    travel_speed: float = 5000.0 / 60.0
+    spawn_count: int = 1
+    spawn_character: str = "DeliveryRecruit"
+    spawn_character_data: dict = None
+
+    def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
+        projectile = SpawnProjectile(
+            id=battle_state.next_entity_id,
+            position=Position(target_pos.x, target_pos.y),
+            player_id=player_id,
+            card_stats=None,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=self.damage,
+            range=0,
+            sight_range=0,
+            target_position=Position(target_pos.x, target_pos.y),
+            travel_speed=self.travel_speed,
+            splash_radius=self.radius,
+            spawn_count=self.spawn_count,
+            spawn_character=self.spawn_character,
+            spawn_character_data=self.spawn_character_data,
+            activation_delay=self.impact_delay,
+            hits_air=True,
+            hits_ground=True,
+        )
+        projectile.spell_name = self.name
+        battle_state.entities[battle_state.next_entity_id] = projectile
+        battle_state.next_entity_id += 1
+        return True
+
+
+@dataclass
 class BuffSpell(Spell):
     """Spells that buff friendly units"""
     buff_duration: float = 3.0  # seconds
@@ -200,6 +286,10 @@ class BuffSpell(Spell):
                     entity.speed *= self.speed_multiplier
                 if hasattr(entity, 'damage'):
                     entity.damage *= self.damage_multiplier
+                entity.attack_speed_buff_multiplier = max(
+                    getattr(entity, "attack_speed_buff_multiplier", 1.0),
+                    self.speed_multiplier,
+                )
                 targets_hit += 1
         
         return targets_hit > 0
@@ -307,6 +397,7 @@ class RollingProjectileSpell(Spell):
     spawn_character: str = None  # For Barbarian Barrel
     spawn_character_data: dict = None
     radius_y: float = 0.6  # Height of rolling hitbox
+    knockback_distance: float = 1.5
     
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
         """Spawn rolling projectile at target position"""
@@ -326,7 +417,8 @@ class RollingProjectileSpell(Spell):
             spawn_delay=self.spawn_delay,
             spawn_character=self.spawn_character,
             spawn_character_data=self.spawn_character_data,
-            radius_y=self.radius_y
+            radius_y=self.radius_y,
+            knockback_distance=self.knockback_distance,
         )
         
         # Add spell name for visualization
@@ -343,6 +435,9 @@ class TornadoSpell(Spell):
     pull_force: float = 3.0  # tiles per second
     damage_per_second: float = 35.0
     duration: float = 3.0
+    hits_air: bool = True
+    hits_ground: bool = True
+    crown_tower_damage_multiplier: float = 1.0
     
     def cast(self, battle_state: 'BattleState', player_id: int, target_pos: Position) -> bool:
         """Create tornado effect that pulls enemies and deals damage"""
@@ -359,7 +454,10 @@ class TornadoSpell(Spell):
             sight_range=self.radius,
             duration=self.duration,
             freeze_effect=False,
-            radius=self.radius
+            radius=self.radius,
+            hits_air=self.hits_air,
+            hits_ground=self.hits_ground,
+            crown_tower_damage_multiplier=self.crown_tower_damage_multiplier,
         )
         
         # Add tornado-specific properties
@@ -461,7 +559,7 @@ EARTHQUAKE = DirectDamageSpell("Earthquake", 3, radius=3000.0/1000.0, damage=332
 BARB_LOG = ProjectileSpell("BarbLog", 2, radius=250.0/1000.0, damage=240, travel_speed=1200.0/60.0)
 HEAL = HealSpell("Heal", 3, radius=3000.0/1000.0, damage=0, heal_amount=400.0)
 SNOWBALL = DirectDamageSpell("Snowball", 2, radius=250.0/1000.0, damage=0, slow_duration=2.5, slow_multiplier=0.65)
-ROYAL_DELIVERY = DirectDamageSpell("RoyalDelivery", 4, radius=0.0, damage=0)  # Special case
+ROYAL_DELIVERY = RoyalDeliverySpell("RoyalDelivery", 3, radius=3.0, damage=171)
 GLOBAL_CLONE = DirectDamageSpell("GlobalClone", 3, radius=0.0, damage=0)  # Special case
 GOBLIN_PARTY_ROCKET = ProjectileSpell("GoblinPartyRocket", 4, radius=250.0, damage=0, travel_speed=1000.0/60.0)
 WARM_SPELL = DirectDamageSpell("WarmSpell", 0, radius=0.0, damage=0)  # Special case
@@ -475,11 +573,18 @@ def _load_dynamic_spell_registry():
     """Load spells dynamically from gamedata.json."""
     try:
         from .dynamic_spells import load_dynamic_spells
-        return load_dynamic_spells()
+        registry = load_dynamic_spells()
+        from .card_aliases import CARD_NAME_ALIASES
+        for alias, target in CARD_NAME_ALIASES.items():
+            if alias in registry:
+                continue
+            if target in registry:
+                registry[alias] = registry[target]
+        return registry
     except Exception as e:
         print(f"Warning: Could not load dynamic spells: {e}")
         # Fallback to static spells
-        return {
+        fallback = {
             "Arrows": ARROWS,
             "Fireball": FIREBALL, 
             "Zap": ZAP,
@@ -507,5 +612,12 @@ def _load_dynamic_spell_registry():
             "GoblinCurse": GOBLIN_CURSE,
             "MergeMaiden": MERGE_MAIDEN
         }
+        from .card_aliases import CARD_NAME_ALIASES
+        for alias, target in CARD_NAME_ALIASES.items():
+            if alias in fallback:
+                continue
+            if target in fallback:
+                fallback[alias] = fallback[target]
+        return fallback
 
 SPELL_REGISTRY = _load_dynamic_spell_registry()

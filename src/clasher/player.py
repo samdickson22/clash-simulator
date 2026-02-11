@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Deque
 from collections import deque
 
-from .data import CardStats
+from .card_types import CardStatsCompat
 
 
 @dataclass
@@ -33,13 +33,13 @@ class PlayerState:
             elixir_per_second = 1.0 / base_regen_time
             self.elixir = min(self.max_elixir, self.elixir + elixir_per_second * dt)
     
-    def can_play_card(self, card_name: str, card_stats: CardStats) -> bool:
+    def can_play_card(self, card_name: str, card_stats: CardStatsCompat) -> bool:
         """Check if player can afford to play this card"""
         return (card_name in self.hand and 
                 self.elixir >= card_stats.mana_cost and
                 self.is_alive())
     
-    def play_card(self, card_name: str, card_stats: CardStats) -> bool:
+    def play_card(self, card_name: str, card_stats: CardStatsCompat) -> bool:
         """Play a card from hand, updating elixir and cycling"""
         if not self.can_play_card(card_name, card_stats):
             return False
@@ -55,6 +55,12 @@ class PlayerState:
             self.cycle_queue.append(card_name)
         
         return True
+
+    def get_next_card(self) -> Optional[str]:
+        """Return the next card in cycle, if known."""
+        if self.cycle_queue:
+            return self.cycle_queue[0]
+        return None
     
     def is_alive(self) -> bool:
         """Check if player still has towers standing"""
@@ -62,11 +68,11 @@ class PlayerState:
     
     def get_crown_count(self) -> int:
         """Get number of crowns (destroyed towers)"""
+        if self.king_tower_hp <= 0:
+            return 3
         crowns = 0
         if self.left_tower_hp <= 0:
             crowns += 1
         if self.right_tower_hp <= 0:
-            crowns += 1
-        if self.king_tower_hp <= 0:
             crowns += 1
         return crowns

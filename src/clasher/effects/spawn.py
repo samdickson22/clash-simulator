@@ -27,29 +27,28 @@ class SpawnUnits(BaseEffect):
 
         # If not found and unit_data provided, create stats from data
         if not unit_stats and self.unit_data:
-            from ...data import CardStats
-            unit_stats = CardStats(
-                name=self.unit_name,
-                id=0,
-                mana_cost=0,
-                rarity="Common",
-                hitpoints=self.unit_data.get("hitpoints", 100),
-                damage=self.unit_data.get("damage", 10),
-                speed=float(self.unit_data.get("speed", 60)),
-                range=self.unit_data.get("range", 1000) / 1000.0,
-                sight_range=self.unit_data.get("sightRange", 5000) / 1000.0,
-                hit_speed=self.unit_data.get("hitSpeed", 1000),
-                deploy_time=self.unit_data.get("deployTime", 1000),
-                load_time=self.unit_data.get("loadTime", 1000),
-                collision_radius=self.unit_data.get("collisionRadius", 500) / 1000.0,
-                attacks_ground=self.unit_data.get("attacksGround", True),
-                attacks_air=False,
-                targets_only_buildings=False,
-                target_type=self.unit_data.get("tidTarget")
+            from ..factory.dynamic_factory import troop_from_character_data
+
+            unit_stats = troop_from_character_data(
+                self.unit_name,
+                self.unit_data,
+                elixir=0,
+                rarity=self.unit_data.get("rarity", "Common"),
             )
 
         if not unit_stats:
-            return
+            from ..factory.dynamic_factory import troop_from_values
+
+            unit_stats = troop_from_values(
+                self.unit_name,
+                hitpoints=100,
+                damage=10,
+                speed_tiles_per_min=60.0,
+                range_tiles=1.0,
+                sight_range_tiles=5.0,
+                hit_speed_ms=1000,
+                collision_radius_tiles=0.5,
+            )
 
         # Spawn units in a circle around target position
         for i in range(self.count):

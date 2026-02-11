@@ -39,6 +39,10 @@ class ApplyBuff(BaseEffect):
                 if hasattr(entity, 'speed'):
                     entity.speed *= self.speed_multiplier
                 entity.damage *= self.damage_multiplier
+                entity.attack_speed_buff_multiplier = max(
+                    getattr(entity, "attack_speed_buff_multiplier", 1.0),
+                    self.speed_multiplier,
+                )
 
                 # Store buff info for duration tracking
                 entity._buff_end_time = battle_state.time + self.duration_seconds

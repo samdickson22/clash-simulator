@@ -103,7 +103,7 @@ class MinerTunnel(BaseMechanic):
         emergence_radius = 2.0  # tiles
         stun_duration = 0.5  # seconds
 
-        for target in entity.battle_state.entities.values():
+        for target in list(entity.battle_state.entities.values()):
             if (target.player_id == entity.player_id or
                     not target.is_alive or
                     target == entity):

@@ -119,6 +119,18 @@
     {
       "name": "Golem Hog Fireball 3.4",
       "cards": ["Cannon", "Fireball", "Golem", "HogRider", "IceSpirit", "Musketeer", "Skeletons", "Log"]
+    },
+    {
+      "name": "LavaLoon Miner",
+      "cards": ["Arrows", "Balloon", "Fireball", "LavaHound", "MegaMinion", "Miner", "Minions", "Tombstone"]
+    },
+    {
+      "name": "Giant Double Prince",
+      "cards": ["DarkPrince", "Fireball", "Giant", "MegaMinion", "Minions", "Miner", "Prince", "Zap"]
+    },
+    {
+      "name": "Golem Night Witch Beatdown",
+      "cards": ["BabyDragon", "BarbarianBarrel", "Bomber", "Golem", "Lumberjack", "NightWitch", "Tornado", "Zap"]
     }
   ]
 }

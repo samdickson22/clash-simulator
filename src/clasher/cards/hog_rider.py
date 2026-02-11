@@ -22,6 +22,8 @@ class HogRiderJump(BaseMechanic):
 
     def on_tick(self, entity, dt_ms: int) -> None:
         """Handle jumping logic"""
+        from ..entities import Troop  # Local import to avoid circular dependency at module load
+
         if not isinstance(entity, Troop):
             return
 

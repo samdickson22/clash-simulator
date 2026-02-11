@@ -40,7 +40,8 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
             mechanics.append(DeathSpawn(
                 unit_name=unit_name,
                 count=count,
-                radius_tiles=0.5
+                radius_tiles=0.5,
+                unit_data=spawn_data,
             ))
 
     # Shield mechanics
@@ -51,20 +52,20 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
         ))
 
     # Damage ramp (Inferno Tower/Dragon)
-    if char_data.get("damageRampData") or entry.get("name") in ["InfernoTower", "InfernoDragon"]:
-        # Create damage stages for inferno units
-        if entry.get("name") == "InfernoTower":
-            stages = [
-                (0, 20),      # Start damage
-                (2000, 60),    # After 2 seconds
-                (4000, 400),   # After 4 seconds (max damage)
-            ]
-        else:  # Inferno Dragon
-            stages = [
-                (0, 80),      # Start damage
-                (2000, 240),   # After 2 seconds
-                (4000, 800),   # After 4 seconds (max damage)
-            ]
+    if (
+        char_data.get("damageRampData")
+        or entry.get("name") in ["InfernoTower", "InfernoDragon"]
+        or char_data.get("variableDamage2") is not None
+        or char_data.get("variableDamage3") is not None
+    ):
+        base_damage = char_data.get("damage", 0) or 0
+        stage2 = char_data.get("variableDamage2", base_damage)
+        stage3 = char_data.get("variableDamage3", stage2)
+        stages = [
+            (0, base_damage),
+            (2000, stage2),
+            (4000, stage3),
+        ]
 
         print(f"[Detect] DamageRamp for {entry.get('name')}")
         mechanics.append(DamageRamp(
