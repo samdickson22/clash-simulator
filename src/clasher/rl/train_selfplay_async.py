@@ -613,7 +613,13 @@ def main() -> None:
 
             mean_reward = float(np.mean(batch_np["rewards"]))
             decisions_per_sec = (transitions_count / 2.0) / max(1e-6, collect_elapsed)
+            effective_decisions_per_sec = (transitions_count / 2.0) / max(
+                1e-6, collect_elapsed + update_elapsed
+            )
             approx_games_per_min = decisions_per_sec / (9090.0 / args.decision_interval) * 60.0
+            effective_games_per_min = (
+                effective_decisions_per_sec / (9090.0 / args.decision_interval) * 60.0
+            )
             print(
                 f"update={update:04d} "
                 f"mean_reward={mean_reward:+.4f} "
@@ -624,7 +630,9 @@ def main() -> None:
                 f"collect_s={collect_elapsed:.2f} "
                 f"update_s={update_elapsed:.2f} "
                 f"dps={decisions_per_sec:.1f} "
-                f"gpm~={approx_games_per_min:.1f}"
+                f"gpm~={approx_games_per_min:.1f} "
+                f"eff_dps={effective_decisions_per_sec:.1f} "
+                f"eff_gpm~={effective_games_per_min:.1f}"
             )
 
             if update % args.save_every == 0 or update == args.updates:

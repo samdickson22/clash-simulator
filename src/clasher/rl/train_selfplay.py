@@ -665,8 +665,14 @@ def main() -> None:
 
             mean_reward = float(np.mean([t.reward for t in transitions]))
             decisions_per_sec = (len(transitions) / 2.0) / max(1e-6, rollout_elapsed)
+            effective_decisions_per_sec = (len(transitions) / 2.0) / max(
+                1e-6, rollout_elapsed + update_elapsed
+            )
             approx_games_per_min = (
                 decisions_per_sec / (args.max_ticks / args.decision_interval) * 60.0
+            )
+            effective_games_per_min = (
+                effective_decisions_per_sec / (args.max_ticks / args.decision_interval) * 60.0
             )
             print(
                 f"update={update:04d} "
@@ -678,7 +684,9 @@ def main() -> None:
                 f"rollout_s={rollout_elapsed:.2f} "
                 f"update_s={update_elapsed:.2f} "
                 f"dps={decisions_per_sec:.1f} "
-                f"gpm~={approx_games_per_min:.1f}"
+                f"gpm~={approx_games_per_min:.1f} "
+                f"eff_dps={effective_decisions_per_sec:.1f} "
+                f"eff_gpm~={effective_games_per_min:.1f}"
             )
 
             if update % args.save_every == 0 or update == args.updates:
