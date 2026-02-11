@@ -43,7 +43,7 @@ class SkeletonKingSoulCollector(ChampionAbilityMechanic):
             return
 
         # Check for nearby deaths and collect souls
-        for other in entity.battle_state.entities.values():
+        for other in list(entity.battle_state.entities.values()):
             if (other.player_id == entity.player_id or  # Don't collect from allies
                     other.is_alive or  # Only collect from dead entities
                     other == entity):  # Don't collect from self

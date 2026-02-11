@@ -21,7 +21,7 @@ class FreezeDebuff(BaseMechanic):
 
         battle_state = entity.battle_state
 
-        for target in battle_state.entities.values():
+        for target in list(battle_state.entities.values()):
             if target.player_id == entity.player_id or not target.is_alive:
                 continue
 

@@ -21,11 +21,10 @@ class RoyalGhostFade(BaseMechanic):
             return
         battle_state = entity.battle_state
         now_ms = int(battle_state.time * 1000)
-        for other in battle_state.entities.values():
+        for other in list(battle_state.entities.values()):
             if other.player_id == entity.player_id or not other.is_alive:
                 continue
             if entity.position.distance_to(other.position) <= self.fade_radius:
                 entity._stealth_until = 0
                 return
         entity._stealth_until = now_ms + self.grace_period_ms
-

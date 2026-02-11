@@ -29,7 +29,7 @@ class MagicArcherPierce(BaseMechanic):
         origin_x = target.position.x
         origin_y = target.position.y
         damage = entity.damage * self.damage_decay
-        for other in battle_state.entities.values():
+        for other in list(battle_state.entities.values()):
             if other.player_id == entity.player_id or not other.is_alive or other.id == target.id:
                 continue
             rel_x = other.position.x - origin_x
@@ -40,4 +40,3 @@ class MagicArcherPierce(BaseMechanic):
             perpendicular = abs(rel_x * uy - rel_y * ux)
             if perpendicular <= self.perpendicular_tolerance:
                 other.take_damage(damage)
-

@@ -55,7 +55,7 @@ class IceSpiritFreeze(BaseMechanic):
         if not hasattr(entity, 'battle_state'):
             return
         battle_state = entity.battle_state
-        for other in battle_state.entities.values():
+        for other in list(battle_state.entities.values()):
             if other.player_id == entity.player_id or not other.is_alive:
                 continue
             if origin.distance_to(other.position) <= self.freeze_radius:

@@ -26,7 +26,7 @@ class DeathDamage(BaseMechanic):
         print(f"[Mechanic] DeathDamage triggered by {getattr(entity.card_stats, 'name', 'Unknown')} at ({entity.position.x:.1f},{entity.position.y:.1f}) radius={self.radius_tiles} dmg={self.damage}")
 
         # Deal area damage at death position
-        for target in battle_state.entities.values():
+        for target in list(battle_state.entities.values()):
             if target.player_id == entity.player_id or not target.is_alive:
                 continue
 

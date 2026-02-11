@@ -27,7 +27,9 @@ class WallBreakersDemolition(BaseMechanic):
     def _explode(self, entity: 'Entity') -> None:
         battle_state = entity.battle_state
         damage = entity.damage * self.damage_multiplier
-        for other in battle_state.entities.values():
+        # Snapshot entities to avoid dict-size changes when damage triggers
+        # deaths/spawns during this loop.
+        for other in list(battle_state.entities.values()):
             if other.player_id == entity.player_id or not other.is_alive:
                 continue
             if entity.position.distance_to(other.position) <= self.explosion_radius:

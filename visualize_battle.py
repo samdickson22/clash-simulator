@@ -16,8 +16,13 @@ import json
 import os
 import math
 from typing import Dict, List, Tuple
-from src.clasher.engine import BattleEngine
-from src.clasher.arena import Position
+try:
+    from src.clasher.engine import BattleEngine
+    from src.clasher.arena import Position
+except ModuleNotFoundError:
+    # Support module execution modes where only `clasher` is on PYTHONPATH.
+    from clasher.engine import BattleEngine
+    from clasher.arena import Position
 
 # Initialize Pygame
 pygame.init()

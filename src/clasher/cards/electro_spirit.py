@@ -36,7 +36,7 @@ class ElectroSpiritChain(BaseMechanic):
     def _find_next_target(self, battle_state, player_id: int, visited: Set[int], origin) -> 'Entity':
         best = None
         best_distance = self.chain_range + 1.0
-        for other in battle_state.entities.values():
+        for other in list(battle_state.entities.values()):
             if other.player_id == player_id or not other.is_alive or other.id in visited:
                 continue
             distance = origin.distance_to(other.position)
@@ -44,4 +44,3 @@ class ElectroSpiritChain(BaseMechanic):
                 best_distance = distance
                 best = other
         return best
-

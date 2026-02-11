@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import as_completed
+from concurrent.futures.process import BrokenProcessPool
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass
 import io
 from pathlib import Path
-from typing import Dict, List
+import time
+from typing import Dict, List, Optional
 
 import numpy as np
 import torch
@@ -27,6 +31,22 @@ class Transition:
     reward: float
     done: bool
     next_value: float
+
+
+@dataclass(frozen=True)
+class RolloutWorkerTask:
+    model_state_dict: Dict[str, torch.Tensor]
+    board_channels: int
+    hud_size: int
+    num_actions: int
+    hidden_size: int
+    rollout_steps: int
+    decision_interval_ticks: int
+    max_ticks: int
+    decks_path: str
+    mirror_match: bool
+    quiet_engine: bool
+    seed: int
 
 
 @contextmanager
@@ -130,6 +150,132 @@ def collect_rollout(
             with maybe_silence_stdio(quiet_engine):
                 env.reset()
 
+    return transitions
+
+
+def split_rollout_steps(total_steps: int, num_workers: int) -> List[int]:
+    workers = max(1, num_workers)
+    base = total_steps // workers
+    remainder = total_steps % workers
+    chunks: List[int] = []
+    for idx in range(workers):
+        chunk = base + (1 if idx < remainder else 0)
+        if chunk > 0:
+            chunks.append(chunk)
+    return chunks
+
+
+def _collect_rollout_worker(task: RolloutWorkerTask) -> List[Transition]:
+    # Rollout workers are intentionally CPU-only because env stepping and action
+    # masking are CPU-bound in the current pipeline.
+    torch_device = torch.device("cpu")
+    torch.manual_seed(task.seed)
+    np.random.seed(task.seed)
+
+    model = MaskedPolicyValueNet(
+        board_channels=task.board_channels,
+        hud_size=task.hud_size,
+        num_actions=task.num_actions,
+        hidden_size=task.hidden_size,
+        recurrent=False,
+    ).to(torch_device)
+    model.load_state_dict(task.model_state_dict)
+
+    env = SelfPlayBattleEnv(
+        decision_interval_ticks=task.decision_interval_ticks,
+        max_ticks=task.max_ticks,
+        decks_path=task.decks_path,
+        seed=task.seed,
+        mirror_match=task.mirror_match,
+        canonical_perspective=True,
+    )
+
+    with maybe_silence_stdio(task.quiet_engine):
+        env.reset()
+
+    return collect_rollout(
+        env=env,
+        model=model,
+        device=torch_device,
+        rollout_steps=task.rollout_steps,
+        quiet_engine=task.quiet_engine,
+    )
+
+
+def collect_rollout_parallel(
+    executor: ProcessPoolExecutor,
+    model: MaskedPolicyValueNet,
+    rollout_steps: int,
+    num_workers: int,
+    board_channels: int,
+    hud_size: int,
+    num_actions: int,
+    hidden_size: int,
+    decision_interval_ticks: int,
+    max_ticks: int,
+    decks_path: str,
+    mirror_match: bool,
+    quiet_engine: bool,
+    seed: int,
+    worker_retries: int,
+) -> List[Transition]:
+    chunks = split_rollout_steps(rollout_steps, num_workers)
+    if not chunks:
+        return []
+
+    # Copy to CPU tensors for process transport.
+    model_state_dict = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+    tasks = [
+        RolloutWorkerTask(
+            model_state_dict=model_state_dict,
+            board_channels=board_channels,
+            hud_size=hud_size,
+            num_actions=num_actions,
+            hidden_size=hidden_size,
+            rollout_steps=chunk_steps,
+            decision_interval_ticks=decision_interval_ticks,
+            max_ticks=max_ticks,
+            decks_path=decks_path,
+            mirror_match=mirror_match,
+            quiet_engine=quiet_engine,
+            seed=seed + (worker_idx + 1) * 1009,
+        )
+        for worker_idx, chunk_steps in enumerate(chunks)
+    ]
+
+    attempts: Dict[int, int] = {idx: 0 for idx in range(len(tasks))}
+    pending: List[tuple[int, RolloutWorkerTask]] = list(enumerate(tasks))
+    parts_by_idx: Dict[int, List[Transition]] = {}
+
+    while pending:
+        submitted = {
+            executor.submit(_collect_rollout_worker, task): (idx, task)
+            for idx, task in pending
+        }
+        pending = []
+
+        for future in as_completed(submitted):
+            idx, task = submitted[future]
+            try:
+                parts_by_idx[idx] = future.result()
+            except BrokenProcessPool:
+                raise
+            except Exception as exc:
+                attempts[idx] += 1
+                print(
+                    f"worker_failure idx={idx} attempt={attempts[idx]} "
+                    f"error={type(exc).__name__}: {exc}"
+                )
+                if attempts[idx] > worker_retries:
+                    raise RuntimeError(
+                        f"worker {idx} failed after {worker_retries + 1} attempts"
+                    ) from exc
+                pending.append((idx, task))
+
+    transitions: List[Transition] = []
+    for idx in range(len(tasks)):
+        part = parts_by_idx[idx]
+        transitions.extend(part)
     return transitions
 
 
@@ -247,6 +393,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mirror-match", action="store_true")
     parser.add_argument("--quiet-engine", action="store_true")
     parser.add_argument("--device", type=str, choices=["auto", "cpu", "mps", "cuda"], default="auto")
+    parser.add_argument("--num-workers", type=int, default=1)
+    parser.add_argument("--worker-retries", type=int, default=2)
+    parser.add_argument("--max-update-restarts", type=int, default=5)
+    parser.add_argument("--resume-latest", action="store_true")
+    parser.add_argument("--resume-from", type=str, default=None)
     return parser.parse_args()
 
 
@@ -270,8 +421,17 @@ def resolve_torch_device(device_arg: str) -> torch.device:
     return torch.device("cpu")
 
 
+def find_latest_checkpoint(checkpoint_dir: Path) -> Optional[Path]:
+    candidates = sorted(checkpoint_dir.glob("policy_update_*.pt"))
+    if not candidates:
+        return None
+    return candidates[-1]
+
+
 def main() -> None:
     args = parse_args()
+    if args.resume_latest and args.resume_from:
+        raise ValueError("Use only one of --resume-latest or --resume-from")
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
@@ -304,61 +464,143 @@ def main() -> None:
 
     checkpoint_dir = Path(args.checkpoint_dir)
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    start_update = 1
 
-    for update in range(1, args.updates + 1):
-        transitions = collect_rollout(
-            env=env,
-            model=model,
-            device=device,
-            rollout_steps=args.rollout_steps,
-            quiet_engine=args.quiet_engine,
-        )
+    resume_checkpoint: Optional[Path] = None
+    if args.resume_from:
+        resume_checkpoint = Path(args.resume_from)
+        if not resume_checkpoint.exists():
+            raise FileNotFoundError(f"resume checkpoint not found: {resume_checkpoint}")
+    elif args.resume_latest:
+        resume_checkpoint = find_latest_checkpoint(checkpoint_dir)
 
-        advantages, returns = compute_gae(
-            transitions=transitions,
-            gamma=args.gamma,
-            gae_lambda=args.gae_lambda,
-        )
+    if resume_checkpoint is not None:
+        state = torch.load(resume_checkpoint, map_location=device)
+        model.load_state_dict(state["model_state_dict"])
+        if "optimizer_state_dict" in state:
+            optimizer.load_state_dict(state["optimizer_state_dict"])
+        saved_update = int(state.get("update", 0))
+        start_update = saved_update + 1
+        print(f"resumed_from={resume_checkpoint} saved_update={saved_update} start_update={start_update}")
 
-        stats = ppo_update(
-            model=model,
-            optimizer=optimizer,
-            transitions=transitions,
-            advantages=advantages,
-            returns=returns,
-            clip_ratio=args.clip_ratio,
-            value_coef=args.value_coef,
-            entropy_coef=args.entropy_coef,
-            epochs=args.epochs,
-            batch_size=args.batch_size,
-            device=device,
-        )
+    if args.num_workers > 1:
+        print(f"rollout_workers={args.num_workers}")
 
-        mean_reward = float(np.mean([t.reward for t in transitions]))
-        print(
-            f"update={update:04d} "
-            f"mean_reward={mean_reward:+.4f} "
-            f"loss={stats['loss']:.4f} "
-            f"policy={stats['policy_loss']:.4f} "
-            f"value={stats['value_loss']:.4f} "
-            f"entropy={stats['entropy']:.4f}"
-        )
+    executor_ctx = ProcessPoolExecutor(max_workers=args.num_workers) if args.num_workers > 1 else None
 
-        if update % args.save_every == 0 or update == args.updates:
-            ckpt_path = checkpoint_dir / f"policy_update_{update:04d}.pt"
-            torch.save(
-                {
-                    "model_state_dict": model.state_dict(),
-                    "optimizer_state_dict": optimizer.state_dict(),
-                    "args": vars(args),
-                    "update": update,
-                    "board_channels": obs0.board.shape[0],
-                    "hud_size": obs0.hud.shape[0],
-                    "num_actions": env.action_space.num_actions,
-                },
-                ckpt_path,
+    try:
+        if start_update > args.updates:
+            print(
+                f"nothing_to_do start_update={start_update} is greater than target updates={args.updates}"
             )
-            print(f"saved_checkpoint={ckpt_path}")
+            return
+        for update in range(start_update, args.updates + 1):
+            restarts = 0
+            while True:
+                try:
+                    rollout_start = time.perf_counter()
+                    if args.num_workers > 1:
+                        assert executor_ctx is not None
+                        transitions = collect_rollout_parallel(
+                            executor=executor_ctx,
+                            model=model,
+                            rollout_steps=args.rollout_steps,
+                            num_workers=args.num_workers,
+                            board_channels=obs0.board.shape[0],
+                            hud_size=obs0.hud.shape[0],
+                            num_actions=env.action_space.num_actions,
+                            hidden_size=args.hidden_size,
+                            decision_interval_ticks=args.decision_interval,
+                            max_ticks=args.max_ticks,
+                            decks_path=args.decks_path,
+                            mirror_match=args.mirror_match,
+                            quiet_engine=args.quiet_engine,
+                            seed=args.seed + update * 100_003,
+                            worker_retries=args.worker_retries,
+                        )
+                    else:
+                        transitions = collect_rollout(
+                            env=env,
+                            model=model,
+                            device=device,
+                            rollout_steps=args.rollout_steps,
+                            quiet_engine=args.quiet_engine,
+                        )
+                    rollout_elapsed = time.perf_counter() - rollout_start
+                    break
+                except BrokenProcessPool as exc:
+                    restarts += 1
+                    print(f"pool_restart update={update:04d} attempt={restarts} error={exc}")
+                    if executor_ctx is not None:
+                        executor_ctx.shutdown(wait=False, cancel_futures=True)
+                    if restarts > args.max_update_restarts:
+                        raise RuntimeError(
+                            f"Exceeded max_update_restarts={args.max_update_restarts} at update={update}"
+                        ) from exc
+                    executor_ctx = ProcessPoolExecutor(max_workers=args.num_workers)
+                except Exception as exc:
+                    restarts += 1
+                    print(
+                        f"rollout_restart update={update:04d} attempt={restarts} "
+                        f"error={type(exc).__name__}: {exc}"
+                    )
+                    if restarts > args.max_update_restarts:
+                        raise RuntimeError(
+                            f"Exceeded max_update_restarts={args.max_update_restarts} at update={update}"
+                        ) from exc
+
+            update_start = time.perf_counter()
+            advantages, returns = compute_gae(
+                transitions=transitions,
+                gamma=args.gamma,
+                gae_lambda=args.gae_lambda,
+            )
+
+            stats = ppo_update(
+                model=model,
+                optimizer=optimizer,
+                transitions=transitions,
+                advantages=advantages,
+                returns=returns,
+                clip_ratio=args.clip_ratio,
+                value_coef=args.value_coef,
+                entropy_coef=args.entropy_coef,
+                epochs=args.epochs,
+                batch_size=args.batch_size,
+                device=device,
+            )
+            update_elapsed = time.perf_counter() - update_start
+
+            mean_reward = float(np.mean([t.reward for t in transitions]))
+            print(
+                f"update={update:04d} "
+                f"mean_reward={mean_reward:+.4f} "
+                f"loss={stats['loss']:.4f} "
+                f"policy={stats['policy_loss']:.4f} "
+                f"value={stats['value_loss']:.4f} "
+                f"entropy={stats['entropy']:.4f} "
+                f"rollout_s={rollout_elapsed:.2f} "
+                f"update_s={update_elapsed:.2f}"
+            )
+
+            if update % args.save_every == 0 or update == args.updates:
+                ckpt_path = checkpoint_dir / f"policy_update_{update:04d}.pt"
+                torch.save(
+                    {
+                        "model_state_dict": model.state_dict(),
+                        "optimizer_state_dict": optimizer.state_dict(),
+                        "args": vars(args),
+                        "update": update,
+                        "board_channels": obs0.board.shape[0],
+                        "hud_size": obs0.hud.shape[0],
+                        "num_actions": env.action_space.num_actions,
+                    },
+                    ckpt_path,
+                )
+                print(f"saved_checkpoint={ckpt_path}")
+    finally:
+        if executor_ctx is not None:
+            executor_ctx.shutdown(wait=True, cancel_futures=False)
 
 
 if __name__ == "__main__":

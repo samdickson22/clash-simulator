@@ -45,7 +45,8 @@ class ActiveAbility:
         self.activation_time = int(battle_state.time * 1000)
 
         # Apply ability effects
-        from ...effects import EffectContext, Position
+        from ...effects import EffectContext
+        from ...arena import Position
         context = EffectContext(
             battle_state=battle_state,
             caster_id=entity.player_id,

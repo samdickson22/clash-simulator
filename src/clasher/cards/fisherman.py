@@ -35,7 +35,7 @@ class FishermanHook(BaseMechanic):
         nearest_enemy = None
         min_distance = float('inf')
 
-        for target in entity.battle_state.entities.values():
+        for target in list(entity.battle_state.entities.values()):
             if (target.player_id == entity.player_id or
                     not target.is_alive or
                     type(target).__name__ in {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect', 'Graveyard'}):
