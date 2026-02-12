@@ -251,6 +251,7 @@ class Entity(ABC):
         
         # Priority: Troops > Buildings (authentic Clash Royale behavior)
         building_targets = []
+        fallback_crown_targets = []
         troop_targets = []
         
         # Check if this unit can only target buildings
@@ -281,15 +282,18 @@ class Entity(ABC):
             
             # Only consider targets within sight range for troops vs troops
             if isinstance(entity, Building):
-                # Crown towers are always valid objectives, but non-tower buildings
-                # should only pull aggro when actually in sight range.
+                # Buildings primarily require sight-range aggro.
+                # Crown towers are kept as fallback objectives so building-targeting
+                # troops still path across the map when nothing is in sight.
                 building_name = getattr(getattr(entity, "card_stats", None), "name", "")
                 is_crown_tower = (
                     building_name in {"Tower", "KingTower"}
                     or bool(getattr(entity, "_is_king_tower", False))
                 )
-                if is_crown_tower or distance <= self.sight_range:
+                if distance <= self.sight_range:
                     building_targets.append((entity, distance))
+                elif is_crown_tower:
+                    fallback_crown_targets.append((entity, distance))
             else:
                 # For troop targets, only consider if within sight range
                 if distance <= self.sight_range:
@@ -299,9 +303,14 @@ class Entity(ABC):
         
         # Choose targets based on targeting rules
         if targets_only_buildings:
-            targets = building_targets  # Only consider buildings
+            targets = building_targets if building_targets else fallback_crown_targets
         else:
-            targets = troop_targets if troop_targets else building_targets  # Troops first, then buildings
+            if troop_targets:
+                targets = troop_targets
+            elif building_targets:
+                targets = building_targets
+            else:
+                targets = fallback_crown_targets
         
         for entity, distance in targets:
             if distance < min_distance:
@@ -327,7 +336,6 @@ class Entity(ABC):
         # Don't switch if current target is closer and same type
         current_distance = self.position.distance_to(current_target.position)
         new_distance = self.position.distance_to(new_target.position)
-
         # Building-to-building retargets should only happen when the new building
         # is actually in aggro/sight range; otherwise troops can snap across lanes.
         if isinstance(current_target, Building) and isinstance(new_target, Building):
@@ -773,17 +781,9 @@ class Troop(Entity):
                     abs(self.position.y - 16.0) <= 1.0)
 
         if on_bridge:
-            # Priority 3: On bridge - go to appropriate princess tower
-            if self.player_id == 0:  # Blue player going to red side
-                if bridge_x == 3.5:  # Left bridge -> left tower
-                    return Position(3.5, 25.5)  # RED_LEFT_TOWER
-                else:  # Right bridge -> right tower
-                    return Position(14.5, 25.5)  # RED_RIGHT_TOWER
-            else:  # Red player going to blue side
-                if bridge_x == 3.5:  # Left bridge -> left tower
-                    return Position(3.5, 6.5)  # BLUE_LEFT_TOWER
-                else:  # Right bridge -> right tower
-                    return Position(14.5, 6.5)  # BLUE_RIGHT_TOWER
+            # Keep heading to the actual locked target rather than hard-snapping to
+            # the bridge-side princess tower.
+            return final_target
         else:
             # Priority 2: Behind bridge - go to bridge center
             return bridge_center

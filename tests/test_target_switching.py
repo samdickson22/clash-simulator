@@ -100,3 +100,29 @@ def test_building_targeting_troop_can_still_acquire_in_sight_defensive_building(
 
     target = troop.get_nearest_target({10: cannon, 11: king})
     assert target is cannon
+
+
+def test_does_not_switch_from_king_to_out_of_sight_princess():
+    troop = _make_building_targeting_troop(x=9.0, y=20.0, sight_range=6.0)
+    current_target = _make_building(entity_id=20, x=9.0, y=29.5, name="KingTower", player_id=1)
+    new_target = _make_building(entity_id=21, x=14.5, y=25.5, name="Tower", player_id=1)
+
+    assert troop._should_switch_target(current_target, new_target) is False
+
+
+def test_can_switch_from_king_to_in_sight_defensive_building():
+    troop = _make_building_targeting_troop(x=9.0, y=20.0, sight_range=6.0)
+    current_target = _make_building(entity_id=20, x=9.0, y=29.5, name="KingTower", player_id=1)
+    new_target = _make_building(entity_id=21, x=10.5, y=20.5, name="Cannon", player_id=1)
+
+    assert troop._should_switch_target(current_target, new_target) is True
+
+
+def test_basic_pathfind_on_bridge_keeps_locked_target():
+    troop = _make_building_targeting_troop(x=3.5, y=16.0, sight_range=6.0)
+    troop.player_id = 0
+    king = _make_building(entity_id=30, x=9.0, y=29.5, name="KingTower", player_id=1)
+
+    target = troop._get_basic_pathfind_target(king)
+    assert target.x == king.position.x
+    assert target.y == king.position.y
