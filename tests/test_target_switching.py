@@ -118,6 +118,14 @@ def test_can_switch_from_king_to_in_sight_defensive_building():
     assert troop._should_switch_target(current_target, new_target) is True
 
 
+def test_can_switch_from_king_to_princess_when_attackable():
+    troop = _make_building_targeting_troop(x=13.8, y=24.9, sight_range=6.0)
+    current_target = _make_building(entity_id=20, x=9.0, y=29.5, name="KingTower", player_id=1)
+    new_target = _make_building(entity_id=21, x=14.5, y=25.5, name="Tower", player_id=1)
+
+    assert troop._should_switch_target(current_target, new_target) is True
+
+
 def test_basic_pathfind_on_bridge_keeps_locked_target():
     troop = _make_building_targeting_troop(x=3.5, y=16.0, sight_range=6.0)
     troop.player_id = 0

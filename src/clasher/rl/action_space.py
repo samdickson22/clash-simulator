@@ -90,6 +90,7 @@ class DiscreteTileActionSpace:
         self,
         battle: BattleState,
         player_id: int,
+        card_stats,
         resolved_name: str,
         position: Position,
         is_spell: bool,
@@ -114,8 +115,14 @@ class DiscreteTileActionSpace:
                 return False
 
         if not is_spell:
-            if battle.is_position_occupied_by_building(position, probe_radius):
-                return False
+            card_type = str(getattr(card_stats, "card_type", "") or "").lower()
+            is_building_card = card_type == "building"
+            if is_building_card:
+                if battle.is_building_placement_occupied(position, card_stats):
+                    return False
+            else:
+                if battle.is_position_occupied_by_building(position, probe_radius):
+                    return False
 
         return True
 
@@ -163,6 +170,7 @@ class DiscreteTileActionSpace:
                 if self._is_legal_deploy(
                     battle=battle,
                     player_id=player_id,
+                    card_stats=card_stats,
                     resolved_name=resolved_name,
                     position=pos,
                     is_spell=is_spell,

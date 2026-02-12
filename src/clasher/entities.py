@@ -336,6 +336,19 @@ class Entity(ABC):
         # Don't switch if current target is closer and same type
         current_distance = self.position.distance_to(current_target.position)
         new_distance = self.position.distance_to(new_target.position)
+        current_name = getattr(getattr(current_target, "card_stats", None), "name", "")
+        new_name = getattr(getattr(new_target, "card_stats", None), "name", "")
+        is_current_king = current_name == "KingTower" or bool(getattr(current_target, "_is_king_tower", False))
+        is_new_princess = new_name == "Tower"
+
+        # Keep king-lock stable while crossing/open-lane pushing; only peel to a
+        # princess tower when it's immediately attackable.
+        if is_current_king and is_new_princess:
+            target_radius = getattr(new_target.card_stats, "collision_radius", 0.5) or 0.5
+            attackable = new_distance <= (self.range + target_radius)
+            if not attackable:
+                return False
+
         # Building-to-building retargets should only happen when the new building
         # is actually in aggro/sight range; otherwise troops can snap across lanes.
         if isinstance(current_target, Building) and isinstance(new_target, Building):

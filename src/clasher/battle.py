@@ -216,9 +216,15 @@ class BattleState:
 
         if not is_spell:
             # Buildings are solid obstacles; do not allow overlapping deployment.
-            probe_radius = getattr(card_stats, "collision_radius", 0.5) or 0.5
-            if self.is_position_occupied_by_building(position, probe_radius):
-                return False
+            card_type = str(getattr(card_stats, "card_type", "") or "").lower()
+            is_building_card = card_type == "building"
+            if is_building_card:
+                if self.is_building_placement_occupied(position, card_stats):
+                    return False
+            else:
+                probe_radius = getattr(card_stats, "collision_radius", 0.5) or 0.5
+                if self.is_position_occupied_by_building(position, probe_radius):
+                    return False
 
         # Play the card
         if not player.play_card(card_name, card_stats):
@@ -1004,6 +1010,40 @@ class BattleState:
                 continue
             building_radius = getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
             if position.distance_to(entity.position) < (building_radius + mover_radius) * 0.95:
+                return True
+        return False
+
+    def _building_footprint_size_tiles(self, card_stats: CardStatsCompat) -> int:
+        """Return placement footprint in board tiles."""
+        name = getattr(card_stats, "name", "")
+        # Clash Royale exception: Tesla has a smaller footprint than most buildings.
+        if name == "Tesla":
+            return 2
+        return 3
+
+    def _footprint_bounds(
+        self,
+        position: Position,
+        card_stats: CardStatsCompat,
+    ) -> tuple[float, float, float, float]:
+        size = float(self._building_footprint_size_tiles(card_stats))
+        half = size / 2.0
+        return (position.x - half, position.x + half, position.y - half, position.y + half)
+
+    def is_building_placement_occupied(
+        self,
+        position: Position,
+        card_stats: CardStatsCompat,
+    ) -> bool:
+        """Return True when a new building footprint overlaps any live building footprint."""
+        x1, x2, y1, y2 = self._footprint_bounds(position, card_stats)
+        for entity in self.entities.values():
+            if not isinstance(entity, Building) or not entity.is_alive:
+                continue
+            ex1, ex2, ey1, ey2 = self._footprint_bounds(entity.position, entity.card_stats)
+            overlap_x = x1 < ex2 and x2 > ex1
+            overlap_y = y1 < ey2 and y2 > ey1
+            if overlap_x and overlap_y:
                 return True
         return False
 
