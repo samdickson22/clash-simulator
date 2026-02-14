@@ -1,10 +1,6 @@
-import os
-import sys
 from collections import deque
 
 import numpy as np
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from clasher.arena import Position
 from clasher.battle import BattleState

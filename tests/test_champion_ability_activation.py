@@ -1,8 +1,4 @@
-import os
-import sys
 from dataclasses import dataclass
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from clasher.battle import BattleState
 from clasher.mechanics.champion.ability import ActiveAbility

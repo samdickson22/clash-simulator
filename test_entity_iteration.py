@@ -4,10 +4,12 @@ Test script to verify the RuntimeError fix for entity iteration
 """
 
 import sys
-import os
+from pathlib import Path
 
-# Add the src directory to the Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+REPO_ROOT = Path(__file__).resolve().parent
+SRC_ROOT = REPO_ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
 
 def test_entity_iteration_fix():
     """Test that entity iteration doesn't cause RuntimeError"""

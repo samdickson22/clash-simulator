@@ -1,16 +1,18 @@
 import time
 from typing import Dict, Any, Optional, Callable
 import json
+from pathlib import Path
 
 from .battle import BattleState
 from .arena import Position
+from .paths import gamedata_path, resolve_path
 
 
 class BattleEngine:
     """Main engine for running Clash Royale battles"""
     
-    def __init__(self, data_file: str = "gamedata.json"):
-        self.data_file = data_file
+    def __init__(self, data_file: str | Path | None = None):
+        self.data_file = gamedata_path(data_file, must_exist=True)
         self.battle: Optional[BattleState] = None
         
     def create_battle(self) -> BattleState:
@@ -99,9 +101,11 @@ class BattleEngine:
             "overtime": self.battle.overtime
         }
     
-    def save_replay(self, filename: str) -> None:
+    def save_replay(self, filename: str | Path) -> None:
         """Save battle replay to JSON file"""
         state = self.get_battle_state()
         if state:
-            with open(filename, 'w') as f:
+            replay_path = resolve_path(filename, must_exist=False)
+            replay_path.parent.mkdir(parents=True, exist_ok=True)
+            with replay_path.open('w') as f:
                 json.dump(state, f, indent=2)

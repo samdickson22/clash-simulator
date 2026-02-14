@@ -1,19 +1,16 @@
 import json
-import os
-import sys
 from collections import deque
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.card_aliases import resolve_card_name
 from clasher.entities import AreaEffect, Graveyard, SpawnProjectile, Troop, Building
+from clasher.paths import decks_path as resolve_decks_path
 from clasher.spells import SPELL_REGISTRY
 
 
 def _load_unique_sample_cards() -> list[str]:
-    with open(os.path.join(os.path.dirname(__file__), "..", "decks.json"), "r") as f:
+    with resolve_decks_path("decks.json", must_exist=True).open("r", encoding="utf-8") as f:
         decks = json.load(f)["decks"]
     return sorted({card for deck in decks for card in deck["cards"]})
 

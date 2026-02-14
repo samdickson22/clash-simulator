@@ -89,15 +89,17 @@ class DeathSpawn(BaseMechanic):
                 battle_state.next_entity_id += 1
             return
 
-        # Try to get death spawn stats from card loader.
-        death_spawn_stats = battle_state.card_loader.get_card(self.unit_name)
-        if not death_spawn_stats and self.unit_data:
+        death_spawn_stats = None
+        if self.unit_data:
             death_spawn_stats = troop_from_character_data(
                 self.unit_name,
                 self.unit_data,
                 elixir=0,
                 rarity=self.unit_data.get("rarity", "Common"),
             )
+        if not death_spawn_stats:
+            # Fall back to canonical card loader entry when raw spawn data is unavailable.
+            death_spawn_stats = battle_state.card_loader.get_card(self.unit_name)
         if not death_spawn_stats:
             death_spawn_stats = troop_from_values(
                 self.unit_name,

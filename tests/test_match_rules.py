@@ -49,6 +49,21 @@ def test_king_tower_activates_when_princess_tower_destroyed():
     assert getattr(blue_king, "_tower_active", False) is True
 
 
+def test_king_tower_activates_when_hit_by_spell():
+    battle = BattleState()
+    _prepare_single_card(battle, 1, "Fireball")
+    blue_king = _get_tower(battle, 0, "king")
+    hp_before = blue_king.hitpoints
+    assert getattr(blue_king, "_tower_active", True) is False
+
+    assert battle.deploy_card(1, "Fireball", Position(battle.arena.BLUE_KING_TOWER.x, battle.arena.BLUE_KING_TOWER.y))
+    for _ in range(120):
+        battle.step()
+
+    assert blue_king.hitpoints < hp_before
+    assert getattr(blue_king, "_tower_active", False) is True
+
+
 def test_deploy_delay_prevents_immediate_troop_action():
     battle = BattleState()
     _prepare_single_card(battle, 0, "Knight")
@@ -171,6 +186,31 @@ def test_sudden_death_and_tiebreaker_damage():
     battle._check_win_conditions()
     assert battle.game_over
     assert battle.winner == 0
+
+
+def test_tiebreaker_uses_lowest_tower_hp_when_total_damage_equal():
+    battle = BattleState()
+    battle.time = 360.0
+
+    # Equal total damage (200 each), but player 1 has a lower minimum tower HP.
+    blue_left = _get_tower(battle, 0, "left")
+    blue_right = _get_tower(battle, 0, "right")
+    red_left = _get_tower(battle, 1, "left")
+    blue_left.hitpoints -= 100
+    blue_right.hitpoints -= 100
+    red_left.hitpoints -= 200
+
+    battle._check_win_conditions()
+    assert battle.game_over
+    assert battle.winner == 0
+
+
+def test_tiebreaker_never_returns_draw():
+    battle = BattleState()
+    battle.time = 360.0
+    battle._check_win_conditions()
+    assert battle.game_over
+    assert battle.winner in (0, 1)
 
 
 def test_stun_resets_attack_timer():
@@ -498,6 +538,39 @@ def test_tombstone_periodic_and_death_spawn():
     battle.step()
     spawned_after_death = len([e for e in battle.entities.values() if isinstance(e, Troop) and e.player_id == 0])
     assert spawned_after_death >= spawned
+
+
+def test_tombstone_periodic_skeletons_move_after_spawn():
+    battle = BattleState()
+    p0 = battle.players[0]
+    p0.elixir = 10.0
+    p0.hand = ["Tombstone"]
+    p0.deck = ["Tombstone"]
+    p0.cycle_queue = deque()
+    assert battle.deploy_card(0, "Tombstone", Position(9.0, 10.0))
+
+    # Deploy delay (~1s) + periodic spawn interval (3.5s) + margin.
+    for _ in range(220):
+        battle.step()
+
+    spawned_positions = {
+        e.id: (e.position.x, e.position.y)
+        for e in battle.entities.values()
+        if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name in {"Skeleton", "Skeletons"}
+    }
+    assert spawned_positions
+
+    for _ in range(180):
+        battle.step()
+
+    moved = 0
+    for e in battle.entities.values():
+        if e.id not in spawned_positions:
+            continue
+        start_x, start_y = spawned_positions[e.id]
+        if ((e.position.x - start_x) ** 2 + (e.position.y - start_y) ** 2) ** 0.5 > 0.2:
+            moved += 1
+    assert moved > 0
 
 
 def test_lava_hound_death_spawns_lava_pups():

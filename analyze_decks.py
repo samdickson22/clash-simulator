@@ -8,12 +8,15 @@ cards from deck configurations and displaying their attributes and mechanics.
 import json
 from pathlib import Path
 
-# Add the src directory to the path for imports
 import sys
-sys.path.append(str(Path(__file__).parent / "src"))
+REPO_ROOT = Path(__file__).resolve().parent
+SRC_ROOT = REPO_ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
 
-from src.clasher.data import CardDataLoader
-from src.clasher.card_types import CardDefinition, CardStatsCompat
+from clasher.data import CardDataLoader
+from clasher.card_types import CardDefinition, CardStatsCompat
+from clasher.paths import decks_path as resolve_decks_path
 
 
 def print_card_analysis(card_name: str, card_def: CardDefinition, loader: CardDataLoader):
@@ -158,9 +161,10 @@ def analyze_decks():
     print("=" * 80)
 
     # Load decks
-    decks_file = Path("decks.json")
-    if not decks_file.exists():
-        print(f"❌ Error: {decks_file} not found")
+    try:
+        decks_file = resolve_decks_path("decks.json", must_exist=True)
+    except FileNotFoundError:
+        print("❌ Error: decks.json not found")
         return
 
     with open(decks_file, 'r') as f:

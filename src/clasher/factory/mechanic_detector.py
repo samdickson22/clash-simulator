@@ -109,7 +109,8 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
     if char_data.get("spawnPauseTime") is not None and (
         char_data.get("spawnNumber") or char_data.get("spawnCharacterData")
     ):
-        unit_name = (char_data.get("spawnCharacterData") or {}).get("name", "Skeleton")
+        spawn_data = char_data.get("spawnCharacterData") or {}
+        unit_name = spawn_data.get("name", "Skeleton")
         interval_ms = char_data.get("spawnPauseTime", 3000)
         count = char_data.get("spawnNumber", 1)
 
@@ -118,7 +119,8 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
             unit_name=unit_name,
             spawn_interval_ms=interval_ms,
             count=count,
-            spawn_radius_tiles=1.5
+            spawn_radius_tiles=1.5,
+            unit_data=spawn_data or None,
         ))
 
     # Card-specific mechanics

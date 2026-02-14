@@ -21,7 +21,7 @@ class DirectDamage(BaseEffect):
 
         targets_hit = 0
 
-        for entity in battle_state.entities.values():
+        for entity in list(battle_state.entities.values()):
             if entity.player_id == context.caster_id or not entity.is_alive:
                 continue
 

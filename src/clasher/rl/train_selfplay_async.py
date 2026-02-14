@@ -15,6 +15,7 @@ import numpy as np
 import torch
 from torch import nn
 
+from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, resolve_path
 from clasher.rl.model import MaskedPolicyValueNet
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.train_selfplay import resolve_torch_device
@@ -466,12 +467,18 @@ def main() -> None:
 
     device = resolve_torch_device(args.device)
     print(f"device={device}")
+    resolved_decks_path = resolve_decks_path(args.decks_path, must_exist=True)
+    checkpoint_dir = checkpoints_dir(args.checkpoint_dir, create=True)
+    args.decks_path = str(resolved_decks_path)
+    args.checkpoint_dir = str(checkpoint_dir)
+    print(f"decks_path={resolved_decks_path}")
+    print(f"checkpoint_dir={checkpoint_dir}")
 
     # Build learner/env metadata.
     meta_env = SelfPlayBattleEnv(
         decision_interval_ticks=args.decision_interval,
         max_ticks=args.max_ticks,
-        decks_path=args.decks_path,
+        decks_path=str(resolved_decks_path),
         seed=args.seed,
         mirror_match=args.mirror_match,
         canonical_perspective=True,
@@ -490,15 +497,10 @@ def main() -> None:
     ).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
 
-    checkpoint_dir = Path(args.checkpoint_dir)
-    checkpoint_dir.mkdir(parents=True, exist_ok=True)
-
     start_update = 1
     resume_ckpt: Optional[Path] = None
     if args.resume_from:
-        resume_ckpt = Path(args.resume_from)
-        if not resume_ckpt.exists():
-            raise FileNotFoundError(f"resume checkpoint not found: {resume_ckpt}")
+        resume_ckpt = resolve_path(args.resume_from, must_exist=True)
     elif args.resume_latest:
         resume_ckpt = _find_latest_checkpoint(checkpoint_dir)
 
@@ -522,7 +524,7 @@ def main() -> None:
 
     actor_cfg_base = {
         "seed": args.seed,
-        "decks_path": args.decks_path,
+        "decks_path": str(resolved_decks_path),
         "decision_interval": args.decision_interval,
         "max_ticks": args.max_ticks,
         "mirror_match": args.mirror_match,

@@ -281,6 +281,10 @@ class BattleState:
         is_air_unit = (getattr(card_stats, 'name', '') in air_units) or (
             getattr(card_stats, 'target_type', '') == 'TID_TARGETS_AIR'
         )
+        troop_radius = getattr(card_stats, "collision_radius", 0.5) or 0.5
+        spawn_position = Position(position.x, position.y)
+        if not is_air_unit:
+            spawn_position = self._snap_to_valid_position(spawn_position, player_id, mover_radius=troop_radius)
         
         # Use level-scaled stats for hitpoints and damage
         scaled_hp = card_stats.scaled_hitpoints or 100
@@ -288,7 +292,7 @@ class BattleState:
         
         troop = Troop(
             id=self.next_entity_id,
-            position=Position(position.x, position.y),  # Create new position object
+            position=spawn_position,
             player_id=player_id,
             card_stats=card_stats,
             hitpoints=scaled_hp,
@@ -381,7 +385,8 @@ class BattleState:
         
         # Validate and snap position to playable area
         spawn_position = Position(spawn_x, spawn_y)
-        spawn_position = self._snap_to_valid_position(spawn_position, player_id)
+        mover_radius = getattr(card_stats, "collision_radius", 0.5) or 0.5
+        spawn_position = self._snap_to_valid_position(spawn_position, player_id, mover_radius=mover_radius)
         
         # Get unit properties
         speed = card_stats.speed or 60.0
@@ -631,6 +636,10 @@ class BattleState:
         air_units = ['Minions', 'MinionHorde', 'Balloon', 'SkeletonBalloon', 'BabyDragon', 
                     'InfernoDragon', 'ElectroDragon', 'SkeletonDragons', 'MegaMinion']
         is_air_unit = card_stats.name in air_units
+        mover_radius = getattr(card_stats, "collision_radius", 0.5) or 0.5
+        spawn_position = Position(position.x, position.y)
+        if not is_air_unit:
+            spawn_position = self._snap_to_valid_position(spawn_position, player_id, mover_radius=mover_radius)
         
         # Use level-scaled stats for hitpoints and damage
         scaled_hp = card_stats.scaled_hitpoints or card_stats.hitpoints or 100
@@ -638,7 +647,7 @@ class BattleState:
         
         troop = Troop(
             id=self.next_entity_id,
-            position=position,
+            position=spawn_position,
             player_id=player_id,
             card_stats=card_stats,
             hitpoints=scaled_hp,
@@ -668,10 +677,14 @@ class BattleState:
         self.next_entity_id += 1
         troop.on_spawn()
     
-    def _snap_to_valid_position(self, position: Position, player_id: int) -> Position:
+    def _snap_to_valid_position(self, position: Position, player_id: int, mover_radius: float = 0.5) -> Position:
         """Snap position to nearest valid playable area"""
         # Check if position is already valid (walkable and not on a tower)
-        if self.arena.is_walkable(position) and not self.arena.is_tower_tile(position, self):
+        if (
+            self.arena.is_walkable(position)
+            and not self.arena.is_tower_tile(position, self)
+            and not self.is_position_occupied_by_building(position, mover_radius=mover_radius)
+        ):
             return position
         
         # Try to find nearest valid position within reasonable distance
@@ -691,7 +704,11 @@ class BattleState:
                     continue
                 
                 # Check if walkable and not on tower
-                if self.arena.is_walkable(test_pos) and not self.arena.is_tower_tile(test_pos, self):
+                if (
+                    self.arena.is_walkable(test_pos)
+                    and not self.arena.is_tower_tile(test_pos, self)
+                    and not self.is_position_occupied_by_building(test_pos, mover_radius=mover_radius)
+                ):
                     distance = position.distance_to(test_pos)
                     if distance < min_distance:
                         min_distance = distance
@@ -705,7 +722,11 @@ class BattleState:
             clamped_pos = Position(clamped_x, clamped_y)
             
             # If clamped position is walkable and not on tower, use it
-            if self.arena.is_walkable(clamped_pos) and not self.arena.is_tower_tile(clamped_pos, self):
+            if (
+                self.arena.is_walkable(clamped_pos)
+                and not self.arena.is_tower_tile(clamped_pos, self)
+                and not self.is_position_occupied_by_building(clamped_pos, mover_radius=mover_radius)
+            ):
                 best_position = clamped_pos
             else:
                 # Fallback: move towards arena center until we find walkable area
@@ -718,9 +739,12 @@ class BattleState:
                     fallback_y = clamped_y + dy * step * 0.1
                     fallback_pos = Position(fallback_x, fallback_y)
                     
-                    if (self.arena.is_valid_position(fallback_pos) and 
-                        self.arena.is_walkable(fallback_pos) and
-                        not self.arena.is_tower_tile(fallback_pos, self)):
+                    if (
+                        self.arena.is_valid_position(fallback_pos)
+                        and self.arena.is_walkable(fallback_pos)
+                        and not self.arena.is_tower_tile(fallback_pos, self)
+                        and not self.is_position_occupied_by_building(fallback_pos, mover_radius=mover_radius)
+                    ):
                         best_position = fallback_pos
                         break
         
@@ -844,16 +868,17 @@ class BattleState:
         death_spawn_name = troop.card_stats.death_spawn_character
         death_spawn_count = troop.card_stats.death_spawn_count or 1
         
-        # Get death spawn card stats using the factory-driven loader
-        death_spawn_stats = self.card_loader.get_card(death_spawn_name)
-
-        if not death_spawn_stats and getattr(troop.card_stats, 'death_spawn_character_data', None):
+        death_spawn_stats = None
+        if getattr(troop.card_stats, 'death_spawn_character_data', None):
             death_spawn_stats = troop_from_character_data(
                 death_spawn_name,
                 troop.card_stats.death_spawn_character_data,
                 elixir=0,
                 rarity="Common",
             )
+        if not death_spawn_stats:
+            # Fall back to canonical card loader entry when raw spawn data is unavailable.
+            death_spawn_stats = self.card_loader.get_card(death_spawn_name)
 
         if not death_spawn_stats:
             death_spawn_stats = troop_from_values(
@@ -911,16 +936,24 @@ class BattleState:
                 self.winner = 0 if player0_crowns > player1_crowns else 1
                 return
 
-            # Long-running tie fallback: tiebreaker by total tower HP damage dealt.
+            # Long-running tie fallback: no draws. Lower tower HP loses.
             if self.time >= self.tiebreaker_time:
-                p0_damage = self._tower_damage_dealt_by_player(0)
-                p1_damage = self._tower_damage_dealt_by_player(1)
-                if p0_damage > p1_damage:
+                p0_sig = self._tower_hp_signature(0)
+                p1_sig = self._tower_hp_signature(1)
+                if p0_sig > p1_sig:
                     self.winner = 0
-                elif p1_damage > p0_damage:
+                elif p1_sig > p0_sig:
                     self.winner = 1
                 else:
-                    self.winner = None
+                    # Ultra-rare perfect tie: deterministic fallback so env never emits draw.
+                    p0_damage = self._tower_damage_dealt_by_player(0)
+                    p1_damage = self._tower_damage_dealt_by_player(1)
+                    if p0_damage > p1_damage:
+                        self.winner = 0
+                    elif p1_damage > p0_damage:
+                        self.winner = 1
+                    else:
+                        self.winner = 0
                 self.game_over = True
     
     def _update_tower_hp(self) -> None:
@@ -995,6 +1028,13 @@ class BattleState:
         )
         start_enemy_hp = self._starting_total_tower_hp.get(enemy_id, current_enemy_hp)
         return max(0.0, start_enemy_hp - current_enemy_hp)
+
+    def _tower_hp_signature(self, player_id: int) -> tuple[int, int, int]:
+        """Sortable tiebreak signature; higher values are better (healthier towers)."""
+        p = self.players[player_id]
+        hps = [max(0.0, p.left_tower_hp), max(0.0, p.right_tower_hp), max(0.0, p.king_tower_hp)]
+        # Sort ascending so lowest tower HP is compared first.
+        return tuple(sorted(int(round(hp * 1000.0)) for hp in hps))
 
     def is_position_occupied_by_building(
         self,

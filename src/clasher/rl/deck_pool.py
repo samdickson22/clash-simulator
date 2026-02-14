@@ -7,10 +7,11 @@ from pathlib import Path
 from typing import List, Sequence, Tuple
 
 from clasher.player import PlayerState
+from clasher.paths import decks_path as resolve_decks_path
 
 
 def load_deck_pool(path: str | Path = "decks.json") -> List[List[str]]:
-    deck_path = Path(path)
+    deck_path = resolve_decks_path(path, must_exist=True)
     with deck_path.open("r", encoding="utf-8") as f:
         payload = json.load(f)
 

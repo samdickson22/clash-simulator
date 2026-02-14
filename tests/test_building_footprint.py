@@ -1,8 +1,3 @@
-import os
-import sys
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import Building
@@ -44,4 +39,3 @@ def test_tesla_uses_2x2_placement_footprint() -> None:
     assert battle.is_building_placement_occupied(Position(9.5, 11.5), tesla)
     # 2 tiles apart touches edge but does not overlap.
     assert not battle.is_building_placement_occupied(Position(9.5, 12.5), tesla)
-

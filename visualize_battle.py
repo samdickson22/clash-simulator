@@ -13,16 +13,19 @@ import pygame
 import sys
 import time
 import json
-import os
 import math
+import os
+from pathlib import Path
 from typing import Dict, List, Tuple
-try:
-    from src.clasher.engine import BattleEngine
-    from src.clasher.arena import Position
-except ModuleNotFoundError:
-    # Support module execution modes where only `clasher` is on PYTHONPATH.
-    from clasher.engine import BattleEngine
-    from clasher.arena import Position
+
+REPO_ROOT = Path(__file__).resolve().parent
+SRC_ROOT = REPO_ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from clasher.engine import BattleEngine
+from clasher.arena import Position
+from clasher.paths import hitboxes_path as resolve_hitboxes_path
 
 # Initialize Pygame
 pygame.init()
@@ -61,7 +64,8 @@ class BattleVisualizer:
         
         # Load hitbox data (these are radii in tile units)
         try:
-            with open('hitboxes.json', 'r') as f:
+            hitbox_file = resolve_hitboxes_path("hitboxes.json", must_exist=True)
+            with hitbox_file.open('r') as f:
                 self.hitboxes = json.load(f)
         except FileNotFoundError:
             print("Warning: hitboxes.json not found, using default values")

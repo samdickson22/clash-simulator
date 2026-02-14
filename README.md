@@ -1,84 +1,32 @@
-# Outdated and probably wrong readme
+# Clasher
 
+Fast Clash Royale-style battle simulator with self-play training loops.
 
-# 🏆 Clash Royale Battle Engine
+## What changed in this refactor
 
-A blazing-fast, feature-complete Clash Royale battle simulation engine built in Python. Designed for reinforcement learning research and game AI development.
+- Centralized path resolution in `src/clasher/paths.py`.
+- No more brittle `cwd` assumptions for `gamedata.json`, `decks.json`, `hitboxes.json`, or checkpoints.
+- Unified CLI in `src/clasher/cli.py` with a local launcher: `run_clasher.py`.
+- RL train/watch/eval now resolve and print absolute paths they actually use.
 
-## ✨ Features
+## Quick start
 
-### 🚀 Core Engine
-- **Authentic mechanics** from official gamedata.json
-- **33ms fixed timestep** (30 FPS) for deterministic simulation
-- **732k+ ticks/second** performance in turbo mode
-- **Bridge pathfinding** and proper troop movement
-- **Complete spell system** (Arrows, Fireball, Zap, Lightning)
-- **Win conditions** with crown counting and overtime
+### 1) Environment
 
-### 🤖 Machine Learning Ready
-- **Gymnasium environment** compatible with Stable-Baselines3, RLlib
-- **128×128×3 observation tensor** (owner mask, troop type, HP)
-- **2304 discrete actions** encoding (card_idx, x_tile, y_tile)  
-- **Reward system** based on crowns, tower damage, victories
-- **Batch simulation** for distributed training
-
-### 🎮 Visualization & Analysis
-- **Real-time pygame visualizer** with health bars and UI
-- **Replay recording** with msgspec for fast serialization
-- **Battle statistics** and performance benchmarking
-- **Advanced mechanics** (knockback, stun, death spawns)
-
-## 🏃 Quick Start
-
-### Basic Battle
-```python
-from src.clasher.engine import BattleEngine
-from src.clasher.arena import Position
-
-# Create and run a battle
-engine = BattleEngine("gamedata.json")
-battle = engine.create_battle()
-
-# Deploy some cards
-battle.deploy_card(0, "Knight", Position(16.0, 8.0))
-battle.deploy_card(1, "Archers", Position(16.0, 10.0))
-
-# Run simulation
-for _ in range(1000):
-    battle.step()
-    if battle.game_over:
-        break
-
-print(f"Winner: Player {battle.winner}")
-```
-
-### Visualized Battle
-```python
-python3 visualized_battle.py
-```
-Watch battles unfold in real-time with the pygame visualizer!
-
-### RL Training
-```python
-from src.clasher.gym_env import ClashRoyaleGymEnv
-
-env = ClashRoyaleGymEnv()
-obs, info = env.reset()
-
-for _ in range(1000):
-    action = env.action_space.sample()  # Your RL agent here
-    obs, reward, terminated, truncated, info = env.step(action)
-    if terminated or truncated:
-        break
-```
-
-### PPO Self-Play (Fast Path)
 ```bash
-# uv-managed env
 uv sync
+```
 
-# CPU rollout workers + MPS learner (stable default)
-PYTHONPATH=src uv run python -m clasher.rl.train_selfplay \
+### 2) Inspect resolved paths
+
+```bash
+uv run python run_clasher.py paths
+```
+
+### 3) Train (sync PPO)
+
+```bash
+uv run python run_clasher.py train -- \
   --num-workers 6 \
   --device mps \
   --quiet-engine \
@@ -86,163 +34,132 @@ PYTHONPATH=src uv run python -m clasher.rl.train_selfplay \
   --save-every 5 \
   --checkpoint-dir checkpoints/selfplay_run \
   --resume-latest
+```
 
-# Async actors + learner overlap (higher throughput)
-PYTHONPATH=src uv run python -m clasher.rl.train_selfplay_async \
-  --num-actors 6 \
+### 4) Train (async actors + learner)
+
+```bash
+uv run python run_clasher.py train-async -- \
+  --num-actors 10 \
   --device mps \
   --quiet-engine \
   --actor-rollout-steps 128 \
-  --transitions-per-update 3072 \
-  --batch-size 1024 \
+  --transitions-per-update 4096 \
+  --epochs 2 \
+  --batch-size 1536 \
+  --compress-obs-fp16 \
+  --policy-sync-every 2 \
   --save-every 5 \
   --checkpoint-dir checkpoints/selfplay_async \
   --resume-latest
 ```
 
-### Watch Latest Policy
+### 5) Watch latest checkpoint
+
 ```bash
-CKPT=$(ls -1t checkpoints/selfplay_run/policy_update_*.pt | head -n 1)
-PYTHONPATH=src uv run python -m clasher.rl.watch_policy_battle \
-  --checkpoint "$CKPT" \
+uv run python run_clasher.py watch -- \
+  --checkpoint-dir checkpoints/selfplay_run \
   --device mps
 ```
 
-### Turbo Benchmarking  
-```python
-from src.clasher.replay import TurboEngine
+`watch` can also take `--checkpoint /absolute/or/relative/path.pt`.
 
-turbo = TurboEngine("gamedata.json")
-results = turbo.benchmark(duration_seconds=10)
-print(f"Speed: {results['ticks_per_second']:,} ticks/sec")
-```
-
-## 📋 Installation
+### 6) Evaluate latest checkpoint
 
 ```bash
-# Clone and install dependencies
-git clone <your-repo>
-cd clasher
-pip3 install -r requirements.txt
-
-# Run tests
-python3 -m pytest tests/ -v
-
-# Try the demos
-python3 example.py                 # Basic engine demo
-python3 advanced_demo.py          # Advanced features
-python3 test_gym_env.py           # RL environment test
-python3 visualized_battle.py      # Visual battle
-python3 final_showcase.py         # Complete showcase
+uv run python run_clasher.py eval -- \
+  --checkpoint-dir checkpoints/selfplay_run \
+  --games 100 \
+  --device mps \
+  --quiet-engine
 ```
 
-## 🏗️ Architecture
-
-```
-src/clasher/
-├── data.py              # Card data loading from gamedata.json
-├── arena.py            # Arena geometry and positioning  
-├── entities.py         # Troops, Buildings, Projectiles
-├── player.py           # Player state and hand management
-├── battle.py           # Core battle simulation
-├── engine.py           # High-level battle engine
-├── spells.py           # Spell system and effects
-├── gym_env.py          # Gymnasium RL environment
-├── replay.py           # Replay recording and turbo mode
-├── visualizer.py       # Pygame real-time visualizer
-└── advanced_mechanics.py # Knockback, stun, death spawns
-```
-
-## 📊 Performance
-
-| Metric | Value |
-|--------|-------|
-| **Simulation speed** | 732k+ ticks/sec |
-| **Real-time speedup** | 24,000x faster |
-| **Battles/second** | 67+ sustained |
-| **Cards supported** | 146 from gamedata.json |
-| **Memory usage** | ~50MB per battle |
-
-## 🧪 Testing
+### 7) Print latest checkpoint path only
 
 ```bash
-# Run all tests
-python3 -m pytest tests/ -v
-
-# Specific test suites
-python3 -m pytest tests/test_basic.py      # Core functionality
-python3 -m pytest tests/test_advanced.py  # Advanced features
+uv run python run_clasher.py latest-checkpoint --checkpoint-dir checkpoints/selfplay_async
 ```
 
-**Test Coverage:**
-- ✅ Card deployment and elixir system
-- ✅ Knight vs Knight mid-bridge battles
-- ✅ Win condition detection  
-- ✅ Spell casting and effects
-- ✅ Turbo mode performance
-- ✅ RL environment integration
+### 8) Smoke-run Gymnasium env
 
-## 🤖 ML Integration Examples
-
-### Stable-Baselines3
-```python
-from stable_baselines3 import PPO
-from src.clasher.gym_env import ClashRoyaleGymEnv
-
-env = ClashRoyaleGymEnv(speed_factor=10.0)
-model = PPO("CnnPolicy", env, verbose=1)
-model.learn(total_timesteps=100000)
+```bash
+uv run python run_clasher.py gym-smoke -- \
+  --episodes 2 \
+  --max-steps 128 \
+  --decks-path decks.json \
+  --action-mode flat
 ```
 
-### Custom Training Loop
-```python
-from src.clasher.replay import TurboEngine
+With structured episode debug dump (for exploit triage):
 
-turbo = TurboEngine("gamedata.json")
-results = turbo.run_batch(num_battles=1000, record_replays=True)
-
-# Analyze results for training data
-for result in results:
-    battle_data = result["result"]
-    # Extract features, rewards, etc.
+```bash
+uv run python run_clasher.py gym-smoke -- \
+  --episodes 1 \
+  --max-steps 256 \
+  --action-mode flat \
+  --debug-dump reports/rollout_debug.jsonl
 ```
 
-## 🎯 Roadmap
+Gym ids:
+- `clasher-selfplay-v0` (`dict` obs + flat discrete actions)
+- `clasher-selfplay-xyz-v0` (`dict` obs + `MultiDiscrete([18, 32, 5])` actions for `(x, y, slot/no-op)`)
 
-### Implemented ✅
-- All 9 phases from plan.md complete
-- Core battle mechanics and physics
-- Gymnasium RL environment
-- Real-time visualization
-- Advanced mechanics system
+### 9) Determinism Check
 
-### Future Enhancements 🚧
-- More cards and mechanics from gamedata.json  
-- Tournament and ladder systems
-- Distributed training support
-- WebGL/browser visualization
-- Multi-agent training scenarios
+```bash
+uv run python run_clasher.py determinism-check -- \
+  --seed 123 \
+  --decisions 512 \
+  --trials 2 \
+  --quiet-engine
+```
 
-## 📚 References
+### 10) Benchmark Suite
 
-Built following the comprehensive plan.md roadmap, incorporating insights from:
-- [RetroRoyale](https://github.com/retroroyale/ClashRoyale) - .NET server implementation
-- [Build-A-Bot](https://github.com/Pbatch/ClashRoyaleBuildABot) - Computer vision bot
-- [clash-royale-gym](https://github.com/MSU-AI/clash-royale-gym) - RL environment
-- [RoyaleAPI](https://github.com/RoyaleAPI/cr-api-data) - Official game data
+Single-process env throughput:
 
-## 📄 License
+```bash
+uv run python run_clasher.py benchmark -- env \
+  --decisions 4096 \
+  --quiet-engine
+```
 
-MIT License - See LICENSE file for details.
+Async actor queue throughput + lag:
 
-## 🤝 Contributing
+```bash
+uv run python run_clasher.py benchmark -- async-queue \
+  --num-actors 6 \
+  --transitions 8192 \
+  --actor-rollout-steps 128 \
+  --quiet-engine
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new features  
-4. Ensure all tests pass
-5. Submit a pull request
+## Legacy modules still supported
 
----
+You can still run module entrypoints directly:
 
-**🏆 Ready for production ML training and game AI research!** 🤖
+- `python -m clasher.rl.train_selfplay`
+- `python -m clasher.rl.train_selfplay_async`
+- `python -m clasher.rl.watch_policy_battle`
+- `python -m clasher.rl.eval`
+
+If running direct modules without an editable install, use `run_clasher.py` instead.
+
+## Path behavior
+
+Resolution order for relative paths:
+
+1. Current working directory
+2. Project root (auto-detected by `pyproject.toml` + `gamedata.json`)
+
+You can force a root with:
+
+```bash
+export CLASHER_ROOT=/absolute/path/to/clasher
+```
+
+## Notes
+
+- Python `>=3.10` required.
+- For Apple Silicon, `--device mps` is supported in both trainers and watch/eval.
+- If a checkpoint/decks/data file is missing, commands now fail with the resolved absolute path in the error.

@@ -4,7 +4,7 @@ import math
 import random
 
 from ..mechanic_base import BaseMechanic
-from ...factory.dynamic_factory import troop_from_values
+from ...factory.dynamic_factory import troop_from_character_data, troop_from_values
 
 if TYPE_CHECKING:
     from ...battle import BattleState
@@ -18,6 +18,7 @@ class PeriodicSpawner(BaseMechanic):
     count: int = 1
     max_spawns: int = -1  # -1 for unlimited
     spawn_radius_tiles: float = 1.0
+    unit_data: dict | None = None
 
     # Internal state
     time_since_spawn_ms: int = field(init=False, default=0)
@@ -43,8 +44,18 @@ class PeriodicSpawner(BaseMechanic):
         """Spawn a single unit"""
         battle_state = entity.battle_state
 
-        # Try to get spawn stats from card loader
-        spawn_stats = battle_state.card_loader.get_card(self.unit_name)
+        spawn_stats = None
+        if self.unit_data:
+            spawn_stats = troop_from_character_data(
+                self.unit_name,
+                self.unit_data,
+                elixir=0,
+                rarity=self.unit_data.get("rarity", "Common"),
+            )
+
+        # Fall back to canonical card loader entry when raw spawn data is unavailable.
+        if not spawn_stats:
+            spawn_stats = battle_state.card_loader.get_card(self.unit_name)
 
         # If not found, create minimal stats
         if not spawn_stats:
@@ -62,11 +73,16 @@ class PeriodicSpawner(BaseMechanic):
         from ...arena import Position
         print(f"[Mechanic] Spawning {self.count}x {self.unit_name} around {getattr(entity.card_stats, 'name', 'Unknown')}")
 
+        spawner_radius = getattr(getattr(entity, "card_stats", None), "collision_radius", 1.0) or 1.0
+        unit_radius = getattr(spawn_stats, "collision_radius", 0.5) or 0.5
+        min_spawn_distance = max(0.0, float(spawner_radius) + float(unit_radius) + 0.05)
+        max_spawn_distance = max(min_spawn_distance, min_spawn_distance + float(self.spawn_radius_tiles))
+
         # Spawn 'count' units around the spawner
         for _ in range(max(1, self.count)):
             # Random position around the spawner
             angle = random.random() * 2 * math.pi
-            distance = random.random() * self.spawn_radius_tiles
+            distance = random.uniform(min_spawn_distance, max_spawn_distance)
             spawn_x = entity.position.x + distance * math.cos(angle)
             spawn_y = entity.position.y + distance * math.sin(angle)
 

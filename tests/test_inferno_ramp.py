@@ -1,8 +1,3 @@
-import os
-import sys
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-
 from clasher.battle import BattleState
 from clasher.arena import Position
 from clasher.entities import Building, Troop

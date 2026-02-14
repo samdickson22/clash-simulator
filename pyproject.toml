@@ -12,8 +12,13 @@ dependencies = [
     "pytest>=7.0.0",
     "numba>=0.56.0",
     "msgspec>=0.18.0",
-    "torch>=2.2.0"
+    "pygame>=2.1.0",
+    "torch>=2.2.0",
+    "gymnasium>=0.29.1"
 ]
+
+[project.scripts]
+clasher = "clasher.cli:main"
 
 [tool.mypy]
 python_version = "3.10"
@@ -24,3 +29,4 @@ disallow_untyped_defs = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+pythonpath = ["src"]

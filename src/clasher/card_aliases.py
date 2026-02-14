@@ -24,6 +24,9 @@ CARD_NAME_ALIASES: dict[str, str] = {
     "MagicArcher": "EliteArcher",
     "NightWitch": "DarkWitch",
     "RoyalGhost": "Ghost",
+    "Skeleton": "Skeletons",
+    "Bat": "Bats",
+    "SpearGoblin": "SpearGoblins",
     "SkeletonBarrel": "SkeletonBalloon",
     # Spaced/punctuation variants occasionally found in deck exports
     "Hog Rider": "HogRider",

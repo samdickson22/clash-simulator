@@ -19,7 +19,7 @@ class ApplyStun(BaseEffect):
         battle_state = context.battle_state
         target_pos = context.target_position
 
-        for entity in battle_state.entities.values():
+        for entity in list(battle_state.entities.values()):
             if entity.player_id == context.caster_id or not entity.is_alive:
                 continue
 
@@ -43,7 +43,7 @@ class ApplySlow(BaseEffect):
         battle_state = context.battle_state
         target_pos = context.target_position
 
-        for entity in battle_state.entities.values():
+        for entity in list(battle_state.entities.values()):
             if entity.player_id == context.caster_id or not entity.is_alive:
                 continue
 
@@ -66,7 +66,7 @@ class ApplyFreeze(BaseEffect):
         battle_state = context.battle_state
         target_pos = context.target_position
 
-        for entity in battle_state.entities.values():
+        for entity in list(battle_state.entities.values()):
             if entity.player_id == context.caster_id or not entity.is_alive:
                 continue
 

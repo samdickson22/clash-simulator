@@ -1496,14 +1496,16 @@ class TimedExplosive(Entity):
 
         from .factory.dynamic_factory import troop_from_character_data, troop_from_values
 
-        spawn_stats = battle_state.card_loader.get_card(self.death_spawn_name)
-        if not spawn_stats and self.death_spawn_data:
+        spawn_stats = None
+        if self.death_spawn_data:
             spawn_stats = troop_from_character_data(
                 self.death_spawn_name,
                 self.death_spawn_data,
                 elixir=0,
                 rarity=self.death_spawn_data.get("rarity", "Common"),
             )
+        if not spawn_stats:
+            spawn_stats = battle_state.card_loader.get_card(self.death_spawn_name)
         if not spawn_stats:
             spawn_stats = troop_from_values(
                 self.death_spawn_name,

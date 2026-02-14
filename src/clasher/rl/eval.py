@@ -9,6 +9,8 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from clasher.paths import decks_path as resolve_decks_path
+from clasher.paths import latest_checkpoint, resolve_path
 from clasher.rl.train_selfplay import resolve_torch_device
 from clasher.rl.model import MaskedPolicyValueNet
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
@@ -26,7 +28,8 @@ def maybe_silence_stdio(enabled: bool):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluate self-play checkpoint")
-    parser.add_argument("--checkpoint", type=str, required=True)
+    parser.add_argument("--checkpoint", type=str, default=None)
+    parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/selfplay_run")
     parser.add_argument("--decks-path", type=str, default="decks.json")
     parser.add_argument("--games", type=int, default=100)
     parser.add_argument("--decision-interval", type=int, default=8)
@@ -63,16 +66,24 @@ def run_eval(args: argparse.Namespace) -> None:
     device = resolve_torch_device(args.device)
     print(f"device={device}")
 
-    checkpoint_path = Path(args.checkpoint)
-    if not checkpoint_path.exists():
-        raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}")
+    if args.checkpoint:
+        checkpoint_path = resolve_path(args.checkpoint, must_exist=True)
+    else:
+        checkpoint_path = latest_checkpoint(args.checkpoint_dir)
+        if checkpoint_path is None:
+            raise FileNotFoundError(
+                f"no policy checkpoints found in {resolve_path(args.checkpoint_dir, must_exist=False)}"
+            )
+    resolved_decks_path = resolve_decks_path(args.decks_path, must_exist=True)
+    print(f"checkpoint={checkpoint_path}")
+    print(f"decks={resolved_decks_path}")
 
     model, _ = load_model(checkpoint_path, device=device)
 
     env = SelfPlayBattleEnv(
         decision_interval_ticks=args.decision_interval,
         max_ticks=args.max_ticks,
-        decks_path=args.decks_path,
+        decks_path=str(resolved_decks_path),
         seed=args.seed,
         mirror_match=False,
         canonical_perspective=True,

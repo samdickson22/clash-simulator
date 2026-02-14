@@ -4,16 +4,13 @@ import argparse
 from pathlib import Path
 import random
 import time
-import sys
 
 import numpy as np
 import torch
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-
 from clasher.engine import BattleEngine
+from clasher.paths import decks_path as resolve_decks_path
+from clasher.paths import latest_checkpoint, resolve_path
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rl.deck_pool import apply_deck_to_player, load_deck_pool, sample_decks
 from clasher.rl.model import MaskedPolicyValueNet
@@ -67,13 +64,17 @@ class PolicyBattleVisualizer(BattleVisualizer):
         self.action_space = DiscreteTileActionSpace(canonical_perspective=True)
 
         self.models: dict[int, MaskedPolicyValueNet | None] = {
-            0: load_policy(Path(checkpoint), self.device),
+            0: load_policy(resolve_path(checkpoint, must_exist=True), self.device),
             1: None,
         }
         self.player_labels = {0: "policy", 1: "random"}
 
         if not opponent_random:
-            opp_ckpt = Path(opponent_checkpoint) if opponent_checkpoint else Path(checkpoint)
+            opp_ckpt = (
+                resolve_path(opponent_checkpoint, must_exist=True)
+                if opponent_checkpoint
+                else resolve_path(checkpoint, must_exist=True)
+            )
             self.models[1] = load_policy(opp_ckpt, self.device)
             self.player_labels[1] = "policy"
 
@@ -204,7 +205,8 @@ class PolicyBattleVisualizer(BattleVisualizer):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Watch checkpoint policy play in pygame")
-    parser.add_argument("--checkpoint", type=str, required=True)
+    parser.add_argument("--checkpoint", type=str, default=None)
+    parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/selfplay_run")
     parser.add_argument("--opponent-checkpoint", type=str, default=None)
     parser.add_argument("--opponent-random", action="store_true")
     parser.add_argument("--decks-path", type=str, default="decks.json")
@@ -218,11 +220,28 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    if args.checkpoint:
+        checkpoint = resolve_path(args.checkpoint, must_exist=True)
+    else:
+        ckpt = latest_checkpoint(args.checkpoint_dir)
+        if ckpt is None:
+            raise FileNotFoundError(
+                f"no policy checkpoints found in {resolve_path(args.checkpoint_dir, must_exist=False)}"
+            )
+        checkpoint = ckpt
+    decks_path = resolve_decks_path(args.decks_path, must_exist=True)
+    opponent_ckpt = (
+        str(resolve_path(args.opponent_checkpoint, must_exist=True))
+        if args.opponent_checkpoint
+        else None
+    )
+    print(f"checkpoint={checkpoint}")
+    print(f"decks={decks_path}")
     visualizer = PolicyBattleVisualizer(
-        checkpoint=args.checkpoint,
-        opponent_checkpoint=args.opponent_checkpoint,
+        checkpoint=str(checkpoint),
+        opponent_checkpoint=opponent_ckpt,
         opponent_random=args.opponent_random,
-        decks_path=args.decks_path,
+        decks_path=str(decks_path),
         decision_interval=args.decision_interval,
         device=args.device,
         deterministic=args.deterministic,

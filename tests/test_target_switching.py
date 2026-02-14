@@ -1,8 +1,3 @@
-import os
-import sys
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-
 from clasher.arena import Position
 from clasher.entities import Building, TargetType, Troop
 from clasher.factory.dynamic_factory import building_from_values, troop_from_values

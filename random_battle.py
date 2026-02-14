@@ -3,13 +3,18 @@
 import sys
 import random
 import time
-sys.path.append('src')
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent
+SRC_ROOT = REPO_ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
 
 from visualize_battle import BattleVisualizer
 from clasher.arena import Position
 from clasher.data import CardDataLoader
+from clasher.paths import decks_path as resolve_decks_path
 import json
-import os
 
 class RandomBattleSimulator(BattleVisualizer):
     def __init__(self):
@@ -437,12 +442,13 @@ class RandomBattleSimulator(BattleVisualizer):
 
     def load_curated_decks(self):
         """Load curated decks from decks.json, filter invalid/excluded cards, and store reasons if skipped."""
-        path = os.path.join(os.getcwd(), "decks.json")
-        if not os.path.exists(path):
+        try:
+            deck_path = resolve_decks_path("decks.json", must_exist=True)
+        except Exception:
             return []
 
         try:
-            with open(path, "r") as f:
+            with deck_path.open("r") as f:
                 data = json.load(f)
         except Exception:
             return []

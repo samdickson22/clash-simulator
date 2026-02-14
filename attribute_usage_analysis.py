@@ -7,9 +7,13 @@ This script identifies the gap between available data and what's actually used.
 import json
 from pathlib import Path
 import sys
-sys.path.append(str(Path(__file__).parent / "src"))
 
-from src.clasher.data import CardDataLoader
+REPO_ROOT = Path(__file__).resolve().parent
+SRC_ROOT = REPO_ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from clasher.data import CardDataLoader
 
 def analyze_attribute_usage():
     """Analyze which card attributes are loaded vs used in battle"""

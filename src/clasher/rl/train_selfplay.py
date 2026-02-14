@@ -15,6 +15,7 @@ import numpy as np
 import torch
 from torch import nn
 
+from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, resolve_path
 from clasher.rl.model import MaskedPolicyValueNet
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 
@@ -481,7 +482,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=256)
     parser.add_argument("--hidden-size", type=int, default=256)
     parser.add_argument("--save-every", type=int, default=20)
-    parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/selfplay")
+    parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/selfplay_run")
     parser.add_argument("--mirror-match", action="store_true")
     parser.add_argument("--quiet-engine", action="store_true")
     parser.add_argument("--device", type=str, choices=["auto", "cpu", "mps", "cuda"], default="auto")
@@ -531,10 +532,12 @@ def main() -> None:
     device = resolve_torch_device(args.device)
     print(f"device={device}")
 
+    decks_path = resolve_decks_path(args.decks_path, must_exist=True)
+    args.decks_path = str(decks_path)
     env = SelfPlayBattleEnv(
         decision_interval_ticks=args.decision_interval,
         max_ticks=args.max_ticks,
-        decks_path=args.decks_path,
+        decks_path=str(decks_path),
         seed=args.seed,
         mirror_match=args.mirror_match,
         canonical_perspective=True,
@@ -554,15 +557,13 @@ def main() -> None:
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
 
-    checkpoint_dir = Path(args.checkpoint_dir)
-    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint_dir = checkpoints_dir(args.checkpoint_dir, create=True)
+    args.checkpoint_dir = str(checkpoint_dir)
     start_update = 1
 
     resume_checkpoint: Optional[Path] = None
     if args.resume_from:
-        resume_checkpoint = Path(args.resume_from)
-        if not resume_checkpoint.exists():
-            raise FileNotFoundError(f"resume checkpoint not found: {resume_checkpoint}")
+        resume_checkpoint = resolve_path(args.resume_from, must_exist=True)
     elif args.resume_latest:
         resume_checkpoint = find_latest_checkpoint(checkpoint_dir)
 
@@ -577,6 +578,8 @@ def main() -> None:
 
     if args.num_workers > 1:
         print(f"rollout_workers={args.num_workers}")
+    print(f"decks_path={decks_path}")
+    print(f"checkpoint_dir={checkpoint_dir}")
 
     executor_ctx = ProcessPoolExecutor(max_workers=args.num_workers) if args.num_workers > 1 else None
 
@@ -604,7 +607,7 @@ def main() -> None:
                             hidden_size=args.hidden_size,
                             decision_interval_ticks=args.decision_interval,
                             max_ticks=args.max_ticks,
-                            decks_path=args.decks_path,
+                            decks_path=str(decks_path),
                             mirror_match=args.mirror_match,
                             quiet_engine=args.quiet_engine,
                             seed=args.seed + update * 100_003,
