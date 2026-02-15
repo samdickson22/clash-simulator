@@ -1033,6 +1033,11 @@ def main() -> None:
                     inference_server.sync_weights_from(model)
 
             mean_reward = float(np.mean(batch_np["rewards"]))
+            p0_mask = batch_np["player_ids"] == 0
+            mean_reward_p0 = float(np.mean(batch_np["rewards"][p0_mask])) if np.any(p0_mask) else 0.0
+            mean_abs_reward = float(np.mean(np.abs(batch_np["rewards"])))
+            reward_std = float(np.std(batch_np["rewards"]))
+            terminal_rate = float(np.mean(batch_np["dones"].astype(np.float32)))
             decisions_per_sec = (transitions_count / 2.0) / max(1e-6, collect_elapsed)
             effective_decisions_per_sec = (transitions_count / 2.0) / max(
                 1e-6, collect_elapsed + update_elapsed
@@ -1051,6 +1056,10 @@ def main() -> None:
                 print(
                     f"update={update:04d} "
                     f"mean_reward={mean_reward:+.4f} "
+                    f"p0_reward={mean_reward_p0:+.4f} "
+                    f"abs_reward={mean_abs_reward:.4f} "
+                    f"reward_std={reward_std:.4f} "
+                    f"terminal_rate={terminal_rate:.4f} "
                     f"loss={stats['loss']:.4f} "
                     f"policy={stats['policy_loss']:.4f} "
                     f"value={stats['value_loss']:.4f} "
