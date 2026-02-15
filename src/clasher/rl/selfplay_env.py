@@ -31,10 +31,14 @@ class SelfPlayBattleEnv:
         seed: Optional[int] = None,
         mirror_match: bool = False,
         canonical_perspective: bool = True,
+        engine_fast_path: str = "off",
     ) -> None:
         self.decision_interval_ticks = decision_interval_ticks
         self.max_ticks = max_ticks
         self.mirror_match = mirror_match
+        if engine_fast_path not in {"off", "shadow", "on"}:
+            raise ValueError("engine_fast_path must be one of: off, shadow, on")
+        self.engine_fast_path = engine_fast_path
         self.rng = random.Random(seed)
         self.np_rng = np.random.default_rng(seed)
 
@@ -56,6 +60,8 @@ class SelfPlayBattleEnv:
             1: {"left": 1.0, "right": 1.0, "king": 1.0},
         }
         self._prev_crown_diff = {0: 0.0, 1: 0.0}
+        self._mask_shadow_checks = 0
+        self._mask_shadow_mismatches = 0
 
     def _sample_and_apply_decks(self) -> None:
         assert self.battle is not None
@@ -77,7 +83,7 @@ class SelfPlayBattleEnv:
         self._prev_crown_diff = {0: 0.0, 1: 0.0}
 
     def reset(self) -> None:
-        self.battle = BattleState()
+        self.battle = BattleState(fast_path=self.engine_fast_path in {"shadow", "on"})
         self._sample_and_apply_decks()
         self._reset_reward_trackers()
 
@@ -87,7 +93,33 @@ class SelfPlayBattleEnv:
 
     def get_action_mask(self, player_id: int) -> np.ndarray:
         assert self.battle is not None
-        return self.action_space.legal_action_mask(self.battle, player_id)
+        if self.engine_fast_path == "off":
+            return self.action_space.legal_action_mask(self.battle, player_id, fast_path=False)
+        if self.engine_fast_path == "on":
+            return self.action_space.legal_action_mask(self.battle, player_id, fast_path=True)
+
+        fast_mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=True)
+        # Shadow mode: sample parity checks against legacy mask.
+        if float(self.np_rng.random()) < 0.005:
+            legacy_mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=False)
+            self._mask_shadow_checks += 1
+            if not np.array_equal(fast_mask, legacy_mask):
+                self._mask_shadow_mismatches += 1
+        return fast_mask
+
+    def fast_path_metrics(self) -> Dict[str, float]:
+        checks = max(1, self._mask_shadow_checks)
+        return {
+            "mask_shadow_checks": float(self._mask_shadow_checks),
+            "mask_shadow_mismatches": float(self._mask_shadow_mismatches),
+            "mask_shadow_divergence": float(self._mask_shadow_mismatches) / float(checks),
+        }
+
+    def pop_fast_path_metrics(self) -> Dict[str, float]:
+        metrics = self.fast_path_metrics()
+        self._mask_shadow_checks = 0
+        self._mask_shadow_mismatches = 0
+        return metrics
 
     def _compute_dense_rewards(self) -> Dict[int, float]:
         assert self.battle is not None

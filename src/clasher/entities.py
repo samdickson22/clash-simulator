@@ -49,6 +49,7 @@ class Entity(ABC):
     target_id: Optional[int] = None
     is_alive: bool = True
     is_air_unit: bool = False  # True for flying troops like Minions, Balloon, Dragon
+    entity_kind: int = 0  # 0=troop,1=building,2=projectile,3=aura/effect,4=other
     
     # Status effects
     stun_timer: float = 0.0
@@ -65,6 +66,17 @@ class Entity(ABC):
     def __post_init__(self) -> None:
         if self.max_hitpoints == 0:
             self.max_hitpoints = self.hitpoints
+        cls_name = type(self).__name__
+        if cls_name in {"Troop"}:
+            self.entity_kind = 0
+        elif cls_name in {"Building"}:
+            self.entity_kind = 1
+        elif cls_name in {"Projectile", "SpawnProjectile", "RollingProjectile"}:
+            self.entity_kind = 2
+        elif cls_name in {"AreaEffect", "TimedExplosive", "Graveyard"}:
+            self.entity_kind = 3
+        else:
+            self.entity_kind = 4
         # Call on_attach for all mechanics
         for mechanic in self.mechanics:
             mechanic.on_attach(self)
@@ -101,13 +113,17 @@ class Entity(ABC):
 
     def on_spawn(self) -> None:
         """Called when entity is spawned in battle"""
-        print(f"[Lifecycle] on_spawn {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
+        battle_state = getattr(self, "battle_state", None)
+        if getattr(battle_state, "debug_logs", False):
+            print(f"[Lifecycle] on_spawn {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
         for mechanic in self.mechanics:
             mechanic.on_spawn(self)
 
     def on_death(self) -> None:
         """Called when entity dies"""
-        print(f"[Lifecycle] on_death {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
+        battle_state = getattr(self, "battle_state", None)
+        if getattr(battle_state, "debug_logs", False):
+            print(f"[Lifecycle] on_death {getattr(self.card_stats, 'name', 'Unknown')} id={self.id}")
         for mechanic in self.mechanics:
             mechanic.on_death(self)
     
@@ -237,8 +253,7 @@ class Entity(ABC):
     def _is_valid_target(self, entity: 'Entity') -> bool:
         """Check if entity can be targeted (excludes spell entities)"""
         # Spell entities cannot be targeted by troops
-        spell_entity_types = {'Projectile', 'SpawnProjectile', 'RollingProjectile', 'AreaEffect'}
-        if type(entity).__name__ in spell_entity_types:
+        if getattr(entity, "entity_kind", 4) in {2, 3}:
             return False
 
         # Stealthed entities cannot be targeted until their cloak expires
@@ -258,7 +273,6 @@ class Entity(ABC):
         
         # Priority: Troops > Buildings (authentic Clash Royale behavior)
         building_targets = []
-        fallback_crown_targets = []
         troop_targets = []
         
         # Check if this unit can only target buildings
@@ -270,13 +284,23 @@ class Entity(ABC):
         can_attack_air = self._can_attack_air()
         can_attack_ground = self._can_attack_ground()
         
-        for entity in entities.values():
+        candidate_entities = entities.values()
+        battle_state = getattr(self, "battle_state", None)
+        if (
+            battle_state is not None
+            and getattr(battle_state, "fast_path", False)
+            and getattr(battle_state, "entities", None) is entities
+            and hasattr(battle_state, "iter_entities_in_radius")
+        ):
+            candidate_entities = battle_state.iter_entities_in_radius(self.position, self.sight_range)
+
+        for entity in candidate_entities:
             # Only check if entity is valid target (excludes spell entities)
             if not self._is_valid_target(entity):
                 continue
 
             # Additional safety: never target spell entities explicitly by class types
-            if isinstance(entity, (Projectile, SpawnProjectile, RollingProjectile, AreaEffect)):
+            if getattr(entity, "entity_kind", 4) in {2, 3}:
                 continue
                 
             distance = self.position.distance_to(entity.position)
@@ -292,15 +316,8 @@ class Entity(ABC):
                 # Buildings primarily require sight-range aggro.
                 # Crown towers are kept as fallback objectives so building-targeting
                 # troops still path across the map when nothing is in sight.
-                building_name = getattr(getattr(entity, "card_stats", None), "name", "")
-                is_crown_tower = (
-                    building_name in {"Tower", "KingTower"}
-                    or bool(getattr(entity, "_is_king_tower", False))
-                )
                 if distance <= self.sight_range:
                     building_targets.append((entity, distance))
-                elif is_crown_tower:
-                    fallback_crown_targets.append((entity, distance))
             else:
                 # For troop targets, only consider if within sight range
                 if distance <= self.sight_range:
@@ -308,16 +325,37 @@ class Entity(ABC):
                     if not targets_only_buildings:
                         troop_targets.append((entity, distance))
         
+        def _fallback_crown_targets() -> list[tuple[Entity, float]]:
+            if battle_state is None:
+                return []
+            towers: list[tuple[Entity, float]] = []
+            for entity in getattr(battle_state, "_alive_buildings", []):
+                if not self._is_valid_target(entity):
+                    continue
+                if entity.is_air_unit and not can_attack_air:
+                    continue
+                if (not entity.is_air_unit) and not can_attack_ground:
+                    continue
+                building_name = getattr(getattr(entity, "card_stats", None), "name", "")
+                is_crown_tower = (
+                    building_name in {"Tower", "KingTower"}
+                    or bool(getattr(entity, "_is_king_tower", False))
+                )
+                if not is_crown_tower:
+                    continue
+                towers.append((entity, self.position.distance_to(entity.position)))
+            return towers
+
         # Choose targets based on targeting rules
         if targets_only_buildings:
-            targets = building_targets if building_targets else fallback_crown_targets
+            targets = building_targets if building_targets else _fallback_crown_targets()
         else:
             if troop_targets:
                 targets = troop_targets
             elif building_targets:
                 targets = building_targets
             else:
-                targets = fallback_crown_targets
+                targets = _fallback_crown_targets()
         
         for entity, distance in targets:
             if distance < min_distance:

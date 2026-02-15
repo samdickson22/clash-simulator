@@ -5,7 +5,6 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from concurrent.futures.process import BrokenProcessPool
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass, field
-import io
 import multiprocessing as mp
 from pathlib import Path
 import time
@@ -22,13 +21,23 @@ from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.train_selfplay import resolve_torch_device
 
 
+class _NullWriter:
+    def write(self, _value):
+        return 0
+
+    def flush(self):
+        return None
+
+
+_NULL_WRITER = _NullWriter()
+
+
 @contextmanager
 def maybe_silence_stdio(enabled: bool):
     if not enabled:
         yield
         return
-    sink = io.StringIO()
-    with redirect_stdout(sink), redirect_stderr(sink):
+    with redirect_stdout(_NULL_WRITER), redirect_stderr(_NULL_WRITER):
         yield
 
 

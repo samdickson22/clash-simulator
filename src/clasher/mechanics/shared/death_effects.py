@@ -23,7 +23,11 @@ class DeathDamage(BaseMechanic):
 
         battle_state = entity.battle_state
 
-        print(f"[Mechanic] DeathDamage triggered by {getattr(entity.card_stats, 'name', 'Unknown')} at ({entity.position.x:.1f},{entity.position.y:.1f}) radius={self.radius_tiles} dmg={self.damage}")
+        if getattr(battle_state, "debug_logs", False):
+            print(
+                f"[Mechanic] DeathDamage triggered by {getattr(entity.card_stats, 'name', 'Unknown')} "
+                f"at ({entity.position.x:.1f},{entity.position.y:.1f}) radius={self.radius_tiles} dmg={self.damage}"
+            )
 
         # Deal area damage at death position
         for target in list(battle_state.entities.values()):
@@ -53,7 +57,11 @@ class DeathSpawn(BaseMechanic):
 
         battle_state = entity.battle_state
 
-        print(f"[Mechanic] DeathSpawn triggered by {getattr(entity.card_stats, 'name', 'Unknown')} -> {self.count}x {self.unit_name}")
+        if getattr(battle_state, "debug_logs", False):
+            print(
+                f"[Mechanic] DeathSpawn triggered by {getattr(entity.card_stats, 'name', 'Unknown')} "
+                f"-> {self.count}x {self.unit_name}"
+            )
 
         from ...arena import Position
         from ...entities import TimedExplosive

@@ -1,0 +1,30 @@
+{
+  "created_at_utc": "2026-02-15T01:10:05.769203+00:00",
+  "host_profile": "m4_24gb_target",
+  "engine_fast_path": "off",
+  "env": {
+    "elapsed_s": 17.789505125023425,
+    "decisions": 16384.0,
+    "transitions": 32768.0,
+    "episodes_finished": 19.0,
+    "decisions_per_sec": 920.9924550938528,
+    "transitions_per_sec": 1841.9849101877055,
+    "approx_games_per_min": 48.63326495545097
+  },
+  "async_queue": {
+    "elapsed_s": 8.109819041914307,
+    "decisions": 16384.0,
+    "transitions": 32768.0,
+    "episodes_finished": 16.0,
+    "inference_mode": "actor_local",
+    "inference_max_batch": 2048.0,
+    "inference_max_wait_ms": 2.0,
+    "inference_device": "cpu",
+    "decisions_per_sec": 2020.2670263444732,
+    "transitions_per_sec": 4040.5340526889463,
+    "queue_lag_mean_s": 0.007624260413649608,
+    "queue_lag_p50_s": 0.004820104455575347,
+    "queue_lag_p95_s": 0.02311775391572153,
+    "queue_lag_max_s": 0.03829433303326368
+  }
+}

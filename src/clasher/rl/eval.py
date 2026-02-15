@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
-import io
 import time
 from pathlib import Path
 
@@ -16,13 +15,23 @@ from clasher.rl.model import MaskedPolicyValueNet
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 
 
+class _NullWriter:
+    def write(self, _value):
+        return 0
+
+    def flush(self):
+        return None
+
+
+_NULL_WRITER = _NullWriter()
+
+
 @contextmanager
 def maybe_silence_stdio(enabled: bool):
     if not enabled:
         yield
         return
-    sink = io.StringIO()
-    with redirect_stdout(sink), redirect_stderr(sink):
+    with redirect_stdout(_NULL_WRITER), redirect_stderr(_NULL_WRITER):
         yield
 
 

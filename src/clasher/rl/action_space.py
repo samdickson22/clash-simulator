@@ -35,22 +35,33 @@ class DiscreteTileActionSpace:
         self.no_op_action = self.num_actions - 1
         self._positions_by_player: Dict[int, list[Position]] = {0: [], 1: []}
         self._non_rolling_spell_tiles: Dict[int, np.ndarray] = {}
+        self._non_blocked_mask_by_player: Dict[int, np.ndarray] = {}
+        self._world_tile_xy_by_player: Dict[int, np.ndarray] = {}
         self._card_meta_cache: Dict[str, Tuple[str, bool, object, bool]] = {}
+        self._deploy_zone_mask_cache: Dict[Tuple[int, bool, bool], np.ndarray] = {}
+        self._tower_mask_cache: Dict[Tuple[int, Tuple[bool, bool, bool, bool, bool, bool]], np.ndarray] = {}
         blocked_tiles = set(TileGrid.BLOCKED_TILES)
 
         for player_id in (0, 1):
             positions: list[Position] = []
             spell_tiles: list[int] = []
+            non_blocked_mask = np.zeros(NUM_TILES, dtype=np.bool_)
+            world_xy = np.zeros((NUM_TILES, 2), dtype=np.int16)
             for cy in range(BOARD_HEIGHT):
                 for cx in range(BOARD_WIDTH):
+                    tile_idx = cy * BOARD_WIDTH + cx
                     wx, wy = self._canonical_to_world_tile(cx, cy, player_id)
                     pos = Position(wx + 0.5, wy + 0.5)
                     positions.append(pos)
+                    world_xy[tile_idx] = (wx, wy)
                     tile_pos = (int(pos.x), int(pos.y))
                     if tile_pos not in blocked_tiles:
-                        spell_tiles.append(cy * BOARD_WIDTH + cx)
+                        spell_tiles.append(tile_idx)
+                        non_blocked_mask[tile_idx] = True
             self._positions_by_player[player_id] = positions
             self._non_rolling_spell_tiles[player_id] = np.asarray(spell_tiles, dtype=np.int64)
+            self._non_blocked_mask_by_player[player_id] = non_blocked_mask
+            self._world_tile_xy_by_player[player_id] = world_xy
 
     def _canonical_to_world_tile(self, x: int, y: int, player_id: int) -> tuple[int, int]:
         if self.canonical_perspective and player_id == 1:
@@ -140,7 +151,88 @@ class DiscreteTileActionSpace:
         self._card_meta_cache[card_name] = meta
         return meta
 
-    def legal_action_mask(self, battle: BattleState, player_id: int) -> np.ndarray:
+    def _zone_key(self, battle: BattleState, player_id: int) -> Tuple[int, bool, bool]:
+        enemy_id = 1 - player_id
+        enemy_left_dead = battle.players[enemy_id].left_tower_hp <= 0.0
+        enemy_right_dead = battle.players[enemy_id].right_tower_hp <= 0.0
+        return (player_id, enemy_left_dead, enemy_right_dead)
+
+    def _zone_ranges_from_key(self, key: Tuple[int, bool, bool]) -> list[tuple[int, int, int, int]]:
+        player_id, enemy_left_dead, enemy_right_dead = key
+        if player_id == 0:
+            zones = [(0, 1, BOARD_WIDTH, 15), (6, 0, 12, 6)]
+            if enemy_left_dead:
+                zones.append((0, 17, 9, 21))
+            if enemy_right_dead:
+                zones.append((9, 17, BOARD_WIDTH, 21))
+            return zones
+        zones = [(0, 17, BOARD_WIDTH, 31), (6, 26, 12, 32)]
+        if enemy_left_dead:
+            zones.append((0, 11, 9, 15))
+        if enemy_right_dead:
+            zones.append((9, 11, BOARD_WIDTH, 15))
+        return zones
+
+    def _deploy_zone_mask(self, battle: BattleState, player_id: int) -> np.ndarray:
+        key = self._zone_key(battle, player_id)
+        cached = self._deploy_zone_mask_cache.get(key)
+        if cached is not None:
+            return cached
+        mask = np.zeros(NUM_TILES, dtype=np.bool_)
+        zones = self._zone_ranges_from_key(key)
+        for tile_idx, pos in enumerate(self._positions_by_player[player_id]):
+            x = pos.x
+            y = pos.y
+            for x1, y1, x2, y2 in zones:
+                if x1 <= x < x2 and y1 <= y < y2:
+                    mask[tile_idx] = True
+                    break
+        self._deploy_zone_mask_cache[key] = mask
+        return mask
+
+    def _tower_mask(self, battle: BattleState, player_id: int) -> np.ndarray:
+        tower_state = battle._tower_alive_flags() if hasattr(battle, "_tower_alive_flags") else (
+            battle.players[0].left_tower_hp > 0.0,
+            battle.players[0].right_tower_hp > 0.0,
+            battle.players[0].king_tower_hp > 0.0,
+            battle.players[1].left_tower_hp > 0.0,
+            battle.players[1].right_tower_hp > 0.0,
+            battle.players[1].king_tower_hp > 0.0,
+        )
+        key = (player_id, tower_state)
+        cached = self._tower_mask_cache.get(key)
+        if cached is not None:
+            return cached
+        world_mask = battle.get_tower_tile_mask_world() if hasattr(battle, "get_tower_tile_mask_world") else None
+        out = np.zeros(NUM_TILES, dtype=np.bool_)
+        if world_mask is not None:
+            world_xy = self._world_tile_xy_by_player[player_id]
+            for tile_idx in range(NUM_TILES):
+                wx = int(world_xy[tile_idx, 0])
+                wy = int(world_xy[tile_idx, 1])
+                out[tile_idx] = bool(world_mask[wy, wx])
+        else:
+            for tile_idx, pos in enumerate(self._positions_by_player[player_id]):
+                out[tile_idx] = battle.arena.is_tower_tile(pos, battle)
+        self._tower_mask_cache[key] = out
+        return out
+
+    def _building_placement_blocked_mask_canonical(
+        self,
+        battle: BattleState,
+        player_id: int,
+        size_tiles: int,
+    ) -> np.ndarray:
+        world_mask = battle.get_building_placement_blocked_mask_world(size_tiles)
+        world_xy = self._world_tile_xy_by_player[player_id]
+        out = np.zeros(NUM_TILES, dtype=np.bool_)
+        for tile_idx in range(NUM_TILES):
+            wx = int(world_xy[tile_idx, 0])
+            wy = int(world_xy[tile_idx, 1])
+            out[tile_idx] = bool(world_mask[wy, wx])
+        return out
+
+    def _legal_action_mask_legacy(self, battle: BattleState, player_id: int) -> np.ndarray:
         mask = np.zeros(self.num_actions, dtype=np.bool_)
         mask[self.no_op_action] = True
 
@@ -158,7 +250,6 @@ class DiscreteTileActionSpace:
             )
             slot_base = slot * NUM_TILES
 
-            # Most spells can be dropped anywhere except blocked tiles.
             if non_rolling_spell:
                 spell_tiles = self._non_rolling_spell_tiles[player_id]
                 mask[slot_base + spell_tiles] = True
@@ -177,10 +268,80 @@ class DiscreteTileActionSpace:
                     spell_obj=spell_obj,
                     probe_radius=probe_radius,
                 ):
-                    action = slot_base + tile_idx
-                    mask[action] = True
-
+                    mask[slot_base + tile_idx] = True
         return mask
+
+    def _legal_action_mask_fast(self, battle: BattleState, player_id: int) -> np.ndarray:
+        mask = np.zeros(self.num_actions, dtype=np.bool_)
+        mask[self.no_op_action] = True
+
+        non_blocked = self._non_blocked_mask_by_player[player_id]
+        zone_mask = self._deploy_zone_mask(battle, player_id)
+        tower_mask = self._tower_mask(battle, player_id)
+        deploy_mask = zone_mask & non_blocked
+        deploy_mask_no_tower = deploy_mask & (~tower_mask)
+
+        player = battle.players[player_id]
+        for slot, card_name in enumerate(player.hand[:NUM_HAND_SLOTS]):
+            card_stats = battle.card_loader.get_card(card_name)
+            if card_stats is None or not player.can_play_card(card_name, card_stats):
+                continue
+
+            resolved_name, is_spell, spell_obj, non_rolling_spell = self._get_card_meta(
+                battle, card_name
+            )
+            slot_base = slot * NUM_TILES
+            if non_rolling_spell:
+                spell_tiles = self._non_rolling_spell_tiles[player_id]
+                mask[slot_base + spell_tiles] = True
+                continue
+
+            card_type = str(getattr(card_stats, "card_type", "") or "").lower()
+            is_building_card = (not is_spell) and (card_type == "building")
+            probe_radius = float(getattr(card_stats, "collision_radius", 0.5) or 0.5)
+            candidate_mask = deploy_mask_no_tower if not is_spell else deploy_mask
+
+            blocked_building_tiles = None
+            if is_building_card:
+                size_tiles = battle._building_footprint_size_tiles(card_stats)
+                blocked_building_tiles = self._building_placement_blocked_mask_canonical(
+                    battle, player_id, size_tiles
+                )
+                candidate_mask = candidate_mask & (~blocked_building_tiles)
+
+            candidate_tiles = np.flatnonzero(candidate_mask)
+            positions = self._positions_by_player[player_id]
+            for tile_idx in candidate_tiles.tolist():
+                pos = positions[tile_idx]
+                if resolved_name in {"RoyalRecruits", "RoyalRecruits_Chess"} and not (6 <= pos.x <= 11):
+                    continue
+                if resolved_name == "Miner":
+                    tile_pos = (int(pos.x), int(pos.y))
+                    if tile_pos in battle.arena.BLOCKED_TILES:
+                        continue
+                    if battle.arena.is_tower_tile(pos, battle):
+                        continue
+                if not is_spell and (not is_building_card):
+                    if battle.is_position_occupied_by_building(pos, probe_radius):
+                        continue
+                if is_spell and battle.arena._is_rolling_projectile_spell(spell_obj):
+                    # Keep exact territory parity for rolling spells.
+                    if not battle.arena.can_deploy_at(pos, player_id, battle, True, spell_obj):
+                        continue
+                mask[slot_base + tile_idx] = True
+        return mask
+
+    def legal_action_mask(
+        self,
+        battle: BattleState,
+        player_id: int,
+        *,
+        fast_path: Optional[bool] = None,
+    ) -> np.ndarray:
+        use_fast = fast_path if fast_path is not None else bool(getattr(battle, "fast_path", False))
+        if use_fast:
+            return self._legal_action_mask_fast(battle, player_id)
+        return self._legal_action_mask_legacy(battle, player_id)
 
     def apply_action(self, battle: BattleState, player_id: int, action_id: int) -> bool:
         decoded = self.decode_action(action_id, player_id)
@@ -197,8 +358,15 @@ class DiscreteTileActionSpace:
         card_name = hand[decoded.slot]
         return battle.deploy_card(player_id, card_name, decoded.position)
 
-    def random_legal_action(self, battle: BattleState, player_id: int, rng: np.random.Generator) -> int:
-        mask = self.legal_action_mask(battle, player_id)
+    def random_legal_action(
+        self,
+        battle: BattleState,
+        player_id: int,
+        rng: np.random.Generator,
+        *,
+        fast_path: Optional[bool] = None,
+    ) -> int:
+        mask = self.legal_action_mask(battle, player_id, fast_path=fast_path)
         legal = np.flatnonzero(mask)
         if legal.size == 0:
             return self.no_op_action

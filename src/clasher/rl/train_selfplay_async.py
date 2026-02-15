@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass
-import io
 import multiprocessing as mp
 from pathlib import Path
 import queue
@@ -16,9 +15,22 @@ import torch
 from torch import nn
 
 from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, resolve_path
+from clasher.rl.benchmark import run_async_queue_benchmark
+from clasher.rl.inference_server import InferenceServer
 from clasher.rl.model import MaskedPolicyValueNet
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.train_selfplay import resolve_torch_device
+
+
+class _NullWriter:
+    def write(self, _value):
+        return 0
+
+    def flush(self):
+        return None
+
+
+_NULL_WRITER = _NullWriter()
 
 
 @contextmanager
@@ -26,8 +38,7 @@ def maybe_silence_stdio(enabled: bool):
     if not enabled:
         yield
         return
-    sink = io.StringIO()
-    with redirect_stdout(sink), redirect_stderr(sink):
+    with redirect_stdout(_NULL_WRITER), redirect_stderr(_NULL_WRITER):
         yield
 
 
@@ -45,6 +56,8 @@ class ActorConfig:
     hud_size: int
     num_actions: int
     hidden_size: int
+    engine_fast_path: str
+    inference_mode: str
 
 
 def _tensorize_obs(obs):
@@ -88,6 +101,28 @@ def _fill_next_values_numpy(batch: Dict[str, np.ndarray], env: SelfPlayBattleEnv
                 next_values[index] = rollout_values[idx[i + 1]]
             else:
                 next_values[index] = bootstrap[pid]
+
+    batch["next_values"] = next_values
+
+
+def _fill_next_values_from_bootstrap(
+    batch: Dict[str, np.ndarray],
+    bootstrap: Dict[int, float],
+) -> None:
+    player_ids = batch["player_ids"]
+    rollout_values = batch["values"]
+    dones = batch["dones"]
+    next_values = np.zeros_like(rollout_values, dtype=np.float32)
+
+    for pid in (0, 1):
+        idx = np.flatnonzero(player_ids == pid)
+        for i, index in enumerate(idx):
+            if dones[index]:
+                next_values[index] = 0.0
+            elif i + 1 < len(idx):
+                next_values[index] = rollout_values[idx[i + 1]]
+            else:
+                next_values[index] = float(bootstrap.get(pid, 0.0))
 
     batch["next_values"] = next_values
 
@@ -184,32 +219,172 @@ def _collect_rollout_numpy(
         "next_values": np.zeros(len(values), dtype=np.float32),
     }
     _fill_next_values_numpy(batch, env=env, model=model)
+    env_metrics = env.pop_fast_path_metrics()
+    batch["mask_shadow_checks"] = np.asarray([env_metrics["mask_shadow_checks"]], dtype=np.float32)
+    batch["mask_shadow_mismatches"] = np.asarray([env_metrics["mask_shadow_mismatches"]], dtype=np.float32)
     return batch
+
+
+def _collect_rollout_numpy_centralized(
+    env: SelfPlayBattleEnv,
+    rollout_steps: int,
+    compress_obs_to_fp16: bool,
+    actor_id: int,
+    request_counter: int,
+    inference_request_queue: mp.Queue,
+    inference_response_queue: mp.Queue,
+) -> tuple[Dict[str, np.ndarray], int]:
+    boards: List[np.ndarray] = []
+    huds: List[np.ndarray] = []
+    masks: List[np.ndarray] = []
+    actions: List[int] = []
+    old_log_probs: List[float] = []
+    values: List[float] = []
+    rewards: List[float] = []
+    dones: List[bool] = []
+    player_ids: List[int] = []
+
+    if env.battle is None:
+        env.reset()
+
+    board_dtype = np.float16 if compress_obs_to_fp16 else np.float32
+    pending_by_id: Dict[int, Dict[str, Any]] = {}
+
+    def _infer(board_np: np.ndarray, hud_np: np.ndarray, mask_np: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        nonlocal request_counter
+        req_id = request_counter
+        request_counter += 1
+        inference_request_queue.put(
+            {
+                "actor_id": actor_id,
+                "request_id": req_id,
+                "boards": board_np.astype(board_dtype, copy=False),
+                "huds": hud_np.astype(board_dtype, copy=False),
+                "masks": mask_np.astype(np.bool_, copy=False),
+            }
+        )
+        while True:
+            if req_id in pending_by_id:
+                response = pending_by_id.pop(req_id)
+                break
+            response = inference_response_queue.get()
+            other_id = int(response["request_id"])
+            if other_id == req_id:
+                break
+            pending_by_id[other_id] = response
+        return (
+            np.asarray(response["actions"], dtype=np.int64),
+            np.asarray(response["log_probs"], dtype=np.float32),
+            np.asarray(response["values"], dtype=np.float32),
+        )
+
+    for _ in range(rollout_steps):
+        decisions: Dict[int, Dict[str, Any]] = {}
+        action_by_player: Dict[int, int] = {}
+        obs0 = env.get_observation(0)
+        obs1 = env.get_observation(1)
+        mask0 = env.get_action_mask(0)
+        mask1 = env.get_action_mask(1)
+        board_np = np.stack([obs0.board, obs1.board], axis=0).astype(np.float32, copy=False)
+        hud_np = np.stack([obs0.hud, obs1.hud], axis=0).astype(np.float32, copy=False)
+        mask_np = np.stack([mask0, mask1], axis=0).astype(np.bool_, copy=False)
+
+        action_arr, log_prob_arr, value_arr = _infer(board_np, hud_np, mask_np)
+
+        action_by_player[0] = int(action_arr[0])
+        action_by_player[1] = int(action_arr[1])
+        decisions[0] = {
+            "obs_board": obs0.board.astype(board_dtype, copy=True),
+            "obs_hud": obs0.hud.astype(board_dtype, copy=True),
+            "mask": mask0.astype(np.bool_, copy=True),
+            "action": action_by_player[0],
+            "log_prob": float(log_prob_arr[0]),
+            "value": float(value_arr[0]),
+        }
+        decisions[1] = {
+            "obs_board": obs1.board.astype(board_dtype, copy=True),
+            "obs_hud": obs1.hud.astype(board_dtype, copy=True),
+            "mask": mask1.astype(np.bool_, copy=True),
+            "action": action_by_player[1],
+            "log_prob": float(log_prob_arr[1]),
+            "value": float(value_arr[1]),
+        }
+
+        reward_by_player, done, _ = env.step(action_by_player)
+
+        for pid in (0, 1):
+            d = decisions[pid]
+            boards.append(d["obs_board"])
+            huds.append(d["obs_hud"])
+            masks.append(d["mask"])
+            actions.append(d["action"])
+            old_log_probs.append(d["log_prob"])
+            values.append(d["value"])
+            rewards.append(float(reward_by_player[pid]))
+            dones.append(done)
+            player_ids.append(pid)
+
+        if done:
+            env.reset()
+
+    bootstrap = {0: 0.0, 1: 0.0}
+    if env.battle is not None and not env.battle.game_over:
+        obs0 = env.get_observation(0)
+        obs1 = env.get_observation(1)
+        mask0 = env.get_action_mask(0)
+        mask1 = env.get_action_mask(1)
+        board_np = np.stack([obs0.board, obs1.board], axis=0).astype(np.float32, copy=False)
+        hud_np = np.stack([obs0.hud, obs1.hud], axis=0).astype(np.float32, copy=False)
+        mask_np = np.stack([mask0, mask1], axis=0).astype(np.bool_, copy=False)
+        _, _, bootstrap_values = _infer(board_np, hud_np, mask_np)
+        bootstrap = {0: float(bootstrap_values[0]), 1: float(bootstrap_values[1])}
+
+    batch: Dict[str, np.ndarray] = {
+        "boards": np.stack(boards),
+        "huds": np.stack(huds),
+        "masks": np.stack(masks),
+        "actions": np.asarray(actions, dtype=np.int64),
+        "old_log_probs": np.asarray(old_log_probs, dtype=np.float32),
+        "values": np.asarray(values, dtype=np.float32),
+        "rewards": np.asarray(rewards, dtype=np.float32),
+        "dones": np.asarray(dones, dtype=np.bool_),
+        "player_ids": np.asarray(player_ids, dtype=np.int8),
+        "next_values": np.zeros(len(values), dtype=np.float32),
+    }
+    _fill_next_values_from_bootstrap(batch, bootstrap=bootstrap)
+    env_metrics = env.pop_fast_path_metrics()
+    batch["mask_shadow_checks"] = np.asarray([env_metrics["mask_shadow_checks"]], dtype=np.float32)
+    batch["mask_shadow_mismatches"] = np.asarray([env_metrics["mask_shadow_mismatches"]], dtype=np.float32)
+    return batch, request_counter
 
 
 def _actor_loop(
     actor_cfg: ActorConfig,
     data_queue: mp.Queue,
-    weight_queue: mp.Queue,
+    weight_queue: Optional[mp.Queue],
     error_queue: mp.Queue,
     stop_event: mp.Event,
     initial_state_dict: Dict[str, torch.Tensor],
     compress_obs_to_fp16: bool,
+    inference_request_queue: Optional[mp.Queue] = None,
+    inference_response_queue: Optional[mp.Queue] = None,
 ) -> None:
     try:
         torch.set_num_threads(1)
         np.random.seed(actor_cfg.seed)
         torch.manual_seed(actor_cfg.seed)
 
-        model = MaskedPolicyValueNet(
-            board_channels=actor_cfg.board_channels,
-            hud_size=actor_cfg.hud_size,
-            num_actions=actor_cfg.num_actions,
-            hidden_size=actor_cfg.hidden_size,
-            recurrent=False,
-        ).to(torch.device("cpu"))
-        model.load_state_dict(initial_state_dict)
-        model.eval()
+        model: Optional[MaskedPolicyValueNet] = None
+        if actor_cfg.inference_mode == "actor_local":
+            model = MaskedPolicyValueNet(
+                board_channels=actor_cfg.board_channels,
+                hud_size=actor_cfg.hud_size,
+                num_actions=actor_cfg.num_actions,
+                hidden_size=actor_cfg.hidden_size,
+                recurrent=False,
+            ).to(torch.device("cpu"))
+            model.load_state_dict(initial_state_dict)
+            model.eval()
 
         env = SelfPlayBattleEnv(
             decision_interval_ticks=actor_cfg.decision_interval,
@@ -218,29 +393,45 @@ def _actor_loop(
             seed=actor_cfg.seed,
             mirror_match=actor_cfg.mirror_match,
             canonical_perspective=True,
+            engine_fast_path=actor_cfg.engine_fast_path,
         )
         with maybe_silence_stdio(actor_cfg.quiet_engine):
             env.reset()
+        request_counter = 0
 
         while not stop_event.is_set():
-            # Apply latest weights if provided.
-            latest_state = None
-            while True:
-                try:
-                    latest_state = weight_queue.get_nowait()
-                except queue.Empty:
-                    break
-            if latest_state is not None:
-                model.load_state_dict(latest_state)
-                model.eval()
-
-            with maybe_silence_stdio(actor_cfg.quiet_engine):
-                batch = _collect_rollout_numpy(
-                    env=env,
-                    model=model,
-                    rollout_steps=actor_cfg.actor_rollout_steps,
-                    compress_obs_to_fp16=compress_obs_to_fp16,
-                )
+            if actor_cfg.inference_mode == "actor_local":
+                assert model is not None
+                if weight_queue is not None:
+                    latest_state = None
+                    while True:
+                        try:
+                            latest_state = weight_queue.get_nowait()
+                        except queue.Empty:
+                            break
+                    if latest_state is not None:
+                        model.load_state_dict(latest_state)
+                        model.eval()
+                with maybe_silence_stdio(actor_cfg.quiet_engine):
+                    batch = _collect_rollout_numpy(
+                        env=env,
+                        model=model,
+                        rollout_steps=actor_cfg.actor_rollout_steps,
+                        compress_obs_to_fp16=compress_obs_to_fp16,
+                    )
+            else:
+                if inference_request_queue is None or inference_response_queue is None:
+                    raise RuntimeError("centralized inference mode requires request/response queues")
+                with maybe_silence_stdio(actor_cfg.quiet_engine):
+                    batch, request_counter = _collect_rollout_numpy_centralized(
+                        env=env,
+                        rollout_steps=actor_cfg.actor_rollout_steps,
+                        compress_obs_to_fp16=compress_obs_to_fp16,
+                        actor_id=actor_cfg.actor_id,
+                        request_counter=request_counter,
+                        inference_request_queue=inference_request_queue,
+                        inference_response_queue=inference_response_queue,
+                    )
 
             if stop_event.is_set():
                 break
@@ -385,13 +576,19 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--quiet-engine", action="store_true")
     p.add_argument("--device", type=str, choices=["auto", "cpu", "mps", "cuda"], default="auto")
     p.add_argument("--num-actors", type=int, default=8)
+    p.add_argument("--actors-auto", action="store_true")
     p.add_argument("--actor-rollout-steps", type=int, default=128)
     p.add_argument("--transitions-per-update", type=int, default=4096)
     p.add_argument("--queue-size", type=int, default=16)
     p.add_argument("--policy-sync-every", type=int, default=2)
+    p.add_argument("--perf-log-every", type=int, default=10)
     p.add_argument("--resume-latest", action="store_true")
     p.add_argument("--resume-from", type=str, default=None)
     p.add_argument("--compress-obs-fp16", action="store_true")
+    p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
+    p.add_argument("--inference-mode", choices=["actor_local", "centralized"], default="actor_local")
+    p.add_argument("--inference-max-batch", type=int, default=2048)
+    p.add_argument("--inference-max-wait-ms", type=float, default=2.0)
     return p.parse_args()
 
 
@@ -404,11 +601,15 @@ def _launch_actors(
     error_queue: mp.Queue,
     stop_event: mp.Event,
     compress_obs_to_fp16: bool,
-) -> tuple[List[mp.Process], List[mp.Queue]]:
+    inference_request_queue: Optional[mp.Queue] = None,
+    inference_response_queues: Optional[List[mp.Queue]] = None,
+) -> tuple[List[mp.Process], List[Optional[mp.Queue]]]:
     processes: List[mp.Process] = []
-    weight_queues: List[mp.Queue] = []
+    weight_queues: List[Optional[mp.Queue]] = []
     for actor_id in range(num_actors):
-        weight_q = ctx.Queue(maxsize=2)
+        weight_q: Optional[mp.Queue] = None
+        if actor_cfg_base["inference_mode"] == "actor_local":
+            weight_q = ctx.Queue(maxsize=2)
         weight_queues.append(weight_q)
         cfg = ActorConfig(
             actor_id=actor_id,
@@ -423,10 +624,25 @@ def _launch_actors(
             hud_size=actor_cfg_base["hud_size"],
             num_actions=actor_cfg_base["num_actions"],
             hidden_size=actor_cfg_base["hidden_size"],
+            engine_fast_path=actor_cfg_base["engine_fast_path"],
+            inference_mode=actor_cfg_base["inference_mode"],
         )
+        response_q = None
+        if inference_response_queues is not None:
+            response_q = inference_response_queues[actor_id]
         proc = ctx.Process(
             target=_actor_loop,
-            args=(cfg, data_queue, weight_q, error_queue, stop_event, initial_state_dict, compress_obs_to_fp16),
+            args=(
+                cfg,
+                data_queue,
+                weight_q,
+                error_queue,
+                stop_event,
+                initial_state_dict,
+                compress_obs_to_fp16,
+                inference_request_queue,
+                response_q,
+            ),
             daemon=True,
         )
         proc.start()
@@ -457,6 +673,48 @@ def _raise_actor_errors(error_queue: mp.Queue) -> None:
     raise RuntimeError(msg)
 
 
+def _auto_pick_actor_count(
+    *,
+    seed: int,
+    transitions: int,
+    actor_rollout_steps: int,
+    queue_size: int,
+    decks_path: str,
+    decision_interval: int,
+    max_ticks: int,
+    mirror_match: bool,
+    quiet_engine: bool,
+    engine_fast_path: str,
+) -> int:
+    cpu_cap = max(2, min(10, mp.cpu_count()))
+    candidates = [n for n in (4, 6, 8, 10) if n <= cpu_cap]
+    best = candidates[0]
+    best_dps = -1.0
+    print(f"actors_auto_candidates={candidates}")
+    for n in candidates:
+        metrics = run_async_queue_benchmark(
+            seed=seed + n * 101,
+            num_actors=n,
+            transitions_target=transitions,
+            actor_rollout_steps=actor_rollout_steps,
+            queue_size=queue_size,
+            decks_path=decks_path,
+            decision_interval=decision_interval,
+            max_ticks=max_ticks,
+            mirror_match=mirror_match,
+            quiet_engine=quiet_engine,
+            engine_fast_path=engine_fast_path,
+            inference_mode="actor_local",
+        )
+        dps = float(metrics["decisions_per_sec"])
+        print(f"actors_auto_probe actors={n} dps={dps:.1f}")
+        if dps > best_dps:
+            best_dps = dps
+            best = n
+    print(f"actors_auto_selected={best}")
+    return best
+
+
 def main() -> None:
     args = _parse_args()
     if args.resume_latest and args.resume_from:
@@ -482,6 +740,7 @@ def main() -> None:
         seed=args.seed,
         mirror_match=args.mirror_match,
         canonical_perspective=True,
+        engine_fast_path=args.engine_fast_path,
     )
     with maybe_silence_stdio(args.quiet_engine):
         meta_env.reset()
@@ -517,10 +776,27 @@ def main() -> None:
         print(f"nothing_to_do start_update={start_update} > updates={args.updates}")
         return
 
+    if args.actors_auto:
+        args.num_actors = _auto_pick_actor_count(
+            seed=args.seed,
+            transitions=min(8192, args.transitions_per_update),
+            actor_rollout_steps=args.actor_rollout_steps,
+            queue_size=args.queue_size,
+            decks_path=str(resolved_decks_path),
+            decision_interval=args.decision_interval,
+            max_ticks=args.max_ticks,
+            mirror_match=args.mirror_match,
+            quiet_engine=args.quiet_engine,
+            engine_fast_path=args.engine_fast_path,
+        )
+
     ctx = mp.get_context("spawn")
     data_queue = ctx.Queue(maxsize=args.queue_size)
     error_queue = ctx.Queue()
     stop_event = ctx.Event()
+    inference_request_queue: Optional[mp.Queue] = None
+    inference_response_queues: Optional[List[mp.Queue]] = None
+    inference_server: Optional[InferenceServer] = None
 
     actor_cfg_base = {
         "seed": args.seed,
@@ -534,7 +810,31 @@ def main() -> None:
         "hud_size": obs0.hud.shape[0],
         "num_actions": num_actions,
         "hidden_size": args.hidden_size,
+        "engine_fast_path": args.engine_fast_path,
+        "inference_mode": args.inference_mode,
     }
+
+    if args.inference_mode == "centralized":
+        inference_request_queue = ctx.Queue(maxsize=max(args.queue_size, args.num_actors * 2))
+        inference_response_queues = [ctx.Queue(maxsize=4) for _ in range(args.num_actors)]
+        inference_model = MaskedPolicyValueNet(
+            board_channels=obs0.board.shape[0],
+            hud_size=obs0.hud.shape[0],
+            num_actions=num_actions,
+            hidden_size=args.hidden_size,
+            recurrent=False,
+        ).to(device)
+        inference_model.load_state_dict(model.state_dict())
+        inference_model.eval()
+        inference_server = InferenceServer(
+            model=inference_model,
+            device=device,
+            request_queue=inference_request_queue,
+            response_queues={idx: q for idx, q in enumerate(inference_response_queues)},
+            max_batch=args.inference_max_batch,
+            max_wait_ms=args.inference_max_wait_ms,
+        )
+        inference_server.start()
 
     initial_state = _state_dict_to_cpu(model)
     actors, weight_queues = _launch_actors(
@@ -546,8 +846,13 @@ def main() -> None:
         error_queue=error_queue,
         stop_event=stop_event,
         compress_obs_to_fp16=args.compress_obs_fp16,
+        inference_request_queue=inference_request_queue,
+        inference_response_queues=inference_response_queues,
     )
-    print(f"actors={len(actors)} transitions_per_update={args.transitions_per_update}")
+    print(
+        f"actors={len(actors)} transitions_per_update={args.transitions_per_update} "
+        f"inference_mode={args.inference_mode} engine_fast_path={args.engine_fast_path}"
+    )
 
     try:
         for update in range(start_update, args.updates + 1):
@@ -604,14 +909,19 @@ def main() -> None:
 
             if update % args.policy_sync_every == 0:
                 weights = _state_dict_to_cpu(model)
-                for wq in weight_queues:
-                    # keep only latest to avoid stale backlog
-                    while True:
-                        try:
-                            _ = wq.get_nowait()
-                        except queue.Empty:
-                            break
-                    wq.put(weights)
+                if args.inference_mode == "actor_local":
+                    for wq in weight_queues:
+                        if wq is None:
+                            continue
+                        # keep only latest to avoid stale backlog
+                        while True:
+                            try:
+                                _ = wq.get_nowait()
+                            except queue.Empty:
+                                break
+                        wq.put(weights)
+                elif inference_server is not None:
+                    inference_server.sync_weights_from(model)
 
             mean_reward = float(np.mean(batch_np["rewards"]))
             decisions_per_sec = (transitions_count / 2.0) / max(1e-6, collect_elapsed)
@@ -622,20 +932,33 @@ def main() -> None:
             effective_games_per_min = (
                 effective_decisions_per_sec / (9090.0 / args.decision_interval) * 60.0
             )
-            print(
-                f"update={update:04d} "
-                f"mean_reward={mean_reward:+.4f} "
-                f"loss={stats['loss']:.4f} "
-                f"policy={stats['policy_loss']:.4f} "
-                f"value={stats['value_loss']:.4f} "
-                f"entropy={stats['entropy']:.4f} "
-                f"collect_s={collect_elapsed:.2f} "
-                f"update_s={update_elapsed:.2f} "
-                f"dps={decisions_per_sec:.1f} "
-                f"gpm~={approx_games_per_min:.1f} "
-                f"eff_dps={effective_decisions_per_sec:.1f} "
-                f"eff_gpm~={effective_games_per_min:.1f}"
+            should_log_perf = (
+                update == start_update
+                or update == args.updates
+                or update % max(1, args.perf_log_every) == 0
             )
+            if should_log_perf:
+                shadow_checks = 0.0
+                shadow_mismatches = 0.0
+                for part in gathered:
+                    shadow_checks += float(part.get("mask_shadow_checks", 0.0))
+                    shadow_mismatches += float(part.get("mask_shadow_mismatches", 0.0))
+                shadow_div = shadow_mismatches / max(1.0, shadow_checks)
+                print(
+                    f"update={update:04d} "
+                    f"mean_reward={mean_reward:+.4f} "
+                    f"loss={stats['loss']:.4f} "
+                    f"policy={stats['policy_loss']:.4f} "
+                    f"value={stats['value_loss']:.4f} "
+                    f"entropy={stats['entropy']:.4f} "
+                    f"collect_s={collect_elapsed:.2f} "
+                    f"update_s={update_elapsed:.2f} "
+                    f"dps={decisions_per_sec:.1f} "
+                    f"gpm~={approx_games_per_min:.1f} "
+                    f"eff_dps={effective_decisions_per_sec:.1f} "
+                    f"eff_gpm~={effective_games_per_min:.1f} "
+                    f"mask_div={shadow_div:.4f}"
+                )
 
             if update % args.save_every == 0 or update == args.updates:
                 ckpt_path = checkpoint_dir / f"policy_update_{update:04d}.pt"
@@ -654,6 +977,8 @@ def main() -> None:
                 print(f"saved_checkpoint={ckpt_path}")
 
     finally:
+        if inference_server is not None:
+            inference_server.stop()
         _terminate_actors(actors, stop_event)
 
 

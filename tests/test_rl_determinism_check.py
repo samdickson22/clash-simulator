@@ -10,6 +10,7 @@ def test_rollout_digest_is_reproducible_for_same_seed():
         max_ticks=9090,
         mirror_match=False,
         quiet_engine=True,
+        engine_fast_path="off",
     )
     d2 = compute_rollout_digest(
         seed=1234,
@@ -19,6 +20,7 @@ def test_rollout_digest_is_reproducible_for_same_seed():
         max_ticks=9090,
         mirror_match=False,
         quiet_engine=True,
+        engine_fast_path="off",
     )
     assert d1.sha256 == d2.sha256
     assert len(d1.sha256) == 64
@@ -33,6 +35,7 @@ def test_rollout_digest_changes_with_different_seed():
         max_ticks=9090,
         mirror_match=False,
         quiet_engine=True,
+        engine_fast_path="off",
     )
     d2 = compute_rollout_digest(
         seed=1235,
@@ -42,5 +45,6 @@ def test_rollout_digest_changes_with_different_seed():
         max_ticks=9090,
         mirror_match=False,
         quiet_engine=True,
+        engine_fast_path="off",
     )
     assert d1.sha256 != d2.sha256

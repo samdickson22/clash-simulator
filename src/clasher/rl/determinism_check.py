@@ -50,6 +50,7 @@ def compute_rollout_digest(
     max_ticks: int,
     mirror_match: bool,
     quiet_engine: bool,
+    engine_fast_path: str = "off",
 ) -> RolloutDigest:
     random.seed(seed)
     np.random.seed(seed)
@@ -60,6 +61,7 @@ def compute_rollout_digest(
         seed=seed,
         mirror_match=mirror_match,
         canonical_perspective=True,
+        engine_fast_path=engine_fast_path,
     )
     action_rng = np.random.default_rng(seed + 1_000_003)
     hasher = hashlib.sha256()
@@ -117,6 +119,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--max-ticks", type=int, default=9090)
     parser.add_argument("--mirror-match", action="store_true")
     parser.add_argument("--quiet-engine", action="store_true")
+    parser.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
     parser.add_argument("--trials", type=int, default=2, help="number of repeated runs with same seed")
     parser.add_argument("--json-out", type=str, default=None)
     return parser.parse_args()
@@ -134,6 +137,7 @@ def main() -> None:
             max_ticks=args.max_ticks,
             mirror_match=args.mirror_match,
             quiet_engine=args.quiet_engine,
+            engine_fast_path=args.engine_fast_path,
         )
         for _ in range(max(1, args.trials))
     ]

@@ -2,16 +2,29 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
-import io
 import multiprocessing as mp
 import queue
 import time
 from typing import Any, Dict, List
 
 import numpy as np
+import torch
 
 from clasher.paths import decks_path as resolve_decks_path
+from clasher.rl.inference_server import InferenceServer
+from clasher.rl.model import MaskedPolicyValueNet
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
+
+
+class _NullWriter:
+    def write(self, _value):
+        return 0
+
+    def flush(self):
+        return None
+
+
+_NULL_WRITER = _NullWriter()
 
 
 @contextmanager
@@ -19,8 +32,7 @@ def _maybe_silence_stdio(enabled: bool):
     if not enabled:
         yield
         return
-    sink = io.StringIO()
-    with redirect_stdout(sink), redirect_stderr(sink):
+    with redirect_stdout(_NULL_WRITER), redirect_stderr(_NULL_WRITER):
         yield
 
 
@@ -38,6 +50,7 @@ def run_env_benchmark(
     max_ticks: int,
     mirror_match: bool,
     quiet_engine: bool,
+    engine_fast_path: str = "off",
 ) -> Dict[str, float]:
     env = SelfPlayBattleEnv(
         decision_interval_ticks=decision_interval,
@@ -46,6 +59,7 @@ def run_env_benchmark(
         seed=seed,
         mirror_match=mirror_match,
         canonical_perspective=True,
+        engine_fast_path=engine_fast_path,
     )
     rng = np.random.default_rng(seed + 77)
     with _maybe_silence_stdio(quiet_engine):
@@ -53,14 +67,13 @@ def run_env_benchmark(
 
     episodes = 0
     start = time.perf_counter()
-    for _ in range(decisions):
-        action0 = _random_legal_action(env, 0, rng)
-        action1 = _random_legal_action(env, 1, rng)
-        with _maybe_silence_stdio(quiet_engine):
+    with _maybe_silence_stdio(quiet_engine):
+        for _ in range(decisions):
+            action0 = _random_legal_action(env, 0, rng)
+            action1 = _random_legal_action(env, 1, rng)
             _, done, _ = env.step({0: action0, 1: action1})
-        if done:
-            episodes += 1
-            with _maybe_silence_stdio(quiet_engine):
+            if done:
+                episodes += 1
                 env.reset()
     elapsed = max(1e-9, time.perf_counter() - start)
 
@@ -87,6 +100,7 @@ def _actor_rollout_worker(
     max_ticks: int,
     mirror_match: bool,
     quiet_engine: bool,
+    engine_fast_path: str,
     actor_rollout_steps: int,
     out_queue: mp.Queue,
     stop_event: mp.Event,
@@ -98,6 +112,7 @@ def _actor_rollout_worker(
         seed=seed + actor_id * 17_411,
         mirror_match=mirror_match,
         canonical_perspective=True,
+        engine_fast_path=engine_fast_path,
     )
     rng = np.random.default_rng(seed + actor_id * 99_991)
     with _maybe_silence_stdio(quiet_engine):
@@ -106,15 +121,97 @@ def _actor_rollout_worker(
     while not stop_event.is_set():
         local_decisions = 0
         local_episodes = 0
-        for _ in range(actor_rollout_steps):
-            action0 = _random_legal_action(env, 0, rng)
-            action1 = _random_legal_action(env, 1, rng)
-            with _maybe_silence_stdio(quiet_engine):
+        with _maybe_silence_stdio(quiet_engine):
+            for _ in range(actor_rollout_steps):
+                action0 = _random_legal_action(env, 0, rng)
+                action1 = _random_legal_action(env, 1, rng)
                 _, done, _ = env.step({0: action0, 1: action1})
-            local_decisions += 1
-            if done:
-                local_episodes += 1
-                with _maybe_silence_stdio(quiet_engine):
+                local_decisions += 1
+                if done:
+                    local_episodes += 1
+                    env.reset()
+        out_queue.put(
+            {
+                "actor_id": actor_id,
+                "produced_at": time.perf_counter(),
+                "decisions": local_decisions,
+                "transitions": local_decisions * 2,
+                "episodes_finished": local_episodes,
+            }
+        )
+
+
+def _actor_rollout_worker_centralized(
+    actor_id: int,
+    seed: int,
+    decks_path: str,
+    decision_interval: int,
+    max_ticks: int,
+    mirror_match: bool,
+    quiet_engine: bool,
+    engine_fast_path: str,
+    actor_rollout_steps: int,
+    out_queue: mp.Queue,
+    stop_event: mp.Event,
+    request_queue: mp.Queue,
+    response_queue: mp.Queue,
+) -> None:
+    env = SelfPlayBattleEnv(
+        decision_interval_ticks=decision_interval,
+        max_ticks=max_ticks,
+        decks_path=decks_path,
+        seed=seed + actor_id * 17_411,
+        mirror_match=mirror_match,
+        canonical_perspective=True,
+        engine_fast_path=engine_fast_path,
+    )
+    with _maybe_silence_stdio(quiet_engine):
+        env.reset()
+
+    next_request_id = 0
+    pending: Dict[int, Dict[str, Any]] = {}
+
+    def _request_actions(board_np: np.ndarray, hud_np: np.ndarray, mask_np: np.ndarray) -> np.ndarray:
+        nonlocal next_request_id
+        req_id = next_request_id
+        next_request_id += 1
+        request_queue.put(
+            {
+                "actor_id": actor_id,
+                "request_id": req_id,
+                "boards": board_np.astype(np.float32, copy=False),
+                "huds": hud_np.astype(np.float32, copy=False),
+                "masks": mask_np.astype(np.bool_, copy=False),
+            }
+        )
+        while True:
+            if req_id in pending:
+                msg = pending.pop(req_id)
+                return np.asarray(msg["actions"], dtype=np.int64)
+            msg = response_queue.get()
+            other_id = int(msg["request_id"])
+            if other_id == req_id:
+                return np.asarray(msg["actions"], dtype=np.int64)
+            pending[other_id] = msg
+
+    while not stop_event.is_set():
+        local_decisions = 0
+        local_episodes = 0
+        with _maybe_silence_stdio(quiet_engine):
+            for _ in range(actor_rollout_steps):
+                obs0 = env.get_observation(0)
+                obs1 = env.get_observation(1)
+                mask0 = env.get_action_mask(0)
+                mask1 = env.get_action_mask(1)
+                board_np = np.stack([obs0.board, obs1.board], axis=0)
+                hud_np = np.stack([obs0.hud, obs1.hud], axis=0)
+                mask_np = np.stack([mask0, mask1], axis=0)
+                actions = _request_actions(board_np, hud_np, mask_np)
+                action_by_player = {0: int(actions[0]), 1: int(actions[1])}
+                _, done, _ = env.step(action_by_player)
+                local_decisions += 1
+                if done:
+                    local_episodes += 1
                     env.reset()
         out_queue.put(
             {
@@ -139,28 +236,104 @@ def run_async_queue_benchmark(
     max_ticks: int,
     mirror_match: bool,
     quiet_engine: bool,
+    engine_fast_path: str = "off",
+    inference_mode: str = "actor_local",
+    inference_max_batch: int = 2048,
+    inference_max_wait_ms: float = 2.0,
+    hidden_size: int = 256,
+    inference_device: str = "cpu",
 ) -> Dict[str, float]:
     ctx = mp.get_context("spawn")
     out_queue = ctx.Queue(maxsize=queue_size)
     stop_event = ctx.Event()
     actors: List[mp.Process] = []
-    for actor_id in range(num_actors):
-        proc = ctx.Process(
-            target=_actor_rollout_worker,
-            args=(
-                actor_id,
-                seed,
-                decks_path,
-                decision_interval,
-                max_ticks,
-                mirror_match,
-                quiet_engine,
-                actor_rollout_steps,
-                out_queue,
-                stop_event,
-            ),
-            daemon=True,
+    inference_server: InferenceServer | None = None
+    request_queue: mp.Queue | None = None
+    response_queues: List[mp.Queue] | None = None
+
+    if inference_mode == "centralized":
+        if inference_device == "auto":
+            if torch.backends.mps.is_available():
+                inference_device_obj = torch.device("mps")
+            elif torch.cuda.is_available():
+                inference_device_obj = torch.device("cuda")
+            else:
+                inference_device_obj = torch.device("cpu")
+        else:
+            inference_device_obj = torch.device(inference_device)
+        meta_env = SelfPlayBattleEnv(
+            decision_interval_ticks=decision_interval,
+            max_ticks=max_ticks,
+            decks_path=decks_path,
+            seed=seed,
+            mirror_match=mirror_match,
+            canonical_perspective=True,
+            engine_fast_path=engine_fast_path,
         )
+        with _maybe_silence_stdio(quiet_engine):
+            meta_env.reset()
+        obs0 = meta_env.get_observation(0)
+        num_actions = meta_env.action_space.num_actions
+        model = MaskedPolicyValueNet(
+            board_channels=obs0.board.shape[0],
+            hud_size=obs0.hud.shape[0],
+            num_actions=num_actions,
+            hidden_size=hidden_size,
+            recurrent=False,
+        ).to(inference_device_obj)
+        model.eval()
+        request_queue = ctx.Queue(maxsize=max(queue_size, num_actors * 2))
+        response_queues = [ctx.Queue(maxsize=4) for _ in range(num_actors)]
+        inference_server = InferenceServer(
+            model=model,
+            device=inference_device_obj,
+            request_queue=request_queue,
+            response_queues={idx: q for idx, q in enumerate(response_queues)},
+            max_batch=inference_max_batch,
+            max_wait_ms=inference_max_wait_ms,
+        )
+        inference_server.start()
+
+    for actor_id in range(num_actors):
+        if inference_mode == "centralized":
+            assert request_queue is not None and response_queues is not None
+            proc = ctx.Process(
+                target=_actor_rollout_worker_centralized,
+                args=(
+                    actor_id,
+                    seed,
+                    decks_path,
+                    decision_interval,
+                    max_ticks,
+                    mirror_match,
+                    quiet_engine,
+                    engine_fast_path,
+                    actor_rollout_steps,
+                    out_queue,
+                    stop_event,
+                    request_queue,
+                    response_queues[actor_id],
+                ),
+                daemon=True,
+            )
+        else:
+            proc = ctx.Process(
+                target=_actor_rollout_worker,
+                args=(
+                    actor_id,
+                    seed,
+                    decks_path,
+                    decision_interval,
+                    max_ticks,
+                    mirror_match,
+                    quiet_engine,
+                    engine_fast_path,
+                    actor_rollout_steps,
+                    out_queue,
+                    stop_event,
+                ),
+                daemon=True,
+            )
         proc.start()
         actors.append(proc)
 
@@ -183,6 +356,8 @@ def run_async_queue_benchmark(
             episodes += int(batch["episodes_finished"])
     finally:
         stop_event.set()
+        if inference_server is not None:
+            inference_server.stop()
         for proc in actors:
             proc.join(timeout=2)
         for proc in actors:
@@ -198,6 +373,10 @@ def run_async_queue_benchmark(
         "decisions": float(decisions),
         "transitions": float(transitions),
         "episodes_finished": float(episodes),
+        "inference_mode": inference_mode,
+        "inference_max_batch": float(inference_max_batch),
+        "inference_max_wait_ms": float(inference_max_wait_ms),
+        "inference_device": inference_device,
         "decisions_per_sec": decisions / elapsed,
         "transitions_per_sec": transitions / elapsed,
         "queue_lag_mean_s": float(lag_arr.mean()),
@@ -219,6 +398,7 @@ def _parse_args() -> argparse.Namespace:
     env_p.add_argument("--max-ticks", type=int, default=9090)
     env_p.add_argument("--mirror-match", action="store_true")
     env_p.add_argument("--quiet-engine", action="store_true")
+    env_p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
 
     async_p = sub.add_parser("async-queue", help="Actor queue throughput/lag benchmark")
     async_p.add_argument("--seed", type=int, default=101)
@@ -231,6 +411,12 @@ def _parse_args() -> argparse.Namespace:
     async_p.add_argument("--max-ticks", type=int, default=9090)
     async_p.add_argument("--mirror-match", action="store_true")
     async_p.add_argument("--quiet-engine", action="store_true")
+    async_p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
+    async_p.add_argument("--inference-mode", choices=["actor_local", "centralized"], default="actor_local")
+    async_p.add_argument("--inference-max-batch", type=int, default=2048)
+    async_p.add_argument("--inference-max-wait-ms", type=float, default=2.0)
+    async_p.add_argument("--hidden-size", type=int, default=256)
+    async_p.add_argument("--inference-device", choices=["auto", "cpu", "mps", "cuda"], default="cpu")
 
     return parser.parse_args()
 
@@ -253,6 +439,7 @@ def main() -> None:
             max_ticks=args.max_ticks,
             mirror_match=args.mirror_match,
             quiet_engine=args.quiet_engine,
+            engine_fast_path=args.engine_fast_path,
         )
         _print_metrics("benchmark=env", metrics)
         return
@@ -269,6 +456,12 @@ def main() -> None:
             max_ticks=args.max_ticks,
             mirror_match=args.mirror_match,
             quiet_engine=args.quiet_engine,
+            engine_fast_path=args.engine_fast_path,
+            inference_mode=args.inference_mode,
+            inference_max_batch=args.inference_max_batch,
+            inference_max_wait_ms=args.inference_max_wait_ms,
+            hidden_size=args.hidden_size,
+            inference_device=args.inference_device,
         )
         _print_metrics("benchmark=async-queue", metrics)
         return

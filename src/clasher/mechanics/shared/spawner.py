@@ -35,7 +35,12 @@ class PeriodicSpawner(BaseMechanic):
         if (self.time_since_spawn_ms >= self.spawn_interval_ms and
                 (self.max_spawns == -1 or self.spawns_created < self.max_spawns)):
 
-            print(f"[Mechanic] PeriodicSpawner tick on {getattr(entity.card_stats, 'name', 'Unknown')} interval={self.spawn_interval_ms}ms count={self.count}")
+            battle_state = entity.battle_state
+            if getattr(battle_state, "debug_logs", False):
+                print(
+                    f"[Mechanic] PeriodicSpawner tick on {getattr(entity.card_stats, 'name', 'Unknown')} "
+                    f"interval={self.spawn_interval_ms}ms count={self.count}"
+                )
             self._spawn_unit(entity)
             self.time_since_spawn_ms = 0
             self.spawns_created += 1
@@ -71,7 +76,11 @@ class PeriodicSpawner(BaseMechanic):
             )
 
         from ...arena import Position
-        print(f"[Mechanic] Spawning {self.count}x {self.unit_name} around {getattr(entity.card_stats, 'name', 'Unknown')}")
+        if getattr(battle_state, "debug_logs", False):
+            print(
+                f"[Mechanic] Spawning {self.count}x {self.unit_name} around "
+                f"{getattr(entity.card_stats, 'name', 'Unknown')}"
+            )
 
         spawner_radius = getattr(getattr(entity, "card_stats", None), "collision_radius", 1.0) or 1.0
         unit_radius = getattr(spawn_stats, "collision_radius", 0.5) or 0.5

@@ -1,4 +1,5 @@
 from collections import deque
+import copy
 
 import numpy as np
 
@@ -79,3 +80,30 @@ def test_decode_invalid_action_yields_noop():
     assert decoded.is_no_op
     assert decoded.slot is None
     assert decoded.position is None
+
+
+def test_fast_mask_matches_legacy_mask_on_same_state():
+    battle = BattleState()
+    _prepare_hand(
+        battle,
+        0,
+        ["Knight", "Archers", "Fireball", "Cannon", "Giant", "Minions", "Zap", "Musketeer"],
+    )
+    _prepare_hand(
+        battle,
+        1,
+        ["HogRider", "IceGolem", "Log", "Tesla", "Knight", "Arrows", "Fireball", "Musketeer"],
+    )
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+
+    legacy0 = action_space.legal_action_mask(battle, player_id=0, fast_path=False)
+    legacy1 = action_space.legal_action_mask(battle, player_id=1, fast_path=False)
+
+    fast_battle = copy.deepcopy(battle)
+    fast_battle.fast_path = True
+    fast_battle._refresh_fast_path_caches()
+    fast0 = action_space.legal_action_mask(fast_battle, player_id=0, fast_path=True)
+    fast1 = action_space.legal_action_mask(fast_battle, player_id=1, fast_path=True)
+
+    assert np.array_equal(legacy0, fast0)
+    assert np.array_equal(legacy1, fast1)

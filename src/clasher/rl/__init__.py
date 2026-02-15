@@ -4,6 +4,7 @@ from .selfplay_env import SelfPlayBattleEnv
 from .model import MaskedPolicyValueNet
 from .gym_env import ClasherSelfPlayGymEnv
 from .oracle_planner import FixedDepthThompsonOracle
+from .inference_server import InferenceServer
 
 __all__ = [
     "CvObservationBuilder",
@@ -12,4 +13,5 @@ __all__ = [
     "MaskedPolicyValueNet",
     "ClasherSelfPlayGymEnv",
     "FixedDepthThompsonOracle",
+    "InferenceServer",
 ]

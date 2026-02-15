@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 import time
@@ -5,6 +6,7 @@ import math
 import random
 import copy
 import json
+import numpy as np
 
 from .entities import Entity, Troop, Building
 from .player import PlayerState
@@ -49,6 +51,19 @@ class BattleState:
     next_entity_id: int = 1
     _starting_total_tower_hp: Dict[int, float] = field(default_factory=dict, init=False)
     _sudden_death_crowns: Tuple[int, int] = field(default=(0, 0), init=False)
+    debug_logs: bool = False
+    fast_path: bool = False
+    _bucket_cell_size: float = 2.0
+    _entity_buckets: Dict[Tuple[int, int], List[Entity]] = field(default_factory=dict, init=False)
+    _alive_buildings: List[Building] = field(default_factory=list, init=False)
+    _tower_tile_mask_world: np.ndarray = field(
+        default_factory=lambda: np.zeros((32, 18), dtype=np.bool_), init=False
+    )
+    _building_placement_blocked_masks: Dict[int, np.ndarray] = field(default_factory=dict, init=False)
+    _building_cache_signature: Tuple[int, ...] = field(default_factory=tuple, init=False)
+    _cached_tower_alive_flags: Tuple[bool, bool, bool, bool, bool, bool] = field(
+        default_factory=lambda: (False, False, False, False, False, False), init=False
+    )
     
     def __post_init__(self) -> None:
         """Initialize battle state"""
@@ -63,6 +78,7 @@ class BattleState:
             0: self.players[0].king_tower_hp + self.players[0].left_tower_hp + self.players[0].right_tower_hp,
             1: self.players[1].king_tower_hp + self.players[1].left_tower_hp + self.players[1].right_tower_hp,
         }
+        self._refresh_fast_path_caches()
     
     def _create_towers(self) -> None:
         """Create tower entities for both players"""
@@ -143,6 +159,140 @@ class BattleState:
         except Exception:
             return None
         return None
+
+    def _refresh_fast_path_caches(self) -> None:
+        """Refresh caches used by fast-path queries."""
+        alive_buildings = [
+            e for e in self.entities.values() if isinstance(e, Building) and e.is_alive
+        ]
+        self._alive_buildings = alive_buildings
+        building_sig = tuple(sorted(e.id for e in alive_buildings))
+        if building_sig != self._building_cache_signature:
+            self._building_cache_signature = building_sig
+            self._building_placement_blocked_masks.clear()
+        self._refresh_tower_mask_if_needed()
+        self._rebuild_entity_buckets()
+
+    def _refresh_tower_mask_if_needed(self) -> None:
+        alive_flags = self._tower_alive_flags()
+        if alive_flags != self._cached_tower_alive_flags:
+            self._update_tower_tile_mask_world()
+
+    def _rebuild_entity_buckets(self) -> None:
+        if not self.fast_path:
+            self._entity_buckets = {}
+            return
+        buckets: Dict[Tuple[int, int], List[Entity]] = defaultdict(list)
+        inv = 1.0 / max(0.25, self._bucket_cell_size)
+        for entity in self.entities.values():
+            if not entity.is_alive:
+                continue
+            bx = int(entity.position.x * inv)
+            by = int(entity.position.y * inv)
+            buckets[(bx, by)].append(entity)
+        self._entity_buckets = dict(buckets)
+
+    def iter_entities_in_radius(self, position: Position, radius: float) -> List[Entity]:
+        """Return candidate entities near position for fast target selection."""
+        if not self.fast_path or not self._entity_buckets:
+            return list(self.entities.values())
+        inv = 1.0 / max(0.25, self._bucket_cell_size)
+        max_dim = float(max(self.arena.width, self.arena.height))
+        if radius >= max_dim:
+            return list(self.entities.values())
+        pad = max(0.5, min(radius + 2.0, max_dim))
+        max_bx_bound = int((self.arena.width - 1e-6) * inv)
+        max_by_bound = int((self.arena.height - 1e-6) * inv)
+        min_bx = max(0, int((position.x - pad) * inv))
+        max_bx = min(max_bx_bound, int((position.x + pad) * inv))
+        min_by = max(0, int((position.y - pad) * inv))
+        max_by = min(max_by_bound, int((position.y + pad) * inv))
+        out: List[Entity] = []
+        for bx in range(min_bx, max_bx + 1):
+            for by in range(min_by, max_by + 1):
+                out.extend(self._entity_buckets.get((bx, by), []))
+        return out
+
+    def _tower_alive_flags(self) -> Tuple[bool, bool, bool, bool, bool, bool]:
+        return (
+            self.players[0].left_tower_hp > 0.0,
+            self.players[0].right_tower_hp > 0.0,
+            self.players[0].king_tower_hp > 0.0,
+            self.players[1].left_tower_hp > 0.0,
+            self.players[1].right_tower_hp > 0.0,
+            self.players[1].king_tower_hp > 0.0,
+        )
+
+    def _is_tower_alive_cached(self, tower_pos: Position, player_id: int) -> bool:
+        """Fast tower alive lookup by fixed arena position."""
+        if player_id == 0:
+            if tower_pos.x == self.arena.BLUE_LEFT_TOWER.x and tower_pos.y == self.arena.BLUE_LEFT_TOWER.y:
+                return self.players[0].left_tower_hp > 0.0
+            if tower_pos.x == self.arena.BLUE_RIGHT_TOWER.x and tower_pos.y == self.arena.BLUE_RIGHT_TOWER.y:
+                return self.players[0].right_tower_hp > 0.0
+            return self.players[0].king_tower_hp > 0.0
+        if tower_pos.x == self.arena.RED_LEFT_TOWER.x and tower_pos.y == self.arena.RED_LEFT_TOWER.y:
+            return self.players[1].left_tower_hp > 0.0
+        if tower_pos.x == self.arena.RED_RIGHT_TOWER.x and tower_pos.y == self.arena.RED_RIGHT_TOWER.y:
+            return self.players[1].right_tower_hp > 0.0
+        return self.players[1].king_tower_hp > 0.0
+
+    def _update_tower_tile_mask_world(self) -> None:
+        """Build world-tile mask blocked by living towers."""
+        alive_flags = self._tower_alive_flags()
+        mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
+        towers = [
+            (self.arena.BLUE_LEFT_TOWER, 1.5, 0),
+            (self.arena.BLUE_RIGHT_TOWER, 1.5, 0),
+            (self.arena.BLUE_KING_TOWER, 2.0, 0),
+            (self.arena.RED_LEFT_TOWER, 1.5, 1),
+            (self.arena.RED_RIGHT_TOWER, 1.5, 1),
+            (self.arena.RED_KING_TOWER, 2.0, 1),
+        ]
+        for tower_pos, radius, player_id in towers:
+            if not self._is_tower_alive_cached(tower_pos, player_id):
+                continue
+            x_min = max(0, int(math.floor(tower_pos.x - radius)))
+            x_max = min(self.arena.width - 1, int(math.floor(tower_pos.x + radius)))
+            y_min = max(0, int(math.floor(tower_pos.y - radius)))
+            y_max = min(self.arena.height - 1, int(math.floor(tower_pos.y + radius)))
+            for ty in range(y_min, y_max + 1):
+                cy = ty + 0.5
+                if abs(cy - tower_pos.y) > radius:
+                    continue
+                for tx in range(x_min, x_max + 1):
+                    cx = tx + 0.5
+                    if abs(cx - tower_pos.x) <= radius:
+                        mask[ty, tx] = True
+        self._tower_tile_mask_world = mask
+        self._cached_tower_alive_flags = alive_flags
+
+    def get_tower_tile_mask_world(self) -> np.ndarray:
+        self._refresh_tower_mask_if_needed()
+        if self._tower_tile_mask_world.shape != (self.arena.height, self.arena.width):
+            self._update_tower_tile_mask_world()
+        return self._tower_tile_mask_world
+
+    def get_building_placement_blocked_mask_world(self, size_tiles: int) -> np.ndarray:
+        """Return world-tile mask where a building of size_tiles cannot be centered."""
+        cached = self._building_placement_blocked_masks.get(size_tiles)
+        if cached is not None:
+            return cached
+        mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
+        half = float(size_tiles) / 2.0
+        for ty in range(self.arena.height):
+            y = ty + 0.5
+            y1, y2 = y - half, y + half
+            for tx in range(self.arena.width):
+                x = tx + 0.5
+                x1, x2 = x - half, x + half
+                for entity in self._alive_buildings:
+                    ex1, ex2, ey1, ey2 = self._footprint_bounds(entity.position, entity.card_stats)
+                    if x1 < ex2 and x2 > ex1 and y1 < ey2 and y2 > ey1:
+                        mask[ty, tx] = True
+                        break
+        self._building_placement_blocked_masks[size_tiles] = mask
+        return mask
     
     def step(self, speed_factor: float = 1.0) -> None:
         """Advance battle by one tick"""
@@ -170,6 +320,9 @@ class BattleState:
         
         for player in self.players:
             player.regenerate_elixir(dt, base_regen)
+
+        if self.fast_path:
+            self._refresh_fast_path_caches()
         
         # Update all entities
         for entity in list(self.entities.values()):
@@ -180,6 +333,9 @@ class BattleState:
         
         # Remove dead entities
         self._cleanup_dead_entities()
+
+        if self.fast_path:
+            self._refresh_fast_path_caches()
         
         # Check win conditions
         self._check_win_conditions()
@@ -318,7 +474,7 @@ class BattleState:
                 troop.mechanics = [copy.deepcopy(m) for m in card_def.mechanics]
                 for mech in troop.mechanics:
                     mech.on_attach(troop)
-                if troop.mechanics:
+                if troop.mechanics and self.debug_logs:
                     print(f"[Attach] {defn_name}: {len(troop.mechanics)} mechanic(s)")
         except Exception as e:
             print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
@@ -431,7 +587,7 @@ class BattleState:
                 troop.mechanics = [copy.deepcopy(m) for m in card_def.mechanics]
                 for mech in troop.mechanics:
                     mech.on_attach(troop)
-                if troop.mechanics:
+                if troop.mechanics and self.debug_logs:
                     print(f"[Attach] {defn_name}: {len(troop.mechanics)} mechanic(s)")
         except Exception as e:
             print(f"[Warn] Failed attaching mechanics for {getattr(card_stats, 'name', 'Unknown')}: {e}")
@@ -797,7 +953,7 @@ class BattleState:
             entity.mechanics = [copy.deepcopy(m) for m in card_stats.card_definition.mechanics]
             for mech in entity.mechanics:
                 mech.on_attach(entity)
-            if entity.mechanics:
+            if entity.mechanics and self.debug_logs:
                 print(f"[Attach] {getattr(card_stats, 'name', 'Building')}: {len(entity.mechanics)} mechanic(s)")
 
         self.entities[self.next_entity_id] = entity
@@ -1043,10 +1199,11 @@ class BattleState:
         ignore_building_id: Optional[int] = None,
     ) -> bool:
         """Return True when a position overlaps any live building footprint."""
-        for entity in self.entities.values():
-            if not isinstance(entity, Building) or not entity.is_alive:
+        buildings = self._alive_buildings if self.fast_path else self.entities.values()
+        for entity in buildings:
+            if not isinstance(entity, Building):
                 continue
-            if ignore_building_id is not None and entity.id == ignore_building_id:
+            if (not entity.is_alive) or (ignore_building_id is not None and entity.id == ignore_building_id):
                 continue
             building_radius = getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
             if position.distance_to(entity.position) < (building_radius + mover_radius) * 0.95:
@@ -1076,9 +1233,16 @@ class BattleState:
         card_stats: CardStatsCompat,
     ) -> bool:
         """Return True when a new building footprint overlaps any live building footprint."""
+        if self.fast_path:
+            size = self._building_footprint_size_tiles(card_stats)
+            tx = int(position.x)
+            ty = int(position.y)
+            if 0 <= tx < self.arena.width and 0 <= ty < self.arena.height:
+                return bool(self.get_building_placement_blocked_mask_world(size)[ty, tx])
         x1, x2, y1, y2 = self._footprint_bounds(position, card_stats)
-        for entity in self.entities.values():
-            if not isinstance(entity, Building) or not entity.is_alive:
+        buildings = self._alive_buildings if self.fast_path else self.entities.values()
+        for entity in buildings:
+            if not isinstance(entity, Building):
                 continue
             ex1, ex2, ey1, ey2 = self._footprint_bounds(entity.position, entity.card_stats)
             overlap_x = x1 < ex2 and x2 > ex1
@@ -1103,30 +1267,59 @@ class BattleState:
     def _resolve_troop_collisions(self) -> None:
         """Simple separation pass to reduce troop stacking."""
         troops = [e for e in self.entities.values() if isinstance(e, Troop) and e.is_alive]
-        for i in range(len(troops)):
-            a = troops[i]
-            if getattr(a, "is_air_unit", False):
+        if not troops:
+            return
+
+        if not self.fast_path:
+            candidate_pairs = ((troops[i], troops[j]) for i in range(len(troops)) for j in range(i + 1, len(troops)))
+        else:
+            cell = max(0.5, self._bucket_cell_size)
+            troop_buckets: Dict[Tuple[int, int], List[Troop]] = defaultdict(list)
+            for troop in troops:
+                if getattr(troop, "is_air_unit", False):
+                    continue
+                bx = int(troop.position.x / cell)
+                by = int(troop.position.y / cell)
+                troop_buckets[(bx, by)].append(troop)
+            seen: set[Tuple[int, int]] = set()
+            pair_list: List[Tuple[Troop, Troop]] = []
+            for (bx, by), bucket in troop_buckets.items():
+                for dx in (-1, 0, 1):
+                    for dy in (-1, 0, 1):
+                        other = troop_buckets.get((bx + dx, by + dy))
+                        if not other:
+                            continue
+                        for a in bucket:
+                            for b in other:
+                                if a.id >= b.id:
+                                    continue
+                                key = (a.id, b.id)
+                                if key in seen:
+                                    continue
+                                seen.add(key)
+                                pair_list.append((a, b))
+            pair_list.sort(key=lambda pair: (pair[0].id, pair[1].id))
+            candidate_pairs = iter(pair_list)
+
+        for a, b in candidate_pairs:
+            if getattr(a, "is_air_unit", False) or getattr(b, "is_air_unit", False):
                 continue
             ra = max(0.2, getattr(a.card_stats, "collision_radius", 0.5) or 0.5)
-            for j in range(i + 1, len(troops)):
-                b = troops[j]
-                if getattr(b, "is_air_unit", False):
-                    continue
-                rb = max(0.2, getattr(b.card_stats, "collision_radius", 0.5) or 0.5)
-                dx = b.position.x - a.position.x
-                dy = b.position.y - a.position.y
-                dist = math.hypot(dx, dy)
-                same_team = a.player_id == b.player_id
-                min_dist = (ra + rb) * (0.8 if same_team else 0.65)
-                if dist == 0:
-                    dist = 0.001
-                    dx, dy = 0.001, 0.0
-                if dist < min_dist:
-                    overlap = (min_dist - dist) / 2.0
-                    ux, uy = dx / dist, dy / dist
-                    new_a = Position(a.position.x - ux * overlap, a.position.y - uy * overlap)
-                    new_b = Position(b.position.x + ux * overlap, b.position.y + uy * overlap)
-                    if self.is_ground_position_walkable(new_a, a):
-                        a.position = new_a
-                    if self.is_ground_position_walkable(new_b, b):
-                        b.position = new_b
+            rb = max(0.2, getattr(b.card_stats, "collision_radius", 0.5) or 0.5)
+            dx = b.position.x - a.position.x
+            dy = b.position.y - a.position.y
+            dist = math.hypot(dx, dy)
+            same_team = a.player_id == b.player_id
+            min_dist = (ra + rb) * (0.8 if same_team else 0.65)
+            if dist == 0:
+                dist = 0.001
+                dx, dy = 0.001, 0.0
+            if dist < min_dist:
+                overlap = (min_dist - dist) / 2.0
+                ux, uy = dx / dist, dy / dist
+                new_a = Position(a.position.x - ux * overlap, a.position.y - uy * overlap)
+                new_b = Position(b.position.x + ux * overlap, b.position.y + uy * overlap)
+                if self.is_ground_position_walkable(new_a, a):
+                    a.position = new_a
+                if self.is_ground_position_walkable(new_b, b):
+                    b.position = new_b

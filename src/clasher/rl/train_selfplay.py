@@ -6,7 +6,6 @@ from concurrent.futures import as_completed
 from concurrent.futures.process import BrokenProcessPool
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass
-import io
 from pathlib import Path
 import time
 from typing import Dict, List, Optional, Any, Tuple
@@ -56,14 +55,24 @@ _WORKER_CONFIG: Optional[Tuple[Any, ...]] = None
 _WORKER_THREADS_SET: bool = False
 
 
+class _NullWriter:
+    def write(self, _value):
+        return 0
+
+    def flush(self):
+        return None
+
+
+_NULL_WRITER = _NullWriter()
+
+
 @contextmanager
 def maybe_silence_stdio(enabled: bool):
     if not enabled:
         yield
         return
 
-    sink = io.StringIO()
-    with redirect_stdout(sink), redirect_stderr(sink):
+    with redirect_stdout(_NULL_WRITER), redirect_stderr(_NULL_WRITER):
         yield
 
 
@@ -91,80 +100,79 @@ def collect_rollout(
         with maybe_silence_stdio(quiet_engine):
             env.reset()
 
-    for _ in range(rollout_steps):
-        step_data: Dict[int, Dict[str, object]] = {}
-        actions: Dict[int, int] = {}
-        obs0 = env.get_observation(0)
-        obs1 = env.get_observation(1)
-        mask0 = env.get_action_mask(0)
-        mask1 = env.get_action_mask(1)
-        board_t = torch.as_tensor(
-            np.stack([obs0.board, obs1.board]),
-            dtype=torch.float32,
-            device=device,
-        )
-        hud_t = torch.as_tensor(
-            np.stack([obs0.hud, obs1.hud]),
-            dtype=torch.float32,
-            device=device,
-        )
-        mask_t = torch.as_tensor(
-            np.stack([mask0, mask1]),
-            dtype=torch.bool,
-            device=device,
-        )
-
-        action_t, log_prob_t, value_t, _ = model.act(
-            board_t,
-            hud_t,
-            mask_t,
-            deterministic=False,
-        )
-        action_arr = action_t.detach().cpu().numpy()
-        log_prob_arr = log_prob_t.detach().cpu().numpy()
-        value_arr = value_t.detach().cpu().numpy()
-
-        actions[0] = int(action_arr[0])
-        actions[1] = int(action_arr[1])
-        step_data[0] = {
-            "board": obs0.board,
-            "hud": obs0.hud,
-            "mask": mask0,
-            "action": actions[0],
-            "old_log_prob": float(log_prob_arr[0]),
-            "value": float(value_arr[0]),
-        }
-        step_data[1] = {
-            "board": obs1.board,
-            "hud": obs1.hud,
-            "mask": mask1,
-            "action": actions[1],
-            "old_log_prob": float(log_prob_arr[1]),
-            "value": float(value_arr[1]),
-        }
-
-        with maybe_silence_stdio(quiet_engine):
-            rewards, done, _ = env.step(actions)
-
-        for player_id in (0, 1):
-            pdata = step_data[player_id]
-            transitions.append(
-                Transition(
-                    player_id=player_id,
-                    board=pdata["board"],
-                    hud=pdata["hud"],
-                    action_mask=pdata["mask"],
-                    action=pdata["action"],
-                    old_log_prob=pdata["old_log_prob"],
-                    value=pdata["value"],
-                    reward=float(rewards[player_id]),
-                    done=done,
-                    next_value=0.0,
-                )
+    with maybe_silence_stdio(quiet_engine):
+        for _ in range(rollout_steps):
+            step_data: Dict[int, Dict[str, object]] = {}
+            actions: Dict[int, int] = {}
+            obs0 = env.get_observation(0)
+            obs1 = env.get_observation(1)
+            mask0 = env.get_action_mask(0)
+            mask1 = env.get_action_mask(1)
+            board_t = torch.as_tensor(
+                np.stack([obs0.board, obs1.board]),
+                dtype=torch.float32,
+                device=device,
+            )
+            hud_t = torch.as_tensor(
+                np.stack([obs0.hud, obs1.hud]),
+                dtype=torch.float32,
+                device=device,
+            )
+            mask_t = torch.as_tensor(
+                np.stack([mask0, mask1]),
+                dtype=torch.bool,
+                device=device,
             )
 
-        if done:
-            with maybe_silence_stdio(quiet_engine):
+            action_t, log_prob_t, value_t, _ = model.act(
+                board_t,
+                hud_t,
+                mask_t,
+                deterministic=False,
+            )
+            action_arr = action_t.detach().cpu().numpy()
+            log_prob_arr = log_prob_t.detach().cpu().numpy()
+            value_arr = value_t.detach().cpu().numpy()
+
+            actions[0] = int(action_arr[0])
+            actions[1] = int(action_arr[1])
+            step_data[0] = {
+                "board": obs0.board,
+                "hud": obs0.hud,
+                "mask": mask0,
+                "action": actions[0],
+                "old_log_prob": float(log_prob_arr[0]),
+                "value": float(value_arr[0]),
+            }
+            step_data[1] = {
+                "board": obs1.board,
+                "hud": obs1.hud,
+                "mask": mask1,
+                "action": actions[1],
+                "old_log_prob": float(log_prob_arr[1]),
+                "value": float(value_arr[1]),
+            }
+
+            rewards, done, _ = env.step(actions)
+
+            for player_id in (0, 1):
+                pdata = step_data[player_id]
+                transitions.append(
+                    Transition(
+                        player_id=player_id,
+                        board=pdata["board"],
+                        hud=pdata["hud"],
+                        action_mask=pdata["mask"],
+                        action=pdata["action"],
+                        old_log_prob=pdata["old_log_prob"],
+                        value=pdata["value"],
+                        reward=float(rewards[player_id]),
+                        done=done,
+                        next_value=0.0,
+                    )
+                )
+
+            if done:
                 env.reset()
 
     _fill_next_values(transitions, env=env, model=model, device=device)

@@ -223,6 +223,10 @@ class TileGrid:
         """Check if tower at given position is still alive"""
         if not battle_state:
             return True  # Assume alive if no battle state
+
+        cached = getattr(battle_state, "_is_tower_alive_cached", None)
+        if callable(cached):
+            return bool(cached(tower_pos, player_id))
         
         # Find tower entity at this position
         for entity in battle_state.entities.values():
