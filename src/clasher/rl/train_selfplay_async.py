@@ -18,6 +18,12 @@ from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, res
 from clasher.rl.benchmark import run_async_queue_benchmark
 from clasher.rl.inference_server import InferenceServer
 from clasher.rl.model import MaskedPolicyValueNet
+from clasher.rl.shared_rollout_ipc import (
+    SlotHandles,
+    SharedRolloutPoolOwner,
+    SharedRolloutWriter,
+    build_rollout_field_specs,
+)
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.train_selfplay import resolve_torch_device
 
@@ -133,22 +139,26 @@ def _collect_rollout_numpy(
     rollout_steps: int,
     compress_obs_to_fp16: bool,
 ) -> Dict[str, np.ndarray]:
-    boards: List[np.ndarray] = []
-    huds: List[np.ndarray] = []
-    masks: List[np.ndarray] = []
-    actions: List[int] = []
-    old_log_probs: List[float] = []
-    values: List[float] = []
-    rewards: List[float] = []
-    dones: List[bool] = []
-    player_ids: List[int] = []
-
     model.eval()
     if env.battle is None:
         env.reset()
+    obs0_init = env.get_observation(0)
+    board_shape = obs0_init.board.shape
+    hud_size = obs0_init.hud.shape[0]
+    transitions = rollout_steps * 2
+    obs_dtype = np.float16 if compress_obs_to_fp16 else np.float32
+    boards = np.empty((transitions, *board_shape), dtype=obs_dtype)
+    huds = np.empty((transitions, hud_size), dtype=obs_dtype)
+    masks = np.empty((transitions, env.action_space.num_actions), dtype=np.bool_)
+    actions = np.empty((transitions,), dtype=np.int64)
+    old_log_probs = np.empty((transitions,), dtype=np.float32)
+    values = np.empty((transitions,), dtype=np.float32)
+    rewards = np.empty((transitions,), dtype=np.float32)
+    dones = np.empty((transitions,), dtype=np.bool_)
+    player_ids = np.empty((transitions,), dtype=np.int8)
+    write_idx = 0
 
     for _ in range(rollout_steps):
-        decisions: Dict[int, Dict[str, Any]] = {}
         action_by_player: Dict[int, int] = {}
         obs0 = env.get_observation(0)
         obs1 = env.get_observation(1)
@@ -172,51 +182,45 @@ def _collect_rollout_numpy(
 
         action_by_player[0] = int(action_arr[0])
         action_by_player[1] = int(action_arr[1])
-        decisions[0] = {
-            "obs_board": obs0.board.astype(np.float16 if compress_obs_to_fp16 else np.float32, copy=True),
-            "obs_hud": obs0.hud.astype(np.float16 if compress_obs_to_fp16 else np.float32, copy=True),
-            "mask": mask0.astype(np.bool_, copy=True),
-            "action": action_by_player[0],
-            "log_prob": float(log_prob_arr[0]),
-            "value": float(value_arr[0]),
-        }
-        decisions[1] = {
-            "obs_board": obs1.board.astype(np.float16 if compress_obs_to_fp16 else np.float32, copy=True),
-            "obs_hud": obs1.hud.astype(np.float16 if compress_obs_to_fp16 else np.float32, copy=True),
-            "mask": mask1.astype(np.bool_, copy=True),
-            "action": action_by_player[1],
-            "log_prob": float(log_prob_arr[1]),
-            "value": float(value_arr[1]),
-        }
 
         reward_by_player, done, _ = env.step(action_by_player)
 
-        for pid in (0, 1):
-            d = decisions[pid]
-            boards.append(d["obs_board"])
-            huds.append(d["obs_hud"])
-            masks.append(d["mask"])
-            actions.append(d["action"])
-            old_log_probs.append(d["log_prob"])
-            values.append(d["value"])
-            rewards.append(float(reward_by_player[pid]))
-            dones.append(done)
-            player_ids.append(pid)
+        boards[write_idx] = obs0.board
+        huds[write_idx] = obs0.hud
+        masks[write_idx] = mask0
+        actions[write_idx] = action_by_player[0]
+        old_log_probs[write_idx] = float(log_prob_arr[0])
+        values[write_idx] = float(value_arr[0])
+        rewards[write_idx] = float(reward_by_player[0])
+        dones[write_idx] = done
+        player_ids[write_idx] = 0
+        write_idx += 1
+
+        boards[write_idx] = obs1.board
+        huds[write_idx] = obs1.hud
+        masks[write_idx] = mask1
+        actions[write_idx] = action_by_player[1]
+        old_log_probs[write_idx] = float(log_prob_arr[1])
+        values[write_idx] = float(value_arr[1])
+        rewards[write_idx] = float(reward_by_player[1])
+        dones[write_idx] = done
+        player_ids[write_idx] = 1
+        write_idx += 1
 
         if done:
             env.reset()
 
     batch: Dict[str, np.ndarray] = {
-        "boards": np.stack(boards),
-        "huds": np.stack(huds),
-        "masks": np.stack(masks),
-        "actions": np.asarray(actions, dtype=np.int64),
-        "old_log_probs": np.asarray(old_log_probs, dtype=np.float32),
-        "values": np.asarray(values, dtype=np.float32),
-        "rewards": np.asarray(rewards, dtype=np.float32),
-        "dones": np.asarray(dones, dtype=np.bool_),
-        "player_ids": np.asarray(player_ids, dtype=np.int8),
-        "next_values": np.zeros(len(values), dtype=np.float32),
+        "boards": boards,
+        "huds": huds,
+        "masks": masks,
+        "actions": actions,
+        "old_log_probs": old_log_probs,
+        "values": values,
+        "rewards": rewards,
+        "dones": dones,
+        "player_ids": player_ids,
+        "next_values": np.zeros(transitions, dtype=np.float32),
     }
     _fill_next_values_numpy(batch, env=env, model=model)
     env_metrics = env.pop_fast_path_metrics()
@@ -234,20 +238,24 @@ def _collect_rollout_numpy_centralized(
     inference_request_queue: mp.Queue,
     inference_response_queue: mp.Queue,
 ) -> tuple[Dict[str, np.ndarray], int]:
-    boards: List[np.ndarray] = []
-    huds: List[np.ndarray] = []
-    masks: List[np.ndarray] = []
-    actions: List[int] = []
-    old_log_probs: List[float] = []
-    values: List[float] = []
-    rewards: List[float] = []
-    dones: List[bool] = []
-    player_ids: List[int] = []
-
     if env.battle is None:
         env.reset()
-
+    obs0_init = env.get_observation(0)
+    board_shape = obs0_init.board.shape
+    hud_size = obs0_init.hud.shape[0]
+    transitions = rollout_steps * 2
     board_dtype = np.float16 if compress_obs_to_fp16 else np.float32
+    boards = np.empty((transitions, *board_shape), dtype=board_dtype)
+    huds = np.empty((transitions, hud_size), dtype=board_dtype)
+    masks = np.empty((transitions, env.action_space.num_actions), dtype=np.bool_)
+    actions = np.empty((transitions,), dtype=np.int64)
+    old_log_probs = np.empty((transitions,), dtype=np.float32)
+    values = np.empty((transitions,), dtype=np.float32)
+    rewards = np.empty((transitions,), dtype=np.float32)
+    dones = np.empty((transitions,), dtype=np.bool_)
+    player_ids = np.empty((transitions,), dtype=np.int8)
+    write_idx = 0
+
     pending_by_id: Dict[int, Dict[str, Any]] = {}
 
     def _infer(board_np: np.ndarray, hud_np: np.ndarray, mask_np: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -279,7 +287,6 @@ def _collect_rollout_numpy_centralized(
         )
 
     for _ in range(rollout_steps):
-        decisions: Dict[int, Dict[str, Any]] = {}
         action_by_player: Dict[int, int] = {}
         obs0 = env.get_observation(0)
         obs1 = env.get_observation(1)
@@ -293,36 +300,30 @@ def _collect_rollout_numpy_centralized(
 
         action_by_player[0] = int(action_arr[0])
         action_by_player[1] = int(action_arr[1])
-        decisions[0] = {
-            "obs_board": obs0.board.astype(board_dtype, copy=True),
-            "obs_hud": obs0.hud.astype(board_dtype, copy=True),
-            "mask": mask0.astype(np.bool_, copy=True),
-            "action": action_by_player[0],
-            "log_prob": float(log_prob_arr[0]),
-            "value": float(value_arr[0]),
-        }
-        decisions[1] = {
-            "obs_board": obs1.board.astype(board_dtype, copy=True),
-            "obs_hud": obs1.hud.astype(board_dtype, copy=True),
-            "mask": mask1.astype(np.bool_, copy=True),
-            "action": action_by_player[1],
-            "log_prob": float(log_prob_arr[1]),
-            "value": float(value_arr[1]),
-        }
 
         reward_by_player, done, _ = env.step(action_by_player)
 
-        for pid in (0, 1):
-            d = decisions[pid]
-            boards.append(d["obs_board"])
-            huds.append(d["obs_hud"])
-            masks.append(d["mask"])
-            actions.append(d["action"])
-            old_log_probs.append(d["log_prob"])
-            values.append(d["value"])
-            rewards.append(float(reward_by_player[pid]))
-            dones.append(done)
-            player_ids.append(pid)
+        boards[write_idx] = obs0.board
+        huds[write_idx] = obs0.hud
+        masks[write_idx] = mask0
+        actions[write_idx] = action_by_player[0]
+        old_log_probs[write_idx] = float(log_prob_arr[0])
+        values[write_idx] = float(value_arr[0])
+        rewards[write_idx] = float(reward_by_player[0])
+        dones[write_idx] = done
+        player_ids[write_idx] = 0
+        write_idx += 1
+
+        boards[write_idx] = obs1.board
+        huds[write_idx] = obs1.hud
+        masks[write_idx] = mask1
+        actions[write_idx] = action_by_player[1]
+        old_log_probs[write_idx] = float(log_prob_arr[1])
+        values[write_idx] = float(value_arr[1])
+        rewards[write_idx] = float(reward_by_player[1])
+        dones[write_idx] = done
+        player_ids[write_idx] = 1
+        write_idx += 1
 
         if done:
             env.reset()
@@ -340,16 +341,16 @@ def _collect_rollout_numpy_centralized(
         bootstrap = {0: float(bootstrap_values[0]), 1: float(bootstrap_values[1])}
 
     batch: Dict[str, np.ndarray] = {
-        "boards": np.stack(boards),
-        "huds": np.stack(huds),
-        "masks": np.stack(masks),
-        "actions": np.asarray(actions, dtype=np.int64),
-        "old_log_probs": np.asarray(old_log_probs, dtype=np.float32),
-        "values": np.asarray(values, dtype=np.float32),
-        "rewards": np.asarray(rewards, dtype=np.float32),
-        "dones": np.asarray(dones, dtype=np.bool_),
-        "player_ids": np.asarray(player_ids, dtype=np.int8),
-        "next_values": np.zeros(len(values), dtype=np.float32),
+        "boards": boards,
+        "huds": huds,
+        "masks": masks,
+        "actions": actions,
+        "old_log_probs": old_log_probs,
+        "values": values,
+        "rewards": rewards,
+        "dones": dones,
+        "player_ids": player_ids,
+        "next_values": np.zeros(transitions, dtype=np.float32),
     }
     _fill_next_values_from_bootstrap(batch, bootstrap=bootstrap)
     env_metrics = env.pop_fast_path_metrics()
@@ -368,11 +369,16 @@ def _actor_loop(
     compress_obs_to_fp16: bool,
     inference_request_queue: Optional[mp.Queue] = None,
     inference_response_queue: Optional[mp.Queue] = None,
+    rollout_slot_handles: Optional[List[SlotHandles]] = None,
+    rollout_free_slot_queue: Optional[mp.Queue] = None,
 ) -> None:
+    rollout_writer: Optional[SharedRolloutWriter] = None
     try:
         torch.set_num_threads(1)
         np.random.seed(actor_cfg.seed)
         torch.manual_seed(actor_cfg.seed)
+        if rollout_slot_handles is not None:
+            rollout_writer = SharedRolloutWriter(rollout_slot_handles)
 
         model: Optional[MaskedPolicyValueNet] = None
         if actor_cfg.inference_mode == "actor_local":
@@ -436,8 +442,22 @@ def _actor_loop(
             if stop_event.is_set():
                 break
 
-            # Backpressure: block when queue is full.
-            data_queue.put(batch)
+            if rollout_writer is not None:
+                if rollout_free_slot_queue is None:
+                    raise RuntimeError("shared rollout writer requires free-slot queue")
+                slot_id = int(rollout_free_slot_queue.get())
+                rollout_writer.write_batch(slot_id, batch)
+                data_queue.put(
+                    {
+                        "shared_rollout": True,
+                        "actor_id": actor_cfg.actor_id,
+                        "slot_id": slot_id,
+                        "transitions": int(batch["actions"].shape[0]),
+                    }
+                )
+            else:
+                # Backpressure: block when queue is full.
+                data_queue.put(batch)
     except Exception:
         error_queue.put(
             {
@@ -445,6 +465,9 @@ def _actor_loop(
                 "traceback": traceback.format_exc(),
             }
         )
+    finally:
+        if rollout_writer is not None:
+            rollout_writer.close()
 
 
 def _compute_gae_numpy(
@@ -535,12 +558,31 @@ def _ppo_update_from_batch(
     return stats
 
 
-def _concat_batches(batches: List[Dict[str, np.ndarray]]) -> Dict[str, np.ndarray]:
-    keys = batches[0].keys()
-    out: Dict[str, np.ndarray] = {}
-    for key in keys:
-        out[key] = np.concatenate([b[key] for b in batches], axis=0)
-    return out
+def _init_rollout_accumulator(
+    capacity: int,
+    batch: Dict[str, np.ndarray],
+) -> Dict[str, np.ndarray]:
+    acc: Dict[str, np.ndarray] = {}
+    for key, value in batch.items():
+        if key in {"mask_shadow_checks", "mask_shadow_mismatches"}:
+            continue
+        shape = value.shape
+        acc[key] = np.empty((capacity, *shape[1:]), dtype=value.dtype)
+    return acc
+
+
+def _append_batch_to_accumulator(
+    acc: Dict[str, np.ndarray],
+    batch: Dict[str, np.ndarray],
+    start: int,
+) -> int:
+    count = int(batch["actions"].shape[0])
+    end = start + count
+    for key, value in batch.items():
+        if key in {"mask_shadow_checks", "mask_shadow_mismatches"}:
+            continue
+        acc[key][start:end] = value
+    return end
 
 
 def _state_dict_to_cpu(model: MaskedPolicyValueNet) -> Dict[str, torch.Tensor]:
@@ -580,6 +622,8 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--actor-rollout-steps", type=int, default=128)
     p.add_argument("--transitions-per-update", type=int, default=4096)
     p.add_argument("--queue-size", type=int, default=16)
+    p.add_argument("--rollout-transport", choices=["queue", "shm"], default="queue")
+    p.add_argument("--shared-slots-per-actor", type=int, default=2)
     p.add_argument("--policy-sync-every", type=int, default=2)
     p.add_argument("--perf-log-every", type=int, default=10)
     p.add_argument("--resume-latest", action="store_true")
@@ -603,6 +647,8 @@ def _launch_actors(
     compress_obs_to_fp16: bool,
     inference_request_queue: Optional[mp.Queue] = None,
     inference_response_queues: Optional[List[mp.Queue]] = None,
+    rollout_slot_handles_by_actor: Optional[List[List[SlotHandles]]] = None,
+    rollout_free_slot_queues: Optional[List[mp.Queue]] = None,
 ) -> tuple[List[mp.Process], List[Optional[mp.Queue]]]:
     processes: List[mp.Process] = []
     weight_queues: List[Optional[mp.Queue]] = []
@@ -630,6 +676,12 @@ def _launch_actors(
         response_q = None
         if inference_response_queues is not None:
             response_q = inference_response_queues[actor_id]
+        actor_rollout_handles = None
+        if rollout_slot_handles_by_actor is not None:
+            actor_rollout_handles = rollout_slot_handles_by_actor[actor_id]
+        free_slot_q = None
+        if rollout_free_slot_queues is not None:
+            free_slot_q = rollout_free_slot_queues[actor_id]
         proc = ctx.Process(
             target=_actor_loop,
             args=(
@@ -642,6 +694,8 @@ def _launch_actors(
                 compress_obs_to_fp16,
                 inference_request_queue,
                 response_q,
+                actor_rollout_handles,
+                free_slot_q,
             ),
             daemon=True,
         )
@@ -797,6 +851,9 @@ def main() -> None:
     inference_request_queue: Optional[mp.Queue] = None
     inference_response_queues: Optional[List[mp.Queue]] = None
     inference_server: Optional[InferenceServer] = None
+    shared_rollout_pool: Optional[SharedRolloutPoolOwner] = None
+    rollout_slot_handles_by_actor: Optional[List[List[SlotHandles]]] = None
+    rollout_free_slot_queues: Optional[List[mp.Queue]] = None
 
     actor_cfg_base = {
         "seed": args.seed,
@@ -836,6 +893,30 @@ def main() -> None:
         )
         inference_server.start()
 
+    if args.rollout_transport == "shm":
+        transitions_per_batch = args.actor_rollout_steps * 2
+        obs_dtype = "float16" if args.compress_obs_fp16 else "float32"
+        field_specs = build_rollout_field_specs(
+            transitions_per_batch=transitions_per_batch,
+            board_shape=tuple(obs0.board.shape),
+            hud_size=int(obs0.hud.shape[0]),
+            num_actions=num_actions,
+            obs_dtype=obs_dtype,
+        )
+        shared_rollout_pool = SharedRolloutPoolOwner(
+            num_actors=args.num_actors,
+            slots_per_actor=max(1, args.shared_slots_per_actor),
+            field_specs=field_specs,
+        )
+        rollout_slot_handles_by_actor = [
+            shared_rollout_pool.actor_slot_handles(actor_id)
+            for actor_id in range(args.num_actors)
+        ]
+        rollout_free_slot_queues = [ctx.Queue(maxsize=max(1, args.shared_slots_per_actor)) for _ in range(args.num_actors)]
+        for q in rollout_free_slot_queues:
+            for slot_id in range(max(1, args.shared_slots_per_actor)):
+                q.put(slot_id)
+
     initial_state = _state_dict_to_cpu(model)
     actors, weight_queues = _launch_actors(
         ctx=ctx,
@@ -848,10 +929,13 @@ def main() -> None:
         compress_obs_to_fp16=args.compress_obs_fp16,
         inference_request_queue=inference_request_queue,
         inference_response_queues=inference_response_queues,
+        rollout_slot_handles_by_actor=rollout_slot_handles_by_actor,
+        rollout_free_slot_queues=rollout_free_slot_queues,
     )
     print(
         f"actors={len(actors)} transitions_per_update={args.transitions_per_update} "
-        f"inference_mode={args.inference_mode} engine_fast_path={args.engine_fast_path}"
+        f"inference_mode={args.inference_mode} engine_fast_path={args.engine_fast_path} "
+        f"rollout_transport={args.rollout_transport}"
     )
 
     try:
@@ -859,11 +943,17 @@ def main() -> None:
             _raise_actor_errors(error_queue)
 
             collect_start = time.perf_counter()
-            gathered: List[Dict[str, np.ndarray]] = []
+            accumulated: Optional[Dict[str, np.ndarray]] = None
             transitions_count = 0
+            shadow_checks = 0.0
+            shadow_mismatches = 0.0
+            max_capacity = (
+                args.transitions_per_update
+                + (args.actor_rollout_steps * 2 * max(1, args.num_actors))
+            )
             while transitions_count < args.transitions_per_update:
                 try:
-                    batch = data_queue.get(timeout=1)
+                    item = data_queue.get(timeout=1)
                 except queue.Empty as exc:
                     _raise_actor_errors(error_queue)
                     dead = [(idx, p.exitcode) for idx, p in enumerate(actors) if not p.is_alive()]
@@ -875,12 +965,31 @@ def main() -> None:
                             f"Timed out waiting for actor rollouts after {waited:.1f}s"
                         ) from exc
                     continue
-                gathered.append(batch)
-                transitions_count += int(batch["actions"].shape[0])
+                batch: Dict[str, np.ndarray]
+                if (
+                    isinstance(item, dict)
+                    and item.get("shared_rollout", False)
+                ):
+                    if shared_rollout_pool is None or rollout_free_slot_queues is None:
+                        raise RuntimeError("received shared rollout metadata without shared pool")
+                    actor_id = int(item["actor_id"])
+                    slot_id = int(item["slot_id"])
+                    batch = shared_rollout_pool.read_batch_copy(actor_id, slot_id)
+                    rollout_free_slot_queues[actor_id].put(slot_id)
+                else:
+                    batch = item
+                if accumulated is None:
+                    accumulated = _init_rollout_accumulator(max_capacity, batch)
+                next_count = _append_batch_to_accumulator(accumulated, batch, transitions_count)
+                transitions_count = next_count
+                shadow_checks += float(np.asarray(batch.get("mask_shadow_checks", 0.0)).reshape(-1)[0])
+                shadow_mismatches += float(np.asarray(batch.get("mask_shadow_mismatches", 0.0)).reshape(-1)[0])
                 _raise_actor_errors(error_queue)
 
             collect_elapsed = time.perf_counter() - collect_start
-            batch_np = _concat_batches(gathered)
+            if accumulated is None:
+                raise RuntimeError("no rollout data collected")
+            batch_np = {k: v[:transitions_count] for k, v in accumulated.items()}
             advantages, returns = _compute_gae_numpy(
                 rewards=batch_np["rewards"],
                 values=batch_np["values"],
@@ -938,11 +1047,6 @@ def main() -> None:
                 or update % max(1, args.perf_log_every) == 0
             )
             if should_log_perf:
-                shadow_checks = 0.0
-                shadow_mismatches = 0.0
-                for part in gathered:
-                    shadow_checks += float(part.get("mask_shadow_checks", 0.0))
-                    shadow_mismatches += float(part.get("mask_shadow_mismatches", 0.0))
                 shadow_div = shadow_mismatches / max(1.0, shadow_checks)
                 print(
                     f"update={update:04d} "
@@ -980,6 +1084,8 @@ def main() -> None:
         if inference_server is not None:
             inference_server.stop()
         _terminate_actors(actors, stop_event)
+        if shared_rollout_pool is not None:
+            shared_rollout_pool.close()
 
 
 if __name__ == "__main__":

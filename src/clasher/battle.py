@@ -7,6 +7,10 @@ import random
 import copy
 import json
 import numpy as np
+try:
+    from numba import njit
+except Exception:  # pragma: no cover - optional accelerator
+    njit = None
 
 from .entities import Entity, Troop, Building
 from .player import PlayerState
@@ -21,6 +25,37 @@ from .factory.dynamic_factory import (
 )
 from .spells import SPELL_REGISTRY
 from .mechanics.shared.death_effects import DeathSpawn
+
+
+if njit is not None:
+    @njit(cache=True)
+    def _build_blocked_mask_numba(
+        height: int,
+        width: int,
+        half_size: float,
+        bounds: np.ndarray,
+    ) -> np.ndarray:
+        mask = np.zeros((height, width), dtype=np.bool_)
+        for ty in range(height):
+            y = ty + 0.5
+            y1 = y - half_size
+            y2 = y + half_size
+            for tx in range(width):
+                x = tx + 0.5
+                x1 = x - half_size
+                x2 = x + half_size
+                blocked = False
+                for i in range(bounds.shape[0]):
+                    ex1 = bounds[i, 0]
+                    ex2 = bounds[i, 1]
+                    ey1 = bounds[i, 2]
+                    ey2 = bounds[i, 3]
+                    if x1 < ex2 and x2 > ex1 and y1 < ey2 and y2 > ey1:
+                        blocked = True
+                        break
+                if blocked:
+                    mask[ty, tx] = True
+        return mask
 
 
 @dataclass
@@ -278,19 +313,40 @@ class BattleState:
         cached = self._building_placement_blocked_masks.get(size_tiles)
         if cached is not None:
             return cached
-        mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
         half = float(size_tiles) / 2.0
-        for ty in range(self.arena.height):
-            y = ty + 0.5
-            y1, y2 = y - half, y + half
-            for tx in range(self.arena.width):
-                x = tx + 0.5
-                x1, x2 = x - half, x + half
-                for entity in self._alive_buildings:
-                    ex1, ex2, ey1, ey2 = self._footprint_bounds(entity.position, entity.card_stats)
-                    if x1 < ex2 and x2 > ex1 and y1 < ey2 and y2 > ey1:
-                        mask[ty, tx] = True
-                        break
+        if self._alive_buildings:
+            bounds = np.empty((len(self._alive_buildings), 4), dtype=np.float32)
+            for i, entity in enumerate(self._alive_buildings):
+                ex1, ex2, ey1, ey2 = self._footprint_bounds(entity.position, entity.card_stats)
+                bounds[i, 0] = ex1
+                bounds[i, 1] = ex2
+                bounds[i, 2] = ey1
+                bounds[i, 3] = ey2
+            if njit is not None:
+                mask = _build_blocked_mask_numba(
+                    self.arena.height,
+                    self.arena.width,
+                    half,
+                    bounds,
+                )
+            else:
+                mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
+                for ty in range(self.arena.height):
+                    y = ty + 0.5
+                    y1, y2 = y - half, y + half
+                    for tx in range(self.arena.width):
+                        x = tx + 0.5
+                        x1, x2 = x - half, x + half
+                        for i in range(bounds.shape[0]):
+                            ex1 = bounds[i, 0]
+                            ex2 = bounds[i, 1]
+                            ey1 = bounds[i, 2]
+                            ey2 = bounds[i, 3]
+                            if x1 < ex2 and x2 > ex1 and y1 < ey2 and y2 > ey1:
+                                mask[ty, tx] = True
+                                break
+        else:
+            mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
         self._building_placement_blocked_masks[size_tiles] = mask
         return mask
     
