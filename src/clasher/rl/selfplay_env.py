@@ -114,8 +114,48 @@ class SelfPlayBattleEnv:
         self._prev_objective_p0 = current_p0
         return {0: float(delta), 1: float(-delta)}
 
+    def _can_spend_elixir_now(self, player_id: int) -> bool:
+        assert self.battle is not None
+        # We only need to know if any non-noop legal action exists.
+        if self.engine_fast_path == "off":
+            mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=False)
+        else:
+            mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=True)
+        return bool(np.any(mask[: self.action_space.no_op_action]))
+
+    def _compute_elixir_leak_penalty(
+        self,
+        *,
+        actions: Dict[int, int],
+        pre_elixir: Dict[int, float],
+        pre_can_spend: Dict[int, bool],
+        done: bool,
+    ) -> Dict[int, float]:
+        assert self.battle is not None
+        penalties = {0: 0.0, 1: 0.0}
+        for player_id in (0, 1):
+            attempted = actions.get(player_id, self.action_space.no_op_action)
+            if pre_elixir[player_id] >= 9.9 and pre_can_spend[player_id]:
+                if attempted == self.action_space.no_op_action:
+                    # Direct leak: had full elixir and chose not to spend.
+                    penalties[player_id] += 0.010
+            if (not done) and self.battle.players[player_id].elixir >= 9.9:
+                if self._can_spend_elixir_now(player_id):
+                    # Ongoing cap pressure: still floating at max after this decision window.
+                    penalties[player_id] += 0.005
+        return penalties
+
     def step(self, actions: Dict[int, int]) -> tuple[Dict[int, float], bool, StepInfo]:
         assert self.battle is not None
+
+        pre_elixir = {
+            0: float(self.battle.players[0].elixir),
+            1: float(self.battle.players[1].elixir),
+        }
+        pre_can_spend = {
+            0: self._can_spend_elixir_now(0),
+            1: self._can_spend_elixir_now(1),
+        }
 
         action_success: Dict[int, bool] = {}
         order = [0, 1]
@@ -159,6 +199,17 @@ class SelfPlayBattleEnv:
             attempted = actions.get(player_id, self.action_space.no_op_action)
             if attempted != self.action_space.no_op_action and not action_success.get(player_id, True):
                 rewards[player_id] -= 0.01
+
+        leak_penalty = self._compute_elixir_leak_penalty(
+            actions=actions,
+            pre_elixir=pre_elixir,
+            pre_can_spend=pre_can_spend,
+            done=done,
+        )
+        # Keep reward strictly zero-sum.
+        leak_edge = leak_penalty[1] - leak_penalty[0]
+        rewards[0] += leak_edge
+        rewards[1] -= leak_edge
 
         if done:
             if self.battle.winner is not None:
