@@ -30,6 +30,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluate self-play checkpoint")
     parser.add_argument("--checkpoint", type=str, default=None)
     parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/selfplay_run")
+    parser.add_argument("--opponent-checkpoint", type=str, default=None)
+    parser.add_argument("--opponent-checkpoint-dir", type=str, default="checkpoints/selfplay_async")
     parser.add_argument("--decks-path", type=str, default="decks.json")
     parser.add_argument("--games", type=int, default=100)
     parser.add_argument("--decision-interval", type=int, default=8)
@@ -37,7 +39,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--device", type=str, choices=["auto", "cpu", "mps", "cuda"], default="auto")
     parser.add_argument("--deterministic", action="store_true")
-    parser.add_argument("--opponent", type=str, choices=["random", "noop"], default="random")
+    parser.add_argument("--opponent", type=str, choices=["random", "noop", "policy"], default="random")
     parser.add_argument("--quiet-engine", action="store_true")
     return parser.parse_args()
 
@@ -56,9 +58,32 @@ def load_model(checkpoint_path: Path, device: torch.device) -> tuple[MaskedPolic
     return model, state
 
 
-def select_opponent_action(env: SelfPlayBattleEnv, mode: str, rng: np.random.Generator) -> int:
+def select_opponent_action(
+    env: SelfPlayBattleEnv,
+    mode: str,
+    rng: np.random.Generator,
+    opponent_model: MaskedPolicyValueNet | None,
+    device: torch.device,
+    deterministic: bool,
+) -> int:
     if mode == "noop":
         return env.action_space.no_op_action
+    if mode == "policy":
+        if opponent_model is None:
+            raise ValueError("opponent_model is required when --opponent=policy")
+        obs = env.get_observation(1)
+        mask = env.get_action_mask(1)
+        board = torch.tensor(obs.board, dtype=torch.float32, device=device).unsqueeze(0)
+        hud = torch.tensor(obs.hud, dtype=torch.float32, device=device).unsqueeze(0)
+        action_mask = torch.tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
+        with torch.no_grad():
+            action_t, _, _, _ = opponent_model.act(
+                board=board,
+                hud=hud,
+                action_mask=action_mask,
+                deterministic=deterministic,
+            )
+        return int(action_t.item())
     return env.action_space.random_legal_action(env.battle, 1, rng)
 
 
@@ -79,6 +104,20 @@ def run_eval(args: argparse.Namespace) -> None:
     print(f"decks={resolved_decks_path}")
 
     model, _ = load_model(checkpoint_path, device=device)
+    opponent_model: MaskedPolicyValueNet | None = None
+    opponent_checkpoint_path: Path | None = None
+    if args.opponent == "policy":
+        if args.opponent_checkpoint:
+            opponent_checkpoint_path = resolve_path(args.opponent_checkpoint, must_exist=True)
+        else:
+            opponent_checkpoint_path = latest_checkpoint(args.opponent_checkpoint_dir)
+            if opponent_checkpoint_path is None:
+                raise FileNotFoundError(
+                    "no opponent policy checkpoints found in "
+                    f"{resolve_path(args.opponent_checkpoint_dir, must_exist=False)}"
+                )
+        opponent_model, _ = load_model(opponent_checkpoint_path, device=device)
+        print(f"opponent_checkpoint={opponent_checkpoint_path}")
 
     env = SelfPlayBattleEnv(
         decision_interval_ticks=args.decision_interval,
@@ -100,25 +139,31 @@ def run_eval(args: argparse.Namespace) -> None:
         with maybe_silence_stdio(args.quiet_engine):
             env.reset()
 
-        done = False
-        while not done:
-            obs = env.get_observation(0)
-            mask = env.get_action_mask(0)
-            board = torch.tensor(obs.board, dtype=torch.float32, device=device).unsqueeze(0)
-            hud = torch.tensor(obs.hud, dtype=torch.float32, device=device).unsqueeze(0)
-            action_mask = torch.tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
+            done = False
+            while not done:
+                obs = env.get_observation(0)
+                mask = env.get_action_mask(0)
+                board = torch.tensor(obs.board, dtype=torch.float32, device=device).unsqueeze(0)
+                hud = torch.tensor(obs.hud, dtype=torch.float32, device=device).unsqueeze(0)
+                action_mask = torch.tensor(mask, dtype=torch.bool, device=device).unsqueeze(0)
 
-            with torch.no_grad():
-                action_t, _, _, _ = model.act(
-                    board=board,
-                    hud=hud,
-                    action_mask=action_mask,
+                with torch.no_grad():
+                    action_t, _, _, _ = model.act(
+                        board=board,
+                        hud=hud,
+                        action_mask=action_mask,
+                        deterministic=args.deterministic,
+                    )
+                action0 = int(action_t.item())
+                action1 = select_opponent_action(
+                    env=env,
+                    mode=args.opponent,
+                    rng=rng,
+                    opponent_model=opponent_model,
+                    device=device,
                     deterministic=args.deterministic,
                 )
-            action0 = int(action_t.item())
-            action1 = select_opponent_action(env, args.opponent, rng)
 
-            with maybe_silence_stdio(args.quiet_engine):
                 _, done, _ = env.step({0: action0, 1: action1})
 
         ticks_total += env.battle.tick

@@ -76,18 +76,25 @@ class Entity(ABC):
     
     def take_damage(self, amount: float) -> None:
         """Apply damage to entity"""
+        incoming = float(amount)
         for mechanic in getattr(self, "mechanics", []):
             guard = getattr(mechanic, "take_damage_during_dash", None)
             if callable(guard):
-                should_take_damage = guard(self, amount)
+                should_take_damage = guard(self, incoming)
                 if not should_take_damage:
                     return
+            modifier = getattr(mechanic, "modify_incoming_damage", None)
+            if callable(modifier):
+                incoming = float(modifier(self, incoming))
+
+        if incoming <= 0:
+            return
 
         # King tower activation when hit directly.
         if type(self).__name__ == "Building" and getattr(getattr(self, "card_stats", None), "name", None) == "KingTower":
-            if amount > 0:
+            if incoming > 0:
                 self._tower_active = True
-        self.hitpoints = max(0, self.hitpoints - amount)
+        self.hitpoints = max(0, self.hitpoints - incoming)
         if self.hitpoints <= 0 and self.is_alive:
             self.is_alive = False
             self.on_death()  # Trigger death mechanics

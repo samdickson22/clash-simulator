@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures.process import BrokenProcessPool
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass, field
 import io
+import multiprocessing as mp
 from pathlib import Path
 import time
-from typing import Dict, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -45,12 +48,28 @@ class DaggerReplayBuffer:
         self.huds.append(hud.astype(np.float32, copy=True))
         self.masks.append(mask.astype(np.bool_, copy=True))
         self.actions.append(int(action))
+        self._trim_to_capacity()
+
+    def add_batch(self, batch: Dict[str, np.ndarray]) -> None:
+        boards = batch["boards"]
+        huds = batch["huds"]
+        masks = batch["masks"]
+        actions = batch["actions"]
+        for idx in range(actions.shape[0]):
+            self.boards.append(boards[idx].astype(np.float32, copy=True))
+            self.huds.append(huds[idx].astype(np.float32, copy=True))
+            self.masks.append(masks[idx].astype(np.bool_, copy=True))
+            self.actions.append(int(actions[idx]))
+        self._trim_to_capacity()
+
+    def _trim_to_capacity(self) -> None:
         over = len(self.actions) - self.capacity
-        if over > 0:
-            del self.boards[:over]
-            del self.huds[:over]
-            del self.masks[:over]
-            del self.actions[:over]
+        if over <= 0:
+            return
+        del self.boards[:over]
+        del self.huds[:over]
+        del self.masks[:over]
+        del self.actions[:over]
 
     def sample_batch(self, rng: np.random.Generator, batch_size: int) -> Dict[str, np.ndarray]:
         n = len(self.actions)
@@ -65,11 +84,55 @@ class DaggerReplayBuffer:
         }
 
 
+@dataclass(frozen=True)
+class DaggerWorkerTask:
+    model_state_dict: Dict[str, torch.Tensor]
+    board_channels: int
+    hud_size: int
+    num_actions: int
+    hidden_size: int
+    decision_interval_ticks: int
+    max_ticks: int
+    decks_path: str
+    mirror_match: bool
+    quiet_engine: bool
+    planner_depth: int
+    planner_sims: int
+    planner_action_samples: int
+    decisions: int
+    beta: float
+    seed: int
+    compress_obs_fp16: bool
+
+
+_WORKER_MODEL: Optional[MaskedPolicyValueNet] = None
+_WORKER_ENV: Optional[SelfPlayBattleEnv] = None
+_WORKER_PLANNER: Optional[FixedDepthThompsonOracle] = None
+_WORKER_CONFIG: Optional[Tuple[Any, ...]] = None
+_WORKER_THREADS_SET: bool = False
+
+
 def _find_latest_checkpoint(checkpoint_dir: Path) -> Optional[Path]:
     candidates = sorted(checkpoint_dir.glob("policy_dagger_iter_*.pt"))
     if not candidates:
         return None
     return candidates[-1]
+
+
+def _state_dict_to_cpu(model: MaskedPolicyValueNet) -> Dict[str, torch.Tensor]:
+    return {k: v.detach().cpu() for k, v in model.state_dict().items()}
+
+
+def _split_decisions(total_decisions: int, num_workers: int) -> List[int]:
+    workers = max(1, num_workers)
+    base = total_decisions // workers
+    remainder = total_decisions % workers
+    chunks: List[int] = []
+    for idx in range(workers):
+        chunk = base + (1 if idx < remainder else 0)
+        if chunk > 0:
+            chunks.append(chunk)
+    return chunks
 
 
 def _supervised_update(
@@ -125,26 +188,51 @@ def _supervised_update(
     }
 
 
-def _collect_dagger_data(
+def _empty_dagger_batch(env: SelfPlayBattleEnv, compress_obs_to_fp16: bool) -> Dict[str, np.ndarray]:
+    obs0 = env.get_observation(0)
+    board_dtype = np.float16 if compress_obs_to_fp16 else np.float32
+    return {
+        "boards": np.empty((0, *obs0.board.shape), dtype=board_dtype),
+        "huds": np.empty((0, *obs0.hud.shape), dtype=board_dtype),
+        "masks": np.empty((0, env.action_space.num_actions), dtype=np.bool_),
+        "actions": np.empty((0,), dtype=np.int64),
+    }
+
+
+def _collect_dagger_batch(
     env: SelfPlayBattleEnv,
     planner: FixedDepthThompsonOracle,
     model: MaskedPolicyValueNet,
-    replay: DaggerReplayBuffer,
     rng: np.random.Generator,
     device: torch.device,
     *,
     decisions: int,
     beta: float,
     quiet_engine: bool,
-) -> Dict[str, float]:
+    compress_obs_to_fp16: bool,
+) -> tuple[Dict[str, np.ndarray], Dict[str, float]]:
     if env.battle is None:
         with maybe_silence_stdio(quiet_engine):
             env.reset()
+
+    if decisions <= 0:
+        return _empty_dagger_batch(env, compress_obs_to_fp16), {
+            "episodes_finished": 0.0,
+            "oracle_exec": 0.0,
+            "student_exec": 0.0,
+            "samples": 0.0,
+        }
 
     model.eval()
     done_count = 0
     oracle_exec = 0
     student_exec = 0
+    board_dtype = np.float16 if compress_obs_to_fp16 else np.float32
+
+    boards: list[np.ndarray] = []
+    huds: list[np.ndarray] = []
+    masks: list[np.ndarray] = []
+    actions: list[int] = []
 
     for _ in range(decisions):
         assert env.battle is not None
@@ -155,12 +243,32 @@ def _collect_dagger_data(
 
         with maybe_silence_stdio(quiet_engine):
             oracle_actions = planner.select_actions(env.battle)
-        replay.add(obs0.board, obs0.hud, mask0, int(oracle_actions[0]))
-        replay.add(obs1.board, obs1.hud, mask1, int(oracle_actions[1]))
 
-        board_t = torch.as_tensor(np.stack([obs0.board, obs1.board]), dtype=torch.float32, device=device)
-        hud_t = torch.as_tensor(np.stack([obs0.hud, obs1.hud]), dtype=torch.float32, device=device)
-        mask_t = torch.as_tensor(np.stack([mask0, mask1]), dtype=torch.bool, device=device)
+        boards.append(obs0.board.astype(board_dtype, copy=True))
+        huds.append(obs0.hud.astype(board_dtype, copy=True))
+        masks.append(mask0.astype(np.bool_, copy=True))
+        actions.append(int(oracle_actions[0]))
+
+        boards.append(obs1.board.astype(board_dtype, copy=True))
+        huds.append(obs1.hud.astype(board_dtype, copy=True))
+        masks.append(mask1.astype(np.bool_, copy=True))
+        actions.append(int(oracle_actions[1]))
+
+        board_t = torch.as_tensor(
+            np.stack([obs0.board, obs1.board]),
+            dtype=torch.float32,
+            device=device,
+        )
+        hud_t = torch.as_tensor(
+            np.stack([obs0.hud, obs1.hud]),
+            dtype=torch.float32,
+            device=device,
+        )
+        mask_t = torch.as_tensor(
+            np.stack([mask0, mask1]),
+            dtype=torch.bool,
+            device=device,
+        )
         with torch.no_grad():
             student_actions_t, _, _, _ = model.act(
                 board=board_t,
@@ -185,12 +293,221 @@ def _collect_dagger_data(
                 done_count += 1
                 env.reset()
 
-    total_exec = max(1, oracle_exec + student_exec)
-    return {
-        "episodes_finished": float(done_count),
-        "oracle_exec_ratio": float(oracle_exec) / total_exec,
-        "student_exec_ratio": float(student_exec) / total_exec,
+    batch = {
+        "boards": np.stack(boards, axis=0),
+        "huds": np.stack(huds, axis=0),
+        "masks": np.stack(masks, axis=0),
+        "actions": np.asarray(actions, dtype=np.int64),
     }
+    stats = {
+        "episodes_finished": float(done_count),
+        "oracle_exec": float(oracle_exec),
+        "student_exec": float(student_exec),
+        "samples": float(len(actions)),
+    }
+    return batch, stats
+
+
+def _collect_dagger_data(
+    env: SelfPlayBattleEnv,
+    planner: FixedDepthThompsonOracle,
+    model: MaskedPolicyValueNet,
+    replay: DaggerReplayBuffer,
+    rng: np.random.Generator,
+    device: torch.device,
+    *,
+    decisions: int,
+    beta: float,
+    quiet_engine: bool,
+) -> Dict[str, float]:
+    batch, stats = _collect_dagger_batch(
+        env=env,
+        planner=planner,
+        model=model,
+        rng=rng,
+        device=device,
+        decisions=decisions,
+        beta=beta,
+        quiet_engine=quiet_engine,
+        compress_obs_to_fp16=False,
+    )
+    replay.add_batch(batch)
+    total_exec = max(1.0, stats["oracle_exec"] + stats["student_exec"])
+    return {
+        "episodes_finished": stats["episodes_finished"],
+        "oracle_exec_ratio": stats["oracle_exec"] / total_exec,
+        "student_exec_ratio": stats["student_exec"] / total_exec,
+    }
+
+
+def _collect_dagger_worker(task: DaggerWorkerTask) -> Dict[str, object]:
+    global _WORKER_MODEL, _WORKER_ENV, _WORKER_PLANNER, _WORKER_CONFIG, _WORKER_THREADS_SET
+
+    if not _WORKER_THREADS_SET:
+        torch.set_num_threads(1)
+        _WORKER_THREADS_SET = True
+
+    config = (
+        task.board_channels,
+        task.hud_size,
+        task.num_actions,
+        task.hidden_size,
+        task.decision_interval_ticks,
+        task.max_ticks,
+        task.decks_path,
+        task.mirror_match,
+        task.planner_depth,
+        task.planner_sims,
+        task.planner_action_samples,
+    )
+    if _WORKER_MODEL is None or _WORKER_ENV is None or _WORKER_PLANNER is None or _WORKER_CONFIG != config:
+        np.random.seed(task.seed)
+        torch.manual_seed(task.seed)
+        _WORKER_MODEL = MaskedPolicyValueNet(
+            board_channels=task.board_channels,
+            hud_size=task.hud_size,
+            num_actions=task.num_actions,
+            hidden_size=task.hidden_size,
+            recurrent=False,
+        ).to(torch.device("cpu"))
+        _WORKER_ENV = SelfPlayBattleEnv(
+            decision_interval_ticks=task.decision_interval_ticks,
+            max_ticks=task.max_ticks,
+            decks_path=task.decks_path,
+            seed=task.seed,
+            mirror_match=task.mirror_match,
+            canonical_perspective=True,
+        )
+        with maybe_silence_stdio(task.quiet_engine):
+            _WORKER_ENV.reset()
+        _WORKER_PLANNER = FixedDepthThompsonOracle(
+            action_space=_WORKER_ENV.action_space,
+            decision_interval_ticks=task.decision_interval_ticks,
+            plan_depth=task.planner_depth,
+            num_simulations=task.planner_sims,
+            rollout_action_samples=task.planner_action_samples,
+            seed=task.seed + 1009,
+        )
+        _WORKER_CONFIG = config
+
+    model = _WORKER_MODEL
+    env = _WORKER_ENV
+    planner = _WORKER_PLANNER
+    assert model is not None
+    assert env is not None
+    assert planner is not None
+
+    model.load_state_dict(task.model_state_dict)
+    model.eval()
+    rng = np.random.default_rng(task.seed + 1337)
+    batch, stats = _collect_dagger_batch(
+        env=env,
+        planner=planner,
+        model=model,
+        rng=rng,
+        device=torch.device("cpu"),
+        decisions=task.decisions,
+        beta=task.beta,
+        quiet_engine=task.quiet_engine,
+        compress_obs_to_fp16=task.compress_obs_fp16,
+    )
+    return {"batch": batch, "stats": stats}
+
+
+def _collect_dagger_parallel(
+    executor: ProcessPoolExecutor,
+    model: MaskedPolicyValueNet,
+    *,
+    decisions_per_iter: int,
+    num_workers: int,
+    board_channels: int,
+    hud_size: int,
+    num_actions: int,
+    hidden_size: int,
+    decision_interval_ticks: int,
+    max_ticks: int,
+    decks_path: str,
+    mirror_match: bool,
+    quiet_engine: bool,
+    planner_depth: int,
+    planner_sims: int,
+    planner_action_samples: int,
+    beta: float,
+    seed: int,
+    compress_obs_fp16: bool,
+    worker_retries: int,
+) -> tuple[List[Dict[str, np.ndarray]], Dict[str, float]]:
+    chunks = _split_decisions(decisions_per_iter, num_workers)
+    if not chunks:
+        return [], {"episodes_finished": 0.0, "oracle_exec": 0.0, "student_exec": 0.0, "samples": 0.0}
+
+    model_state_dict = _state_dict_to_cpu(model)
+    tasks = [
+        DaggerWorkerTask(
+            model_state_dict=model_state_dict,
+            board_channels=board_channels,
+            hud_size=hud_size,
+            num_actions=num_actions,
+            hidden_size=hidden_size,
+            decision_interval_ticks=decision_interval_ticks,
+            max_ticks=max_ticks,
+            decks_path=decks_path,
+            mirror_match=mirror_match,
+            quiet_engine=quiet_engine,
+            planner_depth=planner_depth,
+            planner_sims=planner_sims,
+            planner_action_samples=planner_action_samples,
+            decisions=chunk_decisions,
+            beta=beta,
+            seed=seed + (worker_idx + 1) * 1009,
+            compress_obs_fp16=compress_obs_fp16,
+        )
+        for worker_idx, chunk_decisions in enumerate(chunks)
+    ]
+
+    attempts: Dict[int, int] = {idx: 0 for idx in range(len(tasks))}
+    pending: List[tuple[int, DaggerWorkerTask]] = list(enumerate(tasks))
+    parts_by_idx: Dict[int, Dict[str, object]] = {}
+
+    while pending:
+        submitted = {
+            executor.submit(_collect_dagger_worker, task): (idx, task)
+            for idx, task in pending
+        }
+        pending = []
+
+        for future in as_completed(submitted):
+            idx, task = submitted[future]
+            try:
+                parts_by_idx[idx] = future.result()
+            except BrokenProcessPool:
+                raise
+            except Exception as exc:
+                attempts[idx] += 1
+                print(
+                    f"worker_failure idx={idx} attempt={attempts[idx]} "
+                    f"error={type(exc).__name__}: {exc}"
+                )
+                if attempts[idx] > worker_retries:
+                    raise RuntimeError(
+                        f"dagger worker {idx} failed after {worker_retries + 1} attempts"
+                    ) from exc
+                pending.append((idx, task))
+
+    batches: List[Dict[str, np.ndarray]] = []
+    stats_total = {"episodes_finished": 0.0, "oracle_exec": 0.0, "student_exec": 0.0, "samples": 0.0}
+    for idx in range(len(tasks)):
+        result = parts_by_idx[idx]
+        batch = result["batch"]
+        stats = result["stats"]
+        assert isinstance(batch, dict)
+        assert isinstance(stats, dict)
+        batches.append(batch)
+        stats_total["episodes_finished"] += float(stats["episodes_finished"])
+        stats_total["oracle_exec"] += float(stats["oracle_exec"])
+        stats_total["student_exec"] += float(stats["student_exec"])
+        stats_total["samples"] += float(stats["samples"])
+    return batches, stats_total
 
 
 def _parse_args() -> argparse.Namespace:
@@ -219,6 +536,9 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--planner-action-samples", type=int, default=96)
     p.add_argument("--beta-start", type=float, default=1.0)
     p.add_argument("--beta-end", type=float, default=0.05)
+    p.add_argument("--num-workers", type=int, default=1)
+    p.add_argument("--worker-retries", type=int, default=1)
+    p.add_argument("--compress-obs-fp16", action="store_true")
     return p.parse_args()
 
 
@@ -239,13 +559,13 @@ def main() -> None:
     torch.manual_seed(args.seed)
 
     device = resolve_torch_device(args.device)
-    print(f"device={device}")
+    print(f"device={device}", flush=True)
     resolved_decks_path = resolve_decks_path(args.decks_path, must_exist=True)
     checkpoint_dir = checkpoints_dir(args.checkpoint_dir, create=True)
     args.decks_path = str(resolved_decks_path)
     args.checkpoint_dir = str(checkpoint_dir)
-    print(f"decks_path={resolved_decks_path}")
-    print(f"checkpoint_dir={checkpoint_dir}")
+    print(f"decks_path={resolved_decks_path}", flush=True)
+    print(f"checkpoint_dir={checkpoint_dir}", flush=True)
 
     env = SelfPlayBattleEnv(
         decision_interval_ticks=args.decision_interval,
@@ -282,10 +602,13 @@ def main() -> None:
             optimizer.load_state_dict(state["optimizer_state_dict"])
         saved_iter = int(state.get("iteration", 0))
         start_iter = saved_iter + 1
-        print(f"resumed_from={resume_ckpt} saved_iter={saved_iter} start_iter={start_iter}")
+        print(
+            f"resumed_from={resume_ckpt} saved_iter={saved_iter} start_iter={start_iter}",
+            flush=True,
+        )
 
     if start_iter > args.iterations:
-        print(f"nothing_to_do start_iter={start_iter} > iterations={args.iterations}")
+        print(f"nothing_to_do start_iter={start_iter} > iterations={args.iterations}", flush=True)
         return
 
     planner = FixedDepthThompsonOracle(
@@ -298,69 +621,124 @@ def main() -> None:
     )
     replay = DaggerReplayBuffer(capacity=args.replay_capacity)
 
-    for iteration in range(start_iter, args.iterations + 1):
-        beta = _beta_for_iter(
-            iteration=iteration,
-            total_iters=args.iterations,
-            beta_start=args.beta_start,
-            beta_end=args.beta_end,
-        )
-        collect_start = time.perf_counter()
-        collect_stats = _collect_dagger_data(
-            env=env,
-            planner=planner,
-            model=model,
-            replay=replay,
-            rng=rng,
-            device=device,
-            decisions=args.decisions_per_iter,
-            beta=beta,
-            quiet_engine=args.quiet_engine,
-        )
-        collect_s = time.perf_counter() - collect_start
+    executor: Optional[ProcessPoolExecutor] = None
+    workers = max(1, int(args.num_workers))
+    if workers > 1:
+        ctx = mp.get_context("spawn")
+        executor = ProcessPoolExecutor(max_workers=workers, mp_context=ctx)
+    print(f"workers={workers} decisions_per_iter={args.decisions_per_iter}", flush=True)
 
-        update_start = time.perf_counter()
-        update_stats = _supervised_update(
-            model=model,
-            optimizer=optimizer,
-            replay=replay,
-            rng=rng,
-            device=device,
-            epochs=args.epochs,
-            batch_size=args.batch_size,
-            steps_per_epoch=args.steps_per_epoch,
-        )
-        update_s = time.perf_counter() - update_start
-
-        print(
-            f"iter={iteration:04d} "
-            f"beta={beta:.3f} "
-            f"replay={len(replay)} "
-            f"loss={update_stats['loss']:.4f} "
-            f"acc={update_stats['acc']:.4f} "
-            f"entropy={update_stats['entropy']:.4f} "
-            f"collect_s={collect_s:.2f} "
-            f"update_s={update_s:.2f} "
-            f"episodes={collect_stats['episodes_finished']:.0f} "
-            f"oracle_exec={collect_stats['oracle_exec_ratio']:.3f} "
-            f"student_exec={collect_stats['student_exec_ratio']:.3f}"
-        )
-
-        if iteration % args.save_every == 0 or iteration == args.iterations:
-            ckpt_path = checkpoint_dir / f"policy_dagger_iter_{iteration:04d}.pt"
-            torch.save(
-                {
-                    "model_state_dict": model.state_dict(),
-                    "optimizer_state_dict": optimizer.state_dict(),
-                    "args": vars(args),
-                    "iteration": iteration,
-                    "board_channels": obs0.board.shape[0],
-                    "hud_size": obs0.hud.shape[0],
-                    "num_actions": action_space.num_actions,
-                },
-                ckpt_path,
+    try:
+        for iteration in range(start_iter, args.iterations + 1):
+            beta = _beta_for_iter(
+                iteration=iteration,
+                total_iters=args.iterations,
+                beta_start=args.beta_start,
+                beta_end=args.beta_end,
             )
-            print(f"saved_checkpoint={ckpt_path}")
+            collect_start = time.perf_counter()
+            if executor is None:
+                collect_stats = _collect_dagger_data(
+                    env=env,
+                    planner=planner,
+                    model=model,
+                    replay=replay,
+                    rng=rng,
+                    device=device,
+                    decisions=args.decisions_per_iter,
+                    beta=beta,
+                    quiet_engine=args.quiet_engine,
+                )
+                decisions_collected = args.decisions_per_iter
+            else:
+                batches, raw_stats = _collect_dagger_parallel(
+                    executor=executor,
+                    model=model,
+                    decisions_per_iter=args.decisions_per_iter,
+                    num_workers=workers,
+                    board_channels=obs0.board.shape[0],
+                    hud_size=obs0.hud.shape[0],
+                    num_actions=action_space.num_actions,
+                    hidden_size=args.hidden_size,
+                    decision_interval_ticks=args.decision_interval,
+                    max_ticks=args.max_ticks,
+                    decks_path=str(resolved_decks_path),
+                    mirror_match=args.mirror_match,
+                    quiet_engine=args.quiet_engine,
+                    planner_depth=args.planner_depth,
+                    planner_sims=args.planner_sims,
+                    planner_action_samples=args.planner_action_samples,
+                    beta=beta,
+                    seed=args.seed + iteration * 100_003,
+                    compress_obs_fp16=args.compress_obs_fp16,
+                    worker_retries=args.worker_retries,
+                )
+                for batch in batches:
+                    replay.add_batch(batch)
+                total_exec = max(1.0, raw_stats["oracle_exec"] + raw_stats["student_exec"])
+                collect_stats = {
+                    "episodes_finished": raw_stats["episodes_finished"],
+                    "oracle_exec_ratio": raw_stats["oracle_exec"] / total_exec,
+                    "student_exec_ratio": raw_stats["student_exec"] / total_exec,
+                }
+                decisions_collected = int(raw_stats["samples"] // 2)
+            collect_s = time.perf_counter() - collect_start
+
+            update_start = time.perf_counter()
+            update_stats = _supervised_update(
+                model=model,
+                optimizer=optimizer,
+                replay=replay,
+                rng=rng,
+                device=device,
+                epochs=args.epochs,
+                batch_size=args.batch_size,
+                steps_per_epoch=args.steps_per_epoch,
+            )
+            update_s = time.perf_counter() - update_start
+
+            dps = decisions_collected / max(1e-6, collect_s)
+            effective_dps = decisions_collected / max(1e-6, collect_s + update_s)
+            approx_gpm = dps / (9090.0 / args.decision_interval) * 60.0
+            effective_gpm = effective_dps / (9090.0 / args.decision_interval) * 60.0
+
+            print(
+                f"update={iteration:04d} "
+                f"beta={beta:.3f} "
+                f"replay={len(replay)} "
+                f"loss={update_stats['loss']:.4f} "
+                f"acc={update_stats['acc']:.4f} "
+                f"entropy={update_stats['entropy']:.4f} "
+                f"collect_s={collect_s:.2f} "
+                f"update_s={update_s:.2f} "
+                f"dps={dps:.1f} "
+                f"gpm~={approx_gpm:.1f} "
+                f"eff_dps={effective_dps:.1f} "
+                f"eff_gpm~={effective_gpm:.1f} "
+                f"episodes={collect_stats['episodes_finished']:.0f} "
+                f"oracle_exec={collect_stats['oracle_exec_ratio']:.3f} "
+                f"student_exec={collect_stats['student_exec_ratio']:.3f}",
+                flush=True,
+            )
+
+            if iteration % args.save_every == 0 or iteration == args.iterations:
+                ckpt_path = checkpoint_dir / f"policy_dagger_iter_{iteration:04d}.pt"
+                torch.save(
+                    {
+                        "model_state_dict": model.state_dict(),
+                        "optimizer_state_dict": optimizer.state_dict(),
+                        "args": vars(args),
+                        "iteration": iteration,
+                        "board_channels": obs0.board.shape[0],
+                        "hud_size": obs0.hud.shape[0],
+                        "num_actions": action_space.num_actions,
+                    },
+                    ckpt_path,
+                )
+                print(f"saved_checkpoint={ckpt_path}", flush=True)
+    finally:
+        if executor is not None:
+            executor.shutdown(wait=True, cancel_futures=True)
 
 
 if __name__ == "__main__":
