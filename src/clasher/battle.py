@@ -99,6 +99,14 @@ class BattleState:
     _cached_tower_alive_flags: Tuple[bool, bool, bool, bool, bool, bool] = field(
         default_factory=lambda: (False, False, False, False, False, False), init=False
     )
+    _target_entities: List[Entity] = field(default_factory=list, init=False)
+    _target_pos_x: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.float32), init=False)
+    _target_pos_y: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.float32), init=False)
+    _target_player: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.int8), init=False)
+    _target_is_air: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False)
+    _target_is_building: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False)
+    _target_is_crown: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False)
+    _target_stealth_until: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.int32), init=False)
     
     def __post_init__(self) -> None:
         """Initialize battle state"""
@@ -207,6 +215,78 @@ class BattleState:
             self._building_placement_blocked_masks.clear()
         self._refresh_tower_mask_if_needed()
         self._rebuild_entity_buckets()
+        self._rebuild_target_cache()
+
+    def _rebuild_target_cache(self) -> None:
+        targets: List[Entity] = []
+        for entity in self.entities.values():
+            if not entity.is_alive:
+                continue
+            if getattr(entity, "entity_kind", 4) in {2, 3}:
+                continue
+            targets.append(entity)
+        self._target_entities = targets
+        n = len(targets)
+        if n == 0:
+            self._target_pos_x = np.zeros((0,), dtype=np.float32)
+            self._target_pos_y = np.zeros((0,), dtype=np.float32)
+            self._target_player = np.zeros((0,), dtype=np.int8)
+            self._target_is_air = np.zeros((0,), dtype=np.bool_)
+            self._target_is_building = np.zeros((0,), dtype=np.bool_)
+            self._target_is_crown = np.zeros((0,), dtype=np.bool_)
+            self._target_stealth_until = np.zeros((0,), dtype=np.int32)
+            return
+
+        pos_x = np.empty((n,), dtype=np.float32)
+        pos_y = np.empty((n,), dtype=np.float32)
+        player = np.empty((n,), dtype=np.int8)
+        is_air = np.empty((n,), dtype=np.bool_)
+        is_building = np.empty((n,), dtype=np.bool_)
+        is_crown = np.empty((n,), dtype=np.bool_)
+        stealth_until = np.empty((n,), dtype=np.int32)
+
+        for i, entity in enumerate(targets):
+            pos_x[i] = float(entity.position.x)
+            pos_y[i] = float(entity.position.y)
+            player[i] = int(entity.player_id)
+            is_air[i] = bool(getattr(entity, "is_air_unit", False))
+            building = bool(getattr(entity, "entity_kind", 4) == 1)
+            is_building[i] = building
+            if building:
+                name = getattr(getattr(entity, "card_stats", None), "name", "")
+                is_crown[i] = name in {"Tower", "KingTower"} or bool(getattr(entity, "_is_king_tower", False))
+            else:
+                is_crown[i] = False
+            stealth_until[i] = int(getattr(entity, "_stealth_until", 0) or 0)
+
+        self._target_pos_x = pos_x
+        self._target_pos_y = pos_y
+        self._target_player = player
+        self._target_is_air = is_air
+        self._target_is_building = is_building
+        self._target_is_crown = is_crown
+        self._target_stealth_until = stealth_until
+
+    def get_fast_target_cache(self) -> tuple[
+        List[Entity],
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
+    ]:
+        return (
+            self._target_entities,
+            self._target_pos_x,
+            self._target_pos_y,
+            self._target_player,
+            self._target_is_air,
+            self._target_is_building,
+            self._target_is_crown,
+            self._target_stealth_until,
+        )
 
     def _refresh_tower_mask_if_needed(self) -> None:
         alive_flags = self._tower_alive_flags()
@@ -395,6 +475,50 @@ class BattleState:
         
         # Check win conditions
         self._check_win_conditions()
+
+    def _is_static_tower_entity(self, entity: Entity) -> bool:
+        if not isinstance(entity, Building):
+            return False
+        name = getattr(getattr(entity, "card_stats", None), "name", "")
+        return name in {"Tower", "KingTower"}
+
+    def can_fast_forward_idle(self) -> bool:
+        if self.game_over:
+            return False
+        for entity in self.entities.values():
+            if not entity.is_alive:
+                continue
+            if not self._is_static_tower_entity(entity):
+                return False
+        return True
+
+    def fast_forward_idle_ticks(self, ticks: int) -> int:
+        """Advance multiple idle ticks when only static towers remain."""
+        if ticks <= 0:
+            return 0
+        advanced = 0
+        for _ in range(ticks):
+            if self.game_over:
+                break
+            dt = self.dt
+            self.time += dt
+            self.tick += 1
+            if self.time >= 180.0 and not self.double_elixir:
+                self.double_elixir = True
+            if self.time >= self.overtime_start_time and not self.overtime:
+                self.overtime = True
+            if self.time >= 240.0 and not self.triple_elixir:
+                self.triple_elixir = True
+
+            base_regen = 2.8
+            if self.triple_elixir:
+                base_regen = 0.93
+            elif self.double_elixir:
+                base_regen = 1.4
+            for player in self.players:
+                player.regenerate_elixir(dt, base_regen)
+            advanced += 1
+        return advanced
     
     def deploy_card(self, player_id: int, card_name: str, position: Position) -> bool:
         """Deploy a card at the given position"""

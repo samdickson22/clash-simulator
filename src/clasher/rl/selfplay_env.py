@@ -32,6 +32,7 @@ class SelfPlayBattleEnv:
         mirror_match: bool = False,
         canonical_perspective: bool = True,
         engine_fast_path: str = "off",
+        idle_fast_forward: bool = True,
     ) -> None:
         self.decision_interval_ticks = decision_interval_ticks
         self.max_ticks = max_ticks
@@ -39,6 +40,7 @@ class SelfPlayBattleEnv:
         if engine_fast_path not in {"off", "shadow", "on"}:
             raise ValueError("engine_fast_path must be one of: off, shadow, on")
         self.engine_fast_path = engine_fast_path
+        self.idle_fast_forward = idle_fast_forward
         self.rng = random.Random(seed)
         self.np_rng = np.random.default_rng(seed)
 
@@ -211,13 +213,29 @@ class SelfPlayBattleEnv:
             action_success[player_id] = success
 
         ticks = 0
-        while (
-            ticks < self.decision_interval_ticks
-            and not self.battle.game_over
-            and self.battle.tick < self.max_ticks
+        no_op0 = actions.get(0, self.action_space.no_op_action) == self.action_space.no_op_action
+        no_op1 = actions.get(1, self.action_space.no_op_action) == self.action_space.no_op_action
+        if (
+            self.idle_fast_forward
+            and no_op0
+            and no_op1
+            and hasattr(self.battle, "can_fast_forward_idle")
+            and self.battle.can_fast_forward_idle()
         ):
-            self.battle.step()
-            ticks += 1
+            remaining_ticks = min(
+                self.decision_interval_ticks,
+                max(0, self.max_ticks - self.battle.tick),
+            )
+            if remaining_ticks > 0:
+                ticks = self.battle.fast_forward_idle_ticks(remaining_ticks)
+        else:
+            while (
+                ticks < self.decision_interval_ticks
+                and not self.battle.game_over
+                and self.battle.tick < self.max_ticks
+            ):
+                self.battle.step()
+                ticks += 1
 
         done = self.battle.game_over or self.battle.tick >= self.max_ticks
         rewards = self._compute_dense_rewards()

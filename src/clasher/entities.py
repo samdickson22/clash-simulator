@@ -4,6 +4,7 @@ import math
 from typing import Optional, List, Dict, Any
 from enum import Enum
 from typing import TYPE_CHECKING
+import numpy as np
 
 if TYPE_CHECKING:
     from .battle import BattleState
@@ -283,9 +284,24 @@ class Entity(ABC):
         # Check what this unit can attack
         can_attack_air = self._can_attack_air()
         can_attack_ground = self._can_attack_ground()
-        
-        candidate_entities = entities.values()
+
         battle_state = getattr(self, "battle_state", None)
+        if (
+            battle_state is not None
+            and getattr(battle_state, "fast_path", False)
+            and getattr(battle_state, "entities", None) is entities
+            and hasattr(battle_state, "get_fast_target_cache")
+        ):
+            fast_target = self._get_nearest_target_vectorized(
+                battle_state=battle_state,
+                targets_only_buildings=targets_only_buildings,
+                can_attack_air=can_attack_air,
+                can_attack_ground=can_attack_ground,
+            )
+            if fast_target is not None:
+                return fast_target
+
+        candidate_entities = entities.values()
         if (
             battle_state is not None
             and getattr(battle_state, "fast_path", False)
@@ -361,8 +377,65 @@ class Entity(ABC):
             if distance < min_distance:
                 min_distance = distance
                 nearest = entity
-        
+
         return nearest
+
+    def _get_nearest_target_vectorized(
+        self,
+        *,
+        battle_state: "BattleState",
+        targets_only_buildings: bool,
+        can_attack_air: bool,
+        can_attack_ground: bool,
+    ) -> Optional["Entity"]:
+        (
+            target_entities,
+            pos_x,
+            pos_y,
+            player,
+            is_air,
+            is_building,
+            is_crown,
+            stealth_until,
+        ) = battle_state.get_fast_target_cache()
+        if len(target_entities) == 0:
+            return None
+
+        valid = player != self.player_id
+        if not can_attack_air:
+            valid &= ~is_air
+        if not can_attack_ground:
+            valid &= is_air
+
+        now_ms = int(battle_state.time * 1000)
+        if stealth_until.size:
+            valid &= stealth_until <= now_ms
+        if not np.any(valid):
+            return None
+
+        dx = pos_x - float(self.position.x)
+        dy = pos_y - float(self.position.y)
+        dist2 = dx * dx + dy * dy
+        in_sight = dist2 <= float(self.sight_range * self.sight_range)
+        troop_targets = valid & (~is_building) & in_sight
+        building_targets = valid & is_building & in_sight
+        fallback_crown_targets = valid & is_building & is_crown
+
+        if targets_only_buildings:
+            chosen = building_targets if np.any(building_targets) else fallback_crown_targets
+        else:
+            if np.any(troop_targets):
+                chosen = troop_targets
+            elif np.any(building_targets):
+                chosen = building_targets
+            else:
+                chosen = fallback_crown_targets
+        if not np.any(chosen):
+            return None
+
+        candidates = np.flatnonzero(chosen)
+        idx = int(candidates[int(np.argmin(dist2[candidates]))])
+        return target_entities[idx]
     
     def _should_switch_target(self, current_target: 'Entity', new_target: 'Entity') -> bool:
         """Determine if we should switch from current target to new target"""
