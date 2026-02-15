@@ -85,6 +85,7 @@ class BattleState:
     card_loader: CardDataLoader = field(default_factory=CardDataLoader)
     next_entity_id: int = 1
     _starting_total_tower_hp: Dict[int, float] = field(default_factory=dict, init=False)
+    _starting_tower_hps: Dict[int, Dict[str, float]] = field(default_factory=dict, init=False)
     _sudden_death_crowns: Tuple[int, int] = field(default=(0, 0), init=False)
     debug_logs: bool = False
     fast_path: bool = False
@@ -120,6 +121,18 @@ class BattleState:
         self._starting_total_tower_hp = {
             0: self.players[0].king_tower_hp + self.players[0].left_tower_hp + self.players[0].right_tower_hp,
             1: self.players[1].king_tower_hp + self.players[1].left_tower_hp + self.players[1].right_tower_hp,
+        }
+        self._starting_tower_hps = {
+            0: {
+                "left": float(self.players[0].left_tower_hp),
+                "right": float(self.players[0].right_tower_hp),
+                "king": float(self.players[0].king_tower_hp),
+            },
+            1: {
+                "left": float(self.players[1].left_tower_hp),
+                "right": float(self.players[1].right_tower_hp),
+                "king": float(self.players[1].king_tower_hp),
+            },
         }
         self._refresh_fast_path_caches()
     

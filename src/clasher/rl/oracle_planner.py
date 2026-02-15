@@ -10,6 +10,7 @@ from clasher.battle import BattleState
 from clasher.entities import AreaEffect, Building, Graveyard, Projectile, RollingProjectile, SpawnProjectile, TimedExplosive, Troop
 
 from .action_space import DiscreteTileActionSpace
+from .reward_model import objective_win_prob_p0
 
 
 def _quantize(value: float, scale: float) -> int:
@@ -157,23 +158,7 @@ class FixedDepthThompsonOracle:
             battle.step()
 
     def _evaluate_state_prob(self, battle: BattleState) -> Dict[int, float]:
-        if battle.game_over:
-            if battle.winner is None:
-                return {0: 0.5, 1: 0.5}
-            return {battle.winner: 1.0, 1 - battle.winner: 0.0}
-
-        p0 = battle.players[0]
-        p1 = battle.players[1]
-        p0_start = float(battle._starting_total_tower_hp.get(0, max(1.0, p0.king_tower_hp + p0.left_tower_hp + p0.right_tower_hp)))
-        p1_start = float(battle._starting_total_tower_hp.get(1, max(1.0, p1.king_tower_hp + p1.left_tower_hp + p1.right_tower_hp)))
-
-        p0_total = float(p0.king_tower_hp + p0.left_tower_hp + p0.right_tower_hp)
-        p1_total = float(p1.king_tower_hp + p1.left_tower_hp + p1.right_tower_hp)
-        p0_damage_dealt = (p1_start - p1_total) / max(1.0, p1_start)
-        p1_damage_dealt = (p0_start - p0_total) / max(1.0, p0_start)
-        crown_term = (p0.get_crown_count() - p1.get_crown_count()) / 3.0
-        p0_score = 0.5 + 0.35 * (p0_damage_dealt - p1_damage_dealt) + 0.15 * crown_term
-        p0_prob = float(np.clip(p0_score, 0.0, 1.0))
+        p0_prob = objective_win_prob_p0(battle)
         return {0: p0_prob, 1: 1.0 - p0_prob}
 
     def _state_key(self, battle: BattleState) -> tuple:
