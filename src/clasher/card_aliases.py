@@ -35,6 +35,7 @@ CARD_NAME_ALIASES: dict[str, str] = {
     "Night Witch": "DarkWitch",
     "Skeleton Barrel": "SkeletonBalloon",
     "The Log": "Log",
+    "TheLog": "Log",
     "Wall Breakers": "Wallbreakers",
     "X-Bow": "Xbow",
 }

@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 @dataclass
 class IceSpiritFreeze(BaseMechanic):
     """Freezes nearby enemies when Ice Spirit connects or expires."""
-    freeze_radius: float = 2.0
-    freeze_duration_ms: int = 1500
+    freeze_radius: float = 1.5  # gamedata radius: 1500 = 1.5 tiles
+    freeze_duration_ms: int = 1000  # real CR: 1.0s freeze
     hop_duration_ms: int = 200
 
     def on_attach(self, entity: 'Entity') -> None:
@@ -59,4 +59,5 @@ class IceSpiritFreeze(BaseMechanic):
             if other.player_id == entity.player_id or not other.is_alive:
                 continue
             if origin.distance_to(other.position) <= self.freeze_radius:
+                other.take_damage(float(entity.damage))  # AoE damage
                 other.apply_stun(self.freeze_duration_ms / 1000.0)

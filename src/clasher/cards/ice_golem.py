@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 @dataclass
 class IceGolemChill(BaseMechanic):
     """Applies the Ice Golem's slowing death nova."""
-    slow_radius: float = 2.5
-    slow_multiplier: float = 0.4
-    slow_duration_ms: int = 2000
+    slow_radius: float = 2.0  # gamedata radius: 2000 = 2.0 tiles
+    slow_multiplier: float = 0.65  # 35% speed reduction (gamedata: speedMultiplier -35)
+    slow_duration_ms: int = 2000  # 2.0s matches real CR
     damage_scale: float = 1.0
 
     def on_death(self, entity: 'Entity') -> None:
