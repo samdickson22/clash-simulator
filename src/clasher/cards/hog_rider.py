@@ -21,29 +21,28 @@ class HogRiderJump(BaseMechanic):
     jump_target_pos = None
 
     def on_tick(self, entity, dt_ms: int) -> None:
-        """Handle jumping logic"""
+        """Handle jumping logic — Hog Rider jumps the river only at a bridge."""
         from ..entities import Troop  # Local import to avoid circular dependency at module load
 
         if not isinstance(entity, Troop):
             return
 
-        # Check if we're approaching the river (y=16)
+        # Check if we're approaching the river (y=15-16)
+        current_x = entity.position.x
         current_y = entity.position.y
-        river_y = 16.0
 
-        # Check if we need to jump over river
-        if (not self.is_jumping and
-                ((entity.player_id == 0 and current_y < river_y and current_y > 14.0) or  # Blue approaching from north
-                 (entity.player_id == 1 and current_y > river_y and current_y < 18.0))):  # Red approaching from south
+        # Only jump when on a bridge tile AND at the river edge
+        on_left_bridge = 2.0 <= current_x < 5.0
+        on_right_bridge = 13.0 <= current_x < 16.0
+        on_bridge = on_left_bridge or on_right_bridge
 
-            # Check jump cooldown
-            current_time = getattr(entity, 'battle_state', None)
-            if current_time and hasattr(current_time, 'time'):
-                time_ms = int(current_time.time * 1000)
-                if time_ms - self.last_jump_time >= self.jump_cooldown_ms:
+        approaching_river = (
+            (entity.player_id == 0 and 14.5 <= current_y <= 15.5) or
+            (entity.player_id == 1 and 16.5 <= current_y <= 17.5)
+        )
 
-                    # Start jump
-                    self._start_jump(entity)
+        if not self.is_jumping and on_bridge and approaching_river:
+            self._start_jump(entity)
 
         # Handle jump animation
         if self.is_jumping:

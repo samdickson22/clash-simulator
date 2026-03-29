@@ -88,9 +88,10 @@ class BattleEngine:
                     "king_tower_hp": p.king_tower_hp,
                     "left_tower_hp": p.left_tower_hp,
                     "right_tower_hp": p.right_tower_hp,
-                    "crowns": p.get_crown_count()
+                    "crowns_scored": self.battle.players[1 - i].get_crown_count(),
+                    "crowns_lost": p.get_crown_count()
                 }
-                for p in self.battle.players
+                for i, p in enumerate(self.battle.players)
             ],
             "game_over": self.battle.game_over,
             "winner": self.battle.winner,

@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
+import math
+import random
 
 from ..mechanics.mechanic_base import BaseMechanic
 
@@ -57,9 +59,6 @@ class PrincessAreaArrows(BaseMechanic):
         battle_state = shooter.battle_state
 
         # Calculate random offset for arrow spread
-        import math
-        import random
-
         angle = random.uniform(0, 2 * math.pi)
         distance = random.uniform(0, self.arrow_spread_radius_tiles * 1000)
 
@@ -116,8 +115,6 @@ class PrincessMultiShot(BaseMechanic):
 
         from ..entities import Projectile
         from ..arena import Position
-        import math
-
         # Calculate spread target position
         if total_arrows > 1:
             # Create spread for multiple arrows
