@@ -1,3 +1,5 @@
+import math
+import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Optional, List, Dict, Any
@@ -641,7 +643,6 @@ class Troop(Entity):
             return None
 
         # Try different angles around the blocked direction
-        import math
 
         # Calculate the original angle
         original_angle = math.atan2(original_move_y, original_move_x)
@@ -1234,8 +1235,6 @@ class SpawnProjectile(Projectile):
     
     def _spawn_units(self, battle_state: 'BattleState') -> None:
         """Spawn units at target position"""
-        import math
-        import random
         
         if not self.spawn_character_data:
             return
@@ -1377,7 +1376,6 @@ class RollingProjectile(Entity):
                 candidate_y = entity.position.y - knockback_distance
         
         # Slight random horizontal displacement for realism
-        import random
         horizontal_variance = random.uniform(-0.3, 0.3)
         candidate_x += horizontal_variance
 
@@ -1408,7 +1406,6 @@ class RollingProjectile(Entity):
         if not self.spawn_character_data:
             return
         
-        import math
 
         spawn_stats = troop_from_character_data(
             self.spawn_character,
@@ -1461,8 +1458,6 @@ class TimedExplosive(Entity):
 
     def _spawn_death_units(self, battle_state: 'BattleState') -> None:
         """Spawn units around this explosive when configured."""
-        import math
-        import random
 
         from .factory.dynamic_factory import troop_from_character_data, troop_from_values
 
@@ -1542,8 +1537,6 @@ class Graveyard(Entity):
     
     def _spawn_skeleton(self, battle_state: 'BattleState') -> None:
         """Spawn a skeleton at random position in radius"""
-        import math
-        import random
         
         if not self.skeleton_data:
             return

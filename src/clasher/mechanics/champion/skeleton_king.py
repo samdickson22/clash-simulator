@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
+import math
+import random
 
 from .ability import ChampionAbilityMechanic, ActiveAbility
 from ...effects import SpawnUnits
@@ -101,8 +103,6 @@ class SkeletonKingSoulCollector(ChampionAbilityMechanic):
         if not skeleton_stats:
             return
 
-        import math
-        import random
         from ...arena import Position
 
         # Spawn skeletons in a circle around death position

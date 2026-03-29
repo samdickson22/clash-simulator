@@ -321,9 +321,6 @@ class BattleState:
     
     def _spawn_swarm_troops(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, count: int, radius: float, second_count: int = 0, second_data: dict = None) -> None:
         """Spawn multiple troop entities in a circle around center position"""
-        import math
-        import random
-        
         total_units = count + second_count
         
         # Check for special deployment patterns
@@ -356,9 +353,6 @@ class BattleState:
     
     def _spawn_unit_at_angle(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, index: int, total_count: int, radius: float) -> None:
         """Spawn a single unit at a specific angle in the swarm formation"""
-        import math
-        import random
-        
         # Calculate position in circle
         if total_count == 1:
             # Single unit at center
@@ -433,9 +427,6 @@ class BattleState:
     
     def _spawn_front_back_formation(self, center_pos: Position, player_id: int, card_stats: CardStatsCompat, front_count: int, back_count: int, back_data: dict, radius: float) -> None:
         """Spawn units in front/back formation (melee in front, ranged in back)"""
-        import math
-        import random
-        
         # Create card stats for both unit types
         # Primary units (front) - use actual name from summonCharacterData
         primary_data = getattr(card_stats, 'summon_character_data', {})
@@ -886,8 +877,11 @@ class BattleState:
                 self.winner = 1 - i
                 return
         
-        player0_crowns = self.players[0].get_crown_count()
-        player1_crowns = self.players[1].get_crown_count()
+        # get_crown_count() returns how many of a player's OWN towers are
+        # destroyed, i.e. crowns scored BY the opponent.  Swap so that
+        # player0_crowns = crowns scored BY player 0 (= towers P1 lost).
+        player0_crowns = self.players[1].get_crown_count()
+        player1_crowns = self.players[0].get_crown_count()
 
         # End of 5:00 match timer. If tied, enter sudden death.
         if self.time >= self.sudden_death_start_time and not self.sudden_death:
@@ -955,13 +949,14 @@ class BattleState:
             "players": [
                 {
                     "elixir": p.elixir,
-                    "crowns": p.get_crown_count(),
+                    "crowns_scored": self.players[1 - i].get_crown_count(),
+                    "crowns_lost": p.get_crown_count(),
                     "king_hp": p.king_tower_hp,
                     "left_hp": p.left_tower_hp,
                     "right_hp": p.right_tower_hp,
                     "next_card": p.get_next_card(),
                 }
-                for p in self.players
+                for i, p in enumerate(self.players)
             ],
             "game_over": self.game_over,
             "winner": self.winner
