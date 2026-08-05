@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 from .effect_base import BaseEffect
 
 if TYPE_CHECKING:
-    from ...battle import BattleState
-    from ...arena import Position
+    from ..battle import BattleState
+    from ..arena import Position
 
 
 @dataclass
@@ -15,11 +15,13 @@ class PeriodicArea(BaseEffect):
     duration_seconds: float
     radius_tiles: float
     freeze_effect: bool = False
-    pull_force: float = 0.0
+    attract_percentage: float = 0.0
+    push_speed_factor: float = 0.0
 
     def apply(self, context) -> None:
         """Create area effect entity"""
-        from ...entities import AreaEffect
+        from ..arena import Position
+        from ..entities import AreaEffect
 
         area_effect = AreaEffect(
             id=context.battle_state.next_entity_id,
@@ -36,9 +38,11 @@ class PeriodicArea(BaseEffect):
             radius=self.radius_tiles
         )
 
-        # Add special properties if needed
-        if self.pull_force > 0:
-            area_effect.pull_force = self.pull_force
+        # Controlled attraction is data-driven. Do not collapse these two
+        # native percentages into a guessed force or mass coefficient.
+        if self.attract_percentage > 0 and self.push_speed_factor > 0:
+            area_effect.attract_percentage = self.attract_percentage
+            area_effect.push_speed_factor = self.push_speed_factor
             area_effect.is_tornado = True
 
         context.battle_state.entities[area_effect.id] = area_effect

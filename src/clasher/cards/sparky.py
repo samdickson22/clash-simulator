@@ -27,12 +27,12 @@ class SparkyChargeUp(BaseMechanic):
     def on_tick(self, entity, dt_ms: int) -> None:
         """Update charge state when targeting"""
         # Only charge when we have a target
-        if entity.target_id and not self.has_charged:
+        if entity.target_id is not None and not self.has_charged:
             self.charge_time += dt_ms
             self.is_charging = True
 
             # Visual effect could be added here
-        elif not entity.target_id:
+        elif entity.target_id is None:
             # Lose charge over time when no target
             self.charge_time = max(0, self.charge_time - dt_ms // 2)
             if self.charge_time == 0:

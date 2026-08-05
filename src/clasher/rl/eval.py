@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from clasher.battle import STANDARD_MATCH_TICKS
 from clasher.paths import decks_path as resolve_decks_path
 from clasher.paths import latest_checkpoint, resolve_path
 from clasher.rl.train_selfplay import resolve_torch_device
@@ -44,7 +45,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--decks-path", type=str, default="decks.json")
     parser.add_argument("--games", type=int, default=100)
     parser.add_argument("--decision-interval", type=int, default=8)
-    parser.add_argument("--max-ticks", type=int, default=9090)
+    parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--device", type=str, choices=["auto", "cpu", "mps", "cuda"], default="auto")
     parser.add_argument("--deterministic", action="store_true")

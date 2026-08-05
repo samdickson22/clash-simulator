@@ -1,4 +1,5 @@
 from ..mechanics.champion.ability import ChampionAbilityMechanic, ActiveAbility
+from ..kinematics import logic_time_milliseconds
 
 
 class ArcherQueenCloak(ChampionAbilityMechanic):
@@ -6,10 +7,12 @@ class ArcherQueenCloak(ChampionAbilityMechanic):
 
     def __init__(
         self,
-        damage_multiplier: float = 1.8,
-        speed_multiplier: float = 1.6,
-        cooldown_ms: int = 11000,
-        duration_ms: int = 3000,
+        attack_speed_multiplier: float = 2.8,
+        movement_speed_multiplier: float = 0.75,
+        cooldown_ms: int = 17000,
+        duration_ms: int = 3500,
+        cast_time_ms: int = 933,
+        trigger_delay_ms: int = 200,
     ) -> None:
         ability = ActiveAbility(
             name="Cloak",
@@ -19,48 +22,110 @@ class ArcherQueenCloak(ChampionAbilityMechanic):
             effects=[],
         )
         super().__init__(ability)
-        self.damage_multiplier = damage_multiplier
-        self.speed_multiplier = speed_multiplier
+        self.attack_speed_multiplier = attack_speed_multiplier
+        self.movement_speed_multiplier = movement_speed_multiplier
         self.duration_ms = duration_ms
-        self._original_damage = None
-        self._original_speed = None
+        self.cast_time_ms = cast_time_ms
+        self.trigger_delay_ms = trigger_delay_ms
+        self._original_movement_mode_multiplier = None
+        self._cloak_pending_until = None
+        self._cast_lock_until = None
 
     def on_attach(self, entity) -> None:
         entity._stealth_until = 0
+        raw = getattr(entity.card_stats, "_raw_entry", {}) or {}
+        char_data = raw.get("summonCharacterData", {}) or {}
+        ability_data = char_data.get("abilityData", {}) or {}
+        buff_data = ability_data.get("buffData", {}) or {}
+        self.ability.elixir_cost = int(ability_data.get("manaCost", self.ability.elixir_cost))
+        self.ability.cooldown_ms = int(ability_data.get("cooldown", self.ability.cooldown_ms))
+        self.duration_ms = int(ability_data.get("buffTime", self.duration_ms))
+        self.ability.duration_ms = self.duration_ms
+        self.cast_time_ms = int(ability_data.get("castTime", self.cast_time_ms))
+        self.trigger_delay_ms = int(
+            ability_data.get("triggerDelay", self.trigger_delay_ms)
+        )
+        hit_speed_percent = buff_data.get("hitSpeedMultiplier")
+        if hit_speed_percent is not None:
+            self.attack_speed_multiplier = float(hit_speed_percent) / 100.0
+        speed_percent = buff_data.get("speedMultiplier")
+        if speed_percent is not None:
+            self.movement_speed_multiplier = max(0.0, 1.0 + float(speed_percent) / 100.0)
 
     def activate_ability(self, entity) -> bool:
         if super().activate_ability(entity):
-            self._apply_cloak(entity)
+            now_ms = logic_time_milliseconds(entity.battle_state.time)
+            self._cloak_pending_until = now_ms + self.trigger_delay_ms
+            self._cast_lock_until = now_ms + self.cast_time_ms
+            # TriggerDelay schedules the buff within the longer casting
+            # animation. Buff duration and the later cooldown begin at the
+            # trigger, while movement/attacks remain locked for CastTime.
+            self.ability.activation_time = self._cloak_pending_until
             return True
         return False
 
     def on_tick(self, entity, dt_ms: int) -> None:
         super().on_tick(entity, dt_ms)
-        if not self.ability.is_active and self.can_activate_ability(entity) and getattr(entity, "target_id", None):
-            self.activate_ability(entity)
-        if not self.ability.is_active and self._original_damage is not None:
+        if self._cloak_pending_until is not None:
+            if entity.is_stunned():
+                self._cancel_pending_cast()
+                return
+            now_ms = logic_time_milliseconds(entity.battle_state.time)
+            if now_ms >= self._cloak_pending_until:
+                self._cloak_pending_until = None
+                self._apply_cloak(entity)
+        if self._cast_lock_until is not None:
+            now_ms = logic_time_milliseconds(entity.battle_state.time)
+            if now_ms >= self._cast_lock_until:
+                self._cast_lock_until = None
+        if not self.ability.is_active and self._original_movement_mode_multiplier is not None:
             self._remove_cloak(entity)
 
+    def blocks_combat_actions(self, entity) -> bool:
+        return self._cast_lock_until is not None
+
+    def handle_stun(self, entity) -> None:
+        """Interrupt the cast on the same impact frame as the stun."""
+        self._cancel_pending_cast()
+
+    def _cancel_pending_cast(self) -> None:
+        if self._cloak_pending_until is None:
+            return
+        self._cloak_pending_until = None
+        self._cast_lock_until = None
+        self.ability.cancel_before_effect()
+
     def on_death(self, entity) -> None:
-        if self._original_damage is not None:
+        self._cloak_pending_until = None
+        self._cast_lock_until = None
+        self.ability.is_active = False
+        if self._original_movement_mode_multiplier is not None:
             self._remove_cloak(entity)
 
     def _apply_cloak(self, entity) -> None:
-        self._original_damage = entity.damage
-        self._original_speed = getattr(entity, 'speed', None)
-        entity.damage = self._original_damage * self.damage_multiplier
-        if self._original_speed is not None:
-            entity.speed = self._original_speed * self.speed_multiplier
+        self._original_movement_mode_multiplier = getattr(
+            entity,
+            "movement_mode_multiplier",
+            1.0,
+        )
+        entity.attack_mode_multiplier = self.attack_speed_multiplier
+        set_movement_mode = getattr(entity, "set_movement_mode_multiplier", None)
+        if callable(set_movement_mode):
+            set_movement_mode(
+                self._original_movement_mode_multiplier
+                * self.movement_speed_multiplier
+            )
         if hasattr(entity, 'battle_state'):
-            now_ms = int(entity.battle_state.time * 1000)
+            now_ms = logic_time_milliseconds(entity.battle_state.time)
         else:
             now_ms = 0
         entity._stealth_until = now_ms + self.duration_ms
 
     def _remove_cloak(self, entity) -> None:
-        entity.damage = self._original_damage
-        if self._original_speed is not None:
-            entity.speed = self._original_speed
+        if self._original_movement_mode_multiplier is not None:
+            entity.set_movement_mode_multiplier(
+                self._original_movement_mode_multiplier
+            )
+        entity.attack_mode_multiplier = 1.0
         entity._stealth_until = 0
-        self._original_damage = None
-        self._original_speed = None
+        self._original_movement_mode_multiplier = None

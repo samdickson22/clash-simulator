@@ -9,30 +9,19 @@ if TYPE_CHECKING:
 
 @dataclass
 class WallBreakersDemolition(BaseMechanic):
-    """Forces wall breakers to explode on contact with buildings, dealing area damage."""
-    explosion_radius: float = 2.5
-    damage_multiplier: float = 2.5
+    """Destroys a projectile-backed kamikaze after its payload is committed.
+
+    Wall Breakers serialize their explosion as an ordinary area projectile
+    with a one-logic-unit travel range.  Let the shared projectile engine own
+    its launch position, radius, hit planes, scaling, and impact snapshot;
+    this mechanic supplies only the character's kamikaze lifecycle.
+    """
 
     def on_attach(self, entity: 'Entity') -> None:
         self._triggered = False
-        entity._force_melee_attack = True
 
-    def on_attack_start(self, entity: 'Entity', target: 'Entity') -> None:
-        if self._triggered or not hasattr(entity, 'battle_state'):
+    def on_attack_committed(self, entity: 'Entity', target: 'Entity') -> None:
+        if self._triggered:
             return
-        from ..entities import Building
-        if isinstance(target, Building):
-            self._explode(entity)
-
-    def _explode(self, entity: 'Entity') -> None:
-        battle_state = entity.battle_state
-        damage = entity.damage * self.damage_multiplier
-        # Snapshot entities to avoid dict-size changes when damage triggers
-        # deaths/spawns during this loop.
-        for other in list(battle_state.entities.values()):
-            if other.player_id == entity.player_id or not other.is_alive:
-                continue
-            if entity.position.distance_to(other.position) <= self.explosion_radius:
-                other.take_damage(damage)
-        entity.take_damage(entity.hitpoints)
         self._triggered = True
+        entity.take_damage(entity.hitpoints)

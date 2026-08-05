@@ -6,8 +6,8 @@ import random
 from .effect_base import BaseEffect
 
 if TYPE_CHECKING:
-    from ...battle import BattleState
-    from ...arena import Position
+    from ..battle import BattleState
+    from ..arena import Position
 
 
 @dataclass
@@ -20,6 +20,8 @@ class SpawnUnits(BaseEffect):
 
     def apply(self, context) -> None:
         """Spawn units around target position"""
+        from ..arena import Position
+
         battle_state = context.battle_state
 
         # Try to get unit stats from card loader
@@ -37,17 +39,8 @@ class SpawnUnits(BaseEffect):
             )
 
         if not unit_stats:
-            from ..factory.dynamic_factory import troop_from_values
-
-            unit_stats = troop_from_values(
-                self.unit_name,
-                hitpoints=100,
-                damage=10,
-                speed_tiles_per_min=60.0,
-                range_tiles=1.0,
-                sight_range_tiles=5.0,
-                hit_speed_ms=1000,
-                collision_radius_tiles=0.5,
+            raise ValueError(
+                f"Missing serialized spawn data for {self.unit_name}"
             )
 
         # Spawn units in a circle around target position

@@ -16,6 +16,7 @@ if str(SRC_ROOT) not in sys.path:
 
 from clasher.data import CardDataLoader
 from clasher.card_types import CardDefinition, CardStatsCompat
+from clasher.kinematics import logic_speed_to_tiles_per_second
 from clasher.paths import decks_path as resolve_decks_path
 
 
@@ -47,8 +48,12 @@ def print_card_analysis(card_name: str, card_def: CardDefinition, loader: CardDa
             print(f"  • Range: {stats.range_tiles} tiles")
         if stats.hit_speed_ms:
             print(f"  • Hit Speed: {stats.hit_speed_ms}ms")
-        if stats.speed_tiles_per_min:
-            print(f"  • Speed: {stats.speed_tiles_per_min} tiles/min")
+        if stats.speed_logic_units_per_tick:
+            print(
+                "  • Speed: "
+                f"{logic_speed_to_tiles_per_second(stats.speed_logic_units_per_tick):g} "
+                "tiles/s"
+            )
         if stats.sight_range_tiles:
             print(f"  • Sight Range: {stats.sight_range_tiles} tiles")
         if stats.collision_radius_tiles:
@@ -239,7 +244,7 @@ def analyze_decks():
         "RoyalGhost": "Ghost",
         # Proxy mappings
         "Bandit": "Assassin",
-        "Lumberjack": "AxeMan",
+        "Lumberjack": "RageBarbarian",
         "MagicArcher": "EliteArcher",
         "Guards": "SkeletonWarriors"
     }

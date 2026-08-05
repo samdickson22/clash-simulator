@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Tuple
-
 import numpy as np
 
 from clasher.battle import BattleState
@@ -31,21 +29,38 @@ def _king_active(battle: BattleState, player_id: int) -> bool:
 def _tower_fractions(
     battle: BattleState,
     player_id: int,
-) -> Tuple[float, float, float, float]:
+) -> tuple[float, float]:
     player = battle.players[player_id]
     start = battle._starting_tower_hps.get(player_id, {})
     start_left = float(start.get("left", max(1.0, player.left_tower_hp)))
     start_right = float(start.get("right", max(1.0, player.right_tower_hp)))
     start_king = float(start.get("king", max(1.0, player.king_tower_hp)))
     start_princess = max(1.0, 0.5 * (start_left + start_right))
-    start_total = max(1.0, start_left + start_right + start_king)
-
     left_frac = np.clip(_safe_frac(player.left_tower_hp, start_princess), 0.0, 1.0)
     right_frac = np.clip(_safe_frac(player.right_tower_hp, start_princess), 0.0, 1.0)
     king_frac = np.clip(_safe_frac(player.king_tower_hp, start_king), 0.0, 1.0)
     princess_frac = np.clip((left_frac + right_frac) / 2.0, 0.0, 1.0)
-    lowest_frac = float(min(left_frac, right_frac, king_frac))
-    return float(princess_frac), float(king_frac), float(lowest_frac), float(start_total)
+    return float(princess_frac), float(king_frac)
+
+
+def _tiebreak_edge_p0(battle: BattleState) -> float:
+    """Return the signed in-game tiebreak edge on a shared HP scale.
+
+    Destroyed towers are crowns, not zero-health tiebreak candidates.  The
+    actual match rule compares the lowest *standing* Crown Tower by absolute
+    hitpoints, so comparing per-tower health fractions would also be wrong for
+    a King Tower versus a Princess Tower.
+    """
+    starting_hps = [
+        float(hp)
+        for towers in battle._starting_tower_hps.values()
+        for hp in towers.values()
+    ]
+    scale = max([1.0, *starting_hps]) * 1000.0
+    return float(
+        (battle._lowest_remaining_tower_hp(0) - battle._lowest_remaining_tower_hp(1))
+        / scale
+    )
 
 
 def objective_potential_p0(battle: BattleState) -> float:
@@ -53,10 +68,10 @@ def objective_potential_p0(battle: BattleState) -> float:
     p0 = battle.players[0]
     p1 = battle.players[1]
 
-    p0_princess_frac, p0_king_frac, p0_lowest_frac, _ = _tower_fractions(battle, 0)
-    p1_princess_frac, p1_king_frac, p1_lowest_frac, _ = _tower_fractions(battle, 1)
+    p0_princess_frac, p0_king_frac = _tower_fractions(battle, 0)
+    p1_princess_frac, p1_king_frac = _tower_fractions(battle, 1)
 
-    crown_diff = float(p0.get_crown_count() - p1.get_crown_count()) / 3.0
+    crown_diff = float(battle.get_crown_count(0) - battle.get_crown_count(1)) / 3.0
     princess_pressure = (1.0 - p1_princess_frac) - (1.0 - p0_princess_frac)
 
     p1_princess_alive = _princess_alive_count(p1.left_tower_hp, p1.right_tower_hp)
@@ -68,7 +83,7 @@ def objective_potential_p0(battle: BattleState) -> float:
     p1_king_weight = 0.0 if (p0_princess_alive == 2 and not p0_king_active) else (0.05 if p0_princess_alive == 2 else (0.25 if p0_princess_alive == 1 else 0.60))
 
     king_pressure = p0_king_weight * (1.0 - p1_king_frac) - p1_king_weight * (1.0 - p0_king_frac)
-    tiebreak_edge = p0_lowest_frac - p1_lowest_frac
+    tiebreak_edge = _tiebreak_edge_p0(battle)
 
     # Penalize early king chip while both princess towers are still alive.
     p0_early_king_chip = (1.0 - p1_king_frac) if p1_princess_alive == 2 else 0.0

@@ -18,8 +18,8 @@ class PlayerState:
     
     # Tower HP 
     king_tower_hp: float = 4824.0      # King tower HP
-    left_tower_hp: float = 3631.0      # Level 11 Princess tower HP (1400 * 2.594)  
-    right_tower_hp: float = 3631.0     # Level 11 Princess tower HP (1400 * 2.594)
+    left_tower_hp: float = 3052.0      # Level 11 Tower Princess HP
+    right_tower_hp: float = 3052.0     # Level 11 Tower Princess HP
     
     def __post_init__(self) -> None:
         """Initialize cycle queue with remaining deck cards"""
@@ -35,7 +35,7 @@ class PlayerState:
     
     def can_play_card(self, card_name: str, card_stats: CardStatsCompat) -> bool:
         """Check if player can afford to play this card"""
-        return (card_name in self.hand and 
+        return (card_name in self.hand and
                 self.elixir >= card_stats.mana_cost and
                 self.is_alive())
     
@@ -52,6 +52,8 @@ class PlayerState:
         if self.cycle_queue:
             next_card = self.cycle_queue.popleft()
             self.hand[hand_index] = next_card
+            # Since the October 2025 Champion-cycle rework, Champions rotate
+            # through the ordinary four-card cycle just like every other card.
             self.cycle_queue.append(card_name)
         
         return True
@@ -66,8 +68,8 @@ class PlayerState:
         """Check if player still has towers standing"""
         return self.king_tower_hp > 0
     
-    def get_crown_count(self) -> int:
-        """Get number of crowns (destroyed towers)"""
+    def get_towers_lost(self) -> int:
+        """Return this player's destroyed Crown Towers as a crown count."""
         if self.king_tower_hp <= 0:
             return 3
         crowns = 0
@@ -76,3 +78,11 @@ class PlayerState:
         if self.right_tower_hp <= 0:
             crowns += 1
         return crowns
+
+    def get_crown_count(self) -> int:
+        """Legacy alias for this player's towers lost.
+
+        Crowns earned require both players and are exposed by
+        ``BattleState.get_crown_count(player_id)``.
+        """
+        return self.get_towers_lost()

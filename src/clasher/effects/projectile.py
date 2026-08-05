@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 from .effect_base import BaseEffect
 
 if TYPE_CHECKING:
-    from ...battle import BattleState
-    from ...arena import Position
+    from ..battle import BattleState
+    from ..arena import Position
 
 
 @dataclass
@@ -17,7 +17,8 @@ class ProjectileLaunch(BaseEffect):
 
     def apply(self, context) -> None:
         """Launch projectile from caster position towards target"""
-        from ...entities import Projectile
+        from ..arena import Position
+        from ..entities import Projectile
 
         # Find launch position (caster's nearest tower or king tower)
         launch_pos = self._get_launch_position(context.battle_state, context.caster_id)
@@ -43,7 +44,7 @@ class ProjectileLaunch(BaseEffect):
 
     def _get_launch_position(self, battle_state: 'BattleState', player_id: int) -> 'Position':
         """Get launch position for projectile"""
-        from ...arena import Position
+        from ..arena import Position
 
         if player_id == 0:
             tower_pos = battle_state.arena.BLUE_KING_TOWER

@@ -10,6 +10,7 @@ from typing import Any, Dict, List
 import numpy as np
 import torch
 
+from clasher.battle import STANDARD_MATCH_TICKS
 from clasher.paths import decks_path as resolve_decks_path
 from clasher.rl.inference_server import InferenceServer
 from clasher.rl.model import MaskedPolicyValueNet
@@ -395,7 +396,7 @@ def _parse_args() -> argparse.Namespace:
     env_p.add_argument("--decisions", type=int, default=4096)
     env_p.add_argument("--decks-path", type=str, default="decks.json")
     env_p.add_argument("--decision-interval", type=int, default=8)
-    env_p.add_argument("--max-ticks", type=int, default=9090)
+    env_p.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     env_p.add_argument("--mirror-match", action="store_true")
     env_p.add_argument("--quiet-engine", action="store_true")
     env_p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
@@ -408,7 +409,7 @@ def _parse_args() -> argparse.Namespace:
     async_p.add_argument("--queue-size", type=int, default=32)
     async_p.add_argument("--decks-path", type=str, default="decks.json")
     async_p.add_argument("--decision-interval", type=int, default=8)
-    async_p.add_argument("--max-ticks", type=int, default=9090)
+    async_p.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     async_p.add_argument("--mirror-match", action="store_true")
     async_p.add_argument("--quiet-engine", action="store_true")
     async_p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")

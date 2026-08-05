@@ -7,32 +7,35 @@ from ..mechanic_base import BaseMechanic
 class CrownTowerScaling(BaseMechanic):
     """Mechanic that scales damage against crown towers"""
     damage_multiplier: float = 1.0  # Typically 0.4 for most spells
+    crown_tower_damage: int | None = None
     stored_original_damage: int = 0
 
     def on_attach(self, entity) -> None:
         """Store original damage value"""
         self.stored_original_damage = entity.damage
 
-    def on_attack_start(self, entity, target) -> None:
-        """Apply crown tower scaling if attacking a tower"""
-        # Check if target is a crown tower (king tower or princess tower)
+    @staticmethod
+    def _is_crown_tower(target) -> bool:
         from ...entities import Building
-        if isinstance(target, Building):
-            # Check if this is one of the main towers by position
-            is_crown_tower = False
 
-            # You could add more sophisticated tower detection here
-            # For now, we'll assume buildings are towers if they're not regular defenses
-            if hasattr(target.card_stats, 'name'):
-                tower_names = ['Tower', 'KingTower', 'PrincessTower']
-                for tower_name in tower_names:
-                    if tower_name in target.card_stats.name:
-                        is_crown_tower = True
-                        break
+        return (
+            isinstance(target, Building)
+            and getattr(getattr(target, "card_stats", None), "name", None)
+            in {"Tower", "KingTower", "PrincessTower"}
+        )
 
-            if is_crown_tower:
-                entity.damage = int(self.stored_original_damage * self.damage_multiplier)
-            else:
-                entity.damage = self.stored_original_damage
-        else:
-            entity.damage = self.stored_original_damage
+    def modify_outgoing_damage(self, entity, target, damage: float) -> float:
+        if not self._is_crown_tower(target):
+            return damage
+        if self.crown_tower_damage is not None:
+            return float(self.crown_tower_damage)
+        return float(int(damage * self.damage_multiplier))
+
+    def projectile_crown_tower_damage(
+        self,
+        entity,
+        damage: float,
+    ) -> float | None:
+        if self.crown_tower_damage is not None:
+            return float(self.crown_tower_damage)
+        return float(int(damage * self.damage_multiplier))

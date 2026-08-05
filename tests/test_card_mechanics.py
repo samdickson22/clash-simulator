@@ -1,15 +1,30 @@
 """
 Test suite for card mechanics implementations.
 
-Tests the special mechanics of cards like Bandit, Electro Wizard, Bomb Tower, and Princess.
+Tests the special mechanics of cards like Bandit, Electro Wizard, and Princess.
 """
 
 import pytest
 
 from clasher.cards.bandit import BanditDash
-from clasher.cards.electro_wizard import ElectroWizardSpawnZap, ElectroWizardStunAttack
-from clasher.cards.bomb_tower import BombTowerDeathBomb, BombTowerBomb
-from clasher.cards.princess import PrincessLongRange, PrincessAreaArrows, PrincessMultiShot
+from clasher.cards.archer_queen import ArcherQueenCloak
+from clasher.cards import CARD_MECHANICS
+from clasher.cards.electro_wizard import ElectroWizardSpawnZap
+from clasher.cards.electro_dragon import ElectroDragonChainLightning
+from clasher.cards.electro_spirit import ElectroSpiritChain
+from clasher.cards.firecracker import AttackRecoil
+from clasher.cards.princess import PrincessLongRange
+from clasher.cards.royal_ghost import InvisibilityWhenNotAttacking
+from clasher.cards.tesla import HideWhenIdle
+from clasher.cards.mega_knight import MegaKnightSlam
+from clasher.cards.miner import UndergroundDeployment
+from clasher.cards.battle_ram import BattleRamCharge
+from clasher.cards.ice_spirit import IceSpiritFreeze
+from clasher.cards.wallbreakers import WallBreakersDemolition
+from clasher.factory.mechanic_detector import detect_mechanics_from_data
+from clasher.mechanics.shared import MultipleTargetAttack, SerializedOnHitBuff
+from clasher.rl.deck_pool import load_deck_pool
+from clasher.card_aliases import resolve_card_name
 
 
 class MockPosition:
@@ -23,6 +38,17 @@ class MockPosition:
 
     def copy(self):
         return MockPosition(self.x, self.y)
+
+
+def test_enabled_mechanics_do_not_depend_on_card_name_registry():
+    enabled_names = {
+        name
+        for deck in load_deck_pool()
+        for card_name in deck
+        for name in (card_name, resolve_card_name(card_name))
+    }
+
+    assert enabled_names.isdisjoint(CARD_MECHANICS)
 
 
 class MockEntity:
@@ -46,8 +72,38 @@ class MockEntity:
     def take_damage(self, damage):
         self.damage_taken = damage
 
-    def apply_stun(self, duration):
+    def apply_stun(self, duration, **_kwargs):
         self.stun_duration = duration
+
+    def apply_slow(
+        self,
+        duration,
+        movement_multiplier,
+        *,
+        attack_speed_multiplier=None,
+        spawn_speed_multiplier=None,
+        **_kwargs,
+    ):
+        self.slow_effect = (
+            duration,
+            movement_multiplier,
+            attack_speed_multiplier,
+            spawn_speed_multiplier,
+        )
+
+    def get_collision_radius(self):
+        return 0.5
+
+    def native_target_distance_to(self, target):
+        return self.position.distance_to(target.position)
+
+    def intersects_native_area(self, area_center, area_radius):
+        return self.position.distance_to(area_center) < (
+            self.get_collision_radius() + area_radius
+        )
+
+    def can_receive_area_damage(self, *_args, **_kwargs):
+        return True
 
 
 class MockBattleState:
@@ -92,14 +148,15 @@ class TestBanditDash:
         entity = MockEntity()
         target = MockEntity()
         dash = BanditDash()
+        dash.on_attach(entity)
 
         # Set up entity with battle state
         entity.battle_state = MockBattleState()
         entity.battle_state.time = 2.0  # 2 seconds have passed (enough for dash cooldown)
         entity.position = MockPosition(0, 0)
-        target.position = MockPosition(4000, 0)  # 4 tiles away
+        target.position = MockPosition(4.1, 0)  # 3.6 tiles to the target edge
 
-        # Should dash at 4 tiles (within 3.5-6 range)
+        # Should dash when the target's near edge is within the 3.5-6 range.
         entity.target_id = 1
         entity.battle_state.entities[1] = target
 
@@ -110,8 +167,10 @@ class TestBanditDash:
 
         dash.on_tick(entity, 100)
 
-        # Should initiate dash
-        assert entity._bandit_dashing
+        # The target enters the interruptible charge phase first; movement is
+        # governed separately by jumpSpeed after the 0.8 s wind-up.
+        assert entity._bandit_charging
+        assert not entity._bandit_dashing
 
 
 class TestElectroWizard:
@@ -135,7 +194,7 @@ class TestElectroWizard:
 
         entity.battle_state = battle_state
         entity.position = MockPosition(0, 0)
-        enemy.position = MockPosition(2000, 0)  # 2 tiles away
+        enemy.position = MockPosition(2.0, 0)  # 2 tiles away
 
         zap = ElectroWizardSpawnZap()
         zap.on_spawn(entity)
@@ -147,10 +206,9 @@ class TestElectroWizard:
         assert enemy.stun_duration == 0.5
 
     def test_stun_attack_init(self):
-        """Test ElectroWizardStunAttack initialization"""
-        stun = ElectroWizardStunAttack()
-        assert stun.stun_duration_ms == 500
-        assert stun.chain_targets == 2
+        """Test the shared multi-target attack defaults."""
+        stun = MultipleTargetAttack()
+        assert stun.target_count == 2
 
     def test_stun_attack_on_hit(self):
         """Test Electro Wizard stun on attack hit"""
@@ -161,168 +219,270 @@ class TestElectroWizard:
         entity.battle_state.entities[0] = entity
         entity.battle_state.entities[1] = target
 
-        stun = ElectroWizardStunAttack()
+        stun = SerializedOnHitBuff(
+            duration_ms=500,
+            movement_multiplier=0.0,
+            attack_multiplier=0.0,
+            spawn_multiplier=0.0,
+        )
         stun.on_attack_hit(entity, target)
 
         # Target should be stunned
         assert hasattr(target, 'stun_duration')
         assert target.stun_duration == 0.5
 
+    def test_serialized_multi_target_attack_is_detected_without_card_name(self):
+        mechanics = detect_mechanics_from_data(
+            {
+                "name": "GenericSplitter",
+                "summonCharacterData": {
+                    "multipleTargets": 3,
+                    "allTargetsHit": True,
+                },
+            }
+        )
 
-class TestBombTower:
-    """Test Bomb Tower mechanics"""
+        assert sum(isinstance(item, MultipleTargetAttack) for item in mechanics) == 1
 
-    def test_death_bomb_init(self):
-        """Test BombTowerDeathBomb initialization"""
-        bomb = BombTowerDeathBomb()
-        assert bomb.explosion_radius_tiles == 3.0
-        assert bomb.explosion_delay_ms == 3000
-        assert bomb.damage_scale == 1.0
+    def test_multi_target_on_hit_buff_preserves_independent_slow_axes(self):
+        entity = MockEntity()
+        target = MockEntity(player_id=1)
+        mechanic = SerializedOnHitBuff(
+            duration_ms=2500,
+            movement_multiplier=0.7,
+            attack_multiplier=0.8,
+            spawn_multiplier=0.9,
+        )
 
-    def test_death_bomb_on_death(self):
-        """Test Bomb Tower death bomb"""
-        tower = MockEntity(damage=150)
-        tower.battle_state = MockBattleState()
+        mechanic.on_attack_hit(entity, target)
 
-        bomb = BombTowerDeathBomb()
-        bomb.on_death(tower)
+        assert target.slow_effect == (2.5, 0.7, 0.8, 0.9)
 
-        # Should create a death bomb entity
-        assert len(tower.battle_state.entities) > 0
+    def test_secondary_hit_uses_committed_damage_and_outgoing_modifiers(self):
+        class DoubleDamage:
+            @staticmethod
+            def modify_outgoing_damage(_entity, _target, damage):
+                return damage * 2
 
-        # The created entity should be a bomb with explosion capability
-        bomb_entities = [e for e in tower.battle_state.entities.values() if hasattr(e, 'explosion_damage')]
-        assert len(bomb_entities) == 1
-        assert bomb_entities[0].explosion_damage == 150  # Full damage for death bomb
+        entity = MockEntity(damage=100)
+        secondary = MockEntity(player_id=1)
+        secondary.id = 2
+        battle = MockBattleState()
+        battle.entities[secondary.id] = secondary
+        mechanic = MultipleTargetAttack(
+            _secondary_target_ids=(secondary.id,),
+        )
+        entity.mechanics = [mechanic, DoubleDamage()]
 
-    def test_bomb_projectile_init(self):
-        """Test BombTowerBomb initialization"""
-        bomb = BombTowerBomb()
-        assert bomb.bomb_lifetime_ms == 2000
-        assert bomb.explosion_radius_tiles == 2.0
+        mechanic.resolve_secondary_attack_hits(
+            entity,
+            MockEntity(player_id=1),
+            250,
+            battle,
+        )
+
+        assert secondary.damage_taken == 500
+
+    def test_hide_when_idle_is_detected_without_building_name(self):
+        mechanics = detect_mechanics_from_data(
+            {
+                "name": "GenericRetractableBuilding",
+                "summonCharacterData": {
+                    "hidesWhenNotAttacking": True,
+                    "hideTimeMS": 800,
+                    "upTimeMS": 800,
+                },
+            }
+        )
+
+        assert sum(isinstance(item, HideWhenIdle) for item in mechanics) == 1
+
+    def test_attack_recoil_is_detected_without_character_name(self):
+        mechanics = detect_mechanics_from_data(
+            {
+                "name": "GenericRecoilAttacker",
+                "summonCharacterData": {
+                    "attackPushback": 1250,
+                },
+            }
+        )
+
+        assert sum(isinstance(item, AttackRecoil) for item in mechanics) == 1
+
+    def test_inactivity_invisibility_is_detected_without_character_name(self):
+        mechanics = detect_mechanics_from_data(
+            {
+                "name": "GenericFadingAttacker",
+                "summonCharacterData": {
+                    "buffWhenNotAttackingData": {
+                        "name": "Invisibility",
+                    },
+                    "buffWhenNotAttackingTime": 1500,
+                    "buffWhenNotAttackingUseAttackRange": True,
+                },
+            }
+        )
+
+        assert (
+            sum(
+                isinstance(item, InvisibilityWhenNotAttacking)
+                for item in mechanics
+            )
+            == 1
+        )
+
+    @pytest.mark.parametrize(
+        ("extra_fields", "expected_type"),
+        (
+            (
+                {
+                    "jumpSpeed": 500,
+                    "dashImmuneToDamageTime": 100,
+                },
+                BanditDash,
+            ),
+            (
+                {
+                    "jumpSpeed": 250,
+                    "dashConstantTime": 800,
+                    "dashLandingTime": 300,
+                    "dashRadius": 2200,
+                    "dashPushBack": 1000,
+                },
+                MegaKnightSlam,
+            ),
+        ),
+    )
+    def test_dash_variant_is_detected_from_payload_shape(
+        self,
+        extra_fields,
+        expected_type,
+    ):
+        mechanics = detect_mechanics_from_data(
+            {
+                "name": "GenericDashAttacker",
+                "summonCharacterData": {
+                    "dashDamage": 100,
+                    "dashMinRange": 3500,
+                    "dashMaxRange": 6000,
+                    **extra_fields,
+                },
+            }
+        )
+
+        assert sum(isinstance(item, expected_type) for item in mechanics) == 1
+
+    @pytest.mark.parametrize(
+        ("character_fields", "projectile_fields", "expected_type"),
+        (
+            (
+                {},
+                {"chainedHitCount": 3, "chainedHitRadius": 4000},
+                ElectroDragonChainLightning,
+            ),
+            (
+                {"kamikaze": True},
+                {"chainedHitCount": 9, "chainedHitRadius": 4000},
+                ElectroSpiritChain,
+            ),
+            (
+                {"kamikaze": True},
+                {
+                    "radius": 1500,
+                    "targetBuffData": {"name": "Freeze"},
+                },
+                IceSpiritFreeze,
+            ),
+            (
+                {
+                    "kamikaze": True,
+                    "deathSpawnCount": 2,
+                    "deathSpawnCharacterData": {"name": "GenericRider"},
+                },
+                {},
+                BattleRamCharge,
+            ),
+            (
+                {
+                    "kamikaze": True,
+                    "areaDamageRadius": 1500,
+                },
+                {"radius": 1500},
+                WallBreakersDemolition,
+            ),
+        ),
+    )
+    def test_kamikaze_and_chain_variant_is_detected_from_payload_shape(
+        self,
+        character_fields,
+        projectile_fields,
+        expected_type,
+    ):
+        mechanics = detect_mechanics_from_data(
+            {
+                "name": "GenericPayloadAttacker",
+                "summonCharacterData": {
+                    **character_fields,
+                    "projectileData": projectile_fields,
+                },
+            }
+        )
+
+        assert sum(isinstance(item, expected_type) for item in mechanics) == 1
+
+    @pytest.mark.parametrize(
+        ("character_fields", "expected_type"),
+        (
+            (
+                {
+                    "abilityData": {
+                        "tid": "TID_ABILITY_INVISIBILITY_RUSH",
+                        "buffData": {
+                            "hitSpeedMultiplier": 280,
+                            "speedMultiplier": -25,
+                        },
+                    },
+                },
+                ArcherQueenCloak,
+            ),
+            (
+                {
+                    "spawnPathfindSpeed": 650,
+                },
+                UndergroundDeployment,
+            ),
+        ),
+    )
+    def test_ability_and_deployment_variant_is_detected_without_card_name(
+        self,
+        character_fields,
+        expected_type,
+    ):
+        mechanics = detect_mechanics_from_data(
+            {
+                "name": "GenericSpecialCharacter",
+                "summonCharacterData": character_fields,
+            }
+        )
+
+        assert sum(isinstance(item, expected_type) for item in mechanics) == 1
 
 
 class TestPrincess:
-    """Test Princess mechanics"""
+    """Test Princess's real single-projectile, nine-tile range mechanic."""
 
     def test_long_range_init(self):
         """Test PrincessLongRange initialization"""
         range_mechanic = PrincessLongRange()
-        assert range_mechanic.range_bonus_tiles == 9.0
-        assert range_mechanic.first_attack_speed_bonus == 0.5
+        assert range_mechanic.range_tiles == 9.0
 
     def test_long_range_on_attach(self):
         """Test Princess range bonus on attach"""
-        entity = MockEntity(range=2000)  # 2 tiles
+        entity = MockEntity(range=2.0)
         range_mechanic = PrincessLongRange()
         range_mechanic.on_attach(entity)
 
-        # Range should be increased to 9 tiles
-        assert entity.range == 9000  # 9 tiles in game units
-        assert entity._princess_first_attack
-
-    def test_area_arrows_init(self):
-        """Test PrincessAreaArrows initialization"""
-        arrows = PrincessAreaArrows()
-        assert arrows.arrow_count == 5
-        assert arrows.arrow_spread_radius_tiles == 1.5
-        assert arrows.area_damage_radius_tiles == 1.0
-
-    def test_multi_shot_init(self):
-        """Test PrincessMultiShot initialization"""
-        multi_shot = PrincessMultiShot()
-        assert multi_shot.initial_arrow_count == 1
-        assert multi_shot.subsequent_arrow_count == 5
-        assert multi_shot.is_first_attack
-
-    def test_first_attack_single_arrow(self):
-        """Test Princess first attack shoots single arrow"""
-        entity = MockEntity()
-        target = MockEntity(player_id=1)
-
-        multi_shot = PrincessMultiShot()
-        multi_shot.on_attack_start(entity, target)
-
-        # Should set up for single arrow
-        assert entity._princess_arrow_count == 1
-        assert not multi_shot.is_first_attack
-
-    def test_subsequent_attack_multi_arrow(self):
-        """Test Princess subsequent attacks shoot multiple arrows"""
-        entity = MockEntity()
-        target = MockEntity(player_id=1)
-
-        multi_shot = PrincessMultiShot()
-        multi_shot.is_first_attack = False  # Simulate after first attack
-        multi_shot.on_attack_start(entity, target)
-
-        # Should set up for multiple arrows
-        assert entity._princess_arrow_count == 5
-
-    def test_princess_projectile_creation(self):
-        """Test Princess creates correct number of projectiles with scaled damage"""
-        entity = MockEntity(damage=500)  # 500 damage
-        target = MockEntity(player_id=1)
-
-        # Set up battle state with next_entity_id
-        entity.battle_state = MockBattleState()
-        entity.battle_state.next_entity_id = 100
-        entity.battle_state.entities[0] = entity
-        entity.battle_state.entities[1] = target
-
-        multi_shot = PrincessMultiShot()
-        multi_shot.is_first_attack = False  # 5 arrow attack
-        multi_shot.on_attack_start(entity, target)
-
-        # Mock the add_entity method to capture created projectiles
-        created_projectiles = []
-        def add_entity(proj):
-            created_projectiles.append(proj)
-        entity.battle_state.add_entity = add_entity
-
-        # Simulate attack hit
-        multi_shot.on_attack_hit(entity, target)
-
-        # Should create 5 projectiles
-        assert len(created_projectiles) == 5
-
-        # Each projectile should have 1/5 of the total damage (100 damage each)
-        for projectile in created_projectiles:
-            assert projectile.damage == 100  # 500 / 5 = 100
-            assert projectile.source_name == "Princess"
-            assert projectile.travel_speed == 1200
-            assert projectile.splash_radius == 300
-
-    def test_princess_first_attack_single_projectile(self):
-        """Test Princess first attack creates single projectile with full damage"""
-        entity = MockEntity(damage=500)  # 500 damage
-        target = MockEntity(player_id=1)
-
-        # Set up battle state with next_entity_id
-        entity.battle_state = MockBattleState()
-        entity.battle_state.next_entity_id = 100
-        entity.battle_state.entities[0] = entity
-        entity.battle_state.entities[1] = target
-
-        multi_shot = PrincessMultiShot()
-        multi_shot.on_attack_start(entity, target)  # Should be first attack (1 arrow)
-
-        # Mock the add_entity method to capture created projectiles
-        created_projectiles = []
-        def add_entity(proj):
-            created_projectiles.append(proj)
-        entity.battle_state.add_entity = add_entity
-
-        # Simulate attack hit
-        multi_shot.on_attack_hit(entity, target)
-
-        # Should create 1 projectile
-        assert len(created_projectiles) == 1
-
-        # Single projectile should have full damage
-        projectile = created_projectiles[0]
-        assert projectile.damage == 500  # Full damage for single arrow
-        assert projectile.source_name == "Princess"
+        assert entity.range == 9.0
 
 
 if __name__ == "__main__":
@@ -342,20 +502,9 @@ if __name__ == "__main__":
     suite.addTest(unittest.FunctionTestCase(TestElectroWizard().test_stun_attack_init))
     suite.addTest(unittest.FunctionTestCase(TestElectroWizard().test_stun_attack_on_hit))
 
-    # Add Bomb Tower tests
-    suite.addTest(unittest.FunctionTestCase(TestBombTower().test_death_bomb_init))
-    suite.addTest(unittest.FunctionTestCase(TestBombTower().test_death_bomb_on_death))
-    suite.addTest(unittest.FunctionTestCase(TestBombTower().test_bomb_projectile_init))
-
     # Add Princess tests
     suite.addTest(unittest.FunctionTestCase(TestPrincess().test_long_range_init))
     suite.addTest(unittest.FunctionTestCase(TestPrincess().test_long_range_on_attach))
-    suite.addTest(unittest.FunctionTestCase(TestPrincess().test_area_arrows_init))
-    suite.addTest(unittest.FunctionTestCase(TestPrincess().test_multi_shot_init))
-    suite.addTest(unittest.FunctionTestCase(TestPrincess().test_first_attack_single_arrow))
-    suite.addTest(unittest.FunctionTestCase(TestPrincess().test_subsequent_attack_multi_arrow))
-    suite.addTest(unittest.FunctionTestCase(TestPrincess().test_princess_projectile_creation))
-    suite.addTest(unittest.FunctionTestCase(TestPrincess().test_princess_first_attack_single_projectile))
 
     # Run tests
     runner = unittest.TextTestRunner(verbosity=2)

@@ -516,7 +516,7 @@ class RandomBattleSimulator(BattleVisualizer):
             "RoyalGhost": "Ghost",
             # Proxy mappings requested
             "Bandit": "Assassin",
-            "Lumberjack": "AxeMan",
+            "Lumberjack": "RageBarbarian",
             # Keepers / already matching internal keys
             "Skeletons": "Skeletons",
             "Princess": "Princess",

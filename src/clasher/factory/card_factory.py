@@ -8,6 +8,8 @@ from .mechanic_detector import detect_mechanics_from_data, detect_effects_from_d
 
 def _determine_card_kind(entry: Dict[str, Any]) -> CardKind:
     """Determine card kind from gamedata entry"""
+    if entry.get("rarity") == "Champion":
+        return "champion"
     tid_type = entry.get("tidType")
     if tid_type == "TID_CARD_TYPE_CHARACTER":
         return "troop"
@@ -15,8 +17,6 @@ def _determine_card_kind(entry: Dict[str, Any]) -> CardKind:
         return "spell"
     elif tid_type == "TID_CARD_TYPE_BUILDING":
         return "building"
-    elif entry.get("rarity") == "Champion":
-        return "champion"
     return "troop"  # Default
 
 
@@ -94,9 +94,12 @@ def _create_troop_stats(entry: Dict[str, Any]) -> Optional[TroopStats]:
         hit_speed_ms=char_data.get("hitSpeed"),
         sight_range_tiles=char_data.get("sightRange", 0) / 1000.0,
         collision_radius_tiles=char_data.get("collisionRadius", 0) / 1000.0,
-        speed_tiles_per_min=char_data.get("speed"),
+        speed_logic_units_per_tick=char_data.get("speed"),
         deploy_time_ms=char_data.get("deployTime", 1000),
-        load_time_ms=char_data.get("loadTime", 1000),
+        # An omitted load time means the attack can be fully preloaded.  Use
+        # the card's own hit interval rather than an unrelated one-second
+        # default (notably, X-Bow omits loadTime and has a 0.3 s interval).
+        load_time_ms=char_data.get("loadTime", char_data.get("hitSpeed", 0)),
         summon_count=entry.get("summonNumber")
     )
 

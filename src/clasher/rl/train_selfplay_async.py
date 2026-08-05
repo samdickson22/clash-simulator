@@ -14,6 +14,7 @@ import numpy as np
 import torch
 from torch import nn
 
+from clasher.battle import STANDARD_MATCH_TICKS
 from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, resolve_path
 from clasher.rl.benchmark import run_async_queue_benchmark
 from clasher.rl.inference_server import InferenceServer
@@ -602,7 +603,7 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--seed", type=int, default=13)
     p.add_argument("--updates", type=int, default=2000)
     p.add_argument("--decision-interval", type=int, default=8)
-    p.add_argument("--max-ticks", type=int, default=9090)
+    p.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     p.add_argument("--learning-rate", type=float, default=3e-4)
     p.add_argument("--gamma", type=float, default=0.995)
     p.add_argument("--gae-lambda", type=float, default=0.95)
@@ -1042,9 +1043,9 @@ def main() -> None:
             effective_decisions_per_sec = (transitions_count / 2.0) / max(
                 1e-6, collect_elapsed + update_elapsed
             )
-            approx_games_per_min = decisions_per_sec / (9090.0 / args.decision_interval) * 60.0
+            approx_games_per_min = decisions_per_sec / (args.max_ticks / args.decision_interval) * 60.0
             effective_games_per_min = (
-                effective_decisions_per_sec / (9090.0 / args.decision_interval) * 60.0
+                effective_decisions_per_sec / (args.max_ticks / args.decision_interval) * 60.0
             )
             should_log_perf = (
                 update == start_update

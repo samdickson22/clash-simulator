@@ -1,4 +1,6 @@
 import json
+import os
+from pathlib import Path
 import subprocess
 import sys
 
@@ -21,7 +23,15 @@ def test_gym_smoke_debug_dump_jsonl(tmp_path):
         "--dump-max-legal",
         "32",
     ]
-    subprocess.run(cmd, check=True, capture_output=True, text=True)
+    src_dir = Path(__file__).resolve().parents[1] / "src"
+    existing_pythonpath = os.environ.get("PYTHONPATH")
+    env = os.environ.copy()
+    env["PYTHONPATH"] = (
+        f"{src_dir}{os.pathsep}{existing_pythonpath}"
+        if existing_pythonpath
+        else str(src_dir)
+    )
+    subprocess.run(cmd, check=True, capture_output=True, text=True, env=env)
 
     assert dump_path.exists()
     lines = dump_path.read_text(encoding="utf-8").strip().splitlines()

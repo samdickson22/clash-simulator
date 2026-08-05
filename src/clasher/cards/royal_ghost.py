@@ -8,23 +8,49 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class RoyalGhostFade(BaseMechanic):
-    """Handles Royal Ghost's invisibility when no enemies are nearby."""
-    fade_radius: float = 4.5
-    grace_period_ms: int = 600
+class InvisibilityWhenNotAttacking(BaseMechanic):
+    """Apply serialized inactivity-triggered invisibility."""
+    fade_delay_ms: int = 2000
+    use_attack_range: bool = False
+    time_since_attack_ms: float = 0.0
 
     def on_attach(self, entity: 'Entity') -> None:
-        entity._stealth_until = 0
+        # Royal Ghost enters the arena invisible; the delay applies only when
+        # re-entering stealth after an attack.
+        entity._stealth_until = 2**31 - 1
+        raw = getattr(entity.card_stats, "_raw_entry", {}) or {}
+        char_data = raw.get("summonCharacterData", {}) or {}
+        self.fade_delay_ms = int(char_data.get("buffWhenNotAttackingTime", self.fade_delay_ms))
+        self.use_attack_range = bool(
+            char_data.get("buffWhenNotAttackingUseAttackRange", False)
+        )
+        self.time_since_attack_ms = float(self.fade_delay_ms)
 
-    def on_tick(self, entity: 'Entity', dt_ms: int) -> None:
+    def on_object_tick(self, entity: 'Entity', dt_ms: int) -> None:
         if not hasattr(entity, 'battle_state'):
             return
-        battle_state = entity.battle_state
-        now_ms = int(battle_state.time * 1000)
-        for other in list(battle_state.entities.values()):
-            if other.player_id == entity.player_id or not other.is_alive:
-                continue
-            if entity.position.distance_to(other.position) <= self.fade_radius:
-                entity._stealth_until = 0
+        if self.use_attack_range:
+            target = entity.battle_state.entities.get(
+                getattr(entity, "target_id", None)
+            )
+            if (
+                target is not None
+                and entity._is_valid_target(target)
+                and entity.is_within_attack_reach(target)
+            ):
+                # This serialized mode defines inactivity by combat reach,
+                # not by the elapsed time since the last damage frame. A
+                # slow or stun can stretch the next swing past the fade delay
+                # without making the Ghost leave an ongoing melee.
+                self.time_since_attack_ms = 0.0
                 return
-        entity._stealth_until = now_ms + self.grace_period_ms
+        self.time_since_attack_ms += max(0.0, float(dt_ms))
+        if self.time_since_attack_ms >= self.fade_delay_ms:
+            entity._stealth_until = 2**31 - 1
+
+    def on_attack_start(self, entity: 'Entity', target: 'Entity') -> None:
+        self.time_since_attack_ms = 0.0
+        entity._stealth_until = 0
+
+
+RoyalGhostFade = InvisibilityWhenNotAttacking

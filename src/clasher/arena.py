@@ -1,5 +1,9 @@
 from dataclasses import dataclass
+import math
 from typing import Tuple, List, Optional
+
+from .kinematics import tiles_to_logic_units
+from .native_tilemap import nearest_native_path_id
 
 
 @dataclass 
@@ -61,6 +65,46 @@ class TileGrid:
     def is_blocked_tile(self, x: int, y: int) -> bool:
         """Check if a tile coordinate is blocked (unplayable)"""
         return (x, y) in self.BLOCKED_TILES
+
+    def native_path_id_at(
+        self,
+        pos: Position,
+        other_x: Optional[float] = None,
+    ) -> int:
+        """Return the lane selected by the standard arena's native path grid."""
+
+        return nearest_native_path_id(
+            tiles_to_logic_units(pos.x),
+            tiles_to_logic_units(pos.y),
+            (
+                -1
+                if other_x is None
+                else tiles_to_logic_units(other_x)
+            ),
+        )
+
+    @staticmethod
+    def _touching_tiles(value: float, limit: int) -> tuple[int, ...]:
+        """Return every tile touched by one continuous coordinate."""
+        rounded = round(value)
+        if math.isclose(value, rounded, abs_tol=1e-9):
+            return tuple(
+                tile
+                for tile in (rounded - 1, rounded)
+                if 0 <= tile < limit
+            )
+        tile = math.floor(value)
+        return (tile,) if 0 <= tile < limit else ()
+
+    def is_blocked_position(self, pos: Position) -> bool:
+        """Return whether a point touches any blocked arena tile."""
+        touching_x = self._touching_tiles(pos.x, self.width)
+        touching_y = self._touching_tiles(pos.y, self.height)
+        return any(
+            self.is_blocked_tile(tile_x, tile_y)
+            for tile_x in touching_x
+            for tile_y in touching_y
+        )
     
     def is_walkable(self, pos: Position) -> bool:
         """Check if a position is walkable (not river, not blocked tiles)"""
@@ -68,16 +112,18 @@ class TileGrid:
         if not self.is_valid_position(pos):
             return False
         
-        # Check if it's a blocked tile
-        tile_x, tile_y = int(pos.x), int(pos.y)
-        if self.is_blocked_tile(tile_x, tile_y):
+        # A point exactly on a tile edge touches both adjacent tiles. Treat it
+        # as blocked if either tile is blocked; assigning boundaries with
+        # ``int`` makes the upper/right arena behave differently after a 180°
+        # rotation and can place an entity center on the edge of a fence.
+        if self.is_blocked_position(pos):
             return False
         
         # Check if it's in the river (y=15-16), unless it's on a bridge
-        if self.RIVER_Y1 <= pos.y <= self.RIVER_Y2:
+        if self.RIVER_Y1 <= pos.y <= self.RIVER_Y2 + 1.0:
             # Check if on bridge (3 tiles wide each, allowing fractional positions within tiles)
-            on_left_bridge = 2.0 <= pos.x < 5.0   # Left bridge spans tiles 2,3,4 (x=2.0 to x=4.999...)
-            on_right_bridge = 13.0 <= pos.x < 16.0  # Right bridge spans tiles 13,14,15 (x=13.0 to x=15.999...)
+            on_left_bridge = 2.0 <= pos.x <= 5.0
+            on_right_bridge = 13.0 <= pos.x <= 16.0
             return on_left_bridge or on_right_bridge
         
         return True
@@ -138,12 +184,16 @@ class TileGrid:
         if not is_spell and self.is_tower_tile(pos, battle_state):
             return False
         
-        # Most spells can be deployed anywhere on the battlefield
-        # However, rolling projectiles (Log, Barbarian Barrel) follow troop deployment rules
+        # Most spells can be deployed anywhere.  Payloads serialized as
+        # spellAsDeploy (Log, Barbarian Barrel, Royal Delivery, etc.) follow
+        # the player's current troop deployment territory.
         if is_spell:
-            # Check if this is a rolling projectile spell that requires deployment territory validation
-            if self._is_rolling_projectile_spell(spell_obj):
-                # Rolling projectiles must follow troop deployment rules
+            if (
+                getattr(spell_obj, "requires_walkable_target", False)
+                and not self.is_walkable(pos)
+            ):
+                return False
+            if self._requires_deploy_zone_spell(spell_obj):
                 pass  # Continue to deployment zone validation below
             else:
                 # Regular spells can be deployed anywhere
@@ -176,6 +226,14 @@ class TileGrid:
         # Import here to avoid circular imports
         from .spells import RollingProjectileSpell
         return isinstance(spell_obj, RollingProjectileSpell)
+
+    def _requires_deploy_zone_spell(self, spell_obj) -> bool:
+        if not spell_obj:
+            return False
+        return bool(
+            getattr(spell_obj, "requires_territory", False)
+            or self._is_rolling_projectile_spell(spell_obj)
+        )
     
     def world_to_tile(self, x: float, y: float) -> Tuple[int, int]:
         """Convert world coordinates to tile coordinates"""
@@ -214,7 +272,7 @@ class TileGrid:
             dx = abs(pos.x - tower_pos.x)
             dy = abs(pos.y - tower_pos.y)
             
-            if dx <= radius and dy <= radius:
+            if dx <= radius + 1e-9 and dy <= radius + 1e-9:
                 return True
         
         return False
@@ -261,7 +319,7 @@ class TileGrid:
             
             # Check if Y coordinate intersects with tower area
             dy = abs(y - tower_pos.y)
-            if dy <= radius:
+            if dy <= radius + 1e-9:
                 # Y coordinate overlaps with tower, add X range to blocked list
                 x_min = tower_pos.x - radius
                 x_max = tower_pos.x + radius

@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 from .effect_base import BaseEffect
 
 if TYPE_CHECKING:
-    from ...battle import BattleState
-    from ...arena import Position
+    from ..battle import BattleState
+    from ..arena import Position
 
 
 @dataclass
@@ -25,11 +25,10 @@ class DirectDamage(BaseEffect):
             if entity.player_id == context.caster_id or not entity.is_alive:
                 continue
 
-            # Check if entity is within damage radius
-            distance = entity.position.distance_to(target_pos)
-            entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
-
-            if distance <= (self.radius_tiles + entity_radius):
+            if (
+                entity.intersects_native_area(target_pos, self.radius_tiles)
+                and entity.can_receive_area_damage()
+            ):
                 entity.take_damage(self.damage)
                 targets_hit += 1
                 context.affected_entities.append(entity)

@@ -13,6 +13,8 @@ class ElectroWizardSpawnZap(BaseMechanic):
     radius_tiles: float = 4.0  # Deploy zap radius
     stun_duration_ms: int = 500  # 0.5 seconds
     damage_scale: float = 0.5  # Deploy zap deals 50% of EWiz damage
+    spawn_damage: float = 0.0
+    crown_tower_damage_multiplier: float = 1.0
 
     def on_attach(self, entity: 'Entity') -> None:
         raw = getattr(entity.card_stats, "_raw_entry", {}) if hasattr(entity, "card_stats") else {}
@@ -22,70 +24,48 @@ class ElectroWizardSpawnZap(BaseMechanic):
                 self.radius_tiles = area_data["radius"] / 1000.0
             if area_data.get("buffTime") is not None:
                 self.stun_duration_ms = area_data["buffTime"]
-            if area_data.get("damage") is not None and getattr(entity, "damage", 0):
-                # Convert to a scale against current unit damage so level scaling is preserved.
-                base_damage = float(getattr(entity, "damage", 1) or 1)
-                self.damage_scale = float(area_data["damage"]) / base_damage
+            if area_data.get("damage") is not None:
+                scaler = getattr(entity.card_stats, "get_scaled_stat", None)
+                raw_damage = area_data["damage"]
+                self.spawn_damage = float(scaler(raw_damage) if callable(scaler) else raw_damage)
+            if area_data.get("crownTowerDamagePercent") is not None:
+                self.crown_tower_damage_multiplier = max(
+                    0.0,
+                    1.0 + area_data["crownTowerDamagePercent"] / 100.0,
+                )
 
     def on_spawn(self, entity: 'Entity') -> None:
         """Zap on deploy - stuns and damages enemies"""
         if not hasattr(entity, 'battle_state'):
             return
         battle_state = entity.battle_state
-        damage = (entity.damage or 0) * self.damage_scale
+        damage = self.spawn_damage or (entity.damage or 0) * self.damage_scale
 
+        from ..entities import Building
+
+        # Both spawn bolts are committed from the landing position at once.
+        # Snapshot targets before a killed unit's death effect can displace the
+        # Wizard and alter who receives the same spawn zap.
+        impact_position = type(entity.position)(entity.position.x, entity.position.y)
+        targets = []
         for other in list(battle_state.entities.values()):
             if other.player_id == entity.player_id or not other.is_alive:
                 continue
-            distance = entity.position.distance_to(other.position)
-            distance_tiles = distance / 1000.0 if distance > 100 else distance
-            if distance_tiles <= self.radius_tiles:
-                other.take_damage(damage)
-                if hasattr(other, 'apply_stun'):
-                    other.apply_stun(self.stun_duration_ms / 1000.0)
-
-
-@dataclass
-class ElectroWizardStunAttack(BaseMechanic):
-    """Electro Wizard's attacks stun targets"""
-    stun_duration_ms: int = 500  # 0.5 seconds
-    chain_targets: int = 2  # Attack splits to 2 targets
-    chain_damage_scale: float = 1.0
-
-    def on_attack_hit(self, entity: 'Entity', target: 'Entity') -> None:
-        """Apply stun when Electro Wizard hits a target"""
-        if hasattr(target, 'apply_stun'):
-            target.apply_stun(self.stun_duration_ms / 1000.0)
-
-        # Find secondary target for chain lightning
-        if hasattr(entity, 'battle_state') and self.chain_targets > 1:
-            self._apply_chain_lightning(entity, target)
-
-    def _apply_chain_lightning(self, entity: 'Entity', primary_target: 'Entity') -> None:
-        """Apply chain lightning to secondary targets"""
-        battle_state = entity.battle_state
-        range_value = entity.range if hasattr(entity, 'range') else 3.0
-        radius_tiles = range_value / 1000.0 if range_value > 100 else range_value
-
-        # Find nearest secondary target
-        secondary_target = None
-        min_distance = float('inf')
-
-        for other in list(battle_state.entities.values()):
-            if (other == primary_target or
-                other.player_id == entity.player_id or
-                not other.is_alive):
+            if getattr(other, "entity_kind", 4) in {2, 3}:
                 continue
+            if other.intersects_native_area(
+                impact_position,
+                self.radius_tiles,
+            ) and other.can_receive_area_damage("ElectroWizard"):
+                targets.append(other)
 
-            distance = primary_target.position.distance_to(other.position)
-            distance_tiles = distance / 1000.0 if distance > 100 else distance
-            if distance_tiles <= radius_tiles and distance_tiles < min_distance:
-                secondary_target = other
-                min_distance = distance_tiles
-
-        # Apply damage and stun to secondary target
-        if secondary_target:
-            damage = (entity.damage or 0) * self.chain_damage_scale
-            secondary_target.take_damage(damage)
-            if hasattr(secondary_target, 'apply_stun'):
-                secondary_target.apply_stun(self.stun_duration_ms / 1000.0)
+        for other in targets:
+            target_damage = damage
+            if isinstance(other, Building) and getattr(other.card_stats, "name", None) in {
+                "Tower",
+                "KingTower",
+            }:
+                target_damage *= self.crown_tower_damage_multiplier
+            other.take_damage(target_damage)
+            if other.is_alive and hasattr(other, 'apply_stun'):
+                other.apply_stun(self.stun_duration_ms / 1000.0)

@@ -2,11 +2,14 @@ import os
 import sys
 from collections import deque
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Building, Troop
+from clasher.entities import AreaEffect, Building, Projectile, Troop
+from clasher.spells import SPELL_REGISTRY
 
 
 def _get_tower(battle: BattleState, player_id: int, tower: str) -> Building:
@@ -31,12 +34,159 @@ def _prepare_single_card(battle: BattleState, player_id: int, card_name: str) ->
     player.cycle_queue = deque()
 
 
+def _finish_deployment(entity: Troop | Building) -> None:
+    """Advance a hand-played entity to its active state for mechanics-only tests."""
+    entity.deploy_delay_remaining = 0.0
+    entity.placement_pending = False
+    entity.on_spawn()
+
+
+def _spawn_king_activation_target(battle: BattleState) -> tuple[Building, Troop]:
+    blue_king = _get_tower(battle, 0, "king")
+    knight_stats = battle.card_loader.get_card("Knight")
+    assert knight_stats is not None
+    battle._spawn_troop(Position(9.0, 7.0), 1, knight_stats)
+    knight = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop)
+        and entity.player_id == 1
+        and entity.card_stats.name == "Knight"
+    )
+    _finish_deployment(knight)
+    knight.speed = 0.0
+    return blue_king, knight
+
+
+def _king_has_launched(battle: BattleState) -> bool:
+    return any(
+        isinstance(entity, Projectile) and entity.source_name == "KingTower"
+        for entity in battle.entities.values()
+    )
+
+
+def test_tournament_towers_use_live_tower_troop_stats_without_card_rescaling():
+    battle = BattleState()
+    princess = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Building) and entity.card_stats.name == "Tower"
+    )
+    king = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Building) and entity.card_stats.name == "KingTower"
+    )
+
+    assert (princess.hitpoints, princess.damage, princess.card_stats.collision_radius) == (
+        3052,
+        109,
+        1.0,
+    )
+    assert (king.hitpoints, king.damage, king.card_stats.collision_radius) == (
+        4824,
+        109,
+        1.4,
+    )
+    assert princess.card_stats.projectile_speed == 600
+    assert king.card_stats.projectile_speed == 1000
+
+
 def test_king_tower_starts_inactive_and_activates_when_hit():
     battle = BattleState()
     blue_king = _get_tower(battle, 0, "king")
     assert getattr(blue_king, "_tower_active", True) is False
     blue_king.take_damage(1)
     assert getattr(blue_king, "_tower_active", False) is True
+    assert blue_king.activation_delay_remaining == 3.3
+    assert blue_king.activation_first_hit_delay_remaining == 0.7
+    assert blue_king.card_stats.load_time == 500
+    assert blue_king.card_stats.first_hit_time == 500
+    assert blue_king.attack_cooldown == 0.5
+
+
+def test_building_on_destroyed_tower_footprint_cannot_resurrect_crown_hp():
+    battle = BattleState()
+    blue_left = _get_tower(battle, 0, "left")
+    blue_left.take_damage(blue_left.hitpoints)
+    battle._cleanup_dead_entities()
+    assert battle.players[0].left_tower_hp == 0
+
+    cannon_stats = battle.card_loader.get_card("Cannon")
+    assert cannon_stats is not None
+    cannon = battle._spawn_entity(
+        Building,
+        Position(
+            battle.arena.BLUE_LEFT_TOWER.x,
+            battle.arena.BLUE_LEFT_TOWER.y,
+        ),
+        0,
+        cannon_stats,
+    )
+    battle._update_tower_hp()
+
+    assert cannon.hitpoints > 0
+    assert battle.players[0].left_tower_hp == 0
+    assert battle.get_crown_count(1) == 1
+
+
+def test_king_tower_activation_takes_four_seconds_before_first_shot():
+    battle = BattleState()
+    blue_king, _ = _spawn_king_activation_target(battle)
+
+    blue_king.take_damage(1)
+    blue_king.update(3.99, battle)
+    assert not _king_has_launched(battle)
+
+    blue_king.update(0.01, battle)
+    assert _king_has_launched(battle)
+
+
+def test_short_stun_during_king_activation_does_not_change_first_shot_time():
+    battle = BattleState()
+    blue_king, _ = _spawn_king_activation_target(battle)
+
+    assert SPELL_REGISTRY["Zap"].cast(
+        battle,
+        1,
+        Position(blue_king.position.x, blue_king.position.y),
+    )
+    assert blue_king.stun_timer == 0.5
+    for _ in range(79):
+        blue_king.update(0.05, battle)
+    assert not _king_has_launched(battle)
+
+    blue_king.update(0.05, battle)
+    assert _king_has_launched(battle)
+
+
+def test_freeze_does_not_add_a_new_windup_after_king_activation():
+    battle = BattleState()
+    blue_king, _ = _spawn_king_activation_target(battle)
+
+    assert SPELL_REGISTRY["Freeze"].cast(
+        battle,
+        1,
+        Position(blue_king.position.x, blue_king.position.y),
+    )
+    freeze = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, AreaEffect) and entity.spell_name == "Freeze"
+    )
+    freeze.update(0.0, battle)
+    assert blue_king.stun_timer == 4.0
+    for _ in range(80):
+        blue_king.update(0.05, battle)
+
+    # Combat runs before status expiry on the final frozen frame. The tower
+    # has nevertheless completed and armed its activation shot.
+    assert not _king_has_launched(battle)
+    assert blue_king.stun_timer == 0.0
+    assert blue_king.attack_cooldown == 0.0
+
+    blue_king.update(0.05, battle)
+    assert _king_has_launched(battle)
 
 
 def test_king_tower_activates_when_princess_tower_destroyed():
@@ -87,6 +237,22 @@ def test_miner_can_deploy_outside_normal_zone():
     assert battle.deploy_card(0, "Miner", Position(9.0, 24.0))
 
 
+def test_wide_troop_cards_respect_their_serialized_edge_tile_margin():
+    battle = BattleState()
+    _prepare_single_card(battle, 0, "RoyalHogs")
+
+    assert not battle.deploy_card(0, "RoyalHogs", Position(1.5, 10.5))
+    assert battle.deploy_card(0, "RoyalHogs", Position(2.5, 10.5))
+    hogs = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop)
+        and entity.player_id == 0
+        and entity.card_stats.name == "RoyalHogs"
+    ]
+    assert len(hogs) == 4
+
+
 def test_cannot_deploy_non_spell_on_building_footprint():
     battle = BattleState()
     player = battle.players[0]
@@ -96,6 +262,36 @@ def test_cannot_deploy_non_spell_on_building_footprint():
     player.cycle_queue = deque()
     assert battle.deploy_card(0, "Cannon", Position(9.0, 10.0))
     assert not battle.deploy_card(0, "Knight", Position(9.0, 10.0))
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_same_decision_building_commands_share_live_placement_state(fast_path):
+    battle = BattleState(fast_path=fast_path)
+    red_left = _get_tower(battle, 1, "left")
+    red_left.take_damage(red_left.hitpoints)
+    battle._update_tower_hp()
+
+    for player_id in (0, 1):
+        _prepare_single_card(battle, player_id, "Cannon")
+
+    # Destroying the red-left tower opens this pocket to player zero while it
+    # remains ordinary home territory for player one. The first accepted
+    # command owns the footprint; the second command in the same decision
+    # window must see it before any simulation tick runs.
+    position = Position(6.5, 18.5)
+    assert battle.deploy_card(0, "Cannon", position)
+    assert not battle.deploy_card(1, "Cannon", position)
+    assert len(
+        [
+            entity
+            for entity in battle.entities.values()
+            if (
+                isinstance(entity, Building)
+                and entity.is_alive
+                and entity.card_stats.name == "Cannon"
+            )
+        ]
+    ) == 1
 
 
 def test_ground_troop_does_not_move_through_building_space():
@@ -140,7 +336,7 @@ def test_elixir_phase_regen_rates():
         battle.step()
     regular = player.elixir
     # Double
-    battle.time = 180.0
+    battle.time = 120.0
     player.elixir = 0.0
     for _ in range(30):
         battle.step()
@@ -172,17 +368,62 @@ def test_eight_card_cycle_rotates_played_card_to_back():
     assert player.cycle_queue[-1] == "Knight"
 
 
+def test_champion_cycles_normally_and_can_be_redeployed_while_alive():
+    battle = BattleState()
+    player = battle.players[0]
+    cycle = ["ArcherQueen", "Knight", "Skeletons", "IceSpirit", "Cannon", "Fireball", "Log", "Archers"]
+    player.elixir = 10.0
+    player.deck = cycle.copy()
+    player.hand = cycle[:4].copy()
+    player.cycle_queue = deque(cycle[4:])
+
+    assert battle.deploy_card(0, "ArcherQueen", Position(9.0, 10.0))
+    assert "ArcherQueen" not in player.hand
+    assert player.cycle_queue[-1] == "ArcherQueen"
+
+    for card_name, position in (
+        ("Knight", Position(7.0, 10.0)),
+        ("Skeletons", Position(11.0, 10.0)),
+        ("IceSpirit", Position(6.0, 11.0)),
+        ("Cannon", Position(12.0, 11.0)),
+    ):
+        player.elixir = 10.0
+        assert battle.deploy_card(0, card_name, position)
+
+    assert "ArcherQueen" in player.hand
+    first_queen = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop)
+        and entity.player_id == 0
+        and entity.card_stats.name == "ArcherQueen"
+    )
+    assert first_queen.is_alive
+
+    player.elixir = 10.0
+    assert battle.deploy_card(0, "ArcherQueen", Position(9.0, 11.0))
+    queens = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop)
+        and entity.player_id == 0
+        and entity.card_stats.name == "ArcherQueen"
+        and entity.is_alive
+    ]
+    assert len(queens) == 2
+
+
 def test_sudden_death_and_tiebreaker_damage():
     battle = BattleState()
-    battle.time = 300.0
+    battle.time = 180.0
     battle._check_win_conditions()
     assert battle.sudden_death
     assert not battle.game_over
 
-    # No crown change; force tiebreak window and uneven tower damage.
+    # No crown change; reach the 5:00 tiebreak with uneven tower health.
     red_left = _get_tower(battle, 1, "left")
     red_left.hitpoints -= 200
-    battle.time = 360.0
+    battle.time = 300.0
     battle._check_win_conditions()
     assert battle.game_over
     assert battle.winner == 0
@@ -190,7 +431,7 @@ def test_sudden_death_and_tiebreaker_damage():
 
 def test_tiebreaker_uses_lowest_tower_hp_when_total_damage_equal():
     battle = BattleState()
-    battle.time = 360.0
+    battle.time = 300.0
 
     # Equal total damage (200 each), but player 1 has a lower minimum tower HP.
     blue_left = _get_tower(battle, 0, "left")
@@ -205,15 +446,57 @@ def test_tiebreaker_uses_lowest_tower_hp_when_total_damage_equal():
     assert battle.winner == 0
 
 
-def test_tiebreaker_never_returns_draw():
+def test_tiebreaker_exact_lowest_tower_health_tie_is_draw():
     battle = BattleState()
-    battle.time = 360.0
+    battle.time = 300.0
     battle._check_win_conditions()
     assert battle.game_over
-    assert battle.winner in (0, 1)
+    assert battle.winner is None
 
 
-def test_stun_resets_attack_timer():
+def test_simultaneous_king_tower_destruction_is_a_draw():
+    battle = BattleState()
+    blue_king = _get_tower(battle, 0, "king")
+    red_king = _get_tower(battle, 1, "king")
+
+    blue_king.take_damage(blue_king.hitpoints)
+    red_king.take_damage(red_king.hitpoints)
+    battle.step()
+
+    assert battle.game_over
+    assert battle.winner is None
+
+
+def test_regulation_ends_at_three_minutes_on_crown_advantage():
+    battle = BattleState()
+    red_left = _get_tower(battle, 1, "left")
+    red_left.take_damage(red_left.hitpoints)
+
+    battle.time = 179.999
+    battle._check_win_conditions()
+    assert not battle.game_over
+
+    battle.time = 180.0
+    battle._check_win_conditions()
+    assert battle.game_over
+    assert battle.winner == 0
+
+
+def test_first_overtime_crown_advantage_ends_match_immediately():
+    battle = BattleState()
+    battle.time = 180.0
+    battle._check_win_conditions()
+    assert battle.sudden_death
+
+    red_left = _get_tower(battle, 1, "left")
+    red_left.take_damage(red_left.hitpoints)
+    battle.time = 180.1
+    battle._check_win_conditions()
+    assert battle.game_over
+    assert battle.winner == 0
+
+
+def test_stun_restarts_attack_windup_and_clears_current_target_lock():
     battle = BattleState()
     _prepare_single_card(battle, 0, "Knight")
     assert battle.deploy_card(0, "Knight", Position(9.0, 10.0))
@@ -221,9 +504,16 @@ def test_stun_resets_attack_timer():
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "Knight"
     )
-    knight.attack_cooldown = 0.0
+    _finish_deployment(knight)
+    knight.attack_cooldown = 0.17
+    knight.target_id = next(
+        entity.id
+        for entity in battle.entities.values()
+        if isinstance(entity, Building) and entity.player_id == 1
+    )
     knight.apply_stun(0.5)
-    assert knight.attack_cooldown >= (knight.card_stats.hit_speed / 1000.0)
+    assert knight.attack_cooldown == knight.card_stats.first_hit_time / 1000.0
+    assert knight.target_id is None
 
 
 def test_slow_increases_attack_interval():
@@ -234,11 +524,17 @@ def test_slow_increases_attack_interval():
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "Knight"
     )
-    knight.deploy_delay_remaining = 0.0
+    _finish_deployment(knight)
     base_interval = knight.get_attack_interval_seconds()
     knight.apply_slow(2.0, 0.65)
     slowed_interval = knight.get_attack_interval_seconds()
     assert slowed_interval > base_interval
+
+    knight.attack_cooldown = 1.0
+    knight._has_attacked_once = True
+    knight.update(battle.dt, battle)
+    # Native combat clocks truncate 50ms * 65% to 32ms of work.
+    assert abs(knight.attack_cooldown - (1.0 - 0.032)) < 1e-9
 
     for _ in range(80):
         battle.step()
@@ -285,6 +581,12 @@ def test_ground_only_unit_cannot_attack_air():
     assert len(red_minions) >= 1
     for troop in [blue_knight, *red_minions]:
         troop.deploy_delay_remaining = 0.0
+    # This test isolates Knight's ground-only targeting. With authentic
+    # edge-to-edge tower reach, the nearby friendly princess tower can
+    # otherwise shoot the Minions during the observation window.
+    for entity in battle.entities.values():
+        if isinstance(entity, Building):
+            entity.attack_cooldown = 999.0
 
     minion_hp_before = [m.hitpoints for m in red_minions]
     for _ in range(120):
@@ -306,6 +608,7 @@ def test_balloon_death_spawns_timed_explosive():
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "Balloon"
     )
+    _finish_deployment(balloon)
     balloon.take_damage(balloon.hitpoints)
     battle.step()
 
@@ -322,6 +625,7 @@ def test_battle_ram_death_spawns_barbarians():
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "BattleRam"
     )
+    _finish_deployment(ram)
     ram.take_damage(ram.hitpoints)
     battle.step()
     barbarians = [
@@ -339,6 +643,7 @@ def test_golem_death_spawns_golemites():
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "Golem"
     )
+    _finish_deployment(golem)
     golem.take_damage(golem.hitpoints)
     battle.step()
     golemites = [
@@ -356,6 +661,7 @@ def test_skeleton_barrel_death_spawns_skeletons():
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "SkeletonBalloon"
     )
+    _finish_deployment(barrel)
     barrel.take_damage(barrel.hitpoints)
     for _ in range(40):
         battle.step()
@@ -384,10 +690,10 @@ def test_freeze_spell_immobilizes_target():
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 1 and e.card_stats.name == "Knight"
     )
-    knight.deploy_delay_remaining = 0.0
+    _finish_deployment(knight)
     assert battle.deploy_card(0, "Freeze", Position(9.0, 18.0))
 
-    for _ in range(15):
+    for _ in range(40):
         battle.step()
         if knight.stun_timer > 0:
             break
@@ -407,17 +713,33 @@ def test_lumberjack_death_drops_rage_buff():
 
     lumberjack = next(
         e for e in battle.entities.values()
-        if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "AxeMan"
+        if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "RageBarbarian"
     )
     ally_knight = next(
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "Knight"
     )
-    ally_knight.deploy_delay_remaining = 0.0
+    _finish_deployment(lumberjack)
+    _finish_deployment(ally_knight)
+    damage_before = ally_knight.damage
 
     lumberjack.take_damage(lumberjack.hitpoints)
-    battle.step()
+    assert not any(
+        isinstance(entity, Troop)
+        and entity.is_alive
+        and entity.card_stats.name == "RageBarbarianBottle"
+        for entity in battle.entities.values()
+    )
+    for _ in range(20):
+        battle.step()
+    assert not any(
+        isinstance(entity, Troop)
+        and entity.card_stats.name == "RageBarbarianBottle"
+        for entity in battle.entities.values()
+    )
     assert ally_knight.attack_speed_buff_multiplier > 1.0
+    assert ally_knight.movement_speed_buff_multiplier > 1.0
+    assert ally_knight.damage == damage_before
 
 
 def test_zap_uses_reduced_crown_tower_damage():
@@ -436,12 +758,15 @@ def test_zap_uses_reduced_crown_tower_damage():
         if isinstance(e, Troop) and e.player_id == 1 and e.card_stats.name == "Knight"
     )
     enemy_knight.deploy_delay_remaining = 0.0
+    enemy_knight.placement_pending = False
+    enemy_knight.speed = 0.0
     tower = _get_tower(battle, 1, "left")
 
     tower_hp_before = tower.hitpoints
     knight_hp_before = enemy_knight.hitpoints
     assert battle.deploy_card(0, "Zap", Position(3.5, 25.5))
-    battle.step()
+    for _ in range(31):
+        battle.step()
 
     tower_damage = tower_hp_before - tower.hitpoints
     knight_damage = knight_hp_before - enemy_knight.hitpoints
@@ -491,6 +816,7 @@ def test_bandit_dash_invulnerability_blocks_damage():
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name in {"Assassin", "Bandit"}
     )
     current_ms = int(battle.time * 1000)
+    bandit._bandit_dashing = True
     bandit._bandit_invulnerable_until = current_ms + 1000
     hp_before = bandit.hitpoints
     bandit.take_damage(999)
@@ -560,7 +886,9 @@ def test_tombstone_periodic_skeletons_move_after_spawn():
     }
     assert spawned_positions
 
-    for _ in range(180):
+    # Observe movement before the fragile spawned skeleton is expected to reach
+    # enemy tower fire and disappear from the entity set.
+    for _ in range(60):
         battle.step()
 
     moved = 0
@@ -582,6 +910,7 @@ def test_lava_hound_death_spawns_lava_pups():
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "LavaHound"
     )
+    _finish_deployment(hound)
     hound.take_damage(hound.hitpoints)
     battle.step()
 
@@ -607,8 +936,8 @@ def test_night_witch_periodic_and_death_bats():
             if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name in {"Bat", "Bats"}
         ]
     )
-    # Deploy delay (~1s) + 5s periodic spawn interval + margin.
-    for _ in range(220):
+    # First wave appears one second after the deployment delay finishes.
+    for _ in range(70):
         battle.step()
     periodic_bats = len(
         [
@@ -638,9 +967,13 @@ def test_dark_prince_shield_absorbs_first_damage():
         e for e in battle.entities.values()
         if isinstance(e, Troop) and e.player_id == 0 and e.card_stats.name == "DarkPrince"
     )
+    _finish_deployment(dark_prince)
     hp_before = dark_prince.hitpoints
-    dark_prince.take_damage(50)
+    shield = next(mechanic for mechanic in dark_prince.mechanics if type(mechanic).__name__ == "Shield")
+    assert shield.current_shield > 94
+    dark_prince.take_damage(shield.current_shield + 500)
     assert dark_prince.hitpoints == hp_before
+    assert shield.current_shield == 0
 
 
 def test_prince_charge_uses_special_damage_on_first_hit():
@@ -656,10 +989,10 @@ def test_prince_charge_uses_special_damage_on_first_hit():
     p1.deck = ["Giant"]
     p1.cycle_queue = deque()
 
-    assert battle.deploy_card(0, "Prince", Position(9.0, 8.0))
+    assert battle.deploy_card(0, "Prince", Position(9.0, 10.0))
     giant_stats = battle.card_loader.get_card("Giant")
     assert giant_stats is not None
-    battle._spawn_troop(Position(9.0, 12.0), 1, giant_stats)
+    battle._spawn_troop(Position(9.0, 18.0), 1, giant_stats)
 
     prince = next(
         e for e in battle.entities.values()
@@ -671,6 +1004,10 @@ def test_prince_charge_uses_special_damage_on_first_hit():
     )
     prince.deploy_delay_remaining = 0.0
     giant.deploy_delay_remaining = 0.0
+    prince.placement_pending = False
+    giant.placement_pending = False
+    prince.on_spawn()
+    giant.on_spawn()
 
     hp_before = giant.hitpoints
     for _ in range(220):

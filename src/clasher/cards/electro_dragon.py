@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Set
+from typing import TYPE_CHECKING
 
 from ..mechanics.mechanic_base import BaseMechanic
+from ..kinematics import logic_speed_to_tiles_per_second
 
 if TYPE_CHECKING:
     from ..entities import Entity
@@ -10,41 +11,47 @@ if TYPE_CHECKING:
 @dataclass
 class ElectroDragonChainLightning(BaseMechanic):
     """Electro Dragon's bolt chains to additional enemies after each hit."""
-    chain_range: float = 4.5
+    chain_range: float = 4.0
     max_bounces: int = 2
-    damage_decay: float = 0.7
+    damage_decay: float = 1.0
     stun_duration_ms: int = 300
+    projectile_speed_tiles_per_second: float = logic_speed_to_tiles_per_second(2000.0)
+
+    def on_attach(self, entity: 'Entity') -> None:
+        projectile = getattr(entity.card_stats, "projectile_data", {}) or {}
+        self.chain_range = float(projectile.get("chainedHitRadius", 4000) or 4000) / 1000.0
+        total_targets = int(projectile.get("chainedHitCount", self.max_bounces + 1) or 1)
+        self.max_bounces = max(0, total_targets - 1)
+        self.stun_duration_ms = int(
+            projectile.get("buffTime", self.stun_duration_ms) or self.stun_duration_ms
+        )
+        self.projectile_speed_tiles_per_second = logic_speed_to_tiles_per_second(
+            float(projectile.get("speed", 2000) or 2000)
+        )
 
     def on_attack_hit(self, entity: 'Entity', target: 'Entity') -> None:
         if not hasattr(entity, 'battle_state'):
             return
-        battle_state = entity.battle_state
-        visited: Set[int] = {target.id}
-        previous = target
-        damage = entity.damage * self.damage_decay
-        bounces = 0
-        while bounces < self.max_bounces and damage > 0:
-            candidate = self._find_next_target(battle_state, entity.player_id, visited, previous.position)
-            if not candidate:
-                break
-            visited.add(candidate.id)
-            candidate.take_damage(damage)
-            candidate.apply_stun(self.stun_duration_ms / 1000.0)
-            previous = candidate
-            damage *= self.damage_decay
-            bounces += 1
-        else:
-            # Apply the first bounce effects if at least one candidate exists
-            pass
+        from ..arena import Position
+        from ..entities import ChainLightning
 
-    def _find_next_target(self, battle_state, player_id: int, visited: Set[int], origin) -> 'Entity':
-        best = None
-        best_distance = self.chain_range + 1.0
-        for other in list(battle_state.entities.values()):
-            if other.player_id == player_id or not other.is_alive or other.id in visited:
-                continue
-            distance = origin.distance_to(other.position)
-            if distance <= self.chain_range and distance < best_distance:
-                best_distance = distance
-                best = other
-        return best
+        battle_state = entity.battle_state
+        chain = ChainLightning(
+            id=battle_state.next_entity_id,
+            position=Position(target.position.x, target.position.y),
+            player_id=entity.player_id,
+            card_stats=entity.card_stats,
+            hitpoints=1,
+            max_hitpoints=1,
+            damage=entity.damage * self.damage_decay,
+            range=0,
+            sight_range=0,
+            origin=Position(target.position.x, target.position.y),
+            remaining_bounces=self.max_bounces,
+            chain_range=self.chain_range,
+            travel_speed=self.projectile_speed_tiles_per_second,
+            stun_duration=self.stun_duration_ms / 1000.0,
+            visited_ids={target.id},
+        )
+        battle_state.entities[chain.id] = chain
+        battle_state.next_entity_id += 1

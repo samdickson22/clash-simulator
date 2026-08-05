@@ -26,7 +26,7 @@ class FreezeDebuff(BaseMechanic):
                 continue
 
             distance = entity.position.distance_to(target.position)
-            if distance <= self.radius_tiles:
+            if distance <= self.radius_tiles + 1e-9:
                 # Apply slow effect
                 target.apply_slow(dt_ms / 1000.0, self.slow_multiplier)
 
@@ -39,7 +39,7 @@ class Stun(BaseMechanic):
 
     def on_attack_hit(self, entity, target) -> None:
         """Apply stun to target if chance succeeds"""
-        import random
-
-        if random.random() <= self.stun_chance:
+        rng = getattr(getattr(entity, "battle_state", None), "rng", None)
+        roll = rng.random() if rng is not None else 0.0
+        if roll <= self.stun_chance:
             target.apply_stun(self.stun_duration_ms / 1000.0)

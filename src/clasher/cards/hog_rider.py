@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..mechanics.mechanic_base import BaseMechanic
+from ..kinematics import logic_time_milliseconds
 
 if TYPE_CHECKING:
     from ..entities import Troop
@@ -39,7 +40,7 @@ class HogRiderJump(BaseMechanic):
             # Check jump cooldown
             current_time = getattr(entity, 'battle_state', None)
             if current_time and hasattr(current_time, 'time'):
-                time_ms = int(current_time.time * 1000)
+                time_ms = logic_time_milliseconds(current_time.time)
                 if time_ms - self.last_jump_time >= self.jump_cooldown_ms:
 
                     # Start jump
@@ -64,7 +65,9 @@ class HogRiderJump(BaseMechanic):
 
         # Record jump time
         if hasattr(entity, 'battle_state') and hasattr(entity.battle_state, 'time'):
-            self.last_jump_time = int(entity.battle_state.time * 1000)
+            self.last_jump_time = logic_time_milliseconds(
+                entity.battle_state.time
+            )
 
     def _update_jump(self, entity, dt_ms: int) -> None:
         """Update jump progress"""

@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 from .effect_base import BaseEffect
 
 if TYPE_CHECKING:
-    from ...battle import BattleState
-    from ...arena import Position
+    from ..battle import BattleState
+    from ..arena import Position
 
 
 @dataclass
@@ -23,10 +23,7 @@ class ApplyStun(BaseEffect):
             if entity.player_id == context.caster_id or not entity.is_alive:
                 continue
 
-            distance = entity.position.distance_to(target_pos)
-            entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
-
-            if distance <= (self.radius_tiles + entity_radius):
+            if entity.intersects_native_area(target_pos, self.radius_tiles):
                 entity.apply_stun(self.duration_seconds)
                 context.affected_entities.append(entity)
 
@@ -47,10 +44,7 @@ class ApplySlow(BaseEffect):
             if entity.player_id == context.caster_id or not entity.is_alive:
                 continue
 
-            distance = entity.position.distance_to(target_pos)
-            entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
-
-            if distance <= (self.radius_tiles + entity_radius):
+            if entity.intersects_native_area(target_pos, self.radius_tiles):
                 entity.apply_slow(self.duration_seconds, self.slow_multiplier)
                 context.affected_entities.append(entity)
 
@@ -70,10 +64,7 @@ class ApplyFreeze(BaseEffect):
             if entity.player_id == context.caster_id or not entity.is_alive:
                 continue
 
-            distance = entity.position.distance_to(target_pos)
-            entity_radius = getattr(entity.card_stats, 'collision_radius', 0.5) or 0.5
-
-            if distance <= (self.radius_tiles + entity_radius):
+            if entity.intersects_native_area(target_pos, self.radius_tiles):
                 # Stop movement
                 if hasattr(entity, 'speed'):
                     entity.speed = 0

@@ -13,7 +13,7 @@ class MagicArcherPierce(BaseMechanic):
     """Applies Magic Archer's piercing arrow behaviour."""
     pierce_range: float = 5.0
     perpendicular_tolerance: float = 0.6
-    damage_decay: float = 0.8
+    damage_decay: float = 1.0
 
     def on_attack_hit(self, entity: 'Entity', target: 'Entity') -> None:
         if not hasattr(entity, 'battle_state'):
@@ -30,7 +30,12 @@ class MagicArcherPierce(BaseMechanic):
         origin_y = target.position.y
         damage = entity.damage * self.damage_decay
         for other in list(battle_state.entities.values()):
-            if other.player_id == entity.player_id or not other.is_alive or other.id == target.id:
+            if (
+                other.player_id == entity.player_id
+                or not other.is_alive
+                or other.id == target.id
+                or getattr(other, "entity_kind", 4) in {2, 3}
+            ):
                 continue
             rel_x = other.position.x - origin_x
             rel_y = other.position.y - origin_y

@@ -14,6 +14,7 @@ import numpy as np
 import torch
 from torch import nn
 
+from clasher.battle import STANDARD_MATCH_TICKS
 from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, resolve_path
 from clasher.rl.model import MaskedPolicyValueNet
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
@@ -479,7 +480,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--updates", type=int, default=200)
     parser.add_argument("--rollout-steps", type=int, default=256)
     parser.add_argument("--decision-interval", type=int, default=8)
-    parser.add_argument("--max-ticks", type=int, default=9090)
+    parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     parser.add_argument("--learning-rate", type=float, default=3e-4)
     parser.add_argument("--gamma", type=float, default=0.995)
     parser.add_argument("--gae-lambda", type=float, default=0.95)

@@ -1,8 +1,9 @@
 import json
+import math
 from collections import deque
 
 from clasher.arena import Position
-from clasher.battle import BattleState
+from clasher.battle import BattleState, SERVER_ACTION_DELAY_SECONDS
 from clasher.card_aliases import resolve_card_name
 from clasher.entities import AreaEffect, Graveyard, SpawnProjectile, Troop, Building
 from clasher.paths import decks_path as resolve_decks_path
@@ -26,10 +27,16 @@ def _prepare_player_for_single_card(battle: BattleState, player_id: int, card_na
 def _deployment_position(card_name: str) -> Position:
     resolved = resolve_card_name(card_name)
     spell = SPELL_REGISTRY.get(resolved)
-    # Rolling projectiles follow troop deployment rules.
-    if spell is not None and type(spell).__name__ not in {"RollingProjectileSpell"}:
+    if spell is not None and not getattr(spell, "requires_territory", False):
+        if getattr(spell, "requires_walkable_target", False):
+            return Position(3.5, 16.0)
         return Position(9.0, 16.0)
     return Position(9.0, 10.0)
+
+
+def _resolve_server_action_delay(battle: BattleState) -> None:
+    for _ in range(math.ceil(SERVER_ACTION_DELAY_SECONDS / battle.dt)):
+        battle.step()
 
 
 def test_all_sample_deck_cards_resolve_and_deploy():
@@ -54,6 +61,32 @@ def test_all_sample_deck_cards_resolve_and_deploy():
     assert not failed_deploy, f"Failed deploys: {failed_deploy}"
 
 
+def test_enabled_card_aliases_resolve_to_matching_canonical_card_names():
+    battle = BattleState()
+    mismatches = []
+
+    def normalize(name: str) -> str:
+        return "".join(ch for ch in name.casefold() if ch.isalnum())
+
+    for card_name in _load_unique_sample_cards():
+        stats = battle.card_loader.get_card(card_name)
+        assert stats is not None
+        canonical_name = stats.english_name or stats.name
+        canonical = normalize(canonical_name)
+        requested = normalize(card_name)
+        if canonical not in {requested, f"the{requested}"}:
+            mismatches.append((card_name, stats.name, canonical_name))
+
+    assert not mismatches, f"Enabled card aliases resolve to the wrong cards: {mismatches}"
+
+
+def test_mega_knight_deploy_projectile_is_not_used_as_basic_attack():
+    battle = BattleState()
+    stats = battle.card_loader.get_card("MegaKnight")
+    assert stats is not None
+    assert stats.projectile_data is None
+
+
 def test_archers_card_spawns_two_archers():
     battle = BattleState()
     _prepare_player_for_single_card(battle, 0, "Archers")
@@ -70,6 +103,7 @@ def test_poison_is_persistent_slowing_area():
     battle = BattleState()
     _prepare_player_for_single_card(battle, 0, "Poison")
     assert battle.deploy_card(0, "Poison", Position(9.0, 16.0))
+    _resolve_server_action_delay(battle)
 
     poison_areas = [
         e for e in battle.entities.values()
@@ -117,6 +151,7 @@ def test_tornado_sets_pull_area():
     battle = BattleState()
     _prepare_player_for_single_card(battle, 0, "Tornado")
     assert battle.deploy_card(0, "Tornado", Position(9.0, 16.0))
+    _resolve_server_action_delay(battle)
 
     tornado_areas = [
         e for e in battle.entities.values()
@@ -125,13 +160,15 @@ def test_tornado_sets_pull_area():
     assert len(tornado_areas) == 1
     tornado = tornado_areas[0]
     assert tornado.is_tornado
-    assert tornado.pull_force > 0
+    assert tornado.attract_percentage == 360
+    assert tornado.push_speed_factor == 100
 
 
 def test_graveyard_spawns_graveyard_entity():
     battle = BattleState()
     _prepare_player_for_single_card(battle, 0, "Graveyard")
     assert battle.deploy_card(0, "Graveyard", Position(9.0, 16.0))
+    _resolve_server_action_delay(battle)
 
     graveyards = [e for e in battle.entities.values() if isinstance(e, Graveyard)]
     assert len(graveyards) == 1
@@ -141,7 +178,8 @@ def test_graveyard_spawns_graveyard_entity():
 def test_royal_delivery_is_delayed_spawn_projectile():
     battle = BattleState()
     _prepare_player_for_single_card(battle, 0, "RoyalDelivery")
-    assert battle.deploy_card(0, "RoyalDelivery", Position(9.0, 16.0))
+    assert battle.deploy_card(0, "RoyalDelivery", Position(9.0, 10.0))
+    _resolve_server_action_delay(battle)
 
     delivery_projectiles = [
         e for e in battle.entities.values()

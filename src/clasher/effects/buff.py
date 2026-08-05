@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 from .effect_base import BaseEffect
 
 if TYPE_CHECKING:
-    from ...battle import BattleState
-    from ...arena import Position
+    from ..battle import BattleState
+    from ..arena import Position
 
 
 @dataclass
@@ -28,7 +28,7 @@ class ApplyBuff(BaseEffect):
                 continue
 
             distance = entity.position.distance_to(target_pos)
-            if distance <= self.radius_tiles:
+            if distance <= self.radius_tiles + 1e-9:
                 # Store original values for restoration
                 if not hasattr(entity, '_original_speed'):
                     entity._original_speed = getattr(entity, 'speed', 0)

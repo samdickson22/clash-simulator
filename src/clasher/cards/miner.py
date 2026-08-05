@@ -1,121 +1,146 @@
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
 
+from ..arena import Position
 from ..mechanics.mechanic_base import BaseMechanic
-
-if TYPE_CHECKING:
-    from ..entities import Troop
+from ..kinematics import (
+    logic_speed_to_tiles_per_second,
+    logic_units_to_tiles,
+    speed_work_for_duration,
+    tiles_to_logic_units,
+    vector_towards_logic_units,
+)
 
 
 @dataclass
-class MinerTunnel(BaseMechanic):
-    """Mechanic for Miner's tunnel ability to deploy anywhere"""
-    tunnel_cooldown_ms: int = 1000  # Cooldown after tunneling
-    tunnel_duration_ms: int = 500  # Time spent underground
-    tunnel_move_speed: float = 120.0  # Speed while tunneling
+class UndergroundDeployment(BaseMechanic):
+    """Move an untargetable underground deployment from its King Tower.
 
-    # Internal state
-    is_tunneling: bool = field(init=False, default=False)
-    tunnel_start_time: int = field(init=False, default=0)
-    tunnel_target_pos = None
-    stored_original_speed: float = field(init=False, default=0)
-    has_tunneled_this_deploy: bool = field(init=False, default=False)
+    The regular character deploy time is the emergence animation after the
+    transport reaches its destination. ``travel_speed_logic_units_per_tick``
+    uses the same native movement unit as every troop/projectile Speed field.
+    """
+
+    # Miner uses a distinct underground transport speed of 650 even though
+    # its surfaced movement speed is 90.
+    travel_speed_logic_units_per_tick: float = 650.0
 
     def on_attach(self, entity) -> None:
-        """Store original speed"""
-        self.stored_original_speed = getattr(entity, 'speed', 60.0)
+        raw = getattr(getattr(entity, "card_stats", None), "_raw_entry", {}) or {}
+        character = raw.get("summonCharacterData", {}) or {}
+        self.travel_speed_logic_units_per_tick = float(
+            character.get(
+                "spawnPathfindSpeed",
+                self.travel_speed_logic_units_per_tick,
+            )
+        )
+        emergence_delay = max(
+            0.0,
+            float(getattr(entity, "deploy_delay_remaining", 0.0) or 0.0),
+        )
+        battle = getattr(entity, "battle_state", None)
+        destination = Position(entity.position.x, entity.position.y)
+        king = (
+            battle.arena.BLUE_KING_TOWER
+            if entity.player_id == 0
+            else battle.arena.RED_KING_TOWER
+        )
+        origin = Position(king.x, king.y)
+        speed = max(
+            1e-9,
+            logic_speed_to_tiles_per_second(self.travel_speed_logic_units_per_tick),
+        )
+        travel_duration = origin.distance_to(destination) / speed
+
+        entity._underground_origin = origin
+        entity._underground_destination = destination
+        entity._underground_travel_duration = travel_duration
+        entity._underground_emergence_delay = emergence_delay
+        entity.deploy_delay_remaining = travel_duration + emergence_delay
+        entity.placement_delay_total = entity.deploy_delay_remaining
+        entity.placement_pending = entity.deploy_delay_remaining > 1e-9
+        entity.position = Position(origin.x, origin.y)
+        entity._underground_deployment = entity.placement_pending
+        if entity._underground_deployment:
+            entity._special_move_active = True
 
     def on_spawn(self, entity) -> None:
-        """Reset tunnel state on spawn"""
-        self.has_tunneled_this_deploy = False
-        self.is_tunneling = False
+        destination = getattr(entity, "_underground_destination", None)
+        if destination is not None:
+            entity.position = Position(destination.x, destination.y)
+        entity._underground_deployment = False
+        entity._special_move_active = False
+
+    def on_deploy_tick(self, entity, dt_ms: int) -> None:
+        if not getattr(entity, "_underground_deployment", False):
+            return
+        destination = entity._underground_destination
+        travel_duration = float(entity._underground_travel_duration)
+        total = float(getattr(entity, "placement_delay_total", 0.0) or 0.0)
+        remaining = float(getattr(entity, "deploy_delay_remaining", 0.0) or 0.0)
+        elapsed = max(0.0, total - remaining)
+        if travel_duration <= 0 or elapsed >= travel_duration - 1e-12:
+            entity.position = Position(destination.x, destination.y)
+            return
+
+        dx_units = tiles_to_logic_units(destination.x - entity.position.x)
+        dy_units = tiles_to_logic_units(destination.y - entity.position.y)
+        move_x_units, move_y_units = vector_towards_logic_units(
+            dx_units,
+            dy_units,
+            speed_work_for_duration(
+                self.travel_speed_logic_units_per_tick,
+                max(0.0, float(dt_ms)) / 1000.0,
+            ),
+        )
+        entity.position = Position(
+            logic_units_to_tiles(
+                tiles_to_logic_units(entity.position.x) + move_x_units
+            ),
+            logic_units_to_tiles(
+                tiles_to_logic_units(entity.position.y) + move_y_units
+            ),
+        )
 
     def on_tick(self, entity, dt_ms: int) -> None:
-        """Handle tunneling logic"""
-        if not hasattr(entity, 'battle_state'):
-            return
+        if getattr(entity, "_underground_deployment", False) and getattr(
+            entity, "deploy_delay_remaining", 0.0
+        ) <= 0:
+            entity._underground_deployment = False
+            entity._special_move_active = False
 
-        current_time_ms = int(entity.battle_state.time * 1000)
+    def take_damage_during_dash(self, entity, damage: float) -> bool:
+        return not getattr(entity, "_underground_deployment", False)
 
-        # Check if we should start tunneling to nearest target
-        if (not self.is_tunneling and
-                not self.has_tunneled_this_deploy and
-                entity.target_id):
+    def allows_effect(
+        self,
+        entity,
+        source_kind: str | None,
+        *,
+        affects_hidden: bool = False,
+    ) -> bool:
+        """Keep underground travel distinct from ordinary deployment state."""
+        del affects_hidden
+        return not getattr(entity, "_underground_deployment", False)
 
-            target = entity.battle_state.entities.get(entity.target_id)
-            if target:
-                distance = entity.position.distance_to(target.position)
-                # Start tunneling if target is far away
-                if distance > 5.0:  # Tunnel if target is more than 5 tiles away
-                    self._start_tunnel(entity, target, current_time_ms)
+    def allows_forced_movement(
+        self,
+        entity,
+        source_kind: str | None,
+        movement_kind: str,
+    ) -> bool | None:
+        if getattr(entity, "_underground_deployment", False):
+            return False
+        return None
 
-        # Update tunneling state
-        if self.is_tunneling:
-            self._update_tunnel(entity, dt_ms, current_time_ms)
+    def blocks_status_effect(self, entity) -> bool:
+        return getattr(entity, "_underground_deployment", False)
 
-    def _start_tunnel(self, entity, target, current_time_ms: int) -> None:
-        """Start tunneling towards target"""
-        self.is_tunneling = True
-        self.tunnel_start_time = current_time_ms
-        self.tunnel_target_pos = (target.position.x, target.position.y)
+    def blocks_targeting(self, entity) -> bool:
+        return getattr(entity, "_underground_deployment", False)
 
-        # Apply tunnel speed
-        entity.speed = self.tunnel_move_speed
+    def blocks_ground_collision(self, entity) -> bool:
+        return getattr(entity, "_underground_deployment", False)
 
-        # Apply temporary invincibility while tunneling
-        # This could be handled by modifying take_damage method
 
-    def _update_tunnel(self, entity, dt_ms: int, current_time_ms: int) -> None:
-        """Update tunneling progress"""
-        if not self.tunnel_target_pos:
-            self._end_tunnel(entity)
-            return
-
-        target_x, target_y = self.tunnel_target_pos
-        dx = target_x - entity.position.x
-        dy = target_y - entity.position.y
-        distance = (dx * dx + dy * dy) ** 0.5
-
-        # Check if we've tunneled long enough or reached target
-        if (current_time_ms - self.tunnel_start_time >= self.tunnel_duration_ms or
-                distance < 1.0):
-
-            # Instantly move to target location
-            entity.position.x = target_x
-            entity.position.y = target_y
-            self._end_tunnel(entity)
-
-    def _end_tunnel(self, entity) -> None:
-        """End tunneling and restore normal state"""
-        self.is_tunneling = False
-        self.has_tunneled_this_deploy = True
-        entity.speed = self.stored_original_speed
-
-        # Remove temporary invincibility
-        self.tunnel_target_pos = None
-
-        # Apply brief stun to enemies at emergence location (area effect)
-        if hasattr(entity, 'battle_state'):
-            self._apply_emergence_effect(entity)
-
-    def _apply_emergence_effect(self, entity) -> None:
-        """Apply area effect when miner emerges from tunnel"""
-        emergence_radius = 2.0  # tiles
-        stun_duration = 0.5  # seconds
-
-        for target in list(entity.battle_state.entities.values()):
-            if (target.player_id == entity.player_id or
-                    not target.is_alive or
-                    target == entity):
-                continue
-
-            distance = entity.position.distance_to(target.position)
-            if distance <= emergence_radius:
-                # Apply brief stun and damage
-                target.apply_stun(stun_duration)
-                target.take_damage(50)  # Emergence damage
-
-    def take_damage_while_tunneling(self, entity, damage: float) -> bool:
-        """Check if entity should take damage while tunneling"""
-        # Return False if invincible while tunneling, True if damage should be applied
-        return not self.is_tunneling
+# Compatibility for code importing the old class name.
+MinerTunnel = UndergroundDeployment

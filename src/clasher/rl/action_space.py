@@ -19,20 +19,24 @@ class ActionSelection:
     slot: Optional[int]
     position: Optional[Position]
     is_no_op: bool
+    is_ability: bool = False
 
 
 class DiscreteTileActionSpace:
-    """Action space: (hand slot, tile) + no-op.
+    """Action space: (hand slot, tile) + no-op + champion ability.
 
     Action IDs:
     - `slot * NUM_TILES + tile` for deployment actions.
     - `NUM_HAND_SLOTS * NUM_TILES` for no-op.
+    - `NUM_HAND_SLOTS * NUM_TILES + 1` for the active champion ability.
     """
 
     def __init__(self, canonical_perspective: bool = True) -> None:
         self.canonical_perspective = canonical_perspective
-        self.num_actions = NUM_HAND_SLOTS * NUM_TILES + 1
-        self.no_op_action = self.num_actions - 1
+        placement_actions = NUM_HAND_SLOTS * NUM_TILES
+        self.no_op_action = placement_actions
+        self.ability_action = placement_actions + 1
+        self.num_actions = placement_actions + 2
         self._positions_by_player: Dict[int, list[Position]] = {0: [], 1: []}
         self._non_rolling_spell_tiles: Dict[int, np.ndarray] = {}
         self._non_blocked_mask_by_player: Dict[int, np.ndarray] = {}
@@ -76,6 +80,14 @@ class DiscreteTileActionSpace:
     def decode_action(self, action_id: int, player_id: int) -> ActionSelection:
         if action_id == self.no_op_action:
             return ActionSelection(action_id=action_id, slot=None, position=None, is_no_op=True)
+        if action_id == self.ability_action:
+            return ActionSelection(
+                action_id=action_id,
+                slot=None,
+                position=None,
+                is_no_op=False,
+                is_ability=True,
+            )
 
         if action_id < 0 or action_id >= self.no_op_action:
             return ActionSelection(action_id=action_id, slot=None, position=None, is_no_op=True)
@@ -108,8 +120,11 @@ class DiscreteTileActionSpace:
         spell_obj,
         probe_radius: float,
     ) -> bool:
-        # Explicit special-case parity with BattleState.deploy_card.
-        if resolved_name == "Miner":
+        can_deploy_enemy_side = bool(
+            not is_spell
+            and getattr(card_stats, "can_deploy_on_enemy_side", False)
+        )
+        if can_deploy_enemy_side:
             tile_pos = (int(position.x), int(position.y))
             if not battle.arena.is_valid_position(position):
                 return False
@@ -121,18 +136,36 @@ class DiscreteTileActionSpace:
             if not battle.arena.can_deploy_at(position, player_id, battle, is_spell, spell_obj):
                 return False
 
-        if resolved_name in {"RoyalRecruits", "RoyalRecruits_Chess"}:
-            if not (6 <= position.x <= 11):
+        deploy_w_margin = int(
+            getattr(card_stats, "deploy_w_tile_margin", 0) or 0
+        )
+        if deploy_w_margin > 0:
+            tile_x = int(position.x)
+            if not (
+                deploy_w_margin
+                <= tile_x
+                < battle.arena.width - deploy_w_margin
+            ):
                 return False
 
         if not is_spell:
             card_type = str(getattr(card_stats, "card_type", "") or "").lower()
             is_building_card = card_type == "building"
             if is_building_card:
-                if battle.is_building_placement_occupied(position, card_stats):
+                if battle.is_building_placement_occupied(
+                    position, card_stats
+                ) or battle.is_deployment_payload_occupied(
+                    position,
+                    card_stats=card_stats,
+                ):
                     return False
             else:
-                if battle.is_position_occupied_by_building(position, probe_radius):
+                if battle.is_position_occupied_by_building(
+                    position, probe_radius
+                ) or battle.is_deployment_payload_occupied(
+                    position,
+                    mover_radius=probe_radius,
+                ):
                     return False
 
         return True
@@ -145,7 +178,9 @@ class DiscreteTileActionSpace:
         is_spell = resolved_name in SPELL_REGISTRY
         spell_obj = SPELL_REGISTRY.get(resolved_name) if is_spell else None
         non_rolling_spell = bool(
-            is_spell and not battle.arena._is_rolling_projectile_spell(spell_obj)
+            is_spell
+            and not battle.arena._requires_deploy_zone_spell(spell_obj)
+            and not getattr(spell_obj, "requires_walkable_target", False)
         )
         meta = (resolved_name, is_spell, spell_obj, non_rolling_spell)
         self._card_meta_cache[card_name] = meta
@@ -235,6 +270,7 @@ class DiscreteTileActionSpace:
     def _legal_action_mask_legacy(self, battle: BattleState, player_id: int) -> np.ndarray:
         mask = np.zeros(self.num_actions, dtype=np.bool_)
         mask[self.no_op_action] = True
+        mask[self.ability_action] = battle.can_activate_champion_ability(player_id)
 
         player = battle.players[player_id]
         for slot, card_name in enumerate(player.hand[:NUM_HAND_SLOTS]):
@@ -274,6 +310,7 @@ class DiscreteTileActionSpace:
     def _legal_action_mask_fast(self, battle: BattleState, player_id: int) -> np.ndarray:
         mask = np.zeros(self.num_actions, dtype=np.bool_)
         mask[self.no_op_action] = True
+        mask[self.ability_action] = battle.can_activate_champion_ability(player_id)
 
         non_blocked = self._non_blocked_mask_by_player[player_id]
         zone_mask = self._deploy_zone_mask(battle, player_id)
@@ -299,7 +336,28 @@ class DiscreteTileActionSpace:
             card_type = str(getattr(card_stats, "card_type", "") or "").lower()
             is_building_card = (not is_spell) and (card_type == "building")
             probe_radius = float(getattr(card_stats, "collision_radius", 0.5) or 0.5)
-            candidate_mask = deploy_mask_no_tower if not is_spell else deploy_mask
+            can_deploy_enemy_side = bool(
+                not is_spell
+                and getattr(card_stats, "can_deploy_on_enemy_side", False)
+            )
+            if can_deploy_enemy_side:
+                # Enemy-side troop cards still exclude blocked and live tower
+                # tiles. Build this candidate set
+                # before exact occupancy checks instead of intersecting it
+                # with the ordinary friendly deployment zone.
+                candidate_mask = non_blocked & (~tower_mask)
+            else:
+                if not is_spell:
+                    candidate_mask = deploy_mask_no_tower
+                elif (
+                    getattr(spell_obj, "requires_walkable_target", False)
+                    and not battle.arena._requires_deploy_zone_spell(spell_obj)
+                ):
+                    # Arena-wide payload spells start from every non-fence
+                    # tile; their terrain capability is checked exactly below.
+                    candidate_mask = non_blocked
+                else:
+                    candidate_mask = deploy_mask
 
             blocked_building_tiles = None
             if is_building_card:
@@ -311,21 +369,43 @@ class DiscreteTileActionSpace:
 
             candidate_tiles = np.flatnonzero(candidate_mask)
             positions = self._positions_by_player[player_id]
+            deploy_w_margin = int(
+                getattr(card_stats, "deploy_w_tile_margin", 0) or 0
+            )
             for tile_idx in candidate_tiles.tolist():
                 pos = positions[tile_idx]
-                if resolved_name in {"RoyalRecruits", "RoyalRecruits_Chess"} and not (6 <= pos.x <= 11):
-                    continue
-                if resolved_name == "Miner":
+                if deploy_w_margin > 0:
+                    world_tile_x = int(pos.x)
+                    if not (
+                        deploy_w_margin
+                        <= world_tile_x
+                        < battle.arena.width - deploy_w_margin
+                    ):
+                        continue
+                if can_deploy_enemy_side:
                     tile_pos = (int(pos.x), int(pos.y))
                     if tile_pos in battle.arena.BLOCKED_TILES:
                         continue
                     if battle.arena.is_tower_tile(pos, battle):
                         continue
+                if is_building_card and battle.is_deployment_payload_occupied(
+                    pos,
+                    card_stats=card_stats,
+                ):
+                    continue
                 if not is_spell and (not is_building_card):
-                    if battle.is_position_occupied_by_building(pos, probe_radius):
+                    if battle.is_position_occupied_by_building(
+                        pos, probe_radius
+                    ) or battle.is_deployment_payload_occupied(
+                        pos,
+                        mover_radius=probe_radius,
+                    ):
                         continue
-                if is_spell and battle.arena._is_rolling_projectile_spell(spell_obj):
-                    # Keep exact territory parity for rolling spells.
+                if is_spell and (
+                    battle.arena._requires_deploy_zone_spell(spell_obj)
+                    or getattr(spell_obj, "requires_walkable_target", False)
+                ):
+                    # Keep exact territory/terrain parity for constrained spells.
                     if not battle.arena.can_deploy_at(pos, player_id, battle, True, spell_obj):
                         continue
                 mask[slot_base + tile_idx] = True
@@ -344,9 +424,17 @@ class DiscreteTileActionSpace:
         return self._legal_action_mask_legacy(battle, player_id)
 
     def apply_action(self, battle: BattleState, player_id: int, action_id: int) -> bool:
+        # ``decode_action`` intentionally maps malformed IDs to a safe no-op
+        # selection for callers that only need to inspect an action. Applying
+        # one is different: an out-of-range policy output was not a successful
+        # no-op and must remain visible to self-play's invalid-action handling.
+        if action_id < 0 or action_id >= self.num_actions:
+            return False
         decoded = self.decode_action(action_id, player_id)
         if decoded.is_no_op:
             return True
+        if decoded.is_ability:
+            return battle.activate_champion_ability(player_id)
 
         assert decoded.slot is not None
         assert decoded.position is not None

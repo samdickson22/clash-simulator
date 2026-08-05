@@ -31,7 +31,9 @@ def troop_from_character_data(
     raw_overrides: Optional[Dict[str, Any]] = None,
 ) -> CardStatsCompat:
     """Create CardStatsCompat for a troop using raw character data."""
-    data = dict(char_data or {})
+    from ..balance import apply_character_overrides
+
+    data = apply_character_overrides(name, dict(char_data or {}))
     projectile_data = data.get("projectileData") or {}
     damage = data.get("damage")
     if damage is None:
@@ -44,7 +46,7 @@ def troop_from_character_data(
         hit_speed_ms=data.get("hitSpeed"),
         sight_range_tiles=_units_to_tiles(data.get("sightRange")),
         collision_radius_tiles=_units_to_tiles(data.get("collisionRadius")),
-        speed_tiles_per_min=float(data["speed"]) if data.get("speed") is not None else None,
+        speed_logic_units_per_tick=float(data["speed"]) if data.get("speed") is not None else None,
         deploy_time_ms=data.get("deployTime"),
         load_time_ms=data.get("loadTime"),
         summon_count=data.get("count") or data.get("summonNumber"),
@@ -61,16 +63,12 @@ def troop_from_character_data(
     if raw_overrides:
         raw_entry.update(raw_overrides)
 
-    from .card_factory import create_card_definition
+    # Route nested spawned characters through the same data-driven mechanic
+    # detector as deck cards. This preserves shields, death damage, secondary
+    # death spawns, and spawners on units created by another card.
+    from .card_factory import card_from_gamedata
 
-    card_def = create_card_definition(
-        name=name,
-        kind="troop",
-        rarity=rarity,
-        elixir=elixir,
-        troop_stats=troop_stats,
-        raw=raw_entry,
-    )
+    card_def = card_from_gamedata(raw_entry)
     return CardStatsCompat.from_card_definition(card_def)
 
 
@@ -79,7 +77,7 @@ def troop_from_values(
     *,
     hitpoints: int,
     damage: int,
-    speed_tiles_per_min: float,
+    speed_logic_units_per_tick: float,
     range_tiles: float = 1.0,
     sight_range_tiles: float = 5.0,
     hit_speed_ms: int = 1000,
@@ -96,7 +94,7 @@ def troop_from_values(
     char_data = {
         "hitpoints": hitpoints,
         "damage": damage,
-        "speed": speed_tiles_per_min,
+        "speed": speed_logic_units_per_tick,
         "range": _tiles_to_units(range_tiles),
         "sightRange": _tiles_to_units(sight_range_tiles),
         "hitSpeed": hit_speed_ms,
@@ -119,12 +117,15 @@ def building_from_values(
     sight_range_tiles: Optional[float],
     hit_speed_ms: int,
     deploy_time_ms: int,
+    load_time_ms: Optional[int] = None,
     collision_radius_tiles: Optional[float],
     lifetime_ms: Optional[int] = None,
     elixir: int = 0,
     rarity: str = "Common",
     projectile_speed: Optional[int] = None,
     projectile_damage: Optional[int] = None,
+    projectile_start_radius: int = 0,
+    projectile_y_offset: int = 0,
     target_type: str = "TID_TARGETS_AIR_AND_GROUND",
     raw_overrides: Optional[Dict[str, Any]] = None,
 ) -> CardStatsCompat:
@@ -146,9 +147,12 @@ def building_from_values(
         "range": _tiles_to_units(range_tiles),
         "sightRange": _tiles_to_units(sight_range_tiles) if sight_range_tiles is not None else None,
         "hitSpeed": hit_speed_ms,
+        "loadTime": load_time_ms,
         "collisionRadius": _tiles_to_units(collision_radius_tiles) if collision_radius_tiles is not None else None,
         "deployTime": deploy_time_ms,
         "tidTarget": target_type,
+        "projectileStartRadius": projectile_start_radius,
+        "projectileYOffset": projectile_y_offset,
         "projectileData": {
             "speed": projectile_speed,
             "damage": projectile_damage or damage,

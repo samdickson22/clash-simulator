@@ -102,7 +102,7 @@ uv run python run_clasher.py gym-smoke -- \
 
 Gym ids:
 - `clasher-selfplay-v0` (`dict` obs + flat discrete actions)
-- `clasher-selfplay-xyz-v0` (`dict` obs + `MultiDiscrete([18, 32, 5])` actions for `(x, y, slot/no-op)`)
+- `clasher-selfplay-xyz-v0` (`dict` obs + `MultiDiscrete([18, 32, 6])` actions for `(x, y, card-slot/no-op/champion-ability)`)
 
 ### 9) Determinism Check
 

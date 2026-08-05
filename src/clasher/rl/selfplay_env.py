@@ -7,7 +7,7 @@ from typing import Dict, Optional
 
 import numpy as np
 
-from clasher.battle import BattleState
+from clasher.battle import BattleState, STANDARD_MATCH_TICKS
 
 from .action_space import DiscreteTileActionSpace
 from .deck_pool import apply_deck_to_player, load_deck_pool, sample_decks
@@ -27,7 +27,7 @@ class SelfPlayBattleEnv:
     def __init__(
         self,
         decision_interval_ticks: int = 8,
-        max_ticks: int = 9090,
+        max_ticks: int = STANDARD_MATCH_TICKS,
         decks_path: str | Path = "decks.json",
         seed: Optional[int] = None,
         mirror_match: bool = False,
@@ -68,8 +68,14 @@ class SelfPlayBattleEnv:
         assert self.battle is not None
         self._prev_objective_p0 = objective_potential_p0(self.battle)
 
-    def reset(self) -> None:
-        self.battle = BattleState(fast_path=self.engine_fast_path in {"shadow", "on"})
+    def reset(self, seed: Optional[int] = None) -> None:
+        if seed is not None:
+            self.rng.seed(seed)
+            self.np_rng = np.random.default_rng(seed)
+        self.battle = BattleState(
+            fast_path=self.engine_fast_path in {"shadow", "on"},
+            rng=self.rng,
+        )
         self._sample_and_apply_decks()
         self._reset_reward_trackers()
 
@@ -121,7 +127,9 @@ class SelfPlayBattleEnv:
             mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=False)
         else:
             mask = self.action_space.legal_action_mask(self.battle, player_id, fast_path=True)
-        return bool(np.any(mask[: self.action_space.no_op_action]))
+        can_deploy = bool(np.any(mask[: self.action_space.no_op_action]))
+        can_use_ability = bool(mask[self.action_space.ability_action])
+        return can_deploy or can_use_ability
 
     def _compute_elixir_leak_penalty(
         self,

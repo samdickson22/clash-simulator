@@ -14,6 +14,7 @@ import numpy as np
 import torch
 from torch import nn
 
+from clasher.battle import STANDARD_MATCH_TICKS
 from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, resolve_path
 from clasher.rl.model import MaskedPolicyValueNet
 from clasher.rl.oracle_planner import FixedDepthThompsonOracle
@@ -526,7 +527,7 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--iterations", type=int, default=300)
     p.add_argument("--decisions-per-iter", type=int, default=1024)
     p.add_argument("--decision-interval", type=int, default=8)
-    p.add_argument("--max-ticks", type=int, default=9090)
+    p.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     p.add_argument("--learning-rate", type=float, default=3e-4)
     p.add_argument("--epochs", type=int, default=2)
     p.add_argument("--batch-size", type=int, default=1024)
@@ -708,8 +709,8 @@ def main() -> None:
 
             dps = decisions_collected / max(1e-6, collect_s)
             effective_dps = decisions_collected / max(1e-6, collect_s + update_s)
-            approx_gpm = dps / (9090.0 / args.decision_interval) * 60.0
-            effective_gpm = effective_dps / (9090.0 / args.decision_interval) * 60.0
+            approx_gpm = dps / (args.max_ticks / args.decision_interval) * 60.0
+            effective_gpm = effective_dps / (args.max_ticks / args.decision_interval) * 60.0
 
             print(
                 f"update={iteration:04d} "

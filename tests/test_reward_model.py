@@ -1,5 +1,9 @@
 from clasher.battle import BattleState
-from clasher.rl.reward_model import objective_potential_p0, objective_win_prob_p0
+from clasher.rl.reward_model import (
+    _tiebreak_edge_p0,
+    objective_potential_p0,
+    objective_win_prob_p0,
+)
 
 
 def test_objective_potential_is_neutral_at_start():
@@ -33,3 +37,30 @@ def test_king_damage_becomes_rewarding_after_princess_falls():
     battle.players[1].king_tower_hp = max(0.0, battle.players[1].king_tower_hp - 400.0)
     king_chip = objective_potential_p0(battle)
     assert king_chip > no_king_chip
+
+
+def test_destroying_enemy_princess_tower_rewards_attacker_not_defender():
+    battle = BattleState()
+    battle.players[1].left_tower_hp = 0.0
+
+    assert battle.get_crown_count(0) == 1
+    assert battle.get_crown_count(1) == 0
+    assert objective_potential_p0(battle) > 0.0
+
+
+def test_tiebreak_reward_ignores_destroyed_towers_and_compares_absolute_hp():
+    battle = BattleState()
+    battle.players[0].left_tower_hp = 0.0
+    battle.players[1].left_tower_hp = 0.0
+    battle.players[0].right_tower_hp = 1000.0
+    battle.players[1].right_tower_hp = 900.0
+
+    assert _tiebreak_edge_p0(battle) > 0.0
+
+    # A lower percentage of the larger King Tower still wins the tiebreak
+    # when its absolute HP is greater than the opposing Princess Tower.
+    battle.players[0].right_tower_hp = 0.0
+    battle.players[0].king_tower_hp = 1000.0
+    battle.players[1].right_tower_hp = 900.0
+    battle.players[1].king_tower_hp = 1200.0
+    assert _tiebreak_edge_p0(battle) > 0.0

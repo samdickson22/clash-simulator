@@ -1,11 +1,50 @@
 from pathlib import Path
 from typing import Dict, Any, Optional, List
+from functools import lru_cache
 import json
 
 from .card_types import CardDefinition, CardStatsCompat
 from .card_aliases import alias_card_map, resolve_card_name
 from .factory.card_factory import card_from_gamedata
 from .paths import gamedata_path
+from .balance import apply_entry_overrides
+from .gamedata_normalization import build_object_registry
+
+
+@lru_cache(maxsize=4)
+def _load_definition_snapshot(
+    data_file: str,
+    modified_ns: int,
+    file_size: int,
+) -> Dict[str, CardDefinition]:
+    """Parse and normalize one immutable game-data file revision.
+
+    The v5 export is several megabytes. RL environments create many
+    independent ``CardDataLoader`` instances, but their definition prototypes
+    are immutable and entity mechanics are deep-copied on spawn. Cache the
+    expensive source parse while each loader still materializes its own
+    mutable compatibility wrappers.
+    """
+    del modified_ns, file_size  # They are cache-key revision tokens.
+    with open(data_file, "r") as source:
+        data = json.load(source)
+
+    object_registry = build_object_registry(data)
+    card_definitions: Dict[str, CardDefinition] = {}
+    for entry in data.get("items", {}).get("spells", []):
+        entry = apply_entry_overrides(entry, object_registry)
+        card_name = entry.get("name", "")
+        if not card_name or card_name.startswith("King_"):
+            continue
+        if "manaCost" not in entry:
+            continue
+        try:
+            card_definitions[card_name] = card_from_gamedata(entry)
+        except Exception as exc:
+            raise RuntimeError(
+                f"Could not load card definition for {card_name}"
+            ) from exc
+    return alias_card_map(card_definitions)
 
 
 class CardDataLoader:
@@ -19,25 +58,16 @@ class CardDataLoader:
         if self._card_definitions:
             return self._card_definitions
 
-        with open(self.data_file, 'r') as f:
-            data = json.load(f)
-
-        card_definitions: Dict[str, CardDefinition] = {}
-
-        for entry in data.get("items", {}).get("spells", []):
-            card_name = entry.get("name", "")
-            if not card_name or card_name.startswith("King_"):
-                continue
-            if "manaCost" not in entry:
-                continue
-
-            try:
-                # card_from_gamedata will preserve the raw entry for compat usage
-                card_definitions[card_name] = card_from_gamedata(entry)
-            except Exception as exc:
-                print(f"Warning: Could not load card definition for {card_name}: {exc}")
-
-        self._card_definitions = alias_card_map(card_definitions)
+        file_stat = self.data_file.stat()
+        # Copy the mapping so aliases can remain loader-local. CardDefinition
+        # itself is frozen; its mechanic prototypes are copied per entity.
+        self._card_definitions = dict(
+            _load_definition_snapshot(
+                str(self.data_file),
+                file_stat.st_mtime_ns,
+                file_stat.st_size,
+            )
+        )
         return self._card_definitions
 
     def load_cards(self) -> Dict[str, CardStatsCompat]:
@@ -98,7 +128,7 @@ class CardDataLoader:
             if card.sight_range:
                 print(f"  Sight Range: {card.sight_range} tiles")
             if card.speed:
-                print(f"  Speed: {card.speed} tiles/min")
+                print(f"  Speed: {card.speed} logic units/tick")
             if card.collision_radius:
                 print(f"  Collision Radius: {card.collision_radius} tiles")
                 

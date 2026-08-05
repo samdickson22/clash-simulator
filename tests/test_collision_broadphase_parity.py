@@ -20,7 +20,7 @@ def _alive_troop_positions(battle: BattleState) -> dict[int, tuple[float, float]
     return out
 
 
-def test_fast_path_collision_broadphase_keeps_match_state_close():
+def test_fast_path_collision_broadphase_keeps_match_state_exact():
     battle = BattleState()
     _spawn_many(battle, 0, "Skeletons", 8.2, 11.0)
     _spawn_many(battle, 1, "Skeletons", 8.2, 21.0)
@@ -37,8 +37,4 @@ def test_fast_path_collision_broadphase_keeps_match_state_close():
     assert battle.players[1].left_tower_hp == fast_battle.players[1].left_tower_hp
     legacy_pos = _alive_troop_positions(battle)
     fast_pos = _alive_troop_positions(fast_battle)
-    assert set(legacy_pos.keys()) == set(fast_pos.keys())
-    for entity_id, (lx, ly) in legacy_pos.items():
-        fx, fy = fast_pos[entity_id]
-        assert abs(lx - fx) < 2.0
-        assert abs(ly - fy) < 2.0
+    assert legacy_pos == fast_pos

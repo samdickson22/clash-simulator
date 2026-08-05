@@ -20,7 +20,7 @@ CARD_NAME_ALIASES: dict[str, str] = {
     "Guards": "SkeletonWarriors",
     "IceGolem": "IceGolemite",
     "IceSpirit": "IceSpirits",
-    "Lumberjack": "AxeMan",
+    "Lumberjack": "RageBarbarian",
     "MagicArcher": "EliteArcher",
     "NightWitch": "DarkWitch",
     "RoyalGhost": "Ghost",

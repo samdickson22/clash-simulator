@@ -1,9 +1,10 @@
 import time
+import math
 from typing import Dict, Any, Optional, Callable
 import json
 from pathlib import Path
 
-from .battle import BattleState
+from .battle import BattleState, STANDARD_MATCH_TICKS
 from .arena import Position
 from .paths import gamedata_path, resolve_path
 
@@ -23,23 +24,28 @@ class BattleEngine:
         return self.battle
     
     def run_battle(self, 
-                   max_ticks: int = 9090,  # ~5 minutes at 30 FPS
+                   max_ticks: int = STANDARD_MATCH_TICKS,
                    speed_factor: float = 1.0,
                    on_tick: Optional[Callable[[BattleState], None]] = None) -> Dict[str, Any]:
         """Run a complete battle to completion"""
         
         if not self.battle:
             self.create_battle()
+
+        factor = float(speed_factor)
+        if not math.isfinite(factor) or factor <= 0.0:
+            raise ValueError("speed_factor must be a finite positive number")
+        tick_budget = max(0, int(max_ticks))
+        target_tick = self.battle.tick + tick_budget
         
         start_time = time.time()
         
-        for _ in range(max_ticks):
-            if self.battle.game_over:
-                break
-                
-            self.battle.step(speed_factor)
+        while self.battle.tick < target_tick and not self.battle.game_over:
+            remaining_ticks = target_tick - self.battle.tick
+            tick_before_batch = self.battle.tick
+            self.battle.step(min(factor, float(remaining_ticks)))
             
-            if on_tick:
+            if on_tick and self.battle.tick > tick_before_batch:
                 on_tick(self.battle)
         
         end_time = time.time()
@@ -90,9 +96,9 @@ class BattleEngine:
                     "king_tower_hp": p.king_tower_hp,
                     "left_tower_hp": p.left_tower_hp,
                     "right_tower_hp": p.right_tower_hp,
-                    "crowns": p.get_crown_count()
+                    "crowns": self.battle.get_crown_count(i)
                 }
-                for p in self.battle.players
+                for i, p in enumerate(self.battle.players)
             ],
             "game_over": self.battle.game_over,
             "winner": self.battle.winner,

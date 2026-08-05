@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class BattleRamCharge(BaseMechanic):
-    """Applies charge bonus damage when the ram connects with a building."""
+    """Breaks the ram and releases its riders when it connects."""
 
     def on_attach(self, entity: 'Entity') -> None:
         self._charge_used = False
@@ -22,10 +22,5 @@ class BattleRamCharge(BaseMechanic):
             return
         from ..entities import Building
         if isinstance(target, Building):
-            bonus = (
-                getattr(entity.card_stats, "scaled_damage_special", None)
-                or getattr(entity.card_stats, 'damage_special', None)
-            )
-            if bonus:
-                target.take_damage(bonus)
             self._charge_used = True
+            entity.take_damage(entity.hitpoints)

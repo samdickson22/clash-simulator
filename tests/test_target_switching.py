@@ -1,4 +1,5 @@
 from clasher.arena import Position
+from clasher.battle import BattleState
 from clasher.entities import Building, TargetType, Troop
 from clasher.factory.dynamic_factory import building_from_values, troop_from_values
 
@@ -41,7 +42,7 @@ def _make_building_targeting_troop(x: float, y: float, sight_range: float) -> Tr
         name="TestGiant",
         hitpoints=2000,
         damage=150,
-        speed_tiles_per_min=60.0,
+        speed_logic_units_per_tick=60.0,
         range_tiles=1.0,
         sight_range_tiles=sight_range,
         target_type="TID_TARGETS_BUILDINGS",
@@ -63,10 +64,16 @@ def _make_building_targeting_troop(x: float, y: float, sight_range: float) -> Tr
     )
 
 
+def _make_normal_troop(x: float, y: float, sight_range: float) -> Troop:
+    troop = _make_building_targeting_troop(x, y, sight_range)
+    troop.card_stats.targets_only_buildings = False
+    return troop
+
+
 def test_does_not_switch_to_out_of_sight_building_even_if_closer():
     troop = _make_building_targeting_troop(x=14.5, y=17.0, sight_range=5.0)
     current_target = _make_building(entity_id=2, x=14.5, y=29.0)  # farther
-    new_target = _make_building(entity_id=3, x=8.5, y=17.0)  # closer but out of sight
+    new_target = _make_building(entity_id=3, x=7.4, y=17.0)  # closer but out of sight
 
     assert troop._should_switch_target(current_target, new_target) is False
 
@@ -97,6 +104,96 @@ def test_building_targeting_troop_can_still_acquire_in_sight_defensive_building(
     assert target is cannon
 
 
+def test_building_targeting_troop_acquires_character_marked_as_building_target():
+    attacker = _make_building_targeting_troop(x=9.0, y=10.0, sight_range=6.0)
+    objective = _make_normal_troop(x=9.0, y=12.0, sight_range=6.0)
+    objective.id = 10
+    objective.player_id = 1
+    objective.card_stats.building_target = True
+    distraction = _make_normal_troop(x=9.0, y=11.0, sight_range=6.0)
+    distraction.id = 11
+    distraction.player_id = 1
+
+    assert attacker.get_nearest_target({10: objective, 11: distraction}) is objective
+    assert attacker._should_switch_target(
+        _make_building(entity_id=12, x=9.0, y=14.0),
+        objective,
+    )
+
+
+def test_building_only_attack_eligibility_uses_the_serialized_target_category():
+    attacker = _make_building_targeting_troop(
+        x=9.0,
+        y=10.0,
+        sight_range=6.0,
+    )
+    ordinary_troop = _make_normal_troop(
+        x=9.0,
+        y=10.5,
+        sight_range=6.0,
+    )
+    ordinary_troop.player_id = 1
+    physical_building = _make_building(
+        entity_id=10,
+        x=9.0,
+        y=10.5,
+    )
+    moving_objective = _make_normal_troop(
+        x=9.0,
+        y=10.5,
+        sight_range=6.0,
+    )
+    moving_objective.player_id = 1
+    moving_objective.card_stats.building_target = True
+
+    assert not attacker.can_attack_target(ordinary_troop)
+    assert attacker.can_attack_target(physical_building)
+    assert attacker.can_attack_target(moving_objective)
+
+
+def test_fast_targeting_preserves_character_building_target_bit():
+    battle = BattleState(fast_path=True)
+    attacker = _make_building_targeting_troop(x=9.0, y=10.0, sight_range=6.0)
+    attacker.id = 100
+    objective = _make_normal_troop(x=9.0, y=12.0, sight_range=6.0)
+    objective.id = 101
+    objective.player_id = 1
+    objective.card_stats.building_target = True
+    distraction = _make_normal_troop(x=9.0, y=11.0, sight_range=6.0)
+    distraction.id = 102
+    distraction.player_id = 1
+    for entity in (attacker, objective, distraction):
+        entity.battle_state = battle
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        battle.entities[entity.id] = entity
+    battle._refresh_fast_path_caches()
+
+    assert attacker.get_nearest_target(battle.entities) is objective
+
+
+def test_normal_troop_acquires_closest_eligible_target_not_target_category():
+    troop = _make_normal_troop(x=9.0, y=10.0, sight_range=6.0)
+    closer_building = _make_building(entity_id=10, x=9.0, y=12.0, player_id=1)
+    farther_troop = _make_normal_troop(x=9.0, y=14.0, sight_range=6.0)
+    farther_troop.id = 11
+    farther_troop.player_id = 1
+
+    target = troop.get_nearest_target({10: closer_building, 11: farther_troop})
+    assert target is closer_building
+
+
+def test_normal_troop_switching_uses_distance_not_target_category():
+    troop = _make_normal_troop(x=9.0, y=10.0, sight_range=6.0)
+    closer_building = _make_building(entity_id=10, x=9.0, y=12.0, player_id=1)
+    farther_troop = _make_normal_troop(x=9.0, y=14.0, sight_range=6.0)
+    farther_troop.id = 11
+    farther_troop.player_id = 1
+
+    assert troop._should_switch_target(farther_troop, closer_building)
+    assert not troop._should_switch_target(closer_building, farther_troop)
+
+
 def test_does_not_switch_from_king_to_out_of_sight_princess():
     troop = _make_building_targeting_troop(x=9.0, y=20.0, sight_range=6.0)
     current_target = _make_building(entity_id=20, x=9.0, y=29.5, name="KingTower", player_id=1)
@@ -121,11 +218,121 @@ def test_can_switch_from_king_to_princess_when_attackable():
     assert troop._should_switch_target(current_target, new_target) is True
 
 
-def test_basic_pathfind_on_bridge_keeps_locked_target():
+def test_pathfind_on_bridge_keeps_crossing_toward_locked_target():
     troop = _make_building_targeting_troop(x=3.5, y=16.0, sight_range=6.0)
     troop.player_id = 0
     king = _make_building(entity_id=30, x=9.0, y=29.5, name="KingTower", player_id=1)
 
-    target = troop._get_basic_pathfind_target(king)
-    assert target.x == king.position.x
-    assert target.y == king.position.y
+    target = troop._get_pathfind_target(king)
+    assert target == Position(3.5, 17.5)
+
+
+def test_building_keeps_attack_lock_when_a_closer_enemy_arrives():
+    battle = BattleState()
+    building = _make_building(entity_id=100, x=9.0, y=10.0, player_id=0)
+    current = _make_normal_troop(x=9.0, y=14.0, sight_range=6.0)
+    current.id = 101
+    current.player_id = 1
+    closer = _make_normal_troop(x=9.0, y=12.0, sight_range=6.0)
+    closer.id = 102
+    closer.player_id = 1
+    for entity in (building, current, closer):
+        entity.battle_state = battle
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        battle.entities[entity.id] = entity
+    building.target_id = current.id
+
+    building.update(battle.dt, battle)
+
+    assert building.target_id == current.id
+
+
+def test_building_retargets_when_locked_enemy_leaves_attack_range():
+    battle = BattleState()
+    building = _make_building(entity_id=100, x=9.0, y=10.0, player_id=0)
+    departed = _make_normal_troop(x=9.0, y=18.0, sight_range=6.0)
+    departed.id = 101
+    departed.player_id = 1
+    replacement = _make_normal_troop(x=9.0, y=13.0, sight_range=6.0)
+    replacement.id = 102
+    replacement.player_id = 1
+    for entity in (building, departed, replacement):
+        entity.battle_state = battle
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        battle.entities[entity.id] = entity
+    building.target_id = departed.id
+
+    building.update(battle.dt, battle)
+
+    assert building.target_id == replacement.id
+
+
+def test_building_keeps_lock_inside_native_range_extension():
+    battle = BattleState()
+    building = _make_building(entity_id=100, x=9.0, y=10.0, player_id=0)
+    current = _make_normal_troop(x=9.0, y=10.0, sight_range=6.0)
+    current.id = 101
+    current.player_id = 1
+    replacement = _make_normal_troop(x=9.0, y=12.0, sight_range=6.0)
+    replacement.id = 102
+    replacement.player_id = 1
+    current.position.y = (
+        building.position.y
+        + building.reach_distance_to(current, building.range)
+        + 0.024
+    )
+    for entity in (building, current, replacement):
+        entity.battle_state = battle
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        battle.entities[entity.id] = entity
+    building.target_id = current.id
+
+    building.update(battle.dt, battle)
+
+    assert not building.is_within_attack_reach(current)
+    assert building.target_id == current.id
+
+
+def test_troop_keeps_connected_tower_lock_when_distraction_arrives():
+    battle = BattleState()
+    attacker = _make_normal_troop(x=9.0, y=12.0, sight_range=6.0)
+    attacker.id = 100
+    attacker.player_id = 0
+    tower = _make_building(entity_id=101, x=9.0, y=13.0, name="Tower", player_id=1)
+    distraction = _make_normal_troop(x=9.0, y=12.1, sight_range=6.0)
+    distraction.id = 102
+    distraction.player_id = 1
+    for entity in (attacker, tower, distraction):
+        entity.battle_state = battle
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        battle.entities[entity.id] = entity
+    attacker.target_id = tower.id
+
+    attacker.update(battle.dt, battle)
+
+    assert attacker.target_id == tower.id
+
+
+def test_troop_can_retarget_to_closer_distraction_while_pathing():
+    battle = BattleState()
+    attacker = _make_normal_troop(x=9.0, y=10.0, sight_range=6.0)
+    attacker.id = 100
+    attacker.player_id = 0
+    tower = _make_building(entity_id=101, x=9.0, y=16.0, name="Tower", player_id=1)
+    distraction = _make_normal_troop(x=9.0, y=13.0, sight_range=6.0)
+    distraction.id = 102
+    distraction.player_id = 1
+    for entity in (attacker, tower, distraction):
+        entity.battle_state = battle
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        battle.entities[entity.id] = entity
+    attacker.target_id = tower.id
+
+    attacker.update(battle.dt, battle)
+
+    assert attacker.target_id == distraction.id

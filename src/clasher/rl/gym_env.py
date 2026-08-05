@@ -11,10 +11,11 @@ from typing import Any, Dict, Literal, Optional, Tuple
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
-from gymnasium.envs.registration import register
+from gymnasium.envs.registration import register, registry
 
 from .common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 from .selfplay_env import SelfPlayBattleEnv
+from clasher.battle import STANDARD_MATCH_TICKS
 
 ActionMode = Literal["flat", "xyz"]
 OpponentPolicy = Literal["random", "noop"]
@@ -50,7 +51,7 @@ class ClasherSelfPlayGymEnv(gym.Env):
         self,
         render_mode: Optional[str] = None,
         decision_interval_ticks: int = 8,
-        max_ticks: int = 9090,
+        max_ticks: int = STANDARD_MATCH_TICKS,
         decks_path: str = "decks.json",
         seed: Optional[int] = None,
         mirror_match: bool = False,
@@ -82,7 +83,7 @@ class ClasherSelfPlayGymEnv(gym.Env):
             canonical_perspective=canonical_perspective,
         )
         with _maybe_silence_stdio(self.quiet_engine):
-            self._env.reset()
+            self._env.reset(seed=seed)
 
         spec = self._env.obs_builder.spec
         self._flat_action_space = spaces.Discrete(self._env.action_space.num_actions)
@@ -90,7 +91,7 @@ class ClasherSelfPlayGymEnv(gym.Env):
             self.action_space = self._flat_action_space
         else:
             self.action_space = spaces.MultiDiscrete(
-                np.array([BOARD_WIDTH, BOARD_HEIGHT, NUM_HAND_SLOTS + 1], dtype=np.int64)
+                np.array([BOARD_WIDTH, BOARD_HEIGHT, NUM_HAND_SLOTS + 2], dtype=np.int64)
             )
 
         self.observation_space = spaces.Dict(
@@ -139,13 +140,14 @@ class ClasherSelfPlayGymEnv(gym.Env):
         return self._env.action_space.no_op_action
 
     def _flat_mask_to_xyz(self, flat_mask: np.ndarray) -> np.ndarray:
-        xyz = np.zeros((BOARD_WIDTH, BOARD_HEIGHT, NUM_HAND_SLOTS + 1), dtype=np.bool_)
+        xyz = np.zeros((BOARD_WIDTH, BOARD_HEIGHT, NUM_HAND_SLOTS + 2), dtype=np.bool_)
         for slot in range(NUM_HAND_SLOTS):
             start = slot * NUM_TILES
             stop = start + NUM_TILES
             tile_mask = flat_mask[start:stop].reshape(BOARD_HEIGHT, BOARD_WIDTH)
             xyz[:, :, slot] = tile_mask.T
         xyz[:, :, NUM_HAND_SLOTS] = True
+        xyz[:, :, NUM_HAND_SLOTS + 1] = flat_mask[self._env.action_space.ability_action]
         return xyz
 
     def legal_action_mask_flat(self) -> np.ndarray:
@@ -174,8 +176,10 @@ class ClasherSelfPlayGymEnv(gym.Env):
         x, y, slot = int(arr[0]), int(arr[1]), int(arr[2])
         if not self.action_space.contains(np.array([x, y, slot], dtype=np.int64)):
             return no_op, False
-        if slot >= NUM_HAND_SLOTS:
+        if slot == NUM_HAND_SLOTS:
             return no_op, True
+        if slot == NUM_HAND_SLOTS + 1:
+            return self._env.action_space.ability_action, True
         return self._env.action_space.encode_action(slot=slot, world_x=x, world_y=y, player_id=0), True
 
     def _build_info(
@@ -212,7 +216,7 @@ class ClasherSelfPlayGymEnv(gym.Env):
             self._rng = np.random.default_rng(seed)
         _ = options
         with _maybe_silence_stdio(self.quiet_engine):
-            self._env.reset()
+            self._env.reset(seed=seed)
         no_op = self._env.action_space.no_op_action
         return self._obs_for_player_zero(), self._build_info(
             opponent_action=no_op,
@@ -265,14 +269,13 @@ def register_gym_envs() -> None:
         ("clasher-selfplay-xyz-v0", {"kwargs": {"action_mode": "xyz"}}),
     ]
     for env_id, extra in variants:
-        try:
-            register(
-                id=env_id,
-                entry_point="clasher.rl.gym_env:ClasherSelfPlayGymEnv",
-                **extra,
-            )
-        except Exception:
-            pass
+        if env_id in registry:
+            continue
+        register(
+            id=env_id,
+            entry_point="clasher.rl.gym_env:ClasherSelfPlayGymEnv",
+            **extra,
+        )
 
 
 register_gym_envs()
@@ -285,7 +288,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--decks-path", type=str, default="decks.json")
     parser.add_argument("--decision-interval", type=int, default=8)
-    parser.add_argument("--max-ticks", type=int, default=9090)
+    parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     parser.add_argument("--opponent-policy", type=str, choices=["random", "noop"], default="random")
     parser.add_argument("--action-mode", type=str, choices=["flat", "xyz"], default="flat")
     parser.add_argument("--quiet-engine", dest="quiet_engine", action="store_true", default=True)

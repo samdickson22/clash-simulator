@@ -12,6 +12,7 @@ from typing import Dict
 
 import numpy as np
 
+from clasher.battle import STANDARD_MATCH_TICKS
 from clasher.paths import decks_path as resolve_decks_path
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 
@@ -116,7 +117,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--decisions", type=int, default=512)
     parser.add_argument("--decks-path", type=str, default="decks.json")
     parser.add_argument("--decision-interval", type=int, default=8)
-    parser.add_argument("--max-ticks", type=int, default=9090)
+    parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     parser.add_argument("--mirror-match", action="store_true")
     parser.add_argument("--quiet-engine", action="store_true")
     parser.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
