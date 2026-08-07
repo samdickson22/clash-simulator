@@ -36,7 +36,7 @@ from visualize_battle import (
 
 TEAM_COLORS = {0: (75, 145, 255), 1: (246, 91, 103)}
 TEAM_DARK = {0: (32, 80, 155), 1: (145, 35, 52)}
-RANGE_COLORS = {0: (96, 178, 255), 1: (255, 122, 137)}
+RANGE_COLORS = {0: (90, 165, 235), 1: (235, 108, 122)}
 INK = (230, 236, 245)
 MUTED = (147, 159, 178)
 BACKGROUND = (13, 18, 28)
@@ -534,8 +534,8 @@ class PolicyBattleVisualizer(BattleVisualizer):
                     ring_color,
                     bounds,
                     math.radians(degrees),
-                    math.radians(degrees + 18),
-                    2,
+                    math.radians(degrees + 15),
+                    1,
                 )
 
         if not getattr(entity, "target_id", None):
