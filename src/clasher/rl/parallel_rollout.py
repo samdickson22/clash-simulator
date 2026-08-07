@@ -6,7 +6,7 @@ import traceback
 from collections.abc import Iterable
 from dataclasses import dataclass, fields
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 import torch
@@ -24,6 +24,18 @@ from .train_recurrent import (
 
 
 @dataclass(frozen=True)
+class OpponentSpec:
+    kind: Literal["random", "checkpoint"]
+    checkpoint: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.kind == "random" and self.checkpoint is not None:
+            raise ValueError("random opponent cannot have a checkpoint")
+        if self.kind == "checkpoint" and not self.checkpoint:
+            raise ValueError("checkpoint opponent requires a path")
+
+
+@dataclass(frozen=True)
 class ActorWorkerConfig:
     decks_path: str
     token_names: tuple[str, ...]
@@ -32,7 +44,7 @@ class ActorWorkerConfig:
     max_ticks: int
     mirror_match: bool
     opponent_mode: str
-    opponent_checkpoints: tuple[str, ...]
+    opponent_pool: tuple[OpponentSpec, ...]
     engine_fast_path: str
     quiet_engine: bool
     base_seed: int
@@ -66,6 +78,18 @@ def _cpu_state_dict(model: ClasherPolicy) -> dict[str, torch.Tensor]:
     }
 
 
+def opponent_spec_for_worker(
+    config: ActorWorkerConfig, worker_id: int
+) -> OpponentSpec | None:
+    if config.opponent_mode == "selfplay":
+        return None
+    if config.opponent_mode not in {"random", "checkpoint", "league"}:
+        raise ValueError(f"unknown opponent mode {config.opponent_mode!r}")
+    if not config.opponent_pool:
+        raise ValueError(f"{config.opponent_mode} opponent mode requires a pool")
+    return config.opponent_pool[worker_id % len(config.opponent_pool)]
+
+
 def _actor_worker_main(
     worker_id: int,
     env_indices: tuple[int, ...],
@@ -86,12 +110,10 @@ def _actor_worker_main(
         )
         model = ClasherPolicy(policy_config, builder.card_stat_features).to(device)
         opponent_model: ClasherPolicy | None = None
-        if config.opponent_mode == "checkpoint":
-            if not config.opponent_checkpoints:
-                raise ValueError("checkpoint opponent mode requires checkpoint paths")
-            opponent_path = config.opponent_checkpoints[
-                worker_id % len(config.opponent_checkpoints)
-            ]
+        opponent_spec = opponent_spec_for_worker(config, worker_id)
+        if opponent_spec is not None and opponent_spec.kind == "checkpoint":
+            assert opponent_spec.checkpoint is not None
+            opponent_path = opponent_spec.checkpoint
             opponent_payload = torch.load(
                 opponent_path, map_location=device, weights_only=False
             )
@@ -124,11 +146,14 @@ def _actor_worker_main(
                 env.reset(seed=seed)
                 envs.append(env)
 
-        if config.opponent_mode not in {"selfplay", "random", "checkpoint"}:
-            raise ValueError(f"unknown opponent mode {config.opponent_mode!r}")
+        stationary_opponents = config.opponent_mode in {
+            "random",
+            "checkpoint",
+            "league",
+        }
         agents = (
             len(envs)
-            if config.opponent_mode in {"random", "checkpoint"}
+            if stationary_opponents
             else 2 * len(envs)
         )
         learner_players = tuple(env_index % 2 for env_index in env_indices)
@@ -184,7 +209,7 @@ def _actor_worker_main(
                     opponent_episode_starts=opponent_episode_starts,
                     quiet_engine=config.quiet_engine,
                 )
-                if config.opponent_mode in {"random", "checkpoint"}
+                if stationary_opponents
                 else collect_rollout(
                     envs=envs,
                     builder=builder,

@@ -91,6 +91,31 @@ uv run python run_clasher.py train -- \
   --checkpoint-dir checkpoints/historical_curriculum
 ```
 
+For a mixed league, repeat `--league-opponent` with `random` and frozen
+checkpoints. Repetition controls worker weights; the following assigns four of
+the twelve workers to each opponent:
+
+```bash
+uv run python run_clasher.py train -- \
+  --resume-from checkpoints/historical_curriculum/policy_v2_update_001300.pt \
+  --updates 1500 \
+  --num-envs 64 \
+  --actor-workers 12 \
+  --actor-threads 1 \
+  --rollout-steps 64 \
+  --opponent-mode league \
+  --league-opponent random \
+  --league-opponent checkpoints/random_curriculum/policy_v2_update_000800.pt \
+  --league-opponent checkpoints/historical_curriculum/policy_v2_update_001300.pt \
+  --engine-fast-path on \
+  --device mps \
+  --actor-device cpu \
+  --sequence-batch-size 4 \
+  --epochs 2 \
+  --save-every 10 \
+  --checkpoint-dir checkpoints/mixed_league
+```
+
 ### 4) Evaluate a V2 checkpoint
 
 ```bash

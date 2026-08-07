@@ -928,12 +928,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mirror-match", action="store_true")
     parser.add_argument(
         "--opponent-mode",
-        choices=["selfplay", "random", "checkpoint"],
+        choices=["selfplay", "random", "checkpoint", "league"],
         default="selfplay",
         help=(
             "selfplay trains both seats with the current policy; random trains "
             "one balanced learner seat per environment against a stationary "
-            "uniform-legal opponent"
+            "uniform-legal opponent; checkpoint uses frozen policies; league "
+            "mixes repeated random/checkpoint specifications across workers"
         ),
     )
     parser.add_argument(
@@ -941,6 +942,16 @@ def parse_args() -> argparse.Namespace:
         action="append",
         default=[],
         help="repeat to distribute frozen V2 opponents across rollout workers",
+    )
+    parser.add_argument(
+        "--league-opponent",
+        action="append",
+        default=[],
+        metavar="RANDOM_OR_CHECKPOINT",
+        help=(
+            "repeat in league mode; each value is 'random' or a frozen V2 "
+            "checkpoint path, distributed round-robin across workers"
+        ),
     )
     parser.add_argument(
         "--engine-fast-path", choices=["off", "shadow", "on"], default="off"
@@ -1010,8 +1021,25 @@ def main() -> None:
         raise ValueError("actor_threads must be positive")
     if args.opponent_mode == "checkpoint" and not args.opponent_checkpoint:
         raise ValueError("--opponent-mode checkpoint requires --opponent-checkpoint")
-    if args.opponent_mode == "checkpoint" and args.actor_workers == 1:
-        raise ValueError("checkpoint opponents currently require parallel actors")
+    if args.opponent_mode != "checkpoint" and args.opponent_checkpoint:
+        raise ValueError("--opponent-checkpoint requires --opponent-mode checkpoint")
+    if args.opponent_mode == "league" and not args.league_opponent:
+        raise ValueError("--opponent-mode league requires --league-opponent")
+    if args.opponent_mode != "league" and args.league_opponent:
+        raise ValueError("--league-opponent requires --opponent-mode league")
+    if args.opponent_mode in {"checkpoint", "league"} and args.actor_workers == 1:
+        raise ValueError(
+            "checkpoint and league opponents currently require parallel actors"
+        )
+    if args.opponent_mode == "league":
+        league_kinds = {
+            "random" if spec == "random" else "checkpoint"
+            for spec in args.league_opponent
+        }
+        if league_kinds != {"random", "checkpoint"}:
+            raise ValueError(
+                "league mode requires at least one random and one checkpoint opponent"
+            )
     if args.d_model % args.num_heads != 0:
         raise ValueError("d_model must be divisible by num_heads")
 
@@ -1027,6 +1055,12 @@ def main() -> None:
     decks_path = resolve_decks_path(args.decks_path, must_exist=True)
     opponent_checkpoints = tuple(
         str(resolve_path(path, must_exist=True)) for path in args.opponent_checkpoint
+    )
+    league_opponents = tuple(
+        ("random", None)
+        if spec == "random"
+        else ("checkpoint", str(resolve_path(spec, must_exist=True)))
+        for spec in args.league_opponent
     )
     directory = checkpoints_dir(args.checkpoint_dir, create=True)
     resume, resume_path = _load_resume_state(args, directory, learner_device)
@@ -1085,7 +1119,31 @@ def main() -> None:
                 env.reset(seed=args.seed + index * 1009)
                 envs.append(env)
     else:
-        from .parallel_rollout import ActorWorkerConfig, ParallelRolloutCollector
+        from .parallel_rollout import (
+            ActorWorkerConfig,
+            OpponentSpec,
+            ParallelRolloutCollector,
+        )
+
+        opponent_pool: tuple[OpponentSpec, ...]
+        if args.opponent_mode == "random":
+            opponent_pool = (OpponentSpec(kind="random"),)
+        elif args.opponent_mode == "checkpoint":
+            opponent_pool = tuple(
+                OpponentSpec(kind="checkpoint", checkpoint=path)
+                for path in opponent_checkpoints
+            )
+        elif args.opponent_mode == "league":
+            opponent_pool = tuple(
+                (
+                    OpponentSpec(kind="random")
+                    if kind == "random"
+                    else OpponentSpec(kind="checkpoint", checkpoint=path)
+                )
+                for kind, path in league_opponents
+            )
+        else:
+            opponent_pool = ()
 
         parallel_collector = ParallelRolloutCollector(
             num_workers=args.actor_workers,
@@ -1098,7 +1156,7 @@ def main() -> None:
                 max_ticks=args.max_ticks,
                 mirror_match=args.mirror_match,
                 opponent_mode=args.opponent_mode,
-                opponent_checkpoints=opponent_checkpoints,
+                opponent_pool=opponent_pool,
                 engine_fast_path=args.engine_fast_path,
                 quiet_engine=args.quiet_engine,
                 base_seed=args.seed,
@@ -1109,7 +1167,7 @@ def main() -> None:
 
     agents = (
         args.num_envs
-        if args.opponent_mode in {"random", "checkpoint"}
+        if args.opponent_mode in {"random", "checkpoint", "league"}
         else 2 * args.num_envs
     )
     learner_players = tuple(index % 2 for index in range(args.num_envs))
@@ -1137,6 +1195,12 @@ def main() -> None:
         f"actor_threads={args.actor_threads} rollout_steps={args.rollout_steps} "
         f"transitions_per_update={agents * args.rollout_steps}"
     )
+    if args.opponent_mode == "league":
+        league_labels = [
+            "random" if kind == "random" else str(path)
+            for kind, path in league_opponents
+        ]
+        print(f"league_opponents={league_labels}")
     if resume_path is not None:
         print(
             f"resumed_from={resume_path} start_update={start_update} "
