@@ -281,3 +281,31 @@ optimizer change. Run the matched 24-game safety blocks at update 1420 before an
 longer allocation. If playable no-op or fixed-anchor results regress again, stop and
 test entropy regularization separately rather than spending another 100 updates.
 Do not begin even that pilot until RoadForge confirms its next resource window.
+
+## Equal-weight mixture diagnostic
+
+After RoadForge cleared the resource window, the diagnostic resumed update 1400
+for 20 updates with exactly 16 of 64 environments assigned to each of update 1400,
+update 1300, update 800, and random. It added 81,920 learner decisions and exited
+normally at 5,672,960 total decisions. The update-1420 checkpoint SHA-256 is
+`a69efd75ba615a58c6dddec2df2c4f4a900cb55e33ed122be13516da33f603ae`.
+
+Across all 20 updates, mean KL was 0.00319 (maximum 0.00763), mean explained
+variance was 0.937 (minimum 0.893), mean throughput was 276 decisions/second, and
+five updates stopped early on KL. Conditional no-op stayed between 0.692 and 0.805.
+
+The matched 24-game safety blocks improved in every comparison:
+
+| Opponent | Update 1420 | Crown diff/game | Matched update-1400 baseline |
+|---|---:|---:|---:|
+| Uniform-legal random | 23-1 | +2.250 | 21-3, +1.583 |
+| Update 300 | 21-3 | +1.792 | 18-6, +1.333 |
+| Update 800 | 21-3 | +1.750 | 19-5, +1.458 |
+| Update 1300 | 14-10 | +0.375 | 12-12, -0.042 |
+| Champion update 1400 | 15-9 | +0.500 | direct match |
+
+Wins were balanced by seat in each block. Deterministic playable no-op ranged from
+0.829 to 0.861, close to update 1400 and far below rejected update 1500's 0.896-0.949.
+This supports the opponent-mixture diagnosis, but 24 games per opponent are only a
+safety gate rather than promotion evidence. Update 1400 remains champion while the
+same equal-weight branch continues in another short stage before expanded evaluation.
