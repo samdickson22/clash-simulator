@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, List
 
 from ..mechanic_base import BaseMechanic
+from ...balance import LOGIC_CHAMPION_CAN_EXECUTE_ABILITY_FROZEN
 from ...kinematics import logic_time_milliseconds
 
 if TYPE_CHECKING:
@@ -35,10 +36,18 @@ class ActiveAbility:
             self.activation_time + self.duration_ms + self.cooldown_ms
         )
         is_stunned = getattr(entity, "is_stunned", None)
-
+        frozen_blocks_activation = (
+            not LOGIC_CHAMPION_CAN_EXECUTE_ABILITY_FROZEN
+            and callable(is_stunned)
+            and is_stunned()
+        )
+        # LOGIC_CHAMPION_CAN_EXECUTE_ABILITY_FROZEN is enabled in the native
+        # globals. Frozen/stunned Champions therefore retain access to their
+        # ability button; the status still blocks their ordinary combat and
+        # movement components independently.
         return (player.elixir >= self.elixir_cost and
                 getattr(entity, "is_alive", True) and
-                not (callable(is_stunned) and is_stunned()) and
+                not frozen_blocks_activation and
                 not getattr(entity, "placement_pending", False) and
                 getattr(entity, "deploy_delay_remaining", 0.0) <= 1e-9 and
                 cooldown_ready and

@@ -142,13 +142,11 @@ class MegaKnightSlam(BaseMechanic):
         self._launch_leap(entity, target, distance)
 
     def _target_edge_distance(self, entity: 'Entity', target: 'Entity') -> float | None:
-        edge_distance = (
-            entity.native_target_distance_to(target)
-            - target.get_collision_radius()
+        return entity.native_dash_range_edge_distance(
+            target,
+            self.jump_min_range,
+            self.jump_max_range,
         )
-        if self.jump_min_range < edge_distance < self.jump_max_range:
-            return edge_distance
-        return None
 
     def _update_airborne(self, entity: 'Entity', dt_ms: int) -> None:
         entity._mk_leap_progress += dt_ms
@@ -308,7 +306,10 @@ class MegaKnightSlam(BaseMechanic):
             ):
                 continue
             if other.intersects_native_area(impact_position, radius):
-                if not other.can_receive_area_damage("mega-knight-slam"):
+                if not other.can_receive_area_damage(
+                    "mega-knight-slam",
+                    source_entity=entity,
+                ):
                     continue
                 targets.append(other)
 

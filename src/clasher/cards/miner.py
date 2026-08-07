@@ -1,11 +1,14 @@
 from dataclasses import dataclass
+import math
 
 from ..arena import Position
+from ..balance import LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED
 from ..mechanics.mechanic_base import BaseMechanic
 from ..kinematics import (
-    logic_speed_to_tiles_per_second,
+    LOGIC_TICK_SECONDS,
     logic_units_to_tiles,
     speed_work_for_duration,
+    spawn_path_travel_tick_count,
     tiles_to_logic_units,
     vector_towards_logic_units,
 )
@@ -45,11 +48,17 @@ class UndergroundDeployment(BaseMechanic):
             else battle.arena.RED_KING_TOWER
         )
         origin = Position(king.x, king.y)
-        speed = max(
-            1e-9,
-            logic_speed_to_tiles_per_second(self.travel_speed_logic_units_per_tick),
+        dx_units = tiles_to_logic_units(destination.x - origin.x)
+        dy_units = tiles_to_logic_units(destination.y - origin.y)
+        distance_units = math.isqrt(dx_units * dx_units + dy_units * dy_units)
+        travel_ticks = spawn_path_travel_tick_count(
+            distance_units,
+            max(1, round(self.travel_speed_logic_units_per_tick)),
+            reached_radius_from_speed=(
+                LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED
+            ),
         )
-        travel_duration = origin.distance_to(destination) / speed
+        travel_duration = travel_ticks * LOGIC_TICK_SECONDS
 
         entity._underground_origin = origin
         entity._underground_destination = destination
@@ -78,7 +87,11 @@ class UndergroundDeployment(BaseMechanic):
         total = float(getattr(entity, "placement_delay_total", 0.0) or 0.0)
         remaining = float(getattr(entity, "deploy_delay_remaining", 0.0) or 0.0)
         elapsed = max(0.0, total - remaining)
-        if travel_duration <= 0 or elapsed >= travel_duration - 1e-12:
+        frame_seconds = max(0.0, float(dt_ms)) / 1000.0
+        if (
+            travel_duration <= 0
+            or elapsed + frame_seconds >= travel_duration - 1e-12
+        ):
             entity.position = Position(destination.x, destination.y)
             return
 
@@ -89,7 +102,7 @@ class UndergroundDeployment(BaseMechanic):
             dy_units,
             speed_work_for_duration(
                 self.travel_speed_logic_units_per_tick,
-                max(0.0, float(dt_ms)) / 1000.0,
+                frame_seconds,
             ),
         )
         entity.position = Position(

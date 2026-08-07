@@ -3,16 +3,18 @@ from typing import List, Optional, Deque
 from collections import deque
 
 from .card_types import CardStatsCompat
+from .balance import DEFAULT_BATTLE_TIMELINE_STARTING_ELIXIR
 
 
 @dataclass
 class PlayerState:
     player_id: int
-    elixir: float = 5.0
+    elixir: float = DEFAULT_BATTLE_TIMELINE_STARTING_ELIXIR
     max_elixir: float = 10.0
+    next_card_refill_cooldown_ms: int = 0
     
     # Card system
-    hand: List[str] = field(default_factory=lambda: ["Knight", "Archer", "Giant", "Minions"])
+    hand: List[Optional[str]] = field(default_factory=lambda: ["Knight", "Archer", "Giant", "Minions"])
     deck: List[str] = field(default_factory=lambda: ["Knight", "Archer", "Giant", "Minions", "Musketeer", "BabyDragon", "Balloon", "Wizard"])
     cycle_queue: Deque[str] = field(default_factory=deque)
     
@@ -47,16 +49,32 @@ class PlayerState:
         # Spend elixir
         self.elixir -= card_stats.mana_cost
         
-        # Remove from hand and add next card from cycle
+        # Native leaves the played slot empty until the player tick refills it.
+        # The used card joins the back of the cycle immediately.
         hand_index = self.hand.index(card_name)
-        if self.cycle_queue:
-            next_card = self.cycle_queue.popleft()
-            self.hand[hand_index] = next_card
-            # Since the October 2025 Champion-cycle rework, Champions rotate
-            # through the ordinary four-card cycle just like every other card.
-            self.cycle_queue.append(card_name)
+        self.hand[hand_index] = None
+        # Since the October 2025 Champion-cycle rework, Champions rotate
+        # through the ordinary four-card cycle just like every other card.
+        self.cycle_queue.append(card_name)
         
         return True
+
+    def tick_card_refill(self, cooldown_ms: int, tick_ms: int = 50) -> None:
+        """Advance the native delayed hand-refill state by one player tick."""
+        if self.next_card_refill_cooldown_ms > 0:
+            self.next_card_refill_cooldown_ms = max(
+                0,
+                self.next_card_refill_cooldown_ms - tick_ms,
+            )
+
+        if self.next_card_refill_cooldown_ms != 0 or not self.cycle_queue:
+            return
+
+        for slot, card_name in enumerate(self.hand):
+            if card_name is None:
+                self.hand[slot] = self.cycle_queue.popleft()
+                self.next_card_refill_cooldown_ms = cooldown_ms
+                return
 
     def get_next_card(self) -> Optional[str]:
         """Return the next card in cycle, if known."""

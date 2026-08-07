@@ -3,7 +3,7 @@ from ..card_types import Mechanic
 from ..mechanics.shared import (
     DeathDamage, DeathSpawn, Shield, DamageRamp, FreezeDebuff, Stun,
     CrownTowerScaling, KnockbackOnHit, PeriodicSpawner, SpawnAreaEffect,
-    DeathAreaEffect, MultipleTargetAttack, SerializedOnHitBuff,
+    DeathAreaEffect, MultipleTargetAttack, SerializedOnHitBuff, SpawnPushback,
 )
 from ..mechanics.champion import SkeletonKingSoulCollector, ChampionAbilityMechanic, ActiveAbility
 from ..cards import (
@@ -90,6 +90,9 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
                     char_data.get("deathSpawnMinRadius", 0) or 0
                 ) / 1000.0,
                 radial_pushback=bool(char_data.get("deathSpawnPushback", False)),
+                spawn_const_priority=bool(
+                    char_data.get("spawnConstPriority", False)
+                ),
                 deploy_time_ms=int(char_data.get("deathSpawnDeployTime", 0) or 0),
                 unit_data=spawn_data,
             ))
@@ -264,6 +267,20 @@ def detect_mechanics_from_data(entry: Dict[str, Any]) -> List[Mechanic]:
             mechanics.append(MegaKnightSlam())
         else:
             mechanics.append(BanditDash())
+
+    spawn_pushback = float(char_data.get("spawnPushback", 0) or 0)
+    spawn_pushback_radius = float(
+        char_data.get("spawnPushbackRadius", 0) or 0
+    )
+    if spawn_pushback > 0 and spawn_pushback_radius > 0:
+        mechanics.append(
+            SpawnPushback(
+                distance_tiles=spawn_pushback / 1000.0,
+                radius_tiles=spawn_pushback_radius / 1000.0,
+                hits_air=bool(char_data.get("attacksAir", False)),
+                hits_ground=bool(char_data.get("attacksGround", True)),
+            )
+        )
 
     projectile_data = char_data.get("projectileData", {}) or {}
     chained_hit_count = int(

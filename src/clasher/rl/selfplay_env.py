@@ -13,6 +13,7 @@ from .action_space import DiscreteTileActionSpace
 from .deck_pool import apply_deck_to_player, load_deck_pool, sample_decks
 from .obs_cv import CvObservationBuilder
 from .reward_model import objective_potential_p0
+from .structured_obs import StructuredObservationBuilder
 
 
 @dataclass
@@ -46,12 +47,17 @@ class SelfPlayBattleEnv:
         self.np_rng = np.random.default_rng(seed)
 
         self.decks = load_deck_pool(decks_path)
+        self.decks_path = str(decks_path)
         self.obs_builder = CvObservationBuilder(
             card_vocab=None,
             decks_path=decks_path,
             canonical_perspective=canonical_perspective,
         )
         self.action_space = DiscreteTileActionSpace(canonical_perspective=canonical_perspective)
+        # Structured observations are lazy so Gym/CV-only benchmarks do not
+        # pay their vocabulary construction cost.
+        self._structured_obs_builder: StructuredObservationBuilder | None = None
+        self._canonical_perspective = canonical_perspective
 
         self.battle: Optional[BattleState] = None
         self._prev_objective_p0 = 0.0
@@ -82,6 +88,19 @@ class SelfPlayBattleEnv:
     def get_observation(self, player_id: int):
         assert self.battle is not None
         return self.obs_builder.build(self.battle, player_id)
+
+    @property
+    def structured_obs_builder(self) -> StructuredObservationBuilder:
+        if self._structured_obs_builder is None:
+            self._structured_obs_builder = StructuredObservationBuilder(
+                decks_path=self.decks_path,
+                canonical_perspective=self._canonical_perspective,
+            )
+        return self._structured_obs_builder
+
+    def get_structured_observation(self, player_id: int):
+        assert self.battle is not None
+        return self.structured_obs_builder.build(self.battle, player_id)
 
     def get_action_mask(self, player_id: int) -> np.ndarray:
         assert self.battle is not None
@@ -153,17 +172,33 @@ class SelfPlayBattleEnv:
                     penalties[player_id] += 0.005
         return penalties
 
-    def step(self, actions: Dict[int, int]) -> tuple[Dict[int, float], bool, StepInfo]:
+    def step(
+        self,
+        actions: Dict[int, int],
+        *,
+        pre_action_masks: Optional[Dict[int, np.ndarray]] = None,
+    ) -> tuple[Dict[int, float], bool, StepInfo]:
         assert self.battle is not None
 
         pre_elixir = {
             0: float(self.battle.players[0].elixir),
             1: float(self.battle.players[1].elixir),
         }
-        pre_can_spend = {
-            0: self._can_spend_elixir_now(0),
-            1: self._can_spend_elixir_now(1),
-        }
+        if pre_action_masks is None:
+            pre_can_spend = {
+                0: self._can_spend_elixir_now(0),
+                1: self._can_spend_elixir_now(1),
+            }
+        else:
+            pre_can_spend = {
+                player_id: bool(
+                    np.any(mask[: self.action_space.no_op_action])
+                    or mask[self.action_space.ability_action]
+                )
+                for player_id, mask in pre_action_masks.items()
+            }
+            if set(pre_can_spend) != {0, 1}:
+                raise ValueError("pre_action_masks must contain players 0 and 1")
 
         action_success: Dict[int, bool] = {}
         order = [0, 1]

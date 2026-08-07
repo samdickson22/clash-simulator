@@ -10,6 +10,12 @@ def _assert_players_match(left: BattleState, right: BattleState) -> None:
         lp = left.players[pid]
         rp = right.players[pid]
         assert abs(lp.elixir - rp.elixir) < 1e-6
+        assert lp.hand == rp.hand
+        assert lp.cycle_queue == rp.cycle_queue
+        assert (
+            lp.next_card_refill_cooldown_ms
+            == rp.next_card_refill_cooldown_ms
+        )
         assert lp.left_tower_hp == rp.left_tower_hp
         assert lp.right_tower_hp == rp.right_tower_hp
         assert lp.king_tower_hp == rp.king_tower_hp
@@ -40,6 +46,8 @@ def _assert_tower_clocks_match(left: BattleState, right: BattleState) -> None:
 
 def test_fast_forward_idle_ticks_matches_step_for_static_towers():
     battle = BattleState()
+    battle.players[0].hand[0] = None
+    battle.players[0].next_card_refill_cooldown_ms = 100
     manual = copy.deepcopy(battle)
     ticks = 8
 

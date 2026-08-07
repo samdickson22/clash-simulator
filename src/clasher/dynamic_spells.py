@@ -23,6 +23,7 @@ from .kinematics import (
     SERVER_ACTION_DELAY_SECONDS,
     logic_speed_to_tiles_per_second,
 )
+from .logic_math import native_percent_damage
 from .stat_scaling import scale_stat
 
 
@@ -71,7 +72,12 @@ def _crown_damage(name: str, damage: float, percent: Any) -> float:
     current = tournament_spell_stat(name, "crown_tower_damage")
     if current is not None:
         return float(current)
-    return damage * _percent_to_multiplier(percent)
+    return float(
+        native_percent_damage(
+            damage,
+            _percent_to_multiplier(percent),
+        )
+    )
 
 
 def _repeated_spawn_action_group(
@@ -258,7 +264,12 @@ def create_spell_from_json(
             building_damage=_spell_aux_damage(
                 name,
                 "building_damage",
-                damage * building_damage_multiplier,
+                float(
+                    native_percent_damage(
+                        damage,
+                        building_damage_multiplier,
+                    )
+                ),
             ),
             damage_tick_interval=tick_interval,
             max_damage_ticks=(

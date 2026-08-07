@@ -14,7 +14,7 @@ from .kinematics import (
     tiles_to_logic_units,
     trunc_div,
 )
-from .logic_math import rotate_logic_vector
+from .logic_math import native_percent_damage, rotate_logic_vector
 
 if TYPE_CHECKING:
     from .battle import BattleState
@@ -97,7 +97,10 @@ class DirectDamageSpell(Spell):
                         damage = (
                             self.crown_tower_damage
                             if self.crown_tower_damage is not None
-                            else damage * self.crown_tower_damage_multiplier
+                            else native_percent_damage(
+                                damage,
+                                self.crown_tower_damage_multiplier,
+                            )
                         )
                 targets.append((entity, damage))
 

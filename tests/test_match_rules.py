@@ -65,6 +65,56 @@ def _king_has_launched(battle: BattleState) -> bool:
     )
 
 
+def test_default_battle_timeline_starts_on_playable_frame_with_six_elixir():
+    battle = BattleState()
+
+    assert battle.time == 0.0
+    assert battle.tick == 0
+    assert [player.elixir for player in battle.players] == [6.0, 6.0]
+
+
+@pytest.mark.parametrize(
+    ("start_time", "cooldown_ms", "cooldown_ticks"),
+    ((0.0, 1000, 20), (120.0, 500, 10), (240.0, 350, 7)),
+)
+def test_default_timeline_delays_empty_hand_slot_refills(
+    start_time,
+    cooldown_ms,
+    cooldown_ticks,
+):
+    battle = BattleState()
+    player = battle.players[0]
+    cycle = [
+        "Knight", "Archers", "Fireball", "Cannon",
+        "Giant", "Minions", "Zap", "Musketeer",
+    ]
+    player.elixir = 20.0
+    player.hand = cycle[:4]
+    player.deck = cycle.copy()
+    player.cycle_queue = deque(cycle[4:])
+    battle.time = start_time
+    battle.tick = round(start_time / battle.dt)
+
+    assert battle.deploy_card(0, "Knight", Position(7.0, 10.0))
+    # NextSpellCooldownMS does not lock other occupied hand slots.
+    assert battle.deploy_card(0, "Archers", Position(11.0, 10.0))
+    assert player.hand[:2] == [None, None]
+
+    # A zero timer lets the next player tick fill one lowest-index slot.
+    battle.step()
+    assert player.hand[:2] == ["Giant", None]
+    assert player.next_card_refill_cooldown_ms == cooldown_ms
+
+    for _ in range(cooldown_ticks - 1):
+        battle.step()
+    assert player.hand[1] is None
+    assert player.next_card_refill_cooldown_ms == 50
+
+    battle.step()
+    assert player.hand[1] == "Minions"
+    assert player.next_card_refill_cooldown_ms == cooldown_ms
+
+
 def test_tournament_towers_use_live_tower_troop_stats_without_card_rescaling():
     battle = BattleState()
     princess = next(
@@ -363,9 +413,13 @@ def test_eight_card_cycle_rotates_played_card_to_back():
 
     assert player.get_next_card() == "Musketeer"
     assert battle.deploy_card(0, "Knight", Position(9.0, 10.0))
+    assert player.hand[0] is None
+    assert player.get_next_card() == "Musketeer"
+    assert player.cycle_queue[-1] == "Knight"
+
+    battle.step()
     assert "Musketeer" in player.hand
     assert player.get_next_card() == "Skeletons"
-    assert player.cycle_queue[-1] == "Knight"
 
 
 def test_champion_cycles_normally_and_can_be_redeployed_while_alive():
@@ -385,12 +439,27 @@ def test_champion_cycles_normally_and_can_be_redeployed_while_alive():
         ("Knight", Position(7.0, 10.0)),
         ("Skeletons", Position(11.0, 10.0)),
         ("IceSpirit", Position(6.0, 11.0)),
-        ("Cannon", Position(12.0, 11.0)),
     ):
         player.elixir = 10.0
         assert battle.deploy_card(0, card_name, position)
 
-    assert "ArcherQueen" in player.hand
+    assert player.hand == [None, None, None, None]
+
+    # The first empty slot fills immediately on the next player tick. Each
+    # later slot waits one full Default-timeline refill interval.
+    battle.step()
+    for _ in range(3):
+        for _ in range(20):
+            battle.step()
+    assert player.hand == ["Cannon", "Fireball", "Log", "Archers"]
+    assert player.get_next_card() == "ArcherQueen"
+
+    player.elixir = 10.0
+    assert battle.deploy_card(0, "Cannon", Position(14.0, 11.0))
+    for _ in range(20):
+        battle.step()
+    assert player.hand[0] == "ArcherQueen"
+
     first_queen = next(
         entity
         for entity in battle.entities.values()
@@ -496,7 +565,7 @@ def test_first_overtime_crown_advantage_ends_match_immediately():
     assert battle.winner == 0
 
 
-def test_stun_restarts_attack_windup_and_clears_current_target_lock():
+def test_stun_restarts_complete_attack_cycle_and_clears_current_target_lock():
     battle = BattleState()
     _prepare_single_card(battle, 0, "Knight")
     assert battle.deploy_card(0, "Knight", Position(9.0, 10.0))
@@ -512,7 +581,7 @@ def test_stun_restarts_attack_windup_and_clears_current_target_lock():
         if isinstance(entity, Building) and entity.player_id == 1
     )
     knight.apply_stun(0.5)
-    assert knight.attack_cooldown == knight.card_stats.first_hit_time / 1000.0
+    assert knight.attack_cooldown == knight.get_base_attack_interval_seconds()
     assert knight.target_id is None
 
 
@@ -833,11 +902,20 @@ def test_witch_periodic_skeleton_spawn():
     assert battle.deploy_card(0, "Witch", Position(9.0, 10.0))
 
     baseline = len([e for e in battle.entities.values() if isinstance(e, Troop) and e.player_id == 0])
-    # Deploy delay (~1s) + periodic spawn interval (7s) + margin.
+    spawned_skeleton = False
+    # Observe the interval rather than sampling only its endpoint: live tower
+    # locks can legitimately eliminate a wave before this window closes.
     for _ in range(320):
         battle.step()
-    after = len([e for e in battle.entities.values() if isinstance(e, Troop) and e.player_id == 0])
-    assert after > baseline
+        after = len(
+            [
+                entity
+                for entity in battle.entities.values()
+                if isinstance(entity, Troop) and entity.player_id == 0
+            ]
+        )
+        spawned_skeleton |= after > baseline
+    assert spawned_skeleton
 
 
 def test_tombstone_periodic_and_death_spawn():
@@ -989,10 +1067,13 @@ def test_prince_charge_uses_special_damage_on_first_hit():
     p1.deck = ["Giant"]
     p1.cycle_queue = deque()
 
-    assert battle.deploy_card(0, "Prince", Position(9.0, 10.0))
+    # Exact center is a native Princess-Tower distance tie. Each player's
+    # strict leader-array order resolves that tie to the rotationally opposite
+    # lane, so use an unambiguous same-lane deployment for this charge test.
+    assert battle.deploy_card(0, "Prince", Position(9.5, 10.0))
     giant_stats = battle.card_loader.get_card("Giant")
     assert giant_stats is not None
-    battle._spawn_troop(Position(9.0, 18.0), 1, giant_stats)
+    battle._spawn_troop(Position(9.5, 18.0), 1, giant_stats)
 
     prince = next(
         e for e in battle.entities.values()

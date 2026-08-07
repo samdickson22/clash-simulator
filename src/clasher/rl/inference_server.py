@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 import numpy as np
 import torch
 
-from .model import MaskedPolicyValueNet
+from .legacy_model import MaskedPolicyValueNet
 
 
 class InferenceServer:

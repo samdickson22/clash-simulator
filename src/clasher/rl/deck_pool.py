@@ -40,6 +40,7 @@ def apply_deck_to_player(player: PlayerState, deck: Sequence[str], rng: random.R
     player.deck = shuffled
     player.hand = shuffled[:4]
     player.cycle_queue = deque(shuffled[4:])
+    player.next_card_refill_cooldown_ms = 0
 
 
 def sample_decks(

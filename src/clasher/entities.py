@@ -21,9 +21,11 @@ from .unit_traits import (
 from .native_tilemap import clamp_native_object_axis
 from .kinematics import (
     LOGIC_TICK_SECONDS,
+    NATIVE_MOVEMENT_SUBSTEP_UNITS,
     logic_time_milliseconds,
     logic_speed_to_tiles_per_second,
     logic_units_to_tiles,
+    movement_component_vector_logic_units,
     normalized_vector_logic_units,
     speed_work_for_duration,
     tiles_to_logic_units,
@@ -33,10 +35,34 @@ from .kinematics import (
 )
 from .logic_math import (
     logic_vector_angle,
+    native_percent_damage,
     rotate_logic_vector,
     spawn_target_distance_discount_sq_units,
 )
 from .gamedata_normalization import serialized_hit_planes
+from .balance import (
+    ADD_CHARACTER_RANGE_TO_RADIUS,
+    COMBAT_CMP_USE_HIT_STARTED,
+    CURRENT_TARGET_IGNORES_PENDING_DAMAGE,
+    EXTRA_SIGHT_RANGE_TO_BUILDING,
+    EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS,
+    GLOBAL_ATTACK_FINISH_TIME_MS,
+    LOGIC_ALLOW_DISCARD_HIT_ON_AREA_DAMAGE,
+    LOGIC_CANCEL_HIT_FROM_LONG_DISTANCE,
+    LOGIC_CANCEL_HIT_FROM_LONG_DISTANCE_RANGE,
+    LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK,
+    LOGIC_DEFAULT_TARGET_USE_LANE_ID,
+    LOGIC_INFERNO_RESET_ON_SHIELD_LOST,
+    LOGIC_LOAD_FIRST_HIT_KEEP_LOADED_AFTER_DISCARD,
+    LOGIC_LOAD_FIRST_HIT_RESET_TIMER_WHEN_ZAPPED,
+    LOGIC_PENDING_DAMAGE_IGNORE_IF_DURATION_LESS,
+    LOGIC_PATHFIND_BACKWARDS_TRY_KEEP_TARGET,
+    LOGIC_PRESERVE_TARGET_IF_HIT_STARTED,
+    LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET,
+    LOGIC_RANGE_EXTENSION_TO_KEEP_TARGET,
+    LOGIC_SYMMETRIC_CLOSEST_BUILDING_ITERATION,
+    LOGIC_XPOS_BASED_TOWER_TARGETING,
+)
 
 
 class EntityType(Enum):
@@ -77,9 +103,7 @@ TARGET_DISTANCE_TIE_EPSILON = 1e-6
 # Current native globals, expressed in tiles. These extend only an existing
 # combat lock; acquisition and the actual hit/clock boundary still use the
 # card's exact serialized range.
-TARGET_KEEP_RANGE_EXTENSION = 0.025
 STARTED_ATTACK_KEEP_RANGE_EXTENSION = 0.5
-PENDING_DAMAGE_IGNORE_MAX_DURATION_SECONDS = 0.6
 
 
 @dataclass
@@ -99,11 +123,9 @@ class Entity(ABC):
     # Timing
     attack_cooldown: float = 0.0
     load_time: float = 0.0
-    attack_finish_lock_remaining: float = 0.0
-    _attack_finish_target_id: Optional[int] = field(default=None, repr=False)
     # True once an in-range target has started the final pre-hit portion of
-    # the native combat timer. Target removal during this interval must finish
-    # the current attack animation before acquisition can resume.
+    # the native combat timer. It is used to distinguish committed wind-up
+    # state from ordinary preloading when a target becomes invalid.
     _attack_windup_active: bool = field(default=False, repr=False)
     # Knockback can consume the one-time preload for an interrupted attack.
     # It becomes available again only after an attack is successfully made.
@@ -122,12 +144,35 @@ class Entity(ABC):
     _knockback_target: Optional[Position] = field(default=None, repr=False)
     _knockback_velocity_work: int = field(default=0, repr=False)
     _knockback_interrupts_combat: bool = field(default=True, repr=False)
+    # CharacterData::DeathSpawnPushback uses a dedicated movement-component
+    # state. The child is created at its radial destination, that coordinate
+    # is retained here, and its live position is reset to the parent's death
+    # origin. Unlike ordinary knockback this travel does not interrupt the
+    # child's combat component.
+    _death_spawn_travel_target: Optional[Position] = field(
+        default=None,
+        repr=False,
+    )
+    _death_spawn_travel_ticks_remaining: int = field(default=0, repr=False)
     
     # State
     target_id: Optional[int] = None
     is_alive: bool = True
     is_air_unit: bool = False  # True for flying troops like Minions, Balloon, Dragon
     entity_kind: int = 0  # 0=troop,1=building,2=projectile,3=aura/effect,4=other
+    # Native death spawns carry a source-dependent target-eligibility marker.
+    # LogicCharacter::tick advances it in integer milliseconds and clears it
+    # only after crossing the shared attack-finish duration. ``-1`` is the
+    # inactive sentinel; zero is installed by the parent's death-spawn path.
+    _death_spawn_target_immunity_elapsed_ms: int = field(default=-1, repr=False)
+    # LogicObject::addPendingDamage keeps the greatest launch duration ever
+    # registered for this object. Durations are rounded up to the 50 ms logic
+    # grid and capped at 1000 ms; removing a projectile subtracts its damage
+    # with a -1 duration sentinel and deliberately leaves this value intact.
+    _pending_projectile_max_duration_ms: int = field(default=0, repr=False)
+    # Updated by the native-grid route planner during movement and consumed
+    # by the next combat component's target fallback decision.
+    _ground_path_backwards: bool = field(default=False, repr=False)
     
     # Status effects
     stun_timer: float = 0.0
@@ -188,11 +233,10 @@ class Entity(ABC):
     # SpawnAngleShift is nonzero.
     _facing_x_units: int = field(default=0, repr=False)
     _facing_y_units: int = field(default=0, repr=False)
-    # DeathSpawnPushback does not launch the children after creation. Native
-    # assigns child n the permanent squared-distance allowance
-    # ``(n * 80)^2`` and subtracts it from center-distance squared during
-    # target acquisition/reach checks. Keep the serialized fixed-point value
-    # so scalar and accelerated targeting use the same integer-derived rule.
+    # SpawnConstPriority assigns child n the permanent squared-distance
+    # allowance ``(n * 80)^2`` and subtracts it from center-distance squared
+    # during target acquisition/reach checks. It is independent of the
+    # DeathSpawnPushback travel state above.
     _native_target_distance_discount_sq_units: int = field(default=0, repr=False)
     # Native Character::laneID is selected from the arena path grid when the
     # object is spawned. Ground default-target selection keeps using this
@@ -375,6 +419,38 @@ class Entity(ABC):
             )
         return True
 
+    def begin_death_spawn_travel(self, origin: Position) -> None:
+        """Install native radial death-spawn travel from ``origin``.
+
+        LogicMovementComponent retains the child's already-computed ring
+        coordinate, moves the object back to the parent's death coordinate,
+        and services the retained destination for ``distance / 250`` frames.
+        The division truncates, so diagonal fixed-point ring coordinates can
+        deliberately stop short of their nominal destination.
+        """
+        target_x_units = tiles_to_logic_units(self.position.x)
+        target_y_units = tiles_to_logic_units(self.position.y)
+        origin_x_units = tiles_to_logic_units(origin.x)
+        origin_y_units = tiles_to_logic_units(origin.y)
+        dx_units = target_x_units - origin_x_units
+        dy_units = target_y_units - origin_y_units
+        distance_units = math.isqrt(dx_units * dx_units + dy_units * dy_units)
+
+        self.position = Position(
+            logic_units_to_tiles(origin_x_units),
+            logic_units_to_tiles(origin_y_units),
+        )
+        ticks = distance_units // NATIVE_MOVEMENT_SUBSTEP_UNITS
+        if ticks > 0:
+            self._death_spawn_travel_target = Position(
+                logic_units_to_tiles(target_x_units),
+                logic_units_to_tiles(target_y_units),
+            )
+            self._death_spawn_travel_ticks_remaining = ticks
+        else:
+            self._death_spawn_travel_target = None
+            self._death_spawn_travel_ticks_remaining = 0
+
     def quantize_logic_position(self) -> None:
         """Commit position to the client's integer 1/1000-tile grid."""
         self.position.x = logic_units_to_tiles(tiles_to_logic_units(self.position.x))
@@ -382,8 +458,15 @@ class Entity(ABC):
 
     def _projectile_launch_geometry(self, target: 'Entity') -> tuple[Position, int, int]:
         """Return the serialized projectile muzzle position and aim vector."""
-        dx_units = tiles_to_logic_units(target.position.x - self.position.x)
-        dy_units = tiles_to_logic_units(target.position.y - self.position.y)
+        return self._projectile_launch_geometry_at(target.position)
+
+    def _projectile_launch_geometry_at(
+        self,
+        target_position: Position,
+    ) -> tuple[Position, int, int]:
+        """Return projectile geometry for an explicit aim point."""
+        dx_units = tiles_to_logic_units(target_position.x - self.position.x)
+        dy_units = tiles_to_logic_units(target_position.y - self.position.y)
         start_radius = float(
             getattr(self.card_stats, "projectile_start_radius", 0.0) or 0.0
         )
@@ -449,6 +532,25 @@ class Entity(ABC):
             self.is_alive = False
             self.on_death()  # Trigger death mechanics
 
+    def broadcast_shield_lost(self) -> None:
+        """Notify every live combat object that this entity lost its shield.
+
+        Native routes shield loss through the battle object manager.  The
+        callback is global rather than damage-source-owned, which lets a
+        connected variable-damage weapon react when a different ally breaks
+        its target's shield.
+        """
+        if not LOGIC_INFERNO_RESET_ON_SHIELD_LOST:
+            return
+        battle_state = getattr(self, "battle_state", None)
+        if battle_state is None:
+            return
+        for observer in tuple(battle_state.entities.values()):
+            if not observer.is_alive:
+                continue
+            for mechanic in getattr(observer, "mechanics", []):
+                mechanic.on_shield_lost(observer, self)
+
     def can_receive_effect(
         self,
         source_kind: str | None = None,
@@ -470,6 +572,7 @@ class Entity(ABC):
         source_kind: str | None = None,
         *,
         affects_hidden: bool = False,
+        source_entity: Optional['Entity'] = None,
     ) -> bool:
         """Return whether an area-damage query may include this entity.
 
@@ -478,6 +581,12 @@ class Entity(ABC):
         it is in flight, while an area scan includes a cloaked character only
         when its character payload explicitly opts in.
         """
+        if (
+            self._has_death_spawn_target_immunity()
+            and source_entity is not None
+            and getattr(source_entity, "entity_kind", 4) in {0, 1}
+        ):
+            return False
         stealth_until = int(getattr(self, "_stealth_until", 0) or 0)
         battle_state = getattr(self, "battle_state", None)
         now_ms = logic_time_milliseconds(getattr(battle_state, "time", 0.0))
@@ -547,6 +656,7 @@ class Entity(ABC):
             not self.is_alive
             or self.player_id == player_id
             or self.entity_kind in {2, 3}
+            or self._has_death_spawn_target_immunity()
         ):
             return False
         if getattr(self, "_hidden_building", False) and not allow_hidden_building_path:
@@ -574,6 +684,7 @@ class Entity(ABC):
             or self.player_id == player_id
             or self.entity_kind in {2, 3}
             or getattr(self, "_hidden_building", False)
+            or self._has_death_spawn_target_immunity()
         ):
             return False
         for mechanic in getattr(self, "mechanics", []):
@@ -581,6 +692,37 @@ class Entity(ABC):
             if callable(blocks_targeting) and blocks_targeting(self):
                 return False
         return True
+
+    def _has_death_spawn_target_immunity(self) -> bool:
+        """Return whether native character-source targeting is still gated."""
+        return bool(
+            LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK
+            and self._death_spawn_target_immunity_elapsed_ms >= 0
+        )
+
+    def _activate_death_spawn_target_immunity(self) -> None:
+        """Install the native death-spawn marker only while its global is on."""
+        self._death_spawn_target_immunity_elapsed_ms = (
+            0 if LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK else -1
+        )
+
+    def _tick_death_spawn_target_immunity(self, dt: float) -> None:
+        """Advance the native death-spawn marker in the character object phase."""
+        if not self._has_death_spawn_target_immunity():
+            return
+        self._death_spawn_target_immunity_elapsed_ms += max(
+            0,
+            logic_time_milliseconds(dt),
+        )
+        if (
+            GLOBAL_ATTACK_FINISH_TIME_MS
+            < self._death_spawn_target_immunity_elapsed_ms
+        ):
+            self._death_spawn_target_immunity_elapsed_ms = -1
+            battle_state = getattr(self, "battle_state", None)
+            sync_target = getattr(battle_state, "sync_fast_target_entity", None)
+            if callable(sync_target):
+                sync_target(self)
 
     def on_spawn(self) -> None:
         """Run deployment-complete hooks exactly once.
@@ -651,11 +793,7 @@ class Entity(ABC):
             primary_target.is_alive
             and primary_target.can_receive_effect(source_kind)
         )
-        area_damage_radius = None
-        if getattr(self.card_stats, "area_damage_radius", None):
-            area_damage_radius = self.card_stats.area_damage_radius / 1000.0
-        elif getattr(self.card_stats, "projectile_splash_radius", None):
-            area_damage_radius = self.card_stats.projectile_splash_radius / 1000.0
+        area_damage_radius = self._attack_area_damage_radius()
         if not area_damage_radius or area_damage_radius <= 0:
             return (primary_target,) if primary_receives_hit else ()
 
@@ -675,9 +813,43 @@ class Entity(ABC):
                 break
 
         targets = [primary_target] if primary_receives_hit else []
+        targets.extend(
+            self._snapshot_attack_area_targets_at(
+                area_origin,
+                area_damage_radius,
+                battle_state,
+                source_radius=source_radius,
+                excluded_target=primary_target,
+            )
+        )
+        return tuple(targets)
+
+    def _attack_area_damage_radius(self) -> float:
+        """Return the serialized radius used by this attack's area payload."""
+        radius_units = getattr(self.card_stats, "area_damage_radius", None)
+        if not radius_units:
+            radius_units = getattr(
+                self.card_stats,
+                "projectile_splash_radius",
+                None,
+            )
+        return max(0.0, float(radius_units or 0.0) / 1000.0)
+
+    def _snapshot_attack_area_targets_at(
+        self,
+        area_origin: Position,
+        area_damage_radius: float,
+        battle_state: 'BattleState',
+        *,
+        source_radius: float = 0.0,
+        excluded_target: Optional['Entity'] = None,
+    ) -> tuple['Entity', ...]:
+        """Capture living recipients around a committed area aim point."""
+        source_kind = getattr(getattr(self, "card_stats", None), "name", None)
+        targets: list[Entity] = []
         for entity in battle_state.entities.values():
             if (
-                entity is primary_target
+                entity is excluded_target
                 or entity.player_id == self.player_id
                 or not entity.is_alive
                 or getattr(entity, "entity_kind", 4) in {2, 3}
@@ -687,7 +859,10 @@ class Entity(ABC):
                 continue
             if (not is_airborne_target(entity)) and not self._can_attack_ground():
                 continue
-            if not entity.can_receive_area_damage(source_kind):
+            if not entity.can_receive_area_damage(
+                source_kind,
+                source_entity=self,
+            ):
                 continue
             if entity.intersects_native_area(
                 area_origin,
@@ -722,7 +897,6 @@ class Entity(ABC):
                 if callable(modifier):
                     target_damage = float(modifier(self, target, target_damage))
             target.take_damage(target_damage)
-
         # Multi-recipient direct attacks use the same committed attack damage
         # and outgoing-modifier pipeline as the primary. The shared mechanic
         # snapshots recipient IDs at attack start, so death spawns or movement
@@ -778,21 +952,29 @@ class Entity(ABC):
 
     def _interrupt_combat_by_stun(self) -> None:
         """Reset combat state once stun can interrupt the active movement."""
-        # The native combat component clears its current and previous hit
-        # timers on every stunned tick. A normal swing therefore restarts at
-        # the card's data-driven first-hit wind-up; it does not resume from a
-        # nearly complete animation. Stun also resets the established combat
-        # lock, so the normal target observer reacquires the nearest eligible
-        # target even when the previous one remains inside keep-target reach.
+        # Ordinary weapons always reload their accumulated hit counter here.
+        # The reset-when-zapped global is consulted only for the distinct
+        # CharacterData::LoadFirstHit state; it must not govern every weapon
+        # that merely has a nonzero LoadTime.  Stun also resets the established
+        # combat lock, letting the observer reacquire the nearest eligible
+        # target.
+        load_first_hit = bool(
+            getattr(getattr(self, "card_stats", None), "load_first_hit", False)
+        )
+        reload_attack_clock = (
+            not load_first_hit
+            or LOGIC_LOAD_FIRST_HIT_RESET_TIMER_WHEN_ZAPPED
+        )
         self.target_id = None
         self._last_combat_target_id = None
-        self.reset_attack_windup()
-        self.attack_finish_lock_remaining = 0.0
-        self._attack_finish_target_id = None
+        self.reset_attack_windup(
+            replacement_cooldown_seconds=(
+                self.get_base_attack_interval_seconds()
+                if reload_attack_clock
+                else self.attack_cooldown
+            ),
+        )
         self._attack_windup_active = False
-        if isinstance(self, Troop):
-            self.attack_dash_origin = None
-            self.attack_dash_elapsed = 0.0
         reset_charge = getattr(self, "reset_charge", None)
         if callable(reset_charge):
             reset_charge(interrupted=True)
@@ -1187,6 +1369,27 @@ class Entity(ABC):
         ) or 0
         return first_hit_ms / 1000.0
 
+    def get_post_attack_cooldown_seconds(
+        self,
+        *,
+        payload_discarded: bool = False,
+    ) -> float:
+        """Return the native cooldown installed after an attack attempt.
+
+        A connected attack resets the full hit cycle.  Native gates retained
+        load after a late distance discard behind CharacterData::LoadFirstHit;
+        a nonzero LoadTime alone does not opt an ordinary weapon into that
+        behavior.  A load-first-hit weapon leaves its already-ready timer
+        untouched when the current global is enabled.
+        """
+        if (
+            payload_discarded
+            and bool(getattr(self.card_stats, "load_first_hit", False))
+            and LOGIC_LOAD_FIRST_HIT_KEEP_LOADED_AFTER_DISCARD
+        ):
+            return max(0.0, self.attack_cooldown)
+        return self.get_base_attack_interval_seconds()
+
     def advance_attack_clock(self, dt: float, *, target_in_range: bool) -> None:
         """Advance attack work, respecting Clash's finite idle preload.
 
@@ -1209,13 +1412,19 @@ class Entity(ABC):
             self.attack_cooldown - work,
         )
 
-    def reset_attack_windup(self, *, retarget: bool = False) -> None:
-        """Restore the minimum wind-up for a first lock or a retarget."""
+    def reset_attack_windup(
+        self,
+        *,
+        retarget: bool = False,
+        replacement_cooldown_seconds: float | None = None,
+    ) -> None:
+        """Restore attack work for a first lock, retarget, or interruption."""
         timing_field = "retarget_time" if retarget else "first_hit_time"
         first_hit_ms = getattr(getattr(self, "card_stats", None), timing_field, 0) or 0
-        self.attack_cooldown = max(
-            self.attack_cooldown,
-            first_hit_ms / 1000.0,
+        self.attack_cooldown = (
+            max(0.0, float(replacement_cooldown_seconds))
+            if replacement_cooldown_seconds is not None
+            else max(self.attack_cooldown, first_hit_ms / 1000.0)
         )
         self._has_attacked_once = False
 
@@ -1232,9 +1441,6 @@ class Entity(ABC):
         """Apply combat and special-movement interruption for displacement."""
         charged_attack_was_ready = bool(getattr(self, "is_charging", False))
         self._attack_windup_active = False
-        if isinstance(self, Troop):
-            self.attack_dash_origin = None
-            self.attack_dash_elapsed = 0.0
         # Physical displacement removes any banked load.  The clock starts at
         # a full hit interval and can preload again only while out of reach.
         # Interrupted charges are the exception: since the October 2025 game
@@ -1265,64 +1471,18 @@ class Entity(ABC):
             if callable(handler):
                 handler(self)
 
-    def _record_attack_committed(self, target: 'Entity') -> None:
-        self._attack_finish_target_id = target.id
-
-    def _begin_attack_finish_after_target_loss(
-        self,
-        lost_target_id: Optional[int],
-        dt: float,
-        *,
-        attack_in_progress: bool = False,
-    ) -> bool:
-        """Hold acquisition while a serialized attack animation finishes."""
-        if lost_target_id is None or not (
-            attack_in_progress or self._attack_finish_target_id == lost_target_id
-        ):
-            return False
-        finish_ms = int(
-            getattr(getattr(self, "card_stats", None), "attack_finish_time", 0)
-            or 0
-        )
-        self._attack_finish_target_id = None
-        self._attack_windup_active = False
-        if finish_ms <= 0:
-            return False
-        self.attack_finish_lock_remaining = max(
-            0.0,
-            finish_ms / 1000.0 - max(0.0, dt),
-        )
-        return True
-
-    def _consume_attack_finish_lock(self, dt: float) -> bool:
-        if self.attack_finish_lock_remaining <= 1e-12:
-            self.attack_finish_lock_remaining = 0.0
-            return False
-        self.attack_finish_lock_remaining = max(
-            0.0,
-            self.attack_finish_lock_remaining - max(0.0, dt),
-        )
-        return True
-
     def _note_combat_target(self, target: Optional['Entity']) -> None:
         """Apply the data-driven delay when an established lock is broken."""
         previous = getattr(self, "_last_combat_target_id", None)
         if target is None:
             if previous is not None:
                 self.reset_attack_windup(retarget=True)
-                if self._attack_finish_target_id == previous:
-                    self._attack_finish_target_id = None
             # Clearing the remembered id lets an idle retarget clock preload;
             # acquiring the eventual target must preserve that progress.
             self._last_combat_target_id = None
             return
         if previous is not None and previous != target.id:
             self.reset_attack_windup(retarget=True)
-            # Attack-finish belongs to the connected lock that launched the
-            # last hit. Once that lock breaks, reacquiring the same entity
-            # later must not revive the old animation tail.
-            if self._attack_finish_target_id == previous:
-                self._attack_finish_target_id = None
         self._last_combat_target_id = target.id
     
     def is_stunned(self) -> bool:
@@ -1389,7 +1549,12 @@ class Entity(ABC):
 
     def reach_distance_to(self, target: 'Entity', base_range: float) -> float:
         """Center distance at which serialized range reaches a target hitbox."""
-        return float(base_range) + target.get_collision_radius()
+        target_radius = (
+            target.get_collision_radius()
+            if ADD_CHARACTER_RANGE_TO_RADIUS
+            else 0.0
+        )
+        return float(base_range) + target_radius
 
     @staticmethod
     def native_target_distance_from(
@@ -1419,15 +1584,80 @@ class Entity(ABC):
         """Return native target distance from this entity's current center."""
         return self.native_target_distance_from(self.position, target)
 
+    def native_dash_range_edge_distance(
+        self,
+        target: 'Entity',
+        minimum_range: float,
+        maximum_range: float,
+    ) -> float | None:
+        """Return target-edge distance inside the native dash range band.
+
+        ``LogicCombatComponent::canDashToTarget`` passes ``DashMaxRange`` as
+        the outer radius to ``isInRangeAccurate``. For the inner radius it
+        passes ``DashMinRange + attacker CollisionRadius``; the shared range
+        helper then adds the target radius to both bounds. Consequently the
+        maximum is measured from the attacker center to the target hitbox,
+        while the minimum is the true edge-to-edge gap between both bodies.
+        Native compares the squared integer distances inclusively.
+        """
+        self_x_units = tiles_to_logic_units(self.position.x)
+        self_y_units = tiles_to_logic_units(self.position.y)
+        target_x_units = tiles_to_logic_units(target.position.x)
+        target_y_units = tiles_to_logic_units(target.position.y)
+        dx_units = target_x_units - self_x_units
+        dy_units = target_y_units - self_y_units
+        distance_sq_units = max(
+            0,
+            dx_units * dx_units
+            + dy_units * dy_units
+            - max(
+                0,
+                int(
+                    getattr(
+                        target,
+                        "_native_target_distance_discount_sq_units",
+                        0,
+                    )
+                    or 0
+                ),
+            ),
+        )
+        target_radius_units = tiles_to_logic_units(target.get_collision_radius())
+        inner_radius_units = (
+            tiles_to_logic_units(minimum_range)
+            + tiles_to_logic_units(self.get_collision_radius())
+            + target_radius_units
+        )
+        outer_radius_units = (
+            tiles_to_logic_units(maximum_range)
+            + target_radius_units
+        )
+        if not (
+            inner_radius_units * inner_radius_units
+            <= distance_sq_units
+            <= outer_radius_units * outer_radius_units
+        ):
+            return None
+        return self.native_target_distance_to(target) - target.get_collision_radius()
+
     def is_within_sight(self, target: 'Entity') -> bool:
         target_name = getattr(getattr(target, "card_stats", None), "name", "")
         is_crown_tower = (
             target_name in {"Tower", "KingTower"}
             or bool(getattr(target, "_is_king_tower", False))
         )
-        # Current native globals grant no generic building extension and a
-        # 2,000-logic-unit extension to crown towers.
-        target_visibility_extension = 2.0 if is_crown_tower else 0.0
+        target_visibility_extension_units = (
+            EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS
+            if is_crown_tower
+            else (
+                EXTRA_SIGHT_RANGE_TO_BUILDING
+                if isinstance(target, Building)
+                else 0
+            )
+        )
+        target_visibility_extension = (
+            target_visibility_extension_units / 1000.0
+        )
         sight_reach = (
             self.reach_distance_to(target, self.sight_range)
             + target_visibility_extension
@@ -1521,20 +1751,48 @@ class Entity(ABC):
             getattr(getattr(self, "card_stats", None), "projectile_data", None)
         )
 
+    def has_started_projectile_hit_cycle(self) -> bool:
+        """Return the native projectile target-preservation phase.
+
+        LogicCharacter checks ``hitTimer % HitSpeed > 50``.  The simulator
+        stores remaining attack work instead of the accumulated native timer,
+        so negating the remaining milliseconds modulo HitSpeed recovers the
+        same phase.  Retarget clocks longer than one cycle consequently map
+        back to phase zero, matching the native integer remainder.
+        """
+        if (
+            not COMBAT_CMP_USE_HIT_STARTED
+            or not self.has_attack_projectile_definition()
+        ):
+            return False
+        hit_speed_ms = int(
+            getattr(getattr(self, "card_stats", None), "hit_speed", 0) or 0
+        )
+        if hit_speed_ms <= 0:
+            return False
+        remaining_ms = logic_time_milliseconds(
+            max(0.0, float(self.attack_cooldown))
+        )
+        hit_phase_ms = (-remaining_ms) % hit_speed_ms
+        return hit_phase_ms > 50
+
     def is_within_target_keep_reach(self, target: 'Entity') -> bool:
         """Return whether native combat retains its existing target lock."""
         # The 25-unit global applies to ordinary character objects with a
         # hitpoint component. Ephemeral zero-HP combat objects do not receive
         # it.
         extension = (
-            TARGET_KEEP_RANGE_EXTENSION
+            LOGIC_RANGE_EXTENSION_TO_KEEP_TARGET / 1000.0
             if self.max_hitpoints > 0
             else 0.0
         )
         # LOGIC_PRESERVE_TARGET_IF_HIT_STARTED replaces that margin with 500
         # units only when character data has an attack projectile and the
         # current hit cycle has already started.
-        if self._attack_windup_active and self.has_attack_projectile_definition():
+        if (
+            LOGIC_PRESERVE_TARGET_IF_HIT_STARTED
+            and self.has_started_projectile_hit_cycle()
+        ):
             extension = STARTED_ATTACK_KEEP_RANGE_EXTENSION
         return self.native_target_distance_to(target) <= (
             self.reach_distance_to(target, self.range)
@@ -1550,15 +1808,78 @@ class Entity(ABC):
         has started, native combat can finish it while the retained target is
         inside the 25-unit direct-hit or 500-unit projectile leash.
         """
-        if self._attack_windup_active:
+        if (
+            self._attack_windup_active
+            or (
+                LOGIC_PRESERVE_TARGET_IF_HIT_STARTED
+                and self.has_started_projectile_hit_cycle()
+            )
+        ):
             return self.is_within_target_keep_reach(target)
         return self.is_within_attack_engagement_reach(target)
 
-    def can_attack_target(self, target: 'Entity') -> bool:
+    def should_cancel_committed_hit(self, target: 'Entity') -> bool:
+        """Return whether the native hit-frame distance guard drops payload.
+
+        This is separate from target retention. A target may be valid when
+        the attack clock commits and then move during attack-start mechanics;
+        the shared combat component performs one final, wider intersection
+        test immediately before creating direct damage or a projectile.
+        """
+        if not LOGIC_CANCEL_HIT_FROM_LONG_DISTANCE:
+            return False
+
+        # Native consults this compatibility global only in the no-projectile
+        # branch and only for CharacterData::AreaDamageRadius.  A projectile's
+        # own splash radius must not exempt its launch from the ordinary
+        # committed-hit discard when the global is disabled.
+        direct_area_radius_units = float(
+            getattr(getattr(self, "card_stats", None), "area_damage_radius", 0)
+            or 0
+        )
+        if (
+            direct_area_radius_units > 0.0
+            and not self.has_attack_projectile_definition()
+            and not LOGIC_ALLOW_DISCARD_HIT_ON_AREA_DAMAGE
+        ):
+            return False
+
+        stats = getattr(self, "card_stats", None)
+        serialized_speed = float(getattr(stats, "speed", 0.0) or 0.0)
+        if serialized_speed <= 0.0:
+            return False
+
+        raw = getattr(stats, "_raw_entry", {}) or {}
+        character_data = raw.get("summonCharacterData", {}) or {}
+        if float(character_data.get("dashCooldown", 0.0) or 0.0) > 0.0:
+            return False
+
+        effective_range = max(
+            0.0,
+            self.range - self.get_attack_approach_range_reduction(target),
+        )
+        hit_reach = (
+            effective_range
+            + LOGIC_CANCEL_HIT_FROM_LONG_DISTANCE_RANGE / 1000.0
+            + target.get_collision_radius()
+        )
+        return self.position.distance_to(target.position) > (
+            hit_reach + GEOMETRY_BOUNDARY_EPSILON
+        )
+
+    def can_attack_target(
+        self,
+        target: 'Entity',
+        *,
+        is_current_target: bool = False,
+    ) -> bool:
         """Check if this entity can attack the target"""
         if getattr(target, "_hidden_building", False):
             return False
-        if not self._is_valid_target(target):
+        if not self._is_valid_target(
+            target,
+            is_current_target=is_current_target,
+        ):
             return False
         if (
             bool(
@@ -1601,9 +1922,11 @@ class Entity(ABC):
         """Return whether committed, homing damage already defeats this unit.
 
         Clash reserves lethal projectile damage before impact so towers and
-        troops can move to another target instead of wasting attacks.  Hits
-        are evaluated in arrival order because a shield consumes the whole
-        hit that breaks it, with no overflow into troop health.
+        troops can move to another target instead of wasting attacks. Native
+        LogicObject bookkeeping aggregates the committed damage, but gates
+        the entire aggregate on the target's greatest registered projectile
+        duration. A live shield makes HitpointComponent::isEnoughToKill false
+        regardless of how many shield-breaking hits are already in flight.
         """
         battle_state = getattr(self, "battle_state", None)
         if battle_state is None or not self.is_alive:
@@ -1617,7 +1940,16 @@ class Entity(ABC):
         if reservations is not None:
             return self.id in reservations
 
-        incoming: list[tuple[float, int, float]] = []
+        # LOGIC_PENDING_DAMAGE_IGNORE_IF_DURATION_LESS is 600 ms in the
+        # current globals. Native target validation uses an inclusive <=
+        # comparison against the target-owned, launch-time duration value.
+        if (
+            self._pending_projectile_max_duration_ms
+            > LOGIC_PENDING_DAMAGE_IGNORE_IF_DURATION_LESS
+        ):
+            return False
+
+        pending_damage = 0.0
         for entity in battle_state.entities.values():
             expected_damage = getattr(entity, "expected_damage_against", None)
             if not callable(expected_damage) or not entity.is_alive:
@@ -1629,33 +1961,14 @@ class Entity(ABC):
             damage = expected_damage(self)
             if damage <= 0:
                 continue
-            speed = max(float(entity.travel_speed), 1e-9)
-            arrival = (
-                max(0.0, float(getattr(entity, "launch_delay", 0.0) or 0.0))
-                + entity.position.distance_to(self.position) / speed
-            )
-            # LOGIC_PENDING_DAMAGE_IGNORE_IF_DURATION_LESS is 600 ms in the
-            # current globals. A guaranteed shot farther out than that does
-            # not reserve its victim; another ranged attacker may still fire
-            # because movement or intervening state can invalidate the hit.
-            if arrival >= PENDING_DAMAGE_IGNORE_MAX_DURATION_SECONDS:
-                continue
-            incoming.append((arrival, entity.id, damage))
-        if not incoming:
+            pending_damage += damage
+        if pending_damage <= 0:
             return False
 
-        shield = 0.0
         for mechanic in getattr(self, "mechanics", []):
-            shield = max(shield, float(getattr(mechanic, "current_shield", 0.0) or 0.0))
-        hitpoints = float(self.hitpoints)
-        for _, _, damage in sorted(incoming):
-            if shield > 0:
-                shield = max(0.0, shield - damage)
-                continue
-            hitpoints -= damage
-            if hitpoints <= 0:
-                return True
-        return False
+            if float(getattr(mechanic, "current_shield", 0.0) or 0.0) > 0:
+                return False
+        return pending_damage >= float(self.hitpoints)
 
     def ignores_targets_with_pending_projectile_damage(self) -> bool:
         """Whether this attacker's weapon skips lethally reserved targets.
@@ -1667,12 +1980,21 @@ class Entity(ABC):
         """
         return bool(getattr(getattr(self, "card_stats", None), "projectile_data", None))
 
-    def _is_valid_target(self, entity: 'Entity') -> bool:
+    def _is_valid_target(
+        self,
+        entity: 'Entity',
+        *,
+        is_current_target: bool = False,
+    ) -> bool:
         """Check if entity can be targeted (excludes spell entities)"""
         if not entity.is_targetable_by(self.player_id):
             return False
         if (
             self.ignores_targets_with_pending_projectile_damage()
+            and (
+                not is_current_target
+                or CURRENT_TARGET_IGNORES_PENDING_DAMAGE
+            )
             and entity.is_expected_to_die_from_projectiles()
         ):
             return False
@@ -1682,7 +2004,12 @@ class Entity(ABC):
                 return False
         return True
 
-    def get_nearest_target(self, entities: Dict[int, 'Entity']) -> Optional['Entity']:
+    def get_nearest_target(
+        self,
+        entities: Dict[int, 'Entity'],
+        *,
+        include_crown_fallback: bool = True,
+    ) -> Optional['Entity']:
         """Find nearest valid target with priority rules"""
 
         # Eligible targets in sight compete by distance.  Crown towers are an
@@ -1711,6 +2038,7 @@ class Entity(ABC):
                 targets_only_buildings=targets_only_buildings,
                 can_attack_air=can_attack_air,
                 can_attack_ground=can_attack_ground,
+                include_crown_fallback=include_crown_fallback,
             )
             if fast_target is not None and self._is_valid_target(fast_target):
                 return fast_target
@@ -1809,7 +2137,15 @@ class Entity(ABC):
             in_sight_targets = building_targets
         else:
             in_sight_targets = troop_targets + building_targets
-        targets = in_sight_targets if in_sight_targets else _fallback_crown_targets()
+        targets = (
+            in_sight_targets
+            if in_sight_targets
+            else (
+                _fallback_crown_targets()
+                if include_crown_fallback
+                else []
+            )
+        )
         
         if not targets:
             return None
@@ -1819,7 +2155,7 @@ class Entity(ABC):
         self,
         crown_towers: list['Entity'],
     ) -> list['Entity']:
-        """Choose native crown objectives from stored lane/elevation state."""
+        """Choose native fallback Crown objectives from current globals."""
         princess_towers = [
             tower
             for tower in crown_towers
@@ -1839,10 +2175,21 @@ class Entity(ABC):
         if not king_towers:
             return princess_towers
 
-        # Elevated characters use the client's x-position tower selection.
-        # Ground characters keep the lane ID assigned at spawn; displacement
-        # across the centerline must not silently switch their default tower.
-        if uses_air_collision_plane(self):
+        # Current-client LogicGlobals keeps every surviving Princess Tower in
+        # the default-target set and excludes the King Tower from that set.
+        # This does not stop an attacker from acquiring the King normally
+        # when it enters sight range; it only controls the infinite-sight
+        # Crown fallback used when no ordinary target is available.
+        fallback_kings = (
+            []
+            if LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET
+            else king_towers
+        )
+
+        if (
+            LOGIC_XPOS_BASED_TOWER_TARGETING
+            and not LOGIC_DEFAULT_TARGET_USE_LANE_ID
+        ):
             minimum_x = min(
                 abs(tower.position.x - self.position.x)
                 for tower in princess_towers
@@ -1853,17 +2200,34 @@ class Entity(ABC):
                 if abs(tower.position.x - self.position.x)
                 <= minimum_x + GEOMETRY_BOUNDARY_EPSILON
             ]
-            return nearest_princesses + king_towers
+            return nearest_princesses + fallback_kings
+
+        # Retain the serialized compatibility branches so a future globals
+        # refresh can switch behavior without card- or collision-plane hacks.
+        if LOGIC_XPOS_BASED_TOWER_TARGETING and uses_air_collision_plane(self):
+            minimum_x = min(
+                abs(tower.position.x - self.position.x)
+                for tower in princess_towers
+            )
+            nearest_princesses = [
+                tower
+                for tower in princess_towers
+                if abs(tower.position.x - self.position.x)
+                <= minimum_x + GEOMETRY_BOUNDARY_EPSILON
+            ]
+            return nearest_princesses + fallback_kings
 
         lane_id = int(getattr(self, "_native_lane_id", 0) or 0)
         if lane_id <= 0:
-            return crown_towers
+            return princess_towers + fallback_kings
         same_lane = [
             tower
             for tower in princess_towers
             if int(getattr(tower, "_native_lane_id", 0) or 0) == lane_id
         ]
-        return same_lane + king_towers if same_lane else king_towers
+        if same_lane:
+            return same_lane + fallback_kings
+        return princess_towers + fallback_kings
 
     def _target_tie_break_key(self, target: 'Entity') -> tuple[float, float, int]:
         """Return a deterministic player-relative order for non-combat effects."""
@@ -1893,14 +2257,29 @@ class Entity(ABC):
         self,
         candidates: list[tuple['Entity', float]],
     ) -> Optional['Entity']:
-        """Choose the combat target, retaining native encounter order on ties."""
+        """Choose the combat target with the current native tie rules."""
         if not candidates:
             return None
         # LogicCombatComponent replaces its current best only for a strictly
-        # smaller adjusted distance at the same target priority. Python's
-        # stable ``min`` therefore reproduces the client's first-candidate
-        # retention without inventing a geometric/player-relative tie-break.
-        return min(candidates, key=lambda item: item[1])[0]
+        # smaller adjusted distance at the same target priority. Ordinary
+        # character ties therefore retain encounter order. Current globals
+        # make the closest-building iterator owner-relative, however, so an
+        # equal building tie rotates with the player's arena perspective.
+        selected, minimum = min(candidates, key=lambda item: item[1])
+        if (
+            not LOGIC_SYMMETRIC_CLOSEST_BUILDING_ITERATION
+            or not is_native_building_target(selected)
+        ):
+            return selected
+        tied_buildings = [
+            target
+            for target, distance in candidates
+            if (
+                is_native_building_target(target)
+                and distance <= minimum + TARGET_DISTANCE_TIE_EPSILON
+            )
+        ]
+        return min(tied_buildings, key=self._target_tie_break_key)
 
     def _get_nearest_target_vectorized(
         self,
@@ -1909,6 +2288,7 @@ class Entity(ABC):
         targets_only_buildings: bool,
         can_attack_air: bool,
         can_attack_ground: bool,
+        include_crown_fallback: bool = True,
     ) -> Optional["Entity"]:
         (
             target_entities,
@@ -1974,7 +2354,17 @@ class Entity(ABC):
         # Match the scalar distance calculation and native first-candidate
         # retention. ``argmin`` returns the first minimum in cache order.
         distance = np.sqrt(dist2)
-        sight_reach = self.sight_range + collision_radius + 2.0 * is_crown.astype(float)
+        target_radius = (
+            collision_radius
+            if ADD_CHARACTER_RANGE_TO_RADIUS
+            else np.zeros_like(collision_radius)
+        )
+        building_extension = np.where(
+            is_crown,
+            EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS,
+            np.where(is_building, EXTRA_SIGHT_RANGE_TO_BUILDING, 0),
+        ).astype(np.float64) / 1000.0
+        sight_reach = self.sight_range + target_radius + building_extension
         in_sight = distance <= sight_reach + GEOMETRY_BOUNDARY_EPSILON
         card_stats = getattr(self, "card_stats", None)
         backward_clip = float(getattr(card_stats, "sight_clip", 0.0) or 0.0)
@@ -2001,6 +2391,7 @@ class Entity(ABC):
             if targets_only_buildings
             else (troop_targets | building_targets)
         )
+        chosen = np.zeros_like(valid)
         ordered_candidates: np.ndarray | None = None
         if np.any(in_sight_targets):
             chosen = in_sight_targets
@@ -2016,7 +2407,7 @@ class Entity(ABC):
                         np.flatnonzero(building_targets),
                     )
                 )
-        else:
+        elif include_crown_fallback:
             fallback_indices = np.flatnonzero(fallback_crown_targets)
             preferred = self._preferred_fallback_crown_targets(
                 [target_entities[int(index)] for index in fallback_indices]
@@ -2035,6 +2426,29 @@ class Entity(ABC):
             else np.flatnonzero(chosen)
         )
         idx = int(candidates[int(np.argmin(distance[candidates]))])
+        selected = target_entities[idx]
+        if (
+            LOGIC_SYMMETRIC_CLOSEST_BUILDING_ITERATION
+            and is_native_building_target(selected)
+        ):
+            minimum = float(distance[idx])
+            tied_indices = [
+                int(candidate_index)
+                for candidate_index in candidates
+                if (
+                    is_native_building_target(
+                        target_entities[int(candidate_index)]
+                    )
+                    and float(distance[int(candidate_index)])
+                    <= minimum + TARGET_DISTANCE_TIE_EPSILON
+                )
+            ]
+            idx = min(
+                tied_indices,
+                key=lambda candidate_index: self._target_tie_break_key(
+                    target_entities[candidate_index]
+                ),
+            )
         return target_entities[idx]
     
     def _should_switch_target(self, current_target: 'Entity', new_target: 'Entity') -> bool:
@@ -2127,10 +2541,6 @@ class Troop(Entity):
     _movement_target_id: Optional[int] = field(default=None, repr=False)
     _native_natural_movement_active: bool = field(default=False, repr=False)
     movement_phase_elapsed_ms: int = 0
-    attack_dash_elapsed: float = 0.0
-    attack_dash_origin: Optional[Position] = None
-    attack_dash_direction: tuple[int, int] = (0, 0)
-    attack_dash_speed: int = 0
     kamikaze_primed: bool = False
     kamikaze_timer_remaining: float = 0.0
 
@@ -2178,6 +2588,11 @@ class Troop(Entity):
         # Native checks avoidance before collision/pushback and before this
         # frame's target vector replaces the retained character direction.
         self._update_native_avoidance(battle_state)
+        # Radial death-spawn travel owns the movement component before normal
+        # pushback, deployment transport, and natural movement state checks.
+        if self._death_spawn_travel_ticks_remaining > 0:
+            self._update_death_spawn_travel(battle_state)
+            return
         # Native movement components service an installed pushback before
         # checking the character's ordinary deployment/movement state.
         if self._knockback_target is not None:
@@ -2218,7 +2633,7 @@ class Troop(Entity):
         if (
             target is None
             or not target.is_alive
-            or not self._is_valid_target(target)
+            or not self._is_valid_target(target, is_current_target=True)
             or self.is_stunned()
             or self.forced_movement_active
             or getattr(self, "_special_move_active", False)
@@ -2235,6 +2650,10 @@ class Troop(Entity):
 
     def _native_movement_component_stopped(self) -> bool:
         """Return the serialized movement component's stop-byte equivalent."""
+        if self._death_spawn_travel_ticks_remaining > 0:
+            # The radial child path owns the movement component before
+            # deployment, stun, or ordinary target-state checks.
+            return False
         return bool(
             (
                 self._movement_target_id is None
@@ -2346,6 +2765,11 @@ class Troop(Entity):
                 else:
                     moving_side = geometric_side
             else:
+                from .pathfinding import (
+                    skip_native_ground_route_node_inside_static,
+                )
+
+                skip_native_ground_route_node_inside_static(self, other)
                 static_count += 1
                 static_side = geometric_side
 
@@ -2405,7 +2829,7 @@ class Troop(Entity):
         move_x_units = 0
         move_y_units = 0
         if movement_units > 0:
-            move_x_units, move_y_units = vector_towards_logic_units(
+            move_x_units, move_y_units = movement_component_vector_logic_units(
                 dx_units,
                 dy_units,
                 movement_units,
@@ -2475,6 +2899,62 @@ class Troop(Entity):
             self._knockback_interrupts_combat = True
             self.forced_movement_active = False
 
+    def _update_death_spawn_travel(self, battle_state: 'BattleState') -> None:
+        """Advance one native 250-unit radial child-travel frame."""
+        target = self._death_spawn_travel_target
+        if target is None or self._death_spawn_travel_ticks_remaining <= 0:
+            self._death_spawn_travel_target = None
+            self._death_spawn_travel_ticks_remaining = 0
+            return
+
+        dx_units = tiles_to_logic_units(target.x - self.position.x)
+        dy_units = tiles_to_logic_units(target.y - self.position.y)
+        remaining_units = max(
+            1,
+            math.isqrt(dx_units * dx_units + dy_units * dy_units),
+        )
+        movement_units = min(
+            NATIVE_MOVEMENT_SUBSTEP_UNITS,
+            remaining_units,
+        )
+        # LogicMovementComponent::moveTo first creates an 8-bit normalized
+        # direction and only then scales it by the per-frame movement budget.
+        # These two signed truncations are observably different from one
+        # full-precision division on diagonal rings.
+        direction_x = trunc_div(dx_units * 256, remaining_units)
+        direction_y = trunc_div(dy_units * 256, remaining_units)
+        move_x_units = trunc_div(direction_x * movement_units, 256)
+        move_y_units = trunc_div(direction_y * movement_units, 256)
+        if self._native_avoidance:
+            move_x_units, move_y_units = self._apply_native_avoidance(
+                move_x_units,
+                move_y_units,
+                movement_units,
+            )
+
+        external_x, external_y = self.take_pending_movement_vector()
+        combined_x_units = move_x_units + tiles_to_logic_units(external_x)
+        combined_y_units = move_y_units + tiles_to_logic_units(external_y)
+        if combined_x_units != 0 or combined_y_units != 0:
+            self.position = Position(
+                clamp_native_object_axis(
+                    logic_units_to_tiles(
+                        tiles_to_logic_units(self.position.x) + combined_x_units
+                    ),
+                    battle_state.arena.width,
+                ),
+                clamp_native_object_axis(
+                    logic_units_to_tiles(
+                        tiles_to_logic_units(self.position.y) + combined_y_units
+                    ),
+                    battle_state.arena.height,
+                ),
+            )
+
+        self._death_spawn_travel_ticks_remaining -= 1
+        if self._death_spawn_travel_ticks_remaining == 0:
+            self._death_spawn_travel_target = None
+
     def update_buff_component(self, dt: float) -> None:
         """Run the character buff/status component after movement."""
         if not self.is_alive:
@@ -2485,6 +2965,7 @@ class Troop(Entity):
         """Run only ``LogicCharacter::tick`` for the current server frame."""
         if not self.is_alive:
             return
+        self._tick_death_spawn_target_immunity(dt)
         if self.deploy_delay_remaining > 0:
             self.deploy_delay_remaining = max(
                 0.0,
@@ -2534,12 +3015,6 @@ class Troop(Entity):
             self._special_move_consumed_tick = False
             return
 
-        if self._consume_attack_finish_lock(dt):
-            return
-
-        if self.attack_dash_origin is not None:
-            self._tick_attack_dash(dt, battle_state)
-        
         # Store initial position for distance tracking
         if self.initial_position is None:
             self.initial_position = Position(self.position.x, self.position.y)
@@ -2553,19 +3028,14 @@ class Troop(Entity):
             current_target = battle_state.entities.get(self.target_id)
             if (
                 not current_target
-                or not self._is_valid_target(current_target)
+                or not self._is_valid_target(
+                    current_target,
+                    is_current_target=True,
+                )
                 or not self.can_affect_target_plane(current_target)
             ):
-                lost_target_id = self.target_id
-                removed = current_target is None or not current_target.is_alive
                 self.target_id = None
                 current_target = None
-                if removed and self._begin_attack_finish_after_target_loss(
-                    lost_target_id,
-                    dt,
-                    attack_in_progress=self._attack_windup_active,
-                ):
-                    return
         
         # Re-evaluate while pathing, but preserve an established attack lock.
         # A troop already in reach keeps hitting that target until it dies,
@@ -2576,9 +3046,27 @@ class Troop(Entity):
             current_target is None
             or not self.is_within_target_keep_reach(current_target)
         ):
-            best_target = self.get_nearest_target(battle_state.entities)
+            using_crown_fallback = False
+            best_target = self.get_nearest_target(
+                battle_state.entities,
+                include_crown_fallback=False,
+            )
+            if (
+                best_target is None
+                and not (
+                    current_target is not None
+                    and LOGIC_PATHFIND_BACKWARDS_TRY_KEEP_TARGET
+                    and self._ground_path_backwards
+                )
+            ):
+                best_target = self.get_nearest_target(
+                    battle_state.entities,
+                )
+                using_crown_fallback = best_target is not None
             if best_target and (
-                not current_target or self._should_switch_target(current_target, best_target)
+                using_crown_fallback
+                or not current_target
+                or self._should_switch_target(current_target, best_target)
             ):
                 current_target = best_target
                 self.target_id = current_target.id
@@ -2630,14 +3118,10 @@ class Troop(Entity):
                 and self.attack_cooldown <= windup_seconds + 1e-12
             ):
                 self._attack_windup_active = True
-                self._start_attack_dash(current_target)
         
         if current_target:
             # Move towards target if out of range
             if not target_in_range:
-                # Leaving attack reach ends the connected attack animation;
-                # a later death while chasing must not create a finish lock.
-                self._attack_finish_target_id = None
                 self._movement_target_id = current_target.id
             elif self.attack_cooldown <= 0:
                 # Call on_attack_start for all mechanics
@@ -2652,6 +3136,19 @@ class Troop(Entity):
                     self, "_special_move_consumed_tick", False
                 ):
                     self._special_move_consumed_tick = False
+                    return
+                if self.should_cancel_committed_hit(current_target):
+                    # The attack attempt is consumed even though its payload
+                    # is rejected. Native preserves the already-loaded portion
+                    # of the next hit instead of installing a full cycle.
+                    self.attack_cooldown = self.get_post_attack_cooldown_seconds(
+                        payload_discarded=True,
+                    )
+                    self._attack_windup_active = False
+                    self._has_attacked_once = True
+                    self._attack_preload_blocked = False
+                    self.last_attack_time = 0.0
+                    self._on_attack()
                     return
                 if (
                     getattr(self.card_stats, "kamikaze", False)
@@ -2691,8 +3188,6 @@ class Troop(Entity):
                 for mechanic in self.mechanics:
                     mechanic.on_attack_committed(self, current_target)
 
-                self._record_attack_committed(current_target)
-
                 self.attack_cooldown = self.get_base_attack_interval_seconds()
                 self._attack_windup_active = False
                 self._has_attacked_once = True
@@ -2700,84 +3195,6 @@ class Troop(Entity):
                 self.last_attack_time = 0.0  # Reset for visualization
                 self._on_attack()  # Handle post-attack mechanics
 
-    def _start_attack_dash(self, target: 'Entity') -> None:
-        duration_ms = float(
-            getattr(getattr(self, "card_stats", None), "attack_dash_time", 0) or 0
-        )
-        if duration_ms <= 0.0 or self.attack_dash_origin is not None:
-            return
-        dx_units = tiles_to_logic_units(target.position.x - self.position.x)
-        dy_units = tiles_to_logic_units(target.position.y - self.position.y)
-        if dx_units == 0 and dy_units == 0:
-            return
-        unslowed_speed = (
-            self._unslowed_movement_speed()
-        )
-        movement_debuff = self._movement_debuff_multiplier()
-        self.attack_dash_origin = Position(self.position.x, self.position.y)
-        self.attack_dash_direction = (dx_units, dy_units)
-        effective_speed = self._native_scaled_speed(
-            unslowed_speed,
-            movement_debuff,
-            self.movement_speed_buff_multiplier,
-        )
-        self.attack_dash_speed = effective_speed
-        self.attack_dash_elapsed = 0.0
-
-    def _tick_attack_dash(self, dt: float, battle_state: 'BattleState') -> None:
-        origin = self.attack_dash_origin
-        if origin is None:
-            return
-        duration = max(
-            0.0,
-            float(getattr(self.card_stats, "attack_dash_time", 0) or 0) / 1000.0,
-        )
-        if duration <= 0.0:
-            self.attack_dash_origin = None
-            return
-        self.attack_dash_elapsed = min(
-            duration * 2.0,
-            self.attack_dash_elapsed + max(0.0, dt),
-        )
-        phase_time = (
-            self.attack_dash_elapsed
-            if self.attack_dash_elapsed <= duration
-            else duration * 2.0 - self.attack_dash_elapsed
-        )
-        dx_units, dy_units = self.attack_dash_direction
-        move_x_units, move_y_units = normalized_vector_logic_units(
-            dx_units,
-            dy_units,
-            speed_work_for_duration(self.attack_dash_speed, phase_time),
-        )
-        new_position = Position(
-            logic_units_to_tiles(
-                tiles_to_logic_units(origin.x) + move_x_units
-            ),
-            logic_units_to_tiles(
-                tiles_to_logic_units(origin.y) + move_y_units
-            ),
-        )
-        if self.is_air_unit:
-            # Attack-dash animation is allowed to ignore terrain, but its
-            # forward phase still runs through the tile-map arena boundary.
-            # Without this clip, a flying melee unit attacking a target on an
-            # outer row can lunge its center beyond the playable map.
-            new_position.x = clamp_native_object_axis(
-                new_position.x,
-                battle_state.arena.width,
-            )
-            new_position.y = clamp_native_object_axis(
-                new_position.y,
-                battle_state.arena.height,
-            )
-            self.position = new_position
-        elif battle_state.is_ground_position_walkable(new_position, self):
-            self.position = new_position
-        if self.attack_dash_elapsed >= duration * 2.0 - 1e-12:
-            self.attack_dash_origin = None
-            self.attack_dash_elapsed = 0.0
-    
     def _get_attack_damage(self) -> float:
         """Get the appropriate damage value based on charging state"""
         if getattr(self.card_stats, 'charge_range', None) and not self.has_charged and self.is_charging:
@@ -2797,13 +3214,25 @@ class Troop(Entity):
                 hasattr(self.card_stats, 'projectile_data') and 
                 self.card_stats.projectile_data is not None)
     
-    def _create_projectile(self, target: 'Entity', battle_state: 'BattleState') -> None:
-        """Create a projectile towards the target"""
+    def _create_projectile(
+        self,
+        target: Optional['Entity'],
+        battle_state: 'BattleState',
+        *,
+        target_position: Optional[Position] = None,
+    ) -> None:
+        """Create a projectile toward a live target or explicit aim point."""
         if not self.card_stats or not self.card_stats.projectile_data:
             # Fallback to direct attack if no projectile data
+            if target is None:
+                return
             attack_damage = self._get_attack_damage()
             target.take_damage(attack_damage)
             return
+
+        aim_position = target_position or (
+            target.position if target is not None else self.position
+        )
         
         # Get projectile properties
         projectile_data = self.card_stats.projectile_data
@@ -2836,7 +3265,9 @@ class Troop(Entity):
         crown_tower_damage_multiplier = max(
             0.0, 1.0 + (projectile_data.get("crownTowerDamagePercent", 0) / 100.0)
         )
-        launch_position, direction_x, direction_y = self._projectile_launch_geometry(target)
+        launch_position, direction_x, direction_y = (
+            self._projectile_launch_geometry_at(aim_position)
+        )
         
         # Use charging damage if applicable
         if self.is_charging and self.card_stats.damage_special:
@@ -2895,14 +3326,19 @@ class Troop(Entity):
                 crown_tower_damage_multiplier=crown_tower_damage_multiplier,
                 crown_tower_damage=crown_tower_damage,
                 source_entity=self,
-                primary_target=target,
+                primary_target=(
+                    target if target is not None and target.is_alive else None
+                ),
             )
             
             battle_state.entities[rolling_projectile.id] = rolling_projectile
         else:
             # Create regular projectile
             is_piercing = projectile_range > 0
-            target_position = Position(target.position.x, target.position.y)
+            projectile_target_position = Position(
+                aim_position.x,
+                aim_position.y,
+            )
             if is_piercing:
                 if direction_x or direction_y:
                     range_x_units, range_y_units = normalized_vector_logic_units(
@@ -2910,7 +3346,7 @@ class Troop(Entity):
                         direction_y,
                         tiles_to_logic_units(projectile_range),
                     )
-                    target_position = Position(
+                    projectile_target_position = Position(
                         logic_units_to_tiles(
                             tiles_to_logic_units(launch_position.x) + range_x_units
                         ),
@@ -2928,7 +3364,7 @@ class Troop(Entity):
                 damage=projectile_damage,
                 range=self.range,
                 sight_range=1.0,
-                target_position=target_position,
+                target_position=projectile_target_position,
                 travel_speed=projectile_speed,
                 splash_radius=splash_radius,
                 source_name=self.card_stats.name if self.card_stats else "Unknown",
@@ -2941,10 +3377,17 @@ class Troop(Entity):
                 crown_tower_damage_multiplier=crown_tower_damage_multiplier,
                 crown_tower_damage=crown_tower_damage,
                 source_entity=self,
-                primary_target=target,
+                primary_target=(
+                    target if target is not None and target.is_alive else None
+                ),
                 tracks_target=bool(projectile_data.get("homing", True))
                 and not bool(is_piercing or projectile_data.get("spawnProjectileData")),
                 pierces=is_piercing,
+                projectile_range=projectile_range,
+                homing_time_ms=int(projectile_data.get("homingTime", 0) or 0),
+                homing_min_distance=float(
+                    projectile_data.get("homingMinDistance", 0) or 0
+                ) / 1000.0,
                 start_extra_radius=float(
                     projectile_data.get("projectileStartExtraRadius", 0) or 0
                 ) / 1000.0,
@@ -3073,22 +3516,23 @@ class Troop(Entity):
 
     def _move_towards_target(self, target_entity: 'Entity', dt: float, battle_state=None) -> None:
         """Move toward the next native-grid route waypoint."""
-        from .unit_traits import is_hover_unit_card
-
         self._prepare_native_charge_movement()
-        hovering = is_hover_unit_card(self.card_stats)
-        # Air units ignore both terrain and building pathing.
+        previous_position = Position(self.position.x, self.position.y)
+        route_goal = target_entity.position
+        # Flying characters still select the native required-range goal cell,
+        # but store only that single node instead of invoking LogicPathFinder.
         if self.is_air_unit:
-            pathfind_target = target_entity.position
-        else:
-            # Ordinary ground units use bridge navigation. Hovering units
-            # travel directly across the river but still anticipate and avoid
-            # physical buildings on the ground collision plane.
-            pathfind_target = (
-                target_entity.position
-                if hovering
-                else self._get_pathfind_target(target_entity, battle_state)
+            from .pathfinding import native_single_node_waypoint
+
+            pathfind_target = native_single_node_waypoint(
+                self,
+                target_entity,
             )
+        else:
+            # LogicPathFinder owns bridge and river selection through the
+            # immutable arena's lane/water costs. Hovering characters travel
+            # directly but remain on the ground collision plane.
+            pathfind_target = route_goal
             if battle_state is not None:
                 from .pathfinding import ground_path_waypoint
 
@@ -3096,11 +3540,8 @@ class Troop(Entity):
                     battle_state,
                     self,
                     pathfind_target,
-                    ignored_building_id=(
-                        target_entity.id
-                        if isinstance(target_entity, Building)
-                        else None
-                    ),
+                    target_entity=target_entity,
+                    backwards_reference=target_entity.position,
                 )
 
         self.face_towards(pathfind_target)
@@ -3164,7 +3605,7 @@ class Troop(Entity):
                 movement_work_units,
                 target_distance_units,
             )
-            move_x_units, move_y_units = vector_towards_logic_units(
+            move_x_units, move_y_units = movement_component_vector_logic_units(
                 tiles_to_logic_units(dx),
                 tiles_to_logic_units(dy),
                 intended_movement_units,
@@ -3228,9 +3669,10 @@ class Troop(Entity):
                         self,
                     )
                     and self._try_start_river_jump(
-                        pathfind_target,
+                        route_goal,
                         new_position,
                         battle_state,
+                        target_entity=target_entity,
                     )
                 ):
                     self._advance_native_charge(intended_movement_units)
@@ -3254,6 +3696,18 @@ class Troop(Entity):
                 battle_state.arena.height,
             )
 
+        if (
+            battle_state is not None
+            and not getattr(self, "_river_jump_active", False)
+        ):
+            from .pathfinding import advance_native_ground_route
+
+            advance_native_ground_route(
+                self,
+                pathfind_target,
+                previous_position,
+            )
+
         if getattr(self.card_stats, "charge_range", None):
             # Collision and attraction do not charge Prince/Battle Ram. The
             # native clock consumes requested work even when tile-map
@@ -3267,6 +3721,8 @@ class Troop(Entity):
         pathfind_target: Position,
         blocked_position: Position,
         battle_state: 'BattleState',
+        *,
+        target_entity: Optional['Entity'] = None,
     ) -> bool:
         if not getattr(self.card_stats, "jump_height", None):
             return False
@@ -3281,30 +3737,20 @@ class Troop(Entity):
         ):
             return False
 
-        moving_up = pathfind_target.y > self.position.y
-        # Land just beyond the half-open river bounds on mirrored endpoints.
-        # Using 17.0 upward but 14.999 downward creates a small path/time
-        # asymmetry that can change whether a tower gets another shot.
-        landing_y_units = 17_001 if moving_up else 14_999
-        origin_x_units = tiles_to_logic_units(self.position.x)
-        origin_y_units = tiles_to_logic_units(self.position.y)
-        dx_units = tiles_to_logic_units(pathfind_target.x) - origin_x_units
-        dy_units = tiles_to_logic_units(pathfind_target.y) - origin_y_units
-        if dy_units == 0:
-            return False
-        x_numerator = dx_units * (landing_y_units - origin_y_units)
-        landing_x_delta_units = trunc_div(
-            x_numerator if dy_units > 0 else -x_numerator,
-            abs(dy_units),
+        from .pathfinding import native_jump_landing_waypoint
+
+        landing = native_jump_landing_waypoint(
+            battle_state,
+            self,
+            pathfind_target,
+            target_entity=target_entity,
         )
-        landing = Position(
-            logic_units_to_tiles(origin_x_units + landing_x_delta_units),
-            logic_units_to_tiles(landing_y_units),
-        )
-        if not battle_state.is_ground_position_walkable(landing, self):
+        if landing is None:
             self._river_jump_blocked = True
             return False
 
+        origin_x_units = tiles_to_logic_units(self.position.x)
+        origin_y_units = tiles_to_logic_units(self.position.y)
         landing_dx_units = tiles_to_logic_units(landing.x) - origin_x_units
         landing_dy_units = tiles_to_logic_units(landing.y) - origin_y_units
         distance_units = math.isqrt(
@@ -3341,7 +3787,7 @@ class Troop(Entity):
             min(work_units, remaining_units),
             ordinary_movement_state=False,
         )
-        move_x_units, move_y_units = vector_towards_logic_units(
+        move_x_units, move_y_units = movement_component_vector_logic_units(
             dx_units,
             dy_units,
             work_units,
@@ -3541,6 +3987,7 @@ class Building(Entity):
         """Run only the building character's object-owned phase."""
         if not self.is_alive:
             return
+        self._tick_death_spawn_target_immunity(dt)
         if self.deploy_delay_remaining > 0:
             self.deploy_delay_remaining = max(
                 0.0,
@@ -3603,9 +4050,6 @@ class Building(Entity):
         for mechanic in self.mechanics:
             mechanic.on_tick(self, dt * 1000)  # Convert to ms
 
-        if self._consume_attack_finish_lock(dt):
-            return
-
         # Update last attack time for visualization tracking
         self.last_attack_time += dt
         
@@ -3619,21 +4063,11 @@ class Building(Entity):
         )
         if (
             target is None
-            or not self._is_valid_target(target)
+            or not self._is_valid_target(target, is_current_target=True)
             or not self.can_affect_target_plane(target)
             or not self.is_within_target_keep_reach(target)
         ):
-            lost_target_id = self.target_id
-            removed = lost_target_id is not None and (
-                target is None or not target.is_alive
-            )
             self.target_id = None
-            if removed and self._begin_attack_finish_after_target_loss(
-                lost_target_id,
-                dt,
-                attack_in_progress=self._attack_windup_active,
-            ):
-                return
             target = self.get_nearest_target(battle_state.entities)
             if target is not None and not self.can_attack_target(target):
                 target = None
@@ -3652,7 +4086,7 @@ class Building(Entity):
             return
         target_in_range = bool(
             target is not None
-            and self.can_attack_target(target)
+            and self.can_attack_target(target, is_current_target=True)
             and self.is_within_attack_clock_reach(target)
         )
         self.advance_attack_clock(dt, target_in_range=target_in_range)
@@ -3669,6 +4103,16 @@ class Building(Entity):
             for mechanic in self.mechanics:
                 mechanic.on_attack_start(self, target)
 
+            if self.should_cancel_committed_hit(target):
+                self.attack_cooldown = self.get_post_attack_cooldown_seconds(
+                    payload_discarded=True,
+                )
+                self._attack_windup_active = False
+                self._has_attacked_once = True
+                self._attack_preload_blocked = False
+                self.last_attack_time = 0.0
+                return
+
             # Check if this building uses projectiles
             uses_projectile = self._uses_projectiles()
             if uses_projectile:
@@ -3679,8 +4123,6 @@ class Building(Entity):
 
             for mechanic in self.mechanics:
                 mechanic.on_attack_committed(self, target)
-
-            self._record_attack_committed(target)
 
             self.attack_cooldown = self.get_base_attack_interval_seconds()
             self._attack_windup_active = False
@@ -3723,10 +4165,18 @@ class Building(Entity):
                 hasattr(self.card_stats, 'projectile_data') and 
                 self.card_stats.projectile_data is not None)
     
-    def _create_projectile(self, target: 'Entity', battle_state: 'BattleState') -> None:
-        """Create a projectile towards the target"""
+    def _create_projectile(
+        self,
+        target: Optional['Entity'],
+        battle_state: 'BattleState',
+        *,
+        target_position: Optional[Position] = None,
+    ) -> None:
+        """Create a projectile toward a live target or explicit aim point."""
         if not self.card_stats or not self.card_stats.projectile_data:
             # Fallback to direct attack if no projectile data
+            if target is None:
+                return
             # Call on_attack_start for all mechanics
             for mechanic in self.mechanics:
                 mechanic.on_attack_start(self, target)
@@ -3737,6 +4187,10 @@ class Building(Entity):
             for mechanic in self.mechanics:
                 mechanic.on_attack_hit(self, target)
             return
+
+        aim_position = target_position or (
+            target.position if target is not None else self.position
+        )
         
         # Get projectile properties
         projectile_data = self.card_stats.projectile_data
@@ -3773,7 +4227,9 @@ class Building(Entity):
             candidate = resolver(self, projectile_damage)
             if candidate is not None:
                 crown_tower_damage = float(candidate)
-        launch_position, _, _ = self._projectile_launch_geometry(target)
+        launch_position, _, _ = self._projectile_launch_geometry_at(
+            aim_position
+        )
         
         # Create projectile entity
         projectile = Projectile(
@@ -3786,7 +4242,7 @@ class Building(Entity):
             damage=projectile_damage,
             range=self.range,
             sight_range=1.0,
-            target_position=Position(target.position.x, target.position.y),
+            target_position=Position(aim_position.x, aim_position.y),
             travel_speed=projectile_speed,
             splash_radius=splash_radius,
             source_name=self.card_stats.name if self.card_stats else "Unknown",
@@ -3799,8 +4255,17 @@ class Building(Entity):
             crown_tower_damage_multiplier=crown_tower_damage_multiplier,
             crown_tower_damage=crown_tower_damage,
             source_entity=self,
-            primary_target=target,
+            primary_target=(
+                target if target is not None and target.is_alive else None
+            ),
             tracks_target=bool(projectile_data.get("homing", True)),
+            projectile_range=float(
+                projectile_data.get("projectileRange", 0) or 0
+            ) / 1000.0,
+            homing_time_ms=int(projectile_data.get("homingTime", 0) or 0),
+            homing_min_distance=float(
+                projectile_data.get("homingMinDistance", 0) or 0
+            ) / 1000.0,
             start_extra_radius=float(
                 projectile_data.get("projectileStartExtraRadius", 0) or 0
             ) / 1000.0,
@@ -3839,6 +4304,20 @@ class Projectile(Entity):
     primary_target: Optional[Entity] = field(default=None, repr=False)
     tracks_target: bool = True
     pierces: bool = False
+    projectile_range: float = 0.0
+    homing_time_ms: int = 0
+    homing_min_distance: float = 0.0
+    _temporary_homing_remaining_ms: int = field(default=0, init=False, repr=False)
+    _temporary_homing_target: Optional[Entity] = field(
+        default=None,
+        init=False,
+        repr=False,
+    )
+    _permanent_homing_disabled_by_temporary: bool = field(
+        default=False,
+        init=False,
+        repr=False,
+    )
     hit_entity_ids: set[int] = field(default_factory=set, repr=False)
     launch_position: Optional[Position] = field(default=None, repr=False)
     start_extra_radius: float = 0.0
@@ -3849,11 +4328,107 @@ class Projectile(Entity):
         super().__post_init__()
         if self.launch_position is None:
             self.launch_position = Position(self.position.x, self.position.y)
+        self._initialize_temporary_homing()
+        self._register_pending_damage_duration()
+
+    def _initialize_temporary_homing(self) -> None:
+        """Install native HomingTime only beyond its strict launch distance."""
+        target = self.primary_target
+        homing_time_ms = max(0, int(self.homing_time_ms))
+        if target is None or homing_time_ms <= 0:
+            return
+        dx_units = (
+            tiles_to_logic_units(target.position.x)
+            - tiles_to_logic_units(self.position.x)
+        )
+        dy_units = (
+            tiles_to_logic_units(target.position.y)
+            - tiles_to_logic_units(self.position.y)
+        )
+        launch_distance_units = math.isqrt(
+            dx_units * dx_units + dy_units * dy_units
+        )
+        minimum_units = tiles_to_logic_units(self.homing_min_distance)
+        if launch_distance_units <= minimum_units:
+            return
+        self._temporary_homing_remaining_ms = homing_time_ms
+        self._temporary_homing_target = target
+
+    def _update_homing_for_logic_tick(self) -> None:
+        """Apply native temporary steering before ordinary projectile motion."""
+        if self._temporary_homing_remaining_ms > 0:
+            target = self._temporary_homing_target
+            if target is None:
+                self._temporary_homing_remaining_ms = 0
+            else:
+                target_x_units = tiles_to_logic_units(target.position.x)
+                target_y_units = tiles_to_logic_units(target.position.y)
+                current_x_units = tiles_to_logic_units(self.position.x)
+                current_y_units = tiles_to_logic_units(self.position.y)
+                endpoint_x_units = target_x_units
+                endpoint_y_units = target_y_units
+                projectile_range_units = tiles_to_logic_units(
+                    self.projectile_range
+                )
+                if projectile_range_units > 0:
+                    ray_x_units, ray_y_units = normalized_vector_logic_units(
+                        target_x_units - current_x_units,
+                        target_y_units - current_y_units,
+                        projectile_range_units,
+                    )
+                    endpoint_x_units = current_x_units + ray_x_units
+                    endpoint_y_units = current_y_units + ray_y_units
+                    # LogicProjectile::setTargetPosition clears its ordinary
+                    # homing pointer after installing a finite directed ray.
+                    self._permanent_homing_disabled_by_temporary = True
+                self.target_position = Position(
+                    logic_units_to_tiles(endpoint_x_units),
+                    logic_units_to_tiles(endpoint_y_units),
+                )
+                self._temporary_homing_remaining_ms -= 50
+            return
+
+        if (
+            self.tracks_target
+            and not self._permanent_homing_disabled_by_temporary
+            and self.primary_target is not None
+        ):
+            self.target_position = Position(
+                self.primary_target.position.x,
+                self.primary_target.position.y,
+            )
 
     @property
     def reserves_pending_damage(self) -> bool:
-        """Whether this flight is a guaranteed physical hit for retargeting."""
-        return self.tracks_target and self.splash_radius <= 0 and not self.pierces
+        """Whether native Homing bookkeeping reserves the primary target."""
+        return self.tracks_target
+
+    def _native_pending_damage_duration_ms(self) -> int:
+        """Return the launch duration recorded by LogicProjectile::init."""
+        target = self.primary_target
+        if target is None:
+            return 0
+        dx_units = tiles_to_logic_units(target.position.x - self.position.x)
+        dy_units = tiles_to_logic_units(target.position.y - self.position.y)
+        distance_units = math.isqrt(dx_units * dx_units + dy_units * dy_units)
+        speed_units = tiles_per_second_to_logic_speed(self.travel_speed)
+        if speed_units <= 0:
+            return 1000
+        # LogicProjectile first truncates distance * 50 / serialized speed.
+        # LogicObject then rounds that duration up to the next 50 ms frame and
+        # caps the remembered maximum at one second.
+        duration_ms = (distance_units * 50) // speed_units
+        rounded_ms = ((duration_ms + 49) // 50) * 50
+        return min(1000, rounded_ms)
+
+    def _register_pending_damage_duration(self) -> None:
+        target = self.primary_target
+        if target is None or not self.reserves_pending_damage:
+            return
+        target._pending_projectile_max_duration_ms = max(
+            int(target._pending_projectile_max_duration_ms),
+            self._native_pending_damage_duration_ms(),
+        )
 
     def update(self, dt: float, battle_state: 'BattleState') -> None:
         """Update projectile - move towards target"""
@@ -3867,15 +4442,11 @@ class Projectile(Entity):
             dt -= self.launch_delay
             self.launch_delay = 0.0
 
-        if self.tracks_target and self.primary_target is not None:
-            self.target_position = Position(
-                self.primary_target.position.x,
-                self.primary_target.position.y,
-            )
-
         if self.pierces:
             self._update_piercing(dt, battle_state)
             return
+
+        self._update_homing_for_logic_tick()
 
         if self._reaches_target_this_update(dt):
             # Commit every impact that reaches on this server frame before
@@ -3941,6 +4512,7 @@ class Projectile(Entity):
         battle_state: 'BattleState',
     ) -> None:
         """Run one native projectile movement and endpoint collision check."""
+        self._update_homing_for_logic_tick()
         dx_units = tiles_to_logic_units(
             self.target_position.x - self.position.x
         )
@@ -3992,7 +4564,10 @@ class Projectile(Entity):
             if (
                 entity.id in self.hit_entity_ids
                 or not self._can_damage(entity)
-                or not entity.can_receive_area_damage(source_kind)
+                or not entity.can_receive_area_damage(
+                    source_kind,
+                    source_entity=self.source_entity,
+                )
             ):
                 continue
             if entity.intersects_native_area(position, projectile_radius):
@@ -4051,7 +4626,10 @@ class Projectile(Entity):
             if not self._can_damage(entity):
                 continue
             source_kind = getattr(self, "spell_name", None) or self.source_name
-            if not entity.can_receive_area_damage(source_kind):
+            if not entity.can_receive_area_damage(
+                source_kind,
+                source_entity=self.source_entity,
+            ):
                 continue
             if (
                 self.damage_group_hit_entity_ids is not None
@@ -4199,6 +4777,22 @@ class Projectile(Entity):
         is_air = is_airborne_target(entity)
         return self.hits_air if is_air else self.hits_ground
 
+    def _committed_direct_affects_hidden(self, entity: 'Entity') -> bool:
+        """Whether native impact uses its stored target without a fresh scan.
+
+        Radius-zero projectiles resolve directly through their target pointer,
+        so a later hidden-state transition blocks new locks but not that one
+        already-committed hit. Splash and piercing projectiles instead run a
+        fresh area query at every collision sample and retain normal hidden
+        eligibility. Passing only ``affects_hidden`` through the recipient
+        guard preserves dash/death-spawn immunity and every other guard.
+        """
+        return bool(
+            self.splash_radius <= 0.0
+            and not self.pierces
+            and self.primary_target is entity
+        )
+
     def expected_damage_against(self, entity: 'Entity') -> float:
         """Return this projectile's committed direct damage for reservation."""
         damage = float(self.damage)
@@ -4206,7 +4800,10 @@ class Projectile(Entity):
             damage = (
                 float(self.crown_tower_damage)
                 if self.crown_tower_damage is not None
-                else damage * self.crown_tower_damage_multiplier
+                else native_percent_damage(
+                    damage,
+                    self.crown_tower_damage_multiplier,
+                )
             )
         return max(0.0, damage)
 
@@ -4218,12 +4815,24 @@ class Projectile(Entity):
         apply_status: bool = True,
     ) -> None:
         source_kind = getattr(self, "spell_name", None) or self.source_name
-        if not entity.can_receive_effect(source_kind):
+        affects_hidden = self._committed_direct_affects_hidden(entity)
+        if not entity.can_receive_effect(
+            source_kind,
+            affects_hidden=affects_hidden,
+        ):
             return
         damage = self.expected_damage_against(entity)
-        entity.take_damage(damage, source_kind=source_kind)
+        entity.take_damage(
+            damage,
+            source_kind=source_kind,
+            affects_hidden=affects_hidden,
+        )
         if apply_status:
-            self._apply_status_to_target(entity, source_kind)
+            self._apply_status_to_target(
+                entity,
+                source_kind,
+                affects_hidden=affects_hidden,
+            )
         if self.knockback_distance > 0 and not isinstance(entity, Building):
             self._apply_knockback(entity, battle_state)
 
@@ -4231,14 +4840,21 @@ class Projectile(Entity):
         self,
         entity: 'Entity',
         source_kind: str,
+        *,
+        affects_hidden: bool = False,
     ) -> None:
         if self.stun_duration > 0:
-            entity.apply_stun(self.stun_duration, source_kind=source_kind)
+            entity.apply_stun(
+                self.stun_duration,
+                source_kind=source_kind,
+                affects_hidden=affects_hidden,
+            )
         if self.slow_duration > 0 and self.slow_multiplier < 1.0:
             entity.apply_slow(
                 self.slow_duration,
                 self.slow_multiplier,
                 source_kind=source_kind,
+                affects_hidden=affects_hidden,
             )
 
     def _apply_splash_statuses(self, battle_state: 'BattleState') -> None:
@@ -4253,7 +4869,10 @@ class Projectile(Entity):
                 continue
             if (
                 not self._hitbox_overlaps_with_splash(entity)
-                or not entity.can_receive_area_damage(source_kind)
+                or not entity.can_receive_area_damage(
+                    source_kind,
+                    source_entity=self.source_entity,
+                )
             ):
                 continue
             self._apply_status_to_target(entity, source_kind)
@@ -4783,12 +5402,18 @@ class AreaEffect(Entity):
             return (
                 self.crown_tower_damage
                 if self.crown_tower_damage is not None
-                else amount * self.crown_tower_damage_multiplier
+                else native_percent_damage(
+                    amount,
+                    self.crown_tower_damage_multiplier,
+                )
             )
         return (
             self.building_damage
             if self.building_damage is not None
-            else amount * self.building_damage_multiplier
+            else native_percent_damage(
+                amount,
+                self.building_damage_multiplier,
+            )
         )
 
     def _apply_damage_tick(self, battle_state: 'BattleState', amount: float) -> None:
@@ -4880,6 +5505,7 @@ class BuffAreaEffect(Entity):
     attack_speed_multiplier: float = 1.35
     spawn_speed_multiplier: float = 1.35
     refresh_duration: float = 1.0
+    cap_buff_time_to_effect: bool = False
     effect_tick_interval: float = 0.3
     effect_on_spawn_only: bool = False
     effect_snapshot_applied: bool = False
@@ -4951,13 +5577,17 @@ class BuffAreaEffect(Entity):
             ):
                 continue
             if entity.intersects_native_area(self.position, self.radius):
-                # Rage has a one-second falloff when a unit leaves the area,
-                # but the buff never outlives the field itself. Near field
-                # expiry, refresh only for the remaining active lifetime.
-                refresh_duration = min(
-                    self.refresh_duration,
-                    effect_time_remaining,
-                )
+                # BuffTime is the recipient-owned falloff after its most
+                # recent area scan.  It can outlive the area object unless
+                # CapBuffTimeToAreaEffectTime explicitly opts this payload
+                # into truncating the final refresh (the same rule used by
+                # negative AreaEffect buffs such as Earthquake).
+                refresh_duration = self.refresh_duration
+                if self.cap_buff_time_to_effect:
+                    refresh_duration = min(
+                        refresh_duration,
+                        effect_time_remaining,
+                    )
                 if refresh_duration > 1e-9:
                     entity.apply_haste(
                         refresh_duration,
@@ -4992,7 +5622,10 @@ class BuffAreaEffect(Entity):
                 damage = (
                     float(self.crown_tower_damage)
                     if self.crown_tower_damage is not None
-                    else round(damage * self.crown_tower_damage_multiplier)
+                    else native_percent_damage(
+                        damage,
+                        self.crown_tower_damage_multiplier,
+                    )
                 )
             targets.append((entity, damage))
         for entity, damage in targets:
@@ -5092,6 +5725,9 @@ class SpawnProjectile(Projectile):
                 spacing,
                 self.player_id,
                 float(getattr(spawn_stats, "spawn_angle_shift", 0) or 0),
+                lane_id=battle_state.arena.native_path_id_at(
+                    self.target_position
+                ),
             )
             spawn_x = self.target_position.x + offset_x
             spawn_y = self.target_position.y + offset_y
@@ -5229,7 +5865,10 @@ class RollingProjectile(Entity):
                 getattr(entity, "entity_kind", 4) in {2, 3}):
                 continue
             source_kind = getattr(self, "spell_name", None) or "rolling-projectile"
-            if not entity.can_receive_area_damage(source_kind):
+            if not entity.can_receive_area_damage(
+                source_kind,
+                source_entity=self.source_entity,
+            ):
                 continue
             
             # Skip air units (Log only hits ground)
@@ -5247,7 +5886,10 @@ class RollingProjectile(Entity):
                     damage = (
                         self.crown_tower_damage
                         if self.crown_tower_damage is not None
-                        else damage * self.crown_tower_damage_multiplier
+                        else native_percent_damage(
+                            damage,
+                            self.crown_tower_damage_multiplier,
+                        )
                     )
                 entity.take_damage(damage, source_kind=source_kind)
                 self.hit_entities.add(entity.id)
@@ -5290,7 +5932,10 @@ class RollingProjectile(Entity):
             damage = (
                 float(self.crown_tower_damage)
                 if self.crown_tower_damage is not None
-                else damage * self.crown_tower_damage_multiplier
+                else native_percent_damage(
+                    damage,
+                    self.crown_tower_damage_multiplier,
+                )
             )
         return max(0.0, damage)
     
@@ -5469,10 +6114,10 @@ class TimedExplosive(Entity):
                 facing_x_units=facing_x_units,
                 facing_y_units=facing_y_units,
                 flip_x=(
-                    self.death_spawn_pushback
+                    self.spawn_const_priority
                     and battle_state.arena.native_path_id_at(self.position) == 1
                 ),
-                flip_y=self.death_spawn_pushback and self.player_id == 1,
+                flip_y=self.spawn_const_priority and self.player_id == 1,
             )
             spawn_x = self.position.x + offset_x
             spawn_y = self.position.y + offset_y
@@ -5486,14 +6131,26 @@ class TimedExplosive(Entity):
                 spawn_stats,
                 deploy_delay_override=self.death_spawn_deploy_time,
                 snap_to_valid=False,
+                death_spawn=True,
+                death_spawn_travel_origin=(
+                    self.position
+                    if self.death_spawn_pushback and self.death_spawn_radius > 0.0
+                    else None
+                ),
             )
             spawned = battle_state.entities.get(spawned_id)
-            if spawned is not None and (
-                self.death_spawn_pushback or self.spawn_const_priority
-            ):
+            if spawned is not None and self.spawn_const_priority:
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
                 )
+            if spawned is not None and (
+                (
+                    self.death_spawn_pushback
+                    and self.death_spawn_radius > 0.0
+                )
+                or self.spawn_const_priority
+            ):
+                battle_state.sync_fast_target_entity(spawned)
             if spawned is not None and inherited_freeze_remaining > 1e-9:
                 # The container itself is not stunned: its fall/open timer
                 # continues normally. It carries the original snapshot so

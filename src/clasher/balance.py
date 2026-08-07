@@ -17,11 +17,134 @@ from .gamedata_normalization import normalize_entry
 BALANCE_VERSION = "2026-07-06"
 TOURNAMENT_LEVEL = 11
 
-# Global combat-animation tail used after a connected target disappears.
-# Character data can opt into its own AttackFinishTime, including an explicit
-# zero; every ordinary combat component uses this live global value.
+# The current Default battle timeline begins on the first playable frame with
+# six elixir.  The native battle-start cooldown is a separate pre-play intro
+# phase and is deliberately outside BattleState's 0..300 second match clock.
+DEFAULT_BATTLE_TIMELINE_STARTING_ELIXIR = 6.0
+
+# Current csv_logic/globals.csv target-geometry rules. Attack and sight
+# queries add the target character's serialized radius to the attacker's
+# range. Ordinary buildings receive no extra sight, while Crown Towers add
+# 2,000 logic units. Keep these values shared by scalar and vectorized target
+# selection so neither path embeds an independent geometry assumption.
+ADD_CHARACTER_RANGE_TO_RADIUS = True
+EXTRA_SIGHT_RANGE_TO_BUILDING = 0
+EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS = 2000
+
+# The current combat component derives its in-progress projectile leash from
+# the serialized hit timer. This outer global is distinct from the later
+# LOGIC_PRESERVE_TARGET_IF_HIT_STARTED compatibility switch below: both must
+# be enabled before hit-cycle phase can widen an existing target lock.
+COMBAT_CMP_USE_HIT_STARTED = True
+
+# The Default timeline's native ``NextSpellCooldownMS`` value spaces cards
+# entering empty hand slots; it does not prevent commands from the other
+# occupied slots. The player tick fills at most one slot, choosing the lowest
+# empty index, and then waits this long before the next refill.
+DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS = (
+    (120.0, 1000),
+    (240.0, 500),
+    (300.0, 350),
+)
+
+# Global cleanup interval for a serialized AttackSequence whose target is
+# lost mid-sequence. Character data can opt into its own AttackFinishTime,
+# including an explicit zero. The same global duration also gates the native
+# death-spawn target-immunity marker below.
 GLOBAL_ATTACK_FINISH_TIME_MS = 250
 
+# Current csv_logic/globals.csv behavior. Characters created by a parent's
+# death payload carry a short target-eligibility marker. Native advances that
+# marker in LogicCharacter::tick and clears it only after it crosses the
+# global attack-finish time; character-sourced target queries reject it while
+# non-character effects remain eligible.
+LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK = True
+
+# Champions keep their active-ability control available while their ordinary
+# character components are frozen/stunned. This is a global Champion rule;
+# individual ability mechanics must not special-case the status themselves.
+LOGIC_CHAMPION_CAN_EXECUTE_ABILITY_FROZEN = True
+
+# Spawn-path movement consumes a serialized speed budget each 50 ms frame.
+# The current client declares the final path node reached when its projected
+# remaining distance is no greater than that same speed budget (rather than
+# the historical fixed 1000-logic-unit radius).
+LOGIC_SPAWN_PATHFIND_REACHED_RADIUS_FROM_SPEED = True
+
+# A mobile non-dash character rechecks its target at the actual hit frame.
+# The native attack component drops the payload when the target no longer
+# intersects the serialized attack range plus this 1,500-unit grace radius.
+# Buildings (serialized Speed == 0) and characters with DashCooldown are
+# explicitly exempted by character-data capabilities, not card identity.
+LOGIC_CANCEL_HIT_FROM_LONG_DISTANCE = True
+LOGIC_CANCEL_HIT_FROM_LONG_DISTANCE_RANGE = 1500
+
+# Direct character-owned area damage historically bypassed the late hit-frame
+# distance discard. The live global enables that discard for the whole area
+# payload. Projectile attacks do not consult this flag: they use the ordinary
+# projectile branch of the shared committed-hit guard.
+LOGIC_ALLOW_DISCARD_HIT_ON_AREA_DAMAGE = True
+
+# Current csv_logic/globals.csv attack-clock behavior. Ordinary connected
+# attacks reset the serialized load marker so the next interval is a complete
+# HitSpeed cycle. Stun-driven target clearing also zeros accumulated hit work
+# and installs that marker, discarding both an almost-ready swing and idle
+# first-hit preload. A late long-distance payload discard is the exception:
+# native deliberately preserves the loaded portion for the next attempt.
+LOGIC_LOAD_FIRST_HIT_RESET_TIMER_AFTER_ATTACK = True
+LOGIC_LOAD_FIRST_HIT_RESET_TIMER_WHEN_ZAPPED = True
+LOGIC_LOAD_FIRST_HIT_KEEP_LOADED_AFTER_DISCARD = True
+
+# Native getSpawnOffset mirrors the horizontal ordering of two-, three-, and
+# four-slot formations when the shared deployment anchor resolves to path 1.
+# Larger formations deliberately retain their ordinary world-space order.
+LOGIC_LANE_ID_BASED_DEPLOY_SEQUENCE = True
+
+# LogicSummoner nudges the one resolved deployment anchor by one integer
+# logic unit to remove rotational boundary ambiguity. The character-data
+# gates exclude air units, stationary characters, and dash characters; the
+# adjustment is deliberately not repeated for individual formation members.
+LOGIC_SYMMETRICAL_DEPLOY_SNAP = True
+
+# If a ground route temporarily travels farther from its current target, the
+# combat component keeps that lock when its ordinary in-sight scan is empty.
+# This check precedes the default Crown Tower fallback.
+LOGIC_PATHFIND_BACKWARDS_TRY_KEEP_TARGET = True
+
+# Current combat-lock globals. Continuous-damage characters approach a new
+# channel by the serialized reduction below. Existing character locks receive
+# the small range extension, while an already-started projectile attack uses
+# the native 500-unit leash when preservation is enabled. Pending projectile
+# damage is considered by target selection only through the inclusive duration
+# threshold below.
+LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER = 500
+LOGIC_PRESERVE_TARGET_IF_HIT_STARTED = True
+LOGIC_RANGE_EXTENSION_TO_KEEP_TARGET = 25
+LOGIC_PENDING_DAMAGE_IGNORE_IF_DURATION_LESS = 600
+
+# Version 15.546.41 no longer uses the path lane captured at character birth
+# to choose a fallback Crown Tower. The current x position selects the default
+# Princess Tower for every character collision plane.
+LOGIC_DEFAULT_TARGET_USE_LANE_ID = False
+LOGIC_XPOS_BASED_TOWER_TARGETING = True
+
+# A surviving Princess Tower remains the default Crown objective even when
+# the King Tower is geometrically closer.  The King can still be acquired as
+# an ordinary in-sight target; this flag governs only the no-target fallback.
+LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET = True
+
+# Breaking a shield interrupts a connected continuous-damage channel's stage
+# clock even though the attacker retains the same underlying character lock.
+LOGIC_INFERNO_RESET_ON_SHIELD_LOST = True
+
+# Lethal pending projectile damage filters both acquisition candidates and an
+# already-held ranged-character lock in the current client.
+CURRENT_TARGET_IGNORES_PENDING_DAMAGE = True
+
+# Equal-distance building scans run in owner-relative order.  This prevents
+# world-space insertion order from making rotationally mirrored battles pick
+# the same left/right building.
+LOGIC_SYMMETRIC_CLOSEST_BUILDING_ITERATION = True
 
 # Tower Troops use their own historical level curve rather than the ordinary
 # Common-card multiplier. Store the live tournament snapshot explicitly so
@@ -132,6 +255,12 @@ CHARACTER_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
         "dashLandingTime": 300,
         "dashPushBack": 1000,
         "dashRadius": 2200,
+        # Character-owned deployment displacement is distinct from the
+        # MegaKnightAppear damage projectile.  The native client runs this
+        # one-tile push query when the character reaches its active state;
+        # the wider projectile then supplies the visible landing shockwave.
+        "spawnPushback": 1000,
+        "spawnPushbackRadius": 1000,
     },
     "MegaMinion": {"projectileStartRadius": 450},
     "Minion": {"projectileStartRadius": 450},
@@ -307,6 +436,10 @@ PROJECTILE_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
         "minDistance": 2500,
         "projectileRadius": 1300,
         "projectileRadiusY": 600,
+        # The static 15.546.41 CSV and compact V5 payload still carry 500.
+        # The live December 2025 balance layer changed the Barrel Barbarian's
+        # deploy time from 500 ms to 1000 ms; this projectile-owned custom
+        # deploy time is the field that native LogicProjectile applies.
         "spawnCharacterDeployTime": 1000,
     },
     "BombSkeletonProjectile": {"homing": False},
@@ -336,6 +469,12 @@ PROJECTILE_FIELD_OVERRIDES: dict[str, dict[str, Any]] = {
     },
     "EliteArcherArrow": {
         "homing": False,
+        # Native keeps a separate short-lived target pointer even though the
+        # projectile's ordinary Homing bit is false. At launch distances
+        # strictly greater than five tiles it re-aims the 11-tile piercing
+        # ray for two 50 ms logic frames.
+        "homingTime": 100,
+        "homingMinDistance": 5000,
         "projectileRadius": 250,
         "projectileStartExtraRadius": 400,
     },

@@ -41,6 +41,10 @@ from .kinematics import (
     trunc_div,
 )
 from .logic_math import spawn_target_distance_discount_sq_units
+from .balance import (
+    DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS,
+    LOGIC_SYMMETRICAL_DEPLOY_SNAP,
+)
 
 
 # Clash's deterministic logic update advances in fixed 50 ms quanta. Visual
@@ -696,6 +700,10 @@ class BattleState:
         
         for player in self.players:
             player.regenerate_elixir(dt, base_regen)
+            player.tick_card_refill(
+                self._next_card_refill_cooldown_ms(),
+                round(dt * 1000.0),
+            )
 
         # Commands become visible at this tick boundary. Entities created by
         # those commands did not exist during the elapsed 50 ms interval and
@@ -876,14 +884,12 @@ class BattleState:
                 return False
             # The tower-only shortcut is valid only when a normal component
             # frame has no stateful work beyond the visualization clock.
-            # Status expiry, King activation, attack recovery, and stale
-            # target/finish state all affect the tower's next interaction.
+            # Status expiry, King activation, and attack recovery all affect
+            # the tower's next interaction.
             if (
                 entity.mechanics
                 or entity.deploy_delay_remaining > 1e-9
                 or entity.target_id is not None
-                or entity.attack_finish_lock_remaining > 1e-9
-                or entity._attack_finish_target_id is not None
                 or entity._attack_windup_active
                 or entity.attack_cooldown
                 > entity.get_preloaded_attack_time_seconds() + 1e-9
@@ -896,6 +902,7 @@ class BattleState:
                 or entity._periodic_damage_effects
                 or entity.forced_movement_active
                 or entity._knockback_target is not None
+                or entity._death_spawn_travel_ticks_remaining > 0
                 or entity.activation_delay_remaining > 1e-9
                 or entity.activation_first_hit_delay_remaining > 1e-9
             ):
@@ -931,6 +938,10 @@ class BattleState:
                 base_regen = 1.4
             for player in self.players:
                 player.regenerate_elixir(dt, base_regen)
+                player.tick_card_refill(
+                    self._next_card_refill_cooldown_ms(),
+                    round(dt * 1000.0),
+                )
             # In an otherwise inert frame, active Crown Towers still advance
             # this visualization-only clock in their combat component.
             for entity in self.entities.values():
@@ -996,6 +1007,13 @@ class BattleState:
         self._pending_projectile_impacts = []
         for impact in pending:
             impact.projectile._resolve_impact(self, impact.targets)
+
+    def _next_card_refill_cooldown_ms(self) -> int:
+        """Return the Default timeline's current empty-slot refill delay."""
+        for segment_end_seconds, cooldown_ms in DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS:
+            if self.time < segment_end_seconds - 1e-9:
+                return cooldown_ms
+        return DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS[-1][1]
     
     def deploy_card(self, player_id: int, card_name: str, position: Position) -> bool:
         """Deploy a card at the given position"""
@@ -1080,13 +1098,53 @@ class BattleState:
             if card_type_str == "building":
                 self._spawn_entity(Building, position, player_id, card_stats)
             else:
-                self._spawn_troop(position, player_id, card_stats)
+                deploy_position = self._apply_symmetric_deploy_snap(
+                    position,
+                    player_id,
+                    card_stats,
+                )
+                self._spawn_troop(deploy_position, player_id, card_stats)
             for entity_id in self.entities.keys() - entity_ids_before:
                 entity = self.entities[entity_id]
                 if isinstance(entity, (Troop, Building)) and entity.deploy_delay_remaining > 1e-9:
                     entity.placement_pending = True
         
         return True
+
+    def _apply_symmetric_deploy_snap(
+        self,
+        position: Position,
+        player_id: int,
+        card_stats: CardStatsCompat,
+    ) -> Position:
+        """Apply LogicSummoner's post-search one-unit anchor adjustment."""
+        if not LOGIC_SYMMETRICAL_DEPLOY_SNAP:
+            return position
+
+        card_type = str(getattr(card_stats, "card_type", "") or "").lower()
+        character_data = (
+            getattr(card_stats, "summon_character_data", None) or {}
+        )
+        if (
+            card_type == "building"
+            or is_air_unit_card(card_stats)
+            or float(getattr(card_stats, "speed", 0) or 0) <= 0.0
+            or int(character_data.get("dashCooldown", 0) or 0) > 0
+        ):
+            return position
+
+        x_units = tiles_to_logic_units(position.x)
+        y_units = tiles_to_logic_units(position.y)
+        if x_units < tiles_to_logic_units(self.arena.width) // 2:
+            x_units -= 1
+        # Native findPositionForSpell receives player_id == 0 as this side
+        # flag and decrements y only when it is false.
+        if player_id != 0:
+            y_units -= 1
+        return Position(
+            logic_units_to_tiles(x_units),
+            logic_units_to_tiles(y_units),
+        )
 
     @staticmethod
     def _champion_ability_pair(
@@ -1322,6 +1380,7 @@ class BattleState:
                 else angle_shift_degrees
             ),
             secondary_count=secondary_count,
+            lane_id=self.arena.native_path_id_at(center_pos),
         )
         deploy_delay_offset = (
             index * (getattr(card_stats, "summon_deploy_delay", 0) or 0) / 1000.0
@@ -1347,6 +1406,7 @@ class BattleState:
         # Secondary units (back) - use actual name from summonCharacterSecondData  
         back_name = back_data.get("name", card_stats.name + "_Secondary")
         back_card_stats = self._create_card_stats_from_data(back_data, back_name)
+        lane_id = self.arena.native_path_id_at(center_pos)
         
         # Spawn primary units on the forward arc.
         for i in range(front_count):
@@ -1357,6 +1417,7 @@ class BattleState:
                 radius,
                 player_id,
                 float(getattr(card_stats, "spawn_angle_shift", 0) or 0),
+                lane_id=lane_id,
             )
             front_pos = Position(center_pos.x + offset_x, center_pos.y + offset_y)
             
@@ -1379,6 +1440,7 @@ class BattleState:
                 radius,
                 player_id,
                 float(getattr(card_stats, "spawn_angle_shift", 0) or 0),
+                lane_id=lane_id,
             )
             back_pos = Position(center_pos.x + offset_x, center_pos.y + offset_y)
 
@@ -1404,6 +1466,7 @@ class BattleState:
         """Spawn a data-selected native wide formation."""
         from .formations import horizontal_line_offset
 
+        lane_id = self.arena.native_path_id_at(center_pos)
         for index in range(count):
             offset_x, offset_y = horizontal_line_offset(
                 index,
@@ -1411,6 +1474,7 @@ class BattleState:
                 getattr(card_stats, "summon_width", 0.0) or 0.0,
                 radius,
                 player_id,
+                lane_id=lane_id,
             )
             position = Position(center_pos.x + offset_x, center_pos.y + offset_y)
             stagger = index * (
@@ -1553,6 +1617,8 @@ class BattleState:
         deploy_delay_override: float | None = None,
         deploy_delay_offset: float = 0.0,
         snap_to_valid: bool = True,
+        death_spawn: bool = False,
+        death_spawn_travel_origin: Position | None = None,
     ) -> None:
         """Spawn a single unit at a specific position"""
         # Get unit properties
@@ -1630,11 +1696,18 @@ class BattleState:
             (getattr(card_stats, "first_hit_time", 0) or 0) / 1000.0,
         )
         troop.battle_state = self
+        if death_spawn:
+            troop._activate_death_spawn_target_immunity()
 
         self._attach_card_mechanics(troop, card_stats)
 
         self.entities[self.next_entity_id] = troop
         self.next_entity_id += 1
+        if death_spawn_travel_origin is not None:
+            # Native retains the ring coordinate as movement state and resets
+            # the live object to its parent's death origin before spawn hooks
+            # or manager insertion can expose the child to gameplay.
+            troop.begin_death_spawn_travel(death_spawn_travel_origin)
         troop.on_spawn()
 
     def _native_child_position_without_radius(
@@ -2054,6 +2127,7 @@ class BattleState:
                 death_spawn_stats,
                 deploy_delay_override=deploy_time,
                 snap_to_valid=False,
+                death_spawn=True,
             )
             spawned = self.entities.get(spawned_id)
             if (
@@ -2397,12 +2471,19 @@ class BattleState:
         from .unit_traits import is_in_transit, unit_mass, uses_air_collision_plane
 
         river_jumping = bool(getattr(troop, "_river_jump_active", False))
+        death_spawn_traveling = bool(
+            troop._death_spawn_travel_ticks_remaining > 0
+        )
         mega_knight_airborne = (
             getattr(troop, "_mk_leap_phase", None) == "airborne"
         )
         if (
             not troop.is_alive
-            or (troop.is_stunned() and not river_jumping)
+            or (
+                troop.is_stunned()
+                and not river_jumping
+                and not death_spawn_traveling
+            )
             or (
                 is_in_transit(troop)
                 and not river_jumping

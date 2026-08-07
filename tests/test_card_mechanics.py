@@ -97,6 +97,19 @@ class MockEntity:
     def native_target_distance_to(self, target):
         return self.position.distance_to(target.position)
 
+    def native_dash_range_edge_distance(
+        self,
+        target,
+        minimum_range,
+        maximum_range,
+    ):
+        distance = self.native_target_distance_to(target)
+        target_edge_distance = distance - target.get_collision_radius()
+        edge_gap = target_edge_distance - self.get_collision_radius()
+        if edge_gap >= minimum_range and target_edge_distance <= maximum_range:
+            return target_edge_distance
+        return None
+
     def intersects_native_area(self, area_center, area_radius):
         return self.position.distance_to(area_center) < (
             self.get_collision_radius() + area_radius
@@ -154,9 +167,9 @@ class TestBanditDash:
         entity.battle_state = MockBattleState()
         entity.battle_state.time = 2.0  # 2 seconds have passed (enough for dash cooldown)
         entity.position = MockPosition(0, 0)
-        target.position = MockPosition(4.1, 0)  # 3.6 tiles to the target edge
+        target.position = MockPosition(4.6, 0)  # 3.6 tiles edge-to-edge
 
-        # Should dash when the target's near edge is within the 3.5-6 range.
+        # The inner dash boundary measures the gap between both bodies.
         entity.target_id = 1
         entity.battle_state.entities[1] = target
 

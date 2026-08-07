@@ -21,8 +21,9 @@ class AttackRecoil(BaseMechanic):
     def on_attack_committed(self, entity: 'Entity', target: 'Entity') -> None:
         if target is None:
             return
-        dx_units = tiles_to_logic_units(entity.position.x - target.position.x)
-        dy_units = tiles_to_logic_units(entity.position.y - target.position.y)
+        target_position = target.position
+        dx_units = tiles_to_logic_units(entity.position.x - target_position.x)
+        dy_units = tiles_to_logic_units(entity.position.y - target_position.y)
         if dx_units == 0 and dy_units == 0:
             return
         battle_state = getattr(entity, "battle_state", None)
@@ -33,7 +34,7 @@ class AttackRecoil(BaseMechanic):
         apply_radial_knockback(
             entity,
             battle_state,
-            target.position,
+            target_position,
             self.recoil_distance,
             source_kind=getattr(entity.card_stats, "name", None),
             ignores_mass=True,

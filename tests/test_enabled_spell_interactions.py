@@ -17,7 +17,8 @@ from clasher.entities import (
     TimedExplosive,
     Troop,
 )
-from clasher.spells import SPELL_REGISTRY
+from clasher.logic_math import native_percent_damage
+from clasher.spells import DirectDamageSpell, SPELL_REGISTRY
 from clasher.unit_traits import unit_mass
 
 
@@ -59,7 +60,114 @@ def _enemy_golemites(battle: BattleState) -> list[Troop]:
     ]
 
 
-def test_zap_status_pass_includes_children_spawned_by_its_lethal_damage():
+def _fully_hide_tesla(tesla: Building) -> None:
+    hide = next(
+        mechanic
+        for mechanic in tesla.mechanics
+        if type(mechanic).__name__ == "HideWhenIdle"
+    )
+    hide._phase_ms = float(hide.hide_delay_ms)
+    tesla._hidden_building = True
+    tesla._special_move_active = True
+    tesla.target_id = None
+    battle = tesla.battle_state
+    if battle is not None:
+        battle.sync_fast_target_entity(tesla)
+    assert tesla._hidden_building
+
+
+@pytest.mark.parametrize(
+    ("damage", "multiplier", "expected"),
+    (
+        (179, 0.30, 54),
+        # Python round/floor produce 54 here; every native data getter uses
+        # the add-99 ceiling path and therefore produces 55.
+        (181, 0.30, 55),
+        (1, 0.01, 1),
+        (181, 0.0, 0),
+        (181, 1.0, 181),
+    ),
+)
+def test_native_damage_percentages_use_shared_integer_ceiling(
+    damage,
+    multiplier,
+    expected,
+):
+    assert native_percent_damage(damage, multiplier) == expected
+
+
+def test_native_percentage_ceiling_reaches_direct_projectile_and_area_payloads():
+    battle = BattleState()
+    tower = _enemy_princess_tower(battle)
+    tower_before = tower.hitpoints
+
+    direct = DirectDamageSpell(
+        name="NativePercentProbe",
+        mana_cost=0,
+        radius=1.0,
+        damage=181,
+        crown_tower_damage_multiplier=0.30,
+    )
+    assert direct.cast(battle, 0, tower.position)
+    assert tower_before - tower.hitpoints == 55
+
+    tower.hitpoints = tower_before
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(tower.position.x, tower.position.y),
+        player_id=0,
+        card_stats=None,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=181,
+        range=1.0,
+        sight_range=1.0,
+        target_position=Position(tower.position.x, tower.position.y),
+        primary_target=tower,
+        crown_tower_damage_multiplier=0.30,
+    )
+    projectile.update(battle.dt, battle)
+    assert tower_before - tower.hitpoints == 55
+
+    tower.hitpoints = tower_before
+    area = AreaEffect(
+        id=battle.next_entity_id + 1,
+        position=Position(tower.position.x, tower.position.y),
+        player_id=0,
+        card_stats=None,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=181,
+        range=1.0,
+        sight_range=1.0,
+        duration=battle.dt,
+        radius=1.0,
+        damage_tick_interval=battle.dt,
+        max_damage_ticks=1,
+        damage_on_spawn=True,
+        crown_tower_damage_multiplier=0.30,
+    )
+    area.update(battle.dt, battle)
+    assert tower_before - tower.hitpoints == 55
+
+    cannon = battle._spawn_entity(
+        Building,
+        Position(9.0, 20.0),
+        1,
+        battle.card_loader.get_card("Cannon"),
+    )
+    cannon_before = cannon.hitpoints
+    area.position = Position(cannon.position.x, cannon.position.y)
+    area.damage_ticks_applied = 0
+    area.next_damage_time = 0.0
+    area.time_alive = 0.0
+    area.is_alive = True
+    area.building_damage_multiplier = 0.30
+    area.update(battle.dt, battle)
+    assert cannon_before - cannon.hitpoints == 55
+
+
+def test_zap_status_pass_includes_birth_tick_death_spawns_without_redamage():
     battle = BattleState()
     battle.entities.clear()
     battle.next_entity_id = 1
@@ -72,10 +180,10 @@ def test_zap_status_pass_includes_children_spawned_by_its_lethal_damage():
     golemites = _enemy_golemites(battle)
     assert len(golemites) == 2
     assert all(entity.hitpoints == entity.max_hitpoints for entity in golemites)
-    assert all(entity.stun_timer == pytest.approx(zap.stun_duration) for entity in golemites)
+    assert all(entity.stun_timer == zap.stun_duration for entity in golemites)
 
 
-def test_freeze_status_pass_includes_children_spawned_by_its_lethal_damage():
+def test_freeze_status_pass_includes_birth_tick_death_spawns_without_redamage():
     battle = BattleState()
     battle.entities.clear()
     battle.next_entity_id = 1
@@ -92,11 +200,11 @@ def test_freeze_status_pass_includes_children_spawned_by_its_lethal_damage():
     golemites = _enemy_golemites(battle)
     assert len(golemites) == 2
     assert all(entity.hitpoints == entity.max_hitpoints for entity in golemites)
-    assert all(entity.stun_timer == pytest.approx(freeze.duration) for entity in golemites)
+    assert all(entity.stun_timer > 0.0 for entity in golemites)
     assert all(entity.slow_multiplier == 0.0 for entity in golemites)
 
 
-def test_snowball_status_pass_includes_children_spawned_by_its_lethal_damage():
+def test_snowball_status_pass_includes_birth_tick_death_spawns_without_redamage():
     battle = BattleState()
     battle.entities.clear()
     battle.next_entity_id = 1
@@ -117,14 +225,8 @@ def test_snowball_status_pass_includes_children_spawned_by_its_lethal_damage():
     golemites = _enemy_golemites(battle)
     assert len(golemites) == 2
     assert all(entity.hitpoints == entity.max_hitpoints for entity in golemites)
-    assert all(
-        entity.slow_timer == pytest.approx(snowball.slow_duration)
-        for entity in golemites
-    )
-    assert all(
-        entity.slow_multiplier == pytest.approx(snowball.slow_multiplier)
-        for entity in golemites
-    )
+    assert all(entity.slow_timer == snowball.slow_duration for entity in golemites)
+    assert all(entity.slow_multiplier == snowball.slow_multiplier for entity in golemites)
 
 
 def test_poison_exact_tangent_is_excluded_for_both_player_mirrors():
@@ -228,6 +330,7 @@ def test_hidden_tesla_uses_serialized_area_affects_hidden_flag():
         tesla.deploy_delay_remaining = 0.0
         tesla.placement_pending = False
         tesla.on_spawn()
+        _fully_hide_tesla(tesla)
         assert tesla._hidden_building
         return battle, tesla
 

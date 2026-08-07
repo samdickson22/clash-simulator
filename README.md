@@ -23,64 +23,65 @@ uv sync
 uv run python run_clasher.py paths
 ```
 
-### 3) Train (sync PPO)
+### 3) Train the entity-recurrent policy
 
 ```bash
 uv run python run_clasher.py train -- \
-  --num-workers 6 \
+  --resume-latest \
+  --updates 300 \
+  --num-envs 24 \
+  --actor-workers 8 \
+  --actor-threads 1 \
+  --rollout-steps 64 \
   --device mps \
-  --quiet-engine \
-  --rollout-steps 768 \
-  --save-every 5 \
-  --checkpoint-dir checkpoints/selfplay_run \
-  --resume-latest
+  --actor-device cpu \
+  --sequence-batch-size 4 \
+  --epochs 3 \
+  --save-every 10 \
+  --checkpoint-dir checkpoints/entity_selfplay
 ```
 
-### 4) Train (async actors + learner)
+This is the primary trainer. It uses public entity tokens, an entity Transformer,
+recurrent memory, a card-conditioned spatial decoder, and a separate privileged
+critic. On Apple Silicon, the CPU actor processes run the Python simulator and
+low-latency inference while MPS handles full recurrent PPO minibatches.
 
-```bash
-uv run python run_clasher.py train-async -- \
-  --num-actors 10 \
-  --device mps \
-  --quiet-engine \
-  --actor-rollout-steps 128 \
-  --transitions-per-update 4096 \
-  --epochs 2 \
-  --batch-size 1536 \
-  --compress-obs-fp16 \
-  --policy-sync-every 2 \
-  --save-every 5 \
-  --checkpoint-dir checkpoints/selfplay_async \
-  --resume-latest
-```
-
-### 5) Watch latest checkpoint
-
-```bash
-uv run python run_clasher.py watch -- \
-  --checkpoint-dir checkpoints/selfplay_run \
-  --device mps
-```
-
-`watch` can also take `--checkpoint /absolute/or/relative/path.pt`.
-
-### 6) Evaluate latest checkpoint
+### 4) Evaluate a V2 checkpoint
 
 ```bash
 uv run python run_clasher.py eval -- \
-  --checkpoint-dir checkpoints/selfplay_run \
-  --games 100 \
-  --device mps \
-  --quiet-engine
+  --checkpoint-dir checkpoints/entity_selfplay \
+  --games 40 \
+  --opponent random \
+  --stochastic \
+  --device cpu
 ```
 
-### 7) Print latest checkpoint path only
+Evaluation replays each seeded deck matchup with the candidate on both seats and
+reports a score interval, crown differential, and no-op rate when another action
+was actually legal.
+
+### 5) Watch the V2 checkpoint play itself
 
 ```bash
-uv run python run_clasher.py latest-checkpoint --checkpoint-dir checkpoints/selfplay_async
+uv run python run_clasher.py watch -- \
+  --checkpoint checkpoints/entity_selfplay/policy_v2_update_000140.pt \
+  --device cpu
 ```
 
-### 8) Smoke-run Gymnasium env
+The viewer runs the same recurrent policy on both seats unless
+`--opponent-checkpoint` or `--opponent-random` is supplied. Controls are
+Space to pause, R to reset, 1-5 for simulation speed, and Escape to quit.
+Stochastic action sampling is the default; add `--deterministic` for argmax play.
+
+### 6) Print the latest V2 checkpoint
+
+```bash
+uv run python run_clasher.py latest-checkpoint \
+  --checkpoint-dir checkpoints/entity_selfplay
+```
+
+### 7) Smoke-run Gymnasium env
 
 ```bash
 uv run python run_clasher.py gym-smoke -- \
@@ -104,7 +105,7 @@ Gym ids:
 - `clasher-selfplay-v0` (`dict` obs + flat discrete actions)
 - `clasher-selfplay-xyz-v0` (`dict` obs + `MultiDiscrete([18, 32, 6])` actions for `(x, y, card-slot/no-op/champion-ability)`)
 
-### 9) Determinism Check
+### 8) Determinism Check
 
 ```bash
 uv run python run_clasher.py determinism-check -- \
@@ -114,7 +115,7 @@ uv run python run_clasher.py determinism-check -- \
   --quiet-engine
 ```
 
-### 10) Benchmark Suite
+### 9) Benchmark Suite
 
 Single-process env throughput:
 
@@ -134,16 +135,18 @@ uv run python run_clasher.py benchmark -- async-queue \
   --quiet-engine
 ```
 
-## Legacy modules still supported
+## Legacy trainers still supported
 
-You can still run module entrypoints directly:
+The old raster baseline remains available during checkpoint migration:
 
+- `run_clasher.py train-legacy`
+- `run_clasher.py train-async`
 - `python -m clasher.rl.train_selfplay`
 - `python -m clasher.rl.train_selfplay_async`
-- `python -m clasher.rl.watch_policy_battle`
-- `python -m clasher.rl.eval`
 
-If running direct modules without an editable install, use `run_clasher.py` instead.
+These training commands use the legacy checkpoint format and model, not the V2
+entity-recurrent checkpoints produced by `run_clasher.py train`. The viewer now
+loads V2 checkpoints.
 
 ## Path behavior
 
@@ -161,5 +164,7 @@ export CLASHER_ROOT=/absolute/path/to/clasher
 ## Notes
 
 - Python `>=3.10` required.
-- For Apple Silicon, `--device mps` is supported in both trainers and watch/eval.
+- For Apple Silicon training, use `--device mps --actor-device cpu`; tiny actor
+  inference batches are faster on CPU, while full PPO sequences are faster on MPS.
+- Evaluation defaults to CPU because it performs latency-sensitive batch-one inference.
 - If a checkpoint/decks/data file is missing, commands now fail with the resolved absolute path in the error.

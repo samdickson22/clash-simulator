@@ -210,6 +210,11 @@ class CardStatsCompat:
                           else char_data.get("hitSpeed"))
         self.load_time = (troop_stats.load_time_ms if troop_stats and troop_stats.load_time_ms is not None
                           else char_data.get("loadTime"))
+        # LoadFirstHit is a distinct native weapon capability, not an alias
+        # for having a nonzero LoadTime.  In the current character table it
+        # is used by Sparky's persistent loaded-shot state; ordinary weapons
+        # still use LoadTime to derive their finite idle preload.
+        self.load_first_hit = bool(char_data.get("loadFirstHit", False))
         self.deploy_time = (troop_stats.deploy_time_ms if troop_stats and troop_stats.deploy_time_ms is not None
                             else building_stats.deploy_time_ms if building_stats and building_stats.deploy_time_ms is not None
                             else char_data.get("deployTime"))
@@ -311,6 +316,9 @@ class CardStatsCompat:
         self.special_load_time = char_data.get("specialLoadTime")
         self.special_range = char_data.get("specialRange")
         self.special_min_range = char_data.get("specialMinRange")
+        # The native GameCharacter wrapper consumes AttackDashTime to render a
+        # forward-and-return attack interpolation. It never changes the
+        # LogicCharacter position, so retain it as presentation metadata only.
         self.attack_dash_time = int(char_data.get("attackDashTime", 0) or 0)
         self.spawn_angle_shift = float(char_data.get("spawnAngleShift", 0) or 0)
         self.override_attack_finish_time = bool(

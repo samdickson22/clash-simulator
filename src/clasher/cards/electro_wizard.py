@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..mechanics.mechanic_base import BaseMechanic
+from ..logic_math import native_percent_damage
 
 if TYPE_CHECKING:
     from ..entities import Entity
@@ -56,7 +57,10 @@ class ElectroWizardSpawnZap(BaseMechanic):
             if other.intersects_native_area(
                 impact_position,
                 self.radius_tiles,
-            ) and other.can_receive_area_damage("ElectroWizard"):
+            ) and other.can_receive_area_damage(
+                "ElectroWizard",
+                source_entity=entity,
+            ):
                 targets.append(other)
 
         for other in targets:
@@ -65,7 +69,10 @@ class ElectroWizardSpawnZap(BaseMechanic):
                 "Tower",
                 "KingTower",
             }:
-                target_damage *= self.crown_tower_damage_multiplier
+                target_damage = native_percent_damage(
+                    target_damage,
+                    self.crown_tower_damage_multiplier,
+                )
             other.take_damage(target_damage)
             if other.is_alive and hasattr(other, 'apply_stun'):
                 other.apply_stun(self.stun_duration_ms / 1000.0)

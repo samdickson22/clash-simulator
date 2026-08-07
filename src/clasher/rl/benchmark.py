@@ -13,7 +13,7 @@ import torch
 from clasher.battle import STANDARD_MATCH_TICKS
 from clasher.paths import decks_path as resolve_decks_path
 from clasher.rl.inference_server import InferenceServer
-from clasher.rl.model import MaskedPolicyValueNet
+from clasher.rl.legacy_model import MaskedPolicyValueNet
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 
 

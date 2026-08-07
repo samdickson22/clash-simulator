@@ -25,12 +25,14 @@ class HideWhenIdle(BaseMechanic):
             up_time = character.get("upTimeMs")
         if up_time is not None:
             self.rise_time_ms = max(0, int(up_time))
-        # Deployment state returns before LogicCharacter::updateHideTimer.
-        # Initialize at the fully-hidden boundary; the character clock first
-        # advances on the deployment zero-crossing frame.
-        self._phase_ms = float(self.hide_delay_ms)
-        entity._hidden_building = True
-        entity._special_move_active = True
+        # LogicCharacter constructs the hide timer at zero. Deployment frames
+        # return before updateHideTimer, so a newly placed Tesla remains on
+        # the exposed side of the state boundary until post-deploy idle work
+        # reaches HideTimeMs. Only the exact HideTimeMs boundary is hidden;
+        # this brief initial transition is therefore targetable/damageable.
+        self._phase_ms = 0.0
+        entity._hidden_building = False
+        entity._special_move_active = False
 
     def on_object_tick(self, entity, dt_ms: int) -> None:
         battle = getattr(entity, "battle_state", None)

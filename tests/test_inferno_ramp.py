@@ -300,6 +300,39 @@ def test_inferno_ramp_resets_when_any_enabled_shield_breaks(
     assert inferno.damage == ramp._get_damage_for_time(0)
 
 
+def test_shield_loss_broadcast_filters_target_and_obeys_global(monkeypatch):
+    battle = BattleState()
+    inferno = _spawn_one(
+        battle,
+        "InfernoDragon",
+        0,
+        Position(9.0, 14.0),
+    )
+    target = _spawn_shielded_target(battle, "DarkPrince")
+    other = _spawn_shielded_target(battle, "Guards")
+    ramp = next(
+        mechanic
+        for mechanic in inferno.mechanics
+        if type(mechanic).__name__ == "DamageRamp"
+    )
+    inferno.target_id = target.id
+    ramp._current_target_id = target.id
+    ramp._current_target_ms = 4_000.0
+    inferno.damage = ramp.stages[-1][1]
+
+    other.broadcast_shield_lost()
+    assert ramp._current_target_ms == 4_000.0
+    assert inferno.damage == ramp.stages[-1][1]
+
+    monkeypatch.setattr(
+        "clasher.entities.LOGIC_INFERNO_RESET_ON_SHIELD_LOST",
+        False,
+    )
+    target.broadcast_shield_lost()
+    assert ramp._current_target_ms == 4_000.0
+    assert inferno.damage == ramp.stages[-1][1]
+
+
 @pytest.mark.parametrize("fast_path", [False, True])
 @pytest.mark.parametrize("attacker_name", ["InfernoDragon", "InfernoTower"])
 def test_zap_resets_every_enabled_inferno_channel(fast_path, attacker_name):

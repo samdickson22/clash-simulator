@@ -144,6 +144,7 @@ class IceSpiritFreeze(BaseMechanic):
                 and other.can_receive_area_damage(
                     source_kind,
                     affects_hidden=affects_hidden,
+                    source_entity=entity,
                 )
             ):
                 damage_targets.append(other)
@@ -169,6 +170,7 @@ class IceSpiritFreeze(BaseMechanic):
                 or not other.can_receive_area_damage(
                     source_kind,
                     affects_hidden=affects_hidden,
+                    source_entity=entity,
                 )
             ):
                 continue

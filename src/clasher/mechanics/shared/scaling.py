@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from ..mechanic_base import BaseMechanic
+from ...logic_math import native_percent_damage
 
 
 @dataclass
@@ -29,7 +30,7 @@ class CrownTowerScaling(BaseMechanic):
             return damage
         if self.crown_tower_damage is not None:
             return float(self.crown_tower_damage)
-        return float(int(damage * self.damage_multiplier))
+        return float(native_percent_damage(damage, self.damage_multiplier))
 
     def projectile_crown_tower_damage(
         self,
@@ -38,4 +39,4 @@ class CrownTowerScaling(BaseMechanic):
     ) -> float | None:
         if self.crown_tower_damage is not None:
             return float(self.crown_tower_damage)
-        return float(int(damage * self.damage_multiplier))
+        return float(native_percent_damage(damage, self.damage_multiplier))

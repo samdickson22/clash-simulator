@@ -58,6 +58,10 @@ class BaseMechanic(Mechanic, ABC):
         """Called when entity attack hits target"""
         pass
 
+    def on_shield_lost(self, entity, shielded_entity) -> None:
+        """Called when any live battle object loses its protection shield."""
+        pass
+
     def on_knockback(self, entity) -> None:
         """Called after physical displacement interrupts the entity."""
         pass

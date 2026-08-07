@@ -7,16 +7,22 @@ movement component still applies its ordinary fixed-point speed for the frame.
 
 from __future__ import annotations
 
-import heapq
+import math
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from .arena import Position
-from .kinematics import tiles_to_logic_units, trunc_div
+from .kinematics import (
+    normalized_vector_logic_units,
+    tiles_to_logic_units,
+    trunc_div,
+)
 from .native_tilemap import (
     HALF_TILE_LOGIC_UNITS,
     STANDARD_PATH_HEIGHT,
+    STANDARD_PATH_ROWS,
     STANDARD_PATH_WIDTH,
+    native_spawn_tile_blocked,
 )
 
 if TYPE_CHECKING:
@@ -24,16 +30,23 @@ if TYPE_CHECKING:
     from .entities import Entity
 
 
-_PLAYER_ZERO_NEIGHBORS: tuple[tuple[int, int, int], ...] = (
+_NATIVE_NEIGHBORS: tuple[tuple[int, int, int], ...] = (
+    # LogicPathFinder::ExpandNode visits these in a fixed world-grid order;
+    # it does not rotate the order for the owning player.
+    (0, -1, 10),
     (0, 1, 10),
-    (-1, 1, 14),
-    (1, 1, 14),
     (-1, 0, 10),
     (1, 0, 10),
     (-1, -1, 14),
+    (-1, 1, 14),
+    (1, 1, 14),
     (1, -1, 14),
-    (0, -1, 10),
 )
+
+_NATIVE_EMPTY_TILE_COST = 20
+_NATIVE_OTHER_LANE_COST = 5
+_NATIVE_SAME_LANE_COST = 1
+_NATIVE_WATER_COST = 800
 
 
 def _cell_for_position(position: Position) -> tuple[int, int]:
@@ -69,183 +82,70 @@ def _cell_center(cell: tuple[int, int]) -> Position:
     )
 
 
-def _segment_intersects_building(
-    start: Position,
-    end: Position,
-    building_position: Position,
-    collision_radius: float,
-) -> bool:
-    """Fixed-point point-to-segment collision without a floating projection."""
-
-    start_x = tiles_to_logic_units(start.x)
-    start_y = tiles_to_logic_units(start.y)
-    end_x = tiles_to_logic_units(end.x)
-    end_y = tiles_to_logic_units(end.y)
-    point_x = tiles_to_logic_units(building_position.x)
-    point_y = tiles_to_logic_units(building_position.y)
-    radius = tiles_to_logic_units(collision_radius)
-
-    segment_x = end_x - start_x
-    segment_y = end_y - start_y
-    point_delta_x = point_x - start_x
-    point_delta_y = point_y - start_y
-    segment_length_sq = segment_x * segment_x + segment_y * segment_y
-    if segment_length_sq == 0:
-        return bool(
-            point_delta_x * point_delta_x + point_delta_y * point_delta_y
-            < radius * radius
-        )
-
-    projection = point_delta_x * segment_x + point_delta_y * segment_y
-    if projection <= 0:
-        distance_sq = (
-            point_delta_x * point_delta_x + point_delta_y * point_delta_y
-        )
-        return bool(distance_sq < radius * radius)
-    if projection >= segment_length_sq:
-        end_delta_x = point_x - end_x
-        end_delta_y = point_y - end_y
-        distance_sq = end_delta_x * end_delta_x + end_delta_y * end_delta_y
-        return bool(distance_sq < radius * radius)
-
-    cross = point_delta_x * segment_y - point_delta_y * segment_x
-    return bool(cross * cross < radius * radius * segment_length_sq)
-
-
-def _building_topology(
-    battle_state: "BattleState",
+def native_route_goal_cell(
     mover: "Entity",
-    desired: Position,
-    ignored_building_id: int | None,
-) -> tuple[bool, tuple[tuple[int, int, int, int], ...]]:
-    mover_radius = min(float(mover.get_collision_radius()), 0.5)
-    topology: list[tuple[int, int, int, int]] = []
-    intersects = False
-    for entity in battle_state.entities.values():
-        if (
-            getattr(entity, "entity_kind", 4) != 1
-            or not entity.is_alive
-            or entity.id == ignored_building_id
-        ):
-            continue
-        building_radius = float(entity.get_collision_radius())
-        topology.append(
-            (
-                entity.id,
-                tiles_to_logic_units(entity.position.x),
-                tiles_to_logic_units(entity.position.y),
-                tiles_to_logic_units(building_radius),
-            )
-        )
-        if _segment_intersects_building(
-            mover.position,
-            desired,
-            entity.position,
-            mover_radius + building_radius,
-        ):
-            intersects = True
-    return intersects, tuple(topology)
-
-
-def _static_path_is_blocked(
-    battle_state: "BattleState",
-    start: Position,
-    desired: Position,
-) -> bool:
-    """Check the half-tile cells crossed by the direct movement sightline."""
-
-    start_cell = _cell_for_position(start)
-    desired_cell = _cell_for_position(desired)
-    delta_x = desired_cell[0] - start_cell[0]
-    delta_y = desired_cell[1] - start_cell[1]
-    steps = max(abs(delta_x), abs(delta_y))
-    if steps == 0:
-        return not battle_state.arena.is_walkable(desired)
-    for step in range(1, steps + 1):
-        cell = (
-            start_cell[0] + trunc_div(delta_x * step, steps),
-            start_cell[1] + trunc_div(delta_y * step, steps),
-        )
-        if not battle_state.arena.is_walkable(_cell_center(cell)):
-            return True
-    return False
-
-
-def _hover_path_is_blocked(
-    battle_state: "BattleState",
-    start: Position,
-    desired: Position,
-) -> bool:
-    """Check permanent arena blockers while allowing water traversal."""
-
-    start_cell = _cell_for_position(start)
-    desired_cell = _cell_for_position(desired)
-    delta_x = desired_cell[0] - start_cell[0]
-    delta_y = desired_cell[1] - start_cell[1]
-    steps = max(abs(delta_x), abs(delta_y))
-    if steps == 0:
-        return battle_state.arena.is_blocked_position(desired)
-    for step in range(1, steps + 1):
-        cell = (
-            start_cell[0] + trunc_div(delta_x * step, steps),
-            start_cell[1] + trunc_div(delta_y * step, steps),
-        )
-        if battle_state.arena.is_blocked_position(_cell_center(cell)):
-            return True
-    return False
-
-
-def _relative_cell_key(
-    cell: tuple[int, int],
-    player_id: int,
-) -> tuple[int, int]:
-    if player_id == 0:
-        return cell[1], cell[0]
-    return (
-        STANDARD_PATH_HEIGHT - 1 - cell[1],
-        STANDARD_PATH_WIDTH - 1 - cell[0],
-    )
-
-
-def _nearest_passable_goal(
-    desired_cell: tuple[int, int],
-    player_id: int,
-    passable: Callable[[tuple[int, int]], bool],
+    target: "Entity",
+    *,
+    required_range_tiles: float | None = None,
 ) -> tuple[int, int] | None:
-    if passable(desired_cell):
-        return desired_cell
+    """Return ``getClosestTilePositionToTarget`` for an ordinary attack.
 
+    The movement component does not route to a target object's occupied tile.
+    It scans half-tile centers inside the attacker's serialized range of the
+    target *center*, then keeps the candidate closest to the mover. The scan
+    is y-major/x-minor and replaces only on a strictly smaller distance, so a
+    geometric tie keeps the lowest world-grid y and then x.
+
+    Target collision radius deliberately does not participate here. Native
+    combat uses it when deciding whether an attack can begin, while route goal
+    selection calls the point overload of ``getDistanceToObjectSquared``.
+    """
+
+    range_tiles = (
+        float(getattr(mover, "range", 0.0) or 0.0)
+        if required_range_tiles is None
+        else float(required_range_tiles)
+    )
+    required_range_units = max(0, tiles_to_logic_units(range_tiles))
+    search_radius = trunc_div(required_range_units, HALF_TILE_LOGIC_UNITS) + 1
+    target_cell_x, target_cell_y = _cell_for_position(target.position)
+    min_x = max(0, target_cell_x - search_radius)
+    max_x = min(STANDARD_PATH_WIDTH - 1, target_cell_x + search_radius)
+    min_y = max(0, target_cell_y - search_radius)
+    max_y = min(STANDARD_PATH_HEIGHT - 1, target_cell_y + search_radius)
+
+    mover_x = tiles_to_logic_units(mover.position.x)
+    mover_y = tiles_to_logic_units(mover.position.y)
+    target_x = tiles_to_logic_units(target.position.x)
+    target_y = tiles_to_logic_units(target.position.y)
+    required_range_sq = required_range_units * required_range_units
     best_cell: tuple[int, int] | None = None
-    best_key: tuple[int, tuple[int, int]] | None = None
-    max_radius = max(STANDARD_PATH_WIDTH, STANDARD_PATH_HEIGHT)
-    for radius in range(1, max_radius + 1):
-        # Every not-yet-visited cell is at least ``radius`` cells away. Once
-        # that lower bound exceeds the best Euclidean distance, no wider ring
-        # can replace the native closest-cell choice.
-        if best_key is not None and radius * radius > best_key[0]:
-            break
-        min_x = desired_cell[0] - radius
-        max_x = desired_cell[0] + radius
-        min_y = desired_cell[1] - radius
-        max_y = desired_cell[1] + radius
-        ring: set[tuple[int, int]] = set()
+    best_mover_distance_sq = (1 << 31) - 1
+
+    # LogicTileMap::isPassablePathFinder is only an arena-bounds check. Water
+    # and lane data influence A* cost later, not candidate eligibility.
+    for cell_y in range(min_y, max_y + 1):
+        candidate_y = cell_y * HALF_TILE_LOGIC_UNITS + HALF_TILE_LOGIC_UNITS // 2
+        target_dy = candidate_y - target_y
+        mover_dy = candidate_y - mover_y
         for cell_x in range(min_x, max_x + 1):
-            ring.add((cell_x, min_y))
-            ring.add((cell_x, max_y))
-        for cell_y in range(min_y + 1, max_y):
-            ring.add((min_x, cell_y))
-            ring.add((max_x, cell_y))
-        for cell in ring:
-            if not passable(cell):
-                continue
-            key = (
-                (cell[0] - desired_cell[0]) ** 2
-                + (cell[1] - desired_cell[1]) ** 2,
-                _relative_cell_key(cell, player_id),
+            candidate_x = (
+                cell_x * HALF_TILE_LOGIC_UNITS
+                + HALF_TILE_LOGIC_UNITS // 2
             )
-            if best_key is None or key < best_key:
-                best_cell = cell
-                best_key = key
+            target_dx = candidate_x - target_x
+            if (
+                target_dx * target_dx + target_dy * target_dy
+                > required_range_sq
+            ):
+                continue
+            mover_dx = candidate_x - mover_x
+            mover_distance_sq = (
+                mover_dx * mover_dx + mover_dy * mover_dy
+            )
+            if mover_distance_sq < best_mover_distance_sq:
+                best_cell = (cell_x, cell_y)
+                best_mover_distance_sq = mover_distance_sq
     return best_cell
 
 
@@ -257,154 +157,359 @@ def _heuristic(
     return 10 * max(abs(goal[0] - cell[0]), abs(goal[1] - cell[1]))
 
 
+def _native_pathfinder_tile_cost(
+    mover: "Entity",
+    cell: tuple[int, int],
+) -> int | None:
+    """Return LogicTileMap::getPathFinderCost for the standard arena.
+
+    The immutable tile-map value owns both channels used by routing: bit 5 is
+    water, while the low two bits are lane IDs. Water remains traversable at
+    a high score for ordinary ground units and costs the normal 20 for a
+    JumpHeight character. Non-water lane cells cost 1 on the character's
+    spawn-time lane and 5 on the other lane; unlabeled land costs 20.
+    """
+
+    cell_x, cell_y = cell
+    if not (
+        0 <= cell_x < STANDARD_PATH_WIDTH
+        and 0 <= cell_y < STANDARD_PATH_HEIGHT
+    ):
+        return None
+    if native_spawn_tile_blocked(cell_x, cell_y):
+        return (
+            _NATIVE_EMPTY_TILE_COST
+            if bool(getattr(mover.card_stats, "jump_height", None))
+            else _NATIVE_WATER_COST
+        )
+    cell_lane = ord(STANDARD_PATH_ROWS[cell_y][cell_x]) - ord("0")
+    if cell_lane <= 0:
+        return _NATIVE_EMPTY_TILE_COST
+    return (
+        _NATIVE_SAME_LANE_COST
+        if cell_lane == int(getattr(mover, "_native_lane_id", 0) or 0)
+        else _NATIVE_OTHER_LANE_COST
+    )
+
+
+def _native_grid_route(
+    start: tuple[int, int],
+    goal: tuple[int, int],
+    tile_cost: Callable[[tuple[int, int]], int | None],
+) -> list[tuple[int, int]] | None:
+    """Return a route using the native first-discovery score and binary heap.
+
+    The client does not relax a tile already present in either the open or
+    closed set. Nor does it retain a separate ``g`` value: each child's stored
+    score is its parent's complete score plus terrain-weighted step cost plus
+    the child's heuristic. The heap compares only that cumulative score;
+    equal priorities retain its binary topology instead of using a secondary
+    heuristic or player-relative tie break.
+    """
+
+    parents: dict[tuple[int, int], tuple[int, int]] = {}
+    priorities: dict[tuple[int, int], int] = {start: 0}
+    discovered = {start}
+    heap: list[tuple[int, int]] = [start]
+
+    def push(cell: tuple[int, int]) -> None:
+        heap.append(cell)
+        index = len(heap) - 1
+        while index > 0:
+            parent_index = (index - 1) // 2
+            parent = heap[parent_index]
+            if priorities[parent] <= priorities[cell]:
+                break
+            heap[index] = parent
+            index = parent_index
+        heap[index] = cell
+
+    def pop() -> tuple[int, int]:
+        root = heap[0]
+        last = heap.pop()
+        if not heap:
+            return root
+        heap[0] = last
+        index = 0
+        while True:
+            chosen = index
+            right = index * 2 + 2
+            if (
+                right < len(heap)
+                and priorities[heap[right]] < priorities[heap[chosen]]
+            ):
+                chosen = right
+            left = index * 2 + 1
+            if (
+                left < len(heap)
+                and priorities[heap[left]] < priorities[heap[chosen]]
+            ):
+                chosen = left
+            if chosen == index:
+                break
+            heap[index], heap[chosen] = heap[chosen], heap[index]
+            index = chosen
+        return root
+
+    found = False
+    while heap:
+        current = pop()
+        if current == goal:
+            found = True
+            break
+        for delta_x, delta_y, step_cost in _NATIVE_NEIGHBORS:
+            neighbor = (current[0] + delta_x, current[1] + delta_y)
+            terrain_cost = tile_cost(neighbor)
+            if neighbor in discovered or terrain_cost is None:
+                continue
+            discovered.add(neighbor)
+            parents[neighbor] = current
+            priorities[neighbor] = (
+                priorities[current]
+                + step_cost * terrain_cost
+                + _heuristic(neighbor, goal)
+            )
+            push(neighbor)
+
+    if not found:
+        return None
+    route = [goal]
+    while route[-1] != start:
+        parent = parents.get(route[-1])
+        if parent is None:
+            return None
+        route.append(parent)
+    route.reverse()
+    return route
+
+
+def native_jump_landing_waypoint(
+    battle_state: "BattleState",
+    mover: "Entity",
+    desired: Position,
+    *,
+    target_entity: "Entity" | None = None,
+) -> Position | None:
+    """Return the first native land-cell center beyond a jumpable river run.
+
+    LogicMovementComponent receives the path in reverse order. When its next
+    node is marked with tile-map bit 5, it scans across the complete run of
+    marked half-tile cells, replaces the route with the first unmarked node,
+    and enters movement state 6. Coordinates are reconstructed as
+    ``cell * 500 + 250``; they are not a continuous line/river intersection.
+    """
+
+    # LogicCharacter::GetPathX/Y divides the positive world coordinate by 500
+    # directly. Exact cell boundaries are not re-owned in player space.
+    start = _cell_for_position(mover.position)
+    desired_cell = (
+        native_route_goal_cell(mover, target_entity)
+        if target_entity is not None
+        else _cell_for_position(desired)
+    )
+    if desired_cell is None:
+        return None
+    del battle_state
+    cost_cache: dict[tuple[int, int], int | None] = {}
+
+    def tile_cost(cell: tuple[int, int]) -> int | None:
+        if cell not in cost_cache:
+            cost_cache[cell] = _native_pathfinder_tile_cost(mover, cell)
+        return cost_cache[cell]
+
+    goal = desired_cell
+    if goal is None or goal == start:
+        return None
+
+    retained_route = getattr(mover, "_native_ground_route_cells", None)
+    if target_entity is not None and isinstance(retained_route, list):
+        future_route = list(retained_route)
+    else:
+        route_cells = _native_grid_route(start, goal, tile_cost)
+        if route_cells is None:
+            return None
+        future_route = route_cells[1:]
+
+    river_start = next(
+        (
+            index
+            for index, cell in enumerate(future_route)
+            if native_spawn_tile_blocked(*cell)
+        ),
+        None,
+    )
+    if river_start is None:
+        return None
+    for cell in future_route[river_start + 1 :]:
+        if not native_spawn_tile_blocked(*cell):
+            if target_entity is not None and isinstance(retained_route, list):
+                # The river state replaces the ordinary route with the first
+                # land node beyond the complete water run.
+                retained_route[:] = [cell]
+            return _cell_center(cell)
+    return None
+
+
+def native_single_node_waypoint(
+    mover: "Entity",
+    target: "Entity",
+) -> Position:
+    """Return the retained one-node path used by FlyingHeight characters."""
+
+    goal = native_route_goal_cell(mover, target)
+    if goal is None:
+        return target.position
+    cache_key = ("single", goal)
+    if getattr(mover, "_ground_path_cache_key", None) != cache_key:
+        mover._ground_path_cache_key = cache_key
+        mover._native_ground_route_cells = [goal]
+        mover._ground_path_cache_backwards = False
+    retained_route = getattr(mover, "_native_ground_route_cells", None)
+    if isinstance(retained_route, list) and retained_route:
+        return _cell_center(retained_route[0])
+    return target.position
+
+
 def ground_path_waypoint(
     battle_state: "BattleState",
     mover: "Entity",
     desired: Position,
     *,
-    ignored_building_id: int | None = None,
+    target_entity: "Entity" | None = None,
+    backwards_reference: Position | None = None,
 ) -> Position:
-    """Return the next native half-tile waypoint when a building blocks sightline."""
+    """Return the next LogicPathFinder half-tile waypoint.
+
+    Native ground routing is not an obstacle-triggered detour. Every ordinary
+    target move builds a route on the immutable arena grid; placed buildings
+    are handled later by movement collision and avoidance, not by A*.
+    """
 
     from .unit_traits import is_hover_unit_card
 
-    hovering = is_hover_unit_card(getattr(mover, "card_stats", None))
-    if hovering:
-        building_intersects = False
-        topology = ()
-    else:
-        building_intersects, topology = _building_topology(
-            battle_state,
-            mover,
-            desired,
-            ignored_building_id,
-        )
-    crosses_river_band = (
-        min(mover.position.y, desired.y)
-        <= battle_state.arena.RIVER_Y2 + 1.0
-        and max(mover.position.y, desired.y) >= battle_state.arena.RIVER_Y1
+    reference = backwards_reference or desired
+    origin_dx = tiles_to_logic_units(mover.position.x - reference.x)
+    origin_dy = tiles_to_logic_units(mover.position.y - reference.y)
+    origin_distance = math.isqrt(
+        origin_dx * origin_dx + origin_dy * origin_dy
     )
-    can_jump_directly = bool(
-        getattr(getattr(mover, "card_stats", None), "jump_height", None)
-        and not getattr(mover, "_river_jump_blocked", False)
-        and crosses_river_band
-    )
-    if hovering:
-        static_path_blocked = _hover_path_is_blocked(
-            battle_state,
-            mover.position,
-            desired,
-        )
-    else:
-        static_path_blocked = (
-            False
-            if can_jump_directly
-            else _static_path_is_blocked(
-                battle_state,
-                mover.position,
-                desired,
-            )
-        )
-    if not building_intersects and not static_path_blocked:
-        return desired
+
+    def route_moves_backwards(route_positions: tuple[Position, ...]) -> bool:
+        for route_position in route_positions:
+            dx = tiles_to_logic_units(route_position.x - reference.x)
+            dy = tiles_to_logic_units(route_position.y - reference.y)
+            if math.isqrt(dx * dx + dy * dy) > origin_distance:
+                return True
+        return False
 
     start = _cell_for_position(mover.position)
-    desired_cell = _cell_for_position(desired)
+    desired_cell = (
+        native_route_goal_cell(mover, target_entity)
+        if target_entity is not None
+        else _cell_for_position(desired)
+    )
+    if desired_cell is None:
+        mover._ground_path_backwards = route_moves_backwards((desired,))
+        return desired
+    desired_waypoint = _cell_center(desired_cell)
+    if is_hover_unit_card(getattr(mover, "card_stats", None)):
+        waypoint = (
+            native_single_node_waypoint(mover, target_entity)
+            if target_entity is not None
+            else desired_waypoint
+        )
+        mover._ground_path_backwards = route_moves_backwards((waypoint,))
+        return waypoint
     cache_key = (
-        start,
         desired_cell,
-        mover.player_id,
-        tiles_to_logic_units(min(float(mover.get_collision_radius()), 0.5)),
-        ignored_building_id,
-        topology,
+        int(getattr(mover, "_native_lane_id", 0) or 0),
+        bool(getattr(getattr(mover, "card_stats", None), "jump_height", None)),
     )
     if getattr(mover, "_ground_path_cache_key", None) == cache_key:
-        cached_waypoint = getattr(mover, "_ground_path_cache_waypoint", None)
-        if isinstance(cached_waypoint, Position):
-            return cached_waypoint
-
-    passable_cache: dict[tuple[int, int], bool] = {start: True}
-
-    def passable(cell: tuple[int, int]) -> bool:
-        cached = passable_cache.get(cell)
-        if cached is not None:
-            return cached
-        cell_x, cell_y = cell
-        result = bool(
-            0 <= cell_x < STANDARD_PATH_WIDTH
-            and 0 <= cell_y < STANDARD_PATH_HEIGHT
-            and battle_state.is_ground_position_walkable(
-                _cell_center(cell),
-                mover,
-                ignore_building_id=ignored_building_id,
+        route_cells = getattr(mover, "_native_ground_route_cells", None)
+        if isinstance(route_cells, list):
+            mover._ground_path_backwards = bool(
+                getattr(mover, "_ground_path_cache_backwards", False)
             )
+            return _cell_center(route_cells[0]) if route_cells else desired
+
+    del battle_state
+    if desired_cell == start:
+        mover._ground_path_backwards = route_moves_backwards(
+            (desired_waypoint,)
         )
-        passable_cache[cell] = result
-        return result
-
-    goal = _nearest_passable_goal(
-        desired_cell,
-        mover.player_id,
-        passable,
-    )
-    if goal is None:
-        return desired
-    if goal == start:
-        waypoint = _cell_center(start)
         mover._ground_path_cache_key = cache_key
-        mover._ground_path_cache_waypoint = waypoint
-        return waypoint
+        mover._native_ground_route_cells = []
+        mover._ground_path_cache_backwards = mover._ground_path_backwards
+        return desired_waypoint
 
-    direction = 1 if mover.player_id == 0 else -1
-    neighbors = tuple(
-        (delta_x * direction, delta_y * direction, step_cost)
-        for delta_x, delta_y, step_cost in _PLAYER_ZERO_NEIGHBORS
-    )
-    came_from: dict[tuple[int, int], tuple[int, int]] = {}
-    best_cost: dict[tuple[int, int], int] = {start: 0}
-    insertion_order = 0
-    frontier: list[tuple[int, int, int, int, tuple[int, int]]] = [
-        (_heuristic(start, goal), _heuristic(start, goal), 0, 0, start)
-    ]
+    def tile_cost(cell: tuple[int, int]) -> int | None:
+        return _native_pathfinder_tile_cost(mover, cell)
 
-    while frontier:
-        _, _, _, queued_cost, current = heapq.heappop(frontier)
-        if queued_cost != best_cost.get(current):
-            continue
-        if current == goal:
-            break
-        current_cost = queued_cost
-        for delta_x, delta_y, step_cost in neighbors:
-            neighbor = (current[0] + delta_x, current[1] + delta_y)
-            if not passable(neighbor):
-                continue
-            new_cost = current_cost + step_cost
-            if new_cost >= best_cost.get(neighbor, 1 << 60):
-                continue
-            best_cost[neighbor] = new_cost
-            came_from[neighbor] = current
-            insertion_order += 1
-            heuristic = _heuristic(neighbor, goal)
-            heapq.heappush(
-                frontier,
-                (
-                    new_cost + heuristic,
-                    heuristic,
-                    insertion_order,
-                    new_cost,
-                    neighbor,
-                ),
-            )
-    else:
+    route_cells = _native_grid_route(start, desired_cell, tile_cost)
+    if route_cells is None or len(route_cells) < 2:
+        mover._ground_path_backwards = route_moves_backwards((desired,))
         return desired
-
-    next_cell = goal
-    while came_from.get(next_cell) != start:
-        parent = came_from.get(next_cell)
-        if parent is None:
-            return desired
-        next_cell = parent
-    waypoint = _cell_center(next_cell)
+    retained_route = list(route_cells[1:])
+    waypoint = _cell_center(retained_route[0])
+    backwards = route_moves_backwards(
+        tuple(_cell_center(cell) for cell in route_cells[1:])
+    )
     mover._ground_path_cache_key = cache_key
-    mover._ground_path_cache_waypoint = waypoint
+    mover._native_ground_route_cells = retained_route
+    mover._ground_path_cache_backwards = backwards
+    mover._ground_path_backwards = backwards
     return waypoint
+
+
+def advance_native_ground_route(
+    mover: "Entity",
+    waypoint: Position,
+    previous_position: Position,
+) -> None:
+    """Consume at most one retained route node after native movement.
+
+    ``updateMovementTowards`` projects the node remainder onto the direction
+    selected before movement. A value below 1001 logic units marks that node
+    reached; the movement component then removes exactly one point and starts
+    the following frame with the next retained cell.
+    """
+
+    route_cells = getattr(mover, "_native_ground_route_cells", None)
+    if not isinstance(route_cells, list) or not route_cells:
+        return
+    if _cell_center(route_cells[0]) != waypoint:
+        return
+    direction_x, direction_y = normalized_vector_logic_units(
+        tiles_to_logic_units(waypoint.x - previous_position.x),
+        tiles_to_logic_units(waypoint.y - previous_position.y),
+        256,
+    )
+    remaining_x = tiles_to_logic_units(waypoint.x - mover.position.x)
+    remaining_y = tiles_to_logic_units(waypoint.y - mover.position.y)
+    projected_remaining = (
+        trunc_div(direction_y * remaining_y, 256)
+        + trunc_div(direction_x * remaining_x, 256)
+    )
+    if projected_remaining < 1001:
+        route_cells.pop(0)
+
+
+def skip_native_ground_route_node_inside_static(
+    mover: "Entity",
+    static_entity: "Entity",
+) -> None:
+    """Apply ``checkAvoidance``'s static-object path-node removal."""
+
+    route_cells = getattr(mover, "_native_ground_route_cells", None)
+    if not isinstance(route_cells, list) or len(route_cells) < 2:
+        return
+    waypoint = _cell_center(route_cells[0])
+    dx = tiles_to_logic_units(waypoint.x - static_entity.position.x)
+    dy = tiles_to_logic_units(waypoint.y - static_entity.position.y)
+    radius = max(
+        0,
+        tiles_to_logic_units(static_entity.get_collision_radius()),
+    )
+    if dx * dx + dy * dy < radius * radius:
+        route_cells.pop(0)

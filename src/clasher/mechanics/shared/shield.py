@@ -27,6 +27,7 @@ class Shield(BaseMechanic):
         self.current_shield = max(0.0, self.current_shield - amount)
         if self.current_shield <= 0 < shield_before:
             entity._shield_break_count += 1
+            entity.broadcast_shield_lost()
         # A shield consumes the entire hit that breaks it. Excess damage from
         # that hit does not spill into the unit's health pool.
         return 0.0

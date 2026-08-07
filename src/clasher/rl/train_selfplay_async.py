@@ -18,7 +18,7 @@ from clasher.battle import STANDARD_MATCH_TICKS
 from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, resolve_path
 from clasher.rl.benchmark import run_async_queue_benchmark
 from clasher.rl.inference_server import InferenceServer
-from clasher.rl.model import MaskedPolicyValueNet
+from clasher.rl.legacy_model import MaskedPolicyValueNet
 from clasher.rl.shared_rollout_ipc import (
     SlotHandles,
     SharedRolloutPoolOwner,

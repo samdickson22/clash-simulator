@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import random
-import time
 
 import numpy as np
 import torch
@@ -13,24 +11,11 @@ from clasher.paths import decks_path as resolve_decks_path
 from clasher.paths import latest_checkpoint, resolve_path
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rl.deck_pool import apply_deck_to_player, load_deck_pool, sample_decks
-from clasher.rl.model import MaskedPolicyValueNet
-from clasher.rl.obs_cv import CvObservationBuilder
+from clasher.rl.eval import LoadedPolicy, load_policy_checkpoint
+from clasher.rl.reward_model import objective_potential_p0
+from clasher.rl.train_recurrent import _stack_step_inputs
 from clasher.rl.train_selfplay import resolve_torch_device
-from visualize_battle import BattleVisualizer, PURPLE, RED, WHITE
-
-
-def load_policy(checkpoint_path: Path, device: torch.device) -> MaskedPolicyValueNet:
-    state = torch.load(checkpoint_path, map_location=device)
-    model = MaskedPolicyValueNet(
-        board_channels=state["board_channels"],
-        hud_size=state["hud_size"],
-        num_actions=state["num_actions"],
-        hidden_size=state.get("args", {}).get("hidden_size", 256),
-        recurrent=False,
-    ).to(device)
-    model.load_state_dict(state["model_state_dict"])
-    model.eval()
-    return model
+from visualize_battle import PURPLE, RED, WHITE, BattleVisualizer
 
 
 class PolicyBattleVisualizer(BattleVisualizer):
@@ -54,76 +39,132 @@ class PolicyBattleVisualizer(BattleVisualizer):
 
         self.py_rng = random.Random(seed)
         self.np_rng = np.random.default_rng(seed)
+        torch.manual_seed(seed)
 
         self.device = resolve_torch_device(device)
-        self.obs_builder = CvObservationBuilder(
-            card_vocab=None,
-            decks_path=decks_path,
-            canonical_perspective=True,
-        )
         self.action_space = DiscreteTileActionSpace(canonical_perspective=True)
 
-        self.models: dict[int, MaskedPolicyValueNet | None] = {
-            0: load_policy(resolve_path(checkpoint, must_exist=True), self.device),
+        checkpoint_path = resolve_path(checkpoint, must_exist=True)
+        candidate = load_policy_checkpoint(
+            checkpoint_path,
+            device=self.device,
+            decks_path=decks_path,
+        )
+        self.policies: dict[int, LoadedPolicy | None] = {
+            0: candidate,
             1: None,
         }
-        self.player_labels = {0: "policy", 1: "random"}
+        self.player_labels = {
+            0: f"V2 u{candidate.checkpoint.get('update', 0)}",
+            1: "random",
+        }
 
         if not opponent_random:
             opp_ckpt = (
                 resolve_path(opponent_checkpoint, must_exist=True)
                 if opponent_checkpoint
-                else resolve_path(checkpoint, must_exist=True)
+                else checkpoint_path
             )
-            self.models[1] = load_policy(opp_ckpt, self.device)
-            self.player_labels[1] = "policy"
+            opponent = (
+                candidate
+                if opp_ckpt == checkpoint_path
+                else load_policy_checkpoint(
+                    opp_ckpt,
+                    device=self.device,
+                    decks_path=decks_path,
+                )
+            )
+            self.policies[1] = opponent
+            self.player_labels[1] = f"V2 u{opponent.checkpoint.get('update', 0)}"
 
         self.last_decision_tick = 0
         self.current_decks: dict[int, list[str]] = {0: [], 1: []}
+        self.recurrent_states: dict[int, tuple[torch.Tensor, torch.Tensor] | None] = {
+            0: None,
+            1: None,
+        }
+        self.previous_actions = {
+            0: self.action_space.no_op_action,
+            1: self.action_space.no_op_action,
+        }
+        self.previous_rewards = {0: 0.0, 1: 0.0}
+        self.episode_starts = {0: True, 1: True}
+        self.previous_objective_p0 = 0.0
 
         super().__init__()
 
-    def setup_test_battle(self):
+    def setup_test_battle(self) -> None:
         self.engine = BattleEngine()
         self.battle = self.engine.create_battle()
 
-        deck0, deck1 = sample_decks(self.decks, self.py_rng, mirror_match=self.mirror_match)
+        deck0, deck1 = sample_decks(
+            self.decks, self.py_rng, mirror_match=self.mirror_match
+        )
         self.current_decks = {0: list(deck0), 1: list(deck1)}
         apply_deck_to_player(self.battle.players[0], deck0, self.py_rng)
         apply_deck_to_player(self.battle.players[1], deck1, self.py_rng)
         self.last_decision_tick = self.battle.tick
+        self.previous_objective_p0 = objective_potential_p0(self.battle)
+        for player_id, policy in self.policies.items():
+            self.recurrent_states[player_id] = (
+                policy.model.initial_state(1, device=self.device)
+                if policy is not None
+                else None
+            )
+            self.previous_actions[player_id] = self.action_space.no_op_action
+            self.previous_rewards[player_id] = 0.0
+            self.episode_starts[player_id] = True
 
     def _policy_action(self, player_id: int) -> int:
-        model = self.models[player_id]
-        if model is None:
-            return self.action_space.random_legal_action(self.battle, player_id, self.np_rng)
+        policy = self.policies[player_id]
+        if policy is None:
+            return int(
+                self.action_space.random_legal_action(
+                    self.battle, player_id, self.np_rng
+                )
+            )
 
-        obs = self.obs_builder.build(self.battle, player_id)
-        mask = self.action_space.legal_action_mask(self.battle, player_id)
-        board = torch.tensor(obs.board, dtype=torch.float32, device=self.device).unsqueeze(0)
-        hud = torch.tensor(obs.hud, dtype=torch.float32, device=self.device).unsqueeze(0)
-        action_mask = torch.tensor(mask, dtype=torch.bool, device=self.device).unsqueeze(0)
+        observation = policy.builder.build(self.battle, player_id)
+        mask = self.action_space.legal_action_mask(self.battle, player_id)[None, :]
+        inputs = _stack_step_inputs(
+            [observation],
+            mask,
+            np.asarray([self.previous_actions[player_id]], dtype=np.int64),
+            np.asarray([self.previous_rewards[player_id]], dtype=np.float32),
+            np.asarray([self.episode_starts[player_id]], dtype=np.bool_),
+            self.device,
+        )
+        recurrent_state = self.recurrent_states[player_id]
+        if recurrent_state is None:
+            raise RuntimeError(f"missing recurrent state for policy player {player_id}")
 
         with torch.no_grad():
-            action_t, _, _, _ = model.act(
-                board=board,
-                hud=hud,
-                action_mask=action_mask,
+            action_t, _, _, next_state, _ = policy.model.act(
+                inputs,
+                recurrent_state,
                 deterministic=self.deterministic,
             )
-        return int(action_t.item())
+        self.recurrent_states[player_id] = next_state
+        return int(action_t[0, 0].item())
 
     def _maybe_take_actions(self) -> None:
         if self.battle.tick - self.last_decision_tick < self.decision_interval:
             return
 
+        current_objective_p0 = objective_potential_p0(self.battle)
+        objective_delta = current_objective_p0 - self.previous_objective_p0
+        self.previous_rewards = {0: objective_delta, 1: -objective_delta}
+        self.previous_objective_p0 = current_objective_p0
+
         action0 = self._policy_action(0)
         action1 = self._policy_action(1)
         self.action_space.apply_action(self.battle, 0, action0)
         self.action_space.apply_action(self.battle, 1, action1)
+        self.previous_actions = {0: action0, 1: action1}
+        self.episode_starts = {0: False, 1: False}
         self.last_decision_tick = self.battle.tick
 
-    def draw_ui(self):
+    def draw_ui(self) -> None:
         super().draw_ui()
 
         # Add policy/simulation info in the right panel.
@@ -149,11 +190,15 @@ class PolicyBattleVisualizer(BattleVisualizer):
 
         deck0 = ", ".join(self.current_decks[0][:4]) if self.current_decks[0] else "-"
         deck1 = ", ".join(self.current_decks[1][:4]) if self.current_decks[1] else "-"
-        self.screen.blit(self.small_font.render(f"P0 deck: {deck0}", True, (0, 0, 0)), (x, y))
+        self.screen.blit(
+            self.small_font.render(f"P0 deck: {deck0}", True, (0, 0, 0)), (x, y)
+        )
         y += line
-        self.screen.blit(self.small_font.render(f"P1 deck: {deck1}", True, (0, 0, 0)), (x, y))
+        self.screen.blit(
+            self.small_font.render(f"P1 deck: {deck1}", True, (0, 0, 0)), (x, y)
+        )
 
-    def run(self):
+    def run(self) -> None:
         print("Starting policy battle visualizer")
         print(f"device={self.device}")
         print("Controls:")
@@ -190,7 +235,9 @@ class PolicyBattleVisualizer(BattleVisualizer):
                 self.screen.blit(speed_text, (10, 10))
 
             torch_device_type = self.device.type
-            dev_text = self.small_font.render(f"torch={torch_device_type}", True, (0, 0, 0))
+            dev_text = self.small_font.render(
+                f"torch={torch_device_type}", True, (0, 0, 0)
+            )
             self.screen.blit(dev_text, (10, 35))
 
             self.clock.tick(60)
@@ -204,14 +251,20 @@ class PolicyBattleVisualizer(BattleVisualizer):
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Watch checkpoint policy play in pygame")
+    parser = argparse.ArgumentParser(
+        description="Watch a recurrent V2 policy play in pygame"
+    )
     parser.add_argument("--checkpoint", type=str, default=None)
-    parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/selfplay_run")
+    parser.add_argument(
+        "--checkpoint-dir", type=str, default="checkpoints/entity_selfplay"
+    )
     parser.add_argument("--opponent-checkpoint", type=str, default=None)
     parser.add_argument("--opponent-random", action="store_true")
     parser.add_argument("--decks-path", type=str, default="decks.json")
     parser.add_argument("--decision-interval", type=int, default=8)
-    parser.add_argument("--device", type=str, choices=["auto", "cpu", "mps", "cuda"], default="auto")
+    parser.add_argument(
+        "--device", type=str, choices=["auto", "cpu", "mps", "cuda"], default="auto"
+    )
     parser.add_argument("--deterministic", action="store_true")
     parser.add_argument("--mirror-match", action="store_true")
     parser.add_argument("--seed", type=int, default=17)
@@ -223,7 +276,7 @@ def main() -> None:
     if args.checkpoint:
         checkpoint = resolve_path(args.checkpoint, must_exist=True)
     else:
-        ckpt = latest_checkpoint(args.checkpoint_dir)
+        ckpt = latest_checkpoint(args.checkpoint_dir, pattern="policy_v2_update_*.pt")
         if ckpt is None:
             raise FileNotFoundError(
                 f"no policy checkpoints found in {resolve_path(args.checkpoint_dir, must_exist=False)}"

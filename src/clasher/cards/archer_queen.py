@@ -67,9 +67,6 @@ class ArcherQueenCloak(ChampionAbilityMechanic):
     def on_tick(self, entity, dt_ms: int) -> None:
         super().on_tick(entity, dt_ms)
         if self._cloak_pending_until is not None:
-            if entity.is_stunned():
-                self._cancel_pending_cast()
-                return
             now_ms = logic_time_milliseconds(entity.battle_state.time)
             if now_ms >= self._cloak_pending_until:
                 self._cloak_pending_until = None
@@ -83,17 +80,6 @@ class ArcherQueenCloak(ChampionAbilityMechanic):
 
     def blocks_combat_actions(self, entity) -> bool:
         return self._cast_lock_until is not None
-
-    def handle_stun(self, entity) -> None:
-        """Interrupt the cast on the same impact frame as the stun."""
-        self._cancel_pending_cast()
-
-    def _cancel_pending_cast(self) -> None:
-        if self._cloak_pending_until is None:
-            return
-        self._cloak_pending_until = None
-        self._cast_lock_until = None
-        self.ability.cancel_before_effect()
 
     def on_death(self, entity) -> None:
         self._cloak_pending_until = None

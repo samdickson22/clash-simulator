@@ -30,8 +30,11 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    train = sub.add_parser("train", help="Run synchronous self-play trainer")
+    train = sub.add_parser("train", help="Train the recurrent entity-spatial policy")
     train.add_argument("args", nargs=argparse.REMAINDER)
+
+    train_legacy = sub.add_parser("train-legacy", help="Run the deprecated raster PPO trainer")
+    train_legacy.add_argument("args", nargs=argparse.REMAINDER)
 
     train_async = sub.add_parser("train-async", help="Run async self-play trainer")
     train_async.add_argument("args", nargs=argparse.REMAINDER)
@@ -57,13 +60,13 @@ def _build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("args", nargs=argparse.REMAINDER)
 
     latest = sub.add_parser("latest-checkpoint", help="Print latest checkpoint path")
-    latest.add_argument("--checkpoint-dir", default="checkpoints/selfplay_run")
-    latest.add_argument("--pattern", default="policy_update_*.pt")
+    latest.add_argument("--checkpoint-dir", default="checkpoints/entity_selfplay")
+    latest.add_argument("--pattern", default="policy_v2_update_*.pt")
 
     paths = sub.add_parser("paths", help="Print resolved project/data paths")
     paths.add_argument("--decks-path", default="decks.json")
     paths.add_argument("--gamedata-path", default="gamedata.json")
-    paths.add_argument("--checkpoint-dir", default="checkpoints/selfplay_run")
+    paths.add_argument("--checkpoint-dir", default="checkpoints/entity_selfplay")
 
     return parser
 
@@ -73,6 +76,9 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.command == "train":
+        _dispatch("clasher.rl.train_recurrent", args.args)
+        return
+    if args.command == "train-legacy":
         _dispatch("clasher.rl.train_selfplay", args.args)
         return
     if args.command == "train-async":

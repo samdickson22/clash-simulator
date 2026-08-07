@@ -2,6 +2,7 @@ from collections import deque
 import copy
 
 import numpy as np
+import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
@@ -16,6 +17,46 @@ def _prepare_hand(battle: BattleState, player_id: int, cards: list[str], elixir:
     player.hand = list(cards[:4])
     player.deck = list(cards[:8] if len(cards) >= 8 else cards + cards)
     player.cycle_queue = deque(player.deck[4:])
+
+
+def test_selfplay_reset_preserves_default_timeline_starting_elixir():
+    env = SelfPlayBattleEnv()
+    env.reset(seed=1)
+
+    assert env.battle is not None
+    assert [player.elixir for player in env.battle.players] == [6.0, 6.0]
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_delayed_refill_masks_empty_slots_but_not_occupied_slots(fast_path):
+    battle = BattleState(fast_path=fast_path)
+    _prepare_hand(
+        battle,
+        0,
+        ["Knight", "Archers", "Fireball", "Cannon", "Zap", "IceSpirit", "Skeletons", "Log"],
+        elixir=20.0,
+    )
+    action_space = DiscreteTileActionSpace()
+    slot_size = action_space.no_op_action // 4
+    first_action = action_space.encode_action(0, 7, 10, 0)
+
+    assert action_space.apply_action(battle, 0, first_action)
+    immediate = action_space.legal_action_mask(battle, 0, fast_path=fast_path)
+    assert not immediate[:slot_size].any()
+    assert immediate[slot_size : 4 * slot_size].any()
+
+    second_action = action_space.encode_action(1, 11, 10, 0)
+    assert action_space.apply_action(battle, 0, second_action)
+    battle.step()
+
+    first_refill = action_space.legal_action_mask(battle, 0, fast_path=fast_path)
+    assert first_refill[:slot_size].any()
+    assert not first_refill[slot_size : 2 * slot_size].any()
+
+    for _ in range(20):
+        battle.step()
+    second_refill = action_space.legal_action_mask(battle, 0, fast_path=fast_path)
+    assert second_refill[slot_size : 2 * slot_size].any()
 
 
 def test_mask_contains_noop_and_only_legal_actions():
@@ -118,6 +159,33 @@ def test_champion_ability_is_masked_during_deployment():
     assert not action_space.legal_action_mask(battle, 0)[action_space.ability_action]
     assert not action_space.apply_action(battle, 0, action_space.ability_action)
     assert battle.players[0].elixir == 10.0
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_champion_ability_action_remains_legal_while_stunned(fast_path):
+    battle = BattleState(fast_path=fast_path)
+    queen_stats = battle.card_loader.get_card("ArcherQueen")
+    assert queen_stats is not None
+    battle._spawn_troop(Position(9.0, 10.0), 0, queen_stats)
+    queen = max(
+        (entity for entity in battle.entities.values() if entity.player_id == 0),
+        key=lambda entity: entity.id,
+    )
+    queen.deploy_delay_remaining = 0.0
+    queen.placement_pending = False
+    queen.on_spawn()
+    queen.apply_stun(0.5)
+    battle.players[0].elixir = 1.0
+    action_space = DiscreteTileActionSpace()
+
+    mask = action_space.legal_action_mask(
+        battle,
+        0,
+        fast_path=fast_path,
+    )
+    assert mask[action_space.ability_action]
+    assert action_space.apply_action(battle, 0, action_space.ability_action)
+    assert battle.players[0].elixir == 0.0
 
 
 def test_encode_decode_roundtrip_player_perspective():

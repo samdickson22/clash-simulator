@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from clasher.rl.model import MaskedPolicyValueNet
+from clasher.rl.legacy_model import MaskedPolicyValueNet
 from clasher.rl.oracle_planner import FixedDepthThompsonOracle
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.train_dagger_oracle import (

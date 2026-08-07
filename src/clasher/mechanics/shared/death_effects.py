@@ -57,7 +57,10 @@ class DeathDamage(BaseMechanic):
                 impact_position,
                 self.radius_tiles,
             ):
-                if not target.can_receive_area_damage(source_kind):
+                if not target.can_receive_area_damage(
+                    source_kind,
+                    source_entity=entity,
+                ):
                     continue
                 targets.append(target)
 
@@ -83,6 +86,7 @@ class DeathSpawn(BaseMechanic):
     radius_tiles: float = 0.0
     min_radius_tiles: float = 0.0
     radial_pushback: bool = False
+    spawn_const_priority: bool = False
     deploy_time_ms: int = 0
     unit_data: dict | None = None
 
@@ -228,13 +232,13 @@ class DeathSpawn(BaseMechanic):
                     facing_x_units=facing_x_units,
                     facing_y_units=facing_y_units,
                     flip_x=(
-                        self.radial_pushback
+                        self.spawn_const_priority
                         and battle_state.arena.native_path_id_at(
                             entity.position
                         )
                         == 1
                     ),
-                    flip_y=self.radial_pushback and entity.player_id == 1,
+                    flip_y=self.spawn_const_priority and entity.player_id == 1,
                 )
                 spawn_position = Position(
                     entity.position.x + offset_x,
@@ -254,12 +258,23 @@ class DeathSpawn(BaseMechanic):
                 death_spawn_stats,
                 deploy_delay_override=max(0.0, self.deploy_time_ms / 1000.0),
                 snap_to_valid=False,
+                death_spawn=True,
+                death_spawn_travel_origin=(
+                    entity.position
+                    if self.radial_pushback and radius > 0.0
+                    else None
+                ),
             )
             spawned = battle_state.entities.get(spawned_id)
-            if spawned is not None and self.radial_pushback:
+            if spawned is not None and self.spawn_const_priority:
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
                 )
+            if spawned is not None and (
+                (self.radial_pushback and radius > 0.0)
+                or self.spawn_const_priority
+            ):
+                battle_state.sync_fast_target_entity(spawned)
             # Native Freeze inheritance is limited to immediate death
             # payloads.  A non-zero DeathSpawnDeployTime puts each child into
             # the staggered deployment path, so it is not yet present to

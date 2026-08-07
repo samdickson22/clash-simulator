@@ -5,8 +5,10 @@ import math
 import pytest
 
 from clasher.arena import Position
+from clasher.balance import GLOBAL_ATTACK_FINISH_TIME_MS
 from clasher.battle import BattleState
 from clasher.mechanics.shared import MultipleTargetAttack, SerializedOnHitBuff
+from clasher.mechanics.mechanic_base import BaseMechanic
 from clasher.entities import (
     AreaEffect,
     BuffAreaEffect,
@@ -19,12 +21,27 @@ from clasher.entities import (
 )
 from clasher.formations import formation_offset
 from clasher.kinematics import (
+    logic_speed_to_tiles_per_second,
     logic_units_to_tiles,
+    movement_component_vector_logic_units,
+    normalized_vector_logic_units,
     speed_work_for_duration,
+    spawn_path_travel_tick_count,
     tiles_to_logic_units,
     vector_towards_logic_units,
 )
 from clasher.mechanics.shared.scaling import CrownTowerScaling
+from clasher.mechanics.shared.death_area import spawn_death_area_object
+from clasher.pathfinding import (
+    _cell_for_position,
+    _cell_center,
+    _native_grid_route,
+    _native_pathfinder_tile_cost,
+    ground_path_waypoint,
+    native_jump_landing_waypoint,
+    native_route_goal_cell,
+    native_single_node_waypoint,
+)
 from clasher.unit_traits import unit_mass
 
 
@@ -65,6 +82,43 @@ def _spawn_one(
             if not area.is_alive:
                 battle.entities.pop(area.id, None)
     return troop
+
+
+def _run_natural_movement_component(
+    battle: BattleState,
+    troop: Troop,
+    target: Troop | Building,
+) -> None:
+    """Run the native collision -> avoidance -> movement phase ordering."""
+
+    troop._movement_target_id = target.id
+    troop._native_natural_movement_active = True
+    battle._accumulate_troop_collision_for(troop)
+    troop.begin_movement_tick()
+    try:
+        troop.update_movement_component(battle.dt, battle)
+    finally:
+        troop.finish_movement_tick(battle)
+        troop.quantize_logic_position()
+
+
+def _fully_hide_tesla(tesla: Building) -> None:
+    hide = next(
+        mechanic
+        for mechanic in tesla.mechanics
+        if type(mechanic).__name__ == "HideWhenIdle"
+    )
+    # Isolated effect tests may already have an enemy inside Tesla range. Put
+    # the object at the exact native hidden boundary without consuming an
+    # object phase; the live idle transition itself is tested separately.
+    hide._phase_ms = float(hide.hide_delay_ms)
+    tesla._hidden_building = True
+    tesla._special_move_active = True
+    tesla.target_id = None
+    battle = tesla.battle_state
+    if battle is not None:
+        battle.sync_fast_target_entity(tesla)
+    assert tesla._hidden_building
 
 
 def test_entity_kind_classification_includes_gameplay_subclasses():
@@ -163,6 +217,231 @@ def test_attack_and_sight_ranges_use_target_hitbox_not_attacker_hitbox():
     assert knight.get_nearest_target(battle.entities) is target
 
 
+@pytest.mark.parametrize(
+    ("extra_distance", "expects_hit"),
+    [(0.0, True), (0.001, False)],
+)
+def test_mobile_committed_hit_uses_native_long_distance_guard(
+    extra_distance: float,
+    expects_hit: bool,
+):
+    class MoveTargetAtAttackStart(BaseMechanic):
+        def __init__(self, destination: Position):
+            self.destination = destination
+
+        def on_attack_start(self, entity, target) -> None:
+            target.position = self.destination
+
+    battle = BattleState()
+    knight = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Skeletons", 1, Position(9.0, 10.5))
+    target_hp = target.hitpoints
+    hit_frame_reach = knight.range + target.get_collision_radius() + 1.5
+    knight.mechanics.append(
+        MoveTargetAtAttackStart(
+            Position(9.0, knight.position.y + hit_frame_reach + extra_distance)
+        )
+    )
+    knight.target_id = target.id
+    knight.attack_cooldown = 0.0
+
+    knight.update_combat_component(battle.dt, battle)
+
+    if expects_hit:
+        assert target.hitpoints == pytest.approx(max(0.0, target_hp - knight.damage))
+    else:
+        assert target.hitpoints == target_hp
+    # Knight has LoadTime but not the distinct LoadFirstHit capability.
+    # Native therefore reloads a complete cycle whether the committed payload
+    # connects or the late-distance guard discards it.
+    assert knight.attack_cooldown == pytest.approx(
+        knight.get_base_attack_interval_seconds()
+    )
+
+
+def test_discarded_hit_retains_load_only_for_serialized_load_first_hit(
+    monkeypatch,
+):
+    battle = BattleState()
+    knight = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
+    knight.attack_cooldown = 0.0
+
+    monkeypatch.setattr(
+        "clasher.entities.LOGIC_LOAD_FIRST_HIT_KEEP_LOADED_AFTER_DISCARD",
+        True,
+    )
+    assert not knight.card_stats.load_first_hit
+    assert knight.get_post_attack_cooldown_seconds(
+        payload_discarded=True,
+    ) == pytest.approx(knight.get_base_attack_interval_seconds())
+
+    # Exercise the native capability independently of a card name so future
+    # decoded data automatically receives the same shared rule.
+    knight.card_stats.load_first_hit = True
+    assert knight.get_post_attack_cooldown_seconds(
+        payload_discarded=True,
+    ) == 0.0
+
+    monkeypatch.setattr(
+        "clasher.entities.LOGIC_LOAD_FIRST_HIT_KEEP_LOADED_AFTER_DISCARD",
+        False,
+    )
+    assert knight.get_post_attack_cooldown_seconds(
+        payload_discarded=True,
+    ) == pytest.approx(knight.get_base_attack_interval_seconds())
+
+
+def test_long_distance_hit_guard_uses_character_capabilities_not_card_names():
+    battle = BattleState()
+    target = _spawn_one(battle, "Skeletons", 1, Position(9.0, 15.0))
+    knight = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
+    bandit = _spawn_one(battle, "Bandit", 0, Position(8.0, 10.0))
+    cannon = battle._spawn_entity(
+        Building,
+        Position(10.0, 10.0),
+        0,
+        battle.card_loader.get_card("Cannon"),
+    )
+
+    assert knight.should_cancel_committed_hit(target)
+    # Serialized Speed == 0 exempts every building, while a positive
+    # DashCooldown exempts every dash character through the same shared rule.
+    assert not cannon.should_cancel_committed_hit(target)
+    assert not bandit.should_cancel_committed_hit(target)
+
+
+def test_discarded_projectile_attack_does_not_apply_attack_pushback():
+    class MoveTargetAtAttackStart(BaseMechanic):
+        def __init__(self, destination: Position):
+            self.destination = destination
+
+        def on_attack_start(self, entity, target) -> None:
+            target.position = self.destination
+
+    battle = BattleState()
+    firecracker = _spawn_one(
+        battle,
+        "Firecracker",
+        0,
+        Position(9.0, 10.0),
+    )
+    target = _spawn_one(
+        battle,
+        "Skeletons",
+        1,
+        Position(9.0, 14.0),
+    )
+    start = Position(firecracker.position.x, firecracker.position.y)
+    hit_frame_reach = (
+        firecracker.range + target.get_collision_radius() + 1.501
+    )
+    firecracker.mechanics.append(
+        MoveTargetAtAttackStart(
+            Position(9.0, firecracker.position.y + hit_frame_reach)
+        )
+    )
+    firecracker.target_id = target.id
+    firecracker.attack_cooldown = 0.0
+
+    firecracker.update_combat_component(battle.dt, battle)
+
+    assert firecracker.position == start
+    assert not firecracker.forced_movement_active
+    assert not any(
+        isinstance(entity, Projectile)
+        and entity.source_entity is firecracker
+        for entity in battle.entities.values()
+    )
+    assert not firecracker.card_stats.load_first_hit
+    assert firecracker.attack_cooldown == pytest.approx(
+        firecracker.get_base_attack_interval_seconds()
+    )
+
+
+def test_long_distance_guard_discards_the_entire_direct_area_payload():
+    class MoveAreaAtAttackStart(BaseMechanic):
+        def __init__(self, destination: Position, bystander: Troop):
+            self.destination = destination
+            self.bystander = bystander
+
+        def on_attack_start(self, entity, target) -> None:
+            target.position = self.destination
+            self.bystander.position = Position(
+                self.destination.x + 0.5,
+                self.destination.y,
+            )
+
+    battle = BattleState()
+    attacker = _spawn_one(battle, "DarkPrince", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Skeletons", 1, Position(9.0, 10.5))
+    bystander = _spawn_one(battle, "Knight", 1, Position(1.0, 1.0))
+    target_hp = target.hitpoints
+    bystander_hp = bystander.hitpoints
+    hit_frame_reach = attacker.range + target.get_collision_radius() + 1.501
+    attacker.mechanics.append(
+        MoveAreaAtAttackStart(
+            Position(9.0, attacker.position.y + hit_frame_reach),
+            bystander,
+        )
+    )
+    attacker.target_id = target.id
+    attacker.attack_cooldown = 0.0
+
+    attacker.update_combat_component(battle.dt, battle)
+
+    assert target.hitpoints == target_hp
+    assert bystander.hitpoints == bystander_hp
+    assert not attacker.card_stats.load_first_hit
+    assert attacker.attack_cooldown == pytest.approx(
+        attacker.get_base_attack_interval_seconds()
+    )
+
+
+def test_area_payload_discard_is_governed_by_the_shared_global(monkeypatch):
+    battle = BattleState()
+    attacker = _spawn_one(battle, "DarkPrince", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Skeletons", 1, Position(9.0, 10.5))
+    target.position = Position(
+        9.0,
+        attacker.position.y
+        + attacker.range
+        + target.get_collision_radius()
+        + 1.501,
+    )
+
+    assert attacker.should_cancel_committed_hit(target)
+
+    monkeypatch.setattr(
+        "clasher.entities.LOGIC_ALLOW_DISCARD_HIT_ON_AREA_DAMAGE",
+        False,
+    )
+    assert not attacker.should_cancel_committed_hit(target)
+
+
+def test_projectile_splash_discard_does_not_consult_direct_area_global(
+    monkeypatch,
+):
+    battle = BattleState()
+    attacker = _spawn_one(battle, "BabyDragon", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Skeletons", 1, Position(9.0, 10.5))
+    target.position = Position(
+        9.0,
+        attacker.position.y
+        + attacker.range
+        + target.get_collision_radius()
+        + 1.501,
+    )
+
+    assert attacker.card_stats.projectile_splash_radius > 0
+    assert attacker.should_cancel_committed_hit(target)
+
+    monkeypatch.setattr(
+        "clasher.entities.LOGIC_ALLOW_DISCARD_HIT_ON_AREA_DAMAGE",
+        False,
+    )
+    assert attacker.should_cancel_committed_hit(target)
+
+
 def test_native_death_spawn_distance_allowance_affects_reach_and_target_order():
     battle = BattleState()
     attacker = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
@@ -230,6 +509,52 @@ def test_crown_towers_receive_the_serialized_two_tile_sight_allowance():
     assert knight.is_within_sight(tower)
     tower.position = Position(9.0, 10.0 + sight_edge + 1e-6)
     assert not knight.is_within_sight(tower)
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_target_geometry_is_governed_by_shared_current_client_globals(
+    monkeypatch,
+    fast_path,
+):
+    import clasher.entities as entity_module
+
+    battle = BattleState(fast_path=fast_path)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    knight = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
+    cannon = battle._spawn_entity(
+        Building,
+        Position(9.0, 10.0),
+        1,
+        battle.card_loader.get_card("Cannon"),
+    )
+    cannon.deploy_delay_remaining = 0.0
+    cannon.placement_pending = False
+    cannon.position = Position(
+        9.0,
+        10.0 + knight.sight_range + cannon.get_collision_radius() + 0.25,
+    )
+
+    if fast_path:
+        battle._refresh_fast_path_caches()
+    assert knight.get_nearest_target(
+        battle.entities,
+        include_crown_fallback=False,
+    ) is None
+
+    monkeypatch.setattr(entity_module, "EXTRA_SIGHT_RANGE_TO_BUILDING", 250)
+    if fast_path:
+        battle._refresh_fast_path_caches()
+    assert knight.get_nearest_target(
+        battle.entities,
+        include_crown_fallback=False,
+    ) is cannon
+
+    reach_with_radius = knight.reach_distance_to(cannon, knight.range)
+    monkeypatch.setattr(entity_module, "ADD_CHARACTER_RANGE_TO_RADIUS", False)
+    assert knight.reach_distance_to(cannon, knight.range) == pytest.approx(
+        reach_with_radius - cannon.get_collision_radius()
+    )
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
@@ -469,7 +794,7 @@ def test_wall_breaker_splash_is_centered_on_its_committed_launch_position():
     assert beyond.hitpoints == hp_before[1]
 
 
-def test_wall_breaker_committed_projectile_hits_later_same_frame_death_spawns():
+def test_wall_breaker_committed_projectile_cannot_hit_birth_tick_death_spawns():
     battle = BattleState()
     battle.entities.clear()
     battle.next_entity_id = 1
@@ -503,11 +828,19 @@ def test_wall_breaker_committed_projectile_hits_later_same_frame_death_spawns():
     # The Wall Breaker commits its one-unit projectile first. The later-ID
     # Mini P.E.K.K.A. then destroys Tombstone during the same combat phase,
     # and its four Skeletons are born before the projectile object ticks.
-    # The already-committed splash therefore removes all four children.
+    # LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK keeps the newly created children
+    # immune to that already-committed splash for the rest of this frame.
     assert not wall_breaker.is_alive
     assert not tombstone.is_alive
     assert battle.next_entity_id == 9
-    assert list(battle.entities) == [finisher.id]
+    skeletons = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop) and entity.card_stats.name == "Skeleton"
+    ]
+    assert len(skeletons) == 4
+    assert all(skeleton.hitpoints == skeleton.max_hitpoints for skeleton in skeletons)
+    assert list(battle.entities) == [finisher.id, *(skeleton.id for skeleton in skeletons)]
 
 
 def test_electro_wizard_spawn_area_snapshot_precedes_victim_death_knockback():
@@ -555,8 +888,9 @@ def test_electro_wizard_spawn_area_snapshot_precedes_victim_death_knockback():
     assert len(golemites) == 2
     assert all(target.hitpoints == target.max_hitpoints for target in golemites)
     assert all(
-        target.stun_timer
-        == pytest.approx(spawn_area.area_data["buffTime"] / 1000.0)
+        target.stun_timer == pytest.approx(
+            spawn_area.area_data["buffTime"] / 1000.0
+        )
         for target in golemites
     )
 
@@ -603,15 +937,16 @@ def test_spawn_area_snapshot_precedes_victim_death_knockback():
     ]
     assert len(golemites) == 2
     assert all(target.hitpoints == target.max_hitpoints for target in golemites)
-    assert all(target.slow_multiplier == pytest.approx(0.7) for target in golemites)
+    assert all(target.slow_multiplier == 0.7 for target in golemites)
     assert all(
-        target.slow_timer
-        == pytest.approx(spawn_area.area_data["buffTime"] / 1000.0)
+        target.slow_timer == pytest.approx(
+            spawn_area.area_data["buffTime"] / 1000.0
+        )
         for target in golemites
     )
 
 
-def test_ice_wizard_projectile_status_pass_includes_lethal_death_spawns():
+def test_ice_wizard_projectile_status_pass_excludes_active_lethal_death_spawns():
     battle = BattleState()
     battle.entities.clear()
     battle.next_entity_id = 1
@@ -640,17 +975,11 @@ def test_ice_wizard_projectile_status_pass_includes_lethal_death_spawns():
     ]
     assert len(golemites) == 2
     assert all(target.hitpoints == target.max_hitpoints for target in golemites)
-    assert all(
-        target.slow_timer == pytest.approx(projectile.slow_duration)
-        for target in golemites
-    )
-    assert all(
-        target.slow_multiplier == pytest.approx(projectile.slow_multiplier)
-        for target in golemites
-    )
+    assert all(target.slow_timer == 0.0 for target in golemites)
+    assert all(target.slow_multiplier == 1.0 for target in golemites)
 
 
-def test_ice_spirit_status_pass_includes_lethal_death_spawns_without_redamage():
+def test_ice_spirit_status_pass_excludes_active_lethal_death_spawns():
     battle = BattleState()
     battle.entities.clear()
     battle.next_entity_id = 1
@@ -674,11 +1003,133 @@ def test_ice_spirit_status_pass_includes_lethal_death_spawns_without_redamage():
     ]
     assert len(golemites) == 2
     assert all(target.hitpoints == target.max_hitpoints for target in golemites)
+    assert all(target.stun_timer == 0.0 for target in golemites)
+
+
+def test_death_spawn_target_immunity_uses_attack_finish_timer():
+    battle = BattleState(fast_path=True)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    attacker = _spawn_one(battle, "Knight", 0, Position(9.0, 12.0))
+    golem = _spawn_one(battle, "Golem", 1, Position(9.0, 14.0))
+
+    golem.take_damage(golem.hitpoints)
+    golemites = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop)
+        and entity.player_id == golem.player_id
+        and entity.card_stats.name == "Golemite"
+    ]
+    assert len(golemites) == 2
     assert all(
-        target.stun_timer
-        == pytest.approx(mechanic.freeze_duration_ms / 1000.0)
+        target._death_spawn_target_immunity_elapsed_ms == 0
         for target in golemites
     )
+    assert all(not target.is_targetable_by(attacker.player_id) for target in golemites)
+    assert all(
+        not target.can_receive_area_damage("Test", source_entity=attacker)
+        for target in golemites
+    )
+    assert all(target.can_receive_area_damage("Test") for target in golemites)
+
+    # The native marker is not a generic damage/status invulnerability flag.
+    for target in golemites:
+        target.take_damage(10.0, source_kind="Test")
+        target.apply_stun(0.5, source_kind="Test")
+        target.apply_slow(0.5, 0.5, source_kind="Test")
+    assert all(target.hitpoints == target.max_hitpoints - 10.0 for target in golemites)
+    assert all(target.stun_timer == 0.5 for target in golemites)
+    assert all(target.slow_timer == 0.5 for target in golemites)
+
+    battle._refresh_fast_path_caches()
+    for elapsed in range(50, GLOBAL_ATTACK_FINISH_TIME_MS + 1, 50):
+        for target in golemites:
+            target.tick_character_object_phase(battle.dt)
+            index = battle._target_index_by_id[target.id]
+            assert not bool(battle._target_is_targetable[index])
+            assert target._death_spawn_target_immunity_elapsed_ms == elapsed
+            assert not target.is_targetable_by(attacker.player_id)
+
+    for target in golemites:
+        target.tick_character_object_phase(battle.dt)
+        index = battle._target_index_by_id[target.id]
+        assert target._death_spawn_target_immunity_elapsed_ms == -1
+        assert target.is_targetable_by(attacker.player_id)
+        assert bool(battle._target_is_targetable[index])
+
+
+def test_death_spawn_target_immunity_is_governed_by_shared_global(monkeypatch):
+    import clasher.entities as entity_module
+
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    attacker = _spawn_one(battle, "Knight", 0, Position(9.0, 12.0))
+    golem = _spawn_one(battle, "Golem", 1, Position(9.0, 14.0))
+
+    golem.take_damage(golem.hitpoints)
+    golemites = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop)
+        and entity.player_id == golem.player_id
+        and entity.card_stats.name == "Golemite"
+    ]
+    assert len(golemites) == 2
+    assert all(not target.is_targetable_by(attacker.player_id) for target in golemites)
+    assert all(
+        not target.can_receive_area_damage("Test", source_entity=attacker)
+        for target in golemites
+    )
+
+    monkeypatch.setattr(
+        entity_module,
+        "LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK",
+        False,
+    )
+    assert all(target.is_targetable_by(attacker.player_id) for target in golemites)
+    assert all(
+        target.can_receive_area_damage("Test", source_entity=attacker)
+        for target in golemites
+    )
+
+
+def test_disabled_death_spawn_global_does_not_install_latent_marker(monkeypatch):
+    import clasher.entities as entity_module
+
+    monkeypatch.setattr(
+        entity_module,
+        "LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK",
+        False,
+    )
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    golem = _spawn_one(battle, "Golem", 1, Position(9.0, 14.0))
+
+    golem.take_damage(golem.hitpoints)
+    golemites = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop)
+        and entity.player_id == golem.player_id
+        and entity.card_stats.name == "Golemite"
+    ]
+    assert len(golemites) == 2
+    assert all(
+        target._death_spawn_target_immunity_elapsed_ms == -1
+        for target in golemites
+    )
+
+    # Native decides whether to install the marker at creation time. Enabling
+    # the global later cannot resurrect immunity on an already-created child.
+    monkeypatch.setattr(
+        entity_module,
+        "LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK",
+        True,
+    )
+    assert all(not target._has_death_spawn_target_immunity() for target in golemites)
 
 
 def test_sub_logic_unit_mirror_drift_cannot_change_reach_decisions():
@@ -709,6 +1160,20 @@ def test_existing_target_lock_has_native_25_unit_range_extension():
     assert not knight.is_within_target_keep_reach(target)
 
 
+def test_existing_target_lock_extension_is_governed_by_shared_global(monkeypatch):
+    import clasher.entities as entity_module
+
+    battle = BattleState()
+    knight = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 10.0))
+    reach = knight.reach_distance_to(target, knight.range)
+    target.position = Position(9.0, 10.0 + reach + 0.001)
+
+    assert knight.is_within_target_keep_reach(target)
+    monkeypatch.setattr(entity_module, "LOGIC_RANGE_EXTENSION_TO_KEEP_TARGET", 0)
+    assert not knight.is_within_target_keep_reach(target)
+
+
 def test_started_attack_target_lock_has_native_500_unit_extension():
     battle = BattleState()
     musketeer = _spawn_one(battle, "Musketeer", 0, Position(9.0, 10.0))
@@ -724,6 +1189,79 @@ def test_started_attack_target_lock_has_native_500_unit_extension():
     target.position = Position(9.0, 10.0 + reach + 0.501)
     assert not musketeer.is_within_target_keep_reach(target)
     assert not musketeer.is_within_attack_clock_reach(target)
+
+
+def test_started_projectile_lock_preservation_is_governed_by_shared_global(
+    monkeypatch,
+):
+    import clasher.entities as entity_module
+
+    battle = BattleState()
+    musketeer = _spawn_one(battle, "Musketeer", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 10.0))
+    reach = musketeer.reach_distance_to(target, musketeer.range)
+    musketeer._attack_windup_active = True
+    target.position = Position(9.0, 10.0 + reach + 0.1)
+
+    assert musketeer.is_within_target_keep_reach(target)
+    monkeypatch.setattr(
+        entity_module,
+        "LOGIC_PRESERVE_TARGET_IF_HIT_STARTED",
+        False,
+    )
+    assert not musketeer.is_within_target_keep_reach(target)
+
+
+@pytest.mark.parametrize(
+    ("elapsed_ms", "preserves_target"),
+    ((50, False), (51, True), (100, True)),
+)
+def test_projectile_target_preservation_uses_native_hit_cycle_phase(
+    elapsed_ms,
+    preserves_target,
+):
+    battle = BattleState()
+    musketeer = _spawn_one(battle, "Musketeer", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 10.0))
+    reach = musketeer.reach_distance_to(target, musketeer.range)
+    target.position = Position(9.0, 10.0 + reach + 0.1)
+    musketeer._attack_windup_active = False
+    musketeer.attack_cooldown = (
+        musketeer.get_base_attack_interval_seconds() - elapsed_ms / 1000.0
+    )
+
+    assert musketeer.has_started_projectile_hit_cycle() is preserves_target
+    assert musketeer.is_within_target_keep_reach(target) is preserves_target
+    assert musketeer.is_within_attack_clock_reach(target) is preserves_target
+
+
+def test_hit_cycle_preservation_requires_combat_component_global(monkeypatch):
+    import clasher.entities as entity_module
+
+    battle = BattleState()
+    musketeer = _spawn_one(battle, "Musketeer", 0, Position(9.0, 10.0))
+    musketeer.attack_cooldown = (
+        musketeer.get_base_attack_interval_seconds() - 0.1
+    )
+
+    assert musketeer.has_started_projectile_hit_cycle()
+    monkeypatch.setattr(entity_module, "COMBAT_CMP_USE_HIT_STARTED", False)
+    assert not musketeer.has_started_projectile_hit_cycle()
+
+
+def test_overloaded_retarget_clock_maps_to_zero_preservation_phase():
+    battle = BattleState()
+    dragon = _spawn_one(battle, "InfernoDragon", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 10.0))
+    reach = dragon.reach_distance_to(target, dragon.range)
+    target.position = Position(9.0, 10.0 + reach + 0.1)
+    dragon._attack_windup_active = False
+    dragon.attack_cooldown = dragon.card_stats.retarget_time / 1000.0
+
+    assert dragon.card_stats.retarget_time == 800
+    assert dragon.card_stats.hit_speed == 400
+    assert not dragon.has_started_projectile_hit_cycle()
+    assert not dragon.is_within_target_keep_reach(target)
 
 
 def test_started_direct_attack_keeps_only_native_25_unit_extension():
@@ -881,12 +1419,51 @@ def test_centered_crown_tower_target_ties_keep_native_candidate_order(fast_path)
     assert isinstance(lower_target, Building)
     assert upper_target.card_stats.name == "Tower"
     assert lower_target.card_stats.name == "Tower"
-    assert upper_target.position.x == pytest.approx(3.5)
+    assert upper_target.position.x == pytest.approx(14.5)
     assert lower_target.position.x == pytest.approx(3.5)
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
-def test_destroyed_princess_tower_keeps_fallback_pushes_in_their_lane(fast_path):
+def test_equal_distance_building_ties_use_rotationally_symmetric_iteration(
+    fast_path,
+):
+    selected_x = []
+    for player_id, attacker_y, building_y in (
+        (0, 10.0, 14.0),
+        (1, 22.0, 18.0),
+    ):
+        battle = BattleState(fast_path=fast_path)
+        attacker = _spawn_one(
+            battle,
+            "Giant",
+            player_id,
+            Position(9.0, attacker_y),
+        )
+        cannon_stats = battle.card_loader.get_card("Cannon")
+        assert cannon_stats is not None
+        for x in (7.0, 11.0):
+            cannon = battle._spawn_entity(
+                Building,
+                Position(x, building_y),
+                1 - player_id,
+                cannon_stats,
+            )
+            cannon.deploy_delay_remaining = 0.0
+            cannon.placement_pending = False
+            cannon.on_spawn()
+        if fast_path:
+            battle._refresh_fast_path_caches()
+
+        target = attacker.get_nearest_target(battle.entities)
+        assert isinstance(target, Building)
+        assert target.card_stats.name == "Cannon"
+        selected_x.append(target.position.x)
+
+    assert selected_x == [7.0, 11.0]
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_destroyed_princess_tower_fallback_uses_surviving_current_x_target(fast_path):
     cases = (
         # player, destroyed enemy lane, open-lane start, surviving-lane start
         (0, 3.5, Position(3.5, 10.0), Position(14.5, 10.0)),
@@ -920,14 +1497,72 @@ def test_destroyed_princess_tower_keeps_fallback_pushes_in_their_lane(fast_path)
         surviving_target = surviving_lane_troop.get_nearest_target(battle.entities)
 
         assert isinstance(open_target, Building)
-        assert open_target.card_stats.name == "KingTower"
+        assert open_target.card_stats.name == "Tower"
+        assert open_target.position.x == pytest.approx(18.0 - destroyed_x)
         assert isinstance(surviving_target, Building)
         assert surviving_target.card_stats.name == "Tower"
         assert surviving_target.position.x == pytest.approx(18.0 - destroyed_x)
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
-def test_ground_default_target_uses_spawn_lane_after_cross_lane_displacement(
+def test_surviving_princess_tower_excludes_closer_king_from_default_set(
+    fast_path,
+):
+    battle = BattleState(fast_path=fast_path)
+    attacker = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
+    destroyed = next(
+        entity
+        for entity in battle.entities.values()
+        if (
+            isinstance(entity, Building)
+            and entity.player_id == 1
+            and entity.card_stats.name == "Tower"
+            and entity.position.x == 3.5
+        )
+    )
+    destroyed.take_damage(destroyed.hitpoints)
+    king = next(
+        entity
+        for entity in battle.entities.values()
+        if (
+            isinstance(entity, Building)
+            and entity.player_id == 1
+            and entity.card_stats.name == "KingTower"
+        )
+    )
+    surviving = next(
+        entity
+        for entity in battle.entities.values()
+        if (
+            isinstance(entity, Building)
+            and entity.player_id == 1
+            and entity.card_stats.name == "Tower"
+            and entity.is_alive
+        )
+    )
+
+    # Isolate the infinite-sight fallback and make the King geometrically
+    # closer.  Current LogicGlobals still keeps the surviving Princess Tower
+    # as the only default objective.
+    attacker.sight_range = 0.0
+    king.position = Position(9.0, 20.0)
+    surviving.position = Position(14.5, 25.5)
+    if fast_path:
+        battle._refresh_fast_path_caches()
+
+    assert attacker.native_target_distance_to(king) < attacker.native_target_distance_to(
+        surviving
+    )
+    assert attacker.get_nearest_target(battle.entities) is surviving
+
+    # The global changes only the default set.  A King Tower that is actually
+    # inside sight range remains an ordinary valid building target.
+    attacker.sight_range = 20.0
+    assert attacker.get_nearest_target(battle.entities) is king
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_ground_default_target_uses_current_x_after_cross_lane_displacement(
     fast_path,
 ):
     battle = BattleState(fast_path=fast_path)
@@ -941,11 +1576,11 @@ def test_ground_default_target_uses_spawn_lane_after_cross_lane_displacement(
 
     assert isinstance(target, Building)
     assert target.card_stats.name == "Tower"
-    assert target.position.x == pytest.approx(3.5)
+    assert target.position.x == pytest.approx(14.5)
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
-def test_ground_open_lane_default_stays_on_king_after_cross_lane_displacement(
+def test_ground_open_lane_default_switches_with_current_x_after_displacement(
     fast_path,
 ):
     battle = BattleState(fast_path=fast_path)
@@ -968,7 +1603,8 @@ def test_ground_open_lane_default_stays_on_king_after_cross_lane_displacement(
     target = giant.get_nearest_target(battle.entities)
 
     assert isinstance(target, Building)
-    assert target.card_stats.name == "KingTower"
+    assert target.card_stats.name == "Tower"
+    assert target.position.x == pytest.approx(14.5)
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
@@ -1031,27 +1667,38 @@ def test_sub_nanotile_projectile_endpoint_drift_cannot_add_a_flight_tick(pierces
 
 
 @pytest.mark.parametrize(
-    ("player_id", "start", "target_position", "expected_delta"),
+    ("player_id", "start", "target_position"),
     (
-        (0, Position(5.0, 10.0), Position(8.0, 14.0), (0.036, 0.048)),
-        (1, Position(13.0, 22.0), Position(10.0, 18.0), (-0.036, -0.048)),
+        (0, Position(5.0, 10.0), Position(8.0, 14.0)),
+        (1, Position(13.0, 22.0), Position(10.0, 18.0)),
     ),
 )
 def test_diagonal_troop_movement_uses_native_integer_components(
     player_id,
     start,
     target_position,
-    expected_delta,
 ):
     battle = BattleState()
     mover = _spawn_one(battle, "Knight", player_id, start)
     target = _spawn_one(battle, "Knight", 1 - player_id, target_position)
 
+    waypoint = ground_path_waypoint(
+        battle,
+        mover,
+        target.position,
+        target_entity=target,
+    )
+    expected_delta_units = movement_component_vector_logic_units(
+        tiles_to_logic_units(waypoint.x - start.x),
+        tiles_to_logic_units(waypoint.y - start.y),
+        speed_work_for_duration(mover.speed, battle.dt),
+    )
+
     mover._move_towards_target(target, battle.dt, battle)
 
     assert mover.position == Position(
-        start.x + expected_delta[0],
-        start.y + expected_delta[1],
+        start.x + logic_units_to_tiles(expected_delta_units[0]),
+        start.y + logic_units_to_tiles(expected_delta_units[1]),
     )
 
 
@@ -1080,29 +1727,24 @@ def test_ground_pathfinder_turns_before_reaching_an_intervening_building(
 
     initial_x = troop.position.x
     first_turn_distance = None
-    for _ in range(20):
-        troop._move_towards_target(target, battle.dt, battle)
-        assert battle.is_ground_position_walkable(troop.position, troop)
+    for _ in range(30):
+        _run_natural_movement_component(battle, troop, target)
         if first_turn_distance is None and troop.position.x != pytest.approx(initial_x):
             first_turn_distance = troop.position.distance_to(building.position)
 
-    # Current Clash pathfinding anticipates placed buildings. The troop must
-    # already be routing diagonally before physical contact, instead of walking
-    # into the footprint and only then trying fixed angle offsets.
+    # Buildings never enter LogicPathFinder. The retained heading probes ahead
+    # during checkAvoidance, so steering begins before checkCollisions observes
+    # physical overlap.
     assert first_turn_distance is not None
     assert first_turn_distance > (
         troop.card_stats.collision_radius
         + building.card_stats.collision_radius
     )
     assert troop.position.y > 10.25
-    assert troop.position.distance_to(building.position) > (
-        troop.card_stats.collision_radius
-        + building.card_stats.collision_radius
-    )
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
-def test_anticipatory_building_routes_are_exact_player_rotations(fast_path):
+def test_anticipatory_building_routes_follow_native_cumulative_score(fast_path):
     lower = BattleState(fast_path=fast_path)
     upper = BattleState(fast_path=fast_path)
     for battle in (lower, upper):
@@ -1140,6 +1782,9 @@ def test_anticipatory_building_routes_are_exact_player_rotations(fast_path):
     for _ in range(24):
         lower_troop._move_towards_target(lower_target, lower.dt, lower)
         upper_troop._move_towards_target(upper_target, upper.dt, upper)
+        # The native score accumulates every intermediate heuristic instead
+        # of retaining a separate g-cost. For this mirrored obstacle layout it
+        # selects the rotationally corresponding detours.
         assert lower_troop.position.x == pytest.approx(
             18.0 - upper_troop.position.x
         )
@@ -1175,17 +1820,18 @@ def test_ground_pathfinder_routes_around_overlapping_building_obstacles(
     if fast_path:
         battle._refresh_fast_path_caches()
 
+    max_lateral_offset = 0.0
     for _ in range(240):
-        troop._move_towards_target(target, battle.dt, battle)
-        assert all(
-            troop.position.distance_to(building.position)
-            > building.get_collision_radius()
-            for building in buildings
+        _run_natural_movement_component(battle, troop, target)
+        max_lateral_offset = max(
+            max_lateral_offset,
+            abs(troop.position.x - 9.25),
         )
-        if troop.position.distance_to(target.position) < 0.25:
+        if troop.is_within_attack_engagement_reach(target):
             break
 
-    assert troop.position.distance_to(target.position) < 0.25
+    assert max_lateral_offset > 0.2
+    assert troop.is_within_attack_engagement_reach(target)
     assert troop.position.y > max(building.position.y for building in buildings)
 
 
@@ -1221,17 +1867,13 @@ def test_building_targeter_routes_around_friendly_building_to_attack(
     for _ in range(240):
         if giant.is_within_attack_engagement_reach(target):
             break
-        giant._move_towards_target(target, battle.dt, battle)
+        _run_natural_movement_component(battle, giant, target)
         max_lateral_offset = max(
             max_lateral_offset,
             abs(giant.position.x - 9.25),
         )
-        assert (
-            giant.position.distance_to(friendly.position)
-            > friendly.get_collision_radius()
-        )
 
-    assert max_lateral_offset > 0.5
+    assert max_lateral_offset > 0.2
     assert giant.is_within_attack_engagement_reach(target)
 
 
@@ -1270,7 +1912,7 @@ def test_hovering_ground_troop_passes_through_buildings_without_detouring(
     )
 
 
-def test_ground_pathfinder_uses_nearest_legal_cell_for_displaced_river_target():
+def test_ground_pathfinder_uses_native_world_scan_for_displaced_river_target():
     lower = BattleState()
     upper = BattleState()
     lower.entities.clear()
@@ -1283,20 +1925,86 @@ def test_ground_pathfinder_uses_nearest_legal_cell_for_displaced_river_target():
     upper_target = _spawn_one(upper, "Knight", 0, Position(8.75, 11.75))
     upper_target.position = Position(8.75, 16.5)
 
+    assert native_route_goal_cell(lower_troop, lower_target) == (18, 29)
+    assert native_route_goal_cell(upper_troop, upper_target) == (17, 34)
+
     for _ in range(30):
         lower_troop._move_towards_target(lower_target, lower.dt, lower)
         upper_troop._move_towards_target(upper_target, upper.dt, upper)
-        assert lower.is_ground_position_walkable(lower_troop.position, lower_troop)
-        assert upper.is_ground_position_walkable(upper_troop.position, upper_troop)
-        assert lower_troop.position.x == pytest.approx(
-            18.0 - upper_troop.position.x
-        )
-        assert lower_troop.position.y == pytest.approx(
-            32.0 - upper_troop.position.y
-        )
 
-    assert lower_troop.position == Position(9.25, 14.75)
-    assert upper_troop.position == Position(8.75, 17.25)
+    # Goal candidates are scanned in world y/x order and water remains a valid
+    # (high-cost) path cell. Once the retained path node is consumed,
+    # getTargetPositionWhereGoingNow uses the live target center directly.
+    assert lower_troop.position == lower_target.position
+    assert upper_troop.position == upper_target.position
+
+
+def test_native_ground_route_retains_and_consumes_one_cell_per_frame():
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 0
+    mover = _spawn_one(battle, "Knight", 0, Position(9.25, 8.75))
+    target = _spawn_one(battle, "Knight", 1, Position(9.25, 14.25))
+
+    first = ground_path_waypoint(
+        battle,
+        mover,
+        target.position,
+        target_entity=target,
+    )
+    retained_before = list(mover._native_ground_route_cells)
+    mover._move_towards_target(target, battle.dt, battle)
+    second = ground_path_waypoint(
+        battle,
+        mover,
+        target.position,
+        target_entity=target,
+    )
+
+    assert first == Position(9.25, 9.25)
+    assert retained_before[:2] == [(18, 18), (18, 19)]
+    assert mover._native_ground_route_cells == retained_before[1:]
+    assert second == Position(9.25, 9.75)
+
+
+def test_native_flying_route_consumes_goal_node_then_tracks_live_center():
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 0
+    mover = _spawn_one(battle, "BabyDragon", 0, Position(2.0, 10.0))
+    target = _spawn_one(battle, "Knight", 1, Position(4.0, 14.0))
+
+    mover._move_towards_target(target, battle.dt, battle)
+
+    assert mover.position == Position(2.063, 10.063)
+    assert mover._native_ground_route_cells == []
+    assert native_single_node_waypoint(mover, target) == target.position
+
+
+def test_native_pathfinder_boundary_division_and_heap_ties_are_world_relative():
+    assert _cell_for_position(Position(8.5, 14.9)) == (17, 29)
+    assert _cell_for_position(Position(9.5, 17.1)) == (19, 34)
+
+    def in_bounds(cell):
+        return 0 <= cell[0] < 5 and 0 <= cell[1] < 5
+
+    obstacle = (2, 1)
+    lower_route = _native_grid_route(
+        (2, 2),
+        (2, 0),
+        lambda cell: 20 if in_bounds(cell) and cell != obstacle else None,
+    )
+    upper_route = _native_grid_route(
+        (2, 0),
+        (2, 2),
+        lambda cell: 20 if in_bounds(cell) and cell != obstacle else None,
+    )
+
+    # Native neighbor insertion plus the priority-only binary heap selects
+    # these opposite lateral ties; no secondary h-score or owner transform is
+    # involved.
+    assert lower_route == [(2, 2), (3, 1), (2, 0)]
+    assert upper_route == [(2, 0), (1, 1), (2, 2)]
 
 
 @pytest.mark.parametrize("rotation", (1.0, -1.0))
@@ -1700,8 +2408,126 @@ def test_non_bridge_river_spawn_snap_prefers_the_owners_mirrored_bank():
     assert lower.y == pytest.approx(32.0 - upper.y)
 
 
-def test_river_jump_landings_are_exact_player_mirrors():
-    battle = BattleState()
+@pytest.mark.parametrize("fast_path", [False, True])
+@pytest.mark.parametrize("player_id", [0, 1])
+def test_backwards_ground_route_keeps_current_target_before_crown_fallback(
+    fast_path,
+    player_id,
+):
+    battle = BattleState(fast_path=fast_path)
+    attacker_position = (
+        Position(9.0, 14.9)
+        if player_id == 0
+        else Position(9.0, 17.1)
+    )
+    target_position = (
+        Position(9.0, 24.0)
+        if player_id == 0
+        else Position(9.0, 8.0)
+    )
+    attacker = _spawn_one(battle, "Knight", player_id, attacker_position)
+    target = _spawn_one(battle, "Knight", 1 - player_id, target_position)
+    attacker.target_id = target.id
+
+    # From the middle non-bridge bank the planned bridge route initially
+    # increases integer distance to this out-of-sight target.
+    attacker._move_towards_target(target, battle.dt, battle)
+    assert attacker._ground_path_backwards
+    if fast_path:
+        battle._refresh_fast_path_caches()
+    assert attacker.get_nearest_target(
+        battle.entities,
+        include_crown_fallback=False,
+    ) is None
+
+    attacker.update_combat_component(battle.dt, battle)
+
+    assert attacker.target_id == target.id
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+@pytest.mark.parametrize("player_id", [0, 1])
+def test_forward_ground_route_still_uses_crown_fallback_when_scan_is_empty(
+    fast_path,
+    player_id,
+):
+    battle = BattleState(fast_path=fast_path)
+    attacker_position = (
+        Position(3.5, 12.0)
+        if player_id == 0
+        else Position(14.5, 20.0)
+    )
+    target_position = (
+        Position(14.5, 25.0)
+        if player_id == 0
+        else Position(3.5, 7.0)
+    )
+    attacker = _spawn_one(battle, "Knight", player_id, attacker_position)
+    target = _spawn_one(battle, "Knight", 1 - player_id, target_position)
+    attacker.target_id = target.id
+
+    attacker._move_towards_target(target, battle.dt, battle)
+    assert not attacker._ground_path_backwards
+    if fast_path:
+        battle._refresh_fast_path_caches()
+    assert attacker.get_nearest_target(
+        battle.entities,
+        include_crown_fallback=False,
+    ) is None
+    fallback = attacker.get_nearest_target(battle.entities)
+    assert isinstance(fallback, Building)
+
+    attacker.update_combat_component(battle.dt, battle)
+
+    assert attacker.target_id == fallback.id
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+@pytest.mark.parametrize("player_id", [0, 1])
+def test_forward_route_installs_farther_crown_fallback_unconditionally(
+    fast_path,
+    player_id,
+):
+    battle = BattleState(fast_path=fast_path)
+    attacker_position = (
+        Position(3.5, 12.0)
+        if player_id == 0
+        else Position(14.5, 20.0)
+    )
+    # The retained troop is outside sight but still substantially nearer than
+    # the opposing princess tower. Native's empty-scan forward-route branch
+    # nevertheless replaces it with the crown fallback.
+    target_position = (
+        Position(3.5, 20.0)
+        if player_id == 0
+        else Position(14.5, 12.0)
+    )
+    attacker = _spawn_one(battle, "Knight", player_id, attacker_position)
+    target = _spawn_one(battle, "Knight", 1 - player_id, target_position)
+    attacker.target_id = target.id
+
+    attacker._move_towards_target(target, battle.dt, battle)
+    assert not attacker._ground_path_backwards
+    if fast_path:
+        battle._refresh_fast_path_caches()
+    assert attacker.get_nearest_target(
+        battle.entities,
+        include_crown_fallback=False,
+    ) is None
+    fallback = attacker.get_nearest_target(battle.entities)
+    assert isinstance(fallback, Building)
+    assert attacker.native_target_distance_to(target) < (
+        attacker.native_target_distance_to(fallback)
+    )
+
+    attacker.update_combat_component(battle.dt, battle)
+
+    assert attacker.target_id == fallback.id
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_river_jump_landings_use_native_world_cell_division(fast_path):
+    battle = BattleState(fast_path=fast_path)
     lower = _spawn_one(battle, "HogRider", 0, Position(8.5, 14.9))
     upper = _spawn_one(battle, "HogRider", 1, Position(9.5, 17.1))
     upper_target = _spawn_one(battle, "Knight", 1, Position(9.5, 18.5))
@@ -1717,15 +2543,16 @@ def test_river_jump_landings_are_exact_player_mirrors():
         Position(9.5, 16.9),
         battle,
     )
-    assert lower._river_jump_target.x == pytest.approx(
-        18.0 - upper._river_jump_target.x
-    )
-    assert lower._river_jump_target.y == pytest.approx(
-        32.0 - upper._river_jump_target.y
-    )
+    # Native state 6 reconstructs the first land node after the river run as
+    # ``cell * 500 + 250`` logic units. It does not intersect the movement ray
+    # with the continuous river edge.
+    assert lower._river_jump_target == Position(8.75, 17.25)
+    # Exact 500-unit boundaries are divided in world space before either
+    # player's route is built, so x=9.5 owns cell 19 (center 9.75).
+    assert upper._river_jump_target == Position(9.75, 14.75)
 
 
-def test_river_jump_initiation_includes_both_rotated_river_boundaries():
+def test_lane_weighted_native_route_does_not_force_a_water_jump():
     lower_battle = BattleState()
     upper_battle = BattleState()
     lower = _spawn_one(lower_battle, "Prince", 0, Position(5.493, 14.884))
@@ -1733,27 +2560,24 @@ def test_river_jump_initiation_includes_both_rotated_river_boundaries():
     lower_target = lower_battle.entities[6]
     upper_target = upper_battle.entities[3]
 
-    # At charged speed, these mirrored moves end exactly on y=15 and y=17.
-    # Both outer edges touch the same river rows and must initiate the same
-    # native river jump instead of making only one direction walk around.
-    for prince in (lower, upper):
-        prince._native_charge_progress = 10000
-        prince._update_charging_state(prince.battle_state)
-        prince._prepare_native_charge_movement()
-
-    lower._move_towards_target(lower_target, lower_battle.dt, lower_battle)
-    upper._move_towards_target(upper_target, upper_battle.dt, upper_battle)
-
-    assert lower._river_jump_active
-    assert upper._river_jump_active
-    assert lower.position.x == pytest.approx(18.0 - upper.position.x)
-    assert lower.position.y == pytest.approx(32.0 - upper.position.y)
-    assert lower._river_jump_target.x == pytest.approx(
-        18.0 - upper._river_jump_target.x
-    )
-    assert lower._river_jump_target.y == pytest.approx(
-        32.0 - upper._river_jump_target.y
-    )
+    # These positions sit just outside the bridge corridors. Native routing
+    # costs 1 on the Prince's stored lane but 20 on water even for a jumper,
+    # so both paths turn toward a bridge instead of forcing an edge crossing.
+    assert lower._native_lane_id == 1
+    assert upper._native_lane_id == 2
+    assert _native_pathfinder_tile_cost(lower, (6, 29)) == 1
+    assert _native_pathfinder_tile_cost(lower, (28, 35)) == 5
+    assert _native_pathfinder_tile_cost(lower, (12, 31)) == 20
+    assert native_jump_landing_waypoint(
+        lower_battle,
+        lower,
+        lower_target.position,
+    ) is None
+    assert native_jump_landing_waypoint(
+        upper_battle,
+        upper,
+        upper_target.position,
+    ) is None
 
 
 @pytest.mark.parametrize("stun_duration", [0.5, 1.0])
@@ -1786,7 +2610,7 @@ def test_river_jump_state_resets_charge_before_deferred_stun(stun_duration):
     assert not prince.is_charging
     if prince.stun_timer > 0:
         assert prince.attack_cooldown == pytest.approx(
-            prince.card_stats.first_hit_time / 1000.0
+            prince.get_base_attack_interval_seconds()
         )
 
 
@@ -1826,16 +2650,27 @@ def test_air_capable_knockback_displaces_river_jumper_and_rebases_landing():
 
 
 @pytest.mark.parametrize(
-    ("target_position", "origin", "expected"),
+    ("target_position", "origin", "expected", "expected_after_nine"),
     (
-        (Position(9.0, 10.0), Position(6.0, 6.0), Position(9.6, 10.8)),
-        (Position(9.0, 22.0), Position(12.0, 26.0), Position(8.4, 21.2)),
+        (
+            Position(9.0, 10.0),
+            Position(6.0, 6.0),
+            Position(9.6, 10.8),
+            Position(9.536, 10.715),
+        ),
+        (
+            Position(9.0, 22.0),
+            Position(12.0, 26.0),
+            Position(8.4, 21.2),
+            Position(8.46, 21.28),
+        ),
     ),
 )
 def test_radial_knockback_uses_native_integer_velocity_curve(
     target_position,
     origin,
     expected,
+    expected_after_nine,
 ):
     from clasher.mechanics.shared.knockback import apply_radial_knockback
 
@@ -1857,21 +2692,22 @@ def test_radial_knockback_uses_native_integer_velocity_curve(
 
     assert target.position == target_position
     target.update_movement_component(battle.dt, battle)
+    first_delta = movement_component_vector_logic_units(
+        tiles_to_logic_units(expected.x - target_position.x),
+        tiles_to_logic_units(expected.y - target_position.y),
+        200,
+    )
     first_step = Position(
-        target_position.x + (expected.x - target_position.x) * 0.2,
-        target_position.y + (expected.y - target_position.y) * 0.2,
+        target_position.x + logic_units_to_tiles(first_delta[0]),
+        target_position.y + logic_units_to_tiles(first_delta[1]),
     )
     assert target.position == first_step
     for _ in range(8):
         target.update_movement_component(battle.dt, battle)
-    final_position = Position(
-        target_position.x + (expected.x - target_position.x) * 0.9,
-        target_position.y + (expected.y - target_position.y) * 0.9,
-    )
-    assert target.position == final_position
+    assert target.position == expected_after_nine
     assert target.forced_movement_active
     target.update_movement_component(battle.dt, battle)
-    assert target.position == final_position
+    assert target.position == expected_after_nine
     assert not target.forced_movement_active
     assert target.position.x * 1000 == round(target.position.x * 1000)
     assert target.position.y * 1000 == round(target.position.y * 1000)
@@ -2126,6 +2962,130 @@ def test_royal_hogs_use_native_wide_zigzag_with_staggered_deploys():
         assert [hog.deploy_delay_remaining for hog in hogs] == pytest.approx(
             [1.0, 1.1, 1.2, 1.3]
         )
+
+
+@pytest.mark.parametrize("count", [2, 3, 4])
+def test_native_deploy_sequence_mirrors_small_formations_on_path_one(count):
+    path_one = [
+        formation_offset(index, count, 0.5, 0, lane_id=1)
+        for index in range(count)
+    ]
+    path_two = [
+        formation_offset(index, count, 0.5, 0, lane_id=2)
+        for index in range(count)
+    ]
+
+    assert path_one == pytest.approx(
+        [(-offset_x, offset_y) for offset_x, offset_y in path_two]
+    )
+
+
+def test_native_deploy_sequence_does_not_mirror_five_slot_formation():
+    path_one = [
+        formation_offset(index, 5, 0.5, 0, lane_id=1)
+        for index in range(5)
+    ]
+    path_two = [
+        formation_offset(index, 5, 0.5, 0, lane_id=2)
+        for index in range(5)
+    ]
+
+    assert path_one == path_two
+
+
+def test_symmetric_deploy_snap_nudges_shared_ground_anchor_by_one_logic_unit():
+    battle = BattleState()
+    knight = battle.card_loader.get_card("Knight")
+    assert knight is not None
+
+    bottom_left = battle._apply_symmetric_deploy_snap(
+        Position(8.0, 10.0), 0, knight
+    )
+    bottom_right = battle._apply_symmetric_deploy_snap(
+        Position(10.0, 10.0), 0, knight
+    )
+    top_left = battle._apply_symmetric_deploy_snap(
+        Position(8.0, 22.0), 1, knight
+    )
+
+    assert (
+        tiles_to_logic_units(bottom_left.x),
+        tiles_to_logic_units(bottom_left.y),
+    ) == (7999, 10000)
+    assert (
+        tiles_to_logic_units(bottom_right.x),
+        tiles_to_logic_units(bottom_right.y),
+    ) == (10000, 10000)
+    assert (
+        tiles_to_logic_units(top_left.x),
+        tiles_to_logic_units(top_left.y),
+    ) == (7999, 21999)
+
+
+@pytest.mark.parametrize("card_name", ["Bats", "Cannon", "Bandit", "MegaKnight"])
+def test_symmetric_deploy_snap_uses_character_capability_gates(card_name):
+    battle = BattleState()
+    stats = battle.card_loader.get_card(card_name)
+    assert stats is not None
+    anchor = Position(8.0, 22.0)
+
+    assert battle._apply_symmetric_deploy_snap(anchor, 1, stats) == anchor
+
+
+@pytest.mark.parametrize(
+    ("player_id", "anchor", "expected"),
+    [
+        (0, Position(8.0, 10.0), (7999, 10000)),
+        (1, Position(8.0, 22.0), (7999, 21999)),
+    ],
+)
+def test_card_deployment_applies_symmetric_snap_before_character_birth(
+    player_id, anchor, expected
+):
+    battle = BattleState()
+    before = set(battle.entities)
+
+    assert battle.deploy_card(player_id, "Knight", anchor)
+    knight = next(
+        entity
+        for entity_id, entity in battle.entities.items()
+        if entity_id not in before and isinstance(entity, Troop)
+    )
+
+    assert (
+        tiles_to_logic_units(knight.position.x),
+        tiles_to_logic_units(knight.position.y),
+    ) == expected
+
+
+def test_deploy_sequence_uses_shared_anchor_lane_for_spawn_order():
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    stats = battle.card_loader.get_card("Skeletons")
+    assert stats is not None
+    left_anchor = Position(5.0, 12.0)
+    right_anchor = Position(13.0, 12.0)
+    assert battle.arena.native_path_id_at(left_anchor) == 1
+    assert battle.arena.native_path_id_at(right_anchor) == 2
+
+    def deployed_offsets(anchor):
+        before = set(battle.entities)
+        battle._spawn_troop(anchor, 0, stats)
+        return [
+            (
+                entity.position.x - anchor.x,
+                entity.position.y - anchor.y,
+            )
+            for entity_id, entity in battle.entities.items()
+            if entity_id not in before and isinstance(entity, Troop)
+        ]
+
+    left = deployed_offsets(left_anchor)
+    right = deployed_offsets(right_anchor)
+    assert left == pytest.approx(
+        [(-offset_x, offset_y) for offset_x, offset_y in right]
+    )
 
 
 def test_deploy_formation_offsets_are_not_individually_relocated_from_water():
@@ -2476,7 +3436,7 @@ def test_electro_spirit_chains_after_its_first_hit_kills_the_target():
     assert second.stun_timer == pytest.approx(0.5)
 
 
-def test_electro_spirit_chain_can_enter_units_spawned_by_its_lethal_first_hit():
+def test_electro_spirit_chain_cannot_enter_active_lethal_first_hit_death_spawns():
     battle = BattleState()
     hound = _spawn_one(battle, "LavaHound", 1, Position(5.0, 15.0))
     spirit = _spawn_one(battle, "ElectroSpirit", 0, Position(5.0, 13.0))
@@ -2505,13 +3465,12 @@ def test_electro_spirit_chain_can_enter_units_spawned_by_its_lethal_first_hit():
         if isinstance(entity, ChainLightning)
     )
 
+    # The first 250 ms link seeks its target while the native marker is still
+    # active; it clears only on the following 50 ms character-object tick.
     chain.update(0.25, battle)
 
-    assert sum(
-        before - pup.hitpoints
-        for before, pup in zip(hp_before, pups, strict=True)
-    ) == spirit.damage
-    assert sum(pup.stun_timer > 0 for pup in pups) == 1
+    assert [pup.hitpoints for pup in pups] == hp_before
+    assert all(pup.stun_timer == 0.0 for pup in pups)
 
 
 @pytest.mark.parametrize("distance", (0.5, 4.0))
@@ -2686,6 +3645,7 @@ def test_chain_lightning_can_jump_to_invisible_units_but_not_hidden_buildings():
     tesla.on_spawn()
     before = (ghost.hitpoints, tesla.hitpoints)
     assert not ghost.is_targetable_by(0)
+    _fully_hide_tesla(tesla)
     assert tesla._hidden_building
 
     chain = ChainLightning(
@@ -3027,11 +3987,17 @@ def test_golem_and_golemite_death_novas_are_scaled_and_hit_both_planes():
     assert all(golemites_unit.deploy_delay_remaining == 0.0 for golemites_unit in golemites)
     assert all(golemites_unit.card_stats.sight_clip == 2.0 for golemites_unit in golemites)
     assert all(golemites_unit.card_stats.sight_clip_side == 2.0 for golemites_unit in golemites)
-    assert sorted(golemite.position.x for golemite in golemites) == pytest.approx([7.5, 10.5])
+    assert all(golemite.position == golem.position for golemite in golemites)
+    assert [
+        golemite._death_spawn_travel_target.x for golemite in golemites
+    ] == pytest.approx([7.5, 10.5])
+    assert [
+        golemite._death_spawn_travel_ticks_remaining for golemite in golemites
+    ] == [6, 6]
     assert [
         golemite._native_target_distance_discount_sq_units
         for golemite in golemites
-    ] == [0, 80**2]
+    ] == [0, 0]
     assert any(type(mechanic).__name__ == "DeathDamage" for mechanic in golemites[0].mechanics)
 
     golemites[0].deploy_delay_remaining = 0.0
@@ -3040,6 +4006,7 @@ def test_golem_and_golemite_death_novas_are_scaled_and_hit_both_planes():
     golemites[0].position = Position(ground.position.x - 1.0, ground.position.y)
     ground_hp = ground.hitpoints
     ground_x = ground.position.x
+    battle.tick += 1
     golemites[0].take_damage(golemites[0].hitpoints)
     assert ground_hp - ground.hitpoints == golemites[0].card_stats.get_scaled_stat(39)
     for _ in range(9):
@@ -3062,6 +4029,7 @@ def test_ice_golem_death_slow_is_a_one_shot_post_damage_snapshot():
     tesla.placement_pending = False
     tesla.on_spawn()
     tesla_hp = tesla.hitpoints
+    _fully_hide_tesla(tesla)
     assert tesla._hidden_building
     ice_golem.position = Position(9.0, 14.0)
     golem.position = Position(9.0, 14.0)
@@ -3102,8 +4070,8 @@ def test_ice_golem_death_slow_is_a_one_shot_post_damage_snapshot():
 
     assert survivor.slow_multiplier == pytest.approx(0.7)
     assert survivor.slow_timer == pytest.approx(2.0)
-    assert all(golemite.slow_timer == pytest.approx(2.0) for golemite in golemites)
     assert all(golemite.slow_multiplier == pytest.approx(0.7) for golemite in golemites)
+    assert all(golemite.slow_timer == pytest.approx(2.0) for golemite in golemites)
     # Its separate death-area slow is marked AffectsHidden in the current
     # AreaEffectObject table and therefore reaches a retracted Tesla.
     assert slow_field.affects_hidden
@@ -3138,6 +4106,7 @@ def test_lumberjack_death_rage_keeps_its_distinct_crown_tower_modifier():
     tesla.deploy_delay_remaining = 0.0
     tesla.placement_pending = False
     tesla.on_spawn()
+    _fully_hide_tesla(tesla)
     assert tesla._hidden_building
     lumberjack = _spawn_one(battle, "Lumberjack", 0, Position(9.0, 14.0))
     target_hp = target.hitpoints
@@ -3182,6 +4151,7 @@ def test_spawn_area_without_affects_hidden_does_not_reach_retracted_tesla():
     tesla.deploy_delay_remaining = 0.0
     tesla.placement_pending = False
     tesla.on_spawn()
+    _fully_hide_tesla(tesla)
     assert tesla._hidden_building
     hp_before = tesla.hitpoints
 
@@ -3274,6 +4244,80 @@ def test_lumberjack_rage_buff_waits_for_its_own_300ms_area_scan():
     battle.step()
     assert rage.time_alive == pytest.approx(0.3)
     assert ally.haste_timer == pytest.approx(1.0)
+    assert ally.movement_speed_buff_multiplier == pytest.approx(1.3)
+
+
+@pytest.mark.parametrize(
+    ("cap_to_area", "expected_refresh"),
+    ((False, 1.0), (True, 0.1)),
+)
+def test_positive_area_buff_falloff_uses_serialized_cap_flag(
+    cap_to_area,
+    expected_refresh,
+):
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    ally = _spawn_one(battle, "Knight", 0, Position(9.0, 14.0))
+    lumberjack_stats = battle.card_loader.get_card("Lumberjack")
+    assert lumberjack_stats is not None
+    rage_data = copy.deepcopy(
+        lumberjack_stats._raw_entry["summonCharacterData"]
+        ["deathAreaEffectData"]["onStartingActionData"]
+        ["spawnDataData"]["deathAreaEffectData"]
+    )
+    if cap_to_area:
+        rage_data["capBuffTimeToAreaEffectTime"] = True
+
+    rage = spawn_death_area_object(
+        battle,
+        player_id=0,
+        position=Position(9.0, 14.0),
+        card_stats=lumberjack_stats,
+        area_data=rage_data,
+    )
+    assert isinstance(rage, BuffAreaEffect)
+    assert rage.cap_buff_time_to_effect is cap_to_area
+
+    # Isolate the last 300 ms area scan. Only 100 ms of the field remains at
+    # this scan, while the serialized recipient falloff is a full second.
+    rage.time_alive = 5.1
+    rage.next_effect_time = 5.4
+    rage.impact_applied = True
+    rage.update(0.3, battle)
+
+    assert ally.haste_timer == pytest.approx(expected_refresh)
+
+
+def test_lumberjack_rage_lingers_after_its_area_expires():
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    ally = _spawn_one(battle, "Knight", 0, Position(9.0, 14.0))
+    lumberjack_stats = battle.card_loader.get_card("Lumberjack")
+    assert lumberjack_stats is not None
+    rage_data = copy.deepcopy(
+        lumberjack_stats._raw_entry["summonCharacterData"]
+        ["deathAreaEffectData"]["onStartingActionData"]
+        ["spawnDataData"]["deathAreaEffectData"]
+    )
+    rage = spawn_death_area_object(
+        battle,
+        player_id=0,
+        position=Position(9.0, 14.0),
+        card_stats=lumberjack_stats,
+        area_data=rage_data,
+    )
+    rage.time_alive = 5.1
+    rage.next_effect_time = 5.4
+    rage.impact_applied = True
+
+    rage.update(0.3, battle)
+    ally.update_status_effects(0.1)
+    rage.update(0.1, battle)
+
+    assert not rage.is_alive
+    assert ally.haste_timer == pytest.approx(0.9)
     assert ally.movement_speed_buff_multiplier == pytest.approx(1.3)
 
 
@@ -3464,6 +4508,10 @@ def test_object_phase_lethal_hit_ticks_every_enabled_death_payload_on_birth_fram
         assert all(payload.time_alive == pytest.approx(0.05) for payload in payloads)
     else:
         assert all(
+            payload._death_spawn_target_immunity_elapsed_ms == 50
+            for payload in payloads
+        )
+        assert all(
             payload.deploy_delay_remaining
             == pytest.approx(deploy_time_after_birth)
             for payload in payloads
@@ -3523,8 +4571,8 @@ def test_nested_death_area_precedes_and_affects_same_frame_container_spawns(
         skeleton.deploy_delay_remaining == pytest.approx(0.45)
         for skeleton in skeletons
     )
-    assert all(skeleton.slow_timer == pytest.approx(2.0) for skeleton in skeletons)
     assert all(skeleton.slow_multiplier == pytest.approx(0.7) for skeleton in skeletons)
+    assert all(skeleton.slow_timer == pytest.approx(2.0) for skeleton in skeletons)
 
 
 def test_skeleton_barrel_uses_committed_half_second_contact_countdown():
@@ -3560,7 +4608,7 @@ def test_skeleton_barrel_uses_committed_half_second_contact_countdown():
 
 
 def test_lava_hound_splits_with_native_descending_radial_enumeration():
-    for player_id, flip_y in ((0, 1.0), (1, -1.0)):
+    for player_id in (0, 1):
         battle = BattleState()
         hound = _spawn_one(battle, "LavaHound", player_id, Position(9.0, 14.0))
         assert hound.card_stats.projectile_start_radius == 1.0
@@ -3574,32 +4622,102 @@ def test_lava_hound_splits_with_native_descending_radial_enumeration():
         assert all(pup.card_stats.projectile_start_radius == 0.5 for pup in pups)
         assert all(not pup.placement_pending for pup in pups)
         assert all(pup.deploy_delay_remaining == 0.0 for pup in pups)
-        assert [
-            pup._native_target_distance_discount_sq_units for pup in pups
-        ] == [(index * 80) ** 2 for index in range(6)]
+        assert all(
+            pup._native_target_distance_discount_sq_units == 0
+            for pup in pups
+        )
         expected_offsets = [
-            (1.25, flip_y * -2.165),
-            (-1.25, flip_y * -2.165),
+            (1.25, -2.165),
+            (-1.25, -2.165),
             (-2.5, 0.0),
-            (-1.25, flip_y * 2.165),
-            (1.25, flip_y * 2.165),
+            (-1.25, 2.165),
+            (1.25, 2.165),
             (2.5, 0.0),
         ]
+        assert all(pup.position == hound.position for pup in pups)
         assert [
             (
                 logic_units_to_tiles(
-                    tiles_to_logic_units(pup.position.x - hound.position.x)
+                    tiles_to_logic_units(
+                        pup._death_spawn_travel_target.x - hound.position.x
+                    )
                 ),
                 logic_units_to_tiles(
-                    tiles_to_logic_units(pup.position.y - hound.position.y)
+                    tiles_to_logic_units(
+                        pup._death_spawn_travel_target.y - hound.position.y
+                    )
                 ),
             )
             for pup in pups
         ] == expected_offsets
+        assert [
+            pup._death_spawn_travel_ticks_remaining for pup in pups
+        ] == [9, 9, 10, 9, 9, 10]
 
 
-def test_death_spawn_index_order_uses_native_lane_orientation():
-    indexed_offsets_by_lane = {}
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_death_spawn_pushback_uses_250_unit_noninterrupting_travel(fast_path):
+    battle = BattleState(fast_path=fast_path)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    hound = _spawn_one(battle, "LavaHound", 0, Position(9.0, 14.0))
+    hound.take_damage(hound.hitpoints)
+    pups = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop) and entity.card_stats.name == "LavaPups"
+    ]
+    pup = pups[0]
+    for sibling in pups[1:]:
+        sibling.is_alive = False
+
+    # The dedicated travel state does not set the ordinary forced-movement
+    # combat gate. A child with a live in-range target can launch its attack
+    # before its movement component advances the first radial frame.
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 14.5))
+    target.stun_timer = 99.0
+    pup.target_id = target.id
+    pup.attack_cooldown = 0.0
+    pup.update_combat_component(battle.dt, battle)
+    assert any(
+        isinstance(entity, Projectile)
+        and entity.source_name == "LavaPups"
+        for entity in battle.entities.values()
+    )
+    assert not pup.forced_movement_active
+    # The movement dispatcher services this state before its stun/deployment
+    # branches, so freezing the child does not pause the radial launch.
+    pup.stun_timer = 99.0
+
+    expected_positions = [
+        (9.125, 13.785),
+        (9.249, 13.570),
+        (9.373, 13.355),
+        (9.498, 13.140),
+        (9.622, 12.925),
+        (9.746, 12.710),
+        (9.870, 12.494),
+        (9.995, 12.279),
+        (10.119, 12.063),
+    ]
+    for expected in expected_positions:
+        pup.begin_movement_tick()
+        try:
+            pup.update_movement_component(battle.dt, battle)
+        finally:
+            pup.finish_movement_tick(battle)
+            pup.quantize_logic_position()
+        assert (pup.position.x, pup.position.y) == pytest.approx(expected)
+
+    # The native duration truncates 2499 / 250 to nine frames and does not
+    # snap the diagonal child to its retained 2500-unit ring coordinate.
+    assert pup._death_spawn_travel_ticks_remaining == 0
+    assert pup._death_spawn_travel_target is None
+    assert pup.position != Position(10.25, 11.835)
+
+
+def test_death_spawn_pushback_ring_is_world_fixed_without_const_priority():
+    targets_by_lane = {}
 
     for x in (5.0, 13.0):
         battle = BattleState()
@@ -3611,19 +4729,22 @@ def test_death_spawn_index_order_uses_native_lane_orientation():
             if isinstance(entity, Troop)
             and entity.card_stats.name == "Golemite"
         ]
-        indexed_offsets_by_lane[battle.arena.native_path_id_at(golem.position)] = [
+        targets_by_lane[battle.arena.native_path_id_at(golem.position)] = [
             (
                 logic_units_to_tiles(
-                    tiles_to_logic_units(golemite.position.x - golem.position.x)
+                    tiles_to_logic_units(
+                        golemite._death_spawn_travel_target.x - golem.position.x
+                    )
                 ),
                 golemite._native_target_distance_discount_sq_units,
             )
             for golemite in golemites
         ]
+        assert all(golemite.position == golem.position for golemite in golemites)
 
-    assert indexed_offsets_by_lane == {
-        1: [(1.5, 0), (-1.5, 80**2)],
-        2: [(-1.5, 0), (1.5, 80**2)],
+    assert targets_by_lane == {
+        1: [(-1.5, 0), (1.5, 0)],
+        2: [(-1.5, 0), (1.5, 0)],
     }
 
 
@@ -3754,8 +4875,8 @@ def test_skeleton_barrel_container_propagates_spawn_const_priority():
     )
     assert container.spawn_const_priority
 
-    # Exercise the serialized priority flag independently of radial pushback;
-    # both native fields can request the same child targeting allowance.
+    # Exercise the serialized priority flag independently of radial pushback.
+    # DeathSpawnPushback controls travel only; it never grants this allowance.
     container.death_spawn_pushback = False
     container.update(container.explosion_timer, battle)
     skeletons = [
@@ -3765,6 +4886,49 @@ def test_skeleton_barrel_container_propagates_spawn_const_priority():
         and entity.card_stats.name == "Skeleton"
     ]
     assert len(skeletons) == 7
+    assert [
+        skeleton._native_target_distance_discount_sq_units
+        for skeleton in skeletons
+    ] == [(index * 80) ** 2 for index in range(7)]
+
+
+def test_skeleton_barrel_children_combine_pushback_travel_and_const_priority():
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    barrel = _spawn_one(
+        battle,
+        "SkeletonBarrel",
+        0,
+        Position(9.0, 14.0),
+    )
+    barrel.take_damage(barrel.hitpoints)
+    container = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, TimedExplosive)
+    )
+    assert container.death_spawn_pushback
+    assert container.spawn_const_priority
+
+    container.update(container.explosion_timer, battle)
+
+    skeletons = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop)
+        and entity.card_stats.name == "Skeleton"
+    ]
+    assert len(skeletons) == 7
+    assert all(skeleton.position == container.position for skeleton in skeletons)
+    assert all(
+        skeleton._death_spawn_travel_target is not None
+        for skeleton in skeletons
+    )
+    assert all(
+        skeleton._death_spawn_travel_ticks_remaining == 5
+        for skeleton in skeletons
+    )
     assert [
         skeleton._native_target_distance_discount_sq_units
         for skeleton in skeletons
@@ -3935,7 +5099,29 @@ def test_miner_travels_from_king_at_650_then_emerges_intangible_and_scaled():
 
     origin = battle.arena.BLUE_KING_TOWER
     destination = Position(9.0, 20.0)
-    travel_seconds = origin.distance_to(destination) / (650.0 / 50.0)
+    distance_units = round(origin.distance_to(destination) * 1000)
+    # Native state 7 splits the 650-unit frame budget into 250-unit movement
+    # substeps and tests the full 650-unit reached radius after each one.
+    travel_ticks = 26
+    assert distance_units == 17500
+    assert spawn_path_travel_tick_count(
+        distance_units,
+        650,
+        reached_radius_from_speed=True,
+    ) == travel_ticks
+    # The global is behavior, not documentation: the former fixed 1000-unit
+    # radius completes this nearby boundary case one frame earlier.
+    assert spawn_path_travel_tick_count(
+        17600,
+        650,
+        reached_radius_from_speed=True,
+    ) == 27
+    assert spawn_path_travel_tick_count(
+        17600,
+        650,
+        reached_radius_from_speed=False,
+    ) == 26
+    travel_seconds = travel_ticks * battle.dt
     tunnel = miner.mechanics[1]
     assert tunnel.travel_speed_logic_units_per_tick == 650
     assert miner.card_stats._raw_entry["summonCharacterData"]["spawnPathfindSpeed"] == 650
@@ -3954,7 +5140,6 @@ def test_miner_travels_from_king_at_650_then_emerges_intangible_and_scaled():
     assert origin.y < miner.position.y < destination.y
     assert enemy.position == Position(9.0, 20.5)
 
-    travel_ticks = math.ceil(travel_seconds / battle.dt)
     for _ in range(travel_ticks - 1):
         battle.step()
     assert miner.position.y == pytest.approx(destination.y)
@@ -4027,11 +5212,11 @@ def test_miner_underground_travel_time_depends_on_distance_and_rotates():
 
     near, far, rotated = spawned
     assert near.placement_delay_total < far.placement_delay_total
-    assert near.placement_delay_total == pytest.approx(
-        battle.arena.BLUE_KING_TOWER.distance_to(Position(4.0, 22.0))
-        / (650.0 / 50.0)
-        + 1.0
-    )
+    raw_distance = battle.arena.BLUE_KING_TOWER.distance_to(Position(4.0, 22.0))
+    continuous_duration = raw_distance / (650.0 / 50.0)
+    assert near._underground_travel_duration == 1.5
+    assert near.placement_delay_total == 2.5
+    assert near._underground_travel_duration != pytest.approx(continuous_duration)
     assert rotated.position == battle.arena.RED_KING_TOWER
 
 
@@ -4123,28 +5308,24 @@ def test_serialized_footstep_cycle_pauses_movement(
     battle = BattleState()
     walker = _spawn_one(battle, card_name, 0, Position(9.0, 5.0))
     target = _spawn_one(battle, "Knight", 1, Position(9.0, 10.0))
-    start_y = walker.position.y
-    per_tick_distance = (walker.card_stats.speed / 50.0) * battle.dt
-
     assert walker.card_stats.stop_movement_after_ms == stop_after_ms
     assert walker.card_stats.wait_ms == wait_ms
 
-    positions = []
+    positions = [Position(walker.position.x, walker.position.y)]
     for _ in range(pre_pause_ticks + rest_ticks):
         walker._move_towards_target(target, battle.dt, battle)
-        positions.append(walker.position.y)
+        positions.append(Position(walker.position.x, walker.position.y))
 
-    assert positions[pre_pause_ticks - 1] == pytest.approx(
-        start_y + pre_pause_ticks * per_tick_distance
+    assert all(
+        positions[index] != positions[index - 1]
+        for index in range(1, pre_pause_ticks + 1)
     )
-    assert positions[pre_pause_ticks:] == pytest.approx(
-        [positions[pre_pause_ticks - 1]] * rest_ticks
+    assert positions[pre_pause_ticks + 1 :] == (
+        [positions[pre_pause_ticks]] * rest_ticks
     )
 
     walker._move_towards_target(target, battle.dt, battle)
-    assert walker.position.y == pytest.approx(
-        start_y + (pre_pause_ticks + 1) * per_tick_distance
-    )
+    assert walker.position != positions[-1]
 
 
 def test_rage_advances_giant_footstep_clock_with_native_per_frame_truncation():
@@ -4197,14 +5378,24 @@ def test_projectile_launched_in_combat_ticks_in_same_frames_object_phase():
 
 
 @pytest.mark.parametrize(
-    ("card_name", "finish_ms"),
-    (("Valkyrie", 100), ("Princess", 200), ("Bowler", 150)),
+    ("card_name", "overrides_finish", "finish_ms"),
+    (
+        ("Knight", False, 250),
+        ("Valkyrie", True, 100),
+        ("Princess", True, 200),
+        ("Bowler", True, 150),
+        ("ElectroDragon", True, 0),
+        ("ElectroWizard", True, 0),
+    ),
 )
-def test_serialized_attack_finish_delays_retarget_after_connected_target_dies(
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_attack_finish_metadata_does_not_delay_non_sequence_retarget(
     card_name,
+    overrides_finish,
     finish_ms,
+    fast_path,
 ):
-    battle = BattleState()
+    battle = BattleState(fast_path=fast_path)
     battle.entities.clear()
     battle.next_entity_id = 1
     attacker = _spawn_one(battle, card_name, 0, Position(9.0, 10.0))
@@ -4214,50 +5405,29 @@ def test_serialized_attack_finish_delays_retarget_after_connected_target_dies(
     first.position = Position(9.0, 12.0)
     second.position = Position(10.0, 12.0)
     attacker.target_id = first.id
-    attacker._record_attack_committed(first)
 
-    assert attacker.card_stats.override_attack_finish_time
+    assert attacker.card_stats.override_attack_finish_time is overrides_finish
     assert attacker.card_stats.attack_finish_time == finish_ms
-    first.take_damage(first.hitpoints)
-    battle._cleanup_dead_entities()
-
-    blocked_ticks = math.ceil((finish_ms / 1000.0) / battle.dt)
-    for _ in range(blocked_ticks):
-        attacker.update(battle.dt, battle)
-        assert attacker.target_id is None
-
-    attacker.update(battle.dt, battle)
-    assert attacker.target_id == second.id
-
-
-def test_ordinary_attackers_use_the_global_attack_finish_time():
-    battle = BattleState()
-    battle.entities.clear()
-    battle.next_entity_id = 1
-    attacker = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
-    first = _spawn_one(battle, "Skeletons", 1, Position(9.0, 12.0))
-    second = _spawn_one(battle, "Skeletons", 1, Position(10.0, 12.0))
-    attacker.position = Position(9.0, 10.0)
-    first.position = Position(9.0, 12.0)
-    second.position = Position(10.0, 12.0)
-    attacker.target_id = first.id
-    attacker._record_attack_committed(first)
+    attacker.attack_cooldown = 0.0
+    attacker.update_combat_component(battle.dt, battle)
+    assert attacker.target_id == first.id
+    assert first.is_alive
 
     first.take_damage(first.hitpoints)
     battle._cleanup_dead_entities()
+    battle._rebuild_target_cache()
 
-    assert not attacker.card_stats.override_attack_finish_time
-    assert attacker.card_stats.attack_finish_time == 250
-    for _ in range(math.ceil(0.250 / battle.dt)):
-        attacker.update(battle.dt, battle)
-        assert attacker.target_id is None
-
-    attacker.update(battle.dt, battle)
+    # Native AttackFinishTime gates reacquisition only while preserving a
+    # serialized AttackSequence. None of the enabled/reachable characters has
+    # that data, so these otherwise live metadata values do not add a generic
+    # post-hit or post-death lock.
+    attacker.update_combat_component(battle.dt, battle)
     assert attacker.target_id == second.id
 
 
-def test_troop_target_death_during_windup_still_finishes_attack_animation():
-    battle = BattleState()
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_troop_target_death_during_windup_retargets_next_combat_frame(fast_path):
+    battle = BattleState(fast_path=fast_path)
     battle.entities.clear()
     battle.next_entity_id = 1
     attacker = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
@@ -4271,16 +5441,112 @@ def test_troop_target_death_during_windup_still_finishes_attack_animation():
 
     first.take_damage(first.hitpoints)
     battle._cleanup_dead_entities()
-    for _ in range(math.ceil(0.250 / battle.dt)):
-        attacker.update(battle.dt, battle)
-        assert attacker.target_id is None
+    battle._rebuild_target_cache()
 
-    attacker.update(battle.dt, battle)
+    attacker.update_combat_component(battle.dt, battle)
     assert attacker.target_id == second.id
 
 
-def test_building_target_death_during_windup_uses_the_same_finish_lock():
-    battle = BattleState()
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_direct_area_attack_cancels_payload_after_target_death(fast_path):
+    battle = BattleState(fast_path=fast_path)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    attacker = _spawn_one(battle, "DarkPrince", 0, Position(9.0, 10.0))
+    primary = _spawn_one(battle, "Skeletons", 1, Position(9.0, 11.0))
+    bystander = _spawn_one(battle, "Knight", 1, Position(10.0, 11.0))
+    attacker.position = Position(9.0, 10.0)
+    primary.position = Position(9.0, 11.0)
+    bystander.position = Position(10.0, 11.0)
+
+    attacker.update_combat_component(battle.dt, battle)
+    assert attacker.target_id == primary.id
+    assert attacker._attack_windup_active
+    bystander_hp = bystander.hitpoints
+
+    primary.take_damage(primary.hitpoints)
+    battle._cleanup_dead_entities()
+    primary.position = Position(1.0, 1.0)
+
+    attacker.update_combat_component(battle.dt, battle)
+    assert attacker.target_id == bystander.id
+    assert bystander.hitpoints == bystander_hp
+
+
+@pytest.mark.parametrize("attacker_kind", ("troop", "building"))
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_projectile_area_attack_cancels_payload_after_target_death(
+    attacker_kind,
+    fast_path,
+):
+    battle = BattleState(fast_path=fast_path)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    if attacker_kind == "troop":
+        attacker = _spawn_one(battle, "Bomber", 0, Position(9.0, 10.0))
+    else:
+        attacker = battle._spawn_entity(
+            Building,
+            Position(9.0, 10.0),
+            0,
+            battle.card_loader.get_card("BombTower"),
+        )
+        attacker.deploy_delay_remaining = 0.0
+        attacker.placement_pending = False
+        attacker.on_spawn()
+    primary = _spawn_one(battle, "Skeletons", 1, Position(9.0, 13.0))
+    bystander = _spawn_one(battle, "Knight", 1, Position(10.0, 13.0))
+    primary.position = Position(9.0, 13.0)
+    bystander.position = Position(10.0, 13.0)
+
+    attacker.update_combat_component(battle.dt, battle)
+    assert attacker.target_id == primary.id
+    assert attacker._attack_windup_active
+    bystander_hp = bystander.hitpoints
+    primary.take_damage(primary.hitpoints)
+    battle._cleanup_dead_entities()
+    primary.position = Position(1.0, 1.0)
+
+    attacker.update_combat_component(battle.dt, battle)
+    assert attacker.target_id == bystander.id
+    assert bystander.hitpoints == bystander_hp
+    assert not any(
+        isinstance(entity, Projectile) and entity.source_entity is attacker
+        for entity in battle.entities.values()
+    )
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_area_attack_recoil_does_not_run_after_target_death(fast_path):
+    battle = BattleState(fast_path=fast_path)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    attacker = _spawn_one(battle, "Firecracker", 0, Position(9.0, 10.0))
+    primary = _spawn_one(battle, "Knight", 1, Position(9.0, 15.0))
+    primary.position = Position(9.0, 15.0)
+    attacker.attack_cooldown = attacker.get_preloaded_attack_time_seconds()
+
+    attacker.update_combat_component(battle.dt, battle)
+    assert attacker._attack_windup_active
+    primary.take_damage(primary.hitpoints)
+    battle._cleanup_dead_entities()
+    primary.position = Position(15.0, 10.0)
+
+    for _ in range(5):
+        attacker.update_combat_component(battle.dt, battle)
+        assert attacker.position == Position(9.0, 10.0)
+
+    assert not any(
+        isinstance(entity, Projectile) and entity.source_entity is attacker
+        for entity in battle.entities.values()
+    )
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_building_target_death_during_windup_retargets_next_combat_frame(
+    fast_path,
+):
+    battle = BattleState(fast_path=fast_path)
     battle.entities.clear()
     battle.next_entity_id = 1
     cannon = battle._spawn_entity(
@@ -4301,126 +5567,10 @@ def test_building_target_death_during_windup_uses_the_same_finish_lock():
 
     first.take_damage(first.hitpoints)
     battle._cleanup_dead_entities()
-    for _ in range(math.ceil(0.250 / battle.dt)):
-        cannon.update(battle.dt, battle)
-        assert cannon.target_id is None
+    battle._rebuild_target_cache()
 
-    cannon.update(battle.dt, battle)
+    cannon.update_combat_component(battle.dt, battle)
     assert cannon.target_id == second.id
-
-
-@pytest.mark.parametrize("fast_path", [False, True])
-@pytest.mark.parametrize("card_name", ("Cannon", "Xbow"))
-def test_broken_building_lock_cannot_create_a_later_stale_attack_finish(
-    fast_path,
-    card_name,
-):
-    battle = BattleState(fast_path=fast_path)
-    battle.entities.clear()
-    battle.next_entity_id = 1
-    building = battle._spawn_entity(
-        Building,
-        Position(9.0, 10.0),
-        0,
-        battle.card_loader.get_card(card_name),
-    )
-    building.deploy_delay_remaining = 0.0
-    building.placement_pending = False
-    building.on_spawn()
-    hog = _spawn_one(battle, "HogRider", 1, Position(9.0, 13.0))
-    replacement = _spawn_one(battle, "Knight", 1, Position(10.0, 13.0))
-    building.target_id = hog.id
-    building._note_combat_target(hog)
-    building._record_attack_committed(hog)
-    building.attack_cooldown = 99.0
-    battle._rebuild_target_cache()
-
-    # A river jump breaks the ground-only building's connected lock. The
-    # replacement target proves this is a real retarget, not a temporary
-    # absence of candidates.
-    hog._river_jump_active = True
-    battle.sync_fast_target_entity(hog)
-    building.update_combat_component(battle.dt, battle)
-    assert building.target_id == replacement.id
-
-    # Let the old unit land and become the current target again without
-    # allowing the building to commit another attack against it.
-    replacement.position = Position(1.0, 1.0)
-    hog._river_jump_active = False
-    battle.sync_fast_target_entity(hog)
-    battle.sync_fast_target_entity(replacement)
-    building.update_combat_component(battle.dt, battle)
-    assert building.target_id == hog.id
-
-    # Its later death belongs to the reacquired, not-yet-attacked lock. The
-    # old shot's finish marker must not survive the intervening target break.
-    replacement.position = Position(10.0, 13.0)
-    battle.sync_fast_target_entity(replacement)
-    hog.take_damage(hog.hitpoints)
-    battle._cleanup_dead_entities()
-    battle.sync_fast_target_entity(hog)
-    building.update_combat_component(battle.dt, battle)
-
-    assert building.attack_finish_lock_remaining == 0.0
-    assert building.target_id == replacement.id
-
-
-@pytest.mark.parametrize("fast_path", [False, True])
-def test_broken_troop_lock_cannot_create_a_later_stale_attack_finish(fast_path):
-    battle = BattleState(fast_path=fast_path)
-    battle.entities.clear()
-    battle.next_entity_id = 1
-    attacker = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
-    hog = _spawn_one(battle, "HogRider", 1, Position(9.0, 12.0))
-    replacement = _spawn_one(battle, "Knight", 1, Position(10.0, 12.0))
-    attacker.speed = 0.0
-    attacker.target_id = hog.id
-    attacker._note_combat_target(hog)
-    attacker._record_attack_committed(hog)
-    attacker.attack_cooldown = 99.0
-    battle._rebuild_target_cache()
-
-    hog._river_jump_active = True
-    battle.sync_fast_target_entity(hog)
-    attacker.update_combat_component(battle.dt, battle)
-    assert attacker.target_id == replacement.id
-
-    replacement.position = Position(1.0, 1.0)
-    hog._river_jump_active = False
-    battle.sync_fast_target_entity(hog)
-    battle.sync_fast_target_entity(replacement)
-    attacker.update_combat_component(battle.dt, battle)
-    assert attacker.target_id == hog.id
-
-    replacement.position = Position(10.0, 12.0)
-    battle.sync_fast_target_entity(replacement)
-    hog.take_damage(hog.hitpoints)
-    battle._cleanup_dead_entities()
-    battle.sync_fast_target_entity(hog)
-    attacker.update_combat_component(battle.dt, battle)
-
-    assert attacker.attack_finish_lock_remaining == 0.0
-    assert attacker.target_id == replacement.id
-
-
-@pytest.mark.parametrize("card_name", ("ElectroDragon", "ElectroWizard"))
-def test_explicit_zero_attack_finish_overrides_global_lock(card_name):
-    battle = BattleState()
-    battle.entities.clear()
-    battle.next_entity_id = 1
-    attacker = _spawn_one(battle, card_name, 0, Position(9.0, 10.0))
-    first = _spawn_one(battle, "Knight", 1, Position(9.0, 12.0))
-    second = _spawn_one(battle, "Knight", 1, Position(10.0, 12.0))
-    attacker.target_id = first.id
-    attacker._record_attack_committed(first)
-
-    assert attacker.card_stats.override_attack_finish_time
-    assert attacker.card_stats.attack_finish_time == 0
-    first.take_damage(first.hitpoints)
-    battle._cleanup_dead_entities()
-    attacker.update(battle.dt, battle)
-
-    assert attacker.target_id == second.id
 
 
 def test_first_hit_preload_does_not_finish_while_walking_and_restarts_on_retarget():
@@ -4507,6 +5657,41 @@ def test_overloaded_attack_data_drives_inferno_first_hit_and_retarget_preload():
     assert dragon.attack_cooldown == pytest.approx(0.4)
 
 
+@pytest.mark.parametrize("card_name", ["InfernoDragon", "InfernoTower"])
+def test_zap_resets_overloaded_inferno_weapon_to_one_hit_speed_cycle(card_name):
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    stats = battle.card_loader.get_card(card_name)
+    assert stats is not None
+    attacker = battle._spawn_entity(
+        Building if card_name == "InfernoTower" else Troop,
+        Position(9.0, 12.0),
+        0,
+        stats,
+    )
+    if isinstance(attacker, Building):
+        attacker.deploy_delay_remaining = 0.0
+        attacker.placement_pending = False
+        attacker.on_spawn()
+    target = _spawn_one(battle, "Golem", 1, Position(9.0, 14.0))
+    attacker.target_id = target.id
+    attacker._last_combat_target_id = target.id
+    attacker.attack_cooldown = 0.01
+
+    attacker.apply_stun(0.5, source_kind="Zap")
+
+    # Native reset stores LoadTime in the combat component.  On an overloaded
+    # weapon (LoadTime > HitSpeed), updateHitTimer discards that marker and
+    # begins a fresh HitSpeed counter.  It must not use the 0.8-second ordinary
+    # retarget penalty or preserve the nearly-ready channel above.
+    assert attacker.card_stats.load_time == 1200
+    assert attacker.card_stats.hit_speed == 400
+    assert attacker.card_stats.retarget_time == 800
+    assert attacker.target_id is None
+    assert attacker.attack_cooldown == pytest.approx(0.4)
+
+
 def test_mobile_continuous_damage_approaches_500_units_closer_then_keeps_full_range():
     battle = BattleState()
     battle.entities.clear()
@@ -4544,6 +5729,24 @@ def test_mobile_continuous_damage_approaches_500_units_closer_then_keeps_full_ra
     assert dragon.position == Position(9.0, 10.0)
     assert ramp._current_target_id == target.id
     assert ramp._current_target_ms > connected_ms
+
+
+def test_continuous_damage_approach_is_governed_by_shared_global(monkeypatch):
+    import clasher.mechanics.shared.damage_ramp as damage_ramp_module
+
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    dragon = _spawn_one(battle, "InfernoDragon", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 13.501))
+
+    assert not dragon.is_within_attack_engagement_reach(target)
+    monkeypatch.setattr(
+        damage_ramp_module,
+        "LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER",
+        0,
+    )
+    assert dragon.is_within_attack_engagement_reach(target)
 
 
 def test_continuous_damage_approach_reduction_does_not_apply_to_buildings():
@@ -4720,6 +5923,156 @@ def test_inferno_ramp_clock_uses_native_status_scaled_combat_work(
     assert ramp._current_target_ms == pytest.approx(expected_ramp_work)
 
 
+@pytest.mark.parametrize("card_name", ["InfernoDragon", "InfernoTower"])
+def test_inferno_shield_break_resets_stage_without_changing_target(card_name):
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    stats = battle.card_loader.get_card(card_name)
+    assert stats is not None
+    if card_name == "InfernoTower":
+        attacker = battle._spawn_entity(
+            Building,
+            Position(9.0, 10.0),
+            0,
+            stats,
+        )
+    else:
+        attacker = _spawn_one(
+            battle,
+            card_name,
+            0,
+            Position(9.0, 10.0),
+        )
+    target = _spawn_one(battle, "DarkPrince", 1, Position(9.0, 12.0))
+    shield = next(
+        mechanic
+        for mechanic in target.mechanics
+        if type(mechanic).__name__ == "Shield"
+    )
+    ramp = next(
+        mechanic
+        for mechanic in attacker.mechanics
+        if type(mechanic).__name__ == "DamageRamp"
+    )
+    shield.current_shield = 1
+    attacker.target_id = target.id
+    ramp._current_target_id = target.id
+    ramp._current_target_ms = 4000.0
+    attacker.damage = ramp.stages[-1][1]
+    hp_before = target.hitpoints
+
+    attacker._deal_attack_damage(target, attacker.damage, battle)
+
+    assert shield.current_shield == 0
+    assert target.hitpoints == hp_before
+    assert attacker.target_id == target.id
+    assert ramp._current_target_id == target.id
+    assert ramp._current_target_ms == 0.0
+    assert attacker.damage == ramp.stages[0][1]
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+@pytest.mark.parametrize("card_name", ["InfernoDragon", "InfernoTower"])
+def test_external_shield_break_resets_connected_inferno_immediately(
+    card_name,
+    fast_path,
+):
+    battle = BattleState(fast_path=fast_path)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    stats = battle.card_loader.get_card(card_name)
+    assert stats is not None
+    if card_name == "InfernoTower":
+        inferno = battle._spawn_entity(
+            Building,
+            Position(9.0, 10.0),
+            0,
+            stats,
+        )
+    else:
+        inferno = _spawn_one(
+            battle,
+            card_name,
+            0,
+            Position(9.0, 10.0),
+        )
+    ally = _spawn_one(battle, "Knight", 0, Position(8.0, 10.0))
+    target = _spawn_one(battle, "DarkPrince", 1, Position(9.0, 12.0))
+    shield = next(
+        mechanic
+        for mechanic in target.mechanics
+        if type(mechanic).__name__ == "Shield"
+    )
+    ramp = next(
+        mechanic
+        for mechanic in inferno.mechanics
+        if type(mechanic).__name__ == "DamageRamp"
+    )
+    shield.current_shield = 1
+    inferno.target_id = target.id
+    ramp._current_target_id = target.id
+    ramp._current_target_ms = 4000.0
+    inferno.damage = ramp.stages[-1][1]
+
+    ally._deal_attack_damage(target, ally.damage, battle)
+
+    assert shield.current_shield == 0
+    assert target._shield_break_count == 1
+    assert inferno.target_id == target.id
+    assert ramp._current_target_id == target.id
+    assert ramp._current_target_ms == 0.0
+    assert inferno.damage == ramp.stages[0][1]
+    hp_before_inferno_hit = target.hitpoints
+
+    inferno._deal_attack_damage(target, inferno.damage, battle)
+
+    assert target.hitpoints == hp_before_inferno_hit - ramp.stages[0][1]
+    assert inferno.target_id == target.id
+    assert ramp._current_target_id == target.id
+    assert ramp._current_target_ms == 0.0
+    assert inferno.damage == ramp.stages[0][1]
+
+
+def test_shield_break_consumes_damage_but_not_status_or_knockback_payloads():
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    guard = _spawn_one(battle, "Guards", 1, Position(9.0, 12.0))
+    shield = next(
+        mechanic
+        for mechanic in guard.mechanics
+        if type(mechanic).__name__ == "Shield"
+    )
+    hp_before = guard.hitpoints
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(guard.position.x, guard.position.y),
+        player_id=0,
+        card_stats=None,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=shield.current_shield + hp_before,
+        range=0.0,
+        sight_range=0.0,
+        target_position=Position(guard.position.x, guard.position.y),
+        travel_speed=1.0,
+        source_name="shield-break-probe",
+        stun_duration=0.5,
+        knockback_distance=1.0,
+        primary_target=guard,
+    )
+    battle.entities[projectile.id] = projectile
+    battle.next_entity_id += 1
+
+    projectile.update(battle.dt, battle)
+
+    assert shield.current_shield == 0
+    assert guard.hitpoints == hp_before
+    assert guard.stun_timer == pytest.approx(0.5)
+    assert guard.forced_movement_active
+
+
 def test_lethal_projectiles_reserve_targets_and_respect_shield_hit_consumption():
     battle = BattleState()
     musketeer = _spawn_one(battle, "Musketeer", 0, Position(9.0, 10.0))
@@ -4786,6 +6139,12 @@ def test_lethal_projectiles_reserve_targets_and_respect_shield_hit_consumption()
     )
     finisher.battle_state = battle
     battle.entities[finisher.id] = finisher
+    # Native HitpointComponent::isEnoughToKill always returns false while a
+    # protection shield is live, even when separate committed hits can break
+    # the shield and then defeat the underlying unit.
+    assert not guard.is_expected_to_die_from_projectiles()
+
+    shield.current_shield = 0
     assert guard.is_expected_to_die_from_projectiles()
 
 
@@ -4826,7 +6185,57 @@ def test_only_projectile_attackers_skip_lethally_reserved_targets(fast_path):
     assert melee.get_nearest_target(battle.entities) is first
 
 
-def test_pending_projectile_reservation_uses_native_600ms_duration_cutoff():
+@pytest.mark.parametrize(
+    ("distance_units", "expected_duration_ms", "expected_reserved"),
+    [
+        (2999, 600, True),
+        (3000, 600, True),
+        # The native duration division truncates 600.8 ms to 600 before the
+        # target rounds to its 50 ms bookkeeping grid.
+        (3004, 600, True),
+        (3005, 650, False),
+    ],
+)
+def test_pending_projectile_reservation_uses_native_600ms_duration_cutoff(
+    distance_units,
+    expected_duration_ms,
+    expected_reserved,
+):
+    battle = BattleState()
+    musketeer = _spawn_one(battle, "Musketeer", 0, Position(9.0, 10.0))
+    target = _spawn_one(
+        battle,
+        "Skeletons",
+        1,
+        Position(9.0, 10.0 + logic_units_to_tiles(distance_units)),
+    )
+    target.hitpoints = musketeer.damage
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(9.0, 10.0),
+        player_id=0,
+        card_stats=musketeer.card_stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=target.hitpoints,
+        range=0.0,
+        sight_range=0.0,
+        target_position=Position(target.position.x, target.position.y),
+        travel_speed=logic_speed_to_tiles_per_second(250),
+        source_name="Musketeer",
+        source_entity=musketeer,
+        primary_target=target,
+    )
+    projectile.battle_state = battle
+    battle.entities[projectile.id] = projectile
+
+    assert target._pending_projectile_max_duration_ms == expected_duration_ms
+    assert target.is_expected_to_die_from_projectiles() is expected_reserved
+
+
+def test_pending_damage_duration_cutoff_is_governed_by_shared_global(monkeypatch):
+    import clasher.entities as entity_module
+
     battle = BattleState()
     musketeer = _spawn_one(battle, "Musketeer", 0, Position(9.0, 10.0))
     target = _spawn_one(battle, "Skeletons", 1, Position(9.0, 13.0))
@@ -4842,7 +6251,7 @@ def test_pending_projectile_reservation_uses_native_600ms_duration_cutoff():
         range=0.0,
         sight_range=0.0,
         target_position=Position(target.position.x, target.position.y),
-        travel_speed=3.0 / 0.599,
+        travel_speed=logic_speed_to_tiles_per_second(250),
         source_name="Musketeer",
         source_entity=musketeer,
         primary_target=target,
@@ -4850,13 +6259,117 @@ def test_pending_projectile_reservation_uses_native_600ms_duration_cutoff():
     projectile.battle_state = battle
     battle.entities[projectile.id] = projectile
 
+    assert target._pending_projectile_max_duration_ms == 600
     assert target.is_expected_to_die_from_projectiles()
-
-    projectile.travel_speed = 3.0 / 0.601
+    monkeypatch.setattr(
+        entity_module,
+        "LOGIC_PENDING_DAMAGE_IGNORE_IF_DURATION_LESS",
+        550,
+    )
     assert not target.is_expected_to_die_from_projectiles()
 
 
-def test_splash_and_non_homing_projectiles_do_not_reserve_lethal_targets():
+def test_pending_projectile_duration_is_target_owned_monotonic_launch_state():
+    battle = BattleState()
+    musketeer = _spawn_one(battle, "Musketeer", 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Skeletons", 1, Position(9.0, 13.0))
+    target.hitpoints = musketeer.damage
+
+    short = Projectile(
+        id=battle.next_entity_id,
+        position=Position(9.0, 10.0),
+        player_id=0,
+        card_stats=musketeer.card_stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=target.hitpoints,
+        range=0.0,
+        sight_range=0.0,
+        target_position=Position(target.position.x, target.position.y),
+        travel_speed=logic_speed_to_tiles_per_second(250),
+        source_name="Musketeer",
+        source_entity=musketeer,
+        primary_target=target,
+    )
+    short.battle_state = battle
+    battle.entities[short.id] = short
+    battle.next_entity_id += 1
+    assert target.is_expected_to_die_from_projectiles()
+
+    long = Projectile(
+        id=battle.next_entity_id,
+        position=Position(9.0, 10.0),
+        player_id=0,
+        card_stats=musketeer.card_stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=1,
+        range=0.0,
+        sight_range=0.0,
+        target_position=Position(target.position.x, target.position.y),
+        travel_speed=logic_speed_to_tiles_per_second(200),
+        source_name="Musketeer",
+        source_entity=musketeer,
+        primary_target=target,
+    )
+    long.battle_state = battle
+    battle.entities[long.id] = long
+
+    assert target._pending_projectile_max_duration_ms == 750
+    assert not target.is_expected_to_die_from_projectiles()
+
+    # Projectile impact removes only pending damage in native code. Its -1
+    # duration sentinel does not lower the target's remembered maximum.
+    long.is_alive = False
+    assert target._pending_projectile_max_duration_ms == 750
+    assert not target.is_expected_to_die_from_projectiles()
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_current_target_also_ignores_lethal_pending_damage(fast_path):
+    battle = BattleState(fast_path=fast_path)
+    locked = _spawn_one(battle, "Musketeer", 0, Position(9.0, 10.0))
+    observer = _spawn_one(battle, "Musketeer", 0, Position(8.0, 10.0))
+    first = _spawn_one(battle, "Skeletons", 1, Position(9.0, 13.0))
+    second = _spawn_one(battle, "Skeletons", 1, Position(11.0, 13.0))
+    first.hitpoints = locked.damage
+
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(9.0, 11.0),
+        player_id=0,
+        card_stats=locked.card_stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=first.hitpoints,
+        range=0.0,
+        sight_range=0.0,
+        target_position=Position(first.position.x, first.position.y),
+        travel_speed=10.0,
+        source_name="Musketeer",
+        source_entity=observer,
+        primary_target=first,
+    )
+    projectile.battle_state = battle
+    battle.entities[projectile.id] = projectile
+    battle.next_entity_id += 1
+    locked.target_id = first.id
+    locked.attack_cooldown = 1.0
+
+    if fast_path:
+        battle._refresh_fast_path_caches()
+
+    assert first.is_expected_to_die_from_projectiles()
+    assert not locked._is_valid_target(first)
+    assert not locked._is_valid_target(first, is_current_target=True)
+    assert observer.get_nearest_target(battle.entities) is second
+
+    locked.update(battle.dt, battle)
+
+    assert locked.target_id == second.id
+
+
+def test_non_homing_splash_projectiles_do_not_reserve_lethal_targets():
     battle = BattleState()
     bomber = _spawn_one(battle, "Bomber", 0, Position(9.0, 10.0))
     observer = _spawn_one(battle, "Musketeer", 0, Position(8.0, 10.0))
@@ -4878,6 +6391,50 @@ def test_splash_and_non_homing_projectiles_do_not_reserve_lethal_targets():
     assert second.is_alive
 
 
+@pytest.mark.parametrize("fast_path", [False, True])
+@pytest.mark.parametrize("card_name", ["Witch", "BabyDragon", "IceWizard"])
+def test_homing_splash_projectiles_reserve_their_primary_target(
+    card_name,
+    fast_path,
+):
+    battle = BattleState(fast_path=fast_path)
+    attacker = _spawn_one(battle, card_name, 0, Position(9.0, 10.0))
+    first = _spawn_one(battle, "Skeletons", 1, Position(9.0, 13.0))
+    second = _spawn_one(battle, "Skeletons", 1, Position(11.0, 13.0))
+    first.hitpoints = attacker.damage
+    projectile_data = attacker.card_stats.projectile_data
+    assert projectile_data
+    assert bool(projectile_data.get("homing", True))
+    assert float(projectile_data.get("radius", 0) or 0) > 0
+
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(attacker.position.x, attacker.position.y),
+        player_id=0,
+        card_stats=attacker.card_stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=first.hitpoints,
+        range=0.0,
+        sight_range=0.0,
+        target_position=Position(first.position.x, first.position.y),
+        travel_speed=logic_speed_to_tiles_per_second(
+            projectile_data.get("speed", 500)
+        ),
+        splash_radius=float(projectile_data["radius"]) / 1000.0,
+        source_name=card_name,
+        source_entity=attacker,
+        primary_target=first,
+        tracks_target=True,
+    )
+    projectile.battle_state = battle
+    battle.entities[projectile.id] = projectile
+
+    assert projectile.reserves_pending_damage
+    assert first.is_expected_to_die_from_projectiles()
+    assert attacker.get_nearest_target(battle.entities) is second
+
+
 def test_hidden_tesla_is_bypassed_until_triggered_and_allows_earthquake_and_freeze():
     battle = BattleState()
     tesla_stats = battle.card_loader.get_card("Tesla")
@@ -4893,6 +6450,20 @@ def test_hidden_tesla_is_bypassed_until_triggered_and_allows_earthquake_and_free
     hog = _spawn_one(battle, "HogRider", 0, Position(9.0, 7.0))
     knight = _spawn_one(battle, "Knight", 0, Position(8.0, 7.0))
 
+    # Native construction starts at phase zero, so this initial idle
+    # transition is exposed and ordinary damage can reach it.
+    assert not tesla._hidden_building
+    initial_hp = tesla.hitpoints
+    tesla.take_damage(100, source_kind="Fireball")
+    assert tesla.hitpoints == initial_hp - 100
+    mechanic = next(
+        mechanic
+        for mechanic in tesla.mechanics
+        if type(mechanic).__name__ == "HideWhenIdle"
+    )
+    mechanic.on_object_tick(tesla, 799)
+    assert not tesla._hidden_building
+    mechanic.on_object_tick(tesla, 1)
     assert tesla._hidden_building
     assert hog.get_nearest_target(battle.entities) is not tesla
     assert knight.get_nearest_target(battle.entities) is not tesla
@@ -4921,11 +6492,6 @@ def test_hidden_tesla_is_bypassed_until_triggered_and_allows_earthquake_and_free
     assert hog.can_attack_target(tesla)
 
     # Finish the remaining rise phase before measuring a complete hide.
-    mechanic = next(
-        mechanic
-        for mechanic in tesla.mechanics
-        if type(mechanic).__name__ == "HideWhenIdle"
-    )
     mechanic.on_object_tick(tesla, 750)
     assert mechanic._phase_ms == 0.0
 
@@ -4950,6 +6516,7 @@ def test_hidden_tesla_reveal_redirects_wall_breaker_before_contact(fast_path):
     tesla.deploy_delay_remaining = 0.0
     tesla.placement_pending = False
     tesla.on_spawn()
+    _fully_hide_tesla(tesla)
     wall_breaker = _spawn_one(
         battle,
         "Wallbreakers",
@@ -5025,6 +6592,7 @@ def test_hidden_tesla_lifetime_decay_bypasses_underground_damage_immunity():
     tesla.deploy_delay_remaining = 0.0
     tesla.placement_pending = False
     tesla.on_spawn()
+    _fully_hide_tesla(tesla)
     assert tesla._hidden_building
     hp_before = tesla.hitpoints
 
@@ -5043,6 +6611,95 @@ def test_hidden_tesla_lifetime_decay_bypasses_underground_damage_immunity():
     assert tesla.hitpoints == 0.0
 
 
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_projectile_hidden_tesla_impact_uses_native_direct_vs_area_split(fast_path):
+    battle = BattleState(fast_path=fast_path)
+    tesla = battle._spawn_entity(
+        Building,
+        Position(9.0, 14.0),
+        1,
+        battle.card_loader.get_card("Tesla"),
+    )
+    tesla.deploy_delay_remaining = 0.0
+    tesla.placement_pending = False
+    tesla.on_spawn()
+    hide = next(
+        mechanic
+        for mechanic in tesla.mechanics
+        if type(mechanic).__name__ == "HideWhenIdle"
+    )
+    musketeer = _spawn_one(
+        battle,
+        "Musketeer",
+        0,
+        Position(9.0, 8.0),
+    )
+    # A target inside reach holds the freshly constructed phase at zero.
+    hide.on_object_tick(tesla, 800)
+    assert not tesla._hidden_building
+
+    musketeer._create_projectile(tesla, battle)
+    projectile = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Projectile)
+        and entity.source_entity is musketeer
+    )
+    assert projectile.tracks_target
+    hp_before = tesla.hitpoints
+
+    # Once the shooter leaves Tesla's range, the building fully retracts
+    # before the slow in-flight shot reaches it.
+    musketeer.position = Position(1.0, 1.0)
+    hide.on_object_tick(tesla, 800)
+    assert tesla._hidden_building
+    assert not tesla.can_receive_effect("Musketeer")
+
+    for _ in range(120):
+        projectile.update(battle.dt, battle)
+        if not projectile.is_alive:
+            break
+
+    assert not projectile.is_alive
+    assert hp_before - tesla.hitpoints == musketeer.damage
+
+    # A splash projectile does the inverse: even though its homing endpoint
+    # follows the stored target object, native impact performs a fresh area
+    # query and therefore excludes a Tesla that is hidden by arrival time.
+    baby_dragon = _spawn_one(
+        battle,
+        "BabyDragon",
+        0,
+        Position(9.0, 8.0),
+    )
+    hide.on_object_tick(tesla, 800)
+    assert not tesla._hidden_building
+    baby_dragon._create_projectile(tesla, battle)
+    splash = max(
+        (
+            entity
+            for entity in battle.entities.values()
+            if isinstance(entity, Projectile)
+            and entity.source_entity is baby_dragon
+        ),
+        key=lambda entity: entity.id,
+    )
+    assert splash.tracks_target
+    assert splash.splash_radius > 0.0
+    baby_dragon.position = Position(1.0, 1.0)
+    hide.on_object_tick(tesla, 800)
+    assert tesla._hidden_building
+    hp_before_splash = tesla.hitpoints
+
+    for _ in range(120):
+        splash.update(battle.dt, battle)
+        if not splash.is_alive:
+            break
+
+    assert not splash.is_alive
+    assert tesla.hitpoints == hp_before_splash
+
+
 def test_freeze_pauses_hidden_tesla_reveal_and_visible_tesla_retraction():
     battle = BattleState()
     tesla_stats = battle.card_loader.get_card("Tesla")
@@ -5051,6 +6708,7 @@ def test_freeze_pauses_hidden_tesla_reveal_and_visible_tesla_retraction():
     tesla.deploy_delay_remaining = 0.0
     tesla.placement_pending = False
     tesla.on_spawn()
+    _fully_hide_tesla(tesla)
     hog = _spawn_one(battle, "HogRider", 0, Position(9.0, 12.5))
     mechanic = next(
         mechanic
@@ -5281,7 +6939,7 @@ def test_night_witch_child_rings_follow_retained_combat_facing():
     ) == pytest.approx((-0.353, 0.353))
 
 
-def test_bat_attack_windup_lunges_forward_and_returns_to_origin():
+def test_bat_attack_dash_time_is_presentation_only():
     battle = BattleState()
     bat = _spawn_one(battle, "Bats", 0, Position(9.0, 10.0))
     target = _spawn_one(battle, "Knight", 1, Position(9.0, 11.0))
@@ -5291,61 +6949,32 @@ def test_bat_attack_windup_lunges_forward_and_returns_to_origin():
     bat.target_id = target.id
     bat.attack_cooldown = bat.get_preloaded_attack_time_seconds()
 
-    bat.update(battle.dt, battle)
     assert bat.card_stats.attack_dash_time == 150
-    assert bat.attack_dash_origin == origin
-
-    distances = []
-    for _ in range(10):
+    target_hp = target.hitpoints
+    for _ in range(12):
         bat.update(battle.dt, battle)
-        distances.append(origin.distance_to(bat.position))
+        assert bat.position == origin
 
-    assert max(distances) > 0.25
-    assert bat.position == origin
-    assert bat.attack_dash_origin is None
+    # The animation metadata does not alter authoritative attack timing.
+    assert target.hitpoints == target_hp - bat.damage
 
 
-def test_diagonal_bat_attack_lunge_uses_native_logic_components():
+def test_bat_visual_lunge_cannot_change_logic_collision_footprint():
     battle = BattleState()
     bat = _spawn_one(battle, "Bats", 0, Position(9.0, 10.0))
-    target = _spawn_one(battle, "Knight", 1, Position(12.0, 14.0))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 11.0))
+    bystander = _spawn_one(battle, "Knight", 1, Position(9.0, 9.0))
     bat.position = Position(9.0, 10.0)
-    target.position = Position(12.0, 14.0)
+    target.position = Position(9.0, 11.0)
+    bystander.position = Position(9.0, 9.0)
+    origin = Position(bat.position.x, bat.position.y)
+    bat.target_id = target.id
+    bat.attack_cooldown = bat.get_preloaded_attack_time_seconds()
 
-    bat._start_attack_dash(target)
-    for _ in range(3):
-        bat._tick_attack_dash(battle.dt, battle)
-
-    # Speed 120 for three logic ticks is 360 units along a 3-4-5 vector.
-    assert bat.position == Position(9.216, 10.288)
-
-    for _ in range(3):
-        bat._tick_attack_dash(battle.dt, battle)
-    assert bat.position == Position(9.0, 10.0)
-    assert bat.attack_dash_origin is None
-
-
-@pytest.mark.parametrize(
-    ("origin", "target"),
-    (
-        (Position(9.0, 31.467), Position(9.0, 31.5)),
-        (Position(9.0, 0.533), Position(9.0, 0.5)),
-    ),
-)
-def test_flying_attack_lunge_clips_at_both_rotated_arena_edges(origin, target):
-    battle = BattleState()
-    bat = _spawn_one(battle, "Bats", 0, origin)
-    victim = _spawn_one(battle, "Knight", 1, target)
-    bat.position = Position(origin.x, origin.y)
-    victim.position = Position(target.x, target.y)
-
-    bat._start_attack_dash(victim)
-    for _ in range(3):
-        bat._tick_attack_dash(battle.dt, battle)
-        assert battle.is_entity_position_in_bounds(bat.position, bat)
-
-    expected_edge = 31.75 if target.y > 16.0 else 0.25
-    assert bat.position.y == expected_edge
+    for _ in range(6):
+        bat.update(battle.dt, battle)
+        assert bat.position == origin
+        assert bat.position.distance_to(bystander.position) == pytest.approx(1.0)
 
 
 def test_stunned_troop_still_observes_and_retargets_without_moving_or_attacking():
@@ -5358,13 +6987,53 @@ def test_stunned_troop_still_observes_and_retargets_without_moving_or_attacking(
     origin = Position(knight.position.x, knight.position.y)
 
     knight.apply_stun(0.5)
-    reset_windup = knight.card_stats.first_hit_time / 1000.0
+    reset_windup = knight.get_base_attack_interval_seconds()
     knight.update(battle.dt, battle)
 
     assert knight.target_id == closer_target.id
     assert knight.position == origin
     assert knight.attack_cooldown == reset_windup
     assert closer_target.hitpoints == closer_target.max_hitpoints
+
+
+def test_stun_resets_idle_preload_even_when_attacker_has_no_target_lock():
+    battle = BattleState()
+    knight = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
+    knight.target_id = None
+    knight._last_combat_target_id = None
+    knight.attack_cooldown = knight.get_preloaded_attack_time_seconds()
+
+    knight.apply_stun(0.5, source_kind="Zap")
+
+    # Native stun enters setTarget(nullptr, force=true).  The force flag
+    # bypasses setTarget's same-null early return, so an ordinary weapon still
+    # reloads its hit counter for an idle attacker.
+    assert knight.target_id is None
+    assert knight.attack_cooldown == pytest.approx(
+        knight.get_base_attack_interval_seconds()
+    )
+
+
+def test_zap_reload_global_is_gated_by_serialized_load_first_hit(monkeypatch):
+    battle = BattleState()
+    knight = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
+    monkeypatch.setattr(
+        "clasher.entities.LOGIC_LOAD_FIRST_HIT_RESET_TIMER_WHEN_ZAPPED",
+        False,
+    )
+
+    knight.attack_cooldown = 0.01
+    knight.apply_stun(0.5, source_kind="Zap")
+    assert not knight.card_stats.load_first_hit
+    assert knight.attack_cooldown == pytest.approx(
+        knight.get_base_attack_interval_seconds()
+    )
+
+    knight.stun_timer = 0.0
+    knight.card_stats.load_first_hit = True
+    knight.attack_cooldown = 0.01
+    knight.apply_stun(0.5, source_kind="Zap")
+    assert knight.attack_cooldown == pytest.approx(0.01)
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
@@ -5436,8 +7105,10 @@ def test_stun_clears_connected_lock_before_reacquiring_the_nearest_target(
             Position(9.2, 10.4),
         )
     attacker.target_id = connected.id
+    # Begin near the end of a hit cycle. With the current global enabled, Zap
+    # clears the accumulated native hit counter and reloads a complete cycle;
+    # it does not preserve this almost-ready attack or the idle first-hit load.
     attacker.attack_cooldown = 0.01
-    pre_stun_cooldown = attacker.attack_cooldown
     assert attacker.is_within_target_keep_reach(connected)
     if fast_path:
         battle._refresh_fast_path_caches()
@@ -5448,10 +7119,7 @@ def test_stun_clears_connected_lock_before_reacquiring_the_nearest_target(
 
     assert attacker.target_id == nearest.id
     assert attacker.attack_cooldown == pytest.approx(
-        max(
-            pre_stun_cooldown,
-            attacker.card_stats.first_hit_time / 1000.0,
-        )
+        attacker.get_base_attack_interval_seconds()
     )
     assert connected.hitpoints == connected.max_hitpoints
     assert nearest.hitpoints == nearest.max_hitpoints
@@ -5549,13 +7217,18 @@ def test_equal_rage_and_ice_slow_multiply_on_all_three_speed_axes():
 
     target = _spawn_one(battle, "Knight", 1, Position(9.0, 20.0))
     start = Position(witch.position.x, witch.position.y)
-    path_target = witch._get_pathfind_target(target, battle)
-    expected_x_units, expected_y_units = vector_towards_logic_units(
+    path_target = ground_path_waypoint(
+        battle,
+        witch,
+        target.position,
+        target_entity=target,
+    )
+    expected_x_units, expected_y_units = movement_component_vector_logic_units(
         tiles_to_logic_units(path_target.x - start.x),
         tiles_to_logic_units(path_target.y - start.y),
-        speed_work_for_duration(base_speed * native_tick_rate, 1.0),
+        speed_work_for_duration(base_speed * native_tick_rate, battle.dt),
     )
-    witch._move_towards_target(target, 1.0, battle)
+    witch._move_towards_target(target, battle.dt, battle)
     assert witch.position == Position(
         start.x + logic_units_to_tiles(expected_x_units),
         start.y + logic_units_to_tiles(expected_y_units),
@@ -5658,7 +7331,7 @@ def test_distinct_haste_sources_expire_without_restoring_or_erasing_each_other()
     assert troop.spawn_speed_buff_multiplier == pytest.approx(1.0)
 
 
-def test_rage_falloff_never_extends_past_the_area_lifetime():
+def test_explicitly_capped_haste_falloff_never_extends_past_area_lifetime():
     battle = BattleState(rng=random.Random(77))
     troop = _spawn_one(battle, "Knight", 0, Position(9.0, 10.0))
     rage = BuffAreaEffect(
@@ -5674,6 +7347,7 @@ def test_rage_falloff_never_extends_past_the_area_lifetime():
         duration=0.2,
         radius=3.0,
         refresh_duration=1.0,
+        cap_buff_time_to_effect=True,
         effect_tick_interval=0.19,
         movement_multiplier=1.3,
         attack_speed_multiplier=1.3,
@@ -5868,6 +7542,201 @@ def test_enabled_troop_projectile_homing_comes_from_projectile_data(
         key=lambda entity: entity.id,
     )
     assert projectile.tracks_target is tracks_target
+
+
+@pytest.mark.parametrize("fast_path", [False, True])
+@pytest.mark.parametrize(
+    ("player_id", "archer_y", "target_y"),
+    (
+        (0, 10.0, 16.2),
+        (1, 22.0, 15.8),
+    ),
+)
+def test_magic_archer_launch_installs_projectile_owned_temporary_homing(
+    fast_path,
+    player_id,
+    archer_y,
+    target_y,
+):
+    battle = BattleState(fast_path=fast_path)
+    archer = _spawn_one(
+        battle,
+        "MagicArcher",
+        player_id,
+        Position(9.0, archer_y),
+    )
+    target = _spawn_one(
+        battle,
+        "Knight",
+        1 - player_id,
+        Position(9.0, target_y),
+    )
+    archer.position = Position(9.0, archer_y)
+    target.position = Position(9.0, target_y)
+    target.apply_stun(10.0)
+    archer.target_id = target.id
+    archer.attack_cooldown = 0.0
+    if fast_path:
+        battle._refresh_fast_path_caches()
+
+    archer.update(battle.dt, battle)
+
+    projectile = max(
+        (
+            entity
+            for entity in battle.entities.values()
+            if isinstance(entity, Projectile) and entity.source_entity is archer
+        ),
+        key=lambda entity: entity.id,
+    )
+    data = archer.card_stats.projectile_data
+    assert data["homing"] is False
+    assert data["homingTime"] == 100
+    assert data["homingMinDistance"] == 5000
+    assert projectile.tracks_target is False
+    assert projectile.pierces
+    assert projectile.projectile_range == 11.0
+    assert projectile._temporary_homing_remaining_ms == 100
+
+
+@pytest.mark.parametrize("forward", [1, -1])
+@pytest.mark.parametrize(
+    ("launch_distance", "expected_remaining_ms"),
+    (
+        (5.0, 0),
+        (5.001, 50),
+    ),
+)
+def test_temporary_homing_launch_distance_threshold_is_strict_native_integer(
+    forward,
+    launch_distance,
+    expected_remaining_ms,
+):
+    battle = BattleState()
+    battle.entities.clear()
+    target = _spawn_one(
+        battle,
+        "Knight",
+        1,
+        Position(9.0, 10.0 + forward * launch_distance),
+    )
+    target.position = Position(
+        9.0,
+        10.0 + forward * launch_distance,
+    )
+    initial_endpoint = Position(9.0, 10.0 + forward * 11.0)
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(9.0, 10.0),
+        player_id=0,
+        card_stats=None,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=1,
+        range=0.0,
+        sight_range=0.0,
+        target_position=Position(initial_endpoint.x, initial_endpoint.y),
+        travel_speed=logic_speed_to_tiles_per_second(1000),
+        primary_target=target,
+        tracks_target=False,
+        pierces=True,
+        projectile_range=11.0,
+        homing_time_ms=100,
+        homing_min_distance=5.0,
+    )
+    target.position.x += 2.0
+
+    projectile.update(battle.dt, battle)
+
+    assert projectile._temporary_homing_remaining_ms == expected_remaining_ms
+    if expected_remaining_ms:
+        assert projectile.target_position != initial_endpoint
+        assert projectile.position.x != 9.0
+    else:
+        assert projectile.target_position == initial_endpoint
+        assert projectile.position.x == 9.0
+
+
+@pytest.mark.parametrize("forward", [1, -1])
+def test_magic_archer_temporary_homing_reaims_two_frames_then_freezes_ray(
+    forward,
+):
+    battle = BattleState()
+    battle.entities.clear()
+    target = _spawn_one(
+        battle,
+        "Knight",
+        1,
+        Position(9.0, 10.0 + forward * 6.0),
+    )
+    target.position = Position(11.0, 10.0 + forward * 6.0)
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(9.0, 10.0),
+        player_id=0,
+        card_stats=None,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=1,
+        range=0.0,
+        sight_range=0.0,
+        target_position=Position(9.0, 10.0 + forward * 11.0),
+        travel_speed=logic_speed_to_tiles_per_second(1000),
+        primary_target=target,
+        tracks_target=False,
+        pierces=True,
+        projectile_range=11.0,
+        homing_time_ms=100,
+        homing_min_distance=5.0,
+    )
+
+    projectile.update(battle.dt, battle)
+    first_endpoint = Position(
+        projectile.target_position.x,
+        projectile.target_position.y,
+    )
+    assert projectile._temporary_homing_remaining_ms == 50
+
+    target.position = Position(7.0, 10.0 + forward * 6.0)
+    position_before_second_tick = Position(
+        projectile.position.x,
+        projectile.position.y,
+    )
+    dx_units = (
+        tiles_to_logic_units(target.position.x)
+        - tiles_to_logic_units(position_before_second_tick.x)
+    )
+    dy_units = (
+        tiles_to_logic_units(target.position.y)
+        - tiles_to_logic_units(position_before_second_tick.y)
+    )
+    expected_dx, expected_dy = normalized_vector_logic_units(
+        dx_units,
+        dy_units,
+        11000,
+    )
+    expected_second_endpoint = Position(
+        logic_units_to_tiles(
+            tiles_to_logic_units(position_before_second_tick.x) + expected_dx
+        ),
+        logic_units_to_tiles(
+            tiles_to_logic_units(position_before_second_tick.y) + expected_dy
+        ),
+    )
+
+    projectile.update(battle.dt, battle)
+
+    assert projectile._temporary_homing_remaining_ms == 0
+    assert projectile.target_position == expected_second_endpoint
+    assert projectile.target_position != first_endpoint
+
+    target.position = Position(12.0, 10.0 + forward * 6.0)
+    frozen_endpoint = Position(
+        projectile.target_position.x,
+        projectile.target_position.y,
+    )
+    projectile.update(battle.dt, battle)
+    assert projectile.target_position == frozen_endpoint
 
 
 def test_lava_hound_death_spawned_pup_uses_its_homing_projectile_data():
@@ -6690,7 +8559,7 @@ def test_electro_wizard_simultaneous_bolts_do_not_retarget_lethal_death_spawns()
 
 
 @pytest.mark.parametrize("attacker_name", ["ElectroDragon", "ElectroSpirit"])
-def test_delayed_chain_links_can_target_lethal_primary_death_spawns(attacker_name):
+def test_chain_links_cannot_target_active_lethal_primary_death_spawns(attacker_name):
     battle = BattleState()
     battle.entities.clear()
     battle.next_entity_id = 1
@@ -6725,6 +8594,8 @@ def test_delayed_chain_links_can_target_lethal_primary_death_spawns(attacker_nam
         for entity in battle.entities.values()
         if isinstance(entity, ChainLightning)
     )
+    # Both chain variants seek their next character before the death-spawn
+    # marker crosses the 250 ms attack-finish boundary.
     while chain.is_alive:
         chain.update(0.25, battle)
 
@@ -6736,11 +8607,8 @@ def test_delayed_chain_links_can_target_lethal_primary_death_spawns(attacker_nam
         and entity.card_stats.name == "Golemite"
     ]
     assert len(golemites) == 2
-    assert all(
-        entity.max_hitpoints - entity.hitpoints == attacker.damage
-        for entity in golemites
-    )
-    assert all(entity.stun_timer == chain.stun_duration for entity in golemites)
+    assert all(entity.hitpoints == entity.max_hitpoints for entity in golemites)
+    assert all(entity.stun_timer == 0.0 for entity in golemites)
 
 
 def test_electro_wizard_duplicate_bolt_follows_all_targets_hit_payload():
@@ -6836,7 +8704,7 @@ def test_electro_wizard_split_target_uses_native_death_spawn_distance_allowance(
         1,
         Position(10.003, 14.0),
     )
-    # The first nonzero DeathSpawnPushback index receives (1 * 80)^2 native
+    # The first nonzero SpawnConstPriority index receives (1 * 80)^2 native
     # squared-distance allowance. Its center is slightly farther away, but
     # the same adjusted distance used by combat acquisition makes it the
     # nearest secondary recipient.
@@ -7104,18 +8972,13 @@ def test_newest_archer_queen_owns_ability_and_death_transfers_it_back():
     assert first_mechanic.can_activate_ability(first)
 
 
-def test_archer_queen_cannot_activate_ability_while_stunned():
+def test_archer_queen_can_activate_ability_while_stunned():
     battle = BattleState(rng=random.Random(181))
     queen = _spawn_one(battle, "ArcherQueen", 0, Position(9.0, 12.0))
     mechanic = queen.mechanics[0]
     battle.players[0].elixir = 10.0
 
     queen.apply_stun(0.5)
-    assert not mechanic.can_activate_ability(queen)
-    assert not mechanic.activate_ability(queen)
-    assert battle.players[0].elixir == 10.0
-
-    queen.update_status_effects(0.5)
     assert mechanic.can_activate_ability(queen)
     assert mechanic.activate_ability(queen)
     assert battle.players[0].elixir == 9.0
@@ -7157,7 +9020,7 @@ def test_archer_queen_cast_locks_combat_after_cloak_triggers():
     )
 
 
-def test_stun_interrupts_archer_queen_cast_without_refunding_its_cost():
+def test_stun_does_not_interrupt_archer_queen_cast():
     battle = BattleState()
     queen = _spawn_one(battle, "ArcherQueen", 0, Position(9.0, 12.0))
     mechanic = queen.mechanics[0]
@@ -7168,15 +9031,17 @@ def test_stun_interrupts_archer_queen_cast_without_refunding_its_cost():
 
     assert battle.players[0].elixir == 9.0
     assert queen._stealth_until == 0
-    assert not mechanic.ability.is_active
-    assert not mechanic.blocks_combat_actions(queen)
+    assert mechanic.ability.is_active
+    assert mechanic.blocks_combat_actions(queen)
     assert not mechanic.can_activate_ability(queen)
 
-    queen.update(battle.dt, battle)
-    queen.update_status_effects(0.5)
-    assert mechanic.can_activate_ability(queen)
-    assert mechanic.activate_ability(queen)
-    assert battle.players[0].elixir == 8.0
+    battle.time = mechanic.trigger_delay_ms / 1000.0
+    mechanic.on_tick(queen, mechanic.trigger_delay_ms)
+    assert queen.is_stunned()
+    assert queen._stealth_until == mechanic.trigger_delay_ms + mechanic.duration_ms
+    assert mechanic.ability.is_active
+    assert mechanic.blocks_combat_actions(queen)
+    assert battle.players[0].elixir == 9.0
 
 
 def test_royal_ghost_fades_by_time_since_attack_and_breaks_enemy_lock():
@@ -7390,13 +9255,16 @@ def test_royal_ghost_hovers_across_the_river_without_becoming_an_air_target():
 
     assert not ghost.is_air_unit
     assert not ghost._can_attack_air()
+    goal = native_route_goal_cell(ghost, target)
+    assert goal is not None
+    goal_center = _cell_center(goal)
     for _ in range(90):
         ghost._move_towards_target(target, battle.dt, battle)
         if ghost.position.y >= 17.0:
             break
 
     assert ghost.position.y >= 17.0
-    assert ghost.position.x == pytest.approx(9.0)
+    assert abs(ghost.position.x - goal_center.x) < abs(9.0 - goal_center.x)
 
 
 def test_hovering_troops_touch_blocked_tiles_symmetrically_at_boundaries():
@@ -7761,11 +9629,11 @@ def test_charge_distance_uses_game_units_and_can_recharge_after_attacking():
     prince.apply_stun(0.5)
     assert not prince.is_charging
     assert prince.attack_cooldown == pytest.approx(
-        prince.card_stats.first_hit_time / 1000.0
+        prince.get_base_attack_interval_seconds()
     )
 
-    # Every charge interruption restores the ordinary initial attack wind-up;
-    # ordinary knockback still removes preload (covered separately).
+    # Zap/stun resets the complete hit counter through the current global.
+    # Ordinary knockback instead removes only the idle load portion.
     prince.is_charging = True
     prince.attack_cooldown = 0.0
     prince.interrupt_by_knockback()
@@ -7787,7 +9655,7 @@ def test_charge_distance_uses_game_units_and_can_recharge_after_attacking():
 
 @pytest.mark.parametrize("card_name", ["Prince", "DarkPrince", "BattleRam"])
 @pytest.mark.parametrize("interruption", ["stun", "knockback"])
-def test_every_enabled_charging_troop_uses_first_hit_windup_after_interruption(
+def test_every_enabled_charging_troop_uses_native_windup_after_interruption(
     card_name,
     interruption,
 ):
@@ -7802,8 +9670,13 @@ def test_every_enabled_charging_troop_uses_first_hit_windup_after_interruption(
         troop.interrupt_by_knockback()
 
     assert not troop.is_charging
+    expected = (
+        troop.get_base_attack_interval_seconds()
+        if interruption == "stun"
+        else troop.card_stats.first_hit_time / 1000.0
+    )
     assert troop.attack_cooldown == pytest.approx(
-        troop.card_stats.first_hit_time / 1000.0
+        expected
     )
 
 
@@ -7896,11 +9769,10 @@ def test_sub_ten_unit_movement_call_resets_partial_charge():
     battle.entities.clear()
     battle.next_entity_id = 1
     prince = _spawn_one(battle, "Prince", 0, Position(9.0, 10.0))
-    target = _spawn_one(battle, "Knight", 1, Position(9.0, 10.005))
     prince._native_charge_progress = 9999
     prince.distance_traveled = 2.49
 
-    prince._move_towards_target(target, battle.dt, battle)
+    prince._advance_native_charge(5)
 
     assert prince._native_charge_progress == 0
     assert prince.distance_traveled == 0.0
@@ -7924,7 +9796,21 @@ def test_tilemap_terrain_query_does_not_override_native_move_or_charge_work(
 
     prince._move_towards_target(target, battle.dt, battle)
 
-    assert prince.position == Position(9.0, 10.06)
+    waypoint = ground_path_waypoint(
+        battle,
+        prince,
+        target.position,
+        target_entity=target,
+    )
+    delta = movement_component_vector_logic_units(
+        tiles_to_logic_units(waypoint.x - start.x),
+        tiles_to_logic_units(waypoint.y - start.y),
+        speed_work_for_duration(prince.speed, battle.dt),
+    )
+    assert prince.position == Position(
+        start.x + logic_units_to_tiles(delta[0]),
+        start.y + logic_units_to_tiles(delta[1]),
+    )
     assert prince._native_charge_progress == 240
     assert prince.distance_traveled == 0.06
 
@@ -8117,7 +10003,7 @@ def test_battle_ram_connect_deals_one_charge_hit_then_releases_barbarians():
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
-def test_spawn_slam_can_target_lethal_battle_ram_death_spawns_same_frame(
+def test_spawn_slam_cannot_target_lethal_battle_ram_death_spawns_same_frame(
     fast_path,
 ):
     battle = BattleState(fast_path=fast_path)
@@ -8149,9 +10035,22 @@ def test_spawn_slam_can_target_lethal_battle_ram_death_spawns_same_frame(
 
     battle.step()
 
-    assert list(battle.entities) == [mega_knight.id]
-    assert mega_knight.target_id == 3
-    assert mega_knight.position == Position(9.25, 13.8)
+    barbarians = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop) and entity.card_stats.name == "Barbarian"
+    ]
+    assert len(barbarians) == 2
+    assert all(barbarian.hitpoints == barbarian.max_hitpoints for barbarian in barbarians)
+    assert list(battle.entities) == [mega_knight.id, *(barbarian.id for barbarian in barbarians)]
+    assert mega_knight.target_id is None
+    assert all(
+        barbarian._death_spawn_target_immunity_elapsed_ms == 50
+        for barbarian in barbarians
+    )
+    # Target immunity does not remove physical arena presence, so the new
+    # Barbarians still apply birth-frame collision pressure.
+    assert mega_knight.position == Position(9.312, 13.824)
 
 
 @pytest.mark.parametrize("fast_path", [False, True])
@@ -8193,7 +10092,9 @@ def test_battle_ram_birth_frame_advances_released_barbarian_deploy_clock(
 def test_bandit_charge_is_interruptible_then_dash_is_targetable_but_invulnerable():
     battle = BattleState(rng=random.Random(31))
     bandit = _spawn_one(battle, "Bandit", 0, Position(9.0, 10.0))
-    target = _spawn_one(battle, "Knight", 1, Position(9.0, 14.1))
+    # Bandit's native minimum is an edge-to-edge gap, so include both the
+    # Bandit and Knight collision radii in the center spacing.
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 14.8))
     hp_before = target.hitpoints
 
     bandit.update(battle.dt, battle)  # acquire target
@@ -8238,7 +10139,9 @@ def test_opposing_bandits_are_both_invulnerable_when_their_dashes_cross():
     battle.entities.clear()
     battle.next_entity_id = 1
     first = _spawn_one(battle, "Bandit", 0, Position(9.0, 10.0))
-    second = _spawn_one(battle, "Bandit", 1, Position(9.0, 14.6))
+    # Leave enough room for both movement components to advance before their
+    # dash predicates run on the first update.
+    second = _spawn_one(battle, "Bandit", 1, Position(9.0, 14.9))
     hp_before = (first.hitpoints, second.hitpoints)
     both_launched = False
 
@@ -8279,7 +10182,7 @@ def test_bandit_uses_serialized_post_landing_immunity_window():
     battle.entities.clear()
     battle.next_entity_id = 1
     bandit = _spawn_one(battle, "Bandit", 0, Position(9.0, 10.0))
-    target = _spawn_one(battle, "Knight", 1, Position(9.0, 14.1))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 14.8))
     mechanic = bandit.mechanics[0]
     mechanic._launch_dash(bandit, target)
     assert mechanic.post_dash_immunity_ms == 100
@@ -8318,7 +10221,7 @@ def test_dash_launch_advances_in_same_frames_movement_component(card_name):
     battle.entities.clear()
     battle.next_entity_id = 1
     mover = _spawn_one(battle, card_name, 0, Position(9.0, 10.0))
-    target = _spawn_one(battle, "Knight", 1, Position(9.0, 14.1))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 14.8))
     target.apply_stun(10.0)
     mover.target_id = target.id
     mechanic = mover.mechanics[0]
@@ -8440,6 +10343,54 @@ def test_dash_and_leap_initiation_ranges_measure_to_target_hitbox(
 
 
 @pytest.mark.parametrize(
+    "card_name",
+    ["Bandit", "MegaKnight"],
+)
+def test_dash_and_leap_minimum_range_measures_edge_to_edge_inclusively(card_name):
+    battle = BattleState()
+    mover = _spawn_one(battle, card_name, 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 10.0))
+    mechanic = mover.mechanics[0]
+    minimum_range = (
+        mechanic.dash_min_range
+        if card_name == "Bandit"
+        else mechanic.jump_min_range
+    )
+    minimum_center_distance = (
+        minimum_range
+        + mover.get_collision_radius()
+        + target.get_collision_radius()
+    )
+
+    target.position = Position(9.0, 10.0 + minimum_center_distance - 0.001)
+    assert mechanic._target_edge_distance(mover, target) is None
+
+    target.position = Position(9.0, 10.0 + minimum_center_distance)
+    assert mechanic._target_edge_distance(mover, target) is not None
+
+
+@pytest.mark.parametrize(
+    ("card_name", "maximum_range"),
+    [("Bandit", 6.0), ("MegaKnight", 5.0)],
+)
+def test_dash_and_leap_maximum_target_edge_range_is_inclusive(
+    card_name,
+    maximum_range,
+):
+    battle = BattleState()
+    mover = _spawn_one(battle, card_name, 0, Position(9.0, 10.0))
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 10.0))
+    mechanic = mover.mechanics[0]
+    maximum_center_distance = maximum_range + target.get_collision_radius()
+
+    target.position = Position(9.0, 10.0 + maximum_center_distance)
+    assert mechanic._target_edge_distance(mover, target) is not None
+
+    target.position = Position(9.0, 10.0 + maximum_center_distance + 0.001)
+    assert mechanic._target_edge_distance(mover, target) is None
+
+
+@pytest.mark.parametrize(
     ("card_name", "max_edge_range"),
     [("Bandit", 6.0), ("MegaKnight", 5.0)],
 )
@@ -8511,7 +10462,8 @@ def test_mega_knight_uses_data_scaled_deploy_and_jump_damage_once():
     assert ground.stun_timer == 0.0
     ground.take_damage(ground.hitpoints)
 
-    jump_target = _spawn_one(battle, "Knight", 1, Position(3.5, 16.1))
+    # Mega Knight's native minimum is likewise measured edge to edge.
+    jump_target = _spawn_one(battle, "Knight", 1, Position(3.5, 16.8))
     jump_hp = jump_target.hitpoints
     mega_knight.target_id = jump_target.id
     mega_knight.mechanics[0].on_tick(mega_knight, 33)
@@ -8666,6 +10618,72 @@ def test_mega_knight_jump_uses_wider_landing_shockwave_not_mace_splash():
     )
 
     assert hp_before - edge_target.hitpoints == mega_knight.card_stats.get_scaled_stat(210)
+
+
+def test_mega_knight_keeps_native_character_spawn_pushback_payload():
+    battle = BattleState()
+    mega_knight = battle.card_loader.get_card("MegaKnight")
+    char_data = mega_knight._raw_entry["summonCharacterData"]
+    mechanic = next(
+        item
+        for item in battle.card_loader.get_card_definition("MegaKnight").mechanics
+        if type(item).__name__ == "SpawnPushback"
+    )
+
+    assert char_data["spawnPushback"] == 1000
+    assert char_data["spawnPushbackRadius"] == 1000
+    assert mechanic.distance_tiles == 1.0
+    assert mechanic.radius_tiles == 1.0
+
+
+def test_spawn_pushback_is_data_driven_and_pushes_without_damage():
+    from clasher.factory.mechanic_detector import detect_mechanics_from_data
+
+    mechanics = detect_mechanics_from_data(
+        {
+            "name": "SyntheticSpawner",
+            "summonCharacterData": {
+                "spawnPushback": 750,
+                "spawnPushbackRadius": 1000,
+                "attacksGround": True,
+                "attacksAir": False,
+            },
+        }
+    )
+    mechanic = next(item for item in mechanics if type(item).__name__ == "SpawnPushback")
+
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source = _spawn_one(battle, "Knight", 0, Position(9.0, 12.0))
+    nearby = _spawn_one(battle, "Knight", 1, Position(10.4, 12.0))
+    heavyweight = _spawn_one(battle, "Giant", 1, Position(7.3, 12.0))
+    river_jumper = _spawn_one(battle, "HogRider", 1, Position(9.0, 13.4))
+    flying = _spawn_one(battle, "BabyDragon", 1, Position(9.0, 10.6))
+    outside = _spawn_one(battle, "Knight", 1, Position(10.6, 12.0))
+    river_jumper._river_jump_active = True
+    nearby_hp = nearby.hitpoints
+    heavyweight_hp = heavyweight.hitpoints
+    river_jumper_hp = river_jumper.hitpoints
+    flying_hp = flying.hitpoints
+    outside_hp = outside.hitpoints
+
+    mechanic.on_spawn(source)
+
+    assert nearby.hitpoints == nearby_hp
+    assert heavyweight.hitpoints == heavyweight_hp
+    assert river_jumper.hitpoints == river_jumper_hp
+    assert flying.hitpoints == flying_hp
+    assert outside.hitpoints == outside_hp
+    assert nearby._knockback_target is not None
+    assert nearby.position.distance_to(nearby._knockback_target) == pytest.approx(0.75)
+    # Character SpawnPushback uses the native pushback-all override, and its
+    # plane predicate reads static FlyingHeight rather than the current jump
+    # elevation. A heavyweight and a ground troop mid-river-jump both move.
+    assert heavyweight._knockback_target is not None
+    assert river_jumper._knockback_target is not None
+    assert flying._knockback_target is None
+    assert outside._knockback_target is None
 
 
 def test_mega_knight_leap_stays_ground_target_but_rises_above_ground_effects():
@@ -8888,10 +10906,14 @@ def test_diagonal_bowler_launch_and_knockback_use_native_logic_vectors():
     rolling._apply_knockback(victim, battle)
     assert victim.position == Position(8.0, 9.0)
     victim.update_movement_component(battle.dt, battle)
-    assert victim.position == Position(8.12, 9.16)
+    push_delta = movement_component_vector_logic_units(600, 800, 200)
+    assert victim.position == Position(
+        8.0 + logic_units_to_tiles(push_delta[0]),
+        9.0 + logic_units_to_tiles(push_delta[1]),
+    )
     for _ in range(8):
         victim.update_movement_component(battle.dt, battle)
-    assert victim.position == Position(8.54, 9.72)
+    assert victim.position == Position(8.536, 9.715)
     assert victim.position.x * 1000 == round(victim.position.x * 1000)
     assert victim.position.y * 1000 == round(victim.position.y * 1000)
 
@@ -9237,7 +11259,7 @@ def test_avoiding_ground_spawn_egress_stays_clipped_to_native_boundary(
     assert len(stab_goblins) == 3
     right = max(stab_goblins, key=lambda entity: entity.position.x)
     assert right._native_avoidance == 190
-    assert right.position == Position(5.594, 0.25)
+    assert right.position == Position(5.54, 0.25)
     assert all(
         battle.is_entity_position_in_bounds(entity.position, entity)
         for entity in stab_goblins
@@ -9936,13 +11958,13 @@ def test_tesla_hide_clock_starts_on_deploy_zero_crossing_without_attacking(
         for mechanic in tesla.mechanics
         if type(mechanic).__name__ == "HideWhenIdle"
     )
-    assert hide._phase_ms == 800.0
-    assert tesla._hidden_building
+    assert hide._phase_ms == 0.0
+    assert not tesla._hidden_building
 
     battle.step()
 
     assert not tesla.placement_pending
-    assert hide._phase_ms == 850.0
+    assert hide._phase_ms == 0.0
     assert not tesla._hidden_building
     assert target.hitpoints == hp_before
 
@@ -9974,9 +11996,9 @@ def test_exact_half_second_stun_blocks_ten_full_logic_frames(fast_path):
     battle.step()
 
     assert target.hitpoints == hp_before
-    assert attacker.attack_cooldown == pytest.approx(0.45)
+    assert attacker.attack_cooldown == pytest.approx(1.15)
 
-    for _ in range(8):
+    for _ in range(22):
         battle.step()
 
     assert target.hitpoints == hp_before
@@ -10010,7 +12032,16 @@ def test_slow_and_rage_govern_their_full_final_movement_frame(
         mover.quantize_logic_position()
         steps.append(old_position.distance_to(mover.position))
 
-    assert steps[:10] == pytest.approx([steps[0]] * 10)
+    effect_work = speed_work_for_duration(
+        mover.card_stats.speed * (0.7 if effect == "slow" else 1.3),
+        battle.dt,
+    )
+    base_work = speed_work_for_duration(mover.card_stats.speed, battle.dt)
+    assert all(
+        effect_work - 2 <= tiles_to_logic_units(step) <= effect_work
+        for step in steps[:10]
+    )
+    assert base_work - 2 <= tiles_to_logic_units(steps[10]) <= base_work
     if effect == "slow":
         assert steps[10] > steps[9]
     else:
@@ -10189,7 +12220,9 @@ def test_special_dash_uses_closest_target_at_launch_without_restarting_windup(
 
     # The closer troop appears during the final charge frame. Dash users choose
     # their victim at launch, so the accumulated wind-up must not be discarded.
-    replacement = _spawn_one(battle, "Knight", 1, Position(6.0, 13.2))
+    # Keep the replacement closer than the original while remaining outside
+    # both cards' radius-aware native minimum dash/leap range.
+    replacement = _spawn_one(battle, "Knight", 1, Position(5.8, 13.6))
     replacement.apply_stun(99.0)
 
     battle.step()

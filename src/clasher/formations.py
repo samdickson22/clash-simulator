@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .balance import LOGIC_LANE_ID_BASED_DEPLOY_SEQUENCE
 from .kinematics import logic_units_to_tiles, tiles_to_logic_units, trunc_div
 from .logic_math import logic_cos, logic_sin, logic_vector_angle
 
@@ -16,6 +17,7 @@ def formation_offset(
     secondary_count: int = 0,
     width: float = 0.0,
     reverse_x: bool = False,
+    lane_id: int = 0,
 ) -> tuple[float, float]:
     """Return the offset produced by the native ``getSpawnOffset`` routine.
 
@@ -48,7 +50,11 @@ def formation_offset(
     angle_shift = int(angle_shift_degrees)
     native_index = int(index)
     base_angle = 0
-    flip_x = False
+    lane_flip_x = (
+        LOGIC_LANE_ID_BASED_DEPLOY_SEQUENCE
+        and int(lane_id) == 1
+        and slot_count in {2, 3, 4}
+    )
 
     if slot_count == 2:
         base_angle = 90
@@ -137,7 +143,7 @@ def formation_offset(
             - trunc_div(radius_units, 2)
         )
 
-    if flip_x or reverse_x:
+    if lane_flip_x or reverse_x:
         x_units = -x_units
     # Standard arena ownership reflects only the forward axis. It never
     # reverses left/right spawn order.
@@ -153,6 +159,8 @@ def mixed_ring_offset(
     radius: float,
     player_id: int,
     angle_shift_degrees: float = 0.0,
+    *,
+    lane_id: int = 0,
 ) -> tuple[float, float]:
     """Compatibility wrapper for native mixed primary/secondary formations."""
     return formation_offset(
@@ -162,6 +170,7 @@ def mixed_ring_offset(
         player_id,
         angle_shift_degrees,
         secondary_count=back_count,
+        lane_id=lane_id,
     )
 
 
@@ -171,6 +180,8 @@ def horizontal_line_offset(
     width: float,
     radius: float,
     player_id: int = 0,
+    *,
+    lane_id: int = 0,
 ) -> tuple[float, float]:
     """Compatibility wrapper for a native wide, alternating-row formation."""
     return formation_offset(
@@ -179,6 +190,7 @@ def horizontal_line_offset(
         radius,
         player_id,
         width=width,
+        lane_id=lane_id,
     )
 
 

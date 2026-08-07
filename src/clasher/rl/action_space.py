@@ -274,6 +274,8 @@ class DiscreteTileActionSpace:
 
         player = battle.players[player_id]
         for slot, card_name in enumerate(player.hand[:NUM_HAND_SLOTS]):
+            if card_name is None:
+                continue
             card_stats = battle.card_loader.get_card(card_name)
             if card_stats is None:
                 continue
@@ -320,6 +322,8 @@ class DiscreteTileActionSpace:
 
         player = battle.players[player_id]
         for slot, card_name in enumerate(player.hand[:NUM_HAND_SLOTS]):
+            if card_name is None:
+                continue
             card_stats = battle.card_loader.get_card(card_name)
             if card_stats is None or not player.can_play_card(card_name, card_stats):
                 continue
@@ -444,6 +448,8 @@ class DiscreteTileActionSpace:
             return False
 
         card_name = hand[decoded.slot]
+        if card_name is None:
+            return False
         return battle.deploy_card(player_id, card_name, decoded.position)
 
     def random_legal_action(

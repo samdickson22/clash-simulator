@@ -34,6 +34,25 @@ _ATAN_TABLE = (
 SPAWN_PRIORITY_STEP_LOGIC_UNITS = 80
 
 
+def native_percent_damage(
+    damage: float | int,
+    multiplier: float,
+) -> int:
+    """Apply a serialized damage percentage with native ceiling arithmetic.
+
+    ProjectileData, AreaEffectObjectData, and CharacterBuffData all derive
+    their Crown/building payloads as ``(damage * percent + 99) / 100`` after
+    clamping the final percentage at zero. Their source damage is already an
+    integer level-scaled stat; accepting integer-valued floats here keeps the
+    runtime representation from changing that arithmetic.
+    """
+    base_damage = max(0, round(float(damage)))
+    percentage = max(0, round(float(multiplier) * 100.0))
+    if base_damage == 0 or percentage == 0:
+        return 0
+    return (base_damage * percentage + 99) // 100
+
+
 def spawn_target_distance_discount_sq_units(index: int) -> int:
     """Return the native squared target-distance allowance for child ``index``."""
     offset_units = max(0, int(index)) * SPAWN_PRIORITY_STEP_LOGIC_UNITS

@@ -122,6 +122,9 @@ def spawn_death_area_object(
             attack_speed_multiplier=attack_multiplier,
             spawn_speed_multiplier=spawn_multiplier,
             refresh_duration=buff_duration,
+            cap_buff_time_to_effect=bool(
+                area_data.get("capBuffTimeToAreaEffectTime", False)
+            ),
             effect_tick_interval=hit_interval,
             effect_on_spawn_only=hit_interval <= 0.0,
             impact_damage=impact_damage,

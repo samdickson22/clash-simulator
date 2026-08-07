@@ -1317,6 +1317,12 @@ def run_allied_attack_matrix(
                 primary.position = Position(9.0, 12.0)
                 primary.max_hitpoints = max(primary.max_hitpoints, 1_000_000.0)
                 primary.hitpoints = primary.max_hitpoints
+                # The primary exists only as an enemy recipient. Spawn-time
+                # stuns can legitimately reset an artificial long combat
+                # cooldown, so zero its outgoing damage as well; otherwise a
+                # control with the attacker removed can redirect the primary
+                # onto the protected ally and masquerade as friendly fire.
+                primary.damage = 0.0
 
             scalar._refresh_fast_path_caches()
             control = copy.deepcopy(scalar)
@@ -1493,6 +1499,12 @@ def run_allied_death_payload_matrix(
                 primary.position = Position(9.0, 12.0)
                 primary.max_hitpoints = max(primary.max_hitpoints, 1_000_000.0)
                 primary.hitpoints = primary.max_hitpoints
+                # This enemy exists only to prove the death payload's hostile
+                # branch. Target acquisition can replace the artificial
+                # cooldown with native LoadTime; zero damage prevents a
+                # source's spawned descendants from changing which protected
+                # ally the control Knight eventually attacks.
+                primary.damage = 0.0
 
             scalar._refresh_fast_path_caches()
             control = copy.deepcopy(scalar)

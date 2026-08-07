@@ -16,7 +16,7 @@ from torch import nn
 
 from clasher.battle import STANDARD_MATCH_TICKS
 from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, resolve_path
-from clasher.rl.model import MaskedPolicyValueNet
+from clasher.rl.legacy_model import MaskedPolicyValueNet
 from clasher.rl.oracle_planner import FixedDepthThompsonOracle
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.train_selfplay import resolve_torch_device

@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
-from typing import ClassVar, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from ..mechanic_base import BaseMechanic
+from ...balance import LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER
 
 if TYPE_CHECKING:
     from ...entities import Entity
@@ -13,14 +14,12 @@ class DamageRamp(BaseMechanic):
     # LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER. Native subtracts this
     # only from a moving character's attack range while it approaches a new
     # continuous-damage lock; connected beams and buildings use full range.
-    APPROACH_RANGE_REDUCTION: ClassVar[float] = 0.5
     stages: list[tuple[int, int]]  # [(time_ms, damage)]
     per_target: bool = True  # Retained for API compatibility
     target_timers: dict = field(default_factory=dict)  # legacy field
     stored_original_damage: int = 0
     _current_target_id: int | None = field(init=False, default=None)
     _current_target_ms: float = field(init=False, default=0.0)
-    _target_shield_break_count: int = field(init=False, default=0)
 
     def on_attach(self, entity) -> None:
         """Store original damage value"""
@@ -42,7 +41,10 @@ class DamageRamp(BaseMechanic):
             current_target is not None
             and target_entity is not None
             and not entity.is_stunned()
-            and entity.can_attack_target(target_entity)
+            and entity.can_attack_target(
+                target_entity,
+                is_current_target=True,
+            )
             and entity.is_within_attack_engagement_reach(target_entity)
             and target_entity.can_receive_effect(
                 getattr(getattr(entity, "card_stats", None), "name", None)
@@ -57,7 +59,6 @@ class DamageRamp(BaseMechanic):
             self._current_target_id = current_target
             self._current_target_ms = 0.0
             entity.damage = self._get_damage_for_time(0)
-            self._target_shield_break_count = getattr(target_entity, "_shield_break_count", 0)
         # Native updateHitTimer advances on the acquisition frame before
         # variable damage is chosen for a hit that becomes ready this frame.
         get_attack_rate = getattr(entity, "get_attack_rate_multiplier", None)
@@ -90,21 +91,24 @@ class DamageRamp(BaseMechanic):
             or self._current_target_id == getattr(target_entity, "id", None)
         ):
             return 0.0
-        return self.APPROACH_RANGE_REDUCTION
+        return LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER / 1000.0
 
     def on_attack_start(self, entity, target) -> None:
         """Apply ramped damage based on current lock time."""
         if self._current_target_id != getattr(target, "id", None):
             self._current_target_id = getattr(target, "id", None)
             self._current_target_ms = 0.0
-            self._target_shield_break_count = getattr(target, "_shield_break_count", 0)
         damage = self._get_damage_for_time(self._current_target_ms)
         entity.damage = damage
 
-    def on_attack_hit(self, entity, target) -> None:
-        shield_break_count = getattr(target, "_shield_break_count", 0)
-        if shield_break_count != self._target_shield_break_count:
-            self._target_shield_break_count = shield_break_count
+    def on_shield_lost(self, entity, shielded_entity) -> None:
+        """Reset a connected beam when its retained target loses a shield."""
+        if (
+            getattr(entity, "target_id", None)
+            == getattr(shielded_entity, "id", None)
+            and self._current_target_id
+            == getattr(shielded_entity, "id", None)
+        ):
             self._current_target_ms = 0.0
             entity.damage = self._get_damage_for_time(0)
 
@@ -129,7 +133,6 @@ class DamageRamp(BaseMechanic):
     def _reset_lock(self, entity) -> None:
         self._current_target_id = None
         self._current_target_ms = 0.0
-        self._target_shield_break_count = 0
         entity.target_id = None
         entity.damage = self._get_damage_for_time(0)
 

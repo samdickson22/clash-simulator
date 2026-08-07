@@ -88,12 +88,12 @@ class BanditDash(BaseMechanic):
             self._update_dash(entity, dt_ms)
 
     def _target_edge_distance(self, entity, target) -> float | None:
-        """Return edge distance when the target lies inside dash bounds."""
-        distance = entity.native_target_distance_to(target)
-        edge_distance = distance - target.get_collision_radius()
-        if self.dash_min_range < edge_distance < self.dash_max_range:
-            return edge_distance
-        return None
+        """Return target-edge distance when the native dash band accepts it."""
+        return entity.native_dash_range_edge_distance(
+            target,
+            self.dash_min_range,
+            self.dash_max_range,
+        )
 
     def _start_charge(self, entity, target) -> None:
         """Begin the interruptible 0.8-second dash wind-up."""
