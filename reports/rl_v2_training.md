@@ -211,6 +211,48 @@ predeclared promotion gate: positive crown margins against every anchor, nearly
 perfect seat balance, no meaningful fixed-anchor regression, and a reversal of the
 direct update-1300 deficit.
 
+## Champion-weighted follow-up
+
+The next staged challenger resumed update 1400 for 100 updates against a pool
+weighted 50% to frozen update 1400, 25% to frozen update 1300, 12.5% to random,
+and 12.5% to update 800. Eight one-thread actor workers represented those weights
+exactly. The phase added 409,600 learner decisions at 1e-4 and ended at 6,000,640
+total decisions.
+
+The trainer recorded exit status zero after writing a loadable 15,430,657-byte
+update-1500 checkpoint with SHA-256
+`86f5c57e84ecaf217dfa9e2f74e929c2536733b68fba2ac6f2b1899b5d6a44ef`.
+Across all 100 updates, mean KL was 0.00384 (maximum 0.01481), mean explained
+variance was 0.930 (minimum 0.860), and mean throughput was 278 learner
+decisions/second. KL early stopping activated on 42 updates. Conditional no-op in
+training stayed between 0.662 and 0.810. The final batch had KL 0.00249 and explained
+variance 0.867. These measurements are bounded: the failed gameplay gate is not an
+optimizer or critic divergence.
+
+## Update-1500 evaluation
+
+The evaluation reused the same three paired 24-game blocks per opponent as the
+update-1400 gate.
+
+| Opponent | Games | W-L | Score | Approx. 95% interval | Crown diff/game | Seat wins P0/P1 | Playable no-op range |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Uniform-legal random | 72 | 51-21 | 0.708 | [0.603, 0.813] | +1.000 | 26/25 | 0.916-0.928 |
+| Update 300 | 72 | 49-23 | 0.681 | [0.573, 0.788] | +0.833 | 23/26 | 0.921-0.949 |
+| Update 800 | 72 | 52-20 | 0.722 | [0.619, 0.826] | +0.958 | 22/30 | 0.921-0.948 |
+| Update 1300 | 72 | 36-36 | 0.500 | [0.385, 0.615] | +0.014 | 15/21 | 0.910-0.938 |
+| Champion update 1400 | 72 | 36-36 | 0.500 | [0.385, 0.615] | -0.056 | 16/20 | 0.896-0.926 |
+
+Every recorded update-1400 fixed-anchor result regressed. Wins fell from 62 to 51
+versus random, 60 to 49 versus update 300, 58 to 52 versus update 800, and 39 to 36
+versus update 1300. The corresponding crown margins fell by 0.583, 0.681, 0.445,
+and 0.264 crowns/game. Directly against update 1400, the challenger was even on wins
+and negative on crowns. Deterministic playable no-op also rose from approximately
+82-85% at update 1400 to 90-95% at update 1500.
+
+Update 1500 is rejected. The stable optimization statistics combined with broad
+gameplay regression identify behavioral over-specialization toward passive waiting,
+not numerical instability. Update 1400 remains champion.
+
 ## Throughput experiments
 
 Larger MPS sequence batches were counterproductive because padded entity attention
@@ -228,16 +270,14 @@ or shortening recurrent context.
 
 ## Next curriculum decision
 
-Promote update 1400 and retain update 1300 as the previous-champion anchor. The
-candidate met every gate chosen before the continuation, while rollback would ignore
-both its fixed-anchor retention and the seat-balanced direct reversal.
+Roll back to update 1400. Do not continue training from update 1500 or add it to the
+frozen league.
 
-The next challenger should run only through update 1500 at 1e-4 against a league
-weighted 50% to frozen update 1400, 25% to frozen update 1300, 12.5% to random, and
-12.5% to update 800. Eight one-thread actor workers express that mixture exactly and
-leave more machine capacity for concurrent work. Update 300 remains evaluation-only.
-At update 1500, repeat the same 72-game paired gate against all four historical
-anchors plus a direct update-1400 match. Promotion should again require positive
-crown margins and seat balance everywhere, no meaningful fixed-anchor regression,
-and a positive direct result against the reigning champion. Do not begin that heavy
-run until RoadForge confirms its resource window.
+The next experiment should resume update 1400 for only 20 updates with equal 25%
+worker shares of update 1400, update 1300, update 800, and random, while holding the
+1e-4 learning rate and all PPO settings fixed. Changing only the opponent mixture
+tests the passive-specialization diagnosis without confounding it with another
+optimizer change. Run the matched 24-game safety blocks at update 1420 before any
+longer allocation. If playable no-op or fixed-anchor results regress again, stop and
+test entropy regularization separately rather than spending another 100 updates.
+Do not begin even that pilot until RoadForge confirms its next resource window.
