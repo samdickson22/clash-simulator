@@ -163,6 +163,54 @@ balanced 17/17 by seat. Update 1300 remains champion, but the weighted update-13
 challenger is close enough head-to-head and stronger enough on fixed anchors to
 justify an 80-update continuation before another promotion gate.
 
+## Weighted mixed-league continuation
+
+The weighted challenger continued through update 1400 with six of twelve actor
+workers assigned to frozen update 1300 and three each assigned to uniform-legal
+random and frozen update 800. The full weighted run from update 1300 added 409,600
+learner decisions at a fixed 1e-4 learning rate, bringing the checkpoint total to
+5,591,040 decisions.
+
+The trainer process and its tmux session closed after writing a loadable
+15,430,337-byte update-1400 checkpoint with SHA-256
+`6acbf7b4bd1f0dc3de221cb5d69caa5d79389a6171113e9c403cc10bc8f44b60`.
+The closed session did not retain a numeric shell exit code, but no trainer or actor
+process remained and the final checkpoint restored successfully for every evaluation.
+
+Across the ten saved checkpoints from updates 1310-1400, mean KL was 0.00302
+(maximum 0.00480), mean explained variance was 0.940 (minimum 0.910), and mean
+throughput was 280 learner decisions/second. KL early stopping activated at only
+two saved checkpoints. Conditional no-op remained bounded between 0.658 and 0.800,
+and gradient norm remained between 0.221 and 0.360. The final update completed all
+32 optimizer steps with KL 0.00143, explained variance 0.949, and 265 decisions/second.
+There is no sign of policy, critic, or optimizer instability.
+
+## Update-1400 evaluation
+
+The promotion gate reused three 24-game paired seed blocks per opponent, replaying
+each sampled matchup with the candidate on both seats.
+
+| Opponent | Games | W-L | Score | Approx. 95% interval | Crown diff/game | Seat wins P0/P1 | Playable no-op range |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Uniform-legal random | 72 | 62-10 | 0.861 | [0.781, 0.941] | +1.583 | 31/31 | 0.818-0.829 |
+| Update 300 | 72 | 60-12 | 0.833 | [0.747, 0.919] | +1.514 | 30/30 | 0.831-0.853 |
+| Update 800 | 72 | 58-14 | 0.806 | [0.714, 0.897] | +1.403 | 28/30 | 0.834-0.849 |
+| Champion update 1300 | 72 | 39-33 | 0.542 | [0.427, 0.657] | +0.278 | 19/20 | 0.839-0.854 |
+
+Against the recorded update-1300 fixed-anchor baselines, update 1400 gained two
+wins versus random and two versus update 800. It gave back one win versus update
+300, but retained a decisive 60-12 record, +1.514 crowns/game, and exact seat
+balance. On the update-1320 matched safety blocks, update 1400 tied its 21-3 random
+record with a lower +1.583 rather than +1.833 crown margin, tied its 19-5 update-800
+record with a higher +1.458 rather than +1.292 margin, and improved the expanded
+direct result from 34-38 and -0.111 crowns/game to 39-33 and +0.278.
+
+The direct interval still includes an even match, so update 1400 is not proven
+strictly stronger in a population-level sense. It nevertheless passes the
+predeclared promotion gate: positive crown margins against every anchor, nearly
+perfect seat balance, no meaningful fixed-anchor regression, and a reversal of the
+direct update-1300 deficit.
+
 ## Throughput experiments
 
 Larger MPS sequence batches were counterproductive because padded entity attention
@@ -180,21 +228,16 @@ or shortening recurrent context.
 
 ## Next curriculum decision
 
-Promote update 1300. The large, seat-balanced fixed-anchor gains and the elixir-bucket
-audit outweigh the single noisy final critic batch; rolling back solely because the
-policy waits would discard a validated strategic improvement.
+Promote update 1400 and retain update 1300 as the previous-champion anchor. The
+candidate met every gate chosen before the continuation, while rollback would ignore
+both its fixed-anchor retention and the seat-balanced direct reversal.
 
-The next phase is a staged league rather than another 500-update fixed pool. Continue
-the weighted update-1320 challenger only through update 1400 at 1e-4, using six
-workers on frozen update 1300 and three each on uniform-legal random and frozen
-update 800. Keep update 300 as an evaluation-only regression anchor because update
-1300 already dominates it. At update 1400, rerun the same paired blocks against
-random, updates 300, 800, and 1300. Promote only if the candidate retains positive
-crown margins and seat balance against every anchor and reverses its direct deficit
-to update 1300. Otherwise retain update 1300 and change the opponent mixture before
-spending more transitions.
-
-After promotion, add the new champion to the frozen league and repeat in 100-200
-update stages. This mixes an exploratory anchor, a pressure-heavy historical policy,
-and the current strategic champion while preventing a long run from silently
-specializing to one fixed pair of opponents.
+The next challenger should run only through update 1500 at 1e-4 against a league
+weighted 50% to frozen update 1400, 25% to frozen update 1300, 12.5% to random, and
+12.5% to update 800. Eight one-thread actor workers express that mixture exactly and
+leave more machine capacity for concurrent work. Update 300 remains evaluation-only.
+At update 1500, repeat the same 72-game paired gate against all four historical
+anchors plus a direct update-1400 match. Promotion should again require positive
+crown margins and seat balance everywhere, no meaningful fixed-anchor regression,
+and a positive direct result against the reigning champion. Do not begin that heavy
+run until RoadForge confirms its resource window.
