@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 import random
 import re
 import time
@@ -35,6 +36,7 @@ from visualize_battle import (
 
 TEAM_COLORS = {0: (75, 145, 255), 1: (246, 91, 103)}
 TEAM_DARK = {0: (32, 80, 155), 1: (145, 35, 52)}
+RANGE_COLORS = {0: (67, 121, 183), 1: (173, 72, 87)}
 INK = (230, 236, 245)
 MUTED = (147, 159, 178)
 BACKGROUND = (13, 18, 28)
@@ -191,7 +193,9 @@ class PolicyBattleVisualizer(BattleVisualizer):
         self.paused = False
         self.speed_index = 0
         self.show_help = True
-        self.show_targets = False
+        # Viewing ranges and target locks are core tactical information. Keep
+        # them visible by default; D toggles a clean presentation mode.
+        self.show_targets = True
         self._arena_surface: pygame.Surface | None = None
         self._pending_screenshot: Path | None = None
 
@@ -508,16 +512,61 @@ class PolicyBattleVisualizer(BattleVisualizer):
             hp_text = self.caption_font.render(f"{int(hp):,}", True, (245, 247, 250))
             self.screen.blit(hp_text, hp_text.get_rect(center=(x, y + size // 2 + 10)))
 
-    def _draw_target_line(self, entity: Entity, x: int, y: int) -> None:
-        if not self.show_targets or not getattr(entity, "target_id", None):
+    def _draw_combat_overlay(self, entity: Entity, x: int, y: int) -> None:
+        if not self.show_targets:
+            return
+
+        sight_range = float(getattr(entity, "sight_range", 0.0) or 0.0)
+        sight_radius = round(sight_range * TILE_SIZE)
+        if sight_radius > 0:
+            bounds = pygame.Rect(
+                x - sight_radius,
+                y - sight_radius,
+                sight_radius * 2,
+                sight_radius * 2,
+            )
+            ring_color = RANGE_COLORS.get(entity.player_id, MUTED)
+            # Dashed arcs preserve the exact sight radius without turning
+            # crowded fights into solid overlapping circles.
+            for degrees in range(0, 360, 30):
+                pygame.draw.arc(
+                    self.screen,
+                    ring_color,
+                    bounds,
+                    math.radians(degrees),
+                    math.radians(degrees + 13),
+                    1,
+                )
+
+        if not getattr(entity, "target_id", None):
             return
         target = self.battle.entities.get(entity.target_id)
         if target is None or not target.is_alive:
             return
         tx, ty = self.world_to_screen(target.position.x, target.position.y)
-        pygame.draw.line(
-            self.screen, (*TEAM_COLORS[entity.player_id], 130), (x, y), (tx, ty), 1
-        )
+        line_color = TEAM_COLORS.get(entity.player_id, WARNING)
+        pygame.draw.line(self.screen, line_color, (x, y), (tx, ty), 2)
+        pygame.draw.circle(self.screen, line_color, (tx, ty), 8, 2)
+
+        dx = tx - x
+        dy = ty - y
+        distance = math.hypot(dx, dy)
+        if distance > 1.0:
+            ux, uy = dx / distance, dy / distance
+            arrow_x, arrow_y = tx - ux * 10, ty - uy * 10
+            perpendicular_x, perpendicular_y = -uy, ux
+            arrow = [
+                (tx, ty),
+                (
+                    int(arrow_x + perpendicular_x * 4),
+                    int(arrow_y + perpendicular_y * 4),
+                ),
+                (
+                    int(arrow_x - perpendicular_x * 4),
+                    int(arrow_y - perpendicular_y * 4),
+                ),
+            ]
+            pygame.draw.polygon(self.screen, line_color, arrow)
 
     def draw_entities(self) -> None:
         for entity in tuple(self.battle.entities.values()):
@@ -604,7 +653,7 @@ class PolicyBattleVisualizer(BattleVisualizer):
             if callable(getattr(entity, "is_stunned", None)) and entity.is_stunned():
                 stun = self.caption_font.render("⚡", True, WARNING)
                 self.screen.blit(stun, (x + radius - 2, y - radius - 8))
-            self._draw_target_line(entity, x, y)
+            self._draw_combat_overlay(entity, x, y)
 
     def _panel(self, rect: pygame.Rect, *, color: tuple[int, int, int] = PANEL) -> None:
         pygame.draw.rect(self.screen, color, rect, border_radius=10)
@@ -777,7 +826,7 @@ class PolicyBattleVisualizer(BattleVisualizer):
 
         if self.show_help:
             controls = (
-                "SPACE pause   R/ENTER new match   1–5 speed   D targets   "
+                "SPACE pause   R/ENTER new match   1–5 speed   D ranges/locks   "
                 "H hide help   S screenshot   ESC quit"
             )
         else:
@@ -966,8 +1015,11 @@ class PolicyBattleVisualizer(BattleVisualizer):
     def draw_frame(self) -> None:
         self.screen.fill(BACKGROUND)
         self.draw_arena()
+        previous_clip = self.screen.get_clip()
+        self.screen.set_clip(pygame.Rect(ARENA_X, ARENA_Y, ARENA_WIDTH, ARENA_HEIGHT))
         self.draw_towers()
         self.draw_entities()
+        self.screen.set_clip(previous_clip)
         self.draw_ui()
         if self.battle.game_over:
             self._draw_match_over_overlay()
@@ -976,7 +1028,7 @@ class PolicyBattleVisualizer(BattleVisualizer):
         print("Starting Clasher V2 policy arena")
         print(f"device={self.device}")
         print(
-            "controls=SPACE pause, R/ENTER reset, 1-5 speed, D targets, H help, S screenshot, ESC exit"
+            "controls=SPACE pause, R/ENTER reset, 1-5 speed, D ranges/locks, H help, S screenshot, ESC exit"
         )
 
         running = True

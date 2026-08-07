@@ -50,6 +50,7 @@ def test_v2_viewer_headless_render_actions_and_reset() -> None:
     assert viewer.policy_identities[0].update == 140
     assert viewer.policies[0] is viewer.policies[1]
     assert viewer.episode_starts == {0: True, 1: True}
+    assert viewer.show_targets
 
     viewer.battle.tick = 8
     viewer._maybe_take_actions()
@@ -61,6 +62,13 @@ def test_v2_viewer_headless_render_actions_and_reset() -> None:
 
     viewer.draw_frame()
     assert viewer.screen.get_size() == (1200, 900)
+
+    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_d))
+    assert viewer.handle_events()
+    assert not viewer.show_targets
+    pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_d))
+    assert viewer.handle_events()
+    assert viewer.show_targets
 
     previous_match = viewer.match_number
     pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_r))

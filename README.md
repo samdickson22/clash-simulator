@@ -74,8 +74,9 @@ The viewer runs the same recurrent policy on both seats unless
 `--opponent-checkpoint` or `--opponent-random` is supplied. It displays both
 hands, decks, cycles, elixir, crowns, tower health, last actions, checkpoint
 identity, model transitions, match phase, speed, and FPS. Controls are Space to
-pause, R/Enter to start a new match, 1-5 for speed, D for target lines, H for
-help, S for a screenshot, and Escape to quit. Stochastic action sampling is the
+pause, R/Enter to start a new match, 1-5 for speed, D to toggle viewing ranges
+and lock-on lines, H for help, S for a screenshot, and Escape to quit. Tactical
+range/lock overlays are visible by default. Stochastic action sampling is the
 default; add `--deterministic` for argmax play. Omit `--auto-reset-seconds` to
 leave completed matches on screen until manually reset.
 
