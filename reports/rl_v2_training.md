@@ -93,10 +93,12 @@ or shortening recurrent context.
 
 ## Next curriculum decision
 
-Do not continue training solely against random. The evidence supports moving to a
-frozen historical-opponent phase that mixes update 300 and update 800 snapshots,
-keeps learner seats balanced, and evaluates against both anchors. This preserves a
-stationary learning target while increasing opponent quality and reducing random-
-policy overfitting. A later league should mix random, historical, and current-policy
-opponents, with promotion based on paired win/crown results rather than training
-loss.
+Do not continue training solely against random. The next phase mixes frozen update
+300 and update 800 snapshots, keeps learner seats balanced, and evaluates against
+both anchors. Frozen V2 opponents have independent recurrent/action/reward carry,
+are distributed round-robin across persistent workers, and never enter the learner
+PPO loss. A full-size smoke measured 337 decisions/second with safe KL stopping.
+This preserves a stationary target while increasing opponent quality and reducing
+random-policy overfitting. A later league should mix random, historical, and
+current-policy opponents, with promotion based on paired win/crown results rather
+than training loss.

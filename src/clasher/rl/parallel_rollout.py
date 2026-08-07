@@ -18,7 +18,7 @@ from .structured_obs import StructuredObservationBuilder
 from .train_recurrent import (
     RolloutBatch,
     collect_rollout,
-    collect_rollout_random_opponents,
+    collect_rollout_stationary_opponents,
     maybe_silence_stdio,
 )
 
@@ -32,6 +32,7 @@ class ActorWorkerConfig:
     max_ticks: int
     mirror_match: bool
     opponent_mode: str
+    opponent_checkpoints: tuple[str, ...]
     engine_fast_path: str
     quiet_engine: bool
     base_seed: int
@@ -84,6 +85,27 @@ def _actor_worker_main(
             token_names=config.token_names,
         )
         model = ClasherPolicy(policy_config, builder.card_stat_features).to(device)
+        opponent_model: ClasherPolicy | None = None
+        if config.opponent_mode == "checkpoint":
+            if not config.opponent_checkpoints:
+                raise ValueError("checkpoint opponent mode requires checkpoint paths")
+            opponent_path = config.opponent_checkpoints[
+                worker_id % len(config.opponent_checkpoints)
+            ]
+            opponent_payload = torch.load(
+                opponent_path, map_location=device, weights_only=False
+            )
+            if int(opponent_payload.get("format_version", 0)) != 2:
+                raise ValueError(f"not a V2 opponent checkpoint: {opponent_path}")
+            if opponent_payload["model_config"] != config.model_config:
+                raise ValueError("opponent and learner model configs differ")
+            if tuple(opponent_payload["token_names"]) != config.token_names:
+                raise ValueError("opponent and learner token vocabularies differ")
+            opponent_model = ClasherPolicy(
+                policy_config, builder.card_stat_features
+            ).to(device)
+            opponent_model.load_state_dict(opponent_payload["model_state_dict"])
+            opponent_model.eval()
 
         envs: list[SelfPlayBattleEnv] = []
         with maybe_silence_stdio(config.quiet_engine):
@@ -102,15 +124,27 @@ def _actor_worker_main(
                 env.reset(seed=seed)
                 envs.append(env)
 
-        if config.opponent_mode not in {"selfplay", "random"}:
+        if config.opponent_mode not in {"selfplay", "random", "checkpoint"}:
             raise ValueError(f"unknown opponent mode {config.opponent_mode!r}")
-        agents = len(envs) if config.opponent_mode == "random" else 2 * len(envs)
+        agents = (
+            len(envs)
+            if config.opponent_mode in {"random", "checkpoint"}
+            else 2 * len(envs)
+        )
         learner_players = tuple(env_index % 2 for env_index in env_indices)
         recurrent_state = model.initial_state(agents, device=device)
         no_op = envs[0].action_space.no_op_action
         previous_actions = np.full((agents,), no_op, dtype=np.int64)
         previous_rewards = np.zeros((agents,), dtype=np.float32)
         episode_starts = np.ones((agents,), dtype=np.bool_)
+        opponent_recurrent_state = (
+            opponent_model.initial_state(agents, device=device)
+            if opponent_model is not None
+            else None
+        )
+        opponent_previous_actions = np.full((agents,), no_op, dtype=np.int64)
+        opponent_previous_rewards = np.zeros((agents,), dtype=np.float32)
+        opponent_episode_starts = np.ones((agents,), dtype=np.bool_)
         result_queue.put(("ready", worker_id, None))
 
         while True:
@@ -127,8 +161,12 @@ def _actor_worker_main(
                 previous_actions,
                 previous_rewards,
                 episode_starts,
+                opponent_recurrent_state,
+                opponent_previous_actions,
+                opponent_previous_rewards,
+                opponent_episode_starts,
             ) = (
-                collect_rollout_random_opponents(
+                collect_rollout_stationary_opponents(
                     envs=envs,
                     learner_players=learner_players,
                     builder=builder,
@@ -139,9 +177,14 @@ def _actor_worker_main(
                     previous_actions=previous_actions,
                     previous_rewards=previous_rewards,
                     episode_starts=episode_starts,
+                    opponent_model=opponent_model,
+                    opponent_recurrent_state=opponent_recurrent_state,
+                    opponent_previous_actions=opponent_previous_actions,
+                    opponent_previous_rewards=opponent_previous_rewards,
+                    opponent_episode_starts=opponent_episode_starts,
                     quiet_engine=config.quiet_engine,
                 )
-                if config.opponent_mode == "random"
+                if config.opponent_mode in {"random", "checkpoint"}
                 else collect_rollout(
                     envs=envs,
                     builder=builder,
@@ -153,6 +196,12 @@ def _actor_worker_main(
                     previous_rewards=previous_rewards,
                     episode_starts=episode_starts,
                     quiet_engine=config.quiet_engine,
+                )
+                + (
+                    opponent_recurrent_state,
+                    opponent_previous_actions,
+                    opponent_previous_rewards,
+                    opponent_episode_starts,
                 )
             )
             result_queue.put(("rollout", worker_id, policy_version, rollout))

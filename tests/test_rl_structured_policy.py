@@ -12,7 +12,7 @@ from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rl.train_recurrent import (
     _stack_step_inputs,
     collect_rollout,
-    collect_rollout_random_opponents,
+    collect_rollout_stationary_opponents,
     compute_gae,
     ppo_update,
 )
@@ -199,8 +199,8 @@ def test_random_opponent_rollout_only_trains_balanced_learner_seats():
     state = model.initial_state(2)
     no_op = envs[0].action_space.no_op_action
 
-    rollout, next_state, previous_actions, previous_rewards, starts = (
-        collect_rollout_random_opponents(
+    rollout, next_state, previous_actions, previous_rewards, starts, *_ = (
+        collect_rollout_stationary_opponents(
             envs=envs,
             learner_players=(0, 1),
             builder=builder,
@@ -211,6 +211,11 @@ def test_random_opponent_rollout_only_trains_balanced_learner_seats():
             previous_actions=np.full((2,), no_op, dtype=np.int64),
             previous_rewards=np.zeros((2,), dtype=np.float32),
             episode_starts=np.ones((2,), dtype=np.bool_),
+            opponent_model=None,
+            opponent_recurrent_state=None,
+            opponent_previous_actions=np.full((2,), no_op, dtype=np.int64),
+            opponent_previous_rewards=np.zeros((2,), dtype=np.float32),
+            opponent_episode_starts=np.ones((2,), dtype=np.bool_),
             quiet_engine=True,
         )
     )

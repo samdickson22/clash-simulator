@@ -404,7 +404,7 @@ def collect_rollout(
 
 
 @torch.no_grad()
-def collect_rollout_random_opponents(
+def collect_rollout_stationary_opponents(
     *,
     envs: list[SelfPlayBattleEnv],
     learner_players: tuple[int, ...],
@@ -416,9 +416,24 @@ def collect_rollout_random_opponents(
     previous_actions: np.ndarray,
     previous_rewards: np.ndarray,
     episode_starts: np.ndarray,
+    opponent_model: ClasherPolicy | None,
+    opponent_recurrent_state: tuple[Tensor, Tensor] | None,
+    opponent_previous_actions: np.ndarray,
+    opponent_previous_rewards: np.ndarray,
+    opponent_episode_starts: np.ndarray,
     quiet_engine: bool,
-) -> tuple[RolloutBatch, tuple[Tensor, Tensor], np.ndarray, np.ndarray, np.ndarray]:
-    """Collect PPO experience from one learner seat against a fixed random policy.
+) -> tuple[
+    RolloutBatch,
+    tuple[Tensor, Tensor],
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    tuple[Tensor, Tensor] | None,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+]:
+    """Collect one learner seat against a random or frozen recurrent policy.
 
     Seats alternate across environments, and only learner-controlled decisions
     enter the rollout. This gives PPO a stationary anchor without contaminating
@@ -426,6 +441,10 @@ def collect_rollout_random_opponents(
     """
 
     model.eval()
+    if opponent_model is not None:
+        opponent_model.eval()
+        if opponent_recurrent_state is None:
+            raise ValueError("checkpoint opponent requires recurrent state")
     agents = len(envs)
     if agents != len(learner_players):
         raise ValueError("learner_players must have one seat per environment")
@@ -470,35 +489,73 @@ def collect_rollout_random_opponents(
         arrays["old_log_probs"][:, step] = log_probs_t[:, 0].cpu().numpy()
         arrays["old_values"][:, step] = values_t[:, 0].cpu().numpy()
 
+        opponent_players = tuple(1 - player_id for player_id in learner_players)
+        with maybe_silence_stdio(quiet_engine):
+            opponent_observations, opponent_masks = _current_learner_observations(
+                envs, opponent_players
+            )
+        if opponent_model is not None:
+            opponent_inputs = _stack_step_inputs(
+                opponent_observations,
+                opponent_masks,
+                opponent_previous_actions,
+                opponent_previous_rewards,
+                opponent_episode_starts,
+                device,
+            )
+            (
+                opponent_actions_t,
+                _,
+                _,
+                opponent_recurrent_state,
+                _,
+            ) = opponent_model.act(
+                opponent_inputs,
+                opponent_recurrent_state,
+                deterministic=False,
+            )
+            opponent_actions = (
+                opponent_actions_t[:, 0].cpu().numpy().astype(np.int64, copy=False)
+            )
+        else:
+            opponent_actions = np.asarray(
+                [
+                    int(env.np_rng.choice(np.flatnonzero(mask)))
+                    if np.any(mask)
+                    else env.action_space.no_op_action
+                    for env, mask in zip(envs, opponent_masks)
+                ],
+                dtype=np.int64,
+            )
+
         next_previous_actions = actions.copy()
         next_previous_rewards = np.zeros((agents,), dtype=np.float32)
         next_episode_starts = np.zeros((agents,), dtype=np.bool_)
+        next_opponent_previous_actions = opponent_actions.copy()
+        next_opponent_previous_rewards = np.zeros((agents,), dtype=np.float32)
+        next_opponent_episode_starts = np.zeros((agents,), dtype=np.bool_)
         with maybe_silence_stdio(quiet_engine):
             for env_index, (env, learner_player) in enumerate(
                 zip(envs, learner_players)
             ):
                 opponent_player = 1 - learner_player
-                opponent_mask = env.get_action_mask(opponent_player)
-                opponent_legal = np.flatnonzero(opponent_mask)
-                opponent_action = (
-                    int(env.np_rng.choice(opponent_legal))
-                    if opponent_legal.size
-                    else env.action_space.no_op_action
-                )
                 rewards, done, _ = env.step(
                     {
                         learner_player: int(actions[env_index]),
-                        opponent_player: opponent_action,
+                        opponent_player: int(opponent_actions[env_index]),
                     },
                     pre_action_masks={
                         learner_player: action_masks[env_index],
-                        opponent_player: opponent_mask,
+                        opponent_player: opponent_masks[env_index],
                     },
                 )
                 learner_reward = float(rewards[learner_player])
                 arrays["rewards"][env_index, step] = learner_reward
                 arrays["dones"][env_index, step] = done
                 next_previous_rewards[env_index] = learner_reward
+                next_opponent_previous_rewards[env_index] = float(
+                    rewards[opponent_player]
+                )
                 if done:
                     episodes_finished += 1
                     assert env.battle is not None
@@ -512,10 +569,18 @@ def collect_rollout_random_opponents(
                     next_previous_actions[env_index] = env.action_space.no_op_action
                     next_previous_rewards[env_index] = 0.0
                     next_episode_starts[env_index] = True
+                    next_opponent_previous_actions[env_index] = (
+                        env.action_space.no_op_action
+                    )
+                    next_opponent_previous_rewards[env_index] = 0.0
+                    next_opponent_episode_starts[env_index] = True
 
         previous_actions = next_previous_actions
         previous_rewards = next_previous_rewards
         episode_starts = next_episode_starts
+        opponent_previous_actions = next_opponent_previous_actions
+        opponent_previous_rewards = next_opponent_previous_rewards
+        opponent_episode_starts = next_opponent_episode_starts
 
     with maybe_silence_stdio(quiet_engine):
         bootstrap_observations, bootstrap_masks = _current_learner_observations(
@@ -546,6 +611,17 @@ def collect_rollout_random_opponents(
         previous_actions,
         previous_rewards,
         episode_starts,
+        (
+            None
+            if opponent_recurrent_state is None
+            else (
+                opponent_recurrent_state[0].detach(),
+                opponent_recurrent_state[1].detach(),
+            )
+        ),
+        opponent_previous_actions,
+        opponent_previous_rewards,
+        opponent_episode_starts,
     )
 
 
@@ -852,13 +928,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mirror-match", action="store_true")
     parser.add_argument(
         "--opponent-mode",
-        choices=["selfplay", "random"],
+        choices=["selfplay", "random", "checkpoint"],
         default="selfplay",
         help=(
             "selfplay trains both seats with the current policy; random trains "
             "one balanced learner seat per environment against a stationary "
             "uniform-legal opponent"
         ),
+    )
+    parser.add_argument(
+        "--opponent-checkpoint",
+        action="append",
+        default=[],
+        help="repeat to distribute frozen V2 opponents across rollout workers",
     )
     parser.add_argument(
         "--engine-fast-path", choices=["off", "shadow", "on"], default="off"
@@ -926,6 +1008,10 @@ def main() -> None:
         raise ValueError("actor_workers must be between 1 and num_envs")
     if args.actor_threads <= 0:
         raise ValueError("actor_threads must be positive")
+    if args.opponent_mode == "checkpoint" and not args.opponent_checkpoint:
+        raise ValueError("--opponent-mode checkpoint requires --opponent-checkpoint")
+    if args.opponent_mode == "checkpoint" and args.actor_workers == 1:
+        raise ValueError("checkpoint opponents currently require parallel actors")
     if args.d_model % args.num_heads != 0:
         raise ValueError("d_model must be divisible by num_heads")
 
@@ -939,6 +1025,9 @@ def main() -> None:
             "parallel rollout workers currently require --actor-device cpu"
         )
     decks_path = resolve_decks_path(args.decks_path, must_exist=True)
+    opponent_checkpoints = tuple(
+        str(resolve_path(path, must_exist=True)) for path in args.opponent_checkpoint
+    )
     directory = checkpoints_dir(args.checkpoint_dir, create=True)
     resume, resume_path = _load_resume_state(args, directory, learner_device)
 
@@ -1009,6 +1098,7 @@ def main() -> None:
                 max_ticks=args.max_ticks,
                 mirror_match=args.mirror_match,
                 opponent_mode=args.opponent_mode,
+                opponent_checkpoints=opponent_checkpoints,
                 engine_fast_path=args.engine_fast_path,
                 quiet_engine=args.quiet_engine,
                 base_seed=args.seed,
@@ -1017,13 +1107,20 @@ def main() -> None:
         )
         atexit.register(parallel_collector.close)
 
-    agents = args.num_envs if args.opponent_mode == "random" else 2 * args.num_envs
+    agents = (
+        args.num_envs
+        if args.opponent_mode in {"random", "checkpoint"}
+        else 2 * args.num_envs
+    )
     learner_players = tuple(index % 2 for index in range(args.num_envs))
     recurrent_state = actor_model.initial_state(agents, device=actor_device)
     no_op = model.num_actions - 2
     previous_actions = np.full((agents,), no_op, dtype=np.int64)
     previous_rewards = np.zeros((agents,), dtype=np.float32)
     episode_starts = np.ones((agents,), dtype=np.bool_)
+    opponent_previous_actions = np.full((agents,), no_op, dtype=np.int64)
+    opponent_previous_rewards = np.zeros((agents,), dtype=np.float32)
+    opponent_episode_starts = np.ones((agents,), dtype=np.bool_)
     parameter_count = sum(parameter.numel() for parameter in model.parameters())
 
     print(f"learner_device={learner_device} actor_device={actor_device}")
@@ -1084,8 +1181,12 @@ def main() -> None:
                 previous_actions,
                 previous_rewards,
                 episode_starts,
+                _,
+                opponent_previous_actions,
+                opponent_previous_rewards,
+                opponent_episode_starts,
             ) = (
-                collect_rollout_random_opponents(
+                collect_rollout_stationary_opponents(
                     envs=envs,
                     learner_players=learner_players,
                     builder=builder,
@@ -1096,6 +1197,11 @@ def main() -> None:
                     previous_actions=previous_actions,
                     previous_rewards=previous_rewards,
                     episode_starts=episode_starts,
+                    opponent_model=None,
+                    opponent_recurrent_state=None,
+                    opponent_previous_actions=opponent_previous_actions,
+                    opponent_previous_rewards=opponent_previous_rewards,
+                    opponent_episode_starts=opponent_episode_starts,
                     quiet_engine=args.quiet_engine,
                 )
                 if args.opponent_mode == "random"
@@ -1110,6 +1216,12 @@ def main() -> None:
                     previous_rewards=previous_rewards,
                     episode_starts=episode_starts,
                     quiet_engine=args.quiet_engine,
+                )
+                + (
+                    None,
+                    opponent_previous_actions,
+                    opponent_previous_rewards,
+                    opponent_episode_starts,
                 )
             )
         else:

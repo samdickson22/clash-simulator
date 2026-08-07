@@ -67,6 +67,30 @@ uv run python run_clasher.py train -- \
   --checkpoint-dir checkpoints/random_curriculum
 ```
 
+After the stationary anchor establishes measurable progress, mix frozen V2
+opponents by repeating `--opponent-checkpoint`. Workers distribute the snapshots
+round-robin and preserve each opponent's recurrent state independently:
+
+```bash
+uv run python run_clasher.py train -- \
+  --resume-from checkpoints/random_curriculum/policy_v2_update_000800.pt \
+  --updates 1300 \
+  --num-envs 64 \
+  --actor-workers 12 \
+  --actor-threads 1 \
+  --rollout-steps 64 \
+  --opponent-mode checkpoint \
+  --opponent-checkpoint checkpoints/entity_selfplay/policy_v2_update_000300.pt \
+  --opponent-checkpoint checkpoints/random_curriculum/policy_v2_update_000800.pt \
+  --engine-fast-path on \
+  --device mps \
+  --actor-device cpu \
+  --sequence-batch-size 4 \
+  --epochs 2 \
+  --save-every 10 \
+  --checkpoint-dir checkpoints/historical_curriculum
+```
+
 ### 4) Evaluate a V2 checkpoint
 
 ```bash
