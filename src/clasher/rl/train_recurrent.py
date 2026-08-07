@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import argparse
 import atexit
+import time
+from collections.abc import Iterator
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass
 from pathlib import Path
-import time
-from typing import Any, Iterable, Iterator, Optional
+from typing import Any
 
 import numpy as np
 import torch
@@ -14,7 +15,13 @@ from torch import Tensor, nn
 from torch.nn import functional as F
 
 from clasher.battle import STANDARD_MATCH_TICKS
-from clasher.paths import checkpoints_dir, decks_path as resolve_decks_path, resolve_path
+from clasher.paths import (
+    checkpoints_dir,
+    resolve_path,
+)
+from clasher.paths import (
+    decks_path as resolve_decks_path,
+)
 
 from .model import ClasherPolicy, PolicyConfig, PolicyInputs
 from .selfplay_env import SelfPlayBattleEnv
@@ -149,7 +156,9 @@ def _stack_step_inputs(
         entity_mask=stack("entity_mask", torch.bool),
         hand_ids=stack("hand_ids", torch.long),
         global_features=stack("global_features", torch.float32),
-        action_mask=torch.as_tensor(action_masks, dtype=torch.bool, device=device).unsqueeze(1),
+        action_mask=torch.as_tensor(
+            action_masks, dtype=torch.bool, device=device
+        ).unsqueeze(1),
         previous_actions=torch.as_tensor(
             previous_actions, dtype=torch.long, device=device
         ).unsqueeze(1),
@@ -178,7 +187,8 @@ def _empty_rollout_arrays(
     return {
         "entity_ids": np.zeros((agents, steps, spec.max_entities), dtype=np.int64),
         "entity_features": np.zeros(
-            (agents, steps, spec.max_entities, spec.entity_feature_size), dtype=np.float32
+            (agents, steps, spec.max_entities, spec.entity_feature_size),
+            dtype=np.float32,
         ),
         "entity_mask": np.zeros((agents, steps, spec.max_entities), dtype=np.bool_),
         "hand_ids": np.zeros((agents, steps, 5), dtype=np.int64),
@@ -193,7 +203,8 @@ def _empty_rollout_arrays(
             (agents, steps, spec.max_entities), dtype=np.int64
         ),
         "critic_entity_features": np.zeros(
-            (agents, steps, spec.max_entities, spec.entity_feature_size), dtype=np.float32
+            (agents, steps, spec.max_entities, spec.entity_feature_size),
+            dtype=np.float32,
         ),
         "critic_entity_mask": np.zeros(
             (agents, steps, spec.max_entities), dtype=np.bool_
@@ -250,6 +261,20 @@ def _current_observations(
         for player_id in (0, 1):
             observations.append(env.get_structured_observation(player_id))
             masks.append(env.get_action_mask(player_id))
+    return observations, np.stack(masks)
+
+
+def _current_learner_observations(
+    envs: list[SelfPlayBattleEnv],
+    learner_players: tuple[int, ...],
+) -> tuple[list[StructuredObservation], np.ndarray]:
+    if len(envs) != len(learner_players):
+        raise ValueError("learner_players must have one seat per environment")
+    observations: list[StructuredObservation] = []
+    masks: list[np.ndarray] = []
+    for env, player_id in zip(envs, learner_players):
+        observations.append(env.get_structured_observation(player_id))
+        masks.append(env.get_action_mask(player_id))
     return observations, np.stack(masks)
 
 
@@ -337,7 +362,9 @@ def collect_rollout(
                     else:
                         losses += 1
                     env.reset()
-                    next_previous_actions[base : base + 2] = env.action_space.no_op_action
+                    next_previous_actions[base : base + 2] = (
+                        env.action_space.no_op_action
+                    )
                     next_previous_rewards[base : base + 2] = 0.0
                     next_episode_starts[base : base + 2] = True
 
@@ -357,6 +384,152 @@ def collect_rollout(
     )
     bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
 
+    rollout = RolloutBatch(
+        **arrays,
+        initial_hidden=initial_hidden,
+        initial_cell=initial_cell,
+        bootstrap_values=bootstrap_values.cpu().numpy(),
+        episodes_finished=episodes_finished,
+        wins=wins,
+        losses=losses,
+        draws=draws,
+    )
+    return (
+        rollout,
+        (recurrent_state[0].detach(), recurrent_state[1].detach()),
+        previous_actions,
+        previous_rewards,
+        episode_starts,
+    )
+
+
+@torch.no_grad()
+def collect_rollout_random_opponents(
+    *,
+    envs: list[SelfPlayBattleEnv],
+    learner_players: tuple[int, ...],
+    builder: StructuredObservationBuilder,
+    model: ClasherPolicy,
+    device: torch.device,
+    rollout_steps: int,
+    recurrent_state: tuple[Tensor, Tensor],
+    previous_actions: np.ndarray,
+    previous_rewards: np.ndarray,
+    episode_starts: np.ndarray,
+    quiet_engine: bool,
+) -> tuple[RolloutBatch, tuple[Tensor, Tensor], np.ndarray, np.ndarray, np.ndarray]:
+    """Collect PPO experience from one learner seat against a fixed random policy.
+
+    Seats alternate across environments, and only learner-controlled decisions
+    enter the rollout. This gives PPO a stationary anchor without contaminating
+    the loss with actions sampled by the opponent policy.
+    """
+
+    model.eval()
+    agents = len(envs)
+    if agents != len(learner_players):
+        raise ValueError("learner_players must have one seat per environment")
+    num_actions = envs[0].action_space.num_actions
+    arrays = _empty_rollout_arrays(
+        agents=agents,
+        steps=rollout_steps,
+        builder=builder,
+        num_actions=num_actions,
+    )
+    initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
+    initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
+    episodes_finished = wins = losses = draws = 0
+
+    for step in range(rollout_steps):
+        with maybe_silence_stdio(quiet_engine):
+            observations, action_masks = _current_learner_observations(
+                envs, learner_players
+            )
+        _store_observations(
+            arrays,
+            observations,
+            action_masks,
+            previous_actions,
+            previous_rewards,
+            episode_starts,
+            step,
+        )
+        inputs = _stack_step_inputs(
+            observations,
+            action_masks,
+            previous_actions,
+            previous_rewards,
+            episode_starts,
+            device,
+        )
+        actions_t, log_probs_t, values_t, recurrent_state, _ = model.act(
+            inputs, recurrent_state, deterministic=False
+        )
+        actions = actions_t[:, 0].cpu().numpy().astype(np.int64, copy=False)
+        arrays["actions"][:, step] = actions
+        arrays["old_log_probs"][:, step] = log_probs_t[:, 0].cpu().numpy()
+        arrays["old_values"][:, step] = values_t[:, 0].cpu().numpy()
+
+        next_previous_actions = actions.copy()
+        next_previous_rewards = np.zeros((agents,), dtype=np.float32)
+        next_episode_starts = np.zeros((agents,), dtype=np.bool_)
+        with maybe_silence_stdio(quiet_engine):
+            for env_index, (env, learner_player) in enumerate(
+                zip(envs, learner_players)
+            ):
+                opponent_player = 1 - learner_player
+                opponent_mask = env.get_action_mask(opponent_player)
+                opponent_legal = np.flatnonzero(opponent_mask)
+                opponent_action = (
+                    int(env.np_rng.choice(opponent_legal))
+                    if opponent_legal.size
+                    else env.action_space.no_op_action
+                )
+                rewards, done, _ = env.step(
+                    {
+                        learner_player: int(actions[env_index]),
+                        opponent_player: opponent_action,
+                    },
+                    pre_action_masks={
+                        learner_player: action_masks[env_index],
+                        opponent_player: opponent_mask,
+                    },
+                )
+                learner_reward = float(rewards[learner_player])
+                arrays["rewards"][env_index, step] = learner_reward
+                arrays["dones"][env_index, step] = done
+                next_previous_rewards[env_index] = learner_reward
+                if done:
+                    episodes_finished += 1
+                    assert env.battle is not None
+                    if env.battle.winner is None:
+                        draws += 1
+                    elif env.battle.winner == learner_player:
+                        wins += 1
+                    else:
+                        losses += 1
+                    env.reset()
+                    next_previous_actions[env_index] = env.action_space.no_op_action
+                    next_previous_rewards[env_index] = 0.0
+                    next_episode_starts[env_index] = True
+
+        previous_actions = next_previous_actions
+        previous_rewards = next_previous_rewards
+        episode_starts = next_episode_starts
+
+    with maybe_silence_stdio(quiet_engine):
+        bootstrap_observations, bootstrap_masks = _current_learner_observations(
+            envs, learner_players
+        )
+    bootstrap_inputs = _stack_step_inputs(
+        bootstrap_observations,
+        bootstrap_masks,
+        previous_actions,
+        previous_rewards,
+        episode_starts,
+        device,
+    )
+    bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
     rollout = RolloutBatch(
         **arrays,
         initial_hidden=initial_hidden,
@@ -427,7 +600,7 @@ def _sequence_inputs(
 
 
 def _index_policy_inputs(inputs: PolicyInputs, indices: Tensor) -> PolicyInputs:
-    def select(value: Optional[Tensor]) -> Optional[Tensor]:
+    def select(value: Tensor | None) -> Tensor | None:
         return None if value is None else value.index_select(0, indices)
 
     return PolicyInputs(
@@ -481,9 +654,9 @@ def ppo_update(
     target_kl: float,
 ) -> dict[str, float]:
     model.train()
-    normalized_advantages = (
-        advantages - float(advantages.mean())
-    ) / (float(advantages.std()) + 1e-8)
+    normalized_advantages = (advantages - float(advantages.mean())) / (
+        float(advantages.std()) + 1e-8
+    )
     stat_sums = {
         "loss": 0.0,
         "policy_loss": 0.0,
@@ -550,9 +723,9 @@ def ppo_update(
             clipped_values = old_values + value_delta.clamp(-clip_ratio, clip_ratio)
             value_loss_unclipped = (output.values - return_target).square()
             value_loss_clipped = (clipped_values - return_target).square()
-            value_loss = 0.5 * torch.maximum(
-                value_loss_unclipped, value_loss_clipped
-            ).mean()
+            value_loss = (
+                0.5 * torch.maximum(value_loss_unclipped, value_loss_clipped).mean()
+            )
             entropy = distribution.entropy().mean()
 
             assert inputs.critic_card_ids is not None
@@ -566,9 +739,7 @@ def ppo_update(
                 pos_weight=positive_weight,
             )
             enemy_elixir_target = inputs.critic_global_features[..., -2]
-            elixir_loss = F.smooth_l1_loss(
-                output.opponent_elixir, enemy_elixir_target
-            )
+            elixir_loss = F.smooth_l1_loss(output.opponent_elixir, enemy_elixir_target)
             loss = (
                 policy_loss
                 + value_coef * value_loss
@@ -619,7 +790,7 @@ def ppo_update(
     return stat_sums
 
 
-def find_latest_checkpoint(directory: Path) -> Optional[Path]:
+def find_latest_checkpoint(directory: Path) -> Path | None:
     candidates = sorted(directory.glob("policy_v2_update_*.pt"))
     return candidates[-1] if candidates else None
 
@@ -633,7 +804,7 @@ def save_checkpoint(
     args: argparse.Namespace,
     update: int,
     total_transitions: int,
-    metrics: Optional[dict[str, float]] = None,
+    metrics: dict[str, float] | None = None,
 ) -> None:
     torch.save(
         {
@@ -679,7 +850,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--decision-interval", type=int, default=8)
     parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     parser.add_argument("--mirror-match", action="store_true")
-    parser.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
+    parser.add_argument(
+        "--opponent-mode",
+        choices=["selfplay", "random"],
+        default="selfplay",
+        help=(
+            "selfplay trains both seats with the current policy; random trains "
+            "one balanced learner seat per environment against a stationary "
+            "uniform-legal opponent"
+        ),
+    )
+    parser.add_argument(
+        "--engine-fast-path", choices=["off", "shadow", "on"], default="off"
+    )
     parser.add_argument(
         "--device",
         choices=["auto", "cpu", "mps", "cuda"],
@@ -711,7 +894,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--save-every", type=int, default=10)
     parser.add_argument("--log-every", type=int, default=1)
     parser.add_argument("--no-lr-anneal", dest="lr_anneal", action="store_false")
-    parser.add_argument("--quiet-engine", dest="quiet_engine", action="store_true", default=True)
+    parser.add_argument(
+        "--quiet-engine", dest="quiet_engine", action="store_true", default=True
+    )
     parser.add_argument("--no-quiet-engine", dest="quiet_engine", action="store_false")
     return parser.parse_args()
 
@@ -720,10 +905,10 @@ def _load_resume_state(
     args: argparse.Namespace,
     directory: Path,
     device: torch.device,
-) -> tuple[Optional[dict[str, Any]], Optional[Path]]:
+) -> tuple[dict[str, Any] | None, Path | None]:
     if args.resume_latest and args.resume_from:
         raise ValueError("Use only one of --resume-latest or --resume-from")
-    path: Optional[Path] = None
+    path: Path | None = None
     if args.resume_from:
         path = resolve_path(args.resume_from, must_exist=True)
     elif args.resume_latest:
@@ -750,7 +935,9 @@ def main() -> None:
     learner_device = resolve_learner_device(args.device)
     actor_device = resolve_torch_device(args.actor_device)
     if args.actor_workers > 1 and actor_device.type != "cpu":
-        raise ValueError("parallel rollout workers currently require --actor-device cpu")
+        raise ValueError(
+            "parallel rollout workers currently require --actor-device cpu"
+        )
     decks_path = resolve_decks_path(args.decks_path, must_exist=True)
     directory = checkpoints_dir(args.checkpoint_dir, create=True)
     resume, resume_path = _load_resume_state(args, directory, learner_device)
@@ -821,6 +1008,7 @@ def main() -> None:
                 decision_interval=args.decision_interval,
                 max_ticks=args.max_ticks,
                 mirror_match=args.mirror_match,
+                opponent_mode=args.opponent_mode,
                 engine_fast_path=args.engine_fast_path,
                 quiet_engine=args.quiet_engine,
                 base_seed=args.seed,
@@ -829,7 +1017,8 @@ def main() -> None:
         )
         atexit.register(parallel_collector.close)
 
-    agents = 2 * args.num_envs
+    agents = args.num_envs if args.opponent_mode == "random" else 2 * args.num_envs
+    learner_players = tuple(index % 2 for index in range(args.num_envs))
     recurrent_state = actor_model.initial_state(agents, device=actor_device)
     no_op = model.num_actions - 2
     previous_actions = np.full((agents,), no_op, dtype=np.int64)
@@ -846,7 +1035,8 @@ def main() -> None:
         f"d_model={config.d_model} memory={config.memory_size}"
     )
     print(
-        f"envs={args.num_envs} agents={agents} actor_workers={args.actor_workers} "
+        f"envs={args.num_envs} agents={agents} opponent={args.opponent_mode} "
+        f"actor_workers={args.actor_workers} "
         f"actor_threads={args.actor_threads} rollout_steps={args.rollout_steps} "
         f"transitions_per_update={agents * args.rollout_steps}"
     )
@@ -869,7 +1059,9 @@ def main() -> None:
         print(f"saved_initial_checkpoint={initial_checkpoint}")
 
     if start_update > args.updates:
-        print(f"nothing_to_do start_update={start_update} target_updates={args.updates}")
+        print(
+            f"nothing_to_do start_update={start_update} target_updates={args.updates}"
+        )
         if parallel_collector is not None:
             parallel_collector.close()
             atexit.unregister(parallel_collector.close)
@@ -892,17 +1084,33 @@ def main() -> None:
                 previous_actions,
                 previous_rewards,
                 episode_starts,
-            ) = collect_rollout(
-                envs=envs,
-                builder=builder,
-                model=actor_model,
-                device=actor_device,
-                rollout_steps=args.rollout_steps,
-                recurrent_state=recurrent_state,
-                previous_actions=previous_actions,
-                previous_rewards=previous_rewards,
-                episode_starts=episode_starts,
-                quiet_engine=args.quiet_engine,
+            ) = (
+                collect_rollout_random_opponents(
+                    envs=envs,
+                    learner_players=learner_players,
+                    builder=builder,
+                    model=actor_model,
+                    device=actor_device,
+                    rollout_steps=args.rollout_steps,
+                    recurrent_state=recurrent_state,
+                    previous_actions=previous_actions,
+                    previous_rewards=previous_rewards,
+                    episode_starts=episode_starts,
+                    quiet_engine=args.quiet_engine,
+                )
+                if args.opponent_mode == "random"
+                else collect_rollout(
+                    envs=envs,
+                    builder=builder,
+                    model=actor_model,
+                    device=actor_device,
+                    rollout_steps=args.rollout_steps,
+                    recurrent_state=recurrent_state,
+                    previous_actions=previous_actions,
+                    previous_rewards=previous_rewards,
+                    episode_starts=episode_starts,
+                    quiet_engine=args.quiet_engine,
+                )
             )
         else:
             rollout = parallel_collector.collect(
@@ -951,7 +1159,11 @@ def main() -> None:
         transition_rate = rollout.transitions / max(
             1e-6, collect_seconds + update_seconds + sync_seconds
         )
-        if update % args.log_every == 0 or update == start_update or update == args.updates:
+        if (
+            update % args.log_every == 0
+            or update == start_update
+            or update == args.updates
+        ):
             print(
                 f"update={update:05d} transitions={total_transitions} "
                 f"reward={float(rollout.rewards.mean()):+.5f} "

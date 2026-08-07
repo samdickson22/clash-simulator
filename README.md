@@ -27,7 +27,7 @@ uv run python run_clasher.py paths
 
 ```bash
 uv run python run_clasher.py train -- \
-  --resume-latest \
+  --resume-from checkpoints/entity_selfplay/policy_v2_update_000300.pt \
   --updates 300 \
   --num-envs 24 \
   --actor-workers 8 \
@@ -45,6 +45,27 @@ This is the primary trainer. It uses public entity tokens, an entity Transformer
 recurrent memory, a card-conditioned spatial decoder, and a separate privileged
 critic. On Apple Silicon, the CPU actor processes run the Python simulator and
 low-latency inference while MPS handles full recurrent PPO minibatches.
+
+For a stationary curriculum phase, train one balanced seat per environment
+against a uniform-legal random opponent. Only learner-controlled decisions enter
+PPO, so opponent actions never contaminate the policy loss:
+
+```bash
+uv run python run_clasher.py train -- \
+  --resume-latest \
+  --updates 800 \
+  --num-envs 64 \
+  --actor-workers 12 \
+  --actor-threads 1 \
+  --rollout-steps 64 \
+  --opponent-mode random \
+  --device mps \
+  --actor-device cpu \
+  --sequence-batch-size 4 \
+  --epochs 2 \
+  --save-every 10 \
+  --checkpoint-dir checkpoints/random_curriculum
+```
 
 ### 4) Evaluate a V2 checkpoint
 

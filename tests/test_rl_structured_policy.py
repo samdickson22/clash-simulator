@@ -12,6 +12,7 @@ from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rl.train_recurrent import (
     _stack_step_inputs,
     collect_rollout,
+    collect_rollout_random_opponents,
     compute_gae,
     ppo_update,
 )
@@ -186,3 +187,44 @@ def test_recurrent_rollout_and_ppo_update_smoke():
     assert combined.episodes_finished == 2 * rollout.episodes_finished
     np.testing.assert_array_equal(combined.actions[:2], rollout.actions)
     np.testing.assert_array_equal(combined.actions[2:], rollout.actions)
+
+
+def test_random_opponent_rollout_only_trains_balanced_learner_seats():
+    envs = [SelfPlayBattleEnv(seed=31 + index, max_ticks=128) for index in range(2)]
+    builder = StructuredObservationBuilder(decks_path="decks.json", max_entities=128)
+    for env in envs:
+        env._structured_obs_builder = builder
+        env.reset()
+    model = _tiny_model(builder)
+    state = model.initial_state(2)
+    no_op = envs[0].action_space.no_op_action
+
+    rollout, next_state, previous_actions, previous_rewards, starts = (
+        collect_rollout_random_opponents(
+            envs=envs,
+            learner_players=(0, 1),
+            builder=builder,
+            model=model,
+            device=torch.device("cpu"),
+            rollout_steps=2,
+            recurrent_state=state,
+            previous_actions=np.full((2,), no_op, dtype=np.int64),
+            previous_rewards=np.zeros((2,), dtype=np.float32),
+            episode_starts=np.ones((2,), dtype=np.bool_),
+            quiet_engine=True,
+        )
+    )
+
+    assert rollout.num_sequences == 2
+    assert rollout.transitions == 4
+    assert rollout.actions.shape == (2, 2)
+    assert rollout.bootstrap_values.shape == (2,)
+    assert next_state[0].shape == (2, model.config.memory_size)
+    assert previous_actions.shape == previous_rewards.shape == starts.shape == (2,)
+    assert np.all(
+        np.take_along_axis(
+            rollout.action_masks,
+            rollout.actions[..., None],
+            axis=-1,
+        )
+    )

@@ -1,19 +1,26 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, fields
 import multiprocessing as mp
-from pathlib import Path
 import queue
 import traceback
-from typing import Any, Iterable
+from collections.abc import Iterable
+from dataclasses import dataclass, fields
+from pathlib import Path
+from typing import Any
 
 import numpy as np
 import torch
+from typing_extensions import Self
 
 from .model import ClasherPolicy, PolicyConfig
 from .selfplay_env import SelfPlayBattleEnv
 from .structured_obs import StructuredObservationBuilder
-from .train_recurrent import RolloutBatch, collect_rollout, maybe_silence_stdio
+from .train_recurrent import (
+    RolloutBatch,
+    collect_rollout,
+    collect_rollout_random_opponents,
+    maybe_silence_stdio,
+)
 
 
 @dataclass(frozen=True)
@@ -24,6 +31,7 @@ class ActorWorkerConfig:
     decision_interval: int
     max_ticks: int
     mirror_match: bool
+    opponent_mode: str
     engine_fast_path: str
     quiet_engine: bool
     base_seed: int
@@ -94,7 +102,10 @@ def _actor_worker_main(
                 env.reset(seed=seed)
                 envs.append(env)
 
-        agents = 2 * len(envs)
+        if config.opponent_mode not in {"selfplay", "random"}:
+            raise ValueError(f"unknown opponent mode {config.opponent_mode!r}")
+        agents = len(envs) if config.opponent_mode == "random" else 2 * len(envs)
+        learner_players = tuple(env_index % 2 for env_index in env_indices)
         recurrent_state = model.initial_state(agents, device=device)
         no_op = envs[0].action_space.no_op_action
         previous_actions = np.full((agents,), no_op, dtype=np.int64)
@@ -116,20 +127,36 @@ def _actor_worker_main(
                 previous_actions,
                 previous_rewards,
                 episode_starts,
-            ) = collect_rollout(
-                envs=envs,
-                builder=builder,
-                model=model,
-                device=device,
-                rollout_steps=int(rollout_steps),
-                recurrent_state=recurrent_state,
-                previous_actions=previous_actions,
-                previous_rewards=previous_rewards,
-                episode_starts=episode_starts,
-                quiet_engine=config.quiet_engine,
+            ) = (
+                collect_rollout_random_opponents(
+                    envs=envs,
+                    learner_players=learner_players,
+                    builder=builder,
+                    model=model,
+                    device=device,
+                    rollout_steps=int(rollout_steps),
+                    recurrent_state=recurrent_state,
+                    previous_actions=previous_actions,
+                    previous_rewards=previous_rewards,
+                    episode_starts=episode_starts,
+                    quiet_engine=config.quiet_engine,
+                )
+                if config.opponent_mode == "random"
+                else collect_rollout(
+                    envs=envs,
+                    builder=builder,
+                    model=model,
+                    device=device,
+                    rollout_steps=int(rollout_steps),
+                    recurrent_state=recurrent_state,
+                    previous_actions=previous_actions,
+                    previous_rewards=previous_rewards,
+                    episode_starts=episode_starts,
+                    quiet_engine=config.quiet_engine,
+                )
             )
             result_queue.put(("rollout", worker_id, policy_version, rollout))
-    except BaseException:
+    except BaseException:  # noqa: BLE001 - worker failures must reach the parent
         result_queue.put(("error", worker_id, traceback.format_exc()))
 
 
@@ -214,15 +241,15 @@ class ParallelRolloutCollector:
                 message = self._result_queue.get(timeout=timeout)
             except queue.Empty as error:
                 dead = [
-                    process.name for process in self._processes if not process.is_alive()
+                    process.name
+                    for process in self._processes
+                    if not process.is_alive()
                 ]
                 raise TimeoutError(
                     f"timed out waiting for rollout workers; dead={dead}"
                 ) from error
             if message[0] == "error":
-                raise RuntimeError(
-                    f"rollout worker {message[1]} failed:\n{message[2]}"
-                )
+                raise RuntimeError(f"rollout worker {message[1]} failed:\n{message[2]}")
             if message[0] != "rollout":
                 raise RuntimeError(f"unexpected rollout message {message[0]!r}")
             _, worker_id, result_version, rollout = message
@@ -255,8 +282,8 @@ class ParallelRolloutCollector:
         self._result_queue.close()
         self._result_queue.join_thread()
 
-    def __enter__(self) -> "ParallelRolloutCollector":
+    def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, *_exc_info: Any) -> None:
+    def __exit__(self, *_exc_info: object) -> None:
         self.close()
