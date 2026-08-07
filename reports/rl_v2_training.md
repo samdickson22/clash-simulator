@@ -149,8 +149,19 @@ crowns/game. Update 1320 is rejected and update 1300 remains champion.
 
 The pilot also exposed a resume-control bug: loading AdamW state restored the old
 learning rate after parsing a new `--learning-rate`. Resume now preserves optimizer
-moments while explicitly applying the requested run learning rate. The next pilot
-uses 1e-4 rather than 2.5e-4 before any long league allocation.
+moments while explicitly applying the requested run learning rate. The retry used
+1e-4 rather than 2.5e-4 before any long league allocation.
+
+At 1e-4, an equal-weight retry improved optimizer coverage and went 19-5 with
++1.458 crowns/game versus update 800, but still went 17-7 with +1.208 versus
+random and 11-13 with -0.333 directly against update 1300. A second 20-update
+pilot therefore shifted the pool to 50% update 1300, 25% random, and 25% update
+800 across all 12 workers. That challenger went 21-3 with +1.833 versus random
+and 19-5 with +1.292 versus update 800. Expanded direct evaluation against update
+1300 was 34-38 with -0.111 crowns/game over 72 paired games, with its wins exactly
+balanced 17/17 by seat. Update 1300 remains champion, but the weighted update-1320
+challenger is close enough head-to-head and stronger enough on fixed anchors to
+justify an 80-update continuation before another promotion gate.
 
 ## Throughput experiments
 
@@ -173,16 +184,15 @@ Promote update 1300. The large, seat-balanced fixed-anchor gains and the elixir-
 audit outweigh the single noisy final critic batch; rolling back solely because the
 policy waits would discard a validated strategic improvement.
 
-The next phase should be a short staged league rather than another 500-update fixed
-pool. First rerun a 20-update pilot at 1e-4 against equal worker shares of
-uniform-legal random, frozen update 800, and frozen update 1300. Scale to updates
-1301-1500 only if the lower-rate pilot clears direct and fixed-anchor safety checks.
-Keep update 300 as an evaluation-only regression anchor because update 1300 already
-dominates it. At update 1500, rerun the same 72-game paired blocks against random,
-updates 300, 800, and 1300. Promote only if the candidate retains positive crown
-margins and seat balance against every anchor and demonstrates a clear paired edge
-over update 1300. Otherwise retain update 1300 and change the opponent mixture
-before spending more transitions.
+The next phase is a staged league rather than another 500-update fixed pool. Continue
+the weighted update-1320 challenger only through update 1400 at 1e-4, using six
+workers on frozen update 1300 and three each on uniform-legal random and frozen
+update 800. Keep update 300 as an evaluation-only regression anchor because update
+1300 already dominates it. At update 1400, rerun the same paired blocks against
+random, updates 300, 800, and 1300. Promote only if the candidate retains positive
+crown margins and seat balance against every anchor and reverses its direct deficit
+to update 1300. Otherwise retain update 1300 and change the opponent mixture before
+spending more transitions.
 
 After promotion, add the new champion to the frozen league and repeat in 100-200
 update stages. This mixes an exploratory anchor, a pressure-heavy historical policy,
