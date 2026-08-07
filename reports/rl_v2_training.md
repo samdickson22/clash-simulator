@@ -309,3 +309,38 @@ Wins were balanced by seat in each block. Deterministic playable no-op ranged fr
 This supports the opponent-mixture diagnosis, but 24 games per opponent are only a
 safety gate rather than promotion evidence. Update 1400 remains champion while the
 same equal-weight branch continues in another short stage before expanded evaluation.
+
+## Equal-weight confirmation stage
+
+The same branch continued for 20 more updates through update 1440, adding another
+81,920 learner decisions and reaching 5,754,880 total. The trainer exited with status
+zero and wrote a loadable checkpoint with SHA-256
+`ac552b2e9d88245bc751b3cf79ad261a6d4dcb96e958a9e01c986404e22cd441`.
+
+This stage was noisier but bounded. Mean KL was 0.00556, mean explained variance was
+0.922, and mean throughput was 308 decisions/second. Twelve of 20 updates stopped
+early. One update briefly reached KL 0.03075 and was stopped after 15 optimizer steps;
+the final update recovered to KL 0.00643 and explained variance 0.925. Across the full
+40-update equal-weight branch, mean KL was 0.00438, mean explained variance was 0.929,
+and training-time conditional no-op stayed between 0.692 and 0.811.
+
+The matched safety blocks did not confirm update 1420's gains:
+
+| Opponent | Update 1440 | Crown diff/game | Update 1420 | Champion-1400 baseline |
+|---|---:|---:|---:|---:|
+| Uniform-legal random | 22-2 | +2.042 | 23-1, +2.250 | 21-3, +1.583 |
+| Update 300 | 19-5 | +1.333 | 21-3, +1.792 | 18-6, +1.333 |
+| Update 800 | 18-6 | +1.292 | 21-3, +1.750 | 19-5, +1.458 |
+| Update 1300 | 10-14 | -0.250 | 14-10, +0.375 | 12-12, -0.042 |
+| Champion update 1400 | 12-12 | +0.083 | 15-9, +0.500 | direct match |
+
+Deterministic playable no-op rose to 0.895 and 0.896 against updates 1300 and 1400.
+The branch therefore reproduces the passive trend after only 40 updates, despite its
+strong random result. Update 1440 fails the confirmation gate, and expanded promotion
+evaluation is not warranted. Update 1420 remains an informative diagnostic rather
+than a promoted checkpoint because its single safety block did not replicate.
+
+Stop the equal-weight branch and retain update 1400 as champion. The next controlled
+experiment, if training resumes, should restart from update 1400 with the equal pool
+and change only entropy regularization for a 20-update pilot. Re-check RoadForge
+coordination before launching it even while RoadForgeSSD remains disconnected.
