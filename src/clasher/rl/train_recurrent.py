@@ -1011,6 +1011,19 @@ def _load_resume_state(
     return torch.load(path, map_location=device, weights_only=False), path
 
 
+def restore_optimizer_state(
+    optimizer: torch.optim.Optimizer,
+    state_dict: dict[str, Any],
+    *,
+    learning_rate: float,
+) -> None:
+    """Restore optimizer moments while keeping the current run's requested LR."""
+
+    optimizer.load_state_dict(state_dict)
+    for group in optimizer.param_groups:
+        group["lr"] = learning_rate
+
+
 def main() -> None:
     args = parse_args()
     if args.num_envs <= 0 or args.rollout_steps <= 0:
@@ -1096,7 +1109,11 @@ def main() -> None:
     if resume is not None:
         model.load_state_dict(resume["model_state_dict"])
         if "optimizer_state_dict" in resume:
-            optimizer.load_state_dict(resume["optimizer_state_dict"])
+            restore_optimizer_state(
+                optimizer,
+                resume["optimizer_state_dict"],
+                learning_rate=args.learning_rate,
+            )
         start_update = int(resume.get("update", 0)) + 1
         total_transitions = int(resume.get("total_transitions", 0))
     synchronize_actor_model(model, actor_model)

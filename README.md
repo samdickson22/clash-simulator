@@ -110,6 +110,7 @@ uv run python run_clasher.py train -- \
   --engine-fast-path on \
   --device mps \
   --actor-device cpu \
+  --learning-rate 1e-4 \
   --sequence-batch-size 4 \
   --epochs 2 \
   --save-every 10 \

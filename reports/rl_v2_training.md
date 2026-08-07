@@ -133,6 +133,25 @@ with +1.361 versus update 800. Its seat splits were 30/30, 32/30, and 30/27.
 Because the random sequence shares its first 12 matchups with one primary block,
 these runs are supporting replication rather than a combined 144-game estimate.
 
+## Mixed-league pilot
+
+A coexistence-safe 20-update pilot resumed update 1300 against equal worker shares
+of random, update 800, and update 1300. It used three actor workers while a separate
+RoadForge diagnostic retained its CPU allocation. The pilot added 81,920 learner
+decisions and remained numerically bounded, ending with KL 0.0059 and explained
+variance 0.971, but nearly every update triggered minibatch KL stopping.
+
+Checkpoint 1320 failed the promotion gate on 24-game paired safety blocks. Versus
+random it went 17-7 with +1.250 crowns/game, below update 1300's matched 20-4 and
++1.667. Versus update 800 it went 15-9 with +0.750, below update 1300's 16-8 and
++0.958. Most importantly, it lost directly to update 1300 by 9-15 with -0.542
+crowns/game. Update 1320 is rejected and update 1300 remains champion.
+
+The pilot also exposed a resume-control bug: loading AdamW state restored the old
+learning rate after parsing a new `--learning-rate`. Resume now preserves optimizer
+moments while explicitly applying the requested run learning rate. The next pilot
+uses 1e-4 rather than 2.5e-4 before any long league allocation.
+
 ## Throughput experiments
 
 Larger MPS sequence batches were counterproductive because padded entity attention
@@ -155,13 +174,15 @@ audit outweigh the single noisy final critic batch; rolling back solely because 
 policy waits would discard a validated strategic improvement.
 
 The next phase should be a short staged league rather than another 500-update fixed
-pool. Train updates 1301-1500 against equal worker shares of uniform-legal random,
-frozen update 800, and frozen update 1300. Keep update 300 as an evaluation-only
-regression anchor because update 1300 already dominates it. At update 1500, rerun
-the same 72-game paired blocks against random, updates 300, 800, and 1300. Promote
-only if the candidate retains positive crown margins and seat balance against every
-anchor and demonstrates a clear paired edge over update 1300. Otherwise retain
-update 1300 and change the opponent mixture before spending more transitions.
+pool. First rerun a 20-update pilot at 1e-4 against equal worker shares of
+uniform-legal random, frozen update 800, and frozen update 1300. Scale to updates
+1301-1500 only if the lower-rate pilot clears direct and fixed-anchor safety checks.
+Keep update 300 as an evaluation-only regression anchor because update 1300 already
+dominates it. At update 1500, rerun the same 72-game paired blocks against random,
+updates 300, 800, and 1300. Promote only if the candidate retains positive crown
+margins and seat balance against every anchor and demonstrates a clear paired edge
+over update 1300. Otherwise retain update 1300 and change the opponent mixture
+before spending more transitions.
 
 After promotion, add the new champion to the frozen league and repeat in 100-200
 update stages. This mixes an exploratory anchor, a pressure-heavy historical policy,

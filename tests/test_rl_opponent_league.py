@@ -1,10 +1,12 @@
 import pytest
+import torch
 
 from clasher.rl.parallel_rollout import (
     ActorWorkerConfig,
     OpponentSpec,
     opponent_spec_for_worker,
 )
+from clasher.rl.train_recurrent import restore_optimizer_state
 
 
 def _config(
@@ -53,3 +55,17 @@ def test_opponent_spec_rejects_inconsistent_payloads():
         OpponentSpec(kind="random", checkpoint="not-used.pt")
     with pytest.raises(ValueError, match="requires a path"):
         OpponentSpec(kind="checkpoint")
+
+
+def test_resume_restores_optimizer_moments_but_honors_requested_learning_rate():
+    source_parameter = torch.nn.Parameter(torch.ones(()))
+    source = torch.optim.AdamW([source_parameter], lr=2.5e-4)
+    source_parameter.grad = torch.ones_like(source_parameter)
+    source.step()
+
+    resumed_parameter = torch.nn.Parameter(torch.ones(()))
+    resumed = torch.optim.AdamW([resumed_parameter], lr=2.5e-4)
+    restore_optimizer_state(resumed, source.state_dict(), learning_rate=1e-4)
+
+    assert resumed.param_groups[0]["lr"] == pytest.approx(1e-4)
+    assert resumed.state[resumed_parameter]["step"].item() == 1
