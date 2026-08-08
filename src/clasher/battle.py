@@ -2497,6 +2497,7 @@ class BattleState:
             getattr(troop.card_stats, "collision_radius", 0.5) or 0.5,
         )
         own_mass = max(1e-9, unit_mass(troop.card_stats))
+        own_air_collision = uses_air_collision_plane(troop)
         for other in self.entities.values():
             other_airborne_leap = (
                 getattr(other, "_mk_leap_phase", None) == "airborne"
@@ -2510,8 +2511,7 @@ class BattleState:
                     and not getattr(other, "_river_jump_active", False)
                     and not other_airborne_leap
                 )
-                or uses_air_collision_plane(troop)
-                != uses_air_collision_plane(other)
+                or own_air_collision != uses_air_collision_plane(other)
             ):
                 continue
             other_radius = max(
@@ -2528,7 +2528,7 @@ class BattleState:
             if vector is not None:
                 troop.accumulate_movement_vector_units(*vector)
 
-        if uses_air_collision_plane(troop):
+        if own_air_collision:
             return
         # Static objects do not receive a reciprocal vector. Native supplies
         # mass 20 and caps the moving character's radius contribution at 0.5.
