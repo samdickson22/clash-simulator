@@ -290,6 +290,33 @@ shadow recorded two checks and zero mismatches. A focused target/collision/actio
 mask and spawn/death interaction gate passed 240 selected tests, including explicit
 array-reuse and same-size-membership-replacement coverage.
 
+An attempted 12-actor production attribution used the existing async queue harness,
+12,288 transitions, 64-decision actor batches, and alternating full-rebuild/reuse
+runs. The harness now exposes the same `--target-cache-refresh` control inside each
+spawned actor:
+
+```bash
+.venv/bin/python -m clasher.rl.benchmark async-queue \
+  --seed 2301 --num-actors 12 --transitions 12288 \
+  --actor-rollout-steps 64 --queue-size 32 --decision-interval 8 \
+  --max-ticks 2048 --quiet-engine --engine-fast-path on \
+  --target-cache-refresh rebuild \
+  --inference-mode actor_local --inference-device cpu
+# Alternate with --target-cache-refresh reuse, five times each.
+```
+
+| Mode | Wall times (s) | Decisions/s | Median wall | Median decisions/s |
+|---|---|---|---:|---:|
+| Full rebuild | 6.1087, 6.1770, 6.2142, 6.2901, 8.0361 | 1005.7859, 994.6594, 988.7105, 976.7683, 764.5454 | 6.2142 s | 988.7105 |
+| Incremental | 5.9468, 6.1247, 6.1861, 11.8598, 10.6751 | 1033.1530, 1003.1569, 993.1985, 518.0524, 575.5444 | 6.1861 s | 993.1985 |
+
+These rows are retained for audit but rejected as clean production evidence. Host
+inspection immediately after the run found that the training task had started a
+64-environment, 12-worker MPS training job during the later pairs and RoadForge had
+also started a focused pytest. The apparent all-row median gain is only 0.45%, while
+the contaminated incremental tail contains obvious 10.68-11.86 s outliers. No
+production-throughput claim is made from this run; a new clean window is required.
+
 ### Work explicitly not optimized
 
 - Observation stacking: a representative profile attributed about 1 ms total to

@@ -1,4 +1,19 @@
-from clasher.rl.benchmark import run_async_queue_benchmark, run_env_benchmark
+from clasher.battle import BattleState
+from clasher.rl.benchmark import (
+    _configure_target_cache_refresh,
+    run_async_queue_benchmark,
+    run_env_benchmark,
+)
+
+
+def test_target_cache_benchmark_mode_can_restore_incremental_refresh():
+    incremental = BattleState._refresh_target_cache
+    try:
+        _configure_target_cache_refresh("rebuild")
+        assert BattleState._refresh_target_cache is BattleState._rebuild_target_cache
+    finally:
+        _configure_target_cache_refresh("reuse")
+    assert BattleState._refresh_target_cache is incremental
 
 
 def test_env_benchmark_reports_positive_throughput():
