@@ -278,6 +278,20 @@ def _current_learner_observations(
     return observations, np.stack(masks)
 
 
+def _current_action_masks(
+    envs: list[SelfPlayBattleEnv],
+    players: tuple[int, ...],
+) -> np.ndarray:
+    if len(envs) != len(players):
+        raise ValueError("players must have one seat per environment")
+    return np.stack(
+        [
+            env.get_action_mask(player_id)
+            for env, player_id in zip(envs, players)
+        ]
+    )
+
+
 @torch.no_grad()
 def collect_rollout(
     *,
@@ -491,10 +505,17 @@ def collect_rollout_stationary_opponents(
 
         opponent_players = tuple(1 - player_id for player_id in learner_players)
         with maybe_silence_stdio(quiet_engine):
-            opponent_observations, opponent_masks = _current_learner_observations(
-                envs, opponent_players
-            )
+            if opponent_model is None:
+                # Random opponents consume only legal masks. Avoid building
+                # their unused public and privileged observation tables.
+                opponent_observations = None
+                opponent_masks = _current_action_masks(envs, opponent_players)
+            else:
+                opponent_observations, opponent_masks = (
+                    _current_learner_observations(envs, opponent_players)
+                )
         if opponent_model is not None:
+            assert opponent_observations is not None
             opponent_inputs = _stack_step_inputs(
                 opponent_observations,
                 opponent_masks,
