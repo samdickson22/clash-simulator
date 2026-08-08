@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import Any
 
 
+@lru_cache(maxsize=512)
 def _normalize(name: str) -> str:
     return "".join(ch for ch in name.casefold() if ch.isalnum())
 
