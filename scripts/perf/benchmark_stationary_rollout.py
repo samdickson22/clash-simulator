@@ -12,6 +12,7 @@ import time
 import numpy as np
 import torch
 
+from clasher.battle import BattleState
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.strategy_bots import StrategyBot
@@ -32,6 +33,12 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--max-ticks", type=int, default=2048)
     parser.add_argument(
         "--engine-fast-path", choices=("off", "shadow", "on"), default="on"
+    )
+    parser.add_argument(
+        "--target-cache-refresh",
+        choices=("rebuild", "reuse"),
+        default="reuse",
+        help="select the pre-optimization full rebuild or candidate in-place refresh",
     )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
@@ -57,6 +64,8 @@ def _digest_rollout(rollout: object, envs: list[SelfPlayBattleEnv]) -> str:
 
 def main() -> None:
     args = _parse_args()
+    if args.target_cache_refresh == "rebuild":
+        BattleState._refresh_target_cache = BattleState._rebuild_target_cache
     torch.set_num_threads(args.torch_threads)
     builder = StructuredObservationBuilder(
         decks_path=args.decks_path,
@@ -133,6 +142,7 @@ def main() -> None:
                 "repetitions": args.repetitions,
                 "torch_threads": args.torch_threads,
                 "engine_fast_path": args.engine_fast_path,
+                "target_cache_refresh": args.target_cache_refresh,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,

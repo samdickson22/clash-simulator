@@ -346,7 +346,7 @@ class BattleState:
         self._refresh_alive_buildings_cache()
         self._refresh_tower_mask_if_needed()
         self._rebuild_entity_buckets()
-        self._rebuild_target_cache()
+        self._refresh_target_cache()
 
     def _refresh_alive_buildings_cache(self) -> None:
         """Publish live building membership to every accelerated query.
@@ -447,6 +447,100 @@ class BattleState:
         self._target_collision_radius = collision_radius
         self._target_distance_discount_sq = target_distance_discount_sq
         self._max_target_collision_radius = float(np.max(collision_radius))
+
+    def _refresh_target_cache(self) -> None:
+        """Refresh target values in place when cache membership is unchanged.
+
+        Entity insertion order is stable, so an identity scan detects every
+        structural change, including a remove/add pair that leaves the entity
+        dictionary at the same size. Reusing the arrays avoids rebuilding the
+        ID index and allocating eleven target-property arrays each logic tick.
+        Dynamic properties are still republished so this remains exact for
+        movement, target-plane, stealth, and targetability changes. Static
+        properties are published at structural rebuilds and their explicit
+        post-spawn mutation sites.
+        """
+        target_index = 0
+        cached_count = len(self._target_entities)
+        for entity in self.entities.values():
+            if not self._eligible_fast_target(entity):
+                continue
+            if (
+                target_index >= cached_count
+                or self._target_entities[target_index] is not entity
+            ):
+                self._rebuild_target_cache()
+                return
+            self._refresh_fast_target_dynamic_values(target_index, entity)
+            target_index += 1
+
+        if target_index != cached_count:
+            self._rebuild_target_cache()
+            return
+        self._target_cache_entity_count = len(self.entities)
+
+    def _refresh_fast_target_dynamic_values(
+        self,
+        index: int,
+        entity: Entity,
+    ) -> None:
+        """Publish target properties that can change after insertion."""
+        self._target_pos_x[index] = float(entity.position.x)
+        self._target_pos_y[index] = float(entity.position.y)
+        self._target_is_air[index] = is_airborne_target(entity)
+        self._target_is_targetable[index] = entity.is_targetable_by(
+            1 - entity.player_id
+        )
+        self._target_stealth_until[index] = int(
+            getattr(entity, "_stealth_until", 0) or 0
+        )
+
+    def _refresh_fast_target_static_values(
+        self,
+        index: int,
+        entity: Entity,
+    ) -> None:
+        """Publish target properties that are immutable after spawn setup."""
+        self._target_player[index] = int(entity.player_id)
+        building = bool(getattr(entity, "entity_kind", 4) == 1)
+        self._target_is_building[index] = building
+        self._target_is_building_target[index] = is_native_building_target(entity)
+        if building:
+            name = getattr(getattr(entity, "card_stats", None), "name", "")
+            self._target_is_crown[index] = name in {"Tower", "KingTower"} or bool(
+                getattr(entity, "_is_king_tower", False)
+            )
+        else:
+            self._target_is_crown[index] = False
+        self._target_collision_radius[index] = entity.get_collision_radius()
+        self._target_distance_discount_sq[index] = (
+            max(
+                0,
+                int(
+                    getattr(
+                        entity,
+                        "_native_target_distance_discount_sq_units",
+                        0,
+                    )
+                    or 0
+                ),
+            )
+            / 1_000_000.0
+        )
+
+    def sync_fast_target_static_entity(self, entity: Entity) -> None:
+        """Publish rare post-insertion setup of an otherwise static target."""
+        if not self.fast_path:
+            return
+        index = self._target_index_by_id.get(entity.id)
+        if index is None:
+            self._rebuild_target_cache()
+            index = self._target_index_by_id.get(entity.id)
+        if index is not None:
+            self._refresh_fast_target_static_values(index, entity)
+            self._max_target_collision_radius = float(
+                np.max(self._target_collision_radius)
+            )
 
     @staticmethod
     def _eligible_fast_target(entity: Entity) -> bool:
@@ -2190,6 +2284,7 @@ class BattleState:
                 spawned._native_target_distance_discount_sq_units = (
                     spawn_target_distance_discount_sq_units(index)
                 )
+                self.sync_fast_target_static_entity(spawned)
     
     def _check_win_conditions(self) -> None:
         """Check if game should end"""

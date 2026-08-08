@@ -23,12 +23,27 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--ticks", type=int, default=8)
     parser.add_argument("--repetitions", type=int, default=4)
     parser.add_argument("--mode", choices=("off", "on", "both"), default="both")
+    parser.add_argument(
+        "--target-cache-refresh",
+        choices=("rebuild", "reuse"),
+        default="reuse",
+        help="select the pre-optimization full rebuild or candidate in-place refresh",
+    )
     parser.add_argument("--clear-route-cache-per-mode", action="store_true")
     return parser.parse_args()
 
 
-def _battle(*, seed: int, card: str, per_side: int, fast_path: bool) -> BattleState:
+def _battle(
+    *,
+    seed: int,
+    card: str,
+    per_side: int,
+    fast_path: bool,
+    target_cache_refresh: str,
+) -> BattleState:
     battle = BattleState(rng=random.Random(seed), fast_path=fast_path)
+    if target_cache_refresh == "rebuild":
+        battle._refresh_target_cache = battle._rebuild_target_cache
     stats = battle.card_loader.get_card(card)
     if stats is None:
         raise ValueError(f"unknown card {card!r}")
@@ -75,6 +90,7 @@ def main() -> None:
                 card=args.card,
                 per_side=args.per_side,
                 fast_path=fast_path,
+                target_cache_refresh=args.target_cache_refresh,
             )
             started = time.perf_counter()
             for _ in range(args.ticks):
@@ -99,6 +115,7 @@ def main() -> None:
                 "per_side": args.per_side,
                 "ticks": args.ticks,
                 "repetitions": args.repetitions,
+                "target_cache_refresh": args.target_cache_refresh,
                 "results": reports,
             },
             sort_keys=True,

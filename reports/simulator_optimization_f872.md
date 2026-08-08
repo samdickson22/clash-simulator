@@ -232,6 +232,64 @@ are shared. On the fixed six-tower state, median snapshot time fell from about
 from 114.65 ms to 53.85 ms (2.13x), with identical selected actions
 `{0: 51, 1: 52}`.
 
+### Incremental fast target-cache refresh
+
+The fast engine previously rebuilt target membership, the ID-to-array index, and
+eleven NumPy arrays at both cache refreshes of every logic tick. The incremental
+path now scans the stable entity insertion order by identity. An add, removal, death,
+or same-size replacement falls back to the original structural rebuild; unchanged
+membership republishes only position, airborne plane, targetability, and stealth
+into the existing arrays. The four data-driven post-spawn distance-priority sites
+explicitly publish that otherwise-static value.
+
+The reproducible drivers expose `--target-cache-refresh rebuild|reuse`, allowing
+the old and new paths to run from the same source tree. The crowded probe used seed
+2301, 12 Knights per side, 64 ticks, and 11 repetitions:
+
+```bash
+.venv/bin/python scripts/perf/benchmark_crowded_engine.py \
+  --seed 2301 --card Knight --per-side 12 --ticks 64 --repetitions 11 \
+  --mode on --clear-route-cache-per-mode --target-cache-refresh rebuild
+.venv/bin/python scripts/perf/benchmark_crowded_engine.py \
+  --seed 2301 --card Knight --per-side 12 --ticks 64 --repetitions 11 \
+  --mode on --clear-route-cache-per-mode --target-cache-refresh reuse
+```
+
+| Crowded fast engine | Median wall | Ticks/s | State SHA-256 |
+|---|---:|---:|---|
+| Full target rebuild | 0.330096 s | 193.883 | `d03a412a495660dcda93c9bd182db19d31e72ccae0a8621606e3c4a6cd23e8cb` |
+| Incremental refresh | 0.302905 s | 211.288 | same |
+
+This is an 8.98% throughput gain and 8.24% wall-time reduction. A three-repetition
+`cProfile` attribution recorded 390 cache refreshes: cumulative target-cache time
+fell from 0.128 s in 390 structural rebuilds to 0.045 s in 390 incremental refreshes
+plus six structural rebuilds, a 64.8% reduction in the named cache work.
+
+Whole recurrent-policy rollouts then used one environment, 64 steps, four warm-up
+steps, seven repetitions, two Torch threads, and the optimized engine:
+
+```bash
+.venv/bin/python scripts/perf/benchmark_stationary_rollout.py \
+  --workload random --seed 2301 --num-envs 1 --rollout-steps 64 \
+  --repetitions 7 --warmup-steps 4 --torch-threads 2 \
+  --engine-fast-path on --target-cache-refresh rebuild
+# Repeat with --target-cache-refresh reuse; repeat both commands with
+# --workload strategy --strategy balanced.
+```
+
+| Workload | Full rebuild wall / decisions/s | Incremental wall / decisions/s | Gain | Rollout SHA-256 |
+|---|---:|---:|---:|---|
+| Random | 2.000022 s / 32.000 | 1.920225 s / 33.329 | +4.16% | `1a585dd8f5159d030435096005b8483dcd52079e309df554712150ea9e240785` |
+| Balanced strategy | 2.179087 s / 29.370 | 1.976789 s / 32.376 | +10.23% | `edb2effdd1a3c926b9b9ef8bb583eb4912618ab29e0c804439d9da3382810645` |
+
+The corresponding wall-time reductions are 3.99% and 9.28%. These short samples
+have seven repetitions but no confidence interval and remain single-process
+attribution. The recurring scalar/off, shadow, and optimized/on digest stayed
+`9f190f2efd15954d8105db43b2352e8b50c1bafd3fea9f2921964c6123389349`;
+shadow recorded two checks and zero mismatches. A focused target/collision/action-
+mask and spawn/death interaction gate passed 240 selected tests, including explicit
+array-reuse and same-size-membership-replacement coverage.
+
 ### Work explicitly not optimized
 
 - Observation stacking: a representative profile attributed about 1 ms total to
