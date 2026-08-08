@@ -99,6 +99,58 @@ cold/warm scalar timing was 0.064876/0.024070 s and cold/warm fast timing was
 warm microbenchmark gain (181.0% scalar, 154.5% fast versus the immediately prior
 uncached probe) is deliberately not presented as whole-training throughput.
 
+### Troop placement occupancy masks
+
+RoadForge released attempt 29 before this measurement and both coordinating tasks
+confirmed a clean CPU-only window. The pre-change baseline was a temporary source
+copy with `battle.py` and `rl/action_space.py` restored from artifact commit
+`dd6fcb4`; all inherited rollout, strategy, reward, and reporting code therefore
+remained identical. The optimized state caches a world-tile mask per troop collision
+radius and invalidates every mask when the existing live-building signature changes.
+It preserves the scalar predicate's fixed-point coordinate conversion and strict
+squared-circle comparison. Deployment payload checks remain dynamic.
+
+The fixed mask microbenchmark used six live Cannons, four troop cards, both players,
+seed 2301, 64 decisions, two warm-up decisions, and seven repetitions:
+
+```bash
+.venv/bin/python scripts/perf/benchmark_action_mask.py \
+  --seed 2301 --building-card Cannon \
+  --hand-cards Knight,Giant,Archers,Musketeer \
+  --decisions 64 --repetitions 7 --warmup-decisions 2 --mode both
+```
+
+| Implementation | Median wall time | Decisions/s | Exact mask SHA-256 |
+|---|---:|---:|---|
+| Pre-change scalar/off | 0.938376 s | 68.203 | `640614c29015b001128a181630b61456725801db1df3b197edc9109ec9b4c707` |
+| Candidate scalar/off | 0.941441 s | 67.981 | same |
+| Pre-change fast/on | 0.486308 s | 131.604 | same |
+| Radius-cache fast/on | 0.069867 s | 916.023 | same |
+
+The optimized fast path reduces median wall time by 85.63% and improves mask
+decisions/s by 596.05% on this occupancy-heavy attribution probe. Scalar timing is
+unchanged within run noise.
+
+A separate cold-cache probe used one decision, zero warm-up decisions, and 21
+fresh-battle repetitions. Median fast-path time fell from 0.007861 s (127.218
+decisions/s) to 0.001326 s (753.887 decisions/s): 83.13% less wall time and
+492.60% more throughput. The exact cold mask hash was
+`336a840e7523e2f4aceace11bc7a3eaf9dd410b3fca954ca99a093f300d3bf2f`, so the
+cache construction cost does not hide an episode-start regression.
+
+The identical full-policy stationary driver then used one environment, 32 rollout
+steps, four warm-up steps, five repetitions, two Torch threads, and the optimized
+engine:
+
+| Whole rollout | Pre-change wall / decisions/s | Candidate wall / decisions/s | Gain | Rollout SHA-256 |
+|---|---:|---:|---:|---|
+| Random opponent | 0.282303 s / 113.353 | 0.274430 s / 116.605 | +2.87% | `7efcac3f46f2fed53e3e4b0ee4ceda3f47e72fedc825a962a2f1563fd6e27fb1` |
+| Balanced strategy | 0.333932 s / 95.828 | 0.279738 s / 114.393 | +19.37% | `500a76e31cb0d8112664d047b445afa16d695d8adf0e68965fe94ede2a75c475` |
+
+The corresponding median wall-time reductions are 2.79% and 16.23%. These are
+whole-rollout results for the fixed single-environment probes, not multi-worker
+learner throughput.
+
 ### Oracle snapshots
 
 Commit `e4edffd` replaces oracle `deepcopy` with an exact `BattleState.clone()`.
@@ -142,10 +194,9 @@ training task independently reran combined-tree gates after each manual integrat
 
 ## Pending production preflight
 
-After RoadForge explicitly releases sustained compute, rerun the fixed random,
-strategy, crowded scalar/fast, and oracle commands above with more repetitions,
-then run the training task's scalar/shadow/on hash gate. Only then measure the real
-multi-worker rollout configuration and attribute end-to-end learner decisions/s.
-The next source-level candidate is exact action-mask occupancy caching, but it must
-retain the scalar implementation as an oracle and pass full mask parity before any
-optimized path is accepted.
+The exact action-mask occupancy cache has now passed fixed microbenchmark,
+whole-rollout, scalar/shadow/on hash, all-enabled-card, cache-invalidation, and
+shared targeting/collision gates. A later coordinated production preflight should
+rerun the representative random, strategy, crowded scalar/fast, and oracle commands
+with more repetitions, then measure the real multi-worker configuration before
+attributing end-to-end learner decisions/s.

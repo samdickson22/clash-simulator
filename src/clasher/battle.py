@@ -146,6 +146,9 @@ class BattleState:
         default_factory=lambda: np.zeros((32, 18), dtype=np.bool_), init=False
     )
     _building_placement_blocked_masks: Dict[int, np.ndarray] = field(default_factory=dict, init=False)
+    _troop_placement_blocked_masks: dict[float, np.ndarray] = field(
+        default_factory=dict, init=False
+    )
     _building_cache_signature: Tuple[int, ...] = field(default_factory=tuple, init=False)
     _cached_tower_alive_flags: Tuple[bool, bool, bool, bool, bool, bool] = field(
         default_factory=lambda: (False, False, False, False, False, False), init=False
@@ -360,6 +363,7 @@ class BattleState:
             self._alive_buildings = alive_buildings
             self._building_cache_signature = building_sig
             self._building_placement_blocked_masks.clear()
+            self._troop_placement_blocked_masks.clear()
 
     def _rebuild_target_cache(self) -> None:
         self._target_cache_entity_count = len(self.entities)
@@ -670,6 +674,38 @@ class BattleState:
         else:
             mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
         self._building_placement_blocked_masks[size_tiles] = mask
+        return mask
+
+    def get_troop_placement_blocked_mask_world(
+        self, mover_radius: float
+    ) -> np.ndarray:
+        """Return world tiles where a troop radius overlaps a live building."""
+        self._refresh_alive_buildings_cache()
+        radius = float(mover_radius)
+        cached = self._troop_placement_blocked_masks.get(radius)
+        if cached is not None:
+            return cached
+
+        mask = np.zeros((self.arena.height, self.arena.width), dtype=np.bool_)
+        for entity in self._alive_buildings:
+            building_radius = (
+                getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
+            )
+            collision_units = tiles_to_logic_units(float(building_radius) + radius)
+            collision_sq = collision_units * collision_units
+            for ty in range(self.arena.height):
+                dy_units = tiles_to_logic_units(ty + 0.5 - entity.position.y)
+                dy_sq = dy_units * dy_units
+                if dy_sq >= collision_sq:
+                    continue
+                for tx in range(self.arena.width):
+                    if mask[ty, tx]:
+                        continue
+                    dx_units = tiles_to_logic_units(tx + 0.5 - entity.position.x)
+                    if dx_units * dx_units + dy_sq < collision_sq:
+                        mask[ty, tx] = True
+
+        self._troop_placement_blocked_masks[radius] = mask
         return mask
     
     def step(self, speed_factor: float = 1.0) -> None:

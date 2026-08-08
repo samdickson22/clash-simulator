@@ -267,6 +267,21 @@ class DiscreteTileActionSpace:
             out[tile_idx] = bool(world_mask[wy, wx])
         return out
 
+    def _troop_placement_blocked_mask_canonical(
+        self,
+        battle: BattleState,
+        player_id: int,
+        mover_radius: float,
+    ) -> np.ndarray:
+        world_mask = battle.get_troop_placement_blocked_mask_world(mover_radius)
+        world_xy = self._world_tile_xy_by_player[player_id]
+        out = np.zeros(NUM_TILES, dtype=np.bool_)
+        for tile_idx in range(NUM_TILES):
+            wx = int(world_xy[tile_idx, 0])
+            wy = int(world_xy[tile_idx, 1])
+            out[tile_idx] = bool(world_mask[wy, wx])
+        return out
+
     def _legal_action_mask_legacy(self, battle: BattleState, player_id: int) -> np.ndarray:
         mask = np.zeros(self.num_actions, dtype=np.bool_)
         mask[self.no_op_action] = True
@@ -319,6 +334,8 @@ class DiscreteTileActionSpace:
         tower_mask = self._tower_mask(battle, player_id)
         deploy_mask = zone_mask & non_blocked
         deploy_mask_no_tower = deploy_mask & (~tower_mask)
+        building_blocked_by_size: dict[int, np.ndarray] = {}
+        troop_blocked_by_radius: dict[float, np.ndarray] = {}
 
         player = battle.players[player_id]
         for slot, card_name in enumerate(player.hand[:NUM_HAND_SLOTS]):
@@ -366,10 +383,23 @@ class DiscreteTileActionSpace:
             blocked_building_tiles = None
             if is_building_card:
                 size_tiles = battle._building_footprint_size_tiles(card_stats)
-                blocked_building_tiles = self._building_placement_blocked_mask_canonical(
-                    battle, player_id, size_tiles
-                )
+                blocked_building_tiles = building_blocked_by_size.get(size_tiles)
+                if blocked_building_tiles is None:
+                    blocked_building_tiles = (
+                        self._building_placement_blocked_mask_canonical(
+                            battle, player_id, size_tiles
+                        )
+                    )
+                    building_blocked_by_size[size_tiles] = blocked_building_tiles
                 candidate_mask = candidate_mask & (~blocked_building_tiles)
+            elif not is_spell:
+                blocked_troop_tiles = troop_blocked_by_radius.get(probe_radius)
+                if blocked_troop_tiles is None:
+                    blocked_troop_tiles = self._troop_placement_blocked_mask_canonical(
+                        battle, player_id, probe_radius
+                    )
+                    troop_blocked_by_radius[probe_radius] = blocked_troop_tiles
+                candidate_mask = candidate_mask & (~blocked_troop_tiles)
 
             candidate_tiles = np.flatnonzero(candidate_mask)
             positions = self._positions_by_player[player_id]
@@ -397,14 +427,14 @@ class DiscreteTileActionSpace:
                     card_stats=card_stats,
                 ):
                     continue
-                if not is_spell and (not is_building_card):
-                    if battle.is_position_occupied_by_building(
-                        pos, probe_radius
-                    ) or battle.is_deployment_payload_occupied(
-                        pos,
-                        mover_radius=probe_radius,
-                    ):
-                        continue
+                if (
+                    not is_spell
+                    and not is_building_card
+                    and battle.is_deployment_payload_occupied(
+                        pos, mover_radius=probe_radius
+                    )
+                ):
+                    continue
                 if is_spell and (
                     battle.arena._requires_deploy_zone_spell(spell_obj)
                     or getattr(spell_obj, "requires_walkable_target", False)
