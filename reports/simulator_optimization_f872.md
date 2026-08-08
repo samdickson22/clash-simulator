@@ -151,6 +151,37 @@ The corresponding median wall-time reductions are 2.79% and 16.23%. These are
 whole-rollout results for the fixed single-environment probes, not multi-worker
 learner throughput.
 
+### Multiprocess production attribution
+
+After RoadForge attempt 30 released the CPU window, both coordinating tasks granted
+a bounded multiprocess benchmark. The existing async queue harness used 12
+persistent CPU actors, seed 2301, 12,288 transitions (6,144 two-player decisions),
+64-decision actor batches, the optimized engine, actor-local random legal actions,
+and no inference server, MPS/GPU, learner, checkpoint, or file writes. The baseline
+used the same temporary pre-occupancy source overlay described above.
+
+```bash
+.venv/bin/python -m clasher.rl.benchmark async-queue \
+  --seed 2301 --num-actors 12 --transitions 12288 \
+  --actor-rollout-steps 64 --queue-size 32 --decision-interval 8 \
+  --max-ticks 2048 --quiet-engine --engine-fast-path on \
+  --inference-mode actor_local --inference-device cpu
+```
+
+Five repetitions per revision produced:
+
+| Revision | Wall times (s) | Decisions/s | Median wall | Median decisions/s |
+|---|---|---|---:|---:|
+| Pre-change | 5.6076, 5.5342, 5.6393, 5.5133, 5.6137 | 1095.6525, 1110.1964, 1089.5027, 1114.3961, 1094.4644 | 5.6076 s | 1095.6525 |
+| Occupancy cache | 5.4614, 5.3652, 5.4192, 5.4388, 5.4658 | 1124.9794, 1145.1519, 1133.7559, 1129.6565, 1124.0803 | 5.4388 s | 1129.6565 |
+
+The occupancy cache improves median multiprocess actor throughput by 3.10% and
+reduces median wall time by 3.01%. The five observed throughput ranges do not
+overlap: 1089.50-1114.40 decisions/s before versus 1124.08-1145.15 after. Sample
+means and standard deviations were 1100.84 +/- 10.81 and 1131.52 +/- 8.55
+decisions/s respectively. This establishes production-shaped simulator attribution,
+but it still excludes recurrent policy inference and learner work.
+
 ### Oracle snapshots
 
 Commit `e4edffd` replaces oracle `deepcopy` with an exact `BattleState.clone()`.
@@ -192,11 +223,12 @@ action-mask, air/hover, route/river/bridge, clone isolation, loader, stat-wrappe
 and oracle suites passed after their corresponding shared-engine changes. The
 training task independently reran combined-tree gates after each manual integration.
 
-## Pending production preflight
+## Remaining production attribution
 
 The exact action-mask occupancy cache has now passed fixed microbenchmark,
 whole-rollout, scalar/shadow/on hash, all-enabled-card, cache-invalidation, and
-shared targeting/collision gates. A later coordinated production preflight should
-rerun the representative random, strategy, crowded scalar/fast, and oracle commands
-with more repetitions, then measure the real multi-worker configuration before
-attributing end-to-end learner decisions/s.
+shared targeting/collision gates, plus a matched 12-actor production-shaped queue
+benchmark. End-to-end learner decisions/s remains deliberately unattributed until
+the training task runs its real recurrent collector and learner configuration; that
+work retains separate training ownership and requires a newly coordinated CPU/MPS
+window.
