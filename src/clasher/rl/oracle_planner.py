@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 from dataclasses import dataclass, field
 from typing import Dict, Iterable, Optional
 
@@ -99,7 +98,7 @@ class FixedDepthThompsonOracle:
     def select_actions(self, battle: BattleState) -> Dict[int, int]:
         tree: Dict[tuple, _PlannerNode] = {}
         for _ in range(self.num_simulations):
-            sim = copy.deepcopy(battle)
+            sim = battle.clone()
             path: list[tuple[tuple, Dict[int, int]]] = []
             for _depth in range(self.plan_depth):
                 key = self._state_key(sim)

@@ -212,6 +212,17 @@ class BattleState:
             },
         }
         self._refresh_fast_path_caches()
+
+    def clone(self) -> "BattleState":
+        """Clone mutable battle state without copying the full card catalog."""
+
+        loader = self.card_loader.clone_lazy()
+        memo: dict[int, Any] = {id(self.card_loader): loader}
+        for definition in self.card_loader.load_card_definitions().values():
+            # CardDefinition is frozen and its normalized source snapshot is
+            # process-global. Mutable CardStatsCompat wrappers are still copied.
+            memo[id(definition)] = definition
+        return copy.deepcopy(self, memo)
     
     def _create_towers(self) -> None:
         """Create tower entities for both players"""
