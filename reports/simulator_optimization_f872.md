@@ -71,6 +71,46 @@ The final strategy gain is whole-rollout throughput for this one-environment fix
 probe. Training integrated both low-risk changes and independently passed its
 structured-policy, strategy, and opponent-league gates.
 
+### Strategy scorer card features
+
+After the occupancy and multiprocess work, a post-optimization profile showed
+`StrategyBot.select_action` still scoring 54,212 legal tile actions in a 64-step
+balanced rollout. Card resolution, public stat extraction, and efficiency arithmetic
+were invariant across every tile for a hand slot. The narrow refactor computes those
+features once per visible hand card and retains the exact scalar spatial score. It
+also keeps the first maximum encountered instead of allocating every `(score,
+-action_id)` tuple; because legal IDs are ascending, this is the same smallest-ID
+tie rule, including floating-point equality.
+
+The fixed balanced-strategy command used seed 2301, one environment, 64 steps, four
+warm-up steps, seven repetitions, two Torch threads, and the optimized engine:
+
+```bash
+.venv/bin/python scripts/perf/benchmark_stationary_rollout.py \
+  --workload strategy --strategy balanced --seed 2301 --num-envs 1 \
+  --rollout-steps 64 --repetitions 7 --warmup-steps 4 \
+  --torch-threads 2 --max-ticks 2048 --engine-fast-path on
+```
+
+| Revision | Median wall time | Median decisions/s | Rollout SHA-256 |
+|---|---:|---:|---|
+| Per-tile card features | 0.675390 s | 94.760 | `edb2effdd1a3c926b9b9ef8bb583eb4912618ab29e0c804439d9da3382810645` |
+| Per-hand-slot features | 0.600819 s | 106.521 | same |
+
+This improves whole-rollout throughput by 12.41% and reduces median wall time by
+11.04%. Under `cProfile`, cumulative strategy selection time fell from 0.396 s to
+0.170 s and scoring time from 0.368 s to 0.155 s; feature construction cost 0.002 s.
+
+All six strategy traces were also frozen at seed 7711 for 32 steps. Pre/post hashes
+matched exactly: bridge pressure `423bb32e6664d06cd45c1bcdabddde1c7f13321d1de6bb8cb973b7d85d7d34ce`,
+slow push `052b41b62f640c434295015f4f9d2621914d72e1edae34c06c26733559554066`,
+spell control `eb3487cdb1fd19f9411cbbbc1a8cf196e4bc3ac54dde14dec37c1d9eb473f6d2`,
+reactive defense `2ee4e97cfe3454eab3a8095af8c64824396f3d6e460a52f015d44a81dd30b3a4`,
+split lane `ef52f95bb40026c86753f6807e538777dfbad15cb3654a10d0ff962b556fe7b9`,
+and balanced `10ea618de170b7f9c43ce6817bc848a316c404f51f3694c99f6b1c5481af413f`.
+The strategy, structured-policy, and league gate passed 30 tests. The standard
+off/shadow/on rollout digest remained unchanged with zero shadow mismatches.
+
 ### Crowded exact engine
 
 The fixed state contains 12 Knights per side and advances eight native ticks. Both
