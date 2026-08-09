@@ -54,6 +54,9 @@ DEFAULT_TICK_SECONDS = LOGIC_TICK_SECONDS
 STANDARD_MATCH_DURATION_SECONDS = 300.0
 STANDARD_MATCH_TICKS = math.ceil(STANDARD_MATCH_DURATION_SECONDS / DEFAULT_TICK_SECONDS)
 
+# Reference/benchmark switch for allocation-free integer bucket indexing.
+_USE_DENSE_ENTITY_BUCKETS = True
+
 
 @dataclass(frozen=True)
 class PendingSpellCast:
@@ -140,6 +143,11 @@ class BattleState:
     fast_path: bool = False
     _bucket_cell_size: float = 2.0
     _entity_buckets: Dict[Tuple[int, int], List[Entity]] = field(default_factory=dict, init=False)
+    _entity_bucket_grid: List[Optional[List[Entity]]] = field(
+        default_factory=list,
+        init=False,
+    )
+    _entity_bucket_grid_width: int = field(default=0, init=False)
     _entity_bucket_entity_count: int = field(default=-1, init=False)
     _alive_buildings: List[Building] = field(default_factory=list, init=False)
     _tower_tile_mask_world: np.ndarray = field(
@@ -627,9 +635,34 @@ class BattleState:
         self._entity_bucket_entity_count = len(self.entities)
         if not self.fast_path:
             self._entity_buckets = {}
+            self._entity_bucket_grid = []
+            self._entity_bucket_grid_width = 0
             return
-        buckets: Dict[Tuple[int, int], List[Entity]] = defaultdict(list)
         inv = 1.0 / max(0.25, self._bucket_cell_size)
+        if _USE_DENSE_ENTITY_BUCKETS:
+            width = int((self.arena.width - 1e-6) * inv) + 1
+            height = int((self.arena.height - 1e-6) * inv) + 1
+            bucket_grid: List[Optional[List[Entity]]] = [None] * (width * height)
+            populated = False
+            for entity in self.entities.values():
+                if not entity.is_alive:
+                    continue
+                bx = int(entity.position.x * inv)
+                by = int(entity.position.y * inv)
+                if 0 <= bx < width and 0 <= by < height:
+                    bucket_index = by * width + bx
+                    bucket = bucket_grid[bucket_index]
+                    if bucket is None:
+                        bucket = []
+                        bucket_grid[bucket_index] = bucket
+                    bucket.append(entity)
+                    populated = True
+            self._entity_buckets = {}
+            self._entity_bucket_grid = bucket_grid if populated else []
+            self._entity_bucket_grid_width = width
+            return
+
+        buckets: Dict[Tuple[int, int], List[Entity]] = defaultdict(list)
         for entity in self.entities.values():
             if not entity.is_alive:
                 continue
@@ -637,6 +670,8 @@ class BattleState:
             by = int(entity.position.y * inv)
             buckets[(bx, by)].append(entity)
         self._entity_buckets = dict(buckets)
+        self._entity_bucket_grid = []
+        self._entity_bucket_grid_width = 0
 
     def iter_entities_in_radius(self, position: Position, radius: float) -> List[Entity]:
         """Return candidate entities near position for fast target selection."""
@@ -645,7 +680,12 @@ class BattleState:
             and self._entity_bucket_entity_count != len(self.entities)
         ):
             self._refresh_fast_path_caches()
-        if not self.fast_path or not self._entity_buckets:
+        if not self.fast_path:
+            return list(self.entities.values())
+        if _USE_DENSE_ENTITY_BUCKETS:
+            if not self._entity_bucket_grid:
+                return list(self.entities.values())
+        elif not self._entity_buckets:
             return list(self.entities.values())
         inv = 1.0 / max(0.25, self._bucket_cell_size)
         max_dim = float(max(self.arena.width, self.arena.height))
@@ -661,7 +701,14 @@ class BattleState:
         out: List[Entity] = []
         for bx in range(min_bx, max_bx + 1):
             for by in range(min_by, max_by + 1):
-                out.extend(self._entity_buckets.get((bx, by), []))
+                if _USE_DENSE_ENTITY_BUCKETS:
+                    bucket = self._entity_bucket_grid[
+                        by * self._entity_bucket_grid_width + bx
+                    ]
+                    if bucket is not None:
+                        out.extend(bucket)
+                else:
+                    out.extend(self._entity_buckets.get((bx, by), []))
         # Target ties retain native object encounter order. Bucket traversal
         # is spatial rather than object ordered, so restore ID order before a
         # scalar fallback scans this reduced candidate set.
