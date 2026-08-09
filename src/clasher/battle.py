@@ -70,6 +70,10 @@ _ENTITY_ID_KEY = attrgetter("id")
 # storage order and computing its row offset once per queried row.
 _USE_ROW_MAJOR_BUCKET_SCAN = True
 
+# Reference/benchmark switch for reusing the exact geometry published by the
+# rebuild that created the current entity bucket grid.
+_USE_CACHED_BUCKET_GEOMETRY = True
+
 # Reference/benchmark switch for targetability predicates that cannot change
 # after an ordinary target has joined the battle. Stealth remains a separate
 # timestamp array in the vectorized selector, while hidden/death-immunity and
@@ -166,6 +170,17 @@ class BattleState:
         init=False,
     )
     _entity_bucket_grid_width: int = field(default=0, init=False)
+    _entity_bucket_grid_height: int = field(default=0, init=False, repr=False)
+    _entity_bucket_inverse_cell_size: float = field(
+        default=0.5,
+        init=False,
+        repr=False,
+    )
+    _entity_bucket_max_dimension: float = field(
+        default=32.0,
+        init=False,
+        repr=False,
+    )
     _entity_bucket_entity_count: int = field(default=-1, init=False)
     _alive_buildings: List[Building] = field(default_factory=list, init=False)
     _tower_tile_mask_world: np.ndarray = field(
@@ -714,12 +729,17 @@ class BattleState:
 
     def _rebuild_entity_buckets(self) -> None:
         self._entity_bucket_entity_count = len(self.entities)
+        inv = 1.0 / max(0.25, self._bucket_cell_size)
+        self._entity_bucket_inverse_cell_size = inv
+        self._entity_bucket_max_dimension = float(
+            max(self.arena.width, self.arena.height)
+        )
         if not self.fast_path:
             self._entity_buckets = {}
             self._entity_bucket_grid = []
             self._entity_bucket_grid_width = 0
+            self._entity_bucket_grid_height = 0
             return
-        inv = 1.0 / max(0.25, self._bucket_cell_size)
         if _USE_DENSE_ENTITY_BUCKETS:
             width = int((self.arena.width - 1e-6) * inv) + 1
             height = int((self.arena.height - 1e-6) * inv) + 1
@@ -741,6 +761,7 @@ class BattleState:
             self._entity_buckets = {}
             self._entity_bucket_grid = bucket_grid if populated else []
             self._entity_bucket_grid_width = width
+            self._entity_bucket_grid_height = height
             return
 
         buckets: Dict[Tuple[int, int], List[Entity]] = defaultdict(list)
@@ -753,6 +774,7 @@ class BattleState:
         self._entity_buckets = dict(buckets)
         self._entity_bucket_grid = []
         self._entity_bucket_grid_width = 0
+        self._entity_bucket_grid_height = 0
 
     def iter_entities_in_radius(self, position: Position, radius: float) -> List[Entity]:
         """Return candidate entities near position for fast target selection."""
@@ -768,13 +790,21 @@ class BattleState:
                 return list(self.entities.values())
         elif not self._entity_buckets:
             return list(self.entities.values())
-        inv = 1.0 / max(0.25, self._bucket_cell_size)
-        max_dim = float(max(self.arena.width, self.arena.height))
+        if _USE_CACHED_BUCKET_GEOMETRY:
+            inv = self._entity_bucket_inverse_cell_size
+            max_dim = self._entity_bucket_max_dimension
+        else:
+            inv = 1.0 / max(0.25, self._bucket_cell_size)
+            max_dim = float(max(self.arena.width, self.arena.height))
         if radius >= max_dim:
             return list(self.entities.values())
         pad = max(0.5, min(radius + 2.0, max_dim))
-        max_bx_bound = int((self.arena.width - 1e-6) * inv)
-        max_by_bound = int((self.arena.height - 1e-6) * inv)
+        if _USE_CACHED_BUCKET_GEOMETRY and _USE_DENSE_ENTITY_BUCKETS:
+            max_bx_bound = self._entity_bucket_grid_width - 1
+            max_by_bound = self._entity_bucket_grid_height - 1
+        else:
+            max_bx_bound = int((self.arena.width - 1e-6) * inv)
+            max_by_bound = int((self.arena.height - 1e-6) * inv)
         min_bx = max(0, int((position.x - pad) * inv))
         max_bx = min(max_bx_bound, int((position.x + pad) * inv))
         min_by = max(0, int((position.y - pad) * inv))

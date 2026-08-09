@@ -84,6 +84,12 @@ def _parse_args() -> argparse.Namespace:
         default="row-major",
         help="select exact dense bucket traversal before final ID ordering",
     )
+    parser.add_argument(
+        "--bucket-geometry",
+        choices=("recomputed", "cached"),
+        default="cached",
+        help="select recomputed or rebuild-published exact bucket geometry",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -117,6 +123,7 @@ def main() -> None:
     battle_module._USE_ROW_MAJOR_BUCKET_SCAN = (
         args.bucket_scan_order == "row-major"
     )
+    battle_module._USE_CACHED_BUCKET_GEOMETRY = args.bucket_geometry == "cached"
     entities_module._USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = (
         args.crown_fallback_membership == "cached"
     )
@@ -213,6 +220,7 @@ def main() -> None:
                 "bucket_id_sort": args.bucket_id_sort,
                 "targetability_fields": args.targetability_fields,
                 "bucket_scan_order": args.bucket_scan_order,
+                "bucket_geometry": args.bucket_geometry,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,
