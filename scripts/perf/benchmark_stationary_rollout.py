@@ -54,6 +54,12 @@ def _parse_args() -> argparse.Namespace:
         default="cached",
         help="select full building scan or exact cached Crown membership",
     )
+    parser.add_argument(
+        "--crown-distance-order",
+        choices=("eager", "preferred-first"),
+        default="preferred-first",
+        help="select eager or preferred-only Crown distance evaluation",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -85,6 +91,9 @@ def main() -> None:
     )
     entities_module._USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = (
         args.crown_fallback_membership == "cached"
+    )
+    entities_module._PREFER_CROWN_FALLBACK_BEFORE_DISTANCE = (
+        args.crown_distance_order == "preferred-first"
     )
     torch.set_num_threads(args.torch_threads)
     builder = StructuredObservationBuilder(
@@ -165,6 +174,7 @@ def main() -> None:
                 "target_cache_refresh": args.target_cache_refresh,
                 "targetability_refresh": args.targetability_refresh,
                 "crown_fallback_membership": args.crown_fallback_membership,
+                "crown_distance_order": args.crown_distance_order,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,

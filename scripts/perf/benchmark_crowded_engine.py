@@ -43,6 +43,12 @@ def _parse_args() -> argparse.Namespace:
         default="cached",
         help="select full building scan or exact cached Crown membership",
     )
+    parser.add_argument(
+        "--crown-distance-order",
+        choices=("eager", "preferred-first"),
+        default="preferred-first",
+        help="select eager or preferred-only Crown distance evaluation",
+    )
     parser.add_argument("--clear-route-cache-per-mode", action="store_true")
     return parser.parse_args()
 
@@ -97,6 +103,9 @@ def main() -> None:
     entities_module._USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = (
         args.crown_fallback_membership == "cached"
     )
+    entities_module._PREFER_CROWN_FALLBACK_BEFORE_DISTANCE = (
+        args.crown_distance_order == "preferred-first"
+    )
     modes = (False, True) if args.mode == "both" else (args.mode == "on",)
     reports = []
     for fast_path in modes:
@@ -138,6 +147,7 @@ def main() -> None:
                 "target_cache_refresh": args.target_cache_refresh,
                 "targetability_refresh": args.targetability_refresh,
                 "crown_fallback_membership": args.crown_fallback_membership,
+                "crown_distance_order": args.crown_distance_order,
                 "results": reports,
             },
             sort_keys=True,

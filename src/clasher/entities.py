@@ -150,6 +150,10 @@ _COALESCE_CROWN_FALLBACK_TARGET_SCAN = True
 # the complete building scan.
 _USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = True
 
+# Reference/benchmark switch for computing adjusted distance only after the
+# data-driven Crown preference filter has discarded ineligible objectives.
+_PREFER_CROWN_FALLBACK_BEFORE_DISTANCE = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -2190,7 +2194,7 @@ class Entity(ABC):
                         troop_targets.append((entity, distance))
         
         def _fallback_crown_targets() -> list[tuple[Entity, float]]:
-            towers: list[tuple[Entity, float]] = []
+            crown_towers: list[Entity] = []
             # Target selection is also used by deterministic/unit-level callers
             # before an entity has been attached to a BattleState.  The explicit
             # entity collection is the source of truth in that case; the cached
@@ -2240,10 +2244,20 @@ class Entity(ABC):
                     )
                     if not is_crown_tower:
                         continue
-                towers.append((entity, self.native_target_distance_to(entity)))
+                crown_towers.append(entity)
             preferred = self._preferred_fallback_crown_targets(
-                [entity for entity, _ in towers]
+                crown_towers
             )
+            if _PREFER_CROWN_FALLBACK_BEFORE_DISTANCE:
+                return [
+                    (entity, self.native_target_distance_to(entity))
+                    for entity in preferred
+                ]
+
+            towers = [
+                (entity, self.native_target_distance_to(entity))
+                for entity in crown_towers
+            ]
             preferred_ids = {entity.id for entity in preferred}
             return [item for item in towers if item[0].id in preferred_ids]
 
