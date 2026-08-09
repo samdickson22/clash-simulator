@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 import math
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Literal, overload
 from enum import Enum
 from typing import TYPE_CHECKING
 import numpy as np
@@ -141,6 +141,9 @@ _FAST_TARGET_NONE_IS_EXHAUSTIVE = True
 # using the same exact scalar selector already exercised by fast fallbacks.
 _FAST_TARGET_VECTOR_MIN_SIZE = 21
 
+# Reference/benchmark switch for combining the ordinary target query and its
+# Crown-fallback retry in the troop pathing component.
+_COALESCE_CROWN_FALLBACK_TARGET_SCAN = True
 
 @dataclass
 class PeriodicDamageEffect:
@@ -2070,12 +2073,31 @@ class Entity(ABC):
                 return False
         return True
 
+    @overload
     def get_nearest_target(
         self,
-        entities: Dict[int, 'Entity'],
+        entities: dict[int, 'Entity'],
         *,
         include_crown_fallback: bool = True,
-    ) -> Optional['Entity']:
+        _return_fallback_used: Literal[False] = False,
+    ) -> Optional['Entity']: ...
+
+    @overload
+    def get_nearest_target(
+        self,
+        entities: dict[int, 'Entity'],
+        *,
+        include_crown_fallback: bool = True,
+        _return_fallback_used: Literal[True],
+    ) -> tuple[Optional['Entity'], bool]: ...
+
+    def get_nearest_target(
+        self,
+        entities: dict[int, 'Entity'],
+        *,
+        include_crown_fallback: bool = True,
+        _return_fallback_used: bool = False,
+    ) -> Optional['Entity'] | tuple[Optional['Entity'], bool]:
         """Find nearest valid target with priority rules"""
 
         # Eligible targets in sight compete by distance.  Crown towers are an
@@ -2101,7 +2123,7 @@ class Entity(ABC):
             and len(getattr(battle_state, "_target_entities", ()))
             >= _FAST_TARGET_VECTOR_MIN_SIZE
         ):
-            fast_target = self._get_nearest_target_vectorized(
+            fast_target, fast_used_fallback = self._get_nearest_target_vectorized(
                 battle_state=battle_state,
                 targets_only_buildings=targets_only_buildings,
                 can_attack_air=can_attack_air,
@@ -2109,8 +2131,12 @@ class Entity(ABC):
                 include_crown_fallback=include_crown_fallback,
             )
             if fast_target is not None and self._is_valid_target(fast_target):
+                if _return_fallback_used:
+                    return fast_target, fast_used_fallback
                 return fast_target
             if fast_target is None and _FAST_TARGET_NONE_IS_EXHAUSTIVE:
+                if _return_fallback_used:
+                    return None, False
                 return None
 
         candidate_entities = entities.values()
@@ -2207,19 +2233,21 @@ class Entity(ABC):
             in_sight_targets = building_targets
         else:
             in_sight_targets = troop_targets + building_targets
+        used_fallback = not in_sight_targets and include_crown_fallback
         targets = (
             in_sight_targets
             if in_sight_targets
-            else (
-                _fallback_crown_targets()
-                if include_crown_fallback
-                else []
-            )
+            else (_fallback_crown_targets() if used_fallback else [])
         )
         
         if not targets:
+            if _return_fallback_used:
+                return None, False
             return None
-        return self._select_first_nearest_target(targets)
+        selected = self._select_first_nearest_target(targets)
+        if _return_fallback_used:
+            return selected, used_fallback
+        return selected
 
     def _preferred_fallback_crown_targets(
         self,
@@ -2359,7 +2387,7 @@ class Entity(ABC):
         can_attack_air: bool,
         can_attack_ground: bool,
         include_crown_fallback: bool = True,
-    ) -> Optional["Entity"]:
+    ) -> tuple[Optional["Entity"], bool]:
         (
             target_entities,
             pos_x,
@@ -2375,7 +2403,7 @@ class Entity(ABC):
             target_distance_discount_sq,
         ) = battle_state.get_fast_target_cache()
         if len(target_entities) == 0:
-            return None
+            return None, False
 
         valid = (player != self.player_id) & is_targetable
         if not can_attack_air:
@@ -2413,7 +2441,7 @@ class Entity(ABC):
         if stealth_until.size:
             valid &= stealth_until <= now_ms
         if not np.any(valid):
-            return None
+            return None, False
 
         dx = pos_x - float(self.position.x)
         dy = pos_y - float(self.position.y)
@@ -2458,6 +2486,7 @@ class Entity(ABC):
         )
         chosen = np.zeros_like(valid)
         ordered_candidates: np.ndarray | None = None
+        used_fallback = False
         if np.any(in_sight_targets):
             chosen = in_sight_targets
             # The scalar/native candidate collection visits targetable
@@ -2473,6 +2502,7 @@ class Entity(ABC):
                     )
                 )
         elif include_crown_fallback:
+            used_fallback = True
             fallback_indices = np.flatnonzero(fallback_crown_targets)
             preferred = self._preferred_fallback_crown_targets(
                 [target_entities[int(index)] for index in fallback_indices]
@@ -2483,7 +2513,7 @@ class Entity(ABC):
                 if target_entities[int(index)].id in preferred_ids:
                     chosen[int(index)] = True
         if not np.any(chosen):
-            return None
+            return None, False
 
         candidates = (
             ordered_candidates
@@ -2514,7 +2544,7 @@ class Entity(ABC):
                     target_entities[candidate_index]
                 ),
             )
-        return target_entities[idx]
+        return target_entities[idx], used_fallback
     
     def _should_switch_target(self, current_target: 'Entity', new_target: 'Entity') -> bool:
         """Determine if we should switch from current target to new target"""
@@ -3111,23 +3141,28 @@ class Troop(Entity):
             current_target is None
             or not self.is_within_target_keep_reach(current_target)
         ):
-            using_crown_fallback = False
-            best_target = self.get_nearest_target(
-                battle_state.entities,
-                include_crown_fallback=False,
+            keep_backward_target = (
+                current_target is not None
+                and LOGIC_PATHFIND_BACKWARDS_TRY_KEEP_TARGET
+                and self._ground_path_backwards
             )
-            if (
-                best_target is None
-                and not (
-                    current_target is not None
-                    and LOGIC_PATHFIND_BACKWARDS_TRY_KEEP_TARGET
-                    and self._ground_path_backwards
+            if _COALESCE_CROWN_FALLBACK_TARGET_SCAN:
+                best_target, using_crown_fallback = self.get_nearest_target(
+                    battle_state.entities,
+                    include_crown_fallback=not keep_backward_target,
+                    _return_fallback_used=True,
                 )
-            ):
+            else:
+                using_crown_fallback = False
                 best_target = self.get_nearest_target(
                     battle_state.entities,
+                    include_crown_fallback=False,
                 )
-                using_crown_fallback = best_target is not None
+                if best_target is None and not keep_backward_target:
+                    best_target = self.get_nearest_target(
+                        battle_state.entities,
+                    )
+                    using_crown_fallback = best_target is not None
             if best_target and (
                 using_crown_fallback
                 or not current_target
