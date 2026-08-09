@@ -90,6 +90,12 @@ def _parse_args() -> argparse.Namespace:
         default="cached",
         help="select recomputed or rebuild-published exact bucket geometry",
     )
+    parser.add_argument(
+        "--building-membership",
+        choices=("defensive", "trusted"),
+        default="trusted",
+        help="select defensive checks or exact live-building cache membership",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -124,6 +130,9 @@ def main() -> None:
         args.bucket_scan_order == "row-major"
     )
     battle_module._USE_CACHED_BUCKET_GEOMETRY = args.bucket_geometry == "cached"
+    battle_module._USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP = (
+        args.building_membership == "trusted"
+    )
     entities_module._USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = (
         args.crown_fallback_membership == "cached"
     )
@@ -221,6 +230,7 @@ def main() -> None:
                 "targetability_fields": args.targetability_fields,
                 "bucket_scan_order": args.bucket_scan_order,
                 "bucket_geometry": args.bucket_geometry,
+                "building_membership": args.building_membership,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,

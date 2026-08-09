@@ -74,6 +74,10 @@ _USE_ROW_MAJOR_BUCKET_SCAN = True
 # rebuild that created the current entity bucket grid.
 _USE_CACHED_BUCKET_GEOMETRY = True
 
+# Reference/benchmark switch for trusting the exact live-Building membership
+# contract immediately after the fast placement cache refresh.
+_USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP = True
+
 # Reference/benchmark switch for targetability predicates that cannot change
 # after an ordinary target has joined the battle. Stealth remains a separate
 # timestamp array in the vectorized selector, while hidden/death-immunity and
@@ -2613,10 +2617,15 @@ class BattleState:
             buildings = self._alive_buildings
         else:
             buildings = self.entities.values()
+        trusted_membership = bool(
+            self.fast_path and _USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP
+        )
         for entity in buildings:
-            if not isinstance(entity, Building):
+            if not trusted_membership and (
+                not isinstance(entity, Building) or not entity.is_alive
+            ):
                 continue
-            if (not entity.is_alive) or (ignore_building_id is not None and entity.id == ignore_building_id):
+            if ignore_building_id is not None and entity.id == ignore_building_id:
                 continue
             building_radius = getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
             collision_units = tiles_to_logic_units(
