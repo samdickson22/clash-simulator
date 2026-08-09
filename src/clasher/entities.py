@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 import math
-from typing import Optional, List, Dict, Any, Literal, overload
+from typing import Optional, List, Dict, Any, Iterable, Literal, overload
 from enum import Enum
 from typing import TYPE_CHECKING
 import numpy as np
@@ -161,6 +161,10 @@ _DEFER_INACTIVE_STEALTH_TIME_LOOKUP = True
 # Reference/benchmark switch for reading Entity-owned targetability state
 # directly in this hot predicate instead of routing through defensive helpers.
 _USE_DIRECT_TARGETABILITY_FIELDS = True
+
+# Reference/benchmark switch for pruning native-avoidance scans through the
+# exact ID-restored entity buckets already used by collision and targeting.
+_USE_AVOIDANCE_BUCKET_CANDIDATES = True
 
 @dataclass
 class PeriodicDamageEffect:
@@ -2856,7 +2860,15 @@ class Troop(Entity):
         static_side = 1
         own_mass = unit_mass(self.card_stats)
 
-        for other in battle_state.entities.values():
+        avoidance_candidates: Iterable[Entity] = battle_state.entities.values()
+        if battle_state.fast_path and _USE_AVOIDANCE_BUCKET_CANDIDATES:
+            avoidance_candidates = battle_state.iter_entities_in_radius(
+                self.position,
+                logic_units_to_tiles(256 + probe_radius)
+                + battle_state._max_target_collision_radius,
+            )
+
+        for other in avoidance_candidates:
             if (
                 other is self
                 or not other.is_alive

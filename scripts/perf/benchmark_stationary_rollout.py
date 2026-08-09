@@ -102,6 +102,12 @@ def _parse_args() -> argparse.Namespace:
         default="cached",
         help="select runtime or entity-cached data-driven hover classification",
     )
+    parser.add_argument(
+        "--avoidance-candidates",
+        choices=("full-scan", "bucketed"),
+        default="bucketed",
+        help="select full or exact spatially pruned native-avoidance scans",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -153,6 +159,9 @@ def main() -> None:
     )
     entities_module._USE_DIRECT_TARGETABILITY_FIELDS = (
         args.targetability_fields == "direct"
+    )
+    entities_module._USE_AVOIDANCE_BUCKET_CANDIDATES = (
+        args.avoidance_candidates == "bucketed"
     )
     torch.set_num_threads(args.torch_threads)
     builder = StructuredObservationBuilder(
@@ -241,6 +250,7 @@ def main() -> None:
                 "bucket_geometry": args.bucket_geometry,
                 "building_membership": args.building_membership,
                 "mover_hover_trait": args.mover_hover_trait,
+                "avoidance_candidates": args.avoidance_candidates,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,
