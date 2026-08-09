@@ -57,6 +57,9 @@ _NATIVE_OTHER_LANE_COST = 5
 _NATIVE_SAME_LANE_COST = 1
 _NATIVE_WATER_COST = 800
 
+# Reference/benchmark switch for exact repeated route-goal queries.
+_USE_NATIVE_ROUTE_GOAL_CACHE = True
+
 # Reference/benchmark switch. The compiled kernel implements the same native
 # first-discovery heap and falls back to Python when Numba is unavailable.
 _USE_COMPILED_STANDARD_ROUTE = True
@@ -215,42 +218,35 @@ def _cell_center(cell: tuple[int, int]) -> Position:
     )
 
 
-def native_route_goal_cell(
-    mover: "Entity",
-    target: "Entity",
-    *,
-    required_range_tiles: float | None = None,
+def _compute_native_route_goal_cell_units(
+    mover_x: int,
+    mover_y: int,
+    target_x: int,
+    target_y: int,
+    required_range_units: int,
 ) -> tuple[int, int] | None:
-    """Return ``getClosestTilePositionToTarget`` for an ordinary attack.
+    """Compute one exact native route goal from integer logic coordinates."""
 
-    The movement component does not route to a target object's occupied tile.
-    It scans half-tile centers inside the attacker's serialized range of the
-    target *center*, then keeps the candidate closest to the mover. The scan
-    is y-major/x-minor and replaces only on a strictly smaller distance, so a
-    geometric tie keeps the lowest world-grid y and then x.
-
-    Target collision radius deliberately does not participate here. Native
-    combat uses it when deciding whether an attack can begin, while route goal
-    selection calls the point overload of ``getDistanceToObjectSquared``.
-    """
-
-    range_tiles = (
-        float(getattr(mover, "range", 0.0) or 0.0)
-        if required_range_tiles is None
-        else float(required_range_tiles)
-    )
-    required_range_units = max(0, tiles_to_logic_units(range_tiles))
     search_radius = trunc_div(required_range_units, HALF_TILE_LOGIC_UNITS) + 1
-    target_cell_x, target_cell_y = _cell_for_position(target.position)
+    target_cell_x = max(
+        0,
+        min(
+            STANDARD_PATH_WIDTH - 1,
+            trunc_div(target_x, HALF_TILE_LOGIC_UNITS),
+        ),
+    )
+    target_cell_y = max(
+        0,
+        min(
+            STANDARD_PATH_HEIGHT - 1,
+            trunc_div(target_y, HALF_TILE_LOGIC_UNITS),
+        ),
+    )
     min_x = max(0, target_cell_x - search_radius)
     max_x = min(STANDARD_PATH_WIDTH - 1, target_cell_x + search_radius)
     min_y = max(0, target_cell_y - search_radius)
     max_y = min(STANDARD_PATH_HEIGHT - 1, target_cell_y + search_radius)
 
-    mover_x = tiles_to_logic_units(mover.position.x)
-    mover_y = tiles_to_logic_units(mover.position.y)
-    target_x = tiles_to_logic_units(target.position.x)
-    target_y = tiles_to_logic_units(target.position.y)
     required_range_sq = required_range_units * required_range_units
     best_cell: tuple[int, int] | None = None
     best_mover_distance_sq = (1 << 31) - 1
@@ -280,6 +276,47 @@ def native_route_goal_cell(
                 best_cell = (cell_x, cell_y)
                 best_mover_distance_sq = mover_distance_sq
     return best_cell
+
+
+_cached_native_route_goal_cell_units = lru_cache(maxsize=32_768)(
+    _compute_native_route_goal_cell_units
+)
+
+
+def native_route_goal_cell(
+    mover: "Entity",
+    target: "Entity",
+    *,
+    required_range_tiles: float | None = None,
+) -> tuple[int, int] | None:
+    """Return ``getClosestTilePositionToTarget`` for an ordinary attack.
+
+    The movement component does not route to a target object's occupied tile.
+    It scans half-tile centers inside the attacker's serialized range of the
+    target *center*, then keeps the candidate closest to the mover. The scan
+    is y-major/x-minor and replaces only on a strictly smaller distance, so a
+    geometric tie keeps the lowest world-grid y and then x.
+
+    Target collision radius deliberately does not participate here. Native
+    combat uses it when deciding whether an attack can begin, while route goal
+    selection calls the point overload of ``getDistanceToObjectSquared``.
+    """
+
+    range_tiles = (
+        float(getattr(mover, "range", 0.0) or 0.0)
+        if required_range_tiles is None
+        else float(required_range_tiles)
+    )
+    args = (
+        tiles_to_logic_units(mover.position.x),
+        tiles_to_logic_units(mover.position.y),
+        tiles_to_logic_units(target.position.x),
+        tiles_to_logic_units(target.position.y),
+        max(0, tiles_to_logic_units(range_tiles)),
+    )
+    if _USE_NATIVE_ROUTE_GOAL_CACHE:
+        return _cached_native_route_goal_cell_units(*args)
+    return _compute_native_route_goal_cell_units(*args)
 
 
 def _heuristic(
