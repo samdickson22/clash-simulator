@@ -78,6 +78,12 @@ def _parse_args() -> argparse.Namespace:
         default="direct",
         help="select defensive helpers or exact direct Entity field reads",
     )
+    parser.add_argument(
+        "--bucket-scan-order",
+        choices=("column-major", "row-major"),
+        default="row-major",
+        help="select exact dense bucket traversal before final ID ordering",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -108,6 +114,9 @@ def main() -> None:
         args.targetability_refresh == "classified"
     )
     battle_module._USE_INPLACE_BUCKET_ID_SORT = args.bucket_id_sort == "inplace"
+    battle_module._USE_ROW_MAJOR_BUCKET_SCAN = (
+        args.bucket_scan_order == "row-major"
+    )
     entities_module._USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = (
         args.crown_fallback_membership == "cached"
     )
@@ -203,6 +212,7 @@ def main() -> None:
                 "inactive_stealth_time": args.inactive_stealth_time,
                 "bucket_id_sort": args.bucket_id_sort,
                 "targetability_fields": args.targetability_fields,
+                "bucket_scan_order": args.bucket_scan_order,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,

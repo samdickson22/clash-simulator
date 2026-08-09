@@ -66,6 +66,10 @@ _USE_COLLISION_BUCKET_CANDIDATES = True
 _USE_INPLACE_BUCKET_ID_SORT = True
 _ENTITY_ID_KEY = attrgetter("id")
 
+# Reference/benchmark switch for scanning the dense row-major bucket grid in
+# storage order and computing its row offset once per queried row.
+_USE_ROW_MAJOR_BUCKET_SCAN = True
+
 # Reference/benchmark switch for targetability predicates that cannot change
 # after an ordinary target has joined the battle. Stealth remains a separate
 # timestamp array in the vectorized selector, while hidden/death-immunity and
@@ -776,16 +780,27 @@ class BattleState:
         min_by = max(0, int((position.y - pad) * inv))
         max_by = min(max_by_bound, int((position.y + pad) * inv))
         out: List[Entity] = []
-        for bx in range(min_bx, max_bx + 1):
+        if _USE_DENSE_ENTITY_BUCKETS and _USE_ROW_MAJOR_BUCKET_SCAN:
+            width = self._entity_bucket_grid_width
             for by in range(min_by, max_by + 1):
-                if _USE_DENSE_ENTITY_BUCKETS:
+                row_offset = by * width
+                for bx in range(min_bx, max_bx + 1):
                     bucket = self._entity_bucket_grid[
-                        by * self._entity_bucket_grid_width + bx
+                        row_offset + bx
                     ]
                     if bucket is not None:
                         out.extend(bucket)
-                else:
-                    out.extend(self._entity_buckets.get((bx, by), []))
+        else:
+            for bx in range(min_bx, max_bx + 1):
+                for by in range(min_by, max_by + 1):
+                    if _USE_DENSE_ENTITY_BUCKETS:
+                        bucket = self._entity_bucket_grid[
+                            by * self._entity_bucket_grid_width + bx
+                        ]
+                        if bucket is not None:
+                            out.extend(bucket)
+                    else:
+                        out.extend(self._entity_buckets.get((bx, by), []))
         # Target ties retain native object encounter order. Bucket traversal
         # is spatial rather than object ordered, so restore ID order before a
         # scalar fallback scans this reduced candidate set.
