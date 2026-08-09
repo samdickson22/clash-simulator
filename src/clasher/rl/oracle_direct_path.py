@@ -5,6 +5,7 @@ from __future__ import annotations
 from clasher.battle import BattleState
 
 from .oracle_planner import FixedDepthThompsonOracle, _PlannerNode
+from .reward_model import reward_win_prob_p0
 
 
 class DirectPathFixedDepthThompsonOracle(FixedDepthThompsonOracle):
@@ -56,10 +57,10 @@ class DirectPathFixedDepthThompsonOracle(FixedDepthThompsonOracle):
                 if sim.game_over:
                     break
 
-            value_probs = self._evaluate_state_prob(sim)
+            value_prob_p0 = self._evaluate_state_prob_p0(sim)
             for node, action0, action1 in path:
-                node.by_player[0].update(action0, value_probs[0])
-                node.by_player[1].update(action1, value_probs[1])
+                node.by_player[0].update(action0, value_prob_p0)
+                node.by_player[1].update(action1, 1.0 - value_prob_p0)
 
         root = tree.get(root_key)
         out: dict[int, int] = {}
@@ -79,6 +80,10 @@ class DirectPathFixedDepthThompsonOracle(FixedDepthThompsonOracle):
             else:
                 out[player_id] = root.by_player[player_id].greedy_action(legal)
         return out
+
+    def _evaluate_state_prob_p0(self, battle: BattleState) -> float:
+        """Return the scalar leaf value used internally during backup."""
+        return reward_win_prob_p0(battle, self.reward_profile)
 
     def _apply_joint_action_direct(
         self,
