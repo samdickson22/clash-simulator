@@ -60,6 +60,11 @@ _USE_DENSE_ENTITY_BUCKETS = True
 # Reference/benchmark switch for exact spatial collision candidate pruning.
 _USE_COLLISION_BUCKET_CANDIDATES = True
 
+# Reference/benchmark switch for targetability predicates that cannot change
+# after an ordinary target has joined the battle. Stealth remains a separate
+# timestamp array in the vectorized selector, while hidden/death-immunity and
+# mechanic-owned gates retain the full dynamic predicate.
+_USE_STATIC_TARGETABILITY_CLASSIFICATION = True
 
 @dataclass(frozen=True)
 class PendingSpellCast:
@@ -177,6 +182,9 @@ class BattleState:
     )
     _target_is_crown: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False)
     _target_is_targetable: np.ndarray = field(
+        default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False
+    )
+    _target_requires_targetability_check: np.ndarray = field(
         default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False
     )
     _target_stealth_until: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.int32), init=False)
@@ -397,6 +405,9 @@ class BattleState:
             self._target_is_building_target = np.zeros((0,), dtype=np.bool_)
             self._target_is_crown = np.zeros((0,), dtype=np.bool_)
             self._target_is_targetable = np.zeros((0,), dtype=np.bool_)
+            self._target_requires_targetability_check = np.zeros(
+                (0,), dtype=np.bool_
+            )
             self._target_stealth_until = np.zeros((0,), dtype=np.int32)
             self._target_collision_radius = np.zeros((0,), dtype=np.float64)
             self._target_distance_discount_sq = np.zeros((0,), dtype=np.float64)
@@ -411,6 +422,7 @@ class BattleState:
         is_building_target = np.empty((n,), dtype=np.bool_)
         is_crown = np.empty((n,), dtype=np.bool_)
         is_targetable = np.empty((n,), dtype=np.bool_)
+        requires_targetability_check = np.empty((n,), dtype=np.bool_)
         stealth_until = np.empty((n,), dtype=np.int32)
         collision_radius = np.empty((n,), dtype=np.float64)
         target_distance_discount_sq = np.empty((n,), dtype=np.float64)
@@ -428,7 +440,13 @@ class BattleState:
                 is_crown[i] = name in {"Tower", "KingTower"} or bool(getattr(entity, "_is_king_tower", False))
             else:
                 is_crown[i] = False
-            is_targetable[i] = entity.is_targetable_by(1 - entity.player_id)
+            requires_check = self._requires_targetability_check(entity)
+            requires_targetability_check[i] = requires_check
+            is_targetable[i] = (
+                entity.is_targetable_by(1 - entity.player_id)
+                if requires_check or not _USE_STATIC_TARGETABILITY_CLASSIFICATION
+                else True
+            )
             stealth_until[i] = int(getattr(entity, "_stealth_until", 0) or 0)
             collision_radius[i] = entity.get_collision_radius()
             target_distance_discount_sq[i] = (
@@ -454,6 +472,7 @@ class BattleState:
         self._target_is_building_target = is_building_target
         self._target_is_crown = is_crown
         self._target_is_targetable = is_targetable
+        self._target_requires_targetability_check = requires_targetability_check
         self._target_stealth_until = stealth_until
         self._target_collision_radius = collision_radius
         self._target_distance_discount_sq = target_distance_discount_sq
@@ -499,9 +518,13 @@ class BattleState:
         self._target_pos_x[index] = float(entity.position.x)
         self._target_pos_y[index] = float(entity.position.y)
         self._target_is_air[index] = is_airborne_target(entity)
-        self._target_is_targetable[index] = entity.is_targetable_by(
-            1 - entity.player_id
-        )
+        if (
+            not _USE_STATIC_TARGETABILITY_CLASSIFICATION
+            or self._target_requires_targetability_check[index]
+        ):
+            self._target_is_targetable[index] = entity.is_targetable_by(
+                1 - entity.player_id
+            )
         self._target_stealth_until[index] = int(
             getattr(entity, "_stealth_until", 0) or 0
         )
@@ -560,6 +583,24 @@ class BattleState:
             and getattr(entity, "entity_kind", 4) not in {2, 3}
         )
 
+    @staticmethod
+    def _requires_targetability_check(entity: Entity) -> bool:
+        """Return whether non-stealth targetability can change after insert.
+
+        The vectorized selector applies stealth timestamps independently.
+        Every other mutable gate in ``Entity.is_targetable_by`` is represented
+        by one of these data/mechanic-owned states. Mechanics are attached
+        before manager insertion and remain stable for the entity lifetime.
+        """
+        return bool(
+            entity._has_death_spawn_target_immunity()
+            or hasattr(entity, "_hidden_building")
+            or any(
+                callable(getattr(mechanic, "blocks_targeting", None))
+                for mechanic in entity.mechanics
+            )
+        )
+
     def _sync_fast_target_entity(self, entity: Entity) -> bool:
         """Keep one updated unit coherent in the vectorized target cache.
 
@@ -577,9 +618,13 @@ class BattleState:
         self._target_pos_x[index] = float(entity.position.x)
         self._target_pos_y[index] = float(entity.position.y)
         self._target_is_air[index] = is_airborne_target(entity)
-        self._target_is_targetable[index] = entity.is_targetable_by(
-            1 - entity.player_id
-        )
+        if (
+            not _USE_STATIC_TARGETABILITY_CLASSIFICATION
+            or self._target_requires_targetability_check[index]
+        ):
+            self._target_is_targetable[index] = entity.is_targetable_by(
+                1 - entity.player_id
+            )
         self._target_stealth_until[index] = int(
             getattr(entity, "_stealth_until", 0) or 0
         )

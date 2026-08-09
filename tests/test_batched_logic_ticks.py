@@ -81,6 +81,7 @@ def test_batched_logic_ticks_match_repeated_steps_and_fast_caches():
         "_target_is_building_target",
         "_target_is_crown",
         "_target_is_targetable",
+        "_target_requires_targetability_check",
         "_target_stealth_until",
         "_target_collision_radius",
         "_target_distance_discount_sq",

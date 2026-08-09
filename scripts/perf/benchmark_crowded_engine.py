@@ -10,6 +10,7 @@ import random
 import statistics
 import time
 
+from clasher import battle as battle_module
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.pathfinding import _cached_standard_grid_route
@@ -28,6 +29,12 @@ def _parse_args() -> argparse.Namespace:
         choices=("rebuild", "reuse"),
         default="reuse",
         help="select the pre-optimization full rebuild or candidate in-place refresh",
+    )
+    parser.add_argument(
+        "--targetability-refresh",
+        choices=("full", "classified"),
+        default="classified",
+        help="select full dynamic targetability checks or exact static classification",
     )
     parser.add_argument("--clear-route-cache-per-mode", action="store_true")
     return parser.parse_args()
@@ -77,6 +84,9 @@ def _digest(battle: BattleState) -> str:
 
 def main() -> None:
     args = _parse_args()
+    battle_module._USE_STATIC_TARGETABILITY_CLASSIFICATION = (
+        args.targetability_refresh == "classified"
+    )
     modes = (False, True) if args.mode == "both" else (args.mode == "on",)
     reports = []
     for fast_path in modes:
@@ -116,6 +126,7 @@ def main() -> None:
                 "ticks": args.ticks,
                 "repetitions": args.repetitions,
                 "target_cache_refresh": args.target_cache_refresh,
+                "targetability_refresh": args.targetability_refresh,
                 "results": reports,
             },
             sort_keys=True,

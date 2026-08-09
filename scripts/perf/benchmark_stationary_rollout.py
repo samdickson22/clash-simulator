@@ -12,6 +12,7 @@ import time
 import numpy as np
 import torch
 
+from clasher import battle as battle_module
 from clasher.battle import BattleState
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
@@ -40,6 +41,12 @@ def _parse_args() -> argparse.Namespace:
         default="reuse",
         help="select the pre-optimization full rebuild or candidate in-place refresh",
     )
+    parser.add_argument(
+        "--targetability-refresh",
+        choices=("full", "classified"),
+        default="classified",
+        help="select full dynamic targetability checks or exact static classification",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -66,6 +73,9 @@ def main() -> None:
     args = _parse_args()
     if args.target_cache_refresh == "rebuild":
         BattleState._refresh_target_cache = BattleState._rebuild_target_cache
+    battle_module._USE_STATIC_TARGETABILITY_CLASSIFICATION = (
+        args.targetability_refresh == "classified"
+    )
     torch.set_num_threads(args.torch_threads)
     builder = StructuredObservationBuilder(
         decks_path=args.decks_path,
@@ -143,6 +153,7 @@ def main() -> None:
                 "torch_threads": args.torch_threads,
                 "engine_fast_path": args.engine_fast_path,
                 "target_cache_refresh": args.target_cache_refresh,
+                "targetability_refresh": args.targetability_refresh,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,
