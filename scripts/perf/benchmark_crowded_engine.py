@@ -11,6 +11,7 @@ import statistics
 import time
 
 from clasher import battle as battle_module
+from clasher import entities as entities_module
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.pathfinding import _cached_standard_grid_route
@@ -35,6 +36,12 @@ def _parse_args() -> argparse.Namespace:
         choices=("full", "classified"),
         default="classified",
         help="select full dynamic targetability checks or exact static classification",
+    )
+    parser.add_argument(
+        "--crown-fallback-membership",
+        choices=("scan", "cached"),
+        default="cached",
+        help="select full building scan or exact cached Crown membership",
     )
     parser.add_argument("--clear-route-cache-per-mode", action="store_true")
     return parser.parse_args()
@@ -87,6 +94,9 @@ def main() -> None:
     battle_module._USE_STATIC_TARGETABILITY_CLASSIFICATION = (
         args.targetability_refresh == "classified"
     )
+    entities_module._USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = (
+        args.crown_fallback_membership == "cached"
+    )
     modes = (False, True) if args.mode == "both" else (args.mode == "on",)
     reports = []
     for fast_path in modes:
@@ -127,6 +137,7 @@ def main() -> None:
                 "repetitions": args.repetitions,
                 "target_cache_refresh": args.target_cache_refresh,
                 "targetability_refresh": args.targetability_refresh,
+                "crown_fallback_membership": args.crown_fallback_membership,
                 "results": reports,
             },
             sort_keys=True,

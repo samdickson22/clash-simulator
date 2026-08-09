@@ -72,6 +72,13 @@ def test_batched_logic_ticks_match_repeated_steps_and_fast_caches():
     assert [entity.id for entity in candidate._target_entities] == [
         entity.id for entity in reference._target_entities
     ]
+    assert tuple(
+        tuple(entity.id for entity in towers)
+        for towers in candidate._crown_target_entities_by_player
+    ) == tuple(
+        tuple(entity.id for entity in towers)
+        for towers in reference._crown_target_entities_by_player
+    )
     for name in (
         "_target_pos_x",
         "_target_pos_y",

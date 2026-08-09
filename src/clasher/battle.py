@@ -187,6 +187,9 @@ class BattleState:
     _target_requires_targetability_check: np.ndarray = field(
         default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False
     )
+    _crown_target_entities_by_player: Tuple[List[Entity], List[Entity]] = field(
+        default_factory=lambda: ([], []), init=False
+    )
     _target_stealth_until: np.ndarray = field(default_factory=lambda: np.zeros((0,), dtype=np.int32), init=False)
     _target_collision_radius: np.ndarray = field(
         default_factory=lambda: np.zeros((0,), dtype=np.float64), init=False
@@ -408,6 +411,7 @@ class BattleState:
             self._target_requires_targetability_check = np.zeros(
                 (0,), dtype=np.bool_
             )
+            self._crown_target_entities_by_player = ([], [])
             self._target_stealth_until = np.zeros((0,), dtype=np.int32)
             self._target_collision_radius = np.zeros((0,), dtype=np.float64)
             self._target_distance_discount_sq = np.zeros((0,), dtype=np.float64)
@@ -426,6 +430,7 @@ class BattleState:
         stealth_until = np.empty((n,), dtype=np.int32)
         collision_radius = np.empty((n,), dtype=np.float64)
         target_distance_discount_sq = np.empty((n,), dtype=np.float64)
+        crown_targets_by_player: Tuple[List[Entity], List[Entity]] = ([], [])
 
         for i, entity in enumerate(targets):
             pos_x[i] = float(entity.position.x)
@@ -440,6 +445,8 @@ class BattleState:
                 is_crown[i] = name in {"Tower", "KingTower"} or bool(getattr(entity, "_is_king_tower", False))
             else:
                 is_crown[i] = False
+            if is_crown[i] and entity.player_id in {0, 1}:
+                crown_targets_by_player[entity.player_id].append(entity)
             requires_check = self._requires_targetability_check(entity)
             requires_targetability_check[i] = requires_check
             is_targetable[i] = (
@@ -473,6 +480,7 @@ class BattleState:
         self._target_is_crown = is_crown
         self._target_is_targetable = is_targetable
         self._target_requires_targetability_check = requires_targetability_check
+        self._crown_target_entities_by_player = crown_targets_by_player
         self._target_stealth_until = stealth_until
         self._target_collision_radius = collision_radius
         self._target_distance_discount_sq = target_distance_discount_sq
@@ -571,7 +579,11 @@ class BattleState:
             self._rebuild_target_cache()
             index = self._target_index_by_id.get(entity.id)
         if index is not None:
+            was_crown = bool(self._target_is_crown[index])
             self._refresh_fast_target_static_values(index, entity)
+            if bool(self._target_is_crown[index]) != was_crown:
+                self._rebuild_target_cache()
+                return
             self._max_target_collision_radius = float(
                 np.max(self._target_collision_radius)
             )
@@ -673,6 +685,17 @@ class BattleState:
             self._target_collision_radius,
             self._target_distance_discount_sq,
         )
+
+    def get_fast_crown_target_entities(self, player_id: int) -> List[Entity]:
+        """Return exact live Crown fallback membership for one owner."""
+        if (
+            self.fast_path
+            and self._target_cache_entity_count != len(self.entities)
+        ):
+            self._refresh_fast_path_caches()
+        if player_id not in {0, 1}:
+            return []
+        return self._crown_target_entities_by_player[player_id]
 
     def _refresh_tower_mask_if_needed(self) -> None:
         alive_flags = self._tower_alive_flags()

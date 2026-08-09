@@ -145,6 +145,11 @@ _FAST_TARGET_VECTOR_MIN_SIZE = 21
 # Crown-fallback retry in the troop pathing component.
 _COALESCE_CROWN_FALLBACK_TARGET_SCAN = True
 
+# Reference/benchmark switch for exact Crown membership already maintained by
+# the fast target cache. Scalar and caller-supplied entity collections retain
+# the complete building scan.
+_USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -2190,10 +2195,21 @@ class Entity(ABC):
             # before an entity has been attached to a BattleState.  The explicit
             # entity collection is the source of truth in that case; the cached
             # alive-building list is only an optimization for live battles.
+            use_cached_crowns = bool(
+                _USE_CACHED_CROWN_FALLBACK_MEMBERSHIP
+                and battle_state is not None
+                and getattr(battle_state, "fast_path", False)
+                and getattr(battle_state, "entities", None) is entities
+                and hasattr(battle_state, "get_fast_crown_target_entities")
+            )
             candidates = (
-                getattr(battle_state, "_alive_buildings", [])
-                if battle_state is not None
-                else entities.values()
+                battle_state.get_fast_crown_target_entities(1 - self.player_id)
+                if use_cached_crowns
+                else (
+                    getattr(battle_state, "_alive_buildings", [])
+                    if battle_state is not None
+                    else entities.values()
+                )
             )
             for entity in candidates:
                 # The accelerated building cache is owned by the live
@@ -2206,7 +2222,7 @@ class Entity(ABC):
                 # leaking into the restored state.
                 if entities.get(entity.id) is not entity:
                     continue
-                if not isinstance(entity, Building):
+                if not use_cached_crowns and not isinstance(entity, Building):
                     continue
                 if not self._is_valid_target(entity):
                     continue
@@ -2214,13 +2230,16 @@ class Entity(ABC):
                     continue
                 if (not is_airborne_target(entity)) and not can_attack_ground:
                     continue
-                building_name = getattr(getattr(entity, "card_stats", None), "name", "")
-                is_crown_tower = (
-                    building_name in {"Tower", "KingTower"}
-                    or bool(getattr(entity, "_is_king_tower", False))
-                )
-                if not is_crown_tower:
-                    continue
+                if not use_cached_crowns:
+                    building_name = getattr(
+                        getattr(entity, "card_stats", None), "name", ""
+                    )
+                    is_crown_tower = (
+                        building_name in {"Tower", "KingTower"}
+                        or bool(getattr(entity, "_is_king_tower", False))
+                    )
+                    if not is_crown_tower:
+                        continue
                 towers.append((entity, self.native_target_distance_to(entity)))
             preferred = self._preferred_fallback_crown_targets(
                 [entity for entity, _ in towers]

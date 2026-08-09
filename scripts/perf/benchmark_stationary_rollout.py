@@ -13,6 +13,7 @@ import numpy as np
 import torch
 
 from clasher import battle as battle_module
+from clasher import entities as entities_module
 from clasher.battle import BattleState
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
@@ -47,6 +48,12 @@ def _parse_args() -> argparse.Namespace:
         default="classified",
         help="select full dynamic targetability checks or exact static classification",
     )
+    parser.add_argument(
+        "--crown-fallback-membership",
+        choices=("scan", "cached"),
+        default="cached",
+        help="select full building scan or exact cached Crown membership",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -75,6 +82,9 @@ def main() -> None:
         BattleState._refresh_target_cache = BattleState._rebuild_target_cache
     battle_module._USE_STATIC_TARGETABILITY_CLASSIFICATION = (
         args.targetability_refresh == "classified"
+    )
+    entities_module._USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = (
+        args.crown_fallback_membership == "cached"
     )
     torch.set_num_threads(args.torch_threads)
     builder = StructuredObservationBuilder(
@@ -154,6 +164,7 @@ def main() -> None:
                 "engine_fast_path": args.engine_fast_path,
                 "target_cache_refresh": args.target_cache_refresh,
                 "targetability_refresh": args.targetability_refresh,
+                "crown_fallback_membership": args.crown_fallback_membership,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,
