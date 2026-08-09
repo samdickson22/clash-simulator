@@ -78,8 +78,33 @@ mypy: clean for oracle_direct_path.py
 diff-check: clean
 ```
 
-No wall-clock or labels-per-second claim is made. Timing is deferred until the
-active corpus releases the shared CPU window.
+## Bounded production-shape timing
+
+After the CPU window was released, the candidate was measured with three fixed
+states and five alternating repetitions per mode:
+
+```bash
+PYTHONPATH=src:. uv run python \
+  scripts/perf/benchmark_oracle_scalar_leaf.py \
+  --states 3 --state-stride 4 --repetitions 5 \
+  --planner-depth 6 --planner-simulations 32 \
+  --planner-action-samples 64 --decision-interval 8 \
+  --engine-fast-path on
+```
+
+Machine: Apple M4 Pro, 24 GiB RAM, Darwin arm64, Python 3.12.13. Mapping and
+scalar modes alternated first position to reduce ordering bias and shared the
+same fixed snapshots, seeds, direct backup path, and allocation-lean sampler.
+
+| mode | median seconds / 3 labels | mean seconds | stdev | median labels/s |
+| --- | ---: | ---: | ---: | ---: |
+| mapping leaf | 2.007365 | 2.024802 | 0.038303 | 1.494497 |
+| scalar leaf | 2.002201 | 1.997410 | 0.014113 | 1.498351 |
+
+The median change is +0.258% labels/s. All ten runs produced hash
+`72ac36812d5128f446b1eb98d2f40b6487e36d9c357c61f65148729f7f51e7b9`.
+This confirms no regression, but the effect is too small relative to run
+variation to claim material end-to-end throughput on its own.
 
 ## Training integration
 
@@ -105,8 +130,6 @@ for compatibility. Port `tests/test_rl_oracle_scalar_leaf.py`. Do not alter the
 direct path, subset sampler, leaf reward model, action order, or any other planner
 logic in this commit.
 
-After the active corpus releases CPU, a production-shape matched timing can
-measure whether removing 32 small dictionaries per label is material. Continue
-pinning every backup value, complete planner RNG state, default/stable hashes,
-and scalar/shadow/on rollout hashes. Until then this is an exact source candidate,
-not a measured throughput claim.
+Continue pinning every backup value, complete planner RNG state,
+default/stable hashes, and scalar/shadow/on rollout hashes when composing this
+with later engine changes.
