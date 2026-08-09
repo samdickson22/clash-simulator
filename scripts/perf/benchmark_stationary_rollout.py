@@ -127,6 +127,12 @@ def _parse_args() -> argparse.Namespace:
         default="cached",
         help="select runtime or entity-cached data-driven collision mass",
     )
+    parser.add_argument(
+        "--collision-radius",
+        choices=("runtime", "cached"),
+        default="cached",
+        help="select runtime or entity-cached normalized collision radius",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -187,6 +193,9 @@ def main() -> None:
         args.avoidance_candidates == "bucketed"
     )
     entities_module._USE_CACHED_ENTITY_UNIT_MASS = args.unit_mass == "cached"
+    entities_module._USE_CACHED_ENTITY_COLLISION_RADIUS = (
+        args.collision_radius == "cached"
+    )
     unit_traits._USE_DIRECT_ENTITY_COLLISION_PLANE = (
         args.collision_plane_fields == "direct"
     )
@@ -281,6 +290,7 @@ def main() -> None:
                 "avoidance_candidates": args.avoidance_candidates,
                 "collision_plane_fields": args.collision_plane_fields,
                 "unit_mass": args.unit_mass,
+                "collision_radius": args.collision_radius,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,

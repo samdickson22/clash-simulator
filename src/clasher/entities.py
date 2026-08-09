@@ -170,6 +170,10 @@ _USE_AVOIDANCE_BUCKET_CANDIDATES = True
 # published for every Entity at construction.
 _USE_CACHED_ENTITY_UNIT_MASS = True
 
+# Reference/benchmark switch for reusing the immutable normalized collision
+# radius published for every Entity at construction.
+_USE_CACHED_ENTITY_COLLISION_RADIUS = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -253,6 +257,7 @@ class Entity(ABC):
     is_air_unit: bool = False  # True for flying troops like Minions, Balloon, Dragon
     _is_hover_unit: bool = field(default=False, init=False, repr=False)
     _unit_mass: float = field(default=5.0, init=False, repr=False)
+    _collision_radius: float = field(default=0.5, init=False, repr=False)
     entity_kind: int = 0  # 0=troop,1=building,2=projectile,3=aura/effect,4=other
     # Native death spawns carry a source-dependent target-eligibility marker.
     # LogicCharacter::tick advances it in integer milliseconds and clears it
@@ -347,6 +352,8 @@ class Entity(ABC):
         from .unit_traits import unit_mass
 
         self._unit_mass = unit_mass(self.card_stats)
+        collision_radius = getattr(self.card_stats, "collision_radius", None)
+        self._collision_radius = float(collision_radius or 0.5)
         # Classify by the gameplay base type, not the concrete class name.
         # Exact-name checks silently turn specialized/custom subclasses into
         # ``other`` entities, which makes targeting, collision, and effects
@@ -1602,6 +1609,8 @@ class Entity(ABC):
 
     def get_collision_radius(self) -> float:
         """Return this entity's gameplay collision radius in arena tiles."""
+        if _USE_CACHED_ENTITY_COLLISION_RADIUS:
+            return self._collision_radius
         radius = getattr(getattr(self, "card_stats", None), "collision_radius", None)
         return float(radius or 0.5)
 
