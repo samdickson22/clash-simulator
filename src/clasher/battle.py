@@ -78,6 +78,10 @@ _USE_CACHED_BUCKET_GEOMETRY = True
 # contract immediately after the fast placement cache refresh.
 _USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP = True
 
+# Reference/benchmark switch for reusing the immutable, data-driven hover
+# trait already published by Entity.__post_init__ during movement checks.
+_USE_CACHED_MOVER_HOVER_TRAIT = True
+
 # Reference/benchmark switch for targetability predicates that cannot change
 # after an ordinary target has joined the battle. Stealth remains a separate
 # timestamp array in the vectorized selector, while hidden/death-immunity and
@@ -2726,13 +2730,16 @@ class BattleState:
         ignore_building_id: Optional[int] = None,
     ) -> bool:
         """Ground movement validator including arena terrain and building footprints."""
-        from .unit_traits import is_hover_unit_card
-
         if not self.is_entity_position_in_bounds(position, mover):
             return False
-        hovering = bool(
-            mover is not None and is_hover_unit_card(getattr(mover, "card_stats", None))
-        )
+        if mover is None:
+            hovering = False
+        elif _USE_CACHED_MOVER_HOVER_TRAIT:
+            hovering = mover._is_hover_unit
+        else:
+            from .unit_traits import is_hover_unit_card
+
+            hovering = is_hover_unit_card(getattr(mover, "card_stats", None))
         if hovering:
             # Hovering characters ignore water and dynamic ground bodies, but
             # still respect the arena's permanent blocked boundary cells.

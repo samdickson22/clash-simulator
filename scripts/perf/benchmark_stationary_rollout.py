@@ -96,6 +96,12 @@ def _parse_args() -> argparse.Namespace:
         default="trusted",
         help="select defensive checks or exact live-building cache membership",
     )
+    parser.add_argument(
+        "--mover-hover-trait",
+        choices=("runtime", "cached"),
+        default="cached",
+        help="select runtime or entity-cached data-driven hover classification",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -132,6 +138,9 @@ def main() -> None:
     battle_module._USE_CACHED_BUCKET_GEOMETRY = args.bucket_geometry == "cached"
     battle_module._USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP = (
         args.building_membership == "trusted"
+    )
+    battle_module._USE_CACHED_MOVER_HOVER_TRAIT = (
+        args.mover_hover_trait == "cached"
     )
     entities_module._USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = (
         args.crown_fallback_membership == "cached"
@@ -231,6 +240,7 @@ def main() -> None:
                 "bucket_scan_order": args.bucket_scan_order,
                 "bucket_geometry": args.bucket_geometry,
                 "building_membership": args.building_membership,
+                "mover_hover_trait": args.mover_hover_trait,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,
