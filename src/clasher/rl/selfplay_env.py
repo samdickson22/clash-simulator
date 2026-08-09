@@ -226,13 +226,11 @@ class SelfPlayBattleEnv:
             if remaining_ticks > 0:
                 ticks = self.battle.fast_forward_idle_ticks(remaining_ticks)
         else:
-            while (
-                ticks < self.decision_interval_ticks
-                and not self.battle.game_over
-                and self.battle.tick < self.max_ticks
-            ):
-                self.battle.step()
-                ticks += 1
+            remaining_ticks = min(
+                self.decision_interval_ticks,
+                max(0, self.max_ticks - self.battle.tick),
+            )
+            ticks = self.battle.step_logic_ticks(remaining_ticks)
 
         done = self.battle.game_over or self.battle.tick >= self.max_ticks
         rewards = self._compute_dense_rewards()

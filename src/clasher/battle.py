@@ -821,7 +821,26 @@ class BattleState:
                 break
             self._step_logic_tick()
 
-    def _step_logic_tick(self) -> None:
+    def step_logic_ticks(self, ticks: int) -> int:
+        """Advance an integer tick window with one final cache publication.
+
+        Each tick retains its start-of-frame refresh and every explicit
+        in-component synchronization. The end refresh is externally visible
+        only after control returns to the caller, so a closed multi-tick
+        decision window can publish it once after its final frame.
+        """
+        requested = max(0, int(ticks))
+        advanced = 0
+        for _ in range(requested):
+            if self.game_over:
+                break
+            self._step_logic_tick(refresh_fast_path_end=False)
+            advanced += 1
+        if advanced and self.fast_path:
+            self._refresh_fast_path_caches()
+        return advanced
+
+    def _step_logic_tick(self, *, refresh_fast_path_end: bool = True) -> None:
         """Advance exactly one 50 ms native logic frame."""
         if self.game_over:
             return
@@ -951,7 +970,7 @@ class BattleState:
         # Remove dead entities
         self._cleanup_dead_entities()
 
-        if self.fast_path:
+        if self.fast_path and refresh_fast_path_end:
             self._refresh_fast_path_caches()
         
         # Check win conditions
