@@ -44,6 +44,12 @@ def _parse_args() -> argparse.Namespace:
         help="select the pre-optimization full rebuild or candidate in-place refresh",
     )
     parser.add_argument(
+        "--building-cache-refresh",
+        choices=("rebuild", "reuse"),
+        default="reuse",
+        help="select full membership rebuild or identity-checked cache reuse",
+    )
+    parser.add_argument(
         "--targetability-refresh",
         choices=("full", "classified"),
         default="classified",
@@ -141,6 +147,10 @@ def main() -> None:
     args = _parse_args()
     if args.target_cache_refresh == "rebuild":
         BattleState._refresh_target_cache = BattleState._rebuild_target_cache
+    if args.building_cache_refresh == "rebuild":
+        BattleState._refresh_alive_buildings_cache = (
+            BattleState._rebuild_alive_buildings_cache
+        )
     battle_module._USE_STATIC_TARGETABILITY_CLASSIFICATION = (
         args.targetability_refresh == "classified"
     )
@@ -250,6 +260,7 @@ def main() -> None:
                 "torch_threads": args.torch_threads,
                 "engine_fast_path": args.engine_fast_path,
                 "target_cache_refresh": args.target_cache_refresh,
+                "building_cache_refresh": args.building_cache_refresh,
                 "targetability_refresh": args.targetability_refresh,
                 "crown_fallback_membership": args.crown_fallback_membership,
                 "crown_distance_order": args.crown_distance_order,

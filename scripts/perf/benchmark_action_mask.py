@@ -29,6 +29,12 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--repetitions", type=int, default=5)
     parser.add_argument("--warmup-decisions", type=int, default=2)
     parser.add_argument("--mode", choices=("off", "on", "both"), default="both")
+    parser.add_argument(
+        "--building-cache-refresh",
+        choices=("rebuild", "reuse"),
+        default="reuse",
+        help="select full membership rebuild or identity-checked cache reuse",
+    )
     return parser.parse_args()
 
 
@@ -93,6 +99,10 @@ def _run_decisions(
 
 def main() -> None:
     args = _parse_args()
+    if args.building_cache_refresh == "rebuild":
+        BattleState._refresh_alive_buildings_cache = (
+            BattleState._rebuild_alive_buildings_cache
+        )
     hand_cards = [card.strip() for card in args.hand_cards.split(",") if card.strip()]
     modes = (False, True) if args.mode == "both" else (args.mode == "on",)
     action_space = DiscreteTileActionSpace(canonical_perspective=True)
@@ -144,6 +154,7 @@ def main() -> None:
                 "decisions": args.decisions,
                 "repetitions": args.repetitions,
                 "warmup_decisions": args.warmup_decisions,
+                "building_cache_refresh": args.building_cache_refresh,
                 "results": reports,
             },
             sort_keys=True,

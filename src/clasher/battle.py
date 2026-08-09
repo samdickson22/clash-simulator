@@ -410,6 +410,26 @@ class BattleState:
         validations, before the next logic tick refreshes the broader fast
         caches. Placement queries must observe that mutation immediately.
         """
+        cache_index = 0
+        cached_count = len(self._alive_buildings)
+        membership_matches = True
+        for entity in self.entities.values():
+            if not isinstance(entity, Building) or not entity.is_alive:
+                continue
+            if (
+                cache_index >= cached_count
+                or self._alive_buildings[cache_index] is not entity
+            ):
+                membership_matches = False
+                break
+            cache_index += 1
+        if membership_matches and cache_index == cached_count:
+            return
+
+        self._rebuild_alive_buildings_cache()
+
+    def _rebuild_alive_buildings_cache(self) -> None:
+        """Run the exact allocation-heavy reference membership refresh."""
         alive_buildings = [
             e for e in self.entities.values() if isinstance(e, Building) and e.is_alive
         ]

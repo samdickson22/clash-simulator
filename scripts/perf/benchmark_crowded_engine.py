@@ -33,6 +33,12 @@ def _parse_args() -> argparse.Namespace:
         help="select the pre-optimization full rebuild or candidate in-place refresh",
     )
     parser.add_argument(
+        "--building-cache-refresh",
+        choices=("rebuild", "reuse"),
+        default="reuse",
+        help="select full membership rebuild or identity-checked cache reuse",
+    )
+    parser.add_argument(
         "--targetability-refresh",
         choices=("full", "classified"),
         default="classified",
@@ -115,10 +121,15 @@ def _battle(
     per_side: int,
     fast_path: bool,
     target_cache_refresh: str,
+    building_cache_refresh: str,
 ) -> BattleState:
     battle = BattleState(rng=random.Random(seed), fast_path=fast_path)
     if target_cache_refresh == "rebuild":
         battle._refresh_target_cache = battle._rebuild_target_cache
+    if building_cache_refresh == "rebuild":
+        battle._refresh_alive_buildings_cache = (
+            battle._rebuild_alive_buildings_cache
+        )
     stats = battle.card_loader.get_card(card)
     if stats is None:
         raise ValueError(f"unknown card {card!r}")
@@ -198,6 +209,7 @@ def main() -> None:
                 per_side=args.per_side,
                 fast_path=fast_path,
                 target_cache_refresh=args.target_cache_refresh,
+                building_cache_refresh=args.building_cache_refresh,
             )
             started = time.perf_counter()
             for _ in range(args.ticks):
@@ -223,6 +235,7 @@ def main() -> None:
                 "ticks": args.ticks,
                 "repetitions": args.repetitions,
                 "target_cache_refresh": args.target_cache_refresh,
+                "building_cache_refresh": args.building_cache_refresh,
                 "targetability_refresh": args.targetability_refresh,
                 "crown_fallback_membership": args.crown_fallback_membership,
                 "crown_distance_order": args.crown_distance_order,
