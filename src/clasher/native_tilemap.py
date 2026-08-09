@@ -7,8 +7,9 @@ with ``& 3`` before finding the nearest lane.
 
 from __future__ import annotations
 
-from .kinematics import LOGIC_UNITS_PER_TILE, trunc_div
+from functools import lru_cache
 
+from .kinematics import LOGIC_UNITS_PER_TILE, trunc_div
 
 STANDARD_PATH_ROWS: tuple[str, ...] = (
     "000000000000000000000000000000000000",
@@ -100,6 +101,33 @@ if (
     raise RuntimeError("invalid standard native path map dimensions")
 
 
+# Reference/benchmark switch for the exact no-other-object cell cache.
+_USE_NATIVE_PATH_ID_CELL_CACHE = True
+
+
+@lru_cache(maxsize=STANDARD_PATH_WIDTH * STANDARD_PATH_HEIGHT)
+def _nearest_native_path_id_for_cell(
+    source_cell_x: int,
+    source_cell_y: int,
+) -> int:
+    """Return the first nearest path for one standard-grid source cell."""
+
+    closest_path = 0
+    closest_distance_sq = 0x7FFFFFFF
+    for cell_x in range(STANDARD_PATH_WIDTH):
+        dx = cell_x - source_cell_x
+        for cell_y in range(STANDARD_PATH_HEIGHT):
+            path_id = ord(STANDARD_PATH_ROWS[cell_y][cell_x]) - ord("0")
+            if path_id < 1:
+                continue
+            dy = cell_y - source_cell_y
+            source_distance_sq = dx * dx + dy * dy
+            if source_distance_sq < closest_distance_sq:
+                closest_path = path_id
+                closest_distance_sq = source_distance_sq
+    return closest_path
+
+
 def nearest_native_path_id(
     x_units: int,
     y_units: int,
@@ -109,6 +137,8 @@ def nearest_native_path_id(
 
     source_cell_x = trunc_div(int(x_units), HALF_TILE_LOGIC_UNITS)
     source_cell_y = trunc_div(int(y_units), HALF_TILE_LOGIC_UNITS)
+    if _USE_NATIVE_PATH_ID_CELL_CACHE and other_x_units == -1:
+        return _nearest_native_path_id_for_cell(source_cell_x, source_cell_y)
     other_cell_x = trunc_div(int(other_x_units), HALF_TILE_LOGIC_UNITS)
     rounded_source_cell_x = trunc_div(
         int(x_units) + 5,
