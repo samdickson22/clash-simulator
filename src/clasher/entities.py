@@ -136,6 +136,11 @@ _target_sight_reach = _target_sight_reach_candidate
 # mechanics validation below, which may need to find an alternative target.
 _FAST_TARGET_NONE_IS_EXHAUSTIVE = True
 
+# NumPy's fixed call/allocation overhead exceeds the scalar bucket scan for
+# small target sets. Keep the vector path for genuinely crowded states while
+# using the same exact scalar selector already exercised by fast fallbacks.
+_FAST_TARGET_VECTOR_MIN_SIZE = 21
+
 
 @dataclass
 class PeriodicDamageEffect:
@@ -2093,6 +2098,8 @@ class Entity(ABC):
             and getattr(battle_state, "fast_path", False)
             and getattr(battle_state, "entities", None) is entities
             and hasattr(battle_state, "get_fast_target_cache")
+            and len(getattr(battle_state, "_target_entities", ()))
+            >= _FAST_TARGET_VECTOR_MIN_SIZE
         ):
             fast_target = self._get_nearest_target_vectorized(
                 battle_state=battle_state,
