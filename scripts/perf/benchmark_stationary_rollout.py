@@ -14,6 +14,7 @@ import torch
 
 from clasher import battle as battle_module
 from clasher import entities as entities_module
+from clasher import unit_traits
 from clasher.battle import BattleState
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
@@ -108,6 +109,12 @@ def _parse_args() -> argparse.Namespace:
         default="bucketed",
         help="select full or exact spatially pruned native-avoidance scans",
     )
+    parser.add_argument(
+        "--collision-plane-fields",
+        choices=("defensive", "direct"),
+        default="direct",
+        help="select defensive or required Entity collision-plane fields",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -162,6 +169,9 @@ def main() -> None:
     )
     entities_module._USE_AVOIDANCE_BUCKET_CANDIDATES = (
         args.avoidance_candidates == "bucketed"
+    )
+    unit_traits._USE_DIRECT_ENTITY_COLLISION_PLANE = (
+        args.collision_plane_fields == "direct"
     )
     torch.set_num_threads(args.torch_threads)
     builder = StructuredObservationBuilder(
@@ -251,6 +261,7 @@ def main() -> None:
                 "building_membership": args.building_membership,
                 "mover_hover_trait": args.mover_hover_trait,
                 "avoidance_candidates": args.avoidance_candidates,
+                "collision_plane_fields": args.collision_plane_fields,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,
