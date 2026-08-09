@@ -13,6 +13,13 @@ from functools import lru_cache
 from types import MappingProxyType
 from typing import TYPE_CHECKING, cast
 
+import numpy as np
+
+try:
+    from numba import njit
+except Exception:  # pragma: no cover - optional accelerator
+    njit = None
+
 from .arena import Position
 from .kinematics import (
     normalized_vector_logic_units,
@@ -49,6 +56,130 @@ _NATIVE_EMPTY_TILE_COST = 20
 _NATIVE_OTHER_LANE_COST = 5
 _NATIVE_SAME_LANE_COST = 1
 _NATIVE_WATER_COST = 800
+
+# Reference/benchmark switch. The compiled kernel implements the same native
+# first-discovery heap and falls back to Python when Numba is unavailable.
+_USE_COMPILED_STANDARD_ROUTE = True
+
+
+if njit is not None:
+
+    @njit(cache=True)
+    def _compiled_standard_grid_route_indices(
+        start_index: int,
+        goal_index: int,
+        costs: np.ndarray,
+    ) -> np.ndarray:
+        """Return exact row-major route indices using the native heap."""
+        width = STANDARD_PATH_WIDTH
+        height = STANDARD_PATH_HEIGHT
+        cell_count = width * height
+        goal_x = goal_index % width
+        goal_y = goal_index // width
+        parents = np.full(cell_count, -1, dtype=np.int32)
+        priorities = np.zeros(cell_count, dtype=np.int64)
+        discovered = np.zeros(cell_count, dtype=np.uint8)
+        heap = np.empty(cell_count, dtype=np.int32)
+        heap[0] = start_index
+        heap_size = 1
+        discovered[start_index] = 1
+        found = False
+
+        delta_xs = (0, 0, -1, 1, -1, -1, 1, 1)
+        delta_ys = (-1, 1, 0, 0, -1, 1, 1, -1)
+        step_costs = (10, 10, 10, 10, 14, 14, 14, 14)
+
+        while heap_size:
+            current = int(heap[0])
+            heap_size -= 1
+            if heap_size:
+                last = int(heap[heap_size])
+                heap[0] = last
+                index = 0
+                while True:
+                    chosen = index
+                    right = index * 2 + 2
+                    if (
+                        right < heap_size
+                        and priorities[heap[right]]
+                        < priorities[heap[chosen]]
+                    ):
+                        chosen = right
+                    left = index * 2 + 1
+                    if (
+                        left < heap_size
+                        and priorities[heap[left]]
+                        < priorities[heap[chosen]]
+                    ):
+                        chosen = left
+                    if chosen == index:
+                        break
+                    swap = int(heap[index])
+                    heap[index] = heap[chosen]
+                    heap[chosen] = swap
+                    index = chosen
+
+            if current == goal_index:
+                found = True
+                break
+            current_x = current % width
+            current_y = current // width
+            for neighbor_offset in range(8):
+                neighbor_x = current_x + delta_xs[neighbor_offset]
+                neighbor_y = current_y + delta_ys[neighbor_offset]
+                if not (
+                    0 <= neighbor_x < width
+                    and 0 <= neighbor_y < height
+                ):
+                    continue
+                neighbor = neighbor_y * width + neighbor_x
+                if discovered[neighbor]:
+                    continue
+                discovered[neighbor] = 1
+                parents[neighbor] = current
+                dx = goal_x - neighbor_x
+                if dx < 0:
+                    dx = -dx
+                dy = goal_y - neighbor_y
+                if dy < 0:
+                    dy = -dy
+                heuristic = 10 * max(dx, dy)
+                priorities[neighbor] = (
+                    priorities[current]
+                    + step_costs[neighbor_offset] * costs[neighbor]
+                    + heuristic
+                )
+
+                index = heap_size
+                heap_size += 1
+                while index > 0:
+                    parent_index = (index - 1) // 2
+                    parent = int(heap[parent_index])
+                    if priorities[parent] <= priorities[neighbor]:
+                        break
+                    heap[index] = parent
+                    index = parent_index
+                heap[index] = neighbor
+
+        if not found:
+            return np.empty(0, dtype=np.int32)
+        route_length = 1
+        current = goal_index
+        while current != start_index:
+            current = int(parents[current])
+            if current < 0:
+                return np.empty(0, dtype=np.int32)
+            route_length += 1
+        route: np.ndarray = np.empty(route_length, dtype=np.int32)
+        current = goal_index
+        for route_index in range(route_length - 1, -1, -1):
+            route[route_index] = current
+            if current != start_index:
+                current = int(parents[current])
+        return route
+
+else:  # pragma: no cover - exercised only without the optional accelerator
+    _compiled_standard_grid_route_indices = None
 
 
 def _cell_for_position(position: Position) -> tuple[int, int]:
@@ -225,6 +356,20 @@ def _standard_path_cost_grid(
         for cell_y in range(STANDARD_PATH_HEIGHT)
         for cell_x in range(STANDARD_PATH_WIDTH)
     )
+
+
+@lru_cache(maxsize=16)
+def _standard_path_cost_array(
+    lane_id: int,
+    jump_height: bool,
+) -> np.ndarray:
+    """Return the immutable dense costs consumed by the compiled heap."""
+    costs = np.asarray(
+        _standard_path_cost_grid(lane_id, jump_height),
+        dtype=np.int64,
+    )
+    costs.flags.writeable = False
+    return cast(np.ndarray, costs)
 
 
 @lru_cache(maxsize=16)
@@ -455,11 +600,34 @@ def _cached_standard_grid_route(
 ) -> tuple[tuple[int, int], ...] | None:
     """Return an immutable exact route on the static standard arena grid."""
 
-    route = _native_standard_grid_route(
-        start,
-        goal,
-        _standard_path_cost_grid(lane_id, jump_height),
-    )
+    if (
+        _USE_COMPILED_STANDARD_ROUTE
+        and _compiled_standard_grid_route_indices is not None
+        and 0 <= start[0] < STANDARD_PATH_WIDTH
+        and 0 <= start[1] < STANDARD_PATH_HEIGHT
+        and 0 <= goal[0] < STANDARD_PATH_WIDTH
+        and 0 <= goal[1] < STANDARD_PATH_HEIGHT
+    ):
+        route_indices = _compiled_standard_grid_route_indices(
+            start[1] * STANDARD_PATH_WIDTH + start[0],
+            goal[1] * STANDARD_PATH_WIDTH + goal[0],
+            _standard_path_cost_array(lane_id, jump_height),
+        )
+        route: list[tuple[int, int]] | None = [
+            (
+                int(index) % STANDARD_PATH_WIDTH,
+                int(index) // STANDARD_PATH_WIDTH,
+            )
+            for index in route_indices
+        ]
+        if not route_indices.size:
+            route = None
+    else:
+        route = _native_standard_grid_route(
+            start,
+            goal,
+            _standard_path_cost_grid(lane_id, jump_height),
+        )
     return None if route is None else tuple(route)
 
 
