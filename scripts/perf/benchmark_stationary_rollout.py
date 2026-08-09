@@ -66,6 +66,12 @@ def _parse_args() -> argparse.Namespace:
         default="deferred",
         help="select eager or inactive-stealth-deferred battle-time lookup",
     )
+    parser.add_argument(
+        "--bucket-id-sort",
+        choices=("allocated", "inplace"),
+        default="inplace",
+        help="select allocated or in-place exact bucket candidate ordering",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -95,6 +101,7 @@ def main() -> None:
     battle_module._USE_STATIC_TARGETABILITY_CLASSIFICATION = (
         args.targetability_refresh == "classified"
     )
+    battle_module._USE_INPLACE_BUCKET_ID_SORT = args.bucket_id_sort == "inplace"
     entities_module._USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = (
         args.crown_fallback_membership == "cached"
     )
@@ -185,6 +192,7 @@ def main() -> None:
                 "crown_fallback_membership": args.crown_fallback_membership,
                 "crown_distance_order": args.crown_distance_order,
                 "inactive_stealth_time": args.inactive_stealth_time,
+                "bucket_id_sort": args.bucket_id_sort,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,

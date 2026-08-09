@@ -6,6 +6,7 @@ import math
 import random
 import copy
 import json
+from operator import attrgetter
 import numpy as np
 try:
     from numba import njit
@@ -59,6 +60,11 @@ _USE_DENSE_ENTITY_BUCKETS = True
 
 # Reference/benchmark switch for exact spatial collision candidate pruning.
 _USE_COLLISION_BUCKET_CANDIDATES = True
+
+# Reference/benchmark switch for restoring bucket candidates to exact entity
+# encounter order without allocating a second result list and lambda.
+_USE_INPLACE_BUCKET_ID_SORT = True
+_ENTITY_ID_KEY = attrgetter("id")
 
 # Reference/benchmark switch for targetability predicates that cannot change
 # after an ordinary target has joined the battle. Stealth remains a separate
@@ -783,6 +789,9 @@ class BattleState:
         # Target ties retain native object encounter order. Bucket traversal
         # is spatial rather than object ordered, so restore ID order before a
         # scalar fallback scans this reduced candidate set.
+        if _USE_INPLACE_BUCKET_ID_SORT:
+            out.sort(key=_ENTITY_ID_KEY)
+            return out
         return sorted(out, key=lambda entity: entity.id)
 
     def _tower_alive_flags(self) -> Tuple[bool, bool, bool, bool, bool, bool]:
