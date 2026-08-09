@@ -174,6 +174,10 @@ _USE_CACHED_ENTITY_UNIT_MASS = True
 # radius published for every Entity at construction.
 _USE_CACHED_ENTITY_COLLISION_RADIUS = True
 
+# Reference/benchmark switch for classifying a target's dynamic air/ground
+# plane once per eligibility decision instead of repeating the pure predicate.
+_COALESCE_TARGET_PLANE_CHECKS = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -973,10 +977,20 @@ class Entity(ABC):
                 or getattr(entity, "entity_kind", 4) in {2, 3}
             ):
                 continue
-            if is_airborne_target(entity) and not self._can_attack_air():
-                continue
-            if (not is_airborne_target(entity)) and not self._can_attack_ground():
-                continue
+            if _COALESCE_TARGET_PLANE_CHECKS:
+                is_air = is_airborne_target(entity)
+                if (is_air and not self._can_attack_air()) or (
+                    not is_air and not self._can_attack_ground()
+                ):
+                    continue
+            else:
+                if is_airborne_target(entity) and not self._can_attack_air():
+                    continue
+                if (
+                    not is_airborne_target(entity)
+                    and not self._can_attack_ground()
+                ):
+                    continue
             if not entity.can_receive_area_damage(
                 source_kind,
                 source_entity=self,
@@ -2021,10 +2035,17 @@ class Entity(ABC):
         ):
             return False
 
-        if is_airborne_target(target) and not self._can_attack_air():
-            return False
-        if (not is_airborne_target(target)) and not self._can_attack_ground():
-            return False
+        if _COALESCE_TARGET_PLANE_CHECKS:
+            is_air = is_airborne_target(target)
+            if (is_air and not self._can_attack_air()) or (
+                not is_air and not self._can_attack_ground()
+            ):
+                return False
+        else:
+            if is_airborne_target(target) and not self._can_attack_air():
+                return False
+            if (not is_airborne_target(target)) and not self._can_attack_ground():
+                return False
 
         return self.is_within_attack_reach(target)
 
@@ -2224,10 +2245,17 @@ class Entity(ABC):
             distance = self.native_target_distance_to(entity)
             
             # Check air targeting rules
-            if is_airborne_target(entity) and not can_attack_air:
-                continue  # Skip air units if we can't attack air
-            if (not is_airborne_target(entity)) and not can_attack_ground:
-                continue  # Skip ground units if we can't attack ground
+            if _COALESCE_TARGET_PLANE_CHECKS:
+                is_air = is_airborne_target(entity)
+                if (is_air and not can_attack_air) or (
+                    not is_air and not can_attack_ground
+                ):
+                    continue
+            else:
+                if is_airborne_target(entity) and not can_attack_air:
+                    continue  # Skip air units if we can't attack air
+                if (not is_airborne_target(entity)) and not can_attack_ground:
+                    continue  # Skip ground units if we can't attack ground
             
             # Only consider targets within sight range for troops vs troops
             if is_native_building_target(entity):
@@ -2280,10 +2308,17 @@ class Entity(ABC):
                     continue
                 if not self._is_valid_target(entity):
                     continue
-                if is_airborne_target(entity) and not can_attack_air:
-                    continue
-                if (not is_airborne_target(entity)) and not can_attack_ground:
-                    continue
+                if _COALESCE_TARGET_PLANE_CHECKS:
+                    is_air = is_airborne_target(entity)
+                    if (is_air and not can_attack_air) or (
+                        not is_air and not can_attack_ground
+                    ):
+                        continue
+                else:
+                    if is_airborne_target(entity) and not can_attack_air:
+                        continue
+                    if (not is_airborne_target(entity)) and not can_attack_ground:
+                        continue
                 if not use_cached_crowns:
                     building_name = getattr(
                         getattr(entity, "card_stats", None), "name", ""

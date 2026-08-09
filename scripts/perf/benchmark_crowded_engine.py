@@ -122,6 +122,12 @@ def _parse_args() -> argparse.Namespace:
         default="cached",
         help="select runtime or entity-cached normalized collision radius",
     )
+    parser.add_argument(
+        "--target-plane-checks",
+        choices=("repeated", "coalesced"),
+        default="coalesced",
+        help="select repeated or single dynamic target-plane classification",
+    )
     parser.add_argument("--clear-route-cache-per-mode", action="store_true")
     return parser.parse_args()
 
@@ -208,6 +214,9 @@ def main() -> None:
     entities_module._USE_CACHED_ENTITY_COLLISION_RADIUS = (
         args.collision_radius == "cached"
     )
+    entities_module._COALESCE_TARGET_PLANE_CHECKS = (
+        args.target_plane_checks == "coalesced"
+    )
     unit_traits._USE_DIRECT_ENTITY_COLLISION_PLANE = (
         args.collision_plane_fields == "direct"
     )
@@ -266,6 +275,7 @@ def main() -> None:
                 "collision_plane_fields": args.collision_plane_fields,
                 "unit_mass": args.unit_mass,
                 "collision_radius": args.collision_radius,
+                "target_plane_checks": args.target_plane_checks,
                 "results": reports,
             },
             sort_keys=True,
