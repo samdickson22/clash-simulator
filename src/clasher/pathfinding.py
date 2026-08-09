@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
+from functools import lru_cache
 from typing import TYPE_CHECKING
 
 from .arena import Position
@@ -170,6 +171,19 @@ def _native_pathfinder_tile_cost(
     spawn-time lane and 5 on the other lane; unlabeled land costs 20.
     """
 
+    return _standard_pathfinder_tile_cost(
+        cell,
+        lane_id=int(getattr(mover, "_native_lane_id", 0) or 0),
+        jump_height=bool(getattr(mover.card_stats, "jump_height", None)),
+    )
+
+
+def _standard_pathfinder_tile_cost(
+    cell: tuple[int, int],
+    *,
+    lane_id: int,
+    jump_height: bool,
+) -> int | None:
     cell_x, cell_y = cell
     if not (
         0 <= cell_x < STANDARD_PATH_WIDTH
@@ -179,7 +193,7 @@ def _native_pathfinder_tile_cost(
     if native_spawn_tile_blocked(cell_x, cell_y):
         return (
             _NATIVE_EMPTY_TILE_COST
-            if bool(getattr(mover.card_stats, "jump_height", None))
+            if jump_height
             else _NATIVE_WATER_COST
         )
     cell_lane = ord(STANDARD_PATH_ROWS[cell_y][cell_x]) - ord("0")
@@ -187,7 +201,7 @@ def _native_pathfinder_tile_cost(
         return _NATIVE_EMPTY_TILE_COST
     return (
         _NATIVE_SAME_LANE_COST
-        if cell_lane == int(getattr(mover, "_native_lane_id", 0) or 0)
+        if cell_lane == lane_id
         else _NATIVE_OTHER_LANE_COST
     )
 
@@ -283,6 +297,27 @@ def _native_grid_route(
     return route
 
 
+@lru_cache(maxsize=2048)
+def _cached_standard_grid_route(
+    start: tuple[int, int],
+    goal: tuple[int, int],
+    lane_id: int,
+    jump_height: bool,
+) -> tuple[tuple[int, int], ...] | None:
+    """Return an immutable exact route on the static standard arena grid."""
+
+    route = _native_grid_route(
+        start,
+        goal,
+        lambda cell: _standard_pathfinder_tile_cost(
+            cell,
+            lane_id=lane_id,
+            jump_height=jump_height,
+        ),
+    )
+    return None if route is None else tuple(route)
+
+
 def native_jump_landing_waypoint(
     battle_state: "BattleState",
     mover: "Entity",
@@ -310,13 +345,6 @@ def native_jump_landing_waypoint(
     if desired_cell is None:
         return None
     del battle_state
-    cost_cache: dict[tuple[int, int], int | None] = {}
-
-    def tile_cost(cell: tuple[int, int]) -> int | None:
-        if cell not in cost_cache:
-            cost_cache[cell] = _native_pathfinder_tile_cost(mover, cell)
-        return cost_cache[cell]
-
     goal = desired_cell
     if goal is None or goal == start:
         return None
@@ -325,10 +353,15 @@ def native_jump_landing_waypoint(
     if target_entity is not None and isinstance(retained_route, list):
         future_route = list(retained_route)
     else:
-        route_cells = _native_grid_route(start, goal, tile_cost)
+        route_cells = _cached_standard_grid_route(
+            start,
+            goal,
+            int(getattr(mover, "_native_lane_id", 0) or 0),
+            bool(getattr(mover.card_stats, "jump_height", None)),
+        )
         if route_cells is None:
             return None
-        future_route = route_cells[1:]
+        future_route = list(route_cells[1:])
 
     river_start = next(
         (
@@ -443,10 +476,12 @@ def ground_path_waypoint(
         mover._ground_path_cache_backwards = mover._ground_path_backwards
         return desired_waypoint
 
-    def tile_cost(cell: tuple[int, int]) -> int | None:
-        return _native_pathfinder_tile_cost(mover, cell)
-
-    route_cells = _native_grid_route(start, desired_cell, tile_cost)
+    route_cells = _cached_standard_grid_route(
+        start,
+        desired_cell,
+        int(getattr(mover, "_native_lane_id", 0) or 0),
+        bool(getattr(mover.card_stats, "jump_height", None)),
+    )
     if route_cells is None or len(route_cells) < 2:
         mover._ground_path_backwards = route_moves_backwards((desired,))
         return desired
