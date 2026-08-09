@@ -79,6 +79,58 @@ class TargetType(Enum):
     BOTH = "both"
 
 
+def _target_sight_reach_reference(
+    sight_range: float,
+    collision_radius: np.ndarray,
+    is_building: np.ndarray,
+    is_crown: np.ndarray,
+) -> np.ndarray:
+    """Return the established vectorized sight reach for benchmark parity."""
+    target_radius = (
+        collision_radius
+        if ADD_CHARACTER_RANGE_TO_RADIUS
+        else np.zeros_like(collision_radius)
+    )
+    building_extension = np.where(
+        is_crown,
+        EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS,
+        np.where(is_building, EXTRA_SIGHT_RANGE_TO_BUILDING, 0),
+    ).astype(np.float64) / 1000.0
+    return sight_range + target_radius + building_extension
+
+
+def _target_sight_reach_candidate(
+    sight_range: float,
+    collision_radius: np.ndarray,
+    is_building: np.ndarray,
+    is_crown: np.ndarray,
+) -> np.ndarray:
+    """Return exact sight reach without full-size extension temporaries."""
+    if ADD_CHARACTER_RANGE_TO_RADIUS:
+        reach = sight_range + collision_radius
+    else:
+        reach = np.full_like(collision_radius, sight_range)
+    if EXTRA_SIGHT_RANGE_TO_BUILDING:
+        building_only = is_building & (~is_crown)
+        np.add(
+            reach,
+            float(EXTRA_SIGHT_RANGE_TO_BUILDING) / 1000.0,
+            out=reach,
+            where=building_only,
+        )
+    if EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS:
+        np.add(
+            reach,
+            float(EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS) / 1000.0,
+            out=reach,
+            where=is_crown,
+        )
+    return reach
+
+
+_target_sight_reach = _target_sight_reach_candidate
+
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -2357,17 +2409,12 @@ class Entity(ABC):
         # Match the scalar distance calculation and native first-candidate
         # retention. ``argmin`` returns the first minimum in cache order.
         distance = np.sqrt(dist2)
-        target_radius = (
-            collision_radius
-            if ADD_CHARACTER_RANGE_TO_RADIUS
-            else np.zeros_like(collision_radius)
-        )
-        building_extension = np.where(
+        sight_reach = _target_sight_reach(
+            self.sight_range,
+            collision_radius,
+            is_building,
             is_crown,
-            EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS,
-            np.where(is_building, EXTRA_SIGHT_RANGE_TO_BUILDING, 0),
-        ).astype(np.float64) / 1000.0
-        sight_reach = self.sight_range + target_radius + building_extension
+        )
         in_sight = distance <= sight_reach + GEOMETRY_BOUNDARY_EPSILON
         card_stats = getattr(self, "card_stats", None)
         backward_clip = float(getattr(card_stats, "sight_clip", 0.0) or 0.0)
