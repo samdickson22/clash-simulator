@@ -72,6 +72,12 @@ def _parse_args() -> argparse.Namespace:
         default="inplace",
         help="select allocated or in-place exact bucket candidate ordering",
     )
+    parser.add_argument(
+        "--targetability-fields",
+        choices=("defensive", "direct"),
+        default="direct",
+        help="select defensive helpers or exact direct Entity field reads",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -110,6 +116,9 @@ def main() -> None:
     )
     entities_module._DEFER_INACTIVE_STEALTH_TIME_LOOKUP = (
         args.inactive_stealth_time == "deferred"
+    )
+    entities_module._USE_DIRECT_TARGETABILITY_FIELDS = (
+        args.targetability_fields == "direct"
     )
     torch.set_num_threads(args.torch_threads)
     builder = StructuredObservationBuilder(
@@ -193,6 +202,7 @@ def main() -> None:
                 "crown_distance_order": args.crown_distance_order,
                 "inactive_stealth_time": args.inactive_stealth_time,
                 "bucket_id_sort": args.bucket_id_sort,
+                "targetability_fields": args.targetability_fields,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,

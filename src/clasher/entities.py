@@ -158,6 +158,10 @@ _PREFER_CROWN_FALLBACK_BEFORE_DISTANCE = True
 # target has no active (positive absolute-time) stealth timestamp.
 _DEFER_INACTIVE_STEALTH_TIME_LOOKUP = True
 
+# Reference/benchmark switch for reading Entity-owned targetability state
+# directly in this hot predicate instead of routing through defensive helpers.
+_USE_DIRECT_TARGETABILITY_FIELDS = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -734,16 +738,27 @@ class Entity(ABC):
         allow_hidden_building_path: bool = False,
     ) -> bool:
         """Return shared lock eligibility for attacks and secondary chains."""
+        death_spawn_immune = (
+            LOGIC_DEATH_SPAWN_IMMUNE_FIRST_TICK
+            and self._death_spawn_target_immunity_elapsed_ms >= 0
+            if _USE_DIRECT_TARGETABILITY_FIELDS
+            else self._has_death_spawn_target_immunity()
+        )
         if (
             not self.is_alive
             or self.player_id == player_id
             or self.entity_kind in {2, 3}
-            or self._has_death_spawn_target_immunity()
+            or death_spawn_immune
         ):
             return False
         if getattr(self, "_hidden_building", False) and not allow_hidden_building_path:
             return False
-        for mechanic in getattr(self, "mechanics", []):
+        mechanics = (
+            self.mechanics
+            if _USE_DIRECT_TARGETABILITY_FIELDS
+            else getattr(self, "mechanics", [])
+        )
+        for mechanic in mechanics:
             blocks_targeting = getattr(mechanic, "blocks_targeting", None)
             if callable(blocks_targeting) and blocks_targeting(self):
                 return False

@@ -61,6 +61,12 @@ def _parse_args() -> argparse.Namespace:
         default="inplace",
         help="select allocated or in-place exact bucket candidate ordering",
     )
+    parser.add_argument(
+        "--targetability-fields",
+        choices=("defensive", "direct"),
+        default="direct",
+        help="select defensive helpers or exact direct Entity field reads",
+    )
     parser.add_argument("--clear-route-cache-per-mode", action="store_true")
     return parser.parse_args()
 
@@ -122,6 +128,9 @@ def main() -> None:
     entities_module._DEFER_INACTIVE_STEALTH_TIME_LOOKUP = (
         args.inactive_stealth_time == "deferred"
     )
+    entities_module._USE_DIRECT_TARGETABILITY_FIELDS = (
+        args.targetability_fields == "direct"
+    )
     modes = (False, True) if args.mode == "both" else (args.mode == "on",)
     reports = []
     for fast_path in modes:
@@ -166,6 +175,7 @@ def main() -> None:
                 "crown_distance_order": args.crown_distance_order,
                 "inactive_stealth_time": args.inactive_stealth_time,
                 "bucket_id_sort": args.bucket_id_sort,
+                "targetability_fields": args.targetability_fields,
                 "results": reports,
             },
             sort_keys=True,
