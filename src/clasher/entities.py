@@ -154,6 +154,10 @@ _USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = True
 # data-driven Crown preference filter has discarded ineligible objectives.
 _PREFER_CROWN_FALLBACK_BEFORE_DISTANCE = True
 
+# Reference/benchmark switch for avoiding battle-time conversion when the
+# target has no active (positive absolute-time) stealth timestamp.
+_DEFER_INACTIVE_STEALTH_TIME_LOOKUP = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -744,6 +748,8 @@ class Entity(ABC):
             if callable(blocks_targeting) and blocks_targeting(self):
                 return False
         stealth_until = int(getattr(self, "_stealth_until", 0) or 0)
+        if _DEFER_INACTIVE_STEALTH_TIME_LOOKUP and stealth_until <= 0:
+            return True
         battle_state = getattr(self, "battle_state", None)
         now_ms = logic_time_milliseconds(getattr(battle_state, "time", 0.0))
         return stealth_until <= now_ms

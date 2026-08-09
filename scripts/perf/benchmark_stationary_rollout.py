@@ -60,6 +60,12 @@ def _parse_args() -> argparse.Namespace:
         default="preferred-first",
         help="select eager or preferred-only Crown distance evaluation",
     )
+    parser.add_argument(
+        "--inactive-stealth-time",
+        choices=("eager", "deferred"),
+        default="deferred",
+        help="select eager or inactive-stealth-deferred battle-time lookup",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -94,6 +100,9 @@ def main() -> None:
     )
     entities_module._PREFER_CROWN_FALLBACK_BEFORE_DISTANCE = (
         args.crown_distance_order == "preferred-first"
+    )
+    entities_module._DEFER_INACTIVE_STEALTH_TIME_LOOKUP = (
+        args.inactive_stealth_time == "deferred"
     )
     torch.set_num_threads(args.torch_threads)
     builder = StructuredObservationBuilder(
@@ -175,6 +184,7 @@ def main() -> None:
                 "targetability_refresh": args.targetability_refresh,
                 "crown_fallback_membership": args.crown_fallback_membership,
                 "crown_distance_order": args.crown_distance_order,
+                "inactive_stealth_time": args.inactive_stealth_time,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,
