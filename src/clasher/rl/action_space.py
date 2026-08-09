@@ -260,12 +260,9 @@ class DiscreteTileActionSpace:
     ) -> np.ndarray:
         world_mask = battle.get_building_placement_blocked_mask_world(size_tiles)
         world_xy = self._world_tile_xy_by_player[player_id]
-        out = np.zeros(NUM_TILES, dtype=np.bool_)
-        for tile_idx in range(NUM_TILES):
-            wx = int(world_xy[tile_idx, 0])
-            wy = int(world_xy[tile_idx, 1])
-            out[tile_idx] = bool(world_mask[wy, wx])
-        return out
+        return np.asarray(
+            world_mask[world_xy[:, 1], world_xy[:, 0]], dtype=np.bool_
+        )
 
     def _troop_placement_blocked_mask_canonical(
         self,
@@ -275,12 +272,9 @@ class DiscreteTileActionSpace:
     ) -> np.ndarray:
         world_mask = battle.get_troop_placement_blocked_mask_world(mover_radius)
         world_xy = self._world_tile_xy_by_player[player_id]
-        out = np.zeros(NUM_TILES, dtype=np.bool_)
-        for tile_idx in range(NUM_TILES):
-            wx = int(world_xy[tile_idx, 0])
-            wy = int(world_xy[tile_idx, 1])
-            out[tile_idx] = bool(world_mask[wy, wx])
-        return out
+        return np.asarray(
+            world_mask[world_xy[:, 1], world_xy[:, 0]], dtype=np.bool_
+        )
 
     def _legal_action_mask_legacy(self, battle: BattleState, player_id: int) -> np.ndarray:
         mask = np.zeros(self.num_actions, dtype=np.bool_)
