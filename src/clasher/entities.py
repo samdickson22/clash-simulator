@@ -130,6 +130,12 @@ def _target_sight_reach_candidate(
 
 _target_sight_reach = _target_sight_reach_candidate
 
+# The vectorized selector applies every broad eligibility, plane, sight, and
+# crown-fallback filter used by the scalar scan. A missing candidate is
+# therefore exhaustive; a non-null candidate still passes through the scalar
+# mechanics validation below, which may need to find an alternative target.
+_FAST_TARGET_NONE_IS_EXHAUSTIVE = True
+
 
 @dataclass
 class PeriodicDamageEffect:
@@ -2097,6 +2103,8 @@ class Entity(ABC):
             )
             if fast_target is not None and self._is_valid_target(fast_target):
                 return fast_target
+            if fast_target is None and _FAST_TARGET_NONE_IS_EXHAUSTIVE:
+                return None
 
         candidate_entities = entities.values()
         if (
