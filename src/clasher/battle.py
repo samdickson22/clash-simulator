@@ -2837,7 +2837,7 @@ class BattleState:
 
     def _accumulate_troop_collision_for(self, troop: Troop) -> None:
         """Queue body pressure seen by one native movement component."""
-        from .unit_traits import is_in_transit, unit_mass, uses_air_collision_plane
+        from .unit_traits import is_in_transit, uses_air_collision_plane
 
         river_jumping = bool(getattr(troop, "_river_jump_active", False))
         death_spawn_traveling = bool(
@@ -2865,7 +2865,7 @@ class BattleState:
             0.2,
             getattr(troop.card_stats, "collision_radius", 0.5) or 0.5,
         )
-        own_mass = max(1e-9, unit_mass(troop.card_stats))
+        own_mass = max(1e-9, troop.get_unit_mass())
         own_air_collision = uses_air_collision_plane(troop)
         collision_candidates: Iterable[Entity] = self.entities.values()
         if self.fast_path and _USE_COLLISION_BUCKET_CANDIDATES:
@@ -2897,7 +2897,7 @@ class BattleState:
                 troop,
                 other.position,
                 own_radius + other_radius,
-                max(1e-9, unit_mass(other.card_stats)),
+                max(1e-9, other.get_unit_mass()),
                 own_mass,
             )
             if vector is not None:

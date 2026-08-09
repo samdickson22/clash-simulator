@@ -166,6 +166,10 @@ _USE_DIRECT_TARGETABILITY_FIELDS = True
 # exact ID-restored entity buckets already used by collision and targeting.
 _USE_AVOIDANCE_BUCKET_CANDIDATES = True
 
+# Reference/benchmark switch for reusing the immutable data-driven native mass
+# published for every Entity at construction.
+_USE_CACHED_ENTITY_UNIT_MASS = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -248,6 +252,7 @@ class Entity(ABC):
     is_alive: bool = True
     is_air_unit: bool = False  # True for flying troops like Minions, Balloon, Dragon
     _is_hover_unit: bool = field(default=False, init=False, repr=False)
+    _unit_mass: float = field(default=5.0, init=False, repr=False)
     entity_kind: int = 0  # 0=troop,1=building,2=projectile,3=aura/effect,4=other
     # Native death spawns carry a source-dependent target-eligibility marker.
     # LogicCharacter::tick advances it in integer milliseconds and clears it
@@ -339,6 +344,9 @@ class Entity(ABC):
         if self.max_hitpoints == 0:
             self.max_hitpoints = self.hitpoints
         self._is_hover_unit = is_hover_unit_card(self.card_stats)
+        from .unit_traits import unit_mass
+
+        self._unit_mass = unit_mass(self.card_stats)
         # Classify by the gameplay base type, not the concrete class name.
         # Exact-name checks silently turn specialized/custom subclasses into
         # ``other`` entities, which makes targeting, collision, and effects
@@ -1596,6 +1604,14 @@ class Entity(ABC):
         """Return this entity's gameplay collision radius in arena tiles."""
         radius = getattr(getattr(self, "card_stats", None), "collision_radius", None)
         return float(radius or 0.5)
+
+    def get_unit_mass(self) -> float:
+        """Return the immutable data-driven native collision mass."""
+        if not _USE_CACHED_ENTITY_UNIT_MASS:
+            from .unit_traits import unit_mass
+
+            return unit_mass(self.card_stats)
+        return self._unit_mass
 
     def intersects_native_area(
         self,
@@ -2858,7 +2874,7 @@ class Troop(Entity):
         static_count = 0
         moving_side = 1
         static_side = 1
-        own_mass = unit_mass(self.card_stats)
+        own_mass = self.get_unit_mass()
 
         avoidance_candidates: Iterable[Entity] = battle_state.entities.values()
         if battle_state.fast_path and _USE_AVOIDANCE_BUCKET_CANDIDATES:
@@ -2916,7 +2932,7 @@ class Troop(Entity):
                 if self.is_charging:
                     approaching = (
                         approaching
-                        and own_mass <= unit_mass(other.card_stats)
+                        and own_mass <= other.get_unit_mass()
                     )
                 if not approaching:
                     continue

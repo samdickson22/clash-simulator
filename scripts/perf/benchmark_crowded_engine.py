@@ -110,6 +110,12 @@ def _parse_args() -> argparse.Namespace:
         default="direct",
         help="select defensive or required Entity collision-plane fields",
     )
+    parser.add_argument(
+        "--unit-mass",
+        choices=("runtime", "cached"),
+        default="cached",
+        help="select runtime or entity-cached data-driven collision mass",
+    )
     parser.add_argument("--clear-route-cache-per-mode", action="store_true")
     return parser.parse_args()
 
@@ -192,6 +198,7 @@ def main() -> None:
     entities_module._USE_AVOIDANCE_BUCKET_CANDIDATES = (
         args.avoidance_candidates == "bucketed"
     )
+    entities_module._USE_CACHED_ENTITY_UNIT_MASS = args.unit_mass == "cached"
     unit_traits._USE_DIRECT_ENTITY_COLLISION_PLANE = (
         args.collision_plane_fields == "direct"
     )
@@ -248,6 +255,7 @@ def main() -> None:
                 "mover_hover_trait": args.mover_hover_trait,
                 "avoidance_candidates": args.avoidance_candidates,
                 "collision_plane_fields": args.collision_plane_fields,
+                "unit_mass": args.unit_mass,
                 "results": reports,
             },
             sort_keys=True,
