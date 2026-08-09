@@ -5,6 +5,8 @@ from clasher.pathfinding import (
     STANDARD_PATH_WIDTH,
     _cached_standard_grid_route,
     _native_grid_route,
+    _native_standard_grid_route,
+    _standard_path_cost_grid,
     _standard_path_cost_map,
     _standard_pathfinder_tile_cost,
 )
@@ -65,3 +67,18 @@ def test_standard_path_cost_map_is_exact_and_immutable(lane_id, jump_height):
     assert cost_map.get((STANDARD_PATH_WIDTH, STANDARD_PATH_HEIGHT - 1)) is None
     with pytest.raises(TypeError):
         cost_map[(0, 0)] = 999
+
+
+@pytest.mark.parametrize("lane_id", [0, 1, 2])
+@pytest.mark.parametrize("jump_height", [False, True])
+def test_native_standard_grid_route_matches_reference(lane_id, jump_height):
+    costs = _standard_path_cost_grid(lane_id, jump_height)
+    cost_map = _standard_path_cost_map(lane_id, jump_height)
+    starts = ((0, 0), (5, 18), (18, 32), (35, 63))
+    goals = ((35, 63), (30, 14), (18, 44), (0, 0))
+
+    for start in starts:
+        for goal in goals:
+            expected = _native_grid_route(start, goal, cost_map.get)
+            actual = _native_standard_grid_route(start, goal, costs)
+            assert actual == expected
