@@ -58,6 +58,17 @@ class StructuredObservation:
     critic_global_features: np.ndarray
 
 
+@dataclass(frozen=True)
+class ActorObservation:
+    """Public policy inputs without the unused privileged critic payload."""
+
+    entity_ids: np.ndarray
+    entity_features: np.ndarray
+    entity_mask: np.ndarray
+    hand_ids: np.ndarray
+    global_features: np.ndarray
+
+
 def _walk_named_payloads(value: Any) -> Iterable[str]:
     if isinstance(value, list):
         for child in value:
@@ -471,6 +482,21 @@ class StructuredObservationBuilder:
             critic_entity_mask=critic_entity_mask,
             critic_card_ids=np.concatenate([hand_ids, enemy_ids]).astype(np.int64, copy=False),
             critic_global_features=critic_globals,
+        )
+
+    def build_actor(self, battle: BattleState, player_id: int) -> ActorObservation:
+        """Build only public tensors used by actor inference and imitation data."""
+        entity_ids, entity_features, entity_mask = self._build_entities(
+            battle,
+            player_id,
+            privileged=False,
+        )
+        return ActorObservation(
+            entity_ids=entity_ids,
+            entity_features=entity_features,
+            entity_mask=entity_mask,
+            hand_ids=self._card_ids_for_player(battle, player_id),
+            global_features=self._actor_globals(battle, player_id),
         )
 
 
