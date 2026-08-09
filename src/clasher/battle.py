@@ -1,6 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 import time
 import math
 import random
@@ -56,6 +56,9 @@ STANDARD_MATCH_TICKS = math.ceil(STANDARD_MATCH_DURATION_SECONDS / DEFAULT_TICK_
 
 # Reference/benchmark switch for allocation-free integer bucket indexing.
 _USE_DENSE_ENTITY_BUCKETS = True
+
+# Reference/benchmark switch for exact spatial collision candidate pruning.
+_USE_COLLISION_BUCKET_CANDIDATES = True
 
 
 @dataclass(frozen=True)
@@ -2706,7 +2709,13 @@ class BattleState:
         )
         own_mass = max(1e-9, unit_mass(troop.card_stats))
         own_air_collision = uses_air_collision_plane(troop)
-        for other in self.entities.values():
+        collision_candidates: Iterable[Entity] = self.entities.values()
+        if self.fast_path and _USE_COLLISION_BUCKET_CANDIDATES:
+            collision_candidates = self.iter_entities_in_radius(
+                troop.position,
+                own_radius + self._max_target_collision_radius,
+            )
+        for other in collision_candidates:
             other_airborne_leap = (
                 getattr(other, "_mk_leap_phase", None) == "airborne"
             )
@@ -2741,7 +2750,7 @@ class BattleState:
         # Static objects do not receive a reciprocal vector. Native supplies
         # mass 20 and caps the moving character's radius contribution at 0.5.
         static_radius = min(own_radius, 0.5)
-        for building in self.entities.values():
+        for building in collision_candidates:
             if (
                 not isinstance(building, Building)
                 or not building.is_alive
