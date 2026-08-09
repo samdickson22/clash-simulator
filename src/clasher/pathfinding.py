@@ -7,10 +7,11 @@ movement component still applies its ordinary fixed-point speed for the frame.
 
 from __future__ import annotations
 
-from functools import lru_cache
 import math
-from collections.abc import Callable
-from typing import TYPE_CHECKING
+from collections.abc import Callable, Mapping
+from functools import lru_cache
+from types import MappingProxyType
+from typing import TYPE_CHECKING, cast
 
 from .arena import Position
 from .kinematics import (
@@ -206,6 +207,28 @@ def _standard_pathfinder_tile_cost(
     )
 
 
+@lru_cache(maxsize=16)
+def _standard_path_cost_map(
+    lane_id: int,
+    jump_height: bool,
+) -> Mapping[tuple[int, int], int]:
+    """Return immutable exact costs for one standard-arena movement profile."""
+    return MappingProxyType(
+        {
+            (cell_x, cell_y): cast(
+                int,
+                _standard_pathfinder_tile_cost(
+                    (cell_x, cell_y),
+                    lane_id=lane_id,
+                    jump_height=jump_height,
+                ),
+            )
+            for cell_y in range(STANDARD_PATH_HEIGHT)
+            for cell_x in range(STANDARD_PATH_WIDTH)
+        }
+    )
+
+
 def _native_grid_route(
     start: tuple[int, int],
     goal: tuple[int, int],
@@ -309,11 +332,7 @@ def _cached_standard_grid_route(
     route = _native_grid_route(
         start,
         goal,
-        lambda cell: _standard_pathfinder_tile_cost(
-            cell,
-            lane_id=lane_id,
-            jump_height=jump_height,
-        ),
+        _standard_path_cost_map(lane_id, jump_height).get,
     )
     return None if route is None else tuple(route)
 
