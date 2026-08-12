@@ -153,6 +153,12 @@ def _parse_args() -> argparse.Namespace:
         default="scalar",
         help="select NumPy-dispatched or exact scalar feature clipping",
     )
+    parser.add_argument(
+        "--entity-range-clip",
+        choices=("numpy", "scalar", "both"),
+        default="scalar",
+        help="select NumPy-dispatched or exact scalar entity range clipping",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -236,11 +242,13 @@ def main() -> None:
     model.eval()
 
     scalar_unit_clip = structured_obs_module._unit_clip
+    scalar_range_clip = structured_obs_module._range_clip_scalar
 
     def run_once(
         steps: int,
         observation_buffers: str,
         unit_clip: str,
+        entity_range_clip: str,
     ) -> dict[str, float | str]:
         train_recurrent_module._USE_PREALLOCATED_STEP_OBSERVATION_BUFFERS = (
             observation_buffers == "preallocated"
@@ -249,6 +257,11 @@ def main() -> None:
             structured_obs_module._unit_clip_numpy
             if unit_clip == "numpy"
             else scalar_unit_clip
+        )
+        structured_obs_module._range_clip = (
+            structured_obs_module._range_clip_numpy
+            if entity_range_clip == "numpy"
+            else scalar_range_clip
         )
         torch.manual_seed(args.seed + 99)
         envs = [
@@ -293,6 +306,7 @@ def main() -> None:
         return {
             "observation_buffers": observation_buffers,
             "unit_clip": unit_clip,
+            "entity_range_clip": entity_range_clip,
             "elapsed_s": elapsed,
             "decisions_per_s": args.num_envs * steps / elapsed,
             "sha256": _digest_rollout(result[0], envs),
@@ -306,36 +320,55 @@ def main() -> None:
     unit_clip_variants = (
         ("numpy", "scalar") if args.unit_clip == "both" else (args.unit_clip,)
     )
+    entity_range_clip_variants = (
+        ("numpy", "scalar")
+        if args.entity_range_clip == "both"
+        else (args.entity_range_clip,)
+    )
     variants = tuple(
-        (observation_buffers, unit_clip)
+        (observation_buffers, unit_clip, entity_range_clip)
         for observation_buffers in observation_buffer_variants
         for unit_clip in unit_clip_variants
+        for entity_range_clip in entity_range_clip_variants
     )
     if args.warmup_steps:
-        for observation_buffers, unit_clip in variants:
-            run_once(args.warmup_steps, observation_buffers, unit_clip)
+        for observation_buffers, unit_clip, entity_range_clip in variants:
+            run_once(
+                args.warmup_steps,
+                observation_buffers,
+                unit_clip,
+                entity_range_clip,
+            )
     rows = []
     for repetition in range(args.repetitions):
         order = variants if repetition % 2 == 0 else tuple(reversed(variants))
-        for observation_buffers, unit_clip in order:
-            row = run_once(args.rollout_steps, observation_buffers, unit_clip)
+        for observation_buffers, unit_clip, entity_range_clip in order:
+            row = run_once(
+                args.rollout_steps,
+                observation_buffers,
+                unit_clip,
+                entity_range_clip,
+            )
             row["repetition"] = repetition
             rows.append(row)
     elapsed = [float(row["elapsed_s"]) for row in rows]
     rates = [float(row["decisions_per_s"]) for row in rows]
     summary = {}
-    for observation_buffers, unit_clip in variants:
-        if len(unit_clip_variants) == 1:
-            variant = observation_buffers
-        elif len(observation_buffer_variants) == 1:
-            variant = unit_clip
-        else:
-            variant = f"{observation_buffers}/{unit_clip}"
+    for observation_buffers, unit_clip, entity_range_clip in variants:
+        varying_parts = []
+        if len(observation_buffer_variants) > 1:
+            varying_parts.append(observation_buffers)
+        if len(unit_clip_variants) > 1:
+            varying_parts.append(unit_clip)
+        if len(entity_range_clip_variants) > 1:
+            varying_parts.append(entity_range_clip)
+        variant = "/".join(varying_parts) if varying_parts else observation_buffers
         selected = [
             row
             for row in rows
             if row["observation_buffers"] == observation_buffers
             and row["unit_clip"] == unit_clip
+            and row["entity_range_clip"] == entity_range_clip
         ]
         summary[variant] = {
             "median_elapsed_s": statistics.median(
@@ -346,16 +379,34 @@ def main() -> None:
             ),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    if args.observation_buffers == "both" and args.unit_clip != "both":
+    if (
+        args.observation_buffers == "both"
+        and args.unit_clip != "both"
+        and args.entity_range_clip != "both"
+    ):
         stacked = float(summary["stacked"]["median_elapsed_s"])
         preallocated = float(summary["preallocated"]["median_elapsed_s"])
         summary["preallocated_vs_stacked_percent"] = 100.0 * (
             stacked / preallocated - 1.0
         )
-    if args.unit_clip == "both" and args.observation_buffers != "both":
+    if (
+        args.unit_clip == "both"
+        and args.observation_buffers != "both"
+        and args.entity_range_clip != "both"
+    ):
         numpy_elapsed = float(summary["numpy"]["median_elapsed_s"])
         scalar_elapsed = float(summary["scalar"]["median_elapsed_s"])
         summary["scalar_vs_numpy_percent"] = 100.0 * (
+            numpy_elapsed / scalar_elapsed - 1.0
+        )
+    if (
+        args.entity_range_clip == "both"
+        and args.observation_buffers != "both"
+        and args.unit_clip != "both"
+    ):
+        numpy_elapsed = float(summary["numpy"]["median_elapsed_s"])
+        scalar_elapsed = float(summary["scalar"]["median_elapsed_s"])
+        summary["scalar_range_vs_numpy_percent"] = 100.0 * (
             numpy_elapsed / scalar_elapsed - 1.0
         )
     print(
@@ -388,6 +439,7 @@ def main() -> None:
                 "target_plane_checks": args.target_plane_checks,
                 "observation_buffers": args.observation_buffers,
                 "unit_clip": args.unit_clip,
+                "entity_range_clip": args.entity_range_clip,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,

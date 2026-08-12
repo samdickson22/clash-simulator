@@ -107,6 +107,21 @@ def _unit_clip(value: float) -> float:
     return float(value)
 
 
+def _range_clip_numpy(value: float, lower: float, upper: float) -> float:
+    return float(np.clip(value, lower, upper))
+
+
+def _range_clip_scalar(value: float, lower: float, upper: float) -> float:
+    if value < lower:
+        return float(lower)
+    if value > upper:
+        return float(upper)
+    return float(value)
+
+
+_range_clip = _range_clip_scalar
+
+
 class StructuredObservationBuilder:
     """Build actor-public and critic-privileged entity observations.
 
@@ -265,7 +280,7 @@ class StructuredObservationBuilder:
         own = int(entity.player_id) == perspective_player
         row[2] = float(own)
         row[3] = float(not own)
-        kind = int(np.clip(int(getattr(entity, "entity_kind", 4)), 0, 4))
+        kind = int(_range_clip(int(getattr(entity, "entity_kind", 4)), 0, 4))
         row[4 + kind] = 1.0
         row[9] = _unit_clip(
             _safe_float(getattr(entity, "hitpoints", 0))
@@ -308,8 +323,8 @@ class StructuredObservationBuilder:
             _safe_float(facing_x), _safe_float(facing_y), perspective_player
         )
         magnitude = max(1.0, math.hypot(facing_x, facing_y))
-        row[27] = float(np.clip(facing_x / magnitude, -1.0, 1.0))
-        row[28] = float(np.clip(facing_y / magnitude, -1.0, 1.0))
+        row[27] = _range_clip(facing_x / magnitude, -1.0, 1.0)
+        row[28] = _range_clip(facing_y / magnitude, -1.0, 1.0)
         row[29] = self._effect_progress(entity)
         row[30] = _unit_clip(
             math.log1p(max(0.0, _safe_float(getattr(entity, "damage", 0)))) / 8.0
