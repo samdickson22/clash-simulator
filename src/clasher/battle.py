@@ -278,6 +278,7 @@ class BattleState:
         default_factory=lambda: np.zeros((0,), dtype=np.float64), init=False
     )
     _max_target_collision_radius: float = field(default=0.5, init=False)
+    _max_target_distance_discount_sq: float = field(default=0.0, init=False)
     _pending_spell_casts: List[PendingSpellCast] = field(default_factory=list, init=False)
     _next_spell_cast_sequence: int = field(default=0, init=False)
     _pending_projectile_impacts: List[PendingProjectileImpact] = field(
@@ -537,6 +538,7 @@ class BattleState:
             self._target_collision_radius = np.zeros((0,), dtype=np.float64)
             self._target_distance_discount_sq = np.zeros((0,), dtype=np.float64)
             self._max_target_collision_radius = 0.5
+            self._max_target_distance_discount_sq = 0.0
             self._target_cache_dirty = False
             return
 
@@ -613,6 +615,9 @@ class BattleState:
         self._target_collision_radius = collision_radius
         self._target_distance_discount_sq = target_distance_discount_sq
         self._max_target_collision_radius = float(np.max(collision_radius))
+        self._max_target_distance_discount_sq = float(
+            np.max(target_distance_discount_sq)
+        )
         self._target_cache_dirty = False
 
     def _refresh_target_cache(self, *, trust_dirty: bool = False) -> None:
@@ -734,6 +739,9 @@ class BattleState:
                 return
             self._max_target_collision_radius = float(
                 np.max(self._target_collision_radius)
+            )
+            self._max_target_distance_discount_sq = float(
+                np.max(self._target_distance_discount_sq)
             )
             # A rare post-insertion setup may accompany other direct entity
             # initialization. Preserve the public helper's exact dynamic

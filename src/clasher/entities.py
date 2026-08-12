@@ -208,6 +208,11 @@ _COALESCE_TARGET_PLANE_CHECKS = True
 # decision to perform, so return its only member before shared tie machinery.
 _USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
 
+# Reference/benchmark switch. Scalar target acquisition can derive an exact
+# center-distance bucket bound from cached maximum target radius, sight
+# extension, and spawn-priority distance discount instead of a generic halo.
+_USE_EXACT_TARGET_BUCKET_BOUND = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -2265,12 +2270,49 @@ class Entity(ABC):
             and getattr(battle_state, "entities", None) is entities
             and hasattr(battle_state, "iter_entities_in_radius")
         ):
-            query_radius = (
-                self.sight_range
-                + getattr(battle_state, "_max_target_collision_radius", 0.5)
-                + 1.0
+            cached_max_target_radius = getattr(
+                battle_state,
+                "_max_target_collision_radius",
+                0.5,
             )
-            candidate_entities = battle_state.iter_entities_in_radius(self.position, query_radius)
+            max_target_radius = (
+                cached_max_target_radius
+                if ADD_CHARACTER_RANGE_TO_RADIUS
+                else 0.0
+            )
+            if _USE_EXACT_TARGET_BUCKET_BOUND:
+                maximum_extension = max(
+                    0.0,
+                    float(EXTRA_SIGHT_RANGE_TO_BUILDING) / 1000.0,
+                    float(EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS) / 1000.0,
+                )
+                maximum_reach = (
+                    self.sight_range
+                    + max_target_radius
+                    + maximum_extension
+                    + GEOMETRY_BOUNDARY_EPSILON
+                )
+                query_radius = math.sqrt(
+                    maximum_reach * maximum_reach
+                    + getattr(
+                        battle_state,
+                        "_max_target_distance_discount_sq",
+                        0.0,
+                    )
+                )
+                candidate_entities = battle_state.iter_entities_in_radius(
+                    self.position,
+                    query_radius,
+                    tight_bounds=True,
+                )
+            else:
+                query_radius = (
+                    self.sight_range + cached_max_target_radius + 1.0
+                )
+                candidate_entities = battle_state.iter_entities_in_radius(
+                    self.position,
+                    query_radius,
+                )
 
         for entity in candidate_entities:
             # Only check if entity is valid target (excludes spell entities)
