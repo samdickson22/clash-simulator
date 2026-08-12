@@ -109,6 +109,25 @@ def test_entity_sync_reuses_cached_targetability_requirement(monkeypatch):
     assert battle._target_is_targetable[index]
 
 
+@pytest.mark.parametrize("entity_kind", range(5))
+@pytest.mark.parametrize("is_alive", [False, True])
+def test_direct_target_entity_kind_matches_reference(
+    monkeypatch,
+    entity_kind: int,
+    is_alive: bool,
+):
+    battle = BattleState(fast_path=True)
+    troop = _spawn_troop(battle, "Knight", 1, Position(9.0, 18.0))
+    troop.entity_kind = entity_kind
+    troop.is_alive = is_alive
+
+    monkeypatch.setattr(battle_module, "_USE_DIRECT_TARGET_ENTITY_KIND", False)
+    reference = battle._eligible_fast_target(troop)
+    monkeypatch.setattr(battle_module, "_USE_DIRECT_TARGET_ENTITY_KIND", True)
+
+    assert battle._eligible_fast_target(troop) is reference
+
+
 def test_targetability_classification_cache_is_clone_isolated():
     battle = BattleState(fast_path=True)
     troop = _spawn_troop(battle, "Knight", 1, Position(9.0, 18.0))
@@ -208,3 +227,30 @@ def test_cached_sync_targetability_requirement_preserves_fixed_seed_rollout(
     assert cached.sha256 == recomputed.sha256
     assert cached.mask_shadow_checks == recomputed.mask_shadow_checks
     assert cached.mask_shadow_mismatches == recomputed.mask_shadow_mismatches == 0
+
+
+@pytest.mark.parametrize("engine_fast_path", ["off", "shadow", "on"])
+def test_direct_target_entity_kind_preserves_fixed_seed_rollout(
+    monkeypatch,
+    engine_fast_path: str,
+):
+    common = {
+        "seed": 8831,
+        "decisions": 32,
+        "decks_path": "decks.json",
+        "decision_interval": 8,
+        "max_ticks": 2048,
+        "mirror_match": False,
+        "quiet_engine": True,
+        "engine_fast_path": engine_fast_path,
+        "reward_profile": "defense-v2",
+    }
+
+    monkeypatch.setattr(battle_module, "_USE_DIRECT_TARGET_ENTITY_KIND", False)
+    reference = compute_rollout_digest(**common)
+    monkeypatch.setattr(battle_module, "_USE_DIRECT_TARGET_ENTITY_KIND", True)
+    direct = compute_rollout_digest(**common)
+
+    assert direct.sha256 == reference.sha256
+    assert direct.mask_shadow_checks == reference.mask_shadow_checks
+    assert direct.mask_shadow_mismatches == reference.mask_shadow_mismatches == 0

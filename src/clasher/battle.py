@@ -93,6 +93,10 @@ _USE_STATIC_TARGETABILITY_CLASSIFICATION = True
 # per-component entity synchronization.
 _USE_CACHED_TARGETABILITY_REQUIREMENT = True
 
+# Reference/benchmark switch for reading Entity's required, normalized kind
+# field directly while maintaining the target-cache membership predicate.
+_USE_DIRECT_TARGET_ENTITY_KIND = True
+
 @dataclass(frozen=True)
 class PendingSpellCast:
     """A spell command waiting for the server's universal action delay."""
@@ -648,10 +652,14 @@ class BattleState:
 
     @staticmethod
     def _eligible_fast_target(entity: Entity) -> bool:
-        return bool(
-            entity.is_alive
-            and getattr(entity, "entity_kind", 4) not in {2, 3}
+        if not entity.is_alive:
+            return False
+        entity_kind = (
+            entity.entity_kind
+            if _USE_DIRECT_TARGET_ENTITY_KIND
+            else getattr(entity, "entity_kind", 4)
         )
+        return entity_kind not in {2, 3}
 
     @staticmethod
     def _requires_targetability_check(entity: Entity) -> bool:

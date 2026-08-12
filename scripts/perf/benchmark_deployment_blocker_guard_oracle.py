@@ -66,7 +66,7 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--comparison",
-        choices=("guard", "targetability-requirement"),
+        choices=("guard", "targetability-requirement", "target-entity-kind"),
         default="guard",
     )
     return parser.parse_args()
@@ -76,9 +76,15 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     if args.comparison == "guard":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
-    else:
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+    elif args.comparison == "targetability-requirement":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = mode == "cached"
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = mode == "direct"
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
     del row["variant"]
@@ -88,11 +94,12 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
 def main() -> None:
     args = _parse_args()
     snapshots = _snapshots(args)
-    reference_mode, candidate_mode = (
-        ("scan", "guard")
-        if args.comparison == "guard"
-        else ("recomputed", "cached")
-    )
+    if args.comparison == "guard":
+        reference_mode, candidate_mode = "scan", "guard"
+    elif args.comparison == "targetability-requirement":
+        reference_mode, candidate_mode = "recomputed", "cached"
+    else:
+        reference_mode, candidate_mode = "getattr", "direct"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 

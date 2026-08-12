@@ -78,7 +78,12 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--comparison",
-        choices=("guard", "inference-mode", "targetability-requirement"),
+        choices=(
+            "guard",
+            "inference-mode",
+            "targetability-requirement",
+            "target-entity-kind",
+        ),
         default="guard",
     )
     parser.add_argument(
@@ -108,8 +113,10 @@ def main() -> None:
         reference_variant, candidate_variant = "scanned", "guarded"
     elif args.comparison == "inference-mode":
         reference_variant, candidate_variant = "no-grad", "inference"
-    else:
+    elif args.comparison == "targetability-requirement":
         reference_variant, candidate_variant = "recomputed", "cached"
+    else:
+        reference_variant, candidate_variant = "getattr", "direct"
 
     def run_once(variant: str, steps: int) -> dict[str, float | str | int]:
         if args.comparison == "guard":
@@ -118,16 +125,26 @@ def main() -> None:
             )
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+            battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
         elif args.comparison == "inference-mode":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = (
                 variant == candidate_variant
             )
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
-        else:
+            battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        elif args.comparison == "targetability-requirement":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = (
+                variant == candidate_variant
+            )
+            battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        else:
+            action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+            train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
+            battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+            battle_module._USE_DIRECT_TARGET_ENTITY_KIND = (
                 variant == candidate_variant
             )
         torch.manual_seed(args.seed + 99)
