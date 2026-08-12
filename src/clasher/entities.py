@@ -222,6 +222,11 @@ _USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
 # instead of allocating the same nested closure on every fallback query.
 _USE_HOISTED_CROWN_FALLBACK_VALIDATOR = True
 
+# Reference/benchmark switch. Native fallback layouts have at most two
+# Princess objectives, so keep them in scalar slots instead of allocating a
+# list on every deferred Crown query.
+_USE_SCALAR_DEFERRED_CROWN_SLOTS = True
+
 
 def _valid_cached_crown_candidate(
     attacker: 'Entity',
@@ -2631,6 +2636,86 @@ class Entity(ABC):
         can_attack_ground: bool,
     ) -> 'Entity | None | _UnhandledCrownFallback':
         """Validate only Crown objectives that can win native preference."""
+        if _USE_SCALAR_DEFERRED_CROWN_SLOTS:
+            first: Entity | None = None
+            second: Entity | None = None
+            scalar_king: Entity | None = None
+            for entity in candidates:
+                if entities.get(entity.id) is not entity:
+                    continue
+                crown_slot = getattr(entity, "_crown_tower_slot", None)
+                if crown_slot not in {"left", "right", "king"}:
+                    return _CROWN_FALLBACK_UNHANDLED
+                if crown_slot == "king":
+                    if scalar_king is not None:
+                        return _CROWN_FALLBACK_UNHANDLED
+                    scalar_king = entity
+                elif first is None:
+                    first = entity
+                elif second is None:
+                    second = entity
+                else:
+                    return _CROWN_FALLBACK_UNHANDLED
+
+            if first is not None and second is None:
+                if _valid_cached_crown_candidate(
+                    self,
+                    first,
+                    can_attack_air,
+                    can_attack_ground,
+                ):
+                    return first
+            elif first is not None and second is not None:
+                first_x = abs(first.position.x - self.position.x)
+                second_x = abs(second.position.x - self.position.x)
+                if first_x + GEOMETRY_BOUNDARY_EPSILON < second_x:
+                    if _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    ):
+                        return first
+                    if _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    ):
+                        return second
+                elif second_x + GEOMETRY_BOUNDARY_EPSILON < first_x:
+                    if _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    ):
+                        return second
+                    if _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    ):
+                        return first
+                else:
+                    first_valid = _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    )
+                    second_valid = _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    )
+                    if first_valid and not second_valid:
+                        return first
+                    if second_valid and not first_valid:
+                        return second
+                    if first_valid and second_valid:
+                        return self._select_first_nearest_target(
+                            [
+                                (first, self.native_target_distance_to(first)),
+                                (
+                                    second,
+                                    self.native_target_distance_to(second),
+                                ),
+                            ]
+                        )
+            if scalar_king is not None and _valid_cached_crown_candidate(
+                self,
+                scalar_king,
+                can_attack_air,
+                can_attack_ground,
+            ):
+                return scalar_king
+            return None
+
         princesses: list[Entity] = []
         king: Entity | None = None
         for entity in candidates:

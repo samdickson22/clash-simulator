@@ -85,6 +85,7 @@ def _parse_args() -> argparse.Namespace:
             "exact-target-bucket-bound",
             "deferred-crown-validation",
             "hoisted-crown-validator",
+            "scalar-crown-slots",
         ),
         default="guard",
     )
@@ -104,6 +105,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     entities_module._USE_EXACT_TARGET_BUCKET_BOUND = True
     entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
     entities_module._USE_HOISTED_CROWN_FALLBACK_VALIDATOR = True
+    entities_module._USE_SCALAR_DEFERRED_CROWN_SLOTS = True
     if args.comparison == "guard":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -242,7 +244,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = (
             mode == "deferred"
         )
-    else:
+    elif args.comparison == "hoisted-crown-validator":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
@@ -257,6 +259,22 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         entities_module._USE_EXACT_TARGET_BUCKET_BOUND = True
         entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
         entities_module._USE_HOISTED_CROWN_FALLBACK_VALIDATOR = mode == "hoisted"
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+        battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+        action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
+        entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
+        entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
+        battle_module._USE_SINGLE_PASS_COLLISION_CANDIDATES = True
+        entities_module._USE_LAZY_CROWN_FALLBACK_BUILDER = True
+        battle_module._USE_TIGHT_INTERACTION_BUCKET_BOUNDS = True
+        entities_module._USE_EXACT_TARGET_BUCKET_BOUND = True
+        entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
+        entities_module._USE_HOISTED_CROWN_FALLBACK_VALIDATOR = True
+        entities_module._USE_SCALAR_DEFERRED_CROWN_SLOTS = mode == "scalar"
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
     del row["variant"]
@@ -296,8 +314,10 @@ def main() -> None:
         reference_mode, candidate_mode = "halo", "exact"
     elif args.comparison == "deferred-crown-validation":
         reference_mode, candidate_mode = "eager", "deferred"
-    else:
+    elif args.comparison == "hoisted-crown-validator":
         reference_mode, candidate_mode = "closure", "hoisted"
+    else:
+        reference_mode, candidate_mode = "list", "scalar"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 
