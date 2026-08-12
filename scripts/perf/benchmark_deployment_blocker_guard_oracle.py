@@ -12,6 +12,7 @@ import numpy as np
 from benchmark_oracle_scalar_leaf import _run_variant, _snapshots
 
 from clasher import battle as battle_module
+from clasher import entities as entities_module
 from clasher.rl import action_space as action_space_module
 
 
@@ -66,7 +67,12 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--comparison",
-        choices=("guard", "targetability-requirement", "target-entity-kind"),
+        choices=(
+            "guard",
+            "targetability-requirement",
+            "target-entity-kind",
+            "crown-fallback",
+        ),
         default="guard",
     )
     return parser.parse_args()
@@ -77,14 +83,22 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
     elif args.comparison == "targetability-requirement":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = mode == "cached"
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
-    else:
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+    elif args.comparison == "target-entity-kind":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = mode == "direct"
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = mode == "single-pass"
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
     del row["variant"]
@@ -98,8 +112,10 @@ def main() -> None:
         reference_mode, candidate_mode = "scan", "guard"
     elif args.comparison == "targetability-requirement":
         reference_mode, candidate_mode = "recomputed", "cached"
-    else:
+    elif args.comparison == "target-entity-kind":
         reference_mode, candidate_mode = "getattr", "direct"
+    else:
+        reference_mode, candidate_mode = "partitioned", "single-pass"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 

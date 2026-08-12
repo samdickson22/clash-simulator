@@ -14,6 +14,7 @@ import torch
 from benchmark_stationary_rollout import _digest_rollout
 
 from clasher import battle as battle_module
+from clasher import entities as entities_module
 from clasher.rl import action_space as action_space_module
 from clasher.rl import reward_model as reward_model_module
 from clasher.rl import train_recurrent as train_recurrent_module
@@ -83,6 +84,7 @@ def _parse_args() -> argparse.Namespace:
             "inference-mode",
             "targetability-requirement",
             "target-entity-kind",
+            "crown-fallback",
         ),
         default="guard",
     )
@@ -115,8 +117,10 @@ def main() -> None:
         reference_variant, candidate_variant = "no-grad", "inference"
     elif args.comparison == "targetability-requirement":
         reference_variant, candidate_variant = "recomputed", "cached"
-    else:
+    elif args.comparison == "target-entity-kind":
         reference_variant, candidate_variant = "getattr", "direct"
+    else:
+        reference_variant, candidate_variant = "partitioned", "single-pass"
 
     def run_once(variant: str, steps: int) -> dict[str, float | str | int]:
         if args.comparison == "guard":
@@ -126,6 +130,7 @@ def main() -> None:
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+            entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
         elif args.comparison == "inference-mode":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = (
@@ -133,6 +138,7 @@ def main() -> None:
             )
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+            entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
         elif args.comparison == "targetability-requirement":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
@@ -140,11 +146,21 @@ def main() -> None:
                 variant == candidate_variant
             )
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
-        else:
+            entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+        elif args.comparison == "target-entity-kind":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = (
+                variant == candidate_variant
+            )
+            entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+        else:
+            action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+            train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
+            battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+            battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+            entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = (
                 variant == candidate_variant
             )
         torch.manual_seed(args.seed + 99)

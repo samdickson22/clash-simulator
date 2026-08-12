@@ -150,6 +150,10 @@ _COALESCE_CROWN_FALLBACK_TARGET_SCAN = True
 # the complete building scan.
 _USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = True
 
+# Reference/benchmark switch for validating and partitioning the live cached
+# Crown fallback members in one pass under the active native globals.
+_USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+
 # Reference/benchmark switch for computing adjusted distance only after the
 # data-driven Crown preference filter has discarded ineligible objectives.
 _PREFER_CROWN_FALLBACK_BEFORE_DISTANCE = True
@@ -2293,6 +2297,21 @@ class Entity(ABC):
                     else entities.values()
                 )
             )
+            if (
+                _USE_SINGLE_PASS_CACHED_CROWN_FALLBACK
+                and use_cached_crowns
+                and LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET
+                and LOGIC_XPOS_BASED_TOWER_TARGETING
+                and not LOGIC_DEFAULT_TARGET_USE_LANE_ID
+            ):
+                single_pass = self._single_pass_cached_crown_fallback(
+                    candidates,
+                    entities=entities,
+                    can_attack_air=can_attack_air,
+                    can_attack_ground=can_attack_ground,
+                )
+                if single_pass is not None:
+                    return single_pass
             for entity in candidates:
                 # The accelerated building cache is owned by the live
                 # BattleState, while callers may intentionally ask this
@@ -2366,6 +2385,55 @@ class Entity(ABC):
         if _return_fallback_used:
             return selected, used_fallback
         return selected
+
+    def _single_pass_cached_crown_fallback(
+        self,
+        candidates: Iterable['Entity'],
+        *,
+        entities: dict[int, 'Entity'],
+        can_attack_air: bool,
+        can_attack_ground: bool,
+    ) -> list[tuple['Entity', float]] | None:
+        """Return the active-globals Crown fallback from semantic slot data."""
+        princesses: list[tuple[Entity, float]] = []
+        king_towers: list[Entity] = []
+        for entity in candidates:
+            if entities.get(entity.id) is not entity:
+                continue
+            if not self._is_valid_target(entity):
+                continue
+            is_air = is_airborne_target(entity)
+            if (is_air and not can_attack_air) or (
+                not is_air and not can_attack_ground
+            ):
+                continue
+            crown_slot = getattr(entity, "_crown_tower_slot", None)
+            if crown_slot not in {"left", "right", "king"}:
+                # Custom Crown objectives without native slot metadata retain
+                # the complete compatibility classifier below.
+                return None
+            if crown_slot != "king":
+                princesses.append(
+                    (entity, abs(entity.position.x - self.position.x))
+                )
+            else:
+                king_towers.append(entity)
+
+        if not princesses:
+            preferred = king_towers
+        elif not king_towers:
+            preferred = [entity for entity, _ in princesses]
+        else:
+            minimum_x = min(distance for _, distance in princesses)
+            preferred = [
+                entity
+                for entity, distance in princesses
+                if distance <= minimum_x + GEOMETRY_BOUNDARY_EPSILON
+            ]
+        return [
+            (entity, self.native_target_distance_to(entity))
+            for entity in preferred
+        ]
 
     def _preferred_fallback_crown_targets(
         self,
