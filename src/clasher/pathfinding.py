@@ -57,6 +57,9 @@ _NATIVE_EMPTY_TILE_COST = 20
 # Reference/benchmark switch. Entity initialization already classifies this
 # immutable data-driven movement trait once.
 _USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
+# Reference/benchmark switch. A retained route hit needs only the desired goal
+# and immutable route traits; defer origin/backwards/start-cell work to misses.
+_USE_EARLY_GROUND_PATH_CACHE_HIT = True
 _NATIVE_OTHER_LANE_COST = 5
 _NATIVE_SAME_LANE_COST = 1
 _NATIVE_WATER_COST = 800
@@ -970,12 +973,48 @@ def ground_path_waypoint(
     are handled later by movement collision and avoidance, not by A*.
     """
 
+    desired_cell: tuple[int, int] | None
+    hovering: bool
+    cache_key: tuple[tuple[int, int], int, bool]
+    if _USE_EARLY_GROUND_PATH_CACHE_HIT:
+        desired_cell = (
+            native_route_goal_cell(mover, target_entity)
+            if target_entity is not None
+            else _cell_for_position(desired)
+        )
+        if desired_cell is not None:
+            if _USE_CACHED_GROUND_PATH_HOVER_TRAIT:
+                hovering = mover._is_hover_unit
+            else:
+                from .unit_traits import is_hover_unit_card
+
+                hovering = is_hover_unit_card(getattr(mover, "card_stats", None))
+            cache_key = (
+                desired_cell,
+                int(getattr(mover, "_native_lane_id", 0) or 0),
+                bool(
+                    getattr(
+                        getattr(mover, "card_stats", None),
+                        "jump_height",
+                        None,
+                    )
+                ),
+            )
+            if (
+                not hovering
+                and getattr(mover, "_ground_path_cache_key", None) == cache_key
+            ):
+                route_cells = getattr(mover, "_native_ground_route_cells", None)
+                if isinstance(route_cells, list):
+                    mover._ground_path_backwards = bool(
+                        getattr(mover, "_ground_path_cache_backwards", False)
+                    )
+                    return _cell_center(route_cells[0]) if route_cells else desired
+
     reference = backwards_reference or desired
     origin_dx = tiles_to_logic_units(mover.position.x - reference.x)
     origin_dy = tiles_to_logic_units(mover.position.y - reference.y)
-    origin_distance = math.isqrt(
-        origin_dx * origin_dx + origin_dy * origin_dy
-    )
+    origin_distance = math.isqrt(origin_dx * origin_dx + origin_dy * origin_dy)
 
     def route_moves_backwards(route_positions: tuple[Position, ...]) -> bool:
         for route_position in route_positions:
@@ -986,21 +1025,23 @@ def ground_path_waypoint(
         return False
 
     start = _cell_for_position(mover.position)
-    desired_cell = (
-        native_route_goal_cell(mover, target_entity)
-        if target_entity is not None
-        else _cell_for_position(desired)
-    )
+    if not _USE_EARLY_GROUND_PATH_CACHE_HIT:
+        desired_cell = (
+            native_route_goal_cell(mover, target_entity)
+            if target_entity is not None
+            else _cell_for_position(desired)
+        )
     if desired_cell is None:
         mover._ground_path_backwards = route_moves_backwards((desired,))
         return desired
     desired_waypoint = _cell_center(desired_cell)
-    if _USE_CACHED_GROUND_PATH_HOVER_TRAIT:
-        hovering = mover._is_hover_unit
-    else:
-        from .unit_traits import is_hover_unit_card
+    if not _USE_EARLY_GROUND_PATH_CACHE_HIT:
+        if _USE_CACHED_GROUND_PATH_HOVER_TRAIT:
+            hovering = mover._is_hover_unit
+        else:
+            from .unit_traits import is_hover_unit_card
 
-        hovering = is_hover_unit_card(getattr(mover, "card_stats", None))
+            hovering = is_hover_unit_card(getattr(mover, "card_stats", None))
     if hovering:
         waypoint = (
             native_single_node_waypoint(mover, target_entity)
@@ -1009,11 +1050,12 @@ def ground_path_waypoint(
         )
         mover._ground_path_backwards = route_moves_backwards((waypoint,))
         return waypoint
-    cache_key = (
-        desired_cell,
-        int(getattr(mover, "_native_lane_id", 0) or 0),
-        bool(getattr(getattr(mover, "card_stats", None), "jump_height", None)),
-    )
+    if not _USE_EARLY_GROUND_PATH_CACHE_HIT:
+        cache_key = (
+            desired_cell,
+            int(getattr(mover, "_native_lane_id", 0) or 0),
+            bool(getattr(getattr(mover, "card_stats", None), "jump_height", None)),
+        )
     if getattr(mover, "_ground_path_cache_key", None) == cache_key:
         route_cells = getattr(mover, "_native_ground_route_cells", None)
         if isinstance(route_cells, list):

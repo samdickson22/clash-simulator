@@ -69,6 +69,7 @@ def _parse_args() -> argparse.Namespace:
             "native-route-goal-row-interval",
             "compiled-native-route-goal",
             "sparse-idle-checks",
+            "early-ground-path-cache-hit",
         ),
         default="inline-position-quantization",
     )
@@ -116,8 +117,10 @@ def main() -> None:
         reference_mode, candidate_mode = "full-scan", "row-interval"
     elif args.comparison == "compiled-native-route-goal":
         reference_mode, candidate_mode = "python", "compiled"
-    else:
+    elif args.comparison == "sparse-idle-checks":
         reference_mode, candidate_mode = "per-tick", "sparse"
+    else:
+        reference_mode, candidate_mode = "late", "early"
 
     def run_once(mode: str, steps: int) -> dict[str, object]:
         if args.comparison == "inline-position-quantization":
@@ -154,10 +157,12 @@ def main() -> None:
             pathfinding._cached_native_route_goal_cell_units.cache_clear()
             pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
             pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
-        else:
+        elif args.comparison == "sparse-idle-checks":
             optimized = mode == candidate_mode
             battle_module._USE_SPARSE_IDLE_WIN_CHECKS = optimized
             selfplay_env_module._USE_TRUSTED_IDLE_ELIGIBILITY = optimized
+        else:
+            pathfinding._USE_EARLY_GROUND_PATH_CACHE_HIT = mode == candidate_mode
         torch.manual_seed(args.seed + 99)
         envs = [
             SelfPlayBattleEnv(
@@ -246,6 +251,7 @@ def main() -> None:
         pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
         battle_module._USE_SPARSE_IDLE_WIN_CHECKS = True
         selfplay_env_module._USE_TRUSTED_IDLE_ELIGIBILITY = True
+        pathfinding._USE_EARLY_GROUND_PATH_CACHE_HIT = True
 
     summary: dict[str, object] = {}
     for mode in (reference_mode, candidate_mode):

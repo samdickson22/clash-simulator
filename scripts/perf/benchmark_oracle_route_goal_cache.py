@@ -17,6 +17,11 @@ from clasher import pathfinding
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--comparison",
+        choices=("route-goal-cache", "early-ground-path-cache-hit"),
+        default="route-goal-cache",
+    )
     parser.add_argument("--seed", type=int, default=2301)
     parser.add_argument("--planner-seed", type=int, default=901)
     parser.add_argument("--states", type=int, default=3)
@@ -40,7 +45,10 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _run_variant(args, snapshots, variant: str) -> dict[str, float | str]:
-    pathfinding._USE_NATIVE_ROUTE_GOAL_CACHE = variant == "cached"
+    if args.comparison == "route-goal-cache":
+        pathfinding._USE_NATIVE_ROUTE_GOAL_CACHE = variant == "cached"
+    else:
+        pathfinding._USE_EARLY_GROUND_PATH_CACHE_HIT = variant == "early"
     if args.cache_state == "cold":
         pathfinding._cached_native_route_goal_cell_units.cache_clear()
     cache_info_before = pathfinding._cached_native_route_goal_cell_units.cache_info()
@@ -88,33 +96,40 @@ def _run_variant(args, snapshots, variant: str) -> dict[str, float | str]:
 
 def main() -> None:
     args = _parse_args()
+    variants = (
+        ("uncached", "cached")
+        if args.comparison == "route-goal-cache"
+        else ("late", "early")
+    )
     original_flag = pathfinding._USE_NATIVE_ROUTE_GOAL_CACHE
+    original_early = pathfinding._USE_EARLY_GROUND_PATH_CACHE_HIT
     try:
         snapshots = _snapshots(args)
         pathfinding._cached_native_route_goal_cell_units.cache_clear()
-        _run_variant(args, snapshots[:1], "uncached")
+        _run_variant(args, snapshots[:1], variants[0])
         _run_variant(
             args,
-            snapshots if args.cache_state == "warm" else snapshots[:1],
-            "cached",
+            (
+                snapshots
+                if args.cache_state == "warm"
+                else snapshots[:1]
+            ),
+            variants[1],
         )
         rows = []
         for repetition in range(args.repetitions):
-            order = (
-                ("uncached", "cached")
-                if repetition % 2 == 0
-                else ("cached", "uncached")
-            )
+            order = variants if repetition % 2 == 0 else tuple(reversed(variants))
             for variant in order:
                 row = _run_variant(args, snapshots, variant)
                 row["repetition"] = repetition
                 rows.append(row)
     finally:
         pathfinding._USE_NATIVE_ROUTE_GOAL_CACHE = original_flag
+        pathfinding._USE_EARLY_GROUND_PATH_CACHE_HIT = original_early
         pathfinding._cached_native_route_goal_cell_units.cache_clear()
 
     summary = {}
-    for variant in ("uncached", "cached"):
+    for variant in variants:
         selected = [row for row in rows if row["variant"] == variant]
         seconds = [float(row["seconds"]) for row in selected]
         rates = [float(row["labels_per_second"]) for row in selected]
@@ -130,9 +145,11 @@ def main() -> None:
             "cache_sizes": sorted({int(row["cache_size"]) for row in selected}),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    uncached = float(summary["uncached"]["seconds_median"])
-    cached = float(summary["cached"]["seconds_median"])
-    summary["cached_vs_uncached_percent"] = 100.0 * (uncached / cached - 1.0)
+    reference = float(summary[variants[0]]["seconds_median"])
+    candidate = float(summary[variants[1]]["seconds_median"])
+    summary[f"{variants[1]}_vs_{variants[0]}_percent"] = 100.0 * (
+        reference / candidate - 1.0
+    )
     print(
         json.dumps(
             {
