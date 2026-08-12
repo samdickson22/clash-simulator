@@ -219,6 +219,11 @@ _USE_EXACT_TARGET_BUCKET_BOUND = True
 # attack reach can exceed the configured Crown visibility reach.
 _USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK = True
 
+# A river jump is considered only for a walkable origin and an unwalkable
+# endpoint. Test the endpoint first so ordinary valid movement avoids a second
+# terrain/building query.
+_USE_ENDPOINT_FIRST_RIVER_JUMP_CHECK = True
+
 # Reference/benchmark switch. Native Crown layouts can validate the preferred
 # Princess objective first and avoid dynamic validation of objectives that
 # cannot win the serialized horizontal preference.
@@ -4452,16 +4457,34 @@ class Troop(Entity):
                 self.position = new_position
                 self_movement = move_distance
             else:
-                if (
+                crosses_walkability_boundary = bool(
                     battle_state is not None
-                    and battle_state.is_ground_position_walkable(
-                        self.position,
-                        self,
+                    and (
+                        (
+                            not battle_state.is_ground_position_walkable(
+                                new_position,
+                                self,
+                            )
+                            and battle_state.is_ground_position_walkable(
+                                self.position,
+                                self,
+                            )
+                        )
+                        if _USE_ENDPOINT_FIRST_RIVER_JUMP_CHECK
+                        else (
+                            battle_state.is_ground_position_walkable(
+                                self.position,
+                                self,
+                            )
+                            and not battle_state.is_ground_position_walkable(
+                                new_position,
+                                self,
+                            )
+                        )
                     )
-                    and not battle_state.is_ground_position_walkable(
-                        new_position,
-                        self,
-                    )
+                )
+                if (
+                    crosses_walkability_boundary
                     and self._try_start_river_jump(
                         route_goal,
                         new_position,

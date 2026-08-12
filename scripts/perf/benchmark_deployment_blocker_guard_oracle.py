@@ -190,6 +190,7 @@ def _parse_args() -> argparse.Namespace:
             "inline-building-overlap",
             "conditional-combat-quantization",
             "bounded-building-crown-fallback",
+            "endpoint-first-river-jump-check",
         ),
         default="guard",
     )
@@ -244,6 +245,10 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     elif args.comparison == "bounded-building-crown-fallback":
         entities_module._USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK = (
             mode == "bounded"
+        )
+    elif args.comparison == "endpoint-first-river-jump-check":
+        entities_module._USE_ENDPOINT_FIRST_RIVER_JUMP_CHECK = (
+            mode == "endpoint-first"
         )
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
@@ -441,6 +446,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         "inline-building-overlap",
         "conditional-combat-quantization",
         "bounded-building-crown-fallback",
+        "endpoint-first-river-jump-check",
     }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -516,6 +522,8 @@ def main() -> None:
         reference_mode, candidate_mode = "per-entity", "conditional"
     elif args.comparison == "bounded-building-crown-fallback":
         reference_mode, candidate_mode = "unbounded", "bounded"
+    elif args.comparison == "endpoint-first-river-jump-check":
+        reference_mode, candidate_mode = "origin-first", "endpoint-first"
     else:
         reference_mode, candidate_mode = "generic", "specialized"
     for mode in (reference_mode, candidate_mode):

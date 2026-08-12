@@ -25,6 +25,7 @@ def _parse_args() -> argparse.Namespace:
         choices=(
             "conditional-combat-quantization",
             "bounded-building-crown-fallback",
+            "endpoint-first-river-jump-check",
         ),
         default="conditional-combat-quantization",
     )
@@ -45,9 +46,13 @@ def _run(args: argparse.Namespace, mode: str) -> dict[str, object]:
         battle_module._USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION = (
             mode == "conditional"
         )
-    else:
+    elif args.comparison == "bounded-building-crown-fallback":
         entities_module._USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK = (
             mode == "bounded"
+        )
+    else:
+        entities_module._USE_ENDPOINT_FIRST_RIVER_JUMP_CHECK = (
+            mode == "endpoint-first"
         )
     argv = [
         "benchmark_stationary_rollout.py",
@@ -97,11 +102,13 @@ def main() -> None:
     original_fallback_flag = (
         entities_module._USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK
     )
-    reference_mode, candidate_mode = (
-        ("per-entity", "conditional")
-        if args.comparison == "conditional-combat-quantization"
-        else ("unbounded", "bounded")
-    )
+    original_endpoint_flag = entities_module._USE_ENDPOINT_FIRST_RIVER_JUMP_CHECK
+    if args.comparison == "conditional-combat-quantization":
+        reference_mode, candidate_mode = "per-entity", "conditional"
+    elif args.comparison == "bounded-building-crown-fallback":
+        reference_mode, candidate_mode = "unbounded", "bounded"
+    else:
+        reference_mode, candidate_mode = "origin-first", "endpoint-first"
     rows: list[dict[str, object]] = []
     try:
         for mode in (reference_mode, candidate_mode):
@@ -120,6 +127,9 @@ def main() -> None:
         battle_module._USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION = original_flag
         entities_module._USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK = (
             original_fallback_flag
+        )
+        entities_module._USE_ENDPOINT_FIRST_RIVER_JUMP_CHECK = (
+            original_endpoint_flag
         )
 
     summary: dict[str, object] = {}
