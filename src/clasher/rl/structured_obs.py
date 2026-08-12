@@ -95,8 +95,16 @@ def _safe_float(value: Any, default: float = 0.0) -> float:
     return result if math.isfinite(result) else default
 
 
-def _unit_clip(value: float) -> float:
+def _unit_clip_numpy(value: float) -> float:
     return float(np.clip(value, 0.0, 1.0))
+
+
+def _unit_clip(value: float) -> float:
+    if value < 0.0:
+        return 0.0
+    if value > 1.0:
+        return 1.0
+    return float(value)
 
 
 class StructuredObservationBuilder:

@@ -16,6 +16,7 @@ from clasher import battle as battle_module
 from clasher import entities as entities_module
 from clasher import unit_traits
 from clasher.battle import BattleState
+from clasher.rl import structured_obs as structured_obs_module
 from clasher.rl import train_recurrent as train_recurrent_module
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
@@ -146,6 +147,12 @@ def _parse_args() -> argparse.Namespace:
         default="preallocated",
         help="select duplicate stacking or reusable CPU actor step buffers",
     )
+    parser.add_argument(
+        "--unit-clip",
+        choices=("numpy", "scalar", "both"),
+        default="scalar",
+        help="select NumPy-dispatched or exact scalar feature clipping",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -228,9 +235,20 @@ def main() -> None:
     model = ClasherPolicy(config, builder.card_stat_features)
     model.eval()
 
-    def run_once(steps: int, observation_buffers: str) -> dict[str, float | str]:
+    scalar_unit_clip = structured_obs_module._unit_clip
+
+    def run_once(
+        steps: int,
+        observation_buffers: str,
+        unit_clip: str,
+    ) -> dict[str, float | str]:
         train_recurrent_module._USE_PREALLOCATED_STEP_OBSERVATION_BUFFERS = (
             observation_buffers == "preallocated"
+        )
+        structured_obs_module._unit_clip = (
+            structured_obs_module._unit_clip_numpy
+            if unit_clip == "numpy"
+            else scalar_unit_clip
         )
         torch.manual_seed(args.seed + 99)
         envs = [
@@ -274,31 +292,51 @@ def main() -> None:
         elapsed = time.perf_counter() - started
         return {
             "observation_buffers": observation_buffers,
+            "unit_clip": unit_clip,
             "elapsed_s": elapsed,
             "decisions_per_s": args.num_envs * steps / elapsed,
             "sha256": _digest_rollout(result[0], envs),
         }
 
-    variants = (
+    observation_buffer_variants = (
         ("stacked", "preallocated")
         if args.observation_buffers == "both"
         else (args.observation_buffers,)
     )
+    unit_clip_variants = (
+        ("numpy", "scalar") if args.unit_clip == "both" else (args.unit_clip,)
+    )
+    variants = tuple(
+        (observation_buffers, unit_clip)
+        for observation_buffers in observation_buffer_variants
+        for unit_clip in unit_clip_variants
+    )
     if args.warmup_steps:
-        for variant in variants:
-            run_once(args.warmup_steps, variant)
+        for observation_buffers, unit_clip in variants:
+            run_once(args.warmup_steps, observation_buffers, unit_clip)
     rows = []
     for repetition in range(args.repetitions):
         order = variants if repetition % 2 == 0 else tuple(reversed(variants))
-        for variant in order:
-            row = run_once(args.rollout_steps, variant)
+        for observation_buffers, unit_clip in order:
+            row = run_once(args.rollout_steps, observation_buffers, unit_clip)
             row["repetition"] = repetition
             rows.append(row)
     elapsed = [float(row["elapsed_s"]) for row in rows]
     rates = [float(row["decisions_per_s"]) for row in rows]
     summary = {}
-    for variant in variants:
-        selected = [row for row in rows if row["observation_buffers"] == variant]
+    for observation_buffers, unit_clip in variants:
+        if len(unit_clip_variants) == 1:
+            variant = observation_buffers
+        elif len(observation_buffer_variants) == 1:
+            variant = unit_clip
+        else:
+            variant = f"{observation_buffers}/{unit_clip}"
+        selected = [
+            row
+            for row in rows
+            if row["observation_buffers"] == observation_buffers
+            and row["unit_clip"] == unit_clip
+        ]
         summary[variant] = {
             "median_elapsed_s": statistics.median(
                 float(row["elapsed_s"]) for row in selected
@@ -308,11 +346,17 @@ def main() -> None:
             ),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    if len(variants) == 2:
+    if args.observation_buffers == "both" and args.unit_clip != "both":
         stacked = float(summary["stacked"]["median_elapsed_s"])
         preallocated = float(summary["preallocated"]["median_elapsed_s"])
         summary["preallocated_vs_stacked_percent"] = 100.0 * (
             stacked / preallocated - 1.0
+        )
+    if args.unit_clip == "both" and args.observation_buffers != "both":
+        numpy_elapsed = float(summary["numpy"]["median_elapsed_s"])
+        scalar_elapsed = float(summary["scalar"]["median_elapsed_s"])
+        summary["scalar_vs_numpy_percent"] = 100.0 * (
+            numpy_elapsed / scalar_elapsed - 1.0
         )
     print(
         json.dumps(
@@ -343,6 +387,7 @@ def main() -> None:
                 "collision_radius": args.collision_radius,
                 "target_plane_checks": args.target_plane_checks,
                 "observation_buffers": args.observation_buffers,
+                "unit_clip": args.unit_clip,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,
