@@ -16,6 +16,10 @@ from .reward_model import objective_potential_p0
 from .structured_obs import StructuredObservationBuilder
 
 
+# Reference/benchmark switch. The env has just performed the same exact idle
+# eligibility check before dispatching the bounded fast-forward operation.
+_USE_TRUSTED_IDLE_ELIGIBILITY = True
+
 @dataclass
 class StepInfo:
     action_success: Dict[int, bool]
@@ -224,7 +228,10 @@ class SelfPlayBattleEnv:
                 max(0, self.max_ticks - self.battle.tick),
             )
             if remaining_ticks > 0:
-                ticks = self.battle.fast_forward_idle_ticks(remaining_ticks)
+                ticks = self.battle.fast_forward_idle_ticks(
+                    remaining_ticks,
+                    eligibility_checked=_USE_TRUSTED_IDLE_ELIGIBILITY,
+                )
         else:
             remaining_ticks = min(
                 self.decision_interval_ticks,

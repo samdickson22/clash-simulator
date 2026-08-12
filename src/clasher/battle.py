@@ -86,6 +86,10 @@ _USE_ROW_MAJOR_BUCKET_SCAN = True
 # rebuild that created the current entity bucket grid.
 _USE_CACHED_BUCKET_GEOMETRY = True
 
+# Reference/benchmark switch. Idle eligibility proves tower HP and crowns stay
+# fixed, so win checks are needed only when a timer boundary becomes actionable.
+_USE_SPARSE_IDLE_WIN_CHECKS = True
+
 # Reference/benchmark switch for trusting the exact live-Building membership
 # contract immediately after the fast placement cache refresh.
 _USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP = True
@@ -1445,9 +1449,16 @@ class BattleState:
         if self.time >= self.triple_elixir_start_time:
             self.triple_elixir = True
 
-    def fast_forward_idle_ticks(self, ticks: int) -> int:
+    def fast_forward_idle_ticks(
+        self,
+        ticks: int,
+        *,
+        eligibility_checked: bool = False,
+    ) -> int:
         """Advance multiple idle ticks when only static towers remain."""
-        if ticks <= 0 or not self.can_fast_forward_idle():
+        if ticks <= 0 or (
+            not eligibility_checked and not self.can_fast_forward_idle()
+        ):
             return 0
         advanced = 0
         for _ in range(ticks):
@@ -1479,7 +1490,18 @@ class BattleState:
                 ):
                     entity.last_attack_time += dt
             advanced += 1
-            self._check_win_conditions()
+            if (
+                not _USE_SPARSE_IDLE_WIN_CHECKS
+                or (
+                    not self.sudden_death
+                    and self.time >= self.overtime_start_time
+                )
+                or (
+                    self.sudden_death
+                    and self.time >= self.tiebreaker_time
+                )
+            ):
+                self._check_win_conditions()
             if self.game_over:
                 break
         return advanced

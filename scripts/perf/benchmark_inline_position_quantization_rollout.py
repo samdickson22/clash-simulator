@@ -21,6 +21,7 @@ from clasher import battle as battle_module
 from clasher import entities as entities_module
 from clasher import pathfinding
 from clasher.entities import Entity
+from clasher.rl import selfplay_env as selfplay_env_module
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.strategy_bots import StrategyBot
@@ -67,6 +68,7 @@ def _parse_args() -> argparse.Namespace:
             "inline-building-overlap",
             "native-route-goal-row-interval",
             "compiled-native-route-goal",
+            "sparse-idle-checks",
         ),
         default="inline-position-quantization",
     )
@@ -112,8 +114,10 @@ def main() -> None:
         reference_mode, candidate_mode = "helpers", "inline"
     elif args.comparison == "native-route-goal-row-interval":
         reference_mode, candidate_mode = "full-scan", "row-interval"
-    else:
+    elif args.comparison == "compiled-native-route-goal":
         reference_mode, candidate_mode = "python", "compiled"
+    else:
+        reference_mode, candidate_mode = "per-tick", "sparse"
 
     def run_once(mode: str, steps: int) -> dict[str, object]:
         if args.comparison == "inline-position-quantization":
@@ -144,12 +148,16 @@ def main() -> None:
             pathfinding._cached_native_route_goal_cell_units.cache_clear()
             pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
             pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
-        else:
+        elif args.comparison == "compiled-native-route-goal":
             pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = True
             pathfinding._USE_COMPILED_NATIVE_ROUTE_GOAL = mode == candidate_mode
             pathfinding._cached_native_route_goal_cell_units.cache_clear()
             pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
             pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
+        else:
+            optimized = mode == candidate_mode
+            battle_module._USE_SPARSE_IDLE_WIN_CHECKS = optimized
+            selfplay_env_module._USE_TRUSTED_IDLE_ELIGIBILITY = optimized
         torch.manual_seed(args.seed + 99)
         envs = [
             SelfPlayBattleEnv(
@@ -236,6 +244,8 @@ def main() -> None:
         pathfinding._cached_native_route_goal_cell_units.cache_clear()
         pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
         pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
+        battle_module._USE_SPARSE_IDLE_WIN_CHECKS = True
+        selfplay_env_module._USE_TRUSTED_IDLE_ELIGIBILITY = True
 
     summary: dict[str, object] = {}
     for mode in (reference_mode, candidate_mode):
