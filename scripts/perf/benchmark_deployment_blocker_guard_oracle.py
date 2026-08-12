@@ -24,6 +24,8 @@ _CARD_STATS_DEEPCOPY = CardStatsCompat.__deepcopy__
 _ENTITY_DEEPCOPY = Entity.__deepcopy__
 _PLAYER_DEEPCOPY = PlayerState.__deepcopy__
 _ENTITY_QUANTIZE_POSITION = Entity.quantize_logic_position
+_ENTITY_CAN_ATTACK_AIR = Entity._can_attack_air
+_ENTITY_CAN_ATTACK_GROUND = Entity._can_attack_ground
 
 
 def _quantize_position_reference(self: Entity) -> None:
@@ -32,6 +34,18 @@ def _quantize_position_reference(self: Entity) -> None:
     )
     self.position.y = entities_module.logic_units_to_tiles(
         entities_module.tiles_to_logic_units(self.position.y)
+    )
+
+
+def _can_attack_air_reference(self: Entity) -> bool:
+    return entities_module._can_attack_air_from_card_stats(
+        getattr(self, "card_stats", None)
+    )
+
+
+def _can_attack_ground_reference(self: Entity) -> bool:
+    return entities_module._can_attack_ground_from_card_stats(
+        getattr(self, "card_stats", None)
     )
 
 
@@ -123,6 +137,7 @@ def _parse_args() -> argparse.Namespace:
             "entity-deepcopy",
             "player-deepcopy",
             "inline-position-quantization",
+            "cached-target-capabilities",
         ),
         default="guard",
     )
@@ -157,6 +172,13 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
             if mode == "inline"
             else _quantize_position_reference
         )
+    elif args.comparison == "cached-target-capabilities":
+        if mode == "cached":
+            Entity._can_attack_air = _ENTITY_CAN_ATTACK_AIR
+            Entity._can_attack_ground = _ENTITY_CAN_ATTACK_GROUND
+        else:
+            Entity._can_attack_air = _can_attack_air_reference
+            Entity._can_attack_ground = _can_attack_ground_reference
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
@@ -345,6 +367,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         "entity-deepcopy",
         "player-deepcopy",
         "inline-position-quantization",
+        "cached-target-capabilities",
     }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -410,6 +433,8 @@ def main() -> None:
         reference_mode, candidate_mode = "all-values", "atomic"
     elif args.comparison == "inline-position-quantization":
         reference_mode, candidate_mode = "helpers", "inline"
+    elif args.comparison == "cached-target-capabilities":
+        reference_mode, candidate_mode = "runtime", "cached"
     else:
         reference_mode, candidate_mode = "generic", "specialized"
     for mode in (reference_mode, candidate_mode):

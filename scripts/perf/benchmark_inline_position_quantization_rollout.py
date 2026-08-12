@@ -23,6 +23,8 @@ from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rl.train_recurrent import collect_rollout_stationary_opponents
 
 _INLINE_QUANTIZE_POSITION = Entity.quantize_logic_position
+_CACHED_CAN_ATTACK_AIR = Entity._can_attack_air
+_CACHED_CAN_ATTACK_GROUND = Entity._can_attack_ground
 
 
 def _quantize_position_reference(self: Entity) -> None:
@@ -34,8 +36,25 @@ def _quantize_position_reference(self: Entity) -> None:
     )
 
 
+def _can_attack_air_reference(self: Entity) -> bool:
+    return entities_module._can_attack_air_from_card_stats(
+        getattr(self, "card_stats", None)
+    )
+
+
+def _can_attack_ground_reference(self: Entity) -> bool:
+    return entities_module._can_attack_ground_from_card_stats(
+        getattr(self, "card_stats", None)
+    )
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--comparison",
+        choices=("inline-position-quantization", "cached-target-capabilities"),
+        default="inline-position-quantization",
+    )
     parser.add_argument("--workload", choices=("random", "strategy"), required=True)
     parser.add_argument("--strategy", default="balanced")
     parser.add_argument("--seed", type=int, default=2301)
@@ -68,13 +87,24 @@ def main() -> None:
     )
     torch.manual_seed(91)
     model = ClasherPolicy(config, builder.card_stat_features).eval()
+    if args.comparison == "inline-position-quantization":
+        reference_mode, candidate_mode = "helpers", "inline"
+    else:
+        reference_mode, candidate_mode = "runtime", "cached"
 
     def run_once(mode: str, steps: int) -> dict[str, object]:
-        Entity.quantize_logic_position = (
-            _INLINE_QUANTIZE_POSITION
-            if mode == "inline"
-            else _quantize_position_reference
-        )
+        if args.comparison == "inline-position-quantization":
+            Entity.quantize_logic_position = (
+                _INLINE_QUANTIZE_POSITION
+                if mode == candidate_mode
+                else _quantize_position_reference
+            )
+        elif mode == candidate_mode:
+            Entity._can_attack_air = _CACHED_CAN_ATTACK_AIR
+            Entity._can_attack_ground = _CACHED_CAN_ATTACK_GROUND
+        else:
+            Entity._can_attack_air = _can_attack_air_reference
+            Entity._can_attack_ground = _can_attack_ground_reference
         torch.manual_seed(args.seed + 99)
         envs = [
             SelfPlayBattleEnv(
@@ -135,14 +165,14 @@ def main() -> None:
         }
 
     try:
-        for mode in ("helpers", "inline"):
+        for mode in (reference_mode, candidate_mode):
             run_once(mode, args.warmup_steps)
         rows = []
         for repetition in range(args.repetitions):
             order = (
-                ("helpers", "inline")
+                (reference_mode, candidate_mode)
                 if repetition % 2 == 0
-                else ("inline", "helpers")
+                else (candidate_mode, reference_mode)
             )
             for mode in order:
                 row = run_once(mode, args.rollout_steps)
@@ -150,9 +180,11 @@ def main() -> None:
                 rows.append(row)
     finally:
         Entity.quantize_logic_position = _INLINE_QUANTIZE_POSITION
+        Entity._can_attack_air = _CACHED_CAN_ATTACK_AIR
+        Entity._can_attack_ground = _CACHED_CAN_ATTACK_GROUND
 
     summary: dict[str, object] = {}
-    for mode in ("helpers", "inline"):
+    for mode in (reference_mode, candidate_mode):
         selected = [row for row in rows if row["mode"] == mode]
         summary[mode] = {
             "seconds_median": statistics.median(
@@ -169,13 +201,14 @@ def main() -> None:
                 int(row["mask_shadow_mismatches"]) for row in selected
             ),
         }
-    helpers = float(summary["helpers"]["seconds_median"])  # type: ignore[index]
-    inline = float(summary["inline"]["seconds_median"])  # type: ignore[index]
-    summary["inline_vs_helpers_percent"] = 100.0 * (helpers / inline - 1.0)
-    summary["paired_inline_vs_helpers_percent"] = _paired_gain_summary(
+    reference = float(summary[reference_mode]["seconds_median"])  # type: ignore[index]
+    candidate = float(summary[candidate_mode]["seconds_median"])  # type: ignore[index]
+    comparison_name = f"{candidate_mode}_vs_{reference_mode}_percent"
+    summary[comparison_name] = 100.0 * (reference / candidate - 1.0)
+    summary[f"paired_{comparison_name}"] = _paired_gain_summary(
         rows,
-        "helpers",
-        "inline",
+        reference_mode,
+        candidate_mode,
     )
     print(
         json.dumps(

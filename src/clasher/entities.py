@@ -273,6 +273,30 @@ _ENTITY_DEEPCOPY_ATOMIC_TYPES = frozenset(
 )
 
 
+def _can_attack_air_from_card_stats(card_stats: Any) -> bool:
+    if not card_stats:
+        return True
+    target_type = getattr(card_stats, "target_type", None)
+    if target_type in {"TID_TARGETS_AIR", "TID_TARGETS_AIR_AND_GROUND"}:
+        return True
+    return bool(getattr(card_stats, "attacks_air", False))
+
+
+def _can_attack_ground_from_card_stats(card_stats: Any) -> bool:
+    if not card_stats:
+        return True
+    target_type = getattr(card_stats, "target_type", None)
+    if target_type in {
+        "TID_TARGETS_GROUND",
+        "TID_TARGETS_AIR_AND_GROUND",
+        "TID_TARGETS_BUILDINGS",
+        "TID_TARGETS_GROUND_AND_BUILDINGS",
+        "TID_TARGETS_BUILDINGS_AND_GROUND",
+    }:
+        return True
+    return bool(getattr(card_stats, "attacks_ground", True))
+
+
 @dataclass
 class Entity(ABC):
     id: int
@@ -412,6 +436,8 @@ class Entity(ABC):
     # object is spawned. Ground default-target selection keeps using this
     # stored lane even after collision or displacement moves the character.
     _native_lane_id: int = field(default=0, repr=False)
+    _can_attack_air_cached: bool = field(default=True, init=False, repr=False)
+    _can_attack_ground_cached: bool = field(default=True, init=False, repr=False)
 
     # Mechanics system
     mechanics: List[Mechanic] = field(default_factory=list)
@@ -440,6 +466,12 @@ class Entity(ABC):
         self._unit_mass = unit_mass(self.card_stats)
         collision_radius = getattr(self.card_stats, "collision_radius", None)
         self._collision_radius = float(collision_radius or 0.5)
+        self._can_attack_air_cached = _can_attack_air_from_card_stats(
+            self.card_stats
+        )
+        self._can_attack_ground_cached = _can_attack_ground_from_card_stats(
+            self.card_stats
+        )
         # Classify by the gameplay base type, not the concrete class name.
         # Exact-name checks silently turn specialized/custom subclasses into
         # ``other`` entities, which makes targeting, collision, and effects
@@ -3246,29 +3278,11 @@ class Entity(ABC):
 
     def _can_attack_air(self) -> bool:
         """Return True if this entity can attack air units."""
-        card_stats = getattr(self, "card_stats", None)
-        if not card_stats:
-            return True
-        target_type = getattr(card_stats, "target_type", None)
-        if target_type in {"TID_TARGETS_AIR", "TID_TARGETS_AIR_AND_GROUND"}:
-            return True
-        return bool(getattr(card_stats, "attacks_air", False))
+        return self._can_attack_air_cached
 
     def _can_attack_ground(self) -> bool:
         """Return True if this entity can attack ground units."""
-        card_stats = getattr(self, "card_stats", None)
-        if not card_stats:
-            return True
-        target_type = getattr(card_stats, "target_type", None)
-        if target_type in {
-            "TID_TARGETS_GROUND",
-            "TID_TARGETS_AIR_AND_GROUND",
-            "TID_TARGETS_BUILDINGS",
-            "TID_TARGETS_GROUND_AND_BUILDINGS",
-            "TID_TARGETS_BUILDINGS_AND_GROUND",
-        }:
-            return True
-        return bool(getattr(card_stats, "attacks_ground", True))
+        return self._can_attack_ground_cached
 
 
 @dataclass
