@@ -218,6 +218,23 @@ _USE_EXACT_TARGET_BUCKET_BOUND = True
 # cannot win the serialized horizontal preference.
 _USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
 
+# Reference/benchmark switch. Reuse a module-level dynamic Crown validator
+# instead of allocating the same nested closure on every fallback query.
+_USE_HOISTED_CROWN_FALLBACK_VALIDATOR = True
+
+
+def _valid_cached_crown_candidate(
+    attacker: 'Entity',
+    entity: 'Entity',
+    can_attack_air: bool,
+    can_attack_ground: bool,
+) -> bool:
+    if not attacker._is_valid_target(entity):
+        return False
+    is_air = is_airborne_target(entity)
+    return (not is_air or can_attack_air) and (is_air or can_attack_ground)
+
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -2631,34 +2648,80 @@ class Entity(ABC):
                 if len(princesses) > 2:
                     return _CROWN_FALLBACK_UNHANDLED
 
-        def valid(entity: Entity) -> bool:
-            if not self._is_valid_target(entity):
-                return False
-            is_air = is_airborne_target(entity)
-            return (not is_air or can_attack_air) and (
-                is_air or can_attack_ground
-            )
+        if not _USE_HOISTED_CROWN_FALLBACK_VALIDATOR:
+
+            def valid(entity: Entity) -> bool:
+                if not self._is_valid_target(entity):
+                    return False
+                is_air = is_airborne_target(entity)
+                return (not is_air or can_attack_air) and (
+                    is_air or can_attack_ground
+                )
 
         if len(princesses) == 1:
-            if valid(princesses[0]):
+            if (
+                _valid_cached_crown_candidate(
+                    self,
+                    princesses[0],
+                    can_attack_air,
+                    can_attack_ground,
+                )
+                if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                else valid(princesses[0])
+            ):
                 return princesses[0]
         elif len(princesses) == 2:
             first, second = princesses
             first_x = abs(first.position.x - self.position.x)
             second_x = abs(second.position.x - self.position.x)
             if first_x + GEOMETRY_BOUNDARY_EPSILON < second_x:
-                if valid(first):
+                if (
+                    _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    )
+                    if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                    else valid(first)
+                ):
                     return first
-                if valid(second):
+                if (
+                    _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    )
+                    if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                    else valid(second)
+                ):
                     return second
             elif second_x + GEOMETRY_BOUNDARY_EPSILON < first_x:
-                if valid(second):
+                if (
+                    _valid_cached_crown_candidate(
+                        self, second, can_attack_air, can_attack_ground
+                    )
+                    if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                    else valid(second)
+                ):
                     return second
-                if valid(first):
+                if (
+                    _valid_cached_crown_candidate(
+                        self, first, can_attack_air, can_attack_ground
+                    )
+                    if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                    else valid(first)
+                ):
                     return first
             else:
                 valid_princesses = [
-                    entity for entity in princesses if valid(entity)
+                    entity
+                    for entity in princesses
+                    if (
+                        _valid_cached_crown_candidate(
+                            self,
+                            entity,
+                            can_attack_air,
+                            can_attack_ground,
+                        )
+                        if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                        else valid(entity)
+                    )
                 ]
                 if len(valid_princesses) == 1:
                     return valid_princesses[0]
@@ -2669,8 +2732,19 @@ class Entity(ABC):
                             for entity in valid_princesses
                         ]
                     )
-        if king is not None and valid(king):
-            return king
+        if king is not None:
+            king_is_valid = (
+                _valid_cached_crown_candidate(
+                    self,
+                    king,
+                    can_attack_air,
+                    can_attack_ground,
+                )
+                if _USE_HOISTED_CROWN_FALLBACK_VALIDATOR
+                else valid(king)
+            )
+            if king_is_valid:
+                return king
         return None
 
     def _single_pass_cached_crown_fallback(
