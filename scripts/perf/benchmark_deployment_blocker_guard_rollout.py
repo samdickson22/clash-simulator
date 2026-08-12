@@ -86,6 +86,7 @@ def _parse_args() -> argparse.Namespace:
             "target-entity-kind",
             "crown-fallback",
             "movement-building-refresh",
+            "lazy-card-materialization",
         ),
         default="guard",
     )
@@ -122,8 +123,10 @@ def main() -> None:
         reference_variant, candidate_variant = "getattr", "direct"
     elif args.comparison == "crown-fallback":
         reference_variant, candidate_variant = "partitioned", "single-pass"
-    else:
+    elif args.comparison == "movement-building-refresh":
         reference_variant, candidate_variant = "repeated", "coalesced"
+    else:
+        reference_variant, candidate_variant = "eager", "lazy"
 
     def run_once(variant: str, steps: int) -> dict[str, float | str | int]:
         if args.comparison == "guard":
@@ -135,6 +138,7 @@ def main() -> None:
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
             entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
             battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = False
         elif args.comparison == "inference-mode":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = (
@@ -144,6 +148,7 @@ def main() -> None:
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
             entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
             battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = False
         elif args.comparison == "targetability-requirement":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
@@ -153,6 +158,7 @@ def main() -> None:
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
             entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
             battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = False
         elif args.comparison == "target-entity-kind":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
@@ -162,6 +168,7 @@ def main() -> None:
             )
             entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
             battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = False
         elif args.comparison == "crown-fallback":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
@@ -171,7 +178,8 @@ def main() -> None:
                 variant == candidate_variant
             )
             battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
-        else:
+            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = False
+        elif args.comparison == "movement-building-refresh":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -180,7 +188,20 @@ def main() -> None:
             battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = (
                 variant == candidate_variant
             )
+            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = False
+        else:
+            action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+            train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
+            battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+            battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+            entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+            battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = (
+                variant == reference_variant
+            )
         torch.manual_seed(args.seed + 99)
+        if args.comparison == "lazy-card-materialization":
+            started = time.perf_counter()
         envs = [
             SelfPlayBattleEnv(
                 seed=args.seed + env_index,
@@ -196,7 +217,8 @@ def main() -> None:
         no_op = envs[0].action_space.no_op_action
         zeros = np.zeros((args.num_envs,), dtype=np.float32)
         starts = np.ones((args.num_envs,), dtype=np.bool_)
-        started = time.perf_counter()
+        if args.comparison != "lazy-card-materialization":
+            started = time.perf_counter()
         result = collect_rollout_stationary_opponents(
             envs=envs,
             learner_players=tuple(index % 2 for index in range(args.num_envs)),

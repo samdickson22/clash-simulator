@@ -101,6 +101,10 @@ _USE_DIRECT_TARGET_ENTITY_KIND = True
 # publication across the controlled movement phase, with explicit invalidation.
 _COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
 
+# Reference/benchmark switch for the legacy eager creation of every mutable
+# card wrapper when a battle starts. Normal lookups materialize wrappers lazily.
+_EAGERLY_MATERIALIZE_BATTLE_CARDS = False
+
 @dataclass(frozen=True)
 class PendingSpellCast:
     """A spell command waiting for the server's universal action delay."""
@@ -269,7 +273,8 @@ class BattleState:
     
     def __post_init__(self) -> None:
         """Initialize battle state"""
-        self.card_loader.load_cards()
+        if _EAGERLY_MATERIALIZE_BATTLE_CARDS:
+            self.card_loader.load_cards()
         self._create_towers()
         # PlayerState is also used as the public tower-health view.  Seed it
         # from the actual tower entities so level/balance data and the public
