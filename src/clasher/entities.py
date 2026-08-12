@@ -215,6 +215,10 @@ _USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
 # extension, and spawn-priority distance discount instead of a generic halo.
 _USE_EXACT_TARGET_BUCKET_BOUND = True
 
+# Immobile buildings need an infinite-sight Crown fallback only when their
+# attack reach can exceed the configured Crown visibility reach.
+_USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK = True
+
 # Reference/benchmark switch. Native Crown layouts can validate the preferred
 # Princess objective first and avoid dynamic validation of objectives that
 # cannot win the serialized horizontal preference.
@@ -4862,7 +4866,16 @@ class Building(Entity):
             or not self.is_within_target_keep_reach(target)
         ):
             self.target_id = None
-            target = self.get_nearest_target(battle_state.entities)
+            include_crown_fallback = bool(
+                not _USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK
+                or self.range
+                > self.sight_range
+                + float(EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS) / 1000.0
+            )
+            target = self.get_nearest_target(
+                battle_state.entities,
+                include_crown_fallback=include_crown_fallback,
+            )
             if target is not None and not self.can_attack_target(target):
                 target = None
             self.target_id = target.id if target else None

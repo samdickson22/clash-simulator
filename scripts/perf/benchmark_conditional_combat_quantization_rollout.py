@@ -15,10 +15,19 @@ import benchmark_stationary_rollout
 from benchmark_deployment_blocker_guard_oracle import _paired_gain_summary
 
 from clasher import battle as battle_module
+from clasher import entities as entities_module
 
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--comparison",
+        choices=(
+            "conditional-combat-quantization",
+            "bounded-building-crown-fallback",
+        ),
+        default="conditional-combat-quantization",
+    )
     parser.add_argument("--workload", choices=("random", "strategy"), required=True)
     parser.add_argument("--strategy", default="balanced")
     parser.add_argument("--seed", type=int, default=9079)
@@ -32,9 +41,14 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _run(args: argparse.Namespace, mode: str) -> dict[str, object]:
-    battle_module._USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION = (
-        mode == "conditional"
-    )
+    if args.comparison == "conditional-combat-quantization":
+        battle_module._USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION = (
+            mode == "conditional"
+        )
+    else:
+        entities_module._USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK = (
+            mode == "bounded"
+        )
     argv = [
         "benchmark_stationary_rollout.py",
         "--workload",
@@ -80,15 +94,23 @@ def _run(args: argparse.Namespace, mode: str) -> dict[str, object]:
 def main() -> None:
     args = _parse_args()
     original_flag = battle_module._USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION
+    original_fallback_flag = (
+        entities_module._USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK
+    )
+    reference_mode, candidate_mode = (
+        ("per-entity", "conditional")
+        if args.comparison == "conditional-combat-quantization"
+        else ("unbounded", "bounded")
+    )
     rows: list[dict[str, object]] = []
     try:
-        for mode in ("per-entity", "conditional"):
+        for mode in (reference_mode, candidate_mode):
             _run(args, mode)
         for repetition in range(args.repetitions):
             modes = (
-                ("per-entity", "conditional")
+                (reference_mode, candidate_mode)
                 if repetition % 2 == 0
-                else ("conditional", "per-entity")
+                else (candidate_mode, reference_mode)
             )
             for mode in modes:
                 row = _run(args, mode)
@@ -96,9 +118,12 @@ def main() -> None:
                 rows.append(row)
     finally:
         battle_module._USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION = original_flag
+        entities_module._USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK = (
+            original_fallback_flag
+        )
 
     summary: dict[str, object] = {}
-    for mode in ("per-entity", "conditional"):
+    for mode in (reference_mode, candidate_mode):
         selected = [row for row in rows if row["mode"] == mode]
         seconds = [float(row["seconds"]) for row in selected]
         rates = [float(row["decisions_per_second"]) for row in selected]
@@ -109,15 +134,15 @@ def main() -> None:
             "decisions_per_second_median": statistics.median(rates),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    reference = float(summary["per-entity"]["seconds_median"])  # type: ignore[index]
-    candidate = float(summary["conditional"]["seconds_median"])  # type: ignore[index]
-    summary["conditional_vs_per_entity_percent"] = 100.0 * (
+    reference = float(summary[reference_mode]["seconds_median"])  # type: ignore[index]
+    candidate = float(summary[candidate_mode]["seconds_median"])  # type: ignore[index]
+    summary[f"{candidate_mode}_vs_{reference_mode}_percent"] = 100.0 * (
         reference / candidate - 1.0
     )
-    summary["paired_conditional_vs_per_entity_percent"] = _paired_gain_summary(
+    summary[f"paired_{candidate_mode}_vs_{reference_mode}_percent"] = _paired_gain_summary(
         rows,
-        "per-entity",
-        "conditional",
+        reference_mode,
+        candidate_mode,
     )
     print(
         json.dumps(

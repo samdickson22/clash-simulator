@@ -189,6 +189,7 @@ def _parse_args() -> argparse.Namespace:
             "local-dense-bucket-bindings",
             "inline-building-overlap",
             "conditional-combat-quantization",
+            "bounded-building-crown-fallback",
         ),
         default="guard",
     )
@@ -239,6 +240,10 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     elif args.comparison == "conditional-combat-quantization":
         battle_module._USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION = (
             mode == "conditional"
+        )
+    elif args.comparison == "bounded-building-crown-fallback":
+        entities_module._USE_RANGE_BOUNDED_BUILDING_CROWN_FALLBACK = (
+            mode == "bounded"
         )
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
@@ -435,6 +440,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         "local-dense-bucket-bindings",
         "inline-building-overlap",
         "conditional-combat-quantization",
+        "bounded-building-crown-fallback",
     }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -508,6 +514,8 @@ def main() -> None:
         reference_mode, candidate_mode = "helpers", "inline"
     elif args.comparison == "conditional-combat-quantization":
         reference_mode, candidate_mode = "per-entity", "conditional"
+    elif args.comparison == "bounded-building-crown-fallback":
+        reference_mode, candidate_mode = "unbounded", "bounded"
     else:
         reference_mode, candidate_mode = "generic", "specialized"
     for mode in (reference_mode, candidate_mode):
