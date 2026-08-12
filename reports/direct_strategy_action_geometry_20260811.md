@@ -114,7 +114,9 @@ manually into the authoritative tracked file:
 
 1. import `BOARD_WIDTH` and `NUM_TILES` from `.common`;
 2. retain a private `_USE_DIRECT_CANONICAL_ACTION_GEOMETRY = True` reference
-   switch while integrating the A/B test;
+   switch while integrating the A/B test, and enter the direct branch only
+   when both that switch and `action_space.canonical_perspective` are true;
+   world-coordinate action spaces must keep the decoded fallback;
 3. in `_score_action`, handle no-op/invalid and ability IDs exactly as the
    existing decoded path does;
 4. for placement IDs set `slot = action_id // NUM_TILES`,
