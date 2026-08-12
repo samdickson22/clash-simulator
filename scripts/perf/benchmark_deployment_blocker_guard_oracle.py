@@ -17,10 +17,12 @@ from clasher import entities as entities_module
 from clasher import pathfinding as pathfinding_module
 from clasher.card_types import CardStatsCompat
 from clasher.entities import Entity
+from clasher.player import PlayerState
 from clasher.rl import action_space as action_space_module
 
 _CARD_STATS_DEEPCOPY = CardStatsCompat.__deepcopy__
 _ENTITY_DEEPCOPY = Entity.__deepcopy__
+_PLAYER_DEEPCOPY = PlayerState.__deepcopy__
 
 
 def _card_stats_deepcopy_reference(
@@ -109,6 +111,7 @@ def _parse_args() -> argparse.Namespace:
             "card-wrapper-deepcopy",
             "card-wrapper-atomic-deepcopy",
             "entity-deepcopy",
+            "player-deepcopy",
         ),
         default="guard",
     )
@@ -132,6 +135,11 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
             Entity.__deepcopy__ = _ENTITY_DEEPCOPY
         elif hasattr(Entity, "__deepcopy__"):
             del Entity.__deepcopy__
+    elif args.comparison == "player-deepcopy":
+        if mode == "specialized":
+            PlayerState.__deepcopy__ = _PLAYER_DEEPCOPY
+        elif hasattr(PlayerState, "__deepcopy__"):
+            del PlayerState.__deepcopy__
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
@@ -318,6 +326,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         "card-wrapper-deepcopy",
         "card-wrapper-atomic-deepcopy",
         "entity-deepcopy",
+        "player-deepcopy",
     }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True

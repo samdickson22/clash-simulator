@@ -1,9 +1,45 @@
-from dataclasses import dataclass, field
-from typing import List, Optional, Deque
+import copy
 from collections import deque
+from dataclasses import dataclass, field
+from typing import Any, Deque, List, Optional, TypeVar
 
-from .card_types import CardStatsCompat
 from .balance import DEFAULT_BATTLE_TIMELINE_STARTING_ELIXIR
+from .card_types import CardStatsCompat
+
+_PLAYER_DEEPCOPY_ATOMIC_TYPES = frozenset(
+    {type(None), bool, int, float, complex, bytes, str}
+)
+_CardRefT = TypeVar("_CardRefT", bound=str | None)
+
+
+def _deepcopy_card_ref_list(
+    value: list[_CardRefT],
+    memo: dict[int, Any],
+) -> list[_CardRefT]:
+    existing = memo.get(id(value))
+    if isinstance(existing, list):
+        return existing
+    if type(value) is list and all(
+        item is None or type(item) is str for item in value
+    ):
+        cloned = value.copy()
+        memo[id(value)] = cloned
+        return cloned
+    return copy.deepcopy(value, memo)
+
+
+def _deepcopy_card_ref_deque(
+    value: deque[str],
+    memo: dict[int, Any],
+) -> deque[str]:
+    existing = memo.get(id(value))
+    if isinstance(existing, deque):
+        return existing
+    if type(value) is deque and all(type(item) is str for item in value):
+        cloned = deque(value, maxlen=value.maxlen)
+        memo[id(value)] = cloned
+        return cloned
+    return copy.deepcopy(value, memo)
 
 
 @dataclass
@@ -22,6 +58,33 @@ class PlayerState:
     king_tower_hp: float = 4824.0      # King tower HP
     left_tower_hp: float = 3052.0      # Level 11 Tower Princess HP
     right_tower_hp: float = 3052.0     # Level 11 Tower Princess HP
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'PlayerState':
+        """Copy mutable player state without generic reconstruction setup."""
+        existing = memo.get(id(self))
+        if isinstance(existing, PlayerState):
+            return existing
+        cloned = object.__new__(type(self))
+        memo[id(self)] = cloned
+        if type(self) is PlayerState and len(self.__dict__) == 10:
+            cloned.player_id = self.player_id
+            cloned.elixir = self.elixir
+            cloned.max_elixir = self.max_elixir
+            cloned.next_card_refill_cooldown_ms = self.next_card_refill_cooldown_ms
+            cloned.hand = _deepcopy_card_ref_list(self.hand, memo)
+            cloned.deck = _deepcopy_card_ref_list(self.deck, memo)
+            cloned.cycle_queue = _deepcopy_card_ref_deque(self.cycle_queue, memo)
+            cloned.king_tower_hp = self.king_tower_hp
+            cloned.left_tower_hp = self.left_tower_hp
+            cloned.right_tower_hp = self.right_tower_hp
+            return cloned
+        for name, value in self.__dict__.items():
+            cloned.__dict__[name] = (
+                value
+                if type(value) in _PLAYER_DEEPCOPY_ATOMIC_TYPES
+                else copy.deepcopy(value, memo)
+            )
+        return cloned
     
     def __post_init__(self) -> None:
         """Initialize cycle queue with remaining deck cards"""
