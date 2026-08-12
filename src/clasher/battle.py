@@ -109,6 +109,12 @@ _EAGERLY_MATERIALIZE_BATTLE_CARDS = False
 # cache. The public helper returns an isolated deep copy on every call.
 _USE_CACHED_PRINCESS_TOWER_DATA = True
 
+# Reference/benchmark switch. Structural mutations explicitly invalidate the
+# target cache, while ordinary movement already publishes changed entities at
+# its exact component boundary. Between structural changes only the small,
+# data/mechanic-selected volatile target subset needs a defensive refresh.
+_USE_DIRTY_TARGET_CACHE_REFRESH = True
+
 @dataclass(frozen=True)
 class PendingSpellCast:
     """A spell command waiting for the server's universal action delay."""
@@ -251,6 +257,8 @@ class BattleState:
     _target_requires_targetability_check: np.ndarray = field(
         default_factory=lambda: np.zeros((0,), dtype=np.bool_), init=False
     )
+    _volatile_target_indices: List[int] = field(default_factory=list, init=False)
+    _target_cache_dirty: bool = field(default=True, init=False, repr=False)
     _crown_target_entities_by_player: Tuple[List[Entity], List[Entity]] = field(
         default_factory=lambda: ([], []), init=False
     )
@@ -430,12 +438,16 @@ class BattleState:
                 raise ValueError("King_PrincessTowers has no statCharacterData")
         raise ValueError("King_PrincessTowers is missing from game data")
 
-    def _refresh_fast_path_caches(self) -> None:
+    def _refresh_fast_path_caches(
+        self,
+        *,
+        trust_target_cache_dirty: bool = False,
+    ) -> None:
         """Refresh caches used by fast-path queries."""
         self._refresh_alive_buildings_cache()
         self._refresh_tower_mask_if_needed()
         self._rebuild_entity_buckets()
-        self._refresh_target_cache()
+        self._refresh_target_cache(trust_dirty=trust_target_cache_dirty)
 
     def _refresh_alive_buildings_cache(self) -> None:
         """Publish live building membership to every accelerated query.
@@ -511,11 +523,13 @@ class BattleState:
             self._target_requires_targetability_check = np.zeros(
                 (0,), dtype=np.bool_
             )
+            self._volatile_target_indices = []
             self._crown_target_entities_by_player = ([], [])
             self._target_stealth_until = np.zeros((0,), dtype=np.int32)
             self._target_collision_radius = np.zeros((0,), dtype=np.float64)
             self._target_distance_discount_sq = np.zeros((0,), dtype=np.float64)
             self._max_target_collision_radius = 0.5
+            self._target_cache_dirty = False
             return
 
         pos_x = np.empty((n,), dtype=np.float64)
@@ -580,13 +594,20 @@ class BattleState:
         self._target_is_crown = is_crown
         self._target_is_targetable = is_targetable
         self._target_requires_targetability_check = requires_targetability_check
+        self._volatile_target_indices = [
+            index
+            for index, entity in enumerate(targets)
+            if requires_targetability_check[index]
+            or hasattr(entity, "_stealth_until")
+        ]
         self._crown_target_entities_by_player = crown_targets_by_player
         self._target_stealth_until = stealth_until
         self._target_collision_radius = collision_radius
         self._target_distance_discount_sq = target_distance_discount_sq
         self._max_target_collision_radius = float(np.max(collision_radius))
+        self._target_cache_dirty = False
 
-    def _refresh_target_cache(self) -> None:
+    def _refresh_target_cache(self, *, trust_dirty: bool = False) -> None:
         """Refresh target values in place when cache membership is unchanged.
 
         Entity insertion order is stable, so an identity scan detects every
@@ -598,6 +619,20 @@ class BattleState:
         properties are published at structural rebuilds and their explicit
         post-spawn mutation sites.
         """
+        if (
+            _USE_DIRTY_TARGET_CACHE_REFRESH
+            and trust_dirty
+            and not self._target_cache_dirty
+            and self._target_cache_entity_count == len(self.entities)
+        ):
+            for index in self._volatile_target_indices:
+                entity = self._target_entities[index]
+                if not self._eligible_fast_target(entity):
+                    self._rebuild_target_cache()
+                    return
+                self._refresh_fast_target_dynamic_values(index, entity)
+            return
+
         target_index = 0
         cached_count = len(self._target_entities)
         for entity in self.entities.values():
@@ -616,6 +651,11 @@ class BattleState:
             self._rebuild_target_cache()
             return
         self._target_cache_entity_count = len(self.entities)
+        self._target_cache_dirty = False
+
+    def invalidate_target_cache(self) -> None:
+        """Mark target membership for an exact structural refresh."""
+        self._target_cache_dirty = True
 
     def _refresh_fast_target_dynamic_values(
         self,
@@ -687,6 +727,19 @@ class BattleState:
             self._max_target_collision_radius = float(
                 np.max(self._target_collision_radius)
             )
+            # A rare post-insertion setup may accompany other direct entity
+            # initialization. Preserve the public helper's exact dynamic
+            # publication without forcing an unrelated structural rebuild.
+            self._refresh_fast_target_dynamic_values(index, entity)
+            if (
+                (
+                    self._target_requires_targetability_check[index]
+                    or hasattr(entity, "_stealth_until")
+                )
+                and index not in self._volatile_target_indices
+            ):
+                self._volatile_target_indices.append(index)
+                self._volatile_target_indices.sort()
 
     @staticmethod
     def _eligible_fast_target(entity: Entity) -> bool:
@@ -776,7 +829,10 @@ class BattleState:
         # observe a different object list from the scalar engine.
         if (
             self.fast_path
-            and self._target_cache_entity_count != len(self.entities)
+            and (
+                self._target_cache_dirty
+                or self._target_cache_entity_count != len(self.entities)
+            )
         ):
             self._refresh_fast_path_caches()
         return (
@@ -798,7 +854,10 @@ class BattleState:
         """Return exact live Crown fallback membership for one owner."""
         if (
             self.fast_path
-            and self._target_cache_entity_count != len(self.entities)
+            and (
+                self._target_cache_dirty
+                or self._target_cache_entity_count != len(self.entities)
+            )
         ):
             self._refresh_fast_path_caches()
         if player_id not in {0, 1}:
@@ -1092,7 +1151,7 @@ class BattleState:
             self._step_logic_tick(refresh_fast_path_end=False)
             advanced += 1
         if advanced and self.fast_path:
-            self._refresh_fast_path_caches()
+            self._refresh_fast_path_caches(trust_target_cache_dirty=True)
         return advanced
 
     def _step_logic_tick(self, *, refresh_fast_path_end: bool = True) -> None:
@@ -1132,7 +1191,7 @@ class BattleState:
         post_command_ids = set(self.entities)
 
         if self.fast_path:
-            self._refresh_fast_path_caches()
+            self._refresh_fast_path_caches(trust_target_cache_dirty=True)
         
         # Target reservations are a start-of-tick snapshot. This makes
         # simultaneous attacks commute: a projectile launched by an entity
@@ -1238,7 +1297,7 @@ class BattleState:
         self._cleanup_dead_entities()
 
         if self.fast_path and refresh_fast_path_end:
-            self._refresh_fast_path_caches()
+            self._refresh_fast_path_caches(trust_target_cache_dirty=True)
         
         # Check win conditions
         self._check_win_conditions()
@@ -2129,6 +2188,7 @@ class BattleState:
         self._attach_card_mechanics(troop, card_stats)
 
         self.entities[self.next_entity_id] = troop
+        self.invalidate_target_cache()
         self.next_entity_id += 1
         if death_spawn_travel_origin is not None:
             # Native retains the ring coordinate as movement state and resets
@@ -2385,6 +2445,7 @@ class BattleState:
         self._attach_card_mechanics(entity, card_stats)
 
         self.entities[self.next_entity_id] = entity
+        self.invalidate_target_cache()
         self.next_entity_id += 1
         if isinstance(entity, Building):
             self.invalidate_alive_buildings_cache()
@@ -2464,6 +2525,8 @@ class BattleState:
         }
 
         # Remove dead entities
+        if dead_ids:
+            self.invalidate_target_cache()
         for eid in dead_ids:
             del self.entities[eid]
 

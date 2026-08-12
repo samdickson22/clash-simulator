@@ -88,6 +88,7 @@ def _parse_args() -> argparse.Namespace:
             "crown-fallback",
             "movement-building-refresh",
             "path-hover-trait",
+            "dirty-target-cache",
             "lazy-card-materialization",
             "cached-princess-data",
         ),
@@ -130,6 +131,8 @@ def main() -> None:
         reference_variant, candidate_variant = "repeated", "coalesced"
     elif args.comparison == "path-hover-trait":
         reference_variant, candidate_variant = "runtime", "cached"
+    elif args.comparison == "dirty-target-cache":
+        reference_variant, candidate_variant = "full", "dirty"
     elif args.comparison == "lazy-card-materialization":
         reference_variant, candidate_variant = "eager", "lazy"
     else:
@@ -138,6 +141,7 @@ def main() -> None:
     def run_once(variant: str, steps: int) -> dict[str, float | str | int]:
         pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
         entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
+        battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
         if args.comparison == "guard":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = (
                 variant == candidate_variant
@@ -217,6 +221,18 @@ def main() -> None:
                 variant == candidate_variant
             )
             entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = (
+                variant == candidate_variant
+            )
+        elif args.comparison == "dirty-target-cache":
+            action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+            train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
+            battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+            battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+            entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+            battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = False
+            battle_module._USE_CACHED_PRINCESS_TOWER_DATA = True
+            battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = (
                 variant == candidate_variant
             )
         elif args.comparison == "lazy-card-materialization":
