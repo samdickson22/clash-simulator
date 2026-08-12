@@ -58,6 +58,9 @@ STANDARD_MATCH_TICKS = math.ceil(STANDARD_MATCH_DURATION_SECONDS / DEFAULT_TICK_
 # Reference/benchmark switch for allocation-free integer bucket indexing.
 _USE_DENSE_ENTITY_BUCKETS = True
 
+# Reference/benchmark switch for query-local dense bucket bindings.
+_USE_LOCAL_DENSE_BUCKET_BINDINGS = True
+
 # Reference/benchmark switch for exact spatial collision candidate pruning.
 _USE_COLLISION_BUCKET_CANDIDATES = True
 
@@ -981,14 +984,24 @@ class BattleState:
         out: List[Entity] = []
         if _USE_DENSE_ENTITY_BUCKETS and _USE_ROW_MAJOR_BUCKET_SCAN:
             width = self._entity_bucket_grid_width
-            for by in range(min_by, max_by + 1):
-                row_offset = by * width
-                for bx in range(min_bx, max_bx + 1):
-                    bucket = self._entity_bucket_grid[
-                        row_offset + bx
-                    ]
-                    if bucket is not None:
-                        out.extend(bucket)
+            if _USE_LOCAL_DENSE_BUCKET_BINDINGS:
+                bucket_grid = self._entity_bucket_grid
+                extend = out.extend
+                for by in range(min_by, max_by + 1):
+                    row_offset = by * width
+                    for bx in range(min_bx, max_bx + 1):
+                        bucket = bucket_grid[row_offset + bx]
+                        if bucket is not None:
+                            extend(bucket)
+            else:
+                for by in range(min_by, max_by + 1):
+                    row_offset = by * width
+                    for bx in range(min_bx, max_bx + 1):
+                        bucket = self._entity_bucket_grid[
+                            row_offset + bx
+                        ]
+                        if bucket is not None:
+                            out.extend(bucket)
         else:
             for bx in range(min_bx, max_bx + 1):
                 for by in range(min_by, max_by + 1):

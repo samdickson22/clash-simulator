@@ -14,6 +14,7 @@ import torch
 from benchmark_deployment_blocker_guard_oracle import _paired_gain_summary
 from benchmark_stationary_rollout import _digest_rollout
 
+from clasher import battle as battle_module
 from clasher import entities as entities_module
 from clasher.entities import Entity
 from clasher.rl.model import ClasherPolicy, PolicyConfig
@@ -52,7 +53,11 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--comparison",
-        choices=("inline-position-quantization", "cached-target-capabilities"),
+        choices=(
+            "inline-position-quantization",
+            "cached-target-capabilities",
+            "local-dense-bucket-bindings",
+        ),
         default="inline-position-quantization",
     )
     parser.add_argument("--workload", choices=("random", "strategy"), required=True)
@@ -89,8 +94,10 @@ def main() -> None:
     model = ClasherPolicy(config, builder.card_stat_features).eval()
     if args.comparison == "inline-position-quantization":
         reference_mode, candidate_mode = "helpers", "inline"
-    else:
+    elif args.comparison == "cached-target-capabilities":
         reference_mode, candidate_mode = "runtime", "cached"
+    else:
+        reference_mode, candidate_mode = "attributes", "local"
 
     def run_once(mode: str, steps: int) -> dict[str, object]:
         if args.comparison == "inline-position-quantization":
@@ -99,12 +106,14 @@ def main() -> None:
                 if mode == candidate_mode
                 else _quantize_position_reference
             )
-        elif mode == candidate_mode:
+        elif args.comparison == "cached-target-capabilities" and mode == candidate_mode:
             Entity._can_attack_air = _CACHED_CAN_ATTACK_AIR
             Entity._can_attack_ground = _CACHED_CAN_ATTACK_GROUND
-        else:
+        elif args.comparison == "cached-target-capabilities":
             Entity._can_attack_air = _can_attack_air_reference
             Entity._can_attack_ground = _can_attack_ground_reference
+        else:
+            battle_module._USE_LOCAL_DENSE_BUCKET_BINDINGS = mode == candidate_mode
         torch.manual_seed(args.seed + 99)
         envs = [
             SelfPlayBattleEnv(
@@ -182,6 +191,7 @@ def main() -> None:
         Entity.quantize_logic_position = _INLINE_QUANTIZE_POSITION
         Entity._can_attack_air = _CACHED_CAN_ATTACK_AIR
         Entity._can_attack_ground = _CACHED_CAN_ATTACK_GROUND
+        battle_module._USE_LOCAL_DENSE_BUCKET_BINDINGS = True
 
     summary: dict[str, object] = {}
     for mode in (reference_mode, candidate_mode):

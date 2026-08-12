@@ -138,6 +138,7 @@ def _parse_args() -> argparse.Namespace:
             "player-deepcopy",
             "inline-position-quantization",
             "cached-target-capabilities",
+            "local-dense-bucket-bindings",
         ),
         default="guard",
     )
@@ -182,6 +183,9 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
+    battle_module._USE_LOCAL_DENSE_BUCKET_BINDINGS = (
+        args.comparison != "local-dense-bucket-bindings" or mode == "local"
+    )
     action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
     entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
     entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
@@ -368,6 +372,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         "player-deepcopy",
         "inline-position-quantization",
         "cached-target-capabilities",
+        "local-dense-bucket-bindings",
     }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -435,6 +440,8 @@ def main() -> None:
         reference_mode, candidate_mode = "helpers", "inline"
     elif args.comparison == "cached-target-capabilities":
         reference_mode, candidate_mode = "runtime", "cached"
+    elif args.comparison == "local-dense-bucket-bindings":
+        reference_mode, candidate_mode = "attributes", "local"
     else:
         reference_mode, candidate_mode = "generic", "specialized"
     for mode in (reference_mode, candidate_mode):
