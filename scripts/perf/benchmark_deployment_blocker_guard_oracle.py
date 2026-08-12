@@ -23,6 +23,16 @@ from clasher.rl import action_space as action_space_module
 _CARD_STATS_DEEPCOPY = CardStatsCompat.__deepcopy__
 _ENTITY_DEEPCOPY = Entity.__deepcopy__
 _PLAYER_DEEPCOPY = PlayerState.__deepcopy__
+_ENTITY_QUANTIZE_POSITION = Entity.quantize_logic_position
+
+
+def _quantize_position_reference(self: Entity) -> None:
+    self.position.x = entities_module.logic_units_to_tiles(
+        entities_module.tiles_to_logic_units(self.position.x)
+    )
+    self.position.y = entities_module.logic_units_to_tiles(
+        entities_module.tiles_to_logic_units(self.position.y)
+    )
 
 
 def _card_stats_deepcopy_reference(
@@ -112,6 +122,7 @@ def _parse_args() -> argparse.Namespace:
             "card-wrapper-atomic-deepcopy",
             "entity-deepcopy",
             "player-deepcopy",
+            "inline-position-quantization",
         ),
         default="guard",
     )
@@ -140,6 +151,12 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
             PlayerState.__deepcopy__ = _PLAYER_DEEPCOPY
         elif hasattr(PlayerState, "__deepcopy__"):
             del PlayerState.__deepcopy__
+    elif args.comparison == "inline-position-quantization":
+        Entity.quantize_logic_position = (
+            _ENTITY_QUANTIZE_POSITION
+            if mode == "inline"
+            else _quantize_position_reference
+        )
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
@@ -327,6 +344,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         "card-wrapper-atomic-deepcopy",
         "entity-deepcopy",
         "player-deepcopy",
+        "inline-position-quantization",
     }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -390,6 +408,8 @@ def main() -> None:
         reference_mode, candidate_mode = "generic", "specialized"
     elif args.comparison == "card-wrapper-atomic-deepcopy":
         reference_mode, candidate_mode = "all-values", "atomic"
+    elif args.comparison == "inline-position-quantization":
+        reference_mode, candidate_mode = "helpers", "inline"
     else:
         reference_mode, candidate_mode = "generic", "specialized"
     for mode in (reference_mode, candidate_mode):

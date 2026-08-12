@@ -23,6 +23,7 @@ from .unit_traits import (
 from .native_tilemap import clamp_native_object_axis
 from .kinematics import (
     LOGIC_TICK_SECONDS,
+    LOGIC_UNITS_PER_TILE,
     NATIVE_MOVEMENT_SUBSTEP_UNITS,
     logic_time_milliseconds,
     logic_speed_to_tiles_per_second,
@@ -643,8 +644,14 @@ class Entity(ABC):
 
     def quantize_logic_position(self) -> None:
         """Commit position to the client's integer 1/1000-tile grid."""
-        self.position.x = logic_units_to_tiles(tiles_to_logic_units(self.position.x))
-        self.position.y = logic_units_to_tiles(tiles_to_logic_units(self.position.y))
+        self.position.x = (
+            round(float(self.position.x) * LOGIC_UNITS_PER_TILE)
+            / LOGIC_UNITS_PER_TILE
+        )
+        self.position.y = (
+            round(float(self.position.y) * LOGIC_UNITS_PER_TILE)
+            / LOGIC_UNITS_PER_TILE
+        )
 
     def _projectile_launch_geometry(self, target: 'Entity') -> tuple[Position, int, int]:
         """Return the serialized projectile muzzle position and aim vector."""
