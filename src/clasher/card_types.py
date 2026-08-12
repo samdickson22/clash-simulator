@@ -5,6 +5,9 @@ from abc import ABC, abstractmethod
 
 CardKind = Literal["troop", "building", "spell", "champion"]
 Rarity = Literal["Common", "Rare", "Epic", "Legendary", "Champion"]
+_DEEPCOPY_ATOMIC_TYPES = frozenset(
+    {type(None), bool, int, float, complex, bytes, str}
+)
 
 
 @dataclass(frozen=True)
@@ -372,7 +375,11 @@ class CardStatsCompat:
         cloned = object.__new__(type(self))
         memo[id(self)] = cloned
         for name, value in self.__dict__.items():
-            setattr(cloned, name, copy.deepcopy(value, memo))
+            cloned.__dict__[name] = (
+                value
+                if type(value) in _DEEPCOPY_ATOMIC_TYPES
+                else copy.deepcopy(value, memo)
+            )
         return cloned
 
     @property

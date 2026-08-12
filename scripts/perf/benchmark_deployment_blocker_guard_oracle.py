@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import platform
 import statistics
@@ -18,6 +19,20 @@ from clasher.card_types import CardStatsCompat
 from clasher.rl import action_space as action_space_module
 
 _CARD_STATS_DEEPCOPY = CardStatsCompat.__deepcopy__
+
+
+def _card_stats_deepcopy_reference(
+    self: CardStatsCompat,
+    memo: dict[int, object],
+) -> CardStatsCompat:
+    existing = memo.get(id(self))
+    if isinstance(existing, CardStatsCompat):
+        return existing
+    cloned = object.__new__(type(self))
+    memo[id(self)] = cloned
+    for name, value in self.__dict__.items():
+        setattr(cloned, name, copy.deepcopy(value, memo))
+    return cloned
 
 
 def _paired_gain_summary(
@@ -90,6 +105,7 @@ def _parse_args() -> argparse.Namespace:
             "hoisted-crown-validator",
             "scalar-crown-slots",
             "card-wrapper-deepcopy",
+            "card-wrapper-atomic-deepcopy",
         ),
         default="guard",
     )
@@ -102,6 +118,12 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
             CardStatsCompat.__deepcopy__ = _CARD_STATS_DEEPCOPY
         elif hasattr(CardStatsCompat, "__deepcopy__"):
             del CardStatsCompat.__deepcopy__
+    elif args.comparison == "card-wrapper-atomic-deepcopy":
+        CardStatsCompat.__deepcopy__ = (
+            _CARD_STATS_DEEPCOPY
+            if mode == "atomic"
+            else _card_stats_deepcopy_reference
+        )
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
@@ -284,7 +306,10 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
         entities_module._USE_HOISTED_CROWN_FALLBACK_VALIDATOR = True
         entities_module._USE_SCALAR_DEFERRED_CROWN_SLOTS = mode == "scalar"
-    else:
+    elif args.comparison in {
+        "card-wrapper-deepcopy",
+        "card-wrapper-atomic-deepcopy",
+    }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
@@ -343,8 +368,10 @@ def main() -> None:
         reference_mode, candidate_mode = "closure", "hoisted"
     elif args.comparison == "scalar-crown-slots":
         reference_mode, candidate_mode = "list", "scalar"
-    else:
+    elif args.comparison == "card-wrapper-deepcopy":
         reference_mode, candidate_mode = "generic", "specialized"
+    else:
+        reference_mode, candidate_mode = "all-values", "atomic"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 
