@@ -97,6 +97,10 @@ _USE_CACHED_TARGETABILITY_REQUIREMENT = True
 # field directly while maintaining the target-cache membership predicate.
 _USE_DIRECT_TARGET_ENTITY_KIND = True
 
+# Reference/benchmark switch for sharing one exact alive-building membership
+# publication across the controlled movement phase, with explicit invalidation.
+_COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+
 @dataclass(frozen=True)
 class PendingSpellCast:
     """A spell command waiting for the server's universal action delay."""
@@ -208,6 +212,16 @@ class BattleState:
         default_factory=dict, init=False
     )
     _building_cache_signature: Tuple[int, ...] = field(default_factory=tuple, init=False)
+    _coalesce_alive_building_refreshes: bool = field(
+        default=False,
+        init=False,
+        repr=False,
+    )
+    _alive_building_cache_dirty: bool = field(
+        default=True,
+        init=False,
+        repr=False,
+    )
     _cached_tower_alive_flags: Tuple[bool, bool, bool, bool, bool, bool] = field(
         default_factory=lambda: (False, False, False, False, False, False), init=False
     )
@@ -419,6 +433,13 @@ class BattleState:
         validations, before the next logic tick refreshes the broader fast
         caches. Placement queries must observe that mutation immediately.
         """
+        if (
+            _COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH
+            and self._coalesce_alive_building_refreshes
+            and not self._alive_building_cache_dirty
+        ):
+            return
+
         cache_index = 0
         cached_count = len(self._alive_buildings)
         membership_matches = True
@@ -433,9 +454,15 @@ class BattleState:
                 break
             cache_index += 1
         if membership_matches and cache_index == cached_count:
+            self._alive_building_cache_dirty = False
             return
 
         self._rebuild_alive_buildings_cache()
+        self._alive_building_cache_dirty = False
+
+    def invalidate_alive_buildings_cache(self) -> None:
+        """Publish a structural/live-building mutation to phase-local reuse."""
+        self._alive_building_cache_dirty = True
 
     def _rebuild_alive_buildings_cache(self) -> None:
         """Run the exact allocation-heavy reference membership refresh."""
@@ -1144,28 +1171,40 @@ class BattleState:
             self._projectile_lethal_reservations = None
 
         # Component type 1: movement and deployment-specific transport.
-        for entity in entities_to_update:
-            if not isinstance(entity, (Troop, Building)) or not entity.is_alive:
-                continue
-            if isinstance(entity, Troop):
-                # Each native movement component scans positions at its own
-                # boundary, so earlier movers affect later body pressure.
-                # updatePushback skips checkCollisions on its final zero-work
-                # frame, although already-queued controlled vectors (such as
-                # Tornado attraction) can still be consumed.
-                if not (
-                    entity._knockback_target is not None
-                    and entity._knockback_velocity_work < 1
-                ):
-                    self._accumulate_troop_collision_for(entity)
-            entity.begin_movement_tick()
-            try:
-                entity.update_movement_component(dt, self)
-            finally:
-                entity.finish_movement_tick(self)
-                entity.quantize_logic_position()
-            if self.fast_path and not self._sync_fast_target_entity(entity):
-                self._rebuild_target_cache()
+        coalesce_buildings = bool(
+            self.fast_path and _COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH
+        )
+        if coalesce_buildings:
+            self._coalesce_alive_building_refreshes = True
+            # Combat can kill a building after the start-of-frame refresh.
+            self._alive_building_cache_dirty = True
+        try:
+            for entity in entities_to_update:
+                if not isinstance(entity, (Troop, Building)) or not entity.is_alive:
+                    continue
+                if isinstance(entity, Troop):
+                    # Each native movement component scans positions at its own
+                    # boundary, so earlier movers affect later body pressure.
+                    # updatePushback skips checkCollisions on its final zero-work
+                    # frame, although already-queued controlled vectors (such as
+                    # Tornado attraction) can still be consumed.
+                    if not (
+                        entity._knockback_target is not None
+                        and entity._knockback_velocity_work < 1
+                    ):
+                        self._accumulate_troop_collision_for(entity)
+                entity.begin_movement_tick()
+                try:
+                    entity.update_movement_component(dt, self)
+                finally:
+                    entity.finish_movement_tick(self)
+                    entity.quantize_logic_position()
+                if self.fast_path and not self._sync_fast_target_entity(entity):
+                    self._rebuild_target_cache()
+        finally:
+            if coalesce_buildings:
+                self._coalesce_alive_building_refreshes = False
+                self._alive_building_cache_dirty = True
 
         # Component type 2: building lifetime/hitpoint work.
         for entity in entities_to_update:
@@ -2336,6 +2375,8 @@ class BattleState:
 
         self.entities[self.next_entity_id] = entity
         self.next_entity_id += 1
+        if isinstance(entity, Building):
+            self.invalidate_alive_buildings_cache()
 
         if isinstance(entity, Building) and getattr(card_stats, "name", "") == "KingTower":
             from .balance import tournament_tower_stat

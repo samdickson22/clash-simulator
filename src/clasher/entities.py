@@ -643,6 +643,15 @@ class Entity(ABC):
         self.hitpoints = max(0, self.hitpoints - incoming)
         if self.hitpoints <= 0 and self.is_alive:
             self.is_alive = False
+            if self.entity_kind == 1:
+                battle_state = getattr(self, "battle_state", None)
+                invalidate = getattr(
+                    battle_state,
+                    "invalidate_alive_buildings_cache",
+                    None,
+                )
+                if callable(invalidate):
+                    invalidate()
             self.on_death()  # Trigger death mechanics
 
     def broadcast_shield_lost(self) -> None:
@@ -4451,6 +4460,14 @@ class Building(Entity):
                 self.hitpoints = max(0.0, self.hitpoints - whole_hp_loss)
             if self.hitpoints <= 0 and self.is_alive:
                 self.is_alive = False
+                battle_state = getattr(self, "battle_state", None)
+                invalidate = getattr(
+                    battle_state,
+                    "invalidate_alive_buildings_cache",
+                    None,
+                )
+                if callable(invalidate):
+                    invalidate()
                 self.on_death()
     
     def _uses_projectiles(self) -> bool:

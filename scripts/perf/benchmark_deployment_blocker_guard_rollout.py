@@ -85,6 +85,7 @@ def _parse_args() -> argparse.Namespace:
             "targetability-requirement",
             "target-entity-kind",
             "crown-fallback",
+            "movement-building-refresh",
         ),
         default="guard",
     )
@@ -119,8 +120,10 @@ def main() -> None:
         reference_variant, candidate_variant = "recomputed", "cached"
     elif args.comparison == "target-entity-kind":
         reference_variant, candidate_variant = "getattr", "direct"
-    else:
+    elif args.comparison == "crown-fallback":
         reference_variant, candidate_variant = "partitioned", "single-pass"
+    else:
+        reference_variant, candidate_variant = "repeated", "coalesced"
 
     def run_once(variant: str, steps: int) -> dict[str, float | str | int]:
         if args.comparison == "guard":
@@ -131,6 +134,7 @@ def main() -> None:
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
             entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+            battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
         elif args.comparison == "inference-mode":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = (
@@ -139,6 +143,7 @@ def main() -> None:
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
             entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+            battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
         elif args.comparison == "targetability-requirement":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
@@ -147,6 +152,7 @@ def main() -> None:
             )
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
             entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+            battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
         elif args.comparison == "target-entity-kind":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
@@ -155,12 +161,23 @@ def main() -> None:
                 variant == candidate_variant
             )
             entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
-        else:
+            battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+        elif args.comparison == "crown-fallback":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
             battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
             battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
             entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = (
+                variant == candidate_variant
+            )
+            battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+        else:
+            action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+            train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
+            battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+            battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+            entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+            battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = (
                 variant == candidate_variant
             )
         torch.manual_seed(args.seed + 99)
