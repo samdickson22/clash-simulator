@@ -76,6 +76,7 @@ def _parse_args() -> argparse.Namespace:
             "movement-building-refresh",
             "path-hover-trait",
             "dirty-target-cache",
+            "prefiltered-action-candidates",
         ),
         default="guard",
     )
@@ -86,6 +87,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
+    action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
     if args.comparison == "guard":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -124,13 +126,22 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
         pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = mode == "cached"
         entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = mode == "cached"
-    else:
+    elif args.comparison == "dirty-target-cache":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
         entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
         battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
         battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = mode == "dirty"
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+        battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+        action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = (
+            mode == "prefiltered"
+        )
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
     del row["variant"]
@@ -152,8 +163,10 @@ def main() -> None:
         reference_mode, candidate_mode = "repeated", "coalesced"
     elif args.comparison == "path-hover-trait":
         reference_mode, candidate_mode = "runtime", "cached"
-    else:
+    elif args.comparison == "dirty-target-cache":
         reference_mode, candidate_mode = "full", "dirty"
+    else:
+        reference_mode, candidate_mode = "rechecked", "prefiltered"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 

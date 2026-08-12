@@ -17,6 +17,12 @@ from .common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 # when one exact battle-wide scan proves no live blocker exists.
 _USE_DEPLOYMENT_BLOCKER_GUARD = True
 
+# Reference/benchmark switch. The fast mask's vector candidate sets already
+# encode blocked/tower tiles and ordinary deployment territory. Avoid checking
+# those same predicates again per tile while retaining scalar validation for
+# spell payloads with an additional walkability requirement.
+_USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
+
 
 @dataclass(frozen=True)
 class ActionSelection:
@@ -375,6 +381,14 @@ class DiscreteTileActionSpace:
                 not is_spell
                 and getattr(card_stats, "can_deploy_on_enemy_side", False)
             )
+            requires_walkable_target = bool(
+                is_spell
+                and getattr(spell_obj, "requires_walkable_target", False)
+            )
+            requires_deploy_zone = bool(
+                is_spell
+                and battle.arena._requires_deploy_zone_spell(spell_obj)
+            )
             if can_deploy_enemy_side:
                 # Enemy-side troop cards still exclude blocked and live tower
                 # tiles. Build this candidate set
@@ -431,11 +445,12 @@ class DiscreteTileActionSpace:
                     ):
                         continue
                 if can_deploy_enemy_side:
-                    tile_pos = (int(pos.x), int(pos.y))
-                    if tile_pos in battle.arena.BLOCKED_TILES:
-                        continue
-                    if battle.arena.is_tower_tile(pos, battle):
-                        continue
+                    if not _USE_PREFILTERED_ACTION_MASK_CANDIDATES:
+                        tile_pos = (int(pos.x), int(pos.y))
+                        if tile_pos in battle.arena.BLOCKED_TILES:
+                            continue
+                        if battle.arena.is_tower_tile(pos, battle):
+                            continue
                 if (
                     is_building_card
                     and has_deployment_blockers
@@ -457,9 +472,13 @@ class DiscreteTileActionSpace:
                     )
                 ):
                     continue
-                if is_spell and (
-                    battle.arena._requires_deploy_zone_spell(spell_obj)
-                    or getattr(spell_obj, "requires_walkable_target", False)
+                if (
+                    is_spell
+                    and (requires_deploy_zone or requires_walkable_target)
+                    and (
+                        not _USE_PREFILTERED_ACTION_MASK_CANDIDATES
+                        or requires_walkable_target
+                    )
                 ):
                     # Keep exact territory/terrain parity for constrained spells.
                     if not battle.arena.can_deploy_at(pos, player_id, battle, True, spell_obj):
