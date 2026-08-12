@@ -53,6 +53,10 @@ _NATIVE_NEIGHBORS: tuple[tuple[int, int, int], ...] = (
 )
 
 _NATIVE_EMPTY_TILE_COST = 20
+
+# Reference/benchmark switch. Entity initialization already classifies this
+# immutable data-driven movement trait once.
+_USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
 _NATIVE_OTHER_LANE_COST = 5
 _NATIVE_SAME_LANE_COST = 1
 _NATIVE_WATER_COST = 800
@@ -768,8 +772,6 @@ def ground_path_waypoint(
     are handled later by movement collision and avoidance, not by A*.
     """
 
-    from .unit_traits import is_hover_unit_card
-
     reference = backwards_reference or desired
     origin_dx = tiles_to_logic_units(mover.position.x - reference.x)
     origin_dy = tiles_to_logic_units(mover.position.y - reference.y)
@@ -795,7 +797,13 @@ def ground_path_waypoint(
         mover._ground_path_backwards = route_moves_backwards((desired,))
         return desired
     desired_waypoint = _cell_center(desired_cell)
-    if is_hover_unit_card(getattr(mover, "card_stats", None)):
+    if _USE_CACHED_GROUND_PATH_HOVER_TRAIT:
+        hovering = mover._is_hover_unit
+    else:
+        from .unit_traits import is_hover_unit_card
+
+        hovering = is_hover_unit_card(getattr(mover, "card_stats", None))
+    if hovering:
         waypoint = (
             native_single_node_waypoint(mover, target_entity)
             if target_entity is not None

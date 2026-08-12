@@ -79,6 +79,11 @@ class TargetType(Enum):
     BOTH = "both"
 
 
+# Reference/benchmark switch. Entity initialization already classifies this
+# immutable data-driven movement trait once.
+_USE_CACHED_PATHFIND_HOVER_TRAIT = True
+
+
 def _target_sight_reach_reference(
     sight_range: float,
     collision_radius: np.ndarray,
@@ -4131,9 +4136,13 @@ class Troop(Entity):
         """
         final_target = target_entity.position
 
-        from .unit_traits import is_hover_unit_card
+        if _USE_CACHED_PATHFIND_HOVER_TRAIT:
+            hovering = self._is_hover_unit
+        else:
+            from .unit_traits import is_hover_unit_card
 
-        if self.is_air_unit or is_hover_unit_card(self.card_stats):
+            hovering = is_hover_unit_card(self.card_stats)
+        if self.is_air_unit or hovering:
             return final_target
 
         def arena_side(y: float, owner_id: int) -> int:

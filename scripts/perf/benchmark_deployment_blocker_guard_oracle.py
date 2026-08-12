@@ -13,6 +13,7 @@ from benchmark_oracle_scalar_leaf import _run_variant, _snapshots
 
 from clasher import battle as battle_module
 from clasher import entities as entities_module
+from clasher import pathfinding as pathfinding_module
 from clasher.rl import action_space as action_space_module
 
 
@@ -73,6 +74,7 @@ def _parse_args() -> argparse.Namespace:
             "target-entity-kind",
             "crown-fallback",
             "movement-building-refresh",
+            "path-hover-trait",
         ),
         default="guard",
     )
@@ -80,6 +82,8 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _run(args: argparse.Namespace, snapshots, mode: str):
+    pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
+    entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     if args.comparison == "guard":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -104,12 +108,20 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
         entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = mode == "single-pass"
         battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
-    else:
+    elif args.comparison == "movement-building-refresh":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
         entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
         battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = mode == "coalesced"
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+        battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+        pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = mode == "cached"
+        entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = mode == "cached"
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
     del row["variant"]
@@ -127,8 +139,10 @@ def main() -> None:
         reference_mode, candidate_mode = "getattr", "direct"
     elif args.comparison == "crown-fallback":
         reference_mode, candidate_mode = "partitioned", "single-pass"
-    else:
+    elif args.comparison == "movement-building-refresh":
         reference_mode, candidate_mode = "repeated", "coalesced"
+    else:
+        reference_mode, candidate_mode = "runtime", "cached"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 
