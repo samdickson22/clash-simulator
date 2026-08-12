@@ -24,6 +24,11 @@ from clasher.rl.train_recurrent import collect_rollout_stationary_opponents
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--strategy", choices=STRATEGY_NAMES, default="balanced")
+    parser.add_argument(
+        "--comparison",
+        choices=("geometry", "tile-fit-cache"),
+        default="geometry",
+    )
     parser.add_argument("--seed", type=int, default=2301)
     parser.add_argument("--num-envs", type=int, default=1)
     parser.add_argument("--rollout-steps", type=int, default=64)
@@ -53,10 +58,18 @@ def main() -> None:
     )
     torch.manual_seed(91)
     model = ClasherPolicy(config, builder.card_stat_features).eval()
+    variants = (
+        ("decoded", "direct")
+        if args.comparison == "geometry"
+        else ("uncached", "cached")
+    )
 
     def run_once(variant: str, steps: int) -> dict[str, float | str]:
         strategy_bots_module._USE_DIRECT_CANONICAL_ACTION_GEOMETRY = (
-            variant == "direct"
+            variant == "direct" if args.comparison == "geometry" else True
+        )
+        strategy_bots_module._USE_CACHED_STRATEGY_TILE_FITS = (
+            variant == "cached" if args.comparison == "tile-fit-cache" else True
         )
         torch.manual_seed(args.seed + 99)
         envs = [
@@ -116,14 +129,14 @@ def main() -> None:
         }
 
     if args.warmup_steps:
-        run_once("decoded", args.warmup_steps)
-        run_once("direct", args.warmup_steps)
+        for variant in variants:
+            run_once(variant, args.warmup_steps)
     rows = []
     for repetition in range(args.repetitions):
         order = (
-            ("decoded", "direct")
+            variants
             if repetition % 2 == 0
-            else ("direct", "decoded")
+            else tuple(reversed(variants))
         )
         for variant in order:
             row = run_once(variant, args.rollout_steps)
@@ -131,7 +144,7 @@ def main() -> None:
             rows.append(row)
 
     summary = {}
-    for variant in ("decoded", "direct"):
+    for variant in variants:
         selected = [row for row in rows if row["variant"] == variant]
         seconds = [float(row["seconds"]) for row in selected]
         rates = [float(row["decisions_per_second"]) for row in selected]
@@ -142,9 +155,11 @@ def main() -> None:
             "decisions_per_second_median": statistics.median(rates),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    decoded = float(summary["decoded"]["seconds_median"])
-    direct = float(summary["direct"]["seconds_median"])
-    summary["direct_vs_decoded_percent"] = 100.0 * (decoded / direct - 1.0)
+    reference = float(summary[variants[0]]["seconds_median"])
+    candidate = float(summary[variants[1]]["seconds_median"])
+    summary[f"{variants[1]}_vs_{variants[0]}_percent"] = 100.0 * (
+        reference / candidate - 1.0
+    )
     print(
         json.dumps(
             {

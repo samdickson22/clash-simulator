@@ -18,6 +18,11 @@ from clasher.rl.strategy_bots import STRATEGY_NAMES, StrategyBot
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--strategy", choices=STRATEGY_NAMES, default="balanced")
+    parser.add_argument(
+        "--comparison",
+        choices=("geometry", "tile-fit-cache"),
+        default="geometry",
+    )
     parser.add_argument("--seed", type=int, default=2301)
     parser.add_argument("--selections", type=int, default=64)
     parser.add_argument("--repetitions", type=int, default=11)
@@ -31,10 +36,18 @@ def main() -> None:
     env.reset()
     bot = StrategyBot(args.strategy)
     masks = {player_id: env.get_action_mask(player_id) for player_id in (0, 1)}
+    variants = (
+        ("decoded", "direct")
+        if args.comparison == "geometry"
+        else ("uncached", "cached")
+    )
 
     def run_once(variant: str, selections: int) -> dict[str, float | str]:
         strategy_bots_module._USE_DIRECT_CANONICAL_ACTION_GEOMETRY = (
-            variant == "direct"
+            variant == "direct" if args.comparison == "geometry" else True
+        )
+        strategy_bots_module._USE_CACHED_STRATEGY_TILE_FITS = (
+            variant == "cached" if args.comparison == "tile-fit-cache" else True
         )
         hasher = hashlib.sha256()
         started = time.perf_counter()
@@ -54,14 +67,14 @@ def main() -> None:
             "sha256": hasher.hexdigest(),
         }
 
-    for variant in ("decoded", "direct"):
+    for variant in variants:
         run_once(variant, args.warmup_selections)
     rows = []
     for repetition in range(args.repetitions):
         order = (
-            ("decoded", "direct")
+            variants
             if repetition % 2 == 0
-            else ("direct", "decoded")
+            else tuple(reversed(variants))
         )
         for variant in order:
             row = run_once(variant, args.selections)
@@ -69,7 +82,7 @@ def main() -> None:
             rows.append(row)
 
     summary = {}
-    for variant in ("decoded", "direct"):
+    for variant in variants:
         selected = [row for row in rows if row["variant"] == variant]
         seconds = [float(row["seconds"]) for row in selected]
         rates = [float(row["selections_per_second"]) for row in selected]
@@ -80,9 +93,11 @@ def main() -> None:
             "selections_per_second_median": statistics.median(rates),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    decoded = float(summary["decoded"]["seconds_median"])
-    direct = float(summary["direct"]["seconds_median"])
-    summary["direct_vs_decoded_percent"] = 100.0 * (decoded / direct - 1.0)
+    reference = float(summary[variants[0]]["seconds_median"])
+    candidate = float(summary[variants[1]]["seconds_median"])
+    summary[f"{variants[1]}_vs_{variants[0]}_percent"] = 100.0 * (
+        reference / candidate - 1.0
+    )
     print(
         json.dumps(
             {
