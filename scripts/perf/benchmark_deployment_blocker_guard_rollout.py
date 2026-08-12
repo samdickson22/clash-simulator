@@ -13,6 +13,7 @@ import numpy as np
 import torch
 from benchmark_stationary_rollout import _digest_rollout
 
+from clasher import battle as battle_module
 from clasher.rl import action_space as action_space_module
 from clasher.rl import reward_model as reward_model_module
 from clasher.rl import train_recurrent as train_recurrent_module
@@ -77,7 +78,7 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--comparison",
-        choices=("guard", "inference-mode"),
+        choices=("guard", "inference-mode", "targetability-requirement"),
         default="guard",
     )
     parser.add_argument(
@@ -103,11 +104,12 @@ def main() -> None:
     torch.manual_seed(91)
     model = ClasherPolicy(config, builder.card_stat_features).eval()
 
-    reference_variant, candidate_variant = (
-        ("scanned", "guarded")
-        if args.comparison == "guard"
-        else ("no-grad", "inference")
-    )
+    if args.comparison == "guard":
+        reference_variant, candidate_variant = "scanned", "guarded"
+    elif args.comparison == "inference-mode":
+        reference_variant, candidate_variant = "no-grad", "inference"
+    else:
+        reference_variant, candidate_variant = "recomputed", "cached"
 
     def run_once(variant: str, steps: int) -> dict[str, float | str | int]:
         if args.comparison == "guard":
@@ -115,9 +117,17 @@ def main() -> None:
                 variant == candidate_variant
             )
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
-        else:
+            battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        elif args.comparison == "inference-mode":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
             train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = (
+                variant == candidate_variant
+            )
+            battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        else:
+            action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+            train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
+            battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = (
                 variant == candidate_variant
             )
         torch.manual_seed(args.seed + 99)

@@ -88,6 +88,11 @@ _USE_CACHED_MOVER_HOVER_TRAIT = True
 # mechanic-owned gates retain the full dynamic predicate.
 _USE_STATIC_TARGETABILITY_CLASSIFICATION = True
 
+# Reference/benchmark switch for reading the exact static classification that
+# the target cache already publishes instead of recomputing mechanics on every
+# per-component entity synchronization.
+_USE_CACHED_TARGETABILITY_REQUIREMENT = True
+
 @dataclass(frozen=True)
 class PendingSpellCast:
     """A spell command waiting for the server's universal action delay."""
@@ -685,7 +690,11 @@ class BattleState:
         self._target_is_air[index] = is_airborne_target(entity)
         if (
             not _USE_STATIC_TARGETABILITY_CLASSIFICATION
-            or self._target_requires_targetability_check[index]
+            or (
+                self._target_requires_targetability_check[index]
+                if _USE_CACHED_TARGETABILITY_REQUIREMENT
+                else self._requires_targetability_check(entity)
+            )
         ):
             self._target_is_targetable[index] = entity.is_targetable_by(
                 1 - entity.player_id

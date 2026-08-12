@@ -72,6 +72,43 @@ def test_dynamic_targetability_mechanic_retains_full_refresh():
     assert battle._target_is_targetable[index]
 
 
+def test_entity_sync_reuses_cached_targetability_requirement(monkeypatch):
+    battle = BattleState(fast_path=True)
+    troop = _spawn_troop(battle, "Knight", 1, Position(9.0, 18.0))
+    blocker = _TargetingBlocker(blocked=True)
+    troop.mechanics.append(blocker)
+    battle._rebuild_target_cache()
+    index = battle._target_index_by_id[troop.id]
+    calls = 0
+    original = battle._requires_targetability_check
+
+    def counted(entity):
+        nonlocal calls
+        calls += 1
+        return original(entity)
+
+    monkeypatch.setattr(battle, "_requires_targetability_check", counted)
+    monkeypatch.setattr(
+        battle_module,
+        "_USE_CACHED_TARGETABILITY_REQUIREMENT",
+        False,
+    )
+    battle.sync_fast_target_entity(troop)
+    assert calls == 1
+    assert not battle._target_is_targetable[index]
+
+    calls = 0
+    blocker.blocked = False
+    monkeypatch.setattr(
+        battle_module,
+        "_USE_CACHED_TARGETABILITY_REQUIREMENT",
+        True,
+    )
+    battle.sync_fast_target_entity(troop)
+    assert calls == 0
+    assert battle._target_is_targetable[index]
+
+
 def test_targetability_classification_cache_is_clone_isolated():
     battle = BattleState(fast_path=True)
     troop = _spawn_troop(battle, "Knight", 1, Position(9.0, 18.0))
@@ -136,3 +173,38 @@ def test_static_targetability_preserves_fixed_seed_rollout(
 
     assert classified.sha256 == baseline.sha256
     assert classified.mask_shadow_mismatches == baseline.mask_shadow_mismatches == 0
+
+
+@pytest.mark.parametrize("engine_fast_path", ["off", "shadow", "on"])
+def test_cached_sync_targetability_requirement_preserves_fixed_seed_rollout(
+    monkeypatch,
+    engine_fast_path: str,
+):
+    common = {
+        "seed": 8827,
+        "decisions": 32,
+        "decks_path": "decks.json",
+        "decision_interval": 8,
+        "max_ticks": 2048,
+        "mirror_match": False,
+        "quiet_engine": True,
+        "engine_fast_path": engine_fast_path,
+        "reward_profile": "defense-v2",
+    }
+
+    monkeypatch.setattr(
+        battle_module,
+        "_USE_CACHED_TARGETABILITY_REQUIREMENT",
+        False,
+    )
+    recomputed = compute_rollout_digest(**common)
+    monkeypatch.setattr(
+        battle_module,
+        "_USE_CACHED_TARGETABILITY_REQUIREMENT",
+        True,
+    )
+    cached = compute_rollout_digest(**common)
+
+    assert cached.sha256 == recomputed.sha256
+    assert cached.mask_shadow_checks == recomputed.mask_shadow_checks
+    assert cached.mask_shadow_mismatches == recomputed.mask_shadow_mismatches == 0

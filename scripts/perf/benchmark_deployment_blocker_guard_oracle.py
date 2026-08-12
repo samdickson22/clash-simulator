@@ -8,8 +8,44 @@ import json
 import platform
 import statistics
 
+import numpy as np
 from benchmark_oracle_scalar_leaf import _run_variant, _snapshots
+
+from clasher import battle as battle_module
 from clasher.rl import action_space as action_space_module
+
+
+def _paired_gain_summary(
+    rows: list[dict[str, object]],
+    reference_mode: str,
+    candidate_mode: str,
+) -> dict[str, object]:
+    gains = []
+    for repetition in sorted({int(row["repetition"]) for row in rows}):
+        pair = {
+            str(row["mode"]): float(row["seconds"])
+            for row in rows
+            if int(row["repetition"]) == repetition
+        }
+        gains.append(100.0 * (pair[reference_mode] / pair[candidate_mode] - 1.0))
+    samples = np.asarray(gains, dtype=np.float64)
+    rng = np.random.default_rng(0)
+    means = np.mean(
+        rng.choice(samples, size=(20_000, len(samples)), replace=True),
+        axis=1,
+    )
+    return {
+        "values": gains,
+        "median": statistics.median(gains),
+        "mean": statistics.mean(gains),
+        "stdev": statistics.stdev(gains) if len(gains) > 1 else 0.0,
+        "positive_pairs": sum(gain > 0.0 for gain in gains),
+        "pairs": len(gains),
+        "mean_95_percentile_bootstrap_ci": [
+            float(np.quantile(means, 0.025)),
+            float(np.quantile(means, 0.975)),
+        ],
+    }
 
 
 def _parse_args() -> argparse.Namespace:
@@ -28,11 +64,21 @@ def _parse_args() -> argparse.Namespace:
         choices=("off", "shadow", "on"),
         default="on",
     )
+    parser.add_argument(
+        "--comparison",
+        choices=("guard", "targetability-requirement"),
+        default="guard",
+    )
     return parser.parse_args()
 
 
 def _run(args: argparse.Namespace, snapshots, mode: str):
-    action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
+    if args.comparison == "guard":
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = mode == "cached"
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
     del row["variant"]
@@ -42,19 +88,28 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
 def main() -> None:
     args = _parse_args()
     snapshots = _snapshots(args)
-    for mode in ("scan", "guard"):
+    reference_mode, candidate_mode = (
+        ("scan", "guard")
+        if args.comparison == "guard"
+        else ("recomputed", "cached")
+    )
+    for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 
     rows = []
     for repetition in range(args.repetitions):
-        order = ("scan", "guard") if repetition % 2 == 0 else ("guard", "scan")
+        order = (
+            (reference_mode, candidate_mode)
+            if repetition % 2 == 0
+            else (candidate_mode, reference_mode)
+        )
         for mode in order:
             row = _run(args, snapshots, mode)
             row["repetition"] = repetition
             rows.append(row)
 
     summary = {}
-    for mode in ("scan", "guard"):
+    for mode in (reference_mode, candidate_mode):
         selected = [row for row in rows if row["mode"] == mode]
         seconds = [float(row["seconds"]) for row in selected]
         rates = [float(row["decisions_per_second"]) for row in selected]
@@ -65,9 +120,14 @@ def main() -> None:
             "decisions_per_second_median": statistics.median(rates),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    scan = float(summary["scan"]["seconds_median"])
-    guard = float(summary["guard"]["seconds_median"])
-    summary["guard_vs_scan_percent"] = 100.0 * (scan / guard - 1.0)
+    reference = float(summary[reference_mode]["seconds_median"])
+    candidate = float(summary[candidate_mode]["seconds_median"])
+    summary[f"{candidate_mode}_vs_{reference_mode}_percent"] = 100.0 * (
+        reference / candidate - 1.0
+    )
+    summary[f"paired_{candidate_mode}_vs_{reference_mode}_percent"] = (
+        _paired_gain_summary(rows, reference_mode, candidate_mode)
+    )
     print(
         json.dumps(
             {
