@@ -94,6 +94,11 @@ _USE_SPARSE_IDLE_WIN_CHECKS = True
 # tower HP can change only after a Crown Tower HP mutation.
 _USE_DIRTY_WIN_CONDITION_REFRESH = True
 
+# Most combat components cannot move their owner. Preserve the exact native
+# grid publication for the serialized hooks that do, without rounding every
+# stationary troop and building after every combat phase.
+_USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION = True
+
 # Reference/benchmark switch for trusting the exact live-Building membership
 # contract immediately after the fast placement cache refresh.
 _USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP = True
@@ -1273,12 +1278,20 @@ class BattleState:
             for entity in entities_to_update:
                 if not isinstance(entity, (Troop, Building)):
                     continue
+                if _USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION:
+                    combat_start_x = entity.position.x
+                    combat_start_y = entity.position.y
                 entity.update_combat_component(dt, self)
                 # A few serialized special states currently commit their
                 # travel inside the combat hook. Preserve the native grid at
                 # this component boundary while their phase adapters remain
                 # card-owned.
-                entity.quantize_logic_position()
+                if (
+                    not _USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION
+                    or entity.position.x != combat_start_x
+                    or entity.position.y != combat_start_y
+                ):
+                    entity.quantize_logic_position()
                 if self.fast_path:
                     if len(self.entities) != cached_entity_count:
                         cached_entity_count = len(self.entities)

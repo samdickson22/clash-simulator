@@ -188,6 +188,7 @@ def _parse_args() -> argparse.Namespace:
             "cached-target-capabilities",
             "local-dense-bucket-bindings",
             "inline-building-overlap",
+            "conditional-combat-quantization",
         ),
         default="guard",
     )
@@ -234,6 +235,10 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
             _BUILDING_OCCUPANCY
             if mode == "inline"
             else _building_occupancy_reference
+        )
+    elif args.comparison == "conditional-combat-quantization":
+        battle_module._USE_CONDITIONAL_COMBAT_POSITION_QUANTIZATION = (
+            mode == "conditional"
         )
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
@@ -429,6 +434,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         "cached-target-capabilities",
         "local-dense-bucket-bindings",
         "inline-building-overlap",
+        "conditional-combat-quantization",
     }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -500,6 +506,8 @@ def main() -> None:
         reference_mode, candidate_mode = "attributes", "local"
     elif args.comparison == "inline-building-overlap":
         reference_mode, candidate_mode = "helpers", "inline"
+    elif args.comparison == "conditional-combat-quantization":
+        reference_mode, candidate_mode = "per-entity", "conditional"
     else:
         reference_mode, candidate_mode = "generic", "specialized"
     for mode in (reference_mode, candidate_mode):
