@@ -187,6 +187,10 @@ _USE_CACHED_ENTITY_COLLISION_RADIUS = True
 # plane once per eligibility decision instead of repeating the pure predicate.
 _COALESCE_TARGET_PLANE_CHECKS = True
 
+# Reference/benchmark switch. A singleton target set has no distance or tie
+# decision to perform, so return its only member before shared tie machinery.
+_USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -2558,6 +2562,8 @@ class Entity(ABC):
         """Choose the combat target with the current native tie rules."""
         if not candidates:
             return None
+        if _USE_SINGLETON_TARGET_SELECTION_SHORTCUT and len(candidates) == 1:
+            return candidates[0][0]
         # LogicCombatComponent replaces its current best only for a strictly
         # smaller adjusted distance at the same target priority. Ordinary
         # character ties therefore retain encounter order. Current globals
