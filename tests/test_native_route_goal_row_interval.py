@@ -27,6 +27,48 @@ def test_row_interval_native_route_goal_matches_full_scan(seed: int) -> None:
         )
 
 
+@pytest.mark.skipif(
+    pathfinding._compiled_native_route_goal_cell_units_row_interval_raw is None,
+    reason="Numba is unavailable",
+)
+@pytest.mark.parametrize("seed", range(5))
+def test_compiled_row_interval_native_route_goal_matches_python(seed: int) -> None:
+    rng = random.Random(seed + 10_000)
+    for _ in range(2_000):
+        args = (
+            rng.randrange(-2_000, 20_001),
+            rng.randrange(-2_000, 34_001),
+            rng.randrange(-2_000, 20_001),
+            rng.randrange(-2_000, 34_001),
+            rng.randrange(0, 8_001),
+        )
+        assert (
+            pathfinding._compute_native_route_goal_cell_units_row_interval_compiled(
+                *args
+            )
+            == pathfinding._compute_native_route_goal_cell_units_row_interval(
+                *args
+            )
+        )
+
+
+def test_compiled_row_interval_native_route_goal_falls_back_without_numba(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        pathfinding,
+        "_compiled_native_route_goal_cell_units_row_interval_raw",
+        None,
+    )
+    args = (9_000, 28_000, 9_000, 16_000, 5_500)
+    assert (
+        pathfinding._compute_native_route_goal_cell_units_row_interval_compiled(
+            *args
+        )
+        == pathfinding._compute_native_route_goal_cell_units_row_interval(*args)
+    )
+
+
 @pytest.mark.parametrize(
     "args",
     [

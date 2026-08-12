@@ -66,6 +66,7 @@ def _parse_args() -> argparse.Namespace:
             "local-dense-bucket-bindings",
             "inline-building-overlap",
             "native-route-goal-row-interval",
+            "compiled-native-route-goal",
         ),
         default="inline-position-quantization",
     )
@@ -109,8 +110,10 @@ def main() -> None:
         reference_mode, candidate_mode = "attributes", "local"
     elif args.comparison == "inline-building-overlap":
         reference_mode, candidate_mode = "helpers", "inline"
-    else:
+    elif args.comparison == "native-route-goal-row-interval":
         reference_mode, candidate_mode = "full-scan", "row-interval"
+    else:
+        reference_mode, candidate_mode = "python", "compiled"
 
     def run_once(mode: str, steps: int) -> dict[str, object]:
         if args.comparison == "inline-position-quantization":
@@ -133,11 +136,19 @@ def main() -> None:
                 if mode == candidate_mode
                 else _building_occupancy_reference
             )
-        else:
+        elif args.comparison == "native-route-goal-row-interval":
             pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = (
                 mode == candidate_mode
             )
+            pathfinding._USE_COMPILED_NATIVE_ROUTE_GOAL = False
             pathfinding._cached_native_route_goal_cell_units.cache_clear()
+            pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
+            pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
+        else:
+            pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = True
+            pathfinding._USE_COMPILED_NATIVE_ROUTE_GOAL = mode == candidate_mode
+            pathfinding._cached_native_route_goal_cell_units.cache_clear()
+            pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
             pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
         torch.manual_seed(args.seed + 99)
         envs = [
@@ -221,7 +232,9 @@ def main() -> None:
             _INLINE_BUILDING_OCCUPANCY
         )
         pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = True
+        pathfinding._USE_COMPILED_NATIVE_ROUTE_GOAL = True
         pathfinding._cached_native_route_goal_cell_units.cache_clear()
+        pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
         pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
 
     summary: dict[str, object] = {}

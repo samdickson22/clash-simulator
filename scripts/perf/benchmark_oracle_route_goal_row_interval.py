@@ -28,6 +28,11 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--planner-simulations", type=int, default=32)
     parser.add_argument("--planner-action-samples", type=int, default=64)
     parser.add_argument(
+        "--comparison",
+        choices=("row-interval", "compiled-row-interval"),
+        default="row-interval",
+    )
+    parser.add_argument(
         "--engine-fast-path",
         choices=("off", "shadow", "on"),
         default="on",
@@ -36,8 +41,14 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _run_variant(args, snapshots, mode: str) -> dict[str, float | str]:
-    pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = mode == "row-interval"
+    if args.comparison == "row-interval":
+        pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = mode == "row-interval"
+        pathfinding._USE_COMPILED_NATIVE_ROUTE_GOAL = False
+    else:
+        pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = True
+        pathfinding._USE_COMPILED_NATIVE_ROUTE_GOAL = mode == "compiled"
     pathfinding._cached_native_route_goal_cell_units.cache_clear()
+    pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
     pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
     planner = _ScalarLeafOracle(
         decision_interval_ticks=args.decision_interval,
@@ -80,16 +91,22 @@ def _run_variant(args, snapshots, mode: str) -> dict[str, float | str]:
 def main() -> None:
     args = _parse_args()
     original = pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL
+    original_compiled = pathfinding._USE_COMPILED_NATIVE_ROUTE_GOAL
     snapshots = _snapshots(args)
+    reference_mode, candidate_mode = (
+        ("full-scan", "row-interval")
+        if args.comparison == "row-interval"
+        else ("python", "compiled")
+    )
     try:
-        _run_variant(args, snapshots[:1], "full-scan")
-        _run_variant(args, snapshots[:1], "row-interval")
+        _run_variant(args, snapshots[:1], reference_mode)
+        _run_variant(args, snapshots[:1], candidate_mode)
         rows = []
         for repetition in range(args.repetitions):
             order = (
-                ("full-scan", "row-interval")
+                (reference_mode, candidate_mode)
                 if repetition % 2 == 0
-                else ("row-interval", "full-scan")
+                else (candidate_mode, reference_mode)
             )
             for mode in order:
                 row = _run_variant(args, snapshots, mode)
@@ -97,11 +114,13 @@ def main() -> None:
                 rows.append(row)
     finally:
         pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = original
+        pathfinding._USE_COMPILED_NATIVE_ROUTE_GOAL = original_compiled
         pathfinding._cached_native_route_goal_cell_units.cache_clear()
+        pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
         pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
 
     summary: dict[str, object] = {}
-    for mode in ("full-scan", "row-interval"):
+    for mode in (reference_mode, candidate_mode):
         selected = [row for row in rows if row["mode"] == mode]
         summary[mode] = {
             "seconds_median": statistics.median(
@@ -112,13 +131,14 @@ def main() -> None:
             ),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    reference = float(summary["full-scan"]["seconds_median"])  # type: ignore[index]
-    candidate = float(summary["row-interval"]["seconds_median"])  # type: ignore[index]
-    summary["row_interval_vs_full_scan_percent"] = 100.0 * (
+    reference = float(summary[reference_mode]["seconds_median"])  # type: ignore[index]
+    candidate = float(summary[candidate_mode]["seconds_median"])  # type: ignore[index]
+    comparison_name = f"{candidate_mode}_vs_{reference_mode}_percent"
+    summary[comparison_name] = 100.0 * (
         reference / candidate - 1.0
     )
-    summary["paired_row_interval_vs_full_scan_percent"] = (
-        _paired_gain_summary(rows, "full-scan", "row-interval")
+    summary[f"paired_{comparison_name}"] = (
+        _paired_gain_summary(rows, reference_mode, candidate_mode)
     )
     print(
         json.dumps(
