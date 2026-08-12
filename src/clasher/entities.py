@@ -213,6 +213,11 @@ _USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
 # extension, and spawn-priority distance discount instead of a generic halo.
 _USE_EXACT_TARGET_BUCKET_BOUND = True
 
+# Reference/benchmark switch. Native Crown layouts can validate the preferred
+# Princess objective first and avoid dynamic validation of objectives that
+# cannot win the serialized horizontal preference.
+_USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
+
 @dataclass
 class PeriodicDamageEffect:
     """One source-owned damage buff running on a target's component clock."""
@@ -2520,6 +2525,16 @@ class Entity(ABC):
         can_attack_ground: bool,
     ) -> 'Entity | None | _UnhandledCrownFallback':
         """Select the active-globals Crown fallback without temporary lists."""
+        if _USE_DEFERRED_CROWN_FALLBACK_VALIDATION:
+            deferred = self._select_cached_crown_fallback_deferred_validation(
+                candidates,
+                entities=entities,
+                can_attack_air=can_attack_air,
+                can_attack_ground=can_attack_ground,
+            )
+            if not isinstance(deferred, _UnhandledCrownFallback):
+                return deferred
+
         first_princess: Entity | None = None
         first_princess_x = 0.0
         second_princess: Entity | None = None
@@ -2589,6 +2604,74 @@ class Entity(ABC):
                 key=self._target_tie_break_key,
             )
         return first_princess if first_tied else second_princess
+
+    def _select_cached_crown_fallback_deferred_validation(
+        self,
+        candidates: Iterable['Entity'],
+        *,
+        entities: dict[int, 'Entity'],
+        can_attack_air: bool,
+        can_attack_ground: bool,
+    ) -> 'Entity | None | _UnhandledCrownFallback':
+        """Validate only Crown objectives that can win native preference."""
+        princesses: list[Entity] = []
+        king: Entity | None = None
+        for entity in candidates:
+            if entities.get(entity.id) is not entity:
+                continue
+            crown_slot = getattr(entity, "_crown_tower_slot", None)
+            if crown_slot not in {"left", "right", "king"}:
+                return _CROWN_FALLBACK_UNHANDLED
+            if crown_slot == "king":
+                if king is not None:
+                    return _CROWN_FALLBACK_UNHANDLED
+                king = entity
+            else:
+                princesses.append(entity)
+                if len(princesses) > 2:
+                    return _CROWN_FALLBACK_UNHANDLED
+
+        def valid(entity: Entity) -> bool:
+            if not self._is_valid_target(entity):
+                return False
+            is_air = is_airborne_target(entity)
+            return (not is_air or can_attack_air) and (
+                is_air or can_attack_ground
+            )
+
+        if len(princesses) == 1:
+            if valid(princesses[0]):
+                return princesses[0]
+        elif len(princesses) == 2:
+            first, second = princesses
+            first_x = abs(first.position.x - self.position.x)
+            second_x = abs(second.position.x - self.position.x)
+            if first_x + GEOMETRY_BOUNDARY_EPSILON < second_x:
+                if valid(first):
+                    return first
+                if valid(second):
+                    return second
+            elif second_x + GEOMETRY_BOUNDARY_EPSILON < first_x:
+                if valid(second):
+                    return second
+                if valid(first):
+                    return first
+            else:
+                valid_princesses = [
+                    entity for entity in princesses if valid(entity)
+                ]
+                if len(valid_princesses) == 1:
+                    return valid_princesses[0]
+                if len(valid_princesses) == 2:
+                    return self._select_first_nearest_target(
+                        [
+                            (entity, self.native_target_distance_to(entity))
+                            for entity in valid_princesses
+                        ]
+                    )
+        if king is not None and valid(king):
+            return king
+        return None
 
     def _single_pass_cached_crown_fallback(
         self,

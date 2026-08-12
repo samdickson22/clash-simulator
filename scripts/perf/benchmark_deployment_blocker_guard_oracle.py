@@ -83,6 +83,7 @@ def _parse_args() -> argparse.Namespace:
             "lazy-crown-fallback-builder",
             "tight-interaction-buckets",
             "exact-target-bucket-bound",
+            "deferred-crown-validation",
         ),
         default="guard",
     )
@@ -100,6 +101,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     battle_module._USE_SINGLE_PASS_COLLISION_CANDIDATES = True
     battle_module._USE_TIGHT_INTERACTION_BUCKET_BOUNDS = True
     entities_module._USE_EXACT_TARGET_BUCKET_BOUND = True
+    entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
     if args.comparison == "guard":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -209,7 +211,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         battle_module._USE_SINGLE_PASS_COLLISION_CANDIDATES = True
         entities_module._USE_LAZY_CROWN_FALLBACK_BUILDER = True
         battle_module._USE_TIGHT_INTERACTION_BUCKET_BOUNDS = mode == "tight"
-    else:
+    elif args.comparison == "exact-target-bucket-bound":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
@@ -222,6 +224,22 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         entities_module._USE_LAZY_CROWN_FALLBACK_BUILDER = True
         battle_module._USE_TIGHT_INTERACTION_BUCKET_BOUNDS = True
         entities_module._USE_EXACT_TARGET_BUCKET_BOUND = mode == "exact"
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+        battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+        action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
+        entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
+        entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
+        battle_module._USE_SINGLE_PASS_COLLISION_CANDIDATES = True
+        entities_module._USE_LAZY_CROWN_FALLBACK_BUILDER = True
+        battle_module._USE_TIGHT_INTERACTION_BUCKET_BOUNDS = True
+        entities_module._USE_EXACT_TARGET_BUCKET_BOUND = True
+        entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = (
+            mode == "deferred"
+        )
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
     del row["variant"]
@@ -257,8 +275,10 @@ def main() -> None:
         reference_mode, candidate_mode = "eager", "lazy"
     elif args.comparison == "tight-interaction-buckets":
         reference_mode, candidate_mode = "halo", "tight"
-    else:
+    elif args.comparison == "exact-target-bucket-bound":
         reference_mode, candidate_mode = "halo", "exact"
+    else:
+        reference_mode, candidate_mode = "eager", "deferred"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 
