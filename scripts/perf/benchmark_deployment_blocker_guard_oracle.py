@@ -26,6 +26,7 @@ _PLAYER_DEEPCOPY = PlayerState.__deepcopy__
 _ENTITY_QUANTIZE_POSITION = Entity.quantize_logic_position
 _ENTITY_CAN_ATTACK_AIR = Entity._can_attack_air
 _ENTITY_CAN_ATTACK_GROUND = Entity._can_attack_ground
+_BUILDING_OCCUPANCY = battle_module.BattleState.is_position_occupied_by_building
 
 
 def _quantize_position_reference(self: Entity) -> None:
@@ -47,6 +48,53 @@ def _can_attack_ground_reference(self: Entity) -> bool:
     return entities_module._can_attack_ground_from_card_stats(
         getattr(self, "card_stats", None)
     )
+
+
+def _building_occupancy_reference(
+    self: battle_module.BattleState,
+    position,
+    mover_radius: float = 0.5,
+    ignore_building_id: int | None = None,
+    movement_collision: bool = False,
+) -> bool:
+    effective_mover_radius = (
+        min(float(mover_radius), 0.5)
+        if movement_collision
+        else float(mover_radius)
+    )
+    if self.fast_path:
+        self._refresh_alive_buildings_cache()
+        buildings = self._alive_buildings
+    else:
+        buildings = self.entities.values()
+    trusted_membership = bool(
+        self.fast_path and battle_module._USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP
+    )
+    for entity in buildings:
+        if not trusted_membership and (
+            not isinstance(entity, entities_module.Building) or not entity.is_alive
+        ):
+            continue
+        if ignore_building_id is not None and entity.id == ignore_building_id:
+            continue
+        building_radius = (
+            getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
+        )
+        collision_units = entities_module.tiles_to_logic_units(
+            float(building_radius) + effective_mover_radius
+        )
+        dx_units = entities_module.tiles_to_logic_units(
+            position.x - entity.position.x
+        )
+        dy_units = entities_module.tiles_to_logic_units(
+            position.y - entity.position.y
+        )
+        if (
+            dx_units * dx_units + dy_units * dy_units
+            < collision_units * collision_units
+        ):
+            return True
+    return False
 
 
 def _card_stats_deepcopy_reference(
@@ -139,6 +187,7 @@ def _parse_args() -> argparse.Namespace:
             "inline-position-quantization",
             "cached-target-capabilities",
             "local-dense-bucket-bindings",
+            "inline-building-overlap",
         ),
         default="guard",
     )
@@ -180,6 +229,12 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         else:
             Entity._can_attack_air = _can_attack_air_reference
             Entity._can_attack_ground = _can_attack_ground_reference
+    elif args.comparison == "inline-building-overlap":
+        battle_module.BattleState.is_position_occupied_by_building = (
+            _BUILDING_OCCUPANCY
+            if mode == "inline"
+            else _building_occupancy_reference
+        )
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
@@ -373,6 +428,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         "inline-position-quantization",
         "cached-target-capabilities",
         "local-dense-bucket-bindings",
+        "inline-building-overlap",
     }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -442,6 +498,8 @@ def main() -> None:
         reference_mode, candidate_mode = "runtime", "cached"
     elif args.comparison == "local-dense-bucket-bindings":
         reference_mode, candidate_mode = "attributes", "local"
+    elif args.comparison == "inline-building-overlap":
+        reference_mode, candidate_mode = "helpers", "inline"
     else:
         reference_mode, candidate_mode = "generic", "specialized"
     for mode in (reference_mode, candidate_mode):

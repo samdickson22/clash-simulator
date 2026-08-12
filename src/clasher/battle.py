@@ -36,6 +36,7 @@ from .unit_traits import (
 )
 from .kinematics import (
     LOGIC_TICK_SECONDS,
+    LOGIC_UNITS_PER_TILE,
     SERVER_ACTION_DELAY_SECONDS,
     logic_units_to_tiles,
     tiles_to_logic_units,
@@ -2824,11 +2825,16 @@ class BattleState:
             if ignore_building_id is not None and entity.id == ignore_building_id:
                 continue
             building_radius = getattr(entity.card_stats, "collision_radius", 1.0) or 1.0
-            collision_units = tiles_to_logic_units(
-                float(building_radius) + effective_mover_radius
+            collision_units = round(
+                (float(building_radius) + effective_mover_radius)
+                * LOGIC_UNITS_PER_TILE
             )
-            dx_units = tiles_to_logic_units(position.x - entity.position.x)
-            dy_units = tiles_to_logic_units(position.y - entity.position.y)
+            dx_units = round(
+                float(position.x - entity.position.x) * LOGIC_UNITS_PER_TILE
+            )
+            dy_units = round(
+                float(position.y - entity.position.y) * LOGIC_UNITS_PER_TILE
+            )
             if dx_units * dx_units + dy_units * dy_units < collision_units * collision_units:
                 return True
         return False

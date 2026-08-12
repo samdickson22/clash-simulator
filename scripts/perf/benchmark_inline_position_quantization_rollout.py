@@ -11,7 +11,10 @@ import time
 
 import numpy as np
 import torch
-from benchmark_deployment_blocker_guard_oracle import _paired_gain_summary
+from benchmark_deployment_blocker_guard_oracle import (
+    _building_occupancy_reference,
+    _paired_gain_summary,
+)
 from benchmark_stationary_rollout import _digest_rollout
 
 from clasher import battle as battle_module
@@ -26,6 +29,9 @@ from clasher.rl.train_recurrent import collect_rollout_stationary_opponents
 _INLINE_QUANTIZE_POSITION = Entity.quantize_logic_position
 _CACHED_CAN_ATTACK_AIR = Entity._can_attack_air
 _CACHED_CAN_ATTACK_GROUND = Entity._can_attack_ground
+_INLINE_BUILDING_OCCUPANCY = (
+    battle_module.BattleState.is_position_occupied_by_building
+)
 
 
 def _quantize_position_reference(self: Entity) -> None:
@@ -57,6 +63,7 @@ def _parse_args() -> argparse.Namespace:
             "inline-position-quantization",
             "cached-target-capabilities",
             "local-dense-bucket-bindings",
+            "inline-building-overlap",
         ),
         default="inline-position-quantization",
     )
@@ -96,8 +103,10 @@ def main() -> None:
         reference_mode, candidate_mode = "helpers", "inline"
     elif args.comparison == "cached-target-capabilities":
         reference_mode, candidate_mode = "runtime", "cached"
-    else:
+    elif args.comparison == "local-dense-bucket-bindings":
         reference_mode, candidate_mode = "attributes", "local"
+    else:
+        reference_mode, candidate_mode = "helpers", "inline"
 
     def run_once(mode: str, steps: int) -> dict[str, object]:
         if args.comparison == "inline-position-quantization":
@@ -112,8 +121,14 @@ def main() -> None:
         elif args.comparison == "cached-target-capabilities":
             Entity._can_attack_air = _can_attack_air_reference
             Entity._can_attack_ground = _can_attack_ground_reference
-        else:
+        elif args.comparison == "local-dense-bucket-bindings":
             battle_module._USE_LOCAL_DENSE_BUCKET_BINDINGS = mode == candidate_mode
+        else:
+            battle_module.BattleState.is_position_occupied_by_building = (
+                _INLINE_BUILDING_OCCUPANCY
+                if mode == candidate_mode
+                else _building_occupancy_reference
+            )
         torch.manual_seed(args.seed + 99)
         envs = [
             SelfPlayBattleEnv(
@@ -192,6 +207,9 @@ def main() -> None:
         Entity._can_attack_air = _CACHED_CAN_ATTACK_AIR
         Entity._can_attack_ground = _CACHED_CAN_ATTACK_GROUND
         battle_module._USE_LOCAL_DENSE_BUCKET_BINDINGS = True
+        battle_module.BattleState.is_position_occupied_by_building = (
+            _INLINE_BUILDING_OCCUPANCY
+        )
 
     summary: dict[str, object] = {}
     for mode in (reference_mode, candidate_mode):
