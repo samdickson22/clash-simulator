@@ -3158,6 +3158,7 @@ class Troop(Entity):
                 self.position,
                 logic_units_to_tiles(256 + probe_radius)
                 + battle_state._max_target_collision_radius,
+                tight_bounds=True,
             )
 
         for other in avoidance_candidates:

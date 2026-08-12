@@ -61,6 +61,10 @@ _USE_DENSE_ENTITY_BUCKETS = True
 # Reference/benchmark switch for exact spatial collision candidate pruning.
 _USE_COLLISION_BUCKET_CANDIDATES = True
 
+# Reference/benchmark switch. Collision and native avoidance pass a complete
+# center-distance bound, so their bucket scans need no extra whole-cell halo.
+_USE_TIGHT_INTERACTION_BUCKET_BOUNDS = True
+
 # Reference/benchmark switch. Ground collision pressure from troops and static
 # buildings is additive, so consume the exact nearby candidate list once.
 _USE_SINGLE_PASS_COLLISION_CANDIDATES = True
@@ -922,7 +926,13 @@ class BattleState:
         self._entity_bucket_grid_width = 0
         self._entity_bucket_grid_height = 0
 
-    def iter_entities_in_radius(self, position: Position, radius: float) -> List[Entity]:
+    def iter_entities_in_radius(
+        self,
+        position: Position,
+        radius: float,
+        *,
+        tight_bounds: bool = False,
+    ) -> List[Entity]:
         """Return candidate entities near position for fast target selection."""
         if (
             self.fast_path
@@ -944,7 +954,12 @@ class BattleState:
             max_dim = float(max(self.arena.width, self.arena.height))
         if radius >= max_dim:
             return list(self.entities.values())
-        pad = max(0.5, min(radius + 2.0, max_dim))
+        bucket_halo = (
+            0.0
+            if tight_bounds and _USE_TIGHT_INTERACTION_BUCKET_BOUNDS
+            else 2.0
+        )
+        pad = max(0.5, min(radius + bucket_halo, max_dim))
         if _USE_CACHED_BUCKET_GEOMETRY and _USE_DENSE_ENTITY_BUCKETS:
             max_bx_bound = self._entity_bucket_grid_width - 1
             max_by_bound = self._entity_bucket_grid_height - 1
@@ -3014,6 +3029,7 @@ class BattleState:
             collision_candidates = self.iter_entities_in_radius(
                 troop.position,
                 own_radius + self._max_target_collision_radius,
+                tight_bounds=_USE_TIGHT_INTERACTION_BUCKET_BOUNDS,
             )
         static_radius = min(own_radius, 0.5)
         for other in collision_candidates:
