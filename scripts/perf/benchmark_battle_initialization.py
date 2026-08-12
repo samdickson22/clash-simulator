@@ -19,6 +19,11 @@ from clasher.data import CardDataLoader
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--comparison",
+        choices=("lazy-cards", "princess-data"),
+        default="lazy-cards",
+    )
     parser.add_argument("--battles", type=int, default=8)
     parser.add_argument("--repetitions", type=int, default=21)
     parser.add_argument("--seed", type=int, default=2301)
@@ -57,7 +62,11 @@ def _digest(battles: list[battle_module.BattleState]) -> str:
     return hasher.hexdigest()
 
 
-def _paired_summary(rows: list[dict[str, object]]) -> dict[str, object]:
+def _paired_summary(
+    rows: list[dict[str, object]],
+    reference: str,
+    candidate: str,
+) -> dict[str, object]:
     gains = []
     for repetition in sorted({int(row["repetition"]) for row in rows}):
         pair = {
@@ -65,7 +74,7 @@ def _paired_summary(rows: list[dict[str, object]]) -> dict[str, object]:
             for row in rows
             if int(row["repetition"]) == repetition
         }
-        gains.append(100.0 * (pair["eager"] / pair["lazy"] - 1.0))
+        gains.append(100.0 * (pair[reference] / pair[candidate] - 1.0))
     samples = np.asarray(gains, dtype=np.float64)
     rng = np.random.default_rng(0)
     means = np.mean(
@@ -90,15 +99,27 @@ def main() -> None:
     # Definition parsing is process-global in both variants and not the work
     # under test. Warm it once while retaining per-battle mutable wrappers.
     CardDataLoader().load_card_definitions()
+    reference, candidate = (
+        ("eager", "lazy")
+        if args.comparison == "lazy-cards"
+        else ("parsed", "cached")
+    )
     rows: list[dict[str, object]] = []
     for repetition in range(args.repetitions):
         order = (
-            (("eager", True), ("lazy", False))
+            ((reference, False), (candidate, True))
             if repetition % 2 == 0
-            else (("lazy", False), ("eager", True))
+            else ((candidate, True), (reference, False))
         )
-        for variant, eager in order:
-            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = eager
+        for variant, candidate_enabled in order:
+            if args.comparison == "lazy-cards":
+                battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = (
+                    not candidate_enabled
+                )
+                battle_module._USE_CACHED_PRINCESS_TOWER_DATA = True
+            else:
+                battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = False
+                battle_module._USE_CACHED_PRINCESS_TOWER_DATA = candidate_enabled
             started = time.perf_counter()
             battles = [
                 battle_module.BattleState(
@@ -119,7 +140,7 @@ def main() -> None:
             )
 
     summary: dict[str, object] = {}
-    for variant in ("eager", "lazy"):
+    for variant in (reference, candidate):
         selected = [row for row in rows if row["variant"] == variant]
         summary[variant] = {
             "seconds_median": statistics.median(
@@ -130,7 +151,11 @@ def main() -> None:
             ),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    summary["paired_lazy_vs_eager_percent"] = _paired_summary(rows)
+    summary[f"paired_{candidate}_vs_{reference}_percent"] = _paired_summary(
+        rows,
+        reference,
+        candidate,
+    )
     print(
         json.dumps(
             {

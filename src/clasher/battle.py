@@ -17,7 +17,7 @@ from .entities import Entity, Troop, Building, Projectile
 from .player import PlayerState
 from .arena import TileGrid, Position
 from .card_aliases import resolve_card_name
-from .data import CardDataLoader
+from .data import CardDataLoader, load_princess_tower_character_data
 from .card_types import CardStatsCompat
 from .factory.dynamic_factory import (
     building_from_values,
@@ -104,6 +104,10 @@ _COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
 # Reference/benchmark switch for the legacy eager creation of every mutable
 # card wrapper when a battle starts. Normal lookups materialize wrappers lazily.
 _EAGERLY_MATERIALIZE_BATTLE_CARDS = False
+
+# Reference/benchmark switch for the file-revision-keyed support-tower data
+# cache. The public helper returns an isolated deep copy on every call.
+_USE_CACHED_PRINCESS_TOWER_DATA = True
 
 @dataclass(frozen=True)
 class PendingSpellCast:
@@ -414,6 +418,8 @@ class BattleState:
 
     def _load_princess_tower_character_data(self) -> dict:
         """Load Princess Tower baseline stats from support-card data in gamedata."""
+        if _USE_CACHED_PRINCESS_TOWER_DATA:
+            return load_princess_tower_character_data(self.card_loader.data_file)
         with open(self.card_loader.data_file, "r") as f:
             spells = json.load(f).get("items", {}).get("spells", [])
         for entry in spells:
