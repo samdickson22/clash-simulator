@@ -13,6 +13,11 @@ from clasher.spells import SPELL_REGISTRY
 from .common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 
 
+# Reference/benchmark switch for skipping per-tile deployment-payload queries
+# when one exact battle-wide scan proves no live blocker exists.
+_USE_DEPLOYMENT_BLOCKER_GUARD = True
+
+
 @dataclass(frozen=True)
 class ActionSelection:
     action_id: int
@@ -328,6 +333,21 @@ class DiscreteTileActionSpace:
         tower_mask = self._tower_mask(battle, player_id)
         deploy_mask = zone_mask & non_blocked
         deploy_mask_no_tower = deploy_mask & (~tower_mask)
+        deployment_blockers = (
+            tuple(
+                entity
+                for entity in battle.entities.values()
+                if entity.is_alive
+                and bool(getattr(entity, "blocks_deployment", False))
+            )
+            if _USE_DEPLOYMENT_BLOCKER_GUARD
+            else None
+        )
+        has_deployment_blockers = (
+            bool(deployment_blockers)
+            if deployment_blockers is not None
+            else True
+        )
         building_blocked_by_size: dict[int, np.ndarray] = {}
         troop_blocked_by_radius: dict[float, np.ndarray] = {}
 
@@ -416,16 +436,24 @@ class DiscreteTileActionSpace:
                         continue
                     if battle.arena.is_tower_tile(pos, battle):
                         continue
-                if is_building_card and battle.is_deployment_payload_occupied(
-                    pos,
-                    card_stats=card_stats,
+                if (
+                    is_building_card
+                    and has_deployment_blockers
+                    and battle.is_deployment_payload_occupied(
+                        pos,
+                        card_stats=card_stats,
+                        deployment_blockers=deployment_blockers,
+                    )
                 ):
                     continue
                 if (
                     not is_spell
                     and not is_building_card
+                    and has_deployment_blockers
                     and battle.is_deployment_payload_occupied(
-                        pos, mover_radius=probe_radius
+                        pos,
+                        mover_radius=probe_radius,
+                        deployment_blockers=deployment_blockers,
                     )
                 ):
                     continue

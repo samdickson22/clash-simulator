@@ -18,6 +18,7 @@ from clasher import unit_traits
 from clasher.battle import BattleState
 from clasher.rl import structured_obs as structured_obs_module
 from clasher.rl import train_recurrent as train_recurrent_module
+from clasher.rl import action_space as action_space_module
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.strategy_bots import StrategyBot
@@ -159,6 +160,12 @@ def _parse_args() -> argparse.Namespace:
         default="scalar",
         help="select NumPy-dispatched or exact scalar entity range clipping",
     )
+    parser.add_argument(
+        "--deployment-blocker-guard",
+        choices=("scan", "guard", "both"),
+        default="guard",
+        help="select unconditional per-tile payload scans or one exact empty guard",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -249,7 +256,11 @@ def main() -> None:
         observation_buffers: str,
         unit_clip: str,
         entity_range_clip: str,
+        deployment_blocker_guard: str,
     ) -> dict[str, float | str]:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = (
+            deployment_blocker_guard == "guard"
+        )
         train_recurrent_module._USE_PREALLOCATED_STEP_OBSERVATION_BUFFERS = (
             observation_buffers == "preallocated"
         )
@@ -307,6 +318,7 @@ def main() -> None:
             "observation_buffers": observation_buffers,
             "unit_clip": unit_clip,
             "entity_range_clip": entity_range_clip,
+            "deployment_blocker_guard": deployment_blocker_guard,
             "elapsed_s": elapsed,
             "decisions_per_s": args.num_envs * steps / elapsed,
             "sha256": _digest_rollout(result[0], envs),
@@ -325,36 +337,64 @@ def main() -> None:
         if args.entity_range_clip == "both"
         else (args.entity_range_clip,)
     )
+    deployment_blocker_guard_variants = (
+        ("scan", "guard")
+        if args.deployment_blocker_guard == "both"
+        else (args.deployment_blocker_guard,)
+    )
     variants = tuple(
-        (observation_buffers, unit_clip, entity_range_clip)
+        (
+            observation_buffers,
+            unit_clip,
+            entity_range_clip,
+            deployment_blocker_guard,
+        )
         for observation_buffers in observation_buffer_variants
         for unit_clip in unit_clip_variants
         for entity_range_clip in entity_range_clip_variants
+        for deployment_blocker_guard in deployment_blocker_guard_variants
     )
     if args.warmup_steps:
-        for observation_buffers, unit_clip, entity_range_clip in variants:
+        for (
+            observation_buffers,
+            unit_clip,
+            entity_range_clip,
+            deployment_blocker_guard,
+        ) in variants:
             run_once(
                 args.warmup_steps,
                 observation_buffers,
                 unit_clip,
                 entity_range_clip,
+                deployment_blocker_guard,
             )
     rows = []
     for repetition in range(args.repetitions):
         order = variants if repetition % 2 == 0 else tuple(reversed(variants))
-        for observation_buffers, unit_clip, entity_range_clip in order:
+        for (
+            observation_buffers,
+            unit_clip,
+            entity_range_clip,
+            deployment_blocker_guard,
+        ) in order:
             row = run_once(
                 args.rollout_steps,
                 observation_buffers,
                 unit_clip,
                 entity_range_clip,
+                deployment_blocker_guard,
             )
             row["repetition"] = repetition
             rows.append(row)
     elapsed = [float(row["elapsed_s"]) for row in rows]
     rates = [float(row["decisions_per_s"]) for row in rows]
     summary = {}
-    for observation_buffers, unit_clip, entity_range_clip in variants:
+    for (
+        observation_buffers,
+        unit_clip,
+        entity_range_clip,
+        deployment_blocker_guard,
+    ) in variants:
         varying_parts = []
         if len(observation_buffer_variants) > 1:
             varying_parts.append(observation_buffers)
@@ -362,6 +402,8 @@ def main() -> None:
             varying_parts.append(unit_clip)
         if len(entity_range_clip_variants) > 1:
             varying_parts.append(entity_range_clip)
+        if len(deployment_blocker_guard_variants) > 1:
+            varying_parts.append(deployment_blocker_guard)
         variant = "/".join(varying_parts) if varying_parts else observation_buffers
         selected = [
             row
@@ -369,6 +411,7 @@ def main() -> None:
             if row["observation_buffers"] == observation_buffers
             and row["unit_clip"] == unit_clip
             and row["entity_range_clip"] == entity_range_clip
+            and row["deployment_blocker_guard"] == deployment_blocker_guard
         ]
         summary[variant] = {
             "median_elapsed_s": statistics.median(
@@ -383,6 +426,7 @@ def main() -> None:
         args.observation_buffers == "both"
         and args.unit_clip != "both"
         and args.entity_range_clip != "both"
+        and args.deployment_blocker_guard != "both"
     ):
         stacked = float(summary["stacked"]["median_elapsed_s"])
         preallocated = float(summary["preallocated"]["median_elapsed_s"])
@@ -393,6 +437,7 @@ def main() -> None:
         args.unit_clip == "both"
         and args.observation_buffers != "both"
         and args.entity_range_clip != "both"
+        and args.deployment_blocker_guard != "both"
     ):
         numpy_elapsed = float(summary["numpy"]["median_elapsed_s"])
         scalar_elapsed = float(summary["scalar"]["median_elapsed_s"])
@@ -403,11 +448,23 @@ def main() -> None:
         args.entity_range_clip == "both"
         and args.observation_buffers != "both"
         and args.unit_clip != "both"
+        and args.deployment_blocker_guard != "both"
     ):
         numpy_elapsed = float(summary["numpy"]["median_elapsed_s"])
         scalar_elapsed = float(summary["scalar"]["median_elapsed_s"])
         summary["scalar_range_vs_numpy_percent"] = 100.0 * (
             numpy_elapsed / scalar_elapsed - 1.0
+        )
+    if (
+        args.deployment_blocker_guard == "both"
+        and args.observation_buffers != "both"
+        and args.unit_clip != "both"
+        and args.entity_range_clip != "both"
+    ):
+        scan_elapsed = float(summary["scan"]["median_elapsed_s"])
+        guard_elapsed = float(summary["guard"]["median_elapsed_s"])
+        summary["guard_vs_scan_percent"] = 100.0 * (
+            scan_elapsed / guard_elapsed - 1.0
         )
     print(
         json.dumps(
@@ -440,6 +497,7 @@ def main() -> None:
                 "observation_buffers": args.observation_buffers,
                 "unit_clip": args.unit_clip,
                 "entity_range_clip": args.entity_range_clip,
+                "deployment_blocker_guard": args.deployment_blocker_guard,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,

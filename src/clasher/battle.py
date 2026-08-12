@@ -2667,6 +2667,7 @@ class BattleState:
         *,
         mover_radius: float = 0.5,
         card_stats: CardStatsCompat | None = None,
+        deployment_blockers: Iterable[Entity] | None = None,
     ) -> bool:
         """Return whether a live effect payload blocks card placement here.
 
@@ -2675,7 +2676,12 @@ class BattleState:
         resolve. The entity capability keeps this general for future payload
         types without teaching deployment code individual card names.
         """
-        for entity in self.entities.values():
+        candidates = (
+            self.entities.values()
+            if deployment_blockers is None
+            else deployment_blockers
+        )
+        for entity in candidates:
             if not entity.is_alive or not getattr(entity, "blocks_deployment", False):
                 continue
             payload_radius = float(
