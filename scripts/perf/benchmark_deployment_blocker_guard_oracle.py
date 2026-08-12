@@ -14,7 +14,10 @@ from benchmark_oracle_scalar_leaf import _run_variant, _snapshots
 from clasher import battle as battle_module
 from clasher import entities as entities_module
 from clasher import pathfinding as pathfinding_module
+from clasher.card_types import CardStatsCompat
 from clasher.rl import action_space as action_space_module
+
+_CARD_STATS_DEEPCOPY = CardStatsCompat.__deepcopy__
 
 
 def _paired_gain_summary(
@@ -86,6 +89,7 @@ def _parse_args() -> argparse.Namespace:
             "deferred-crown-validation",
             "hoisted-crown-validator",
             "scalar-crown-slots",
+            "card-wrapper-deepcopy",
         ),
         default="guard",
     )
@@ -93,6 +97,11 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _run(args: argparse.Namespace, snapshots, mode: str):
+    if args.comparison == "card-wrapper-deepcopy":
+        if mode == "specialized":
+            CardStatsCompat.__deepcopy__ = _CARD_STATS_DEEPCOPY
+        elif hasattr(CardStatsCompat, "__deepcopy__"):
+            del CardStatsCompat.__deepcopy__
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
@@ -259,7 +268,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         entities_module._USE_EXACT_TARGET_BUCKET_BOUND = True
         entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
         entities_module._USE_HOISTED_CROWN_FALLBACK_VALIDATOR = mode == "hoisted"
-    else:
+    elif args.comparison == "scalar-crown-slots":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
@@ -275,6 +284,22 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
         entities_module._USE_HOISTED_CROWN_FALLBACK_VALIDATOR = True
         entities_module._USE_SCALAR_DEFERRED_CROWN_SLOTS = mode == "scalar"
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+        battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+        action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
+        entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
+        entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
+        battle_module._USE_SINGLE_PASS_COLLISION_CANDIDATES = True
+        entities_module._USE_LAZY_CROWN_FALLBACK_BUILDER = True
+        battle_module._USE_TIGHT_INTERACTION_BUCKET_BOUNDS = True
+        entities_module._USE_EXACT_TARGET_BUCKET_BOUND = True
+        entities_module._USE_DEFERRED_CROWN_FALLBACK_VALIDATION = True
+        entities_module._USE_HOISTED_CROWN_FALLBACK_VALIDATOR = True
+        entities_module._USE_SCALAR_DEFERRED_CROWN_SLOTS = True
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
     del row["variant"]
@@ -316,8 +341,10 @@ def main() -> None:
         reference_mode, candidate_mode = "eager", "deferred"
     elif args.comparison == "hoisted-crown-validator":
         reference_mode, candidate_mode = "closure", "hoisted"
-    else:
+    elif args.comparison == "scalar-crown-slots":
         reference_mode, candidate_mode = "list", "scalar"
+    else:
+        reference_mode, candidate_mode = "generic", "specialized"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 
