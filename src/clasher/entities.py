@@ -164,6 +164,11 @@ _USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
 # candidate lists. Unclassified or non-native slot layouts fall back below.
 _USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
 
+# Reference/benchmark switch. The complete compatibility fallback is rarely
+# reached by live native battles, so do not allocate its nested closure on
+# every ordinary target query.
+_USE_LAZY_CROWN_FALLBACK_BUILDER = True
+
 
 class _UnhandledCrownFallback:
     """Marker requiring the complete compatibility selector."""
@@ -2305,95 +2310,16 @@ class Entity(ABC):
                     if not targets_only_buildings:
                         troop_targets.append((entity, distance))
         
-        def _fallback_crown_targets() -> list[tuple[Entity, float]]:
-            crown_towers: list[Entity] = []
-            # Target selection is also used by deterministic/unit-level callers
-            # before an entity has been attached to a BattleState.  The explicit
-            # entity collection is the source of truth in that case; the cached
-            # alive-building list is only an optimization for live battles.
-            use_cached_crowns = bool(
-                _USE_CACHED_CROWN_FALLBACK_MEMBERSHIP
-                and battle_state is not None
-                and getattr(battle_state, "fast_path", False)
-                and getattr(battle_state, "entities", None) is entities
-                and hasattr(battle_state, "get_fast_crown_target_entities")
-            )
-            candidates = (
-                battle_state.get_fast_crown_target_entities(1 - self.player_id)
-                if use_cached_crowns
-                else (
-                    getattr(battle_state, "_alive_buildings", [])
-                    if battle_state is not None
-                    else entities.values()
-                )
-            )
-            if (
-                _USE_SINGLE_PASS_CACHED_CROWN_FALLBACK
-                and use_cached_crowns
-                and LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET
-                and LOGIC_XPOS_BASED_TOWER_TARGETING
-                and not LOGIC_DEFAULT_TARGET_USE_LANE_ID
-            ):
-                single_pass = self._single_pass_cached_crown_fallback(
-                    candidates,
-                    entities=entities,
+        fallback_crown_targets = None
+        if not _USE_LAZY_CROWN_FALLBACK_BUILDER:
+            # Keep the former per-query closure as an exact timing reference.
+            def fallback_crown_targets() -> list[tuple[Entity, float]]:
+                return self._fallback_crown_targets(
+                    entities,
+                    battle_state=battle_state,
                     can_attack_air=can_attack_air,
                     can_attack_ground=can_attack_ground,
                 )
-                if single_pass is not None:
-                    return single_pass
-            for entity in candidates:
-                # The accelerated building cache is owned by the live
-                # BattleState, while callers may intentionally ask this
-                # entity to select from a smaller/replaced collection (state
-                # restoration and isolated interaction probes both do this).
-                # A cached object is eligible only when that exact object is
-                # still present in the collection being queried. Comparing
-                # identity also prevents an old tower with a reused ID from
-                # leaking into the restored state.
-                if entities.get(entity.id) is not entity:
-                    continue
-                if not use_cached_crowns and not isinstance(entity, Building):
-                    continue
-                if not self._is_valid_target(entity):
-                    continue
-                if _COALESCE_TARGET_PLANE_CHECKS:
-                    is_air = is_airborne_target(entity)
-                    if (is_air and not can_attack_air) or (
-                        not is_air and not can_attack_ground
-                    ):
-                        continue
-                else:
-                    if is_airborne_target(entity) and not can_attack_air:
-                        continue
-                    if (not is_airborne_target(entity)) and not can_attack_ground:
-                        continue
-                if not use_cached_crowns:
-                    building_name = getattr(
-                        getattr(entity, "card_stats", None), "name", ""
-                    )
-                    is_crown_tower = (
-                        building_name in {"Tower", "KingTower"}
-                        or bool(getattr(entity, "_is_king_tower", False))
-                    )
-                    if not is_crown_tower:
-                        continue
-                crown_towers.append(entity)
-            preferred = self._preferred_fallback_crown_targets(
-                crown_towers
-            )
-            if _PREFER_CROWN_FALLBACK_BEFORE_DISTANCE:
-                return [
-                    (entity, self.native_target_distance_to(entity))
-                    for entity in preferred
-                ]
-
-            towers = [
-                (entity, self.native_target_distance_to(entity))
-                for entity in crown_towers
-            ]
-            preferred_ids = {entity.id for entity in preferred}
-            return [item for item in towers if item[0].id in preferred_ids]
 
         # Choose targets based on targeting rules
         if targets_only_buildings:
@@ -2423,11 +2349,21 @@ class Entity(ABC):
                 if _return_fallback_used:
                     return direct_fallback, direct_fallback is not None
                 return direct_fallback
-        targets = (
-            in_sight_targets
-            if in_sight_targets
-            else (_fallback_crown_targets() if used_fallback else [])
-        )
+        if in_sight_targets:
+            targets = in_sight_targets
+        elif used_fallback:
+            targets = (
+                self._fallback_crown_targets(
+                    entities,
+                    battle_state=battle_state,
+                    can_attack_air=can_attack_air,
+                    can_attack_ground=can_attack_ground,
+                )
+                if fallback_crown_targets is None
+                else fallback_crown_targets()
+            )
+        else:
+            targets = []
         
         if not targets:
             if _return_fallback_used:
@@ -2437,6 +2373,101 @@ class Entity(ABC):
         if _return_fallback_used:
             return selected, used_fallback
         return selected
+
+    def _fallback_crown_targets(
+        self,
+        entities: dict[int, 'Entity'],
+        *,
+        battle_state: 'BattleState | None',
+        can_attack_air: bool,
+        can_attack_ground: bool,
+    ) -> list[tuple['Entity', float]]:
+        """Build the complete compatibility Crown fallback only on demand."""
+        crown_towers: list[Entity] = []
+        # Target selection is also used by deterministic/unit-level callers
+        # before an entity has been attached to a BattleState. The explicit
+        # entity collection is the source of truth in that case; the cached
+        # alive-building list is only an optimization for live battles.
+        use_cached_crowns = bool(
+            _USE_CACHED_CROWN_FALLBACK_MEMBERSHIP
+            and battle_state is not None
+            and getattr(battle_state, "fast_path", False)
+            and getattr(battle_state, "entities", None) is entities
+            and hasattr(battle_state, "get_fast_crown_target_entities")
+        )
+        candidates: Iterable[Entity]
+        if use_cached_crowns:
+            assert battle_state is not None
+            candidates = battle_state.get_fast_crown_target_entities(
+                1 - self.player_id
+            )
+        else:
+            candidates = (
+                getattr(battle_state, "_alive_buildings", [])
+                if battle_state is not None
+                else entities.values()
+            )
+        if (
+            _USE_SINGLE_PASS_CACHED_CROWN_FALLBACK
+            and use_cached_crowns
+            and LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET
+            and LOGIC_XPOS_BASED_TOWER_TARGETING
+            and not LOGIC_DEFAULT_TARGET_USE_LANE_ID
+        ):
+            single_pass = self._single_pass_cached_crown_fallback(
+                candidates,
+                entities=entities,
+                can_attack_air=can_attack_air,
+                can_attack_ground=can_attack_ground,
+            )
+            if single_pass is not None:
+                return single_pass
+        for entity in candidates:
+            # The accelerated building cache is owned by the live BattleState,
+            # while callers may intentionally ask this entity to select from a
+            # smaller/replaced collection. Identity also prevents an old tower
+            # with a reused ID from leaking into restored state.
+            if entities.get(entity.id) is not entity:
+                continue
+            if not use_cached_crowns and not isinstance(entity, Building):
+                continue
+            if not self._is_valid_target(entity):
+                continue
+            if _COALESCE_TARGET_PLANE_CHECKS:
+                is_air = is_airborne_target(entity)
+                if (is_air and not can_attack_air) or (
+                    not is_air and not can_attack_ground
+                ):
+                    continue
+            else:
+                if is_airborne_target(entity) and not can_attack_air:
+                    continue
+                if (not is_airborne_target(entity)) and not can_attack_ground:
+                    continue
+            if not use_cached_crowns:
+                building_name = getattr(
+                    getattr(entity, "card_stats", None), "name", ""
+                )
+                is_crown_tower = (
+                    building_name in {"Tower", "KingTower"}
+                    or bool(getattr(entity, "_is_king_tower", False))
+                )
+                if not is_crown_tower:
+                    continue
+            crown_towers.append(entity)
+        preferred = self._preferred_fallback_crown_targets(crown_towers)
+        if _PREFER_CROWN_FALLBACK_BEFORE_DISTANCE:
+            return [
+                (entity, self.native_target_distance_to(entity))
+                for entity in preferred
+            ]
+
+        towers = [
+            (entity, self.native_target_distance_to(entity))
+            for entity in crown_towers
+        ]
+        preferred_ids = {entity.id for entity in preferred}
+        return [item for item in towers if item[0].id in preferred_ids]
 
     def _select_cached_crown_fallback_direct(
         self,
