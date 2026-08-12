@@ -61,6 +61,10 @@ _USE_DENSE_ENTITY_BUCKETS = True
 # Reference/benchmark switch for exact spatial collision candidate pruning.
 _USE_COLLISION_BUCKET_CANDIDATES = True
 
+# Reference/benchmark switch. Ground collision pressure from troops and static
+# buildings is additive, so consume the exact nearby candidate list once.
+_USE_SINGLE_PASS_COLLISION_CANDIDATES = True
+
 # Reference/benchmark switch for restoring bucket candidates to exact entity
 # encounter order without allocating a second result list and lambda.
 _USE_INPLACE_BUCKET_ID_SORT = True
@@ -3011,41 +3015,60 @@ class BattleState:
                 troop.position,
                 own_radius + self._max_target_collision_radius,
             )
+        static_radius = min(own_radius, 0.5)
         for other in collision_candidates:
-            other_airborne_leap = (
-                getattr(other, "_mk_leap_phase", None) == "airborne"
-            )
-            if (
-                other is troop
-                or not isinstance(other, Troop)
-                or not other.is_alive
-                or (
-                    is_in_transit(other)
-                    and not getattr(other, "_river_jump_active", False)
-                    and not other_airborne_leap
-                )
-                or own_air_collision != uses_air_collision_plane(other)
-            ):
+            if other is troop or not other.is_alive:
                 continue
-            other_radius = max(
-                0.2,
-                getattr(other.card_stats, "collision_radius", 0.5) or 0.5,
-            )
-            vector = self._collision_vector_units(
-                troop,
-                other.position,
-                own_radius + other_radius,
-                max(1e-9, other.get_unit_mass()),
-                own_mass,
-            )
-            if vector is not None:
-                troop.accumulate_movement_vector_units(*vector)
+            if isinstance(other, Troop):
+                other_airborne_leap = (
+                    getattr(other, "_mk_leap_phase", None) == "airborne"
+                )
+                if (
+                    (
+                        is_in_transit(other)
+                        and not getattr(other, "_river_jump_active", False)
+                        and not other_airborne_leap
+                    )
+                    or own_air_collision != uses_air_collision_plane(other)
+                ):
+                    continue
+                other_radius = max(
+                    0.2,
+                    getattr(other.card_stats, "collision_radius", 0.5) or 0.5,
+                )
+                vector = self._collision_vector_units(
+                    troop,
+                    other.position,
+                    own_radius + other_radius,
+                    max(1e-9, other.get_unit_mass()),
+                    own_mass,
+                )
+                if vector is not None:
+                    troop.accumulate_movement_vector_units(*vector)
+                continue
+            if (
+                _USE_SINGLE_PASS_COLLISION_CANDIDATES
+                and not own_air_collision
+                and isinstance(other, Building)
+            ):
+                building_radius = max(
+                    0.0,
+                    getattr(other.card_stats, "collision_radius", 0.0) or 0.0,
+                )
+                vector = self._collision_vector_units(
+                    troop,
+                    other.position,
+                    static_radius + building_radius,
+                    20.0,
+                    own_mass,
+                )
+                if vector is not None:
+                    troop.accumulate_movement_vector_units(*vector)
 
-        if own_air_collision:
+        if own_air_collision or _USE_SINGLE_PASS_COLLISION_CANDIDATES:
             return
         # Static objects do not receive a reciprocal vector. Native supplies
         # mass 20 and caps the moving character's radius contribution at 0.5.
-        static_radius = min(own_radius, 0.5)
         for building in collision_candidates:
             if (
                 not isinstance(building, Building)

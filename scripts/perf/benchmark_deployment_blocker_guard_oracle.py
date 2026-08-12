@@ -79,6 +79,7 @@ def _parse_args() -> argparse.Namespace:
             "prefiltered-action-candidates",
             "singleton-target-selection",
             "direct-crown-selection",
+            "single-pass-collision",
         ),
         default="guard",
     )
@@ -92,6 +93,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
     entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
     entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
+    battle_module._USE_SINGLE_PASS_COLLISION_CANDIDATES = True
     if args.comparison == "guard":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -157,7 +159,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = (
             mode == "shortcut"
         )
-    else:
+    elif args.comparison == "direct-crown-selection":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
@@ -168,6 +170,16 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = (
             mode == "direct"
         )
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+        battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+        action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
+        entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
+        entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
+        battle_module._USE_SINGLE_PASS_COLLISION_CANDIDATES = mode == "single"
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
     del row["variant"]
@@ -195,8 +207,10 @@ def main() -> None:
         reference_mode, candidate_mode = "rechecked", "prefiltered"
     elif args.comparison == "singleton-target-selection":
         reference_mode, candidate_mode = "general", "shortcut"
-    else:
+    elif args.comparison == "direct-crown-selection":
         reference_mode, candidate_mode = "listed", "direct"
+    else:
+        reference_mode, candidate_mode = "double", "single"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 

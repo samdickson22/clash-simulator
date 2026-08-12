@@ -92,6 +92,7 @@ def _parse_args() -> argparse.Namespace:
             "prefiltered-action-candidates",
             "singleton-target-selection",
             "direct-crown-selection",
+            "single-pass-collision",
             "lazy-card-materialization",
             "cached-princess-data",
         ),
@@ -142,6 +143,8 @@ def main() -> None:
         reference_variant, candidate_variant = "general", "shortcut"
     elif args.comparison == "direct-crown-selection":
         reference_variant, candidate_variant = "listed", "direct"
+    elif args.comparison == "single-pass-collision":
+        reference_variant, candidate_variant = "double", "single"
     elif args.comparison == "lazy-card-materialization":
         reference_variant, candidate_variant = "eager", "lazy"
     else:
@@ -154,6 +157,7 @@ def main() -> None:
         action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
         entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
         entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
+        battle_module._USE_SINGLE_PASS_COLLISION_CANDIDATES = True
         if args.comparison == "guard":
             action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = (
                 variant == candidate_variant
@@ -285,6 +289,21 @@ def main() -> None:
             action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
             entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
             entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = (
+                variant == candidate_variant
+            )
+        elif args.comparison == "single-pass-collision":
+            action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+            train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
+            battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+            battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+            entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+            battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+            battle_module._EAGERLY_MATERIALIZE_BATTLE_CARDS = False
+            battle_module._USE_CACHED_PRINCESS_TOWER_DATA = True
+            action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
+            entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
+            entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
+            battle_module._USE_SINGLE_PASS_COLLISION_CANDIDATES = (
                 variant == candidate_variant
             )
         elif args.comparison == "lazy-card-materialization":
