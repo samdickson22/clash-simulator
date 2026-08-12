@@ -14,11 +14,49 @@ import torch
 from benchmark_stationary_rollout import _digest_rollout
 
 from clasher.rl import action_space as action_space_module
+from clasher.rl import reward_model as reward_model_module
+from clasher.rl import train_recurrent as train_recurrent_module
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.strategy_bots import StrategyBot
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rl.train_recurrent import collect_rollout_stationary_opponents
+
+
+def _paired_gain_summary(
+    rows: list[dict[str, float | str | int]],
+    reference_variant: str,
+    candidate_variant: str,
+) -> dict[str, object]:
+    gains = []
+    for repetition in sorted({int(row["repetition"]) for row in rows}):
+        pair = {
+            str(row["variant"]): float(row["seconds"])
+            for row in rows
+            if int(row["repetition"]) == repetition
+        }
+        gains.append(
+            100.0
+            * (pair[reference_variant] / pair[candidate_variant] - 1.0)
+        )
+    samples = np.asarray(gains, dtype=np.float64)
+    rng = np.random.default_rng(0)
+    means = np.mean(
+        rng.choice(samples, size=(20_000, len(samples)), replace=True),
+        axis=1,
+    )
+    return {
+        "values": gains,
+        "median": statistics.median(gains),
+        "mean": statistics.mean(gains),
+        "stdev": statistics.stdev(gains) if len(gains) > 1 else 0.0,
+        "positive_pairs": sum(gain > 0.0 for gain in gains),
+        "pairs": len(gains),
+        "mean_95_percentile_bootstrap_ci": [
+            float(np.quantile(means, 0.025)),
+            float(np.quantile(means, 0.975)),
+        ],
+    }
 
 
 def _parse_args() -> argparse.Namespace:
@@ -36,6 +74,16 @@ def _parse_args() -> argparse.Namespace:
         "--engine-fast-path",
         choices=("off", "shadow", "on"),
         default="on",
+    )
+    parser.add_argument(
+        "--comparison",
+        choices=("guard", "inference-mode"),
+        default="guard",
+    )
+    parser.add_argument(
+        "--reward-profile",
+        choices=reward_model_module.REWARD_PROFILES,
+        default=reward_model_module.OBJECTIVE_V1,
     )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
@@ -55,14 +103,30 @@ def main() -> None:
     torch.manual_seed(91)
     model = ClasherPolicy(config, builder.card_stat_features).eval()
 
+    reference_variant, candidate_variant = (
+        ("scanned", "guarded")
+        if args.comparison == "guard"
+        else ("no-grad", "inference")
+    )
+
     def run_once(variant: str, steps: int) -> dict[str, float | str | int]:
-        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = variant == "guarded"
+        if args.comparison == "guard":
+            action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = (
+                variant == candidate_variant
+            )
+            train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = True
+        else:
+            action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+            train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = (
+                variant == candidate_variant
+            )
         torch.manual_seed(args.seed + 99)
         envs = [
             SelfPlayBattleEnv(
                 seed=args.seed + env_index,
                 max_ticks=args.max_ticks,
                 engine_fast_path=args.engine_fast_path,
+                reward_profile=args.reward_profile,
             )
             for env_index in range(args.num_envs)
         ]
@@ -118,14 +182,14 @@ def main() -> None:
         }
 
     if args.warmup_steps:
-        run_once("scanned", args.warmup_steps)
-        run_once("guarded", args.warmup_steps)
+        run_once(reference_variant, args.warmup_steps)
+        run_once(candidate_variant, args.warmup_steps)
     rows = []
     for repetition in range(args.repetitions):
         order = (
-            ("scanned", "guarded")
+            (reference_variant, candidate_variant)
             if repetition % 2 == 0
-            else ("guarded", "scanned")
+            else (candidate_variant, reference_variant)
         )
         for variant in order:
             row = run_once(variant, args.rollout_steps)
@@ -133,7 +197,7 @@ def main() -> None:
             rows.append(row)
 
     summary = {}
-    for variant in ("scanned", "guarded"):
+    for variant in (reference_variant, candidate_variant):
         selected = [row for row in rows if row["variant"] == variant]
         seconds = [float(row["seconds"]) for row in selected]
         rates = [float(row["decisions_per_second"]) for row in selected]
@@ -146,9 +210,14 @@ def main() -> None:
             "decisions_per_second_median": statistics.median(rates),
             "hashes": sorted({str(row["sha256"]) for row in selected}),
         }
-    scanned = float(summary["scanned"]["seconds_median"])
-    guarded = float(summary["guarded"]["seconds_median"])
-    summary["guarded_vs_scanned_percent"] = 100.0 * (scanned / guarded - 1.0)
+    reference = float(summary[reference_variant]["seconds_median"])
+    candidate = float(summary[candidate_variant]["seconds_median"])
+    summary[f"{candidate_variant}_vs_{reference_variant}_percent"] = 100.0 * (
+        reference / candidate - 1.0
+    )
+    summary[f"paired_{candidate_variant}_vs_{reference_variant}_percent"] = (
+        _paired_gain_summary(rows, reference_variant, candidate_variant)
+    )
     print(
         json.dumps(
             {

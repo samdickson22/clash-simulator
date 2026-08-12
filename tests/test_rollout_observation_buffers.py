@@ -78,10 +78,17 @@ def test_preallocated_observation_buffers_match_stacked_policy_inputs():
         np.testing.assert_array_equal(rollout_arrays[field][:, 1], buffer)
 
 
-def _fixed_stationary_rollout(*, use_preallocated_buffers: bool):
+def _fixed_stationary_rollout(
+    *,
+    use_preallocated_buffers: bool,
+    use_inference_mode: bool | None = None,
+    recurrent_state: tuple[torch.Tensor, torch.Tensor] | None = None,
+):
     train_recurrent_module._USE_PREALLOCATED_STEP_OBSERVATION_BUFFERS = (
         use_preallocated_buffers
     )
+    if use_inference_mode is not None:
+        train_recurrent_module._USE_ROLLOUT_INFERENCE_MODE = use_inference_mode
     torch.manual_seed(8833)
     env = SelfPlayBattleEnv(seed=8833, max_ticks=128)
     env.reset(seed=8833)
@@ -107,7 +114,11 @@ def _fixed_stationary_rollout(*, use_preallocated_buffers: bool):
         model=model,
         device=torch.device("cpu"),
         rollout_steps=3,
-        recurrent_state=model.initial_state(1),
+        recurrent_state=(
+            model.initial_state(1)
+            if recurrent_state is None
+            else recurrent_state
+        ),
         previous_actions=np.full((1,), no_op, dtype=np.int64),
         previous_rewards=np.zeros((1,), dtype=np.float32),
         episode_starts=np.ones((1,), dtype=np.bool_),
@@ -153,3 +164,48 @@ def test_preallocated_observation_buffers_preserve_fixed_rollout(monkeypatch):
                     assert preallocated_field == stacked_field
         else:
             assert preallocated_value == stacked_value
+
+
+def test_inference_mode_preserves_rollout_and_supports_recurrent_continuation():
+    reference = _fixed_stationary_rollout(
+        use_preallocated_buffers=True,
+        use_inference_mode=False,
+    )
+    inference = _fixed_stationary_rollout(
+        use_preallocated_buffers=True,
+        use_inference_mode=True,
+    )
+
+    for reference_value, inference_value in zip(reference, inference):
+        if isinstance(reference_value, tuple):
+            for reference_tensor, inference_tensor in zip(
+                reference_value,
+                inference_value,
+            ):
+                torch.testing.assert_close(
+                    inference_tensor,
+                    reference_tensor,
+                    rtol=0,
+                    atol=0,
+                )
+        elif isinstance(reference_value, np.ndarray):
+            np.testing.assert_array_equal(inference_value, reference_value)
+        elif hasattr(reference_value, "__dataclass_fields__"):
+            for field in fields(reference_value):
+                reference_field = getattr(reference_value, field.name)
+                inference_field = getattr(inference_value, field.name)
+                if isinstance(reference_field, np.ndarray):
+                    np.testing.assert_array_equal(inference_field, reference_field)
+                else:
+                    assert inference_field == reference_field
+        else:
+            assert inference_value == reference_value
+
+    assert not reference[1][0].is_inference()
+    assert inference[1][0].is_inference()
+    continued = _fixed_stationary_rollout(
+        use_preallocated_buffers=True,
+        use_inference_mode=True,
+        recurrent_state=inference[1],
+    )
+    assert continued[1][0].is_inference()

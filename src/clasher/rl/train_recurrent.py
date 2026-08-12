@@ -6,8 +6,9 @@ import time
 from collections.abc import Iterator
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass
+from functools import wraps
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, ParamSpec, TypeVar
 
 import numpy as np
 import torch
@@ -41,6 +42,25 @@ _NULL_WRITER = _NullWriter()
 # Reference/benchmark switch for filling one reusable contiguous observation
 # buffer per CPU actor step instead of stacking the same observations twice.
 _USE_PREALLOCATED_STEP_OBSERVATION_BUFFERS = True
+_USE_ROLLOUT_INFERENCE_MODE = True
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
+
+
+def _rollout_grad_mode(function: Callable[_P, _R]) -> Callable[_P, _R]:
+    """Select benchmarkable inference-only execution for actor rollouts."""
+
+    @wraps(function)
+    def wrapped(*args: _P.args, **kwargs: _P.kwargs) -> _R:
+        context = (
+            torch.inference_mode()
+            if _USE_ROLLOUT_INFERENCE_MODE
+            else torch.no_grad()
+        )
+        with context:
+            return function(*args, **kwargs)
+
+    return wrapped
 
 
 @contextmanager
@@ -357,7 +377,7 @@ def _current_action_masks(
     )
 
 
-@torch.no_grad()
+@_rollout_grad_mode
 def collect_rollout(
     *,
     envs: list[SelfPlayBattleEnv],
@@ -501,7 +521,7 @@ def collect_rollout(
     )
 
 
-@torch.no_grad()
+@_rollout_grad_mode
 def collect_rollout_stationary_opponents(
     *,
     envs: list[SelfPlayBattleEnv],
