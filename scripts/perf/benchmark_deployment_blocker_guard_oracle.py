@@ -16,9 +16,11 @@ from clasher import battle as battle_module
 from clasher import entities as entities_module
 from clasher import pathfinding as pathfinding_module
 from clasher.card_types import CardStatsCompat
+from clasher.entities import Entity
 from clasher.rl import action_space as action_space_module
 
 _CARD_STATS_DEEPCOPY = CardStatsCompat.__deepcopy__
+_ENTITY_DEEPCOPY = Entity.__deepcopy__
 
 
 def _card_stats_deepcopy_reference(
@@ -106,6 +108,7 @@ def _parse_args() -> argparse.Namespace:
             "scalar-crown-slots",
             "card-wrapper-deepcopy",
             "card-wrapper-atomic-deepcopy",
+            "entity-deepcopy",
         ),
         default="guard",
     )
@@ -124,6 +127,11 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
             if mode == "atomic"
             else _card_stats_deepcopy_reference
         )
+    elif args.comparison == "entity-deepcopy":
+        if mode == "specialized":
+            Entity.__deepcopy__ = _ENTITY_DEEPCOPY
+        elif hasattr(Entity, "__deepcopy__"):
+            del Entity.__deepcopy__
     pathfinding_module._USE_CACHED_GROUND_PATH_HOVER_TRAIT = True
     entities_module._USE_CACHED_PATHFIND_HOVER_TRAIT = True
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
@@ -309,6 +317,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     elif args.comparison in {
         "card-wrapper-deepcopy",
         "card-wrapper-atomic-deepcopy",
+        "entity-deepcopy",
     }:
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -370,8 +379,10 @@ def main() -> None:
         reference_mode, candidate_mode = "list", "scalar"
     elif args.comparison == "card-wrapper-deepcopy":
         reference_mode, candidate_mode = "generic", "specialized"
-    else:
+    elif args.comparison == "card-wrapper-atomic-deepcopy":
         reference_mode, candidate_mode = "all-values", "atomic"
+    else:
+        reference_mode, candidate_mode = "generic", "specialized"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 

@@ -1,9 +1,10 @@
+import copy
+import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-import math
-from typing import Optional, List, Dict, Any, Iterable, Literal, overload
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Literal, Optional, overload
+
 import numpy as np
 
 if TYPE_CHECKING:
@@ -266,6 +267,9 @@ TARGET_DISTANCE_TIE_EPSILON = 1e-6
 # combat lock; acquisition and the actual hit/clock boundary still use the
 # card's exact serialized range.
 STARTED_ATTACK_KEEP_RANGE_EXTENSION = 0.5
+_ENTITY_DEEPCOPY_ATOMIC_TYPES = frozenset(
+    {type(None), bool, int, float, complex, bytes, str}
+)
 
 
 @dataclass
@@ -410,6 +414,21 @@ class Entity(ABC):
 
     # Mechanics system
     mechanics: List[Mechanic] = field(default_factory=list)
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'Entity':
+        """Copy mutable entity state without generic reconstruction setup."""
+        existing = memo.get(id(self))
+        if isinstance(existing, Entity):
+            return existing
+        cloned = object.__new__(type(self))
+        memo[id(self)] = cloned
+        for name, value in self.__dict__.items():
+            cloned.__dict__[name] = (
+                value
+                if type(value) in _ENTITY_DEEPCOPY_ATOMIC_TYPES
+                else copy.deepcopy(value, memo)
+            )
+        return cloned
 
     def __post_init__(self) -> None:
         if self.max_hitpoints == 0:
