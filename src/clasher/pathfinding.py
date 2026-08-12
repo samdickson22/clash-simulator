@@ -64,6 +64,11 @@ _NATIVE_WATER_COST = 800
 # Reference/benchmark switch for exact repeated route-goal queries.
 _USE_NATIVE_ROUTE_GOAL_CACHE = True
 
+# Reference/benchmark switch. The native goal candidates on one half-tile row
+# form a contiguous x interval, so only the interval point closest to the mover
+# can win that row's distance comparison.
+_USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = True
+
 # Reference/benchmark switch. The compiled kernel implements the same native
 # first-discovery heap and falls back to Python when Numba is unavailable.
 _USE_COMPILED_STANDARD_ROUTE = True
@@ -282,8 +287,77 @@ def _compute_native_route_goal_cell_units(
     return best_cell
 
 
-_cached_native_route_goal_cell_units = lru_cache(maxsize=32_768)(
+def _compute_native_route_goal_cell_units_row_interval(
+    mover_x: int,
+    mover_y: int,
+    target_x: int,
+    target_y: int,
+    required_range_units: int,
+) -> tuple[int, int] | None:
+    """Compute the identical native goal from one exact candidate per row."""
+
+    cell_size = HALF_TILE_LOGIC_UNITS
+    cell_center_offset = cell_size // 2
+    search_radius = trunc_div(required_range_units, cell_size) + 1
+    target_cell_x = max(
+        0,
+        min(STANDARD_PATH_WIDTH - 1, trunc_div(target_x, cell_size)),
+    )
+    target_cell_y = max(
+        0,
+        min(STANDARD_PATH_HEIGHT - 1, trunc_div(target_y, cell_size)),
+    )
+    min_x = max(0, target_cell_x - search_radius)
+    max_x = min(STANDARD_PATH_WIDTH - 1, target_cell_x + search_radius)
+    min_y = max(0, target_cell_y - search_radius)
+    max_y = min(STANDARD_PATH_HEIGHT - 1, target_cell_y + search_radius)
+
+    required_range_sq = required_range_units * required_range_units
+    best_cell: tuple[int, int] | None = None
+    best_mover_distance_sq = (1 << 31) - 1
+    mover_cell_x, mover_remainder = divmod(
+        mover_x - cell_center_offset,
+        cell_size,
+    )
+    if mover_remainder * 2 > cell_size:
+        mover_cell_x += 1
+
+    for cell_y in range(min_y, max_y + 1):
+        candidate_y = cell_y * cell_size + cell_center_offset
+        target_dy = candidate_y - target_y
+        remaining_range_sq = required_range_sq - target_dy * target_dy
+        if remaining_range_sq < 0:
+            continue
+        max_target_dx = math.isqrt(remaining_range_sq)
+        lower_center_x = target_x - max_target_dx
+        upper_center_x = target_x + max_target_dx
+        first_valid_x = max(
+            min_x,
+            -(-(lower_center_x - cell_center_offset) // cell_size),
+        )
+        last_valid_x = min(
+            max_x,
+            (upper_center_x - cell_center_offset) // cell_size,
+        )
+        if first_valid_x > last_valid_x:
+            continue
+
+        cell_x = max(first_valid_x, min(last_valid_x, mover_cell_x))
+        candidate_x = cell_x * cell_size + cell_center_offset
+        mover_dx = candidate_x - mover_x
+        mover_dy = candidate_y - mover_y
+        mover_distance_sq = mover_dx * mover_dx + mover_dy * mover_dy
+        if mover_distance_sq < best_mover_distance_sq:
+            best_cell = (cell_x, cell_y)
+            best_mover_distance_sq = mover_distance_sq
+    return best_cell
+
+
+_cached_native_route_goal_cell_units_full_scan = lru_cache(maxsize=32_768)(
     _compute_native_route_goal_cell_units
+)
+_cached_native_route_goal_cell_units = lru_cache(maxsize=32_768)(
+    _compute_native_route_goal_cell_units_row_interval
 )
 
 
@@ -318,8 +392,12 @@ def native_route_goal_cell(
         tiles_to_logic_units(target.position.y),
         max(0, tiles_to_logic_units(range_tiles)),
     )
+    if _USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL:
+        if _USE_NATIVE_ROUTE_GOAL_CACHE:
+            return _cached_native_route_goal_cell_units(*args)
+        return _compute_native_route_goal_cell_units_row_interval(*args)
     if _USE_NATIVE_ROUTE_GOAL_CACHE:
-        return _cached_native_route_goal_cell_units(*args)
+        return _cached_native_route_goal_cell_units_full_scan(*args)
     return _compute_native_route_goal_cell_units(*args)
 
 

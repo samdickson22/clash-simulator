@@ -19,6 +19,7 @@ from benchmark_stationary_rollout import _digest_rollout
 
 from clasher import battle as battle_module
 from clasher import entities as entities_module
+from clasher import pathfinding
 from clasher.entities import Entity
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
@@ -64,6 +65,7 @@ def _parse_args() -> argparse.Namespace:
             "cached-target-capabilities",
             "local-dense-bucket-bindings",
             "inline-building-overlap",
+            "native-route-goal-row-interval",
         ),
         default="inline-position-quantization",
     )
@@ -105,8 +107,10 @@ def main() -> None:
         reference_mode, candidate_mode = "runtime", "cached"
     elif args.comparison == "local-dense-bucket-bindings":
         reference_mode, candidate_mode = "attributes", "local"
-    else:
+    elif args.comparison == "inline-building-overlap":
         reference_mode, candidate_mode = "helpers", "inline"
+    else:
+        reference_mode, candidate_mode = "full-scan", "row-interval"
 
     def run_once(mode: str, steps: int) -> dict[str, object]:
         if args.comparison == "inline-position-quantization":
@@ -123,12 +127,18 @@ def main() -> None:
             Entity._can_attack_ground = _can_attack_ground_reference
         elif args.comparison == "local-dense-bucket-bindings":
             battle_module._USE_LOCAL_DENSE_BUCKET_BINDINGS = mode == candidate_mode
-        else:
+        elif args.comparison == "inline-building-overlap":
             battle_module.BattleState.is_position_occupied_by_building = (
                 _INLINE_BUILDING_OCCUPANCY
                 if mode == candidate_mode
                 else _building_occupancy_reference
             )
+        else:
+            pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = (
+                mode == candidate_mode
+            )
+            pathfinding._cached_native_route_goal_cell_units.cache_clear()
+            pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
         torch.manual_seed(args.seed + 99)
         envs = [
             SelfPlayBattleEnv(
@@ -210,6 +220,9 @@ def main() -> None:
         battle_module.BattleState.is_position_occupied_by_building = (
             _INLINE_BUILDING_OCCUPANCY
         )
+        pathfinding._USE_ROW_INTERVAL_NATIVE_ROUTE_GOAL = True
+        pathfinding._cached_native_route_goal_cell_units.cache_clear()
+        pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
 
     summary: dict[str, object] = {}
     for mode in (reference_mode, candidate_mode):
