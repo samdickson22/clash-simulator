@@ -16,6 +16,7 @@ from clasher import battle as battle_module
 from clasher import entities as entities_module
 from clasher import unit_traits
 from clasher.battle import BattleState
+from clasher.rl import train_recurrent as train_recurrent_module
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.strategy_bots import StrategyBot
@@ -139,6 +140,12 @@ def _parse_args() -> argparse.Namespace:
         default="coalesced",
         help="select repeated or single dynamic target-plane classification",
     )
+    parser.add_argument(
+        "--observation-buffers",
+        choices=("stacked", "preallocated", "both"),
+        default="preallocated",
+        help="select duplicate stacking or reusable CPU actor step buffers",
+    )
     parser.add_argument("--decks-path", default="decks.json")
     return parser.parse_args()
 
@@ -221,7 +228,10 @@ def main() -> None:
     model = ClasherPolicy(config, builder.card_stat_features)
     model.eval()
 
-    def run_once(steps: int) -> dict[str, float | str]:
+    def run_once(steps: int, observation_buffers: str) -> dict[str, float | str]:
+        train_recurrent_module._USE_PREALLOCATED_STEP_OBSERVATION_BUFFERS = (
+            observation_buffers == "preallocated"
+        )
         torch.manual_seed(args.seed + 99)
         envs = [
             SelfPlayBattleEnv(
@@ -263,16 +273,47 @@ def main() -> None:
         )
         elapsed = time.perf_counter() - started
         return {
+            "observation_buffers": observation_buffers,
             "elapsed_s": elapsed,
             "decisions_per_s": args.num_envs * steps / elapsed,
             "sha256": _digest_rollout(result[0], envs),
         }
 
+    variants = (
+        ("stacked", "preallocated")
+        if args.observation_buffers == "both"
+        else (args.observation_buffers,)
+    )
     if args.warmup_steps:
-        run_once(args.warmup_steps)
-    rows = [run_once(args.rollout_steps) for _ in range(args.repetitions)]
+        for variant in variants:
+            run_once(args.warmup_steps, variant)
+    rows = []
+    for repetition in range(args.repetitions):
+        order = variants if repetition % 2 == 0 else tuple(reversed(variants))
+        for variant in order:
+            row = run_once(args.rollout_steps, variant)
+            row["repetition"] = repetition
+            rows.append(row)
     elapsed = [float(row["elapsed_s"]) for row in rows]
     rates = [float(row["decisions_per_s"]) for row in rows]
+    summary = {}
+    for variant in variants:
+        selected = [row for row in rows if row["observation_buffers"] == variant]
+        summary[variant] = {
+            "median_elapsed_s": statistics.median(
+                float(row["elapsed_s"]) for row in selected
+            ),
+            "median_decisions_per_s": statistics.median(
+                float(row["decisions_per_s"]) for row in selected
+            ),
+            "hashes": sorted({str(row["sha256"]) for row in selected}),
+        }
+    if len(variants) == 2:
+        stacked = float(summary["stacked"]["median_elapsed_s"])
+        preallocated = float(summary["preallocated"]["median_elapsed_s"])
+        summary["preallocated_vs_stacked_percent"] = 100.0 * (
+            stacked / preallocated - 1.0
+        )
     print(
         json.dumps(
             {
@@ -301,11 +342,14 @@ def main() -> None:
                 "unit_mass": args.unit_mass,
                 "collision_radius": args.collision_radius,
                 "target_plane_checks": args.target_plane_checks,
+                "observation_buffers": args.observation_buffers,
                 "elapsed_s": elapsed,
                 "median_elapsed_s": statistics.median(elapsed),
                 "decisions_per_s": rates,
                 "median_decisions_per_s": statistics.median(rates),
                 "hashes": sorted({str(row["sha256"]) for row in rows}),
+                "rows": rows,
+                "summary": summary,
             },
             sort_keys=True,
         )

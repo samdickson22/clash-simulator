@@ -38,6 +38,10 @@ class _NullWriter:
 
 _NULL_WRITER = _NullWriter()
 
+# Reference/benchmark switch for filling one reusable contiguous observation
+# buffer per CPU actor step instead of stacking the same observations twice.
+_USE_PREALLOCATED_STEP_OBSERVATION_BUFFERS = True
+
 
 @contextmanager
 def maybe_silence_stdio(enabled: bool) -> Iterator[None]:
@@ -146,9 +150,65 @@ def _stack_step_inputs(
     episode_starts: np.ndarray,
     device: torch.device,
 ) -> PolicyInputs:
+    stacked_observations = _stack_observation_arrays(observations)
+    return _step_inputs_from_stacked_observations(
+        stacked_observations,
+        action_masks,
+        previous_actions,
+        previous_rewards,
+        episode_starts,
+        device,
+    )
+
+
+_OBSERVATION_FIELDS = (
+    "entity_ids",
+    "entity_features",
+    "entity_mask",
+    "hand_ids",
+    "global_features",
+    "critic_entity_ids",
+    "critic_entity_features",
+    "critic_entity_mask",
+    "critic_card_ids",
+    "critic_global_features",
+)
+
+
+def _stack_observation_arrays(
+    observations: list[StructuredObservation],
+    *,
+    out: dict[str, np.ndarray] | None = None,
+) -> dict[str, np.ndarray]:
+    if not observations:
+        raise ValueError("at least one observation is required")
+    if out is None:
+        return {
+            field: np.stack(
+                [getattr(observation, field) for observation in observations]
+            )
+            for field in _OBSERVATION_FIELDS
+        }
+    for field in _OBSERVATION_FIELDS:
+        np.stack(
+            [getattr(observation, field) for observation in observations],
+            out=out[field],
+        )
+    return out
+
+
+def _step_inputs_from_stacked_observations(
+    observations: dict[str, np.ndarray],
+    action_masks: np.ndarray,
+    previous_actions: np.ndarray,
+    previous_rewards: np.ndarray,
+    episode_starts: np.ndarray,
+    device: torch.device,
+) -> PolicyInputs:
     def stack(name: str, dtype: torch.dtype) -> Tensor:
-        array = np.stack([getattr(observation, name) for observation in observations])
-        return torch.as_tensor(array, dtype=dtype, device=device).unsqueeze(1)
+        return torch.as_tensor(
+            observations[name], dtype=dtype, device=device
+        ).unsqueeze(1)
 
     return PolicyInputs(
         entity_ids=stack("entity_ids", torch.long),
@@ -229,27 +289,32 @@ def _store_observations(
     previous_rewards: np.ndarray,
     episode_starts: np.ndarray,
     step: int,
+    *,
+    stacked_observations: dict[str, np.ndarray] | None = None,
 ) -> None:
-    observation_fields = (
-        "entity_ids",
-        "entity_features",
-        "entity_mask",
-        "hand_ids",
-        "global_features",
-        "critic_entity_ids",
-        "critic_entity_features",
-        "critic_entity_mask",
-        "critic_card_ids",
-        "critic_global_features",
+    observation_arrays = (
+        _stack_observation_arrays(observations)
+        if stacked_observations is None
+        else stacked_observations
     )
-    for field in observation_fields:
-        arrays[field][:, step] = np.stack(
-            [getattr(observation, field) for observation in observations]
-        )
+    for field in _OBSERVATION_FIELDS:
+        arrays[field][:, step] = observation_arrays[field]
     arrays["action_masks"][:, step] = action_masks
     arrays["previous_actions"][:, step] = previous_actions
     arrays["previous_rewards"][:, step] = previous_rewards
     arrays["episode_starts"][:, step] = episode_starts
+
+
+def _empty_step_observation_arrays(
+    rollout_arrays: dict[str, np.ndarray],
+) -> dict[str, np.ndarray]:
+    return {
+        field: np.empty(
+            (rollout_arrays[field].shape[0], *rollout_arrays[field].shape[2:]),
+            dtype=rollout_arrays[field].dtype,
+        )
+        for field in _OBSERVATION_FIELDS
+    }
 
 
 def _current_observations(
@@ -315,6 +380,11 @@ def collect_rollout(
         builder=builder,
         num_actions=num_actions,
     )
+    step_observation_arrays = (
+        _empty_step_observation_arrays(arrays)
+        if device.type == "cpu" and _USE_PREALLOCATED_STEP_OBSERVATION_BUFFERS
+        else None
+    )
     initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = 0
@@ -323,6 +393,8 @@ def collect_rollout(
     for step in range(rollout_steps):
         with maybe_silence_stdio(quiet_engine):
             observations, action_masks = _current_observations(envs)
+        if step_observation_arrays is not None:
+            _stack_observation_arrays(observations, out=step_observation_arrays)
         _store_observations(
             arrays,
             observations,
@@ -331,14 +403,26 @@ def collect_rollout(
             previous_rewards,
             episode_starts,
             step,
+            stacked_observations=step_observation_arrays,
         )
-        inputs = _stack_step_inputs(
-            observations,
-            action_masks,
-            previous_actions,
-            previous_rewards,
-            episode_starts,
-            device,
+        inputs = (
+            _step_inputs_from_stacked_observations(
+                step_observation_arrays,
+                action_masks,
+                previous_actions,
+                previous_rewards,
+                episode_starts,
+                device,
+            )
+            if step_observation_arrays is not None
+            else _stack_step_inputs(
+                observations,
+                action_masks,
+                previous_actions,
+                previous_rewards,
+                episode_starts,
+                device,
+            )
         )
         actions_t, log_probs_t, values_t, recurrent_state, _ = model.act(
             inputs, recurrent_state, deterministic=False
@@ -469,6 +553,11 @@ def collect_rollout_stationary_opponents(
         builder=builder,
         num_actions=num_actions,
     )
+    step_observation_arrays = (
+        _empty_step_observation_arrays(arrays)
+        if device.type == "cpu" and _USE_PREALLOCATED_STEP_OBSERVATION_BUFFERS
+        else None
+    )
     initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = wins = losses = draws = 0
@@ -478,6 +567,8 @@ def collect_rollout_stationary_opponents(
             observations, action_masks = _current_learner_observations(
                 envs, learner_players
             )
+        if step_observation_arrays is not None:
+            _stack_observation_arrays(observations, out=step_observation_arrays)
         _store_observations(
             arrays,
             observations,
@@ -486,14 +577,26 @@ def collect_rollout_stationary_opponents(
             previous_rewards,
             episode_starts,
             step,
+            stacked_observations=step_observation_arrays,
         )
-        inputs = _stack_step_inputs(
-            observations,
-            action_masks,
-            previous_actions,
-            previous_rewards,
-            episode_starts,
-            device,
+        inputs = (
+            _step_inputs_from_stacked_observations(
+                step_observation_arrays,
+                action_masks,
+                previous_actions,
+                previous_rewards,
+                episode_starts,
+                device,
+            )
+            if step_observation_arrays is not None
+            else _stack_step_inputs(
+                observations,
+                action_masks,
+                previous_actions,
+                previous_rewards,
+                episode_starts,
+                device,
+            )
         )
         actions_t, log_probs_t, values_t, recurrent_state, _ = model.act(
             inputs, recurrent_state, deterministic=False
