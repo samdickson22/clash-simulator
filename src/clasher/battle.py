@@ -90,6 +90,10 @@ _USE_CACHED_BUCKET_GEOMETRY = True
 # fixed, so win checks are needed only when a timer boundary becomes actionable.
 _USE_SPARSE_IDLE_WIN_CHECKS = True
 
+# Reference/benchmark switch. Between timer boundaries, win state and public
+# tower HP can change only after a Crown Tower HP mutation.
+_USE_DIRTY_WIN_CONDITION_REFRESH = True
+
 # Reference/benchmark switch for trusting the exact live-Building membership
 # contract immediately after the fast placement cache refresh.
 _USE_TRUSTED_ALIVE_BUILDING_MEMBERSHIP = True
@@ -299,6 +303,7 @@ class BattleState:
         default_factory=dict,
         init=False,
     )
+    _win_conditions_dirty: bool = field(default=True, init=False, repr=False)
     
     def __post_init__(self) -> None:
         """Initialize battle state"""
@@ -1344,8 +1349,21 @@ class BattleState:
         if self.fast_path and refresh_fast_path_end:
             self._refresh_fast_path_caches(trust_target_cache_dirty=True)
         
-        # Check win conditions
-        self._check_win_conditions()
+        # Check win conditions only when a Crown Tower changed or a timer
+        # boundary can alter match state.
+        if (
+            not _USE_DIRTY_WIN_CONDITION_REFRESH
+            or self._win_conditions_dirty
+            or (
+                not self.sudden_death
+                and self.time >= self.overtime_start_time
+            )
+            or (
+                self.sudden_death
+                and self.time >= self.tiebreaker_time
+            )
+        ):
+            self._check_win_conditions()
 
     def _run_object_phase(
         self,
@@ -1402,6 +1420,11 @@ class BattleState:
             and getattr(entity, "_crown_tower_slot", None)
             in {"left", "right", "king"}
         )
+
+    def mark_win_conditions_dirty_if_crown(self, entity: Entity) -> None:
+        """Publish a Crown Tower HP mutation to the end-of-tick refresh."""
+        if self._is_static_tower_entity(entity):
+            self._win_conditions_dirty = True
 
     def can_fast_forward_idle(self) -> bool:
         if self.game_over:
@@ -2575,6 +2598,7 @@ class BattleState:
         for eid in dead_ids:
             entity = self.entities[eid]
             if self._is_static_tower_entity(entity):
+                self._win_conditions_dirty = True
                 player = self.players[entity.player_id]
                 slot = entity._crown_tower_slot
                 setattr(player, f"{slot}_tower_hp", 0)
@@ -2704,6 +2728,7 @@ class BattleState:
         """Check if game should end"""
         # Update player tower HP from entities
         self._update_tower_hp()
+        self._win_conditions_dirty = False
         
         # Check both King Towers as one simultaneous resolution. Effects from
         # the same simulation tick can destroy both; iteration order must not

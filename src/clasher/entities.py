@@ -757,10 +757,17 @@ class Entity(ABC):
         if incoming > 0 and callable(activate) and getattr(self, "requires_activation", False):
             activate()
         self.hitpoints = max(0, self.hitpoints - incoming)
+        battle_state = getattr(self, "battle_state", None)
+        mark_win_dirty = getattr(
+            battle_state,
+            "mark_win_conditions_dirty_if_crown",
+            None,
+        )
+        if callable(mark_win_dirty):
+            mark_win_dirty(self)
         if self.hitpoints <= 0 and self.is_alive:
             self.is_alive = False
             if self.entity_kind == 1:
-                battle_state = getattr(self, "battle_state", None)
                 invalidate = getattr(
                     battle_state,
                     "invalidate_alive_buildings_cache",
@@ -4942,6 +4949,14 @@ class Building(Entity):
             )
             if whole_hp_loss > 0:
                 self.hitpoints = max(0.0, self.hitpoints - whole_hp_loss)
+                battle_state = getattr(self, "battle_state", None)
+                mark_win_dirty = getattr(
+                    battle_state,
+                    "mark_win_conditions_dirty_if_crown",
+                    None,
+                )
+                if callable(mark_win_dirty):
+                    mark_win_dirty(self)
             if self.hitpoints <= 0 and self.is_alive:
                 self.is_alive = False
                 battle_state = getattr(self, "battle_state", None)

@@ -70,6 +70,7 @@ def _parse_args() -> argparse.Namespace:
             "compiled-native-route-goal",
             "sparse-idle-checks",
             "early-ground-path-cache-hit",
+            "dirty-win-condition-refresh",
         ),
         default="inline-position-quantization",
     )
@@ -119,6 +120,8 @@ def main() -> None:
         reference_mode, candidate_mode = "python", "compiled"
     elif args.comparison == "sparse-idle-checks":
         reference_mode, candidate_mode = "per-tick", "sparse"
+    elif args.comparison == "dirty-win-condition-refresh":
+        reference_mode, candidate_mode = "per-tick", "dirty"
     else:
         reference_mode, candidate_mode = "late", "early"
 
@@ -161,6 +164,10 @@ def main() -> None:
             optimized = mode == candidate_mode
             battle_module._USE_SPARSE_IDLE_WIN_CHECKS = optimized
             selfplay_env_module._USE_TRUSTED_IDLE_ELIGIBILITY = optimized
+        elif args.comparison == "dirty-win-condition-refresh":
+            battle_module._USE_DIRTY_WIN_CONDITION_REFRESH = (
+                mode == candidate_mode
+            )
         else:
             pathfinding._USE_EARLY_GROUND_PATH_CACHE_HIT = mode == candidate_mode
         torch.manual_seed(args.seed + 99)
@@ -250,6 +257,7 @@ def main() -> None:
         pathfinding._cached_native_route_goal_cell_units_row_interval_python.cache_clear()
         pathfinding._cached_native_route_goal_cell_units_full_scan.cache_clear()
         battle_module._USE_SPARSE_IDLE_WIN_CHECKS = True
+        battle_module._USE_DIRTY_WIN_CONDITION_REFRESH = True
         selfplay_env_module._USE_TRUSTED_IDLE_ELIGIBILITY = True
         pathfinding._USE_EARLY_GROUND_PATH_CACHE_HIT = True
 
