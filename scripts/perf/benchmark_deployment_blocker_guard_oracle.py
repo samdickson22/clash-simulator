@@ -78,6 +78,7 @@ def _parse_args() -> argparse.Namespace:
             "dirty-target-cache",
             "prefiltered-action-candidates",
             "singleton-target-selection",
+            "direct-crown-selection",
         ),
         default="guard",
     )
@@ -90,6 +91,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
     battle_module._USE_DIRTY_TARGET_CACHE_REFRESH = True
     action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
     entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
+    entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
     if args.comparison == "guard":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = mode == "guard"
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
@@ -113,6 +115,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
         entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = mode == "single-pass"
+        entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = False
         battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
     elif args.comparison == "movement-building-refresh":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
@@ -144,7 +147,7 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = (
             mode == "prefiltered"
         )
-    else:
+    elif args.comparison == "singleton-target-selection":
         action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
         battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
         battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
@@ -153,6 +156,17 @@ def _run(args: argparse.Namespace, snapshots, mode: str):
         action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
         entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = (
             mode == "shortcut"
+        )
+    else:
+        action_space_module._USE_DEPLOYMENT_BLOCKER_GUARD = True
+        battle_module._USE_CACHED_TARGETABILITY_REQUIREMENT = True
+        battle_module._USE_DIRECT_TARGET_ENTITY_KIND = True
+        entities_module._USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
+        battle_module._COALESCE_MOVEMENT_BUILDING_CACHE_REFRESH = True
+        action_space_module._USE_PREFILTERED_ACTION_MASK_CANDIDATES = True
+        entities_module._USE_SINGLETON_TARGET_SELECTION_SHORTCUT = True
+        entities_module._USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = (
+            mode == "direct"
         )
     row = _run_variant(args, snapshots, "scalar")
     row["mode"] = mode
@@ -179,8 +193,10 @@ def main() -> None:
         reference_mode, candidate_mode = "full", "dirty"
     elif args.comparison == "prefiltered-action-candidates":
         reference_mode, candidate_mode = "rechecked", "prefiltered"
-    else:
+    elif args.comparison == "singleton-target-selection":
         reference_mode, candidate_mode = "general", "shortcut"
+    else:
+        reference_mode, candidate_mode = "listed", "direct"
     for mode in (reference_mode, candidate_mode):
         _run(args, snapshots[:1], mode)
 

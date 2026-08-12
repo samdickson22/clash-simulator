@@ -159,6 +159,18 @@ _USE_CACHED_CROWN_FALLBACK_MEMBERSHIP = True
 # Crown fallback members in one pass under the active native globals.
 _USE_SINGLE_PASS_CACHED_CROWN_FALLBACK = True
 
+# Reference/benchmark switch. Under the active Crown-fallback globals, select
+# directly from exact semantic tower slots without constructing intermediate
+# candidate lists. Unclassified or non-native slot layouts fall back below.
+_USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION = True
+
+
+class _UnhandledCrownFallback:
+    """Marker requiring the complete compatibility selector."""
+
+
+_CROWN_FALLBACK_UNHANDLED = _UnhandledCrownFallback()
+
 # Reference/benchmark switch for computing adjusted distance only after the
 # data-driven Crown preference filter has discarded ineligible objectives.
 _PREFER_CROWN_FALLBACK_BEFORE_DISTANCE = True
@@ -2389,6 +2401,28 @@ class Entity(ABC):
         else:
             in_sight_targets = troop_targets + building_targets
         used_fallback = not in_sight_targets and include_crown_fallback
+        if (
+            used_fallback
+            and _USE_SINGLE_PASS_CACHED_CROWN_FALLBACK
+            and _USE_DIRECT_CACHED_CROWN_FALLBACK_SELECTION
+            and battle_state is not None
+            and getattr(battle_state, "fast_path", False)
+            and getattr(battle_state, "entities", None) is entities
+            and hasattr(battle_state, "get_fast_crown_target_entities")
+            and LOGIC_PRINCESS_TOWERS_ALWAYS_AS_DEFAULT_TARGET
+            and LOGIC_XPOS_BASED_TOWER_TARGETING
+            and not LOGIC_DEFAULT_TARGET_USE_LANE_ID
+        ):
+            direct_fallback = self._select_cached_crown_fallback_direct(
+                battle_state.get_fast_crown_target_entities(1 - self.player_id),
+                entities=entities,
+                can_attack_air=can_attack_air,
+                can_attack_ground=can_attack_ground,
+            )
+            if not isinstance(direct_fallback, _UnhandledCrownFallback):
+                if _return_fallback_used:
+                    return direct_fallback, direct_fallback is not None
+                return direct_fallback
         targets = (
             in_sight_targets
             if in_sight_targets
@@ -2403,6 +2437,85 @@ class Entity(ABC):
         if _return_fallback_used:
             return selected, used_fallback
         return selected
+
+    def _select_cached_crown_fallback_direct(
+        self,
+        candidates: Iterable['Entity'],
+        *,
+        entities: dict[int, 'Entity'],
+        can_attack_air: bool,
+        can_attack_ground: bool,
+    ) -> 'Entity | None | _UnhandledCrownFallback':
+        """Select the active-globals Crown fallback without temporary lists."""
+        first_princess: Entity | None = None
+        first_princess_x = 0.0
+        second_princess: Entity | None = None
+        second_princess_x = 0.0
+        king: Entity | None = None
+        for entity in candidates:
+            if entities.get(entity.id) is not entity:
+                continue
+            if not self._is_valid_target(entity):
+                continue
+            is_air = is_airborne_target(entity)
+            if (is_air and not can_attack_air) or (
+                not is_air and not can_attack_ground
+            ):
+                continue
+            crown_slot = getattr(entity, "_crown_tower_slot", None)
+            if crown_slot not in {"left", "right", "king"}:
+                return _CROWN_FALLBACK_UNHANDLED
+            if crown_slot == "king":
+                if king is not None:
+                    return _CROWN_FALLBACK_UNHANDLED
+                king = entity
+                continue
+            x_distance = abs(entity.position.x - self.position.x)
+            if first_princess is None:
+                first_princess = entity
+                first_princess_x = x_distance
+            elif second_princess is None:
+                second_princess = entity
+                second_princess_x = x_distance
+            else:
+                return _CROWN_FALLBACK_UNHANDLED
+
+        if first_princess is None:
+            return king
+        if second_princess is None:
+            return first_princess
+        if first_princess_x + GEOMETRY_BOUNDARY_EPSILON < second_princess_x:
+            return first_princess
+        if second_princess_x + GEOMETRY_BOUNDARY_EPSILON < first_princess_x:
+            return second_princess
+
+        first_distance = self.native_target_distance_to(first_princess)
+        second_distance = self.native_target_distance_to(second_princess)
+        if second_distance < first_distance:
+            selected = second_princess
+            minimum = second_distance
+        else:
+            selected = first_princess
+            minimum = first_distance
+        if (
+            not LOGIC_SYMMETRIC_CLOSEST_BUILDING_ITERATION
+            or not is_native_building_target(selected)
+        ):
+            return selected
+        first_tied = (
+            is_native_building_target(first_princess)
+            and first_distance <= minimum + TARGET_DISTANCE_TIE_EPSILON
+        )
+        second_tied = (
+            is_native_building_target(second_princess)
+            and second_distance <= minimum + TARGET_DISTANCE_TIE_EPSILON
+        )
+        if first_tied and second_tied:
+            return min(
+                (first_princess, second_princess),
+                key=self._target_tie_break_key,
+            )
+        return first_princess if first_tied else second_princess
 
     def _single_pass_cached_crown_fallback(
         self,
