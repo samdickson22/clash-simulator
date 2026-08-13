@@ -920,6 +920,15 @@
       ]
     },
     {
+      "path": "tests/test_interaction_scenarios.py",
+      "sha256": "3169c93637cab88ea555798d6dfa7baa79074947159ab15b97bdbd5389743fa9",
+      "static_test_functions": [
+        "test_every_systematic_event_family_builds_a_replayable_case",
+        "test_executable_one_v_one_case_is_exact_per_tick",
+        "test_spawn_order_and_lane_mirror_change_state_without_rng_drift"
+      ]
+    },
+    {
       "path": "tests/test_lazy_battle_card_materialization.py",
       "sha256": "15b3e7fdacf903c5ae404db051b944402f584610bac532ec31b50826c07a46ab",
       "static_test_functions": [
@@ -1481,6 +1490,6 @@
   ],
   "note": "Static inventory only; pytest parameter expansion is intentionally reported separately by collection commands in the evidence report.",
   "schema_version": 1,
-  "static_test_function_count": 842,
-  "test_file_count": 106
+  "static_test_function_count": 845,
+  "test_file_count": 107
 }
