@@ -1,0 +1,1486 @@
+{
+  "files": [
+    {
+      "path": "tests/test_alive_building_cache_refresh.py",
+      "sha256": "c627f76e48a491c9cb42607e0303109bcc97b5ece2df3fa8095f9a738e7e2990",
+      "static_test_functions": [
+        "test_alive_building_cache_exact_match_skips_reference_refresh",
+        "test_alive_building_cache_membership_change_matches_reference",
+        "test_alive_building_cache_reuse_preserves_fixed_seed_rollout",
+        "test_alive_building_cache_same_id_replacement_preserves_reference_semantics"
+      ]
+    },
+    {
+      "path": "tests/test_avoidance_bucket_candidates.py",
+      "sha256": "de4f72fdfe4b671a7e83deb99d172130f629bd5aa75d3b752ace86adefb84698",
+      "static_test_functions": [
+        "test_avoidance_bucket_candidates_preserve_fixed_seed_rollout",
+        "test_avoidance_buckets_include_data_driven_large_collision_radii"
+      ]
+    },
+    {
+      "path": "tests/test_balance_override_hygiene.py",
+      "sha256": "1a86a7d6e47de60cef3f890b243ab5cc322e8a8bfbd26a3be67f21be47e6bf65",
+      "static_test_functions": [
+        "test_enabled_entry_overrides_only_correct_missing_or_stale_feed_values",
+        "test_enabled_identity_overrides_do_not_repin_complete_live_payloads"
+      ]
+    },
+    {
+      "path": "tests/test_batched_logic_ticks.py",
+      "sha256": "f1a837458d7f127281f88ac620234af57380ef32fc42ae660260732846c85f26",
+      "static_test_functions": [
+        "test_batched_logic_ticks_match_repeated_steps_and_fast_caches",
+        "test_batched_logic_ticks_preserve_fixed_seed_rollout",
+        "test_batched_logic_ticks_preserve_oracle_action_and_rng"
+      ]
+    },
+    {
+      "path": "tests/test_battle_clone.py",
+      "sha256": "52b0ee1b9f73b4066475fda1fb51538826662f80057e23e925a19c3dc9aaea6e",
+      "static_test_functions": [
+        "test_battle_clone_matches_deepcopy_through_deploy_and_ticks",
+        "test_lazy_loader_clone_has_independent_mutable_card_cache"
+      ]
+    },
+    {
+      "path": "tests/test_bounded_building_crown_fallback.py",
+      "sha256": "22f94da699f2c440158782b643297af3adc7859daf1978c5ffc3506c3f0462e5",
+      "static_test_functions": [
+        "test_bounded_building_retains_required_long_range_fallback",
+        "test_bounded_building_skips_only_unreachable_crown_fallback"
+      ]
+    },
+    {
+      "path": "tests/test_building_footprint.py",
+      "sha256": "f802c4fe11ed72da3912dd7b1d99fe91d658907650138ac6d9c71192804e01fd",
+      "static_test_functions": [
+        "test_compact_building_footprint_is_data_driven_not_name_driven",
+        "test_destroyed_building_immediately_releases_its_placement_footprint",
+        "test_standard_building_uses_3x3_placement_footprint",
+        "test_tesla_uses_2x2_placement_footprint"
+      ]
+    },
+    {
+      "path": "tests/test_cached_bucket_geometry.py",
+      "sha256": "05a248ec470fd20a02be6af4a9b2e0b27baf89394594ca6882da98cea482e512",
+      "static_test_functions": [
+        "test_bucket_geometry_cache_is_clone_isolated",
+        "test_cached_bucket_geometry_matches_recomputed_bounds",
+        "test_cached_bucket_geometry_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_cached_crown_fallback_membership.py",
+      "sha256": "35c7df251470f164c3b0462a7723d14ce3f329d7cafad0f6548a15a96c9d2819",
+      "static_test_functions": [
+        "test_cached_crown_membership_matches_full_fallback_scan",
+        "test_cached_crown_membership_preserves_fixed_seed_rollout",
+        "test_crown_membership_is_clone_isolated",
+        "test_crown_membership_rebuilds_for_death_and_same_size_replacement",
+        "test_static_crown_classification_change_rebuilds_membership"
+      ]
+    },
+    {
+      "path": "tests/test_cached_entity_collision_radius.py",
+      "sha256": "dd330143f547a72e44e820590fda95f415b4b7343e972d840aa26442fff5dc3d",
+      "static_test_functions": [
+        "test_cached_entity_collision_radius_matches_runtime_resolver",
+        "test_cached_entity_collision_radius_preserves_explicit_custom_radius",
+        "test_cached_entity_collision_radius_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_cached_entity_unit_mass.py",
+      "sha256": "b9fd04413e91908481be7f73852970b128045e98aa07e6edf4cd31db54b7b93a",
+      "static_test_functions": [
+        "test_cached_entity_unit_mass_matches_data_driven_resolver",
+        "test_cached_entity_unit_mass_preserves_explicit_custom_mass",
+        "test_cached_entity_unit_mass_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_cached_mover_hover_trait.py",
+      "sha256": "e6595aeab4f341e00bee27a077d914188c058482fde76f67693044aa515ecc92",
+      "static_test_functions": [
+        "test_cached_mover_hover_trait_avoids_runtime_card_data_lookup",
+        "test_cached_mover_hover_trait_matches_card_data_lookup",
+        "test_cached_mover_hover_trait_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_cached_path_hover_trait.py",
+      "sha256": "6dae5b04c4b73e9ef1bffe9f4456a9193e26ffcdbd5043993b2fe02ea6bacd36",
+      "static_test_functions": [
+        "test_cached_path_hover_trait_avoids_runtime_card_lookup",
+        "test_cached_path_hover_trait_matches_runtime_classification",
+        "test_cached_path_hover_trait_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_cached_princess_tower_data.py",
+      "sha256": "647f94d4c38b0a2e751acd403e9d9f6ac9089b3a2c248206fc9b5ffcdd928ff9",
+      "static_test_functions": [
+        "test_cached_princess_data_preserves_fixed_seed_rollout",
+        "test_cached_support_data_is_revision_keyed_and_copy_isolated",
+        "test_two_battles_parse_support_data_once"
+      ]
+    },
+    {
+      "path": "tests/test_cached_target_capabilities.py",
+      "sha256": "d6373e210609a6d4ade44378b844dc642f0979bffa36e80253552eab386aaa45",
+      "static_test_functions": [
+        "test_cached_target_capabilities_match_all_loaded_card_data",
+        "test_spawned_entities_cache_exact_target_capabilities"
+      ]
+    },
+    {
+      "path": "tests/test_card_mechanics.py",
+      "sha256": "24d52f0b5157289ea8e4e0054a4dd2c53fedaf97f3922449cf91eb56b8091341",
+      "static_test_functions": [
+        "test_ability_and_deployment_variant_is_detected_without_card_name",
+        "test_attack_recoil_is_detected_without_character_name",
+        "test_bandit_dash_init",
+        "test_bandit_dash_on_attach",
+        "test_bandit_dash_range_check",
+        "test_dash_variant_is_detected_from_payload_shape",
+        "test_enabled_mechanics_do_not_depend_on_card_name_registry",
+        "test_hide_when_idle_is_detected_without_building_name",
+        "test_inactivity_invisibility_is_detected_without_character_name",
+        "test_kamikaze_and_chain_variant_is_detected_from_payload_shape",
+        "test_long_range_init",
+        "test_long_range_on_attach",
+        "test_multi_target_on_hit_buff_preserves_independent_slow_axes",
+        "test_secondary_hit_uses_committed_damage_and_outgoing_modifiers",
+        "test_serialized_multi_target_attack_is_detected_without_card_name",
+        "test_spawn_zap_init",
+        "test_spawn_zap_on_spawn",
+        "test_stun_attack_init",
+        "test_stun_attack_on_hit"
+      ]
+    },
+    {
+      "path": "tests/test_card_stats_deepcopy.py",
+      "sha256": "07d4d2b4fe1b917fed482cf85b7cab1bc6d7b3346d872c56f76b1e3db85dfc53",
+      "static_test_functions": [
+        "test_battle_clone_shares_only_definition_but_isolates_active_wrapper",
+        "test_specialized_card_stats_deepcopy_matches_generic_and_isolates_mutables"
+      ]
+    },
+    {
+      "path": "tests/test_champion_ability_activation.py",
+      "sha256": "1116de82cecc01b53911ba977a76cadd0b419a6d5d0d652cce7007a76b43f854",
+      "static_test_functions": [
+        "test_active_ability_activation_builds_context_without_import_error",
+        "test_active_ability_can_activate_while_champion_is_stunned",
+        "test_active_ability_cooldown_starts_after_active_duration",
+        "test_frozen_champion_activation_is_controlled_by_shared_global"
+      ]
+    },
+    {
+      "path": "tests/test_coalesced_alive_building_refresh.py",
+      "sha256": "1c0ff865214af4a6ead173b0fa77ff98fa9fec494145e6ee1a528fe95bc9dcc8",
+      "static_test_functions": [
+        "test_building_death_invalidates_phase_local_membership",
+        "test_building_spawn_invalidates_phase_local_membership",
+        "test_coalesced_building_refresh_preserves_fixed_seed_rollout",
+        "test_movement_phase_reuses_one_exact_membership_scan"
+      ]
+    },
+    {
+      "path": "tests/test_coalesced_target_fallback.py",
+      "sha256": "18166d7c13f381c6716a75f9106b76f73d96b0d5043addcc4849c9d18a86c758",
+      "static_test_functions": [
+        "test_coalesced_fallback_scan_preserves_fixed_seed_rollout",
+        "test_scalar_and_vector_selectors_report_same_fallback_status"
+      ]
+    },
+    {
+      "path": "tests/test_coalesced_target_plane_checks.py",
+      "sha256": "da656381fc5fa978957e75e4f7d0821fdcd236589556df6a256c4cdb668ee502",
+      "static_test_functions": [
+        "test_coalesced_target_plane_checks_preserve_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_collision_broadphase_parity.py",
+      "sha256": "0f35102b2b5ec075c9ef72e3a265f8ef29cf03166f4046071c9c85bc7e5a09d8",
+      "static_test_functions": [
+        "test_fast_path_collision_broadphase_keeps_match_state_exact"
+      ]
+    },
+    {
+      "path": "tests/test_collision_bucket_candidates.py",
+      "sha256": "703bab1adb992b2b5ef2b771edf7f29502e97a5d3aa03f9e44e525e0b2d3674d",
+      "static_test_functions": [
+        "test_bucket_candidates_include_data_driven_large_collision_radii",
+        "test_collision_bucket_candidates_preserve_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_compiled_standard_route.py",
+      "sha256": "29953594923bb823e848ad8621f4472acfd0a13927deb26973f662b5a8903c7c",
+      "static_test_functions": [
+        "test_compiled_standard_routes_match_python_reference"
+      ]
+    },
+    {
+      "path": "tests/test_conditional_combat_position_quantization.py",
+      "sha256": "fd73435a0833264308a7451b9a8e198ebeea9dd28d51f55b6019b05ed6157882",
+      "static_test_functions": [
+        "test_combat_position_quantization_skips_only_unchanged_entities"
+      ]
+    },
+    {
+      "path": "tests/test_deferred_crown_fallback_validation.py",
+      "sha256": "8ee766acdb7fcb37098fbb580e822f029a58fc76ea57943690db2ec1d77428f9",
+      "static_test_functions": [
+        "test_deferred_validation_checks_only_potential_winners",
+        "test_deferred_validation_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_dense_entity_buckets.py",
+      "sha256": "1f4a9d99b2a4c2deec1f6c7eba23a60384a637b22a9bdb1c8e1d8ecc26f66b28",
+      "static_test_functions": [
+        "test_dense_entity_buckets_preserve_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_differential_parity.py",
+      "sha256": "3ceb5971af061ece525429b2d8f882aa869ec4ea864cb7510deca494c494763a",
+      "static_test_functions": [
+        "test_first_mismatch_has_exact_path_and_atomic_reproducer",
+        "test_observable_payload_participates_in_exact_comparison",
+        "test_python_lockstep_covers_full_mutable_state",
+        "test_snapshot_digest_is_stable_across_exact_clones"
+      ]
+    },
+    {
+      "path": "tests/test_direct_collision_plane.py",
+      "sha256": "78dd162af9d08d7e2acc0ff296ec771f8d0dd6799936bd7d612dede2e9e6ec76",
+      "static_test_functions": [
+        "test_direct_collision_plane_matches_defensive_entity_path",
+        "test_direct_collision_plane_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_direct_crown_fallback_selection.py",
+      "sha256": "4d7911c1d4beb1457338b0e212f70ee1f53131cb5d5abe11bcbc15177ff25a53",
+      "static_test_functions": [
+        "test_direct_crown_fallback_matches_listed_selection",
+        "test_direct_crown_fallback_preserves_fixed_seed_rollout",
+        "test_unclassified_custom_crown_uses_listed_fallback"
+      ]
+    },
+    {
+      "path": "tests/test_direct_targetability_fields.py",
+      "sha256": "c26250402d465dc53df7302ddce1d8bafd14c49214ce9aa51278672e882a89c1",
+      "static_test_functions": [
+        "test_direct_targetability_fields_preserve_fixed_seed_rollout",
+        "test_direct_targetability_retains_death_immunity_and_mechanic_gates",
+        "test_direct_targetability_skips_death_immunity_helper"
+      ]
+    },
+    {
+      "path": "tests/test_dirty_target_cache_refresh.py",
+      "sha256": "f745bd3b49d52def5aa245dfe5e6ace5fe20fe21561dbd3421cd3098e94b1d9e",
+      "static_test_functions": [
+        "test_clean_target_cache_refreshes_data_selected_stealth_entry",
+        "test_clean_target_cache_skips_ordinary_full_dynamic_scan",
+        "test_dirty_target_cache_clone_owns_mutable_refresh_state",
+        "test_dirty_target_cache_preserves_fixed_seed_rollout",
+        "test_structural_invalidation_rebuilds_same_size_replacement"
+      ]
+    },
+    {
+      "path": "tests/test_dirty_win_condition_refresh.py",
+      "sha256": "d559f5dc213b9395611802c6ab1990fb6be8e8735ac4ad35e369f2883363c3d9",
+      "static_test_functions": [
+        "test_clean_win_refresh_still_crosses_overtime_boundary",
+        "test_dead_crown_cleanup_marks_win_refresh_dirty",
+        "test_dirty_win_refresh_preserves_fixed_seed_rollout",
+        "test_dirty_win_refresh_publishes_tower_damage_exactly",
+        "test_healed_crown_tower_marks_win_refresh_dirty"
+      ]
+    },
+    {
+      "path": "tests/test_early_ground_path_cache_hit.py",
+      "sha256": "83978c17c31e4491a7147e564e06a08089c71b65d603d29c15ac4ac561b0178a",
+      "static_test_functions": [
+        "test_early_ground_path_cache_hit_matches_reference",
+        "test_early_ground_path_cache_hit_preserves_fixed_seed_rollout",
+        "test_early_ground_path_cache_hit_skips_mover_start_quantization"
+      ]
+    },
+    {
+      "path": "tests/test_elixir_leak_penalty.py",
+      "sha256": "7205142183398904319ad2d107bf62bbe2db95e0328b4dab44130c802a97dcdd",
+      "static_test_functions": [
+        "test_elixir_leak_penalty_discourages_noop_at_cap",
+        "test_equal_leak_keeps_zero_sum_balance"
+      ]
+    },
+    {
+      "path": "tests/test_enabled_projectile_interactions.py",
+      "sha256": "08e99f2489a1e48db1d903ffe614c37b9ade815611173618e4222f3e4cc24773",
+      "static_test_functions": [
+        "test_every_enabled_projectile_obeys_serialized_homing_after_target_moves",
+        "test_every_enabled_projectile_uses_exact_fixed_point_flight_ticks"
+      ]
+    },
+    {
+      "path": "tests/test_enabled_reachable_children.py",
+      "sha256": "440c4a322e5cb1fa4bfb585c91f3690ab84eaee5277600f4c27bced50ac7b6f1",
+      "static_test_functions": [
+        "test_enabled_spawn_graph_includes_every_distinct_base_child",
+        "test_random_fast_parity_density_cap_resets_deterministically",
+        "test_random_fast_parity_rejects_nonpositive_density_cap",
+        "test_reachable_child_audit_spawns_one_real_combat_entity",
+        "test_reachable_children_use_current_nested_stats_and_mechanics"
+      ]
+    },
+    {
+      "path": "tests/test_enabled_spell_interactions.py",
+      "sha256": "00edd9a1e3eca79f009e5f6295a20bf24f00bdd4f08bac3a09cee817bea75995",
+      "static_test_functions": [
+        "test_area_movement_slow_uses_serialized_one_second_falloff",
+        "test_area_projectile_hits_enabled_invisible_troops_without_targeting_them",
+        "test_area_spells_deal_exact_discrete_totals",
+        "test_arrows_create_three_linked_ten_projectile_waves",
+        "test_arrows_grouped_ring_geometry_is_deterministic_and_rerolled_per_wave",
+        "test_arrows_small_areas_preserve_native_gaps_inside_cast_radius",
+        "test_barbarian_barrel_endpoint_spawn_keeps_projectile_impact_coordinate",
+        "test_barbarian_barrel_spawn_keeps_current_one_second_deploy_time",
+        "test_death_spawned_troops_inherit_their_frozen_parents_expiry",
+        "test_earthquake_caps_its_final_slow_refresh_to_source_lifetime",
+        "test_earthquake_compact_ground_only_payload_does_not_hit_air",
+        "test_earthquake_uses_distinct_troop_building_and_crown_payloads",
+        "test_edge_payload_formations_use_native_quarter_tile_spawn_clamp",
+        "test_enabled_spell_payloads_use_current_level_11_values",
+        "test_freeze_popped_character_container_carries_expiry_to_children",
+        "test_freeze_snapshots_targets_and_does_not_affect_late_entrants",
+        "test_freeze_status_pass_includes_birth_tick_death_spawns_without_redamage",
+        "test_goblin_barrel_diagonal_arrival_uses_native_integer_distance",
+        "test_goblin_barrel_lands_in_a_fixed_player_relative_triangle",
+        "test_goblin_barrel_payload_can_land_and_spawn_in_native_water",
+        "test_graveyard_children_keep_projectile_spawn_points_in_water_and_at_edges",
+        "test_graveyard_children_path_out_of_native_water_spawn_points",
+        "test_graveyard_first_skeleton_uses_published_total_delay_from_card_play",
+        "test_graveyard_pattern_rotates_for_the_opposite_player",
+        "test_graveyard_uses_live_delay_count_radius_and_fixed_sequence",
+        "test_hidden_tesla_uses_serialized_area_affects_hidden_flag",
+        "test_invisible_area_damage_eligibility_comes_from_character_payload",
+        "test_log_passes_under_air_troops_and_ignores_spell_entities",
+        "test_log_pushback_cancels_bandit_pre_dash_charge",
+        "test_log_pushback_cancels_mega_knight_pre_jump_charge",
+        "test_native_area_intersection_excludes_exact_character_tangent",
+        "test_native_area_intersection_uses_rounded_building_corners",
+        "test_native_damage_percentages_use_shared_integer_ceiling",
+        "test_native_percentage_ceiling_reaches_direct_projectile_and_area_payloads",
+        "test_overlapping_poisons_keep_independent_target_local_hit_phases",
+        "test_overlapping_slows_expire_independently",
+        "test_periodic_area_buffs_wait_for_their_serialized_aeo_hit_speed",
+        "test_played_spell_waits_for_universal_server_action_delay",
+        "test_poison_and_earthquake_are_movement_only_slows",
+        "test_poison_damage_clock_starts_on_first_target_scan_and_lingers_after_exit",
+        "test_poison_exact_tangent_is_excluded_for_both_player_mirrors",
+        "test_pre_frozen_parent_passes_expiry_through_character_container",
+        "test_rolling_projectile_hit_starts_pushback_in_next_movement_phase",
+        "test_rolling_projectile_hits_a_character_that_is_still_deploying",
+        "test_rolling_projectile_rectangular_boundary_tolerates_subnanotile_drift",
+        "test_rolling_projectile_resolves_damage_at_exact_range_endpoint",
+        "test_rolling_pushback_all_is_loaded_from_projectile_data",
+        "test_rolling_spell_cast_delay_honors_native_minimum_travel_distance",
+        "test_rolling_spell_cast_delay_uses_data_speed_and_king_tower_distance",
+        "test_royal_delivery_damage_and_death_effects_precede_recruit_spawn",
+        "test_royal_delivery_serialized_area_ignores_buildings_but_hits_troops",
+        "test_royal_delivery_spawns_current_shielded_recruit_after_impact",
+        "test_royal_delivery_uses_payload_spawn_time_for_recruit_action_delay",
+        "test_snowball_cannot_affect_a_committed_spirit_jump",
+        "test_snowball_cannot_damage_slow_or_push_bandit_during_dash_travel",
+        "test_snowball_respects_heavy_mass_but_log_pushes_heavy_troops",
+        "test_snowball_status_pass_includes_birth_tick_death_spawns_without_redamage",
+        "test_staggered_death_spawns_do_not_inherit_freeze",
+        "test_territory_restricted_spells_share_deployment_validation",
+        "test_tornado_controlled_vector_moves_stunned_troops_on_the_next_tick",
+        "test_tornado_damages_archer_queen_during_cloak_activation",
+        "test_tornado_damages_but_never_moves_buildings",
+        "test_tornado_displaces_committed_skeleton_barrel_during_contact_countdown",
+        "test_tornado_late_target_uses_its_own_clock_but_parent_caps_the_buff",
+        "test_tornado_moves_falling_skeleton_container_but_not_stationary_death_bomb",
+        "test_tornado_pull_stops_out_of_range_crown_tower_attacks",
+        "test_tornado_pull_uses_base_speed_not_mass_or_active_speed_modifiers",
+        "test_tornado_pulls_airborne_river_jumper_without_resetting_landing",
+        "test_tornado_waits_for_its_serialized_hit_frequency_before_one_damage_hit",
+        "test_zap_status_pass_includes_birth_tick_death_spawns_without_redamage"
+      ]
+    },
+    {
+      "path": "tests/test_enabled_troop_interactions.py",
+      "sha256": "e6a400d053fd60f1b54a9cda1d61d2f37acc947d09aa2b4895c34de770fa4db2",
+      "static_test_functions": [
+        "test_active_native_pushback_ignores_a_second_push",
+        "test_air_capable_knockback_displaces_river_jumper_and_rebases_landing",
+        "test_air_units_collide_with_air_but_not_ground_units",
+        "test_airborne_mega_knight_collides_with_air_but_not_ground_plane",
+        "test_anticipatory_building_routes_follow_native_cumulative_score",
+        "test_archer_queen_ability_is_explicit_and_uses_gamedata_modifiers",
+        "test_archer_queen_can_activate_ability_while_stunned",
+        "test_archer_queen_cast_locks_combat_after_cloak_triggers",
+        "test_archer_queen_cloak_and_rage_expire_without_restoring_or_erasing_each_other",
+        "test_archer_queen_cloak_survives_slow_start_and_expiry_without_speed_corruption",
+        "test_archer_queen_cloak_uses_exact_integer_server_deadlines",
+        "test_archer_queen_cooldown_begins_when_cloak_ends",
+        "test_area_attack_recoil_does_not_run_after_target_death",
+        "test_area_payload_discard_is_governed_by_the_shared_global",
+        "test_attack_and_sight_ranges_use_target_hitbox_not_attacker_hitbox",
+        "test_attack_finish_metadata_does_not_delay_non_sequence_retarget",
+        "test_avoiding_air_troops_remain_clipped_to_the_native_arena_boundary",
+        "test_avoiding_ground_spawn_egress_stays_clipped_to_native_boundary",
+        "test_backwards_ground_route_keeps_current_target_before_crown_fallback",
+        "test_bandit_charge_is_interruptible_then_dash_is_targetable_but_invulnerable",
+        "test_bandit_uses_serialized_post_landing_immunity_window",
+        "test_bat_attack_dash_time_is_presentation_only",
+        "test_bat_visual_lunge_cannot_change_logic_collision_footprint",
+        "test_bats_use_native_rotated_ring_and_mixed_swarms_face_the_opponent",
+        "test_battle_ram_birth_frame_advances_released_barbarian_deploy_clock",
+        "test_battle_ram_connect_deals_one_charge_hit_then_releases_barbarians",
+        "test_bomb_tower_uses_one_serialized_timed_death_bomb_with_local_hitbox_aoe",
+        "test_bomber_projectile_splashes_ground_group_but_not_air",
+        "test_both_river_edges_have_rotationally_symmetric_walkability",
+        "test_bowler_pierces_but_cannot_push_heavy_troops",
+        "test_bowler_uses_physical_radius_while_rolling_and_damage_radius_at_endpoint",
+        "test_bridge_approach_threshold_ulp_drift_changes_neither_player_path",
+        "test_bridge_crossing_direction_comes_from_positions_not_ownership",
+        "test_building_commits_final_attack_before_lifetime_component_kills_it",
+        "test_building_occupancy_uses_exact_deployment_and_native_movement_radii",
+        "test_building_target_death_during_windup_retargets_next_combat_frame",
+        "test_building_targeter_routes_around_friendly_building_to_attack",
+        "test_card_deployment_applies_symmetric_snap_before_character_birth",
+        "test_centered_crown_tower_target_ties_keep_native_candidate_order",
+        "test_centerline_target_side_is_resolved_by_owner_for_mirrored_pathing",
+        "test_chain_lightning_can_enter_a_character_that_is_still_deploying",
+        "test_chain_lightning_can_jump_to_invisible_units_but_not_hidden_buildings",
+        "test_chain_lightning_equal_distance_tie_rotates_with_its_owner",
+        "test_chain_lightning_uses_native_death_spawn_distance_for_range_and_order",
+        "test_chain_links_cannot_target_active_lethal_primary_death_spawns",
+        "test_charge_distance_uses_game_units_and_can_recharge_after_attacking",
+        "test_charge_resets_when_stopped_troop_starts_toward_a_new_target",
+        "test_charge_uses_native_per_frame_chunks_under_speed_effects",
+        "test_charged_prince_hit_is_consumed_by_shield_without_health_overflow",
+        "test_collision_pass_stabilizes_subnanotile_mirror_drift_between_ticks",
+        "test_collision_pressure_caps_overlap_then_uses_directional_mass_ratio",
+        "test_collision_separation_keeps_centers_on_outermost_arena_tiles",
+        "test_combat_phase_stun_only_denies_later_id_attack_component",
+        "test_combat_phase_stun_prevents_same_frame_movement_and_then_ticks",
+        "test_combined_rage_and_slow_use_integer_attack_work_each_frame",
+        "test_committed_bandit_dash_finishes_without_a_hit_if_primary_dies",
+        "test_committed_mega_knight_leap_hits_midair_cloaked_archer_queen",
+        "test_committed_mega_knight_leap_still_slams_if_primary_dies",
+        "test_committed_projectile_inherits_source_plane_during_river_jump",
+        "test_committed_splash_snapshot_precedes_primary_target_death_knockback",
+        "test_continuous_damage_approach_is_governed_by_shared_global",
+        "test_continuous_damage_approach_reduction_does_not_apply_to_buildings",
+        "test_crown_towers_receive_the_serialized_two_tile_sight_allowance",
+        "test_current_target_also_ignores_lethal_pending_damage",
+        "test_dark_prince_charge_payload_splashes_each_shield_once",
+        "test_dash_and_leap_initiation_ranges_measure_to_target_hitbox",
+        "test_dash_and_leap_maximum_target_edge_range_is_inclusive",
+        "test_dash_and_leap_minimum_range_measures_edge_to_edge_inclusively",
+        "test_dash_and_leap_ranges_use_native_death_spawn_distance_allowance",
+        "test_dash_launch_advances_in_same_frames_movement_component",
+        "test_death_spawn_pushback_ring_is_world_fixed_without_const_priority",
+        "test_death_spawn_pushback_uses_250_unit_noninterrupting_travel",
+        "test_death_spawn_target_immunity_is_governed_by_shared_global",
+        "test_death_spawn_target_immunity_uses_attack_finish_timer",
+        "test_default_three_unit_formation_uses_collision_diameter_spacing",
+        "test_deploy_formation_offsets_are_not_individually_relocated_from_water",
+        "test_deploy_sequence_uses_shared_anchor_lane_for_spawn_order",
+        "test_deploying_building_immediately_pulls_building_targeters",
+        "test_deploying_characters_are_present_but_cannot_act",
+        "test_deploying_spawn_payloads_are_targetable_and_collidable",
+        "test_deployment_completion_defers_combat_until_the_next_logic_frame",
+        "test_deployment_payloads_resolve_when_deploy_timer_finishes",
+        "test_destroyed_ice_spirit_does_not_freeze_without_connecting",
+        "test_destroyed_princess_tower_fallback_uses_surviving_current_x_target",
+        "test_diagonal_bandit_and_mega_knight_endpoints_use_native_logic_vectors",
+        "test_diagonal_bowler_boulder_uses_circular_projectile_radius",
+        "test_diagonal_bowler_launch_and_knockback_use_native_logic_vectors",
+        "test_diagonal_projectile_movement_uses_native_integer_components",
+        "test_diagonal_troop_movement_uses_native_integer_components",
+        "test_direct_area_attack_cancels_payload_after_target_death",
+        "test_directional_sight_clips_do_not_shorten_crown_tower_fallback",
+        "test_directional_sight_clips_rear_and_side_but_not_forward",
+        "test_disabled_death_spawn_global_does_not_install_latent_marker",
+        "test_discarded_hit_retains_load_only_for_serialized_load_first_hit",
+        "test_discarded_projectile_attack_does_not_apply_attack_pushback",
+        "test_distinct_haste_sources_expire_without_restoring_or_erasing_each_other",
+        "test_electro_dragon_chain_arrival_uses_native_integer_distance",
+        "test_electro_dragon_chain_occurs_when_projectile_lands",
+        "test_electro_dragon_committed_projectile_chains_after_source_death",
+        "test_electro_spirit_chain_cannot_enter_active_lethal_first_hit_death_spawns",
+        "test_electro_spirit_chain_interval_is_independent_of_hop_distance",
+        "test_electro_spirit_chains_after_its_first_hit_kills_the_target",
+        "test_electro_spirit_chains_on_contact_not_on_deployment",
+        "test_electro_spirit_requires_live_primary_contact_to_start_chain",
+        "test_electro_wizard_deploy_zap_is_level_scaled_and_does_not_damage_crown_towers",
+        "test_electro_wizard_duplicate_bolt_follows_all_targets_hit_payload",
+        "test_electro_wizard_equal_distance_split_target_rotates_with_owner",
+        "test_electro_wizard_fires_two_simultaneous_bolts",
+        "test_electro_wizard_second_bolt_survives_invulnerable_primary",
+        "test_electro_wizard_simultaneous_bolts_do_not_retarget_lethal_death_spawns",
+        "test_electro_wizard_spawn_area_snapshot_precedes_victim_death_knockback",
+        "test_electro_wizard_split_target_uses_native_death_spawn_distance_allowance",
+        "test_enabled_building_lifetime_components_tick_during_deployment",
+        "test_enabled_building_lifetimes_use_native_fixed_point_decay",
+        "test_enabled_chargers_use_absolute_serialized_speed_percentage",
+        "test_enabled_death_payloads_explode_on_exact_logic_frame",
+        "test_enabled_defenses_and_crown_towers_use_serialized_muzzle_geometry",
+        "test_enabled_runtime_traits_come_from_nested_character_data",
+        "test_enabled_spawners_preserve_first_wave_and_intra_wave_timing",
+        "test_enabled_swarm_deploy_delay_applies_between_each_successive_unit",
+        "test_enabled_timed_death_payloads_reserve_their_placement_footprint",
+        "test_enabled_troop_projectile_homing_comes_from_projectile_data",
+        "test_enemy_commits_attack_before_royal_ghost_recloaks_in_object_phase",
+        "test_entity_id_zero_is_a_real_target_and_keeps_its_attack_lock",
+        "test_entity_kind_classification_includes_gameplay_subclasses",
+        "test_equal_distance_building_ties_use_rotationally_symmetric_iteration",
+        "test_equal_distance_character_precedes_building_in_native_target_order",
+        "test_equal_rage_and_ice_slow_multiply_on_all_three_speed_axes",
+        "test_every_enabled_charger_uses_serialized_integer_progress",
+        "test_every_enabled_charging_troop_uses_native_windup_after_interruption",
+        "test_exact_center_radial_push_uses_owner_rotated_native_fallback",
+        "test_exact_half_second_stun_blocks_ten_full_logic_frames",
+        "test_existing_target_lock_extension_is_governed_by_shared_global",
+        "test_existing_target_lock_has_native_25_unit_range_extension",
+        "test_explicitly_capped_haste_falloff_never_extends_past_area_lifetime",
+        "test_external_shield_break_resets_connected_inferno_immediately",
+        "test_fallback_crown_target_cache_cannot_leak_outside_queried_entities",
+        "test_fast_target_cache_preserves_scalar_tick_order_and_ties",
+        "test_firecracker_carrier_deals_no_damage_and_shrapnel_hits_individually",
+        "test_firecracker_noninterrupting_recoil_keeps_attack_clock_running",
+        "test_firecracker_shrapnel_uses_native_five_tile_line_scatter",
+        "test_firecracker_shrapnel_uses_projectile_travel_time_and_can_miss_movers",
+        "test_firecracker_uses_the_current_base_cards_one_tile_recoil",
+        "test_firecracker_uses_the_current_faster_serialized_projectile_speed",
+        "test_first_hit_preload_does_not_finish_while_walking_and_restarts_on_retarget",
+        "test_first_hit_windup_uses_hit_cycle_minus_recovery_time",
+        "test_fisherman_death_immediately_releases_a_hooked_target",
+        "test_fisherman_hook_cancels_invulnerable_dash_and_mega_knight_leap",
+        "test_fisherman_hook_in_flight_misses_a_target_that_starts_a_river_jump",
+        "test_fisherman_hook_launch_advances_in_same_frames_object_phase",
+        "test_fisherman_hook_preserves_the_victims_existing_combat_lock",
+        "test_fisherman_hook_pulls_only_the_victim_to_the_serialized_surface_margin",
+        "test_fisherman_hook_pulls_self_to_buildings_without_moving_them",
+        "test_fisherman_hook_uses_serialized_range_windup_and_projectile_motion",
+        "test_fixed_chain_interpolation_is_exact_under_the_player_rotation",
+        "test_fixed_chain_interval_is_paid_for_each_bounce_with_a_large_update",
+        "test_fixed_point_path_validation_matches_fast_path_at_bridge_edges",
+        "test_flying_default_target_uses_current_x_instead_of_spawn_lane",
+        "test_forward_ground_route_still_uses_crown_fallback_when_scan_is_empty",
+        "test_forward_route_installs_farther_crown_fallback_unconditionally",
+        "test_freeze_pauses_hidden_tesla_reveal_and_visible_tesla_retraction",
+        "test_full_attack_cycles_only_preload_to_first_hit_without_a_target",
+        "test_golem_and_golemite_death_novas_are_scaled_and_hit_both_planes",
+        "test_ground_default_target_uses_current_x_after_cross_lane_displacement",
+        "test_ground_open_lane_default_switches_with_current_x_after_displacement",
+        "test_ground_pathfinder_routes_around_overlapping_building_obstacles",
+        "test_ground_pathfinder_turns_before_reaching_an_intervening_building",
+        "test_ground_pathfinder_uses_native_world_scan_for_displaced_river_target",
+        "test_ground_splash_hits_ground_once_and_never_hits_air",
+        "test_ground_troops_receive_static_building_collision_pressure",
+        "test_hasted_spawner_preserves_fractional_tick_budget_without_drift",
+        "test_hidden_tesla_is_bypassed_until_triggered_and_allows_earthquake_and_freeze",
+        "test_hidden_tesla_lifetime_decay_bypasses_underground_damage_immunity",
+        "test_hidden_tesla_reveal_redirects_wall_breaker_before_contact",
+        "test_hit_cycle_preservation_requires_combat_component_global",
+        "test_homing_splash_projectiles_reserve_their_primary_target",
+        "test_hovering_avoidance_uses_air_body_collision_plane",
+        "test_hovering_default_target_uses_current_x_instead_of_spawn_lane",
+        "test_hovering_ground_troop_passes_through_buildings_without_detouring",
+        "test_hovering_troops_remain_on_ground_plane_for_every_attack_payload_shape",
+        "test_hovering_troops_touch_blocked_tiles_symmetrically_at_boundaries",
+        "test_hovering_troops_use_air_body_collision_but_remain_ground_targets",
+        "test_ice_golem_death_slow_is_a_one_shot_post_damage_snapshot",
+        "test_ice_spirit_jump_is_delayed_untargetable_and_area_damages_on_landing",
+        "test_ice_spirit_projectile_still_detonates_if_primary_dies_mid_jump",
+        "test_ice_spirit_status_pass_excludes_active_lethal_death_spawns",
+        "test_ice_wizard_projectile_status_pass_excludes_active_lethal_death_spawns",
+        "test_ice_wizard_spawn_nova_is_delayed_scaled_and_hits_both_planes",
+        "test_inferno_damage_stages_use_native_connected_combat_timer",
+        "test_inferno_ramp_clock_uses_native_status_scaled_combat_work",
+        "test_inferno_retargets_from_effect_immune_dashing_bandit",
+        "test_inferno_shield_break_resets_stage_without_changing_target",
+        "test_jump_height_units_cross_the_river_off_bridge_and_are_untargetable_midair",
+        "test_lane_weighted_native_route_does_not_force_a_water_jump",
+        "test_lava_hound_death_spawned_pup_uses_its_homing_projectile_data",
+        "test_lava_hound_splits_with_native_descending_radial_enumeration",
+        "test_lethal_projectile_start_collision_cannot_be_overwritten_by_death_spawns",
+        "test_lethal_projectiles_reserve_targets_and_respect_shield_hit_consumption",
+        "test_lethal_shrapnel_start_collision_keeps_every_spawned_projectile",
+        "test_long_distance_guard_discards_the_entire_direct_area_payload",
+        "test_long_distance_hit_guard_uses_character_capabilities_not_card_names",
+        "test_lumberjack_bottle_activates_on_exact_tenth_logic_frame",
+        "test_lumberjack_death_rage_keeps_its_distinct_crown_tower_modifier",
+        "test_lumberjack_rage_buff_waits_for_its_own_300ms_area_scan",
+        "test_lumberjack_rage_lingers_after_its_area_expires",
+        "test_magic_archer_arrow_pierces_the_full_data_range_once_per_target",
+        "test_magic_archer_launch_installs_projectile_owned_temporary_homing",
+        "test_magic_archer_temporary_homing_reaims_two_frames_then_freezes_ray",
+        "test_magic_archer_uses_the_enlarged_hitbox_only_at_projectile_start",
+        "test_mega_knight_jump_has_fixed_flight_landing_lock_and_pushback",
+        "test_mega_knight_jump_uses_wider_landing_shockwave_not_mace_splash",
+        "test_mega_knight_keeps_native_character_spawn_pushback_payload",
+        "test_mega_knight_leap_stays_ground_target_but_rises_above_ground_effects",
+        "test_mega_knight_uses_data_scaled_deploy_and_jump_damage_once",
+        "test_miner_dirt_trail_no_longer_collides_with_troops_underground",
+        "test_miner_travels_from_king_at_650_then_emerges_intangible_and_scaled",
+        "test_miner_underground_travel_time_depends_on_distance_and_rotates",
+        "test_mobile_committed_hit_uses_native_long_distance_guard",
+        "test_mobile_continuous_damage_approaches_500_units_closer_then_keeps_full_range",
+        "test_moving_troops_receive_the_native_one_tile_rear_sight_clip",
+        "test_multiple_collision_contacts_are_averaged_before_the_native_cap",
+        "test_native_avoidance_chargers_plow_through_lighter_but_yield_to_heavier_units",
+        "test_native_avoidance_ignores_overtaking_troops_with_parallel_direction",
+        "test_native_avoidance_inherits_an_avoiding_movers_turn_side",
+        "test_native_avoidance_only_compares_objects_on_the_same_height_plane",
+        "test_native_avoidance_preserves_intended_charge_work_not_rotated_vector_length",
+        "test_native_avoidance_rotation_uses_the_clients_fixed_point_sequence",
+        "test_native_avoidance_scan_continues_while_pushback_transport_is_installed",
+        "test_native_avoidance_static_objects_adjust_an_existing_turn_then_decay",
+        "test_native_avoidance_steers_head_on_troops_before_body_contact",
+        "test_native_avoidance_treats_stopped_movers_as_obstacles",
+        "test_native_child_terrain_uses_the_tilemap_obstruction_channel",
+        "test_native_death_spawn_distance_allowance_affects_reach_and_target_order",
+        "test_native_deploy_sequence_does_not_mirror_five_slot_formation",
+        "test_native_deploy_sequence_mirrors_small_formations_on_path_one",
+        "test_native_flying_route_consumes_goal_node_then_tracks_live_center",
+        "test_native_ground_route_retains_and_consumes_one_cell_per_frame",
+        "test_native_pathfinder_boundary_division_and_heap_ties_are_world_relative",
+        "test_native_pushback_can_cross_nonbridge_river_terrain",
+        "test_native_pushback_caps_both_endpoint_and_velocity_distance",
+        "test_native_pushback_composes_collision_before_boundary_clamp",
+        "test_nearest_valid_spawn_ties_rotate_with_player_perspective",
+        "test_nearest_valid_spawn_ulp_ties_keep_owner_relative_search_order",
+        "test_nested_death_area_precedes_and_affects_same_frame_container_spawns",
+        "test_newest_archer_queen_owns_ability_and_death_transfers_it_back",
+        "test_night_witch_child_rings_follow_retained_combat_facing",
+        "test_non_bridge_river_spawn_snap_prefers_the_owners_mirrored_bank",
+        "test_non_homing_bomb_commits_to_the_target_location_at_attack_time",
+        "test_non_homing_splash_projectiles_do_not_reserve_lethal_targets",
+        "test_object_phase_death_spawns_consume_deploy_time_on_birth_frame",
+        "test_object_phase_lethal_hit_ticks_every_enabled_death_payload_on_birth_frame",
+        "test_only_projectile_attackers_skip_lethally_reserved_targets",
+        "test_opposing_bandits_are_both_invulnerable_when_their_dashes_cross",
+        "test_ordinary_buildings_receive_no_extra_sight_allowance",
+        "test_other_enabled_death_bombs_do_not_inherit_skeleton_barrel_knockback",
+        "test_outer_row_mixed_swarm_positions_are_exact_river_reflections",
+        "test_overloaded_attack_data_drives_inferno_first_hit_and_retarget_preload",
+        "test_overloaded_retarget_clock_maps_to_zero_preservation_phase",
+        "test_passing_bank_y_does_not_skip_lateral_bridge_alignment",
+        "test_pending_damage_duration_cutoff_is_governed_by_shared_global",
+        "test_pending_projectile_duration_is_target_owned_monotonic_launch_state",
+        "test_pending_projectile_reservation_uses_native_600ms_duration_cutoff",
+        "test_piercing_projectiles_check_native_tick_points_not_swept_segments",
+        "test_positive_area_buff_falloff_uses_serialized_cap_flag",
+        "test_primary_death_cancels_fisherman_hook_in_every_committed_state",
+        "test_princess_uses_its_combat_projectile_damage_and_splash",
+        "test_projectile_area_attack_cancels_payload_after_target_death",
+        "test_projectile_committed_before_invisibility_still_connects",
+        "test_projectile_crown_payload_uses_final_special_damage_for_every_shape",
+        "test_projectile_hidden_tesla_impact_uses_native_direct_vs_area_split",
+        "test_projectile_launched_in_combat_ticks_in_same_frames_object_phase",
+        "test_projectile_muzzle_radius_rotates_with_attack_direction_and_shortens_flight",
+        "test_projectile_splash_discard_does_not_consult_direct_area_global",
+        "test_projectile_target_preservation_uses_native_hit_cycle_phase",
+        "test_projectile_tracks_a_destroyed_targets_final_position_without_damaging_it",
+        "test_radial_knockback_uses_native_integer_velocity_curve",
+        "test_rage_accelerates_enabled_periodic_spawners",
+        "test_rage_advances_giant_footstep_clock_with_native_per_frame_truncation",
+        "test_rage_area_is_an_effect_container_not_a_combat_target",
+        "test_river_jump_applies_same_plane_avoidance_but_mega_knight_jump_clears_it",
+        "test_river_jump_landings_use_native_world_cell_division",
+        "test_river_jump_state_resets_charge_before_deferred_stun",
+        "test_river_jumper_collides_on_air_plane_but_not_ground_plane",
+        "test_river_jumper_does_not_receive_ground_building_collision",
+        "test_rolling_and_piercing_ranges_begin_at_their_forward_launch_points",
+        "test_rolling_troop_projectile_uses_serialized_range",
+        "test_royal_ghost_character_clock_runs_on_deploy_zero_crossing",
+        "test_royal_ghost_does_not_recloak_mid_fight_when_status_delays_next_hit",
+        "test_royal_ghost_fade_clock_continues_while_stunned",
+        "test_royal_ghost_fades_by_time_since_attack_and_breaks_enemy_lock",
+        "test_royal_ghost_hovers_across_the_river_without_becoming_an_air_target",
+        "test_royal_ghost_recloaks_after_combat_on_exact_fortieth_logic_frame",
+        "test_royal_hogs_use_native_wide_zigzag_with_staggered_deploys",
+        "test_same_tick_committed_projectiles_trade_independent_of_entity_order",
+        "test_same_tick_lethal_melee_hit_denies_later_combat_component",
+        "test_self_centered_splash_uses_strict_radius_without_source_hitbox_inflation",
+        "test_serialized_footstep_cycle_pauses_movement",
+        "test_shield_break_consumes_damage_but_not_status_or_knockback_payloads",
+        "test_sight_edge_target_acquisition_matches_fast_and_scalar_paths",
+        "test_single_target_projectile_hits_on_impact_and_tracks_its_target",
+        "test_skeleton_barrel_breaks_on_building_contact_then_opens_container",
+        "test_skeleton_barrel_children_combine_pushback_travel_and_const_priority",
+        "test_skeleton_barrel_container_propagates_spawn_const_priority",
+        "test_skeleton_barrel_uses_committed_half_second_contact_countdown",
+        "test_slow_and_rage_govern_their_full_final_movement_frame",
+        "test_spawn_area_object_damages_later_same_frame_character_spawns",
+        "test_spawn_area_snapshot_precedes_victim_death_knockback",
+        "test_spawn_area_without_affects_hidden_does_not_reach_retracted_tesla",
+        "test_spawn_payload_and_character_clock_run_on_deploy_zero_crossing",
+        "test_spawn_pushback_is_data_driven_and_pushes_without_damage",
+        "test_spawn_randomness_is_owned_by_each_battle",
+        "test_spawn_slam_cannot_target_lethal_battle_ram_death_spawns_same_frame",
+        "test_spawned_allies_cannot_break_witch_crown_tower_windup",
+        "test_spawner_object_clock_observes_buff_expiry_from_the_same_frame",
+        "test_spear_goblins_use_the_current_wider_serialized_spawn_radius",
+        "test_special_attack_windup_cancels_when_no_launch_target_remains",
+        "test_special_dash_uses_closest_target_at_launch_without_restarting_windup",
+        "test_spirit_attack_launch_advances_in_same_frames_movement_component",
+        "test_spirit_homing_jump_keeps_serialized_speed_when_target_flees",
+        "test_standard_arena_path_ids_use_the_native_half_tile_map",
+        "test_started_attack_target_lock_has_native_500_unit_extension",
+        "test_started_direct_attack_keeps_only_native_25_unit_extension",
+        "test_started_projectile_attack_finishes_inside_native_500_unit_leash",
+        "test_started_projectile_lock_preservation_is_governed_by_shared_global",
+        "test_status_clocks_advance_once_when_deployment_finishes",
+        "test_stun_clears_connected_lock_before_reacquiring_the_nearest_target",
+        "test_stun_does_not_interrupt_archer_queen_cast",
+        "test_stun_resets_fisherman_hook_in_every_committed_state",
+        "test_stun_resets_idle_preload_even_when_attacker_has_no_target_lock",
+        "test_stunned_troop_still_observes_and_retargets_without_moving_or_attacking",
+        "test_sub_logic_unit_mirror_drift_cannot_change_reach_decisions",
+        "test_sub_nanotile_distance_ties_preserve_target_insertion_order",
+        "test_sub_nanotile_projectile_endpoint_drift_cannot_add_a_flight_tick",
+        "test_sub_ten_unit_movement_call_resets_partial_charge",
+        "test_subnanotile_center_collision_fallback_rotates_with_player_perspective",
+        "test_surviving_princess_tower_excludes_closer_king_from_default_set",
+        "test_symmetric_deploy_snap_nudges_shared_ground_anchor_by_one_logic_unit",
+        "test_symmetric_deploy_snap_uses_character_capability_gates",
+        "test_target_geometry_is_governed_by_shared_current_client_globals",
+        "test_temporary_homing_launch_distance_threshold_is_strict_native_integer",
+        "test_tesla_hide_clock_starts_on_deploy_zero_crossing_without_attacking",
+        "test_tied_bridge_routes_use_rotationally_symmetric_player_relative_lane",
+        "test_tile_and_bridge_boundaries_rotate_without_half_open_artifacts",
+        "test_tilemap_terrain_query_does_not_override_native_move_or_charge_work",
+        "test_tower_footprint_boundary_ulp_drift_blocks_both_player_mirrors",
+        "test_troop_target_death_during_windup_retargets_next_combat_frame",
+        "test_unrelated_destroyed_princess_tower_does_not_change_bridge_route",
+        "test_valkyrie_spin_is_centered_on_herself_and_hits_behind_her",
+        "test_wall_breaker_committed_projectile_cannot_hit_birth_tick_death_spawns",
+        "test_wall_breaker_contact_is_one_data_scaled_explosion",
+        "test_wall_breaker_explosion_snapshot_precedes_victim_death_knockback",
+        "test_wall_breaker_splash_is_centered_on_its_committed_launch_position",
+        "test_witches_use_one_second_first_wave_and_stable_data_counts",
+        "test_xbow_locks_ground_only_after_its_full_deploy_window",
+        "test_zap_reload_global_is_gated_by_serialized_load_first_hit",
+        "test_zap_resets_overloaded_inferno_weapon_to_one_hit_speed_cycle",
+        "test_zero_radius_spawner_uses_native_footprint_candidate_scan"
+      ]
+    },
+    {
+      "path": "tests/test_endpoint_first_river_jump_check.py",
+      "sha256": "efff08b4d83908679ef9a8abd76866f9c0e3e75a5ea528692f50a9713e78bb41",
+      "static_test_functions": [
+        "test_endpoint_first_preserves_unwalkable_boundary_jump",
+        "test_endpoint_first_skips_origin_query_for_walkable_move"
+      ]
+    },
+    {
+      "path": "tests/test_entity_deepcopy.py",
+      "sha256": "d586d40b1354d16e117995af886681978ae06bc7264f96ac550f3befb87bd098",
+      "static_test_functions": [
+        "test_specialized_entity_deepcopy_matches_generic_and_isolates_state"
+      ]
+    },
+    {
+      "path": "tests/test_exact_target_bucket_bound.py",
+      "sha256": "b70450fd6c05c5a0c5d895e480dc6dd29ce2b05950fb8895b7b44d8f4d229b62",
+      "static_test_functions": [
+        "test_exact_bound_includes_discounted_large_crown_at_sight_edge",
+        "test_exact_target_bound_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_fast_target_exhaustive_none.py",
+      "sha256": "63b3b44445ca4014c88bb4ace81ac589bfe80cf1c5e97d38a6e80723073a7828",
+      "static_test_functions": [
+        "test_exhaustive_fast_none_matches_scalar_fallback",
+        "test_non_null_fast_candidate_keeps_scalar_mechanics_validation"
+      ]
+    },
+    {
+      "path": "tests/test_fast_target_small_set.py",
+      "sha256": "2d5f204fc38bcb519149389408a4339c81a93fcf1849b8b03596e7aa94b8f152",
+      "static_test_functions": [
+        "test_small_target_scalar_path_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_fixed_step_batching.py",
+      "sha256": "7f1b68dc62d3c26aa549259417ea578fb2b892850924aedba968c07e5e44d9d7",
+      "static_test_functions": [
+        "test_battle_engine_speed_batching_respects_native_tick_budget",
+        "test_battle_rejects_invalid_speed_factors",
+        "test_engine_rejects_non_progressing_speed_factors",
+        "test_fractional_speed_factor_accumulates_complete_native_ticks_only",
+        "test_speed_factor_batches_native_logic_ticks_without_changing_interactions"
+      ]
+    },
+    {
+      "path": "tests/test_gamedata_normalization.py",
+      "sha256": "20fd340f89d7f22d9c0d89c357d524d67f40f70f450f4fcec42bd3ea9afa839a",
+      "static_test_functions": [
+        "test_arbitrary_character_death_area_action_uses_shared_mechanic",
+        "test_compact_hit_plane_omission_means_false_when_other_plane_is_present",
+        "test_current_gamedata_snapshot_is_the_statsroyale_v5_export",
+        "test_death_action_spawn_is_normalized_without_card_identity",
+        "test_named_death_spawn_reference_hydrates_transitive_character_data",
+        "test_special_spell_loaders_follow_payload_shape_after_card_rename",
+        "test_spell_as_deploy_action_is_normalized_without_card_identity"
+      ]
+    },
+    {
+      "path": "tests/test_generated_interaction_matrix.py",
+      "sha256": "d210424b8103bddc64a3949a06d88287ab251bcdd842523f5ec1eb052c961893",
+      "static_test_functions": [
+        "test_enabled_interaction_catalog_is_data_driven_and_stable",
+        "test_manifest_reports_exact_and_systematic_coverage_separately",
+        "test_one_v_one_matrix_is_exhaustive_ordered_mirrored_and_dual_engine",
+        "test_shards_are_contiguous_nonoverlapping_and_complete",
+        "test_two_v_two_matrix_exhausts_unordered_compositions_only"
+      ]
+    },
+    {
+      "path": "tests/test_hoisted_crown_fallback_validator.py",
+      "sha256": "c13465407cfbc1a28d65019225b628f71dd94653e2d65cd297292e44de20d7eb",
+      "static_test_functions": [
+        "test_hoisted_crown_validator_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_idle_fast_forward.py",
+      "sha256": "b496b5e3779f1597395841a73fbce85deea758791eec53f1447fef4875869628",
+      "static_test_functions": [
+        "test_env_idle_fast_forward_matches_manual_tick_advance",
+        "test_fast_forward_idle_ticks_matches_step_for_static_towers",
+        "test_idle_fast_forward_rejects_active_static_tower_clocks",
+        "test_idle_fast_forward_stops_at_tiebreaker_like_normal_step",
+        "test_sparse_idle_win_checks_enter_sudden_death_at_overtime",
+        "test_sparse_idle_win_checks_resolve_crown_lead_at_overtime",
+        "test_tower_clocks_reenable_idle_fast_forward_after_normal_expiry"
+      ]
+    },
+    {
+      "path": "tests/test_inactive_stealth_targetability.py",
+      "sha256": "034379c9ca07a6da3172bcb7f1ab8dab79e3bec2ef4ea358351aa61fc1b8fb7f",
+      "static_test_functions": [
+        "test_active_stealth_still_uses_current_battle_time",
+        "test_inactive_stealth_shortcut_preserves_fixed_seed_rollout",
+        "test_inactive_stealth_skips_battle_time_conversion"
+      ]
+    },
+    {
+      "path": "tests/test_inferno_ramp.py",
+      "sha256": "02557652fcbe2f7723a3d76f9b3eba8029d0d42fae29c689af6aa223dc168e9a",
+      "static_test_functions": [
+        "test_bandit_dash_keeps_inferno_lock_but_resets_its_damage_channel",
+        "test_fireball_knockback_breaks_inferno_dragon_ramp_even_if_target_stays_in_range",
+        "test_hook_displacement_breaks_inferno_ramp_through_shared_movement_contract",
+        "test_inferno_lock_and_ramp_continue_through_a_river_jump",
+        "test_inferno_ramp_only_advances_while_beam_is_connected",
+        "test_inferno_ramp_resets_when_any_enabled_shield_breaks",
+        "test_inferno_stages_scale_each_serialized_damage_stat_independently",
+        "test_inferno_tower_ramp_resets_on_retarget",
+        "test_shield_loss_broadcast_filters_target_and_obeys_global",
+        "test_zap_resets_every_enabled_inferno_channel"
+      ]
+    },
+    {
+      "path": "tests/test_inline_building_overlap.py",
+      "sha256": "029279d38361f4a3ca5aa148a05da004b452193a92d5ee123854a67f983b242f",
+      "static_test_functions": [
+        "test_inline_building_overlap_matches_helper_geometry"
+      ]
+    },
+    {
+      "path": "tests/test_inline_position_quantization.py",
+      "sha256": "6a4cd0f428b1f19571042a509c047728fd9dbd5056c092f9c3390cbe33754571",
+      "static_test_functions": [
+        "test_inline_position_quantization_matches_helpers"
+      ]
+    },
+    {
+      "path": "tests/test_inplace_bucket_candidate_sort.py",
+      "sha256": "368029dc55a5114fbc04ed4e00c4451eda3c018ddfb7a640e3c550ce0928d36f",
+      "static_test_functions": [
+        "test_inplace_bucket_sort_preserves_entity_encounter_order",
+        "test_inplace_bucket_sort_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_lazy_battle_card_materialization.py",
+      "sha256": "15b3e7fdacf903c5ae404db051b944402f584610bac532ec31b50826c07a46ab",
+      "static_test_functions": [
+        "test_battle_materializes_card_wrappers_only_on_lookup",
+        "test_lazy_and_eager_card_wrappers_are_equal_and_battle_local",
+        "test_lazy_card_materialization_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_lazy_crown_fallback_builder.py",
+      "sha256": "541c275e3079b8f8575dde967354937ad9218857cbd1d7480c39969f8cba99b2",
+      "static_test_functions": [
+        "test_lazy_builder_preserves_complete_compatibility_fallback",
+        "test_lazy_builder_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_local_dense_bucket_bindings.py",
+      "sha256": "8e78eb4259f15fd3c327703d856d3ba7f0d61a84be81fafeeb791904862a6c00",
+      "static_test_functions": [
+        "test_local_dense_bucket_bindings_preserve_exact_candidates"
+      ]
+    },
+    {
+      "path": "tests/test_match_rules.py",
+      "sha256": "b242ddc4973a2b95985358afa8a31c599a64d8861682b8b0725ae97387476a09",
+      "static_test_functions": [
+        "test_balloon_death_spawns_timed_explosive",
+        "test_bandit_dash_invulnerability_blocks_damage",
+        "test_battle_ram_death_spawns_barbarians",
+        "test_building_on_destroyed_tower_footprint_cannot_resurrect_crown_hp",
+        "test_cannot_deploy_non_spell_on_building_footprint",
+        "test_champion_cycles_normally_and_can_be_redeployed_while_alive",
+        "test_dark_prince_shield_absorbs_first_damage",
+        "test_default_battle_timeline_starts_on_playable_frame_with_six_elixir",
+        "test_default_timeline_delays_empty_hand_slot_refills",
+        "test_deploy_delay_prevents_immediate_troop_action",
+        "test_eight_card_cycle_rotates_played_card_to_back",
+        "test_elixir_phase_regen_rates",
+        "test_enemy_ground_troops_separate_when_overlapping",
+        "test_first_overtime_crown_advantage_ends_match_immediately",
+        "test_freeze_does_not_add_a_new_windup_after_king_activation",
+        "test_freeze_spell_immobilizes_target",
+        "test_golem_death_spawns_golemites",
+        "test_ground_only_unit_cannot_attack_air",
+        "test_ground_troop_does_not_move_through_building_space",
+        "test_ice_wizard_projectile_applies_slow",
+        "test_king_tower_activates_when_hit_by_spell",
+        "test_king_tower_activates_when_princess_tower_destroyed",
+        "test_king_tower_activation_takes_four_seconds_before_first_shot",
+        "test_king_tower_starts_inactive_and_activates_when_hit",
+        "test_lava_hound_death_spawns_lava_pups",
+        "test_lumberjack_death_drops_rage_buff",
+        "test_miner_can_deploy_outside_normal_zone",
+        "test_night_witch_periodic_and_death_bats",
+        "test_prince_charge_uses_special_damage_on_first_hit",
+        "test_regulation_ends_at_three_minutes_on_crown_advantage",
+        "test_same_decision_building_commands_share_live_placement_state",
+        "test_short_stun_during_king_activation_does_not_change_first_shot_time",
+        "test_simultaneous_king_tower_destruction_is_a_draw",
+        "test_skeleton_barrel_death_spawns_skeletons",
+        "test_slow_increases_attack_interval",
+        "test_stun_restarts_complete_attack_cycle_and_clears_current_target_lock",
+        "test_sudden_death_and_tiebreaker_damage",
+        "test_tiebreaker_exact_lowest_tower_health_tie_is_draw",
+        "test_tiebreaker_uses_lowest_tower_hp_when_total_damage_equal",
+        "test_tombstone_periodic_and_death_spawn",
+        "test_tombstone_periodic_skeletons_move_after_spawn",
+        "test_tournament_towers_use_live_tower_troop_stats_without_card_rescaling",
+        "test_wide_troop_cards_respect_their_serialized_edge_tile_margin",
+        "test_witch_periodic_skeleton_spawn",
+        "test_zap_uses_reduced_crown_tower_damage"
+      ]
+    },
+    {
+      "path": "tests/test_native_path_id_cell_cache.py",
+      "sha256": "679b80979eeace86f1fa537edaa6851f044b76453595f76990d64e49c7bc37ef",
+      "static_test_functions": [
+        "test_native_path_cell_cache_does_not_change_other_object_tie_scan",
+        "test_native_path_cell_cache_matches_full_scan_for_standard_and_edge_cells",
+        "test_native_path_cell_cache_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_native_route_goal_cache.py",
+      "sha256": "c374b3c521890d2dca78c74d9dc52132ada566a39219c0c0c0f2580573ce5baf",
+      "static_test_functions": [
+        "test_native_route_goal_cache_matches_uncached_grid_queries",
+        "test_native_route_goal_cache_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_native_route_goal_row_interval.py",
+      "sha256": "b8f87f160765ce2b6539be023ec98d1c1b6b49728e169ff430bb8bfb80e88469",
+      "static_test_functions": [
+        "test_compiled_row_interval_native_route_goal_falls_back_without_numba",
+        "test_compiled_row_interval_native_route_goal_matches_python",
+        "test_row_interval_native_route_goal_matches_full_scan",
+        "test_row_interval_native_route_goal_matches_full_scan_boundaries",
+        "test_row_interval_native_route_goal_preserves_fast_path_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_pathfinding_cache.py",
+      "sha256": "12a0c2c959891c08beb140090671378eaa79b179a5db7e71ba557b4201fa3ba1",
+      "static_test_functions": [
+        "test_cached_standard_route_is_exact_and_immutable",
+        "test_native_standard_grid_route_matches_reference",
+        "test_standard_path_cost_map_is_exact_and_immutable"
+      ]
+    },
+    {
+      "path": "tests/test_pathfinding_cost_map.py",
+      "sha256": "6b46ed31a421cd124540f89471820ed40b7948c616724b1e4ec2eb5d91cbf0ac",
+      "static_test_functions": [
+        "test_path_cost_map_preserves_scalar_shadow_and_fast_rollout_hashes"
+      ]
+    },
+    {
+      "path": "tests/test_paths.py",
+      "sha256": "7f245063863a3484c8a553b5d344de6b437f6a5256627911f3037b6916b4061a",
+      "static_test_functions": [
+        "test_checkpoints_dir_create_and_resolve",
+        "test_default_data_paths_exist",
+        "test_latest_checkpoint_missing_dir_returns_none"
+      ]
+    },
+    {
+      "path": "tests/test_player_deepcopy.py",
+      "sha256": "78aa96180fbe4af59784615715b9e4bafcb711bd48abc615fae3a4e75abdc54f",
+      "static_test_functions": [
+        "test_specialized_player_deepcopy_matches_generic_and_isolates_state",
+        "test_specialized_player_deepcopy_matches_generic_battle_clone",
+        "test_specialized_player_deepcopy_preserves_container_aliases"
+      ]
+    },
+    {
+      "path": "tests/test_preferred_crown_distance.py",
+      "sha256": "4d597dcfa8eb64fbb7d02e69bc7d3d97d021ccfc7a2b8144bafa9ca891fc314c",
+      "static_test_functions": [
+        "test_preferred_crown_distance_matches_eager_distance",
+        "test_preferred_crown_distance_preserves_fixed_seed_rollout",
+        "test_preferred_crown_filter_avoids_discarded_distance_work"
+      ]
+    },
+    {
+      "path": "tests/test_prefiltered_action_mask_candidates.py",
+      "sha256": "253c1b56e05172a6409c13208fb993d3bfb696113d861c942f250aeebabc680a",
+      "static_test_functions": [
+        "test_prefiltered_candidates_preserve_fixed_seed_rollout",
+        "test_prefiltered_miner_candidates_skip_scalar_tower_rechecks",
+        "test_prefiltered_territory_spell_skips_redundant_zone_rechecks",
+        "test_walkability_predicate_remains_scalar_and_exact"
+      ]
+    },
+    {
+      "path": "tests/test_reward_model.py",
+      "sha256": "bdfe5f13efad78319be27f36578d44093bfa8f86f7a241d32ac4d947d3cd74d5",
+      "static_test_functions": [
+        "test_destroying_enemy_princess_tower_rewards_attacker_not_defender",
+        "test_early_king_chip_is_penalized_when_both_princess_alive",
+        "test_king_damage_becomes_rewarding_after_princess_falls",
+        "test_objective_potential_is_neutral_at_start",
+        "test_princess_damage_is_rewarded",
+        "test_tiebreak_reward_ignores_destroyed_towers_and_compares_absolute_hp"
+      ]
+    },
+    {
+      "path": "tests/test_rl_action_mask.py",
+      "sha256": "a102caf8631f596e372a124d1521712e365a9746ed8bc3f00dcfdae7410f60bd",
+      "static_test_functions": [
+        "test_apply_action_rejects_out_of_range_ids_without_mutating_battle",
+        "test_champion_ability_action_remains_legal_while_stunned",
+        "test_champion_ability_counts_as_an_available_elixir_spend",
+        "test_champion_ability_has_a_distinct_masked_action",
+        "test_champion_ability_is_masked_during_deployment",
+        "test_decode_invalid_action_yields_noop",
+        "test_delayed_refill_masks_empty_slots_but_not_occupied_slots",
+        "test_encode_decode_roundtrip_player_perspective",
+        "test_every_enabled_card_mask_matches_both_engines_and_canonical_sides",
+        "test_fast_mask_matches_legacy_mask_on_same_state",
+        "test_fast_mask_sees_building_spawned_earlier_in_same_decision_window",
+        "test_fast_miner_mask_matches_full_arena_rule_for_both_players",
+        "test_fast_troop_occupancy_cache_matches_scalar_and_invalidates",
+        "test_mask_blocks_actions_when_elixir_insufficient",
+        "test_mask_contains_noop_and_only_legal_actions",
+        "test_projectile_spawn_spells_can_target_water_like_other_arena_wide_spells",
+        "test_selfplay_reports_out_of_range_action_as_failed",
+        "test_selfplay_reset_preserves_default_timeline_starting_elixir",
+        "test_timed_death_payload_blocks_troop_and_building_actions_in_both_masks",
+        "test_wide_formation_margin_matches_in_both_action_masks"
+      ]
+    },
+    {
+      "path": "tests/test_rl_action_mask_gather.py",
+      "sha256": "99c474c86ff8746f075d3d18e1ae024995998f5a8aef079eb36181e7ac97038b",
+      "static_test_functions": [
+        "test_canonical_occupancy_gather_matches_world_tile_order"
+      ]
+    },
+    {
+      "path": "tests/test_rl_benchmark.py",
+      "sha256": "0d3a6d0061a7199e6715522b9f4b1316bad88ea6c49f64d75e0621f4a8ad9dc0",
+      "static_test_functions": [
+        "test_async_queue_benchmark_centralized_inference_mode",
+        "test_async_queue_benchmark_reports_lag_stats",
+        "test_env_benchmark_reports_positive_throughput",
+        "test_target_cache_benchmark_mode_can_restore_incremental_refresh"
+      ]
+    },
+    {
+      "path": "tests/test_rl_dagger_behavior.py",
+      "sha256": "96cbdb667916616db5dd7121eed6d203325082743673275f2d076f4908997639",
+      "static_test_functions": [
+        "test_actor_only_observation_matches_full_public_payload",
+        "test_actor_only_policy_action_matches_full_deterministic_action_and_state",
+        "test_behavior_seats_balance_across_shards_and_episodes",
+        "test_precomputed_masks_preserve_scalar_shadow_and_fast_fixed_seed_hashes",
+        "test_prepared_stationary_decision_builds_one_observation_and_each_mask_once",
+        "test_stationary_opponent_parser_rejects_unknown_modes",
+        "test_stationary_random_and_strategy_reuse_masks_exactly"
+      ]
+    },
+    {
+      "path": "tests/test_rl_deployment_blocker_guard.py",
+      "sha256": "831aa798ac7e6718452693d6a4c65467a934035754a7c9618bb28c99d82de023",
+      "static_test_functions": [
+        "test_deployment_blocker_guard_preserves_fixed_rollout_digest",
+        "test_deployment_blocker_guard_preserves_live_payload_occupancy",
+        "test_deployment_blocker_guard_skips_empty_payload_queries"
+      ]
+    },
+    {
+      "path": "tests/test_rl_determinism_check.py",
+      "sha256": "cde945c79ddc88feb337fa7923be3d3e3214cb7658a4ecb5de0310843080cee9",
+      "static_test_functions": [
+        "test_rollout_digest_changes_with_different_seed",
+        "test_rollout_digest_is_reproducible_for_same_seed"
+      ]
+    },
+    {
+      "path": "tests/test_rl_gym_debug_dump.py",
+      "sha256": "edb7a327828850d7ddbe36040a5caec6a0f2783b0c9c9af15a3e5729ebf3aad2",
+      "static_test_functions": [
+        "test_gym_smoke_debug_dump_jsonl"
+      ]
+    },
+    {
+      "path": "tests/test_rl_gym_env.py",
+      "sha256": "304a1fef200d16b36f9d68a945cfdb6fa5f1d93231a649f8e99981a09601dca0",
+      "static_test_functions": [
+        "test_enabled_legal_rollout_matches_both_production_engine_paths",
+        "test_env_parity_verifier_allows_only_reproducible_joint_action_conflicts",
+        "test_gym_env_reset_and_step_shapes_flat_dict",
+        "test_gym_env_xyz_mode_dict_obs",
+        "test_gym_registration_is_explicitly_idempotent",
+        "test_reset_seed_replays_decks_and_initial_observation"
+      ]
+    },
+    {
+      "path": "tests/test_rl_imitation_objective.py",
+      "sha256": "d371e6577405f9b3c07758bb50b6bd4831cdfec7c779a5a48158b5e34f2e51d2",
+      "static_test_functions": [
+        "test_metrics_separate_exact_type_distance_and_mechanic_tolerance",
+        "test_spatial_smoothing_never_assigns_mass_to_illegal_tiles",
+        "test_special_actions_have_no_location_loss",
+        "test_zero_smoothing_factorization_equals_exact_joint_cross_entropy"
+      ]
+    },
+    {
+      "path": "tests/test_rl_obs_cv.py",
+      "sha256": "6684b6a00d6f357098f10cf6d5f7e450955709b9dd3133919a49bda8a2e68f13",
+      "static_test_functions": [
+        "test_canonical_observation_rotates_continuous_positions_before_rasterizing",
+        "test_champion_ability_status_is_visible_without_exposing_enemy_state",
+        "test_cv_observation_shapes_and_visible_hud_only",
+        "test_enemy_hand_changes_do_not_change_cv_observation",
+        "test_entity_identity_and_shield_are_observable",
+        "test_entity_planes_reflect_spawned_units",
+        "test_hud_crowns_are_earned_from_enemy_towers",
+        "test_nested_spawned_descendants_preserve_parent_card_identity",
+        "test_public_status_timers_and_special_movement_are_observable",
+        "test_symmetric_initial_battle_has_identical_canonical_player_views",
+        "test_visible_spell_payloads_preserve_card_identity",
+        "test_visual_state_marks_public_cloak_and_encodes_retracted_tesla"
+      ]
+    },
+    {
+      "path": "tests/test_rl_opponent_league.py",
+      "sha256": "415775f6777ac3c9ab1c77cd78a48249e4cbfe16e583b14d77772592abc185e7",
+      "static_test_functions": [
+        "test_league_opponents_are_distributed_round_robin_across_workers",
+        "test_opponent_spec_rejects_inconsistent_payloads",
+        "test_resume_restores_optimizer_moments_but_honors_requested_learning_rate",
+        "test_selfplay_has_no_stationary_opponent_spec",
+        "test_stationary_mode_requires_an_opponent_pool"
+      ]
+    },
+    {
+      "path": "tests/test_rl_oracle_corpus.py",
+      "sha256": "6066e5ade78846ff09638847e4a6d9ca08c9f5eb187e8d741aa7194a55301393",
+      "static_test_functions": [
+        "test_atomic_shard_round_trip_and_manifest"
+      ]
+    },
+    {
+      "path": "tests/test_rl_oracle_dagger.py",
+      "sha256": "27bb0c5f9109bb4f927ee7f3f8d0441529125be5e2ae258ce6941b5ced37c878",
+      "static_test_functions": [
+        "test_dagger_collect_and_supervised_update_smoke",
+        "test_oracle_planner_actions_are_legal"
+      ]
+    },
+    {
+      "path": "tests/test_rl_oracle_direct_path.py",
+      "sha256": "e07edcd6e695d65cc91f12c2bceff515c909b4e0d5fd618bdf593dc067685c47",
+      "static_test_functions": [
+        "test_direct_path_preserves_labels_battle_states_rng_and_hashes"
+      ]
+    },
+    {
+      "path": "tests/test_rl_oracle_sampling.py",
+      "sha256": "6b8c62bcf60aff699cea9f84a6e9adea29e07ca7afa047108e40c738ae7cb2b7",
+      "static_test_functions": [
+        "test_optimized_sampling_preserves_joint_planner_actions_states_and_rng",
+        "test_sample_action_subset_matches_reference_output_and_rng_state"
+      ]
+    },
+    {
+      "path": "tests/test_rl_oracle_scalar_leaf.py",
+      "sha256": "21a46b62a9c749a65f079927bbf9d3e8db913805539538916e406bf6b98c3955",
+      "static_test_functions": [
+        "test_scalar_leaf_keeps_dictionary_evaluator_compatible_but_unused",
+        "test_scalar_leaf_preserves_every_backup_value_and_rng"
+      ]
+    },
+    {
+      "path": "tests/test_rl_shared_rollout_ipc.py",
+      "sha256": "af83f47a51fbd8f6ac62c59664b6a794a760ec054d3385805ff5141d5ee858b2",
+      "static_test_functions": [
+        "test_shared_rollout_ipc_roundtrip"
+      ]
+    },
+    {
+      "path": "tests/test_rl_strategy_action_geometry.py",
+      "sha256": "2e97c1573088e8fae4ab859b4c085e71bfcca75ce5e609103c1a149425140532",
+      "static_test_functions": [
+        "test_direct_strategy_action_geometry_falls_back_for_world_action_ids",
+        "test_direct_strategy_action_geometry_matches_decoded_scores",
+        "test_direct_strategy_action_geometry_preserves_fixed_action_trace"
+      ]
+    },
+    {
+      "path": "tests/test_rl_strategy_tile_fit_cache.py",
+      "sha256": "63a3e6d740621493a2427e03970f3846e3855b87e09092bcad2518ca13ba11b4",
+      "static_test_functions": [
+        "test_cached_strategy_tile_fits_match_uncached_scores",
+        "test_cached_strategy_tile_fits_preserve_action_trace"
+      ]
+    },
+    {
+      "path": "tests/test_rl_structured_policy.py",
+      "sha256": "6645fd93cd5a83c05338fa9df8e201f75723462e070967d195389ff1ff051395",
+      "static_test_functions": [
+        "test_hierarchical_joint_distribution_is_legal_and_not_tile_count_biased",
+        "test_random_opponent_does_not_build_unused_structured_observations",
+        "test_random_opponent_rollout_only_trains_balanced_learner_seats",
+        "test_recurrent_rollout_and_ppo_update_smoke",
+        "test_recurrent_state_resets_inside_a_sequence",
+        "test_structured_actor_excludes_hidden_enemy_cards_and_elixir",
+        "test_structured_entities_do_not_overwrite_same_position"
+      ]
+    },
+    {
+      "path": "tests/test_rl_train_utils.py",
+      "sha256": "eeaa9e768c5470c42a5e0dd76d370b518165e922eb3a81d122d85c42f0c24696",
+      "static_test_functions": [
+        "test_split_rollout_steps_even",
+        "test_split_rollout_steps_more_workers_than_steps",
+        "test_split_rollout_steps_with_remainder"
+      ]
+    },
+    {
+      "path": "tests/test_rollout_observation_buffers.py",
+      "sha256": "22cac33d22df75c227a799daa0640dd8a1ae239cacbb6d69a32dd32f01fe3c41",
+      "static_test_functions": [
+        "test_inference_mode_preserves_rollout_and_supports_recurrent_continuation",
+        "test_preallocated_observation_buffers_match_stacked_policy_inputs",
+        "test_preallocated_observation_buffers_preserve_fixed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_row_major_bucket_scan.py",
+      "sha256": "db17913ed737f8e3052d24ced9d8a1559fea3ad3891ad65ddef71394dce64b15",
+      "static_test_functions": [
+        "test_row_major_bucket_scan_preserves_exact_candidates",
+        "test_row_major_bucket_scan_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_sample_deck_logic.py",
+      "sha256": "d22366785dfc5f28244f3bfd3348343e5d77c7dc124f02a80fcba5c2797e0bab",
+      "static_test_functions": [
+        "test_all_sample_deck_cards_resolve_and_deploy",
+        "test_archers_card_spawns_two_archers",
+        "test_earthquake_deals_bonus_damage_to_buildings",
+        "test_enabled_card_aliases_resolve_to_matching_canonical_card_names",
+        "test_graveyard_spawns_graveyard_entity",
+        "test_mega_knight_deploy_projectile_is_not_used_as_basic_attack",
+        "test_poison_is_persistent_slowing_area",
+        "test_royal_delivery_is_delayed_spawn_projectile",
+        "test_tornado_sets_pull_area"
+      ]
+    },
+    {
+      "path": "tests/test_scalar_deferred_crown_slots.py",
+      "sha256": "0d4ebde0c71e3516c11bff51bc7a9c9060262f92fbf5383d46489c7e73aec940",
+      "static_test_functions": [
+        "test_scalar_crown_slots_preserve_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_single_pass_collision_candidates.py",
+      "sha256": "a6b417d0a51249b4df2ffa39f643958f4ad7f5091eb3a366fa64f564d65b6e8f",
+      "static_test_functions": [
+        "test_single_pass_collision_matches_two_candidate_scans",
+        "test_single_pass_collision_preserves_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_single_pass_crown_fallback.py",
+      "sha256": "ded7e6cefb86aaae561dbcd66a73a5213f11746b1af2a2ed3d3e0ad89d665ed8",
+      "static_test_functions": [
+        "test_single_pass_crown_fallback_matches_partitioned_reference",
+        "test_single_pass_crown_fallback_preserves_fixed_seed_rollout",
+        "test_unclassified_custom_crown_uses_reference_classifier"
+      ]
+    },
+    {
+      "path": "tests/test_singleton_target_selection_shortcut.py",
+      "sha256": "d0db7df9042528c8543987fe2aa6dabb973bb9c6d5cddae7fa31e428aca7e857",
+      "static_test_functions": [
+        "test_multi_candidate_selection_still_uses_native_encounter_tie_order",
+        "test_singleton_shortcut_matches_general_path",
+        "test_singleton_shortcut_preserves_fixed_seed_rollout",
+        "test_singleton_shortcut_skips_distance_tie_classification"
+      ]
+    },
+    {
+      "path": "tests/test_spatial_targeting_parity.py",
+      "sha256": "f3ca7125161e73c7a4a26f26c190e3837794e132e63dc02fdd60290c8e543f30",
+      "static_test_functions": [
+        "test_fast_path_target_selection_matches_legacy",
+        "test_fast_target_refresh_rebuilds_for_same_size_membership_change",
+        "test_fast_target_refresh_reuses_arrays_and_updates_dynamic_values"
+      ]
+    },
+    {
+      "path": "tests/test_spell_import_order.py",
+      "sha256": "813a05f49583eb1661ddf4d12dce12cd560fbd5b313b35dcae240c738e79417e",
+      "static_test_functions": [
+        "test_spell_modules_load_in_either_import_order"
+      ]
+    },
+    {
+      "path": "tests/test_spell_iteration_safety.py",
+      "sha256": "b2fd5b49e1f69495a38f391355ecfc39308948afb91f6c3d87acbd3f35d1ffb5",
+      "static_test_functions": [
+        "test_direct_damage_spell_does_not_damage_projectile_entities",
+        "test_direct_damage_spell_safe_when_target_death_spawns",
+        "test_persistent_spells_do_not_damage_or_pull_other_spell_effects"
+      ]
+    },
+    {
+      "path": "tests/test_stat_scaling.py",
+      "sha256": "079c22a4912f2e308d0226f823e61218385bb8dabd7f9c148dddc8f84314022a",
+      "static_test_functions": [
+        "test_cached_definitions_still_create_loader_local_compatibility_stats",
+        "test_current_balance_layer_updates_enabled_base_cards",
+        "test_current_hidden_combat_timings_and_nested_character_balance",
+        "test_level_11_snapshot_stats_use_game_multiplier",
+        "test_level_multipliers_match_game_tables",
+        "test_load_time_encodes_first_hit_and_overloaded_retarget_timings"
+      ]
+    },
+    {
+      "path": "tests/test_static_targetability_cache.py",
+      "sha256": "7cd92fa146a743e4dbe27a6dd25c2976f9252860d9224d9368090f5e3f51b560",
+      "static_test_functions": [
+        "test_cached_sync_targetability_requirement_preserves_fixed_seed_rollout",
+        "test_direct_target_entity_kind_matches_reference",
+        "test_direct_target_entity_kind_preserves_fixed_seed_rollout",
+        "test_dynamic_targetability_mechanic_retains_full_refresh",
+        "test_entity_sync_reuses_cached_targetability_requirement",
+        "test_static_targetability_preserves_fixed_seed_rollout",
+        "test_static_targetability_skips_ordinary_predicate_refresh",
+        "test_stealth_timestamp_remains_independent_of_static_targetability",
+        "test_targetability_classification_cache_is_clone_isolated"
+      ]
+    },
+    {
+      "path": "tests/test_structured_observation_clip.py",
+      "sha256": "aebf4624a6c28aad1d80f9354ddf6b2bed440c9d8947b4135f3c2289aed837db",
+      "static_test_functions": [
+        "test_scalar_range_clip_matches_numpy_bits",
+        "test_scalar_unit_clip_matches_numpy_bits"
+      ]
+    },
+    {
+      "path": "tests/test_target_sight_reach.py",
+      "sha256": "699d5d052036122ebb49c8fde65e74556b7786b9217a1e330e5ab83092e01f9c",
+      "static_test_functions": [
+        "test_allocation_reduced_target_sight_reach_is_bit_exact"
+      ]
+    },
+    {
+      "path": "tests/test_target_switching.py",
+      "sha256": "b0454c65eb4b1862613b484f3c0ac3f4d6b14a0b6decd2027b831e1b33863ec8",
+      "static_test_functions": [
+        "test_building_keeps_attack_lock_when_a_closer_enemy_arrives",
+        "test_building_keeps_lock_inside_native_range_extension",
+        "test_building_only_attack_eligibility_uses_the_serialized_target_category",
+        "test_building_retargets_when_locked_enemy_leaves_attack_range",
+        "test_building_targeting_troop_acquires_character_marked_as_building_target",
+        "test_building_targeting_troop_can_still_acquire_in_sight_defensive_building",
+        "test_building_targeting_troop_ignores_out_of_sight_bridge_cannon",
+        "test_can_switch_from_king_to_in_sight_defensive_building",
+        "test_can_switch_from_king_to_princess_when_attackable",
+        "test_does_not_switch_from_king_to_out_of_sight_princess",
+        "test_does_not_switch_to_out_of_sight_building_even_if_closer",
+        "test_fast_targeting_preserves_character_building_target_bit",
+        "test_normal_troop_acquires_closest_eligible_target_not_target_category",
+        "test_normal_troop_switching_uses_distance_not_target_category",
+        "test_pathfind_on_bridge_keeps_crossing_toward_locked_target",
+        "test_switches_to_in_sight_closer_building",
+        "test_troop_can_retarget_to_closer_distraction_while_pathing",
+        "test_troop_keeps_connected_tower_lock_when_distraction_arrives"
+      ]
+    },
+    {
+      "path": "tests/test_tight_interaction_bucket_bounds.py",
+      "sha256": "cbac23ba8f7018d52910341f9f3249f1a5396ba342f8df9a9fe3d6f5ec6b8979",
+      "static_test_functions": [
+        "test_tight_bounds_cover_every_bucket_intersecting_query_square",
+        "test_tight_bounds_keep_every_center_inside_interaction_radius",
+        "test_tight_bounds_preserve_collision_accumulation",
+        "test_tight_bounds_preserve_fixed_seed_rollout"
+      ]
+    },
+    {
+      "path": "tests/test_trusted_alive_building_membership.py",
+      "sha256": "13ec4939d92edc48c35e4ba9f977beb6e4fe8e25c2c9b93d32b618956515b2c2",
+      "static_test_functions": [
+        "test_alive_building_cache_contains_only_live_buildings",
+        "test_trusted_building_membership_matches_defensive_scan",
+        "test_trusted_building_membership_preserves_fixed_seed_rollout"
+      ]
+    }
+  ],
+  "note": "Static inventory only; pytest parameter expansion is intentionally reported separately by collection commands in the evidence report.",
+  "schema_version": 1,
+  "static_test_function_count": 842,
+  "test_file_count": 106
+}

@@ -1,0 +1,1838 @@
+{
+  "decks": {
+    "path_name": "decks.json",
+    "sha256": "39fd5d5fe36cc7cfa69cf049de3ea2e7e00bc143ec71b14f33ead300fb4b2944"
+  },
+  "enabled_troop_cards": [
+    "ArcherQueen",
+    "Archers",
+    "BabyDragon",
+    "Balloon",
+    "Bandit",
+    "Bats",
+    "BattleRam",
+    "Bomber",
+    "Bowler",
+    "DarkPrince",
+    "DartGoblin",
+    "ElectroDragon",
+    "ElectroSpirit",
+    "ElectroWizard",
+    "Firecracker",
+    "Giant",
+    "GoblinGang",
+    "Golem",
+    "Guards",
+    "HogRider",
+    "IceGolem",
+    "IceSpirit",
+    "IceWizard",
+    "InfernoDragon",
+    "Knight",
+    "LavaHound",
+    "Lumberjack",
+    "MagicArcher",
+    "MegaKnight",
+    "MegaMinion",
+    "Miner",
+    "MiniPekka",
+    "Minions",
+    "Musketeer",
+    "NightWitch",
+    "Pekka",
+    "Prince",
+    "Princess",
+    "RoyalGhost",
+    "RoyalHogs",
+    "SkeletonBarrel",
+    "Skeletons",
+    "SpearGoblins",
+    "Valkyrie",
+    "Wallbreakers",
+    "Witch"
+  ],
+  "enabled_troop_count": 46,
+  "gamedata": {
+    "path_name": "gamedata.json",
+    "sha256": "3d99987c19cb94a0c8a6795e943829771078e564859e34c1411e221e5d57486a"
+  },
+  "one_v_one": {
+    "case_count": 8464,
+    "coverage": "exhaustive ordered cards x mirrored positions x scalar/fast",
+    "shard_count": 32,
+    "shards": [
+      {
+        "shard_count": 32,
+        "shard_index": 0,
+        "start": 0,
+        "stop": 264
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 1,
+        "start": 264,
+        "stop": 529
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 2,
+        "start": 529,
+        "stop": 793
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 3,
+        "start": 793,
+        "stop": 1058
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 4,
+        "start": 1058,
+        "stop": 1322
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 5,
+        "start": 1322,
+        "stop": 1587
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 6,
+        "start": 1587,
+        "stop": 1851
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 7,
+        "start": 1851,
+        "stop": 2116
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 8,
+        "start": 2116,
+        "stop": 2380
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 9,
+        "start": 2380,
+        "stop": 2645
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 10,
+        "start": 2645,
+        "stop": 2909
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 11,
+        "start": 2909,
+        "stop": 3174
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 12,
+        "start": 3174,
+        "stop": 3438
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 13,
+        "start": 3438,
+        "stop": 3703
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 14,
+        "start": 3703,
+        "stop": 3967
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 15,
+        "start": 3967,
+        "stop": 4232
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 16,
+        "start": 4232,
+        "stop": 4496
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 17,
+        "start": 4496,
+        "stop": 4761
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 18,
+        "start": 4761,
+        "stop": 5025
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 19,
+        "start": 5025,
+        "stop": 5290
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 20,
+        "start": 5290,
+        "stop": 5554
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 21,
+        "start": 5554,
+        "stop": 5819
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 22,
+        "start": 5819,
+        "stop": 6083
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 23,
+        "start": 6083,
+        "stop": 6348
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 24,
+        "start": 6348,
+        "stop": 6612
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 25,
+        "start": 6612,
+        "stop": 6877
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 26,
+        "start": 6877,
+        "stop": 7141
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 27,
+        "start": 7141,
+        "stop": 7406
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 28,
+        "start": 7406,
+        "stop": 7670
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 29,
+        "start": 7670,
+        "stop": 7935
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 30,
+        "start": 7935,
+        "stop": 8199
+      },
+      {
+        "shard_count": 32,
+        "shard_index": 31,
+        "start": 8199,
+        "stop": 8464
+      }
+    ]
+  },
+  "schema_version": 1,
+  "two_v_two": {
+    "case_count": 584821,
+    "coverage": "exhaustive unordered team-composition matchups",
+    "shard_count": 256,
+    "shards": [
+      {
+        "shard_count": 256,
+        "shard_index": 0,
+        "start": 0,
+        "stop": 2284
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 1,
+        "start": 2284,
+        "stop": 4568
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 2,
+        "start": 4568,
+        "stop": 6853
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 3,
+        "start": 6853,
+        "stop": 9137
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 4,
+        "start": 9137,
+        "stop": 11422
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 5,
+        "start": 11422,
+        "stop": 13706
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 6,
+        "start": 13706,
+        "stop": 15991
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 7,
+        "start": 15991,
+        "stop": 18275
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 8,
+        "start": 18275,
+        "stop": 20560
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 9,
+        "start": 20560,
+        "stop": 22844
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 10,
+        "start": 22844,
+        "stop": 25129
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 11,
+        "start": 25129,
+        "stop": 27413
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 12,
+        "start": 27413,
+        "stop": 29697
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 13,
+        "start": 29697,
+        "stop": 31982
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 14,
+        "start": 31982,
+        "stop": 34266
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 15,
+        "start": 34266,
+        "stop": 36551
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 16,
+        "start": 36551,
+        "stop": 38835
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 17,
+        "start": 38835,
+        "stop": 41120
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 18,
+        "start": 41120,
+        "stop": 43404
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 19,
+        "start": 43404,
+        "stop": 45689
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 20,
+        "start": 45689,
+        "stop": 47973
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 21,
+        "start": 47973,
+        "stop": 50258
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 22,
+        "start": 50258,
+        "stop": 52542
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 23,
+        "start": 52542,
+        "stop": 54826
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 24,
+        "start": 54826,
+        "stop": 57111
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 25,
+        "start": 57111,
+        "stop": 59395
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 26,
+        "start": 59395,
+        "stop": 61680
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 27,
+        "start": 61680,
+        "stop": 63964
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 28,
+        "start": 63964,
+        "stop": 66249
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 29,
+        "start": 66249,
+        "stop": 68533
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 30,
+        "start": 68533,
+        "stop": 70818
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 31,
+        "start": 70818,
+        "stop": 73102
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 32,
+        "start": 73102,
+        "stop": 75387
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 33,
+        "start": 75387,
+        "stop": 77671
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 34,
+        "start": 77671,
+        "stop": 79955
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 35,
+        "start": 79955,
+        "stop": 82240
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 36,
+        "start": 82240,
+        "stop": 84524
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 37,
+        "start": 84524,
+        "stop": 86809
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 38,
+        "start": 86809,
+        "stop": 89093
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 39,
+        "start": 89093,
+        "stop": 91378
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 40,
+        "start": 91378,
+        "stop": 93662
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 41,
+        "start": 93662,
+        "stop": 95947
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 42,
+        "start": 95947,
+        "stop": 98231
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 43,
+        "start": 98231,
+        "stop": 100516
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 44,
+        "start": 100516,
+        "stop": 102800
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 45,
+        "start": 102800,
+        "stop": 105085
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 46,
+        "start": 105085,
+        "stop": 107369
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 47,
+        "start": 107369,
+        "stop": 109653
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 48,
+        "start": 109653,
+        "stop": 111938
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 49,
+        "start": 111938,
+        "stop": 114222
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 50,
+        "start": 114222,
+        "stop": 116507
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 51,
+        "start": 116507,
+        "stop": 118791
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 52,
+        "start": 118791,
+        "stop": 121076
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 53,
+        "start": 121076,
+        "stop": 123360
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 54,
+        "start": 123360,
+        "stop": 125645
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 55,
+        "start": 125645,
+        "stop": 127929
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 56,
+        "start": 127929,
+        "stop": 130214
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 57,
+        "start": 130214,
+        "stop": 132498
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 58,
+        "start": 132498,
+        "stop": 134782
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 59,
+        "start": 134782,
+        "stop": 137067
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 60,
+        "start": 137067,
+        "stop": 139351
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 61,
+        "start": 139351,
+        "stop": 141636
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 62,
+        "start": 141636,
+        "stop": 143920
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 63,
+        "start": 143920,
+        "stop": 146205
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 64,
+        "start": 146205,
+        "stop": 148489
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 65,
+        "start": 148489,
+        "stop": 150774
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 66,
+        "start": 150774,
+        "stop": 153058
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 67,
+        "start": 153058,
+        "stop": 155343
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 68,
+        "start": 155343,
+        "stop": 157627
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 69,
+        "start": 157627,
+        "stop": 159911
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 70,
+        "start": 159911,
+        "stop": 162196
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 71,
+        "start": 162196,
+        "stop": 164480
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 72,
+        "start": 164480,
+        "stop": 166765
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 73,
+        "start": 166765,
+        "stop": 169049
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 74,
+        "start": 169049,
+        "stop": 171334
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 75,
+        "start": 171334,
+        "stop": 173618
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 76,
+        "start": 173618,
+        "stop": 175903
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 77,
+        "start": 175903,
+        "stop": 178187
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 78,
+        "start": 178187,
+        "stop": 180472
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 79,
+        "start": 180472,
+        "stop": 182756
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 80,
+        "start": 182756,
+        "stop": 185041
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 81,
+        "start": 185041,
+        "stop": 187325
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 82,
+        "start": 187325,
+        "stop": 189609
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 83,
+        "start": 189609,
+        "stop": 191894
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 84,
+        "start": 191894,
+        "stop": 194178
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 85,
+        "start": 194178,
+        "stop": 196463
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 86,
+        "start": 196463,
+        "stop": 198747
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 87,
+        "start": 198747,
+        "stop": 201032
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 88,
+        "start": 201032,
+        "stop": 203316
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 89,
+        "start": 203316,
+        "stop": 205601
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 90,
+        "start": 205601,
+        "stop": 207885
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 91,
+        "start": 207885,
+        "stop": 210170
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 92,
+        "start": 210170,
+        "stop": 212454
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 93,
+        "start": 212454,
+        "stop": 214738
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 94,
+        "start": 214738,
+        "stop": 217023
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 95,
+        "start": 217023,
+        "stop": 219307
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 96,
+        "start": 219307,
+        "stop": 221592
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 97,
+        "start": 221592,
+        "stop": 223876
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 98,
+        "start": 223876,
+        "stop": 226161
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 99,
+        "start": 226161,
+        "stop": 228445
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 100,
+        "start": 228445,
+        "stop": 230730
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 101,
+        "start": 230730,
+        "stop": 233014
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 102,
+        "start": 233014,
+        "stop": 235299
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 103,
+        "start": 235299,
+        "stop": 237583
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 104,
+        "start": 237583,
+        "stop": 239867
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 105,
+        "start": 239867,
+        "stop": 242152
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 106,
+        "start": 242152,
+        "stop": 244436
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 107,
+        "start": 244436,
+        "stop": 246721
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 108,
+        "start": 246721,
+        "stop": 249005
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 109,
+        "start": 249005,
+        "stop": 251290
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 110,
+        "start": 251290,
+        "stop": 253574
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 111,
+        "start": 253574,
+        "stop": 255859
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 112,
+        "start": 255859,
+        "stop": 258143
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 113,
+        "start": 258143,
+        "stop": 260428
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 114,
+        "start": 260428,
+        "stop": 262712
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 115,
+        "start": 262712,
+        "stop": 264997
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 116,
+        "start": 264997,
+        "stop": 267281
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 117,
+        "start": 267281,
+        "stop": 269565
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 118,
+        "start": 269565,
+        "stop": 271850
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 119,
+        "start": 271850,
+        "stop": 274134
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 120,
+        "start": 274134,
+        "stop": 276419
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 121,
+        "start": 276419,
+        "stop": 278703
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 122,
+        "start": 278703,
+        "stop": 280988
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 123,
+        "start": 280988,
+        "stop": 283272
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 124,
+        "start": 283272,
+        "stop": 285557
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 125,
+        "start": 285557,
+        "stop": 287841
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 126,
+        "start": 287841,
+        "stop": 290126
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 127,
+        "start": 290126,
+        "stop": 292410
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 128,
+        "start": 292410,
+        "stop": 294694
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 129,
+        "start": 294694,
+        "stop": 296979
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 130,
+        "start": 296979,
+        "stop": 299263
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 131,
+        "start": 299263,
+        "stop": 301548
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 132,
+        "start": 301548,
+        "stop": 303832
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 133,
+        "start": 303832,
+        "stop": 306117
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 134,
+        "start": 306117,
+        "stop": 308401
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 135,
+        "start": 308401,
+        "stop": 310686
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 136,
+        "start": 310686,
+        "stop": 312970
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 137,
+        "start": 312970,
+        "stop": 315255
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 138,
+        "start": 315255,
+        "stop": 317539
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 139,
+        "start": 317539,
+        "stop": 319823
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 140,
+        "start": 319823,
+        "stop": 322108
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 141,
+        "start": 322108,
+        "stop": 324392
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 142,
+        "start": 324392,
+        "stop": 326677
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 143,
+        "start": 326677,
+        "stop": 328961
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 144,
+        "start": 328961,
+        "stop": 331246
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 145,
+        "start": 331246,
+        "stop": 333530
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 146,
+        "start": 333530,
+        "stop": 335815
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 147,
+        "start": 335815,
+        "stop": 338099
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 148,
+        "start": 338099,
+        "stop": 340384
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 149,
+        "start": 340384,
+        "stop": 342668
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 150,
+        "start": 342668,
+        "stop": 344953
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 151,
+        "start": 344953,
+        "stop": 347237
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 152,
+        "start": 347237,
+        "stop": 349521
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 153,
+        "start": 349521,
+        "stop": 351806
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 154,
+        "start": 351806,
+        "stop": 354090
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 155,
+        "start": 354090,
+        "stop": 356375
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 156,
+        "start": 356375,
+        "stop": 358659
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 157,
+        "start": 358659,
+        "stop": 360944
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 158,
+        "start": 360944,
+        "stop": 363228
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 159,
+        "start": 363228,
+        "stop": 365513
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 160,
+        "start": 365513,
+        "stop": 367797
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 161,
+        "start": 367797,
+        "stop": 370082
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 162,
+        "start": 370082,
+        "stop": 372366
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 163,
+        "start": 372366,
+        "stop": 374650
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 164,
+        "start": 374650,
+        "stop": 376935
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 165,
+        "start": 376935,
+        "stop": 379219
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 166,
+        "start": 379219,
+        "stop": 381504
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 167,
+        "start": 381504,
+        "stop": 383788
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 168,
+        "start": 383788,
+        "stop": 386073
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 169,
+        "start": 386073,
+        "stop": 388357
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 170,
+        "start": 388357,
+        "stop": 390642
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 171,
+        "start": 390642,
+        "stop": 392926
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 172,
+        "start": 392926,
+        "stop": 395211
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 173,
+        "start": 395211,
+        "stop": 397495
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 174,
+        "start": 397495,
+        "stop": 399779
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 175,
+        "start": 399779,
+        "stop": 402064
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 176,
+        "start": 402064,
+        "stop": 404348
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 177,
+        "start": 404348,
+        "stop": 406633
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 178,
+        "start": 406633,
+        "stop": 408917
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 179,
+        "start": 408917,
+        "stop": 411202
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 180,
+        "start": 411202,
+        "stop": 413486
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 181,
+        "start": 413486,
+        "stop": 415771
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 182,
+        "start": 415771,
+        "stop": 418055
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 183,
+        "start": 418055,
+        "stop": 420340
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 184,
+        "start": 420340,
+        "stop": 422624
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 185,
+        "start": 422624,
+        "stop": 424909
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 186,
+        "start": 424909,
+        "stop": 427193
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 187,
+        "start": 427193,
+        "stop": 429477
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 188,
+        "start": 429477,
+        "stop": 431762
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 189,
+        "start": 431762,
+        "stop": 434046
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 190,
+        "start": 434046,
+        "stop": 436331
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 191,
+        "start": 436331,
+        "stop": 438615
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 192,
+        "start": 438615,
+        "stop": 440900
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 193,
+        "start": 440900,
+        "stop": 443184
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 194,
+        "start": 443184,
+        "stop": 445469
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 195,
+        "start": 445469,
+        "stop": 447753
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 196,
+        "start": 447753,
+        "stop": 450038
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 197,
+        "start": 450038,
+        "stop": 452322
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 198,
+        "start": 452322,
+        "stop": 454606
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 199,
+        "start": 454606,
+        "stop": 456891
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 200,
+        "start": 456891,
+        "stop": 459175
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 201,
+        "start": 459175,
+        "stop": 461460
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 202,
+        "start": 461460,
+        "stop": 463744
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 203,
+        "start": 463744,
+        "stop": 466029
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 204,
+        "start": 466029,
+        "stop": 468313
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 205,
+        "start": 468313,
+        "stop": 470598
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 206,
+        "start": 470598,
+        "stop": 472882
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 207,
+        "start": 472882,
+        "stop": 475167
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 208,
+        "start": 475167,
+        "stop": 477451
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 209,
+        "start": 477451,
+        "stop": 479735
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 210,
+        "start": 479735,
+        "stop": 482020
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 211,
+        "start": 482020,
+        "stop": 484304
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 212,
+        "start": 484304,
+        "stop": 486589
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 213,
+        "start": 486589,
+        "stop": 488873
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 214,
+        "start": 488873,
+        "stop": 491158
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 215,
+        "start": 491158,
+        "stop": 493442
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 216,
+        "start": 493442,
+        "stop": 495727
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 217,
+        "start": 495727,
+        "stop": 498011
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 218,
+        "start": 498011,
+        "stop": 500296
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 219,
+        "start": 500296,
+        "stop": 502580
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 220,
+        "start": 502580,
+        "stop": 504865
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 221,
+        "start": 504865,
+        "stop": 507149
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 222,
+        "start": 507149,
+        "stop": 509433
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 223,
+        "start": 509433,
+        "stop": 511718
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 224,
+        "start": 511718,
+        "stop": 514002
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 225,
+        "start": 514002,
+        "stop": 516287
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 226,
+        "start": 516287,
+        "stop": 518571
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 227,
+        "start": 518571,
+        "stop": 520856
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 228,
+        "start": 520856,
+        "stop": 523140
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 229,
+        "start": 523140,
+        "stop": 525425
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 230,
+        "start": 525425,
+        "stop": 527709
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 231,
+        "start": 527709,
+        "stop": 529994
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 232,
+        "start": 529994,
+        "stop": 532278
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 233,
+        "start": 532278,
+        "stop": 534562
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 234,
+        "start": 534562,
+        "stop": 536847
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 235,
+        "start": 536847,
+        "stop": 539131
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 236,
+        "start": 539131,
+        "stop": 541416
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 237,
+        "start": 541416,
+        "stop": 543700
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 238,
+        "start": 543700,
+        "stop": 545985
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 239,
+        "start": 545985,
+        "stop": 548269
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 240,
+        "start": 548269,
+        "stop": 550554
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 241,
+        "start": 550554,
+        "stop": 552838
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 242,
+        "start": 552838,
+        "stop": 555123
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 243,
+        "start": 555123,
+        "stop": 557407
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 244,
+        "start": 557407,
+        "stop": 559691
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 245,
+        "start": 559691,
+        "stop": 561976
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 246,
+        "start": 561976,
+        "stop": 564260
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 247,
+        "start": 564260,
+        "stop": 566545
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 248,
+        "start": 566545,
+        "stop": 568829
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 249,
+        "start": 568829,
+        "stop": 571114
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 250,
+        "start": 571114,
+        "stop": 573398
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 251,
+        "start": 573398,
+        "stop": 575683
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 252,
+        "start": 575683,
+        "stop": 577967
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 253,
+        "start": 577967,
+        "stop": 580252
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 254,
+        "start": 580252,
+        "stop": 582536
+      },
+      {
+        "shard_count": 256,
+        "shard_index": 255,
+        "start": 582536,
+        "stop": 584821
+      }
+    ],
+    "systematic_not_exhaustive_axes": {
+      "event_family": [
+        "ordinary",
+        "target_order",
+        "simultaneous_attack",
+        "simultaneous_death",
+        "stun",
+        "slow",
+        "rage",
+        "death_payload",
+        "projectile",
+        "retarget",
+        "allied_collision"
+      ],
+      "fast_path": [
+        false,
+        true
+      ],
+      "geometry": [
+        "center",
+        "left_lane",
+        "right_lane",
+        "river_left",
+        "river_right",
+        "split_lane"
+      ],
+      "mirrored": [
+        false,
+        true
+      ],
+      "team_spawn_reversed": [
+        false,
+        true
+      ]
+    },
+    "team_composition_count": 1081
+  }
+}
