@@ -1,0 +1,45 @@
+{
+  "config": {
+    "calls": 200000,
+    "repetitions": 9,
+    "state_bytes": 364337,
+    "state_calls": 20
+  },
+  "machine": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "processor": "Apple M4 Pro",
+    "python": "3.12.13"
+  },
+  "python_noop": {
+    "max_seconds": 0.0017984169535338879,
+    "median_calls_per_second": 111698026.98691693,
+    "median_nanoseconds_per_call": 8.952709613367915,
+    "median_seconds": 0.001790541922673583,
+    "min_seconds": 0.0017197499983012676
+  },
+  "python_state_consume": {
+    "max_seconds": 0.36894370906520635,
+    "median_calls_per_second": 55.858250477785056,
+    "median_nanoseconds_per_call": 17902458.301978186,
+    "median_seconds": 0.3580491660395637,
+    "min_seconds": 0.3441074589500204
+  },
+  "rust_noop": {
+    "max_seconds": 0.019362209015525877,
+    "median_calls_per_second": 10834114.130593022,
+    "median_nanoseconds_per_call": 92.30103984009475,
+    "median_seconds": 0.01846020796801895,
+    "min_seconds": 0.01805591699667275
+  },
+  "rust_state_consume": {
+    "max_seconds": 0.007690291968174279,
+    "median_calls_per_second": 2661.9195691314144,
+    "median_nanoseconds_per_call": 375668.75107586384,
+    "median_seconds": 0.007513375021517277,
+    "min_seconds": 0.007415000000037253
+  },
+  "state_result": {
+    "fnv1a_u64": 17595393570910166249,
+    "size": 364337
+  }
+}

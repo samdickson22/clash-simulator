@@ -1,0 +1,12 @@
+[package]
+name = "clasher-core"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[lib]
+name = "_clasher_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.26", features = ["abi3-py310", "extension-module"] }

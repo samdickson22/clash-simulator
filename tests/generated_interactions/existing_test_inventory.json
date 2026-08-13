@@ -1329,6 +1329,15 @@
       ]
     },
     {
+      "path": "tests/test_rust_core_boundary.py",
+      "sha256": "25c599c6f6f880d4e0d5c7346c7f44f5bfecf6adde13d1275ed245f540c60430",
+      "static_test_functions": [
+        "test_rust_noop_tick_boundary_rejects_out_of_range_values",
+        "test_rust_noop_tick_boundary_round_trips_exactly",
+        "test_rust_state_boundary_matches_python_reference"
+      ]
+    },
+    {
       "path": "tests/test_sample_deck_logic.py",
       "sha256": "d22366785dfc5f28244f3bfd3348343e5d77c7dc124f02a80fcba5c2797e0bab",
       "static_test_functions": [
@@ -1490,6 +1499,6 @@
   ],
   "note": "Static inventory only; pytest parameter expansion is intentionally reported separately by collection commands in the evidence report.",
   "schema_version": 1,
-  "static_test_function_count": 845,
-  "test_file_count": 107
+  "static_test_function_count": 848,
+  "test_file_count": 108
 }
