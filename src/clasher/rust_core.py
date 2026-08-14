@@ -405,6 +405,9 @@ class ResidentRustBattle:
     def advance_complete_tick(self) -> bool:
         return bool(self._native.advance_complete_tick())
 
+    def advance_complete_ticks(self, ticks: int) -> int:
+        return int(self._native.advance_complete_ticks(int(ticks)))
+
     def advance_clock_phase(self) -> bool:
         return bool(self._native.advance_clock_phase())
 
@@ -1097,6 +1100,9 @@ def shield_state_rows(battle: Any) -> list[dict[str, Any]]:
             {
                 "encounter_index": encounter_index,
                 "id": int(entity.id),
+                "shield_break_count": int(
+                    getattr(entity, "_shield_break_count", 0)
+                ),
                 "shields": [
                     {
                         "current_shield": _exact_scalar(

@@ -1085,6 +1085,7 @@ struct ResidentEntity {
     pending_projectile_max_duration_ms: i64,
     mechanics: Vec<String>,
     shields: Vec<ShieldState>,
+    shield_break_count: i64,
     death_opcodes: Vec<ResidentDeathOpcode>,
     modifier_state: Option<ModifierState>,
     movement: Option<ResidentMovementState>,
@@ -2245,16 +2246,22 @@ impl ResidentEntity {
     }
 
     fn apply_incoming_damage(&mut self, mut amount: f64) -> f64 {
+        let mut broke_shield = false;
         for shield in &mut self.shields {
             if amount <= 0.0 {
-                return 0.0;
+                break;
             }
             let current = shield.current.as_f64();
             if current <= 0.0 {
                 continue;
             }
-            shield.current.set_f64((current - amount).max(0.0));
+            let remaining = (current - amount).max(0.0);
+            shield.current.set_f64(remaining);
+            broke_shield = current > 0.0 && remaining <= 0.0;
             amount = 0.0;
+        }
+        if broke_shield {
+            self.shield_break_count += 1;
         }
         amount
     }
@@ -2350,6 +2357,17 @@ impl ResidentEntity {
                 }
                 _ => {}
             }
+        }
+        let shield_break_count = match fields.get("_shield_break_count") {
+            Some(value) => value.as_i64().ok_or_else(|| {
+                PyValueError::new_err("entity _shield_break_count is not an integer")
+            })?,
+            None => 0,
+        };
+        if !(0..i64::MAX).contains(&shield_break_count) {
+            return Err(PyValueError::new_err(
+                "entity _shield_break_count is outside the supported range",
+            ));
         }
         let target_id = fields
             .get("target_id")
@@ -2567,6 +2585,7 @@ impl ResidentEntity {
             )?,
             mechanics,
             shields,
+            shield_break_count,
             death_opcodes,
             modifier_state,
             movement,
@@ -3776,6 +3795,7 @@ impl ResidentBattle {
                 json!({
                     "encounter_index": entity.encounter_index,
                     "id": entity.id,
+                    "shield_break_count": entity.shield_break_count,
                     "shields": entity
                         .shields
                         .iter()
@@ -4980,6 +5000,22 @@ impl ResidentBattle {
     fn advance_complete_tick(&mut self) -> PyResult<bool> {
         let mut candidate = self.clone();
         let advanced = candidate.advance_complete_tick_transaction()?;
+        *self = candidate;
+        Ok(advanced)
+    }
+
+    fn advance_complete_ticks(&mut self, ticks: i64) -> PyResult<i64> {
+        if ticks <= 0 {
+            return Ok(0);
+        }
+        let mut candidate = self.clone();
+        let mut advanced = 0;
+        for _ in 0..ticks {
+            if !candidate.advance_complete_tick_transaction()? {
+                break;
+            }
+            advanced += 1;
+        }
         *self = candidate;
         Ok(advanced)
     }
@@ -7311,6 +7347,7 @@ impl ResidentBattle {
             pending_projectile_max_duration_ms: 0,
             mechanics: Vec::new(),
             shields: Vec::new(),
+            shield_break_count: 0,
             death_opcodes: Vec::new(),
             modifier_state: None,
             movement: None,
@@ -7688,6 +7725,7 @@ impl ResidentBattle {
             pending_projectile_max_duration_ms: 0,
             mechanics: Vec::new(),
             shields: Vec::new(),
+            shield_break_count: 0,
             death_opcodes: Vec::new(),
             modifier_state: None,
             movement: None,

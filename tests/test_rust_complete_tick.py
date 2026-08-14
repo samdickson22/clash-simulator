@@ -20,8 +20,10 @@ from clasher.rust_core import (
     compare_point_projectile_phase,
     compare_resident_entities,
     compare_resident_rng,
+    compare_shield_state,
     rust_core_available,
 )
+from clasher.rust_differential import rust_resident_semantic_snapshot
 
 pytestmark = pytest.mark.skipif(
     not rust_core_available(),
@@ -55,6 +57,7 @@ def _compare_complete_tick(battle: BattleState, resident: ResidentRustBattle) ->
     compare_modifier_phase(battle, resident)
     compare_character_object_phase(battle, resident)
     compare_point_projectile_phase(battle, resident)
+    compare_shield_state(battle, resident)
     compare_resident_entities(battle, resident)
     compare_resident_rng(battle.rng, resident)
     compare_idle_state(battle, resident)
@@ -136,6 +139,25 @@ def test_restricted_complete_tick_launches_and_updates_projectile_same_frame() -
     assert resident.next_entity_id == battle.next_entity_id == 10
 
 
+def test_restricted_complete_tick_tracks_shield_break_count() -> None:
+    battle = BattleState(rng=random.Random(9421))
+    attacker = _spawn(battle, "Knight", 0, Position(9.0, 12.0))
+    target = _spawn(battle, "Guards", 1, Position(9.0, 13.0))
+    for troop in (attacker, target):
+        troop.deploy_delay_remaining = 0.0
+        troop.placement_pending = False
+        troop._spawn_hook_pending = False
+        troop._spawn_hook_fired = True
+    shield = target.mechanics[0]
+    attacker.damage = shield.current_shield + 1
+    attacker.attack_cooldown = 0.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    _advance_lockstep(battle, resident)
+
+    assert target._shield_break_count == 1
+
+
 def test_restricted_complete_tick_refreshes_nonlethal_crown_damage() -> None:
     battle = BattleState(rng=random.Random(9416))
     attacker = _spawn(battle, "Knight", 0, Position(3.5, 24.0))
@@ -198,3 +220,51 @@ def test_restricted_complete_tick_rejection_is_atomic() -> None:
     assert resident.checkpoint_bytes() == checkpoint
     assert resident.entity_state_bytes() == entity_state
     assert resident.rng_getstate() == rng_state
+
+
+def test_advance_complete_ticks_matches_repeated_python_ticks() -> None:
+    battle = BattleState(rng=random.Random(9418))
+    _spawn(battle, "Knight", 0, Position(8.0, 13.0))
+    _spawn(battle, "Musketeer", 1, Position(10.0, 19.0))
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.advance_complete_ticks(8) == 8
+    assert battle.step_logic_ticks(8) == 8
+    _compare_complete_tick(battle, resident)
+
+
+def test_advance_complete_ticks_stops_at_game_over() -> None:
+    battle = BattleState(rng=random.Random(9419))
+    for player_id, position in (
+        (0, Position(9.0, 28.0)),
+        (1, Position(9.0, 4.0)),
+    ):
+        attacker = _spawn(battle, "Knight", player_id, position)
+        attacker.deploy_delay_remaining = 0.0
+        attacker.placement_pending = False
+        attacker._spawn_hook_pending = False
+        attacker._spawn_hook_fired = True
+        attacker.attack_cooldown = 0.0
+        attacker.damage = 10_000
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.advance_complete_ticks(8) == 1
+    assert battle.step_logic_ticks(8) == 1
+    _compare_complete_tick(battle, resident)
+    assert battle.game_over
+    before = rust_resident_semantic_snapshot(resident)
+
+    assert resident.advance_complete_ticks(8) == 0
+    assert rust_resident_semantic_snapshot(resident) == before
+
+
+@pytest.mark.parametrize("ticks", [0, -1])
+def test_advance_complete_ticks_nonpositive_is_noop(ticks: int) -> None:
+    resident = ResidentRustBattle.from_battle(BattleState(rng=random.Random(9420)))
+    before = rust_resident_semantic_snapshot(resident)
+    generation = resident.checkpoint_generation
+
+    assert resident.advance_complete_ticks(ticks) == 0
+    assert rust_resident_semantic_snapshot(resident) == before
+    assert resident.checkpoint_generation == generation
+    assert resident.checkpoint_is_current
