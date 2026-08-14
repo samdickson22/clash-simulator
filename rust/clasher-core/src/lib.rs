@@ -642,12 +642,66 @@ struct ResidentEntity {
     mechanics: Vec<String>,
     shields: Vec<ShieldState>,
     modifier_state: Option<ModifierState>,
+    movement: Option<ResidentMovementState>,
     modifier_supported: bool,
     direct_combat_unsupported: Vec<String>,
     locked_combat: Option<LockedDirectCombatState>,
     building_lifetime: Option<BuildingLifetimeState>,
     building_impact: Option<BuildingImpactState>,
     point_projectile: Option<PointProjectileState>,
+}
+
+#[derive(Clone)]
+struct ResidentMovementState {
+    vector_x_units: i64,
+    vector_y_units: i64,
+    vector_count: i64,
+    vector_bypasses_cap: bool,
+    pending_x: f64,
+    pending_y: f64,
+    pending_consumed: bool,
+    unit_mass: f64,
+    is_hover: bool,
+    native_avoidance: i64,
+    death_spawn_travel_ticks: i64,
+    knockback_target_present: bool,
+    knockback_velocity_work: i64,
+    river_jump_active: bool,
+    special_move_active: bool,
+    special_move_consumed_tick: bool,
+    forced_movement_active: bool,
+}
+
+impl ResidentMovementState {
+    fn from_fields(fields: &Map<String, Value>) -> PyResult<Self> {
+        Ok(Self {
+            vector_x_units: required_i64(fields, "_movement_vector_x_units")?,
+            vector_y_units: required_i64(fields, "_movement_vector_y_units")?,
+            vector_count: required_i64(fields, "_movement_vector_count")?,
+            vector_bypasses_cap: required_bool(fields, "_movement_vector_bypasses_cap")?,
+            pending_x: normalized_f64(fields, "_pending_movement_x")?,
+            pending_y: normalized_f64(fields, "_pending_movement_y")?,
+            pending_consumed: required_bool(fields, "_pending_movement_consumed")?,
+            unit_mass: normalized_f64(fields, "_unit_mass")?,
+            is_hover: required_bool(fields, "_is_hover_unit")?,
+            native_avoidance: fields
+                .get("_native_avoidance")
+                .and_then(Value::as_i64)
+                .unwrap_or(0),
+            death_spawn_travel_ticks: required_i64(fields, "_death_spawn_travel_ticks_remaining")?,
+            knockback_target_present: fields
+                .get("_knockback_target")
+                .is_some_and(|value| !value.is_null()),
+            knockback_velocity_work: required_i64(fields, "_knockback_velocity_work")?,
+            river_jump_active: normalized_optional_bool(fields, "_river_jump_active"),
+            special_move_active: normalized_optional_bool(fields, "_special_move_active"),
+            special_move_consumed_tick: normalized_optional_bool(
+                fields,
+                "_special_move_consumed_tick",
+            ),
+            forced_movement_active: required_bool(fields, "forced_movement_active")?,
+        })
+    }
 }
 
 #[derive(Clone)]
@@ -1351,6 +1405,11 @@ impl ResidentEntity {
         } else {
             None
         };
+        let movement = if is_character {
+            Some(ResidentMovementState::from_fields(fields)?)
+        } else {
+            None
+        };
         let mut direct_combat_unsupported = Vec::new();
         let locked_combat = if is_character {
             Some(LockedDirectCombatState::from_fields(
@@ -1522,6 +1581,7 @@ impl ResidentEntity {
             mechanics,
             shields,
             modifier_state,
+            movement,
             modifier_supported,
             direct_combat_unsupported,
             locked_combat,
@@ -2552,6 +2612,97 @@ impl ResidentBattle {
         Ok(sha256_hex(&self.character_object_state_bytes()?))
     }
 
+    fn supports_stationary_movement_phase(&self) -> bool {
+        self.entities.iter().all(|entity| {
+            if !entity.active || !matches!(entity.entity_kind, 0 | 1) || !entity.is_alive {
+                return true;
+            }
+            let (Some(movement), Some(combat)) =
+                (entity.movement.as_ref(), entity.locked_combat.as_ref())
+            else {
+                return false;
+            };
+            entity.deploy_delay_remaining <= 0.0
+                && entity.has_only_shield_mechanics()
+                && movement.vector_count >= 0
+                && movement.unit_mass.is_finite()
+                && movement.unit_mass > 0.0
+                && movement.pending_x.is_finite()
+                && movement.pending_y.is_finite()
+                && movement.native_avoidance == 0
+                && movement.death_spawn_travel_ticks == 0
+                && !movement.knockback_target_present
+                && movement.knockback_velocity_work == 0
+                && !movement.river_jump_active
+                && !movement.special_move_active
+                && !movement.special_move_consumed_tick
+                && !movement.forced_movement_active
+                && (entity.entity_kind == 1 || combat.movement_target_id.is_none())
+        })
+    }
+
+    fn advance_stationary_movement_phase(&mut self) -> PyResult<()> {
+        if !self.supports_stationary_movement_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident stationary movement preflight rejected active transport or natural movement",
+            ));
+        }
+        self.checkpoint_current = false;
+        let movement_indices = self
+            .entities
+            .iter()
+            .enumerate()
+            .filter_map(|(index, entity)| {
+                (entity.active && entity.is_alive && matches!(entity.entity_kind, 0 | 1))
+                    .then_some(index)
+            })
+            .collect::<Vec<_>>();
+        for entity_index in movement_indices {
+            if self.entities[entity_index].entity_kind == 0 {
+                self.accumulate_stationary_collision_for(entity_index);
+            }
+            self.begin_resident_movement(entity_index);
+            self.finish_resident_movement(entity_index);
+        }
+        Ok(())
+    }
+
+    fn stationary_movement_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active && matches!(entity.entity_kind, 0 | 1))
+            .map(|entity| {
+                let movement = entity
+                    .movement
+                    .as_ref()
+                    .expect("character movement state parsed at initialization");
+                json!({
+                    "encounter_index": entity.encounter_index,
+                    "id": entity.id,
+                    "pending_consumed": movement.pending_consumed,
+                    "pending_x": exact_f64_value(movement.pending_x),
+                    "pending_y": exact_f64_value(movement.pending_y),
+                    "position_x": entity.position_x.diagnostic_value(),
+                    "position_y": entity.position_y.diagnostic_value(),
+                    "vector_bypasses_cap": movement.vector_bypasses_cap,
+                    "vector_count": movement.vector_count,
+                    "vector_x_units": movement.vector_x_units,
+                    "vector_y_units": movement.vector_y_units,
+                })
+            })
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize stationary movement state: {error}"
+            ))
+        })
+    }
+
+    fn stationary_movement_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.stationary_movement_state_bytes()?))
+    }
+
     fn supports_direct_combat_phase(&self) -> bool {
         self.entities.iter().all(|entity| {
             !entity.active
@@ -3294,6 +3445,188 @@ impl ResidentBattle {
 }
 
 impl ResidentBattle {
+    fn stationary_collision_vector(
+        entity: &ResidentEntity,
+        other: &ResidentEntity,
+        collision_distance: f64,
+        other_mass: f64,
+        own_mass: f64,
+    ) -> Option<(i64, i64)> {
+        let mut dx = logic_units(entity.position_x.as_f64() - other.position_x.as_f64());
+        let mut dy = logic_units(entity.position_y.as_f64() - other.position_y.as_f64());
+        let collision_units = logic_units(collision_distance);
+        if dx.abs() > collision_units || dy.abs() > collision_units {
+            return None;
+        }
+        let squared = i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy);
+        if squared > i128::from(collision_units) * i128::from(collision_units) {
+            return None;
+        }
+        let distance = if squared == 0 {
+            dx = 0;
+            dy = if entity.player_id == 0 { 1 } else { -1 };
+            1
+        } else {
+            integer_sqrt(squared as u128).max(1)
+        };
+        let overlap = (collision_units - distance).clamp(0, 300);
+        let own_mass_units = (own_mass.round_ties_even() as i64).max(1);
+        let magnitude =
+            (((overlap as f64 * other_mass) / own_mass_units as f64).trunc() as i64 + 1).min(300);
+        Some((
+            truncating_div(i128::from(dx) * i128::from(magnitude), distance),
+            truncating_div(i128::from(dy) * i128::from(magnitude), distance),
+        ))
+    }
+
+    fn accumulate_stationary_collision_for(&mut self, entity_index: usize) {
+        let entity = &self.entities[entity_index];
+        let combat = entity
+            .locked_combat
+            .as_ref()
+            .expect("stationary troop requires combat state");
+        if combat.stun_timer > 0.0 {
+            return;
+        }
+        let movement = entity
+            .movement
+            .as_ref()
+            .expect("stationary troop requires movement state");
+        let own_radius = combat.collision_radius.max(0.2);
+        let own_mass = movement.unit_mass.max(1e-9);
+        let own_air = combat.is_air_unit || movement.is_hover;
+        let static_radius = own_radius.min(0.5);
+        let mut contributions = Vec::new();
+        for (other_index, other) in self.entities.iter().enumerate() {
+            if other_index == entity_index || !other.active || !other.is_alive {
+                continue;
+            }
+            match other.entity_kind {
+                0 => {
+                    let other_combat = other
+                        .locked_combat
+                        .as_ref()
+                        .expect("troop collision candidate requires combat state");
+                    let other_movement = other
+                        .movement
+                        .as_ref()
+                        .expect("troop collision candidate requires movement state");
+                    let other_air = other_combat.is_air_unit || other_movement.is_hover;
+                    if own_air != other_air {
+                        continue;
+                    }
+                    if let Some(vector) = Self::stationary_collision_vector(
+                        entity,
+                        other,
+                        own_radius + other_combat.collision_radius.max(0.2),
+                        other_movement.unit_mass.max(1e-9),
+                        own_mass,
+                    ) {
+                        contributions.push(vector);
+                    }
+                }
+                1 if !own_air => {
+                    let other_radius = other
+                        .locked_combat
+                        .as_ref()
+                        .expect("building collision candidate requires combat state")
+                        .collision_radius
+                        .max(0.0);
+                    if let Some(vector) = Self::stationary_collision_vector(
+                        entity,
+                        other,
+                        static_radius + other_radius,
+                        20.0,
+                        own_mass,
+                    ) {
+                        contributions.push(vector);
+                    }
+                }
+                _ => {}
+            }
+        }
+        let movement = self.entities[entity_index]
+            .movement
+            .as_mut()
+            .expect("stationary troop requires movement state");
+        for (x, y) in contributions {
+            movement.vector_x_units += x;
+            movement.vector_y_units += y;
+            movement.vector_count += 1;
+        }
+    }
+
+    fn begin_resident_movement(&mut self, entity_index: usize) {
+        let movement = self.entities[entity_index]
+            .movement
+            .as_mut()
+            .expect("character movement state parsed at initialization");
+        if movement.vector_count <= 0 {
+            movement.pending_x = 0.0;
+            movement.pending_y = 0.0;
+            movement.pending_consumed = true;
+            return;
+        }
+        let mut x = movement.vector_x_units / movement.vector_count;
+        let mut y = movement.vector_y_units / movement.vector_count;
+        let squared = i128::from(x) * i128::from(x) + i128::from(y) * i128::from(y);
+        if !movement.vector_bypasses_cap && squared > 150 * 150 {
+            let magnitude = integer_sqrt(squared as u128).max(1);
+            x = truncating_div(i128::from(x) * 150, magnitude);
+            y = truncating_div(i128::from(y) * 150, magnitude);
+        }
+        movement.pending_x = x as f64 / 1000.0;
+        movement.pending_y = y as f64 / 1000.0;
+        movement.pending_consumed = false;
+        movement.vector_x_units = 0;
+        movement.vector_y_units = 0;
+        movement.vector_count = 0;
+        movement.vector_bypasses_cap = false;
+    }
+
+    fn finish_resident_movement(&mut self, entity_index: usize) {
+        let (pending_x, pending_y) = {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("character movement state parsed at initialization");
+            if movement.pending_consumed {
+                (0.0, 0.0)
+            } else {
+                movement.pending_consumed = true;
+                (movement.pending_x, movement.pending_y)
+            }
+        };
+        let movement = self.entities[entity_index]
+            .movement
+            .as_mut()
+            .expect("character movement state parsed at initialization");
+        movement.pending_x = 0.0;
+        movement.pending_y = 0.0;
+        if pending_x.abs() > 1e-15 || pending_y.abs() > 1e-15 {
+            let x = (logic_units(self.entities[entity_index].position_x.as_f64())
+                + logic_units(pending_x)) as f64
+                / 1000.0;
+            let y = (logic_units(self.entities[entity_index].position_y.as_f64())
+                + logic_units(pending_y)) as f64
+                / 1000.0;
+            self.entities[entity_index]
+                .position_x
+                .set_f64(x.clamp(0.25, 17.75));
+            self.entities[entity_index]
+                .position_y
+                .set_f64(y.clamp(0.25, 31.75));
+        }
+        let quantized_x = logic_units(self.entities[entity_index].position_x.as_f64());
+        let quantized_y = logic_units(self.entities[entity_index].position_y.as_f64());
+        self.entities[entity_index]
+            .position_x
+            .set_f64(quantized_x as f64 / 1000.0);
+        self.entities[entity_index]
+            .position_y
+            .set_f64(quantized_y as f64 / 1000.0);
+    }
+
     fn refresh_lethal_projectile_reservations(&mut self) {
         let mut pending_damage = Vec::<(i64, f64)>::new();
         for projectile_entity in &self.entities {
@@ -3538,6 +3871,7 @@ impl ResidentBattle {
             mechanics: Vec::new(),
             shields: Vec::new(),
             modifier_state: None,
+            movement: None,
             modifier_supported: true,
             direct_combat_unsupported: vec!["non_character_entity".to_owned()],
             locked_combat: None,

@@ -372,6 +372,19 @@ class ResidentRustBattle:
         return str(self._native.character_object_sha256())
 
     @property
+    def supports_stationary_movement_phase(self) -> bool:
+        return bool(self._native.supports_stationary_movement_phase())
+
+    def advance_stationary_movement_phase(self) -> None:
+        self._native.advance_stationary_movement_phase()
+
+    def stationary_movement_state_bytes(self) -> bytes:
+        return bytes(self._native.stationary_movement_state_bytes())
+
+    def stationary_movement_sha256(self) -> str:
+        return str(self._native.stationary_movement_sha256())
+
+    @property
     def supports_direct_combat_phase(self) -> bool:
         return bool(self._native.supports_direct_combat_phase())
 
@@ -980,6 +993,64 @@ def compare_character_object_phase(
     if expected_hash != actual_hash:
         raise AssertionError(
             "resident Rust character object hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
+
+
+def stationary_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
+    return [
+        {
+            "encounter_index": encounter_index,
+            "id": int(entity.id),
+            "pending_consumed": bool(entity._pending_movement_consumed),
+            "pending_x": _exact_scalar(entity._pending_movement_x),
+            "pending_y": _exact_scalar(entity._pending_movement_y),
+            "position_x": _exact_scalar(entity.position.x),
+            "position_y": _exact_scalar(entity.position.y),
+            "vector_bypasses_cap": bool(
+                entity._movement_vector_bypasses_cap
+            ),
+            "vector_count": int(entity._movement_vector_count),
+            "vector_x_units": int(entity._movement_vector_x_units),
+            "vector_y_units": int(entity._movement_vector_y_units),
+        }
+        for encounter_index, entity in enumerate(battle.entities.values())
+        if entity.entity_kind in {0, 1}
+    ]
+
+
+def stationary_movement_state_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        stationary_movement_state_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_stationary_movement_phase(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = stationary_movement_state_rows(battle)
+    actual = json.loads(resident.stationary_movement_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust stationary movement mismatch")
+        raise AssertionError(
+            "resident Rust stationary movement parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(
+        stationary_movement_state_bytes(battle)
+    ).hexdigest()
+    actual_hash = resident.stationary_movement_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust stationary movement hash mismatch "
             f"expected={expected_hash} actual={actual_hash}"
         )
 
