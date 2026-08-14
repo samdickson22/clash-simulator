@@ -235,6 +235,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "freeze_expiry_time",
             "death_spawn_target_immunity_elapsed_ms",
             "pending_projectile_max_duration_ms",
+            "status_nova_jump",
         }
     ),
     "root": frozenset(
@@ -350,6 +351,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "point_projectile_state",
             "area_effect_state",
             "character_birth",
+            "status_nova_jump",
         }
     ),
     "modifier": frozenset(
@@ -371,6 +373,22 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
         }
     ),
     "modifier_effect": frozenset({"remaining", "movement", "attack", "spawn"}),
+    "status_nova_jump": frozenset(
+        {
+            "freeze_radius_units",
+            "freeze_duration_ms",
+            "hop_duration_ms",
+            "jump_speed_units_per_tick",
+            "affects_hidden",
+            "hits_air",
+            "hits_ground",
+            "detonated",
+            "jump_timer_ms",
+            "jump_target_id",
+            "jump_destination",
+            "jump_origin",
+        }
+    ),
     "shield": frozenset({"current", "maximum"}),
     "death_opcode": frozenset({"kind", "damage", "spawn", "area"}),
     "death_damage": frozenset(
@@ -1151,6 +1169,47 @@ def _validate_direct_entity_scalars(row: dict[str, Any], entity_id: int) -> None
         _direct_exact(shield_row["maximum"], f"entity {entity_id} shield maximum")
     _validate_direct_modifier(row["modifier_state"], entity_id)
     _validate_direct_death_opcodes(row["death_opcodes"], entity_id)
+    _validate_direct_status_nova_jump(row["status_nova_jump"], entity_id)
+
+
+def _validate_direct_status_nova_jump(value: Any, entity_id: int) -> None:
+    if value is None:
+        return
+    row = _direct_dict(value, "status_nova_jump")
+    for field in (
+        "freeze_radius_units",
+        "freeze_duration_ms",
+        "hop_duration_ms",
+        "jump_speed_units_per_tick",
+    ):
+        _direct_int(row[field], f"entity {entity_id} status nova {field}")
+    for field in ("affects_hidden", "hits_air", "hits_ground", "detonated"):
+        _direct_bool(row[field], f"entity {entity_id} status nova {field}")
+    _direct_float(row["jump_timer_ms"], f"entity {entity_id} status nova timer")
+    _direct_optional_int(
+        row["jump_target_id"], f"entity {entity_id} status nova target"
+    )
+    _direct_position(
+        row["jump_destination"],
+        f"entity {entity_id} status nova destination",
+        exact=True,
+    )
+    _direct_position(
+        row["jump_origin"], f"entity {entity_id} status nova origin", exact=True
+    )
+    if (
+        row["freeze_radius_units"] <= 0
+        or row["freeze_duration_ms"] <= 0
+        or row["hop_duration_ms"] < 0
+        or row["jump_speed_units_per_tick"] <= 0
+        or row["jump_timer_ms"] < 0.0
+        or not (row["hits_air"] or row["hits_ground"])
+        or ((row["jump_target_id"] is None) != (row["jump_destination"] is None))
+        or (row["jump_target_id"] is not None and row["jump_origin"] is None)
+    ):
+        raise ResidentPublicationError(
+            f"malformed direct entity {entity_id} status-nova jump"
+        )
 
 
 def _validate_direct_movement(value: Any, entity_id: int) -> None:
@@ -1775,6 +1834,9 @@ def _build_direct_publication_plan(
             None
             if row["area_effect_state"] is None
             else row["area_effect_state"]["birth_source_entity_id"],
+            None
+            if row["status_nova_jump"] is None
+            else row["status_nova_jump"]["jump_target_id"],
         ):
             if reference is not None and reference not in all_ids:
                 raise ResidentPublicationError(
@@ -2159,6 +2221,9 @@ def _validate_direct_full_delta_entity(
         None if point is None else point["source_entity_id"],
         None if point is None else point["temporary_homing_target_id"],
         None if area is None else area["birth_source_entity_id"],
+        None
+        if row["status_nova_jump"] is None
+        else row["status_nova_jump"]["jump_target_id"],
     ):
         if reference is not None and reference not in all_ids:
             raise ResidentPublicationError(
@@ -2176,6 +2241,9 @@ def _validate_direct_changed_references(
     references: list[int | None] = []
     if mask & _ENTITY_DELTA_BASE:
         references.append(raw["base"]["target_id"])
+        status_nova = raw["base"]["status_nova_jump"]
+        if status_nova is not None:
+            references.append(status_nova["jump_target_id"])
     if mask & _ENTITY_DELTA_COMBAT and raw["locked_combat_state"] is not None:
         state = raw["locked_combat_state"]
         references.extend(
@@ -2384,6 +2452,9 @@ def _build_direct_delta_publication_plan(
             ):
                 _direct_int(base_row[field], f"entity {entity_id}.{field}")
             _direct_optional_int(base_row["target_id"], f"entity {entity_id}.target_id")
+            _validate_direct_status_nova_jump(
+                base_row["status_nova_jump"], entity_id
+            )
         if bool(mask & _ENTITY_DELTA_SHIELDS) != (
             type(change["shields"]) is list
             and type(change["shield_break_count"]) is int
@@ -2817,7 +2888,7 @@ def _typed_movement(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
     route_kind = state["route_cache_kind"]
     if type(route_kind) is not int or not 0 <= route_kind < len(route_names):
         raise ResidentPublicationError("malformed typed route kind")
-    return {
+    result = {
         "airborne_for_projectile": bool(
             combat is not None and combat["is_airborne_for_projectile"]
         ),
@@ -2881,6 +2952,37 @@ def _typed_movement(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
         "vector_y_units": state["vector_y_units"],
         "wait_ms": _exact_float(state["wait_ms"]),
     }
+    status_nova = entity["status_nova_jump"]
+    if status_nova is not None:
+        result.update(
+            {
+                "status_nova_affects_hidden": status_nova["affects_hidden"],
+                "status_nova_detonated": status_nova["detonated"],
+                "status_nova_freeze_duration_ms": status_nova[
+                    "freeze_duration_ms"
+                ],
+                "status_nova_freeze_radius_units": status_nova[
+                    "freeze_radius_units"
+                ],
+                "status_nova_hits_air": status_nova["hits_air"],
+                "status_nova_hits_ground": status_nova["hits_ground"],
+                "status_nova_hop_duration_ms": status_nova["hop_duration_ms"],
+                "status_nova_jump_destination": _optional_exact_position(
+                    status_nova["jump_destination"], exact=True
+                ),
+                "status_nova_jump_origin": _optional_exact_position(
+                    status_nova["jump_origin"], exact=True
+                ),
+                "status_nova_jump_speed_units_per_tick": status_nova[
+                    "jump_speed_units_per_tick"
+                ],
+                "status_nova_jump_target_id": status_nova["jump_target_id"],
+                "status_nova_jump_timer_ms": _exact_float(
+                    status_nova["jump_timer_ms"]
+                ),
+            }
+        )
+    return result
 
 
 def _typed_combat(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
@@ -3570,6 +3672,14 @@ def _validate_structure(
             if reference_id is not None and int(reference_id) not in all_ids:
                 raise ResidentPublicationError(
                     f"resident entity {row['id']} has unknown {field} {reference_id}"
+                )
+        movement_state = row["movement_state"]
+        if movement_state is not None:
+            reference_id = movement_state.get("status_nova_jump_target_id")
+            if reference_id is not None and int(reference_id) not in all_ids:
+                raise ResidentPublicationError(
+                    f"resident entity {row['id']} has unknown status-nova jump "
+                    f"target {reference_id}"
                 )
         combat_state = row["locked_combat_state"]
         if combat_state is not None:
@@ -4689,6 +4799,19 @@ def _validate_direct_bound_entities(
                 raise ResidentPublicationError(
                     f"resident entity {entity_plan.entity_id} changed initial-position topology"
                 )
+        status_nova = row["status_nova_jump"]
+        status_mechanics = [
+            mechanic
+            for mechanic in entity.mechanics
+            if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+            == "clasher.cards.ice_spirit.IceSpiritFreeze"
+        ]
+        if (status_nova is None) != (len(status_mechanics) == 0) or len(
+            status_mechanics
+        ) > 1:
+            raise ResidentPublicationError(
+                f"resident entity {entity_plan.entity_id} status-nova topology changed"
+            )
 
 
 def _apply_publication_entity_rows(
@@ -4885,6 +5008,28 @@ def _plan_direct_projectile_groups(
     return chosen, assignments
 
 
+def _apply_direct_status_nova_jump(entity: Any, state: Any) -> None:
+    if state is None:
+        return
+    entity._ice_spirit_detonated = state["detonated"]
+    entity._ice_spirit_jump_timer = state["jump_timer_ms"]
+    entity._ice_spirit_jump_target = state["jump_target_id"]
+    destination = state["jump_destination"]
+    entity._ice_spirit_jump_destination = (
+        None
+        if destination is None
+        else (_scalar(destination[0]), _scalar(destination[1]))
+    )
+    origin = state["jump_origin"]
+    if origin is None:
+        entity.__dict__.pop("_ice_spirit_jump_origin", None)
+    else:
+        entity._ice_spirit_jump_origin = (
+            _scalar(origin[0]),
+            _scalar(origin[1]),
+        )
+
+
 def _apply_direct_entity(
     battle: Any,
     entity: Any,
@@ -4914,6 +5059,7 @@ def _apply_direct_entity(
     entity.position.y = _scalar(row["position_y"])
     entity.target_id = row["target_id"]
     entity.battle_state = battle
+    _apply_direct_status_nova_jump(entity, row["status_nova_jump"])
 
     modifier = row["modifier_state"]
     if modifier is not None:
@@ -5368,6 +5514,7 @@ def _apply_direct_delta_entity(
         entity.position.y = _scalar(row["position_y"])
         entity.target_id = row["target_id"]
         entity.battle_state = battle
+        _apply_direct_status_nova_jump(entity, row["status_nova_jump"])
         if hasattr(entity, "deploy_delay_remaining"):
             entity._death_spawn_target_immunity_elapsed_ms = row[
                 "death_spawn_target_immunity_elapsed_ms"

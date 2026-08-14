@@ -4,6 +4,7 @@ import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.cards.ice_spirit import IceSpiritFreeze
 from clasher.entities import Building, Troop
 from clasher.interaction_matrix import enabled_troop_cards
 from clasher.rust_core import (
@@ -95,6 +96,9 @@ def test_character_object_phase_is_card_general_and_fail_closed(
             *death_opcode_state_rows(battle),
             *shield_state_rows(battle),
         )
+    )
+    compiled_count += sum(
+        type(mechanic) is IceSpiritFreeze for mechanic in troop.mechanics
     )
     if compiled_count != len(troop.mechanics):
         assert not resident.supports_character_object_phase

@@ -14,6 +14,7 @@ from types import MappingProxyType
 from typing import Any, Final, cast
 
 from .balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
+from .cards.ice_spirit import IceSpiritFreeze
 from .differential import (
     SNAPSHOT_SCHEMA_VERSION,
     _entity_snapshot,
@@ -44,7 +45,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 5
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 6
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -74,7 +75,10 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
         reasons.append("explicit_formation")
     if bool(getattr(card_stats, "full_lane_deploy", False)):
         reasons.append("full_lane_deploy")
-    if tuple(getattr(card_def, "mechanics", ()) or ()):
+    mechanics = tuple(getattr(card_def, "mechanics", ()) or ())
+    if mechanics and not (
+        len(mechanics) == 1 and type(mechanics[0]) is IceSpiritFreeze
+    ):
         reasons.append("executable_mechanics")
     if not getattr(card_stats, "summon_character_data", None):
         reasons.append("missing_character_data")
@@ -761,7 +765,7 @@ def _decode_prepared_publication_parts(value: Any) -> MappingProxyType[str, Any]
     binding = frozen.get("binding")
     if not isinstance(binding, MappingProxyType):
         raise TypeError("resident prepared publication binding is not a mapping")
-    if binding.get("semantic_schema_version") != 7:
+    if binding.get("semantic_schema_version") != 8:
         raise ValueError("unsupported resident prepared semantic schema")
     return frozen
 
@@ -831,7 +835,7 @@ class ResidentPreparedPublication:
         binding = value.get("binding")
         if type(binding) is not dict:
             raise TypeError("resident prepared publication binding is not a mapping")
-        if binding.get("semantic_schema_version") != 7:
+        if binding.get("semantic_schema_version") != 8:
             raise ValueError("unsupported resident prepared semantic schema")
         return cast(dict[str, Any], value)
 
@@ -852,7 +856,7 @@ class ResidentPreparedPublication:
             raise TypeError(
                 "resident prepared publication delta binding is not a mapping"
             )
-        if binding.get("semantic_schema_version") != 7:
+        if binding.get("semantic_schema_version") != 8:
             raise ValueError("unsupported resident prepared delta semantic schema")
         return cast(dict[str, Any], value)
 
@@ -2648,6 +2652,60 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                 ),
             }
         )
+        status_mechanic = next(
+            (
+                mechanic
+                for mechanic in entity.mechanics
+                if type(mechanic) is IceSpiritFreeze
+            ),
+            None,
+        )
+        if status_mechanic is not None:
+            destination = entity._ice_spirit_jump_destination
+            origin = getattr(entity, "_ice_spirit_jump_origin", None)
+            rows[-1].update(
+                {
+                    "status_nova_affects_hidden": bool(
+                        getattr(entity.card_stats, "projectile_data", {}).get(
+                            "affectsHidden", False
+                        )
+                    ),
+                    "status_nova_detonated": bool(entity._ice_spirit_detonated),
+                    "status_nova_freeze_duration_ms": int(
+                        status_mechanic.freeze_duration_ms
+                    ),
+                    "status_nova_freeze_radius_units": round(
+                        status_mechanic.freeze_radius * 1000.0
+                    ),
+                    "status_nova_hits_air": bool(entity._can_attack_air_cached),
+                    "status_nova_hits_ground": bool(
+                        entity._can_attack_ground_cached
+                    ),
+                    "status_nova_hop_duration_ms": int(
+                        status_mechanic.hop_duration_ms
+                    ),
+                    "status_nova_jump_destination": (
+                        None
+                        if destination is None
+                        else [
+                            _exact_scalar(destination[0]),
+                            _exact_scalar(destination[1]),
+                        ]
+                    ),
+                    "status_nova_jump_origin": (
+                        None
+                        if origin is None
+                        else [_exact_scalar(origin[0]), _exact_scalar(origin[1])]
+                    ),
+                    "status_nova_jump_speed_units_per_tick": int(
+                        status_mechanic.jump_speed_logic_units_per_tick
+                    ),
+                    "status_nova_jump_target_id": entity._ice_spirit_jump_target,
+                    "status_nova_jump_timer_ms": _exact_scalar(
+                        entity._ice_spirit_jump_timer
+                    ),
+                }
+            )
     return rows
 
 

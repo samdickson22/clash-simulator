@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 7;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 8;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -766,6 +766,31 @@ fn optional_exact_position(
     )))
 }
 
+fn optional_exact_tuple_position(
+    fields: &Map<String, Value>,
+    name: &str,
+) -> PyResult<Option<(ExactScalar, ExactScalar)>> {
+    let Some(value) = fields.get(name) else {
+        return Ok(None);
+    };
+    if value.is_null() {
+        return Ok(None);
+    }
+    let values = value
+        .get("$tuple")
+        .and_then(Value::as_array)
+        .ok_or_else(|| PyValueError::new_err(format!("{name} is not a tuple")))?;
+    if values.len() != 2 {
+        return Err(PyValueError::new_err(format!(
+            "{name} must have two values"
+        )));
+    }
+    Ok(Some((
+        ExactScalar::from_normalized(&values[0])?,
+        ExactScalar::from_normalized(&values[1])?,
+    )))
+}
+
 fn normalized_path_cell(value: &Value) -> PyResult<(i64, i64)> {
     let values = value
         .get("$tuple")
@@ -1509,6 +1534,7 @@ struct ResidentEntity {
     reward_traits: ResidentRewardTraits,
     death_spawn_payload_present: bool,
     mechanics: Vec<String>,
+    status_nova_jump: Option<ResidentStatusNovaJumpState>,
     shields: Vec<ShieldState>,
     shield_break_count: i64,
     death_opcodes: Vec<ResidentDeathOpcode>,
@@ -1576,6 +1602,157 @@ struct ResidentMovementState {
     special_move_active: bool,
     special_move_consumed_tick: bool,
     forced_movement_active: bool,
+}
+
+#[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentStatusNovaJumpState {
+    freeze_radius_units: i64,
+    freeze_duration_ms: i64,
+    hop_duration_ms: i64,
+    jump_speed_units_per_tick: i64,
+    affects_hidden: bool,
+    hits_air: bool,
+    hits_ground: bool,
+    detonated: bool,
+    jump_timer_ms: f64,
+    jump_target_id: Option<i64>,
+    jump_destination: Option<(ExactScalar, ExactScalar)>,
+    jump_origin: Option<(ExactScalar, ExactScalar)>,
+}
+
+impl ResidentStatusNovaJumpState {
+    fn from_normalized(
+        mechanic: &Value,
+        fields: &Map<String, Value>,
+        card_fields: &Map<String, Value>,
+    ) -> PyResult<Self> {
+        let mechanic_fields = object_fields(mechanic)?;
+        let projectile = card_fields
+            .get("projectile_data")
+            .filter(|value| !value.is_null())
+            .ok_or_else(|| PyValueError::new_err("status-nova jump has no projectile data"))?;
+        let radius = normalized_f64(mechanic_fields, "freeze_radius")?;
+        let freeze_duration_ms = required_i64(mechanic_fields, "freeze_duration_ms")?;
+        let hop_duration_ms = required_i64(mechanic_fields, "hop_duration_ms")?;
+        let jump_speed_units_per_tick =
+            required_i64(mechanic_fields, "jump_speed_logic_units_per_tick")?;
+        let target_buff = normalized_mapping_get(projectile, "targetBuffData")
+            .ok_or_else(|| PyValueError::new_err("status-nova jump has no target buff"))?;
+        let target_buff_name = normalized_mapping_get(target_buff, "name")
+            .and_then(Value::as_str)
+            .unwrap_or("");
+        let projectile_radius: f64 = normalized_mapping_get(projectile, "radius")
+            .map(ExactScalar::from_normalized)
+            .transpose()?
+            .map(|value| value.as_f64())
+            .unwrap_or(0.0);
+        let projectile_duration = normalized_mapping_get(projectile, "buffTime")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let projectile_speed = normalized_mapping_get(projectile, "speed")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let chained_hits = normalized_mapping_get(projectile, "chainedHitCount")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let hits_air = required_bool(fields, "_can_attack_air_cached")?;
+        let hits_ground = required_bool(fields, "_can_attack_ground_cached")?;
+        let affects_hidden = match normalized_mapping_get(projectile, "affectsHidden") {
+            None | Some(Value::Null) => false,
+            Some(Value::Bool(value)) => *value,
+            Some(_) => {
+                return Err(PyValueError::new_err(
+                    "status-nova jump affectsHidden is not a boolean",
+                ));
+            }
+        };
+        let homing = normalized_mapping_get(projectile, "homing")
+            .and_then(Value::as_bool)
+            .unwrap_or(false);
+        if !normalized_optional_bool(card_fields, "kamikaze")
+            || !normalized_optional_bool(fields, "_force_melee_attack")
+            || !homing
+            || !projectile_radius.is_finite()
+            || projectile_radius <= 0.0
+            || !radius.is_finite()
+            || radius <= 0.0
+            || logic_units(radius) <= 0
+            || freeze_duration_ms <= 0
+            || hop_duration_ms < 0
+            || jump_speed_units_per_tick <= 0
+            || projectile_radius.round_ties_even() as i64 != logic_units(radius)
+            || projectile_duration != freeze_duration_ms
+            || projectile_speed != jump_speed_units_per_tick
+            || chained_hits > 1
+            || !target_buff_name.to_ascii_lowercase().contains("freeze")
+            || (!hits_air && !hits_ground)
+            || normalized_optional_bool(fields, "kamikaze_primed")
+            || optional_normalized_f64(fields, "kamikaze_timer_remaining")?
+                .is_some_and(|timer| timer.to_bits() != 0.0_f64.to_bits())
+        {
+            return Err(PyValueError::new_err(
+                "status-nova jump mechanic payload is unsupported",
+            ));
+        }
+        let jump_timer_ms = normalized_f64(fields, "_ice_spirit_jump_timer")?;
+        if !jump_timer_ms.is_finite() || jump_timer_ms < 0.0 {
+            return Err(PyValueError::new_err(
+                "status-nova jump timer is unsupported",
+            ));
+        }
+        let jump_target_id = match fields.get("_ice_spirit_jump_target") {
+            Some(value) if value.is_null() => None,
+            Some(value) => Some(value.as_i64().ok_or_else(|| {
+                PyValueError::new_err("status-nova jump target is not an integer or null")
+            })?),
+            None => {
+                return Err(PyValueError::new_err(
+                    "status-nova jump target field is absent",
+                ));
+            }
+        };
+        if !fields.contains_key("_ice_spirit_jump_destination") {
+            return Err(PyValueError::new_err(
+                "status-nova jump destination field is absent",
+            ));
+        }
+        Ok(Self {
+            freeze_radius_units: logic_units(radius),
+            freeze_duration_ms,
+            hop_duration_ms,
+            jump_speed_units_per_tick,
+            affects_hidden,
+            hits_air,
+            hits_ground,
+            detonated: required_bool(fields, "_ice_spirit_detonated")?,
+            jump_timer_ms,
+            jump_target_id,
+            jump_destination: optional_exact_tuple_position(
+                fields,
+                "_ice_spirit_jump_destination",
+            )?,
+            jump_origin: optional_exact_tuple_position(fields, "_ice_spirit_jump_origin")?,
+        })
+    }
+
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.freeze_radius_units == other.freeze_radius_units
+            && self.freeze_duration_ms == other.freeze_duration_ms
+            && self.hop_duration_ms == other.hop_duration_ms
+            && self.jump_speed_units_per_tick == other.jump_speed_units_per_tick
+            && self.affects_hidden == other.affects_hidden
+            && self.hits_air == other.hits_air
+            && self.hits_ground == other.hits_ground
+    }
+
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.publication_static_eq(other)
+            && self.detonated == other.detonated
+            && self.jump_timer_ms.to_bits() == other.jump_timer_ms.to_bits()
+            && self.jump_target_id == other.jump_target_id
+            && self.jump_destination == other.jump_destination
+            && self.jump_origin == other.jump_origin
+    }
 }
 
 impl ResidentMovementState {
@@ -2529,6 +2706,7 @@ struct PointWeapon {
 }
 
 enum CombatPayload {
+    StatusNovaJump,
     DirectDamage {
         damage: f64,
         area: Option<DirectAreaWeapon>,
@@ -2858,7 +3036,18 @@ impl LockedDirectCombatState {
 
 impl ResidentEntity {
     fn has_only_compiled_mechanics(&self) -> bool {
-        self.mechanics.len() == self.shields.len() + self.death_opcodes.len()
+        self.mechanics.len()
+            == self.shields.len()
+                + self.death_opcodes.len()
+                + usize::from(self.status_nova_jump.is_some())
+    }
+
+    fn blocks_effects_while_committed(&self) -> bool {
+        self.status_nova_jump.is_some()
+            && self
+                .movement
+                .as_ref()
+                .is_some_and(|movement| movement.special_move_active)
     }
 
     fn fresh_catalog_deploy_state_supported(&self) -> bool {
@@ -2912,6 +3101,9 @@ impl ResidentEntity {
     }
 
     fn apply_incoming_damage(&mut self, mut amount: f64) -> f64 {
+        if self.blocks_effects_while_committed() {
+            return 0.0;
+        }
         let mut broke_shield = false;
         for shield in &mut self.shields {
             if amount <= 0.0 {
@@ -2939,20 +3131,28 @@ impl ResidentEntity {
         slow_duration: f64,
         slow_multiplier: f64,
     ) {
+        if self.blocks_effects_while_committed() {
+            return;
+        }
         if stun_duration > 0.0 {
             if let Some(modifiers) = self.modifier_state.as_mut() {
                 modifiers.stun_timer = modifiers.stun_timer.max(stun_duration);
             }
             if let Some(combat) = self.locked_combat.as_mut() {
                 combat.stun_timer = combat.stun_timer.max(stun_duration);
-                combat.last_combat_target_id = None;
-                combat.attack_cooldown = combat.base_attack_interval();
-                combat.attack_windup_active = false;
-                combat.has_attacked_once = false;
             }
-            self.sparse_attributes.insert("_last_combat_target_id");
-            self.sparse_attributes.insert("_has_attacked_once");
-            self.target_id = None;
+            if self
+                .movement
+                .as_ref()
+                .is_some_and(|movement| movement.river_jump_active)
+            {
+                self.movement
+                    .as_mut()
+                    .expect("river jumper requires movement state")
+                    .stun_interrupt_deferred_until_landing = true;
+            } else {
+                self.interrupt_combat_by_stun();
+            }
         }
         if slow_duration > 0.0
             && slow_multiplier < 1.0
@@ -2963,6 +3163,18 @@ impl ResidentEntity {
                 combat.attack_speed_debuff_multiplier = modifiers.attack_speed_debuff_multiplier;
             }
         }
+    }
+
+    fn interrupt_combat_by_stun(&mut self) {
+        if let Some(combat) = self.locked_combat.as_mut() {
+            combat.last_combat_target_id = None;
+            combat.attack_cooldown = combat.base_attack_interval();
+            combat.attack_windup_active = false;
+            combat.has_attacked_once = false;
+        }
+        self.sparse_attributes.insert("_last_combat_target_id");
+        self.sparse_attributes.insert("_has_attacked_once");
+        self.target_id = None;
     }
 
     fn projectile_target_traits(&self) -> Option<(bool, f64, i64, bool)> {
@@ -3009,6 +3221,7 @@ impl ResidentEntity {
             .collect::<PyResult<Vec<_>>>()?;
         let mut shields = Vec::new();
         let mut death_opcodes = Vec::new();
+        let mut status_nova_jump = None;
         for mechanic in mechanic_values {
             match object_type(mechanic)?.as_str() {
                 "clasher.mechanics.shared.shield.Shield" => {
@@ -3028,6 +3241,18 @@ impl ResidentEntity {
                     if let Some(area) = ResidentDeathAreaSpec::from_normalized(mechanic)? {
                         death_opcodes.push(ResidentDeathOpcode::Area(area));
                     }
+                }
+                "clasher.cards.ice_spirit.IceSpiritFreeze" => {
+                    if status_nova_jump.is_some() {
+                        return Err(PyValueError::new_err(
+                            "entity has multiple committed status-nova mechanics",
+                        ));
+                    }
+                    status_nova_jump = Some(ResidentStatusNovaJumpState::from_normalized(
+                        mechanic,
+                        fields,
+                        card_fields,
+                    )?);
                 }
                 _ => {}
             }
@@ -3132,7 +3357,9 @@ impl ResidentEntity {
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
         }
-        if shields.len() + death_opcodes.len() != mechanics.len() {
+        if shields.len() + death_opcodes.len() + usize::from(status_nova_jump.is_some())
+            != mechanics.len()
+        {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
         }
         let death_spawn_payload_present = card_fields
@@ -3173,12 +3400,19 @@ impl ResidentEntity {
         if normalized_optional_bool(card_fields, "self_as_aoe_center") && !uses_direct_area {
             direct_combat_unsupported.push("self_centered_aoe".to_owned());
         }
-        if normalized_optional_bool(card_fields, "kamikaze") {
+        if normalized_optional_bool(card_fields, "kamikaze") && status_nova_jump.is_none() {
             direct_combat_unsupported.push("kamikaze_payload".to_owned());
         }
-        if normalized_optional_bool(fields, "_force_melee_attack") {
+        if normalized_optional_bool(fields, "_force_melee_attack") && status_nova_jump.is_none() {
             direct_combat_unsupported.push("forced_melee_override".to_owned());
         }
+        let compiled_river_jump_state = movement.as_ref().is_some_and(|movement| {
+            movement.river_jump_active
+                && movement.special_move_active
+                && movement.jump_height_present
+                && movement.river_jump_origin.is_some()
+                && movement.river_jump_target.is_some()
+        });
         for (field, reason) in [
             ("_river_jump_active", "active_river_jump"),
             ("_special_move_active", "active_special_move"),
@@ -3187,7 +3421,14 @@ impl ResidentEntity {
             ("is_charging", "active_charge"),
             ("has_charged", "completed_charge_state"),
         ] {
-            if normalized_optional_bool(fields, field) {
+            let compiled_special_state = (status_nova_jump.is_some()
+                && matches!(
+                    field,
+                    "_special_move_active" | "_special_move_consumed_tick"
+                ))
+                || (compiled_river_jump_state
+                    && matches!(field, "_river_jump_active" | "_special_move_active"));
+            if normalized_optional_bool(fields, field) && !compiled_special_state {
                 direct_combat_unsupported.push(reason.to_owned());
             }
         }
@@ -3306,6 +3547,7 @@ impl ResidentEntity {
             blocks_deployment,
             deployment_collision_radius,
             character_birth: None,
+            status_nova_jump,
         })
     }
 
@@ -3502,6 +3744,58 @@ impl ResidentEntity {
             exact_f64_value(movement.stop_movement_after_ms),
         );
         fields.insert("wait_ms".to_owned(), exact_f64_value(movement.wait_ms));
+        if let Some(state) = self.status_nova_jump.as_ref() {
+            fields.insert(
+                "status_nova_affects_hidden".to_owned(),
+                json!(state.affects_hidden),
+            );
+            fields.insert("status_nova_detonated".to_owned(), json!(state.detonated));
+            fields.insert(
+                "status_nova_freeze_duration_ms".to_owned(),
+                json!(state.freeze_duration_ms),
+            );
+            fields.insert(
+                "status_nova_freeze_radius_units".to_owned(),
+                json!(state.freeze_radius_units),
+            );
+            fields.insert("status_nova_hits_air".to_owned(), json!(state.hits_air));
+            fields.insert(
+                "status_nova_hits_ground".to_owned(),
+                json!(state.hits_ground),
+            );
+            fields.insert(
+                "status_nova_hop_duration_ms".to_owned(),
+                json!(state.hop_duration_ms),
+            );
+            fields.insert(
+                "status_nova_jump_destination".to_owned(),
+                state
+                    .jump_destination
+                    .as_ref()
+                    .map(|(x, y)| json!([x.diagnostic_value(), y.diagnostic_value()]))
+                    .unwrap_or(Value::Null),
+            );
+            fields.insert(
+                "status_nova_jump_origin".to_owned(),
+                state
+                    .jump_origin
+                    .as_ref()
+                    .map(|(x, y)| json!([x.diagnostic_value(), y.diagnostic_value()]))
+                    .unwrap_or(Value::Null),
+            );
+            fields.insert(
+                "status_nova_jump_speed_units_per_tick".to_owned(),
+                json!(state.jump_speed_units_per_tick),
+            );
+            fields.insert(
+                "status_nova_jump_target_id".to_owned(),
+                json!(state.jump_target_id),
+            );
+            fields.insert(
+                "status_nova_jump_timer_ms".to_owned(),
+                exact_f64_value(state.jump_timer_ms),
+            );
+        }
         Some(value)
     }
 
@@ -3518,7 +3812,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 5;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 6;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -3907,7 +4201,9 @@ impl ResidentCardCatalog {
                         && prototype.is_alive
                         && prototype.card_name == card.effective_name
                         && prototype.has_only_compiled_mechanics()
-                        && prototype.mechanics.is_empty()
+                        && (prototype.mechanics.is_empty()
+                            || (prototype.mechanics.len() == 1
+                                && prototype.status_nova_jump.is_some()))
                         && prototype.shields.is_empty()
                         && prototype.death_opcodes.is_empty()
                         && prototype.modifier_supported
@@ -5220,6 +5516,11 @@ impl ResidentEntity {
                 (Some(left), Some(right)) => left.publication_static_eq(right),
                 _ => false,
             }
+            && match (&self.status_nova_jump, &other.status_nova_jump) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
     }
 
     fn publication_base_eq(&self, other: &Self) -> bool {
@@ -5250,6 +5551,11 @@ impl ResidentEntity {
                     other.freeze_expiry_time,
                 ],
             )
+            && match (&self.status_nova_jump, &other.status_nova_jump) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_exact_eq(right),
+                _ => false,
+            }
     }
 }
 
@@ -5515,6 +5821,7 @@ struct PreparedEntityParts {
     pending_projectile_max_duration_ms: i64,
     spawn_angle_shift: f64,
     mechanics: Vec<String>,
+    status_nova_jump: Option<ResidentStatusNovaJumpState>,
     shields: Vec<ShieldState>,
     shield_break_count: i64,
     death_opcodes: Vec<PreparedDeathOpcodeParts>,
@@ -5556,6 +5863,7 @@ impl From<&ResidentEntity> for PreparedEntityParts {
             pending_projectile_max_duration_ms: entity.pending_projectile_max_duration_ms,
             spawn_angle_shift: entity.spawn_angle_shift,
             mechanics: entity.mechanics.clone(),
+            status_nova_jump: entity.status_nova_jump.clone(),
             shields: entity.shields.clone(),
             shield_break_count: entity.shield_break_count,
             death_opcodes: entity
@@ -5597,6 +5905,7 @@ struct PreparedEntityBaseDelta {
     freeze_expiry_time: f64,
     death_spawn_target_immunity_elapsed_ms: i64,
     pending_projectile_max_duration_ms: i64,
+    status_nova_jump: Option<ResidentStatusNovaJumpState>,
 }
 
 impl From<&ResidentEntity> for PreparedEntityBaseDelta {
@@ -5619,6 +5928,7 @@ impl From<&ResidentEntity> for PreparedEntityBaseDelta {
             freeze_expiry_time: entity.freeze_expiry_time,
             death_spawn_target_immunity_elapsed_ms: entity.death_spawn_target_immunity_elapsed_ms,
             pending_projectile_max_duration_ms: entity.pending_projectile_max_duration_ms,
+            status_nova_jump: entity.status_nova_jump.clone(),
         }
     }
 }
@@ -7201,8 +7511,9 @@ impl ResidentBattle {
                         entity.direct_combat_unsupported.is_empty()
                             && !entity.movement.as_ref().is_some_and(|movement| {
                                 movement.river_jump_active
-                                    || movement.special_move_active
-                                    || movement.special_move_consumed_tick
+                                    || ((movement.special_move_active
+                                        || movement.special_move_consumed_tick)
+                                        && entity.status_nova_jump.is_none())
                             })
                     }
                     2 => entity
@@ -7400,7 +7711,40 @@ impl ResidentBattle {
     }
 
     fn supports_direct_troop_combat_phase(&self) -> bool {
-        if !self.resident_id_invariants_hold() || !self.supports_direct_combat_phase() {
+        let direct_phase_supported = self.entities.iter().all(|entity| {
+            !entity.active
+                || match entity.entity_kind {
+                    0 | 1 => {
+                        let river_jump_active = entity
+                            .movement
+                            .as_ref()
+                            .is_some_and(|movement| movement.river_jump_active);
+                        let unsupported_reasons_allowed =
+                            entity.direct_combat_unsupported.is_empty()
+                                || (river_jump_active
+                                    && entity.direct_combat_unsupported.as_slice()
+                                        == ["active_river_jump", "active_special_move"]);
+                        unsupported_reasons_allowed
+                            && !entity.movement.as_ref().is_some_and(|movement| {
+                                let supported_river_transition = movement.jump_height_present
+                                    && !movement.special_move_active
+                                    && movement.special_move_consumed_tick;
+                                (movement.special_move_active
+                                    || movement.special_move_consumed_tick)
+                                    && !river_jump_active
+                                    && entity.status_nova_jump.is_none()
+                                    && !supported_river_transition
+                            })
+                    }
+                    2 => entity
+                        .point_projectile
+                        .as_ref()
+                        .is_some_and(|projectile| projectile.unsupported.is_empty()),
+                    3 => entity.supports_area_effect_object(),
+                    _ => false,
+                }
+        });
+        if !self.resident_id_invariants_hold() || !direct_phase_supported {
             return false;
         }
         if self.entities.iter().any(|entity| {
@@ -7485,6 +7829,48 @@ impl ResidentBattle {
                     .sparse_attributes
                     .insert("_spawn_hook_fired");
             }
+            if self.entities[actor_index]
+                .movement
+                .as_ref()
+                .is_some_and(|movement| movement.river_jump_active)
+            {
+                continue;
+            }
+            let supported_river_transition = self.entities[actor_index]
+                .movement
+                .as_ref()
+                .is_some_and(|movement| {
+                    movement.jump_height_present
+                        && !movement.special_move_active
+                        && movement.special_move_consumed_tick
+                });
+            if supported_river_transition {
+                self.entities[actor_index]
+                    .movement
+                    .as_mut()
+                    .expect("river jumper requires movement state")
+                    .special_move_consumed_tick = false;
+                continue;
+            }
+            if self.entities[actor_index]
+                .status_nova_jump
+                .as_ref()
+                .is_some_and(|_| {
+                    self.entities[actor_index]
+                        .movement
+                        .as_ref()
+                        .is_some_and(|movement| {
+                            movement.special_move_active || movement.special_move_consumed_tick
+                        })
+                })
+            {
+                self.entities[actor_index]
+                    .movement
+                    .as_mut()
+                    .expect("status-nova jump requires movement state")
+                    .special_move_consumed_tick = false;
+                continue;
+            }
             let actor_kind = self.entities[actor_index].entity_kind;
             let Some(step_dt) = self.prepare_direct_combat_actor(actor_index) else {
                 continue;
@@ -7514,6 +7900,7 @@ impl ResidentBattle {
                 .and_then(|state| state.last_combat_target_id);
             let payload = {
                 let actor = &mut self.entities[actor_index];
+                let has_status_nova_jump = actor.status_nova_jump.is_some();
                 actor.target_id = target_id;
                 let state = actor
                     .locked_combat
@@ -7570,18 +7957,22 @@ impl ResidentBattle {
                         state.movement_target_id = target_id;
                     }
                     if target_id.is_some() && target_in_range && state.attack_cooldown <= 0.0 {
-                        state.attack_cooldown = state.base_attack_interval();
-                        state.attack_windup_active = false;
-                        state.has_attacked_once = true;
-                        state.attack_preload_blocked = false;
-                        state.last_attack_time = 0.0;
-                        Some(state.point_weapon.clone().map_or_else(
-                            || CombatPayload::DirectDamage {
-                                damage: state.damage,
-                                area: state.direct_area.clone(),
-                            },
-                            CombatPayload::PointProjectile,
-                        ))
+                        if has_status_nova_jump {
+                            Some(CombatPayload::StatusNovaJump)
+                        } else {
+                            state.attack_cooldown = state.base_attack_interval();
+                            state.attack_windup_active = false;
+                            state.has_attacked_once = true;
+                            state.attack_preload_blocked = false;
+                            state.last_attack_time = 0.0;
+                            Some(state.point_weapon.clone().map_or_else(
+                                || CombatPayload::DirectDamage {
+                                    damage: state.damage,
+                                    area: state.direct_area.clone(),
+                                },
+                                CombatPayload::PointProjectile,
+                            ))
+                        }
                     } else {
                         None
                     }
@@ -7598,7 +7989,8 @@ impl ResidentBattle {
                     .sparse_attributes
                     .insert("initial_position");
             }
-            if payload.is_some()
+            let status_nova_payload = matches!(&payload, Some(CombatPayload::StatusNovaJump));
+            if (payload.is_some() && !status_nova_payload)
                 || (previous_combat_target_id.is_some() && previous_combat_target_id != target_id)
                 || self.entities[actor_index]
                     .locked_combat
@@ -7611,6 +8003,9 @@ impl ResidentBattle {
             }
             if let (Some(target_index), Some(payload)) = (target_index, payload) {
                 match payload {
+                    CombatPayload::StatusNovaJump => {
+                        self.start_status_nova_jump(actor_index, target_index);
+                    }
                     CombatPayload::DirectDamage { damage, area } => {
                         self.apply_direct_combat_damage(
                             actor_index,
@@ -7638,6 +8033,36 @@ impl ResidentBattle {
             }
         }
         Ok(())
+    }
+
+    fn start_status_nova_jump(&mut self, actor_index: usize, target_index: usize) {
+        let origin = (
+            self.entities[actor_index].position_x.clone(),
+            self.entities[actor_index].position_y.clone(),
+        );
+        let destination = (
+            self.entities[target_index].position_x.clone(),
+            self.entities[target_index].position_y.clone(),
+        );
+        let target_id = self.entities[target_index].id;
+        let actor = &mut self.entities[actor_index];
+        let status = actor
+            .status_nova_jump
+            .as_mut()
+            .expect("status-nova combat payload requires compiled state");
+        status.jump_origin = Some(origin);
+        status.jump_destination = Some(destination);
+        status.jump_target_id = Some(target_id);
+        status.jump_timer_ms = 0.0;
+        actor
+            .movement
+            .as_mut()
+            .expect("status-nova jump requires movement state")
+            .special_move_active = true;
+        actor.sparse_attributes.insert("_special_move_active");
+        actor
+            .sparse_attributes
+            .insert("_special_move_consumed_tick");
     }
 
     fn supports_building_lifetime_phase(&self) -> bool {
@@ -8971,6 +9396,7 @@ impl ResidentBattle {
                     },
                     death_spawn_payload_present: false,
                     mechanics: Vec::new(),
+                    status_nova_jump: None,
                     shields: Vec::new(),
                     shield_break_count: 0,
                     death_opcodes: Vec::new(),
@@ -10010,7 +10436,34 @@ impl ResidentBattle {
             ) else {
                 return false;
             };
-            let river_state_supported = if movement.river_jump_active {
+            let status_nova_jump_active = entity
+                .status_nova_jump
+                .as_ref()
+                .is_some_and(|state| state.jump_target_id.is_some());
+            let status_nova_jump_supported = match entity.status_nova_jump.as_ref() {
+                None => true,
+                Some(state) if status_nova_jump_active => {
+                    !state.detonated
+                        && state.jump_destination.is_some()
+                        && state.jump_origin.is_some()
+                        && state.jump_timer_ms.is_finite()
+                        && state.jump_timer_ms >= 0.0
+                        && movement.special_move_active
+                        && !movement.special_move_consumed_tick
+                        && !movement.river_jump_active
+                        && movement.knockback_target.is_none()
+                        && movement.death_spawn_travel_ticks == 0
+                        && !movement.forced_movement_active
+                }
+                Some(state) => {
+                    state.jump_destination.is_none()
+                        && !movement.special_move_active
+                        && (!state.detonated || !entity.is_alive)
+                }
+            };
+            let river_state_supported = if status_nova_jump_active {
+                status_nova_jump_supported
+            } else if movement.river_jump_active {
                 allow_ground
                     && self.arena_width_tiles == 18
                     && self.arena_height_tiles == 32
@@ -10032,8 +10485,7 @@ impl ResidentBattle {
                     && movement.river_jump_duration >= self.dt
                     && movement.special_move_active
                     && !movement.special_move_consumed_tick
-                    && !movement.stun_interrupt_deferred_until_landing
-                    && combat.stun_timer <= 0.0
+                    && (combat.stun_timer <= 0.0 || movement.stun_interrupt_deferred_until_landing)
             } else {
                 !movement.special_move_active
                     && !movement.stun_interrupt_deferred_until_landing
@@ -10048,6 +10500,7 @@ impl ResidentBattle {
                 && entity.has_only_compiled_mechanics()
                 && movement.route_cache_supported
                 && river_state_supported
+                && status_nova_jump_supported
                 && movement.vector_count >= 0
                 && movement.unit_mass.is_finite()
                 && movement.unit_mass > 0.0
@@ -10137,14 +10590,21 @@ impl ResidentBattle {
             })
             .collect::<Vec<_>>();
         for entity_index in movement_indices {
+            if !self.entities[entity_index].active || !self.entities[entity_index].is_alive {
+                continue;
+            }
             if self.entities[entity_index].entity_kind == 0 {
+                let committed_status_jump = self.entities[entity_index]
+                    .status_nova_jump
+                    .as_ref()
+                    .is_some_and(|state| state.jump_target_id.is_some());
                 let skip_final_knockback_collision = self.entities[entity_index]
                     .movement
                     .as_ref()
                     .is_some_and(|movement| {
                         movement.knockback_target.is_some() && movement.knockback_velocity_work < 1
                     });
-                if !skip_final_knockback_collision {
+                if !skip_final_knockback_collision && !committed_status_jump {
                     self.accumulate_stationary_collision_for(entity_index);
                 }
             }
@@ -10207,6 +10667,9 @@ impl ResidentBattle {
         {
             return;
         }
+        if entity.blocks_effects_while_committed() {
+            return;
+        }
         let own_radius = movement.collision_radius.max(0.2);
         let own_mass = movement.unit_mass.max(1e-9);
         let own_air = combat.is_air_unit || movement.is_hover || movement.river_jump_active;
@@ -10214,6 +10677,9 @@ impl ResidentBattle {
         let mut contributions = Vec::new();
         for (other_index, other) in self.entities.iter().enumerate() {
             if other_index == entity_index || !other.active || !other.is_alive {
+                continue;
+            }
+            if other.blocks_effects_while_committed() {
                 continue;
             }
             match other.entity_kind {
@@ -10605,6 +11071,7 @@ impl ResidentBattle {
             && !target_state.hidden_building
             && target_state.stealth_until_ms <= now_ms
             && target.death_spawn_target_immunity_elapsed_ms < 0
+            && !target.blocks_effects_while_committed()
             && !(actor_state.point_weapon.is_some()
                 && self.lethal_projectile_reservation_ids.contains(&target.id))
     }
@@ -10614,6 +11081,7 @@ impl ResidentBattle {
             death_spawn_travel_active,
             knockback_active,
             river_jump_active,
+            status_nova_jump_active,
             special_move_consumed_tick,
         ) = {
             let movement = self.entities[entity_index]
@@ -10624,6 +11092,10 @@ impl ResidentBattle {
                 movement.death_spawn_travel_ticks > 0,
                 movement.knockback_target.is_some(),
                 movement.river_jump_active,
+                self.entities[entity_index]
+                    .status_nova_jump
+                    .as_ref()
+                    .is_some_and(|state| state.jump_target_id.is_some()),
                 movement.special_move_consumed_tick,
             )
         };
@@ -10650,6 +11122,15 @@ impl ResidentBattle {
                 .expect("resident troop requires movement state")
                 .native_natural_movement_active = false;
             self.update_resident_river_jump(entity_index);
+            return;
+        }
+        if status_nova_jump_active {
+            self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state")
+                .native_natural_movement_active = false;
+            self.update_resident_status_nova_jump(entity_index);
             return;
         }
         if special_move_consumed_tick {
@@ -10703,6 +11184,195 @@ impl ResidentBattle {
             .expect("resident troop requires movement state")
             .native_natural_movement_active = true;
         self.move_resident_towards_target(entity_index, target_index);
+    }
+
+    fn update_resident_status_nova_jump(&mut self, entity_index: usize) {
+        let (target_id, mut destination, speed_units, tick_ms) = {
+            let state = self.entities[entity_index]
+                .status_nova_jump
+                .as_ref()
+                .expect("committed status jump requires state");
+            (
+                state.jump_target_id,
+                state
+                    .jump_destination
+                    .clone()
+                    .expect("committed status jump requires destination"),
+                state.jump_speed_units_per_tick,
+                (self.dt * 1000.0).round_ties_even() as i64,
+            )
+        };
+        if let Some(target_index) = target_id.and_then(|id| {
+            self.entities
+                .iter()
+                .position(|candidate| candidate.id == id && candidate.active)
+        }) {
+            destination = (
+                self.entities[target_index].position_x.clone(),
+                self.entities[target_index].position_y.clone(),
+            );
+            self.entities[entity_index]
+                .status_nova_jump
+                .as_mut()
+                .expect("committed status jump requires state")
+                .jump_destination = Some(destination.clone());
+        }
+        let current_x_units = logic_units(self.entities[entity_index].position_x.as_f64());
+        let current_y_units = logic_units(self.entities[entity_index].position_y.as_f64());
+        let destination_x_units = logic_units(destination.0.as_f64());
+        let destination_y_units = logic_units(destination.1.as_f64());
+        let dx = destination_x_units - current_x_units;
+        let dy = destination_y_units - current_y_units;
+        let remaining = integer_sqrt(
+            (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128,
+        );
+        let travel = speed_units.saturating_mul(tick_ms.max(0)) / 50;
+        let (move_x, move_y) = vector_towards_logic_units(dx, dy, travel);
+        self.entities[entity_index]
+            .position_x
+            .set_f64((current_x_units + move_x) as f64 / 1000.0);
+        self.entities[entity_index]
+            .position_y
+            .set_f64((current_y_units + move_y) as f64 / 1000.0);
+        self.entities[entity_index]
+            .status_nova_jump
+            .as_mut()
+            .expect("committed status jump requires state")
+            .jump_timer_ms += tick_ms as f64;
+        if remaining <= travel {
+            {
+                let entity = &mut self.entities[entity_index];
+                let state = entity
+                    .status_nova_jump
+                    .as_mut()
+                    .expect("committed status jump requires state");
+                state.jump_target_id = None;
+                state.jump_destination = None;
+                entity
+                    .movement
+                    .as_mut()
+                    .expect("committed status jump requires movement")
+                    .special_move_active = false;
+                entity
+                    .movement
+                    .as_mut()
+                    .expect("committed status jump requires movement")
+                    .special_move_consumed_tick = true;
+            }
+            self.resolve_resident_status_nova(entity_index);
+            self.entities[entity_index]
+                .status_nova_jump
+                .as_mut()
+                .expect("committed status jump requires state")
+                .detonated = true;
+            let remaining_hp = self.entities[entity_index].hitpoints.as_f64();
+            self.apply_resident_damage(entity_index, remaining_hp);
+        }
+    }
+
+    fn resident_status_nova_target_valid(
+        &self,
+        source_index: usize,
+        target_index: usize,
+        center: (i64, i64),
+        state: &ResidentStatusNovaJumpState,
+    ) -> bool {
+        if source_index == target_index {
+            return false;
+        }
+        let source = &self.entities[source_index];
+        let target = &self.entities[target_index];
+        if !target.active
+            || !target.is_alive
+            || target.player_id == source.player_id
+            || !matches!(target.entity_kind, 0 | 1)
+            || target.death_spawn_target_immunity_elapsed_ms >= 0
+            || target.blocks_effects_while_committed()
+        {
+            return false;
+        }
+        let Some((target_is_air, collision_radius, stealth_until_ms, allow_invisible)) =
+            target.projectile_target_traits()
+        else {
+            return false;
+        };
+        if target
+            .locked_combat
+            .as_ref()
+            .is_some_and(|combat| combat.hidden_building)
+            && !state.affects_hidden
+        {
+            return false;
+        }
+        if (target_is_air && !state.hits_air) || (!target_is_air && !state.hits_ground) {
+            return false;
+        }
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        if stealth_until_ms > now_ms && !allow_invisible {
+            return false;
+        }
+        let target_x = logic_units(target.position_x.as_f64());
+        let target_y = logic_units(target.position_y.as_f64());
+        let target_radius = logic_units(collision_radius).max(0);
+        if target.entity_kind == 1 {
+            let closest_x = center
+                .0
+                .clamp(target_x - target_radius, target_x + target_radius);
+            let closest_y = center
+                .1
+                .clamp(target_y - target_radius, target_y + target_radius);
+            let dx = closest_x - center.0;
+            let dy = closest_y - center.1;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(state.freeze_radius_units) * i128::from(state.freeze_radius_units)
+        } else {
+            let dx = target_x - center.0;
+            let dy = target_y - center.1;
+            let radius = state.freeze_radius_units + target_radius;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(radius) * i128::from(radius)
+        }
+    }
+
+    fn resolve_resident_status_nova(&mut self, source_index: usize) {
+        let state = self.entities[source_index]
+            .status_nova_jump
+            .as_ref()
+            .expect("status nova requires compiled state")
+            .clone();
+        let center = (
+            logic_units(self.entities[source_index].position_x.as_f64()),
+            logic_units(self.entities[source_index].position_y.as_f64()),
+        );
+        let damage = self.entities[source_index].damage.as_f64();
+        let damage_targets = self
+            .entities
+            .iter()
+            .enumerate()
+            .filter_map(|(index, _)| {
+                self.resident_status_nova_target_valid(source_index, index, center, &state)
+                    .then_some(index)
+            })
+            .collect::<Vec<_>>();
+        for target_index in damage_targets {
+            self.apply_resident_damage(target_index, damage);
+        }
+        let status_targets = self
+            .entities
+            .iter()
+            .enumerate()
+            .filter_map(|(index, _)| {
+                self.resident_status_nova_target_valid(source_index, index, center, &state)
+                    .then_some(index)
+            })
+            .collect::<Vec<_>>();
+        for target_index in status_targets {
+            self.entities[target_index].apply_projectile_status(
+                state.freeze_duration_ms as f64 / 1000.0,
+                0.0,
+                1.0,
+            );
+        }
     }
 
     fn update_resident_death_spawn_travel(&mut self, entity_index: usize) {
@@ -10889,14 +11559,23 @@ impl ResidentBattle {
         }
         self.entities[entity_index].position_x.set_f64(target_x);
         self.entities[entity_index].position_y.set_f64(target_y);
-        let movement = self.entities[entity_index]
-            .movement
-            .as_mut()
-            .expect("resident troop requires movement state");
-        movement.river_jump_active = false;
-        movement.special_move_active = false;
-        movement.special_move_consumed_tick = true;
-        movement.river_jump_blocked = false;
+        let combat_stunned = self.entities[entity_index]
+            .locked_combat
+            .as_ref()
+            .is_some_and(|combat| combat.stun_timer > 0.0);
+        let interrupt_after_landing = {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state");
+            movement.river_jump_active = false;
+            movement.special_move_active = false;
+            movement.special_move_consumed_tick = true;
+            movement.river_jump_blocked = false;
+            let interrupt = movement.stun_interrupt_deferred_until_landing && combat_stunned;
+            movement.stun_interrupt_deferred_until_landing = false;
+            interrupt
+        };
         self.entities[entity_index].sparse_attributes.extend([
             "_river_jump_active",
             "_special_move_active",
@@ -10911,6 +11590,9 @@ impl ResidentBattle {
             .locked_combat
             .as_ref()
             .is_some_and(|combat| combat.is_air_unit);
+        if interrupt_after_landing {
+            self.entities[entity_index].interrupt_combat_by_stun();
+        }
     }
 
     fn move_resident_towards_target(&mut self, entity_index: usize, target_index: usize) {
@@ -11514,96 +12196,7 @@ impl ResidentBattle {
             .entities
             .iter()
             .filter(|entity| entity.active && matches!(entity.entity_kind, 0 | 1))
-            .map(|entity| {
-                let movement = entity
-                    .movement
-                    .as_ref()
-                    .expect("character movement state parsed at initialization");
-                let combat = entity
-                    .locked_combat
-                    .as_ref()
-                    .expect("character combat state parsed at initialization");
-                let mut value = json!({
-                    "airborne_for_projectile": combat.is_airborne_for_projectile,
-                    "building_pathing_radius": exact_f64_value(movement.building_pathing_radius),
-                    "death_spawn_travel_target": movement.death_spawn_travel_target.map(|(x, y)| {
-                        json!([exact_f64_value(x), exact_f64_value(y)])
-                    }),
-                    "death_spawn_travel_ticks": movement.death_spawn_travel_ticks,
-                    "encounter_index": entity.encounter_index,
-                    "facing_x_units": combat.facing_x_units,
-                    "facing_y_units": combat.facing_y_units,
-                    "ground_path_backwards": combat.ground_path_backwards,
-                    "id": entity.id,
-                    "jump_speed": exact_f64_value(movement.jump_speed),
-                    "knockback_interrupts_combat": movement.knockback_interrupts_combat,
-                    "knockback_target": movement.knockback_target.map(|(x, y)| {
-                        json!([exact_f64_value(x), exact_f64_value(y)])
-                    }),
-                    "knockback_velocity_work": movement.knockback_velocity_work,
-                    "native_avoidance": movement.native_avoidance,
-                    "native_lane_id": movement.native_lane_id,
-                    "native_natural_movement_active": movement.native_natural_movement_active,
-                    "pending_consumed": movement.pending_consumed,
-                    "pending_x": exact_f64_value(movement.pending_x),
-                    "pending_y": exact_f64_value(movement.pending_y),
-                    "position_x": entity.position_x.diagnostic_value(),
-                    "position_y": entity.position_y.diagnostic_value(),
-                    "route_backwards": movement.route_backwards,
-                    "route_cells": movement.route_cells,
-                    "route_goal": movement.route_goal,
-                    "route_jump_height": movement.route_jump_height,
-                    "route_kind": match movement.route_cache_kind {
-                        RouteCacheKind::Absent => "absent",
-                        RouteCacheKind::Single => "single",
-                        RouteCacheKind::Ground => "ground",
-                        RouteCacheKind::Unsupported => "unsupported",
-                    },
-                    "route_lane_id": movement.route_lane_id,
-                    "river_jump_active": movement.river_jump_active,
-                    "river_jump_blocked": movement.river_jump_blocked,
-                    "river_jump_duration": exact_f64_value(movement.river_jump_duration),
-                    "river_jump_elapsed": exact_f64_value(movement.river_jump_elapsed),
-                    "river_jump_origin": movement.river_jump_origin.as_ref().map(|(x, y)| {
-                        json!([x.diagnostic_value(), y.diagnostic_value()])
-                    }),
-                    "river_jump_target": movement.river_jump_target.map(|(x, y)| {
-                        json!([exact_f64_value(x), exact_f64_value(y)])
-                    }),
-                    "special_move_active": movement.special_move_active,
-                    "special_move_consumed_tick": movement.special_move_consumed_tick,
-                    "stun_interrupt_deferred_until_landing": movement.stun_interrupt_deferred_until_landing,
-                    "forced_movement_active": movement.forced_movement_active,
-                    "vector_bypasses_cap": movement.vector_bypasses_cap,
-                    "vector_count": movement.vector_count,
-                    "vector_x_units": movement.vector_x_units,
-                    "vector_y_units": movement.vector_y_units,
-                });
-                value
-                    .as_object_mut()
-                    .expect("movement diagnostic is an object")
-                    .insert("knockback_immune".to_owned(), json!(movement.knockback_immune));
-                let diagnostic = value
-                    .as_object_mut()
-                    .expect("movement diagnostic is an object");
-                diagnostic.insert(
-                    "movement_phase_elapsed_ms".to_owned(),
-                    json!(movement.movement_phase_elapsed_ms),
-                );
-                diagnostic.insert(
-                    "serialized_speed".to_owned(),
-                    exact_f64_value(movement.serialized_speed),
-                );
-                diagnostic.insert(
-                    "stop_movement_after_ms".to_owned(),
-                    exact_f64_value(movement.stop_movement_after_ms),
-                );
-                diagnostic.insert(
-                    "wait_ms".to_owned(),
-                    exact_f64_value(movement.wait_ms),
-                );
-                value
-            })
+            .filter_map(ResidentEntity::movement_diagnostic_value)
             .collect::<Vec<_>>();
         serde_json::to_vec(&values).map_err(|error| {
             PyRuntimeError::new_err(format!(
@@ -12044,6 +12637,7 @@ impl ResidentBattle {
             },
             death_spawn_payload_present: false,
             mechanics: Vec::new(),
+            status_nova_jump: None,
             shields: Vec::new(),
             shield_break_count: 0,
             death_opcodes: Vec::new(),
@@ -12159,6 +12753,7 @@ impl ResidentBattle {
             || target.player_id == area.player_id
             || !matches!(target.entity_kind, 0 | 1)
             || !target.has_only_compiled_mechanics()
+            || target.blocks_effects_while_committed()
         {
             return false;
         }
@@ -12228,6 +12823,7 @@ impl ResidentBattle {
             || target.player_id == source.player_id
             || !matches!(target.entity_kind, 0 | 1)
             || target.death_spawn_target_immunity_elapsed_ms >= 0
+            || target.blocks_effects_while_committed()
         {
             return false;
         }
@@ -12471,6 +13067,7 @@ impl ResidentBattle {
             },
             death_spawn_payload_present: false,
             mechanics: Vec::new(),
+            status_nova_jump: None,
             shields: Vec::new(),
             shield_break_count: 0,
             death_opcodes: Vec::new(),
@@ -12709,6 +13306,7 @@ impl ResidentBattle {
                 };
                 target.active
                     && target.is_alive
+                    && !target.blocks_effects_while_committed()
                     && target.player_id != projectile_player
                     && matches!(target.entity_kind, 0 | 1)
                     && !(ignore_buildings && target.entity_kind == 1)
@@ -12890,6 +13488,7 @@ impl ResidentBattle {
             && !target_state.hidden_building
             && target_state.stealth_until_ms <= now_ms
             && target.death_spawn_target_immunity_elapsed_ms < 0
+            && !target.blocks_effects_while_committed()
             && ((target_state.is_air_unit && actor_state.can_attack_air)
                 || (!target_state.is_air_unit && actor_state.can_attack_ground))
             && !(actor_state.point_weapon.is_some()

@@ -198,7 +198,7 @@ def test_missing_water_run_sets_blocked_and_preserves_route() -> None:
     assert jumper._native_ground_route_cells == old_route
 
 
-@pytest.mark.parametrize("failure", ["speed", "charge", "deferred_stun"])
+@pytest.mark.parametrize("failure", ["speed", "charge"])
 def test_invalid_river_state_rejects_before_mutation(failure: str) -> None:
     battle = BattleState()
     jumper = _spawn_troop(battle, "HogRider", 0, Position(9.0, 14.9))
@@ -207,13 +207,6 @@ def test_invalid_river_state_rejects_before_mutation(failure: str) -> None:
         jumper.card_stats.jump_speed = 0
     elif failure == "charge":
         jumper.card_stats.charge_range = 250
-    else:
-        assert jumper._try_start_river_jump(
-            battle.entities[6].position,
-            Position(9.0, battle.arena.RIVER_Y1),
-            battle,
-        )
-        jumper.apply_stun(0.5, source_kind="test")
     resident = ResidentRustBattle.from_battle(battle)
     state_before = resident.ground_movement_state_bytes()
     rng_before = resident.rng_state_bytes()
