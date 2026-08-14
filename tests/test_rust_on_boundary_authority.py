@@ -272,6 +272,119 @@ def test_direct_guard_allows_only_known_derived_cache_refreshes() -> None:
     assert runtime.advance_ticks(1) == 1
 
 
+def test_guard_record_rebuilds_topology_stable_boundary_and_rejects_drift() -> None:
+    battle = BattleState(rng=random.Random(71_019), fast_path=True)
+    runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
+    initial_guard = runtime._on_boundary_guard
+    assert initial_guard is not None
+
+    assert runtime.advance_ticks(1) == 1
+    published_guard = runtime._on_boundary_guard
+    assert published_guard is not None
+    assert published_guard is not initial_guard
+    initial_static = {
+        (kind, path, id(owner)): expected
+        for kind, path, owner, expected, static in initial_guard.entries
+        if static
+    }
+    assert any(
+        initial_static.get((kind, path, id(owner))) is expected
+        for kind, path, owner, expected, static in published_guard.entries
+        if static
+    )
+
+    battle.players[0].elixir -= 0.25
+    with pytest.raises(RuntimeError, match=r"external Python state mutation.*elixir"):
+        runtime.advance_ticks(1)
+
+
+def _route_runtime(seed: int) -> tuple[BattleState, ResidentCompleteTickRuntime]:
+    battle = BattleState(rng=random.Random(seed), fast_path=True)
+    _spawn_ready(battle, "Knight", 0, Position(7.0, 12.0))
+    _spawn_ready(battle, "Knight", 1, Position(11.0, 20.0))
+    runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
+    assert runtime.active_mode is RustBattleMode.ON
+    return battle, runtime
+
+
+def test_guard_record_rebinds_sparse_presence_after_publication() -> None:
+    battle, runtime = _route_runtime(71_020)
+    assert "_win_conditions_dirty" not in battle.__dict__
+
+    assert runtime.advance_ticks(8) == 8
+    assert "_win_conditions_dirty" in battle.__dict__
+    battle.__dict__.pop("_win_conditions_dirty")
+
+    with pytest.raises(
+        RuntimeError, match=r"external Python state mutation.*battle.__dict__"
+    ):
+        runtime.advance_ticks(8)
+
+
+def test_guard_record_rebinds_replaced_route_list_after_publication() -> None:
+    battle, runtime = _route_runtime(71_021)
+    assert runtime.advance_ticks(8) == 8
+    mover = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(getattr(entity, "_native_ground_route_cells", None), list)
+    )
+    first_route = mover._native_ground_route_cells
+
+    assert runtime.advance_ticks(8) == 8
+    published_route = mover._native_ground_route_cells
+    assert published_route is not first_route
+    published_route.append((999, 999))
+
+    with pytest.raises(
+        RuntimeError, match=r"external Python state mutation.*route_cells"
+    ):
+        runtime.advance_ticks(8)
+
+
+def _birth_and_tombstone_runtime(
+    seed: int,
+) -> tuple[BattleState, ResidentCompleteTickRuntime, Troop]:
+    battle = BattleState(rng=random.Random(seed), fast_path=True)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source = _spawn_ready(battle, "Musketeer", 0, Position(9.0, 11.0))
+    killer = _spawn_ready(battle, "Knight", 0, Position(9.0, 13.0))
+    target = _spawn_ready(battle, "Knight", 1, Position(9.0, 14.0))
+    source.target_id = target.id
+    source.attack_cooldown = 0.0
+    killer.target_id = target.id
+    killer.attack_cooldown = 0.0
+    killer.damage = target.hitpoints + 1
+    runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
+    assert runtime.advance_ticks(1) == 1
+    return battle, runtime, target
+
+
+@pytest.mark.parametrize("mutated_object", ["birth", "tombstone"])
+def test_guard_record_binds_native_birth_and_inactive_tombstone(
+    mutated_object: str,
+) -> None:
+    battle, runtime, target = _birth_and_tombstone_runtime(71_022)
+    assert target.id not in battle.entities
+    assert runtime.entity_registry[target.id] is target
+    projectile = next(
+        entity for entity in battle.entities.values() if type(entity) is Projectile
+    )
+
+    if mutated_object == "birth":
+        projectile.target_position.x += 0.25
+        expected_path = "target_position"
+    else:
+        target.position.x += 0.25
+        expected_path = "primary_target"
+
+    with pytest.raises(
+        RuntimeError, match=rf"external Python state mutation.*{expected_path}"
+    ):
+        runtime.advance_ticks(1)
+
+
 @pytest.mark.parametrize("mutation", ["tick", "rng"])
 def test_native_authority_rejects_external_resident_mutation(mutation: str) -> None:
     battle, runtime, _source, _target = _runtime_with_troops(71_006)

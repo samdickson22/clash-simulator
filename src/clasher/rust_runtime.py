@@ -128,18 +128,6 @@ def _guard_token_matches(expected: tuple[Any, ...], actual: Any) -> bool:
     return type(actual) is expected[2] and actual is expected[1].value
 
 
-def _guard_topology_matches(expected: tuple[Any, ...], actual: Any) -> bool:
-    kind = expected[0]
-    if kind == "identity":
-        return type(actual) is expected[2] and actual is expected[1].value
-    if kind == "tuple":
-        return type(actual) is tuple and len(actual) == len(expected[1]) and all(
-            _guard_topology_matches(item, value)
-            for item, value in zip(expected[1], actual, strict=True)
-        )
-    return True
-
-
 _ARENA_POSITION_FIELDS = (
     "BLUE_KING_TOWER",
     "BLUE_LEFT_TOWER",
@@ -180,115 +168,6 @@ def _arena_geometry_token(arena: Any) -> tuple[Any, ...]:
 @dataclass
 class _DirectCausalBoundaryGuard:
     entries: list[list[Any]]
-
-    def topology_matches(self) -> bool:
-        for kind, _path, owner, expected, _static in self.entries:
-            if kind in {"attrs", "battle_attrs"}:
-                fields = vars(owner)
-                actual = (
-                    (name, value)
-                    for name, value in fields.items()
-                    if kind != "battle_attrs"
-                    or name not in _DERIVED_BATTLE_CACHE_FIELDS
-                )
-                if len(expected) != sum(
-                    kind != "battle_attrs"
-                    or name not in _DERIVED_BATTLE_CACHE_FIELDS
-                    for name in fields
-                ):
-                    return False
-                for (expected_name, expected_value), (actual_name, actual_value) in zip(
-                    expected, actual, strict=True
-                ):
-                    if expected_name != actual_name or not _guard_topology_matches(
-                        expected_value, actual_value
-                    ):
-                        return False
-            elif kind == "dict":
-                if len(owner) != len(expected):
-                    return False
-                for (expected_key, expected_value), (actual_key, actual_value) in zip(
-                    expected, owner.items(), strict=True
-                ):
-                    if not _guard_token_matches(expected_key, actual_key) or not (
-                        _guard_topology_matches(expected_value, actual_value)
-                    ):
-                        return False
-            elif kind == "mapping_subset":
-                for key, expected_present, expected_value in expected:
-                    if (key in owner) != expected_present:
-                        return False
-                    if expected_present and not _guard_topology_matches(
-                        expected_value, owner[key]
-                    ):
-                        return False
-            elif kind == "sequence":
-                if len(owner) != len(expected) or any(
-                    not _guard_topology_matches(expected_value, actual_value)
-                    for expected_value, actual_value in zip(
-                        expected, owner, strict=True
-                    )
-                ):
-                    return False
-            elif kind == "set":
-                if {_guard_token(item) for item in owner} != expected:
-                    return False
-            elif kind == "arena_geometry":
-                arena_actual = _arena_geometry_token(owner)
-                if (
-                    arena_actual[0] is not expected[0]
-                    or arena_actual[6].value is not expected[6].value
-                    or len(arena_actual[8]) != len(expected[8])
-                    or any(
-                        actual_position[1].value is not expected_position[1].value
-                        for actual_position, expected_position in zip(
-                            arena_actual[8], expected[8], strict=True
-                        )
-                    )
-                ):
-                    return False
-        return True
-
-    def refresh(self) -> None:
-        for entry in self.entries:
-            kind, _path, owner, _expected, static = entry
-            if static:
-                continue
-            if kind == "attrs":
-                entry[3] = tuple(
-                    (name, _guard_token(value)) for name, value in vars(owner).items()
-                )
-            elif kind == "battle_attrs":
-                entry[3] = tuple(
-                    (name, _guard_token(value))
-                    for name, value in vars(owner).items()
-                    if name not in _DERIVED_BATTLE_CACHE_FIELDS
-                )
-            elif kind == "dict":
-                entry[3] = tuple(
-                    (_guard_token(key), _guard_token(value))
-                    for key, value in owner.items()
-                )
-            elif kind == "mapping_subset":
-                entry[3] = tuple(
-                    (key, key in owner, _guard_token(owner.get(key)))
-                    for key, _present, _value in entry[3]
-                )
-            elif kind == "sequence":
-                entry[3] = tuple(_guard_token(value) for value in owner)
-            elif kind == "set":
-                entry[3] = {_guard_token(value) for value in owner}
-            elif kind == "rng":
-                entry[3] = _guard_token(owner.getstate())
-            elif kind == "ndarray":
-                entry[3] = (
-                    owner.shape,
-                    owner.strides,
-                    owner.dtype.str,
-                    owner.tobytes(order="A"),
-                )
-            elif kind == "arena_geometry":  # immutable resident authority
-                continue
 
     def first_mismatch(self) -> str | None:
         for entry in self.entries:
@@ -767,15 +646,12 @@ class ResidentCompleteTickRuntime:
 
     def _record_on_boundary(self) -> None:
         guard = self._on_boundary_guard
-        if guard is not None and guard.topology_matches():
-            guard.refresh()
-        else:
-            guard = _compile_direct_causal_guard(
-                self.battle,
-                self._entity_registry,
-                previous_guard=guard,
-            )
-            self._on_boundary_guard = guard
+        guard = _compile_direct_causal_guard(
+            self.battle,
+            self._entity_registry,
+            previous_guard=guard,
+        )
+        self._on_boundary_guard = guard
         resident = self._resident
         if resident is None:  # pragma: no cover - active runtime invariant
             raise RuntimeError("resident on-mode boundary has no native state")
