@@ -27,6 +27,47 @@ fn sha256_hex(payload: &[u8]) -> String {
     format!("{:x}", Sha256::digest(payload))
 }
 
+fn integer_sqrt(value: u128) -> i64 {
+    if value < 2 {
+        return value as i64;
+    }
+    let mut low = 1_u128;
+    let mut high = value.min(i64::MAX as u128);
+    while low <= high {
+        let middle = (low + high) / 2;
+        if middle <= value / middle {
+            low = middle + 1;
+        } else {
+            high = middle - 1;
+        }
+    }
+    high as i64
+}
+
+fn logic_units(value: f64) -> i64 {
+    (value * 1000.0).round_ties_even() as i64
+}
+
+fn truncating_div(numerator: i128, denominator: i64) -> i64 {
+    debug_assert!(denominator > 0);
+    (numerator / i128::from(denominator)) as i64
+}
+
+fn vector_towards_logic_units(dx: i64, dy: i64, distance: i64) -> (i64, i64) {
+    if distance <= 0 || (dx == 0 && dy == 0) {
+        return (0, 0);
+    }
+    let squared = (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128;
+    let remaining = integer_sqrt(squared).max(1);
+    if distance >= remaining {
+        return (dx, dy);
+    }
+    (
+        truncating_div(i128::from(dx) * i128::from(distance), remaining),
+        truncating_div(i128::from(dy) * i128::from(distance), remaining),
+    )
+}
+
 fn validate_checkpoint(payload: &[u8]) -> PyResult<u64> {
     let root: Value = serde_json::from_slice(payload)
         .map_err(|error| PyValueError::new_err(format!("invalid battle checkpoint: {error}")))?;
@@ -71,6 +112,24 @@ fn required_bool(fields: &Map<String, Value>, name: &str) -> PyResult<bool> {
         .get(name)
         .and_then(Value::as_bool)
         .ok_or_else(|| PyValueError::new_err(format!("checkpoint field {name:?} is not a bool")))
+}
+
+fn optional_entity_ref_id(fields: &Map<String, Value>, name: &str) -> PyResult<Option<i64>> {
+    let Some(value) = fields.get(name) else {
+        return Ok(None);
+    };
+    if value.is_null() {
+        return Ok(None);
+    }
+    value
+        .get("$entity_ref")
+        .and_then(Value::as_i64)
+        .map(Some)
+        .ok_or_else(|| {
+            PyValueError::new_err(format!(
+                "checkpoint field {name:?} is not an entity reference"
+            ))
+        })
 }
 
 #[derive(Clone)]
@@ -471,6 +530,7 @@ struct ResidentEntity {
     position_y: ExactScalar,
     hitpoints: ExactScalar,
     max_hitpoints: ExactScalar,
+    damage: ExactScalar,
     is_alive: bool,
     target_id: Option<i64>,
     deploy_delay_remaining: f64,
@@ -484,6 +544,115 @@ struct ResidentEntity {
     direct_combat_unsupported: Vec<String>,
     locked_combat: Option<LockedDirectCombatState>,
     building_lifetime: Option<BuildingLifetimeState>,
+    point_projectile: Option<PointProjectileState>,
+}
+
+#[derive(Clone)]
+struct PointProjectileState {
+    target_x: f64,
+    target_y: f64,
+    travel_speed: f64,
+    hits_air: bool,
+    hits_ground: bool,
+    launch_delay: f64,
+    primary_target_id: Option<i64>,
+    source_entity_id: Option<i64>,
+    tracks_target: bool,
+    temporary_homing_remaining_ms: i64,
+    temporary_homing_target_id: Option<i64>,
+    permanent_homing_disabled_by_temporary: bool,
+    unsupported: Vec<String>,
+}
+
+impl PointProjectileState {
+    fn from_fields(fields: &Map<String, Value>) -> PyResult<Self> {
+        let target = object_fields(
+            fields
+                .get("target_position")
+                .ok_or_else(|| PyValueError::new_err("projectile has no target_position"))?,
+        )?;
+        let mut unsupported = Vec::new();
+        let splash_radius = normalized_f64(fields, "splash_radius")?;
+        let stun_duration = normalized_f64(fields, "stun_duration")?;
+        let slow_duration = normalized_f64(fields, "slow_duration")?;
+        let slow_multiplier = normalized_f64(fields, "slow_multiplier")?;
+        let knockback_distance = normalized_f64(fields, "knockback_distance")?;
+        let damage_waves = required_i64(fields, "damage_waves")?;
+        let damage_wave_interval = normalized_f64(fields, "damage_wave_interval")?;
+        let pierces = required_bool(fields, "pierces")?;
+        let projectile_range = normalized_f64(fields, "projectile_range")?;
+        required_i64(fields, "homing_time_ms")?;
+        let start_extra_radius = normalized_f64(fields, "start_extra_radius")?;
+        if splash_radius != 0.0 {
+            unsupported.push("splash_radius".to_owned());
+        }
+        if stun_duration != 0.0 || slow_duration != 0.0 || slow_multiplier != 1.0 {
+            unsupported.push("status_payload".to_owned());
+        }
+        if knockback_distance != 0.0 {
+            unsupported.push("knockback_payload".to_owned());
+        }
+        if damage_waves != 1 || damage_wave_interval != 0.0 {
+            unsupported.push("damage_waves".to_owned());
+        }
+        if pierces || projectile_range != 0.0 || start_extra_radius != 0.0 {
+            unsupported.push("piercing_payload".to_owned());
+        }
+        let spawn_projectile_data_present = fields
+            .get("spawn_projectile_data")
+            .is_some_and(|value| !value.is_null());
+        if spawn_projectile_data_present {
+            unsupported.push("child_projectiles".to_owned());
+        }
+        for (name, value) in [
+            ("target_x", normalized_f64(target, "x")?),
+            ("target_y", normalized_f64(target, "y")?),
+            ("travel_speed", normalized_f64(fields, "travel_speed")?),
+            ("launch_delay", normalized_f64(fields, "launch_delay")?),
+        ] {
+            if !value.is_finite() {
+                unsupported.push(format!("nonfinite_{name}"));
+            }
+        }
+        Ok(Self {
+            target_x: normalized_f64(target, "x")?,
+            target_y: normalized_f64(target, "y")?,
+            travel_speed: normalized_f64(fields, "travel_speed")?,
+            hits_air: required_bool(fields, "hits_air")?,
+            hits_ground: required_bool(fields, "hits_ground")?,
+            launch_delay: normalized_f64(fields, "launch_delay")?,
+            primary_target_id: optional_entity_ref_id(fields, "primary_target")?,
+            source_entity_id: optional_entity_ref_id(fields, "source_entity")?,
+            tracks_target: required_bool(fields, "tracks_target")?,
+            temporary_homing_remaining_ms: fields
+                .get("_temporary_homing_remaining_ms")
+                .and_then(Value::as_i64)
+                .unwrap_or(0),
+            temporary_homing_target_id: optional_entity_ref_id(fields, "_temporary_homing_target")?,
+            permanent_homing_disabled_by_temporary: fields
+                .get("_permanent_homing_disabled_by_temporary")
+                .and_then(Value::as_bool)
+                .unwrap_or(false),
+            unsupported,
+        })
+    }
+
+    fn diagnostic_value(&self, entity: &ResidentEntity) -> Value {
+        json!({
+            "encounter_index": entity.encounter_index,
+            "hitpoints": entity.hitpoints.diagnostic_value(),
+            "id": entity.id,
+            "is_alive": entity.is_alive,
+            "launch_delay": exact_f64_value(self.launch_delay),
+            "permanent_homing_disabled_by_temporary": self.permanent_homing_disabled_by_temporary,
+            "position_x": entity.position_x.diagnostic_value(),
+            "position_y": entity.position_y.diagnostic_value(),
+            "target_position_x": exact_f64_value(self.target_x),
+            "target_position_y": exact_f64_value(self.target_y),
+            "temporary_homing_remaining_ms": self.temporary_homing_remaining_ms,
+            "temporary_homing_target_id": self.temporary_homing_target_id,
+        })
+    }
 }
 
 #[derive(Clone)]
@@ -533,6 +702,7 @@ struct LockedDirectCombatState {
     collision_radius: f64,
     native_target_distance_discount_sq_units: i64,
     is_air_unit: bool,
+    is_airborne_for_projectile: bool,
     can_attack_air: bool,
     can_attack_ground: bool,
     facing_x_units: i64,
@@ -592,6 +762,8 @@ impl LockedDirectCombatState {
                 "_native_target_distance_discount_sq_units",
             )?,
             is_air_unit: required_bool(fields, "is_air_unit")?,
+            is_airborne_for_projectile: required_bool(fields, "is_air_unit")?
+                || normalized_optional_bool(fields, "_river_jump_active"),
             can_attack_air: required_bool(fields, "_can_attack_air_cached")?,
             can_attack_ground: required_bool(fields, "_can_attack_ground_cached")?,
             facing_x_units: required_i64(fields, "_facing_x_units")?,
@@ -713,6 +885,11 @@ impl ResidentEntity {
         } else {
             None
         };
+        let point_projectile = if object_type(value)? == "clasher.entities.Projectile" {
+            Some(PointProjectileState::from_fields(fields)?)
+        } else {
+            None
+        };
         let mut direct_combat_unsupported = Vec::new();
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
@@ -829,6 +1006,11 @@ impl ResidentEntity {
                     .get("max_hitpoints")
                     .ok_or_else(|| PyValueError::new_err("entity has no max_hitpoints"))?,
             )?,
+            damage: ExactScalar::from_normalized(
+                fields
+                    .get("damage")
+                    .ok_or_else(|| PyValueError::new_err("entity has no damage"))?,
+            )?,
             is_alive: required_bool(fields, "is_alive")?,
             target_id,
             deploy_delay_remaining: normalized_f64(fields, "deploy_delay_remaining")?,
@@ -851,6 +1033,7 @@ impl ResidentEntity {
             direct_combat_unsupported,
             locked_combat,
             building_lifetime,
+            point_projectile,
         })
     }
 
@@ -946,6 +1129,12 @@ impl ResidentEntity {
 
     fn building_lifetime_diagnostic_value(&self) -> Option<Value> {
         self.building_lifetime
+            .as_ref()
+            .map(|state| state.diagnostic_value(self))
+    }
+
+    fn point_projectile_diagnostic_value(&self) -> Option<Value> {
+        self.point_projectile
             .as_ref()
             .map(|state| state.diagnostic_value(self))
     }
@@ -2169,6 +2358,105 @@ impl ResidentBattle {
         Ok(sha256_hex(&self.building_lifetime_state_bytes()?))
     }
 
+    fn supports_point_projectile_phase(&self) -> bool {
+        self.entities.iter().all(|entity| {
+            if entity.entity_kind != 2 {
+                return matches!(entity.entity_kind, 0 | 1);
+            }
+            let Some(projectile) = entity.point_projectile.as_ref() else {
+                return false;
+            };
+            if !entity.mechanics.is_empty() || !projectile.unsupported.is_empty() {
+                return false;
+            }
+            if !entity.damage.as_f64().is_finite()
+                || !entity.hitpoints.as_f64().is_finite()
+                || !entity.position_x.as_f64().is_finite()
+                || !entity.position_y.as_f64().is_finite()
+            {
+                return false;
+            }
+            let Some(target_id) = projectile.primary_target_id else {
+                return false;
+            };
+            let Some(target) = self
+                .entities
+                .iter()
+                .find(|candidate| candidate.id == target_id)
+            else {
+                return false;
+            };
+            if target.entity_kind != 0 || !target.mechanics.is_empty() {
+                return false;
+            }
+            if !target.hitpoints.as_f64().is_finite() {
+                return false;
+            }
+            if let Some(source_id) = projectile.source_entity_id {
+                let Some(source) = self
+                    .entities
+                    .iter()
+                    .find(|candidate| candidate.id == source_id)
+                else {
+                    return false;
+                };
+                if !source.mechanics.is_empty() {
+                    return false;
+                }
+            }
+            if projectile.temporary_homing_remaining_ms > 0 {
+                let Some(homing_target_id) = projectile.temporary_homing_target_id else {
+                    return false;
+                };
+                if !self
+                    .entities
+                    .iter()
+                    .any(|candidate| candidate.id == homing_target_id)
+                {
+                    return false;
+                }
+            }
+            true
+        })
+    }
+
+    fn advance_point_projectile_phase(&mut self) -> PyResult<()> {
+        if !self.supports_point_projectile_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident point-projectile preflight rejected unsupported object or payload",
+            ));
+        }
+        self.checkpoint_current = false;
+        let mut projectile_indices = self
+            .entities
+            .iter()
+            .enumerate()
+            .filter_map(|(index, entity)| (entity.entity_kind == 2).then_some(index))
+            .collect::<Vec<_>>();
+        projectile_indices.sort_unstable_by_key(|index| self.entities[*index].id);
+        for projectile_index in projectile_indices {
+            self.advance_point_projectile(projectile_index);
+        }
+        Ok(())
+    }
+
+    fn point_projectile_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter_map(ResidentEntity::point_projectile_diagnostic_value)
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident point-projectile state: {error}"
+            ))
+        })
+    }
+
+    fn point_projectile_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.point_projectile_state_bytes()?))
+    }
+
     fn rng_random(&mut self) -> f64 {
         self.checkpoint_current = false;
         self.rng.random()
@@ -2273,6 +2561,172 @@ impl ResidentBattle {
 }
 
 impl ResidentBattle {
+    fn advance_point_projectile(&mut self, projectile_index: usize) {
+        if !self.entities[projectile_index].is_alive {
+            return;
+        }
+        let mut step_dt = self.dt;
+        {
+            let projectile = self.entities[projectile_index]
+                .point_projectile
+                .as_mut()
+                .expect("point-projectile preflight requires state");
+            if projectile.launch_delay > 0.0 {
+                if step_dt <= projectile.launch_delay + 1e-12 {
+                    projectile.launch_delay = (projectile.launch_delay - step_dt).max(0.0);
+                    let position_x =
+                        logic_units(self.entities[projectile_index].position_x.as_f64());
+                    let position_y =
+                        logic_units(self.entities[projectile_index].position_y.as_f64());
+                    self.entities[projectile_index]
+                        .position_x
+                        .set_f64(position_x as f64 / 1000.0);
+                    self.entities[projectile_index]
+                        .position_y
+                        .set_f64(position_y as f64 / 1000.0);
+                    return;
+                }
+                step_dt -= projectile.launch_delay;
+                projectile.launch_delay = 0.0;
+            }
+        }
+
+        let (
+            temporary_remaining,
+            temporary_target_id,
+            tracks_target,
+            permanent_homing_disabled,
+            primary_target_id,
+        ) = {
+            let projectile = self.entities[projectile_index]
+                .point_projectile
+                .as_ref()
+                .expect("point-projectile preflight requires state");
+            (
+                projectile.temporary_homing_remaining_ms,
+                projectile.temporary_homing_target_id,
+                projectile.tracks_target,
+                projectile.permanent_homing_disabled_by_temporary,
+                projectile.primary_target_id,
+            )
+        };
+        let homing_target_id = if temporary_remaining > 0 {
+            temporary_target_id
+        } else if tracks_target && !permanent_homing_disabled {
+            primary_target_id
+        } else {
+            None
+        };
+        if let Some(target_id) = homing_target_id {
+            let target = self
+                .entities
+                .iter()
+                .find(|candidate| candidate.id == target_id)
+                .expect("point-projectile preflight requires homing target");
+            let target_position = (target.position_x.as_f64(), target.position_y.as_f64());
+            let projectile = self.entities[projectile_index]
+                .point_projectile
+                .as_mut()
+                .expect("point-projectile preflight requires state");
+            projectile.target_x = target_position.0;
+            projectile.target_y = target_position.1;
+            if temporary_remaining > 0 {
+                projectile.temporary_homing_remaining_ms -= 50;
+            }
+        } else if temporary_remaining > 0 {
+            self.entities[projectile_index]
+                .point_projectile
+                .as_mut()
+                .expect("point-projectile preflight requires state")
+                .temporary_homing_remaining_ms = 0;
+        }
+
+        let (position_x, position_y, target_x, target_y, travel_speed, target_id) = {
+            let entity = &self.entities[projectile_index];
+            let projectile = entity
+                .point_projectile
+                .as_ref()
+                .expect("point-projectile preflight requires state");
+            (
+                entity.position_x.as_f64(),
+                entity.position_y.as_f64(),
+                projectile.target_x,
+                projectile.target_y,
+                projectile.travel_speed,
+                projectile.primary_target_id,
+            )
+        };
+        let dx = logic_units(target_x - position_x);
+        let dy = logic_units(target_y - position_y);
+        let remaining = integer_sqrt(
+            (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128,
+        );
+        let serialized_speed = (travel_speed * 1000.0 * 0.05).round_ties_even().max(0.0) as i64;
+        let tick_count = step_dt.max(0.0) / 0.05;
+        let rounded_tick_count = tick_count.round_ties_even();
+        let travel = if (tick_count - rounded_tick_count).abs() <= 1e-9 {
+            serialized_speed * rounded_tick_count as i64
+        } else {
+            (serialized_speed as f64 * tick_count)
+                .round_ties_even()
+                .max(0.0) as i64
+        };
+        if remaining <= travel {
+            let (projectile_player, damage, hits_air, hits_ground) = {
+                let entity = &self.entities[projectile_index];
+                let projectile = entity
+                    .point_projectile
+                    .as_ref()
+                    .expect("point-projectile preflight requires state");
+                (
+                    entity.player_id,
+                    entity.damage.as_f64(),
+                    projectile.hits_air,
+                    projectile.hits_ground,
+                )
+            };
+            if let Some(target_index) = target_id.and_then(|id| {
+                self.entities
+                    .iter()
+                    .position(|candidate| candidate.id == id)
+            }) {
+                let target_is_air = self.entities[target_index]
+                    .locked_combat
+                    .as_ref()
+                    .is_some_and(|state| state.is_airborne_for_projectile);
+                let can_damage = self.entities[target_index].is_alive
+                    && self.entities[target_index].player_id != projectile_player
+                    && self.entities[target_index].entity_kind == 0
+                    && ((target_is_air && hits_air) || (!target_is_air && hits_ground));
+                if can_damage && damage > 0.0 {
+                    let remaining_hp =
+                        (self.entities[target_index].hitpoints.as_f64() - damage).max(0.0);
+                    if remaining_hp <= 0.0 {
+                        self.entities[target_index].hitpoints = ExactScalar::Int(0);
+                        self.entities[target_index].is_alive = false;
+                    } else {
+                        self.entities[target_index].hitpoints.set_f64(remaining_hp);
+                    }
+                }
+            }
+            self.entities[projectile_index].is_alive = false;
+            self.entities[projectile_index]
+                .position_x
+                .set_f64(logic_units(position_x) as f64 / 1000.0);
+            self.entities[projectile_index]
+                .position_y
+                .set_f64(logic_units(position_y) as f64 / 1000.0);
+        } else {
+            let (move_x, move_y) = vector_towards_logic_units(dx, dy, travel);
+            self.entities[projectile_index]
+                .position_x
+                .set_f64((logic_units(position_x) + move_x) as f64 / 1000.0);
+            self.entities[projectile_index]
+                .position_y
+                .set_f64((logic_units(position_y) + move_y) as f64 / 1000.0);
+        }
+    }
+
     fn direct_target_valid(&self, actor_index: usize, target_index: usize) -> bool {
         if actor_index == target_index {
             return false;

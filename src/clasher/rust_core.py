@@ -6,7 +6,7 @@ import struct
 from collections import deque
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Final
+from typing import Any, Final, cast
 
 from .balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
 from .differential import (
@@ -366,7 +366,10 @@ class ResidentRustBattle:
         return bool(self._native.supports_direct_combat_phase())
 
     def direct_combat_capability(self) -> list[dict[str, Any]]:
-        return json.loads(self._native.direct_combat_capability_bytes())
+        return cast(
+            list[dict[str, Any]],
+            json.loads(self._native.direct_combat_capability_bytes()),
+        )
 
     @property
     def supports_locked_direct_combat_phase(self) -> bool:
@@ -394,6 +397,19 @@ class ResidentRustBattle:
 
     def building_lifetime_sha256(self) -> str:
         return str(self._native.building_lifetime_sha256())
+
+    @property
+    def supports_point_projectile_phase(self) -> bool:
+        return bool(self._native.supports_point_projectile_phase())
+
+    def advance_point_projectile_phase(self) -> None:
+        self._native.advance_point_projectile_phase()
+
+    def point_projectile_state_bytes(self) -> bytes:
+        return bytes(self._native.point_projectile_state_bytes())
+
+    def point_projectile_sha256(self) -> str:
+        return str(self._native.point_projectile_sha256())
 
     def locked_direct_combat_state_bytes(self) -> bytes:
         return bytes(self._native.locked_direct_combat_state_bytes())
@@ -634,6 +650,10 @@ def _exact_scalar(value: Any) -> dict[str, str | int]:
     if type(value) is int:
         return {"kind": "int", "value": int(value)}
     return {"bits": f"{struct.unpack('<Q', struct.pack('<d', float(value)))[0]:016x}", "kind": "float"}
+
+
+def _entity_id_or_none(value: Any) -> int | None:
+    return None if value is None else int(value.id)
 
 
 def resident_entity_rows(battle: Any) -> list[dict[str, Any]]:
@@ -984,6 +1004,79 @@ def building_lifetime_state_bytes(battle: Any) -> bytes:
         sort_keys=True,
         separators=(",", ":"),
     ).encode("ascii")
+
+
+def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
+    from .entities import Projectile
+
+    return [
+        {
+            "encounter_index": encounter_index,
+            "hitpoints": _exact_scalar(entity.hitpoints),
+            "id": int(entity.id),
+            "is_alive": bool(entity.is_alive),
+            "launch_delay": _exact_scalar(entity.launch_delay),
+            "permanent_homing_disabled_by_temporary": bool(
+                getattr(
+                    entity,
+                    "_permanent_homing_disabled_by_temporary",
+                    False,
+                )
+            ),
+            "position_x": _exact_scalar(entity.position.x),
+            "position_y": _exact_scalar(entity.position.y),
+            "target_position_x": _exact_scalar(entity.target_position.x),
+            "target_position_y": _exact_scalar(entity.target_position.y),
+            "temporary_homing_remaining_ms": int(
+                getattr(entity, "_temporary_homing_remaining_ms", 0)
+            ),
+            "temporary_homing_target_id": (
+                _entity_id_or_none(
+                    getattr(entity, "_temporary_homing_target", None)
+                )
+            ),
+        }
+        for encounter_index, entity in enumerate(battle.entities.values())
+        if type(entity) is Projectile
+    ]
+
+
+def point_projectile_state_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        point_projectile_state_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_point_projectile_phase(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = point_projectile_state_rows(battle)
+    actual = json.loads(resident.point_projectile_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust point-projectile state mismatch")
+        raise AssertionError(
+            "resident Rust point-projectile parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(
+        point_projectile_state_bytes(battle)
+    ).hexdigest()
+    actual_hash = resident.point_projectile_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust point-projectile hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
+    compare_resident_entities(battle, resident)
+    compare_resident_rng(battle.rng, resident)
 
 
 def compare_building_lifetime_phase(
