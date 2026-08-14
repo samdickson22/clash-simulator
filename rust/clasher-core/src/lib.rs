@@ -1868,6 +1868,7 @@ impl BuildingImpactState {
 
 #[derive(Clone)]
 struct PointProjectileState {
+    source_kind: String,
     target_x: f64,
     target_y: f64,
     travel_speed: f64,
@@ -1880,6 +1881,8 @@ struct PointProjectileState {
     stun_duration: f64,
     slow_duration: f64,
     slow_multiplier: f64,
+    knockback_distance: f64,
+    knockback_ignores_mass: bool,
     launch_delay: f64,
     primary_target_id: Option<i64>,
     source_entity_id: Option<i64>,
@@ -1910,8 +1913,8 @@ impl PointProjectileState {
         let projectile_range = normalized_f64(fields, "projectile_range")?;
         required_i64(fields, "homing_time_ms")?;
         let start_extra_radius = normalized_f64(fields, "start_extra_radius")?;
-        if knockback_distance != 0.0 {
-            unsupported.push("knockback_payload".to_owned());
+        if !knockback_distance.is_finite() || knockback_distance < 0.0 {
+            unsupported.push("invalid_knockback_payload".to_owned());
         }
         if damage_waves != 1 || damage_wave_interval != 0.0 {
             unsupported.push("damage_waves".to_owned());
@@ -1936,6 +1939,12 @@ impl PointProjectileState {
             }
         }
         Ok(Self {
+            source_kind: fields
+                .get("spell_name")
+                .and_then(Value::as_str)
+                .or_else(|| fields.get("source_name").and_then(Value::as_str))
+                .unwrap_or("Unknown")
+                .to_owned(),
             target_x: normalized_f64(target, "x")?,
             target_y: normalized_f64(target, "y")?,
             travel_speed: normalized_f64(fields, "travel_speed")?,
@@ -1948,6 +1957,8 @@ impl PointProjectileState {
             stun_duration,
             slow_duration,
             slow_multiplier,
+            knockback_distance,
+            knockback_ignores_mass: required_bool(fields, "knockback_ignores_mass")?,
             launch_delay: normalized_f64(fields, "launch_delay")?,
             primary_target_id: optional_entity_ref_id(fields, "primary_target")?,
             source_entity_id: optional_entity_ref_id(fields, "source_entity")?,
@@ -1972,19 +1983,29 @@ impl PointProjectileState {
             "crown_tower_damage": self.crown_tower_damage.map(exact_f64_value),
             "crown_tower_damage_multiplier": exact_f64_value(self.crown_tower_damage_multiplier),
             "hitpoints": entity.hitpoints.diagnostic_value(),
+            "damage": entity.damage.diagnostic_value(),
+            "hits_air": self.hits_air,
+            "hits_ground": self.hits_ground,
             "id": entity.id,
             "ignore_buildings": self.ignore_buildings,
             "is_alive": entity.is_alive,
             "launch_delay": exact_f64_value(self.launch_delay),
+            "knockback_distance": exact_f64_value(self.knockback_distance),
+            "knockback_ignores_mass": self.knockback_ignores_mass,
             "permanent_homing_disabled_by_temporary": self.permanent_homing_disabled_by_temporary,
             "position_x": entity.position_x.diagnostic_value(),
             "position_y": entity.position_y.diagnostic_value(),
+            "primary_target_id": self.primary_target_id,
             "splash_radius": exact_f64_value(self.splash_radius),
             "slow_duration": exact_f64_value(self.slow_duration),
             "slow_multiplier": exact_f64_value(self.slow_multiplier),
+            "source_entity_id": self.source_entity_id,
+            "source_kind": self.source_kind,
             "stun_duration": exact_f64_value(self.stun_duration),
             "target_position_x": exact_f64_value(self.target_x),
             "target_position_y": exact_f64_value(self.target_y),
+            "tracks_target": self.tracks_target,
+            "travel_speed": exact_f64_value(self.travel_speed),
             "start_collision_resolved": self.start_collision_resolved,
             "temporary_homing_remaining_ms": self.temporary_homing_remaining_ms,
             "temporary_homing_target_id": self.temporary_homing_target_id,
@@ -2519,11 +2540,11 @@ impl ResidentEntity {
                 .get("position")
                 .ok_or_else(|| PyValueError::new_err("entity has no position"))?,
         )?;
-        let card_fields = object_fields(
-            fields
-                .get("card_stats")
-                .ok_or_else(|| PyValueError::new_err("entity has no card_stats"))?,
-        )?;
+        let empty_card_fields = Map::new();
+        let card_fields = match fields.get("card_stats") {
+            Some(Value::Null) | None => &empty_card_fields,
+            Some(card_stats) => object_fields(card_stats)?,
+        };
         let mechanic_values = fields
             .get("mechanics")
             .and_then(Value::as_array)
@@ -2790,7 +2811,7 @@ impl ResidentEntity {
                 fields,
                 "_pending_projectile_max_duration_ms",
             )?,
-            spawn_angle_shift: optional_normalized_f64(card_fields, "spawn_angle_shift")?
+            spawn_angle_shift: absent_optional_normalized_f64(card_fields, "spawn_angle_shift")?
                 .unwrap_or(0.0),
             reward_traits: ResidentRewardTraits::from_card_fields(card_fields)?,
             death_spawn_payload_present,
@@ -2933,7 +2954,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 2;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 3;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -2964,6 +2985,40 @@ struct ResidentCardWire {
     deploy_delay_offsets: Vec<f64>,
     capability_reasons: Vec<String>,
     template_snapshot: Option<Value>,
+    #[serde(default)]
+    projectile_spell: Option<ResidentProjectileSpellWire>,
+}
+
+#[derive(Deserialize)]
+struct ResidentProjectileSpellWire {
+    radius: f64,
+    damage: f64,
+    travel_speed: f64,
+    stun_duration: f64,
+    slow_duration: f64,
+    slow_multiplier: f64,
+    knockback_distance: f64,
+    knockback_ignores_mass: bool,
+    hits_air: bool,
+    hits_ground: bool,
+    crown_tower_damage_multiplier: f64,
+    crown_tower_damage: Option<f64>,
+}
+
+#[derive(Clone)]
+struct ResidentProjectileSpellSpec {
+    radius: f64,
+    damage: f64,
+    travel_speed: f64,
+    stun_duration: f64,
+    slow_duration: f64,
+    slow_multiplier: f64,
+    knockback_distance: f64,
+    knockback_ignores_mass: bool,
+    hits_air: bool,
+    hits_ground: bool,
+    crown_tower_damage_multiplier: f64,
+    crown_tower_damage: Option<f64>,
 }
 
 #[derive(Clone)]
@@ -2979,11 +3034,13 @@ struct ResidentCardSpec {
     deploy_delay_offsets: Vec<f64>,
     capability_reasons: Vec<String>,
     prototype: Option<ResidentEntity>,
+    projectile_spell: Option<ResidentProjectileSpellSpec>,
 }
 
 impl ResidentCardSpec {
-    fn supports_troop_action(&self) -> bool {
-        self.capability_reasons.is_empty() && self.prototype.is_some()
+    fn supports_action(&self) -> bool {
+        self.capability_reasons.is_empty()
+            && (self.prototype.is_some() != self.projectile_spell.is_some())
     }
 }
 
@@ -3085,7 +3142,7 @@ impl ResidentCardCatalog {
                 )));
             }
             let summon_count = usize::try_from(card.summon_count).unwrap_or_default();
-            if !(1..=90).contains(&card.summon_count) {
+            if card.projectile_spell.is_none() && !(1..=90).contains(&card.summon_count) {
                 return Err(PyValueError::new_err(format!(
                     "resident catalog card {:?} has invalid formation data",
                     card.lookup_name
@@ -3100,6 +3157,7 @@ impl ResidentCardCatalog {
 
             let mut reasons = card.capability_reasons;
             if reasons.is_empty()
+                && card.projectile_spell.is_none()
                 && (card.formation_offsets.len() != 4
                     || card
                         .formation_offsets
@@ -3123,7 +3181,49 @@ impl ResidentCardCatalog {
                 },
                 None => None,
             };
-            if reasons.is_empty() {
+            let projectile_spell = card.projectile_spell.map(|spell| {
+                let finite = [
+                    spell.radius,
+                    spell.damage,
+                    spell.travel_speed,
+                    spell.stun_duration,
+                    spell.slow_duration,
+                    spell.slow_multiplier,
+                    spell.knockback_distance,
+                    spell.crown_tower_damage_multiplier,
+                ]
+                .into_iter()
+                .all(f64::is_finite)
+                    && spell.crown_tower_damage.is_none_or(f64::is_finite);
+                if !finite
+                    || spell.radius <= 0.0
+                    || spell.damage <= 0.0
+                    || spell.travel_speed <= 0.0
+                    || spell.stun_duration < 0.0
+                    || spell.slow_duration < 0.0
+                    || spell.slow_multiplier < 0.0
+                    || spell.knockback_distance < 0.0
+                    || spell.crown_tower_damage_multiplier < 0.0
+                    || spell.crown_tower_damage.is_some_and(|damage| damage < 0.0)
+                {
+                    reasons.push("native_projectile_spell_preflight".to_owned());
+                }
+                ResidentProjectileSpellSpec {
+                    radius: spell.radius,
+                    damage: spell.damage,
+                    travel_speed: spell.travel_speed,
+                    stun_duration: spell.stun_duration,
+                    slow_duration: spell.slow_duration,
+                    slow_multiplier: spell.slow_multiplier,
+                    knockback_distance: spell.knockback_distance,
+                    knockback_ignores_mass: spell.knockback_ignores_mass,
+                    hits_air: spell.hits_air,
+                    hits_ground: spell.hits_ground,
+                    crown_tower_damage_multiplier: spell.crown_tower_damage_multiplier,
+                    crown_tower_damage: spell.crown_tower_damage,
+                }
+            });
+            if reasons.is_empty() && projectile_spell.is_none() {
                 let supported = prototype.as_ref().is_some_and(|prototype| {
                     prototype.entity_kind == 0
                         && prototype.active
@@ -3153,6 +3253,8 @@ impl ResidentCardCatalog {
                 if !supported {
                     reasons.push("native_single_troop_preflight".to_owned());
                 }
+            } else if projectile_spell.is_some() && prototype.is_some() {
+                reasons.push("ambiguous_action_payload".to_owned());
             }
 
             let index = cards.len();
@@ -3169,6 +3271,7 @@ impl ResidentCardCatalog {
                 deploy_delay_offsets: card.deploy_delay_offsets,
                 capability_reasons: reasons,
                 prototype,
+                projectile_spell,
             });
         }
         Ok(Self {
@@ -3188,7 +3291,7 @@ impl ResidentCardCatalog {
     fn supported_names(&self) -> Vec<String> {
         self.cards
             .iter()
-            .filter(|card| card.supports_troop_action())
+            .filter(|card| card.supports_action())
             .map(|card| card.lookup_name.clone())
             .collect()
     }
@@ -3637,6 +3740,29 @@ fn append_string(payload: &mut Vec<u8>, value: &str) {
     payload.extend_from_slice(value.as_bytes());
 }
 
+#[derive(Clone)]
+struct ResidentPendingSpellCast {
+    execute_at: f64,
+    sequence: i64,
+    spell_name: String,
+    player_id: i64,
+    position_x: f64,
+    position_y: f64,
+}
+
+impl ResidentPendingSpellCast {
+    fn diagnostic_value(&self) -> Value {
+        json!({
+            "execute_at": exact_f64_value(self.execute_at),
+            "player_id": self.player_id,
+            "position_x": exact_f64_value(self.position_x),
+            "position_y": exact_f64_value(self.position_y),
+            "sequence": self.sequence,
+            "spell_name": self.spell_name,
+        })
+    }
+}
+
 /// Long-lived native battle allocation.
 ///
 /// Initialization and explicit checkpoint replacement may cross the FFI as a
@@ -3679,7 +3805,8 @@ struct ResidentBattle {
     entities: Vec<ResidentEntity>,
     next_entity_id: i64,
     lethal_projectile_reservation_ids: Vec<i64>,
-    pending_spell_casts_empty: bool,
+    pending_spell_casts: Vec<ResidentPendingSpellCast>,
+    next_spell_cast_sequence: i64,
     rng: PythonMt19937,
 }
 
@@ -3715,7 +3842,8 @@ impl ResidentBattle {
         sudden_death_crowns,
         tiebreaker_time,
         winner,
-        pending_spell_casts_empty
+        pending_spell_casts,
+        next_spell_cast_sequence
     ))]
     #[allow(clippy::too_many_arguments)]
     fn new(
@@ -3746,7 +3874,8 @@ impl ResidentBattle {
         sudden_death_crowns: (i64, i64),
         tiebreaker_time: f64,
         winner: Option<i64>,
-        pending_spell_casts_empty: bool,
+        pending_spell_casts: Vec<(f64, i64, String, i64, f64, f64)>,
+        next_spell_cast_sequence: i64,
     ) -> PyResult<Self> {
         if !time.is_finite() || !dt.is_finite() || dt < 0.0 {
             return Err(PyValueError::new_err(
@@ -3761,6 +3890,34 @@ impl ResidentBattle {
         let schema_version = validate_checkpoint(checkpoint)?;
         let catalog = Arc::new(ResidentCardCatalog::from_bytes(catalog)?);
         let entities = parse_resident_entities(checkpoint)?;
+        let pending_spell_casts = pending_spell_casts
+            .into_iter()
+            .map(
+                |(execute_at, sequence, spell_name, player_id, position_x, position_y)| {
+                    ResidentPendingSpellCast {
+                        execute_at,
+                        sequence,
+                        spell_name,
+                        player_id,
+                        position_x,
+                        position_y,
+                    }
+                },
+            )
+            .collect::<Vec<_>>();
+        if next_spell_cast_sequence < 0
+            || pending_spell_casts.iter().any(|cast| {
+                !cast.execute_at.is_finite()
+                    || cast.spell_name.is_empty()
+                    || !matches!(cast.player_id, 0 | 1)
+                    || !cast.position_x.is_finite()
+                    || !cast.position_y.is_finite()
+            })
+        {
+            return Err(PyValueError::new_err(
+                "resident pending spell cast state is invalid",
+            ));
+        }
         let next_entity_id = parse_next_entity_id(checkpoint)?;
         let rng = PythonMt19937::from_checkpoint(checkpoint)?;
         if refill_schedule.is_empty() {
@@ -3819,7 +3976,8 @@ impl ResidentBattle {
             entities,
             next_entity_id,
             lethal_projectile_reservation_ids: Vec::new(),
-            pending_spell_casts_empty,
+            pending_spell_casts,
+            next_spell_cast_sequence,
             rng,
         })
     }
@@ -4081,6 +4239,22 @@ impl ResidentBattle {
         self.next_entity_id
     }
 
+    fn pending_spell_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let value = json!({
+            "casts": self
+                .pending_spell_casts
+                .iter()
+                .map(ResidentPendingSpellCast::diagnostic_value)
+                .collect::<Vec<_>>(),
+            "next_sequence": self.next_spell_cast_sequence,
+        });
+        serde_json::to_vec(&value).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident pending spell state: {error}"
+            ))
+        })
+    }
+
     fn supports_modifier_phase(&self) -> bool {
         self.entities
             .iter()
@@ -4262,6 +4436,13 @@ impl ResidentBattle {
     }
 
     fn advance_resident_object_phase(&mut self) -> PyResult<()> {
+        self.advance_resident_object_phase_excluding(None)
+    }
+
+    fn advance_resident_object_phase_excluding(
+        &mut self,
+        excluded_id_range: Option<(i64, i64)>,
+    ) -> PyResult<()> {
         if !self.supports_resident_object_phase() {
             return Err(PyRuntimeError::new_err(
                 "resident object phase rejected unsupported object or character callback",
@@ -4275,7 +4456,10 @@ impl ResidentBattle {
                 .iter()
                 .enumerate()
                 .filter_map(|(index, entity)| {
-                    (entity.active && !processed_ids.contains(&entity.id)).then_some(index)
+                    let excluded = excluded_id_range
+                        .is_some_and(|(start, end)| (start..end).contains(&entity.id));
+                    (entity.active && !excluded && !processed_ids.contains(&entity.id))
+                        .then_some(index)
                 })
                 .collect::<Vec<_>>();
             if pending.is_empty() {
@@ -4710,6 +4894,13 @@ impl ResidentBattle {
             {
                 continue;
             }
+            if self.entities[actor_index].entity_kind == 0 {
+                self.entities[actor_index]
+                    .locked_combat
+                    .as_mut()
+                    .expect("direct preflight requires combat state")
+                    .movement_target_id = None;
+            }
             if self.entities[actor_index]
                 .movement
                 .as_ref()
@@ -4720,13 +4911,6 @@ impl ResidentBattle {
                 })
             {
                 continue;
-            }
-            if self.entities[actor_index].entity_kind == 0 {
-                self.entities[actor_index]
-                    .locked_combat
-                    .as_mut()
-                    .expect("direct preflight requires combat state")
-                    .movement_target_id = None;
             }
             if self.entities[actor_index].deploy_delay_remaining > 0.0 {
                 continue;
@@ -5009,26 +5193,30 @@ impl ResidentBattle {
                 || !projectile.stun_duration.is_finite()
                 || !projectile.slow_duration.is_finite()
                 || !projectile.slow_multiplier.is_finite()
+                || !projectile.knockback_distance.is_finite()
             {
                 return false;
             }
-            let Some(target_id) = projectile.primary_target_id else {
-                return false;
-            };
-            let Some(target) = self
-                .entities
-                .iter()
-                .find(|candidate| candidate.id == target_id)
-            else {
-                return false;
-            };
-            if !matches!(target.entity_kind, 0 | 1) || !target.has_only_compiled_mechanics() {
-                return false;
-            }
-            if target.entity_kind == 1 && target.building_impact.is_none() {
-                return false;
-            }
-            if !target.hitpoints.as_f64().is_finite() {
+            if let Some(target_id) = projectile.primary_target_id {
+                let Some(target) = self
+                    .entities
+                    .iter()
+                    .find(|candidate| candidate.id == target_id)
+                else {
+                    return false;
+                };
+                if !matches!(target.entity_kind, 0 | 1) || !target.has_only_compiled_mechanics() {
+                    return false;
+                }
+                if target.entity_kind == 1 && target.building_impact.is_none() {
+                    return false;
+                }
+                if !target.hitpoints.as_f64().is_finite() {
+                    return false;
+                }
+            } else if projectile.splash_radius <= 0.0
+                || !self.point_projectile_matches_spell_spec(entity, projectile)
+            {
                 return false;
             }
             if let Some(source_id) = projectile.source_entity_id {
@@ -5491,12 +5679,14 @@ impl ResidentBattle {
                 } else {
                     (canonical_x, canonical_y)
                 };
-                if self.valid_troop_placement(
-                    player_id,
-                    world_x * 1000 + 500,
-                    world_y * 1000 + 500,
-                    card,
-                ) {
+                let x_units = world_x * 1000 + 500;
+                let y_units = world_y * 1000 + 500;
+                let valid = if card.projectile_spell.is_some() {
+                    self.valid_spell_placement(x_units, y_units)
+                } else {
+                    self.valid_troop_placement(player_id, x_units, y_units, card)
+                };
+                if valid {
                     actions.push(slot_base + tile);
                 }
             }
@@ -5650,6 +5840,195 @@ impl ResidentBattle {
     const ACTION_ABILITY: i64 = Self::ACTION_NO_OP + 1;
     const ACTION_COUNT: i64 = Self::ACTION_ABILITY + 1;
 
+    fn projectile_spell_spec(&self, spell_name: &str) -> Option<&ResidentProjectileSpellSpec> {
+        self.catalog
+            .cards
+            .iter()
+            .find(|card| {
+                card.supports_action()
+                    && card.effective_name == spell_name
+                    && card.projectile_spell.is_some()
+            })
+            .and_then(|card| card.projectile_spell.as_ref())
+    }
+
+    fn supports_pending_spell_casts(&self) -> bool {
+        self.pending_spell_casts
+            .windows(2)
+            .all(|pair| pair[0].sequence < pair[1].sequence)
+            && self.next_spell_cast_sequence >= 0
+            && self.pending_spell_casts.iter().all(|cast| {
+                cast.execute_at.is_finite()
+                    && cast.sequence >= 0
+                    && cast.sequence < self.next_spell_cast_sequence
+                    && matches!(cast.player_id, 0 | 1)
+                    && cast.position_x.is_finite()
+                    && cast.position_y.is_finite()
+                    && (0.0..self.arena_width_tiles as f64).contains(&cast.position_x)
+                    && (0.0..self.arena_height_tiles as f64).contains(&cast.position_y)
+                    && self.valid_spell_placement(
+                        logic_units(cast.position_x),
+                        logic_units(cast.position_y),
+                    )
+                    && self.projectile_spell_spec(&cast.spell_name).is_some()
+            })
+    }
+
+    fn point_projectile_matches_spell_spec(
+        &self,
+        entity: &ResidentEntity,
+        projectile: &PointProjectileState,
+    ) -> bool {
+        let Some(spec) = self.projectile_spell_spec(&projectile.source_kind) else {
+            return false;
+        };
+        projectile.primary_target_id.is_none()
+            && projectile.source_entity_id.is_none()
+            && entity.damage.as_f64().to_bits() == spec.damage.to_bits()
+            && projectile.travel_speed.to_bits() == spec.travel_speed.to_bits()
+            && projectile.splash_radius.to_bits() == spec.radius.to_bits()
+            && projectile.stun_duration.to_bits() == spec.stun_duration.to_bits()
+            && projectile.slow_duration.to_bits() == spec.slow_duration.to_bits()
+            && projectile.slow_multiplier.to_bits() == spec.slow_multiplier.to_bits()
+            && projectile.knockback_distance.to_bits() == spec.knockback_distance.to_bits()
+            && projectile.knockback_ignores_mass == spec.knockback_ignores_mass
+            && projectile.hits_air == spec.hits_air
+            && projectile.hits_ground == spec.hits_ground
+            && projectile.crown_tower_damage_multiplier.to_bits()
+                == spec.crown_tower_damage_multiplier.to_bits()
+            && projectile.crown_tower_damage.map(f64::to_bits)
+                == spec.crown_tower_damage.map(f64::to_bits)
+            && projectile.tracks_target
+            && !projectile.ignore_buildings
+    }
+
+    fn resolve_pending_spell_casts(&mut self) -> PyResult<()> {
+        let mut due = self
+            .pending_spell_casts
+            .iter()
+            .filter(|cast| cast.execute_at <= self.time + 1e-9)
+            .cloned()
+            .collect::<Vec<_>>();
+        if due.is_empty() {
+            return Ok(());
+        }
+        let due_count = i64::try_from(due.len())
+            .map_err(|_| PyRuntimeError::new_err("resident due spell count overflow"))?;
+        if self
+            .next_entity_id
+            .checked_add(due_count)
+            .is_none_or(|next_id| !(0..i64::MAX).contains(&next_id))
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident due spell casts lack entity-ID allocation headroom",
+            ));
+        }
+        self.pending_spell_casts
+            .retain(|cast| cast.execute_at > self.time + 1e-9);
+        due.sort_by(|left, right| {
+            left.execute_at
+                .total_cmp(&right.execute_at)
+                .then_with(|| left.sequence.cmp(&right.sequence))
+        });
+        for cast in due {
+            let spec = self
+                .projectile_spell_spec(&cast.spell_name)
+                .cloned()
+                .ok_or_else(|| {
+                    PyRuntimeError::new_err("resident pending spell capability changed")
+                })?;
+            self.instantiate_projectile_spell(&cast, &spec)?;
+        }
+        Ok(())
+    }
+
+    fn instantiate_projectile_spell(
+        &mut self,
+        cast: &ResidentPendingSpellCast,
+        spec: &ResidentProjectileSpellSpec,
+    ) -> PyResult<()> {
+        let projectile_id = self.next_entity_id;
+        self.next_entity_id = self
+            .next_entity_id
+            .checked_add(1)
+            .ok_or_else(|| PyRuntimeError::new_err("resident spell projectile ID overflow"))?;
+        let launch_y: f64 = if cast.player_id == 0 { 2.5 } else { 29.5 };
+        self.entities.push(ResidentEntity {
+            active: true,
+            encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
+            id: projectile_id,
+            player_id: cast.player_id,
+            entity_kind: 2,
+            python_type: "clasher.entities.Projectile".to_owned(),
+            card_name: String::new(),
+            position_x: ExactScalar::Float(9.0_f64.to_bits()),
+            position_y: ExactScalar::Float(launch_y.to_bits()),
+            hitpoints: ExactScalar::Int(1),
+            max_hitpoints: ExactScalar::Int(1),
+            damage: ExactScalar::Float(spec.damage.to_bits()),
+            is_alive: true,
+            target_id: None,
+            deploy_delay_remaining: 0.0,
+            placement_delay_total: 0.0,
+            placement_pending: false,
+            spawn_hook_pending: false,
+            spawn_hook_fired: false,
+            freeze_expiry_time: 0.0,
+            death_spawn_target_immunity_elapsed_ms: -1,
+            pending_projectile_max_duration_ms: 0,
+            spawn_angle_shift: 0.0,
+            reward_traits: ResidentRewardTraits {
+                mana_cost: 0.0,
+                summon_count: 0,
+                summon_character_second_count: 0,
+                hit_speed_ms: 0.0,
+            },
+            death_spawn_payload_present: false,
+            mechanics: Vec::new(),
+            shields: Vec::new(),
+            shield_break_count: 0,
+            death_opcodes: Vec::new(),
+            modifier_state: None,
+            movement: None,
+            modifier_supported: true,
+            direct_combat_unsupported: vec!["non_character_entity".to_owned()],
+            locked_combat: None,
+            building_lifetime: None,
+            building_impact: None,
+            point_projectile: Some(PointProjectileState {
+                source_kind: cast.spell_name.clone(),
+                target_x: cast.position_x,
+                target_y: cast.position_y,
+                travel_speed: spec.travel_speed,
+                splash_radius: spec.radius,
+                hits_air: spec.hits_air,
+                hits_ground: spec.hits_ground,
+                ignore_buildings: false,
+                crown_tower_damage: spec.crown_tower_damage,
+                crown_tower_damage_multiplier: spec.crown_tower_damage_multiplier,
+                stun_duration: spec.stun_duration,
+                slow_duration: spec.slow_duration,
+                slow_multiplier: spec.slow_multiplier,
+                knockback_distance: spec.knockback_distance,
+                knockback_ignores_mass: spec.knockback_ignores_mass,
+                launch_delay: 0.0,
+                primary_target_id: None,
+                source_entity_id: None,
+                tracks_target: true,
+                temporary_homing_remaining_ms: 0,
+                temporary_homing_target_id: None,
+                permanent_homing_disabled_by_temporary: false,
+                start_collision_resolved: false,
+                unsupported: Vec::new(),
+            }),
+            area_effect: None,
+            object_base_movement_noop: true,
+            blocks_deployment: false,
+            deployment_collision_radius: 0.5,
+        });
+        Ok(())
+    }
+
     fn resident_death_spawns_supported(&self, entity: &ResidentEntity) -> bool {
         let compiled_spawn_count = entity
             .death_opcodes
@@ -5704,7 +6083,7 @@ impl ResidentBattle {
                 "resident oracle requires canonical ordered two-player hand state",
             ));
         }
-        if !self.pending_spell_casts_empty || !self.resident_id_invariants_hold() {
+        if !self.supports_pending_spell_casts() || !self.resident_id_invariants_hold() {
             return Err(PyRuntimeError::new_err(
                 "resident oracle rejected pending commands or entity-ID state",
             ));
@@ -5724,7 +6103,7 @@ impl ResidentBattle {
                         "resident oracle rejected uncatalogued hand/cycle card {card_name:?}"
                     )));
                 };
-                if !card.supports_troop_action() {
+                if !card.supports_action() {
                     return Err(PyRuntimeError::new_err(format!(
                         "resident oracle rejected unsupported hand/cycle card {card_name:?}: {}",
                         card.capability_reasons.join(",")
@@ -5837,7 +6216,7 @@ impl ResidentBattle {
                 "resident joint action rejected uncatalogued hand card {card_name:?}"
             )));
         };
-        if !card.supports_troop_action() {
+        if !card.supports_action() {
             return Err(PyRuntimeError::new_err(format!(
                 "resident joint action rejected unsupported hand card {card_name:?}: {}",
                 card.capability_reasons.join(",")
@@ -5873,8 +6252,14 @@ impl ResidentBattle {
             .get(slot)
             .and_then(Option::as_deref)
             .and_then(|name| self.catalog.get(name))
-            .filter(|card| card.supports_troop_action())
-            .map_or(0, |card| card.summon_count)
+            .filter(|card| card.supports_action())
+            .map_or(0, |card| {
+                if card.projectile_spell.is_some() {
+                    0
+                } else {
+                    card.summon_count
+                }
+            })
     }
 
     fn apply_troop_action(&mut self, player_id: usize, action: i64) -> PyResult<bool> {
@@ -5918,7 +6303,7 @@ impl ResidentBattle {
             .get(&card_name)
             .cloned()
             .ok_or_else(|| PyRuntimeError::new_err("resident card vanished after preflight"))?;
-        if !card.supports_troop_action() {
+        if !card.supports_action() {
             return Err(PyRuntimeError::new_err(
                 "resident card capability changed after preflight",
             ));
@@ -5930,7 +6315,12 @@ impl ResidentBattle {
 
         let x_units = world_x * 1000 + 500;
         let y_units = world_y * 1000 + 500;
-        if !self.valid_troop_placement(player_id, x_units, y_units, &card) {
+        let valid_placement = if card.projectile_spell.is_some() {
+            self.valid_spell_placement(x_units, y_units)
+        } else {
+            self.valid_troop_placement(player_id, x_units, y_units, &card)
+        };
+        if !valid_placement {
             return Ok(false);
         }
 
@@ -5947,6 +6337,23 @@ impl ResidentBattle {
         };
         player.hand[played_index] = None;
         player.cycle_queue.push_back(card_name);
+
+        if card.projectile_spell.is_some() {
+            self.pending_spell_casts.push(ResidentPendingSpellCast {
+                execute_at: self.time + 1.0,
+                sequence: self.next_spell_cast_sequence,
+                spell_name: card.effective_name.clone(),
+                player_id,
+                position_x: x_units as f64 / 1000.0,
+                position_y: y_units as f64 / 1000.0,
+            });
+            self.next_spell_cast_sequence = self
+                .next_spell_cast_sequence
+                .checked_add(1)
+                .ok_or_else(|| PyRuntimeError::new_err("resident spell sequence overflow"))?;
+            self.idle_eligible = false;
+            return Ok(true);
+        }
 
         let mut spawn_x_units = x_units;
         let mut spawn_y_units = y_units;
@@ -6097,6 +6504,17 @@ impl ResidentBattle {
             && !self.deployment_payload_occupies(x_units, y_units, mover_radius)
     }
 
+    fn valid_spell_placement(&self, x_units: i64, y_units: i64) -> bool {
+        if self.arena_width_tiles != Self::ACTION_BOARD_WIDTH
+            || self.arena_height_tiles != Self::ACTION_BOARD_HEIGHT
+            || !(0..self.arena_width_tiles * 1000).contains(&x_units)
+            || !(0..self.arena_height_tiles * 1000).contains(&y_units)
+        {
+            return false;
+        }
+        !Self::blocked_deployment_tile(x_units / 1000, y_units / 1000)
+    }
+
     fn blocked_deployment_tile(tile_x: i64, tile_y: i64) -> bool {
         matches!((tile_x, tile_y), (0, 14) | (0, 17) | (17, 14) | (17, 17))
             || (tile_y == 0 || tile_y == 31)
@@ -6187,9 +6605,9 @@ impl ResidentBattle {
         if self.game_over {
             return Ok(false);
         }
-        if !self.pending_spell_casts_empty {
+        if !self.supports_pending_spell_casts() {
             return Err(PyRuntimeError::new_err(
-                "resident complete tick has unsupported pending spell commands",
+                "resident complete tick rejected pending spell commands",
             ));
         }
         if !self.resident_id_invariants_hold() {
@@ -6205,6 +6623,8 @@ impl ResidentBattle {
         let initial_next_entity_id = self.next_entity_id;
         self.advance_clock_phase();
         self.advance_player_phase();
+        self.resolve_pending_spell_casts()?;
+        let post_command_next_entity_id = self.next_entity_id;
         self.advance_direct_troop_combat_phase()?;
         if !self.supports_ground_movement_phase() {
             return Err(PyRuntimeError::new_err(
@@ -6214,7 +6634,10 @@ impl ResidentBattle {
         self.advance_restricted_movement_phase(false, Some(initial_next_entity_id));
         self.advance_building_lifetime_phase()?;
         self.advance_modifier_phase_up_to(Some(initial_next_entity_id))?;
-        self.advance_resident_object_phase()?;
+        self.advance_resident_object_phase_excluding(Some((
+            initial_next_entity_id,
+            post_command_next_entity_id,
+        )))?;
         self.advance_cleanup_phase()?;
         if !self.sparse_idle_win_checks
             || self.win_conditions_dirty
@@ -8505,6 +8928,23 @@ impl ResidentBattle {
         origin: (i64, i64),
         distance_units: i64,
     ) {
+        self.begin_resident_radial_knockback_with_options(
+            target_index,
+            origin,
+            distance_units,
+            false,
+            None,
+        );
+    }
+
+    fn begin_resident_radial_knockback_with_options(
+        &mut self,
+        target_index: usize,
+        origin: (i64, i64),
+        distance_units: i64,
+        ignores_mass: bool,
+        fallback_direction: Option<(i64, i64)>,
+    ) {
         let target = &self.entities[target_index];
         let (Some(movement), Some(combat)) =
             (target.movement.as_ref(), target.locked_combat.as_ref())
@@ -8513,7 +8953,7 @@ impl ResidentBattle {
         };
         if target.entity_kind != 0
             || !target.is_alive
-            || movement.knockback_immune
+            || (movement.knockback_immune && !ignores_mass)
             || movement.knockback_target.is_some()
             || distance_units <= 0
         {
@@ -8524,8 +8964,15 @@ impl ResidentBattle {
         let mut dx = target_x - origin.0;
         let mut dy = target_y - origin.1;
         if dx == 0 && dy == 0 {
-            dx = if target.player_id == 0 { 1 } else { -1 };
-            dy = 0;
+            if let Some((fallback_x, fallback_y)) = fallback_direction
+                && (fallback_x != 0 || fallback_y != 0)
+            {
+                dx = fallback_x;
+                dy = fallback_y;
+            } else {
+                dx = if target.player_id == 0 { 1 } else { -1 };
+                dy = 0;
+            }
         }
         let distance_units = distance_units.clamp(0, 10_000);
         let (move_x, move_y) = normalized_vector_logic_units(dx, dy, distance_units);
@@ -8645,7 +9092,7 @@ impl ResidentBattle {
             player_id,
             entity_kind: 2,
             python_type: "clasher.entities.Projectile".to_owned(),
-            card_name,
+            card_name: card_name.clone(),
             position_x: ExactScalar::Float(launch_x.to_bits()),
             position_y: ExactScalar::Float(launch_y.to_bits()),
             hitpoints: ExactScalar::Int(1),
@@ -8681,6 +9128,7 @@ impl ResidentBattle {
             building_lifetime: None,
             building_impact: None,
             point_projectile: Some(PointProjectileState {
+                source_kind: card_name.clone(),
                 target_x,
                 target_y,
                 travel_speed: weapon.travel_speed,
@@ -8693,6 +9141,8 @@ impl ResidentBattle {
                 stun_duration: weapon.stun_duration,
                 slow_duration: weapon.slow_duration,
                 slow_multiplier: weapon.slow_multiplier,
+                knockback_distance: 0.0,
+                knockback_ignores_mass: false,
                 launch_delay: 0.0,
                 primary_target_id: Some(target_id),
                 source_entity_id: Some(source_id),
@@ -8834,6 +9284,8 @@ impl ResidentBattle {
                 stun_duration,
                 slow_duration,
                 slow_multiplier,
+                knockback_distance,
+                knockback_ignores_mass,
             ) = {
                 let entity = &self.entities[projectile_index];
                 let projectile = entity
@@ -8853,6 +9305,8 @@ impl ResidentBattle {
                     projectile.stun_duration,
                     projectile.slow_duration,
                     projectile.slow_multiplier,
+                    projectile.knockback_distance,
+                    projectile.knockback_ignores_mass,
                 )
             };
             let source_is_character = source_entity_id.is_some_and(|id| {
@@ -8934,6 +9388,11 @@ impl ResidentBattle {
                     .collect::<Vec<_>>()
             };
             let status_targets = hit_targets.clone();
+            let knockback_origin = (logic_units(target_x), logic_units(target_y));
+            let fallback_direction = (
+                ((target_x - position_x) * 1_000_000.0).round_ties_even() as i64,
+                ((target_y - position_y) * 1_000_000.0).round_ties_even() as i64,
+            );
             if damage > 0.0 {
                 for &target_index in &hit_targets {
                     let crown_slot = self.entities[target_index]
@@ -8959,6 +9418,18 @@ impl ResidentBattle {
                         continue;
                     }
                     self.apply_resident_damage(target_index, target_damage);
+                    if self.entities[target_index].is_alive
+                        && self.entities[target_index].entity_kind != 1
+                        && knockback_distance > 0.0
+                    {
+                        self.begin_resident_radial_knockback_with_options(
+                            target_index,
+                            knockback_origin,
+                            logic_units(knockback_distance).clamp(0, 10_000),
+                            knockback_ignores_mass,
+                            Some(fallback_direction),
+                        );
+                    }
                 }
             }
             for target_index in status_targets {

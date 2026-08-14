@@ -28,7 +28,24 @@ from .rust_core import (
     shield_state_rows,
 )
 
-RESIDENT_SEMANTIC_SCHEMA_VERSION = 4
+RESIDENT_SEMANTIC_SCHEMA_VERSION = 5
+
+
+def _python_pending_spell_state(battle: BattleState) -> dict[str, Any]:
+    return {
+        "casts": [
+            {
+                "execute_at": _exact_scalar(cast.execute_at),
+                "player_id": int(cast.player_id),
+                "position_x": _exact_scalar(cast.position.x),
+                "position_y": _exact_scalar(cast.position.y),
+                "sequence": int(cast.sequence),
+                "spell_name": str(cast.spell_name),
+            }
+            for cast in battle._pending_spell_casts
+        ],
+        "next_sequence": int(battle._next_spell_cast_sequence),
+    }
 
 
 def _player_row(state: ResidentPlayerState) -> dict[str, Any]:
@@ -102,6 +119,7 @@ def python_resident_semantic_snapshot(battle: BattleState) -> dict[str, Any]:
         "point_projectiles": point_projectile_state_rows(battle),
         "rng": resident_rng_state(battle.rng),
         "next_entity_id": int(battle.next_entity_id),
+        "pending_spells": _python_pending_spell_state(battle),
         "win_conditions_dirty": bool(battle._win_conditions_dirty),
     }
 
@@ -136,6 +154,7 @@ def rust_resident_semantic_snapshot(
         "point_projectiles": json.loads(resident.point_projectile_state_bytes()),
         "rng": json.loads(resident.rng_state_bytes()),
         "next_entity_id": resident.next_entity_id,
+        "pending_spells": json.loads(resident.pending_spell_state_bytes()),
         "win_conditions_dirty": resident.win_conditions_dirty,
     }
 

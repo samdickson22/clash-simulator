@@ -42,7 +42,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 2
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 3
 
 
 def _catalog_source_sha256(path: Path) -> str:
@@ -148,6 +148,7 @@ def _resident_card_catalog_bytes(
     from .factory.dynamic_factory import troop_from_character_data
     from .formations import formation_offset
     from .kinematics import tiles_to_logic_units
+    from .spells import SPELL_REGISTRY, ProjectileSpell
     from .unit_traits import is_air_unit_card
 
     path = Path(data_file)
@@ -167,10 +168,69 @@ def _resident_card_catalog_bytes(
         if card_def is None or card_stats is None:  # pragma: no cover - loader invariant
             continue
         reasons = _single_troop_capability_reasons(card_stats, card_def)
+        projectile_spell: dict[str, Any] | None = None
+        spell = SPELL_REGISTRY.get(str(card_stats.name))
+        if type(spell) is ProjectileSpell:
+            spell_values = (
+                float(spell.radius),
+                float(spell.damage),
+                float(spell.travel_speed),
+                float(spell.stun_duration),
+                float(spell.slow_duration),
+                float(spell.slow_multiplier),
+                float(spell.knockback_distance),
+                float(spell.crown_tower_damage_multiplier),
+            )
+            crown_damage = (
+                None
+                if spell.crown_tower_damage is None
+                else float(spell.crown_tower_damage)
+            )
+            spell_reasons: list[str] = []
+            if (
+                max(1, int(spell.multiple_projectiles)) != 1
+                or max(1, int(spell.damage_waves)) != 1
+                or float(spell.damage_wave_interval) != 0.0
+            ):
+                spell_reasons.append("grouped_or_multiwave_projectile_spell")
+            if bool(spell.requires_territory) or bool(spell.requires_walkable_target):
+                spell_reasons.append("restricted_projectile_spell_placement")
+            if int(getattr(card_stats, "deploy_w_tile_margin", 0) or 0) != 0:
+                spell_reasons.append("projectile_spell_margin")
+            if float(spell.stun_duration) != 0.0 or float(spell.slow_duration) != 0.0:
+                spell_reasons.append("projectile_spell_status")
+            if (
+                not all(math.isfinite(value) for value in spell_values)
+                or crown_damage is not None
+                and not math.isfinite(crown_damage)
+                or spell.radius <= 0.0
+                or spell.damage <= 0.0
+                or spell.travel_speed <= 0.0
+                or spell.knockback_distance < 0.0
+            ):
+                spell_reasons.append("invalid_projectile_spell")
+            reasons = spell_reasons
+            if not reasons:
+                projectile_spell = {
+                    "radius": float(spell.radius),
+                    "damage": float(spell.damage),
+                    "travel_speed": float(spell.travel_speed),
+                    "stun_duration": float(spell.stun_duration),
+                    "slow_duration": float(spell.slow_duration),
+                    "slow_multiplier": float(spell.slow_multiplier),
+                    "knockback_distance": float(spell.knockback_distance),
+                    "knockback_ignores_mass": bool(spell.knockback_ignores_mass),
+                    "hits_air": bool(spell.hits_air),
+                    "hits_ground": bool(spell.hits_ground),
+                    "crown_tower_damage_multiplier": float(
+                        spell.crown_tower_damage_multiplier
+                    ),
+                    "crown_tower_damage": crown_damage,
+                }
         template_snapshot: dict[str, Any] | None = None
         formation_offsets: list[list[list[int]]] = []
         deploy_delay_offsets: list[float] = []
-        if not reasons:
+        if not reasons and projectile_spell is None:
             summon_count = int(getattr(card_stats, "summon_count", None) or 1)
             summon_radius = getattr(card_stats, "summon_radius", None)
             formation_radius = (
@@ -252,6 +312,7 @@ def _resident_card_catalog_bytes(
                 "deploy_delay_offsets": deploy_delay_offsets,
                 "capability_reasons": reasons,
                 "template_snapshot": template_snapshot,
+                "projectile_spell": projectile_spell,
             }
         )
         death_spawn_data = getattr(card_stats, "death_spawn_character_data", None)
@@ -549,7 +610,18 @@ class ResidentRustBattle:
             sudden_death_crowns=tuple(battle._sudden_death_crowns),
             tiebreaker_time=float(battle.tiebreaker_time),
             winner=battle.winner,
-            pending_spell_casts_empty=not bool(battle._pending_spell_casts),
+            pending_spell_casts=[
+                (
+                    float(cast.execute_at),
+                    int(cast.sequence),
+                    str(cast.spell_name),
+                    int(cast.player_id),
+                    float(cast.position.x),
+                    float(cast.position.y),
+                )
+                for cast in battle._pending_spell_casts
+            ],
+            next_spell_cast_sequence=int(battle._next_spell_cast_sequence),
         )
         return cls(native)
 
@@ -570,6 +642,9 @@ class ResidentRustBattle:
 
     def advance_complete_ticks(self, ticks: int) -> int:
         return int(self._native.advance_complete_ticks(int(ticks)))
+
+    def pending_spell_state_bytes(self) -> bytes:
+        return bytes(self._native.pending_spell_state_bytes())
 
     def advance_clock_phase(self) -> bool:
         return bool(self._native.advance_clock_phase())
@@ -2218,11 +2293,16 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
             "crown_tower_damage_multiplier": _exact_scalar(
                 entity.crown_tower_damage_multiplier
             ),
+            "damage": _exact_scalar(entity.damage),
+            "hits_air": bool(entity.hits_air),
+            "hits_ground": bool(entity.hits_ground),
             "hitpoints": _exact_scalar(entity.hitpoints),
             "id": int(entity.id),
             "ignore_buildings": bool(entity.ignore_buildings),
             "is_alive": bool(entity.is_alive),
             "launch_delay": _exact_scalar(entity.launch_delay),
+            "knockback_distance": _exact_scalar(entity.knockback_distance),
+            "knockback_ignores_mass": bool(entity.knockback_ignores_mass),
             "permanent_homing_disabled_by_temporary": bool(
                 getattr(
                     entity,
@@ -2232,13 +2312,20 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
             ),
             "position_x": _exact_scalar(entity.position.x),
             "position_y": _exact_scalar(entity.position.y),
+            "primary_target_id": _entity_id_or_none(entity.primary_target),
             "splash_radius": _exact_scalar(entity.splash_radius),
             "slow_duration": _exact_scalar(entity.slow_duration),
             "slow_multiplier": _exact_scalar(entity.slow_multiplier),
+            "source_entity_id": _entity_id_or_none(entity.source_entity),
+            "source_kind": str(
+                getattr(entity, "spell_name", None) or entity.source_name
+            ),
             "start_collision_resolved": bool(entity.start_collision_resolved),
             "stun_duration": _exact_scalar(entity.stun_duration),
             "target_position_x": _exact_scalar(entity.target_position.x),
             "target_position_y": _exact_scalar(entity.target_position.y),
+            "tracks_target": bool(entity.tracks_target),
+            "travel_speed": _exact_scalar(entity.travel_speed),
             "temporary_homing_remaining_ms": int(
                 getattr(entity, "_temporary_homing_remaining_ms", 0)
             ),

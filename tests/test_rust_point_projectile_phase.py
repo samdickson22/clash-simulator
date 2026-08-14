@@ -666,7 +666,6 @@ def test_same_pass_projectile_launch_does_not_change_frozen_reservations() -> No
 @pytest.mark.parametrize(
     ("field", "value"),
     [
-        ("knockback_distance", 1.0),
         ("damage_waves", 2),
         ("pierces", True),
     ],
