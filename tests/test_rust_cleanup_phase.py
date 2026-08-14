@@ -133,7 +133,7 @@ def test_cleanup_rejects_death_payload_before_mutation() -> None:
     battle = BattleState()
     battle.entities.clear()
     battle.next_entity_id = 1
-    stats = battle.card_loader.get_card("Golem")
+    stats = battle.card_loader.get_card("Balloon")
     assert stats is not None
     troop = battle._spawn_entity(
         Troop,

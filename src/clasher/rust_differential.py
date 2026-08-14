@@ -28,7 +28,7 @@ from .rust_core import (
     shield_state_rows,
 )
 
-RESIDENT_SEMANTIC_SCHEMA_VERSION = 3
+RESIDENT_SEMANTIC_SCHEMA_VERSION = 4
 
 
 def _player_row(state: ResidentPlayerState) -> dict[str, Any]:

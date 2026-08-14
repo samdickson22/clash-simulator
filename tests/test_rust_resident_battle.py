@@ -147,7 +147,7 @@ def test_complete_tick_modes_follow_dynamic_resident_capability() -> None:
     resident.require_complete_tick(RustBattleMode.ON)
 
     unsupported = BattleState()
-    stats = unsupported.card_loader.get_card("Golem")
+    stats = unsupported.card_loader.get_card("Balloon")
     assert stats is not None
     unsupported._spawn_unit_at_position(Position(9.0, 14.0), 0, stats)
     rejected = ResidentRustBattle.from_battle(unsupported)

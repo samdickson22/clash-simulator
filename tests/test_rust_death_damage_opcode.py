@@ -173,9 +173,9 @@ def test_death_damage_parser_uses_serialized_mechanic_fields() -> None:
     assert b'"hits_air":false' in rows
 
 
-def test_uncompiled_death_spawn_payload_remains_fail_closed() -> None:
+def test_timed_explosive_death_spawn_payload_remains_fail_closed() -> None:
     battle = BattleState(rng=random.Random(8102))
-    _spawn(battle, "Golem", 0, Position(9.0, 14.0))
+    _spawn(battle, "Balloon", 0, Position(9.0, 14.0))
     resident = ResidentRustBattle.from_battle(battle)
     entity_before = resident.entity_state_bytes()
     rng_before = resident.rng_state_bytes()

@@ -298,6 +298,39 @@ fn logic_units(value: f64) -> i64 {
     (value * 1000.0).round_ties_even() as i64
 }
 
+const LOGIC_SIN_TABLE: [i64; 91] = [
+    0, 18, 36, 54, 71, 89, 107, 125, 143, 160, 178, 195, 213, 230, 248, 265, 282, 299, 316, 333,
+    350, 367, 384, 400, 416, 433, 449, 465, 481, 496, 512, 527, 543, 558, 573, 587, 602, 616, 630,
+    644, 658, 672, 685, 698, 711, 724, 737, 749, 761, 773, 784, 796, 807, 818, 828, 839, 849, 859,
+    868, 878, 887, 896, 904, 912, 920, 928, 935, 943, 949, 956, 962, 968, 974, 979, 984, 989, 994,
+    998, 1002, 1005, 1008, 1011, 1014, 1016, 1018, 1020, 1022, 1023, 1023, 1024, 1024,
+];
+
+fn logic_sin(degrees: i64, magnitude: i64) -> i64 {
+    let angle = degrees.rem_euclid(360);
+    let (index, sign) = if angle < 180 {
+        (if angle <= 90 { angle } else { 180 - angle }, 1)
+    } else {
+        let reflected = angle - 180;
+        (
+            if reflected <= 90 {
+                reflected
+            } else {
+                360 - angle
+            },
+            -1,
+        )
+    };
+    truncating_div(
+        i128::from(sign * LOGIC_SIN_TABLE[index as usize]) * i128::from(magnitude),
+        1024,
+    )
+}
+
+fn logic_cos(degrees: i64, magnitude: i64) -> i64 {
+    logic_sin(degrees + 90, magnitude)
+}
+
 fn truncating_div(numerator: i128, denominator: i64) -> i64 {
     debug_assert!(denominator > 0);
     (numerator / i128::from(denominator)) as i64
@@ -1078,11 +1111,15 @@ struct ResidentEntity {
     is_alive: bool,
     target_id: Option<i64>,
     deploy_delay_remaining: f64,
+    placement_delay_total: f64,
     placement_pending: bool,
     spawn_hook_pending: bool,
     spawn_hook_fired: bool,
+    freeze_expiry_time: f64,
     death_spawn_target_immunity_elapsed_ms: i64,
     pending_projectile_max_duration_ms: i64,
+    spawn_angle_shift: f64,
+    death_spawn_payload_present: bool,
     mechanics: Vec<String>,
     shields: Vec<ShieldState>,
     shield_break_count: i64,
@@ -1256,7 +1293,88 @@ struct ShieldState {
 #[derive(Clone)]
 enum ResidentDeathOpcode {
     Damage(ResidentDeathDamage),
+    Spawn(ResidentDeathSpawn),
     Area(ResidentDeathAreaSpec),
+}
+
+#[derive(Clone)]
+struct ResidentDeathSpawn {
+    unit_name: String,
+    unit_data: Value,
+    count: i64,
+    radius_tiles: f64,
+    min_radius_tiles: f64,
+    radial_pushback: bool,
+    spawn_const_priority: bool,
+    deploy_time_ms: i64,
+}
+
+impl ResidentDeathSpawn {
+    fn from_normalized(value: &Value) -> PyResult<Option<Self>> {
+        let fields = object_fields(value)?;
+        let unit_data = fields
+            .get("unit_data")
+            .ok_or_else(|| PyValueError::new_err("DeathSpawn has no unit_data"))?;
+        if unit_data.is_null() {
+            return Ok(None);
+        }
+        let is_timed_explosive = normalized_mapping_get(unit_data, "deathDamage")
+            .is_some_and(|damage| !damage.is_null())
+            && normalized_mapping_get(unit_data, "hitpoints")
+                .is_none_or(|hitpoints| hitpoints.is_null() || hitpoints.as_i64() == Some(0));
+        if is_timed_explosive {
+            return Ok(None);
+        }
+        let unit_name = fields
+            .get("unit_name")
+            .and_then(Value::as_str)
+            .filter(|name| !name.is_empty())
+            .ok_or_else(|| PyValueError::new_err("DeathSpawn has no unit_name"))?
+            .to_owned();
+        let count = required_i64(fields, "count")?;
+        let deploy_time_ms = required_i64(fields, "deploy_time_ms")?;
+        let radius_tiles = normalized_f64(fields, "radius_tiles")?;
+        let min_radius_tiles = normalized_f64(fields, "min_radius_tiles")?;
+        if count <= 0
+            || deploy_time_ms < 0
+            || !radius_tiles.is_finite()
+            || radius_tiles < 0.0
+            || !min_radius_tiles.is_finite()
+            || min_radius_tiles < 0.0
+            || min_radius_tiles > radius_tiles
+        {
+            return Err(PyValueError::new_err(
+                "DeathSpawn has unsupported count, timing, or radius",
+            ));
+        }
+        Ok(Some(Self {
+            unit_name,
+            unit_data: unit_data.clone(),
+            count,
+            radius_tiles,
+            min_radius_tiles,
+            radial_pushback: required_bool(fields, "radial_pushback")?,
+            spawn_const_priority: required_bool(fields, "spawn_const_priority")?,
+            deploy_time_ms,
+        }))
+    }
+
+    fn diagnostic_value(&self, opcode_index: usize) -> Value {
+        let unit_data_bytes = serde_json::to_vec(&self.unit_data)
+            .expect("normalized DeathSpawn unit_data is serializable");
+        json!({
+            "count": self.count,
+            "deploy_time_ms": self.deploy_time_ms,
+            "min_radius_tiles": exact_f64_value(self.min_radius_tiles),
+            "opcode_index": opcode_index,
+            "opcode_type": "spawn",
+            "radial_pushback": self.radial_pushback,
+            "radius_tiles": exact_f64_value(self.radius_tiles),
+            "spawn_const_priority": self.spawn_const_priority,
+            "unit_name": self.unit_name,
+            "unit_data_sha256": sha256_hex(&unit_data_bytes),
+        })
+    }
 }
 
 #[derive(Clone)]
@@ -2350,6 +2468,11 @@ impl ResidentEntity {
                         ResidentDeathDamage::from_normalized(mechanic)?,
                     ));
                 }
+                "clasher.mechanics.shared.death_effects.DeathSpawn" => {
+                    if let Some(spawn) = ResidentDeathSpawn::from_normalized(mechanic)? {
+                        death_opcodes.push(ResidentDeathOpcode::Spawn(spawn));
+                    }
+                }
                 "clasher.mechanics.shared.death_area.DeathAreaEffect" => {
                     if let Some(area) = ResidentDeathAreaSpec::from_normalized(mechanic)? {
                         death_opcodes.push(ResidentDeathOpcode::Area(area));
@@ -2443,6 +2566,17 @@ impl ResidentEntity {
         if shields.len() + death_opcodes.len() != mechanics.len() {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
         }
+        let death_spawn_payload_present = card_fields
+            .get("death_spawn_character")
+            .and_then(Value::as_str)
+            .is_some_and(|name| !name.is_empty());
+        let compiled_death_spawn_count = death_opcodes
+            .iter()
+            .filter(|opcode| matches!(opcode, ResidentDeathOpcode::Spawn(_)))
+            .count();
+        if death_spawn_payload_present != (compiled_death_spawn_count == 1) {
+            direct_combat_unsupported.push("death_spawn_payload".to_owned());
+        }
         let uses_projectile_weapon = locked_combat
             .as_ref()
             .is_some_and(|state| state.point_weapon.is_some());
@@ -2472,12 +2606,6 @@ impl ResidentEntity {
         }
         if normalized_optional_bool(card_fields, "kamikaze") {
             direct_combat_unsupported.push("kamikaze_payload".to_owned());
-        }
-        if !card_fields
-            .get("death_spawn_character")
-            .is_none_or(Value::is_null)
-        {
-            direct_combat_unsupported.push("death_spawn_payload".to_owned());
         }
         if normalized_optional_bool(fields, "_force_melee_attack") {
             direct_combat_unsupported.push("forced_melee_override".to_owned());
@@ -2566,6 +2694,7 @@ impl ResidentEntity {
             is_alive: required_bool(fields, "is_alive")?,
             target_id,
             deploy_delay_remaining: normalized_f64(fields, "deploy_delay_remaining")?,
+            placement_delay_total: normalized_f64(fields, "placement_delay_total")?,
             placement_pending: required_bool(fields, "placement_pending")?,
             spawn_hook_pending: fields
                 .get("_spawn_hook_pending")
@@ -2575,6 +2704,8 @@ impl ResidentEntity {
                 .get("_spawn_hook_fired")
                 .and_then(Value::as_bool)
                 .unwrap_or(false),
+            freeze_expiry_time: absent_optional_normalized_f64(fields, "freeze_expiry_time")?
+                .unwrap_or(0.0),
             death_spawn_target_immunity_elapsed_ms: required_i64(
                 fields,
                 "_death_spawn_target_immunity_elapsed_ms",
@@ -2583,6 +2714,9 @@ impl ResidentEntity {
                 fields,
                 "_pending_projectile_max_duration_ms",
             )?,
+            spawn_angle_shift: optional_normalized_f64(card_fields, "spawn_angle_shift")?
+                .unwrap_or(0.0),
+            death_spawn_payload_present,
             mechanics,
             shields,
             shield_break_count,
@@ -2607,16 +2741,19 @@ impl ResidentEntity {
             "card_name": self.card_name,
             "encounter_index": self.encounter_index,
             "entity_kind": self.entity_kind,
+            "freeze_expiry_time": exact_f64_value(self.freeze_expiry_time),
             "hitpoints": self.hitpoints.diagnostic_value(),
             "id": self.id,
             "is_alive": self.is_alive,
             "max_hitpoints": self.max_hitpoints.diagnostic_value(),
             "mechanics": self.mechanics,
             "pending_projectile_max_duration_ms": self.pending_projectile_max_duration_ms,
+            "placement_delay_total": exact_f64_value(self.placement_delay_total),
             "player_id": self.player_id,
             "position_x": self.position_x.diagnostic_value(),
             "position_y": self.position_y.diagnostic_value(),
             "python_type": self.python_type,
+            "spawn_angle_shift": exact_f64_value(self.spawn_angle_shift),
             "target_id": self.target_id,
         })
     }
@@ -2726,6 +2863,15 @@ struct ResidentCardCatalogWire {
     schema_version: u64,
     source_fingerprint: String,
     cards: Vec<ResidentCardWire>,
+    #[serde(default)]
+    death_spawn_templates: Vec<ResidentDeathSpawnTemplateWire>,
+}
+
+#[derive(Deserialize)]
+struct ResidentDeathSpawnTemplateWire {
+    unit_name: String,
+    unit_data: Value,
+    template_snapshot: Value,
 }
 
 #[derive(Deserialize)]
@@ -2764,6 +2910,14 @@ struct ResidentCardCatalog {
     fingerprint: String,
     cards: Vec<ResidentCardSpec>,
     by_name: HashMap<String, usize>,
+    death_spawn_templates: Vec<ResidentDeathSpawnTemplateSpec>,
+}
+
+struct ResidentDeathSpawnTemplateSpec {
+    unit_name: String,
+    unit_data: Value,
+    prototype: ResidentEntity,
+    supported: bool,
 }
 
 impl ResidentCardCatalog {
@@ -2785,6 +2939,46 @@ impl ResidentCardCatalog {
             return Err(PyValueError::new_err(
                 "resident catalog source fingerprint must be a SHA-256 hex digest",
             ));
+        }
+
+        let mut death_spawn_templates = Vec::with_capacity(wire.death_spawn_templates.len());
+        for template in wire.death_spawn_templates {
+            let prototype = ResidentEntity::from_normalized(0, &template.template_snapshot)?;
+            let supported = !template.unit_name.is_empty()
+                && prototype.entity_kind == 0
+                && prototype.active
+                && prototype.is_alive
+                && prototype.card_name == template.unit_name
+                && prototype.has_only_compiled_mechanics()
+                && prototype
+                    .death_opcodes
+                    .iter()
+                    .all(|opcode| matches!(opcode, ResidentDeathOpcode::Damage(_)))
+                && prototype.modifier_supported
+                && prototype.direct_combat_unsupported.is_empty()
+                && prototype
+                    .locked_combat
+                    .as_ref()
+                    .is_some_and(|combat| combat.point_weapon.is_none())
+                && prototype.movement.as_ref().is_some_and(|movement| {
+                    movement.route_cache_supported
+                        && movement.collision_radius.is_finite()
+                        && movement.collision_radius > 0.0
+                        && movement.unit_mass.is_finite()
+                        && movement.unit_mass > 0.0
+                })
+                && prototype.point_projectile.is_none()
+                && prototype.area_effect.is_none()
+                && prototype.building_lifetime.is_none()
+                && prototype.building_impact.is_none()
+                && prototype.object_base_movement_noop
+                && !prototype.blocks_deployment;
+            death_spawn_templates.push(ResidentDeathSpawnTemplateSpec {
+                unit_name: template.unit_name,
+                unit_data: template.unit_data,
+                prototype,
+                supported,
+            });
         }
 
         let mut cards = Vec::with_capacity(wire.cards.len());
@@ -2876,6 +3070,7 @@ impl ResidentCardCatalog {
             fingerprint: sha256_hex(payload),
             cards,
             by_name,
+            death_spawn_templates,
         })
     }
 
@@ -2889,6 +3084,18 @@ impl ResidentCardCatalog {
             .filter(|card| card.supports_single_primary_troop())
             .map(|card| card.lookup_name.clone())
             .collect()
+    }
+
+    fn death_spawn_template(
+        &self,
+        unit_name: &str,
+        unit_data: &Value,
+    ) -> Option<&ResidentDeathSpawnTemplateSpec> {
+        self.death_spawn_templates.iter().find(|template| {
+            template.supported
+                && template.unit_name == unit_name
+                && template.unit_data == *unit_data
+        })
     }
 }
 
@@ -3742,6 +3949,10 @@ impl ResidentBattle {
     }
 
     fn advance_modifier_phase(&mut self) -> PyResult<()> {
+        self.advance_modifier_phase_up_to(None)
+    }
+
+    fn advance_modifier_phase_up_to(&mut self, entity_id_exclusive: Option<i64>) -> PyResult<()> {
         if !self.supports_modifier_phase() {
             return Err(PyRuntimeError::new_err(
                 "resident modifier phase contains periodic damage or callback-owned temporary buffs",
@@ -3750,6 +3961,9 @@ impl ResidentBattle {
         self.checkpoint_current = false;
         for entity in &mut self.entities {
             if !entity.active {
+                continue;
+            }
+            if entity_id_exclusive.is_some_and(|limit| entity.id >= limit) {
                 continue;
             }
             if !entity.is_alive {
@@ -3819,6 +4033,7 @@ impl ResidentBattle {
             for (opcode_index, opcode) in entity.death_opcodes.iter().enumerate() {
                 let mut value = match opcode {
                     ResidentDeathOpcode::Damage(damage) => damage.diagnostic_value(opcode_index),
+                    ResidentDeathOpcode::Spawn(spawn) => spawn.diagnostic_value(opcode_index),
                     ResidentDeathOpcode::Area(area) => area.diagnostic_value(opcode_index),
                 };
                 let fields = value
@@ -4078,7 +4293,7 @@ impl ResidentBattle {
                 "resident flying movement preflight rejected unsupported natural movement",
             ));
         }
-        self.advance_restricted_movement_phase(true);
+        self.advance_restricted_movement_phase(true, None);
         Ok(())
     }
 
@@ -4100,7 +4315,7 @@ impl ResidentBattle {
                 "resident ground movement preflight rejected unsupported natural movement",
             ));
         }
-        self.advance_restricted_movement_phase(true);
+        self.advance_restricted_movement_phase(true, None);
         Ok(())
     }
 
@@ -4309,15 +4524,24 @@ impl ResidentBattle {
         if !self.resident_id_invariants_hold() || !self.supports_direct_combat_phase() {
             return false;
         }
-        let possible_area_births = self
+        if self.entities.iter().any(|entity| {
+            entity.active && entity.is_alive && !self.resident_death_spawns_supported(entity)
+        }) {
+            return false;
+        }
+        let possible_death_births = self
             .entities
             .iter()
             .filter(|entity| entity.active && entity.is_alive)
             .flat_map(|entity| entity.death_opcodes.iter())
-            .filter(|opcode| matches!(opcode, ResidentDeathOpcode::Area(_)))
-            .count();
-        if i64::try_from(possible_area_births)
-            .ok()
+            .try_fold(0_i64, |births, opcode| {
+                births.checked_add(match opcode {
+                    ResidentDeathOpcode::Area(_) => 1,
+                    ResidentDeathOpcode::Spawn(spawn) => spawn.count,
+                    ResidentDeathOpcode::Damage(_) => 0,
+                })
+            });
+        if possible_death_births
             .and_then(|count| self.next_entity_id.checked_add(count))
             .is_none_or(|next_entity_id| !(0..i64::MAX).contains(&next_entity_id))
         {
@@ -4740,11 +4964,9 @@ impl ResidentBattle {
             !entity.active
                 || entity.is_alive
                 || (entity.has_only_compiled_mechanics()
+                    && self.resident_death_spawns_supported(entity)
                     && match entity.entity_kind {
-                        0 | 1 => !entity
-                            .direct_combat_unsupported
-                            .iter()
-                            .any(|reason| reason == "death_spawn_payload"),
+                        0 | 1 => true,
                         2 => entity.point_projectile.is_some(),
                         3 => entity.supports_area_effect_object(),
                         _ => false,
@@ -5034,6 +5256,31 @@ impl ResidentBattle {
     const ACTION_ABILITY: i64 = Self::ACTION_NO_OP + 1;
     const ACTION_COUNT: i64 = Self::ACTION_ABILITY + 1;
 
+    fn resident_death_spawns_supported(&self, entity: &ResidentEntity) -> bool {
+        let compiled_spawn_count = entity
+            .death_opcodes
+            .iter()
+            .filter(|opcode| matches!(opcode, ResidentDeathOpcode::Spawn(_)))
+            .count();
+        entity.death_spawn_payload_present == (compiled_spawn_count == 1)
+            && entity.death_opcodes.iter().all(|opcode| {
+                let ResidentDeathOpcode::Spawn(spawn) = opcode else {
+                    return true;
+                };
+                let radius_units = logic_units(spawn.radius_tiles);
+                let min_radius_units = logic_units(spawn.min_radius_tiles);
+                radius_units > 0
+                    && min_radius_units >= 0
+                    && min_radius_units <= radius_units
+                    && (min_radius_units == 0 || min_radius_units < radius_units)
+                    && entity.spawn_angle_shift == 0.0
+                    && self
+                        .catalog
+                        .death_spawn_template(&spawn.unit_name, &spawn.unit_data)
+                        .is_some()
+            })
+    }
+
     fn player_index(&self, player_id: i64) -> PyResult<usize> {
         self.players
             .iter()
@@ -5202,19 +5449,48 @@ impl ResidentBattle {
         x_units: i64,
         y_units: i64,
     ) -> PyResult<ResidentEntity> {
-        let mut entity = card.prototype.clone().ok_or_else(|| {
+        let prototype = card.prototype.as_ref().ok_or_else(|| {
             PyRuntimeError::new_err("resident single-character template is unavailable")
         })?;
+        Ok(self.instantiate_character_template(
+            prototype,
+            &card.effective_name,
+            player_id,
+            (x_units, y_units),
+            None,
+            false,
+        ))
+    }
+
+    fn instantiate_character_template(
+        &self,
+        prototype: &ResidentEntity,
+        effective_name: &str,
+        player_id: i64,
+        position_units: (i64, i64),
+        deploy_delay_override: Option<f64>,
+        death_spawn: bool,
+    ) -> ResidentEntity {
+        let mut entity = prototype.clone();
+        let (x_units, y_units) = position_units;
         entity.active = true;
         entity.encounter_index = self.entities.iter().filter(|entity| entity.active).count();
         entity.id = self.next_entity_id;
         entity.player_id = player_id;
-        entity.card_name.clone_from(&card.effective_name);
+        entity.card_name.clear();
+        entity.card_name.push_str(effective_name);
         entity.position_x = ExactScalar::Float((x_units as f64 / 1000.0).to_bits());
         entity.position_y = ExactScalar::Float((y_units as f64 / 1000.0).to_bits());
         entity.target_id = None;
-        entity.death_spawn_target_immunity_elapsed_ms = -1;
+        entity.death_spawn_target_immunity_elapsed_ms = if death_spawn { 0 } else { -1 };
         entity.pending_projectile_max_duration_ms = 0;
+        if let Some(delay) = deploy_delay_override {
+            entity.deploy_delay_remaining = delay.max(0.0);
+            entity.placement_delay_total = entity.deploy_delay_remaining;
+            entity.placement_pending = entity.deploy_delay_remaining > 1e-9;
+            entity.spawn_hook_pending = entity.placement_pending;
+            entity.spawn_hook_fired = !entity.placement_pending;
+        }
         if let Some(movement) = entity.movement.as_mut() {
             movement.native_lane_id = nearest_standard_path_id(x_units, y_units);
             movement.route_goal = None;
@@ -5235,7 +5511,7 @@ impl ResidentBattle {
             combat.movement_target_id = None;
             combat.initial_position = None;
         }
-        Ok(entity)
+        entity
     }
 
     fn valid_single_troop_placement(
@@ -5381,6 +5657,7 @@ impl ResidentBattle {
                 "resident complete tick rejected combat capability",
             ));
         }
+        let initial_next_entity_id = self.next_entity_id;
         self.advance_clock_phase();
         self.advance_player_phase();
         self.advance_direct_troop_combat_phase()?;
@@ -5389,9 +5666,9 @@ impl ResidentBattle {
                 "resident complete tick rejected post-combat movement capability",
             ));
         }
-        self.advance_restricted_movement_phase(false);
+        self.advance_restricted_movement_phase(false, Some(initial_next_entity_id));
         self.advance_building_lifetime_phase()?;
-        self.advance_modifier_phase()?;
+        self.advance_modifier_phase_up_to(Some(initial_next_entity_id))?;
         self.advance_resident_object_phase()?;
         self.advance_cleanup_phase()?;
         if !self.sparse_idle_win_checks
@@ -5644,7 +5921,11 @@ impl ResidentBattle {
         })
     }
 
-    fn advance_restricted_movement_phase(&mut self, refresh_reservations: bool) {
+    fn advance_restricted_movement_phase(
+        &mut self,
+        refresh_reservations: bool,
+        entity_id_exclusive: Option<i64>,
+    ) {
         self.checkpoint_current = false;
         if refresh_reservations {
             self.refresh_lethal_projectile_reservations();
@@ -5654,8 +5935,11 @@ impl ResidentBattle {
             .iter()
             .enumerate()
             .filter_map(|(index, entity)| {
-                (entity.active && entity.is_alive && matches!(entity.entity_kind, 0 | 1))
-                    .then_some(index)
+                (entity.active
+                    && entity.is_alive
+                    && matches!(entity.entity_kind, 0 | 1)
+                    && entity_id_exclusive.is_none_or(|limit| entity.id < limit))
+                .then_some(index)
             })
             .collect::<Vec<_>>();
         for entity_index in movement_indices {
@@ -7310,10 +7594,107 @@ impl ResidentBattle {
                 ResidentDeathOpcode::Damage(damage) => {
                     self.execute_resident_death_damage(source_index, &damage);
                 }
+                ResidentDeathOpcode::Spawn(spawn) => {
+                    self.execute_resident_death_spawn(source_index, &spawn);
+                }
                 ResidentDeathOpcode::Area(area) => {
                     self.spawn_resident_death_area(source_index, &area);
                 }
             }
+        }
+    }
+
+    fn execute_resident_death_spawn(&mut self, source_index: usize, spawn: &ResidentDeathSpawn) {
+        let template = self
+            .catalog
+            .death_spawn_template(&spawn.unit_name, &spawn.unit_data)
+            .expect("death-spawn preflight requires exact catalog template");
+        let prototype = template.prototype.clone();
+        let source_player_id = self.entities[source_index].player_id;
+        let source_x_units = logic_units(self.entities[source_index].position_x.as_f64());
+        let source_y_units = logic_units(self.entities[source_index].position_y.as_f64());
+        let source_path_id = nearest_standard_path_id(source_x_units, source_y_units);
+        let inherited_freeze_expiry = self.entities[source_index].freeze_expiry_time;
+        let mut radius_units = logic_units(spawn.radius_tiles).max(0);
+        let min_radius_units = logic_units(spawn.min_radius_tiles).max(0);
+        if min_radius_units > 0 && min_radius_units < radius_units {
+            let width = u64::try_from(radius_units - min_radius_units)
+                .expect("death-spawn preflight validates radius width");
+            let sampled = self
+                .rng
+                .randbelow(width)
+                .expect("death-spawn preflight validates positive radius width");
+            radius_units = min_radius_units
+                + i64::try_from(sampled).expect("sampled death-spawn radius fits i64");
+        }
+        for index in 0..spawn.count {
+            let angle = truncating_div(i128::from(spawn.count - 1 - index) * 360, spawn.count);
+            let mut offset_x = logic_cos(angle, radius_units);
+            let mut offset_y = logic_sin(angle, radius_units);
+            if spawn.spawn_const_priority && source_path_id == 1 {
+                offset_x = -offset_x;
+            }
+            if spawn.spawn_const_priority && source_player_id == 1 {
+                offset_y = -offset_y;
+            }
+            let target_x_units =
+                (source_x_units + offset_x).clamp(250, self.arena_width_tiles * 1000 - 250);
+            let target_y_units =
+                (source_y_units + offset_y).clamp(250, self.arena_height_tiles * 1000 - 250);
+            let deploy_delay = spawn.deploy_time_ms as f64 / 1000.0;
+            let mut child = self.instantiate_character_template(
+                &prototype,
+                &spawn.unit_name,
+                source_player_id,
+                (target_x_units, target_y_units),
+                Some(deploy_delay),
+                true,
+            );
+            if spawn.spawn_const_priority
+                && let Some(combat) = child.locked_combat.as_mut()
+            {
+                let discount_units = index * 80;
+                combat.native_target_distance_discount_sq_units = discount_units * discount_units;
+            }
+            if spawn.radial_pushback && radius_units > 0 {
+                let dx = target_x_units - source_x_units;
+                let dy = target_y_units - source_y_units;
+                let distance = integer_sqrt(
+                    (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128,
+                );
+                let movement = child
+                    .movement
+                    .as_mut()
+                    .expect("death-spawn template requires movement state");
+                movement.death_spawn_travel_ticks = distance / 250;
+                movement.death_spawn_travel_target = (movement.death_spawn_travel_ticks > 0)
+                    .then_some((
+                        target_x_units as f64 / 1000.0,
+                        target_y_units as f64 / 1000.0,
+                    ));
+                child.position_x.set_f64(source_x_units as f64 / 1000.0);
+                child.position_y.set_f64(source_y_units as f64 / 1000.0);
+            }
+            if inherited_freeze_expiry > self.time + 1e-9 && spawn.deploy_time_ms <= 0 {
+                let remaining = inherited_freeze_expiry - self.time;
+                child.freeze_expiry_time = child.freeze_expiry_time.max(inherited_freeze_expiry);
+                if let Some(modifiers) = child.modifier_state.as_mut() {
+                    modifiers.stun_timer = modifiers.stun_timer.max(remaining);
+                    modifiers.apply_slow(remaining, 0.0);
+                }
+                child.target_id = None;
+                if let Some(combat) = child.locked_combat.as_mut() {
+                    combat.stun_timer = combat.stun_timer.max(remaining);
+                    combat.last_combat_target_id = None;
+                    combat.movement_target_id = None;
+                    combat.attack_cooldown = combat.base_attack_interval();
+                    combat.attack_windup_active = false;
+                    combat.has_attacked_once = false;
+                    combat.attack_speed_debuff_multiplier = 0.0;
+                }
+            }
+            self.entities.push(child);
+            self.next_entity_id += 1;
         }
     }
 
@@ -7340,11 +7721,15 @@ impl ResidentBattle {
             is_alive: true,
             target_id: None,
             deploy_delay_remaining: 0.0,
+            placement_delay_total: 0.0,
             placement_pending: false,
             spawn_hook_pending: false,
             spawn_hook_fired: false,
+            freeze_expiry_time: 0.0,
             death_spawn_target_immunity_elapsed_ms: -1,
             pending_projectile_max_duration_ms: 0,
+            spawn_angle_shift: 0.0,
+            death_spawn_payload_present: false,
             mechanics: Vec::new(),
             shields: Vec::new(),
             shield_break_count: 0,
@@ -7718,11 +8103,15 @@ impl ResidentBattle {
             is_alive: true,
             target_id: None,
             deploy_delay_remaining: 0.0,
+            placement_delay_total: 0.0,
             placement_pending: false,
             spawn_hook_pending: false,
             spawn_hook_fired: false,
+            freeze_expiry_time: 0.0,
             death_spawn_target_immunity_elapsed_ms: -1,
             pending_projectile_max_duration_ms: 0,
+            spawn_angle_shift: 0.0,
+            death_spawn_payload_present: false,
             mechanics: Vec::new(),
             shields: Vec::new(),
             shield_break_count: 0,
@@ -8212,10 +8601,17 @@ impl ResidentBattle {
         }
         let best =
             self.direct_acquired_target_index(actor_index, !actor_state.ground_path_backwards);
+        let best_uses_crown_fallback = best.is_some_and(|index| {
+            self.direct_crown_slot(index).is_some()
+                && !self.direct_target_in_sight(actor_index, index)
+        });
         match (current, best) {
             (None, best) => best,
             (current, None) => current,
             (Some(current), Some(best)) => {
+                if best_uses_crown_fallback {
+                    return Some(best);
+                }
                 if self.direct_crown_slot(current) == Some("king")
                     && matches!(self.direct_crown_slot(best), Some("left" | "right"))
                     && !self.direct_attack_reach(actor_index, best)

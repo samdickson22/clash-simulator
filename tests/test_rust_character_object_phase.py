@@ -72,7 +72,7 @@ def test_character_object_phase_matches_target_immunity_boundary() -> None:
 
 def test_character_object_phase_rejects_executable_mechanics() -> None:
     battle = BattleState()
-    troop = _spawn(battle, "Golem")
+    troop = _spawn(battle, "Balloon")
     assert troop.mechanics
     resident = ResidentRustBattle.from_battle(battle)
 

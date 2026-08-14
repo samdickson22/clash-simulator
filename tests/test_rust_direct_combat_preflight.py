@@ -363,7 +363,7 @@ def test_direct_combat_symmetric_building_tie_is_owner_relative(
     ("card_name", "expected_reason"),
     [
         ("MagicArcher", "projectile_payload"),
-        ("Golem", "executable_mechanics"),
+        ("Balloon", "executable_mechanics"),
         ("BattleRam", "charge_payload"),
         ("Wallbreakers", "kamikaze_payload"),
     ],

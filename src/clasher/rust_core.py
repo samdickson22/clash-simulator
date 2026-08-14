@@ -14,6 +14,7 @@ from .balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
 from .differential import (
     SNAPSHOT_SCHEMA_VERSION,
     _entity_snapshot,
+    _normalize,
     canonical_battle_snapshot,
     snapshot_bytes,
 )
@@ -85,6 +86,7 @@ def _resident_card_catalog_bytes(
     from .battle import BattleState
     from .card_aliases import CARD_NAME_ALIASES
     from .data import CardDataLoader
+    from .factory.dynamic_factory import troop_from_character_data
     from .unit_traits import is_air_unit_card
 
     path = Path(data_file)
@@ -96,6 +98,8 @@ def _resident_card_catalog_bytes(
         alias for alias, target in CARD_NAME_ALIASES.items() if target in definitions
     )
     cards: list[dict[str, Any]] = []
+    death_spawn_templates: list[dict[str, Any]] = []
+    seen_death_spawn_templates: set[str] = set()
     for lookup_name in sorted(lookup_names):
         card_def = loader.get_card_definition(lookup_name)
         card_stats = loader.get_card(lookup_name)
@@ -139,10 +143,49 @@ def _resident_card_catalog_bytes(
                 "template_snapshot": template_snapshot,
             }
         )
+        death_spawn_data = getattr(card_stats, "death_spawn_character_data", None)
+        death_spawn_name = str(
+            getattr(card_stats, "death_spawn_character", "") or ""
+        )
+        if (
+            death_spawn_name
+            and death_spawn_data
+            and death_spawn_data.get("hitpoints") is not None
+        ):
+            normalized_unit_data = _normalize(death_spawn_data)
+            template_key = json.dumps(
+                [death_spawn_name, normalized_unit_data],
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            if template_key not in seen_death_spawn_templates:
+                seen_death_spawn_templates.add(template_key)
+                child_stats = troop_from_character_data(
+                    death_spawn_name,
+                    death_spawn_data,
+                    elixir=0,
+                    rarity=death_spawn_data.get("rarity", "Common"),
+                )
+                spawned_id = prototype_battle.next_entity_id
+                prototype_battle._spawn_unit_at_position(
+                    Position(9.0, 8.0),
+                    0,
+                    child_stats,
+                    snap_to_valid=False,
+                )
+                child_prototype = prototype_battle.entities.pop(spawned_id)
+                death_spawn_templates.append(
+                    {
+                        "unit_name": death_spawn_name,
+                        "unit_data": normalized_unit_data,
+                        "template_snapshot": dict(_entity_snapshot(child_prototype)),
+                    }
+                )
     payload = {
         "schema_version": RESIDENT_CARD_CATALOG_SCHEMA_VERSION,
         "source_fingerprint": _catalog_source_sha256(path),
         "cards": cards,
+        "death_spawn_templates": death_spawn_templates,
     }
     return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("ascii")
 
@@ -924,6 +967,9 @@ def resident_entity_rows(battle: Any) -> list[dict[str, Any]]:
             "card_name": str(getattr(entity.card_stats, "name", "")),
             "encounter_index": encounter_index,
             "entity_kind": int(entity.entity_kind),
+            "freeze_expiry_time": _exact_scalar(
+                getattr(entity, "freeze_expiry_time", 0.0)
+            ),
             "hitpoints": _exact_scalar(entity.hitpoints),
             "id": int(entity.id),
             "is_alive": bool(entity.is_alive),
@@ -935,11 +981,17 @@ def resident_entity_rows(battle: Any) -> list[dict[str, Any]]:
             "pending_projectile_max_duration_ms": int(
                 entity._pending_projectile_max_duration_ms
             ),
+            "placement_delay_total": _exact_scalar(
+                entity.placement_delay_total
+            ),
             "player_id": int(entity.player_id),
             "position_x": _exact_scalar(entity.position.x),
             "position_y": _exact_scalar(entity.position.y),
             "python_type": (
                 f"{type(entity).__module__}.{type(entity).__qualname__}"
+            ),
+            "spawn_angle_shift": _exact_scalar(
+                getattr(entity.card_stats, "spawn_angle_shift", 0.0) or 0.0
             ),
             "target_id": (
                 None if entity.target_id is None else int(entity.target_id)
@@ -1134,7 +1186,7 @@ def death_opcode_state_rows(battle: Any) -> list[dict[str, Any]]:
         DeathAreaEffect,
         _serialized_speed_multiplier,
     )
-    from .mechanics.shared.death_effects import DeathDamage
+    from .mechanics.shared.death_effects import DeathDamage, DeathSpawn
 
     rows: list[dict[str, Any]] = []
     for encounter_index, entity in enumerate(battle.entities.values()):
@@ -1238,6 +1290,40 @@ def death_opcode_state_rows(battle: Any) -> list[dict[str, Any]]:
                         ),
                         "refresh_duration": _exact_scalar(refresh_duration),
                         "spawn_multiplier": _exact_scalar(spawn_multiplier),
+                    }
+                )
+                opcode_index += 1
+                continue
+            if isinstance(mechanic, DeathSpawn):
+                unit_data = mechanic.unit_data or {}
+                if unit_data.get("deathDamage") is not None and not unit_data.get(
+                    "hitpoints"
+                ):
+                    continue
+                rows.append(
+                    {
+                        "count": int(mechanic.count),
+                        "deploy_time_ms": int(mechanic.deploy_time_ms),
+                        "encounter_index": encounter_index,
+                        "id": int(entity.id),
+                        "min_radius_tiles": _exact_scalar(
+                            mechanic.min_radius_tiles
+                        ),
+                        "opcode_index": opcode_index,
+                        "opcode_type": "spawn",
+                        "radial_pushback": bool(mechanic.radial_pushback),
+                        "radius_tiles": _exact_scalar(mechanic.radius_tiles),
+                        "spawn_const_priority": bool(
+                            mechanic.spawn_const_priority
+                        ),
+                        "unit_name": str(mechanic.unit_name),
+                        "unit_data_sha256": hashlib.sha256(
+                            json.dumps(
+                                _normalize(mechanic.unit_data),
+                                sort_keys=True,
+                                separators=(",", ":"),
+                            ).encode("ascii")
+                        ).hexdigest(),
                     }
                 )
                 opcode_index += 1

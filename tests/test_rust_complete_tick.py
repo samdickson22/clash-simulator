@@ -206,7 +206,7 @@ def test_restricted_complete_tick_resolves_simultaneous_king_death_as_draw() -> 
 
 def test_restricted_complete_tick_rejection_is_atomic() -> None:
     battle = BattleState(rng=random.Random(9415))
-    _spawn(battle, "Golem", 0, Position(9.0, 14.0))
+    _spawn(battle, "Balloon", 0, Position(9.0, 14.0))
     resident = ResidentRustBattle.from_battle(battle)
     checkpoint = resident.checkpoint_bytes()
     entity_state = resident.entity_state_bytes()
