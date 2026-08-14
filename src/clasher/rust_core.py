@@ -202,6 +202,8 @@ class ResidentRustBattle:
             tick=int(battle.tick),
             time=float(battle.time),
             dt=float(battle.dt),
+            arena_width_tiles=int(battle.arena.width),
+            arena_height_tiles=int(battle.arena.height),
             double_elixir=bool(battle.double_elixir),
             triple_elixir=bool(battle.triple_elixir),
             overtime=bool(battle.overtime),
@@ -1000,13 +1002,31 @@ def compare_character_object_phase(
 def stationary_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
     return [
         {
+            "collision_radius": _exact_scalar(
+                (
+                    getattr(entity.card_stats, "collision_radius", 0.5)
+                    or 0.5
+                )
+                if entity.entity_kind == 0
+                else (
+                    getattr(entity.card_stats, "collision_radius", 0.0)
+                    or 0.0
+                )
+            ),
             "encounter_index": encounter_index,
             "id": int(entity.id),
+            "native_avoidance": int(
+                getattr(entity, "_native_avoidance", 0)
+            ),
+            "native_natural_movement_active": bool(
+                getattr(entity, "_native_natural_movement_active", False)
+            ),
             "pending_consumed": bool(entity._pending_movement_consumed),
             "pending_x": _exact_scalar(entity._pending_movement_x),
             "pending_y": _exact_scalar(entity._pending_movement_y),
             "position_x": _exact_scalar(entity.position.x),
             "position_y": _exact_scalar(entity.position.y),
+            "unit_mass": _exact_scalar(entity._unit_mass),
             "vector_bypasses_cap": bool(
                 entity._movement_vector_bypasses_cap
             ),

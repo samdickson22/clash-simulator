@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from clasher.arena import Position
+from clasher.arena import Position, TileGrid
 from clasher.battle import BattleState
 from clasher.entities import Building, Troop
 from clasher.rust_core import (
@@ -17,8 +17,8 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def _empty_battle() -> BattleState:
-    battle = BattleState()
+def _empty_battle(*, arena: TileGrid | None = None) -> BattleState:
+    battle = BattleState() if arena is None else BattleState(arena=arena)
     battle.entities.clear()
     battle.next_entity_id = 1
     return battle
@@ -155,6 +155,47 @@ def test_stationary_external_vector_clamps_native_arena_boundary() -> None:
     assert troop.position == Position(0.25, 0.25)
 
 
+def test_stationary_external_vector_uses_resident_arena_dimensions() -> None:
+    battle = _empty_battle(arena=TileGrid(width=10, height=20))
+    troop = _spawn_troop(
+        battle,
+        player_id=0,
+        position=Position(9.75, 19.75),
+    )
+    troop.accumulate_movement_vector_units(500, 500, bypasses_cap=True)
+    resident = ResidentRustBattle.from_battle(battle)
+
+    resident.advance_stationary_movement_phase()
+    _advance_python_movement(battle)
+
+    compare_stationary_movement_phase(battle, resident)
+    assert troop.position == Position(9.75, 19.75)
+
+
+@pytest.mark.parametrize("avoidance", [-200, -7, 7, 200])
+def test_stationary_movement_decays_retained_avoidance(
+    avoidance: int,
+) -> None:
+    battle = _empty_battle()
+    troop = _spawn_troop(
+        battle,
+        player_id=0,
+        position=Position(9.0, 12.0),
+    )
+    troop._native_avoidance = avoidance
+    troop._native_natural_movement_active = True
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_stationary_movement_phase
+    resident.advance_stationary_movement_phase()
+    _advance_python_movement(battle)
+
+    compare_stationary_movement_phase(battle, resident)
+    expected = max(0, avoidance - 10) if avoidance > 0 else min(0, avoidance + 10)
+    assert troop._native_avoidance == expected
+    assert not troop._native_natural_movement_active
+
+
 def test_stationary_movement_rejects_natural_target_before_mutation() -> None:
     battle = _empty_battle()
     troop = _spawn_troop(
@@ -168,6 +209,26 @@ def test_stationary_movement_rejects_natural_target_before_mutation() -> None:
         position=Position(9.0, 16.0),
     )
     troop._movement_target_id = target.id
+    resident = ResidentRustBattle.from_battle(battle)
+    state_before = resident.stationary_movement_state_bytes()
+    rng_before = resident.rng_state_bytes()
+
+    assert not resident.supports_stationary_movement_phase
+    with pytest.raises(RuntimeError, match="stationary movement preflight rejected"):
+        resident.advance_stationary_movement_phase()
+
+    assert resident.stationary_movement_state_bytes() == state_before
+    assert resident.rng_state_bytes() == rng_before
+
+
+def test_stationary_movement_rejects_nonfinite_collision_radius() -> None:
+    battle = _empty_battle()
+    troop = _spawn_troop(
+        battle,
+        player_id=0,
+        position=Position(9.0, 12.0),
+    )
+    troop.card_stats.collision_radius = float("inf")
     resident = ResidentRustBattle.from_battle(battle)
     state_before = resident.stationary_movement_state_bytes()
     rng_before = resident.rng_state_bytes()

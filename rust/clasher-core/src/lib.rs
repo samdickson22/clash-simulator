@@ -661,8 +661,10 @@ struct ResidentMovementState {
     pending_y: f64,
     pending_consumed: bool,
     unit_mass: f64,
+    collision_radius: f64,
     is_hover: bool,
     native_avoidance: i64,
+    native_natural_movement_active: bool,
     death_spawn_travel_ticks: i64,
     knockback_target_present: bool,
     knockback_velocity_work: i64,
@@ -673,7 +675,17 @@ struct ResidentMovementState {
 }
 
 impl ResidentMovementState {
-    fn from_fields(fields: &Map<String, Value>) -> PyResult<Self> {
+    fn from_fields(
+        fields: &Map<String, Value>,
+        card_fields: &Map<String, Value>,
+        entity_kind: i64,
+    ) -> PyResult<Self> {
+        let serialized_radius = optional_normalized_f64(card_fields, "collision_radius")?;
+        let collision_radius = match entity_kind {
+            0 => serialized_radius.filter(|radius| *radius != 0.0).unwrap_or(0.5),
+            1 => serialized_radius.filter(|radius| *radius != 0.0).unwrap_or(0.0),
+            _ => 0.0,
+        };
         Ok(Self {
             vector_x_units: required_i64(fields, "_movement_vector_x_units")?,
             vector_y_units: required_i64(fields, "_movement_vector_y_units")?,
@@ -683,11 +695,16 @@ impl ResidentMovementState {
             pending_y: normalized_f64(fields, "_pending_movement_y")?,
             pending_consumed: required_bool(fields, "_pending_movement_consumed")?,
             unit_mass: normalized_f64(fields, "_unit_mass")?,
+            collision_radius,
             is_hover: required_bool(fields, "_is_hover_unit")?,
             native_avoidance: fields
                 .get("_native_avoidance")
                 .and_then(Value::as_i64)
                 .unwrap_or(0),
+            native_natural_movement_active: normalized_optional_bool(
+                fields,
+                "_native_natural_movement_active",
+            ),
             death_spawn_travel_ticks: required_i64(fields, "_death_spawn_travel_ticks_remaining")?,
             knockback_target_present: fields
                 .get("_knockback_target")
@@ -1406,7 +1423,11 @@ impl ResidentEntity {
             None
         };
         let movement = if is_character {
-            Some(ResidentMovementState::from_fields(fields)?)
+            Some(ResidentMovementState::from_fields(
+                fields,
+                card_fields,
+                entity_kind,
+            )?)
         } else {
             None
         };
@@ -2125,6 +2146,8 @@ struct ResidentBattle {
     tick: i64,
     time: f64,
     dt: f64,
+    arena_width_tiles: i64,
+    arena_height_tiles: i64,
     double_elixir: bool,
     triple_elixir: bool,
     overtime: bool,
@@ -2157,6 +2180,8 @@ impl ResidentBattle {
         tick,
         time,
         dt,
+        arena_width_tiles,
+        arena_height_tiles,
         double_elixir,
         triple_elixir,
         overtime,
@@ -2181,6 +2206,8 @@ impl ResidentBattle {
         tick: i64,
         time: f64,
         dt: f64,
+        arena_width_tiles: i64,
+        arena_height_tiles: i64,
         double_elixir: bool,
         triple_elixir: bool,
         overtime: bool,
@@ -2202,6 +2229,11 @@ impl ResidentBattle {
         if !time.is_finite() || !dt.is_finite() || dt < 0.0 {
             return Err(PyValueError::new_err(
                 "battle time and non-negative dt must be finite",
+            ));
+        }
+        if arena_width_tiles < 1 || arena_height_tiles < 1 {
+            return Err(PyValueError::new_err(
+                "resident arena dimensions must be positive",
             ));
         }
         let schema_version = validate_checkpoint(checkpoint)?;
@@ -2228,6 +2260,8 @@ impl ResidentBattle {
             tick,
             time,
             dt,
+            arena_width_tiles,
+            arena_height_tiles,
             double_elixir,
             triple_elixir,
             overtime,
@@ -2627,9 +2661,11 @@ impl ResidentBattle {
                 && movement.vector_count >= 0
                 && movement.unit_mass.is_finite()
                 && movement.unit_mass > 0.0
+                && movement.collision_radius.is_finite()
+                && entity.position_x.as_f64().is_finite()
+                && entity.position_y.as_f64().is_finite()
                 && movement.pending_x.is_finite()
                 && movement.pending_y.is_finite()
-                && movement.native_avoidance == 0
                 && movement.death_spawn_travel_ticks == 0
                 && !movement.knockback_target_present
                 && movement.knockback_velocity_work == 0
@@ -2662,6 +2698,18 @@ impl ResidentBattle {
                 self.accumulate_stationary_collision_for(entity_index);
             }
             self.begin_resident_movement(entity_index);
+            if self.entities[entity_index].entity_kind == 0 {
+                let movement = self.entities[entity_index]
+                    .movement
+                    .as_mut()
+                    .expect("stationary troop requires movement state");
+                if movement.native_avoidance < 0 {
+                    movement.native_avoidance = (movement.native_avoidance + 10).min(0);
+                } else if movement.native_avoidance > 0 {
+                    movement.native_avoidance = (movement.native_avoidance - 10).max(0);
+                }
+                movement.native_natural_movement_active = false;
+            }
             self.finish_resident_movement(entity_index);
         }
         Ok(())
@@ -2678,13 +2726,17 @@ impl ResidentBattle {
                     .as_ref()
                     .expect("character movement state parsed at initialization");
                 json!({
+                    "collision_radius": exact_f64_value(movement.collision_radius),
                     "encounter_index": entity.encounter_index,
                     "id": entity.id,
+                    "native_avoidance": movement.native_avoidance,
+                    "native_natural_movement_active": movement.native_natural_movement_active,
                     "pending_consumed": movement.pending_consumed,
                     "pending_x": exact_f64_value(movement.pending_x),
                     "pending_y": exact_f64_value(movement.pending_y),
                     "position_x": entity.position_x.diagnostic_value(),
                     "position_y": entity.position_y.diagnostic_value(),
+                    "unit_mass": exact_f64_value(movement.unit_mass),
                     "vector_bypasses_cap": movement.vector_bypasses_cap,
                     "vector_count": movement.vector_count,
                     "vector_x_units": movement.vector_x_units,
@@ -3492,7 +3544,7 @@ impl ResidentBattle {
             .movement
             .as_ref()
             .expect("stationary troop requires movement state");
-        let own_radius = combat.collision_radius.max(0.2);
+        let own_radius = movement.collision_radius.max(0.2);
         let own_mass = movement.unit_mass.max(1e-9);
         let own_air = combat.is_air_unit || movement.is_hover;
         let static_radius = own_radius.min(0.5);
@@ -3518,7 +3570,7 @@ impl ResidentBattle {
                     if let Some(vector) = Self::stationary_collision_vector(
                         entity,
                         other,
-                        own_radius + other_combat.collision_radius.max(0.2),
+                        own_radius + other_movement.collision_radius.max(0.2),
                         other_movement.unit_mass.max(1e-9),
                         own_mass,
                     ) {
@@ -3527,9 +3579,9 @@ impl ResidentBattle {
                 }
                 1 if !own_air => {
                     let other_radius = other
-                        .locked_combat
+                        .movement
                         .as_ref()
-                        .expect("building collision candidate requires combat state")
+                        .expect("building collision candidate requires movement state")
                         .collision_radius
                         .max(0.0);
                     if let Some(vector) = Self::stationary_collision_vector(
@@ -3610,12 +3662,14 @@ impl ResidentBattle {
             let y = (logic_units(self.entities[entity_index].position_y.as_f64())
                 + logic_units(pending_y)) as f64
                 / 1000.0;
+            let max_x = self.arena_width_tiles as f64 - 0.25;
+            let max_y = self.arena_height_tiles as f64 - 0.25;
             self.entities[entity_index]
                 .position_x
-                .set_f64(x.clamp(0.25, 17.75));
+                .set_f64(x.clamp(0.25, max_x));
             self.entities[entity_index]
                 .position_y
-                .set_f64(y.clamp(0.25, 31.75));
+                .set_f64(y.clamp(0.25, max_y));
         }
         let quantized_x = logic_units(self.entities[entity_index].position_x.as_f64());
         let quantized_y = logic_units(self.entities[entity_index].position_y.as_f64());
