@@ -302,6 +302,27 @@ def run_python_interaction_case(
     return setup, result
 
 
+def run_rust_interaction_case(
+    case: InteractionCase,
+    *,
+    ticks: int,
+    seed: int = 0xC1A5_0000,
+    dump_directory: str | None = None,
+) -> tuple[InteractionSetup, DifferentialResult]:
+    """Run one supported case through Python and resident Rust lockstep."""
+
+    from .rust_differential import rust_shadow_lockstep
+
+    setup = build_interaction_battle(case, seed=seed)
+    result = rust_shadow_lockstep(
+        setup.battle,
+        ticks=ticks,
+        scenario=case.case_id,
+        dump_directory=dump_directory,
+    )
+    return setup, result
+
+
 def interaction_case_summary(setup: InteractionSetup) -> dict[str, Any]:
     return {
         **setup.case.as_dict(),
