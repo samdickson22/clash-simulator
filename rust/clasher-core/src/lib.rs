@@ -420,6 +420,11 @@ struct ResidentEntity {
     max_hitpoints: ExactScalar,
     is_alive: bool,
     target_id: Option<i64>,
+    deploy_delay_remaining: f64,
+    placement_pending: bool,
+    spawn_hook_pending: bool,
+    spawn_hook_fired: bool,
+    death_spawn_target_immunity_elapsed_ms: i64,
     mechanics: Vec<String>,
     modifier_state: Option<ModifierState>,
     modifier_supported: bool,
@@ -495,6 +500,20 @@ impl ResidentEntity {
             )?,
             is_alive: required_bool(fields, "is_alive")?,
             target_id,
+            deploy_delay_remaining: normalized_f64(fields, "deploy_delay_remaining")?,
+            placement_pending: required_bool(fields, "placement_pending")?,
+            spawn_hook_pending: fields
+                .get("_spawn_hook_pending")
+                .and_then(Value::as_bool)
+                .unwrap_or(false),
+            spawn_hook_fired: fields
+                .get("_spawn_hook_fired")
+                .and_then(Value::as_bool)
+                .unwrap_or(false),
+            death_spawn_target_immunity_elapsed_ms: required_i64(
+                fields,
+                "_death_spawn_target_immunity_elapsed_ms",
+            )?,
             mechanics,
             modifier_state,
             modifier_supported,
@@ -523,6 +542,58 @@ impl ResidentEntity {
         self.modifier_state
             .as_ref()
             .map(|state| state.diagnostic_value(self.id, self.encounter_index))
+    }
+
+    fn supports_character_object_phase(&self) -> bool {
+        matches!(self.entity_kind, 0 | 1) && self.mechanics.is_empty()
+    }
+
+    fn advance_character_object_phase(&mut self, dt: f64) {
+        const GLOBAL_ATTACK_FINISH_TIME_MS: i64 = 250;
+        if !self.is_alive {
+            return;
+        }
+        if self.death_spawn_target_immunity_elapsed_ms >= 0 {
+            // The resident whole-tick boundary advances on the same fixed
+            // 50 ms grid as Python's logic_time_milliseconds(). Keeping the
+            // conversion explicit pins the causal immunity zero-crossing.
+            let elapsed_ms = (dt * 1000.0).round_ties_even() as i64;
+            self.death_spawn_target_immunity_elapsed_ms += elapsed_ms.max(0);
+            if GLOBAL_ATTACK_FINISH_TIME_MS < self.death_spawn_target_immunity_elapsed_ms {
+                self.death_spawn_target_immunity_elapsed_ms = -1;
+            }
+        }
+        if self.deploy_delay_remaining > 0.0 {
+            self.deploy_delay_remaining = (self.deploy_delay_remaining - dt).max(0.0);
+            if self.deploy_delay_remaining > 1e-9 {
+                return;
+            }
+            self.deploy_delay_remaining = 0.0;
+            self.placement_pending = false;
+            if self.spawn_hook_pending {
+                self.spawn_hook_pending = false;
+                self.spawn_hook_fired = true;
+            }
+            return;
+        }
+        if self.spawn_hook_pending {
+            self.spawn_hook_pending = false;
+            self.spawn_hook_fired = true;
+        }
+    }
+
+    fn character_object_diagnostic_value(&self) -> Option<Value> {
+        matches!(self.entity_kind, 0 | 1).then(|| {
+            json!({
+                "death_spawn_target_immunity_elapsed_ms": self.death_spawn_target_immunity_elapsed_ms,
+                "deploy_delay_remaining": exact_f64_value(self.deploy_delay_remaining),
+                "encounter_index": self.encounter_index,
+                "id": self.id,
+                "placement_pending": self.placement_pending,
+                "spawn_hook_fired": self.spawn_hook_fired,
+                "spawn_hook_pending": self.spawn_hook_pending,
+            })
+        })
     }
 }
 
@@ -1351,6 +1422,42 @@ impl ResidentBattle {
 
     fn modifier_sha256(&self) -> PyResult<String> {
         Ok(sha256_hex(&self.modifier_state_bytes()?))
+    }
+
+    fn supports_character_object_phase(&self) -> bool {
+        self.entities
+            .iter()
+            .all(ResidentEntity::supports_character_object_phase)
+    }
+
+    fn advance_character_object_phase(&mut self) -> PyResult<()> {
+        if !self.supports_character_object_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident character object phase contains non-character entities or executable mechanics",
+            ));
+        }
+        self.checkpoint_current = false;
+        for entity in &mut self.entities {
+            entity.advance_character_object_phase(self.dt);
+        }
+        Ok(())
+    }
+
+    fn character_object_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter_map(ResidentEntity::character_object_diagnostic_value)
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident character object state: {error}"
+            ))
+        })
+    }
+
+    fn character_object_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.character_object_state_bytes()?))
     }
 
     fn rng_random(&mut self) -> f64 {

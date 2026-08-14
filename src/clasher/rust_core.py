@@ -348,6 +348,19 @@ class ResidentRustBattle:
     def modifier_sha256(self) -> str:
         return str(self._native.modifier_sha256())
 
+    @property
+    def supports_character_object_phase(self) -> bool:
+        return bool(self._native.supports_character_object_phase())
+
+    def advance_character_object_phase(self) -> None:
+        self._native.advance_character_object_phase()
+
+    def character_object_state_bytes(self) -> bytes:
+        return bytes(self._native.character_object_state_bytes())
+
+    def character_object_sha256(self) -> str:
+        return str(self._native.character_object_sha256())
+
     def rng_random(self) -> float:
         return float(self._native.rng_random())
 
@@ -764,6 +777,64 @@ def compare_modifier_phase(battle: Any, resident: ResidentRustBattle) -> None:
     if expected_hash != actual_hash:
         raise AssertionError(
             "resident Rust modifier hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
+
+
+def character_object_state_rows(battle: Any) -> list[dict[str, Any]]:
+    return [
+        {
+            "death_spawn_target_immunity_elapsed_ms": int(
+                entity._death_spawn_target_immunity_elapsed_ms
+            ),
+            "deploy_delay_remaining": _exact_scalar(
+                entity.deploy_delay_remaining
+            ),
+            "encounter_index": encounter_index,
+            "id": int(entity.id),
+            "placement_pending": bool(entity.placement_pending),
+            "spawn_hook_fired": bool(
+                getattr(entity, "_spawn_hook_fired", False)
+            ),
+            "spawn_hook_pending": bool(
+                getattr(entity, "_spawn_hook_pending", False)
+            ),
+        }
+        for encounter_index, entity in enumerate(battle.entities.values())
+        if entity.entity_kind in {0, 1}
+    ]
+
+
+def character_object_state_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        character_object_state_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_character_object_phase(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = character_object_state_rows(battle)
+    actual = json.loads(resident.character_object_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust character object state mismatch")
+        raise AssertionError(
+            "resident Rust character object parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(character_object_state_bytes(battle)).hexdigest()
+    actual_hash = resident.character_object_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust character object hash mismatch "
             f"expected={expected_hash} actual={actual_hash}"
         )
 
