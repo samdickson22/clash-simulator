@@ -189,6 +189,7 @@ fn normalized_mapping_is_empty(fields: &Map<String, Value>, name: &str) -> PyRes
         .ok_or_else(|| PyValueError::new_err(format!("entity {name} is not a mapping")))
 }
 
+#[derive(Clone)]
 struct ModifierState {
     stun_timer: f64,
     slow_timer: f64,
@@ -405,6 +406,7 @@ fn parse_python_float_hex(encoded: &str) -> PyResult<u64> {
     Ok(sign | (exponent_bits << 52) | fraction)
 }
 
+#[derive(Clone)]
 struct ResidentEntity {
     encounter_index: usize,
     id: i64,
@@ -559,6 +561,7 @@ fn parse_resident_entities(payload: &[u8]) -> PyResult<Vec<ResidentEntity>> {
     Ok(parsed)
 }
 
+#[derive(Clone)]
 struct PythonMt19937 {
     version: i64,
     state: [u32; 624],
@@ -721,6 +724,7 @@ type PlayerStateTuple = PlayerInit;
 type TowerInit = (i64, i64, String, f64, i64, bool, bool, f64);
 type TowerStateTuple = TowerInit;
 
+#[derive(Clone)]
 struct ResidentPlayer {
     player_id: i64,
     elixir: f64,
@@ -843,6 +847,7 @@ impl ResidentPlayer {
     }
 }
 
+#[derive(Clone)]
 struct ResidentTower {
     id: i64,
     player_id: i64,
@@ -915,6 +920,7 @@ fn append_string(payload: &mut Vec<u8>, value: &str) {
 /// complete canonical payload. Ordinary phase/tick methods mutate the fields
 /// below directly and never serialize or reparse that payload.
 #[pyclass(module = "_clasher_rust")]
+#[derive(Clone)]
 struct ResidentBattle {
     checkpoint: Vec<u8>,
     checkpoint_sha256: String,
@@ -1396,6 +1402,10 @@ impl ResidentBattle {
 
     fn supports_complete_tick(&self) -> bool {
         false
+    }
+
+    fn fork(&self) -> Self {
+        self.clone()
     }
 }
 

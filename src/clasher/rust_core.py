@@ -188,6 +188,10 @@ class ResidentRustBattle:
     def __init__(self, native: Any) -> None:
         self._native = native
 
+    def fork(self) -> ResidentRustBattle:
+        """Clone all resident mutable state without Python-state marshalling."""
+        return type(self)(self._native.fork())
+
     @classmethod
     def from_battle(cls, battle: Any) -> ResidentRustBattle:
         require_rust_core()
