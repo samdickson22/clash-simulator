@@ -98,7 +98,7 @@ def test_resident_death_spawn_travel_matches_complete_trace(
         # trait even though this transport does not exercise knockback.
         assert (
             resident.ground_movement_sha256()
-            == "fec7f7e3e786403a25c3271a55f68cf3a8f62b0d3085fd3034839a3ce6eda7b5"
+                == "c2b64045fbbeaed5cd7691bc4f883c8741dd664639b8d7be9de752b37c6e852b"
         )
     assert resident.rng_state_bytes() == rng_before
 

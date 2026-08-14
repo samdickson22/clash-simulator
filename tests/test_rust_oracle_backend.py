@@ -35,6 +35,8 @@ def _supported_unique_deck(battle: BattleState) -> list[str]:
     supported = set(resident.resident_supported_action_cards())
     assert all(name in supported for name in historical_deck)
     return historical_deck
+
+
 def _supported_battle(seed: int) -> BattleState:
     battle = BattleState(rng=random.Random(seed))
     deck = _supported_unique_deck(battle)
@@ -44,6 +46,66 @@ def _supported_battle(seed: int) -> BattleState:
         player.cycle_queue = deque(deck[4:])
         player.elixir = player.max_elixir
     return battle
+
+
+def _production_deck_battle(seed: int) -> BattleState:
+    battle = BattleState(rng=random.Random(seed))
+    deck = [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer",
+    ]
+    resident = ResidentRustBattle.from_battle(battle)
+    assert all(name in set(resident.resident_supported_action_cards()) for name in deck)
+    for player in battle.players:
+        player.hand = deck[:4]
+        player.deck = deck.copy()
+        player.cycle_queue = deque(deck[4:])
+        player.elixir = player.max_elixir
+    return battle
+
+
+def test_production_deck_oracle_off_shadow_on_is_exact() -> None:
+    outputs = []
+    for mode in ("off", "shadow", "on"):
+        battle = _production_deck_battle(9401)
+        battle_before = snapshot_bytes(canonical_battle_snapshot(battle))
+        battle_rng_before = battle.rng.getstate()
+        planner = RustBackendFixedDepthThompsonOracle(
+            decision_interval_ticks=8,
+            plan_depth=3,
+            num_simulations=8,
+            rollout_action_samples=32,
+            seed=901,
+            reward_profile=DEFENSE_V2,
+            stable_root_candidates=True,
+            rust_mode=mode,
+        )
+
+        actions = planner.select_actions(battle)
+
+        assert actions == {0: 204, 1: 1766}
+        assert (
+            planner.metrics.trace_sha256
+            == "251c80d88e5228b13f34d699342020ce85f0dc3dbc0cc51e59177ab17a26610d"
+        )
+        assert snapshot_bytes(canonical_battle_snapshot(battle)) == battle_before
+        assert battle.rng.getstate() == battle_rng_before
+        outputs.append((actions, copy.deepcopy(planner.rng.bit_generator.state)))
+        if mode == "shadow":
+            assert planner.metrics.active_backend == "python+rust-shadow"
+            assert planner.metrics.shadow_checks == 1
+            assert planner.metrics.shadow_mismatches == 0
+        elif mode == "on":
+            assert planner.metrics.active_backend == "rust"
+            assert planner.metrics.fallback_reason is None
+
+    assert outputs[0] == outputs[1] == outputs[2]
 
 
 @pytest.mark.parametrize(

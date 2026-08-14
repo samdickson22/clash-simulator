@@ -71,7 +71,7 @@ def test_complete_tick_off_keeps_python_authoritative() -> None:
 
 def test_complete_tick_unsupported_state_falls_back_before_play() -> None:
     battle = BattleState(rng=random.Random(9903))
-    _spawn(battle, "Golem", 0, Position(9.0, 14.0))
+    _spawn(battle, "Balloon", 0, Position(9.0, 14.0))
     runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.SHADOW)
 
     assert runtime.status.active_mode is RustBattleMode.OFF

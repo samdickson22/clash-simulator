@@ -108,7 +108,7 @@ def test_resident_river_jump_matches_full_initiation_and_landing_trace(
         # trait even though this trace is a river transport.
         assert (
             resident.ground_movement_sha256()
-            == "01de2e2f84012686dd759774667ce293b08bea632fbd64d1d8855b487bf0c235"
+                == "a590171268d264b7d848634d228bdc6377cbfa640615868268e4219bf1d8dcc5"
         )
     assert resident.rng_state_bytes() == rng_before
 

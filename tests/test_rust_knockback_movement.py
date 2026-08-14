@@ -107,7 +107,7 @@ def test_resident_knockback_matches_complete_velocity_trace(
         # trait used by the resident radial-knockback gate.
         assert (
             resident.ground_movement_sha256()
-            == "9035af94f984ce5cbc711e82171a73492a5b4c40e526260a46d9774dfbb9cf48"
+                == "f56acc78a4542d8a64e726f8b845080005aa366397442632d56b2062f4790619"
         )
     assert resident.rng_state_bytes() == rng_before
 

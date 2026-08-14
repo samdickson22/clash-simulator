@@ -131,7 +131,7 @@ def test_ground_movement_fixed_trace_hash_is_pinned() -> None:
     # The movement digest includes the data-driven knockback-immunity trait.
     assert (
         resident.ground_movement_sha256()
-        == "c7af5e709b4abbdbeea3c4bf9419dc83a62c7876b436f6e459d5235228ab8897"
+            == "80a668ac10df2973b2da7a41ee6497f49cbb87398cfaf11022c2eea3d237a94f"
     )
     assert resident.rng_state_bytes() == rng_before
 

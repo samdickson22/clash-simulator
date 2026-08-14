@@ -1219,6 +1219,7 @@ struct ResidentMovementState {
     is_hover: bool,
     native_avoidance: i64,
     native_natural_movement_active: bool,
+    movement_phase_elapsed_ms: i64,
     stop_movement_after_ms: f64,
     wait_ms: f64,
     serialized_speed: f64,
@@ -1301,6 +1302,14 @@ impl ResidentMovementState {
                 fields,
                 "_native_natural_movement_active",
             ),
+            movement_phase_elapsed_ms: if entity_kind == 0 {
+                required_i64(fields, "movement_phase_elapsed_ms")?
+            } else {
+                fields
+                    .get("movement_phase_elapsed_ms")
+                    .and_then(Value::as_i64)
+                    .unwrap_or(0)
+            },
             stop_movement_after_ms: optional_normalized_f64(card_fields, "stop_movement_after_ms")?
                 .unwrap_or(0.0),
             wait_ms: optional_normalized_f64(card_fields, "wait_ms")?.unwrap_or(0.0),
@@ -7184,6 +7193,14 @@ impl ResidentBattle {
                 && entity.position_y.as_f64().is_finite()
                 && movement.pending_x.is_finite()
                 && movement.pending_y.is_finite()
+                && movement.movement_phase_elapsed_ms >= 0
+                && movement.stop_movement_after_ms.is_finite()
+                && movement.stop_movement_after_ms >= 0.0
+                && movement.wait_ms.is_finite()
+                && movement.wait_ms >= 0.0
+                && (!(movement.stop_movement_after_ms > 0.0 && movement.wait_ms > 0.0)
+                    || (movement.stop_movement_after_ms + movement.wait_ms).round_ties_even()
+                        > 0.0)
                 && self.resident_death_spawn_travel_supported(entity)
                 && self.resident_knockback_state_supported(entity)
                 && !(movement.death_spawn_travel_ticks > 0
@@ -7226,8 +7243,6 @@ impl ResidentBattle {
                         && self.arena_height_tiles == 32
                         && movement.jump_speed.is_finite()
                         && movement.jump_speed.round_ties_even() > 0.0))
-                && movement.stop_movement_after_ms == 0.0
-                && movement.wait_ms == 0.0
                 && movement.serialized_speed.is_finite()
                 && modifiers.speed.as_f64().is_finite()
                 && modifiers.original_speed.is_none_or(f64::is_finite)
@@ -8171,7 +8186,33 @@ impl ResidentBattle {
                     movement.native_avoidance,
                 )
             };
-            let movement_work = Self::speed_work_for_duration(effective_speed, self.dt);
+            let movement_work = {
+                let movement = self.entities[entity_index]
+                    .movement
+                    .as_mut()
+                    .expect("resident troop requires movement state");
+                let mut work = Self::speed_work_for_duration(effective_speed, self.dt);
+                if movement.stop_movement_after_ms > 0.0 && movement.wait_ms > 0.0 {
+                    let base_logic_speed =
+                        movement.serialized_speed.round_ties_even().max(1.0) as i64;
+                    let tick_ms = (self.dt * 1000.0).round_ties_even().max(0.0) as i64;
+                    let elapsed_work = truncating_div(
+                        i128::from(tick_ms) * i128::from(effective_speed),
+                        base_logic_speed,
+                    );
+                    movement.movement_phase_elapsed_ms += elapsed_work;
+                    let cycle_ms = (movement.stop_movement_after_ms + movement.wait_ms)
+                        .round_ties_even() as i64;
+                    if movement.movement_phase_elapsed_ms >= cycle_ms {
+                        movement.movement_phase_elapsed_ms %= cycle_ms;
+                    } else if movement.movement_phase_elapsed_ms as f64
+                        > movement.stop_movement_after_ms
+                    {
+                        work = 0;
+                    }
+                }
+                work
+            };
             let target_distance = integer_sqrt(
                 (i128::from(dx_units) * i128::from(dx_units)
                     + i128::from(dy_units) * i128::from(dy_units)) as u128,
@@ -8637,6 +8678,25 @@ impl ResidentBattle {
                     .as_object_mut()
                     .expect("movement diagnostic is an object")
                     .insert("knockback_immune".to_owned(), json!(movement.knockback_immune));
+                let diagnostic = value
+                    .as_object_mut()
+                    .expect("movement diagnostic is an object");
+                diagnostic.insert(
+                    "movement_phase_elapsed_ms".to_owned(),
+                    json!(movement.movement_phase_elapsed_ms),
+                );
+                diagnostic.insert(
+                    "serialized_speed".to_owned(),
+                    exact_f64_value(movement.serialized_speed),
+                );
+                diagnostic.insert(
+                    "stop_movement_after_ms".to_owned(),
+                    exact_f64_value(movement.stop_movement_after_ms),
+                );
+                diagnostic.insert(
+                    "wait_ms".to_owned(),
+                    exact_f64_value(movement.wait_ms),
+                );
                 value
             })
             .collect::<Vec<_>>();

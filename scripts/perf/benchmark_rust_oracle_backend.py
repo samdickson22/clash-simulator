@@ -15,14 +15,14 @@ from clasher.rl.rust_oracle_planner import RustBackendFixedDepthThompsonOracle
 from clasher.rust_core import ResidentRustBattle
 
 BENCHMARK_DECK = (
-    "BabyDragon",
-    "Berserker",
-    "BlowdartGoblin",
-    "Bomber",
-    "DartBarrell",
-    "ElectroGiant",
+    "Archers",
+    "Arrows",
+    "Fireball",
     "Giant",
-    "GiantBuffer",
+    "Knight",
+    "MiniPekka",
+    "Minions",
+    "Musketeer",
 )
 
 
@@ -154,7 +154,8 @@ def main() -> None:
         json.dumps(
             {
                 "schema_version": 1,
-                "workload": "fixed-depth-oracle-supported-resident-closure",
+                "workload": "fixed-depth-oracle-production-deck",
+                "deck": list(BENCHMARK_DECK),
                 "parameters": parameters,
                 "warmups": args.warmups,
                 "repetitions": args.repetitions,

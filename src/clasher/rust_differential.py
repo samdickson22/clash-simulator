@@ -28,7 +28,7 @@ from .rust_core import (
     shield_state_rows,
 )
 
-RESIDENT_SEMANTIC_SCHEMA_VERSION = 6
+RESIDENT_SEMANTIC_SCHEMA_VERSION = 7
 
 
 def _python_pending_spell_state(battle: BattleState) -> dict[str, Any]:

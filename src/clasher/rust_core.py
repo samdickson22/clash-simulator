@@ -2064,6 +2064,9 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "knockback_velocity_work": int(
                     entity._knockback_velocity_work
                 ),
+                "movement_phase_elapsed_ms": int(
+                    getattr(entity, "movement_phase_elapsed_ms", 0)
+                ),
                 "native_avoidance": int(
                     getattr(entity, "_native_avoidance", 0)
                 ),
@@ -2118,6 +2121,19 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "special_move_consumed_tick": bool(
                     getattr(entity, "_special_move_consumed_tick", False)
                 ),
+                "serialized_speed": _exact_scalar(
+                    float(getattr(entity.card_stats, "speed", 0.0) or 0.0)
+                ),
+                "stop_movement_after_ms": _exact_scalar(
+                    float(
+                        getattr(
+                            entity.card_stats,
+                            "stop_movement_after_ms",
+                            0.0,
+                        )
+                        or 0.0
+                    )
+                ),
                 "stun_interrupt_deferred_until_landing": bool(
                     getattr(
                         entity,
@@ -2134,6 +2150,9 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "vector_count": int(entity._movement_vector_count),
                 "vector_x_units": int(entity._movement_vector_x_units),
                 "vector_y_units": int(entity._movement_vector_y_units),
+                "wait_ms": _exact_scalar(
+                    float(getattr(entity.card_stats, "wait_ms", 0.0) or 0.0)
+                ),
             }
         )
     return rows

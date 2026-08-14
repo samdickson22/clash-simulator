@@ -41,7 +41,7 @@ def test_unsupported_interaction_fails_before_advancing() -> None:
     case = InteractionCase(
         index=18,
         kind="1v1",
-        team_0=("Golem",),
+        team_0=("Balloon",),
         team_1=("Knight",),
         fast_path=False,
         mirrored=False,
