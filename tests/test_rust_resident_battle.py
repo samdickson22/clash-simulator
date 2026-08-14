@@ -139,13 +139,23 @@ def test_clock_phase_stops_exactly_when_game_is_over() -> None:
     compare_clock_phase(battle, resident)
 
 
-def test_on_mode_fails_closed_until_complete_tick_is_supported() -> None:
+def test_complete_tick_modes_follow_dynamic_resident_capability() -> None:
     resident = ResidentRustBattle.from_battle(BattleState())
 
     resident.require_complete_tick(RustBattleMode.OFF)
     resident.require_complete_tick(RustBattleMode.SHADOW)
-    with pytest.raises(RuntimeError, match="does not yet implement every"):
-        resident.require_complete_tick(RustBattleMode.ON)
+    resident.require_complete_tick(RustBattleMode.ON)
+
+    unsupported = BattleState()
+    stats = unsupported.card_loader.get_card("Golem")
+    assert stats is not None
+    unsupported._spawn_unit_at_position(Position(9.0, 14.0), 0, stats)
+    rejected = ResidentRustBattle.from_battle(unsupported)
+    rejected.require_complete_tick(RustBattleMode.OFF)
+    with pytest.raises(RuntimeError, match="cannot execute the complete tick exactly"):
+        rejected.require_complete_tick(RustBattleMode.SHADOW)
+    with pytest.raises(RuntimeError, match="cannot execute the complete tick exactly"):
+        rejected.require_complete_tick(RustBattleMode.ON)
 
 
 @pytest.mark.parametrize("start_time", [0.0, 119.9, 179.9, 239.9, 299.9])

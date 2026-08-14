@@ -3,6 +3,7 @@ use pyo3::prelude::*;
 use serde_json::{Map, Value, json};
 use sha2::{Digest, Sha256};
 use std::collections::VecDeque;
+use std::sync::Arc;
 
 const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
 const FNV_PRIME: u64 = 0x100000001b3;
@@ -1059,6 +1060,7 @@ struct ResidentEntity {
     building_lifetime: Option<BuildingLifetimeState>,
     building_impact: Option<BuildingImpactState>,
     point_projectile: Option<PointProjectileState>,
+    object_base_movement_noop: bool,
 }
 
 #[derive(Clone)]
@@ -1935,6 +1937,15 @@ impl ResidentEntity {
         } else {
             None
         };
+        let pending_movement_x = normalized_f64(fields, "_pending_movement_x")?;
+        let pending_movement_y = normalized_f64(fields, "_pending_movement_y")?;
+        let object_base_movement_noop = required_i64(fields, "_movement_vector_x_units")? == 0
+            && required_i64(fields, "_movement_vector_y_units")? == 0
+            && required_i64(fields, "_movement_vector_count")? == 0
+            && !required_bool(fields, "_movement_vector_bypasses_cap")?
+            && pending_movement_x.to_bits() == 0.0_f64.to_bits()
+            && pending_movement_y.to_bits() == 0.0_f64.to_bits()
+            && required_bool(fields, "_pending_movement_consumed")?;
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
         }
@@ -2088,6 +2099,7 @@ impl ResidentEntity {
             building_lifetime,
             building_impact,
             point_projectile,
+            object_base_movement_noop,
         })
     }
 
@@ -2425,9 +2437,9 @@ struct ResidentPlayer {
     next_card_refill_cooldown_ms: i64,
     hand: Vec<Option<String>>,
     cycle_queue: VecDeque<String>,
-    king_tower_hp: f64,
-    left_tower_hp: f64,
-    right_tower_hp: f64,
+    king_tower_hp: ExactScalar,
+    left_tower_hp: ExactScalar,
+    right_tower_hp: ExactScalar,
 }
 
 impl ResidentPlayer {
@@ -2460,9 +2472,9 @@ impl ResidentPlayer {
             next_card_refill_cooldown_ms: cooldown_ms,
             hand,
             cycle_queue: cycle_queue.into(),
-            king_tower_hp,
-            left_tower_hp,
-            right_tower_hp,
+            king_tower_hp: ExactScalar::Float(king_tower_hp.to_bits()),
+            left_tower_hp: ExactScalar::Float(left_tower_hp.to_bits()),
+            right_tower_hp: ExactScalar::Float(right_tower_hp.to_bits()),
         })
     }
 
@@ -2474,9 +2486,9 @@ impl ResidentPlayer {
             self.next_card_refill_cooldown_ms,
             self.hand.clone(),
             self.cycle_queue.iter().cloned().collect(),
-            self.king_tower_hp,
-            self.left_tower_hp,
-            self.right_tower_hp,
+            self.king_tower_hp.as_f64(),
+            self.left_tower_hp.as_f64(),
+            self.right_tower_hp.as_f64(),
         )
     }
 
@@ -2518,22 +2530,25 @@ impl ResidentPlayer {
         for card in &self.cycle_queue {
             append_string(payload, card);
         }
-        payload.extend_from_slice(&self.king_tower_hp.to_bits().to_le_bytes());
-        payload.extend_from_slice(&self.left_tower_hp.to_bits().to_le_bytes());
-        payload.extend_from_slice(&self.right_tower_hp.to_bits().to_le_bytes());
+        payload.extend_from_slice(&self.king_tower_hp.as_f64().to_bits().to_le_bytes());
+        payload.extend_from_slice(&self.left_tower_hp.as_f64().to_bits().to_le_bytes());
+        payload.extend_from_slice(&self.right_tower_hp.as_f64().to_bits().to_le_bytes());
     }
 
     fn towers_lost(&self) -> i64 {
-        if self.king_tower_hp <= 0.0 {
+        if self.king_tower_hp.as_f64() <= 0.0 {
             return 3;
         }
-        i64::from(self.left_tower_hp <= 0.0) + i64::from(self.right_tower_hp <= 0.0)
+        i64::from(self.left_tower_hp.as_f64() <= 0.0)
+            + i64::from(self.right_tower_hp.as_f64() <= 0.0)
     }
 
     fn lowest_tower_hp_milli(&self, towers: &[ResidentTower]) -> i64 {
         towers
             .iter()
-            .filter(|tower| tower.active && tower.player_id == self.player_id && tower.hp > 0.0)
+            .filter(|tower| {
+                tower.active && tower.player_id == self.player_id && tower.hp.as_f64() > 0.0
+            })
             .map(|tower| tower.hp_milli)
             .min()
             .unwrap_or(0)
@@ -2546,7 +2561,7 @@ struct ResidentTower {
     id: i64,
     player_id: i64,
     slot: String,
-    hp: f64,
+    hp: ExactScalar,
     hp_milli: i64,
     is_alive: bool,
     is_active: bool,
@@ -2571,7 +2586,7 @@ impl ResidentTower {
             id,
             player_id,
             slot,
-            hp,
+            hp: ExactScalar::Float(hp.to_bits()),
             hp_milli,
             is_alive,
             is_active,
@@ -2584,7 +2599,7 @@ impl ResidentTower {
             self.id,
             self.player_id,
             self.slot.clone(),
-            self.hp,
+            self.hp.as_f64(),
             self.hp_milli,
             self.is_alive,
             self.is_active,
@@ -2596,7 +2611,7 @@ impl ResidentTower {
         payload.extend_from_slice(&self.id.to_le_bytes());
         payload.extend_from_slice(&self.player_id.to_le_bytes());
         append_string(payload, &self.slot);
-        payload.extend_from_slice(&self.hp.to_bits().to_le_bytes());
+        payload.extend_from_slice(&self.hp.as_f64().to_bits().to_le_bytes());
         payload.extend_from_slice(&self.hp_milli.to_le_bytes());
         payload.push(u8::from(self.is_alive));
         payload.push(u8::from(self.is_active));
@@ -2617,7 +2632,7 @@ fn append_string(payload: &mut Vec<u8>, value: &str) {
 #[pyclass(module = "_clasher_rust")]
 #[derive(Clone)]
 struct ResidentBattle {
-    checkpoint: Vec<u8>,
+    checkpoint: Arc<[u8]>,
     checkpoint_sha256: String,
     checkpoint_current: bool,
     schema_version: u64,
@@ -2640,6 +2655,7 @@ struct ResidentBattle {
     towers: Vec<ResidentTower>,
     idle_eligible: bool,
     sparse_idle_win_checks: bool,
+    win_conditions_dirty: bool,
     sudden_death: bool,
     sudden_death_crowns: (i64, i64),
     tiebreaker_time: f64,
@@ -2647,6 +2663,7 @@ struct ResidentBattle {
     entities: Vec<ResidentEntity>,
     next_entity_id: i64,
     lethal_projectile_reservation_ids: Vec<i64>,
+    pending_spell_casts_empty: bool,
     rng: PythonMt19937,
 }
 
@@ -2674,10 +2691,12 @@ impl ResidentBattle {
         towers,
         idle_eligible,
         sparse_idle_win_checks,
+        win_conditions_dirty,
         sudden_death,
         sudden_death_crowns,
         tiebreaker_time,
-        winner
+        winner,
+        pending_spell_casts_empty
     ))]
     #[allow(clippy::too_many_arguments)]
     fn new(
@@ -2700,10 +2719,12 @@ impl ResidentBattle {
         towers: Vec<TowerInit>,
         idle_eligible: bool,
         sparse_idle_win_checks: bool,
+        win_conditions_dirty: bool,
         sudden_death: bool,
         sudden_death_crowns: (i64, i64),
         tiebreaker_time: f64,
         winner: Option<i64>,
+        pending_spell_casts_empty: bool,
     ) -> PyResult<Self> {
         if !time.is_finite() || !dt.is_finite() || dt < 0.0 {
             return Err(PyValueError::new_err(
@@ -2731,7 +2752,7 @@ impl ResidentBattle {
             .map(ResidentTower::from_init)
             .collect::<PyResult<Vec<_>>>()?;
         Ok(Self {
-            checkpoint: checkpoint.to_vec(),
+            checkpoint: Arc::from(checkpoint),
             checkpoint_sha256: sha256_hex(checkpoint),
             checkpoint_current: true,
             schema_version,
@@ -2754,6 +2775,7 @@ impl ResidentBattle {
             towers,
             idle_eligible,
             sparse_idle_win_checks,
+            win_conditions_dirty,
             sudden_death,
             sudden_death_crowns,
             tiebreaker_time,
@@ -2761,6 +2783,7 @@ impl ResidentBattle {
             entities,
             next_entity_id,
             lethal_projectile_reservation_ids: Vec::new(),
+            pending_spell_casts_empty,
             rng,
         })
     }
@@ -2894,9 +2917,11 @@ impl ResidentBattle {
     }
 
     fn check_win_conditions(&mut self) {
+        self.sync_player_crown_hitpoints();
+        self.win_conditions_dirty = false;
         let king_alive = (
-            self.players[0].king_tower_hp > 0.0,
-            self.players[1].king_tower_hp > 0.0,
+            self.players[0].king_tower_hp.as_f64() > 0.0,
+            self.players[1].king_tower_hp.as_f64() > 0.0,
         );
         if !king_alive.0 || !king_alive.1 {
             self.game_over = true;
@@ -2963,6 +2988,10 @@ impl ResidentBattle {
             self.winner,
             self.sudden_death_crowns,
         )
+    }
+
+    fn win_conditions_dirty(&self) -> bool {
+        self.win_conditions_dirty
     }
 
     fn idle_sha256(&self) -> String {
@@ -3038,6 +3067,14 @@ impl ResidentBattle {
             }
             if let Some(state) = &mut entity.modifier_state {
                 state.advance(self.dt);
+                let stun_timer = state.stun_timer;
+                let attack_speed_debuff_multiplier = state.attack_speed_debuff_multiplier;
+                let attack_speed_buff_multiplier = state.attack_speed_buff_multiplier;
+                if let Some(combat) = entity.locked_combat.as_mut() {
+                    combat.stun_timer = stun_timer;
+                    combat.attack_speed_debuff_multiplier = attack_speed_debuff_multiplier;
+                    combat.attack_speed_buff_multiplier = attack_speed_buff_multiplier;
+                }
             }
         }
         Ok(())
@@ -3123,6 +3160,65 @@ impl ResidentBattle {
 
     fn character_object_sha256(&self) -> PyResult<String> {
         Ok(sha256_hex(&self.character_object_state_bytes()?))
+    }
+
+    fn supports_resident_object_phase(&self) -> bool {
+        self.resident_id_invariants_hold()
+            && self.supports_point_projectile_phase()
+            && self.entities.iter().all(|entity| {
+                !entity.active
+                    || (entity.entity_kind == 2 && entity.object_base_movement_noop)
+                    || entity.supports_character_object_phase()
+            })
+    }
+
+    fn advance_resident_object_phase(&mut self) -> PyResult<()> {
+        if !self.supports_resident_object_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident object phase rejected unsupported object or character callback",
+            ));
+        }
+        self.checkpoint_current = false;
+        let mut processed_ids = Vec::<i64>::new();
+        loop {
+            let mut pending = self
+                .entities
+                .iter()
+                .enumerate()
+                .filter_map(|(index, entity)| {
+                    (entity.active && !processed_ids.contains(&entity.id)).then_some(index)
+                })
+                .collect::<Vec<_>>();
+            if pending.is_empty() {
+                break;
+            }
+            pending.sort_unstable_by_key(|index| self.entities[*index].id);
+            for entity_index in pending {
+                let entity_id = self.entities[entity_index].id;
+                processed_ids.push(entity_id);
+                if !self.entities[entity_index].is_alive {
+                    continue;
+                }
+                match self.entities[entity_index].entity_kind {
+                    0 | 1 => self.entities[entity_index].advance_character_object_phase(self.dt),
+                    2 => self.advance_point_projectile(entity_index),
+                    _ => unreachable!("resident object preflight validates object kinds"),
+                }
+                self.quantize_resident_position(entity_index);
+            }
+        }
+        Ok(())
+    }
+
+    fn quantize_resident_position(&mut self, entity_index: usize) {
+        let quantized_x = logic_units(self.entities[entity_index].position_x.as_f64());
+        let quantized_y = logic_units(self.entities[entity_index].position_y.as_f64());
+        self.entities[entity_index]
+            .position_x
+            .set_f64(quantized_x as f64 / 1000.0);
+        self.entities[entity_index]
+            .position_y
+            .set_f64(quantized_y as f64 / 1000.0);
     }
 
     fn supports_stationary_movement_phase(&self) -> bool {
@@ -3246,7 +3342,7 @@ impl ResidentBattle {
                 "resident flying movement preflight rejected unsupported natural movement",
             ));
         }
-        self.advance_restricted_movement_phase();
+        self.advance_restricted_movement_phase(true);
         Ok(())
     }
 
@@ -3268,7 +3364,7 @@ impl ResidentBattle {
                 "resident ground movement preflight rejected unsupported natural movement",
             ));
         }
-        self.advance_restricted_movement_phase();
+        self.advance_restricted_movement_phase(true);
         Ok(())
     }
 
@@ -3473,14 +3569,14 @@ impl ResidentBattle {
     }
 
     fn supports_direct_troop_combat_phase(&self) -> bool {
-        if !self.supports_direct_combat_phase() {
+        if !self.resident_id_invariants_hold() || !self.supports_direct_combat_phase() {
             return false;
         }
         self.entities.iter().all(|entity| {
             !entity.active
                 || !entity.is_alive
                 || !matches!(entity.entity_kind, 0 | 1)
-                || (entity.deploy_delay_remaining <= 0.0 && entity.locked_combat.is_some())
+                || (Self::resident_deploy_state_supported(entity) && entity.locked_combat.is_some())
         })
     }
 
@@ -3498,6 +3594,16 @@ impl ResidentBattle {
                 || !self.entities[actor_index].is_alive
                 || !matches!(self.entities[actor_index].entity_kind, 0 | 1)
             {
+                continue;
+            }
+            if self.entities[actor_index].entity_kind == 0 {
+                self.entities[actor_index]
+                    .locked_combat
+                    .as_mut()
+                    .expect("direct preflight requires combat state")
+                    .movement_target_id = None;
+            }
+            if self.entities[actor_index].deploy_delay_remaining > 0.0 {
                 continue;
             }
             if self.entities[actor_index].spawn_hook_pending {
@@ -3630,7 +3736,8 @@ impl ResidentBattle {
             ));
         }
         self.checkpoint_current = false;
-        for entity in &mut self.entities {
+        let mut changed_crown_indices = Vec::new();
+        for (entity_index, entity) in self.entities.iter_mut().enumerate() {
             if !entity.active || !entity.is_alive || entity.entity_kind != 1 {
                 continue;
             }
@@ -3652,10 +3759,21 @@ impl ResidentBattle {
             state.decay_work %= 100;
             if whole_hp_loss > 0 {
                 entity.hitpoints.subtract_whole_hp(whole_hp_loss);
+                if entity
+                    .building_impact
+                    .as_ref()
+                    .is_some_and(|building| building.crown_slot.is_some())
+                {
+                    changed_crown_indices.push(entity_index);
+                }
             }
             if entity.hitpoints.as_f64() <= 0.0 && entity.is_alive {
                 entity.is_alive = false;
             }
+        }
+        for entity_index in changed_crown_indices {
+            self.win_conditions_dirty = true;
+            self.sync_resident_tower(entity_index);
         }
         Ok(())
     }
@@ -3866,15 +3984,16 @@ impl ResidentBattle {
             let Some(slot) = building.crown_slot.as_deref() else {
                 continue;
             };
+            self.win_conditions_dirty = true;
             if let Some(player) = self
                 .players
                 .iter_mut()
                 .find(|player| player.player_id == dead.player_id)
             {
                 match slot {
-                    "left" => player.left_tower_hp = 0.0,
-                    "right" => player.right_tower_hp = 0.0,
-                    "king" => player.king_tower_hp = 0.0,
+                    "left" => player.left_tower_hp = ExactScalar::Int(0),
+                    "right" => player.right_tower_hp = ExactScalar::Int(0),
+                    "king" => player.king_tower_hp = ExactScalar::Int(0),
                     _ => unreachable!("Crown slot validated at resident initialization"),
                 }
             }
@@ -3975,7 +4094,7 @@ impl ResidentBattle {
                 "resident checkpoint is stale after native mutation; exact current-state export is not implemented yet",
             ));
         }
-        Ok(self.checkpoint.clone())
+        Ok(self.checkpoint.as_ref().to_vec())
     }
 
     fn checkpoint_sha256(&self) -> PyResult<&str> {
@@ -4020,7 +4139,15 @@ impl ResidentBattle {
     }
 
     fn supports_complete_tick(&self) -> bool {
-        false
+        let mut candidate = self.clone();
+        candidate.advance_complete_tick_transaction().is_ok()
+    }
+
+    fn advance_complete_tick(&mut self) -> PyResult<bool> {
+        let mut candidate = self.clone();
+        let advanced = candidate.advance_complete_tick_transaction()?;
+        *self = candidate;
+        Ok(advanced)
     }
 
     fn fork(&self) -> Self {
@@ -4029,6 +4156,103 @@ impl ResidentBattle {
 }
 
 impl ResidentBattle {
+    fn advance_complete_tick_transaction(&mut self) -> PyResult<bool> {
+        if self.game_over {
+            return Ok(false);
+        }
+        if !self.pending_spell_casts_empty {
+            return Err(PyRuntimeError::new_err(
+                "resident complete tick has unsupported pending spell commands",
+            ));
+        }
+        if !self.resident_id_invariants_hold() {
+            return Err(PyRuntimeError::new_err(
+                "resident complete tick rejected invalid entity-ID allocation state",
+            ));
+        }
+        if !self.supports_direct_troop_combat_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident complete tick rejected combat capability",
+            ));
+        }
+        self.advance_clock_phase();
+        self.advance_player_phase();
+        self.advance_direct_troop_combat_phase()?;
+        if !self.supports_ground_movement_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident complete tick rejected post-combat movement capability",
+            ));
+        }
+        self.advance_restricted_movement_phase(false);
+        self.advance_building_lifetime_phase()?;
+        self.advance_modifier_phase()?;
+        self.advance_resident_object_phase()?;
+        self.advance_cleanup_phase()?;
+        if !self.sparse_idle_win_checks
+            || self.win_conditions_dirty
+            || (!self.sudden_death && self.time >= self.overtime_start_time)
+            || (self.sudden_death && self.time >= self.tiebreaker_time)
+        {
+            self.check_win_conditions();
+        }
+        Ok(true)
+    }
+
+    fn resident_id_invariants_hold(&self) -> bool {
+        if !(0..i64::MAX).contains(&self.next_entity_id) {
+            return false;
+        }
+        let mut ids = self
+            .entities
+            .iter()
+            .map(|entity| entity.id)
+            .collect::<Vec<_>>();
+        ids.sort_unstable();
+        ids.windows(2).all(|pair| pair[0] != pair[1])
+            && ids.last().is_none_or(|id| self.next_entity_id > *id)
+    }
+
+    fn sync_player_crown_hitpoints(&mut self) {
+        for entity in self.entities.iter().filter(|entity| entity.active) {
+            let Some(slot) = entity
+                .building_impact
+                .as_ref()
+                .and_then(|building| building.crown_slot.as_deref())
+            else {
+                continue;
+            };
+            let Some(player) = self
+                .players
+                .iter_mut()
+                .find(|player| player.player_id == entity.player_id)
+            else {
+                continue;
+            };
+            match slot {
+                "left" => player.left_tower_hp = entity.hitpoints.clone(),
+                "right" => player.right_tower_hp = entity.hitpoints.clone(),
+                "king" => player.king_tower_hp = entity.hitpoints.clone(),
+                _ => unreachable!("Crown slot validated at resident initialization"),
+            }
+        }
+    }
+
+    fn resident_deploy_state_supported(entity: &ResidentEntity) -> bool {
+        let remaining = entity.deploy_delay_remaining;
+        if !remaining.is_finite() || remaining < 0.0 {
+            return false;
+        }
+        let deferred =
+            entity.placement_pending && entity.spawn_hook_pending && !entity.spawn_hook_fired;
+        let completed =
+            !entity.placement_pending && !entity.spawn_hook_pending && entity.spawn_hook_fired;
+        if remaining > 1e-9 {
+            deferred
+        } else {
+            deferred || completed
+        }
+    }
+
     fn resident_death_spawn_travel_supported(&self, entity: &ResidentEntity) -> bool {
         let Some(movement) = entity.movement.as_ref() else {
             return false;
@@ -4145,7 +4369,11 @@ impl ResidentBattle {
                     && (!movement.special_move_consumed_tick || movement.jump_height_present)
             };
             let death_spawn_travel_active = movement.death_spawn_travel_ticks > 0;
-            let common = (entity.deploy_delay_remaining <= 0.0 || death_spawn_travel_active)
+            let knockback_active = movement.knockback_target.is_some();
+            let deploying = entity.deploy_delay_remaining > 0.0;
+            let common = (death_spawn_travel_active
+                || knockback_active
+                || Self::resident_deploy_state_supported(entity))
                 && entity.has_only_shield_mechanics()
                 && movement.route_cache_supported
                 && river_state_supported
@@ -4170,6 +4398,8 @@ impl ResidentBattle {
                 && (!death_spawn_travel_active || !movement.charge_range_present);
             if !common
                 || death_spawn_travel_active
+                || knockback_active
+                || deploying
                 || entity.entity_kind == 1
                 || combat.movement_target_id.is_none()
             {
@@ -4208,9 +4438,11 @@ impl ResidentBattle {
         })
     }
 
-    fn advance_restricted_movement_phase(&mut self) {
+    fn advance_restricted_movement_phase(&mut self, refresh_reservations: bool) {
         self.checkpoint_current = false;
-        self.refresh_lethal_projectile_reservations();
+        if refresh_reservations {
+            self.refresh_lethal_projectile_reservations();
+        }
         let movement_indices = self
             .entities
             .iter()
@@ -4717,6 +4949,14 @@ impl ResidentBattle {
         }
         if knockback_active {
             self.update_resident_knockback(entity_index);
+            return;
+        }
+        if self.entities[entity_index].deploy_delay_remaining > 0.0 {
+            self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state")
+                .native_natural_movement_active = false;
             return;
         }
         if river_jump_active {
@@ -5732,6 +5972,13 @@ impl ResidentBattle {
             self.entities[target_index].hitpoints.set_f64(remaining);
         }
         if self.entities[target_index].entity_kind == 1 {
+            if self.entities[target_index]
+                .building_impact
+                .as_ref()
+                .is_some_and(|building| building.crown_slot.is_some())
+            {
+                self.win_conditions_dirty = true;
+            }
             self.sync_resident_tower(target_index);
         }
     }
@@ -5748,8 +5995,8 @@ impl ResidentBattle {
             return;
         };
         debug_assert_eq!(tower.slot, slot);
-        tower.hp = entity.hitpoints.as_f64();
-        tower.hp_milli = (tower.hp * 1000.0).round_ties_even() as i64;
+        tower.hp = entity.hitpoints.clone();
+        tower.hp_milli = (tower.hp.as_f64() * 1000.0).round_ties_even() as i64;
         tower.is_alive = entity.is_alive;
         tower.is_active = building.tower_active;
         tower.last_attack_time = entity
@@ -5869,6 +6116,7 @@ impl ResidentBattle {
                 start_collision_resolved: true,
                 unsupported: Vec::new(),
             }),
+            object_base_movement_noop: true,
         });
     }
 
@@ -6145,20 +6393,9 @@ impl ResidentBattle {
                     } else {
                         self.entities[target_index].hitpoints.set_f64(remaining_hp);
                     }
-                    if let Some(slot) = crown_slot {
-                        let target_id = self.entities[target_index].id;
-                        if let Some(tower) =
-                            self.towers.iter_mut().find(|tower| tower.id == target_id)
-                        {
-                            tower.hp = remaining_hp;
-                            tower.hp_milli = (remaining_hp * 1000.0).round_ties_even() as i64;
-                            tower.is_alive = self.entities[target_index].is_alive;
-                            tower.is_active = self.entities[target_index]
-                                .building_impact
-                                .as_ref()
-                                .is_some_and(|building| building.tower_active);
-                            debug_assert_eq!(tower.slot, slot);
-                        }
+                    if crown_slot.is_some() {
+                        self.win_conditions_dirty = true;
+                        self.sync_resident_tower(target_index);
                     }
                 }
             }

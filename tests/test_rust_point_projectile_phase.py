@@ -8,6 +8,7 @@ from clasher.entities import Building, Projectile, Troop
 from clasher.rust_core import (
     ResidentRustBattle,
     compare_building_lifetime_phase,
+    compare_character_object_phase,
     compare_idle_state,
     compare_locked_direct_combat_phase,
     compare_modifier_phase,
@@ -79,6 +80,11 @@ def _advance_python(battle: BattleState) -> None:
         entity.quantize_logic_position()
 
 
+def _advance_python_object_phase(battle: BattleState) -> None:
+    ids = set(battle.entities)
+    battle._run_object_phase(battle.dt, ids, ids)
+
+
 def _advance_python_combat(battle: BattleState) -> None:
     for entity in list(battle.entities.values()):
         if entity.entity_kind in {0, 1}:
@@ -127,6 +133,69 @@ def test_delayed_point_projectile_still_quantizes_its_position() -> None:
     compare_point_projectile_phase(battle, resident)
 
     assert projectile.position.x == 9.001
+
+
+def test_resident_object_phase_quantizes_supported_character_position() -> None:
+    battle, target, projectile = _fixture(launch_delay=0.05)
+    projectile.is_alive = False
+    target.position.x = 9.0006
+    target.deploy_delay_remaining = 0.0
+    target.placement_pending = False
+    target._spawn_hook_pending = False
+    target._spawn_hook_fired = True
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_resident_object_phase
+    resident.advance_resident_object_phase()
+    _advance_python_object_phase(battle)
+    compare_point_projectile_phase(battle, resident)
+    compare_character_object_phase(battle, resident)
+
+    assert target.position.x == 9.001
+
+
+def test_resident_object_phase_rejects_noncharacter_base_movement_atomically() -> None:
+    battle, _, projectile = _fixture(launch_delay=0.05)
+    projectile.accumulate_movement_vector_units(100, 0)
+    resident = ResidentRustBattle.from_battle(battle)
+    checkpoint = resident.checkpoint_bytes()
+    rng_state = resident.rng_getstate()
+
+    assert not resident.supports_resident_object_phase
+    with pytest.raises(RuntimeError, match="unsupported object"):
+        resident.advance_resident_object_phase()
+
+    assert resident.checkpoint_is_current
+    assert resident.checkpoint_bytes() == checkpoint
+    assert resident.rng_getstate() == rng_state
+
+
+@pytest.mark.parametrize("projectile_first", [False, True])
+def test_resident_object_phase_uses_global_id_order(
+    projectile_first: bool,
+) -> None:
+    battle, target, projectile = _fixture(
+        position=Position(9.0, 12.0),
+        target_position=Position(9.0, 12.0),
+        damage=10_000.0,
+    )
+    target.deploy_delay_remaining = 0.10
+    target.placement_pending = True
+    target._spawn_hook_pending = True
+    target._spawn_hook_fired = False
+    target.id, projectile.id = ((2, 1) if projectile_first else (1, 2))
+    battle.entities = {target.id: target, projectile.id: projectile}
+    battle.next_entity_id = 3
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_resident_object_phase
+    resident.advance_resident_object_phase()
+    _advance_python_object_phase(battle)
+    compare_point_projectile_phase(battle, resident)
+    compare_character_object_phase(battle, resident)
+
+    expected_remaining = 0.10 if projectile_first else 0.05
+    assert target.deploy_delay_remaining == pytest.approx(expected_remaining)
 
 
 def test_point_projectile_matches_permanent_and_temporary_homing() -> None:

@@ -265,10 +265,12 @@ class ResidentRustBattle:
             ],
             idle_eligible=bool(battle.can_fast_forward_idle()),
             sparse_idle_win_checks=True,
+            win_conditions_dirty=bool(battle._win_conditions_dirty),
             sudden_death=bool(battle.sudden_death),
             sudden_death_crowns=tuple(battle._sudden_death_crowns),
             tiebreaker_time=float(battle.tiebreaker_time),
             winner=battle.winner,
+            pending_spell_casts_empty=not bool(battle._pending_spell_casts),
         )
         return cls(native)
 
@@ -278,11 +280,14 @@ class ResidentRustBattle:
 
     def require_complete_tick(self, mode: RustBattleMode | str) -> None:
         parsed_mode = RustBattleMode(mode)
-        if parsed_mode is RustBattleMode.ON and not self.supports_complete_tick:
+        if parsed_mode is not RustBattleMode.OFF and not self.supports_complete_tick:
             raise RuntimeError(
-                "Rust battle mode 'on' is unavailable: the resident core does "
-                "not yet implement every native tick phase"
+                f"Rust battle mode {parsed_mode.value!r} is unavailable: the "
+                "resident core cannot execute the complete tick exactly"
             )
+
+    def advance_complete_tick(self) -> bool:
+        return bool(self._native.advance_complete_tick())
 
     def advance_clock_phase(self) -> bool:
         return bool(self._native.advance_clock_phase())
@@ -347,6 +352,10 @@ class ResidentRustBattle:
             sudden_death_crowns=(int(crowns[0]), int(crowns[1])),
         )
 
+    @property
+    def win_conditions_dirty(self) -> bool:
+        return bool(self._native.win_conditions_dirty())
+
     def idle_sha256(self) -> str:
         return str(self._native.idle_sha256())
 
@@ -391,6 +400,13 @@ class ResidentRustBattle:
 
     def character_object_sha256(self) -> str:
         return str(self._native.character_object_sha256())
+
+    @property
+    def supports_resident_object_phase(self) -> bool:
+        return bool(self._native.supports_resident_object_phase())
+
+    def advance_resident_object_phase(self) -> None:
+        self._native.advance_resident_object_phase()
 
     @property
     def supports_stationary_movement_phase(self) -> bool:
