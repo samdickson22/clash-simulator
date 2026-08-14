@@ -585,7 +585,60 @@ struct ResidentEntity {
     direct_combat_unsupported: Vec<String>,
     locked_combat: Option<LockedDirectCombatState>,
     building_lifetime: Option<BuildingLifetimeState>,
+    building_impact: Option<BuildingImpactState>,
     point_projectile: Option<PointProjectileState>,
+}
+
+#[derive(Clone)]
+struct BuildingImpactState {
+    collision_radius: f64,
+    crown_slot: Option<String>,
+    requires_activation: bool,
+    tower_active: bool,
+    activation_delay_seconds: f64,
+    activation_delay_remaining: f64,
+    activation_first_hit_delay_seconds: f64,
+    activation_first_hit_delay_remaining: f64,
+    stealth_until_ms: i64,
+    allow_area_damage_when_invisible: bool,
+}
+
+impl BuildingImpactState {
+    fn from_fields(
+        fields: &Map<String, Value>,
+        card_fields: &Map<String, Value>,
+    ) -> PyResult<Self> {
+        Ok(Self {
+            collision_radius: normalized_f64(fields, "_collision_radius")?,
+            crown_slot: fields
+                .get("_crown_tower_slot")
+                .and_then(Value::as_str)
+                .map(str::to_owned),
+            requires_activation: required_bool(fields, "requires_activation")?,
+            tower_active: fields
+                .get("_tower_active")
+                .and_then(Value::as_bool)
+                .unwrap_or(true),
+            activation_delay_seconds: normalized_f64(fields, "activation_delay_seconds")?,
+            activation_delay_remaining: normalized_f64(fields, "activation_delay_remaining")?,
+            activation_first_hit_delay_seconds: normalized_f64(
+                fields,
+                "activation_first_hit_delay_seconds",
+            )?,
+            activation_first_hit_delay_remaining: normalized_f64(
+                fields,
+                "activation_first_hit_delay_remaining",
+            )?,
+            stealth_until_ms: fields
+                .get("_stealth_until")
+                .and_then(Value::as_i64)
+                .unwrap_or(0),
+            allow_area_damage_when_invisible: normalized_optional_bool(
+                card_fields,
+                "allow_area_damage_when_invisible",
+            ),
+        })
+    }
 }
 
 #[derive(Clone)]
@@ -596,6 +649,9 @@ struct PointProjectileState {
     splash_radius: f64,
     hits_air: bool,
     hits_ground: bool,
+    ignore_buildings: bool,
+    crown_tower_damage: Option<f64>,
+    crown_tower_damage_multiplier: f64,
     launch_delay: f64,
     primary_target_id: Option<i64>,
     source_entity_id: Option<i64>,
@@ -661,6 +717,9 @@ impl PointProjectileState {
             splash_radius,
             hits_air: required_bool(fields, "hits_air")?,
             hits_ground: required_bool(fields, "hits_ground")?,
+            ignore_buildings: required_bool(fields, "ignore_buildings")?,
+            crown_tower_damage: optional_normalized_f64(fields, "crown_tower_damage")?,
+            crown_tower_damage_multiplier: normalized_f64(fields, "crown_tower_damage_multiplier")?,
             launch_delay: normalized_f64(fields, "launch_delay")?,
             primary_target_id: optional_entity_ref_id(fields, "primary_target")?,
             source_entity_id: optional_entity_ref_id(fields, "source_entity")?,
@@ -682,8 +741,11 @@ impl PointProjectileState {
     fn diagnostic_value(&self, entity: &ResidentEntity) -> Value {
         json!({
             "encounter_index": entity.encounter_index,
+            "crown_tower_damage": self.crown_tower_damage.map(exact_f64_value),
+            "crown_tower_damage_multiplier": exact_f64_value(self.crown_tower_damage_multiplier),
             "hitpoints": entity.hitpoints.diagnostic_value(),
             "id": entity.id,
+            "ignore_buildings": self.ignore_buildings,
             "is_alive": entity.is_alive,
             "launch_delay": exact_f64_value(self.launch_delay),
             "permanent_homing_disabled_by_temporary": self.permanent_homing_disabled_by_temporary,
@@ -721,7 +783,14 @@ impl BuildingLifetimeState {
     }
 
     fn diagnostic_value(&self, entity: &ResidentEntity) -> Value {
+        let impact = entity
+            .building_impact
+            .as_ref()
+            .expect("building lifetime requires impact state");
         json!({
+            "activation_delay_remaining": exact_f64_value(impact.activation_delay_remaining),
+            "activation_first_hit_delay_remaining": exact_f64_value(impact.activation_first_hit_delay_remaining),
+            "crown_slot": impact.crown_slot,
             "encounter_index": entity.encounter_index,
             "hitpoints": entity.hitpoints.diagnostic_value(),
             "id": entity.id,
@@ -729,6 +798,7 @@ impl BuildingLifetimeState {
             "lifetime_decay_work": self.decay_work,
             "lifetime_elapsed": exact_f64_value(self.lifetime_elapsed),
             "lifetime_tick_carry_ms": exact_f64_value(self.tick_carry_ms),
+            "tower_active": impact.tower_active,
         })
     }
 }
@@ -778,6 +848,7 @@ struct PointWeapon {
     y_offset: f64,
     splash_radius: f64,
     hit_planes: Option<(bool, bool)>,
+    crown_tower_damage_multiplier: f64,
 }
 
 enum CombatPayload {
@@ -875,7 +946,16 @@ impl PointWeapon {
                     )
                 })
         };
-        if !start_radius.is_finite() || !y_offset.is_finite() || !splash_radius.is_finite() {
+        let crown_percent = normalized_mapping_get(projectile_data, "crownTowerDamagePercent")
+            .map(ExactScalar::from_normalized)
+            .transpose()?
+            .map_or(0.0, |value| value.as_f64());
+        let crown_tower_damage_multiplier = (1.0 + crown_percent / 100.0).max(0.0);
+        if !start_radius.is_finite()
+            || !y_offset.is_finite()
+            || !splash_radius.is_finite()
+            || !crown_tower_damage_multiplier.is_finite()
+        {
             unsupported.push("nonfinite_projectile_launch_geometry".to_owned());
         }
         Ok(Some(Self {
@@ -885,6 +965,7 @@ impl PointWeapon {
             y_offset,
             splash_radius,
             hit_planes,
+            crown_tower_damage_multiplier,
         }))
     }
 }
@@ -1015,6 +1096,28 @@ impl LockedDirectCombatState {
 }
 
 impl ResidentEntity {
+    fn projectile_target_traits(&self) -> Option<(bool, f64, i64, bool)> {
+        match self.entity_kind {
+            0 => self.locked_combat.as_ref().map(|state| {
+                (
+                    state.is_airborne_for_projectile,
+                    state.collision_radius,
+                    state.stealth_until_ms,
+                    state.allow_area_damage_when_invisible,
+                )
+            }),
+            1 => self.building_impact.as_ref().map(|state| {
+                (
+                    false,
+                    state.collision_radius,
+                    state.stealth_until_ms,
+                    state.allow_area_damage_when_invisible,
+                )
+            }),
+            _ => None,
+        }
+    }
+
     fn from_normalized(encounter_index: usize, value: &Value) -> PyResult<Self> {
         let fields = object_fields(value)?;
         let position_fields = object_fields(
@@ -1063,6 +1166,11 @@ impl ResidentEntity {
         };
         let building_lifetime = if entity_kind == 1 {
             Some(BuildingLifetimeState::from_fields(fields, card_fields)?)
+        } else {
+            None
+        };
+        let building_impact = if entity_kind == 1 {
+            Some(BuildingImpactState::from_fields(fields, card_fields)?)
         } else {
             None
         };
@@ -1222,6 +1330,7 @@ impl ResidentEntity {
             direct_combat_unsupported,
             locked_combat,
             building_lifetime,
+            building_impact,
             point_projectile,
         })
     }
@@ -2576,10 +2685,10 @@ impl ResidentBattle {
                 .is_some_and(|projectile| projectile.splash_radius > 0.0)
         });
         if has_splash
-            && self.entities.iter().any(|entity| {
-                (entity.entity_kind == 1)
-                    || (entity.entity_kind == 0 && !entity.mechanics.is_empty())
-            })
+            && self
+                .entities
+                .iter()
+                .any(|entity| matches!(entity.entity_kind, 0 | 1) && !entity.mechanics.is_empty())
         {
             return false;
         }
@@ -2598,6 +2707,10 @@ impl ResidentBattle {
                 || !entity.position_x.as_f64().is_finite()
                 || !entity.position_y.as_f64().is_finite()
                 || !projectile.splash_radius.is_finite()
+                || !projectile.crown_tower_damage_multiplier.is_finite()
+                || projectile
+                    .crown_tower_damage
+                    .is_some_and(|damage| !damage.is_finite())
             {
                 return false;
             }
@@ -2611,7 +2724,10 @@ impl ResidentBattle {
             else {
                 return false;
             };
-            if target.entity_kind != 0 || !target.mechanics.is_empty() {
+            if !matches!(target.entity_kind, 0 | 1) || !target.mechanics.is_empty() {
+                return false;
+            }
+            if target.entity_kind == 1 && target.building_impact.is_none() {
                 return false;
             }
             if !target.hitpoints.as_f64().is_finite() {
@@ -2869,6 +2985,7 @@ impl ResidentBattle {
             direct_combat_unsupported: vec!["non_character_entity".to_owned()],
             locked_combat: None,
             building_lifetime: None,
+            building_impact: None,
             point_projectile: Some(PointProjectileState {
                 target_x,
                 target_y,
@@ -2876,6 +2993,9 @@ impl ResidentBattle {
                 splash_radius: weapon.splash_radius,
                 hits_air,
                 hits_ground,
+                ignore_buildings: false,
+                crown_tower_damage: None,
+                crown_tower_damage_multiplier: weapon.crown_tower_damage_multiplier,
                 launch_delay: 0.0,
                 primary_target_id: Some(target_id),
                 source_entity_id: Some(source_id),
@@ -3000,7 +3120,17 @@ impl ResidentBattle {
                 .max(0.0) as i64
         };
         if remaining <= travel {
-            let (projectile_player, damage, hits_air, hits_ground, splash_radius, source_entity_id) = {
+            let (
+                projectile_player,
+                damage,
+                hits_air,
+                hits_ground,
+                splash_radius,
+                source_entity_id,
+                ignore_buildings,
+                crown_tower_damage,
+                crown_tower_damage_multiplier,
+            ) = {
                 let entity = &self.entities[projectile_index];
                 let projectile = entity
                     .point_projectile
@@ -3013,6 +3143,9 @@ impl ResidentBattle {
                     projectile.hits_ground,
                     projectile.splash_radius,
                     projectile.source_entity_id,
+                    projectile.ignore_buildings,
+                    projectile.crown_tower_damage,
+                    projectile.crown_tower_damage_multiplier,
                 )
             };
             let source_is_character = source_entity_id.is_some_and(|id| {
@@ -3024,14 +3157,14 @@ impl ResidentBattle {
             let now_ms = (self.time * 1000.0).round_ties_even() as i64;
             let can_damage_index = |target_index: usize| {
                 let target = &self.entities[target_index];
-                let Some(target_state) = target.locked_combat.as_ref() else {
+                let Some((target_is_air, _, _, _)) = target.projectile_target_traits() else {
                     return false;
                 };
                 target.is_alive
                     && target.player_id != projectile_player
-                    && target.entity_kind == 0
-                    && ((target_state.is_airborne_for_projectile && hits_air)
-                        || (!target_state.is_airborne_for_projectile && hits_ground))
+                    && matches!(target.entity_kind, 0 | 1)
+                    && !(ignore_buildings && target.entity_kind == 1)
+                    && ((target_is_air && hits_air) || (!target_is_air && hits_ground))
             };
             let hit_targets = if splash_radius <= 0.0 {
                 target_id
@@ -3054,37 +3187,102 @@ impl ResidentBattle {
                         if !can_damage_index(target_index) {
                             return None;
                         }
-                        let target_state = target
-                            .locked_combat
-                            .as_ref()
-                            .expect("splash preflight requires combat target state");
+                        let (_, collision_radius, stealth_until_ms, allow_invisible) = target
+                            .projectile_target_traits()
+                            .expect("splash preflight requires target traits");
                         if (source_is_character
                             && target.death_spawn_target_immunity_elapsed_ms >= 0)
-                            || (target_state.stealth_until_ms > now_ms
-                                && !target_state.allow_area_damage_when_invisible)
+                            || (stealth_until_ms > now_ms && !allow_invisible)
                         {
                             return None;
                         }
-                        let dx_units = logic_units(target.position_x.as_f64()) - center_x_units;
-                        let dy_units = logic_units(target.position_y.as_f64()) - center_y_units;
-                        let combined_radius =
-                            area_radius_units + logic_units(target_state.collision_radius).max(0);
-                        (i128::from(dx_units) * i128::from(dx_units)
-                            + i128::from(dy_units) * i128::from(dy_units)
-                            < i128::from(combined_radius) * i128::from(combined_radius))
-                        .then_some(target_index)
+                        let target_x_units = logic_units(target.position_x.as_f64());
+                        let target_y_units = logic_units(target.position_y.as_f64());
+                        let collision_radius_units = logic_units(collision_radius).max(0);
+                        let intersects = if target.entity_kind == 1 {
+                            let closest_x = center_x_units.clamp(
+                                target_x_units - collision_radius_units,
+                                target_x_units + collision_radius_units,
+                            );
+                            let closest_y = center_y_units.clamp(
+                                target_y_units - collision_radius_units,
+                                target_y_units + collision_radius_units,
+                            );
+                            let dx_units = closest_x - center_x_units;
+                            let dy_units = closest_y - center_y_units;
+                            i128::from(dx_units) * i128::from(dx_units)
+                                + i128::from(dy_units) * i128::from(dy_units)
+                                < i128::from(area_radius_units) * i128::from(area_radius_units)
+                        } else {
+                            let dx_units = target_x_units - center_x_units;
+                            let dy_units = target_y_units - center_y_units;
+                            let combined_radius = area_radius_units + collision_radius_units;
+                            i128::from(dx_units) * i128::from(dx_units)
+                                + i128::from(dy_units) * i128::from(dy_units)
+                                < i128::from(combined_radius) * i128::from(combined_radius)
+                        };
+                        intersects.then_some(target_index)
                     })
                     .collect::<Vec<_>>()
             };
             if damage > 0.0 {
                 for target_index in hit_targets {
+                    let crown_slot = self.entities[target_index]
+                        .building_impact
+                        .as_ref()
+                        .and_then(|state| state.crown_slot.clone());
+                    let target_damage = if crown_slot.is_some() {
+                        crown_tower_damage.unwrap_or_else(|| {
+                            let base = damage.round_ties_even().max(0.0) as i64;
+                            let percentage = (crown_tower_damage_multiplier * 100.0)
+                                .round_ties_even()
+                                .max(0.0) as i64;
+                            if base == 0 || percentage == 0 {
+                                0.0
+                            } else {
+                                ((base * percentage + 99) / 100) as f64
+                            }
+                        })
+                    } else {
+                        damage
+                    };
+                    if target_damage <= 0.0 {
+                        continue;
+                    }
+                    if let Some(building) = self.entities[target_index].building_impact.as_mut()
+                        && building.requires_activation
+                        && !building.tower_active
+                    {
+                        building.tower_active = true;
+                        building.activation_delay_remaining = building
+                            .activation_delay_remaining
+                            .max(building.activation_delay_seconds);
+                        building.activation_first_hit_delay_remaining = building
+                            .activation_first_hit_delay_remaining
+                            .max(building.activation_first_hit_delay_seconds);
+                    }
                     let remaining_hp =
-                        (self.entities[target_index].hitpoints.as_f64() - damage).max(0.0);
+                        (self.entities[target_index].hitpoints.as_f64() - target_damage).max(0.0);
                     if remaining_hp <= 0.0 {
                         self.entities[target_index].hitpoints = ExactScalar::Int(0);
                         self.entities[target_index].is_alive = false;
                     } else {
                         self.entities[target_index].hitpoints.set_f64(remaining_hp);
+                    }
+                    if let Some(slot) = crown_slot {
+                        let target_id = self.entities[target_index].id;
+                        if let Some(tower) =
+                            self.towers.iter_mut().find(|tower| tower.id == target_id)
+                        {
+                            tower.hp = remaining_hp;
+                            tower.hp_milli = (remaining_hp * 1000.0).round_ties_even() as i64;
+                            tower.is_alive = self.entities[target_index].is_alive;
+                            tower.is_active = self.entities[target_index]
+                                .building_impact
+                                .as_ref()
+                                .is_some_and(|building| building.tower_active);
+                            debug_assert_eq!(tower.slot, slot);
+                        }
                     }
                 }
             }

@@ -7,6 +7,8 @@ from clasher.battle import BattleState
 from clasher.entities import Building, Projectile, Troop
 from clasher.rust_core import (
     ResidentRustBattle,
+    compare_building_lifetime_phase,
+    compare_idle_state,
     compare_locked_direct_combat_phase,
     compare_point_projectile_phase,
     rust_core_available,
@@ -228,24 +230,82 @@ def test_splash_projectile_snapshots_exact_troop_hitboxes_and_planes() -> None:
         assert excluded.hitpoints == hitpoints_before[excluded.id]
 
 
-def test_splash_projectile_rejects_building_geometry_before_mutation() -> None:
-    battle, _, projectile = _fixture()
+def test_splash_projectile_matches_square_building_geometry() -> None:
+    battle, _, projectile = _fixture(
+        target_position=Position(9.0, 10.25),
+    )
     stats = battle.card_loader.get_card("Cannon")
     assert stats is not None
-    battle._spawn_entity(Building, Position(9.0, 11.0), 1, stats)
+    collision_radius = float(stats.collision_radius or 0.5)
+    overlapping = battle._spawn_entity(
+        Building,
+        Position(9.0 + collision_radius + 0.9, 10.25),
+        1,
+        stats,
+    )
+    tangent = battle._spawn_entity(
+        Building,
+        Position(9.0 + collision_radius + 1.0, 10.25),
+        1,
+        stats,
+    )
     projectile.splash_radius = 1.0
+    overlapping_hp = overlapping.hitpoints
+    tangent_hp = tangent.hitpoints
     resident = ResidentRustBattle.from_battle(battle)
-    entity_before = resident.entity_state_bytes()
-    projectile_before = resident.point_projectile_state_bytes()
-    rng_before = resident.rng_state_bytes()
 
-    assert not resident.supports_point_projectile_phase
-    with pytest.raises(RuntimeError, match="unsupported object or payload"):
-        resident.advance_point_projectile_phase()
+    assert resident.supports_point_projectile_phase
+    resident.advance_point_projectile_phase()
+    _advance_python(battle)
+    compare_point_projectile_phase(battle, resident)
 
-    assert resident.entity_state_bytes() == entity_before
-    assert resident.point_projectile_state_bytes() == projectile_before
-    assert resident.rng_state_bytes() == rng_before
+    assert overlapping.hitpoints == overlapping_hp - projectile.damage
+    assert tangent.hitpoints == tangent_hp
+
+
+def test_point_projectile_matches_crown_damage_and_king_activation() -> None:
+    battle = BattleState()
+    king = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Building)
+        and entity._crown_tower_slot == "king"
+        and entity.player_id == 1
+    )
+    stats = battle.card_loader.get_card("Musketeer")
+    assert stats is not None
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(king.position.x, king.position.y - 0.25),
+        player_id=0,
+        card_stats=stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=101,
+        range=5.0,
+        sight_range=1.0,
+        target_position=Position(king.position.x, king.position.y),
+        travel_speed=10.0,
+        source_name="rust-crown-fixture",
+        primary_target=king,
+        tracks_target=True,
+        crown_tower_damage_multiplier=0.3,
+    )
+    battle.entities[projectile.id] = projectile
+    battle.next_entity_id += 1
+    hitpoints_before = king.hitpoints
+    assert king.requires_activation and not king._tower_active
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_point_projectile_phase
+    resident.advance_point_projectile_phase()
+    _advance_python(battle)
+    compare_point_projectile_phase(battle, resident)
+    compare_building_lifetime_phase(battle, resident)
+    compare_idle_state(battle, resident)
+
+    assert king.hitpoints == hitpoints_before - 31
+    assert king._tower_active
 
 
 @pytest.mark.parametrize(

@@ -990,6 +990,13 @@ def compare_locked_direct_combat_phase(
 def building_lifetime_state_rows(battle: Any) -> list[dict[str, Any]]:
     return [
         {
+            "activation_delay_remaining": _exact_scalar(
+                entity.activation_delay_remaining
+            ),
+            "activation_first_hit_delay_remaining": _exact_scalar(
+                entity.activation_first_hit_delay_remaining
+            ),
+            "crown_slot": entity._crown_tower_slot,
             "encounter_index": encounter_index,
             "hitpoints": _exact_scalar(entity.hitpoints),
             "id": int(entity.id),
@@ -999,6 +1006,7 @@ def building_lifetime_state_rows(battle: Any) -> list[dict[str, Any]]:
             "lifetime_tick_carry_ms": _exact_scalar(
                 entity.lifetime_tick_carry_ms
             ),
+            "tower_active": bool(getattr(entity, "_tower_active", True)),
         }
         for encounter_index, entity in enumerate(battle.entities.values())
         if entity.entity_kind == 1
@@ -1019,8 +1027,17 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
     return [
         {
             "encounter_index": encounter_index,
+            "crown_tower_damage": (
+                None
+                if entity.crown_tower_damage is None
+                else _exact_scalar(entity.crown_tower_damage)
+            ),
+            "crown_tower_damage_multiplier": _exact_scalar(
+                entity.crown_tower_damage_multiplier
+            ),
             "hitpoints": _exact_scalar(entity.hitpoints),
             "id": int(entity.id),
+            "ignore_buildings": bool(entity.ignore_buildings),
             "is_alive": bool(entity.is_alive),
             "launch_delay": _exact_scalar(entity.launch_delay),
             "permanent_homing_disabled_by_temporary": bool(
