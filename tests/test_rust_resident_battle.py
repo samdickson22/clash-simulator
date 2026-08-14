@@ -57,18 +57,34 @@ def test_resident_checkpoint_round_trip_is_exact() -> None:
     assert resident.checkpoint_generation == 0
 
 
-def test_explicit_checkpoint_replace_is_exact_and_counted() -> None:
+def test_identical_checkpoint_replace_is_exact_and_counted() -> None:
     first = BattleState(rng=__import__("random").Random(722))
     resident = ResidentRustBattle.from_battle(first)
-    second = BattleState(rng=__import__("random").Random(723))
-    second.step_logic_ticks(2)
-    replacement = snapshot_bytes(canonical_battle_snapshot(second))
+    replacement = snapshot_bytes(canonical_battle_snapshot(first))
 
     resident.replace_checkpoint(replacement)
 
     assert resident.checkpoint_bytes() == replacement
     assert resident.checkpoint_sha256 == hashlib.sha256(replacement).hexdigest()
     assert resident.checkpoint_generation == 1
+
+
+def test_checkpoint_export_and_replace_fail_closed_after_native_mutation() -> None:
+    battle = BattleState(rng=__import__("random").Random(723))
+    resident = ResidentRustBattle.from_battle(battle)
+    assert resident.checkpoint_is_current
+
+    assert resident.advance_clock_phase()
+
+    assert not resident.checkpoint_is_current
+    with pytest.raises(RuntimeError, match="checkpoint is stale"):
+        resident.checkpoint_bytes()
+    with pytest.raises(RuntimeError, match="checkpoint is stale"):
+        _ = resident.checkpoint_sha256
+    with pytest.raises(RuntimeError, match="full-state rehydration"):
+        resident.replace_checkpoint(
+            snapshot_bytes(canonical_battle_snapshot(battle))
+        )
 
 
 def test_resident_checkpoint_rejects_invalid_or_unknown_schema() -> None:
@@ -79,6 +95,12 @@ def test_resident_checkpoint_rejects_invalid_or_unknown_schema() -> None:
         resident.replace_checkpoint(b"not-json")
     with pytest.raises(ValueError, match="unsupported battle checkpoint schema"):
         resident.replace_checkpoint(b'{"schema_version":2}')
+
+    different = BattleState(rng=__import__("random").Random(999))
+    with pytest.raises(RuntimeError, match="full-state rehydration"):
+        resident.replace_checkpoint(
+            snapshot_bytes(canonical_battle_snapshot(different))
+        )
 
 
 @pytest.mark.parametrize(

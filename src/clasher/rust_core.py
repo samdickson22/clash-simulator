@@ -339,6 +339,10 @@ class ResidentRustBattle:
         return int(self._native.checkpoint_generation())
 
     @property
+    def checkpoint_is_current(self) -> bool:
+        return bool(self._native.checkpoint_is_current())
+
+    @property
     def schema_version(self) -> int:
         return int(self._native.schema_version())
 

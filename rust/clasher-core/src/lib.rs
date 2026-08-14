@@ -254,6 +254,7 @@ fn append_string(payload: &mut Vec<u8>, value: &str) {
 struct ResidentBattle {
     checkpoint: Vec<u8>,
     checkpoint_sha256: String,
+    checkpoint_current: bool,
     schema_version: u64,
     checkpoint_generation: u64,
     tick: i64,
@@ -349,6 +350,7 @@ impl ResidentBattle {
         Ok(Self {
             checkpoint: checkpoint.to_vec(),
             checkpoint_sha256: sha256_hex(checkpoint),
+            checkpoint_current: true,
             schema_version,
             checkpoint_generation: 0,
             tick,
@@ -381,6 +383,7 @@ impl ResidentBattle {
         if self.game_over {
             return false;
         }
+        self.checkpoint_current = false;
         self.time += self.dt;
         self.tick += 1;
         if self.time >= self.double_elixir_start_time {
@@ -423,6 +426,7 @@ impl ResidentBattle {
 
     /// Advance the resident player phase after the clock phase of this tick.
     fn advance_player_phase(&mut self) {
+        self.checkpoint_current = false;
         self.advance_players();
     }
 
@@ -597,12 +601,22 @@ impl ResidentBattle {
         sha256_hex(&payload)
     }
 
-    fn checkpoint_bytes(&self) -> Vec<u8> {
-        self.checkpoint.clone()
+    fn checkpoint_bytes(&self) -> PyResult<Vec<u8>> {
+        if !self.checkpoint_current {
+            return Err(PyRuntimeError::new_err(
+                "resident checkpoint is stale after native mutation; exact current-state export is not implemented yet",
+            ));
+        }
+        Ok(self.checkpoint.clone())
     }
 
-    fn checkpoint_sha256(&self) -> &str {
-        &self.checkpoint_sha256
+    fn checkpoint_sha256(&self) -> PyResult<&str> {
+        if !self.checkpoint_current {
+            return Err(PyRuntimeError::new_err(
+                "resident checkpoint is stale after native mutation; exact current-state export is not implemented yet",
+            ));
+        }
+        Ok(&self.checkpoint_sha256)
     }
 
     fn checkpoint_size(&self) -> usize {
@@ -613,15 +627,22 @@ impl ResidentBattle {
         self.checkpoint_generation
     }
 
+    fn checkpoint_is_current(&self) -> bool {
+        self.checkpoint_current
+    }
+
     fn schema_version(&self) -> u64 {
         self.schema_version
     }
 
     fn replace_checkpoint(&mut self, checkpoint: &[u8]) -> PyResult<()> {
         let schema_version = validate_checkpoint(checkpoint)?;
-        self.checkpoint.clear();
-        self.checkpoint.extend_from_slice(checkpoint);
-        self.checkpoint_sha256 = sha256_hex(checkpoint);
+        let replacement_sha256 = sha256_hex(checkpoint);
+        if !self.checkpoint_current || replacement_sha256 != self.checkpoint_sha256 {
+            return Err(PyRuntimeError::new_err(
+                "installing a different resident checkpoint requires exact full-state rehydration, which is not implemented yet",
+            ));
+        }
         self.schema_version = schema_version;
         self.checkpoint_generation = self
             .checkpoint_generation
