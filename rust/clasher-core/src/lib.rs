@@ -6269,6 +6269,11 @@ impl ResidentBattle {
                 "resident ordered interval requires first_player 0 or 1",
             ));
         }
+        if action0 == Self::ACTION_ABILITY || action1 == Self::ACTION_ABILITY {
+            return Err(PyRuntimeError::new_err(
+                "resident ordered intervals do not yet support champion abilities",
+            ));
+        }
         self.preflight_joint_action(0, action0)?;
         self.preflight_joint_action(1, action1)?;
         let allocation_count =
@@ -6888,11 +6893,6 @@ impl ResidentBattle {
     }
 
     fn preflight_joint_action(&self, player_id: i64, action: i64) -> PyResult<()> {
-        if action == Self::ACTION_ABILITY {
-            return Err(PyRuntimeError::new_err(
-                "resident joint actions do not yet support champion abilities",
-            ));
-        }
         if !(0..Self::ACTION_NO_OP).contains(&action) {
             return Ok(());
         }
@@ -6965,9 +6965,10 @@ impl ResidentBattle {
             return Ok(true);
         }
         if action == Self::ACTION_ABILITY {
-            return Err(PyRuntimeError::new_err(
-                "resident joint actions do not yet support champion abilities",
-            ));
+            // The current resident capability closure excludes live Champion
+            // mechanics. Python still consumes the simultaneous-action
+            // shuffle before an ability button with no owner returns false.
+            return Ok(false);
         }
 
         let player_id = i64::try_from(player_id).expect("two-player index fits i64");

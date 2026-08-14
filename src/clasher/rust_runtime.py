@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, cast
 
@@ -83,6 +84,14 @@ class RustRuntimeStatus:
     fallback_reason: str | None
     shadow_checks: int
     shadow_mismatches: int
+    poisoned_reason: str | None = None
+
+
+@dataclass(frozen=True)
+class ResidentDecisionResult:
+    action_success: dict[int, bool]
+    action_order: tuple[int, int]
+    ticks_advanced: int
 
 
 class ResidentIdleRuntime:
@@ -196,6 +205,10 @@ class ResidentCompleteTickRuntime:
         self,
         battle: Any,
         mode: RustBattleMode | str = RustBattleMode.OFF,
+        *,
+        action_ingress: bool = False,
+        canonical_action_perspective: bool = True,
+        python_action_applier: Callable[[Any, int, int], bool] | None = None,
     ) -> None:
         self.battle = battle
         self.requested_mode = RustBattleMode(mode)
@@ -208,6 +221,9 @@ class ResidentCompleteTickRuntime:
         self._on_boundary_snapshot: dict[str, Any] | None = None
         self._on_boundary_bytes: bytes | None = None
         self.poisoned_reason: str | None = None
+        self._action_ingress = bool(action_ingress)
+        self._canonical_action_perspective = bool(canonical_action_perspective)
+        self._python_action_applier = python_action_applier
 
         if self.requested_mode is RustBattleMode.OFF:
             return
@@ -221,6 +237,35 @@ class ResidentCompleteTickRuntime:
             self.active_mode = RustBattleMode.OFF
             self.fallback_reason = "resident core rejected complete-tick capability"
             return
+        if self._action_ingress:
+            if not self._canonical_action_perspective:
+                self.active_mode = RustBattleMode.OFF
+                self.fallback_reason = (
+                    "resident action ingress requires canonical action perspective"
+                )
+                return
+            if (
+                self.active_mode is RustBattleMode.SHADOW
+                and self._python_action_applier is None
+            ):
+                raise ValueError(
+                    "resident action-ingress shadow mode requires a Python "
+                    "action applier"
+                )
+            try:
+                # Both calls are read-only. The native preflight scans the full
+                # hand and cycle of both players before generating either legal
+                # set, so an episode cannot become unsupported only after a card
+                # rotates into hand.
+                resident.resident_legal_action_ids(0)
+                resident.resident_legal_action_ids(1)
+            except RuntimeError as error:
+                self.active_mode = RustBattleMode.OFF
+                self.fallback_reason = (
+                    "resident action ingress rejected the initial episode: "
+                    f"{error}"
+                )
+                return
         self._resident = resident
         self._assert_shadow_parity()
         if self.active_mode is RustBattleMode.ON:
@@ -234,6 +279,7 @@ class ResidentCompleteTickRuntime:
             fallback_reason=self.fallback_reason,
             shadow_checks=self.shadow_checks,
             shadow_mismatches=self.shadow_mismatches,
+            poisoned_reason=self.poisoned_reason,
         )
 
     @property
@@ -304,8 +350,157 @@ class ResidentCompleteTickRuntime:
             detail = f"path={difference.path} reason={difference.reason}"
         raise RuntimeError(
             "resident complete-tick on mode detected external Python state "
-            f"mutation before advance ({detail}); resident action ingress is "
-            "not implemented"
+            f"mutation before advance ({detail})"
+        )
+
+    def _apply_python_joint_actions(
+        self,
+        action0: int,
+        action1: int,
+    ) -> tuple[dict[int, bool], tuple[int, int]]:
+        applier = self._python_action_applier
+        if applier is None:  # pragma: no cover - constructor invariant
+            raise RuntimeError("resident shadow action applier is unavailable")
+        order = [0, 1]
+        self.battle.rng.shuffle(order)
+        actions = (action0, action1)
+        success: dict[int, bool] = {}
+        for player_id in order:
+            success[player_id] = bool(
+                applier(self.battle, player_id, actions[player_id])
+            )
+        return success, (order[0], order[1])
+
+    def _assert_shadow_action_result(
+        self,
+        *,
+        python_success: dict[int, bool],
+        python_order: tuple[int, int],
+        rust_success: dict[int, bool],
+        rust_order: tuple[int, int],
+    ) -> None:
+        if python_order != rust_order:
+            self.shadow_mismatches += 1
+            raise AssertionError(
+                "resident Rust joint-action parity mismatch field=action_order "
+                f"expected={python_order!r} actual={rust_order!r}"
+            )
+        if python_success != rust_success:
+            self.shadow_mismatches += 1
+            raise AssertionError(
+                "resident Rust joint-action parity mismatch field=action_success "
+                f"expected={python_success!r} actual={rust_success!r}"
+            )
+
+    def apply_joint_actions_and_advance(
+        self,
+        action0: int,
+        action1: int,
+        ticks: int,
+    ) -> ResidentDecisionResult:
+        """Apply canonical 4x18x32 joint action IDs and advance exactly.
+
+        IDs follow ``DiscreteTileActionSpace`` with canonical perspective:
+        deployment IDs are slot-major over the 18x32 board, followed by no-op
+        and the single ability button. Native action ingress mirrors player 1;
+        noncanonical action spaces fail closed during episode initialization.
+        """
+
+        if not self._action_ingress:
+            raise RuntimeError("resident complete-tick action ingress is not enabled")
+        if self.active_mode is RustBattleMode.OFF:
+            raise RuntimeError("resident complete-tick action ingress is inactive")
+
+        requested = max(0, int(ticks))
+        resident = self._resident
+        if resident is None:  # pragma: no cover - constructor invariant
+            raise RuntimeError("active Rust runtime has no resident battle")
+
+        if self.active_mode is RustBattleMode.SHADOW:
+            self._assert_shadow_parity()
+            candidate = resident.fork()
+            try:
+                rust_success, rust_order = candidate.apply_resident_joint_actions(
+                    action0,
+                    action1,
+                )
+            except RuntimeError as error:
+                raise RuntimeError(
+                    "battle no longer satisfies the resident joint-action contract; "
+                    "mid-battle fallback is forbidden"
+                ) from error
+            python_success, python_order = self._apply_python_joint_actions(
+                action0,
+                action1,
+            )
+            self._assert_shadow_action_result(
+                python_success=python_success,
+                python_order=python_order,
+                rust_success=rust_success,
+                rust_order=rust_order,
+            )
+            self._resident = candidate
+            self.shadow_checks += 1
+            self._assert_shadow_parity()
+            advanced = self.advance_ticks(requested)
+            return ResidentDecisionResult(
+                action_success=python_success,
+                action_order=python_order,
+                ticks_advanced=advanced,
+            )
+
+        self._assert_on_boundary_unchanged()
+        candidate = resident.fork()
+        try:
+            rust_success, rust_order = candidate.apply_resident_joint_actions(
+                action0,
+                action1,
+            )
+        except RuntimeError as error:
+            raise RuntimeError(
+                "battle no longer satisfies the resident joint-action contract; "
+                "mid-battle fallback is forbidden"
+            ) from error
+        try:
+            rust_advanced = candidate.advance_complete_ticks(requested)
+        except RuntimeError as error:
+            self.poisoned_reason = (
+                "post-action complete-tick capability failure: "
+                f"{error}"
+            )
+            raise RuntimeError(
+                "resident complete-tick runtime failed after native action "
+                "application and is now poisoned; the published battle and "
+                "resident root remain unchanged"
+            ) from error
+
+        from .rust_publication import (
+            ResidentPublicationError,
+            publish_complete_tick_state,
+        )
+
+        try:
+            publish_complete_tick_state(
+                self.battle,
+                candidate,
+                prior_resident=resident,
+                entity_registry=self._entity_registry,
+            )
+        except ResidentPublicationError as error:
+            self.poisoned_reason = str(error)
+            raise RuntimeError(
+                "resident complete-tick publication rejected the decision "
+                "interval and the runtime is now poisoned; mid-battle "
+                "fallback is forbidden"
+            ) from error
+        self._resident = candidate
+        self._record_on_boundary()
+        return ResidentDecisionResult(
+            action_success={
+                player_id: rust_success[player_id] for player_id in rust_order
+            },
+            action_order=rust_order,
+            ticks_advanced=int(rust_advanced),
         )
 
     def advance_one_tick(self) -> bool:
@@ -357,6 +552,10 @@ class ResidentCompleteTickRuntime:
                 if not self.advance_one_tick():
                     break
                 advanced += 1
+            if advanced and self.battle.fast_path:
+                self.battle._refresh_fast_path_caches(
+                    trust_target_cache_dirty=True
+                )
             return advanced
 
         resident = self._resident

@@ -1,20 +1,21 @@
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass
 from pathlib import Path
-import random
 from typing import Dict, Optional
 
 import numpy as np
 
-from clasher.battle import BattleState, STANDARD_MATCH_TICKS
+from clasher.battle import STANDARD_MATCH_TICKS, BattleState
+from clasher.rust_core import RustBattleMode
+from clasher.rust_runtime import ResidentCompleteTickRuntime, RustRuntimeStatus
 
 from .action_space import DiscreteTileActionSpace
 from .deck_pool import apply_deck_to_player, load_deck_pool, sample_decks
 from .obs_cv import CvObservationBuilder
 from .reward_model import objective_potential_p0
 from .structured_obs import StructuredObservationBuilder
-
 
 @dataclass
 class StepInfo:
@@ -35,6 +36,7 @@ class SelfPlayBattleEnv:
         canonical_perspective: bool = True,
         engine_fast_path: str = "off",
         idle_fast_forward: bool = True,
+        resident_complete_tick_mode: str = "off",
     ) -> None:
         self.decision_interval_ticks = decision_interval_ticks
         self.max_ticks = max_ticks
@@ -43,6 +45,13 @@ class SelfPlayBattleEnv:
             raise ValueError("engine_fast_path must be one of: off, shadow, on")
         self.engine_fast_path = engine_fast_path
         self.idle_fast_forward = idle_fast_forward
+        if resident_complete_tick_mode not in {"off", "shadow", "on"}:
+            raise ValueError(
+                "resident_complete_tick_mode must be one of: off, shadow, on"
+            )
+        self.resident_complete_tick_mode = RustBattleMode(
+            resident_complete_tick_mode
+        )
         self.rng = random.Random(seed)
         self.np_rng = np.random.default_rng(seed)
 
@@ -60,6 +69,7 @@ class SelfPlayBattleEnv:
         self._canonical_perspective = canonical_perspective
 
         self.battle: Optional[BattleState] = None
+        self._complete_tick_runtime: ResidentCompleteTickRuntime | None = None
         self._prev_objective_p0 = 0.0
         self._mask_shadow_checks = 0
         self._mask_shadow_mismatches = 0
@@ -83,7 +93,19 @@ class SelfPlayBattleEnv:
             rng=self.rng,
         )
         self._sample_and_apply_decks()
+        self._complete_tick_runtime = ResidentCompleteTickRuntime(
+            self.battle,
+            self.resident_complete_tick_mode,
+            action_ingress=True,
+            canonical_action_perspective=self._canonical_perspective,
+            python_action_applier=self.action_space.apply_action,
+        )
         self._reset_reward_trackers()
+
+    @property
+    def resident_runtime_status(self) -> RustRuntimeStatus | None:
+        runtime = self._complete_tick_runtime
+        return None if runtime is None else runtime.status
 
     def get_observation(self, player_id: int):
         assert self.battle is not None
@@ -200,39 +222,58 @@ class SelfPlayBattleEnv:
             if set(pre_can_spend) != {0, 1}:
                 raise ValueError("pre_action_masks must contain players 0 and 1")
 
-        action_success: Dict[int, bool] = {}
-        order = [0, 1]
-        self.rng.shuffle(order)
-
-        for player_id in order:
-            action_id = actions.get(player_id, self.action_space.no_op_action)
-            success = self.action_space.apply_action(self.battle, player_id, action_id)
-            action_success[player_id] = success
-
-        ticks = 0
-        no_op0 = actions.get(0, self.action_space.no_op_action) == self.action_space.no_op_action
-        no_op1 = actions.get(1, self.action_space.no_op_action) == self.action_space.no_op_action
-        if (
-            self.idle_fast_forward
-            and no_op0
-            and no_op1
-            and hasattr(self.battle, "can_fast_forward_idle")
-            and self.battle.can_fast_forward_idle()
-        ):
-            remaining_ticks = min(
+        action0 = actions.get(0, self.action_space.no_op_action)
+        action1 = actions.get(1, self.action_space.no_op_action)
+        remaining_ticks = max(
+            0,
+            min(
                 self.decision_interval_ticks,
                 max(0, self.max_ticks - self.battle.tick),
+            ),
+        )
+        runtime = self._complete_tick_runtime
+        if runtime is not None and runtime.active_mode is not RustBattleMode.OFF:
+            result = runtime.apply_joint_actions_and_advance(
+                action0,
+                action1,
+                remaining_ticks,
             )
-            if remaining_ticks > 0:
-                ticks = self.battle.fast_forward_idle_ticks(remaining_ticks)
+            action_success = result.action_success
+            ticks = result.ticks_advanced
         else:
-            while (
-                ticks < self.decision_interval_ticks
-                and not self.battle.game_over
-                and self.battle.tick < self.max_ticks
+            action_success = {}
+            order = [0, 1]
+            self.rng.shuffle(order)
+
+            for player_id in order:
+                action_id = action0 if player_id == 0 else action1
+                success = self.action_space.apply_action(
+                    self.battle,
+                    player_id,
+                    action_id,
+                )
+                action_success[player_id] = success
+
+            ticks = 0
+            no_op0 = action0 == self.action_space.no_op_action
+            no_op1 = action1 == self.action_space.no_op_action
+            if (
+                self.idle_fast_forward
+                and no_op0
+                and no_op1
+                and hasattr(self.battle, "can_fast_forward_idle")
+                and self.battle.can_fast_forward_idle()
             ):
-                self.battle.step()
-                ticks += 1
+                if remaining_ticks > 0:
+                    ticks = self.battle.fast_forward_idle_ticks(remaining_ticks)
+            else:
+                while (
+                    ticks < self.decision_interval_ticks
+                    and not self.battle.game_over
+                    and self.battle.tick < self.max_ticks
+                ):
+                    self.battle.step()
+                    ticks += 1
 
         done = self.battle.game_over or self.battle.tick >= self.max_ticks
         rewards = self._compute_dense_rewards()
