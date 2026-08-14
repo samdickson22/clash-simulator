@@ -222,11 +222,20 @@ def _unordered_pair_row_starts(item_count: int) -> tuple[int, ...]:
     return tuple(starts)
 
 
-def _unordered_pair_at(item_count: int, index: int) -> tuple[int, int]:
+def _unordered_pair_at(
+    item_count: int,
+    index: int,
+    *,
+    row_starts: Sequence[int] | None = None,
+) -> tuple[int, int]:
     total = item_count * (item_count + 1) // 2
     if not 0 <= index < total:
         raise IndexError(index)
-    starts = _unordered_pair_row_starts(item_count)
+    starts = (
+        _unordered_pair_row_starts(item_count)
+        if row_starts is None
+        else row_starts
+    )
     first = bisect_right(starts, index) - 1
     second = first + index - starts[first]
     return first, second
@@ -253,9 +262,16 @@ def _systematic_axes(index: int) -> tuple[
     )
 
 
-def _two_v_two_case(cards: Sequence[str], index: int) -> InteractionCase:
-    compositions = _team_compositions(cards)
-    first, second = _unordered_pair_at(len(compositions), index)
+def _two_v_two_case_from_catalog(
+    compositions: Sequence[tuple[str, str]],
+    row_starts: Sequence[int],
+    index: int,
+) -> InteractionCase:
+    first, second = _unordered_pair_at(
+        len(compositions),
+        index,
+        row_starts=row_starts,
+    )
     (
         fast_path,
         mirrored,
@@ -278,6 +294,15 @@ def _two_v_two_case(cards: Sequence[str], index: int) -> InteractionCase:
     )
 
 
+def _two_v_two_case(cards: Sequence[str], index: int) -> InteractionCase:
+    compositions = _team_compositions(cards)
+    return _two_v_two_case_from_catalog(
+        compositions,
+        _unordered_pair_row_starts(len(compositions)),
+        index,
+    )
+
+
 def iter_two_v_two_cases(
     cards: Sequence[str],
     *,
@@ -289,8 +314,14 @@ def iter_two_v_two_cases(
         shard_index,
         shard_count,
     )
+    compositions = _team_compositions(cards)
+    row_starts = _unordered_pair_row_starts(len(compositions))
     for index in range(selected.start, selected.stop):
-        yield _two_v_two_case(cards, index)
+        yield _two_v_two_case_from_catalog(
+            compositions,
+            row_starts,
+            index,
+        )
 
 
 def matrix_manifest(

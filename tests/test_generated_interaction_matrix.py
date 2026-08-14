@@ -53,6 +53,25 @@ def test_two_v_two_matrix_exhausts_unordered_compositions_only():
     assert {case.event_family for case in cases} == set(EVENT_FAMILIES)
 
 
+def test_two_v_two_iterator_builds_catalog_once(monkeypatch):
+    from clasher import interaction_matrix
+
+    calls = 0
+    original = interaction_matrix._team_compositions
+
+    def counted(cards):
+        nonlocal calls
+        calls += 1
+        return original(cards)
+
+    monkeypatch.setattr(interaction_matrix, "_team_compositions", counted)
+
+    cases = list(islice(iter_two_v_two_cases(("A", "B", "C")), 10))
+
+    assert len(cases) == 10
+    assert calls == 1
+
+
 @pytest.mark.parametrize("total,shards", [(8_464, 32), (584_821, 256)])
 def test_shards_are_contiguous_nonoverlapping_and_complete(total, shards):
     ranges = [shard_range(total, index, shards) for index in range(shards)]
