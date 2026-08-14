@@ -6,11 +6,14 @@ import struct
 from collections import deque
 from dataclasses import dataclass
 from enum import Enum
+from functools import lru_cache
+from pathlib import Path
 from typing import Any, Final, cast
 
 from .balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
 from .differential import (
     SNAPSHOT_SCHEMA_VERSION,
+    _entity_snapshot,
     canonical_battle_snapshot,
     snapshot_bytes,
 )
@@ -37,6 +40,111 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 1
+
+
+def _catalog_source_sha256(path: Path) -> str:
+    hasher = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str]:
+    """Return data-driven reasons a card is outside the first resident action slice."""
+    reasons: list[str] = []
+    if str(getattr(card_def, "kind", "") or "").casefold() != "troop":
+        reasons.append("not_troop")
+    if int(getattr(card_stats, "summon_count", None) or 1) != 1:
+        reasons.append("multi_primary")
+    if int(getattr(card_stats, "summon_character_second_count", None) or 0) != 0:
+        reasons.append("secondary_character")
+    if float(getattr(card_stats, "summon_width", 0.0) or 0.0) != 0.0:
+        reasons.append("wide_formation")
+    if getattr(card_stats, "summon_formation", None) is not None:
+        reasons.append("explicit_formation")
+    if bool(getattr(card_stats, "full_lane_deploy", False)):
+        reasons.append("full_lane_deploy")
+    if tuple(getattr(card_def, "mechanics", ()) or ()):
+        reasons.append("executable_mechanics")
+    if not getattr(card_stats, "summon_character_data", None):
+        reasons.append("missing_character_data")
+    return reasons
+
+
+@lru_cache(maxsize=4)
+def _resident_card_catalog_bytes(
+    data_file: str,
+    modified_ns: int,
+    file_size: int,
+) -> bytes:
+    """Compile one immutable, fingerprinted resident card catalog revision."""
+    del modified_ns, file_size
+    from .arena import Position
+    from .battle import BattleState
+    from .card_aliases import CARD_NAME_ALIASES
+    from .data import CardDataLoader
+    from .unit_traits import is_air_unit_card
+
+    path = Path(data_file)
+    loader = CardDataLoader(path)
+    definitions = loader.load_card_definitions()
+    prototype_battle = BattleState(card_loader=loader.clone_lazy())
+    lookup_names = set(definitions)
+    lookup_names.update(
+        alias for alias, target in CARD_NAME_ALIASES.items() if target in definitions
+    )
+    cards: list[dict[str, Any]] = []
+    for lookup_name in sorted(lookup_names):
+        card_def = loader.get_card_definition(lookup_name)
+        card_stats = loader.get_card(lookup_name)
+        if card_def is None or card_stats is None:  # pragma: no cover - loader invariant
+            continue
+        reasons = _single_troop_capability_reasons(card_stats, card_def)
+        template_snapshot: dict[str, Any] | None = None
+        if not reasons:
+            spawned_id = prototype_battle.next_entity_id
+            prototype_battle._spawn_unit_at_position(
+                Position(9.0, 8.0),
+                0,
+                card_stats,
+                snap_to_valid=False,
+            )
+            prototype = prototype_battle.entities.pop(spawned_id)
+            template_snapshot = dict(_entity_snapshot(prototype))
+        cards.append(
+            {
+                "lookup_name": lookup_name,
+                "effective_name": str(card_stats.name),
+                "mana_cost": float(card_stats.mana_cost),
+                "can_deploy_on_enemy_side": bool(
+                    getattr(card_stats, "can_deploy_on_enemy_side", False)
+                ),
+                "deploy_w_tile_margin": int(
+                    getattr(card_stats, "deploy_w_tile_margin", 0) or 0
+                ),
+                "symmetric_deploy_snap": bool(
+                    not is_air_unit_card(card_stats)
+                    and float(getattr(card_stats, "speed", 0) or 0) > 0.0
+                    and int(
+                        (getattr(card_stats, "summon_character_data", {}) or {}).get(
+                            "dashCooldown", 0
+                        )
+                        or 0
+                    )
+                    == 0
+                ),
+                "capability_reasons": reasons,
+                "template_snapshot": template_snapshot,
+            }
+        )
+    payload = {
+        "schema_version": RESIDENT_CARD_CATALOG_SCHEMA_VERSION,
+        "source_fingerprint": _catalog_source_sha256(path),
+        "cards": cards,
+    }
+    return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("ascii")
 
 
 def rust_core_available() -> bool:
@@ -215,9 +323,17 @@ class ResidentRustBattle:
     def from_battle(cls, battle: Any) -> ResidentRustBattle:
         require_rust_core()
         checkpoint = snapshot_bytes(canonical_battle_snapshot(battle))
+        data_path = Path(battle.card_loader.data_file)
+        data_stat = data_path.stat()
+        catalog = _resident_card_catalog_bytes(
+            str(data_path.resolve()),
+            data_stat.st_mtime_ns,
+            data_stat.st_size,
+        )
         assert _ResidentBattle is not None
         native = _ResidentBattle(
             checkpoint,
+            catalog=catalog,
             tick=int(battle.tick),
             time=float(battle.time),
             dt=float(battle.dt),
@@ -521,6 +637,44 @@ class ResidentRustBattle:
 
     def locked_direct_combat_sha256(self) -> str:
         return str(self._native.locked_direct_combat_sha256())
+
+    @property
+    def resident_catalog_schema_version(self) -> int:
+        return int(self._native.catalog_schema_version())
+
+    @property
+    def resident_catalog_fingerprint(self) -> str:
+        return str(self._native.catalog_fingerprint())
+
+    @property
+    def resident_catalog_source_fingerprint(self) -> str:
+        return str(self._native.catalog_source_fingerprint())
+
+    @property
+    def resident_catalog_strong_count(self) -> int:
+        return int(self._native.catalog_strong_count())
+
+    def resident_supported_action_cards(self) -> tuple[str, ...]:
+        return tuple(str(name) for name in self._native.catalog_supported_cards())
+
+    def resident_action_card_capability_reasons(self, name: str) -> tuple[str, ...]:
+        return tuple(
+            str(reason) for reason in self._native.catalog_capability_reasons(str(name))
+        )
+
+    def apply_resident_joint_actions(
+        self,
+        action0: int,
+        action1: int,
+    ) -> tuple[dict[int, bool], tuple[int, int]]:
+        success0, success1, order = self._native.apply_joint_actions(
+            int(action0),
+            int(action1),
+        )
+        return (
+            {0: bool(success0), 1: bool(success1)},
+            (int(order[0]), int(order[1])),
+        )
 
     def rng_random(self) -> float:
         return float(self._native.rng_random())

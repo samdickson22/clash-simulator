@@ -1,8 +1,9 @@
 use pyo3::exceptions::{PyIndexError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
+use serde::Deserialize;
 use serde_json::{Map, Value, json};
 use sha2::{Digest, Sha256};
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 
 const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
@@ -107,6 +108,32 @@ fn standard_path_tile_cost(cell_x: i64, cell_y: i64, lane_id: i64, jump_height: 
     } else {
         5
     }
+}
+
+fn nearest_standard_path_id(x_units: i64, y_units: i64) -> i64 {
+    let source_cell_x = x_units / 500;
+    let source_cell_y = y_units / 500;
+    let mut closest_path = 0;
+    let mut closest_distance_sq = i64::from(i32::MAX);
+    // Python and the game scan x first, then y, and retain the first lane on
+    // an equal-distance tie.
+    for cell_x in 0..STANDARD_PATH_WIDTH {
+        let dx = cell_x - source_cell_x;
+        for cell_y in 0..STANDARD_PATH_HEIGHT {
+            let path_id =
+                i64::from(STANDARD_PATH_ROWS[cell_y as usize].as_bytes()[cell_x as usize] - b'0');
+            if path_id < 1 {
+                continue;
+            }
+            let dy = cell_y - source_cell_y;
+            let distance_sq = dx * dx + dy * dy;
+            if distance_sq < closest_distance_sq {
+                closest_path = path_id;
+                closest_distance_sq = distance_sq;
+            }
+        }
+    }
+    closest_path
 }
 
 fn native_path_heap_push(heap: &mut Vec<usize>, priorities: &[i64], cell: usize) {
@@ -1069,6 +1096,8 @@ struct ResidentEntity {
     point_projectile: Option<PointProjectileState>,
     area_effect: Option<ResidentAreaEffectState>,
     object_base_movement_noop: bool,
+    blocks_deployment: bool,
+    deployment_collision_radius: f64,
 }
 
 #[derive(Clone)]
@@ -2387,6 +2416,9 @@ impl ResidentEntity {
             && pending_movement_x.to_bits() == 0.0_f64.to_bits()
             && pending_movement_y.to_bits() == 0.0_f64.to_bits()
             && required_bool(fields, "_pending_movement_consumed")?;
+        let blocks_deployment = normalized_optional_bool(fields, "blocks_deployment");
+        let deployment_collision_radius =
+            absent_optional_normalized_f64(fields, "deployment_collision_radius")?.unwrap_or(0.5);
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
         }
@@ -2546,6 +2578,8 @@ impl ResidentEntity {
             point_projectile,
             area_effect,
             object_base_movement_noop,
+            blocks_deployment,
+            deployment_collision_radius,
         })
     }
 
@@ -2663,6 +2697,179 @@ impl ResidentEntity {
         self.point_projectile
             .as_ref()
             .map(|state| state.diagnostic_value(self))
+    }
+}
+
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 1;
+
+#[derive(Deserialize)]
+struct ResidentCardCatalogWire {
+    schema_version: u64,
+    source_fingerprint: String,
+    cards: Vec<ResidentCardWire>,
+}
+
+#[derive(Deserialize)]
+struct ResidentCardWire {
+    lookup_name: String,
+    effective_name: String,
+    mana_cost: f64,
+    can_deploy_on_enemy_side: bool,
+    deploy_w_tile_margin: i64,
+    symmetric_deploy_snap: bool,
+    capability_reasons: Vec<String>,
+    template_snapshot: Option<Value>,
+}
+
+#[derive(Clone)]
+struct ResidentCardSpec {
+    lookup_name: String,
+    effective_name: String,
+    mana_cost: f64,
+    can_deploy_on_enemy_side: bool,
+    deploy_w_tile_margin: i64,
+    symmetric_deploy_snap: bool,
+    capability_reasons: Vec<String>,
+    prototype: Option<ResidentEntity>,
+}
+
+impl ResidentCardSpec {
+    fn supports_single_primary_troop(&self) -> bool {
+        self.capability_reasons.is_empty() && self.prototype.is_some()
+    }
+}
+
+struct ResidentCardCatalog {
+    schema_version: u64,
+    source_fingerprint: String,
+    fingerprint: String,
+    cards: Vec<ResidentCardSpec>,
+    by_name: HashMap<String, usize>,
+}
+
+impl ResidentCardCatalog {
+    fn from_bytes(payload: &[u8]) -> PyResult<Self> {
+        let wire: ResidentCardCatalogWire = serde_json::from_slice(payload)
+            .map_err(|error| PyValueError::new_err(format!("invalid resident catalog: {error}")))?;
+        if wire.schema_version != RESIDENT_CARD_CATALOG_SCHEMA_VERSION {
+            return Err(PyValueError::new_err(format!(
+                "unsupported resident catalog schema {}; expected {}",
+                wire.schema_version, RESIDENT_CARD_CATALOG_SCHEMA_VERSION
+            )));
+        }
+        if wire.source_fingerprint.len() != 64
+            || !wire
+                .source_fingerprint
+                .bytes()
+                .all(|byte| byte.is_ascii_hexdigit())
+        {
+            return Err(PyValueError::new_err(
+                "resident catalog source fingerprint must be a SHA-256 hex digest",
+            ));
+        }
+
+        let mut cards = Vec::with_capacity(wire.cards.len());
+        let mut by_name = HashMap::with_capacity(wire.cards.len());
+        for card in wire.cards {
+            if card.lookup_name.is_empty() || card.effective_name.is_empty() {
+                return Err(PyValueError::new_err(
+                    "resident catalog card names cannot be empty",
+                ));
+            }
+            if !card.mana_cost.is_finite() || card.mana_cost < 0.0 {
+                return Err(PyValueError::new_err(format!(
+                    "resident catalog card {:?} has invalid mana cost",
+                    card.lookup_name
+                )));
+            }
+            if card.deploy_w_tile_margin < 0 {
+                return Err(PyValueError::new_err(format!(
+                    "resident catalog card {:?} has a negative deployment margin",
+                    card.lookup_name
+                )));
+            }
+            if by_name.contains_key(&card.lookup_name) {
+                return Err(PyValueError::new_err(format!(
+                    "resident catalog contains duplicate lookup name {:?}",
+                    card.lookup_name
+                )));
+            }
+
+            let mut reasons = card.capability_reasons;
+            let prototype = match card.template_snapshot {
+                Some(snapshot) => match ResidentEntity::from_normalized(0, &snapshot) {
+                    Ok(prototype) => Some(prototype),
+                    Err(error) => {
+                        reasons.push(format!("template_parse:{error}"));
+                        None
+                    }
+                },
+                None => None,
+            };
+            if reasons.is_empty() {
+                let supported = prototype.as_ref().is_some_and(|prototype| {
+                    prototype.entity_kind == 0
+                        && prototype.active
+                        && prototype.is_alive
+                        && prototype.card_name == card.effective_name
+                        && prototype.has_only_compiled_mechanics()
+                        && prototype.mechanics.is_empty()
+                        && prototype.shields.is_empty()
+                        && prototype.death_opcodes.is_empty()
+                        && prototype.modifier_supported
+                        && prototype.direct_combat_unsupported.is_empty()
+                        && prototype.locked_combat.is_some()
+                        && prototype.movement.as_ref().is_some_and(|movement| {
+                            movement.route_cache_supported
+                                && movement.collision_radius.is_finite()
+                                && movement.collision_radius > 0.0
+                                && movement.unit_mass.is_finite()
+                                && movement.unit_mass > 0.0
+                        })
+                        && prototype.point_projectile.is_none()
+                        && prototype.area_effect.is_none()
+                        && prototype.building_lifetime.is_none()
+                        && prototype.building_impact.is_none()
+                        && prototype.object_base_movement_noop
+                        && !prototype.blocks_deployment
+                });
+                if !supported {
+                    reasons.push("native_single_troop_preflight".to_owned());
+                }
+            }
+
+            let index = cards.len();
+            by_name.insert(card.lookup_name.clone(), index);
+            cards.push(ResidentCardSpec {
+                lookup_name: card.lookup_name,
+                effective_name: card.effective_name,
+                mana_cost: card.mana_cost,
+                can_deploy_on_enemy_side: card.can_deploy_on_enemy_side,
+                deploy_w_tile_margin: card.deploy_w_tile_margin,
+                symmetric_deploy_snap: card.symmetric_deploy_snap,
+                capability_reasons: reasons,
+                prototype,
+            });
+        }
+        Ok(Self {
+            schema_version: wire.schema_version,
+            source_fingerprint: wire.source_fingerprint.to_ascii_lowercase(),
+            fingerprint: sha256_hex(payload),
+            cards,
+            by_name,
+        })
+    }
+
+    fn get(&self, name: &str) -> Option<&ResidentCardSpec> {
+        self.by_name.get(name).map(|index| &self.cards[*index])
+    }
+
+    fn supported_names(&self) -> Vec<String> {
+        self.cards
+            .iter()
+            .filter(|card| card.supports_single_primary_troop())
+            .map(|card| card.lookup_name.clone())
+            .collect()
     }
 }
 
@@ -3092,6 +3299,7 @@ fn append_string(payload: &mut Vec<u8>, value: &str) {
 #[derive(Clone)]
 struct ResidentBattle {
     checkpoint: Arc<[u8]>,
+    catalog: Arc<ResidentCardCatalog>,
     checkpoint_sha256: String,
     checkpoint_current: bool,
     schema_version: u64,
@@ -3132,6 +3340,7 @@ impl ResidentBattle {
     #[pyo3(signature = (
         checkpoint,
         *,
+        catalog,
         tick,
         time,
         dt,
@@ -3160,6 +3369,7 @@ impl ResidentBattle {
     #[allow(clippy::too_many_arguments)]
     fn new(
         checkpoint: &[u8],
+        catalog: &[u8],
         tick: i64,
         time: f64,
         dt: f64,
@@ -3196,6 +3406,7 @@ impl ResidentBattle {
             ));
         }
         let schema_version = validate_checkpoint(checkpoint)?;
+        let catalog = Arc::new(ResidentCardCatalog::from_bytes(catalog)?);
         let entities = parse_resident_entities(checkpoint)?;
         let next_entity_id = parse_next_entity_id(checkpoint)?;
         let rng = PythonMt19937::from_checkpoint(checkpoint)?;
@@ -3212,6 +3423,7 @@ impl ResidentBattle {
             .collect::<PyResult<Vec<_>>>()?;
         Ok(Self {
             checkpoint: Arc::from(checkpoint),
+            catalog,
             checkpoint_sha256: sha256_hex(checkpoint),
             checkpoint_current: true,
             schema_version,
@@ -4679,6 +4891,71 @@ impl ResidentBattle {
         self.schema_version
     }
 
+    fn catalog_schema_version(&self) -> u64 {
+        self.catalog.schema_version
+    }
+
+    fn catalog_fingerprint(&self) -> &str {
+        &self.catalog.fingerprint
+    }
+
+    fn catalog_source_fingerprint(&self) -> &str {
+        &self.catalog.source_fingerprint
+    }
+
+    fn catalog_strong_count(&self) -> usize {
+        Arc::strong_count(&self.catalog)
+    }
+
+    fn catalog_supported_cards(&self) -> Vec<String> {
+        self.catalog.supported_names()
+    }
+
+    fn catalog_capability_reasons(&self, name: &str) -> Vec<String> {
+        self.catalog
+            .get(name)
+            .map(|card| card.capability_reasons.clone())
+            .unwrap_or_else(|| vec!["missing_catalog_card".to_owned()])
+    }
+
+    fn apply_joint_actions(
+        &mut self,
+        action0: i64,
+        action1: i64,
+    ) -> PyResult<(bool, bool, Vec<i64>)> {
+        self.preflight_joint_action(0, action0)?;
+        self.preflight_joint_action(1, action1)?;
+        let allocation_count =
+            self.action_allocation_count(0, action0) + self.action_allocation_count(1, action1);
+        if self
+            .next_entity_id
+            .checked_add(allocation_count)
+            .is_none_or(|next_id| !(0..i64::MAX).contains(&next_id))
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident joint actions do not have enough entity-ID allocation headroom",
+            ));
+        }
+
+        let mut candidate = self.clone();
+        let order = candidate.rng.shuffle_indices(2)?;
+        candidate.checkpoint_current = false;
+        let mut success = [false; 2];
+        for player_id in order.iter().copied() {
+            let action = if player_id == 0 { action0 } else { action1 };
+            success[player_id] = candidate.apply_single_primary_action(player_id, action)?;
+        }
+        *self = candidate;
+        Ok((
+            success[0],
+            success[1],
+            order
+                .into_iter()
+                .map(|player_id| player_id as i64)
+                .collect(),
+        ))
+    }
+
     fn replace_checkpoint(&mut self, checkpoint: &[u8]) -> PyResult<()> {
         let schema_version = validate_checkpoint(checkpoint)?;
         let replacement_sha256 = sha256_hex(checkpoint);
@@ -4713,6 +4990,342 @@ impl ResidentBattle {
 }
 
 impl ResidentBattle {
+    const ACTION_BOARD_WIDTH: i64 = 18;
+    const ACTION_BOARD_HEIGHT: i64 = 32;
+    const ACTION_TILES: i64 = Self::ACTION_BOARD_WIDTH * Self::ACTION_BOARD_HEIGHT;
+    const ACTION_HAND_SLOTS: i64 = 4;
+    const ACTION_NO_OP: i64 = Self::ACTION_HAND_SLOTS * Self::ACTION_TILES;
+    const ACTION_ABILITY: i64 = Self::ACTION_NO_OP + 1;
+    const ACTION_COUNT: i64 = Self::ACTION_ABILITY + 1;
+
+    fn player_index(&self, player_id: i64) -> PyResult<usize> {
+        self.players
+            .iter()
+            .position(|player| player.player_id == player_id)
+            .ok_or_else(|| PyRuntimeError::new_err(format!("missing resident player {player_id}")))
+    }
+
+    fn preflight_joint_action(&self, player_id: i64, action: i64) -> PyResult<()> {
+        if action == Self::ACTION_ABILITY {
+            return Err(PyRuntimeError::new_err(
+                "resident joint actions do not yet support champion abilities",
+            ));
+        }
+        if !(0..Self::ACTION_NO_OP).contains(&action) {
+            return Ok(());
+        }
+        let slot = usize::try_from(action / Self::ACTION_TILES)
+            .expect("non-negative action slot fits usize");
+        let player_index = self.player_index(player_id)?;
+        let Some(card_name) = self.players[player_index]
+            .hand
+            .get(slot)
+            .and_then(Option::as_deref)
+        else {
+            return Ok(());
+        };
+        let Some(card) = self.catalog.get(card_name) else {
+            return Err(PyRuntimeError::new_err(format!(
+                "resident joint action rejected uncatalogued hand card {card_name:?}"
+            )));
+        };
+        if !card.supports_single_primary_troop() {
+            return Err(PyRuntimeError::new_err(format!(
+                "resident joint action rejected unsupported hand card {card_name:?}: {}",
+                card.capability_reasons.join(",")
+            )));
+        }
+        if self.arena_width_tiles != Self::ACTION_BOARD_WIDTH
+            || self.arena_height_tiles != Self::ACTION_BOARD_HEIGHT
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident joint actions require the standard 18x32 arena",
+            ));
+        }
+        if !self.resident_id_invariants_hold() {
+            return Err(PyRuntimeError::new_err(
+                "resident joint actions rejected invalid entity-ID allocation state",
+            ));
+        }
+        Ok(())
+    }
+
+    fn action_allocation_count(&self, player_id: i64, action: i64) -> i64 {
+        if !(0..Self::ACTION_NO_OP).contains(&action) {
+            return 0;
+        }
+        let Ok(slot) = usize::try_from(action / Self::ACTION_TILES) else {
+            return 0;
+        };
+        let Ok(player_index) = self.player_index(player_id) else {
+            return 0;
+        };
+        i64::from(
+            self.players[player_index]
+                .hand
+                .get(slot)
+                .and_then(Option::as_deref)
+                .and_then(|name| self.catalog.get(name))
+                .is_some_and(ResidentCardSpec::supports_single_primary_troop),
+        )
+    }
+
+    fn apply_single_primary_action(&mut self, player_id: usize, action: i64) -> PyResult<bool> {
+        if !(0..Self::ACTION_COUNT).contains(&action) {
+            return Ok(false);
+        }
+        if action == Self::ACTION_NO_OP {
+            return Ok(true);
+        }
+        if action == Self::ACTION_ABILITY {
+            return Err(PyRuntimeError::new_err(
+                "resident joint actions do not yet support champion abilities",
+            ));
+        }
+
+        let player_id = i64::try_from(player_id).expect("two-player index fits i64");
+        let player_index = self.player_index(player_id)?;
+        let slot =
+            usize::try_from(action / Self::ACTION_TILES).expect("validated action slot fits usize");
+        let tile = action % Self::ACTION_TILES;
+        let canonical_x = tile % Self::ACTION_BOARD_WIDTH;
+        let canonical_y = tile / Self::ACTION_BOARD_WIDTH;
+        let (world_x, world_y) = if player_id == 1 {
+            (
+                Self::ACTION_BOARD_WIDTH - 1 - canonical_x,
+                Self::ACTION_BOARD_HEIGHT - 1 - canonical_y,
+            )
+        } else {
+            (canonical_x, canonical_y)
+        };
+        let Some(card_name) = self.players[player_index]
+            .hand
+            .get(slot)
+            .and_then(Option::as_ref)
+            .cloned()
+        else {
+            return Ok(false);
+        };
+        let card = self
+            .catalog
+            .get(&card_name)
+            .cloned()
+            .ok_or_else(|| PyRuntimeError::new_err("resident card vanished after preflight"))?;
+        if !card.supports_single_primary_troop() {
+            return Err(PyRuntimeError::new_err(
+                "resident card capability changed after preflight",
+            ));
+        }
+        let player = &self.players[player_index];
+        if player.elixir < card.mana_cost || player.king_tower_hp.as_f64() <= 0.0 {
+            return Ok(false);
+        }
+
+        let x_units = world_x * 1000 + 500;
+        let y_units = world_y * 1000 + 500;
+        if !self.valid_single_troop_placement(player_id, x_units, y_units, &card) {
+            return Ok(false);
+        }
+
+        let player = &mut self.players[player_index];
+        player.elixir -= card.mana_cost;
+        let Some(played_index) = player
+            .hand
+            .iter()
+            .position(|entry| entry.as_deref() == Some(card_name.as_str()))
+        else {
+            return Err(PyRuntimeError::new_err(
+                "resident card vanished from hand after placement validation",
+            ));
+        };
+        player.hand[played_index] = None;
+        player.cycle_queue.push_back(card_name);
+
+        let mut spawn_x_units = x_units;
+        let mut spawn_y_units = y_units;
+        if card.symmetric_deploy_snap {
+            if spawn_x_units < self.arena_width_tiles * 1000 / 2 {
+                spawn_x_units -= 1;
+            }
+            if player_id != 0 {
+                spawn_y_units -= 1;
+            }
+        }
+        let entity =
+            self.instantiate_single_character(&card, player_id, spawn_x_units, spawn_y_units)?;
+        self.entities.push(entity);
+        self.next_entity_id += 1;
+        self.idle_eligible = false;
+        Ok(true)
+    }
+
+    fn instantiate_single_character(
+        &self,
+        card: &ResidentCardSpec,
+        player_id: i64,
+        x_units: i64,
+        y_units: i64,
+    ) -> PyResult<ResidentEntity> {
+        let mut entity = card.prototype.clone().ok_or_else(|| {
+            PyRuntimeError::new_err("resident single-character template is unavailable")
+        })?;
+        entity.active = true;
+        entity.encounter_index = self.entities.iter().filter(|entity| entity.active).count();
+        entity.id = self.next_entity_id;
+        entity.player_id = player_id;
+        entity.card_name.clone_from(&card.effective_name);
+        entity.position_x = ExactScalar::Float((x_units as f64 / 1000.0).to_bits());
+        entity.position_y = ExactScalar::Float((y_units as f64 / 1000.0).to_bits());
+        entity.target_id = None;
+        entity.death_spawn_target_immunity_elapsed_ms = -1;
+        entity.pending_projectile_max_duration_ms = 0;
+        if let Some(movement) = entity.movement.as_mut() {
+            movement.native_lane_id = nearest_standard_path_id(x_units, y_units);
+            movement.route_goal = None;
+            movement.route_cells.clear();
+            movement.route_backwards = false;
+            movement.route_lane_id = 0;
+            movement.death_spawn_travel_target = None;
+            movement.death_spawn_travel_ticks = 0;
+            movement.knockback_target = None;
+            movement.knockback_velocity_work = 0;
+            movement.knockback_interrupts_combat = true;
+            movement.forced_movement_active = false;
+        }
+        if let Some(combat) = entity.locked_combat.as_mut() {
+            combat.facing_x_units = 0;
+            combat.facing_y_units = if player_id == 0 { 1000 } else { -1000 };
+            combat.last_combat_target_id = None;
+            combat.movement_target_id = None;
+            combat.initial_position = None;
+        }
+        Ok(entity)
+    }
+
+    fn valid_single_troop_placement(
+        &self,
+        player_id: i64,
+        x_units: i64,
+        y_units: i64,
+        card: &ResidentCardSpec,
+    ) -> bool {
+        if self.arena_width_tiles != Self::ACTION_BOARD_WIDTH
+            || self.arena_height_tiles != Self::ACTION_BOARD_HEIGHT
+            || !(0..self.arena_width_tiles * 1000).contains(&x_units)
+            || !(0..self.arena_height_tiles * 1000).contains(&y_units)
+        {
+            return false;
+        }
+        let tile_x = x_units / 1000;
+        let tile_y = y_units / 1000;
+        if Self::blocked_deployment_tile(tile_x, tile_y)
+            || self.live_tower_occupies(x_units, y_units)
+        {
+            return false;
+        }
+        if !card.can_deploy_on_enemy_side && !self.in_deployment_zone(player_id, x_units, y_units) {
+            return false;
+        }
+        if card.deploy_w_tile_margin > 0
+            && !(card.deploy_w_tile_margin..self.arena_width_tiles - card.deploy_w_tile_margin)
+                .contains(&tile_x)
+        {
+            return false;
+        }
+        let mover_radius = card
+            .prototype
+            .as_ref()
+            .and_then(|prototype| prototype.movement.as_ref())
+            .map(|movement| movement.collision_radius)
+            .unwrap_or(0.5);
+        !self.live_building_occupies(x_units, y_units, mover_radius)
+            && !self.deployment_payload_occupies(x_units, y_units, mover_radius)
+    }
+
+    fn blocked_deployment_tile(tile_x: i64, tile_y: i64) -> bool {
+        matches!((tile_x, tile_y), (0, 14) | (0, 17) | (17, 14) | (17, 17))
+            || (tile_y == 0 || tile_y == 31)
+                && ((0..=5).contains(&tile_x) || (12..=17).contains(&tile_x))
+    }
+
+    fn live_tower_occupies(&self, x_units: i64, y_units: i64) -> bool {
+        const TOWERS: [(i64, &str, i64, i64, i64); 6] = [
+            (0, "left", 3500, 6500, 1500),
+            (0, "right", 14500, 6500, 1500),
+            (0, "king", 9000, 2500, 2000),
+            (1, "left", 3500, 25500, 1500),
+            (1, "right", 14500, 25500, 1500),
+            (1, "king", 9000, 29500, 2000),
+        ];
+        TOWERS
+            .iter()
+            .any(|(player_id, slot, tower_x, tower_y, radius)| {
+                self.towers.iter().any(|tower| {
+                    tower.active
+                        && tower.is_alive
+                        && tower.player_id == *player_id
+                        && tower.slot == *slot
+                        && (x_units - tower_x).abs() <= *radius
+                        && (y_units - tower_y).abs() <= *radius
+                })
+            })
+    }
+
+    fn in_deployment_zone(&self, player_id: i64, x_units: i64, y_units: i64) -> bool {
+        let in_rect = |x1: i64, y1: i64, x2: i64, y2: i64| {
+            x1 * 1000 <= x_units
+                && x_units < x2 * 1000
+                && y1 * 1000 <= y_units
+                && y_units < y2 * 1000
+        };
+        let Ok(enemy_index) = self.player_index(1 - player_id) else {
+            return false;
+        };
+        let enemy = &self.players[enemy_index];
+        if player_id == 0 {
+            in_rect(0, 1, 18, 15)
+                || in_rect(6, 0, 12, 6)
+                || enemy.left_tower_hp.as_f64() <= 0.0 && in_rect(0, 17, 9, 21)
+                || enemy.right_tower_hp.as_f64() <= 0.0 && in_rect(9, 17, 18, 21)
+        } else {
+            in_rect(0, 17, 18, 31)
+                || in_rect(6, 26, 12, 32)
+                || enemy.left_tower_hp.as_f64() <= 0.0 && in_rect(0, 11, 9, 15)
+                || enemy.right_tower_hp.as_f64() <= 0.0 && in_rect(9, 11, 18, 15)
+        }
+    }
+
+    fn live_building_occupies(&self, x_units: i64, y_units: i64, mover_radius: f64) -> bool {
+        self.entities.iter().any(|entity| {
+            if !entity.active || !entity.is_alive || entity.entity_kind != 1 {
+                return false;
+            }
+            let building_radius = entity
+                .movement
+                .as_ref()
+                .map(|movement| movement.building_pathing_radius)
+                .filter(|radius| *radius != 0.0)
+                .unwrap_or(1.0);
+            let collision_units = logic_units(building_radius + mover_radius);
+            let dx = logic_units(x_units as f64 / 1000.0 - entity.position_x.as_f64());
+            let dy = logic_units(y_units as f64 / 1000.0 - entity.position_y.as_f64());
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(collision_units) * i128::from(collision_units)
+        })
+    }
+
+    fn deployment_payload_occupies(&self, x_units: i64, y_units: i64, mover_radius: f64) -> bool {
+        let x = x_units as f64 / 1000.0;
+        let y = y_units as f64 / 1000.0;
+        self.entities.iter().any(|entity| {
+            entity.active
+                && entity.is_alive
+                && entity.blocks_deployment
+                && (x - entity.position_x.as_f64()).hypot(y - entity.position_y.as_f64())
+                    <= mover_radius + entity.deployment_collision_radius + 1e-9
+        })
+    }
+
     fn advance_complete_tick_transaction(&mut self) -> PyResult<bool> {
         if self.game_over {
             return Ok(false);
@@ -6714,6 +7327,8 @@ impl ResidentBattle {
                 supported: true,
             }),
             object_base_movement_noop: true,
+            blocks_deployment: false,
+            deployment_collision_radius: 0.5,
         });
     }
 
@@ -7106,6 +7721,8 @@ impl ResidentBattle {
             }),
             area_effect: None,
             object_base_movement_noop: true,
+            blocks_deployment: false,
+            deployment_collision_radius: 0.5,
         });
     }
 
