@@ -419,6 +419,19 @@ class ResidentRustBattle:
         return str(self._native.flying_movement_sha256())
 
     @property
+    def supports_ground_movement_phase(self) -> bool:
+        return bool(self._native.supports_ground_movement_phase())
+
+    def advance_ground_movement_phase(self) -> None:
+        self._native.advance_ground_movement_phase()
+
+    def ground_movement_state_bytes(self) -> bytes:
+        return bytes(self._native.ground_movement_state_bytes())
+
+    def ground_movement_sha256(self) -> str:
+        return str(self._native.ground_movement_sha256())
+
+    @property
     def supports_direct_combat_phase(self) -> bool:
         return bool(self._native.supports_direct_combat_phase())
 
@@ -1113,25 +1126,51 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
         if entity.entity_kind not in {0, 1}:
             continue
         cache_key = getattr(entity, "_ground_path_cache_key", None)
-        single_goal: list[int] | None = None
-        single_cells: list[list[int]] = []
-        single_backwards = False
+        route_kind = "absent"
+        route_goal: list[int] | None = None
+        route_cells: list[list[int]] = []
+        route_backwards = bool(
+            getattr(entity, "_ground_path_cache_backwards", False)
+        )
+        route_lane_id = 0
+        route_jump_height = False
+        has_route_cells = hasattr(entity, "_native_ground_route_cells")
         if (
             isinstance(cache_key, tuple)
             and len(cache_key) == 2
             and cache_key[0] == "single"
         ):
+            route_kind = "single"
             goal = cache_key[1]
             if isinstance(goal, tuple) and len(goal) == 2:
-                single_goal = [int(goal[0]), int(goal[1])]
-                route_cells = getattr(entity, "_native_ground_route_cells", [])
-                if isinstance(route_cells, list):
-                    single_cells = [
-                        [int(cell[0]), int(cell[1])] for cell in route_cells
-                    ]
-                single_backwards = bool(
-                    getattr(entity, "_ground_path_cache_backwards", False)
+                route_goal = [int(goal[0]), int(goal[1])]
+                native_route_cells = getattr(
+                    entity, "_native_ground_route_cells", []
                 )
+                if isinstance(native_route_cells, list):
+                    route_cells = [
+                        [int(cell[0]), int(cell[1])]
+                        for cell in native_route_cells
+                    ]
+        elif isinstance(cache_key, tuple) and len(cache_key) == 3:
+            goal, lane_id, jump_height = cache_key
+            if isinstance(goal, tuple) and len(goal) == 2:
+                route_kind = "ground"
+                route_goal = [int(goal[0]), int(goal[1])]
+                route_lane_id = int(lane_id)
+                route_jump_height = bool(jump_height)
+                native_route_cells = getattr(
+                    entity, "_native_ground_route_cells", []
+                )
+                if isinstance(native_route_cells, list):
+                    route_cells = [
+                        [int(cell[0]), int(cell[1])]
+                        for cell in native_route_cells
+                    ]
+            else:
+                route_kind = "unsupported"
+        elif cache_key is not None or has_route_cells:
+            route_kind = "unsupported"
         rows.append(
             {
                 "encounter_index": encounter_index,
@@ -1142,6 +1181,9 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "native_avoidance": int(
                     getattr(entity, "_native_avoidance", 0)
                 ),
+                "native_lane_id": int(
+                    getattr(entity, "_native_lane_id", 0)
+                ),
                 "native_natural_movement_active": bool(
                     getattr(entity, "_native_natural_movement_active", False)
                 ),
@@ -1150,9 +1192,12 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "pending_y": _exact_scalar(entity._pending_movement_y),
                 "position_x": _exact_scalar(entity.position.x),
                 "position_y": _exact_scalar(entity.position.y),
-                "single_route_backwards": single_backwards,
-                "single_route_cells": single_cells,
-                "single_route_goal": single_goal,
+                "route_backwards": route_backwards,
+                "route_cells": route_cells,
+                "route_goal": route_goal,
+                "route_jump_height": route_jump_height,
+                "route_kind": route_kind,
+                "route_lane_id": route_lane_id,
                 "vector_bypasses_cap": bool(
                     entity._movement_vector_bypasses_cap
                 ),
@@ -1196,6 +1241,34 @@ def compare_flying_movement_phase(
     if expected_hash != actual_hash:
         raise AssertionError(
             "resident Rust flying movement hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
+
+
+def compare_ground_movement_phase(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = flying_movement_state_rows(battle)
+    actual = json.loads(resident.ground_movement_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust ground movement mismatch")
+        raise AssertionError(
+            "resident Rust ground movement parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(
+        flying_movement_state_bytes(battle)
+    ).hexdigest()
+    actual_hash = resident.ground_movement_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust ground movement hash mismatch "
             f"expected={expected_hash} actual={actual_hash}"
         )
 
