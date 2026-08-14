@@ -1574,7 +1574,14 @@ struct LockedDirectCombatState {
     hidden_building: bool,
     stealth_until_ms: i64,
     allow_area_damage_when_invisible: bool,
+    direct_area: Option<DirectAreaWeapon>,
     point_weapon: Option<PointWeapon>,
+}
+
+#[derive(Clone)]
+struct DirectAreaWeapon {
+    radius_units: i64,
+    self_centered: bool,
 }
 
 #[derive(Clone)]
@@ -1592,8 +1599,43 @@ struct PointWeapon {
 }
 
 enum CombatPayload {
-    DirectDamage(f64),
+    DirectDamage {
+        damage: f64,
+        area: Option<DirectAreaWeapon>,
+    },
     PointProjectile(PointWeapon),
+}
+
+impl DirectAreaWeapon {
+    fn from_card_fields(
+        card_fields: &Map<String, Value>,
+        uses_projectile_weapon: bool,
+        unsupported: &mut Vec<String>,
+    ) -> PyResult<Option<Self>> {
+        if uses_projectile_weapon {
+            return Ok(None);
+        }
+        let area_damage_radius = optional_normalized_f64(card_fields, "area_damage_radius")?;
+        let serialized_radius = area_damage_radius
+            .filter(|radius| *radius != 0.0)
+            .or(optional_normalized_f64(
+                card_fields,
+                "projectile_splash_radius",
+            )?)
+            .unwrap_or(0.0);
+        if !serialized_radius.is_finite() {
+            unsupported.push("invalid_direct_area_geometry".to_owned());
+            return Ok(None);
+        }
+        let radius_tiles = (serialized_radius / 1000.0).max(0.0);
+        if radius_tiles == 0.0 {
+            return Ok(None);
+        }
+        Ok(Some(Self {
+            radius_units: logic_units(radius_tiles).max(0),
+            self_centered: normalized_optional_bool(card_fields, "self_as_aoe_center"),
+        }))
+    }
 }
 
 impl PointWeapon {
@@ -1769,6 +1811,11 @@ impl LockedDirectCombatState {
         if direct_combat_unsupported.len() > projectile_reason_count {
             direct_combat_unsupported.push("projectile_payload".to_owned());
         }
+        let direct_area = DirectAreaWeapon::from_card_fields(
+            card_fields,
+            point_weapon.is_some(),
+            direct_combat_unsupported,
+        )?;
         Ok(Self {
             damage: normalized_f64(fields, "damage")?,
             range: normalized_f64(fields, "range")?,
@@ -1823,6 +1870,7 @@ impl LockedDirectCombatState {
                 card_fields,
                 "allow_area_damage_when_invisible",
             ),
+            direct_area,
             point_weapon,
         })
     }
@@ -2048,6 +2096,9 @@ impl ResidentEntity {
         let uses_projectile_weapon = locked_combat
             .as_ref()
             .is_some_and(|state| state.point_weapon.is_some());
+        let uses_direct_area = locked_combat
+            .as_ref()
+            .is_some_and(|state| state.direct_area.is_some());
         for (field, reason) in [
             ("attack_pushback", "attack_pushback"),
             ("charge_range", "charge_payload"),
@@ -2056,7 +2107,7 @@ impl ResidentEntity {
                 direct_combat_unsupported.push(reason.to_owned());
             }
         }
-        if !uses_projectile_weapon {
+        if !uses_projectile_weapon && !uses_direct_area {
             for (field, reason) in [
                 ("area_damage_radius", "area_damage"),
                 ("projectile_splash_radius", "projectile_splash"),
@@ -2066,7 +2117,7 @@ impl ResidentEntity {
                 }
             }
         }
-        if normalized_optional_bool(card_fields, "self_as_aoe_center") {
+        if normalized_optional_bool(card_fields, "self_as_aoe_center") && !uses_direct_area {
             direct_combat_unsupported.push("self_centered_aoe".to_owned());
         }
         if normalized_optional_bool(card_fields, "kamikaze") {
@@ -3824,8 +3875,11 @@ impl ResidentBattle {
                         state.has_attacked_once = true;
                         state.attack_preload_blocked = false;
                         state.last_attack_time = 0.0;
-                        Some(state.point_weapon.clone().map_or(
-                            CombatPayload::DirectDamage(state.damage),
+                        Some(state.point_weapon.clone().map_or_else(
+                            || CombatPayload::DirectDamage {
+                                damage: state.damage,
+                                area: state.direct_area.clone(),
+                            },
                             CombatPayload::PointProjectile,
                         ))
                     } else {
@@ -3835,8 +3889,13 @@ impl ResidentBattle {
             };
             if let (Some(target_index), Some(payload)) = (target_index, payload) {
                 match payload {
-                    CombatPayload::DirectDamage(damage) => {
-                        self.apply_direct_combat_damage(target_index, damage);
+                    CombatPayload::DirectDamage { damage, area } => {
+                        self.apply_direct_combat_damage(
+                            actor_index,
+                            target_index,
+                            damage,
+                            area.as_ref(),
+                        );
                         let state = self.entities[actor_index]
                             .locked_combat
                             .as_mut()
@@ -6098,8 +6157,109 @@ impl ResidentBattle {
         Some(step_dt)
     }
 
-    fn apply_direct_combat_damage(&mut self, target_index: usize, damage: f64) {
-        self.apply_resident_damage(target_index, damage);
+    fn apply_direct_combat_damage(
+        &mut self,
+        actor_index: usize,
+        primary_index: usize,
+        damage: f64,
+        area: Option<&DirectAreaWeapon>,
+    ) {
+        if !self.entities[primary_index].is_alive {
+            return;
+        }
+        let Some(area) = area else {
+            self.apply_resident_damage(primary_index, damage);
+            return;
+        };
+        let center_index = if area.self_centered {
+            actor_index
+        } else {
+            primary_index
+        };
+        let center = (
+            logic_units(self.entities[center_index].position_x.as_f64()),
+            logic_units(self.entities[center_index].position_y.as_f64()),
+        );
+        let mut targets = Vec::with_capacity(self.entities.len());
+        targets.push(primary_index);
+        targets.extend(
+            self.entities
+                .iter()
+                .enumerate()
+                .filter_map(|(target_index, _)| {
+                    (target_index != primary_index
+                        && self.direct_area_target_valid(
+                            actor_index,
+                            target_index,
+                            center,
+                            area.radius_units,
+                        ))
+                    .then_some(target_index)
+                }),
+        );
+        for target_index in targets {
+            self.apply_resident_damage(target_index, damage);
+        }
+    }
+
+    fn direct_area_target_valid(
+        &self,
+        actor_index: usize,
+        target_index: usize,
+        center: (i64, i64),
+        radius_units: i64,
+    ) -> bool {
+        if actor_index == target_index {
+            return false;
+        }
+        let actor = &self.entities[actor_index];
+        let target = &self.entities[target_index];
+        if !target.active
+            || !target.is_alive
+            || target.player_id == actor.player_id
+            || !matches!(target.entity_kind, 0 | 1)
+            || target.death_spawn_target_immunity_elapsed_ms >= 0
+        {
+            return false;
+        }
+        let Some(actor_state) = actor.locked_combat.as_ref() else {
+            return false;
+        };
+        let Some((target_is_air, collision_radius, stealth_until_ms, allow_invisible)) =
+            target.projectile_target_traits()
+        else {
+            return false;
+        };
+        if (target_is_air && !actor_state.can_attack_air)
+            || (!target_is_air && !actor_state.can_attack_ground)
+        {
+            return false;
+        }
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        if stealth_until_ms > now_ms && !allow_invisible {
+            return false;
+        }
+        let target_x = logic_units(target.position_x.as_f64());
+        let target_y = logic_units(target.position_y.as_f64());
+        let target_radius = logic_units(collision_radius).max(0);
+        if target.entity_kind == 1 {
+            let closest_x = center
+                .0
+                .clamp(target_x - target_radius, target_x + target_radius);
+            let closest_y = center
+                .1
+                .clamp(target_y - target_radius, target_y + target_radius);
+            let dx = closest_x - center.0;
+            let dy = closest_y - center.1;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(radius_units) * i128::from(radius_units)
+        } else {
+            let dx = target_x - center.0;
+            let dy = target_y - center.1;
+            let radius = radius_units + target_radius;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(radius) * i128::from(radius)
+        }
     }
 
     fn apply_resident_damage(&mut self, target_index: usize, damage: f64) {
