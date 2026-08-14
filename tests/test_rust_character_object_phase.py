@@ -87,7 +87,14 @@ def test_character_object_phase_is_card_general_and_fail_closed(
     troop = _spawn(battle, card_name)
     resident = ResidentRustBattle.from_battle(battle)
 
-    if troop.mechanics:
+    supported_mechanics = {
+        "clasher.mechanics.shared.shield.Shield",
+    }
+    mechanic_types = {
+        f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+        for mechanic in troop.mechanics
+    }
+    if not mechanic_types <= supported_mechanics:
         assert not resident.supports_character_object_phase
         return
     assert resident.supports_character_object_phase

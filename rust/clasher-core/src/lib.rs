@@ -640,6 +640,7 @@ struct ResidentEntity {
     death_spawn_target_immunity_elapsed_ms: i64,
     pending_projectile_max_duration_ms: i64,
     mechanics: Vec<String>,
+    shields: Vec<ShieldState>,
     modifier_state: Option<ModifierState>,
     modifier_supported: bool,
     direct_combat_unsupported: Vec<String>,
@@ -647,6 +648,37 @@ struct ResidentEntity {
     building_lifetime: Option<BuildingLifetimeState>,
     building_impact: Option<BuildingImpactState>,
     point_projectile: Option<PointProjectileState>,
+}
+
+#[derive(Clone)]
+struct ShieldState {
+    current: ExactScalar,
+    maximum: ExactScalar,
+}
+
+impl ShieldState {
+    fn from_normalized(value: &Value) -> PyResult<Self> {
+        let fields = object_fields(value)?;
+        Ok(Self {
+            current: ExactScalar::from_normalized(
+                fields
+                    .get("current_shield")
+                    .ok_or_else(|| PyValueError::new_err("Shield has no current_shield"))?,
+            )?,
+            maximum: ExactScalar::from_normalized(
+                fields
+                    .get("max_shield")
+                    .ok_or_else(|| PyValueError::new_err("Shield has no max_shield"))?,
+            )?,
+        })
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        json!({
+            "current_shield": self.current.diagnostic_value(),
+            "max_shield": self.maximum.diagnostic_value(),
+        })
+    }
 }
 
 #[derive(Clone)]
@@ -1204,6 +1236,25 @@ impl LockedDirectCombatState {
 }
 
 impl ResidentEntity {
+    fn has_only_shield_mechanics(&self) -> bool {
+        self.mechanics.len() == self.shields.len()
+    }
+
+    fn apply_incoming_damage(&mut self, mut amount: f64) -> f64 {
+        for shield in &mut self.shields {
+            if amount <= 0.0 {
+                return 0.0;
+            }
+            let current = shield.current.as_f64();
+            if current <= 0.0 {
+                continue;
+            }
+            shield.current.set_f64((current - amount).max(0.0));
+            amount = 0.0;
+        }
+        amount
+    }
+
     fn apply_projectile_status(
         &mut self,
         stun_duration: f64,
@@ -1268,12 +1319,20 @@ impl ResidentEntity {
                 .get("card_stats")
                 .ok_or_else(|| PyValueError::new_err("entity has no card_stats"))?,
         )?;
-        let mechanics = fields
+        let mechanic_values = fields
             .get("mechanics")
             .and_then(Value::as_array)
-            .ok_or_else(|| PyValueError::new_err("entity mechanics is not a list"))?
+            .ok_or_else(|| PyValueError::new_err("entity mechanics is not a list"))?;
+        let mechanics = mechanic_values
             .iter()
             .map(object_type)
+            .collect::<PyResult<Vec<_>>>()?;
+        let shields = mechanic_values
+            .iter()
+            .filter_map(|mechanic| {
+                (object_type(mechanic).ok()?.as_str() == "clasher.mechanics.shared.shield.Shield")
+                    .then_some(ShieldState::from_normalized(mechanic))
+            })
             .collect::<PyResult<Vec<_>>>()?;
         let target_id = fields
             .get("target_id")
@@ -1320,7 +1379,7 @@ impl ResidentEntity {
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
         }
-        if !mechanics.is_empty() {
+        if shields.len() != mechanics.len() {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
         }
         let uses_projectile_weapon = locked_combat
@@ -1461,6 +1520,7 @@ impl ResidentEntity {
                 "_pending_projectile_max_duration_ms",
             )?,
             mechanics,
+            shields,
             modifier_state,
             modifier_supported,
             direct_combat_unsupported,
@@ -1497,7 +1557,7 @@ impl ResidentEntity {
     }
 
     fn supports_character_object_phase(&self) -> bool {
-        matches!(self.entity_kind, 0 | 1) && self.mechanics.is_empty()
+        matches!(self.entity_kind, 0 | 1) && self.has_only_shield_mechanics()
     }
 
     fn advance_character_object_phase(&mut self, dt: f64) {
@@ -2426,6 +2486,32 @@ impl ResidentBattle {
         Ok(sha256_hex(&self.modifier_state_bytes()?))
     }
 
+    fn shield_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active && !entity.shields.is_empty())
+            .map(|entity| {
+                json!({
+                    "encounter_index": entity.encounter_index,
+                    "id": entity.id,
+                    "shields": entity
+                        .shields
+                        .iter()
+                        .map(ShieldState::diagnostic_value)
+                        .collect::<Vec<_>>(),
+                })
+            })
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!("failed to serialize shield state: {error}"))
+        })
+    }
+
+    fn shield_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.shield_state_bytes()?))
+    }
+
     fn supports_character_object_phase(&self) -> bool {
         self.entities
             .iter()
@@ -2798,7 +2884,7 @@ impl ResidentBattle {
         self.entities.iter().all(|entity| {
             !entity.active
                 || entity.entity_kind != 1
-                || (entity.building_lifetime.is_some() && entity.mechanics.is_empty())
+                || (entity.building_lifetime.is_some() && entity.has_only_shield_mechanics())
         })
     }
 
@@ -2874,7 +2960,9 @@ impl ResidentBattle {
         });
         if has_splash
             && self.entities.iter().any(|entity| {
-                entity.active && matches!(entity.entity_kind, 0 | 1) && !entity.mechanics.is_empty()
+                entity.active
+                    && matches!(entity.entity_kind, 0 | 1)
+                    && !entity.has_only_shield_mechanics()
             })
         {
             return false;
@@ -2930,7 +3018,7 @@ impl ResidentBattle {
             else {
                 return false;
             };
-            if !matches!(target.entity_kind, 0 | 1) || !target.mechanics.is_empty() {
+            if !matches!(target.entity_kind, 0 | 1) || !target.has_only_shield_mechanics() {
                 return false;
             }
             if target.entity_kind == 1 && target.building_impact.is_none() {
@@ -2947,7 +3035,7 @@ impl ResidentBattle {
                 else {
                     return false;
                 };
-                if !source.mechanics.is_empty() {
+                if !source.has_only_shield_mechanics() {
                     return false;
                 }
             }
@@ -3010,7 +3098,7 @@ impl ResidentBattle {
         self.entities.iter().all(|entity| {
             !entity.active
                 || entity.is_alive
-                || (entity.mechanics.is_empty()
+                || (entity.has_only_shield_mechanics()
                     && match entity.entity_kind {
                         0 | 1 => !entity
                             .direct_combat_unsupported
@@ -3265,6 +3353,10 @@ impl ResidentBattle {
                 .find(|candidate| candidate.id == target_id)
                 .expect("reservation target was collected from resident entities");
             if target.pending_projectile_max_duration_ms <= 600
+                && !target
+                    .shields
+                    .iter()
+                    .any(|shield| shield.current.as_f64() > 0.0)
                 && damage >= target.hitpoints.as_f64()
             {
                 self.lethal_projectile_reservation_ids.push(target_id);
@@ -3313,6 +3405,10 @@ impl ResidentBattle {
     }
 
     fn apply_direct_combat_damage(&mut self, target_index: usize, damage: f64) {
+        let damage = self.entities[target_index].apply_incoming_damage(damage);
+        if damage <= 0.0 {
+            return;
+        }
         if let Some(building) = self.entities[target_index].building_impact.as_mut()
             && damage > 0.0
             && building.requires_activation
@@ -3440,6 +3536,7 @@ impl ResidentBattle {
             death_spawn_target_immunity_elapsed_ms: -1,
             pending_projectile_max_duration_ms: 0,
             mechanics: Vec::new(),
+            shields: Vec::new(),
             modifier_state: None,
             modifier_supported: true,
             direct_combat_unsupported: vec!["non_character_entity".to_owned()],
@@ -3717,6 +3814,11 @@ impl ResidentBattle {
                     } else {
                         damage
                     };
+                    if target_damage <= 0.0 {
+                        continue;
+                    }
+                    let target_damage =
+                        self.entities[target_index].apply_incoming_damage(target_damage);
                     if target_damage <= 0.0 {
                         continue;
                     }

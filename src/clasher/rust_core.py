@@ -352,6 +352,12 @@ class ResidentRustBattle:
     def modifier_sha256(self) -> str:
         return str(self._native.modifier_sha256())
 
+    def shield_state_bytes(self) -> bytes:
+        return bytes(self._native.shield_state_bytes())
+
+    def shield_sha256(self) -> str:
+        return str(self._native.shield_sha256())
+
     @property
     def supports_character_object_phase(self) -> bool:
         return bool(self._native.supports_character_object_phase())
@@ -830,6 +836,71 @@ def modifier_state_bytes(battle: Any) -> bytes:
         sort_keys=True,
         separators=(",", ":"),
     ).encode("ascii")
+
+
+def shield_state_rows(battle: Any) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for encounter_index, entity in enumerate(battle.entities.values()):
+        shields = [
+            mechanic
+            for mechanic in entity.mechanics
+            if (
+                f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+                == "clasher.mechanics.shared.shield.Shield"
+            )
+        ]
+        if not shields:
+            continue
+        rows.append(
+            {
+                "encounter_index": encounter_index,
+                "id": int(entity.id),
+                "shields": [
+                    {
+                        "current_shield": _exact_scalar(
+                            mechanic.current_shield
+                        ),
+                        "max_shield": _exact_scalar(mechanic.max_shield),
+                    }
+                    for mechanic in shields
+                ],
+            }
+        )
+    return rows
+
+
+def shield_state_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        shield_state_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_shield_state(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = shield_state_rows(battle)
+    actual = json.loads(resident.shield_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust shield state mismatch")
+        raise AssertionError(
+            "resident Rust shield parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(shield_state_bytes(battle)).hexdigest()
+    actual_hash = resident.shield_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust shield hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
 
 
 def compare_modifier_phase(battle: Any, resident: ResidentRustBattle) -> None:
