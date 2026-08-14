@@ -44,7 +44,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 4
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 5
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -99,6 +99,40 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
     return reasons
 
 
+def _ordinary_building_capability_reasons(
+    card_stats: Any,
+    card_def: Any,
+) -> list[str]:
+    """Return data-driven reasons a building is outside resident actions."""
+    reasons: list[str] = []
+    if str(getattr(card_def, "kind", "") or "").casefold() != "building":
+        reasons.append("not_building")
+    if str(getattr(card_stats, "card_type", "") or "").casefold() != "building":
+        reasons.append("not_building_stats")
+    if tuple(getattr(card_def, "mechanics", ()) or ()):
+        reasons.append("executable_mechanics")
+    if not getattr(card_stats, "summon_character_data", None):
+        reasons.append("missing_character_data")
+    if int(getattr(card_stats, "summon_count", None) or 1) != 1:
+        reasons.append("unsupported_primary_count")
+    if int(getattr(card_stats, "summon_character_second_count", None) or 0) != 0:
+        reasons.append("secondary_character")
+    if float(getattr(card_stats, "summon_width", 0.0) or 0.0) != 0.0:
+        reasons.append("wide_formation")
+    if getattr(card_stats, "summon_formation", None) is not None:
+        reasons.append("explicit_formation")
+    if bool(getattr(card_stats, "full_lane_deploy", False)):
+        reasons.append("full_lane_deploy")
+    raw_radius = getattr(card_stats, "collision_radius", None)
+    collision_radius = float(1.0 if raw_radius is None else raw_radius)
+    if not math.isfinite(collision_radius) or collision_radius < 0.0:
+        reasons.append("invalid_building_collision_radius")
+    deploy_time = float(getattr(card_stats, "deploy_time", 0.0) or 0.0)
+    if not math.isfinite(deploy_time) or deploy_time < 0.0:
+        reasons.append("invalid_deploy_time")
+    return reasons
+
+
 def _is_canonical_resident_action_arena(arena: Any) -> bool:
     """Return whether Rust's fixed action geometry exactly describes ``arena``."""
     from .arena import TileGrid
@@ -141,6 +175,7 @@ def _is_canonical_resident_action_arena(arena: Any) -> bool:
 @dataclass(frozen=True)
 class _ResidentCharacterBirthRecipe:
     kind: str
+    action_kind: str
     effective_name: str
     template_fingerprint: str
     source_fingerprint: str | None
@@ -194,6 +229,7 @@ def _copy_attested_birth_recipe(
     memo = {} if prototype_battle is None else {id(prototype_battle): prototype_battle}
     return _ResidentCharacterBirthRecipe(
         kind=recipe.kind,
+        action_kind=recipe.action_kind,
         effective_name=recipe.effective_name,
         template_fingerprint=recipe.template_fingerprint,
         source_fingerprint=recipe.source_fingerprint,
@@ -238,10 +274,23 @@ def _resident_card_catalog_bundle(
         card_stats = loader.get_card(lookup_name)
         if card_def is None or card_stats is None:  # pragma: no cover - loader invariant
             continue
-        reasons = _single_troop_capability_reasons(card_stats, card_def)
+        serialized_kind = str(getattr(card_def, "kind", "") or "").casefold()
+        action_kind = (
+            "building"
+            if serialized_kind == "building"
+            else "troop"
+            if serialized_kind == "troop"
+            else "unsupported"
+        )
+        reasons = (
+            _ordinary_building_capability_reasons(card_stats, card_def)
+            if action_kind == "building"
+            else _single_troop_capability_reasons(card_stats, card_def)
+        )
         projectile_spell: dict[str, Any] | None = None
         spell = SPELL_REGISTRY.get(str(card_stats.name))
         if type(spell) is ProjectileSpell:
+            action_kind = "projectile_spell"
             spell_values = (
                 float(spell.radius),
                 float(spell.damage),
@@ -321,7 +370,7 @@ def _resident_card_catalog_bundle(
         template_fingerprint: str | None = None
         formation_offsets: list[list[list[int]]] = []
         deploy_delay_offsets: list[float] = []
-        if not reasons and projectile_spell is None:
+        if not reasons and projectile_spell is None and action_kind == "troop":
             summon_count = int(getattr(card_stats, "summon_count", None) or 1)
             summon_radius = getattr(card_stats, "summon_radius", None)
             formation_radius = (
@@ -373,6 +422,7 @@ def _resident_card_catalog_bundle(
                 template_fingerprint = _prototype_sha256(prototype)
                 action_recipes[lookup_name] = _ResidentCharacterBirthRecipe(
                     kind="catalog_action",
+                    action_kind="troop",
                     effective_name=str(card_stats.name),
                     template_fingerprint=template_fingerprint,
                     source_fingerprint=None,
@@ -383,10 +433,47 @@ def _resident_card_catalog_bundle(
                 reasons.append(f"formation_compile:{type(error).__name__}")
                 formation_offsets = []
                 deploy_delay_offsets = []
+        elif not reasons and action_kind == "building":
+            try:
+                spawned_id = prototype_battle.next_entity_id
+                prototype_battle._spawn_entity(
+                    Building,
+                    Position(9.0, 8.0),
+                    0,
+                    card_stats,
+                )
+                prototype = prototype_battle.entities.pop(spawned_id)
+                template_snapshot = dict(_entity_snapshot(prototype))
+                template_fingerprint = _prototype_sha256(prototype)
+                action_recipes[lookup_name] = _ResidentCharacterBirthRecipe(
+                    kind="catalog_action",
+                    action_kind="building",
+                    effective_name=str(card_stats.name),
+                    template_fingerprint=template_fingerprint,
+                    source_fingerprint=None,
+                    member_count=1,
+                    prototype=prototype,
+                )
+            except (OverflowError, TypeError, ValueError) as error:
+                reasons.append(f"building_template_compile:{type(error).__name__}")
+        building_footprint_size: int | None = None
+        if action_kind == "building":
+            raw_collision_radius = getattr(card_stats, "collision_radius", None)
+            collision_radius = (
+                1.0
+                if raw_collision_radius is None
+                else float(raw_collision_radius)
+            )
+            building_footprint_size = max(
+                1,
+                math.ceil(max(0.0, collision_radius) * 2.0) + 1,
+            )
         cards.append(
             {
                 "lookup_name": lookup_name,
                 "effective_name": str(card_stats.name),
+                "action_kind": action_kind,
+                "building_footprint_size": building_footprint_size,
                 "mana_cost": float(card_stats.mana_cost),
                 "can_deploy_on_enemy_side": bool(
                     getattr(card_stats, "can_deploy_on_enemy_side", False)
@@ -395,7 +482,8 @@ def _resident_card_catalog_bundle(
                     getattr(card_stats, "deploy_w_tile_margin", 0) or 0
                 ),
                 "symmetric_deploy_snap": bool(
-                    not is_air_unit_card(card_stats)
+                    action_kind == "troop"
+                    and not is_air_unit_card(card_stats)
                     and float(getattr(card_stats, "speed", 0) or 0) > 0.0
                     and int(
                         (getattr(card_stats, "summon_character_data", {}) or {}).get(
@@ -460,6 +548,7 @@ def _resident_card_catalog_bundle(
                 death_spawn_recipes[(death_spawn_name, death_template_fingerprint)] = (
                     _ResidentCharacterBirthRecipe(
                         kind="death_spawn",
+                        action_kind="troop",
                         effective_name=death_spawn_name,
                         template_fingerprint=death_template_fingerprint,
                         source_fingerprint=_canonical_json_sha256(

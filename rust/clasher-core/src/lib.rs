@@ -1519,6 +1519,7 @@ struct ResidentEntity {
     locked_combat: Option<LockedDirectCombatState>,
     building_lifetime: Option<BuildingLifetimeState>,
     building_impact: Option<BuildingImpactState>,
+    building_footprint_size: Option<i64>,
     point_projectile: Option<PointProjectileState>,
     area_effect: Option<ResidentAreaEffectState>,
     object_base_movement_noop: bool,
@@ -2860,6 +2861,38 @@ impl ResidentEntity {
         self.mechanics.len() == self.shields.len() + self.death_opcodes.len()
     }
 
+    fn fresh_catalog_deploy_state_supported(&self) -> bool {
+        let remaining = self.deploy_delay_remaining;
+        let total = self.placement_delay_total;
+        if !remaining.is_finite()
+            || remaining < 0.0
+            || !total.is_finite()
+            || total < 0.0
+            || remaining.to_bits() != total.to_bits()
+            || !self.freeze_expiry_time.is_finite()
+            || self.freeze_expiry_time < 0.0
+            || self.death_spawn_target_immunity_elapsed_ms != -1
+            || self.pending_projectile_max_duration_ms != 0
+        {
+            return false;
+        }
+        let pending_present = self.sparse_attributes.contains("_spawn_hook_pending");
+        let fired_present = self.sparse_attributes.contains("_spawn_hook_fired");
+        if remaining > 1e-9 {
+            self.placement_pending
+                && self.spawn_hook_pending
+                && !self.spawn_hook_fired
+                && pending_present
+                && !fired_present
+        } else {
+            !self.placement_pending
+                && !self.spawn_hook_pending
+                && self.spawn_hook_fired
+                && pending_present
+                && fired_present
+        }
+    }
+
     fn oracle_state_kind(&self) -> i64 {
         match self.entity_kind {
             1 => 0,
@@ -3056,6 +3089,24 @@ impl ResidentEntity {
         } else {
             None
         };
+        let building_footprint_size = if entity_kind == 1 {
+            let raw_radius =
+                absent_optional_normalized_f64(card_fields, "collision_radius")?.unwrap_or(1.0);
+            if !raw_radius.is_finite() || raw_radius < 0.0 {
+                return Err(PyValueError::new_err(
+                    "building collision radius is outside the supported range",
+                ));
+            }
+            let size = (raw_radius * 2.0).ceil() + 1.0;
+            if !(1.0..=64.0).contains(&size) {
+                return Err(PyValueError::new_err(
+                    "building footprint is outside the supported range",
+                ));
+            }
+            Some(size as i64)
+        } else {
+            None
+        };
         let point_projectile = if object_type(value)? == "clasher.entities.Projectile" {
             Some(PointProjectileState::from_fields(fields)?)
         } else {
@@ -3248,6 +3299,7 @@ impl ResidentEntity {
             locked_combat,
             building_lifetime,
             building_impact,
+            building_footprint_size,
             point_projectile,
             area_effect,
             object_base_movement_noop,
@@ -3466,7 +3518,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 4;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 5;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -3489,6 +3541,8 @@ struct ResidentDeathSpawnTemplateWire {
 struct ResidentCardWire {
     lookup_name: String,
     effective_name: String,
+    action_kind: ResidentCardActionKind,
+    building_footprint_size: Option<i64>,
     mana_cost: f64,
     can_deploy_on_enemy_side: bool,
     deploy_w_tile_margin: i64,
@@ -3501,6 +3555,15 @@ struct ResidentCardWire {
     template_fingerprint: Option<String>,
     #[serde(default)]
     projectile_spell: Option<ResidentProjectileSpellWire>,
+}
+
+#[derive(Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum ResidentCardActionKind {
+    Unsupported,
+    Troop,
+    Building,
+    ProjectileSpell,
 }
 
 #[derive(Deserialize)]
@@ -3548,6 +3611,8 @@ struct ResidentProjectileSpellSpec {
 struct ResidentCardSpec {
     lookup_name: String,
     effective_name: String,
+    action_kind: ResidentCardActionKind,
+    building_footprint_size: Option<i64>,
     mana_cost: f64,
     can_deploy_on_enemy_side: bool,
     deploy_w_tile_margin: i64,
@@ -3563,8 +3628,18 @@ struct ResidentCardSpec {
 
 impl ResidentCardSpec {
     fn supports_action(&self) -> bool {
-        self.capability_reasons.is_empty()
-            && (self.prototype.is_some() != self.projectile_spell.is_some())
+        if !self.capability_reasons.is_empty() {
+            return false;
+        }
+        match self.action_kind {
+            ResidentCardActionKind::Unsupported => false,
+            ResidentCardActionKind::Troop | ResidentCardActionKind::Building => {
+                self.prototype.is_some() && self.projectile_spell.is_none()
+            }
+            ResidentCardActionKind::ProjectileSpell => {
+                self.prototype.is_none() && self.projectile_spell.is_some()
+            }
+        }
     }
 }
 
@@ -3686,7 +3761,9 @@ impl ResidentCardCatalog {
                 )));
             }
             let summon_count = usize::try_from(card.summon_count).unwrap_or_default();
-            if card.projectile_spell.is_none() && !(1..=90).contains(&card.summon_count) {
+            if card.action_kind == ResidentCardActionKind::Troop
+                && !(1..=90).contains(&card.summon_count)
+            {
                 return Err(PyValueError::new_err(format!(
                     "resident catalog card {:?} has invalid formation data",
                     card.lookup_name
@@ -3701,7 +3778,7 @@ impl ResidentCardCatalog {
 
             let mut reasons = card.capability_reasons;
             if reasons.is_empty()
-                && card.projectile_spell.is_none()
+                && card.action_kind == ResidentCardActionKind::Troop
                 && (card.formation_offsets.len() != 4
                     || card
                         .formation_offsets
@@ -3714,6 +3791,21 @@ impl ResidentCardCatalog {
                         .any(|delay| !delay.is_finite() || *delay < 0.0))
             {
                 reasons.push("native_formation_preflight".to_owned());
+            }
+            if reasons.is_empty()
+                && card.action_kind == ResidentCardActionKind::Building
+                && (card.summon_count != 1
+                    || !card.formation_offsets.is_empty()
+                    || !card.deploy_delay_offsets.is_empty()
+                    || card.symmetric_deploy_snap
+                    || !matches!(card.building_footprint_size, Some(1..=64)))
+            {
+                reasons.push("native_building_action_shape".to_owned());
+            }
+            if card.action_kind != ResidentCardActionKind::Building
+                && card.building_footprint_size.is_some()
+            {
+                reasons.push("unexpected_building_footprint".to_owned());
             }
             let (prototype, computed_template_fingerprint) = match card.template_snapshot {
                 Some(snapshot) => {
@@ -3810,9 +3902,8 @@ impl ResidentCardCatalog {
                 }
             });
             if reasons.is_empty() && projectile_spell.is_none() {
-                let supported = prototype.as_ref().is_some_and(|prototype| {
-                    prototype.entity_kind == 0
-                        && prototype.active
+                let common_supported = |prototype: &ResidentEntity| {
+                    prototype.active
                         && prototype.is_alive
                         && prototype.card_name == card.effective_name
                         && prototype.has_only_compiled_mechanics()
@@ -3822,25 +3913,82 @@ impl ResidentCardCatalog {
                         && prototype.modifier_supported
                         && prototype.direct_combat_unsupported.is_empty()
                         && prototype.locked_combat.is_some()
-                        && prototype.movement.as_ref().is_some_and(|movement| {
-                            movement.route_cache_supported
-                                && movement.collision_radius.is_finite()
-                                && movement.collision_radius > 0.0
-                                && movement.unit_mass.is_finite()
-                                && movement.unit_mass > 0.0
-                        })
                         && prototype.point_projectile.is_none()
                         && prototype.area_effect.is_none()
-                        && prototype.building_lifetime.is_none()
-                        && prototype.building_impact.is_none()
                         && prototype.object_base_movement_noop
                         && !prototype.blocks_deployment
-                });
+                };
+                let supported =
+                    prototype
+                        .as_ref()
+                        .is_some_and(|prototype| match card.action_kind {
+                            ResidentCardActionKind::Troop => {
+                                prototype.entity_kind == 0
+                                    && prototype.python_type == "clasher.entities.Troop"
+                                    && common_supported(prototype)
+                                    && prototype.movement.as_ref().is_some_and(|movement| {
+                                        movement.route_cache_supported
+                                            && movement.collision_radius.is_finite()
+                                            && movement.collision_radius > 0.0
+                                            && movement.unit_mass.is_finite()
+                                            && movement.unit_mass > 0.0
+                                    })
+                                    && prototype.building_lifetime.is_none()
+                                    && prototype.building_impact.is_none()
+                            }
+                            ResidentCardActionKind::Building => {
+                                prototype.entity_kind == 1
+                                    && prototype.python_type == "clasher.entities.Building"
+                                    && common_supported(prototype)
+                                    && prototype.fresh_catalog_deploy_state_supported()
+                                    && prototype.building_footprint_size
+                                        == card.building_footprint_size
+                                    && prototype.movement.as_ref().is_some_and(|movement| {
+                                        movement.route_cache_supported
+                                            && movement.collision_radius.is_finite()
+                                            && movement.collision_radius >= 0.0
+                                            && movement.unit_mass.is_finite()
+                                            && movement.unit_mass > 0.0
+                                    })
+                                    && prototype.building_lifetime.is_some()
+                                    && prototype.building_impact.as_ref().is_some_and(|impact| {
+                                        impact.collision_radius.is_finite()
+                                            && impact.collision_radius >= 0.0
+                                            && impact.crown_slot.is_none()
+                                            && !impact.is_king_tower
+                                            && !impact.requires_activation
+                                            && impact.tower_active
+                                    })
+                            }
+                            ResidentCardActionKind::Unsupported
+                            | ResidentCardActionKind::ProjectileSpell => false,
+                        });
                 if !supported {
-                    reasons.push("native_single_troop_preflight".to_owned());
+                    reasons.push(match card.action_kind {
+                        ResidentCardActionKind::Building => {
+                            "native_ordinary_building_preflight".to_owned()
+                        }
+                        _ => "native_single_troop_preflight".to_owned(),
+                    });
                 }
             } else if projectile_spell.is_some() && prototype.is_some() {
                 reasons.push("ambiguous_action_payload".to_owned());
+            }
+            match card.action_kind {
+                ResidentCardActionKind::ProjectileSpell if projectile_spell.is_none() => {
+                    reasons.push("projectile_spell_payload_missing".to_owned());
+                }
+                ResidentCardActionKind::Troop | ResidentCardActionKind::Building
+                    if projectile_spell.is_some() =>
+                {
+                    reasons.push("action_kind_payload_mismatch".to_owned());
+                }
+                ResidentCardActionKind::Unsupported
+                    if projectile_spell.is_some() || prototype.is_some() =>
+                {
+                    reasons.push("unsupported_action_payload".to_owned());
+                }
+                _ => {}
             }
 
             let index = cards.len();
@@ -3848,6 +3996,8 @@ impl ResidentCardCatalog {
             cards.push(ResidentCardSpec {
                 lookup_name: card.lookup_name,
                 effective_name: card.effective_name,
+                action_kind: card.action_kind,
+                building_footprint_size: card.building_footprint_size,
                 mana_cost: card.mana_cost,
                 can_deploy_on_enemy_side: card.can_deploy_on_enemy_side,
                 deploy_w_tile_margin: card.deploy_w_tile_margin,
@@ -5032,6 +5182,7 @@ impl ResidentEntity {
             && self.direct_combat_unsupported == other.direct_combat_unsupported
             && self.object_base_movement_noop == other.object_base_movement_noop
             && self.blocks_deployment == other.blocks_deployment
+            && self.building_footprint_size == other.building_footprint_size
             && self.shields.len() == other.shields.len()
             && self
                 .shields
@@ -8201,10 +8352,17 @@ impl ResidentBattle {
                 };
                 let x_units = world_x * 1000 + 500;
                 let y_units = world_y * 1000 + 500;
-                let valid = if card.projectile_spell.is_some() {
-                    self.valid_spell_placement(x_units, y_units)
-                } else {
-                    self.valid_troop_placement(player_id, x_units, y_units, card)
+                let valid = match card.action_kind {
+                    ResidentCardActionKind::ProjectileSpell => {
+                        self.valid_spell_placement(x_units, y_units)
+                    }
+                    ResidentCardActionKind::Building => {
+                        self.valid_building_placement(player_id, x_units, y_units, card)
+                    }
+                    ResidentCardActionKind::Troop => {
+                        self.valid_troop_placement(player_id, x_units, y_units, card)
+                    }
+                    ResidentCardActionKind::Unsupported => false,
                 };
                 if valid {
                     actions.push(slot_base + tile);
@@ -8823,6 +8981,7 @@ impl ResidentBattle {
                     locked_combat: None,
                     building_lifetime: None,
                     building_impact: None,
+                    building_footprint_size: None,
                     point_projectile: Some(PointProjectileState {
                         source_kind: cast.spell_name.clone(),
                         target_x: ExactScalar::Float(target_x.to_bits()),
@@ -9139,12 +9298,11 @@ impl ResidentBattle {
             .and_then(Option::as_deref)
             .and_then(|name| self.catalog.get(name))
             .filter(|card| card.supports_action())
-            .map_or(0, |card| {
-                if card.projectile_spell.is_some() {
-                    0
-                } else {
-                    card.summon_count
-                }
+            .map_or(0, |card| match card.action_kind {
+                ResidentCardActionKind::ProjectileSpell => 0,
+                ResidentCardActionKind::Building => 1,
+                ResidentCardActionKind::Troop => card.summon_count,
+                ResidentCardActionKind::Unsupported => 0,
             })
     }
 
@@ -9202,10 +9360,15 @@ impl ResidentBattle {
 
         let x_units = world_x * 1000 + 500;
         let y_units = world_y * 1000 + 500;
-        let valid_placement = if card.projectile_spell.is_some() {
-            self.valid_spell_placement(x_units, y_units)
-        } else {
-            self.valid_troop_placement(player_id, x_units, y_units, &card)
+        let valid_placement = match card.action_kind {
+            ResidentCardActionKind::ProjectileSpell => self.valid_spell_placement(x_units, y_units),
+            ResidentCardActionKind::Building => {
+                self.valid_building_placement(player_id, x_units, y_units, &card)
+            }
+            ResidentCardActionKind::Troop => {
+                self.valid_troop_placement(player_id, x_units, y_units, &card)
+            }
+            ResidentCardActionKind::Unsupported => false,
         };
         if !valid_placement {
             return Ok(false);
@@ -9225,7 +9388,7 @@ impl ResidentBattle {
         player.hand[played_index] = None;
         player.cycle_queue.push_back(card_name);
 
-        if card.projectile_spell.is_some() {
+        if card.action_kind == ResidentCardActionKind::ProjectileSpell {
             self.pending_spell_casts.push(ResidentPendingSpellCast {
                 execute_at: self.time + 1.0,
                 sequence: self.next_spell_cast_sequence,
@@ -9243,6 +9406,12 @@ impl ResidentBattle {
             return Ok(true);
         }
 
+        if card.action_kind == ResidentCardActionKind::Building {
+            self.instantiate_catalog_building(&card, player_id, x_units, y_units)?;
+            self.idle_eligible = false;
+            return Ok(true);
+        }
+
         let mut spawn_x_units = x_units;
         let mut spawn_y_units = y_units;
         if card.symmetric_deploy_snap {
@@ -9256,6 +9425,45 @@ impl ResidentBattle {
         self.instantiate_troop_formation(&card, player_id, spawn_x_units, spawn_y_units)?;
         self.idle_eligible = false;
         Ok(true)
+    }
+
+    fn instantiate_catalog_building(
+        &mut self,
+        card: &ResidentCardSpec,
+        player_id: i64,
+        x_units: i64,
+        y_units: i64,
+    ) -> PyResult<()> {
+        let prototype = card
+            .prototype
+            .as_ref()
+            .ok_or_else(|| PyRuntimeError::new_err("resident building template is unavailable"))?;
+        let template_fingerprint = card.template_fingerprint.as_ref().ok_or_else(|| {
+            PyRuntimeError::new_err("resident building template fingerprint is unavailable")
+        })?;
+        let entity_id = self.next_entity_id;
+        let mut entity = self.instantiate_character_template(
+            prototype,
+            &card.effective_name,
+            player_id,
+            (x_units, y_units),
+            None,
+            false,
+        );
+        entity.character_birth = Some(ResidentCharacterBirthProvenance::CatalogAction {
+            lookup_name: card.lookup_name.clone(),
+            effective_name: card.effective_name.clone(),
+            template_fingerprint: template_fingerprint.clone(),
+            formation_id: entity_id,
+            ordinal: 0,
+            member_count: 1,
+        });
+        self.entities.push(entity);
+        self.next_entity_id = self
+            .next_entity_id
+            .checked_add(1)
+            .ok_or_else(|| PyRuntimeError::new_err("resident building entity-ID overflow"))?;
+        Ok(())
     }
 
     fn instantiate_troop_formation(
@@ -9410,6 +9618,43 @@ impl ResidentBattle {
             && !self.deployment_payload_occupies(x_units, y_units, mover_radius)
     }
 
+    fn valid_building_placement(
+        &self,
+        player_id: i64,
+        x_units: i64,
+        y_units: i64,
+        card: &ResidentCardSpec,
+    ) -> bool {
+        if self.arena_width_tiles != Self::ACTION_BOARD_WIDTH
+            || self.arena_height_tiles != Self::ACTION_BOARD_HEIGHT
+            || !(0..self.arena_width_tiles * 1000).contains(&x_units)
+            || !(0..self.arena_height_tiles * 1000).contains(&y_units)
+        {
+            return false;
+        }
+        let tile_x = x_units / 1000;
+        let tile_y = y_units / 1000;
+        if Self::blocked_deployment_tile(tile_x, tile_y)
+            || self.live_tower_occupies(x_units, y_units)
+        {
+            return false;
+        }
+        if !card.can_deploy_on_enemy_side && !self.in_deployment_zone(player_id, x_units, y_units) {
+            return false;
+        }
+        if card.deploy_w_tile_margin > 0
+            && !(card.deploy_w_tile_margin..self.arena_width_tiles - card.deploy_w_tile_margin)
+                .contains(&tile_x)
+        {
+            return false;
+        }
+        let Some(size_tiles) = card.building_footprint_size else {
+            return false;
+        };
+        !self.live_building_footprint_occupies(x_units, y_units, size_tiles)
+            && !self.deployment_payload_occupies_building(x_units, y_units, size_tiles)
+    }
+
     fn valid_spell_placement(&self, x_units: i64, y_units: i64) -> bool {
         if self.arena_width_tiles != Self::ACTION_BOARD_WIDTH
             || self.arena_height_tiles != Self::ACTION_BOARD_HEIGHT
@@ -9493,6 +9738,36 @@ impl ResidentBattle {
         })
     }
 
+    fn live_building_footprint_occupies(
+        &self,
+        x_units: i64,
+        y_units: i64,
+        size_tiles: i64,
+    ) -> bool {
+        let half = size_tiles as f64 / 2.0;
+        let x = x_units as f64 / 1000.0;
+        let y = y_units as f64 / 1000.0;
+        let (x1, x2, y1, y2) = (x - half, x + half, y - half, y + half);
+        self.entities.iter().any(|entity| {
+            if !entity.active || !entity.is_alive || entity.entity_kind != 1 {
+                return false;
+            }
+            let Some(existing_size) = entity.building_footprint_size else {
+                return true;
+            };
+            let existing_half = existing_size as f64 / 2.0;
+            let existing_x = entity.position_x.as_f64();
+            let existing_y = entity.position_y.as_f64();
+            let (existing_x1, existing_x2, existing_y1, existing_y2) = (
+                existing_x - existing_half,
+                existing_x + existing_half,
+                existing_y - existing_half,
+                existing_y + existing_half,
+            );
+            x1 < existing_x2 && x2 > existing_x1 && y1 < existing_y2 && y2 > existing_y1
+        })
+    }
+
     fn deployment_payload_occupies(&self, x_units: i64, y_units: i64, mover_radius: f64) -> bool {
         let x = x_units as f64 / 1000.0;
         let y = y_units as f64 / 1000.0;
@@ -9504,6 +9779,29 @@ impl ResidentBattle {
                     + (y - entity.position_y.as_f64()).powi(2))
                 .powf(0.5))
                     <= mover_radius + entity.deployment_collision_radius + 1e-9
+        })
+    }
+
+    fn deployment_payload_occupies_building(
+        &self,
+        x_units: i64,
+        y_units: i64,
+        size_tiles: i64,
+    ) -> bool {
+        let half = size_tiles as f64 / 2.0;
+        let x = x_units as f64 / 1000.0;
+        let y = y_units as f64 / 1000.0;
+        let (x1, x2, y1, y2) = (x - half, x + half, y - half, y + half);
+        self.entities.iter().any(|entity| {
+            if !entity.active || !entity.is_alive || !entity.blocks_deployment {
+                return false;
+            }
+            let payload_x = entity.position_x.as_f64();
+            let payload_y = entity.position_y.as_f64();
+            let closest_x = payload_x.clamp(x1, x2);
+            let closest_y = payload_y.clamp(y1, y2);
+            ((payload_x - closest_x).powi(2) + (payload_y - closest_y).powi(2)).powf(0.5)
+                <= entity.deployment_collision_radius + 1e-9
         })
     }
 
@@ -11756,6 +12054,7 @@ impl ResidentBattle {
             locked_combat: None,
             building_lifetime: None,
             building_impact: None,
+            building_footprint_size: None,
             point_projectile: None,
             area_effect: Some(ResidentAreaEffectState {
                 spec: spec.clone(),
@@ -12182,6 +12481,7 @@ impl ResidentBattle {
             locked_combat: None,
             building_lifetime: None,
             building_impact: None,
+            building_footprint_size: None,
             point_projectile: Some(PointProjectileState {
                 source_kind: card_name.clone(),
                 target_x: target_position_x,

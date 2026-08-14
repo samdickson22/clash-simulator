@@ -15,11 +15,12 @@ import numpy as np
 from .arena import Position
 from .battle import PendingSpellCast
 from .differential import _normalize, first_snapshot_difference
-from .entities import AreaEffect, Projectile, Troop
+from .entities import AreaEffect, Building, Projectile, Troop
 from .mechanics.shared.death_area import DeathAreaEffect
 from .mechanics.shared.death_effects import DeathDamage, DeathSpawn
 from .rust_core import (
     _PREPARED_PUBLICATION_BEST_CONSUMER,
+    RESIDENT_CARD_CATALOG_SCHEMA_VERSION,
     ResidentRustBattle,
 )
 from .rust_differential import (
@@ -31,6 +32,16 @@ from .rust_differential import (
 
 class ResidentPublicationError(RuntimeError):
     """The resident state cannot be published without changing Python identity."""
+
+
+def _catalog_birth_type(entity_kind: int) -> tuple[type[Any], str, str]:
+    if entity_kind == 0:
+        return Troop, "clasher.entities.Troop", "troop"
+    if entity_kind == 1:
+        return Building, "clasher.entities.Building", "building"
+    raise ResidentPublicationError(
+        f"resident catalog birth has unsupported entity kind {entity_kind}"
+    )
 
 
 @dataclass(frozen=True)
@@ -1540,7 +1551,7 @@ def _build_direct_publication_plan(
         raise ResidentPublicationError("typed publication is not a direct child")
     if binding["checkpoint_schema_version"] != 2:
         raise ResidentPublicationError("typed publication checkpoint schema changed")
-    if binding["catalog_schema_version"] != 4:
+    if binding["catalog_schema_version"] != RESIDENT_CARD_CATALOG_SCHEMA_VERSION:
         raise ResidentPublicationError("typed publication catalog schema changed")
     for field in ("catalog_fingerprint", "catalog_source_fingerprint"):
         if not _valid_fingerprint(binding[field]):
@@ -1736,16 +1747,14 @@ def _build_direct_publication_plan(
                 if point is not None
                 else "clasher.entities.AreaEffect"
                 if area is not None
-                else "clasher.entities.Troop"
+                else _catalog_birth_type(row["entity_kind"])[1]
             )
             if row["python_type"] != expected_type:
                 raise ResidentPublicationError(
                     f"resident publication birth type mismatch for id {entity.entity_id}"
                 )
-            if character is not None and row["entity_kind"] != 0:
-                raise ResidentPublicationError(
-                    f"resident character birth {entity.entity_id} is not a troop"
-                )
+            if character is not None:
+                _catalog_birth_type(row["entity_kind"])
         for reference in (
             row["target_id"],
             None
@@ -1948,7 +1957,7 @@ def _validate_direct_binding(
         raise ResidentPublicationError("typed publication is not a direct child")
     if binding["checkpoint_schema_version"] != 2:
         raise ResidentPublicationError("typed publication checkpoint schema changed")
-    if binding["catalog_schema_version"] != 4:
+    if binding["catalog_schema_version"] != RESIDENT_CARD_CATALOG_SCHEMA_VERSION:
         raise ResidentPublicationError("typed publication catalog schema changed")
     for field in ("catalog_fingerprint", "catalog_source_fingerprint"):
         if not _valid_fingerprint(binding[field]):
@@ -2128,15 +2137,13 @@ def _validate_direct_full_delta_entity(
         if point is not None
         else "clasher.entities.AreaEffect"
         if area is not None
-        else "clasher.entities.Troop"
+        else _catalog_birth_type(row["entity_kind"])[1]
     )
     if row["python_type"] != expected_type:
         raise ResidentPublicationError(
             f"resident publication birth type mismatch for id {entity_id}"
         )
-    if character is not None and (
-        row["entity_kind"] != 0 or row["card_name"] != character["effective_name"]
-    ):
+    if character is not None and row["card_name"] != character["effective_name"]:
         raise ResidentPublicationError(
             f"resident character birth {entity_id} identity changed"
         )
@@ -3382,7 +3389,7 @@ def _validate_structure(
             else (
                 "clasher.entities.AreaEffect"
                 if area_state is not None
-                else "clasher.entities.Troop"
+                else _catalog_birth_type(int(row["entity_kind"]))[1]
             )
         )
         if row["python_type"] != expected_type:
@@ -3390,10 +3397,8 @@ def _validate_structure(
                 f"resident publication birth type mismatch for id {entity_id}: "
                 f"expected={expected_type!r} actual={row['python_type']!r}"
             )
-        if character_birth is not None and int(row["entity_kind"]) != 0:
-            raise ResidentPublicationError(
-                f"resident character birth {entity_id} is not a troop entity"
-            )
+        if character_birth is not None:
+            _catalog_birth_type(int(row["entity_kind"]))
 
     character_groups: dict[
         tuple[str, int],
@@ -4351,7 +4356,7 @@ def _create_character_birth(
     resident: ResidentRustBattle,
     shared_card_stats: dict[tuple[str, int], Any],
     attest_live_action_stats: bool,
-) -> Troop:
+) -> Troop | Building:
     provenance = row["character_birth"]
     kind = str(provenance["kind"])
     group_key = (kind, int(provenance["group_id"]))
@@ -4397,15 +4402,16 @@ def _create_character_birth(
     if prototype_battle is not None:
         memo[id(prototype_battle)] = battle
     entity = copy.deepcopy(prototype, memo)
-    if type(entity) is not Troop:
+    expected_type, _, expected_action_kind = _catalog_birth_type(int(row["entity_kind"]))
+    if recipe.action_kind != expected_action_kind or type(entity) is not expected_type:
         raise ResidentPublicationError(
-            f"resident character birth recipe produced {type(entity)!r}"
+            "resident catalog birth recipe produced the wrong entity type"
         )
     entity.id = int(row["id"])
     entity.player_id = int(row["player_id"])
     entity.card_stats = stats
     cast(Any, entity).battle_state = battle
-    return entity
+    return cast(Troop | Building, entity)
 
 
 def _prepare_births(
@@ -4546,7 +4552,7 @@ def _create_character_birth_direct(
     row: dict[str, Any],
     resident: ResidentRustBattle,
     shared_card_stats: dict[tuple[int, int], Any],
-) -> Troop:
+) -> Troop | Building:
     provenance = cast(dict[str, Any], row["character_birth"])
     kind = provenance["kind"]
     group_key = (kind, provenance["group_id"])
@@ -4583,15 +4589,16 @@ def _create_character_birth_direct(
     if prototype_battle is not None:
         memo[id(prototype_battle)] = battle
     entity = copy.deepcopy(prototype, memo)
-    if type(entity) is not Troop:
+    expected_type, _, expected_action_kind = _catalog_birth_type(row["entity_kind"])
+    if recipe.action_kind != expected_action_kind or type(entity) is not expected_type:
         raise ResidentPublicationError(
-            "resident character recipe did not produce a troop"
+            "resident catalog recipe did not produce the expected entity type"
         )
     entity.id = row["id"]
     entity.player_id = row["player_id"]
     entity.card_stats = stats
     cast(Any, entity).battle_state = battle
-    return entity
+    return cast(Troop | Building, entity)
 
 
 def _prepare_direct_births(
@@ -5932,7 +5939,10 @@ def _validate_typed_binding(
         raise ResidentPublicationError("typed publication is not a direct child")
     if binding.get("checkpoint_schema_version") != 2:
         raise ResidentPublicationError("typed publication checkpoint schema changed")
-    if binding.get("catalog_schema_version") != 4:
+    if (
+        binding.get("catalog_schema_version")
+        != RESIDENT_CARD_CATALOG_SCHEMA_VERSION
+    ):
         raise ResidentPublicationError("typed publication catalog schema changed")
     for field in ("catalog_fingerprint", "catalog_source_fingerprint"):
         value = binding.get(field)
