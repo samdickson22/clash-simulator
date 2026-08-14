@@ -361,6 +361,13 @@ class ResidentRustBattle:
     def character_object_sha256(self) -> str:
         return str(self._native.character_object_sha256())
 
+    @property
+    def supports_direct_combat_phase(self) -> bool:
+        return bool(self._native.supports_direct_combat_phase())
+
+    def direct_combat_capability(self) -> list[dict[str, Any]]:
+        return json.loads(self._native.direct_combat_capability_bytes())
+
     def rng_random(self) -> float:
         return float(self._native.rng_random())
 

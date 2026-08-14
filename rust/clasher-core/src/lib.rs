@@ -189,6 +189,23 @@ fn normalized_mapping_is_empty(fields: &Map<String, Value>, name: &str) -> PyRes
         .ok_or_else(|| PyValueError::new_err(format!("entity {name} is not a mapping")))
 }
 
+fn normalized_optional_number_is_nonzero(
+    fields: &Map<String, Value>,
+    name: &str,
+) -> PyResult<bool> {
+    let Some(value) = fields.get(name) else {
+        return Ok(false);
+    };
+    if value.is_null() {
+        return Ok(false);
+    }
+    Ok(ExactScalar::from_normalized(value)?.as_f64() != 0.0)
+}
+
+fn normalized_optional_bool(fields: &Map<String, Value>, name: &str) -> bool {
+    fields.get(name).and_then(Value::as_bool).unwrap_or(false)
+}
+
 #[derive(Clone)]
 struct ModifierState {
     stun_timer: f64,
@@ -428,6 +445,7 @@ struct ResidentEntity {
     mechanics: Vec<String>,
     modifier_state: Option<ModifierState>,
     modifier_supported: bool,
+    direct_combat_unsupported: Vec<String>,
 }
 
 impl ResidentEntity {
@@ -467,6 +485,88 @@ impl ResidentEntity {
         } else {
             None
         };
+        let mut direct_combat_unsupported = Vec::new();
+        if !is_character {
+            direct_combat_unsupported.push("non_character_entity".to_owned());
+        }
+        if !mechanics.is_empty() {
+            direct_combat_unsupported.push("executable_mechanics".to_owned());
+        }
+        if !card_fields
+            .get("projectile_data")
+            .is_none_or(Value::is_null)
+        {
+            direct_combat_unsupported.push("projectile_payload".to_owned());
+        }
+        for (field, reason) in [
+            ("area_damage_radius", "area_damage"),
+            ("projectile_splash_radius", "projectile_splash"),
+            ("attack_pushback", "attack_pushback"),
+            ("charge_range", "charge_payload"),
+        ] {
+            if normalized_optional_number_is_nonzero(card_fields, field)? {
+                direct_combat_unsupported.push(reason.to_owned());
+            }
+        }
+        if normalized_optional_bool(card_fields, "self_as_aoe_center") {
+            direct_combat_unsupported.push("self_centered_aoe".to_owned());
+        }
+        if normalized_optional_bool(card_fields, "kamikaze") {
+            direct_combat_unsupported.push("kamikaze_payload".to_owned());
+        }
+        if !card_fields
+            .get("death_spawn_character")
+            .is_none_or(Value::is_null)
+        {
+            direct_combat_unsupported.push("death_spawn_payload".to_owned());
+        }
+        if normalized_optional_bool(fields, "_force_melee_attack") {
+            direct_combat_unsupported.push("forced_melee_override".to_owned());
+        }
+        for (field, reason) in [
+            ("_river_jump_active", "active_river_jump"),
+            ("_special_move_active", "active_special_move"),
+            ("_special_move_consumed_tick", "consumed_special_move_tick"),
+            ("kamikaze_primed", "active_kamikaze"),
+            ("is_charging", "active_charge"),
+            ("has_charged", "completed_charge_state"),
+        ] {
+            if normalized_optional_bool(fields, field) {
+                direct_combat_unsupported.push(reason.to_owned());
+            }
+        }
+        let forced_movement_active = normalized_optional_bool(fields, "forced_movement_active");
+        let knockback_target_present = fields
+            .get("_knockback_target")
+            .is_some_and(|value| !value.is_null());
+        let knockback_interrupts_combat = fields
+            .get("_knockback_interrupts_combat")
+            .and_then(Value::as_bool)
+            .unwrap_or(true);
+        if forced_movement_active && !(knockback_target_present && !knockback_interrupts_combat) {
+            direct_combat_unsupported.push("interrupting_forced_movement".to_owned());
+        }
+        for field in [
+            "hitpoints",
+            "max_hitpoints",
+            "damage",
+            "range",
+            "sight_range",
+            "attack_cooldown",
+            "deploy_delay_remaining",
+            "last_attack_time",
+            "stun_timer",
+        ] {
+            let number = ExactScalar::from_normalized(
+                fields
+                    .get(field)
+                    .ok_or_else(|| PyValueError::new_err(format!("entity has no {field}")))?,
+            )?
+            .as_f64();
+            if !number.is_finite() {
+                direct_combat_unsupported.push(format!("nonfinite_{field}"));
+            }
+        }
         Ok(Self {
             encounter_index,
             id: required_i64(fields, "id")?,
@@ -517,6 +617,7 @@ impl ResidentEntity {
             mechanics,
             modifier_state,
             modifier_supported,
+            direct_combat_unsupported,
         })
     }
 
@@ -593,6 +694,14 @@ impl ResidentEntity {
                 "spawn_hook_fired": self.spawn_hook_fired,
                 "spawn_hook_pending": self.spawn_hook_pending,
             })
+        })
+    }
+
+    fn direct_combat_capability_value(&self) -> Value {
+        json!({
+            "encounter_index": self.encounter_index,
+            "id": self.id,
+            "reasons": self.direct_combat_unsupported,
         })
     }
 }
@@ -1458,6 +1567,25 @@ impl ResidentBattle {
 
     fn character_object_sha256(&self) -> PyResult<String> {
         Ok(sha256_hex(&self.character_object_state_bytes()?))
+    }
+
+    fn supports_direct_combat_phase(&self) -> bool {
+        self.entities
+            .iter()
+            .all(|entity| entity.direct_combat_unsupported.is_empty())
+    }
+
+    fn direct_combat_capability_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .map(ResidentEntity::direct_combat_capability_value)
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident direct-combat capability: {error}"
+            ))
+        })
     }
 
     fn rng_random(&mut self) -> f64 {
