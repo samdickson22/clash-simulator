@@ -512,16 +512,12 @@ def test_structural_commit_failure_restores_registry_and_active_order(
     before = python_resident_semantic_snapshot(battle)
     active_items = tuple(battle.entities.items())
     registry_items = tuple(runtime.entity_registry.items())
-    require_exact = rust_publication._require_exact_projection
-
-    def fail_live_commit(*args: object, stage: str, **kwargs: object) -> None:
-        if stage == "commit":
-            raise ResidentPublicationError("injected structural commit failure")
-        require_exact(*args, stage=stage, **kwargs)
+    def fail_live_commit(*args: object, **kwargs: object) -> None:
+        raise ResidentPublicationError("injected structural commit failure")
 
     monkeypatch.setattr(
         rust_publication,
-        "_require_exact_projection",
+        "_after_typed_publication_commit",
         fail_live_commit,
     )
 
@@ -567,14 +563,12 @@ def test_group_cleanup_commit_failure_restores_position_and_set_aliases(
         projectile.id: set(projectile.damage_group_hit_entity_ids or ())
         for projectile in projectiles
     }
-    require_exact = rust_publication._require_exact_projection
+    def fail_live_commit(*args: object, **kwargs: object) -> None:
+        raise ResidentPublicationError("injected grouped commit failure")
 
-    def fail_live_commit(*args: object, stage: str, **kwargs: object) -> None:
-        if stage == "commit":
-            raise ResidentPublicationError("injected grouped commit failure")
-        require_exact(*args, stage=stage, **kwargs)
-
-    monkeypatch.setattr(rust_publication, "_require_exact_projection", fail_live_commit)
+    monkeypatch.setattr(
+        rust_publication, "_after_typed_publication_commit", fail_live_commit
+    )
 
     with pytest.raises(RuntimeError, match="runtime is now poisoned"):
         runtime.advance_ticks(25)

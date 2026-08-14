@@ -543,19 +543,19 @@ def test_publication_rejects_malformed_sparse_presence_before_mutation(
         rows = json.loads(resident.publication_entity_state_bytes())
         rows[0]["sparse_attribute_presence"].pop("_has_attacked_once")
         resident.publication_entity_state_bytes = lambda: json.dumps(rows).encode()
-        expected_error = "malformed attribute presence"
+        expected_error = "legacy publication override rejected"
     elif payload_kind == "battle":
         presence = json.loads(resident.publication_battle_attribute_presence_bytes())
         presence.pop("_win_conditions_dirty")
         resident.publication_battle_attribute_presence_bytes = (
             lambda: json.dumps(presence).encode()
         )
-        expected_error = "presence payload is malformed"
+        expected_error = "legacy publication override rejected"
     else:
         players = json.loads(resident.publication_player_state_bytes())
         players[0].pop("king_tower_hp")
         resident.publication_player_state_bytes = lambda: json.dumps(players).encode()
-        expected_error = "player payload is malformed"
+        expected_error = "legacy publication override rejected"
     before = canonical_battle_snapshot(battle)
     registry: dict[int, object] = dict(battle.entities)
 
@@ -594,7 +594,9 @@ def test_publication_authenticates_sparse_presence_boolean_values(
     before = canonical_battle_snapshot(battle)
     registry: dict[int, object] = dict(battle.entities)
 
-    with pytest.raises(ResidentPublicationError, match="attestation mismatch"):
+    with pytest.raises(
+        ResidentPublicationError, match="legacy publication override rejected"
+    ):
         publish_complete_tick_state(
             battle,
             resident,
@@ -622,7 +624,9 @@ def test_publication_authenticates_exact_player_tower_hp_scalar_kind() -> None:
     before = canonical_battle_snapshot(battle)
     registry: dict[int, object] = dict(battle.entities)
 
-    with pytest.raises(ResidentPublicationError, match="attestation mismatch"):
+    with pytest.raises(
+        ResidentPublicationError, match="legacy publication override rejected"
+    ):
         publish_complete_tick_state(
             battle,
             resident,
@@ -644,7 +648,9 @@ def _assert_entity_payload_tamper_rejected(battle, mutate_rows) -> None:
     before = canonical_battle_snapshot(battle)
     registry: dict[int, object] = dict(battle.entities)
 
-    with pytest.raises(ResidentPublicationError, match="attestation mismatch"):
+    with pytest.raises(
+        ResidentPublicationError, match="legacy publication override rejected"
+    ):
         publish_complete_tick_state(
             battle,
             resident,
@@ -747,20 +753,27 @@ def test_on_commit_failure_rolls_back_and_poisons_runtime(monkeypatch) -> None:
     runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
     resident = runtime.resident
     assert resident is not None
+    battle._refresh_fast_path_caches(trust_target_cache_dirty=True)
+    target_cache_before = tuple(
+        (id(value), value.copy())
+        for value in battle.get_fast_target_cache()[1:]
+    )
+    actor = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop) and entity.player_id == 0
+    )
+    target_before = actor.get_nearest_target(battle.entities)
     before = python_resident_semantic_snapshot(battle)
     canonical_before = canonical_battle_snapshot(battle)
     topology_before = _mutable_identity_topology(battle)
     control = battle.clone()
-    require_exact = rust_publication._require_exact_projection
-
-    def fail_live_commit(*args, stage: str, **kwargs) -> None:
-        if stage == "commit":
-            raise ResidentPublicationError("injected live commit failure")
-        require_exact(*args, stage=stage, **kwargs)
+    def fail_live_commit(*args, **kwargs) -> None:
+        raise ResidentPublicationError("injected live commit failure")
 
     monkeypatch.setattr(
         rust_publication,
-        "_require_exact_projection",
+        "_after_typed_publication_commit",
         fail_live_commit,
     )
 
@@ -770,6 +783,15 @@ def test_on_commit_failure_rolls_back_and_poisons_runtime(monkeypatch) -> None:
     assert python_resident_semantic_snapshot(battle) == before
     assert canonical_battle_snapshot(battle) == canonical_before
     assert _mutable_identity_topology(battle) == topology_before
+    target_cache_after = battle.get_fast_target_cache()[1:]
+    for (expected_id, expected), actual in zip(
+        target_cache_before,
+        target_cache_after,
+        strict=True,
+    ):
+        assert id(actual) == expected_id
+        np.testing.assert_array_equal(actual, expected)
+    assert actor.get_nearest_target(battle.entities) is target_before
     _assert_observations_equal(control, battle)
     _assert_action_masks_equal(control, battle)
     assert runtime.resident is resident

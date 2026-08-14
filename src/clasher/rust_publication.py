@@ -7,6 +7,7 @@ import random
 import struct
 from collections import deque
 from collections.abc import Iterable
+from dataclasses import dataclass
 from typing import Any, cast
 
 import numpy as np
@@ -21,12 +22,21 @@ from .rust_core import ResidentRustBattle
 from .rust_differential import (
     RESIDENT_SEMANTIC_SCHEMA_VERSION,
     python_resident_semantic_snapshot,
-    rust_resident_semantic_snapshot,
+    rust_resident_semantic_snapshot,  # noqa: F401 - legacy-call tripwire in tests
 )
 
 
 class ResidentPublicationError(RuntimeError):
     """The resident state cannot be published without changing Python identity."""
+
+
+@dataclass(frozen=True)
+class _TypedPublication:
+    binding: dict[str, Any]
+    snapshot: dict[str, Any]
+    publication_rows: list[dict[str, Any]]
+    battle_presence: dict[str, bool]
+    player_rows: list[dict[str, Any]]
 
 
 _ENTITY_SPARSE_ATTRIBUTE_NAMES = (
@@ -88,10 +98,7 @@ class _UndoJournal:
     def watch_attrs(self, owner: Any) -> None:
         if not hasattr(owner, "__dict__"):
             return
-        if not self._record("attrs", owner, dict(owner.__dict__)):
-            return
-        for value in owner.__dict__.values():
-            self.watch_value(value)
+        self._record("attrs", owner, dict(owner.__dict__))
 
     def watch_value(self, value: Any) -> None:
         if isinstance(value, list):
@@ -146,34 +153,83 @@ class _UndoJournal:
                 raise AssertionError(f"unknown publication undo kind {kind!r}")
 
 
-def _publication_undo_journal(
+def _live_publication_undo_journal(
     battle: Any,
     entity_registry: dict[int, Any],
 ) -> _UndoJournal:
-    journal = _UndoJournal()
-    journal.watch_attrs(battle)
-    journal.watch_value(battle.entities)
-    journal.watch_value(entity_registry)
-    journal.watch_attrs(battle.card_loader)
-    journal.watch_value(battle.card_loader._cards)
-    card_definitions = getattr(battle.card_loader, "_card_definitions", None)
-    if isinstance(card_definitions, dict):
-        journal.watch_value(card_definitions)
-    for player in battle.players:
-        journal.watch_attrs(player)
-        journal.watch_value(player.hand)
-        journal.watch_value(player.cycle_queue)
-    for entity in entity_registry.values():
-        journal.watch_attrs(entity)
-        for mechanic in getattr(entity, "mechanics", ()):
-            journal.watch_attrs(mechanic)
-    for pending_cast in battle._pending_spell_casts:
-        journal.watch_attrs(pending_cast)
-        journal.watch_attrs(pending_cast.position)
-    return journal
+    del battle, entity_registry
+    return _UndoJournal()
+
+
+def _watch_entity_attrs(
+    undo: _UndoJournal | None,
+    entity: Any,
+    *position_fields: str,
+) -> None:
+    if undo is None:
+        return
+    undo.watch_attrs(entity)
+    undo.watch_attrs(entity.position)
+    for field in position_fields:
+        value = getattr(entity, field, None)
+        if isinstance(value, Position):
+            undo.watch_attrs(value)
+
+
+def _watch_cache_refresh_mutations(battle: Any, journal: _UndoJournal) -> None:
+    """Lazily record mutable cache storage immediately before one refresh."""
+    in_place_fast_cache_fields = {
+        "_target_pos_x",
+        "_target_pos_y",
+        "_target_player",
+        "_target_is_air",
+        "_target_is_building",
+        "_target_is_building_target",
+        "_target_is_crown",
+        "_target_is_targetable",
+        "_target_requires_targetability_check",
+        "_target_stealth_until",
+        "_target_collision_radius",
+        "_target_distance_discount_sq",
+    }
+    for name, value in battle.__dict__.items():
+        if (
+            "cache" in name
+            or "bucket" in name
+            or "placement_blocked" in name
+            or name == "_pending_projectile_impacts"
+            or name in in_place_fast_cache_fields
+        ):
+            journal.watch_value(value)
 
 
 def _scalar(value: Any) -> int | float:
+    if type(value) is tuple and len(value) == 3:
+        tag, integer, bits = value
+        if (
+            type(tag) is int
+            and tag == 0
+            and type(integer) is int
+            and -(1 << 63) <= integer < 1 << 63
+            and type(bits) is int
+            and bits == 0
+        ):
+            return integer
+        if (
+            type(tag) is int
+            and tag == 1
+            and type(integer) is int
+            and integer == 0
+            and type(bits) is int
+            and 0 <= bits < 1 << 64
+        ):
+            try:
+                return float(struct.unpack("<d", struct.pack("<Q", bits))[0])
+            except struct.error as error:
+                raise ResidentPublicationError(
+                    f"invalid typed exact scalar payload: {value!r}"
+                ) from error
+        raise ResidentPublicationError(f"invalid typed exact scalar payload: {value!r}")
     if not isinstance(value, dict):
         raise ResidentPublicationError(f"invalid exact scalar payload: {value!r}")
     kind = value.get("kind")
@@ -187,6 +243,53 @@ def _scalar(value: Any) -> int | float:
 
 def _float(value: Any) -> float:
     return float(_scalar(value))
+
+
+def _exact(value: Any) -> dict[str, Any]:
+    """Convert one typed exact scalar to the semantic-schema representation."""
+    if type(value) is not tuple or len(value) != 3:
+        raise ResidentPublicationError(f"invalid typed exact scalar payload: {value!r}")
+    tag, integer, bits = value
+    if (
+        type(tag) is int
+        and tag == 0
+        and type(integer) is int
+        and -(1 << 63) <= integer < 1 << 63
+        and type(bits) is int
+        and bits == 0
+    ):
+        return {"kind": "int", "value": integer}
+    if (
+        type(tag) is int
+        and tag == 1
+        and type(integer) is int
+        and integer == 0
+        and type(bits) is int
+        and 0 <= bits < 1 << 64
+    ):
+        return {"bits": f"{bits:016x}", "kind": "float"}
+    raise ResidentPublicationError(f"invalid typed exact scalar payload: {value!r}")
+
+
+def _exact_float(value: Any) -> dict[str, Any]:
+    if type(value) is not float:
+        raise ResidentPublicationError(f"invalid typed binary64 value: {value!r}")
+    try:
+        bits = struct.unpack("<Q", struct.pack("<d", float(value)))[0]
+    except (OverflowError, TypeError, ValueError, struct.error) as error:
+        raise ResidentPublicationError(
+            f"invalid typed binary64 value: {value!r}"
+        ) from error
+    return {"bits": f"{bits:016x}", "kind": "float"}
+
+
+def _optional_exact_position(value: Any, *, exact: bool) -> list[Any] | None:
+    if value is None:
+        return None
+    if type(value) is not tuple or len(value) != 2:
+        raise ResidentPublicationError(f"invalid typed position payload: {value!r}")
+    convert = _exact if exact else _exact_float
+    return [convert(value[0]), convert(value[1])]
 
 
 def _rows_by_id(
@@ -245,6 +348,656 @@ def _validate_transient_boundary(battle: Any) -> None:
         raise ResidentPublicationError(
             "resident publication requires an integer Python tick boundary"
         )
+
+
+def _presence_from_mask(
+    mask: Any,
+    names: tuple[str, ...],
+    *,
+    offset: int,
+    label: str,
+) -> dict[str, bool]:
+    if type(mask) is not int or mask < 0 or mask >= 1 << 64:
+        raise ResidentPublicationError(f"invalid typed {label} presence mask")
+    known = sum(1 << (offset + index) for index in range(len(names)))
+    if mask & ~known:
+        raise ResidentPublicationError(f"typed {label} presence has unknown bits")
+    return {
+        name: bool(mask & (1 << (offset + index)))
+        for index, name in enumerate(names)
+    }
+
+
+def _typed_modifier(row: Any, entity: Any) -> dict[str, Any] | None:
+    state = entity["modifier_state"]
+    if state is None:
+        return None
+    effects = lambda values: [
+        [
+            _exact_float(effect["remaining"]),
+            _exact_float(effect["movement"]),
+            _exact_float(effect["attack"]),
+            _exact_float(effect["spawn"]),
+        ]
+        for effect in values
+    ]
+    return {
+        "attack_speed_buff_multiplier": _exact_float(
+            state["attack_speed_buff_multiplier"]
+        ),
+        "attack_speed_debuff_multiplier": _exact_float(
+            state["attack_speed_debuff_multiplier"]
+        ),
+        "encounter_index": row["encounter_index"],
+        "haste_effects": effects(state["haste_effects"]),
+        "haste_timer": _exact_float(state["haste_timer"]),
+        "id": row["id"],
+        "movement_mode_multiplier": _exact_float(
+            state["movement_mode_multiplier"]
+        ),
+        "movement_speed_buff_multiplier": _exact_float(
+            state["movement_speed_buff_multiplier"]
+        ),
+        "original_speed": (
+            None
+            if state["original_speed"] is None
+            else _exact_float(state["original_speed"])
+        ),
+        "slow_effects": effects(state["slow_effects"]),
+        "slow_multiplier": _exact_float(state["slow_multiplier"]),
+        "slow_timer": _exact_float(state["slow_timer"]),
+        "spawn_speed_buff_multiplier": _exact_float(
+            state["spawn_speed_buff_multiplier"]
+        ),
+        "spawn_speed_debuff_multiplier": _exact_float(
+            state["spawn_speed_debuff_multiplier"]
+        ),
+        "speed": _exact(state["speed"]),
+        "stun_timer": _exact_float(state["stun_timer"]),
+    }
+
+
+def _typed_shields(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
+    shields = entity["shields"]
+    if not shields:
+        return None
+    return {
+        "encounter_index": row["encounter_index"],
+        "id": row["id"],
+        "shield_break_count": entity["shield_break_count"],
+        "shields": [
+            {
+                "current_shield": _exact(shield["current"]),
+                "max_shield": _exact(shield["maximum"]),
+            }
+            for shield in shields
+        ],
+    }
+
+
+def _typed_death_opcodes(row: dict[str, Any], entity: Any) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    for opcode_index, opcode in enumerate(entity["death_opcodes"]):
+        kind = opcode["kind"]
+        common = {
+            "encounter_index": row["encounter_index"],
+            "id": row["id"],
+            "opcode_index": opcode_index,
+        }
+        if kind == 0:
+            state = opcode["damage"]
+            if state is None or opcode["spawn"] is not None or opcode["area"] is not None:
+                raise ResidentPublicationError("malformed typed death-damage opcode")
+            result.append(
+                {
+                    **common,
+                    "base_damage": state["base_damage"],
+                    "hits_air": state["hits_air"],
+                    "hits_ground": state["hits_ground"],
+                    "knockback_distance": _exact(state["knockback_distance"]),
+                    "knockback_units": state["knockback_units"],
+                    "opcode_type": "damage",
+                    "radius_tiles": _exact(state["radius_tiles"]),
+                    "radius_units": state["radius_units"],
+                    "scaled_damage": _exact(state["scaled_damage"]),
+                }
+            )
+        elif kind == 1:
+            state = opcode["spawn"]
+            if state is None or opcode["damage"] is not None or opcode["area"] is not None:
+                raise ResidentPublicationError("malformed typed death-spawn opcode")
+            result.append(
+                {
+                    **common,
+                    "count": state["count"],
+                    "deploy_time_ms": state["deploy_time_ms"],
+                    "min_radius_tiles": _exact_float(state["min_radius_tiles"]),
+                    "opcode_type": "spawn",
+                    "radial_pushback": state["radial_pushback"],
+                    "radius_tiles": _exact_float(state["radius_tiles"]),
+                    "spawn_const_priority": state["spawn_const_priority"],
+                    "unit_data_sha256": state["unit_data_fingerprint"],
+                    "unit_name": state["unit_name"],
+                }
+            )
+        elif kind == 2:
+            state = opcode["area"]
+            if state is None or opcode["damage"] is not None or opcode["spawn"] is not None:
+                raise ResidentPublicationError("malformed typed death-area opcode")
+            result.append(
+                {
+                    **common,
+                    "affects_hidden": state["affects_hidden"],
+                    "area_name": state["area_name"],
+                    "attack_multiplier": _exact_float(state["attack_multiplier"]),
+                    "cap_buff_time_to_effect": state["cap_buff_time_to_effect"],
+                    "duration": _exact_float(state["duration"]),
+                    "effect_tick_interval": _exact_float(
+                        state["effect_tick_interval"]
+                    ),
+                    "hits_air": state["hits_air"],
+                    "hits_ground": state["hits_ground"],
+                    "movement_multiplier": _exact_float(
+                        state["movement_multiplier"]
+                    ),
+                    "opcode_type": "area",
+                    "radius_tiles": _exact_float(state["radius_tiles"]),
+                    "radius_units": state["radius_units"],
+                    "refresh_duration": _exact_float(state["refresh_duration"]),
+                    "spawn_multiplier": _exact_float(state["spawn_multiplier"]),
+                }
+            )
+        else:
+            raise ResidentPublicationError(f"unknown typed death opcode {kind!r}")
+    return result
+
+
+def _typed_movement(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
+    state = entity["movement_state"]
+    combat = entity["locked_combat_state"]
+    if state is None:
+        return None
+    route_names = ("absent", "single", "ground", "unsupported")
+    route_kind = state["route_cache_kind"]
+    if type(route_kind) is not int or not 0 <= route_kind < len(route_names):
+        raise ResidentPublicationError("malformed typed route kind")
+    return {
+        "airborne_for_projectile": bool(
+            combat is not None and combat["is_airborne_for_projectile"]
+        ),
+        "building_pathing_radius": _exact_float(state["building_pathing_radius"]),
+        "death_spawn_travel_target": _optional_exact_position(
+            state["death_spawn_travel_target"], exact=False
+        ),
+        "death_spawn_travel_ticks": state["death_spawn_travel_ticks"],
+        "encounter_index": row["encounter_index"],
+        "facing_x_units": 0 if combat is None else combat["facing_x_units"],
+        "facing_y_units": 0 if combat is None else combat["facing_y_units"],
+        "forced_movement_active": state["forced_movement_active"],
+        "ground_path_backwards": bool(
+            combat is not None and combat["ground_path_backwards"]
+        ),
+        "id": row["id"],
+        "jump_speed": _exact_float(state["jump_speed"]),
+        "knockback_immune": state["knockback_immune"],
+        "knockback_interrupts_combat": state["knockback_interrupts_combat"],
+        "knockback_target": _optional_exact_position(
+            state["knockback_target"], exact=False
+        ),
+        "knockback_velocity_work": state["knockback_velocity_work"],
+        "movement_phase_elapsed_ms": state["movement_phase_elapsed_ms"],
+        "native_avoidance": state["native_avoidance"],
+        "native_lane_id": state["native_lane_id"],
+        "native_natural_movement_active": state["native_natural_movement_active"],
+        "pending_consumed": state["pending_consumed"],
+        "pending_x": _exact_float(state["pending_x"]),
+        "pending_y": _exact_float(state["pending_y"]),
+        "position_x": _exact(entity["position_x"]),
+        "position_y": _exact(entity["position_y"]),
+        "route_backwards": state["route_backwards"],
+        "route_cells": [list(cell) for cell in state["route_cells"]],
+        "route_goal": None if state["route_goal"] is None else list(state["route_goal"]),
+        "route_jump_height": state["route_jump_height"],
+        "route_kind": route_names[route_kind],
+        "route_lane_id": state["route_lane_id"],
+        "river_jump_active": state["river_jump_active"],
+        "river_jump_blocked": state["river_jump_blocked"],
+        "river_jump_duration": _exact_float(state["river_jump_duration"]),
+        "river_jump_elapsed": _exact_float(state["river_jump_elapsed"]),
+        "river_jump_origin": _optional_exact_position(
+            state["river_jump_origin"], exact=True
+        ),
+        "river_jump_target": _optional_exact_position(
+            state["river_jump_target"], exact=False
+        ),
+        "serialized_speed": _exact_float(state["serialized_speed"]),
+        "special_move_active": state["special_move_active"],
+        "special_move_consumed_tick": state["special_move_consumed_tick"],
+        "stop_movement_after_ms": _exact_float(state["stop_movement_after_ms"]),
+        "stun_interrupt_deferred_until_landing": state[
+            "stun_interrupt_deferred_until_landing"
+        ],
+        "vector_bypasses_cap": state["vector_bypasses_cap"],
+        "vector_count": state["vector_count"],
+        "vector_x_units": state["vector_x_units"],
+        "vector_y_units": state["vector_y_units"],
+        "wait_ms": _exact_float(state["wait_ms"]),
+    }
+
+
+def _typed_combat(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
+    state = entity["locked_combat_state"]
+    if state is None:
+        return None
+    return {
+        "attack_cooldown": _exact_float(state["attack_cooldown"]),
+        "attack_preload_blocked": state["attack_preload_blocked"],
+        "attack_windup_active": state["attack_windup_active"],
+        "encounter_index": row["encounter_index"],
+        "facing_x_units": state["facing_x_units"],
+        "facing_y_units": state["facing_y_units"],
+        "has_attacked_once": state["has_attacked_once"],
+        "hitpoints": _exact(entity["hitpoints"]),
+        "id": row["id"],
+        "initial_position": _optional_exact_position(
+            state["initial_position"], exact=True
+        ),
+        "is_alive": row["is_alive"],
+        "last_attack_time": _exact_float(state["last_attack_time"]),
+        "last_combat_target_id": state["last_combat_target_id"],
+        "movement_target_id": state["movement_target_id"],
+        "native_target_distance_discount_sq_units": state[
+            "native_target_distance_discount_sq_units"
+        ],
+        "target_id": row["target_id"],
+    }
+
+
+def _typed_building(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
+    lifetime = entity["building_lifetime_state"]
+    impact = entity["building_impact_state"]
+    if lifetime is None:
+        return None
+    if impact is None:
+        raise ResidentPublicationError("typed building lifetime has no impact state")
+    return {
+        "activation_delay_remaining": _exact_float(
+            impact["activation_delay_remaining"]
+        ),
+        "activation_first_hit_delay_remaining": _exact_float(
+            impact["activation_first_hit_delay_remaining"]
+        ),
+        "crown_slot": impact["crown_slot"],
+        "encounter_index": row["encounter_index"],
+        "hitpoints": _exact(entity["hitpoints"]),
+        "id": row["id"],
+        "is_alive": row["is_alive"],
+        "lifetime_decay_work": lifetime["decay_work"],
+        "lifetime_elapsed": _exact_float(lifetime["lifetime_elapsed"]),
+        "lifetime_tick_carry_ms": _exact_float(lifetime["tick_carry_ms"]),
+        "tower_active": impact["tower_active"],
+    }
+
+
+def _typed_area(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
+    state = entity["area_effect_state"]
+    if state is None:
+        return None
+    spec = state["spec"]
+    return {
+        "affects_hidden": spec["affects_hidden"],
+        "area_name": spec["area_name"],
+        "attack_multiplier": _exact_float(spec["attack_multiplier"]),
+        "cap_buff_time_to_effect": spec["cap_buff_time_to_effect"],
+        "duration": _exact_float(spec["duration"]),
+        "effect_snapshot_applied": state["effect_snapshot_applied"],
+        "effect_tick_interval": _exact_float(spec["effect_tick_interval"]),
+        "encounter_index": row["encounter_index"],
+        "hits_air": spec["hits_air"],
+        "hits_ground": spec["hits_ground"],
+        "id": row["id"],
+        "is_alive": row["is_alive"],
+        "movement_multiplier": _exact_float(spec["movement_multiplier"]),
+        "player_id": row["player_id"],
+        "position_x": _exact(entity["position_x"]),
+        "position_y": _exact(entity["position_y"]),
+        "radius_tiles": _exact_float(spec["radius_tiles"]),
+        "radius_units": spec["radius_units"],
+        "refresh_duration": _exact_float(spec["refresh_duration"]),
+        "spawn_multiplier": _exact_float(spec["spawn_multiplier"]),
+        "time_alive": _exact_float(state["time_alive"]),
+    }
+
+
+def _typed_point(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
+    state = entity["point_projectile_state"]
+    if state is None:
+        return None
+    return {
+        "crown_tower_damage": (
+            None
+            if state["crown_tower_damage"] is None
+            else _exact_float(state["crown_tower_damage"])
+        ),
+        "crown_tower_damage_multiplier": _exact_float(
+            state["crown_tower_damage_multiplier"]
+        ),
+        "damage": _exact(entity["damage"]),
+        "damage_group_id": state["damage_group_id"],
+        "damage_wave_interval": _exact_float(state["damage_wave_interval"]),
+        "encounter_index": row["encounter_index"],
+        "hitpoints": _exact(entity["hitpoints"]),
+        "hits_air": state["hits_air"],
+        "hits_ground": state["hits_ground"],
+        "id": row["id"],
+        "ignore_buildings": state["ignore_buildings"],
+        "is_alive": row["is_alive"],
+        "knockback_distance": _exact_float(state["knockback_distance"]),
+        "knockback_ignores_mass": state["knockback_ignores_mass"],
+        "launch_delay": _exact_float(state["launch_delay"]),
+        "permanent_homing_disabled_by_temporary": state[
+            "permanent_homing_disabled_by_temporary"
+        ],
+        "position_x": _exact(entity["position_x"]),
+        "position_y": _exact(entity["position_y"]),
+        "primary_target_id": state["primary_target_id"],
+        "slow_duration": _exact_float(state["slow_duration"]),
+        "slow_multiplier": _exact_float(state["slow_multiplier"]),
+        "source_entity_id": state["source_entity_id"],
+        "source_kind": state["source_kind"],
+        "splash_radius": _exact_float(state["splash_radius"]),
+        "start_collision_resolved": state["start_collision_resolved"],
+        "stun_duration": _exact_float(state["stun_duration"]),
+        "target_position_x": _exact(state["target_x"]),
+        "target_position_y": _exact(state["target_y"]),
+        "temporary_homing_remaining_ms": state["temporary_homing_remaining_ms"],
+        "temporary_homing_target_id": state["temporary_homing_target_id"],
+        "tracks_target": state["tracks_target"],
+        "travel_speed": _exact_float(state["travel_speed"]),
+    }
+
+
+def _typed_character_birth(state: Any) -> dict[str, Any] | None:
+    if state is None:
+        return None
+    kind = state["kind"]
+    base = {
+        "effective_name": state["effective_name"],
+        "group_id": state["group_id"],
+        "lookup_name": state["lookup_name"],
+        "member_count": state["member_count"],
+        "opcode_index": state["opcode_index"],
+        "ordinal": state["ordinal"],
+        "source_entity_id": state["source_entity_id"],
+        "template_fingerprint": state["template_fingerprint"],
+    }
+    if kind == 0:
+        if state["unit_data_fingerprint"] is not None:
+            raise ResidentPublicationError("catalog birth has death-spawn data")
+        return {**base, "kind": "catalog_action"}
+    if kind == 1:
+        return {
+            **base,
+            "kind": "death_spawn",
+            "unit_data_fingerprint": state["unit_data_fingerprint"],
+        }
+    raise ResidentPublicationError(f"unknown typed character birth kind {kind!r}")
+
+
+def _typed_publication_projection(parts: Any) -> _TypedPublication:
+    """Decode one owned typed native publication without legacy exporters."""
+    try:
+        if parts["version"] != 1:
+            raise ResidentPublicationError("unsupported typed publication version")
+        binding = dict(parts["binding"])
+        if binding["semantic_schema_version"] != RESIDENT_SEMANTIC_SCHEMA_VERSION:
+            raise ResidentPublicationError("typed semantic schema changed")
+        battle = parts["battle"]
+        battle_presence = _presence_from_mask(
+            battle["sparse_attribute_presence"],
+            _BATTLE_SPARSE_ATTRIBUTE_NAMES,
+            offset=len(_ENTITY_SPARSE_ATTRIBUTE_NAMES),
+            label="battle",
+        )
+        player_rows = [
+            {
+                "cycle_queue": list(player["cycle_queue"]),
+                "elixir": _exact_float(player["elixir"]),
+                "hand": list(player["hand"]),
+                "king_tower_hp": _exact(player["king_tower_hp"]),
+                "left_tower_hp": _exact(player["left_tower_hp"]),
+                "max_elixir": _exact_float(player["max_elixir"]),
+                "next_card_refill_cooldown_ms": player[
+                    "next_card_refill_cooldown_ms"
+                ],
+                "player_id": player["player_id"],
+                "right_tower_hp": _exact(player["right_tower_hp"]),
+            }
+            for player in parts["players"]
+        ]
+        semantic_players = [
+            {
+                **row,
+                "king_tower_hp": _exact_float(float(_scalar(row["king_tower_hp"]))),
+                "left_tower_hp": _exact_float(float(_scalar(row["left_tower_hp"]))),
+                "right_tower_hp": _exact_float(
+                    float(_scalar(row["right_tower_hp"]))
+                ),
+            }
+            for row in player_rows
+        ]
+
+        publication_rows: list[dict[str, Any]] = []
+        sections: dict[str, list[dict[str, Any]]] = {
+            name: []
+            for name in (
+                "entities",
+                "modifiers",
+                "shields",
+                "character_objects",
+                "death_opcodes",
+                "area_effects",
+                "movement",
+                "locked_combat",
+                "building_lifetime",
+                "point_projectiles",
+            )
+        }
+        for entity in parts["entities"]:
+            base = {
+                "card_name": entity["card_name"],
+                "encounter_index": entity["encounter_index"],
+                "entity_kind": entity["entity_kind"],
+                "freeze_expiry_time": _exact_float(entity["freeze_expiry_time"]),
+                "hitpoints": _exact(entity["hitpoints"]),
+                "id": entity["id"],
+                "is_alive": entity["is_alive"],
+                "max_hitpoints": _exact(entity["max_hitpoints"]),
+                "mechanics": list(entity["mechanics"]),
+                "pending_projectile_max_duration_ms": entity[
+                    "pending_projectile_max_duration_ms"
+                ],
+                "placement_delay_total": _exact_float(
+                    entity["placement_delay_total"]
+                ),
+                "player_id": entity["player_id"],
+                "position_x": _exact(entity["position_x"]),
+                "position_y": _exact(entity["position_y"]),
+                "python_type": entity["python_type"],
+                "spawn_angle_shift": _exact_float(entity["spawn_angle_shift"]),
+                "target_id": entity["target_id"],
+            }
+            modifier = _typed_modifier(base, entity)
+            shield = _typed_shields(base, entity)
+            death_rows = _typed_death_opcodes(base, entity)
+            movement = _typed_movement(base, entity)
+            combat = _typed_combat(base, entity)
+            building = _typed_building(base, entity)
+            area = _typed_area(base, entity)
+            point = _typed_point(base, entity)
+            character_state = None
+            if entity["entity_kind"] in (0, 1):
+                character_state = {
+                    "death_spawn_target_immunity_elapsed_ms": entity[
+                        "death_spawn_target_immunity_elapsed_ms"
+                    ],
+                    "deploy_delay_remaining": _exact_float(
+                        entity["deploy_delay_remaining"]
+                    ),
+                    "encounter_index": entity["encounter_index"],
+                    "id": entity["id"],
+                    "placement_pending": entity["placement_pending"],
+                    "spawn_hook_fired": entity["spawn_hook_fired"],
+                    "spawn_hook_pending": entity["spawn_hook_pending"],
+                }
+            point_constructor = None
+            point_group_ids = None
+            if point is not None:
+                point_state = entity["point_projectile_state"]
+                point_constructor = {
+                    "card_stats_source_id": point_state["source_entity_id"],
+                    "constructor_range": _exact(point_state["constructor_range"]),
+                    "constructor_sight_range": _exact(
+                        point_state["constructor_sight_range"]
+                    ),
+                    "homing_min_distance": _exact_float(
+                        point_state["homing_min_distance"]
+                    ),
+                    "homing_time_ms": point_state["homing_time_ms"],
+                    "launch_position_x": _exact_float(point_state["launch_x"]),
+                    "launch_position_y": _exact_float(point_state["launch_y"]),
+                    "pierces": False,
+                    "projectile_range": _exact_float(0.0),
+                    "start_extra_radius": _exact_float(0.0),
+                }
+                point_group_ids = (
+                    None
+                    if point_state["damage_group_hit_entity_ids"] is None
+                    else list(point_state["damage_group_hit_entity_ids"])
+                )
+            row = {
+                **base,
+                "active": entity["active"],
+                "area_effect_birth_source_id": (
+                    None
+                    if entity["area_effect_state"] is None
+                    else entity["area_effect_state"]["birth_source_entity_id"]
+                ),
+                "area_effect_state": area,
+                "building_lifetime_state": building,
+                "character_birth": _typed_character_birth(entity["character_birth"]),
+                "character_object_state": character_state,
+                "locked_combat_state": combat,
+                "modifier_state": modifier,
+                "movement_state": movement,
+                "point_projectile_constructor": point_constructor,
+                "point_projectile_group_hit_entity_ids": point_group_ids,
+                "point_projectile_state": point,
+                "shield_state": shield,
+                "sparse_attribute_presence": _presence_from_mask(
+                    entity["sparse_attribute_presence"],
+                    _ENTITY_SPARSE_ATTRIBUTE_NAMES,
+                    offset=0,
+                    label=f"entity {entity['id']}",
+                ),
+            }
+            publication_rows.append(row)
+            if not entity["active"]:
+                continue
+            sections["entities"].append(base)
+            for name, value in (
+                ("modifiers", modifier),
+                ("shields", shield),
+                ("character_objects", character_state),
+                ("area_effects", area),
+                ("movement", movement),
+                ("locked_combat", combat),
+                ("building_lifetime", building),
+                ("point_projectiles", point),
+            ):
+                if value is not None:
+                    sections[name].append(value)
+            sections["death_opcodes"].extend(death_rows)
+
+        towers = [
+            {
+                "hp": _exact_float(float(_scalar(tower["hp"]))),
+                "hp_milli": tower["hp_milli"],
+                "id": tower["id"],
+                "is_active": tower["is_active"],
+                "is_alive": tower["is_alive"],
+                "last_attack_time": _exact_float(tower["last_attack_time"]),
+                "player_id": tower["player_id"],
+                "slot": tower["slot"],
+            }
+            for tower in parts["towers"]
+            if tower["active"]
+        ]
+        rng = parts["rng"]
+        pending = parts["pending_spells"]
+        snapshot = {
+            "schema_version": binding["semantic_schema_version"],
+            "clock": {
+                "double_elixir": battle["double_elixir"],
+                "dt": _exact_float(battle["dt"]),
+                "game_over": battle["game_over"],
+                "overtime": battle["overtime"],
+                "tick": battle["tick"],
+                "time": _exact_float(battle["time"]),
+                "triple_elixir": battle["triple_elixir"],
+            },
+            "players": semantic_players,
+            "towers": towers,
+            "outcome": {
+                "game_over": battle["game_over"],
+                "sudden_death": battle["sudden_death"],
+                "sudden_death_crowns": list(battle["sudden_death_crowns"]),
+                "winner": battle["winner"],
+            },
+            **sections,
+            "rng": {
+                "gauss_next": (
+                    None if rng["gauss_next"] is None else _exact(rng["gauss_next"])
+                ),
+                "index": rng["index"],
+                "state": list(rng["state"]),
+                "version": rng["version"],
+            },
+            "next_entity_id": battle["next_entity_id"],
+            "pending_spells": {
+                "casts": [
+                    {
+                        "execute_at": _exact_float(cast["execute_at"]),
+                        "player_id": cast["player_id"],
+                        "position_x": _exact_float(cast["position_x"]),
+                        "position_y": _exact_float(cast["position_y"]),
+                        "sequence": cast["sequence"],
+                        "spell_name": cast["spell_name"],
+                    }
+                    for cast in pending["casts"]
+                ],
+                "next_sequence": pending["next_sequence"],
+            },
+            "projectile_damage_groups": [
+                {
+                    "group_id": group["id"],
+                    "hit_entity_ids": sorted(set(group["hit_entity_ids"])),
+                }
+                for group in parts["projectile_groups"]
+            ],
+            "win_conditions_dirty": battle["win_conditions_dirty"],
+        }
+        return _TypedPublication(
+            binding=binding,
+            snapshot=snapshot,
+            publication_rows=publication_rows,
+            battle_presence=battle_presence,
+            player_rows=player_rows,
+        )
+    except ResidentPublicationError:
+        raise
+    except (AttributeError, KeyError, OverflowError, TypeError, ValueError) as error:
+        raise ResidentPublicationError("typed resident publication is malformed") from error
 
 
 def _validate_entity_attribute_presence(
@@ -521,6 +1274,24 @@ def _validate_structure(
 
     projectile_group_snapshots: dict[int, tuple[int, ...]] = {}
     for row in publication_rows:
+        for field, reference_id in (("target_id", row["target_id"]),):
+            if reference_id is not None and int(reference_id) not in all_ids:
+                raise ResidentPublicationError(
+                    f"resident entity {row['id']} has unknown {field} {reference_id}"
+                )
+        combat_state = row["locked_combat_state"]
+        if combat_state is not None:
+            for field in (
+                "last_combat_target_id",
+                "movement_target_id",
+                "target_id",
+            ):
+                reference_id = combat_state[field]
+                if reference_id is not None and int(reference_id) not in all_ids:
+                    raise ResidentPublicationError(
+                        f"resident entity {row['id']} has unknown {field} "
+                        f"{reference_id}"
+                    )
         point_state = row["point_projectile_state"]
         if point_state is None:
             if row["point_projectile_group_hit_entity_ids"] is not None:
@@ -585,8 +1356,16 @@ def _validate_structure(
 
 
 
-def _apply_players(battle: Any, rows: list[dict[str, Any]]) -> None:
+def _apply_players(
+    battle: Any,
+    rows: list[dict[str, Any]],
+    undo: _UndoJournal | None = None,
+) -> None:
     for player, row in zip(battle.players, rows, strict=True):
+        if undo is not None:
+            undo.watch_attrs(player)
+            undo.watch_value(player.hand)
+            undo.watch_value(player.cycle_queue)
         player.elixir = _float(row["elixir"])
         player.max_elixir = _float(row["max_elixir"])
         player.next_card_refill_cooldown_ms = int(
@@ -601,10 +1380,13 @@ def _apply_players(battle: Any, rows: list[dict[str, Any]]) -> None:
 
 
 def _apply_entity_base(
-    entity_registry: dict[int, Any], snapshot: dict[str, Any]
+    entity_registry: dict[int, Any],
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     for row in snapshot["entities"]:
         entity = entity_registry[int(row["id"])]
+        _watch_entity_attrs(undo, entity)
         entity.freeze_expiry_time = _scalar(row["freeze_expiry_time"])
         entity.hitpoints = _scalar(row["hitpoints"])
         entity.max_hitpoints = _scalar(row["max_hitpoints"])
@@ -621,10 +1403,16 @@ def _apply_entity_base(
 
 
 def _apply_modifiers(
-    entity_registry: dict[int, Any], snapshot: dict[str, Any]
+    entity_registry: dict[int, Any],
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     for row in snapshot["modifiers"]:
         entity = entity_registry[int(row["id"])]
+        _watch_entity_attrs(undo, entity)
+        if undo is not None:
+            undo.watch_value(entity._haste_effects)
+            undo.watch_value(entity._slow_effects)
         entity.attack_speed_buff_multiplier = _scalar(
             row["attack_speed_buff_multiplier"]
         )
@@ -664,7 +1452,9 @@ def _apply_modifiers(
 
 
 def _apply_shields(
-    entity_registry: dict[int, Any], snapshot: dict[str, Any]
+    entity_registry: dict[int, Any],
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     for row in snapshot["shields"]:
         entity = entity_registry[int(row["id"])]
@@ -676,16 +1466,23 @@ def _apply_shields(
                 == "clasher.mechanics.shared.shield.Shield"
             )
         ]
+        _watch_entity_attrs(undo, entity)
+        if undo is not None:
+            for shield in shields:
+                undo.watch_attrs(shield)
         entity._shield_break_count = int(row["shield_break_count"])
         for shield, shield_row in zip(shields, row["shields"], strict=True):
             shield.current_shield = _scalar(shield_row["current_shield"])
 
 
 def _apply_character_objects(
-    entity_registry: dict[int, Any], snapshot: dict[str, Any]
+    entity_registry: dict[int, Any],
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     for row in snapshot["character_objects"]:
         entity = entity_registry[int(row["id"])]
+        _watch_entity_attrs(undo, entity)
         entity._death_spawn_target_immunity_elapsed_ms = int(
             row["death_spawn_target_immunity_elapsed_ms"]
         )
@@ -696,10 +1493,20 @@ def _apply_character_objects(
 
 
 def _apply_movement(
-    entity_registry: dict[int, Any], snapshot: dict[str, Any]
+    entity_registry: dict[int, Any],
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     for row in snapshot["movement"]:
         entity = entity_registry[int(row["id"])]
+        _watch_entity_attrs(
+            undo,
+            entity,
+            "_death_spawn_travel_target",
+            "_knockback_target",
+            "_river_jump_origin",
+            "_river_jump_target",
+        )
         _set_position(entity, "_death_spawn_travel_target", row["death_spawn_travel_target"])
         entity._death_spawn_travel_ticks_remaining = int(
             row["death_spawn_travel_ticks"]
@@ -766,10 +1573,13 @@ def _apply_movement(
 
 
 def _apply_combat(
-    entity_registry: dict[int, Any], snapshot: dict[str, Any]
+    entity_registry: dict[int, Any],
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     for row in snapshot["locked_combat"]:
         entity = entity_registry[int(row["id"])]
+        _watch_entity_attrs(undo, entity, "initial_position")
         entity.attack_cooldown = _scalar(row["attack_cooldown"])
         entity._attack_preload_blocked = bool(row["attack_preload_blocked"])
         entity._attack_windup_active = bool(row["attack_windup_active"])
@@ -789,10 +1599,13 @@ def _apply_combat(
 
 
 def _apply_buildings(
-    entity_registry: dict[int, Any], snapshot: dict[str, Any]
+    entity_registry: dict[int, Any],
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     for row in snapshot["building_lifetime"]:
         entity = entity_registry[int(row["id"])]
+        _watch_entity_attrs(undo, entity)
         entity.activation_delay_remaining = _scalar(
             row["activation_delay_remaining"]
         )
@@ -808,16 +1621,20 @@ def _apply_buildings(
 
     for row in snapshot["towers"]:
         tower = entity_registry[int(row["id"])]
+        _watch_entity_attrs(undo, tower)
         tower.is_alive = bool(row["is_alive"])
         tower._tower_active = bool(row["is_active"])
         tower.last_attack_time = _float(row["last_attack_time"])
 
 
 def _apply_area_effects(
-    entity_registry: dict[int, Any], snapshot: dict[str, Any]
+    entity_registry: dict[int, Any],
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     for row in snapshot["area_effects"]:
         entity = entity_registry[int(row["id"])]
+        _watch_entity_attrs(undo, entity)
         _apply_area_effect_row(entity, row)
 
 
@@ -830,11 +1647,14 @@ def _apply_area_effect_row(entity: Any, row: dict[str, Any]) -> None:
 
 
 def _apply_projectiles(
-    entity_registry: dict[int, Any], snapshot: dict[str, Any]
+    entity_registry: dict[int, Any],
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     group_sets: dict[int, set[int]] = {}
     for row in snapshot["point_projectiles"]:
         entity = entity_registry[int(row["id"])]
+        _watch_entity_attrs(undo, entity, "target_position")
         _apply_projectile_row(entity, row, entity_registry)
         group_id = row["damage_group_id"]
         if group_id is not None:
@@ -844,6 +1664,8 @@ def _apply_projectiles(
         hit_ids = group_sets[int(row["group_id"])]
         if hit_ids is None:  # pragma: no cover - structural preflight invariant
             raise AssertionError("validated projectile group disappeared")
+        if undo is not None:
+            undo.watch_value(hit_ids)
         hit_ids.clear()
         hit_ids.update(int(entity_id) for entity_id in row["hit_entity_ids"])
 
@@ -909,7 +1731,14 @@ def _apply_projectile_row(
     )
 
 
-def _apply_pending_spells(battle: Any, snapshot: dict[str, Any]) -> None:
+def _apply_pending_spells(
+    battle: Any,
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
+) -> None:
+    if undo is not None:
+        undo.watch_attrs(battle)
+        undo.watch_value(battle._pending_spell_casts)
     spell_state = snapshot["pending_spells"]
     existing_by_sequence = {
         int(cast.sequence): cast for cast in battle._pending_spell_casts
@@ -954,10 +1783,16 @@ def _apply_pending_spells(battle: Any, snapshot: dict[str, Any]) -> None:
     )
 
 
-def _apply_rng(battle: Any, snapshot: dict[str, Any]) -> None:
+def _apply_rng(
+    battle: Any,
+    snapshot: dict[str, Any],
+    undo: _UndoJournal | None = None,
+) -> None:
     state = snapshot["rng"]
     inner = tuple(int(word) for word in state["state"]) + (int(state["index"]),)
     gauss = None if state["gauss_next"] is None else _float(state["gauss_next"])
+    if undo is not None:
+        undo.watch_value(battle.rng)
     battle.rng.setstate((int(state["version"]), inner, gauss))
 
 
@@ -1307,13 +2142,14 @@ def _create_character_birth(
     return entity
 
 
-def _materialize_births(
+def _prepare_births(
     battle: Any,
     resident: ResidentRustBattle,
     publication_rows: list[dict[str, Any]],
     entity_registry: dict[int, Any],
     attest_live_action_stats: bool,
-) -> None:
+) -> dict[int, Any]:
+    """Construct all births detached from the live registry and entity dict."""
     pending: dict[int, Any] = {}
     available = dict(entity_registry)
     shared_card_stats: dict[tuple[str, int], Any] = {}
@@ -1337,16 +2173,18 @@ def _materialize_births(
             raise AssertionError("validated resident birth recipe disappeared")
         pending[entity_id] = entity
         available[entity_id] = entity
-    entity_registry.update(pending)
+    return pending
 
 
 def _apply_publication_entity_rows(
     battle: Any,
     publication_rows: list[dict[str, Any]],
     entity_registry: dict[int, Any],
+    undo: _UndoJournal | None = None,
 ) -> None:
     for row in publication_rows:
         entity = entity_registry[int(row["id"])]
+        _watch_entity_attrs(undo, entity)
         entity.freeze_expiry_time = _scalar(row["freeze_expiry_time"])
         entity.hitpoints = _scalar(row["hitpoints"])
         entity.max_hitpoints = _scalar(row["max_hitpoints"])
@@ -1366,30 +2204,37 @@ def _apply_publication_entity_rows(
         entity = entity_registry[int(row["id"])]
         point_state = row["point_projectile_state"]
         if point_state is not None:
+            _watch_entity_attrs(undo, entity, "target_position")
             _apply_projectile_row(entity, point_state, entity_registry)
         area_state = row["area_effect_state"]
         if area_state is not None:
             _apply_area_effect_row(entity, area_state)
         modifier_state = row["modifier_state"]
         if modifier_state is not None:
-            _apply_modifiers(entity_registry, {"modifiers": [modifier_state]})
+            _apply_modifiers(
+                entity_registry, {"modifiers": [modifier_state]}, undo
+            )
         shield_state = row["shield_state"]
         if shield_state is not None:
-            _apply_shields(entity_registry, {"shields": [shield_state]})
+            _apply_shields(entity_registry, {"shields": [shield_state]}, undo)
         character_state = row["character_object_state"]
         if character_state is not None:
             _apply_character_objects(
                 entity_registry,
                 {"character_objects": [character_state]},
+                undo,
             )
         movement_state = row["movement_state"]
         if movement_state is not None:
-            _apply_movement(entity_registry, {"movement": [movement_state]})
+            _apply_movement(
+                entity_registry, {"movement": [movement_state]}, undo
+            )
         combat_state = row["locked_combat_state"]
         if combat_state is not None:
             _apply_combat(
                 entity_registry,
                 {"locked_combat": [combat_state]},
+                undo,
             )
         building_lifetime_state = row["building_lifetime_state"]
         if building_lifetime_state is not None:
@@ -1399,12 +2244,15 @@ def _apply_publication_entity_rows(
                     "building_lifetime": [building_lifetime_state],
                     "towers": [],
                 },
+                undo,
             )
 
     active_rows = sorted(
         (row for row in publication_rows if bool(row["active"])),
         key=lambda row: int(row["encounter_index"]),
     )
+    if undo is not None:
+        undo.watch_value(battle.entities)
     battle.entities.clear()
     battle.entities.update(
         (int(row["id"]), entity_registry[int(row["id"])])
@@ -1412,10 +2260,10 @@ def _apply_publication_entity_rows(
     )
 
 
-def _prepare_projectile_groups(
+def _plan_projectile_groups(
     publication_rows: list[dict[str, Any]],
     entity_registry: dict[int, Any],
-) -> None:
+) -> tuple[dict[int, tuple[set[int], tuple[int, ...]]], dict[int, int | None]]:
     group_members: dict[int, list[int]] = {}
     group_hit_ids: dict[int, tuple[int, ...]] = {}
     for row in publication_rows:
@@ -1431,7 +2279,7 @@ def _prepare_projectile_groups(
                 for entity_id in row["point_projectile_group_hit_entity_ids"]
             )
 
-    chosen_sets: dict[int, set[int]] = {}
+    chosen_sets: dict[int, tuple[set[int], tuple[int, ...]]] = {}
     used_set_ids: set[int] = set()
     for group_id, member_ids in group_members.items():
         existing = {
@@ -1454,18 +2302,35 @@ def _prepare_projectile_groups(
                 f"resident projectile group {group_id} would split a Python set identity"
             )
         used_set_ids.add(id(shared_hit_ids))
-        shared_hit_ids.clear()
-        shared_hit_ids.update(group_hit_ids[group_id])
-        chosen_sets[group_id] = shared_hit_ids
+        chosen_sets[group_id] = (shared_hit_ids, group_hit_ids[group_id])
 
+    assignments: dict[int, int | None] = {}
     for row in publication_rows:
         state = row["point_projectile_state"]
         if state is None:
             continue
-        projectile = entity_registry[int(row["id"])]
         group_id = state["damage_group_id"]
+        assignments[int(row["id"])] = None if group_id is None else int(group_id)
+    return chosen_sets, assignments
+
+
+def _apply_projectile_group_plan(
+    plan: tuple[dict[int, tuple[set[int], tuple[int, ...]]], dict[int, int | None]],
+    entity_registry: dict[int, Any],
+    undo: _UndoJournal | None = None,
+) -> None:
+    chosen_sets, assignments = plan
+    for shared_hit_ids, hit_ids in chosen_sets.values():
+        if undo is not None:
+            undo.watch_value(shared_hit_ids)
+        shared_hit_ids.clear()
+        shared_hit_ids.update(hit_ids)
+    for entity_id, group_id in assignments.items():
+        projectile = entity_registry[entity_id]
+        if undo is not None:
+            undo.watch_attrs(projectile)
         projectile.damage_group_hit_entity_ids = (
-            None if group_id is None else chosen_sets[int(group_id)]
+            None if group_id is None else chosen_sets[group_id][0]
         )
 
 
@@ -1479,16 +2344,33 @@ def _apply_snapshot_unchecked(
     attest_live_action_stats: bool,
     battle_presence: dict[str, bool],
     player_rows: list[dict[str, Any]],
+    prepared_births: dict[int, Any] | None = None,
+    projectile_group_plan: tuple[
+        dict[int, tuple[set[int], tuple[int, ...]]], dict[int, int | None]
+    ]
+    | None = None,
+    undo: _UndoJournal | None = None,
 ) -> None:
-    _materialize_births(
-        battle,
-        resident,
-        publication_rows,
-        entity_registry,
-        attest_live_action_stats,
+    if prepared_births is None:
+        prepared_births = _prepare_births(
+            battle,
+            resident,
+            publication_rows,
+            entity_registry,
+            attest_live_action_stats,
+        )
+    if undo is not None:
+        undo.watch_value(entity_registry)
+        undo.watch_attrs(battle)
+    entity_registry.update(prepared_births)
+    _apply_publication_entity_rows(
+        battle, publication_rows, entity_registry, undo
     )
-    _apply_publication_entity_rows(battle, publication_rows, entity_registry)
-    _prepare_projectile_groups(publication_rows, entity_registry)
+    if projectile_group_plan is None:
+        projectile_group_plan = _plan_projectile_groups(
+            publication_rows, entity_registry
+        )
+    _apply_projectile_group_plan(projectile_group_plan, entity_registry, undo)
     clock = snapshot["clock"]
     battle.double_elixir = bool(clock["double_elixir"])
     battle.dt = _float(clock["dt"])
@@ -1509,20 +2391,22 @@ def _apply_snapshot_unchecked(
         (0, 0),
     )
 
-    _apply_players(battle, player_rows)
-    _apply_entity_base(entity_registry, snapshot)
-    _apply_modifiers(entity_registry, snapshot)
-    _apply_shields(entity_registry, snapshot)
-    _apply_character_objects(entity_registry, snapshot)
-    _apply_movement(entity_registry, snapshot)
-    _apply_combat(entity_registry, snapshot)
-    _apply_buildings(entity_registry, snapshot)
-    _apply_area_effects(entity_registry, snapshot)
-    _apply_projectiles(entity_registry, snapshot)
-    _apply_pending_spells(battle, snapshot)
-    _apply_rng(battle, snapshot)
+    _apply_players(battle, player_rows, undo)
+    _apply_entity_base(entity_registry, snapshot, undo)
+    _apply_modifiers(entity_registry, snapshot, undo)
+    _apply_shields(entity_registry, snapshot, undo)
+    _apply_character_objects(entity_registry, snapshot, undo)
+    _apply_movement(entity_registry, snapshot, undo)
+    _apply_combat(entity_registry, snapshot, undo)
+    _apply_buildings(entity_registry, snapshot, undo)
+    _apply_area_effects(entity_registry, snapshot, undo)
+    _apply_projectiles(entity_registry, snapshot, undo)
+    _apply_pending_spells(battle, snapshot, undo)
+    _apply_rng(battle, snapshot, undo)
     battle.next_entity_id = int(snapshot["next_entity_id"])
     battle._win_conditions_dirty = bool(snapshot["win_conditions_dirty"])
+    if undo is not None:
+        _watch_cache_refresh_mutations(battle, undo)
     _refresh_python_caches(battle)
     _apply_attribute_presence(
         battle,
@@ -1550,6 +2434,87 @@ def _require_exact_projection(
         )
 
 
+def _validate_typed_binding(
+    battle: Any,
+    publication: _TypedPublication,
+    *,
+    entity_registry: dict[int, Any],
+) -> None:
+    binding = publication.binding
+    prior_ids = binding.get("prior_entity_ids")
+    if type(prior_ids) is not tuple or any(type(value) is not int for value in prior_ids):
+        raise ResidentPublicationError("typed publication prior entity IDs are malformed")
+    if tuple(entity_registry) != prior_ids:
+        raise ResidentPublicationError(
+            "typed publication registry disagrees with the authenticated prior"
+        )
+    if (
+        type(binding.get("prior_next_entity_id")) is not int
+        or binding["prior_next_entity_id"] != battle.next_entity_id
+    ):
+        raise ResidentPublicationError(
+            "typed publication next-entity ID disagrees with the live prior"
+        )
+    if (
+        binding.get("parent_node_id") != binding.get("prior_node_id")
+        or binding.get("parent_epoch") != binding.get("prior_epoch")
+    ):
+        raise ResidentPublicationError("typed publication is not a direct child")
+    if binding.get("checkpoint_schema_version") != 2:
+        raise ResidentPublicationError("typed publication checkpoint schema changed")
+    if binding.get("catalog_schema_version") != 4:
+        raise ResidentPublicationError("typed publication catalog schema changed")
+    for field in ("catalog_fingerprint", "catalog_source_fingerprint"):
+        value = binding.get(field)
+        if (
+            type(value) is not str
+            or len(value) != 64
+            or any(character not in "0123456789abcdef" for character in value)
+        ):
+            raise ResidentPublicationError(
+                f"typed publication has malformed {field.replace('_', ' ')}"
+            )
+    if [row["player_id"] for row in publication.player_rows] != [0, 1]:
+        raise ResidentPublicationError("typed publication player order changed")
+
+
+def _require_live_application_shape(
+    battle: Any,
+    publication: _TypedPublication,
+    entity_registry: dict[int, Any],
+) -> None:
+    """Cheap post-commit proof for structural/root fields owned by publication."""
+    snapshot = publication.snapshot
+    expected_active = [
+        int(row["id"])
+        for row in sorted(
+            (row for row in publication.publication_rows if row["active"]),
+            key=lambda row: int(row["encounter_index"]),
+        )
+    ]
+    if list(battle.entities) != expected_active:
+        raise ResidentPublicationError("typed publication active order was not applied")
+    if tuple(entity_registry) != tuple(
+        int(row["id"]) for row in publication.publication_rows
+    ):
+        raise ResidentPublicationError("typed publication registry order was not applied")
+    if (
+        battle.tick != snapshot["clock"]["tick"]
+        or battle.next_entity_id != snapshot["next_entity_id"]
+        or battle.rng.getstate()[1][-1] != snapshot["rng"]["index"]
+    ):
+        raise ResidentPublicationError("typed publication root state was not applied")
+
+
+def _after_typed_publication_commit(
+    battle: Any,
+    publication: _TypedPublication,
+    entity_registry: dict[int, Any],
+) -> None:
+    """Final typed commit guard and focused fault-injection seam."""
+    _require_live_application_shape(battle, publication, entity_registry)
+
+
 def publish_complete_tick_state(
     battle: Any,
     resident: ResidentRustBattle,
@@ -1557,110 +2522,117 @@ def publish_complete_tick_state(
     prior_resident: ResidentRustBattle,
     entity_registry: dict[int, Any],
 ) -> None:
-    """Atomically stage and publish one resident decision-boundary snapshot.
+    """Publish one authenticated typed resident boundary with one live commit."""
 
-    The registry is append-only and retains inactive Python tombstones so
-    projectile/source references keep their object identities after cleanup.
-    Native PointProjectile and DeathArea births are reconstructed off-dict,
-    then all state is staged on an isolated clone before live mutation.
-    """
+    legacy_overrides = {
+        "publication_entity_state_bytes",
+        "publication_battle_attribute_presence_bytes",
+        "publication_player_state_bytes",
+        "publication_exactness_sha256",
+    }.intersection(resident.__dict__)
+    if legacy_overrides:
+        raise ResidentPublicationError(
+            "legacy publication override rejected before typed publication"
+        )
 
-    original_snapshot = python_resident_semantic_snapshot(battle)
-    undo = _publication_undo_journal(battle, entity_registry)
-    snapshot = rust_resident_semantic_snapshot(resident)
-    try:
-        original_publication_rows = _publication_rows(prior_resident)
-        entity_payload = resident.publication_entity_state_bytes()
-        battle_presence_payload = (
-            resident.publication_battle_attribute_presence_bytes()
-        )
-        player_payload = resident.publication_player_state_bytes()
-        publication_rows = _decode_publication_rows(entity_payload)
-        battle_presence = _decode_battle_attribute_presence(
-            battle_presence_payload
-        )
-        player_rows = _decode_publication_player_rows(player_payload)
-        _validate_entity_attribute_presence(publication_rows)
-        _require_publication_exactness_attestation(
-            resident,
-            entity_payload,
-            battle_presence_payload,
-            player_payload,
-        )
-        if set(entity_registry) != {
-            int(row["id"]) for row in original_publication_rows
-        }:
-            raise ResidentPublicationError(
-                "resident publication registry disagrees with the prior resident"
+    loader_cards = battle.card_loader._cards
+    loader_cards_before = list(loader_cards.items())
+    raw_loader_definitions = getattr(battle.card_loader, "_card_definitions", None)
+    loader_definitions: dict[Any, Any] | None = (
+        cast(dict[Any, Any], raw_loader_definitions)
+        if isinstance(raw_loader_definitions, dict)
+        else None
+    )
+    loader_definitions_before = (
+        None
+        if not isinstance(loader_definitions, dict)
+        else list(loader_definitions.items())
+    )
+
+    def restore_loader_caches() -> None:
+        loader_cards.clear()
+        loader_cards.update(loader_cards_before)
+        if loader_definitions_before is not None and loader_definitions is not None:
+            loader_definitions.clear()
+            loader_definitions.update(loader_definitions_before)
+
+    def same_items(mapping: dict[Any, Any], before: list[tuple[Any, Any]]) -> bool:
+        return len(mapping) == len(before) and all(
+            actual_key == expected_key and actual_value is expected_value
+            for (actual_key, actual_value), (expected_key, expected_value) in zip(
+                mapping.items(), before, strict=True
             )
-        _validate_structure(
+        )
+
+    try:
+        prepared = resident.prepare_publication(prior_resident)
+        publication = _typed_publication_projection(prepared.parts())
+        _validate_typed_binding(
             battle,
-            snapshot,
-            resident=resident,
-            attest_live_action_stats=True,
-            publication_rows=publication_rows,
+            publication,
             entity_registry=entity_registry,
         )
+        _validate_structure(
+            battle,
+            publication.snapshot,
+            resident=resident,
+            attest_live_action_stats=True,
+            publication_rows=publication.publication_rows,
+            entity_registry=entity_registry,
+        )
+        prepared_births = _prepare_births(
+            battle,
+            resident=resident,
+            publication_rows=publication.publication_rows,
+            entity_registry=entity_registry,
+            attest_live_action_stats=True,
+        )
+        provisional_registry = dict(entity_registry)
+        provisional_registry.update(prepared_births)
+        projectile_group_plan = _plan_projectile_groups(
+            publication.publication_rows,
+            provisional_registry,
+        )
+        if (
+            not same_items(loader_cards, loader_cards_before)
+            or (
+                loader_definitions_before is not None
+                and loader_definitions is not None
+                and not same_items(loader_definitions, loader_definitions_before)
+            )
+        ):
+            restore_loader_caches()
+            raise ResidentPublicationError(
+                "typed publication preflight mutated the card-loader cache"
+            )
     except ResidentPublicationError:
-        undo.rollback()
+        restore_loader_caches()
         raise
     except (AttributeError, KeyError, OverflowError, TypeError, ValueError) as error:
-        undo.rollback()
+        restore_loader_caches()
         raise ResidentPublicationError(
-            "resident publication entity payload is malformed"
+            "typed resident publication is malformed"
         ) from error
 
-    try:
-        staged = battle.clone()
-        staged_registry = _clone_registry(battle, staged, entity_registry)
-        _validate_structure(
-            staged,
-            snapshot,
-            resident=resident,
-            attest_live_action_stats=False,
-            publication_rows=publication_rows,
-            entity_registry=staged_registry,
-        )
-        _apply_snapshot_unchecked(
-            staged,
-            resident,
-            snapshot,
-            publication_rows=publication_rows,
-            entity_registry=staged_registry,
-            attest_live_action_stats=False,
-            battle_presence=battle_presence,
-            player_rows=player_rows,
-        )
-        _require_exact_projection(staged, snapshot, stage="staging")
-    except ResidentPublicationError:
-        undo.rollback()
-        raise
-    except Exception as staging_error:
-        undo.rollback()
-        raise ResidentPublicationError(
-            "resident publication staging failed before live Python mutation"
-        ) from staging_error
-
+    undo = _live_publication_undo_journal(battle, entity_registry)
     try:
         _apply_snapshot_unchecked(
             battle,
             resident,
-            snapshot,
-            publication_rows=publication_rows,
+            publication.snapshot,
+            publication_rows=publication.publication_rows,
             entity_registry=entity_registry,
             attest_live_action_stats=True,
-            battle_presence=battle_presence,
-            player_rows=player_rows,
+            battle_presence=publication.battle_presence,
+            player_rows=publication.player_rows,
+            prepared_births=prepared_births,
+            projectile_group_plan=projectile_group_plan,
+            undo=undo,
         )
-        _require_exact_projection(battle, snapshot, stage="commit")
+        _after_typed_publication_commit(battle, publication, entity_registry)
     except Exception as commit_error:
         try:
             undo.rollback()
-            _require_exact_projection(
-                battle,
-                original_snapshot,
-                stage="rollback",
-            )
         except Exception as rollback_error:
             raise ResidentPublicationError(
                 "resident publication commit and rollback both failed; "

@@ -385,7 +385,9 @@ def test_corrupt_character_provenance_fails_before_live_mutation() -> None:
     entities_before = tuple(battle.entities.items())
     registry: dict[int, object] = dict(battle.entities)
 
-    with pytest.raises(ResidentPublicationError, match="attestation mismatch"):
+    with pytest.raises(
+        ResidentPublicationError, match="legacy publication override rejected"
+    ):
         publish_complete_tick_state(
             battle,
             candidate,
@@ -414,10 +416,10 @@ def test_character_provenance_shape_fails_closed(corruption: str) -> None:
     )["character_birth"]
     if corruption == "ordinal":
         provenance["ordinal"] = 17
-        expected = "attestation mismatch"
+        expected = "legacy publication override rejected"
     else:
         provenance["unexpected"] = True
-        expected = "attestation mismatch"
+        expected = "legacy publication override rejected"
     candidate.publication_entity_state_bytes = lambda: json.dumps(rows).encode()
     before = python_resident_semantic_snapshot(battle)
     registry: dict[int, object] = dict(battle.entities)
@@ -440,7 +442,9 @@ def test_malformed_publication_json_is_a_typed_publication_error() -> None:
     candidate = prior.fork()
     candidate.publication_entity_state_bytes = lambda: b"{not-json"
 
-    with pytest.raises(ResidentPublicationError, match="not valid JSON"):
+    with pytest.raises(
+        ResidentPublicationError, match="legacy publication override rejected"
+    ):
         publish_complete_tick_state(
             battle,
             candidate,
@@ -465,7 +469,9 @@ def test_death_spawn_provenance_tamper_fails_before_live_mutation() -> None:
     before = python_resident_semantic_snapshot(battle)
     registry: dict[int, object] = dict(battle.entities)
 
-    with pytest.raises(ResidentPublicationError, match="attestation mismatch"):
+    with pytest.raises(
+        ResidentPublicationError, match="legacy publication override rejected"
+    ):
         publish_complete_tick_state(
             battle,
             candidate,
@@ -530,19 +536,15 @@ def test_character_birth_commit_failure_rolls_back_loader_and_registry(
     entities_before = tuple(battle.entities.items())
     cache_before = tuple(battle.card_loader._cards.items())
     registry: dict[int, object] = dict(battle.entities)
-    exact_projection = rust_publication._require_exact_projection
-
     def reject_commit(
-        published_battle: BattleState,
-        snapshot: dict[str, object],
-        *,
-        stage: str,
+        *args: object,
+        **kwargs: object,
     ) -> None:
-        if stage == "commit":
-            raise ResidentPublicationError("injected commit failure")
-        exact_projection(published_battle, snapshot, stage=stage)
+        raise ResidentPublicationError("injected commit failure")
 
-    monkeypatch.setattr(rust_publication, "_require_exact_projection", reject_commit)
+    monkeypatch.setattr(
+        rust_publication, "_after_typed_publication_commit", reject_commit
+    )
 
     with pytest.raises(ResidentPublicationError, match="rolled back"):
         publish_complete_tick_state(
