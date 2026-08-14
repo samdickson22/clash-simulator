@@ -6,14 +6,16 @@ import random
 import struct
 from typing import Any
 
+import numpy as np
 import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Troop
+from clasher.entities import Building, Troop
 from clasher.pathfinding import ground_path_waypoint
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rust_core import (
+    _PREPARED_PUBLICATION_BEST_CONSUMER,
     _PREPARED_PUBLICATION_DELTA_CONSUMER,
     _PREPARED_PUBLICATION_RAW_CONSUMER,
     ResidentRustBattle,
@@ -26,7 +28,9 @@ from clasher.rust_differential import (
 )
 from clasher.rust_publication import (
     ResidentPublicationError,
+    _build_direct_delta_publication_plan,
     _build_direct_publication_plan,
+    _require_live_application_shape,
     _typed_publication_projection,
     publish_complete_tick_state,
 )
@@ -57,6 +61,45 @@ def _spawn_ready(
     troop._spawn_hook_pending = False
     troop._spawn_hook_fired = True
     return troop
+
+
+def _advance_python_movement(battle: BattleState) -> None:
+    for entity in list(battle.entities.values()):
+        if not isinstance(entity, (Troop, Building)) or not entity.is_alive:
+            continue
+        if isinstance(entity, Troop):
+            battle._accumulate_troop_collision_for(entity)
+        entity.begin_movement_tick()
+        try:
+            entity.update_movement_component(battle.dt, battle)
+        finally:
+            entity.finish_movement_tick(battle)
+            entity.quantize_logic_position()
+
+
+def _identity_projection(value: Any) -> Any:
+    if type(value) is float:
+        return ("float", struct.pack(">d", value))
+    if type(value) in (str, int, bool, type(None), bytes):
+        return (type(value), value)
+    if isinstance(value, np.ndarray):
+        return ("array", id(value), value.dtype.str, value.shape, value.tobytes())
+    if type(value) is list:
+        return ("list", id(value), tuple(_identity_projection(item) for item in value))
+    if type(value) is tuple:
+        return ("tuple", tuple(_identity_projection(item) for item in value))
+    if type(value) is dict:
+        return (
+            "dict",
+            id(value),
+            tuple(
+                (_identity_projection(key), _identity_projection(item))
+                for key, item in value.items()
+            ),
+        )
+    if type(value) is set:
+        return ("set", id(value), frozenset(_identity_projection(item) for item in value))
+    return ("object", id(value))
 
 
 def _prepared_scenarios() -> list[
@@ -731,15 +774,29 @@ def test_on_publication_uses_one_typed_crossing_and_no_legacy_or_clone(
     native_type = type(resident._native)
     prepared = resident.fork().prepare_publication(resident)
     prepared_type = type(prepared._native)
-    native_parts = prepared_type.parts
+    native_best_parts = prepared_type.best_parts
     crossings = 0
 
     def counted_parts(native: Any) -> Any:
         nonlocal crossings
         crossings += 1
-        return native_parts(native)
+        return native_best_parts(native)
 
-    monkeypatch.setattr(prepared_type, "parts", counted_parts)
+    monkeypatch.setattr(prepared_type, "best_parts", counted_parts)
+    monkeypatch.setattr(
+        prepared_type,
+        "parts",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("full prepared parts called")
+        ),
+    )
+    monkeypatch.setattr(
+        prepared_type,
+        "delta_parts",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("standalone delta parts called")
+        ),
+    )
     for name in (
         "publication_entity_state_bytes",
         "publication_player_state_bytes",
@@ -788,6 +845,360 @@ def test_on_publication_uses_one_typed_crossing_and_no_legacy_or_clone(
     assert crossings == 1
 
 
+def test_native_best_selector_uses_delta_for_common_and_full_for_arrows() -> None:
+    scenarios = _prepared_scenarios()
+    common = [scenarios[0]]
+    battle32 = BattleState(rng=random.Random(70_020), fast_path=True)
+    prior32 = ResidentRustBattle.from_battle(battle32)
+    candidate32 = prior32.fork()
+    assert candidate32.advance_complete_ticks(32) == 32
+    common.append((battle32, prior32, candidate32))
+    for _battle, prior, candidate in common:
+        envelope = candidate.prepare_publication(prior)._consume_best_parts(
+            _PREPARED_PUBLICATION_BEST_CONSUMER
+        )
+        assert envelope["kind"] == 1
+        assert envelope["full"] is None
+        assert type(envelope["delta"]) is dict
+
+    _battle, prior, candidate = scenarios[5]
+    envelope = candidate.prepare_publication(prior)._consume_best_parts(
+        _PREPARED_PUBLICATION_BEST_CONSUMER
+    )
+    assert envelope["kind"] == 0
+    assert type(envelope["full"]) is dict
+    assert envelope["delta"] is None
+    standalone_full = candidate.prepare_publication(prior)._consume_raw_parts(
+        _PREPARED_PUBLICATION_RAW_CONSUMER
+    )
+    _assert_bit_exact(envelope["full"], standalone_full)
+
+
+def test_native_best_delta_matches_standalone_shared_selection() -> None:
+    battle, prior, candidate = _prepared_scenarios()[0]
+    envelope = candidate.prepare_publication(prior)._consume_best_parts(
+        _PREPARED_PUBLICATION_BEST_CONSUMER
+    )
+    standalone = candidate.prepare_publication(prior)._consume_delta_parts(
+        _PREPARED_PUBLICATION_DELTA_CONSUMER
+    )
+    assert envelope["kind"] == 1
+    _assert_bit_exact(envelope["delta"], standalone)
+
+    plan = _build_direct_delta_publication_plan(
+        envelope["delta"],
+        battle=battle,
+        resident=candidate,
+        entity_registry=dict(battle.entities),
+    )
+    assert plan.active_entity_ids == tuple(battle.entities)
+
+
+def test_empty_delta_publication_does_not_touch_clean_identity_graph() -> None:
+    battle = BattleState(rng=random.Random(70_021), fast_path=True)
+    prior = ResidentRustBattle.from_battle(battle)
+    candidate = prior.fork()
+    registry = dict(battle.entities)
+    identities = {
+        "entities": id(battle.entities),
+        "rng": id(battle.rng),
+        "pending": id(battle._pending_spell_casts),
+        "hands": tuple(id(player.hand) for player in battle.players),
+        "queues": tuple(id(player.cycle_queue) for player in battle.players),
+        "positions": tuple(id(entity.position) for entity in registry.values()),
+    }
+    rng_state = battle.rng.getstate()
+
+    publish_complete_tick_state(
+        battle,
+        candidate,
+        prior_resident=prior,
+        entity_registry=registry,
+    )
+
+    assert id(battle.entities) == identities["entities"]
+    assert id(battle.rng) == identities["rng"]
+    assert id(battle._pending_spell_casts) == identities["pending"]
+    assert tuple(id(player.hand) for player in battle.players) == identities["hands"]
+    assert tuple(id(player.cycle_queue) for player in battle.players) == identities["queues"]
+    assert tuple(id(entity.position) for entity in registry.values()) == identities[
+        "positions"
+    ]
+    assert battle.rng.getstate() == rng_state
+
+
+def test_movement_only_river_jump_refreshes_air_cache_and_continues_exactly() -> None:
+    battle = BattleState(rng=random.Random(70_023), fast_path=True)
+    jumper = _spawn_ready(battle, "HogRider", 0, Position(9.0, 14.0))
+    jumper._movement_target_id = 6
+    battle._refresh_fast_path_caches()
+    control = battle.clone()
+    registry = dict(battle.entities)
+    prior = ResidentRustBattle.from_battle(battle)
+
+    for _ in range(11):
+        candidate = prior.fork()
+        candidate.advance_ground_movement_phase()
+        publish_complete_tick_state(
+            battle,
+            candidate,
+            prior_resident=prior,
+            entity_registry=registry,
+        )
+        _advance_python_movement(control)
+        assert python_resident_semantic_snapshot(battle) == (
+            python_resident_semantic_snapshot(control)
+        )
+        prior = candidate
+
+    before_position = (jumper.position.x, jumper.position.y)
+    candidate = prior.fork()
+    candidate.advance_ground_movement_phase()
+    delta = _delta_parts(candidate, prior)
+    change = next(row for row in delta["entities"] if row["id"] == jumper.id)
+    assert change["dirty_mask"] & (1 << 4)
+    assert not change["dirty_mask"] & (1 << 1)
+    plan = _build_direct_delta_publication_plan(
+        delta,
+        battle=battle,
+        resident=candidate,
+        entity_registry=registry,
+    )
+    assert plan.battle is None
+    assert plan.cache_dirty
+
+    publish_complete_tick_state(
+        battle,
+        candidate,
+        prior_resident=prior,
+        entity_registry=registry,
+    )
+    _advance_python_movement(control)
+    assert (jumper.position.x, jumper.position.y) == before_position
+    assert jumper._river_jump_active
+    target_index = battle._target_index_by_id[jumper.id]
+    assert bool(battle._target_is_air[target_index])
+    assert python_resident_semantic_snapshot(battle) == (
+        python_resident_semantic_snapshot(control)
+    )
+
+    prior = candidate
+    candidate = prior.fork()
+    candidate.advance_ground_movement_phase()
+    publish_complete_tick_state(
+        battle,
+        candidate,
+        prior_resident=prior,
+        entity_registry=registry,
+    )
+    _advance_python_movement(control)
+    assert python_resident_semantic_snapshot(battle) == (
+        python_resident_semantic_snapshot(control)
+    )
+    target_index = battle._target_index_by_id[jumper.id]
+    assert bool(battle._target_is_air[target_index])
+
+
+def test_combat_delta_refreshes_distance_discount_cache() -> None:
+    battle = BattleState(rng=random.Random(70_024), fast_path=True)
+    tower = battle.entities[1]
+    tower._native_target_distance_discount_sq_units = 6_400
+    battle.sync_fast_target_static_entity(tower)
+    prior = ResidentRustBattle.from_battle(battle)
+    candidate = prior.fork()
+    assert candidate.advance_complete_ticks(8) == 8
+    delta = _delta_parts(candidate, prior)
+    change = next(row for row in delta["entities"] if row["id"] == tower.id)
+    assert change["dirty_mask"] & (1 << 5)
+    assert not change["dirty_mask"] & (1 << 1)
+    registry = dict(battle.entities)
+    plan = _build_direct_delta_publication_plan(
+        delta,
+        battle=battle,
+        resident=candidate,
+        entity_registry=registry,
+    )
+    assert plan.cache_dirty
+
+    target_index = battle._target_index_by_id[tower.id]
+    battle._target_distance_discount_sq[target_index] = 123.0
+    publish_complete_tick_state(
+        battle,
+        candidate,
+        prior_resident=prior,
+        entity_registry=registry,
+    )
+    target_index = battle._target_index_by_id[tower.id]
+    assert battle._target_distance_discount_sq[target_index] == pytest.approx(0.0064)
+
+
+def test_spawn_angle_is_static_prefix_and_rejected_from_delta_base() -> None:
+    battle = BattleState(rng=random.Random(70_025), fast_path=True)
+    troop = _spawn_ready(battle, "Knight", 0, Position(9.0, 12.0))
+    troop.card_stats.spawn_angle_shift = 0.125
+    troop._movement_target_id = 6
+    prior = ResidentRustBattle.from_battle(battle)
+    candidate = prior.fork()
+    candidate.advance_ground_movement_phase()
+    full = _full_parts(candidate, prior)
+    full_row = next(row for row in full["entities"] if row["id"] == troop.id)
+    assert struct.pack(">d", full_row["spawn_angle_shift"]) == struct.pack(
+        ">d", 0.125
+    )
+
+    delta = _delta_parts(candidate, prior)
+    change = next(row for row in delta["entities"] if row["id"] == troop.id)
+    assert change["base"] is not None
+    assert "spawn_angle_shift" not in change["base"]
+    change["base"]["spawn_angle_shift"] = 0.125
+    with pytest.raises(ResidentPublicationError, match="keys|delta base|malformed"):
+        _build_direct_delta_publication_plan(
+            delta,
+            battle=battle,
+            resident=candidate,
+            entity_registry=dict(battle.entities),
+        )
+
+    action_battle, action_prior, action_candidate = _prepared_scenarios()[4]
+    action_delta = _delta_parts(action_candidate, action_prior)
+    births = [
+        row["full"]
+        for row in action_delta["entities"]
+        if row["dirty_mask"] == 1 << 10
+    ]
+    assert births
+    assert all(type(row["spawn_angle_shift"]) is float for row in births)
+    assert action_battle.next_entity_id == action_prior.next_entity_id
+
+
+def test_delta_next_entity_id_requires_battle_payload_and_is_always_postchecked() -> None:
+    battle, prior, candidate = _prepared_scenarios()[4]
+    delta = _delta_parts(candidate, prior)
+    assert delta["next_entity_id"] > delta["binding"]["prior_next_entity_id"]
+    assert delta["dirty_mask"] & 1
+    delta["dirty_mask"] &= ~1
+    delta["battle"] = None
+    delta["idle_eligible"] = None
+    with pytest.raises(ResidentPublicationError, match="next id.*battle payload"):
+        _build_direct_delta_publication_plan(
+            delta,
+            battle=battle,
+            resident=candidate,
+            entity_registry=dict(battle.entities),
+        )
+
+    empty_battle = BattleState(rng=random.Random(70_026), fast_path=True)
+    empty_prior = ResidentRustBattle.from_battle(empty_battle)
+    empty_candidate = empty_prior.fork()
+    empty_plan = _build_direct_delta_publication_plan(
+        _delta_parts(empty_candidate, empty_prior),
+        battle=empty_battle,
+        resident=empty_candidate,
+        entity_registry=dict(empty_battle.entities),
+    )
+    empty_battle.next_entity_id += 1
+    with pytest.raises(ResidentPublicationError, match="root state was not applied"):
+        _require_live_application_shape(
+            empty_battle, empty_plan, dict(empty_battle.entities)
+        )
+
+
+def test_cache_dirty_root_clean_failure_restores_exact_battle_bindings(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from clasher import rust_publication
+
+    battle = BattleState(rng=random.Random(70_027), fast_path=True)
+    troop = _spawn_ready(battle, "HogRider", 0, Position(9.0, 14.0))
+    troop._movement_target_id = 6
+    battle._refresh_fast_path_caches()
+    prior = ResidentRustBattle.from_battle(battle)
+    candidate = prior.fork()
+    candidate.advance_ground_movement_phase()
+    delta = _delta_parts(candidate, prior)
+    registry = dict(battle.entities)
+    plan = _build_direct_delta_publication_plan(
+        delta,
+        battle=battle,
+        resident=candidate,
+        entity_registry=registry,
+    )
+    assert plan.battle is None
+    assert plan.cache_dirty
+    before_battle = _identity_projection(vars(battle))
+    before_entities = {
+        entity_id: _identity_projection(vars(entity))
+        for entity_id, entity in registry.items()
+    }
+    before_semantic = python_resident_semantic_snapshot(battle)
+
+    def reject_commit(*_args: Any, **_kwargs: Any) -> None:
+        raise ResidentPublicationError("injected cache-dirty commit failure")
+
+    monkeypatch.setattr(
+        rust_publication, "_after_typed_publication_commit", reject_commit
+    )
+    with pytest.raises(ResidentPublicationError, match="rolled back"):
+        publish_complete_tick_state(
+            battle,
+            candidate,
+            prior_resident=prior,
+            entity_registry=registry,
+        )
+
+    assert _identity_projection(vars(battle)) == before_battle
+    assert {
+        entity_id: _identity_projection(vars(entity))
+        for entity_id, entity in registry.items()
+    } == before_entities
+    assert python_resident_semantic_snapshot(battle) == before_semantic
+
+
+@pytest.mark.parametrize(
+    "tamper",
+    (
+        "root_unknown_bit",
+        "root_missing_players",
+        "entity_unknown_bit",
+        "entity_missing_combat",
+        "entity_bool_exact",
+    ),
+)
+def test_direct_delta_plan_rejects_category_tamper_before_live_mutation(
+    tamper: str,
+) -> None:
+    battle = BattleState(rng=random.Random(70_022), fast_path=True)
+    prior = ResidentRustBattle.from_battle(battle)
+    candidate = prior.fork()
+    assert candidate.advance_complete_ticks(8) == 8
+    delta = candidate.prepare_publication(prior)._consume_delta_parts(
+        _PREPARED_PUBLICATION_DELTA_CONSUMER
+    )
+    before = tuple(battle.entities.items())
+    if tamper == "root_unknown_bit":
+        delta["dirty_mask"] |= 1 << 63
+    elif tamper == "root_missing_players":
+        assert delta["dirty_mask"] & (1 << 1)
+        delta["players"] = None
+    else:
+        change = next(row for row in delta["entities"] if row["dirty_mask"] & (1 << 5))
+        if tamper == "entity_unknown_bit":
+            change["dirty_mask"] |= 1 << 63
+        elif tamper == "entity_missing_combat":
+            change["locked_combat_state"] = None
+        else:
+            change["locked_combat_state"]["attack_cooldown"] = True
+
+    with pytest.raises(ResidentPublicationError, match="delta|mask|combat|publication"):
+        _build_direct_delta_publication_plan(
+            delta,
+            battle=battle,
+            resident=candidate,
+            entity_registry=dict(battle.entities),
+        )
+    assert tuple(battle.entities.items()) == before
+
+
 def test_typed_decoder_rejects_bool_exact_scalar() -> None:
     _battle, prior, candidate = _prepared_scenarios()[0]
     parts = candidate.prepare_publication(prior).parts()
@@ -834,6 +1245,9 @@ def test_direct_raw_structural_tampering_fails_before_live_mutation(
         mutate: Any,
     ) -> None:
         original_build = rust_publication._build_direct_publication_plan
+        prepared_type = type(candidate.prepare_publication(prior)._native)
+        native_best = prepared_type.best_parts
+        native_full = prepared_type.parts
 
         def mutate_then_build(raw: Any, **kwargs: Any) -> Any:
             mutate(raw)
@@ -843,6 +1257,16 @@ def test_direct_raw_structural_tampering_fails_before_live_mutation(
             rust_publication,
             "_build_direct_publication_plan",
             mutate_then_build,
+        )
+        monkeypatch.setattr(
+            prepared_type,
+            "best_parts",
+            lambda native: {
+                "version": 1,
+                "kind": 0,
+                "full": native_full(native),
+                "delta": None,
+            },
         )
         before = tuple(battle.entities.items())
         with pytest.raises(ResidentPublicationError):
@@ -856,6 +1280,7 @@ def test_direct_raw_structural_tampering_fails_before_live_mutation(
         monkeypatch.setattr(
             rust_publication, "_build_direct_publication_plan", original_build
         )
+        monkeypatch.setattr(prepared_type, "best_parts", native_best)
 
     projectile = BattleState(rng=random.Random(70_010), fast_path=True)
     projectile.entities.clear()

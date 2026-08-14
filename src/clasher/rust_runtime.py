@@ -205,9 +205,14 @@ class _DirectCausalBoundaryGuard:
             "initial_position",
             "damage_group_hit_entity_ids",
         )
-        for entity_plan in publication.entities:
-            entity = entity_registry[entity_plan.entity_id]
-            prefix = f"resident_entity_registry[{entity_plan.entity_id}]"
+        publication_ids = getattr(publication, "all_entity_ids", None)
+        if publication_ids is None:
+            publication_ids = tuple(
+                entity_plan.entity_id for entity_plan in publication.entities
+            )
+        for entity_id in publication_ids:
+            entity = entity_registry[entity_id]
+            prefix = f"resident_entity_registry[{entity_id}]"
             for field in optional_fields:
                 manage(getattr(entity, field, None), f"{prefix}.{field}")
 
@@ -356,11 +361,11 @@ class _DirectCausalBoundaryGuard:
                     entity_registry[entity_id],
                     f"resident_entity_registry[{entity_id}]",
                 )
-        for entity_plan in publication.entities:
-            if entity_plan.entity_id not in prior_ids:
+        for entity_id in publication_ids:
+            if entity_id not in prior_ids:
                 visit(
-                    entity_registry[entity_plan.entity_id],
-                    f"resident_entity_registry[{entity_plan.entity_id}]",
+                    entity_registry[entity_id],
+                    f"resident_entity_registry[{entity_id}]",
                 )
         for value, path in current_managed.values():
             visit(value, path)

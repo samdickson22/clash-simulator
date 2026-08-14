@@ -680,6 +680,7 @@ def _decode_prepared_publication_parts(value: Any) -> MappingProxyType[str, Any]
 _PREPARED_PUBLICATION_AUTHORITY: Final = object()
 _PREPARED_PUBLICATION_RAW_CONSUMER: Final = object()
 _PREPARED_PUBLICATION_DELTA_CONSUMER: Final = object()
+_PREPARED_PUBLICATION_BEST_CONSUMER: Final = object()
 
 
 class ResidentPreparedPublication:
@@ -764,6 +765,37 @@ class ResidentPreparedPublication:
             )
         if binding.get("semantic_schema_version") != 7:
             raise ValueError("unsupported resident prepared delta semantic schema")
+        return cast(dict[str, Any], value)
+
+    def _consume_best_parts(self, authority: object) -> dict[str, Any]:
+        """Return one native-selected full-or-delta graph to production."""
+        if authority is not _PREPARED_PUBLICATION_BEST_CONSUMER:
+            raise TypeError("best prepared publication consumption is runtime-owned")
+        if self._consumed:
+            raise RuntimeError("resident prepared publication was already consumed")
+        object.__setattr__(self, "_consumed", True)
+        value = self._native.best_parts()
+        if type(value) is not dict or set(value) != {
+            "version",
+            "kind",
+            "full",
+            "delta",
+        }:
+            raise TypeError("resident best publication envelope is malformed")
+        if (
+            type(value["version"]) is not int
+            or value["version"] != 1
+            or type(value["kind"]) is not int
+        ):
+            raise ValueError("unsupported resident best publication version")
+        if value["kind"] == 0:
+            if type(value["full"]) is not dict or value["delta"] is not None:
+                raise ValueError("resident best full publication is malformed")
+        elif value["kind"] == 1:
+            if type(value["delta"]) is not dict or value["full"] is not None:
+                raise ValueError("resident best delta publication is malformed")
+        else:
+            raise ValueError("resident best publication kind is unsupported")
         return cast(dict[str, Any], value)
 
 

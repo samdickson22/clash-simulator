@@ -14,6 +14,7 @@ const FNV_PRIME: u64 = 0x100000001b3;
 const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
+const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
 const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 7;
 
 const DELTA_BATTLE: u64 = 1 << 0;
@@ -5014,11 +5015,13 @@ impl ResidentEntity {
                     self.reward_traits.mana_cost,
                     self.reward_traits.hit_speed_ms,
                     self.deployment_collision_radius,
+                    self.spawn_angle_shift,
                 ],
                 [
                     other.reward_traits.mana_cost,
                     other.reward_traits.hit_speed_ms,
                     other.deployment_collision_radius,
+                    other.spawn_angle_shift,
                 ],
             )
             && self.reward_traits.summon_count == other.reward_traits.summon_count
@@ -5089,13 +5092,11 @@ impl ResidentEntity {
                     self.deploy_delay_remaining,
                     self.placement_delay_total,
                     self.freeze_expiry_time,
-                    self.spawn_angle_shift,
                 ],
                 [
                     other.deploy_delay_remaining,
                     other.placement_delay_total,
                     other.freeze_expiry_time,
-                    other.spawn_angle_shift,
                 ],
             )
     }
@@ -5445,7 +5446,6 @@ struct PreparedEntityBaseDelta {
     freeze_expiry_time: f64,
     death_spawn_target_immunity_elapsed_ms: i64,
     pending_projectile_max_duration_ms: i64,
-    spawn_angle_shift: f64,
 }
 
 impl From<&ResidentEntity> for PreparedEntityBaseDelta {
@@ -5468,7 +5468,6 @@ impl From<&ResidentEntity> for PreparedEntityBaseDelta {
             freeze_expiry_time: entity.freeze_expiry_time,
             death_spawn_target_immunity_elapsed_ms: entity.death_spawn_target_immunity_elapsed_ms,
             pending_projectile_max_duration_ms: entity.pending_projectile_max_duration_ms,
-            spawn_angle_shift: entity.spawn_angle_shift,
         }
     }
 }
@@ -5514,6 +5513,19 @@ struct PreparedPublicationDeltaParts {
     rng: Option<PythonMt19937>,
     pending_spells: Option<PreparedPendingSpellParts>,
     projectile_groups: Option<Vec<ResidentProjectileDamageGroup>>,
+}
+
+#[derive(IntoPyObject)]
+struct PreparedPublicationBestParts {
+    version: u64,
+    kind: u8,
+    full: Option<PreparedPublicationParts>,
+    delta: Option<PreparedPublicationDeltaParts>,
+}
+
+struct PreparedDeltaSelection {
+    dirty_mask: u64,
+    entity_masks: Vec<(usize, u64)>,
 }
 
 #[derive(IntoPyObject)]
@@ -5664,11 +5676,8 @@ impl PreparedPublication {
             catalog_source_fingerprint: candidate.catalog.source_fingerprint.clone(),
         }
     }
-}
 
-#[pymethods]
-impl PreparedPublication {
-    fn delta_parts(&self) -> PyResult<PreparedPublicationDeltaParts> {
+    fn delta_selection(&self) -> PyResult<PreparedDeltaSelection> {
         let prior = &self.prior;
         let candidate = &self.candidate;
         if !prior.publication_immutable_root_eq(candidate) {
@@ -5677,7 +5686,7 @@ impl PreparedPublication {
             ));
         }
         let mut dirty_mask = 0_u64;
-        let battle_changed = prior.sparse_attributes != candidate.sparse_attributes
+        if prior.sparse_attributes != candidate.sparse_attributes
             || prior.tick != candidate.tick
             || !publication_f64_fields_eq([prior.time, prior.dt], [candidate.time, candidate.dt])
             || prior.double_elixir != candidate.double_elixir
@@ -5689,49 +5698,51 @@ impl PreparedPublication {
             || prior.winner != candidate.winner
             || prior.win_conditions_dirty != candidate.win_conditions_dirty
             || prior.next_entity_id != candidate.next_entity_id
-            || prior.idle_eligible != candidate.idle_eligible;
-        if battle_changed {
+            || prior.idle_eligible != candidate.idle_eligible
+        {
             dirty_mask |= DELTA_BATTLE;
         }
-        let players_changed = prior.players.len() != candidate.players.len()
+        if prior.players.len() != candidate.players.len()
             || prior
                 .players
                 .iter()
                 .zip(&candidate.players)
-                .any(|(left, right)| !left.publication_exact_eq(right));
-        if players_changed {
+                .any(|(left, right)| !left.publication_exact_eq(right))
+        {
             dirty_mask |= DELTA_PLAYERS;
         }
-        let towers_changed = prior.towers.len() != candidate.towers.len()
+        if prior.towers.len() != candidate.towers.len()
             || prior
                 .towers
                 .iter()
                 .zip(&candidate.towers)
-                .any(|(left, right)| !left.publication_exact_eq(right));
-        if towers_changed {
+                .any(|(left, right)| !left.publication_exact_eq(right))
+        {
             dirty_mask |= DELTA_TOWERS;
         }
-        let rng_changed = prior.rng != candidate.rng;
-        if rng_changed {
+        if prior.rng != candidate.rng {
             dirty_mask |= DELTA_RNG;
         }
-        let pending_changed = prior.next_spell_cast_sequence != candidate.next_spell_cast_sequence
+        if prior.next_spell_cast_sequence != candidate.next_spell_cast_sequence
             || prior.pending_spell_casts.len() != candidate.pending_spell_casts.len()
             || prior
                 .pending_spell_casts
                 .iter()
                 .zip(&candidate.pending_spell_casts)
-                .any(|(left, right)| !left.publication_exact_eq(right));
-        if pending_changed {
+                .any(|(left, right)| !left.publication_exact_eq(right))
+        {
             dirty_mask |= DELTA_PENDING;
         }
-        let groups_changed = prior.projectile_damage_groups != candidate.projectile_damage_groups;
-        if groups_changed {
+        if prior.projectile_damage_groups != candidate.projectile_damage_groups {
             dirty_mask |= DELTA_GROUPS;
         }
 
-        let mut entities = Vec::new();
-        for (prior_entity, candidate_entity) in prior.entities.iter().zip(candidate.entities.iter())
+        let mut entity_masks = Vec::new();
+        for (index, (prior_entity, candidate_entity)) in prior
+            .entities
+            .iter()
+            .zip(candidate.entities.iter())
+            .enumerate()
         {
             if !prior_entity.publication_immutable_prefix_eq(candidate_entity) {
                 return Err(PyValueError::new_err(format!(
@@ -5791,16 +5802,26 @@ impl PreparedPublication {
                 entity_mask |= ENTITY_DELTA_AREA;
             }
             if entity_mask != 0 {
-                entities.push(prepared_entity_delta(candidate_entity, entity_mask, false));
+                entity_masks.push((index, entity_mask));
             }
         }
-        entities.extend(
-            candidate.entities[prior.entities.len()..]
-                .iter()
-                .map(|entity| prepared_entity_delta(entity, ENTITY_DELTA_FULL, true)),
+        entity_masks.extend(
+            (prior.entities.len()..candidate.entities.len())
+                .map(|index| (index, ENTITY_DELTA_FULL)),
         );
+        Ok(PreparedDeltaSelection {
+            dirty_mask,
+            entity_masks,
+        })
+    }
 
-        Ok(PreparedPublicationDeltaParts {
+    fn build_delta_parts(
+        &self,
+        selection: &PreparedDeltaSelection,
+    ) -> PreparedPublicationDeltaParts {
+        let candidate = &self.candidate;
+        let dirty_mask = selection.dirty_mask;
+        PreparedPublicationDeltaParts {
             version: PREPARED_PUBLICATION_DELTA_VERSION,
             binding: self.binding(),
             all_entity_ids: candidate.entities.iter().map(|entity| entity.id).collect(),
@@ -5812,21 +5833,32 @@ impl PreparedPublication {
                 .collect(),
             next_entity_id: candidate.next_entity_id,
             dirty_mask,
-            battle: battle_changed.then(|| prepared_battle_parts(candidate)),
-            idle_eligible: battle_changed.then_some(candidate.idle_eligible),
-            players: players_changed.then(|| candidate.players.clone()),
-            towers: towers_changed.then(|| candidate.towers.clone()),
-            entities,
-            rng: rng_changed.then(|| candidate.rng.clone()),
-            pending_spells: pending_changed.then(|| PreparedPendingSpellParts {
+            battle: (dirty_mask & DELTA_BATTLE != 0).then(|| prepared_battle_parts(candidate)),
+            idle_eligible: (dirty_mask & DELTA_BATTLE != 0).then_some(candidate.idle_eligible),
+            players: (dirty_mask & DELTA_PLAYERS != 0).then(|| candidate.players.clone()),
+            towers: (dirty_mask & DELTA_TOWERS != 0).then(|| candidate.towers.clone()),
+            entities: selection
+                .entity_masks
+                .iter()
+                .map(|(index, mask)| {
+                    prepared_entity_delta(
+                        &candidate.entities[*index],
+                        *mask,
+                        *mask == ENTITY_DELTA_FULL,
+                    )
+                })
+                .collect(),
+            rng: (dirty_mask & DELTA_RNG != 0).then(|| candidate.rng.clone()),
+            pending_spells: (dirty_mask & DELTA_PENDING != 0).then(|| PreparedPendingSpellParts {
                 next_sequence: candidate.next_spell_cast_sequence,
                 casts: candidate.pending_spell_casts.clone(),
             }),
-            projectile_groups: groups_changed.then(|| candidate.projectile_damage_groups.clone()),
-        })
+            projectile_groups: (dirty_mask & DELTA_GROUPS != 0)
+                .then(|| candidate.projectile_damage_groups.clone()),
+        }
     }
 
-    fn parts(&self) -> PreparedPublicationParts {
+    fn build_full_parts(&self) -> PreparedPublicationParts {
         let candidate = &self.candidate;
         PreparedPublicationParts {
             version: PREPARED_PUBLICATION_VERSION,
@@ -5846,6 +5878,51 @@ impl PreparedPublication {
             },
             projectile_groups: candidate.projectile_damage_groups.clone(),
         }
+    }
+}
+
+#[pymethods]
+impl PreparedPublication {
+    fn best_parts(&self) -> PyResult<PreparedPublicationBestParts> {
+        let selection = self.delta_selection()?;
+        let full_weight = self.candidate.entities.len().saturating_mul(11) + 12;
+        let delta_weight = (selection.dirty_mask.count_ones() as usize).saturating_mul(2)
+            + selection
+                .entity_masks
+                .iter()
+                .map(|(_, mask)| {
+                    if *mask == ENTITY_DELTA_FULL {
+                        11
+                    } else {
+                        mask.count_ones() as usize
+                    }
+                })
+                .sum::<usize>();
+        let use_delta = delta_weight.saturating_mul(100) <= full_weight.saturating_mul(70);
+        Ok(if use_delta {
+            PreparedPublicationBestParts {
+                version: PREPARED_PUBLICATION_BEST_VERSION,
+                kind: 1,
+                full: None,
+                delta: Some(self.build_delta_parts(&selection)),
+            }
+        } else {
+            PreparedPublicationBestParts {
+                version: PREPARED_PUBLICATION_BEST_VERSION,
+                kind: 0,
+                full: Some(self.build_full_parts()),
+                delta: None,
+            }
+        })
+    }
+
+    fn delta_parts(&self) -> PyResult<PreparedPublicationDeltaParts> {
+        let selection = self.delta_selection()?;
+        Ok(self.build_delta_parts(&selection))
+    }
+
+    fn parts(&self) -> PreparedPublicationParts {
+        self.build_full_parts()
     }
 }
 
