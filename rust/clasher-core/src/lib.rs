@@ -225,6 +225,101 @@ fn optional_position(fields: &Map<String, Value>, name: &str) -> PyResult<Option
     )))
 }
 
+fn normalized_path_cell(value: &Value) -> PyResult<(i64, i64)> {
+    let values = value
+        .get("$tuple")
+        .and_then(Value::as_array)
+        .ok_or_else(|| PyValueError::new_err("path cell is not a tuple"))?;
+    if values.len() != 2 {
+        return Err(PyValueError::new_err("path cell must have two values"));
+    }
+    let x = values[0]
+        .as_i64()
+        .ok_or_else(|| PyValueError::new_err("path cell x is not an integer"))?;
+    let y = values[1]
+        .as_i64()
+        .ok_or_else(|| PyValueError::new_err("path cell y is not an integer"))?;
+    Ok((x, y))
+}
+
+struct SingleRouteCacheInit {
+    supported: bool,
+    goal: Option<(i64, i64)>,
+    cells: Vec<(i64, i64)>,
+    backwards: bool,
+}
+
+fn normalized_single_route_cache(fields: &Map<String, Value>) -> PyResult<SingleRouteCacheInit> {
+    let cache_key = fields.get("_ground_path_cache_key");
+    let route_cells = fields.get("_native_ground_route_cells");
+    if cache_key.is_none() && route_cells.is_none() {
+        return Ok(SingleRouteCacheInit {
+            supported: true,
+            goal: None,
+            cells: Vec::new(),
+            backwards: false,
+        });
+    }
+    let Some(cache_key) = cache_key else {
+        return Ok(SingleRouteCacheInit {
+            supported: false,
+            goal: None,
+            cells: Vec::new(),
+            backwards: false,
+        });
+    };
+    if cache_key.is_null() {
+        return Ok(SingleRouteCacheInit {
+            supported: route_cells.is_none(),
+            goal: None,
+            cells: Vec::new(),
+            backwards: false,
+        });
+    }
+    let Some(key_values) = cache_key.get("$tuple").and_then(Value::as_array) else {
+        return Ok(SingleRouteCacheInit {
+            supported: false,
+            goal: None,
+            cells: Vec::new(),
+            backwards: false,
+        });
+    };
+    if key_values.len() != 2 || key_values[0].as_str() != Some("single") {
+        return Ok(SingleRouteCacheInit {
+            supported: false,
+            goal: None,
+            cells: Vec::new(),
+            backwards: false,
+        });
+    }
+    let goal = normalized_path_cell(&key_values[1])?;
+    let Some(route_values) = route_cells.and_then(Value::as_array) else {
+        return Ok(SingleRouteCacheInit {
+            supported: false,
+            goal: None,
+            cells: Vec::new(),
+            backwards: false,
+        });
+    };
+    let cells = route_values
+        .iter()
+        .map(normalized_path_cell)
+        .collect::<PyResult<Vec<_>>>()?;
+    let backwards = fields
+        .get("_ground_path_cache_backwards")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+    let goal_in_bounds = (0..36).contains(&goal.0) && (0..64).contains(&goal.1);
+    let supported =
+        !backwards && goal_in_bounds && (cells.is_empty() || cells.as_slice() == [goal]);
+    Ok(SingleRouteCacheInit {
+        supported,
+        goal: Some(goal),
+        cells,
+        backwards,
+    })
+}
+
 fn normalized_f64(fields: &Map<String, Value>, name: &str) -> PyResult<f64> {
     ExactScalar::from_normalized(
         fields
@@ -665,6 +760,16 @@ struct ResidentMovementState {
     is_hover: bool,
     native_avoidance: i64,
     native_natural_movement_active: bool,
+    stop_movement_after_ms: f64,
+    wait_ms: f64,
+    serialized_speed: f64,
+    charge_range_present: bool,
+    jump_height_present: bool,
+    kamikaze_primed: bool,
+    single_route_cache_supported: bool,
+    single_route_goal: Option<(i64, i64)>,
+    single_route_cells: Vec<(i64, i64)>,
+    single_route_backwards: bool,
     death_spawn_travel_ticks: i64,
     knockback_target_present: bool,
     knockback_velocity_work: i64,
@@ -682,10 +787,15 @@ impl ResidentMovementState {
     ) -> PyResult<Self> {
         let serialized_radius = optional_normalized_f64(card_fields, "collision_radius")?;
         let collision_radius = match entity_kind {
-            0 => serialized_radius.filter(|radius| *radius != 0.0).unwrap_or(0.5),
-            1 => serialized_radius.filter(|radius| *radius != 0.0).unwrap_or(0.0),
+            0 => serialized_radius
+                .filter(|radius| *radius != 0.0)
+                .unwrap_or(0.5),
+            1 => serialized_radius
+                .filter(|radius| *radius != 0.0)
+                .unwrap_or(0.0),
             _ => 0.0,
         };
+        let single_route_cache = normalized_single_route_cache(fields)?;
         Ok(Self {
             vector_x_units: required_i64(fields, "_movement_vector_x_units")?,
             vector_y_units: required_i64(fields, "_movement_vector_y_units")?,
@@ -705,6 +815,19 @@ impl ResidentMovementState {
                 fields,
                 "_native_natural_movement_active",
             ),
+            stop_movement_after_ms: optional_normalized_f64(card_fields, "stop_movement_after_ms")?
+                .unwrap_or(0.0),
+            wait_ms: optional_normalized_f64(card_fields, "wait_ms")?.unwrap_or(0.0),
+            serialized_speed: optional_normalized_f64(card_fields, "speed")?.unwrap_or(0.0),
+            charge_range_present: optional_normalized_f64(card_fields, "charge_range")?
+                .is_some_and(|value| value != 0.0),
+            jump_height_present: optional_normalized_f64(card_fields, "jump_height")?
+                .is_some_and(|value| value != 0.0),
+            kamikaze_primed: normalized_optional_bool(fields, "kamikaze_primed"),
+            single_route_cache_supported: single_route_cache.supported,
+            single_route_goal: single_route_cache.goal,
+            single_route_cells: single_route_cache.cells,
+            single_route_backwards: single_route_cache.backwards,
             death_spawn_travel_ticks: required_i64(fields, "_death_spawn_travel_ticks_remaining")?,
             knockback_target_present: fields
                 .get("_knockback_target")
@@ -2755,6 +2878,113 @@ impl ResidentBattle {
         Ok(sha256_hex(&self.stationary_movement_state_bytes()?))
     }
 
+    fn supports_flying_movement_phase(&self) -> bool {
+        let needs_live_projectile_reservations = self.entities.iter().any(|entity| {
+            entity.active
+                && entity.is_alive
+                && entity.locked_combat.as_ref().is_some_and(|combat| {
+                    combat.movement_target_id.is_some() && combat.point_weapon.is_some()
+                })
+        });
+        if needs_live_projectile_reservations
+            && self.entities.iter().any(|entity| {
+                entity.active
+                    && entity.is_alive
+                    && entity.entity_kind == 2
+                    && !entity
+                        .point_projectile
+                        .as_ref()
+                        .is_some_and(|projectile| projectile.unsupported.is_empty())
+            })
+        {
+            return false;
+        }
+        self.entities.iter().all(|entity| {
+            if !entity.active || !matches!(entity.entity_kind, 0 | 1) || !entity.is_alive {
+                return true;
+            }
+            let (Some(movement), Some(combat), Some(modifiers)) = (
+                entity.movement.as_ref(),
+                entity.locked_combat.as_ref(),
+                entity.modifier_state.as_ref(),
+            ) else {
+                return false;
+            };
+            let common = entity.deploy_delay_remaining <= 0.0
+                && entity.has_only_shield_mechanics()
+                && movement.vector_count >= 0
+                && movement.unit_mass.is_finite()
+                && movement.unit_mass > 0.0
+                && movement.collision_radius.is_finite()
+                && entity.position_x.as_f64().is_finite()
+                && entity.position_y.as_f64().is_finite()
+                && movement.pending_x.is_finite()
+                && movement.pending_y.is_finite()
+                && movement.death_spawn_travel_ticks == 0
+                && !movement.knockback_target_present
+                && movement.knockback_velocity_work == 0
+                && !movement.river_jump_active
+                && !movement.special_move_active
+                && !movement.special_move_consumed_tick
+                && !movement.forced_movement_active
+                && !movement.kamikaze_primed;
+            if !common || entity.entity_kind == 1 || combat.movement_target_id.is_none() {
+                return common;
+            }
+            (combat.is_air_unit || movement.is_hover)
+                && movement.single_route_cache_supported
+                && !movement.charge_range_present
+                && !movement.jump_height_present
+                && movement.stop_movement_after_ms == 0.0
+                && movement.wait_ms == 0.0
+                && movement.serialized_speed.is_finite()
+                && modifiers.speed.as_f64().is_finite()
+                && modifiers.original_speed.is_none_or(f64::is_finite)
+                && modifiers.slow_multiplier.is_finite()
+                && modifiers.movement_mode_multiplier.is_finite()
+                && modifiers.movement_speed_buff_multiplier.is_finite()
+        })
+    }
+
+    fn advance_flying_movement_phase(&mut self) -> PyResult<()> {
+        if !self.supports_flying_movement_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident flying movement preflight rejected unsupported natural movement",
+            ));
+        }
+        self.checkpoint_current = false;
+        self.refresh_lethal_projectile_reservations();
+        let movement_indices = self
+            .entities
+            .iter()
+            .enumerate()
+            .filter_map(|(index, entity)| {
+                (entity.active && entity.is_alive && matches!(entity.entity_kind, 0 | 1))
+                    .then_some(index)
+            })
+            .collect::<Vec<_>>();
+        for entity_index in movement_indices {
+            if self.entities[entity_index].entity_kind == 0 {
+                self.accumulate_stationary_collision_for(entity_index);
+            }
+            self.begin_resident_movement(entity_index);
+            if self.entities[entity_index].entity_kind == 0 {
+                self.update_resident_avoidance(entity_index);
+                self.advance_resident_flying_movement(entity_index);
+            }
+            self.finish_resident_movement(entity_index);
+        }
+        Ok(())
+    }
+
+    fn flying_movement_state_bytes(&self) -> PyResult<Vec<u8>> {
+        self.resident_flying_movement_state_bytes()
+    }
+
+    fn flying_movement_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.resident_flying_movement_state_bytes()?))
+    }
+
     fn supports_direct_combat_phase(&self) -> bool {
         self.entities.iter().all(|entity| {
             !entity.active
@@ -3679,6 +3909,522 @@ impl ResidentBattle {
         self.entities[entity_index]
             .position_y
             .set_f64(quantized_y as f64 / 1000.0);
+    }
+
+    fn movement_component_vector_logic_units(dx: i64, dy: i64, movement_units: i64) -> (i64, i64) {
+        if movement_units <= 0 || (dx == 0 && dy == 0) {
+            return (0, 0);
+        }
+        let squared = (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128;
+        let remaining = integer_sqrt(squared).max(1);
+        let capped = movement_units.min(remaining);
+        let direction_x = truncating_div(i128::from(dx) << 8, remaining);
+        let direction_y = truncating_div(i128::from(dy) << 8, remaining);
+        ((direction_x * capped) >> 8, (direction_y * capped) >> 8)
+    }
+
+    fn speed_work_for_duration(speed: i64, dt: f64) -> i64 {
+        let tick_count = dt.max(0.0) / 0.05;
+        let rounded_tick_count = tick_count.round_ties_even();
+        if (tick_count - rounded_tick_count).abs() <= 1e-9 {
+            speed.max(0) * rounded_tick_count as i64
+        } else {
+            (speed.max(0) as f64 * tick_count).round_ties_even() as i64
+        }
+    }
+
+    fn native_route_goal_cell(
+        mover_x: i64,
+        mover_y: i64,
+        target_x: i64,
+        target_y: i64,
+        required_range: i64,
+    ) -> Option<(i64, i64)> {
+        const CELL_SIZE: i64 = 500;
+        const PATH_WIDTH: i64 = 36;
+        const PATH_HEIGHT: i64 = 64;
+        let required_range = required_range.max(0);
+        let search_radius = required_range / CELL_SIZE + 1;
+        let target_cell_x = (target_x / CELL_SIZE).clamp(0, PATH_WIDTH - 1);
+        let target_cell_y = (target_y / CELL_SIZE).clamp(0, PATH_HEIGHT - 1);
+        let min_x = (target_cell_x - search_radius).max(0);
+        let max_x = (target_cell_x + search_radius).min(PATH_WIDTH - 1);
+        let min_y = (target_cell_y - search_radius).max(0);
+        let max_y = (target_cell_y + search_radius).min(PATH_HEIGHT - 1);
+        let required_range_sq = i128::from(required_range) * i128::from(required_range);
+        let mut best = None;
+        let mut best_mover_distance_sq = i128::from((1_i64 << 31) - 1);
+        for cell_y in min_y..=max_y {
+            let candidate_y = cell_y * CELL_SIZE + CELL_SIZE / 2;
+            let target_dy = candidate_y - target_y;
+            let mover_dy = candidate_y - mover_y;
+            for cell_x in min_x..=max_x {
+                let candidate_x = cell_x * CELL_SIZE + CELL_SIZE / 2;
+                let target_dx = candidate_x - target_x;
+                let target_distance_sq = i128::from(target_dx) * i128::from(target_dx)
+                    + i128::from(target_dy) * i128::from(target_dy);
+                if target_distance_sq > required_range_sq {
+                    continue;
+                }
+                let mover_dx = candidate_x - mover_x;
+                let mover_distance_sq = i128::from(mover_dx) * i128::from(mover_dx)
+                    + i128::from(mover_dy) * i128::from(mover_dy);
+                if mover_distance_sq < best_mover_distance_sq {
+                    best = Some((cell_x, cell_y));
+                    best_mover_distance_sq = mover_distance_sq;
+                }
+            }
+        }
+        best
+    }
+
+    fn resident_movement_component_stopped(&self, entity_index: usize) -> bool {
+        let entity = &self.entities[entity_index];
+        let combat = entity
+            .locked_combat
+            .as_ref()
+            .expect("resident troop requires combat state");
+        let movement = entity
+            .movement
+            .as_ref()
+            .expect("resident troop requires movement state");
+        combat.movement_target_id.is_none()
+            || entity.deploy_delay_remaining > 0.0
+            || combat.stun_timer > 0.0
+            || movement.kamikaze_primed
+    }
+
+    fn update_resident_avoidance(&mut self, entity_index: usize) {
+        let stopped = self.resident_movement_component_stopped(entity_index);
+        let (facing_x, facing_y) = {
+            let combat = self.entities[entity_index]
+                .locked_combat
+                .as_ref()
+                .expect("resident troop requires combat state");
+            normalized_vector_logic_units(combat.facing_x_units, combat.facing_y_units, 256)
+        };
+        if stopped || (facing_x == 0 && facing_y == 0) {
+            self.decay_resident_avoidance(entity_index);
+            return;
+        }
+        let entity = &self.entities[entity_index];
+        let own_x = logic_units(entity.position_x.as_f64());
+        let own_y = logic_units(entity.position_y.as_f64());
+        let probe_x = own_x + facing_x;
+        let probe_y = own_y + facing_y;
+        let probe_radius = entity.locked_combat.as_ref().map_or(0, |combat| {
+            logic_units(combat.collision_radius).clamp(0, 500)
+        });
+        let own_air = entity
+            .locked_combat
+            .as_ref()
+            .is_some_and(|combat| combat.is_air_unit)
+            || entity
+                .movement
+                .as_ref()
+                .is_some_and(|movement| movement.is_hover);
+        let mut moving_count = 0_i64;
+        let mut moving_side = 1_i64;
+        for (other_index, other) in self.entities.iter().enumerate() {
+            if other_index == entity_index
+                || !other.active
+                || !other.is_alive
+                || !matches!(other.entity_kind, 0 | 1)
+            {
+                continue;
+            }
+            let other_air = other
+                .locked_combat
+                .as_ref()
+                .is_some_and(|combat| combat.is_air_unit)
+                || other
+                    .movement
+                    .as_ref()
+                    .is_some_and(|movement| movement.is_hover);
+            if own_air != other_air {
+                continue;
+            }
+            let other_x = logic_units(other.position_x.as_f64());
+            let other_y = logic_units(other.position_y.as_f64());
+            let other_radius = other
+                .locked_combat
+                .as_ref()
+                .map_or(0, |combat| logic_units(combat.collision_radius).max(0));
+            let query_radius = probe_radius + other_radius;
+            let probe_dx = other_x - probe_x;
+            let probe_dy = other_y - probe_y;
+            if i128::from(probe_dx) * i128::from(probe_dx)
+                + i128::from(probe_dy) * i128::from(probe_dy)
+                > i128::from(query_radius) * i128::from(query_radius)
+            {
+                continue;
+            }
+            if other.entity_kind != 0 {
+                continue;
+            }
+            let relative_x = other_x - own_x;
+            let relative_y = other_y - own_y;
+            let cross = facing_y * relative_x - facing_x * relative_y;
+            let geometric_side = i64::from(cross < 0);
+            let direction_dot = if self.resident_movement_component_stopped(other_index) {
+                0
+            } else {
+                let other_combat = other
+                    .locked_combat
+                    .as_ref()
+                    .expect("resident troop requires combat state");
+                let (other_facing_x, other_facing_y) = normalized_vector_logic_units(
+                    other_combat.facing_x_units,
+                    other_combat.facing_y_units,
+                    256,
+                );
+                other_facing_x * facing_x + other_facing_y * facing_y
+            };
+            if direction_dot > 0 {
+                continue;
+            }
+            moving_count += 1;
+            let other_avoidance = other
+                .movement
+                .as_ref()
+                .map_or(0, |movement| movement.native_avoidance);
+            moving_side = if other_avoidance == 0 {
+                geometric_side
+            } else {
+                i64::from(other_avoidance > 0)
+            };
+        }
+        if moving_count > 0 {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state");
+            if movement.native_avoidance == 0 {
+                movement.native_avoidance = if moving_side != 0 { 200 } else { -200 };
+            }
+        }
+        self.decay_resident_avoidance(entity_index);
+    }
+
+    fn decay_resident_avoidance(&mut self, entity_index: usize) {
+        let movement = self.entities[entity_index]
+            .movement
+            .as_mut()
+            .expect("resident troop requires movement state");
+        if movement.native_avoidance < 0 {
+            movement.native_avoidance = (movement.native_avoidance + 10).min(0);
+        } else if movement.native_avoidance > 0 {
+            movement.native_avoidance = (movement.native_avoidance - 10).max(0);
+        }
+    }
+
+    fn resident_movement_target_valid(&self, actor_index: usize, target_index: usize) -> bool {
+        if actor_index == target_index {
+            return false;
+        }
+        let actor = &self.entities[actor_index];
+        let target = &self.entities[target_index];
+        let (Some(actor_state), Some(target_state)) =
+            (actor.locked_combat.as_ref(), target.locked_combat.as_ref())
+        else {
+            return false;
+        };
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        target.active
+            && target.is_alive
+            && target.player_id != actor.player_id
+            && !target_state.hidden_building
+            && target_state.stealth_until_ms <= now_ms
+            && target.death_spawn_target_immunity_elapsed_ms < 0
+            && !(actor_state.point_weapon.is_some()
+                && self.lethal_projectile_reservation_ids.contains(&target.id))
+    }
+
+    fn advance_resident_flying_movement(&mut self, entity_index: usize) {
+        let target_id = self.entities[entity_index]
+            .locked_combat
+            .as_ref()
+            .and_then(|combat| combat.movement_target_id);
+        let Some(target_id) = target_id else {
+            self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state")
+                .native_natural_movement_active = false;
+            return;
+        };
+        let target_index = self
+            .entities
+            .iter()
+            .position(|entity| entity.id == target_id && entity.active);
+        let Some(target_index) = target_index else {
+            self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state")
+                .native_natural_movement_active = false;
+            return;
+        };
+        let stunned = self.entities[entity_index]
+            .locked_combat
+            .as_ref()
+            .is_some_and(|combat| combat.stun_timer > 0.0);
+        if !self.resident_movement_target_valid(entity_index, target_index) || stunned {
+            self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state")
+                .native_natural_movement_active = false;
+            return;
+        }
+        self.entities[entity_index]
+            .movement
+            .as_mut()
+            .expect("resident troop requires movement state")
+            .native_natural_movement_active = true;
+        self.move_resident_flying_towards_target(entity_index, target_index);
+    }
+
+    fn move_resident_flying_towards_target(&mut self, entity_index: usize, target_index: usize) {
+        let previous_x = self.entities[entity_index].position_x.as_f64();
+        let previous_y = self.entities[entity_index].position_y.as_f64();
+        let target_x = self.entities[target_index].position_x.as_f64();
+        let target_y = self.entities[target_index].position_y.as_f64();
+        let required_range = self.entities[entity_index]
+            .locked_combat
+            .as_ref()
+            .map_or(0, |combat| logic_units(combat.range).max(0));
+        let goal = Self::native_route_goal_cell(
+            logic_units(previous_x),
+            logic_units(previous_y),
+            logic_units(target_x),
+            logic_units(target_y),
+            required_range,
+        );
+        let (waypoint_x, waypoint_y) = {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state");
+            if movement.single_route_goal != goal {
+                movement.single_route_goal = goal;
+                movement.single_route_cells = goal.into_iter().collect();
+                movement.single_route_backwards = false;
+            }
+            movement
+                .single_route_cells
+                .first()
+                .map_or((target_x, target_y), |(cell_x, cell_y)| {
+                    (
+                        (*cell_x * 500 + 250) as f64 / 1000.0,
+                        (*cell_y * 500 + 250) as f64 / 1000.0,
+                    )
+                })
+        };
+        if self.entities[entity_index]
+            .movement
+            .as_ref()
+            .is_some_and(|movement| movement.is_hover)
+        {
+            let origin_dx = logic_units(previous_x - target_x);
+            let origin_dy = logic_units(previous_y - target_y);
+            let waypoint_dx = logic_units(waypoint_x - target_x);
+            let waypoint_dy = logic_units(waypoint_y - target_y);
+            let origin_distance = integer_sqrt(
+                (i128::from(origin_dx) * i128::from(origin_dx)
+                    + i128::from(origin_dy) * i128::from(origin_dy)) as u128,
+            );
+            let waypoint_distance = integer_sqrt(
+                (i128::from(waypoint_dx) * i128::from(waypoint_dx)
+                    + i128::from(waypoint_dy) * i128::from(waypoint_dy)) as u128,
+            );
+            self.entities[entity_index]
+                .locked_combat
+                .as_mut()
+                .expect("resident troop requires combat state")
+                .ground_path_backwards = waypoint_distance > origin_distance;
+        }
+        let dx = waypoint_x - previous_x;
+        let dy = waypoint_y - previous_y;
+        let dx_units = logic_units(dx);
+        let dy_units = logic_units(dy);
+        if dx_units != 0 || dy_units != 0 {
+            let combat = self.entities[entity_index]
+                .locked_combat
+                .as_mut()
+                .expect("resident troop requires combat state");
+            combat.facing_x_units = dx_units;
+            combat.facing_y_units = dy_units;
+        }
+        let distance = (dx * dx + dy * dy).sqrt();
+        let (external_x, external_y) = {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state");
+            if movement.pending_consumed {
+                (0.0, 0.0)
+            } else {
+                movement.pending_consumed = true;
+                (movement.pending_x, movement.pending_y)
+            }
+        };
+        let external_x_units = logic_units(external_x);
+        let external_y_units = logic_units(external_y);
+        if distance > 0.0 {
+            let (effective_speed, avoidance) = {
+                let movement = self.entities[entity_index]
+                    .movement
+                    .as_ref()
+                    .expect("resident troop requires movement state");
+                let modifiers = self.entities[entity_index]
+                    .modifier_state
+                    .as_ref()
+                    .expect("resident troop requires modifier state");
+                let debuff = modifiers
+                    .slow_multiplier
+                    .max(0.0)
+                    .min(modifiers.movement_mode_multiplier.max(0.0));
+                let unslowed = modifiers.original_speed.unwrap_or_else(|| {
+                    if debuff > 1e-9 {
+                        modifiers.speed.as_f64() / debuff
+                    } else if movement.serialized_speed != 0.0 {
+                        movement.serialized_speed
+                    } else {
+                        modifiers.speed.as_f64()
+                    }
+                });
+                let base = unslowed.round_ties_even().max(0.0) as i64;
+                let debuff_percent = (debuff * 100.0).round_ties_even().max(0.0) as i64;
+                let buff_percent = (modifiers.movement_speed_buff_multiplier * 100.0)
+                    .round_ties_even()
+                    .max(0.0) as i64;
+                (
+                    (base * buff_percent / 100) * debuff_percent / 100,
+                    movement.native_avoidance,
+                )
+            };
+            let movement_work = Self::speed_work_for_duration(effective_speed, self.dt);
+            let target_distance = integer_sqrt(
+                (i128::from(dx_units) * i128::from(dx_units)
+                    + i128::from(dy_units) * i128::from(dy_units)) as u128,
+            )
+            .max(1);
+            let intended = movement_work.min(target_distance);
+            let (mut move_x, mut move_y) =
+                Self::movement_component_vector_logic_units(dx_units, dy_units, intended);
+            if avoidance != 0 {
+                let avoidance = avoidance.clamp(-256, 256);
+                let retained = 256 - avoidance.abs();
+                let rotated_x = ((retained * move_x) >> 8) + ((avoidance * move_y) >> 8);
+                let rotated_y = ((retained * move_y) >> 8) + ((-move_x * avoidance) >> 8);
+                (move_x, move_y) = normalized_vector_logic_units(rotated_x, rotated_y, intended);
+            }
+            let new_x = (logic_units(previous_x) + move_x + external_x_units) as f64 / 1000.0;
+            let new_y = (logic_units(previous_y) + move_y + external_y_units) as f64 / 1000.0;
+            self.entities[entity_index]
+                .position_x
+                .set_f64(new_x.clamp(0.25, self.arena_width_tiles as f64 - 0.25));
+            self.entities[entity_index]
+                .position_y
+                .set_f64(new_y.clamp(0.25, self.arena_height_tiles as f64 - 0.25));
+        } else if external_x.abs() > 1e-15 || external_y.abs() > 1e-15 {
+            let new_x = (logic_units(previous_x) + external_x_units) as f64 / 1000.0;
+            let new_y = (logic_units(previous_y) + external_y_units) as f64 / 1000.0;
+            self.entities[entity_index]
+                .position_x
+                .set_f64(new_x.clamp(0.25, self.arena_width_tiles as f64 - 0.25));
+            self.entities[entity_index]
+                .position_y
+                .set_f64(new_y.clamp(0.25, self.arena_height_tiles as f64 - 0.25));
+        }
+        self.advance_resident_single_route(
+            entity_index,
+            previous_x,
+            previous_y,
+            waypoint_x,
+            waypoint_y,
+        );
+    }
+
+    fn advance_resident_single_route(
+        &mut self,
+        entity_index: usize,
+        previous_x: f64,
+        previous_y: f64,
+        waypoint_x: f64,
+        waypoint_y: f64,
+    ) {
+        let current_x = self.entities[entity_index].position_x.as_f64();
+        let current_y = self.entities[entity_index].position_y.as_f64();
+        let movement = self.entities[entity_index]
+            .movement
+            .as_mut()
+            .expect("resident troop requires movement state");
+        let Some(&(cell_x, cell_y)) = movement.single_route_cells.first() else {
+            return;
+        };
+        if waypoint_x != (cell_x * 500 + 250) as f64 / 1000.0
+            || waypoint_y != (cell_y * 500 + 250) as f64 / 1000.0
+        {
+            return;
+        }
+        let (direction_x, direction_y) = normalized_vector_logic_units(
+            logic_units(waypoint_x - previous_x),
+            logic_units(waypoint_y - previous_y),
+            256,
+        );
+        let remaining_x = logic_units(waypoint_x - current_x);
+        let remaining_y = logic_units(waypoint_y - current_y);
+        let projected = truncating_div(i128::from(direction_y) * i128::from(remaining_y), 256)
+            + truncating_div(i128::from(direction_x) * i128::from(remaining_x), 256);
+        if projected < 1001 {
+            movement.single_route_cells.remove(0);
+        }
+    }
+
+    fn resident_flying_movement_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active && matches!(entity.entity_kind, 0 | 1))
+            .map(|entity| {
+                let movement = entity
+                    .movement
+                    .as_ref()
+                    .expect("character movement state parsed at initialization");
+                let combat = entity
+                    .locked_combat
+                    .as_ref()
+                    .expect("character combat state parsed at initialization");
+                json!({
+                    "encounter_index": entity.encounter_index,
+                    "facing_x_units": combat.facing_x_units,
+                    "facing_y_units": combat.facing_y_units,
+                    "ground_path_backwards": combat.ground_path_backwards,
+                    "id": entity.id,
+                    "native_avoidance": movement.native_avoidance,
+                    "native_natural_movement_active": movement.native_natural_movement_active,
+                    "pending_consumed": movement.pending_consumed,
+                    "pending_x": exact_f64_value(movement.pending_x),
+                    "pending_y": exact_f64_value(movement.pending_y),
+                    "position_x": entity.position_x.diagnostic_value(),
+                    "position_y": entity.position_y.diagnostic_value(),
+                    "single_route_backwards": movement.single_route_backwards,
+                    "single_route_cells": movement.single_route_cells,
+                    "single_route_goal": movement.single_route_goal,
+                    "vector_bypasses_cap": movement.vector_bypasses_cap,
+                    "vector_count": movement.vector_count,
+                    "vector_x_units": movement.vector_x_units,
+                    "vector_y_units": movement.vector_y_units,
+                })
+            })
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize flying movement state: {error}"
+            ))
+        })
     }
 
     fn refresh_lethal_projectile_reservations(&mut self) {
