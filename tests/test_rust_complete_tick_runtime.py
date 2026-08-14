@@ -81,15 +81,13 @@ def test_complete_tick_unsupported_state_falls_back_before_play() -> None:
     assert runtime.resident is None
 
 
-def test_complete_tick_on_fails_closed_until_publication_exists() -> None:
+def test_complete_tick_on_keeps_supported_resident_active() -> None:
     battle = BattleState(rng=random.Random(9904))
     runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
 
-    assert runtime.status.active_mode is RustBattleMode.OFF
-    assert runtime.status.fallback_reason == (
-        "resident complete-tick Python publication is not implemented"
-    )
-    assert runtime.resident is None
+    assert runtime.status.active_mode is RustBattleMode.ON
+    assert runtime.status.fallback_reason is None
+    assert runtime.resident is not None
 
 
 def test_complete_tick_shadow_detects_external_drift_before_advance() -> None:
