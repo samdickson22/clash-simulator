@@ -265,6 +265,153 @@ fn parse_resident_entities(payload: &[u8]) -> PyResult<Vec<ResidentEntity>> {
         .collect()
 }
 
+struct PythonMt19937 {
+    version: i64,
+    state: [u32; 624],
+    index: usize,
+    gauss_next: Option<ExactScalar>,
+}
+
+impl PythonMt19937 {
+    fn from_checkpoint(payload: &[u8]) -> PyResult<Self> {
+        let root: Value = serde_json::from_slice(payload).map_err(|error| {
+            PyValueError::new_err(format!("invalid battle checkpoint: {error}"))
+        })?;
+        let outer = root
+            .get("rng_state")
+            .and_then(|value| value.get("$tuple"))
+            .and_then(Value::as_array)
+            .ok_or_else(|| PyValueError::new_err("checkpoint has no Python RNG tuple"))?;
+        if outer.len() != 3 {
+            return Err(PyValueError::new_err(
+                "Python RNG outer state must have 3 items",
+            ));
+        }
+        let version = outer[0]
+            .as_i64()
+            .ok_or_else(|| PyValueError::new_err("Python RNG version is not an integer"))?;
+        if version != 3 {
+            return Err(PyValueError::new_err(format!(
+                "unsupported Python RNG version {version}; expected 3"
+            )));
+        }
+        let inner = outer[1]
+            .get("$tuple")
+            .and_then(Value::as_array)
+            .ok_or_else(|| PyValueError::new_err("Python RNG inner state is not a tuple"))?;
+        if inner.len() != 625 {
+            return Err(PyValueError::new_err(format!(
+                "Python RNG inner state has {} items; expected 625",
+                inner.len()
+            )));
+        }
+        let mut state = [0_u32; 624];
+        for (target, source) in state.iter_mut().zip(&inner[..624]) {
+            let word = source
+                .as_u64()
+                .ok_or_else(|| PyValueError::new_err("Python RNG word is not an unsigned int"))?;
+            *target = u32::try_from(word)
+                .map_err(|_| PyValueError::new_err("Python RNG word exceeds u32"))?;
+        }
+        let index_u64 = inner[624]
+            .as_u64()
+            .ok_or_else(|| PyValueError::new_err("Python RNG index is not unsigned"))?;
+        let index = usize::try_from(index_u64)
+            .map_err(|_| PyValueError::new_err("Python RNG index exceeds usize"))?;
+        if index > 624 {
+            return Err(PyValueError::new_err(format!(
+                "Python RNG index {index} exceeds 624"
+            )));
+        }
+        let gauss_next = if outer[2].is_null() {
+            None
+        } else {
+            Some(ExactScalar::from_normalized(&outer[2])?)
+        };
+        Ok(Self {
+            version,
+            state,
+            index,
+            gauss_next,
+        })
+    }
+
+    fn next_u32(&mut self) -> u32 {
+        const N: usize = 624;
+        const M: usize = 397;
+        const MATRIX_A: u32 = 0x9908_b0df;
+        const UPPER_MASK: u32 = 0x8000_0000;
+        const LOWER_MASK: u32 = 0x7fff_ffff;
+        if self.index >= N {
+            for index in 0..(N - M) {
+                let value = (self.state[index] & UPPER_MASK) | (self.state[index + 1] & LOWER_MASK);
+                self.state[index] = self.state[index + M]
+                    ^ (value >> 1)
+                    ^ if value & 1 == 0 { 0 } else { MATRIX_A };
+            }
+            for index in (N - M)..(N - 1) {
+                let value = (self.state[index] & UPPER_MASK) | (self.state[index + 1] & LOWER_MASK);
+                self.state[index] = self.state[index + M - N]
+                    ^ (value >> 1)
+                    ^ if value & 1 == 0 { 0 } else { MATRIX_A };
+            }
+            let value = (self.state[N - 1] & UPPER_MASK) | (self.state[0] & LOWER_MASK);
+            self.state[N - 1] =
+                self.state[M - 1] ^ (value >> 1) ^ if value & 1 == 0 { 0 } else { MATRIX_A };
+            self.index = 0;
+        }
+        let mut value = self.state[self.index];
+        self.index += 1;
+        value ^= value >> 11;
+        value ^= (value << 7) & 0x9d2c_5680;
+        value ^= (value << 15) & 0xefc6_0000;
+        value ^= value >> 18;
+        value
+    }
+
+    fn random(&mut self) -> f64 {
+        let first = u64::from(self.next_u32() >> 5);
+        let second = u64::from(self.next_u32() >> 6);
+        ((first << 26) + second) as f64 * (1.0 / 9_007_199_254_740_992.0)
+    }
+
+    fn getrandbits_u64(&mut self, bits: u32) -> u64 {
+        match bits {
+            0 => 0,
+            1..=32 => u64::from(self.next_u32() >> (32 - bits)),
+            33..=64 => {
+                let low = u64::from(self.next_u32());
+                let high_bits = bits - 32;
+                let high = u64::from(self.next_u32() >> (32 - high_bits));
+                low | (high << 32)
+            }
+            _ => unreachable!("u64 bit width"),
+        }
+    }
+
+    fn randbelow(&mut self, stop: u64) -> PyResult<u64> {
+        if stop == 0 {
+            return Err(PyValueError::new_err("randrange stop must be positive"));
+        }
+        let bits = 64 - stop.leading_zeros();
+        loop {
+            let value = self.getrandbits_u64(bits);
+            if value < stop {
+                return Ok(value);
+            }
+        }
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        json!({
+            "gauss_next": self.gauss_next.as_ref().map(ExactScalar::diagnostic_value),
+            "index": self.index,
+            "state": self.state.as_slice(),
+            "version": self.version,
+        })
+    }
+}
+
 type PlayerInit = (
     i64,
     f64,
@@ -501,6 +648,7 @@ struct ResidentBattle {
     tiebreaker_time: f64,
     winner: Option<i64>,
     entities: Vec<ResidentEntity>,
+    rng: PythonMt19937,
 }
 
 #[pymethods]
@@ -561,6 +709,7 @@ impl ResidentBattle {
         }
         let schema_version = validate_checkpoint(checkpoint)?;
         let entities = parse_resident_entities(checkpoint)?;
+        let rng = PythonMt19937::from_checkpoint(checkpoint)?;
         if refill_schedule.is_empty() {
             return Err(PyValueError::new_err("refill schedule cannot be empty"));
         }
@@ -599,6 +748,7 @@ impl ResidentBattle {
             tiebreaker_time,
             winner,
             entities,
+            rng,
         })
     }
 
@@ -840,6 +990,27 @@ impl ResidentBattle {
 
     fn entity_sha256(&self) -> PyResult<String> {
         Ok(sha256_hex(&self.entity_state_bytes()?))
+    }
+
+    fn rng_random(&mut self) -> f64 {
+        self.checkpoint_current = false;
+        self.rng.random()
+    }
+
+    fn rng_randrange(&mut self, stop: u64) -> PyResult<u64> {
+        let value = self.rng.randbelow(stop)?;
+        self.checkpoint_current = false;
+        Ok(value)
+    }
+
+    fn rng_state_bytes(&self) -> PyResult<Vec<u8>> {
+        serde_json::to_vec(&self.rng.diagnostic_value()).map_err(|error| {
+            PyRuntimeError::new_err(format!("failed to serialize resident RNG: {error}"))
+        })
+    }
+
+    fn rng_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.rng_state_bytes()?))
     }
 
     fn checkpoint_bytes(&self) -> PyResult<Vec<u8>> {

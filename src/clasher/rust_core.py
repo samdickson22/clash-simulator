@@ -331,6 +331,18 @@ class ResidentRustBattle:
     def entity_sha256(self) -> str:
         return str(self._native.entity_sha256())
 
+    def rng_random(self) -> float:
+        return float(self._native.rng_random())
+
+    def rng_randrange(self, stop: int) -> int:
+        return int(self._native.rng_randrange(stop))
+
+    def rng_state_bytes(self) -> bytes:
+        return bytes(self._native.rng_state_bytes())
+
+    def rng_sha256(self) -> str:
+        return str(self._native.rng_sha256())
+
     def checkpoint_bytes(self) -> bytes:
         return bytes(self._native.checkpoint_bytes())
 
@@ -601,6 +613,47 @@ def compare_resident_entities(
         f"path={difference.path} reason={difference.reason} "
         f"expected={difference.expected!r} actual={difference.actual!r}"
     )
+
+
+def resident_rng_state(rng: Any) -> dict[str, Any]:
+    version, inner, gauss_next = rng.getstate()
+    return {
+        "gauss_next": None if gauss_next is None else _exact_scalar(gauss_next),
+        "index": int(inner[-1]),
+        "state": [int(word) for word in inner[:-1]],
+        "version": int(version),
+    }
+
+
+def resident_rng_bytes(rng: Any) -> bytes:
+    return json.dumps(
+        resident_rng_state(rng),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_resident_rng(rng: Any, resident: ResidentRustBattle) -> None:
+    expected = resident_rng_state(rng)
+    actual = json.loads(resident.rng_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust RNG state mismatch")
+        raise AssertionError(
+            "resident Rust RNG parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(resident_rng_bytes(rng)).hexdigest()
+    actual_hash = resident.rng_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust RNG hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
 
 
 def apply_idle_state(battle: Any, resident: ResidentRustBattle) -> None:
