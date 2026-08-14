@@ -7,6 +7,7 @@ from clasher.battle import BattleState
 from clasher.cards.ice_spirit import IceSpiritFreeze
 from clasher.entities import Building, Troop
 from clasher.interaction_matrix import enabled_troop_cards
+from clasher.mechanics.shared.damage_ramp import DamageRamp
 from clasher.rust_core import (
     ResidentRustBattle,
     compare_character_object_phase,
@@ -98,7 +99,8 @@ def test_character_object_phase_is_card_general_and_fail_closed(
         )
     )
     compiled_count += sum(
-        type(mechanic) is IceSpiritFreeze for mechanic in troop.mechanics
+        type(mechanic) in (IceSpiritFreeze, DamageRamp)
+        for mechanic in troop.mechanics
     )
     if compiled_count != len(troop.mechanics):
         assert not resident.supports_character_object_phase

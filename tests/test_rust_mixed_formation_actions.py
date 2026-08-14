@@ -123,7 +123,7 @@ def test_catalog_structurally_qualifies_current_mixed_troop_formations() -> None
     }
     resident = ResidentRustBattle.from_battle(battle)
 
-    assert payload["schema_version"] == 10
+    assert payload["schema_version"] == 11
     assert set(mixed) == {"GoblinGang", "Rascals"}
     assert mixed["GoblinGang"]["summon_count"] == 6
     assert mixed["Rascals"]["summon_count"] == 3

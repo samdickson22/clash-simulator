@@ -45,7 +45,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 10
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 11
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -61,6 +61,7 @@ def _catalog_source_sha256(path: Path) -> str:
 
 def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str]:
     """Return data-driven reasons a card is outside resident troop actions."""
+    from .mechanics.shared.damage_ramp import DamageRamp
     from .mechanics.shared.death_area import DeathAreaEffect
     from .mechanics.shared.death_effects import DeathDamage, DeathSpawn
     from .mechanics.shared.shield import Shield
@@ -100,6 +101,7 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
     mechanic_types = tuple(type(mechanic) for mechanic in mechanics)
     supported_mechanic_family = (
         mechanic_types == (IceSpiritFreeze,)
+        or mechanic_types == (DamageRamp,)
         or all(
             mechanic_type in resident_death_mechanic_types
             for mechanic_type in mechanic_types
@@ -138,7 +140,13 @@ def _ordinary_building_capability_reasons(
         reasons.append("not_building")
     if str(getattr(card_stats, "card_type", "") or "").casefold() != "building":
         reasons.append("not_building_stats")
-    if tuple(getattr(card_def, "mechanics", ()) or ()):
+    from .mechanics.shared.damage_ramp import DamageRamp
+
+    mechanic_types = tuple(
+        type(mechanic)
+        for mechanic in tuple(getattr(card_def, "mechanics", ()) or ())
+    )
+    if mechanic_types not in ((), (DamageRamp,)):
         reasons.append("executable_mechanics")
     if not getattr(card_stats, "summon_character_data", None):
         reasons.append("missing_character_data")
@@ -1466,7 +1474,7 @@ def _decode_prepared_publication_parts(value: Any) -> MappingProxyType[str, Any]
     binding = frozen.get("binding")
     if not isinstance(binding, MappingProxyType):
         raise TypeError("resident prepared publication binding is not a mapping")
-    if binding.get("semantic_schema_version") != 10:
+    if binding.get("semantic_schema_version") != 11:
         raise ValueError("unsupported resident prepared semantic schema")
     return frozen
 
@@ -1536,7 +1544,7 @@ class ResidentPreparedPublication:
         binding = value.get("binding")
         if type(binding) is not dict:
             raise TypeError("resident prepared publication binding is not a mapping")
-        if binding.get("semantic_schema_version") != 10:
+        if binding.get("semantic_schema_version") != 11:
             raise ValueError("unsupported resident prepared semantic schema")
         return cast(dict[str, Any], value)
 
@@ -1557,7 +1565,7 @@ class ResidentPreparedPublication:
             raise TypeError(
                 "resident prepared publication delta binding is not a mapping"
             )
-        if binding.get("semantic_schema_version") != 10:
+        if binding.get("semantic_schema_version") != 11:
             raise ValueError("unsupported resident prepared delta semantic schema")
         return cast(dict[str, Any], value)
 
@@ -3596,16 +3604,48 @@ def compare_ground_movement_phase(
 
 
 def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
+    from .mechanics.shared.damage_ramp import DamageRamp
+
     rows: list[dict[str, Any]] = []
     for encounter_index, entity in enumerate(battle.entities.values()):
         if entity.entity_kind not in {0, 1}:
             continue
         initial_position = getattr(entity, "initial_position", None)
+        damage_ramp = next(
+            (
+                mechanic
+                for mechanic in entity.mechanics
+                if type(mechanic) is DamageRamp
+            ),
+            None,
+        )
         rows.append(
             {
                 "attack_cooldown": _exact_scalar(entity.attack_cooldown),
                 "attack_preload_blocked": bool(entity._attack_preload_blocked),
                 "attack_windup_active": bool(entity._attack_windup_active),
+                "damage_ramp": (
+                    None
+                    if damage_ramp is None
+                    else {
+                        "current_target_id": getattr(
+                            damage_ramp, "_current_target_id", None
+                        ),
+                        "current_target_ms": _exact_scalar(
+                            getattr(damage_ramp, "_current_target_ms", 0.0)
+                        ),
+                        "current_target_ms_present": (
+                            "_current_target_ms" in vars(damage_ramp)
+                        ),
+                        "current_target_present": (
+                            "_current_target_id" in vars(damage_ramp)
+                        ),
+                        "stages": [list(stage) for stage in damage_ramp.stages],
+                        "stored_original_damage": int(
+                            damage_ramp.stored_original_damage
+                        ),
+                    }
+                ),
                 "encounter_index": encounter_index,
                 "facing_x_units": int(entity._facing_x_units),
                 "facing_y_units": int(entity._facing_y_units),

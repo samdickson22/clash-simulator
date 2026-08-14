@@ -4086,7 +4086,6 @@ class Building(Entity):
             return
         target_in_range = bool(
             target is not None
-            and self.can_attack_target(target, is_current_target=True)
             and self.is_within_attack_clock_reach(target)
         )
         self.advance_attack_clock(dt, target_in_range=target_in_range)

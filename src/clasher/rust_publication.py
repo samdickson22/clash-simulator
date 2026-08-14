@@ -506,6 +506,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "collision_radius",
             "constructor_range",
             "damage",
+            "damage_ramp",
             "direct_area",
             "facing_x_units",
             "facing_y_units",
@@ -534,6 +535,17 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
         }
     ),
     "direct_area": frozenset({"radius_units", "self_centered"}),
+    "damage_ramp": frozenset(
+        {
+            "stages",
+            "stored_original_damage",
+            "current_target_present",
+            "current_target_id",
+            "current_target_ms_present",
+            "current_target_ms",
+        }
+    ),
+    "damage_ramp_stage": frozenset({"time_ms", "damage"}),
     "point_weapon": frozenset(
         {
             "travel_speed",
@@ -1434,6 +1446,63 @@ def _validate_direct_combat(value: Any, entity_id: int) -> None:
             )
     for field in ("last_combat_target_id", "movement_target_id"):
         _direct_optional_int(row[field], f"entity {entity_id} combat {field}")
+    _validate_direct_damage_ramp(row["damage_ramp"], entity_id, row["damage"])
+
+
+def _validate_direct_damage_ramp(
+    value: Any,
+    entity_id: int,
+    current_damage: float,
+) -> None:
+    if value is None:
+        return
+    row = _direct_dict(value, "damage_ramp")
+    stages = _direct_list(row["stages"], f"entity {entity_id} DamageRamp stages")
+    if len(stages) != 3:
+        raise ResidentPublicationError(
+            f"malformed direct entity {entity_id} DamageRamp stages"
+        )
+    normalized: list[tuple[int, int]] = []
+    for item in stages:
+        stage = _direct_dict(item, "damage_ramp_stage")
+        time_ms = _direct_int(
+            stage["time_ms"], f"entity {entity_id} DamageRamp time", minimum=0
+        )
+        damage = _direct_int(
+            stage["damage"], f"entity {entity_id} DamageRamp damage", minimum=0
+        )
+        normalized.append((time_ms, damage))
+    stored = _direct_int(
+        row["stored_original_damage"],
+        f"entity {entity_id} DamageRamp original damage",
+        minimum=0,
+    )
+    current_target_present = _direct_bool(
+        row["current_target_present"],
+        f"entity {entity_id} DamageRamp target presence",
+    )
+    current_ms_present = _direct_bool(
+        row["current_target_ms_present"],
+        f"entity {entity_id} DamageRamp timer presence",
+    )
+    current_target = _direct_optional_int(
+        row["current_target_id"], f"entity {entity_id} DamageRamp target"
+    )
+    current_ms = _direct_float(
+        row["current_target_ms"], f"entity {entity_id} DamageRamp timer"
+    )
+    if (
+        normalized[0][0] != 0
+        or not normalized[0][0] <= normalized[1][0] <= normalized[2][0]
+        or stored != normalized[0][1]
+        or current_target_present != current_ms_present
+        or current_ms < 0.0
+        or (current_target is None and current_ms != 0.0)
+        or current_damage not in {float(damage) for _, damage in normalized}
+    ):
+        raise ResidentPublicationError(
+            f"malformed direct entity {entity_id} DamageRamp state"
+        )
 
 
 def _validate_direct_building(row: dict[str, Any], entity_id: int) -> None:
@@ -2823,6 +2892,10 @@ def _validate_direct_full_delta_entity(
         None
         if row["locked_combat_state"] is None
         else row["locked_combat_state"]["movement_target_id"],
+        None
+        if row["locked_combat_state"] is None
+        or row["locked_combat_state"]["damage_ramp"] is None
+        else row["locked_combat_state"]["damage_ramp"]["current_target_id"],
         None if point is None else point["primary_target_id"],
         None if point is None else point["source_entity_id"],
         None if point is None else point["temporary_homing_target_id"],
@@ -2862,6 +2935,8 @@ def _validate_direct_changed_references(
         references.extend(
             (state["last_combat_target_id"], state["movement_target_id"])
         )
+        if state["damage_ramp"] is not None:
+            references.append(state["damage_ramp"]["current_target_id"])
     if mask & _ENTITY_DELTA_POINT and raw["point_projectile_state"] is not None:
         state = raw["point_projectile_state"]
         references.extend(
@@ -3736,10 +3811,34 @@ def _typed_combat(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
     state = entity["locked_combat_state"]
     if state is None:
         return None
+    damage_ramp = state["damage_ramp"]
     return {
         "attack_cooldown": _exact_float(state["attack_cooldown"]),
         "attack_preload_blocked": state["attack_preload_blocked"],
         "attack_windup_active": state["attack_windup_active"],
+        "damage_ramp": (
+            None
+            if damage_ramp is None
+            else {
+                "current_target_id": damage_ramp["current_target_id"],
+                "current_target_ms": _exact_float(
+                    damage_ramp["current_target_ms"]
+                ),
+                "current_target_ms_present": damage_ramp[
+                    "current_target_ms_present"
+                ],
+                "current_target_present": damage_ramp[
+                    "current_target_present"
+                ],
+                "stages": [
+                    [stage["time_ms"], stage["damage"]]
+                    for stage in damage_ramp["stages"]
+                ],
+                "stored_original_damage": damage_ramp[
+                    "stored_original_damage"
+                ],
+            }
+        ),
         "encounter_index": row["encounter_index"],
         "facing_x_units": state["facing_x_units"],
         "facing_y_units": state["facing_y_units"],
@@ -4850,6 +4949,7 @@ def _apply_combat(
             row["native_target_distance_discount_sq_units"]
         )
         entity.target_id = row["target_id"]
+        _apply_direct_damage_ramp(entity, row["damage_ramp"], undo)
 
 
 def _apply_buildings(
@@ -5838,6 +5938,38 @@ def _validate_direct_bound_entities(
             raise ResidentPublicationError(
                 f"resident entity {entity_plan.entity_id} status-nova topology changed"
             )
+        combat = row["locked_combat_state"]
+        damage_ramp = None if combat is None else combat["damage_ramp"]
+        ramp_mechanics = [
+            mechanic
+            for mechanic in entity.mechanics
+            if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+            == "clasher.mechanics.shared.damage_ramp.DamageRamp"
+        ]
+        if (damage_ramp is None) != (len(ramp_mechanics) == 0) or len(
+            ramp_mechanics
+        ) > 1:
+            raise ResidentPublicationError(
+                f"resident entity {entity_plan.entity_id} DamageRamp topology changed"
+            )
+        if damage_ramp is not None:
+            mechanic = ramp_mechanics[0]
+            expected_stages = [
+                (stage["time_ms"], stage["damage"])
+                for stage in damage_ramp["stages"]
+            ]
+            if (
+                type(mechanic.stages) is not list
+                or mechanic.stages != expected_stages
+                or mechanic.stored_original_damage
+                != damage_ramp["stored_original_damage"]
+                or mechanic.per_target is not True
+                or type(mechanic.target_timers) is not dict
+                or mechanic.target_timers
+            ):
+                raise ResidentPublicationError(
+                    f"resident entity {entity_plan.entity_id} DamageRamp static state changed"
+                )
 
 
 def _apply_publication_entity_rows(
@@ -6056,6 +6188,36 @@ def _apply_direct_status_nova_jump(entity: Any, state: Any) -> None:
         )
 
 
+def _apply_direct_damage_ramp(
+    entity: Any,
+    state: Any,
+    undo: _UndoJournal | None,
+) -> None:
+    mechanics = [
+        mechanic
+        for mechanic in entity.mechanics
+        if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+        == "clasher.mechanics.shared.damage_ramp.DamageRamp"
+    ]
+    if (state is None) != (len(mechanics) == 0) or len(mechanics) > 1:
+        raise ResidentPublicationError(
+            f"resident entity {entity.id} DamageRamp topology changed during commit"
+        )
+    if state is None:
+        return
+    mechanic = mechanics[0]
+    if undo is not None:
+        undo.watch_attrs(mechanic)
+    if state["current_target_present"]:
+        mechanic._current_target_id = state["current_target_id"]
+    else:
+        mechanic.__dict__.pop("_current_target_id", None)
+    if state["current_target_ms_present"]:
+        mechanic._current_target_ms = state["current_target_ms"]
+    else:
+        mechanic.__dict__.pop("_current_target_ms", None)
+
+
 def _apply_direct_entity(
     battle: Any,
     entity: Any,
@@ -6076,6 +6238,7 @@ def _apply_direct_entity(
     entity.freeze_expiry_time = row["freeze_expiry_time"]
     entity.hitpoints = _scalar(row["hitpoints"])
     entity.max_hitpoints = _scalar(row["max_hitpoints"])
+    entity.damage = _scalar(row["damage"])
     entity.is_alive = row["is_alive"]
     entity._pending_projectile_max_duration_ms = row[
         "pending_projectile_max_duration_ms"
@@ -6236,6 +6399,7 @@ def _apply_direct_entity(
         entity._native_target_distance_discount_sq_units = combat[
             "native_target_distance_discount_sq_units"
         ]
+        _apply_direct_damage_ramp(entity, combat["damage_ramp"], undo)
 
     lifetime = row["building_lifetime_state"]
     impact = row["building_impact_state"]
@@ -6714,6 +6878,7 @@ def _apply_direct_delta_entity(
             entity._last_combat_target_id = combat["last_combat_target_id"]
             entity._movement_target_id = combat["movement_target_id"]
             entity._native_target_distance_discount_sq_units = combat["native_target_distance_discount_sq_units"]
+            _apply_direct_damage_ramp(entity, combat["damage_ramp"], undo)
     if mask & _ENTITY_DELTA_BUILDING_LIFETIME:
         lifetime = raw["building_lifetime_state"]
         if lifetime is not None:

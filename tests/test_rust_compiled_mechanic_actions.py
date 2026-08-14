@@ -47,6 +47,8 @@ _MECHANIC_ACTION_CARDS = (
     "SkeletonWarriors",
     "IceGolem",
     "IceGolemite",
+    "InfernoDragon",
+    "InfernoTower",
 )
 
 
@@ -92,6 +94,8 @@ def test_catalog_admits_only_exact_compiled_mechanic_action_closure() -> None:
         "SkeletonWarriors",
         "IceGolem",
         "IceGolemite",
+        "InfernoDragon",
+        "InfernoTower",
     } <= supported
     assert "formation_runtime_preflight" in resident.resident_action_card_capability_reasons(
         "RoyalRecruits"
@@ -236,6 +240,21 @@ def test_compiled_mechanic_joint_actions_and_first_ticks_match_python(
     assert rust_resident_semantic_snapshot(resident) == (
         python_resident_semantic_snapshot(control)
     )
+    if card_name in {"InfernoDragon", "InfernoTower"}:
+        ramp_entities = [
+            entity
+            for entity in control.entities.values()
+            if getattr(entity.card_stats, "name", None) == card_name
+        ]
+        assert len(ramp_entities) == 2
+        for entity in ramp_entities:
+            ramp = next(
+                mechanic
+                for mechanic in entity.mechanics
+                if type(mechanic).__name__ == "DamageRamp"
+            )
+            assert "_current_target_id" not in vars(ramp)
+            assert "_current_target_ms" not in vars(ramp)
     for _ in range(8):
         assert resident.advance_complete_tick()
         control._step_logic_tick(refresh_fast_path_end=False)
@@ -283,8 +302,8 @@ def test_compiled_mechanic_action_off_shadow_on_and_delta_continuation(
     )
     assert shadow.status.shadow_mismatches == 0
 
-    assert off.step_logic_ticks(8) == 8
-    assert shadow.advance_ticks(8) == on.advance_ticks(8) == 8
+    assert off.step_logic_ticks(16) == 16
+    assert shadow.advance_ticks(16) == on.advance_ticks(16) == 16
     assert python_resident_semantic_snapshot(shadow_battle) == (
         python_resident_semantic_snapshot(off)
     )

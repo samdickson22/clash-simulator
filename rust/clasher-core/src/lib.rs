@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 10;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 11;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -3009,6 +3009,141 @@ impl BuildingLifetimeState {
     }
 }
 
+#[derive(Clone, IntoPyObject, PartialEq, Eq)]
+struct ResidentDamageRampStage {
+    time_ms: i64,
+    damage: i64,
+}
+
+#[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentDamageRampState {
+    stages: Vec<ResidentDamageRampStage>,
+    stored_original_damage: i64,
+    current_target_present: bool,
+    current_target_id: Option<i64>,
+    current_target_ms_present: bool,
+    current_target_ms: f64,
+}
+
+impl ResidentDamageRampState {
+    fn from_normalized(mechanic: &Value) -> PyResult<Self> {
+        let fields = object_fields(mechanic)?;
+        if !required_bool(fields, "per_target")?
+            || !normalized_mapping_is_empty(fields, "target_timers")?
+        {
+            return Err(PyValueError::new_err(
+                "DamageRamp has unsupported per-target state",
+            ));
+        }
+        let stage_values = fields
+            .get("stages")
+            .and_then(Value::as_array)
+            .ok_or_else(|| PyValueError::new_err("DamageRamp stages is not a list"))?;
+        if stage_values.len() != 3 {
+            return Err(PyValueError::new_err(
+                "DamageRamp must contain exactly three stages",
+            ));
+        }
+        let mut stages = Vec::with_capacity(3);
+        for value in stage_values {
+            let values = value
+                .get("$tuple")
+                .and_then(Value::as_array)
+                .ok_or_else(|| PyValueError::new_err("DamageRamp stage is not a tuple"))?;
+            if values.len() != 2 {
+                return Err(PyValueError::new_err(
+                    "DamageRamp stage must contain time and damage",
+                ));
+            }
+            let time_ms = values[0]
+                .as_i64()
+                .ok_or_else(|| PyValueError::new_err("DamageRamp time is not an integer"))?;
+            let damage = values[1]
+                .as_i64()
+                .ok_or_else(|| PyValueError::new_err("DamageRamp damage is not an integer"))?;
+            if time_ms < 0 || damage < 0 {
+                return Err(PyValueError::new_err(
+                    "DamageRamp stage is outside the supported range",
+                ));
+            }
+            stages.push(ResidentDamageRampStage { time_ms, damage });
+        }
+        if stages[0].time_ms != 0
+            || stages[0].time_ms > stages[1].time_ms
+            || stages[1].time_ms > stages[2].time_ms
+        {
+            return Err(PyValueError::new_err(
+                "DamageRamp stage times are not ordered",
+            ));
+        }
+        let stored_original_damage = required_i64(fields, "stored_original_damage")?;
+        if stored_original_damage != stages[0].damage {
+            return Err(PyValueError::new_err(
+                "DamageRamp original damage disagrees with its first stage",
+            ));
+        }
+        let current_target_present = fields.contains_key("_current_target_id");
+        let current_target_id =
+            match fields.get("_current_target_id") {
+                None | Some(Value::Null) => None,
+                Some(value) => Some(value.as_i64().ok_or_else(|| {
+                    PyValueError::new_err("DamageRamp current target is malformed")
+                })?),
+            };
+        let current_target_ms_present = fields.contains_key("_current_target_ms");
+        let current_target_ms = match fields.get("_current_target_ms") {
+            None => 0.0,
+            Some(value) => ExactScalar::from_normalized(value)?.as_f64(),
+        };
+        if current_target_present != current_target_ms_present
+            || !current_target_ms.is_finite()
+            || current_target_ms < 0.0
+            || (current_target_id.is_none() && current_target_ms != 0.0)
+        {
+            return Err(PyValueError::new_err(
+                "DamageRamp current lock state is malformed",
+            ));
+        }
+        Ok(Self {
+            stages,
+            stored_original_damage,
+            current_target_present,
+            current_target_id,
+            current_target_ms_present,
+            current_target_ms,
+        })
+    }
+
+    fn base_damage(&self) -> i64 {
+        self.stages[0].damage
+    }
+
+    fn damage_for_time(&self, time_ms: f64) -> i64 {
+        self.stages
+            .iter()
+            .rev()
+            .find(|stage| time_ms >= stage.time_ms as f64)
+            .map_or(self.stored_original_damage, |stage| stage.damage)
+    }
+
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.stages == other.stages && self.stored_original_damage == other.stored_original_damage
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        json!({
+            "current_target_id": self.current_target_id,
+            "current_target_ms": exact_f64_value(self.current_target_ms),
+            "current_target_ms_present": self.current_target_ms_present,
+            "current_target_present": self.current_target_present,
+            "stages": self.stages.iter().map(|stage| {
+                json!([stage.time_ms, stage.damage])
+            }).collect::<Vec<_>>(),
+            "stored_original_damage": self.stored_original_damage,
+        })
+    }
+}
+
 #[derive(Clone, IntoPyObject, PartialEq)]
 struct LockedDirectCombatState {
     damage: f64,
@@ -3048,6 +3183,7 @@ struct LockedDirectCombatState {
     allow_area_damage_when_invisible: bool,
     direct_area: Option<DirectAreaWeapon>,
     point_weapon: Option<PointWeapon>,
+    damage_ramp: Option<ResidentDamageRampState>,
 }
 
 #[derive(Clone, IntoPyObject, PartialEq, Eq)]
@@ -3350,6 +3486,7 @@ impl LockedDirectCombatState {
             ),
             direct_area,
             point_weapon,
+            damage_ramp: None,
         })
     }
 
@@ -3380,6 +3517,9 @@ impl LockedDirectCombatState {
             "attack_cooldown": exact_f64_value(self.attack_cooldown),
             "attack_preload_blocked": self.attack_preload_blocked,
             "attack_windup_active": self.attack_windup_active,
+            "damage_ramp": self.damage_ramp.as_ref().map(
+                ResidentDamageRampState::diagnostic_value
+            ),
             "encounter_index": entity.encounter_index,
             "facing_x_units": self.facing_x_units,
             "facing_y_units": self.facing_y_units,
@@ -3405,6 +3545,11 @@ impl ResidentEntity {
             == self.shields.len()
                 + self.death_opcodes.len()
                 + usize::from(self.status_nova_jump.is_some())
+                + usize::from(
+                    self.locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.damage_ramp.is_some()),
+                )
     }
 
     fn blocks_effects_while_committed(&self) -> bool {
@@ -3413,6 +3558,63 @@ impl ResidentEntity {
                 .movement
                 .as_ref()
                 .is_some_and(|movement| movement.special_move_active)
+    }
+
+    fn reset_damage_ramp_lock(&mut self) {
+        let Some(combat) = self.locked_combat.as_mut() else {
+            return;
+        };
+        let Some(ramp) = combat.damage_ramp.as_mut() else {
+            return;
+        };
+        ramp.current_target_present = true;
+        ramp.current_target_id = None;
+        ramp.current_target_ms_present = true;
+        ramp.current_target_ms = 0.0;
+        combat.damage = ramp.base_damage() as f64;
+        self.damage = ExactScalar::Int(ramp.base_damage());
+        self.target_id = None;
+    }
+
+    fn reset_damage_ramp_stage_for_shield_loss(&mut self, target_id: i64) {
+        if self.target_id != Some(target_id) {
+            return;
+        }
+        let Some(combat) = self.locked_combat.as_mut() else {
+            return;
+        };
+        let Some(ramp) = combat.damage_ramp.as_mut() else {
+            return;
+        };
+        if ramp.current_target_id != Some(target_id) {
+            return;
+        }
+        ramp.current_target_present = true;
+        ramp.current_target_ms_present = true;
+        ramp.current_target_ms = 0.0;
+        combat.damage = ramp.base_damage() as f64;
+        self.damage = ExactScalar::Int(ramp.base_damage());
+    }
+
+    fn damage_ramp_state_supported(&self, next_entity_id: i64) -> bool {
+        let Some(combat) = self.locked_combat.as_ref() else {
+            return true;
+        };
+        let Some(ramp) = combat.damage_ramp.as_ref() else {
+            return true;
+        };
+        ramp.current_target_present == ramp.current_target_ms_present
+            && ramp.current_target_ms.is_finite()
+            && ramp.current_target_ms >= 0.0
+            && ramp
+                .current_target_id
+                .is_none_or(|target_id| (0..next_entity_id).contains(&target_id))
+            && (ramp.current_target_id.is_some() || ramp.current_target_ms == 0.0)
+            && ramp
+                .stages
+                .iter()
+                .any(|stage| self.damage == ExactScalar::Int(stage.damage))
+            && combat.damage.to_bits() == self.damage.as_f64().to_bits()
     }
 
     fn fresh_catalog_deploy_state_supported(&self) -> bool {
@@ -3540,6 +3742,7 @@ impl ResidentEntity {
         self.sparse_attributes.insert("_last_combat_target_id");
         self.sparse_attributes.insert("_has_attacked_once");
         self.target_id = None;
+        self.reset_damage_ramp_lock();
     }
 
     fn projectile_target_traits(&self) -> Option<(bool, f64, i64, bool)> {
@@ -3587,6 +3790,7 @@ impl ResidentEntity {
         let mut shields = Vec::new();
         let mut death_opcodes = Vec::new();
         let mut status_nova_jump = None;
+        let mut damage_ramp = None;
         for mechanic in mechanic_values {
             match object_type(mechanic)?.as_str() {
                 "clasher.mechanics.shared.shield.Shield" => {
@@ -3618,6 +3822,14 @@ impl ResidentEntity {
                         fields,
                         card_fields,
                     )?);
+                }
+                "clasher.mechanics.shared.damage_ramp.DamageRamp" => {
+                    if damage_ramp.is_some() {
+                        return Err(PyValueError::new_err(
+                            "entity has multiple DamageRamp mechanics",
+                        ));
+                    }
+                    damage_ramp = Some(ResidentDamageRampState::from_normalized(mechanic)?);
                 }
                 _ => {}
             }
@@ -3661,11 +3873,13 @@ impl ResidentEntity {
         };
         let mut direct_combat_unsupported = Vec::new();
         let locked_combat = if is_character {
-            Some(LockedDirectCombatState::from_fields(
+            let mut state = LockedDirectCombatState::from_fields(
                 fields,
                 card_fields,
                 &mut direct_combat_unsupported,
-            )?)
+            )?;
+            state.damage_ramp = damage_ramp;
+            Some(state)
         } else {
             None
         };
@@ -3731,7 +3945,14 @@ impl ResidentEntity {
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
         }
-        if shields.len() + death_opcodes.len() + usize::from(status_nova_jump.is_some())
+        if shields.len()
+            + death_opcodes.len()
+            + usize::from(status_nova_jump.is_some())
+            + usize::from(
+                locked_combat
+                    .as_ref()
+                    .is_some_and(|combat| combat.damage_ramp.is_some()),
+            )
             != mechanics.len()
         {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
@@ -3836,6 +4057,29 @@ impl ResidentEntity {
             .as_f64();
             if !number.is_finite() {
                 direct_combat_unsupported.push(format!("nonfinite_{field}"));
+            }
+        }
+        if let Some(ramp) = locked_combat
+            .as_ref()
+            .and_then(|combat| combat.damage_ramp.as_ref())
+        {
+            let entity_damage = ExactScalar::from_normalized(
+                fields
+                    .get("damage")
+                    .ok_or_else(|| PyValueError::new_err("entity has no damage"))?,
+            )?;
+            let combat = locked_combat
+                .as_ref()
+                .expect("DamageRamp requires locked combat state");
+            if combat.point_weapon.is_some()
+                || combat.direct_area.is_some()
+                || combat.damage.to_bits() != entity_damage.as_f64().to_bits()
+                || !ramp
+                    .stages
+                    .iter()
+                    .any(|stage| entity_damage == ExactScalar::Int(stage.damage))
+            {
+                direct_combat_unsupported.push("damage_ramp_payload".to_owned());
             }
         }
         Ok(Self {
@@ -4187,7 +4431,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 10;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 11;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -5215,7 +5459,16 @@ impl ResidentCardCatalog {
                         })
                 };
                 let common_supported = |prototype: &ResidentEntity, expected_name: &str| {
+                    let damage_ramp_present = prototype
+                        .locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.damage_ramp.is_some());
                     let mechanic_family_supported = if prototype.status_nova_jump.is_some() {
+                        prototype.mechanics.len() == 1
+                            && prototype.shields.is_empty()
+                            && prototype.death_opcodes.is_empty()
+                            && !damage_ramp_present
+                    } else if damage_ramp_present {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
@@ -5223,11 +5476,24 @@ impl ResidentCardCatalog {
                         prototype.mechanics.len()
                             == prototype.shields.len() + prototype.death_opcodes.len()
                     };
+                    let damage_ramp_fresh = prototype
+                        .locked_combat
+                        .as_ref()
+                        .and_then(|combat| combat.damage_ramp.as_ref().map(|ramp| (combat, ramp)))
+                        .is_none_or(|(combat, ramp)| {
+                            !ramp.current_target_present
+                                && !ramp.current_target_ms_present
+                                && ramp.current_target_id.is_none()
+                                && ramp.current_target_ms.to_bits() == 0.0_f64.to_bits()
+                                && combat.damage.to_bits() == (ramp.base_damage() as f64).to_bits()
+                                && prototype.damage == ExactScalar::Int(ramp.base_damage())
+                        });
                     prototype.active
                         && prototype.is_alive
                         && prototype.card_name == expected_name
                         && prototype.has_only_compiled_mechanics()
                         && mechanic_family_supported
+                        && damage_ramp_fresh
                         && prototype.shields.iter().all(|shield| {
                             shield.current == shield.maximum && shield.current.as_f64() > 0.0
                         })
@@ -6415,6 +6681,18 @@ impl PublicationExactEq for LockedDirectCombatState {
                 (Some(left), Some(right)) => left.publication_exact_eq(right),
                 _ => false,
             }
+            && publication_option_exact_eq(&self.damage_ramp, &other.damage_ramp)
+    }
+}
+
+impl PublicationExactEq for ResidentDamageRampState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.stages == other.stages
+            && self.stored_original_damage == other.stored_original_damage
+            && self.current_target_present == other.current_target_present
+            && self.current_target_id == other.current_target_id
+            && self.current_target_ms_present == other.current_target_ms_present
+            && publication_f64_eq(self.current_target_ms, other.current_target_ms)
     }
 }
 
@@ -6511,9 +6789,13 @@ impl LockedDirectCombatState {
                 (Some(left), Some(right)) => left.publication_exact_eq(right),
                 _ => false,
             }
+            && match (&self.damage_ramp, &other.damage_ramp) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
             && publication_f64_fields_eq(
                 [
-                    self.damage,
                     self.range,
                     self.sight_range,
                     self.collision_radius,
@@ -6522,7 +6804,6 @@ impl LockedDirectCombatState {
                     self.sight_clip_side,
                 ],
                 [
-                    other.damage,
                     other.range,
                     other.sight_range,
                     other.collision_radius,
@@ -8886,7 +9167,7 @@ impl ResidentBattle {
             let Some(actor_state) = actor.locked_combat.as_ref() else {
                 return false;
             };
-            if actor_state.point_weapon.is_some() {
+            if actor_state.point_weapon.is_some() || actor_state.damage_ramp.is_some() {
                 return false;
             }
             let Some(target_id) = actor.target_id else {
@@ -9057,6 +9338,7 @@ impl ResidentBattle {
                                     && entity.direct_combat_unsupported.as_slice()
                                         == ["active_river_jump", "active_special_move"]);
                         unsupported_reasons_allowed
+                            && entity.damage_ramp_state_supported(self.next_entity_id)
                             && !entity.movement.as_ref().is_some_and(|movement| {
                                 let supported_river_transition = movement.jump_height_present
                                     && !movement.special_move_active
@@ -9278,8 +9560,17 @@ impl ResidentBattle {
                     self.entities[index].position_y.as_f64(),
                 )
             });
-            let target_in_range =
-                target_index.is_some_and(|index| self.direct_attack_reach(actor_index, index));
+            let damage_ramp_connected =
+                self.observe_damage_ramp_target(actor_index, target_index, step_dt);
+            let target_in_range = if self.entities[actor_index]
+                .locked_combat
+                .as_ref()
+                .is_some_and(|combat| combat.damage_ramp.is_some() && combat.attack_windup_active)
+            {
+                target_index.is_some_and(|index| self.direct_keep_reach(actor_index, index))
+            } else {
+                damage_ramp_connected
+            };
             let actor_position = (
                 self.entities[actor_index].position_x.clone(),
                 self.entities[actor_index].position_y.clone(),
@@ -9351,6 +9642,17 @@ impl ResidentBattle {
                         if has_status_nova_jump {
                             Some(CombatPayload::StatusNovaJump)
                         } else {
+                            if let Some(ramp) = state.damage_ramp.as_mut() {
+                                if ramp.current_target_id != target_id {
+                                    ramp.current_target_present = true;
+                                    ramp.current_target_id = target_id;
+                                    ramp.current_target_ms_present = true;
+                                    ramp.current_target_ms = 0.0;
+                                }
+                                let damage = ramp.damage_for_time(ramp.current_target_ms);
+                                state.damage = damage as f64;
+                                actor.damage = ExactScalar::Int(damage);
+                            }
                             state.attack_cooldown = state.base_attack_interval();
                             state.attack_windup_active = false;
                             state.has_attacked_once = true;
@@ -12500,6 +12802,14 @@ impl ResidentBattle {
             combat.last_combat_target_id = None;
             combat.movement_target_id = None;
             combat.initial_position = None;
+            if let Some(ramp) = combat.damage_ramp.as_mut() {
+                ramp.current_target_present = false;
+                ramp.current_target_id = None;
+                ramp.current_target_ms_present = false;
+                ramp.current_target_ms = 0.0;
+                combat.damage = ramp.base_damage() as f64;
+                entity.damage = ExactScalar::Int(ramp.base_damage());
+            }
         }
         entity
     }
@@ -14996,7 +15306,16 @@ impl ResidentBattle {
     }
 
     fn apply_resident_damage(&mut self, target_index: usize, damage: f64) {
+        let previous_shield_break_count = self.entities[target_index].shield_break_count;
         let damage = self.entities[target_index].apply_incoming_damage(damage);
+        if self.entities[target_index].shield_break_count != previous_shield_break_count {
+            let target_id = self.entities[target_index].id;
+            for observer in &mut self.entities {
+                if observer.active && observer.is_alive {
+                    observer.reset_damage_ramp_stage_for_shield_loss(target_id);
+                }
+            }
+        }
         if damage <= 0.0 {
             return;
         }
@@ -15523,6 +15842,7 @@ impl ResidentBattle {
         self.entities[target_index]
             .sparse_attributes
             .insert("_has_attacked_once");
+        self.entities[target_index].reset_damage_ramp_lock();
     }
 
     fn sync_resident_tower(&mut self, entity_index: usize) {
@@ -16105,6 +16425,79 @@ impl ResidentBattle {
         };
         self.direct_target_distance(actor_index, target_index)
             <= actor_state.range + target_state.collision_radius + extension + 1e-8
+    }
+
+    fn observe_damage_ramp_target(
+        &mut self,
+        actor_index: usize,
+        target_index: Option<usize>,
+        step_dt: f64,
+    ) -> bool {
+        let Some(ramp) = self.entities[actor_index]
+            .locked_combat
+            .as_ref()
+            .and_then(|combat| combat.damage_ramp.as_ref())
+        else {
+            return target_index
+                .is_some_and(|target_index| self.direct_attack_reach(actor_index, target_index));
+        };
+        let target_id = target_index.map(|index| self.entities[index].id);
+        let current_target_id = ramp.current_target_id;
+        let connected = target_index.is_some_and(|target_index| {
+            let actor = &self.entities[actor_index];
+            let combat = actor
+                .locked_combat
+                .as_ref()
+                .expect("DamageRamp actor requires combat state");
+            let target = &self.entities[target_index];
+            let target_combat = target
+                .locked_combat
+                .as_ref()
+                .expect("DamageRamp target requires combat state");
+            let approach_reduction =
+                if actor.entity_kind == 0 && current_target_id != Some(target.id) {
+                    0.5
+                } else {
+                    0.0
+                };
+            combat.stun_timer <= 0.0
+                && self.direct_target_valid(actor_index, target_index)
+                && self.direct_target_distance(actor_index, target_index)
+                    <= (combat.range - approach_reduction).max(0.0)
+                        + target_combat.collision_radius
+                        + 1e-8
+        });
+        let attack_rate = self.entities[actor_index]
+            .locked_combat
+            .as_ref()
+            .expect("DamageRamp actor requires combat state")
+            .attack_rate();
+        let actor = &mut self.entities[actor_index];
+        let combat = actor
+            .locked_combat
+            .as_mut()
+            .expect("DamageRamp actor requires combat state");
+        let ramp = combat
+            .damage_ramp
+            .as_mut()
+            .expect("DamageRamp actor retains ramp state");
+        ramp.current_target_present = true;
+        ramp.current_target_ms_present = true;
+        if !connected {
+            ramp.current_target_id = None;
+            ramp.current_target_ms = 0.0;
+            combat.damage = ramp.base_damage() as f64;
+            actor.damage = ExactScalar::Int(ramp.base_damage());
+            return false;
+        }
+        if ramp.current_target_id != target_id {
+            ramp.current_target_id = target_id;
+            ramp.current_target_ms = 0.0;
+            combat.damage = ramp.base_damage() as f64;
+            actor.damage = ExactScalar::Int(ramp.base_damage());
+        }
+        ramp.current_target_ms += step_dt * 1000.0 * attack_rate.max(0.0);
+        true
     }
 
     fn direct_keep_reach(&self, actor_index: usize, target_index: usize) -> bool {

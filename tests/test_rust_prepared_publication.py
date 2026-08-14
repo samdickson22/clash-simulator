@@ -250,6 +250,31 @@ def _typed_basic_semantic(parts: MappingProxyType[str, Any]) -> dict[str, Any]:
                     "attack_cooldown": _float_scalar(combat["attack_cooldown"]),
                     "attack_preload_blocked": combat["attack_preload_blocked"],
                     "attack_windup_active": combat["attack_windup_active"],
+                    "damage_ramp": (
+                        None
+                        if combat["damage_ramp"] is None
+                        else {
+                            "current_target_id": combat["damage_ramp"][
+                                "current_target_id"
+                            ],
+                            "current_target_ms": _float_scalar(
+                                combat["damage_ramp"]["current_target_ms"]
+                            ),
+                            "current_target_ms_present": combat["damage_ramp"][
+                                "current_target_ms_present"
+                            ],
+                            "current_target_present": combat["damage_ramp"][
+                                "current_target_present"
+                            ],
+                            "stages": [
+                                [stage["time_ms"], stage["damage"]]
+                                for stage in combat["damage_ramp"]["stages"]
+                            ],
+                            "stored_original_damage": combat["damage_ramp"][
+                                "stored_original_damage"
+                            ],
+                        }
+                    ),
                     "encounter_index": row["encounter_index"],
                     "facing_x_units": combat["facing_x_units"],
                     "facing_y_units": combat["facing_y_units"],
@@ -396,9 +421,9 @@ def test_prepared_parts_are_owned_frozen_and_match_legacy_root_rows() -> None:
 
     assert isinstance(parts, MappingProxyType)
     assert parts["version"] == 1
-    assert parts["binding"]["semantic_schema_version"] == 10
+    assert parts["binding"]["semantic_schema_version"] == 11
     assert parts["binding"]["checkpoint_schema_version"] == 2
-    assert parts["binding"]["catalog_schema_version"] == 10
+    assert parts["binding"]["catalog_schema_version"] == 11
     assert parts["battle"]["tick"] == 1
     assert isinstance(parts["entities"], tuple)
     assert isinstance(parts["entities"][0], MappingProxyType)

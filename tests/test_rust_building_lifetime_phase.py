@@ -5,6 +5,7 @@ import pytest
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import Building
+from clasher.mechanics.shared.damage_ramp import DamageRamp
 from clasher.rust_core import (
     ResidentRustBattle,
     compare_building_lifetime_phase,
@@ -44,7 +45,10 @@ def test_building_lifetime_capability_is_structural(card_name: str) -> None:
     battle, building = _spawn(card_name)
     resident = ResidentRustBattle.from_battle(battle)
 
-    assert resident.supports_building_lifetime_phase is (not building.mechanics)
+    mechanics_supported = not building.mechanics or all(
+        type(mechanic) is DamageRamp for mechanic in building.mechanics
+    )
+    assert resident.supports_building_lifetime_phase is mechanics_supported
 
 
 @pytest.mark.parametrize("card_name", ["Cannon", "Xbow"])

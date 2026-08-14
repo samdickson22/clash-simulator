@@ -34,6 +34,7 @@ QUALIFIED_BUILDINGS = (
     "Elixir Collector",
     "FirespiritHut",
     "GoblinDrill",
+    "InfernoTower",
     "Mortar",
     "X-Bow",
     "Xbow",
@@ -99,7 +100,7 @@ def test_catalog_building_qualification_is_data_driven() -> None:
     building_lookups.add("X-Bow")
 
     assert supported & building_lookups == set(QUALIFIED_BUILDINGS)
-    for card_name in ("BombTower", "InfernoTower", "Tesla", "Tombstone"):
+    for card_name in ("BombTower", "Tesla", "Tombstone"):
         assert "executable_mechanics" in (
             resident.resident_action_card_capability_reasons(card_name)
         )
