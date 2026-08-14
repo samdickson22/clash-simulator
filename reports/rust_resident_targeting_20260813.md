@@ -26,7 +26,7 @@ iteration forks the same immutable resident root and advances exactly one comple
 direct-combat phase, forcing crowded target acquisition while holding fork cost
 constant across arms.
 
-Each arm used 20 untimed warmups followed by 9 repetitions of 800 phases. Timing
+Each arm used 100 untimed warmups followed by 9 repetitions of 5,000 phases. Timing
 used `time.perf_counter_ns()`. The reported confidence interval is the two-sided
 95% Student-t interval for the repetition mean (8 degrees of freedom). The command
 shape was:
@@ -35,22 +35,22 @@ shape was:
 PYTHONPATH=src:. .venv/bin/python <inline fixed-seed crowded-acquisition driver>
 ```
 
-The baseline used commit `c76c434b`; the candidate changed only
-`rust/clasher-core/src/lib.rs`. The extension was rebuilt before each arm with:
+The baseline used commit `c76c434b`; the candidate is commit `3649c889`. The
+extension was rebuilt in the production release profile before each arm with:
 
 ```text
-uvx maturin develop --manifest-path rust/clasher-core/Cargo.toml
+uvx maturin develop --release --manifest-path rust/clasher-core/Cargo.toml
 ```
 
 ## Results
 
-| Arm | Median wall time / 800 phases | Mean (95% CI) | Phases/s | Actor decisions/s |
+| Arm | Median wall time / 5,000 phases | Mean (95% CI) | Phases/s | Actor decisions/s |
 |---|---:|---:|---:|---:|
-| `c76c434b` baseline | 0.154765834 s | 0.154655097 s [0.153688663, 0.155621532] | 5,169.10 | 248,116.78 |
-| allocation-free candidate | 0.131929666 s | 0.132019657 s [0.131351653, 0.132687662] | 6,063.84 | 291,064.18 |
+| `c76c434b` baseline | 0.117215416 s | 0.117268366 s [0.116292272, 0.118244459] | 42,656.51 | 2,047,512.25 |
+| `3649c889` allocation-free | 0.082139541 s | 0.082112588 s [0.081623138, 0.082602038] | 60,871.99 | 2,921,857.09 |
 
-The candidate is **1.1731x / +17.31% throughput** on this acquisition-attribution
-workload and reduces median wall time by 14.76%. This is not claimed as whole-RL
+The candidate is **1.4270x / +42.70% throughput** on this acquisition-attribution
+workload and reduces median wall time by 29.92%. This is not claimed as whole-RL
 rollout speedup; steady locked-target battles spend much less time acquiring.
 
 Parity evidence is exact for both arms:
