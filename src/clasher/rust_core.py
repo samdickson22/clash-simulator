@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import struct
+from collections import deque
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Final
@@ -524,6 +525,74 @@ def compare_idle_state(battle: Any, resident: ResidentRustBattle) -> None:
             "resident Rust idle parity mismatch field=hash "
             f"expected={expected_hash} actual={actual_hash}"
         )
+
+
+def apply_idle_state(battle: Any, resident: ResidentRustBattle) -> None:
+    """Publish resident idle state at one explicit Python boundary."""
+    clock = resident.clock_state()
+    battle.tick = clock.tick
+    battle.time = clock.time
+    battle.dt = clock.dt
+    battle.double_elixir = clock.double_elixir
+    battle.triple_elixir = clock.triple_elixir
+    battle.overtime = clock.overtime
+    battle.game_over = clock.game_over
+
+    player_states = resident.player_states()
+    if len(player_states) != len(battle.players):
+        raise RuntimeError(
+            "resident idle export has a different player count: "
+            f"rust={len(player_states)} python={len(battle.players)}"
+        )
+    for player, player_state in zip(battle.players, player_states, strict=True):
+        if int(player.player_id) != player_state.player_id:
+            raise RuntimeError(
+                "resident idle export changed player order: "
+                f"rust={player_state.player_id} python={player.player_id}"
+            )
+        player.elixir = player_state.elixir
+        player.max_elixir = player_state.max_elixir
+        player.next_card_refill_cooldown_ms = (
+            player_state.next_card_refill_cooldown_ms
+        )
+        player.hand[:] = player_state.hand
+        player.cycle_queue = deque(player_state.cycle_queue)
+        # Idle ticks never change tower HP. Keeping the Python values avoids
+        # turning exact integer tower snapshots into binary64 at publication.
+
+    towers_by_id = {
+        entity.id: entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Building)
+        and entity._crown_tower_slot in {"left", "right", "king"}
+    }
+    tower_states = resident.tower_states()
+    if set(towers_by_id) != {state.id for state in tower_states}:
+        raise RuntimeError("resident idle export changed Crown Tower membership")
+    for tower_state in tower_states:
+        tower = towers_by_id[tower_state.id]
+        if (
+            tower.player_id != tower_state.player_id
+            or tower._crown_tower_slot != tower_state.slot
+        ):
+            raise RuntimeError(
+                "resident idle export changed Crown Tower identity "
+                f"id={tower_state.id}"
+            )
+        # The idle path never mutates tower HP/liveness/activation. Preserve
+        # their original Python scalar types and instance/class field layout;
+        # only the visualization clock advances in this coherent phase.
+        tower.last_attack_time = tower_state.last_attack_time
+
+    outcome = resident.outcome_state()
+    battle.sudden_death = outcome.sudden_death
+    battle.game_over = outcome.game_over
+    battle.winner = outcome.winner
+    if (
+        "_sudden_death_crowns" in battle.__dict__
+        or outcome.sudden_death_crowns != (0, 0)
+    ):
+        battle._sudden_death_crowns = outcome.sudden_death_crowns
 
 
 assert SNAPSHOT_SCHEMA_VERSION == 1
