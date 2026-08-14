@@ -447,6 +447,14 @@ class ResidentRustBattle:
                 )
                 for player in battle.players
             ],
+            starting_tower_hps=[
+                (
+                    float(battle._starting_tower_hps[player_id]["left"]),
+                    float(battle._starting_tower_hps[player_id]["right"]),
+                    float(battle._starting_tower_hps[player_id]["king"]),
+                )
+                for player_id in (0, 1)
+            ],
             towers=[
                 (
                     int(entity.id),
@@ -762,6 +770,13 @@ class ResidentRustBattle:
                 tuple(int(value) for value in entity_key)
                 for entity_key in entities
             ),
+        )
+
+    def resident_oracle_leaf_projection(self) -> Any:
+        from .rl.rust_oracle_leaf import projection_from_native_parts
+
+        return projection_from_native_parts(
+            self._native.oracle_leaf_projection_parts()
         )
 
     def apply_resident_joint_actions(

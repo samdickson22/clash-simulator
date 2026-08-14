@@ -1111,6 +1111,45 @@ fn parse_python_float_hex(encoded: &str) -> PyResult<u64> {
 }
 
 #[derive(Clone)]
+struct ResidentRewardTraits {
+    mana_cost: f64,
+    summon_count: i64,
+    summon_character_second_count: i64,
+    hit_speed_ms: f64,
+}
+
+impl ResidentRewardTraits {
+    fn from_card_fields(card_fields: &Map<String, Value>) -> PyResult<Self> {
+        let mana_cost = absent_optional_normalized_f64(card_fields, "mana_cost")?.unwrap_or(0.0);
+        let summon_count = card_fields
+            .get("summon_count")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let summon_character_second_count = card_fields
+            .get("summon_character_second_count")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let hit_speed_ms = absent_optional_normalized_f64(card_fields, "hit_speed")?.unwrap_or(0.0);
+        if !mana_cost.is_finite()
+            || mana_cost < 0.0
+            || summon_count < 0
+            || summon_character_second_count < 0
+            || !hit_speed_ms.is_finite()
+        {
+            return Err(PyValueError::new_err(
+                "entity reward traits contain unsupported values",
+            ));
+        }
+        Ok(Self {
+            mana_cost,
+            summon_count,
+            summon_character_second_count,
+            hit_speed_ms,
+        })
+    }
+}
+
+#[derive(Clone)]
 struct ResidentEntity {
     active: bool,
     encounter_index: usize,
@@ -1135,6 +1174,7 @@ struct ResidentEntity {
     death_spawn_target_immunity_elapsed_ms: i64,
     pending_projectile_max_duration_ms: i64,
     spawn_angle_shift: f64,
+    reward_traits: ResidentRewardTraits,
     death_spawn_payload_present: bool,
     mechanics: Vec<String>,
     shields: Vec<ShieldState>,
@@ -1776,6 +1816,7 @@ impl ShieldState {
 struct BuildingImpactState {
     collision_radius: f64,
     crown_slot: Option<String>,
+    is_king_tower: bool,
     requires_activation: bool,
     tower_active: bool,
     activation_delay_seconds: f64,
@@ -1797,6 +1838,7 @@ impl BuildingImpactState {
                 .get("_crown_tower_slot")
                 .and_then(Value::as_str)
                 .map(str::to_owned),
+            is_king_tower: normalized_optional_bool(fields, "_is_king_tower"),
             requires_activation: required_bool(fields, "requires_activation")?,
             tower_active: fields
                 .get("_tower_active")
@@ -2750,6 +2792,7 @@ impl ResidentEntity {
             )?,
             spawn_angle_shift: optional_normalized_f64(card_fields, "spawn_angle_shift")?
                 .unwrap_or(0.0),
+            reward_traits: ResidentRewardTraits::from_card_fields(card_fields)?,
             death_spawn_payload_present,
             mechanics,
             shields,
@@ -3356,6 +3399,18 @@ type TowerInit = (i64, i64, String, f64, i64, bool, bool, f64);
 type TowerStateTuple = TowerInit;
 type OracleStateEntityKey = (i64, i64, i64, i64, i64);
 type OracleStateKeyParts = (Vec<i64>, Vec<OracleStateEntityKey>);
+type OracleLeafPlayer = (i64, (f64, f64, f64), (f64, f64, f64), i64);
+type OracleLeafCrown = (usize, i64, String, bool, bool, f64, f64, f64, f64, i64);
+type OracleLeafCombatState = (usize, i64, i64, bool, bool, f64, f64, f64, f64, f64);
+type OracleLeafCombatTraits = (usize, bool, bool, bool, f64, f64, f64, i64, i64, f64);
+type OracleLeafProjectionParts = (
+    bool,
+    Option<i64>,
+    Vec<OracleLeafPlayer>,
+    Vec<OracleLeafCrown>,
+    Vec<OracleLeafCombatState>,
+    Vec<OracleLeafCombatTraits>,
+);
 
 #[derive(Clone)]
 struct ResidentPlayer {
@@ -3582,6 +3637,7 @@ struct ResidentBattle {
     player_tick_ms: i64,
     refill_schedule: Vec<(f64, i64)>,
     players: Vec<ResidentPlayer>,
+    starting_tower_hps: Vec<(f64, f64, f64)>,
     towers: Vec<ResidentTower>,
     idle_eligible: bool,
     sparse_idle_win_checks: bool,
@@ -3620,6 +3676,7 @@ impl ResidentBattle {
         player_tick_ms,
         refill_schedule,
         players,
+        starting_tower_hps,
         towers,
         idle_eligible,
         sparse_idle_win_checks,
@@ -3650,6 +3707,7 @@ impl ResidentBattle {
         player_tick_ms: i64,
         refill_schedule: Vec<(f64, i64)>,
         players: Vec<PlayerInit>,
+        starting_tower_hps: Vec<(f64, f64, f64)>,
         towers: Vec<TowerInit>,
         idle_eligible: bool,
         sparse_idle_win_checks: bool,
@@ -3682,6 +3740,16 @@ impl ResidentBattle {
             .into_iter()
             .map(ResidentPlayer::from_init)
             .collect::<PyResult<Vec<_>>>()?;
+        if starting_tower_hps.len() != 2
+            || starting_tower_hps
+                .iter()
+                .flat_map(|values| [values.0, values.1, values.2])
+                .any(|value| !value.is_finite())
+        {
+            return Err(PyValueError::new_err(
+                "resident oracle leaf requires two finite starting tower rows",
+            ));
+        }
         let towers = towers
             .into_iter()
             .map(ResidentTower::from_init)
@@ -3709,6 +3777,7 @@ impl ResidentBattle {
             player_tick_ms,
             refill_schedule,
             players,
+            starting_tower_hps,
             towers,
             idle_eligible,
             sparse_idle_win_checks,
@@ -5242,6 +5311,121 @@ impl ResidentBattle {
         entities.sort_unstable();
         entities.truncate(96);
         Ok((base, entities))
+    }
+
+    fn oracle_leaf_projection_parts(&self) -> PyResult<OracleLeafProjectionParts> {
+        if self.players.len() != 2
+            || self.starting_tower_hps.len() != 2
+            || self.players[0].player_id != 0
+            || self.players[1].player_id != 1
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident oracle leaf requires ordered players and starting tower rows",
+            ));
+        }
+        let mut players = Vec::with_capacity(2);
+        for (player, starting) in self.players.iter().zip(&self.starting_tower_hps) {
+            let current = (
+                player.left_tower_hp.as_f64(),
+                player.right_tower_hp.as_f64(),
+                player.king_tower_hp.as_f64(),
+            );
+            let lowest = [current.0, current.1, current.2]
+                .into_iter()
+                .filter(|hp| *hp > 0.0)
+                .reduce(f64::min)
+                .map_or(Ok(0), |hp| python_quantize_i64(hp, 1000.0))?;
+            players.push((player.player_id, current, *starting, lowest));
+        }
+
+        let mut crowns = Vec::new();
+        let mut combat_states = Vec::new();
+        let mut combat_traits = Vec::new();
+        for (leaf_index, entity) in self
+            .entities
+            .iter()
+            .filter(|entity| entity.active)
+            .enumerate()
+        {
+            if !matches!(entity.entity_kind, 0 | 1) {
+                continue;
+            }
+            if !entity.has_only_compiled_mechanics() {
+                return Err(PyRuntimeError::new_err(format!(
+                    "resident oracle leaf cannot resolve visibility for entity {}",
+                    entity.id
+                )));
+            }
+            let combat = entity.locked_combat.as_ref().ok_or_else(|| {
+                PyRuntimeError::new_err("resident oracle leaf character lacks combat state")
+            })?;
+            let modifiers = entity.modifier_state.as_ref().ok_or_else(|| {
+                PyRuntimeError::new_err("resident oracle leaf character lacks modifier state")
+            })?;
+            let crown_slot = entity
+                .building_impact
+                .as_ref()
+                .and_then(|impact| impact.crown_slot.clone());
+            if entity.building_impact.as_ref().is_some_and(|impact| {
+                impact.is_king_tower != (impact.crown_slot.as_deref() == Some("king"))
+            }) {
+                return Err(PyRuntimeError::new_err(format!(
+                    "resident oracle leaf has unsupported King Tower identity for entity {}",
+                    entity.id
+                )));
+            }
+            let is_crown = crown_slot.is_some();
+            if let Some(slot) = crown_slot {
+                let tower_active = entity
+                    .building_impact
+                    .as_ref()
+                    .is_some_and(|impact| impact.tower_active);
+                crowns.push((
+                    leaf_index,
+                    entity.player_id,
+                    slot,
+                    entity.is_alive,
+                    tower_active,
+                    entity.hitpoints.as_f64(),
+                    entity.max_hitpoints.as_f64(),
+                    entity.position_x.as_f64(),
+                    entity.position_y.as_f64(),
+                    combat.native_target_distance_discount_sq_units,
+                ));
+            }
+            combat_states.push((
+                leaf_index,
+                entity.player_id,
+                entity.entity_kind,
+                entity.is_alive,
+                is_crown,
+                entity.position_x.as_f64(),
+                entity.position_y.as_f64(),
+                entity.hitpoints.as_f64(),
+                entity.max_hitpoints.as_f64(),
+                entity.damage.as_f64(),
+            ));
+            combat_traits.push((
+                leaf_index,
+                true,
+                true,
+                combat.can_attack_ground,
+                combat.range,
+                modifiers.speed.as_f64(),
+                entity.reward_traits.mana_cost,
+                entity.reward_traits.summon_count,
+                entity.reward_traits.summon_character_second_count,
+                entity.reward_traits.hit_speed_ms,
+            ));
+        }
+        Ok((
+            self.game_over,
+            self.winner,
+            players,
+            crowns,
+            combat_states,
+            combat_traits,
+        ))
     }
 
     fn legal_action_ids(&self, player_id: i64) -> PyResult<Vec<i64>> {
@@ -8042,6 +8226,12 @@ impl ResidentBattle {
             death_spawn_target_immunity_elapsed_ms: -1,
             pending_projectile_max_duration_ms: 0,
             spawn_angle_shift: 0.0,
+            reward_traits: ResidentRewardTraits {
+                mana_cost: 0.0,
+                summon_count: 0,
+                summon_character_second_count: 0,
+                hit_speed_ms: 0.0,
+            },
             death_spawn_payload_present: false,
             mechanics: Vec::new(),
             shields: Vec::new(),
@@ -8424,6 +8614,12 @@ impl ResidentBattle {
             death_spawn_target_immunity_elapsed_ms: -1,
             pending_projectile_max_duration_ms: 0,
             spawn_angle_shift: 0.0,
+            reward_traits: ResidentRewardTraits {
+                mana_cost: 0.0,
+                summon_count: 0,
+                summon_character_second_count: 0,
+                hit_speed_ms: 0.0,
+            },
             death_spawn_payload_present: false,
             mechanics: Vec::new(),
             shields: Vec::new(),
