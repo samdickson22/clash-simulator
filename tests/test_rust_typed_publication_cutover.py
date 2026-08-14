@@ -9,10 +9,19 @@ import pytest
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import Troop
-from clasher.rust_core import ResidentRustBattle, RustBattleMode, rust_core_available
-from clasher.rust_differential import rust_resident_semantic_snapshot
+from clasher.rust_core import (
+    _PREPARED_PUBLICATION_RAW_CONSUMER,
+    ResidentRustBattle,
+    RustBattleMode,
+    rust_core_available,
+)
+from clasher.rust_differential import (
+    python_resident_semantic_snapshot,
+    rust_resident_semantic_snapshot,
+)
 from clasher.rust_publication import (
     ResidentPublicationError,
+    _build_direct_publication_plan,
     _typed_publication_projection,
     publish_complete_tick_state,
 )
@@ -45,14 +54,16 @@ def _spawn_ready(
     return troop
 
 
-def _prepared_scenarios() -> list[tuple[ResidentRustBattle, ResidentRustBattle]]:
-    scenarios: list[tuple[ResidentRustBattle, ResidentRustBattle]] = []
+def _prepared_scenarios() -> list[
+    tuple[BattleState, ResidentRustBattle, ResidentRustBattle]
+]:
+    scenarios: list[tuple[BattleState, ResidentRustBattle, ResidentRustBattle]] = []
 
     baseline = BattleState(rng=random.Random(70_001), fast_path=True)
     prior = ResidentRustBattle.from_battle(baseline)
     candidate = prior.fork()
     assert candidate.advance_complete_ticks(8) == 8
-    scenarios.append((prior, candidate))
+    scenarios.append((baseline, prior, candidate))
 
     projectile = BattleState(rng=random.Random(70_002), fast_path=True)
     projectile.entities.clear()
@@ -64,7 +75,7 @@ def _prepared_scenarios() -> list[tuple[ResidentRustBattle, ResidentRustBattle]]
     prior = ResidentRustBattle.from_battle(projectile)
     candidate = prior.fork()
     assert candidate.advance_complete_tick()
-    scenarios.append((prior, candidate))
+    scenarios.append((projectile, prior, candidate))
 
     area = BattleState(rng=random.Random(70_003), fast_path=True)
     area.entities.clear()
@@ -77,7 +88,7 @@ def _prepared_scenarios() -> list[tuple[ResidentRustBattle, ResidentRustBattle]]
     prior = ResidentRustBattle.from_battle(area)
     candidate = prior.fork()
     assert candidate.advance_complete_tick()
-    scenarios.append((prior, candidate))
+    scenarios.append((area, prior, candidate))
 
     shields = BattleState(rng=random.Random(70_004), fast_path=True)
     shields.entities.clear()
@@ -86,7 +97,7 @@ def _prepared_scenarios() -> list[tuple[ResidentRustBattle, ResidentRustBattle]]
     _spawn_ready(shields, "Golem", 1, Position(9.0, 20.0))
     prior = ResidentRustBattle.from_battle(shields)
     candidate = prior.fork()
-    scenarios.append((prior, candidate))
+    scenarios.append((shields, prior, candidate))
 
     action = BattleState(rng=random.Random(70_007), fast_path=True)
     action.players[0].hand[0] = "Minions"
@@ -94,24 +105,24 @@ def _prepared_scenarios() -> list[tuple[ResidentRustBattle, ResidentRustBattle]]
     prior = ResidentRustBattle.from_battle(action)
     no_op = 4 * 18 * 32
     minions = 10 * 18 + 8
-    candidate, success, _order, advanced = (
-        prior.preview_resident_joint_action_interval(minions, no_op, 0)
+    candidate, success, _order, advanced = prior.preview_resident_joint_action_interval(
+        minions, no_op, 0
     )
     assert success == {0: True, 1: True}
     assert advanced == 0
-    scenarios.append((prior, candidate))
+    scenarios.append((action, prior, candidate))
 
     arrows = BattleState(rng=random.Random(70_008), fast_path=True)
     arrows.players[0].hand[0] = "Arrows"
     arrows.players[0].elixir = 10.0
     prior = ResidentRustBattle.from_battle(arrows)
     arrow_action = 10 * 18 + 8
-    candidate, success, _order, advanced = (
-        prior.preview_resident_joint_action_interval(arrow_action, no_op, 22)
+    candidate, success, _order, advanced = prior.preview_resident_joint_action_interval(
+        arrow_action, no_op, 22
     )
     assert success == {0: True, 1: True}
     assert advanced == 22
-    scenarios.append((prior, candidate))
+    scenarios.append((arrows, prior, candidate))
 
     death_spawn = BattleState(rng=random.Random(70_009), fast_path=True)
     death_spawn.entities.clear()
@@ -124,13 +135,13 @@ def _prepared_scenarios() -> list[tuple[ResidentRustBattle, ResidentRustBattle]]
     prior = ResidentRustBattle.from_battle(death_spawn)
     candidate = prior.fork()
     assert candidate.advance_complete_tick()
-    scenarios.append((prior, candidate))
+    scenarios.append((death_spawn, prior, candidate))
 
     return scenarios
 
 
 def test_typed_projection_matches_every_legacy_publication_section() -> None:
-    for prior, candidate in _prepared_scenarios():
+    for _battle, prior, candidate in _prepared_scenarios():
         projection = _typed_publication_projection(
             candidate.prepare_publication(prior).parts()
         )
@@ -144,6 +155,32 @@ def test_typed_projection_matches_every_legacy_publication_section() -> None:
         assert projection.player_rows == json.loads(
             candidate.publication_player_state_bytes()
         )
+
+
+def test_direct_plan_publication_matches_normalized_typed_projection() -> None:
+    for battle, prior, candidate in _prepared_scenarios():
+        raw = candidate.prepare_publication(prior)._consume_raw_parts(
+            _PREPARED_PUBLICATION_RAW_CONSUMER
+        )
+        expected = _typed_publication_projection(raw)
+        plan = _build_direct_publication_plan(
+            raw,
+            battle=battle,
+            resident=candidate,
+            entity_registry=dict(battle.entities),
+        )
+        assert plan.active_entity_ids == tuple(
+            row["id"] for row in expected.snapshot["entities"]
+        )
+
+        registry = dict(battle.entities)
+        publish_complete_tick_state(
+            battle,
+            candidate,
+            prior_resident=prior,
+            entity_registry=registry,
+        )
+        assert python_resident_semantic_snapshot(battle) == expected.snapshot
 
 
 def test_on_publication_uses_one_typed_crossing_and_no_legacy_or_clone(
@@ -197,6 +234,13 @@ def test_on_publication_uses_one_typed_crossing_and_no_legacy_or_clone(
         ),
     )
     monkeypatch.setattr(
+        rust_publication,
+        "_typed_publication_projection",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("diagnostic typed projection called")
+        ),
+    )
+    monkeypatch.setattr(
         BattleState,
         "clone",
         lambda *args, **kwargs: (_ for _ in ()).throw(
@@ -209,7 +253,7 @@ def test_on_publication_uses_one_typed_crossing_and_no_legacy_or_clone(
 
 
 def test_typed_decoder_rejects_bool_exact_scalar() -> None:
-    prior, candidate = _prepared_scenarios()[0]
+    _battle, prior, candidate = _prepared_scenarios()[0]
     parts = candidate.prepare_publication(prior).parts()
     modified = dict(parts)
     entities = list(parts["entities"])
@@ -242,7 +286,7 @@ def test_typed_binding_rejects_wrong_registry_before_mutation() -> None:
     assert tuple(battle.entities.items()) == before
 
 
-def test_decoded_typed_structural_tampering_fails_before_live_mutation(
+def test_direct_raw_structural_tampering_fails_before_live_mutation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     from clasher import rust_publication
@@ -253,13 +297,16 @@ def test_decoded_typed_structural_tampering_fails_before_live_mutation(
         candidate: ResidentRustBattle,
         mutate: Any,
     ) -> None:
-        original_decode = rust_publication._typed_publication_projection
-        publication = original_decode(candidate.prepare_publication(prior).parts())
-        mutate(publication.publication_rows)
+        original_build = rust_publication._build_direct_publication_plan
+
+        def mutate_then_build(raw: Any, **kwargs: Any) -> Any:
+            mutate(raw)
+            return original_build(raw, **kwargs)
+
         monkeypatch.setattr(
             rust_publication,
-            "_typed_publication_projection",
-            lambda _parts: publication,
+            "_build_direct_publication_plan",
+            mutate_then_build,
         )
         before = tuple(battle.entities.items())
         with pytest.raises(ResidentPublicationError):
@@ -271,7 +318,7 @@ def test_decoded_typed_structural_tampering_fails_before_live_mutation(
             )
         assert tuple(battle.entities.items()) == before
         monkeypatch.setattr(
-            rust_publication, "_typed_publication_projection", original_decode
+            rust_publication, "_build_direct_publication_plan", original_build
         )
 
     projectile = BattleState(rng=random.Random(70_010), fast_path=True)
@@ -285,11 +332,16 @@ def test_decoded_typed_structural_tampering_fails_before_live_mutation(
     candidate = prior.fork()
     assert candidate.advance_complete_tick()
 
-    def break_constructor(rows: list[dict[str, Any]]) -> None:
-        row = next(row for row in rows if row["point_projectile_state"] is not None)
-        row["point_projectile_constructor"]["card_stats_source_id"] = None
+    def replace_exact_with_legacy_dict(raw: dict[str, Any]) -> None:
+        row = next(
+            row for row in raw["entities"] if row["point_projectile_state"] is not None
+        )
+        row["point_projectile_state"]["constructor_range"] = {
+            "bits": "0000000000000000",
+            "kind": "float",
+        }
 
-    reject_mutation(projectile, prior, candidate, break_constructor)
+    reject_mutation(projectile, prior, candidate, replace_exact_with_legacy_dict)
 
     area = BattleState(rng=random.Random(70_011), fast_path=True)
     area.entities.clear()
@@ -303,9 +355,11 @@ def test_decoded_typed_structural_tampering_fails_before_live_mutation(
     candidate = prior.fork()
     assert candidate.advance_complete_tick()
 
-    def break_area_source(rows: list[dict[str, Any]]) -> None:
-        row = next(row for row in rows if row["area_effect_state"] is not None)
-        row["area_effect_birth_source_id"] = None
+    def break_area_source(raw: dict[str, Any]) -> None:
+        row = next(
+            row for row in raw["entities"] if row["area_effect_state"] is not None
+        )
+        row["area_effect_state"]["birth_source_entity_id"] = None
 
     reject_mutation(area, prior, candidate, break_area_source)
 
@@ -318,8 +372,27 @@ def test_decoded_typed_structural_tampering_fails_before_live_mutation(
         prior.preview_resident_joint_action_interval(10 * 18 + 8, no_op, 0)
     )
 
-    def break_provenance(rows: list[dict[str, Any]]) -> None:
-        row = next(row for row in rows if row["character_birth"] is not None)
+    def break_provenance(raw: dict[str, Any]) -> None:
+        row = next(row for row in raw["entities"] if row["character_birth"] is not None)
         row["character_birth"]["ordinal"] = 17
 
     reject_mutation(action, prior, candidate, break_provenance)
+
+    def break_birth_name(raw: dict[str, Any]) -> None:
+        row = next(row for row in raw["entities"] if row["character_birth"] is not None)
+        row["card_name"] = f"{row['card_name']}-tampered"
+
+    reject_mutation(action, prior, candidate, break_birth_name)
+
+    topology, topology_prior, topology_candidate = _prepared_scenarios()[0]
+
+    def break_movement_combat_topology(raw: dict[str, Any]) -> None:
+        row = next(row for row in raw["entities"] if row["movement_state"] is not None)
+        row["locked_combat_state"] = None
+
+    reject_mutation(
+        topology,
+        topology_prior,
+        topology_candidate,
+        break_movement_combat_topology,
+    )
