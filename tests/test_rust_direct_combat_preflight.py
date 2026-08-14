@@ -4,11 +4,14 @@ import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Troop
+from clasher.entities import Projectile, Troop
 from clasher.interaction_matrix import enabled_troop_cards
 from clasher.rust_core import (
     ResidentRustBattle,
+    compare_building_lifetime_phase,
+    compare_idle_state,
     compare_locked_direct_combat_phase,
+    compare_point_projectile_phase,
     rust_core_available,
 )
 
@@ -305,3 +308,107 @@ def test_direct_combat_preflight_is_deterministic_for_every_enabled_troop(
 
     assert first.supports_direct_combat_phase == second.supports_direct_combat_phase
     assert first.direct_combat_capability() == second.direct_combat_capability()
+
+
+def test_direct_combat_building_launch_matches_princess_tower() -> None:
+    battle = BattleState()
+    tower = battle.entities[1]
+    target = _spawn(battle, "Knight", 1)
+    target.position = Position(3.5, 11.0)
+    target.deploy_delay_remaining = 0.0
+    target.placement_pending = False
+    target._spawn_hook_pending = False
+    target._spawn_hook_fired = True
+    tower.attack_cooldown = 0.0
+    resident = ResidentRustBattle.from_battle(battle)
+    rng_before = resident.rng_state_bytes()
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    compare_building_lifetime_phase(battle, resident)
+    compare_point_projectile_phase(battle, resident)
+    compare_idle_state(battle, resident)
+    assert any(type(entity) is Projectile for entity in battle.entities.values())
+    assert resident.rng_state_bytes() == rng_before
+
+
+@pytest.mark.parametrize(
+    ("activation_delay", "first_hit_delay"),
+    [(0.03, 0.0), (0.0, 0.03), (0.05, 0.0), (0.0, 0.05)],
+)
+def test_direct_combat_king_activation_clock_matches_partial_tick(
+    activation_delay: float,
+    first_hit_delay: float,
+) -> None:
+    battle = BattleState()
+    king = battle.entities[3]
+    target = _spawn(battle, "Knight", 1)
+    target.position = Position(9.0, 7.0)
+    target.deploy_delay_remaining = 0.0
+    target.placement_pending = False
+    target._spawn_hook_pending = False
+    target._spawn_hook_fired = True
+    king._tower_active = True
+    king.activation_delay_remaining = activation_delay
+    king.activation_first_hit_delay_remaining = first_hit_delay
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    compare_building_lifetime_phase(battle, resident)
+    compare_point_projectile_phase(battle, resident)
+    compare_idle_state(battle, resident)
+
+
+@pytest.mark.parametrize("card_name", ["Knight", "Giant"])
+@pytest.mark.parametrize(("x", "expected_slot"), [(3.5, "left"), (14.5, "right")])
+def test_direct_combat_crown_fallback_is_data_driven(
+    card_name: str,
+    x: float,
+    expected_slot: str,
+) -> None:
+    battle = BattleState()
+    actor = _spawn(battle, card_name, 0)
+    actor.position = Position(x, 12.0)
+    actor.deploy_delay_remaining = 0.0
+    actor.placement_pending = False
+    actor._spawn_hook_pending = False
+    actor._spawn_hook_fired = True
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    selected = battle.entities[actor.target_id]
+    assert selected._crown_tower_slot == expected_slot
+
+
+def test_direct_combat_damage_activates_and_syncs_king_tower() -> None:
+    battle = BattleState()
+    king = battle.entities[3]
+    actor = _spawn(battle, "Knight", 1)
+    actor.position = Position(9.0, 4.0)
+    actor.deploy_delay_remaining = 0.0
+    actor.placement_pending = False
+    actor._spawn_hook_pending = False
+    actor._spawn_hook_fired = True
+    actor.attack_cooldown = 0.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert not king._tower_active
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    compare_building_lifetime_phase(battle, resident)
+    compare_idle_state(battle, resident)
+    assert king._tower_active
+    assert king.activation_delay_remaining == king.activation_delay_seconds

@@ -897,6 +897,8 @@ struct LockedDirectCombatState {
     first_hit_ms: i64,
     retarget_ms: i64,
     targets_only_buildings: bool,
+    native_building_target: bool,
+    ground_path_backwards: bool,
     sight_clip: f64,
     sight_clip_side: f64,
     hidden_building: bool,
@@ -1132,6 +1134,13 @@ impl LockedDirectCombatState {
             first_hit_ms,
             retarget_ms,
             targets_only_buildings: normalized_optional_bool(card_fields, "targets_only_buildings"),
+            native_building_target: normalized_optional_bool(card_fields, "building_target")
+                || card_fields
+                    .get("summon_character_data")
+                    .and_then(|value| normalized_mapping_get(value, "buildingTarget"))
+                    .and_then(Value::as_bool)
+                    .unwrap_or(false),
+            ground_path_backwards: normalized_optional_bool(fields, "_ground_path_backwards"),
             sight_clip: optional_normalized_f64(card_fields, "sight_clip")?.unwrap_or(0.0),
             sight_clip_side: optional_normalized_f64(card_fields, "sight_clip_side")?
                 .unwrap_or(0.0),
@@ -1309,9 +1318,6 @@ impl ResidentEntity {
         };
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
-        }
-        if entity_kind == 1 {
-            direct_combat_unsupported.push("building_combat_not_implemented".to_owned());
         }
         if !mechanics.is_empty() {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
@@ -2630,11 +2636,24 @@ impl ResidentBattle {
             ));
         }
         self.checkpoint_current = false;
-        for actor_index in 0..self.entities.len() {
+        let combat_actor_count = self.entities.len();
+        for actor_index in 0..combat_actor_count {
             if !self.entities[actor_index].is_alive {
                 continue;
             }
-            let target_index = self.direct_troop_target_index(actor_index);
+            if self.entities[actor_index].spawn_hook_pending {
+                self.entities[actor_index].spawn_hook_pending = false;
+                self.entities[actor_index].spawn_hook_fired = true;
+            }
+            let actor_kind = self.entities[actor_index].entity_kind;
+            let Some(step_dt) = self.prepare_direct_combat_actor(actor_index) else {
+                continue;
+            };
+            let target_index = if actor_kind == 1 {
+                self.direct_building_target_index(actor_index)
+            } else {
+                self.direct_troop_target_index(actor_index)
+            };
             let target_id = target_index.map(|index| self.entities[index].id);
             let target_position = target_index.map(|index| {
                 (
@@ -2655,10 +2674,14 @@ impl ResidentBattle {
                     .locked_combat
                     .as_mut()
                     .expect("direct preflight requires combat state");
-                state.movement_target_id = None;
-                state.initial_position.get_or_insert((actor_x, actor_y));
-                state.last_attack_time += self.dt;
-                if let Some((target_x, target_y)) = target_position {
+                if actor_kind == 0 {
+                    state.movement_target_id = None;
+                    state.initial_position.get_or_insert((actor_x, actor_y));
+                }
+                state.last_attack_time += step_dt;
+                if actor_kind == 0
+                    && let Some((target_x, target_y)) = target_position
+                {
                     let facing_x = ((target_x - actor_x) * 1000.0).round_ties_even() as i64;
                     let facing_y = ((target_y - actor_y) * 1000.0).round_ties_even() as i64;
                     if facing_x != 0 || facing_y != 0 {
@@ -2678,13 +2701,13 @@ impl ResidentBattle {
                 } else {
                     if state.attack_cooldown > 0.0 {
                         if target_in_range {
-                            state.attack_cooldown -= self.dt * state.attack_rate();
+                            state.attack_cooldown -= step_dt * state.attack_rate();
                             if state.attack_cooldown <= 1e-9 {
                                 state.attack_cooldown = 0.0;
                             }
                         } else if !state.attack_preload_blocked {
                             state.attack_cooldown = (state.attack_cooldown
-                                - self.dt * state.attack_rate())
+                                - step_dt * state.attack_rate())
                             .max(state.first_hit_ms as f64 / 1000.0);
                         }
                     }
@@ -2695,7 +2718,8 @@ impl ResidentBattle {
                     {
                         state.attack_windup_active = true;
                     }
-                    if let Some(_) = target_id
+                    if actor_kind == 0
+                        && let Some(_) = target_id
                         && !target_in_range
                     {
                         state.movement_target_id = target_id;
@@ -2718,27 +2742,15 @@ impl ResidentBattle {
             if let (Some(target_index), Some(payload)) = (target_index, payload) {
                 match payload {
                     CombatPayload::DirectDamage(damage) => {
-                        let target = &mut self.entities[target_index];
-                        let remaining = (target.hitpoints.as_f64() - damage).max(0.0);
-                        if remaining <= 0.0 {
-                            // Python take_damage uses max(0, hp - damage), whose
-                            // winning zero operand is the exact integer sentinel.
-                            target.hitpoints = ExactScalar::Int(0);
-                        } else {
-                            target.hitpoints.set_f64(remaining);
-                        }
-                        if remaining <= 0.0 && target.is_alive {
-                            // Mechanics and death payloads are rejected by the
-                            // whole-battle preflight. The dead flag therefore has no
-                            // callback work but is immediately visible to later
-                            // encounter-order actors in this same combat pass.
-                            target.is_alive = false;
-                        }
+                        self.apply_direct_combat_damage(target_index, damage);
                     }
                     CombatPayload::PointProjectile(weapon) => {
                         self.launch_point_projectile(actor_index, target_index, weapon);
                     }
                 }
+            }
+            if actor_kind == 1 {
+                self.sync_resident_tower(actor_index);
             }
         }
         Ok(())
@@ -3051,6 +3063,95 @@ impl ResidentBattle {
 }
 
 impl ResidentBattle {
+    fn prepare_direct_combat_actor(&mut self, actor_index: usize) -> Option<f64> {
+        if self.entities[actor_index].entity_kind != 1 {
+            return Some(self.dt);
+        }
+        let building = self.entities[actor_index]
+            .building_impact
+            .as_mut()
+            .expect("building combat preflight requires impact state");
+        if building.crown_slot.as_deref() == Some("king") && !building.tower_active {
+            return None;
+        }
+        let mut step_dt = self.dt;
+        if building.activation_delay_remaining > 0.0 {
+            let work = step_dt.min(building.activation_delay_remaining);
+            building.activation_delay_remaining =
+                (building.activation_delay_remaining - work).max(0.0);
+            step_dt -= work;
+            if step_dt <= 1e-9 {
+                return None;
+            }
+        }
+        if building.activation_first_hit_delay_remaining > 0.0 {
+            let work = step_dt.min(building.activation_first_hit_delay_remaining);
+            building.activation_first_hit_delay_remaining =
+                (building.activation_first_hit_delay_remaining - work).max(0.0);
+            step_dt -= work;
+            if building.activation_first_hit_delay_remaining > 1e-9 {
+                return None;
+            }
+            let combat = self.entities[actor_index]
+                .locked_combat
+                .as_mut()
+                .expect("building combat preflight requires combat state");
+            combat.attack_cooldown = 0.0;
+            combat.attack_preload_blocked = false;
+            step_dt = step_dt.max(0.0);
+        }
+        Some(step_dt)
+    }
+
+    fn apply_direct_combat_damage(&mut self, target_index: usize, damage: f64) {
+        if let Some(building) = self.entities[target_index].building_impact.as_mut()
+            && damage > 0.0
+            && building.requires_activation
+            && !building.tower_active
+        {
+            building.tower_active = true;
+            building.activation_delay_remaining = building
+                .activation_delay_remaining
+                .max(building.activation_delay_seconds);
+            building.activation_first_hit_delay_remaining = building
+                .activation_first_hit_delay_remaining
+                .max(building.activation_first_hit_delay_seconds);
+        }
+        let remaining = (self.entities[target_index].hitpoints.as_f64() - damage).max(0.0);
+        if remaining <= 0.0 {
+            self.entities[target_index].hitpoints = ExactScalar::Int(0);
+            self.entities[target_index].is_alive = false;
+        } else {
+            self.entities[target_index].hitpoints.set_f64(remaining);
+        }
+        if self.entities[target_index].entity_kind == 1 {
+            self.sync_resident_tower(target_index);
+        }
+    }
+
+    fn sync_resident_tower(&mut self, entity_index: usize) {
+        let entity = &self.entities[entity_index];
+        let Some(building) = entity.building_impact.as_ref() else {
+            return;
+        };
+        let Some(slot) = building.crown_slot.as_deref() else {
+            return;
+        };
+        let Some(tower) = self.towers.iter_mut().find(|tower| tower.id == entity.id) else {
+            return;
+        };
+        debug_assert_eq!(tower.slot, slot);
+        tower.hp = entity.hitpoints.as_f64();
+        tower.hp_milli = (tower.hp * 1000.0).round_ties_even() as i64;
+        tower.is_alive = entity.is_alive;
+        tower.is_active = building.tower_active;
+        tower.last_attack_time = entity
+            .locked_combat
+            .as_ref()
+            .expect("Crown Tower requires combat state")
+            .last_attack_time;
+    }
+
     fn launch_point_projectile(
         &mut self,
         source_index: usize,
@@ -3517,7 +3618,9 @@ impl ResidentBattle {
             .locked_combat
             .as_ref()
             .expect("character target has combat state");
-        let extension = if actor_state.attack_windup_active {
+        let extension = if self.direct_projectile_hit_cycle_started(actor_index) {
+            0.5
+        } else if actor_state.attack_windup_active {
             0.025
         } else {
             0.0
@@ -3535,8 +3638,40 @@ impl ResidentBattle {
             .locked_combat
             .as_ref()
             .expect("character target has combat state");
+        let extension = if self.direct_projectile_hit_cycle_started(actor_index) {
+            0.5
+        } else {
+            0.025
+        };
         self.direct_target_distance(actor_index, target_index)
-            <= actor_state.range + target_state.collision_radius + 0.025 + 1e-8
+            <= actor_state.range + target_state.collision_radius + extension + 1e-8
+    }
+
+    fn direct_projectile_hit_cycle_started(&self, actor_index: usize) -> bool {
+        let Some(state) = self.entities[actor_index].locked_combat.as_ref() else {
+            return false;
+        };
+        if state.point_weapon.is_none() || state.hit_speed_ms <= 0 {
+            return false;
+        }
+        let remaining_ms = (state.attack_cooldown.max(0.0) * 1000.0).round_ties_even() as i64;
+        (-remaining_ms).rem_euclid(state.hit_speed_ms) > 50
+    }
+
+    fn direct_is_native_building_target(&self, target_index: usize) -> bool {
+        let target = &self.entities[target_index];
+        target.entity_kind == 1
+            || target
+                .locked_combat
+                .as_ref()
+                .is_some_and(|state| state.native_building_target)
+    }
+
+    fn direct_crown_slot(&self, target_index: usize) -> Option<&str> {
+        self.entities[target_index]
+            .building_impact
+            .as_ref()
+            .and_then(|state| state.crown_slot.as_deref())
     }
 
     fn direct_target_in_sight(&self, actor_index: usize, target_index: usize) -> bool {
@@ -3550,9 +3685,16 @@ impl ResidentBattle {
             .locked_combat
             .as_ref()
             .expect("character target has combat state");
-        let sight_reach = actor_state.sight_range + target_state.collision_radius;
+        let target_is_crown = self.direct_crown_slot(target_index).is_some();
+        let actor_is_crown = self.direct_crown_slot(actor_index).is_some();
+        let sight_reach = actor_state.sight_range
+            + target_state.collision_radius
+            + if target_is_crown { 2.0 } else { 0.0 };
         if self.direct_target_distance(actor_index, target_index) > sight_reach + 1e-8 {
             return false;
+        }
+        if actor_is_crown || target_is_crown {
+            return true;
         }
         let dx = target.position_x.as_f64() - actor.position_x.as_f64();
         let dy = target.position_y.as_f64() - actor.position_y.as_f64();
@@ -3582,26 +3724,24 @@ impl ResidentBattle {
         if current.is_some_and(|index| self.direct_keep_reach(actor_index, index)) {
             return current;
         }
-        let best = if actor_state.targets_only_buildings {
-            None
-        } else {
-            self.entities
-                .iter()
-                .enumerate()
-                .filter(|(index, _)| {
-                    self.direct_target_valid(actor_index, *index)
-                        && self.direct_target_in_sight(actor_index, *index)
-                })
-                .min_by(|(left, _), (right, _)| {
-                    self.direct_target_distance(actor_index, *left)
-                        .total_cmp(&self.direct_target_distance(actor_index, *right))
-                })
-                .map(|(index, _)| index)
-        };
+        let best =
+            self.direct_acquired_target_index(actor_index, !actor_state.ground_path_backwards);
         match (current, best) {
             (None, best) => best,
             (current, None) => current,
             (Some(current), Some(best)) => {
+                if self.direct_crown_slot(current) == Some("king")
+                    && matches!(self.direct_crown_slot(best), Some("left" | "right"))
+                    && !self.direct_attack_reach(actor_index, best)
+                {
+                    return Some(current);
+                }
+                if self.direct_is_native_building_target(current)
+                    && self.direct_is_native_building_target(best)
+                    && !self.direct_target_in_sight(actor_index, best)
+                {
+                    return Some(current);
+                }
                 if self.direct_target_distance(actor_index, best)
                     < self.direct_target_distance(actor_index, current) - 1e-6
                 {
@@ -3611,6 +3751,141 @@ impl ResidentBattle {
                 }
             }
         }
+    }
+
+    fn direct_building_target_index(&self, actor_index: usize) -> Option<usize> {
+        let current = self.entities[actor_index].target_id.and_then(|target_id| {
+            self.entities
+                .iter()
+                .position(|entity| entity.id == target_id)
+                .filter(|&index| {
+                    self.direct_target_valid(actor_index, index)
+                        && self.direct_keep_reach(actor_index, index)
+                })
+        });
+        if current.is_some() {
+            return current;
+        }
+        let actor_state = self.entities[actor_index].locked_combat.as_ref()?;
+        let include_crown_fallback = actor_state.range > actor_state.sight_range + 2.0;
+        self.direct_acquired_target_index(actor_index, include_crown_fallback)
+    }
+
+    fn direct_acquired_target_index(
+        &self,
+        actor_index: usize,
+        include_crown_fallback: bool,
+    ) -> Option<usize> {
+        let actor = &self.entities[actor_index];
+        let actor_state = actor.locked_combat.as_ref()?;
+        let mut troop_targets = Vec::new();
+        let mut building_targets = Vec::new();
+        for (target_index, _) in self.entities.iter().enumerate() {
+            if !self.direct_target_valid(actor_index, target_index)
+                || !self.direct_target_in_sight(actor_index, target_index)
+            {
+                continue;
+            }
+            if self.direct_is_native_building_target(target_index) {
+                building_targets.push(target_index);
+            } else if !actor_state.targets_only_buildings {
+                troop_targets.push(target_index);
+            }
+        }
+        let mut candidates = if actor_state.targets_only_buildings {
+            building_targets
+        } else {
+            troop_targets.extend(building_targets);
+            troop_targets
+        };
+        if candidates.is_empty() && include_crown_fallback {
+            let crowns = self
+                .entities
+                .iter()
+                .enumerate()
+                .filter_map(|(target_index, _)| {
+                    (self.direct_target_valid(actor_index, target_index)
+                        && self.direct_crown_slot(target_index).is_some())
+                    .then_some(target_index)
+                })
+                .collect::<Vec<_>>();
+            let princesses = crowns
+                .iter()
+                .copied()
+                .filter(|&target_index| {
+                    matches!(self.direct_crown_slot(target_index), Some("left" | "right"))
+                })
+                .collect::<Vec<_>>();
+            if princesses.is_empty() {
+                candidates = crowns
+                    .into_iter()
+                    .filter(|&target_index| self.direct_crown_slot(target_index) == Some("king"))
+                    .collect();
+            } else {
+                let actor_x = actor.position_x.as_f64();
+                let minimum_x = princesses.iter().fold(f64::INFINITY, |minimum, &index| {
+                    minimum.min((self.entities[index].position_x.as_f64() - actor_x).abs())
+                });
+                candidates = princesses
+                    .into_iter()
+                    .filter(|&index| {
+                        (self.entities[index].position_x.as_f64() - actor_x).abs()
+                            <= minimum_x + 1e-8
+                    })
+                    .collect();
+            }
+        }
+        self.direct_select_first_nearest(actor_index, &candidates)
+    }
+
+    fn direct_select_first_nearest(
+        &self,
+        actor_index: usize,
+        candidates: &[usize],
+    ) -> Option<usize> {
+        let mut selected = *candidates.first()?;
+        let mut minimum = self.direct_target_distance(actor_index, selected);
+        for &candidate in &candidates[1..] {
+            let distance = self.direct_target_distance(actor_index, candidate);
+            if distance < minimum {
+                selected = candidate;
+                minimum = distance;
+            }
+        }
+        if !self.direct_is_native_building_target(selected) {
+            return Some(selected);
+        }
+        let direction = if self.entities[actor_index].player_id == 0 {
+            1.0
+        } else {
+            -1.0
+        };
+        candidates
+            .iter()
+            .copied()
+            .filter(|&candidate| {
+                self.direct_is_native_building_target(candidate)
+                    && self.direct_target_distance(actor_index, candidate) <= minimum + 1e-6
+            })
+            .min_by(|&left, &right| {
+                let left_entity = &self.entities[left];
+                let right_entity = &self.entities[right];
+                let left_key = (
+                    direction * (left_entity.position_x.as_f64() - 9.0),
+                    direction * (left_entity.position_y.as_f64() - 16.0),
+                    left_entity.id,
+                );
+                let right_key = (
+                    direction * (right_entity.position_x.as_f64() - 9.0),
+                    direction * (right_entity.position_y.as_f64() - 16.0),
+                    right_entity.id,
+                );
+                left_key
+                    .0
+                    .total_cmp(&right_key.0)
+                    .then(left_key.1.total_cmp(&right_key.1))
+                    .then(left_key.2.cmp(&right_key.2))
+            })
     }
 }
 
