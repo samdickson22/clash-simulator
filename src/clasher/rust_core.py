@@ -1050,7 +1050,10 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
             "position_x": _exact_scalar(entity.position.x),
             "position_y": _exact_scalar(entity.position.y),
             "splash_radius": _exact_scalar(entity.splash_radius),
+            "slow_duration": _exact_scalar(entity.slow_duration),
+            "slow_multiplier": _exact_scalar(entity.slow_multiplier),
             "start_collision_resolved": bool(entity.start_collision_resolved),
+            "stun_duration": _exact_scalar(entity.stun_duration),
             "target_position_x": _exact_scalar(entity.target_position.x),
             "target_position_y": _exact_scalar(entity.target_position.y),
             "temporary_homing_remaining_ms": int(

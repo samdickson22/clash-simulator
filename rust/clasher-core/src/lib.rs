@@ -481,6 +481,65 @@ impl ModifierState {
         }
     }
 
+    fn apply_slow(&mut self, duration: f64, multiplier: f64) {
+        let movement = multiplier.max(0.0);
+        let signature = (movement, movement, movement);
+        if self.original_speed.is_none() {
+            let debuff = self
+                .slow_multiplier
+                .max(0.0)
+                .min(self.movement_mode_multiplier.max(0.0));
+            self.original_speed = Some(if debuff > 1e-9 {
+                self.speed.as_f64() / debuff
+            } else {
+                self.speed.as_f64()
+            });
+        }
+        if let Some(effect) = self
+            .slow_effects
+            .iter_mut()
+            .find(|effect| (effect.movement, effect.attack, effect.spawn) == signature)
+        {
+            effect.remaining = effect.remaining.max(duration);
+        } else {
+            self.slow_effects.push(ModifierEffect {
+                remaining: duration,
+                movement,
+                attack: movement,
+                spawn: movement,
+            });
+        }
+        self.slow_timer = self
+            .slow_effects
+            .iter()
+            .map(|effect| effect.remaining)
+            .fold(0.0, f64::max);
+        self.slow_multiplier = self
+            .slow_effects
+            .iter()
+            .map(|effect| effect.movement)
+            .fold(1.0, f64::min);
+        self.attack_speed_debuff_multiplier = self
+            .slow_effects
+            .iter()
+            .map(|effect| effect.attack)
+            .fold(1.0, f64::min);
+        self.spawn_speed_debuff_multiplier = self
+            .slow_effects
+            .iter()
+            .map(|effect| effect.spawn)
+            .fold(1.0, f64::min);
+        if let Some(original_speed) = self.original_speed {
+            self.speed.set_f64(
+                original_speed
+                    * self
+                        .slow_multiplier
+                        .max(0.0)
+                        .min(self.movement_mode_multiplier.max(0.0)),
+            );
+        }
+    }
+
     fn diagnostic_value(&self, id: i64, encounter_index: usize) -> Value {
         json!({
             "attack_speed_buff_multiplier": exact_f64_value(self.attack_speed_buff_multiplier),
@@ -652,6 +711,9 @@ struct PointProjectileState {
     ignore_buildings: bool,
     crown_tower_damage: Option<f64>,
     crown_tower_damage_multiplier: f64,
+    stun_duration: f64,
+    slow_duration: f64,
+    slow_multiplier: f64,
     launch_delay: f64,
     primary_target_id: Option<i64>,
     source_entity_id: Option<i64>,
@@ -682,9 +744,6 @@ impl PointProjectileState {
         let projectile_range = normalized_f64(fields, "projectile_range")?;
         required_i64(fields, "homing_time_ms")?;
         let start_extra_radius = normalized_f64(fields, "start_extra_radius")?;
-        if stun_duration != 0.0 || slow_duration != 0.0 || slow_multiplier != 1.0 {
-            unsupported.push("status_payload".to_owned());
-        }
         if knockback_distance != 0.0 {
             unsupported.push("knockback_payload".to_owned());
         }
@@ -720,6 +779,9 @@ impl PointProjectileState {
             ignore_buildings: required_bool(fields, "ignore_buildings")?,
             crown_tower_damage: optional_normalized_f64(fields, "crown_tower_damage")?,
             crown_tower_damage_multiplier: normalized_f64(fields, "crown_tower_damage_multiplier")?,
+            stun_duration,
+            slow_duration,
+            slow_multiplier,
             launch_delay: normalized_f64(fields, "launch_delay")?,
             primary_target_id: optional_entity_ref_id(fields, "primary_target")?,
             source_entity_id: optional_entity_ref_id(fields, "source_entity")?,
@@ -752,6 +814,9 @@ impl PointProjectileState {
             "position_x": entity.position_x.diagnostic_value(),
             "position_y": entity.position_y.diagnostic_value(),
             "splash_radius": exact_f64_value(self.splash_radius),
+            "slow_duration": exact_f64_value(self.slow_duration),
+            "slow_multiplier": exact_f64_value(self.slow_multiplier),
+            "stun_duration": exact_f64_value(self.stun_duration),
             "target_position_x": exact_f64_value(self.target_x),
             "target_position_y": exact_f64_value(self.target_y),
             "start_collision_resolved": self.start_collision_resolved,
@@ -849,6 +914,9 @@ struct PointWeapon {
     splash_radius: f64,
     hit_planes: Option<(bool, bool)>,
     crown_tower_damage_multiplier: f64,
+    stun_duration: f64,
+    slow_duration: f64,
+    slow_multiplier: f64,
 }
 
 enum CombatPayload {
@@ -868,7 +936,6 @@ impl PointWeapon {
             return Ok(None);
         }
         for (field, reason) in [
-            ("buffTime", "projectile_status"),
             ("pushback", "projectile_pushback"),
             ("projectileRange", "projectile_range"),
             ("homingTime", "temporary_homing"),
@@ -878,10 +945,7 @@ impl PointWeapon {
                 unsupported.push(reason.to_owned());
             }
         }
-        for (field, reason) in [
-            ("targetBuffData", "projectile_status"),
-            ("spawnProjectileData", "child_projectiles"),
-        ] {
+        for (field, reason) in [("spawnProjectileData", "child_projectiles")] {
             if normalized_mapping_get(projectile_data, field).is_some_and(|value| !value.is_null())
             {
                 unsupported.push(reason.to_owned());
@@ -951,10 +1015,41 @@ impl PointWeapon {
             .transpose()?
             .map_or(0.0, |value| value.as_f64());
         let crown_tower_damage_multiplier = (1.0 + crown_percent / 100.0).max(0.0);
+        let target_buff_data = normalized_mapping_get(projectile_data, "targetBuffData");
+        if target_buff_data
+            .is_some_and(|value| value.get("$mapping").and_then(Value::as_array).is_none())
+        {
+            unsupported.push("invalid_projectile_status".to_owned());
+        }
+        let buff_time_ms = normalized_mapping_get(projectile_data, "buffTime")
+            .map(ExactScalar::from_normalized)
+            .transpose()?
+            .map_or(0.0, |value| value.as_f64());
+        let speed_percent = target_buff_data
+            .and_then(|value| normalized_mapping_get(value, "speedMultiplier"))
+            .map(ExactScalar::from_normalized)
+            .transpose()?
+            .map_or(0.0, |value| value.as_f64());
+        let hit_speed_percent = target_buff_data
+            .and_then(|value| normalized_mapping_get(value, "hitSpeedMultiplier"))
+            .map(ExactScalar::from_normalized)
+            .transpose()?
+            .map_or(0.0, |value| value.as_f64());
+        let mut stun_duration = 0.0;
+        let mut slow_duration = buff_time_ms / 1000.0;
+        let mut slow_multiplier = (1.0 + speed_percent / 100.0).max(0.0);
+        if speed_percent == -100.0 && hit_speed_percent == -100.0 && slow_duration > 0.0 {
+            stun_duration = slow_duration;
+            slow_duration = 0.0;
+            slow_multiplier = 1.0;
+        }
         if !start_radius.is_finite()
             || !y_offset.is_finite()
             || !splash_radius.is_finite()
             || !crown_tower_damage_multiplier.is_finite()
+            || !stun_duration.is_finite()
+            || !slow_duration.is_finite()
+            || !slow_multiplier.is_finite()
         {
             unsupported.push("nonfinite_projectile_launch_geometry".to_owned());
         }
@@ -966,6 +1061,9 @@ impl PointWeapon {
             splash_radius,
             hit_planes,
             crown_tower_damage_multiplier,
+            stun_duration,
+            slow_duration,
+            slow_multiplier,
         }))
     }
 }
@@ -1096,6 +1194,36 @@ impl LockedDirectCombatState {
 }
 
 impl ResidentEntity {
+    fn apply_projectile_status(
+        &mut self,
+        stun_duration: f64,
+        slow_duration: f64,
+        slow_multiplier: f64,
+    ) {
+        if stun_duration > 0.0 {
+            if let Some(modifiers) = self.modifier_state.as_mut() {
+                modifiers.stun_timer = modifiers.stun_timer.max(stun_duration);
+            }
+            if let Some(combat) = self.locked_combat.as_mut() {
+                combat.stun_timer = combat.stun_timer.max(stun_duration);
+                combat.last_combat_target_id = None;
+                combat.attack_cooldown = combat.base_attack_interval();
+                combat.attack_windup_active = false;
+                combat.has_attacked_once = false;
+            }
+            self.target_id = None;
+        }
+        if slow_duration > 0.0
+            && slow_multiplier < 1.0
+            && let Some(modifiers) = self.modifier_state.as_mut()
+        {
+            modifiers.apply_slow(slow_duration, slow_multiplier);
+            if let Some(combat) = self.locked_combat.as_mut() {
+                combat.attack_speed_debuff_multiplier = modifiers.attack_speed_debuff_multiplier;
+            }
+        }
+    }
+
     fn projectile_target_traits(&self) -> Option<(bool, f64, i64, bool)> {
         match self.entity_kind {
             0 => self.locked_combat.as_ref().map(|state| {
@@ -2684,11 +2812,29 @@ impl ResidentBattle {
                 .as_ref()
                 .is_some_and(|projectile| projectile.splash_radius > 0.0)
         });
+        let has_status = self.entities.iter().any(|entity| {
+            entity.point_projectile.as_ref().is_some_and(|projectile| {
+                projectile.stun_duration > 0.0
+                    || (projectile.slow_duration > 0.0 && projectile.slow_multiplier < 1.0)
+            })
+        });
         if has_splash
             && self
                 .entities
                 .iter()
                 .any(|entity| matches!(entity.entity_kind, 0 | 1) && !entity.mechanics.is_empty())
+        {
+            return false;
+        }
+        if has_status
+            && self.entities.iter().any(|entity| {
+                entity.entity_kind == 1
+                    || (entity.entity_kind == 0 && !entity.direct_combat_unsupported.is_empty())
+                    || entity
+                        .locked_combat
+                        .as_ref()
+                        .is_some_and(|state| state.is_airborne_for_projectile && !state.is_air_unit)
+            })
         {
             return false;
         }
@@ -2711,6 +2857,9 @@ impl ResidentBattle {
                 || projectile
                     .crown_tower_damage
                     .is_some_and(|damage| !damage.is_finite())
+                || !projectile.stun_duration.is_finite()
+                || !projectile.slow_duration.is_finite()
+                || !projectile.slow_multiplier.is_finite()
             {
                 return false;
             }
@@ -2996,6 +3145,9 @@ impl ResidentBattle {
                 ignore_buildings: false,
                 crown_tower_damage: None,
                 crown_tower_damage_multiplier: weapon.crown_tower_damage_multiplier,
+                stun_duration: weapon.stun_duration,
+                slow_duration: weapon.slow_duration,
+                slow_multiplier: weapon.slow_multiplier,
                 launch_delay: 0.0,
                 primary_target_id: Some(target_id),
                 source_entity_id: Some(source_id),
@@ -3130,6 +3282,9 @@ impl ResidentBattle {
                 ignore_buildings,
                 crown_tower_damage,
                 crown_tower_damage_multiplier,
+                stun_duration,
+                slow_duration,
+                slow_multiplier,
             ) = {
                 let entity = &self.entities[projectile_index];
                 let projectile = entity
@@ -3146,6 +3301,9 @@ impl ResidentBattle {
                     projectile.ignore_buildings,
                     projectile.crown_tower_damage,
                     projectile.crown_tower_damage_multiplier,
+                    projectile.stun_duration,
+                    projectile.slow_duration,
+                    projectile.slow_multiplier,
                 )
             };
             let source_is_character = source_entity_id.is_some_and(|id| {
@@ -3225,8 +3383,9 @@ impl ResidentBattle {
                     })
                     .collect::<Vec<_>>()
             };
+            let status_targets = hit_targets.clone();
             if damage > 0.0 {
-                for target_index in hit_targets {
+                for &target_index in &hit_targets {
                     let crown_slot = self.entities[target_index]
                         .building_impact
                         .as_ref()
@@ -3285,6 +3444,16 @@ impl ResidentBattle {
                         }
                     }
                 }
+            }
+            for target_index in status_targets {
+                if splash_radius > 0.0 && !self.entities[target_index].is_alive {
+                    continue;
+                }
+                self.entities[target_index].apply_projectile_status(
+                    stun_duration,
+                    slow_duration,
+                    slow_multiplier,
+                );
             }
             self.entities[projectile_index].is_alive = false;
             self.entities[projectile_index]

@@ -10,6 +10,7 @@ from clasher.rust_core import (
     compare_building_lifetime_phase,
     compare_idle_state,
     compare_locked_direct_combat_phase,
+    compare_modifier_phase,
     compare_point_projectile_phase,
     rust_core_available,
 )
@@ -308,6 +309,36 @@ def test_point_projectile_matches_crown_damage_and_king_activation() -> None:
     assert king._tower_active
 
 
+@pytest.mark.parametrize("status_kind", ["stun", "slow"])
+def test_point_projectile_matches_troop_status_state(status_kind: str) -> None:
+    battle, target, projectile = _fixture(
+        target_position=Position(9.0, 10.25),
+    )
+    target.attack_cooldown = 0.2
+    target._last_combat_target_id = 99
+    if status_kind == "stun":
+        projectile.stun_duration = 0.5
+    else:
+        projectile.slow_duration = 1.0
+        projectile.slow_multiplier = 0.7
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_point_projectile_phase
+    resident.advance_point_projectile_phase()
+    _advance_python(battle)
+    compare_point_projectile_phase(battle, resident)
+    compare_modifier_phase(battle, resident)
+    compare_locked_direct_combat_phase(battle, resident)
+
+    if status_kind == "stun":
+        assert target.stun_timer == 0.5
+        assert target.attack_cooldown == target.get_base_attack_interval_seconds()
+        assert target._last_combat_target_id is None
+    else:
+        assert target.slow_timer == 1.0
+        assert target.slow_multiplier == 0.7
+
+
 @pytest.mark.parametrize(
     ("source_position", "target_position"),
     [
@@ -409,7 +440,6 @@ def test_enabled_simple_point_weapons_launch_without_card_special_cases(
 @pytest.mark.parametrize(
     ("field", "value"),
     [
-        ("stun_duration", 0.5),
         ("knockback_distance", 1.0),
         ("damage_waves", 2),
         ("pierces", True),
