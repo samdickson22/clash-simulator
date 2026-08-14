@@ -74,6 +74,45 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
     return reasons
 
 
+def _is_canonical_resident_action_arena(arena: Any) -> bool:
+    """Return whether Rust's fixed action geometry exactly describes ``arena``."""
+    from .arena import TileGrid
+
+    if type(arena) is not TileGrid:
+        return False
+    expected_blocked = {
+        (0, 14),
+        (0, 17),
+        (17, 14),
+        (17, 17),
+        *((x, 0) for x in (*range(6), *range(12, 18))),
+        *((x, 31) for x in (*range(6), *range(12, 18))),
+    }
+    tower_positions = (
+        (arena.BLUE_LEFT_TOWER.x, arena.BLUE_LEFT_TOWER.y),
+        (arena.BLUE_RIGHT_TOWER.x, arena.BLUE_RIGHT_TOWER.y),
+        (arena.BLUE_KING_TOWER.x, arena.BLUE_KING_TOWER.y),
+        (arena.RED_LEFT_TOWER.x, arena.RED_LEFT_TOWER.y),
+        (arena.RED_RIGHT_TOWER.x, arena.RED_RIGHT_TOWER.y),
+        (arena.RED_KING_TOWER.x, arena.RED_KING_TOWER.y),
+    )
+    return (
+        int(arena.width) == 18
+        and int(arena.height) == 32
+        and float(arena.tile_size) == 100.0
+        and set(arena.BLOCKED_TILES) == expected_blocked
+        and tower_positions
+        == (
+            (3.5, 6.5),
+            (14.5, 6.5),
+            (9.0, 2.5),
+            (3.5, 25.5),
+            (14.5, 25.5),
+            (9.0, 29.5),
+        )
+    )
+
+
 @lru_cache(maxsize=4)
 def _resident_card_catalog_bytes(
     data_file: str,
@@ -382,6 +421,7 @@ class ResidentRustBattle:
             dt=float(battle.dt),
             arena_width_tiles=int(battle.arena.width),
             arena_height_tiles=int(battle.arena.height),
+            canonical_action_arena=_is_canonical_resident_action_arena(battle.arena),
             double_elixir=bool(battle.double_elixir),
             triple_elixir=bool(battle.triple_elixir),
             overtime=bool(battle.overtime),
@@ -708,6 +748,12 @@ class ResidentRustBattle:
             str(reason) for reason in self._native.catalog_capability_reasons(str(name))
         )
 
+    def resident_legal_action_ids(self, player_id: int) -> tuple[int, ...]:
+        return tuple(
+            int(action_id)
+            for action_id in self._native.legal_action_ids(int(player_id))
+        )
+
     def apply_resident_joint_actions(
         self,
         action0: int,
@@ -721,6 +767,21 @@ class ResidentRustBattle:
             {0: bool(success0), 1: bool(success1)},
             (int(order[0]), int(order[1])),
         )
+
+    def apply_resident_ordered_interval(
+        self,
+        action0: int,
+        action1: int,
+        first_player: int,
+        ticks: int,
+    ) -> tuple[dict[int, bool], int]:
+        success0, success1, advanced = self._native.apply_ordered_interval(
+            int(action0),
+            int(action1),
+            int(first_player),
+            int(ticks),
+        )
+        return {0: bool(success0), 1: bool(success1)}, int(advanced)
 
     def rng_random(self) -> float:
         return float(self._native.rng_random())

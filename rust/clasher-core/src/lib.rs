@@ -3535,6 +3535,7 @@ struct ResidentBattle {
     dt: f64,
     arena_width_tiles: i64,
     arena_height_tiles: i64,
+    canonical_action_arena: bool,
     double_elixir: bool,
     triple_elixir: bool,
     overtime: bool,
@@ -3572,6 +3573,7 @@ impl ResidentBattle {
         dt,
         arena_width_tiles,
         arena_height_tiles,
+        canonical_action_arena,
         double_elixir,
         triple_elixir,
         overtime,
@@ -3601,6 +3603,7 @@ impl ResidentBattle {
         dt: f64,
         arena_width_tiles: i64,
         arena_height_tiles: i64,
+        canonical_action_arena: bool,
         double_elixir: bool,
         triple_elixir: bool,
         overtime: bool,
@@ -3659,6 +3662,7 @@ impl ResidentBattle {
             dt,
             arena_width_tiles,
             arena_height_tiles,
+            canonical_action_arena,
             double_elixir,
             triple_elixir,
             overtime,
@@ -5160,6 +5164,54 @@ impl ResidentBattle {
             .unwrap_or_else(|| vec!["missing_catalog_card".to_owned()])
     }
 
+    fn legal_action_ids(&self, player_id: i64) -> PyResult<Vec<i64>> {
+        self.preflight_resident_oracle_state()?;
+        if !matches!(player_id, 0 | 1) {
+            return Err(PyValueError::new_err(
+                "resident legal actions require player_id 0 or 1",
+            ));
+        }
+        let player_index = self.player_index(player_id)?;
+        let player = &self.players[player_index];
+        let mut actions = Vec::new();
+        for slot in 0..Self::ACTION_HAND_SLOTS {
+            let slot_index = usize::try_from(slot).expect("four action slots fit usize");
+            let Some(card_name) = player.hand[slot_index].as_deref() else {
+                continue;
+            };
+            let card = self.catalog.get(card_name).ok_or_else(|| {
+                PyRuntimeError::new_err("resident oracle catalog closure changed after preflight")
+            })?;
+            if player.elixir < card.mana_cost || player.king_tower_hp.as_f64() <= 0.0 {
+                continue;
+            }
+            let slot_base = slot * Self::ACTION_TILES;
+            for tile in 0..Self::ACTION_TILES {
+                let canonical_x = tile % Self::ACTION_BOARD_WIDTH;
+                let canonical_y = tile / Self::ACTION_BOARD_WIDTH;
+                let (world_x, world_y) = if player_id == 1 {
+                    (
+                        Self::ACTION_BOARD_WIDTH - 1 - canonical_x,
+                        Self::ACTION_BOARD_HEIGHT - 1 - canonical_y,
+                    )
+                } else {
+                    (canonical_x, canonical_y)
+                };
+                if self.valid_single_troop_placement(
+                    player_id,
+                    world_x * 1000 + 500,
+                    world_y * 1000 + 500,
+                    card,
+                ) {
+                    actions.push(slot_base + tile);
+                }
+            }
+        }
+        actions.push(Self::ACTION_NO_OP);
+        debug_assert!(actions.windows(2).all(|pair| pair[0] < pair[1]));
+        Ok(actions)
+    }
+
     fn apply_joint_actions(
         &mut self,
         action0: i64,
@@ -5196,6 +5248,54 @@ impl ResidentBattle {
                 .map(|player_id| player_id as i64)
                 .collect(),
         ))
+    }
+
+    fn apply_ordered_interval(
+        &mut self,
+        action0: i64,
+        action1: i64,
+        first_player: i64,
+        ticks: i64,
+    ) -> PyResult<(bool, bool, i64)> {
+        self.preflight_resident_oracle_state()?;
+        if !matches!(first_player, 0 | 1) {
+            return Err(PyValueError::new_err(
+                "resident ordered interval requires first_player 0 or 1",
+            ));
+        }
+        self.preflight_joint_action(0, action0)?;
+        self.preflight_joint_action(1, action1)?;
+        let allocation_count =
+            self.action_allocation_count(0, action0) + self.action_allocation_count(1, action1);
+        if self
+            .next_entity_id
+            .checked_add(allocation_count)
+            .is_none_or(|next_id| !(0..i64::MAX).contains(&next_id))
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident ordered interval does not have enough entity-ID allocation headroom",
+            ));
+        }
+
+        // This is the oracle's branch boundary: clone exactly once, apply the
+        // caller-selected simultaneous-action order without touching battle
+        // RNG, and publish only after the entire interval succeeds.
+        let mut candidate = self.clone();
+        let mut success = [false; 2];
+        for player_id in [first_player, 1 - first_player] {
+            let action = if player_id == 0 { action0 } else { action1 };
+            let player_index = usize::try_from(player_id).expect("validated two-player ID");
+            success[player_index] = candidate.apply_single_primary_action(player_index, action)?;
+        }
+        let mut advanced = 0;
+        for _ in 0..ticks {
+            if !candidate.advance_complete_tick_transaction()? {
+                break;
+            }
+            advanced += 1;
+        }
+        *self = candidate;
+        Ok((success[0], success[1], advanced))
     }
 
     fn replace_checkpoint(&mut self, checkpoint: &[u8]) -> PyResult<()> {
@@ -5286,6 +5386,137 @@ impl ResidentBattle {
             .iter()
             .position(|player| player.player_id == player_id)
             .ok_or_else(|| PyRuntimeError::new_err(format!("missing resident player {player_id}")))
+    }
+
+    fn preflight_resident_oracle_state(&self) -> PyResult<()> {
+        if !self.canonical_action_arena
+            || self.arena_width_tiles != Self::ACTION_BOARD_WIDTH
+            || self.arena_height_tiles != Self::ACTION_BOARD_HEIGHT
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident oracle requires the canonical 18x32 arena",
+            ));
+        }
+        if self.players.len() != 2
+            || self.players[0].player_id != 0
+            || self.players[1].player_id != 1
+            || self.players.iter().any(|player| {
+                player.hand.len()
+                    != usize::try_from(Self::ACTION_HAND_SLOTS)
+                        .expect("four action slots fit usize")
+            })
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident oracle requires canonical ordered two-player hand state",
+            ));
+        }
+        if !self.pending_spell_casts_empty || !self.resident_id_invariants_hold() {
+            return Err(PyRuntimeError::new_err(
+                "resident oracle rejected pending commands or entity-ID state",
+            ));
+        }
+
+        for player in &self.players {
+            let mut card_count = 0_usize;
+            for card_name in player
+                .hand
+                .iter()
+                .filter_map(Option::as_deref)
+                .chain(player.cycle_queue.iter().map(String::as_str))
+            {
+                card_count += 1;
+                let Some(card) = self.catalog.get(card_name) else {
+                    return Err(PyRuntimeError::new_err(format!(
+                        "resident oracle rejected uncatalogued hand/cycle card {card_name:?}"
+                    )));
+                };
+                if !card.supports_single_primary_troop() {
+                    return Err(PyRuntimeError::new_err(format!(
+                        "resident oracle rejected unsupported hand/cycle card {card_name:?}: {}",
+                        card.capability_reasons.join(",")
+                    )));
+                }
+            }
+            if card_count != 8 {
+                return Err(PyRuntimeError::new_err(
+                    "resident oracle requires exactly eight hand/cycle cards per player",
+                ));
+            }
+        }
+
+        if !self.resident_tower_player_state_synced() {
+            return Err(PyRuntimeError::new_err(
+                "resident oracle rejected unsynchronized Crown Tower/player state",
+            ));
+        }
+
+        if self
+            .entities
+            .iter()
+            .any(|entity| entity.active && !entity.has_only_compiled_mechanics())
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident oracle rejected an active ability or unsupported mechanic",
+            ));
+        }
+        if !self.supports_direct_troop_combat_phase()
+            || !self.supports_ground_movement_phase()
+            || !self.supports_building_lifetime_phase()
+            || !self.supports_modifier_phase()
+            || !self.supports_resident_object_phase()
+            || !self.supports_cleanup_phase()
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident oracle rejected noncanonical complete-tick capability",
+            ));
+        }
+        Ok(())
+    }
+
+    fn resident_tower_player_state_synced(&self) -> bool {
+        if self.towers.iter().any(|tower| {
+            !matches!(tower.player_id, 0 | 1)
+                || !matches!(tower.slot.as_str(), "left" | "right" | "king")
+        }) {
+            return false;
+        }
+        [
+            (0, "left"),
+            (0, "right"),
+            (0, "king"),
+            (1, "left"),
+            (1, "right"),
+            (1, "king"),
+        ]
+        .iter()
+        .all(|(player_id, slot)| {
+            let Ok(player_index) = self.player_index(*player_id) else {
+                return false;
+            };
+            let player = &self.players[player_index];
+            let player_hp = match *slot {
+                "left" => &player.left_tower_hp,
+                "right" => &player.right_tower_hp,
+                "king" => &player.king_tower_hp,
+                _ => unreachable!("fixed Crown Tower slot"),
+            };
+            let mut matching = self
+                .towers
+                .iter()
+                .filter(|tower| tower.player_id == *player_id && tower.slot == *slot);
+            let tower = matching.next();
+            if matching.next().is_some() {
+                return false;
+            }
+            match tower {
+                Some(tower) => {
+                    tower.hp.as_f64().to_bits() == player_hp.as_f64().to_bits()
+                        && tower.is_alive == (tower.hp.as_f64() > 0.0)
+                        && (tower.hp.as_f64() <= 0.0 || tower.active)
+                }
+                None => player_hp.as_f64() <= 0.0,
+            }
+        })
     }
 
     fn preflight_joint_action(&self, player_id: i64, action: i64) -> PyResult<()> {
@@ -5633,7 +5864,9 @@ impl ResidentBattle {
             entity.active
                 && entity.is_alive
                 && entity.blocks_deployment
-                && (x - entity.position_x.as_f64()).hypot(y - entity.position_y.as_f64())
+                && (((x - entity.position_x.as_f64()).powi(2)
+                    + (y - entity.position_y.as_f64()).powi(2))
+                .powf(0.5))
                     <= mover_radius + entity.deployment_collision_radius + 1e-9
         })
     }
