@@ -16,14 +16,35 @@ from clasher.interaction_matrix import (
     two_v_two_composition_count,
 )
 
-AGGREGATE_SCHEMA_VERSION = 1
+try:
+    from scripts.interaction_journal import (
+        fingerprint,
+        load_journal,
+        resolve_artifact_path,
+        setup_event_counts,
+    )
+except ModuleNotFoundError:  # Direct ``python scripts/...`` execution.
+    from interaction_journal import (  # type: ignore[no-redef]
+        fingerprint,
+        load_journal,
+        resolve_artifact_path,
+        setup_event_counts,
+    )
+
+AGGREGATE_SCHEMA_VERSION = 2
 SHARED_CONFIG_FIELDS = (
     "candidate",
     "cards_sha256",
+    "decks_sha256",
+    "gamedata_sha256",
+    "interaction_manifest_sha256",
     "journal_schema_version",
     "kind",
+    "provenance",
+    "semantic_event_trace_schema_version",
     "seed",
     "shard_count",
+    "state_schema",
     "ticks_per_case",
 )
 SHARD_CONFIG_FIELDS = (
@@ -42,19 +63,6 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("summaries", nargs="+", type=Path)
     parser.add_argument("--json-out", required=True, type=Path)
     return parser.parse_args()
-
-
-def _canonical_bytes(value: Mapping[str, Any]) -> bytes:
-    return json.dumps(
-        value,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=True,
-    ).encode("ascii")
-
-
-def _fingerprint(value: Mapping[str, Any]) -> str:
-    return hashlib.sha256(_canonical_bytes(value)).hexdigest()
 
 
 def _write_atomic(path: Path, payload: Mapping[str, Any]) -> None:
@@ -97,7 +105,7 @@ def _validate_summary(
             f"expected={shared_config!r} actual={actual_shared!r}"
         )
     shard_config = {field: summary[field] for field in SHARD_CONFIG_FIELDS}
-    expected_fingerprint = _fingerprint(shard_config)
+    expected_fingerprint = fingerprint(shard_config)
     if summary.get("fingerprint") != expected_fingerprint:
         raise ValueError(
             f"interaction shard fingerprint mismatch in {path}: "
@@ -117,12 +125,43 @@ def _validate_summary(
         raise ValueError(
             f"interaction shard case count does not match its range: {path}"
         )
-    journal_path = Path(str(summary["journal_path"]))
+    journal_path = resolve_artifact_path(
+        str(summary["journal_path"]),
+        summary_path=path,
+    )
     if not journal_path.is_file():
         raise ValueError(f"interaction shard journal is missing: {journal_path}")
     actual_journal_hash = hashlib.sha256(journal_path.read_bytes()).hexdigest()
     if actual_journal_hash != summary.get("journal_sha256"):
         raise ValueError(f"interaction shard journal hash mismatch: {journal_path}")
+    loaded = load_journal(
+        journal_path,
+        expected_config=shard_config,
+        expected_fingerprint=expected_fingerprint,
+        expected_start=start,
+        expected_stop=stop,
+    )
+    if loaded.sha256_chain != summary.get("sha256_chain"):
+        raise ValueError(f"interaction shard final hash-chain mismatch: {journal_path}")
+    expected_event_counts = setup_event_counts(loaded.records)
+    if summary.get("event_counts") != expected_event_counts:
+        raise ValueError(
+            f"interaction shard event counts do not match journal: {journal_path}"
+        )
+    if summary.get("event_counts_scope") != "scenario-setup-only":
+        raise ValueError(f"interaction shard event-count scope is invalid: {path}")
+    if summary.get("semantic_event_tracing") != "deferred":
+        raise ValueError(f"interaction shard event-trace status is invalid: {path}")
+    shadow_checks = sum(int(record["shadow_checks"]) for record in loaded.records)
+    shadow_mismatches = sum(
+        int(record["shadow_mismatches"]) for record in loaded.records
+    )
+    if int(summary.get("shadow_checks", -1)) != shadow_checks:
+        raise ValueError(f"interaction shard shadow-check count mismatch: {path}")
+    if int(summary.get("shadow_mismatches", -1)) != shadow_mismatches:
+        raise ValueError(f"interaction shard shadow mismatch count mismatch: {path}")
+    if shadow_mismatches != 0:
+        raise ValueError(f"interaction shard contains shadow mismatches: {path}")
 
 
 def aggregate_summaries(
@@ -149,11 +188,15 @@ def aggregate_summaries(
     if set(by_index) != expected_indices:
         missing = sorted(expected_indices - set(by_index))
         extra = sorted(set(by_index) - expected_indices)
-        raise ValueError(f"interaction shard index gap: missing={missing} extra={extra}")
+        raise ValueError(
+            f"interaction shard index gap: missing={missing} extra={extra}"
+        )
 
     total = _expected_total(str(shared["kind"]))
     cursor = 0
     cases_run = 0
+    shadow_checks = 0
+    shadow_mismatches = 0
     event_counts: dict[str, Counter[str]] = {}
     shard_records: list[dict[str, Any]] = []
     for shard_index in range(shard_count):
@@ -167,6 +210,8 @@ def aggregate_summaries(
             )
         cursor = stop
         cases_run += int(summary["cases_run"])
+        shadow_checks += int(summary["shadow_checks"])
+        shadow_mismatches += int(summary["shadow_mismatches"])
         for event, counts in dict(summary["event_counts"]).items():
             aggregate = event_counts.setdefault(str(event), Counter())
             aggregate.update({key: int(value) for key, value in counts.items()})
@@ -211,8 +256,12 @@ def aggregate_summaries(
             event: dict(sorted(counts.items()))
             for event, counts in sorted(event_counts.items())
         },
-        "fingerprint": _fingerprint(aggregate_identity),
+        "event_counts_scope": "scenario-setup-only",
+        "fingerprint": fingerprint(aggregate_identity),
+        "semantic_event_tracing": "deferred",
         "shards": shard_records,
+        "shadow_checks": shadow_checks,
+        "shadow_mismatches": shadow_mismatches,
         "status": "complete",
     }
 
