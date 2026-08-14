@@ -471,6 +471,7 @@ struct ResidentEntity {
 struct LockedDirectCombatState {
     damage: f64,
     range: f64,
+    sight_range: f64,
     attack_cooldown: f64,
     attack_windup_active: bool,
     attack_preload_blocked: bool,
@@ -492,6 +493,10 @@ struct LockedDirectCombatState {
     attack_mode_multiplier: f64,
     hit_speed_ms: i64,
     first_hit_ms: i64,
+    retarget_ms: i64,
+    targets_only_buildings: bool,
+    sight_clip: f64,
+    sight_clip_side: f64,
     hidden_building: bool,
     stealth_until_ms: i64,
 }
@@ -514,9 +519,15 @@ impl LockedDirectCombatState {
         } else {
             (hit_speed_ms - load_time_ms).max(0)
         };
+        let retarget_ms = if load_time_ms > hit_speed_ms {
+            load_time_ms - hit_speed_ms
+        } else {
+            (hit_speed_ms - load_time_ms).max(0)
+        };
         Ok(Self {
             damage: normalized_f64(fields, "damage")?,
             range: normalized_f64(fields, "range")?,
+            sight_range: normalized_f64(fields, "sight_range")?,
             attack_cooldown: normalized_f64(fields, "attack_cooldown")?,
             attack_windup_active: required_bool(fields, "_attack_windup_active")?,
             attack_preload_blocked: required_bool(fields, "_attack_preload_blocked")?,
@@ -544,6 +555,11 @@ impl LockedDirectCombatState {
             attack_mode_multiplier: normalized_f64(fields, "attack_mode_multiplier")?,
             hit_speed_ms,
             first_hit_ms,
+            retarget_ms,
+            targets_only_buildings: normalized_optional_bool(card_fields, "targets_only_buildings"),
+            sight_clip: optional_normalized_f64(card_fields, "sight_clip")?.unwrap_or(0.0),
+            sight_clip_side: optional_normalized_f64(card_fields, "sight_clip_side")?
+                .unwrap_or(0.0),
             hidden_building: normalized_optional_bool(fields, "_hidden_building"),
             stealth_until_ms: fields
                 .get("_stealth_until")
@@ -1906,6 +1922,145 @@ impl ResidentBattle {
         Ok(sha256_hex(&self.locked_direct_combat_state_bytes()?))
     }
 
+    fn supports_direct_troop_combat_phase(&self) -> bool {
+        if !self.supports_direct_combat_phase() {
+            return false;
+        }
+        let mut incoming_damage = vec![0.0; self.entities.len()];
+        for actor_index in 0..self.entities.len() {
+            let actor = &self.entities[actor_index];
+            if !actor.is_alive {
+                continue;
+            }
+            if actor.deploy_delay_remaining > 0.0 {
+                return false;
+            }
+            let Some(state) = actor.locked_combat.as_ref() else {
+                return false;
+            };
+            let target_index = self.direct_troop_target_index(actor_index);
+            let target_id = target_index.map(|index| self.entities[index].id);
+            let mut cooldown = state.attack_cooldown;
+            if state.last_combat_target_id.is_some() && state.last_combat_target_id != target_id {
+                cooldown = cooldown.max(state.retarget_ms as f64 / 1000.0);
+            }
+            let target_in_range =
+                target_index.is_some_and(|index| self.direct_attack_reach(actor_index, index));
+            if state.stun_timer > 0.0 || !target_in_range {
+                continue;
+            }
+            if cooldown > 0.0 {
+                cooldown -= self.dt * state.attack_rate();
+            }
+            if cooldown <= 1e-9 {
+                let index = target_index.expect("range requires target");
+                incoming_damage[index] += state.damage;
+            }
+        }
+        self.entities.iter().enumerate().all(|(index, entity)| {
+            !entity.is_alive || incoming_damage[index] < entity.hitpoints.as_f64()
+        })
+    }
+
+    fn advance_direct_troop_combat_phase(&mut self) -> PyResult<()> {
+        if !self.supports_direct_troop_combat_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident direct-troop combat preflight rejected battle state",
+            ));
+        }
+        self.checkpoint_current = false;
+        for actor_index in 0..self.entities.len() {
+            if !self.entities[actor_index].is_alive {
+                continue;
+            }
+            let target_index = self.direct_troop_target_index(actor_index);
+            let target_id = target_index.map(|index| self.entities[index].id);
+            let target_position = target_index.map(|index| {
+                (
+                    self.entities[index].position_x.as_f64(),
+                    self.entities[index].position_y.as_f64(),
+                )
+            });
+            let target_in_range =
+                target_index.is_some_and(|index| self.direct_attack_reach(actor_index, index));
+            let (actor_x, actor_y) = (
+                self.entities[actor_index].position_x.as_f64(),
+                self.entities[actor_index].position_y.as_f64(),
+            );
+            let damage = {
+                let actor = &mut self.entities[actor_index];
+                actor.target_id = target_id;
+                let state = actor
+                    .locked_combat
+                    .as_mut()
+                    .expect("direct preflight requires combat state");
+                state.movement_target_id = None;
+                state.initial_position.get_or_insert((actor_x, actor_y));
+                state.last_attack_time += self.dt;
+                if let Some((target_x, target_y)) = target_position {
+                    let facing_x = ((target_x - actor_x) * 1000.0).round_ties_even() as i64;
+                    let facing_y = ((target_y - actor_y) * 1000.0).round_ties_even() as i64;
+                    if facing_x != 0 || facing_y != 0 {
+                        state.facing_x_units = facing_x;
+                        state.facing_y_units = facing_y;
+                    }
+                }
+                if state.last_combat_target_id.is_some() && state.last_combat_target_id != target_id
+                {
+                    state.attack_cooldown =
+                        state.attack_cooldown.max(state.retarget_ms as f64 / 1000.0);
+                    state.has_attacked_once = false;
+                }
+                state.last_combat_target_id = target_id;
+                if state.stun_timer > 0.0 {
+                    None
+                } else {
+                    if state.attack_cooldown > 0.0 {
+                        if target_in_range {
+                            state.attack_cooldown -= self.dt * state.attack_rate();
+                            if state.attack_cooldown <= 1e-9 {
+                                state.attack_cooldown = 0.0;
+                            }
+                        } else if !state.attack_preload_blocked {
+                            state.attack_cooldown = (state.attack_cooldown
+                                - self.dt * state.attack_rate())
+                            .max(state.first_hit_ms as f64 / 1000.0);
+                        }
+                    }
+                    if !target_in_range {
+                        state.attack_windup_active = false;
+                    } else if !state.attack_windup_active
+                        && state.attack_cooldown <= state.first_hit_ms as f64 / 1000.0 + 1e-12
+                    {
+                        state.attack_windup_active = true;
+                    }
+                    if let Some(_) = target_id
+                        && !target_in_range
+                    {
+                        state.movement_target_id = target_id;
+                    }
+                    if target_id.is_some() && target_in_range && state.attack_cooldown <= 0.0 {
+                        state.attack_cooldown = state.base_attack_interval();
+                        state.attack_windup_active = false;
+                        state.has_attacked_once = true;
+                        state.attack_preload_blocked = false;
+                        state.last_attack_time = 0.0;
+                        Some(state.damage)
+                    } else {
+                        None
+                    }
+                }
+            };
+            if let (Some(target_index), Some(damage)) = (target_index, damage) {
+                let target = &mut self.entities[target_index];
+                target
+                    .hitpoints
+                    .set_f64((target.hitpoints.as_f64() - damage).max(0.0));
+            }
+        }
+        Ok(())
+    }
+
     fn rng_random(&mut self) -> f64 {
         self.checkpoint_current = false;
         self.rng.random()
@@ -2006,6 +2161,148 @@ impl ResidentBattle {
 
     fn fork(&self) -> Self {
         self.clone()
+    }
+}
+
+impl ResidentBattle {
+    fn direct_target_valid(&self, actor_index: usize, target_index: usize) -> bool {
+        if actor_index == target_index {
+            return false;
+        }
+        let actor = &self.entities[actor_index];
+        let target = &self.entities[target_index];
+        let (Some(actor_state), Some(target_state)) =
+            (actor.locked_combat.as_ref(), target.locked_combat.as_ref())
+        else {
+            return false;
+        };
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        target.is_alive
+            && target.player_id != actor.player_id
+            && !target_state.hidden_building
+            && target_state.stealth_until_ms <= now_ms
+            && target.death_spawn_target_immunity_elapsed_ms < 0
+            && ((target_state.is_air_unit && actor_state.can_attack_air)
+                || (!target_state.is_air_unit && actor_state.can_attack_ground))
+    }
+
+    fn direct_target_distance(&self, actor_index: usize, target_index: usize) -> f64 {
+        let actor = &self.entities[actor_index];
+        let target = &self.entities[target_index];
+        let target_state = target
+            .locked_combat
+            .as_ref()
+            .expect("character target has combat state");
+        let dx = target.position_x.as_f64() - actor.position_x.as_f64();
+        let dy = target.position_y.as_f64() - actor.position_y.as_f64();
+        let discount =
+            target_state.native_target_distance_discount_sq_units.max(0) as f64 / 1_000_000.0;
+        (dx * dx + dy * dy - discount).max(0.0).sqrt()
+    }
+
+    fn direct_attack_reach(&self, actor_index: usize, target_index: usize) -> bool {
+        let actor_state = self.entities[actor_index]
+            .locked_combat
+            .as_ref()
+            .expect("character actor has combat state");
+        let target_state = self.entities[target_index]
+            .locked_combat
+            .as_ref()
+            .expect("character target has combat state");
+        let extension = if actor_state.attack_windup_active {
+            0.025
+        } else {
+            0.0
+        };
+        self.direct_target_distance(actor_index, target_index)
+            <= actor_state.range + target_state.collision_radius + extension + 1e-8
+    }
+
+    fn direct_keep_reach(&self, actor_index: usize, target_index: usize) -> bool {
+        let actor_state = self.entities[actor_index]
+            .locked_combat
+            .as_ref()
+            .expect("character actor has combat state");
+        let target_state = self.entities[target_index]
+            .locked_combat
+            .as_ref()
+            .expect("character target has combat state");
+        self.direct_target_distance(actor_index, target_index)
+            <= actor_state.range + target_state.collision_radius + 0.025 + 1e-8
+    }
+
+    fn direct_target_in_sight(&self, actor_index: usize, target_index: usize) -> bool {
+        let actor = &self.entities[actor_index];
+        let target = &self.entities[target_index];
+        let actor_state = actor
+            .locked_combat
+            .as_ref()
+            .expect("character actor has combat state");
+        let target_state = target
+            .locked_combat
+            .as_ref()
+            .expect("character target has combat state");
+        let sight_reach = actor_state.sight_range + target_state.collision_radius;
+        if self.direct_target_distance(actor_index, target_index) > sight_reach + 1e-8 {
+            return false;
+        }
+        let dx = target.position_x.as_f64() - actor.position_x.as_f64();
+        let dy = target.position_y.as_f64() - actor.position_y.as_f64();
+        if actor_state.sight_clip_side > 0.0
+            && dx.abs() > (sight_reach - actor_state.sight_clip_side).max(0.0) + 1e-8
+        {
+            return false;
+        }
+        if actor_state.sight_clip > 0.0 {
+            let forward_delta = if actor.player_id == 0 { dy } else { -dy };
+            if forward_delta < -(sight_reach - actor_state.sight_clip).max(0.0) - 1e-8 {
+                return false;
+            }
+        }
+        true
+    }
+
+    fn direct_troop_target_index(&self, actor_index: usize) -> Option<usize> {
+        let actor = &self.entities[actor_index];
+        let actor_state = actor.locked_combat.as_ref()?;
+        let current = actor.target_id.and_then(|target_id| {
+            self.entities
+                .iter()
+                .position(|entity| entity.id == target_id)
+                .filter(|&index| self.direct_target_valid(actor_index, index))
+        });
+        if current.is_some_and(|index| self.direct_keep_reach(actor_index, index)) {
+            return current;
+        }
+        let best = if actor_state.targets_only_buildings {
+            None
+        } else {
+            self.entities
+                .iter()
+                .enumerate()
+                .filter(|(index, _)| {
+                    self.direct_target_valid(actor_index, *index)
+                        && self.direct_target_in_sight(actor_index, *index)
+                })
+                .min_by(|(left, _), (right, _)| {
+                    self.direct_target_distance(actor_index, *left)
+                        .total_cmp(&self.direct_target_distance(actor_index, *right))
+                })
+                .map(|(index, _)| index)
+        };
+        match (current, best) {
+            (None, best) => best,
+            (current, None) => current,
+            (Some(current), Some(best)) => {
+                if self.direct_target_distance(actor_index, best)
+                    < self.direct_target_distance(actor_index, current) - 1e-6
+                {
+                    Some(best)
+                } else {
+                    Some(current)
+                }
+            }
+        }
     }
 }
 

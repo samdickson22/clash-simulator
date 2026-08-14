@@ -129,6 +129,94 @@ def test_locked_direct_combat_phase_rejects_lethal_ordering_before_mutation() ->
     assert resident.rng_state_bytes() == rng_before
 
 
+def test_direct_troop_combat_acquires_target_and_publishes_movement_lock() -> None:
+    battle, first, second = _locked_pair(cooldown=0.20)
+    first.position = Position(9.0, 12.0)
+    second.position = Position(9.0, 16.0)
+    for actor in (first, second):
+        actor.target_id = None
+        actor._last_combat_target_id = None
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert first.target_id == second.id
+    assert second.target_id == first.id
+    assert first._movement_target_id == second.id
+    assert second._movement_target_id == first.id
+
+
+def test_direct_troop_combat_handles_targetless_building_targeter() -> None:
+    battle = _empty_battle()
+    giant = _spawn(battle, "Giant")
+    giant.deploy_delay_remaining = 0.0
+    giant.placement_pending = False
+    giant._spawn_hook_pending = False
+    giant._spawn_hook_fired = True
+    giant.attack_cooldown = 1.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert giant.target_id is None
+
+
+def test_direct_troop_combat_retargets_to_strictly_closer_enemy() -> None:
+    battle = _empty_battle()
+    actor = _spawn(battle, "Knight", 0)
+    nearer = _spawn(battle, "Knight", 1)
+    farther = _spawn(battle, "Knight", 1)
+    actor.position = Position(9.0, 12.0)
+    nearer.position = Position(9.0, 15.0)
+    farther.position = Position(9.0, 17.0)
+    for entity in (actor, nearer, farther):
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        entity._spawn_hook_pending = False
+        entity._spawn_hook_fired = True
+        entity.attack_cooldown = 1.0
+    actor.target_id = farther.id
+    actor._last_combat_target_id = farther.id
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert actor.target_id == nearer.id
+
+
+def test_direct_troop_combat_equal_distance_keeps_encounter_order() -> None:
+    battle = _empty_battle()
+    actor = _spawn(battle, "Knight", 0)
+    first = _spawn(battle, "Knight", 1)
+    second = _spawn(battle, "Knight", 1)
+    actor.position = Position(9.0, 12.0)
+    first.position = Position(8.0, 15.0)
+    second.position = Position(10.0, 15.0)
+    for entity in (actor, first, second):
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        entity._spawn_hook_pending = False
+        entity._spawn_hook_fired = True
+        entity.attack_cooldown = 1.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert actor.target_id == first.id
+
+
 @pytest.mark.parametrize(
     ("card_name", "expected_reason"),
     [

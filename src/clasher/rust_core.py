@@ -375,6 +375,13 @@ class ResidentRustBattle:
     def advance_locked_direct_combat_phase(self) -> None:
         self._native.advance_locked_direct_combat_phase()
 
+    @property
+    def supports_direct_troop_combat_phase(self) -> bool:
+        return bool(self._native.supports_direct_troop_combat_phase())
+
+    def advance_direct_troop_combat_phase(self) -> None:
+        self._native.advance_direct_troop_combat_phase()
+
     def locked_direct_combat_state_bytes(self) -> bytes:
         return bytes(self._native.locked_direct_combat_state_bytes())
 
