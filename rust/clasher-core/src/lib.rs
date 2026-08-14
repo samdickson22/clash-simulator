@@ -1,6 +1,6 @@
 use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
-use serde_json::Value;
+use serde_json::{Map, Value, json};
 use sha2::{Digest, Sha256};
 use std::collections::VecDeque;
 
@@ -40,6 +40,229 @@ fn validate_checkpoint(payload: &[u8]) -> PyResult<u64> {
         )));
     }
     Ok(schema_version)
+}
+
+fn object_fields(value: &Value) -> PyResult<&Map<String, Value>> {
+    value
+        .get("$object")
+        .and_then(|object| object.get("fields"))
+        .and_then(Value::as_object)
+        .ok_or_else(|| PyValueError::new_err("checkpoint object has no normalized fields"))
+}
+
+fn object_type(value: &Value) -> PyResult<String> {
+    value
+        .get("$object")
+        .and_then(|object| object.get("type"))
+        .and_then(Value::as_str)
+        .map(str::to_owned)
+        .ok_or_else(|| PyValueError::new_err("checkpoint object has no normalized type"))
+}
+
+fn required_i64(fields: &Map<String, Value>, name: &str) -> PyResult<i64> {
+    fields
+        .get(name)
+        .and_then(Value::as_i64)
+        .ok_or_else(|| PyValueError::new_err(format!("checkpoint field {name:?} is not an i64")))
+}
+
+fn required_bool(fields: &Map<String, Value>, name: &str) -> PyResult<bool> {
+    fields
+        .get(name)
+        .and_then(Value::as_bool)
+        .ok_or_else(|| PyValueError::new_err(format!("checkpoint field {name:?} is not a bool")))
+}
+
+#[derive(Clone)]
+enum ExactScalar {
+    Int(i64),
+    Float(u64),
+}
+
+impl ExactScalar {
+    fn from_normalized(value: &Value) -> PyResult<Self> {
+        if let Some(integer) = value.as_i64() {
+            return Ok(Self::Int(integer));
+        }
+        let encoded = value
+            .get("$float")
+            .and_then(Value::as_str)
+            .ok_or_else(|| PyValueError::new_err("checkpoint scalar is not int or binary64"))?;
+        Ok(Self::Float(parse_python_float_hex(encoded)?))
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        match self {
+            Self::Int(value) => json!({"kind": "int", "value": value}),
+            Self::Float(bits) => json!({
+                "bits": format!("{bits:016x}"),
+                "kind": "float"
+            }),
+        }
+    }
+}
+
+fn parse_python_float_hex(encoded: &str) -> PyResult<u64> {
+    match encoded {
+        "inf" => return Ok(f64::INFINITY.to_bits()),
+        "-inf" => return Ok(f64::NEG_INFINITY.to_bits()),
+        "nan" => return Ok(f64::NAN.to_bits()),
+        _ => {}
+    }
+    let (negative, unsigned) = encoded
+        .strip_prefix('-')
+        .map_or((false, encoded), |rest| (true, rest));
+    let (mantissa, exponent_text) = unsigned
+        .split_once('p')
+        .ok_or_else(|| PyValueError::new_err(format!("invalid float.hex value {encoded:?}")))?;
+    let exponent = exponent_text.parse::<i32>().map_err(|error| {
+        PyValueError::new_err(format!("invalid float.hex exponent {encoded:?}: {error}"))
+    })?;
+    let mantissa = mantissa
+        .strip_prefix("0x")
+        .ok_or_else(|| PyValueError::new_err(format!("invalid float.hex prefix {encoded:?}")))?;
+    let (integer_text, fraction_text) = mantissa
+        .split_once('.')
+        .ok_or_else(|| PyValueError::new_err(format!("invalid float.hex mantissa {encoded:?}")))?;
+    if fraction_text.len() > 13 {
+        return Err(PyValueError::new_err(format!(
+            "float.hex fraction exceeds binary64 width {encoded:?}"
+        )));
+    }
+    let integer = u64::from_str_radix(integer_text, 16).map_err(|error| {
+        PyValueError::new_err(format!("invalid float.hex integer {encoded:?}: {error}"))
+    })?;
+    let mut fraction = u64::from_str_radix(fraction_text, 16).map_err(|error| {
+        PyValueError::new_err(format!("invalid float.hex fraction {encoded:?}: {error}"))
+    })?;
+    fraction <<= 4 * (13 - fraction_text.len());
+    let sign = u64::from(negative) << 63;
+    if integer == 0 {
+        if fraction == 0 {
+            return Ok(sign);
+        }
+        if exponent != -1022 {
+            return Err(PyValueError::new_err(format!(
+                "invalid subnormal float.hex exponent {encoded:?}"
+            )));
+        }
+        return Ok(sign | fraction);
+    }
+    if integer != 1 || !(-1022..=1023).contains(&exponent) {
+        return Err(PyValueError::new_err(format!(
+            "unsupported normalized float.hex value {encoded:?}"
+        )));
+    }
+    let exponent_bits = u64::try_from(exponent + 1023).expect("validated exponent");
+    Ok(sign | (exponent_bits << 52) | fraction)
+}
+
+struct ResidentEntity {
+    encounter_index: usize,
+    id: i64,
+    player_id: i64,
+    entity_kind: i64,
+    python_type: String,
+    card_name: String,
+    position_x: ExactScalar,
+    position_y: ExactScalar,
+    hitpoints: ExactScalar,
+    max_hitpoints: ExactScalar,
+    is_alive: bool,
+    target_id: Option<i64>,
+    mechanics: Vec<String>,
+}
+
+impl ResidentEntity {
+    fn from_normalized(encounter_index: usize, value: &Value) -> PyResult<Self> {
+        let fields = object_fields(value)?;
+        let position_fields = object_fields(
+            fields
+                .get("position")
+                .ok_or_else(|| PyValueError::new_err("entity has no position"))?,
+        )?;
+        let card_fields = object_fields(
+            fields
+                .get("card_stats")
+                .ok_or_else(|| PyValueError::new_err("entity has no card_stats"))?,
+        )?;
+        let mechanics = fields
+            .get("mechanics")
+            .and_then(Value::as_array)
+            .ok_or_else(|| PyValueError::new_err("entity mechanics is not a list"))?
+            .iter()
+            .map(object_type)
+            .collect::<PyResult<Vec<_>>>()?;
+        let target_id = fields
+            .get("target_id")
+            .ok_or_else(|| PyValueError::new_err("entity has no target_id"))?
+            .as_i64();
+        Ok(Self {
+            encounter_index,
+            id: required_i64(fields, "id")?,
+            player_id: required_i64(fields, "player_id")?,
+            entity_kind: required_i64(fields, "entity_kind")?,
+            python_type: object_type(value)?,
+            card_name: card_fields
+                .get("name")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_owned(),
+            position_x: ExactScalar::from_normalized(
+                position_fields
+                    .get("x")
+                    .ok_or_else(|| PyValueError::new_err("position has no x"))?,
+            )?,
+            position_y: ExactScalar::from_normalized(
+                position_fields
+                    .get("y")
+                    .ok_or_else(|| PyValueError::new_err("position has no y"))?,
+            )?,
+            hitpoints: ExactScalar::from_normalized(
+                fields
+                    .get("hitpoints")
+                    .ok_or_else(|| PyValueError::new_err("entity has no hitpoints"))?,
+            )?,
+            max_hitpoints: ExactScalar::from_normalized(
+                fields
+                    .get("max_hitpoints")
+                    .ok_or_else(|| PyValueError::new_err("entity has no max_hitpoints"))?,
+            )?,
+            is_alive: required_bool(fields, "is_alive")?,
+            target_id,
+            mechanics,
+        })
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        json!({
+            "card_name": self.card_name,
+            "encounter_index": self.encounter_index,
+            "entity_kind": self.entity_kind,
+            "hitpoints": self.hitpoints.diagnostic_value(),
+            "id": self.id,
+            "is_alive": self.is_alive,
+            "max_hitpoints": self.max_hitpoints.diagnostic_value(),
+            "mechanics": self.mechanics,
+            "player_id": self.player_id,
+            "position_x": self.position_x.diagnostic_value(),
+            "position_y": self.position_y.diagnostic_value(),
+            "python_type": self.python_type,
+            "target_id": self.target_id,
+        })
+    }
+}
+
+fn parse_resident_entities(payload: &[u8]) -> PyResult<Vec<ResidentEntity>> {
+    let root: Value = serde_json::from_slice(payload)
+        .map_err(|error| PyValueError::new_err(format!("invalid battle checkpoint: {error}")))?;
+    root.get("entities")
+        .and_then(Value::as_array)
+        .ok_or_else(|| PyValueError::new_err("battle checkpoint has no entity list"))?
+        .iter()
+        .enumerate()
+        .map(|(index, entity)| ResidentEntity::from_normalized(index, entity))
+        .collect()
 }
 
 type PlayerInit = (
@@ -277,6 +500,7 @@ struct ResidentBattle {
     sudden_death_crowns: (i64, i64),
     tiebreaker_time: f64,
     winner: Option<i64>,
+    entities: Vec<ResidentEntity>,
 }
 
 #[pymethods]
@@ -336,6 +560,7 @@ impl ResidentBattle {
             ));
         }
         let schema_version = validate_checkpoint(checkpoint)?;
+        let entities = parse_resident_entities(checkpoint)?;
         if refill_schedule.is_empty() {
             return Err(PyValueError::new_err("refill schedule cannot be empty"));
         }
@@ -373,6 +598,7 @@ impl ResidentBattle {
             sudden_death_crowns,
             tiebreaker_time,
             winner,
+            entities,
         })
     }
 
@@ -601,6 +827,21 @@ impl ResidentBattle {
         sha256_hex(&payload)
     }
 
+    fn entity_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .map(ResidentEntity::diagnostic_value)
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!("failed to serialize resident entities: {error}"))
+        })
+    }
+
+    fn entity_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.entity_state_bytes()?))
+    }
+
     fn checkpoint_bytes(&self) -> PyResult<Vec<u8>> {
         if !self.checkpoint_current {
             return Err(PyRuntimeError::new_err(
@@ -680,5 +921,25 @@ mod tests {
             sha256_hex(b"clasher"),
             "2c69056d0b19b570ec219f88f78d9e3cb73ebb7c0496c1f50b59e3585f1f615d"
         );
+    }
+
+    #[test]
+    fn python_float_hex_round_trips_binary64_bits() {
+        let cases = [
+            ("0x0.0p+0", 0.0_f64),
+            ("-0x0.0p+0", -0.0_f64),
+            ("0x0.0000000000001p-1022", f64::from_bits(1)),
+            ("0x1.0000000000000p-1022", f64::MIN_POSITIVE),
+            ("0x1.8000000000000p+1", 3.0_f64),
+            ("-0x1.921fb54442d18p+1", -std::f64::consts::PI),
+            ("0x1.fffffffffffffp+1023", f64::MAX),
+        ];
+        for (encoded, expected) in cases {
+            assert_eq!(
+                parse_python_float_hex(encoded).expect("valid float.hex"),
+                expected.to_bits(),
+                "{encoded}"
+            );
+        }
     }
 }

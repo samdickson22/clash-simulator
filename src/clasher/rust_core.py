@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import struct
 from collections import deque
 from dataclasses import dataclass
@@ -324,6 +325,12 @@ class ResidentRustBattle:
     def idle_sha256(self) -> str:
         return str(self._native.idle_sha256())
 
+    def entity_state_bytes(self) -> bytes:
+        return bytes(self._native.entity_state_bytes())
+
+    def entity_sha256(self) -> str:
+        return str(self._native.entity_sha256())
+
     def checkpoint_bytes(self) -> bytes:
         return bytes(self._native.checkpoint_bytes())
 
@@ -525,6 +532,75 @@ def compare_idle_state(battle: Any, resident: ResidentRustBattle) -> None:
             "resident Rust idle parity mismatch field=hash "
             f"expected={expected_hash} actual={actual_hash}"
         )
+
+
+def _exact_scalar(value: Any) -> dict[str, str | int]:
+    if type(value) is int:
+        return {"kind": "int", "value": int(value)}
+    return {"bits": f"{struct.unpack('<Q', struct.pack('<d', float(value)))[0]:016x}", "kind": "float"}
+
+
+def resident_entity_rows(battle: Any) -> list[dict[str, Any]]:
+    return [
+        {
+            "card_name": str(getattr(entity.card_stats, "name", "")),
+            "encounter_index": encounter_index,
+            "entity_kind": int(entity.entity_kind),
+            "hitpoints": _exact_scalar(entity.hitpoints),
+            "id": int(entity.id),
+            "is_alive": bool(entity.is_alive),
+            "max_hitpoints": _exact_scalar(entity.max_hitpoints),
+            "mechanics": [
+                f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+                for mechanic in entity.mechanics
+            ],
+            "player_id": int(entity.player_id),
+            "position_x": _exact_scalar(entity.position.x),
+            "position_y": _exact_scalar(entity.position.y),
+            "python_type": (
+                f"{type(entity).__module__}.{type(entity).__qualname__}"
+            ),
+            "target_id": (
+                None if entity.target_id is None else int(entity.target_id)
+            ),
+        }
+        for encounter_index, entity in enumerate(battle.entities.values())
+    ]
+
+
+def resident_entity_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        resident_entity_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_resident_entities(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = resident_entity_rows(battle)
+    actual = json.loads(resident.entity_state_bytes())
+    if expected == actual:
+        expected_hash = hashlib.sha256(resident_entity_bytes(battle)).hexdigest()
+        actual_hash = resident.entity_sha256()
+        if expected_hash == actual_hash:
+            return
+        raise AssertionError(
+            "resident Rust entity hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
+    from .differential import first_snapshot_difference
+
+    difference = first_snapshot_difference(expected, actual)
+    if difference is None:  # pragma: no cover - defensive
+        raise AssertionError("resident Rust entity state mismatch")
+    raise AssertionError(
+        "resident Rust entity parity mismatch "
+        f"path={difference.path} reason={difference.reason} "
+        f"expected={difference.expected!r} actual={difference.actual!r}"
+    )
 
 
 def apply_idle_state(battle: Any, resident: ResidentRustBattle) -> None:
