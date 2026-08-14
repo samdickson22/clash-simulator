@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import random
+from collections import deque
 from typing import Any
 
 import pytest
@@ -15,6 +16,7 @@ from clasher.entities import Projectile, Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rust_core import (
     _PREPARED_PUBLICATION_AUTHORITY,
+    _PREPARED_PUBLICATION_DELTA_CONSUMER,
     _PREPARED_PUBLICATION_RAW_CONSUMER,
     ResidentPreparedPublication,
     ResidentRustBattle,
@@ -23,6 +25,8 @@ from clasher.rust_core import (
 )
 from clasher.rust_publication import (
     ResidentPublicationError,
+    _build_direct_delta_publication_plan,
+    _UndoJournal,
     publish_complete_tick_state,
 )
 from clasher.rust_runtime import ResidentCompleteTickRuntime
@@ -303,20 +307,261 @@ def test_guard_record_does_not_recompile_after_initial_boundary(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     battle, runtime = _route_runtime(71_023)
+    assert runtime.advance_ticks(8) == 8
 
     def reject_compile(*args: Any, **kwargs: Any) -> Any:
         raise AssertionError("full direct guard compiler was called")
+
+    def reject_rebind(*args: Any, **kwargs: Any) -> Any:
+        raise AssertionError("general direct guard rebind was called")
 
     monkeypatch.setattr(
         rust_runtime_module,
         "_compile_direct_causal_guard",
         reject_compile,
     )
+    guard = runtime._on_boundary_guard
+    assert guard is not None
+    monkeypatch.setattr(type(guard), "refresh_or_rebind", reject_rebind)
     assert runtime.advance_ticks(8) == 8
     assert runtime.advance_ticks(8) == 8
     battle.players[0].elixir -= 0.25
     with pytest.raises(RuntimeError, match=r"external Python state mutation.*elixir"):
         runtime.advance_ticks(8)
+
+
+@pytest.mark.parametrize(
+    ("mutate", "expected_path"),
+    (
+        (lambda battle, mover: setattr(battle, "time", battle.time + 0.25), "time"),
+        (
+            lambda battle, mover: setattr(
+                battle.players[0], "elixir", battle.players[0].elixir - 0.25
+            ),
+            "elixir",
+        ),
+        (
+            lambda battle, mover: setattr(
+                battle.entities[1],
+                "last_attack_time",
+                battle.entities[1].last_attack_time + 0.25,
+            ),
+            "last_attack_time",
+        ),
+        (
+            lambda battle, mover: setattr(
+                mover.position, "x", mover.position.x + 0.25
+            ),
+            "position",
+        ),
+        (
+            lambda battle, mover: setattr(
+                mover, "_pending_movement_x", mover._pending_movement_x + 1
+            ),
+            "pending_movement_x",
+        ),
+        (
+            lambda battle, mover: setattr(
+                mover, "attack_cooldown", mover.attack_cooldown + 0.25
+            ),
+            "attack_cooldown",
+        ),
+        (lambda battle, mover: battle.rng.random(), "rng"),
+    ),
+    ids=("root", "player", "tower", "position", "movement", "combat", "rng"),
+)
+def test_guard_write_through_updates_changed_owners_and_rejects_later_drift(
+    monkeypatch: pytest.MonkeyPatch,
+    mutate: Any,
+    expected_path: str,
+) -> None:
+    battle, runtime = _route_runtime(71_030)
+    assert runtime.advance_ticks(8) == 8
+    previous_guard = runtime._on_boundary_guard
+    assert previous_guard is not None
+    previous_expected = tuple(entry[3] for entry in previous_guard.entries)
+
+    def reject_rebind(*args: Any, **kwargs: Any) -> Any:
+        raise AssertionError("general guard rebind was called")
+
+    monkeypatch.setattr(type(previous_guard), "refresh_or_rebind", reject_rebind)
+    assert runtime.advance_ticks(8) == 8
+    published_guard = runtime._on_boundary_guard
+    assert published_guard is not None
+    assert published_guard is not previous_guard
+    assert all(
+        entry[3] is expected
+        for entry, expected in zip(
+            previous_guard.entries, previous_expected, strict=True
+        )
+    )
+    assert all(
+        published_guard.entries[index] is entry
+        for index, entry in enumerate(previous_guard.entries)
+        if entry[4]
+    )
+    assert published_guard.first_mismatch() is None
+    mover = next(
+        entity
+        for entity in battle.entities.values()
+        if getattr(getattr(entity, "card_stats", None), "name", None) == "Knight"
+    )
+    mutate(battle, mover)
+
+    with pytest.raises(RuntimeError, match=rf"external Python state mutation.*{expected_path}"):
+        runtime._assert_on_boundary_unchanged()
+
+
+def test_guard_write_through_falls_back_for_sparse_route_and_birth_topology(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls = 0
+    original = rust_runtime_module._DirectCausalBoundaryGuard.refresh_or_rebind
+
+    def counted_rebind(*args: Any, **kwargs: Any) -> Any:
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(
+        rust_runtime_module._DirectCausalBoundaryGuard,
+        "refresh_or_rebind",
+        counted_rebind,
+    )
+    _battle, runtime = _route_runtime(71_031)
+    assert runtime.advance_ticks(8) == 8
+    route_calls = calls
+    assert route_calls >= 1
+
+    battle = BattleState(rng=random.Random(71_032), fast_path=True)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source = _spawn_ready(battle, "Musketeer", 0, Position(9.0, 12.0))
+    target = _spawn_ready(battle, "Knight", 1, Position(9.0, 16.0))
+    source.target_id = target.id
+    source.attack_cooldown = 0.0
+    runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
+    assert runtime.advance_ticks(1) == 1
+    assert calls > route_calls
+
+
+def test_guard_write_through_updates_rng_after_noop_action_ingress(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    battle = BattleState(rng=random.Random(71_033), fast_path=True)
+    for player in battle.players:
+        player.deck = ["Knight"] * 8
+        player.hand = ["Knight"] * 4
+        player.cycle_queue = deque(["Knight"] * 4)
+        player.elixir = player.max_elixir
+    runtime = ResidentCompleteTickRuntime(
+        battle,
+        RustBattleMode.ON,
+        action_ingress=True,
+    )
+    guard = runtime._on_boundary_guard
+    assert guard is not None
+
+    def reject_rebind(*args: Any, **kwargs: Any) -> Any:
+        raise AssertionError("general guard rebind was called")
+
+    monkeypatch.setattr(type(guard), "refresh_or_rebind", reject_rebind)
+    no_op = DiscreteTileActionSpace().no_op_action
+    result = runtime.apply_joint_actions_and_advance(no_op, no_op, 0)
+    assert result.ticks_advanced == 0
+    assert runtime._on_boundary_guard is not guard
+    assert runtime._on_boundary_guard is not None
+    assert runtime._on_boundary_guard.first_mismatch() is None
+
+    battle.rng.random()
+    with pytest.raises(RuntimeError, match=r"external Python state mutation.*rng"):
+        runtime._assert_on_boundary_unchanged()
+
+
+def test_guard_write_through_falls_back_for_pending_cast_identity_change(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    battle = BattleState(rng=random.Random(71_034), fast_path=True)
+    for player in battle.players:
+        player.deck = ["Fireball"] * 8
+        player.hand = ["Fireball"] * 4
+        player.cycle_queue = deque(["Fireball"] * 4)
+        player.elixir = player.max_elixir
+    runtime = ResidentCompleteTickRuntime(
+        battle,
+        RustBattleMode.ON,
+        action_ingress=True,
+    )
+    guard = runtime._on_boundary_guard
+    assert guard is not None
+    calls = 0
+    original = type(guard).refresh_or_rebind
+
+    def counted_rebind(*args: Any, **kwargs: Any) -> Any:
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(type(guard), "refresh_or_rebind", counted_rebind)
+    action_space = DiscreteTileActionSpace()
+    fireball = action_space.encode_action(0, 8, 10, 0)
+    result = runtime.apply_joint_actions_and_advance(
+        fireball, action_space.no_op_action, 0
+    )
+
+    assert result.action_success[0]
+    assert len(battle._pending_spell_casts) == 1
+    assert calls == 1
+
+
+def test_guard_write_through_rejects_and_rolls_back_static_receipt_owner() -> None:
+    battle, runtime, source, _target = _runtime_with_troops(71_035)
+    prior = runtime.resident
+    guard = runtime._on_boundary_guard
+    assert prior is not None
+    assert guard is not None
+    candidate = prior.fork()
+    delta = candidate.prepare_publication(prior)._consume_delta_parts(
+        _PREPARED_PUBLICATION_DELTA_CONSUMER
+    )
+    plan = _build_direct_delta_publication_plan(
+        delta,
+        battle=battle,
+        resident=candidate,
+        entity_registry=runtime.entity_registry,
+    )
+    card_stats = source.card_stats
+    static_rows = [
+        entry
+        for entry in guard.entries
+        if entry[2] is card_stats and entry[4]
+    ]
+    assert static_rows
+    static_row_ids = tuple(id(entry) for entry in static_rows)
+    original_damage = card_stats.damage
+    resident_authority = runtime._on_resident_authority
+    python_authority = runtime._on_python_authority
+    resident_before = runtime.resident
+    undo = _UndoJournal()
+    undo.watch_attrs(card_stats)
+    card_stats.damage = original_damage + 1
+
+    with pytest.raises(RuntimeError, match="statically guarded owner"):
+        runtime._prepare_on_boundary_guard(plan, undo.guard_write_receipt())
+    undo.rollback()
+
+    assert source.card_stats is card_stats
+    assert card_stats.damage == original_damage
+    assert runtime.resident is resident_before
+    assert runtime._on_boundary_guard is guard
+    assert runtime._on_resident_authority is resident_authority
+    assert runtime._on_python_authority is python_authority
+    assert tuple(
+        id(entry)
+        for entry in guard.entries
+        if entry[2] is card_stats and entry[4]
+    ) == static_row_ids
+    assert guard.first_mismatch() is None
 
 
 def _route_runtime(seed: int) -> tuple[BattleState, ResidentCompleteTickRuntime]:
@@ -378,16 +623,20 @@ def test_guard_rebind_failure_rolls_back_route_identity_and_state(
     state_before = snapshot_bytes(canonical_battle_snapshot(battle))
     resident_before = runtime.resident
 
-    def fail_rebind(*args: Any, **kwargs: Any) -> Any:
-        raise RuntimeError("injected guard rebind failure")
+    def fail_guard_update(*args: Any, **kwargs: Any) -> Any:
+        raise RuntimeError("injected guard update failure")
 
     guard = runtime._on_boundary_guard
     assert guard is not None
-    monkeypatch.setattr(type(guard), "refresh_or_rebind", fail_rebind)
+    guard_before = guard
+    monkeypatch.setattr(
+        type(guard), "write_through_or_rebind", fail_guard_update
+    )
     with pytest.raises(RuntimeError, match="runtime is now poisoned"):
         runtime.advance_ticks(8)
 
     assert runtime.resident is resident_before
+    assert runtime._on_boundary_guard is guard_before
     assert mover._native_ground_route_cells is route
     assert route == route_before
     assert snapshot_bytes(canonical_battle_snapshot(battle)) == state_before

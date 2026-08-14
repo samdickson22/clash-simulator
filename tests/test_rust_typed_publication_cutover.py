@@ -28,10 +28,12 @@ from clasher.rust_differential import (
 )
 from clasher.rust_publication import (
     ResidentPublicationError,
+    _apply_direct_delta_publication_plan,
     _build_direct_delta_publication_plan,
     _build_direct_publication_plan,
     _require_live_application_shape,
     _typed_publication_projection,
+    _UndoJournal,
     publish_complete_tick_state,
 )
 from clasher.rust_runtime import ResidentCompleteTickRuntime
@@ -1152,6 +1154,65 @@ def test_cache_dirty_root_clean_failure_restores_exact_battle_bindings(
         for entity_id, entity in registry.items()
     } == before_entities
     assert python_resident_semantic_snapshot(battle) == before_semantic
+
+
+def test_pending_only_root_clean_guard_failure_restores_sequence_and_authority() -> None:
+    battle = BattleState(rng=random.Random(70_028), fast_path=True)
+    battle._queue_spell_cast("Fireball", 0, Position(9.5, 16.5))
+    runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
+    prior = runtime.resident
+    assert prior is not None
+    candidate = prior.fork()
+    delta = _delta_parts(candidate, prior)
+    pending = copy.deepcopy(_full_parts(candidate, prior)["pending_spells"])
+    pending["next_sequence"] += 1
+    delta["dirty_mask"] |= 1 << 4
+    delta["pending_spells"] = pending
+    registry = runtime.entity_registry
+    plan = _build_direct_delta_publication_plan(
+        delta,
+        battle=battle,
+        resident=candidate,
+        entity_registry=registry,
+    )
+    assert plan.battle is None
+    assert plan.pending_spells is not None
+    pending_list = battle._pending_spell_casts
+    pending_cast = pending_list[0]
+    pending_position = pending_cast.position
+    battle_before = _identity_projection(vars(battle))
+    semantic_before = python_resident_semantic_snapshot(battle)
+    guard_before = runtime._on_boundary_guard
+    resident_authority_before = runtime._on_resident_authority
+    python_authority_before = runtime._on_python_authority
+    undo = _UndoJournal()
+
+    try:
+        _apply_direct_delta_publication_plan(
+            battle,
+            plan,
+            entity_registry=registry,
+            prepared_births={},
+            projectile_group_plan=({}, {}),
+            undo=undo,
+        )
+        prepared_guard = runtime._prepare_on_boundary_guard(
+            plan, undo.guard_write_receipt()
+        )
+        assert prepared_guard is not guard_before
+        raise ResidentPublicationError("injected pending-only commit failure")
+    except ResidentPublicationError:
+        undo.rollback()
+
+    assert _identity_projection(vars(battle)) == battle_before
+    assert python_resident_semantic_snapshot(battle) == semantic_before
+    assert battle._pending_spell_casts is pending_list
+    assert battle._pending_spell_casts[0] is pending_cast
+    assert battle._pending_spell_casts[0].position is pending_position
+    assert battle._next_spell_cast_sequence == 1
+    assert runtime._on_boundary_guard is guard_before
+    assert runtime._on_resident_authority is resident_authority_before
+    assert runtime._on_python_authority is python_authority_before
 
 
 @pytest.mark.parametrize(

@@ -5,6 +5,7 @@ import struct
 from collections import deque
 from collections.abc import Callable
 from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 from typing import Any, cast
 
 import numpy as np
@@ -168,6 +169,221 @@ def _arena_geometry_token(arena: Any) -> tuple[Any, ...]:
 @dataclass
 class _DirectCausalBoundaryGuard:
     entries: list[list[Any]]
+    _owner_entries: dict[int, tuple[int, ...]] = dataclass_field(
+        default_factory=dict,
+        repr=False,
+    )
+
+    def __post_init__(self) -> None:
+        if self._owner_entries:
+            return
+        indices: dict[int, list[int]] = {}
+        for index, entry in enumerate(self.entries):
+            indices.setdefault(id(entry[2]), []).append(index)
+        self._owner_entries = {
+            owner_id: tuple(owner_indices)
+            for owner_id, owner_indices in indices.items()
+        }
+
+    def write_through_or_rebind(
+        self,
+        battle: Any,
+        entity_registry: dict[int, Any],
+        publication: Any,
+        write_receipt: tuple[tuple[str, Any, Any], ...],
+    ) -> _DirectCausalBoundaryGuard:
+        """Patch written owners for one authenticated stable delta boundary."""
+
+        from .rust_publication import (
+            _ENTITY_DELTA_FULL,
+            _ENTITY_DELTA_PRESENCE,
+            _DirectDeltaPublicationPlan,
+        )
+
+        def fallback() -> _DirectCausalBoundaryGuard:
+            refreshed = self.refresh_or_rebind(
+                battle, entity_registry, publication
+            )
+            mismatch = refreshed._first_mismatch(retained_only=True)
+            if mismatch is not None:
+                raise RuntimeError(
+                    "publication changed retained boundary authority "
+                    f"(path={mismatch})"
+                )
+            return refreshed
+
+        if type(publication) is not _DirectDeltaPublicationPlan:
+            return fallback()
+        if publication.topology_dirty or any(
+            change.dirty_mask & (_ENTITY_DELTA_PRESENCE | _ENTITY_DELTA_FULL)
+            for change in publication.entities
+        ):
+            return fallback()
+
+        journal_battle_state = next(
+            (
+                state
+                for kind, owner, state in write_receipt
+                if kind == "attrs" and owner is battle
+            ),
+            None,
+        )
+        derived_owner_ids = {
+            id(value)
+            for name, value in vars(battle).items()
+            if name in _DERIVED_BATTLE_CACHE_FIELDS
+        }
+        if type(journal_battle_state) is dict:
+            derived_owner_ids.update(
+                id(value)
+                for name, value in journal_battle_state.items()
+                if name in _DERIVED_BATTLE_CACHE_FIELDS
+            )
+
+        entries = list(self.entries)
+        changed_indices: set[int] = set()
+
+        def identity_tokens(token: tuple[Any, ...]) -> frozenset[tuple[Any, ...]]:
+            kind = token[0]
+            if kind == "identity":
+                return frozenset((token,))
+            if kind == "tuple":
+                return frozenset().union(
+                    *(identity_tokens(item) for item in token[1])
+                )
+            if kind == "frozenset":
+                return frozenset().union(
+                    *(identity_tokens(item) for item in token[1])
+                )
+            return frozenset()
+
+        def refreshed_attrs_expected(
+            kind: str,
+            owner: Any,
+            state: Any,
+            old_expected: tuple[tuple[str, tuple[Any, ...]], ...],
+        ) -> tuple[tuple[tuple[str, tuple[Any, ...]], ...], bool]:
+            if type(state) is not dict:
+                return old_expected, False
+            battle_root = kind == "battle_attrs"
+            current = vars(owner)
+            old_names = tuple(name for name, _value in old_expected)
+            current_names = tuple(
+                name
+                for name in current
+                if not (battle_root and name in _DERIVED_BATTLE_CACHE_FIELDS)
+            )
+            if current_names != old_names:
+                return old_expected, False
+            updated: list[tuple[str, tuple[Any, ...]]] = []
+            for name, old_token in old_expected:
+                old_value = state[name]
+                new_value = current[name]
+                if old_value is new_value:
+                    updated.append((name, old_token))
+                    continue
+                new_token = _guard_token(new_value)
+                if old_token[0] == "identity" or new_token[0] == "identity":
+                    return old_expected, False
+                updated.append((name, new_token))
+            return tuple(updated), True
+
+        def refreshed_expected(kind: str, owner: Any) -> Any:
+            if kind in {"attrs", "battle_attrs"}:
+                raise AssertionError("attribute refresh requires its journal state")
+            if kind == "dict":
+                return tuple(
+                    (_guard_token(key), _guard_token(value))
+                    for key, value in owner.items()
+                )
+            if kind == "sequence":
+                return tuple(_guard_token(value) for value in owner)
+            if kind == "set":
+                return {_guard_token(value) for value in owner}
+            if kind == "rng":
+                return _guard_token(owner.getstate())
+            if kind == "ndarray":
+                return (
+                    owner.shape,
+                    owner.strides,
+                    owner.dtype.str,
+                    owner.tobytes(order="A"),
+                )
+            raise AssertionError(f"unsupported guard write-through kind {kind!r}")
+
+        def identity_topology_matches(kind: str, old: Any, new: Any) -> bool:
+            if kind == "dict":
+                return frozenset().union(
+                    *(
+                        identity_tokens(key) | identity_tokens(value)
+                        for key, value in old
+                    )
+                ) == frozenset().union(
+                    *(
+                        identity_tokens(key) | identity_tokens(value)
+                        for key, value in new
+                    )
+                )
+            if kind == "sequence":
+                return identity_tokens(("tuple", old)) == identity_tokens(
+                    ("tuple", new)
+                )
+            if kind == "set":
+                return frozenset().union(
+                    *(identity_tokens(value) for value in old)
+                ) == frozenset().union(
+                    *(identity_tokens(value) for value in new)
+                )
+            return True
+
+        receipt_kinds = {
+            "attrs": {"attrs", "battle_attrs"},
+            "list": {"sequence"},
+            "deque": {"sequence"},
+            "dict": {"dict"},
+            "set": {"set"},
+            "rng": {"rng"},
+            "ndarray": {"ndarray"},
+        }
+        for receipt_kind, owner, state in write_receipt:
+            allowed = receipt_kinds.get(receipt_kind)
+            if allowed is None:
+                raise RuntimeError(
+                    f"unknown publication guard write kind {receipt_kind!r}"
+                )
+            owner_indices = self._owner_entries.get(id(owner), ())
+            if any(self.entries[index][4] for index in owner_indices):
+                raise RuntimeError(
+                    "publication attempted to mutate a statically guarded owner"
+                )
+            matching = [
+                index
+                for index in owner_indices
+                if self.entries[index][0] in allowed and not self.entries[index][4]
+            ]
+            if not matching:
+                if id(owner) in derived_owner_ids:
+                    continue
+                return fallback()
+            for index in matching:
+                if index in changed_indices:
+                    continue
+                entry = self.entries[index]
+                if entry[0] in {"attrs", "battle_attrs"}:
+                    expected, compatible = refreshed_attrs_expected(
+                        entry[0], owner, state, entry[3]
+                    )
+                    if not compatible:
+                        return fallback()
+                else:
+                    expected = refreshed_expected(entry[0], owner)
+                    if not identity_topology_matches(entry[0], entry[3], expected):
+                        return fallback()
+                replacement = entry.copy()
+                replacement[3] = expected
+                entries[index] = replacement
+                changed_indices.add(index)
+        return _DirectCausalBoundaryGuard(entries, self._owner_entries)
 
     def refresh_or_rebind(
         self,
@@ -371,9 +587,13 @@ class _DirectCausalBoundaryGuard:
             visit(value, path)
         return _DirectCausalBoundaryGuard(entries)
 
-    def first_mismatch(self) -> str | None:
+    def _first_mismatch(self, *, retained_only: bool = False) -> str | None:
         for entry in self.entries:
-            kind, path, owner, expected, _static = entry
+            kind, path, owner, expected, static = entry
+            if retained_only and not (
+                static or kind in {"mapping_subset", "arena_geometry"}
+            ):
+                continue
             if kind == "attrs":
                 fields = vars(owner)
                 if len(fields) != len(expected):
@@ -450,6 +670,9 @@ class _DirectCausalBoundaryGuard:
             else:  # pragma: no cover - closed internal entry kinds
                 raise AssertionError(f"unknown boundary guard kind {kind!r}")
         return None
+
+    def first_mismatch(self) -> str | None:
+        return self._first_mismatch()
 
 
 def _compile_direct_causal_guard(
@@ -846,14 +1069,19 @@ class ResidentCompleteTickRuntime:
             f"expected={difference.expected!r} actual={difference.actual!r}"
         )
 
-    def _prepare_on_boundary_guard(self, publication: Any) -> _DirectCausalBoundaryGuard:
+    def _prepare_on_boundary_guard(
+        self,
+        publication: Any,
+        write_receipt: tuple[tuple[str, Any, Any], ...],
+    ) -> _DirectCausalBoundaryGuard:
         guard = self._on_boundary_guard
         if guard is None:  # pragma: no cover - active on-mode invariant
             raise RuntimeError("resident on-mode boundary checkpoint is missing")
-        prepared_guard = guard.refresh_or_rebind(
+        prepared_guard = guard.write_through_or_rebind(
             self.battle,
             self._entity_registry,
             publication,
+            write_receipt,
         )
         if type(prepared_guard) is not _DirectCausalBoundaryGuard:
             raise RuntimeError("typed publication omitted its prepared guard")

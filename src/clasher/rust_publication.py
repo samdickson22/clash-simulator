@@ -672,6 +672,11 @@ class _UndoJournal:
             else:  # pragma: no cover - closed internal record kinds
                 raise AssertionError(f"unknown publication undo kind {kind!r}")
 
+    def guard_write_receipt(self) -> tuple[tuple[str, Any, Any], ...]:
+        """Return the exact first-write set while the transaction is live."""
+
+        return tuple(self._entries)
+
 
 def _live_publication_undo_journal(
     battle: Any,
@@ -5603,6 +5608,7 @@ def _apply_direct_delta_publication_plan(
             entity._tower_active = tower["is_active"]
             entity.last_attack_time = tower["last_attack_time"]
     if plan.pending_spells is not None:
+        undo.watch_attrs(battle)
         undo.watch_value(battle._pending_spell_casts)
         existing = {cast.sequence: cast for cast in battle._pending_spell_casts}
         casts: list[PendingSpellCast] = []
@@ -6022,7 +6028,11 @@ def publish_complete_tick_state(
     prior_resident: ResidentRustBattle,
     entity_registry: dict[int, Any],
     _prepare_guard: Callable[
-        [_DirectPublicationPlan | _DirectDeltaPublicationPlan], Any
+        [
+            _DirectPublicationPlan | _DirectDeltaPublicationPlan,
+            tuple[tuple[str, Any, Any], ...],
+        ],
+        Any,
     ]
     | None = None,
 ) -> Any | None:
@@ -6164,7 +6174,7 @@ def publish_complete_tick_state(
             )
         _after_typed_publication_commit(battle, plan, entity_registry)
         if _prepare_guard is not None:
-            prepared_guard = _prepare_guard(plan)
+            prepared_guard = _prepare_guard(plan, undo.guard_write_receipt())
     except Exception as commit_error:
         try:
             undo.rollback()
