@@ -322,6 +322,7 @@ def _typed_basic_semantic(parts: MappingProxyType[str, Any]) -> dict[str, Any]:
         "locked_combat": locked_combat,
         "building_lifetime": building_lifetime,
         "point_projectiles": [],
+        "rolling_projectiles": [],
         "rng": {
             "gauss_next": None
             if rng["gauss_next"] is None
@@ -395,9 +396,9 @@ def test_prepared_parts_are_owned_frozen_and_match_legacy_root_rows() -> None:
 
     assert isinstance(parts, MappingProxyType)
     assert parts["version"] == 1
-    assert parts["binding"]["semantic_schema_version"] == 8
+    assert parts["binding"]["semantic_schema_version"] == 9
     assert parts["binding"]["checkpoint_schema_version"] == 2
-    assert parts["binding"]["catalog_schema_version"] == 6
+    assert parts["binding"]["catalog_schema_version"] == 7
     assert parts["battle"]["tick"] == 1
     assert isinstance(parts["entities"], tuple)
     assert isinstance(parts["entities"][0], MappingProxyType)

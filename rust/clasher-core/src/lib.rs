@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 8;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 9;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -34,7 +34,8 @@ const ENTITY_DELTA_BUILDING_LIFETIME: u64 = 1 << 6;
 const ENTITY_DELTA_BUILDING_IMPACT: u64 = 1 << 7;
 const ENTITY_DELTA_POINT: u64 = 1 << 8;
 const ENTITY_DELTA_AREA: u64 = 1 << 9;
-const ENTITY_DELTA_FULL: u64 = 1 << 10;
+const ENTITY_DELTA_ROLLING: u64 = 1 << 10;
+const ENTITY_DELTA_FULL: u64 = 1 << 11;
 static NEXT_RESIDENT_STATE_TOKEN: AtomicU64 = AtomicU64::new(1);
 
 type ResidentPublicationAuthorityToken = (
@@ -1457,6 +1458,14 @@ enum ResidentCharacterBirthProvenance {
         ordinal: i64,
         member_count: i64,
     },
+    RollingSpawn {
+        source_entity_id: i64,
+        spell_name: String,
+        unit_name: String,
+        unit_data_fingerprint: String,
+        template_fingerprint: String,
+        spawn_group_id: i64,
+    },
 }
 
 impl ResidentCharacterBirthProvenance {
@@ -1499,6 +1508,25 @@ impl ResidentCharacterBirthProvenance {
                 "member_count": member_count,
                 "source_entity_id": source_entity_id,
                 "opcode_index": opcode_index,
+                "unit_data_fingerprint": unit_data_fingerprint,
+            }),
+            Self::RollingSpawn {
+                source_entity_id,
+                spell_name,
+                unit_name,
+                unit_data_fingerprint,
+                template_fingerprint,
+                spawn_group_id,
+            } => json!({
+                "kind": "rolling_spawn",
+                "lookup_name": spell_name,
+                "effective_name": unit_name,
+                "template_fingerprint": template_fingerprint,
+                "group_id": spawn_group_id,
+                "ordinal": 0,
+                "member_count": 1,
+                "source_entity_id": source_entity_id,
+                "opcode_index": null,
                 "unit_data_fingerprint": unit_data_fingerprint,
             }),
         }
@@ -1547,6 +1575,7 @@ struct ResidentEntity {
     building_impact: Option<BuildingImpactState>,
     building_footprint_size: Option<i64>,
     point_projectile: Option<PointProjectileState>,
+    rolling_projectile: Option<ResidentRollingProjectileState>,
     area_effect: Option<ResidentAreaEffectState>,
     object_base_movement_noop: bool,
     blocks_deployment: bool,
@@ -2602,6 +2631,217 @@ impl PointProjectileState {
     }
 }
 
+impl ResidentRollingProjectileState {
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.source_kind == other.source_kind
+            && self.spawn_character == other.spawn_character
+            && self.spawn_character_data_fingerprint == other.spawn_character_data_fingerprint
+            && self.travel_speed == other.travel_speed
+            && self.knockback_ignores_mass == other.knockback_ignores_mass
+            && publication_optional_f64_eq(self.crown_tower_damage, other.crown_tower_damage)
+            && publication_optional_f64_eq(
+                self.spawn_deploy_delay_override,
+                other.spawn_deploy_delay_override,
+            )
+            && publication_f64_fields_eq(
+                [
+                    self.rolling_radius,
+                    self.projectile_range,
+                    self.spawn_delay,
+                    self.radius_y,
+                    self.knockback_distance,
+                    self.crown_tower_damage_multiplier,
+                ],
+                [
+                    other.rolling_radius,
+                    other.projectile_range,
+                    other.spawn_delay,
+                    other.radius_y,
+                    other.knockback_distance,
+                    other.crown_tower_damage_multiplier,
+                ],
+            )
+    }
+}
+
+#[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentRollingProjectileState {
+    source_kind: String,
+    spawn_character: Option<String>,
+    spawn_character_data_fingerprint: String,
+    spawn_deploy_delay_override: Option<f64>,
+    rolling_radius: f64,
+    travel_speed: ExactScalar,
+    projectile_range: f64,
+    spawn_delay: f64,
+    radius_y: f64,
+    knockback_distance: f64,
+    knockback_ignores_mass: bool,
+    crown_tower_damage_multiplier: f64,
+    crown_tower_damage: Option<f64>,
+    time_alive: f64,
+    distance_traveled: f64,
+    hit_entity_ids: Vec<i64>,
+    has_spawned_character: bool,
+}
+
+impl ResidentRollingProjectileState {
+    fn from_fields(fields: &Map<String, Value>) -> PyResult<Self> {
+        let hit_values = fields
+            .get("hit_entities")
+            .and_then(|value| value.get("$set"))
+            .and_then(|value| value.get("items"))
+            .and_then(Value::as_array)
+            .ok_or_else(|| PyValueError::new_err("rolling projectile hit_entities is not a set"))?;
+        let mut hit_entity_ids = hit_values
+            .iter()
+            .map(|value| {
+                value.as_i64().ok_or_else(|| {
+                    PyValueError::new_err("rolling projectile hit ID is not an integer")
+                })
+            })
+            .collect::<PyResult<Vec<_>>>()?;
+        hit_entity_ids.sort_unstable();
+        if hit_entity_ids.windows(2).any(|pair| pair[0] == pair[1]) {
+            return Err(PyValueError::new_err(
+                "rolling projectile hit set contains duplicate IDs",
+            ));
+        }
+        let source_kind = fields
+            .get("spell_name")
+            .and_then(Value::as_str)
+            .ok_or_else(|| PyValueError::new_err("rolling projectile has no spell_name"))?
+            .to_owned();
+        let spawn_character = match fields
+            .get("spawn_character")
+            .ok_or_else(|| PyValueError::new_err("rolling projectile has no spawn_character"))?
+        {
+            Value::Null => None,
+            Value::String(value) if !value.is_empty() => Some(value.clone()),
+            _ => {
+                return Err(PyValueError::new_err(
+                    "rolling projectile spawn_character is malformed",
+                ));
+            }
+        };
+        let spawn_character_data = fields.get("spawn_character_data").ok_or_else(|| {
+            PyValueError::new_err("rolling projectile has no spawn_character_data")
+        })?;
+        let spawn_character_data_fingerprint =
+            sha256_hex(&serde_json::to_vec(spawn_character_data).map_err(|error| {
+                PyValueError::new_err(format!(
+                    "failed to fingerprint rolling projectile spawn data: {error}"
+                ))
+            })?);
+        let state = Self {
+            source_kind,
+            spawn_character,
+            spawn_character_data_fingerprint,
+            spawn_deploy_delay_override: optional_normalized_f64(
+                fields,
+                "spawn_deploy_delay_override",
+            )?,
+            rolling_radius: normalized_f64(fields, "rolling_radius")?,
+            travel_speed: ExactScalar::from_normalized(
+                fields.get("travel_speed").ok_or_else(|| {
+                    PyValueError::new_err("rolling projectile has no travel_speed")
+                })?,
+            )?,
+            projectile_range: normalized_f64(fields, "projectile_range")?,
+            spawn_delay: normalized_f64(fields, "spawn_delay")?,
+            radius_y: normalized_f64(fields, "radius_y")?,
+            knockback_distance: normalized_f64(fields, "knockback_distance")?,
+            knockback_ignores_mass: required_bool(fields, "knockback_ignores_mass")?,
+            crown_tower_damage_multiplier: normalized_f64(fields, "crown_tower_damage_multiplier")?,
+            crown_tower_damage: optional_normalized_f64(fields, "crown_tower_damage")?,
+            time_alive: normalized_f64(fields, "time_alive")?,
+            distance_traveled: normalized_f64(fields, "distance_traveled")?,
+            hit_entity_ids,
+            has_spawned_character: required_bool(fields, "has_spawned_character")?,
+        };
+        let finite = [
+            state.rolling_radius,
+            state.travel_speed.as_f64(),
+            state.projectile_range,
+            state.spawn_delay,
+            state.radius_y,
+            state.knockback_distance,
+            state.crown_tower_damage_multiplier,
+            state.time_alive,
+            state.distance_traveled,
+        ]
+        .into_iter()
+        .all(f64::is_finite)
+            && state.crown_tower_damage.is_none_or(f64::is_finite);
+        let finite = finite && state.spawn_deploy_delay_override.is_none_or(f64::is_finite);
+        let default_direction = fields.get("target_direction_x").is_some_and(Value::is_null)
+            && fields.get("target_direction_y").is_some_and(Value::is_null);
+        let no_refs = optional_entity_ref_id(fields, "source_entity")?.is_none()
+            && optional_entity_ref_id(fields, "primary_target")?.is_none();
+        let no_impact_radius = fields.get("impact_radius").is_some_and(Value::is_null);
+        let rolling_matches_range = ExactScalar::from_normalized(
+            fields
+                .get("range")
+                .ok_or_else(|| PyValueError::new_err("rolling projectile has no range"))?,
+        )?
+        .as_f64()
+        .to_bits()
+            == state.rolling_radius.to_bits();
+        if !finite
+            || state.source_kind.is_empty()
+            || state.rolling_radius <= 0.0
+            || state.travel_speed.as_f64() <= 0.0
+            || state.projectile_range <= 0.0
+            || state.spawn_delay < 0.0
+            || state.radius_y < 0.0
+            || state.knockback_distance < 0.0
+            || state.crown_tower_damage_multiplier < 0.0
+            || state.crown_tower_damage.is_some_and(|damage| damage < 0.0)
+            || state
+                .spawn_deploy_delay_override
+                .is_some_and(|delay| delay < 0.0)
+            || state.time_alive < 0.0
+            || state.distance_traveled < 0.0
+            || state.distance_traveled > state.projectile_range + 1e-9
+            || !default_direction
+            || !no_refs
+            || !no_impact_radius
+            || !rolling_matches_range
+        {
+            return Err(PyValueError::new_err(
+                "rolling projectile is outside the resident spell closure",
+            ));
+        }
+        Ok(state)
+    }
+
+    fn diagnostic_value(&self, entity: &ResidentEntity) -> Value {
+        json!({
+            "crown_tower_damage": self.crown_tower_damage.map(exact_f64_value),
+            "crown_tower_damage_multiplier": exact_f64_value(self.crown_tower_damage_multiplier),
+            "damage": entity.damage.diagnostic_value(),
+            "distance_traveled": exact_f64_value(self.distance_traveled),
+            "encounter_index": entity.encounter_index,
+            "has_spawned_character": self.has_spawned_character,
+            "hit_entity_ids": self.hit_entity_ids,
+            "id": entity.id,
+            "is_alive": entity.is_alive,
+            "knockback_distance": exact_f64_value(self.knockback_distance),
+            "knockback_ignores_mass": self.knockback_ignores_mass,
+            "player_id": entity.player_id,
+            "position_x": entity.position_x.diagnostic_value(),
+            "position_y": entity.position_y.diagnostic_value(),
+            "projectile_range": exact_f64_value(self.projectile_range),
+            "radius_y": exact_f64_value(self.radius_y),
+            "rolling_radius": exact_f64_value(self.rolling_radius),
+            "source_kind": self.source_kind,
+            "spawn_delay": exact_f64_value(self.spawn_delay),
+            "time_alive": exact_f64_value(self.time_alive),
+            "travel_speed": self.travel_speed.diagnostic_value(),
+        })
+    }
+}
+
 #[derive(Clone, IntoPyObject, PartialEq)]
 struct BuildingLifetimeState {
     lifetime_ms: Option<i64>,
@@ -3337,6 +3577,11 @@ impl ResidentEntity {
         } else {
             None
         };
+        let rolling_projectile = if object_type(value)? == "clasher.entities.RollingProjectile" {
+            Some(ResidentRollingProjectileState::from_fields(fields)?)
+        } else {
+            None
+        };
         let area_effect = if object_type(value)? == "clasher.entities.AreaEffect" {
             Some(ResidentAreaEffectState::from_fields(fields)?)
         } else {
@@ -3542,6 +3787,7 @@ impl ResidentEntity {
             building_impact,
             building_footprint_size,
             point_projectile,
+            rolling_projectile,
             area_effect,
             object_base_movement_noop,
             blocks_deployment,
@@ -3812,7 +4058,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 6;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 7;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -3849,6 +4095,8 @@ struct ResidentCardWire {
     template_fingerprint: Option<String>,
     #[serde(default)]
     projectile_spell: Option<ResidentProjectileSpellWire>,
+    #[serde(default)]
+    rolling_projectile_spell: Option<ResidentRollingProjectileSpellWire>,
 }
 
 #[derive(Clone, Copy, Deserialize, PartialEq, Eq)]
@@ -3858,6 +4106,7 @@ enum ResidentCardActionKind {
     Troop,
     Building,
     ProjectileSpell,
+    RollingProjectileSpell,
 }
 
 #[derive(Deserialize)]
@@ -3881,6 +4130,28 @@ struct ResidentProjectileSpellWire {
     spread_radius: f64,
 }
 
+#[derive(Deserialize)]
+struct ResidentRollingProjectileSpellWire {
+    #[serde(rename = "radius")]
+    rolling_radius: f64,
+    damage: f64,
+    casting_speed: f64,
+    casting_min_distance: f64,
+    travel_speed: i64,
+    projectile_range: f64,
+    radius_y: f64,
+    knockback_distance: f64,
+    knockback_ignores_mass: bool,
+    crown_tower_damage_multiplier: f64,
+    crown_tower_damage: Option<f64>,
+    spawn_character: Option<String>,
+    spawn_character_data: Option<Value>,
+    spawn_data_fingerprint: Option<String>,
+    spawn_deploy_delay: Option<f64>,
+    spawn_template_snapshot: Option<Value>,
+    spawn_template_fingerprint: Option<String>,
+}
+
 #[derive(Clone)]
 struct ResidentProjectileSpellSpec {
     radius: f64,
@@ -3902,6 +4173,34 @@ struct ResidentProjectileSpellSpec {
 }
 
 #[derive(Clone)]
+struct ResidentRollingChildSpec {
+    unit_name: String,
+    unit_data_fingerprint: String,
+    deploy_delay: Option<f64>,
+    prototype: ResidentEntity,
+    template_fingerprint: String,
+}
+
+#[derive(Clone)]
+struct ResidentRollingProjectileSpellSpec {
+    rolling_radius: f64,
+    damage: f64,
+    casting_speed: f64,
+    casting_min_distance: f64,
+    travel_speed: i64,
+    projectile_range: f64,
+    radius_y: f64,
+    knockback_distance: f64,
+    knockback_ignores_mass: bool,
+    crown_tower_damage_multiplier: f64,
+    crown_tower_damage: Option<f64>,
+    spawn_character: Option<String>,
+    spawn_character_data_fingerprint: String,
+    spawn_deploy_delay: Option<f64>,
+    child: Option<ResidentRollingChildSpec>,
+}
+
+#[derive(Clone)]
 struct ResidentCardSpec {
     lookup_name: String,
     effective_name: String,
@@ -3918,6 +4217,7 @@ struct ResidentCardSpec {
     prototype: Option<ResidentEntity>,
     template_fingerprint: Option<String>,
     projectile_spell: Option<ResidentProjectileSpellSpec>,
+    rolling_projectile_spell: Option<ResidentRollingProjectileSpellSpec>,
 }
 
 impl ResidentCardSpec {
@@ -3928,10 +4228,19 @@ impl ResidentCardSpec {
         match self.action_kind {
             ResidentCardActionKind::Unsupported => false,
             ResidentCardActionKind::Troop | ResidentCardActionKind::Building => {
-                self.prototype.is_some() && self.projectile_spell.is_none()
+                self.prototype.is_some()
+                    && self.projectile_spell.is_none()
+                    && self.rolling_projectile_spell.is_none()
             }
             ResidentCardActionKind::ProjectileSpell => {
-                self.prototype.is_none() && self.projectile_spell.is_some()
+                self.prototype.is_none()
+                    && self.projectile_spell.is_some()
+                    && self.rolling_projectile_spell.is_none()
+            }
+            ResidentCardActionKind::RollingProjectileSpell => {
+                self.prototype.is_none()
+                    && self.projectile_spell.is_none()
+                    && self.rolling_projectile_spell.is_some()
             }
         }
     }
@@ -4195,7 +4504,153 @@ impl ResidentCardCatalog {
                     spread_radius: spell.spread_radius,
                 }
             });
-            if reasons.is_empty() && projectile_spell.is_none() {
+            let rolling_projectile_spell = card.rolling_projectile_spell.map(|spell| {
+                let finite = [
+                    spell.rolling_radius,
+                    spell.damage,
+                    spell.casting_speed,
+                    spell.casting_min_distance,
+                    spell.projectile_range,
+                    spell.radius_y,
+                    spell.knockback_distance,
+                    spell.crown_tower_damage_multiplier,
+                ]
+                .into_iter()
+                .all(f64::is_finite)
+                    && spell.crown_tower_damage.is_none_or(f64::is_finite)
+                    && spell.spawn_deploy_delay.is_none_or(f64::is_finite);
+                let child_shape = match (
+                    spell.spawn_character.clone(),
+                    spell.spawn_character_data.as_ref(),
+                    spell.spawn_data_fingerprint.as_ref(),
+                    spell.spawn_deploy_delay,
+                    spell.spawn_template_snapshot.as_ref(),
+                    spell.spawn_template_fingerprint.as_ref(),
+                ) {
+                    (None, Some(unit_data), Some(unit_data_fingerprint), None, None, None)
+                        if unit_data_fingerprint.eq_ignore_ascii_case(&sha256_hex(
+                            &serde_json::to_vec(unit_data)
+                                .expect("normalized rolling data is serializable"),
+                        )) =>
+                    {
+                        Some(None)
+                    }
+                    (
+                        Some(unit_name),
+                        Some(unit_data),
+                        Some(unit_data_fingerprint),
+                        deploy_delay,
+                        Some(snapshot),
+                        Some(template_fingerprint),
+                    ) => {
+                        let computed = sha256_hex(
+                            &serde_json::to_vec(&snapshot)
+                                .expect("normalized rolling child template is serializable"),
+                        );
+                        let prototype = ResidentEntity::from_normalized(0, snapshot).ok();
+                        let computed_unit_data_fingerprint = sha256_hex(
+                            &serde_json::to_vec(unit_data)
+                                .expect("normalized rolling child data is serializable"),
+                        );
+                        let supported = !unit_name.is_empty()
+                            && unit_data_fingerprint.len() == 64
+                            && unit_data_fingerprint
+                                .bytes()
+                                .all(|byte| byte.is_ascii_hexdigit())
+                            && unit_data_fingerprint
+                                .eq_ignore_ascii_case(&computed_unit_data_fingerprint)
+                            && template_fingerprint.len() == 64
+                            && template_fingerprint
+                                .bytes()
+                                .all(|byte| byte.is_ascii_hexdigit())
+                            && template_fingerprint.eq_ignore_ascii_case(&computed)
+                            && deploy_delay.is_none_or(|delay| delay >= 0.0)
+                            && prototype.as_ref().is_some_and(|prototype| {
+                                deploy_delay.is_none_or(|delay| {
+                                    prototype.deploy_delay_remaining.to_bits() == delay.to_bits()
+                                }) && prototype.entity_kind == 0
+                                    && prototype.python_type == "clasher.entities.Troop"
+                                    && prototype.card_name == unit_name
+                                    && prototype.active
+                                    && prototype.is_alive
+                                    && prototype.has_only_compiled_mechanics()
+                                    && prototype.shields.is_empty()
+                                    && prototype.death_opcodes.is_empty()
+                                    && prototype.modifier_supported
+                                    && prototype.direct_combat_unsupported.is_empty()
+                                    && prototype
+                                        .locked_combat
+                                        .as_ref()
+                                        .is_some_and(|combat| combat.point_weapon.is_none())
+                                    && prototype.movement.as_ref().is_some_and(|movement| {
+                                        movement.route_cache_supported
+                                            && movement.collision_radius.is_finite()
+                                            && movement.collision_radius > 0.0
+                                            && movement.unit_mass.is_finite()
+                                            && movement.unit_mass > 0.0
+                                    })
+                                    && prototype.point_projectile.is_none()
+                                    && prototype.rolling_projectile.is_none()
+                                    && prototype.area_effect.is_none()
+                                    && prototype.building_lifetime.is_none()
+                                    && prototype.building_impact.is_none()
+                                    && prototype.object_base_movement_noop
+                                    && !prototype.blocks_deployment
+                            });
+                        if supported {
+                            Some(Some(ResidentRollingChildSpec {
+                                unit_name,
+                                unit_data_fingerprint: computed_unit_data_fingerprint,
+                                deploy_delay,
+                                prototype: prototype.expect("supported child has prototype"),
+                                template_fingerprint: template_fingerprint.to_ascii_lowercase(),
+                            }))
+                        } else {
+                            None
+                        }
+                    }
+                    _ => None,
+                };
+                if !finite
+                    || spell.rolling_radius <= 0.0
+                    || spell.damage <= 0.0
+                    || spell.casting_speed <= 0.0
+                    || spell.casting_min_distance < 0.0
+                    || spell.travel_speed <= 0
+                    || spell.projectile_range <= 0.0
+                    || spell.radius_y < 0.0
+                    || spell.knockback_distance < 0.0
+                    || spell.crown_tower_damage_multiplier < 0.0
+                    || spell.crown_tower_damage.is_some_and(|damage| damage < 0.0)
+                    || child_shape.is_none()
+                {
+                    reasons.push("native_rolling_projectile_spell_preflight".to_owned());
+                }
+                ResidentRollingProjectileSpellSpec {
+                    rolling_radius: spell.rolling_radius,
+                    damage: spell.damage,
+                    casting_speed: spell.casting_speed,
+                    casting_min_distance: spell.casting_min_distance,
+                    travel_speed: spell.travel_speed,
+                    projectile_range: spell.projectile_range,
+                    radius_y: spell.radius_y,
+                    knockback_distance: spell.knockback_distance,
+                    knockback_ignores_mass: spell.knockback_ignores_mass,
+                    crown_tower_damage_multiplier: spell.crown_tower_damage_multiplier,
+                    crown_tower_damage: spell.crown_tower_damage,
+                    spawn_character: spell.spawn_character,
+                    spawn_character_data_fingerprint: spell
+                        .spawn_data_fingerprint
+                        .unwrap_or_default()
+                        .to_ascii_lowercase(),
+                    spawn_deploy_delay: spell.spawn_deploy_delay,
+                    child: child_shape.flatten(),
+                }
+            });
+            if reasons.is_empty()
+                && projectile_spell.is_none()
+                && rolling_projectile_spell.is_none()
+            {
                 let common_supported = |prototype: &ResidentEntity| {
                     prototype.active
                         && prototype.is_alive
@@ -4257,7 +4712,8 @@ impl ResidentCardCatalog {
                                     })
                             }
                             ResidentCardActionKind::Unsupported
-                            | ResidentCardActionKind::ProjectileSpell => false,
+                            | ResidentCardActionKind::ProjectileSpell
+                            | ResidentCardActionKind::RollingProjectileSpell => false,
                         });
                 if !supported {
                     reasons.push(match card.action_kind {
@@ -4267,7 +4723,9 @@ impl ResidentCardCatalog {
                         _ => "native_single_troop_preflight".to_owned(),
                     });
                 }
-            } else if projectile_spell.is_some() && prototype.is_some() {
+            } else if (projectile_spell.is_some() || rolling_projectile_spell.is_some())
+                && prototype.is_some()
+            {
                 reasons.push("ambiguous_action_payload".to_owned());
             }
             match card.action_kind {
@@ -4275,12 +4733,22 @@ impl ResidentCardCatalog {
                     reasons.push("projectile_spell_payload_missing".to_owned());
                 }
                 ResidentCardActionKind::Troop | ResidentCardActionKind::Building
-                    if projectile_spell.is_some() =>
+                    if projectile_spell.is_some() || rolling_projectile_spell.is_some() =>
                 {
                     reasons.push("action_kind_payload_mismatch".to_owned());
                 }
+                ResidentCardActionKind::RollingProjectileSpell
+                    if rolling_projectile_spell.is_none() =>
+                {
+                    reasons.push("rolling_projectile_spell_payload_missing".to_owned());
+                }
+                ResidentCardActionKind::ProjectileSpell if rolling_projectile_spell.is_some() => {
+                    reasons.push("action_kind_payload_mismatch".to_owned());
+                }
                 ResidentCardActionKind::Unsupported
-                    if projectile_spell.is_some() || prototype.is_some() =>
+                    if projectile_spell.is_some()
+                        || rolling_projectile_spell.is_some()
+                        || prototype.is_some() =>
                 {
                     reasons.push("unsupported_action_payload".to_owned());
                 }
@@ -4305,6 +4773,7 @@ impl ResidentCardCatalog {
                 prototype,
                 template_fingerprint,
                 projectile_spell,
+                rolling_projectile_spell,
             });
         }
         Ok(Self {
@@ -5131,6 +5600,45 @@ impl PublicationExactEq for PointProjectileState {
     }
 }
 
+impl PublicationExactEq for ResidentRollingProjectileState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.source_kind == other.source_kind
+            && self.spawn_character == other.spawn_character
+            && self.spawn_character_data_fingerprint == other.spawn_character_data_fingerprint
+            && self.travel_speed == other.travel_speed
+            && self.knockback_ignores_mass == other.knockback_ignores_mass
+            && self.hit_entity_ids == other.hit_entity_ids
+            && self.has_spawned_character == other.has_spawned_character
+            && publication_optional_f64_eq(self.crown_tower_damage, other.crown_tower_damage)
+            && publication_optional_f64_eq(
+                self.spawn_deploy_delay_override,
+                other.spawn_deploy_delay_override,
+            )
+            && publication_f64_fields_eq(
+                [
+                    self.rolling_radius,
+                    self.projectile_range,
+                    self.spawn_delay,
+                    self.radius_y,
+                    self.knockback_distance,
+                    self.crown_tower_damage_multiplier,
+                    self.time_alive,
+                    self.distance_traveled,
+                ],
+                [
+                    other.rolling_radius,
+                    other.projectile_range,
+                    other.spawn_delay,
+                    other.radius_y,
+                    other.knockback_distance,
+                    other.crown_tower_damage_multiplier,
+                    other.time_alive,
+                    other.distance_traveled,
+                ],
+            )
+    }
+}
+
 impl PublicationExactEq for BuildingLifetimeState {
     fn publication_exact_eq(&self, other: &Self) -> bool {
         self.lifetime_ms == other.lifetime_ms
@@ -5511,6 +6019,11 @@ impl ResidentEntity {
                 (Some(left), Some(right)) => left.publication_static_eq(right),
                 _ => false,
             }
+            && match (&self.rolling_projectile, &other.rolling_projectile) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
             && match (&self.area_effect, &other.area_effect) {
                 (None, None) => true,
                 (Some(left), Some(right)) => left.publication_static_eq(right),
@@ -5790,6 +6303,25 @@ impl From<&ResidentCharacterBirthProvenance> for PreparedCharacterBirthParts {
                 source_entity_id: Some(*source_entity_id),
                 opcode_index: Some(*opcode_index),
             },
+            ResidentCharacterBirthProvenance::RollingSpawn {
+                source_entity_id,
+                spell_name,
+                unit_name,
+                unit_data_fingerprint,
+                template_fingerprint,
+                spawn_group_id,
+            } => Self {
+                kind: 2,
+                lookup_name: Some(spell_name.clone()),
+                effective_name: unit_name.clone(),
+                template_fingerprint: template_fingerprint.clone(),
+                unit_data_fingerprint: Some(unit_data_fingerprint.clone()),
+                group_id: *spawn_group_id,
+                ordinal: 0,
+                member_count: 1,
+                source_entity_id: Some(*source_entity_id),
+                opcode_index: None,
+            },
         }
     }
 }
@@ -5831,6 +6363,7 @@ struct PreparedEntityParts {
     building_lifetime_state: Option<BuildingLifetimeState>,
     building_impact_state: Option<BuildingImpactState>,
     point_projectile_state: Option<PointProjectileState>,
+    rolling_projectile_state: Option<ResidentRollingProjectileState>,
     area_effect_state: Option<ResidentAreaEffectState>,
     character_birth: Option<PreparedCharacterBirthParts>,
 }
@@ -5877,6 +6410,7 @@ impl From<&ResidentEntity> for PreparedEntityParts {
             building_lifetime_state: entity.building_lifetime.clone(),
             building_impact_state: entity.building_impact.clone(),
             point_projectile_state: entity.point_projectile.clone(),
+            rolling_projectile_state: entity.rolling_projectile.clone(),
             area_effect_state: entity.area_effect.clone(),
             character_birth: entity
                 .character_birth
@@ -5953,6 +6487,8 @@ struct PreparedEntityDeltaParts {
     building_impact_present: bool,
     point_projectile_state: Option<PointProjectileState>,
     point_projectile_present: bool,
+    rolling_projectile_state: Option<ResidentRollingProjectileState>,
+    rolling_projectile_present: bool,
     area_effect_state: Option<ResidentAreaEffectState>,
     area_effect_present: bool,
     full: Option<PreparedEntityParts>,
@@ -6105,6 +6641,11 @@ fn prepared_entity_delta(
             .flatten(),
         point_projectile_present: dirty_mask & ENTITY_DELTA_POINT != 0
             && entity.point_projectile.is_some(),
+        rolling_projectile_state: (dirty_mask & ENTITY_DELTA_ROLLING != 0)
+            .then(|| entity.rolling_projectile.clone())
+            .flatten(),
+        rolling_projectile_present: dirty_mask & ENTITY_DELTA_ROLLING != 0
+            && entity.rolling_projectile.is_some(),
         area_effect_state: (dirty_mask & ENTITY_DELTA_AREA != 0)
             .then(|| entity.area_effect.clone())
             .flatten(),
@@ -6255,6 +6796,12 @@ impl PreparedPublication {
                 &candidate_entity.point_projectile,
             ) {
                 entity_mask |= ENTITY_DELTA_POINT;
+            }
+            if !publication_option_exact_eq(
+                &prior_entity.rolling_projectile,
+                &candidate_entity.rolling_projectile,
+            ) {
+                entity_mask |= ENTITY_DELTA_ROLLING;
             }
             if !publication_option_exact_eq(
                 &prior_entity.area_effect,
@@ -6481,6 +7028,19 @@ impl ResidentBattle {
             .ok_or_else(|| PyValueError::new_err("battle checkpoint has no fast_path flag"))?;
         let catalog = Arc::new(ResidentCardCatalog::from_bytes(catalog)?);
         let mut entities = parse_resident_entities(checkpoint)?;
+        let next_entity_id = parse_next_entity_id(checkpoint)?;
+        if entities.iter().any(|entity| {
+            entity.rolling_projectile.as_ref().is_some_and(|rolling| {
+                rolling
+                    .hit_entity_ids
+                    .iter()
+                    .any(|id| !(0..next_entity_id).contains(id))
+            })
+        }) {
+            return Err(PyValueError::new_err(
+                "resident rolling projectile references an unallocated historical hit ID",
+            ));
+        }
         let mut damage_groups = Vec::with_capacity(projectile_damage_groups.len());
         let mut grouped_projectile_ids = Vec::new();
         for (group_id, hit_entity_ids, projectile_ids) in projectile_damage_groups {
@@ -6552,7 +7112,6 @@ impl ResidentBattle {
                 "resident pending spell cast state is invalid",
             ));
         }
-        let next_entity_id = parse_next_entity_id(checkpoint)?;
         let rng = PythonMt19937::from_checkpoint(checkpoint)?;
         if refill_schedule.is_empty() {
             return Err(PyValueError::new_err("refill schedule cannot be empty"));
@@ -6966,6 +7525,14 @@ impl ResidentBattle {
                         .map_or(Value::Null, |ids| json!(ids)),
                 );
                 fields.insert(
+                    "rolling_projectile_state".to_owned(),
+                    entity
+                        .rolling_projectile
+                        .as_ref()
+                        .map(|state| state.diagnostic_value(entity))
+                        .unwrap_or(Value::Null),
+                );
+                fields.insert(
                     "area_effect_state".to_owned(),
                     entity
                         .area_effect
@@ -7275,6 +7842,7 @@ impl ResidentBattle {
     fn supports_resident_object_phase(&self) -> bool {
         self.resident_id_invariants_hold()
             && self.supports_point_projectile_phase()
+            && self.supports_rolling_projectile_phase()
             && self.entities.iter().all(|entity| {
                 !entity.active
                     || (entity.entity_kind == 2 && entity.object_base_movement_noop)
@@ -7294,6 +7862,11 @@ impl ResidentBattle {
         if !self.supports_resident_object_phase() {
             return Err(PyRuntimeError::new_err(
                 "resident object phase rejected unsupported object or character callback",
+            ));
+        }
+        if !self.resident_object_allocation_headroom_supported() {
+            return Err(PyRuntimeError::new_err(
+                "resident object phase lacks aggregate entity-ID allocation headroom",
             ));
         }
         self.mark_publication_mutated();
@@ -7323,6 +7896,9 @@ impl ResidentBattle {
                 }
                 match self.entities[entity_index].entity_kind {
                     0 | 1 => self.entities[entity_index].advance_character_object_phase(self.dt),
+                    2 if self.entities[entity_index].rolling_projectile.is_some() => {
+                        self.advance_rolling_projectile(entity_index)
+                    }
                     2 => self.advance_point_projectile(entity_index),
                     3 => self.advance_resident_area_effect(entity_index),
                     _ => unreachable!("resident object preflight validates object kinds"),
@@ -7331,6 +7907,38 @@ impl ResidentBattle {
             }
         }
         Ok(())
+    }
+
+    fn resident_object_allocation_headroom_supported(&self) -> bool {
+        let possible_death_births = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active && entity.is_alive)
+            .flat_map(|entity| entity.death_opcodes.iter())
+            .try_fold(0_i64, |births, opcode| {
+                births.checked_add(match opcode {
+                    ResidentDeathOpcode::Area(_) => 1,
+                    ResidentDeathOpcode::Spawn(spawn) => spawn.count,
+                    ResidentDeathOpcode::Damage(_) => 0,
+                })
+            });
+        let possible_rolling_children = self.entities.iter().try_fold(0_i64, |count, entity| {
+            let may_spawn = entity.active
+                && entity.is_alive
+                && entity.rolling_projectile.as_ref().is_some_and(|rolling| {
+                    !rolling.has_spawned_character
+                        && self
+                            .rolling_projectile_spell_spec(&rolling.source_kind)
+                            .is_some_and(|spec| spec.child.is_some())
+                });
+            count.checked_add(i64::from(may_spawn))
+        });
+        possible_death_births
+            .and_then(|births| {
+                possible_rolling_children.and_then(|children| births.checked_add(children))
+            })
+            .and_then(|count| self.next_entity_id.checked_add(count))
+            .is_some_and(|next_id| (0..i64::MAX).contains(&next_id))
     }
 
     fn quantize_resident_position(&mut self, entity_index: usize) {
@@ -7516,10 +8124,13 @@ impl ResidentBattle {
                                         && entity.status_nova_jump.is_none())
                             })
                     }
-                    2 => entity
-                        .point_projectile
-                        .as_ref()
-                        .is_some_and(|projectile| projectile.unsupported.is_empty()),
+                    2 => {
+                        entity
+                            .point_projectile
+                            .as_ref()
+                            .is_some_and(|projectile| projectile.unsupported.is_empty())
+                            || entity.rolling_projectile.is_some()
+                    }
                     3 => entity.supports_area_effect_object(),
                     _ => false,
                 }
@@ -7736,10 +8347,13 @@ impl ResidentBattle {
                                     && !supported_river_transition
                             })
                     }
-                    2 => entity
-                        .point_projectile
-                        .as_ref()
-                        .is_some_and(|projectile| projectile.unsupported.is_empty()),
+                    2 => {
+                        entity
+                            .point_projectile
+                            .as_ref()
+                            .is_some_and(|projectile| projectile.unsupported.is_empty())
+                            || entity.rolling_projectile.is_some()
+                    }
                     3 => entity.supports_area_effect_object(),
                     _ => false,
                 }
@@ -7752,6 +8366,15 @@ impl ResidentBattle {
         }) {
             return false;
         }
+        self.entities.iter().all(|entity| {
+            !entity.active
+                || !entity.is_alive
+                || !matches!(entity.entity_kind, 0 | 1)
+                || (Self::resident_deploy_state_supported(entity) && entity.locked_combat.is_some())
+        })
+    }
+
+    fn direct_combat_allocation_headroom_supported(&self) -> bool {
         let possible_death_births = self
             .entities
             .iter()
@@ -7764,24 +8387,63 @@ impl ResidentBattle {
                     ResidentDeathOpcode::Damage(_) => 0,
                 })
             });
+        let possible_projectile_launches = self.possible_point_projectile_launches_this_phase();
         if possible_death_births
+            .and_then(|births| {
+                possible_projectile_launches.and_then(|launches| births.checked_add(launches))
+            })
             .and_then(|count| self.next_entity_id.checked_add(count))
             .is_none_or(|next_entity_id| !(0..i64::MAX).contains(&next_entity_id))
         {
             return false;
         }
-        self.entities.iter().all(|entity| {
-            !entity.active
-                || !entity.is_alive
-                || !matches!(entity.entity_kind, 0 | 1)
-                || (Self::resident_deploy_state_supported(entity) && entity.locked_combat.is_some())
-        })
+        true
+    }
+
+    fn possible_point_projectile_launches_this_phase(&self) -> Option<i64> {
+        self.entities
+            .iter()
+            .enumerate()
+            .try_fold(0_i64, |count, (actor_index, entity)| {
+                let point_attacker = entity.active
+                    && entity.is_alive
+                    && matches!(entity.entity_kind, 0 | 1)
+                    && entity.deploy_delay_remaining <= 0.0
+                    && entity
+                        .locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.point_weapon.is_some())
+                    && !entity.movement.as_ref().is_some_and(|movement| {
+                        movement.river_jump_active
+                            || (movement.forced_movement_active
+                                && !(movement.knockback_target.is_some()
+                                    && !movement.knockback_interrupts_combat))
+                    });
+                if !point_attacker {
+                    return Some(count);
+                }
+                // Complete-tick boundaries clear the phase-local lethal
+                // reservation set. If a standalone caller supplies a stale
+                // nonempty set, retain the conservative one-launch bound.
+                let may_acquire_target = !self.lethal_projectile_reservation_ids.is_empty()
+                    || if entity.entity_kind == 1 {
+                        self.direct_building_target_index(actor_index).is_some()
+                    } else {
+                        self.direct_troop_target_index(actor_index).is_some()
+                    };
+                count.checked_add(i64::from(may_acquire_target))
+            })
     }
 
     fn advance_direct_troop_combat_phase(&mut self) -> PyResult<()> {
         if !self.supports_direct_troop_combat_phase() {
             return Err(PyRuntimeError::new_err(
                 "resident direct-troop combat preflight rejected battle state",
+            ));
+        }
+        if !self.direct_combat_allocation_headroom_supported() {
+            return Err(PyRuntimeError::new_err(
+                "resident direct-troop combat lacks aggregate entity-ID allocation headroom",
             ));
         }
         self.mark_publication_mutated();
@@ -8199,7 +8861,7 @@ impl ResidentBattle {
                 return matches!(entity.entity_kind, 0 | 1) || entity.supports_area_effect_object();
             }
             let Some(projectile) = entity.point_projectile.as_ref() else {
-                return false;
+                return entity.rolling_projectile.is_some();
             };
             if !entity.mechanics.is_empty() || !projectile.unsupported.is_empty() {
                 return false;
@@ -8285,14 +8947,309 @@ impl ResidentBattle {
             .entities
             .iter()
             .enumerate()
-            .filter_map(|(index, entity)| (entity.entity_kind == 2).then_some(index))
-            .filter(|index| self.entities[*index].active)
+            .filter_map(|(index, entity)| {
+                (entity.active && entity.point_projectile.is_some()).then_some(index)
+            })
             .collect::<Vec<_>>();
         projectile_indices.sort_unstable_by_key(|index| self.entities[*index].id);
         for projectile_index in projectile_indices {
             self.advance_point_projectile(projectile_index);
         }
         Ok(())
+    }
+
+    fn rolling_projectile_matches_spell_spec(&self, entity_index: usize) -> bool {
+        let entity = &self.entities[entity_index];
+        let Some(rolling) = entity.rolling_projectile.as_ref() else {
+            return false;
+        };
+        let Some(spec) = self.rolling_projectile_spell_spec(&rolling.source_kind) else {
+            return false;
+        };
+        entity.python_type == "clasher.entities.RollingProjectile"
+            && entity.entity_kind == 2
+            && entity.card_name.is_empty()
+            && entity.active
+            && entity.is_alive
+            && entity.hitpoints == ExactScalar::Int(1)
+            && entity.max_hitpoints == ExactScalar::Int(1)
+            && entity.target_id.is_none()
+            && entity.deploy_delay_remaining.to_bits() == 0.0_f64.to_bits()
+            && entity.placement_delay_total.to_bits() == 0.0_f64.to_bits()
+            && !entity.placement_pending
+            && !entity.spawn_hook_pending
+            && !entity.spawn_hook_fired
+            && entity.freeze_expiry_time.to_bits() == 0.0_f64.to_bits()
+            && entity.death_spawn_target_immunity_elapsed_ms == -1
+            && entity.pending_projectile_max_duration_ms == 0
+            && entity.spawn_angle_shift.to_bits() == 0.0_f64.to_bits()
+            && entity.status_nova_jump.is_none()
+            && entity.point_projectile.is_none()
+            && entity.area_effect.is_none()
+            && entity.mechanics.is_empty()
+            && entity.shields.is_empty()
+            && entity.death_opcodes.is_empty()
+            && entity.modifier_state.is_none()
+            && entity.movement.is_none()
+            && entity.locked_combat.is_none()
+            && entity.building_lifetime.is_none()
+            && entity.building_impact.is_none()
+            && entity.object_base_movement_noop
+            && !entity.blocks_deployment
+            && entity.damage.as_f64().to_bits() == spec.damage.to_bits()
+            && rolling.rolling_radius.to_bits() == spec.rolling_radius.to_bits()
+            && rolling.travel_speed == ExactScalar::Int(spec.travel_speed)
+            && rolling.projectile_range.to_bits() == spec.projectile_range.to_bits()
+            && rolling.radius_y.to_bits() == spec.radius_y.to_bits()
+            && rolling.knockback_distance.to_bits() == spec.knockback_distance.to_bits()
+            && rolling.knockback_ignores_mass == spec.knockback_ignores_mass
+            && rolling.crown_tower_damage_multiplier.to_bits()
+                == spec.crown_tower_damage_multiplier.to_bits()
+            && rolling.crown_tower_damage.map(f64::to_bits)
+                == spec.crown_tower_damage.map(f64::to_bits)
+            && rolling.spawn_character == spec.spawn_character
+            && rolling.spawn_character_data_fingerprint == spec.spawn_character_data_fingerprint
+            && rolling.spawn_deploy_delay_override.map(f64::to_bits)
+                == spec.spawn_deploy_delay.map(f64::to_bits)
+            && (spec.child.is_some() || !rolling.has_spawned_character)
+            && rolling
+                .hit_entity_ids
+                .iter()
+                .all(|id| (0..self.next_entity_id).contains(id))
+    }
+
+    fn supports_rolling_projectile_phase(&self) -> bool {
+        self.entities.iter().enumerate().all(|(index, entity)| {
+            if !entity.active {
+                return true;
+            }
+            let Some(_) = entity.rolling_projectile.as_ref() else {
+                return true;
+            };
+            self.rolling_projectile_matches_spell_spec(index)
+        }) && self.entities.iter().all(|target| {
+            !target.active
+                || !matches!(target.entity_kind, 0 | 1)
+                || (target.has_only_compiled_mechanics()
+                    && target.locked_combat.is_some()
+                    && target.movement.is_some()
+                    && (target.entity_kind != 1 || target.building_impact.is_some()))
+        })
+    }
+
+    fn rolling_target_valid(&self, projectile_index: usize, target_index: usize) -> bool {
+        if projectile_index == target_index {
+            return false;
+        }
+        let projectile = &self.entities[projectile_index];
+        let rolling = projectile
+            .rolling_projectile
+            .as_ref()
+            .expect("rolling target query requires rolling state");
+        let target = &self.entities[target_index];
+        if !target.active
+            || !target.is_alive
+            || target.player_id == projectile.player_id
+            || !matches!(target.entity_kind, 0 | 1)
+            || rolling.hit_entity_ids.contains(&target.id)
+            || target.blocks_effects_while_committed()
+            || target
+                .locked_combat
+                .as_ref()
+                .is_some_and(|combat| combat.hidden_building)
+        {
+            return false;
+        }
+        let Some((is_air, collision_radius, stealth_until_ms, allow_invisible)) =
+            target.projectile_target_traits()
+        else {
+            return false;
+        };
+        if is_air
+            || target
+                .movement
+                .as_ref()
+                .is_some_and(|movement| movement.river_jump_active)
+        {
+            return false;
+        }
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        if stealth_until_ms > now_ms && !allow_invisible {
+            return false;
+        }
+        let dx = (target.position_x.as_f64() - projectile.position_x.as_f64()).abs();
+        let dy = (target.position_y.as_f64() - projectile.position_y.as_f64()).abs();
+        dx <= rolling.rolling_radius + collision_radius + 1e-9
+            && dy <= rolling.radius_y + collision_radius + 1e-9
+    }
+
+    fn advance_rolling_projectile(&mut self, projectile_index: usize) {
+        let dt = self.dt;
+        {
+            let rolling = self.entities[projectile_index]
+                .rolling_projectile
+                .as_mut()
+                .expect("rolling projectile branch requires state");
+            rolling.time_alive += dt;
+            if rolling.time_alive + 1e-9 < rolling.spawn_delay {
+                return;
+            }
+        }
+        let (travel_speed, remaining_units, player_id) = {
+            let entity = &self.entities[projectile_index];
+            let rolling = entity
+                .rolling_projectile
+                .as_ref()
+                .expect("rolling projectile branch requires state");
+            (
+                rolling.travel_speed.as_f64().round_ties_even() as i64,
+                logic_units((rolling.projectile_range - rolling.distance_traveled).max(0.0)),
+                entity.player_id,
+            )
+        };
+        let roll_units = Self::speed_work_for_duration(travel_speed, dt).min(remaining_units);
+        {
+            let entity = &mut self.entities[projectile_index];
+            let current_y = logic_units(entity.position_y.as_f64());
+            entity.position_y.set_f64(
+                (current_y
+                    + if player_id == 0 {
+                        roll_units
+                    } else {
+                        -roll_units
+                    }) as f64
+                    / 1000.0,
+            );
+            entity
+                .rolling_projectile
+                .as_mut()
+                .expect("rolling projectile branch requires state")
+                .distance_traveled += roll_units as f64 / 1000.0;
+        }
+
+        let snapshot = (0..self.entities.len()).collect::<Vec<_>>();
+        for target_index in snapshot {
+            let rolling = self.entities[projectile_index]
+                .rolling_projectile
+                .as_ref()
+                .expect("rolling projectile branch requires state")
+                .clone();
+            if !self.rolling_target_valid(projectile_index, target_index) {
+                continue;
+            }
+            let crown = self.entities[target_index]
+                .building_impact
+                .as_ref()
+                .is_some_and(|building| building.crown_slot.is_some());
+            let damage = if crown {
+                rolling.crown_tower_damage.unwrap_or_else(|| {
+                    let base = self.entities[projectile_index]
+                        .damage
+                        .as_f64()
+                        .round_ties_even()
+                        .max(0.0) as i64;
+                    let percent = (rolling.crown_tower_damage_multiplier * 100.0)
+                        .round_ties_even()
+                        .max(0.0) as i64;
+                    if base == 0 || percent == 0 {
+                        0.0
+                    } else {
+                        ((base * percent + 99) / 100) as f64
+                    }
+                })
+            } else {
+                self.entities[projectile_index].damage.as_f64()
+            };
+            self.apply_resident_damage(target_index, damage);
+            let target_id = self.entities[target_index].id;
+            let hit_ids = &mut self.entities[projectile_index]
+                .rolling_projectile
+                .as_mut()
+                .expect("rolling projectile branch requires state")
+                .hit_entity_ids;
+            let insertion = hit_ids
+                .binary_search(&target_id)
+                .unwrap_or_else(|index| index);
+            hit_ids.insert(insertion, target_id);
+            if self.entities[target_index].is_alive && rolling.knockback_distance > 0.0 {
+                let center = (
+                    logic_units(self.entities[target_index].position_x.as_f64()),
+                    logic_units(self.entities[target_index].position_y.as_f64()),
+                );
+                self.begin_resident_radial_knockback_with_options(
+                    target_index,
+                    center,
+                    logic_units(rolling.knockback_distance).clamp(0, 10_000),
+                    rolling.knockback_ignores_mass,
+                    Some((0, if player_id == 0 { 1 } else { -1 })),
+                );
+            }
+        }
+
+        let terminal = {
+            let rolling = self.entities[projectile_index]
+                .rolling_projectile
+                .as_ref()
+                .expect("rolling projectile branch requires state");
+            rolling.distance_traveled >= rolling.projectile_range - 1e-9
+        };
+        if terminal {
+            self.spawn_resident_rolling_child(projectile_index);
+            self.entities[projectile_index].is_alive = false;
+        }
+    }
+
+    fn spawn_resident_rolling_child(&mut self, projectile_index: usize) {
+        let source_entity_id = self.entities[projectile_index].id;
+        let player_id = self.entities[projectile_index].player_id;
+        let spell_name = self.entities[projectile_index]
+            .rolling_projectile
+            .as_ref()
+            .expect("rolling projectile branch requires state")
+            .source_kind
+            .clone();
+        let Some(child_spec) = self
+            .rolling_projectile_spell_spec(&spell_name)
+            .and_then(|spec| spec.child.clone())
+        else {
+            return;
+        };
+        if self.entities[projectile_index]
+            .rolling_projectile
+            .as_ref()
+            .expect("rolling projectile branch requires state")
+            .has_spawned_character
+        {
+            return;
+        }
+        let x_units = logic_units(self.entities[projectile_index].position_x.as_f64())
+            .clamp(250, self.arena_width_tiles * 1000 - 250);
+        let y_units = logic_units(self.entities[projectile_index].position_y.as_f64())
+            .clamp(250, self.arena_height_tiles * 1000 - 250);
+        let child_id = self.next_entity_id;
+        let mut child = self.instantiate_character_template(
+            &child_spec.prototype,
+            &child_spec.unit_name,
+            player_id,
+            (x_units, y_units),
+            child_spec.deploy_delay,
+            false,
+        );
+        child.character_birth = Some(ResidentCharacterBirthProvenance::RollingSpawn {
+            source_entity_id,
+            spell_name,
+            unit_name: child_spec.unit_name,
+            unit_data_fingerprint: child_spec.unit_data_fingerprint,
+            template_fingerprint: child_spec.template_fingerprint,
+            spawn_group_id: child_id,
+        });
+        self.entities.push(child);
+        self.next_entity_id += 1;
+        self.entities[projectile_index]
+            .rolling_projectile
+            .as_mut()
+            .expect("rolling projectile branch requires state")
+            .has_spawned_character = true;
     }
 
     fn point_projectile_state_bytes(&self) -> PyResult<Vec<u8>> {
@@ -8313,6 +9270,29 @@ impl ResidentBattle {
         Ok(sha256_hex(&self.point_projectile_state_bytes()?))
     }
 
+    fn rolling_projectile_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active)
+            .filter_map(|entity| {
+                entity
+                    .rolling_projectile
+                    .as_ref()
+                    .map(|rolling| rolling.diagnostic_value(entity))
+            })
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident rolling-projectile state: {error}"
+            ))
+        })
+    }
+
+    fn rolling_projectile_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.rolling_projectile_state_bytes()?))
+    }
+
     fn supports_cleanup_phase(&self) -> bool {
         self.entities.iter().all(|entity| {
             !entity.active
@@ -8321,7 +9301,9 @@ impl ResidentBattle {
                     && self.resident_death_spawns_supported(entity)
                     && match entity.entity_kind {
                         0 | 1 => true,
-                        2 => entity.point_projectile.is_some(),
+                        2 => {
+                            entity.point_projectile.is_some() || entity.rolling_projectile.is_some()
+                        }
                         3 => entity.supports_area_effect_object(),
                         _ => false,
                     })
@@ -8781,6 +9763,9 @@ impl ResidentBattle {
                     ResidentCardActionKind::ProjectileSpell => {
                         self.valid_spell_placement(x_units, y_units)
                     }
+                    ResidentCardActionKind::RollingProjectileSpell => {
+                        self.valid_territory_spell_placement(player_id, x_units, y_units)
+                    }
                     ResidentCardActionKind::Building => {
                         self.valid_building_placement(player_id, x_units, y_units, card)
                     }
@@ -9141,10 +10126,25 @@ impl ResidentBattle {
             .iter()
             .find(|card| {
                 card.supports_action()
-                    && card.effective_name == spell_name
+                    && (card.lookup_name == spell_name || card.effective_name == spell_name)
                     && card.projectile_spell.is_some()
             })
             .and_then(|card| card.projectile_spell.as_ref())
+    }
+
+    fn rolling_projectile_spell_spec(
+        &self,
+        spell_name: &str,
+    ) -> Option<&ResidentRollingProjectileSpellSpec> {
+        self.catalog
+            .cards
+            .iter()
+            .find(|card| {
+                card.supports_action()
+                    && (card.lookup_name == spell_name || card.effective_name == spell_name)
+                    && card.rolling_projectile_spell.is_some()
+            })
+            .and_then(|card| card.rolling_projectile_spell.as_ref())
     }
 
     fn supports_pending_spell_casts(&self) -> bool {
@@ -9161,11 +10161,23 @@ impl ResidentBattle {
                     && cast.position_y.is_finite()
                     && (0.0..self.arena_width_tiles as f64).contains(&cast.position_x)
                     && (0.0..self.arena_height_tiles as f64).contains(&cast.position_y)
-                    && self.valid_spell_placement(
-                        logic_units(cast.position_x),
-                        logic_units(cast.position_y),
-                    )
-                    && self.projectile_spell_spec(&cast.spell_name).is_some()
+                    && if self.projectile_spell_spec(&cast.spell_name).is_some() {
+                        self.valid_spell_placement(
+                            logic_units(cast.position_x),
+                            logic_units(cast.position_y),
+                        )
+                    } else if self
+                        .rolling_projectile_spell_spec(&cast.spell_name)
+                        .is_some()
+                    {
+                        self.valid_territory_spell_placement(
+                            cast.player_id,
+                            logic_units(cast.position_x),
+                            logic_units(cast.position_y),
+                        )
+                    } else {
+                        false
+                    }
             })
     }
 
@@ -9306,8 +10318,13 @@ impl ResidentBattle {
             return Ok(());
         }
         let due_count = due.iter().try_fold(0_i64, |count, cast| {
-            let spec = self.projectile_spell_spec(&cast.spell_name)?;
-            count.checked_add(spec.multiple_projectiles.checked_mul(spec.damage_waves)?)
+            if let Some(spec) = self.projectile_spell_spec(&cast.spell_name) {
+                count.checked_add(spec.multiple_projectiles.checked_mul(spec.damage_waves)?)
+            } else if let Some(spec) = self.rolling_projectile_spell_spec(&cast.spell_name) {
+                count.checked_add(1 + i64::from(spec.child.is_some()))
+            } else {
+                None
+            }
         });
         let Some(due_count) = due_count else {
             return Err(PyRuntimeError::new_err(
@@ -9331,14 +10348,122 @@ impl ResidentBattle {
                 .then_with(|| left.sequence.cmp(&right.sequence))
         });
         for cast in due {
-            let spec = self
-                .projectile_spell_spec(&cast.spell_name)
+            if let Some(spec) = self.projectile_spell_spec(&cast.spell_name).cloned() {
+                self.instantiate_projectile_spell(&cast, &spec)?;
+            } else if let Some(spec) = self
+                .rolling_projectile_spell_spec(&cast.spell_name)
                 .cloned()
-                .ok_or_else(|| {
-                    PyRuntimeError::new_err("resident pending spell capability changed")
-                })?;
-            self.instantiate_projectile_spell(&cast, &spec)?;
+            {
+                let effective_name = self
+                    .catalog
+                    .cards
+                    .iter()
+                    .find(|card| card.lookup_name == cast.spell_name)
+                    .map(|card| card.effective_name.clone())
+                    .ok_or_else(|| {
+                        PyRuntimeError::new_err("resident pending rolling spell identity changed")
+                    })?;
+                self.instantiate_rolling_projectile_spell(&cast, &effective_name, &spec)?;
+            } else {
+                return Err(PyRuntimeError::new_err(
+                    "resident pending spell capability changed",
+                ));
+            }
         }
+        Ok(())
+    }
+
+    fn instantiate_rolling_projectile_spell(
+        &mut self,
+        cast: &ResidentPendingSpellCast,
+        effective_name: &str,
+        spec: &ResidentRollingProjectileSpellSpec,
+    ) -> PyResult<()> {
+        let launch = if cast.player_id == 0 {
+            (9.0_f64, 2.5_f64)
+        } else {
+            (9.0_f64, 29.5_f64)
+        };
+        let dx = cast.position_x - launch.0;
+        let dy = cast.position_y - launch.1;
+        let casting_distance = (dx * dx + dy * dy).sqrt().max(spec.casting_min_distance);
+        let spawn_delay = casting_distance / spec.casting_speed.max(1e-9);
+        let projectile_id = self.next_entity_id;
+        self.next_entity_id = self
+            .next_entity_id
+            .checked_add(1)
+            .ok_or_else(|| PyRuntimeError::new_err("resident rolling projectile ID overflow"))?;
+        self.entities.push(ResidentEntity {
+            sparse_attributes: constructed_entity_sparse_presence(true),
+            active: true,
+            encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
+            id: projectile_id,
+            player_id: cast.player_id,
+            entity_kind: 2,
+            python_type: "clasher.entities.RollingProjectile".to_owned(),
+            card_name: String::new(),
+            position_x: ExactScalar::Float(cast.position_x.to_bits()),
+            position_y: ExactScalar::Float(cast.position_y.to_bits()),
+            hitpoints: ExactScalar::Int(1),
+            max_hitpoints: ExactScalar::Int(1),
+            damage: ExactScalar::Float(spec.damage.to_bits()),
+            is_alive: true,
+            target_id: None,
+            deploy_delay_remaining: 0.0,
+            placement_delay_total: 0.0,
+            placement_pending: false,
+            spawn_hook_pending: false,
+            spawn_hook_fired: false,
+            freeze_expiry_time: 0.0,
+            death_spawn_target_immunity_elapsed_ms: -1,
+            pending_projectile_max_duration_ms: 0,
+            spawn_angle_shift: 0.0,
+            reward_traits: ResidentRewardTraits {
+                mana_cost: 0.0,
+                summon_count: 0,
+                summon_character_second_count: 0,
+                hit_speed_ms: 0.0,
+            },
+            death_spawn_payload_present: false,
+            mechanics: Vec::new(),
+            status_nova_jump: None,
+            shields: Vec::new(),
+            shield_break_count: 0,
+            death_opcodes: Vec::new(),
+            modifier_state: None,
+            movement: None,
+            modifier_supported: true,
+            direct_combat_unsupported: vec!["non_character_entity".to_owned()],
+            locked_combat: None,
+            building_lifetime: None,
+            building_impact: None,
+            building_footprint_size: None,
+            point_projectile: None,
+            rolling_projectile: Some(ResidentRollingProjectileState {
+                source_kind: effective_name.to_owned(),
+                spawn_character: spec.spawn_character.clone(),
+                spawn_character_data_fingerprint: spec.spawn_character_data_fingerprint.clone(),
+                spawn_deploy_delay_override: spec.spawn_deploy_delay,
+                rolling_radius: spec.rolling_radius,
+                travel_speed: ExactScalar::Int(spec.travel_speed),
+                projectile_range: spec.projectile_range,
+                spawn_delay,
+                radius_y: spec.radius_y,
+                knockback_distance: spec.knockback_distance,
+                knockback_ignores_mass: spec.knockback_ignores_mass,
+                crown_tower_damage_multiplier: spec.crown_tower_damage_multiplier,
+                crown_tower_damage: spec.crown_tower_damage,
+                time_alive: 0.0,
+                distance_traveled: 0.0,
+                hit_entity_ids: Vec::new(),
+                has_spawned_character: false,
+            }),
+            area_effect: None,
+            object_base_movement_noop: true,
+            blocks_deployment: false,
+            deployment_collision_radius: 0.5,
+            character_birth: None,
+        });
         Ok(())
     }
 
@@ -9443,6 +10568,7 @@ impl ResidentBattle {
                         homing_min_distance: 0.0,
                         unsupported: Vec::new(),
                     }),
+                    rolling_projectile: None,
                     area_effect: None,
                     object_base_movement_noop: true,
                     blocks_deployment: false,
@@ -9506,6 +10632,13 @@ impl ResidentBattle {
     }
 
     fn resident_death_spawns_supported(&self, entity: &ResidentEntity) -> bool {
+        if let Some(rolling) = entity.rolling_projectile.as_ref() {
+            return entity.death_opcodes.is_empty()
+                && !entity.death_spawn_payload_present
+                && self
+                    .rolling_projectile_spell_spec(&rolling.source_kind)
+                    .is_some();
+        }
         let compiled_spawn_count = entity
             .death_opcodes
             .iter()
@@ -9725,7 +10858,8 @@ impl ResidentBattle {
             .and_then(|name| self.catalog.get(name))
             .filter(|card| card.supports_action())
             .map_or(0, |card| match card.action_kind {
-                ResidentCardActionKind::ProjectileSpell => 0,
+                ResidentCardActionKind::ProjectileSpell
+                | ResidentCardActionKind::RollingProjectileSpell => 0,
                 ResidentCardActionKind::Building => 1,
                 ResidentCardActionKind::Troop => card.summon_count,
                 ResidentCardActionKind::Unsupported => 0,
@@ -9788,6 +10922,9 @@ impl ResidentBattle {
         let y_units = world_y * 1000 + 500;
         let valid_placement = match card.action_kind {
             ResidentCardActionKind::ProjectileSpell => self.valid_spell_placement(x_units, y_units),
+            ResidentCardActionKind::RollingProjectileSpell => {
+                self.valid_territory_spell_placement(player_id, x_units, y_units)
+            }
             ResidentCardActionKind::Building => {
                 self.valid_building_placement(player_id, x_units, y_units, &card)
             }
@@ -9814,11 +10951,15 @@ impl ResidentBattle {
         player.hand[played_index] = None;
         player.cycle_queue.push_back(card_name);
 
-        if card.action_kind == ResidentCardActionKind::ProjectileSpell {
+        if matches!(
+            card.action_kind,
+            ResidentCardActionKind::ProjectileSpell
+                | ResidentCardActionKind::RollingProjectileSpell
+        ) {
             self.pending_spell_casts.push(ResidentPendingSpellCast {
                 execute_at: self.time + 1.0,
                 sequence: self.next_spell_cast_sequence,
-                spell_name: card.effective_name.clone(),
+                spell_name: card.lookup_name.clone(),
                 player_id,
                 position_x: x_units as f64 / 1000.0,
                 position_y: y_units as f64 / 1000.0,
@@ -10092,6 +11233,11 @@ impl ResidentBattle {
         !Self::blocked_deployment_tile(x_units / 1000, y_units / 1000)
     }
 
+    fn valid_territory_spell_placement(&self, player_id: i64, x_units: i64, y_units: i64) -> bool {
+        self.valid_spell_placement(x_units, y_units)
+            && self.in_deployment_zone(player_id, x_units, y_units)
+    }
+
     fn blocked_deployment_tile(tile_x: i64, tile_y: i64) -> bool {
         matches!((tile_x, tile_y), (0, 14) | (0, 17) | (17, 14) | (17, 17))
             || (tile_y == 0 || tile_y == 31)
@@ -10231,6 +11377,55 @@ impl ResidentBattle {
         })
     }
 
+    fn complete_tick_allocation_headroom_supported(&self) -> bool {
+        let due_spell_births = self
+            .pending_spell_casts
+            .iter()
+            .filter(|cast| cast.execute_at <= self.time + self.dt + 1e-9)
+            .try_fold(0_i64, |count, cast| {
+                if let Some(spec) = self.projectile_spell_spec(&cast.spell_name) {
+                    count.checked_add(spec.multiple_projectiles.checked_mul(spec.damage_waves)?)
+                } else if self
+                    .rolling_projectile_spell_spec(&cast.spell_name)
+                    .is_some()
+                {
+                    count.checked_add(1)
+                } else {
+                    None
+                }
+            });
+        let possible_direct_projectiles = self.possible_point_projectile_launches_this_phase();
+        let possible_death_births = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active && entity.is_alive)
+            .flat_map(|entity| entity.death_opcodes.iter())
+            .try_fold(0_i64, |births, opcode| {
+                births.checked_add(match opcode {
+                    ResidentDeathOpcode::Area(_) => 1,
+                    ResidentDeathOpcode::Spawn(spawn) => spawn.count,
+                    ResidentDeathOpcode::Damage(_) => 0,
+                })
+            });
+        let possible_rolling_children = self.entities.iter().try_fold(0_i64, |count, entity| {
+            let may_spawn = entity.active
+                && entity.is_alive
+                && entity.rolling_projectile.as_ref().is_some_and(|rolling| {
+                    !rolling.has_spawned_character
+                        && self
+                            .rolling_projectile_spell_spec(&rolling.source_kind)
+                            .is_some_and(|spec| spec.child.is_some())
+                });
+            count.checked_add(i64::from(may_spawn))
+        });
+        due_spell_births
+            .and_then(|due| possible_direct_projectiles.and_then(|value| due.checked_add(value)))
+            .and_then(|count| possible_death_births.and_then(|value| count.checked_add(value)))
+            .and_then(|count| possible_rolling_children.and_then(|value| count.checked_add(value)))
+            .and_then(|count| self.next_entity_id.checked_add(count))
+            .is_some_and(|next_id| (0..i64::MAX).contains(&next_id))
+    }
+
     fn advance_complete_tick_transaction(&mut self) -> PyResult<bool> {
         if self.game_over {
             return Ok(false);
@@ -10243,6 +11438,11 @@ impl ResidentBattle {
         if !self.resident_id_invariants_hold() {
             return Err(PyRuntimeError::new_err(
                 "resident complete tick rejected invalid entity-ID allocation state",
+            ));
+        }
+        if !self.complete_tick_allocation_headroom_supported() {
+            return Err(PyRuntimeError::new_err(
+                "resident complete tick lacks aggregate entity-ID allocation headroom",
             ));
         }
         if !self.supports_direct_troop_combat_phase() {
@@ -10416,11 +11616,10 @@ impl ResidentBattle {
             && self.entities.iter().any(|entity| {
                 entity.active
                     && entity.is_alive
-                    && entity.entity_kind == 2
-                    && !entity
+                    && entity
                         .point_projectile
                         .as_ref()
-                        .is_some_and(|projectile| projectile.unsupported.is_empty())
+                        .is_some_and(|projectile| !projectile.unsupported.is_empty())
             })
         {
             return false;
@@ -12650,6 +13849,7 @@ impl ResidentBattle {
             building_impact: None,
             building_footprint_size: None,
             point_projectile: None,
+            rolling_projectile: None,
             area_effect: Some(ResidentAreaEffectState {
                 spec: spec.clone(),
                 time_alive: 0.0,
@@ -13114,6 +14314,7 @@ impl ResidentBattle {
                 homing_min_distance: 0.0,
                 unsupported: Vec::new(),
             }),
+            rolling_projectile: None,
             area_effect: None,
             object_base_movement_noop: true,
             blocks_deployment: false,

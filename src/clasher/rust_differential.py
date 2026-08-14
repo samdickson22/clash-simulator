@@ -25,10 +25,11 @@ from .rust_core import (
     python_tower_states,
     resident_entity_rows,
     resident_rng_state,
+    rolling_projectile_state_rows,
     shield_state_rows,
 )
 
-RESIDENT_SEMANTIC_SCHEMA_VERSION = 8
+RESIDENT_SEMANTIC_SCHEMA_VERSION = 9
 
 
 def _python_pending_spell_state(battle: BattleState) -> dict[str, Any]:
@@ -136,6 +137,7 @@ def python_resident_semantic_snapshot(battle: BattleState) -> dict[str, Any]:
         "locked_combat": locked_direct_combat_state_rows(battle),
         "building_lifetime": building_lifetime_state_rows(battle),
         "point_projectiles": point_projectile_state_rows(battle),
+        "rolling_projectiles": rolling_projectile_state_rows(battle),
         "rng": resident_rng_state(battle.rng),
         "next_entity_id": int(battle.next_entity_id),
         "pending_spells": _python_pending_spell_state(battle),
@@ -172,6 +174,9 @@ def rust_resident_semantic_snapshot(
         "locked_combat": json.loads(resident.locked_direct_combat_state_bytes()),
         "building_lifetime": json.loads(resident.building_lifetime_state_bytes()),
         "point_projectiles": json.loads(resident.point_projectile_state_bytes()),
+        "rolling_projectiles": json.loads(
+            resident.rolling_projectile_state_bytes()
+        ),
         "rng": json.loads(resident.rng_state_bytes()),
         "next_entity_id": resident.next_entity_id,
         "pending_spells": json.loads(resident.pending_spell_state_bytes()),
