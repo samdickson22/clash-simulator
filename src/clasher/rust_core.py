@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Final
 
+from .balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
 from .differential import (
     SNAPSHOT_SCHEMA_VERSION,
     canonical_battle_snapshot,
@@ -99,6 +100,34 @@ class BattleClockState:
         return hashlib.sha256(payload).hexdigest()
 
 
+@dataclass(frozen=True)
+class ResidentPlayerState:
+    player_id: int
+    elixir: float
+    max_elixir: float
+    next_card_refill_cooldown_ms: int
+    hand: tuple[str | None, ...]
+    cycle_queue: tuple[str, ...]
+
+    def append_hash_payload(self, payload: bytearray) -> None:
+        payload.extend(struct.pack("<qddqQ", self.player_id, self.elixir, self.max_elixir, self.next_card_refill_cooldown_ms, len(self.hand)))
+        for card in self.hand:
+            if card is None:
+                payload.append(0)
+            else:
+                payload.append(1)
+                _append_string(payload, card)
+        payload.extend(struct.pack("<Q", len(self.cycle_queue)))
+        for card in self.cycle_queue:
+            _append_string(payload, card)
+
+
+def _append_string(payload: bytearray, value: str) -> None:
+    encoded = value.encode("utf-8")
+    payload.extend(struct.pack("<Q", len(encoded)))
+    payload.extend(encoded)
+
+
 class ResidentRustBattle:
     """Python owner for one long-lived native battle allocation.
 
@@ -128,6 +157,21 @@ class ResidentRustBattle:
             double_elixir_start_time=float(battle.double_elixir_start_time),
             overtime_start_time=float(battle.overtime_start_time),
             triple_elixir_start_time=float(battle.triple_elixir_start_time),
+            player_tick_ms=round(float(battle.dt) * 1000.0),
+            refill_schedule=list(
+                DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
+            ),
+            players=[
+                (
+                    int(player.player_id),
+                    float(player.elixir),
+                    float(player.max_elixir),
+                    int(player.next_card_refill_cooldown_ms),
+                    list(player.hand),
+                    list(player.cycle_queue),
+                )
+                for player in battle.players
+            ],
         )
         return cls(native)
 
@@ -152,6 +196,25 @@ class ResidentRustBattle:
 
     def clock_sha256(self) -> str:
         return str(self._native.clock_sha256())
+
+    def advance_player_phase(self) -> None:
+        self._native.advance_player_phase()
+
+    def player_states(self) -> tuple[ResidentPlayerState, ...]:
+        return tuple(
+            ResidentPlayerState(
+                player_id=int(values[0]),
+                elixir=float(values[1]),
+                max_elixir=float(values[2]),
+                next_card_refill_cooldown_ms=int(values[3]),
+                hand=tuple(values[4]),
+                cycle_queue=tuple(values[5]),
+            )
+            for values in self._native.player_states()
+        )
+
+    def player_sha256(self) -> str:
+        return str(self._native.player_sha256())
 
     def checkpoint_bytes(self) -> bytes:
         return bytes(self._native.checkpoint_bytes())
@@ -201,6 +264,58 @@ def compare_clock_phase(battle: Any, resident: ResidentRustBattle) -> None:
     raise AssertionError(
         "resident Rust clock hash mismatch "
         f"expected={expected.sha256()} actual={resident.clock_sha256()}"
+    )
+
+
+def python_player_states(battle: Any) -> tuple[ResidentPlayerState, ...]:
+    return tuple(
+        ResidentPlayerState(
+            player_id=int(player.player_id),
+            elixir=float(player.elixir),
+            max_elixir=float(player.max_elixir),
+            next_card_refill_cooldown_ms=int(
+                player.next_card_refill_cooldown_ms
+            ),
+            hand=tuple(player.hand),
+            cycle_queue=tuple(player.cycle_queue),
+        )
+        for player in battle.players
+    )
+
+
+def player_states_sha256(states: tuple[ResidentPlayerState, ...]) -> str:
+    payload = bytearray(struct.pack("<Q", len(states)))
+    for player in states:
+        player.append_hash_payload(payload)
+    return hashlib.sha256(payload).hexdigest()
+
+
+def compare_player_phase(battle: Any, resident: ResidentRustBattle) -> None:
+    expected = python_player_states(battle)
+    actual = resident.player_states()
+    if actual == expected and resident.player_sha256() == player_states_sha256(expected):
+        return
+    if len(actual) != len(expected):
+        raise AssertionError(
+            "resident Rust player parity mismatch "
+            f"field=count expected={len(expected)} actual={len(actual)}"
+        )
+    for player_index, (expected_player, actual_player) in enumerate(
+        zip(expected, actual, strict=True)
+    ):
+        for field_name in ResidentPlayerState.__dataclass_fields__:
+            expected_value = getattr(expected_player, field_name)
+            actual_value = getattr(actual_player, field_name)
+            if type(expected_value) is not type(actual_value) or expected_value != actual_value:
+                raise AssertionError(
+                    "resident Rust player parity mismatch "
+                    f"player={player_index} field={field_name} "
+                    f"expected={expected_value!r} actual={actual_value!r}"
+                )
+    raise AssertionError(
+        "resident Rust player hash mismatch "
+        f"expected={player_states_sha256(expected)} "
+        f"actual={resident.player_sha256()}"
     )
 
 

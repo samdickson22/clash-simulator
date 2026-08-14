@@ -10,6 +10,7 @@ from clasher.rust_core import (
     ResidentRustBattle,
     RustBattleMode,
     compare_clock_phase,
+    compare_player_phase,
     rust_core_available,
 )
 
@@ -25,6 +26,20 @@ def _advance_python_clock_phase(battle: BattleState) -> None:
     battle.time += battle.dt
     battle.tick += 1
     battle._update_battle_phases()
+
+
+def _advance_python_player_phase(battle: BattleState) -> None:
+    base_regen = 2.8
+    if battle.triple_elixir:
+        base_regen = 0.93
+    elif battle.double_elixir:
+        base_regen = 1.4
+    for player in battle.players:
+        player.regenerate_elixir(battle.dt, base_regen)
+        player.tick_card_refill(
+            battle._next_card_refill_cooldown_ms(),
+            round(battle.dt * 1000.0),
+        )
 
 
 def test_resident_checkpoint_round_trip_is_exact() -> None:
@@ -107,3 +122,52 @@ def test_on_mode_fails_closed_until_complete_tick_is_supported() -> None:
     resident.require_complete_tick(RustBattleMode.SHADOW)
     with pytest.raises(RuntimeError, match="does not yet implement every"):
         resident.require_complete_tick(RustBattleMode.ON)
+
+
+@pytest.mark.parametrize("start_time", [0.0, 119.9, 179.9, 239.9, 299.9])
+def test_player_phase_matches_elixir_and_refill_boundaries(start_time: float) -> None:
+    battle = BattleState()
+    battle.time = start_time
+    battle.tick = round(start_time / battle.dt)
+    battle._update_battle_phases()
+    for player in battle.players:
+        player.elixir = 9.95
+        player.hand[0] = None
+        player.hand[2] = None
+        player.next_card_refill_cooldown_ms = 50
+    resident = ResidentRustBattle.from_battle(battle)
+
+    compare_player_phase(battle, resident)
+    for _ in range(25):
+        assert resident.advance_clock_phase()
+        _advance_python_clock_phase(battle)
+        resident.advance_player_phase()
+        _advance_python_player_phase(battle)
+        compare_clock_phase(battle, resident)
+        compare_player_phase(battle, resident)
+
+
+def test_player_phase_preserves_lowest_empty_slot_and_queue_order() -> None:
+    battle = BattleState()
+    first = battle.players[0]
+    first.hand = [None, "Archer", None, "Minions"]
+    first.cycle_queue.clear()
+    first.cycle_queue.extend(["Musketeer", "Knight", "Wizard"])
+    first.next_card_refill_cooldown_ms = 0
+    second = battle.players[1]
+    second.next_card_refill_cooldown_ms = 125
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.advance_clock_phase()
+    _advance_python_clock_phase(battle)
+    resident.advance_player_phase()
+    _advance_python_player_phase(battle)
+
+    compare_player_phase(battle, resident)
+    assert resident.player_states()[0].hand == (
+        "Musketeer",
+        "Archer",
+        None,
+        "Minions",
+    )
+    assert resident.player_states()[0].cycle_queue == ("Knight", "Wizard")
