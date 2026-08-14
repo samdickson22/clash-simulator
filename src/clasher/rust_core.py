@@ -336,6 +336,10 @@ class ResidentRustBattle:
         return str(self._native.entity_sha256())
 
     @property
+    def next_entity_id(self) -> int:
+        return int(self._native.next_entity_id())
+
+    @property
     def supports_modifier_phase(self) -> bool:
         return bool(self._native.supports_modifier_phase())
 
@@ -670,6 +674,9 @@ def resident_entity_rows(battle: Any) -> list[dict[str, Any]]:
                 f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
                 for mechanic in entity.mechanics
             ],
+            "pending_projectile_max_duration_ms": int(
+                entity._pending_projectile_max_duration_ms
+            ),
             "player_id": int(entity.player_id),
             "position_x": _exact_scalar(entity.position.x),
             "position_y": _exact_scalar(entity.position.y),
@@ -1025,6 +1032,7 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
             ),
             "position_x": _exact_scalar(entity.position.x),
             "position_y": _exact_scalar(entity.position.y),
+            "start_collision_resolved": bool(entity.start_collision_resolved),
             "target_position_x": _exact_scalar(entity.target_position.x),
             "target_position_y": _exact_scalar(entity.target_position.y),
             "temporary_homing_remaining_ms": int(
@@ -1077,6 +1085,11 @@ def compare_point_projectile_phase(
         )
     compare_resident_entities(battle, resident)
     compare_resident_rng(battle.rng, resident)
+    if int(battle.next_entity_id) != resident.next_entity_id:
+        raise AssertionError(
+            "resident Rust next entity ID mismatch "
+            f"expected={battle.next_entity_id} actual={resident.next_entity_id}"
+        )
 
 
 def compare_building_lifetime_phase(

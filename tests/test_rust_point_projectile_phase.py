@@ -7,6 +7,7 @@ from clasher.battle import BattleState
 from clasher.entities import Projectile, Troop
 from clasher.rust_core import (
     ResidentRustBattle,
+    compare_locked_direct_combat_phase,
     compare_point_projectile_phase,
     rust_core_available,
 )
@@ -73,6 +74,12 @@ def _advance_python(battle: BattleState) -> None:
             continue
         entity.update(battle.dt, battle)
         entity.quantize_logic_position()
+
+
+def _advance_python_combat(battle: BattleState) -> None:
+    for entity in list(battle.entities.values()):
+        if entity.entity_kind in {0, 1}:
+            entity.update_combat_component(battle.dt, battle)
 
 
 @pytest.mark.parametrize("target", [Position(10.0, 12.0), Position(8.0, 8.0)])
@@ -179,6 +186,101 @@ def test_point_projectile_matches_current_air_plane(
     compare_point_projectile_phase(battle, resident)
 
     assert target.hitpoints == hitpoints_before
+
+
+@pytest.mark.parametrize(
+    ("source_position", "target_position"),
+    [
+        (Position(9.0, 10.0), Position(9.0, 14.0)),
+        (Position(8.0, 10.0), Position(10.0, 13.0)),
+    ],
+)
+def test_direct_combat_launches_resident_point_projectile(
+    source_position: Position,
+    target_position: Position,
+) -> None:
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source_stats = battle.card_loader.get_card("Musketeer")
+    target_stats = battle.card_loader.get_card("Knight")
+    assert source_stats is not None and target_stats is not None
+    battle._spawn_unit_at_position(source_position, 0, source_stats)
+    battle._spawn_unit_at_position(target_position, 1, target_stats)
+    source, target = list(battle.entities.values())
+    assert isinstance(source, Troop) and isinstance(target, Troop)
+    assert not source.mechanics and not target.mechanics
+    source.deploy_delay_remaining = 0.0
+    target.deploy_delay_remaining = 0.0
+    source.attack_cooldown = 0.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    compare_point_projectile_phase(battle, resident)
+    projectile = next(
+        entity
+        for entity in battle.entities.values()
+        if type(entity) is Projectile
+    )
+    assert projectile.source_entity is source
+    assert projectile.primary_target is target
+    assert projectile.start_collision_resolved
+    assert target._pending_projectile_max_duration_ms > 0
+
+    resident.advance_point_projectile_phase()
+    _advance_python(battle)
+    compare_point_projectile_phase(battle, resident)
+
+
+@pytest.mark.parametrize(
+    "card_name",
+    [
+        "Archers",
+        "DartGoblin",
+        "MegaMinion",
+        "Minions",
+        "Musketeer",
+        "SpearGoblins",
+    ],
+)
+def test_enabled_simple_point_weapons_launch_without_card_special_cases(
+    card_name: str,
+) -> None:
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source_stats = battle.card_loader.get_card(card_name)
+    target_stats = battle.card_loader.get_card("Knight")
+    assert source_stats is not None and target_stats is not None
+    source = battle._spawn_entity(
+        Troop,
+        Position(9.0, 12.0),
+        0,
+        source_stats,
+    )
+    target = battle._spawn_entity(
+        Troop,
+        Position(9.0, 14.0),
+        1,
+        target_stats,
+    )
+    assert not source.mechanics and not target.mechanics
+    source.deploy_delay_remaining = 0.0
+    target.deploy_delay_remaining = 0.0
+    source.attack_cooldown = 0.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    compare_point_projectile_phase(battle, resident)
+    assert any(type(entity) is Projectile for entity in battle.entities.values())
 
 
 @pytest.mark.parametrize(
