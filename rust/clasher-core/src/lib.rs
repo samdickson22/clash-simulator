@@ -4058,7 +4058,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 7;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 8;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -4097,6 +4097,8 @@ struct ResidentCardWire {
     projectile_spell: Option<ResidentProjectileSpellWire>,
     #[serde(default)]
     rolling_projectile_spell: Option<ResidentRollingProjectileSpellWire>,
+    #[serde(default)]
+    direct_damage_spell: Option<ResidentDirectDamageSpellWire>,
 }
 
 #[derive(Clone, Copy, Deserialize, PartialEq, Eq)]
@@ -4107,6 +4109,7 @@ enum ResidentCardActionKind {
     Building,
     ProjectileSpell,
     RollingProjectileSpell,
+    DirectDamageSpell,
 }
 
 #[derive(Deserialize)]
@@ -4150,6 +4153,20 @@ struct ResidentRollingProjectileSpellWire {
     spawn_deploy_delay: Option<f64>,
     spawn_template_snapshot: Option<Value>,
     spawn_template_fingerprint: Option<String>,
+}
+
+#[derive(Deserialize)]
+struct ResidentDirectDamageSpellWire {
+    radius: f64,
+    damage: f64,
+    stun_duration: f64,
+    slow_duration: f64,
+    slow_multiplier: f64,
+    hits_air: bool,
+    hits_ground: bool,
+    affects_hidden: bool,
+    crown_tower_damage_multiplier: f64,
+    crown_tower_damage: Option<f64>,
 }
 
 #[derive(Clone)]
@@ -4201,6 +4218,19 @@ struct ResidentRollingProjectileSpellSpec {
 }
 
 #[derive(Clone)]
+struct ResidentDirectDamageSpellSpec {
+    radius: f64,
+    damage: f64,
+    stun_duration: f64,
+    slow_duration: f64,
+    slow_multiplier: f64,
+    hits_air: bool,
+    hits_ground: bool,
+    crown_tower_damage_multiplier: f64,
+    crown_tower_damage: Option<f64>,
+}
+
+#[derive(Clone)]
 struct ResidentCardSpec {
     lookup_name: String,
     effective_name: String,
@@ -4218,6 +4248,7 @@ struct ResidentCardSpec {
     template_fingerprint: Option<String>,
     projectile_spell: Option<ResidentProjectileSpellSpec>,
     rolling_projectile_spell: Option<ResidentRollingProjectileSpellSpec>,
+    direct_damage_spell: Option<ResidentDirectDamageSpellSpec>,
 }
 
 impl ResidentCardSpec {
@@ -4231,16 +4262,25 @@ impl ResidentCardSpec {
                 self.prototype.is_some()
                     && self.projectile_spell.is_none()
                     && self.rolling_projectile_spell.is_none()
+                    && self.direct_damage_spell.is_none()
             }
             ResidentCardActionKind::ProjectileSpell => {
                 self.prototype.is_none()
                     && self.projectile_spell.is_some()
                     && self.rolling_projectile_spell.is_none()
+                    && self.direct_damage_spell.is_none()
             }
             ResidentCardActionKind::RollingProjectileSpell => {
                 self.prototype.is_none()
                     && self.projectile_spell.is_none()
                     && self.rolling_projectile_spell.is_some()
+                    && self.direct_damage_spell.is_none()
+            }
+            ResidentCardActionKind::DirectDamageSpell => {
+                self.prototype.is_none()
+                    && self.projectile_spell.is_none()
+                    && self.rolling_projectile_spell.is_none()
+                    && self.direct_damage_spell.is_some()
             }
         }
     }
@@ -4655,9 +4695,50 @@ impl ResidentCardCatalog {
                     child: child_shape.flatten(),
                 }
             });
+            let direct_damage_spell = card.direct_damage_spell.map(|spell| {
+                let _ = spell.affects_hidden;
+                let finite = [
+                    spell.radius,
+                    spell.damage,
+                    spell.stun_duration,
+                    spell.slow_duration,
+                    spell.slow_multiplier,
+                    spell.crown_tower_damage_multiplier,
+                ]
+                .into_iter()
+                .all(f64::is_finite)
+                    && spell.crown_tower_damage.is_none_or(f64::is_finite);
+                if !finite
+                    || spell.radius <= 0.0
+                    || spell.damage <= 0.0
+                    || spell.stun_duration < 0.0
+                    || spell.slow_duration < 0.0
+                    || spell.slow_multiplier < 0.0
+                    || (spell.slow_duration > 0.0 && spell.slow_multiplier >= 1.0)
+                    || !spell.hits_air
+                    || !spell.hits_ground
+                    || spell.crown_tower_damage_multiplier < 0.0
+                    || spell.crown_tower_damage.is_some_and(|damage| damage < 0.0)
+                    || spell.radius > (i64::MAX / 4096) as f64 / 1000.0
+                {
+                    reasons.push("native_direct_damage_spell_preflight".to_owned());
+                }
+                ResidentDirectDamageSpellSpec {
+                    radius: spell.radius,
+                    damage: spell.damage,
+                    stun_duration: spell.stun_duration,
+                    slow_duration: spell.slow_duration,
+                    slow_multiplier: spell.slow_multiplier,
+                    hits_air: spell.hits_air,
+                    hits_ground: spell.hits_ground,
+                    crown_tower_damage_multiplier: spell.crown_tower_damage_multiplier,
+                    crown_tower_damage: spell.crown_tower_damage,
+                }
+            });
             if reasons.is_empty()
                 && projectile_spell.is_none()
                 && rolling_projectile_spell.is_none()
+                && direct_damage_spell.is_none()
             {
                 let compiled_death_closure_supported = |prototype: &ResidentEntity| {
                     let spawn_count = prototype
@@ -4758,7 +4839,8 @@ impl ResidentCardCatalog {
                             }
                             ResidentCardActionKind::Unsupported
                             | ResidentCardActionKind::ProjectileSpell
-                            | ResidentCardActionKind::RollingProjectileSpell => false,
+                            | ResidentCardActionKind::RollingProjectileSpell
+                            | ResidentCardActionKind::DirectDamageSpell => false,
                         });
                 if !supported {
                     reasons.push(match card.action_kind {
@@ -4768,7 +4850,9 @@ impl ResidentCardCatalog {
                         _ => "native_single_troop_preflight".to_owned(),
                     });
                 }
-            } else if (projectile_spell.is_some() || rolling_projectile_spell.is_some())
+            } else if (projectile_spell.is_some()
+                || rolling_projectile_spell.is_some()
+                || direct_damage_spell.is_some())
                 && prototype.is_some()
             {
                 reasons.push("ambiguous_action_payload".to_owned());
@@ -4778,7 +4862,9 @@ impl ResidentCardCatalog {
                     reasons.push("projectile_spell_payload_missing".to_owned());
                 }
                 ResidentCardActionKind::Troop | ResidentCardActionKind::Building
-                    if projectile_spell.is_some() || rolling_projectile_spell.is_some() =>
+                    if projectile_spell.is_some()
+                        || rolling_projectile_spell.is_some()
+                        || direct_damage_spell.is_some() =>
                 {
                     reasons.push("action_kind_payload_mismatch".to_owned());
                 }
@@ -4790,9 +4876,24 @@ impl ResidentCardCatalog {
                 ResidentCardActionKind::ProjectileSpell if rolling_projectile_spell.is_some() => {
                     reasons.push("action_kind_payload_mismatch".to_owned());
                 }
+                ResidentCardActionKind::DirectDamageSpell if direct_damage_spell.is_none() => {
+                    reasons.push("direct_damage_spell_payload_missing".to_owned());
+                }
+                ResidentCardActionKind::ProjectileSpell
+                | ResidentCardActionKind::RollingProjectileSpell
+                    if direct_damage_spell.is_some() =>
+                {
+                    reasons.push("action_kind_payload_mismatch".to_owned());
+                }
+                ResidentCardActionKind::DirectDamageSpell
+                    if projectile_spell.is_some() || rolling_projectile_spell.is_some() =>
+                {
+                    reasons.push("action_kind_payload_mismatch".to_owned());
+                }
                 ResidentCardActionKind::Unsupported
                     if projectile_spell.is_some()
                         || rolling_projectile_spell.is_some()
+                        || direct_damage_spell.is_some()
                         || prototype.is_some() =>
                 {
                     reasons.push("unsupported_action_payload".to_owned());
@@ -4819,6 +4920,7 @@ impl ResidentCardCatalog {
                 template_fingerprint,
                 projectile_spell,
                 rolling_projectile_spell,
+                direct_damage_spell,
             });
         }
         Ok(Self {
@@ -8481,6 +8583,13 @@ impl ResidentBattle {
     }
 
     fn advance_direct_troop_combat_phase(&mut self) -> PyResult<()> {
+        self.advance_direct_troop_combat_phase_up_to(None)
+    }
+
+    fn advance_direct_troop_combat_phase_up_to(
+        &mut self,
+        actor_id_limit: Option<i64>,
+    ) -> PyResult<()> {
         if !self.supports_direct_troop_combat_phase() {
             return Err(PyRuntimeError::new_err(
                 "resident direct-troop combat preflight rejected battle state",
@@ -8499,6 +8608,7 @@ impl ResidentBattle {
             if !self.entities[actor_index].active
                 || !self.entities[actor_index].is_alive
                 || !matches!(self.entities[actor_index].entity_kind, 0 | 1)
+                || actor_id_limit.is_some_and(|limit| self.entities[actor_index].id >= limit)
             {
                 continue;
             }
@@ -9811,6 +9921,9 @@ impl ResidentBattle {
                     ResidentCardActionKind::RollingProjectileSpell => {
                         self.valid_territory_spell_placement(player_id, x_units, y_units)
                     }
+                    ResidentCardActionKind::DirectDamageSpell => {
+                        self.valid_spell_placement(x_units, y_units)
+                    }
                     ResidentCardActionKind::Building => {
                         self.valid_building_placement(player_id, x_units, y_units, card)
                     }
@@ -10192,6 +10305,18 @@ impl ResidentBattle {
             .and_then(|card| card.rolling_projectile_spell.as_ref())
     }
 
+    fn direct_damage_spell_spec(&self, spell_name: &str) -> Option<&ResidentDirectDamageSpellSpec> {
+        self.catalog
+            .cards
+            .iter()
+            .find(|card| {
+                card.supports_action()
+                    && (card.lookup_name == spell_name || card.effective_name == spell_name)
+                    && card.direct_damage_spell.is_some()
+            })
+            .and_then(|card| card.direct_damage_spell.as_ref())
+    }
+
     fn supports_pending_spell_casts(&self) -> bool {
         self.pending_spell_casts
             .windows(2)
@@ -10217,6 +10342,11 @@ impl ResidentBattle {
                     {
                         self.valid_territory_spell_placement(
                             cast.player_id,
+                            logic_units(cast.position_x),
+                            logic_units(cast.position_y),
+                        )
+                    } else if self.direct_damage_spell_spec(&cast.spell_name).is_some() {
+                        self.valid_spell_placement(
                             logic_units(cast.position_x),
                             logic_units(cast.position_y),
                         )
@@ -10367,6 +10497,8 @@ impl ResidentBattle {
                 count.checked_add(spec.multiple_projectiles.checked_mul(spec.damage_waves)?)
             } else if let Some(spec) = self.rolling_projectile_spell_spec(&cast.spell_name) {
                 count.checked_add(1 + i64::from(spec.child.is_some()))
+            } else if self.direct_damage_spell_spec(&cast.spell_name).is_some() {
+                Some(count)
             } else {
                 None
             }
@@ -10409,6 +10541,8 @@ impl ResidentBattle {
                         PyRuntimeError::new_err("resident pending rolling spell identity changed")
                     })?;
                 self.instantiate_rolling_projectile_spell(&cast, &effective_name, &spec)?;
+            } else if let Some(spec) = self.direct_damage_spell_spec(&cast.spell_name).cloned() {
+                self.apply_direct_damage_spell(&cast, &spec)?;
             } else {
                 return Err(PyRuntimeError::new_err(
                     "resident pending spell capability changed",
@@ -10416,6 +10550,129 @@ impl ResidentBattle {
             }
         }
         Ok(())
+    }
+
+    fn apply_direct_damage_spell(
+        &mut self,
+        cast: &ResidentPendingSpellCast,
+        spec: &ResidentDirectDamageSpellSpec,
+    ) -> PyResult<()> {
+        let center = (logic_units(cast.position_x), logic_units(cast.position_y));
+        let damage_targets = self
+            .entities
+            .iter()
+            .enumerate()
+            .filter_map(|(target_index, _)| {
+                self.direct_damage_spell_target_valid(
+                    target_index,
+                    cast.player_id,
+                    center,
+                    spec,
+                    true,
+                )
+                .then_some(target_index)
+            })
+            .collect::<Vec<_>>();
+        for target_index in damage_targets {
+            let crown_slot = self.entities[target_index]
+                .building_impact
+                .as_ref()
+                .and_then(|state| state.crown_slot.as_ref());
+            let damage = if crown_slot.is_some() {
+                spec.crown_tower_damage.unwrap_or_else(|| {
+                    let base = spec.damage.round_ties_even().max(0.0) as i64;
+                    let percentage = (spec.crown_tower_damage_multiplier * 100.0)
+                        .round_ties_even()
+                        .max(0.0) as i64;
+                    if base == 0 || percentage == 0 {
+                        0.0
+                    } else {
+                        ((base * percentage + 99) / 100) as f64
+                    }
+                })
+            } else {
+                spec.damage
+            };
+            self.apply_resident_damage(target_index, damage);
+        }
+
+        if spec.stun_duration > 0.0 || spec.slow_duration > 0.0 {
+            let status_targets = self
+                .entities
+                .iter()
+                .enumerate()
+                .filter_map(|(target_index, _)| {
+                    self.direct_damage_spell_target_valid(
+                        target_index,
+                        cast.player_id,
+                        center,
+                        spec,
+                        false,
+                    )
+                    .then_some(target_index)
+                })
+                .collect::<Vec<_>>();
+            for target_index in status_targets {
+                self.entities[target_index].apply_projectile_status(
+                    spec.stun_duration,
+                    spec.slow_duration,
+                    spec.slow_multiplier,
+                );
+            }
+        }
+        Ok(())
+    }
+
+    fn direct_damage_spell_target_valid(
+        &self,
+        target_index: usize,
+        player_id: i64,
+        center: (i64, i64),
+        spec: &ResidentDirectDamageSpellSpec,
+        for_damage: bool,
+    ) -> bool {
+        let target = &self.entities[target_index];
+        let Some((target_is_air, collision_radius, stealth_until_ms, allow_invisible)) =
+            target.projectile_target_traits()
+        else {
+            return false;
+        };
+        if !target.active
+            || !target.is_alive
+            || target.player_id == player_id
+            || !matches!(target.entity_kind, 0 | 1)
+            || target.blocks_effects_while_committed()
+            || (target_is_air && !spec.hits_air)
+            || (!target_is_air && !spec.hits_ground)
+        {
+            return false;
+        }
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        if for_damage && stealth_until_ms > now_ms && !allow_invisible {
+            return false;
+        }
+        let target_x = logic_units(target.position_x.as_f64());
+        let target_y = logic_units(target.position_y.as_f64());
+        let target_radius = logic_units(collision_radius).max(0);
+        let area_radius = logic_units(spec.radius).max(0);
+        if target.entity_kind == 1 {
+            let closest_x = center
+                .0
+                .clamp(target_x - target_radius, target_x + target_radius);
+            let closest_y = center
+                .1
+                .clamp(target_y - target_radius, target_y + target_radius);
+            let dx = closest_x - center.0;
+            let dy = closest_y - center.1;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(area_radius) * i128::from(area_radius)
+        } else {
+            let dx = target_x - center.0;
+            let dy = target_y - center.1;
+            let radius = area_radius + target_radius;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(radius) * i128::from(radius)
+        }
     }
 
     fn instantiate_rolling_projectile_spell(
@@ -10904,7 +11161,8 @@ impl ResidentBattle {
             .filter(|card| card.supports_action())
             .map_or(0, |card| match card.action_kind {
                 ResidentCardActionKind::ProjectileSpell
-                | ResidentCardActionKind::RollingProjectileSpell => 0,
+                | ResidentCardActionKind::RollingProjectileSpell
+                | ResidentCardActionKind::DirectDamageSpell => 0,
                 ResidentCardActionKind::Building => 1,
                 ResidentCardActionKind::Troop => card.summon_count,
                 ResidentCardActionKind::Unsupported => 0,
@@ -10970,6 +11228,9 @@ impl ResidentBattle {
             ResidentCardActionKind::RollingProjectileSpell => {
                 self.valid_territory_spell_placement(player_id, x_units, y_units)
             }
+            ResidentCardActionKind::DirectDamageSpell => {
+                self.valid_spell_placement(x_units, y_units)
+            }
             ResidentCardActionKind::Building => {
                 self.valid_building_placement(player_id, x_units, y_units, &card)
             }
@@ -11000,6 +11261,7 @@ impl ResidentBattle {
             card.action_kind,
             ResidentCardActionKind::ProjectileSpell
                 | ResidentCardActionKind::RollingProjectileSpell
+                | ResidentCardActionKind::DirectDamageSpell
         ) {
             self.pending_spell_casts.push(ResidentPendingSpellCast {
                 execute_at: self.time + 1.0,
@@ -11435,6 +11697,8 @@ impl ResidentBattle {
                     .is_some()
                 {
                     count.checked_add(1)
+                } else if self.direct_damage_spell_spec(&cast.spell_name).is_some() {
+                    Some(count)
                 } else {
                     None
                 }
@@ -11507,7 +11771,7 @@ impl ResidentBattle {
         self.advance_player_phase();
         self.resolve_pending_spell_casts()?;
         let post_command_next_entity_id = self.next_entity_id;
-        self.advance_direct_troop_combat_phase()?;
+        self.advance_direct_troop_combat_phase_up_to(Some(initial_next_entity_id))?;
         if !self.supports_ground_movement_phase() {
             return Err(PyRuntimeError::new_err(
                 "resident complete tick rejected post-combat movement capability",

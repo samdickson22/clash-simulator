@@ -2167,21 +2167,9 @@ def _build_direct_publication_plan(
     if rng["gauss_next"] is not None:
         _direct_exact(rng["gauss_next"], "rng gauss")
 
-    pending = _direct_dict(root["pending_spells"], "pending")
-    _direct_int(pending["next_sequence"], "pending next sequence", minimum=0)
-    seen_sequences: set[int] = set()
-    for value in _direct_list(pending["casts"], "pending casts"):
-        cast_row = _direct_dict(value, "pending_cast")
-        sequence = _direct_int(cast_row["sequence"], "pending sequence", minimum=0)
-        if sequence in seen_sequences:
-            raise ResidentPublicationError("duplicate direct pending spell sequence")
-        seen_sequences.add(sequence)
-        _direct_float(cast_row["execute_at"], "pending execute time")
-        _direct_float(cast_row["position_x"], "pending position x")
-        _direct_float(cast_row["position_y"], "pending position y")
-        _direct_int(cast_row["player_id"], "pending player id")
-        if type(cast_row["spell_name"]) is not str:
-            raise ResidentPublicationError("malformed direct pending spell name")
+    pending = _validate_direct_pending(
+        root["pending_spells"], battle=battle, resident=resident
+    )
 
     projectile_groups: list[dict[str, Any]] = []
     group_rows: dict[int, tuple[int, ...]] = {}
@@ -2365,21 +2353,55 @@ def _validate_direct_rng(value: Any) -> dict[str, Any]:
     return row
 
 
-def _validate_direct_pending(value: Any) -> dict[str, Any]:
+def _validate_direct_pending(
+    value: Any,
+    *,
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> dict[str, Any]:
     row = _direct_dict(value, "pending")
-    _direct_int(row["next_sequence"], "pending next sequence", minimum=0)
-    seen: set[int] = set()
+    next_sequence = _direct_int(
+        row["next_sequence"], "pending next sequence", minimum=0
+    )
+    previous_sequence = -1
     for item in _direct_list(row["casts"], "pending casts"):
         cast_row = _direct_dict(item, "pending_cast")
         sequence = _direct_int(cast_row["sequence"], "pending sequence", minimum=0)
-        if sequence in seen:
-            raise ResidentPublicationError("duplicate direct pending spell sequence")
-        seen.add(sequence)
-        for field in ("execute_at", "position_x", "position_y"):
-            _direct_float(cast_row[field], f"pending {field}")
-        _direct_int(cast_row["player_id"], "pending player id")
-        if type(cast_row["spell_name"]) is not str:
+        execute_at = _direct_float(cast_row["execute_at"], "pending execute_at")
+        position_x = _direct_float(cast_row["position_x"], "pending position_x")
+        position_y = _direct_float(cast_row["position_y"], "pending position_y")
+        player_id = _direct_int(cast_row["player_id"], "pending player id")
+        spell_name = cast_row["spell_name"]
+        if type(spell_name) is not str or not spell_name:
             raise ResidentPublicationError("malformed direct pending spell name")
+        action_kind = resident.pending_spell_action_kind(spell_name)
+        if action_kind not in {
+            "projectile_spell",
+            "rolling_projectile_spell",
+            "direct_damage_spell",
+        }:
+            raise ResidentPublicationError(
+                f"unsupported direct pending spell {spell_name!r}"
+            )
+        in_deploy_zone = any(
+            x1 <= position_x < x2 and y1 <= position_y < y2
+            for x1, y1, x2, y2 in battle.arena.get_deploy_zones(player_id, battle)
+        )
+        if (
+            sequence <= previous_sequence
+            or sequence >= next_sequence
+            or not np.isfinite(execute_at)
+            or not np.isfinite(position_x)
+            or not np.isfinite(position_y)
+            or not 0.0 <= position_x < float(battle.arena.width)
+            or not 0.0 <= position_y < float(battle.arena.height)
+            or (int(position_x), int(position_y)) in battle.arena.BLOCKED_TILES
+            or player_id not in (0, 1)
+            or action_kind == "rolling_projectile_spell"
+            and not in_deploy_zone
+        ):
+            raise ResidentPublicationError("malformed direct pending spell state")
+        previous_sequence = sequence
     return row
 
 
@@ -2621,7 +2643,9 @@ def _build_direct_delta_publication_plan(
         raise ResidentPublicationError("direct publication delta has unknown tower")
     rng = _validate_direct_rng(root["rng"]) if dirty_mask & _DELTA_RNG else None
     pending = (
-        _validate_direct_pending(root["pending_spells"])
+        _validate_direct_pending(
+            root["pending_spells"], battle=battle, resident=resident
+        )
         if dirty_mask & _DELTA_PENDING
         else None
     )
@@ -6735,6 +6759,7 @@ def publish_complete_tick_state(
         "character_action_birth_recipe",
         "character_death_spawn_birth_recipe",
         "character_action_card_stats_are_current",
+        "pending_spell_action_kind",
     }.intersection(resident.__dict__)
     if authority_overrides:
         raise ResidentPublicationError(

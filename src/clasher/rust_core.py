@@ -6,7 +6,7 @@ import json
 import math
 import struct
 from collections import deque
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from enum import Enum
 from functools import lru_cache
 from pathlib import Path
@@ -45,7 +45,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 7
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 8
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -230,6 +230,7 @@ class _ResidentCardCatalogBundle:
     rolling_projectile_recipes: dict[
         str, _ResidentRollingProjectileRecipe
     ] = field(default_factory=dict)
+    pending_spell_action_kinds: tuple[tuple[str, str], ...] = ()
 
 
 def _normalized_sha256(value: Any) -> str:
@@ -290,7 +291,12 @@ def _resident_card_catalog_bundle(
     from .factory.dynamic_factory import troop_from_character_data
     from .formations import formation_offset
     from .kinematics import tiles_to_logic_units
-    from .spells import SPELL_REGISTRY, ProjectileSpell, RollingProjectileSpell
+    from .spells import (
+        SPELL_REGISTRY,
+        DirectDamageSpell,
+        ProjectileSpell,
+        RollingProjectileSpell,
+    )
     from .unit_traits import is_air_unit_card
 
     path = Path(data_file)
@@ -330,8 +336,65 @@ def _resident_card_catalog_bundle(
         )
         projectile_spell: dict[str, Any] | None = None
         rolling_projectile_spell: dict[str, Any] | None = None
+        direct_damage_spell: dict[str, Any] | None = None
         spell = SPELL_REGISTRY.get(str(card_stats.name))
-        if type(spell) is ProjectileSpell:
+        if type(spell) is DirectDamageSpell:
+            action_kind = "direct_damage_spell"
+            direct_values = (
+                float(spell.radius),
+                float(spell.damage),
+                float(spell.stun_duration),
+                float(spell.slow_duration),
+                float(spell.slow_multiplier),
+                float(spell.knockback_distance),
+                float(spell.crown_tower_damage_multiplier),
+            )
+            crown_damage = (
+                None
+                if spell.crown_tower_damage is None
+                else float(spell.crown_tower_damage)
+            )
+            direct_reasons: list[str] = []
+            if bool(spell.requires_territory) or bool(spell.requires_walkable_target):
+                direct_reasons.append("restricted_direct_damage_spell_placement")
+            if int(getattr(card_stats, "deploy_w_tile_margin", 0) or 0) != 0:
+                direct_reasons.append("direct_damage_spell_margin")
+            if (
+                not all(math.isfinite(value) for value in direct_values)
+                or crown_damage is not None
+                and not math.isfinite(crown_damage)
+                or spell.radius <= 0.0
+                or spell.damage <= 0.0
+                or spell.stun_duration < 0.0
+                or spell.slow_duration < 0.0
+                or spell.slow_multiplier < 0.0
+                or spell.slow_duration > 0.0
+                and spell.slow_multiplier >= 1.0
+                or spell.knockback_distance != 0.0
+                or bool(spell.knockback_ignores_mass)
+                or not (bool(spell.hits_air) and bool(spell.hits_ground))
+                or spell.crown_tower_damage_multiplier < 0.0
+                or crown_damage is not None
+                and crown_damage < 0.0
+            ):
+                direct_reasons.append("invalid_direct_damage_spell")
+            reasons = direct_reasons
+            if not reasons:
+                direct_damage_spell = {
+                    "radius": float(spell.radius),
+                    "damage": float(spell.damage),
+                    "stun_duration": float(spell.stun_duration),
+                    "slow_duration": float(spell.slow_duration),
+                    "slow_multiplier": float(spell.slow_multiplier),
+                    "hits_air": bool(spell.hits_air),
+                    "hits_ground": bool(spell.hits_ground),
+                    "affects_hidden": bool(spell.affects_hidden),
+                    "crown_tower_damage_multiplier": float(
+                        spell.crown_tower_damage_multiplier
+                    ),
+                    "crown_tower_damage": crown_damage,
+                }
+        elif type(spell) is ProjectileSpell:
             action_kind = "projectile_spell"
             spell_values = (
                 float(spell.radius),
@@ -729,6 +792,7 @@ def _resident_card_catalog_bundle(
                 "template_fingerprint": template_fingerprint,
                 "projectile_spell": projectile_spell,
                 "rolling_projectile_spell": rolling_projectile_spell,
+                "direct_damage_spell": direct_damage_spell,
             }
         )
         death_spawn_data = getattr(card_stats, "death_spawn_character_data", None)
@@ -801,6 +865,17 @@ def _resident_card_catalog_bundle(
         death_spawn_recipes=death_spawn_recipes,
         rolling_spawn_recipes=rolling_spawn_recipes,
         rolling_projectile_recipes=rolling_projectile_recipes,
+        pending_spell_action_kinds=tuple(
+            (str(card["lookup_name"]), str(card["action_kind"]))
+            for card in cards
+            if not card["capability_reasons"]
+            and card["action_kind"]
+            in {
+                "projectile_spell",
+                "rolling_projectile_spell",
+                "direct_damage_spell",
+            }
+        ),
     )
 
 
@@ -1260,6 +1335,17 @@ class ResidentRustBattle:
             spawn_deploy_delay=recipe.spawn_deploy_delay,
         )
 
+    def pending_spell_action_kind(self, spell_name: str) -> str | None:
+        """Return the attested placement family for a supported pending spell."""
+        catalog = self._birth_catalog
+        if catalog is None:  # pragma: no cover - legacy direct construction
+            return None
+        expected_name = str(spell_name)
+        for lookup_name, action_kind in catalog.pending_spell_action_kinds:
+            if lookup_name == expected_name:
+                return action_kind
+        return None
+
     @classmethod
     def from_battle(cls, battle: Any) -> ResidentRustBattle:
         require_rust_core()
@@ -1377,6 +1463,17 @@ class ResidentRustBattle:
             ],
             next_spell_cast_sequence=int(battle._next_spell_cast_sequence),
             projectile_damage_groups=projectile_damage_groups,
+        )
+        native_supported_actions = frozenset(
+            str(name) for name in native.catalog_supported_cards()
+        )
+        catalog = replace(
+            catalog,
+            pending_spell_action_kinds=tuple(
+                (lookup_name, action_kind)
+                for lookup_name, action_kind in catalog.pending_spell_action_kinds
+                if lookup_name in native_supported_actions
+            ),
         )
         return cls(native, catalog, action_card_stats)
 
