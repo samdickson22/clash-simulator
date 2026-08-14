@@ -24,10 +24,14 @@ try:
         consume_state_bytes as _consume_state_bytes,
     )
     from _clasher_rust import noop_ticks as _noop_ticks  # type: ignore[import-untyped]
+    from _clasher_rust import (  # type: ignore[import-untyped]
+        standard_grid_route as _standard_grid_route,
+    )
 except ImportError:  # pragma: no cover - depends on optional compiled artifact
     _consume_state_bytes = None
     _noop_ticks = None
     _ResidentBattle = None
+    _standard_grid_route = None
 
 
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
@@ -40,6 +44,7 @@ def rust_core_available() -> bool:
         _noop_ticks is not None
         and _consume_state_bytes is not None
         and _ResidentBattle is not None
+        and _standard_grid_route is not None
     )
 
 
@@ -71,6 +76,20 @@ def rust_consume_state_bytes(payload: bytes) -> tuple[int, int]:
     assert _consume_state_bytes is not None
     size, hash_value = _consume_state_bytes(payload)
     return int(size), int(hash_value)
+
+
+def rust_standard_grid_route(
+    start: tuple[int, int],
+    goal: tuple[int, int],
+    lane_id: int,
+    jump_height: bool,
+) -> tuple[tuple[int, int], ...] | None:
+    require_rust_core()
+    assert _standard_grid_route is not None
+    route = _standard_grid_route(start, goal, lane_id, jump_height)
+    if route is None:
+        return None
+    return tuple((int(cell[0]), int(cell[1])) for cell in route)
 
 
 class RustBattleMode(str, Enum):

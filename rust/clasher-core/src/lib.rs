@@ -23,6 +23,228 @@ fn consume_state_bytes(payload: &[u8]) -> (usize, u64) {
     (payload.len(), fnv1a(payload))
 }
 
+const STANDARD_PATH_WIDTH: i64 = 36;
+const STANDARD_PATH_HEIGHT: i64 = 64;
+const STANDARD_PATH_ROWS: [&str; 64] = [
+    "000000000000000000000000000000000000",
+    "000000000000000000000000000000000000",
+    "000000000000001111222200000000000000",
+    "000000000000001111222200000000000000",
+    "000000000000001111222200000000000000",
+    "000001111111111111222222222222200000",
+    "000001111111111111222222222222200000",
+    "000001111111111111222222222222200000",
+    "000001111111111111222222222222200000",
+    "000001111100001111222200002222200000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000000110000000000000000000022000000",
+    "000000110000000000000000000022000000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000001111000000000000000000222200000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000011111100000000000000002222220000",
+    "000001111100001111222200002222200000",
+    "000001111111111111222222222222200000",
+    "000001111111111111222222222222200000",
+    "000001111111111111222222222222200000",
+    "000001111111111111222222222222200000",
+    "000000000000001111222200000000000000",
+    "000000000000001111222200000000000000",
+    "000000000000001111222200000000000000",
+    "000000000000000000000000000000000000",
+    "000000000000000000000000000000000000",
+];
+
+fn standard_path_tile_cost(cell_x: i64, cell_y: i64, lane_id: i64, jump_height: bool) -> i64 {
+    let blocked_river =
+        (30..34).contains(&cell_y) && !((5..=8).contains(&cell_x) || (27..=30).contains(&cell_x));
+    if blocked_river {
+        return if jump_height { 20 } else { 800 };
+    }
+    let lane = i64::from(STANDARD_PATH_ROWS[cell_y as usize].as_bytes()[cell_x as usize] - b'0');
+    if lane <= 0 {
+        20
+    } else if lane == lane_id {
+        1
+    } else {
+        5
+    }
+}
+
+fn native_path_heap_push(heap: &mut Vec<usize>, priorities: &[i64], cell: usize) {
+    heap.push(cell);
+    let mut index = heap.len() - 1;
+    while index > 0 {
+        let parent_index = (index - 1) / 2;
+        let parent = heap[parent_index];
+        if priorities[parent] <= priorities[cell] {
+            break;
+        }
+        heap[index] = parent;
+        index = parent_index;
+    }
+    heap[index] = cell;
+}
+
+fn native_path_heap_pop(heap: &mut Vec<usize>, priorities: &[i64]) -> usize {
+    let root = heap[0];
+    let last = heap.pop().expect("nonempty native path heap");
+    if heap.is_empty() {
+        return root;
+    }
+    heap[0] = last;
+    let mut index = 0;
+    loop {
+        let mut chosen = index;
+        let right = index * 2 + 2;
+        if right < heap.len() && priorities[heap[right]] < priorities[heap[chosen]] {
+            chosen = right;
+        }
+        let left = index * 2 + 1;
+        if left < heap.len() && priorities[heap[left]] < priorities[heap[chosen]] {
+            chosen = left;
+        }
+        if chosen == index {
+            break;
+        }
+        heap.swap(index, chosen);
+        index = chosen;
+    }
+    root
+}
+
+fn exact_standard_grid_route(
+    start: (i64, i64),
+    goal: (i64, i64),
+    lane_id: i64,
+    jump_height: bool,
+) -> Option<Vec<(i64, i64)>> {
+    if !(0..STANDARD_PATH_WIDTH).contains(&start.0)
+        || !(0..STANDARD_PATH_HEIGHT).contains(&start.1)
+        || !(0..STANDARD_PATH_WIDTH).contains(&goal.0)
+        || !(0..STANDARD_PATH_HEIGHT).contains(&goal.1)
+    {
+        return None;
+    }
+    let cell_count = (STANDARD_PATH_WIDTH * STANDARD_PATH_HEIGHT) as usize;
+    let start_index = (start.1 * STANDARD_PATH_WIDTH + start.0) as usize;
+    let goal_index = (goal.1 * STANDARD_PATH_WIDTH + goal.0) as usize;
+    let mut parents = vec![usize::MAX; cell_count];
+    let mut priorities = vec![0_i64; cell_count];
+    let mut discovered = vec![false; cell_count];
+    let mut heap = Vec::with_capacity(cell_count);
+    discovered[start_index] = true;
+    heap.push(start_index);
+
+    const NEIGHBORS: [(i64, i64, i64); 8] = [
+        (0, -1, 10),
+        (0, 1, 10),
+        (-1, 0, 10),
+        (1, 0, 10),
+        (-1, -1, 14),
+        (-1, 1, 14),
+        (1, 1, 14),
+        (1, -1, 14),
+    ];
+    let mut found = false;
+    while !heap.is_empty() {
+        let current = native_path_heap_pop(&mut heap, &priorities);
+        if current == goal_index {
+            found = true;
+            break;
+        }
+        let current_x = current as i64 % STANDARD_PATH_WIDTH;
+        let current_y = current as i64 / STANDARD_PATH_WIDTH;
+        for (delta_x, delta_y, step_cost) in NEIGHBORS {
+            let neighbor_x = current_x + delta_x;
+            let neighbor_y = current_y + delta_y;
+            if !(0..STANDARD_PATH_WIDTH).contains(&neighbor_x)
+                || !(0..STANDARD_PATH_HEIGHT).contains(&neighbor_y)
+            {
+                continue;
+            }
+            let neighbor = (neighbor_y * STANDARD_PATH_WIDTH + neighbor_x) as usize;
+            if discovered[neighbor] {
+                continue;
+            }
+            discovered[neighbor] = true;
+            parents[neighbor] = current;
+            let heuristic = 10 * (goal.0 - neighbor_x).abs().max((goal.1 - neighbor_y).abs());
+            priorities[neighbor] = priorities[current]
+                + step_cost * standard_path_tile_cost(neighbor_x, neighbor_y, lane_id, jump_height)
+                + heuristic;
+            native_path_heap_push(&mut heap, &priorities, neighbor);
+        }
+    }
+    if !found {
+        return None;
+    }
+    let mut route = Vec::new();
+    let mut current = goal_index;
+    loop {
+        route.push((
+            current as i64 % STANDARD_PATH_WIDTH,
+            current as i64 / STANDARD_PATH_WIDTH,
+        ));
+        if current == start_index {
+            break;
+        }
+        current = parents[current];
+        if current == usize::MAX {
+            return None;
+        }
+    }
+    route.reverse();
+    Some(route)
+}
+
+#[pyfunction]
+fn standard_grid_route(
+    start: (i64, i64),
+    goal: (i64, i64),
+    lane_id: i64,
+    jump_height: bool,
+) -> Option<Vec<(i64, i64)>> {
+    exact_standard_grid_route(start, goal, lane_id, jump_height)
+}
+
 fn sha256_hex(payload: &[u8]) -> String {
     format!("{:x}", Sha256::digest(payload))
 }
@@ -5344,6 +5566,7 @@ impl ResidentBattle {
 fn _clasher_rust(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(noop_ticks, module)?)?;
     module.add_function(wrap_pyfunction!(consume_state_bytes, module)?)?;
+    module.add_function(wrap_pyfunction!(standard_grid_route, module)?)?;
     module.add_class::<ResidentBattle>()?;
     Ok(())
 }
