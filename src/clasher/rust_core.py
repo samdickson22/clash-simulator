@@ -19,7 +19,7 @@ from .differential import (
     canonical_battle_snapshot,
     snapshot_bytes,
 )
-from .entities import Building
+from .entities import Building, Projectile
 
 try:
     from _clasher_rust import (  # type: ignore[import-untyped]
@@ -42,7 +42,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 3
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 4
 
 
 def _catalog_source_sha256(path: Path) -> str:
@@ -187,12 +187,26 @@ def _resident_card_catalog_bytes(
                 else float(spell.crown_tower_damage)
             )
             spell_reasons: list[str] = []
-            if (
-                max(1, int(spell.multiple_projectiles)) != 1
-                or max(1, int(spell.damage_waves)) != 1
-                or float(spell.damage_wave_interval) != 0.0
-            ):
-                spell_reasons.append("grouped_or_multiwave_projectile_spell")
+            projectile_count = max(1, int(spell.multiple_projectiles))
+            wave_count = max(1, int(spell.damage_waves))
+            grouped_ring = (
+                projectile_count > 1
+                and str(spell.projectile_pattern) == "grouped_ring"
+                and wave_count >= 1
+                and float(spell.damage_wave_interval) > 0.0
+                and float(spell.spread_radius) > 0.0
+                and float(spell.knockback_distance) == 0.0
+                and float(spell.stun_duration) == 0.0
+                and float(spell.slow_duration) == 0.0
+            )
+            single_projectile = (
+                projectile_count == 1
+                and wave_count == 1
+                and float(spell.damage_wave_interval) == 0.0
+                and str(spell.projectile_pattern) == "native_radial"
+            )
+            if not (single_projectile or grouped_ring):
+                spell_reasons.append("unsupported_projectile_spell_pattern")
             if bool(spell.requires_territory) or bool(spell.requires_walkable_target):
                 spell_reasons.append("restricted_projectile_spell_placement")
             if int(getattr(card_stats, "deploy_w_tile_margin", 0) or 0) != 0:
@@ -226,6 +240,11 @@ def _resident_card_catalog_bytes(
                         spell.crown_tower_damage_multiplier
                     ),
                     "crown_tower_damage": crown_damage,
+                    "projectile_pattern": str(spell.projectile_pattern),
+                    "multiple_projectiles": projectile_count,
+                    "damage_waves": wave_count,
+                    "damage_wave_interval": float(spell.damage_wave_interval),
+                    "spread_radius": float(spell.spread_radius),
                 }
         template_snapshot: dict[str, Any] | None = None
         formation_offsets: list[list[list[int]]] = []
@@ -545,6 +564,22 @@ class ResidentRustBattle:
             data_stat.st_mtime_ns,
             data_stat.st_size,
         )
+        damage_groups_by_identity: dict[int, tuple[set[int], list[int]]] = {}
+        for entity in battle.entities.values():
+            if type(entity) is not Projectile:
+                continue
+            hit_ids = entity.damage_group_hit_entity_ids
+            if hit_ids is None:
+                continue
+            _, projectile_ids = damage_groups_by_identity.setdefault(
+                id(hit_ids),
+                (hit_ids, []),
+            )
+            projectile_ids.append(int(entity.id))
+        projectile_damage_groups = [
+            (min(projectile_ids), sorted(hit_ids), projectile_ids)
+            for hit_ids, projectile_ids in damage_groups_by_identity.values()
+        ]
         assert _ResidentBattle is not None
         native = _ResidentBattle(
             checkpoint,
@@ -622,6 +657,7 @@ class ResidentRustBattle:
                 for cast in battle._pending_spell_casts
             ],
             next_spell_cast_sequence=int(battle._next_spell_cast_sequence),
+            projectile_damage_groups=projectile_damage_groups,
         )
         return cls(native)
 
@@ -645,6 +681,9 @@ class ResidentRustBattle:
 
     def pending_spell_state_bytes(self) -> bytes:
         return bytes(self._native.pending_spell_state_bytes())
+
+    def projectile_damage_group_state_bytes(self) -> bytes:
+        return bytes(self._native.projectile_damage_group_state_bytes())
 
     def advance_clock_phase(self) -> bool:
         return bool(self._native.advance_clock_phase())
@@ -2282,6 +2321,13 @@ def building_lifetime_state_bytes(battle: Any) -> bytes:
 def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
     from .entities import Projectile
 
+    group_projectile_ids: dict[int, list[int]] = {}
+    for entity in battle.entities.values():
+        if type(entity) is Projectile and entity.damage_group_hit_entity_ids is not None:
+            group_projectile_ids.setdefault(
+                id(entity.damage_group_hit_entity_ids), []
+            ).append(int(entity.id))
+
     return [
         {
             "encounter_index": encounter_index,
@@ -2294,6 +2340,12 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
                 entity.crown_tower_damage_multiplier
             ),
             "damage": _exact_scalar(entity.damage),
+            "damage_group_id": (
+                None
+                if entity.damage_group_hit_entity_ids is None
+                else min(group_projectile_ids[id(entity.damage_group_hit_entity_ids)])
+            ),
+            "damage_wave_interval": _exact_scalar(entity.damage_wave_interval),
             "hits_air": bool(entity.hits_air),
             "hits_ground": bool(entity.hits_ground),
             "hitpoints": _exact_scalar(entity.hitpoints),

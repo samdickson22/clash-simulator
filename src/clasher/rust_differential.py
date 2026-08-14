@@ -28,7 +28,7 @@ from .rust_core import (
     shield_state_rows,
 )
 
-RESIDENT_SEMANTIC_SCHEMA_VERSION = 5
+RESIDENT_SEMANTIC_SCHEMA_VERSION = 6
 
 
 def _python_pending_spell_state(battle: BattleState) -> dict[str, Any]:
@@ -46,6 +46,25 @@ def _python_pending_spell_state(battle: BattleState) -> dict[str, Any]:
         ],
         "next_sequence": int(battle._next_spell_cast_sequence),
     }
+
+
+def _python_projectile_damage_groups(battle: BattleState) -> list[dict[str, Any]]:
+    from .entities import Projectile
+
+    groups: dict[int, tuple[set[int], list[int]]] = {}
+    for entity in battle.entities.values():
+        if type(entity) is not Projectile or entity.damage_group_hit_entity_ids is None:
+            continue
+        hit_ids = entity.damage_group_hit_entity_ids
+        _, projectile_ids = groups.setdefault(id(hit_ids), (hit_ids, []))
+        projectile_ids.append(int(entity.id))
+    return [
+        {
+            "group_id": min(projectile_ids),
+            "hit_entity_ids": sorted(hit_ids),
+        }
+        for hit_ids, projectile_ids in groups.values()
+    ]
 
 
 def _player_row(state: ResidentPlayerState) -> dict[str, Any]:
@@ -120,6 +139,7 @@ def python_resident_semantic_snapshot(battle: BattleState) -> dict[str, Any]:
         "rng": resident_rng_state(battle.rng),
         "next_entity_id": int(battle.next_entity_id),
         "pending_spells": _python_pending_spell_state(battle),
+        "projectile_damage_groups": _python_projectile_damage_groups(battle),
         "win_conditions_dirty": bool(battle._win_conditions_dirty),
     }
 
@@ -155,6 +175,9 @@ def rust_resident_semantic_snapshot(
         "rng": json.loads(resident.rng_state_bytes()),
         "next_entity_id": resident.next_entity_id,
         "pending_spells": json.loads(resident.pending_spell_state_bytes()),
+        "projectile_damage_groups": json.loads(
+            resident.projectile_damage_group_state_bytes()
+        ),
         "win_conditions_dirty": resident.win_conditions_dirty,
     }
 

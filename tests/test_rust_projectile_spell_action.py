@@ -71,11 +71,9 @@ def test_projectile_spell_catalog_is_data_driven_and_fail_closed() -> None:
 
     assert "Fireball" in supported
     assert "Rocket" in supported
-    assert "Arrows" not in supported
+    assert "Arrows" in supported
     assert resident.resident_action_card_capability_reasons("Fireball") == ()
-    assert resident.resident_action_card_capability_reasons("Arrows") == (
-        "grouped_or_multiwave_projectile_spell",
-    )
+    assert resident.resident_action_card_capability_reasons("Arrows") == ()
 
 
 @pytest.mark.parametrize("player_id", [0, 1])

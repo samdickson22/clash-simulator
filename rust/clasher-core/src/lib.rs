@@ -3,7 +3,7 @@ use pyo3::prelude::*;
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
 use sha2::{Digest, Sha256};
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::sync::Arc;
 
 const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
@@ -345,6 +345,15 @@ fn logic_sin(degrees: i64, magnitude: i64) -> i64 {
 
 fn logic_cos(degrees: i64, magnitude: i64) -> i64 {
     logic_sin(degrees + 90, magnitude)
+}
+
+fn rotate_logic_vector(x_units: i64, y_units: i64, degrees: i64) -> (i64, i64) {
+    let sine = logic_sin(degrees, 1024);
+    let cosine = logic_cos(degrees, 1024);
+    (
+        (cosine * x_units - sine * y_units) >> 10,
+        (sine * x_units + cosine * y_units) >> 10,
+    )
 }
 
 fn truncating_div(numerator: i128, denominator: i64) -> i64 {
@@ -1883,6 +1892,8 @@ struct PointProjectileState {
     slow_multiplier: f64,
     knockback_distance: f64,
     knockback_ignores_mass: bool,
+    damage_wave_interval: f64,
+    damage_group_id: Option<i64>,
     launch_delay: f64,
     primary_target_id: Option<i64>,
     source_entity_id: Option<i64>,
@@ -1916,8 +1927,11 @@ impl PointProjectileState {
         if !knockback_distance.is_finite() || knockback_distance < 0.0 {
             unsupported.push("invalid_knockback_payload".to_owned());
         }
-        if damage_waves != 1 || damage_wave_interval != 0.0 {
+        if damage_waves != 1 {
             unsupported.push("damage_waves".to_owned());
+        }
+        if !damage_wave_interval.is_finite() || damage_wave_interval < 0.0 {
+            unsupported.push("invalid_damage_wave_interval".to_owned());
         }
         if pierces || projectile_range != 0.0 || start_extra_radius != 0.0 {
             unsupported.push("piercing_payload".to_owned());
@@ -1959,6 +1973,8 @@ impl PointProjectileState {
             slow_multiplier,
             knockback_distance,
             knockback_ignores_mass: required_bool(fields, "knockback_ignores_mass")?,
+            damage_wave_interval,
+            damage_group_id: None,
             launch_delay: normalized_f64(fields, "launch_delay")?,
             primary_target_id: optional_entity_ref_id(fields, "primary_target")?,
             source_entity_id: optional_entity_ref_id(fields, "source_entity")?,
@@ -1984,6 +2000,8 @@ impl PointProjectileState {
             "crown_tower_damage_multiplier": exact_f64_value(self.crown_tower_damage_multiplier),
             "hitpoints": entity.hitpoints.diagnostic_value(),
             "damage": entity.damage.diagnostic_value(),
+            "damage_group_id": self.damage_group_id,
+            "damage_wave_interval": exact_f64_value(self.damage_wave_interval),
             "hits_air": self.hits_air,
             "hits_ground": self.hits_ground,
             "id": entity.id,
@@ -2954,7 +2972,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 3;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 4;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -3003,6 +3021,11 @@ struct ResidentProjectileSpellWire {
     hits_ground: bool,
     crown_tower_damage_multiplier: f64,
     crown_tower_damage: Option<f64>,
+    projectile_pattern: String,
+    multiple_projectiles: i64,
+    damage_waves: i64,
+    damage_wave_interval: f64,
+    spread_radius: f64,
 }
 
 #[derive(Clone)]
@@ -3019,6 +3042,10 @@ struct ResidentProjectileSpellSpec {
     hits_ground: bool,
     crown_tower_damage_multiplier: f64,
     crown_tower_damage: Option<f64>,
+    multiple_projectiles: i64,
+    damage_waves: i64,
+    damage_wave_interval: f64,
+    spread_radius: f64,
 }
 
 #[derive(Clone)]
@@ -3191,6 +3218,8 @@ impl ResidentCardCatalog {
                     spell.slow_multiplier,
                     spell.knockback_distance,
                     spell.crown_tower_damage_multiplier,
+                    spell.damage_wave_interval,
+                    spell.spread_radius,
                 ]
                 .into_iter()
                 .all(f64::is_finite)
@@ -3205,6 +3234,23 @@ impl ResidentCardCatalog {
                     || spell.knockback_distance < 0.0
                     || spell.crown_tower_damage_multiplier < 0.0
                     || spell.crown_tower_damage.is_some_and(|damage| damage < 0.0)
+                    || !(1..=90).contains(&spell.multiple_projectiles)
+                    || !(1..=10).contains(&spell.damage_waves)
+                    || spell.damage_wave_interval < 0.0
+                    || spell.spread_radius < 0.0
+                    || spell.radius > (i64::MAX / 4096) as f64 / 1000.0
+                    || spell.spread_radius > (i64::MAX / 4096) as f64 / 1000.0
+                    || (spell.multiple_projectiles == 1
+                        && (spell.damage_waves != 1
+                            || spell.damage_wave_interval != 0.0
+                            || spell.projectile_pattern != "native_radial"))
+                    || (spell.multiple_projectiles > 1
+                        && (spell.projectile_pattern != "grouped_ring"
+                            || spell.damage_wave_interval <= 0.0
+                            || spell.spread_radius <= 0.0
+                            || spell.knockback_distance != 0.0
+                            || spell.stun_duration != 0.0
+                            || spell.slow_duration != 0.0))
                 {
                     reasons.push("native_projectile_spell_preflight".to_owned());
                 }
@@ -3221,6 +3267,10 @@ impl ResidentCardCatalog {
                     hits_ground: spell.hits_ground,
                     crown_tower_damage_multiplier: spell.crown_tower_damage_multiplier,
                     crown_tower_damage: spell.crown_tower_damage,
+                    multiple_projectiles: spell.multiple_projectiles,
+                    damage_waves: spell.damage_waves,
+                    damage_wave_interval: spell.damage_wave_interval,
+                    spread_radius: spell.spread_radius,
                 }
             });
             if reasons.is_empty() && projectile_spell.is_none() {
@@ -3763,6 +3813,24 @@ impl ResidentPendingSpellCast {
     }
 }
 
+#[derive(Clone)]
+struct ResidentProjectileDamageGroup {
+    id: i64,
+    hit_entity_ids: Vec<i64>,
+}
+
+impl ResidentProjectileDamageGroup {
+    fn diagnostic_value(&self) -> Value {
+        let mut hit_entity_ids = self.hit_entity_ids.clone();
+        hit_entity_ids.sort_unstable();
+        hit_entity_ids.dedup();
+        json!({
+            "group_id": self.id,
+            "hit_entity_ids": hit_entity_ids,
+        })
+    }
+}
+
 /// Long-lived native battle allocation.
 ///
 /// Initialization and explicit checkpoint replacement may cross the FFI as a
@@ -3807,6 +3875,7 @@ struct ResidentBattle {
     lethal_projectile_reservation_ids: Vec<i64>,
     pending_spell_casts: Vec<ResidentPendingSpellCast>,
     next_spell_cast_sequence: i64,
+    projectile_damage_groups: Vec<ResidentProjectileDamageGroup>,
     rng: PythonMt19937,
 }
 
@@ -3843,7 +3912,8 @@ impl ResidentBattle {
         tiebreaker_time,
         winner,
         pending_spell_casts,
-        next_spell_cast_sequence
+        next_spell_cast_sequence,
+        projectile_damage_groups
     ))]
     #[allow(clippy::too_many_arguments)]
     fn new(
@@ -3876,6 +3946,7 @@ impl ResidentBattle {
         winner: Option<i64>,
         pending_spell_casts: Vec<(f64, i64, String, i64, f64, f64)>,
         next_spell_cast_sequence: i64,
+        projectile_damage_groups: Vec<(i64, Vec<i64>, Vec<i64>)>,
     ) -> PyResult<Self> {
         if !time.is_finite() || !dt.is_finite() || dt < 0.0 {
             return Err(PyValueError::new_err(
@@ -3889,7 +3960,49 @@ impl ResidentBattle {
         }
         let schema_version = validate_checkpoint(checkpoint)?;
         let catalog = Arc::new(ResidentCardCatalog::from_bytes(catalog)?);
-        let entities = parse_resident_entities(checkpoint)?;
+        let mut entities = parse_resident_entities(checkpoint)?;
+        let mut damage_groups = Vec::with_capacity(projectile_damage_groups.len());
+        let mut grouped_projectile_ids = Vec::new();
+        for (group_id, hit_entity_ids, projectile_ids) in projectile_damage_groups {
+            let unique_hit_ids = hit_entity_ids.iter().copied().collect::<HashSet<_>>();
+            if group_id < 0
+                || projectile_ids.is_empty()
+                || projectile_ids.iter().min().copied() != Some(group_id)
+                || hit_entity_ids.iter().any(|id| *id < 0)
+                || unique_hit_ids.len() != hit_entity_ids.len()
+                || damage_groups
+                    .iter()
+                    .any(|group: &ResidentProjectileDamageGroup| group.id == group_id)
+                || projectile_ids
+                    .iter()
+                    .any(|id| grouped_projectile_ids.contains(id))
+            {
+                return Err(PyValueError::new_err(
+                    "resident projectile damage-group state is invalid",
+                ));
+            }
+            for projectile_id in projectile_ids {
+                let entity = entities
+                    .iter_mut()
+                    .find(|entity| entity.id == projectile_id)
+                    .ok_or_else(|| {
+                        PyValueError::new_err(
+                            "resident projectile damage group references a missing entity",
+                        )
+                    })?;
+                let projectile = entity.point_projectile.as_mut().ok_or_else(|| {
+                    PyValueError::new_err(
+                        "resident projectile damage group references a non-projectile",
+                    )
+                })?;
+                projectile.damage_group_id = Some(group_id);
+                grouped_projectile_ids.push(projectile_id);
+            }
+            damage_groups.push(ResidentProjectileDamageGroup {
+                id: group_id,
+                hit_entity_ids,
+            });
+        }
         let pending_spell_casts = pending_spell_casts
             .into_iter()
             .map(
@@ -3978,6 +4091,7 @@ impl ResidentBattle {
             lethal_projectile_reservation_ids: Vec::new(),
             pending_spell_casts,
             next_spell_cast_sequence,
+            projectile_damage_groups: damage_groups,
             rng,
         })
     }
@@ -4251,6 +4365,19 @@ impl ResidentBattle {
         serde_json::to_vec(&value).map_err(|error| {
             PyRuntimeError::new_err(format!(
                 "failed to serialize resident pending spell state: {error}"
+            ))
+        })
+    }
+
+    fn projectile_damage_group_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .projectile_damage_groups
+            .iter()
+            .map(ResidentProjectileDamageGroup::diagnostic_value)
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident projectile damage groups: {error}"
             ))
         })
     }
@@ -5132,6 +5259,9 @@ impl ResidentBattle {
     }
 
     fn supports_point_projectile_phase(&self) -> bool {
+        if !self.projectile_damage_groups_valid() {
+            return false;
+        }
         let has_splash = self.entities.iter().any(|entity| {
             entity.active
                 && entity
@@ -5198,6 +5328,9 @@ impl ResidentBattle {
                 return false;
             }
             if let Some(target_id) = projectile.primary_target_id {
+                if projectile.damage_wave_interval != 0.0 || projectile.damage_group_id.is_some() {
+                    return false;
+                }
                 let Some(target) = self
                     .entities
                     .iter()
@@ -5379,6 +5512,55 @@ impl ResidentBattle {
                 encounter_index += 1;
             }
         }
+        let damage_group_remaps = self
+            .projectile_damage_groups
+            .iter()
+            .map(|group| {
+                let next_id = self
+                    .entities
+                    .iter()
+                    .filter(|entity| entity.active)
+                    .filter_map(|entity| {
+                        entity
+                            .point_projectile
+                            .as_ref()
+                            .filter(|projectile| projectile.damage_group_id == Some(group.id))
+                            .map(|_| entity.id)
+                    })
+                    .min();
+                (group.id, next_id)
+            })
+            .collect::<Vec<_>>();
+        for (old_id, next_id) in &damage_group_remaps {
+            let Some(next_id) = next_id else {
+                continue;
+            };
+            if old_id == next_id {
+                continue;
+            }
+            if let Some(group) = self
+                .projectile_damage_groups
+                .iter_mut()
+                .find(|group| group.id == *old_id)
+            {
+                group.id = *next_id;
+            }
+            for entity in &mut self.entities {
+                if let Some(projectile) = entity.point_projectile.as_mut()
+                    && projectile.damage_group_id == Some(*old_id)
+                {
+                    projectile.damage_group_id = Some(*next_id);
+                }
+            }
+        }
+        self.projectile_damage_groups.retain(|group| {
+            damage_group_remaps
+                .iter()
+                .any(|(old_id, next_id)| *old_id == group.id && next_id.is_some())
+                || damage_group_remaps
+                    .iter()
+                    .any(|(_, next_id)| *next_id == Some(group.id))
+        });
         Ok(())
     }
 
@@ -5898,8 +6080,102 @@ impl ResidentBattle {
                 == spec.crown_tower_damage_multiplier.to_bits()
             && projectile.crown_tower_damage.map(f64::to_bits)
                 == spec.crown_tower_damage.map(f64::to_bits)
+            && projectile.damage_wave_interval.to_bits() == spec.damage_wave_interval.to_bits()
+            && (projectile.damage_group_id.is_some() == (spec.multiple_projectiles > 1))
+            && projectile.damage_group_id.is_none_or(|group_id| {
+                self.projectile_damage_groups
+                    .iter()
+                    .any(|group| group.id == group_id)
+            })
+            && projectile.launch_delay >= 0.0
+            && if spec.multiple_projectiles == 1 {
+                projectile.launch_delay.to_bits() == 0.0_f64.to_bits()
+            } else {
+                projectile.launch_delay
+                    <= (spec.damage_waves - 1) as f64 * spec.damage_wave_interval + 1e-12
+            }
             && projectile.tracks_target
             && !projectile.ignore_buildings
+    }
+
+    fn projectile_damage_groups_valid(&self) -> bool {
+        let mut seen_group_ids = HashSet::new();
+        for group in &self.projectile_damage_groups {
+            if !seen_group_ids.insert(group.id)
+                || group.id < 0
+                || group.hit_entity_ids.iter().any(|id| *id < 0)
+                || group
+                    .hit_entity_ids
+                    .iter()
+                    .copied()
+                    .collect::<HashSet<_>>()
+                    .len()
+                    != group.hit_entity_ids.len()
+            {
+                return false;
+            }
+            let members = self
+                .entities
+                .iter()
+                .filter(|entity| entity.active)
+                .filter(|entity| {
+                    entity
+                        .point_projectile
+                        .as_ref()
+                        .is_some_and(|projectile| projectile.damage_group_id == Some(group.id))
+                })
+                .collect::<Vec<_>>();
+            let Some(first) = members.first() else {
+                return false;
+            };
+            if members.iter().map(|entity| entity.id).min() != Some(group.id) {
+                return false;
+            }
+            let first_projectile = first
+                .point_projectile
+                .as_ref()
+                .expect("damage-group members are projectiles");
+            let Some(spec) = self.projectile_spell_spec(&first_projectile.source_kind) else {
+                return false;
+            };
+            if spec.multiple_projectiles <= 1
+                || members.len()
+                    > usize::try_from(spec.multiple_projectiles)
+                        .expect("validated projectile count fits usize")
+                || !self.point_projectile_matches_spell_spec(first, first_projectile)
+            {
+                return false;
+            }
+            for member in members.iter().skip(1) {
+                let projectile = member
+                    .point_projectile
+                    .as_ref()
+                    .expect("damage-group members are projectiles");
+                if member.player_id != first.player_id
+                    || projectile.source_kind != first_projectile.source_kind
+                    || projectile.launch_delay.to_bits() != first_projectile.launch_delay.to_bits()
+                    || !self.point_projectile_matches_spell_spec(member, projectile)
+                {
+                    return false;
+                }
+            }
+        }
+        self.entities
+            .iter()
+            .filter(|entity| entity.active)
+            .all(|entity| {
+                entity
+                    .point_projectile
+                    .as_ref()
+                    .and_then(|projectile| projectile.damage_group_id)
+                    .is_none_or(|group_id| {
+                        self.projectile_damage_groups
+                            .iter()
+                            .filter(|group| group.id == group_id)
+                            .count()
+                            == 1
+                    })
+            })
     }
 
     fn resolve_pending_spell_casts(&mut self) -> PyResult<()> {
@@ -5912,8 +6188,15 @@ impl ResidentBattle {
         if due.is_empty() {
             return Ok(());
         }
-        let due_count = i64::try_from(due.len())
-            .map_err(|_| PyRuntimeError::new_err("resident due spell count overflow"))?;
+        let due_count = due.iter().try_fold(0_i64, |count, cast| {
+            let spec = self.projectile_spell_spec(&cast.spell_name)?;
+            count.checked_add(spec.multiple_projectiles.checked_mul(spec.damage_waves)?)
+        });
+        let Some(due_count) = due_count else {
+            return Err(PyRuntimeError::new_err(
+                "resident due spell count or capability overflow",
+            ));
+        };
         if self
             .next_entity_id
             .checked_add(due_count)
@@ -5947,86 +6230,151 @@ impl ResidentBattle {
         cast: &ResidentPendingSpellCast,
         spec: &ResidentProjectileSpellSpec,
     ) -> PyResult<()> {
-        let projectile_id = self.next_entity_id;
-        self.next_entity_id = self
-            .next_entity_id
-            .checked_add(1)
-            .ok_or_else(|| PyRuntimeError::new_err("resident spell projectile ID overflow"))?;
         let launch_y: f64 = if cast.player_id == 0 { 2.5 } else { 29.5 };
-        self.entities.push(ResidentEntity {
-            active: true,
-            encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
-            id: projectile_id,
-            player_id: cast.player_id,
-            entity_kind: 2,
-            python_type: "clasher.entities.Projectile".to_owned(),
-            card_name: String::new(),
-            position_x: ExactScalar::Float(9.0_f64.to_bits()),
-            position_y: ExactScalar::Float(launch_y.to_bits()),
-            hitpoints: ExactScalar::Int(1),
-            max_hitpoints: ExactScalar::Int(1),
-            damage: ExactScalar::Float(spec.damage.to_bits()),
-            is_alive: true,
-            target_id: None,
-            deploy_delay_remaining: 0.0,
-            placement_delay_total: 0.0,
-            placement_pending: false,
-            spawn_hook_pending: false,
-            spawn_hook_fired: false,
-            freeze_expiry_time: 0.0,
-            death_spawn_target_immunity_elapsed_ms: -1,
-            pending_projectile_max_duration_ms: 0,
-            spawn_angle_shift: 0.0,
-            reward_traits: ResidentRewardTraits {
-                mana_cost: 0.0,
-                summon_count: 0,
-                summon_character_second_count: 0,
-                hit_speed_ms: 0.0,
-            },
-            death_spawn_payload_present: false,
-            mechanics: Vec::new(),
-            shields: Vec::new(),
-            shield_break_count: 0,
-            death_opcodes: Vec::new(),
-            modifier_state: None,
-            movement: None,
-            modifier_supported: true,
-            direct_combat_unsupported: vec!["non_character_entity".to_owned()],
-            locked_combat: None,
-            building_lifetime: None,
-            building_impact: None,
-            point_projectile: Some(PointProjectileState {
-                source_kind: cast.spell_name.clone(),
-                target_x: cast.position_x,
-                target_y: cast.position_y,
-                travel_speed: spec.travel_speed,
-                splash_radius: spec.radius,
-                hits_air: spec.hits_air,
-                hits_ground: spec.hits_ground,
-                ignore_buildings: false,
-                crown_tower_damage: spec.crown_tower_damage,
-                crown_tower_damage_multiplier: spec.crown_tower_damage_multiplier,
-                stun_duration: spec.stun_duration,
-                slow_duration: spec.slow_duration,
-                slow_multiplier: spec.slow_multiplier,
-                knockback_distance: spec.knockback_distance,
-                knockback_ignores_mass: spec.knockback_ignores_mass,
-                launch_delay: 0.0,
-                primary_target_id: None,
-                source_entity_id: None,
-                tracks_target: true,
-                temporary_homing_remaining_ms: 0,
-                temporary_homing_target_id: None,
-                permanent_homing_disabled_by_temporary: false,
-                start_collision_resolved: false,
-                unsupported: Vec::new(),
-            }),
-            area_effect: None,
-            object_base_movement_noop: true,
-            blocks_deployment: false,
-            deployment_collision_radius: 0.5,
-        });
+        for wave_index in 0..spec.damage_waves {
+            let positions = self.projectile_spell_positions(cast, spec)?;
+            let damage_group_id = (spec.multiple_projectiles > 1).then_some(self.next_entity_id);
+            if let Some(group_id) = damage_group_id {
+                self.projectile_damage_groups
+                    .push(ResidentProjectileDamageGroup {
+                        id: group_id,
+                        hit_entity_ids: Vec::new(),
+                    });
+            }
+            for (target_x, target_y) in positions {
+                let projectile_id = self.next_entity_id;
+                self.next_entity_id = self.next_entity_id.checked_add(1).ok_or_else(|| {
+                    PyRuntimeError::new_err("resident spell projectile ID overflow")
+                })?;
+                self.entities.push(ResidentEntity {
+                    active: true,
+                    encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
+                    id: projectile_id,
+                    player_id: cast.player_id,
+                    entity_kind: 2,
+                    python_type: "clasher.entities.Projectile".to_owned(),
+                    card_name: String::new(),
+                    position_x: ExactScalar::Float(9.0_f64.to_bits()),
+                    position_y: ExactScalar::Float(launch_y.to_bits()),
+                    hitpoints: ExactScalar::Int(1),
+                    max_hitpoints: ExactScalar::Int(1),
+                    damage: ExactScalar::Float(spec.damage.to_bits()),
+                    is_alive: true,
+                    target_id: None,
+                    deploy_delay_remaining: 0.0,
+                    placement_delay_total: 0.0,
+                    placement_pending: false,
+                    spawn_hook_pending: false,
+                    spawn_hook_fired: false,
+                    freeze_expiry_time: 0.0,
+                    death_spawn_target_immunity_elapsed_ms: -1,
+                    pending_projectile_max_duration_ms: 0,
+                    spawn_angle_shift: 0.0,
+                    reward_traits: ResidentRewardTraits {
+                        mana_cost: 0.0,
+                        summon_count: 0,
+                        summon_character_second_count: 0,
+                        hit_speed_ms: 0.0,
+                    },
+                    death_spawn_payload_present: false,
+                    mechanics: Vec::new(),
+                    shields: Vec::new(),
+                    shield_break_count: 0,
+                    death_opcodes: Vec::new(),
+                    modifier_state: None,
+                    movement: None,
+                    modifier_supported: true,
+                    direct_combat_unsupported: vec!["non_character_entity".to_owned()],
+                    locked_combat: None,
+                    building_lifetime: None,
+                    building_impact: None,
+                    point_projectile: Some(PointProjectileState {
+                        source_kind: cast.spell_name.clone(),
+                        target_x,
+                        target_y,
+                        travel_speed: spec.travel_speed,
+                        splash_radius: spec.radius,
+                        hits_air: spec.hits_air,
+                        hits_ground: spec.hits_ground,
+                        ignore_buildings: false,
+                        crown_tower_damage: spec.crown_tower_damage,
+                        crown_tower_damage_multiplier: spec.crown_tower_damage_multiplier,
+                        stun_duration: spec.stun_duration,
+                        slow_duration: spec.slow_duration,
+                        slow_multiplier: spec.slow_multiplier,
+                        knockback_distance: spec.knockback_distance,
+                        knockback_ignores_mass: spec.knockback_ignores_mass,
+                        damage_wave_interval: spec.damage_wave_interval,
+                        damage_group_id,
+                        launch_delay: wave_index as f64 * spec.damage_wave_interval,
+                        primary_target_id: None,
+                        source_entity_id: None,
+                        tracks_target: true,
+                        temporary_homing_remaining_ms: 0,
+                        temporary_homing_target_id: None,
+                        permanent_homing_disabled_by_temporary: false,
+                        start_collision_resolved: false,
+                        unsupported: Vec::new(),
+                    }),
+                    area_effect: None,
+                    object_base_movement_noop: true,
+                    blocks_deployment: false,
+                    deployment_collision_radius: 0.5,
+                });
+            }
+        }
         Ok(())
+    }
+
+    fn projectile_spell_positions(
+        &mut self,
+        cast: &ResidentPendingSpellCast,
+        spec: &ResidentProjectileSpellSpec,
+    ) -> PyResult<Vec<(f64, f64)>> {
+        if spec.multiple_projectiles == 1 {
+            return Ok(vec![(cast.position_x, cast.position_y)]);
+        }
+        let count = spec.multiple_projectiles;
+        let radius_units = logic_units(spec.spread_radius).max(0);
+        let projectile_radius_units = logic_units(spec.radius).max(0);
+        let jitter_units = projectile_radius_units * 60 / 100;
+        let ring_units = (radius_units - jitter_units).max(0);
+        let clamp_units = radius_units * 90 / 100;
+        let angle_step = 360 / (count - 1);
+        let mut positions = Vec::with_capacity(
+            usize::try_from(count).expect("validated projectile count fits usize"),
+        );
+        for index in 0..count {
+            let (base_x, base_y) = if index == 0 {
+                (0, 0)
+            } else {
+                rotate_logic_vector(ring_units, 0, angle_step * (index - 1))
+            };
+            let jitter_angle =
+                i64::try_from(self.rng.randbelow(359)?).expect("randbelow(359) fits i64");
+            let (jitter_x, jitter_y) = rotate_logic_vector(0, jitter_units, jitter_angle);
+            let mut offset_x = base_x + jitter_x;
+            let mut offset_y = base_y + jitter_y;
+            let distance_squared = i128::from(offset_x) * i128::from(offset_x)
+                + i128::from(offset_y) * i128::from(offset_y);
+            if clamp_units > 0
+                && distance_squared > i128::from(clamp_units) * i128::from(clamp_units)
+            {
+                (offset_x, offset_y) =
+                    normalized_vector_logic_units(offset_x, offset_y, clamp_units);
+            }
+            let generated_x = cast.position_x + offset_x as f64 / 1000.0;
+            let generated_y = cast.position_y + offset_y as f64 / 1000.0;
+            positions.push(if cast.player_id == 1 {
+                (
+                    cast.position_x - (generated_x - cast.position_x),
+                    cast.position_y - (generated_y - cast.position_y),
+                )
+            } else {
+                (generated_x, generated_y)
+            });
+        }
+        Ok(positions)
     }
 
     fn resident_death_spawns_supported(&self, entity: &ResidentEntity) -> bool {
@@ -9143,6 +9491,8 @@ impl ResidentBattle {
                 slow_multiplier: weapon.slow_multiplier,
                 knockback_distance: 0.0,
                 knockback_ignores_mass: false,
+                damage_wave_interval: 0.0,
+                damage_group_id: None,
                 launch_delay: 0.0,
                 primary_target_id: Some(target_id),
                 source_entity_id: Some(source_id),
@@ -9315,6 +9665,18 @@ impl ResidentBattle {
                     .find(|candidate| candidate.id == id)
                     .is_some_and(|source| matches!(source.entity_kind, 0 | 1))
             });
+            let damage_group_id = self.entities[projectile_index]
+                .point_projectile
+                .as_ref()
+                .and_then(|projectile| projectile.damage_group_id);
+            let damage_group_hit_ids = damage_group_id
+                .and_then(|group_id| {
+                    self.projectile_damage_groups
+                        .iter()
+                        .find(|group| group.id == group_id)
+                })
+                .map(|group| group.hit_entity_ids.clone())
+                .unwrap_or_default();
             let now_ms = (self.time * 1000.0).round_ties_even() as i64;
             let can_damage_index = |target_index: usize| {
                 let target = &self.entities[target_index];
@@ -9347,6 +9709,9 @@ impl ResidentBattle {
                     .enumerate()
                     .filter_map(|(target_index, target)| {
                         if !can_damage_index(target_index) {
+                            return None;
+                        }
+                        if damage_group_hit_ids.contains(&target.id) {
                             return None;
                         }
                         let (_, collision_radius, stealth_until_ms, allow_invisible) = target
@@ -9387,6 +9752,18 @@ impl ResidentBattle {
                     })
                     .collect::<Vec<_>>()
             };
+            if let Some(group_id) = damage_group_id {
+                let new_hit_ids = hit_targets
+                    .iter()
+                    .map(|target_index| self.entities[*target_index].id)
+                    .collect::<Vec<_>>();
+                let group = self
+                    .projectile_damage_groups
+                    .iter_mut()
+                    .find(|group| group.id == group_id)
+                    .expect("point-projectile preflight requires damage group");
+                group.hit_entity_ids.extend(new_hit_ids);
+            }
             let status_targets = hit_targets.clone();
             let knockback_origin = (logic_units(target_x), logic_units(target_y));
             let fallback_direction = (
