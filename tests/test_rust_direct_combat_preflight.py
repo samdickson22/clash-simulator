@@ -6,7 +6,11 @@ from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import Troop
 from clasher.interaction_matrix import enabled_troop_cards
-from clasher.rust_core import ResidentRustBattle, rust_core_available
+from clasher.rust_core import (
+    ResidentRustBattle,
+    compare_locked_direct_combat_phase,
+    rust_core_available,
+)
 
 pytestmark = pytest.mark.skipif(
     not rust_core_available(),
@@ -49,6 +53,28 @@ def _reasons(resident: ResidentRustBattle) -> set[str]:
     }
 
 
+def _locked_pair(*, cooldown: float) -> tuple[BattleState, Troop, Troop]:
+    battle = _empty_battle()
+    first = _spawn(battle, "Knight", 0)
+    second = _spawn(battle, "Knight", 1)
+    first.position = Position(9.0, 14.0)
+    second.position = Position(9.0, 15.0)
+    for actor, target in ((first, second), (second, first)):
+        actor.deploy_delay_remaining = 0.0
+        actor.placement_pending = False
+        actor._spawn_hook_pending = False
+        actor._spawn_hook_fired = True
+        actor.target_id = target.id
+        actor._last_combat_target_id = target.id
+        actor.attack_cooldown = cooldown
+    return battle, first, second
+
+
+def _advance_python_combat_phase(battle: BattleState) -> None:
+    for entity in list(battle.entities.values()):
+        entity.update_combat_component(battle.dt, battle)
+
+
 def test_direct_combat_preflight_accepts_plain_resolved_melee_state() -> None:
     battle = _empty_battle()
     _spawn(battle, "Knight", 0)
@@ -57,6 +83,50 @@ def test_direct_combat_preflight_accepts_plain_resolved_melee_state() -> None:
 
     assert resident.supports_direct_combat_phase
     assert _reasons(resident) == set()
+
+
+@pytest.mark.parametrize("cooldown", [0.0, 0.05, 0.20])
+def test_locked_direct_combat_phase_matches_nonlethal_melee_pass(
+    cooldown: float,
+) -> None:
+    battle, _, _ = _locked_pair(cooldown=cooldown)
+    resident = ResidentRustBattle.from_battle(battle)
+    rng_before = resident.rng_state_bytes()
+
+    assert resident.supports_locked_direct_combat_phase
+    resident.advance_locked_direct_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert resident.rng_state_bytes() == rng_before
+
+
+def test_locked_direct_combat_phase_matches_stunned_target_observation() -> None:
+    battle, first, second = _locked_pair(cooldown=0.0)
+    first.stun_timer = 1.0
+    second.stun_timer = 1.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_locked_direct_combat_phase
+    resident.advance_locked_direct_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+
+
+def test_locked_direct_combat_phase_rejects_lethal_ordering_before_mutation() -> None:
+    battle, _, second = _locked_pair(cooldown=0.0)
+    second.hitpoints = 1.0
+    resident = ResidentRustBattle.from_battle(battle)
+    state_before = resident.locked_direct_combat_state_bytes()
+    rng_before = resident.rng_state_bytes()
+
+    assert not resident.supports_locked_direct_combat_phase
+    with pytest.raises(RuntimeError, match="preflight rejected"):
+        resident.advance_locked_direct_combat_phase()
+
+    assert resident.locked_direct_combat_state_bytes() == state_before
+    assert resident.rng_state_bytes() == rng_before
 
 
 @pytest.mark.parametrize(

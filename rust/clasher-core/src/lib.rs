@@ -107,6 +107,24 @@ impl ExactScalar {
             Self::Float(bits) => f64::from_bits(*bits),
         }
     }
+
+    fn set_f64(&mut self, value: f64) {
+        *self = Self::Float(value.to_bits());
+    }
+}
+
+fn optional_position(fields: &Map<String, Value>, name: &str) -> PyResult<Option<(f64, f64)>> {
+    let Some(value) = fields.get(name) else {
+        return Ok(None);
+    };
+    if value.is_null() {
+        return Ok(None);
+    }
+    let position = object_fields(value)?;
+    Ok(Some((
+        normalized_f64(position, "x")?,
+        normalized_f64(position, "y")?,
+    )))
 }
 
 fn normalized_f64(fields: &Map<String, Value>, name: &str) -> PyResult<f64> {
@@ -446,6 +464,137 @@ struct ResidentEntity {
     modifier_state: Option<ModifierState>,
     modifier_supported: bool,
     direct_combat_unsupported: Vec<String>,
+    locked_combat: Option<LockedDirectCombatState>,
+}
+
+#[derive(Clone)]
+struct LockedDirectCombatState {
+    damage: f64,
+    range: f64,
+    attack_cooldown: f64,
+    attack_windup_active: bool,
+    attack_preload_blocked: bool,
+    last_attack_time: f64,
+    stun_timer: f64,
+    collision_radius: f64,
+    native_target_distance_discount_sq_units: i64,
+    is_air_unit: bool,
+    can_attack_air: bool,
+    can_attack_ground: bool,
+    facing_x_units: i64,
+    facing_y_units: i64,
+    last_combat_target_id: Option<i64>,
+    has_attacked_once: bool,
+    movement_target_id: Option<i64>,
+    initial_position: Option<(f64, f64)>,
+    attack_speed_debuff_multiplier: f64,
+    attack_speed_buff_multiplier: f64,
+    attack_mode_multiplier: f64,
+    hit_speed_ms: i64,
+    first_hit_ms: i64,
+    hidden_building: bool,
+    stealth_until_ms: i64,
+}
+
+impl LockedDirectCombatState {
+    fn from_fields(
+        fields: &Map<String, Value>,
+        card_fields: &Map<String, Value>,
+    ) -> PyResult<Self> {
+        let hit_speed_ms = card_fields
+            .get("hit_speed")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let load_time_ms = card_fields
+            .get("load_time")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let first_hit_ms = if load_time_ms > hit_speed_ms {
+            hit_speed_ms
+        } else {
+            (hit_speed_ms - load_time_ms).max(0)
+        };
+        Ok(Self {
+            damage: normalized_f64(fields, "damage")?,
+            range: normalized_f64(fields, "range")?,
+            attack_cooldown: normalized_f64(fields, "attack_cooldown")?,
+            attack_windup_active: required_bool(fields, "_attack_windup_active")?,
+            attack_preload_blocked: required_bool(fields, "_attack_preload_blocked")?,
+            last_attack_time: normalized_f64(fields, "last_attack_time")?,
+            stun_timer: normalized_f64(fields, "stun_timer")?,
+            collision_radius: normalized_f64(fields, "_collision_radius")?,
+            native_target_distance_discount_sq_units: required_i64(
+                fields,
+                "_native_target_distance_discount_sq_units",
+            )?,
+            is_air_unit: required_bool(fields, "is_air_unit")?,
+            can_attack_air: required_bool(fields, "_can_attack_air_cached")?,
+            can_attack_ground: required_bool(fields, "_can_attack_ground_cached")?,
+            facing_x_units: required_i64(fields, "_facing_x_units")?,
+            facing_y_units: required_i64(fields, "_facing_y_units")?,
+            last_combat_target_id: fields.get("_last_combat_target_id").and_then(Value::as_i64),
+            has_attacked_once: normalized_optional_bool(fields, "_has_attacked_once"),
+            movement_target_id: fields.get("_movement_target_id").and_then(Value::as_i64),
+            initial_position: optional_position(fields, "initial_position")?,
+            attack_speed_debuff_multiplier: normalized_f64(
+                fields,
+                "attack_speed_debuff_multiplier",
+            )?,
+            attack_speed_buff_multiplier: normalized_f64(fields, "attack_speed_buff_multiplier")?,
+            attack_mode_multiplier: normalized_f64(fields, "attack_mode_multiplier")?,
+            hit_speed_ms,
+            first_hit_ms,
+            hidden_building: normalized_optional_bool(fields, "_hidden_building"),
+            stealth_until_ms: fields
+                .get("_stealth_until")
+                .and_then(Value::as_i64)
+                .unwrap_or(0),
+        })
+    }
+
+    fn attack_rate(&self) -> f64 {
+        let debuff = (self.attack_speed_debuff_multiplier * 100.0)
+            .round_ties_even()
+            .max(0.0) as i64;
+        let buff = (self
+            .attack_speed_buff_multiplier
+            .max(self.attack_mode_multiplier)
+            * 100.0)
+            .round_ties_even()
+            .max(0.0) as i64;
+        let buffed = 50_i64 * buff / 100;
+        (buffed * debuff / 100) as f64 / 50.0
+    }
+
+    fn base_attack_interval(&self) -> f64 {
+        if self.hit_speed_ms == 0 {
+            1.0
+        } else {
+            self.hit_speed_ms as f64 / 1000.0
+        }
+    }
+
+    fn diagnostic_value(&self, entity: &ResidentEntity) -> Value {
+        json!({
+            "attack_cooldown": exact_f64_value(self.attack_cooldown),
+            "attack_preload_blocked": self.attack_preload_blocked,
+            "attack_windup_active": self.attack_windup_active,
+            "encounter_index": entity.encounter_index,
+            "facing_x_units": self.facing_x_units,
+            "facing_y_units": self.facing_y_units,
+            "has_attacked_once": self.has_attacked_once,
+            "hitpoints": entity.hitpoints.diagnostic_value(),
+            "id": entity.id,
+            "initial_position": self.initial_position.map(|(x, y)| json!([
+                exact_f64_value(x), exact_f64_value(y)
+            ])),
+            "is_alive": entity.is_alive,
+            "last_attack_time": exact_f64_value(self.last_attack_time),
+            "last_combat_target_id": self.last_combat_target_id,
+            "movement_target_id": self.movement_target_id,
+            "target_id": entity.target_id,
+        })
+    }
 }
 
 impl ResidentEntity {
@@ -485,9 +634,17 @@ impl ResidentEntity {
         } else {
             None
         };
+        let locked_combat = if is_character {
+            Some(LockedDirectCombatState::from_fields(fields, card_fields)?)
+        } else {
+            None
+        };
         let mut direct_combat_unsupported = Vec::new();
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
+        }
+        if entity_kind == 1 {
+            direct_combat_unsupported.push("building_combat_not_implemented".to_owned());
         }
         if !mechanics.is_empty() {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
@@ -618,6 +775,7 @@ impl ResidentEntity {
             modifier_state,
             modifier_supported,
             direct_combat_unsupported,
+            locked_combat,
         })
     }
 
@@ -703,6 +861,12 @@ impl ResidentEntity {
             "id": self.id,
             "reasons": self.direct_combat_unsupported,
         })
+    }
+
+    fn locked_combat_diagnostic_value(&self) -> Option<Value> {
+        self.locked_combat
+            .as_ref()
+            .map(|state| state.diagnostic_value(self))
     }
 }
 
@@ -1586,6 +1750,160 @@ impl ResidentBattle {
                 "failed to serialize resident direct-combat capability: {error}"
             ))
         })
+    }
+
+    fn supports_locked_direct_combat_phase(&self) -> bool {
+        if !self.supports_direct_combat_phase() {
+            return false;
+        }
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        for actor in &self.entities {
+            if !actor.is_alive {
+                continue;
+            }
+            if actor.deploy_delay_remaining > 0.0 {
+                return false;
+            }
+            let Some(actor_state) = actor.locked_combat.as_ref() else {
+                return false;
+            };
+            let Some(target_id) = actor.target_id else {
+                return false;
+            };
+            if actor_state.last_combat_target_id != Some(target_id) {
+                return false;
+            }
+            let Some(target) = self.entities.iter().find(|entity| entity.id == target_id) else {
+                return false;
+            };
+            let Some(target_state) = target.locked_combat.as_ref() else {
+                return false;
+            };
+            if !target.is_alive
+                || target.player_id == actor.player_id
+                || target_state.hidden_building
+                || target_state.stealth_until_ms > now_ms
+                || target.death_spawn_target_immunity_elapsed_ms >= 0
+            {
+                return false;
+            }
+            if (target_state.is_air_unit && !actor_state.can_attack_air)
+                || (!target_state.is_air_unit && !actor_state.can_attack_ground)
+            {
+                return false;
+            }
+            let dx = target.position_x.as_f64() - actor.position_x.as_f64();
+            let dy = target.position_y.as_f64() - actor.position_y.as_f64();
+            let discount =
+                target_state.native_target_distance_discount_sq_units.max(0) as f64 / 1_000_000.0;
+            let distance = (dx * dx + dy * dy - discount).max(0.0).sqrt();
+            let reach = actor_state.range + target_state.collision_radius + 1e-8;
+            if distance > reach {
+                return false;
+            }
+            let hits_this_phase = actor_state.stun_timer <= 0.0
+                && (actor_state.attack_cooldown <= 0.0
+                    || actor_state.attack_cooldown - self.dt * actor_state.attack_rate() <= 1e-9);
+            if hits_this_phase && actor_state.damage >= target.hitpoints.as_f64() {
+                // Lethal ordered damage requires retarget/death/cache behavior
+                // that belongs to the next combat capability expansion.
+                return false;
+            }
+        }
+        true
+    }
+
+    fn advance_locked_direct_combat_phase(&mut self) -> PyResult<()> {
+        if !self.supports_locked_direct_combat_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident locked direct-combat preflight rejected battle state",
+            ));
+        }
+        self.checkpoint_current = false;
+        for actor_index in 0..self.entities.len() {
+            if !self.entities[actor_index].is_alive {
+                continue;
+            }
+            let target_id = self.entities[actor_index]
+                .target_id
+                .expect("locked preflight requires target");
+            let target_index = self
+                .entities
+                .iter()
+                .position(|entity| entity.id == target_id)
+                .expect("locked preflight requires resident target");
+            let target_x = self.entities[target_index].position_x.as_f64();
+            let target_y = self.entities[target_index].position_y.as_f64();
+            let (actor_x, actor_y) = (
+                self.entities[actor_index].position_x.as_f64(),
+                self.entities[actor_index].position_y.as_f64(),
+            );
+            let damage = {
+                let actor = &mut self.entities[actor_index];
+                let state = actor
+                    .locked_combat
+                    .as_mut()
+                    .expect("locked preflight requires combat state");
+                state.movement_target_id = None;
+                state.initial_position.get_or_insert((actor_x, actor_y));
+                state.last_attack_time += self.dt;
+                let facing_x = ((target_x - actor_x) * 1000.0).round_ties_even() as i64;
+                let facing_y = ((target_y - actor_y) * 1000.0).round_ties_even() as i64;
+                if facing_x != 0 || facing_y != 0 {
+                    state.facing_x_units = facing_x;
+                    state.facing_y_units = facing_y;
+                }
+                if state.stun_timer > 0.0 {
+                    None
+                } else {
+                    if state.attack_cooldown > 0.0 {
+                        state.attack_cooldown -= self.dt * state.attack_rate();
+                        if state.attack_cooldown <= 1e-9 {
+                            state.attack_cooldown = 0.0;
+                        }
+                    }
+                    if !state.attack_windup_active
+                        && state.attack_cooldown <= state.first_hit_ms as f64 / 1000.0 + 1e-12
+                    {
+                        state.attack_windup_active = true;
+                    }
+                    if state.attack_cooldown <= 0.0 {
+                        state.attack_cooldown = state.base_attack_interval();
+                        state.attack_windup_active = false;
+                        state.has_attacked_once = true;
+                        state.attack_preload_blocked = false;
+                        state.last_attack_time = 0.0;
+                        Some(state.damage)
+                    } else {
+                        None
+                    }
+                }
+            };
+            if let Some(damage) = damage {
+                let target = &mut self.entities[target_index];
+                target
+                    .hitpoints
+                    .set_f64((target.hitpoints.as_f64() - damage).max(0.0));
+            }
+        }
+        Ok(())
+    }
+
+    fn locked_direct_combat_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter_map(ResidentEntity::locked_combat_diagnostic_value)
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident locked direct-combat state: {error}"
+            ))
+        })
+    }
+
+    fn locked_direct_combat_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.locked_direct_combat_state_bytes()?))
     }
 
     fn rng_random(&mut self) -> f64 {

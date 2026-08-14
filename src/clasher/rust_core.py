@@ -368,6 +368,19 @@ class ResidentRustBattle:
     def direct_combat_capability(self) -> list[dict[str, Any]]:
         return json.loads(self._native.direct_combat_capability_bytes())
 
+    @property
+    def supports_locked_direct_combat_phase(self) -> bool:
+        return bool(self._native.supports_locked_direct_combat_phase())
+
+    def advance_locked_direct_combat_phase(self) -> None:
+        self._native.advance_locked_direct_combat_phase()
+
+    def locked_direct_combat_state_bytes(self) -> bytes:
+        return bytes(self._native.locked_direct_combat_state_bytes())
+
+    def locked_direct_combat_sha256(self) -> str:
+        return str(self._native.locked_direct_combat_sha256())
+
     def rng_random(self) -> float:
         return float(self._native.rng_random())
 
@@ -842,6 +855,87 @@ def compare_character_object_phase(
     if expected_hash != actual_hash:
         raise AssertionError(
             "resident Rust character object hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
+
+
+def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for encounter_index, entity in enumerate(battle.entities.values()):
+        if entity.entity_kind not in {0, 1}:
+            continue
+        initial_position = getattr(entity, "initial_position", None)
+        rows.append(
+            {
+                "attack_cooldown": _exact_scalar(entity.attack_cooldown),
+                "attack_preload_blocked": bool(entity._attack_preload_blocked),
+                "attack_windup_active": bool(entity._attack_windup_active),
+                "encounter_index": encounter_index,
+                "facing_x_units": int(entity._facing_x_units),
+                "facing_y_units": int(entity._facing_y_units),
+                "has_attacked_once": bool(
+                    getattr(entity, "_has_attacked_once", False)
+                ),
+                "hitpoints": _exact_scalar(entity.hitpoints),
+                "id": int(entity.id),
+                "initial_position": (
+                    None
+                    if initial_position is None
+                    else [
+                        _exact_scalar(initial_position.x),
+                        _exact_scalar(initial_position.y),
+                    ]
+                ),
+                "is_alive": bool(entity.is_alive),
+                "last_attack_time": _exact_scalar(entity.last_attack_time),
+                "last_combat_target_id": getattr(
+                    entity,
+                    "_last_combat_target_id",
+                    None,
+                ),
+                "movement_target_id": getattr(
+                    entity,
+                    "_movement_target_id",
+                    None,
+                ),
+                "target_id": entity.target_id,
+            }
+        )
+    return rows
+
+
+def locked_direct_combat_state_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        locked_direct_combat_state_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_locked_direct_combat_phase(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = locked_direct_combat_state_rows(battle)
+    actual = json.loads(resident.locked_direct_combat_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust locked combat state mismatch")
+        raise AssertionError(
+            "resident Rust locked combat parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(
+        locked_direct_combat_state_bytes(battle)
+    ).hexdigest()
+    actual_hash = resident.locked_direct_combat_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust locked combat hash mismatch "
             f"expected={expected_hash} actual={actual_hash}"
         )
 
