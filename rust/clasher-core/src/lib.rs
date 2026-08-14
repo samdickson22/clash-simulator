@@ -6532,6 +6532,19 @@ impl ResidentBattle {
     }
 
     fn direct_target_in_sight(&self, actor_index: usize, target_index: usize) -> bool {
+        self.direct_target_in_sight_at_distance(
+            actor_index,
+            target_index,
+            self.direct_target_distance(actor_index, target_index),
+        )
+    }
+
+    fn direct_target_in_sight_at_distance(
+        &self,
+        actor_index: usize,
+        target_index: usize,
+        distance: f64,
+    ) -> bool {
         let actor = &self.entities[actor_index];
         let target = &self.entities[target_index];
         let actor_state = actor
@@ -6547,7 +6560,7 @@ impl ResidentBattle {
         let sight_reach = actor_state.sight_range
             + target_state.collision_radius
             + if target_is_crown { 2.0 } else { 0.0 };
-        if self.direct_target_distance(actor_index, target_index) > sight_reach + 1e-8 {
+        if distance > sight_reach + 1e-8 {
             return false;
         }
         if actor_is_crown || target_is_crown {
@@ -6635,94 +6648,104 @@ impl ResidentBattle {
     ) -> Option<usize> {
         let actor = &self.entities[actor_index];
         let actor_state = actor.locked_combat.as_ref()?;
-        let mut troop_targets = Vec::new();
-        let mut building_targets = Vec::new();
-        for (target_index, _) in self.entities.iter().enumerate() {
-            if !self.direct_target_valid(actor_index, target_index)
-                || !self.direct_target_in_sight(actor_index, target_index)
-            {
+        let mut best_troop = None;
+        let mut best_building = None;
+        let mut minimum_princess_x = f64::INFINITY;
+        let actor_x = actor.position_x.as_f64();
+        for (target_index, target) in self.entities.iter().enumerate() {
+            if !self.direct_target_valid(actor_index, target_index) {
+                continue;
+            }
+            if matches!(self.direct_crown_slot(target_index), Some("left" | "right")) {
+                minimum_princess_x =
+                    minimum_princess_x.min((target.position_x.as_f64() - actor_x).abs());
+            }
+            let distance = self.direct_target_distance(actor_index, target_index);
+            if !self.direct_target_in_sight_at_distance(actor_index, target_index, distance) {
                 continue;
             }
             if self.direct_is_native_building_target(target_index) {
-                building_targets.push(target_index);
-            } else if !actor_state.targets_only_buildings {
-                troop_targets.push(target_index);
+                if best_building.is_none_or(|(_, minimum)| distance < minimum) {
+                    best_building = Some((target_index, distance));
+                }
+            } else if !actor_state.targets_only_buildings
+                && best_troop.is_none_or(|(_, minimum)| distance < minimum)
+            {
+                best_troop = Some((target_index, distance));
             }
         }
-        let mut candidates = if actor_state.targets_only_buildings {
-            building_targets
-        } else {
-            troop_targets.extend(building_targets);
-            troop_targets
-        };
-        if candidates.is_empty() && include_crown_fallback {
-            let crowns = self
-                .entities
-                .iter()
-                .enumerate()
-                .filter_map(|(target_index, _)| {
-                    (self.direct_target_valid(actor_index, target_index)
-                        && self.direct_crown_slot(target_index).is_some())
-                    .then_some(target_index)
-                })
-                .collect::<Vec<_>>();
-            let princesses = crowns
-                .iter()
-                .copied()
-                .filter(|&target_index| {
-                    matches!(self.direct_crown_slot(target_index), Some("left" | "right"))
-                })
-                .collect::<Vec<_>>();
-            if princesses.is_empty() {
-                candidates = crowns
-                    .into_iter()
-                    .filter(|&target_index| self.direct_crown_slot(target_index) == Some("king"))
-                    .collect();
+        let selected = match (best_troop, best_building) {
+            (None, None) => None,
+            (Some(troop), None) => Some(troop),
+            (None, Some(building)) => Some(building),
+            (Some(troop), Some(building)) => Some(if building.1 < troop.1 {
+                building
             } else {
-                let actor_x = actor.position_x.as_f64();
-                let minimum_x = princesses.iter().fold(f64::INFINITY, |minimum, &index| {
-                    minimum.min((self.entities[index].position_x.as_f64() - actor_x).abs())
-                });
-                candidates = princesses
-                    .into_iter()
-                    .filter(|&index| {
-                        (self.entities[index].position_x.as_f64() - actor_x).abs()
-                            <= minimum_x + 1e-8
-                    })
-                    .collect();
+                troop
+            }),
+        };
+        if let Some((selected, minimum_distance)) = selected {
+            if !self.direct_is_native_building_target(selected) {
+                return Some(selected);
+            }
+            return self.direct_select_symmetric_building(
+                actor_index,
+                minimum_distance,
+                |candidate, distance| {
+                    self.direct_target_in_sight_at_distance(actor_index, candidate, distance)
+                        && self.direct_is_native_building_target(candidate)
+                },
+            );
+        }
+        if !include_crown_fallback {
+            return None;
+        }
+        let use_princesses = minimum_princess_x.is_finite();
+        let crown_eligible = |candidate: usize| {
+            if use_princesses {
+                matches!(self.direct_crown_slot(candidate), Some("left" | "right"))
+                    && (self.entities[candidate].position_x.as_f64() - actor_x).abs()
+                        <= minimum_princess_x + 1e-8
+            } else {
+                self.direct_crown_slot(candidate) == Some("king")
+            }
+        };
+        let mut minimum_distance = f64::INFINITY;
+        for (candidate, _) in self.entities.iter().enumerate() {
+            if self.direct_target_valid(actor_index, candidate) && crown_eligible(candidate) {
+                minimum_distance =
+                    minimum_distance.min(self.direct_target_distance(actor_index, candidate));
             }
         }
-        self.direct_select_first_nearest(actor_index, &candidates)
+        if !minimum_distance.is_finite() {
+            return None;
+        }
+        self.direct_select_symmetric_building(actor_index, minimum_distance, |candidate, _| {
+            crown_eligible(candidate)
+        })
     }
 
-    fn direct_select_first_nearest(
+    fn direct_select_symmetric_building(
         &self,
         actor_index: usize,
-        candidates: &[usize],
+        minimum_distance: f64,
+        eligible: impl Fn(usize, f64) -> bool,
     ) -> Option<usize> {
-        let mut selected = *candidates.first()?;
-        let mut minimum = self.direct_target_distance(actor_index, selected);
-        for &candidate in &candidates[1..] {
-            let distance = self.direct_target_distance(actor_index, candidate);
-            if distance < minimum {
-                selected = candidate;
-                minimum = distance;
-            }
-        }
-        if !self.direct_is_native_building_target(selected) {
-            return Some(selected);
-        }
         let direction = if self.entities[actor_index].player_id == 0 {
             1.0
         } else {
             -1.0
         };
-        candidates
+        self.entities
             .iter()
-            .copied()
-            .filter(|&candidate| {
-                self.direct_is_native_building_target(candidate)
-                    && self.direct_target_distance(actor_index, candidate) <= minimum + 1e-6
+            .enumerate()
+            .filter_map(|(candidate, _)| {
+                if !self.direct_target_valid(actor_index, candidate) {
+                    return None;
+                }
+                let distance = self.direct_target_distance(actor_index, candidate);
+                (distance <= minimum_distance + 1e-6 && eligible(candidate, distance))
+                    .then_some(candidate)
             })
             .min_by(|&left, &right| {
                 let left_entity = &self.entities[left];

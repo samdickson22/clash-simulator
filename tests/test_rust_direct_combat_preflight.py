@@ -4,7 +4,8 @@ import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Projectile, Troop
+from clasher.entities import Building, Projectile, Troop
+from clasher.factory.dynamic_factory import building_from_values
 from clasher.interaction_matrix import enabled_troop_cards
 from clasher.rust_core import (
     ResidentRustBattle,
@@ -46,6 +47,45 @@ def _spawn(
         for entity_id, entity in battle.entities.items()
         if entity_id not in before and isinstance(entity, Troop)
     )
+
+
+def _spawn_plain_building(
+    battle: BattleState,
+    *,
+    player_id: int,
+    position: Position,
+) -> Building:
+    stats = building_from_values(
+        name="TestBuilding",
+        hitpoints=1200,
+        damage=80,
+        range_tiles=6.0,
+        sight_range_tiles=6.0,
+        hit_speed_ms=1000,
+        deploy_time_ms=0,
+        collision_radius_tiles=1.0,
+        lifetime_ms=None,
+        target_type="TID_TARGETS_AIR_AND_GROUND",
+    )
+    building = Building(
+        id=battle.next_entity_id,
+        position=position,
+        player_id=player_id,
+        card_stats=stats,
+        hitpoints=1200,
+        max_hitpoints=1200,
+        damage=80,
+        range=6.0,
+        sight_range=6.0,
+    )
+    battle.entities[building.id] = building
+    battle.next_entity_id += 1
+    building.deploy_delay_remaining = 0.0
+    building.placement_pending = False
+    building._spawn_hook_pending = False
+    building._spawn_hook_fired = True
+    building.attack_cooldown = 1.0
+    return building
 
 
 def _reasons(resident: ResidentRustBattle) -> set[str]:
@@ -250,6 +290,73 @@ def test_direct_troop_combat_equal_distance_keeps_encounter_order() -> None:
 
     compare_locked_direct_combat_phase(battle, resident)
     assert actor.target_id == first.id
+
+
+@pytest.mark.parametrize(
+    ("building_y", "expected_kind"),
+    [(15.0, Troop), (14.5, Building)],
+)
+def test_direct_combat_preserves_troop_then_building_category_precedence(
+    building_y: float,
+    expected_kind: type[Troop | Building],
+) -> None:
+    battle = _empty_battle()
+    actor = _spawn(battle, "Knight", 0)
+    _spawn_plain_building(
+        battle,
+        player_id=1,
+        position=Position(9.0, building_y),
+    )
+    troop = _spawn(battle, "Knight", 1)
+    actor.position = Position(9.0, 12.0)
+    troop.position = Position(9.0, 15.0)
+    for entity in (actor, troop):
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        entity._spawn_hook_pending = False
+        entity._spawn_hook_fired = True
+        entity.attack_cooldown = 1.0
+    resident = ResidentRustBattle.from_battle(battle)
+    rng_before = resident.rng_state_bytes()
+
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert isinstance(battle.entities[actor.target_id], expected_kind)
+    assert resident.rng_state_bytes() == rng_before
+
+
+@pytest.mark.parametrize(("player_id", "expected_x"), [(0, 7.0), (1, 11.0)])
+def test_direct_combat_symmetric_building_tie_is_owner_relative(
+    player_id: int,
+    expected_x: float,
+) -> None:
+    battle = _empty_battle()
+    actor = _spawn(battle, "Giant", player_id)
+    actor.position = Position(9.0, 12.0 if player_id == 0 else 20.0)
+    actor.deploy_delay_remaining = 0.0
+    actor.placement_pending = False
+    actor._spawn_hook_pending = False
+    actor._spawn_hook_fired = True
+    actor.attack_cooldown = 1.0
+    target_y = 15.0 if player_id == 0 else 17.0
+    xs = (11.0, 7.0) if player_id == 0 else (7.0, 11.0)
+    for x in xs:
+        _spawn_plain_building(
+            battle,
+            player_id=1 - player_id,
+            position=Position(x, target_y),
+        )
+    resident = ResidentRustBattle.from_battle(battle)
+    rng_before = resident.rng_state_bytes()
+
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert battle.entities[actor.target_id].position.x == expected_x
+    assert resident.rng_state_bytes() == rng_before
 
 
 @pytest.mark.parametrize(
