@@ -31,15 +31,15 @@ Five alternating warmups preceded 30 alternating repetitions. Timing used
 intervals for the repetition mean (29 degrees of freedom).
 
 ```text
-PYTHONPATH=src:. .venv/bin/python <inline fixed-seed action-plus-32-tick driver>
+PYTHONPATH=src:. .venv/bin/python scripts/perf/benchmark_rust_action_interval.py
 ```
 
 | Arm | Median wall / decision | Mean wall (95% CI) | Decisions/s | Ticks/s |
 |---|---:|---:|---:|---:|
-| optimized Python scalar | 0.003546625 s | 0.003593282 s [0.003498227, 0.003688337] | 278.30 | 8,905.51 |
-| resident Rust action + batch | 0.000129667 s | 0.000136407 s [0.000126913, 0.000145901] | 7,331.00 | 234,592.01 |
+| optimized Python scalar | 0.003022292 s | 0.003016047 s [0.002957424, 0.003074671] | 331.56 | 10,609.91 |
+| resident Rust action + batch | 0.000110229 s | 0.000114601 s [0.000108885, 0.000120317] | 8,725.90 | 279,228.70 |
 
-The resident boundary is **26.3424x faster** and reduces mean simulator/action
+The resident boundary is **26.3177x faster** and reduces mean simulator/action
 wall time by **96.20%** for this declared-capability decision workload. The final
 Python and Rust states matched exactly across player state, entity order/IDs,
 combat, movement/routes, modifiers, objects, shield/death opcodes, complete
