@@ -1052,6 +1052,7 @@ struct ResidentEntity {
     pending_projectile_max_duration_ms: i64,
     mechanics: Vec<String>,
     shields: Vec<ShieldState>,
+    death_opcodes: Vec<ResidentDeathOpcode>,
     modifier_state: Option<ModifierState>,
     movement: Option<ResidentMovementState>,
     modifier_supported: bool,
@@ -1073,6 +1074,7 @@ struct ResidentMovementState {
     pending_y: f64,
     pending_consumed: bool,
     unit_mass: f64,
+    knockback_immune: bool,
     collision_radius: f64,
     building_pathing_radius: f64,
     is_hover: bool,
@@ -1134,6 +1136,11 @@ impl ResidentMovementState {
             0.0
         };
         let route_cache = normalized_route_cache(fields)?;
+        let knockback_immune = card_fields
+            .get("summon_character_data")
+            .and_then(|value| normalized_mapping_get(value, "ignorePushback"))
+            .and_then(Value::as_bool)
+            .unwrap_or(false);
         Ok(Self {
             vector_x_units: required_i64(fields, "_movement_vector_x_units")?,
             vector_y_units: required_i64(fields, "_movement_vector_y_units")?,
@@ -1143,6 +1150,7 @@ impl ResidentMovementState {
             pending_y: normalized_f64(fields, "_pending_movement_y")?,
             pending_consumed: required_bool(fields, "_pending_movement_consumed")?,
             unit_mass: normalized_f64(fields, "_unit_mass")?,
+            knockback_immune,
             collision_radius,
             building_pathing_radius,
             is_hover: required_bool(fields, "_is_hover_unit")?,
@@ -1206,6 +1214,83 @@ impl ResidentMovementState {
 struct ShieldState {
     current: ExactScalar,
     maximum: ExactScalar,
+}
+
+#[derive(Clone)]
+enum ResidentDeathOpcode {
+    Damage(ResidentDeathDamage),
+}
+
+#[derive(Clone)]
+struct ResidentDeathDamage {
+    radius_tiles: ExactScalar,
+    radius_units: i64,
+    base_damage: i64,
+    scaled_damage: ExactScalar,
+    knockback_distance: ExactScalar,
+    knockback_units: i64,
+    hits_air: bool,
+    hits_ground: bool,
+}
+
+impl ResidentDeathDamage {
+    fn from_normalized(value: &Value) -> PyResult<Self> {
+        let fields = object_fields(value)?;
+        let radius_tiles = ExactScalar::from_normalized(
+            fields
+                .get("radius_tiles")
+                .ok_or_else(|| PyValueError::new_err("DeathDamage has no radius_tiles"))?,
+        )?;
+        let scaled_damage = ExactScalar::from_normalized(
+            fields
+                .get("scaled_damage")
+                .ok_or_else(|| PyValueError::new_err("DeathDamage has no scaled_damage"))?,
+        )?;
+        let knockback_distance = ExactScalar::from_normalized(
+            fields
+                .get("knockback_distance")
+                .ok_or_else(|| PyValueError::new_err("DeathDamage has no knockback_distance"))?,
+        )?;
+        let radius = radius_tiles.as_f64();
+        let damage = scaled_damage.as_f64();
+        let knockback = knockback_distance.as_f64();
+        if !radius.is_finite()
+            || radius < 0.0
+            || !damage.is_finite()
+            || damage < 0.0
+            || !knockback.is_finite()
+            || knockback < 0.0
+        {
+            return Err(PyValueError::new_err(
+                "DeathDamage contains invalid radius, damage, or knockback",
+            ));
+        }
+        Ok(Self {
+            radius_units: logic_units(radius).max(0),
+            radius_tiles,
+            base_damage: required_i64(fields, "damage")?,
+            scaled_damage,
+            knockback_units: logic_units(knockback).clamp(0, 10_000),
+            knockback_distance,
+            hits_air: required_bool(fields, "hits_air")?,
+            hits_ground: required_bool(fields, "hits_ground")?,
+        })
+    }
+
+    fn diagnostic_value(&self, opcode_index: usize) -> Value {
+        json!({
+            "base_damage": self.base_damage,
+            "hits_air": self.hits_air,
+            "hits_ground": self.hits_ground,
+            "knockback_distance": self.knockback_distance.diagnostic_value(),
+            "knockback_units": self.knockback_units,
+            "opcode_index": opcode_index,
+            "opcode_type": "damage",
+            "radius_tiles": self.radius_tiles.diagnostic_value(),
+            "radius_units": self.radius_units,
+            "scaled_damage": self.scaled_damage.diagnostic_value(),
+        })
+    }
 }
 
 impl ShieldState {
@@ -1788,8 +1873,8 @@ impl LockedDirectCombatState {
 }
 
 impl ResidentEntity {
-    fn has_only_shield_mechanics(&self) -> bool {
-        self.mechanics.len() == self.shields.len()
+    fn has_only_compiled_mechanics(&self) -> bool {
+        self.mechanics.len() == self.shields.len() + self.death_opcodes.len()
     }
 
     fn apply_incoming_damage(&mut self, mut amount: f64) -> f64 {
@@ -1879,13 +1964,21 @@ impl ResidentEntity {
             .iter()
             .map(object_type)
             .collect::<PyResult<Vec<_>>>()?;
-        let shields = mechanic_values
-            .iter()
-            .filter_map(|mechanic| {
-                (object_type(mechanic).ok()?.as_str() == "clasher.mechanics.shared.shield.Shield")
-                    .then_some(ShieldState::from_normalized(mechanic))
-            })
-            .collect::<PyResult<Vec<_>>>()?;
+        let mut shields = Vec::new();
+        let mut death_opcodes = Vec::new();
+        for mechanic in mechanic_values {
+            match object_type(mechanic)?.as_str() {
+                "clasher.mechanics.shared.shield.Shield" => {
+                    shields.push(ShieldState::from_normalized(mechanic)?);
+                }
+                "clasher.mechanics.shared.death_effects.DeathDamage" => {
+                    death_opcodes.push(ResidentDeathOpcode::Damage(
+                        ResidentDeathDamage::from_normalized(mechanic)?,
+                    ));
+                }
+                _ => {}
+            }
+        }
         let target_id = fields
             .get("target_id")
             .ok_or_else(|| PyValueError::new_err("entity has no target_id"))?
@@ -1949,7 +2042,7 @@ impl ResidentEntity {
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
         }
-        if shields.len() != mechanics.len() {
+        if shields.len() + death_opcodes.len() != mechanics.len() {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
         }
         let uses_projectile_weapon = locked_combat
@@ -2091,6 +2184,7 @@ impl ResidentEntity {
             )?,
             mechanics,
             shields,
+            death_opcodes,
             modifier_state,
             movement,
             modifier_supported,
@@ -2129,7 +2223,7 @@ impl ResidentEntity {
     }
 
     fn supports_character_object_phase(&self) -> bool {
-        matches!(self.entity_kind, 0 | 1) && self.has_only_shield_mechanics()
+        matches!(self.entity_kind, 0 | 1) && self.has_only_compiled_mechanics()
     }
 
     fn advance_character_object_phase(&mut self, dt: f64) {
@@ -3122,6 +3216,30 @@ impl ResidentBattle {
         Ok(sha256_hex(&self.shield_state_bytes()?))
     }
 
+    fn death_opcode_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let mut values = Vec::new();
+        for entity in self.entities.iter().filter(|entity| entity.active) {
+            for (opcode_index, opcode) in entity.death_opcodes.iter().enumerate() {
+                let mut value = match opcode {
+                    ResidentDeathOpcode::Damage(damage) => damage.diagnostic_value(opcode_index),
+                };
+                let fields = value
+                    .as_object_mut()
+                    .expect("death opcode diagnostic is an object");
+                fields.insert("encounter_index".to_owned(), json!(entity.encounter_index));
+                fields.insert("id".to_owned(), json!(entity.id));
+                values.push(value);
+            }
+        }
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!("failed to serialize death opcode state: {error}"))
+        })
+    }
+
+    fn death_opcode_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.death_opcode_state_bytes()?))
+    }
+
     fn supports_character_object_phase(&self) -> bool {
         self.entities
             .iter()
@@ -3232,7 +3350,7 @@ impl ResidentBattle {
                 return false;
             };
             entity.deploy_delay_remaining <= 0.0
-                && entity.has_only_shield_mechanics()
+                && entity.has_only_compiled_mechanics()
                 && movement.vector_count >= 0
                 && movement.unit_mass.is_finite()
                 && movement.unit_mass > 0.0
@@ -3596,6 +3714,17 @@ impl ResidentBattle {
             {
                 continue;
             }
+            if self.entities[actor_index]
+                .movement
+                .as_ref()
+                .is_some_and(|movement| {
+                    movement.forced_movement_active
+                        && !(movement.knockback_target.is_some()
+                            && !movement.knockback_interrupts_combat)
+                })
+            {
+                continue;
+            }
             if self.entities[actor_index].entity_kind == 0 {
                 self.entities[actor_index]
                     .locked_combat
@@ -3708,6 +3837,15 @@ impl ResidentBattle {
                 match payload {
                     CombatPayload::DirectDamage(damage) => {
                         self.apply_direct_combat_damage(target_index, damage);
+                        let state = self.entities[actor_index]
+                            .locked_combat
+                            .as_mut()
+                            .expect("direct attacker retains combat state");
+                        state.attack_cooldown = state.base_attack_interval();
+                        state.attack_windup_active = false;
+                        state.has_attacked_once = true;
+                        state.attack_preload_blocked = false;
+                        state.last_attack_time = 0.0;
                     }
                     CombatPayload::PointProjectile(weapon) => {
                         self.launch_point_projectile(actor_index, target_index, weapon);
@@ -3725,7 +3863,7 @@ impl ResidentBattle {
         self.entities.iter().all(|entity| {
             !entity.active
                 || entity.entity_kind != 1
-                || (entity.building_lifetime.is_some() && entity.has_only_shield_mechanics())
+                || (entity.building_lifetime.is_some() && entity.has_only_compiled_mechanics())
         })
     }
 
@@ -3736,44 +3874,53 @@ impl ResidentBattle {
             ));
         }
         self.checkpoint_current = false;
-        let mut changed_crown_indices = Vec::new();
-        for (entity_index, entity) in self.entities.iter_mut().enumerate() {
-            if !entity.active || !entity.is_alive || entity.entity_kind != 1 {
+        let entity_count = self.entities.len();
+        for entity_index in 0..entity_count {
+            if !self.entities[entity_index].active
+                || !self.entities[entity_index].is_alive
+                || self.entities[entity_index].entity_kind != 1
+            {
                 continue;
             }
-            let state = entity
-                .building_lifetime
-                .as_mut()
-                .expect("building preflight requires lifetime state");
-            let Some(lifetime_ms) = state.lifetime_ms.filter(|value| *value > 0) else {
-                continue;
-            };
-            state.lifetime_elapsed += self.dt;
-            let total_tick_ms = state.tick_carry_ms + (self.dt * 1000.0).max(0.0);
-            let native_ticks = ((total_tick_ms + 1e-9) / 50.0).floor() as i64;
-            state.tick_carry_ms = total_tick_ms - native_ticks as f64 * 50.0;
-            let rounded_max_hp = entity.max_hitpoints.as_f64().round_ties_even() as i64;
-            let decay_rate = 5000 * rounded_max_hp / lifetime_ms;
-            state.decay_work += decay_rate * native_ticks;
-            let whole_hp_loss = state.decay_work / 100;
-            state.decay_work %= 100;
-            if whole_hp_loss > 0 {
-                entity.hitpoints.subtract_whole_hp(whole_hp_loss);
-                if entity
-                    .building_impact
-                    .as_ref()
-                    .is_some_and(|building| building.crown_slot.is_some())
-                {
-                    changed_crown_indices.push(entity_index);
+            let (changed_crown, newly_dead) = {
+                let entity = &mut self.entities[entity_index];
+                let state = entity
+                    .building_lifetime
+                    .as_mut()
+                    .expect("building preflight requires lifetime state");
+                let Some(lifetime_ms) = state.lifetime_ms.filter(|value| *value > 0) else {
+                    continue;
+                };
+                state.lifetime_elapsed += self.dt;
+                let total_tick_ms = state.tick_carry_ms + (self.dt * 1000.0).max(0.0);
+                let native_ticks = ((total_tick_ms + 1e-9) / 50.0).floor() as i64;
+                state.tick_carry_ms = total_tick_ms - native_ticks as f64 * 50.0;
+                let rounded_max_hp = entity.max_hitpoints.as_f64().round_ties_even() as i64;
+                let decay_rate = 5000 * rounded_max_hp / lifetime_ms;
+                state.decay_work += decay_rate * native_ticks;
+                let whole_hp_loss = state.decay_work / 100;
+                state.decay_work %= 100;
+                let changed_crown = whole_hp_loss > 0
+                    && entity
+                        .building_impact
+                        .as_ref()
+                        .is_some_and(|building| building.crown_slot.is_some());
+                if whole_hp_loss > 0 {
+                    entity.hitpoints.subtract_whole_hp(whole_hp_loss);
                 }
+                let newly_dead = entity.hitpoints.as_f64() <= 0.0 && entity.is_alive;
+                if newly_dead {
+                    entity.is_alive = false;
+                }
+                (changed_crown, newly_dead)
+            };
+            if changed_crown {
+                self.win_conditions_dirty = true;
+                self.sync_resident_tower(entity_index);
             }
-            if entity.hitpoints.as_f64() <= 0.0 && entity.is_alive {
-                entity.is_alive = false;
+            if newly_dead {
+                self.dispatch_resident_death(entity_index);
             }
-        }
-        for entity_index in changed_crown_indices {
-            self.win_conditions_dirty = true;
-            self.sync_resident_tower(entity_index);
         }
         Ok(())
     }
@@ -3815,7 +3962,7 @@ impl ResidentBattle {
             && self.entities.iter().any(|entity| {
                 entity.active
                     && matches!(entity.entity_kind, 0 | 1)
-                    && !entity.has_only_shield_mechanics()
+                    && !entity.has_only_compiled_mechanics()
             })
         {
             return false;
@@ -3871,7 +4018,7 @@ impl ResidentBattle {
             else {
                 return false;
             };
-            if !matches!(target.entity_kind, 0 | 1) || !target.has_only_shield_mechanics() {
+            if !matches!(target.entity_kind, 0 | 1) || !target.has_only_compiled_mechanics() {
                 return false;
             }
             if target.entity_kind == 1 && target.building_impact.is_none() {
@@ -3888,7 +4035,7 @@ impl ResidentBattle {
                 else {
                     return false;
                 };
-                if !source.has_only_shield_mechanics() {
+                if !source.has_only_compiled_mechanics() {
                     return false;
                 }
             }
@@ -3951,7 +4098,7 @@ impl ResidentBattle {
         self.entities.iter().all(|entity| {
             !entity.active
                 || entity.is_alive
-                || (entity.has_only_shield_mechanics()
+                || (entity.has_only_compiled_mechanics()
                     && match entity.entity_kind {
                         0 | 1 => !entity
                             .direct_combat_unsupported
@@ -4374,7 +4521,7 @@ impl ResidentBattle {
             let common = (death_spawn_travel_active
                 || knockback_active
                 || Self::resident_deploy_state_supported(entity))
-                && entity.has_only_shield_mechanics()
+                && entity.has_only_compiled_mechanics()
                 && movement.route_cache_supported
                 && river_state_supported
                 && movement.vector_count >= 0
@@ -5771,7 +5918,7 @@ impl ResidentBattle {
                     .locked_combat
                     .as_ref()
                     .expect("character combat state parsed at initialization");
-                json!({
+                let mut value = json!({
                     "airborne_for_projectile": combat.is_airborne_for_projectile,
                     "building_pathing_radius": exact_f64_value(movement.building_pathing_radius),
                     "death_spawn_travel_target": movement.death_spawn_travel_target.map(|(x, y)| {
@@ -5826,7 +5973,12 @@ impl ResidentBattle {
                     "vector_count": movement.vector_count,
                     "vector_x_units": movement.vector_x_units,
                     "vector_y_units": movement.vector_y_units,
-                })
+                });
+                value
+                    .as_object_mut()
+                    .expect("movement diagnostic is an object")
+                    .insert("knockback_immune".to_owned(), json!(movement.knockback_immune));
+                value
             })
             .collect::<Vec<_>>();
         serde_json::to_vec(&values).map_err(|error| {
@@ -5947,6 +6099,10 @@ impl ResidentBattle {
     }
 
     fn apply_direct_combat_damage(&mut self, target_index: usize, damage: f64) {
+        self.apply_resident_damage(target_index, damage);
+    }
+
+    fn apply_resident_damage(&mut self, target_index: usize, damage: f64) {
         let damage = self.entities[target_index].apply_incoming_damage(damage);
         if damage <= 0.0 {
             return;
@@ -5965,6 +6121,7 @@ impl ResidentBattle {
                 .max(building.activation_first_hit_delay_seconds);
         }
         let remaining = (self.entities[target_index].hitpoints.as_f64() - damage).max(0.0);
+        let died = remaining <= 0.0 && self.entities[target_index].is_alive;
         if remaining <= 0.0 {
             self.entities[target_index].hitpoints = ExactScalar::Int(0);
             self.entities[target_index].is_alive = false;
@@ -5981,6 +6138,153 @@ impl ResidentBattle {
             }
             self.sync_resident_tower(target_index);
         }
+        if died {
+            self.dispatch_resident_death(target_index);
+        }
+    }
+
+    fn dispatch_resident_death(&mut self, source_index: usize) {
+        let opcodes = self.entities[source_index].death_opcodes.clone();
+        for opcode in opcodes {
+            match opcode {
+                ResidentDeathOpcode::Damage(damage) => {
+                    self.execute_resident_death_damage(source_index, &damage);
+                }
+            }
+        }
+    }
+
+    fn execute_resident_death_damage(&mut self, source_index: usize, damage: &ResidentDeathDamage) {
+        let targets = self
+            .entities
+            .iter()
+            .enumerate()
+            .filter_map(|(target_index, _)| {
+                self.resident_death_damage_target_valid(source_index, target_index, damage)
+                    .then_some(target_index)
+            })
+            .collect::<Vec<_>>();
+        let origin = (
+            logic_units(self.entities[source_index].position_x.as_f64()),
+            logic_units(self.entities[source_index].position_y.as_f64()),
+        );
+        for target_index in targets {
+            self.apply_resident_damage(target_index, damage.scaled_damage.as_f64());
+            if self.entities[target_index].is_alive && damage.knockback_units > 0 {
+                self.begin_resident_radial_knockback(target_index, origin, damage.knockback_units);
+            }
+        }
+    }
+
+    fn resident_death_damage_target_valid(
+        &self,
+        source_index: usize,
+        target_index: usize,
+        damage: &ResidentDeathDamage,
+    ) -> bool {
+        if source_index == target_index {
+            return false;
+        }
+        let source = &self.entities[source_index];
+        let target = &self.entities[target_index];
+        if !target.active
+            || !target.is_alive
+            || target.player_id == source.player_id
+            || !matches!(target.entity_kind, 0 | 1)
+            || target.death_spawn_target_immunity_elapsed_ms >= 0
+        {
+            return false;
+        }
+        let Some((target_is_air, collision_radius, stealth_until_ms, allow_invisible)) =
+            target.projectile_target_traits()
+        else {
+            return false;
+        };
+        if (target_is_air && !damage.hits_air) || (!target_is_air && !damage.hits_ground) {
+            return false;
+        }
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        if stealth_until_ms > now_ms && !allow_invisible {
+            return false;
+        }
+        let source_x = logic_units(source.position_x.as_f64());
+        let source_y = logic_units(source.position_y.as_f64());
+        let target_x = logic_units(target.position_x.as_f64());
+        let target_y = logic_units(target.position_y.as_f64());
+        let target_radius = logic_units(collision_radius).max(0);
+        if target.entity_kind == 1 {
+            let closest_x = source_x.clamp(target_x - target_radius, target_x + target_radius);
+            let closest_y = source_y.clamp(target_y - target_radius, target_y + target_radius);
+            let dx = closest_x - source_x;
+            let dy = closest_y - source_y;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(damage.radius_units) * i128::from(damage.radius_units)
+        } else {
+            let dx = target_x - source_x;
+            let dy = target_y - source_y;
+            let radius = damage.radius_units + target_radius;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(radius) * i128::from(radius)
+        }
+    }
+
+    fn begin_resident_radial_knockback(
+        &mut self,
+        target_index: usize,
+        origin: (i64, i64),
+        distance_units: i64,
+    ) {
+        let target = &self.entities[target_index];
+        let (Some(movement), Some(combat)) =
+            (target.movement.as_ref(), target.locked_combat.as_ref())
+        else {
+            return;
+        };
+        if target.entity_kind != 0
+            || !target.is_alive
+            || movement.knockback_immune
+            || movement.knockback_target.is_some()
+            || distance_units <= 0
+        {
+            return;
+        }
+        let target_x = logic_units(target.position_x.as_f64());
+        let target_y = logic_units(target.position_y.as_f64());
+        let mut dx = target_x - origin.0;
+        let mut dy = target_y - origin.1;
+        if dx == 0 && dy == 0 {
+            dx = if target.player_id == 0 { 1 } else { -1 };
+            dy = 0;
+        }
+        let distance_units = distance_units.clamp(0, 10_000);
+        let (move_x, move_y) = normalized_vector_logic_units(dx, dy, distance_units);
+        let knockback_target = (
+            (target_x + move_x) as f64 / 1000.0,
+            (target_y + move_y) as f64 / 1000.0,
+        );
+        let base_attack_interval = combat.base_attack_interval();
+        let mut velocity_work = 0;
+        let mut accumulated_work = 0;
+        while accumulated_work < distance_units {
+            velocity_work += 25;
+            accumulated_work += velocity_work;
+        }
+        let movement = self.entities[target_index]
+            .movement
+            .as_mut()
+            .expect("death-damage target has movement state");
+        movement.knockback_target = Some(knockback_target);
+        movement.knockback_velocity_work = velocity_work;
+        movement.knockback_interrupts_combat = true;
+        movement.forced_movement_active = true;
+        let combat = self.entities[target_index]
+            .locked_combat
+            .as_mut()
+            .expect("death-damage target has combat state");
+        combat.attack_windup_active = false;
+        combat.attack_cooldown = combat.attack_cooldown.max(base_attack_interval);
+        combat.attack_preload_blocked = true;
+        combat.has_attacked_once = false;
     }
 
     fn sync_resident_tower(&mut self, entity_index: usize) {
@@ -6086,6 +6390,7 @@ impl ResidentBattle {
             pending_projectile_max_duration_ms: 0,
             mechanics: Vec::new(),
             shields: Vec::new(),
+            death_opcodes: Vec::new(),
             modifier_state: None,
             movement: None,
             modifier_supported: true,
@@ -6368,35 +6673,7 @@ impl ResidentBattle {
                     if target_damage <= 0.0 {
                         continue;
                     }
-                    let target_damage =
-                        self.entities[target_index].apply_incoming_damage(target_damage);
-                    if target_damage <= 0.0 {
-                        continue;
-                    }
-                    if let Some(building) = self.entities[target_index].building_impact.as_mut()
-                        && building.requires_activation
-                        && !building.tower_active
-                    {
-                        building.tower_active = true;
-                        building.activation_delay_remaining = building
-                            .activation_delay_remaining
-                            .max(building.activation_delay_seconds);
-                        building.activation_first_hit_delay_remaining = building
-                            .activation_first_hit_delay_remaining
-                            .max(building.activation_first_hit_delay_seconds);
-                    }
-                    let remaining_hp =
-                        (self.entities[target_index].hitpoints.as_f64() - target_damage).max(0.0);
-                    if remaining_hp <= 0.0 {
-                        self.entities[target_index].hitpoints = ExactScalar::Int(0);
-                        self.entities[target_index].is_alive = false;
-                    } else {
-                        self.entities[target_index].hitpoints.set_f64(remaining_hp);
-                    }
-                    if crown_slot.is_some() {
-                        self.win_conditions_dirty = true;
-                        self.sync_resident_tower(target_index);
-                    }
+                    self.apply_resident_damage(target_index, target_damage);
                 }
             }
             for target_index in status_targets {

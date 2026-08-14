@@ -388,6 +388,12 @@ class ResidentRustBattle:
     def shield_sha256(self) -> str:
         return str(self._native.shield_sha256())
 
+    def death_opcode_state_bytes(self) -> bytes:
+        return bytes(self._native.death_opcode_state_bytes())
+
+    def death_opcode_sha256(self) -> str:
+        return str(self._native.death_opcode_sha256())
+
     @property
     def supports_character_object_phase(self) -> bool:
         return bool(self._native.supports_character_object_phase())
@@ -953,6 +959,81 @@ def shield_state_bytes(battle: Any) -> bytes:
     ).encode("ascii")
 
 
+def death_opcode_state_rows(battle: Any) -> list[dict[str, Any]]:
+    from .kinematics import tiles_to_logic_units
+    from .mechanics.shared.death_effects import DeathDamage
+
+    rows: list[dict[str, Any]] = []
+    for encounter_index, entity in enumerate(battle.entities.values()):
+        opcode_index = 0
+        for mechanic in entity.mechanics:
+            if not isinstance(mechanic, DeathDamage):
+                continue
+            rows.append(
+                {
+                    "base_damage": int(mechanic.damage),
+                    "encounter_index": encounter_index,
+                    "hits_air": bool(mechanic.hits_air),
+                    "hits_ground": bool(mechanic.hits_ground),
+                    "id": int(entity.id),
+                    "knockback_distance": _exact_scalar(
+                        mechanic.knockback_distance
+                    ),
+                    "knockback_units": min(
+                        10_000,
+                        max(
+                            0,
+                            tiles_to_logic_units(mechanic.knockback_distance),
+                        ),
+                    ),
+                    "opcode_index": opcode_index,
+                    "opcode_type": "damage",
+                    "radius_tiles": _exact_scalar(mechanic.radius_tiles),
+                    "radius_units": max(
+                        0,
+                        tiles_to_logic_units(mechanic.radius_tiles),
+                    ),
+                    "scaled_damage": _exact_scalar(mechanic.scaled_damage),
+                }
+            )
+            opcode_index += 1
+    return rows
+
+
+def death_opcode_state_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        death_opcode_state_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_death_opcode_state(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = death_opcode_state_rows(battle)
+    actual = json.loads(resident.death_opcode_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust death opcode state mismatch")
+        raise AssertionError(
+            "resident Rust death opcode parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(death_opcode_state_bytes(battle)).hexdigest()
+    actual_hash = resident.death_opcode_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust death opcode hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
+
+
 def compare_shield_state(
     battle: Any,
     resident: ResidentRustBattle,
@@ -1137,6 +1218,8 @@ def compare_stationary_movement_phase(
 
 
 def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
+    from .unit_traits import is_knockback_immune
+
     rows: list[dict[str, Any]] = []
     for encounter_index, entity in enumerate(battle.entities.values()):
         if entity.entity_kind not in {0, 1}:
@@ -1230,6 +1313,7 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                         getattr(entity.card_stats, "jump_speed", 0.0) or 0.0
                     )
                 ),
+                "knockback_immune": is_knockback_immune(entity.card_stats),
                 "knockback_interrupts_combat": bool(
                     entity._knockback_interrupts_combat
                 ),
