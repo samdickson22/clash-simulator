@@ -4307,10 +4307,18 @@ impl ResidentCardCatalog {
                 && prototype.is_alive
                 && prototype.card_name == template.unit_name
                 && prototype.has_only_compiled_mechanics()
+                && prototype.status_nova_jump.is_none()
+                && prototype.mechanics.len()
+                    == prototype.shields.len() + prototype.death_opcodes.len()
+                && prototype.shields.iter().all(|shield| {
+                    shield.current == shield.maximum && shield.current.as_f64() > 0.0
+                })
+                && prototype.shield_break_count == 0
                 && prototype
                     .death_opcodes
                     .iter()
                     .all(|opcode| matches!(opcode, ResidentDeathOpcode::Damage(_)))
+                && prototype.fresh_catalog_deploy_state_supported()
                 && prototype.modifier_supported
                 && prototype.direct_combat_unsupported.is_empty()
                 && prototype
@@ -4651,16 +4659,52 @@ impl ResidentCardCatalog {
                 && projectile_spell.is_none()
                 && rolling_projectile_spell.is_none()
             {
+                let compiled_death_closure_supported = |prototype: &ResidentEntity| {
+                    let spawn_count = prototype
+                        .death_opcodes
+                        .iter()
+                        .filter(|opcode| matches!(opcode, ResidentDeathOpcode::Spawn(_)))
+                        .count();
+                    prototype.death_spawn_payload_present == (spawn_count == 1)
+                        && prototype.death_opcodes.iter().all(|opcode| {
+                            let ResidentDeathOpcode::Spawn(spawn) = opcode else {
+                                return true;
+                            };
+                            let radius_units = logic_units(spawn.radius_tiles);
+                            let minimum_radius_units = logic_units(spawn.min_radius_tiles);
+                            radius_units > 0
+                                && minimum_radius_units >= 0
+                                && minimum_radius_units <= radius_units
+                                && (minimum_radius_units == 0
+                                    || minimum_radius_units < radius_units)
+                                && prototype.spawn_angle_shift == 0.0
+                                && death_spawn_templates.iter().any(|template| {
+                                    template.supported
+                                        && template.unit_name == spawn.unit_name
+                                        && template.unit_data_fingerprint
+                                            == spawn.unit_data_fingerprint
+                                })
+                        })
+                };
                 let common_supported = |prototype: &ResidentEntity| {
+                    let mechanic_family_supported = if prototype.status_nova_jump.is_some() {
+                        prototype.mechanics.len() == 1
+                            && prototype.shields.is_empty()
+                            && prototype.death_opcodes.is_empty()
+                    } else {
+                        prototype.mechanics.len()
+                            == prototype.shields.len() + prototype.death_opcodes.len()
+                    };
                     prototype.active
                         && prototype.is_alive
                         && prototype.card_name == card.effective_name
                         && prototype.has_only_compiled_mechanics()
-                        && (prototype.mechanics.is_empty()
-                            || (prototype.mechanics.len() == 1
-                                && prototype.status_nova_jump.is_some()))
-                        && prototype.shields.is_empty()
-                        && prototype.death_opcodes.is_empty()
+                        && mechanic_family_supported
+                        && prototype.shields.iter().all(|shield| {
+                            shield.current == shield.maximum && shield.current.as_f64() > 0.0
+                        })
+                        && prototype.shield_break_count == 0
+                        && compiled_death_closure_supported(prototype)
                         && prototype.modifier_supported
                         && prototype.direct_combat_unsupported.is_empty()
                         && prototype.locked_combat.is_some()
@@ -4677,6 +4721,7 @@ impl ResidentCardCatalog {
                                 prototype.entity_kind == 0
                                     && prototype.python_type == "clasher.entities.Troop"
                                     && common_supported(prototype)
+                                    && prototype.fresh_catalog_deploy_state_supported()
                                     && prototype.movement.as_ref().is_some_and(|movement| {
                                         movement.route_cache_supported
                                             && movement.collision_radius.is_finite()

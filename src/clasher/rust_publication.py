@@ -1714,6 +1714,49 @@ def _validate_direct_character_birth(value: Any, entity_id: int) -> None:
             )
 
 
+def _direct_death_spawn_source(
+    source_id: int,
+    group_id: int,
+    *,
+    battle: Any,
+    resident: ResidentRustBattle,
+    entity_registry: dict[int, Any],
+    same_publication_births: dict[int, dict[str, Any]],
+) -> Any | None:
+    """Resolve a death-spawn source from the prior or an attested action birth.
+
+    A catalog-action troop can die and execute its compiled DeathSpawn opcode in
+    the same resident interval in which it was allocated. Such a source is not
+    in the prior Python registry yet, so validate its full suffix row against
+    the catalog recipe and inspect the detached attested prototype instead.
+    """
+    source = entity_registry.get(source_id)
+    if source is not None:
+        return source
+    source_row = same_publication_births.get(source_id)
+    if source_row is None or source_id >= group_id or source_row["entity_kind"] != 0:
+        return None
+    source_birth = source_row["character_birth"]
+    if source_birth is None or source_birth["kind"] != 0:
+        return None
+    recipe = resident.character_action_birth_recipe(source_birth["lookup_name"])
+    if (
+        recipe is None
+        or recipe.kind != "catalog_action"
+        or recipe.action_kind != "troop"
+        or recipe.effective_name != source_birth["effective_name"]
+        or recipe.template_fingerprint != source_birth["template_fingerprint"]
+        or recipe.member_count != source_birth["member_count"]
+        or source_row["card_name"] != source_birth["effective_name"]
+        or type(recipe.prototype) is not Troop
+        or not resident.character_action_card_stats_are_current(
+            battle, source_birth["lookup_name"]
+        )
+    ):
+        return None
+    return recipe.prototype
+
+
 def _build_direct_publication_plan(
     raw: Any,
     *,
@@ -1947,6 +1990,11 @@ def _build_direct_publication_plan(
             "resident publication rejected changed encounter ordering"
         )
     active_entity_ids = tuple(cast(int, value) for value in active_slots)
+    same_publication_births = {
+        entity.entity_id: entity.raw
+        for entity in entities
+        if entity.entity_id in actual_birth_ids
+    }
 
     for entity in entities:
         row = entity.raw
@@ -2049,7 +2097,14 @@ def _build_direct_publication_plan(
                 )
         elif kind == 1:
             source_id = members[0]["source_entity_id"]
-            source = entity_registry.get(source_id)
+            source = _direct_death_spawn_source(
+                source_id,
+                group_id,
+                battle=battle,
+                resident=resident,
+                entity_registry=entity_registry,
+                same_publication_births=same_publication_births,
+            )
             recipe = resident.character_death_spawn_birth_recipe(
                 members[0]["effective_name"], members[0]["template_fingerprint"]
             )
@@ -2841,6 +2896,10 @@ def _build_direct_delta_publication_plan(
     if tuple(active_slots) != active_entity_ids:
         raise ResidentPublicationError("direct publication delta active order disagrees")
 
+    same_publication_births = {
+        item.entity_id: item.raw for item in full_births
+    }
+
     character_groups: dict[tuple[int, int], list[dict[str, Any]]] = {}
     for item in full_births:
         birth = item.raw["character_birth"]
@@ -2881,7 +2940,14 @@ def _build_direct_delta_publication_plan(
                     "resident character has unknown catalog birth recipe"
                 )
         elif kind == 1:
-            source = entity_registry.get(members[0]["source_entity_id"])
+            source = _direct_death_spawn_source(
+                members[0]["source_entity_id"],
+                group_id,
+                battle=battle,
+                resident=resident,
+                entity_registry=entity_registry,
+                same_publication_births=same_publication_births,
+            )
             recipe = resident.character_death_spawn_birth_recipe(
                 members[0]["effective_name"], members[0]["template_fingerprint"]
             )

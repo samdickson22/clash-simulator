@@ -61,6 +61,10 @@ def _catalog_source_sha256(path: Path) -> str:
 
 def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str]:
     """Return data-driven reasons a card is outside resident troop actions."""
+    from .mechanics.shared.death_area import DeathAreaEffect
+    from .mechanics.shared.death_effects import DeathDamage, DeathSpawn
+    from .mechanics.shared.shield import Shield
+
     reasons: list[str] = []
     if str(getattr(card_def, "kind", "") or "").casefold() != "troop":
         reasons.append("not_troop")
@@ -76,9 +80,21 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
     if bool(getattr(card_stats, "full_lane_deploy", False)):
         reasons.append("full_lane_deploy")
     mechanics = tuple(getattr(card_def, "mechanics", ()) or ())
-    if mechanics and not (
-        len(mechanics) == 1 and type(mechanics[0]) is IceSpiritFreeze
-    ):
+    resident_death_mechanic_types = (
+        Shield,
+        DeathDamage,
+        DeathSpawn,
+        DeathAreaEffect,
+    )
+    mechanic_types = tuple(type(mechanic) for mechanic in mechanics)
+    supported_mechanic_family = (
+        mechanic_types == (IceSpiritFreeze,)
+        or all(
+            mechanic_type in resident_death_mechanic_types
+            for mechanic_type in mechanic_types
+        )
+    )
+    if not supported_mechanic_family:
         reasons.append("executable_mechanics")
     if not getattr(card_stats, "summon_character_data", None):
         reasons.append("missing_character_data")
@@ -583,6 +599,53 @@ def _resident_card_catalog_bundle(
                 prototype = prototype_battle.entities.pop(spawned_id)
                 template_snapshot = dict(_entity_snapshot(prototype))
                 template_fingerprint = _prototype_sha256(prototype)
+                formation_runtime_supported = True
+                if summon_count > 1:
+                    for variant_index, (player_id, lane_x) in enumerate(
+                        ((0, 4.0), (0, 14.0), (1, 4.0), (1, 14.0))
+                    ):
+                        formation_battle = BattleState(card_loader=loader.clone_lazy())
+                        anchor = Position(lane_x, 8.0 if player_id == 0 else 24.0)
+                        before_ids = set(formation_battle.entities)
+                        formation_battle._spawn_troop(anchor, player_id, card_stats)
+                        spawned = [
+                            entity
+                            for entity_id, entity in formation_battle.entities.items()
+                            if entity_id not in before_ids
+                        ]
+                        expected_offsets = formation_offsets[variant_index]
+                        if len(spawned) != summon_count:
+                            formation_runtime_supported = False
+                            break
+                        for index, entity in enumerate(spawned):
+                            offset_x, offset_y = expected_offsets[index]
+                            expected_x = (
+                                tiles_to_logic_units(anchor.x) + offset_x
+                            ) / 1000.0
+                            expected_y = (
+                                tiles_to_logic_units(anchor.y) + offset_y
+                            ) / 1000.0
+                            expected_delay = (
+                                prototype.deploy_delay_remaining
+                                + deploy_delay_offsets[index]
+                            )
+                            if (
+                                type(entity) is not type(prototype)
+                                or str(entity.card_stats.name)
+                                != str(prototype.card_stats.name)
+                                or float(entity.position.x).hex()
+                                != float(expected_x).hex()
+                                or float(entity.position.y).hex()
+                                != float(expected_y).hex()
+                                or float(entity.deploy_delay_remaining).hex()
+                                != float(expected_delay).hex()
+                            ):
+                                formation_runtime_supported = False
+                                break
+                        if not formation_runtime_supported:
+                            break
+                if not formation_runtime_supported:
+                    reasons.append("formation_runtime_preflight")
                 action_recipes[lookup_name] = _ResidentCharacterBirthRecipe(
                     kind="catalog_action",
                     action_kind="troop",
