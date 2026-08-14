@@ -2933,7 +2933,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 1;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 2;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -2959,6 +2959,9 @@ struct ResidentCardWire {
     can_deploy_on_enemy_side: bool,
     deploy_w_tile_margin: i64,
     symmetric_deploy_snap: bool,
+    summon_count: i64,
+    formation_offsets: Vec<Vec<[i64; 2]>>,
+    deploy_delay_offsets: Vec<f64>,
     capability_reasons: Vec<String>,
     template_snapshot: Option<Value>,
 }
@@ -2971,12 +2974,15 @@ struct ResidentCardSpec {
     can_deploy_on_enemy_side: bool,
     deploy_w_tile_margin: i64,
     symmetric_deploy_snap: bool,
+    summon_count: i64,
+    formation_offsets: Vec<Vec<[i64; 2]>>,
+    deploy_delay_offsets: Vec<f64>,
     capability_reasons: Vec<String>,
     prototype: Option<ResidentEntity>,
 }
 
 impl ResidentCardSpec {
-    fn supports_single_primary_troop(&self) -> bool {
+    fn supports_troop_action(&self) -> bool {
         self.capability_reasons.is_empty() && self.prototype.is_some()
     }
 }
@@ -3078,6 +3084,13 @@ impl ResidentCardCatalog {
                     card.lookup_name
                 )));
             }
+            let summon_count = usize::try_from(card.summon_count).unwrap_or_default();
+            if !(1..=90).contains(&card.summon_count) {
+                return Err(PyValueError::new_err(format!(
+                    "resident catalog card {:?} has invalid formation data",
+                    card.lookup_name
+                )));
+            }
             if by_name.contains_key(&card.lookup_name) {
                 return Err(PyValueError::new_err(format!(
                     "resident catalog contains duplicate lookup name {:?}",
@@ -3086,6 +3099,20 @@ impl ResidentCardCatalog {
             }
 
             let mut reasons = card.capability_reasons;
+            if reasons.is_empty()
+                && (card.formation_offsets.len() != 4
+                    || card
+                        .formation_offsets
+                        .iter()
+                        .any(|variant| variant.len() != summon_count)
+                    || card.deploy_delay_offsets.len() != summon_count
+                    || card
+                        .deploy_delay_offsets
+                        .iter()
+                        .any(|delay| !delay.is_finite() || *delay < 0.0))
+            {
+                reasons.push("native_formation_preflight".to_owned());
+            }
             let prototype = match card.template_snapshot {
                 Some(snapshot) => match ResidentEntity::from_normalized(0, &snapshot) {
                     Ok(prototype) => Some(prototype),
@@ -3137,6 +3164,9 @@ impl ResidentCardCatalog {
                 can_deploy_on_enemy_side: card.can_deploy_on_enemy_side,
                 deploy_w_tile_margin: card.deploy_w_tile_margin,
                 symmetric_deploy_snap: card.symmetric_deploy_snap,
+                summon_count: card.summon_count,
+                formation_offsets: card.formation_offsets,
+                deploy_delay_offsets: card.deploy_delay_offsets,
                 capability_reasons: reasons,
                 prototype,
             });
@@ -3158,7 +3188,7 @@ impl ResidentCardCatalog {
     fn supported_names(&self) -> Vec<String> {
         self.cards
             .iter()
-            .filter(|card| card.supports_single_primary_troop())
+            .filter(|card| card.supports_troop_action())
             .map(|card| card.lookup_name.clone())
             .collect()
     }
@@ -5461,7 +5491,7 @@ impl ResidentBattle {
                 } else {
                     (canonical_x, canonical_y)
                 };
-                if self.valid_single_troop_placement(
+                if self.valid_troop_placement(
                     player_id,
                     world_x * 1000 + 500,
                     world_y * 1000 + 500,
@@ -5501,7 +5531,7 @@ impl ResidentBattle {
         let mut success = [false; 2];
         for player_id in order.iter().copied() {
             let action = if player_id == 0 { action0 } else { action1 };
-            success[player_id] = candidate.apply_single_primary_action(player_id, action)?;
+            success[player_id] = candidate.apply_troop_action(player_id, action)?;
         }
         *self = candidate;
         Ok((
@@ -5549,7 +5579,7 @@ impl ResidentBattle {
         for player_id in [first_player, 1 - first_player] {
             let action = if player_id == 0 { action0 } else { action1 };
             let player_index = usize::try_from(player_id).expect("validated two-player ID");
-            success[player_index] = candidate.apply_single_primary_action(player_index, action)?;
+            success[player_index] = candidate.apply_troop_action(player_index, action)?;
         }
         let mut advanced = 0;
         for _ in 0..ticks {
@@ -5694,7 +5724,7 @@ impl ResidentBattle {
                         "resident oracle rejected uncatalogued hand/cycle card {card_name:?}"
                     )));
                 };
-                if !card.supports_single_primary_troop() {
+                if !card.supports_troop_action() {
                     return Err(PyRuntimeError::new_err(format!(
                         "resident oracle rejected unsupported hand/cycle card {card_name:?}: {}",
                         card.capability_reasons.join(",")
@@ -5807,7 +5837,7 @@ impl ResidentBattle {
                 "resident joint action rejected uncatalogued hand card {card_name:?}"
             )));
         };
-        if !card.supports_single_primary_troop() {
+        if !card.supports_troop_action() {
             return Err(PyRuntimeError::new_err(format!(
                 "resident joint action rejected unsupported hand card {card_name:?}: {}",
                 card.capability_reasons.join(",")
@@ -5838,17 +5868,16 @@ impl ResidentBattle {
         let Ok(player_index) = self.player_index(player_id) else {
             return 0;
         };
-        i64::from(
-            self.players[player_index]
-                .hand
-                .get(slot)
-                .and_then(Option::as_deref)
-                .and_then(|name| self.catalog.get(name))
-                .is_some_and(ResidentCardSpec::supports_single_primary_troop),
-        )
+        self.players[player_index]
+            .hand
+            .get(slot)
+            .and_then(Option::as_deref)
+            .and_then(|name| self.catalog.get(name))
+            .filter(|card| card.supports_troop_action())
+            .map_or(0, |card| card.summon_count)
     }
 
-    fn apply_single_primary_action(&mut self, player_id: usize, action: i64) -> PyResult<bool> {
+    fn apply_troop_action(&mut self, player_id: usize, action: i64) -> PyResult<bool> {
         if !(0..Self::ACTION_COUNT).contains(&action) {
             return Ok(false);
         }
@@ -5889,7 +5918,7 @@ impl ResidentBattle {
             .get(&card_name)
             .cloned()
             .ok_or_else(|| PyRuntimeError::new_err("resident card vanished after preflight"))?;
-        if !card.supports_single_primary_troop() {
+        if !card.supports_troop_action() {
             return Err(PyRuntimeError::new_err(
                 "resident card capability changed after preflight",
             ));
@@ -5901,7 +5930,7 @@ impl ResidentBattle {
 
         let x_units = world_x * 1000 + 500;
         let y_units = world_y * 1000 + 500;
-        if !self.valid_single_troop_placement(player_id, x_units, y_units, &card) {
+        if !self.valid_troop_placement(player_id, x_units, y_units, &card) {
             return Ok(false);
         }
 
@@ -5929,32 +5958,51 @@ impl ResidentBattle {
                 spawn_y_units -= 1;
             }
         }
-        let entity =
-            self.instantiate_single_character(&card, player_id, spawn_x_units, spawn_y_units)?;
-        self.entities.push(entity);
-        self.next_entity_id += 1;
+        self.instantiate_troop_formation(&card, player_id, spawn_x_units, spawn_y_units)?;
         self.idle_eligible = false;
         Ok(true)
     }
 
-    fn instantiate_single_character(
-        &self,
+    fn instantiate_troop_formation(
+        &mut self,
         card: &ResidentCardSpec,
         player_id: i64,
         x_units: i64,
         y_units: i64,
-    ) -> PyResult<ResidentEntity> {
-        let prototype = card.prototype.as_ref().ok_or_else(|| {
-            PyRuntimeError::new_err("resident single-character template is unavailable")
+    ) -> PyResult<()> {
+        let prototype = card
+            .prototype
+            .as_ref()
+            .ok_or_else(|| PyRuntimeError::new_err("resident troop template is unavailable"))?;
+        let lane_id = nearest_standard_path_id(x_units, y_units);
+        let variant_index = usize::try_from(player_id * 2 + i64::from(lane_id != 1))
+            .expect("validated player/formation lane fits usize");
+        let offsets = card.formation_offsets.get(variant_index).ok_or_else(|| {
+            PyRuntimeError::new_err("resident troop formation variant is unavailable")
         })?;
-        Ok(self.instantiate_character_template(
-            prototype,
-            &card.effective_name,
-            player_id,
-            (x_units, y_units),
-            None,
-            false,
-        ))
+        for (index, offset) in offsets.iter().enumerate() {
+            let [offset_x, offset_y] = *offset;
+            let spawn_x = (x_units + offset_x).clamp(250, self.arena_width_tiles * 1000 - 250);
+            let spawn_y = (y_units + offset_y).clamp(250, self.arena_height_tiles * 1000 - 250);
+            let deploy_delay = if card.summon_count == 1 {
+                None
+            } else {
+                Some(prototype.deploy_delay_remaining + card.deploy_delay_offsets[index])
+            };
+            let entity = self.instantiate_character_template(
+                prototype,
+                &card.effective_name,
+                player_id,
+                (spawn_x, spawn_y),
+                deploy_delay,
+                false,
+            );
+            self.entities.push(entity);
+            self.next_entity_id = self.next_entity_id.checked_add(1).ok_or_else(|| {
+                PyRuntimeError::new_err("resident troop formation entity-ID overflow")
+            })?;
+        }
+        Ok(())
     }
 
     fn instantiate_character_template(
@@ -6009,7 +6057,7 @@ impl ResidentBattle {
         entity
     }
 
-    fn valid_single_troop_placement(
+    fn valid_troop_placement(
         &self,
         player_id: i64,
         x_units: i64,

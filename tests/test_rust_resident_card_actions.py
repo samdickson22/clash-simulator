@@ -6,6 +6,8 @@ import pytest
 
 from clasher.battle import BattleState
 from clasher.card_aliases import CARD_NAME_ALIASES
+from clasher.entities import Troop
+from clasher.kinematics import tiles_to_logic_units
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rust_core import (
     ResidentRustBattle,
@@ -77,7 +79,7 @@ def test_catalog_is_fingerprinted_immutable_and_shared_across_forks() -> None:
 
     forked = resident.fork()
 
-    assert resident.resident_catalog_schema_version == 1
+    assert resident.resident_catalog_schema_version == 2
     assert len(original_fingerprint) == 64
     assert len(original_source) == 64
     assert supported
@@ -222,3 +224,140 @@ def test_invalid_placement_and_invalid_action_still_match_shuffle_semantics() ->
     assert actual_order == expected_order
     assert actual_success == expected_success == {0: False, 1: False}
     _compare_resident_state(battle, resident)
+
+
+@pytest.mark.parametrize(
+    ("card_name", "count", "stagger_ms"),
+    [("Archers", 2, 100), ("Minions", 3, 100), ("Skeletons", 3, 0)],
+)
+@pytest.mark.parametrize("player_id", [0, 1])
+@pytest.mark.parametrize("world_x", [5, 12])
+def test_primary_formations_match_both_players_and_native_lanes(
+    card_name: str,
+    count: int,
+    stagger_ms: int,
+    player_id: int,
+    world_x: int,
+) -> None:
+    battle = BattleState(rng=random.Random(83_000 + player_id * 100 + world_x))
+    battle.players[player_id].hand = [card_name, None, None, None]
+    battle.players[player_id].elixir = battle.players[player_id].max_elixir
+    initial_ids = set(battle.entities)
+    resident = ResidentRustBattle.from_battle(battle)
+    action_space = DiscreteTileActionSpace()
+    world_y = 10 if player_id == 0 else 21
+    action = action_space.encode_action(0, world_x, world_y, player_id)
+    actions = (
+        action if player_id == 0 else action_space.no_op_action,
+        action if player_id == 1 else action_space.no_op_action,
+    )
+
+    expected_success, expected_order = _apply_python_joint_actions(battle, actions)
+    actual_success, actual_order = resident.apply_resident_joint_actions(*actions)
+
+    assert actual_order == expected_order
+    assert actual_success == expected_success == {0: True, 1: True}
+    spawned = [
+        entity
+        for entity_id, entity in battle.entities.items()
+        if entity_id not in initial_ids and isinstance(entity, Troop)
+    ]
+    stats = battle.card_loader.get_card(card_name)
+    assert stats is not None
+    assert len(spawned) == count
+    assert [entity.card_stats.name for entity in spawned] == [stats.name] * count
+    assert [entity.id for entity in spawned] == list(
+        range(min(entity.id for entity in spawned), battle.next_entity_id)
+    )
+    assert [entity.deploy_delay_remaining for entity in spawned] == pytest.approx(
+        [1.0 + index * stagger_ms / 1000.0 for index in range(count)]
+    )
+    assert all(entity.placement_pending for entity in spawned)
+    assert all(entity._spawn_hook_pending for entity in spawned)
+    assert not any(getattr(entity, "_spawn_hook_fired", False) for entity in spawned)
+    _compare_resident_state(battle, resident)
+
+    for _ in range(5):
+        assert resident.advance_complete_tick()
+        battle._step_logic_tick(refresh_fast_path_end=False)
+        _compare_resident_state(battle, resident)
+
+
+def test_primary_formation_children_clamp_and_cross_terrain_without_relocation() -> None:
+    battle = BattleState(rng=random.Random(83_101))
+    battle.players[0].hand = ["Skeletons", None, None, None]
+    battle.players[0].elixir = battle.players[0].max_elixir
+    resident = ResidentRustBattle.from_battle(battle)
+    action_space = DiscreteTileActionSpace()
+    river_action = action_space.encode_action(0, 9, 14, 0)
+
+    expected_success, expected_order = _apply_python_joint_actions(
+        battle, (river_action, action_space.no_op_action)
+    )
+    actual_success, actual_order = resident.apply_resident_joint_actions(
+        river_action, action_space.no_op_action
+    )
+
+    assert actual_order == expected_order
+    assert actual_success == expected_success == {0: True, 1: True}
+    skeletons = [
+        entity
+        for entity in battle.entities.values()
+        if isinstance(entity, Troop) and entity.card_stats.name == "Skeletons"
+    ]
+    assert len(skeletons) == 3
+    assert any(not battle.arena.is_walkable(entity.position) for entity in skeletons)
+    _compare_resident_state(battle, resident)
+
+    edge = BattleState(rng=random.Random(83_102))
+    edge.players[0].hand = ["Archers", None, None, None]
+    edge.players[0].elixir = edge.players[0].max_elixir
+    edge_resident = ResidentRustBattle.from_battle(edge)
+    edge_action = action_space.encode_action(0, 0, 10, 0)
+    expected_success, expected_order = _apply_python_joint_actions(
+        edge, (edge_action, action_space.no_op_action)
+    )
+    actual_success, actual_order = edge_resident.apply_resident_joint_actions(
+        edge_action, action_space.no_op_action
+    )
+    assert actual_order == expected_order
+    assert actual_success == expected_success == {0: True, 1: True}
+    archers = [
+        entity
+        for entity in edge.entities.values()
+        if isinstance(entity, Troop) and entity.card_stats.name == "Archer"
+    ]
+    assert min(tiles_to_logic_units(entity.position.x) for entity in archers) == 250
+    _compare_resident_state(edge, edge_resident)
+
+
+def test_multi_formation_id_headroom_rejects_before_joint_shuffle() -> None:
+    battle = BattleState(rng=random.Random(83_103))
+    for player in battle.players:
+        player.hand = ["Skeletons", None, None, None]
+        player.elixir = player.max_elixir
+    battle.next_entity_id = (1 << 63) - 1 - 5
+    resident = ResidentRustBattle.from_battle(battle)
+    action_space = DiscreteTileActionSpace()
+    actions = (
+        action_space.encode_action(0, 8, 10, 0),
+        action_space.encode_action(0, 9, 21, 1),
+    )
+    before = (
+        resident.player_states(),
+        resident.entity_state_bytes(),
+        resident.rng_state_bytes(),
+        resident.next_entity_id,
+        resident.checkpoint_is_current,
+    )
+
+    with pytest.raises(RuntimeError, match="entity-ID allocation headroom"):
+        resident.apply_resident_joint_actions(*actions)
+
+    assert (
+        resident.player_states(),
+        resident.entity_state_bytes(),
+        resident.rng_state_bytes(),
+        resident.next_entity_id,
+        resident.checkpoint_is_current,
+    ) == before

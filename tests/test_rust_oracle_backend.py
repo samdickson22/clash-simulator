@@ -22,21 +22,19 @@ pytestmark = pytest.mark.skipif(
 
 def _supported_unique_deck(battle: BattleState) -> list[str]:
     resident = ResidentRustBattle.from_battle(battle)
-    deck: list[str] = []
-    effective_names: set[str] = set()
-    for name in resident.resident_supported_action_cards():
-        stats = battle.card_loader.get_card(name)
-        assert stats is not None
-        if stats.name in effective_names:
-            continue
-        effective_names.add(stats.name)
-        deck.append(name)
-        if len(deck) == 8:
-            break
-    assert len(deck) == 8
-    return deck
-
-
+    historical_deck = [
+        "BabyDragon",
+        "Berserker",
+        "BlowdartGoblin",
+        "Bomber",
+        "DartBarrell",
+        "ElectroGiant",
+        "Giant",
+        "GiantBuffer",
+    ]
+    supported = set(resident.resident_supported_action_cards())
+    assert all(name in supported for name in historical_deck)
+    return historical_deck
 def _supported_battle(seed: int) -> BattleState:
     battle = BattleState(rng=random.Random(seed))
     deck = _supported_unique_deck(battle)

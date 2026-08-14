@@ -14,6 +14,17 @@ from clasher.battle import BattleState
 from clasher.rl.rust_oracle_planner import RustBackendFixedDepthThompsonOracle
 from clasher.rust_core import ResidentRustBattle
 
+BENCHMARK_DECK = (
+    "BabyDragon",
+    "Berserker",
+    "BlowdartGoblin",
+    "Bomber",
+    "DartBarrell",
+    "ElectroGiant",
+    "Giant",
+    "GiantBuffer",
+)
+
 
 @dataclass(frozen=True)
 class Sample:
@@ -28,18 +39,10 @@ class Sample:
 def _supported_battle(seed: int) -> BattleState:
     battle = BattleState(rng=random.Random(seed))
     resident = ResidentRustBattle.from_battle(battle)
-    deck: list[str] = []
-    effective_names: set[str] = set()
-    for name in resident.resident_supported_action_cards():
-        stats = battle.card_loader.get_card(name)
-        if stats is None or stats.name in effective_names:
-            continue
-        effective_names.add(stats.name)
-        deck.append(name)
-        if len(deck) == 8:
-            break
-    if len(deck) != 8:
-        raise RuntimeError("resident oracle benchmark needs eight supported cards")
+    supported = set(resident.resident_supported_action_cards())
+    if not all(name in supported for name in BENCHMARK_DECK):
+        raise RuntimeError("resident oracle benchmark deck is no longer supported")
+    deck = list(BENCHMARK_DECK)
     for player in battle.players:
         player.hand = list(deck[:4])
         player.deck = deck.copy()

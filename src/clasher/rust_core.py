@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import struct
 from collections import deque
 from dataclasses import dataclass
@@ -41,7 +42,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 1
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 2
 
 
 def _catalog_source_sha256(path: Path) -> str:
@@ -53,12 +54,13 @@ def _catalog_source_sha256(path: Path) -> str:
 
 
 def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str]:
-    """Return data-driven reasons a card is outside the first resident action slice."""
+    """Return data-driven reasons a card is outside resident troop actions."""
     reasons: list[str] = []
     if str(getattr(card_def, "kind", "") or "").casefold() != "troop":
         reasons.append("not_troop")
-    if int(getattr(card_stats, "summon_count", None) or 1) != 1:
-        reasons.append("multi_primary")
+    summon_count = int(getattr(card_stats, "summon_count", None) or 1)
+    if not 1 <= summon_count <= 90:
+        reasons.append("unsupported_primary_count")
     if int(getattr(card_stats, "summon_character_second_count", None) or 0) != 0:
         reasons.append("secondary_character")
     if float(getattr(card_stats, "summon_width", 0.0) or 0.0) != 0.0:
@@ -71,6 +73,24 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
         reasons.append("executable_mechanics")
     if not getattr(card_stats, "summon_character_data", None):
         reasons.append("missing_character_data")
+    summon_radius = getattr(card_stats, "summon_radius", None)
+    formation_radius = (
+        float(summon_radius)
+        if summon_radius is not None
+        else float(getattr(card_stats, "collision_radius", 0.5) or 0.5)
+    )
+    if not math.isfinite(formation_radius) or formation_radius < 0.0:
+        reasons.append("invalid_formation_radius")
+    summon_deploy_delay = float(
+        getattr(card_stats, "summon_deploy_delay", 0.0) or 0.0
+    )
+    if not math.isfinite(summon_deploy_delay) or summon_deploy_delay < 0.0:
+        reasons.append("invalid_summon_deploy_delay")
+    spawn_angle_shift = float(
+        getattr(card_stats, "spawn_angle_shift", 0.0) or 0.0
+    )
+    if not math.isfinite(spawn_angle_shift):
+        reasons.append("invalid_spawn_angle_shift")
     return reasons
 
 
@@ -126,6 +146,8 @@ def _resident_card_catalog_bytes(
     from .card_aliases import CARD_NAME_ALIASES
     from .data import CardDataLoader
     from .factory.dynamic_factory import troop_from_character_data
+    from .formations import formation_offset
+    from .kinematics import tiles_to_logic_units
     from .unit_traits import is_air_unit_card
 
     path = Path(data_file)
@@ -146,16 +168,61 @@ def _resident_card_catalog_bytes(
             continue
         reasons = _single_troop_capability_reasons(card_stats, card_def)
         template_snapshot: dict[str, Any] | None = None
+        formation_offsets: list[list[list[int]]] = []
+        deploy_delay_offsets: list[float] = []
         if not reasons:
-            spawned_id = prototype_battle.next_entity_id
-            prototype_battle._spawn_unit_at_position(
-                Position(9.0, 8.0),
-                0,
-                card_stats,
-                snap_to_valid=False,
+            summon_count = int(getattr(card_stats, "summon_count", None) or 1)
+            summon_radius = getattr(card_stats, "summon_radius", None)
+            formation_radius = (
+                float(summon_radius)
+                if summon_radius is not None
+                else float(getattr(card_stats, "collision_radius", 0.5) or 0.5)
             )
-            prototype = prototype_battle.entities.pop(spawned_id)
-            template_snapshot = dict(_entity_snapshot(prototype))
+            angle_shift = float(
+                getattr(card_stats, "spawn_angle_shift", 0.0) or 0.0
+            )
+            try:
+                for player_id in (0, 1):
+                    for lane_id in (1, 2):
+                        formation_offsets.append(
+                            [
+                                [
+                                    tiles_to_logic_units(offset_x),
+                                    tiles_to_logic_units(offset_y),
+                                ]
+                                for index in range(summon_count)
+                                for offset_x, offset_y in (
+                                    formation_offset(
+                                        index,
+                                        summon_count,
+                                        formation_radius,
+                                        player_id,
+                                        angle_shift_degrees=angle_shift,
+                                        lane_id=lane_id,
+                                    ),
+                                )
+                            ]
+                        )
+                summon_deploy_delay = float(
+                    getattr(card_stats, "summon_deploy_delay", 0.0) or 0.0
+                )
+                deploy_delay_offsets = [
+                    index * summon_deploy_delay / 1000.0
+                    for index in range(summon_count)
+                ]
+                spawned_id = prototype_battle.next_entity_id
+                prototype_battle._spawn_unit_at_position(
+                    Position(9.0, 8.0),
+                    0,
+                    card_stats,
+                    snap_to_valid=False,
+                )
+                prototype = prototype_battle.entities.pop(spawned_id)
+                template_snapshot = dict(_entity_snapshot(prototype))
+            except (OverflowError, TypeError, ValueError) as error:
+                reasons.append(f"formation_compile:{type(error).__name__}")
+                formation_offsets = []
+                deploy_delay_offsets = []
         cards.append(
             {
                 "lookup_name": lookup_name,
@@ -178,6 +245,11 @@ def _resident_card_catalog_bytes(
                     )
                     == 0
                 ),
+                "summon_count": int(
+                    getattr(card_stats, "summon_count", None) or 1
+                ),
+                "formation_offsets": formation_offsets,
+                "deploy_delay_offsets": deploy_delay_offsets,
                 "capability_reasons": reasons,
                 "template_snapshot": template_snapshot,
             }
