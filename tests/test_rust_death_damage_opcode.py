@@ -173,10 +173,9 @@ def test_death_damage_parser_uses_serialized_mechanic_fields() -> None:
     assert b'"hits_air":false' in rows
 
 
-@pytest.mark.parametrize("card_name", ["Golem", "IceGolem"])
-def test_mixed_death_payloads_remain_fail_closed(card_name: str) -> None:
+def test_uncompiled_death_spawn_payload_remains_fail_closed() -> None:
     battle = BattleState(rng=random.Random(8102))
-    _spawn(battle, card_name, 0, Position(9.0, 14.0))
+    _spawn(battle, "Golem", 0, Position(9.0, 14.0))
     resident = ResidentRustBattle.from_battle(battle)
     entity_before = resident.entity_state_bytes()
     rng_before = resident.rng_state_bytes()

@@ -4,12 +4,14 @@ import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Troop
+from clasher.entities import Building, Troop
 from clasher.interaction_matrix import enabled_troop_cards
 from clasher.rust_core import (
     ResidentRustBattle,
     compare_character_object_phase,
+    death_opcode_state_rows,
     rust_core_available,
+    shield_state_rows,
 )
 
 pytestmark = pytest.mark.skipif(
@@ -32,7 +34,7 @@ def _spawn(battle: BattleState, card_name: str = "Knight") -> Troop:
 
 def _advance_python_character_object_phase(battle: BattleState) -> None:
     for entity in list(battle.entities.values()):
-        if entity.entity_kind in {0, 1}:
+        if isinstance(entity, (Troop, Building)):
             entity.tick_character_object_phase(battle.dt)
 
 
@@ -87,14 +89,14 @@ def test_character_object_phase_is_card_general_and_fail_closed(
     troop = _spawn(battle, card_name)
     resident = ResidentRustBattle.from_battle(battle)
 
-    supported_mechanics = {
-        "clasher.mechanics.shared.shield.Shield",
-    }
-    mechanic_types = {
-        f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
-        for mechanic in troop.mechanics
-    }
-    if not mechanic_types <= supported_mechanics:
+    compiled_count = sum(
+        row["id"] == troop.id
+        for row in (
+            *death_opcode_state_rows(battle),
+            *shield_state_rows(battle),
+        )
+    )
+    if compiled_count != len(troop.mechanics):
         assert not resident.supports_character_object_phase
         return
     assert resident.supports_character_object_phase

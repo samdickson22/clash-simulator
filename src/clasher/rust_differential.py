@@ -12,6 +12,7 @@ from .rust_core import (
     ResidentRustBattle,
     ResidentTowerState,
     _exact_scalar,
+    area_effect_state_rows,
     building_lifetime_state_rows,
     character_object_state_rows,
     death_opcode_state_rows,
@@ -27,7 +28,7 @@ from .rust_core import (
     shield_state_rows,
 )
 
-RESIDENT_SEMANTIC_SCHEMA_VERSION = 1
+RESIDENT_SEMANTIC_SCHEMA_VERSION = 2
 
 
 def _player_row(state: ResidentPlayerState) -> dict[str, Any]:
@@ -94,6 +95,7 @@ def python_resident_semantic_snapshot(battle: BattleState) -> dict[str, Any]:
         "shields": shield_state_rows(battle),
         "character_objects": character_object_state_rows(battle),
         "death_opcodes": death_opcode_state_rows(battle),
+        "area_effects": area_effect_state_rows(battle),
         "movement": flying_movement_state_rows(battle),
         "locked_combat": locked_direct_combat_state_rows(battle),
         "building_lifetime": building_lifetime_state_rows(battle),
@@ -127,6 +129,7 @@ def rust_resident_semantic_snapshot(
         "shields": json.loads(resident.shield_state_bytes()),
         "character_objects": json.loads(resident.character_object_state_bytes()),
         "death_opcodes": json.loads(resident.death_opcode_state_bytes()),
+        "area_effects": json.loads(resident.area_effect_state_bytes()),
         "movement": json.loads(resident.ground_movement_state_bytes()),
         "locked_combat": json.loads(resident.locked_direct_combat_state_bytes()),
         "building_lifetime": json.loads(resident.building_lifetime_state_bytes()),

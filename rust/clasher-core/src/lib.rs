@@ -893,8 +893,14 @@ impl ModifierState {
     }
 
     fn apply_slow(&mut self, duration: f64, multiplier: f64) {
-        let movement = multiplier.max(0.0);
-        let signature = (movement, movement, movement);
+        self.apply_slow_axes(duration, multiplier, multiplier, multiplier);
+    }
+
+    fn apply_slow_axes(&mut self, duration: f64, movement: f64, attack: f64, spawn: f64) {
+        let movement = movement.max(0.0);
+        let attack = attack.max(0.0);
+        let spawn = spawn.max(0.0);
+        let signature = (movement, attack, spawn);
         if self.original_speed.is_none() {
             let debuff = self
                 .slow_multiplier
@@ -916,8 +922,8 @@ impl ModifierState {
             self.slow_effects.push(ModifierEffect {
                 remaining: duration,
                 movement,
-                attack: movement,
-                spawn: movement,
+                attack,
+                spawn,
             });
         }
         self.slow_timer = self
@@ -1061,6 +1067,7 @@ struct ResidentEntity {
     building_lifetime: Option<BuildingLifetimeState>,
     building_impact: Option<BuildingImpactState>,
     point_projectile: Option<PointProjectileState>,
+    area_effect: Option<ResidentAreaEffectState>,
     object_base_movement_noop: bool,
 }
 
@@ -1219,6 +1226,289 @@ struct ShieldState {
 #[derive(Clone)]
 enum ResidentDeathOpcode {
     Damage(ResidentDeathDamage),
+    Area(ResidentDeathAreaSpec),
+}
+
+#[derive(Clone)]
+struct ResidentDeathAreaSpec {
+    area_name: String,
+    radius_tiles: f64,
+    radius_units: i64,
+    duration: f64,
+    effect_tick_interval: f64,
+    refresh_duration: f64,
+    movement_multiplier: f64,
+    attack_multiplier: f64,
+    spawn_multiplier: f64,
+    hits_air: bool,
+    hits_ground: bool,
+    affects_hidden: bool,
+    cap_buff_time_to_effect: bool,
+}
+
+impl ResidentDeathAreaSpec {
+    fn from_normalized(value: &Value) -> PyResult<Option<Self>> {
+        let fields = object_fields(value)?;
+        let area_data = fields
+            .get("area_data")
+            .ok_or_else(|| PyValueError::new_err("DeathAreaEffect has no area_data"))?;
+        let number = |name: &str| -> PyResult<f64> {
+            normalized_mapping_get(area_data, name)
+                .map(ExactScalar::from_normalized)
+                .transpose()
+                .map(|value| value.map_or(0.0, |value| value.as_f64()))
+        };
+        let radius_tiles = number("radius")? / 1000.0;
+        let duration = (number("lifeDuration")? / 1000.0).max(0.001);
+        let effect_tick_interval = (number("hitSpeed")? / 1000.0).max(0.0);
+        let refresh_duration = (number("buffTime")? / 1000.0).max(0.0);
+        let raw_damage = number("damage")?;
+        let buff_data = normalized_mapping_get(area_data, "buffData");
+        let decode_multiplier = |name: &str| -> PyResult<f64> {
+            let Some(raw) = buff_data.and_then(|buff| normalized_mapping_get(buff, name)) else {
+                return Ok(1.0);
+            };
+            let raw = ExactScalar::from_normalized(raw)?.as_f64();
+            Ok(if raw <= 0.0 {
+                ((100.0 + raw) / 100.0).max(0.0)
+            } else {
+                (raw / 100.0).max(0.0)
+            })
+        };
+        let movement_multiplier = decode_multiplier("speedMultiplier")?;
+        let attack_multiplier = decode_multiplier("hitSpeedMultiplier")?;
+        let spawn_multiplier = decode_multiplier("spawnSpeedMultiplier")?;
+        for value in [
+            radius_tiles,
+            duration,
+            effect_tick_interval,
+            refresh_duration,
+            raw_damage,
+            movement_multiplier,
+            attack_multiplier,
+            spawn_multiplier,
+        ] {
+            if !value.is_finite() {
+                return Err(PyValueError::new_err(
+                    "DeathAreaEffect contains a non-finite numeric field",
+                ));
+            }
+        }
+        let has_nested_action = normalized_mapping_get(area_data, "onStartingActionData")
+            .is_some_and(|action| !action.is_null());
+        let positive_buff =
+            movement_multiplier > 1.0 || attack_multiplier > 1.0 || spawn_multiplier > 1.0;
+        let stun_payload =
+            movement_multiplier == 0.0 && attack_multiplier == 0.0 && spawn_multiplier == 0.0;
+        if has_nested_action
+            || positive_buff
+            || stun_payload
+            || radius_tiles < 0.0
+            || raw_damage != 0.0
+            || effect_tick_interval > 0.0
+        {
+            return Ok(None);
+        }
+        let plane_field_present = normalized_mapping_get(area_data, "hitsAir").is_some()
+            || normalized_mapping_get(area_data, "hitsGround").is_some();
+        let (hits_air, hits_ground) = if plane_field_present {
+            let parse_plane = |name: &str| -> PyResult<bool> {
+                match normalized_mapping_get(area_data, name) {
+                    None => Ok(false),
+                    Some(value) => value.as_bool().ok_or_else(|| {
+                        PyValueError::new_err(format!("DeathAreaEffect {name} is not a boolean"))
+                    }),
+                }
+            };
+            (parse_plane("hitsAir")?, parse_plane("hitsGround")?)
+        } else if let Some(target_type) = normalized_mapping_get(area_data, "tidTarget") {
+            let target_type = target_type
+                .as_str()
+                .ok_or_else(|| PyValueError::new_err("DeathAreaEffect tidTarget is not text"))?;
+            (
+                target_type.contains("AIR"),
+                target_type.contains("GROUND") || target_type.contains("BUILDINGS"),
+            )
+        } else {
+            (true, true)
+        };
+        let area_name = normalized_mapping_get(area_data, "name")
+            .and_then(Value::as_str)
+            .filter(|name| !name.is_empty())
+            .unwrap_or("death-area")
+            .to_owned();
+        let boolean = |name: &str| -> PyResult<bool> {
+            match normalized_mapping_get(area_data, name) {
+                None => Ok(false),
+                Some(value) => value.as_bool().ok_or_else(|| {
+                    PyValueError::new_err(format!("DeathAreaEffect {name} is not a boolean"))
+                }),
+            }
+        };
+        Ok(Some(Self {
+            area_name,
+            radius_units: logic_units(radius_tiles).max(0),
+            radius_tiles,
+            duration,
+            effect_tick_interval,
+            refresh_duration,
+            movement_multiplier,
+            attack_multiplier,
+            spawn_multiplier,
+            hits_air,
+            hits_ground,
+            affects_hidden: boolean("affectsHidden")?,
+            cap_buff_time_to_effect: boolean("capBuffTimeToAreaEffectTime")?,
+        }))
+    }
+
+    fn diagnostic_value(&self, opcode_index: usize) -> Value {
+        json!({
+            "affects_hidden": self.affects_hidden,
+            "area_name": self.area_name,
+            "attack_multiplier": exact_f64_value(self.attack_multiplier),
+            "cap_buff_time_to_effect": self.cap_buff_time_to_effect,
+            "duration": exact_f64_value(self.duration),
+            "effect_tick_interval": exact_f64_value(self.effect_tick_interval),
+            "hits_air": self.hits_air,
+            "hits_ground": self.hits_ground,
+            "movement_multiplier": exact_f64_value(self.movement_multiplier),
+            "opcode_index": opcode_index,
+            "opcode_type": "area",
+            "radius_tiles": exact_f64_value(self.radius_tiles),
+            "radius_units": self.radius_units,
+            "refresh_duration": exact_f64_value(self.refresh_duration),
+            "spawn_multiplier": exact_f64_value(self.spawn_multiplier),
+        })
+    }
+}
+
+#[derive(Clone)]
+struct ResidentAreaEffectState {
+    spec: ResidentDeathAreaSpec,
+    time_alive: f64,
+    effect_snapshot_applied: bool,
+    supported: bool,
+}
+
+impl ResidentAreaEffectState {
+    fn from_fields(fields: &Map<String, Value>) -> PyResult<Self> {
+        let radius_tiles = normalized_f64(fields, "radius")?;
+        let duration = normalized_f64(fields, "duration")?;
+        let effect_tick_interval = normalized_f64(fields, "effect_tick_interval")?;
+        let refresh_duration = normalized_f64(fields, "slow_refresh_duration")?;
+        let movement_multiplier = normalized_f64(fields, "speed_multiplier")?;
+        let slows_attack_speed = required_bool(fields, "slows_attack_speed")?;
+        let slows_spawn_speed = required_bool(fields, "slows_spawn_speed")?;
+        let attack_multiplier = optional_normalized_f64(fields, "attack_speed_multiplier")?
+            .unwrap_or(if slows_attack_speed {
+                movement_multiplier
+            } else {
+                1.0
+            });
+        let spawn_multiplier = optional_normalized_f64(fields, "spawn_speed_multiplier")?
+            .unwrap_or(if slows_spawn_speed {
+                movement_multiplier
+            } else {
+                1.0
+            });
+        let time_alive = normalized_f64(fields, "time_alive")?;
+        for value in [
+            radius_tiles,
+            duration,
+            effect_tick_interval,
+            refresh_duration,
+            movement_multiplier,
+            attack_multiplier,
+            spawn_multiplier,
+            time_alive,
+        ] {
+            if !value.is_finite() {
+                return Err(PyValueError::new_err(
+                    "AreaEffect contains a non-finite numeric field",
+                ));
+            }
+        }
+        let option_is_none = |name: &str| fields.get(name).is_none_or(Value::is_null);
+        let damage = normalized_f64(fields, "damage")?;
+        let supported = duration >= 0.001
+            && radius_tiles >= 0.0
+            && refresh_duration >= 0.0
+            && movement_multiplier >= 0.0
+            && attack_multiplier >= 0.0
+            && spawn_multiplier >= 0.0
+            && movement_multiplier <= 1.0
+            && attack_multiplier <= 1.0
+            && spawn_multiplier <= 1.0
+            && !(movement_multiplier == 0.0 && attack_multiplier == 0.0 && spawn_multiplier == 0.0)
+            && time_alive >= 0.0
+            && effect_tick_interval == 0.0
+            && damage == 0.0
+            && required_i64(fields, "max_damage_ticks")? == 0
+            && required_i64(fields, "damage_ticks_applied")? == 0
+            && !required_bool(fields, "freeze_effect")?
+            && required_bool(fields, "effect_on_spawn_only")?
+            && !required_bool(fields, "target_local_damage")?
+            && normalized_f64(fields, "periodic_damage_buff_duration")? == 0.0
+            && !required_bool(fields, "periodic_damage_controlled_by_parent")?
+            && normalized_f64(fields, "attract_percentage")? == 0.0
+            && normalized_f64(fields, "push_speed_factor")? == 0.0
+            && !required_bool(fields, "is_tornado")?
+            && option_is_none("initial_damage_delay")
+            && option_is_none("next_damage_time")
+            && option_is_none("next_effect_time");
+        Ok(Self {
+            spec: ResidentDeathAreaSpec {
+                area_name: fields
+                    .get("spell_name")
+                    .and_then(Value::as_str)
+                    .filter(|name| !name.is_empty())
+                    .unwrap_or("death-area")
+                    .to_owned(),
+                radius_units: logic_units(radius_tiles).max(0),
+                radius_tiles,
+                duration,
+                effect_tick_interval,
+                refresh_duration,
+                movement_multiplier,
+                attack_multiplier,
+                spawn_multiplier,
+                hits_air: required_bool(fields, "hits_air")?,
+                hits_ground: required_bool(fields, "hits_ground")?,
+                affects_hidden: required_bool(fields, "affects_hidden")?,
+                cap_buff_time_to_effect: required_bool(fields, "cap_buff_time_to_effect")?,
+            },
+            time_alive,
+            effect_snapshot_applied: required_bool(fields, "effect_snapshot_applied")?,
+            supported,
+        })
+    }
+
+    fn diagnostic_value(&self, entity: &ResidentEntity) -> Value {
+        json!({
+            "affects_hidden": self.spec.affects_hidden,
+            "area_name": self.spec.area_name,
+            "attack_multiplier": exact_f64_value(self.spec.attack_multiplier),
+            "cap_buff_time_to_effect": self.spec.cap_buff_time_to_effect,
+            "duration": exact_f64_value(self.spec.duration),
+            "effect_snapshot_applied": self.effect_snapshot_applied,
+            "effect_tick_interval": exact_f64_value(self.spec.effect_tick_interval),
+            "encounter_index": entity.encounter_index,
+            "hits_air": self.spec.hits_air,
+            "hits_ground": self.spec.hits_ground,
+            "id": entity.id,
+            "is_alive": entity.is_alive,
+            "movement_multiplier": exact_f64_value(self.spec.movement_multiplier),
+            "player_id": entity.player_id,
+            "position_x": entity.position_x.diagnostic_value(),
+            "position_y": entity.position_y.diagnostic_value(),
+            "radius_tiles": exact_f64_value(self.spec.radius_tiles),
+            "radius_units": self.spec.radius_units,
+            "refresh_duration": exact_f64_value(self.spec.refresh_duration),
+            "spawn_multiplier": exact_f64_value(self.spec.spawn_multiplier),
+            "time_alive": exact_f64_value(self.time_alive),
+        })
+    }
 }
 
 #[derive(Clone)]
@@ -2024,6 +2314,11 @@ impl ResidentEntity {
                         ResidentDeathDamage::from_normalized(mechanic)?,
                     ));
                 }
+                "clasher.mechanics.shared.death_area.DeathAreaEffect" => {
+                    if let Some(area) = ResidentDeathAreaSpec::from_normalized(mechanic)? {
+                        death_opcodes.push(ResidentDeathOpcode::Area(area));
+                    }
+                }
                 _ => {}
             }
         }
@@ -2075,6 +2370,11 @@ impl ResidentEntity {
         };
         let point_projectile = if object_type(value)? == "clasher.entities.Projectile" {
             Some(PointProjectileState::from_fields(fields)?)
+        } else {
+            None
+        };
+        let area_effect = if object_type(value)? == "clasher.entities.AreaEffect" {
+            Some(ResidentAreaEffectState::from_fields(fields)?)
         } else {
             None
         };
@@ -2244,6 +2544,7 @@ impl ResidentEntity {
             building_lifetime,
             building_impact,
             point_projectile,
+            area_effect,
             object_base_movement_noop,
         })
     }
@@ -2273,8 +2574,21 @@ impl ResidentEntity {
             .map(|state| state.diagnostic_value(self.id, self.encounter_index))
     }
 
+    fn area_effect_diagnostic_value(&self) -> Option<Value> {
+        self.area_effect
+            .as_ref()
+            .map(|state| state.diagnostic_value(self))
+    }
+
     fn supports_character_object_phase(&self) -> bool {
         matches!(self.entity_kind, 0 | 1) && self.has_only_compiled_mechanics()
+    }
+
+    fn supports_area_effect_object(&self) -> bool {
+        self.entity_kind == 3
+            && self.mechanics.is_empty()
+            && self.object_base_movement_noop
+            && self.area_effect.as_ref().is_some_and(|area| area.supported)
     }
 
     fn advance_character_object_phase(&mut self, dt: f64) {
@@ -3273,6 +3587,7 @@ impl ResidentBattle {
             for (opcode_index, opcode) in entity.death_opcodes.iter().enumerate() {
                 let mut value = match opcode {
                     ResidentDeathOpcode::Damage(damage) => damage.diagnostic_value(opcode_index),
+                    ResidentDeathOpcode::Area(area) => area.diagnostic_value(opcode_index),
                 };
                 let fields = value
                     .as_object_mut()
@@ -3289,6 +3604,24 @@ impl ResidentBattle {
 
     fn death_opcode_sha256(&self) -> PyResult<String> {
         Ok(sha256_hex(&self.death_opcode_state_bytes()?))
+    }
+
+    fn area_effect_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active)
+            .filter_map(ResidentEntity::area_effect_diagnostic_value)
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident area-effect state: {error}"
+            ))
+        })
+    }
+
+    fn area_effect_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.area_effect_state_bytes()?))
     }
 
     fn supports_character_object_phase(&self) -> bool {
@@ -3337,6 +3670,7 @@ impl ResidentBattle {
             && self.entities.iter().all(|entity| {
                 !entity.active
                     || (entity.entity_kind == 2 && entity.object_base_movement_noop)
+                    || entity.supports_area_effect_object()
                     || entity.supports_character_object_phase()
             })
     }
@@ -3371,6 +3705,7 @@ impl ResidentBattle {
                 match self.entities[entity_index].entity_kind {
                     0 | 1 => self.entities[entity_index].advance_character_object_phase(self.dt),
                     2 => self.advance_point_projectile(entity_index),
+                    3 => self.advance_resident_area_effect(entity_index),
                     _ => unreachable!("resident object preflight validates object kinds"),
                 }
                 self.quantize_resident_position(entity_index);
@@ -3561,6 +3896,7 @@ impl ResidentBattle {
                         .point_projectile
                         .as_ref()
                         .is_some_and(|projectile| projectile.unsupported.is_empty()),
+                    3 => entity.supports_area_effect_object(),
                     _ => false,
                 }
         })
@@ -3739,6 +4075,20 @@ impl ResidentBattle {
 
     fn supports_direct_troop_combat_phase(&self) -> bool {
         if !self.resident_id_invariants_hold() || !self.supports_direct_combat_phase() {
+            return false;
+        }
+        let possible_area_births = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active && entity.is_alive)
+            .flat_map(|entity| entity.death_opcodes.iter())
+            .filter(|opcode| matches!(opcode, ResidentDeathOpcode::Area(_)))
+            .count();
+        if i64::try_from(possible_area_births)
+            .ok()
+            .and_then(|count| self.next_entity_id.checked_add(count))
+            .is_none_or(|next_entity_id| !(0..i64::MAX).contains(&next_entity_id))
+        {
             return false;
         }
         self.entities.iter().all(|entity| {
@@ -4044,7 +4394,7 @@ impl ResidentBattle {
                 return true;
             }
             if entity.entity_kind != 2 {
-                return matches!(entity.entity_kind, 0 | 1);
+                return matches!(entity.entity_kind, 0 | 1) || entity.supports_area_effect_object();
             }
             let Some(projectile) = entity.point_projectile.as_ref() else {
                 return false;
@@ -4164,6 +4514,7 @@ impl ResidentBattle {
                             .iter()
                             .any(|reason| reason == "death_spawn_payload"),
                         2 => entity.point_projectile.is_some(),
+                        3 => entity.supports_area_effect_object(),
                         _ => false,
                     })
         })
@@ -6310,7 +6661,179 @@ impl ResidentBattle {
                 ResidentDeathOpcode::Damage(damage) => {
                     self.execute_resident_death_damage(source_index, &damage);
                 }
+                ResidentDeathOpcode::Area(area) => {
+                    self.spawn_resident_death_area(source_index, &area);
+                }
             }
+        }
+    }
+
+    fn spawn_resident_death_area(&mut self, source_index: usize, spec: &ResidentDeathAreaSpec) {
+        let source_player_id = self.entities[source_index].player_id;
+        let source_card_name = self.entities[source_index].card_name.clone();
+        let source_position_x = self.entities[source_index].position_x.clone();
+        let source_position_y = self.entities[source_index].position_y.clone();
+        let area_id = self.next_entity_id;
+        self.next_entity_id += 1;
+        self.entities.push(ResidentEntity {
+            active: true,
+            encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
+            id: area_id,
+            player_id: source_player_id,
+            entity_kind: 3,
+            python_type: "clasher.entities.AreaEffect".to_owned(),
+            card_name: source_card_name,
+            position_x: source_position_x,
+            position_y: source_position_y,
+            hitpoints: ExactScalar::Int(1),
+            max_hitpoints: ExactScalar::Int(1),
+            damage: ExactScalar::Float(0.0_f64.to_bits()),
+            is_alive: true,
+            target_id: None,
+            deploy_delay_remaining: 0.0,
+            placement_pending: false,
+            spawn_hook_pending: false,
+            spawn_hook_fired: false,
+            death_spawn_target_immunity_elapsed_ms: -1,
+            pending_projectile_max_duration_ms: 0,
+            mechanics: Vec::new(),
+            shields: Vec::new(),
+            death_opcodes: Vec::new(),
+            modifier_state: None,
+            movement: None,
+            modifier_supported: true,
+            direct_combat_unsupported: vec!["non_character_entity".to_owned()],
+            locked_combat: None,
+            building_lifetime: None,
+            building_impact: None,
+            point_projectile: None,
+            area_effect: Some(ResidentAreaEffectState {
+                spec: spec.clone(),
+                time_alive: 0.0,
+                effect_snapshot_applied: false,
+                supported: true,
+            }),
+            object_base_movement_noop: true,
+        });
+    }
+
+    fn advance_resident_area_effect(&mut self, area_index: usize) {
+        let (spec, active_dt, effect_time_remaining, scan) = {
+            let state = self.entities[area_index]
+                .area_effect
+                .as_mut()
+                .expect("resident area-effect preflight requires state");
+            let previous_time = state.time_alive;
+            let active_dt = self.dt.min((state.spec.duration - previous_time).max(0.0));
+            state.time_alive += self.dt;
+            (
+                state.spec.clone(),
+                active_dt,
+                (state.spec.duration - state.time_alive).max(0.0),
+                active_dt > 0.0 && !state.effect_snapshot_applied,
+            )
+        };
+        if scan {
+            let targets = self
+                .entities
+                .iter()
+                .enumerate()
+                .filter_map(|(target_index, _)| {
+                    self.resident_area_effect_target_valid(area_index, target_index, &spec)
+                        .then_some(target_index)
+                })
+                .collect::<Vec<_>>();
+            let mut refresh_duration = active_dt.max(spec.refresh_duration);
+            if spec.cap_buff_time_to_effect {
+                refresh_duration = refresh_duration.min(effect_time_remaining);
+            }
+            if refresh_duration > 1e-9
+                && spec
+                    .movement_multiplier
+                    .min(spec.attack_multiplier)
+                    .min(spec.spawn_multiplier)
+                    < 1.0
+            {
+                for target_index in targets {
+                    let entity = &mut self.entities[target_index];
+                    let modifiers = entity
+                        .modifier_state
+                        .as_mut()
+                        .expect("area-effect target requires modifier state");
+                    modifiers.apply_slow_axes(
+                        refresh_duration,
+                        spec.movement_multiplier,
+                        spec.attack_multiplier,
+                        spec.spawn_multiplier,
+                    );
+                    if let Some(combat) = entity.locked_combat.as_mut() {
+                        combat.attack_speed_debuff_multiplier =
+                            modifiers.attack_speed_debuff_multiplier;
+                    }
+                }
+            }
+            self.entities[area_index]
+                .area_effect
+                .as_mut()
+                .expect("resident area-effect retains state")
+                .effect_snapshot_applied = true;
+        }
+        let expired = {
+            let state = self.entities[area_index]
+                .area_effect
+                .as_ref()
+                .expect("resident area-effect retains state");
+            state.time_alive >= state.spec.duration - 1e-9
+        };
+        if expired {
+            self.entities[area_index].is_alive = false;
+        }
+    }
+
+    fn resident_area_effect_target_valid(
+        &self,
+        area_index: usize,
+        target_index: usize,
+        spec: &ResidentDeathAreaSpec,
+    ) -> bool {
+        if area_index == target_index {
+            return false;
+        }
+        let area = &self.entities[area_index];
+        let target = &self.entities[target_index];
+        if !target.active
+            || !target.is_alive
+            || target.player_id == area.player_id
+            || !matches!(target.entity_kind, 0 | 1)
+            || !target.has_only_compiled_mechanics()
+        {
+            return false;
+        }
+        let Some((target_is_air, collision_radius, _, _)) = target.projectile_target_traits()
+        else {
+            return false;
+        };
+        if (target_is_air && !spec.hits_air) || (!target_is_air && !spec.hits_ground) {
+            return false;
+        }
+        let area_x = logic_units(area.position_x.as_f64());
+        let area_y = logic_units(area.position_y.as_f64());
+        let target_x = logic_units(target.position_x.as_f64());
+        let target_y = logic_units(target.position_y.as_f64());
+        let target_radius = logic_units(collision_radius).max(0);
+        if target.entity_kind == 1 {
+            let closest_x = area_x.clamp(target_x - target_radius, target_x + target_radius);
+            let closest_y = area_y.clamp(target_y - target_radius, target_y + target_radius);
+            let dx = closest_x - area_x;
+            let dy = closest_y - area_y;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(spec.radius_units) * i128::from(spec.radius_units)
+        } else {
+            let dx = target_x - area_x;
+            let dy = target_y - area_y;
+            let radius = spec.radius_units + target_radius;
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                < i128::from(radius) * i128::from(radius)
         }
     }
 
@@ -6581,6 +7104,7 @@ impl ResidentBattle {
                 start_collision_resolved: true,
                 unsupported: Vec::new(),
             }),
+            area_effect: None,
             object_base_movement_noop: true,
         });
     }

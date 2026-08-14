@@ -394,6 +394,12 @@ class ResidentRustBattle:
     def death_opcode_sha256(self) -> str:
         return str(self._native.death_opcode_sha256())
 
+    def area_effect_state_bytes(self) -> bytes:
+        return bytes(self._native.area_effect_state_bytes())
+
+    def area_effect_sha256(self) -> str:
+        return str(self._native.area_effect_sha256())
+
     @property
     def supports_character_object_phase(self) -> bool:
         return bool(self._native.supports_character_object_phase())
@@ -960,13 +966,122 @@ def shield_state_bytes(battle: Any) -> bytes:
 
 
 def death_opcode_state_rows(battle: Any) -> list[dict[str, Any]]:
+    import math
+
+    from .gamedata_normalization import serialized_hit_planes
     from .kinematics import tiles_to_logic_units
+    from .mechanics.shared.death_area import (
+        DeathAreaEffect,
+        _serialized_speed_multiplier,
+    )
     from .mechanics.shared.death_effects import DeathDamage
 
     rows: list[dict[str, Any]] = []
     for encounter_index, entity in enumerate(battle.entities.values()):
         opcode_index = 0
         for mechanic in entity.mechanics:
+            if isinstance(mechanic, DeathAreaEffect):
+                area_data = mechanic.area_data
+                radius_tiles = float(area_data.get("radius", 0) or 0) / 1000.0
+                duration = max(
+                    0.001,
+                    float(area_data.get("lifeDuration", 0) or 0) / 1000.0,
+                )
+                effect_tick_interval = max(
+                    0.0,
+                    float(area_data.get("hitSpeed", 0) or 0) / 1000.0,
+                )
+                refresh_duration = max(
+                    0.0,
+                    float(area_data.get("buffTime", 0) or 0) / 1000.0,
+                )
+                buff_data = area_data.get("buffData") or {}
+                movement_multiplier = _serialized_speed_multiplier(
+                    buff_data.get("speedMultiplier")
+                )
+                attack_multiplier = _serialized_speed_multiplier(
+                    buff_data.get("hitSpeedMultiplier")
+                )
+                spawn_multiplier = _serialized_speed_multiplier(
+                    buff_data.get("spawnSpeedMultiplier")
+                )
+                raw_damage = float(area_data.get("damage", 0) or 0)
+                if not all(
+                    math.isfinite(value)
+                    for value in (
+                        radius_tiles,
+                        duration,
+                        effect_tick_interval,
+                        refresh_duration,
+                        raw_damage,
+                        movement_multiplier,
+                        attack_multiplier,
+                        spawn_multiplier,
+                    )
+                ):
+                    raise ValueError(
+                        "DeathAreaEffect contains a non-finite numeric field"
+                    )
+                if (
+                    area_data.get("onStartingActionData") is not None
+                    or max(
+                        movement_multiplier,
+                        attack_multiplier,
+                        spawn_multiplier,
+                    )
+                    > 1.0
+                    or (
+                        movement_multiplier == 0.0
+                        and attack_multiplier == 0.0
+                        and spawn_multiplier == 0.0
+                    )
+                    or radius_tiles < 0.0
+                    or raw_damage != 0.0
+                    or effect_tick_interval > 0.0
+                ):
+                    continue
+                hits_air, hits_ground = serialized_hit_planes(area_data)
+                rows.append(
+                    {
+                        "affects_hidden": bool(
+                            area_data.get("affectsHidden", False)
+                        ),
+                        "area_name": str(
+                            area_data.get("name", "") or "death-area"
+                        ),
+                        "attack_multiplier": _exact_scalar(
+                            attack_multiplier
+                        ),
+                        "cap_buff_time_to_effect": bool(
+                            area_data.get(
+                                "capBuffTimeToAreaEffectTime",
+                                False,
+                            )
+                        ),
+                        "duration": _exact_scalar(duration),
+                        "effect_tick_interval": _exact_scalar(
+                            effect_tick_interval
+                        ),
+                        "encounter_index": encounter_index,
+                        "hits_air": hits_air,
+                        "hits_ground": hits_ground,
+                        "id": int(entity.id),
+                        "movement_multiplier": _exact_scalar(
+                            movement_multiplier
+                        ),
+                        "opcode_index": opcode_index,
+                        "opcode_type": "area",
+                        "radius_tiles": _exact_scalar(radius_tiles),
+                        "radius_units": max(
+                            0,
+                            tiles_to_logic_units(radius_tiles),
+                        ),
+                        "refresh_duration": _exact_scalar(refresh_duration),
+                        "spawn_multiplier": _exact_scalar(spawn_multiplier),
+                    }
+                )
+                opcode_index += 1
+                continue
             if not isinstance(mechanic, DeathDamage):
                 continue
             rows.append(
@@ -998,6 +1113,109 @@ def death_opcode_state_rows(battle: Any) -> list[dict[str, Any]]:
             )
             opcode_index += 1
     return rows
+
+
+def area_effect_state_rows(battle: Any) -> list[dict[str, Any]]:
+    from .entities import AreaEffect
+    from .kinematics import tiles_to_logic_units
+
+    rows: list[dict[str, Any]] = []
+    for encounter_index, entity in enumerate(battle.entities.values()):
+        if not isinstance(entity, AreaEffect):
+            continue
+        attack_multiplier = (
+            (
+                entity.speed_multiplier
+                if entity.slows_attack_speed
+                else 1.0
+            )
+            if entity.attack_speed_multiplier is None
+            else entity.attack_speed_multiplier
+        )
+        spawn_multiplier = (
+            (
+                entity.speed_multiplier
+                if entity.slows_spawn_speed
+                else 1.0
+            )
+            if entity.spawn_speed_multiplier is None
+            else entity.spawn_speed_multiplier
+        )
+        rows.append(
+            {
+                "affects_hidden": bool(entity.affects_hidden),
+                "area_name": str(
+                    getattr(entity, "spell_name", "") or "death-area"
+                ),
+                "attack_multiplier": _exact_scalar(attack_multiplier),
+                "cap_buff_time_to_effect": bool(
+                    entity.cap_buff_time_to_effect
+                ),
+                "duration": _exact_scalar(entity.duration),
+                "effect_snapshot_applied": bool(
+                    entity.effect_snapshot_applied
+                ),
+                "effect_tick_interval": _exact_scalar(
+                    entity.effect_tick_interval
+                ),
+                "encounter_index": encounter_index,
+                "hits_air": bool(entity.hits_air),
+                "hits_ground": bool(entity.hits_ground),
+                "id": int(entity.id),
+                "is_alive": bool(entity.is_alive),
+                "movement_multiplier": _exact_scalar(
+                    entity.speed_multiplier
+                ),
+                "player_id": int(entity.player_id),
+                "position_x": _exact_scalar(entity.position.x),
+                "position_y": _exact_scalar(entity.position.y),
+                "radius_tiles": _exact_scalar(entity.radius),
+                "radius_units": max(
+                    0,
+                    tiles_to_logic_units(entity.radius),
+                ),
+                "refresh_duration": _exact_scalar(
+                    entity.slow_refresh_duration
+                ),
+                "spawn_multiplier": _exact_scalar(spawn_multiplier),
+                "time_alive": _exact_scalar(entity.time_alive),
+            }
+        )
+    return rows
+
+
+def area_effect_state_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        area_effect_state_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_area_effect_state(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = area_effect_state_rows(battle)
+    actual = json.loads(resident.area_effect_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust area-effect state mismatch")
+        raise AssertionError(
+            "resident Rust area-effect parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(area_effect_state_bytes(battle)).hexdigest()
+    actual_hash = resident.area_effect_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust area-effect hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
 
 
 def death_opcode_state_bytes(battle: Any) -> bytes:
