@@ -9,8 +9,9 @@ import pytest
 
 from clasher.arena import Position, TileGrid
 from clasher.battle import BattleState
-from clasher.entities import Building, Troop
+from clasher.entities import AreaEffect, BuffAreaEffect, Building, Projectile, Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
+from clasher.rl.oracle_planner import FixedDepthThompsonOracle
 from clasher.rust_core import (
     ResidentRustBattle,
     _single_troop_capability_reasons,
@@ -99,6 +100,165 @@ def _compare_resident_state(
     compare_resident_rng(battle.rng, resident)
     compare_idle_state(battle, resident)
     assert resident.next_entity_id == battle.next_entity_id
+
+
+def _python_oracle_state_key(battle: BattleState) -> tuple[Any, ...]:
+    return FixedDepthThompsonOracle()._state_key(battle)
+
+
+@pytest.mark.parametrize("mirrored", [False, True])
+def test_native_oracle_state_key_matches_python_mirrored_state_without_mutation(
+    mirrored: bool,
+) -> None:
+    battle = BattleState(rng=random.Random(90_900 + int(mirrored)))
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    position = Position(10.25, 12.75)
+    player_id = 0
+    if mirrored:
+        position = Position(battle.arena.width - position.x, battle.arena.height - position.y)
+        player_id = 1
+    battle._spawn_unit_at_position(position, player_id, stats)
+    battle.tick = 17
+    battle.time = 0.85
+    battle.double_elixir = True
+    resident = ResidentRustBattle.from_battle(battle)
+    resident_before = _resident_state(resident)
+    rng_before = battle.rng.getstate()
+
+    actual = resident.resident_oracle_state_key()
+
+    assert actual == _python_oracle_state_key(battle)
+    assert _resident_state(resident) == resident_before
+    assert battle.rng.getstate() == rng_before
+
+
+def test_native_oracle_state_key_matches_every_python_entity_kind() -> None:
+    battle = BattleState(rng=random.Random(90_902))
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    battle._spawn_unit_at_position(Position(8.0, 10.0), 0, stats)
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(8.5, 11.0),
+        player_id=1,
+        card_stats=stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=12,
+        range=1.0,
+        sight_range=1.0,
+        target_position=Position(8.0, 10.0),
+    )
+    battle.entities[projectile.id] = projectile
+    battle.next_entity_id += 1
+    area = AreaEffect(
+        id=battle.next_entity_id,
+        position=Position(9.0, 12.0),
+        player_id=0,
+        card_stats=stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=0,
+        range=1.0,
+        sight_range=1.0,
+        duration=1.0,
+        radius=1.0,
+    )
+    battle.entities[area.id] = area
+    battle.next_entity_id += 1
+    buff = BuffAreaEffect(
+        id=battle.next_entity_id,
+        position=Position(10.0, 13.0),
+        player_id=1,
+        card_stats=stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=0,
+        range=1.0,
+        sight_range=1.0,
+        duration=1.0,
+        radius=1.0,
+    )
+    battle.entities[buff.id] = buff
+    battle.next_entity_id += 1
+    resident = ResidentRustBattle.from_battle(battle)
+
+    actual = resident.resident_oracle_state_key()
+
+    assert actual == _python_oracle_state_key(battle)
+    assert {row[0] for row in actual[-1]} == {0, 1, 2, 3, 4}
+
+
+def test_native_oracle_state_key_matches_bankers_ties_and_negative_coordinates() -> None:
+    battle = BattleState(rng=random.Random(90_903))
+    battle.time = 0.05
+    battle.players[0].elixir = 0.25
+    battle.players[1].elixir = 0.35
+    battle.players[0].left_tower_hp = 100.5
+    battle.players[0].right_tower_hp = 101.5
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    battle._spawn_unit_at_position(Position(-0.75, 1.25), 0, stats)
+    troop = next(
+        entity
+        for entity in reversed(tuple(battle.entities.values()))
+        if isinstance(entity, Troop)
+    )
+    troop.position = Position(-0.75, 1.25)
+    troop.hitpoints = 12.5
+    troop.max_hitpoints = 100.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    actual = resident.resident_oracle_state_key()
+
+    assert actual == _python_oracle_state_key(battle)
+    assert actual[1] == 0
+    assert actual[5:7] == (2, 4)
+    assert actual[7:9] == (100, 102)
+    assert (1, 0, -2, 2, 2) in actual[-1]
+
+
+def test_native_oracle_state_key_excludes_dead_and_retained_inactive_entities() -> None:
+    battle = BattleState(rng=random.Random(90_904))
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    battle._spawn_unit_at_position(Position(7.25, 9.25), 0, stats)
+    dead = next(
+        entity
+        for entity in reversed(tuple(battle.entities.values()))
+        if isinstance(entity, Troop)
+    )
+    dead.hitpoints = 0
+    dead.is_alive = False
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.resident_oracle_state_key() == _python_oracle_state_key(battle)
+    assert (1, 0, 14, 18, 0) not in resident.resident_oracle_state_key()[-1]
+
+    resident.advance_cleanup_phase()
+    battle._cleanup_dead_entities()
+
+    assert resident.resident_oracle_state_key() == _python_oracle_state_key(battle)
+
+
+def test_native_oracle_state_key_sorts_then_truncates_to_96_entities() -> None:
+    battle = BattleState(rng=random.Random(90_905))
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    for index in range(110):
+        battle._spawn_unit_at_position(
+            Position(-8.0 + index * 0.125, 4.0 + (index % 17) * 0.25),
+            index % 2,
+            stats,
+            snap_to_valid=False,
+        )
+    resident = ResidentRustBattle.from_battle(battle)
+
+    actual = resident.resident_oracle_state_key()
+
+    assert actual == _python_oracle_state_key(battle)
+    assert len(actual[-1]) == 96
 
 
 @pytest.mark.parametrize("fast_path", [False, True])

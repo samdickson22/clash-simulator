@@ -754,6 +754,16 @@ class ResidentRustBattle:
             for action_id in self._native.legal_action_ids(int(player_id))
         )
 
+    def resident_oracle_state_key(self) -> tuple[Any, ...]:
+        base, entities = self._native.oracle_state_key_parts()
+        return (
+            *(int(value) for value in base),
+            tuple(
+                tuple(int(value) for value in entity_key)
+                for entity_key in entities
+            ),
+        )
+
     def apply_resident_joint_actions(
         self,
         action0: int,

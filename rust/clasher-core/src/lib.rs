@@ -298,6 +298,22 @@ fn logic_units(value: f64) -> i64 {
     (value * 1000.0).round_ties_even() as i64
 }
 
+fn python_quantize_i64(value: f64, scale: f64) -> PyResult<i64> {
+    let scaled = value * scale;
+    if !scaled.is_finite() {
+        return Err(PyValueError::new_err(
+            "resident oracle state-key quantization requires a finite value",
+        ));
+    }
+    let rounded = scaled.round_ties_even();
+    if rounded < i64::MIN as f64 || rounded > i64::MAX as f64 {
+        return Err(PyValueError::new_err(
+            "resident oracle state-key quantization exceeds i64",
+        ));
+    }
+    Ok(rounded as i64)
+}
+
 const LOGIC_SIN_TABLE: [i64; 91] = [
     0, 18, 36, 54, 71, 89, 107, 125, 143, 160, 178, 195, 213, 230, 248, 265, 282, 299, 316, 333,
     350, 367, 384, 400, 416, 433, 449, 465, 481, 496, 512, 527, 543, 558, 573, 587, 602, 616, 630,
@@ -2363,6 +2379,24 @@ impl ResidentEntity {
         self.mechanics.len() == self.shields.len() + self.death_opcodes.len()
     }
 
+    fn oracle_state_kind(&self) -> i64 {
+        match self.entity_kind {
+            1 => 0,
+            0 => 1,
+            2 => 2,
+            3 if matches!(
+                self.python_type.as_str(),
+                "clasher.entities.AreaEffect"
+                    | "clasher.entities.TimedExplosive"
+                    | "clasher.entities.Graveyard"
+            ) =>
+            {
+                3
+            }
+            _ => 4,
+        }
+    }
+
     fn apply_incoming_damage(&mut self, mut amount: f64) -> f64 {
         let mut broke_shield = false;
         for shield in &mut self.shields {
@@ -3320,6 +3354,8 @@ type PlayerInit = (
 type PlayerStateTuple = PlayerInit;
 type TowerInit = (i64, i64, String, f64, i64, bool, bool, f64);
 type TowerStateTuple = TowerInit;
+type OracleStateEntityKey = (i64, i64, i64, i64, i64);
+type OracleStateKeyParts = (Vec<i64>, Vec<OracleStateEntityKey>);
 
 #[derive(Clone)]
 struct ResidentPlayer {
@@ -5162,6 +5198,50 @@ impl ResidentBattle {
             .get(name)
             .map(|card| card.capability_reasons.clone())
             .unwrap_or_else(|| vec!["missing_catalog_card".to_owned()])
+    }
+
+    fn oracle_state_key_parts(&self) -> PyResult<OracleStateKeyParts> {
+        if self.players.len() != 2 {
+            return Err(PyRuntimeError::new_err(
+                "resident oracle state key requires exactly two players",
+            ));
+        }
+        let player0 = &self.players[0];
+        let player1 = &self.players[1];
+        let base = vec![
+            self.tick,
+            python_quantize_i64(self.time, 10.0)?,
+            i64::from(self.double_elixir),
+            i64::from(self.triple_elixir),
+            i64::from(self.overtime),
+            python_quantize_i64(player0.elixir, 10.0)?,
+            python_quantize_i64(player1.elixir, 10.0)?,
+            python_quantize_i64(player0.left_tower_hp.as_f64(), 1.0)?,
+            python_quantize_i64(player0.right_tower_hp.as_f64(), 1.0)?,
+            python_quantize_i64(player0.king_tower_hp.as_f64(), 1.0)?,
+            python_quantize_i64(player1.left_tower_hp.as_f64(), 1.0)?,
+            python_quantize_i64(player1.right_tower_hp.as_f64(), 1.0)?,
+            python_quantize_i64(player1.king_tower_hp.as_f64(), 1.0)?,
+        ];
+        let mut entities = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active && entity.is_alive)
+            .map(|entity| {
+                let raw_max_hp = entity.max_hitpoints.as_f64();
+                let max_hp = 1.0_f64.max(if raw_max_hp == 0.0 { 1.0 } else { raw_max_hp });
+                Ok((
+                    entity.oracle_state_kind(),
+                    entity.player_id,
+                    python_quantize_i64(entity.position_x.as_f64(), 2.0)?,
+                    python_quantize_i64(entity.position_y.as_f64(), 2.0)?,
+                    python_quantize_i64(entity.hitpoints.as_f64() / max_hp, 20.0)?,
+                ))
+            })
+            .collect::<PyResult<Vec<_>>>()?;
+        entities.sort_unstable();
+        entities.truncate(96);
+        Ok((base, entities))
     }
 
     fn legal_action_ids(&self, player_id: i64) -> PyResult<Vec<i64>> {
