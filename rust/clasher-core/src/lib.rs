@@ -1,4 +1,4 @@
-use pyo3::exceptions::{PyRuntimeError, PyValueError};
+use pyo3::exceptions::{PyIndexError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use serde_json::{Map, Value, json};
 use sha2::{Digest, Sha256};
@@ -699,6 +699,30 @@ impl PythonMt19937 {
         }
     }
 
+    fn choice_index(&mut self, length: usize) -> PyResult<usize> {
+        if length == 0 {
+            return Err(PyIndexError::new_err(
+                "cannot choose from an empty sequence",
+            ));
+        }
+        let length = u64::try_from(length)
+            .map_err(|_| PyValueError::new_err("sequence length exceeds u64"))?;
+        usize::try_from(self.randbelow(length)?)
+            .map_err(|_| PyValueError::new_err("chosen index exceeds usize"))
+    }
+
+    fn shuffle_indices(&mut self, length: usize) -> PyResult<Vec<usize>> {
+        let mut indices = (0..length).collect::<Vec<_>>();
+        // This is the exact reverse Fisher-Yates loop used by
+        // random.Random.shuffle in CPython. In particular, a two-element
+        // action order consumes _randbelow(2) once per environment decision.
+        for index in (1..length).rev() {
+            let other = self.choice_index(index + 1)?;
+            indices.swap(index, other);
+        }
+        Ok(indices)
+    }
+
     fn diagnostic_value(&self) -> Value {
         json!({
             "gauss_next": self.gauss_next.as_ref().map(ExactScalar::diagnostic_value),
@@ -1338,6 +1362,29 @@ impl ResidentBattle {
         let value = self.rng.randbelow(stop)?;
         self.checkpoint_current = false;
         Ok(value)
+    }
+
+    fn rng_choice_index(&mut self, length: usize) -> PyResult<usize> {
+        let value = self.rng.choice_index(length)?;
+        self.checkpoint_current = false;
+        Ok(value)
+    }
+
+    fn rng_shuffle_indices(&mut self, length: usize) -> PyResult<Vec<usize>> {
+        let value = self.rng.shuffle_indices(length)?;
+        if length >= 2 {
+            self.checkpoint_current = false;
+        }
+        Ok(value)
+    }
+
+    fn rng_state_parts(&self) -> (i64, Vec<u32>, usize, Option<f64>) {
+        (
+            self.rng.version,
+            self.rng.state.to_vec(),
+            self.rng.index,
+            self.rng.gauss_next.as_ref().map(ExactScalar::as_f64),
+        )
     }
 
     fn rng_state_bytes(&self) -> PyResult<Vec<u8>> {

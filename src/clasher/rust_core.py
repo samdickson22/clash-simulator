@@ -354,6 +354,20 @@ class ResidentRustBattle:
     def rng_randrange(self, stop: int) -> int:
         return int(self._native.rng_randrange(stop))
 
+    def rng_choice_index(self, length: int) -> int:
+        return int(self._native.rng_choice_index(length))
+
+    def rng_shuffle_indices(self, length: int) -> list[int]:
+        return [int(index) for index in self._native.rng_shuffle_indices(length)]
+
+    def rng_getstate(self) -> tuple[int, tuple[int, ...], float | None]:
+        version, words, index, gauss_next = self._native.rng_state_parts()
+        return (
+            int(version),
+            (*[int(word) for word in words], int(index)),
+            None if gauss_next is None else float(gauss_next),
+        )
+
     def rng_state_bytes(self) -> bytes:
         return bytes(self._native.rng_state_bytes())
 
