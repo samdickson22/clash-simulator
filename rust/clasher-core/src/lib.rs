@@ -1,13 +1,28 @@
 use pyo3::exceptions::{PyIndexError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
+use pyo3::types::PyTuple;
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
 use sha2::{Digest, Sha256};
+use std::borrow::Cow;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
 const FNV_PRIME: u64 = 0x100000001b3;
+const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
+const PREPARED_PUBLICATION_VERSION: u64 = 1;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 7;
+static NEXT_RESIDENT_STATE_TOKEN: AtomicU64 = AtomicU64::new(1);
+
+fn next_resident_state_token() -> u64 {
+    NEXT_RESIDENT_STATE_TOKEN
+        .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |token| {
+            token.checked_add(1)
+        })
+        .expect("resident publication token space exhausted")
+}
 
 const ENTITY_SPARSE_ATTRIBUTE_NAMES: [&str; 26] = [
     "_spawn_hook_pending",
@@ -49,7 +64,8 @@ const BATTLE_SPARSE_ATTRIBUTE_NAMES: [&str; 8] = [
     "_troop_placement_blocked_masks",
 ];
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Default, IntoPyObject)]
+#[pyo3(transparent)]
 struct SparseAttributePresence(u64);
 
 impl SparseAttributePresence {
@@ -508,7 +524,7 @@ fn validate_checkpoint(payload: &[u8]) -> PyResult<u64> {
         .get("schema_version")
         .and_then(Value::as_u64)
         .ok_or_else(|| PyValueError::new_err("battle checkpoint has no integer schema_version"))?;
-    if schema_version != 2 {
+    if schema_version != RESIDENT_CHECKPOINT_SCHEMA_VERSION {
         return Err(PyValueError::new_err(format!(
             "unsupported battle checkpoint schema {schema_version}; expected 2"
         )));
@@ -611,6 +627,19 @@ fn optional_entity_ref_id(fields: &Map<String, Value>, name: &str) -> PyResult<O
 enum ExactScalar {
     Int(i64),
     Float(u64),
+}
+
+impl<'py> IntoPyObject<'py> for ExactScalar {
+    type Target = PyTuple;
+    type Output = Bound<'py, PyTuple>;
+    type Error = PyErr;
+
+    fn into_pyobject(self, py: Python<'py>) -> Result<Self::Output, Self::Error> {
+        match self {
+            Self::Int(value) => (0_u8, value, 0_u64).into_pyobject(py),
+            Self::Float(bits) => (1_u8, 0_i64, bits).into_pyobject(py),
+        }
+    }
 }
 
 impl ExactScalar {
@@ -727,6 +756,31 @@ enum RouteCacheKind {
     Single,
     Ground,
     Unsupported,
+}
+
+fn route_cache_kind_into_py<'py>(
+    kind: Cow<'_, RouteCacheKind>,
+    py: Python<'py>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let tag = match *kind {
+        RouteCacheKind::Absent => 0_u8,
+        RouteCacheKind::Single => 1,
+        RouteCacheKind::Ground => 2,
+        RouteCacheKind::Unsupported => 3,
+    };
+    Ok(tag.into_pyobject(py)?.into_any())
+}
+
+fn string_deque_into_py<'py>(
+    values: Cow<'_, VecDeque<String>>,
+    py: Python<'py>,
+) -> PyResult<Bound<'py, PyAny>> {
+    Ok(values
+        .iter()
+        .cloned()
+        .collect::<Vec<_>>()
+        .into_pyobject(py)?
+        .into_any())
 }
 
 struct RouteCacheInit {
@@ -908,7 +962,7 @@ fn absent_optional_normalized_f64(
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ModifierEffect {
     remaining: f64,
     movement: f64,
@@ -1004,7 +1058,7 @@ fn normalized_optional_bool(fields: &Map<String, Value>, name: &str) -> bool {
     fields.get(name).and_then(Value::as_bool).unwrap_or(false)
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ModifierState {
     stun_timer: f64,
     slow_timer: f64,
@@ -1325,7 +1379,7 @@ impl ResidentRewardTraits {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 enum ResidentCharacterBirthProvenance {
     CatalogAction {
         lookup_name: String,
@@ -1440,7 +1494,7 @@ struct ResidentEntity {
     character_birth: Option<ResidentCharacterBirthProvenance>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ResidentMovementState {
     vector_x_units: i64,
     vector_y_units: i64,
@@ -1465,6 +1519,7 @@ struct ResidentMovementState {
     jump_speed: f64,
     kamikaze_primed: bool,
     route_cache_supported: bool,
+    #[pyo3(into_py_with = route_cache_kind_into_py)]
     route_cache_kind: RouteCacheKind,
     route_goal: Option<(i64, i64)>,
     route_cells: Vec<(i64, i64)>,
@@ -1595,7 +1650,7 @@ impl ResidentMovementState {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ShieldState {
     current: ExactScalar,
     maximum: ExactScalar,
@@ -1612,6 +1667,7 @@ enum ResidentDeathOpcode {
 struct ResidentDeathSpawn {
     unit_name: String,
     unit_data: Value,
+    unit_data_fingerprint: String,
     count: i64,
     radius_tiles: f64,
     min_radius_tiles: f64,
@@ -1658,9 +1714,15 @@ impl ResidentDeathSpawn {
                 "DeathSpawn has unsupported count, timing, or radius",
             ));
         }
+        let unit_data_bytes = serde_json::to_vec(unit_data).map_err(|error| {
+            PyValueError::new_err(format!(
+                "failed to fingerprint DeathSpawn unit_data: {error}"
+            ))
+        })?;
         Ok(Some(Self {
             unit_name,
             unit_data: unit_data.clone(),
+            unit_data_fingerprint: sha256_hex(&unit_data_bytes),
             count,
             radius_tiles,
             min_radius_tiles,
@@ -1671,8 +1733,6 @@ impl ResidentDeathSpawn {
     }
 
     fn diagnostic_value(&self, opcode_index: usize) -> Value {
-        let unit_data_bytes = serde_json::to_vec(&self.unit_data)
-            .expect("normalized DeathSpawn unit_data is serializable");
         json!({
             "count": self.count,
             "deploy_time_ms": self.deploy_time_ms,
@@ -1683,12 +1743,12 @@ impl ResidentDeathSpawn {
             "radius_tiles": exact_f64_value(self.radius_tiles),
             "spawn_const_priority": self.spawn_const_priority,
             "unit_name": self.unit_name,
-            "unit_data_sha256": sha256_hex(&unit_data_bytes),
+            "unit_data_sha256": self.unit_data_fingerprint,
         })
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ResidentDeathAreaSpec {
     area_name: String,
     radius_tiles: f64,
@@ -1842,7 +1902,7 @@ impl ResidentDeathAreaSpec {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ResidentAreaEffectState {
     spec: ResidentDeathAreaSpec,
     time_alive: f64,
@@ -1972,7 +2032,7 @@ impl ResidentAreaEffectState {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ResidentDeathDamage {
     radius_tiles: ExactScalar,
     radius_units: i64,
@@ -2069,7 +2129,7 @@ impl ShieldState {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct BuildingImpactState {
     collision_radius: f64,
     crown_slot: Option<String>,
@@ -2123,7 +2183,7 @@ impl BuildingImpactState {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct PointProjectileState {
     source_kind: String,
     target_x: ExactScalar,
@@ -2331,7 +2391,7 @@ impl PointProjectileState {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct BuildingLifetimeState {
     lifetime_ms: Option<i64>,
     lifetime_elapsed: f64,
@@ -2373,7 +2433,7 @@ impl BuildingLifetimeState {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct LockedDirectCombatState {
     damage: f64,
     range: f64,
@@ -2414,13 +2474,13 @@ struct LockedDirectCombatState {
     point_weapon: Option<PointWeapon>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct DirectAreaWeapon {
     radius_units: i64,
     self_centered: bool,
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct PointWeapon {
     travel_speed: f64,
     tracks_target: bool,
@@ -3838,7 +3898,7 @@ fn parse_resident_entities(payload: &[u8]) -> PyResult<Vec<ResidentEntity>> {
     Ok(parsed)
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct PythonMt19937 {
     version: i64,
     state: [u32; 624],
@@ -4039,13 +4099,14 @@ type OracleLeafProjectionParts = (
     Vec<OracleLeafCombatTraits>,
 );
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ResidentPlayer {
     player_id: i64,
     elixir: f64,
     max_elixir: f64,
     next_card_refill_cooldown_ms: i64,
     hand: Vec<Option<String>>,
+    #[pyo3(into_py_with = string_deque_into_py)]
     cycle_queue: VecDeque<String>,
     king_tower_hp: ExactScalar,
     left_tower_hp: ExactScalar,
@@ -4165,7 +4226,7 @@ impl ResidentPlayer {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ResidentTower {
     active: bool,
     id: i64,
@@ -4234,7 +4295,7 @@ fn append_string(payload: &mut Vec<u8>, value: &str) {
     payload.extend_from_slice(value.as_bytes());
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ResidentPendingSpellCast {
     execute_at: f64,
     sequence: i64,
@@ -4257,10 +4318,15 @@ impl ResidentPendingSpellCast {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, IntoPyObject)]
 struct ResidentProjectileDamageGroup {
     id: i64,
     hit_entity_ids: Vec<i64>,
+}
+
+#[derive(Debug)]
+struct ResidentPublicationLineage {
+    id: u64,
 }
 
 impl ResidentProjectileDamageGroup {
@@ -4283,6 +4349,11 @@ impl ResidentProjectileDamageGroup {
 #[pyclass(module = "_clasher_rust")]
 #[derive(Clone)]
 struct ResidentBattle {
+    publication_lineage: Arc<ResidentPublicationLineage>,
+    publication_node_id: u64,
+    publication_epoch: u64,
+    publication_parent: Option<(u64, u64)>,
+    publication_epoch_suppressed: bool,
     sparse_attributes: SparseAttributePresence,
     fast_path: bool,
     checkpoint: Arc<[u8]>,
@@ -4323,6 +4394,334 @@ struct ResidentBattle {
     next_spell_cast_sequence: i64,
     projectile_damage_groups: Vec<ResidentProjectileDamageGroup>,
     rng: PythonMt19937,
+}
+
+#[pyclass(frozen, module = "_clasher_rust")]
+#[derive(Clone)]
+struct PreparedPublication {
+    prior_node_id: u64,
+    prior_epoch: u64,
+    prior_next_entity_id: i64,
+    prior_entity_ids: Vec<i64>,
+    candidate: ResidentBattle,
+}
+
+#[derive(Clone, IntoPyObject)]
+struct PreparedDeathSpawnParts {
+    unit_name: String,
+    unit_data_fingerprint: String,
+    count: i64,
+    radius_tiles: f64,
+    min_radius_tiles: f64,
+    radial_pushback: bool,
+    spawn_const_priority: bool,
+    deploy_time_ms: i64,
+}
+
+#[derive(Clone, IntoPyObject)]
+struct PreparedDeathOpcodeParts {
+    kind: u8,
+    damage: Option<ResidentDeathDamage>,
+    spawn: Option<PreparedDeathSpawnParts>,
+    area: Option<ResidentDeathAreaSpec>,
+}
+
+impl From<&ResidentDeathOpcode> for PreparedDeathOpcodeParts {
+    fn from(value: &ResidentDeathOpcode) -> Self {
+        match value {
+            ResidentDeathOpcode::Damage(value) => Self {
+                kind: 0,
+                damage: Some(value.clone()),
+                spawn: None,
+                area: None,
+            },
+            ResidentDeathOpcode::Spawn(value) => Self {
+                kind: 1,
+                damage: None,
+                spawn: Some(PreparedDeathSpawnParts {
+                    unit_name: value.unit_name.clone(),
+                    unit_data_fingerprint: value.unit_data_fingerprint.clone(),
+                    count: value.count,
+                    radius_tiles: value.radius_tiles,
+                    min_radius_tiles: value.min_radius_tiles,
+                    radial_pushback: value.radial_pushback,
+                    spawn_const_priority: value.spawn_const_priority,
+                    deploy_time_ms: value.deploy_time_ms,
+                }),
+                area: None,
+            },
+            ResidentDeathOpcode::Area(value) => Self {
+                kind: 2,
+                damage: None,
+                spawn: None,
+                area: Some(value.clone()),
+            },
+        }
+    }
+}
+
+#[derive(Clone, IntoPyObject)]
+struct PreparedCharacterBirthParts {
+    kind: u8,
+    lookup_name: Option<String>,
+    effective_name: String,
+    template_fingerprint: String,
+    unit_data_fingerprint: Option<String>,
+    group_id: i64,
+    ordinal: i64,
+    member_count: i64,
+    source_entity_id: Option<i64>,
+    opcode_index: Option<i64>,
+}
+
+impl From<&ResidentCharacterBirthProvenance> for PreparedCharacterBirthParts {
+    fn from(value: &ResidentCharacterBirthProvenance) -> Self {
+        match value {
+            ResidentCharacterBirthProvenance::CatalogAction {
+                lookup_name,
+                effective_name,
+                template_fingerprint,
+                formation_id,
+                ordinal,
+                member_count,
+            } => Self {
+                kind: 0,
+                lookup_name: Some(lookup_name.clone()),
+                effective_name: effective_name.clone(),
+                template_fingerprint: template_fingerprint.clone(),
+                unit_data_fingerprint: None,
+                group_id: *formation_id,
+                ordinal: *ordinal,
+                member_count: *member_count,
+                source_entity_id: None,
+                opcode_index: None,
+            },
+            ResidentCharacterBirthProvenance::DeathSpawn {
+                source_entity_id,
+                opcode_index,
+                unit_name,
+                unit_data_fingerprint,
+                template_fingerprint,
+                spawn_group_id,
+                ordinal,
+                member_count,
+            } => Self {
+                kind: 1,
+                lookup_name: None,
+                effective_name: unit_name.clone(),
+                template_fingerprint: template_fingerprint.clone(),
+                unit_data_fingerprint: Some(unit_data_fingerprint.clone()),
+                group_id: *spawn_group_id,
+                ordinal: *ordinal,
+                member_count: *member_count,
+                source_entity_id: Some(*source_entity_id),
+                opcode_index: Some(*opcode_index),
+            },
+        }
+    }
+}
+
+#[derive(Clone, IntoPyObject)]
+struct PreparedEntityParts {
+    sparse_attribute_presence: SparseAttributePresence,
+    active: bool,
+    encounter_index: usize,
+    id: i64,
+    player_id: i64,
+    entity_kind: i64,
+    python_type: String,
+    card_name: String,
+    position_x: ExactScalar,
+    position_y: ExactScalar,
+    hitpoints: ExactScalar,
+    max_hitpoints: ExactScalar,
+    damage: ExactScalar,
+    is_alive: bool,
+    target_id: Option<i64>,
+    deploy_delay_remaining: f64,
+    placement_delay_total: f64,
+    placement_pending: bool,
+    spawn_hook_pending: bool,
+    spawn_hook_fired: bool,
+    freeze_expiry_time: f64,
+    death_spawn_target_immunity_elapsed_ms: i64,
+    pending_projectile_max_duration_ms: i64,
+    spawn_angle_shift: f64,
+    mechanics: Vec<String>,
+    shields: Vec<ShieldState>,
+    shield_break_count: i64,
+    death_opcodes: Vec<PreparedDeathOpcodeParts>,
+    modifier_state: Option<ModifierState>,
+    movement_state: Option<ResidentMovementState>,
+    locked_combat_state: Option<LockedDirectCombatState>,
+    building_lifetime_state: Option<BuildingLifetimeState>,
+    building_impact_state: Option<BuildingImpactState>,
+    point_projectile_state: Option<PointProjectileState>,
+    area_effect_state: Option<ResidentAreaEffectState>,
+    character_birth: Option<PreparedCharacterBirthParts>,
+}
+
+impl From<&ResidentEntity> for PreparedEntityParts {
+    fn from(entity: &ResidentEntity) -> Self {
+        Self {
+            sparse_attribute_presence: entity.sparse_attributes,
+            active: entity.active,
+            encounter_index: entity.encounter_index,
+            id: entity.id,
+            player_id: entity.player_id,
+            entity_kind: entity.entity_kind,
+            python_type: entity.python_type.clone(),
+            card_name: entity.card_name.clone(),
+            position_x: entity.position_x.clone(),
+            position_y: entity.position_y.clone(),
+            hitpoints: entity.hitpoints.clone(),
+            max_hitpoints: entity.max_hitpoints.clone(),
+            damage: entity.damage.clone(),
+            is_alive: entity.is_alive,
+            target_id: entity.target_id,
+            deploy_delay_remaining: entity.deploy_delay_remaining,
+            placement_delay_total: entity.placement_delay_total,
+            placement_pending: entity.placement_pending,
+            spawn_hook_pending: entity.spawn_hook_pending,
+            spawn_hook_fired: entity.spawn_hook_fired,
+            freeze_expiry_time: entity.freeze_expiry_time,
+            death_spawn_target_immunity_elapsed_ms: entity.death_spawn_target_immunity_elapsed_ms,
+            pending_projectile_max_duration_ms: entity.pending_projectile_max_duration_ms,
+            spawn_angle_shift: entity.spawn_angle_shift,
+            mechanics: entity.mechanics.clone(),
+            shields: entity.shields.clone(),
+            shield_break_count: entity.shield_break_count,
+            death_opcodes: entity
+                .death_opcodes
+                .iter()
+                .map(PreparedDeathOpcodeParts::from)
+                .collect(),
+            modifier_state: entity.modifier_state.clone(),
+            movement_state: entity.movement.clone(),
+            locked_combat_state: entity.locked_combat.clone(),
+            building_lifetime_state: entity.building_lifetime.clone(),
+            building_impact_state: entity.building_impact.clone(),
+            point_projectile_state: entity.point_projectile.clone(),
+            area_effect_state: entity.area_effect.clone(),
+            character_birth: entity
+                .character_birth
+                .as_ref()
+                .map(PreparedCharacterBirthParts::from),
+        }
+    }
+}
+
+#[derive(IntoPyObject)]
+struct PreparedPublicationBinding {
+    semantic_schema_version: u64,
+    lineage_id: u64,
+    prior_node_id: u64,
+    prior_epoch: u64,
+    candidate_node_id: u64,
+    candidate_epoch: u64,
+    parent_node_id: u64,
+    parent_epoch: u64,
+    prior_next_entity_id: i64,
+    prior_entity_ids: Vec<i64>,
+    checkpoint_schema_version: u64,
+    checkpoint_generation: u64,
+    catalog_schema_version: u64,
+    catalog_fingerprint: String,
+    catalog_source_fingerprint: String,
+}
+
+#[derive(IntoPyObject)]
+struct PreparedBattleParts {
+    sparse_attribute_presence: SparseAttributePresence,
+    tick: i64,
+    time: f64,
+    dt: f64,
+    double_elixir: bool,
+    triple_elixir: bool,
+    overtime: bool,
+    game_over: bool,
+    sudden_death: bool,
+    sudden_death_crowns: (i64, i64),
+    winner: Option<i64>,
+    win_conditions_dirty: bool,
+    next_entity_id: i64,
+}
+
+#[derive(IntoPyObject)]
+struct PreparedPendingSpellParts {
+    next_sequence: i64,
+    casts: Vec<ResidentPendingSpellCast>,
+}
+
+#[derive(IntoPyObject)]
+struct PreparedPublicationParts {
+    version: u64,
+    binding: PreparedPublicationBinding,
+    battle: PreparedBattleParts,
+    players: Vec<ResidentPlayer>,
+    towers: Vec<ResidentTower>,
+    entities: Vec<PreparedEntityParts>,
+    rng: PythonMt19937,
+    pending_spells: PreparedPendingSpellParts,
+    projectile_groups: Vec<ResidentProjectileDamageGroup>,
+}
+
+#[pymethods]
+impl PreparedPublication {
+    fn parts(&self) -> PreparedPublicationParts {
+        let candidate = &self.candidate;
+        let (parent_node_id, parent_epoch) = candidate
+            .publication_parent
+            .expect("prepared candidate has an authenticated parent");
+        PreparedPublicationParts {
+            version: PREPARED_PUBLICATION_VERSION,
+            binding: PreparedPublicationBinding {
+                semantic_schema_version: PREPARED_SEMANTIC_SCHEMA_VERSION,
+                lineage_id: candidate.publication_lineage.id,
+                prior_node_id: self.prior_node_id,
+                prior_epoch: self.prior_epoch,
+                candidate_node_id: candidate.publication_node_id,
+                candidate_epoch: candidate.publication_epoch,
+                parent_node_id,
+                parent_epoch,
+                prior_next_entity_id: self.prior_next_entity_id,
+                prior_entity_ids: self.prior_entity_ids.clone(),
+                checkpoint_schema_version: candidate.schema_version,
+                checkpoint_generation: candidate.checkpoint_generation,
+                catalog_schema_version: candidate.catalog.schema_version,
+                catalog_fingerprint: candidate.catalog.fingerprint.clone(),
+                catalog_source_fingerprint: candidate.catalog.source_fingerprint.clone(),
+            },
+            battle: PreparedBattleParts {
+                sparse_attribute_presence: candidate.sparse_attributes,
+                tick: candidate.tick,
+                time: candidate.time,
+                dt: candidate.dt,
+                double_elixir: candidate.double_elixir,
+                triple_elixir: candidate.triple_elixir,
+                overtime: candidate.overtime,
+                game_over: candidate.game_over,
+                sudden_death: candidate.sudden_death,
+                sudden_death_crowns: candidate.sudden_death_crowns,
+                winner: candidate.winner,
+                win_conditions_dirty: candidate.win_conditions_dirty,
+                next_entity_id: candidate.next_entity_id,
+            },
+            players: candidate.players.clone(),
+            towers: candidate.towers.clone(),
+            entities: candidate
+                .entities
+                .iter()
+                .map(PreparedEntityParts::from)
+                .collect(),
+            rng: candidate.rng.clone(),
+            pending_spells: PreparedPendingSpellParts {
+                next_sequence: candidate.next_spell_cast_sequence,
+                casts: candidate.pending_spell_casts.clone(),
+            },
+            projectile_groups: candidate.projectile_damage_groups.clone(),
+        }
+    }
 }
 
 #[pymethods]
@@ -4526,6 +4925,13 @@ impl ResidentBattle {
             .map(ResidentTower::from_init)
             .collect::<PyResult<Vec<_>>>()?;
         Ok(Self {
+            publication_lineage: Arc::new(ResidentPublicationLineage {
+                id: next_resident_state_token(),
+            }),
+            publication_node_id: next_resident_state_token(),
+            publication_epoch: 0,
+            publication_parent: None,
+            publication_epoch_suppressed: false,
             sparse_attributes,
             fast_path,
             checkpoint: Arc::from(checkpoint),
@@ -4576,6 +4982,7 @@ impl ResidentBattle {
         if self.game_over {
             return false;
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         self.time += self.dt;
         self.tick += 1;
@@ -4624,6 +5031,7 @@ impl ResidentBattle {
     }
 
     fn advance_players(&mut self) {
+        self.mark_publication_mutated();
         let base_regen_time = if self.triple_elixir {
             0.93
         } else if self.double_elixir {
@@ -4696,6 +5104,8 @@ impl ResidentBattle {
                 "resident battle did not pass the Python idle preflight",
             ));
         }
+        let previous_suppression = self.publication_epoch_suppressed;
+        self.publication_epoch_suppressed = true;
         let mut advanced = 0;
         for _ in 0..ticks {
             if self.game_over {
@@ -4719,10 +5129,15 @@ impl ResidentBattle {
                 break;
             }
         }
+        self.publication_epoch_suppressed = previous_suppression;
+        if advanced > 0 {
+            self.mark_publication_mutated();
+        }
         Ok(advanced)
     }
 
     fn check_win_conditions(&mut self) {
+        self.mark_publication_mutated();
         self.sync_player_crown_hitpoints();
         self.win_conditions_dirty = false;
         self.sparse_attributes.insert("_win_conditions_dirty");
@@ -5039,6 +5454,7 @@ impl ResidentBattle {
                 "resident modifier phase contains periodic damage or callback-owned temporary buffs",
             ));
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         for entity in &mut self.entities {
             if !entity.active {
@@ -5164,6 +5580,7 @@ impl ResidentBattle {
                 "resident character object phase contains non-character entities or executable mechanics",
             ));
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         for entity in &mut self.entities {
             if !entity.active {
@@ -5216,6 +5633,7 @@ impl ResidentBattle {
                 "resident object phase rejected unsupported object or character callback",
             ));
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         let mut processed_ids = Vec::<i64>::new();
         loop {
@@ -5253,6 +5671,7 @@ impl ResidentBattle {
     }
 
     fn quantize_resident_position(&mut self, entity_index: usize) {
+        self.mark_publication_mutated();
         let quantized_x = logic_units(self.entities[entity_index].position_x.as_f64());
         let quantized_y = logic_units(self.entities[entity_index].position_y.as_f64());
         self.entities[entity_index]
@@ -5302,6 +5721,7 @@ impl ResidentBattle {
                 "resident stationary movement preflight rejected active transport or natural movement",
             ));
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         let movement_indices = self
             .entities
@@ -5384,6 +5804,7 @@ impl ResidentBattle {
                 "resident flying movement preflight rejected unsupported natural movement",
             ));
         }
+        self.mark_publication_mutated();
         self.advance_restricted_movement_phase(true, None);
         Ok(())
     }
@@ -5406,6 +5827,7 @@ impl ResidentBattle {
                 "resident ground movement preflight rejected unsupported natural movement",
             ));
         }
+        self.mark_publication_mutated();
         self.advance_restricted_movement_phase(true, None);
         Ok(())
     }
@@ -5523,6 +5945,7 @@ impl ResidentBattle {
                 "resident locked direct-combat preflight rejected battle state",
             ));
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         for actor_index in 0..self.entities.len() {
             if !self.entities[actor_index].is_alive {
@@ -5664,6 +6087,7 @@ impl ResidentBattle {
                 "resident direct-troop combat preflight rejected battle state",
             ));
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         self.refresh_lethal_projectile_reservations();
         let combat_actor_count = self.entities.len();
@@ -5877,6 +6301,7 @@ impl ResidentBattle {
                 "resident building lifetime phase contains executable death mechanics",
             ));
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         let entity_count = self.entities.len();
         for entity_index in 0..entity_count {
@@ -6076,6 +6501,7 @@ impl ResidentBattle {
                 "resident point-projectile preflight rejected unsupported object or payload",
             ));
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         let mut projectile_indices = self
             .entities
@@ -6130,6 +6556,7 @@ impl ResidentBattle {
                 "resident cleanup preflight rejected death callbacks or payloads",
             ));
         }
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         let dead_indices = self
             .entities
@@ -6256,18 +6683,21 @@ impl ResidentBattle {
     }
 
     fn rng_random(&mut self) -> f64 {
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         self.rng.random()
     }
 
     fn rng_randrange(&mut self, stop: u64) -> PyResult<u64> {
         let value = self.rng.randbelow(stop)?;
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         Ok(value)
     }
 
     fn rng_choice_index(&mut self, length: usize) -> PyResult<usize> {
         let value = self.rng.choice_index(length)?;
+        self.mark_publication_mutated();
         self.checkpoint_current = false;
         Ok(value)
     }
@@ -6275,6 +6705,7 @@ impl ResidentBattle {
     fn rng_shuffle_indices(&mut self, length: usize) -> PyResult<Vec<usize>> {
         let value = self.rng.shuffle_indices(length)?;
         if length >= 2 {
+            self.mark_publication_mutated();
             self.checkpoint_current = false;
         }
         Ok(value)
@@ -6589,6 +7020,7 @@ impl ResidentBattle {
         }
 
         let mut candidate = self.clone();
+        candidate.publication_epoch_suppressed = true;
         let order = candidate.rng.shuffle_indices(2)?;
         candidate.checkpoint_current = false;
         let mut success = [false; 2];
@@ -6596,6 +7028,8 @@ impl ResidentBattle {
             let action = if player_id == 0 { action0 } else { action1 };
             success[player_id] = candidate.apply_troop_action(player_id, action)?;
         }
+        candidate.publication_epoch_suppressed = false;
+        candidate.mark_publication_mutated();
         *self = candidate;
         Ok((
             success[0],
@@ -6630,7 +7064,8 @@ impl ResidentBattle {
         // Clone the unpublished root exactly once. All action and tick
         // mutations remain private to this candidate until Python publishes
         // the completed decision boundary.
-        let mut candidate = self.clone();
+        let mut candidate = self.fork_for_publication();
+        candidate.publication_epoch_suppressed = true;
         let order = candidate.rng.shuffle_indices(2)?;
         candidate.checkpoint_current = false;
         let mut success = [false; 2];
@@ -6654,6 +7089,8 @@ impl ResidentBattle {
             }
             advanced += 1;
         }
+        candidate.publication_epoch_suppressed = false;
+        candidate.mark_publication_mutated();
         Ok((
             candidate,
             success[0],
@@ -6702,6 +7139,7 @@ impl ResidentBattle {
         // caller-selected simultaneous-action order without touching battle
         // RNG, and publish only after the entire interval succeeds.
         let mut candidate = self.clone();
+        candidate.publication_epoch_suppressed = true;
         let mut success = [false; 2];
         for player_id in [first_player, 1 - first_player] {
             let action = if player_id == 0 { action0 } else { action1 };
@@ -6714,6 +7152,13 @@ impl ResidentBattle {
                 break;
             }
             advanced += 1;
+        }
+        candidate.publication_epoch_suppressed = false;
+        if advanced > 0
+            || (action0 != Self::ACTION_NO_OP && success[0])
+            || (action1 != Self::ACTION_NO_OP && success[1])
+        {
+            candidate.mark_publication_mutated();
         }
         *self = candidate;
         Ok((success[0], success[1], advanced))
@@ -6732,6 +7177,7 @@ impl ResidentBattle {
             .checkpoint_generation
             .checked_add(1)
             .ok_or_else(|| PyRuntimeError::new_err("checkpoint generation overflow"))?;
+        self.mark_publication_mutated();
         Ok(())
     }
 
@@ -6742,7 +7188,12 @@ impl ResidentBattle {
 
     fn advance_complete_tick(&mut self) -> PyResult<bool> {
         let mut candidate = self.clone();
+        candidate.publication_epoch_suppressed = true;
         let advanced = candidate.advance_complete_tick_transaction()?;
+        candidate.publication_epoch_suppressed = false;
+        if advanced {
+            candidate.mark_publication_mutated();
+        }
         *self = candidate;
         Ok(advanced)
     }
@@ -6752,6 +7203,7 @@ impl ResidentBattle {
             return Ok(0);
         }
         let mut candidate = self.clone();
+        candidate.publication_epoch_suppressed = true;
         let mut advanced = 0;
         for _ in 0..ticks {
             if !candidate.advance_complete_tick_transaction()? {
@@ -6759,12 +7211,97 @@ impl ResidentBattle {
             }
             advanced += 1;
         }
+        candidate.publication_epoch_suppressed = false;
+        if advanced > 0 {
+            candidate.mark_publication_mutated();
+        }
         *self = candidate;
         Ok(advanced)
     }
 
     fn fork(&self) -> Self {
-        self.clone()
+        self.fork_for_publication()
+    }
+
+    fn prepare_publication(&self, prior: &ResidentBattle) -> PyResult<PreparedPublication> {
+        if self.publication_epoch_suppressed || prior.publication_epoch_suppressed {
+            return Err(PyValueError::new_err(
+                "prepared publication cannot capture an in-progress native mutation",
+            ));
+        }
+        if !self.lethal_projectile_reservation_ids.is_empty()
+            || !prior.lethal_projectile_reservation_ids.is_empty()
+        {
+            return Err(PyValueError::new_err(
+                "prepared publication requires no phase-local lethal reservations",
+            ));
+        }
+        if !Arc::ptr_eq(&self.publication_lineage, &prior.publication_lineage) {
+            return Err(PyValueError::new_err(
+                "prepared publication candidate belongs to a different lineage",
+            ));
+        }
+        if self.publication_parent != Some((prior.publication_node_id, prior.publication_epoch)) {
+            return Err(PyValueError::new_err(
+                "prepared publication candidate is not a direct fork of the supplied prior epoch",
+            ));
+        }
+        if self.schema_version != RESIDENT_CHECKPOINT_SCHEMA_VERSION
+            || prior.schema_version != RESIDENT_CHECKPOINT_SCHEMA_VERSION
+            || self.schema_version != prior.schema_version
+            || self.checkpoint_generation != prior.checkpoint_generation
+        {
+            return Err(PyValueError::new_err(
+                "prepared publication prior has a stale checkpoint schema or generation",
+            ));
+        }
+        if self.catalog.schema_version != RESIDENT_CARD_CATALOG_SCHEMA_VERSION
+            || prior.catalog.schema_version != RESIDENT_CARD_CATALOG_SCHEMA_VERSION
+            || !Arc::ptr_eq(&self.catalog, &prior.catalog)
+            || self.catalog.schema_version != prior.catalog.schema_version
+            || self.catalog.fingerprint != prior.catalog.fingerprint
+            || self.catalog.source_fingerprint != prior.catalog.source_fingerprint
+        {
+            return Err(PyValueError::new_err(
+                "prepared publication prior uses a different resident catalog",
+            ));
+        }
+        if self.tick < prior.tick
+            || self.next_entity_id < prior.next_entity_id
+            || self.entities.len() < prior.entities.len()
+        {
+            return Err(PyValueError::new_err(
+                "prepared publication candidate regressed native allocation or clock state",
+            ));
+        }
+        for (prior_entity, candidate_entity) in prior.entities.iter().zip(self.entities.iter()) {
+            if prior_entity.id != candidate_entity.id
+                || prior_entity.entity_kind != candidate_entity.entity_kind
+                || prior_entity.python_type != candidate_entity.python_type
+                || prior_entity.card_name != candidate_entity.card_name
+            {
+                return Err(PyValueError::new_err(
+                    "prepared publication candidate changed an allocated entity identity",
+                ));
+            }
+        }
+        let expected_suffix = (prior.next_entity_id..self.next_entity_id).collect::<Vec<_>>();
+        let actual_suffix = self.entities[prior.entities.len()..]
+            .iter()
+            .map(|entity| entity.id)
+            .collect::<Vec<_>>();
+        if actual_suffix != expected_suffix {
+            return Err(PyValueError::new_err(
+                "prepared publication candidate has non-contiguous native entity allocations",
+            ));
+        }
+        Ok(PreparedPublication {
+            prior_node_id: prior.publication_node_id,
+            prior_epoch: prior.publication_epoch,
+            prior_next_entity_id: prior.next_entity_id,
+            prior_entity_ids: prior.entities.iter().map(|entity| entity.id).collect(),
+            candidate: self.clone(),
+        })
     }
 }
 
@@ -6778,6 +7315,25 @@ impl ResidentBattle {
     const ACTION_COUNT: i64 = Self::ACTION_ABILITY + 1;
     const PREVIEW_TICK_FAILURE_PREFIX: &'static str =
         "resident joint-action preview failed after actions during complete ticks: ";
+
+    fn fork_for_publication(&self) -> Self {
+        let mut candidate = self.clone();
+        candidate.publication_node_id = next_resident_state_token();
+        candidate.publication_epoch = 0;
+        candidate.publication_parent = Some((self.publication_node_id, self.publication_epoch));
+        candidate.publication_epoch_suppressed = false;
+        candidate
+    }
+
+    fn mark_publication_mutated(&mut self) {
+        if self.publication_epoch_suppressed {
+            return;
+        }
+        self.publication_epoch = self
+            .publication_epoch
+            .checked_add(1)
+            .expect("resident publication epoch space exhausted");
+    }
 
     fn projectile_spell_spec(&self, spell_name: &str) -> Option<&ResidentProjectileSpellSpec> {
         self.catalog
@@ -7789,6 +8345,11 @@ impl ResidentBattle {
         {
             self.check_win_conditions();
         }
+        // Python publishes only between logic ticks, where this reservation
+        // cache is None. Direct combat and movement rebuild it before every
+        // use, so retaining the final phase-local IDs would only make an
+        // otherwise clean native decision boundary ambiguous.
+        self.lethal_projectile_reservation_ids.clear();
         Ok(true)
     }
 
@@ -11148,6 +11709,7 @@ fn _clasher_rust(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(consume_state_bytes, module)?)?;
     module.add_function(wrap_pyfunction!(standard_grid_route, module)?)?;
     module.add_class::<ResidentBattle>()?;
+    module.add_class::<PreparedPublication>()?;
     Ok(())
 }
 

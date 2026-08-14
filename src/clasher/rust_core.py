@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import lru_cache
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any, Final, cast
 
 from .balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
@@ -651,6 +652,79 @@ class ResidentOutcomeState:
     sudden_death_crowns: tuple[int, int]
 
 
+def _freeze_prepared_value(value: Any) -> Any:
+    """Recursively detach mutable PyO3 containers from a prepared boundary."""
+    if isinstance(value, dict):
+        return MappingProxyType(
+            {str(key): _freeze_prepared_value(item) for key, item in value.items()}
+        )
+    if isinstance(value, (list, tuple)):
+        return tuple(_freeze_prepared_value(item) for item in value)
+    return value
+
+
+def _decode_prepared_publication_parts(value: Any) -> MappingProxyType[str, Any]:
+    frozen = _freeze_prepared_value(value)
+    if not isinstance(frozen, MappingProxyType):
+        raise TypeError("resident prepared publication parts are not a mapping")
+    if frozen.get("version") != 1:
+        raise ValueError("unsupported resident prepared publication version")
+    binding = frozen.get("binding")
+    if not isinstance(binding, MappingProxyType):
+        raise TypeError("resident prepared publication binding is not a mapping")
+    if binding.get("semantic_schema_version") != 7:
+        raise ValueError("unsupported resident prepared semantic schema")
+    return frozen
+
+
+_PREPARED_PUBLICATION_AUTHORITY: Final = object()
+
+
+class ResidentPreparedPublication:
+    """Single-use owner for one authenticated native publication projection.
+
+    Stage 1 intentionally does not apply these parts to a Python battle. The
+    binding carried by the parts is the future consume-time authority: runtime
+    cutover must compare it with the live prior registry/boundary before any
+    mutation. Making the crossing single-use prevents accidental replay while
+    that final consumer is still deferred.
+    """
+
+    __slots__ = (
+        "_action_card_stats",
+        "_birth_catalog",
+        "_consumed",
+        "_native",
+    )
+
+    def __init__(
+        self,
+        native: Any,
+        birth_catalog: _ResidentCardCatalogBundle | None,
+        action_card_stats: dict[str, _ResidentActionCardStatsAttestation] | None,
+        *,
+        authority: object,
+    ) -> None:
+        if authority is not _PREPARED_PUBLICATION_AUTHORITY:
+            raise TypeError("ResidentPreparedPublication is runtime-owned")
+        self._native = native
+        self._birth_catalog = birth_catalog
+        self._action_card_stats = action_card_stats
+        self._consumed = False
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if hasattr(self, name):
+            raise AttributeError("ResidentPreparedPublication is immutable")
+        object.__setattr__(self, name, value)
+
+    def parts(self) -> MappingProxyType[str, Any]:
+        """Cross native state once and return recursively frozen typed parts."""
+        if self._consumed:
+            raise RuntimeError("resident prepared publication was already consumed")
+        object.__setattr__(self, "_consumed", True)
+        return _decode_prepared_publication_parts(self._native.parts())
+
+
 def _append_string(payload: bytearray, value: str) -> None:
     encoded = value.encode("utf-8")
     payload.extend(struct.pack("<Q", len(encoded)))
@@ -686,6 +760,24 @@ class ResidentRustBattle:
             self._native.fork(),
             self._birth_catalog,
             self._action_card_stats,
+        )
+
+    def prepare_publication(
+        self,
+        prior: ResidentRustBattle,
+    ) -> ResidentPreparedPublication:
+        """Authenticate and freeze a direct native child against its prior."""
+        if self._birth_catalog is not prior._birth_catalog:
+            raise ValueError("prepared publication uses a different Python birth catalog")
+        if self._action_card_stats is not prior._action_card_stats:
+            raise ValueError(
+                "prepared publication uses different Python action-card attestations"
+            )
+        return ResidentPreparedPublication(
+            self._native.prepare_publication(prior._native),
+            self._birth_catalog,
+            self._action_card_stats,
+            authority=_PREPARED_PUBLICATION_AUTHORITY,
         )
 
     def character_action_birth_recipe(
