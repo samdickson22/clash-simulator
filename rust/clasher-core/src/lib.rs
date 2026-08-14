@@ -34,9 +34,9 @@ fn validate_checkpoint(payload: &[u8]) -> PyResult<u64> {
         .get("schema_version")
         .and_then(Value::as_u64)
         .ok_or_else(|| PyValueError::new_err("battle checkpoint has no integer schema_version"))?;
-    if schema_version != 1 {
+    if schema_version != 2 {
         return Err(PyValueError::new_err(format!(
-            "unsupported battle checkpoint schema {schema_version}; expected 1"
+            "unsupported battle checkpoint schema {schema_version}; expected 2"
         )));
     }
     Ok(schema_version)
@@ -256,13 +256,36 @@ impl ResidentEntity {
 fn parse_resident_entities(payload: &[u8]) -> PyResult<Vec<ResidentEntity>> {
     let root: Value = serde_json::from_slice(payload)
         .map_err(|error| PyValueError::new_err(format!("invalid battle checkpoint: {error}")))?;
-    root.get("entities")
+    let entities = root
+        .get("entities")
         .and_then(Value::as_array)
-        .ok_or_else(|| PyValueError::new_err("battle checkpoint has no entity list"))?
+        .ok_or_else(|| PyValueError::new_err("battle checkpoint has no entity list"))?;
+    let iteration_order = root
+        .get("entity_iteration_order")
+        .and_then(Value::as_array)
+        .ok_or_else(|| PyValueError::new_err("battle checkpoint has no entity iteration order"))?;
+    if entities.len() != iteration_order.len() {
+        return Err(PyValueError::new_err(
+            "entity list and iteration order have different lengths",
+        ));
+    }
+    let parsed = entities
         .iter()
         .enumerate()
         .map(|(index, entity)| ResidentEntity::from_normalized(index, entity))
-        .collect()
+        .collect::<PyResult<Vec<_>>>()?;
+    for (index, (entity, expected_id)) in parsed.iter().zip(iteration_order).enumerate() {
+        let expected_id = expected_id.as_i64().ok_or_else(|| {
+            PyValueError::new_err("entity iteration order contains a non-integer ID")
+        })?;
+        if entity.id != expected_id {
+            return Err(PyValueError::new_err(format!(
+                "entity iteration order mismatch at {index}: entity={} order={expected_id}",
+                entity.id
+            )));
+        }
+    }
+    Ok(parsed)
 }
 
 struct PythonMt19937 {

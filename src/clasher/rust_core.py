@@ -724,4 +724,4 @@ def apply_idle_state(battle: Any, resident: ResidentRustBattle) -> None:
         battle._sudden_death_crowns = outcome.sudden_death_crowns
 
 
-assert SNAPSHOT_SCHEMA_VERSION == 1
+assert SNAPSHOT_SCHEMA_VERSION == 2

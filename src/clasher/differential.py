@@ -7,6 +7,7 @@ import random
 from collections import deque
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -16,7 +17,7 @@ from .battle import BattleState
 from .card_types import CardDefinition, CardStatsCompat
 from .entities import Entity
 
-SNAPSHOT_SCHEMA_VERSION = 1
+SNAPSHOT_SCHEMA_VERSION = 2
 
 
 @dataclass(frozen=True)
@@ -204,6 +205,21 @@ def _entity_snapshot(entity: Entity) -> Mapping[str, Any]:
     return normalized
 
 
+@lru_cache(maxsize=8)
+def _content_sha256(
+    path_text: str,
+    size: int,
+    modified_ns: int,
+) -> str:
+    """Return a portable content identity with cheap revision-keyed reuse."""
+    del size, modified_ns
+    hasher = hashlib.sha256()
+    with Path(path_text).open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
 def canonical_battle_snapshot(
     battle: BattleState,
     *,
@@ -219,6 +235,7 @@ def canonical_battle_snapshot(
 
     data_path = battle.card_loader.data_file
     data_stat = data_path.stat()
+    entity_iteration_order = [int(entity_id) for entity_id in battle.entities]
     excluded = {"arena", "card_loader", "entities", "players", "rng"}
     battle_fields = {
         name: _normalize(value)
@@ -230,15 +247,20 @@ def canonical_battle_snapshot(
         "catalog": {
             "path_name": data_path.name,
             "size": data_stat.st_size,
-            "modified_ns": data_stat.st_mtime_ns,
+            "sha256": _content_sha256(
+                str(data_path.resolve()),
+                data_stat.st_size,
+                data_stat.st_mtime_ns,
+            ),
         },
         "battle_type": _type_name(battle),
         "battle_fields": battle_fields,
         "rng_state": _normalize(battle.rng.getstate()),
         "players": [_normalize(player) for player in battle.players],
+        "entity_iteration_order": entity_iteration_order,
         "entities": [
             _entity_snapshot(entity)
-            for entity in sorted(battle.entities.values(), key=lambda item: item.id)
+            for entity in battle.entities.values()
         ],
         "observables": _normalize({} if observables is None else observables),
     }

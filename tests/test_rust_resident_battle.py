@@ -50,7 +50,7 @@ def test_resident_checkpoint_round_trip_is_exact() -> None:
 
     resident = ResidentRustBattle.from_battle(battle)
 
-    assert resident.schema_version == 1
+    assert resident.schema_version == 2
     assert resident.checkpoint_bytes() == expected
     assert resident.checkpoint_size == len(expected)
     assert resident.checkpoint_sha256 == hashlib.sha256(expected).hexdigest()
@@ -94,7 +94,7 @@ def test_resident_checkpoint_rejects_invalid_or_unknown_schema() -> None:
     with pytest.raises(ValueError, match="invalid battle checkpoint"):
         resident.replace_checkpoint(b"not-json")
     with pytest.raises(ValueError, match="unsupported battle checkpoint schema"):
-        resident.replace_checkpoint(b'{"schema_version":2}')
+        resident.replace_checkpoint(b'{"schema_version":1}')
 
     different = BattleState(rng=__import__("random").Random(999))
     with pytest.raises(RuntimeError, match="full-state rehydration"):
