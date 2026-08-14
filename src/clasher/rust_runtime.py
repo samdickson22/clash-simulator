@@ -169,6 +169,203 @@ def _arena_geometry_token(arena: Any) -> tuple[Any, ...]:
 class _DirectCausalBoundaryGuard:
     entries: list[list[Any]]
 
+    def refresh_or_rebind(
+        self,
+        battle: Any,
+        entity_registry: dict[int, Any],
+        publication: Any,
+    ) -> _DirectCausalBoundaryGuard:
+        """Refresh one published boundary and visit only new causal objects."""
+
+        managed_markers = (
+            "._native_ground_route_cells",
+            "._death_spawn_travel_target",
+            "._knockback_target",
+            "._river_jump_origin",
+            "._river_jump_target",
+            ".initial_position",
+            ".damage_group_hit_entity_ids",
+            "battle._pending_spell_casts[",
+        )
+        current_managed: dict[int, tuple[Any, str]] = {}
+
+        def manage(value: Any, path: str) -> None:
+            if value is not None and _guard_token(value)[0] == "identity":
+                current_managed[id(value)] = (value, path)
+
+        for index, pending in enumerate(battle._pending_spell_casts):
+            manage(pending, f"battle._pending_spell_casts[{index}]")
+            manage(pending.position, f"battle._pending_spell_casts[{index}].position")
+        optional_fields = (
+            "_native_ground_route_cells",
+            "_death_spawn_travel_target",
+            "_knockback_target",
+            "_river_jump_origin",
+            "_river_jump_target",
+            "initial_position",
+            "damage_group_hit_entity_ids",
+        )
+        for entity_plan in publication.entities:
+            entity = entity_registry[entity_plan.entity_id]
+            prefix = f"resident_entity_registry[{entity_plan.entity_id}]"
+            for field in optional_fields:
+                manage(getattr(entity, field, None), f"{prefix}.{field}")
+
+        active_ids = set(publication.active_entity_ids)
+        retired_active_prefixes = tuple(
+            f"battle.entities[{entity_id}]"
+            for entity_id in publication.binding["prior_entity_ids"]
+            if entity_id not in active_ids
+        )
+
+        entries = [
+            entry.copy()
+            for entry in self.entries
+            if entry[4]
+            or not (
+                (
+                    any(marker in entry[1] for marker in managed_markers)
+                    and id(entry[2]) not in current_managed
+                )
+                or any(
+                    entry[1] == prefix or entry[1].startswith(f"{prefix}.")
+                    for prefix in retired_active_prefixes
+                )
+            )
+        ]
+        for entry in entries:
+            kind, _path, owner, _expected, static = entry
+            if static:
+                continue
+            if kind == "attrs":
+                entry[3] = tuple(
+                    (name, _guard_token(value)) for name, value in vars(owner).items()
+                )
+            elif kind == "battle_attrs":
+                entry[3] = tuple(
+                    (name, _guard_token(value))
+                    for name, value in vars(owner).items()
+                    if name not in _DERIVED_BATTLE_CACHE_FIELDS
+                )
+            elif kind == "dict":
+                entry[3] = tuple(
+                    (_guard_token(key), _guard_token(value))
+                    for key, value in owner.items()
+                )
+            elif kind == "sequence":
+                entry[3] = tuple(_guard_token(value) for value in owner)
+            elif kind == "set":
+                entry[3] = {_guard_token(value) for value in owner}
+            elif kind == "rng":
+                entry[3] = _guard_token(owner.getstate())
+            elif kind == "ndarray":
+                entry[3] = (
+                    owner.shape,
+                    owner.strides,
+                    owner.dtype.str,
+                    owner.tobytes(order="A"),
+                )
+            elif kind in {"mapping_subset", "arena_geometry"}:
+                continue
+            else:  # pragma: no cover - closed internal entry kinds
+                raise AssertionError(f"unknown boundary guard kind {kind!r}")
+
+        seen = {id(entry[2]) for entry in entries}
+
+        def add(kind: str, path: str, owner: Any, expected: Any) -> None:
+            static = ".card_stats" in path
+            entries.append([kind, path, owner, expected, static])
+
+        def visit(value: Any, path: str) -> None:
+            if _guard_token(value)[0] != "identity":
+                if type(value) is tuple:
+                    for index, item in enumerate(value):
+                        visit(item, f"{path}[{index}]")
+                return
+            identity = id(value)
+            if identity in seen:
+                return
+            seen.add(identity)
+            if isinstance(value, random.Random):
+                add("rng", path, value, _guard_token(value.getstate()))
+                return
+            if isinstance(value, np.ndarray):
+                add(
+                    "ndarray",
+                    path,
+                    value,
+                    (
+                        value.shape,
+                        value.strides,
+                        value.dtype.str,
+                        value.tobytes(order="A"),
+                    ),
+                )
+                return
+            if isinstance(value, dict):
+                add(
+                    "dict",
+                    path,
+                    value,
+                    tuple(
+                        (_guard_token(key), _guard_token(item))
+                        for key, item in value.items()
+                    ),
+                )
+                for key, item in value.items():
+                    visit(key, f"{path}.key")
+                    visit(item, f"{path}[{key!r}]")
+                return
+            if isinstance(value, (list, deque)):
+                add(
+                    "sequence",
+                    path,
+                    value,
+                    tuple(_guard_token(item) for item in value),
+                )
+                for index, item in enumerate(value):
+                    visit(item, f"{path}[{index}]")
+                return
+            if isinstance(value, set):
+                add("set", path, value, {_guard_token(item) for item in value})
+                for item in value:
+                    visit(item, f"{path}.member")
+                return
+            if hasattr(value, "__dict__"):
+                add(
+                    "attrs",
+                    path,
+                    value,
+                    tuple(
+                        (name, _guard_token(item))
+                        for name, item in vars(value).items()
+                    ),
+                )
+                for name, item in vars(value).items():
+                    visit(item, f"{path}.{name}")
+
+        prior_ids = set(publication.binding["prior_entity_ids"])
+        for entity_id in publication.active_entity_ids:
+            visit(
+                entity_registry[entity_id],
+                f"battle.entities[{entity_id}]",
+            )
+        for entity_id in publication.binding["prior_entity_ids"]:
+            if entity_id not in active_ids:
+                visit(
+                    entity_registry[entity_id],
+                    f"resident_entity_registry[{entity_id}]",
+                )
+        for entity_plan in publication.entities:
+            if entity_plan.entity_id not in prior_ids:
+                visit(
+                    entity_registry[entity_plan.entity_id],
+                    f"resident_entity_registry[{entity_plan.entity_id}]",
+                )
+        for value, path in current_managed.values():
+            visit(value, path)
+        return _DirectCausalBoundaryGuard(entries)
+
     def first_mismatch(self) -> str | None:
         for entry in self.entries:
             kind, path, owner, expected, _static = entry
@@ -644,14 +841,30 @@ class ResidentCompleteTickRuntime:
             f"expected={difference.expected!r} actual={difference.actual!r}"
         )
 
-    def _record_on_boundary(self) -> None:
+    def _prepare_on_boundary_guard(self, publication: Any) -> _DirectCausalBoundaryGuard:
         guard = self._on_boundary_guard
-        guard = _compile_direct_causal_guard(
+        if guard is None:  # pragma: no cover - active on-mode invariant
+            raise RuntimeError("resident on-mode boundary checkpoint is missing")
+        prepared_guard = guard.refresh_or_rebind(
             self.battle,
             self._entity_registry,
-            previous_guard=guard,
+            publication,
         )
-        self._on_boundary_guard = guard
+        if type(prepared_guard) is not _DirectCausalBoundaryGuard:
+            raise RuntimeError("typed publication omitted its prepared guard")
+        return prepared_guard
+
+    def _record_on_boundary(
+        self,
+        prepared_guard: _DirectCausalBoundaryGuard | None = None,
+    ) -> None:
+        if prepared_guard is None:
+            prepared_guard = _compile_direct_causal_guard(
+                self.battle,
+                self._entity_registry,
+                previous_guard=self._on_boundary_guard,
+            )
+        self._on_boundary_guard = prepared_guard
         resident = self._resident
         if resident is None:  # pragma: no cover - active runtime invariant
             raise RuntimeError("resident on-mode boundary has no native state")
@@ -835,11 +1048,12 @@ class ResidentCompleteTickRuntime:
         )
 
         try:
-            publish_complete_tick_state(
+            prepared_guard = publish_complete_tick_state(
                 self.battle,
                 candidate,
                 prior_resident=resident,
                 entity_registry=self._entity_registry,
+                _prepare_guard=self._prepare_on_boundary_guard,
             )
         except ResidentPublicationError as error:
             self.poisoned_reason = str(error)
@@ -849,7 +1063,10 @@ class ResidentCompleteTickRuntime:
                 "fallback is forbidden"
             ) from error
         self._resident = candidate
-        self._record_on_boundary()
+        if type(prepared_guard) is not _DirectCausalBoundaryGuard:
+            self.poisoned_reason = "typed publication omitted its prepared guard"
+            raise RuntimeError(self.poisoned_reason)
+        self._record_on_boundary(prepared_guard)
         return ResidentDecisionResult(
             action_success={
                 player_id: rust_success[player_id] for player_id in rust_order
@@ -932,11 +1149,12 @@ class ResidentCompleteTickRuntime:
         )
 
         try:
-            publish_complete_tick_state(
+            prepared_guard = publish_complete_tick_state(
                 self.battle,
                 candidate,
                 prior_resident=resident,
                 entity_registry=self._entity_registry,
+                _prepare_guard=self._prepare_on_boundary_guard,
             )
         except ResidentPublicationError as error:
             self.poisoned_reason = str(error)
@@ -946,5 +1164,8 @@ class ResidentCompleteTickRuntime:
                 "fallback is forbidden"
             ) from error
         self._resident = candidate
-        self._record_on_boundary()
+        if type(prepared_guard) is not _DirectCausalBoundaryGuard:
+            self.poisoned_reason = "typed publication omitted its prepared guard"
+            raise RuntimeError(self.poisoned_reason)
+        self._record_on_boundary(prepared_guard)
         return int(rust_advanced)

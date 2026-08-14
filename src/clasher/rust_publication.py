@@ -6,7 +6,7 @@ import json
 import random
 import struct
 from collections import deque
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from typing import Any, cast
 
@@ -4136,9 +4136,15 @@ def _apply_direct_entity(
                 if route_kind == 1
                 else (goal, movement["route_lane_id"], movement["route_jump_height"])
             )
-            entity._native_ground_route_cells = [
-                tuple(cell) for cell in movement["route_cells"]
-            ]
+            route_cells = [tuple(cell) for cell in movement["route_cells"]]
+            existing_route_cells = entity.__dict__.get(
+                "_native_ground_route_cells"
+            )
+            if type(existing_route_cells) is list:
+                undo.watch_value(existing_route_cells)
+                existing_route_cells[:] = route_cells
+            else:
+                entity._native_ground_route_cells = route_cells
         entity._river_jump_active = movement["river_jump_active"]
         entity._river_jump_blocked = movement["river_jump_blocked"]
         entity._river_jump_duration = movement["river_jump_duration"]
@@ -4569,7 +4575,8 @@ def publish_complete_tick_state(
     *,
     prior_resident: ResidentRustBattle,
     entity_registry: dict[int, Any],
-) -> None:
+    _prepare_guard: Callable[[_DirectPublicationPlan], Any] | None = None,
+) -> Any | None:
     """Publish one authenticated typed resident boundary with one live commit."""
 
     if (
@@ -4671,6 +4678,7 @@ def publish_complete_tick_state(
         ) from error
 
     undo = _live_publication_undo_journal(battle, entity_registry)
+    prepared_guard: Any | None = None
     try:
         _apply_direct_publication_plan(
             battle,
@@ -4681,6 +4689,8 @@ def publish_complete_tick_state(
             undo=undo,
         )
         _after_typed_publication_commit(battle, plan, entity_registry)
+        if _prepare_guard is not None:
+            prepared_guard = _prepare_guard(plan)
     except Exception as commit_error:
         try:
             undo.rollback()
@@ -4693,3 +4703,4 @@ def publish_complete_tick_state(
             "resident publication commit failed; the Python battle was "
             "rolled back to its exact pre-publication projection"
         ) from commit_error
+    return prepared_guard

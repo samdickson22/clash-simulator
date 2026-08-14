@@ -7,6 +7,7 @@ from typing import Any
 
 import pytest
 
+import clasher.rust_runtime as rust_runtime_module
 from clasher.arena import Position, TileGrid
 from clasher.battle import BattleState
 from clasher.differential import canonical_battle_snapshot, snapshot_bytes
@@ -298,6 +299,26 @@ def test_guard_record_rebuilds_topology_stable_boundary_and_rejects_drift() -> N
         runtime.advance_ticks(1)
 
 
+def test_guard_record_does_not_recompile_after_initial_boundary(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    battle, runtime = _route_runtime(71_023)
+
+    def reject_compile(*args: Any, **kwargs: Any) -> Any:
+        raise AssertionError("full direct guard compiler was called")
+
+    monkeypatch.setattr(
+        rust_runtime_module,
+        "_compile_direct_causal_guard",
+        reject_compile,
+    )
+    assert runtime.advance_ticks(8) == 8
+    assert runtime.advance_ticks(8) == 8
+    battle.players[0].elixir -= 0.25
+    with pytest.raises(RuntimeError, match=r"external Python state mutation.*elixir"):
+        runtime.advance_ticks(8)
+
+
 def _route_runtime(seed: int) -> tuple[BattleState, ResidentCompleteTickRuntime]:
     battle = BattleState(rng=random.Random(seed), fast_path=True)
     _spawn_ready(battle, "Knight", 0, Position(7.0, 12.0))
@@ -321,7 +342,7 @@ def test_guard_record_rebinds_sparse_presence_after_publication() -> None:
         runtime.advance_ticks(8)
 
 
-def test_guard_record_rebinds_replaced_route_list_after_publication() -> None:
+def test_guard_record_refreshes_route_list_in_place_after_publication() -> None:
     battle, runtime = _route_runtime(71_021)
     assert runtime.advance_ticks(8) == 8
     mover = next(
@@ -333,13 +354,43 @@ def test_guard_record_rebinds_replaced_route_list_after_publication() -> None:
 
     assert runtime.advance_ticks(8) == 8
     published_route = mover._native_ground_route_cells
-    assert published_route is not first_route
+    assert published_route is first_route
     published_route.append((999, 999))
 
     with pytest.raises(
         RuntimeError, match=r"external Python state mutation.*route_cells"
     ):
         runtime.advance_ticks(8)
+
+
+def test_guard_rebind_failure_rolls_back_route_identity_and_state(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    battle, runtime = _route_runtime(71_024)
+    assert runtime.advance_ticks(8) == 8
+    mover = next(
+        entity
+        for entity in battle.entities.values()
+        if isinstance(getattr(entity, "_native_ground_route_cells", None), list)
+    )
+    route = mover._native_ground_route_cells
+    route_before = list(route)
+    state_before = snapshot_bytes(canonical_battle_snapshot(battle))
+    resident_before = runtime.resident
+
+    def fail_rebind(*args: Any, **kwargs: Any) -> Any:
+        raise RuntimeError("injected guard rebind failure")
+
+    guard = runtime._on_boundary_guard
+    assert guard is not None
+    monkeypatch.setattr(type(guard), "refresh_or_rebind", fail_rebind)
+    with pytest.raises(RuntimeError, match="runtime is now poisoned"):
+        runtime.advance_ticks(8)
+
+    assert runtime.resident is resident_before
+    assert mover._native_ground_route_cells is route
+    assert route == route_before
+    assert snapshot_bytes(canonical_battle_snapshot(battle)) == state_before
 
 
 def _birth_and_tombstone_runtime(
@@ -381,6 +432,43 @@ def test_guard_record_binds_native_birth_and_inactive_tombstone(
 
     with pytest.raises(
         RuntimeError, match=rf"external Python state mutation.*{expected_path}"
+    ):
+        runtime.advance_ticks(1)
+
+
+def test_guard_rebinds_survivor_first_seen_through_retired_projectile() -> None:
+    battle = BattleState(rng=random.Random(71_025), fast_path=True)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source = _spawn_ready(battle, "Musketeer", 0, Position(9.0, 12.0))
+    target = _spawn_ready(battle, "Knight", 1, Position(9.0, 12.5))
+    source._create_projectile(target, battle)
+    projectile = next(
+        entity for entity in battle.entities.values() if type(entity) is Projectile
+    )
+    survivors = [
+        (entity_id, entity)
+        for entity_id, entity in battle.entities.items()
+        if entity_id not in {projectile.id, target.id}
+    ]
+    battle.entities.clear()
+    battle.entities.update((*survivors, (projectile.id, projectile), (target.id, target)))
+    runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
+    guard = runtime._on_boundary_guard
+    assert guard is not None
+    assert any(
+        owner is target and "primary_target" in path
+        for _kind, path, owner, _expected, _static in guard.entries
+    )
+
+    assert runtime.advance_ticks(1) == 1
+    assert projectile.id not in battle.entities
+    assert target.id in battle.entities
+    target.hitpoints -= 1.0
+
+    with pytest.raises(
+        RuntimeError,
+        match=rf"external Python state mutation.*battle.entities\[{target.id}\].hitpoints",
     ):
         runtime.advance_ticks(1)
 

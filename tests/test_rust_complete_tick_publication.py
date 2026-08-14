@@ -284,6 +284,13 @@ def test_lifetime_expired_building_publishes_exact_registry_tombstone() -> None:
     assert not building.is_alive
     assert _entity_snapshot(building) == _entity_snapshot(control_building)
 
+    building.position.x += 0.25
+    with pytest.raises(
+        RuntimeError,
+        match=rf"external Python state mutation.*resident_entity_registry\[{building.id}\]",
+    ):
+        runtime.advance_ticks(1)
+
 
 def test_publication_preserves_sparse_forced_movement_finish() -> None:
     candidate = BattleState(rng=random.Random(9980), fast_path=True)
