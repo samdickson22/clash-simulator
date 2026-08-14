@@ -129,6 +129,38 @@ def test_locked_direct_combat_phase_rejects_lethal_ordering_before_mutation() ->
     assert resident.rng_state_bytes() == rng_before
 
 
+def test_direct_troop_combat_lethal_hit_skips_later_actor() -> None:
+    battle, first, second = _locked_pair(cooldown=0.0)
+    second.hitpoints = 1.0
+    resident = ResidentRustBattle.from_battle(battle)
+    first_hp_before = first.hitpoints
+    rng_before = resident.rng_state_bytes()
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert not second.is_alive
+    assert first.hitpoints == first_hp_before
+    assert resident.rng_state_bytes() == rng_before
+
+
+def test_direct_troop_combat_later_lethal_actor_preserves_earlier_attack() -> None:
+    battle, first, second = _locked_pair(cooldown=0.0)
+    first.hitpoints = 1.0
+    second_hp_before = second.hitpoints
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert not first.is_alive
+    assert second.hitpoints == second_hp_before - first.damage
+
+
 def test_direct_troop_combat_acquires_target_and_publishes_movement_lock() -> None:
     battle, first, second = _locked_pair(cooldown=0.20)
     first.position = Position(9.0, 12.0)

@@ -1926,39 +1926,9 @@ impl ResidentBattle {
         if !self.supports_direct_combat_phase() {
             return false;
         }
-        let mut incoming_damage = vec![0.0; self.entities.len()];
-        for actor_index in 0..self.entities.len() {
-            let actor = &self.entities[actor_index];
-            if !actor.is_alive {
-                continue;
-            }
-            if actor.deploy_delay_remaining > 0.0 {
-                return false;
-            }
-            let Some(state) = actor.locked_combat.as_ref() else {
-                return false;
-            };
-            let target_index = self.direct_troop_target_index(actor_index);
-            let target_id = target_index.map(|index| self.entities[index].id);
-            let mut cooldown = state.attack_cooldown;
-            if state.last_combat_target_id.is_some() && state.last_combat_target_id != target_id {
-                cooldown = cooldown.max(state.retarget_ms as f64 / 1000.0);
-            }
-            let target_in_range =
-                target_index.is_some_and(|index| self.direct_attack_reach(actor_index, index));
-            if state.stun_timer > 0.0 || !target_in_range {
-                continue;
-            }
-            if cooldown > 0.0 {
-                cooldown -= self.dt * state.attack_rate();
-            }
-            if cooldown <= 1e-9 {
-                let index = target_index.expect("range requires target");
-                incoming_damage[index] += state.damage;
-            }
-        }
-        self.entities.iter().enumerate().all(|(index, entity)| {
-            !entity.is_alive || incoming_damage[index] < entity.hitpoints.as_f64()
+        self.entities.iter().all(|entity| {
+            !entity.is_alive
+                || (entity.deploy_delay_remaining <= 0.0 && entity.locked_combat.is_some())
         })
     }
 
@@ -2053,9 +2023,21 @@ impl ResidentBattle {
             };
             if let (Some(target_index), Some(damage)) = (target_index, damage) {
                 let target = &mut self.entities[target_index];
-                target
-                    .hitpoints
-                    .set_f64((target.hitpoints.as_f64() - damage).max(0.0));
+                let remaining = (target.hitpoints.as_f64() - damage).max(0.0);
+                if remaining <= 0.0 {
+                    // Python take_damage uses max(0, hp - damage), whose
+                    // winning zero operand is the exact integer sentinel.
+                    target.hitpoints = ExactScalar::Int(0);
+                } else {
+                    target.hitpoints.set_f64(remaining);
+                }
+                if remaining <= 0.0 && target.is_alive {
+                    // Mechanics and death payloads are rejected by the
+                    // whole-battle preflight. The dead flag therefore has no
+                    // callback work but is immediately visible to later
+                    // encounter-order actors in this same combat pass.
+                    target.is_alive = false;
+                }
             }
         }
         Ok(())
