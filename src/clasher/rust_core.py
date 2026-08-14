@@ -45,7 +45,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 8
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 9
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -69,10 +69,21 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
     if str(getattr(card_def, "kind", "") or "").casefold() != "troop":
         reasons.append("not_troop")
     summon_count = int(getattr(card_stats, "summon_count", None) or 1)
-    if not 1 <= summon_count <= 90:
+    second_count = int(
+        getattr(card_stats, "summon_character_second_count", None) or 0
+    )
+    second_data = getattr(card_stats, "summon_character_second_data", None)
+    if not 1 <= summon_count <= 90 or not 0 <= second_count <= 90:
         reasons.append("unsupported_primary_count")
-    if int(getattr(card_stats, "summon_character_second_count", None) or 0) != 0:
-        reasons.append("secondary_character")
+    if summon_count + second_count > 90:
+        reasons.append("unsupported_formation_count")
+    if (second_count > 0 and type(second_data) is not dict) or (
+        second_count == 0 and second_data is not None
+    ):
+        reasons.append("malformed_secondary_character")
+    primary_data = getattr(card_stats, "summon_character_data", None)
+    if type(primary_data) is not dict or not primary_data:
+        reasons.append("missing_character_data")
     if float(getattr(card_stats, "summon_width", 0.0) or 0.0) != 0.0:
         reasons.append("wide_formation")
     if getattr(card_stats, "summon_formation", None) is not None:
@@ -96,8 +107,6 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
     )
     if not supported_mechanic_family:
         reasons.append("executable_mechanics")
-    if not getattr(card_stats, "summon_character_data", None):
-        reasons.append("missing_character_data")
     summon_radius = getattr(card_stats, "summon_radius", None)
     formation_radius = (
         float(summon_radius)
@@ -202,6 +211,9 @@ class _ResidentCharacterBirthRecipe:
     member_count: int | None
     prototype: Any
     source_data: Any | None = None
+    card_stats_group: int = 0
+    uses_live_action_card_stats: bool = True
+    formation_variant: int | None = None
 
 
 @dataclass(frozen=True)
@@ -224,6 +236,9 @@ class _ResidentCardCatalogBundle:
     payload: bytes
     action_recipes: dict[str, _ResidentCharacterBirthRecipe]
     death_spawn_recipes: dict[tuple[str, str], _ResidentCharacterBirthRecipe]
+    action_member_recipes: dict[
+        tuple[str, int, str], _ResidentCharacterBirthRecipe
+    ] = field(default_factory=dict)
     rolling_spawn_recipes: dict[
         tuple[str, str], _ResidentCharacterBirthRecipe
     ] = field(default_factory=dict)
@@ -260,7 +275,18 @@ def _prototype_sha256(prototype: Any) -> str:
 def _copy_attested_birth_recipe(
     recipe: _ResidentCharacterBirthRecipe,
 ) -> _ResidentCharacterBirthRecipe | None:
+    if recipe.formation_variant is not None and (
+        type(recipe.formation_variant) is not int
+        or not 0 <= recipe.formation_variant < 4
+    ):
+        return None
     if _prototype_sha256(recipe.prototype) != recipe.template_fingerprint:
+        return None
+    if (
+        not recipe.uses_live_action_card_stats
+        and recipe.source_fingerprint
+        != _normalized_sha256(recipe.prototype.card_stats)
+    ):
         return None
     prototype_battle = getattr(recipe.prototype, "battle_state", None)
     memo = {} if prototype_battle is None else {id(prototype_battle): prototype_battle}
@@ -273,6 +299,9 @@ def _copy_attested_birth_recipe(
         member_count=recipe.member_count,
         prototype=copy.deepcopy(recipe.prototype, memo),
         source_data=copy.deepcopy(recipe.source_data),
+        card_stats_group=recipe.card_stats_group,
+        uses_live_action_card_stats=recipe.uses_live_action_card_stats,
+        formation_variant=recipe.formation_variant,
     )
 
 
@@ -311,6 +340,9 @@ def _resident_card_catalog_bundle(
     death_spawn_templates: list[dict[str, Any]] = []
     seen_death_spawn_templates: set[str] = set()
     action_recipes: dict[str, _ResidentCharacterBirthRecipe] = {}
+    action_member_recipes: dict[
+        tuple[str, int, str], _ResidentCharacterBirthRecipe
+    ] = {}
     death_spawn_recipes: dict[tuple[str, str], _ResidentCharacterBirthRecipe] = {}
     rolling_spawn_recipes: dict[
         tuple[str, str], _ResidentCharacterBirthRecipe
@@ -612,7 +644,100 @@ def _resident_card_catalog_bundle(
         template_fingerprint: str | None = None
         formation_offsets: list[list[list[int]]] = []
         deploy_delay_offsets: list[float] = []
-        if not reasons and projectile_spell is None and action_kind == "troop":
+        mixed_formation_members: list[list[dict[str, Any]]] = []
+        catalog_summon_count = int(
+            getattr(card_stats, "summon_count", None) or 1
+        )
+        second_count = int(
+            getattr(card_stats, "summon_character_second_count", None) or 0
+        )
+        if (
+            not reasons
+            and projectile_spell is None
+            and action_kind == "troop"
+            and second_count > 0
+        ):
+            catalog_summon_count += second_count
+            compiled_member_keys: list[tuple[str, int, str]] = []
+            try:
+                for variant_index, (player_id, lane_x) in enumerate(
+                    (
+                        (0, 4.0),
+                        (0, 14.0),
+                        (1, 4.0),
+                        (1, 14.0),
+                    )
+                ):
+                    formation_battle = BattleState(card_loader=loader.clone_lazy())
+                    formation_stats = formation_battle.card_loader.get_card(lookup_name)
+                    if formation_stats is None:
+                        raise ValueError("mixed formation card disappeared")
+                    anchor = Position(lane_x, 8.0 if player_id == 0 else 24.0)
+                    before_ids = set(formation_battle.entities)
+                    formation_battle._spawn_troop(
+                        anchor,
+                        player_id,
+                        formation_stats,
+                    )
+                    spawned = [
+                        entity
+                        for entity_id, entity in formation_battle.entities.items()
+                        if entity_id not in before_ids
+                    ]
+                    if len(spawned) != catalog_summon_count:
+                        raise ValueError("mixed formation member count changed")
+                    stats_groups: dict[int, int] = {}
+                    members: list[dict[str, Any]] = []
+                    for ordinal, entity in enumerate(spawned):
+                        stats_identity = id(entity.card_stats)
+                        stats_group = stats_groups.setdefault(
+                            stats_identity,
+                            len(stats_groups),
+                        )
+                        snapshot = dict(_entity_snapshot(entity))
+                        fingerprint = _prototype_sha256(entity)
+                        effective_name = str(entity.card_stats.name)
+                        stats_fingerprint = _normalized_sha256(entity.card_stats)
+                        member_row = {
+                            "offset": [
+                                tiles_to_logic_units(entity.position.x - anchor.x),
+                                tiles_to_logic_units(entity.position.y - anchor.y),
+                            ],
+                            "deploy_delay": float(entity.deploy_delay_remaining),
+                            "effective_name": effective_name,
+                            "template_snapshot": snapshot,
+                            "template_fingerprint": fingerprint,
+                            "card_stats_group": stats_group,
+                            "card_stats_fingerprint": stats_fingerprint,
+                        }
+                        recipe_key = (lookup_name, ordinal, fingerprint)
+                        action_member_recipes[recipe_key] = (
+                            _ResidentCharacterBirthRecipe(
+                                kind="catalog_action",
+                                action_kind="troop",
+                                effective_name=effective_name,
+                                template_fingerprint=fingerprint,
+                                source_fingerprint=stats_fingerprint,
+                                member_count=catalog_summon_count,
+                                prototype=entity,
+                                card_stats_group=stats_group,
+                                uses_live_action_card_stats=False,
+                                formation_variant=variant_index,
+                            )
+                        )
+                        compiled_member_keys.append(recipe_key)
+                        members.append(member_row)
+                    if sorted(set(stats_groups.values())) != list(
+                        range(len(stats_groups))
+                    ):
+                        raise ValueError("mixed formation stats groups changed")
+                    mixed_formation_members.append(members)
+            except (OverflowError, TypeError, ValueError) as error:
+                reasons.append(f"mixed_formation_compile:{type(error).__name__}")
+                mixed_formation_members = []
+                for recipe_key in compiled_member_keys:
+                    action_member_recipes.pop(recipe_key, None)
+        elif not reasons and projectile_spell is None and action_kind == "troop":
             summon_count = int(getattr(card_stats, "summon_count", None) or 1)
             summon_radius = getattr(card_stats, "summon_radius", None)
             formation_radius = (
@@ -783,10 +908,11 @@ def _resident_card_catalog_bundle(
                     == 0
                 ),
                 "summon_count": int(
-                    getattr(card_stats, "summon_count", None) or 1
+                    catalog_summon_count
                 ),
                 "formation_offsets": formation_offsets,
                 "deploy_delay_offsets": deploy_delay_offsets,
+                "mixed_formation_members": mixed_formation_members,
                 "capability_reasons": reasons,
                 "template_snapshot": template_snapshot,
                 "template_fingerprint": template_fingerprint,
@@ -863,6 +989,7 @@ def _resident_card_catalog_bundle(
         ).encode("ascii"),
         action_recipes=action_recipes,
         death_spawn_recipes=death_spawn_recipes,
+        action_member_recipes=action_member_recipes,
         rolling_spawn_recipes=rolling_spawn_recipes,
         rolling_projectile_recipes=rolling_projectile_recipes,
         pending_spell_action_kinds=tuple(
@@ -1250,11 +1377,26 @@ class ResidentRustBattle:
     def character_action_birth_recipe(
         self,
         lookup_name: str,
+        template_fingerprint: str | None = None,
+        ordinal: int | None = None,
     ) -> _ResidentCharacterBirthRecipe | None:
         catalog = self._birth_catalog
         if catalog is None:  # pragma: no cover - legacy direct construction
             return None
-        recipe = catalog.action_recipes.get(str(lookup_name))
+        normalized_lookup = str(lookup_name)
+        recipe = (
+            catalog.action_member_recipes.get(
+                (
+                    normalized_lookup,
+                    int(ordinal),
+                    str(template_fingerprint).lower(),
+                )
+            )
+            if ordinal is not None and template_fingerprint is not None
+            else None
+        )
+        if recipe is None:
+            recipe = catalog.action_recipes.get(normalized_lookup)
         return None if recipe is None else _copy_attested_birth_recipe(recipe)
 
     def character_action_card_stats_are_current(
@@ -1361,7 +1503,11 @@ class ResidentRustBattle:
             str,
             _ResidentActionCardStatsAttestation,
         ] = {}
-        for lookup_name in catalog.action_recipes:
+        action_lookup_names = set(catalog.action_recipes)
+        action_lookup_names.update(
+            lookup_name for lookup_name, _, _ in catalog.action_member_recipes
+        )
+        for lookup_name in action_lookup_names:
             card_stats = battle.card_loader.get_card(lookup_name)
             if card_stats is None:  # pragma: no cover - catalog/loader invariant
                 continue

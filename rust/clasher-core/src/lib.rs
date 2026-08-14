@@ -5,7 +5,7 @@ use serde::Deserialize;
 use serde_json::{Map, Value, json};
 use sha2::{Digest, Sha256};
 use std::borrow::Cow;
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{BTreeSet, HashMap, HashSet, VecDeque};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -4058,7 +4058,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 8;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 9;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -4090,6 +4090,8 @@ struct ResidentCardWire {
     summon_count: i64,
     formation_offsets: Vec<Vec<[i64; 2]>>,
     deploy_delay_offsets: Vec<f64>,
+    #[serde(default)]
+    mixed_formation_members: Vec<Vec<ResidentMixedFormationMemberWire>>,
     capability_reasons: Vec<String>,
     template_snapshot: Option<Value>,
     template_fingerprint: Option<String>,
@@ -4099,6 +4101,17 @@ struct ResidentCardWire {
     rolling_projectile_spell: Option<ResidentRollingProjectileSpellWire>,
     #[serde(default)]
     direct_damage_spell: Option<ResidentDirectDamageSpellWire>,
+}
+
+#[derive(Deserialize)]
+struct ResidentMixedFormationMemberWire {
+    offset: [i64; 2],
+    deploy_delay: f64,
+    effective_name: String,
+    template_snapshot: Value,
+    template_fingerprint: String,
+    card_stats_group: i64,
+    card_stats_fingerprint: String,
 }
 
 #[derive(Clone, Copy, Deserialize, PartialEq, Eq)]
@@ -4243,12 +4256,24 @@ struct ResidentCardSpec {
     summon_count: i64,
     formation_offsets: Vec<Vec<[i64; 2]>>,
     deploy_delay_offsets: Vec<f64>,
+    mixed_formation_members: Vec<Vec<ResidentMixedFormationMemberSpec>>,
     capability_reasons: Vec<String>,
     prototype: Option<ResidentEntity>,
     template_fingerprint: Option<String>,
     projectile_spell: Option<ResidentProjectileSpellSpec>,
     rolling_projectile_spell: Option<ResidentRollingProjectileSpellSpec>,
     direct_damage_spell: Option<ResidentDirectDamageSpellSpec>,
+}
+
+#[derive(Clone)]
+struct ResidentMixedFormationMemberSpec {
+    offset: [i64; 2],
+    deploy_delay: f64,
+    effective_name: String,
+    prototype: ResidentEntity,
+    template_fingerprint: String,
+    card_stats_group: i64,
+    card_stats_fingerprint: String,
 }
 
 impl ResidentCardSpec {
@@ -4258,8 +4283,15 @@ impl ResidentCardSpec {
         }
         match self.action_kind {
             ResidentCardActionKind::Unsupported => false,
-            ResidentCardActionKind::Troop | ResidentCardActionKind::Building => {
+            ResidentCardActionKind::Troop => {
+                (self.prototype.is_some() != !self.mixed_formation_members.is_empty())
+                    && self.projectile_spell.is_none()
+                    && self.rolling_projectile_spell.is_none()
+                    && self.direct_damage_spell.is_none()
+            }
+            ResidentCardActionKind::Building => {
                 self.prototype.is_some()
+                    && self.mixed_formation_members.is_empty()
                     && self.projectile_spell.is_none()
                     && self.rolling_projectile_spell.is_none()
                     && self.direct_damage_spell.is_none()
@@ -4430,16 +4462,26 @@ impl ResidentCardCatalog {
             let mut reasons = card.capability_reasons;
             if reasons.is_empty()
                 && card.action_kind == ResidentCardActionKind::Troop
-                && (card.formation_offsets.len() != 4
-                    || card
-                        .formation_offsets
-                        .iter()
-                        .any(|variant| variant.len() != summon_count)
-                    || card.deploy_delay_offsets.len() != summon_count
-                    || card
-                        .deploy_delay_offsets
-                        .iter()
-                        .any(|delay| !delay.is_finite() || *delay < 0.0))
+                && if card.mixed_formation_members.is_empty() {
+                    card.formation_offsets.len() != 4
+                        || card
+                            .formation_offsets
+                            .iter()
+                            .any(|variant| variant.len() != summon_count)
+                        || card.deploy_delay_offsets.len() != summon_count
+                        || card
+                            .deploy_delay_offsets
+                            .iter()
+                            .any(|delay| !delay.is_finite() || *delay < 0.0)
+                } else {
+                    !card.formation_offsets.is_empty()
+                        || !card.deploy_delay_offsets.is_empty()
+                        || card.mixed_formation_members.len() != 4
+                        || card
+                            .mixed_formation_members
+                            .iter()
+                            .any(|variant| variant.len() != summon_count)
+                }
             {
                 reasons.push("native_formation_preflight".to_owned());
             }
@@ -4457,6 +4499,75 @@ impl ResidentCardCatalog {
                 && card.building_footprint_size.is_some()
             {
                 reasons.push("unexpected_building_footprint".to_owned());
+            }
+            let mut mixed_formation_members = Vec::new();
+            for (variant_index, variant) in card.mixed_formation_members.into_iter().enumerate() {
+                let mut parsed_variant = Vec::new();
+                for member in variant {
+                    let computed_fingerprint = sha256_hex(
+                        &serde_json::to_vec(&member.template_snapshot)
+                            .expect("normalized mixed action template is serializable"),
+                    );
+                    let template_fingerprint = member.template_fingerprint.to_ascii_lowercase();
+                    let card_stats_fingerprint = member.card_stats_fingerprint.to_ascii_lowercase();
+                    let computed_card_stats_fingerprint = object_fields(&member.template_snapshot)
+                        .ok()
+                        .and_then(|fields| fields.get("card_stats"))
+                        .and_then(|card_stats| serde_json::to_vec(card_stats).ok())
+                        .map(|payload| sha256_hex(&payload));
+                    let fingerprint_valid = |fingerprint: &str| {
+                        fingerprint.len() == 64
+                            && fingerprint.bytes().all(|byte| byte.is_ascii_hexdigit())
+                    };
+                    match ResidentEntity::from_normalized(0, &member.template_snapshot) {
+                        Ok(prototype)
+                            if !member.effective_name.is_empty()
+                                && member.deploy_delay.is_finite()
+                                && member.deploy_delay >= 0.0
+                                && member.card_stats_group >= 0
+                                && fingerprint_valid(&template_fingerprint)
+                                && fingerprint_valid(&card_stats_fingerprint)
+                                && computed_fingerprint == template_fingerprint
+                                && computed_card_stats_fingerprint.as_deref()
+                                    == Some(card_stats_fingerprint.as_str())
+                                && prototype.player_id == if variant_index < 2 { 0 } else { 1 }
+                                && {
+                                    let anchor_x: i64 = if variant_index % 2 == 0 {
+                                        4_000
+                                    } else {
+                                        14_000
+                                    };
+                                    let anchor_y: i64 =
+                                        if variant_index < 2 { 8_000 } else { 24_000 };
+                                    anchor_x.checked_add(member.offset[0]).is_some_and(
+                                        |expected_x| {
+                                            logic_units(prototype.position_x.as_f64()) == expected_x
+                                        },
+                                    ) && anchor_y.checked_add(member.offset[1]).is_some_and(
+                                        |expected_y| {
+                                            logic_units(prototype.position_y.as_f64()) == expected_y
+                                        },
+                                    )
+                                }
+                                && prototype.deploy_delay_remaining.to_bits()
+                                    == member.deploy_delay.to_bits()
+                                && prototype.placement_delay_total.to_bits()
+                                    == member.deploy_delay.to_bits() =>
+                        {
+                            parsed_variant.push(ResidentMixedFormationMemberSpec {
+                                offset: member.offset,
+                                deploy_delay: member.deploy_delay,
+                                effective_name: member.effective_name,
+                                prototype,
+                                template_fingerprint,
+                                card_stats_group: member.card_stats_group,
+                                card_stats_fingerprint,
+                            });
+                        }
+                        _ => reasons.push("mixed_formation_template_parse".to_owned()),
+                    }
+                }
+                mixed_formation_members.push(parsed_variant);
             }
             let (prototype, computed_template_fingerprint) = match card.template_snapshot {
                 Some(snapshot) => {
@@ -4767,7 +4878,7 @@ impl ResidentCardCatalog {
                                 })
                         })
                 };
-                let common_supported = |prototype: &ResidentEntity| {
+                let common_supported = |prototype: &ResidentEntity, expected_name: &str| {
                     let mechanic_family_supported = if prototype.status_nova_jump.is_some() {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
@@ -4778,7 +4889,7 @@ impl ResidentCardCatalog {
                     };
                     prototype.active
                         && prototype.is_alive
-                        && prototype.card_name == card.effective_name
+                        && prototype.card_name == expected_name
                         && prototype.has_only_compiled_mechanics()
                         && mechanic_family_supported
                         && prototype.shields.iter().all(|shield| {
@@ -4794,29 +4905,90 @@ impl ResidentCardCatalog {
                         && prototype.object_base_movement_noop
                         && !prototype.blocks_deployment
                 };
-                let supported =
-                    prototype
+                let troop_supported = |prototype: &ResidentEntity, expected_name: &str| {
+                    prototype.entity_kind == 0
+                        && prototype.python_type == "clasher.entities.Troop"
+                        && common_supported(prototype, expected_name)
+                        && prototype.fresh_catalog_deploy_state_supported()
+                        && prototype.movement.as_ref().is_some_and(|movement| {
+                            movement.route_cache_supported
+                                && movement.collision_radius.is_finite()
+                                && movement.collision_radius > 0.0
+                                && movement.unit_mass.is_finite()
+                                && movement.unit_mass > 0.0
+                        })
+                        && prototype.building_lifetime.is_none()
+                        && prototype.building_impact.is_none()
+                };
+                let supported = match card.action_kind {
+                    ResidentCardActionKind::Troop if !mixed_formation_members.is_empty() => {
+                        let expected_signature = mixed_formation_members.first().map(|variant| {
+                            variant
+                                .iter()
+                                .map(|member| {
+                                    (
+                                        member.effective_name.as_str(),
+                                        member.card_stats_group,
+                                        member.card_stats_fingerprint.as_str(),
+                                    )
+                                })
+                                .collect::<Vec<_>>()
+                        });
+                        let groups = mixed_formation_members
+                            .first()
+                            .into_iter()
+                            .flat_map(|variant| variant.iter())
+                            .map(|member| member.card_stats_group)
+                            .collect::<BTreeSet<_>>();
+                        let group_identity_supported =
+                            mixed_formation_members.first().is_some_and(|variant| {
+                                let mut identities = HashMap::new();
+                                variant.iter().all(|member| {
+                                    let identity = (
+                                        member.effective_name.as_str(),
+                                        member.card_stats_fingerprint.as_str(),
+                                    );
+                                    identities
+                                        .entry(member.card_stats_group)
+                                        .or_insert(identity)
+                                        == &identity
+                                })
+                            });
+                        prototype.is_none()
+                            && template_fingerprint.is_none()
+                            && expected_signature.is_some()
+                            && group_identity_supported
+                            && groups.iter().copied().eq(0..i64::try_from(groups.len())
+                                .expect("mixed formation group count fits i64"))
+                            && mixed_formation_members.iter().all(|variant| {
+                                variant.len() == summon_count
+                                    && variant.iter().all(|member| {
+                                        troop_supported(&member.prototype, &member.effective_name)
+                                    })
+                                    && Some(
+                                        variant
+                                            .iter()
+                                            .map(|member| {
+                                                (
+                                                    member.effective_name.as_str(),
+                                                    member.card_stats_group,
+                                                    member.card_stats_fingerprint.as_str(),
+                                                )
+                                            })
+                                            .collect::<Vec<_>>(),
+                                    ) == expected_signature
+                            })
+                    }
+                    _ => prototype
                         .as_ref()
                         .is_some_and(|prototype| match card.action_kind {
                             ResidentCardActionKind::Troop => {
-                                prototype.entity_kind == 0
-                                    && prototype.python_type == "clasher.entities.Troop"
-                                    && common_supported(prototype)
-                                    && prototype.fresh_catalog_deploy_state_supported()
-                                    && prototype.movement.as_ref().is_some_and(|movement| {
-                                        movement.route_cache_supported
-                                            && movement.collision_radius.is_finite()
-                                            && movement.collision_radius > 0.0
-                                            && movement.unit_mass.is_finite()
-                                            && movement.unit_mass > 0.0
-                                    })
-                                    && prototype.building_lifetime.is_none()
-                                    && prototype.building_impact.is_none()
+                                troop_supported(prototype, &card.effective_name)
                             }
                             ResidentCardActionKind::Building => {
                                 prototype.entity_kind == 1
                                     && prototype.python_type == "clasher.entities.Building"
-                                    && common_supported(prototype)
+                                    && common_supported(prototype, &card.effective_name)
                                     && prototype.fresh_catalog_deploy_state_supported()
                                     && prototype.building_footprint_size
                                         == card.building_footprint_size
@@ -4841,7 +5013,8 @@ impl ResidentCardCatalog {
                             | ResidentCardActionKind::ProjectileSpell
                             | ResidentCardActionKind::RollingProjectileSpell
                             | ResidentCardActionKind::DirectDamageSpell => false,
-                        });
+                        }),
+                };
                 if !supported {
                     reasons.push(match card.action_kind {
                         ResidentCardActionKind::Building => {
@@ -4915,6 +5088,7 @@ impl ResidentCardCatalog {
                 summon_count: card.summon_count,
                 formation_offsets: card.formation_offsets,
                 deploy_delay_offsets: card.deploy_delay_offsets,
+                mixed_formation_members,
                 capability_reasons: reasons,
                 prototype,
                 template_fingerprint,
@@ -11347,6 +11521,43 @@ impl ResidentBattle {
         x_units: i64,
         y_units: i64,
     ) -> PyResult<()> {
+        let formation_id = self.next_entity_id;
+        let lane_id = nearest_standard_path_id(x_units, y_units);
+        let variant_index = usize::try_from(player_id * 2 + i64::from(lane_id != 1))
+            .expect("validated player/formation lane fits usize");
+        if let Some(members) = card.mixed_formation_members.get(variant_index) {
+            for (index, member) in members.iter().enumerate() {
+                let spawn_x = x_units
+                    .checked_add(member.offset[0])
+                    .ok_or_else(|| PyRuntimeError::new_err("resident mixed formation X overflow"))?
+                    .clamp(250, self.arena_width_tiles * 1000 - 250);
+                let spawn_y = y_units
+                    .checked_add(member.offset[1])
+                    .ok_or_else(|| PyRuntimeError::new_err("resident mixed formation Y overflow"))?
+                    .clamp(250, self.arena_height_tiles * 1000 - 250);
+                let mut entity = self.instantiate_character_template(
+                    &member.prototype,
+                    &member.effective_name,
+                    player_id,
+                    (spawn_x, spawn_y),
+                    Some(member.deploy_delay),
+                    false,
+                );
+                entity.character_birth = Some(ResidentCharacterBirthProvenance::CatalogAction {
+                    lookup_name: card.lookup_name.clone(),
+                    effective_name: member.effective_name.clone(),
+                    template_fingerprint: member.template_fingerprint.clone(),
+                    formation_id,
+                    ordinal: i64::try_from(index).expect("mixed formation ordinal fits i64"),
+                    member_count: card.summon_count,
+                });
+                self.entities.push(entity);
+                self.next_entity_id = self.next_entity_id.checked_add(1).ok_or_else(|| {
+                    PyRuntimeError::new_err("resident mixed formation entity-ID overflow")
+                })?;
+            }
+            return Ok(());
+        }
         let prototype = card
             .prototype
             .as_ref()
@@ -11354,10 +11565,6 @@ impl ResidentBattle {
         let template_fingerprint = card.template_fingerprint.as_ref().ok_or_else(|| {
             PyRuntimeError::new_err("resident troop template fingerprint is unavailable")
         })?;
-        let formation_id = self.next_entity_id;
-        let lane_id = nearest_standard_path_id(x_units, y_units);
-        let variant_index = usize::try_from(player_id * 2 + i64::from(lane_id != 1))
-            .expect("validated player/formation lane fits usize");
         let offsets = card.formation_offsets.get(variant_index).ok_or_else(|| {
             PyRuntimeError::new_err("resident troop formation variant is unavailable")
         })?;

@@ -1739,7 +1739,11 @@ def _direct_death_spawn_source(
     source_birth = source_row["character_birth"]
     if source_birth is None or source_birth["kind"] != 0:
         return None
-    recipe = resident.character_action_birth_recipe(source_birth["lookup_name"])
+    recipe = resident.character_action_birth_recipe(
+        source_birth["lookup_name"],
+        source_birth["template_fingerprint"],
+        source_birth["ordinal"],
+    )
     if (
         recipe is None
         or recipe.kind != "catalog_action"
@@ -2076,18 +2080,41 @@ def _build_direct_publication_plan(
             )
             for row in members
         }
-        if count <= 0 or ordinals != list(range(count)) or len(common) != 1:
+        if (
+            count <= 0
+            or ordinals != list(range(count))
+            or kind != 0
+            and len(common) != 1
+        ):
             raise ResidentPublicationError(
                 f"resident character group {group_id} has inconsistent provenance"
             )
         if kind == 0:
-            recipe = resident.character_action_birth_recipe(members[0]["lookup_name"])
+            lookup_names = {member["lookup_name"] for member in members}
+            recipes = [
+                resident.character_action_birth_recipe(
+                    member["lookup_name"],
+                    member["template_fingerprint"],
+                    member["ordinal"],
+                )
+                for member in members
+            ]
+            formation_variants = {
+                recipe.formation_variant
+                for recipe in recipes
+                if recipe is not None
+            }
             if (
-                recipe is None
-                or recipe.kind != "catalog_action"
-                or recipe.effective_name != members[0]["effective_name"]
-                or recipe.template_fingerprint != members[0]["template_fingerprint"]
-                or recipe.member_count != count
+                len(lookup_names) != 1
+                or len(formation_variants) != 1
+                or any(
+                    recipe is None
+                    or recipe.kind != "catalog_action"
+                    or recipe.effective_name != member["effective_name"]
+                    or recipe.template_fingerprint != member["template_fingerprint"]
+                    or recipe.member_count != count
+                    for recipe, member in zip(recipes, members, strict=True)
+                )
                 or not resident.character_action_card_stats_are_current(
                     battle, members[0]["lookup_name"]
                 )
@@ -2944,18 +2971,36 @@ def _build_direct_delta_publication_plan(
             )
             for member in members
         }
-        if len(common) != 1:
+        if kind != 0 and len(common) != 1:
             raise ResidentPublicationError(
                 f"resident character group {group_id} has inconsistent provenance"
             )
         if kind == 0:
-            recipe = resident.character_action_birth_recipe(members[0]["lookup_name"])
+            lookup_names = {member["lookup_name"] for member in members}
+            recipes = [
+                resident.character_action_birth_recipe(
+                    member["lookup_name"],
+                    member["template_fingerprint"],
+                    member["ordinal"],
+                )
+                for member in members
+            ]
+            formation_variants = {
+                recipe.formation_variant
+                for recipe in recipes
+                if recipe is not None
+            }
             if (
-                recipe is None
-                or recipe.kind != "catalog_action"
-                or recipe.effective_name != members[0]["effective_name"]
-                or recipe.template_fingerprint != members[0]["template_fingerprint"]
-                or recipe.member_count != count
+                len(lookup_names) != 1
+                or len(formation_variants) != 1
+                or any(
+                    recipe is None
+                    or recipe.kind != "catalog_action"
+                    or recipe.effective_name != member["effective_name"]
+                    or recipe.template_fingerprint != member["template_fingerprint"]
+                    or recipe.member_count != count
+                    for recipe, member in zip(recipes, members, strict=True)
+                )
                 or not resident.character_action_card_stats_are_current(
                     battle, members[0]["lookup_name"]
                 )
@@ -3893,6 +3938,7 @@ def _validate_structure(
         tuple[str, int],
         list[tuple[int, dict[str, Any]]],
     ] = {}
+    catalog_group_variants: dict[tuple[str, int], set[int | None]] = {}
     for entity_id in actual_birth_ids:
         provenance = publication_by_id[entity_id]["character_birth"]
         if provenance is None:
@@ -3938,7 +3984,11 @@ def _validate_structure(
             )
         if kind == "catalog_action":
             lookup_name = str(provenance["lookup_name"])
-            recipe = resident.character_action_birth_recipe(lookup_name)
+            recipe = resident.character_action_birth_recipe(
+                lookup_name,
+                fingerprint,
+                int(provenance["ordinal"]),
+            )
             if (
                 recipe is None
                 or recipe.kind != kind
@@ -3956,6 +4006,9 @@ def _validate_structure(
                 raise ResidentPublicationError(
                     f"resident character {entity_id} has unknown catalog birth recipe"
                 )
+            catalog_group_variants.setdefault((kind, group_id), set()).add(
+                recipe.formation_variant
+            )
             if (
                 provenance["source_entity_id"] is not None
                 or provenance["opcode_index"] is not None
@@ -4062,7 +4115,15 @@ def _validate_structure(
             )
             for _, provenance in members
         }
-        if len(common) != 1 or group_id != min(entity_id for entity_id, _ in members):
+        if (
+            kind != "catalog_action"
+            and len(common) != 1
+            or kind == "catalog_action"
+            and len({provenance["lookup_name"] for _, provenance in members}) != 1
+            or kind == "catalog_action"
+            and len(catalog_group_variants.get((kind, group_id), ())) != 1
+            or group_id != min(entity_id for entity_id, _ in members)
+        ):
             raise ResidentPublicationError(
                 f"resident {kind} character group {group_id} has inconsistent provenance"
             )
@@ -4879,18 +4940,23 @@ def _create_character_birth(
     battle: Any,
     row: dict[str, Any],
     resident: ResidentRustBattle,
-    shared_card_stats: dict[tuple[str, int], Any],
+    shared_card_stats: dict[tuple[Any, ...], Any],
     attest_live_action_stats: bool,
 ) -> Troop | Building:
     provenance = row["character_birth"]
     kind = str(provenance["kind"])
-    group_key = (kind, int(provenance["group_id"]))
+    group_key: tuple[Any, ...] = (kind, int(provenance["group_id"]))
     fingerprint = str(provenance["template_fingerprint"]).lower()
     if kind == "catalog_action":
         lookup_name = str(provenance["lookup_name"])
-        recipe = resident.character_action_birth_recipe(lookup_name)
+        recipe = resident.character_action_birth_recipe(
+            lookup_name,
+            fingerprint,
+            int(provenance["ordinal"]),
+        )
         if recipe is None:  # pragma: no cover - structural preflight invariant
             raise AssertionError("validated action birth recipe disappeared")
+        group_key = (*group_key, recipe.card_stats_group)
         if (
             attest_live_action_stats
             and not resident.character_action_card_stats_are_current(
@@ -4903,11 +4969,14 @@ def _create_character_birth(
             )
         stats = shared_card_stats.get(group_key)
         if stats is None:
-            stats = battle.card_loader.get_card(lookup_name)
-            if stats is None or str(stats.name) != recipe.effective_name:
-                raise ResidentPublicationError(
-                    f"catalog birth lookup {lookup_name!r} changed during publication"
-                )
+            if recipe.uses_live_action_card_stats:
+                stats = battle.card_loader.get_card(lookup_name)
+                if stats is None or str(stats.name) != recipe.effective_name:
+                    raise ResidentPublicationError(
+                        f"catalog birth lookup {lookup_name!r} changed during publication"
+                    )
+            else:
+                stats = copy.deepcopy(recipe.prototype.card_stats)
             shared_card_stats[group_key] = stats
     elif kind == "death_spawn":
         recipe = resident.character_death_spawn_birth_recipe(
@@ -4961,7 +5030,7 @@ def _prepare_births(
     """Construct all births detached from the live registry and entity dict."""
     pending: dict[int, Any] = {}
     available = dict(entity_registry)
-    shared_card_stats: dict[tuple[str, int], Any] = {}
+    shared_card_stats: dict[tuple[Any, ...], Any] = {}
     for row in publication_rows:
         entity_id = int(row["id"])
         if entity_id in entity_registry:
@@ -5127,27 +5196,35 @@ def _create_character_birth_direct(
     battle: Any,
     row: dict[str, Any],
     resident: ResidentRustBattle,
-    shared_card_stats: dict[tuple[int, int], Any],
+    shared_card_stats: dict[tuple[Any, ...], Any],
 ) -> Troop | Building:
     provenance = cast(dict[str, Any], row["character_birth"])
     kind = provenance["kind"]
-    group_key = (kind, provenance["group_id"])
+    group_key: tuple[Any, ...] = (kind, provenance["group_id"])
     if kind == 0:
         lookup_name = provenance["lookup_name"]
-        recipe = resident.character_action_birth_recipe(lookup_name)
+        recipe = resident.character_action_birth_recipe(
+            lookup_name,
+            provenance["template_fingerprint"],
+            provenance["ordinal"],
+        )
         if recipe is None or not resident.character_action_card_stats_are_current(
             battle, lookup_name
         ):
             raise ResidentPublicationError(
                 f"catalog birth lookup {lookup_name!r} changed during publication"
             )
+        group_key = (*group_key, recipe.card_stats_group)
         stats = shared_card_stats.get(group_key)
         if stats is None:
-            stats = battle.card_loader.get_card(lookup_name)
-            if stats is None or str(stats.name) != recipe.effective_name:
-                raise ResidentPublicationError(
-                    f"catalog birth lookup {lookup_name!r} changed during publication"
-                )
+            if recipe.uses_live_action_card_stats:
+                stats = battle.card_loader.get_card(lookup_name)
+                if stats is None or str(stats.name) != recipe.effective_name:
+                    raise ResidentPublicationError(
+                        f"catalog birth lookup {lookup_name!r} changed during publication"
+                    )
+            else:
+                stats = copy.deepcopy(recipe.prototype.card_stats)
             shared_card_stats[group_key] = stats
     elif kind == 1:
         recipe = resident.character_death_spawn_birth_recipe(
@@ -5197,7 +5274,7 @@ def _prepare_direct_births(
 ) -> dict[int, Any]:
     pending: dict[int, Any] = {}
     available = dict(entity_registry)
-    shared_card_stats: dict[tuple[int, int], Any] = {}
+    shared_card_stats: dict[tuple[Any, ...], Any] = {}
     for entity_plan in plan.entities:
         entity_id = entity_plan.entity_id
         if entity_id in entity_registry:
@@ -5781,7 +5858,7 @@ def _prepare_direct_delta_births(
 ) -> dict[int, Any]:
     pending: dict[int, Any] = {}
     available = dict(entity_registry)
-    shared_card_stats: dict[tuple[int, int], Any] = {}
+    shared_card_stats: dict[tuple[Any, ...], Any] = {}
     for change in plan.entities:
         if change.full is None:
             continue

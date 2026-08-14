@@ -343,7 +343,7 @@ def _reconstruct_prepared_publication_delta(
     if (
         binding["semantic_schema_version"] != 9
         or binding["checkpoint_schema_version"] != 2
-        or binding["catalog_schema_version"] != 8
+        or binding["catalog_schema_version"] != 9
         or binding["lineage_id"] != prior_binding["lineage_id"]
         or binding["prior_node_id"] != prior_binding["prior_node_id"]
         or binding["prior_epoch"] != prior_binding["prior_epoch"]
