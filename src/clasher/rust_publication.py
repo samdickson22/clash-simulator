@@ -15,7 +15,14 @@ import numpy as np
 from .arena import Position
 from .battle import PendingSpellCast
 from .differential import _normalize, first_snapshot_difference
-from .entities import AreaEffect, Building, Projectile, RollingProjectile, Troop
+from .entities import (
+    AreaEffect,
+    Building,
+    Projectile,
+    RollingProjectile,
+    SpawnProjectile,
+    Troop,
+)
 from .mechanics.shared.death_area import DeathAreaEffect
 from .mechanics.shared.death_effects import DeathDamage, DeathSpawn
 from .rust_core import (
@@ -594,6 +601,19 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "tracks_target",
             "travel_speed",
             "unsupported",
+            "spawn_projectile_state",
+        }
+    ),
+    "spawn_projectile_state": frozenset(
+        {
+            "activation_delay",
+            "spawn_count",
+            "spawn_character",
+            "spawn_data_fingerprint",
+            "spawn_radius",
+            "spawn_deploy_delay",
+            "spawn_const_priority",
+            "time_alive",
         }
     ),
     "rolling": frozenset(
@@ -1302,7 +1322,7 @@ def _validate_direct_movement(value: Any, entity_id: int) -> None:
         raise ResidentPublicationError(
             f"resident publication rejected unsupported route cache for id {entity_id}"
         )
-    if kind not in (0, 1, 2):
+    if kind not in (0, 1, 2, 3):
         raise ResidentPublicationError(
             f"malformed direct entity {entity_id} route kind"
         )
@@ -1313,7 +1333,7 @@ def _validate_direct_movement(value: Any, entity_id: int) -> None:
             raise ResidentPublicationError(
                 f"malformed direct entity {entity_id} absent route"
             )
-    else:
+    elif kind == 2:
         if (
             type(goal) is not tuple
             or len(goal) != 2
@@ -1527,6 +1547,212 @@ def _validate_direct_point(value: Any, entity_id: int) -> None:
             raise ResidentPublicationError(
                 f"malformed direct projectile {entity_id} hit ids"
             )
+    spawn = row["spawn_projectile_state"]
+    if spawn is not None:
+        spawn_row = _direct_dict(spawn, "spawn_projectile_state")
+        for field in ("activation_delay", "time_alive"):
+            number = _direct_float(
+                spawn_row[field], f"entity {entity_id} spawn projectile {field}"
+            )
+            if not np.isfinite(number) or number < 0.0:
+                raise ResidentPublicationError(
+                    f"malformed direct spawn projectile {entity_id} {field}"
+                )
+        count = _direct_int(
+            spawn_row["spawn_count"],
+            f"entity {entity_id} spawn projectile count",
+        )
+        if not 1 <= count <= 90:
+            raise ResidentPublicationError(
+                f"malformed direct spawn projectile {entity_id} count"
+            )
+        if (
+            type(spawn_row["spawn_character"]) is not str
+            or not spawn_row["spawn_character"]
+            or not _valid_fingerprint(spawn_row["spawn_data_fingerprint"])
+        ):
+            raise ResidentPublicationError(
+                f"malformed direct spawn projectile {entity_id} child"
+            )
+        for field in ("spawn_radius", "spawn_deploy_delay"):
+            if spawn_row[field] is not None:
+                number = _direct_float(
+                    spawn_row[field],
+                    f"entity {entity_id} spawn projectile {field}",
+                )
+                if not np.isfinite(number) or number < 0.0:
+                    raise ResidentPublicationError(
+                        f"malformed direct spawn projectile {entity_id} {field}"
+                    )
+        _direct_bool(
+            spawn_row["spawn_const_priority"],
+            f"entity {entity_id} spawn projectile priority",
+        )
+
+
+def _direct_f64_same(left: float, right: float) -> bool:
+    return struct.pack("=d", left) == struct.pack("=d", right)
+
+
+def _validate_direct_spawn_projectile_recipe(
+    row: dict[str, Any], resident: ResidentRustBattle, entity_id: int
+) -> None:
+    point = row["point_projectile_state"]
+    if (
+        point is not None
+        and point["spawn_projectile_state"] is not None
+        and (
+            row["python_type"] != "clasher.entities.SpawnProjectile"
+            or row["entity_kind"] != 2
+            or row["card_name"] != ""
+            or row["hitpoints"] != (0, 1, 0)
+            or row["max_hitpoints"] != (0, 1, 0)
+            or row["target_id"] is not None
+            or not _direct_f64_same(row["deploy_delay_remaining"], 0.0)
+            or not _direct_f64_same(row["placement_delay_total"], 0.0)
+            or row["placement_pending"]
+            or row["spawn_hook_pending"]
+            or row["spawn_hook_fired"]
+            or not _direct_f64_same(row["freeze_expiry_time"], 0.0)
+            or row["death_spawn_target_immunity_elapsed_ms"] != -1
+            or row["pending_projectile_max_duration_ms"] != 0
+            or not _direct_f64_same(row["spawn_angle_shift"], 0.0)
+            or row["mechanics"]
+            or row["shields"]
+            or row["shield_break_count"] != 0
+            or row["death_opcodes"]
+            or row["modifier_state"] is not None
+            or row["movement_state"] is not None
+            or row["locked_combat_state"] is not None
+            or row["building_lifetime_state"] is not None
+            or row["building_impact_state"] is not None
+            or row["rolling_projectile_state"] is not None
+            or row["area_effect_state"] is not None
+            or row["status_nova_jump"] is not None
+            or point["primary_target_id"] is not None
+            or point["source_entity_id"] is not None
+            or point["damage_group_id"] is not None
+            or point["damage_group_hit_entity_ids"] is not None
+            or not _direct_f64_same(point["launch_delay"], 0.0)
+            or not point["tracks_target"]
+            or point["temporary_homing_remaining_ms"] != 0
+            or point["temporary_homing_target_id"] is not None
+            or point["permanent_homing_disabled_by_temporary"]
+            or point["start_collision_resolved"]
+            or point["constructor_range"] != (0, 0, 0)
+            or point["constructor_sight_range"] != (0, 0, 0)
+            or point["homing_time_ms"] != 0
+            or not _direct_f64_same(point["homing_min_distance"], 0.0)
+            or not _direct_f64_same(point["stun_duration"], 0.0)
+            or not _direct_f64_same(point["slow_duration"], 0.0)
+            or not _direct_f64_same(point["slow_multiplier"], 1.0)
+            or not _direct_f64_same(point["knockback_distance"], 0.0)
+            or point["knockback_ignores_mass"]
+            or not _direct_f64_same(point["damage_wave_interval"], 0.0)
+        )
+    ):
+        raise ResidentPublicationError(
+            f"spawn projectile {entity_id} has unsupported base shape"
+        )
+    damage = _direct_exact(row["damage"], f"entity {entity_id} damage")
+    _validate_direct_spawn_projectile_state(
+        point, damage, row["player_id"], resident, entity_id
+    )
+
+
+def _validate_direct_spawn_projectile_state(
+    point: dict[str, Any] | None,
+    damage: float,
+    player_id: int,
+    resident: ResidentRustBattle,
+    entity_id: int,
+) -> None:
+    if point is None or point["spawn_projectile_state"] is None:
+        return
+    if (
+        point["primary_target_id"] is not None
+        or point["source_entity_id"] is not None
+        or point["damage_group_id"] is not None
+        or point["damage_group_hit_entity_ids"] is not None
+        or not _direct_f64_same(point["launch_delay"], 0.0)
+        or not point["tracks_target"]
+        or point["temporary_homing_remaining_ms"] != 0
+        or point["temporary_homing_target_id"] is not None
+        or point["permanent_homing_disabled_by_temporary"]
+        or point["start_collision_resolved"]
+        or point["constructor_range"] != (0, 0, 0)
+        or point["constructor_sight_range"] != (0, 0, 0)
+        or point["homing_time_ms"] != 0
+        or not _direct_f64_same(point["homing_min_distance"], 0.0)
+        or not _direct_f64_same(point["stun_duration"], 0.0)
+        or not _direct_f64_same(point["slow_duration"], 0.0)
+        or not _direct_f64_same(point["slow_multiplier"], 1.0)
+        or not _direct_f64_same(point["knockback_distance"], 0.0)
+        or point["knockback_ignores_mass"]
+        or not _direct_f64_same(point["damage_wave_interval"], 0.0)
+    ):
+        raise ResidentPublicationError(
+            f"spawn projectile {entity_id} has unsupported point shape"
+        )
+    state = point["spawn_projectile_state"]
+    recipe = resident.spawn_projectile_recipe(point["source_kind"])
+    if recipe is None:
+        raise ResidentPublicationError(
+            f"spawn projectile {entity_id} has no attested recipe"
+        )
+    expected_pairs = (
+        (float(damage), recipe.damage),
+        (point["travel_speed"], recipe.travel_speed),
+        (point["splash_radius"], recipe.radius),
+        (point["crown_tower_damage_multiplier"], recipe.crown_tower_damage_multiplier),
+        (state["activation_delay"], recipe.activation_delay),
+    )
+    if any(not _direct_f64_same(left, right) for left, right in expected_pairs) or (
+        point["crown_tower_damage"] is None
+    ) != (recipe.crown_tower_damage is None) or (
+        point["crown_tower_damage"] is not None
+        and not _direct_f64_same(
+            point["crown_tower_damage"], cast(float, recipe.crown_tower_damage)
+        )
+    ):
+        raise ResidentPublicationError(
+            f"spawn projectile {entity_id} payload changed from its attested recipe"
+        )
+    if (
+        state["spawn_count"] != recipe.spawn_count
+        or state["spawn_character"] != recipe.spawn_character
+        or state["spawn_data_fingerprint"] != recipe.spawn_data_fingerprint
+        or state["spawn_const_priority"] != recipe.spawn_const_priority
+        or point["hits_air"] != recipe.hits_air
+        or point["hits_ground"] != recipe.hits_ground
+        or point["ignore_buildings"] != recipe.ignore_buildings
+    ):
+        raise ResidentPublicationError(
+            f"spawn projectile {entity_id} constructor provenance changed"
+        )
+    for field, expected in (
+        ("spawn_radius", recipe.spawn_radius),
+        ("spawn_deploy_delay", recipe.spawn_deploy_delay),
+    ):
+        actual = state[field]
+        if (actual is None) != (expected is None) or (
+            actual is not None
+            and not _direct_f64_same(actual, cast(float, expected))
+        ):
+            raise ResidentPublicationError(
+                f"spawn projectile {entity_id} changed {field}"
+            )
+    expected_launch = (
+        (9.0, 2.5 if player_id == 0 else 29.5)
+        if recipe.launch_from_king
+        else (_scalar(point["target_x"]), _scalar(point["target_y"]))
+    )
+    if not _direct_f64_same(point["launch_x"], float(expected_launch[0])) or not _direct_f64_same(
+        point["launch_y"], float(expected_launch[1])
+    ):
+        raise ResidentPublicationError(
+            f"spawn projectile {entity_id} launch provenance changed"
+        )
 
 
 def _validate_direct_rolling(value: Any, entity_id: int) -> None:
@@ -1661,7 +1887,7 @@ def _validate_direct_character_birth(value: Any, entity_id: int) -> None:
         return
     row = _direct_dict(value, "character_birth")
     kind = _direct_int(row["kind"], f"entity {entity_id} birth kind")
-    if kind not in (0, 1, 2):
+    if kind not in (0, 1, 2, 3):
         raise ResidentPublicationError(
             f"unsupported direct character birth {entity_id}"
         )
@@ -1697,7 +1923,7 @@ def _validate_direct_character_birth(value: Any, entity_id: int) -> None:
             or not _valid_fingerprint(row["unit_data_fingerprint"])
         ):
             raise ResidentPublicationError(f"malformed direct death birth {entity_id}")
-    else:
+    elif kind == 2:
         if (
             type(row["lookup_name"]) is not str
             or _direct_optional_int(
@@ -1711,6 +1937,20 @@ def _validate_direct_character_birth(value: Any, entity_id: int) -> None:
         ):
             raise ResidentPublicationError(
                 f"malformed direct rolling birth {entity_id}"
+            )
+    else:
+        if (
+            type(row["lookup_name"]) is not str
+            or _direct_optional_int(
+                row["source_entity_id"],
+                f"entity {entity_id} spawn projectile birth source",
+            )
+            is None
+            or row["opcode_index"] is not None
+            or not _valid_fingerprint(row["unit_data_fingerprint"])
+        ):
+            raise ResidentPublicationError(
+                f"malformed direct spawn-projectile birth {entity_id}"
             )
 
 
@@ -1920,6 +2160,7 @@ def _build_direct_publication_plan(
             )
         _validate_direct_building(row, entity_id)
         _validate_direct_point(row["point_projectile_state"], entity_id)
+        _validate_direct_spawn_projectile_recipe(row, resident, entity_id)
         _validate_direct_rolling(row["rolling_projectile_state"], entity_id)
         if row["rolling_projectile_state"] is not None:
             _validate_direct_rolling_recipe(
@@ -2014,7 +2255,12 @@ def _build_direct_publication_plan(
                     f"resident publication has unsupported birth recipe for id {entity.entity_id}"
                 )
             expected_type = (
-                "clasher.entities.Projectile"
+                (
+                    "clasher.entities.SpawnProjectile"
+                    if point is not None
+                    and point["spawn_projectile_state"] is not None
+                    else "clasher.entities.Projectile"
+                )
                 if point is not None
                 else "clasher.entities.RollingProjectile"
                 if rolling is not None
@@ -2166,7 +2412,7 @@ def _build_direct_publication_plan(
                 raise ResidentPublicationError(
                     "resident death-spawn data provenance changed"
                 )
-        else:
+        elif kind == 2:
             source_id = members[0]["source_entity_id"]
             source = entity_registry.get(source_id)
             recipe = resident.character_rolling_spawn_birth_recipe(
@@ -2183,6 +2429,47 @@ def _build_direct_publication_plan(
             ):
                 raise ResidentPublicationError(
                     "resident character has unknown rolling-spawn recipe"
+                )
+        else:
+            source_id = members[0]["source_entity_id"]
+            source = entity_registry.get(source_id)
+            source_row = same_publication_births.get(source_id)
+            if source is not None:
+                source_spell = getattr(source, "spell_name", None)
+                source_valid = type(source) is SpawnProjectile
+            else:
+                source_point = (
+                    None if source_row is None else source_row["point_projectile_state"]
+                )
+                source_spell = None if source_point is None else source_point["source_kind"]
+                source_valid = (
+                    source_row is not None
+                    and source_row["python_type"] == "clasher.entities.SpawnProjectile"
+                    and source_point is not None
+                    and source_point["spawn_projectile_state"] is not None
+                )
+            recipes = [
+                resident.character_spawn_projectile_birth_recipe(
+                    member["lookup_name"],
+                    member["template_fingerprint"],
+                    member["ordinal"],
+                )
+                for member in members
+            ]
+            if (
+                not source_valid
+                or source_spell != members[0]["lookup_name"]
+                or any(
+                    recipe is None
+                    or recipe.kind != "spawn_projectile_spawn"
+                    or recipe.effective_name != member["effective_name"]
+                    or recipe.source_fingerprint != member["unit_data_fingerprint"]
+                    or recipe.member_count != count
+                    for recipe, member in zip(recipes, members, strict=True)
+                )
+            ):
+                raise ResidentPublicationError(
+                    "resident character has unknown spawn-projectile recipe"
                 )
 
     rng = _direct_dict(root["rng"], "rng")
@@ -2402,9 +2689,15 @@ def _validate_direct_pending(
         if type(spell_name) is not str or not spell_name:
             raise ResidentPublicationError("malformed direct pending spell name")
         action_kind = resident.pending_spell_action_kind(spell_name)
+        spawn_recipe = (
+            resident.spawn_projectile_recipe(spell_name)
+            if action_kind == "spawn_projectile_spell"
+            else None
+        )
         if action_kind not in {
             "projectile_spell",
             "rolling_projectile_spell",
+            "spawn_projectile_spell",
             "direct_damage_spell",
         }:
             raise ResidentPublicationError(
@@ -2426,6 +2719,12 @@ def _validate_direct_pending(
             or player_id not in (0, 1)
             or action_kind == "rolling_projectile_spell"
             and not in_deploy_zone
+            or action_kind == "spawn_projectile_spell"
+            and (
+                spawn_recipe is None
+                or spawn_recipe.requires_territory
+                and not in_deploy_zone
+            )
         ):
             raise ResidentPublicationError("malformed direct pending spell state")
         previous_sequence = sequence
@@ -2479,6 +2778,7 @@ def _validate_direct_full_delta_entity(
         )
     _validate_direct_building(row, entity_id)
     _validate_direct_point(row["point_projectile_state"], entity_id)
+    _validate_direct_spawn_projectile_recipe(row, resident, entity_id)
     _validate_direct_rolling(row["rolling_projectile_state"], entity_id)
     if row["rolling_projectile_state"] is not None:
         _validate_direct_rolling_recipe(
@@ -2495,7 +2795,11 @@ def _validate_direct_full_delta_entity(
             f"resident publication has unsupported birth recipe for id {entity_id}"
         )
     expected_type = (
-        "clasher.entities.Projectile"
+        (
+            "clasher.entities.SpawnProjectile"
+            if point is not None and point["spawn_projectile_state"] is not None
+            else "clasher.entities.Projectile"
+        )
         if point is not None
         else "clasher.entities.RollingProjectile"
         if rolling is not None
@@ -2840,7 +3144,7 @@ def _build_direct_delta_publication_plan(
                     _ENTITY_DELTA_MOVEMENT,
                     _ENTITY_DELTA_COMBAT,
                 )
-                else type(python_entity) is Projectile
+                else type(python_entity) in (Projectile, SpawnProjectile)
                 if bit == _ENTITY_DELTA_POINT
                 else type(python_entity) is RollingProjectile
                 if bit == _ENTITY_DELTA_ROLLING
@@ -2850,6 +3154,29 @@ def _build_direct_delta_publication_plan(
                 raise ResidentPublicationError(
                     f"direct entity {entity_id} {field} topology changed"
                 )
+            if bit == _ENTITY_DELTA_POINT and payload is not None:
+                expected_point_type = (
+                    SpawnProjectile
+                    if payload["spawn_projectile_state"] is not None
+                    else Projectile
+                )
+                if type(python_entity) is not expected_point_type:
+                    raise ResidentPublicationError(
+                        f"direct entity {entity_id} point projectile type changed"
+                    )
+        if mask & _ENTITY_DELTA_POINT and change["point_projectile_state"] is not None:
+            damage = (
+                _direct_exact(base["damage"], f"entity {entity_id} damage")
+                if base is not None
+                else python_entity.damage
+            )
+            _validate_direct_spawn_projectile_state(
+                change["point_projectile_state"],
+                damage,
+                int(python_entity.player_id),
+                resident,
+                entity_id,
+            )
         for bit, field, present_field in (
             (_ENTITY_DELTA_BUILDING_LIFETIME, "building_lifetime_state", "building_lifetime_present"),
             (_ENTITY_DELTA_BUILDING_IMPACT, "building_impact_state", "building_impact_present"),
@@ -3048,7 +3375,7 @@ def _build_direct_delta_publication_plan(
                 raise ResidentPublicationError(
                     "resident death-spawn data provenance changed"
                 )
-        else:
+        elif kind == 2:
             source = entity_registry.get(members[0]["source_entity_id"])
             recipe = resident.character_rolling_spawn_birth_recipe(
                 members[0]["lookup_name"], members[0]["template_fingerprint"]
@@ -3064,6 +3391,47 @@ def _build_direct_delta_publication_plan(
             ):
                 raise ResidentPublicationError(
                     "resident character has unknown rolling-spawn recipe"
+                )
+        else:
+            source_id = members[0]["source_entity_id"]
+            source = entity_registry.get(source_id)
+            source_row = same_publication_births.get(source_id)
+            if source is not None:
+                source_spell = getattr(source, "spell_name", None)
+                source_valid = type(source) is SpawnProjectile
+            else:
+                source_point = (
+                    None if source_row is None else source_row["point_projectile_state"]
+                )
+                source_spell = None if source_point is None else source_point["source_kind"]
+                source_valid = (
+                    source_row is not None
+                    and source_row["python_type"] == "clasher.entities.SpawnProjectile"
+                    and source_point is not None
+                    and source_point["spawn_projectile_state"] is not None
+                )
+            recipes = [
+                resident.character_spawn_projectile_birth_recipe(
+                    member["lookup_name"],
+                    member["template_fingerprint"],
+                    member["ordinal"],
+                )
+                for member in members
+            ]
+            if (
+                not source_valid
+                or source_spell != members[0]["lookup_name"]
+                or any(
+                    recipe is None
+                    or recipe.kind != "spawn_projectile_spawn"
+                    or recipe.effective_name != member["effective_name"]
+                    or recipe.source_fingerprint != member["unit_data_fingerprint"]
+                    or recipe.member_count != count
+                    for recipe, member in zip(recipes, members, strict=True)
+                )
+            ):
+                raise ResidentPublicationError(
+                    "resident character has unknown spawn-projectile recipe"
                 )
 
     topology_dirty = tuple(battle.entities) != active_entity_ids or bool(full_births)
@@ -3452,6 +3820,7 @@ def _typed_point(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
     state = entity["point_projectile_state"]
     if state is None:
         return None
+    spawn_state = state["spawn_projectile_state"]
     return {
         "crown_tower_damage": (
             None
@@ -3493,6 +3862,28 @@ def _typed_point(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
         "temporary_homing_target_id": state["temporary_homing_target_id"],
         "tracks_target": state["tracks_target"],
         "travel_speed": _exact_float(state["travel_speed"]),
+        "spawn_projectile_state": (
+            None
+            if spawn_state is None
+            else {
+                "activation_delay": _exact_float(spawn_state["activation_delay"]),
+                "spawn_count": spawn_state["spawn_count"],
+                "spawn_character": spawn_state["spawn_character"],
+                "spawn_data_fingerprint": spawn_state["spawn_data_fingerprint"],
+                "spawn_radius": (
+                    None
+                    if spawn_state["spawn_radius"] is None
+                    else _exact_float(spawn_state["spawn_radius"])
+                ),
+                "spawn_deploy_delay": (
+                    None
+                    if spawn_state["spawn_deploy_delay"] is None
+                    else _exact_float(spawn_state["spawn_deploy_delay"])
+                ),
+                "spawn_const_priority": spawn_state["spawn_const_priority"],
+                "time_alive": _exact_float(spawn_state["time_alive"]),
+            }
+        ),
     }
 
 
@@ -4989,7 +5380,7 @@ def _create_character_birth(
         if stats is None:
             stats = copy.deepcopy(recipe.prototype.card_stats)
             shared_card_stats[group_key] = stats
-    else:
+    elif kind == "rolling_spawn":
         recipe = resident.character_rolling_spawn_birth_recipe(
             provenance["lookup_name"], provenance["template_fingerprint"]
         )
@@ -5001,6 +5392,22 @@ def _create_character_birth(
         if stats is None:
             stats = copy.deepcopy(recipe.prototype.card_stats)
             shared_card_stats[group_key] = stats
+    elif kind == "spawn_projectile_spawn":
+        recipe = resident.character_spawn_projectile_birth_recipe(
+            provenance["lookup_name"],
+            provenance["template_fingerprint"],
+            provenance["ordinal"],
+        )
+        if recipe is None:
+            raise ResidentPublicationError(
+                "validated spawn-projectile child recipe disappeared"
+            )
+        stats = shared_card_stats.get(group_key)
+        if stats is None:
+            stats = copy.deepcopy(recipe.prototype.card_stats)
+            shared_card_stats[group_key] = stats
+    else:
+        raise ResidentPublicationError("unsupported character birth provenance kind")
 
     prototype = recipe.prototype
     memo: dict[int, Any] = {id(prototype.card_stats): stats}
@@ -5058,11 +5465,41 @@ def _create_projectile_birth_direct(
     battle: Any,
     row: dict[str, Any],
     available: dict[int, Any],
+    resident: ResidentRustBattle,
 ) -> Projectile:
     state = cast(dict[str, Any], row["point_projectile_state"])
     source_id = state["source_entity_id"]
     source = None if source_id is None else available[source_id]
-    projectile = Projectile(
+    spawn_state = state["spawn_projectile_state"]
+    spawn_recipe = (
+        None
+        if spawn_state is None
+        else resident.spawn_projectile_recipe(state["source_kind"])
+    )
+    if spawn_state is not None and spawn_recipe is None:
+        raise ResidentPublicationError(
+            f"spawn projectile {row['id']} recipe disappeared"
+        )
+    projectile_type: type[Projectile] = (
+        SpawnProjectile if spawn_state is not None else Projectile
+    )
+    spawn_kwargs: dict[str, Any] = (
+        {}
+        if spawn_state is None
+        else {
+            "spawn_count": spawn_state["spawn_count"],
+            "spawn_character": spawn_state["spawn_character"],
+            "spawn_character_data": copy.deepcopy(
+                cast(Any, spawn_recipe).spawn_character_data
+            ),
+            "spawn_radius": spawn_state["spawn_radius"],
+            "activation_delay": spawn_state["activation_delay"],
+            "spawn_deploy_delay_override": spawn_state["spawn_deploy_delay"],
+            "spawn_const_priority": spawn_state["spawn_const_priority"],
+            "time_alive": spawn_state["time_alive"],
+        }
+    )
+    projectile = projectile_type(
         id=row["id"],
         position=Position(_scalar(row["position_x"]), _scalar(row["position_y"])),
         player_id=row["player_id"],
@@ -5102,6 +5539,7 @@ def _create_projectile_birth_direct(
         start_extra_radius=0.0,
         start_collision_resolved=state["start_collision_resolved"],
         spawn_projectile_data=None,
+        **spawn_kwargs,
     )
     dynamic = cast(Any, projectile)
     if source is None:
@@ -5236,7 +5674,7 @@ def _create_character_birth_direct(
         if stats is None:
             stats = copy.deepcopy(recipe.prototype.card_stats)
             shared_card_stats[group_key] = stats
-    else:
+    elif kind == 2:
         recipe = resident.character_rolling_spawn_birth_recipe(
             provenance["lookup_name"], provenance["template_fingerprint"]
         )
@@ -5248,6 +5686,22 @@ def _create_character_birth_direct(
         if stats is None:
             stats = copy.deepcopy(recipe.prototype.card_stats)
             shared_card_stats[group_key] = stats
+    elif kind == 3:
+        recipe = resident.character_spawn_projectile_birth_recipe(
+            provenance["lookup_name"],
+            provenance["template_fingerprint"],
+            provenance["ordinal"],
+        )
+        if recipe is None:
+            raise ResidentPublicationError(
+                "validated spawn-projectile child recipe disappeared"
+            )
+        stats = shared_card_stats.get(group_key)
+        if stats is None:
+            stats = copy.deepcopy(recipe.prototype.card_stats)
+            shared_card_stats[group_key] = stats
+    else:
+        raise ResidentPublicationError("unsupported character birth provenance kind")
     prototype = recipe.prototype
     memo: dict[int, Any] = {id(prototype.card_stats): stats}
     prototype_battle = getattr(prototype, "battle_state", None)
@@ -5281,7 +5735,9 @@ def _prepare_direct_births(
             continue
         row = entity_plan.raw
         if row["point_projectile_state"] is not None:
-            entity: Any = _create_projectile_birth_direct(battle, row, available)
+            entity: Any = _create_projectile_birth_direct(
+                battle, row, available, resident
+            )
         elif row["rolling_projectile_state"] is not None:
             entity = _create_rolling_birth_direct(battle, row, resident)
         elif row["area_effect_state"] is not None:
@@ -5315,7 +5771,12 @@ def _validate_direct_bound_entities(
             )
         point = row["point_projectile_state"]
         if point is not None:
-            if type(entity) is not Projectile or not isinstance(
+            expected_type = (
+                SpawnProjectile
+                if point["spawn_projectile_state"] is not None
+                else Projectile
+            )
+            if type(entity) is not expected_type or not isinstance(
                 entity.target_position, Position
             ):
                 raise ResidentPublicationError(
@@ -5825,6 +6286,9 @@ def _apply_direct_entity(
             if point["temporary_homing_target_id"] is None
             else registry[point["temporary_homing_target_id"]]
         )
+        spawn = point["spawn_projectile_state"]
+        if spawn is not None:
+            entity.time_alive = spawn["time_alive"]
 
     rolling = row["rolling_projectile_state"]
     if rolling is not None:
@@ -5864,7 +6328,9 @@ def _prepare_direct_delta_births(
             continue
         row = change.full.raw
         if row["point_projectile_state"] is not None:
-            entity: Any = _create_projectile_birth_direct(battle, row, available)
+            entity: Any = _create_projectile_birth_direct(
+                battle, row, available, resident
+            )
         elif row["rolling_projectile_state"] is not None:
             entity = _create_rolling_birth_direct(battle, row, resident)
         elif row["area_effect_state"] is not None:
@@ -5908,7 +6374,12 @@ def _validate_direct_delta_bound_entities(
             else None
         )
         if point is not None:
-            if type(entity) is not Projectile or not isinstance(
+            expected_type = (
+                SpawnProjectile
+                if point["spawn_projectile_state"] is not None
+                else Projectile
+            )
+            if type(entity) is not expected_type or not isinstance(
                 entity.target_position, Position
             ):
                 raise ResidentPublicationError(
@@ -6282,6 +6753,9 @@ def _apply_direct_delta_entity(
             entity.travel_speed = point["travel_speed"]
             entity._temporary_homing_remaining_ms = point["temporary_homing_remaining_ms"]
             entity._temporary_homing_target = None if point["temporary_homing_target_id"] is None else registry[point["temporary_homing_target_id"]]
+            spawn = point["spawn_projectile_state"]
+            if spawn is not None:
+                entity.time_alive = spawn["time_alive"]
     if mask & _ENTITY_DELTA_ROLLING:
         rolling = raw["rolling_projectile_state"]
         if rolling is not None:
@@ -6836,6 +7310,8 @@ def publish_complete_tick_state(
         "character_action_birth_recipe",
         "character_death_spawn_birth_recipe",
         "character_action_card_stats_are_current",
+        "spawn_projectile_recipe",
+        "character_spawn_projectile_birth_recipe",
         "pending_spell_action_kind",
     }.intersection(resident.__dict__)
     if authority_overrides:

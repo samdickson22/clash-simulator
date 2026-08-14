@@ -341,9 +341,9 @@ def _reconstruct_prepared_publication_delta(
     if any(type(binding[name]) is not int for name in integer_binding_fields):
         raise TypeError("prepared publication delta binding integer is malformed")
     if (
-        binding["semantic_schema_version"] != 9
+        binding["semantic_schema_version"] != 10
         or binding["checkpoint_schema_version"] != 2
-        or binding["catalog_schema_version"] != 9
+        or binding["catalog_schema_version"] != 10
         or binding["lineage_id"] != prior_binding["lineage_id"]
         or binding["prior_node_id"] != prior_binding["prior_node_id"]
         or binding["prior_epoch"] != prior_binding["prior_epoch"]

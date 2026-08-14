@@ -45,7 +45,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 9
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 10
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -232,6 +232,29 @@ class _ResidentRollingProjectileRecipe:
 
 
 @dataclass(frozen=True)
+class _ResidentSpawnProjectileRecipe:
+    source_kind: str
+    damage: float
+    radius: float
+    travel_speed: float
+    activation_delay: float
+    spawn_count: int
+    spawn_character: str
+    spawn_character_data: dict[str, Any]
+    spawn_data_fingerprint: str
+    spawn_radius: float | None
+    spawn_deploy_delay: float | None
+    spawn_const_priority: bool
+    launch_from_king: bool
+    requires_territory: bool
+    hits_air: bool
+    hits_ground: bool
+    ignore_buildings: bool
+    crown_tower_damage_multiplier: float
+    crown_tower_damage: float | None
+
+
+@dataclass(frozen=True)
 class _ResidentCardCatalogBundle:
     payload: bytes
     action_recipes: dict[str, _ResidentCharacterBirthRecipe]
@@ -244,6 +267,12 @@ class _ResidentCardCatalogBundle:
     ] = field(default_factory=dict)
     rolling_projectile_recipes: dict[
         str, _ResidentRollingProjectileRecipe
+    ] = field(default_factory=dict)
+    spawn_projectile_spawn_recipes: dict[
+        tuple[str, int, str], _ResidentCharacterBirthRecipe
+    ] = field(default_factory=dict)
+    spawn_projectile_recipes: dict[
+        str, _ResidentSpawnProjectileRecipe
     ] = field(default_factory=dict)
     pending_spell_action_kinds: tuple[tuple[str, str], ...] = ()
 
@@ -325,6 +354,8 @@ def _resident_card_catalog_bundle(
         DirectDamageSpell,
         ProjectileSpell,
         RollingProjectileSpell,
+        RoyalDeliverySpell,
+        SpawnProjectileSpell,
     )
     from .unit_traits import is_air_unit_card
 
@@ -348,6 +379,10 @@ def _resident_card_catalog_bundle(
         tuple[str, str], _ResidentCharacterBirthRecipe
     ] = {}
     rolling_projectile_recipes: dict[str, _ResidentRollingProjectileRecipe] = {}
+    spawn_projectile_spawn_recipes: dict[
+        tuple[str, int, str], _ResidentCharacterBirthRecipe
+    ] = {}
+    spawn_projectile_recipes: dict[str, _ResidentSpawnProjectileRecipe] = {}
     for lookup_name in sorted(lookup_names):
         card_def = loader.get_card_definition(lookup_name)
         card_stats = loader.get_card(lookup_name)
@@ -368,6 +403,7 @@ def _resident_card_catalog_bundle(
         )
         projectile_spell: dict[str, Any] | None = None
         rolling_projectile_spell: dict[str, Any] | None = None
+        spawn_projectile_spell: dict[str, Any] | None = None
         direct_damage_spell: dict[str, Any] | None = None
         spell = SPELL_REGISTRY.get(str(card_stats.name))
         if type(spell) is DirectDamageSpell:
@@ -426,6 +462,240 @@ def _resident_card_catalog_bundle(
                     ),
                     "crown_tower_damage": crown_damage,
                 }
+        elif type(spell) in (SpawnProjectileSpell, RoyalDeliverySpell):
+            assert isinstance(spell, (SpawnProjectileSpell, RoyalDeliverySpell))
+            action_kind = "spawn_projectile_spell"
+            launch_from_king = type(spell) is SpawnProjectileSpell
+            activation_delay = (
+                0.0
+                if launch_from_king
+                else float(cast(RoyalDeliverySpell, spell).impact_delay)
+            )
+            spawn_radius_value = (
+                getattr(spell, "spawn_radius", None)
+                if launch_from_king
+                else 0.0
+            )
+            spawn_radius = (
+                None if spawn_radius_value is None else float(spawn_radius_value)
+            )
+            spawn_deploy_delay = (
+                None
+                if spell.spawn_deploy_delay is None
+                else float(spell.spawn_deploy_delay)
+            )
+            spawn_character = str(spell.spawn_character or "")
+            spawn_character_data = spell.spawn_character_data
+            crown_damage = (
+                None
+                if spell.crown_tower_damage is None
+                else float(spell.crown_tower_damage)
+            )
+            spawn_values = (
+                float(spell.radius),
+                float(spell.damage),
+                float(spell.travel_speed),
+                activation_delay,
+                float(spell.crown_tower_damage_multiplier),
+            )
+            spawn_spell_reasons: list[str] = []
+            inherited_projectile_payload = {
+                "stun_duration": float(getattr(spell, "stun_duration", 0.0) or 0.0),
+                "slow_duration": float(getattr(spell, "slow_duration", 0.0) or 0.0),
+                "slow_multiplier": float(getattr(spell, "slow_multiplier", 1.0)),
+                "knockback_distance": float(
+                    getattr(spell, "knockback_distance", 0.0) or 0.0
+                ),
+                "knockback_ignores_mass": bool(
+                    getattr(spell, "knockback_ignores_mass", False)
+                ),
+                "damage_waves": int(getattr(spell, "damage_waves", 1) or 1),
+                "damage_wave_interval": float(
+                    getattr(spell, "damage_wave_interval", 0.0) or 0.0
+                ),
+                "multiple_projectiles": int(
+                    getattr(spell, "multiple_projectiles", 1) or 1
+                ),
+                "spread_radius": float(getattr(spell, "spread_radius", 0.0) or 0.0),
+                "projectile_pattern": str(
+                    getattr(spell, "projectile_pattern", "native_radial")
+                ),
+                "pierces": bool(getattr(spell, "pierces", False)),
+                "homing": bool(getattr(spell, "homing", False)),
+                "spawn_projectile_data_present": getattr(
+                    spell, "spawn_projectile_data", None
+                )
+                is not None,
+            }
+            if bool(spell.requires_walkable_target):
+                spawn_spell_reasons.append("spawn_projectile_walkable_placement")
+            if int(getattr(card_stats, "deploy_w_tile_margin", 0) or 0) != 0:
+                spawn_spell_reasons.append("spawn_projectile_margin")
+            if (
+                not all(math.isfinite(value) for value in spawn_values)
+                or crown_damage is not None
+                and not math.isfinite(crown_damage)
+                or spell.radius < 0.0
+                or spell.damage < 0.0
+                or spell.travel_speed <= 0.0
+                or activation_delay < 0.0
+                or not 1 <= int(spell.spawn_count) <= 90
+                or spawn_radius is not None
+                and (not math.isfinite(spawn_radius) or spawn_radius < 0.0)
+                or spawn_deploy_delay is not None
+                and (
+                    not math.isfinite(spawn_deploy_delay)
+                    or spawn_deploy_delay < 0.0
+                )
+                or spell.crown_tower_damage_multiplier < 0.0
+                or crown_damage is not None
+                and crown_damage < 0.0
+                or inherited_projectile_payload["stun_duration"] != 0.0
+                or inherited_projectile_payload["slow_duration"] != 0.0
+                or inherited_projectile_payload["slow_multiplier"] != 1.0
+                or inherited_projectile_payload["knockback_distance"] != 0.0
+                or inherited_projectile_payload["knockback_ignores_mass"]
+                or inherited_projectile_payload["damage_waves"] != 1
+                or inherited_projectile_payload["damage_wave_interval"] != 0.0
+                or inherited_projectile_payload["multiple_projectiles"] != 1
+                or inherited_projectile_payload["spread_radius"] != 0.0
+                or inherited_projectile_payload["projectile_pattern"]
+                != "native_radial"
+                or inherited_projectile_payload["pierces"]
+                or inherited_projectile_payload["homing"]
+                or inherited_projectile_payload["spawn_projectile_data_present"]
+            ):
+                spawn_spell_reasons.append("invalid_spawn_projectile_spell")
+            if (
+                type(spawn_character_data) is not dict
+                or not spawn_character_data
+                or str(spawn_character_data.get("name") or "") != spawn_character
+            ):
+                spawn_spell_reasons.append("spawn_projectile_child_payload")
+
+            normalized_spawn_data: Any = None
+            spawn_data_fingerprint: str | None = None
+            carrier_child_template_snapshot: dict[str, Any] | None = None
+            carrier_child_template_fingerprint: str | None = None
+            if not spawn_spell_reasons:
+                try:
+                    normalized_spawn_data = _normalize(spawn_character_data)
+                    spawn_data_fingerprint = _canonical_json_sha256(
+                        normalized_spawn_data
+                    )
+                    spawn_stats = troop_from_character_data(
+                        spawn_character,
+                        spawn_character_data,
+                        elixir=0,
+                        rarity=spawn_character_data.get("rarity", "Common"),
+                    )
+                    spawned_id = prototype_battle.next_entity_id
+                    prototype_battle._spawn_unit_at_position(
+                        Position(9.0, 8.0),
+                        0,
+                        spawn_stats,
+                        deploy_delay_override=spawn_deploy_delay,
+                        snap_to_valid=False,
+                    )
+                    prototype = prototype_battle.entities.pop(spawned_id)
+                    carrier_child_template_snapshot = dict(_entity_snapshot(prototype))
+                    carrier_child_template_fingerprint = _prototype_sha256(prototype)
+                    for ordinal in range(int(spell.spawn_count)):
+                        spawn_projectile_spawn_recipes[
+                            (
+                                str(spell.name),
+                                ordinal,
+                                carrier_child_template_fingerprint,
+                            )
+                        ] = _ResidentCharacterBirthRecipe(
+                            kind="spawn_projectile_spawn",
+                            action_kind="troop",
+                            effective_name=spawn_character,
+                            template_fingerprint=carrier_child_template_fingerprint,
+                            source_fingerprint=spawn_data_fingerprint,
+                            member_count=int(spell.spawn_count),
+                            prototype=prototype,
+                            source_data=copy.deepcopy(spawn_character_data),
+                            card_stats_group=0,
+                            # The provenance fingerprint authenticates the raw
+                            # child payload here (as it does for rolling
+                            # endpoint births), while publication still clones
+                            # the attested prototype stats rather than consulting
+                            # the live action-card wrapper.
+                            uses_live_action_card_stats=True,
+                        )
+                except (OverflowError, TypeError, ValueError) as error:
+                    spawn_spell_reasons.append(
+                        f"spawn_projectile_template_compile:{type(error).__name__}"
+                    )
+            reasons = spawn_spell_reasons
+            if not reasons:
+                spawn_projectile_spell = {
+                    "radius": float(spell.radius),
+                    "damage": float(spell.damage),
+                    "travel_speed": float(spell.travel_speed),
+                    "activation_delay": activation_delay,
+                    "spawn_count": int(spell.spawn_count),
+                    "spawn_character": spawn_character,
+                    "spawn_character_data": normalized_spawn_data,
+                    "spawn_data_fingerprint": spawn_data_fingerprint,
+                    "spawn_radius": spawn_radius,
+                    "spawn_deploy_delay": spawn_deploy_delay,
+                    "spawn_const_priority": (
+                        bool(getattr(spell, "spawn_const_priority", False))
+                        if launch_from_king
+                        else False
+                    ),
+                    "launch_from_king": launch_from_king,
+                    "requires_territory": bool(spell.requires_territory),
+                    "hits_air": bool(getattr(spell, "hits_air", True)),
+                    "hits_ground": bool(getattr(spell, "hits_ground", True)),
+                    "ignore_buildings": (
+                        False
+                        if launch_from_king
+                        else bool(cast(RoyalDeliverySpell, spell).ignore_buildings)
+                    ),
+                    "crown_tower_damage_multiplier": float(
+                        spell.crown_tower_damage_multiplier
+                    ),
+                    "crown_tower_damage": crown_damage,
+                    "spawn_template_snapshot": carrier_child_template_snapshot,
+                    "spawn_template_fingerprint": carrier_child_template_fingerprint,
+                    **inherited_projectile_payload,
+                }
+                recipe = _ResidentSpawnProjectileRecipe(
+                    source_kind=str(spell.name),
+                    damage=float(spell.damage),
+                    radius=float(spell.radius),
+                    travel_speed=float(spell.travel_speed),
+                    activation_delay=activation_delay,
+                    spawn_count=int(spell.spawn_count),
+                    spawn_character=spawn_character,
+                    spawn_character_data=copy.deepcopy(spawn_character_data),
+                    spawn_data_fingerprint=cast(str, spawn_data_fingerprint),
+                    spawn_radius=spawn_radius,
+                    spawn_deploy_delay=spawn_deploy_delay,
+                    spawn_const_priority=(
+                        bool(getattr(spell, "spawn_const_priority", False))
+                        if launch_from_king
+                        else False
+                    ),
+                    launch_from_king=launch_from_king,
+                    requires_territory=bool(spell.requires_territory),
+                    hits_air=bool(getattr(spell, "hits_air", True)),
+                    hits_ground=bool(getattr(spell, "hits_ground", True)),
+                    ignore_buildings=(
+                        False
+                        if launch_from_king
+                        else bool(cast(RoyalDeliverySpell, spell).ignore_buildings)
+                    ),
+                    crown_tower_damage_multiplier=float(
+                        spell.crown_tower_damage_multiplier
+                    ),
+                    crown_tower_damage=crown_damage,
+                )
+                spawn_projectile_recipes[lookup_name] = recipe
+                spawn_projectile_recipes[str(spell.name)] = recipe
         elif type(spell) is ProjectileSpell:
             action_kind = "projectile_spell"
             spell_values = (
@@ -918,6 +1188,7 @@ def _resident_card_catalog_bundle(
                 "template_fingerprint": template_fingerprint,
                 "projectile_spell": projectile_spell,
                 "rolling_projectile_spell": rolling_projectile_spell,
+                "spawn_projectile_spell": spawn_projectile_spell,
                 "direct_damage_spell": direct_damage_spell,
             }
         )
@@ -992,6 +1263,8 @@ def _resident_card_catalog_bundle(
         action_member_recipes=action_member_recipes,
         rolling_spawn_recipes=rolling_spawn_recipes,
         rolling_projectile_recipes=rolling_projectile_recipes,
+        spawn_projectile_spawn_recipes=spawn_projectile_spawn_recipes,
+        spawn_projectile_recipes=spawn_projectile_recipes,
         pending_spell_action_kinds=tuple(
             (str(card["lookup_name"]), str(card["action_kind"]))
             for card in cards
@@ -1000,6 +1273,7 @@ def _resident_card_catalog_bundle(
             in {
                 "projectile_spell",
                 "rolling_projectile_spell",
+                "spawn_projectile_spell",
                 "direct_damage_spell",
             }
         ),
@@ -1192,7 +1466,7 @@ def _decode_prepared_publication_parts(value: Any) -> MappingProxyType[str, Any]
     binding = frozen.get("binding")
     if not isinstance(binding, MappingProxyType):
         raise TypeError("resident prepared publication binding is not a mapping")
-    if binding.get("semantic_schema_version") != 9:
+    if binding.get("semantic_schema_version") != 10:
         raise ValueError("unsupported resident prepared semantic schema")
     return frozen
 
@@ -1262,7 +1536,7 @@ class ResidentPreparedPublication:
         binding = value.get("binding")
         if type(binding) is not dict:
             raise TypeError("resident prepared publication binding is not a mapping")
-        if binding.get("semantic_schema_version") != 9:
+        if binding.get("semantic_schema_version") != 10:
             raise ValueError("unsupported resident prepared semantic schema")
         return cast(dict[str, Any], value)
 
@@ -1283,7 +1557,7 @@ class ResidentPreparedPublication:
             raise TypeError(
                 "resident prepared publication delta binding is not a mapping"
             )
-        if binding.get("semantic_schema_version") != 9:
+        if binding.get("semantic_schema_version") != 10:
             raise ValueError("unsupported resident prepared delta semantic schema")
         return cast(dict[str, Any], value)
 
@@ -1475,6 +1749,32 @@ class ResidentRustBattle:
             spawn_character_data=copy.deepcopy(recipe.spawn_character_data),
             spawn_data_fingerprint=recipe.spawn_data_fingerprint,
             spawn_deploy_delay=recipe.spawn_deploy_delay,
+        )
+
+    def character_spawn_projectile_birth_recipe(
+        self,
+        spell_name: str,
+        template_fingerprint: str,
+        ordinal: int,
+    ) -> _ResidentCharacterBirthRecipe | None:
+        catalog = self._birth_catalog
+        if catalog is None:  # pragma: no cover - legacy direct construction
+            return None
+        recipe = catalog.spawn_projectile_spawn_recipes.get(
+            (str(spell_name), int(ordinal), str(template_fingerprint).lower())
+        )
+        return None if recipe is None else _copy_attested_birth_recipe(recipe)
+
+    def spawn_projectile_recipe(
+        self, spell_name: str
+    ) -> _ResidentSpawnProjectileRecipe | None:
+        catalog = self._birth_catalog
+        if catalog is None:  # pragma: no cover - legacy direct construction
+            return None
+        recipe = catalog.spawn_projectile_recipes.get(str(spell_name))
+        return None if recipe is None else replace(
+            recipe,
+            spawn_character_data=copy.deepcopy(recipe.spawn_character_data),
         )
 
     def pending_spell_action_kind(self, spell_name: str) -> str | None:
@@ -3418,7 +3718,7 @@ def building_lifetime_state_bytes(battle: Any) -> bytes:
 
 
 def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
-    from .entities import Projectile
+    from .entities import Projectile, SpawnProjectile
 
     group_projectile_ids: dict[int, list[int]] = {}
     for entity in battle.entities.values():
@@ -3485,9 +3785,33 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
                     getattr(entity, "_temporary_homing_target", None)
                 )
             ),
+            "spawn_projectile_state": (
+                None
+                if type(entity) is Projectile
+                else {
+                    "activation_delay": _exact_scalar(entity.activation_delay),
+                    "spawn_character": str(entity.spawn_character),
+                    "spawn_count": int(entity.spawn_count),
+                    "spawn_data_fingerprint": _normalized_sha256(
+                        entity.spawn_character_data
+                    ),
+                    "spawn_deploy_delay": (
+                        None
+                        if entity.spawn_deploy_delay_override is None
+                        else _exact_scalar(entity.spawn_deploy_delay_override)
+                    ),
+                    "spawn_radius": (
+                        None
+                        if entity.spawn_radius is None
+                        else _exact_scalar(entity.spawn_radius)
+                    ),
+                    "spawn_const_priority": bool(entity.spawn_const_priority),
+                    "time_alive": _exact_scalar(entity.time_alive),
+                }
+            ),
         }
         for encounter_index, entity in enumerate(battle.entities.values())
-        if type(entity) is Projectile
+        if type(entity) in (Projectile, SpawnProjectile)
     ]
 
 

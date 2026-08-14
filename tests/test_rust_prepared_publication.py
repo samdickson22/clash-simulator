@@ -396,9 +396,9 @@ def test_prepared_parts_are_owned_frozen_and_match_legacy_root_rows() -> None:
 
     assert isinstance(parts, MappingProxyType)
     assert parts["version"] == 1
-    assert parts["binding"]["semantic_schema_version"] == 9
+    assert parts["binding"]["semantic_schema_version"] == 10
     assert parts["binding"]["checkpoint_schema_version"] == 2
-    assert parts["binding"]["catalog_schema_version"] == 9
+    assert parts["binding"]["catalog_schema_version"] == 10
     assert parts["battle"]["tick"] == 1
     assert isinstance(parts["entities"], tuple)
     assert isinstance(parts["entities"][0], MappingProxyType)

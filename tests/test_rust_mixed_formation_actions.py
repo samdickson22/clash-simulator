@@ -123,7 +123,7 @@ def test_catalog_structurally_qualifies_current_mixed_troop_formations() -> None
     }
     resident = ResidentRustBattle.from_battle(battle)
 
-    assert payload["schema_version"] == 9
+    assert payload["schema_version"] == 10
     assert set(mixed) == {"GoblinGang", "Rascals"}
     assert mixed["GoblinGang"]["summon_count"] == 6
     assert mixed["Rascals"]["summon_count"] == 3
@@ -131,7 +131,7 @@ def test_catalog_structurally_qualifies_current_mixed_troop_formations() -> None
     assert resident.resident_action_card_capability_reasons("GoblinGang") == ()
     assert resident.resident_action_card_capability_reasons("Rascals") == ()
     assert resident.resident_action_card_capability_reasons("Goblinstein")
-    assert resident.resident_action_card_capability_reasons("GoblinBarrel")
+    assert resident.resident_action_card_capability_reasons("GoblinBarrel") == ()
 
 
 @pytest.mark.parametrize("card_name", ["GoblinGang", "Rascals"])

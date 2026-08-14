@@ -822,7 +822,7 @@ def test_raw_consumer_rejects_mapping_subclasses_after_burning(
     class FakeNative:
         def parts(self) -> dict[str, Any]:
             binding: dict[str, Any] = {
-                "semantic_schema_version": 9,
+                "semantic_schema_version": 10,
             }
             if bad_section == "binding":
                 binding = MappingSubclass(binding)
@@ -867,6 +867,8 @@ def test_raw_consumer_burns_before_native_crossing_failure() -> None:
         "character_action_birth_recipe",
         "character_death_spawn_birth_recipe",
         "character_action_card_stats_are_current",
+        "spawn_projectile_recipe",
+        "character_spawn_projectile_birth_recipe",
     ],
 )
 def test_publication_rejects_instance_authority_overrides(
@@ -875,6 +877,10 @@ def test_publication_rejects_instance_authority_overrides(
     battle = BattleState(rng=random.Random(71_010), fast_path=True)
     prior = ResidentRustBattle.from_battle(battle)
     candidate = prior.fork()
+    before = canonical_battle_snapshot(battle)
+    registry = dict(battle.entities)
+    prior_authority = ResidentRustBattle.publication_authority_token(prior)
+    candidate_authority = ResidentRustBattle.publication_authority_token(candidate)
     setattr(candidate, method_name, lambda *args, **kwargs: None)
 
     with pytest.raises(ResidentPublicationError, match="authority override"):
@@ -884,6 +890,14 @@ def test_publication_rejects_instance_authority_overrides(
             prior_resident=prior,
             entity_registry=dict(battle.entities),
         )
+
+    assert canonical_battle_snapshot(battle) == before
+    assert tuple(battle.entities.items()) == tuple(registry.items())
+    assert ResidentRustBattle.publication_authority_token(prior) == prior_authority
+    assert (
+        ResidentRustBattle.publication_authority_token(candidate)
+        == candidate_authority
+    )
 
 
 def test_publication_rejects_resident_wrapper_subclass_override() -> None:
