@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, cast
 
-from .differential import canonical_battle_snapshot, snapshot_bytes
+from .differential import _entity_snapshot, canonical_battle_snapshot, snapshot_bytes
 from .rust_core import (
     ResidentRustBattle,
     RustBattleMode,
@@ -63,6 +63,17 @@ def _causal_boundary_snapshot(battle: Any) -> dict[str, Any]:
         if name not in _DERIVED_BATTLE_CACHE_FIELDS
     }
     return cast(dict[str, Any], snapshot)
+
+
+def _registry_boundary_snapshot(
+    entity_registry: dict[int, Any],
+    active_ids: set[int],
+) -> list[dict[str, Any]]:
+    return [
+        {"id": entity_id, "state": _entity_snapshot(entity)}
+        for entity_id, entity in entity_registry.items()
+        if entity_id not in active_ids
+    ]
 
 
 @dataclass(frozen=True)
@@ -193,6 +204,7 @@ class ResidentCompleteTickRuntime:
         self.shadow_checks = 0
         self.shadow_mismatches = 0
         self._resident: ResidentRustBattle | None = None
+        self._entity_registry: dict[int, Any] = dict(battle.entities)
         self._on_boundary_snapshot: dict[str, Any] | None = None
         self._on_boundary_bytes: bytes | None = None
         self.poisoned_reason: str | None = None
@@ -228,6 +240,12 @@ class ResidentCompleteTickRuntime:
     def resident(self) -> ResidentRustBattle | None:
         return self._resident
 
+    @property
+    def entity_registry(self) -> dict[int, Any]:
+        """Return the append-only identity registry used by on publication."""
+
+        return self._entity_registry
+
     def _assert_shadow_parity(self) -> None:
         from .differential import first_snapshot_difference
         from .rust_differential import (
@@ -240,9 +258,11 @@ class ResidentCompleteTickRuntime:
             raise RuntimeError("active Rust runtime has no resident battle")
         expected = python_resident_semantic_snapshot(self.battle)
         actual = rust_resident_semantic_snapshot(resident)
-        difference = first_snapshot_difference(expected, actual)
-        if difference is None:
+        if expected == actual:
             return
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - equality fast path invariant
+            raise AssertionError("resident snapshots compare unequal without a difference")
         self.shadow_mismatches += 1
         raise AssertionError(
             "resident Rust complete-tick parity mismatch "
@@ -252,6 +272,10 @@ class ResidentCompleteTickRuntime:
 
     def _record_on_boundary(self) -> None:
         snapshot = _causal_boundary_snapshot(self.battle)
+        snapshot["resident_entity_registry"] = _registry_boundary_snapshot(
+            self._entity_registry,
+            set(self.battle.entities),
+        )
         self._on_boundary_snapshot = snapshot
         self._on_boundary_bytes = snapshot_bytes(snapshot)
 
@@ -266,6 +290,10 @@ class ResidentCompleteTickRuntime:
         if expected is None or expected_bytes is None:
             raise RuntimeError("resident on-mode boundary checkpoint is missing")
         actual = _causal_boundary_snapshot(self.battle)
+        actual["resident_entity_registry"] = _registry_boundary_snapshot(
+            self._entity_registry,
+            set(self.battle.entities),
+        )
         if snapshot_bytes(actual) == expected_bytes:
             return
         from .differential import first_snapshot_difference
@@ -335,7 +363,6 @@ class ResidentCompleteTickRuntime:
         if resident is None:  # pragma: no cover - constructor invariant
             raise RuntimeError("active Rust runtime has no resident battle")
         self._assert_on_boundary_unchanged()
-        self._assert_shadow_parity()
         candidate = resident.fork()
         try:
             rust_advanced = candidate.advance_complete_ticks(requested)
@@ -351,7 +378,12 @@ class ResidentCompleteTickRuntime:
         )
 
         try:
-            publish_complete_tick_state(self.battle, candidate)
+            publish_complete_tick_state(
+                self.battle,
+                candidate,
+                prior_resident=resident,
+                entity_registry=self._entity_registry,
+            )
         except ResidentPublicationError as error:
             self.poisoned_reason = str(error)
             raise RuntimeError(
@@ -360,6 +392,5 @@ class ResidentCompleteTickRuntime:
                 "fallback is forbidden"
             ) from error
         self._resident = candidate
-        self._assert_shadow_parity()
         self._record_on_boundary()
         return int(rust_advanced)

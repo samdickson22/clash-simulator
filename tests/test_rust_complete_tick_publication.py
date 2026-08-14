@@ -9,7 +9,6 @@ import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.differential import canonical_battle_snapshot, snapshot_bytes
 from clasher.entities import AreaEffect, Projectile, Troop
 from clasher.mechanics.shared.death_area import (
     DeathAreaEffect,
@@ -233,7 +232,7 @@ def test_on_publication_preserves_pending_spell_list_and_survivor_identity() -> 
     assert id(candidate._pending_spell_casts[0].position) == pending_position_identity
 
 
-def test_on_publication_rejects_birth_before_mutating_python() -> None:
+def test_on_publication_publishes_projectile_birth_in_place() -> None:
     battle = BattleState(rng=random.Random(9963), fast_path=True)
     source = _spawn_ready(battle, "Musketeer", 0, Position(9.0, 12.0))
     target = _spawn_ready(battle, "Knight", 1, Position(9.0, 14.0))
@@ -242,29 +241,37 @@ def test_on_publication_rejects_birth_before_mutating_python() -> None:
     runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
     resident = runtime.resident
     assert resident is not None
-    before = python_resident_semantic_snapshot(battle)
     control = battle.clone()
     entity_identities = {
         entity_id: id(entity) for entity_id, entity in battle.entities.items()
     }
 
-    with pytest.raises(RuntimeError, match="publication rejected"):
-        runtime.advance_ticks(1)
-
-    assert python_resident_semantic_snapshot(battle) == before
+    assert runtime.advance_ticks(1) == control.step_logic_ticks(1) == 1
+    assert python_resident_semantic_snapshot(battle) == (
+        python_resident_semantic_snapshot(control)
+    )
     _assert_observations_equal(control, battle)
     _assert_action_masks_equal(control, battle)
     assert {
-        entity_id: id(entity) for entity_id, entity in battle.entities.items()
+        entity_id: id(battle.entities[entity_id]) for entity_id in entity_identities
     } == entity_identities
-    assert rust_resident_semantic_snapshot(resident) == before
-    assert runtime.resident is resident
-    assert runtime.poisoned_reason is not None
-    with pytest.raises(RuntimeError, match="runtime is poisoned"):
-        runtime.advance_ticks(1)
+    projectile = next(
+        entity for entity in battle.entities.values() if type(entity) is Projectile
+    )
+    assert projectile.source_entity is source
+    assert projectile.primary_target is target
+    assert projectile.card_stats is source.card_stats
+    assert projectile.position is not projectile.target_position
+    assert projectile.position is not projectile.launch_position
+    assert projectile.target_position is not projectile.launch_position
+
+    assert battle.step_logic_ticks(1) == control.step_logic_ticks(1) == 1
+    assert python_resident_semantic_snapshot(battle) == (
+        python_resident_semantic_snapshot(control)
+    )
 
 
-def test_on_publication_rejects_cleanup_before_mutating_python() -> None:
+def test_on_publication_publishes_cleanup_and_retains_tombstone_identity() -> None:
     battle = BattleState(rng=random.Random(9964), fast_path=True)
     source = _spawn_ready(battle, "Knight", 0, Position(9.0, 12.0))
     target = _spawn_ready(battle, "Knight", 1, Position(9.0, 13.0))
@@ -272,14 +279,20 @@ def test_on_publication_rejects_cleanup_before_mutating_python() -> None:
     source.attack_cooldown = 0.0
     source.damage = target.hitpoints + 1
     runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
-    before = python_resident_semantic_snapshot(battle)
-    canonical_before = snapshot_bytes(canonical_battle_snapshot(battle))
+    control = battle.clone()
 
-    with pytest.raises(RuntimeError, match="publication rejected"):
-        runtime.advance_ticks(1)
+    assert runtime.advance_ticks(1) == control.step_logic_ticks(1) == 1
+    assert python_resident_semantic_snapshot(battle) == (
+        python_resident_semantic_snapshot(control)
+    )
+    assert target.id not in battle.entities
+    assert runtime.entity_registry[target.id] is target
+    assert not target.is_alive
 
-    assert python_resident_semantic_snapshot(battle) == before
-    assert snapshot_bytes(canonical_battle_snapshot(battle)) == canonical_before
+    assert battle.step_logic_ticks(1) == control.step_logic_ticks(1) == 1
+    assert python_resident_semantic_snapshot(battle) == (
+        python_resident_semantic_snapshot(control)
+    )
 
 
 def test_on_boundary_rejects_unpublished_causal_python_mutation() -> None:

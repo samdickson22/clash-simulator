@@ -1610,6 +1610,7 @@ struct ResidentAreaEffectState {
     spec: ResidentDeathAreaSpec,
     time_alive: f64,
     effect_snapshot_applied: bool,
+    birth_source_entity_id: Option<i64>,
     supported: bool,
 }
 
@@ -1702,6 +1703,7 @@ impl ResidentAreaEffectState {
             },
             time_alive,
             effect_snapshot_applied: required_bool(fields, "effect_snapshot_applied")?,
+            birth_source_entity_id: None,
             supported,
         })
     }
@@ -1911,6 +1913,12 @@ struct PointProjectileState {
     temporary_homing_target_id: Option<i64>,
     permanent_homing_disabled_by_temporary: bool,
     start_collision_resolved: bool,
+    constructor_range: f64,
+    constructor_sight_range: f64,
+    launch_x: f64,
+    launch_y: f64,
+    homing_time_ms: i64,
+    homing_min_distance: f64,
     unsupported: Vec<String>,
 }
 
@@ -1920,6 +1928,11 @@ impl PointProjectileState {
             fields
                 .get("target_position")
                 .ok_or_else(|| PyValueError::new_err("projectile has no target_position"))?,
+        )?;
+        let launch = object_fields(
+            fields
+                .get("launch_position")
+                .ok_or_else(|| PyValueError::new_err("projectile has no launch_position"))?,
         )?;
         let mut unsupported = Vec::new();
         let splash_radius = normalized_f64(fields, "splash_radius")?;
@@ -1998,6 +2011,12 @@ impl PointProjectileState {
                 .and_then(Value::as_bool)
                 .unwrap_or(false),
             start_collision_resolved: required_bool(fields, "start_collision_resolved")?,
+            constructor_range: normalized_f64(fields, "range")?,
+            constructor_sight_range: normalized_f64(fields, "sight_range")?,
+            launch_x: normalized_f64(launch, "x")?,
+            launch_y: normalized_f64(launch, "y")?,
+            homing_time_ms: required_i64(fields, "homing_time_ms")?,
+            homing_min_distance: normalized_f64(fields, "homing_min_distance")?,
             unsupported,
         })
     }
@@ -2036,6 +2055,21 @@ impl PointProjectileState {
             "start_collision_resolved": self.start_collision_resolved,
             "temporary_homing_remaining_ms": self.temporary_homing_remaining_ms,
             "temporary_homing_target_id": self.temporary_homing_target_id,
+        })
+    }
+
+    fn publication_value(&self) -> Value {
+        json!({
+            "card_stats_source_id": self.source_entity_id,
+            "constructor_range": exact_f64_value(self.constructor_range),
+            "constructor_sight_range": exact_f64_value(self.constructor_sight_range),
+            "homing_min_distance": exact_f64_value(self.homing_min_distance),
+            "homing_time_ms": self.homing_time_ms,
+            "launch_position_x": exact_f64_value(self.launch_x),
+            "launch_position_y": exact_f64_value(self.launch_y),
+            "pierces": false,
+            "projectile_range": exact_f64_value(0.0),
+            "start_extra_radius": exact_f64_value(0.0),
         })
     }
 }
@@ -4358,6 +4392,59 @@ impl ResidentBattle {
         Ok(sha256_hex(&self.entity_state_bytes()?))
     }
 
+    fn publication_entity_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .map(|entity| {
+                let mut value = entity.diagnostic_value();
+                let fields = value
+                    .as_object_mut()
+                    .expect("resident entity diagnostic is an object");
+                fields.insert("active".to_owned(), json!(entity.active));
+                fields.insert(
+                    "point_projectile_state".to_owned(),
+                    entity
+                        .point_projectile
+                        .as_ref()
+                        .map(|state| state.diagnostic_value(entity))
+                        .unwrap_or(Value::Null),
+                );
+                fields.insert(
+                    "point_projectile_constructor".to_owned(),
+                    entity
+                        .point_projectile
+                        .as_ref()
+                        .map(PointProjectileState::publication_value)
+                        .unwrap_or(Value::Null),
+                );
+                fields.insert(
+                    "area_effect_state".to_owned(),
+                    entity
+                        .area_effect
+                        .as_ref()
+                        .map(|state| state.diagnostic_value(entity))
+                        .unwrap_or(Value::Null),
+                );
+                fields.insert(
+                    "area_effect_birth_source_id".to_owned(),
+                    json!(
+                        entity
+                            .area_effect
+                            .as_ref()
+                            .and_then(|state| state.birth_source_entity_id)
+                    ),
+                );
+                value
+            })
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident publication entities: {error}"
+            ))
+        })
+    }
+
     fn next_entity_id(&self) -> i64 {
         self.next_entity_id
     }
@@ -6323,6 +6410,12 @@ impl ResidentBattle {
                         temporary_homing_target_id: None,
                         permanent_homing_disabled_by_temporary: false,
                         start_collision_resolved: false,
+                        constructor_range: 0.0,
+                        constructor_sight_range: 0.0,
+                        launch_x: 9.0,
+                        launch_y,
+                        homing_time_ms: 0,
+                        homing_min_distance: 0.0,
                         unsupported: Vec::new(),
                     }),
                     area_effect: None,
@@ -9078,6 +9171,7 @@ impl ResidentBattle {
     }
 
     fn spawn_resident_death_area(&mut self, source_index: usize, spec: &ResidentDeathAreaSpec) {
+        let source_entity_id = self.entities[source_index].id;
         let source_player_id = self.entities[source_index].player_id;
         let source_card_name = self.entities[source_index].card_name.clone();
         let source_position_x = self.entities[source_index].position_x.clone();
@@ -9131,6 +9225,7 @@ impl ResidentBattle {
                 spec: spec.clone(),
                 time_alive: 0.0,
                 effect_snapshot_applied: false,
+                birth_source_entity_id: Some(source_entity_id),
                 supported: true,
             }),
             object_base_movement_noop: true,
@@ -9465,12 +9560,15 @@ impl ResidentBattle {
         let player_id = source.player_id;
         let card_name = source.card_name.clone();
         let damage = source.damage.clone();
-        let inherited_hit_planes = {
+        let (inherited_hit_planes, constructor_range) = {
             let combat = source
                 .locked_combat
                 .as_ref()
                 .expect("point weapon requires combat state");
-            (combat.can_attack_air, combat.can_attack_ground)
+            (
+                (combat.can_attack_air, combat.can_attack_ground),
+                combat.range,
+            )
         };
         let (hits_air, hits_ground) = weapon.hit_planes.unwrap_or(inherited_hit_planes);
 
@@ -9564,6 +9662,12 @@ impl ResidentBattle {
                 temporary_homing_target_id: None,
                 permanent_homing_disabled_by_temporary: false,
                 start_collision_resolved: true,
+                constructor_range,
+                constructor_sight_range: 1.0,
+                launch_x,
+                launch_y,
+                homing_time_ms: 0,
+                homing_min_distance: 0.0,
                 unsupported: Vec::new(),
             }),
             area_effect: None,

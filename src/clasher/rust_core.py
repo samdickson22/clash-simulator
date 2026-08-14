@@ -758,6 +758,9 @@ class ResidentRustBattle:
     def entity_state_bytes(self) -> bytes:
         return bytes(self._native.entity_state_bytes())
 
+    def publication_entity_state_bytes(self) -> bytes:
+        return bytes(self._native.publication_entity_state_bytes())
+
     def entity_sha256(self) -> str:
         return str(self._native.entity_sha256())
 
