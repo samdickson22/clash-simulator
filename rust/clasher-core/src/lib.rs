@@ -6988,7 +6988,10 @@ impl ResidentBattle {
                 "resident complete tick rejected post-combat movement capability",
             ));
         }
-        self.advance_restricted_movement_phase(false, Some(initial_next_entity_id));
+        // Direct combat deliberately consumes the frozen start-of-tick
+        // reservation set. Movement is a later component boundary and must
+        // observe lethal homing projectiles launched by that combat phase.
+        self.advance_restricted_movement_phase(true, Some(initial_next_entity_id));
         self.advance_building_lifetime_phase()?;
         self.advance_modifier_phase_up_to(Some(initial_next_entity_id))?;
         self.advance_resident_object_phase_excluding(Some((

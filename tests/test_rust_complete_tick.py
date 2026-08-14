@@ -139,6 +139,34 @@ def test_restricted_complete_tick_launches_and_updates_projectile_same_frame() -
     assert resident.next_entity_id == battle.next_entity_id == 10
 
 
+def test_complete_tick_movement_refreshes_same_frame_lethal_reservations() -> None:
+    battle = BattleState(rng=random.Random(9422))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    launcher = _spawn(battle, "Musketeer", 0, Position(9.0, 12.0))
+    mover = _spawn(battle, "Musketeer", 0, Position(9.0, 7.0))
+    target = _spawn(battle, "Knight", 1, Position(9.0, 14.0))
+    for troop in (launcher, mover, target):
+        troop.deploy_delay_remaining = 0.0
+        troop.placement_pending = False
+        troop._spawn_hook_pending = False
+        troop._spawn_hook_fired = True
+        troop.attack_cooldown = 1.0
+    launcher.target_id = target.id
+    launcher.attack_cooldown = 0.0
+    mover.target_id = target.id
+    mover._last_combat_target_id = target.id
+    mover._attack_windup_active = True
+    target.hitpoints = launcher.damage
+    resident = ResidentRustBattle.from_battle(battle)
+
+    _advance_lockstep(battle, resident)
+
+    assert (mover.position.x, mover.position.y) == (9.0, 7.0)
+    assert mover._movement_target_id == target.id
+    assert not mover._native_natural_movement_active
+
+
 def test_restricted_complete_tick_tracks_shield_break_count() -> None:
     battle = BattleState(rng=random.Random(9421))
     attacker = _spawn(battle, "Knight", 0, Position(9.0, 12.0))
