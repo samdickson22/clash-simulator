@@ -437,6 +437,163 @@ def test_enabled_simple_point_weapons_launch_without_card_special_cases(
     assert any(type(entity) is Projectile for entity in battle.entities.values())
 
 
+def test_resident_combat_repeats_with_point_projectile_in_flight() -> None:
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source_stats = battle.card_loader.get_card("Musketeer")
+    target_stats = battle.card_loader.get_card("Knight")
+    assert source_stats is not None and target_stats is not None
+    source = battle._spawn_entity(
+        Troop,
+        Position(9.0, 10.0),
+        0,
+        source_stats,
+    )
+    target = battle._spawn_entity(
+        Troop,
+        Position(9.0, 14.0),
+        1,
+        target_stats,
+    )
+    for entity in (source, target):
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        entity._spawn_hook_pending = False
+        entity._spawn_hook_fired = True
+    source.attack_cooldown = 0.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat(battle)
+    resident.advance_point_projectile_phase()
+    _advance_python(battle)
+    assert resident.supports_direct_troop_combat_phase
+
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    compare_point_projectile_phase(battle, resident)
+
+
+def test_resident_combat_uses_frozen_lethal_projectile_reservation() -> None:
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source_stats = battle.card_loader.get_card("Musketeer")
+    target_stats = battle.card_loader.get_card("Knight")
+    assert source_stats is not None and target_stats is not None
+    source = battle._spawn_entity(
+        Troop,
+        Position(9.0, 10.0),
+        0,
+        source_stats,
+    )
+    reserved = battle._spawn_entity(
+        Troop,
+        Position(9.0, 14.0),
+        1,
+        target_stats,
+    )
+    fallback = battle._spawn_entity(
+        Troop,
+        Position(10.0, 14.0),
+        1,
+        target_stats,
+    )
+    for entity in (source, reserved, fallback):
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        entity._spawn_hook_pending = False
+        entity._spawn_hook_fired = True
+        entity.attack_cooldown = 1.0
+    reserved.hitpoints = source.damage
+    projectile = Projectile(
+        id=battle.next_entity_id,
+        position=Position(9.0, 13.0),
+        player_id=0,
+        card_stats=source_stats,
+        hitpoints=1,
+        max_hitpoints=1,
+        damage=source.damage,
+        range=5.0,
+        sight_range=1.0,
+        target_position=Position(reserved.position.x, reserved.position.y),
+        travel_speed=10.0,
+        source_name="rust-reservation-fixture",
+        primary_target=reserved,
+        source_entity=source,
+        tracks_target=True,
+    )
+    battle.entities[projectile.id] = projectile
+    battle.next_entity_id += 1
+    battle._projectile_lethal_reservations = frozenset({reserved.id})
+    resident = ResidentRustBattle.from_battle(battle)
+    rng_before = resident.rng_state_bytes()
+
+    assert reserved._pending_projectile_max_duration_ms <= 600
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    compare_point_projectile_phase(battle, resident)
+    assert source.target_id == fallback.id
+    assert resident.rng_state_bytes() == rng_before
+
+
+def test_same_pass_projectile_launch_does_not_change_frozen_reservations() -> None:
+    battle = BattleState()
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source_stats = battle.card_loader.get_card("Musketeer")
+    target_stats = battle.card_loader.get_card("Knight")
+    assert source_stats is not None and target_stats is not None
+    sources = [
+        battle._spawn_entity(
+            Troop,
+            Position(x, 10.0),
+            0,
+            source_stats,
+        )
+        for x in (8.5, 9.5)
+    ]
+    reserved = battle._spawn_entity(
+        Troop,
+        Position(9.0, 14.0),
+        1,
+        target_stats,
+    )
+    fallback = battle._spawn_entity(
+        Troop,
+        Position(11.0, 14.0),
+        1,
+        target_stats,
+    )
+    for entity in (*sources, reserved, fallback):
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        entity._spawn_hook_pending = False
+        entity._spawn_hook_fired = True
+        entity.attack_cooldown = 1.0
+    reserved.hitpoints = sources[0].damage
+    for source in sources:
+        source.attack_cooldown = 0.0
+    battle._projectile_lethal_reservations = frozenset()
+    resident = ResidentRustBattle.from_battle(battle)
+
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    compare_point_projectile_phase(battle, resident)
+    assert [source.target_id for source in sources] == [reserved.id, reserved.id]
+    assert len(
+        [entity for entity in battle.entities.values() if type(entity) is Projectile]
+    ) == 2
+
+
 @pytest.mark.parametrize(
     ("field", "value"),
     [

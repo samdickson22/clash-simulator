@@ -2020,6 +2020,7 @@ struct ResidentBattle {
     winner: Option<i64>,
     entities: Vec<ResidentEntity>,
     next_entity_id: i64,
+    lethal_projectile_reservation_ids: Vec<i64>,
     rng: PythonMt19937,
 }
 
@@ -2122,6 +2123,7 @@ impl ResidentBattle {
             winner,
             entities,
             next_entity_id,
+            lethal_projectile_reservation_ids: Vec::new(),
             rng,
         })
     }
@@ -2444,9 +2446,14 @@ impl ResidentBattle {
     }
 
     fn supports_direct_combat_phase(&self) -> bool {
-        self.entities
-            .iter()
-            .all(|entity| entity.direct_combat_unsupported.is_empty())
+        self.entities.iter().all(|entity| match entity.entity_kind {
+            0 | 1 => entity.direct_combat_unsupported.is_empty(),
+            2 => entity
+                .point_projectile
+                .as_ref()
+                .is_some_and(|projectile| projectile.unsupported.is_empty()),
+            _ => false,
+        })
     }
 
     fn direct_combat_capability_bytes(&self) -> PyResult<Vec<u8>> {
@@ -2625,6 +2632,7 @@ impl ResidentBattle {
         }
         self.entities.iter().all(|entity| {
             !entity.is_alive
+                || !matches!(entity.entity_kind, 0 | 1)
                 || (entity.deploy_delay_remaining <= 0.0 && entity.locked_combat.is_some())
         })
     }
@@ -2636,9 +2644,12 @@ impl ResidentBattle {
             ));
         }
         self.checkpoint_current = false;
+        self.refresh_lethal_projectile_reservations();
         let combat_actor_count = self.entities.len();
         for actor_index in 0..combat_actor_count {
-            if !self.entities[actor_index].is_alive {
+            if !self.entities[actor_index].is_alive
+                || !matches!(self.entities[actor_index].entity_kind, 0 | 1)
+            {
                 continue;
             }
             if self.entities[actor_index].spawn_hook_pending {
@@ -3063,6 +3074,74 @@ impl ResidentBattle {
 }
 
 impl ResidentBattle {
+    fn refresh_lethal_projectile_reservations(&mut self) {
+        let mut pending_damage = Vec::<(i64, f64)>::new();
+        for projectile_entity in &self.entities {
+            if !projectile_entity.is_alive {
+                continue;
+            }
+            let Some(projectile) = projectile_entity.point_projectile.as_ref() else {
+                continue;
+            };
+            if !projectile.tracks_target {
+                continue;
+            }
+            let Some(target_id) = projectile.primary_target_id else {
+                continue;
+            };
+            let Some(target) = self
+                .entities
+                .iter()
+                .find(|candidate| candidate.id == target_id && candidate.is_alive)
+            else {
+                continue;
+            };
+            let damage = if target
+                .building_impact
+                .as_ref()
+                .is_some_and(|building| building.crown_slot.is_some())
+            {
+                projectile.crown_tower_damage.unwrap_or_else(|| {
+                    let base = projectile_entity.damage.as_f64().round_ties_even().max(0.0) as i64;
+                    let percentage = (projectile.crown_tower_damage_multiplier * 100.0)
+                        .round_ties_even()
+                        .max(0.0) as i64;
+                    if base == 0 || percentage == 0 {
+                        0.0
+                    } else {
+                        ((base * percentage + 99) / 100) as f64
+                    }
+                })
+            } else {
+                projectile_entity.damage.as_f64().max(0.0)
+            };
+            if damage <= 0.0 {
+                continue;
+            }
+            if let Some((_, total)) = pending_damage
+                .iter_mut()
+                .find(|(pending_target_id, _)| *pending_target_id == target_id)
+            {
+                *total += damage;
+            } else {
+                pending_damage.push((target_id, damage));
+            }
+        }
+        self.lethal_projectile_reservation_ids.clear();
+        for (target_id, damage) in pending_damage {
+            let target = self
+                .entities
+                .iter()
+                .find(|candidate| candidate.id == target_id)
+                .expect("reservation target was collected from resident entities");
+            if target.pending_projectile_max_duration_ms <= 600
+                && damage >= target.hitpoints.as_f64()
+            {
+                self.lethal_projectile_reservation_ids.push(target_id);
+            }
+        }
+    }
+
     fn prepare_direct_combat_actor(&mut self, actor_index: usize) -> Option<f64> {
         if self.entities[actor_index].entity_kind != 1 {
             return Some(self.dt);
@@ -3593,6 +3672,8 @@ impl ResidentBattle {
             && target.death_spawn_target_immunity_elapsed_ms < 0
             && ((target_state.is_air_unit && actor_state.can_attack_air)
                 || (!target_state.is_air_unit && actor_state.can_attack_ground))
+            && !(actor_state.point_weapon.is_some()
+                && self.lethal_projectile_reservation_ids.contains(&target.id))
     }
 
     fn direct_target_distance(&self, actor_index: usize, target_index: usize) -> f64 {
