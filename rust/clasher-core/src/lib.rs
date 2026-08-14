@@ -619,6 +619,7 @@ fn parse_python_float_hex(encoded: &str) -> PyResult<u64> {
 
 #[derive(Clone)]
 struct ResidentEntity {
+    active: bool,
     encounter_index: usize,
     id: i64,
     player_id: i64,
@@ -1403,6 +1404,7 @@ impl ResidentEntity {
             }
         }
         Ok(Self {
+            active: true,
             encounter_index,
             id: required_i64(fields, "id")?,
             player_id: required_i64(fields, "player_id")?,
@@ -1911,7 +1913,7 @@ impl ResidentPlayer {
     fn lowest_tower_hp_milli(&self, towers: &[ResidentTower]) -> i64 {
         towers
             .iter()
-            .filter(|tower| tower.player_id == self.player_id && tower.hp > 0.0)
+            .filter(|tower| tower.active && tower.player_id == self.player_id && tower.hp > 0.0)
             .map(|tower| tower.hp_milli)
             .min()
             .unwrap_or(0)
@@ -1920,6 +1922,7 @@ impl ResidentPlayer {
 
 #[derive(Clone)]
 struct ResidentTower {
+    active: bool,
     id: i64,
     player_id: i64,
     slot: String,
@@ -1944,6 +1947,7 @@ impl ResidentTower {
             ));
         }
         Ok(Self {
+            active: true,
             id,
             player_id,
             slot,
@@ -2312,7 +2316,11 @@ impl ResidentBattle {
     }
 
     fn tower_states(&self) -> Vec<TowerStateTuple> {
-        self.towers.iter().map(ResidentTower::state_tuple).collect()
+        self.towers
+            .iter()
+            .filter(|tower| tower.active)
+            .map(ResidentTower::state_tuple)
+            .collect()
     }
 
     fn outcome_state(&self) -> (bool, bool, Option<i64>, (i64, i64)) {
@@ -2346,8 +2354,10 @@ impl ResidentBattle {
         for player in &self.players {
             player.append_hash_payload(&mut payload);
         }
-        payload.extend_from_slice(&(self.towers.len() as u64).to_le_bytes());
-        for tower in &self.towers {
+        payload.extend_from_slice(
+            &(self.towers.iter().filter(|tower| tower.active).count() as u64).to_le_bytes(),
+        );
+        for tower in self.towers.iter().filter(|tower| tower.active) {
             tower.append_hash_payload(&mut payload);
         }
         sha256_hex(&payload)
@@ -2357,6 +2367,7 @@ impl ResidentBattle {
         let values = self
             .entities
             .iter()
+            .filter(|entity| entity.active)
             .map(ResidentEntity::diagnostic_value)
             .collect::<Vec<_>>();
         serde_json::to_vec(&values).map_err(|error| {
@@ -2373,7 +2384,9 @@ impl ResidentBattle {
     }
 
     fn supports_modifier_phase(&self) -> bool {
-        self.entities.iter().all(|entity| entity.modifier_supported)
+        self.entities
+            .iter()
+            .all(|entity| !entity.active || entity.modifier_supported)
     }
 
     fn advance_modifier_phase(&mut self) -> PyResult<()> {
@@ -2384,6 +2397,9 @@ impl ResidentBattle {
         }
         self.checkpoint_current = false;
         for entity in &mut self.entities {
+            if !entity.active {
+                continue;
+            }
             if !entity.is_alive {
                 continue;
             }
@@ -2398,6 +2414,7 @@ impl ResidentBattle {
         let values = self
             .entities
             .iter()
+            .filter(|entity| entity.active)
             .filter_map(ResidentEntity::modifier_diagnostic_value)
             .collect::<Vec<_>>();
         serde_json::to_vec(&values).map_err(|error| {
@@ -2412,7 +2429,7 @@ impl ResidentBattle {
     fn supports_character_object_phase(&self) -> bool {
         self.entities
             .iter()
-            .all(ResidentEntity::supports_character_object_phase)
+            .all(|entity| !entity.active || entity.supports_character_object_phase())
     }
 
     fn advance_character_object_phase(&mut self) -> PyResult<()> {
@@ -2423,6 +2440,9 @@ impl ResidentBattle {
         }
         self.checkpoint_current = false;
         for entity in &mut self.entities {
+            if !entity.active {
+                continue;
+            }
             entity.advance_character_object_phase(self.dt);
         }
         Ok(())
@@ -2432,6 +2452,7 @@ impl ResidentBattle {
         let values = self
             .entities
             .iter()
+            .filter(|entity| entity.active)
             .filter_map(ResidentEntity::character_object_diagnostic_value)
             .collect::<Vec<_>>();
         serde_json::to_vec(&values).map_err(|error| {
@@ -2446,13 +2467,16 @@ impl ResidentBattle {
     }
 
     fn supports_direct_combat_phase(&self) -> bool {
-        self.entities.iter().all(|entity| match entity.entity_kind {
-            0 | 1 => entity.direct_combat_unsupported.is_empty(),
-            2 => entity
-                .point_projectile
-                .as_ref()
-                .is_some_and(|projectile| projectile.unsupported.is_empty()),
-            _ => false,
+        self.entities.iter().all(|entity| {
+            !entity.active
+                || match entity.entity_kind {
+                    0 | 1 => entity.direct_combat_unsupported.is_empty(),
+                    2 => entity
+                        .point_projectile
+                        .as_ref()
+                        .is_some_and(|projectile| projectile.unsupported.is_empty()),
+                    _ => false,
+                }
         })
     }
 
@@ -2613,6 +2637,7 @@ impl ResidentBattle {
         let values = self
             .entities
             .iter()
+            .filter(|entity| entity.active)
             .filter_map(ResidentEntity::locked_combat_diagnostic_value)
             .collect::<Vec<_>>();
         serde_json::to_vec(&values).map_err(|error| {
@@ -2631,7 +2656,8 @@ impl ResidentBattle {
             return false;
         }
         self.entities.iter().all(|entity| {
-            !entity.is_alive
+            !entity.active
+                || !entity.is_alive
                 || !matches!(entity.entity_kind, 0 | 1)
                 || (entity.deploy_delay_remaining <= 0.0 && entity.locked_combat.is_some())
         })
@@ -2647,7 +2673,8 @@ impl ResidentBattle {
         self.refresh_lethal_projectile_reservations();
         let combat_actor_count = self.entities.len();
         for actor_index in 0..combat_actor_count {
-            if !self.entities[actor_index].is_alive
+            if !self.entities[actor_index].active
+                || !self.entities[actor_index].is_alive
                 || !matches!(self.entities[actor_index].entity_kind, 0 | 1)
             {
                 continue;
@@ -2769,7 +2796,8 @@ impl ResidentBattle {
 
     fn supports_building_lifetime_phase(&self) -> bool {
         self.entities.iter().all(|entity| {
-            entity.entity_kind != 1
+            !entity.active
+                || entity.entity_kind != 1
                 || (entity.building_lifetime.is_some() && entity.mechanics.is_empty())
         })
     }
@@ -2782,7 +2810,7 @@ impl ResidentBattle {
         }
         self.checkpoint_current = false;
         for entity in &mut self.entities {
-            if !entity.is_alive || entity.entity_kind != 1 {
+            if !entity.active || !entity.is_alive || entity.entity_kind != 1 {
                 continue;
             }
             let state = entity
@@ -2815,6 +2843,7 @@ impl ResidentBattle {
         let values = self
             .entities
             .iter()
+            .filter(|entity| entity.active)
             .filter_map(ResidentEntity::building_lifetime_diagnostic_value)
             .collect::<Vec<_>>();
         serde_json::to_vec(&values).map_err(|error| {
@@ -2830,38 +2859,43 @@ impl ResidentBattle {
 
     fn supports_point_projectile_phase(&self) -> bool {
         let has_splash = self.entities.iter().any(|entity| {
-            entity
-                .point_projectile
-                .as_ref()
-                .is_some_and(|projectile| projectile.splash_radius > 0.0)
+            entity.active
+                && entity
+                    .point_projectile
+                    .as_ref()
+                    .is_some_and(|projectile| projectile.splash_radius > 0.0)
         });
         let has_status = self.entities.iter().any(|entity| {
-            entity.point_projectile.as_ref().is_some_and(|projectile| {
-                projectile.stun_duration > 0.0
-                    || (projectile.slow_duration > 0.0 && projectile.slow_multiplier < 1.0)
-            })
+            entity.active
+                && entity.point_projectile.as_ref().is_some_and(|projectile| {
+                    projectile.stun_duration > 0.0
+                        || (projectile.slow_duration > 0.0 && projectile.slow_multiplier < 1.0)
+                })
         });
         if has_splash
-            && self
-                .entities
-                .iter()
-                .any(|entity| matches!(entity.entity_kind, 0 | 1) && !entity.mechanics.is_empty())
+            && self.entities.iter().any(|entity| {
+                entity.active && matches!(entity.entity_kind, 0 | 1) && !entity.mechanics.is_empty()
+            })
         {
             return false;
         }
         if has_status
             && self.entities.iter().any(|entity| {
-                entity.entity_kind == 1
-                    || (entity.entity_kind == 0 && !entity.direct_combat_unsupported.is_empty())
-                    || entity
-                        .locked_combat
-                        .as_ref()
-                        .is_some_and(|state| state.is_airborne_for_projectile && !state.is_air_unit)
+                entity.active
+                    && (entity.entity_kind == 1
+                        || (entity.entity_kind == 0
+                            && !entity.direct_combat_unsupported.is_empty())
+                        || entity.locked_combat.as_ref().is_some_and(|state| {
+                            state.is_airborne_for_projectile && !state.is_air_unit
+                        }))
             })
         {
             return false;
         }
         self.entities.iter().all(|entity| {
+            if !entity.active {
+                return true;
+            }
             if entity.entity_kind != 2 {
                 return matches!(entity.entity_kind, 0 | 1);
             }
@@ -2945,6 +2979,7 @@ impl ResidentBattle {
             .iter()
             .enumerate()
             .filter_map(|(index, entity)| (entity.entity_kind == 2).then_some(index))
+            .filter(|index| self.entities[*index].active)
             .collect::<Vec<_>>();
         projectile_indices.sort_unstable_by_key(|index| self.entities[*index].id);
         for projectile_index in projectile_indices {
@@ -2957,6 +2992,7 @@ impl ResidentBattle {
         let values = self
             .entities
             .iter()
+            .filter(|entity| entity.active)
             .filter_map(ResidentEntity::point_projectile_diagnostic_value)
             .collect::<Vec<_>>();
         serde_json::to_vec(&values).map_err(|error| {
@@ -2968,6 +3004,102 @@ impl ResidentBattle {
 
     fn point_projectile_sha256(&self) -> PyResult<String> {
         Ok(sha256_hex(&self.point_projectile_state_bytes()?))
+    }
+
+    fn supports_cleanup_phase(&self) -> bool {
+        self.entities.iter().all(|entity| {
+            !entity.active
+                || entity.is_alive
+                || (entity.mechanics.is_empty()
+                    && match entity.entity_kind {
+                        0 | 1 => !entity
+                            .direct_combat_unsupported
+                            .iter()
+                            .any(|reason| reason == "death_spawn_payload"),
+                        2 => entity.point_projectile.is_some(),
+                        _ => false,
+                    })
+        })
+    }
+
+    fn advance_cleanup_phase(&mut self) -> PyResult<()> {
+        if !self.supports_cleanup_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident cleanup preflight rejected death callbacks or payloads",
+            ));
+        }
+        self.checkpoint_current = false;
+        let dead_indices = self
+            .entities
+            .iter()
+            .enumerate()
+            .filter_map(|(index, entity)| (entity.active && !entity.is_alive).then_some(index))
+            .collect::<Vec<_>>();
+        for &dead_index in &dead_indices {
+            let dead = &self.entities[dead_index];
+            let Some(building) = dead.building_impact.as_ref() else {
+                continue;
+            };
+            let Some(slot) = building.crown_slot.as_deref() else {
+                continue;
+            };
+            if let Some(player) = self
+                .players
+                .iter_mut()
+                .find(|player| player.player_id == dead.player_id)
+            {
+                match slot {
+                    "left" => player.left_tower_hp = 0.0,
+                    "right" => player.right_tower_hp = 0.0,
+                    "king" => player.king_tower_hp = 0.0,
+                    _ => unreachable!("Crown slot validated at resident initialization"),
+                }
+            }
+            if slot != "king"
+                && let Some(king_index) = self.entities.iter().position(|candidate| {
+                    candidate.active
+                        && candidate.is_alive
+                        && candidate.player_id == dead.player_id
+                        && candidate
+                            .building_impact
+                            .as_ref()
+                            .is_some_and(|state| state.crown_slot.as_deref() == Some("king"))
+                })
+            {
+                let king = self.entities[king_index]
+                    .building_impact
+                    .as_mut()
+                    .expect("King Crown slot requires building state");
+                if king.requires_activation && !king.tower_active {
+                    king.tower_active = true;
+                    king.activation_delay_remaining = king
+                        .activation_delay_remaining
+                        .max(king.activation_delay_seconds);
+                    king.activation_first_hit_delay_remaining = king
+                        .activation_first_hit_delay_remaining
+                        .max(king.activation_first_hit_delay_seconds);
+                }
+                self.sync_resident_tower(king_index);
+            }
+        }
+        for dead_index in dead_indices {
+            self.entities[dead_index].active = false;
+            if let Some(tower) = self
+                .towers
+                .iter_mut()
+                .find(|tower| tower.id == self.entities[dead_index].id)
+            {
+                tower.active = false;
+            }
+        }
+        let mut encounter_index = 0;
+        for entity in &mut self.entities {
+            if entity.active {
+                entity.encounter_index = encounter_index;
+                encounter_index += 1;
+            }
+        }
+        Ok(())
     }
 
     fn rng_random(&mut self) -> f64 {
@@ -3077,7 +3209,7 @@ impl ResidentBattle {
     fn refresh_lethal_projectile_reservations(&mut self) {
         let mut pending_damage = Vec::<(i64, f64)>::new();
         for projectile_entity in &self.entities {
-            if !projectile_entity.is_alive {
+            if !projectile_entity.active || !projectile_entity.is_alive {
                 continue;
             }
             let Some(projectile) = projectile_entity.point_projectile.as_ref() else {
@@ -3089,11 +3221,9 @@ impl ResidentBattle {
             let Some(target_id) = projectile.primary_target_id else {
                 continue;
             };
-            let Some(target) = self
-                .entities
-                .iter()
-                .find(|candidate| candidate.id == target_id && candidate.is_alive)
-            else {
+            let Some(target) = self.entities.iter().find(|candidate| {
+                candidate.id == target_id && candidate.active && candidate.is_alive
+            }) else {
                 continue;
             };
             let damage = if target
@@ -3289,7 +3419,8 @@ impl ResidentBattle {
         let projectile_id = self.next_entity_id;
         self.next_entity_id += 1;
         self.entities.push(ResidentEntity {
-            encounter_index: self.entities.len(),
+            active: true,
+            encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
             id: projectile_id,
             player_id,
             entity_kind: 2,
@@ -3498,7 +3629,8 @@ impl ResidentBattle {
                 let Some((target_is_air, _, _, _)) = target.projectile_target_traits() else {
                     return false;
                 };
-                target.is_alive
+                target.active
+                    && target.is_alive
                     && target.player_id != projectile_player
                     && matches!(target.entity_kind, 0 | 1)
                     && !(ignore_buildings && target.entity_kind == 1)
@@ -3665,7 +3797,9 @@ impl ResidentBattle {
             return false;
         };
         let now_ms = (self.time * 1000.0).round_ties_even() as i64;
-        target.is_alive
+        actor.active
+            && target.active
+            && target.is_alive
             && target.player_id != actor.player_id
             && !target_state.hidden_building
             && target_state.stealth_until_ms <= now_ms

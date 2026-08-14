@@ -415,6 +415,13 @@ class ResidentRustBattle:
     def point_projectile_sha256(self) -> str:
         return str(self._native.point_projectile_sha256())
 
+    @property
+    def supports_cleanup_phase(self) -> bool:
+        return bool(self._native.supports_cleanup_phase())
+
+    def advance_cleanup_phase(self) -> None:
+        self._native.advance_cleanup_phase()
+
     def locked_direct_combat_state_bytes(self) -> bytes:
         return bytes(self._native.locked_direct_combat_state_bytes())
 
