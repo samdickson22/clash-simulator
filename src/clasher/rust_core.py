@@ -678,6 +678,7 @@ def _decode_prepared_publication_parts(value: Any) -> MappingProxyType[str, Any]
 
 
 _PREPARED_PUBLICATION_AUTHORITY: Final = object()
+_PREPARED_PUBLICATION_RAW_CONSUMER: Final = object()
 
 
 class ResidentPreparedPublication:
@@ -723,6 +724,25 @@ class ResidentPreparedPublication:
             raise RuntimeError("resident prepared publication was already consumed")
         object.__setattr__(self, "_consumed", True)
         return _decode_prepared_publication_parts(self._native.parts())
+
+    def _consume_raw_parts(self, authority: object) -> dict[str, Any]:
+        """Return the native graph once to the trusted publication consumer."""
+        if authority is not _PREPARED_PUBLICATION_RAW_CONSUMER:
+            raise TypeError("raw prepared publication consumption is runtime-owned")
+        if self._consumed:
+            raise RuntimeError("resident prepared publication was already consumed")
+        object.__setattr__(self, "_consumed", True)
+        value = self._native.parts()
+        if type(value) is not dict:
+            raise TypeError("resident prepared publication parts are not a mapping")
+        if value.get("version") != 1:
+            raise ValueError("unsupported resident prepared publication version")
+        binding = value.get("binding")
+        if type(binding) is not dict:
+            raise TypeError("resident prepared publication binding is not a mapping")
+        if binding.get("semantic_schema_version") != 7:
+            raise ValueError("unsupported resident prepared semantic schema")
+        return cast(dict[str, Any], value)
 
 
 def _append_string(payload: bytearray, value: str) -> None:
@@ -1359,6 +1379,11 @@ class ResidentRustBattle:
     @property
     def checkpoint_generation(self) -> int:
         return int(self._native.checkpoint_generation())
+
+    def publication_authority_token(self) -> tuple[Any, ...]:
+        """Return the immutable native lineage/node/epoch publication binding."""
+
+        return tuple(self._native.publication_authority_token())
 
     @property
     def checkpoint_is_current(self) -> bool:

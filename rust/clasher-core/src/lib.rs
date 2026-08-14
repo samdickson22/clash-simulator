@@ -16,6 +16,18 @@ const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 7;
 static NEXT_RESIDENT_STATE_TOKEN: AtomicU64 = AtomicU64::new(1);
 
+type ResidentPublicationAuthorityToken = (
+    u64,
+    u64,
+    u64,
+    Option<(u64, u64)>,
+    u64,
+    u64,
+    u64,
+    String,
+    String,
+);
+
 fn next_resident_state_token() -> u64 {
     NEXT_RESIDENT_STATE_TOKEN
         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |token| {
@@ -6754,6 +6766,20 @@ impl ResidentBattle {
 
     fn checkpoint_generation(&self) -> u64 {
         self.checkpoint_generation
+    }
+
+    fn publication_authority_token(&self) -> ResidentPublicationAuthorityToken {
+        (
+            self.publication_lineage.id,
+            self.publication_node_id,
+            self.publication_epoch,
+            self.publication_parent,
+            self.checkpoint_generation,
+            self.schema_version,
+            self.catalog.schema_version,
+            self.catalog.fingerprint.clone(),
+            self.catalog.source_fingerprint.clone(),
+        )
     }
 
     fn checkpoint_is_current(&self) -> bool {

@@ -18,7 +18,10 @@ from .differential import _normalize, first_snapshot_difference
 from .entities import AreaEffect, Projectile, Troop
 from .mechanics.shared.death_area import DeathAreaEffect
 from .mechanics.shared.death_effects import DeathDamage, DeathSpawn
-from .rust_core import ResidentRustBattle
+from .rust_core import (
+    _PREPARED_PUBLICATION_RAW_CONSUMER,
+    ResidentRustBattle,
+)
 from .rust_differential import (
     RESIDENT_SEMANTIC_SCHEMA_VERSION,
     python_resident_semantic_snapshot,
@@ -2442,9 +2445,15 @@ def _validate_typed_binding(
 ) -> None:
     binding = publication.binding
     prior_ids = binding.get("prior_entity_ids")
-    if type(prior_ids) is not tuple or any(type(value) is not int for value in prior_ids):
+    if type(prior_ids) is list:
+        validated_prior_ids = cast(list[Any], prior_ids)
+    elif type(prior_ids) is tuple:
+        validated_prior_ids = list(cast(tuple[Any, ...], prior_ids))
+    else:
         raise ResidentPublicationError("typed publication prior entity IDs are malformed")
-    if tuple(entity_registry) != prior_ids:
+    if any(type(value) is not int for value in validated_prior_ids):
+        raise ResidentPublicationError("typed publication prior entity IDs are malformed")
+    if tuple(entity_registry) != tuple(validated_prior_ids):
         raise ResidentPublicationError(
             "typed publication registry disagrees with the authenticated prior"
         )
@@ -2524,6 +2533,14 @@ def publish_complete_tick_state(
 ) -> None:
     """Publish one authenticated typed resident boundary with one live commit."""
 
+    if (
+        type(resident) is not ResidentRustBattle
+        or type(prior_resident) is not ResidentRustBattle
+    ):
+        raise ResidentPublicationError(
+            "publication authority requires exact resident wrapper types"
+        )
+
     legacy_overrides = {
         "publication_entity_state_bytes",
         "publication_battle_attribute_presence_bytes",
@@ -2533,6 +2550,16 @@ def publish_complete_tick_state(
     if legacy_overrides:
         raise ResidentPublicationError(
             "legacy publication override rejected before typed publication"
+        )
+    authority_overrides = {
+        "prepare_publication",
+        "character_action_birth_recipe",
+        "character_death_spawn_birth_recipe",
+        "character_action_card_stats_are_current",
+    }.intersection(resident.__dict__)
+    if authority_overrides:
+        raise ResidentPublicationError(
+            "publication authority override rejected before typed publication"
         )
 
     loader_cards = battle.card_loader._cards
@@ -2566,7 +2593,9 @@ def publish_complete_tick_state(
 
     try:
         prepared = resident.prepare_publication(prior_resident)
-        publication = _typed_publication_projection(prepared.parts())
+        publication = _typed_publication_projection(
+            prepared._consume_raw_parts(_PREPARED_PUBLICATION_RAW_CONSUMER)
+        )
         _validate_typed_binding(
             battle,
             publication,
