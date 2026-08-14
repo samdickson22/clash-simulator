@@ -130,7 +130,7 @@ def test_ground_movement_fixed_trace_hash_is_pinned() -> None:
 
     assert (
         resident.ground_movement_sha256()
-        == "0ca368e2b506cdd0f0b75dd4e0023ca0d0c0bc6969dfd7e03776fedb76356dbd"
+        == "ae3684e07b47614b9af89547d7d94df07646c4685652c3b688ee8d7d92bc240e"
     )
     assert resident.rng_state_bytes() == rng_before
 

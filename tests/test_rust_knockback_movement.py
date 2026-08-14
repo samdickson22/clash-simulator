@@ -105,7 +105,7 @@ def test_resident_knockback_matches_complete_velocity_trace(
     if player_id == 0 and start == Position(9.0, 10.0):
         assert (
             resident.ground_movement_sha256()
-            == "8d86b6d1facae984eda11e64856b54f7dc64a6235d1b554042fc8a3abd0e0cf8"
+            == "0ee71a41d2dfae1f10083602dd053ad1204a3f56883cd9a8df5ba892eeb6d286"
         )
     assert resident.rng_state_bytes() == rng_before
 

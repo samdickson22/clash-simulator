@@ -105,8 +105,8 @@ def test_resident_river_jump_matches_full_initiation_and_landing_trace(
     assert not jumper._special_move_consumed_tick
     if player_id == 0:
         assert (
-                resident.ground_movement_sha256()
-                == "155732ff6f83313d5a7870f14484e1502b89a14e4f5f144d2e01e10be0b1cc63"
+            resident.ground_movement_sha256()
+            == "3f3ab32635d2f5ed3ddc28d524e018354875d5a7903ca93c185f45aaa29162c1"
         )
     assert resident.rng_state_bytes() == rng_before
 

@@ -1127,6 +1127,11 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
             continue
         river_origin = getattr(entity, "_river_jump_origin", None)
         river_target = getattr(entity, "_river_jump_target", None)
+        death_spawn_travel_target = getattr(
+            entity,
+            "_death_spawn_travel_target",
+            None,
+        )
         knockback_target = getattr(entity, "_knockback_target", None)
         cache_key = getattr(entity, "_ground_path_cache_key", None)
         route_kind = "absent"
@@ -1187,6 +1192,17 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                     )
                     if entity.entity_kind == 1
                     else 0.0
+                ),
+                "death_spawn_travel_target": (
+                    None
+                    if death_spawn_travel_target is None
+                    else [
+                        _exact_scalar(death_spawn_travel_target.x),
+                        _exact_scalar(death_spawn_travel_target.y),
+                    ]
+                ),
+                "death_spawn_travel_ticks": int(
+                    entity._death_spawn_travel_ticks_remaining
                 ),
                 "encounter_index": encounter_index,
                 "facing_x_units": int(entity._facing_x_units),

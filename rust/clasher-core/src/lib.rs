@@ -1091,6 +1091,7 @@ struct ResidentMovementState {
     route_lane_id: i64,
     route_jump_height: bool,
     native_lane_id: i64,
+    death_spawn_travel_target: Option<(f64, f64)>,
     death_spawn_travel_ticks: i64,
     knockback_target: Option<(f64, f64)>,
     knockback_velocity_work: i64,
@@ -1169,6 +1170,7 @@ impl ResidentMovementState {
             route_lane_id: route_cache.lane_id,
             route_jump_height: route_cache.jump_height,
             native_lane_id: required_i64(fields, "_native_lane_id")?,
+            death_spawn_travel_target: optional_position(fields, "_death_spawn_travel_target")?,
             death_spawn_travel_ticks: required_i64(fields, "_death_spawn_travel_ticks_remaining")?,
             knockback_target: optional_position(fields, "_knockback_target")?,
             knockback_velocity_work: required_i64(fields, "_knockback_velocity_work")?,
@@ -3145,6 +3147,7 @@ impl ResidentBattle {
                 && movement.pending_x.is_finite()
                 && movement.pending_y.is_finite()
                 && movement.death_spawn_travel_ticks == 0
+                && movement.death_spawn_travel_target.is_none()
                 && movement.knockback_target.is_none()
                 && movement.knockback_velocity_work == 0
                 && !movement.river_jump_active
@@ -4026,6 +4029,31 @@ impl ResidentBattle {
 }
 
 impl ResidentBattle {
+    fn resident_death_spawn_travel_supported(&self, entity: &ResidentEntity) -> bool {
+        let Some(movement) = entity.movement.as_ref() else {
+            return false;
+        };
+        match movement.death_spawn_travel_target {
+            Some((target_x, target_y)) => {
+                let max_dx = self.arena_width_tiles * 1000 - 500;
+                let max_dy = self.arena_height_tiles * 1000 - 500;
+                let max_ticks = integer_sqrt(
+                    (i128::from(max_dx) * i128::from(max_dx)
+                        + i128::from(max_dy) * i128::from(max_dy)) as u128,
+                ) / 250;
+                entity.entity_kind == 0
+                    && target_x.is_finite()
+                    && target_y.is_finite()
+                    && (0.25..=self.arena_width_tiles as f64 - 0.25).contains(&target_x)
+                    && (0.25..=self.arena_height_tiles as f64 - 0.25).contains(&target_y)
+                    && logic_units(target_x) as f64 / 1000.0 == target_x
+                    && logic_units(target_y) as f64 / 1000.0 == target_y
+                    && (1..=max_ticks).contains(&movement.death_spawn_travel_ticks)
+            }
+            None => movement.death_spawn_travel_ticks == 0,
+        }
+    }
+
     fn resident_knockback_state_supported(&self, entity: &ResidentEntity) -> bool {
         let Some(movement) = entity.movement.as_ref() else {
             return false;
@@ -4116,7 +4144,8 @@ impl ResidentBattle {
                     && !movement.stun_interrupt_deferred_until_landing
                     && (!movement.special_move_consumed_tick || movement.jump_height_present)
             };
-            let common = entity.deploy_delay_remaining <= 0.0
+            let death_spawn_travel_active = movement.death_spawn_travel_ticks > 0;
+            let common = (entity.deploy_delay_remaining <= 0.0 || death_spawn_travel_active)
                 && entity.has_only_shield_mechanics()
                 && movement.route_cache_supported
                 && river_state_supported
@@ -4128,11 +4157,22 @@ impl ResidentBattle {
                 && entity.position_y.as_f64().is_finite()
                 && movement.pending_x.is_finite()
                 && movement.pending_y.is_finite()
-                && movement.death_spawn_travel_ticks == 0
+                && self.resident_death_spawn_travel_supported(entity)
                 && self.resident_knockback_state_supported(entity)
+                && !(movement.death_spawn_travel_ticks > 0
+                    && (movement.knockback_target.is_some()
+                        || movement.river_jump_active
+                        || movement.special_move_active
+                        || movement.special_move_consumed_tick
+                        || movement.forced_movement_active))
                 && !(movement.river_jump_active && movement.knockback_target.is_some())
-                && !movement.kamikaze_primed;
-            if !common || entity.entity_kind == 1 || combat.movement_target_id.is_none() {
+                && !movement.kamikaze_primed
+                && (!death_spawn_travel_active || !movement.charge_range_present);
+            if !common
+                || death_spawn_travel_active
+                || entity.entity_kind == 1
+                || combat.movement_target_id.is_none()
+            {
                 return common;
             }
             let single_node = combat.is_air_unit || movement.is_hover;
@@ -4245,7 +4285,10 @@ impl ResidentBattle {
             .movement
             .as_ref()
             .expect("stationary troop requires movement state");
-        if combat.stun_timer > 0.0 && !movement.river_jump_active {
+        if combat.stun_timer > 0.0
+            && !movement.river_jump_active
+            && movement.death_spawn_travel_ticks <= 0
+        {
             return;
         }
         let own_radius = movement.collision_radius.max(0.2);
@@ -4464,6 +4507,9 @@ impl ResidentBattle {
             .movement
             .as_ref()
             .expect("resident troop requires movement state");
+        if movement.death_spawn_travel_ticks > 0 {
+            return false;
+        }
         (combat.movement_target_id.is_none() && !movement.river_jump_active)
             || entity.deploy_delay_remaining > 0.0
             || combat.stun_timer > 0.0
@@ -4648,17 +4694,27 @@ impl ResidentBattle {
     }
 
     fn advance_resident_natural_movement(&mut self, entity_index: usize) {
-        let (knockback_active, river_jump_active, special_move_consumed_tick) = {
+        let (
+            death_spawn_travel_active,
+            knockback_active,
+            river_jump_active,
+            special_move_consumed_tick,
+        ) = {
             let movement = self.entities[entity_index]
                 .movement
                 .as_ref()
                 .expect("resident troop requires movement state");
             (
+                movement.death_spawn_travel_ticks > 0,
                 movement.knockback_target.is_some(),
                 movement.river_jump_active,
                 movement.special_move_consumed_tick,
             )
         };
+        if death_spawn_travel_active {
+            self.update_resident_death_spawn_travel(entity_index);
+            return;
+        }
         if knockback_active {
             self.update_resident_knockback(entity_index);
             return;
@@ -4723,6 +4779,71 @@ impl ResidentBattle {
             .expect("resident troop requires movement state")
             .native_natural_movement_active = true;
         self.move_resident_towards_target(entity_index, target_index);
+    }
+
+    fn update_resident_death_spawn_travel(&mut self, entity_index: usize) {
+        let (target_x, target_y, avoidance, external_x, external_y) = {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state");
+            let (target_x, target_y) = movement
+                .death_spawn_travel_target
+                .expect("death-spawn travel preflight requires target");
+            let (external_x, external_y) = if movement.pending_consumed {
+                (0.0, 0.0)
+            } else {
+                movement.pending_consumed = true;
+                (movement.pending_x, movement.pending_y)
+            };
+            (
+                target_x,
+                target_y,
+                movement.native_avoidance,
+                external_x,
+                external_y,
+            )
+        };
+        let current_x = self.entities[entity_index].position_x.as_f64();
+        let current_y = self.entities[entity_index].position_y.as_f64();
+        let dx = logic_units(target_x - current_x);
+        let dy = logic_units(target_y - current_y);
+        let remaining = integer_sqrt(
+            (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128,
+        )
+        .max(1);
+        let movement_units = remaining.min(250);
+        let direction_x = truncating_div(i128::from(dx) * 256, remaining);
+        let direction_y = truncating_div(i128::from(dy) * 256, remaining);
+        let mut move_x = truncating_div(i128::from(direction_x) * i128::from(movement_units), 256);
+        let mut move_y = truncating_div(i128::from(direction_y) * i128::from(movement_units), 256);
+        if avoidance != 0 {
+            let avoidance = avoidance.clamp(-256, 256);
+            let retained = 256 - avoidance.abs();
+            let rotated_x = ((retained * move_x) >> 8) + ((avoidance * move_y) >> 8);
+            let rotated_y = ((retained * move_y) >> 8) + ((-move_x * avoidance) >> 8);
+            (move_x, move_y) = normalized_vector_logic_units(rotated_x, rotated_y, movement_units);
+        }
+        let combined_x = move_x + logic_units(external_x);
+        let combined_y = move_y + logic_units(external_y);
+        if combined_x != 0 || combined_y != 0 {
+            let new_x = (logic_units(current_x) + combined_x) as f64 / 1000.0;
+            let new_y = (logic_units(current_y) + combined_y) as f64 / 1000.0;
+            self.entities[entity_index]
+                .position_x
+                .set_f64(new_x.clamp(0.25, self.arena_width_tiles as f64 - 0.25));
+            self.entities[entity_index]
+                .position_y
+                .set_f64(new_y.clamp(0.25, self.arena_height_tiles as f64 - 0.25));
+        }
+        let movement = self.entities[entity_index]
+            .movement
+            .as_mut()
+            .expect("resident troop requires movement state");
+        movement.death_spawn_travel_ticks -= 1;
+        if movement.death_spawn_travel_ticks == 0 {
+            movement.death_spawn_travel_target = None;
+        }
     }
 
     fn update_resident_knockback(&mut self, entity_index: usize) {
@@ -5413,6 +5534,10 @@ impl ResidentBattle {
                 json!({
                     "airborne_for_projectile": combat.is_airborne_for_projectile,
                     "building_pathing_radius": exact_f64_value(movement.building_pathing_radius),
+                    "death_spawn_travel_target": movement.death_spawn_travel_target.map(|(x, y)| {
+                        json!([exact_f64_value(x), exact_f64_value(y)])
+                    }),
+                    "death_spawn_travel_ticks": movement.death_spawn_travel_ticks,
                     "encounter_index": entity.encounter_index,
                     "facing_x_units": combat.facing_x_units,
                     "facing_y_units": combat.facing_y_units,
