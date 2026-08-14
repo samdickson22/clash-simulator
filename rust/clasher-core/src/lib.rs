@@ -100,6 +100,254 @@ impl ExactScalar {
             }),
         }
     }
+
+    fn as_f64(&self) -> f64 {
+        match self {
+            Self::Int(value) => *value as f64,
+            Self::Float(bits) => f64::from_bits(*bits),
+        }
+    }
+}
+
+fn normalized_f64(fields: &Map<String, Value>, name: &str) -> PyResult<f64> {
+    ExactScalar::from_normalized(
+        fields
+            .get(name)
+            .ok_or_else(|| PyValueError::new_err(format!("entity has no {name}")))?,
+    )
+    .map(|value| value.as_f64())
+}
+
+fn optional_normalized_f64(fields: &Map<String, Value>, name: &str) -> PyResult<Option<f64>> {
+    let value = fields
+        .get(name)
+        .ok_or_else(|| PyValueError::new_err(format!("entity has no {name}")))?;
+    if value.is_null() {
+        Ok(None)
+    } else {
+        ExactScalar::from_normalized(value).map(|value| Some(value.as_f64()))
+    }
+}
+
+#[derive(Clone)]
+struct ModifierEffect {
+    remaining: f64,
+    movement: f64,
+    attack: f64,
+    spawn: f64,
+}
+
+impl ModifierEffect {
+    fn from_normalized(value: &Value) -> PyResult<Self> {
+        let values = value
+            .get("$tuple")
+            .and_then(Value::as_array)
+            .ok_or_else(|| PyValueError::new_err("modifier effect is not a tuple"))?;
+        if values.len() != 4 {
+            return Err(PyValueError::new_err(
+                "modifier effect must have four values",
+            ));
+        }
+        Ok(Self {
+            remaining: ExactScalar::from_normalized(&values[0])?.as_f64(),
+            movement: ExactScalar::from_normalized(&values[1])?.as_f64(),
+            attack: ExactScalar::from_normalized(&values[2])?.as_f64(),
+            spawn: ExactScalar::from_normalized(&values[3])?.as_f64(),
+        })
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        json!([
+            exact_f64_value(self.remaining),
+            exact_f64_value(self.movement),
+            exact_f64_value(self.attack),
+            exact_f64_value(self.spawn),
+        ])
+    }
+}
+
+fn exact_f64_value(value: f64) -> Value {
+    json!({"bits": format!("{:016x}", value.to_bits()), "kind": "float"})
+}
+
+fn normalized_effects(fields: &Map<String, Value>, name: &str) -> PyResult<Vec<ModifierEffect>> {
+    fields
+        .get(name)
+        .and_then(Value::as_array)
+        .ok_or_else(|| PyValueError::new_err(format!("entity {name} is not a list")))?
+        .iter()
+        .map(ModifierEffect::from_normalized)
+        .collect()
+}
+
+fn normalized_mapping_is_empty(fields: &Map<String, Value>, name: &str) -> PyResult<bool> {
+    fields
+        .get(name)
+        .and_then(|value| value.get("$mapping"))
+        .and_then(Value::as_array)
+        .map(Vec::is_empty)
+        .ok_or_else(|| PyValueError::new_err(format!("entity {name} is not a mapping")))
+}
+
+struct ModifierState {
+    stun_timer: f64,
+    slow_timer: f64,
+    slow_multiplier: f64,
+    original_speed: Option<f64>,
+    movement_mode_multiplier: f64,
+    attack_speed_debuff_multiplier: f64,
+    spawn_speed_debuff_multiplier: f64,
+    attack_speed_buff_multiplier: f64,
+    movement_speed_buff_multiplier: f64,
+    spawn_speed_buff_multiplier: f64,
+    haste_timer: f64,
+    speed: ExactScalar,
+    slow_effects: Vec<ModifierEffect>,
+    haste_effects: Vec<ModifierEffect>,
+}
+
+impl ModifierState {
+    fn from_fields(fields: &Map<String, Value>) -> PyResult<Self> {
+        Ok(Self {
+            stun_timer: normalized_f64(fields, "stun_timer")?,
+            slow_timer: normalized_f64(fields, "slow_timer")?,
+            slow_multiplier: normalized_f64(fields, "slow_multiplier")?,
+            original_speed: optional_normalized_f64(fields, "original_speed")?,
+            movement_mode_multiplier: normalized_f64(fields, "movement_mode_multiplier")?,
+            attack_speed_debuff_multiplier: normalized_f64(
+                fields,
+                "attack_speed_debuff_multiplier",
+            )?,
+            spawn_speed_debuff_multiplier: normalized_f64(fields, "spawn_speed_debuff_multiplier")?,
+            attack_speed_buff_multiplier: normalized_f64(fields, "attack_speed_buff_multiplier")?,
+            movement_speed_buff_multiplier: normalized_f64(
+                fields,
+                "movement_speed_buff_multiplier",
+            )?,
+            spawn_speed_buff_multiplier: normalized_f64(fields, "spawn_speed_buff_multiplier")?,
+            haste_timer: normalized_f64(fields, "haste_timer")?,
+            speed: ExactScalar::from_normalized(
+                fields
+                    .get("speed")
+                    .ok_or_else(|| PyValueError::new_err("entity has no speed"))?,
+            )?,
+            slow_effects: normalized_effects(fields, "_slow_effects")?,
+            haste_effects: normalized_effects(fields, "_haste_effects")?,
+        })
+    }
+
+    fn advance(&mut self, dt: f64) {
+        if self.stun_timer > 0.0 {
+            self.stun_timer = 0.0_f64.max(self.stun_timer - dt);
+            if self.stun_timer <= 1e-9 {
+                self.stun_timer = 0.0;
+            }
+        }
+
+        if !self.slow_effects.is_empty() {
+            for effect in &mut self.slow_effects {
+                effect.remaining -= dt;
+            }
+            self.slow_effects.retain(|effect| effect.remaining > 1e-9);
+            self.slow_timer = self
+                .slow_effects
+                .iter()
+                .map(|effect| effect.remaining)
+                .reduce(f64::max)
+                .unwrap_or(0.0);
+            self.slow_multiplier = self
+                .slow_effects
+                .iter()
+                .map(|effect| effect.movement)
+                .reduce(f64::min)
+                .unwrap_or(1.0);
+            self.attack_speed_debuff_multiplier = self
+                .slow_effects
+                .iter()
+                .map(|effect| effect.attack)
+                .reduce(f64::min)
+                .unwrap_or(1.0);
+            self.spawn_speed_debuff_multiplier = self
+                .slow_effects
+                .iter()
+                .map(|effect| effect.spawn)
+                .reduce(f64::min)
+                .unwrap_or(1.0);
+            if let Some(original_speed) = self.original_speed {
+                let movement_debuff = self
+                    .slow_multiplier
+                    .max(0.0)
+                    .min(self.movement_mode_multiplier.max(0.0));
+                self.speed = ExactScalar::Float((original_speed * movement_debuff).to_bits());
+            }
+            if self.slow_effects.is_empty()
+                && let Some(original_speed) = self.original_speed
+            {
+                self.speed =
+                    ExactScalar::Float((original_speed * self.movement_mode_multiplier).to_bits());
+                self.original_speed = None;
+            }
+        }
+
+        if !self.haste_effects.is_empty() {
+            for effect in &mut self.haste_effects {
+                effect.remaining -= dt;
+            }
+            self.haste_effects.retain(|effect| effect.remaining > 1e-9);
+            self.haste_timer = self
+                .haste_effects
+                .iter()
+                .map(|effect| effect.remaining)
+                .reduce(f64::max)
+                .unwrap_or(0.0);
+            self.movement_speed_buff_multiplier = self
+                .haste_effects
+                .iter()
+                .map(|effect| effect.movement)
+                .reduce(f64::max)
+                .unwrap_or(1.0);
+            self.attack_speed_buff_multiplier = self
+                .haste_effects
+                .iter()
+                .map(|effect| effect.attack)
+                .reduce(f64::max)
+                .unwrap_or(1.0);
+            self.spawn_speed_buff_multiplier = self
+                .haste_effects
+                .iter()
+                .map(|effect| effect.spawn)
+                .reduce(f64::max)
+                .unwrap_or(1.0);
+        } else if self.haste_timer > 0.0 {
+            self.haste_timer = 0.0_f64.max(self.haste_timer - dt);
+            if self.haste_timer <= 0.0 {
+                self.movement_speed_buff_multiplier = 1.0;
+                self.attack_speed_buff_multiplier = 1.0;
+                self.spawn_speed_buff_multiplier = 1.0;
+            }
+        }
+    }
+
+    fn diagnostic_value(&self, id: i64, encounter_index: usize) -> Value {
+        json!({
+            "attack_speed_buff_multiplier": exact_f64_value(self.attack_speed_buff_multiplier),
+            "attack_speed_debuff_multiplier": exact_f64_value(self.attack_speed_debuff_multiplier),
+            "encounter_index": encounter_index,
+            "haste_effects": self.haste_effects.iter().map(ModifierEffect::diagnostic_value).collect::<Vec<_>>(),
+            "haste_timer": exact_f64_value(self.haste_timer),
+            "id": id,
+            "movement_mode_multiplier": exact_f64_value(self.movement_mode_multiplier),
+            "movement_speed_buff_multiplier": exact_f64_value(self.movement_speed_buff_multiplier),
+            "original_speed": self.original_speed.map(exact_f64_value),
+            "slow_effects": self.slow_effects.iter().map(ModifierEffect::diagnostic_value).collect::<Vec<_>>(),
+            "slow_multiplier": exact_f64_value(self.slow_multiplier),
+            "slow_timer": exact_f64_value(self.slow_timer),
+            "spawn_speed_buff_multiplier": exact_f64_value(self.spawn_speed_buff_multiplier),
+            "spawn_speed_debuff_multiplier": exact_f64_value(self.spawn_speed_debuff_multiplier),
+            "speed": self.speed.diagnostic_value(),
+            "stun_timer": exact_f64_value(self.stun_timer),
+        })
+    }
 }
 
 fn parse_python_float_hex(encoded: &str) -> PyResult<u64> {
@@ -171,6 +419,8 @@ struct ResidentEntity {
     is_alive: bool,
     target_id: Option<i64>,
     mechanics: Vec<String>,
+    modifier_state: Option<ModifierState>,
+    modifier_supported: bool,
 }
 
 impl ResidentEntity {
@@ -197,11 +447,24 @@ impl ResidentEntity {
             .get("target_id")
             .ok_or_else(|| PyValueError::new_err("entity has no target_id"))?
             .as_i64();
+        let entity_kind = required_i64(fields, "entity_kind")?;
+        let is_character = matches!(entity_kind, 0 | 1);
+        let periodic_empty = normalized_mapping_is_empty(fields, "_periodic_damage_effects")?;
+        let temporary_buff_active = fields
+            .get("_buff_active")
+            .and_then(Value::as_bool)
+            .unwrap_or(false);
+        let modifier_supported = !is_character || (periodic_empty && !temporary_buff_active);
+        let modifier_state = if is_character {
+            Some(ModifierState::from_fields(fields)?)
+        } else {
+            None
+        };
         Ok(Self {
             encounter_index,
             id: required_i64(fields, "id")?,
             player_id: required_i64(fields, "player_id")?,
-            entity_kind: required_i64(fields, "entity_kind")?,
+            entity_kind,
             python_type: object_type(value)?,
             card_name: card_fields
                 .get("name")
@@ -231,6 +494,8 @@ impl ResidentEntity {
             is_alive: required_bool(fields, "is_alive")?,
             target_id,
             mechanics,
+            modifier_state,
+            modifier_supported,
         })
     }
 
@@ -250,6 +515,12 @@ impl ResidentEntity {
             "python_type": self.python_type,
             "target_id": self.target_id,
         })
+    }
+
+    fn modifier_diagnostic_value(&self) -> Option<Value> {
+        self.modifier_state
+            .as_ref()
+            .map(|state| state.diagnostic_value(self.id, self.encounter_index))
     }
 }
 
@@ -1013,6 +1284,43 @@ impl ResidentBattle {
 
     fn entity_sha256(&self) -> PyResult<String> {
         Ok(sha256_hex(&self.entity_state_bytes()?))
+    }
+
+    fn supports_modifier_phase(&self) -> bool {
+        self.entities.iter().all(|entity| entity.modifier_supported)
+    }
+
+    fn advance_modifier_phase(&mut self) -> PyResult<()> {
+        if !self.supports_modifier_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident modifier phase contains periodic damage or callback-owned temporary buffs",
+            ));
+        }
+        self.checkpoint_current = false;
+        for entity in &mut self.entities {
+            if !entity.is_alive {
+                continue;
+            }
+            if let Some(state) = &mut entity.modifier_state {
+                state.advance(self.dt);
+            }
+        }
+        Ok(())
+    }
+
+    fn modifier_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter_map(ResidentEntity::modifier_diagnostic_value)
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!("failed to serialize modifier state: {error}"))
+        })
+    }
+
+    fn modifier_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.modifier_state_bytes()?))
     }
 
     fn rng_random(&mut self) -> f64 {

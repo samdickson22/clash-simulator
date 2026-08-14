@@ -331,6 +331,19 @@ class ResidentRustBattle:
     def entity_sha256(self) -> str:
         return str(self._native.entity_sha256())
 
+    @property
+    def supports_modifier_phase(self) -> bool:
+        return bool(self._native.supports_modifier_phase())
+
+    def advance_modifier_phase(self) -> None:
+        self._native.advance_modifier_phase()
+
+    def modifier_state_bytes(self) -> bytes:
+        return bytes(self._native.modifier_state_bytes())
+
+    def modifier_sha256(self) -> str:
+        return str(self._native.modifier_sha256())
+
     def rng_random(self) -> float:
         return float(self._native.rng_random())
 
@@ -652,6 +665,87 @@ def compare_resident_rng(rng: Any, resident: ResidentRustBattle) -> None:
     if expected_hash != actual_hash:
         raise AssertionError(
             "resident Rust RNG hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
+
+
+def modifier_state_rows(battle: Any) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for encounter_index, entity in enumerate(battle.entities.values()):
+        if not isinstance(entity, Building) and entity.entity_kind != 0:
+            continue
+        rows.append(
+            {
+                "attack_speed_buff_multiplier": _exact_scalar(
+                    entity.attack_speed_buff_multiplier
+                ),
+                "attack_speed_debuff_multiplier": _exact_scalar(
+                    entity.attack_speed_debuff_multiplier
+                ),
+                "encounter_index": encounter_index,
+                "haste_effects": [
+                    [_exact_scalar(value) for value in effect]
+                    for effect in entity._haste_effects
+                ],
+                "haste_timer": _exact_scalar(entity.haste_timer),
+                "id": int(entity.id),
+                "movement_mode_multiplier": _exact_scalar(
+                    entity.movement_mode_multiplier
+                ),
+                "movement_speed_buff_multiplier": _exact_scalar(
+                    entity.movement_speed_buff_multiplier
+                ),
+                "original_speed": (
+                    None
+                    if entity.original_speed is None
+                    else _exact_scalar(entity.original_speed)
+                ),
+                "slow_effects": [
+                    [_exact_scalar(value) for value in effect]
+                    for effect in entity._slow_effects
+                ],
+                "slow_multiplier": _exact_scalar(entity.slow_multiplier),
+                "slow_timer": _exact_scalar(entity.slow_timer),
+                "spawn_speed_buff_multiplier": _exact_scalar(
+                    entity.spawn_speed_buff_multiplier
+                ),
+                "spawn_speed_debuff_multiplier": _exact_scalar(
+                    entity.spawn_speed_debuff_multiplier
+                ),
+                "speed": _exact_scalar(entity.speed),
+                "stun_timer": _exact_scalar(entity.stun_timer),
+            }
+        )
+    return rows
+
+
+def modifier_state_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        modifier_state_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_modifier_phase(battle: Any, resident: ResidentRustBattle) -> None:
+    expected = modifier_state_rows(battle)
+    actual = json.loads(resident.modifier_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust modifier state mismatch")
+        raise AssertionError(
+            "resident Rust modifier parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(modifier_state_bytes(battle)).hexdigest()
+    actual_hash = resident.modifier_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust modifier hash mismatch "
             f"expected={expected_hash} actual={actual_hash}"
         )
 
