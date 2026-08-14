@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import math
@@ -133,12 +134,76 @@ def _is_canonical_resident_action_arena(arena: Any) -> bool:
     )
 
 
+@dataclass(frozen=True)
+class _ResidentCharacterBirthRecipe:
+    kind: str
+    effective_name: str
+    template_fingerprint: str
+    source_fingerprint: str | None
+    member_count: int | None
+    prototype: Any
+
+
+@dataclass(frozen=True)
+class _ResidentActionCardStatsAttestation:
+    card_stats: Any
+    fingerprint: str
+
+
+@dataclass(frozen=True)
+class _ResidentCardCatalogBundle:
+    payload: bytes
+    action_recipes: dict[str, _ResidentCharacterBirthRecipe]
+    death_spawn_recipes: dict[tuple[str, str], _ResidentCharacterBirthRecipe]
+
+
+def _normalized_sha256(value: Any) -> str:
+    return _canonical_json_sha256(_normalize(value))
+
+
+def _canonical_json_sha256(value: Any) -> str:
+    return hashlib.sha256(
+        json.dumps(
+            value,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("ascii")
+    ).hexdigest()
+
+
+def _prototype_sha256(prototype: Any) -> str:
+    return hashlib.sha256(
+        json.dumps(
+            _entity_snapshot(prototype),
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("ascii")
+    ).hexdigest()
+
+
+def _copy_attested_birth_recipe(
+    recipe: _ResidentCharacterBirthRecipe,
+) -> _ResidentCharacterBirthRecipe | None:
+    if _prototype_sha256(recipe.prototype) != recipe.template_fingerprint:
+        return None
+    prototype_battle = getattr(recipe.prototype, "battle_state", None)
+    memo = {} if prototype_battle is None else {id(prototype_battle): prototype_battle}
+    return _ResidentCharacterBirthRecipe(
+        kind=recipe.kind,
+        effective_name=recipe.effective_name,
+        template_fingerprint=recipe.template_fingerprint,
+        source_fingerprint=recipe.source_fingerprint,
+        member_count=recipe.member_count,
+        prototype=copy.deepcopy(recipe.prototype, memo),
+    )
+
+
 @lru_cache(maxsize=4)
-def _resident_card_catalog_bytes(
+def _resident_card_catalog_bundle(
     data_file: str,
     modified_ns: int,
     file_size: int,
-) -> bytes:
+) -> _ResidentCardCatalogBundle:
     """Compile one immutable, fingerprinted resident card catalog revision."""
     del modified_ns, file_size
     from .arena import Position
@@ -162,6 +227,8 @@ def _resident_card_catalog_bytes(
     cards: list[dict[str, Any]] = []
     death_spawn_templates: list[dict[str, Any]] = []
     seen_death_spawn_templates: set[str] = set()
+    action_recipes: dict[str, _ResidentCharacterBirthRecipe] = {}
+    death_spawn_recipes: dict[tuple[str, str], _ResidentCharacterBirthRecipe] = {}
     for lookup_name in sorted(lookup_names):
         card_def = loader.get_card_definition(lookup_name)
         card_stats = loader.get_card(lookup_name)
@@ -247,6 +314,7 @@ def _resident_card_catalog_bytes(
                     "spread_radius": float(spell.spread_radius),
                 }
         template_snapshot: dict[str, Any] | None = None
+        template_fingerprint: str | None = None
         formation_offsets: list[list[list[int]]] = []
         deploy_delay_offsets: list[float] = []
         if not reasons and projectile_spell is None:
@@ -298,6 +366,15 @@ def _resident_card_catalog_bytes(
                 )
                 prototype = prototype_battle.entities.pop(spawned_id)
                 template_snapshot = dict(_entity_snapshot(prototype))
+                template_fingerprint = _prototype_sha256(prototype)
+                action_recipes[lookup_name] = _ResidentCharacterBirthRecipe(
+                    kind="catalog_action",
+                    effective_name=str(card_stats.name),
+                    template_fingerprint=template_fingerprint,
+                    source_fingerprint=None,
+                    member_count=summon_count,
+                    prototype=prototype,
+                )
             except (OverflowError, TypeError, ValueError) as error:
                 reasons.append(f"formation_compile:{type(error).__name__}")
                 formation_offsets = []
@@ -331,6 +408,7 @@ def _resident_card_catalog_bytes(
                 "deploy_delay_offsets": deploy_delay_offsets,
                 "capability_reasons": reasons,
                 "template_snapshot": template_snapshot,
+                "template_fingerprint": template_fingerprint,
                 "projectile_spell": projectile_spell,
             }
         )
@@ -365,12 +443,27 @@ def _resident_card_catalog_bytes(
                     snap_to_valid=False,
                 )
                 child_prototype = prototype_battle.entities.pop(spawned_id)
+                child_template_snapshot = dict(_entity_snapshot(child_prototype))
+                death_template_fingerprint = _prototype_sha256(child_prototype)
                 death_spawn_templates.append(
                     {
                         "unit_name": death_spawn_name,
                         "unit_data": normalized_unit_data,
-                        "template_snapshot": dict(_entity_snapshot(child_prototype)),
+                        "template_snapshot": child_template_snapshot,
+                        "template_fingerprint": death_template_fingerprint,
                     }
+                )
+                death_spawn_recipes[(death_spawn_name, death_template_fingerprint)] = (
+                    _ResidentCharacterBirthRecipe(
+                        kind="death_spawn",
+                        effective_name=death_spawn_name,
+                        template_fingerprint=death_template_fingerprint,
+                        source_fingerprint=_canonical_json_sha256(
+                            normalized_unit_data
+                        ),
+                        member_count=None,
+                        prototype=child_prototype,
+                    )
                 )
     payload = {
         "schema_version": RESIDENT_CARD_CATALOG_SCHEMA_VERSION,
@@ -378,7 +471,27 @@ def _resident_card_catalog_bytes(
         "cards": cards,
         "death_spawn_templates": death_spawn_templates,
     }
-    return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("ascii")
+    return _ResidentCardCatalogBundle(
+        payload=json.dumps(
+            payload,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("ascii"),
+        action_recipes=action_recipes,
+        death_spawn_recipes=death_spawn_recipes,
+    )
+
+
+def _resident_card_catalog_bytes(
+    data_file: str,
+    modified_ns: int,
+    file_size: int,
+) -> bytes:
+    return _resident_card_catalog_bundle(
+        data_file,
+        modified_ns,
+        file_size,
+    ).payload
 
 
 def rust_core_available() -> bool:
@@ -546,12 +659,67 @@ class ResidentRustBattle:
     every phase has been ported and the extension advertises that capability.
     """
 
-    def __init__(self, native: Any) -> None:
+    def __init__(
+        self,
+        native: Any,
+        birth_catalog: _ResidentCardCatalogBundle | None = None,
+        action_card_stats: dict[
+            str,
+            _ResidentActionCardStatsAttestation,
+        ]
+        | None = None,
+    ) -> None:
         self._native = native
+        self._birth_catalog = birth_catalog
+        self._action_card_stats = action_card_stats
 
     def fork(self) -> ResidentRustBattle:
         """Clone all resident mutable state without Python-state marshalling."""
-        return type(self)(self._native.fork())
+        return type(self)(
+            self._native.fork(),
+            self._birth_catalog,
+            self._action_card_stats,
+        )
+
+    def character_action_birth_recipe(
+        self,
+        lookup_name: str,
+    ) -> _ResidentCharacterBirthRecipe | None:
+        catalog = self._birth_catalog
+        if catalog is None:  # pragma: no cover - legacy direct construction
+            return None
+        recipe = catalog.action_recipes.get(str(lookup_name))
+        return None if recipe is None else _copy_attested_birth_recipe(recipe)
+
+    def character_action_card_stats_are_current(
+        self,
+        battle: Any,
+        lookup_name: str,
+    ) -> bool:
+        attestations = self._action_card_stats
+        if attestations is None:  # pragma: no cover - legacy direct construction
+            return False
+        attestation = attestations.get(str(lookup_name))
+        if attestation is None:
+            return False
+        current = battle.card_loader.get_card(str(lookup_name))
+        return (
+            current is attestation.card_stats
+            and _normalized_sha256(current) == attestation.fingerprint
+        )
+
+    def character_death_spawn_birth_recipe(
+        self,
+        unit_name: str,
+        template_fingerprint: str,
+    ) -> _ResidentCharacterBirthRecipe | None:
+        catalog = self._birth_catalog
+        if catalog is None:  # pragma: no cover - legacy direct construction
+            return None
+        recipe = catalog.death_spawn_recipes.get(
+            (str(unit_name), str(template_fingerprint).lower())
+        )
+        return None if recipe is None else _copy_attested_birth_recipe(recipe)
 
     @classmethod
     def from_battle(cls, battle: Any) -> ResidentRustBattle:
@@ -559,11 +727,23 @@ class ResidentRustBattle:
         checkpoint = snapshot_bytes(canonical_battle_snapshot(battle))
         data_path = Path(battle.card_loader.data_file)
         data_stat = data_path.stat()
-        catalog = _resident_card_catalog_bytes(
+        catalog = _resident_card_catalog_bundle(
             str(data_path.resolve()),
             data_stat.st_mtime_ns,
             data_stat.st_size,
         )
+        action_card_stats: dict[
+            str,
+            _ResidentActionCardStatsAttestation,
+        ] = {}
+        for lookup_name in catalog.action_recipes:
+            card_stats = battle.card_loader.get_card(lookup_name)
+            if card_stats is None:  # pragma: no cover - catalog/loader invariant
+                continue
+            action_card_stats[lookup_name] = _ResidentActionCardStatsAttestation(
+                card_stats=card_stats,
+                fingerprint=_normalized_sha256(card_stats),
+            )
         damage_groups_by_identity: dict[int, tuple[set[int], list[int]]] = {}
         for entity in battle.entities.values():
             if type(entity) is not Projectile:
@@ -583,7 +763,7 @@ class ResidentRustBattle:
         assert _ResidentBattle is not None
         native = _ResidentBattle(
             checkpoint,
-            catalog=catalog,
+            catalog=catalog.payload,
             tick=int(battle.tick),
             time=float(battle.time),
             dt=float(battle.dt),
@@ -659,7 +839,7 @@ class ResidentRustBattle:
             next_spell_cast_sequence=int(battle._next_spell_cast_sequence),
             projectile_damage_groups=projectile_damage_groups,
         )
-        return cls(native)
+        return cls(native, catalog, action_card_stats)
 
     @property
     def supports_complete_tick(self) -> bool:
@@ -2263,6 +2443,13 @@ def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
                     entity,
                     "_movement_target_id",
                     None,
+                ),
+                "native_target_distance_discount_sq_units": int(
+                    getattr(
+                        entity,
+                        "_native_target_distance_discount_sq_units",
+                        0,
+                    )
                 ),
                 "target_id": entity.target_id,
             }

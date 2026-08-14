@@ -1159,6 +1159,74 @@ impl ResidentRewardTraits {
 }
 
 #[derive(Clone)]
+enum ResidentCharacterBirthProvenance {
+    CatalogAction {
+        lookup_name: String,
+        effective_name: String,
+        template_fingerprint: String,
+        formation_id: i64,
+        ordinal: i64,
+        member_count: i64,
+    },
+    DeathSpawn {
+        source_entity_id: i64,
+        opcode_index: i64,
+        unit_name: String,
+        unit_data_fingerprint: String,
+        template_fingerprint: String,
+        spawn_group_id: i64,
+        ordinal: i64,
+        member_count: i64,
+    },
+}
+
+impl ResidentCharacterBirthProvenance {
+    fn publication_value(&self) -> Value {
+        match self {
+            Self::CatalogAction {
+                lookup_name,
+                effective_name,
+                template_fingerprint,
+                formation_id,
+                ordinal,
+                member_count,
+            } => json!({
+                "kind": "catalog_action",
+                "lookup_name": lookup_name,
+                "effective_name": effective_name,
+                "template_fingerprint": template_fingerprint,
+                "group_id": formation_id,
+                "ordinal": ordinal,
+                "member_count": member_count,
+                "source_entity_id": null,
+                "opcode_index": null,
+            }),
+            Self::DeathSpawn {
+                source_entity_id,
+                opcode_index,
+                unit_name,
+                unit_data_fingerprint,
+                template_fingerprint,
+                spawn_group_id,
+                ordinal,
+                member_count,
+            } => json!({
+                "kind": "death_spawn",
+                "lookup_name": null,
+                "effective_name": unit_name,
+                "template_fingerprint": template_fingerprint,
+                "group_id": spawn_group_id,
+                "ordinal": ordinal,
+                "member_count": member_count,
+                "source_entity_id": source_entity_id,
+                "opcode_index": opcode_index,
+                "unit_data_fingerprint": unit_data_fingerprint,
+            }),
+        }
+    }
+}
+
+#[derive(Clone)]
 struct ResidentEntity {
     active: bool,
     encounter_index: usize,
@@ -1201,6 +1269,7 @@ struct ResidentEntity {
     object_base_movement_noop: bool,
     blocks_deployment: bool,
     deployment_collision_radius: f64,
+    character_birth: Option<ResidentCharacterBirthProvenance>,
 }
 
 #[derive(Clone)]
@@ -2493,6 +2562,7 @@ impl LockedDirectCombatState {
             "last_attack_time": exact_f64_value(self.last_attack_time),
             "last_combat_target_id": self.last_combat_target_id,
             "movement_target_id": self.movement_target_id,
+            "native_target_distance_discount_sq_units": self.native_target_distance_discount_sq_units,
             "target_id": entity.target_id,
         })
     }
@@ -2892,6 +2962,7 @@ impl ResidentEntity {
             object_base_movement_noop,
             blocks_deployment,
             deployment_collision_radius,
+            character_birth: None,
         })
     }
 
@@ -3002,6 +3073,91 @@ impl ResidentEntity {
             .map(|state| state.diagnostic_value(self))
     }
 
+    fn movement_diagnostic_value(&self) -> Option<Value> {
+        let movement = self.movement.as_ref()?;
+        let combat = self.locked_combat.as_ref()?;
+        let mut value = json!({
+            "airborne_for_projectile": combat.is_airborne_for_projectile,
+            "building_pathing_radius": exact_f64_value(movement.building_pathing_radius),
+            "death_spawn_travel_target": movement.death_spawn_travel_target.map(|(x, y)| {
+                json!([exact_f64_value(x), exact_f64_value(y)])
+            }),
+            "death_spawn_travel_ticks": movement.death_spawn_travel_ticks,
+            "encounter_index": self.encounter_index,
+            "facing_x_units": combat.facing_x_units,
+            "facing_y_units": combat.facing_y_units,
+            "ground_path_backwards": combat.ground_path_backwards,
+            "id": self.id,
+            "jump_speed": exact_f64_value(movement.jump_speed),
+            "knockback_interrupts_combat": movement.knockback_interrupts_combat,
+            "knockback_target": movement.knockback_target.map(|(x, y)| {
+                json!([exact_f64_value(x), exact_f64_value(y)])
+            }),
+            "knockback_velocity_work": movement.knockback_velocity_work,
+            "native_avoidance": movement.native_avoidance,
+            "native_lane_id": movement.native_lane_id,
+            "native_natural_movement_active": movement.native_natural_movement_active,
+            "pending_consumed": movement.pending_consumed,
+            "pending_x": exact_f64_value(movement.pending_x),
+            "pending_y": exact_f64_value(movement.pending_y),
+            "position_x": self.position_x.diagnostic_value(),
+            "position_y": self.position_y.diagnostic_value(),
+            "route_backwards": movement.route_backwards,
+            "route_cells": movement.route_cells,
+            "route_goal": movement.route_goal,
+            "route_jump_height": movement.route_jump_height,
+            "route_kind": match movement.route_cache_kind {
+                RouteCacheKind::Absent => "absent",
+                RouteCacheKind::Single => "single",
+                RouteCacheKind::Ground => "ground",
+                RouteCacheKind::Unsupported => "unsupported",
+            },
+            "route_lane_id": movement.route_lane_id,
+            "river_jump_active": movement.river_jump_active,
+            "river_jump_blocked": movement.river_jump_blocked,
+            "river_jump_duration": exact_f64_value(movement.river_jump_duration),
+            "river_jump_elapsed": exact_f64_value(movement.river_jump_elapsed),
+            "river_jump_origin": movement.river_jump_origin.map(|(x, y)| {
+                json!([exact_f64_value(x), exact_f64_value(y)])
+            }),
+            "river_jump_target": movement.river_jump_target.map(|(x, y)| {
+                json!([exact_f64_value(x), exact_f64_value(y)])
+            }),
+            "special_move_active": movement.special_move_active,
+            "special_move_consumed_tick": movement.special_move_consumed_tick,
+            "stun_interrupt_deferred_until_landing": movement.stun_interrupt_deferred_until_landing,
+            "vector_bypasses_cap": movement.vector_bypasses_cap,
+            "vector_count": movement.vector_count,
+            "vector_x_units": movement.vector_x_units,
+            "vector_y_units": movement.vector_y_units,
+        });
+        let fields = value
+            .as_object_mut()
+            .expect("movement diagnostic is an object");
+        fields.insert(
+            "forced_movement_active".to_owned(),
+            json!(movement.forced_movement_active),
+        );
+        fields.insert(
+            "knockback_immune".to_owned(),
+            json!(movement.knockback_immune),
+        );
+        fields.insert(
+            "movement_phase_elapsed_ms".to_owned(),
+            json!(movement.movement_phase_elapsed_ms),
+        );
+        fields.insert(
+            "serialized_speed".to_owned(),
+            exact_f64_value(movement.serialized_speed),
+        );
+        fields.insert(
+            "stop_movement_after_ms".to_owned(),
+            exact_f64_value(movement.stop_movement_after_ms),
+        );
+        fields.insert("wait_ms".to_owned(), exact_f64_value(movement.wait_ms));
+        Some(value)
+    }
+
     fn building_lifetime_diagnostic_value(&self) -> Option<Value> {
         self.building_lifetime
             .as_ref()
@@ -3031,6 +3187,7 @@ struct ResidentDeathSpawnTemplateWire {
     unit_name: String,
     unit_data: Value,
     template_snapshot: Value,
+    template_fingerprint: String,
 }
 
 #[derive(Deserialize)]
@@ -3046,6 +3203,7 @@ struct ResidentCardWire {
     deploy_delay_offsets: Vec<f64>,
     capability_reasons: Vec<String>,
     template_snapshot: Option<Value>,
+    template_fingerprint: Option<String>,
     #[serde(default)]
     projectile_spell: Option<ResidentProjectileSpellWire>,
 }
@@ -3104,6 +3262,7 @@ struct ResidentCardSpec {
     deploy_delay_offsets: Vec<f64>,
     capability_reasons: Vec<String>,
     prototype: Option<ResidentEntity>,
+    template_fingerprint: Option<String>,
     projectile_spell: Option<ResidentProjectileSpellSpec>,
 }
 
@@ -3126,7 +3285,9 @@ struct ResidentCardCatalog {
 struct ResidentDeathSpawnTemplateSpec {
     unit_name: String,
     unit_data: Value,
+    unit_data_fingerprint: String,
     prototype: ResidentEntity,
+    template_fingerprint: String,
     supported: bool,
 }
 
@@ -3153,8 +3314,21 @@ impl ResidentCardCatalog {
 
         let mut death_spawn_templates = Vec::with_capacity(wire.death_spawn_templates.len());
         for template in wire.death_spawn_templates {
+            let computed_template_fingerprint = sha256_hex(
+                &serde_json::to_vec(&template.template_snapshot)
+                    .expect("normalized death-spawn template is serializable"),
+            );
             let prototype = ResidentEntity::from_normalized(0, &template.template_snapshot)?;
-            let supported = !template.unit_name.is_empty()
+            let fingerprint_valid = template.template_fingerprint.len() == 64
+                && template
+                    .template_fingerprint
+                    .bytes()
+                    .all(|byte| byte.is_ascii_hexdigit())
+                && template
+                    .template_fingerprint
+                    .eq_ignore_ascii_case(&computed_template_fingerprint);
+            let supported = fingerprint_valid
+                && !template.unit_name.is_empty()
                 && prototype.entity_kind == 0
                 && prototype.active
                 && prototype.is_alive
@@ -3185,8 +3359,13 @@ impl ResidentCardCatalog {
                 && !prototype.blocks_deployment;
             death_spawn_templates.push(ResidentDeathSpawnTemplateSpec {
                 unit_name: template.unit_name,
+                unit_data_fingerprint: sha256_hex(
+                    &serde_json::to_vec(&template.unit_data)
+                        .expect("normalized death-spawn unit data is serializable"),
+                ),
                 unit_data: template.unit_data,
                 prototype,
+                template_fingerprint: template.template_fingerprint.to_ascii_lowercase(),
                 supported,
             });
         }
@@ -3241,16 +3420,35 @@ impl ResidentCardCatalog {
             {
                 reasons.push("native_formation_preflight".to_owned());
             }
-            let prototype = match card.template_snapshot {
-                Some(snapshot) => match ResidentEntity::from_normalized(0, &snapshot) {
-                    Ok(prototype) => Some(prototype),
-                    Err(error) => {
-                        reasons.push(format!("template_parse:{error}"));
-                        None
+            let (prototype, computed_template_fingerprint) = match card.template_snapshot {
+                Some(snapshot) => {
+                    let computed_fingerprint = sha256_hex(
+                        &serde_json::to_vec(&snapshot)
+                            .expect("normalized action template is serializable"),
+                    );
+                    match ResidentEntity::from_normalized(0, &snapshot) {
+                        Ok(prototype) => (Some(prototype), Some(computed_fingerprint)),
+                        Err(error) => {
+                            reasons.push(format!("template_parse:{error}"));
+                            (None, Some(computed_fingerprint))
+                        }
                     }
-                },
-                None => None,
+                }
+                None => (None, None),
             };
+            let template_fingerprint = card
+                .template_fingerprint
+                .filter(|fingerprint| {
+                    fingerprint.len() == 64
+                        && fingerprint.bytes().all(|byte| byte.is_ascii_hexdigit())
+                })
+                .map(|fingerprint| fingerprint.to_ascii_lowercase());
+            if prototype.is_some() != template_fingerprint.is_some() {
+                reasons.push("template_fingerprint".to_owned());
+            }
+            if computed_template_fingerprint != template_fingerprint {
+                reasons.push("template_fingerprint_mismatch".to_owned());
+            }
             let projectile_spell = card.projectile_spell.map(|spell| {
                 let finite = [
                     spell.radius,
@@ -3364,6 +3562,7 @@ impl ResidentCardCatalog {
                 deploy_delay_offsets: card.deploy_delay_offsets,
                 capability_reasons: reasons,
                 prototype,
+                template_fingerprint,
                 projectile_spell,
             });
         }
@@ -4434,6 +4633,51 @@ impl ResidentBattle {
                             .as_ref()
                             .and_then(|state| state.birth_source_entity_id)
                     ),
+                );
+                fields.insert(
+                    "character_birth".to_owned(),
+                    entity
+                        .character_birth
+                        .as_ref()
+                        .map(ResidentCharacterBirthProvenance::publication_value)
+                        .unwrap_or(Value::Null),
+                );
+                fields.insert(
+                    "modifier_state".to_owned(),
+                    entity.modifier_diagnostic_value().unwrap_or(Value::Null),
+                );
+                fields.insert(
+                    "shield_state".to_owned(),
+                    if entity.shields.is_empty() {
+                        Value::Null
+                    } else {
+                        json!({
+                            "encounter_index": entity.encounter_index,
+                            "id": entity.id,
+                            "shield_break_count": entity.shield_break_count,
+                            "shields": entity
+                                .shields
+                                .iter()
+                                .map(ShieldState::diagnostic_value)
+                                .collect::<Vec<_>>(),
+                        })
+                    },
+                );
+                fields.insert(
+                    "character_object_state".to_owned(),
+                    entity
+                        .character_object_diagnostic_value()
+                        .unwrap_or(Value::Null),
+                );
+                fields.insert(
+                    "movement_state".to_owned(),
+                    entity.movement_diagnostic_value().unwrap_or(Value::Null),
+                );
+                fields.insert(
+                    "locked_combat_state".to_owned(),
+                    entity
+                        .locked_combat_diagnostic_value()
+                        .unwrap_or(Value::Null),
                 );
                 value
             })
@@ -6422,6 +6666,7 @@ impl ResidentBattle {
                     object_base_movement_noop: true,
                     blocks_deployment: false,
                     deployment_collision_radius: 0.5,
+                    character_birth: None,
                 });
             }
         }
@@ -6831,6 +7076,10 @@ impl ResidentBattle {
             .prototype
             .as_ref()
             .ok_or_else(|| PyRuntimeError::new_err("resident troop template is unavailable"))?;
+        let template_fingerprint = card.template_fingerprint.as_ref().ok_or_else(|| {
+            PyRuntimeError::new_err("resident troop template fingerprint is unavailable")
+        })?;
+        let formation_id = self.next_entity_id;
         let lane_id = nearest_standard_path_id(x_units, y_units);
         let variant_index = usize::try_from(player_id * 2 + i64::from(lane_id != 1))
             .expect("validated player/formation lane fits usize");
@@ -6846,7 +7095,7 @@ impl ResidentBattle {
             } else {
                 Some(prototype.deploy_delay_remaining + card.deploy_delay_offsets[index])
             };
-            let entity = self.instantiate_character_template(
+            let mut entity = self.instantiate_character_template(
                 prototype,
                 &card.effective_name,
                 player_id,
@@ -6854,6 +7103,14 @@ impl ResidentBattle {
                 deploy_delay,
                 false,
             );
+            entity.character_birth = Some(ResidentCharacterBirthProvenance::CatalogAction {
+                lookup_name: card.lookup_name.clone(),
+                effective_name: card.effective_name.clone(),
+                template_fingerprint: template_fingerprint.clone(),
+                formation_id,
+                ordinal: i64::try_from(index).expect("formation ordinal fits i64"),
+                member_count: card.summon_count,
+            });
             self.entities.push(entity);
             self.next_entity_id = self.next_entity_id.checked_add(1).ok_or_else(|| {
                 PyRuntimeError::new_err("resident troop formation entity-ID overflow")
@@ -9061,13 +9318,13 @@ impl ResidentBattle {
 
     fn dispatch_resident_death(&mut self, source_index: usize) {
         let opcodes = self.entities[source_index].death_opcodes.clone();
-        for opcode in opcodes {
+        for (opcode_index, opcode) in opcodes.into_iter().enumerate() {
             match opcode {
                 ResidentDeathOpcode::Damage(damage) => {
                     self.execute_resident_death_damage(source_index, &damage);
                 }
                 ResidentDeathOpcode::Spawn(spawn) => {
-                    self.execute_resident_death_spawn(source_index, &spawn);
+                    self.execute_resident_death_spawn(source_index, opcode_index, &spawn);
                 }
                 ResidentDeathOpcode::Area(area) => {
                     self.spawn_resident_death_area(source_index, &area);
@@ -9076,17 +9333,26 @@ impl ResidentBattle {
         }
     }
 
-    fn execute_resident_death_spawn(&mut self, source_index: usize, spawn: &ResidentDeathSpawn) {
+    fn execute_resident_death_spawn(
+        &mut self,
+        source_index: usize,
+        opcode_index: usize,
+        spawn: &ResidentDeathSpawn,
+    ) {
         let template = self
             .catalog
             .death_spawn_template(&spawn.unit_name, &spawn.unit_data)
             .expect("death-spawn preflight requires exact catalog template");
+        let template_fingerprint = template.template_fingerprint.clone();
+        let unit_data_fingerprint = template.unit_data_fingerprint.clone();
         let prototype = template.prototype.clone();
         let source_player_id = self.entities[source_index].player_id;
         let source_x_units = logic_units(self.entities[source_index].position_x.as_f64());
         let source_y_units = logic_units(self.entities[source_index].position_y.as_f64());
         let source_path_id = nearest_standard_path_id(source_x_units, source_y_units);
         let inherited_freeze_expiry = self.entities[source_index].freeze_expiry_time;
+        let source_entity_id = self.entities[source_index].id;
+        let spawn_group_id = self.next_entity_id;
         let mut radius_units = logic_units(spawn.radius_tiles).max(0);
         let min_radius_units = logic_units(spawn.min_radius_tiles).max(0);
         if min_radius_units > 0 && min_radius_units < radius_units {
@@ -9122,6 +9388,16 @@ impl ResidentBattle {
                 Some(deploy_delay),
                 true,
             );
+            child.character_birth = Some(ResidentCharacterBirthProvenance::DeathSpawn {
+                source_entity_id,
+                opcode_index: i64::try_from(opcode_index).expect("opcode index fits i64"),
+                unit_name: spawn.unit_name.clone(),
+                unit_data_fingerprint: unit_data_fingerprint.clone(),
+                template_fingerprint: template_fingerprint.clone(),
+                spawn_group_id,
+                ordinal: index,
+                member_count: spawn.count,
+            });
             if spawn.spawn_const_priority
                 && let Some(combat) = child.locked_combat.as_mut()
             {
@@ -9231,6 +9507,7 @@ impl ResidentBattle {
             object_base_movement_noop: true,
             blocks_deployment: false,
             deployment_collision_radius: 0.5,
+            character_birth: None,
         });
     }
 
@@ -9674,6 +9951,7 @@ impl ResidentBattle {
             object_base_movement_noop: true,
             blocks_deployment: false,
             deployment_collision_radius: 0.5,
+            character_birth: None,
         });
     }
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import struct
 from collections.abc import Iterable
@@ -8,8 +9,10 @@ from typing import Any, cast
 
 from .arena import Position
 from .battle import PendingSpellCast
-from .differential import first_snapshot_difference
-from .entities import AreaEffect, Projectile
+from .differential import _normalize, first_snapshot_difference
+from .entities import AreaEffect, Projectile, Troop
+from .mechanics.shared.death_area import DeathAreaEffect
+from .mechanics.shared.death_effects import DeathDamage, DeathSpawn
 from .rust_core import ResidentRustBattle
 from .rust_differential import (
     RESIDENT_SEMANTIC_SCHEMA_VERSION,
@@ -102,6 +105,8 @@ def _validate_structure(
     battle: Any,
     snapshot: dict[str, Any],
     *,
+    resident: ResidentRustBattle,
+    attest_live_action_stats: bool,
     publication_rows: list[dict[str, Any]],
     entity_registry: dict[int, Any],
 ) -> None:
@@ -158,19 +163,192 @@ def _validate_structure(
         row = publication_by_id[entity_id]
         point_state = row["point_projectile_state"]
         area_state = row["area_effect_state"]
-        if (point_state is None) == (area_state is None):
+        character_birth = row["character_birth"]
+        if (
+            sum(
+                value is not None
+                for value in (point_state, area_state, character_birth)
+            )
+            != 1
+        ):
             raise ResidentPublicationError(
                 f"resident publication has unsupported birth recipe for id {entity_id}"
             )
         expected_type = (
             "clasher.entities.Projectile"
             if point_state is not None
-            else "clasher.entities.AreaEffect"
+            else (
+                "clasher.entities.AreaEffect"
+                if area_state is not None
+                else "clasher.entities.Troop"
+            )
         )
         if row["python_type"] != expected_type:
             raise ResidentPublicationError(
                 f"resident publication birth type mismatch for id {entity_id}: "
                 f"expected={expected_type!r} actual={row['python_type']!r}"
+            )
+        if character_birth is not None and int(row["entity_kind"]) != 0:
+            raise ResidentPublicationError(
+                f"resident character birth {entity_id} is not a troop entity"
+            )
+
+    character_groups: dict[
+        tuple[str, int],
+        list[tuple[int, dict[str, Any]]],
+    ] = {}
+    for entity_id in actual_birth_ids:
+        provenance = publication_by_id[entity_id]["character_birth"]
+        if provenance is None:
+            continue
+        fingerprint = str(provenance["template_fingerprint"]).lower()
+        if len(fingerprint) != 64 or any(
+            digit not in "0123456789abcdef" for digit in fingerprint
+        ):
+            raise ResidentPublicationError(
+                f"resident character {entity_id} has invalid template fingerprint"
+            )
+        kind = str(provenance["kind"])
+        expected_fields = {
+            "effective_name",
+            "group_id",
+            "kind",
+            "lookup_name",
+            "member_count",
+            "opcode_index",
+            "ordinal",
+            "source_entity_id",
+            "template_fingerprint",
+        }
+        if kind == "death_spawn":
+            expected_fields.add("unit_data_fingerprint")
+        if set(provenance) != expected_fields:
+            raise ResidentPublicationError(
+                f"resident character {entity_id} has malformed {kind!r} provenance"
+            )
+        group_id = int(provenance["group_id"])
+        ordinal = int(provenance["ordinal"])
+        if entity_id != group_id + ordinal:
+            raise ResidentPublicationError(
+                f"resident character {entity_id} disagrees with group/ordinal provenance"
+            )
+        character_groups.setdefault((kind, group_id), []).append(
+            (entity_id, provenance)
+        )
+        effective_name = str(provenance["effective_name"])
+        if publication_by_id[entity_id]["card_name"] != effective_name:
+            raise ResidentPublicationError(
+                f"resident character {entity_id} birth name disagrees with entity row"
+            )
+        if kind == "catalog_action":
+            lookup_name = str(provenance["lookup_name"])
+            recipe = resident.character_action_birth_recipe(lookup_name)
+            if (
+                recipe is None
+                or recipe.kind != kind
+                or recipe.effective_name != effective_name
+                or recipe.template_fingerprint != fingerprint
+                or recipe.member_count != int(provenance["member_count"])
+                or (
+                    attest_live_action_stats
+                    and not resident.character_action_card_stats_are_current(
+                        battle,
+                        lookup_name,
+                    )
+                )
+            ):
+                raise ResidentPublicationError(
+                    f"resident character {entity_id} has unknown catalog birth recipe"
+                )
+            if (
+                provenance["source_entity_id"] is not None
+                or provenance["opcode_index"] is not None
+            ):
+                raise ResidentPublicationError(
+                    f"resident catalog character {entity_id} has death provenance"
+                )
+        elif kind == "death_spawn":
+            source_id = int(provenance["source_entity_id"])
+            if source_id not in all_ids:
+                raise ResidentPublicationError(
+                    f"resident death-spawn character {entity_id} has unknown source {source_id}"
+                )
+            recipe = resident.character_death_spawn_birth_recipe(
+                effective_name,
+                fingerprint,
+            )
+            if recipe is None or recipe.kind != kind:
+                raise ResidentPublicationError(
+                    f"resident character {entity_id} has unknown death-spawn recipe"
+                )
+            source = entity_registry.get(source_id)
+            if source is None:
+                raise ResidentPublicationError(
+                    f"resident death-spawn source {source_id} was not allocated before its child"
+                )
+            opcodes = [
+                mechanic
+                for mechanic in source.mechanics
+                if isinstance(mechanic, (DeathDamage, DeathSpawn, DeathAreaEffect))
+            ]
+            opcode_index = int(provenance["opcode_index"])
+            opcode = (
+                None
+                if opcode_index < 0 or opcode_index >= len(opcodes)
+                else opcodes[opcode_index]
+            )
+            if (
+                not isinstance(opcode, DeathSpawn)
+                or str(opcode.unit_name) != effective_name
+                or int(opcode.count) != int(provenance["member_count"])
+            ):
+                raise ResidentPublicationError(
+                    f"resident character {entity_id} death-spawn opcode provenance changed"
+                )
+            unit_data_fingerprint = hashlib.sha256(
+                json.dumps(
+                    _normalize(opcode.unit_data),
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode("ascii")
+            ).hexdigest()
+            if (
+                recipe.source_fingerprint != unit_data_fingerprint
+                or provenance["unit_data_fingerprint"] != unit_data_fingerprint
+            ):
+                raise ResidentPublicationError(
+                    f"resident character {entity_id} death-spawn data provenance changed"
+                )
+            if provenance["lookup_name"] is not None:
+                raise ResidentPublicationError(
+                    f"resident death-spawn character {entity_id} has action provenance"
+                )
+        else:
+            raise ResidentPublicationError(
+                f"resident character {entity_id} has unsupported birth kind {kind!r}"
+            )
+
+    for (kind, group_id), members in character_groups.items():
+        member_count = int(members[0][1]["member_count"])
+        ordinals = sorted(int(provenance["ordinal"]) for _, provenance in members)
+        if member_count <= 0 or ordinals != list(range(member_count)):
+            raise ResidentPublicationError(
+                f"resident {kind} character group {group_id} has incomplete ordinals"
+            )
+        common = {
+            (
+                provenance["effective_name"],
+                provenance["template_fingerprint"],
+                provenance["lookup_name"],
+                provenance["source_entity_id"],
+                provenance["opcode_index"],
+                provenance["member_count"],
+            )
+            for _, provenance in members
+        }
+        if len(common) != 1 or group_id != min(entity_id for entity_id, _ in members):
+            raise ResidentPublicationError(
+                f"resident {kind} character group {group_id} has inconsistent provenance"
             )
 
     player_ids = [int(row["player_id"]) for row in snapshot["players"]]
@@ -413,6 +591,9 @@ def _apply_combat(
         entity.last_attack_time = _scalar(row["last_attack_time"])
         entity._last_combat_target_id = row["last_combat_target_id"]
         entity._movement_target_id = row["movement_target_id"]
+        entity._native_target_distance_discount_sq_units = int(
+            row["native_target_distance_discount_sq_units"]
+        )
         entity.target_id = row["target_id"]
 
 
@@ -603,10 +784,15 @@ def _refresh_python_caches(battle: Any) -> None:
 
 
 def _publication_rows(resident: ResidentRustBattle) -> list[dict[str, Any]]:
-    value = json.loads(resident.publication_entity_state_bytes())
-    if not isinstance(value, list):
+    try:
+        value = json.loads(resident.publication_entity_state_bytes())
+    except (json.JSONDecodeError, TypeError, UnicodeDecodeError) as error:
         raise ResidentPublicationError(
-            "resident publication entity payload is not a list"
+            "resident publication entity payload is not valid JSON"
+        ) from error
+    if not isinstance(value, list) or any(type(row) is not dict for row in value):
+        raise ResidentPublicationError(
+            "resident publication entity payload is not a list of rows"
         )
     return value
 
@@ -751,13 +937,79 @@ def _create_area_effect_birth(
     return effect
 
 
+def _create_character_birth(
+    battle: Any,
+    row: dict[str, Any],
+    resident: ResidentRustBattle,
+    shared_card_stats: dict[tuple[str, int], Any],
+    attest_live_action_stats: bool,
+) -> Troop:
+    provenance = row["character_birth"]
+    kind = str(provenance["kind"])
+    group_key = (kind, int(provenance["group_id"]))
+    fingerprint = str(provenance["template_fingerprint"]).lower()
+    if kind == "catalog_action":
+        lookup_name = str(provenance["lookup_name"])
+        recipe = resident.character_action_birth_recipe(lookup_name)
+        if recipe is None:  # pragma: no cover - structural preflight invariant
+            raise AssertionError("validated action birth recipe disappeared")
+        if (
+            attest_live_action_stats
+            and not resident.character_action_card_stats_are_current(
+                battle,
+                lookup_name,
+            )
+        ):
+            raise ResidentPublicationError(
+                f"catalog birth lookup {lookup_name!r} changed after resident initialization"
+            )
+        stats = shared_card_stats.get(group_key)
+        if stats is None:
+            stats = battle.card_loader.get_card(lookup_name)
+            if stats is None or str(stats.name) != recipe.effective_name:
+                raise ResidentPublicationError(
+                    f"catalog birth lookup {lookup_name!r} changed during publication"
+                )
+            shared_card_stats[group_key] = stats
+    else:
+        recipe = resident.character_death_spawn_birth_recipe(
+            str(provenance["effective_name"]),
+            fingerprint,
+        )
+        if recipe is None:  # pragma: no cover - structural preflight invariant
+            raise AssertionError("validated death-spawn recipe disappeared")
+        stats = shared_card_stats.get(group_key)
+        if stats is None:
+            stats = copy.deepcopy(recipe.prototype.card_stats)
+            shared_card_stats[group_key] = stats
+
+    prototype = recipe.prototype
+    memo: dict[int, Any] = {id(prototype.card_stats): stats}
+    prototype_battle = getattr(prototype, "battle_state", None)
+    if prototype_battle is not None:
+        memo[id(prototype_battle)] = battle
+    entity = copy.deepcopy(prototype, memo)
+    if type(entity) is not Troop:
+        raise ResidentPublicationError(
+            f"resident character birth recipe produced {type(entity)!r}"
+        )
+    entity.id = int(row["id"])
+    entity.player_id = int(row["player_id"])
+    entity.card_stats = stats
+    cast(Any, entity).battle_state = battle
+    return entity
+
+
 def _materialize_births(
     battle: Any,
+    resident: ResidentRustBattle,
     publication_rows: list[dict[str, Any]],
     entity_registry: dict[int, Any],
+    attest_live_action_stats: bool,
 ) -> None:
     pending: dict[int, Any] = {}
     available = dict(entity_registry)
+    shared_card_stats: dict[tuple[str, int], Any] = {}
     for row in publication_rows:
         entity_id = int(row["id"])
         if entity_id in entity_registry:
@@ -766,6 +1018,14 @@ def _materialize_births(
             entity: Any = _create_projectile_birth(battle, row, available)
         elif row["area_effect_state"] is not None:
             entity = _create_area_effect_birth(battle, row, available)
+        elif row["character_birth"] is not None:
+            entity = _create_character_birth(
+                battle,
+                row,
+                resident,
+                shared_card_stats,
+                attest_live_action_stats,
+            )
         else:  # pragma: no cover - structural validation owns this invariant
             raise AssertionError("validated resident birth recipe disappeared")
         pending[entity_id] = entity
@@ -803,6 +1063,28 @@ def _apply_publication_entity_rows(
         area_state = row["area_effect_state"]
         if area_state is not None:
             _apply_area_effect_row(entity, area_state)
+        if row["character_birth"] is not None:
+            modifier_state = row["modifier_state"]
+            if modifier_state is not None:
+                _apply_modifiers(entity_registry, {"modifiers": [modifier_state]})
+            shield_state = row["shield_state"]
+            if shield_state is not None:
+                _apply_shields(entity_registry, {"shields": [shield_state]})
+            character_state = row["character_object_state"]
+            if character_state is not None:
+                _apply_character_objects(
+                    entity_registry,
+                    {"character_objects": [character_state]},
+                )
+            movement_state = row["movement_state"]
+            if movement_state is not None:
+                _apply_movement(entity_registry, {"movement": [movement_state]})
+            combat_state = row["locked_combat_state"]
+            if combat_state is not None:
+                _apply_combat(
+                    entity_registry,
+                    {"locked_combat": [combat_state]},
+                )
 
     active_rows = sorted(
         (row for row in publication_rows if bool(row["active"])),
@@ -862,12 +1144,20 @@ def _prepare_projectile_groups(
 
 def _apply_snapshot_unchecked(
     battle: Any,
+    resident: ResidentRustBattle,
     snapshot: dict[str, Any],
     *,
     publication_rows: list[dict[str, Any]],
     entity_registry: dict[int, Any],
+    attest_live_action_stats: bool,
 ) -> None:
-    _materialize_births(battle, publication_rows, entity_registry)
+    _materialize_births(
+        battle,
+        resident,
+        publication_rows,
+        entity_registry,
+        attest_live_action_stats,
+    )
     _apply_publication_entity_rows(battle, publication_rows, entity_registry)
     _prepare_projectile_groups(publication_rows, entity_registry)
     clock = snapshot["clock"]
@@ -941,21 +1231,35 @@ def publish_complete_tick_state(
     """
 
     original_snapshot = python_resident_semantic_snapshot(battle)
+    original_card_cache_items = tuple(battle.card_loader._cards.items())
     snapshot = rust_resident_semantic_snapshot(resident)
-    original_publication_rows = _publication_rows(prior_resident)
-    publication_rows = _publication_rows(resident)
-    if set(entity_registry) != {
-        int(row["id"]) for row in original_publication_rows
-    }:
-        raise ResidentPublicationError(
-            "resident publication registry disagrees with the prior resident"
+    try:
+        original_publication_rows = _publication_rows(prior_resident)
+        publication_rows = _publication_rows(resident)
+        if set(entity_registry) != {
+            int(row["id"]) for row in original_publication_rows
+        }:
+            raise ResidentPublicationError(
+                "resident publication registry disagrees with the prior resident"
+            )
+        _validate_structure(
+            battle,
+            snapshot,
+            resident=resident,
+            attest_live_action_stats=True,
+            publication_rows=publication_rows,
+            entity_registry=entity_registry,
         )
-    _validate_structure(
-        battle,
-        snapshot,
-        publication_rows=publication_rows,
-        entity_registry=entity_registry,
-    )
+    except ResidentPublicationError:
+        battle.card_loader._cards.clear()
+        battle.card_loader._cards.update(original_card_cache_items)
+        raise
+    except (AttributeError, KeyError, OverflowError, TypeError, ValueError) as error:
+        battle.card_loader._cards.clear()
+        battle.card_loader._cards.update(original_card_cache_items)
+        raise ResidentPublicationError(
+            "resident publication entity payload is malformed"
+        ) from error
 
     try:
         staged = battle.clone()
@@ -963,14 +1267,18 @@ def publish_complete_tick_state(
         _validate_structure(
             staged,
             snapshot,
+            resident=resident,
+            attest_live_action_stats=False,
             publication_rows=publication_rows,
             entity_registry=staged_registry,
         )
         _apply_snapshot_unchecked(
             staged,
+            resident,
             snapshot,
             publication_rows=publication_rows,
             entity_registry=staged_registry,
+            attest_live_action_stats=False,
         )
         _require_exact_projection(staged, snapshot, stage="staging")
     except ResidentPublicationError:
@@ -983,13 +1291,17 @@ def publish_complete_tick_state(
     try:
         _apply_snapshot_unchecked(
             battle,
+            resident,
             snapshot,
             publication_rows=publication_rows,
             entity_registry=entity_registry,
+            attest_live_action_stats=True,
         )
         _require_exact_projection(battle, snapshot, stage="commit")
     except Exception as commit_error:
         try:
+            battle.card_loader._cards.clear()
+            battle.card_loader._cards.update(original_card_cache_items)
             original_ids = {
                 int(row["id"]) for row in original_publication_rows
             }
@@ -998,9 +1310,11 @@ def publish_complete_tick_state(
                     del entity_registry[entity_id]
             _apply_snapshot_unchecked(
                 battle,
+                prior_resident,
                 original_snapshot,
                 publication_rows=original_publication_rows,
                 entity_registry=entity_registry,
+                attest_live_action_stats=False,
             )
             _require_exact_projection(
                 battle,
