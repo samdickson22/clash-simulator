@@ -9,6 +9,119 @@ use std::sync::Arc;
 const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
 const FNV_PRIME: u64 = 0x100000001b3;
 
+const ENTITY_SPARSE_ATTRIBUTE_NAMES: [&str; 26] = [
+    "_spawn_hook_pending",
+    "_spawn_hook_fired",
+    "_ground_path_cache_key",
+    "_native_ground_route_cells",
+    "_ground_path_cache_backwards",
+    "movement_phase_elapsed_ms",
+    "_native_avoidance",
+    "_native_natural_movement_active",
+    "_death_spawn_travel_target",
+    "_knockback_target",
+    "_river_jump_active",
+    "_river_jump_origin",
+    "_river_jump_target",
+    "_river_jump_elapsed",
+    "_river_jump_duration",
+    "_river_jump_blocked",
+    "_special_move_active",
+    "_special_move_consumed_tick",
+    "_last_combat_target_id",
+    "_has_attacked_once",
+    "_movement_target_id",
+    "initial_position",
+    "_permanent_homing_disabled_by_temporary",
+    "_temporary_homing_remaining_ms",
+    "_temporary_homing_target",
+    "_shield_break_count",
+];
+
+const BATTLE_SPARSE_ATTRIBUTE_NAMES: [&str; 8] = [
+    "_sudden_death_crowns",
+    "_next_spell_cast_sequence",
+    "_defer_projectile_impacts",
+    "_projectile_lethal_reservations",
+    "_coalesce_alive_building_refreshes",
+    "_win_conditions_dirty",
+    "_building_placement_blocked_masks",
+    "_troop_placement_blocked_masks",
+];
+
+#[derive(Clone, Copy, Default)]
+struct SparseAttributePresence(u64);
+
+impl SparseAttributePresence {
+    fn bit(name: &str) -> u64 {
+        ENTITY_SPARSE_ATTRIBUTE_NAMES
+            .iter()
+            .chain(BATTLE_SPARSE_ATTRIBUTE_NAMES.iter())
+            .position(|candidate| *candidate == name)
+            .map_or_else(
+                || panic!("untracked resident sparse attribute {name:?}"),
+                |index| 1_u64 << index,
+            )
+    }
+
+    fn insert(&mut self, name: impl AsRef<str>) {
+        self.0 |= Self::bit(name.as_ref());
+    }
+
+    fn remove(&mut self, name: &str) {
+        self.0 &= !Self::bit(name);
+    }
+
+    fn contains(&self, name: &str) -> bool {
+        self.0 & Self::bit(name) != 0
+    }
+}
+
+impl Extend<String> for SparseAttributePresence {
+    fn extend<T: IntoIterator<Item = String>>(&mut self, iter: T) {
+        for name in iter {
+            self.insert(name);
+        }
+    }
+}
+
+impl<'a> Extend<&'a str> for SparseAttributePresence {
+    fn extend<T: IntoIterator<Item = &'a str>>(&mut self, iter: T) {
+        for name in iter {
+            self.insert(name);
+        }
+    }
+}
+
+fn tracked_presence(fields: &Map<String, Value>, names: &[&str]) -> SparseAttributePresence {
+    let mut present = SparseAttributePresence::default();
+    for name in names {
+        if fields.contains_key(*name) {
+            present.insert(*name);
+        }
+    }
+    present
+}
+
+fn presence_value(present: &SparseAttributePresence, names: &[&str]) -> Value {
+    Value::Object(
+        names
+            .iter()
+            .map(|name| ((*name).to_owned(), Value::Bool(present.contains(name))))
+            .collect(),
+    )
+}
+
+fn constructed_entity_sparse_presence(_projectile: bool) -> SparseAttributePresence {
+    // Python dataclass fields with init=false remain class defaults until the
+    // corresponding mechanic writes them. In particular, ordinary native
+    // projectile births do not materialize the three temporary-homing fields.
+    let mut present = SparseAttributePresence::default();
+    present.insert("_death_spawn_travel_target");
+    present.insert("_knockback_target");
+    present
+}
+
 fn fnv1a(payload: &[u8]) -> u64 {
     payload.iter().fold(FNV_OFFSET_BASIS, |hash, byte| {
         (hash ^ u64::from(*byte)).wrapping_mul(FNV_PRIME)
@@ -412,6 +525,39 @@ fn parse_next_entity_id(payload: &[u8]) -> PyResult<i64> {
         .ok_or_else(|| PyValueError::new_err("battle checkpoint has no next_entity_id"))
 }
 
+fn parse_player_tower_hitpoints(
+    payload: &[u8],
+) -> PyResult<Vec<(i64, ExactScalar, ExactScalar, ExactScalar)>> {
+    let root: Value = serde_json::from_slice(payload)
+        .map_err(|error| PyValueError::new_err(format!("invalid battle checkpoint: {error}")))?;
+    root.get("players")
+        .and_then(Value::as_array)
+        .ok_or_else(|| PyValueError::new_err("battle checkpoint has no players"))?
+        .iter()
+        .map(|player| {
+            let fields = object_fields(player)?;
+            Ok((
+                required_i64(fields, "player_id")?,
+                ExactScalar::from_normalized(
+                    fields
+                        .get("king_tower_hp")
+                        .ok_or_else(|| PyValueError::new_err("player has no king_tower_hp"))?,
+                )?,
+                ExactScalar::from_normalized(
+                    fields
+                        .get("left_tower_hp")
+                        .ok_or_else(|| PyValueError::new_err("player has no left_tower_hp"))?,
+                )?,
+                ExactScalar::from_normalized(
+                    fields
+                        .get("right_tower_hp")
+                        .ok_or_else(|| PyValueError::new_err("player has no right_tower_hp"))?,
+                )?,
+            ))
+        })
+        .collect()
+}
+
 fn object_fields(value: &Value) -> PyResult<&Map<String, Value>> {
     value
         .get("$object")
@@ -533,6 +679,31 @@ fn optional_position(fields: &Map<String, Value>, name: &str) -> PyResult<Option
     )))
 }
 
+fn optional_exact_position(
+    fields: &Map<String, Value>,
+    name: &str,
+) -> PyResult<Option<(ExactScalar, ExactScalar)>> {
+    let Some(value) = fields.get(name) else {
+        return Ok(None);
+    };
+    if value.is_null() {
+        return Ok(None);
+    }
+    let position = object_fields(value)?;
+    Ok(Some((
+        ExactScalar::from_normalized(
+            position
+                .get("x")
+                .ok_or_else(|| PyValueError::new_err("position is missing x"))?,
+        )?,
+        ExactScalar::from_normalized(
+            position
+                .get("y")
+                .ok_or_else(|| PyValueError::new_err("position is missing y"))?,
+        )?,
+    )))
+}
+
 fn normalized_path_cell(value: &Value) -> PyResult<(i64, i64)> {
     let values = value
         .get("$tuple")
@@ -595,12 +766,8 @@ fn normalized_route_cache(fields: &Map<String, Value>) -> PyResult<RouteCacheIni
     };
     if cache_key.is_null() {
         return Ok(RouteCacheInit {
-            supported: route_cells.is_none(),
-            kind: if route_cells.is_none() {
-                RouteCacheKind::Absent
-            } else {
-                RouteCacheKind::Unsupported
-            },
+            supported: false,
+            kind: RouteCacheKind::Unsupported,
             goal: None,
             cells: Vec::new(),
             backwards: false,
@@ -1228,6 +1395,7 @@ impl ResidentCharacterBirthProvenance {
 
 #[derive(Clone)]
 struct ResidentEntity {
+    sparse_attributes: SparseAttributePresence,
     active: bool,
     encounter_index: usize,
     id: i64,
@@ -1310,7 +1478,7 @@ struct ResidentMovementState {
     knockback_velocity_work: i64,
     knockback_interrupts_combat: bool,
     river_jump_active: bool,
-    river_jump_origin: Option<(f64, f64)>,
+    river_jump_origin: Option<(ExactScalar, ExactScalar)>,
     river_jump_target: Option<(f64, f64)>,
     river_jump_elapsed: f64,
     river_jump_duration: f64,
@@ -1406,7 +1574,7 @@ impl ResidentMovementState {
                 .and_then(Value::as_bool)
                 .unwrap_or(true),
             river_jump_active: normalized_optional_bool(fields, "_river_jump_active"),
-            river_jump_origin: optional_position(fields, "_river_jump_origin")?,
+            river_jump_origin: optional_exact_position(fields, "_river_jump_origin")?,
             river_jump_target: optional_position(fields, "_river_jump_target")?,
             river_jump_elapsed: absent_optional_normalized_f64(fields, "_river_jump_elapsed")?
                 .unwrap_or(0.0),
@@ -1958,8 +2126,8 @@ impl BuildingImpactState {
 #[derive(Clone)]
 struct PointProjectileState {
     source_kind: String,
-    target_x: f64,
-    target_y: f64,
+    target_x: ExactScalar,
+    target_y: ExactScalar,
     travel_speed: f64,
     splash_radius: f64,
     hits_air: bool,
@@ -1974,6 +2142,7 @@ struct PointProjectileState {
     knockback_ignores_mass: bool,
     damage_wave_interval: f64,
     damage_group_id: Option<i64>,
+    damage_group_hit_entity_ids: Option<Vec<i64>>,
     launch_delay: f64,
     primary_target_id: Option<i64>,
     source_entity_id: Option<i64>,
@@ -1982,8 +2151,8 @@ struct PointProjectileState {
     temporary_homing_target_id: Option<i64>,
     permanent_homing_disabled_by_temporary: bool,
     start_collision_resolved: bool,
-    constructor_range: f64,
-    constructor_sight_range: f64,
+    constructor_range: ExactScalar,
+    constructor_sight_range: ExactScalar,
     launch_x: f64,
     launch_y: f64,
     homing_time_ms: i64,
@@ -2002,6 +2171,16 @@ impl PointProjectileState {
             fields
                 .get("launch_position")
                 .ok_or_else(|| PyValueError::new_err("projectile has no launch_position"))?,
+        )?;
+        let target_x = ExactScalar::from_normalized(
+            target
+                .get("x")
+                .ok_or_else(|| PyValueError::new_err("projectile target has no x"))?,
+        )?;
+        let target_y = ExactScalar::from_normalized(
+            target
+                .get("y")
+                .ok_or_else(|| PyValueError::new_err("projectile target has no y"))?,
         )?;
         let mut unsupported = Vec::new();
         let splash_radius = normalized_f64(fields, "splash_radius")?;
@@ -2034,8 +2213,8 @@ impl PointProjectileState {
             unsupported.push("child_projectiles".to_owned());
         }
         for (name, value) in [
-            ("target_x", normalized_f64(target, "x")?),
-            ("target_y", normalized_f64(target, "y")?),
+            ("target_x", target_x.as_f64()),
+            ("target_y", target_y.as_f64()),
             ("travel_speed", normalized_f64(fields, "travel_speed")?),
             ("launch_delay", normalized_f64(fields, "launch_delay")?),
         ] {
@@ -2050,8 +2229,8 @@ impl PointProjectileState {
                 .or_else(|| fields.get("source_name").and_then(Value::as_str))
                 .unwrap_or("Unknown")
                 .to_owned(),
-            target_x: normalized_f64(target, "x")?,
-            target_y: normalized_f64(target, "y")?,
+            target_x,
+            target_y,
             travel_speed: normalized_f64(fields, "travel_speed")?,
             splash_radius,
             hits_air: required_bool(fields, "hits_air")?,
@@ -2066,6 +2245,7 @@ impl PointProjectileState {
             knockback_ignores_mass: required_bool(fields, "knockback_ignores_mass")?,
             damage_wave_interval,
             damage_group_id: None,
+            damage_group_hit_entity_ids: None,
             launch_delay: normalized_f64(fields, "launch_delay")?,
             primary_target_id: optional_entity_ref_id(fields, "primary_target")?,
             source_entity_id: optional_entity_ref_id(fields, "source_entity")?,
@@ -2080,8 +2260,16 @@ impl PointProjectileState {
                 .and_then(Value::as_bool)
                 .unwrap_or(false),
             start_collision_resolved: required_bool(fields, "start_collision_resolved")?,
-            constructor_range: normalized_f64(fields, "range")?,
-            constructor_sight_range: normalized_f64(fields, "sight_range")?,
+            constructor_range: ExactScalar::from_normalized(
+                fields
+                    .get("range")
+                    .ok_or_else(|| PyValueError::new_err("projectile has no range"))?,
+            )?,
+            constructor_sight_range: ExactScalar::from_normalized(
+                fields
+                    .get("sight_range")
+                    .ok_or_else(|| PyValueError::new_err("projectile has no sight_range"))?,
+            )?,
             launch_x: normalized_f64(launch, "x")?,
             launch_y: normalized_f64(launch, "y")?,
             homing_time_ms: required_i64(fields, "homing_time_ms")?,
@@ -2117,8 +2305,8 @@ impl PointProjectileState {
             "source_entity_id": self.source_entity_id,
             "source_kind": self.source_kind,
             "stun_duration": exact_f64_value(self.stun_duration),
-            "target_position_x": exact_f64_value(self.target_x),
-            "target_position_y": exact_f64_value(self.target_y),
+            "target_position_x": self.target_x.diagnostic_value(),
+            "target_position_y": self.target_y.diagnostic_value(),
             "tracks_target": self.tracks_target,
             "travel_speed": exact_f64_value(self.travel_speed),
             "start_collision_resolved": self.start_collision_resolved,
@@ -2130,8 +2318,8 @@ impl PointProjectileState {
     fn publication_value(&self) -> Value {
         json!({
             "card_stats_source_id": self.source_entity_id,
-            "constructor_range": exact_f64_value(self.constructor_range),
-            "constructor_sight_range": exact_f64_value(self.constructor_sight_range),
+            "constructor_range": self.constructor_range.diagnostic_value(),
+            "constructor_sight_range": self.constructor_sight_range.diagnostic_value(),
             "homing_min_distance": exact_f64_value(self.homing_min_distance),
             "homing_time_ms": self.homing_time_ms,
             "launch_position_x": exact_f64_value(self.launch_x),
@@ -2189,6 +2377,7 @@ impl BuildingLifetimeState {
 struct LockedDirectCombatState {
     damage: f64,
     range: f64,
+    constructor_range: ExactScalar,
     sight_range: f64,
     attack_cooldown: f64,
     attack_windup_active: bool,
@@ -2206,7 +2395,7 @@ struct LockedDirectCombatState {
     last_combat_target_id: Option<i64>,
     has_attacked_once: bool,
     movement_target_id: Option<i64>,
-    initial_position: Option<(f64, f64)>,
+    initial_position: Option<(ExactScalar, ExactScalar)>,
     attack_speed_debuff_multiplier: f64,
     attack_speed_buff_multiplier: f64,
     attack_mode_multiplier: f64,
@@ -2466,6 +2655,11 @@ impl LockedDirectCombatState {
         Ok(Self {
             damage: normalized_f64(fields, "damage")?,
             range: normalized_f64(fields, "range")?,
+            constructor_range: ExactScalar::from_normalized(
+                fields
+                    .get("range")
+                    .ok_or_else(|| PyValueError::new_err("entity has no range"))?,
+            )?,
             sight_range: normalized_f64(fields, "sight_range")?,
             attack_cooldown: normalized_f64(fields, "attack_cooldown")?,
             attack_windup_active: required_bool(fields, "_attack_windup_active")?,
@@ -2487,7 +2681,7 @@ impl LockedDirectCombatState {
             last_combat_target_id: fields.get("_last_combat_target_id").and_then(Value::as_i64),
             has_attacked_once: normalized_optional_bool(fields, "_has_attacked_once"),
             movement_target_id: fields.get("_movement_target_id").and_then(Value::as_i64),
-            initial_position: optional_position(fields, "initial_position")?,
+            initial_position: optional_exact_position(fields, "initial_position")?,
             attack_speed_debuff_multiplier: normalized_f64(
                 fields,
                 "attack_speed_debuff_multiplier",
@@ -2555,8 +2749,8 @@ impl LockedDirectCombatState {
             "has_attacked_once": self.has_attacked_once,
             "hitpoints": entity.hitpoints.diagnostic_value(),
             "id": entity.id,
-            "initial_position": self.initial_position.map(|(x, y)| json!([
-                exact_f64_value(x), exact_f64_value(y)
+            "initial_position": self.initial_position.as_ref().map(|(x, y)| json!([
+                x.diagnostic_value(), y.diagnostic_value()
             ])),
             "is_alive": entity.is_alive,
             "last_attack_time": exact_f64_value(self.last_attack_time),
@@ -2608,6 +2802,7 @@ impl ResidentEntity {
         }
         if broke_shield {
             self.shield_break_count += 1;
+            self.sparse_attributes.insert("_shield_break_count");
         }
         amount
     }
@@ -2629,6 +2824,8 @@ impl ResidentEntity {
                 combat.attack_windup_active = false;
                 combat.has_attacked_once = false;
             }
+            self.sparse_attributes.insert("_last_combat_target_id");
+            self.sparse_attributes.insert("_has_attacked_once");
             self.target_id = None;
         }
         if slow_duration > 0.0
@@ -2883,6 +3080,7 @@ impl ResidentEntity {
             }
         }
         Ok(Self {
+            sparse_attributes: tracked_presence(fields, &ENTITY_SPARSE_ATTRIBUTE_NAMES),
             active: true,
             encounter_index,
             id: required_i64(fields, "id")?,
@@ -3036,12 +3234,16 @@ impl ResidentEntity {
             if self.spawn_hook_pending {
                 self.spawn_hook_pending = false;
                 self.spawn_hook_fired = true;
+                self.sparse_attributes.insert("_spawn_hook_pending");
+                self.sparse_attributes.insert("_spawn_hook_fired");
             }
             return;
         }
         if self.spawn_hook_pending {
             self.spawn_hook_pending = false;
             self.spawn_hook_fired = true;
+            self.sparse_attributes.insert("_spawn_hook_pending");
+            self.sparse_attributes.insert("_spawn_hook_fired");
         }
     }
 
@@ -3117,8 +3319,8 @@ impl ResidentEntity {
             "river_jump_blocked": movement.river_jump_blocked,
             "river_jump_duration": exact_f64_value(movement.river_jump_duration),
             "river_jump_elapsed": exact_f64_value(movement.river_jump_elapsed),
-            "river_jump_origin": movement.river_jump_origin.map(|(x, y)| {
-                json!([exact_f64_value(x), exact_f64_value(y)])
+            "river_jump_origin": movement.river_jump_origin.as_ref().map(|(x, y)| {
+                json!([x.diagnostic_value(), y.diagnostic_value()])
             }),
             "river_jump_target": movement.river_jump_target.map(|(x, y)| {
                 json!([exact_f64_value(x), exact_f64_value(y)])
@@ -4081,6 +4283,8 @@ impl ResidentProjectileDamageGroup {
 #[pyclass(module = "_clasher_rust")]
 #[derive(Clone)]
 struct ResidentBattle {
+    sparse_attributes: SparseAttributePresence,
+    fast_path: bool,
     checkpoint: Arc<[u8]>,
     catalog: Arc<ResidentCardCatalog>,
     checkpoint_sha256: String,
@@ -4201,6 +4405,18 @@ impl ResidentBattle {
             ));
         }
         let schema_version = validate_checkpoint(checkpoint)?;
+        let checkpoint_root: Value = serde_json::from_slice(checkpoint).map_err(|error| {
+            PyValueError::new_err(format!("invalid battle checkpoint: {error}"))
+        })?;
+        let battle_fields = checkpoint_root
+            .get("battle_fields")
+            .and_then(Value::as_object)
+            .ok_or_else(|| PyValueError::new_err("battle checkpoint has no battle_fields"))?;
+        let sparse_attributes = tracked_presence(battle_fields, &BATTLE_SPARSE_ATTRIBUTE_NAMES);
+        let fast_path = battle_fields
+            .get("fast_path")
+            .and_then(Value::as_bool)
+            .ok_or_else(|| PyValueError::new_err("battle checkpoint has no fast_path flag"))?;
         let catalog = Arc::new(ResidentCardCatalog::from_bytes(catalog)?);
         let mut entities = parse_resident_entities(checkpoint)?;
         let mut damage_groups = Vec::with_capacity(projectile_damage_groups.len());
@@ -4238,6 +4454,7 @@ impl ResidentBattle {
                     )
                 })?;
                 projectile.damage_group_id = Some(group_id);
+                projectile.damage_group_hit_entity_ids = Some(hit_entity_ids.clone());
                 grouped_projectile_ids.push(projectile_id);
             }
             damage_groups.push(ResidentProjectileDamageGroup {
@@ -4278,10 +4495,22 @@ impl ResidentBattle {
         if refill_schedule.is_empty() {
             return Err(PyValueError::new_err("refill schedule cannot be empty"));
         }
-        let players = players
+        let mut players = players
             .into_iter()
             .map(ResidentPlayer::from_init)
             .collect::<PyResult<Vec<_>>>()?;
+        let exact_player_hitpoints = parse_player_tower_hitpoints(checkpoint)?;
+        for (player_id, king, left, right) in exact_player_hitpoints {
+            let player = players
+                .iter_mut()
+                .find(|player| player.player_id == player_id)
+                .ok_or_else(|| {
+                    PyValueError::new_err("checkpoint player is absent from resident player rows")
+                })?;
+            player.king_tower_hp = king;
+            player.left_tower_hp = left;
+            player.right_tower_hp = right;
+        }
         if starting_tower_hps.len() != 2
             || starting_tower_hps
                 .iter()
@@ -4297,6 +4526,8 @@ impl ResidentBattle {
             .map(ResidentTower::from_init)
             .collect::<PyResult<Vec<_>>>()?;
         Ok(Self {
+            sparse_attributes,
+            fast_path,
             checkpoint: Arc::from(checkpoint),
             catalog,
             checkpoint_sha256: sha256_hex(checkpoint),
@@ -4418,6 +4649,31 @@ impl ResidentBattle {
             .collect()
     }
 
+    fn publication_player_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .players
+            .iter()
+            .map(|player| {
+                json!({
+                    "cycle_queue": player.cycle_queue,
+                    "elixir": exact_f64_value(player.elixir),
+                    "hand": player.hand,
+                    "king_tower_hp": player.king_tower_hp.diagnostic_value(),
+                    "left_tower_hp": player.left_tower_hp.diagnostic_value(),
+                    "max_elixir": exact_f64_value(player.max_elixir),
+                    "next_card_refill_cooldown_ms": player.next_card_refill_cooldown_ms,
+                    "player_id": player.player_id,
+                    "right_tower_hp": player.right_tower_hp.diagnostic_value(),
+                })
+            })
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident publication players: {error}"
+            ))
+        })
+    }
+
     fn player_sha256(&self) -> String {
         let mut payload = Vec::new();
         payload.extend_from_slice(&(self.players.len() as u64).to_le_bytes());
@@ -4469,6 +4725,7 @@ impl ResidentBattle {
     fn check_win_conditions(&mut self) {
         self.sync_player_crown_hitpoints();
         self.win_conditions_dirty = false;
+        self.sparse_attributes.insert("_win_conditions_dirty");
         let king_alive = (
             self.players[0].king_tower_hp.as_f64() > 0.0,
             self.players[1].king_tower_hp.as_f64() > 0.0,
@@ -4497,6 +4754,7 @@ impl ResidentBattle {
             }
             self.sudden_death = true;
             self.sudden_death_crowns = (player0_crowns, player1_crowns);
+            self.sparse_attributes.insert("_sudden_death_crowns");
         }
         if self.sudden_death {
             if player0_crowns != player1_crowns {
@@ -4602,6 +4860,10 @@ impl ResidentBattle {
                     .expect("resident entity diagnostic is an object");
                 fields.insert("active".to_owned(), json!(entity.active));
                 fields.insert(
+                    "sparse_attribute_presence".to_owned(),
+                    presence_value(&entity.sparse_attributes, &ENTITY_SPARSE_ATTRIBUTE_NAMES),
+                );
+                fields.insert(
                     "point_projectile_state".to_owned(),
                     entity
                         .point_projectile
@@ -4616,6 +4878,14 @@ impl ResidentBattle {
                         .as_ref()
                         .map(PointProjectileState::publication_value)
                         .unwrap_or(Value::Null),
+                );
+                fields.insert(
+                    "point_projectile_group_hit_entity_ids".to_owned(),
+                    entity
+                        .point_projectile
+                        .as_ref()
+                        .and_then(|state| state.damage_group_hit_entity_ids.clone())
+                        .map_or(Value::Null, |ids| json!(ids)),
                 );
                 fields.insert(
                     "area_effect_state".to_owned(),
@@ -4679,6 +4949,12 @@ impl ResidentBattle {
                         .locked_combat_diagnostic_value()
                         .unwrap_or(Value::Null),
                 );
+                fields.insert(
+                    "building_lifetime_state".to_owned(),
+                    entity
+                        .building_lifetime_diagnostic_value()
+                        .unwrap_or(Value::Null),
+                );
                 value
             })
             .collect::<Vec<_>>();
@@ -4687,6 +4963,31 @@ impl ResidentBattle {
                 "failed to serialize resident publication entities: {error}"
             ))
         })
+    }
+
+    fn publication_battle_attribute_presence_bytes(&self) -> PyResult<Vec<u8>> {
+        serde_json::to_vec(&presence_value(
+            &self.sparse_attributes,
+            &BATTLE_SPARSE_ATTRIBUTE_NAMES,
+        ))
+        .map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident battle attribute presence: {error}"
+            ))
+        })
+    }
+
+    fn publication_exactness_sha256(&self) -> PyResult<String> {
+        let mut payload = b"clasher-publication-exactness-v1".to_vec();
+        for part in [
+            self.publication_entity_state_bytes()?,
+            self.publication_battle_attribute_presence_bytes()?,
+            self.publication_player_state_bytes()?,
+        ] {
+            payload.extend_from_slice(&(part.len() as u64).to_le_bytes());
+            payload.extend_from_slice(&part);
+        }
+        Ok(sha256_hex(&payload))
     }
 
     fn next_entity_id(&self) -> i64 {
@@ -5237,10 +5538,11 @@ impl ResidentBattle {
                 .expect("locked preflight requires resident target");
             let target_x = self.entities[target_index].position_x.as_f64();
             let target_y = self.entities[target_index].position_y.as_f64();
-            let (actor_x, actor_y) = (
-                self.entities[actor_index].position_x.as_f64(),
-                self.entities[actor_index].position_y.as_f64(),
+            let actor_position = (
+                self.entities[actor_index].position_x.clone(),
+                self.entities[actor_index].position_y.clone(),
             );
+            let (actor_x, actor_y) = (actor_position.0.as_f64(), actor_position.1.as_f64());
             let damage = {
                 let actor = &mut self.entities[actor_index];
                 let state = actor
@@ -5248,7 +5550,7 @@ impl ResidentBattle {
                     .as_mut()
                     .expect("locked preflight requires combat state");
                 state.movement_target_id = None;
-                state.initial_position.get_or_insert((actor_x, actor_y));
+                state.initial_position.get_or_insert(actor_position);
                 state.last_attack_time += self.dt;
                 let facing_x = ((target_x - actor_x) * 1000.0).round_ties_even() as i64;
                 let facing_y = ((target_y - actor_y) * 1000.0).round_ties_even() as i64;
@@ -5282,6 +5584,17 @@ impl ResidentBattle {
                     }
                 }
             };
+            self.entities[actor_index]
+                .sparse_attributes
+                .insert("_movement_target_id");
+            self.entities[actor_index]
+                .sparse_attributes
+                .insert("initial_position");
+            if damage.is_some() {
+                self.entities[actor_index]
+                    .sparse_attributes
+                    .insert("_has_attacked_once");
+            }
             if let Some(damage) = damage {
                 let target = &mut self.entities[target_index];
                 target
@@ -5367,6 +5680,9 @@ impl ResidentBattle {
                     .as_mut()
                     .expect("direct preflight requires combat state")
                     .movement_target_id = None;
+                self.entities[actor_index]
+                    .sparse_attributes
+                    .insert("_movement_target_id");
             }
             if self.entities[actor_index]
                 .movement
@@ -5385,6 +5701,12 @@ impl ResidentBattle {
             if self.entities[actor_index].spawn_hook_pending {
                 self.entities[actor_index].spawn_hook_pending = false;
                 self.entities[actor_index].spawn_hook_fired = true;
+                self.entities[actor_index]
+                    .sparse_attributes
+                    .insert("_spawn_hook_pending");
+                self.entities[actor_index]
+                    .sparse_attributes
+                    .insert("_spawn_hook_fired");
             }
             let actor_kind = self.entities[actor_index].entity_kind;
             let Some(step_dt) = self.prepare_direct_combat_actor(actor_index) else {
@@ -5404,10 +5726,15 @@ impl ResidentBattle {
             });
             let target_in_range =
                 target_index.is_some_and(|index| self.direct_attack_reach(actor_index, index));
-            let (actor_x, actor_y) = (
-                self.entities[actor_index].position_x.as_f64(),
-                self.entities[actor_index].position_y.as_f64(),
+            let actor_position = (
+                self.entities[actor_index].position_x.clone(),
+                self.entities[actor_index].position_y.clone(),
             );
+            let (actor_x, actor_y) = (actor_position.0.as_f64(), actor_position.1.as_f64());
+            let previous_combat_target_id = self.entities[actor_index]
+                .locked_combat
+                .as_ref()
+                .and_then(|state| state.last_combat_target_id);
             let payload = {
                 let actor = &mut self.entities[actor_index];
                 actor.target_id = target_id;
@@ -5417,7 +5744,7 @@ impl ResidentBattle {
                     .expect("direct preflight requires combat state");
                 if actor_kind == 0 {
                     state.movement_target_id = None;
-                    state.initial_position.get_or_insert((actor_x, actor_y));
+                    state.initial_position.get_or_insert(actor_position);
                 }
                 state.last_attack_time += step_dt;
                 if actor_kind == 0
@@ -5483,6 +5810,28 @@ impl ResidentBattle {
                     }
                 }
             };
+            self.entities[actor_index]
+                .sparse_attributes
+                .insert("_last_combat_target_id");
+            if actor_kind == 0 {
+                self.entities[actor_index]
+                    .sparse_attributes
+                    .insert("_movement_target_id");
+                self.entities[actor_index]
+                    .sparse_attributes
+                    .insert("initial_position");
+            }
+            if payload.is_some()
+                || (previous_combat_target_id.is_some() && previous_combat_target_id != target_id)
+                || self.entities[actor_index]
+                    .locked_combat
+                    .as_ref()
+                    .is_some_and(|state| state.has_attacked_once)
+            {
+                self.entities[actor_index]
+                    .sparse_attributes
+                    .insert("_has_attacked_once");
+            }
             if let (Some(target_index), Some(payload)) = (target_index, payload) {
                 match payload {
                     CombatPayload::DirectDamage { damage, area } => {
@@ -5571,6 +5920,7 @@ impl ResidentBattle {
             };
             if changed_crown {
                 self.win_conditions_dirty = true;
+                self.sparse_attributes.insert("_win_conditions_dirty");
                 self.sync_resident_tower(entity_index);
             }
             if newly_dead {
@@ -5796,6 +6146,7 @@ impl ResidentBattle {
                 continue;
             };
             self.win_conditions_dirty = true;
+            self.sparse_attributes.insert("_win_conditions_dirty");
             if let Some(player) = self
                 .players
                 .iter_mut()
@@ -6548,6 +6899,8 @@ impl ResidentBattle {
                 || members.len()
                     > usize::try_from(spec.multiple_projectiles)
                         .expect("validated projectile count fits usize")
+                || first_projectile.damage_group_hit_entity_ids.as_deref()
+                    != Some(group.hit_entity_ids.as_slice())
                 || !self.point_projectile_matches_spell_spec(first, first_projectile)
             {
                 return false;
@@ -6560,6 +6913,8 @@ impl ResidentBattle {
                 if member.player_id != first.player_id
                     || projectile.source_kind != first_projectile.source_kind
                     || projectile.launch_delay.to_bits() != first_projectile.launch_delay.to_bits()
+                    || projectile.damage_group_hit_entity_ids.as_deref()
+                        != Some(group.hit_entity_ids.as_slice())
                     || !self.point_projectile_matches_spell_spec(member, projectile)
                 {
                     return false;
@@ -6653,6 +7008,7 @@ impl ResidentBattle {
                     PyRuntimeError::new_err("resident spell projectile ID overflow")
                 })?;
                 self.entities.push(ResidentEntity {
+                    sparse_attributes: constructed_entity_sparse_presence(true),
                     active: true,
                     encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
                     id: projectile_id,
@@ -6696,8 +7052,8 @@ impl ResidentBattle {
                     building_impact: None,
                     point_projectile: Some(PointProjectileState {
                         source_kind: cast.spell_name.clone(),
-                        target_x,
-                        target_y,
+                        target_x: ExactScalar::Float(target_x.to_bits()),
+                        target_y: ExactScalar::Float(target_y.to_bits()),
                         travel_speed: spec.travel_speed,
                         splash_radius: spec.radius,
                         hits_air: spec.hits_air,
@@ -6712,6 +7068,7 @@ impl ResidentBattle {
                         knockback_ignores_mass: spec.knockback_ignores_mass,
                         damage_wave_interval: spec.damage_wave_interval,
                         damage_group_id,
+                        damage_group_hit_entity_ids: damage_group_id.map(|_| Vec::new()),
                         launch_delay: wave_index as f64 * spec.damage_wave_interval,
                         primary_target_id: None,
                         source_entity_id: None,
@@ -6720,8 +7077,8 @@ impl ResidentBattle {
                         temporary_homing_target_id: None,
                         permanent_homing_disabled_by_temporary: false,
                         start_collision_resolved: false,
-                        constructor_range: 0.0,
-                        constructor_sight_range: 0.0,
+                        constructor_range: ExactScalar::Int(0),
+                        constructor_sight_range: ExactScalar::Int(0),
                         launch_x: 9.0,
                         launch_y,
                         homing_time_ms: 0,
@@ -7108,6 +7465,7 @@ impl ResidentBattle {
                 .next_spell_cast_sequence
                 .checked_add(1)
                 .ok_or_else(|| PyRuntimeError::new_err("resident spell sequence overflow"))?;
+            self.sparse_attributes.insert("_next_spell_cast_sequence");
             self.idle_eligible = false;
             return Ok(true);
         }
@@ -7209,6 +7567,12 @@ impl ResidentBattle {
             entity.placement_pending = entity.deploy_delay_remaining > 1e-9;
             entity.spawn_hook_pending = entity.placement_pending;
             entity.spawn_hook_fired = !entity.placement_pending;
+            entity.sparse_attributes.insert("_spawn_hook_pending");
+            if entity.placement_pending {
+                entity.sparse_attributes.remove("_spawn_hook_fired");
+            } else {
+                entity.sparse_attributes.insert("_spawn_hook_fired");
+            }
         }
         if let Some(movement) = entity.movement.as_mut() {
             movement.native_lane_id = nearest_standard_path_id(x_units, y_units);
@@ -7388,6 +7752,13 @@ impl ResidentBattle {
             return Err(PyRuntimeError::new_err(
                 "resident complete tick rejected combat capability",
             ));
+        }
+        self.sparse_attributes.insert("_defer_projectile_impacts");
+        self.sparse_attributes
+            .insert("_projectile_lethal_reservations");
+        if self.fast_path {
+            self.sparse_attributes
+                .insert("_coalesce_alive_building_refreshes");
         }
         let initial_next_entity_id = self.next_entity_id;
         self.advance_clock_phase();
@@ -7574,7 +7945,8 @@ impl ResidentBattle {
                     && movement.jump_speed.round_ties_even() > 0.0
                     && movement
                         .river_jump_origin
-                        .is_some_and(|(x, y)| x.is_finite() && y.is_finite())
+                        .as_ref()
+                        .is_some_and(|(x, y)| x.as_f64().is_finite() && y.as_f64().is_finite())
                     && movement
                         .river_jump_target
                         .is_some_and(|(x, y)| x.is_finite() && y.is_finite())
@@ -8380,6 +8752,9 @@ impl ResidentBattle {
     }
 
     fn update_resident_river_jump(&mut self, entity_index: usize) {
+        self.entities[entity_index]
+            .sparse_attributes
+            .insert("_river_jump_elapsed");
         let (target_x, target_y, jump_speed) = {
             let movement = self.entities[entity_index]
                 .movement
@@ -8446,6 +8821,12 @@ impl ResidentBattle {
         movement.special_move_active = false;
         movement.special_move_consumed_tick = true;
         movement.river_jump_blocked = false;
+        self.entities[entity_index].sparse_attributes.extend([
+            "_river_jump_active",
+            "_special_move_active",
+            "_special_move_consumed_tick",
+            "_river_jump_blocked",
+        ]);
         self.entities[entity_index]
             .locked_combat
             .as_mut()
@@ -8518,6 +8899,13 @@ impl ResidentBattle {
                 target_y,
             )
         };
+        if single_node && goal.is_some() {
+            self.entities[entity_index].sparse_attributes.extend([
+                "_ground_path_cache_key",
+                "_native_ground_route_cells",
+                "_ground_path_cache_backwards",
+            ]);
+        }
         if self.entities[entity_index]
             .movement
             .as_ref()
@@ -8745,10 +9133,17 @@ impl ResidentBattle {
                 .as_mut()
                 .expect("resident troop requires movement state")
                 .river_jump_blocked = true;
+            self.entities[entity_index]
+                .sparse_attributes
+                .insert("_river_jump_blocked");
             return false;
         };
-        let origin_x = self.entities[entity_index].position_x.as_f64();
-        let origin_y = self.entities[entity_index].position_y.as_f64();
+        let origin_position = (
+            self.entities[entity_index].position_x.clone(),
+            self.entities[entity_index].position_y.clone(),
+        );
+        let origin_x = origin_position.0.as_f64();
+        let origin_y = origin_position.1.as_f64();
         let target_x = (landing.0 * 500 + 250) as f64 / 1000.0;
         let target_y = (landing.1 * 500 + 250) as f64 / 1000.0;
         let dx = logic_units(target_x) - logic_units(origin_x);
@@ -8771,12 +9166,21 @@ impl ResidentBattle {
             .as_mut()
             .expect("resident troop requires movement state");
         movement.route_cells = vec![landing];
-        movement.river_jump_origin = Some((origin_x, origin_y));
+        movement.river_jump_origin = Some(origin_position);
         movement.river_jump_target = Some((target_x, target_y));
         movement.river_jump_elapsed = 0.0;
         movement.river_jump_duration = duration;
         movement.river_jump_active = true;
         movement.special_move_active = true;
+        self.entities[entity_index].sparse_attributes.extend([
+            "_native_ground_route_cells",
+            "_river_jump_origin",
+            "_river_jump_target",
+            "_river_jump_elapsed",
+            "_river_jump_duration",
+            "_river_jump_active",
+            "_special_move_active",
+        ]);
         self.entities[entity_index]
             .locked_combat
             .as_mut()
@@ -8914,6 +9318,11 @@ impl ResidentBattle {
             movement.route_backwards = backwards;
             movement.route_lane_id = lane_id;
             movement.route_jump_height = jump_height;
+            self.entities[entity_index].sparse_attributes.extend([
+                "_ground_path_cache_key",
+                "_native_ground_route_cells",
+                "_ground_path_cache_backwards",
+            ]);
             self.entities[entity_index]
                 .locked_combat
                 .as_mut()
@@ -8959,6 +9368,11 @@ impl ResidentBattle {
         movement.route_backwards = backwards;
         movement.route_lane_id = lane_id;
         movement.route_jump_height = jump_height;
+        self.entities[entity_index].sparse_attributes.extend([
+            "_ground_path_cache_key",
+            "_native_ground_route_cells",
+            "_ground_path_cache_backwards",
+        ]);
         self.entities[entity_index]
             .locked_combat
             .as_mut()
@@ -9074,8 +9488,8 @@ impl ResidentBattle {
                     "river_jump_blocked": movement.river_jump_blocked,
                     "river_jump_duration": exact_f64_value(movement.river_jump_duration),
                     "river_jump_elapsed": exact_f64_value(movement.river_jump_elapsed),
-                    "river_jump_origin": movement.river_jump_origin.map(|(x, y)| {
-                        json!([exact_f64_value(x), exact_f64_value(y)])
+                    "river_jump_origin": movement.river_jump_origin.as_ref().map(|(x, y)| {
+                        json!([x.diagnostic_value(), y.diagnostic_value()])
                     }),
                     "river_jump_target": movement.river_jump_target.map(|(x, y)| {
                         json!([exact_f64_value(x), exact_f64_value(y)])
@@ -9370,6 +9784,7 @@ impl ResidentBattle {
                 .is_some_and(|building| building.crown_slot.is_some())
             {
                 self.win_conditions_dirty = true;
+                self.sparse_attributes.insert("_win_conditions_dirty");
             }
             self.sync_resident_tower(target_index);
         }
@@ -9484,6 +9899,7 @@ impl ResidentBattle {
                     ));
                 child.position_x.set_f64(source_x_units as f64 / 1000.0);
                 child.position_y.set_f64(source_y_units as f64 / 1000.0);
+                child.sparse_attributes.insert("_death_spawn_travel_target");
             }
             if inherited_freeze_expiry > self.time + 1e-9 && spawn.deploy_time_ms <= 0 {
                 let remaining = inherited_freeze_expiry - self.time;
@@ -9502,6 +9918,9 @@ impl ResidentBattle {
                     combat.has_attacked_once = false;
                     combat.attack_speed_debuff_multiplier = 0.0;
                 }
+                child.sparse_attributes.insert("_last_combat_target_id");
+                child.sparse_attributes.insert("_movement_target_id");
+                child.sparse_attributes.insert("_has_attacked_once");
             }
             self.entities.push(child);
             self.next_entity_id += 1;
@@ -9517,6 +9936,7 @@ impl ResidentBattle {
         let area_id = self.next_entity_id;
         self.next_entity_id += 1;
         self.entities.push(ResidentEntity {
+            sparse_attributes: constructed_entity_sparse_presence(false),
             active: true,
             encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
             id: area_id,
@@ -9848,6 +10268,12 @@ impl ResidentBattle {
         combat.attack_cooldown = combat.attack_cooldown.max(base_attack_interval);
         combat.attack_preload_blocked = true;
         combat.has_attacked_once = false;
+        self.entities[target_index]
+            .sparse_attributes
+            .insert("_knockback_target");
+        self.entities[target_index]
+            .sparse_attributes
+            .insert("_has_attacked_once");
     }
 
     fn sync_resident_tower(&mut self, entity_index: usize) {
@@ -9894,6 +10320,8 @@ impl ResidentBattle {
         let launch_y = launch_y_units as f64 / 1000.0;
         let target_x = target.position_x.as_f64();
         let target_y = target.position_y.as_f64();
+        let target_position_x = target.position_x.clone();
+        let target_position_y = target.position_y.clone();
         let source_id = source.id;
         let target_id = target.id;
         let player_id = source.player_id;
@@ -9906,7 +10334,7 @@ impl ResidentBattle {
                 .expect("point weapon requires combat state");
             (
                 (combat.can_attack_air, combat.can_attack_ground),
-                combat.range,
+                combat.constructor_range.clone(),
             )
         };
         let (hits_air, hits_ground) = weapon.hit_planes.unwrap_or(inherited_hit_planes);
@@ -9934,6 +10362,7 @@ impl ResidentBattle {
         let projectile_id = self.next_entity_id;
         self.next_entity_id += 1;
         self.entities.push(ResidentEntity {
+            sparse_attributes: constructed_entity_sparse_presence(true),
             active: true,
             encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
             id: projectile_id,
@@ -9977,8 +10406,8 @@ impl ResidentBattle {
             building_impact: None,
             point_projectile: Some(PointProjectileState {
                 source_kind: card_name.clone(),
-                target_x,
-                target_y,
+                target_x: target_position_x,
+                target_y: target_position_y,
                 travel_speed: weapon.travel_speed,
                 splash_radius: weapon.splash_radius,
                 hits_air,
@@ -9993,6 +10422,7 @@ impl ResidentBattle {
                 knockback_ignores_mass: false,
                 damage_wave_interval: 0.0,
                 damage_group_id: None,
+                damage_group_hit_entity_ids: None,
                 launch_delay: 0.0,
                 primary_target_id: Some(target_id),
                 source_entity_id: Some(source_id),
@@ -10002,7 +10432,7 @@ impl ResidentBattle {
                 permanent_homing_disabled_by_temporary: false,
                 start_collision_resolved: true,
                 constructor_range,
-                constructor_sight_range: 1.0,
+                constructor_sight_range: ExactScalar::Float(1.0_f64.to_bits()),
                 launch_x,
                 launch_y,
                 homing_time_ms: 0,
@@ -10079,7 +10509,16 @@ impl ResidentBattle {
                 .iter()
                 .find(|candidate| candidate.id == target_id)
                 .expect("point-projectile preflight requires homing target");
-            let target_position = (target.position_x.as_f64(), target.position_y.as_f64());
+            let target_position = if temporary_remaining > 0 {
+                let target_x = logic_units(target.position_x.as_f64()) as f64 / 1000.0;
+                let target_y = logic_units(target.position_y.as_f64()) as f64 / 1000.0;
+                (
+                    ExactScalar::Float(target_x.to_bits()),
+                    ExactScalar::Float(target_y.to_bits()),
+                )
+            } else {
+                (target.position_x.clone(), target.position_y.clone())
+            };
             let projectile = self.entities[projectile_index]
                 .point_projectile
                 .as_mut()
@@ -10106,8 +10545,8 @@ impl ResidentBattle {
             (
                 entity.position_x.as_f64(),
                 entity.position_y.as_f64(),
-                projectile.target_x,
-                projectile.target_y,
+                projectile.target_x.as_f64(),
+                projectile.target_y.as_f64(),
                 projectile.travel_speed,
                 projectile.primary_target_id,
             )
@@ -10264,12 +10703,22 @@ impl ResidentBattle {
                     .iter()
                     .map(|target_index| self.entities[*target_index].id)
                     .collect::<Vec<_>>();
-                let group = self
-                    .projectile_damage_groups
-                    .iter_mut()
-                    .find(|group| group.id == group_id)
-                    .expect("point-projectile preflight requires damage group");
-                group.hit_entity_ids.extend(new_hit_ids);
+                let final_hit_ids = {
+                    let group = self
+                        .projectile_damage_groups
+                        .iter_mut()
+                        .find(|group| group.id == group_id)
+                        .expect("point-projectile preflight requires damage group");
+                    group.hit_entity_ids.extend(new_hit_ids);
+                    group.hit_entity_ids.clone()
+                };
+                for entity in &mut self.entities {
+                    if let Some(projectile) = entity.point_projectile.as_mut()
+                        && projectile.damage_group_id == Some(group_id)
+                    {
+                        projectile.damage_group_hit_entity_ids = Some(final_hit_ids.clone());
+                    }
+                }
             }
             let status_targets = hit_targets.clone();
             let knockback_origin = (logic_units(target_x), logic_units(target_y));

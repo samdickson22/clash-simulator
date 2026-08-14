@@ -901,6 +901,9 @@ class ResidentRustBattle:
             for values in self._native.player_states()
         )
 
+    def publication_player_state_bytes(self) -> bytes:
+        return bytes(self._native.publication_player_state_bytes())
+
     def player_sha256(self) -> str:
         return str(self._native.player_sha256())
 
@@ -947,6 +950,12 @@ class ResidentRustBattle:
 
     def publication_entity_state_bytes(self) -> bytes:
         return bytes(self._native.publication_entity_state_bytes())
+
+    def publication_battle_attribute_presence_bytes(self) -> bytes:
+        return bytes(self._native.publication_battle_attribute_presence_bytes())
+
+    def publication_exactness_sha256(self) -> str:
+        return str(self._native.publication_exactness_sha256())
 
     def entity_sha256(self) -> str:
         return str(self._native.entity_sha256())

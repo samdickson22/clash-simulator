@@ -23,7 +23,10 @@ from clasher.rust_publication import (
     ResidentPublicationError,
     publish_complete_tick_state,
 )
-from clasher.rust_runtime import ResidentCompleteTickRuntime
+from clasher.rust_runtime import (
+    ResidentCompleteTickRuntime,
+    _causal_boundary_snapshot,
+)
 
 pytestmark = pytest.mark.skipif(
     not rust_core_available(),
@@ -247,6 +250,7 @@ def test_catalog_character_birth_publication_is_exact(
     assert python_resident_semantic_snapshot(battle) == (
         python_resident_semantic_snapshot(control)
     )
+    assert _causal_boundary_snapshot(battle) == _causal_boundary_snapshot(control)
     children = [registry[entity_id] for entity_id in range(first_id, first_id + count)]
     control_children = [
         control.entities[entity_id] for entity_id in range(first_id, first_id + count)
@@ -263,6 +267,8 @@ def test_catalog_character_birth_publication_is_exact(
         for child, control_child in zip(children, control_children, strict=True)
     )
     assert all(child.battle_state is battle for child in children)
+    assert all("_spawn_hook_pending" in vars(child) for child in children)
+    assert all("_spawn_hook_fired" not in vars(child) for child in children)
     _assert_consumers_equal(control, battle)
 
     assert battle.step_logic_ticks(1) == control.step_logic_ticks(1) == 1
@@ -276,11 +282,14 @@ def test_compiled_golem_death_spawn_publishes_exact_identities_and_future_ticks(
 ):
     battle = BattleState(rng=random.Random(12_302), fast_path=True)
     attacker = _spawn_ready(battle, "Knight", 1, Position(3.0, 13.5))
+    bystander = _spawn_ready(battle, "Knight", 1, Position(4.0, 14.0))
     golem = _spawn_ready(battle, "Golem", 0, Position(3.0, 14.0))
     attacker.target_id = golem.id
     attacker._last_combat_target_id = golem.id
     attacker.attack_cooldown = 0.0
     attacker.damage = golem.hitpoints + 1
+    bystander.attack_cooldown = 10.0
+    bystander.__dict__.pop("_has_attacked_once", None)
     death_spawn = next(
         mechanic for mechanic in golem.mechanics if isinstance(mechanic, DeathSpawn)
     )
@@ -292,6 +301,7 @@ def test_compiled_golem_death_spawn_publishes_exact_identities_and_future_ticks(
     assert python_resident_semantic_snapshot(battle) == (
         python_resident_semantic_snapshot(control)
     )
+    assert _causal_boundary_snapshot(battle) == _causal_boundary_snapshot(control)
     children = [
         entity
         for entity in battle.entities.values()
@@ -307,6 +317,9 @@ def test_compiled_golem_death_spawn_publishes_exact_identities_and_future_ticks(
         0,
         80 * 80,
     ]
+    assert bystander.__dict__["_has_attacked_once"] is False
+    assert bystander._knockback_target is not None
+    assert bystander.forced_movement_active
     _assert_consumers_equal(control, battle)
 
     for _ in range(7):
@@ -314,6 +327,7 @@ def test_compiled_golem_death_spawn_publishes_exact_identities_and_future_ticks(
         assert python_resident_semantic_snapshot(battle) == (
             python_resident_semantic_snapshot(control)
         )
+        assert _causal_boundary_snapshot(battle) == _causal_boundary_snapshot(control)
 
 
 def test_catalog_character_born_and_removed_inside_interval_keeps_tombstones() -> None:
@@ -371,7 +385,7 @@ def test_corrupt_character_provenance_fails_before_live_mutation() -> None:
     entities_before = tuple(battle.entities.items())
     registry: dict[int, object] = dict(battle.entities)
 
-    with pytest.raises(ResidentPublicationError, match="unknown catalog birth recipe"):
+    with pytest.raises(ResidentPublicationError, match="attestation mismatch"):
         publish_complete_tick_state(
             battle,
             candidate,
@@ -400,10 +414,10 @@ def test_character_provenance_shape_fails_closed(corruption: str) -> None:
     )["character_birth"]
     if corruption == "ordinal":
         provenance["ordinal"] = 17
-        expected = "group/ordinal"
+        expected = "attestation mismatch"
     else:
         provenance["unexpected"] = True
-        expected = "malformed"
+        expected = "attestation mismatch"
     candidate.publication_entity_state_bytes = lambda: json.dumps(rows).encode()
     before = python_resident_semantic_snapshot(battle)
     registry: dict[int, object] = dict(battle.entities)
@@ -451,7 +465,7 @@ def test_death_spawn_provenance_tamper_fails_before_live_mutation() -> None:
     before = python_resident_semantic_snapshot(battle)
     registry: dict[int, object] = dict(battle.entities)
 
-    with pytest.raises(ResidentPublicationError, match="data provenance"):
+    with pytest.raises(ResidentPublicationError, match="attestation mismatch"):
         publish_complete_tick_state(
             battle,
             candidate,

@@ -8,7 +8,8 @@ import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import AreaEffect, Projectile, Troop
+from clasher.differential import canonical_battle_snapshot
+from clasher.entities import AreaEffect, Building, Projectile, Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rust_core import RustBattleMode, rust_core_available
@@ -49,6 +50,7 @@ def _assert_exact(control: BattleState, candidate: BattleState) -> None:
     assert python_resident_semantic_snapshot(candidate) == (
         python_resident_semantic_snapshot(control)
     )
+    assert canonical_battle_snapshot(candidate) == canonical_battle_snapshot(control)
 
 
 def _assert_consumers_equal(control: BattleState, candidate: BattleState) -> None:
@@ -94,6 +96,14 @@ def test_projectile_birth_survival_impact_cleanup_and_future_python_tick() -> No
     assert projectile.source_entity is source
     assert projectile.primary_target is target
     assert projectile.card_stats is source.card_stats
+    assert all(
+        field not in vars(projectile)
+        for field in (
+            "_permanent_homing_disabled_by_temporary",
+            "_temporary_homing_remaining_ms",
+            "_temporary_homing_target",
+        )
+    )
 
     assert runtime.advance_ticks(8) == control.step_logic_ticks(8) == 8
     _assert_exact(control, candidate)
@@ -104,6 +114,30 @@ def test_projectile_birth_survival_impact_cleanup_and_future_python_tick() -> No
 
     assert candidate.step_logic_ticks(1) == control.step_logic_ticks(1) == 1
     _assert_exact(control, candidate)
+
+
+def test_surviving_point_projectile_preserves_integer_target_position() -> None:
+    candidate = BattleState(rng=random.Random(9987), fast_path=True)
+    source = _spawn_ready(candidate, "Musketeer", 0, Position(9.0, 12.0))
+    source._create_projectile(
+        None,
+        candidate,
+        target_position=Position(9, 30),
+    )
+    projectile = next(
+        entity for entity in candidate.entities.values() if type(entity) is Projectile
+    )
+    assert type(projectile.target_position.x) is int
+    assert type(projectile.target_position.y) is int
+    control = candidate.clone()
+    runtime = ResidentCompleteTickRuntime(candidate, RustBattleMode.ON)
+
+    assert runtime.advance_ticks(1) == control.step_logic_ticks(1) == 1
+    _assert_exact(control, candidate)
+    assert candidate.entities[projectile.id] is projectile
+    assert type(projectile.target_position.x) is int
+    assert type(projectile.target_position.y) is int
+    assert projectile.target_position == Position(9, 30)
 
 
 @pytest.mark.parametrize("dead_reference", ["source", "primary_target"])
@@ -253,6 +287,15 @@ def test_pending_arrows_births_preserve_spell_recipe_and_group_aliases() -> None
         and projectile.target_position is not projectile.launch_position
         for projectile in projectiles
     )
+    assert all(
+        field not in vars(projectile)
+        for projectile in projectiles
+        for field in (
+            "_permanent_homing_disabled_by_temporary",
+            "_temporary_homing_remaining_ms",
+            "_temporary_homing_target",
+        )
+    )
 
     assert runtime.advance_ticks(1) == control.step_logic_ticks(1) == 1
     _assert_exact(control, candidate)
@@ -296,6 +339,165 @@ def test_group_cleanup_remap_preserves_surviving_shared_set_identities() -> None
     )
 
 
+def test_partial_group_cleanup_preserves_aliases_across_on_boundaries() -> None:
+    candidate = BattleState(rng=random.Random(9993), fast_path=True)
+    stats = candidate.card_loader.get_card("Cannon")
+    assert stats is not None
+    target = candidate._spawn_entity(
+        Building,
+        Position(9.5, 16.5),
+        1,
+        stats,
+    )
+    target.deploy_delay_remaining = 0.0
+    target.placement_pending = False
+    target._spawn_hook_pending = False
+    target._spawn_hook_fired = True
+    assert SPELL_REGISTRY["Arrows"].cast(candidate, 0, Position(9.5, 16.5))
+    projectiles = [
+        entity for entity in candidate.entities.values() if type(entity) is Projectile
+    ]
+    groups: dict[int, tuple[set[int], set[int]]] = {}
+    for projectile in projectiles:
+        hit_ids = projectile.damage_group_hit_entity_ids
+        assert hit_ids is not None
+        group = groups.setdefault(id(hit_ids), (hit_ids, set()))
+        group[1].add(projectile.id)
+    assert len(groups) == 3
+    control = candidate.clone()
+    control_projectiles = {
+        entity.id: entity
+        for entity in control.entities.values()
+        if type(entity) is Projectile
+    }
+    runtime = ResidentCompleteTickRuntime(candidate, RustBattleMode.ON)
+    assert runtime.active_mode is RustBattleMode.ON
+
+    assert runtime.advance_ticks(15) == control.step_logic_ticks(15) == 15
+    _assert_exact(control, candidate)
+    active_ids = set(candidate.entities)
+    assert any(
+        member_ids & active_ids and member_ids - active_ids
+        for _, member_ids in groups.values()
+    )
+
+    for expected_set, member_ids in groups.values():
+        assert all(
+            runtime.entity_registry[entity_id].damage_group_hit_entity_ids
+            is expected_set
+            for entity_id in member_ids
+        )
+        control_set = control_projectiles[min(member_ids)].damage_group_hit_entity_ids
+        assert expected_set == control_set
+
+    assert runtime.advance_ticks(5) == control.step_logic_ticks(5) == 5
+    _assert_exact(control, candidate)
+    for expected_set, member_ids in groups.values():
+        assert all(
+            runtime.entity_registry[entity_id].damage_group_hit_entity_ids
+            is expected_set
+            for entity_id in member_ids
+        )
+        control_set = control_projectiles[min(member_ids)].damage_group_hit_entity_ids
+        assert expected_set == control_set
+
+
+def test_staged_registry_rejects_split_active_projectile_group_alias() -> None:
+    from clasher import rust_publication
+
+    battle = BattleState(rng=random.Random(9994), fast_path=True)
+    assert SPELL_REGISTRY["Arrows"].cast(battle, 0, Position(9.5, 16.5))
+    projectiles = [
+        entity for entity in battle.entities.values() if type(entity) is Projectile
+    ]
+    first = projectiles[0]
+    second = next(
+        projectile
+        for projectile in projectiles[1:]
+        if projectile.damage_group_hit_entity_ids
+        is first.damage_group_hit_entity_ids
+    )
+    staged = battle.clone()
+    staged.entities[second.id].damage_group_hit_entity_ids = set()
+
+    with pytest.raises(ResidentPublicationError, match="split a shared group set"):
+        rust_publication._clone_registry(battle, staged, dict(battle.entities))
+
+
+def test_last_group_member_cleanup_publishes_shared_tombstone_set_contents() -> None:
+    candidate = BattleState(rng=random.Random(9992), fast_path=True)
+    stats = candidate.card_loader.get_card("Cannon")
+    assert stats is not None
+    target = candidate._spawn_entity(
+        Building,
+        Position(9.5, 16.5),
+        1,
+        stats,
+    )
+    target.deploy_delay_remaining = 0.0
+    target.placement_pending = False
+    target._spawn_hook_pending = False
+    target._spawn_hook_fired = True
+    assert SPELL_REGISTRY["Arrows"].cast(candidate, 0, Position(9.5, 16.5))
+    projectiles = [
+        entity for entity in candidate.entities.values() if type(entity) is Projectile
+    ]
+    groups: dict[int, tuple[set[int], list[Projectile]]] = {}
+    for projectile in projectiles:
+        hit_ids = projectile.damage_group_hit_entity_ids
+        assert hit_ids is not None
+        group = groups.setdefault(id(hit_ids), (hit_ids, []))
+        group[1].append(projectile)
+    assert len(groups) == 3
+    original_sets = {
+        min(projectile.id for projectile in members): (
+            hit_ids,
+            {projectile.id for projectile in members},
+        )
+        for hit_ids, members in groups.values()
+    }
+    control = candidate.clone()
+    control_projectiles = [
+        entity for entity in control.entities.values() if type(entity) is Projectile
+    ]
+    runtime = ResidentCompleteTickRuntime(candidate, RustBattleMode.ON)
+    assert runtime.active_mode is RustBattleMode.ON
+
+    assert runtime.advance_ticks(25) == control.step_logic_ticks(25) == 25
+    _assert_exact(control, candidate)
+    assert not any(type(entity) is Projectile for entity in candidate.entities.values())
+    assert not any(type(entity) is Projectile for entity in control.entities.values())
+
+    for group_id, (original_set, member_ids) in original_sets.items():
+        assert group_id == min(member_ids)
+        candidate_members = [
+            projectile
+            for projectile in projectiles
+            if projectile.id in member_ids
+        ]
+        control_members = [
+            projectile
+            for projectile in control_projectiles
+            if projectile.id in member_ids
+        ]
+        assert len(candidate_members) == len(control_members) == 10
+        assert all(
+            runtime.entity_registry[projectile.id] is projectile
+            for projectile in candidate_members
+        )
+        assert all(
+            projectile.damage_group_hit_entity_ids is original_set
+            for projectile in candidate_members
+        )
+        control_set = control_members[0].damage_group_hit_entity_ids
+        assert control_set == {target.id}
+        assert original_set == control_set
+        assert all(
+            projectile.damage_group_hit_entity_ids is control_set
+            for projectile in control_members
+        )
+
+
 def test_structural_commit_failure_restores_registry_and_active_order(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -329,3 +531,63 @@ def test_structural_commit_failure_restores_registry_and_active_order(
     assert python_resident_semantic_snapshot(battle) == before
     assert tuple(battle.entities.items()) == active_items
     assert tuple(runtime.entity_registry.items()) == registry_items
+
+
+def test_group_cleanup_commit_failure_restores_position_and_set_aliases(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from clasher import rust_publication
+
+    battle = BattleState(rng=random.Random(9983), fast_path=True)
+    stats = battle.card_loader.get_card("Cannon")
+    assert stats is not None
+    target = battle._spawn_entity(
+        Building,
+        Position(9.5, 16.5),
+        1,
+        stats,
+    )
+    target.deploy_delay_remaining = 0.0
+    target.placement_pending = False
+    target._spawn_hook_pending = False
+    target._spawn_hook_fired = True
+    assert SPELL_REGISTRY["Arrows"].cast(battle, 0, Position(9.5, 16.5))
+    projectiles = [
+        entity for entity in battle.entities.values() if type(entity) is Projectile
+    ]
+    runtime = ResidentCompleteTickRuntime(battle, RustBattleMode.ON)
+    assert runtime.active_mode is RustBattleMode.ON
+    before = canonical_battle_snapshot(battle)
+    position_ids = {projectile.id: id(projectile.position) for projectile in projectiles}
+    group_sets = {
+        projectile.id: projectile.damage_group_hit_entity_ids
+        for projectile in projectiles
+    }
+    group_contents = {
+        projectile.id: set(projectile.damage_group_hit_entity_ids or ())
+        for projectile in projectiles
+    }
+    require_exact = rust_publication._require_exact_projection
+
+    def fail_live_commit(*args: object, stage: str, **kwargs: object) -> None:
+        if stage == "commit":
+            raise ResidentPublicationError("injected grouped commit failure")
+        require_exact(*args, stage=stage, **kwargs)
+
+    monkeypatch.setattr(rust_publication, "_require_exact_projection", fail_live_commit)
+
+    with pytest.raises(RuntimeError, match="runtime is now poisoned"):
+        runtime.advance_ticks(25)
+
+    assert canonical_battle_snapshot(battle) == before
+    assert {
+        projectile.id: id(projectile.position) for projectile in projectiles
+    } == position_ids
+    assert all(
+        projectile.damage_group_hit_entity_ids is group_sets[projectile.id]
+        for projectile in projectiles
+    )
+    assert {
+        projectile.id: set(projectile.damage_group_hit_entity_ids or ())
+        for projectile in projectiles
+    } == group_contents
