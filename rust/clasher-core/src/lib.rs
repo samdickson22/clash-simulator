@@ -13,7 +13,27 @@ const FNV_OFFSET_BASIS: u64 = 0xcbf29ce484222325;
 const FNV_PRIME: u64 = 0x100000001b3;
 const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
+const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 7;
+
+const DELTA_BATTLE: u64 = 1 << 0;
+const DELTA_PLAYERS: u64 = 1 << 1;
+const DELTA_TOWERS: u64 = 1 << 2;
+const DELTA_RNG: u64 = 1 << 3;
+const DELTA_PENDING: u64 = 1 << 4;
+const DELTA_GROUPS: u64 = 1 << 5;
+
+const ENTITY_DELTA_PRESENCE: u64 = 1 << 0;
+const ENTITY_DELTA_BASE: u64 = 1 << 1;
+const ENTITY_DELTA_SHIELDS: u64 = 1 << 2;
+const ENTITY_DELTA_MODIFIER: u64 = 1 << 3;
+const ENTITY_DELTA_MOVEMENT: u64 = 1 << 4;
+const ENTITY_DELTA_COMBAT: u64 = 1 << 5;
+const ENTITY_DELTA_BUILDING_LIFETIME: u64 = 1 << 6;
+const ENTITY_DELTA_BUILDING_IMPACT: u64 = 1 << 7;
+const ENTITY_DELTA_POINT: u64 = 1 << 8;
+const ENTITY_DELTA_AREA: u64 = 1 << 9;
+const ENTITY_DELTA_FULL: u64 = 1 << 10;
 static NEXT_RESIDENT_STATE_TOKEN: AtomicU64 = AtomicU64::new(1);
 
 type ResidentPublicationAuthorityToken = (
@@ -76,7 +96,7 @@ const BATTLE_SPARSE_ATTRIBUTE_NAMES: [&str; 8] = [
     "_troop_placement_blocked_masks",
 ];
 
-#[derive(Clone, Copy, Default, IntoPyObject)]
+#[derive(Clone, Copy, Default, IntoPyObject, PartialEq, Eq)]
 #[pyo3(transparent)]
 struct SparseAttributePresence(u64);
 
@@ -635,7 +655,7 @@ fn optional_entity_ref_id(fields: &Map<String, Value>, name: &str) -> PyResult<O
         })
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 enum ExactScalar {
     Int(i64),
     Float(u64),
@@ -974,7 +994,7 @@ fn absent_optional_normalized_f64(
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct ModifierEffect {
     remaining: f64,
     movement: f64,
@@ -1070,7 +1090,7 @@ fn normalized_optional_bool(fields: &Map<String, Value>, name: &str) -> bool {
     fields.get(name).and_then(Value::as_bool).unwrap_or(false)
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct ModifierState {
     stun_timer: f64,
     slow_timer: f64,
@@ -1391,7 +1411,7 @@ impl ResidentRewardTraits {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 enum ResidentCharacterBirthProvenance {
     CatalogAction {
         lookup_name: String,
@@ -1506,7 +1526,7 @@ struct ResidentEntity {
     character_birth: Option<ResidentCharacterBirthProvenance>,
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct ResidentMovementState {
     vector_x_units: i64,
     vector_y_units: i64,
@@ -1662,20 +1682,20 @@ impl ResidentMovementState {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq, Eq)]
 struct ShieldState {
     current: ExactScalar,
     maximum: ExactScalar,
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 enum ResidentDeathOpcode {
     Damage(ResidentDeathDamage),
     Spawn(ResidentDeathSpawn),
     Area(ResidentDeathAreaSpec),
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 struct ResidentDeathSpawn {
     unit_name: String,
     unit_data: Value,
@@ -1760,7 +1780,7 @@ impl ResidentDeathSpawn {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct ResidentDeathAreaSpec {
     area_name: String,
     radius_tiles: f64,
@@ -1914,7 +1934,7 @@ impl ResidentDeathAreaSpec {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct ResidentAreaEffectState {
     spec: ResidentDeathAreaSpec,
     time_alive: f64,
@@ -2044,7 +2064,7 @@ impl ResidentAreaEffectState {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq, Eq)]
 struct ResidentDeathDamage {
     radius_tiles: ExactScalar,
     radius_units: i64,
@@ -2141,7 +2161,7 @@ impl ShieldState {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct BuildingImpactState {
     collision_radius: f64,
     crown_slot: Option<String>,
@@ -2195,7 +2215,7 @@ impl BuildingImpactState {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct PointProjectileState {
     source_kind: String,
     target_x: ExactScalar,
@@ -2403,7 +2423,7 @@ impl PointProjectileState {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct BuildingLifetimeState {
     lifetime_ms: Option<i64>,
     lifetime_elapsed: f64,
@@ -2445,7 +2465,7 @@ impl BuildingLifetimeState {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct LockedDirectCombatState {
     damage: f64,
     range: f64,
@@ -2486,13 +2506,13 @@ struct LockedDirectCombatState {
     point_weapon: Option<PointWeapon>,
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq, Eq)]
 struct DirectAreaWeapon {
     radius_units: i64,
     self_centered: bool,
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct PointWeapon {
     travel_speed: f64,
     tracks_target: bool,
@@ -3910,7 +3930,7 @@ fn parse_resident_entities(payload: &[u8]) -> PyResult<Vec<ResidentEntity>> {
     Ok(parsed)
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq, Eq)]
 struct PythonMt19937 {
     version: i64,
     state: [u32; 624],
@@ -4111,7 +4131,7 @@ type OracleLeafProjectionParts = (
     Vec<OracleLeafCombatTraits>,
 );
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct ResidentPlayer {
     player_id: i64,
     elixir: f64,
@@ -4238,7 +4258,7 @@ impl ResidentPlayer {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct ResidentTower {
     active: bool,
     id: i64,
@@ -4307,7 +4327,7 @@ fn append_string(payload: &mut Vec<u8>, value: &str) {
     payload.extend_from_slice(value.as_bytes());
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct ResidentPendingSpellCast {
     execute_at: f64,
     sequence: i64,
@@ -4330,7 +4350,7 @@ impl ResidentPendingSpellCast {
     }
 }
 
-#[derive(Clone, IntoPyObject)]
+#[derive(Clone, IntoPyObject, PartialEq, Eq)]
 struct ResidentProjectileDamageGroup {
     id: i64,
     hit_entity_ids: Vec<i64>,
@@ -4350,6 +4370,788 @@ impl ResidentProjectileDamageGroup {
             "group_id": self.id,
             "hit_entity_ids": hit_entity_ids,
         })
+    }
+}
+
+fn publication_f64_eq(left: f64, right: f64) -> bool {
+    left.to_bits() == right.to_bits()
+}
+
+fn publication_f64_fields_eq<const N: usize>(left: [f64; N], right: [f64; N]) -> bool {
+    left.into_iter()
+        .zip(right)
+        .all(|(left, right)| publication_f64_eq(left, right))
+}
+
+fn publication_optional_f64_eq(left: Option<f64>, right: Option<f64>) -> bool {
+    match (left, right) {
+        (None, None) => true,
+        (Some(left), Some(right)) => publication_f64_eq(left, right),
+        _ => false,
+    }
+}
+
+trait PublicationExactEq {
+    fn publication_exact_eq(&self, other: &Self) -> bool;
+}
+
+impl PublicationExactEq for ModifierEffect {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        publication_f64_fields_eq(
+            [self.remaining, self.movement, self.attack, self.spawn],
+            [other.remaining, other.movement, other.attack, other.spawn],
+        )
+    }
+}
+
+impl PublicationExactEq for ModifierState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.speed == other.speed
+            && publication_f64_fields_eq(
+                [
+                    self.stun_timer,
+                    self.slow_timer,
+                    self.slow_multiplier,
+                    self.movement_mode_multiplier,
+                    self.attack_speed_debuff_multiplier,
+                    self.spawn_speed_debuff_multiplier,
+                    self.attack_speed_buff_multiplier,
+                    self.movement_speed_buff_multiplier,
+                    self.spawn_speed_buff_multiplier,
+                    self.haste_timer,
+                ],
+                [
+                    other.stun_timer,
+                    other.slow_timer,
+                    other.slow_multiplier,
+                    other.movement_mode_multiplier,
+                    other.attack_speed_debuff_multiplier,
+                    other.spawn_speed_debuff_multiplier,
+                    other.attack_speed_buff_multiplier,
+                    other.movement_speed_buff_multiplier,
+                    other.spawn_speed_buff_multiplier,
+                    other.haste_timer,
+                ],
+            )
+            && publication_optional_f64_eq(self.original_speed, other.original_speed)
+            && self.slow_effects.len() == other.slow_effects.len()
+            && self
+                .slow_effects
+                .iter()
+                .zip(&other.slow_effects)
+                .all(|(left, right)| left.publication_exact_eq(right))
+            && self.haste_effects.len() == other.haste_effects.len()
+            && self
+                .haste_effects
+                .iter()
+                .zip(&other.haste_effects)
+                .all(|(left, right)| left.publication_exact_eq(right))
+    }
+}
+
+impl PublicationExactEq for ResidentMovementState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.vector_x_units == other.vector_x_units
+            && self.vector_y_units == other.vector_y_units
+            && self.vector_count == other.vector_count
+            && self.vector_bypasses_cap == other.vector_bypasses_cap
+            && self.pending_consumed == other.pending_consumed
+            && self.knockback_immune == other.knockback_immune
+            && self.is_hover == other.is_hover
+            && self.native_avoidance == other.native_avoidance
+            && self.native_natural_movement_active == other.native_natural_movement_active
+            && self.movement_phase_elapsed_ms == other.movement_phase_elapsed_ms
+            && self.charge_range_present == other.charge_range_present
+            && self.jump_height_present == other.jump_height_present
+            && self.kamikaze_primed == other.kamikaze_primed
+            && self.route_cache_supported == other.route_cache_supported
+            && self.route_cache_kind == other.route_cache_kind
+            && self.route_goal == other.route_goal
+            && self.route_cells == other.route_cells
+            && self.route_backwards == other.route_backwards
+            && self.route_lane_id == other.route_lane_id
+            && self.route_jump_height == other.route_jump_height
+            && self.native_lane_id == other.native_lane_id
+            && self.death_spawn_travel_ticks == other.death_spawn_travel_ticks
+            && self.knockback_velocity_work == other.knockback_velocity_work
+            && self.knockback_interrupts_combat == other.knockback_interrupts_combat
+            && self.river_jump_active == other.river_jump_active
+            && self.river_jump_origin == other.river_jump_origin
+            && self.river_jump_blocked == other.river_jump_blocked
+            && self.stun_interrupt_deferred_until_landing
+                == other.stun_interrupt_deferred_until_landing
+            && self.special_move_active == other.special_move_active
+            && self.special_move_consumed_tick == other.special_move_consumed_tick
+            && self.forced_movement_active == other.forced_movement_active
+            && publication_f64_fields_eq(
+                [
+                    self.pending_x,
+                    self.pending_y,
+                    self.unit_mass,
+                    self.collision_radius,
+                    self.building_pathing_radius,
+                    self.stop_movement_after_ms,
+                    self.wait_ms,
+                    self.serialized_speed,
+                    self.jump_speed,
+                    self.river_jump_elapsed,
+                    self.river_jump_duration,
+                ],
+                [
+                    other.pending_x,
+                    other.pending_y,
+                    other.unit_mass,
+                    other.collision_radius,
+                    other.building_pathing_radius,
+                    other.stop_movement_after_ms,
+                    other.wait_ms,
+                    other.serialized_speed,
+                    other.jump_speed,
+                    other.river_jump_elapsed,
+                    other.river_jump_duration,
+                ],
+            )
+            && self
+                .death_spawn_travel_target
+                .map(|value| (value.0.to_bits(), value.1.to_bits()))
+                == other
+                    .death_spawn_travel_target
+                    .map(|value| (value.0.to_bits(), value.1.to_bits()))
+            && self
+                .knockback_target
+                .map(|value| (value.0.to_bits(), value.1.to_bits()))
+                == other
+                    .knockback_target
+                    .map(|value| (value.0.to_bits(), value.1.to_bits()))
+            && self
+                .river_jump_target
+                .map(|value| (value.0.to_bits(), value.1.to_bits()))
+                == other
+                    .river_jump_target
+                    .map(|value| (value.0.to_bits(), value.1.to_bits()))
+    }
+}
+
+impl PublicationExactEq for ResidentDeathAreaSpec {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.area_name == other.area_name
+            && self.radius_units == other.radius_units
+            && self.hits_air == other.hits_air
+            && self.hits_ground == other.hits_ground
+            && self.affects_hidden == other.affects_hidden
+            && self.cap_buff_time_to_effect == other.cap_buff_time_to_effect
+            && publication_f64_fields_eq(
+                [
+                    self.radius_tiles,
+                    self.duration,
+                    self.effect_tick_interval,
+                    self.refresh_duration,
+                    self.movement_multiplier,
+                    self.attack_multiplier,
+                    self.spawn_multiplier,
+                ],
+                [
+                    other.radius_tiles,
+                    other.duration,
+                    other.effect_tick_interval,
+                    other.refresh_duration,
+                    other.movement_multiplier,
+                    other.attack_multiplier,
+                    other.spawn_multiplier,
+                ],
+            )
+    }
+}
+
+impl PublicationExactEq for ResidentDeathSpawn {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.unit_name == other.unit_name
+            && self.unit_data == other.unit_data
+            && self.unit_data_fingerprint == other.unit_data_fingerprint
+            && self.count == other.count
+            && self.radial_pushback == other.radial_pushback
+            && self.spawn_const_priority == other.spawn_const_priority
+            && self.deploy_time_ms == other.deploy_time_ms
+            && publication_f64_fields_eq(
+                [self.radius_tiles, self.min_radius_tiles],
+                [other.radius_tiles, other.min_radius_tiles],
+            )
+    }
+}
+
+impl PublicationExactEq for ResidentDeathOpcode {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Damage(left), Self::Damage(right)) => left == right,
+            (Self::Spawn(left), Self::Spawn(right)) => left.publication_exact_eq(right),
+            (Self::Area(left), Self::Area(right)) => left.publication_exact_eq(right),
+            _ => false,
+        }
+    }
+}
+
+impl PublicationExactEq for ResidentAreaEffectState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.spec.publication_exact_eq(&other.spec)
+            && publication_f64_eq(self.time_alive, other.time_alive)
+            && self.effect_snapshot_applied == other.effect_snapshot_applied
+            && self.birth_source_entity_id == other.birth_source_entity_id
+            && self.supported == other.supported
+    }
+}
+
+impl PublicationExactEq for BuildingImpactState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.crown_slot == other.crown_slot
+            && self.is_king_tower == other.is_king_tower
+            && self.requires_activation == other.requires_activation
+            && self.tower_active == other.tower_active
+            && self.stealth_until_ms == other.stealth_until_ms
+            && self.allow_area_damage_when_invisible == other.allow_area_damage_when_invisible
+            && publication_f64_fields_eq(
+                [
+                    self.collision_radius,
+                    self.activation_delay_seconds,
+                    self.activation_delay_remaining,
+                    self.activation_first_hit_delay_seconds,
+                    self.activation_first_hit_delay_remaining,
+                ],
+                [
+                    other.collision_radius,
+                    other.activation_delay_seconds,
+                    other.activation_delay_remaining,
+                    other.activation_first_hit_delay_seconds,
+                    other.activation_first_hit_delay_remaining,
+                ],
+            )
+    }
+}
+
+impl PublicationExactEq for PointProjectileState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.source_kind == other.source_kind
+            && self.target_x == other.target_x
+            && self.target_y == other.target_y
+            && self.hits_air == other.hits_air
+            && self.hits_ground == other.hits_ground
+            && self.ignore_buildings == other.ignore_buildings
+            && self.knockback_ignores_mass == other.knockback_ignores_mass
+            && self.damage_group_id == other.damage_group_id
+            && self.damage_group_hit_entity_ids == other.damage_group_hit_entity_ids
+            && self.primary_target_id == other.primary_target_id
+            && self.source_entity_id == other.source_entity_id
+            && self.tracks_target == other.tracks_target
+            && self.temporary_homing_remaining_ms == other.temporary_homing_remaining_ms
+            && self.temporary_homing_target_id == other.temporary_homing_target_id
+            && self.permanent_homing_disabled_by_temporary
+                == other.permanent_homing_disabled_by_temporary
+            && self.start_collision_resolved == other.start_collision_resolved
+            && self.constructor_range == other.constructor_range
+            && self.constructor_sight_range == other.constructor_sight_range
+            && self.homing_time_ms == other.homing_time_ms
+            && self.unsupported == other.unsupported
+            && publication_f64_fields_eq(
+                [
+                    self.travel_speed,
+                    self.splash_radius,
+                    self.crown_tower_damage_multiplier,
+                    self.stun_duration,
+                    self.slow_duration,
+                    self.slow_multiplier,
+                    self.knockback_distance,
+                    self.damage_wave_interval,
+                    self.launch_delay,
+                    self.launch_x,
+                    self.launch_y,
+                    self.homing_min_distance,
+                ],
+                [
+                    other.travel_speed,
+                    other.splash_radius,
+                    other.crown_tower_damage_multiplier,
+                    other.stun_duration,
+                    other.slow_duration,
+                    other.slow_multiplier,
+                    other.knockback_distance,
+                    other.damage_wave_interval,
+                    other.launch_delay,
+                    other.launch_x,
+                    other.launch_y,
+                    other.homing_min_distance,
+                ],
+            )
+            && publication_optional_f64_eq(self.crown_tower_damage, other.crown_tower_damage)
+    }
+}
+
+impl PublicationExactEq for BuildingLifetimeState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.lifetime_ms == other.lifetime_ms
+            && self.decay_work == other.decay_work
+            && publication_f64_fields_eq(
+                [self.lifetime_elapsed, self.tick_carry_ms],
+                [other.lifetime_elapsed, other.tick_carry_ms],
+            )
+    }
+}
+
+impl PublicationExactEq for PointWeapon {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.tracks_target == other.tracks_target
+            && self.hit_planes == other.hit_planes
+            && publication_f64_fields_eq(
+                [
+                    self.travel_speed,
+                    self.start_radius,
+                    self.y_offset,
+                    self.splash_radius,
+                    self.crown_tower_damage_multiplier,
+                    self.stun_duration,
+                    self.slow_duration,
+                    self.slow_multiplier,
+                ],
+                [
+                    other.travel_speed,
+                    other.start_radius,
+                    other.y_offset,
+                    other.splash_radius,
+                    other.crown_tower_damage_multiplier,
+                    other.stun_duration,
+                    other.slow_duration,
+                    other.slow_multiplier,
+                ],
+            )
+    }
+}
+
+impl PublicationExactEq for LockedDirectCombatState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.constructor_range == other.constructor_range
+            && self.attack_windup_active == other.attack_windup_active
+            && self.attack_preload_blocked == other.attack_preload_blocked
+            && self.native_target_distance_discount_sq_units
+                == other.native_target_distance_discount_sq_units
+            && self.is_air_unit == other.is_air_unit
+            && self.is_airborne_for_projectile == other.is_airborne_for_projectile
+            && self.can_attack_air == other.can_attack_air
+            && self.can_attack_ground == other.can_attack_ground
+            && self.facing_x_units == other.facing_x_units
+            && self.facing_y_units == other.facing_y_units
+            && self.last_combat_target_id == other.last_combat_target_id
+            && self.has_attacked_once == other.has_attacked_once
+            && self.movement_target_id == other.movement_target_id
+            && self.initial_position == other.initial_position
+            && self.hit_speed_ms == other.hit_speed_ms
+            && self.first_hit_ms == other.first_hit_ms
+            && self.retarget_ms == other.retarget_ms
+            && self.targets_only_buildings == other.targets_only_buildings
+            && self.native_building_target == other.native_building_target
+            && self.ground_path_backwards == other.ground_path_backwards
+            && self.hidden_building == other.hidden_building
+            && self.stealth_until_ms == other.stealth_until_ms
+            && self.allow_area_damage_when_invisible == other.allow_area_damage_when_invisible
+            && self.direct_area == other.direct_area
+            && publication_f64_fields_eq(
+                [
+                    self.damage,
+                    self.range,
+                    self.sight_range,
+                    self.attack_cooldown,
+                    self.last_attack_time,
+                    self.stun_timer,
+                    self.collision_radius,
+                    self.attack_speed_debuff_multiplier,
+                    self.attack_speed_buff_multiplier,
+                    self.attack_mode_multiplier,
+                    self.sight_clip,
+                    self.sight_clip_side,
+                ],
+                [
+                    other.damage,
+                    other.range,
+                    other.sight_range,
+                    other.attack_cooldown,
+                    other.last_attack_time,
+                    other.stun_timer,
+                    other.collision_radius,
+                    other.attack_speed_debuff_multiplier,
+                    other.attack_speed_buff_multiplier,
+                    other.attack_mode_multiplier,
+                    other.sight_clip,
+                    other.sight_clip_side,
+                ],
+            )
+            && match (&self.point_weapon, &other.point_weapon) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_exact_eq(right),
+                _ => false,
+            }
+    }
+}
+
+impl PublicationExactEq for ResidentPlayer {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.player_id == other.player_id
+            && self.next_card_refill_cooldown_ms == other.next_card_refill_cooldown_ms
+            && self.hand == other.hand
+            && self.cycle_queue == other.cycle_queue
+            && self.king_tower_hp == other.king_tower_hp
+            && self.left_tower_hp == other.left_tower_hp
+            && self.right_tower_hp == other.right_tower_hp
+            && publication_f64_fields_eq(
+                [self.elixir, self.max_elixir],
+                [other.elixir, other.max_elixir],
+            )
+    }
+}
+
+impl PublicationExactEq for ResidentTower {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.active == other.active
+            && self.id == other.id
+            && self.player_id == other.player_id
+            && self.slot == other.slot
+            && self.hp == other.hp
+            && self.hp_milli == other.hp_milli
+            && self.is_alive == other.is_alive
+            && self.is_active == other.is_active
+            && publication_f64_eq(self.last_attack_time, other.last_attack_time)
+    }
+}
+
+impl PublicationExactEq for ResidentPendingSpellCast {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.sequence == other.sequence
+            && self.spell_name == other.spell_name
+            && self.player_id == other.player_id
+            && publication_f64_fields_eq(
+                [self.execute_at, self.position_x, self.position_y],
+                [other.execute_at, other.position_x, other.position_y],
+            )
+    }
+}
+
+impl ResidentMovementState {
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.knockback_immune == other.knockback_immune
+            && self.is_hover == other.is_hover
+            && self.charge_range_present == other.charge_range_present
+            && self.jump_height_present == other.jump_height_present
+            && self.kamikaze_primed == other.kamikaze_primed
+            && self.route_cache_supported == other.route_cache_supported
+            && publication_f64_fields_eq(
+                [
+                    self.unit_mass,
+                    self.collision_radius,
+                    self.building_pathing_radius,
+                    self.stop_movement_after_ms,
+                    self.wait_ms,
+                    self.serialized_speed,
+                    self.jump_speed,
+                ],
+                [
+                    other.unit_mass,
+                    other.collision_radius,
+                    other.building_pathing_radius,
+                    other.stop_movement_after_ms,
+                    other.wait_ms,
+                    other.serialized_speed,
+                    other.jump_speed,
+                ],
+            )
+    }
+}
+
+impl LockedDirectCombatState {
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.constructor_range == other.constructor_range
+            && self.is_air_unit == other.is_air_unit
+            && self.can_attack_air == other.can_attack_air
+            && self.can_attack_ground == other.can_attack_ground
+            && self.hit_speed_ms == other.hit_speed_ms
+            && self.first_hit_ms == other.first_hit_ms
+            && self.retarget_ms == other.retarget_ms
+            && self.targets_only_buildings == other.targets_only_buildings
+            && self.native_building_target == other.native_building_target
+            && self.hidden_building == other.hidden_building
+            && self.stealth_until_ms == other.stealth_until_ms
+            && self.allow_area_damage_when_invisible == other.allow_area_damage_when_invisible
+            && self.direct_area == other.direct_area
+            && match (&self.point_weapon, &other.point_weapon) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_exact_eq(right),
+                _ => false,
+            }
+            && publication_f64_fields_eq(
+                [
+                    self.damage,
+                    self.range,
+                    self.sight_range,
+                    self.collision_radius,
+                    self.attack_mode_multiplier,
+                    self.sight_clip,
+                    self.sight_clip_side,
+                ],
+                [
+                    other.damage,
+                    other.range,
+                    other.sight_range,
+                    other.collision_radius,
+                    other.attack_mode_multiplier,
+                    other.sight_clip,
+                    other.sight_clip_side,
+                ],
+            )
+    }
+}
+
+impl BuildingLifetimeState {
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.lifetime_ms == other.lifetime_ms
+    }
+}
+
+impl BuildingImpactState {
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.crown_slot == other.crown_slot
+            && self.is_king_tower == other.is_king_tower
+            && self.requires_activation == other.requires_activation
+            && self.stealth_until_ms == other.stealth_until_ms
+            && self.allow_area_damage_when_invisible == other.allow_area_damage_when_invisible
+            && publication_f64_fields_eq(
+                [
+                    self.collision_radius,
+                    self.activation_delay_seconds,
+                    self.activation_first_hit_delay_seconds,
+                ],
+                [
+                    other.collision_radius,
+                    other.activation_delay_seconds,
+                    other.activation_first_hit_delay_seconds,
+                ],
+            )
+    }
+}
+
+impl PointProjectileState {
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.source_kind == other.source_kind
+            && self.hits_air == other.hits_air
+            && self.hits_ground == other.hits_ground
+            && self.ignore_buildings == other.ignore_buildings
+            && self.knockback_ignores_mass == other.knockback_ignores_mass
+            && self.source_entity_id == other.source_entity_id
+            && self.tracks_target == other.tracks_target
+            && self.constructor_range == other.constructor_range
+            && self.constructor_sight_range == other.constructor_sight_range
+            && self.homing_time_ms == other.homing_time_ms
+            && self.unsupported == other.unsupported
+            && publication_optional_f64_eq(self.crown_tower_damage, other.crown_tower_damage)
+            && publication_f64_fields_eq(
+                [
+                    self.travel_speed,
+                    self.splash_radius,
+                    self.crown_tower_damage_multiplier,
+                    self.stun_duration,
+                    self.slow_duration,
+                    self.slow_multiplier,
+                    self.knockback_distance,
+                    self.damage_wave_interval,
+                    self.launch_x,
+                    self.launch_y,
+                    self.homing_min_distance,
+                ],
+                [
+                    other.travel_speed,
+                    other.splash_radius,
+                    other.crown_tower_damage_multiplier,
+                    other.stun_duration,
+                    other.slow_duration,
+                    other.slow_multiplier,
+                    other.knockback_distance,
+                    other.damage_wave_interval,
+                    other.launch_x,
+                    other.launch_y,
+                    other.homing_min_distance,
+                ],
+            )
+    }
+}
+
+impl ResidentAreaEffectState {
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.spec.publication_exact_eq(&other.spec)
+            && self.birth_source_entity_id == other.birth_source_entity_id
+            && self.supported == other.supported
+    }
+}
+
+fn publication_option_exact_eq<T: PublicationExactEq>(left: &Option<T>, right: &Option<T>) -> bool {
+    match (left, right) {
+        (None, None) => true,
+        (Some(left), Some(right)) => left.publication_exact_eq(right),
+        _ => false,
+    }
+}
+
+impl ResidentEntity {
+    fn publication_immutable_prefix_eq(&self, other: &Self) -> bool {
+        self.id == other.id
+            && self.player_id == other.player_id
+            && self.entity_kind == other.entity_kind
+            && self.python_type == other.python_type
+            && self.card_name == other.card_name
+            && self.mechanics == other.mechanics
+            && self.death_opcodes.len() == other.death_opcodes.len()
+            && self
+                .death_opcodes
+                .iter()
+                .zip(&other.death_opcodes)
+                .all(|(left, right)| left.publication_exact_eq(right))
+            && self.character_birth == other.character_birth
+            && publication_f64_fields_eq(
+                [
+                    self.reward_traits.mana_cost,
+                    self.reward_traits.hit_speed_ms,
+                    self.deployment_collision_radius,
+                ],
+                [
+                    other.reward_traits.mana_cost,
+                    other.reward_traits.hit_speed_ms,
+                    other.deployment_collision_radius,
+                ],
+            )
+            && self.reward_traits.summon_count == other.reward_traits.summon_count
+            && self.reward_traits.summon_character_second_count
+                == other.reward_traits.summon_character_second_count
+            && self.death_spawn_payload_present == other.death_spawn_payload_present
+            && self.modifier_supported == other.modifier_supported
+            && self.direct_combat_unsupported == other.direct_combat_unsupported
+            && self.object_base_movement_noop == other.object_base_movement_noop
+            && self.blocks_deployment == other.blocks_deployment
+            && self.shields.len() == other.shields.len()
+            && self
+                .shields
+                .iter()
+                .zip(&other.shields)
+                .all(|(left, right)| left.maximum == right.maximum)
+            && self.modifier_state.is_some() == other.modifier_state.is_some()
+            && match (&self.movement, &other.movement) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
+            && match (&self.locked_combat, &other.locked_combat) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
+            && match (&self.building_lifetime, &other.building_lifetime) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
+            && match (&self.building_impact, &other.building_impact) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
+            && match (&self.point_projectile, &other.point_projectile) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
+            && match (&self.area_effect, &other.area_effect) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
+    }
+
+    fn publication_base_eq(&self, other: &Self) -> bool {
+        self.active == other.active
+            && self.encounter_index == other.encounter_index
+            && self.position_x == other.position_x
+            && self.position_y == other.position_y
+            && self.hitpoints == other.hitpoints
+            && self.max_hitpoints == other.max_hitpoints
+            && self.damage == other.damage
+            && self.is_alive == other.is_alive
+            && self.target_id == other.target_id
+            && self.placement_pending == other.placement_pending
+            && self.spawn_hook_pending == other.spawn_hook_pending
+            && self.spawn_hook_fired == other.spawn_hook_fired
+            && self.death_spawn_target_immunity_elapsed_ms
+                == other.death_spawn_target_immunity_elapsed_ms
+            && self.pending_projectile_max_duration_ms == other.pending_projectile_max_duration_ms
+            && publication_f64_fields_eq(
+                [
+                    self.deploy_delay_remaining,
+                    self.placement_delay_total,
+                    self.freeze_expiry_time,
+                    self.spawn_angle_shift,
+                ],
+                [
+                    other.deploy_delay_remaining,
+                    other.placement_delay_total,
+                    other.freeze_expiry_time,
+                    other.spawn_angle_shift,
+                ],
+            )
+    }
+}
+
+impl ResidentBattle {
+    fn publication_immutable_root_eq(&self, other: &Self) -> bool {
+        self.fast_path == other.fast_path
+            && self.arena_width_tiles == other.arena_width_tiles
+            && self.arena_height_tiles == other.arena_height_tiles
+            && self.canonical_action_arena == other.canonical_action_arena
+            && self.player_tick_ms == other.player_tick_ms
+            && self.sparse_idle_win_checks == other.sparse_idle_win_checks
+            && publication_f64_fields_eq(
+                [
+                    self.dt,
+                    self.double_elixir_start_time,
+                    self.overtime_start_time,
+                    self.triple_elixir_start_time,
+                    self.tiebreaker_time,
+                ],
+                [
+                    other.dt,
+                    other.double_elixir_start_time,
+                    other.overtime_start_time,
+                    other.triple_elixir_start_time,
+                    other.tiebreaker_time,
+                ],
+            )
+            && self.refill_schedule.len() == other.refill_schedule.len()
+            && self
+                .refill_schedule
+                .iter()
+                .zip(&other.refill_schedule)
+                .all(|(left, right)| publication_f64_eq(left.0, right.0) && left.1 == right.1)
+            && self.starting_tower_hps.len() == other.starting_tower_hps.len()
+            && self
+                .starting_tower_hps
+                .iter()
+                .zip(&other.starting_tower_hps)
+                .all(|(left, right)| {
+                    publication_f64_fields_eq([left.0, left.1, left.2], [right.0, right.1, right.2])
+                })
+            && self.players.len() == other.players.len()
+            && self
+                .players
+                .iter()
+                .zip(&other.players)
+                .all(|(left, right)| {
+                    left.player_id == right.player_id
+                        && publication_f64_eq(left.max_elixir, right.max_elixir)
+                })
+            && self.towers.len() == other.towers.len()
+            && self.towers.iter().zip(&other.towers).all(|(left, right)| {
+                left.id == right.id && left.player_id == right.player_id && left.slot == right.slot
+            })
     }
 }
 
@@ -4415,6 +5217,7 @@ struct PreparedPublication {
     prior_epoch: u64,
     prior_next_entity_id: i64,
     prior_entity_ids: Vec<i64>,
+    prior: ResidentBattle,
     candidate: ResidentBattle,
 }
 
@@ -4623,6 +5426,96 @@ impl From<&ResidentEntity> for PreparedEntityParts {
     }
 }
 
+#[derive(Clone, IntoPyObject)]
+struct PreparedEntityBaseDelta {
+    active: bool,
+    encounter_index: usize,
+    position_x: ExactScalar,
+    position_y: ExactScalar,
+    hitpoints: ExactScalar,
+    max_hitpoints: ExactScalar,
+    damage: ExactScalar,
+    is_alive: bool,
+    target_id: Option<i64>,
+    deploy_delay_remaining: f64,
+    placement_delay_total: f64,
+    placement_pending: bool,
+    spawn_hook_pending: bool,
+    spawn_hook_fired: bool,
+    freeze_expiry_time: f64,
+    death_spawn_target_immunity_elapsed_ms: i64,
+    pending_projectile_max_duration_ms: i64,
+    spawn_angle_shift: f64,
+}
+
+impl From<&ResidentEntity> for PreparedEntityBaseDelta {
+    fn from(entity: &ResidentEntity) -> Self {
+        Self {
+            active: entity.active,
+            encounter_index: entity.encounter_index,
+            position_x: entity.position_x.clone(),
+            position_y: entity.position_y.clone(),
+            hitpoints: entity.hitpoints.clone(),
+            max_hitpoints: entity.max_hitpoints.clone(),
+            damage: entity.damage.clone(),
+            is_alive: entity.is_alive,
+            target_id: entity.target_id,
+            deploy_delay_remaining: entity.deploy_delay_remaining,
+            placement_delay_total: entity.placement_delay_total,
+            placement_pending: entity.placement_pending,
+            spawn_hook_pending: entity.spawn_hook_pending,
+            spawn_hook_fired: entity.spawn_hook_fired,
+            freeze_expiry_time: entity.freeze_expiry_time,
+            death_spawn_target_immunity_elapsed_ms: entity.death_spawn_target_immunity_elapsed_ms,
+            pending_projectile_max_duration_ms: entity.pending_projectile_max_duration_ms,
+            spawn_angle_shift: entity.spawn_angle_shift,
+        }
+    }
+}
+
+#[derive(IntoPyObject)]
+struct PreparedEntityDeltaParts {
+    id: i64,
+    dirty_mask: u64,
+    sparse_attribute_presence: Option<SparseAttributePresence>,
+    base: Option<PreparedEntityBaseDelta>,
+    shields: Option<Vec<ShieldState>>,
+    shield_break_count: Option<i64>,
+    modifier_state: Option<ModifierState>,
+    modifier_present: bool,
+    movement_state: Option<ResidentMovementState>,
+    movement_present: bool,
+    locked_combat_state: Option<LockedDirectCombatState>,
+    locked_combat_present: bool,
+    building_lifetime_state: Option<BuildingLifetimeState>,
+    building_lifetime_present: bool,
+    building_impact_state: Option<BuildingImpactState>,
+    building_impact_present: bool,
+    point_projectile_state: Option<PointProjectileState>,
+    point_projectile_present: bool,
+    area_effect_state: Option<ResidentAreaEffectState>,
+    area_effect_present: bool,
+    full: Option<PreparedEntityParts>,
+}
+
+#[derive(IntoPyObject)]
+struct PreparedPublicationDeltaParts {
+    version: u64,
+    binding: PreparedPublicationBinding,
+    all_entity_ids: Vec<i64>,
+    active_entity_ids: Vec<i64>,
+    next_entity_id: i64,
+    dirty_mask: u64,
+    battle: Option<PreparedBattleParts>,
+    idle_eligible: Option<bool>,
+    players: Option<Vec<ResidentPlayer>>,
+    towers: Option<Vec<ResidentTower>>,
+    entities: Vec<PreparedEntityDeltaParts>,
+    rng: Option<PythonMt19937>,
+    pending_spells: Option<PreparedPendingSpellParts>,
+    projectile_groups: Option<Vec<ResidentProjectileDamageGroup>>,
+}
+
 #[derive(IntoPyObject)]
 struct PreparedPublicationBinding {
     semantic_schema_version: u64,
@@ -4678,47 +5571,267 @@ struct PreparedPublicationParts {
     projectile_groups: Vec<ResidentProjectileDamageGroup>,
 }
 
-#[pymethods]
+fn prepared_battle_parts(candidate: &ResidentBattle) -> PreparedBattleParts {
+    PreparedBattleParts {
+        sparse_attribute_presence: candidate.sparse_attributes,
+        tick: candidate.tick,
+        time: candidate.time,
+        dt: candidate.dt,
+        double_elixir: candidate.double_elixir,
+        triple_elixir: candidate.triple_elixir,
+        overtime: candidate.overtime,
+        game_over: candidate.game_over,
+        sudden_death: candidate.sudden_death,
+        sudden_death_crowns: candidate.sudden_death_crowns,
+        winner: candidate.winner,
+        win_conditions_dirty: candidate.win_conditions_dirty,
+        next_entity_id: candidate.next_entity_id,
+    }
+}
+
+fn prepared_entity_delta(
+    entity: &ResidentEntity,
+    dirty_mask: u64,
+    full: bool,
+) -> PreparedEntityDeltaParts {
+    PreparedEntityDeltaParts {
+        id: entity.id,
+        dirty_mask,
+        sparse_attribute_presence: (dirty_mask & ENTITY_DELTA_PRESENCE != 0)
+            .then_some(entity.sparse_attributes),
+        base: (dirty_mask & ENTITY_DELTA_BASE != 0).then(|| PreparedEntityBaseDelta::from(entity)),
+        shields: (dirty_mask & ENTITY_DELTA_SHIELDS != 0).then(|| entity.shields.clone()),
+        shield_break_count: (dirty_mask & ENTITY_DELTA_SHIELDS != 0)
+            .then_some(entity.shield_break_count),
+        modifier_state: (dirty_mask & ENTITY_DELTA_MODIFIER != 0)
+            .then(|| entity.modifier_state.clone())
+            .flatten(),
+        modifier_present: dirty_mask & ENTITY_DELTA_MODIFIER != 0
+            && entity.modifier_state.is_some(),
+        movement_state: (dirty_mask & ENTITY_DELTA_MOVEMENT != 0)
+            .then(|| entity.movement.clone())
+            .flatten(),
+        movement_present: dirty_mask & ENTITY_DELTA_MOVEMENT != 0 && entity.movement.is_some(),
+        locked_combat_state: (dirty_mask & ENTITY_DELTA_COMBAT != 0)
+            .then(|| entity.locked_combat.clone())
+            .flatten(),
+        locked_combat_present: dirty_mask & ENTITY_DELTA_COMBAT != 0
+            && entity.locked_combat.is_some(),
+        building_lifetime_state: (dirty_mask & ENTITY_DELTA_BUILDING_LIFETIME != 0)
+            .then(|| entity.building_lifetime.clone())
+            .flatten(),
+        building_lifetime_present: dirty_mask & ENTITY_DELTA_BUILDING_LIFETIME != 0
+            && entity.building_lifetime.is_some(),
+        building_impact_state: (dirty_mask & ENTITY_DELTA_BUILDING_IMPACT != 0)
+            .then(|| entity.building_impact.clone())
+            .flatten(),
+        building_impact_present: dirty_mask & ENTITY_DELTA_BUILDING_IMPACT != 0
+            && entity.building_impact.is_some(),
+        point_projectile_state: (dirty_mask & ENTITY_DELTA_POINT != 0)
+            .then(|| entity.point_projectile.clone())
+            .flatten(),
+        point_projectile_present: dirty_mask & ENTITY_DELTA_POINT != 0
+            && entity.point_projectile.is_some(),
+        area_effect_state: (dirty_mask & ENTITY_DELTA_AREA != 0)
+            .then(|| entity.area_effect.clone())
+            .flatten(),
+        area_effect_present: dirty_mask & ENTITY_DELTA_AREA != 0 && entity.area_effect.is_some(),
+        full: full.then(|| PreparedEntityParts::from(entity)),
+    }
+}
+
 impl PreparedPublication {
-    fn parts(&self) -> PreparedPublicationParts {
+    fn binding(&self) -> PreparedPublicationBinding {
         let candidate = &self.candidate;
         let (parent_node_id, parent_epoch) = candidate
             .publication_parent
             .expect("prepared candidate has an authenticated parent");
+        PreparedPublicationBinding {
+            semantic_schema_version: PREPARED_SEMANTIC_SCHEMA_VERSION,
+            lineage_id: candidate.publication_lineage.id,
+            prior_node_id: self.prior_node_id,
+            prior_epoch: self.prior_epoch,
+            candidate_node_id: candidate.publication_node_id,
+            candidate_epoch: candidate.publication_epoch,
+            parent_node_id,
+            parent_epoch,
+            prior_next_entity_id: self.prior_next_entity_id,
+            prior_entity_ids: self.prior_entity_ids.clone(),
+            checkpoint_schema_version: candidate.schema_version,
+            checkpoint_generation: candidate.checkpoint_generation,
+            catalog_schema_version: candidate.catalog.schema_version,
+            catalog_fingerprint: candidate.catalog.fingerprint.clone(),
+            catalog_source_fingerprint: candidate.catalog.source_fingerprint.clone(),
+        }
+    }
+}
+
+#[pymethods]
+impl PreparedPublication {
+    fn delta_parts(&self) -> PyResult<PreparedPublicationDeltaParts> {
+        let prior = &self.prior;
+        let candidate = &self.candidate;
+        if !prior.publication_immutable_root_eq(candidate) {
+            return Err(PyValueError::new_err(
+                "prepared delta candidate changed immutable battle configuration",
+            ));
+        }
+        let mut dirty_mask = 0_u64;
+        let battle_changed = prior.sparse_attributes != candidate.sparse_attributes
+            || prior.tick != candidate.tick
+            || !publication_f64_fields_eq([prior.time, prior.dt], [candidate.time, candidate.dt])
+            || prior.double_elixir != candidate.double_elixir
+            || prior.triple_elixir != candidate.triple_elixir
+            || prior.overtime != candidate.overtime
+            || prior.game_over != candidate.game_over
+            || prior.sudden_death != candidate.sudden_death
+            || prior.sudden_death_crowns != candidate.sudden_death_crowns
+            || prior.winner != candidate.winner
+            || prior.win_conditions_dirty != candidate.win_conditions_dirty
+            || prior.next_entity_id != candidate.next_entity_id
+            || prior.idle_eligible != candidate.idle_eligible;
+        if battle_changed {
+            dirty_mask |= DELTA_BATTLE;
+        }
+        let players_changed = prior.players.len() != candidate.players.len()
+            || prior
+                .players
+                .iter()
+                .zip(&candidate.players)
+                .any(|(left, right)| !left.publication_exact_eq(right));
+        if players_changed {
+            dirty_mask |= DELTA_PLAYERS;
+        }
+        let towers_changed = prior.towers.len() != candidate.towers.len()
+            || prior
+                .towers
+                .iter()
+                .zip(&candidate.towers)
+                .any(|(left, right)| !left.publication_exact_eq(right));
+        if towers_changed {
+            dirty_mask |= DELTA_TOWERS;
+        }
+        let rng_changed = prior.rng != candidate.rng;
+        if rng_changed {
+            dirty_mask |= DELTA_RNG;
+        }
+        let pending_changed = prior.next_spell_cast_sequence != candidate.next_spell_cast_sequence
+            || prior.pending_spell_casts.len() != candidate.pending_spell_casts.len()
+            || prior
+                .pending_spell_casts
+                .iter()
+                .zip(&candidate.pending_spell_casts)
+                .any(|(left, right)| !left.publication_exact_eq(right));
+        if pending_changed {
+            dirty_mask |= DELTA_PENDING;
+        }
+        let groups_changed = prior.projectile_damage_groups != candidate.projectile_damage_groups;
+        if groups_changed {
+            dirty_mask |= DELTA_GROUPS;
+        }
+
+        let mut entities = Vec::new();
+        for (prior_entity, candidate_entity) in prior.entities.iter().zip(candidate.entities.iter())
+        {
+            if !prior_entity.publication_immutable_prefix_eq(candidate_entity) {
+                return Err(PyValueError::new_err(format!(
+                    "prepared delta candidate changed immutable entity prefix {}",
+                    prior_entity.id
+                )));
+            }
+            let mut entity_mask = 0_u64;
+            if prior_entity.sparse_attributes != candidate_entity.sparse_attributes {
+                entity_mask |= ENTITY_DELTA_PRESENCE;
+            }
+            if !prior_entity.publication_base_eq(candidate_entity) {
+                entity_mask |= ENTITY_DELTA_BASE;
+            }
+            if prior_entity.shields != candidate_entity.shields
+                || prior_entity.shield_break_count != candidate_entity.shield_break_count
+            {
+                entity_mask |= ENTITY_DELTA_SHIELDS;
+            }
+            if !publication_option_exact_eq(
+                &prior_entity.modifier_state,
+                &candidate_entity.modifier_state,
+            ) {
+                entity_mask |= ENTITY_DELTA_MODIFIER;
+            }
+            if !publication_option_exact_eq(&prior_entity.movement, &candidate_entity.movement) {
+                entity_mask |= ENTITY_DELTA_MOVEMENT;
+            }
+            if !publication_option_exact_eq(
+                &prior_entity.locked_combat,
+                &candidate_entity.locked_combat,
+            ) {
+                entity_mask |= ENTITY_DELTA_COMBAT;
+            }
+            if !publication_option_exact_eq(
+                &prior_entity.building_lifetime,
+                &candidate_entity.building_lifetime,
+            ) {
+                entity_mask |= ENTITY_DELTA_BUILDING_LIFETIME;
+            }
+            if !publication_option_exact_eq(
+                &prior_entity.building_impact,
+                &candidate_entity.building_impact,
+            ) {
+                entity_mask |= ENTITY_DELTA_BUILDING_IMPACT;
+            }
+            if !publication_option_exact_eq(
+                &prior_entity.point_projectile,
+                &candidate_entity.point_projectile,
+            ) {
+                entity_mask |= ENTITY_DELTA_POINT;
+            }
+            if !publication_option_exact_eq(
+                &prior_entity.area_effect,
+                &candidate_entity.area_effect,
+            ) {
+                entity_mask |= ENTITY_DELTA_AREA;
+            }
+            if entity_mask != 0 {
+                entities.push(prepared_entity_delta(candidate_entity, entity_mask, false));
+            }
+        }
+        entities.extend(
+            candidate.entities[prior.entities.len()..]
+                .iter()
+                .map(|entity| prepared_entity_delta(entity, ENTITY_DELTA_FULL, true)),
+        );
+
+        Ok(PreparedPublicationDeltaParts {
+            version: PREPARED_PUBLICATION_DELTA_VERSION,
+            binding: self.binding(),
+            all_entity_ids: candidate.entities.iter().map(|entity| entity.id).collect(),
+            active_entity_ids: candidate
+                .entities
+                .iter()
+                .filter(|entity| entity.active)
+                .map(|entity| entity.id)
+                .collect(),
+            next_entity_id: candidate.next_entity_id,
+            dirty_mask,
+            battle: battle_changed.then(|| prepared_battle_parts(candidate)),
+            idle_eligible: battle_changed.then_some(candidate.idle_eligible),
+            players: players_changed.then(|| candidate.players.clone()),
+            towers: towers_changed.then(|| candidate.towers.clone()),
+            entities,
+            rng: rng_changed.then(|| candidate.rng.clone()),
+            pending_spells: pending_changed.then(|| PreparedPendingSpellParts {
+                next_sequence: candidate.next_spell_cast_sequence,
+                casts: candidate.pending_spell_casts.clone(),
+            }),
+            projectile_groups: groups_changed.then(|| candidate.projectile_damage_groups.clone()),
+        })
+    }
+
+    fn parts(&self) -> PreparedPublicationParts {
+        let candidate = &self.candidate;
         PreparedPublicationParts {
             version: PREPARED_PUBLICATION_VERSION,
-            binding: PreparedPublicationBinding {
-                semantic_schema_version: PREPARED_SEMANTIC_SCHEMA_VERSION,
-                lineage_id: candidate.publication_lineage.id,
-                prior_node_id: self.prior_node_id,
-                prior_epoch: self.prior_epoch,
-                candidate_node_id: candidate.publication_node_id,
-                candidate_epoch: candidate.publication_epoch,
-                parent_node_id,
-                parent_epoch,
-                prior_next_entity_id: self.prior_next_entity_id,
-                prior_entity_ids: self.prior_entity_ids.clone(),
-                checkpoint_schema_version: candidate.schema_version,
-                checkpoint_generation: candidate.checkpoint_generation,
-                catalog_schema_version: candidate.catalog.schema_version,
-                catalog_fingerprint: candidate.catalog.fingerprint.clone(),
-                catalog_source_fingerprint: candidate.catalog.source_fingerprint.clone(),
-            },
-            battle: PreparedBattleParts {
-                sparse_attribute_presence: candidate.sparse_attributes,
-                tick: candidate.tick,
-                time: candidate.time,
-                dt: candidate.dt,
-                double_elixir: candidate.double_elixir,
-                triple_elixir: candidate.triple_elixir,
-                overtime: candidate.overtime,
-                game_over: candidate.game_over,
-                sudden_death: candidate.sudden_death,
-                sudden_death_crowns: candidate.sudden_death_crowns,
-                winner: candidate.winner,
-                win_conditions_dirty: candidate.win_conditions_dirty,
-                next_entity_id: candidate.next_entity_id,
-            },
+            binding: self.binding(),
+            battle: prepared_battle_parts(candidate),
             players: candidate.players.clone(),
             towers: candidate.towers.clone(),
             entities: candidate
@@ -7326,6 +8439,7 @@ impl ResidentBattle {
             prior_epoch: prior.publication_epoch,
             prior_next_entity_id: prior.next_entity_id,
             prior_entity_ids: prior.entities.iter().map(|entity| entity.id).collect(),
+            prior: prior.clone(),
             candidate: self.clone(),
         })
     }
@@ -11775,5 +12889,51 @@ mod tests {
                 "{encoded}"
             );
         }
+    }
+
+    #[test]
+    fn publication_exact_comparison_preserves_float_bits_and_scalar_kind() {
+        let nan_a = f64::from_bits(0x7ff8_0000_0000_0001);
+        let nan_b = f64::from_bits(0x7ff8_0000_0000_0002);
+        assert!(publication_f64_eq(-0.0, f64::from_bits(1_u64 << 63)));
+        assert!(!publication_f64_eq(0.0, -0.0));
+        assert!(publication_f64_eq(nan_a, nan_a));
+        assert!(!publication_f64_eq(nan_a, nan_b));
+        assert!(ExactScalar::Int(1) != ExactScalar::Float(1.0_f64.to_bits()));
+        assert!(!publication_optional_f64_eq(None, Some(0.0)));
+
+        let dynamic = ModifierEffect {
+            remaining: nan_a,
+            movement: 0.0,
+            attack: 1.0,
+            spawn: 1.0,
+        };
+        let mut changed_dynamic = dynamic.clone();
+        assert!(dynamic.publication_exact_eq(&changed_dynamic));
+        changed_dynamic.remaining = nan_b;
+        assert!(!dynamic.publication_exact_eq(&changed_dynamic));
+        changed_dynamic = dynamic.clone();
+        changed_dynamic.movement = -0.0;
+        assert!(!dynamic.publication_exact_eq(&changed_dynamic));
+
+        let static_config = PointWeapon {
+            travel_speed: nan_a,
+            tracks_target: true,
+            start_radius: 0.0,
+            y_offset: 0.0,
+            splash_radius: 0.0,
+            hit_planes: Some((true, false)),
+            crown_tower_damage_multiplier: 1.0,
+            stun_duration: 0.0,
+            slow_duration: 0.0,
+            slow_multiplier: 1.0,
+        };
+        let mut changed_static = static_config.clone();
+        assert!(static_config.publication_exact_eq(&changed_static));
+        changed_static.travel_speed = nan_b;
+        assert!(!static_config.publication_exact_eq(&changed_static));
+        changed_static = static_config.clone();
+        changed_static.start_radius = -0.0;
+        assert!(!static_config.publication_exact_eq(&changed_static));
     }
 }

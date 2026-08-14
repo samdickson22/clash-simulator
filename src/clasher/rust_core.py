@@ -679,6 +679,7 @@ def _decode_prepared_publication_parts(value: Any) -> MappingProxyType[str, Any]
 
 _PREPARED_PUBLICATION_AUTHORITY: Final = object()
 _PREPARED_PUBLICATION_RAW_CONSUMER: Final = object()
+_PREPARED_PUBLICATION_DELTA_CONSUMER: Final = object()
 
 
 class ResidentPreparedPublication:
@@ -742,6 +743,27 @@ class ResidentPreparedPublication:
             raise TypeError("resident prepared publication binding is not a mapping")
         if binding.get("semantic_schema_version") != 7:
             raise ValueError("unsupported resident prepared semantic schema")
+        return cast(dict[str, Any], value)
+
+    def _consume_delta_parts(self, authority: object) -> dict[str, Any]:
+        """Return one native field-group delta to the trusted test decoder."""
+        if authority is not _PREPARED_PUBLICATION_DELTA_CONSUMER:
+            raise TypeError("delta prepared publication consumption is runtime-owned")
+        if self._consumed:
+            raise RuntimeError("resident prepared publication was already consumed")
+        object.__setattr__(self, "_consumed", True)
+        value = self._native.delta_parts()
+        if type(value) is not dict:
+            raise TypeError("resident prepared publication delta is not a mapping")
+        if value.get("version") != 1:
+            raise ValueError("unsupported resident prepared delta version")
+        binding = value.get("binding")
+        if type(binding) is not dict:
+            raise TypeError(
+                "resident prepared publication delta binding is not a mapping"
+            )
+        if binding.get("semantic_schema_version") != 7:
+            raise ValueError("unsupported resident prepared delta semantic schema")
         return cast(dict[str, Any], value)
 
 
