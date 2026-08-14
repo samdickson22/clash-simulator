@@ -12,6 +12,7 @@ from .differential import (
     canonical_battle_snapshot,
     snapshot_bytes,
 )
+from .entities import Building
 
 try:
     from _clasher_rust import (  # type: ignore[import-untyped]
@@ -108,6 +109,9 @@ class ResidentPlayerState:
     next_card_refill_cooldown_ms: int
     hand: tuple[str | None, ...]
     cycle_queue: tuple[str, ...]
+    king_tower_hp: float
+    left_tower_hp: float
+    right_tower_hp: float
 
     def append_hash_payload(self, payload: bytearray) -> None:
         payload.extend(struct.pack("<qddqQ", self.player_id, self.elixir, self.max_elixir, self.next_card_refill_cooldown_ms, len(self.hand)))
@@ -120,6 +124,48 @@ class ResidentPlayerState:
         payload.extend(struct.pack("<Q", len(self.cycle_queue)))
         for card in self.cycle_queue:
             _append_string(payload, card)
+        payload.extend(
+            struct.pack(
+                "<ddd",
+                self.king_tower_hp,
+                self.left_tower_hp,
+                self.right_tower_hp,
+            )
+        )
+
+
+@dataclass(frozen=True)
+class ResidentTowerState:
+    id: int
+    player_id: int
+    slot: str
+    hp: float
+    hp_milli: int
+    is_alive: bool
+    is_active: bool
+    last_attack_time: float
+
+    def append_hash_payload(self, payload: bytearray) -> None:
+        payload.extend(struct.pack("<qq", self.id, self.player_id))
+        _append_string(payload, self.slot)
+        payload.extend(
+            struct.pack(
+                "<dq??d",
+                self.hp,
+                self.hp_milli,
+                self.is_alive,
+                self.is_active,
+                self.last_attack_time,
+            )
+        )
+
+
+@dataclass(frozen=True)
+class ResidentOutcomeState:
+    sudden_death: bool
+    game_over: bool
+    winner: int | None
+    sudden_death_crowns: tuple[int, int]
 
 
 def _append_string(payload: bytearray, value: str) -> None:
@@ -169,9 +215,33 @@ class ResidentRustBattle:
                     int(player.next_card_refill_cooldown_ms),
                     list(player.hand),
                     list(player.cycle_queue),
+                    float(player.king_tower_hp),
+                    float(player.left_tower_hp),
+                    float(player.right_tower_hp),
                 )
                 for player in battle.players
             ],
+            towers=[
+                (
+                    int(entity.id),
+                    int(entity.player_id),
+                    str(entity._crown_tower_slot),
+                    float(entity.hitpoints),
+                    round(float(entity.hitpoints) * 1000.0),
+                    bool(entity.is_alive),
+                    bool(getattr(entity, "_tower_active", True)),
+                    float(entity.last_attack_time),
+                )
+                for entity in battle.entities.values()
+                if isinstance(entity, Building)
+                and entity._crown_tower_slot in {"left", "right", "king"}
+            ],
+            idle_eligible=bool(battle.can_fast_forward_idle()),
+            sparse_idle_win_checks=True,
+            sudden_death=bool(battle.sudden_death),
+            sudden_death_crowns=tuple(battle._sudden_death_crowns),
+            tiebreaker_time=float(battle.tiebreaker_time),
+            winner=battle.winner,
         )
         return cls(native)
 
@@ -209,12 +279,49 @@ class ResidentRustBattle:
                 next_card_refill_cooldown_ms=int(values[3]),
                 hand=tuple(values[4]),
                 cycle_queue=tuple(values[5]),
+                king_tower_hp=float(values[6]),
+                left_tower_hp=float(values[7]),
+                right_tower_hp=float(values[8]),
             )
             for values in self._native.player_states()
         )
 
     def player_sha256(self) -> str:
         return str(self._native.player_sha256())
+
+    @property
+    def supports_idle_ticks(self) -> bool:
+        return bool(self._native.supports_idle_ticks())
+
+    def advance_idle_ticks(self, ticks: int) -> int:
+        return int(self._native.advance_idle_ticks(ticks))
+
+    def tower_states(self) -> tuple[ResidentTowerState, ...]:
+        return tuple(
+            ResidentTowerState(
+                id=int(values[0]),
+                player_id=int(values[1]),
+                slot=str(values[2]),
+                hp=float(values[3]),
+                hp_milli=int(values[4]),
+                is_alive=bool(values[5]),
+                is_active=bool(values[6]),
+                last_attack_time=float(values[7]),
+            )
+            for values in self._native.tower_states()
+        )
+
+    def outcome_state(self) -> ResidentOutcomeState:
+        sudden_death, game_over, winner, crowns = self._native.outcome_state()
+        return ResidentOutcomeState(
+            sudden_death=bool(sudden_death),
+            game_over=bool(game_over),
+            winner=None if winner is None else int(winner),
+            sudden_death_crowns=(int(crowns[0]), int(crowns[1])),
+        )
+
+    def idle_sha256(self) -> str:
+        return str(self._native.idle_sha256())
 
     def checkpoint_bytes(self) -> bytes:
         return bytes(self._native.checkpoint_bytes())
@@ -278,6 +385,9 @@ def python_player_states(battle: Any) -> tuple[ResidentPlayerState, ...]:
             ),
             hand=tuple(player.hand),
             cycle_queue=tuple(player.cycle_queue),
+            king_tower_hp=float(player.king_tower_hp),
+            left_tower_hp=float(player.left_tower_hp),
+            right_tower_hp=float(player.right_tower_hp),
         )
         for player in battle.players
     )
@@ -317,6 +427,99 @@ def compare_player_phase(battle: Any, resident: ResidentRustBattle) -> None:
         f"expected={player_states_sha256(expected)} "
         f"actual={resident.player_sha256()}"
     )
+
+
+def python_tower_states(battle: Any) -> tuple[ResidentTowerState, ...]:
+    return tuple(
+        ResidentTowerState(
+            id=int(entity.id),
+            player_id=int(entity.player_id),
+            slot=str(entity._crown_tower_slot),
+            hp=float(entity.hitpoints),
+            hp_milli=round(float(entity.hitpoints) * 1000.0),
+            is_alive=bool(entity.is_alive),
+            is_active=bool(getattr(entity, "_tower_active", True)),
+            last_attack_time=float(entity.last_attack_time),
+        )
+        for entity in battle.entities.values()
+        if isinstance(entity, Building)
+        and entity._crown_tower_slot in {"left", "right", "king"}
+    )
+
+
+def python_outcome_state(battle: Any) -> ResidentOutcomeState:
+    return ResidentOutcomeState(
+        sudden_death=bool(battle.sudden_death),
+        game_over=bool(battle.game_over),
+        winner=battle.winner,
+        sudden_death_crowns=tuple(battle._sudden_death_crowns),
+    )
+
+
+def idle_state_sha256(battle: Any) -> str:
+    clock = BattleClockState(
+        tick=int(battle.tick),
+        time=float(battle.time),
+        dt=float(battle.dt),
+        double_elixir=bool(battle.double_elixir),
+        triple_elixir=bool(battle.triple_elixir),
+        overtime=bool(battle.overtime),
+        game_over=bool(battle.game_over),
+    )
+    outcome = python_outcome_state(battle)
+    players = python_player_states(battle)
+    towers = python_tower_states(battle)
+    payload = bytearray(struct.pack("<qd", clock.tick, clock.time))
+    payload.extend(
+        bytes(
+            (
+                clock.double_elixir,
+                clock.triple_elixir,
+                clock.overtime,
+                outcome.sudden_death,
+                outcome.game_over,
+            )
+        )
+    )
+    if outcome.winner is None:
+        payload.append(0)
+    else:
+        payload.append(1)
+        payload.extend(struct.pack("<q", outcome.winner))
+    payload.extend(struct.pack("<qq", *outcome.sudden_death_crowns))
+    payload.extend(struct.pack("<Q", len(players)))
+    for player in players:
+        player.append_hash_payload(payload)
+    payload.extend(struct.pack("<Q", len(towers)))
+    for tower in towers:
+        tower.append_hash_payload(payload)
+    return hashlib.sha256(payload).hexdigest()
+
+
+def compare_idle_state(battle: Any, resident: ResidentRustBattle) -> None:
+    compare_clock_phase(battle, resident)
+    compare_player_phase(battle, resident)
+    expected_towers = python_tower_states(battle)
+    actual_towers = resident.tower_states()
+    if expected_towers != actual_towers:
+        raise AssertionError(
+            "resident Rust idle parity mismatch field=towers "
+            f"expected={expected_towers!r} actual={actual_towers!r}"
+        )
+    expected_outcome = python_outcome_state(battle)
+    actual_outcome = resident.outcome_state()
+    if expected_outcome != actual_outcome:
+        raise AssertionError(
+            "resident Rust idle parity mismatch field=outcome "
+            f"expected={expected_outcome!r} actual={actual_outcome!r}"
+        )
+    expected_hash = idle_state_sha256(battle)
+    actual_hash = resident.idle_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust idle parity mismatch field=hash "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
 
 
 assert SNAPSHOT_SCHEMA_VERSION == 1

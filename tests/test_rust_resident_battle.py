@@ -4,12 +4,14 @@ import hashlib
 
 import pytest
 
-from clasher.battle import BattleState
+from clasher.arena import Position
+from clasher.battle import BattleState, PendingSpellCast
 from clasher.differential import canonical_battle_snapshot, snapshot_bytes
 from clasher.rust_core import (
     ResidentRustBattle,
     RustBattleMode,
     compare_clock_phase,
+    compare_idle_state,
     compare_player_phase,
     rust_core_available,
 )
@@ -171,3 +173,53 @@ def test_player_phase_preserves_lowest_empty_slot_and_queue_order() -> None:
         "Minions",
     )
     assert resident.player_states()[0].cycle_queue == ("Knight", "Wizard")
+
+
+@pytest.mark.parametrize("start_time", [0.0, 119.9, 179.9, 239.9, 299.9])
+def test_resident_idle_ticks_match_python_exactly(start_time: float) -> None:
+    battle = BattleState()
+    battle.time = start_time
+    battle.tick = round(start_time / battle.dt)
+    battle._update_battle_phases()
+    resident = ResidentRustBattle.from_battle(battle)
+    assert resident.supports_idle_ticks
+
+    rust_advanced = resident.advance_idle_ticks(8)
+    python_advanced = battle.fast_forward_idle_ticks(8)
+
+    assert rust_advanced == python_advanced
+    compare_idle_state(battle, resident)
+
+
+def test_resident_idle_tiebreaker_matches_fixed_point_tower_order() -> None:
+    battle = BattleState()
+    battle.time = battle.tiebreaker_time - battle.dt
+    battle.tick = round(battle.time / battle.dt)
+    battle.sudden_death = True
+    battle.overtime = True
+    battle.double_elixir = True
+    battle.triple_elixir = True
+    battle.players[0].left_tower_hp = 1500.125
+    battle.players[1].left_tower_hp = 1500.124
+    for entity in battle.entities.values():
+        if getattr(entity, "_crown_tower_slot", None) == "left":
+            entity.hitpoints = battle.players[entity.player_id].left_tower_hp
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.advance_idle_ticks(1) == battle.fast_forward_idle_ticks(1)
+
+    compare_idle_state(battle, resident)
+    assert battle.game_over
+    assert battle.winner == 0
+
+
+def test_resident_idle_path_rejects_failed_python_preflight() -> None:
+    battle = BattleState()
+    battle._pending_spell_casts.append(
+        PendingSpellCast(1.0, 0, "Arrows", 0, Position(9.0, 16.0))
+    )
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert not resident.supports_idle_ticks
+    with pytest.raises(RuntimeError, match="did not pass the Python idle preflight"):
+        resident.advance_idle_ticks(1)
