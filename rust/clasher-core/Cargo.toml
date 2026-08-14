@@ -10,3 +10,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.26", features = ["abi3-py310", "extension-module"] }
+serde_json = "1.0"
+sha2 = "0.10"
