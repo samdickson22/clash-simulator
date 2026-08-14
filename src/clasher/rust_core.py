@@ -1127,6 +1127,7 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
             continue
         river_origin = getattr(entity, "_river_jump_origin", None)
         river_target = getattr(entity, "_river_jump_target", None)
+        knockback_target = getattr(entity, "_knockback_target", None)
         cache_key = getattr(entity, "_ground_path_cache_key", None)
         route_kind = "absent"
         route_goal: list[int] | None = None
@@ -1197,6 +1198,20 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                         getattr(entity.card_stats, "jump_speed", 0.0) or 0.0
                     )
                 ),
+                "knockback_interrupts_combat": bool(
+                    entity._knockback_interrupts_combat
+                ),
+                "knockback_target": (
+                    None
+                    if knockback_target is None
+                    else [
+                        _exact_scalar(knockback_target.x),
+                        _exact_scalar(knockback_target.y),
+                    ]
+                ),
+                "knockback_velocity_work": int(
+                    entity._knockback_velocity_work
+                ),
                 "native_avoidance": int(
                     getattr(entity, "_native_avoidance", 0)
                 ),
@@ -1257,6 +1272,9 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                         "_stun_interrupt_deferred_until_landing",
                         False,
                     )
+                ),
+                "forced_movement_active": bool(
+                    entity.forced_movement_active
                 ),
                 "vector_bypasses_cap": bool(
                     entity._movement_vector_bypasses_cap

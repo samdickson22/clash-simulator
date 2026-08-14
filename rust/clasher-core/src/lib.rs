@@ -1092,8 +1092,9 @@ struct ResidentMovementState {
     route_jump_height: bool,
     native_lane_id: i64,
     death_spawn_travel_ticks: i64,
-    knockback_target_present: bool,
+    knockback_target: Option<(f64, f64)>,
     knockback_velocity_work: i64,
+    knockback_interrupts_combat: bool,
     river_jump_active: bool,
     river_jump_origin: Option<(f64, f64)>,
     river_jump_target: Option<(f64, f64)>,
@@ -1169,10 +1170,12 @@ impl ResidentMovementState {
             route_jump_height: route_cache.jump_height,
             native_lane_id: required_i64(fields, "_native_lane_id")?,
             death_spawn_travel_ticks: required_i64(fields, "_death_spawn_travel_ticks_remaining")?,
-            knockback_target_present: fields
-                .get("_knockback_target")
-                .is_some_and(|value| !value.is_null()),
+            knockback_target: optional_position(fields, "_knockback_target")?,
             knockback_velocity_work: required_i64(fields, "_knockback_velocity_work")?,
+            knockback_interrupts_combat: fields
+                .get("_knockback_interrupts_combat")
+                .and_then(Value::as_bool)
+                .unwrap_or(true),
             river_jump_active: normalized_optional_bool(fields, "_river_jump_active"),
             river_jump_origin: optional_position(fields, "_river_jump_origin")?,
             river_jump_target: optional_position(fields, "_river_jump_target")?,
@@ -3142,7 +3145,7 @@ impl ResidentBattle {
                 && movement.pending_x.is_finite()
                 && movement.pending_y.is_finite()
                 && movement.death_spawn_travel_ticks == 0
-                && !movement.knockback_target_present
+                && movement.knockback_target.is_none()
                 && movement.knockback_velocity_work == 0
                 && !movement.river_jump_active
                 && !movement.special_move_active
@@ -4023,6 +4026,36 @@ impl ResidentBattle {
 }
 
 impl ResidentBattle {
+    fn resident_knockback_state_supported(&self, entity: &ResidentEntity) -> bool {
+        let Some(movement) = entity.movement.as_ref() else {
+            return false;
+        };
+        match movement.knockback_target {
+            Some((target_x, target_y)) => {
+                if entity.entity_kind != 0
+                    || !target_x.is_finite()
+                    || !target_y.is_finite()
+                    || !(0..=700).contains(&movement.knockback_velocity_work)
+                    || movement.knockback_velocity_work % 25 != 0
+                    || !movement.forced_movement_active
+                {
+                    return false;
+                }
+                let dx = target_x - entity.position_x.as_f64();
+                let dy = target_y - entity.position_y.as_f64();
+                dx.is_finite()
+                    && dy.is_finite()
+                    && (-9.75..=self.arena_width_tiles as f64 + 9.75).contains(&target_x)
+                    && (-9.75..=self.arena_height_tiles as f64 + 9.75).contains(&target_y)
+            }
+            None => {
+                movement.knockback_velocity_work == 0
+                    && movement.knockback_interrupts_combat
+                    && !movement.forced_movement_active
+            }
+        }
+    }
+
     fn supports_restricted_movement_phase(&self, allow_ground: bool) -> bool {
         let needs_live_projectile_reservations = self.entities.iter().any(|entity| {
             entity.active
@@ -4096,9 +4129,8 @@ impl ResidentBattle {
                 && movement.pending_x.is_finite()
                 && movement.pending_y.is_finite()
                 && movement.death_spawn_travel_ticks == 0
-                && !movement.knockback_target_present
-                && movement.knockback_velocity_work == 0
-                && !movement.forced_movement_active
+                && self.resident_knockback_state_supported(entity)
+                && !(movement.river_jump_active && movement.knockback_target.is_some())
                 && !movement.kamikaze_primed;
             if !common || entity.entity_kind == 1 || combat.movement_target_id.is_none() {
                 return common;
@@ -4150,7 +4182,15 @@ impl ResidentBattle {
             .collect::<Vec<_>>();
         for entity_index in movement_indices {
             if self.entities[entity_index].entity_kind == 0 {
-                self.accumulate_stationary_collision_for(entity_index);
+                let skip_final_knockback_collision = self.entities[entity_index]
+                    .movement
+                    .as_ref()
+                    .is_some_and(|movement| {
+                        movement.knockback_target.is_some() && movement.knockback_velocity_work < 1
+                    });
+                if !skip_final_knockback_collision {
+                    self.accumulate_stationary_collision_for(entity_index);
+                }
             }
             self.begin_resident_movement(entity_index);
             if self.entities[entity_index].entity_kind == 0 {
@@ -4608,16 +4648,21 @@ impl ResidentBattle {
     }
 
     fn advance_resident_natural_movement(&mut self, entity_index: usize) {
-        let (river_jump_active, special_move_consumed_tick) = {
+        let (knockback_active, river_jump_active, special_move_consumed_tick) = {
             let movement = self.entities[entity_index]
                 .movement
                 .as_ref()
                 .expect("resident troop requires movement state");
             (
+                movement.knockback_target.is_some(),
                 movement.river_jump_active,
                 movement.special_move_consumed_tick,
             )
         };
+        if knockback_active {
+            self.update_resident_knockback(entity_index);
+            return;
+        }
         if river_jump_active {
             self.entities[entity_index]
                 .movement
@@ -4678,6 +4723,63 @@ impl ResidentBattle {
             .expect("resident troop requires movement state")
             .native_natural_movement_active = true;
         self.move_resident_towards_target(entity_index, target_index);
+    }
+
+    fn update_resident_knockback(&mut self, entity_index: usize) {
+        let (target_x, target_y, velocity_work, external_x, external_y) = {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state");
+            let (target_x, target_y) = movement
+                .knockback_target
+                .expect("knockback preflight requires target");
+            movement.knockback_velocity_work -= 25;
+            let (external_x, external_y) = if movement.pending_consumed {
+                (0.0, 0.0)
+            } else {
+                movement.pending_consumed = true;
+                (movement.pending_x, movement.pending_y)
+            };
+            (
+                target_x,
+                target_y,
+                movement.knockback_velocity_work,
+                external_x,
+                external_y,
+            )
+        };
+        let current_x = self.entities[entity_index].position_x.as_f64();
+        let current_y = self.entities[entity_index].position_y.as_f64();
+        let dx = logic_units(target_x - current_x);
+        let dy = logic_units(target_y - current_y);
+        let remaining = integer_sqrt(
+            (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128,
+        );
+        let movement_units = velocity_work.clamp(0, 250).min(remaining);
+        let (move_x, move_y) = Self::movement_component_vector_logic_units(dx, dy, movement_units);
+        let combined_x = move_x + logic_units(external_x);
+        let combined_y = move_y + logic_units(external_y);
+        if combined_x != 0 || combined_y != 0 {
+            let new_x = (logic_units(current_x) + combined_x) as f64 / 1000.0;
+            let new_y = (logic_units(current_y) + combined_y) as f64 / 1000.0;
+            self.entities[entity_index]
+                .position_x
+                .set_f64(new_x.clamp(0.25, self.arena_width_tiles as f64 - 0.25));
+            self.entities[entity_index]
+                .position_y
+                .set_f64(new_y.clamp(0.25, self.arena_height_tiles as f64 - 0.25));
+        }
+        if velocity_work < 0 {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state");
+            movement.knockback_target = None;
+            movement.knockback_velocity_work = 0;
+            movement.knockback_interrupts_combat = true;
+            movement.forced_movement_active = false;
+        }
     }
 
     fn update_resident_river_jump(&mut self, entity_index: usize) {
@@ -5317,6 +5419,11 @@ impl ResidentBattle {
                     "ground_path_backwards": combat.ground_path_backwards,
                     "id": entity.id,
                     "jump_speed": exact_f64_value(movement.jump_speed),
+                    "knockback_interrupts_combat": movement.knockback_interrupts_combat,
+                    "knockback_target": movement.knockback_target.map(|(x, y)| {
+                        json!([exact_f64_value(x), exact_f64_value(y)])
+                    }),
+                    "knockback_velocity_work": movement.knockback_velocity_work,
                     "native_avoidance": movement.native_avoidance,
                     "native_lane_id": movement.native_lane_id,
                     "native_natural_movement_active": movement.native_natural_movement_active,
@@ -5349,6 +5456,7 @@ impl ResidentBattle {
                     "special_move_active": movement.special_move_active,
                     "special_move_consumed_tick": movement.special_move_consumed_tick,
                     "stun_interrupt_deferred_until_landing": movement.stun_interrupt_deferred_until_landing,
+                    "forced_movement_active": movement.forced_movement_active,
                     "vector_bypasses_cap": movement.vector_bypasses_cap,
                     "vector_count": movement.vector_count,
                     "vector_x_units": movement.vector_x_units,
