@@ -4,7 +4,7 @@ import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Projectile, Troop
+from clasher.entities import Building, Projectile, Troop
 from clasher.rust_core import (
     ResidentRustBattle,
     compare_locked_direct_combat_phase,
@@ -188,6 +188,66 @@ def test_point_projectile_matches_current_air_plane(
     assert target.hitpoints == hitpoints_before
 
 
+def test_splash_projectile_snapshots_exact_troop_hitboxes_and_planes() -> None:
+    battle, primary, projectile = _fixture(
+        target_position=Position(9.0, 10.25),
+    )
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+
+    def spawn(position: Position, player_id: int) -> Troop:
+        troop = battle._spawn_entity(Troop, position, player_id, stats)
+        troop.deploy_delay_remaining = 0.0
+        troop.mechanics = []
+        return troop
+
+    bystander = spawn(Position(9.8, 10.25), 1)
+    tangent = spawn(Position(10.5, 10.25), 1)
+    ally = spawn(Position(9.4, 10.25), 0)
+    airborne = spawn(Position(9.5, 10.25), 1)
+    airborne.is_air_unit = True
+    invisible = spawn(Position(9.6, 10.25), 1)
+    invisible._stealth_until = 1_000
+    projectile.splash_radius = 1.0
+    projectile.hits_air = False
+    projectile.hits_ground = True
+    hitpoints_before = {
+        entity.id: entity.hitpoints
+        for entity in (primary, bystander, tangent, ally, airborne, invisible)
+    }
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_point_projectile_phase
+    resident.advance_point_projectile_phase()
+    _advance_python(battle)
+    compare_point_projectile_phase(battle, resident)
+
+    assert primary.hitpoints == hitpoints_before[primary.id] - projectile.damage
+    assert bystander.hitpoints == hitpoints_before[bystander.id] - projectile.damage
+    for excluded in (tangent, ally, airborne, invisible):
+        assert excluded.hitpoints == hitpoints_before[excluded.id]
+
+
+def test_splash_projectile_rejects_building_geometry_before_mutation() -> None:
+    battle, _, projectile = _fixture()
+    stats = battle.card_loader.get_card("Cannon")
+    assert stats is not None
+    battle._spawn_entity(Building, Position(9.0, 11.0), 1, stats)
+    projectile.splash_radius = 1.0
+    resident = ResidentRustBattle.from_battle(battle)
+    entity_before = resident.entity_state_bytes()
+    projectile_before = resident.point_projectile_state_bytes()
+    rng_before = resident.rng_state_bytes()
+
+    assert not resident.supports_point_projectile_phase
+    with pytest.raises(RuntimeError, match="unsupported object or payload"):
+        resident.advance_point_projectile_phase()
+
+    assert resident.entity_state_bytes() == entity_before
+    assert resident.point_projectile_state_bytes() == projectile_before
+    assert resident.rng_state_bytes() == rng_before
+
+
 @pytest.mark.parametrize(
     ("source_position", "target_position"),
     [
@@ -240,10 +300,13 @@ def test_direct_combat_launches_resident_point_projectile(
     "card_name",
     [
         "Archers",
+        "BabyDragon",
+        "Bomber",
         "DartGoblin",
         "MegaMinion",
         "Minions",
         "Musketeer",
+        "Princess",
         "SpearGoblins",
     ],
 )
@@ -286,7 +349,6 @@ def test_enabled_simple_point_weapons_launch_without_card_special_cases(
 @pytest.mark.parametrize(
     ("field", "value"),
     [
-        ("splash_radius", 1.0),
         ("stun_duration", 0.5),
         ("knockback_distance", 1.0),
         ("damage_waves", 2),

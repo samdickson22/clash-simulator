@@ -252,7 +252,7 @@ def test_direct_troop_combat_equal_distance_keeps_encounter_order() -> None:
 @pytest.mark.parametrize(
     ("card_name", "expected_reason"),
     [
-        ("BabyDragon", "projectile_payload"),
+        ("MagicArcher", "projectile_payload"),
         ("Golem", "executable_mechanics"),
         ("BattleRam", "charge_payload"),
         ("Wallbreakers", "kamikaze_payload"),

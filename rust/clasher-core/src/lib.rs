@@ -593,6 +593,7 @@ struct PointProjectileState {
     target_x: f64,
     target_y: f64,
     travel_speed: f64,
+    splash_radius: f64,
     hits_air: bool,
     hits_ground: bool,
     launch_delay: f64,
@@ -625,9 +626,6 @@ impl PointProjectileState {
         let projectile_range = normalized_f64(fields, "projectile_range")?;
         required_i64(fields, "homing_time_ms")?;
         let start_extra_radius = normalized_f64(fields, "start_extra_radius")?;
-        if splash_radius != 0.0 {
-            unsupported.push("splash_radius".to_owned());
-        }
         if stun_duration != 0.0 || slow_duration != 0.0 || slow_multiplier != 1.0 {
             unsupported.push("status_payload".to_owned());
         }
@@ -660,6 +658,7 @@ impl PointProjectileState {
             target_x: normalized_f64(target, "x")?,
             target_y: normalized_f64(target, "y")?,
             travel_speed: normalized_f64(fields, "travel_speed")?,
+            splash_radius,
             hits_air: required_bool(fields, "hits_air")?,
             hits_ground: required_bool(fields, "hits_ground")?,
             launch_delay: normalized_f64(fields, "launch_delay")?,
@@ -690,6 +689,7 @@ impl PointProjectileState {
             "permanent_homing_disabled_by_temporary": self.permanent_homing_disabled_by_temporary,
             "position_x": entity.position_x.diagnostic_value(),
             "position_y": entity.position_y.diagnostic_value(),
+            "splash_radius": exact_f64_value(self.splash_radius),
             "target_position_x": exact_f64_value(self.target_x),
             "target_position_y": exact_f64_value(self.target_y),
             "start_collision_resolved": self.start_collision_resolved,
@@ -766,6 +766,7 @@ struct LockedDirectCombatState {
     sight_clip_side: f64,
     hidden_building: bool,
     stealth_until_ms: i64,
+    allow_area_damage_when_invisible: bool,
     point_weapon: Option<PointWeapon>,
 }
 
@@ -775,6 +776,8 @@ struct PointWeapon {
     tracks_target: bool,
     start_radius: f64,
     y_offset: f64,
+    splash_radius: f64,
+    hit_planes: Option<(bool, bool)>,
 }
 
 enum CombatPayload {
@@ -794,7 +797,6 @@ impl PointWeapon {
             return Ok(None);
         }
         for (field, reason) in [
-            ("radius", "projectile_splash"),
             ("buffTime", "projectile_status"),
             ("pushback", "projectile_pushback"),
             ("projectileRange", "projectile_range"),
@@ -808,9 +810,6 @@ impl PointWeapon {
         for (field, reason) in [
             ("targetBuffData", "projectile_status"),
             ("spawnProjectileData", "child_projectiles"),
-            ("tidTarget", "projectile_plane_override"),
-            ("hitsAir", "projectile_plane_override"),
-            ("hitsGround", "projectile_plane_override"),
         ] {
             if normalized_mapping_get(projectile_data, field).is_some_and(|value| !value.is_null())
             {
@@ -838,7 +837,45 @@ impl PointWeapon {
         let start_radius =
             optional_normalized_f64(card_fields, "projectile_start_radius")?.unwrap_or(0.0);
         let y_offset = optional_normalized_f64(card_fields, "projectile_y_offset")?.unwrap_or(0.0);
-        if !start_radius.is_finite() || !y_offset.is_finite() {
+        let splash_radius = normalized_mapping_get(projectile_data, "radius")
+            .map(ExactScalar::from_normalized)
+            .transpose()?
+            .map_or(0.0, |value| value.as_f64() / 1000.0);
+        for field in ["hitsAir", "hitsGround"] {
+            if normalized_mapping_get(projectile_data, field)
+                .is_some_and(|value| !value.is_boolean())
+            {
+                unsupported.push("invalid_projectile_plane_override".to_owned());
+            }
+        }
+        if normalized_mapping_get(projectile_data, "tidTarget")
+            .is_some_and(|value| !value.is_string())
+        {
+            unsupported.push("invalid_projectile_plane_override".to_owned());
+        }
+        let hit_planes = if normalized_mapping_get(projectile_data, "hitsAir").is_some()
+            || normalized_mapping_get(projectile_data, "hitsGround").is_some()
+        {
+            Some((
+                normalized_mapping_get(projectile_data, "hitsAir")
+                    .and_then(Value::as_bool)
+                    .unwrap_or(false),
+                normalized_mapping_get(projectile_data, "hitsGround")
+                    .and_then(Value::as_bool)
+                    .unwrap_or(false),
+            ))
+        } else {
+            normalized_mapping_get(projectile_data, "tidTarget")
+                .and_then(Value::as_str)
+                .filter(|value| !value.is_empty())
+                .map(|target_type| {
+                    (
+                        target_type.contains("AIR"),
+                        target_type.contains("GROUND") || target_type.contains("BUILDINGS"),
+                    )
+                })
+        };
+        if !start_radius.is_finite() || !y_offset.is_finite() || !splash_radius.is_finite() {
             unsupported.push("nonfinite_projectile_launch_geometry".to_owned());
         }
         Ok(Some(Self {
@@ -846,6 +883,8 @@ impl PointWeapon {
             tracks_target,
             start_radius,
             y_offset,
+            splash_radius,
+            hit_planes,
         }))
     }
 }
@@ -922,6 +961,10 @@ impl LockedDirectCombatState {
                 .get("_stealth_until")
                 .and_then(Value::as_i64)
                 .unwrap_or(0),
+            allow_area_damage_when_invisible: normalized_optional_bool(
+                card_fields,
+                "allow_area_damage_when_invisible",
+            ),
             point_weapon,
         })
     }
@@ -1037,14 +1080,25 @@ impl ResidentEntity {
         if !mechanics.is_empty() {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
         }
+        let uses_projectile_weapon = locked_combat
+            .as_ref()
+            .is_some_and(|state| state.point_weapon.is_some());
         for (field, reason) in [
-            ("area_damage_radius", "area_damage"),
-            ("projectile_splash_radius", "projectile_splash"),
             ("attack_pushback", "attack_pushback"),
             ("charge_range", "charge_payload"),
         ] {
             if normalized_optional_number_is_nonzero(card_fields, field)? {
                 direct_combat_unsupported.push(reason.to_owned());
+            }
+        }
+        if !uses_projectile_weapon {
+            for (field, reason) in [
+                ("area_damage_radius", "area_damage"),
+                ("projectile_splash_radius", "projectile_splash"),
+            ] {
+                if normalized_optional_number_is_nonzero(card_fields, field)? {
+                    direct_combat_unsupported.push(reason.to_owned());
+                }
             }
         }
         if normalized_optional_bool(card_fields, "self_as_aoe_center") {
@@ -2515,6 +2569,20 @@ impl ResidentBattle {
     }
 
     fn supports_point_projectile_phase(&self) -> bool {
+        let has_splash = self.entities.iter().any(|entity| {
+            entity
+                .point_projectile
+                .as_ref()
+                .is_some_and(|projectile| projectile.splash_radius > 0.0)
+        });
+        if has_splash
+            && self.entities.iter().any(|entity| {
+                (entity.entity_kind == 1)
+                    || (entity.entity_kind == 0 && !entity.mechanics.is_empty())
+            })
+        {
+            return false;
+        }
         self.entities.iter().all(|entity| {
             if entity.entity_kind != 2 {
                 return matches!(entity.entity_kind, 0 | 1);
@@ -2529,6 +2597,7 @@ impl ResidentBattle {
                 || !entity.hitpoints.as_f64().is_finite()
                 || !entity.position_x.as_f64().is_finite()
                 || !entity.position_y.as_f64().is_finite()
+                || !projectile.splash_radius.is_finite()
             {
                 return false;
             }
@@ -2743,13 +2812,14 @@ impl ResidentBattle {
         let player_id = source.player_id;
         let card_name = source.card_name.clone();
         let damage = source.damage.clone();
-        let (hits_air, hits_ground) = {
+        let inherited_hit_planes = {
             let combat = source
                 .locked_combat
                 .as_ref()
                 .expect("point weapon requires combat state");
             (combat.can_attack_air, combat.can_attack_ground)
         };
+        let (hits_air, hits_ground) = weapon.hit_planes.unwrap_or(inherited_hit_planes);
 
         if weapon.tracks_target {
             let pending_dx = logic_units(target_x - launch_x);
@@ -2803,6 +2873,7 @@ impl ResidentBattle {
                 target_x,
                 target_y,
                 travel_speed: weapon.travel_speed,
+                splash_radius: weapon.splash_radius,
                 hits_air,
                 hits_ground,
                 launch_delay: 0.0,
@@ -2929,7 +3000,7 @@ impl ResidentBattle {
                 .max(0.0) as i64
         };
         if remaining <= travel {
-            let (projectile_player, damage, hits_air, hits_ground) = {
+            let (projectile_player, damage, hits_air, hits_ground, splash_radius, source_entity_id) = {
                 let entity = &self.entities[projectile_index];
                 let projectile = entity
                     .point_projectile
@@ -2940,22 +3011,73 @@ impl ResidentBattle {
                     entity.damage.as_f64(),
                     projectile.hits_air,
                     projectile.hits_ground,
+                    projectile.splash_radius,
+                    projectile.source_entity_id,
                 )
             };
-            if let Some(target_index) = target_id.and_then(|id| {
+            let source_is_character = source_entity_id.is_some_and(|id| {
                 self.entities
                     .iter()
-                    .position(|candidate| candidate.id == id)
-            }) {
-                let target_is_air = self.entities[target_index]
-                    .locked_combat
-                    .as_ref()
-                    .is_some_and(|state| state.is_airborne_for_projectile);
-                let can_damage = self.entities[target_index].is_alive
-                    && self.entities[target_index].player_id != projectile_player
-                    && self.entities[target_index].entity_kind == 0
-                    && ((target_is_air && hits_air) || (!target_is_air && hits_ground));
-                if can_damage && damage > 0.0 {
+                    .find(|candidate| candidate.id == id)
+                    .is_some_and(|source| matches!(source.entity_kind, 0 | 1))
+            });
+            let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+            let can_damage_index = |target_index: usize| {
+                let target = &self.entities[target_index];
+                let Some(target_state) = target.locked_combat.as_ref() else {
+                    return false;
+                };
+                target.is_alive
+                    && target.player_id != projectile_player
+                    && target.entity_kind == 0
+                    && ((target_state.is_airborne_for_projectile && hits_air)
+                        || (!target_state.is_airborne_for_projectile && hits_ground))
+            };
+            let hit_targets = if splash_radius <= 0.0 {
+                target_id
+                    .and_then(|id| {
+                        self.entities
+                            .iter()
+                            .position(|candidate| candidate.id == id)
+                    })
+                    .filter(|index| can_damage_index(*index))
+                    .into_iter()
+                    .collect::<Vec<_>>()
+            } else {
+                let center_x_units = logic_units(target_x);
+                let center_y_units = logic_units(target_y);
+                let area_radius_units = logic_units(splash_radius).max(0);
+                self.entities
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(target_index, target)| {
+                        if !can_damage_index(target_index) {
+                            return None;
+                        }
+                        let target_state = target
+                            .locked_combat
+                            .as_ref()
+                            .expect("splash preflight requires combat target state");
+                        if (source_is_character
+                            && target.death_spawn_target_immunity_elapsed_ms >= 0)
+                            || (target_state.stealth_until_ms > now_ms
+                                && !target_state.allow_area_damage_when_invisible)
+                        {
+                            return None;
+                        }
+                        let dx_units = logic_units(target.position_x.as_f64()) - center_x_units;
+                        let dy_units = logic_units(target.position_y.as_f64()) - center_y_units;
+                        let combined_radius =
+                            area_radius_units + logic_units(target_state.collision_radius).max(0);
+                        (i128::from(dx_units) * i128::from(dx_units)
+                            + i128::from(dy_units) * i128::from(dy_units)
+                            < i128::from(combined_radius) * i128::from(combined_radius))
+                        .then_some(target_index)
+                    })
+                    .collect::<Vec<_>>()
+            };
+            if damage > 0.0 {
+                for target_index in hit_targets {
                     let remaining_hp =
                         (self.entities[target_index].hitpoints.as_f64() - damage).max(0.0);
                     if remaining_hp <= 0.0 {
