@@ -94,9 +94,11 @@ def test_resident_death_spawn_travel_matches_complete_trace(
     assert child._death_spawn_travel_target is None
     assert child._death_spawn_travel_ticks_remaining == 0
     if player_id == 0 and origin == Position(9.0, 14.0):
+        # The movement digest includes the data-driven knockback-immunity
+        # trait even though this transport does not exercise knockback.
         assert (
             resident.ground_movement_sha256()
-            == "5d48a2b77ccee131a75c70017fc0cf86053315168981cc61a4b37528dcadf751"
+            == "fec7f7e3e786403a25c3271a55f68cf3a8f62b0d3085fd3034839a3ce6eda7b5"
         )
     assert resident.rng_state_bytes() == rng_before
 

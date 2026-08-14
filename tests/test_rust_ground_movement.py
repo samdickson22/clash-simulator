@@ -128,9 +128,10 @@ def test_ground_movement_fixed_trace_hash_is_pinned() -> None:
         _advance_python_movement(battle)
         compare_ground_movement_phase(battle, resident)
 
+    # The movement digest includes the data-driven knockback-immunity trait.
     assert (
         resident.ground_movement_sha256()
-        == "ae3684e07b47614b9af89547d7d94df07646c4685652c3b688ee8d7d92bc240e"
+        == "c7af5e709b4abbdbeea3c4bf9419dc83a62c7876b436f6e459d5235228ab8897"
     )
     assert resident.rng_state_bytes() == rng_before
 

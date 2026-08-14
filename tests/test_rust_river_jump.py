@@ -104,9 +104,11 @@ def test_resident_river_jump_matches_full_initiation_and_landing_trace(
     compare_ground_movement_phase(battle, resident)
     assert not jumper._special_move_consumed_tick
     if player_id == 0:
+        # The movement digest includes the data-driven knockback-immunity
+        # trait even though this trace is a river transport.
         assert (
             resident.ground_movement_sha256()
-            == "3f3ab32635d2f5ed3ddc28d524e018354875d5a7903ca93c185f45aaa29162c1"
+            == "01de2e2f84012686dd759774667ce293b08bea632fbd64d1d8855b487bf0c235"
         )
     assert resident.rng_state_bytes() == rng_before
 

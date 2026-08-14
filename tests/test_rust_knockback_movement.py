@@ -103,9 +103,11 @@ def test_resident_knockback_matches_complete_velocity_trace(
     assert target._knockback_velocity_work == 0
     assert not target.forced_movement_active
     if player_id == 0 and start == Position(9.0, 10.0):
+        # The movement digest now pins the same data-driven immunity
+        # trait used by the resident radial-knockback gate.
         assert (
             resident.ground_movement_sha256()
-            == "0ee71a41d2dfae1f10083602dd053ad1204a3f56883cd9a8df5ba892eeb6d286"
+            == "9035af94f984ce5cbc711e82171a73492a5b4c40e526260a46d9774dfbb9cf48"
         )
     assert resident.rng_state_bytes() == rng_before
 
