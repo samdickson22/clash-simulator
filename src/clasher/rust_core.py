@@ -44,6 +44,9 @@ FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
 RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 4
+_RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
+    "resident joint-action preview failed after actions during complete ticks: "
+)
 
 
 def _catalog_source_sha256(path: Path) -> str:
@@ -551,6 +554,10 @@ class RustBattleMode(str, Enum):
     OFF = "off"
     SHADOW = "shadow"
     ON = "on"
+
+
+class ResidentPreviewTickError(RuntimeError):
+    """An unpublished resident candidate failed after applying joint actions."""
 
 
 @dataclass(frozen=True)
@@ -1160,6 +1167,40 @@ class ResidentRustBattle:
         return (
             {0: bool(success0), 1: bool(success1)},
             (int(order[0]), int(order[1])),
+        )
+
+    def preview_resident_joint_action_interval(
+        self,
+        action0: int,
+        action1: int,
+        ticks: int,
+    ) -> tuple[ResidentRustBattle, dict[int, bool], tuple[int, int], int]:
+        """Return one unpublished clone after exact joint actions and ticks."""
+
+        try:
+            native, success0, success1, order, advanced = (
+                self._native.preview_joint_action_interval(
+                    int(action0),
+                    int(action1),
+                    int(ticks),
+                )
+            )
+        except RuntimeError as error:
+            message = str(error)
+            if message.startswith(_RESIDENT_PREVIEW_TICK_FAILURE_PREFIX):
+                detail = message.removeprefix(_RESIDENT_PREVIEW_TICK_FAILURE_PREFIX)
+                raise ResidentPreviewTickError(detail) from error
+            raise
+        candidate = type(self)(
+            native,
+            self._birth_catalog,
+            self._action_card_stats,
+        )
+        return (
+            candidate,
+            {0: bool(success0), 1: bool(success1)},
+            (int(order[0]), int(order[1])),
+            int(advanced),
         )
 
     def apply_resident_ordered_interval(

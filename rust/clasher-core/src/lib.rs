@@ -6256,6 +6256,65 @@ impl ResidentBattle {
         ))
     }
 
+    fn preview_joint_action_interval(
+        &self,
+        action0: i64,
+        action1: i64,
+        ticks: i64,
+    ) -> PyResult<(Self, bool, bool, Vec<i64>, i64)> {
+        self.preflight_joint_action(0, action0)?;
+        self.preflight_joint_action(1, action1)?;
+        let allocation_count =
+            self.action_allocation_count(0, action0) + self.action_allocation_count(1, action1);
+        if self
+            .next_entity_id
+            .checked_add(allocation_count)
+            .is_none_or(|next_id| !(0..i64::MAX).contains(&next_id))
+        {
+            return Err(PyRuntimeError::new_err(
+                "resident joint-action preview does not have enough entity-ID allocation headroom",
+            ));
+        }
+
+        // Clone the unpublished root exactly once. All action and tick
+        // mutations remain private to this candidate until Python publishes
+        // the completed decision boundary.
+        let mut candidate = self.clone();
+        let order = candidate.rng.shuffle_indices(2)?;
+        candidate.checkpoint_current = false;
+        let mut success = [false; 2];
+        for player_id in order.iter().copied() {
+            let action = if player_id == 0 { action0 } else { action1 };
+            success[player_id] = candidate.apply_troop_action(player_id, action)?;
+        }
+        let mut advanced = 0;
+        for _ in 0..ticks {
+            let tick_advanced = candidate
+                .advance_complete_tick_transaction()
+                .map_err(|error| {
+                    PyRuntimeError::new_err(format!(
+                        "{}{}",
+                        Self::PREVIEW_TICK_FAILURE_PREFIX,
+                        error
+                    ))
+                })?;
+            if !tick_advanced {
+                break;
+            }
+            advanced += 1;
+        }
+        Ok((
+            candidate,
+            success[0],
+            success[1],
+            order
+                .into_iter()
+                .map(|player_id| player_id as i64)
+                .collect(),
+            advanced,
+        ))
+    }
+
     fn apply_ordered_interval(
         &mut self,
         action0: i64,
@@ -6366,6 +6425,8 @@ impl ResidentBattle {
     const ACTION_NO_OP: i64 = Self::ACTION_HAND_SLOTS * Self::ACTION_TILES;
     const ACTION_ABILITY: i64 = Self::ACTION_NO_OP + 1;
     const ACTION_COUNT: i64 = Self::ACTION_ABILITY + 1;
+    const PREVIEW_TICK_FAILURE_PREFIX: &'static str =
+        "resident joint-action preview failed after actions during complete ticks: ";
 
     fn projectile_spell_spec(&self, spell_name: &str) -> Option<&ResidentProjectileSpellSpec> {
         self.catalog

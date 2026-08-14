@@ -8,10 +8,17 @@ from typing import Any
 import numpy as np
 import pytest
 
+from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.entities import Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
-from clasher.rust_core import ResidentRustBattle, RustBattleMode, rust_core_available
+from clasher.rust_core import (
+    ResidentPreviewTickError,
+    ResidentRustBattle,
+    RustBattleMode,
+    rust_core_available,
+)
 from clasher.rust_differential import (
     python_resident_semantic_snapshot,
     rust_resident_semantic_snapshot,
@@ -139,6 +146,35 @@ def test_on_joint_action_interval_matches_python_without_python_action_calls(
         python_resident_semantic_snapshot(control)
     )
     assert runtime.poisoned_reason is None
+
+
+@pytest.mark.parametrize("ticks", [0, 8])
+def test_native_preview_matches_legacy_sequence_without_mutating_root(
+    ticks: int,
+) -> None:
+    battle = BattleState(rng=random.Random(13_005 + ticks))
+    _install_knight_decks(battle)
+    action_space = DiscreteTileActionSpace()
+    actions = _joint_knight_actions(action_space)
+    root = ResidentRustBattle.from_battle(battle)
+    legacy = ResidentRustBattle.from_battle(battle.clone())
+    root_before = rust_resident_semantic_snapshot(root)
+
+    expected_success, expected_order = legacy.apply_resident_joint_actions(*actions)
+    expected_advanced = legacy.advance_complete_ticks(ticks)
+    candidate, actual_success, actual_order, actual_advanced = (
+        root.preview_resident_joint_action_interval(*actions, ticks)
+    )
+
+    assert actual_success == expected_success
+    assert actual_order == expected_order
+    assert actual_advanced == expected_advanced == ticks
+    assert rust_resident_semantic_snapshot(candidate) == (
+        rust_resident_semantic_snapshot(legacy)
+    )
+    assert rust_resident_semantic_snapshot(root) == root_before
+    assert root.resident_catalog_strong_count == 2
+    assert candidate.resident_catalog_strong_count == 2
 
 
 def test_shadow_joint_action_compares_before_exact_per_tick_lockstep() -> None:
@@ -340,18 +376,70 @@ def test_native_ability_action_consumes_shuffle_and_matches_python_false(
     actions = (mutable_actions[0], mutable_actions[1])
     expected_success, expected_order = _apply_python_joint_actions(control, actions)
     resident = ResidentRustBattle.from_battle(battle)
+    root_before = rust_resident_semantic_snapshot(resident)
     rng_before = battle.rng.getstate()
 
-    actual_success, actual_order = resident.apply_resident_joint_actions(*actions)
+    candidate, actual_success, actual_order, advanced = (
+        resident.preview_resident_joint_action_interval(*actions, 0)
+    )
 
     assert actual_order == expected_order
     assert actual_success == expected_success
     assert actual_success[ability_player] is False
     assert actual_success[other_player] is True
+    assert advanced == 0
     assert control.rng.getstate() != rng_before
-    assert rust_resident_semantic_snapshot(resident) == (
+    assert rust_resident_semantic_snapshot(candidate) == (
         python_resident_semantic_snapshot(control)
     )
+    assert rust_resident_semantic_snapshot(resident) == root_before
+
+
+def test_native_preview_rolls_back_root_after_partial_tick_window() -> None:
+    battle = BattleState(rng=random.Random(13_053))
+    _install_knight_decks(battle)
+    source_stats = battle.card_loader.get_card("Musketeer")
+    target_stats = battle.card_loader.get_card("Knight")
+    assert source_stats is not None
+    assert target_stats is not None
+    before_ids = set(battle.entities)
+    battle._spawn_unit_at_position(Position(9.0, 12.0), 0, source_stats)
+    source = next(
+        entity
+        for entity_id, entity in battle.entities.items()
+        if entity_id not in before_ids and isinstance(entity, Troop)
+    )
+    before_ids = set(battle.entities)
+    battle._spawn_unit_at_position(Position(9.0, 14.0), 1, target_stats)
+    target = next(
+        entity
+        for entity_id, entity in battle.entities.items()
+        if entity_id not in before_ids and isinstance(entity, Troop)
+    )
+    for troop in (source, target):
+        troop.deploy_delay_remaining = 0.0
+        troop.placement_pending = False
+        troop._spawn_hook_pending = False
+        troop._spawn_hook_fired = True
+    source.target_id = target.id
+    source.__dict__["_last_combat_target_id"] = target.id
+    source.attack_cooldown = 0.0
+    battle.next_entity_id = (1 << 63) - 2
+    resident = ResidentRustBattle.from_battle(battle)
+    action_space = DiscreteTileActionSpace()
+    root_before = rust_resident_semantic_snapshot(resident)
+    rng_before = resident.rng_getstate()
+
+    with pytest.raises(ResidentPreviewTickError):
+        resident.preview_resident_joint_action_interval(
+            action_space.no_op_action,
+            action_space.no_op_action,
+            2,
+        )
+
+    assert rust_resident_semantic_snapshot(resident) == root_before
+    assert resident.rng_getstate() == rng_before
+    assert resident.resident_catalog_strong_count == 1
 
 
 def test_on_ability_action_matches_python_and_remains_usable() -> None:
@@ -402,10 +490,19 @@ def test_post_action_tick_failure_poisons_without_publishing(
     resident_before = rust_resident_semantic_snapshot(resident)
     registry_before = tuple(runtime.entity_registry.items())
 
-    def reject_ticks(_self: ResidentRustBattle, _ticks: int) -> int:
-        raise RuntimeError("injected post-action capability failure")
+    def reject_preview(
+        _self: ResidentRustBattle,
+        _action0: int,
+        _action1: int,
+        _ticks: int,
+    ) -> tuple[ResidentRustBattle, dict[int, bool], tuple[int, int], int]:
+        raise ResidentPreviewTickError("injected post-action capability failure")
 
-    monkeypatch.setattr(ResidentRustBattle, "advance_complete_ticks", reject_ticks)
+    monkeypatch.setattr(
+        ResidentRustBattle,
+        "preview_resident_joint_action_interval",
+        reject_preview,
+    )
 
     with pytest.raises(RuntimeError, match="now poisoned"):
         runtime.apply_joint_actions_and_advance(

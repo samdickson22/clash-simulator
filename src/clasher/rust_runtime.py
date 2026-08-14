@@ -6,6 +6,7 @@ from typing import Any, cast
 
 from .differential import _entity_snapshot, canonical_battle_snapshot, snapshot_bytes
 from .rust_core import (
+    ResidentPreviewTickError,
     ResidentRustBattle,
     RustBattleMode,
     apply_idle_state,
@@ -450,20 +451,15 @@ class ResidentCompleteTickRuntime:
             )
 
         self._assert_on_boundary_unchanged()
-        candidate = resident.fork()
         try:
-            rust_success, rust_order = candidate.apply_resident_joint_actions(
-                action0,
-                action1,
+            candidate, rust_success, rust_order, rust_advanced = (
+                resident.preview_resident_joint_action_interval(
+                    action0,
+                    action1,
+                    requested,
+                )
             )
-        except RuntimeError as error:
-            raise RuntimeError(
-                "battle no longer satisfies the resident joint-action contract; "
-                "mid-battle fallback is forbidden"
-            ) from error
-        try:
-            rust_advanced = candidate.advance_complete_ticks(requested)
-        except RuntimeError as error:
+        except ResidentPreviewTickError as error:
             self.poisoned_reason = (
                 "post-action complete-tick capability failure: "
                 f"{error}"
@@ -472,6 +468,11 @@ class ResidentCompleteTickRuntime:
                 "resident complete-tick runtime failed after native action "
                 "application and is now poisoned; the published battle and "
                 "resident root remain unchanged"
+            ) from error
+        except RuntimeError as error:
+            raise RuntimeError(
+                "battle no longer satisfies the resident joint-action contract; "
+                "mid-battle fallback is forbidden"
             ) from error
 
         from .rust_publication import (
