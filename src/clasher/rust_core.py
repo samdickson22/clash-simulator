@@ -382,6 +382,19 @@ class ResidentRustBattle:
     def advance_direct_troop_combat_phase(self) -> None:
         self._native.advance_direct_troop_combat_phase()
 
+    @property
+    def supports_building_lifetime_phase(self) -> bool:
+        return bool(self._native.supports_building_lifetime_phase())
+
+    def advance_building_lifetime_phase(self) -> None:
+        self._native.advance_building_lifetime_phase()
+
+    def building_lifetime_state_bytes(self) -> bytes:
+        return bytes(self._native.building_lifetime_state_bytes())
+
+    def building_lifetime_sha256(self) -> str:
+        return str(self._native.building_lifetime_sha256())
+
     def locked_direct_combat_state_bytes(self) -> bytes:
         return bytes(self._native.locked_direct_combat_state_bytes())
 
@@ -943,6 +956,60 @@ def compare_locked_direct_combat_phase(
     if expected_hash != actual_hash:
         raise AssertionError(
             "resident Rust locked combat hash mismatch "
+            f"expected={expected_hash} actual={actual_hash}"
+        )
+
+
+def building_lifetime_state_rows(battle: Any) -> list[dict[str, Any]]:
+    return [
+        {
+            "encounter_index": encounter_index,
+            "hitpoints": _exact_scalar(entity.hitpoints),
+            "id": int(entity.id),
+            "is_alive": bool(entity.is_alive),
+            "lifetime_decay_work": int(entity.lifetime_decay_work),
+            "lifetime_elapsed": _exact_scalar(entity.lifetime_elapsed),
+            "lifetime_tick_carry_ms": _exact_scalar(
+                entity.lifetime_tick_carry_ms
+            ),
+        }
+        for encounter_index, entity in enumerate(battle.entities.values())
+        if entity.entity_kind == 1
+    ]
+
+
+def building_lifetime_state_bytes(battle: Any) -> bytes:
+    return json.dumps(
+        building_lifetime_state_rows(battle),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+
+
+def compare_building_lifetime_phase(
+    battle: Any,
+    resident: ResidentRustBattle,
+) -> None:
+    expected = building_lifetime_state_rows(battle)
+    actual = json.loads(resident.building_lifetime_state_bytes())
+    if expected != actual:
+        from .differential import first_snapshot_difference
+
+        difference = first_snapshot_difference(expected, actual)
+        if difference is None:  # pragma: no cover - defensive
+            raise AssertionError("resident Rust building lifetime state mismatch")
+        raise AssertionError(
+            "resident Rust building lifetime parity mismatch "
+            f"path={difference.path} reason={difference.reason} "
+            f"expected={difference.expected!r} actual={difference.actual!r}"
+        )
+    expected_hash = hashlib.sha256(
+        building_lifetime_state_bytes(battle)
+    ).hexdigest()
+    actual_hash = resident.building_lifetime_sha256()
+    if expected_hash != actual_hash:
+        raise AssertionError(
+            "resident Rust building lifetime hash mismatch "
             f"expected={expected_hash} actual={actual_hash}"
         )
 

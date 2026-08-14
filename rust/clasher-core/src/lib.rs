@@ -111,6 +111,24 @@ impl ExactScalar {
     fn set_f64(&mut self, value: f64) {
         *self = Self::Float(value.to_bits());
     }
+
+    fn subtract_whole_hp(&mut self, loss: i64) {
+        *self = match self {
+            Self::Int(value) => {
+                let remaining = *value - loss;
+                if remaining > 0 {
+                    Self::Int(remaining)
+                } else {
+                    // Building lifetime uses max(0.0, hp - loss), so the
+                    // zero-crossing preserves Python's float sentinel.
+                    Self::Float(0.0_f64.to_bits())
+                }
+            }
+            Self::Float(bits) => {
+                Self::Float((f64::from_bits(*bits) - loss as f64).max(0.0).to_bits())
+            }
+        };
+    }
 }
 
 fn optional_position(fields: &Map<String, Value>, name: &str) -> PyResult<Option<(f64, f64)>> {
@@ -465,6 +483,41 @@ struct ResidentEntity {
     modifier_supported: bool,
     direct_combat_unsupported: Vec<String>,
     locked_combat: Option<LockedDirectCombatState>,
+    building_lifetime: Option<BuildingLifetimeState>,
+}
+
+#[derive(Clone)]
+struct BuildingLifetimeState {
+    lifetime_ms: Option<i64>,
+    lifetime_elapsed: f64,
+    decay_work: i64,
+    tick_carry_ms: f64,
+}
+
+impl BuildingLifetimeState {
+    fn from_fields(
+        fields: &Map<String, Value>,
+        card_fields: &Map<String, Value>,
+    ) -> PyResult<Self> {
+        Ok(Self {
+            lifetime_ms: card_fields.get("lifetime_ms").and_then(Value::as_i64),
+            lifetime_elapsed: normalized_f64(fields, "lifetime_elapsed")?,
+            decay_work: required_i64(fields, "lifetime_decay_work")?,
+            tick_carry_ms: normalized_f64(fields, "lifetime_tick_carry_ms")?,
+        })
+    }
+
+    fn diagnostic_value(&self, entity: &ResidentEntity) -> Value {
+        json!({
+            "encounter_index": entity.encounter_index,
+            "hitpoints": entity.hitpoints.diagnostic_value(),
+            "id": entity.id,
+            "is_alive": entity.is_alive,
+            "lifetime_decay_work": self.decay_work,
+            "lifetime_elapsed": exact_f64_value(self.lifetime_elapsed),
+            "lifetime_tick_carry_ms": exact_f64_value(self.tick_carry_ms),
+        })
+    }
 }
 
 #[derive(Clone)]
@@ -655,6 +708,11 @@ impl ResidentEntity {
         } else {
             None
         };
+        let building_lifetime = if entity_kind == 1 {
+            Some(BuildingLifetimeState::from_fields(fields, card_fields)?)
+        } else {
+            None
+        };
         let mut direct_combat_unsupported = Vec::new();
         if !is_character {
             direct_combat_unsupported.push("non_character_entity".to_owned());
@@ -792,6 +850,7 @@ impl ResidentEntity {
             modifier_supported,
             direct_combat_unsupported,
             locked_combat,
+            building_lifetime,
         })
     }
 
@@ -881,6 +940,12 @@ impl ResidentEntity {
 
     fn locked_combat_diagnostic_value(&self) -> Option<Value> {
         self.locked_combat
+            .as_ref()
+            .map(|state| state.diagnostic_value(self))
+    }
+
+    fn building_lifetime_diagnostic_value(&self) -> Option<Value> {
+        self.building_lifetime
             .as_ref()
             .map(|state| state.diagnostic_value(self))
     }
@@ -2041,6 +2106,67 @@ impl ResidentBattle {
             }
         }
         Ok(())
+    }
+
+    fn supports_building_lifetime_phase(&self) -> bool {
+        self.entities.iter().all(|entity| {
+            entity.entity_kind != 1
+                || (entity.building_lifetime.is_some() && entity.mechanics.is_empty())
+        })
+    }
+
+    fn advance_building_lifetime_phase(&mut self) -> PyResult<()> {
+        if !self.supports_building_lifetime_phase() {
+            return Err(PyRuntimeError::new_err(
+                "resident building lifetime phase contains executable death mechanics",
+            ));
+        }
+        self.checkpoint_current = false;
+        for entity in &mut self.entities {
+            if !entity.is_alive || entity.entity_kind != 1 {
+                continue;
+            }
+            let state = entity
+                .building_lifetime
+                .as_mut()
+                .expect("building preflight requires lifetime state");
+            let Some(lifetime_ms) = state.lifetime_ms.filter(|value| *value > 0) else {
+                continue;
+            };
+            state.lifetime_elapsed += self.dt;
+            let total_tick_ms = state.tick_carry_ms + (self.dt * 1000.0).max(0.0);
+            let native_ticks = ((total_tick_ms + 1e-9) / 50.0).floor() as i64;
+            state.tick_carry_ms = total_tick_ms - native_ticks as f64 * 50.0;
+            let rounded_max_hp = entity.max_hitpoints.as_f64().round_ties_even() as i64;
+            let decay_rate = 5000 * rounded_max_hp / lifetime_ms;
+            state.decay_work += decay_rate * native_ticks;
+            let whole_hp_loss = state.decay_work / 100;
+            state.decay_work %= 100;
+            if whole_hp_loss > 0 {
+                entity.hitpoints.subtract_whole_hp(whole_hp_loss);
+            }
+            if entity.hitpoints.as_f64() <= 0.0 && entity.is_alive {
+                entity.is_alive = false;
+            }
+        }
+        Ok(())
+    }
+
+    fn building_lifetime_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter_map(ResidentEntity::building_lifetime_diagnostic_value)
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident building lifetime state: {error}"
+            ))
+        })
+    }
+
+    fn building_lifetime_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.building_lifetime_state_bytes()?))
     }
 
     fn rng_random(&mut self) -> f64 {
