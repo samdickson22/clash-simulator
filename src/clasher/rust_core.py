@@ -1125,6 +1125,8 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
     for encounter_index, entity in enumerate(battle.entities.values()):
         if entity.entity_kind not in {0, 1}:
             continue
+        river_origin = getattr(entity, "_river_jump_origin", None)
+        river_target = getattr(entity, "_river_jump_target", None)
         cache_key = getattr(entity, "_ground_path_cache_key", None)
         route_kind = "absent"
         route_goal: list[int] | None = None
@@ -1173,11 +1175,28 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
             route_kind = "unsupported"
         rows.append(
             {
+                "airborne_for_projectile": bool(
+                    entity.is_air_unit
+                    or getattr(entity, "_river_jump_active", False)
+                ),
+                "building_pathing_radius": _exact_scalar(
+                    float(
+                        getattr(entity.card_stats, "collision_radius", 1.0)
+                        or 1.0
+                    )
+                    if entity.entity_kind == 1
+                    else 0.0
+                ),
                 "encounter_index": encounter_index,
                 "facing_x_units": int(entity._facing_x_units),
                 "facing_y_units": int(entity._facing_y_units),
                 "ground_path_backwards": bool(entity._ground_path_backwards),
                 "id": int(entity.id),
+                "jump_speed": _exact_scalar(
+                    float(
+                        getattr(entity.card_stats, "jump_speed", 0.0) or 0.0
+                    )
+                ),
                 "native_avoidance": int(
                     getattr(entity, "_native_avoidance", 0)
                 ),
@@ -1198,6 +1217,47 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "route_jump_height": route_jump_height,
                 "route_kind": route_kind,
                 "route_lane_id": route_lane_id,
+                "river_jump_active": bool(
+                    getattr(entity, "_river_jump_active", False)
+                ),
+                "river_jump_blocked": bool(
+                    getattr(entity, "_river_jump_blocked", False)
+                ),
+                "river_jump_duration": _exact_scalar(
+                    getattr(entity, "_river_jump_duration", 0.0)
+                ),
+                "river_jump_elapsed": _exact_scalar(
+                    getattr(entity, "_river_jump_elapsed", 0.0)
+                ),
+                "river_jump_origin": (
+                    None
+                    if river_origin is None
+                    else [
+                        _exact_scalar(river_origin.x),
+                        _exact_scalar(river_origin.y),
+                    ]
+                ),
+                "river_jump_target": (
+                    None
+                    if river_target is None
+                    else [
+                        _exact_scalar(river_target.x),
+                        _exact_scalar(river_target.y),
+                    ]
+                ),
+                "special_move_active": bool(
+                    getattr(entity, "_special_move_active", False)
+                ),
+                "special_move_consumed_tick": bool(
+                    getattr(entity, "_special_move_consumed_tick", False)
+                ),
+                "stun_interrupt_deferred_until_landing": bool(
+                    getattr(
+                        entity,
+                        "_stun_interrupt_deferred_until_landing",
+                        False,
+                    )
+                ),
                 "vector_bypasses_cap": bool(
                     entity._movement_vector_bypasses_cap
                 ),

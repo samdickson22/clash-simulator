@@ -641,6 +641,20 @@ fn optional_normalized_f64(fields: &Map<String, Value>, name: &str) -> PyResult<
     }
 }
 
+fn absent_optional_normalized_f64(
+    fields: &Map<String, Value>,
+    name: &str,
+) -> PyResult<Option<f64>> {
+    let Some(value) = fields.get(name) else {
+        return Ok(None);
+    };
+    if value.is_null() {
+        Ok(None)
+    } else {
+        ExactScalar::from_normalized(value).map(|value| Some(value.as_f64()))
+    }
+}
+
 #[derive(Clone)]
 struct ModifierEffect {
     remaining: f64,
@@ -1058,6 +1072,7 @@ struct ResidentMovementState {
     pending_consumed: bool,
     unit_mass: f64,
     collision_radius: f64,
+    building_pathing_radius: f64,
     is_hover: bool,
     native_avoidance: i64,
     native_natural_movement_active: bool,
@@ -1066,6 +1081,7 @@ struct ResidentMovementState {
     serialized_speed: f64,
     charge_range_present: bool,
     jump_height_present: bool,
+    jump_speed: f64,
     kamikaze_primed: bool,
     route_cache_supported: bool,
     route_cache_kind: RouteCacheKind,
@@ -1079,6 +1095,12 @@ struct ResidentMovementState {
     knockback_target_present: bool,
     knockback_velocity_work: i64,
     river_jump_active: bool,
+    river_jump_origin: Option<(f64, f64)>,
+    river_jump_target: Option<(f64, f64)>,
+    river_jump_elapsed: f64,
+    river_jump_duration: f64,
+    river_jump_blocked: bool,
+    stun_interrupt_deferred_until_landing: bool,
     special_move_active: bool,
     special_move_consumed_tick: bool,
     forced_movement_active: bool,
@@ -1100,6 +1122,13 @@ impl ResidentMovementState {
                 .unwrap_or(0.0),
             _ => 0.0,
         };
+        let building_pathing_radius = if entity_kind == 1 {
+            serialized_radius
+                .filter(|radius| *radius != 0.0)
+                .unwrap_or(1.0)
+        } else {
+            0.0
+        };
         let route_cache = normalized_route_cache(fields)?;
         Ok(Self {
             vector_x_units: required_i64(fields, "_movement_vector_x_units")?,
@@ -1111,6 +1140,7 @@ impl ResidentMovementState {
             pending_consumed: required_bool(fields, "_pending_movement_consumed")?,
             unit_mass: normalized_f64(fields, "_unit_mass")?,
             collision_radius,
+            building_pathing_radius,
             is_hover: required_bool(fields, "_is_hover_unit")?,
             native_avoidance: fields
                 .get("_native_avoidance")
@@ -1128,6 +1158,7 @@ impl ResidentMovementState {
                 .is_some_and(|value| value != 0.0),
             jump_height_present: optional_normalized_f64(card_fields, "jump_height")?
                 .is_some_and(|value| value != 0.0),
+            jump_speed: optional_normalized_f64(card_fields, "jump_speed")?.unwrap_or(0.0),
             kamikaze_primed: normalized_optional_bool(fields, "kamikaze_primed"),
             route_cache_supported: route_cache.supported,
             route_cache_kind: route_cache.kind,
@@ -1143,6 +1174,17 @@ impl ResidentMovementState {
                 .is_some_and(|value| !value.is_null()),
             knockback_velocity_work: required_i64(fields, "_knockback_velocity_work")?,
             river_jump_active: normalized_optional_bool(fields, "_river_jump_active"),
+            river_jump_origin: optional_position(fields, "_river_jump_origin")?,
+            river_jump_target: optional_position(fields, "_river_jump_target")?,
+            river_jump_elapsed: absent_optional_normalized_f64(fields, "_river_jump_elapsed")?
+                .unwrap_or(0.0),
+            river_jump_duration: absent_optional_normalized_f64(fields, "_river_jump_duration")?
+                .unwrap_or(0.0),
+            river_jump_blocked: normalized_optional_bool(fields, "_river_jump_blocked"),
+            stun_interrupt_deferred_until_landing: normalized_optional_bool(
+                fields,
+                "_stun_interrupt_deferred_until_landing",
+            ),
             special_move_active: normalized_optional_bool(fields, "_special_move_active"),
             special_move_consumed_tick: normalized_optional_bool(
                 fields,
@@ -3094,6 +3136,7 @@ impl ResidentBattle {
                 && movement.unit_mass.is_finite()
                 && movement.unit_mass > 0.0
                 && movement.collision_radius.is_finite()
+                && movement.building_pathing_radius.is_finite()
                 && entity.position_x.as_f64().is_finite()
                 && entity.position_y.as_f64().is_finite()
                 && movement.pending_x.is_finite()
@@ -3235,7 +3278,14 @@ impl ResidentBattle {
         self.entities.iter().all(|entity| {
             !entity.active
                 || match entity.entity_kind {
-                    0 | 1 => entity.direct_combat_unsupported.is_empty(),
+                    0 | 1 => {
+                        entity.direct_combat_unsupported.is_empty()
+                            && !entity.movement.as_ref().is_some_and(|movement| {
+                                movement.river_jump_active
+                                    || movement.special_move_active
+                                    || movement.special_move_consumed_tick
+                            })
+                    }
                     2 => entity
                         .point_projectile
                         .as_ref()
@@ -4005,9 +4055,38 @@ impl ResidentBattle {
             ) else {
                 return false;
             };
+            let river_state_supported = if movement.river_jump_active {
+                allow_ground
+                    && self.arena_width_tiles == 18
+                    && self.arena_height_tiles == 32
+                    && entity.entity_kind == 0
+                    && movement.jump_height_present
+                    && !movement.charge_range_present
+                    && movement.jump_speed.is_finite()
+                    && movement.jump_speed.round_ties_even() > 0.0
+                    && movement
+                        .river_jump_origin
+                        .is_some_and(|(x, y)| x.is_finite() && y.is_finite())
+                    && movement
+                        .river_jump_target
+                        .is_some_and(|(x, y)| x.is_finite() && y.is_finite())
+                    && movement.river_jump_elapsed.is_finite()
+                    && movement.river_jump_elapsed >= 0.0
+                    && movement.river_jump_duration.is_finite()
+                    && movement.river_jump_duration >= self.dt
+                    && movement.special_move_active
+                    && !movement.special_move_consumed_tick
+                    && !movement.stun_interrupt_deferred_until_landing
+                    && combat.stun_timer <= 0.0
+            } else {
+                !movement.special_move_active
+                    && !movement.stun_interrupt_deferred_until_landing
+                    && (!movement.special_move_consumed_tick || movement.jump_height_present)
+            };
             let common = entity.deploy_delay_remaining <= 0.0
                 && entity.has_only_shield_mechanics()
                 && movement.route_cache_supported
+                && river_state_supported
                 && movement.vector_count >= 0
                 && movement.unit_mass.is_finite()
                 && movement.unit_mass > 0.0
@@ -4019,9 +4098,6 @@ impl ResidentBattle {
                 && movement.death_spawn_travel_ticks == 0
                 && !movement.knockback_target_present
                 && movement.knockback_velocity_work == 0
-                && !movement.river_jump_active
-                && !movement.special_move_active
-                && !movement.special_move_consumed_tick
                 && !movement.forced_movement_active
                 && !movement.kamikaze_primed;
             if !common || entity.entity_kind == 1 || combat.movement_target_id.is_none() {
@@ -4043,7 +4119,12 @@ impl ResidentBattle {
             route_kind_supported
                 && movement.route_cache_supported
                 && !movement.charge_range_present
-                && !movement.jump_height_present
+                && (!movement.jump_height_present
+                    || (allow_ground
+                        && self.arena_width_tiles == 18
+                        && self.arena_height_tiles == 32
+                        && movement.jump_speed.is_finite()
+                        && movement.jump_speed.round_ties_even() > 0.0))
                 && movement.stop_movement_after_ms == 0.0
                 && movement.wait_ms == 0.0
                 && movement.serialized_speed.is_finite()
@@ -4120,16 +4201,16 @@ impl ResidentBattle {
             .locked_combat
             .as_ref()
             .expect("stationary troop requires combat state");
-        if combat.stun_timer > 0.0 {
-            return;
-        }
         let movement = entity
             .movement
             .as_ref()
             .expect("stationary troop requires movement state");
+        if combat.stun_timer > 0.0 && !movement.river_jump_active {
+            return;
+        }
         let own_radius = movement.collision_radius.max(0.2);
         let own_mass = movement.unit_mass.max(1e-9);
-        let own_air = combat.is_air_unit || movement.is_hover;
+        let own_air = combat.is_air_unit || movement.is_hover || movement.river_jump_active;
         let static_radius = own_radius.min(0.5);
         let mut contributions = Vec::new();
         for (other_index, other) in self.entities.iter().enumerate() {
@@ -4146,7 +4227,9 @@ impl ResidentBattle {
                         .movement
                         .as_ref()
                         .expect("troop collision candidate requires movement state");
-                    let other_air = other_combat.is_air_unit || other_movement.is_hover;
+                    let other_air = other_combat.is_air_unit
+                        || other_movement.is_hover
+                        || other_movement.river_jump_active;
                     if own_air != other_air {
                         continue;
                     }
@@ -4341,7 +4424,7 @@ impl ResidentBattle {
             .movement
             .as_ref()
             .expect("resident troop requires movement state");
-        combat.movement_target_id.is_none()
+        (combat.movement_target_id.is_none() && !movement.river_jump_active)
             || entity.deploy_delay_remaining > 0.0
             || combat.stun_timer > 0.0
             || movement.kamikaze_primed
@@ -4375,7 +4458,7 @@ impl ResidentBattle {
             || entity
                 .movement
                 .as_ref()
-                .is_some_and(|movement| movement.is_hover);
+                .is_some_and(|movement| movement.is_hover || movement.river_jump_active);
         let mut moving_count = 0_i64;
         let mut static_count = 0_i64;
         let mut moving_side = 1_i64;
@@ -4396,7 +4479,7 @@ impl ResidentBattle {
                 || other
                     .movement
                     .as_ref()
-                    .is_some_and(|movement| movement.is_hover);
+                    .is_some_and(|movement| movement.is_hover || movement.river_jump_active);
             if own_air != other_air {
                 continue;
             }
@@ -4525,6 +4608,34 @@ impl ResidentBattle {
     }
 
     fn advance_resident_natural_movement(&mut self, entity_index: usize) {
+        let (river_jump_active, special_move_consumed_tick) = {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_ref()
+                .expect("resident troop requires movement state");
+            (
+                movement.river_jump_active,
+                movement.special_move_consumed_tick,
+            )
+        };
+        if river_jump_active {
+            self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state")
+                .native_natural_movement_active = false;
+            self.update_resident_river_jump(entity_index);
+            return;
+        }
+        if special_move_consumed_tick {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state");
+            movement.native_natural_movement_active = false;
+            movement.special_move_consumed_tick = false;
+            return;
+        }
         let target_id = self.entities[entity_index]
             .locked_combat
             .as_ref()
@@ -4567,6 +4678,83 @@ impl ResidentBattle {
             .expect("resident troop requires movement state")
             .native_natural_movement_active = true;
         self.move_resident_towards_target(entity_index, target_index);
+    }
+
+    fn update_resident_river_jump(&mut self, entity_index: usize) {
+        let (target_x, target_y, jump_speed) = {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state");
+            movement.river_jump_elapsed += self.dt;
+            let (target_x, target_y) = movement
+                .river_jump_target
+                .expect("active river jump requires a landing target");
+            (
+                target_x,
+                target_y,
+                movement.jump_speed.round_ties_even().max(0.0) as i64,
+            )
+        };
+        let current_x = self.entities[entity_index].position_x.as_f64();
+        let current_y = self.entities[entity_index].position_y.as_f64();
+        let dx_units = logic_units(target_x - current_x);
+        let dy_units = logic_units(target_y - current_y);
+        if dx_units != 0 || dy_units != 0 {
+            let combat = self.entities[entity_index]
+                .locked_combat
+                .as_mut()
+                .expect("resident troop requires combat state");
+            combat.facing_x_units = dx_units;
+            combat.facing_y_units = dy_units;
+        }
+        let remaining = integer_sqrt(
+            (i128::from(dx_units) * i128::from(dx_units)
+                + i128::from(dy_units) * i128::from(dy_units)) as u128,
+        );
+        let work = Self::speed_work_for_duration(jump_speed, self.dt);
+        let (mut move_x, mut move_y) =
+            Self::movement_component_vector_logic_units(dx_units, dy_units, work);
+        let avoidance = self.entities[entity_index]
+            .movement
+            .as_ref()
+            .expect("resident troop requires movement state")
+            .native_avoidance;
+        if avoidance != 0 {
+            let avoidance = avoidance.clamp(-256, 256);
+            let retained = 256 - avoidance.abs();
+            let rotated_x = ((retained * move_x) >> 8) + ((avoidance * move_y) >> 8);
+            let rotated_y = ((retained * move_y) >> 8) + ((-move_x * avoidance) >> 8);
+            (move_x, move_y) =
+                normalized_vector_logic_units(rotated_x, rotated_y, work.min(remaining));
+        }
+        self.entities[entity_index]
+            .position_x
+            .set_f64((logic_units(current_x) + move_x) as f64 / 1000.0);
+        self.entities[entity_index]
+            .position_y
+            .set_f64((logic_units(current_y) + move_y) as f64 / 1000.0);
+        if remaining > work {
+            return;
+        }
+        self.entities[entity_index].position_x.set_f64(target_x);
+        self.entities[entity_index].position_y.set_f64(target_y);
+        let movement = self.entities[entity_index]
+            .movement
+            .as_mut()
+            .expect("resident troop requires movement state");
+        movement.river_jump_active = false;
+        movement.special_move_active = false;
+        movement.special_move_consumed_tick = true;
+        movement.river_jump_blocked = false;
+        self.entities[entity_index]
+            .locked_combat
+            .as_mut()
+            .expect("resident troop requires combat state")
+            .is_airborne_for_projectile = self.entities[entity_index]
+            .locked_combat
+            .as_ref()
+            .is_some_and(|combat| combat.is_air_unit);
     }
 
     fn move_resident_towards_target(&mut self, entity_index: usize, target_index: usize) {
@@ -4732,12 +4920,25 @@ impl ResidentBattle {
             }
             let new_x = (logic_units(previous_x) + move_x + external_x_units) as f64 / 1000.0;
             let new_y = (logic_units(previous_y) + move_y + external_y_units) as f64 / 1000.0;
-            self.entities[entity_index]
-                .position_x
-                .set_f64(new_x.clamp(0.25, self.arena_width_tiles as f64 - 0.25));
-            self.entities[entity_index]
-                .position_y
-                .set_f64(new_y.clamp(0.25, self.arena_height_tiles as f64 - 0.25));
+            let new_x = new_x.clamp(0.25, self.arena_width_tiles as f64 - 0.25);
+            let new_y = new_y.clamp(0.25, self.arena_height_tiles as f64 - 0.25);
+            let has_external = external_x.abs() > 1e-15 || external_y.abs() > 1e-15;
+            let jump_height = self.entities[entity_index]
+                .movement
+                .as_ref()
+                .is_some_and(|movement| movement.jump_height_present);
+            if !single_node
+                && jump_height
+                && !has_external
+                && !self.resident_ground_position_walkable(entity_index, new_x, new_y)
+                && self.resident_ground_position_walkable(entity_index, previous_x, previous_y)
+                && (15.0..=17.0).contains(&new_y)
+                && self.start_resident_river_jump(entity_index)
+            {
+                return;
+            }
+            self.entities[entity_index].position_x.set_f64(new_x);
+            self.entities[entity_index].position_y.set_f64(new_y);
         } else if external_x.abs() > 1e-15 || external_y.abs() > 1e-15 {
             let new_x = (logic_units(previous_x) + external_x_units) as f64 / 1000.0;
             let new_y = (logic_units(previous_y) + external_y_units) as f64 / 1000.0;
@@ -4749,6 +4950,148 @@ impl ResidentBattle {
                 .set_f64(new_y.clamp(0.25, self.arena_height_tiles as f64 - 0.25));
         }
         self.advance_resident_route(entity_index, previous_x, previous_y, waypoint_x, waypoint_y);
+    }
+
+    fn resident_ground_position_walkable(
+        &self,
+        entity_index: usize,
+        position_x: f64,
+        position_y: f64,
+    ) -> bool {
+        let edge_epsilon = 1e-9;
+        if position_x < 0.25 - edge_epsilon
+            || position_x > self.arena_width_tiles as f64 - 0.25 + edge_epsilon
+            || position_y < 0.25 - edge_epsilon
+            || position_y > self.arena_height_tiles as f64 - 0.25 + edge_epsilon
+        {
+            return false;
+        }
+        if Self::standard_position_touches_blocked_tile(position_x, position_y) {
+            return false;
+        }
+        let in_river = (15.0..=17.0).contains(&position_y);
+        let on_bridge = (2.0..=5.0).contains(&position_x) || (13.0..=16.0).contains(&position_x);
+        if in_river && !on_bridge {
+            return false;
+        }
+        let mover_radius = self.entities[entity_index]
+            .movement
+            .as_ref()
+            .expect("resident troop requires movement state")
+            .collision_radius
+            .min(0.5);
+        self.entities.iter().all(|building| {
+            if !building.active || !building.is_alive || building.entity_kind != 1 {
+                return true;
+            }
+            let building_radius = building
+                .movement
+                .as_ref()
+                .expect("building requires movement state")
+                .building_pathing_radius;
+            let collision_units = logic_units(building_radius + mover_radius);
+            let dx = logic_units(position_x - building.position_x.as_f64());
+            let dy = logic_units(position_y - building.position_y.as_f64());
+            i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)
+                >= i128::from(collision_units) * i128::from(collision_units)
+        })
+    }
+
+    fn start_resident_river_jump(&mut self, entity_index: usize) -> bool {
+        let landing = {
+            let movement = self.entities[entity_index]
+                .movement
+                .as_ref()
+                .expect("resident troop requires movement state");
+            let river_start = movement
+                .route_cells
+                .iter()
+                .position(|&(cell_x, cell_y)| Self::standard_path_cell_blocked(cell_x, cell_y));
+            river_start.and_then(|river_start| {
+                movement.route_cells[river_start + 1..]
+                    .iter()
+                    .copied()
+                    .find(|&(cell_x, cell_y)| !Self::standard_path_cell_blocked(cell_x, cell_y))
+            })
+        };
+        let Some(landing) = landing else {
+            self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state")
+                .river_jump_blocked = true;
+            return false;
+        };
+        let origin_x = self.entities[entity_index].position_x.as_f64();
+        let origin_y = self.entities[entity_index].position_y.as_f64();
+        let target_x = (landing.0 * 500 + 250) as f64 / 1000.0;
+        let target_y = (landing.1 * 500 + 250) as f64 / 1000.0;
+        let dx = logic_units(target_x) - logic_units(origin_x);
+        let dy = logic_units(target_y) - logic_units(origin_y);
+        let distance = integer_sqrt(
+            (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128,
+        );
+        let jump_speed = self.entities[entity_index]
+            .movement
+            .as_ref()
+            .expect("resident troop requires movement state")
+            .jump_speed
+            .round_ties_even() as i64;
+        if jump_speed <= 0 {
+            return false;
+        }
+        let duration = self.dt.max(distance as f64 / jump_speed as f64 * 0.05);
+        let movement = self.entities[entity_index]
+            .movement
+            .as_mut()
+            .expect("resident troop requires movement state");
+        movement.route_cells = vec![landing];
+        movement.river_jump_origin = Some((origin_x, origin_y));
+        movement.river_jump_target = Some((target_x, target_y));
+        movement.river_jump_elapsed = 0.0;
+        movement.river_jump_duration = duration;
+        movement.river_jump_active = true;
+        movement.special_move_active = true;
+        self.entities[entity_index]
+            .locked_combat
+            .as_mut()
+            .expect("resident troop requires combat state")
+            .is_airborne_for_projectile = true;
+        true
+    }
+
+    fn standard_path_cell_blocked(cell_x: i64, cell_y: i64) -> bool {
+        (30..34).contains(&cell_y) && !((5..=8).contains(&cell_x) || (27..=30).contains(&cell_x))
+    }
+
+    fn standard_position_touches_blocked_tile(position_x: f64, position_y: f64) -> bool {
+        let touching_tiles = |value: f64, limit: i64| -> Vec<i64> {
+            let rounded = value.round_ties_even();
+            let tolerance = 1e-9_f64.max(1e-9 * value.abs().max(rounded.abs()));
+            if (value - rounded).abs() <= tolerance {
+                [rounded as i64 - 1, rounded as i64]
+                    .into_iter()
+                    .filter(|tile| (0..limit).contains(tile))
+                    .collect()
+            } else {
+                let tile = value.floor() as i64;
+                (0..limit)
+                    .contains(&tile)
+                    .then_some(tile)
+                    .into_iter()
+                    .collect()
+            }
+        };
+        let x_tiles = touching_tiles(position_x, 18);
+        let y_tiles = touching_tiles(position_y, 32);
+        x_tiles.iter().any(|&tile_x| {
+            y_tiles.iter().any(|&tile_y| {
+                matches!(
+                    (tile_x, tile_y),
+                    (0 | 17, 14 | 17) | (0..=5, 0 | 31) | (12..=17, 0 | 31)
+                )
+            })
+        })
     }
 
     fn resident_ground_waypoint(
@@ -4966,11 +5309,14 @@ impl ResidentBattle {
                     .as_ref()
                     .expect("character combat state parsed at initialization");
                 json!({
+                    "airborne_for_projectile": combat.is_airborne_for_projectile,
+                    "building_pathing_radius": exact_f64_value(movement.building_pathing_radius),
                     "encounter_index": entity.encounter_index,
                     "facing_x_units": combat.facing_x_units,
                     "facing_y_units": combat.facing_y_units,
                     "ground_path_backwards": combat.ground_path_backwards,
                     "id": entity.id,
+                    "jump_speed": exact_f64_value(movement.jump_speed),
                     "native_avoidance": movement.native_avoidance,
                     "native_lane_id": movement.native_lane_id,
                     "native_natural_movement_active": movement.native_natural_movement_active,
@@ -4990,6 +5336,19 @@ impl ResidentBattle {
                         RouteCacheKind::Unsupported => "unsupported",
                     },
                     "route_lane_id": movement.route_lane_id,
+                    "river_jump_active": movement.river_jump_active,
+                    "river_jump_blocked": movement.river_jump_blocked,
+                    "river_jump_duration": exact_f64_value(movement.river_jump_duration),
+                    "river_jump_elapsed": exact_f64_value(movement.river_jump_elapsed),
+                    "river_jump_origin": movement.river_jump_origin.map(|(x, y)| {
+                        json!([exact_f64_value(x), exact_f64_value(y)])
+                    }),
+                    "river_jump_target": movement.river_jump_target.map(|(x, y)| {
+                        json!([exact_f64_value(x), exact_f64_value(y)])
+                    }),
+                    "special_move_active": movement.special_move_active,
+                    "special_move_consumed_tick": movement.special_move_consumed_tick,
+                    "stun_interrupt_deferred_until_landing": movement.stun_interrupt_deferred_until_landing,
                     "vector_bypasses_cap": movement.vector_bypasses_cap,
                     "vector_count": movement.vector_count,
                     "vector_x_units": movement.vector_x_units,
