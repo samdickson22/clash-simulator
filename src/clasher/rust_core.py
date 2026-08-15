@@ -45,7 +45,8 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 12
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 13
+RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 13
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -61,6 +62,7 @@ def _catalog_source_sha256(path: Path) -> str:
 
 def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str]:
     """Return data-driven reasons a card is outside resident troop actions."""
+    from .cards.wallbreakers import WallBreakersDemolition
     from .mechanics.shared.damage_ramp import DamageRamp
     from .mechanics.shared.death_area import DeathAreaEffect
     from .mechanics.shared.death_effects import DeathDamage, DeathSpawn
@@ -102,6 +104,7 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
     supported_mechanic_family = (
         mechanic_types == (IceSpiritFreeze,)
         or mechanic_types == (DamageRamp,)
+        or mechanic_types == (WallBreakersDemolition,)
         or all(
             mechanic_type in resident_death_mechanic_types
             for mechanic_type in mechanic_types
@@ -1484,7 +1487,7 @@ def _decode_prepared_publication_parts(value: Any) -> MappingProxyType[str, Any]
     binding = frozen.get("binding")
     if not isinstance(binding, MappingProxyType):
         raise TypeError("resident prepared publication binding is not a mapping")
-    if binding.get("semantic_schema_version") != 12:
+    if binding.get("semantic_schema_version") != RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION:
         raise ValueError("unsupported resident prepared semantic schema")
     return frozen
 
@@ -1554,7 +1557,10 @@ class ResidentPreparedPublication:
         binding = value.get("binding")
         if type(binding) is not dict:
             raise TypeError("resident prepared publication binding is not a mapping")
-        if binding.get("semantic_schema_version") != 12:
+        if (
+            binding.get("semantic_schema_version")
+            != RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION
+        ):
             raise ValueError("unsupported resident prepared semantic schema")
         return cast(dict[str, Any], value)
 
@@ -1575,7 +1581,10 @@ class ResidentPreparedPublication:
             raise TypeError(
                 "resident prepared publication delta binding is not a mapping"
             )
-        if binding.get("semantic_schema_version") != 12:
+        if (
+            binding.get("semantic_schema_version")
+            != RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION
+        ):
             raise ValueError("unsupported resident prepared delta semantic schema")
         return cast(dict[str, Any], value)
 
@@ -3615,6 +3624,7 @@ def compare_ground_movement_phase(
 
 def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
     from .cards.tesla import HideWhenIdle
+    from .cards.wallbreakers import WallBreakersDemolition
     from .mechanics.shared.damage_ramp import DamageRamp
 
     rows: list[dict[str, Any]] = []
@@ -3635,6 +3645,14 @@ def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
                 mechanic
                 for mechanic in entity.mechanics
                 if type(mechanic) is HideWhenIdle
+            ),
+            None,
+        )
+        demolition = next(
+            (
+                mechanic
+                for mechanic in entity.mechanics
+                if type(mechanic) is WallBreakersDemolition
             ),
             None,
         )
@@ -3679,6 +3697,11 @@ def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
                         "phase_ms": _exact_scalar(hide_when_idle._phase_ms),
                         "rise_time_ms": int(hide_when_idle.rise_time_ms),
                     }
+                ),
+                "wall_breakers_demolition": (
+                    None
+                    if demolition is None
+                    else {"triggered": bool(demolition._triggered)}
                 ),
                 "hidden_building": bool(
                     getattr(entity, "_hidden_building", False)
@@ -3821,6 +3844,9 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
             "hitpoints": _exact_scalar(entity.hitpoints),
             "id": int(entity.id),
             "ignore_buildings": bool(entity.ignore_buildings),
+            "pierces": bool(entity.pierces),
+            "projectile_range": _exact_scalar(entity.projectile_range),
+            "hit_entity_ids": sorted(int(value) for value in entity.hit_entity_ids),
             "is_alive": bool(entity.is_alive),
             "launch_delay": _exact_scalar(entity.launch_delay),
             "knockback_distance": _exact_scalar(entity.knockback_distance),

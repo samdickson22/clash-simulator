@@ -365,7 +365,6 @@ def test_direct_combat_symmetric_building_tie_is_owner_relative(
         ("MagicArcher", "projectile_payload"),
         ("Balloon", "executable_mechanics"),
         ("BattleRam", "charge_payload"),
-        ("Wallbreakers", "kamikaze_payload"),
     ],
 )
 def test_direct_combat_preflight_rejects_unsupported_resolved_payloads(

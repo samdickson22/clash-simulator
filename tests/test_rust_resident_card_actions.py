@@ -79,7 +79,7 @@ def test_catalog_is_fingerprinted_immutable_and_shared_across_forks() -> None:
 
     forked = resident.fork()
 
-    assert resident.resident_catalog_schema_version == 12
+    assert resident.resident_catalog_schema_version == 13
     assert len(original_fingerprint) == 64
     assert len(original_source) == 64
     assert supported

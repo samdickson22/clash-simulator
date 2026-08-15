@@ -822,7 +822,7 @@ def test_raw_consumer_rejects_mapping_subclasses_after_burning(
     class FakeNative:
         def parts(self) -> dict[str, Any]:
             binding: dict[str, Any] = {
-                "semantic_schema_version": 12,
+                "semantic_schema_version": 13,
             }
             if bad_section == "binding":
                 binding = MappingSubclass(binding)

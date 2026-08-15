@@ -6,6 +6,7 @@ from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.cards.ice_spirit import IceSpiritFreeze
 from clasher.cards.tesla import HideWhenIdle
+from clasher.cards.wallbreakers import WallBreakersDemolition
 from clasher.entities import Building, Troop
 from clasher.interaction_matrix import enabled_troop_cards
 from clasher.mechanics.shared.damage_ramp import DamageRamp
@@ -100,7 +101,8 @@ def test_character_object_phase_is_card_general_and_fail_closed(
         )
     )
     compiled_count += sum(
-        type(mechanic) in (IceSpiritFreeze, DamageRamp, HideWhenIdle)
+        type(mechanic)
+        in (IceSpiritFreeze, DamageRamp, HideWhenIdle, WallBreakersDemolition)
         for mechanic in troop.mechanics
     )
     if compiled_count != len(troop.mechanics):

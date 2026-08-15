@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 12;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 13;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -2568,6 +2568,9 @@ struct PointProjectileState {
     temporary_homing_target_id: Option<i64>,
     permanent_homing_disabled_by_temporary: bool,
     start_collision_resolved: bool,
+    pierces: bool,
+    projectile_range: f64,
+    hit_entity_ids: Vec<i64>,
     constructor_range: ExactScalar,
     constructor_sight_range: ExactScalar,
     launch_x: f64,
@@ -2621,8 +2624,36 @@ impl PointProjectileState {
         if !damage_wave_interval.is_finite() || damage_wave_interval < 0.0 {
             unsupported.push("invalid_damage_wave_interval".to_owned());
         }
-        if pierces || projectile_range != 0.0 || start_extra_radius != 0.0 {
-            unsupported.push("piercing_payload".to_owned());
+        if !projectile_range.is_finite()
+            || projectile_range < 0.0
+            || pierces != (projectile_range > 0.0)
+        {
+            unsupported.push("invalid_piercing_payload".to_owned());
+        }
+        if start_extra_radius != 0.0 {
+            unsupported.push("projectile_start_collision".to_owned());
+        }
+        let hit_values = fields
+            .get("hit_entity_ids")
+            .and_then(|value| value.get("$set"))
+            .and_then(|value| value.get("items"))
+            .and_then(Value::as_array)
+            .ok_or_else(|| PyValueError::new_err("projectile hit_entity_ids is not a set"))?;
+        let mut hit_entity_ids = hit_values
+            .iter()
+            .map(|value| {
+                value.as_i64().ok_or_else(|| {
+                    PyValueError::new_err("projectile historical hit ID is not an integer")
+                })
+            })
+            .collect::<PyResult<Vec<_>>>()?;
+        hit_entity_ids.sort_unstable();
+        if hit_entity_ids.windows(2).any(|pair| pair[0] == pair[1])
+            || (!pierces && !hit_entity_ids.is_empty())
+        {
+            return Err(PyValueError::new_err(
+                "projectile historical hit set is malformed",
+            ));
         }
         let spawn_projectile_data_present = fields
             .get("spawn_projectile_data")
@@ -2678,6 +2709,9 @@ impl PointProjectileState {
                 .and_then(Value::as_bool)
                 .unwrap_or(false),
             start_collision_resolved: required_bool(fields, "start_collision_resolved")?,
+            pierces,
+            projectile_range,
+            hit_entity_ids,
             constructor_range: ExactScalar::from_normalized(
                 fields
                     .get("range")
@@ -2732,6 +2766,9 @@ impl PointProjectileState {
             "tracks_target": self.tracks_target,
             "travel_speed": exact_f64_value(self.travel_speed),
             "start_collision_resolved": self.start_collision_resolved,
+            "pierces": self.pierces,
+            "projectile_range": exact_f64_value(self.projectile_range),
+            "hit_entity_ids": self.hit_entity_ids,
             "temporary_homing_remaining_ms": self.temporary_homing_remaining_ms,
             "temporary_homing_target_id": self.temporary_homing_target_id,
             "spawn_projectile_state": self
@@ -2750,8 +2787,8 @@ impl PointProjectileState {
             "homing_time_ms": self.homing_time_ms,
             "launch_position_x": exact_f64_value(self.launch_x),
             "launch_position_y": exact_f64_value(self.launch_y),
-            "pierces": false,
-            "projectile_range": exact_f64_value(0.0),
+            "pierces": self.pierces,
+            "projectile_range": exact_f64_value(self.projectile_range),
             "start_extra_radius": exact_f64_value(0.0),
         })
     }
@@ -3033,6 +3070,24 @@ struct ResidentHideWhenIdleState {
     phase_ms: f64,
 }
 
+#[derive(Clone, IntoPyObject, PartialEq, Eq)]
+struct ResidentWallBreakersDemolitionState {
+    triggered: bool,
+}
+
+impl ResidentWallBreakersDemolitionState {
+    fn from_normalized(mechanic: &Value) -> PyResult<Self> {
+        let fields = object_fields(mechanic)?;
+        Ok(Self {
+            triggered: required_bool(fields, "_triggered")?,
+        })
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        json!({"triggered": self.triggered})
+    }
+}
+
 impl ResidentHideWhenIdleState {
     fn from_normalized(mechanic: &Value) -> PyResult<Self> {
         let fields = object_fields(mechanic)?;
@@ -3232,6 +3287,7 @@ struct LockedDirectCombatState {
     point_weapon: Option<PointWeapon>,
     damage_ramp: Option<ResidentDamageRampState>,
     hide_when_idle: Option<ResidentHideWhenIdleState>,
+    wall_breakers_demolition: Option<ResidentWallBreakersDemolitionState>,
 }
 
 #[derive(Clone, IntoPyObject, PartialEq, Eq)]
@@ -3252,6 +3308,8 @@ struct PointWeapon {
     stun_duration: f64,
     slow_duration: f64,
     slow_multiplier: f64,
+    pierces: bool,
+    projectile_range: f64,
 }
 
 enum CombatPayload {
@@ -3308,7 +3366,6 @@ impl PointWeapon {
         }
         for (field, reason) in [
             ("pushback", "projectile_pushback"),
-            ("projectileRange", "projectile_range"),
             ("homingTime", "temporary_homing"),
             ("projectileStartExtraRadius", "projectile_start_collision"),
         ] {
@@ -3330,7 +3387,7 @@ impl PointWeapon {
         if !speed.is_finite() || speed <= 0.0 {
             unsupported.push("invalid_projectile_speed".to_owned());
         }
-        let tracks_target = match normalized_mapping_get(projectile_data, "homing") {
+        let mut tracks_target = match normalized_mapping_get(projectile_data, "homing") {
             None => true,
             Some(value) => match value.as_bool() {
                 Some(value) => value,
@@ -3340,6 +3397,17 @@ impl PointWeapon {
                 }
             },
         };
+        let projectile_range = normalized_mapping_get(projectile_data, "projectileRange")
+            .map(ExactScalar::from_normalized)
+            .transpose()?
+            .map_or(0.0, |value| value.as_f64() / 1000.0);
+        let pierces = projectile_range > 0.0;
+        if pierces {
+            tracks_target = false;
+        }
+        if !projectile_range.is_finite() || projectile_range < 0.0 {
+            unsupported.push("invalid_projectile_range".to_owned());
+        }
         let start_radius =
             optional_normalized_f64(card_fields, "projectile_start_radius")?.unwrap_or(0.0);
         let y_offset = optional_normalized_f64(card_fields, "projectile_y_offset")?.unwrap_or(0.0);
@@ -3435,6 +3503,8 @@ impl PointWeapon {
             stun_duration,
             slow_duration,
             slow_multiplier,
+            pierces,
+            projectile_range,
         }))
     }
 }
@@ -3536,6 +3606,7 @@ impl LockedDirectCombatState {
             point_weapon,
             damage_ramp: None,
             hide_when_idle: None,
+            wall_breakers_demolition: None,
         })
     }
 
@@ -3572,6 +3643,9 @@ impl LockedDirectCombatState {
             "hide_when_idle": self.hide_when_idle.as_ref().map(
                 ResidentHideWhenIdleState::diagnostic_value
             ),
+            "wall_breakers_demolition": self.wall_breakers_demolition.as_ref().map(
+                ResidentWallBreakersDemolitionState::diagnostic_value
+            ),
             "encounter_index": entity.encounter_index,
             "facing_x_units": self.facing_x_units,
             "facing_y_units": self.facing_y_units,
@@ -3607,6 +3681,11 @@ impl ResidentEntity {
                     self.locked_combat
                         .as_ref()
                         .is_some_and(|combat| combat.hide_when_idle.is_some()),
+                )
+                + usize::from(
+                    self.locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.wall_breakers_demolition.is_some()),
                 )
     }
 
@@ -3885,6 +3964,7 @@ impl ResidentEntity {
         let mut status_nova_jump = None;
         let mut damage_ramp = None;
         let mut hide_when_idle = None;
+        let mut wall_breakers_demolition = None;
         for mechanic in mechanic_values {
             match object_type(mechanic)?.as_str() {
                 "clasher.mechanics.shared.shield.Shield" => {
@@ -3932,6 +4012,16 @@ impl ResidentEntity {
                         ));
                     }
                     hide_when_idle = Some(ResidentHideWhenIdleState::from_normalized(mechanic)?);
+                }
+                "clasher.cards.wallbreakers.WallBreakersDemolition" => {
+                    if wall_breakers_demolition.is_some() {
+                        return Err(PyValueError::new_err(
+                            "entity has multiple WallBreakersDemolition mechanics",
+                        ));
+                    }
+                    wall_breakers_demolition = Some(
+                        ResidentWallBreakersDemolitionState::from_normalized(mechanic)?,
+                    );
                 }
                 _ => {}
             }
@@ -3982,6 +4072,7 @@ impl ResidentEntity {
             )?;
             state.damage_ramp = damage_ramp;
             state.hide_when_idle = hide_when_idle;
+            state.wall_breakers_demolition = wall_breakers_demolition;
             Some(state)
         } else {
             None
@@ -4061,6 +4152,11 @@ impl ResidentEntity {
                     .as_ref()
                     .is_some_and(|combat| combat.hide_when_idle.is_some()),
             )
+            + usize::from(
+                locked_combat
+                    .as_ref()
+                    .is_some_and(|combat| combat.wall_breakers_demolition.is_some()),
+            )
             != mechanics.len()
         {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
@@ -4103,7 +4199,12 @@ impl ResidentEntity {
         if normalized_optional_bool(card_fields, "self_as_aoe_center") && !uses_direct_area {
             direct_combat_unsupported.push("self_centered_aoe".to_owned());
         }
-        if normalized_optional_bool(card_fields, "kamikaze") && status_nova_jump.is_none() {
+        if normalized_optional_bool(card_fields, "kamikaze")
+            && status_nova_jump.is_none()
+            && locked_combat
+                .as_ref()
+                .is_none_or(|combat| combat.wall_breakers_demolition.is_none())
+        {
             direct_combat_unsupported.push("kamikaze_payload".to_owned());
         }
         if normalized_optional_bool(fields, "_force_melee_attack") && status_nova_jump.is_none() {
@@ -4557,7 +4658,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 12;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 13;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -5594,18 +5695,29 @@ impl ResidentCardCatalog {
                         .locked_combat
                         .as_ref()
                         .is_some_and(|combat| combat.hide_when_idle.is_some());
+                    let demolition_present = prototype
+                        .locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.wall_breakers_demolition.is_some());
                     let mechanic_family_supported = if prototype.status_nova_jump.is_some() {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
                             && !damage_ramp_present
                             && !hide_when_idle_present
+                            && !demolition_present
                     } else if damage_ramp_present {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
                             && !hide_when_idle_present
+                            && !demolition_present
                     } else if hide_when_idle_present {
+                        prototype.mechanics.len() == 1
+                            && prototype.shields.is_empty()
+                            && prototype.death_opcodes.is_empty()
+                            && !demolition_present
+                    } else if demolition_present {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
@@ -5640,6 +5752,32 @@ impl ResidentCardCatalog {
                                         && !movement.special_move_consumed_tick
                                 })
                         });
+                    let demolition_fresh = prototype
+                        .locked_combat
+                        .as_ref()
+                        .and_then(|combat| {
+                            combat
+                                .wall_breakers_demolition
+                                .as_ref()
+                                .map(|demolition| (combat, demolition))
+                        })
+                        .is_none_or(|(combat, demolition)| {
+                            !demolition.triggered
+                                && combat.point_weapon.as_ref().is_some_and(|weapon| {
+                                    weapon.pierces
+                                        && weapon.projectile_range > 0.0
+                                        && weapon.projectile_range.is_finite()
+                                        && weapon.travel_speed * 0.05
+                                            >= weapon.projectile_range - 1e-12
+                                        && !weapon.tracks_target
+                                        && weapon.start_radius.to_bits() == 0.0_f64.to_bits()
+                                        && weapon.y_offset.to_bits() == 0.0_f64.to_bits()
+                                        && weapon.splash_radius > 0.0
+                                        && weapon.stun_duration.to_bits() == 0.0_f64.to_bits()
+                                        && weapon.slow_duration.to_bits() == 0.0_f64.to_bits()
+                                        && weapon.slow_multiplier.to_bits() == 1.0_f64.to_bits()
+                                })
+                        });
                     prototype.active
                         && prototype.is_alive
                         && prototype.card_name == expected_name
@@ -5647,6 +5785,7 @@ impl ResidentCardCatalog {
                         && mechanic_family_supported
                         && damage_ramp_fresh
                         && hide_when_idle_fresh
+                        && demolition_fresh
                         && prototype.shields.iter().all(|shield| {
                             shield.current == shield.maximum && shield.current.as_f64() > 0.0
                         })
@@ -6646,11 +6785,13 @@ impl PublicationExactEq for PointProjectileState {
             && self.primary_target_id == other.primary_target_id
             && self.source_entity_id == other.source_entity_id
             && self.tracks_target == other.tracks_target
+            && self.pierces == other.pierces
             && self.temporary_homing_remaining_ms == other.temporary_homing_remaining_ms
             && self.temporary_homing_target_id == other.temporary_homing_target_id
             && self.permanent_homing_disabled_by_temporary
                 == other.permanent_homing_disabled_by_temporary
             && self.start_collision_resolved == other.start_collision_resolved
+            && self.hit_entity_ids == other.hit_entity_ids
             && self.constructor_range == other.constructor_range
             && self.constructor_sight_range == other.constructor_sight_range
             && self.homing_time_ms == other.homing_time_ms
@@ -6673,6 +6814,7 @@ impl PublicationExactEq for PointProjectileState {
                     self.launch_x,
                     self.launch_y,
                     self.homing_min_distance,
+                    self.projectile_range,
                 ],
                 [
                     other.travel_speed,
@@ -6687,6 +6829,7 @@ impl PublicationExactEq for PointProjectileState {
                     other.launch_x,
                     other.launch_y,
                     other.homing_min_distance,
+                    other.projectile_range,
                 ],
             )
             && publication_optional_f64_eq(self.crown_tower_damage, other.crown_tower_damage)
@@ -6747,6 +6890,7 @@ impl PublicationExactEq for PointWeapon {
     fn publication_exact_eq(&self, other: &Self) -> bool {
         self.tracks_target == other.tracks_target
             && self.hit_planes == other.hit_planes
+            && self.pierces == other.pierces
             && publication_f64_fields_eq(
                 [
                     self.travel_speed,
@@ -6757,6 +6901,7 @@ impl PublicationExactEq for PointWeapon {
                     self.stun_duration,
                     self.slow_duration,
                     self.slow_multiplier,
+                    self.projectile_range,
                 ],
                 [
                     other.travel_speed,
@@ -6767,6 +6912,7 @@ impl PublicationExactEq for PointWeapon {
                     other.stun_duration,
                     other.slow_duration,
                     other.slow_multiplier,
+                    other.projectile_range,
                 ],
             )
     }
@@ -6836,6 +6982,7 @@ impl PublicationExactEq for LockedDirectCombatState {
             }
             && publication_option_exact_eq(&self.damage_ramp, &other.damage_ramp)
             && publication_option_exact_eq(&self.hide_when_idle, &other.hide_when_idle)
+            && self.wall_breakers_demolition == other.wall_breakers_demolition
     }
 }
 
@@ -6853,6 +7000,12 @@ impl PublicationExactEq for ResidentDamageRampState {
 impl PublicationExactEq for ResidentHideWhenIdleState {
     fn publication_exact_eq(&self, other: &Self) -> bool {
         self.publication_static_eq(other) && publication_f64_eq(self.phase_ms, other.phase_ms)
+    }
+}
+
+impl PublicationExactEq for ResidentWallBreakersDemolitionState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self == other
     }
 }
 
@@ -6958,6 +7111,13 @@ impl LockedDirectCombatState {
                 (Some(left), Some(right)) => left.publication_static_eq(right),
                 _ => false,
             }
+            && matches!(
+                (
+                    &self.wall_breakers_demolition,
+                    &other.wall_breakers_demolition
+                ),
+                (None, None) | (Some(_), Some(_))
+            )
             && publication_f64_fields_eq(
                 [
                     self.range,
@@ -7016,6 +7176,7 @@ impl PointProjectileState {
             && self.knockback_ignores_mass == other.knockback_ignores_mass
             && self.source_entity_id == other.source_entity_id
             && self.tracks_target == other.tracks_target
+            && self.pierces == other.pierces
             && self.constructor_range == other.constructor_range
             && self.constructor_sight_range == other.constructor_sight_range
             && self.homing_time_ms == other.homing_time_ms
@@ -7039,6 +7200,7 @@ impl PointProjectileState {
                     self.launch_x,
                     self.launch_y,
                     self.homing_min_distance,
+                    self.projectile_range,
                 ],
                 [
                     other.travel_speed,
@@ -7052,6 +7214,7 @@ impl PointProjectileState {
                     other.launch_x,
                     other.launch_y,
                     other.homing_min_distance,
+                    other.projectile_range,
                 ],
             )
     }
@@ -10019,6 +10182,17 @@ impl ResidentBattle {
                     }
                     CombatPayload::PointProjectile(weapon) => {
                         self.launch_point_projectile(actor_index, target_index, weapon);
+                        let demolition = self.entities[actor_index]
+                            .locked_combat
+                            .as_mut()
+                            .and_then(|combat| combat.wall_breakers_demolition.as_mut());
+                        if let Some(demolition) = demolition
+                            && !demolition.triggered
+                        {
+                            demolition.triggered = true;
+                            let remaining = self.entities[actor_index].hitpoints.as_f64();
+                            self.apply_resident_damage(actor_index, remaining);
+                        }
                     }
                 }
             }
@@ -10214,7 +10388,34 @@ impl ResidentBattle {
                 || !projectile.slow_duration.is_finite()
                 || !projectile.slow_multiplier.is_finite()
                 || !projectile.knockback_distance.is_finite()
+                || !projectile.projectile_range.is_finite()
+                || projectile
+                    .hit_entity_ids
+                    .iter()
+                    .any(|id| *id < 0 || *id >= self.next_entity_id)
+                || projectile
+                    .hit_entity_ids
+                    .windows(2)
+                    .any(|pair| pair[0] >= pair[1])
             {
+                return false;
+            }
+            if projectile.pierces {
+                if projectile.projectile_range <= 0.0
+                    || projectile.tracks_target
+                    || projectile.damage_group_id.is_some()
+                    || projectile.damage_group_hit_entity_ids.is_some()
+                    || projectile.temporary_homing_remaining_ms != 0
+                    || projectile.temporary_homing_target_id.is_some()
+                    || !projectile.start_collision_resolved
+                    || projectile.splash_radius <= 0.0
+                    || projectile.stun_duration != 0.0
+                    || projectile.slow_duration != 0.0
+                    || projectile.knockback_distance != 0.0
+                {
+                    return false;
+                }
+            } else if projectile.projectile_range != 0.0 || !projectile.hit_entity_ids.is_empty() {
                 return false;
             }
             if let Some(target_id) = projectile.primary_target_id {
@@ -12128,6 +12329,9 @@ impl ResidentBattle {
                 temporary_homing_target_id: None,
                 permanent_homing_disabled_by_temporary: false,
                 start_collision_resolved: false,
+                pierces: false,
+                projectile_range: 0.0,
+                hit_entity_ids: Vec::new(),
                 constructor_range: ExactScalar::Int(0),
                 constructor_sight_range: ExactScalar::Int(0),
                 launch_x,
@@ -12467,6 +12671,9 @@ impl ResidentBattle {
                         temporary_homing_target_id: None,
                         permanent_homing_disabled_by_temporary: false,
                         start_collision_resolved: false,
+                        pierces: false,
+                        projectile_range: 0.0,
+                        hit_entity_ids: Vec::new(),
                         constructor_range: ExactScalar::Int(0),
                         constructor_sight_range: ExactScalar::Int(0),
                         launch_x: 9.0,
@@ -16205,8 +16412,16 @@ impl ResidentBattle {
         let launch_y = launch_y_units as f64 / 1000.0;
         let target_x = target.position_x.as_f64();
         let target_y = target.position_y.as_f64();
-        let target_position_x = target.position_x.clone();
-        let target_position_y = target.position_y.clone();
+        let (target_position_x, target_position_y) = if weapon.pierces {
+            let range_units = logic_units(weapon.projectile_range).max(0);
+            let (range_x, range_y) = normalized_vector_logic_units(dx_units, dy_units, range_units);
+            (
+                ExactScalar::Float(((launch_x_units + range_x) as f64 / 1000.0).to_bits()),
+                ExactScalar::Float(((launch_y_units + range_y) as f64 / 1000.0).to_bits()),
+            )
+        } else {
+            (target.position_x.clone(), target.position_y.clone())
+        };
         let source_id = source.id;
         let target_id = target.id;
         let player_id = source.player_id;
@@ -16318,6 +16533,9 @@ impl ResidentBattle {
                 temporary_homing_target_id: None,
                 permanent_homing_disabled_by_temporary: false,
                 start_collision_resolved: true,
+                pierces: weapon.pierces,
+                projectile_range: weapon.projectile_range,
+                hit_entity_ids: Vec::new(),
                 constructor_range,
                 constructor_sight_range: ExactScalar::Float(1.0_f64.to_bits()),
                 launch_x,
@@ -16364,6 +16582,15 @@ impl ResidentBattle {
                 step_dt -= projectile.launch_delay;
                 projectile.launch_delay = 0.0;
             }
+        }
+
+        if self.entities[projectile_index]
+            .point_projectile
+            .as_ref()
+            .is_some_and(|projectile| projectile.pierces)
+        {
+            self.advance_piercing_point_projectile(projectile_index, step_dt);
+            return;
         }
 
         let (
@@ -16681,6 +16908,185 @@ impl ResidentBattle {
             self.entities[projectile_index]
                 .position_y
                 .set_f64((logic_units(position_y) + move_y) as f64 / 1000.0);
+        }
+    }
+
+    fn advance_piercing_point_projectile(
+        &mut self,
+        projectile_index: usize,
+        mut remaining_dt: f64,
+    ) {
+        while self.entities[projectile_index].is_alive && remaining_dt > 1e-12 {
+            let step_dt = remaining_dt.min(0.05);
+            remaining_dt -= step_dt;
+            let (position_x, position_y, target_x, target_y, travel_speed) = {
+                let entity = &self.entities[projectile_index];
+                let projectile = entity
+                    .point_projectile
+                    .as_ref()
+                    .expect("piercing projectile requires point state");
+                (
+                    entity.position_x.as_f64(),
+                    entity.position_y.as_f64(),
+                    projectile.target_x.as_f64(),
+                    projectile.target_y.as_f64(),
+                    projectile.travel_speed,
+                )
+            };
+            let dx = logic_units(target_x - position_x);
+            let dy = logic_units(target_y - position_y);
+            let remaining = integer_sqrt(
+                (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128,
+            );
+            let serialized_speed = (travel_speed * 1000.0 * 0.05).round_ties_even().max(0.0) as i64;
+            let tick_count = step_dt / 0.05;
+            let travel = (serialized_speed as f64 * tick_count)
+                .round_ties_even()
+                .max(0.0) as i64;
+            let reached_endpoint = remaining <= travel;
+            let (move_x, move_y) = vector_towards_logic_units(dx, dy, travel);
+            let next_x = logic_units(position_x) + move_x;
+            let next_y = logic_units(position_y) + move_y;
+            self.entities[projectile_index]
+                .position_x
+                .set_f64(next_x as f64 / 1000.0);
+            self.entities[projectile_index]
+                .position_y
+                .set_f64(next_y as f64 / 1000.0);
+
+            let (damage, crown_tower_damage, crown_tower_damage_multiplier) = {
+                let entity = &self.entities[projectile_index];
+                let projectile = entity
+                    .point_projectile
+                    .as_ref()
+                    .expect("piercing projectile retains point state");
+                (
+                    entity.damage.as_f64(),
+                    projectile.crown_tower_damage,
+                    projectile.crown_tower_damage_multiplier,
+                )
+            };
+            let scan_len = self.entities.len();
+            let targets = (0..scan_len)
+                .filter(|&target_index| {
+                    self.piercing_point_projectile_target_valid(
+                        projectile_index,
+                        target_index,
+                        next_x,
+                        next_y,
+                    )
+                })
+                .collect::<Vec<_>>();
+            for target_index in targets {
+                if !self.piercing_point_projectile_target_valid(
+                    projectile_index,
+                    target_index,
+                    next_x,
+                    next_y,
+                ) {
+                    continue;
+                }
+                let target_id = self.entities[target_index].id;
+                self.entities[projectile_index]
+                    .point_projectile
+                    .as_mut()
+                    .expect("piercing projectile retains point state")
+                    .hit_entity_ids
+                    .push(target_id);
+                self.entities[projectile_index]
+                    .point_projectile
+                    .as_mut()
+                    .expect("piercing projectile retains point state")
+                    .hit_entity_ids
+                    .sort_unstable();
+                let crown = self.entities[target_index]
+                    .building_impact
+                    .as_ref()
+                    .is_some_and(|building| building.crown_slot.is_some());
+                let target_damage = if crown {
+                    crown_tower_damage.unwrap_or_else(|| {
+                        let base = damage.round_ties_even().max(0.0) as i64;
+                        let percentage = (crown_tower_damage_multiplier * 100.0)
+                            .round_ties_even()
+                            .max(0.0) as i64;
+                        if base == 0 || percentage == 0 {
+                            0.0
+                        } else {
+                            ((base * percentage + 99) / 100) as f64
+                        }
+                    })
+                } else {
+                    damage
+                };
+                if target_damage > 0.0 {
+                    self.apply_resident_damage(target_index, target_damage);
+                }
+            }
+            if reached_endpoint {
+                self.entities[projectile_index].is_alive = false;
+            }
+        }
+    }
+
+    fn piercing_point_projectile_target_valid(
+        &self,
+        projectile_index: usize,
+        target_index: usize,
+        projectile_x: i64,
+        projectile_y: i64,
+    ) -> bool {
+        if target_index == projectile_index {
+            return false;
+        }
+        let projectile_entity = &self.entities[projectile_index];
+        let projectile = projectile_entity
+            .point_projectile
+            .as_ref()
+            .expect("piercing projectile retains point state");
+        let target = &self.entities[target_index];
+        let Some((target_is_air, collision_radius, stealth_until_ms, allow_invisible)) =
+            target.projectile_target_traits()
+        else {
+            return false;
+        };
+        let source_is_character = projectile.source_entity_id.is_some_and(|id| {
+            self.entities
+                .iter()
+                .find(|entity| entity.id == id)
+                .is_some_and(|entity| matches!(entity.entity_kind, 0 | 1))
+        });
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        if !target.active
+            || !target.is_alive
+            || target.player_id == projectile_entity.player_id
+            || projectile.hit_entity_ids.contains(&target.id)
+            || (projectile.ignore_buildings && target.entity_kind == 1)
+            || target.blocks_effects_while_committed()
+            || target.hide_when_idle_blocks_effects(false)
+            || (source_is_character && target.death_spawn_target_immunity_elapsed_ms >= 0)
+            || (stealth_until_ms > now_ms && !allow_invisible)
+            || (target_is_air && !projectile.hits_air)
+            || (!target_is_air && !projectile.hits_ground)
+        {
+            return false;
+        }
+        let target_x = logic_units(target.position_x.as_f64());
+        let target_y = logic_units(target.position_y.as_f64());
+        let target_radius = logic_units(collision_radius).max(0);
+        let radius_units = logic_units(projectile.splash_radius).max(0);
+        if target.entity_kind == 1 {
+            let closest_x = projectile_x.clamp(target_x - target_radius, target_x + target_radius);
+            let closest_y = projectile_y.clamp(target_y - target_radius, target_y + target_radius);
+            let x = closest_x - projectile_x;
+            let y = closest_y - projectile_y;
+            i128::from(x) * i128::from(x) + i128::from(y) * i128::from(y)
+                < i128::from(radius_units) * i128::from(radius_units)
+        } else {
+            let x = target_x - projectile_x;
+            let y = target_y - projectile_y;
+            let combined = radius_units + target_radius;
+            i128::from(x) * i128::from(x) + i128::from(y) * i128::from(y)
+                < i128::from(combined) * i128::from(combined)
         }
     }
 
@@ -17191,6 +17597,8 @@ mod tests {
             stun_duration: 0.0,
             slow_duration: 0.0,
             slow_multiplier: 1.0,
+            pierces: false,
+            projectile_range: 0.0,
         };
         let mut changed_static = static_config.clone();
         assert!(static_config.publication_exact_eq(&changed_static));

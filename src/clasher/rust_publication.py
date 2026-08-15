@@ -516,6 +516,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "has_attacked_once",
             "hidden_building",
             "hide_when_idle",
+            "wall_breakers_demolition",
             "hit_speed_ms",
             "initial_position",
             "is_air_unit",
@@ -551,6 +552,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
     "hide_when_idle": frozenset(
         {"hide_delay_ms", "rise_time_ms", "phase_ms"}
     ),
+    "wall_breakers_demolition": frozenset({"triggered"}),
     "point_weapon": frozenset(
         {
             "travel_speed",
@@ -563,6 +565,8 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "stun_duration",
             "slow_duration",
             "slow_multiplier",
+            "pierces",
+            "projectile_range",
         }
     ),
     "building_lifetime": frozenset(
@@ -619,6 +623,9 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "travel_speed",
             "unsupported",
             "spawn_projectile_state",
+            "pierces",
+            "projectile_range",
+            "hit_entity_ids",
         }
     ),
     "spawn_projectile_state": frozenset(
@@ -1435,11 +1442,13 @@ def _validate_direct_combat(value: Any, entity_id: int) -> None:
             "stun_duration",
             "slow_duration",
             "slow_multiplier",
+            "projectile_range",
         ):
             _direct_float(point[field], f"entity {entity_id} point weapon {field}")
         _direct_bool(
             point["tracks_target"], f"entity {entity_id} point weapon tracking"
         )
+        _direct_bool(point["pierces"], f"entity {entity_id} point weapon piercing")
         planes = point["hit_planes"]
         if planes is not None and (
             type(planes) is not tuple
@@ -1455,6 +1464,13 @@ def _validate_direct_combat(value: Any, entity_id: int) -> None:
     _validate_direct_hide_when_idle(
         row["hide_when_idle"], entity_id, row["hidden_building"]
     )
+    demolition = row["wall_breakers_demolition"]
+    if demolition is not None:
+        demolition_row = _direct_dict(demolition, "wall_breakers_demolition")
+        _direct_bool(
+            demolition_row["triggered"],
+            f"entity {entity_id} WallBreakersDemolition trigger",
+        )
 
 
 def _validate_direct_damage_ramp(
@@ -1650,6 +1666,7 @@ def _validate_direct_point(value: Any, entity_id: int) -> None:
         "splash_radius",
         "stun_duration",
         "travel_speed",
+        "projectile_range",
     ):
         _direct_float(row[field], f"entity {entity_id} projectile {field}")
     if row["crown_tower_damage"] is not None:
@@ -1667,8 +1684,21 @@ def _validate_direct_point(value: Any, entity_id: int) -> None:
         "permanent_homing_disabled_by_temporary",
         "start_collision_resolved",
         "tracks_target",
+        "pierces",
     ):
         _direct_bool(row[field], f"entity {entity_id} projectile {field}")
+    hit_ids = _direct_list(
+        row["hit_entity_ids"], f"entity {entity_id} projectile historical hits"
+    )
+    if (
+        any(type(value) is not int or value < 0 for value in hit_ids)
+        or hit_ids != sorted(set(hit_ids))
+        or row["pierces"] != (row["projectile_range"] > 0.0)
+        or (not row["pierces"] and hit_ids)
+    ):
+        raise ResidentPublicationError(
+            f"malformed direct projectile {entity_id} piercing state"
+        )
     unsupported = _direct_list(
         row["unsupported"], f"entity {entity_id} projectile unsupported"
     )
@@ -2314,6 +2344,14 @@ def _build_direct_publication_plan(
         )
         _validate_direct_building(row, entity_id)
         _validate_direct_point(row["point_projectile_state"], entity_id)
+        point_state = row["point_projectile_state"]
+        if point_state is not None and any(
+            hit_id >= battle_row["next_entity_id"]
+            for hit_id in point_state["hit_entity_ids"]
+        ):
+            raise ResidentPublicationError(
+                f"resident projectile {entity_id} has future historical hit ID"
+            )
         _validate_direct_spawn_projectile_recipe(row, resident, entity_id)
         _validate_direct_rolling(row["rolling_projectile_state"], entity_id)
         if row["rolling_projectile_state"] is not None:
@@ -2939,6 +2977,13 @@ def _validate_direct_full_delta_entity(
     )
     _validate_direct_building(row, entity_id)
     _validate_direct_point(row["point_projectile_state"], entity_id)
+    point_state = row["point_projectile_state"]
+    if point_state is not None and any(
+        hit_id >= next_entity_id for hit_id in point_state["hit_entity_ids"]
+    ):
+        raise ResidentPublicationError(
+            f"resident projectile {entity_id} has future historical hit ID"
+        )
     _validate_direct_spawn_projectile_recipe(row, resident, entity_id)
     _validate_direct_rolling(row["rolling_projectile_state"], entity_id)
     if row["rolling_projectile_state"] is not None:
@@ -3911,6 +3956,7 @@ def _typed_combat(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
         return None
     damage_ramp = state["damage_ramp"]
     hide_when_idle = state["hide_when_idle"]
+    demolition = state["wall_breakers_demolition"]
     return {
         "attack_cooldown": _exact_float(state["attack_cooldown"]),
         "attack_preload_blocked": state["attack_preload_blocked"],
@@ -3950,6 +3996,11 @@ def _typed_combat(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
                 "phase_ms": _exact_float(hide_when_idle["phase_ms"]),
                 "rise_time_ms": hide_when_idle["rise_time_ms"],
             }
+        ),
+        "wall_breakers_demolition": (
+            None
+            if demolition is None
+            else {"triggered": demolition["triggered"]}
         ),
         "hidden_building": state["hidden_building"],
         "hitpoints": _exact(entity["hitpoints"]),
@@ -4047,6 +4098,9 @@ def _typed_point(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
         "hits_ground": state["hits_ground"],
         "id": row["id"],
         "ignore_buildings": state["ignore_buildings"],
+        "pierces": state["pierces"],
+        "projectile_range": _exact_float(state["projectile_range"]),
+        "hit_entity_ids": list(state["hit_entity_ids"]),
         "is_alive": row["is_alive"],
         "knockback_distance": _exact_float(state["knockback_distance"]),
         "knockback_ignores_mass": state["knockback_ignores_mass"],
@@ -4281,8 +4335,10 @@ def _typed_publication_projection(parts: Any) -> _TypedPublication:
                     "homing_time_ms": point_state["homing_time_ms"],
                     "launch_position_x": _exact_float(point_state["launch_x"]),
                     "launch_position_y": _exact_float(point_state["launch_y"]),
-                    "pierces": False,
-                    "projectile_range": _exact_float(0.0),
+                    "pierces": point_state["pierces"],
+                    "projectile_range": _exact_float(
+                        point_state["projectile_range"]
+                    ),
                     "start_extra_radius": _exact_float(0.0),
                 }
                 point_group_ids = (
@@ -5076,6 +5132,9 @@ def _apply_combat(
         entity._hidden_building = bool(row["hidden_building"])
         _apply_direct_damage_ramp(entity, row["damage_ramp"], undo)
         _apply_direct_hide_when_idle(entity, row["hide_when_idle"], undo)
+        _apply_direct_wall_breakers_demolition(
+            entity, row["wall_breakers_demolition"], undo
+        )
 
 
 def _apply_buildings(
@@ -5133,6 +5192,8 @@ def _apply_projectiles(
     for row in snapshot["point_projectiles"]:
         entity = entity_registry[int(row["id"])]
         _watch_entity_attrs(undo, entity, "target_position")
+        if undo is not None:
+            undo.watch_value(entity.hit_entity_ids)
         _apply_projectile_row(entity, row, entity_registry)
         group_id = row["damage_group_id"]
         if group_id is not None:
@@ -5187,6 +5248,10 @@ def _apply_projectile_row(
     entity.target_position.x = _scalar(row["target_position_x"])
     entity.target_position.y = _scalar(row["target_position_y"])
     entity.tracks_target = bool(row["tracks_target"])
+    entity.pierces = bool(row["pierces"])
+    entity.projectile_range = _scalar(row["projectile_range"])
+    entity.hit_entity_ids.clear()
+    entity.hit_entity_ids.update(int(value) for value in row["hit_entity_ids"])
     entity.travel_speed = _scalar(row["travel_speed"])
     _set_sparse_default(
         entity,
@@ -5502,6 +5567,7 @@ def _create_projectile_birth(
         spawn_projectile_data=None,
     )
     dynamic_projectile = cast(Any, projectile)
+    dynamic_projectile.hit_entity_ids.update(state["hit_entity_ids"])
     if source is None:
         dynamic_projectile.spell_name = str(state["source_kind"])
     dynamic_projectile.battle_state = battle
@@ -5757,8 +5823,8 @@ def _create_projectile_birth_direct(
         source_entity=None,
         primary_target=None,
         tracks_target=state["tracks_target"],
-        pierces=False,
-        projectile_range=0.0,
+        pierces=state["pierces"],
+        projectile_range=state["projectile_range"],
         homing_time_ms=state["homing_time_ms"],
         homing_min_distance=state["homing_min_distance"],
         launch_position=Position(state["launch_x"], state["launch_y"]),
@@ -5768,6 +5834,7 @@ def _create_projectile_birth_direct(
         **spawn_kwargs,
     )
     dynamic = cast(Any, projectile)
+    dynamic.hit_entity_ids.update(state["hit_entity_ids"])
     if source is None:
         dynamic.spell_name = state["source_kind"]
     dynamic.battle_state = battle
@@ -6120,6 +6187,19 @@ def _validate_direct_bound_entities(
                 raise ResidentPublicationError(
                     f"resident entity {entity_plan.entity_id} HideWhenIdle static state changed"
                 )
+        demolition = None if combat is None else combat["wall_breakers_demolition"]
+        demolition_mechanics = [
+            mechanic
+            for mechanic in entity.mechanics
+            if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+            == "clasher.cards.wallbreakers.WallBreakersDemolition"
+        ]
+        if (demolition is None) != (len(demolition_mechanics) == 0) or len(
+            demolition_mechanics
+        ) > 1:
+            raise ResidentPublicationError(
+                f"resident entity {entity_plan.entity_id} WallBreakersDemolition topology changed"
+            )
 
 
 def _apply_publication_entity_rows(
@@ -6391,6 +6471,29 @@ def _apply_direct_hide_when_idle(
     mechanic._phase_ms = state["phase_ms"]
 
 
+def _apply_direct_wall_breakers_demolition(
+    entity: Any,
+    state: Any,
+    undo: _UndoJournal | None,
+) -> None:
+    mechanics = [
+        mechanic
+        for mechanic in entity.mechanics
+        if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+        == "clasher.cards.wallbreakers.WallBreakersDemolition"
+    ]
+    if (state is None) != (len(mechanics) == 0) or len(mechanics) > 1:
+        raise ResidentPublicationError(
+            f"resident entity {entity.id} WallBreakersDemolition topology changed"
+        )
+    if state is None:
+        return
+    mechanic = mechanics[0]
+    if undo is not None:
+        undo.watch_attrs(mechanic)
+    mechanic._triggered = state["triggered"]
+
+
 def _apply_direct_hidden_building(
     entity: Any,
     hidden: bool,
@@ -6596,6 +6699,9 @@ def _apply_direct_entity(
         )
         _apply_direct_damage_ramp(entity, combat["damage_ramp"], undo)
         _apply_direct_hide_when_idle(entity, combat["hide_when_idle"], undo)
+        _apply_direct_wall_breakers_demolition(
+            entity, combat["wall_breakers_demolition"], undo
+        )
 
     lifetime = row["building_lifetime_state"]
     impact = row["building_impact_state"]
@@ -6616,6 +6722,7 @@ def _apply_direct_entity(
 
     point = row["point_projectile_state"]
     if point is not None:
+        undo.watch_value(entity.hit_entity_ids)
         entity.crown_tower_damage = point["crown_tower_damage"]
         entity.crown_tower_damage_multiplier = point["crown_tower_damage_multiplier"]
         entity.damage = _scalar(row["damage"])
@@ -6639,6 +6746,10 @@ def _apply_direct_entity(
         entity.target_position.x = _scalar(point["target_x"])
         entity.target_position.y = _scalar(point["target_y"])
         entity.tracks_target = point["tracks_target"]
+        entity.pierces = point["pierces"]
+        entity.projectile_range = point["projectile_range"]
+        entity.hit_entity_ids.clear()
+        entity.hit_entity_ids.update(point["hit_entity_ids"])
         entity.travel_speed = point["travel_speed"]
         entity._temporary_homing_remaining_ms = point["temporary_homing_remaining_ms"]
         entity._temporary_homing_target = (
@@ -6870,6 +6981,19 @@ def _validate_direct_delta_bound_entities(
                     raise ResidentPublicationError(
                         f"resident entity {change.entity_id} HideWhenIdle topology changed"
                     )
+            demolition = combat["wall_breakers_demolition"]
+            demolition_mechanics = [
+                mechanic
+                for mechanic in entity.mechanics
+                if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+                == "clasher.cards.wallbreakers.WallBreakersDemolition"
+            ]
+            if (demolition is None) != (len(demolition_mechanics) == 0) or len(
+                demolition_mechanics
+            ) > 1:
+                raise ResidentPublicationError(
+                    f"resident entity {change.entity_id} WallBreakersDemolition topology changed"
+                )
 
 
 def _plan_direct_delta_projectile_groups(
@@ -7141,6 +7265,9 @@ def _apply_direct_delta_entity(
             )
             _apply_direct_damage_ramp(entity, combat["damage_ramp"], undo)
             _apply_direct_hide_when_idle(entity, combat["hide_when_idle"], undo)
+            _apply_direct_wall_breakers_demolition(
+                entity, combat["wall_breakers_demolition"], undo
+            )
     if mask & _ENTITY_DELTA_BUILDING_LIFETIME:
         lifetime = raw["building_lifetime_state"]
         if lifetime is not None:
@@ -7165,6 +7292,7 @@ def _apply_direct_delta_entity(
         point = raw["point_projectile_state"]
         if point is not None:
             _watch_entity_attrs(undo, entity, "target_position")
+            undo.watch_value(entity.hit_entity_ids)
             entity.crown_tower_damage = point["crown_tower_damage"]
             entity.crown_tower_damage_multiplier = point["crown_tower_damage_multiplier"]
             entity.damage_wave_interval = point["damage_wave_interval"]
@@ -7177,6 +7305,10 @@ def _apply_direct_delta_entity(
             entity.target_position.x = _scalar(point["target_x"])
             entity.target_position.y = _scalar(point["target_y"])
             entity.tracks_target = point["tracks_target"]
+            entity.pierces = point["pierces"]
+            entity.projectile_range = point["projectile_range"]
+            entity.hit_entity_ids.clear()
+            entity.hit_entity_ids.update(point["hit_entity_ids"])
             entity.travel_speed = point["travel_speed"]
             entity._temporary_homing_remaining_ms = point["temporary_homing_remaining_ms"]
             entity._temporary_homing_target = None if point["temporary_homing_target_id"] is None else registry[point["temporary_homing_target_id"]]
