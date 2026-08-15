@@ -497,6 +497,56 @@ def test_direct_combat_crown_fallback_is_data_driven(
     assert selected._crown_tower_slot == expected_slot
 
 
+def test_direct_combat_backward_route_reacquires_crown_after_target_disappears() -> None:
+    battle = BattleState()
+    actor = _spawn(battle, "Knight", 0)
+    vanished = _spawn(battle, "Knight", 1)
+    actor.position = Position(3.5, 12.0)
+    for entity in (actor, vanished):
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        entity._spawn_hook_pending = False
+        entity._spawn_hook_fired = True
+    actor.target_id = vanished.id
+    actor._last_combat_target_id = vanished.id
+    actor._ground_path_backwards = True
+    vanished.is_alive = False
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    selected = battle.entities[actor.target_id]
+    assert selected._crown_tower_slot == "left"
+
+
+def test_direct_combat_backward_route_keeps_live_current_target_while_stunned() -> None:
+    battle = BattleState()
+    actor = _spawn(battle, "Knight", 0)
+    current = _spawn(battle, "Knight", 1)
+    actor.position = Position(3.5, 12.0)
+    current.position = Position(9.0, 30.0)
+    for entity in (actor, current):
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        entity._spawn_hook_pending = False
+        entity._spawn_hook_fired = True
+    actor.target_id = current.id
+    actor._last_combat_target_id = current.id
+    actor._ground_path_backwards = True
+    actor.stun_timer = 1.0
+    resident = ResidentRustBattle.from_battle(battle)
+
+    assert resident.supports_direct_troop_combat_phase
+    resident.advance_direct_troop_combat_phase()
+    _advance_python_combat_phase(battle)
+
+    compare_locked_direct_combat_phase(battle, resident)
+    assert actor.target_id == current.id
+
+
 def test_direct_combat_damage_activates_and_syncs_king_tower() -> None:
     battle = BattleState()
     king = battle.entities[3]

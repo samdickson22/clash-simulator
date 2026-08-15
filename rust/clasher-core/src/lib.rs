@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 15;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 16;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -2335,14 +2335,43 @@ impl ResidentDeathAreaSpec {
 
 #[derive(Clone, IntoPyObject, PartialEq)]
 struct ResidentPersistentAreaSpellSpec {
+    clock_kind: String,
     damage: f64,
     crown_tower_damage_multiplier: f64,
     building_damage_multiplier: f64,
     crown_tower_damage: f64,
-    building_damage: f64,
+    building_damage: Option<f64>,
+    freeze_effect: bool,
+    damage_on_spawn: bool,
+    slows_attack_speed: bool,
+    slows_spawn_speed: bool,
+    attack_speed_multiplier: Option<f64>,
+    spawn_speed_multiplier: Option<f64>,
     damage_tick_interval: f64,
     max_damage_ticks: i64,
     periodic_damage_buff_duration: f64,
+}
+
+impl ResidentPersistentAreaSpellSpec {
+    fn diagnostic_value(&self) -> Value {
+        json!({
+            "attack_speed_multiplier": self.attack_speed_multiplier.map(exact_f64_value),
+            "building_damage": self.building_damage.map(exact_f64_value),
+            "building_damage_multiplier": exact_f64_value(self.building_damage_multiplier),
+            "clock_kind": self.clock_kind,
+            "crown_tower_damage": exact_f64_value(self.crown_tower_damage),
+            "crown_tower_damage_multiplier": exact_f64_value(self.crown_tower_damage_multiplier),
+            "damage": exact_f64_value(self.damage),
+            "damage_on_spawn": self.damage_on_spawn,
+            "damage_tick_interval": exact_f64_value(self.damage_tick_interval),
+            "freeze_effect": self.freeze_effect,
+            "max_damage_ticks": self.max_damage_ticks,
+            "periodic_damage_buff_duration": exact_f64_value(self.periodic_damage_buff_duration),
+            "slows_attack_speed": self.slows_attack_speed,
+            "slows_spawn_speed": self.slows_spawn_speed,
+            "spawn_speed_multiplier": self.spawn_speed_multiplier.map(exact_f64_value),
+        })
+    }
 }
 
 #[derive(Clone, IntoPyObject, PartialEq)]
@@ -2351,6 +2380,7 @@ struct ResidentAreaEffectState {
     persistent_spell: Option<ResidentPersistentAreaSpellSpec>,
     time_alive: f64,
     effect_snapshot_applied: bool,
+    freeze_targets_applied: bool,
     damage_ticks_applied: i64,
     next_damage_time: Option<f64>,
     next_effect_time: Option<f64>,
@@ -2368,18 +2398,18 @@ impl ResidentAreaEffectState {
         let movement_multiplier = normalized_f64(fields, "speed_multiplier")?;
         let slows_attack_speed = required_bool(fields, "slows_attack_speed")?;
         let slows_spawn_speed = required_bool(fields, "slows_spawn_speed")?;
-        let attack_multiplier = optional_normalized_f64(fields, "attack_speed_multiplier")?
-            .unwrap_or(if slows_attack_speed {
-                movement_multiplier
-            } else {
-                1.0
-            });
-        let spawn_multiplier = optional_normalized_f64(fields, "spawn_speed_multiplier")?
-            .unwrap_or(if slows_spawn_speed {
-                movement_multiplier
-            } else {
-                1.0
-            });
+        let attack_speed_multiplier = optional_normalized_f64(fields, "attack_speed_multiplier")?;
+        let spawn_speed_multiplier = optional_normalized_f64(fields, "spawn_speed_multiplier")?;
+        let attack_multiplier = attack_speed_multiplier.unwrap_or(if slows_attack_speed {
+            movement_multiplier
+        } else {
+            1.0
+        });
+        let spawn_multiplier = spawn_speed_multiplier.unwrap_or(if slows_spawn_speed {
+            movement_multiplier
+        } else {
+            1.0
+        });
         let time_alive = normalized_f64(fields, "time_alive")?;
         for value in [
             radius_tiles,
@@ -2416,6 +2446,7 @@ impl ResidentAreaEffectState {
         let is_tornado = required_bool(fields, "is_tornado")?;
         let damage_on_spawn = required_bool(fields, "damage_on_spawn")?;
         let freeze_targets_applied = required_bool(fields, "freeze_targets_applied")?;
+        let effect_snapshot_applied = required_bool(fields, "effect_snapshot_applied")?;
         let cap_buff_time_to_effect = required_bool(fields, "cap_buff_time_to_effect")?;
         let hits_air = required_bool(fields, "hits_air")?;
         let hits_ground = required_bool(fields, "hits_ground")?;
@@ -2434,7 +2465,6 @@ impl ResidentAreaEffectState {
             && movement_multiplier <= 1.0
             && attack_multiplier <= 1.0
             && spawn_multiplier <= 1.0
-            && !(movement_multiplier == 0.0 && attack_multiplier == 0.0 && spawn_multiplier == 0.0)
             && time_alive >= 0.0
             && [
                 damage,
@@ -2455,6 +2485,7 @@ impl ResidentAreaEffectState {
             && push_speed_factor == 0.0
             && !is_tornado;
         let death_area_supported = common_supported
+            && !(movement_multiplier == 0.0 && attack_multiplier == 0.0 && spawn_multiplier == 0.0)
             && effect_tick_interval == 0.0
             && damage == 0.0
             && max_damage_ticks == 0
@@ -2467,7 +2498,7 @@ impl ResidentAreaEffectState {
             && initial_damage_delay.is_none()
             && next_damage_time.is_none()
             && next_effect_time.is_none();
-        let persistent_spell = (common_supported
+        let source_periodic_supported = common_supported
             && radius_tiles > 0.0
             && damage > 0.0
             && max_damage_ticks > 0
@@ -2499,17 +2530,70 @@ impl ResidentAreaEffectState {
             && crown_tower_damage_multiplier >= 0.0
             && building_damage_multiplier >= 1.0
             && crown_tower_damage.is_some_and(|value| value >= 0.0)
-            && building_damage.is_some_and(|value| value >= 0.0))
-        .then(|| ResidentPersistentAreaSpellSpec {
-            damage,
-            crown_tower_damage_multiplier,
-            building_damage_multiplier,
-            crown_tower_damage: crown_tower_damage.unwrap_or_default(),
-            building_damage: building_damage.unwrap_or_default(),
-            damage_tick_interval,
-            max_damage_ticks,
-            periodic_damage_buff_duration,
-        });
+            && building_damage.is_some_and(|value| value >= 0.0)
+            && attack_speed_multiplier.is_none()
+            && spawn_speed_multiplier.is_none();
+        let freeze_snapshot_supported = common_supported
+            && radius_tiles > 0.0
+            && damage > 0.0
+            && max_damage_ticks == 1
+            && (0..=1).contains(&damage_ticks_applied)
+            && freeze_effect
+            && !effect_on_spawn_only
+            && !target_local_damage
+            && periodic_damage_buff_duration == 0.0
+            && !periodic_damage_controlled_by_parent
+            && damage_on_spawn
+            && initial_damage_delay.is_none()
+            && ((damage_ticks_applied == 0 && next_damage_time.is_none())
+                || (damage_ticks_applied == 1
+                    && next_damage_time.is_some_and(|value| value.to_bits() == 0.0_f64.to_bits())))
+            && freeze_targets_applied == (damage_ticks_applied == 1)
+            && next_effect_time.is_none()
+            && !effect_snapshot_applied
+            && slows_attack_speed
+            && slows_spawn_speed
+            && attack_speed_multiplier.is_none()
+            && spawn_speed_multiplier.is_none()
+            && movement_multiplier.to_bits() == 0.0_f64.to_bits()
+            && attack_multiplier.to_bits() == 0.0_f64.to_bits()
+            && spawn_multiplier.to_bits() == 0.0_f64.to_bits()
+            && damage_tick_interval.to_bits() == 0.0_f64.to_bits()
+            && effect_tick_interval > 0.0
+            && refresh_duration > 0.0
+            && !cap_buff_time_to_effect
+            && hits_ground
+            && hits_air
+            && affects_hidden
+            && crown_tower_damage_multiplier >= 0.0
+            && building_damage_multiplier >= 1.0
+            && crown_tower_damage.is_some_and(|value| value >= 0.0)
+            && building_damage.is_none();
+        let persistent_clock_kind = if source_periodic_supported {
+            Some("source_periodic")
+        } else if freeze_snapshot_supported {
+            Some("freeze_snapshot")
+        } else {
+            None
+        };
+        let persistent_spell =
+            persistent_clock_kind.map(|clock_kind| ResidentPersistentAreaSpellSpec {
+                clock_kind: clock_kind.to_owned(),
+                damage,
+                crown_tower_damage_multiplier,
+                building_damage_multiplier,
+                crown_tower_damage: crown_tower_damage.unwrap_or_default(),
+                building_damage,
+                freeze_effect,
+                damage_on_spawn,
+                slows_attack_speed,
+                slows_spawn_speed,
+                attack_speed_multiplier,
+                spawn_speed_multiplier,
+                damage_tick_interval,
+                max_damage_ticks,
+                periodic_damage_buff_duration,
+            });
         let supported = death_area_supported || persistent_spell.is_some();
         Ok(Self {
             spec: ResidentDeathAreaSpec {
@@ -2534,7 +2618,8 @@ impl ResidentAreaEffectState {
             },
             persistent_spell,
             time_alive,
-            effect_snapshot_applied: required_bool(fields, "effect_snapshot_applied")?,
+            effect_snapshot_applied,
+            freeze_targets_applied,
             damage_ticks_applied,
             next_damage_time,
             next_effect_time,
@@ -2552,6 +2637,7 @@ impl ResidentAreaEffectState {
             "duration": exact_f64_value(self.spec.duration),
             "damage_ticks_applied": self.damage_ticks_applied,
             "effect_snapshot_applied": self.effect_snapshot_applied,
+            "freeze_targets_applied": self.freeze_targets_applied,
             "effect_tick_interval": exact_f64_value(self.spec.effect_tick_interval),
             "encounter_index": entity.encounter_index,
             "hits_air": self.spec.hits_air,
@@ -2569,16 +2655,7 @@ impl ResidentAreaEffectState {
             "refresh_duration": exact_f64_value(self.spec.refresh_duration),
             "spawn_multiplier": exact_f64_value(self.spec.spawn_multiplier),
             "time_alive": exact_f64_value(self.time_alive),
-            "persistent_spell": self.persistent_spell.as_ref().map(|spell| json!({
-                "building_damage": exact_f64_value(spell.building_damage),
-                "building_damage_multiplier": exact_f64_value(spell.building_damage_multiplier),
-                "crown_tower_damage": exact_f64_value(spell.crown_tower_damage),
-                "crown_tower_damage_multiplier": exact_f64_value(spell.crown_tower_damage_multiplier),
-                "damage": exact_f64_value(spell.damage),
-                "damage_tick_interval": exact_f64_value(spell.damage_tick_interval),
-                "max_damage_ticks": spell.max_damage_ticks,
-                "periodic_damage_buff_duration": exact_f64_value(spell.periodic_damage_buff_duration),
-            })),
+            "persistent_spell": self.persistent_spell.as_ref().map(ResidentPersistentAreaSpellSpec::diagnostic_value),
         })
     }
 }
@@ -5169,7 +5246,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 15;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 16;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -5256,6 +5333,12 @@ struct ResidentAreaEffectSpellWire {
     building_damage_multiplier: f64,
     crown_tower_damage: Option<f64>,
     building_damage: Option<f64>,
+    freeze_effect: bool,
+    damage_on_spawn: bool,
+    slows_attack_speed: bool,
+    slows_spawn_speed: bool,
+    attack_speed_multiplier: Option<f64>,
+    spawn_speed_multiplier: Option<f64>,
     damage_tick_interval: f64,
     max_damage_ticks: i64,
     periodic_damage_buff_duration: f64,
@@ -5422,6 +5505,7 @@ struct ResidentDirectDamageSpellSpec {
 
 #[derive(Clone)]
 struct ResidentAreaEffectSpellSpec {
+    clock_kind: String,
     radius: f64,
     damage: f64,
     duration: f64,
@@ -5432,7 +5516,13 @@ struct ResidentAreaEffectSpellSpec {
     crown_tower_damage_multiplier: f64,
     building_damage_multiplier: f64,
     crown_tower_damage: f64,
-    building_damage: f64,
+    building_damage: Option<f64>,
+    freeze_effect: bool,
+    damage_on_spawn: bool,
+    slows_attack_speed: bool,
+    slows_spawn_speed: bool,
+    attack_speed_multiplier: Option<f64>,
+    spawn_speed_multiplier: Option<f64>,
     damage_tick_interval: f64,
     max_damage_ticks: i64,
     periodic_damage_buff_duration: f64,
@@ -6241,32 +6331,62 @@ impl ResidentCardCatalog {
                 .into_iter()
                 .all(f64::is_finite)
                     && spell.crown_tower_damage.is_some_and(f64::is_finite)
-                    && spell.building_damage.is_some_and(f64::is_finite);
-                if !finite
-                    || spell.clock_kind != "source_periodic"
-                    || spell.radius <= 0.0
-                    || spell.radius > (i64::MAX / 4096) as f64 / 1000.0
-                    || spell.damage <= 0.0
-                    || spell.duration <= 0.0
-                    || !(spell.hits_ground && !spell.hits_air)
-                    || !spell.affects_hidden
-                    || !(0.0 < spell.movement_multiplier && spell.movement_multiplier < 1.0)
-                    || spell.crown_tower_damage_multiplier < 0.0
-                    || spell.building_damage_multiplier < 1.0
-                    || spell.crown_tower_damage.is_some_and(|damage| damage < 0.0)
-                    || spell.building_damage.is_some_and(|damage| damage < 0.0)
-                    || spell.damage_tick_interval <= 0.0
-                    || spell.max_damage_ticks <= 0
-                    || spell.slow_refresh_duration <= 0.0
-                    || spell.effect_tick_interval <= 0.0
-                    || spell.periodic_damage_buff_duration <= 0.0
-                    || !spell.cap_buff_time_to_effect
-                    || (spell.duration / spell.damage_tick_interval).round() as i64
-                        != spell.max_damage_ticks
-                {
+                    && spell.building_damage.is_none_or(f64::is_finite)
+                    && spell.attack_speed_multiplier.is_none_or(f64::is_finite)
+                    && spell.spawn_speed_multiplier.is_none_or(f64::is_finite);
+                let common = finite
+                    && spell.radius > 0.0
+                    && spell.radius <= (i64::MAX / 4096) as f64 / 1000.0
+                    && spell.damage > 0.0
+                    && spell.duration > 0.0
+                    && spell.affects_hidden
+                    && spell.crown_tower_damage_multiplier >= 0.0
+                    && spell.building_damage_multiplier >= 1.0
+                    && spell.crown_tower_damage.is_some_and(|damage| damage >= 0.0)
+                    && spell.building_damage.is_none_or(|damage| damage >= 0.0);
+                let source_periodic = common
+                    && spell.clock_kind == "source_periodic"
+                    && !spell.freeze_effect
+                    && !spell.damage_on_spawn
+                    && !spell.slows_attack_speed
+                    && !spell.slows_spawn_speed
+                    && spell.attack_speed_multiplier.is_none()
+                    && spell.spawn_speed_multiplier.is_none()
+                    && spell.hits_ground
+                    && !spell.hits_air
+                    && (0.0 < spell.movement_multiplier && spell.movement_multiplier < 1.0)
+                    && spell.building_damage.is_some()
+                    && spell.damage_tick_interval > 0.0
+                    && spell.max_damage_ticks > 0
+                    && spell.slow_refresh_duration > 0.0
+                    && spell.effect_tick_interval > 0.0
+                    && spell.periodic_damage_buff_duration > 0.0
+                    && spell.cap_buff_time_to_effect
+                    && (spell.duration / spell.damage_tick_interval).round() as i64
+                        == spell.max_damage_ticks;
+                let freeze_snapshot = common
+                    && spell.clock_kind == "freeze_snapshot"
+                    && spell.freeze_effect
+                    && spell.damage_on_spawn
+                    && spell.slows_attack_speed
+                    && spell.slows_spawn_speed
+                    && spell.attack_speed_multiplier.is_none()
+                    && spell.spawn_speed_multiplier.is_none()
+                    && spell.hits_ground
+                    && spell.hits_air
+                    && spell.movement_multiplier.to_bits() == 0.0_f64.to_bits()
+                    && spell.building_damage.is_none()
+                    && spell.damage_tick_interval.to_bits() == 0.0_f64.to_bits()
+                    && spell.max_damage_ticks == 1
+                    && spell.slow_refresh_duration > 0.0
+                    && spell.effect_tick_interval > 0.0
+                    && spell.periodic_damage_buff_duration.to_bits() == 0.0_f64.to_bits()
+                    && !spell.cap_buff_time_to_effect;
+                if !(source_periodic || freeze_snapshot) {
                     reasons.push("native_area_effect_spell_preflight".to_owned());
                 }
                 ResidentAreaEffectSpellSpec {
+                    clock_kind: spell.clock_kind,
                     radius: spell.radius,
                     damage: spell.damage,
                     duration: spell.duration,
@@ -6277,7 +6397,13 @@ impl ResidentCardCatalog {
                     crown_tower_damage_multiplier: spell.crown_tower_damage_multiplier,
                     building_damage_multiplier: spell.building_damage_multiplier,
                     crown_tower_damage: spell.crown_tower_damage.unwrap_or_default(),
-                    building_damage: spell.building_damage.unwrap_or_default(),
+                    building_damage: spell.building_damage,
+                    freeze_effect: spell.freeze_effect,
+                    damage_on_spawn: spell.damage_on_spawn,
+                    slows_attack_speed: spell.slows_attack_speed,
+                    slows_spawn_speed: spell.slows_spawn_speed,
+                    attack_speed_multiplier: spell.attack_speed_multiplier,
+                    spawn_speed_multiplier: spell.spawn_speed_multiplier,
                     damage_tick_interval: spell.damage_tick_interval,
                     max_damage_ticks: spell.max_damage_ticks,
                     periodic_damage_buff_duration: spell.periodic_damage_buff_duration,
@@ -7412,14 +7538,27 @@ impl PublicationExactEq for ResidentAreaEffectState {
             && match (&self.persistent_spell, &other.persistent_spell) {
                 (None, None) => true,
                 (Some(left), Some(right)) => {
-                    left.max_damage_ticks == right.max_damage_ticks
+                    left.clock_kind == right.clock_kind
+                        && left.max_damage_ticks == right.max_damage_ticks
+                        && left.freeze_effect == right.freeze_effect
+                        && left.damage_on_spawn == right.damage_on_spawn
+                        && left.slows_attack_speed == right.slows_attack_speed
+                        && left.slows_spawn_speed == right.slows_spawn_speed
+                        && publication_optional_f64_eq(
+                            left.attack_speed_multiplier,
+                            right.attack_speed_multiplier,
+                        )
+                        && publication_optional_f64_eq(
+                            left.spawn_speed_multiplier,
+                            right.spawn_speed_multiplier,
+                        )
+                        && publication_optional_f64_eq(left.building_damage, right.building_damage)
                         && publication_f64_fields_eq(
                             [
                                 left.damage,
                                 left.crown_tower_damage_multiplier,
                                 left.building_damage_multiplier,
                                 left.crown_tower_damage,
-                                left.building_damage,
                                 left.damage_tick_interval,
                                 left.periodic_damage_buff_duration,
                             ],
@@ -7428,7 +7567,6 @@ impl PublicationExactEq for ResidentAreaEffectState {
                                 right.crown_tower_damage_multiplier,
                                 right.building_damage_multiplier,
                                 right.crown_tower_damage,
-                                right.building_damage,
                                 right.damage_tick_interval,
                                 right.periodic_damage_buff_duration,
                             ],
@@ -7438,6 +7576,7 @@ impl PublicationExactEq for ResidentAreaEffectState {
             }
             && publication_f64_eq(self.time_alive, other.time_alive)
             && self.effect_snapshot_applied == other.effect_snapshot_applied
+            && self.freeze_targets_applied == other.freeze_targets_applied
             && self.damage_ticks_applied == other.damage_ticks_applied
             && publication_optional_f64_eq(self.next_damage_time, other.next_damage_time)
             && publication_optional_f64_eq(self.next_effect_time, other.next_effect_time)
@@ -7928,14 +8067,27 @@ impl ResidentAreaEffectState {
             && match (&self.persistent_spell, &other.persistent_spell) {
                 (None, None) => true,
                 (Some(left), Some(right)) => {
-                    left.max_damage_ticks == right.max_damage_ticks
+                    left.clock_kind == right.clock_kind
+                        && left.max_damage_ticks == right.max_damage_ticks
+                        && left.freeze_effect == right.freeze_effect
+                        && left.damage_on_spawn == right.damage_on_spawn
+                        && left.slows_attack_speed == right.slows_attack_speed
+                        && left.slows_spawn_speed == right.slows_spawn_speed
+                        && publication_optional_f64_eq(
+                            left.attack_speed_multiplier,
+                            right.attack_speed_multiplier,
+                        )
+                        && publication_optional_f64_eq(
+                            left.spawn_speed_multiplier,
+                            right.spawn_speed_multiplier,
+                        )
+                        && publication_optional_f64_eq(left.building_damage, right.building_damage)
                         && publication_f64_fields_eq(
                             [
                                 left.damage,
                                 left.crown_tower_damage_multiplier,
                                 left.building_damage_multiplier,
                                 left.crown_tower_damage,
-                                left.building_damage,
                                 left.damage_tick_interval,
                                 left.periodic_damage_buff_duration,
                             ],
@@ -7944,7 +8096,6 @@ impl ResidentAreaEffectState {
                                 right.crown_tower_damage_multiplier,
                                 right.building_damage_multiplier,
                                 right.crown_tower_damage,
-                                right.building_damage,
                                 right.damage_tick_interval,
                                 right.periodic_damage_buff_duration,
                             ],
@@ -8142,8 +8293,24 @@ impl ResidentBattle {
             && eq(state.spec.effect_tick_interval, spec.effect_tick_interval)
             && eq(state.spec.refresh_duration, spec.slow_refresh_duration)
             && eq(state.spec.movement_multiplier, spec.movement_multiplier)
-            && eq(state.spec.attack_multiplier, 1.0)
-            && eq(state.spec.spawn_multiplier, 1.0)
+            && eq(
+                state.spec.attack_multiplier,
+                spec.attack_speed_multiplier
+                    .unwrap_or(if spec.slows_attack_speed {
+                        spec.movement_multiplier
+                    } else {
+                        1.0
+                    }),
+            )
+            && eq(
+                state.spec.spawn_multiplier,
+                spec.spawn_speed_multiplier
+                    .unwrap_or(if spec.slows_spawn_speed {
+                        spec.movement_multiplier
+                    } else {
+                        1.0
+                    }),
+            )
             && state.spec.hits_air == spec.hits_air
             && state.spec.hits_ground == spec.hits_ground
             && state.spec.affects_hidden == spec.affects_hidden
@@ -8158,7 +8325,20 @@ impl ResidentBattle {
                 spec.building_damage_multiplier,
             )
             && eq(dynamic.crown_tower_damage, spec.crown_tower_damage)
-            && eq(dynamic.building_damage, spec.building_damage)
+            && dynamic.clock_kind == spec.clock_kind
+            && dynamic.freeze_effect == spec.freeze_effect
+            && dynamic.damage_on_spawn == spec.damage_on_spawn
+            && dynamic.slows_attack_speed == spec.slows_attack_speed
+            && dynamic.slows_spawn_speed == spec.slows_spawn_speed
+            && publication_optional_f64_eq(
+                dynamic.attack_speed_multiplier,
+                spec.attack_speed_multiplier,
+            )
+            && publication_optional_f64_eq(
+                dynamic.spawn_speed_multiplier,
+                spec.spawn_speed_multiplier,
+            )
+            && publication_optional_f64_eq(dynamic.building_damage, spec.building_damage)
             && eq(dynamic.damage_tick_interval, spec.damage_tick_interval)
             && dynamic.max_damage_ticks == spec.max_damage_ticks
             && eq(
@@ -13382,25 +13562,45 @@ impl ResidentBattle {
                     effect_tick_interval: spell.effect_tick_interval,
                     refresh_duration: spell.slow_refresh_duration,
                     movement_multiplier: spell.movement_multiplier,
-                    attack_multiplier: 1.0,
-                    spawn_multiplier: 1.0,
+                    attack_multiplier: spell.attack_speed_multiplier.unwrap_or(
+                        if spell.slows_attack_speed {
+                            spell.movement_multiplier
+                        } else {
+                            1.0
+                        },
+                    ),
+                    spawn_multiplier: spell.spawn_speed_multiplier.unwrap_or(
+                        if spell.slows_spawn_speed {
+                            spell.movement_multiplier
+                        } else {
+                            1.0
+                        },
+                    ),
                     hits_air: spell.hits_air,
                     hits_ground: spell.hits_ground,
                     affects_hidden: spell.affects_hidden,
                     cap_buff_time_to_effect: spell.cap_buff_time_to_effect,
                 },
                 persistent_spell: Some(ResidentPersistentAreaSpellSpec {
+                    clock_kind: spell.clock_kind.clone(),
                     damage: spell.damage,
                     crown_tower_damage_multiplier: spell.crown_tower_damage_multiplier,
                     building_damage_multiplier: spell.building_damage_multiplier,
                     crown_tower_damage: spell.crown_tower_damage,
                     building_damage: spell.building_damage,
+                    freeze_effect: spell.freeze_effect,
+                    damage_on_spawn: spell.damage_on_spawn,
+                    slows_attack_speed: spell.slows_attack_speed,
+                    slows_spawn_speed: spell.slows_spawn_speed,
+                    attack_speed_multiplier: spell.attack_speed_multiplier,
+                    spawn_speed_multiplier: spell.spawn_speed_multiplier,
                     damage_tick_interval: spell.damage_tick_interval,
                     max_damage_ticks: spell.max_damage_ticks,
                     periodic_damage_buff_duration: spell.periodic_damage_buff_duration,
                 }),
                 time_alive: 0.0,
                 effect_snapshot_applied: false,
+                freeze_targets_applied: false,
                 damage_ticks_applied: 0,
                 next_damage_time: None,
                 next_effect_time: None,
@@ -17611,6 +17811,7 @@ impl ResidentBattle {
                 persistent_spell: None,
                 time_alive: 0.0,
                 effect_snapshot_applied: false,
+                freeze_targets_applied: false,
                 damage_ticks_applied: 0,
                 next_damage_time: None,
                 next_effect_time: None,
@@ -17706,6 +17907,15 @@ impl ResidentBattle {
     }
 
     fn advance_resident_persistent_area_effect(&mut self, area_index: usize) {
+        if self.entities[area_index]
+            .area_effect
+            .as_ref()
+            .and_then(|state| state.persistent_spell.as_ref())
+            .is_some_and(|spell| spell.clock_kind == "freeze_snapshot")
+        {
+            self.advance_resident_freeze_area_effect(area_index);
+            return;
+        }
         let (spec, spell, damage_deadlines, effect_deadlines) = {
             let state = self.entities[area_index]
                 .area_effect
@@ -17763,7 +17973,7 @@ impl ResidentBattle {
                         let damage = if building.is_some_and(|state| state.crown_slot.is_some()) {
                             spell.crown_tower_damage
                         } else if self.entities[target_index].entity_kind == 1 {
-                            spell.building_damage
+                            spell.building_damage.unwrap_or(spell.damage)
                         } else {
                             spell.damage
                         };
@@ -17815,6 +18025,102 @@ impl ResidentBattle {
             .as_ref()
             .is_some_and(|state| state.time_alive >= state.spec.duration - 1e-9);
         if expired {
+            self.entities[area_index].is_alive = false;
+        }
+    }
+
+    fn advance_resident_freeze_area_effect(&mut self, area_index: usize) {
+        let (spec, spell, apply_snapshot) = {
+            let state = self.entities[area_index]
+                .area_effect
+                .as_mut()
+                .expect("resident Freeze requires area state");
+            let spell = state
+                .persistent_spell
+                .clone()
+                .expect("resident Freeze requires spell state");
+            state.time_alive += self.dt;
+            if state.next_damage_time.is_none() {
+                state.next_damage_time = Some(0.0);
+            }
+            let apply_snapshot = state.damage_ticks_applied == 0
+                && state.next_damage_time.is_some_and(|deadline| {
+                    deadline <= state.time_alive.min(state.spec.duration) + 1e-9
+                });
+            if apply_snapshot {
+                state.damage_ticks_applied = 1;
+            }
+            (state.spec.clone(), spell, apply_snapshot)
+        };
+
+        if apply_snapshot {
+            let damage_targets = self
+                .entities
+                .iter()
+                .enumerate()
+                .filter_map(|(target_index, _)| {
+                    if self.resident_area_effect_target_valid(area_index, target_index, &spec)
+                        && self.resident_area_damage_target_visible(target_index)
+                    {
+                        let building = self.entities[target_index].building_impact.as_ref();
+                        let damage = if building.is_some_and(|state| state.crown_slot.is_some()) {
+                            spell.crown_tower_damage
+                        } else if self.entities[target_index].entity_kind == 1 {
+                            spell.building_damage.unwrap_or_else(|| {
+                                let base = spell.damage.round_ties_even().max(0.0) as i64;
+                                let percentage = (spell.building_damage_multiplier * 100.0)
+                                    .round_ties_even()
+                                    .max(0.0)
+                                    as i64;
+                                if base == 0 || percentage == 0 {
+                                    0.0
+                                } else {
+                                    ((base * percentage + 99) / 100) as f64
+                                }
+                            })
+                        } else {
+                            spell.damage
+                        };
+                        Some((target_index, damage))
+                    } else {
+                        None
+                    }
+                })
+                .collect::<Vec<_>>();
+            for (target_index, damage) in damage_targets {
+                if self.entities[target_index].active && self.entities[target_index].is_alive {
+                    self.apply_resident_damage(target_index, damage);
+                }
+            }
+
+            let freeze_targets = (0..self.entities.len())
+                .filter(|&target_index| {
+                    self.resident_area_effect_target_valid(area_index, target_index, &spec)
+                })
+                .collect::<Vec<_>>();
+            let expiry_time = self.time + spec.duration;
+            for target_index in freeze_targets {
+                self.entities[target_index].apply_projectile_status(
+                    spec.duration,
+                    spec.duration,
+                    0.0,
+                );
+                self.entities[target_index].freeze_expiry_time = self.entities[target_index]
+                    .freeze_expiry_time
+                    .max(expiry_time);
+            }
+            self.entities[area_index]
+                .area_effect
+                .as_mut()
+                .expect("resident Freeze retains state")
+                .freeze_targets_applied = true;
+        }
+
+        if self.entities[area_index]
+            .area_effect
+            .as_ref()
+            .is_some_and(|state| state.time_alive >= state.spec.duration - 1e-9)
+        {
             self.entities[area_index].is_alive = false;
         }
     }
@@ -19009,8 +19315,11 @@ impl ResidentBattle {
         if current.is_some_and(|index| self.direct_keep_reach(actor_index, index)) {
             return current;
         }
-        let best =
-            self.direct_acquired_target_index(actor_index, !actor_state.ground_path_backwards);
+        // A backwards route suppresses the native crown fallback only while
+        // the actor still has a valid current target.  Once that target is
+        // gone, Python reacquires the crown target regardless of stun state.
+        let include_crown_fallback = current.is_none() || !actor_state.ground_path_backwards;
+        let best = self.direct_acquired_target_index(actor_index, include_crown_fallback);
         let best_uses_crown_fallback = best.is_some_and(|index| {
             self.direct_crown_slot(index).is_some()
                 && !self.direct_target_in_sight(actor_index, index)

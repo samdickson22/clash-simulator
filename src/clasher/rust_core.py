@@ -46,8 +46,8 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 15
-RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 15
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 16
+RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 16
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -291,7 +291,13 @@ class _ResidentAreaEffectSpellRecipe:
     crown_tower_damage_multiplier: float
     building_damage_multiplier: float
     crown_tower_damage: float
-    building_damage: float
+    building_damage: float | None
+    freeze_effect: bool
+    damage_on_spawn: bool
+    slows_attack_speed: bool
+    slows_spawn_speed: bool
+    attack_speed_multiplier: float | None
+    spawn_speed_multiplier: float | None
     damage_tick_interval: float
     max_damage_ticks: int
     periodic_damage_buff_duration: float
@@ -503,44 +509,75 @@ def _resident_card_catalog_bundle(
                 area_reasons.append("restricted_area_effect_spell_placement")
             if int(getattr(card_stats, "deploy_w_tile_margin", 0) or 0) != 0:
                 area_reasons.append("area_effect_spell_margin")
-            if (
+            common_unsupported = (
                 not all(math.isfinite(value) for value in area_values)
                 or crown_damage is None
                 or not math.isfinite(crown_damage)
-                or building_damage is None
-                or not math.isfinite(building_damage)
+                or building_damage is not None
+                and not math.isfinite(building_damage)
                 or spell.radius <= 0.0
                 or spell.damage <= 0.0
                 or spell.duration <= 0.0
-                or spell.freeze_effect
-                or not (bool(spell.hits_ground) and not bool(spell.hits_air))
-                or not bool(spell.affects_hidden)
-                or spell.speed_multiplier <= 0.0
-                or spell.speed_multiplier >= 1.0
                 or spell.crown_tower_damage_multiplier < 0.0
                 or spell.building_damage_multiplier < 1.0
                 or crown_damage < 0.0
-                or building_damage < 0.0
-                or spell.damage_tick_interval <= 0.0
-                or spell.max_damage_ticks <= 0
-                or spell.damage_on_spawn
+                or building_damage is not None
+                and building_damage < 0.0
                 or spell.initial_damage_delay is not None
-                or spell.slows_attack_speed
-                or spell.slows_spawn_speed
-                or spell.slow_refresh_duration <= 0.0
-                or spell.effect_tick_interval <= 0.0
-                or not spell.cap_buff_time_to_effect
                 or spell.target_local_damage
-                or spell.periodic_damage_buff_duration <= 0.0
                 or spell.periodic_damage_controlled_by_parent
-                or buff.get("damagePerSecond") is None
-                or buff.get("hitTickFromSource") is not True
-            ):
+            )
+            # Keep the two clocks disjoint: source-periodic areas repeatedly
+            # refresh a movement-only slow, while Freeze commits one immediate
+            # damage snapshot followed by one fresh status snapshot.
+            source_periodic = bool(
+                not common_unsupported
+                and not spell.freeze_effect
+                and spell.hits_ground
+                and not spell.hits_air
+                and spell.affects_hidden
+                and 0.0 < spell.speed_multiplier < 1.0
+                and spell.damage_tick_interval > 0.0
+                and spell.max_damage_ticks > 0
+                and not spell.damage_on_spawn
+                and not spell.slows_attack_speed
+                and not spell.slows_spawn_speed
+                and spell.slow_refresh_duration > 0.0
+                and spell.effect_tick_interval > 0.0
+                and spell.cap_buff_time_to_effect
+                and spell.periodic_damage_buff_duration > 0.0
+                and buff.get("damagePerSecond") is not None
+                and buff.get("hitTickFromSource") is True
+            )
+            freeze_snapshot = bool(
+                not common_unsupported
+                and spell.freeze_effect
+                and spell.hits_air
+                and spell.hits_ground
+                and spell.affects_hidden
+                and spell.speed_multiplier == 0.0
+                and spell.damage_tick_interval == 0.0
+                and spell.max_damage_ticks == 1
+                and spell.damage_on_spawn
+                and spell.slows_attack_speed
+                and spell.slows_spawn_speed
+                and spell.periodic_damage_buff_duration == 0.0
+                and not spell.cap_buff_time_to_effect
+                and type(buff) is dict
+                and buff.get("speedMultiplier") == -100
+                and buff.get("hitSpeedMultiplier") == -100
+                and buff.get("spawnSpeedMultiplier") == -100
+                and area.get("onlyEnemies") is True
+                and area.get("buffTime") == area.get("lifeDuration")
+            )
+            if not (source_periodic or freeze_snapshot):
                 area_reasons.append("unsupported_area_effect_clock")
             reasons = area_reasons
             if not reasons:
                 area_effect_spell = {
-                    "clock_kind": "source_periodic",
+                    "clock_kind": (
+                        "freeze_snapshot" if freeze_snapshot else "source_periodic"
+                    ),
                     "radius": float(spell.radius),
                     "damage": float(spell.damage),
                     "duration": float(spell.duration),
@@ -556,6 +593,12 @@ def _resident_card_catalog_bundle(
                     ),
                     "crown_tower_damage": crown_damage,
                     "building_damage": building_damage,
+                    "freeze_effect": bool(spell.freeze_effect),
+                    "damage_on_spawn": bool(spell.damage_on_spawn),
+                    "slows_attack_speed": bool(spell.slows_attack_speed),
+                    "slows_spawn_speed": bool(spell.slows_spawn_speed),
+                    "attack_speed_multiplier": None,
+                    "spawn_speed_multiplier": None,
                     "damage_tick_interval": float(spell.damage_tick_interval),
                     "max_damage_ticks": int(spell.max_damage_ticks),
                     "periodic_damage_buff_duration": float(
@@ -3181,6 +3224,7 @@ def area_effect_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "effect_snapshot_applied": bool(
                     entity.effect_snapshot_applied
                 ),
+                "freeze_targets_applied": bool(entity.freeze_targets_applied),
                 "effect_tick_interval": _exact_scalar(
                     entity.effect_tick_interval
                 ),
@@ -3217,7 +3261,16 @@ def area_effect_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "time_alive": _exact_scalar(entity.time_alive),
                 "persistent_spell": (
                     {
-                        "building_damage": _exact_scalar(entity.building_damage),
+                        "attack_speed_multiplier": (
+                            None
+                            if entity.attack_speed_multiplier is None
+                            else _exact_scalar(entity.attack_speed_multiplier)
+                        ),
+                        "building_damage": (
+                            None
+                            if entity.building_damage is None
+                            else _exact_scalar(entity.building_damage)
+                        ),
                         "building_damage_multiplier": _exact_scalar(
                             entity.building_damage_multiplier
                         ),
@@ -3228,17 +3281,30 @@ def area_effect_state_rows(battle: Any) -> list[dict[str, Any]]:
                             entity.crown_tower_damage_multiplier
                         ),
                         "damage": _exact_scalar(entity.damage),
+                        "damage_on_spawn": bool(entity.damage_on_spawn),
                         "damage_tick_interval": _exact_scalar(
                             entity.damage_tick_interval
                         ),
                         "max_damage_ticks": int(entity.max_damage_ticks),
+                        "clock_kind": (
+                            "freeze_snapshot"
+                            if entity.freeze_effect
+                            else "source_periodic"
+                        ),
+                        "freeze_effect": bool(entity.freeze_effect),
                         "periodic_damage_buff_duration": _exact_scalar(
                             entity.periodic_damage_buff_duration
+                        ),
+                        "slows_attack_speed": bool(entity.slows_attack_speed),
+                        "slows_spawn_speed": bool(entity.slows_spawn_speed),
+                        "spawn_speed_multiplier": (
+                            None
+                            if entity.spawn_speed_multiplier is None
+                            else _exact_scalar(entity.spawn_speed_multiplier)
                         ),
                     }
                     if entity.max_damage_ticks > 0
                     and entity.damage > 0
-                    and not entity.freeze_effect
                     and not entity.target_local_damage
                     else None
                 ),

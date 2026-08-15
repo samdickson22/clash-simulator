@@ -708,6 +708,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "birth_source_entity_id",
             "damage_ticks_applied",
             "effect_snapshot_applied",
+            "freeze_targets_applied",
             "next_damage_time",
             "next_effect_time",
             "persistent_spell",
@@ -720,12 +721,19 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
         {
             "building_damage",
             "building_damage_multiplier",
+            "clock_kind",
             "crown_tower_damage",
             "crown_tower_damage_multiplier",
             "damage",
+            "damage_on_spawn",
             "damage_tick_interval",
+            "freeze_effect",
             "max_damage_ticks",
             "periodic_damage_buff_duration",
+            "slows_attack_speed",
+            "slows_spawn_speed",
+            "attack_speed_multiplier",
+            "spawn_speed_multiplier",
         }
     ),
     "character_birth": frozenset(
@@ -2206,6 +2214,9 @@ def _validate_direct_area(
         minimum=0,
     )
     _direct_bool(row["effect_snapshot_applied"], f"entity {entity_id} area snapshot")
+    freeze_applied = _direct_bool(
+        row["freeze_targets_applied"], f"entity {entity_id} area freeze snapshot"
+    )
     _direct_bool(row["supported"], f"entity {entity_id} area supported")
     if not row["supported"]:
         raise ResidentPublicationError(f"unsupported direct area effect {entity_id}")
@@ -2229,7 +2240,6 @@ def _validate_direct_area(
         )
     spell = _direct_dict(persistent, "persistent_area_spell")
     for field in (
-        "building_damage",
         "building_damage_multiplier",
         "crown_tower_damage",
         "crown_tower_damage_multiplier",
@@ -2238,6 +2248,22 @@ def _validate_direct_area(
         "periodic_damage_buff_duration",
     ):
         _direct_float(spell[field], f"entity {entity_id} area spell {field}")
+    if spell["building_damage"] is not None:
+        _direct_float(
+            spell["building_damage"], f"entity {entity_id} area spell building_damage"
+        )
+    if type(spell["clock_kind"]) is not str:
+        raise ResidentPublicationError(f"malformed direct catalog area {entity_id} clock")
+    for field in (
+        "freeze_effect",
+        "damage_on_spawn",
+        "slows_attack_speed",
+        "slows_spawn_speed",
+    ):
+        _direct_bool(spell[field], f"entity {entity_id} area spell {field}")
+    for field in ("attack_speed_multiplier", "spawn_speed_multiplier"):
+        if spell[field] is not None:
+            _direct_float(spell[field], f"entity {entity_id} area spell {field}")
     max_ticks = _direct_int(
         spell["max_damage_ticks"],
         f"entity {entity_id} area spell max ticks",
@@ -2269,7 +2295,6 @@ def _validate_direct_area(
         (spec["refresh_duration"], recipe.slow_refresh_duration, "refresh"),
         (spec["effect_tick_interval"], recipe.effect_tick_interval, "effect tick"),
         (spell["damage"], recipe.damage, "damage"),
-        (spell["building_damage"], recipe.building_damage, "building damage"),
         (
             spell["building_damage_multiplier"],
             recipe.building_damage_multiplier,
@@ -2292,15 +2317,33 @@ def _validate_direct_area(
             "periodic duration",
         ),
     )
+    expected_attack = (
+        recipe.attack_speed_multiplier
+        if recipe.attack_speed_multiplier is not None
+        else recipe.movement_multiplier if recipe.slows_attack_speed else 1.0
+    )
+    expected_spawn = (
+        recipe.spawn_speed_multiplier
+        if recipe.spawn_speed_multiplier is not None
+        else recipe.movement_multiplier if recipe.slows_spawn_speed else 1.0
+    )
     if (
-        recipe.clock_kind != "source_periodic"
+        spell["clock_kind"] != recipe.clock_kind
+        or spell["freeze_effect"] is not recipe.freeze_effect
+        or spell["damage_on_spawn"] is not recipe.damage_on_spawn
+        or spell["slows_attack_speed"] is not recipe.slows_attack_speed
+        or spell["slows_spawn_speed"] is not recipe.slows_spawn_speed
+        or spell["attack_speed_multiplier"] != recipe.attack_speed_multiplier
+        or spell["spawn_speed_multiplier"] != recipe.spawn_speed_multiplier
+        or spell["building_damage"] != recipe.building_damage
+        or freeze_applied != (damage_ticks == max_ticks and recipe.freeze_effect)
         or spec["radius_units"] != round(recipe.radius * 1000.0)
         or spec["hits_air"] is not recipe.hits_air
         or spec["hits_ground"] is not recipe.hits_ground
         or spec["affects_hidden"] is not recipe.affects_hidden
         or spec["cap_buff_time_to_effect"] is not recipe.cap_buff_time_to_effect
-        or not same_float(spec["attack_multiplier"], 1.0, "attack multiplier")
-        or not same_float(spec["spawn_multiplier"], 1.0, "spawn multiplier")
+        or not same_float(spec["attack_multiplier"], expected_attack, "attack multiplier")
+        or not same_float(spec["spawn_multiplier"], expected_spawn, "spawn multiplier")
         or max_ticks != recipe.max_damage_ticks
         or any(
             not same_float(actual, expected, f"entity {entity_id} area {label}")
@@ -4400,6 +4443,7 @@ def _typed_area(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
         "duration": _exact_float(spec["duration"]),
         "damage_ticks_applied": state["damage_ticks_applied"],
         "effect_snapshot_applied": state["effect_snapshot_applied"],
+        "freeze_targets_applied": state["freeze_targets_applied"],
         "effect_tick_interval": _exact_float(spec["effect_tick_interval"]),
         "encounter_index": row["encounter_index"],
         "hits_air": spec["hits_air"],
@@ -4429,10 +4473,20 @@ def _typed_area(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
             None
             if persistent is None
             else {
-                "building_damage": _exact_float(persistent["building_damage"]),
+                "attack_speed_multiplier": (
+                    None
+                    if persistent["attack_speed_multiplier"] is None
+                    else _exact_float(persistent["attack_speed_multiplier"])
+                ),
+                "building_damage": (
+                    None
+                    if persistent["building_damage"] is None
+                    else _exact_float(persistent["building_damage"])
+                ),
                 "building_damage_multiplier": _exact_float(
                     persistent["building_damage_multiplier"]
                 ),
+                "clock_kind": persistent["clock_kind"],
                 "crown_tower_damage": _exact_float(
                     persistent["crown_tower_damage"]
                 ),
@@ -4440,12 +4494,21 @@ def _typed_area(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
                     persistent["crown_tower_damage_multiplier"]
                 ),
                 "damage": _exact_float(persistent["damage"]),
+                "damage_on_spawn": persistent["damage_on_spawn"],
                 "damage_tick_interval": _exact_float(
                     persistent["damage_tick_interval"]
                 ),
                 "max_damage_ticks": persistent["max_damage_ticks"],
+                "freeze_effect": persistent["freeze_effect"],
                 "periodic_damage_buff_duration": _exact_float(
                     persistent["periodic_damage_buff_duration"]
+                ),
+                "slows_attack_speed": persistent["slows_attack_speed"],
+                "slows_spawn_speed": persistent["slows_spawn_speed"],
+                "spawn_speed_multiplier": (
+                    None
+                    if persistent["spawn_speed_multiplier"] is None
+                    else _exact_float(persistent["spawn_speed_multiplier"])
                 ),
             }
         ),
@@ -5593,6 +5656,7 @@ def _apply_area_effects(
 def _apply_area_effect_row(entity: Any, row: dict[str, Any]) -> None:
     entity.damage_ticks_applied = int(row["damage_ticks_applied"])
     entity.effect_snapshot_applied = bool(row["effect_snapshot_applied"])
+    entity.freeze_targets_applied = bool(row["freeze_targets_applied"])
     entity.is_alive = bool(row["is_alive"])
     entity.position.x = _scalar(row["position_x"])
     entity.position.y = _scalar(row["position_y"])
@@ -6014,6 +6078,7 @@ def _create_area_effect_birth(
         )
     source = None if source_id is None else entity_registry[int(source_id)]
     radius = _float(state["radius_tiles"])
+    freeze = persistent is not None and persistent["clock_kind"] == "freeze_snapshot"
     effect = AreaEffect(
         id=int(row["id"]),
         position=Position(
@@ -6028,10 +6093,22 @@ def _create_area_effect_birth(
         range=radius,
         sight_range=radius,
         duration=_float(state["duration"]),
-        freeze_effect=False,
+        freeze_effect=freeze,
         speed_multiplier=_float(state["movement_multiplier"]),
-        attack_speed_multiplier=_float(state["attack_multiplier"]),
-        spawn_speed_multiplier=_float(state["spawn_multiplier"]),
+        attack_speed_multiplier=(
+            _float(state["attack_multiplier"])
+            if persistent is None
+            else None
+            if persistent["attack_speed_multiplier"] is None
+            else _float(persistent["attack_speed_multiplier"])
+        ),
+        spawn_speed_multiplier=(
+            _float(state["spawn_multiplier"])
+            if persistent is None
+            else None
+            if persistent["spawn_speed_multiplier"] is None
+            else _float(persistent["spawn_speed_multiplier"])
+        ),
         radius=radius,
         hits_air=bool(state["hits_air"]),
         hits_ground=bool(state["hits_ground"]),
@@ -6053,7 +6130,7 @@ def _create_area_effect_birth(
         ),
         building_damage=(
             None
-            if persistent is None
+            if persistent is None or persistent["building_damage"] is None
             else _float(persistent["building_damage"])
         ),
         damage_tick_interval=(
@@ -6064,9 +6141,13 @@ def _create_area_effect_birth(
         max_damage_ticks=(
             0 if persistent is None else int(persistent["max_damage_ticks"])
         ),
-        damage_on_spawn=False,
-        slows_attack_speed=persistent is None,
-        slows_spawn_speed=persistent is None,
+        damage_on_spawn=(False if persistent is None else bool(persistent["damage_on_spawn"])),
+        slows_attack_speed=(
+            persistent is None or bool(persistent["slows_attack_speed"])
+        ),
+        slows_spawn_speed=(
+            persistent is None or bool(persistent["slows_spawn_speed"])
+        ),
         slow_refresh_duration=_float(state["refresh_duration"]),
         effect_tick_interval=_float(state["effect_tick_interval"]),
         effect_on_spawn_only=persistent is None,
@@ -6081,6 +6162,7 @@ def _create_area_effect_birth(
     dynamic_effect = cast(Any, effect)
     dynamic_effect.spell_name = str(state["area_name"])
     dynamic_effect.damage_ticks_applied = int(state["damage_ticks_applied"])
+    dynamic_effect.freeze_targets_applied = bool(state["freeze_targets_applied"])
     dynamic_effect.next_damage_time = (
         None
         if state["next_damage_time"] is None
@@ -6332,6 +6414,7 @@ def _create_area_effect_birth_direct(
     source = None if source_id is None else available[source_id]
     spec = cast(dict[str, Any], state["spec"])
     radius = spec["radius_tiles"]
+    freeze = persistent is not None and persistent["clock_kind"] == "freeze_snapshot"
     effect = AreaEffect(
         id=row["id"],
         position=Position(_scalar(row["position_x"]), _scalar(row["position_y"])),
@@ -6343,10 +6426,18 @@ def _create_area_effect_birth_direct(
         range=radius,
         sight_range=radius,
         duration=spec["duration"],
-        freeze_effect=False,
+        freeze_effect=freeze,
         speed_multiplier=spec["movement_multiplier"],
-        attack_speed_multiplier=spec["attack_multiplier"],
-        spawn_speed_multiplier=spec["spawn_multiplier"],
+        attack_speed_multiplier=(
+            spec["attack_multiplier"]
+            if persistent is None
+            else persistent["attack_speed_multiplier"]
+        ),
+        spawn_speed_multiplier=(
+            spec["spawn_multiplier"]
+            if persistent is None
+            else persistent["spawn_speed_multiplier"]
+        ),
         radius=radius,
         hits_air=spec["hits_air"],
         hits_ground=spec["hits_ground"],
@@ -6361,7 +6452,9 @@ def _create_area_effect_birth_direct(
             None if persistent is None else persistent["crown_tower_damage"]
         ),
         building_damage=(
-            None if persistent is None else persistent["building_damage"]
+            None
+            if persistent is None or persistent["building_damage"] is None
+            else persistent["building_damage"]
         ),
         damage_tick_interval=(
             0.0 if persistent is None else persistent["damage_tick_interval"]
@@ -6369,9 +6462,13 @@ def _create_area_effect_birth_direct(
         max_damage_ticks=(
             0 if persistent is None else persistent["max_damage_ticks"]
         ),
-        damage_on_spawn=False,
-        slows_attack_speed=persistent is None,
-        slows_spawn_speed=persistent is None,
+        damage_on_spawn=(False if persistent is None else persistent["damage_on_spawn"]),
+        slows_attack_speed=(
+            persistent is None or persistent["slows_attack_speed"]
+        ),
+        slows_spawn_speed=(
+            persistent is None or persistent["slows_spawn_speed"]
+        ),
         slow_refresh_duration=spec["refresh_duration"],
         effect_tick_interval=spec["effect_tick_interval"],
         effect_on_spawn_only=persistent is None,
@@ -6386,6 +6483,7 @@ def _create_area_effect_birth_direct(
     dynamic = cast(Any, effect)
     dynamic.spell_name = spec["area_name"]
     dynamic.damage_ticks_applied = state["damage_ticks_applied"]
+    dynamic.freeze_targets_applied = state["freeze_targets_applied"]
     dynamic.next_damage_time = state["next_damage_time"]
     dynamic.next_effect_time = state["next_effect_time"]
     dynamic.battle_state = battle
@@ -7345,6 +7443,7 @@ def _apply_direct_entity(
     if area is not None:
         entity.damage_ticks_applied = area["damage_ticks_applied"]
         entity.effect_snapshot_applied = area["effect_snapshot_applied"]
+        entity.freeze_targets_applied = area["freeze_targets_applied"]
         entity.next_damage_time = area["next_damage_time"]
         entity.next_effect_time = area["next_effect_time"]
         entity.time_alive = area["time_alive"]
@@ -8005,6 +8104,7 @@ def _apply_direct_delta_entity(
             undo.watch_attrs(entity)
             entity.damage_ticks_applied = area["damage_ticks_applied"]
             entity.effect_snapshot_applied = area["effect_snapshot_applied"]
+            entity.freeze_targets_applied = area["freeze_targets_applied"]
             entity.next_damage_time = area["next_damage_time"]
             entity.next_effect_time = area["next_effect_time"]
             entity.time_alive = area["time_alive"]

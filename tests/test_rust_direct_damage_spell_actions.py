@@ -111,7 +111,7 @@ def test_direct_damage_catalog_structurally_qualifies_only_zap() -> None:
     }
     resident = ResidentRustBattle.from_battle(battle)
 
-    assert payload["schema_version"] == 15
+    assert payload["schema_version"] == 16
     assert direct["Zap"] == ()
     assert {
         name for name, reasons in direct.items() if not reasons
