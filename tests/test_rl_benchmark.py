@@ -34,6 +34,21 @@ def test_env_benchmark_reports_positive_throughput():
     assert metrics["approx_games_per_min"] > 0.0
 
 
+def test_env_benchmark_routes_opt_in_simulation_backend():
+    metrics = run_env_benchmark(
+        seed=101,
+        decisions=2,
+        decks_path="decks.json",
+        decision_interval=2,
+        max_ticks=4,
+        mirror_match=False,
+        quiet_engine=True,
+        simulation_backend="pytorch",
+    )
+
+    assert metrics["simulation_backend"] == "pytorch"
+
+
 def test_async_queue_benchmark_reports_lag_stats():
     metrics = run_async_queue_benchmark(
         seed=202,

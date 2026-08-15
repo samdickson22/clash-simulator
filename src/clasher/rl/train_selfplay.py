@@ -48,6 +48,7 @@ class RolloutWorkerTask:
     mirror_match: bool
     quiet_engine: bool
     seed: int
+    simulation_backend: str = "python"
 
 
 _WORKER_MODEL: Optional[MaskedPolicyValueNet] = None
@@ -210,6 +211,7 @@ def _collect_rollout_worker(task: RolloutWorkerTask) -> List[Transition]:
         task.max_ticks,
         task.decks_path,
         task.mirror_match,
+        task.simulation_backend,
     )
     if _WORKER_MODEL is None or _WORKER_ENV is None or _WORKER_CONFIG != config:
         torch.manual_seed(task.seed)
@@ -228,6 +230,7 @@ def _collect_rollout_worker(task: RolloutWorkerTask) -> List[Transition]:
             seed=task.seed,
             mirror_match=task.mirror_match,
             canonical_perspective=True,
+            simulation_backend=task.simulation_backend,
         )
         with maybe_silence_stdio(task.quiet_engine):
             _WORKER_ENV.reset()
@@ -264,6 +267,7 @@ def collect_rollout_parallel(
     quiet_engine: bool,
     seed: int,
     worker_retries: int,
+    simulation_backend: str = "python",
 ) -> List[Transition]:
     chunks = split_rollout_steps(rollout_steps, num_workers)
     if not chunks:
@@ -285,6 +289,7 @@ def collect_rollout_parallel(
             mirror_match=mirror_match,
             quiet_engine=quiet_engine,
             seed=seed + (worker_idx + 1) * 1009,
+            simulation_backend=simulation_backend,
         )
         for worker_idx, chunk_steps in enumerate(chunks)
     ]
@@ -500,6 +505,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-update-restarts", type=int, default=5)
     parser.add_argument("--resume-latest", action="store_true")
     parser.add_argument("--resume-from", type=str, default=None)
+    parser.add_argument(
+        "--simulation-backend",
+        choices=["python", "pytorch-shadow", "pytorch"],
+        default="python",
+        help=(
+            "battle tick backend; PyTorch modes fail closed to the Python "
+            "oracle for mechanics not yet covered by tensor kernels"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -550,6 +564,7 @@ def main() -> None:
         seed=args.seed,
         mirror_match=args.mirror_match,
         canonical_perspective=True,
+        simulation_backend=args.simulation_backend,
     )
 
     with maybe_silence_stdio(args.quiet_engine):
@@ -587,6 +602,7 @@ def main() -> None:
 
     if args.num_workers > 1:
         print(f"rollout_workers={args.num_workers}")
+    print(f"simulation_backend={args.simulation_backend}")
     print(f"decks_path={decks_path}")
     print(f"checkpoint_dir={checkpoint_dir}")
 
@@ -621,6 +637,7 @@ def main() -> None:
                             quiet_engine=args.quiet_engine,
                             seed=args.seed + update * 100_003,
                             worker_retries=args.worker_retries,
+                            simulation_backend=args.simulation_backend,
                         )
                     else:
                         transitions = collect_rollout(
