@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from collections import deque
 from collections.abc import Sequence
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field, fields
+from typing import Any
 
 import torch
 
@@ -446,3 +447,93 @@ class TensorBattleState:
                     ].item()
                 )
         self.rng.sync_to_randoms([battle.rng for battle in battles])
+
+
+@dataclass(frozen=True)
+class TensorBattleFork:
+    """Tensor root plus an exact scalar guard for safe search-tree forking.
+
+    ``TensorBattleState`` intentionally contains only the fields implemented
+    by tensor kernels.  The scalar snapshots prevent a caller from binding a
+    tensor root to a behaviorally different ``BattleState`` merely because its
+    clock and entity IDs happen to match.
+    """
+
+    _state: TensorBattleState = field(repr=False)
+    scalar_snapshots: tuple[dict[str, Any], ...]
+
+    @property
+    def state(self) -> TensorBattleState:
+        """Return an independent, caller-owned copy of the tensor root."""
+
+        return self._state.clone()
+
+    def _materialize_state(self) -> TensorBattleState:
+        """Return mutable storage for an executor without exposing the root."""
+
+        return self._state.clone()
+
+    @classmethod
+    def capture(
+        cls,
+        battles: Sequence[BattleState],
+        *,
+        device: str | torch.device = "cpu",
+        max_entities: int | None = None,
+        max_cards: int | None = None,
+    ) -> TensorBattleFork:
+        if not battles:
+            raise ValueError("at least one battle is required")
+        from .diagnostics import battle_snapshot
+
+        entity_capacity = max(
+            128 if max_entities is None else int(max_entities),
+            max(len(battle.entities) for battle in battles),
+        )
+        card_capacity = max(
+            16 if max_cards is None else int(max_cards),
+            max(
+                max(len(player.deck), len(player.cycle_queue))
+                for battle in battles
+                for player in battle.players
+            ),
+        )
+        return cls(
+            _state=TensorBattleState.from_battles(
+                battles,
+                device=device,
+                max_entities=entity_capacity,
+                max_cards=card_capacity,
+            ),
+            scalar_snapshots=tuple(battle_snapshot(battle) for battle in battles),
+        )
+
+    @property
+    def batch_size(self) -> int:
+        return self._state.batch_size
+
+    def fork(
+        self,
+        batch_indices: Sequence[int] | torch.Tensor | None = None,
+    ) -> TensorBattleFork:
+        if batch_indices is None:
+            selected = tuple(range(self.batch_size))
+        elif isinstance(batch_indices, torch.Tensor):
+            selected = tuple(int(value) for value in batch_indices.cpu().tolist())
+        else:
+            selected = tuple(int(value) for value in batch_indices)
+        forked_state = self._state.fork(selected)
+        return type(self)(
+            _state=forked_state,
+            scalar_snapshots=tuple(self.scalar_snapshots[index] for index in selected),
+        )
+
+    def matches_battles(self, battles: Sequence[BattleState]) -> bool:
+        if len(battles) != self.batch_size:
+            return False
+        from .diagnostics import battle_snapshot, first_divergence
+
+        return all(
+            first_divergence(expected, battle_snapshot(battle)) is None
+            for expected, battle in zip(self.scalar_snapshots, battles)
+        )

@@ -9,12 +9,13 @@ from .catalog import CardKindOpcode, TensorCardCatalog
 from .diagnostics import StateDivergence, TorchParityError, first_divergence
 from .executor import SimulatorBackend, TorchBattleExecutor
 from .rng import TensorPythonRandom
-from .state import TensorBattleState
+from .state import TensorBattleFork, TensorBattleState
 
 __all__ = [
     "CardKindOpcode",
     "SimulatorBackend",
     "StateDivergence",
+    "TensorBattleFork",
     "TensorBattleState",
     "TensorCardCatalog",
     "TensorPythonRandom",
