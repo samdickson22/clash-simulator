@@ -8,12 +8,13 @@ perform fail-closed parity checks.
 from .catalog import CardKindOpcode, TensorCardCatalog
 from .diagnostics import StateDivergence, TorchParityError, first_divergence
 from .executor import SimulatorBackend, TorchBattleExecutor
-from .state import TensorBattleState
+from .state import TensorBattleFork, TensorBattleState
 
 __all__ = [
     "SimulatorBackend",
     "CardKindOpcode",
     "StateDivergence",
+    "TensorBattleFork",
     "TensorBattleState",
     "TensorCardCatalog",
     "TorchBattleExecutor",
