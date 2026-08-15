@@ -87,6 +87,8 @@ def _entity_snapshot(entity: Entity) -> dict[str, Any]:
         ),
         "tower_slot": getattr(entity, "_crown_tower_slot", None),
         "tower_active": getattr(entity, "_tower_active", None),
+        "spawn_hook_pending": getattr(entity, "_spawn_hook_pending", False),
+        "spawn_hook_fired": getattr(entity, "_spawn_hook_fired", False),
     }
 
 

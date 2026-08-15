@@ -21,6 +21,17 @@ def _assert_exact_battle_match(expected: BattleState, actual: BattleState) -> No
     assert mismatch is None, str(mismatch)
 
 
+def _battle_with_deployed_card(card_name: str) -> BattleState:
+    battle = BattleState()
+    player = battle.players[0]
+    player.elixir = 10.0
+    player.hand = [card_name, None, None, None]
+    player.deck = [card_name]
+    player.cycle_queue = deque()
+    assert battle.deploy_card(0, card_name, Position(9.0, 10.0))
+    return battle
+
+
 @pytest.mark.parametrize(
     ("start_time", "ticks"),
     [
@@ -99,14 +110,92 @@ def test_shadow_mode_runs_exact_differential_check() -> None:
     }
 
 
-def test_pytorch_on_fails_closed_to_python_for_combat_state() -> None:
-    battle = BattleState()
-    player = battle.players[0]
-    player.elixir = 10.0
-    player.hand = ["Knight", None, None, None]
-    player.deck = ["Knight"]
-    player.cycle_queue = deque()
-    assert battle.deploy_card(0, "Knight", Position(9.0, 10.0))
+@pytest.mark.parametrize("backend", ["pytorch-shadow", "pytorch"])
+def test_twelve_battles_advance_in_one_exact_tensor_batch(backend: str) -> None:
+    starts = [
+        0.0,
+        1.25,
+        119.9,
+        120.0,
+        179.9,
+        180.0,
+        239.9,
+        240.0,
+        299.9,
+        0.05,
+        42.0,
+        118.0,
+    ]
+    actual = [BattleState() for _ in starts]
+    expected = [battle.clone() for battle in actual]
+    for start, reference, candidate in zip(starts, expected, actual):
+        reference.time = start
+        candidate.time = start
+        reference.step_logic_ticks(8)
+
+    executor = TorchBattleExecutor(backend)
+    advanced = executor.step_battles(actual, 8)
+
+    for reference, candidate in zip(expected, actual):
+        _assert_exact_battle_match(reference, candidate)
+    assert advanced == [8, 8, 8, 8, 8, 8, 8, 8, 2, 8, 8, 8]
+    assert executor.metrics_dict()["tensor_ticks"] == sum(advanced)
+    if backend == "pytorch-shadow":
+        assert executor.metrics_dict()["shadow_checks"] == 12
+
+
+@pytest.mark.parametrize("backend", ["pytorch-shadow", "pytorch"])
+def test_mechanic_free_deployment_frames_match_exactly(backend: str) -> None:
+    battle = _battle_with_deployed_card("Knight")
+    expected = battle.clone()
+    expected.step_logic_ticks(8)
+
+    executor = TorchBattleExecutor(backend)
+    assert executor.step_logic_ticks(battle, 8) == 8
+
+    _assert_exact_battle_match(expected, battle)
+    assert executor.metrics_dict()["tensor_ticks"] == 8
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
+@pytest.mark.parametrize("backend", ["pytorch-shadow", "pytorch"])
+def test_deployment_window_continues_in_python_at_first_actionable_frame(
+    backend: str,
+) -> None:
+    battle = _battle_with_deployed_card("Knight")
+    expected = battle.clone()
+    expected.step_logic_ticks(25)
+
+    executor = TorchBattleExecutor(backend)
+    assert executor.step_logic_ticks(battle, 25) == 25
+
+    _assert_exact_battle_match(expected, battle)
+    assert executor.metrics_dict()["tensor_ticks"] == 20
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 1
+    expected_python_ticks = 25 if backend == "pytorch-shadow" else 5
+    assert executor.metrics_dict()["python_ticks"] == expected_python_ticks
+
+
+def test_mixed_batch_falls_back_only_for_unsupported_member() -> None:
+    idle = BattleState()
+    combat = _battle_with_deployed_card("ArcherQueen")
+    expected_idle = idle.clone()
+    expected_combat = combat.clone()
+    expected_idle.step_logic_ticks(4)
+    expected_combat.step_logic_ticks(4)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_battles([idle, combat], 4) == [4, 4]
+
+    _assert_exact_battle_match(expected_idle, idle)
+    _assert_exact_battle_match(expected_combat, combat)
+    assert executor.metrics_dict()["tensor_ticks"] == 4
+    assert executor.metrics_dict()["python_ticks"] == 4
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 1
+
+
+def test_pytorch_on_fails_closed_for_mechanic_bearing_deployment() -> None:
+    battle = _battle_with_deployed_card("ArcherQueen")
     expected = battle.clone()
 
     expected.step_logic_ticks(3)
@@ -116,6 +205,24 @@ def test_pytorch_on_fails_closed_to_python_for_combat_state() -> None:
     _assert_exact_battle_match(expected, battle)
     assert executor.metrics_dict()["tensor_ticks"] == 0
     assert executor.metrics_dict()["python_ticks"] == 3
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 1
+
+
+def test_deployment_at_exact_body_contact_fails_closed() -> None:
+    battle = _battle_with_deployed_card("Knight")
+    knight = max(battle.entities.values(), key=lambda entity: entity.id)
+    tower = battle.entities[1]
+    contact_distance = knight.get_collision_radius() + tower.get_collision_radius()
+    knight.position = Position(tower.position.x + contact_distance, tower.position.y)
+    expected = battle.clone()
+    expected.step_logic_ticks(1)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(battle, 1) == 1
+
+    _assert_exact_battle_match(expected, battle)
+    assert executor.metrics_dict()["tensor_ticks"] == 0
+    assert executor.metrics_dict()["python_ticks"] == 1
     assert executor.metrics_dict()["unsupported_fallbacks"] == 1
 
 

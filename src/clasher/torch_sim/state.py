@@ -57,6 +57,10 @@ class TensorBattleState:
     entity_hp: torch.Tensor
     entity_max_hp: torch.Tensor
     entity_last_attack_time: torch.Tensor
+    entity_deploy_delay: torch.Tensor
+    entity_placement_pending: torch.Tensor
+    entity_spawn_hook_pending: torch.Tensor
+    entity_spawn_hook_fired: torch.Tensor
     entity_tower_slot: torch.Tensor
     entity_tower_active: torch.Tensor
 
@@ -144,6 +148,10 @@ class TensorBattleState:
             entity_hp=zeros(batch, max_entities, dtype=torch.float64),
             entity_max_hp=zeros(batch, max_entities, dtype=torch.float64),
             entity_last_attack_time=zeros(batch, max_entities, dtype=torch.float64),
+            entity_deploy_delay=zeros(batch, max_entities, dtype=torch.float64),
+            entity_placement_pending=zeros(batch, max_entities, dtype=torch.bool),
+            entity_spawn_hook_pending=zeros(batch, max_entities, dtype=torch.bool),
+            entity_spawn_hook_fired=zeros(batch, max_entities, dtype=torch.bool),
             entity_tower_slot=torch.full(
                 (batch, max_entities), -1, dtype=torch.int8, device=torch_device
             ),
@@ -173,6 +181,10 @@ class TensorBattleState:
         self.entity_hp.zero_()
         self.entity_max_hp.zero_()
         self.entity_last_attack_time.zero_()
+        self.entity_deploy_delay.zero_()
+        self.entity_placement_pending.zero_()
+        self.entity_spawn_hook_pending.zero_()
+        self.entity_spawn_hook_fired.zero_()
         self.entity_tower_slot.fill_(-1)
         self.entity_tower_active.zero_()
         self.hand.zero_()
@@ -247,6 +259,18 @@ class TensorBattleState:
                 self.entity_last_attack_time[batch_index, entity_index] = (
                     entity.last_attack_time
                 )
+                self.entity_deploy_delay[batch_index, entity_index] = (
+                    entity.deploy_delay_remaining
+                )
+                self.entity_placement_pending[batch_index, entity_index] = (
+                    entity.placement_pending
+                )
+                self.entity_spawn_hook_pending[batch_index, entity_index] = bool(
+                    getattr(entity, "_spawn_hook_pending", False)
+                )
+                self.entity_spawn_hook_fired[batch_index, entity_index] = bool(
+                    getattr(entity, "_spawn_hook_fired", False)
+                )
                 tower_slot = getattr(entity, "_crown_tower_slot", None)
                 self.entity_tower_slot[batch_index, entity_index] = (
                     TOWER_SLOTS.get(tower_slot, -1)
@@ -319,4 +343,22 @@ class TensorBattleState:
                 entity = entities_by_id[entity_id]
                 entity.last_attack_time = float(
                     self.entity_last_attack_time[batch_index, entity_index].item()
+                )
+                entity.deploy_delay_remaining = float(
+                    self.entity_deploy_delay[batch_index, entity_index].item()
+                )
+                entity.placement_pending = bool(
+                    self.entity_placement_pending[
+                        batch_index, entity_index
+                    ].item()
+                )
+                entity._spawn_hook_pending = bool(
+                    self.entity_spawn_hook_pending[
+                        batch_index, entity_index
+                    ].item()
+                )
+                entity._spawn_hook_fired = bool(
+                    self.entity_spawn_hook_fired[
+                        batch_index, entity_index
+                    ].item()
                 )

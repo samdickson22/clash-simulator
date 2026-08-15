@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import Enum
 
@@ -9,6 +10,7 @@ import torch
 
 from clasher.balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
 from clasher.battle import BattleState
+from clasher.entities import Troop
 from clasher.kinematics import LOGIC_TICK_MILLISECONDS, LOGIC_TICK_SECONDS
 
 from .diagnostics import TorchParityError, battle_snapshot, first_divergence
@@ -39,10 +41,63 @@ class BackendMetrics:
         }
 
 
-def _idle_tensor_supported(battle: BattleState) -> bool:
-    """The first complete-tick vertical slice: inert static Crown Towers."""
+def _deployment_only_tensor_supported(battle: BattleState) -> bool:
+    """Return whether every non-Crown object is an inert deploying troop."""
 
-    return bool(battle.can_fast_forward_idle())
+    if battle.game_over or battle._pending_spell_casts:
+        return False
+    deploying: list[Troop] = []
+    for entity in battle.entities.values():
+        if battle._is_static_tower_entity(entity):
+            continue
+        if not isinstance(entity, Troop):
+            return False
+        if (
+            not entity.is_alive
+            or entity.deploy_delay_remaining <= 1e-9
+            or not entity.placement_pending
+            or entity.mechanics
+            or entity.forced_movement_active
+            or entity._knockback_target is not None
+            or entity._death_spawn_travel_ticks_remaining > 0
+            or entity._death_spawn_target_immunity_elapsed_ms >= 0
+            or entity.stun_timer > 0
+            or entity.freeze_expiry_time > battle.time
+            or entity.slow_timer > 0
+            or entity.haste_timer > 0
+            or entity._periodic_damage_effects
+            or entity._native_avoidance != 0
+            or entity._movement_vector_count != 0
+            or not entity._pending_movement_consumed
+        ):
+            return False
+        deploying.append(entity)
+
+    # Deployment frames still execute body-pressure collection. Restrict this
+    # slice to states whose exact collision result is the zero vector.
+    collision_objects = [
+        entity
+        for entity in battle.entities.values()
+        if entity.is_alive and entity.entity_kind in {0, 1}
+    ]
+    for troop in deploying:
+        for other in collision_objects:
+            if other is troop:
+                continue
+            minimum = troop.get_collision_radius() + other.get_collision_radius()
+            # Native emits a one-unit pressure vector even at exact contact.
+            if troop.position.distance_to(other.position) <= minimum:
+                return False
+    return bool(deploying)
+
+
+def _tensor_slice_supported(battle: BattleState) -> bool:
+    """Current exact coverage: inert Crown state or inert deployment state."""
+
+    return bool(
+        battle.can_fast_forward_idle()
+        or _deployment_only_tensor_supported(battle)
+    )
 
 
 def _crowns_for_players(state: TensorBattleState) -> torch.Tensor:
@@ -199,13 +254,21 @@ def _check_win_conditions(state: TensorBattleState, active: torch.Tensor) -> Non
     state.active.copy_(~state.game_over)
 
 
-def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> int:
+def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> torch.Tensor:
     """Advance a batch of idle complete ticks without Python object stepping."""
 
     requested = max(0, int(ticks))
-    advanced = 0
+    advanced = torch.zeros((state.batch_size,), dtype=torch.int64, device=state.device)
     for _ in range(requested):
-        active = state.active & ~state.game_over
+        deploying = (
+            state.entity_active
+            & (state.entity_tower_slot < 0)
+            & (state.entity_id != 0)
+        )
+        newly_actionable = (
+            deploying & (state.entity_deploy_delay <= 1e-9)
+        ).any(dim=1)
+        active = state.active & ~state.game_over & ~newly_actionable
         if not bool(active.any().item()):
             break
         state.time.add_(torch.where(active, torch.full_like(state.time, 0.05), 0.0))
@@ -223,12 +286,36 @@ def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> int:
         state.entity_last_attack_time.add_(
             active_towers.to(torch.float64) * LOGIC_TICK_SECONDS
         )
+        deployment_mask = active[:, None] & deploying
+        # Preserve the pre-tick values: ``copy_`` below mutates the retained
+        # tensor in place, and an alias would make the zero-crossing predicate
+        # observe only post-tick values.
+        previous_deploy_delay = state.entity_deploy_delay.clone()
+        next_deploy_delay = torch.clamp(
+            previous_deploy_delay - LOGIC_TICK_SECONDS,
+            min=0.0,
+        )
+        state.entity_deploy_delay.copy_(
+            torch.where(
+                deployment_mask,
+                next_deploy_delay,
+                previous_deploy_delay,
+            )
+        )
+        deployment_finished = (
+            deployment_mask
+            & (previous_deploy_delay > 0)
+            & (state.entity_deploy_delay <= 1e-9)
+        )
+        state.entity_placement_pending &= ~deployment_finished
+        state.entity_spawn_hook_pending &= ~deployment_finished
+        state.entity_spawn_hook_fired |= deployment_finished
         timer_boundary = (~state.sudden_death & (state.time >= 180.0)) | (
             state.sudden_death & (state.time >= 300.0)
         )
         if bool((active & timer_boundary).any().item()):
             _check_win_conditions(state, active)
-        advanced += 1
+        advanced.add_(active.to(torch.int64))
     return advanced
 
 
@@ -245,16 +332,20 @@ class TorchBattleExecutor:
         self.device = torch.device(device)
         self.metrics = BackendMetrics()
         self._state: TensorBattleState | None = None
-        self._battle_identity: int | None = None
+        self._battle_identities: tuple[int, ...] = ()
 
-    def _state_for(self, battle: BattleState) -> TensorBattleState:
+    def _state_for(self, battles: Sequence[BattleState]) -> TensorBattleState:
+        identities = tuple(id(battle) for battle in battles)
         if (
             self._state is None
-            or self._battle_identity != id(battle)
-            or not self._state.clocks_match(battle)
+            or self._battle_identities != identities
+            or any(
+                not self._state.clocks_match(battle, batch_index)
+                for batch_index, battle in enumerate(battles)
+            )
         ):
-            self._state = TensorBattleState.from_battles([battle], device=self.device)
-            self._battle_identity = id(battle)
+            self._state = TensorBattleState.from_battles(battles, device=self.device)
+            self._battle_identities = identities
         return self._state
 
     def _fallback(self, battle: BattleState, ticks: int) -> int:
@@ -262,41 +353,92 @@ class TorchBattleExecutor:
         self.metrics.python_ticks += advanced
         self.metrics.unsupported_fallbacks += 1
         self._state = None
-        self._battle_identity = None
+        self._battle_identities = ()
         return advanced
 
     def step_logic_ticks(self, battle: BattleState, ticks: int) -> int:
+        return self.step_battles([battle], ticks)[0]
+
+    def step_battles(
+        self,
+        battles: Sequence[BattleState],
+        ticks: int,
+    ) -> list[int]:
+        """Advance multiple battles through one retained tensor batch.
+
+        Unsupported members fail closed independently. Supported members are
+        grouped into one tensor state/kernel call, including in mixed batches.
+        """
+
+        if not battles:
+            return []
         requested = max(0, int(ticks))
         if self.backend is SimulatorBackend.PYTHON:
-            advanced = battle.step_logic_ticks(requested)
-            self.metrics.python_ticks += advanced
+            advanced = [battle.step_logic_ticks(requested) for battle in battles]
+            self.metrics.python_ticks += sum(advanced)
             return advanced
-        if not _idle_tensor_supported(battle):
-            return self._fallback(battle, requested)
+
+        supported_indices = [
+            index
+            for index, battle in enumerate(battles)
+            if _tensor_slice_supported(battle)
+        ]
+        supported_set = set(supported_indices)
+        unsupported_indices = [
+            index for index in range(len(battles)) if index not in supported_set
+        ]
+        if unsupported_indices:
+            advanced = [0 for _ in battles]
+            for index in unsupported_indices:
+                advanced[index] = self._fallback(battles[index], requested)
+            if supported_indices:
+                tensor_advanced = self.step_battles(
+                    [battles[index] for index in supported_indices],
+                    requested,
+                )
+                for index, count in zip(supported_indices, tensor_advanced):
+                    advanced[index] = count
+            return advanced
 
         if self.backend is SimulatorBackend.PYTORCH_SHADOW:
-            candidate = battle.clone()
-            advanced = battle.step_logic_ticks(requested)
+            candidates = [battle.clone() for battle in battles]
+            advanced = [battle.step_logic_ticks(requested) for battle in battles]
             tensor_state = TensorBattleState.from_battles(
-                [candidate], device=self.device
+                candidates, device=self.device
             )
-            tensor_advanced = step_idle_tensor_ticks(tensor_state, requested)
-            tensor_state.sync_to_battles([candidate])
-            self.metrics.python_ticks += advanced
-            self.metrics.tensor_ticks += tensor_advanced
-            self.metrics.shadow_checks += 1
-            mismatch = first_divergence(
-                battle_snapshot(battle), battle_snapshot(candidate)
+            tensor_counts = step_idle_tensor_ticks(tensor_state, requested)
+            tensor_state.sync_to_battles(candidates)
+            self.metrics.python_ticks += sum(advanced)
+            self.metrics.tensor_ticks += sum(
+                int(count) for count in tensor_counts.tolist()
             )
-            if mismatch is not None:
-                self.metrics.shadow_mismatches += 1
-                raise TorchParityError(mismatch)
+            self.metrics.shadow_checks += len(battles)
+            for index, count in enumerate(tensor_counts.tolist()):
+                remaining = advanced[index] - int(count)
+                if remaining > 0:
+                    candidates[index].step_logic_ticks(remaining)
+                    self.metrics.unsupported_fallbacks += 1
+            for index, (battle, candidate) in enumerate(zip(battles, candidates)):
+                mismatch = first_divergence(
+                    battle_snapshot(battle),
+                    battle_snapshot(candidate),
+                    path=f"battles[{index}]",
+                )
+                if mismatch is not None:
+                    self.metrics.shadow_mismatches += 1
+                    raise TorchParityError(mismatch)
             return advanced
 
-        state = self._state_for(battle)
-        advanced = step_idle_tensor_ticks(state, requested)
-        state.sync_to_battles([battle])
-        self.metrics.tensor_ticks += advanced
+        state = self._state_for(battles)
+        tensor_counts = step_idle_tensor_ticks(state, requested)
+        state.sync_to_battles(battles)
+        tensor_advanced = [int(count) for count in tensor_counts.tolist()]
+        self.metrics.tensor_ticks += sum(tensor_advanced)
+        advanced = tensor_advanced.copy()
+        for index, count in enumerate(tensor_advanced):
+            remaining = requested - count
+            if remaining > 0 and not battles[index].game_over:
+                advanced[index] += self._fallback(battles[index], remaining)
         return advanced
 
     def metrics_dict(self) -> dict[str, float]:

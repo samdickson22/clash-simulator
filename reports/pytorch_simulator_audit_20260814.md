@@ -162,11 +162,22 @@ point semantics and unsupported float64 operations rule out blanket MPS use.
 
 Current direct evidence:
 
-- 13 new vertical-slice tests pass.
+- 24 owned PyTorch tests pass.
 - Exact matches cover 1/100 ticks, refill mutation, and boundaries around
   120/180/240/300 seconds, including exact scalar kinds.
-- 83 pre-existing focused tests passed before type cleanup; the final owned
-  gate is 47 tests plus mypy success for six touched modules.
+- A retained 12-battle tensor batch advances independently through timer and
+  terminal boundaries. Mixed batches fail closed per member rather than
+  forcing supported members through Python.
+- Mechanic-free deployment advances entirely in tensors until the zero-crossing
+  frame, then continues through Python at the first frame where combat can act;
+  both the pure and split windows match exact snapshots in shadow and on modes.
+- `TensorCardCatalog` compiles all 66 enabled definitions and the complete
+  current factory mechanic/effect inventory into dense opcodes and scalar
+  parameter planes without card-name dispatch.
+- Ruff's F/I gate and mypy pass on all PyTorch modules plus both training
+  integration modules.
+- The initial milestone also passed 47 focused integration/regression tests;
+  the current evidence above is additive to that gate.
 - With the seven uncollectable inherited modules explicitly ignored, the broad
   clean-tip run produced 1,255 passes and 135 failures. Those failures are
   dominated by parity tests passing the uncommitted `reward_profile` argument
