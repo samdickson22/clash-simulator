@@ -62,8 +62,9 @@ def run_env_benchmark(
     mirror_match: bool,
     quiet_engine: bool,
     engine_fast_path: str = "off",
+    simulation_backend: str = "python",
     target_cache_refresh: str = "reuse",
-) -> Dict[str, float]:
+) -> Dict[str, float | str]:
     _configure_target_cache_refresh(target_cache_refresh)
     env = SelfPlayBattleEnv(
         decision_interval_ticks=decision_interval,
@@ -73,6 +74,7 @@ def run_env_benchmark(
         mirror_match=mirror_match,
         canonical_perspective=True,
         engine_fast_path=engine_fast_path,
+        simulation_backend=simulation_backend,
     )
     rng = np.random.default_rng(seed + 77)
     with _maybe_silence_stdio(quiet_engine):
@@ -96,6 +98,7 @@ def run_env_benchmark(
     approx_games_per_min = decisions_per_sec / (max_ticks / decision_interval) * 60.0
     return {
         "elapsed_s": elapsed,
+        "simulation_backend": simulation_backend,
         "decisions": float(decisions),
         "transitions": float(transitions),
         "episodes_finished": float(episodes),
@@ -114,6 +117,7 @@ def _actor_rollout_worker(
     mirror_match: bool,
     quiet_engine: bool,
     engine_fast_path: str,
+    simulation_backend: str,
     target_cache_refresh: str,
     actor_rollout_steps: int,
     out_queue: mp.Queue,
@@ -128,6 +132,7 @@ def _actor_rollout_worker(
         mirror_match=mirror_match,
         canonical_perspective=True,
         engine_fast_path=engine_fast_path,
+        simulation_backend=simulation_backend,
     )
     rng = np.random.default_rng(seed + actor_id * 99_991)
     with _maybe_silence_stdio(quiet_engine):
@@ -165,6 +170,7 @@ def _actor_rollout_worker_centralized(
     mirror_match: bool,
     quiet_engine: bool,
     engine_fast_path: str,
+    simulation_backend: str,
     target_cache_refresh: str,
     actor_rollout_steps: int,
     out_queue: mp.Queue,
@@ -181,6 +187,7 @@ def _actor_rollout_worker_centralized(
         mirror_match=mirror_match,
         canonical_perspective=True,
         engine_fast_path=engine_fast_path,
+        simulation_backend=simulation_backend,
     )
     with _maybe_silence_stdio(quiet_engine):
         env.reset()
@@ -254,13 +261,14 @@ def run_async_queue_benchmark(
     mirror_match: bool,
     quiet_engine: bool,
     engine_fast_path: str = "off",
+    simulation_backend: str = "python",
     target_cache_refresh: str = "reuse",
     inference_mode: str = "actor_local",
     inference_max_batch: int = 2048,
     inference_max_wait_ms: float = 2.0,
     hidden_size: int = 256,
     inference_device: str = "cpu",
-) -> Dict[str, float]:
+) -> Dict[str, float | str]:
     ctx = mp.get_context("spawn")
     out_queue = ctx.Queue(maxsize=queue_size)
     stop_event = ctx.Event()
@@ -287,6 +295,7 @@ def run_async_queue_benchmark(
             mirror_match=mirror_match,
             canonical_perspective=True,
             engine_fast_path=engine_fast_path,
+            simulation_backend=simulation_backend,
         )
         with _maybe_silence_stdio(quiet_engine):
             meta_env.reset()
@@ -326,6 +335,7 @@ def run_async_queue_benchmark(
                     mirror_match,
                     quiet_engine,
                     engine_fast_path,
+                    simulation_backend,
                     target_cache_refresh,
                     actor_rollout_steps,
                     out_queue,
@@ -347,6 +357,7 @@ def run_async_queue_benchmark(
                     mirror_match,
                     quiet_engine,
                     engine_fast_path,
+                    simulation_backend,
                     target_cache_refresh,
                     actor_rollout_steps,
                     out_queue,
@@ -390,6 +401,7 @@ def run_async_queue_benchmark(
     lag_arr = np.asarray(lags, dtype=np.float64) if lags else np.asarray([0.0], dtype=np.float64)
     return {
         "elapsed_s": elapsed,
+        "simulation_backend": simulation_backend,
         "decisions": float(decisions),
         "transitions": float(transitions),
         "episodes_finished": float(episodes),
@@ -420,6 +432,11 @@ def _parse_args() -> argparse.Namespace:
     env_p.add_argument("--quiet-engine", action="store_true")
     env_p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
     env_p.add_argument(
+        "--simulation-backend",
+        choices=["python", "pytorch-shadow", "pytorch"],
+        default="python",
+    )
+    env_p.add_argument(
         "--target-cache-refresh", choices=["rebuild", "reuse"], default="reuse"
     )
 
@@ -436,6 +453,11 @@ def _parse_args() -> argparse.Namespace:
     async_p.add_argument("--quiet-engine", action="store_true")
     async_p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
     async_p.add_argument(
+        "--simulation-backend",
+        choices=["python", "pytorch-shadow", "pytorch"],
+        default="python",
+    )
+    async_p.add_argument(
         "--target-cache-refresh", choices=["rebuild", "reuse"], default="reuse"
     )
     async_p.add_argument("--inference-mode", choices=["actor_local", "centralized"], default="actor_local")
@@ -447,7 +469,7 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _print_metrics(prefix: str, metrics: Dict[str, float]) -> None:
+def _print_metrics(prefix: str, metrics: Dict[str, float | str]) -> None:
     parts = [f"{k}={v:.4f}" if isinstance(v, float) else f"{k}={v}" for k, v in metrics.items()]
     print(f"{prefix} " + " ".join(parts))
 
@@ -466,6 +488,7 @@ def main() -> None:
             mirror_match=args.mirror_match,
             quiet_engine=args.quiet_engine,
             engine_fast_path=args.engine_fast_path,
+            simulation_backend=args.simulation_backend,
             target_cache_refresh=args.target_cache_refresh,
         )
         _print_metrics("benchmark=env", metrics)
@@ -484,6 +507,7 @@ def main() -> None:
             mirror_match=args.mirror_match,
             quiet_engine=args.quiet_engine,
             engine_fast_path=args.engine_fast_path,
+            simulation_backend=args.simulation_backend,
             target_cache_refresh=args.target_cache_refresh,
             inference_mode=args.inference_mode,
             inference_max_batch=args.inference_max_batch,

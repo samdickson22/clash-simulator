@@ -65,6 +65,7 @@ class ActorConfig:
     hidden_size: int
     engine_fast_path: str
     inference_mode: str
+    simulation_backend: str = "python"
 
 
 def _tensorize_obs(obs):
@@ -401,6 +402,7 @@ def _actor_loop(
             mirror_match=actor_cfg.mirror_match,
             canonical_perspective=True,
             engine_fast_path=actor_cfg.engine_fast_path,
+            simulation_backend=actor_cfg.simulation_backend,
         )
         with maybe_silence_stdio(actor_cfg.quiet_engine):
             env.reset()
@@ -631,6 +633,15 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--resume-from", type=str, default=None)
     p.add_argument("--compress-obs-fp16", action="store_true")
     p.add_argument("--engine-fast-path", choices=["off", "shadow", "on"], default="off")
+    p.add_argument(
+        "--simulation-backend",
+        choices=["python", "pytorch-shadow", "pytorch"],
+        default="python",
+        help=(
+            "battle tick backend; PyTorch modes fail closed to the Python "
+            "oracle for mechanics not yet covered by tensor kernels"
+        ),
+    )
     p.add_argument("--inference-mode", choices=["actor_local", "centralized"], default="actor_local")
     p.add_argument("--inference-max-batch", type=int, default=2048)
     p.add_argument("--inference-max-wait-ms", type=float, default=2.0)
@@ -673,6 +684,7 @@ def _launch_actors(
             hidden_size=actor_cfg_base["hidden_size"],
             engine_fast_path=actor_cfg_base["engine_fast_path"],
             inference_mode=actor_cfg_base["inference_mode"],
+            simulation_backend=actor_cfg_base["simulation_backend"],
         )
         response_q = None
         if inference_response_queues is not None:
@@ -740,6 +752,7 @@ def _auto_pick_actor_count(
     mirror_match: bool,
     quiet_engine: bool,
     engine_fast_path: str,
+    simulation_backend: str,
 ) -> int:
     cpu_cap = max(2, min(10, mp.cpu_count()))
     candidates = [n for n in (4, 6, 8, 10) if n <= cpu_cap]
@@ -759,6 +772,7 @@ def _auto_pick_actor_count(
             mirror_match=mirror_match,
             quiet_engine=quiet_engine,
             engine_fast_path=engine_fast_path,
+            simulation_backend=simulation_backend,
             inference_mode="actor_local",
         )
         dps = float(metrics["decisions_per_sec"])
@@ -796,6 +810,7 @@ def main() -> None:
         mirror_match=args.mirror_match,
         canonical_perspective=True,
         engine_fast_path=args.engine_fast_path,
+        simulation_backend=args.simulation_backend,
     )
     with maybe_silence_stdio(args.quiet_engine):
         meta_env.reset()
@@ -843,6 +858,7 @@ def main() -> None:
             mirror_match=args.mirror_match,
             quiet_engine=args.quiet_engine,
             engine_fast_path=args.engine_fast_path,
+            simulation_backend=args.simulation_backend,
         )
 
     ctx = mp.get_context("spawn")
@@ -870,6 +886,7 @@ def main() -> None:
         "hidden_size": args.hidden_size,
         "engine_fast_path": args.engine_fast_path,
         "inference_mode": args.inference_mode,
+        "simulation_backend": args.simulation_backend,
     }
 
     if args.inference_mode == "centralized":
@@ -936,6 +953,7 @@ def main() -> None:
     print(
         f"actors={len(actors)} transitions_per_update={args.transitions_per_update} "
         f"inference_mode={args.inference_mode} engine_fast_path={args.engine_fast_path} "
+        f"simulation_backend={args.simulation_backend} "
         f"rollout_transport={args.rollout_transport}"
     )
 
