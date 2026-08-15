@@ -46,8 +46,8 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 14
-RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 14
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 15
+RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 15
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -279,6 +279,28 @@ class _ResidentSpawnProjectileRecipe:
 
 
 @dataclass(frozen=True)
+class _ResidentAreaEffectSpellRecipe:
+    clock_kind: str
+    radius: float
+    damage: float
+    duration: float
+    movement_multiplier: float
+    hits_air: bool
+    hits_ground: bool
+    affects_hidden: bool
+    crown_tower_damage_multiplier: float
+    building_damage_multiplier: float
+    crown_tower_damage: float
+    building_damage: float
+    damage_tick_interval: float
+    max_damage_ticks: int
+    periodic_damage_buff_duration: float
+    slow_refresh_duration: float
+    effect_tick_interval: float
+    cap_buff_time_to_effect: bool
+
+
+@dataclass(frozen=True)
 class _ResidentCardCatalogBundle:
     payload: bytes
     action_recipes: dict[str, _ResidentCharacterBirthRecipe]
@@ -297,6 +319,9 @@ class _ResidentCardCatalogBundle:
     ] = field(default_factory=dict)
     spawn_projectile_recipes: dict[
         str, _ResidentSpawnProjectileRecipe
+    ] = field(default_factory=dict)
+    area_effect_spell_recipes: dict[
+        str, _ResidentAreaEffectSpellRecipe
     ] = field(default_factory=dict)
     pending_spell_action_kinds: tuple[tuple[str, str], ...] = ()
 
@@ -375,6 +400,7 @@ def _resident_card_catalog_bundle(
     from .kinematics import tiles_to_logic_units
     from .spells import (
         SPELL_REGISTRY,
+        AreaEffectSpell,
         DirectDamageSpell,
         ProjectileSpell,
         RollingProjectileSpell,
@@ -407,6 +433,7 @@ def _resident_card_catalog_bundle(
         tuple[str, int, str], _ResidentCharacterBirthRecipe
     ] = {}
     spawn_projectile_recipes: dict[str, _ResidentSpawnProjectileRecipe] = {}
+    area_effect_spell_recipes: dict[str, _ResidentAreaEffectSpellRecipe] = {}
     for lookup_name in sorted(lookup_names):
         card_def = loader.get_card_definition(lookup_name)
         card_stats = loader.get_card(lookup_name)
@@ -429,8 +456,121 @@ def _resident_card_catalog_bundle(
         rolling_projectile_spell: dict[str, Any] | None = None
         spawn_projectile_spell: dict[str, Any] | None = None
         direct_damage_spell: dict[str, Any] | None = None
+        area_effect_spell: dict[str, Any] | None = None
         spell = SPELL_REGISTRY.get(str(card_stats.name))
-        if type(spell) is DirectDamageSpell:
+        if type(spell) is AreaEffectSpell:
+            action_kind = "area_effect_spell"
+            area = cast(dict[str, Any], card_def.raw).get(
+                "areaEffectObjectData",
+                {},
+            )
+            buff = area.get("buffData", {}) if type(area) is dict else {}
+            area_values = (
+                float(spell.radius),
+                float(spell.damage),
+                float(spell.duration),
+                float(spell.speed_multiplier),
+                float(spell.crown_tower_damage_multiplier),
+                float(spell.building_damage_multiplier),
+                float(spell.damage_tick_interval),
+                float(spell.slow_refresh_duration),
+                float(spell.effect_tick_interval),
+                float(spell.periodic_damage_buff_duration),
+            )
+            crown_damage = (
+                None
+                if spell.crown_tower_damage is None
+                else float(spell.crown_tower_damage)
+            )
+            building_damage = (
+                None
+                if spell.building_damage is None
+                else float(spell.building_damage)
+            )
+            area_reasons: list[str] = []
+            nested_keys = {
+                "onStartingAction",
+                "onStartingActionData",
+                "onHitActionData",
+                "projectileData",
+                "actionGroups",
+            }
+            if type(area) is not dict or type(buff) is not dict:
+                area_reasons.append("invalid_area_effect_payload")
+            elif nested_keys.intersection(area):
+                area_reasons.append("nested_area_effect_payload")
+            if bool(spell.requires_territory) or bool(spell.requires_walkable_target):
+                area_reasons.append("restricted_area_effect_spell_placement")
+            if int(getattr(card_stats, "deploy_w_tile_margin", 0) or 0) != 0:
+                area_reasons.append("area_effect_spell_margin")
+            if (
+                not all(math.isfinite(value) for value in area_values)
+                or crown_damage is None
+                or not math.isfinite(crown_damage)
+                or building_damage is None
+                or not math.isfinite(building_damage)
+                or spell.radius <= 0.0
+                or spell.damage <= 0.0
+                or spell.duration <= 0.0
+                or spell.freeze_effect
+                or not (bool(spell.hits_ground) and not bool(spell.hits_air))
+                or not bool(spell.affects_hidden)
+                or spell.speed_multiplier <= 0.0
+                or spell.speed_multiplier >= 1.0
+                or spell.crown_tower_damage_multiplier < 0.0
+                or spell.building_damage_multiplier < 1.0
+                or crown_damage < 0.0
+                or building_damage < 0.0
+                or spell.damage_tick_interval <= 0.0
+                or spell.max_damage_ticks <= 0
+                or spell.damage_on_spawn
+                or spell.initial_damage_delay is not None
+                or spell.slows_attack_speed
+                or spell.slows_spawn_speed
+                or spell.slow_refresh_duration <= 0.0
+                or spell.effect_tick_interval <= 0.0
+                or not spell.cap_buff_time_to_effect
+                or spell.target_local_damage
+                or spell.periodic_damage_buff_duration <= 0.0
+                or spell.periodic_damage_controlled_by_parent
+                or buff.get("damagePerSecond") is None
+                or buff.get("hitTickFromSource") is not True
+            ):
+                area_reasons.append("unsupported_area_effect_clock")
+            reasons = area_reasons
+            if not reasons:
+                area_effect_spell = {
+                    "clock_kind": "source_periodic",
+                    "radius": float(spell.radius),
+                    "damage": float(spell.damage),
+                    "duration": float(spell.duration),
+                    "movement_multiplier": float(spell.speed_multiplier),
+                    "hits_air": bool(spell.hits_air),
+                    "hits_ground": bool(spell.hits_ground),
+                    "affects_hidden": bool(spell.affects_hidden),
+                    "crown_tower_damage_multiplier": float(
+                        spell.crown_tower_damage_multiplier
+                    ),
+                    "building_damage_multiplier": float(
+                        spell.building_damage_multiplier
+                    ),
+                    "crown_tower_damage": crown_damage,
+                    "building_damage": building_damage,
+                    "damage_tick_interval": float(spell.damage_tick_interval),
+                    "max_damage_ticks": int(spell.max_damage_ticks),
+                    "periodic_damage_buff_duration": float(
+                        spell.periodic_damage_buff_duration
+                    ),
+                    "slow_refresh_duration": float(spell.slow_refresh_duration),
+                    "effect_tick_interval": float(spell.effect_tick_interval),
+                    "cap_buff_time_to_effect": bool(
+                        spell.cap_buff_time_to_effect
+                    ),
+                }
+                area_effect_spell_recipes[lookup_name] = (
+                    _ResidentAreaEffectSpellRecipe(**area_effect_spell)
+                )
+        elif type(spell) is DirectDamageSpell:
             action_kind = "direct_damage_spell"
             direct_values = (
                 float(spell.radius),
@@ -1214,6 +1354,7 @@ def _resident_card_catalog_bundle(
                 "rolling_projectile_spell": rolling_projectile_spell,
                 "spawn_projectile_spell": spawn_projectile_spell,
                 "direct_damage_spell": direct_damage_spell,
+                "area_effect_spell": area_effect_spell,
             }
         )
         death_spawn_data = getattr(card_stats, "death_spawn_character_data", None)
@@ -1289,6 +1430,7 @@ def _resident_card_catalog_bundle(
         rolling_projectile_recipes=rolling_projectile_recipes,
         spawn_projectile_spawn_recipes=spawn_projectile_spawn_recipes,
         spawn_projectile_recipes=spawn_projectile_recipes,
+        area_effect_spell_recipes=area_effect_spell_recipes,
         pending_spell_action_kinds=tuple(
             (str(card["lookup_name"]), str(card["action_kind"]))
             for card in cards
@@ -1299,6 +1441,7 @@ def _resident_card_catalog_bundle(
                 "rolling_projectile_spell",
                 "spawn_projectile_spell",
                 "direct_damage_spell",
+                "area_effect_spell",
             }
         ),
     )
@@ -1817,6 +1960,15 @@ class ResidentRustBattle:
             if lookup_name == expected_name:
                 return action_kind
         return None
+
+    def area_effect_spell_recipe(
+        self, spell_name: str
+    ) -> _ResidentAreaEffectSpellRecipe | None:
+        """Return the attested immutable constructor for one area spell."""
+        catalog = self._birth_catalog
+        if catalog is None:  # pragma: no cover - legacy direct construction
+            return None
+        return catalog.area_effect_spell_recipes.get(str(spell_name))
 
     @classmethod
     def from_battle(cls, battle: Any) -> ResidentRustBattle:
@@ -3025,6 +3177,7 @@ def area_effect_state_rows(battle: Any) -> list[dict[str, Any]]:
                     entity.cap_buff_time_to_effect
                 ),
                 "duration": _exact_scalar(entity.duration),
+                "damage_ticks_applied": int(entity.damage_ticks_applied),
                 "effect_snapshot_applied": bool(
                     entity.effect_snapshot_applied
                 ),
@@ -3039,6 +3192,16 @@ def area_effect_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "movement_multiplier": _exact_scalar(
                     entity.speed_multiplier
                 ),
+                "next_damage_time": (
+                    None
+                    if entity.next_damage_time is None
+                    else _exact_scalar(entity.next_damage_time)
+                ),
+                "next_effect_time": (
+                    None
+                    if entity.next_effect_time is None
+                    else _exact_scalar(entity.next_effect_time)
+                ),
                 "player_id": int(entity.player_id),
                 "position_x": _exact_scalar(entity.position.x),
                 "position_y": _exact_scalar(entity.position.y),
@@ -3052,6 +3215,33 @@ def area_effect_state_rows(battle: Any) -> list[dict[str, Any]]:
                 ),
                 "spawn_multiplier": _exact_scalar(spawn_multiplier),
                 "time_alive": _exact_scalar(entity.time_alive),
+                "persistent_spell": (
+                    {
+                        "building_damage": _exact_scalar(entity.building_damage),
+                        "building_damage_multiplier": _exact_scalar(
+                            entity.building_damage_multiplier
+                        ),
+                        "crown_tower_damage": _exact_scalar(
+                            entity.crown_tower_damage
+                        ),
+                        "crown_tower_damage_multiplier": _exact_scalar(
+                            entity.crown_tower_damage_multiplier
+                        ),
+                        "damage": _exact_scalar(entity.damage),
+                        "damage_tick_interval": _exact_scalar(
+                            entity.damage_tick_interval
+                        ),
+                        "max_damage_ticks": int(entity.max_damage_ticks),
+                        "periodic_damage_buff_duration": _exact_scalar(
+                            entity.periodic_damage_buff_duration
+                        ),
+                    }
+                    if entity.max_damage_ticks > 0
+                    and entity.damage > 0
+                    and not entity.freeze_effect
+                    and not entity.target_local_damage
+                    else None
+                ),
             }
         )
     return rows

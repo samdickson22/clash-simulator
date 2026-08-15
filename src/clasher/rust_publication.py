@@ -706,10 +706,26 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
     "area": frozenset(
         {
             "birth_source_entity_id",
+            "damage_ticks_applied",
             "effect_snapshot_applied",
+            "next_damage_time",
+            "next_effect_time",
+            "persistent_spell",
             "spec",
             "supported",
             "time_alive",
+        }
+    ),
+    "persistent_area_spell": frozenset(
+        {
+            "building_damage",
+            "building_damage_multiplier",
+            "crown_tower_damage",
+            "crown_tower_damage_multiplier",
+            "damage",
+            "damage_tick_interval",
+            "max_damage_ticks",
+            "periodic_damage_buff_duration",
         }
     ),
     "character_birth": frozenset(
@@ -2175,19 +2191,125 @@ def _validate_direct_rolling_recipe(
         )
 
 
-def _validate_direct_area(value: Any, entity_id: int) -> None:
+def _validate_direct_area(
+    value: Any, entity_id: int, resident: ResidentRustBattle
+) -> None:
     if value is None:
         return
     row = _direct_dict(value, "area")
-    _direct_optional_int(
+    source_id = _direct_optional_int(
         row["birth_source_entity_id"], f"entity {entity_id} area source"
+    )
+    damage_ticks = _direct_int(
+        row["damage_ticks_applied"],
+        f"entity {entity_id} area damage ticks",
+        minimum=0,
     )
     _direct_bool(row["effect_snapshot_applied"], f"entity {entity_id} area snapshot")
     _direct_bool(row["supported"], f"entity {entity_id} area supported")
     if not row["supported"]:
         raise ResidentPublicationError(f"unsupported direct area effect {entity_id}")
     _direct_float(row["time_alive"], f"entity {entity_id} area time")
+    for field in ("next_damage_time", "next_effect_time"):
+        if row[field] is not None:
+            _direct_float(row[field], f"entity {entity_id} area {field}")
     _validate_direct_area_spec(row["spec"], f"entity {entity_id} area")
+    persistent = row["persistent_spell"]
+    if persistent is None:
+        # A pre-existing death area may outlive an already-cleaned source, so
+        # its retained source reference is legitimately absent.
+        if damage_ticks != 0:
+            raise ResidentPublicationError(
+                f"malformed direct death area {entity_id} provenance"
+            )
+        return
+    if source_id is not None:
+        raise ResidentPublicationError(
+            f"malformed direct catalog area {entity_id} provenance"
+        )
+    spell = _direct_dict(persistent, "persistent_area_spell")
+    for field in (
+        "building_damage",
+        "building_damage_multiplier",
+        "crown_tower_damage",
+        "crown_tower_damage_multiplier",
+        "damage",
+        "damage_tick_interval",
+        "periodic_damage_buff_duration",
+    ):
+        _direct_float(spell[field], f"entity {entity_id} area spell {field}")
+    max_ticks = _direct_int(
+        spell["max_damage_ticks"],
+        f"entity {entity_id} area spell max ticks",
+        minimum=1,
+    )
+    if damage_ticks > max_ticks:
+        raise ResidentPublicationError(
+            f"malformed direct catalog area {entity_id} damage clock"
+        )
+    spec = row["spec"]
+    recipe = resident.area_effect_spell_recipe(spec["area_name"])
+    if recipe is None:
+        raise ResidentPublicationError(
+            f"resident catalog area {entity_id} provenance changed"
+        )
+
+    def same_float(actual: Any, expected: float, label: str) -> bool:
+        value = _direct_float(actual, label)
+        return struct.pack("=d", value) == struct.pack("=d", expected)
+
+    static_float_pairs = (
+        (spec["radius_tiles"], recipe.radius, "radius"),
+        (spec["duration"], recipe.duration, "duration"),
+        (
+            spec["movement_multiplier"],
+            recipe.movement_multiplier,
+            "movement multiplier",
+        ),
+        (spec["refresh_duration"], recipe.slow_refresh_duration, "refresh"),
+        (spec["effect_tick_interval"], recipe.effect_tick_interval, "effect tick"),
+        (spell["damage"], recipe.damage, "damage"),
+        (spell["building_damage"], recipe.building_damage, "building damage"),
+        (
+            spell["building_damage_multiplier"],
+            recipe.building_damage_multiplier,
+            "building multiplier",
+        ),
+        (spell["crown_tower_damage"], recipe.crown_tower_damage, "crown damage"),
+        (
+            spell["crown_tower_damage_multiplier"],
+            recipe.crown_tower_damage_multiplier,
+            "crown multiplier",
+        ),
+        (
+            spell["damage_tick_interval"],
+            recipe.damage_tick_interval,
+            "damage tick",
+        ),
+        (
+            spell["periodic_damage_buff_duration"],
+            recipe.periodic_damage_buff_duration,
+            "periodic duration",
+        ),
+    )
+    if (
+        recipe.clock_kind != "source_periodic"
+        or spec["radius_units"] != round(recipe.radius * 1000.0)
+        or spec["hits_air"] is not recipe.hits_air
+        or spec["hits_ground"] is not recipe.hits_ground
+        or spec["affects_hidden"] is not recipe.affects_hidden
+        or spec["cap_buff_time_to_effect"] is not recipe.cap_buff_time_to_effect
+        or not same_float(spec["attack_multiplier"], 1.0, "attack multiplier")
+        or not same_float(spec["spawn_multiplier"], 1.0, "spawn multiplier")
+        or max_ticks != recipe.max_damage_ticks
+        or any(
+            not same_float(actual, expected, f"entity {entity_id} area {label}")
+            for actual, expected, label in static_float_pairs
+        )
+    ):
+        raise ResidentPublicationError(
+            f"resident catalog area {entity_id} constructor provenance changed"
+        )
 
 
 def _validate_direct_character_birth(value: Any, entity_id: int) -> None:
@@ -2490,7 +2612,7 @@ def _build_direct_publication_plan(
                 row["rolling_projectile_state"], resident, entity_id
             )
         _validate_direct_chain_lightning(row["chain_lightning_state"], entity_id)
-        _validate_direct_area(row["area_effect_state"], entity_id)
+        _validate_direct_area(row["area_effect_state"], entity_id, resident)
         _validate_direct_character_birth(row["character_birth"], entity_id)
         if active:
             if encounter_index < 0:
@@ -3042,6 +3164,7 @@ def _validate_direct_pending(
             "rolling_projectile_spell",
             "spawn_projectile_spell",
             "direct_damage_spell",
+            "area_effect_spell",
         }:
             raise ResidentPublicationError(
                 f"unsupported direct pending spell {spell_name!r}"
@@ -3142,7 +3265,7 @@ def _validate_direct_full_delta_entity(
             row["rolling_projectile_state"], resident, entity_id
         )
     _validate_direct_chain_lightning(row["chain_lightning_state"], entity_id)
-    _validate_direct_area(row["area_effect_state"], entity_id)
+    _validate_direct_area(row["area_effect_state"], entity_id, resident)
     _validate_direct_character_birth(row["character_birth"], entity_id)
     point = row["point_projectile_state"]
     rolling = row["rolling_projectile_state"]
@@ -3510,7 +3633,7 @@ def _build_direct_delta_publication_plan(
             (_ENTITY_DELTA_POINT, "point_projectile_state", "point_projectile_present", _validate_direct_point),
             (_ENTITY_DELTA_ROLLING, "rolling_projectile_state", "rolling_projectile_present", _validate_direct_rolling),
             (_ENTITY_DELTA_CHAIN_LIGHTNING, "chain_lightning_state", "chain_lightning_present", _validate_direct_chain_lightning),
-            (_ENTITY_DELTA_AREA, "area_effect_state", "area_effect_present", _validate_direct_area),
+            (_ENTITY_DELTA_AREA, "area_effect_state", "area_effect_present", None),
         )
         for bit, field, present_field, validator in optional:
             present = _direct_bool(change[present_field], f"entity {entity_id} {present_field}")
@@ -3525,7 +3648,11 @@ def _build_direct_delta_publication_plan(
                     f"direct entity {entity_id} {field} disagrees with presence"
                 )
             elif payload is not None:
-                validator(payload, entity_id)
+                if bit == _ENTITY_DELTA_AREA:
+                    _validate_direct_area(payload, entity_id, resident)
+                else:
+                    assert validator is not None
+                    validator(payload, entity_id)
             if bit == _ENTITY_DELTA_ROLLING and payload is not None:
                 _validate_direct_rolling_recipe(payload, resident, entity_id)
             expected_present = (
@@ -4264,12 +4391,14 @@ def _typed_area(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
     if state is None:
         return None
     spec = state["spec"]
+    persistent = state["persistent_spell"]
     return {
         "affects_hidden": spec["affects_hidden"],
         "area_name": spec["area_name"],
         "attack_multiplier": _exact_float(spec["attack_multiplier"]),
         "cap_buff_time_to_effect": spec["cap_buff_time_to_effect"],
         "duration": _exact_float(spec["duration"]),
+        "damage_ticks_applied": state["damage_ticks_applied"],
         "effect_snapshot_applied": state["effect_snapshot_applied"],
         "effect_tick_interval": _exact_float(spec["effect_tick_interval"]),
         "encounter_index": row["encounter_index"],
@@ -4278,6 +4407,16 @@ def _typed_area(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
         "id": row["id"],
         "is_alive": row["is_alive"],
         "movement_multiplier": _exact_float(spec["movement_multiplier"]),
+        "next_damage_time": (
+            None
+            if state["next_damage_time"] is None
+            else _exact_float(state["next_damage_time"])
+        ),
+        "next_effect_time": (
+            None
+            if state["next_effect_time"] is None
+            else _exact_float(state["next_effect_time"])
+        ),
         "player_id": row["player_id"],
         "position_x": _exact(entity["position_x"]),
         "position_y": _exact(entity["position_y"]),
@@ -4286,6 +4425,30 @@ def _typed_area(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
         "refresh_duration": _exact_float(spec["refresh_duration"]),
         "spawn_multiplier": _exact_float(spec["spawn_multiplier"]),
         "time_alive": _exact_float(state["time_alive"]),
+        "persistent_spell": (
+            None
+            if persistent is None
+            else {
+                "building_damage": _exact_float(persistent["building_damage"]),
+                "building_damage_multiplier": _exact_float(
+                    persistent["building_damage_multiplier"]
+                ),
+                "crown_tower_damage": _exact_float(
+                    persistent["crown_tower_damage"]
+                ),
+                "crown_tower_damage_multiplier": _exact_float(
+                    persistent["crown_tower_damage_multiplier"]
+                ),
+                "damage": _exact_float(persistent["damage"]),
+                "damage_tick_interval": _exact_float(
+                    persistent["damage_tick_interval"]
+                ),
+                "max_damage_ticks": persistent["max_damage_ticks"],
+                "periodic_damage_buff_duration": _exact_float(
+                    persistent["periodic_damage_buff_duration"]
+                ),
+            }
+        ),
     }
 
 
@@ -5428,10 +5591,21 @@ def _apply_area_effects(
 
 
 def _apply_area_effect_row(entity: Any, row: dict[str, Any]) -> None:
+    entity.damage_ticks_applied = int(row["damage_ticks_applied"])
     entity.effect_snapshot_applied = bool(row["effect_snapshot_applied"])
     entity.is_alive = bool(row["is_alive"])
     entity.position.x = _scalar(row["position_x"])
     entity.position.y = _scalar(row["position_y"])
+    entity.next_damage_time = (
+        None
+        if row["next_damage_time"] is None
+        else _scalar(row["next_damage_time"])
+    )
+    entity.next_effect_time = (
+        None
+        if row["next_effect_time"] is None
+        else _scalar(row["next_effect_time"])
+    )
     entity.time_alive = _scalar(row["time_alive"])
 
 
@@ -5833,11 +6007,12 @@ def _create_area_effect_birth(
 ) -> AreaEffect:
     state = row["area_effect_state"]
     source_id = row["area_effect_birth_source_id"]
-    if source_id is None:
+    persistent = state["persistent_spell"]
+    if source_id is None and persistent is None:
         raise ResidentPublicationError(
             f"new area effect {row['id']} has no birth-source provenance"
         )
-    source = entity_registry[int(source_id)]
+    source = None if source_id is None else entity_registry[int(source_id)]
     radius = _float(state["radius_tiles"])
     effect = AreaEffect(
         id=int(row["id"]),
@@ -5846,13 +6021,14 @@ def _create_area_effect_birth(
             _scalar(row["position_y"]),
         ),
         player_id=int(row["player_id"]),
-        card_stats=source.card_stats,
+        card_stats=None if source is None else source.card_stats,
         hitpoints=_scalar(row["hitpoints"]),
         max_hitpoints=_scalar(row["max_hitpoints"]),
-        damage=0.0,
+        damage=(0.0 if persistent is None else _float(persistent["damage"])),
         range=radius,
         sight_range=radius,
         duration=_float(state["duration"]),
+        freeze_effect=False,
         speed_multiplier=_float(state["movement_multiplier"]),
         attack_speed_multiplier=_float(state["attack_multiplier"]),
         spawn_speed_multiplier=_float(state["spawn_multiplier"]),
@@ -5860,13 +6036,61 @@ def _create_area_effect_birth(
         hits_air=bool(state["hits_air"]),
         hits_ground=bool(state["hits_ground"]),
         affects_hidden=bool(state["affects_hidden"]),
+        crown_tower_damage_multiplier=(
+            1.0
+            if persistent is None
+            else _float(persistent["crown_tower_damage_multiplier"])
+        ),
+        building_damage_multiplier=(
+            1.0
+            if persistent is None
+            else _float(persistent["building_damage_multiplier"])
+        ),
+        crown_tower_damage=(
+            None
+            if persistent is None
+            else _float(persistent["crown_tower_damage"])
+        ),
+        building_damage=(
+            None
+            if persistent is None
+            else _float(persistent["building_damage"])
+        ),
+        damage_tick_interval=(
+            0.0
+            if persistent is None
+            else _float(persistent["damage_tick_interval"])
+        ),
+        max_damage_ticks=(
+            0 if persistent is None else int(persistent["max_damage_ticks"])
+        ),
+        damage_on_spawn=False,
+        slows_attack_speed=persistent is None,
+        slows_spawn_speed=persistent is None,
         slow_refresh_duration=_float(state["refresh_duration"]),
         effect_tick_interval=_float(state["effect_tick_interval"]),
-        effect_on_spawn_only=True,
+        effect_on_spawn_only=persistent is None,
         cap_buff_time_to_effect=bool(state["cap_buff_time_to_effect"]),
+        target_local_damage=False,
+        periodic_damage_buff_duration=(
+            0.0
+            if persistent is None
+            else _float(persistent["periodic_damage_buff_duration"])
+        ),
     )
     dynamic_effect = cast(Any, effect)
     dynamic_effect.spell_name = str(state["area_name"])
+    dynamic_effect.damage_ticks_applied = int(state["damage_ticks_applied"])
+    dynamic_effect.next_damage_time = (
+        None
+        if state["next_damage_time"] is None
+        else _scalar(state["next_damage_time"])
+    )
+    dynamic_effect.next_effect_time = (
+        None
+        if state["next_effect_time"] is None
+        else _scalar(state["next_effect_time"])
+    )
     dynamic_effect.battle_state = battle
     return effect
 
@@ -6100,24 +6324,26 @@ def _create_area_effect_birth_direct(
 ) -> AreaEffect:
     state = cast(dict[str, Any], row["area_effect_state"])
     source_id = state["birth_source_entity_id"]
-    if source_id is None:
+    persistent = state["persistent_spell"]
+    if source_id is None and persistent is None:
         raise ResidentPublicationError(
             f"new area effect {row['id']} has no birth source"
         )
-    source = available[source_id]
+    source = None if source_id is None else available[source_id]
     spec = cast(dict[str, Any], state["spec"])
     radius = spec["radius_tiles"]
     effect = AreaEffect(
         id=row["id"],
         position=Position(_scalar(row["position_x"]), _scalar(row["position_y"])),
         player_id=row["player_id"],
-        card_stats=source.card_stats,
+        card_stats=None if source is None else source.card_stats,
         hitpoints=_scalar(row["hitpoints"]),
         max_hitpoints=_scalar(row["max_hitpoints"]),
-        damage=0.0,
+        damage=0.0 if persistent is None else persistent["damage"],
         range=radius,
         sight_range=radius,
         duration=spec["duration"],
+        freeze_effect=False,
         speed_multiplier=spec["movement_multiplier"],
         attack_speed_multiplier=spec["attack_multiplier"],
         spawn_speed_multiplier=spec["spawn_multiplier"],
@@ -6125,13 +6351,43 @@ def _create_area_effect_birth_direct(
         hits_air=spec["hits_air"],
         hits_ground=spec["hits_ground"],
         affects_hidden=spec["affects_hidden"],
+        crown_tower_damage_multiplier=(
+            1.0 if persistent is None else persistent["crown_tower_damage_multiplier"]
+        ),
+        building_damage_multiplier=(
+            1.0 if persistent is None else persistent["building_damage_multiplier"]
+        ),
+        crown_tower_damage=(
+            None if persistent is None else persistent["crown_tower_damage"]
+        ),
+        building_damage=(
+            None if persistent is None else persistent["building_damage"]
+        ),
+        damage_tick_interval=(
+            0.0 if persistent is None else persistent["damage_tick_interval"]
+        ),
+        max_damage_ticks=(
+            0 if persistent is None else persistent["max_damage_ticks"]
+        ),
+        damage_on_spawn=False,
+        slows_attack_speed=persistent is None,
+        slows_spawn_speed=persistent is None,
         slow_refresh_duration=spec["refresh_duration"],
         effect_tick_interval=spec["effect_tick_interval"],
-        effect_on_spawn_only=True,
+        effect_on_spawn_only=persistent is None,
         cap_buff_time_to_effect=spec["cap_buff_time_to_effect"],
+        target_local_damage=False,
+        periodic_damage_buff_duration=(
+            0.0
+            if persistent is None
+            else persistent["periodic_damage_buff_duration"]
+        ),
     )
     dynamic = cast(Any, effect)
     dynamic.spell_name = spec["area_name"]
+    dynamic.damage_ticks_applied = state["damage_ticks_applied"]
+    dynamic.next_damage_time = state["next_damage_time"]
+    dynamic.next_effect_time = state["next_effect_time"]
     dynamic.battle_state = battle
     return effect
 
@@ -7087,7 +7343,10 @@ def _apply_direct_entity(
 
     area = row["area_effect_state"]
     if area is not None:
+        entity.damage_ticks_applied = area["damage_ticks_applied"]
         entity.effect_snapshot_applied = area["effect_snapshot_applied"]
+        entity.next_damage_time = area["next_damage_time"]
+        entity.next_effect_time = area["next_effect_time"]
         entity.time_alive = area["time_alive"]
 
     point = row["point_projectile_state"]
@@ -7744,7 +8003,10 @@ def _apply_direct_delta_entity(
         area = raw["area_effect_state"]
         if area is not None:
             undo.watch_attrs(entity)
+            entity.damage_ticks_applied = area["damage_ticks_applied"]
             entity.effect_snapshot_applied = area["effect_snapshot_applied"]
+            entity.next_damage_time = area["next_damage_time"]
+            entity.next_effect_time = area["next_effect_time"]
             entity.time_alive = area["time_alive"]
     if mask & _ENTITY_DELTA_POINT:
         point = raw["point_projectile_state"]
@@ -8348,6 +8610,7 @@ def publish_complete_tick_state(
         "spawn_projectile_recipe",
         "character_spawn_projectile_birth_recipe",
         "pending_spell_action_kind",
+        "area_effect_spell_recipe",
     }.intersection(resident.__dict__)
     if authority_overrides:
         raise ResidentPublicationError(

@@ -91,7 +91,7 @@ def test_spawn_projectile_catalog_is_structural_and_attests_inherited_payload() 
         if row["action_kind"] == "spawn_projectile_spell"
     }
 
-    assert payload["schema_version"] == 14
+    assert payload["schema_version"] == 15
     assert set(rows) == {"GoblinBarrel", "Royal Delivery", "RoyalDelivery"}
     assert all(not row["capability_reasons"] for row in rows.values())
     assert rows["Royal Delivery"]["effective_name"] == "RoyalDelivery"

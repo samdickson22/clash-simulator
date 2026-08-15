@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 14;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 15;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -2334,10 +2334,26 @@ impl ResidentDeathAreaSpec {
 }
 
 #[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentPersistentAreaSpellSpec {
+    damage: f64,
+    crown_tower_damage_multiplier: f64,
+    building_damage_multiplier: f64,
+    crown_tower_damage: f64,
+    building_damage: f64,
+    damage_tick_interval: f64,
+    max_damage_ticks: i64,
+    periodic_damage_buff_duration: f64,
+}
+
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct ResidentAreaEffectState {
     spec: ResidentDeathAreaSpec,
+    persistent_spell: Option<ResidentPersistentAreaSpellSpec>,
     time_alive: f64,
     effect_snapshot_applied: bool,
+    damage_ticks_applied: i64,
+    next_damage_time: Option<f64>,
+    next_effect_time: Option<f64>,
     birth_source_entity_id: Option<i64>,
     supported: bool,
 }
@@ -2347,6 +2363,7 @@ impl ResidentAreaEffectState {
         let radius_tiles = normalized_f64(fields, "radius")?;
         let duration = normalized_f64(fields, "duration")?;
         let effect_tick_interval = normalized_f64(fields, "effect_tick_interval")?;
+        let damage_tick_interval = normalized_f64(fields, "damage_tick_interval")?;
         let refresh_duration = normalized_f64(fields, "slow_refresh_duration")?;
         let movement_multiplier = normalized_f64(fields, "speed_multiplier")?;
         let slows_attack_speed = required_bool(fields, "slows_attack_speed")?;
@@ -2368,6 +2385,7 @@ impl ResidentAreaEffectState {
             radius_tiles,
             duration,
             effect_tick_interval,
+            damage_tick_interval,
             refresh_duration,
             movement_multiplier,
             attack_multiplier,
@@ -2380,9 +2398,34 @@ impl ResidentAreaEffectState {
                 ));
             }
         }
-        let option_is_none = |name: &str| fields.get(name).is_none_or(Value::is_null);
         let damage = normalized_f64(fields, "damage")?;
-        let supported = duration >= 0.001
+        let max_damage_ticks = required_i64(fields, "max_damage_ticks")?;
+        let damage_ticks_applied = required_i64(fields, "damage_ticks_applied")?;
+        let next_damage_time = optional_normalized_f64(fields, "next_damage_time")?;
+        let next_effect_time = optional_normalized_f64(fields, "next_effect_time")?;
+        let initial_damage_delay = optional_normalized_f64(fields, "initial_damage_delay")?;
+        let freeze_effect = required_bool(fields, "freeze_effect")?;
+        let effect_on_spawn_only = required_bool(fields, "effect_on_spawn_only")?;
+        let target_local_damage = required_bool(fields, "target_local_damage")?;
+        let periodic_damage_buff_duration =
+            normalized_f64(fields, "periodic_damage_buff_duration")?;
+        let periodic_damage_controlled_by_parent =
+            required_bool(fields, "periodic_damage_controlled_by_parent")?;
+        let attract_percentage = normalized_f64(fields, "attract_percentage")?;
+        let push_speed_factor = normalized_f64(fields, "push_speed_factor")?;
+        let is_tornado = required_bool(fields, "is_tornado")?;
+        let damage_on_spawn = required_bool(fields, "damage_on_spawn")?;
+        let freeze_targets_applied = required_bool(fields, "freeze_targets_applied")?;
+        let cap_buff_time_to_effect = required_bool(fields, "cap_buff_time_to_effect")?;
+        let hits_air = required_bool(fields, "hits_air")?;
+        let hits_ground = required_bool(fields, "hits_ground")?;
+        let affects_hidden = required_bool(fields, "affects_hidden")?;
+        let crown_tower_damage_multiplier =
+            normalized_f64(fields, "crown_tower_damage_multiplier")?;
+        let building_damage_multiplier = normalized_f64(fields, "building_damage_multiplier")?;
+        let crown_tower_damage = optional_normalized_f64(fields, "crown_tower_damage")?;
+        let building_damage = optional_normalized_f64(fields, "building_damage")?;
+        let common_supported = duration >= 0.001
             && radius_tiles >= 0.0
             && refresh_duration >= 0.0
             && movement_multiplier >= 0.0
@@ -2393,21 +2436,81 @@ impl ResidentAreaEffectState {
             && spawn_multiplier <= 1.0
             && !(movement_multiplier == 0.0 && attack_multiplier == 0.0 && spawn_multiplier == 0.0)
             && time_alive >= 0.0
+            && [
+                damage,
+                periodic_damage_buff_duration,
+                attract_percentage,
+                push_speed_factor,
+                crown_tower_damage_multiplier,
+                building_damage_multiplier,
+            ]
+            .into_iter()
+            .all(f64::is_finite)
+            && next_damage_time.is_none_or(f64::is_finite)
+            && next_effect_time.is_none_or(f64::is_finite)
+            && initial_damage_delay.is_none_or(f64::is_finite)
+            && crown_tower_damage.is_none_or(f64::is_finite)
+            && building_damage.is_none_or(f64::is_finite)
+            && attract_percentage == 0.0
+            && push_speed_factor == 0.0
+            && !is_tornado;
+        let death_area_supported = common_supported
             && effect_tick_interval == 0.0
             && damage == 0.0
-            && required_i64(fields, "max_damage_ticks")? == 0
-            && required_i64(fields, "damage_ticks_applied")? == 0
-            && !required_bool(fields, "freeze_effect")?
-            && required_bool(fields, "effect_on_spawn_only")?
-            && !required_bool(fields, "target_local_damage")?
-            && normalized_f64(fields, "periodic_damage_buff_duration")? == 0.0
-            && !required_bool(fields, "periodic_damage_controlled_by_parent")?
-            && normalized_f64(fields, "attract_percentage")? == 0.0
-            && normalized_f64(fields, "push_speed_factor")? == 0.0
-            && !required_bool(fields, "is_tornado")?
-            && option_is_none("initial_damage_delay")
-            && option_is_none("next_damage_time")
-            && option_is_none("next_effect_time");
+            && max_damage_ticks == 0
+            && damage_ticks_applied == 0
+            && !freeze_effect
+            && effect_on_spawn_only
+            && !target_local_damage
+            && periodic_damage_buff_duration == 0.0
+            && !periodic_damage_controlled_by_parent
+            && initial_damage_delay.is_none()
+            && next_damage_time.is_none()
+            && next_effect_time.is_none();
+        let persistent_spell = (common_supported
+            && radius_tiles > 0.0
+            && damage > 0.0
+            && max_damage_ticks > 0
+            && (0..=max_damage_ticks).contains(&damage_ticks_applied)
+            && !freeze_effect
+            && !effect_on_spawn_only
+            && !target_local_damage
+            && periodic_damage_buff_duration > 0.0
+            && !periodic_damage_controlled_by_parent
+            && !damage_on_spawn
+            && initial_damage_delay.is_none()
+            && (damage_ticks_applied == 0) == next_damage_time.is_none()
+            && next_damage_time.is_none_or(|time| time >= 0.0)
+            && next_effect_time.is_none_or(|time| time >= 0.0)
+            && !freeze_targets_applied
+            && !slows_attack_speed
+            && !slows_spawn_speed
+            && attack_multiplier.to_bits() == 1.0_f64.to_bits()
+            && spawn_multiplier.to_bits() == 1.0_f64.to_bits()
+            && movement_multiplier > 0.0
+            && movement_multiplier < 1.0
+            && damage_tick_interval > 0.0
+            && effect_tick_interval > 0.0
+            && refresh_duration > 0.0
+            && cap_buff_time_to_effect
+            && hits_ground
+            && !hits_air
+            && affects_hidden
+            && crown_tower_damage_multiplier >= 0.0
+            && building_damage_multiplier >= 1.0
+            && crown_tower_damage.is_some_and(|value| value >= 0.0)
+            && building_damage.is_some_and(|value| value >= 0.0))
+        .then(|| ResidentPersistentAreaSpellSpec {
+            damage,
+            crown_tower_damage_multiplier,
+            building_damage_multiplier,
+            crown_tower_damage: crown_tower_damage.unwrap_or_default(),
+            building_damage: building_damage.unwrap_or_default(),
+            damage_tick_interval,
+            max_damage_ticks,
+            periodic_damage_buff_duration,
+        });
+        let supported = death_area_supported || persistent_spell.is_some();
         Ok(Self {
             spec: ResidentDeathAreaSpec {
                 area_name: fields
@@ -2424,13 +2527,17 @@ impl ResidentAreaEffectState {
                 movement_multiplier,
                 attack_multiplier,
                 spawn_multiplier,
-                hits_air: required_bool(fields, "hits_air")?,
-                hits_ground: required_bool(fields, "hits_ground")?,
-                affects_hidden: required_bool(fields, "affects_hidden")?,
-                cap_buff_time_to_effect: required_bool(fields, "cap_buff_time_to_effect")?,
+                hits_air,
+                hits_ground,
+                affects_hidden,
+                cap_buff_time_to_effect,
             },
+            persistent_spell,
             time_alive,
             effect_snapshot_applied: required_bool(fields, "effect_snapshot_applied")?,
+            damage_ticks_applied,
+            next_damage_time,
+            next_effect_time,
             birth_source_entity_id: None,
             supported,
         })
@@ -2443,6 +2550,7 @@ impl ResidentAreaEffectState {
             "attack_multiplier": exact_f64_value(self.spec.attack_multiplier),
             "cap_buff_time_to_effect": self.spec.cap_buff_time_to_effect,
             "duration": exact_f64_value(self.spec.duration),
+            "damage_ticks_applied": self.damage_ticks_applied,
             "effect_snapshot_applied": self.effect_snapshot_applied,
             "effect_tick_interval": exact_f64_value(self.spec.effect_tick_interval),
             "encounter_index": entity.encounter_index,
@@ -2451,6 +2559,8 @@ impl ResidentAreaEffectState {
             "id": entity.id,
             "is_alive": entity.is_alive,
             "movement_multiplier": exact_f64_value(self.spec.movement_multiplier),
+            "next_damage_time": self.next_damage_time.map(exact_f64_value),
+            "next_effect_time": self.next_effect_time.map(exact_f64_value),
             "player_id": entity.player_id,
             "position_x": entity.position_x.diagnostic_value(),
             "position_y": entity.position_y.diagnostic_value(),
@@ -2459,6 +2569,16 @@ impl ResidentAreaEffectState {
             "refresh_duration": exact_f64_value(self.spec.refresh_duration),
             "spawn_multiplier": exact_f64_value(self.spec.spawn_multiplier),
             "time_alive": exact_f64_value(self.time_alive),
+            "persistent_spell": self.persistent_spell.as_ref().map(|spell| json!({
+                "building_damage": exact_f64_value(spell.building_damage),
+                "building_damage_multiplier": exact_f64_value(spell.building_damage_multiplier),
+                "crown_tower_damage": exact_f64_value(spell.crown_tower_damage),
+                "crown_tower_damage_multiplier": exact_f64_value(spell.crown_tower_damage_multiplier),
+                "damage": exact_f64_value(spell.damage),
+                "damage_tick_interval": exact_f64_value(spell.damage_tick_interval),
+                "max_damage_ticks": spell.max_damage_ticks,
+                "periodic_damage_buff_duration": exact_f64_value(spell.periodic_damage_buff_duration),
+            })),
         })
     }
 }
@@ -5049,7 +5169,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 14;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 15;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -5094,6 +5214,8 @@ struct ResidentCardWire {
     spawn_projectile_spell: Option<ResidentSpawnProjectileSpellWire>,
     #[serde(default)]
     direct_damage_spell: Option<ResidentDirectDamageSpellWire>,
+    #[serde(default)]
+    area_effect_spell: Option<ResidentAreaEffectSpellWire>,
 }
 
 #[derive(Deserialize)]
@@ -5117,6 +5239,29 @@ enum ResidentCardActionKind {
     RollingProjectileSpell,
     SpawnProjectileSpell,
     DirectDamageSpell,
+    AreaEffectSpell,
+}
+
+#[derive(Deserialize)]
+struct ResidentAreaEffectSpellWire {
+    clock_kind: String,
+    radius: f64,
+    damage: f64,
+    duration: f64,
+    movement_multiplier: f64,
+    hits_air: bool,
+    hits_ground: bool,
+    affects_hidden: bool,
+    crown_tower_damage_multiplier: f64,
+    building_damage_multiplier: f64,
+    crown_tower_damage: Option<f64>,
+    building_damage: Option<f64>,
+    damage_tick_interval: f64,
+    max_damage_ticks: i64,
+    periodic_damage_buff_duration: f64,
+    slow_refresh_duration: f64,
+    effect_tick_interval: f64,
+    cap_buff_time_to_effect: bool,
 }
 
 #[derive(Deserialize)]
@@ -5276,6 +5421,27 @@ struct ResidentDirectDamageSpellSpec {
 }
 
 #[derive(Clone)]
+struct ResidentAreaEffectSpellSpec {
+    radius: f64,
+    damage: f64,
+    duration: f64,
+    movement_multiplier: f64,
+    hits_air: bool,
+    hits_ground: bool,
+    affects_hidden: bool,
+    crown_tower_damage_multiplier: f64,
+    building_damage_multiplier: f64,
+    crown_tower_damage: f64,
+    building_damage: f64,
+    damage_tick_interval: f64,
+    max_damage_ticks: i64,
+    periodic_damage_buff_duration: f64,
+    slow_refresh_duration: f64,
+    effect_tick_interval: f64,
+    cap_buff_time_to_effect: bool,
+}
+
+#[derive(Clone)]
 struct ResidentSpawnProjectileSpellSpec {
     radius: f64,
     damage: f64,
@@ -5319,6 +5485,7 @@ struct ResidentCardSpec {
     rolling_projectile_spell: Option<ResidentRollingProjectileSpellSpec>,
     spawn_projectile_spell: Option<ResidentSpawnProjectileSpellSpec>,
     direct_damage_spell: Option<ResidentDirectDamageSpellSpec>,
+    area_effect_spell: Option<ResidentAreaEffectSpellSpec>,
 }
 
 #[derive(Clone)]
@@ -5345,6 +5512,7 @@ impl ResidentCardSpec {
                     && self.rolling_projectile_spell.is_none()
                     && self.spawn_projectile_spell.is_none()
                     && self.direct_damage_spell.is_none()
+                    && self.area_effect_spell.is_none()
             }
             ResidentCardActionKind::Building => {
                 self.prototype.is_some()
@@ -5353,6 +5521,7 @@ impl ResidentCardSpec {
                     && self.rolling_projectile_spell.is_none()
                     && self.spawn_projectile_spell.is_none()
                     && self.direct_damage_spell.is_none()
+                    && self.area_effect_spell.is_none()
             }
             ResidentCardActionKind::ProjectileSpell => {
                 self.prototype.is_none()
@@ -5360,6 +5529,7 @@ impl ResidentCardSpec {
                     && self.rolling_projectile_spell.is_none()
                     && self.spawn_projectile_spell.is_none()
                     && self.direct_damage_spell.is_none()
+                    && self.area_effect_spell.is_none()
             }
             ResidentCardActionKind::RollingProjectileSpell => {
                 self.prototype.is_none()
@@ -5367,6 +5537,7 @@ impl ResidentCardSpec {
                     && self.rolling_projectile_spell.is_some()
                     && self.spawn_projectile_spell.is_none()
                     && self.direct_damage_spell.is_none()
+                    && self.area_effect_spell.is_none()
             }
             ResidentCardActionKind::SpawnProjectileSpell => {
                 self.prototype.is_none()
@@ -5374,6 +5545,7 @@ impl ResidentCardSpec {
                     && self.rolling_projectile_spell.is_none()
                     && self.spawn_projectile_spell.is_some()
                     && self.direct_damage_spell.is_none()
+                    && self.area_effect_spell.is_none()
             }
             ResidentCardActionKind::DirectDamageSpell => {
                 self.prototype.is_none()
@@ -5381,6 +5553,15 @@ impl ResidentCardSpec {
                     && self.rolling_projectile_spell.is_none()
                     && self.spawn_projectile_spell.is_none()
                     && self.direct_damage_spell.is_some()
+                    && self.area_effect_spell.is_none()
+            }
+            ResidentCardActionKind::AreaEffectSpell => {
+                self.prototype.is_none()
+                    && self.projectile_spell.is_none()
+                    && self.rolling_projectile_spell.is_none()
+                    && self.spawn_projectile_spell.is_none()
+                    && self.direct_damage_spell.is_none()
+                    && self.area_effect_spell.is_some()
             }
         }
     }
@@ -6044,11 +6225,73 @@ impl ResidentCardCatalog {
                     crown_tower_damage: spell.crown_tower_damage,
                 }
             });
+            let area_effect_spell = card.area_effect_spell.map(|spell| {
+                let finite = [
+                    spell.radius,
+                    spell.damage,
+                    spell.duration,
+                    spell.movement_multiplier,
+                    spell.crown_tower_damage_multiplier,
+                    spell.building_damage_multiplier,
+                    spell.damage_tick_interval,
+                    spell.slow_refresh_duration,
+                    spell.effect_tick_interval,
+                    spell.periodic_damage_buff_duration,
+                ]
+                .into_iter()
+                .all(f64::is_finite)
+                    && spell.crown_tower_damage.is_some_and(f64::is_finite)
+                    && spell.building_damage.is_some_and(f64::is_finite);
+                if !finite
+                    || spell.clock_kind != "source_periodic"
+                    || spell.radius <= 0.0
+                    || spell.radius > (i64::MAX / 4096) as f64 / 1000.0
+                    || spell.damage <= 0.0
+                    || spell.duration <= 0.0
+                    || !(spell.hits_ground && !spell.hits_air)
+                    || !spell.affects_hidden
+                    || !(0.0 < spell.movement_multiplier && spell.movement_multiplier < 1.0)
+                    || spell.crown_tower_damage_multiplier < 0.0
+                    || spell.building_damage_multiplier < 1.0
+                    || spell.crown_tower_damage.is_some_and(|damage| damage < 0.0)
+                    || spell.building_damage.is_some_and(|damage| damage < 0.0)
+                    || spell.damage_tick_interval <= 0.0
+                    || spell.max_damage_ticks <= 0
+                    || spell.slow_refresh_duration <= 0.0
+                    || spell.effect_tick_interval <= 0.0
+                    || spell.periodic_damage_buff_duration <= 0.0
+                    || !spell.cap_buff_time_to_effect
+                    || (spell.duration / spell.damage_tick_interval).round() as i64
+                        != spell.max_damage_ticks
+                {
+                    reasons.push("native_area_effect_spell_preflight".to_owned());
+                }
+                ResidentAreaEffectSpellSpec {
+                    radius: spell.radius,
+                    damage: spell.damage,
+                    duration: spell.duration,
+                    movement_multiplier: spell.movement_multiplier,
+                    hits_air: spell.hits_air,
+                    hits_ground: spell.hits_ground,
+                    affects_hidden: spell.affects_hidden,
+                    crown_tower_damage_multiplier: spell.crown_tower_damage_multiplier,
+                    building_damage_multiplier: spell.building_damage_multiplier,
+                    crown_tower_damage: spell.crown_tower_damage.unwrap_or_default(),
+                    building_damage: spell.building_damage.unwrap_or_default(),
+                    damage_tick_interval: spell.damage_tick_interval,
+                    max_damage_ticks: spell.max_damage_ticks,
+                    periodic_damage_buff_duration: spell.periodic_damage_buff_duration,
+                    slow_refresh_duration: spell.slow_refresh_duration,
+                    effect_tick_interval: spell.effect_tick_interval,
+                    cap_buff_time_to_effect: spell.cap_buff_time_to_effect,
+                }
+            });
             if reasons.is_empty()
                 && projectile_spell.is_none()
                 && rolling_projectile_spell.is_none()
                 && spawn_projectile_spell.is_none()
                 && direct_damage_spell.is_none()
+                && area_effect_spell.is_none()
             {
                 let compiled_death_closure_supported = |prototype: &ResidentEntity| {
                     let spawn_count = prototype
@@ -6319,7 +6562,8 @@ impl ResidentCardCatalog {
                             | ResidentCardActionKind::ProjectileSpell
                             | ResidentCardActionKind::RollingProjectileSpell
                             | ResidentCardActionKind::SpawnProjectileSpell
-                            | ResidentCardActionKind::DirectDamageSpell => false,
+                            | ResidentCardActionKind::DirectDamageSpell
+                            | ResidentCardActionKind::AreaEffectSpell => false,
                         }),
                 };
                 if !supported {
@@ -6333,7 +6577,8 @@ impl ResidentCardCatalog {
             } else if (projectile_spell.is_some()
                 || rolling_projectile_spell.is_some()
                 || spawn_projectile_spell.is_some()
-                || direct_damage_spell.is_some())
+                || direct_damage_spell.is_some()
+                || area_effect_spell.is_some())
                 && prototype.is_some()
             {
                 reasons.push("ambiguous_action_payload".to_owned());
@@ -6346,7 +6591,8 @@ impl ResidentCardCatalog {
                     if projectile_spell.is_some()
                         || rolling_projectile_spell.is_some()
                         || spawn_projectile_spell.is_some()
-                        || direct_damage_spell.is_some() =>
+                        || direct_damage_spell.is_some()
+                        || area_effect_spell.is_some() =>
                 {
                     reasons.push("action_kind_payload_mismatch".to_owned());
                 }
@@ -6366,6 +6612,9 @@ impl ResidentCardCatalog {
                 ResidentCardActionKind::DirectDamageSpell if direct_damage_spell.is_none() => {
                     reasons.push("direct_damage_spell_payload_missing".to_owned());
                 }
+                ResidentCardActionKind::AreaEffectSpell if area_effect_spell.is_none() => {
+                    reasons.push("area_effect_spell_payload_missing".to_owned());
+                }
                 ResidentCardActionKind::ProjectileSpell
                 | ResidentCardActionKind::RollingProjectileSpell
                 | ResidentCardActionKind::SpawnProjectileSpell
@@ -6376,7 +6625,16 @@ impl ResidentCardCatalog {
                 ResidentCardActionKind::DirectDamageSpell
                     if projectile_spell.is_some()
                         || rolling_projectile_spell.is_some()
-                        || spawn_projectile_spell.is_some() =>
+                        || spawn_projectile_spell.is_some()
+                        || area_effect_spell.is_some() =>
+                {
+                    reasons.push("action_kind_payload_mismatch".to_owned());
+                }
+                ResidentCardActionKind::AreaEffectSpell
+                    if projectile_spell.is_some()
+                        || rolling_projectile_spell.is_some()
+                        || spawn_projectile_spell.is_some()
+                        || direct_damage_spell.is_some() =>
                 {
                     reasons.push("action_kind_payload_mismatch".to_owned());
                 }
@@ -6385,6 +6643,7 @@ impl ResidentCardCatalog {
                         || rolling_projectile_spell.is_some()
                         || spawn_projectile_spell.is_some()
                         || direct_damage_spell.is_some()
+                        || area_effect_spell.is_some()
                         || prototype.is_some() =>
                 {
                     reasons.push("unsupported_action_payload".to_owned());
@@ -6414,6 +6673,7 @@ impl ResidentCardCatalog {
                 rolling_projectile_spell,
                 spawn_projectile_spell,
                 direct_damage_spell,
+                area_effect_spell,
             });
         }
         Ok(Self {
@@ -7149,8 +7409,38 @@ impl PublicationExactEq for ResidentDeathOpcode {
 impl PublicationExactEq for ResidentAreaEffectState {
     fn publication_exact_eq(&self, other: &Self) -> bool {
         self.spec.publication_exact_eq(&other.spec)
+            && match (&self.persistent_spell, &other.persistent_spell) {
+                (None, None) => true,
+                (Some(left), Some(right)) => {
+                    left.max_damage_ticks == right.max_damage_ticks
+                        && publication_f64_fields_eq(
+                            [
+                                left.damage,
+                                left.crown_tower_damage_multiplier,
+                                left.building_damage_multiplier,
+                                left.crown_tower_damage,
+                                left.building_damage,
+                                left.damage_tick_interval,
+                                left.periodic_damage_buff_duration,
+                            ],
+                            [
+                                right.damage,
+                                right.crown_tower_damage_multiplier,
+                                right.building_damage_multiplier,
+                                right.crown_tower_damage,
+                                right.building_damage,
+                                right.damage_tick_interval,
+                                right.periodic_damage_buff_duration,
+                            ],
+                        )
+                }
+                _ => false,
+            }
             && publication_f64_eq(self.time_alive, other.time_alive)
             && self.effect_snapshot_applied == other.effect_snapshot_applied
+            && self.damage_ticks_applied == other.damage_ticks_applied
+            && publication_optional_f64_eq(self.next_damage_time, other.next_damage_time)
+            && publication_optional_f64_eq(self.next_effect_time, other.next_effect_time)
             && self.birth_source_entity_id == other.birth_source_entity_id
             && self.supported == other.supported
     }
@@ -7635,6 +7925,33 @@ impl PointProjectileState {
 impl ResidentAreaEffectState {
     fn publication_static_eq(&self, other: &Self) -> bool {
         self.spec.publication_exact_eq(&other.spec)
+            && match (&self.persistent_spell, &other.persistent_spell) {
+                (None, None) => true,
+                (Some(left), Some(right)) => {
+                    left.max_damage_ticks == right.max_damage_ticks
+                        && publication_f64_fields_eq(
+                            [
+                                left.damage,
+                                left.crown_tower_damage_multiplier,
+                                left.building_damage_multiplier,
+                                left.crown_tower_damage,
+                                left.building_damage,
+                                left.damage_tick_interval,
+                                left.periodic_damage_buff_duration,
+                            ],
+                            [
+                                right.damage,
+                                right.crown_tower_damage_multiplier,
+                                right.building_damage_multiplier,
+                                right.crown_tower_damage,
+                                right.building_damage,
+                                right.damage_tick_interval,
+                                right.periodic_damage_buff_duration,
+                            ],
+                        )
+                }
+                _ => false,
+            }
             && self.birth_source_entity_id == other.birth_source_entity_id
             && self.supported == other.supported
     }
@@ -7787,6 +8104,69 @@ impl ResidentEntity {
 }
 
 impl ResidentBattle {
+    fn persistent_area_effect_matches_catalog(
+        &self,
+        entity: &ResidentEntity,
+        state: &ResidentAreaEffectState,
+    ) -> bool {
+        let Some(dynamic) = state.persistent_spell.as_ref() else {
+            return false;
+        };
+        let Some(spec) = self.area_effect_spell_spec(&state.spec.area_name) else {
+            return false;
+        };
+        let eq = |left: f64, right: f64| left.to_bits() == right.to_bits();
+        entity.entity_kind == 3
+            && entity.python_type == "clasher.entities.AreaEffect"
+            && entity.card_name.is_empty()
+            && entity.hitpoints == ExactScalar::Int(1)
+            && entity.max_hitpoints == ExactScalar::Int(1)
+            && entity.damage == ExactScalar::Float(spec.damage.to_bits())
+            && entity.target_id.is_none()
+            && entity.mechanics.is_empty()
+            && entity.modifier_state.is_none()
+            && entity.movement.is_none()
+            && entity.locked_combat.is_none()
+            && entity.point_projectile.is_none()
+            && entity.rolling_projectile.is_none()
+            && state.birth_source_entity_id.is_none()
+            && !state.effect_snapshot_applied
+            && (0..=dynamic.max_damage_ticks).contains(&state.damage_ticks_applied)
+            && state.time_alive >= 0.0
+            && state.time_alive.is_finite()
+            && state.next_damage_time.is_none_or(f64::is_finite)
+            && state.next_effect_time.is_none_or(f64::is_finite)
+            && eq(state.spec.radius_tiles, spec.radius)
+            && state.spec.radius_units == logic_units(spec.radius).max(0)
+            && eq(state.spec.duration, spec.duration)
+            && eq(state.spec.effect_tick_interval, spec.effect_tick_interval)
+            && eq(state.spec.refresh_duration, spec.slow_refresh_duration)
+            && eq(state.spec.movement_multiplier, spec.movement_multiplier)
+            && eq(state.spec.attack_multiplier, 1.0)
+            && eq(state.spec.spawn_multiplier, 1.0)
+            && state.spec.hits_air == spec.hits_air
+            && state.spec.hits_ground == spec.hits_ground
+            && state.spec.affects_hidden == spec.affects_hidden
+            && state.spec.cap_buff_time_to_effect == spec.cap_buff_time_to_effect
+            && eq(dynamic.damage, spec.damage)
+            && eq(
+                dynamic.crown_tower_damage_multiplier,
+                spec.crown_tower_damage_multiplier,
+            )
+            && eq(
+                dynamic.building_damage_multiplier,
+                spec.building_damage_multiplier,
+            )
+            && eq(dynamic.crown_tower_damage, spec.crown_tower_damage)
+            && eq(dynamic.building_damage, spec.building_damage)
+            && eq(dynamic.damage_tick_interval, spec.damage_tick_interval)
+            && dynamic.max_damage_ticks == spec.max_damage_ticks
+            && eq(
+                dynamic.periodic_damage_buff_duration,
+                spec.periodic_damage_buff_duration,
+            )
+    }
+
     fn publication_immutable_root_eq(&self, other: &Self) -> bool {
         self.fast_path == other.fast_path
             && self.arena_width_tiles == other.arena_width_tiles
@@ -9609,6 +9989,12 @@ impl ResidentBattle {
             && self.supports_point_projectile_phase()
             && self.supports_rolling_projectile_phase()
             && self.supports_spawn_projectile_phase()
+            && self.entities.iter().all(|entity| {
+                entity.area_effect.as_ref().is_none_or(|area| {
+                    area.persistent_spell.is_none()
+                        || self.persistent_area_effect_matches_catalog(entity, area)
+                })
+            })
             && self.entities.iter().all(|entity| {
                 !entity.active
                     || (entity.entity_kind == 2 && entity.object_base_movement_noop)
@@ -12106,6 +12492,9 @@ impl ResidentBattle {
                     ResidentCardActionKind::DirectDamageSpell => {
                         self.valid_spell_placement(x_units, y_units)
                     }
+                    ResidentCardActionKind::AreaEffectSpell => {
+                        self.valid_spell_placement(x_units, y_units)
+                    }
                     ResidentCardActionKind::SpawnProjectileSpell => {
                         card.spawn_projectile_spell.as_ref().is_some_and(|spec| {
                             if spec.requires_territory {
@@ -12508,6 +12897,18 @@ impl ResidentBattle {
             .and_then(|card| card.direct_damage_spell.as_ref())
     }
 
+    fn area_effect_spell_spec(&self, spell_name: &str) -> Option<&ResidentAreaEffectSpellSpec> {
+        self.catalog
+            .cards
+            .iter()
+            .find(|card| {
+                card.supports_action()
+                    && (card.lookup_name == spell_name || card.effective_name == spell_name)
+                    && card.area_effect_spell.is_some()
+            })
+            .and_then(|card| card.area_effect_spell.as_ref())
+    }
+
     fn spawn_projectile_spell_spec(
         &self,
         spell_name: &str,
@@ -12551,7 +12952,9 @@ impl ResidentBattle {
                             logic_units(cast.position_x),
                             logic_units(cast.position_y),
                         )
-                    } else if self.direct_damage_spell_spec(&cast.spell_name).is_some() {
+                    } else if self.direct_damage_spell_spec(&cast.spell_name).is_some()
+                        || self.area_effect_spell_spec(&cast.spell_name).is_some()
+                    {
                         self.valid_spell_placement(
                             logic_units(cast.position_x),
                             logic_units(cast.position_y),
@@ -12719,6 +13122,8 @@ impl ResidentBattle {
                 count.checked_add(1 + i64::from(spec.child.is_some()))
             } else if self.direct_damage_spell_spec(&cast.spell_name).is_some() {
                 Some(count)
+            } else if self.area_effect_spell_spec(&cast.spell_name).is_some() {
+                count.checked_add(1)
             } else if let Some(spec) = self.spawn_projectile_spell_spec(&cast.spell_name) {
                 count.checked_add(1_i64.checked_add(spec.spawn_count)?)
             } else {
@@ -12765,6 +13170,8 @@ impl ResidentBattle {
                 self.instantiate_rolling_projectile_spell(&cast, &effective_name, &spec)?;
             } else if let Some(spec) = self.direct_damage_spell_spec(&cast.spell_name).cloned() {
                 self.apply_direct_damage_spell(&cast, &spec)?;
+            } else if let Some(spec) = self.area_effect_spell_spec(&cast.spell_name).cloned() {
+                self.instantiate_area_effect_spell(&cast, &spec)?;
             } else if let Some(spec) = self.spawn_projectile_spell_spec(&cast.spell_name).cloned() {
                 let effective_name = self
                     .catalog
@@ -12899,6 +13306,107 @@ impl ResidentBattle {
             }),
             rolling_projectile: None,
             area_effect: None,
+            object_base_movement_noop: true,
+            blocks_deployment: false,
+            deployment_collision_radius: 0.5,
+            character_birth: None,
+        });
+        Ok(())
+    }
+
+    fn instantiate_area_effect_spell(
+        &mut self,
+        cast: &ResidentPendingSpellCast,
+        spell: &ResidentAreaEffectSpellSpec,
+    ) -> PyResult<()> {
+        let area_id = self.next_entity_id;
+        self.next_entity_id = self
+            .next_entity_id
+            .checked_add(1)
+            .ok_or_else(|| PyRuntimeError::new_err("resident area spell entity-ID overflow"))?;
+        self.entities.push(ResidentEntity {
+            sparse_attributes: constructed_entity_sparse_presence(false),
+            active: true,
+            encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
+            id: area_id,
+            player_id: cast.player_id,
+            entity_kind: 3,
+            python_type: "clasher.entities.AreaEffect".to_owned(),
+            card_name: String::new(),
+            position_x: ExactScalar::Float(cast.position_x.to_bits()),
+            position_y: ExactScalar::Float(cast.position_y.to_bits()),
+            hitpoints: ExactScalar::Int(1),
+            max_hitpoints: ExactScalar::Int(1),
+            damage: ExactScalar::Float(spell.damage.to_bits()),
+            is_alive: true,
+            target_id: None,
+            deploy_delay_remaining: 0.0,
+            placement_delay_total: 0.0,
+            placement_pending: false,
+            spawn_hook_pending: false,
+            spawn_hook_fired: false,
+            freeze_expiry_time: 0.0,
+            death_spawn_target_immunity_elapsed_ms: -1,
+            pending_projectile_max_duration_ms: 0,
+            spawn_angle_shift: 0.0,
+            reward_traits: ResidentRewardTraits {
+                mana_cost: 0.0,
+                summon_count: 0,
+                summon_character_second_count: 0,
+                hit_speed_ms: 0.0,
+            },
+            death_spawn_payload_present: false,
+            mechanics: Vec::new(),
+            status_nova_jump: None,
+            electro_spirit_chain: None,
+            chain_lightning: None,
+            shields: Vec::new(),
+            shield_break_count: 0,
+            death_opcodes: Vec::new(),
+            modifier_state: None,
+            movement: None,
+            modifier_supported: true,
+            direct_combat_unsupported: vec!["non_character_entity".to_owned()],
+            locked_combat: None,
+            building_lifetime: None,
+            building_impact: None,
+            building_footprint_size: None,
+            point_projectile: None,
+            rolling_projectile: None,
+            area_effect: Some(ResidentAreaEffectState {
+                spec: ResidentDeathAreaSpec {
+                    area_name: cast.spell_name.clone(),
+                    radius_tiles: spell.radius,
+                    radius_units: logic_units(spell.radius).max(0),
+                    duration: spell.duration,
+                    effect_tick_interval: spell.effect_tick_interval,
+                    refresh_duration: spell.slow_refresh_duration,
+                    movement_multiplier: spell.movement_multiplier,
+                    attack_multiplier: 1.0,
+                    spawn_multiplier: 1.0,
+                    hits_air: spell.hits_air,
+                    hits_ground: spell.hits_ground,
+                    affects_hidden: spell.affects_hidden,
+                    cap_buff_time_to_effect: spell.cap_buff_time_to_effect,
+                },
+                persistent_spell: Some(ResidentPersistentAreaSpellSpec {
+                    damage: spell.damage,
+                    crown_tower_damage_multiplier: spell.crown_tower_damage_multiplier,
+                    building_damage_multiplier: spell.building_damage_multiplier,
+                    crown_tower_damage: spell.crown_tower_damage,
+                    building_damage: spell.building_damage,
+                    damage_tick_interval: spell.damage_tick_interval,
+                    max_damage_ticks: spell.max_damage_ticks,
+                    periodic_damage_buff_duration: spell.periodic_damage_buff_duration,
+                }),
+                time_alive: 0.0,
+                effect_snapshot_applied: false,
+                damage_ticks_applied: 0,
+                next_damage_time: None,
+                next_effect_time: None,
+                birth_source_entity_id: None,
+                supported: true,
+            }),
             object_base_movement_noop: true,
             blocks_deployment: false,
             deployment_collision_radius: 0.5,
@@ -13527,7 +14035,8 @@ impl ResidentBattle {
                 ResidentCardActionKind::ProjectileSpell
                 | ResidentCardActionKind::RollingProjectileSpell
                 | ResidentCardActionKind::DirectDamageSpell
-                | ResidentCardActionKind::SpawnProjectileSpell => 0,
+                | ResidentCardActionKind::SpawnProjectileSpell
+                | ResidentCardActionKind::AreaEffectSpell => 0,
                 ResidentCardActionKind::Building => 1,
                 ResidentCardActionKind::Troop => card.summon_count,
                 ResidentCardActionKind::Unsupported => 0,
@@ -13596,6 +14105,7 @@ impl ResidentBattle {
             ResidentCardActionKind::DirectDamageSpell => {
                 self.valid_spell_placement(x_units, y_units)
             }
+            ResidentCardActionKind::AreaEffectSpell => self.valid_spell_placement(x_units, y_units),
             ResidentCardActionKind::SpawnProjectileSpell => {
                 card.spawn_projectile_spell.as_ref().is_some_and(|spec| {
                     if spec.requires_territory {
@@ -13637,6 +14147,7 @@ impl ResidentBattle {
                 | ResidentCardActionKind::RollingProjectileSpell
                 | ResidentCardActionKind::DirectDamageSpell
                 | ResidentCardActionKind::SpawnProjectileSpell
+                | ResidentCardActionKind::AreaEffectSpell
         ) {
             self.pending_spell_casts.push(ResidentPendingSpellCast {
                 execute_at: self.time + 1.0,
@@ -14133,7 +14644,9 @@ impl ResidentBattle {
                     count.checked_add(1)
                 } else if self.direct_damage_spell_spec(&cast.spell_name).is_some() {
                     Some(count)
-                } else if self.spawn_projectile_spell_spec(&cast.spell_name).is_some() {
+                } else if self.area_effect_spell_spec(&cast.spell_name).is_some()
+                    || self.spawn_projectile_spell_spec(&cast.spell_name).is_some()
+                {
                     count.checked_add(1)
                 } else {
                     None
@@ -17095,8 +17608,12 @@ impl ResidentBattle {
             rolling_projectile: None,
             area_effect: Some(ResidentAreaEffectState {
                 spec: spec.clone(),
+                persistent_spell: None,
                 time_alive: 0.0,
                 effect_snapshot_applied: false,
+                damage_ticks_applied: 0,
+                next_damage_time: None,
+                next_effect_time: None,
                 birth_source_entity_id: Some(source_entity_id),
                 supported: true,
             }),
@@ -17108,6 +17625,14 @@ impl ResidentBattle {
     }
 
     fn advance_resident_area_effect(&mut self, area_index: usize) {
+        if self.entities[area_index]
+            .area_effect
+            .as_ref()
+            .is_some_and(|state| state.persistent_spell.is_some())
+        {
+            self.advance_resident_persistent_area_effect(area_index);
+            return;
+        }
         let (spec, active_dt, effect_time_remaining, scan) = {
             let state = self.entities[area_index]
                 .area_effect
@@ -17178,6 +17703,130 @@ impl ResidentBattle {
         if expired {
             self.entities[area_index].is_alive = false;
         }
+    }
+
+    fn advance_resident_persistent_area_effect(&mut self, area_index: usize) {
+        let (spec, spell, damage_deadlines, effect_deadlines) = {
+            let state = self.entities[area_index]
+                .area_effect
+                .as_mut()
+                .expect("resident persistent area requires state");
+            let spell = state
+                .persistent_spell
+                .clone()
+                .expect("resident persistent area requires spell spec");
+            state.time_alive += self.dt;
+            if state.next_damage_time.is_none() {
+                state.next_damage_time = Some(spell.damage_tick_interval);
+            }
+            let mut damage_deadlines = Vec::new();
+            while state.damage_ticks_applied < spell.max_damage_ticks
+                && state.next_damage_time.is_some_and(|deadline| {
+                    deadline <= state.time_alive.min(state.spec.duration) + 1e-9
+                })
+            {
+                let deadline = state.next_damage_time.expect("checked damage deadline");
+                damage_deadlines.push(deadline);
+                state.damage_ticks_applied += 1;
+                state.next_damage_time = Some(deadline + spell.damage_tick_interval);
+            }
+            if state.next_effect_time.is_none() {
+                state.next_effect_time = Some(state.spec.effect_tick_interval.max(0.05));
+            }
+            let mut effect_deadlines = Vec::new();
+            while state.next_effect_time.is_some_and(|deadline| {
+                deadline <= state.time_alive.min(state.spec.duration) + 1e-9
+                    && deadline < state.spec.duration - 1e-9
+            }) {
+                let deadline = state.next_effect_time.expect("checked effect deadline");
+                effect_deadlines.push(deadline);
+                state.next_effect_time = Some(deadline + state.spec.effect_tick_interval);
+            }
+            (
+                state.spec.clone(),
+                spell,
+                damage_deadlines,
+                effect_deadlines,
+            )
+        };
+
+        for _deadline in damage_deadlines {
+            let targets = self
+                .entities
+                .iter()
+                .enumerate()
+                .filter_map(|(target_index, _)| {
+                    if self.resident_area_effect_target_valid(area_index, target_index, &spec)
+                        && self.resident_area_damage_target_visible(target_index)
+                    {
+                        let building = self.entities[target_index].building_impact.as_ref();
+                        let damage = if building.is_some_and(|state| state.crown_slot.is_some()) {
+                            spell.crown_tower_damage
+                        } else if self.entities[target_index].entity_kind == 1 {
+                            spell.building_damage
+                        } else {
+                            spell.damage
+                        };
+                        Some((target_index, damage))
+                    } else {
+                        None
+                    }
+                })
+                .collect::<Vec<_>>();
+            for (target_index, damage) in targets {
+                if self.entities[target_index].active && self.entities[target_index].is_alive {
+                    self.apply_resident_damage(target_index, damage);
+                }
+            }
+        }
+
+        for deadline in effect_deadlines {
+            let targets = self
+                .entities
+                .iter()
+                .enumerate()
+                .filter_map(|(target_index, _)| {
+                    self.resident_area_effect_target_valid(area_index, target_index, &spec)
+                        .then_some(target_index)
+                })
+                .collect::<Vec<_>>();
+            let mut refresh_duration = spec.refresh_duration.max(spec.effect_tick_interval);
+            if spec.cap_buff_time_to_effect {
+                refresh_duration = refresh_duration.min((spec.duration - deadline).max(0.0));
+            }
+            if refresh_duration > 1e-9 {
+                for target_index in targets {
+                    let entity = &mut self.entities[target_index];
+                    let modifiers = entity
+                        .modifier_state
+                        .as_mut()
+                        .expect("persistent area target requires modifier state");
+                    modifiers.apply_slow_axes(refresh_duration, spec.movement_multiplier, 1.0, 1.0);
+                    if let Some(combat) = entity.locked_combat.as_mut() {
+                        combat.attack_speed_debuff_multiplier =
+                            modifiers.attack_speed_debuff_multiplier;
+                    }
+                }
+            }
+        }
+
+        let expired = self.entities[area_index]
+            .area_effect
+            .as_ref()
+            .is_some_and(|state| state.time_alive >= state.spec.duration - 1e-9);
+        if expired {
+            self.entities[area_index].is_alive = false;
+        }
+    }
+
+    fn resident_area_damage_target_visible(&self, target_index: usize) -> bool {
+        let target = &self.entities[target_index];
+        let Some((_, _, stealth_until_ms, allow_invisible)) = target.projectile_target_traits()
+        else {
+            return false;
+        };
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        stealth_until_ms <= now_ms || allow_invisible
     }
 
     fn resident_area_effect_target_valid(
