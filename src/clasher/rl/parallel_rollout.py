@@ -49,6 +49,7 @@ class ActorWorkerConfig:
     quiet_engine: bool
     base_seed: int
     torch_threads: int
+    simulation_backend: str = "python"
 
 
 def concatenate_rollouts(rollouts: Iterable[RolloutBatch]) -> RolloutBatch:
@@ -141,6 +142,7 @@ def _actor_worker_main(
                     mirror_match=config.mirror_match,
                     canonical_perspective=True,
                     engine_fast_path=config.engine_fast_path,
+                    simulation_backend=config.simulation_backend,
                 )
                 env._structured_obs_builder = builder
                 env.reset(seed=seed)

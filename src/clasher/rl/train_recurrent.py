@@ -1101,6 +1101,15 @@ def parse_args() -> argparse.Namespace:
         "--engine-fast-path", choices=["off", "shadow", "on"], default="off"
     )
     parser.add_argument(
+        "--simulation-backend",
+        choices=["python", "pytorch-shadow", "pytorch"],
+        default="python",
+        help=(
+            "battle tick backend; PyTorch modes fail closed to the Python "
+            "oracle for mechanics not yet covered by tensor kernels"
+        ),
+    )
+    parser.add_argument(
         "--device",
         choices=["auto", "cpu", "mps", "cuda"],
         default="auto",
@@ -1275,6 +1284,7 @@ def main() -> None:
                     mirror_match=args.mirror_match,
                     canonical_perspective=True,
                     engine_fast_path=args.engine_fast_path,
+                    simulation_backend=args.simulation_backend,
                 )
                 env._structured_obs_builder = builder
                 env.reset(seed=args.seed + index * 1009)
@@ -1322,6 +1332,7 @@ def main() -> None:
                 quiet_engine=args.quiet_engine,
                 base_seed=args.seed,
                 torch_threads=args.actor_threads,
+                simulation_backend=args.simulation_backend,
             ),
         )
         atexit.register(parallel_collector.close)

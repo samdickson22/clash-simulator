@@ -1,20 +1,20 @@
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass
 from pathlib import Path
-import random
 from typing import Dict, Optional
 
 import numpy as np
 
-from clasher.battle import BattleState, STANDARD_MATCH_TICKS
+from clasher.battle import STANDARD_MATCH_TICKS, BattleState
+from clasher.torch_sim import SimulatorBackend, TorchBattleExecutor
 
 from .action_space import DiscreteTileActionSpace
 from .deck_pool import apply_deck_to_player, load_deck_pool, sample_decks
-from .obs_cv import CvObservationBuilder
+from .obs_cv import CvObservation, CvObservationBuilder
 from .reward_model import objective_potential_p0
-from .structured_obs import StructuredObservationBuilder
-
+from .structured_obs import StructuredObservation, StructuredObservationBuilder
 
 # Reference/benchmark switch. The env has just performed the same exact idle
 # eligibility check before dispatching the bounded fast-forward operation.
@@ -38,6 +38,7 @@ class SelfPlayBattleEnv:
         mirror_match: bool = False,
         canonical_perspective: bool = True,
         engine_fast_path: str = "off",
+        simulation_backend: str = "python",
         idle_fast_forward: bool = True,
     ) -> None:
         self.decision_interval_ticks = decision_interval_ticks
@@ -46,6 +47,11 @@ class SelfPlayBattleEnv:
         if engine_fast_path not in {"off", "shadow", "on"}:
             raise ValueError("engine_fast_path must be one of: off, shadow, on")
         self.engine_fast_path = engine_fast_path
+        try:
+            self.simulation_backend = SimulatorBackend(simulation_backend)
+        except ValueError as exc:
+            choices = ", ".join(value.value for value in SimulatorBackend)
+            raise ValueError(f"simulation_backend must be one of: {choices}") from exc
         self.idle_fast_forward = idle_fast_forward
         self.rng = random.Random(seed)
         self.np_rng = np.random.default_rng(seed)
@@ -67,6 +73,7 @@ class SelfPlayBattleEnv:
         self._prev_objective_p0 = 0.0
         self._mask_shadow_checks = 0
         self._mask_shadow_mismatches = 0
+        self._simulator = TorchBattleExecutor(self.simulation_backend)
 
     def _sample_and_apply_decks(self) -> None:
         assert self.battle is not None
@@ -86,10 +93,11 @@ class SelfPlayBattleEnv:
             fast_path=self.engine_fast_path in {"shadow", "on"},
             rng=self.rng,
         )
+        self._simulator = TorchBattleExecutor(self.simulation_backend)
         self._sample_and_apply_decks()
         self._reset_reward_trackers()
 
-    def get_observation(self, player_id: int):
+    def get_observation(self, player_id: int) -> CvObservation:
         assert self.battle is not None
         return self.obs_builder.build(self.battle, player_id)
 
@@ -102,7 +110,7 @@ class SelfPlayBattleEnv:
             )
         return self._structured_obs_builder
 
-    def get_structured_observation(self, player_id: int):
+    def get_structured_observation(self, player_id: int) -> StructuredObservation:
         assert self.battle is not None
         return self.structured_obs_builder.build(self.battle, player_id)
 
@@ -135,6 +143,12 @@ class SelfPlayBattleEnv:
         self._mask_shadow_checks = 0
         self._mask_shadow_mismatches = 0
         return metrics
+
+    def simulator_backend_metrics(self) -> Dict[str, float]:
+        return self._simulator.metrics_dict()
+
+    def pop_simulator_backend_metrics(self) -> Dict[str, float]:
+        return self._simulator.pop_metrics()
 
     def _compute_dense_rewards(self) -> Dict[int, float]:
         assert self.battle is not None
@@ -217,7 +231,8 @@ class SelfPlayBattleEnv:
         no_op0 = actions.get(0, self.action_space.no_op_action) == self.action_space.no_op_action
         no_op1 = actions.get(1, self.action_space.no_op_action) == self.action_space.no_op_action
         if (
-            self.idle_fast_forward
+            self.simulation_backend is SimulatorBackend.PYTHON
+            and self.idle_fast_forward
             and no_op0
             and no_op1
             and hasattr(self.battle, "can_fast_forward_idle")
@@ -237,7 +252,10 @@ class SelfPlayBattleEnv:
                 self.decision_interval_ticks,
                 max(0, self.max_ticks - self.battle.tick),
             )
-            ticks = self.battle.step_logic_ticks(remaining_ticks)
+            ticks = self._simulator.step_logic_ticks(
+                self.battle,
+                remaining_ticks,
+            )
 
         done = self.battle.game_over or self.battle.tick >= self.max_ticks
         rewards = self._compute_dense_rewards()
