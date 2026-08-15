@@ -116,7 +116,8 @@ def test_status_nova_catalog_qualification_is_data_driven() -> None:
 
     assert resident.resident_action_card_capability_reasons("IceSpirit") == ()
     assert resident.resident_action_card_capability_reasons("IceSpirits") == ()
-    for card_name in ("ElectroSpirit", "FireSpirits", "Heal"):
+    assert resident.resident_action_card_capability_reasons("ElectroSpirit") == ()
+    for card_name in ("FireSpirits", "Heal"):
         assert resident.resident_action_card_capability_reasons(card_name)
     assert resident.resident_action_card_capability_reasons("Wallbreakers") == ()
 

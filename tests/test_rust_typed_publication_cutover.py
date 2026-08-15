@@ -341,9 +341,9 @@ def _reconstruct_prepared_publication_delta(
     if any(type(binding[name]) is not int for name in integer_binding_fields):
         raise TypeError("prepared publication delta binding integer is malformed")
     if (
-        binding["semantic_schema_version"] != 13
+        binding["semantic_schema_version"] != 14
         or binding["checkpoint_schema_version"] != 2
-        or binding["catalog_schema_version"] != 13
+        or binding["catalog_schema_version"] != 14
         or binding["lineage_id"] != prior_binding["lineage_id"]
         or binding["prior_node_id"] != prior_binding["prior_node_id"]
         or binding["prior_epoch"] != prior_binding["prior_epoch"]
@@ -424,7 +424,7 @@ def _reconstruct_prepared_publication_delta(
 
     prior_rows = {row["id"]: copy.deepcopy(row) for row in prior_entities}
     rows = dict(prior_rows)
-    known_entity_mask = (1 << 12) - 1
+    known_entity_mask = (1 << 13) - 1
     changes = delta.get("entities")
     if type(changes) is not list:
         raise TypeError("prepared publication entity deltas are not a list")
@@ -443,9 +443,9 @@ def _reconstruct_prepared_publication_delta(
         ):
             raise ValueError("prepared publication entity delta is malformed")
         changed_ids.add(entity_id)
-        if mask & (1 << 11):
+        if mask & (1 << 12):
             if (
-                mask != 1 << 11
+                mask != 1 << 12
                 or type(change.get("full")) is not dict
                 or change["full"].get("id") != entity_id
                 or entity_id in prior_rows
@@ -492,6 +492,7 @@ def _reconstruct_prepared_publication_delta(
             (1 << 8, "point_projectile_state", "point_projectile_present"),
             (1 << 9, "area_effect_state", "area_effect_present"),
             (1 << 10, "rolling_projectile_state", "rolling_projectile_present"),
+            (1 << 11, "chain_lightning_state", "chain_lightning_present"),
         )
         for bit, field, present_field in optional_sections:
             present = change.get(present_field)
@@ -634,7 +635,7 @@ def test_private_delta_preserves_born_and_removed_character_suffix() -> None:
     )
     suffix = [row for row in delta["entities"] if row["id"] >= first_id]
     assert suffix
-    assert all(row["dirty_mask"] == 1 << 11 for row in suffix)
+    assert all(row["dirty_mask"] == 1 << 12 for row in suffix)
     character_rows = [
         row["full"] for row in suffix if row["full"]["character_birth"] is not None
     ]
@@ -1096,7 +1097,7 @@ def test_spawn_angle_is_static_prefix_and_rejected_from_delta_base() -> None:
     births = [
         row["full"]
         for row in action_delta["entities"]
-        if row["dirty_mask"] == 1 << 11
+        if row["dirty_mask"] == 1 << 12
     ]
     assert births
     assert all(type(row["spawn_angle_shift"]) is float for row in births)

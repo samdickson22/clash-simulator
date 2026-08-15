@@ -103,7 +103,6 @@ def test_wall_breakers_aliases_are_the_only_new_structural_family() -> None:
     assert resident.resident_action_card_capability_reasons("Wall Breakers") == ()
     for near_match in (
         "FireSpirits",
-        "ElectroSpirit",
         "BattleRam",
         "SkeletonBalloon",
         "SuspiciousBush",

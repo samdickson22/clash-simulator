@@ -14,6 +14,7 @@ from types import MappingProxyType
 from typing import Any, Final, cast
 
 from .balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
+from .cards.electro_spirit import ElectroSpiritChain
 from .cards.ice_spirit import IceSpiritFreeze
 from .differential import (
     SNAPSHOT_SCHEMA_VERSION,
@@ -45,8 +46,8 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 13
-RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 13
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 14
+RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 14
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -62,6 +63,7 @@ def _catalog_source_sha256(path: Path) -> str:
 
 def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str]:
     """Return data-driven reasons a card is outside resident troop actions."""
+    from .cards.electro_spirit import ElectroSpiritChain
     from .cards.wallbreakers import WallBreakersDemolition
     from .mechanics.shared.damage_ramp import DamageRamp
     from .mechanics.shared.death_area import DeathAreaEffect
@@ -103,6 +105,7 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
     mechanic_types = tuple(type(mechanic) for mechanic in mechanics)
     supported_mechanic_family = (
         mechanic_types == (IceSpiritFreeze,)
+        or mechanic_types == (ElectroSpiritChain,)
         or mechanic_types == (DamageRamp,)
         or mechanic_types == (WallBreakersDemolition,)
         or all(
@@ -2212,6 +2215,12 @@ class ResidentRustBattle:
     def rolling_projectile_sha256(self) -> str:
         return str(self._native.rolling_projectile_sha256())
 
+    def chain_lightning_state_bytes(self) -> bytes:
+        return bytes(self._native.chain_lightning_state_bytes())
+
+    def chain_lightning_sha256(self) -> str:
+        return str(self._native.chain_lightning_sha256())
+
     @property
     def supports_cleanup_phase(self) -> bool:
         return bool(self._native.supports_cleanup_phase())
@@ -3555,6 +3564,62 @@ def flying_movement_state_rows(battle: Any) -> list[dict[str, Any]]:
                     ),
                 }
             )
+        electro_mechanic = next(
+            (
+                mechanic
+                for mechanic in entity.mechanics
+                if type(mechanic) is ElectroSpiritChain
+            ),
+            None,
+        )
+        if electro_mechanic is not None:
+            destination = entity._electro_spirit_jump_destination
+            origin = getattr(entity, "_electro_spirit_jump_origin", None)
+            rows[-1].update(
+                {
+                    "electro_chain_range_units": round(
+                        electro_mechanic.chain_range * 1000.0
+                    ),
+                    "electro_max_targets": int(electro_mechanic.max_targets),
+                    "electro_stun_duration_ms": int(
+                        electro_mechanic.stun_duration_ms
+                    ),
+                    "electro_damage_decay": _exact_scalar(
+                        electro_mechanic.damage_decay
+                    ),
+                    "electro_jump_duration_ms": int(
+                        electro_mechanic.jump_duration_ms
+                    ),
+                    "electro_jump_speed_units_per_tick": int(
+                        electro_mechanic.jump_speed_logic_units_per_tick
+                    ),
+                    "electro_projectile_speed_tiles_per_second": _exact_scalar(
+                        electro_mechanic.projectile_speed_tiles_per_second
+                    ),
+                    "electro_chain_interval_seconds": _exact_scalar(
+                        electro_mechanic.chain_interval_seconds
+                    ),
+                    "electro_hits_air": bool(entity._can_attack_air_cached),
+                    "electro_hits_ground": bool(entity._can_attack_ground_cached),
+                    "electro_jump_target_id": entity._electro_spirit_jump_target_id,
+                    "electro_jump_elapsed_ms": _exact_scalar(
+                        entity._electro_spirit_jump_elapsed
+                    ),
+                    "electro_jump_destination": (
+                        None
+                        if destination is None
+                        else [
+                            _exact_scalar(destination[0]),
+                            _exact_scalar(destination[1]),
+                        ]
+                    ),
+                    "electro_jump_origin": (
+                        None
+                        if origin is None
+                        else [_exact_scalar(origin[0]), _exact_scalar(origin[1])]
+                    ),
+                }
+            )
     return rows
 
 
@@ -3964,6 +4029,41 @@ def rolling_projectile_state_bytes(battle: Any) -> bytes:
         sort_keys=True,
         separators=(",", ":"),
     ).encode("ascii")
+
+
+def chain_lightning_state_rows(battle: Any) -> list[dict[str, Any]]:
+    from .entities import ChainLightning
+
+    return [
+        {
+            "chain_range": _exact_scalar(entity.chain_range),
+            "current_target_id": entity.current_target_id,
+            "damage": _exact_scalar(entity.damage),
+            "encounter_index": encounter_index,
+            "fixed_hop_duration": (
+                None
+                if entity.fixed_hop_duration is None
+                else _exact_scalar(entity.fixed_hop_duration)
+            ),
+            "hitpoints": _exact_scalar(entity.hitpoints),
+            "hits_air": bool(entity.hits_air),
+            "hits_ground": bool(entity.hits_ground),
+            "hop_time_remaining": _exact_scalar(entity.hop_time_remaining),
+            "id": int(entity.id),
+            "is_alive": bool(entity.is_alive),
+            "origin_x": _exact_scalar(entity.origin.x),
+            "origin_y": _exact_scalar(entity.origin.y),
+            "player_id": int(entity.player_id),
+            "position_x": _exact_scalar(entity.position.x),
+            "position_y": _exact_scalar(entity.position.y),
+            "remaining_bounces": int(entity.remaining_bounces),
+            "stun_duration": _exact_scalar(entity.stun_duration),
+            "travel_speed": _exact_scalar(entity.travel_speed),
+            "visited_ids": sorted(int(value) for value in entity.visited_ids),
+        }
+        for encounter_index, entity in enumerate(battle.entities.values())
+        if type(entity) is ChainLightning
+    ]
 
 
 def compare_point_projectile_phase(

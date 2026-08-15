@@ -4,6 +4,7 @@ import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.cards.electro_spirit import ElectroSpiritChain
 from clasher.cards.ice_spirit import IceSpiritFreeze
 from clasher.cards.tesla import HideWhenIdle
 from clasher.cards.wallbreakers import WallBreakersDemolition
@@ -102,7 +103,13 @@ def test_character_object_phase_is_card_general_and_fail_closed(
     )
     compiled_count += sum(
         type(mechanic)
-        in (IceSpiritFreeze, DamageRamp, HideWhenIdle, WallBreakersDemolition)
+        in (
+            ElectroSpiritChain,
+            IceSpiritFreeze,
+            DamageRamp,
+            HideWhenIdle,
+            WallBreakersDemolition,
+        )
         for mechanic in troop.mechanics
     )
     if compiled_count != len(troop.mechanics):

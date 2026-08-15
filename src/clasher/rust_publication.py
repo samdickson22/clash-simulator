@@ -18,6 +18,7 @@ from .differential import _normalize, first_snapshot_difference
 from .entities import (
     AreaEffect,
     Building,
+    ChainLightning,
     Projectile,
     RollingProjectile,
     SpawnProjectile,
@@ -134,8 +135,9 @@ _ENTITY_DELTA_BUILDING_IMPACT = 1 << 7
 _ENTITY_DELTA_POINT = 1 << 8
 _ENTITY_DELTA_AREA = 1 << 9
 _ENTITY_DELTA_ROLLING = 1 << 10
-_ENTITY_DELTA_FULL = 1 << 11
-_ENTITY_DELTA_MASK = (1 << 12) - 1
+_ENTITY_DELTA_CHAIN_LIGHTNING = 1 << 11
+_ENTITY_DELTA_FULL = 1 << 12
+_ENTITY_DELTA_MASK = (1 << 13) - 1
 
 
 _ENTITY_SPARSE_ATTRIBUTE_NAMES = (
@@ -166,6 +168,7 @@ _ENTITY_SPARSE_ATTRIBUTE_NAMES = (
     "_temporary_homing_target",
     "_shield_break_count",
     "_hidden_building",
+    "_electro_spirit_jump_origin",
 )
 _ENTITY_SPARSE_ATTRIBUTES = frozenset(_ENTITY_SPARSE_ATTRIBUTE_NAMES)
 
@@ -222,6 +225,8 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "point_projectile_present",
             "rolling_projectile_state",
             "rolling_projectile_present",
+            "chain_lightning_state",
+            "chain_lightning_present",
             "area_effect_state",
             "area_effect_present",
             "full",
@@ -247,6 +252,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "death_spawn_target_immunity_elapsed_ms",
             "pending_projectile_max_duration_ms",
             "status_nova_jump",
+            "electro_spirit_chain",
         }
     ),
     "root": frozenset(
@@ -361,9 +367,11 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "building_impact_state",
             "point_projectile_state",
             "rolling_projectile_state",
+            "chain_lightning_state",
             "area_effect_state",
             "character_birth",
             "status_nova_jump",
+            "electro_spirit_chain",
         }
     ),
     "modifier": frozenset(
@@ -397,6 +405,24 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "detonated",
             "jump_timer_ms",
             "jump_target_id",
+            "jump_destination",
+            "jump_origin",
+        }
+    ),
+    "electro_spirit_chain": frozenset(
+        {
+            "chain_range_units",
+            "max_targets",
+            "stun_duration_ms",
+            "damage_decay",
+            "jump_duration_ms",
+            "jump_speed_units_per_tick",
+            "projectile_speed_tiles_per_second",
+            "chain_interval_seconds",
+            "hits_air",
+            "hits_ground",
+            "jump_target_id",
+            "jump_elapsed_ms",
             "jump_destination",
             "jump_origin",
         }
@@ -659,6 +685,22 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "spawn_delay",
             "time_alive",
             "travel_speed",
+        }
+    ),
+    "chain_lightning": frozenset(
+        {
+            "source_entity_id",
+            "origin",
+            "remaining_bounces",
+            "chain_range",
+            "travel_speed",
+            "fixed_hop_duration",
+            "hop_time_remaining",
+            "stun_duration",
+            "visited_ids",
+            "hits_air",
+            "hits_ground",
+            "current_target_id",
         }
     ),
     "area": frozenset(
@@ -1239,6 +1281,7 @@ def _validate_direct_entity_scalars(row: dict[str, Any], entity_id: int) -> None
     _validate_direct_modifier(row["modifier_state"], entity_id)
     _validate_direct_death_opcodes(row["death_opcodes"], entity_id)
     _validate_direct_status_nova_jump(row["status_nova_jump"], entity_id)
+    _validate_direct_electro_spirit_chain(row["electro_spirit_chain"], entity_id)
 
 
 def _validate_direct_status_nova_jump(value: Any, entity_id: int) -> None:
@@ -1279,6 +1322,94 @@ def _validate_direct_status_nova_jump(value: Any, entity_id: int) -> None:
         raise ResidentPublicationError(
             f"malformed direct entity {entity_id} status-nova jump"
         )
+
+
+def _validate_direct_electro_spirit_chain(value: Any, entity_id: int) -> None:
+    if value is None:
+        return
+    row = _direct_dict(value, "electro_spirit_chain")
+    for field in (
+        "chain_range_units",
+        "max_targets",
+        "stun_duration_ms",
+        "jump_duration_ms",
+        "jump_speed_units_per_tick",
+    ):
+        _direct_int(row[field], f"entity {entity_id} Electro chain {field}")
+    for field in (
+        "damage_decay",
+        "projectile_speed_tiles_per_second",
+        "chain_interval_seconds",
+        "jump_elapsed_ms",
+    ):
+        _direct_float(row[field], f"entity {entity_id} Electro chain {field}")
+    for field in ("hits_air", "hits_ground"):
+        _direct_bool(row[field], f"entity {entity_id} Electro chain {field}")
+    _direct_optional_int(row["jump_target_id"], f"entity {entity_id} Electro target")
+    _direct_position(
+        row["jump_destination"],
+        f"entity {entity_id} Electro destination",
+        exact=True,
+    )
+    _direct_position(row["jump_origin"], f"entity {entity_id} Electro origin", exact=True)
+    if (
+        row["chain_range_units"] <= 0
+        or row["max_targets"] <= 1
+        or row["stun_duration_ms"] <= 0
+        or row["jump_duration_ms"] < 0
+        or row["jump_speed_units_per_tick"] <= 0
+        or not np.isfinite(row["damage_decay"])
+        or not np.isfinite(row["projectile_speed_tiles_per_second"])
+        or row["projectile_speed_tiles_per_second"] <= 0.0
+        or not np.isfinite(row["chain_interval_seconds"])
+        or row["chain_interval_seconds"] <= 0.0
+        or not np.isfinite(row["jump_elapsed_ms"])
+        or row["jump_elapsed_ms"] < 0.0
+        or not row["hits_air"]
+        or not row["hits_ground"]
+        or (row["jump_destination"] is not None and row["jump_target_id"] is None)
+        or (row["jump_target_id"] is not None and row["jump_origin"] is None)
+    ):
+        raise ResidentPublicationError(
+            f"malformed direct entity {entity_id} Electro Spirit chain"
+        )
+
+
+def _validate_direct_chain_lightning(value: Any, entity_id: int) -> None:
+    if value is None:
+        return
+    row = _direct_dict(value, "chain_lightning")
+    _direct_optional_int(row["source_entity_id"], f"chain {entity_id} source")
+    _direct_position(row["origin"], f"chain {entity_id} origin", exact=True)
+    _direct_int(row["remaining_bounces"], f"chain {entity_id} remaining")
+    for field in (
+        "chain_range",
+        "travel_speed",
+        "hop_time_remaining",
+        "stun_duration",
+    ):
+        _direct_float(row[field], f"chain {entity_id} {field}")
+    if row["fixed_hop_duration"] is not None:
+        _direct_float(row["fixed_hop_duration"], f"chain {entity_id} fixed hop")
+    for field in ("hits_air", "hits_ground"):
+        _direct_bool(row[field], f"chain {entity_id} {field}")
+    _direct_optional_int(row["current_target_id"], f"chain {entity_id} target")
+    visited = _direct_list(row["visited_ids"], f"chain {entity_id} visited")
+    if (
+        row["remaining_bounces"] < 0
+        or row["chain_range"] <= 0.0
+        or row["travel_speed"] <= 0.0
+        or row["hop_time_remaining"] < 0.0
+        or row["stun_duration"] <= 0.0
+        or row["fixed_hop_duration"] is None
+        or row["fixed_hop_duration"] <= 0.0
+        or not row["hits_air"]
+        or not row["hits_ground"]
+        or any(type(item) is not int or item < 0 for item in visited)
+        or visited != sorted(visited)
+        or len(visited) != len(set(visited))
+    ):
+        raise ResidentPublicationError(f"malformed direct chain lightning {entity_id}")
 
 
 def _validate_direct_movement(value: Any, entity_id: int) -> None:
@@ -2358,6 +2489,7 @@ def _build_direct_publication_plan(
             _validate_direct_rolling_recipe(
                 row["rolling_projectile_state"], resident, entity_id
             )
+        _validate_direct_chain_lightning(row["chain_lightning_state"], entity_id)
         _validate_direct_area(row["area_effect_state"], entity_id)
         _validate_direct_character_birth(row["character_birth"], entity_id)
         if active:
@@ -2438,10 +2570,11 @@ def _build_direct_publication_plan(
         if entity.entity_id in actual_birth_ids:
             point = row["point_projectile_state"]
             rolling = row["rolling_projectile_state"]
+            chain = row["chain_lightning_state"]
             area = row["area_effect_state"]
             character = row["character_birth"]
             if sum(
-                value is not None for value in (point, rolling, area, character)
+                value is not None for value in (point, rolling, chain, area, character)
             ) != 1:
                 raise ResidentPublicationError(
                     f"resident publication has unsupported birth recipe for id {entity.entity_id}"
@@ -2456,6 +2589,8 @@ def _build_direct_publication_plan(
                 if point is not None
                 else "clasher.entities.RollingProjectile"
                 if rolling is not None
+                else "clasher.entities.ChainLightning"
+                if chain is not None
                 else "clasher.entities.AreaEffect"
                 if area is not None
                 else _catalog_birth_type(row["entity_kind"])[1]
@@ -2489,6 +2624,15 @@ def _build_direct_publication_plan(
             None
             if row["status_nova_jump"] is None
             else row["status_nova_jump"]["jump_target_id"],
+            None
+            if row["electro_spirit_chain"] is None
+            else row["electro_spirit_chain"]["jump_target_id"],
+            None
+            if row["chain_lightning_state"] is None
+            else row["chain_lightning_state"]["source_entity_id"],
+            None
+            if row["chain_lightning_state"] is None
+            else row["chain_lightning_state"]["current_target_id"],
         ):
             if reference is not None and reference not in all_ids:
                 raise ResidentPublicationError(
@@ -2501,6 +2645,13 @@ def _build_direct_publication_plan(
         ):
             raise ResidentPublicationError(
                 f"resident rolling projectile {entity.entity_id} has unallocated hit ID"
+            )
+        chain = row["chain_lightning_state"]
+        if chain is not None and any(
+            hit_id >= battle_row["next_entity_id"] for hit_id in chain["visited_ids"]
+        ):
+            raise ResidentPublicationError(
+                f"resident chain lightning {entity.entity_id} has unallocated visited ID"
             )
 
     for (kind, group_id), members in character_groups.items():
@@ -2990,13 +3141,15 @@ def _validate_direct_full_delta_entity(
         _validate_direct_rolling_recipe(
             row["rolling_projectile_state"], resident, entity_id
         )
+    _validate_direct_chain_lightning(row["chain_lightning_state"], entity_id)
     _validate_direct_area(row["area_effect_state"], entity_id)
     _validate_direct_character_birth(row["character_birth"], entity_id)
     point = row["point_projectile_state"]
     rolling = row["rolling_projectile_state"]
+    chain = row["chain_lightning_state"]
     area = row["area_effect_state"]
     character = row["character_birth"]
-    if sum(item is not None for item in (point, rolling, area, character)) != 1:
+    if sum(item is not None for item in (point, rolling, chain, area, character)) != 1:
         raise ResidentPublicationError(
             f"resident publication has unsupported birth recipe for id {entity_id}"
         )
@@ -3009,6 +3162,8 @@ def _validate_direct_full_delta_entity(
         if point is not None
         else "clasher.entities.RollingProjectile"
         if rolling is not None
+        else "clasher.entities.ChainLightning"
+        if chain is not None
         else "clasher.entities.AreaEffect"
         if area is not None
         else _catalog_birth_type(row["entity_kind"])[1]
@@ -3040,6 +3195,11 @@ def _validate_direct_full_delta_entity(
         None
         if row["status_nova_jump"] is None
         else row["status_nova_jump"]["jump_target_id"],
+        None
+        if row["electro_spirit_chain"] is None
+        else row["electro_spirit_chain"]["jump_target_id"],
+        None if chain is None else chain["source_entity_id"],
+        None if chain is None else chain["current_target_id"],
     ):
         if reference is not None and reference not in all_ids:
             raise ResidentPublicationError(
@@ -3050,6 +3210,12 @@ def _validate_direct_full_delta_entity(
     ):
         raise ResidentPublicationError(
             f"resident rolling projectile {entity_id} has unallocated hit ID"
+        )
+    if chain is not None and any(
+        hit_id >= next_entity_id for hit_id in chain["visited_ids"]
+    ):
+        raise ResidentPublicationError(
+            f"resident chain lightning {entity_id} has unallocated visited ID"
         )
     return _DirectEntityPublication(row, entity_id, active, encounter, presence)
 
@@ -3067,6 +3233,9 @@ def _validate_direct_changed_references(
         status_nova = raw["base"]["status_nova_jump"]
         if status_nova is not None:
             references.append(status_nova["jump_target_id"])
+        electro = raw["base"]["electro_spirit_chain"]
+        if electro is not None:
+            references.append(electro["jump_target_id"])
     if mask & _ENTITY_DELTA_COMBAT and raw["locked_combat_state"] is not None:
         state = raw["locked_combat_state"]
         references.extend(
@@ -3088,6 +3257,13 @@ def _validate_direct_changed_references(
         if any(hit_id >= next_entity_id for hit_id in state["hit_entity_ids"]):
             raise ResidentPublicationError(
                 f"resident rolling projectile {entity_id} has unallocated hit ID"
+            )
+    if mask & _ENTITY_DELTA_CHAIN_LIGHTNING and raw["chain_lightning_state"] is not None:
+        state = raw["chain_lightning_state"]
+        references.extend((state["source_entity_id"], state["current_target_id"]))
+        if any(hit_id >= next_entity_id for hit_id in state["visited_ids"]):
+            raise ResidentPublicationError(
+                f"resident chain lightning {entity_id} has unallocated visited ID"
             )
     if mask & _ENTITY_DELTA_AREA and raw["area_effect_state"] is not None:
         references.append(raw["area_effect_state"]["birth_source_entity_id"])
@@ -3293,6 +3469,9 @@ def _build_direct_delta_publication_plan(
             _validate_direct_status_nova_jump(
                 base_row["status_nova_jump"], entity_id
             )
+            _validate_direct_electro_spirit_chain(
+                base_row["electro_spirit_chain"], entity_id
+            )
         if bool(mask & _ENTITY_DELTA_SHIELDS) != (
             type(change["shields"]) is list
             and type(change["shield_break_count"]) is int
@@ -3330,6 +3509,7 @@ def _build_direct_delta_publication_plan(
             (_ENTITY_DELTA_COMBAT, "locked_combat_state", "locked_combat_present", _validate_direct_combat),
             (_ENTITY_DELTA_POINT, "point_projectile_state", "point_projectile_present", _validate_direct_point),
             (_ENTITY_DELTA_ROLLING, "rolling_projectile_state", "rolling_projectile_present", _validate_direct_rolling),
+            (_ENTITY_DELTA_CHAIN_LIGHTNING, "chain_lightning_state", "chain_lightning_present", _validate_direct_chain_lightning),
             (_ENTITY_DELTA_AREA, "area_effect_state", "area_effect_present", _validate_direct_area),
         )
         for bit, field, present_field, validator in optional:
@@ -3360,6 +3540,8 @@ def _build_direct_delta_publication_plan(
                 if bit == _ENTITY_DELTA_POINT
                 else type(python_entity) is RollingProjectile
                 if bit == _ENTITY_DELTA_ROLLING
+                else type(python_entity) is ChainLightning
+                if bit == _ENTITY_DELTA_CHAIN_LIGHTNING
                 else type(python_entity) is AreaEffect
             )
             if mask & bit and present is not expected_present:
@@ -3947,6 +4129,38 @@ def _typed_movement(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
                 ),
             }
         )
+    electro = entity["electro_spirit_chain"]
+    if electro is not None:
+        result.update(
+            {
+                "electro_chain_range_units": electro["chain_range_units"],
+                "electro_max_targets": electro["max_targets"],
+                "electro_stun_duration_ms": electro["stun_duration_ms"],
+                "electro_damage_decay": _exact_float(electro["damage_decay"]),
+                "electro_jump_duration_ms": electro["jump_duration_ms"],
+                "electro_jump_speed_units_per_tick": electro[
+                    "jump_speed_units_per_tick"
+                ],
+                "electro_projectile_speed_tiles_per_second": _exact_float(
+                    electro["projectile_speed_tiles_per_second"]
+                ),
+                "electro_chain_interval_seconds": _exact_float(
+                    electro["chain_interval_seconds"]
+                ),
+                "electro_hits_air": electro["hits_air"],
+                "electro_hits_ground": electro["hits_ground"],
+                "electro_jump_target_id": electro["jump_target_id"],
+                "electro_jump_elapsed_ms": _exact_float(
+                    electro["jump_elapsed_ms"]
+                ),
+                "electro_jump_destination": _optional_exact_position(
+                    electro["jump_destination"], exact=True
+                ),
+                "electro_jump_origin": _optional_exact_position(
+                    electro["jump_origin"], exact=True
+                ),
+            }
+        )
     return result
 
 
@@ -4184,6 +4398,40 @@ def _typed_rolling(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
     }
 
 
+def _typed_chain_lightning(
+    row: dict[str, Any], entity: Any
+) -> dict[str, Any] | None:
+    state = entity["chain_lightning_state"]
+    if state is None:
+        return None
+    return {
+        "chain_range": _exact_float(state["chain_range"]),
+        "current_target_id": state["current_target_id"],
+        "damage": _exact(entity["damage"]),
+        "encounter_index": row["encounter_index"],
+        "fixed_hop_duration": (
+            None
+            if state["fixed_hop_duration"] is None
+            else _exact_float(state["fixed_hop_duration"])
+        ),
+        "hitpoints": _exact(entity["hitpoints"]),
+        "hits_air": state["hits_air"],
+        "hits_ground": state["hits_ground"],
+        "hop_time_remaining": _exact_float(state["hop_time_remaining"]),
+        "id": row["id"],
+        "is_alive": row["is_alive"],
+        "origin_x": _exact(state["origin"][0]),
+        "origin_y": _exact(state["origin"][1]),
+        "player_id": row["player_id"],
+        "position_x": _exact(entity["position_x"]),
+        "position_y": _exact(entity["position_y"]),
+        "remaining_bounces": state["remaining_bounces"],
+        "stun_duration": _exact_float(state["stun_duration"]),
+        "travel_speed": _exact_float(state["travel_speed"]),
+        "visited_ids": list(state["visited_ids"]),
+    }
+
+
 def _typed_character_birth(state: Any) -> dict[str, Any] | None:
     if state is None:
         return None
@@ -4271,6 +4519,7 @@ def _typed_publication_projection(parts: Any) -> _TypedPublication:
                 "building_lifetime",
                 "point_projectiles",
                 "rolling_projectiles",
+                "chain_lightnings",
             )
         }
         for entity in parts["entities"]:
@@ -4304,6 +4553,7 @@ def _typed_publication_projection(parts: Any) -> _TypedPublication:
             area = _typed_area(base, entity)
             point = _typed_point(base, entity)
             rolling = _typed_rolling(base, entity)
+            chain = _typed_chain_lightning(base, entity)
             character_state = None
             if entity["entity_kind"] in (0, 1):
                 character_state = {
@@ -4365,6 +4615,7 @@ def _typed_publication_projection(parts: Any) -> _TypedPublication:
                 "point_projectile_group_hit_entity_ids": point_group_ids,
                 "point_projectile_state": point,
                 "rolling_projectile_state": rolling,
+                "chain_lightning_state": chain,
                 "shield_state": shield,
                 "sparse_attribute_presence": _presence_from_mask(
                     entity["sparse_attribute_presence"],
@@ -4387,6 +4638,7 @@ def _typed_publication_projection(parts: Any) -> _TypedPublication:
                 ("building_lifetime", building),
                 ("point_projectiles", point),
                 ("rolling_projectiles", rolling),
+                ("chain_lightnings", chain),
             ):
                 if value is not None:
                     sections[name].append(value)
@@ -5923,6 +6175,45 @@ def _create_rolling_birth_direct(
     return projectile
 
 
+def _create_chain_lightning_birth_direct(
+    battle: Any,
+    row: dict[str, Any],
+    available: dict[int, Any],
+) -> ChainLightning:
+    state = cast(dict[str, Any], row["chain_lightning_state"])
+    source_id = state["source_entity_id"]
+    if source_id is None or source_id not in available:
+        raise ResidentPublicationError(
+            f"new chain lightning {row['id']} has no allocated source"
+        )
+    source = available[source_id]
+    origin = state["origin"]
+    chain = ChainLightning(
+        id=row["id"],
+        position=Position(_scalar(row["position_x"]), _scalar(row["position_y"])),
+        player_id=row["player_id"],
+        card_stats=source.card_stats,
+        hitpoints=_scalar(row["hitpoints"]),
+        max_hitpoints=_scalar(row["max_hitpoints"]),
+        damage=_scalar(row["damage"]),
+        range=0,
+        sight_range=0,
+        origin=Position(_scalar(origin[0]), _scalar(origin[1])),
+        remaining_bounces=state["remaining_bounces"],
+        chain_range=state["chain_range"],
+        travel_speed=state["travel_speed"],
+        fixed_hop_duration=state["fixed_hop_duration"],
+        hop_time_remaining=state["hop_time_remaining"],
+        stun_duration=state["stun_duration"],
+        visited_ids=set(state["visited_ids"]),
+        hits_air=state["hits_air"],
+        hits_ground=state["hits_ground"],
+        current_target_id=state["current_target_id"],
+    )
+    cast(Any, chain).battle_state = battle
+    return chain
+
+
 def _create_character_birth_direct(
     battle: Any,
     row: dict[str, Any],
@@ -6033,6 +6324,8 @@ def _prepare_direct_births(
             )
         elif row["rolling_projectile_state"] is not None:
             entity = _create_rolling_birth_direct(battle, row, resident)
+        elif row["chain_lightning_state"] is not None:
+            entity = _create_chain_lightning_birth_direct(battle, row, available)
         elif row["area_effect_state"] is not None:
             entity = _create_area_effect_birth_direct(battle, row, available)
         else:
@@ -6093,6 +6386,21 @@ def _validate_direct_bound_entities(
             raise ResidentPublicationError(
                 f"resident rolling projectile {entity_plan.entity_id} Python topology changed"
             )
+        chain = row["chain_lightning_state"]
+        if chain is not None and (
+            type(entity) is not ChainLightning
+            or type(entity.visited_ids) is not set
+            or not isinstance(entity.origin, Position)
+        ):
+            raise ResidentPublicationError(
+                f"resident chain lightning {entity_plan.entity_id} Python topology changed"
+            )
+        if chain is not None and chain["source_entity_id"] is not None:
+            source = registry[chain["source_entity_id"]]
+            if entity.card_stats is not source.card_stats:
+                raise ResidentPublicationError(
+                    f"resident chain lightning {entity_plan.entity_id} card-stats alias changed"
+                )
         area = row["area_effect_state"]
         if area is not None and type(entity) is not AreaEffect:
             raise ResidentPublicationError(
@@ -6131,6 +6439,45 @@ def _validate_direct_bound_entities(
             raise ResidentPublicationError(
                 f"resident entity {entity_plan.entity_id} status-nova topology changed"
             )
+        electro = row["electro_spirit_chain"]
+        electro_mechanics = [
+            mechanic
+            for mechanic in entity.mechanics
+            if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+            == "clasher.cards.electro_spirit.ElectroSpiritChain"
+        ]
+        if (electro is None) != (len(electro_mechanics) == 0) or len(
+            electro_mechanics
+        ) > 1:
+            raise ResidentPublicationError(
+                f"resident entity {entity_plan.entity_id} Electro Spirit topology changed"
+            )
+        if electro is not None:
+            mechanic = electro_mechanics[0]
+            expected = (
+                electro["chain_range_units"] / 1000.0,
+                electro["max_targets"],
+                electro["stun_duration_ms"],
+                electro["damage_decay"],
+                electro["jump_duration_ms"],
+                electro["jump_speed_units_per_tick"],
+                electro["projectile_speed_tiles_per_second"],
+                electro["chain_interval_seconds"],
+            )
+            actual = (
+                mechanic.chain_range,
+                mechanic.max_targets,
+                mechanic.stun_duration_ms,
+                mechanic.damage_decay,
+                mechanic.jump_duration_ms,
+                mechanic.jump_speed_logic_units_per_tick,
+                mechanic.projectile_speed_tiles_per_second,
+                mechanic.chain_interval_seconds,
+            )
+            if actual != expected:
+                raise ResidentPublicationError(
+                    f"resident entity {entity_plan.entity_id} Electro Spirit static state changed"
+                )
         combat = row["locked_combat_state"]
         damage_ramp = None if combat is None else combat["damage_ramp"]
         ramp_mechanics = [
@@ -6418,6 +6765,27 @@ def _apply_direct_status_nova_jump(entity: Any, state: Any) -> None:
         )
 
 
+def _apply_direct_electro_spirit_chain(entity: Any, state: Any) -> None:
+    if state is None:
+        return
+    entity._electro_spirit_jump_target_id = state["jump_target_id"]
+    entity._electro_spirit_jump_elapsed = state["jump_elapsed_ms"]
+    destination = state["jump_destination"]
+    entity._electro_spirit_jump_destination = (
+        None
+        if destination is None
+        else (_scalar(destination[0]), _scalar(destination[1]))
+    )
+    origin = state["jump_origin"]
+    if origin is None:
+        entity.__dict__.pop("_electro_spirit_jump_origin", None)
+    else:
+        entity._electro_spirit_jump_origin = (
+            _scalar(origin[0]),
+            _scalar(origin[1]),
+        )
+
+
 def _apply_direct_damage_ramp(
     entity: Any,
     state: Any,
@@ -6522,6 +6890,7 @@ def _apply_direct_entity(
         undo,
         entity,
         "target_position",
+        "origin",
         "_death_spawn_travel_target",
         "_knockback_target",
         "_river_jump_origin",
@@ -6542,6 +6911,7 @@ def _apply_direct_entity(
     entity.target_id = row["target_id"]
     entity.battle_state = battle
     _apply_direct_status_nova_jump(entity, row["status_nova_jump"])
+    _apply_direct_electro_spirit_chain(entity, row["electro_spirit_chain"])
 
     modifier = row["modifier_state"]
     if modifier is not None:
@@ -6784,6 +7154,24 @@ def _apply_direct_entity(
         entity.time_alive = rolling["time_alive"]
         entity.travel_speed = _scalar(rolling["travel_speed"])
 
+    chain = row["chain_lightning_state"]
+    if chain is not None:
+        undo.watch_value(entity.visited_ids)
+        entity.damage = _scalar(row["damage"])
+        entity.origin.x = _scalar(chain["origin"][0])
+        entity.origin.y = _scalar(chain["origin"][1])
+        entity.remaining_bounces = chain["remaining_bounces"]
+        entity.chain_range = chain["chain_range"]
+        entity.travel_speed = chain["travel_speed"]
+        entity.fixed_hop_duration = chain["fixed_hop_duration"]
+        entity.hop_time_remaining = chain["hop_time_remaining"]
+        entity.stun_duration = chain["stun_duration"]
+        entity.visited_ids.clear()
+        entity.visited_ids.update(chain["visited_ids"])
+        entity.hits_air = chain["hits_air"]
+        entity.hits_ground = chain["hits_ground"]
+        entity.current_target_id = chain["current_target_id"]
+
 
 def _prepare_direct_delta_births(
     battle: Any,
@@ -6804,6 +7192,8 @@ def _prepare_direct_delta_births(
             )
         elif row["rolling_projectile_state"] is not None:
             entity = _create_rolling_birth_direct(battle, row, resident)
+        elif row["chain_lightning_state"] is not None:
+            entity = _create_chain_lightning_birth_direct(battle, row, available)
         elif row["area_effect_state"] is not None:
             entity = _create_area_effect_birth_direct(battle, row, available)
         else:
@@ -6880,6 +7270,27 @@ def _validate_direct_delta_bound_entities(
             raise ResidentPublicationError(
                 f"resident rolling projectile {change.entity_id} Python topology changed"
             )
+        chain = (
+            change.full.raw["chain_lightning_state"]
+            if change.full is not None
+            else change.raw["chain_lightning_state"]
+            if change.dirty_mask & _ENTITY_DELTA_CHAIN_LIGHTNING
+            else None
+        )
+        if chain is not None and (
+            type(entity) is not ChainLightning
+            or type(entity.visited_ids) is not set
+            or not isinstance(entity.origin, Position)
+        ):
+            raise ResidentPublicationError(
+                f"resident chain lightning {change.entity_id} Python topology changed"
+            )
+        if chain is not None and chain["source_entity_id"] is not None:
+            source = registry[chain["source_entity_id"]]
+            if entity.card_stats is not source.card_stats:
+                raise ResidentPublicationError(
+                    f"resident chain lightning {change.entity_id} card-stats alias changed"
+                )
         area = (
             change.full.raw["area_effect_state"]
             if change.full is not None
@@ -6909,6 +7320,52 @@ def _validate_direct_delta_bound_entities(
                 if value is not None and not isinstance(value, Position):
                     raise ResidentPublicationError(
                         f"resident entity {change.entity_id} changed {field} topology"
+                    )
+        electro = (
+            change.full.raw["electro_spirit_chain"]
+            if change.full is not None
+            else change.raw["base"]["electro_spirit_chain"]
+            if change.dirty_mask & _ENTITY_DELTA_BASE
+            else None
+        )
+        if change.full is not None or change.dirty_mask & _ENTITY_DELTA_BASE:
+            electro_mechanics = [
+                mechanic
+                for mechanic in entity.mechanics
+                if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+                == "clasher.cards.electro_spirit.ElectroSpiritChain"
+            ]
+            if (electro is None) != (len(electro_mechanics) == 0) or len(
+                electro_mechanics
+            ) > 1:
+                raise ResidentPublicationError(
+                    f"resident entity {change.entity_id} Electro Spirit topology changed"
+                )
+            if electro is not None:
+                mechanic = electro_mechanics[0]
+                expected = (
+                    electro["chain_range_units"] / 1000.0,
+                    electro["max_targets"],
+                    electro["stun_duration_ms"],
+                    electro["damage_decay"],
+                    electro["jump_duration_ms"],
+                    electro["jump_speed_units_per_tick"],
+                    electro["projectile_speed_tiles_per_second"],
+                    electro["chain_interval_seconds"],
+                )
+                actual = (
+                    mechanic.chain_range,
+                    mechanic.max_targets,
+                    mechanic.stun_duration_ms,
+                    mechanic.damage_decay,
+                    mechanic.jump_duration_ms,
+                    mechanic.jump_speed_logic_units_per_tick,
+                    mechanic.projectile_speed_tiles_per_second,
+                    mechanic.chain_interval_seconds,
+                )
+                if actual != expected:
+                    raise ResidentPublicationError(
+                        f"resident entity {change.entity_id} Electro Spirit static state changed"
                     )
         combat = (
             change.full.raw["locked_combat_state"]
@@ -7132,6 +7589,7 @@ def _apply_direct_delta_entity(
         entity.target_id = row["target_id"]
         entity.battle_state = battle
         _apply_direct_status_nova_jump(entity, row["status_nova_jump"])
+        _apply_direct_electro_spirit_chain(entity, row["electro_spirit_chain"])
         if hasattr(entity, "deploy_delay_remaining"):
             entity._death_spawn_target_immunity_elapsed_ms = row[
                 "death_spawn_target_immunity_elapsed_ms"
@@ -7329,6 +7787,24 @@ def _apply_direct_delta_entity(
             entity.hit_entities.clear()
             entity.hit_entities.update(rolling["hit_entity_ids"])
             entity.time_alive = rolling["time_alive"]
+    if mask & _ENTITY_DELTA_CHAIN_LIGHTNING:
+        chain = raw["chain_lightning_state"]
+        if chain is not None:
+            _watch_entity_attrs(undo, entity, "origin")
+            undo.watch_value(entity.visited_ids)
+            entity.origin.x = _scalar(chain["origin"][0])
+            entity.origin.y = _scalar(chain["origin"][1])
+            entity.remaining_bounces = chain["remaining_bounces"]
+            entity.chain_range = chain["chain_range"]
+            entity.travel_speed = chain["travel_speed"]
+            entity.fixed_hop_duration = chain["fixed_hop_duration"]
+            entity.hop_time_remaining = chain["hop_time_remaining"]
+            entity.stun_duration = chain["stun_duration"]
+            entity.visited_ids.clear()
+            entity.visited_ids.update(chain["visited_ids"])
+            entity.hits_air = chain["hits_air"]
+            entity.hits_ground = chain["hits_ground"]
+            entity.current_target_id = chain["current_target_id"]
 
 
 def _apply_direct_delta_publication_plan(

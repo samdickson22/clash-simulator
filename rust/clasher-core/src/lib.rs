@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 13;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 14;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -35,7 +35,8 @@ const ENTITY_DELTA_BUILDING_IMPACT: u64 = 1 << 7;
 const ENTITY_DELTA_POINT: u64 = 1 << 8;
 const ENTITY_DELTA_AREA: u64 = 1 << 9;
 const ENTITY_DELTA_ROLLING: u64 = 1 << 10;
-const ENTITY_DELTA_FULL: u64 = 1 << 11;
+const ENTITY_DELTA_CHAIN_LIGHTNING: u64 = 1 << 11;
+const ENTITY_DELTA_FULL: u64 = 1 << 12;
 static NEXT_RESIDENT_STATE_TOKEN: AtomicU64 = AtomicU64::new(1);
 
 type ResidentPublicationAuthorityToken = (
@@ -58,7 +59,7 @@ fn next_resident_state_token() -> u64 {
         .expect("resident publication token space exhausted")
 }
 
-const ENTITY_SPARSE_ATTRIBUTE_NAMES: [&str; 27] = [
+const ENTITY_SPARSE_ATTRIBUTE_NAMES: [&str; 28] = [
     "_spawn_hook_pending",
     "_spawn_hook_fired",
     "_ground_path_cache_key",
@@ -86,6 +87,7 @@ const ENTITY_SPARSE_ATTRIBUTE_NAMES: [&str; 27] = [
     "_temporary_homing_target",
     "_shield_break_count",
     "_hidden_building",
+    "_electro_spirit_jump_origin",
 ];
 
 const BATTLE_SPARSE_ATTRIBUTE_NAMES: [&str; 8] = [
@@ -1595,6 +1597,7 @@ struct ResidentEntity {
     death_spawn_payload_present: bool,
     mechanics: Vec<String>,
     status_nova_jump: Option<ResidentStatusNovaJumpState>,
+    electro_spirit_chain: Option<ResidentElectroSpiritChainState>,
     shields: Vec<ShieldState>,
     shield_break_count: i64,
     death_opcodes: Vec<ResidentDeathOpcode>,
@@ -1608,6 +1611,7 @@ struct ResidentEntity {
     building_footprint_size: Option<i64>,
     point_projectile: Option<PointProjectileState>,
     rolling_projectile: Option<ResidentRollingProjectileState>,
+    chain_lightning: Option<ResidentChainLightningState>,
     area_effect: Option<ResidentAreaEffectState>,
     object_base_movement_noop: bool,
     blocks_deployment: bool,
@@ -1811,6 +1815,161 @@ impl ResidentStatusNovaJumpState {
             && self.detonated == other.detonated
             && self.jump_timer_ms.to_bits() == other.jump_timer_ms.to_bits()
             && self.jump_target_id == other.jump_target_id
+            && self.jump_destination == other.jump_destination
+            && self.jump_origin == other.jump_origin
+    }
+}
+
+#[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentElectroSpiritChainState {
+    chain_range_units: i64,
+    max_targets: i64,
+    stun_duration_ms: i64,
+    damage_decay: f64,
+    jump_duration_ms: i64,
+    jump_speed_units_per_tick: i64,
+    projectile_speed_tiles_per_second: f64,
+    chain_interval_seconds: f64,
+    hits_air: bool,
+    hits_ground: bool,
+    jump_target_id: Option<i64>,
+    jump_elapsed_ms: f64,
+    jump_destination: Option<(ExactScalar, ExactScalar)>,
+    jump_origin: Option<(ExactScalar, ExactScalar)>,
+}
+
+impl ResidentElectroSpiritChainState {
+    fn from_normalized(
+        mechanic: &Value,
+        fields: &Map<String, Value>,
+        card_fields: &Map<String, Value>,
+    ) -> PyResult<Self> {
+        let mechanic_fields = object_fields(mechanic)?;
+        let projectile = card_fields
+            .get("projectile_data")
+            .filter(|value| !value.is_null())
+            .ok_or_else(|| PyValueError::new_err("Electro Spirit has no projectile data"))?;
+        let chain_range = normalized_f64(mechanic_fields, "chain_range")?;
+        let max_targets = required_i64(mechanic_fields, "max_targets")?;
+        let stun_duration_ms = required_i64(mechanic_fields, "stun_duration_ms")?;
+        let damage_decay = normalized_f64(mechanic_fields, "damage_decay")?;
+        let jump_duration_ms = required_i64(mechanic_fields, "jump_duration_ms")?;
+        let jump_speed_units_per_tick =
+            required_i64(mechanic_fields, "jump_speed_logic_units_per_tick")?;
+        let projectile_speed_tiles_per_second =
+            normalized_f64(mechanic_fields, "projectile_speed_tiles_per_second")?;
+        let chain_interval_seconds = normalized_f64(mechanic_fields, "chain_interval_seconds")?;
+        let serialized_range = normalized_mapping_get(projectile, "chainedHitRadius")
+            .map(ExactScalar::from_normalized)
+            .transpose()?
+            .map(|value| value.as_f64())
+            .unwrap_or(0.0);
+        let serialized_count = normalized_mapping_get(projectile, "chainedHitCount")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let serialized_duration = normalized_mapping_get(projectile, "buffTime")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let serialized_speed = normalized_mapping_get(projectile, "speed")
+            .and_then(Value::as_i64)
+            .unwrap_or(0);
+        let homing = normalized_mapping_get(projectile, "homing")
+            .and_then(Value::as_bool)
+            .unwrap_or(false);
+        let hits_air = required_bool(fields, "_can_attack_air_cached")?;
+        let hits_ground = required_bool(fields, "_can_attack_ground_cached")?;
+        if !normalized_optional_bool(card_fields, "kamikaze")
+            || !normalized_optional_bool(fields, "_force_melee_attack")
+            || !homing
+            || !chain_range.is_finite()
+            || chain_range <= 0.0
+            || logic_units(chain_range) <= 0
+            || max_targets <= 1
+            || max_targets > 64
+            || stun_duration_ms <= 0
+            || damage_decay.to_bits() != 1.0_f64.to_bits()
+            || jump_duration_ms < 0
+            || jump_speed_units_per_tick <= 0
+            || !projectile_speed_tiles_per_second.is_finite()
+            || projectile_speed_tiles_per_second.to_bits()
+                != (jump_speed_units_per_tick as f64 / 50.0).to_bits()
+            || !chain_interval_seconds.is_finite()
+            || chain_interval_seconds <= 0.0
+            || (serialized_range / 1000.0).to_bits() != chain_range.to_bits()
+            || serialized_count != max_targets
+            || serialized_duration != stun_duration_ms
+            || serialized_speed != jump_speed_units_per_tick
+            || !hits_air
+            || !hits_ground
+            || normalized_optional_bool(fields, "kamikaze_primed")
+            || optional_normalized_f64(fields, "kamikaze_timer_remaining")?
+                .is_some_and(|timer| timer.to_bits() != 0.0_f64.to_bits())
+        {
+            return Err(PyValueError::new_err(
+                "Electro Spirit chain mechanic payload is unsupported",
+            ));
+        }
+        let jump_elapsed_ms = normalized_f64(fields, "_electro_spirit_jump_elapsed")?;
+        if !jump_elapsed_ms.is_finite() || jump_elapsed_ms < 0.0 {
+            return Err(PyValueError::new_err(
+                "Electro Spirit jump elapsed time is unsupported",
+            ));
+        }
+        let jump_target_id = match fields.get("_electro_spirit_jump_target_id") {
+            Some(Value::Null) => None,
+            Some(value) => Some(value.as_i64().ok_or_else(|| {
+                PyValueError::new_err("Electro Spirit jump target is not integer or null")
+            })?),
+            None => {
+                return Err(PyValueError::new_err(
+                    "Electro Spirit jump target is absent",
+                ));
+            }
+        };
+        if !fields.contains_key("_electro_spirit_jump_destination") {
+            return Err(PyValueError::new_err(
+                "Electro Spirit jump destination is absent",
+            ));
+        }
+        Ok(Self {
+            chain_range_units: logic_units(chain_range),
+            max_targets,
+            stun_duration_ms,
+            damage_decay,
+            jump_duration_ms,
+            jump_speed_units_per_tick,
+            projectile_speed_tiles_per_second,
+            chain_interval_seconds,
+            hits_air,
+            hits_ground,
+            jump_target_id,
+            jump_elapsed_ms,
+            jump_destination: optional_exact_tuple_position(
+                fields,
+                "_electro_spirit_jump_destination",
+            )?,
+            jump_origin: optional_exact_tuple_position(fields, "_electro_spirit_jump_origin")?,
+        })
+    }
+
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.chain_range_units == other.chain_range_units
+            && self.max_targets == other.max_targets
+            && self.stun_duration_ms == other.stun_duration_ms
+            && self.damage_decay.to_bits() == other.damage_decay.to_bits()
+            && self.jump_duration_ms == other.jump_duration_ms
+            && self.jump_speed_units_per_tick == other.jump_speed_units_per_tick
+            && self.projectile_speed_tiles_per_second.to_bits()
+                == other.projectile_speed_tiles_per_second.to_bits()
+            && self.chain_interval_seconds.to_bits() == other.chain_interval_seconds.to_bits()
+            && self.hits_air == other.hits_air
+            && self.hits_ground == other.hits_ground
+    }
+
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.publication_static_eq(other)
+            && self.jump_target_id == other.jump_target_id
+            && self.jump_elapsed_ms.to_bits() == other.jump_elapsed_ms.to_bits()
             && self.jump_destination == other.jump_destination
             && self.jump_origin == other.jump_origin
     }
@@ -3006,6 +3165,133 @@ impl ResidentRollingProjectileState {
 }
 
 #[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentChainLightningState {
+    source_entity_id: Option<i64>,
+    origin: (ExactScalar, ExactScalar),
+    remaining_bounces: i64,
+    chain_range: f64,
+    travel_speed: f64,
+    fixed_hop_duration: Option<f64>,
+    hop_time_remaining: f64,
+    stun_duration: f64,
+    visited_ids: Vec<i64>,
+    hits_air: bool,
+    hits_ground: bool,
+    current_target_id: Option<i64>,
+}
+
+impl ResidentChainLightningState {
+    fn from_fields(fields: &Map<String, Value>) -> PyResult<Self> {
+        let origin = optional_exact_position(fields, "origin")?
+            .ok_or_else(|| PyValueError::new_err("chain lightning origin is absent"))?;
+        let values = fields
+            .get("visited_ids")
+            .and_then(|value| value.get("$set"))
+            .and_then(|value| value.get("items"))
+            .and_then(Value::as_array)
+            .ok_or_else(|| PyValueError::new_err("chain lightning visited_ids is not a set"))?;
+        let mut visited_ids = values
+            .iter()
+            .map(|value| {
+                value.as_i64().ok_or_else(|| {
+                    PyValueError::new_err("chain lightning visited ID is not an integer")
+                })
+            })
+            .collect::<PyResult<Vec<_>>>()?;
+        visited_ids.sort_unstable();
+        if visited_ids.windows(2).any(|pair| pair[0] == pair[1]) {
+            return Err(PyValueError::new_err(
+                "chain lightning visited set contains duplicate IDs",
+            ));
+        }
+        let state = Self {
+            source_entity_id: None,
+            origin,
+            remaining_bounces: required_i64(fields, "remaining_bounces")?,
+            chain_range: normalized_f64(fields, "chain_range")?,
+            travel_speed: normalized_f64(fields, "travel_speed")?,
+            fixed_hop_duration: optional_normalized_f64(fields, "fixed_hop_duration")?,
+            hop_time_remaining: normalized_f64(fields, "hop_time_remaining")?,
+            stun_duration: normalized_f64(fields, "stun_duration")?,
+            visited_ids,
+            hits_air: required_bool(fields, "hits_air")?,
+            hits_ground: required_bool(fields, "hits_ground")?,
+            current_target_id: optional_entity_ref_id(fields, "current_target_id")?,
+        };
+        if state.remaining_bounces < 0
+            || !state.chain_range.is_finite()
+            || state.chain_range <= 0.0
+            || !state.travel_speed.is_finite()
+            || state.travel_speed <= 0.0
+            || !state.hop_time_remaining.is_finite()
+            || state.hop_time_remaining < 0.0
+            || !state.stun_duration.is_finite()
+            || state.stun_duration <= 0.0
+            || state
+                .fixed_hop_duration
+                .is_none_or(|duration| !duration.is_finite() || duration <= 0.0)
+            || !state.hits_air
+            || !state.hits_ground
+        {
+            return Err(PyValueError::new_err(
+                "chain lightning is outside the resident closure",
+            ));
+        }
+        Ok(state)
+    }
+
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.source_entity_id == other.source_entity_id
+            && self.chain_range.to_bits() == other.chain_range.to_bits()
+            && self.travel_speed.to_bits() == other.travel_speed.to_bits()
+            && publication_optional_f64_eq(self.fixed_hop_duration, other.fixed_hop_duration)
+            && self.stun_duration.to_bits() == other.stun_duration.to_bits()
+            && self.hits_air == other.hits_air
+            && self.hits_ground == other.hits_ground
+    }
+
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.publication_static_eq(other)
+            && self.origin == other.origin
+            && self.remaining_bounces == other.remaining_bounces
+            && self.hop_time_remaining.to_bits() == other.hop_time_remaining.to_bits()
+            && self.visited_ids == other.visited_ids
+            && self.current_target_id == other.current_target_id
+    }
+
+    fn diagnostic_value(&self, entity: &ResidentEntity) -> Value {
+        json!({
+            "chain_range": exact_f64_value(self.chain_range),
+            "current_target_id": self.current_target_id,
+            "damage": entity.damage.diagnostic_value(),
+            "encounter_index": entity.encounter_index,
+            "fixed_hop_duration": self.fixed_hop_duration.map(exact_f64_value),
+            "hitpoints": entity.hitpoints.diagnostic_value(),
+            "hits_air": self.hits_air,
+            "hits_ground": self.hits_ground,
+            "hop_time_remaining": exact_f64_value(self.hop_time_remaining),
+            "id": entity.id,
+            "is_alive": entity.is_alive,
+            "origin_x": self.origin.0.diagnostic_value(),
+            "origin_y": self.origin.1.diagnostic_value(),
+            "player_id": entity.player_id,
+            "position_x": entity.position_x.diagnostic_value(),
+            "position_y": entity.position_y.diagnostic_value(),
+            "remaining_bounces": self.remaining_bounces,
+            "stun_duration": exact_f64_value(self.stun_duration),
+            "travel_speed": exact_f64_value(self.travel_speed),
+            "visited_ids": self.visited_ids,
+        })
+    }
+}
+
+impl PublicationExactEq for ResidentChainLightningState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        ResidentChainLightningState::publication_exact_eq(self, other)
+    }
+}
+
+#[derive(Clone, IntoPyObject, PartialEq)]
 struct BuildingLifetimeState {
     lifetime_ms: Option<i64>,
     lifetime_elapsed: f64,
@@ -3314,6 +3600,7 @@ struct PointWeapon {
 
 enum CombatPayload {
     StatusNovaJump,
+    ElectroSpiritJump,
     DirectDamage {
         damage: f64,
         area: Option<DirectAreaWeapon>,
@@ -3672,6 +3959,7 @@ impl ResidentEntity {
             == self.shields.len()
                 + self.death_opcodes.len()
                 + usize::from(self.status_nova_jump.is_some())
+                + usize::from(self.electro_spirit_chain.is_some())
                 + usize::from(
                     self.locked_combat
                         .as_ref()
@@ -3690,7 +3978,7 @@ impl ResidentEntity {
     }
 
     fn blocks_effects_while_committed(&self) -> bool {
-        self.status_nova_jump.is_some()
+        (self.status_nova_jump.is_some() || self.electro_spirit_chain.is_some())
             && self
                 .movement
                 .as_ref()
@@ -3962,6 +4250,7 @@ impl ResidentEntity {
         let mut shields = Vec::new();
         let mut death_opcodes = Vec::new();
         let mut status_nova_jump = None;
+        let mut electro_spirit_chain = None;
         let mut damage_ramp = None;
         let mut hide_when_idle = None;
         let mut wall_breakers_demolition = None;
@@ -3992,6 +4281,18 @@ impl ResidentEntity {
                         ));
                     }
                     status_nova_jump = Some(ResidentStatusNovaJumpState::from_normalized(
+                        mechanic,
+                        fields,
+                        card_fields,
+                    )?);
+                }
+                "clasher.cards.electro_spirit.ElectroSpiritChain" => {
+                    if electro_spirit_chain.is_some() {
+                        return Err(PyValueError::new_err(
+                            "entity has multiple Electro Spirit chain mechanics",
+                        ));
+                    }
+                    electro_spirit_chain = Some(ResidentElectroSpiritChainState::from_normalized(
                         mechanic,
                         fields,
                         card_fields,
@@ -4119,6 +4420,11 @@ impl ResidentEntity {
         } else {
             None
         };
+        let chain_lightning = if object_type(value)? == "clasher.entities.ChainLightning" {
+            Some(ResidentChainLightningState::from_fields(fields)?)
+        } else {
+            None
+        };
         let area_effect = if object_type(value)? == "clasher.entities.AreaEffect" {
             Some(ResidentAreaEffectState::from_fields(fields)?)
         } else {
@@ -4142,6 +4448,7 @@ impl ResidentEntity {
         if shields.len()
             + death_opcodes.len()
             + usize::from(status_nova_jump.is_some())
+            + usize::from(electro_spirit_chain.is_some())
             + usize::from(
                 locked_combat
                     .as_ref()
@@ -4201,13 +4508,17 @@ impl ResidentEntity {
         }
         if normalized_optional_bool(card_fields, "kamikaze")
             && status_nova_jump.is_none()
+            && electro_spirit_chain.is_none()
             && locked_combat
                 .as_ref()
                 .is_none_or(|combat| combat.wall_breakers_demolition.is_none())
         {
             direct_combat_unsupported.push("kamikaze_payload".to_owned());
         }
-        if normalized_optional_bool(fields, "_force_melee_attack") && status_nova_jump.is_none() {
+        if normalized_optional_bool(fields, "_force_melee_attack")
+            && status_nova_jump.is_none()
+            && electro_spirit_chain.is_none()
+        {
             direct_combat_unsupported.push("forced_melee_override".to_owned());
         }
         let compiled_river_jump_state = movement.as_ref().is_some_and(|movement| {
@@ -4225,7 +4536,8 @@ impl ResidentEntity {
             ("is_charging", "active_charge"),
             ("has_charged", "completed_charge_state"),
         ] {
-            let compiled_special_state = (status_nova_jump.is_some()
+            let compiled_special_state = ((status_nova_jump.is_some()
+                || electro_spirit_chain.is_some())
                 && matches!(
                     field,
                     "_special_move_active" | "_special_move_consumed_tick"
@@ -4388,12 +4700,14 @@ impl ResidentEntity {
             building_footprint_size,
             point_projectile,
             rolling_projectile,
+            chain_lightning,
             area_effect,
             object_base_movement_noop,
             blocks_deployment,
             deployment_collision_radius,
             character_birth: None,
             status_nova_jump,
+            electro_spirit_chain,
         })
     }
 
@@ -4440,6 +4754,26 @@ impl ResidentEntity {
             && self.mechanics.is_empty()
             && self.object_base_movement_noop
             && self.area_effect.as_ref().is_some_and(|area| area.supported)
+    }
+
+    fn supports_chain_lightning_object(&self, next_entity_id: i64) -> bool {
+        self.entity_kind == 3
+            && self.python_type == "clasher.entities.ChainLightning"
+            && self.mechanics.is_empty()
+            && self.object_base_movement_noop
+            && self.area_effect.is_none()
+            && self.chain_lightning.as_ref().is_some_and(|state| {
+                state
+                    .source_entity_id
+                    .is_none_or(|id| (0..next_entity_id).contains(&id))
+                    && state
+                        .current_target_id
+                        .is_none_or(|id| (0..next_entity_id).contains(&id))
+                    && state
+                        .visited_ids
+                        .iter()
+                        .all(|id| (0..next_entity_id).contains(id))
+            })
     }
 
     fn advance_character_object_phase(&mut self, dt: f64) {
@@ -4642,6 +4976,63 @@ impl ResidentEntity {
                 exact_f64_value(state.jump_timer_ms),
             );
         }
+        if let Some(state) = self.electro_spirit_chain.as_ref() {
+            fields.insert(
+                "electro_chain_range_units".to_owned(),
+                json!(state.chain_range_units),
+            );
+            fields.insert("electro_max_targets".to_owned(), json!(state.max_targets));
+            fields.insert(
+                "electro_stun_duration_ms".to_owned(),
+                json!(state.stun_duration_ms),
+            );
+            fields.insert(
+                "electro_damage_decay".to_owned(),
+                exact_f64_value(state.damage_decay),
+            );
+            fields.insert(
+                "electro_jump_duration_ms".to_owned(),
+                json!(state.jump_duration_ms),
+            );
+            fields.insert(
+                "electro_jump_speed_units_per_tick".to_owned(),
+                json!(state.jump_speed_units_per_tick),
+            );
+            fields.insert(
+                "electro_projectile_speed_tiles_per_second".to_owned(),
+                exact_f64_value(state.projectile_speed_tiles_per_second),
+            );
+            fields.insert(
+                "electro_chain_interval_seconds".to_owned(),
+                exact_f64_value(state.chain_interval_seconds),
+            );
+            fields.insert("electro_hits_air".to_owned(), json!(state.hits_air));
+            fields.insert("electro_hits_ground".to_owned(), json!(state.hits_ground));
+            fields.insert(
+                "electro_jump_target_id".to_owned(),
+                json!(state.jump_target_id),
+            );
+            fields.insert(
+                "electro_jump_elapsed_ms".to_owned(),
+                exact_f64_value(state.jump_elapsed_ms),
+            );
+            fields.insert(
+                "electro_jump_destination".to_owned(),
+                state
+                    .jump_destination
+                    .as_ref()
+                    .map(|(x, y)| json!([x.diagnostic_value(), y.diagnostic_value()]))
+                    .unwrap_or(Value::Null),
+            );
+            fields.insert(
+                "electro_jump_origin".to_owned(),
+                state
+                    .jump_origin
+                    .as_ref()
+                    .map(|(x, y)| json!([x.diagnostic_value(), y.diagnostic_value()]))
+                    .unwrap_or(Value::Null),
+            );
+        }
         Some(value)
     }
 
@@ -4658,7 +5049,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 13;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 14;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -5699,7 +6090,16 @@ impl ResidentCardCatalog {
                         .locked_combat
                         .as_ref()
                         .is_some_and(|combat| combat.wall_breakers_demolition.is_some());
+                    let electro_chain_present = prototype.electro_spirit_chain.is_some();
                     let mechanic_family_supported = if prototype.status_nova_jump.is_some() {
+                        prototype.mechanics.len() == 1
+                            && !electro_chain_present
+                            && prototype.shields.is_empty()
+                            && prototype.death_opcodes.is_empty()
+                            && !damage_ramp_present
+                            && !hide_when_idle_present
+                            && !demolition_present
+                    } else if electro_chain_present {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
@@ -5778,6 +6178,17 @@ impl ResidentCardCatalog {
                                         && weapon.slow_multiplier.to_bits() == 1.0_f64.to_bits()
                                 })
                         });
+                    let electro_chain_fresh =
+                        prototype.electro_spirit_chain.as_ref().is_none_or(|chain| {
+                            chain.jump_target_id.is_none()
+                                && chain.jump_elapsed_ms.to_bits() == 0.0_f64.to_bits()
+                                && chain.jump_destination.is_none()
+                                && chain.jump_origin.is_none()
+                                && prototype.movement.as_ref().is_some_and(|movement| {
+                                    !movement.special_move_active
+                                        && !movement.special_move_consumed_tick
+                                })
+                        });
                     prototype.active
                         && prototype.is_alive
                         && prototype.card_name == expected_name
@@ -5786,6 +6197,7 @@ impl ResidentCardCatalog {
                         && damage_ramp_fresh
                         && hide_when_idle_fresh
                         && demolition_fresh
+                        && electro_chain_fresh
                         && prototype.shields.iter().all(|shield| {
                             shield.current == shield.maximum && shield.current.as_f64() > 0.0
                         })
@@ -7311,12 +7723,22 @@ impl ResidentEntity {
                 (Some(left), Some(right)) => left.publication_static_eq(right),
                 _ => false,
             }
+            && match (&self.chain_lightning, &other.chain_lightning) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
             && match (&self.area_effect, &other.area_effect) {
                 (None, None) => true,
                 (Some(left), Some(right)) => left.publication_static_eq(right),
                 _ => false,
             }
             && match (&self.status_nova_jump, &other.status_nova_jump) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
+            && match (&self.electro_spirit_chain, &other.electro_spirit_chain) {
                 (None, None) => true,
                 (Some(left), Some(right)) => left.publication_static_eq(right),
                 _ => false,
@@ -7352,6 +7774,11 @@ impl ResidentEntity {
                 ],
             )
             && match (&self.status_nova_jump, &other.status_nova_jump) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_exact_eq(right),
+                _ => false,
+            }
+            && match (&self.electro_spirit_chain, &other.electro_spirit_chain) {
                 (None, None) => true,
                 (Some(left), Some(right)) => left.publication_exact_eq(right),
                 _ => false,
@@ -7662,6 +8089,7 @@ struct PreparedEntityParts {
     spawn_angle_shift: f64,
     mechanics: Vec<String>,
     status_nova_jump: Option<ResidentStatusNovaJumpState>,
+    electro_spirit_chain: Option<ResidentElectroSpiritChainState>,
     shields: Vec<ShieldState>,
     shield_break_count: i64,
     death_opcodes: Vec<PreparedDeathOpcodeParts>,
@@ -7672,6 +8100,7 @@ struct PreparedEntityParts {
     building_impact_state: Option<BuildingImpactState>,
     point_projectile_state: Option<PointProjectileState>,
     rolling_projectile_state: Option<ResidentRollingProjectileState>,
+    chain_lightning_state: Option<ResidentChainLightningState>,
     area_effect_state: Option<ResidentAreaEffectState>,
     character_birth: Option<PreparedCharacterBirthParts>,
 }
@@ -7705,6 +8134,7 @@ impl From<&ResidentEntity> for PreparedEntityParts {
             spawn_angle_shift: entity.spawn_angle_shift,
             mechanics: entity.mechanics.clone(),
             status_nova_jump: entity.status_nova_jump.clone(),
+            electro_spirit_chain: entity.electro_spirit_chain.clone(),
             shields: entity.shields.clone(),
             shield_break_count: entity.shield_break_count,
             death_opcodes: entity
@@ -7719,6 +8149,7 @@ impl From<&ResidentEntity> for PreparedEntityParts {
             building_impact_state: entity.building_impact.clone(),
             point_projectile_state: entity.point_projectile.clone(),
             rolling_projectile_state: entity.rolling_projectile.clone(),
+            chain_lightning_state: entity.chain_lightning.clone(),
             area_effect_state: entity.area_effect.clone(),
             character_birth: entity
                 .character_birth
@@ -7748,6 +8179,7 @@ struct PreparedEntityBaseDelta {
     death_spawn_target_immunity_elapsed_ms: i64,
     pending_projectile_max_duration_ms: i64,
     status_nova_jump: Option<ResidentStatusNovaJumpState>,
+    electro_spirit_chain: Option<ResidentElectroSpiritChainState>,
 }
 
 impl From<&ResidentEntity> for PreparedEntityBaseDelta {
@@ -7771,6 +8203,7 @@ impl From<&ResidentEntity> for PreparedEntityBaseDelta {
             death_spawn_target_immunity_elapsed_ms: entity.death_spawn_target_immunity_elapsed_ms,
             pending_projectile_max_duration_ms: entity.pending_projectile_max_duration_ms,
             status_nova_jump: entity.status_nova_jump.clone(),
+            electro_spirit_chain: entity.electro_spirit_chain.clone(),
         }
     }
 }
@@ -7797,6 +8230,8 @@ struct PreparedEntityDeltaParts {
     point_projectile_present: bool,
     rolling_projectile_state: Option<ResidentRollingProjectileState>,
     rolling_projectile_present: bool,
+    chain_lightning_state: Option<ResidentChainLightningState>,
+    chain_lightning_present: bool,
     area_effect_state: Option<ResidentAreaEffectState>,
     area_effect_present: bool,
     full: Option<PreparedEntityParts>,
@@ -7954,6 +8389,11 @@ fn prepared_entity_delta(
             .flatten(),
         rolling_projectile_present: dirty_mask & ENTITY_DELTA_ROLLING != 0
             && entity.rolling_projectile.is_some(),
+        chain_lightning_state: (dirty_mask & ENTITY_DELTA_CHAIN_LIGHTNING != 0)
+            .then(|| entity.chain_lightning.clone())
+            .flatten(),
+        chain_lightning_present: dirty_mask & ENTITY_DELTA_CHAIN_LIGHTNING != 0
+            && entity.chain_lightning.is_some(),
         area_effect_state: (dirty_mask & ENTITY_DELTA_AREA != 0)
             .then(|| entity.area_effect.clone())
             .flatten(),
@@ -8110,6 +8550,12 @@ impl PreparedPublication {
                 &candidate_entity.rolling_projectile,
             ) {
                 entity_mask |= ENTITY_DELTA_ROLLING;
+            }
+            if !publication_option_exact_eq(
+                &prior_entity.chain_lightning,
+                &candidate_entity.chain_lightning,
+            ) {
+                entity_mask |= ENTITY_DELTA_CHAIN_LIGHTNING;
             }
             if !publication_option_exact_eq(
                 &prior_entity.area_effect,
@@ -8841,6 +9287,14 @@ impl ResidentBattle {
                         .unwrap_or(Value::Null),
                 );
                 fields.insert(
+                    "chain_lightning_state".to_owned(),
+                    entity
+                        .chain_lightning
+                        .as_ref()
+                        .map(|state| state.diagnostic_value(entity))
+                        .unwrap_or(Value::Null),
+                );
+                fields.insert(
                     "area_effect_state".to_owned(),
                     entity
                         .area_effect
@@ -9159,6 +9613,7 @@ impl ResidentBattle {
                 !entity.active
                     || (entity.entity_kind == 2 && entity.object_base_movement_noop)
                     || entity.supports_area_effect_object()
+                    || entity.supports_chain_lightning_object(self.next_entity_id)
                     || entity.supports_character_object_phase()
             })
     }
@@ -9224,6 +9679,9 @@ impl ResidentBattle {
                         self.advance_spawn_projectile(entity_index)
                     }
                     2 => self.advance_point_projectile(entity_index),
+                    3 if self.entities[entity_index].chain_lightning.is_some() => {
+                        self.advance_chain_lightning(entity_index)
+                    }
                     3 => self.advance_resident_area_effect(entity_index),
                     _ => unreachable!("resident object preflight validates object kinds"),
                 }
@@ -9526,6 +9984,7 @@ impl ResidentBattle {
 
     fn supports_flying_movement_phase(&self) -> bool {
         self.supports_restricted_movement_phase(false)
+            && self.restricted_movement_allocation_headroom_supported()
     }
 
     fn advance_flying_movement_phase(&mut self) -> PyResult<()> {
@@ -9549,6 +10008,7 @@ impl ResidentBattle {
 
     fn supports_ground_movement_phase(&self) -> bool {
         self.supports_restricted_movement_phase(true)
+            && self.restricted_movement_allocation_headroom_supported()
     }
 
     fn advance_ground_movement_phase(&mut self) -> PyResult<()> {
@@ -9590,7 +10050,10 @@ impl ResidentBattle {
                             .is_some_and(|projectile| projectile.unsupported.is_empty())
                             || entity.rolling_projectile.is_some()
                     }
-                    3 => entity.supports_area_effect_object(),
+                    3 => {
+                        entity.supports_area_effect_object()
+                            || entity.supports_chain_lightning_object(self.next_entity_id)
+                    }
                     _ => false,
                 }
         })
@@ -9805,6 +10268,7 @@ impl ResidentBattle {
                                     || movement.special_move_consumed_tick)
                                     && !river_jump_active
                                     && entity.status_nova_jump.is_none()
+                                    && entity.electro_spirit_chain.is_none()
                                     && !entity.locked_combat.as_ref().is_some_and(|combat| {
                                         combat.hide_when_idle.is_some()
                                             && combat.hidden_building
@@ -9821,7 +10285,10 @@ impl ResidentBattle {
                             .is_some_and(|projectile| projectile.unsupported.is_empty())
                             || entity.rolling_projectile.is_some()
                     }
-                    3 => entity.supports_area_effect_object(),
+                    3 => {
+                        entity.supports_area_effect_object()
+                            || entity.supports_chain_lightning_object(self.next_entity_id)
+                    }
                     _ => false,
                 }
         });
@@ -9855,10 +10322,19 @@ impl ResidentBattle {
                 })
             });
         let possible_projectile_launches = self.possible_point_projectile_launches_this_phase();
+        let possible_chain_launches = self.entities.iter().try_fold(0_i64, |count, entity| {
+            count.checked_add(i64::from(
+                entity.active
+                    && entity.is_alive
+                    && entity.electro_spirit_chain.is_some()
+                    && entity.deploy_delay_remaining <= 0.0,
+            ))
+        });
         if possible_death_births
             .and_then(|births| {
                 possible_projectile_launches.and_then(|launches| births.checked_add(launches))
             })
+            .and_then(|count| possible_chain_launches.and_then(|value| count.checked_add(value)))
             .and_then(|count| self.next_entity_id.checked_add(count))
             .is_none_or(|next_entity_id| !(0..i64::MAX).contains(&next_entity_id))
         {
@@ -9989,17 +10465,16 @@ impl ResidentBattle {
                     .special_move_consumed_tick = false;
                 continue;
             }
-            if self.entities[actor_index]
-                .status_nova_jump
-                .as_ref()
-                .is_some_and(|_| {
+            if (self.entities[actor_index].status_nova_jump.is_some()
+                || self.entities[actor_index].electro_spirit_chain.is_some())
+                && {
                     self.entities[actor_index]
                         .movement
                         .as_ref()
                         .is_some_and(|movement| {
                             movement.special_move_active || movement.special_move_consumed_tick
                         })
-                })
+                }
             {
                 self.entities[actor_index]
                     .movement
@@ -10047,6 +10522,7 @@ impl ResidentBattle {
             let payload = {
                 let actor = &mut self.entities[actor_index];
                 let has_status_nova_jump = actor.status_nova_jump.is_some();
+                let has_electro_spirit_chain = actor.electro_spirit_chain.is_some();
                 actor.target_id = target_id;
                 let state = actor
                     .locked_combat
@@ -10105,6 +10581,8 @@ impl ResidentBattle {
                     if target_id.is_some() && target_in_range && state.attack_cooldown <= 0.0 {
                         if has_status_nova_jump {
                             Some(CombatPayload::StatusNovaJump)
+                        } else if has_electro_spirit_chain {
+                            Some(CombatPayload::ElectroSpiritJump)
                         } else {
                             if let Some(ramp) = state.damage_ramp.as_mut() {
                                 if ramp.current_target_id != target_id {
@@ -10146,8 +10624,11 @@ impl ResidentBattle {
                     .sparse_attributes
                     .insert("initial_position");
             }
-            let status_nova_payload = matches!(&payload, Some(CombatPayload::StatusNovaJump));
-            if (payload.is_some() && !status_nova_payload)
+            let committed_jump_payload = matches!(
+                &payload,
+                Some(CombatPayload::StatusNovaJump | CombatPayload::ElectroSpiritJump)
+            );
+            if (payload.is_some() && !committed_jump_payload)
                 || (previous_combat_target_id.is_some() && previous_combat_target_id != target_id)
                 || self.entities[actor_index]
                     .locked_combat
@@ -10162,6 +10643,9 @@ impl ResidentBattle {
                 match payload {
                     CombatPayload::StatusNovaJump => {
                         self.start_status_nova_jump(actor_index, target_index);
+                    }
+                    CombatPayload::ElectroSpiritJump => {
+                        self.start_electro_spirit_jump(actor_index, target_index);
                     }
                     CombatPayload::DirectDamage { damage, area } => {
                         self.apply_direct_combat_damage(
@@ -10228,6 +10712,39 @@ impl ResidentBattle {
             .expect("status-nova jump requires movement state")
             .special_move_active = true;
         actor.sparse_attributes.insert("_special_move_active");
+        actor
+            .sparse_attributes
+            .insert("_special_move_consumed_tick");
+    }
+
+    fn start_electro_spirit_jump(&mut self, actor_index: usize, target_index: usize) {
+        let origin = (
+            self.entities[actor_index].position_x.clone(),
+            self.entities[actor_index].position_y.clone(),
+        );
+        let destination = (
+            self.entities[target_index].position_x.clone(),
+            self.entities[target_index].position_y.clone(),
+        );
+        let target_id = self.entities[target_index].id;
+        let actor = &mut self.entities[actor_index];
+        let chain = actor
+            .electro_spirit_chain
+            .as_mut()
+            .expect("Electro Spirit combat payload requires compiled state");
+        chain.jump_origin = Some(origin);
+        chain.jump_destination = Some(destination);
+        chain.jump_target_id = Some(target_id);
+        chain.jump_elapsed_ms = 0.0;
+        actor
+            .movement
+            .as_mut()
+            .expect("Electro Spirit jump requires movement state")
+            .special_move_active = true;
+        actor.sparse_attributes.insert("_special_move_active");
+        actor
+            .sparse_attributes
+            .insert("_electro_spirit_jump_origin");
         actor
             .sparse_attributes
             .insert("_special_move_consumed_tick");
@@ -10364,7 +10881,9 @@ impl ResidentBattle {
                 return true;
             }
             if entity.entity_kind != 2 {
-                return matches!(entity.entity_kind, 0 | 1) || entity.supports_area_effect_object();
+                return matches!(entity.entity_kind, 0 | 1)
+                    || entity.supports_area_effect_object()
+                    || entity.supports_chain_lightning_object(self.next_entity_id);
             }
             let Some(projectile) = entity.point_projectile.as_ref() else {
                 return entity.rolling_projectile.is_some();
@@ -11085,6 +11604,29 @@ impl ResidentBattle {
         Ok(sha256_hex(&self.rolling_projectile_state_bytes()?))
     }
 
+    fn chain_lightning_state_bytes(&self) -> PyResult<Vec<u8>> {
+        let values = self
+            .entities
+            .iter()
+            .filter(|entity| entity.active)
+            .filter_map(|entity| {
+                entity
+                    .chain_lightning
+                    .as_ref()
+                    .map(|chain| chain.diagnostic_value(entity))
+            })
+            .collect::<Vec<_>>();
+        serde_json::to_vec(&values).map_err(|error| {
+            PyRuntimeError::new_err(format!(
+                "failed to serialize resident chain-lightning state: {error}"
+            ))
+        })
+    }
+
+    fn chain_lightning_sha256(&self) -> PyResult<String> {
+        Ok(sha256_hex(&self.chain_lightning_state_bytes()?))
+    }
+
     fn supports_cleanup_phase(&self) -> bool {
         self.entities.iter().all(|entity| {
             !entity.active
@@ -11096,7 +11638,10 @@ impl ResidentBattle {
                         2 => {
                             entity.point_projectile.is_some() || entity.rolling_projectile.is_some()
                         }
-                        3 => entity.supports_area_effect_object(),
+                        3 => {
+                            entity.supports_area_effect_object()
+                                || entity.supports_chain_lightning_object(self.next_entity_id)
+                        }
                         _ => false,
                     })
         })
@@ -12291,6 +12836,8 @@ impl ResidentBattle {
             death_spawn_payload_present: false,
             mechanics: Vec::new(),
             status_nova_jump: None,
+            electro_spirit_chain: None,
+            chain_lightning: None,
             shields: Vec::new(),
             shield_break_count: 0,
             death_opcodes: Vec::new(),
@@ -12538,6 +13085,8 @@ impl ResidentBattle {
             death_spawn_payload_present: false,
             mechanics: Vec::new(),
             status_nova_jump: None,
+            electro_spirit_chain: None,
+            chain_lightning: None,
             shields: Vec::new(),
             shield_break_count: 0,
             death_opcodes: Vec::new(),
@@ -12633,6 +13182,8 @@ impl ResidentBattle {
                     death_spawn_payload_present: false,
                     mechanics: Vec::new(),
                     status_nova_jump: None,
+                    electro_spirit_chain: None,
+                    chain_lightning: None,
                     shields: Vec::new(),
                     shield_break_count: 0,
                     death_opcodes: Vec::new(),
@@ -13589,6 +14140,14 @@ impl ResidentBattle {
                 }
             });
         let possible_direct_projectiles = self.possible_point_projectile_launches_this_phase();
+        let possible_chain_launches = self.entities.iter().try_fold(0_i64, |count, entity| {
+            count.checked_add(i64::from(
+                entity.active
+                    && entity.is_alive
+                    && entity.electro_spirit_chain.is_some()
+                    && entity.deploy_delay_remaining <= 0.0,
+            ))
+        });
         let possible_death_births = self
             .entities
             .iter()
@@ -13624,6 +14183,7 @@ impl ResidentBattle {
             });
         due_spell_births
             .and_then(|due| possible_direct_projectiles.and_then(|value| due.checked_add(value)))
+            .and_then(|count| possible_chain_launches.and_then(|value| count.checked_add(value)))
             .and_then(|count| possible_death_births.and_then(|value| count.checked_add(value)))
             .and_then(|count| possible_rolling_children.and_then(|value| count.checked_add(value)))
             .and_then(|count| {
@@ -13811,6 +14371,22 @@ impl ResidentBattle {
         }
     }
 
+    fn restricted_movement_allocation_headroom_supported(&self) -> bool {
+        let possible_chain_births = self.entities.iter().try_fold(0_i64, |count, entity| {
+            count.checked_add(i64::from(
+                entity.active
+                    && entity.is_alive
+                    && entity
+                        .electro_spirit_chain
+                        .as_ref()
+                        .is_some_and(|state| state.jump_destination.is_some()),
+            ))
+        });
+        possible_chain_births
+            .and_then(|births| self.next_entity_id.checked_add(births))
+            .is_some_and(|next_entity_id| (0..i64::MAX).contains(&next_entity_id))
+    }
+
     fn supports_restricted_movement_phase(&self, allow_ground: bool) -> bool {
         let needs_live_projectile_reservations = self.entities.iter().any(|entity| {
             entity.active
@@ -13867,8 +14443,28 @@ impl ResidentBattle {
                         && (!state.detonated || !entity.is_alive)
                 }
             };
+            let electro_jump_active = entity.electro_spirit_chain.as_ref().is_some_and(|state| {
+                state.jump_target_id.is_some() && state.jump_destination.is_some()
+            });
+            let electro_jump_supported = match entity.electro_spirit_chain.as_ref() {
+                None => true,
+                Some(state) if electro_jump_active => {
+                    state.jump_origin.is_some()
+                        && state.jump_elapsed_ms.is_finite()
+                        && state.jump_elapsed_ms >= 0.0
+                        && movement.special_move_active
+                        && !movement.special_move_consumed_tick
+                        && !movement.river_jump_active
+                        && movement.knockback_target.is_none()
+                        && movement.death_spawn_travel_ticks == 0
+                        && !movement.forced_movement_active
+                }
+                Some(state) => state.jump_destination.is_none() && !movement.special_move_active,
+            };
             let river_state_supported = if status_nova_jump_active {
                 status_nova_jump_supported
+            } else if electro_jump_active {
+                electro_jump_supported
             } else if movement.river_jump_active {
                 allow_ground
                     && self.arena_width_tiles == 18
@@ -13911,6 +14507,7 @@ impl ResidentBattle {
                 && movement.route_cache_supported
                 && river_state_supported
                 && status_nova_jump_supported
+                && electro_jump_supported
                 && movement.vector_count >= 0
                 && movement.unit_mass.is_finite()
                 && movement.unit_mass > 0.0
@@ -14007,7 +14604,11 @@ impl ResidentBattle {
                 let committed_status_jump = self.entities[entity_index]
                     .status_nova_jump
                     .as_ref()
-                    .is_some_and(|state| state.jump_target_id.is_some());
+                    .is_some_and(|state| state.jump_target_id.is_some())
+                    || self.entities[entity_index]
+                        .electro_spirit_chain
+                        .as_ref()
+                        .is_some_and(|state| state.jump_destination.is_some());
                 let skip_final_knockback_collision = self.entities[entity_index]
                     .movement
                     .as_ref()
@@ -14492,6 +15093,7 @@ impl ResidentBattle {
             knockback_active,
             river_jump_active,
             status_nova_jump_active,
+            electro_jump_active,
             special_move_consumed_tick,
         ) = {
             let movement = self.entities[entity_index]
@@ -14506,6 +15108,10 @@ impl ResidentBattle {
                     .status_nova_jump
                     .as_ref()
                     .is_some_and(|state| state.jump_target_id.is_some()),
+                self.entities[entity_index]
+                    .electro_spirit_chain
+                    .as_ref()
+                    .is_some_and(|state| state.jump_destination.is_some()),
                 movement.special_move_consumed_tick,
             )
         };
@@ -14541,6 +15147,15 @@ impl ResidentBattle {
                 .expect("resident troop requires movement state")
                 .native_natural_movement_active = false;
             self.update_resident_status_nova_jump(entity_index);
+            return;
+        }
+        if electro_jump_active {
+            self.entities[entity_index]
+                .movement
+                .as_mut()
+                .expect("resident troop requires movement state")
+                .native_natural_movement_active = false;
+            self.update_resident_electro_spirit_jump(entity_index);
             return;
         }
         if special_move_consumed_tick {
@@ -14677,6 +15292,416 @@ impl ResidentBattle {
                 .detonated = true;
             let remaining_hp = self.entities[entity_index].hitpoints.as_f64();
             self.apply_resident_damage(entity_index, remaining_hp);
+        }
+    }
+
+    fn update_resident_electro_spirit_jump(&mut self, entity_index: usize) {
+        let (target_id, mut destination, speed_units) = {
+            let state = self.entities[entity_index]
+                .electro_spirit_chain
+                .as_ref()
+                .expect("committed Electro Spirit jump requires state");
+            (
+                state.jump_target_id,
+                state
+                    .jump_destination
+                    .clone()
+                    .expect("committed Electro Spirit jump requires destination"),
+                state.jump_speed_units_per_tick,
+            )
+        };
+        let target_index = target_id.and_then(|id| {
+            self.entities
+                .iter()
+                .position(|candidate| candidate.id == id && candidate.active)
+        });
+        if let Some(target_index) = target_index {
+            destination = (
+                self.entities[target_index].position_x.clone(),
+                self.entities[target_index].position_y.clone(),
+            );
+            self.entities[entity_index]
+                .electro_spirit_chain
+                .as_mut()
+                .expect("committed Electro Spirit jump requires state")
+                .jump_destination = Some(destination.clone());
+        }
+        let current_x_units = logic_units(self.entities[entity_index].position_x.as_f64());
+        let current_y_units = logic_units(self.entities[entity_index].position_y.as_f64());
+        let destination_x_units = logic_units(destination.0.as_f64());
+        let destination_y_units = logic_units(destination.1.as_f64());
+        let dx = destination_x_units - current_x_units;
+        let dy = destination_y_units - current_y_units;
+        let remaining = integer_sqrt(
+            (i128::from(dx) * i128::from(dx) + i128::from(dy) * i128::from(dy)) as u128,
+        );
+        let travel = Self::speed_work_for_duration(speed_units, self.dt);
+        let (move_x, move_y) = vector_towards_logic_units(dx, dy, travel);
+        self.entities[entity_index]
+            .position_x
+            .set_f64((current_x_units + move_x) as f64 / 1000.0);
+        self.entities[entity_index]
+            .position_y
+            .set_f64((current_y_units + move_y) as f64 / 1000.0);
+        self.entities[entity_index]
+            .electro_spirit_chain
+            .as_mut()
+            .expect("committed Electro Spirit jump requires state")
+            .jump_elapsed_ms += self.dt.max(0.0) * 1000.0;
+        if remaining > travel {
+            return;
+        }
+        {
+            let entity = &mut self.entities[entity_index];
+            entity
+                .electro_spirit_chain
+                .as_mut()
+                .expect("committed Electro Spirit jump requires state")
+                .jump_destination = None;
+            let movement = entity
+                .movement
+                .as_mut()
+                .expect("committed Electro Spirit jump requires movement");
+            movement.special_move_active = false;
+            movement.special_move_consumed_tick = true;
+        }
+        if let Some(target_index) = target_index.filter(|index| self.entities[*index].is_alive) {
+            let can_receive_primary = !self.entities[target_index].blocks_effects_while_committed()
+                && !self.entities[target_index].hide_when_idle_blocks_effects(false);
+            if can_receive_primary {
+                let damage = self.entities[entity_index].damage.as_f64();
+                self.apply_resident_damage(target_index, damage);
+            }
+            if self.entities[target_index].is_alive
+                && !self.entities[target_index].blocks_effects_while_committed()
+                && !self.entities[target_index].hide_when_idle_blocks_effects(false)
+            {
+                let stun = self.entities[entity_index]
+                    .electro_spirit_chain
+                    .as_ref()
+                    .expect("Electro Spirit state retained")
+                    .stun_duration_ms as f64
+                    / 1000.0;
+                self.entities[target_index].apply_projectile_status(stun, 0.0, 1.0);
+            }
+            self.spawn_resident_chain_lightning(entity_index, target_index);
+        }
+        let remaining_hp = self.entities[entity_index].hitpoints.as_f64();
+        self.apply_resident_damage(entity_index, remaining_hp);
+    }
+
+    fn spawn_resident_chain_lightning(&mut self, source_index: usize, target_index: usize) {
+        let source = self.entities[source_index]
+            .electro_spirit_chain
+            .as_ref()
+            .expect("Electro Spirit landing requires compiled state")
+            .clone();
+        let source_id = self.entities[source_index].id;
+        let target_id = self.entities[target_index].id;
+        let position_x = self.entities[target_index].position_x.clone();
+        let position_y = self.entities[target_index].position_y.clone();
+        let id = self.next_entity_id;
+        self.next_entity_id += 1;
+        self.entities.push(ResidentEntity {
+            sparse_attributes: constructed_entity_sparse_presence(false),
+            active: true,
+            encounter_index: self.entities.iter().filter(|entity| entity.active).count(),
+            id,
+            player_id: self.entities[source_index].player_id,
+            entity_kind: 3,
+            python_type: "clasher.entities.ChainLightning".to_owned(),
+            card_name: self.entities[source_index].card_name.clone(),
+            position_x: position_x.clone(),
+            position_y: position_y.clone(),
+            hitpoints: ExactScalar::Int(1),
+            max_hitpoints: ExactScalar::Int(1),
+            damage: self.entities[source_index].damage.clone(),
+            is_alive: true,
+            target_id: None,
+            deploy_delay_remaining: 0.0,
+            placement_delay_total: 0.0,
+            placement_pending: false,
+            spawn_hook_pending: false,
+            spawn_hook_fired: false,
+            freeze_expiry_time: 0.0,
+            death_spawn_target_immunity_elapsed_ms: -1,
+            pending_projectile_max_duration_ms: 0,
+            spawn_angle_shift: 0.0,
+            reward_traits: ResidentRewardTraits {
+                mana_cost: 0.0,
+                summon_count: 0,
+                summon_character_second_count: 0,
+                hit_speed_ms: 0.0,
+            },
+            death_spawn_payload_present: false,
+            mechanics: Vec::new(),
+            status_nova_jump: None,
+            electro_spirit_chain: None,
+            shields: Vec::new(),
+            shield_break_count: 0,
+            death_opcodes: Vec::new(),
+            modifier_state: None,
+            movement: None,
+            modifier_supported: true,
+            direct_combat_unsupported: vec!["non_character_entity".to_owned()],
+            locked_combat: None,
+            building_lifetime: None,
+            building_impact: None,
+            building_footprint_size: None,
+            point_projectile: None,
+            rolling_projectile: None,
+            chain_lightning: Some(ResidentChainLightningState {
+                source_entity_id: Some(source_id),
+                origin: (position_x, position_y),
+                remaining_bounces: source.max_targets - 1,
+                chain_range: source.chain_range_units as f64 / 1000.0,
+                travel_speed: source.projectile_speed_tiles_per_second,
+                fixed_hop_duration: Some(source.chain_interval_seconds),
+                hop_time_remaining: 0.0,
+                stun_duration: source.stun_duration_ms as f64 / 1000.0,
+                visited_ids: vec![target_id],
+                hits_air: true,
+                hits_ground: true,
+                current_target_id: None,
+            }),
+            area_effect: None,
+            object_base_movement_noop: true,
+            blocks_deployment: false,
+            deployment_collision_radius: 0.5,
+            character_birth: None,
+        });
+    }
+
+    fn chain_lightning_target_valid(&self, chain_index: usize, target_index: usize) -> bool {
+        let chain = &self.entities[chain_index];
+        let state = chain
+            .chain_lightning
+            .as_ref()
+            .expect("chain object requires state");
+        let target = &self.entities[target_index];
+        if chain_index == target_index
+            || !target.active
+            || !target.is_alive
+            || target.player_id == chain.player_id
+            || !matches!(target.entity_kind, 0 | 1)
+            || target.death_spawn_target_immunity_elapsed_ms >= 0
+            || target.blocks_effects_while_committed()
+            || target.hide_when_idle_blocks_effects(false)
+            || state.visited_ids.binary_search(&target.id).is_ok()
+        {
+            return false;
+        }
+        let Some((target_is_air, _, _, _)) = target.projectile_target_traits() else {
+            return false;
+        };
+        if target_is_air {
+            state.hits_air
+        } else {
+            state.hits_ground
+        }
+    }
+
+    fn chain_lightning_distance(&self, chain_index: usize, target_index: usize) -> f64 {
+        let state = self.entities[chain_index]
+            .chain_lightning
+            .as_ref()
+            .expect("chain object requires state");
+        let target = &self.entities[target_index];
+        let dx = target.position_x.as_f64() - state.origin.0.as_f64();
+        let dy = target.position_y.as_f64() - state.origin.1.as_f64();
+        let discount = target.locked_combat.as_ref().map_or(0, |combat| {
+            combat.native_target_distance_discount_sq_units.max(0)
+        }) as f64
+            / 1_000_000.0;
+        (dx * dx + dy * dy - discount).max(0.0).sqrt()
+    }
+
+    fn select_chain_lightning_target(&self, chain_index: usize) -> Option<usize> {
+        let state = self.entities[chain_index]
+            .chain_lightning
+            .as_ref()
+            .expect("chain object requires state");
+        let mut candidates = self
+            .entities
+            .iter()
+            .enumerate()
+            .filter(|(index, _)| self.chain_lightning_target_valid(chain_index, *index))
+            .map(|(index, _)| (index, self.chain_lightning_distance(chain_index, index)))
+            .filter(|(_, distance)| *distance <= state.chain_range + 1e-9)
+            .collect::<Vec<_>>();
+        let minimum = candidates
+            .iter()
+            .map(|(_, distance)| *distance)
+            .reduce(f64::min)?;
+        candidates.retain(|(_, distance)| *distance <= minimum + 1e-6);
+        let direction = if self.entities[chain_index].player_id == 0 {
+            1.0
+        } else {
+            -1.0
+        };
+        candidates
+            .into_iter()
+            .min_by(|(left, _), (right, _)| {
+                let left_entity = &self.entities[*left];
+                let right_entity = &self.entities[*right];
+                (
+                    direction * (left_entity.position_x.as_f64() - 9.0),
+                    direction * (left_entity.position_y.as_f64() - 16.0),
+                    left_entity.id,
+                )
+                    .partial_cmp(&(
+                        direction * (right_entity.position_x.as_f64() - 9.0),
+                        direction * (right_entity.position_y.as_f64() - 16.0),
+                        right_entity.id,
+                    ))
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
+            .map(|(index, _)| index)
+    }
+
+    fn advance_chain_lightning(&mut self, chain_index: usize) {
+        let mut remaining_time = self.dt.max(0.0);
+        while self.entities[chain_index]
+            .chain_lightning
+            .as_ref()
+            .is_some_and(|state| state.remaining_bounces > 0)
+        {
+            let target_index = if let Some(target_id) = self.entities[chain_index]
+                .chain_lightning
+                .as_ref()
+                .and_then(|state| state.current_target_id)
+            {
+                self.entities
+                    .iter()
+                    .position(|entity| entity.id == target_id && entity.active)
+            } else {
+                let selected = self.select_chain_lightning_target(chain_index);
+                if let Some(target_index) = selected {
+                    let target_id = self.entities[target_index].id;
+                    let state = self.entities[chain_index]
+                        .chain_lightning
+                        .as_mut()
+                        .expect("chain object requires state");
+                    state.current_target_id = Some(target_id);
+                    state.hop_time_remaining = state.fixed_hop_duration.unwrap_or(0.0).max(0.0);
+                }
+                selected
+            };
+            let Some(target_index) = target_index else {
+                self.entities[chain_index].is_alive = false;
+                return;
+            };
+            if !self.chain_lightning_target_valid(chain_index, target_index) {
+                self.entities[chain_index].is_alive = false;
+                return;
+            }
+            let target_x = self.entities[target_index].position_x.clone();
+            let target_y = self.entities[target_index].position_y.clone();
+            let current_x_units = logic_units(self.entities[chain_index].position_x.as_f64());
+            let current_y_units = logic_units(self.entities[chain_index].position_y.as_f64());
+            let dx = logic_units(target_x.as_f64()) - current_x_units;
+            let dy = logic_units(target_y.as_f64()) - current_y_units;
+            let time_to_impact = self.entities[chain_index]
+                .chain_lightning
+                .as_ref()
+                .expect("chain object requires state")
+                .hop_time_remaining;
+            if remaining_time + 1e-12 < time_to_impact {
+                let duration_units = (time_to_impact * 1_000_000_000.0)
+                    .round_ties_even()
+                    .max(1.0) as i64;
+                let consumed_units = (remaining_time * 1_000_000_000.0)
+                    .round_ties_even()
+                    .clamp(0.0, duration_units as f64) as i64;
+                let move_x =
+                    truncating_div(i128::from(dx) * i128::from(consumed_units), duration_units);
+                let move_y =
+                    truncating_div(i128::from(dy) * i128::from(consumed_units), duration_units);
+                self.entities[chain_index]
+                    .position_x
+                    .set_f64((current_x_units + move_x) as f64 / 1000.0);
+                self.entities[chain_index]
+                    .position_y
+                    .set_f64((current_y_units + move_y) as f64 / 1000.0);
+                self.entities[chain_index]
+                    .chain_lightning
+                    .as_mut()
+                    .expect("chain object requires state")
+                    .hop_time_remaining = (time_to_impact - remaining_time).max(0.0);
+                return;
+            }
+            self.entities[chain_index].position_x = target_x.clone();
+            self.entities[chain_index].position_y = target_y.clone();
+            remaining_time = (remaining_time - time_to_impact).max(0.0);
+            let target_id = self.entities[target_index].id;
+            {
+                let state = self.entities[chain_index]
+                    .chain_lightning
+                    .as_mut()
+                    .expect("chain object requires state");
+                state.hop_time_remaining = 0.0;
+                if let Err(index) = state.visited_ids.binary_search(&target_id) {
+                    state.visited_ids.insert(index, target_id);
+                }
+            }
+            if self.chain_lightning_target_valid_after_visit(chain_index, target_index) {
+                let damage = self.entities[chain_index].damage.as_f64();
+                let stun = self.entities[chain_index]
+                    .chain_lightning
+                    .as_ref()
+                    .expect("chain object requires state")
+                    .stun_duration;
+                self.apply_resident_damage(target_index, damage);
+                self.entities[target_index].apply_projectile_status(stun, 0.0, 1.0);
+            }
+            let state = self.entities[chain_index]
+                .chain_lightning
+                .as_mut()
+                .expect("chain object requires state");
+            state.origin = (target_x, target_y);
+            state.remaining_bounces -= 1;
+            state.current_target_id = None;
+            if remaining_time <= 0.0 {
+                break;
+            }
+        }
+        if self.entities[chain_index]
+            .chain_lightning
+            .as_ref()
+            .is_some_and(|state| state.remaining_bounces <= 0)
+        {
+            self.entities[chain_index].is_alive = false;
+        }
+    }
+
+    fn chain_lightning_target_valid_after_visit(
+        &self,
+        chain_index: usize,
+        target_index: usize,
+    ) -> bool {
+        let chain = &self.entities[chain_index];
+        let target = &self.entities[target_index];
+        if !target.active
+            || !target.is_alive
+            || target.player_id == chain.player_id
+            || !matches!(target.entity_kind, 0 | 1)
+            || target.death_spawn_target_immunity_elapsed_ms >= 0
+            || target.blocks_effects_while_committed()
+            || target.hide_when_idle_blocks_effects(false)
+        {
+            return false;
+        }
+        let state = chain
+            .chain_lightning
+            .as_ref()
+            .expect("chain object requires state");
+        let Some((is_air, _, _, _)) = target.projectile_target_traits() else {
+            return false;
+        };
+        if is_air {
+            state.hits_air
+        } else {
+            state.hits_ground
         }
     }
 
@@ -16053,6 +17078,8 @@ impl ResidentBattle {
             death_spawn_payload_present: false,
             mechanics: Vec::new(),
             status_nova_jump: None,
+            electro_spirit_chain: None,
+            chain_lightning: None,
             shields: Vec::new(),
             shield_break_count: 0,
             death_opcodes: Vec::new(),
@@ -16495,6 +17522,8 @@ impl ResidentBattle {
             death_spawn_payload_present: false,
             mechanics: Vec::new(),
             status_nova_jump: None,
+            electro_spirit_chain: None,
+            chain_lightning: None,
             shields: Vec::new(),
             shield_break_count: 0,
             death_opcodes: Vec::new(),
