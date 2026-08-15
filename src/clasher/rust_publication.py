@@ -19,6 +19,7 @@ from .entities import (
     AreaEffect,
     Building,
     ChainLightning,
+    PeriodicDamageEffect,
     Projectile,
     RollingProjectile,
     SpawnProjectile,
@@ -383,6 +384,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "movement_mode_multiplier",
             "movement_speed_buff_multiplier",
             "original_speed",
+            "periodic_damage_effects",
             "slow_effects",
             "slow_multiplier",
             "slow_timer",
@@ -393,6 +395,18 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
         }
     ),
     "modifier_effect": frozenset({"remaining", "movement", "attack", "spawn"}),
+    "periodic_damage_effect": frozenset(
+        {
+            "affects_hidden",
+            "damage",
+            "hard_remaining",
+            "hit_interval",
+            "remaining",
+            "source_id",
+            "source_kind",
+            "time_to_next_hit",
+        }
+    ),
     "status_nova_jump": frozenset(
         {
             "freeze_radius_units",
@@ -730,10 +744,12 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "freeze_effect",
             "max_damage_ticks",
             "periodic_damage_buff_duration",
+            "periodic_damage_controlled_by_parent",
             "slows_attack_speed",
             "slows_spawn_speed",
             "attack_speed_multiplier",
             "spawn_speed_multiplier",
+            "target_local_damage",
         }
     ),
     "character_birth": frozenset(
@@ -1193,6 +1209,64 @@ def _validate_direct_modifier(state: Any, entity_id: int) -> None:
             effect_row = _direct_dict(effect, "modifier_effect")
             for field in _DIRECT_KEYS["modifier_effect"]:
                 _direct_float(effect_row[field], f"entity {entity_id} {name}.{field}")
+    seen_sources: set[int] = set()
+    for effect in _direct_list(
+        row["periodic_damage_effects"],
+        f"entity {entity_id} periodic damage effects",
+    ):
+        effect_row = _direct_dict(effect, "periodic_damage_effect")
+        source_id = _direct_int(
+            effect_row["source_id"],
+            f"entity {entity_id} periodic source",
+            minimum=0,
+        )
+        if source_id in seen_sources:
+            raise ResidentPublicationError(
+                f"entity {entity_id} has duplicate periodic source {source_id}"
+            )
+        seen_sources.add(source_id)
+        if effect_row["source_kind"] is not None and (
+            type(effect_row["source_kind"]) is not str
+            or not effect_row["source_kind"]
+        ):
+            raise ResidentPublicationError(
+                f"entity {entity_id} periodic source kind is malformed"
+            )
+        _direct_bool(
+            effect_row["affects_hidden"],
+            f"entity {entity_id} periodic affects hidden",
+        )
+        for field in ("damage", "hit_interval", "remaining", "time_to_next_hit"):
+            if _direct_float(
+                effect_row[field], f"entity {entity_id} periodic {field}"
+            ) <= 0.0:
+                raise ResidentPublicationError(
+                    f"entity {entity_id} periodic {field} is outside range"
+                )
+        if effect_row["hard_remaining"] is not None and _direct_float(
+            effect_row["hard_remaining"],
+            f"entity {entity_id} periodic hard remaining",
+        ) <= 0.0:
+            raise ResidentPublicationError(
+                f"entity {entity_id} periodic hard remaining is outside range"
+            )
+
+
+def _validate_periodic_source_ceiling(
+    state: Any, entity_id: int, next_entity_id: int
+) -> None:
+    if state is None:
+        return
+    row = _direct_dict(state, "modifier")
+    for effect in _direct_list(
+        row["periodic_damage_effects"],
+        f"entity {entity_id} periodic damage effects",
+    ):
+        source_id = _direct_dict(effect, "periodic_damage_effect")["source_id"]
+        if source_id >= next_entity_id:
+            raise ResidentPublicationError(
+                f"entity {entity_id} has future periodic source {source_id}"
+            )
 
 
 def _validate_direct_death_opcodes(opcodes: Any, entity_id: int) -> None:
@@ -2257,8 +2331,10 @@ def _validate_direct_area(
     for field in (
         "freeze_effect",
         "damage_on_spawn",
+        "periodic_damage_controlled_by_parent",
         "slows_attack_speed",
         "slows_spawn_speed",
+        "target_local_damage",
     ):
         _direct_bool(spell[field], f"entity {entity_id} area spell {field}")
     for field in ("attack_speed_multiplier", "spawn_speed_multiplier"):
@@ -2267,7 +2343,7 @@ def _validate_direct_area(
     max_ticks = _direct_int(
         spell["max_damage_ticks"],
         f"entity {entity_id} area spell max ticks",
-        minimum=1,
+        minimum=0,
     )
     if damage_ticks > max_ticks:
         raise ResidentPublicationError(
@@ -2333,6 +2409,9 @@ def _validate_direct_area(
         or spell["damage_on_spawn"] is not recipe.damage_on_spawn
         or spell["slows_attack_speed"] is not recipe.slows_attack_speed
         or spell["slows_spawn_speed"] is not recipe.slows_spawn_speed
+        or spell["target_local_damage"] is not recipe.target_local_damage
+        or spell["periodic_damage_controlled_by_parent"]
+        is not recipe.periodic_damage_controlled_by_parent
         or spell["attack_speed_multiplier"] != recipe.attack_speed_multiplier
         or spell["spawn_speed_multiplier"] != recipe.spawn_speed_multiplier
         or spell["building_damage"] != recipe.building_damage
@@ -2625,6 +2704,9 @@ def _build_direct_publication_plan(
                 f"typed entity {entity_id} presence has unknown bits"
             )
         _validate_direct_entity_scalars(row, entity_id)
+        _validate_periodic_source_ceiling(
+            row["modifier_state"], entity_id, battle_row["next_entity_id"]
+        )
         _validate_direct_movement(row["movement_state"], entity_id)
         _validate_direct_combat(row["locked_combat_state"], entity_id)
         if (row["movement_state"] is None) != (row["locked_combat_state"] is None):
@@ -3279,6 +3361,9 @@ def _validate_direct_full_delta_entity(
             f"typed entity {entity_id} presence has unknown bits"
         )
     _validate_direct_entity_scalars(row, entity_id)
+    _validate_periodic_source_ceiling(
+        row["modifier_state"], entity_id, next_entity_id
+    )
     _validate_direct_movement(row["movement_state"], entity_id)
     _validate_direct_combat(row["locked_combat_state"], entity_id)
     if (row["movement_state"] is None) != (row["locked_combat_state"] is None):
@@ -3394,6 +3479,10 @@ def _validate_direct_changed_references(
     next_entity_id: int,
 ) -> None:
     references: list[int | None] = []
+    if mask & _ENTITY_DELTA_MODIFIER:
+        _validate_periodic_source_ceiling(
+            raw["modifier_state"], entity_id, next_entity_id
+        )
     if mask & _ENTITY_DELTA_BASE:
         references.append(raw["base"]["target_id"])
         status_nova = raw["base"]["status_nova_jump"]
@@ -4079,6 +4168,23 @@ def _typed_modifier(row: Any, entity: Any) -> dict[str, Any] | None:
             if state["original_speed"] is None
             else _exact_float(state["original_speed"])
         ),
+        "periodic_damage_effects": [
+            {
+                "affects_hidden": effect["affects_hidden"],
+                "damage": _exact_float(effect["damage"]),
+                "hard_remaining": (
+                    None
+                    if effect["hard_remaining"] is None
+                    else _exact_float(effect["hard_remaining"])
+                ),
+                "hit_interval": _exact_float(effect["hit_interval"]),
+                "remaining": _exact_float(effect["remaining"]),
+                "source_id": effect["source_id"],
+                "source_kind": effect["source_kind"],
+                "time_to_next_hit": _exact_float(effect["time_to_next_hit"]),
+            }
+            for effect in state["periodic_damage_effects"]
+        ],
         "slow_effects": effects(state["slow_effects"]),
         "slow_multiplier": _exact_float(state["slow_multiplier"]),
         "slow_timer": _exact_float(state["slow_timer"]),
@@ -4503,13 +4609,17 @@ def _typed_area(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
                 "periodic_damage_buff_duration": _exact_float(
                     persistent["periodic_damage_buff_duration"]
                 ),
+                "periodic_damage_controlled_by_parent": persistent[
+                    "periodic_damage_controlled_by_parent"
+                ],
                 "slows_attack_speed": persistent["slows_attack_speed"],
                 "slows_spawn_speed": persistent["slows_spawn_speed"],
                 "spawn_speed_multiplier": (
                     None
                     if persistent["spawn_speed_multiplier"] is None
-                    else _exact_float(persistent["spawn_speed_multiplier"])
-                ),
+                        else _exact_float(persistent["spawn_speed_multiplier"])
+                    ),
+                "target_local_damage": persistent["target_local_damage"],
             }
         ),
     }
@@ -5434,6 +5544,9 @@ def _apply_modifiers(
         if undo is not None:
             undo.watch_value(entity._haste_effects)
             undo.watch_value(entity._slow_effects)
+        _apply_periodic_damage_effects(
+            entity, row["periodic_damage_effects"], undo, exact=True
+        )
         entity.attack_speed_buff_multiplier = _scalar(
             row["attack_speed_buff_multiplier"]
         )
@@ -5462,6 +5575,55 @@ def _apply_modifiers(
         )
         entity.speed = _scalar(row["speed"])
         entity.stun_timer = _scalar(row["stun_timer"])
+
+
+def _apply_periodic_damage_effects(
+    entity: Any,
+    rows: Iterable[dict[str, Any]],
+    undo: _UndoJournal | None,
+    *,
+    exact: bool,
+) -> None:
+    effects = entity._periodic_damage_effects
+    if undo is not None:
+        undo.watch_value(effects)
+    ordered: list[tuple[int, PeriodicDamageEffect]] = []
+    number = _scalar if exact else float
+    for row in rows:
+        source_id = int(row["source_id"])
+        effect = effects.get(source_id)
+        if effect is None:
+            effect = PeriodicDamageEffect(
+                source_id=source_id,
+                source_kind=row["source_kind"],
+                remaining=number(row["remaining"]),
+                hit_interval=number(row["hit_interval"]),
+                time_to_next_hit=number(row["time_to_next_hit"]),
+                damage=number(row["damage"]),
+                hard_remaining=(
+                    None
+                    if row["hard_remaining"] is None
+                    else number(row["hard_remaining"])
+                ),
+                affects_hidden=bool(row["affects_hidden"]),
+            )
+        else:
+            if undo is not None:
+                undo.watch_attrs(effect)
+            effect.source_kind = row["source_kind"]
+            effect.remaining = number(row["remaining"])
+            effect.hit_interval = number(row["hit_interval"])
+            effect.time_to_next_hit = number(row["time_to_next_hit"])
+            effect.damage = number(row["damage"])
+            effect.hard_remaining = (
+                None
+                if row["hard_remaining"] is None
+                else number(row["hard_remaining"])
+            )
+            effect.affects_hidden = bool(row["affects_hidden"])
+        ordered.append((source_id, effect))
+    effects.clear()
+    effects.update(ordered)
 
 
 def _apply_shields(
@@ -6152,11 +6314,18 @@ def _create_area_effect_birth(
         effect_tick_interval=_float(state["effect_tick_interval"]),
         effect_on_spawn_only=persistent is None,
         cap_buff_time_to_effect=bool(state["cap_buff_time_to_effect"]),
-        target_local_damage=False,
+        target_local_damage=(
+            False if persistent is None else bool(persistent["target_local_damage"])
+        ),
         periodic_damage_buff_duration=(
             0.0
             if persistent is None
             else _float(persistent["periodic_damage_buff_duration"])
+        ),
+        periodic_damage_controlled_by_parent=(
+            False
+            if persistent is None
+            else bool(persistent["periodic_damage_controlled_by_parent"])
         ),
     )
     dynamic_effect = cast(Any, effect)
@@ -6473,11 +6642,18 @@ def _create_area_effect_birth_direct(
         effect_tick_interval=spec["effect_tick_interval"],
         effect_on_spawn_only=persistent is None,
         cap_buff_time_to_effect=spec["cap_buff_time_to_effect"],
-        target_local_damage=False,
+        target_local_damage=(
+            False if persistent is None else persistent["target_local_damage"]
+        ),
         periodic_damage_buff_duration=(
             0.0
             if persistent is None
             else persistent["periodic_damage_buff_duration"]
+        ),
+        periodic_damage_controlled_by_parent=(
+            False
+            if persistent is None
+            else persistent["periodic_damage_controlled_by_parent"]
         ),
     )
     dynamic = cast(Any, effect)
@@ -7271,6 +7447,9 @@ def _apply_direct_entity(
     if modifier is not None:
         undo.watch_value(entity._haste_effects)
         undo.watch_value(entity._slow_effects)
+        _apply_periodic_damage_effects(
+            entity, modifier["periodic_damage_effects"], undo, exact=False
+        )
         entity.attack_speed_buff_multiplier = modifier["attack_speed_buff_multiplier"]
         entity.attack_speed_debuff_multiplier = modifier[
             "attack_speed_debuff_multiplier"
@@ -7962,6 +8141,9 @@ def _apply_direct_delta_entity(
             undo.watch_attrs(entity)
             undo.watch_value(entity._haste_effects)
             undo.watch_value(entity._slow_effects)
+            _apply_periodic_damage_effects(
+                entity, modifier["periodic_damage_effects"], undo, exact=False
+            )
             entity.attack_speed_buff_multiplier = modifier[
                 "attack_speed_buff_multiplier"
             ]

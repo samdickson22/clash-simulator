@@ -23,7 +23,7 @@ from .differential import (
     canonical_battle_snapshot,
     snapshot_bytes,
 )
-from .entities import Building, Projectile
+from .entities import Building, PeriodicDamageEffect, Projectile
 
 try:
     from _clasher_rust import (  # type: ignore[import-untyped]
@@ -46,8 +46,8 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 16
-RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 16
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 17
+RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 17
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -301,6 +301,8 @@ class _ResidentAreaEffectSpellRecipe:
     damage_tick_interval: float
     max_damage_ticks: int
     periodic_damage_buff_duration: float
+    target_local_damage: bool
+    periodic_damage_controlled_by_parent: bool
     slow_refresh_duration: float
     effect_tick_interval: float
     cap_buff_time_to_effect: bool
@@ -524,15 +526,15 @@ def _resident_card_catalog_bundle(
                 or building_damage is not None
                 and building_damage < 0.0
                 or spell.initial_damage_delay is not None
-                or spell.target_local_damage
-                or spell.periodic_damage_controlled_by_parent
             )
-            # Keep the two clocks disjoint: source-periodic areas repeatedly
-            # refresh a movement-only slow, while Freeze commits one immediate
-            # damage snapshot followed by one fresh status snapshot.
+            # Keep the clocks disjoint: source-periodic areas own their pulse
+            # schedule, target-periodic areas refresh per-source target clocks,
+            # and Freeze commits one damage/status snapshot.
             source_periodic = bool(
                 not common_unsupported
                 and not spell.freeze_effect
+                and not spell.target_local_damage
+                and not spell.periodic_damage_controlled_by_parent
                 and spell.hits_ground
                 and not spell.hits_air
                 and spell.affects_hidden
@@ -552,6 +554,8 @@ def _resident_card_catalog_bundle(
             freeze_snapshot = bool(
                 not common_unsupported
                 and spell.freeze_effect
+                and not spell.target_local_damage
+                and not spell.periodic_damage_controlled_by_parent
                 and spell.hits_air
                 and spell.hits_ground
                 and spell.affects_hidden
@@ -570,13 +574,39 @@ def _resident_card_catalog_bundle(
                 and area.get("onlyEnemies") is True
                 and area.get("buffTime") == area.get("lifeDuration")
             )
-            if not (source_periodic or freeze_snapshot):
+            target_periodic = bool(
+                not common_unsupported
+                and not spell.freeze_effect
+                and spell.hits_ground
+                and spell.hits_air
+                and not spell.affects_hidden
+                and 0.0 < spell.speed_multiplier < 1.0
+                and spell.damage_tick_interval > 0.0
+                and spell.max_damage_ticks == 0
+                and not spell.damage_on_spawn
+                and not spell.slows_attack_speed
+                and not spell.slows_spawn_speed
+                and spell.slow_refresh_duration > 0.0
+                and spell.effect_tick_interval > 0.0
+                and not spell.cap_buff_time_to_effect
+                and spell.target_local_damage
+                and spell.periodic_damage_buff_duration > 0.0
+                and not spell.periodic_damage_controlled_by_parent
+                and buff.get("damagePerSecond") is not None
+                and buff.get("hitTickFromSource") is not True
+                and area.get("onlyEnemies") is True
+            )
+            if not (source_periodic or freeze_snapshot or target_periodic):
                 area_reasons.append("unsupported_area_effect_clock")
             reasons = area_reasons
             if not reasons:
                 area_effect_spell = {
                     "clock_kind": (
-                        "freeze_snapshot" if freeze_snapshot else "source_periodic"
+                        "freeze_snapshot"
+                        if freeze_snapshot
+                        else "target_periodic"
+                        if target_periodic
+                        else "source_periodic"
                     ),
                     "radius": float(spell.radius),
                     "damage": float(spell.damage),
@@ -603,6 +633,10 @@ def _resident_card_catalog_bundle(
                     "max_damage_ticks": int(spell.max_damage_ticks),
                     "periodic_damage_buff_duration": float(
                         spell.periodic_damage_buff_duration
+                    ),
+                    "target_local_damage": bool(spell.target_local_damage),
+                    "periodic_damage_controlled_by_parent": bool(
+                        spell.periodic_damage_controlled_by_parent
                     ),
                     "slow_refresh_duration": float(spell.slow_refresh_duration),
                     "effect_tick_interval": float(spell.effect_tick_interval),
@@ -1687,6 +1721,22 @@ _PREPARED_PUBLICATION_DELTA_CONSUMER: Final = object()
 _PREPARED_PUBLICATION_BEST_CONSUMER: Final = object()
 
 
+def _validate_periodic_damage_checkpoint_boundary(battle: Any) -> None:
+    next_entity_id = int(battle.next_entity_id)
+    for entity in battle.entities.values():
+        effects = entity._periodic_damage_effects
+        if type(effects) is not dict:
+            raise TypeError("periodic damage effects must be an exact dict")
+        for source_id, effect in effects.items():
+            if (
+                type(source_id) is not int
+                or type(effect) is not PeriodicDamageEffect
+                or effect.source_id != source_id
+                or not 0 <= source_id < next_entity_id
+            ):
+                raise ValueError("periodic damage effect boundary is malformed")
+
+
 class ResidentPreparedPublication:
     """Single-use owner for one authenticated native publication projection.
 
@@ -2016,6 +2066,7 @@ class ResidentRustBattle:
     @classmethod
     def from_battle(cls, battle: Any) -> ResidentRustBattle:
         require_rust_core()
+        _validate_periodic_damage_checkpoint_boundary(battle)
         checkpoint = snapshot_bytes(canonical_battle_snapshot(battle))
         data_path = Path(battle.card_loader.data_file)
         data_stat = data_path.stat()
@@ -2930,6 +2981,25 @@ def modifier_state_rows(battle: Any) -> list[dict[str, Any]]:
                     if entity.original_speed is None
                     else _exact_scalar(entity.original_speed)
                 ),
+                "periodic_damage_effects": [
+                    {
+                        "affects_hidden": bool(effect.affects_hidden),
+                        "damage": _exact_scalar(effect.damage),
+                        "hard_remaining": (
+                            None
+                            if effect.hard_remaining is None
+                            else _exact_scalar(effect.hard_remaining)
+                        ),
+                        "hit_interval": _exact_scalar(effect.hit_interval),
+                        "remaining": _exact_scalar(effect.remaining),
+                        "source_id": int(effect.source_id),
+                        "source_kind": effect.source_kind,
+                        "time_to_next_hit": _exact_scalar(
+                            effect.time_to_next_hit
+                        ),
+                    }
+                    for effect in entity._periodic_damage_effects.values()
+                ],
                 "slow_effects": [
                     [_exact_scalar(value) for value in effect]
                     for effect in entity._slow_effects
@@ -3289,11 +3359,16 @@ def area_effect_state_rows(battle: Any) -> list[dict[str, Any]]:
                         "clock_kind": (
                             "freeze_snapshot"
                             if entity.freeze_effect
+                            else "target_periodic"
+                            if entity.target_local_damage
                             else "source_periodic"
                         ),
                         "freeze_effect": bool(entity.freeze_effect),
                         "periodic_damage_buff_duration": _exact_scalar(
                             entity.periodic_damage_buff_duration
+                        ),
+                        "periodic_damage_controlled_by_parent": bool(
+                            entity.periodic_damage_controlled_by_parent
                         ),
                         "slows_attack_speed": bool(entity.slows_attack_speed),
                         "slows_spawn_speed": bool(entity.slows_spawn_speed),
@@ -3302,10 +3377,10 @@ def area_effect_state_rows(battle: Any) -> list[dict[str, Any]]:
                             if entity.spawn_speed_multiplier is None
                             else _exact_scalar(entity.spawn_speed_multiplier)
                         ),
+                        "target_local_damage": bool(entity.target_local_damage),
                     }
-                    if entity.max_damage_ticks > 0
-                    and entity.damage > 0
-                    and not entity.target_local_damage
+                    if entity.damage > 0
+                    and (entity.max_damage_ticks > 0 or entity.target_local_damage)
                     else None
                 ),
             }

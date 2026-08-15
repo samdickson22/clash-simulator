@@ -4,6 +4,7 @@ from typing import cast
 
 import pytest
 
+from clasher import rust_core
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import PeriodicDamageEffect, Troop
@@ -87,11 +88,11 @@ def test_modifier_phase_matches_legacy_haste_scalar_expiry() -> None:
     compare_modifier_phase(battle, resident)
 
 
-def test_modifier_phase_rejects_periodic_damage_fail_closed() -> None:
+def test_modifier_phase_advances_target_owned_periodic_damage() -> None:
     battle = BattleState()
     troop = _spawn(battle, "Knight", 0)
-    troop._periodic_damage_effects[91] = PeriodicDamageEffect(
-        source_id=91,
+    troop._periodic_damage_effects[1] = PeriodicDamageEffect(
+        source_id=1,
         source_kind="test",
         remaining=1.0,
         hit_interval=0.5,
@@ -100,9 +101,153 @@ def test_modifier_phase_rejects_periodic_damage_fail_closed() -> None:
     )
     resident = ResidentRustBattle.from_battle(battle)
 
-    assert not resident.supports_modifier_phase
-    with pytest.raises(RuntimeError, match="periodic damage"):
+    assert resident.supports_modifier_phase
+    for _ in range(20):
         resident.advance_modifier_phase()
+        _advance_python_modifier_phase(battle)
+        compare_modifier_phase(battle, resident)
+    assert troop.hitpoints == troop.max_hitpoints - 2.0
+    assert not troop._periodic_damage_effects
+
+
+def test_modifier_phase_periodic_death_headroom_rejects_before_mutation() -> None:
+    battle = BattleState()
+    golem = _spawn(battle, "Golem", 0)
+    golem.hitpoints = 1.0
+    golem._periodic_damage_effects[1] = PeriodicDamageEffect(
+        source_id=1,
+        source_kind="Poison",
+        remaining=1.0,
+        hit_interval=0.05,
+        time_to_next_hit=0.05,
+        damage=92.0,
+    )
+    battle.next_entity_id = (1 << 63) - 2
+    resident = ResidentRustBattle.from_battle(battle)
+    before = resident.entity_state_bytes()
+
+    with pytest.raises(RuntimeError, match="headroom"):
+        resident.advance_modifier_phase()
+    assert resident.entity_state_bytes() == before
+
+
+def test_periodic_checkpoint_rejects_mapping_and_effect_subclasses_atomically() -> None:
+    class PeriodicMap(dict[int, PeriodicDamageEffect]):
+        pass
+
+    class PeriodicEffectSubclass(PeriodicDamageEffect):
+        pass
+
+    for malformed in (
+        PeriodicMap(),
+        {
+            1: PeriodicEffectSubclass(
+                source_id=1,
+                source_kind="Poison",
+                remaining=1.0,
+                hit_interval=1.0,
+                time_to_next_hit=1.0,
+                damage=92.0,
+            )
+        },
+    ):
+        battle = BattleState()
+        troop = _spawn(battle, "Knight", 0)
+        troop._periodic_damage_effects = malformed
+        rng_before = battle.rng.getstate()
+        entities_before = tuple(battle.entities.items())
+
+        with pytest.raises((TypeError, ValueError), match="periodic damage"):
+            ResidentRustBattle.from_battle(battle)
+        assert battle.rng.getstate() == rng_before
+        assert tuple(battle.entities.items()) == entities_before
+        assert troop._periodic_damage_effects is malformed
+
+
+def test_native_periodic_hydration_rejects_effect_subclass(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class PeriodicEffectSubclass(PeriodicDamageEffect):
+        pass
+
+    battle = BattleState()
+    troop = _spawn(battle, "Knight", 0)
+    troop._periodic_damage_effects[1] = PeriodicEffectSubclass(
+        source_id=1,
+        source_kind="Poison",
+        remaining=1.0,
+        hit_interval=1.0,
+        time_to_next_hit=1.0,
+        damage=92.0,
+    )
+    monkeypatch.setattr(
+        rust_core,
+        "_validate_periodic_damage_checkpoint_boundary",
+        lambda _battle: None,
+    )
+
+    with pytest.raises(ValueError, match="unsupported runtime type"):
+        ResidentRustBattle.from_battle(battle)
+
+
+def test_periodic_checkpoint_rejects_future_source_atomically(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    battle = BattleState()
+    troop = _spawn(battle, "Knight", 0)
+    future_id = battle.next_entity_id
+    troop._periodic_damage_effects[future_id] = PeriodicDamageEffect(
+        source_id=future_id,
+        source_kind="Poison",
+        remaining=1.0,
+        hit_interval=1.0,
+        time_to_next_hit=1.0,
+        damage=92.0,
+    )
+    rng_before = battle.rng.getstate()
+    entities_before = tuple(battle.entities.items())
+
+    with pytest.raises(ValueError, match="periodic damage"):
+        ResidentRustBattle.from_battle(battle)
+    assert battle.rng.getstate() == rng_before
+    assert tuple(battle.entities.items()) == entities_before
+
+    monkeypatch.setattr(
+        rust_core,
+        "_validate_periodic_damage_checkpoint_boundary",
+        lambda _battle: None,
+    )
+    with pytest.raises(ValueError, match="unallocated source ID"):
+        ResidentRustBattle.from_battle(battle)
+    assert battle.rng.getstate() == rng_before
+    assert tuple(battle.entities.items()) == entities_before
+
+
+def test_modifier_headroom_covers_secondary_death_spawn_chain() -> None:
+    battle = BattleState()
+    poisoned = _spawn(battle, "IceGolem", 0)
+    secondary = _spawn(battle, "Golem", 1)
+    poisoned.position = Position(8.5, 14.0)
+    secondary.position = Position(8.5, 14.0)
+    poisoned.hitpoints = 1.0
+    secondary.hitpoints = 1.0
+    poisoned._periodic_damage_effects[1] = PeriodicDamageEffect(
+        source_id=1,
+        source_kind="Poison",
+        remaining=1.0,
+        hit_interval=0.05,
+        time_to_next_hit=0.05,
+        damage=92.0,
+    )
+    # Poison kills IceGolem; its DeathDamage can kill Golem, whose two-child
+    # DeathSpawn must be covered by the same pre-mutation headroom proof.
+    battle.next_entity_id = (1 << 63) - 2
+    resident = ResidentRustBattle.from_battle(battle)
+    before = resident.entity_state_bytes()
+
+    with pytest.raises(RuntimeError, match="headroom"):
+        resident.advance_modifier_phase()
+    assert resident.entity_state_bytes() == before
 
 
 def test_modifier_phase_preserves_signed_zero_bits() -> None:

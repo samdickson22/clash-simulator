@@ -202,6 +202,11 @@ def _entity_snapshot(entity: Entity) -> Mapping[str, Any]:
     normalized = _normalize(entity, root_entity=entity)
     if not isinstance(normalized, Mapping):  # pragma: no cover - schema guard
         raise TypeError("entity snapshots must be mappings")
+    periodic = getattr(entity, "_periodic_damage_effects", None)
+    if periodic:
+        normalized["$object"]["fields"]["_periodic_damage_effect_order"] = [
+            int(source_id) for source_id in periodic
+        ]
     return normalized
 
 

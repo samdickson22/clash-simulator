@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 16;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 17;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -1061,6 +1061,185 @@ impl ModifierEffect {
     }
 }
 
+#[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentPeriodicDamageEffect {
+    source_id: i64,
+    source_kind: Option<String>,
+    remaining: f64,
+    hit_interval: f64,
+    time_to_next_hit: f64,
+    damage: f64,
+    hard_remaining: Option<f64>,
+    affects_hidden: bool,
+}
+
+impl ResidentPeriodicDamageEffect {
+    fn from_normalized(source_key: &Value, value: &Value) -> PyResult<Self> {
+        let source_id = source_key
+            .as_i64()
+            .ok_or_else(|| PyValueError::new_err("periodic damage source key is not an integer"))?;
+        let object = value
+            .get("$object")
+            .and_then(Value::as_object)
+            .ok_or_else(|| PyValueError::new_err("periodic damage effect is not an object"))?;
+        if object.get("type").and_then(Value::as_str)
+            != Some("clasher.entities.PeriodicDamageEffect")
+        {
+            return Err(PyValueError::new_err(
+                "periodic damage effect has an unsupported runtime type",
+            ));
+        }
+        let fields = object_fields(value)?;
+        if required_i64(fields, "source_id")? != source_id || source_id < 0 {
+            return Err(PyValueError::new_err(
+                "periodic damage source key disagrees with source_id",
+            ));
+        }
+        let source_kind = match fields.get("source_kind") {
+            Some(Value::Null) => None,
+            Some(Value::String(value)) if !value.is_empty() => Some(value.clone()),
+            _ => {
+                return Err(PyValueError::new_err(
+                    "periodic damage source_kind is malformed",
+                ));
+            }
+        };
+        let remaining = normalized_f64(fields, "remaining")?;
+        let hit_interval = normalized_f64(fields, "hit_interval")?;
+        let time_to_next_hit = normalized_f64(fields, "time_to_next_hit")?;
+        let damage = normalized_f64(fields, "damage")?;
+        let hard_remaining = optional_normalized_f64(fields, "hard_remaining")?;
+        let affects_hidden = required_bool(fields, "affects_hidden")?;
+        if ![remaining, hit_interval, time_to_next_hit, damage]
+            .into_iter()
+            .all(f64::is_finite)
+            || hard_remaining.is_some_and(|value| !value.is_finite())
+            || remaining <= 0.0
+            || hit_interval <= 0.0
+            || time_to_next_hit <= 0.0
+            || damage <= 0.0
+            || hard_remaining.is_some_and(|value| value <= 0.0)
+        {
+            return Err(PyValueError::new_err(
+                "periodic damage effect is outside the supported range",
+            ));
+        }
+        Ok(Self {
+            source_id,
+            source_kind,
+            remaining,
+            hit_interval,
+            time_to_next_hit,
+            damage,
+            hard_remaining,
+            affects_hidden,
+        })
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        json!({
+            "affects_hidden": self.affects_hidden,
+            "damage": exact_f64_value(self.damage),
+            "hard_remaining": self.hard_remaining.map(exact_f64_value),
+            "hit_interval": exact_f64_value(self.hit_interval),
+            "remaining": exact_f64_value(self.remaining),
+            "source_id": self.source_id,
+            "source_kind": self.source_kind,
+            "time_to_next_hit": exact_f64_value(self.time_to_next_hit),
+        })
+    }
+
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.source_id == other.source_id
+            && self.source_kind == other.source_kind
+            && self.affects_hidden == other.affects_hidden
+            && publication_optional_f64_eq(self.hard_remaining, other.hard_remaining)
+            && publication_f64_fields_eq(
+                [
+                    self.remaining,
+                    self.hit_interval,
+                    self.time_to_next_hit,
+                    self.damage,
+                ],
+                [
+                    other.remaining,
+                    other.hit_interval,
+                    other.time_to_next_hit,
+                    other.damage,
+                ],
+            )
+    }
+}
+
+fn normalized_periodic_damage_effects(
+    fields: &Map<String, Value>,
+) -> PyResult<Vec<ResidentPeriodicDamageEffect>> {
+    let entries = fields
+        .get("_periodic_damage_effects")
+        .and_then(|value| value.get("$mapping"))
+        .and_then(Value::as_array)
+        .ok_or_else(|| PyValueError::new_err("entity periodic damage state is not a mapping"))?;
+    let mut effects = Vec::with_capacity(entries.len());
+    for entry in entries {
+        let pair = entry
+            .as_array()
+            .filter(|pair| pair.len() == 2)
+            .ok_or_else(|| PyValueError::new_err("periodic damage mapping row is malformed"))?;
+        effects.push(ResidentPeriodicDamageEffect::from_normalized(
+            &pair[0], &pair[1],
+        )?);
+    }
+    let mut source_ids = HashSet::new();
+    if effects
+        .iter()
+        .any(|effect| !source_ids.insert(effect.source_id))
+    {
+        return Err(PyValueError::new_err(
+            "periodic damage mapping contains duplicate source IDs",
+        ));
+    }
+    if !effects.is_empty() {
+        let order = fields
+            .get("_periodic_damage_effect_order")
+            .and_then(Value::as_array)
+            .ok_or_else(|| {
+                PyValueError::new_err("entity periodic damage state has no causal order")
+            })?;
+        if order.len() != effects.len()
+            || order.iter().any(|source_id| {
+                source_id
+                    .as_i64()
+                    .is_none_or(|id| !source_ids.contains(&id))
+            })
+        {
+            return Err(PyValueError::new_err(
+                "entity periodic damage causal order disagrees with mapping",
+            ));
+        }
+        let mut ordered = Vec::with_capacity(effects.len());
+        for source_id in order.iter().filter_map(Value::as_i64) {
+            let index = effects
+                .iter()
+                .position(|effect| effect.source_id == source_id)
+                .expect("validated periodic damage source order");
+            ordered.push(effects[index].clone());
+        }
+        if ordered
+            .iter()
+            .map(|effect| effect.source_id)
+            .collect::<HashSet<_>>()
+            .len()
+            != effects.len()
+        {
+            return Err(PyValueError::new_err(
+                "entity periodic damage causal order contains duplicates",
+            ));
+        }
+        effects = ordered;
+    }
+    Ok(effects)
+}
+
 fn exact_f64_value(value: f64) -> Value {
     json!({"bits": format!("{:016x}", value.to_bits()), "kind": "float"})
 }
@@ -1136,6 +1315,7 @@ struct ModifierState {
     speed: ExactScalar,
     slow_effects: Vec<ModifierEffect>,
     haste_effects: Vec<ModifierEffect>,
+    periodic_damage_effects: Vec<ResidentPeriodicDamageEffect>,
 }
 
 impl ModifierState {
@@ -1165,6 +1345,7 @@ impl ModifierState {
             )?,
             slow_effects: normalized_effects(fields, "_slow_effects")?,
             haste_effects: normalized_effects(fields, "_haste_effects")?,
+            periodic_damage_effects: normalized_periodic_damage_effects(fields)?,
         })
     }
 
@@ -1264,6 +1445,39 @@ impl ModifierState {
         self.apply_slow_axes(duration, multiplier, multiplier, multiplier);
     }
 
+    fn apply_periodic_damage(
+        &mut self,
+        source_id: i64,
+        source_kind: &str,
+        duration: f64,
+        hit_interval: f64,
+        damage: f64,
+        affects_hidden: bool,
+    ) {
+        if let Some(effect) = self
+            .periodic_damage_effects
+            .iter_mut()
+            .find(|effect| effect.source_id == source_id)
+        {
+            effect.remaining = effect.remaining.max(duration);
+            effect.damage = damage;
+            effect.source_kind = Some(source_kind.to_owned());
+            effect.affects_hidden = affects_hidden;
+        } else {
+            self.periodic_damage_effects
+                .push(ResidentPeriodicDamageEffect {
+                    source_id,
+                    source_kind: Some(source_kind.to_owned()),
+                    remaining: duration,
+                    hit_interval,
+                    time_to_next_hit: hit_interval,
+                    damage,
+                    hard_remaining: None,
+                    affects_hidden,
+                });
+        }
+    }
+
     fn apply_slow_axes(&mut self, duration: f64, movement: f64, attack: f64, spawn: f64) {
         let movement = movement.max(0.0);
         let attack = attack.max(0.0);
@@ -1336,6 +1550,7 @@ impl ModifierState {
             "movement_mode_multiplier": exact_f64_value(self.movement_mode_multiplier),
             "movement_speed_buff_multiplier": exact_f64_value(self.movement_speed_buff_multiplier),
             "original_speed": self.original_speed.map(exact_f64_value),
+            "periodic_damage_effects": self.periodic_damage_effects.iter().map(ResidentPeriodicDamageEffect::diagnostic_value).collect::<Vec<_>>(),
             "slow_effects": self.slow_effects.iter().map(ModifierEffect::diagnostic_value).collect::<Vec<_>>(),
             "slow_multiplier": exact_f64_value(self.slow_multiplier),
             "slow_timer": exact_f64_value(self.slow_timer),
@@ -2350,6 +2565,8 @@ struct ResidentPersistentAreaSpellSpec {
     damage_tick_interval: f64,
     max_damage_ticks: i64,
     periodic_damage_buff_duration: f64,
+    target_local_damage: bool,
+    periodic_damage_controlled_by_parent: bool,
 }
 
 impl ResidentPersistentAreaSpellSpec {
@@ -2367,6 +2584,8 @@ impl ResidentPersistentAreaSpellSpec {
             "freeze_effect": self.freeze_effect,
             "max_damage_ticks": self.max_damage_ticks,
             "periodic_damage_buff_duration": exact_f64_value(self.periodic_damage_buff_duration),
+            "target_local_damage": self.target_local_damage,
+            "periodic_damage_controlled_by_parent": self.periodic_damage_controlled_by_parent,
             "slows_attack_speed": self.slows_attack_speed,
             "slows_spawn_speed": self.slows_spawn_speed,
             "spawn_speed_multiplier": self.spawn_speed_multiplier.map(exact_f64_value),
@@ -2569,10 +2788,47 @@ impl ResidentAreaEffectState {
             && building_damage_multiplier >= 1.0
             && crown_tower_damage.is_some_and(|value| value >= 0.0)
             && building_damage.is_none();
+        let target_periodic_supported = common_supported
+            && radius_tiles > 0.0
+            && damage > 0.0
+            && max_damage_ticks == 0
+            && damage_ticks_applied == 0
+            && !freeze_effect
+            && !effect_on_spawn_only
+            && target_local_damage
+            && periodic_damage_buff_duration > 0.0
+            && !periodic_damage_controlled_by_parent
+            && !damage_on_spawn
+            && initial_damage_delay.is_none()
+            && next_damage_time.is_none()
+            && next_effect_time.is_none_or(|time| time >= 0.0)
+            && !freeze_targets_applied
+            && !effect_snapshot_applied
+            && !slows_attack_speed
+            && !slows_spawn_speed
+            && attack_multiplier.to_bits() == 1.0_f64.to_bits()
+            && spawn_multiplier.to_bits() == 1.0_f64.to_bits()
+            && movement_multiplier > 0.0
+            && movement_multiplier < 1.0
+            && damage_tick_interval > 0.0
+            && effect_tick_interval > 0.0
+            && refresh_duration > 0.0
+            && !cap_buff_time_to_effect
+            && hits_ground
+            && hits_air
+            && !affects_hidden
+            && crown_tower_damage_multiplier >= 0.0
+            && building_damage_multiplier >= 1.0
+            && crown_tower_damage.is_some_and(|value| value >= 0.0)
+            && building_damage.is_some_and(|value| value >= 0.0)
+            && attack_speed_multiplier.is_none()
+            && spawn_speed_multiplier.is_none();
         let persistent_clock_kind = if source_periodic_supported {
             Some("source_periodic")
         } else if freeze_snapshot_supported {
             Some("freeze_snapshot")
+        } else if target_periodic_supported {
+            Some("target_periodic")
         } else {
             None
         };
@@ -2593,6 +2849,8 @@ impl ResidentAreaEffectState {
                 damage_tick_interval,
                 max_damage_ticks,
                 periodic_damage_buff_duration,
+                target_local_damage,
+                periodic_damage_controlled_by_parent,
             });
         let supported = death_area_supported || persistent_spell.is_some();
         Ok(Self {
@@ -4541,12 +4799,11 @@ impl ResidentEntity {
             .as_i64();
         let entity_kind = required_i64(fields, "entity_kind")?;
         let is_character = matches!(entity_kind, 0 | 1);
-        let periodic_empty = normalized_mapping_is_empty(fields, "_periodic_damage_effects")?;
         let temporary_buff_active = fields
             .get("_buff_active")
             .and_then(Value::as_bool)
             .unwrap_or(false);
-        let modifier_supported = !is_character || (periodic_empty && !temporary_buff_active);
+        let modifier_supported = !is_character || !temporary_buff_active;
         let modifier_state = if is_character {
             Some(ModifierState::from_fields(fields)?)
         } else {
@@ -5246,7 +5503,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 16;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 17;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -5342,6 +5599,8 @@ struct ResidentAreaEffectSpellWire {
     damage_tick_interval: f64,
     max_damage_ticks: i64,
     periodic_damage_buff_duration: f64,
+    target_local_damage: bool,
+    periodic_damage_controlled_by_parent: bool,
     slow_refresh_duration: f64,
     effect_tick_interval: f64,
     cap_buff_time_to_effect: bool,
@@ -5526,6 +5785,8 @@ struct ResidentAreaEffectSpellSpec {
     damage_tick_interval: f64,
     max_damage_ticks: i64,
     periodic_damage_buff_duration: f64,
+    target_local_damage: bool,
+    periodic_damage_controlled_by_parent: bool,
     slow_refresh_duration: f64,
     effect_tick_interval: f64,
     cap_buff_time_to_effect: bool,
@@ -6339,14 +6600,16 @@ impl ResidentCardCatalog {
                     && spell.radius <= (i64::MAX / 4096) as f64 / 1000.0
                     && spell.damage > 0.0
                     && spell.duration > 0.0
-                    && spell.affects_hidden
                     && spell.crown_tower_damage_multiplier >= 0.0
                     && spell.building_damage_multiplier >= 1.0
                     && spell.crown_tower_damage.is_some_and(|damage| damage >= 0.0)
                     && spell.building_damage.is_none_or(|damage| damage >= 0.0);
                 let source_periodic = common
                     && spell.clock_kind == "source_periodic"
+                    && spell.affects_hidden
                     && !spell.freeze_effect
+                    && !spell.target_local_damage
+                    && !spell.periodic_damage_controlled_by_parent
                     && !spell.damage_on_spawn
                     && !spell.slows_attack_speed
                     && !spell.slows_spawn_speed
@@ -6366,7 +6629,10 @@ impl ResidentCardCatalog {
                         == spell.max_damage_ticks;
                 let freeze_snapshot = common
                     && spell.clock_kind == "freeze_snapshot"
+                    && spell.affects_hidden
                     && spell.freeze_effect
+                    && !spell.target_local_damage
+                    && !spell.periodic_damage_controlled_by_parent
                     && spell.damage_on_spawn
                     && spell.slows_attack_speed
                     && spell.slows_spawn_speed
@@ -6382,7 +6648,28 @@ impl ResidentCardCatalog {
                     && spell.effect_tick_interval > 0.0
                     && spell.periodic_damage_buff_duration.to_bits() == 0.0_f64.to_bits()
                     && !spell.cap_buff_time_to_effect;
-                if !(source_periodic || freeze_snapshot) {
+                let target_periodic = common
+                    && spell.clock_kind == "target_periodic"
+                    && !spell.affects_hidden
+                    && !spell.freeze_effect
+                    && spell.target_local_damage
+                    && !spell.periodic_damage_controlled_by_parent
+                    && !spell.damage_on_spawn
+                    && !spell.slows_attack_speed
+                    && !spell.slows_spawn_speed
+                    && spell.attack_speed_multiplier.is_none()
+                    && spell.spawn_speed_multiplier.is_none()
+                    && spell.hits_ground
+                    && spell.hits_air
+                    && (0.0 < spell.movement_multiplier && spell.movement_multiplier < 1.0)
+                    && spell.building_damage.is_some()
+                    && spell.damage_tick_interval > 0.0
+                    && spell.max_damage_ticks == 0
+                    && spell.slow_refresh_duration > 0.0
+                    && spell.effect_tick_interval > 0.0
+                    && spell.periodic_damage_buff_duration > 0.0
+                    && !spell.cap_buff_time_to_effect;
+                if !(source_periodic || freeze_snapshot || target_periodic) {
                     reasons.push("native_area_effect_spell_preflight".to_owned());
                 }
                 ResidentAreaEffectSpellSpec {
@@ -6407,6 +6694,9 @@ impl ResidentCardCatalog {
                     damage_tick_interval: spell.damage_tick_interval,
                     max_damage_ticks: spell.max_damage_ticks,
                     periodic_damage_buff_duration: spell.periodic_damage_buff_duration,
+                    target_local_damage: spell.target_local_damage,
+                    periodic_damage_controlled_by_parent: spell
+                        .periodic_damage_controlled_by_parent,
                     slow_refresh_duration: spell.slow_refresh_duration,
                     effect_tick_interval: spell.effect_tick_interval,
                     cap_buff_time_to_effect: spell.cap_buff_time_to_effect,
@@ -7388,6 +7678,12 @@ impl PublicationExactEq for ModifierState {
                 .iter()
                 .zip(&other.haste_effects)
                 .all(|(left, right)| left.publication_exact_eq(right))
+            && self.periodic_damage_effects.len() == other.periodic_damage_effects.len()
+            && self
+                .periodic_damage_effects
+                .iter()
+                .zip(&other.periodic_damage_effects)
+                .all(|(left, right)| left.publication_exact_eq(right))
     }
 }
 
@@ -7544,6 +7840,9 @@ impl PublicationExactEq for ResidentAreaEffectState {
                         && left.damage_on_spawn == right.damage_on_spawn
                         && left.slows_attack_speed == right.slows_attack_speed
                         && left.slows_spawn_speed == right.slows_spawn_speed
+                        && left.target_local_damage == right.target_local_damage
+                        && left.periodic_damage_controlled_by_parent
+                            == right.periodic_damage_controlled_by_parent
                         && publication_optional_f64_eq(
                             left.attack_speed_multiplier,
                             right.attack_speed_multiplier,
@@ -8073,6 +8372,9 @@ impl ResidentAreaEffectState {
                         && left.damage_on_spawn == right.damage_on_spawn
                         && left.slows_attack_speed == right.slows_attack_speed
                         && left.slows_spawn_speed == right.slows_spawn_speed
+                        && left.target_local_damage == right.target_local_damage
+                        && left.periodic_damage_controlled_by_parent
+                            == right.periodic_damage_controlled_by_parent
                         && publication_optional_f64_eq(
                             left.attack_speed_multiplier,
                             right.attack_speed_multiplier,
@@ -8330,6 +8632,9 @@ impl ResidentBattle {
             && dynamic.damage_on_spawn == spec.damage_on_spawn
             && dynamic.slows_attack_speed == spec.slows_attack_speed
             && dynamic.slows_spawn_speed == spec.slows_spawn_speed
+            && dynamic.target_local_damage == spec.target_local_damage
+            && dynamic.periodic_damage_controlled_by_parent
+                == spec.periodic_damage_controlled_by_parent
             && publication_optional_f64_eq(
                 dynamic.attack_speed_multiplier,
                 spec.attack_speed_multiplier,
@@ -9344,6 +9649,18 @@ impl ResidentBattle {
         let mut entities = parse_resident_entities(checkpoint)?;
         let next_entity_id = parse_next_entity_id(checkpoint)?;
         if entities.iter().any(|entity| {
+            entity.modifier_state.as_ref().is_some_and(|state| {
+                state
+                    .periodic_damage_effects
+                    .iter()
+                    .any(|effect| !(0..next_entity_id).contains(&effect.source_id))
+            })
+        }) {
+            return Err(PyValueError::new_err(
+                "resident periodic damage references an unallocated source ID",
+            ));
+        }
+        if entities.iter().any(|entity| {
             entity.rolling_projectile.as_ref().is_some_and(|rolling| {
                 rolling
                     .hit_entity_ids
@@ -10003,27 +10320,39 @@ impl ResidentBattle {
     fn advance_modifier_phase_up_to(&mut self, entity_id_exclusive: Option<i64>) -> PyResult<()> {
         if !self.supports_modifier_phase() {
             return Err(PyRuntimeError::new_err(
-                "resident modifier phase contains periodic damage or callback-owned temporary buffs",
+                "resident modifier phase contains callback-owned temporary buffs",
+            ));
+        }
+        if !self.modifier_phase_references_supported(entity_id_exclusive) {
+            return Err(PyRuntimeError::new_err(
+                "resident modifier phase has an unallocated periodic source ID",
+            ));
+        }
+        if !self.modifier_phase_allocation_headroom_supported(entity_id_exclusive) {
+            return Err(PyRuntimeError::new_err(
+                "resident modifier phase entity-ID headroom is exhausted",
             ));
         }
         self.mark_publication_mutated();
         self.checkpoint_current = false;
-        for entity in &mut self.entities {
-            if !entity.active {
+        let entity_count = self.entities.len();
+        for entity_index in 0..entity_count {
+            if !self.entities[entity_index].active {
                 continue;
             }
-            if entity_id_exclusive.is_some_and(|limit| entity.id >= limit) {
+            if entity_id_exclusive.is_some_and(|limit| self.entities[entity_index].id >= limit) {
                 continue;
             }
-            if !entity.is_alive {
+            if !self.entities[entity_index].is_alive {
                 continue;
             }
-            if let Some(state) = &mut entity.modifier_state {
+            self.advance_periodic_damage_effects(entity_index);
+            if let Some(state) = &mut self.entities[entity_index].modifier_state {
                 state.advance(self.dt);
                 let stun_timer = state.stun_timer;
                 let attack_speed_debuff_multiplier = state.attack_speed_debuff_multiplier;
                 let attack_speed_buff_multiplier = state.attack_speed_buff_multiplier;
-                if let Some(combat) = entity.locked_combat.as_mut() {
+                if let Some(combat) = self.entities[entity_index].locked_combat.as_mut() {
                     combat.stun_timer = stun_timer;
                     combat.attack_speed_debuff_multiplier = attack_speed_debuff_multiplier;
                     combat.attack_speed_buff_multiplier = attack_speed_buff_multiplier;
@@ -10031,6 +10360,105 @@ impl ResidentBattle {
             }
         }
         Ok(())
+    }
+
+    fn modifier_phase_allocation_headroom_supported(
+        &self,
+        entity_id_exclusive: Option<i64>,
+    ) -> bool {
+        self.entities
+            .iter()
+            .filter(|entity| {
+                entity.active
+                    && entity.is_alive
+                    && entity_id_exclusive.is_none_or(|limit| entity.id < limit)
+            })
+            .flat_map(|entity| entity.death_opcodes.iter())
+            .try_fold(0_i64, |births, opcode| {
+                births.checked_add(match opcode {
+                    ResidentDeathOpcode::Area(_) => 1,
+                    ResidentDeathOpcode::Spawn(spawn) => spawn.count,
+                    ResidentDeathOpcode::Damage(_) => 0,
+                })
+            })
+            .and_then(|count| self.next_entity_id.checked_add(count))
+            .is_some_and(|next_id| (0..i64::MAX).contains(&next_id))
+    }
+
+    fn modifier_phase_references_supported(&self, entity_id_exclusive: Option<i64>) -> bool {
+        self.entities.iter().all(|entity| {
+            !entity.active
+                || entity_id_exclusive.is_some_and(|limit| entity.id >= limit)
+                || entity.modifier_state.as_ref().is_none_or(|state| {
+                    state
+                        .periodic_damage_effects
+                        .iter()
+                        .all(|effect| (0..self.next_entity_id).contains(&effect.source_id))
+                })
+        })
+    }
+
+    fn advance_periodic_damage_effects(&mut self, entity_index: usize) {
+        if self.entities[entity_index].modifier_state.is_none() {
+            return;
+        }
+        let effect_count = self.entities[entity_index]
+            .modifier_state
+            .as_ref()
+            .map_or(0, |state| state.periodic_damage_effects.len());
+        for effect_index in 0..effect_count {
+            {
+                let effect = &mut self.entities[entity_index]
+                    .modifier_state
+                    .as_mut()
+                    .expect("periodic damage target retains modifier state")
+                    .periodic_damage_effects[effect_index];
+                effect.remaining = (effect.remaining - self.dt).max(0.0);
+                if let Some(hard_remaining) = effect.hard_remaining.as_mut() {
+                    *hard_remaining = (*hard_remaining - self.dt).max(0.0);
+                }
+                effect.time_to_next_hit -= self.dt;
+            }
+            loop {
+                let (due, damage, affects_hidden) = {
+                    let effect = &self.entities[entity_index]
+                        .modifier_state
+                        .as_ref()
+                        .expect("periodic damage target retains modifier state")
+                        .periodic_damage_effects[effect_index];
+                    (
+                        effect.time_to_next_hit <= 1e-9 && self.entities[entity_index].is_alive,
+                        effect.damage,
+                        effect.affects_hidden,
+                    )
+                };
+                if !due {
+                    break;
+                }
+                let can_receive = !self.entities[entity_index].blocks_effects_while_committed()
+                    && !self.entities[entity_index].hide_when_idle_blocks_effects(affects_hidden);
+                if can_receive {
+                    self.apply_resident_damage(entity_index, damage);
+                }
+                let effect = &mut self.entities[entity_index]
+                    .modifier_state
+                    .as_mut()
+                    .expect("periodic damage target retains modifier state")
+                    .periodic_damage_effects[effect_index];
+                effect.time_to_next_hit += effect.hit_interval;
+            }
+        }
+        let alive = self.entities[entity_index].is_alive;
+        self.entities[entity_index]
+            .modifier_state
+            .as_mut()
+            .expect("periodic damage target retains modifier state")
+            .periodic_damage_effects
+            .retain(|effect| {
+                alive
+                    && effect.remaining > 1e-9
+                    && effect.hard_remaining.is_none_or(|value| value > 1e-9)
+            });
     }
 
     fn modifier_state_bytes(&self) -> PyResult<Vec<u8>> {
@@ -13597,6 +14025,9 @@ impl ResidentBattle {
                     damage_tick_interval: spell.damage_tick_interval,
                     max_damage_ticks: spell.max_damage_ticks,
                     periodic_damage_buff_duration: spell.periodic_damage_buff_duration,
+                    target_local_damage: spell.target_local_damage,
+                    periodic_damage_controlled_by_parent: spell
+                        .periodic_damage_controlled_by_parent,
                 }),
                 time_alive: 0.0,
                 effect_snapshot_applied: false,
@@ -14986,6 +15417,14 @@ impl ResidentBattle {
         ids.sort_unstable();
         ids.windows(2).all(|pair| pair[0] != pair[1])
             && ids.last().is_none_or(|id| self.next_entity_id > *id)
+            && self.entities.iter().all(|entity| {
+                entity.modifier_state.as_ref().is_none_or(|state| {
+                    state
+                        .periodic_damage_effects
+                        .iter()
+                        .all(|effect| (0..self.next_entity_id).contains(&effect.source_id))
+                })
+            })
     }
 
     fn sync_player_crown_hitpoints(&mut self) {
@@ -17916,6 +18355,15 @@ impl ResidentBattle {
             self.advance_resident_freeze_area_effect(area_index);
             return;
         }
+        if self.entities[area_index]
+            .area_effect
+            .as_ref()
+            .and_then(|state| state.persistent_spell.as_ref())
+            .is_some_and(|spell| spell.clock_kind == "target_periodic")
+        {
+            self.advance_resident_target_periodic_area_effect(area_index);
+            return;
+        }
         let (spec, spell, damage_deadlines, effect_deadlines) = {
             let state = self.entities[area_index]
                 .area_effect
@@ -18025,6 +18473,96 @@ impl ResidentBattle {
             .as_ref()
             .is_some_and(|state| state.time_alive >= state.spec.duration - 1e-9);
         if expired {
+            self.entities[area_index].is_alive = false;
+        }
+    }
+
+    fn advance_resident_target_periodic_area_effect(&mut self, area_index: usize) {
+        let (spec, spell, effect_count) = {
+            let state = self.entities[area_index]
+                .area_effect
+                .as_mut()
+                .expect("resident target-periodic area requires state");
+            let spell = state
+                .persistent_spell
+                .clone()
+                .expect("resident target-periodic area requires spell state");
+            state.time_alive += self.dt;
+            if state.next_effect_time.is_none() {
+                state.next_effect_time = Some(state.spec.effect_tick_interval.max(0.05));
+            }
+            let mut effect_count = 0_usize;
+            while state.next_effect_time.is_some_and(|deadline| {
+                deadline <= state.time_alive.min(state.spec.duration) + 1e-9
+                    && deadline < state.spec.duration - 1e-9
+            }) {
+                let deadline = state.next_effect_time.expect("checked effect deadline");
+                effect_count += 1;
+                state.next_effect_time = Some(deadline + state.spec.effect_tick_interval);
+            }
+            (state.spec.clone(), spell, effect_count)
+        };
+
+        for _ in 0..effect_count {
+            let targets = self
+                .entities
+                .iter()
+                .enumerate()
+                .filter_map(|(target_index, _)| {
+                    self.resident_area_effect_target_valid(area_index, target_index, &spec)
+                        .then_some(target_index)
+                })
+                .collect::<Vec<_>>();
+            for target_index in targets {
+                let damage = if self.entities[target_index]
+                    .building_impact
+                    .as_ref()
+                    .is_some_and(|state| state.crown_slot.is_some())
+                {
+                    spell.crown_tower_damage
+                } else if self.entities[target_index].entity_kind == 1 {
+                    spell.building_damage.unwrap_or(spell.damage)
+                } else {
+                    spell.damage
+                };
+                let visible = self.resident_area_damage_target_visible(target_index);
+                let source_id = self.entities[area_index].id;
+                let attack_speed_debuff =
+                    if let Some(modifiers) = self.entities[target_index].modifier_state.as_mut() {
+                        if visible {
+                            modifiers.apply_periodic_damage(
+                                source_id,
+                                &spec.area_name,
+                                spell.periodic_damage_buff_duration,
+                                spell.damage_tick_interval,
+                                damage,
+                                spec.affects_hidden,
+                            );
+                        }
+                        modifiers.apply_slow_axes(
+                            spec.refresh_duration.max(spec.effect_tick_interval),
+                            spec.movement_multiplier,
+                            spec.attack_multiplier,
+                            spec.spawn_multiplier,
+                        );
+                        Some(modifiers.attack_speed_debuff_multiplier)
+                    } else {
+                        None
+                    };
+                if let (Some(debuff), Some(combat)) = (
+                    attack_speed_debuff,
+                    self.entities[target_index].locked_combat.as_mut(),
+                ) {
+                    combat.attack_speed_debuff_multiplier = debuff;
+                }
+            }
+        }
+
+        if self.entities[area_index]
+            .area_effect
+            .as_ref()
+            .is_some_and(|state| state.time_alive >= state.spec.duration - 1e-9)
+        {
             self.entities[area_index].is_alive = false;
         }
     }
