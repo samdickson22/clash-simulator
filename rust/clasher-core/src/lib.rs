@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 17;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 18;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -488,6 +488,15 @@ const LOGIC_SIN_TABLE: [i64; 91] = [
     998, 1002, 1005, 1008, 1011, 1014, 1016, 1018, 1020, 1022, 1023, 1023, 1024, 1024,
 ];
 
+const LOGIC_ATAN_TABLE: [i64; 129] = [
+    0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 8, 9, 9, 10, 10, 11, 11, 11, 12, 12,
+    13, 13, 14, 14, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 19, 20, 20, 21, 21, 21, 22, 22,
+    22, 23, 23, 24, 24, 24, 25, 25, 25, 26, 26, 27, 27, 27, 28, 28, 28, 29, 29, 29, 30, 30, 30, 31,
+    31, 31, 32, 32, 32, 33, 33, 33, 34, 34, 34, 35, 35, 35, 35, 36, 36, 36, 37, 37, 37, 37, 38, 38,
+    38, 39, 39, 39, 39, 40, 40, 40, 40, 41, 41, 41, 41, 42, 42, 42, 42, 43, 43, 43, 43, 44, 44, 44,
+    44, 45, 45, 45,
+];
+
 fn logic_sin(degrees: i64, magnitude: i64) -> i64 {
     let angle = degrees.rem_euclid(360);
     let (index, sign) = if angle < 180 {
@@ -520,6 +529,37 @@ fn rotate_logic_vector(x_units: i64, y_units: i64, degrees: i64) -> (i64, i64) {
         (cosine * x_units - sine * y_units) >> 10,
         (sine * x_units + cosine * y_units) >> 10,
     )
+}
+
+fn logic_vector_angle(x: i64, y: i64) -> i64 {
+    if x == 0 && y == 0 {
+        return 0;
+    }
+    let abs_x = x.abs();
+    let abs_y = y.abs();
+    if x > 0 && y >= 0 {
+        if y < x {
+            LOGIC_ATAN_TABLE[(y * 128 / x) as usize]
+        } else {
+            90 - LOGIC_ATAN_TABLE[(x * 128 / y) as usize]
+        }
+    } else if x <= 0 && y > 0 {
+        if abs_x < y {
+            90 + LOGIC_ATAN_TABLE[(abs_x * 128 / y) as usize]
+        } else {
+            180 - LOGIC_ATAN_TABLE[(y * 128 / abs_x) as usize]
+        }
+    } else if x < 0 && y <= 0 {
+        if abs_y < abs_x {
+            180 + LOGIC_ATAN_TABLE[(abs_y * 128 / abs_x) as usize]
+        } else {
+            270 - LOGIC_ATAN_TABLE[(abs_x * 128 / abs_y) as usize]
+        }
+    } else if abs_x < abs_y {
+        270 + LOGIC_ATAN_TABLE[(abs_x * 128 / abs_y) as usize]
+    } else {
+        360 - LOGIC_ATAN_TABLE[(abs_y * 128 / abs_x) as usize]
+    }
 }
 
 fn truncating_div(numerator: i128, denominator: i64) -> i64 {
@@ -3191,6 +3231,9 @@ struct PointProjectileState {
     launch_y: f64,
     homing_time_ms: i64,
     homing_min_distance: f64,
+    start_extra_radius: f64,
+    impact_children: Option<ResidentImpactChildProjectileSpec>,
+    impact_child_provenance: bool,
     spawn_projectile_state: Option<ResidentSpawnProjectileState>,
     unsupported: Vec<String>,
 }
@@ -3227,6 +3270,8 @@ impl PointProjectileState {
         let damage_wave_interval = normalized_f64(fields, "damage_wave_interval")?;
         let pierces = required_bool(fields, "pierces")?;
         let projectile_range = normalized_f64(fields, "projectile_range")?;
+        let hits_air = required_bool(fields, "hits_air")?;
+        let hits_ground = required_bool(fields, "hits_ground")?;
         required_i64(fields, "homing_time_ms")?;
         let start_extra_radius = normalized_f64(fields, "start_extra_radius")?;
         if !knockback_distance.is_finite() || knockback_distance < 0.0 {
@@ -3238,13 +3283,24 @@ impl PointProjectileState {
         if !damage_wave_interval.is_finite() || damage_wave_interval < 0.0 {
             unsupported.push("invalid_damage_wave_interval".to_owned());
         }
+        let source_entity_id = optional_entity_ref_id(fields, "source_entity")?;
+        let primary_target_id = optional_entity_ref_id(fields, "primary_target")?;
+        let spawn_projectile_data_present = fields
+            .get("spawn_projectile_data")
+            .is_some_and(|value| !value.is_null());
+        let impact_child_provenance = pierces
+            && projectile_range.to_bits() == 0.0_f64.to_bits()
+            && start_extra_radius > 0.0
+            && source_entity_id.is_none()
+            && primary_target_id.is_none()
+            && !spawn_projectile_data_present;
         if !projectile_range.is_finite()
             || projectile_range < 0.0
-            || pierces != (projectile_range > 0.0)
+            || (pierces != (projectile_range > 0.0) && !impact_child_provenance)
         {
             unsupported.push("invalid_piercing_payload".to_owned());
         }
-        if start_extra_radius != 0.0 {
+        if start_extra_radius != 0.0 && !impact_child_provenance {
             unsupported.push("projectile_start_collision".to_owned());
         }
         let hit_values = fields
@@ -3269,12 +3325,18 @@ impl PointProjectileState {
                 "projectile historical hit set is malformed",
             ));
         }
-        let spawn_projectile_data_present = fields
+        let impact_children = fields
             .get("spawn_projectile_data")
-            .is_some_and(|value| !value.is_null());
-        if spawn_projectile_data_present {
-            unsupported.push("child_projectiles".to_owned());
-        }
+            .filter(|value| !value.is_null())
+            .map(|value| {
+                ResidentImpactChildProjectileSpec::from_normalized(
+                    value,
+                    (hits_air, hits_ground),
+                    &mut unsupported,
+                )
+            })
+            .transpose()?
+            .flatten();
         for (name, value) in [
             ("target_x", target_x.as_f64()),
             ("target_y", target_y.as_f64()),
@@ -3296,8 +3358,8 @@ impl PointProjectileState {
             target_y,
             travel_speed: normalized_f64(fields, "travel_speed")?,
             splash_radius,
-            hits_air: required_bool(fields, "hits_air")?,
-            hits_ground: required_bool(fields, "hits_ground")?,
+            hits_air,
+            hits_ground,
             ignore_buildings: required_bool(fields, "ignore_buildings")?,
             crown_tower_damage: optional_normalized_f64(fields, "crown_tower_damage")?,
             crown_tower_damage_multiplier: normalized_f64(fields, "crown_tower_damage_multiplier")?,
@@ -3310,8 +3372,8 @@ impl PointProjectileState {
             damage_group_id: None,
             damage_group_hit_entity_ids: None,
             launch_delay: normalized_f64(fields, "launch_delay")?,
-            primary_target_id: optional_entity_ref_id(fields, "primary_target")?,
-            source_entity_id: optional_entity_ref_id(fields, "source_entity")?,
+            primary_target_id,
+            source_entity_id,
             tracks_target: required_bool(fields, "tracks_target")?,
             temporary_homing_remaining_ms: fields
                 .get("_temporary_homing_remaining_ms")
@@ -3340,6 +3402,9 @@ impl PointProjectileState {
             launch_y: normalized_f64(launch, "y")?,
             homing_time_ms: required_i64(fields, "homing_time_ms")?,
             homing_min_distance: normalized_f64(fields, "homing_min_distance")?,
+            start_extra_radius,
+            impact_children,
+            impact_child_provenance,
             spawn_projectile_state: fields
                 .contains_key("spawn_count")
                 .then(|| ResidentSpawnProjectileState::from_fields(fields))
@@ -3385,6 +3450,12 @@ impl PointProjectileState {
             "hit_entity_ids": self.hit_entity_ids,
             "temporary_homing_remaining_ms": self.temporary_homing_remaining_ms,
             "temporary_homing_target_id": self.temporary_homing_target_id,
+            "start_extra_radius": exact_f64_value(self.start_extra_radius),
+            "impact_children": self
+                .impact_children
+                .as_ref()
+                .map(ResidentImpactChildProjectileSpec::diagnostic_value),
+            "impact_child_provenance": self.impact_child_provenance,
             "spawn_projectile_state": self
                 .spawn_projectile_state
                 .as_ref()
@@ -3395,6 +3466,7 @@ impl PointProjectileState {
     fn publication_value(&self) -> Value {
         json!({
             "card_stats_source_id": self.source_entity_id,
+            "card_stats_source_kind": self.impact_child_provenance.then(|| self.source_kind.clone()),
             "constructor_range": self.constructor_range.diagnostic_value(),
             "constructor_sight_range": self.constructor_sight_range.diagnostic_value(),
             "homing_min_distance": exact_f64_value(self.homing_min_distance),
@@ -3403,7 +3475,8 @@ impl PointProjectileState {
             "launch_position_y": exact_f64_value(self.launch_y),
             "pierces": self.pierces,
             "projectile_range": exact_f64_value(self.projectile_range),
-            "start_extra_radius": exact_f64_value(0.0),
+            "start_extra_radius": exact_f64_value(self.start_extra_radius),
+            "impact_child_provenance": self.impact_child_provenance,
         })
     }
 }
@@ -3816,6 +3889,33 @@ struct ResidentWallBreakersDemolitionState {
     triggered: bool,
 }
 
+#[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentAttackRecoilState {
+    recoil_distance: f64,
+}
+
+impl ResidentAttackRecoilState {
+    fn from_normalized(mechanic: &Value, card_fields: &Map<String, Value>) -> PyResult<Self> {
+        let fields = object_fields(mechanic)?;
+        let recoil_distance = normalized_f64(fields, "recoil_distance")?;
+        let serialized = optional_normalized_f64(card_fields, "attack_pushback")?.unwrap_or(0.0);
+        if !recoil_distance.is_finite()
+            || recoil_distance <= 0.0
+            || recoil_distance.to_bits() != serialized.to_bits()
+            || recoil_distance > 10.0
+        {
+            return Err(PyValueError::new_err(
+                "AttackRecoil distance disagrees with the serialized payload",
+            ));
+        }
+        Ok(Self { recoil_distance })
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        json!({"recoil_distance": exact_f64_value(self.recoil_distance)})
+    }
+}
+
 impl ResidentWallBreakersDemolitionState {
     fn from_normalized(mechanic: &Value) -> PyResult<Self> {
         let fields = object_fields(mechanic)?;
@@ -4029,6 +4129,7 @@ struct LockedDirectCombatState {
     damage_ramp: Option<ResidentDamageRampState>,
     hide_when_idle: Option<ResidentHideWhenIdleState>,
     wall_breakers_demolition: Option<ResidentWallBreakersDemolitionState>,
+    attack_recoil: Option<ResidentAttackRecoilState>,
 }
 
 #[derive(Clone, IntoPyObject, PartialEq, Eq)]
@@ -4051,6 +4152,21 @@ struct PointWeapon {
     slow_multiplier: f64,
     pierces: bool,
     projectile_range: f64,
+    impact_children: Option<ResidentImpactChildProjectileSpec>,
+}
+
+#[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentImpactChildProjectileSpec {
+    spawn_count: i64,
+    damage: f64,
+    travel_speed: f64,
+    projectile_range: f64,
+    hit_radius: f64,
+    start_extra_radius: f64,
+    spawn_radius: i64,
+    hits_air: bool,
+    hits_ground: bool,
+    crown_tower_damage_multiplier: f64,
 }
 
 enum CombatPayload {
@@ -4098,6 +4214,7 @@ impl DirectAreaWeapon {
 impl PointWeapon {
     fn from_card_fields(
         card_fields: &Map<String, Value>,
+        inherited_hit_planes: (bool, bool),
         unsupported: &mut Vec<String>,
     ) -> PyResult<Option<Self>> {
         let Some(projectile_data) = card_fields.get("projectile_data") else {
@@ -4112,12 +4229,6 @@ impl PointWeapon {
             ("projectileStartExtraRadius", "projectile_start_collision"),
         ] {
             if normalized_mapping_nonzero(projectile_data, field)? {
-                unsupported.push(reason.to_owned());
-            }
-        }
-        for (field, reason) in [("spawnProjectileData", "child_projectiles")] {
-            if normalized_mapping_get(projectile_data, field).is_some_and(|value| !value.is_null())
-            {
                 unsupported.push(reason.to_owned());
             }
         }
@@ -4191,6 +4302,28 @@ impl PointWeapon {
                     )
                 })
         };
+        let impact_children = normalized_mapping_get(projectile_data, "spawnProjectileData")
+            .filter(|value| !value.is_null())
+            .map(|value| {
+                ResidentImpactChildProjectileSpec::from_normalized(
+                    value,
+                    hit_planes.unwrap_or(inherited_hit_planes),
+                    unsupported,
+                )
+            })
+            .transpose()?
+            .flatten();
+        if let Some(children) = impact_children.as_ref() {
+            if normalized_mapping_get(projectile_data, "damage")
+                .is_some_and(|value| !value.is_null())
+            {
+                unsupported.push("impact_child_carrier_damage".to_owned());
+            }
+            let source_serialized_damage = normalized_f64(card_fields, "damage")?;
+            if children.damage.to_bits() != source_serialized_damage.to_bits() {
+                unsupported.push("invalid_child_projectile_damage".to_owned());
+            }
+        }
         let crown_percent = normalized_mapping_get(projectile_data, "crownTowerDamagePercent")
             .map(ExactScalar::from_normalized)
             .transpose()?
@@ -4247,6 +4380,154 @@ impl PointWeapon {
             slow_multiplier,
             pierces,
             projectile_range,
+            impact_children,
+        }))
+    }
+}
+
+impl ResidentImpactChildProjectileSpec {
+    fn diagnostic_value(&self) -> Value {
+        json!({
+            "spawn_count": self.spawn_count,
+            "damage": exact_f64_value(self.damage),
+            "travel_speed": exact_f64_value(self.travel_speed),
+            "projectile_range": exact_f64_value(self.projectile_range),
+            "hit_radius": exact_f64_value(self.hit_radius),
+            "start_extra_radius": exact_f64_value(self.start_extra_radius),
+            "spawn_radius": self.spawn_radius,
+            "hits_air": self.hits_air,
+            "hits_ground": self.hits_ground,
+            "crown_tower_damage_multiplier": exact_f64_value(
+                self.crown_tower_damage_multiplier,
+            ),
+        })
+    }
+
+    fn from_normalized(
+        value: &Value,
+        inherited_hit_planes: (bool, bool),
+        unsupported: &mut Vec<String>,
+    ) -> PyResult<Option<Self>> {
+        if value.get("$mapping").and_then(Value::as_array).is_none() {
+            unsupported.push("invalid_child_projectiles".to_owned());
+            return Ok(None);
+        }
+        let exact = |name: &str| -> PyResult<Option<ExactScalar>> {
+            normalized_mapping_get(value, name)
+                .map(ExactScalar::from_normalized)
+                .transpose()
+        };
+        let Some(ExactScalar::Int(spawn_count)) = exact("spawnCount")? else {
+            unsupported.push("invalid_child_projectile_count".to_owned());
+            return Ok(None);
+        };
+        let Some(damage) = exact("damage")? else {
+            unsupported.push("invalid_child_projectile_damage".to_owned());
+            return Ok(None);
+        };
+        let Some(speed) = exact("speed")? else {
+            unsupported.push("invalid_child_projectile_speed".to_owned());
+            return Ok(None);
+        };
+        let Some(projectile_range) = exact("projectileRange")? else {
+            unsupported.push("invalid_child_projectile_range".to_owned());
+            return Ok(None);
+        };
+        let hit_radius = exact("projectileRadius")?
+            .or(exact("radius")?)
+            .map_or(0.0, |scalar| scalar.as_f64() / 1000.0);
+        let start_extra_radius =
+            exact("projectileStartExtraRadius")?.map_or(0.0, |scalar| scalar.as_f64() / 1000.0);
+        let spawn_radius = match exact("spawnRadius")? {
+            None => 0,
+            Some(ExactScalar::Int(value)) => value,
+            Some(ExactScalar::Float(_)) => {
+                unsupported.push("invalid_child_projectile_scatter".to_owned());
+                return Ok(None);
+            }
+        };
+        let homing = match normalized_mapping_get(value, "homing") {
+            None => true,
+            Some(value) => match value.as_bool() {
+                Some(value) => value,
+                None => {
+                    unsupported.push("invalid_child_projectile_homing".to_owned());
+                    true
+                }
+            },
+        };
+        for field in ["hitsAir", "hitsGround"] {
+            if normalized_mapping_get(value, field).is_some_and(|value| !value.is_boolean()) {
+                unsupported.push("invalid_child_projectile_plane_override".to_owned());
+            }
+        }
+        if normalized_mapping_get(value, "tidTarget").is_some_and(|value| !value.is_string()) {
+            unsupported.push("invalid_child_projectile_plane_override".to_owned());
+        }
+        let (hits_air, hits_ground) = if normalized_mapping_get(value, "hitsAir").is_some()
+            || normalized_mapping_get(value, "hitsGround").is_some()
+        {
+            (
+                normalized_mapping_get(value, "hitsAir")
+                    .and_then(Value::as_bool)
+                    .unwrap_or(false),
+                normalized_mapping_get(value, "hitsGround")
+                    .and_then(Value::as_bool)
+                    .unwrap_or(false),
+            )
+        } else {
+            normalized_mapping_get(value, "tidTarget")
+                .and_then(Value::as_str)
+                .filter(|value| !value.is_empty())
+                .map_or(inherited_hit_planes, |target_type| {
+                    (
+                        target_type.contains("AIR"),
+                        target_type.contains("GROUND") || target_type.contains("BUILDINGS"),
+                    )
+                })
+        };
+        let crown_percent = exact("crownTowerDamagePercent")?.map_or(0.0, |scalar| scalar.as_f64());
+        let crown_tower_damage_multiplier = (1.0 + crown_percent / 100.0).max(0.0);
+        let travel_speed = speed.as_f64() / 1000.0 / 0.05;
+        let projectile_range = projectile_range.as_f64() / 1000.0;
+        let valid = (1..=32).contains(&spawn_count)
+            && damage.as_f64().is_finite()
+            && damage.as_f64() > 0.0
+            && travel_speed.is_finite()
+            && travel_speed > 0.0
+            && projectile_range.is_finite()
+            && projectile_range > 0.0
+            && hit_radius.is_finite()
+            && hit_radius > 0.0
+            && start_extra_radius.is_finite()
+            && start_extra_radius > 0.0
+            && (0..=360).contains(&spawn_radius)
+            && !homing
+            && hits_air
+            && hits_ground
+            && crown_tower_damage_multiplier.is_finite()
+            && !normalized_mapping_nonzero(value, "pushback")?
+            && !normalized_mapping_nonzero(value, "homingTime")?
+            && normalized_mapping_get(value, "spawnProjectileData").is_none_or(Value::is_null)
+            && normalized_mapping_get(value, "spawnAreaEffectObjectData")
+                .is_none_or(Value::is_null)
+            && normalized_mapping_get(value, "targetBuffData").is_none_or(Value::is_null)
+            && exact("buffTime")?.is_none_or(|scalar| scalar.as_f64() == 0.0);
+        if !valid {
+            unsupported.push("invalid_child_projectiles".to_owned());
+            return Ok(None);
+        }
+        Ok(Some(Self {
+            spawn_count,
+            damage: damage.as_f64(),
+            travel_speed,
+            projectile_range,
+            hit_radius,
+            start_extra_radius,
+            spawn_radius,
+            hits_air,
+            hits_ground,
+            crown_tower_damage_multiplier,
         }))
     }
 }
@@ -4276,7 +4557,21 @@ impl LockedDirectCombatState {
         } else {
             (hit_speed_ms - load_time_ms).max(0)
         };
-        let point_weapon = PointWeapon::from_card_fields(card_fields, direct_combat_unsupported)?;
+        let inherited_hit_planes = (
+            required_bool(fields, "_can_attack_air_cached")?,
+            required_bool(fields, "_can_attack_ground_cached")?,
+        );
+        let mut point_weapon = PointWeapon::from_card_fields(
+            card_fields,
+            inherited_hit_planes,
+            direct_combat_unsupported,
+        )?;
+        if let Some(children) = point_weapon
+            .as_mut()
+            .and_then(|weapon| weapon.impact_children.as_mut())
+        {
+            children.damage = normalized_f64(fields, "damage")?;
+        }
         if direct_combat_unsupported.len() > projectile_reason_count {
             direct_combat_unsupported.push("projectile_payload".to_owned());
         }
@@ -4349,6 +4644,7 @@ impl LockedDirectCombatState {
             damage_ramp: None,
             hide_when_idle: None,
             wall_breakers_demolition: None,
+            attack_recoil: None,
         })
     }
 
@@ -4387,6 +4683,9 @@ impl LockedDirectCombatState {
             ),
             "wall_breakers_demolition": self.wall_breakers_demolition.as_ref().map(
                 ResidentWallBreakersDemolitionState::diagnostic_value
+            ),
+            "attack_recoil": self.attack_recoil.as_ref().map(
+                ResidentAttackRecoilState::diagnostic_value
             ),
             "encounter_index": entity.encounter_index,
             "facing_x_units": self.facing_x_units,
@@ -4429,6 +4728,11 @@ impl ResidentEntity {
                     self.locked_combat
                         .as_ref()
                         .is_some_and(|combat| combat.wall_breakers_demolition.is_some()),
+                )
+                + usize::from(
+                    self.locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.attack_recoil.is_some()),
                 )
     }
 
@@ -4709,6 +5013,7 @@ impl ResidentEntity {
         let mut damage_ramp = None;
         let mut hide_when_idle = None;
         let mut wall_breakers_demolition = None;
+        let mut attack_recoil = None;
         for mechanic in mechanic_values {
             match object_type(mechanic)?.as_str() {
                 "clasher.mechanics.shared.shield.Shield" => {
@@ -4779,6 +5084,17 @@ impl ResidentEntity {
                         ResidentWallBreakersDemolitionState::from_normalized(mechanic)?,
                     );
                 }
+                "clasher.cards.firecracker.AttackRecoil" => {
+                    if attack_recoil.is_some() {
+                        return Err(PyValueError::new_err(
+                            "entity has multiple AttackRecoil mechanics",
+                        ));
+                    }
+                    attack_recoil = Some(ResidentAttackRecoilState::from_normalized(
+                        mechanic,
+                        card_fields,
+                    )?);
+                }
                 _ => {}
             }
         }
@@ -4828,6 +5144,7 @@ impl ResidentEntity {
             state.damage_ramp = damage_ramp;
             state.hide_when_idle = hide_when_idle;
             state.wall_breakers_demolition = wall_breakers_demolition;
+            state.attack_recoil = attack_recoil;
             Some(state)
         } else {
             None
@@ -4918,6 +5235,11 @@ impl ResidentEntity {
                     .as_ref()
                     .is_some_and(|combat| combat.wall_breakers_demolition.is_some()),
             )
+            + usize::from(
+                locked_combat
+                    .as_ref()
+                    .is_some_and(|combat| combat.attack_recoil.is_some()),
+            )
             != mechanics.len()
         {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
@@ -4939,13 +5261,38 @@ impl ResidentEntity {
         let uses_direct_area = locked_combat
             .as_ref()
             .is_some_and(|state| state.direct_area.is_some());
-        for (field, reason) in [
-            ("attack_pushback", "attack_pushback"),
-            ("charge_range", "charge_payload"),
-        ] {
-            if normalized_optional_number_is_nonzero(card_fields, field)? {
-                direct_combat_unsupported.push(reason.to_owned());
-            }
+        let impact_children_present = locked_combat
+            .as_ref()
+            .and_then(|state| state.point_weapon.as_ref())
+            .is_some_and(|weapon| weapon.impact_children.is_some());
+        let attack_recoil_present = locked_combat
+            .as_ref()
+            .is_some_and(|state| state.attack_recoil.is_some());
+        if impact_children_present != attack_recoil_present {
+            direct_combat_unsupported.push("impact_child_recoil_closure".to_owned());
+        }
+        if let Some(weapon) = locked_combat
+            .as_ref()
+            .and_then(|state| state.point_weapon.as_ref())
+            .filter(|weapon| weapon.impact_children.is_some())
+            && (weapon.tracks_target
+                || weapon.pierces
+                || weapon.projectile_range.to_bits() != 0.0_f64.to_bits()
+                || weapon.splash_radius.to_bits() != 0.0_f64.to_bits()
+                || weapon.stun_duration.to_bits() != 0.0_f64.to_bits()
+                || weapon.slow_duration.to_bits() != 0.0_f64.to_bits()
+                || weapon.slow_multiplier.to_bits() != 1.0_f64.to_bits()
+                || weapon.crown_tower_damage_multiplier.to_bits() != 1.0_f64.to_bits())
+        {
+            direct_combat_unsupported.push("impact_child_carrier_payload".to_owned());
+        }
+        if normalized_optional_number_is_nonzero(card_fields, "attack_pushback")?
+            != attack_recoil_present
+        {
+            direct_combat_unsupported.push("attack_pushback".to_owned());
+        }
+        if normalized_optional_number_is_nonzero(card_fields, "charge_range")? {
+            direct_combat_unsupported.push("charge_payload".to_owned());
         }
         if !uses_projectile_weapon && !uses_direct_area {
             for (field, reason) in [
@@ -5503,7 +5850,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 17;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 18;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -6749,6 +7096,10 @@ impl ResidentCardCatalog {
                         .locked_combat
                         .as_ref()
                         .is_some_and(|combat| combat.wall_breakers_demolition.is_some());
+                    let attack_recoil_present = prototype
+                        .locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.attack_recoil.is_some());
                     let electro_chain_present = prototype.electro_spirit_chain.is_some();
                     let mechanic_family_supported = if prototype.status_nova_jump.is_some() {
                         prototype.mechanics.len() == 1
@@ -6758,6 +7109,7 @@ impl ResidentCardCatalog {
                             && !damage_ramp_present
                             && !hide_when_idle_present
                             && !demolition_present
+                            && !attack_recoil_present
                     } else if electro_chain_present {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
@@ -6765,18 +7117,26 @@ impl ResidentCardCatalog {
                             && !damage_ramp_present
                             && !hide_when_idle_present
                             && !demolition_present
+                            && !attack_recoil_present
                     } else if damage_ramp_present {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
                             && !hide_when_idle_present
                             && !demolition_present
+                            && !attack_recoil_present
                     } else if hide_when_idle_present {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
                             && !demolition_present
+                            && !attack_recoil_present
                     } else if demolition_present {
+                        prototype.mechanics.len() == 1
+                            && prototype.shields.is_empty()
+                            && prototype.death_opcodes.is_empty()
+                            && !attack_recoil_present
+                    } else if attack_recoil_present {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
@@ -7924,6 +8284,7 @@ impl PublicationExactEq for PointProjectileState {
             && self.damage_group_hit_entity_ids == other.damage_group_hit_entity_ids
             && self.primary_target_id == other.primary_target_id
             && self.source_entity_id == other.source_entity_id
+            && self.impact_child_provenance == other.impact_child_provenance
             && self.tracks_target == other.tracks_target
             && self.pierces == other.pierces
             && self.temporary_homing_remaining_ms == other.temporary_homing_remaining_ms
@@ -7936,6 +8297,7 @@ impl PublicationExactEq for PointProjectileState {
             && self.constructor_sight_range == other.constructor_sight_range
             && self.homing_time_ms == other.homing_time_ms
             && self.unsupported == other.unsupported
+            && publication_option_exact_eq(&self.impact_children, &other.impact_children)
             && publication_option_exact_eq(
                 &self.spawn_projectile_state,
                 &other.spawn_projectile_state,
@@ -7955,6 +8317,7 @@ impl PublicationExactEq for PointProjectileState {
                     self.launch_y,
                     self.homing_min_distance,
                     self.projectile_range,
+                    self.start_extra_radius,
                 ],
                 [
                     other.travel_speed,
@@ -7970,6 +8333,7 @@ impl PublicationExactEq for PointProjectileState {
                     other.launch_y,
                     other.homing_min_distance,
                     other.projectile_range,
+                    other.start_extra_radius,
                 ],
             )
             && publication_optional_f64_eq(self.crown_tower_damage, other.crown_tower_damage)
@@ -8031,6 +8395,7 @@ impl PublicationExactEq for PointWeapon {
         self.tracks_target == other.tracks_target
             && self.hit_planes == other.hit_planes
             && self.pierces == other.pierces
+            && publication_option_exact_eq(&self.impact_children, &other.impact_children)
             && publication_f64_fields_eq(
                 [
                     self.travel_speed,
@@ -8123,6 +8488,7 @@ impl PublicationExactEq for LockedDirectCombatState {
             && publication_option_exact_eq(&self.damage_ramp, &other.damage_ramp)
             && publication_option_exact_eq(&self.hide_when_idle, &other.hide_when_idle)
             && self.wall_breakers_demolition == other.wall_breakers_demolition
+            && publication_option_exact_eq(&self.attack_recoil, &other.attack_recoil)
     }
 }
 
@@ -8146,6 +8512,39 @@ impl PublicationExactEq for ResidentHideWhenIdleState {
 impl PublicationExactEq for ResidentWallBreakersDemolitionState {
     fn publication_exact_eq(&self, other: &Self) -> bool {
         self == other
+    }
+}
+
+impl PublicationExactEq for ResidentAttackRecoilState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        publication_f64_eq(self.recoil_distance, other.recoil_distance)
+    }
+}
+
+impl PublicationExactEq for ResidentImpactChildProjectileSpec {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.spawn_count == other.spawn_count
+            && self.spawn_radius == other.spawn_radius
+            && self.hits_air == other.hits_air
+            && self.hits_ground == other.hits_ground
+            && publication_f64_fields_eq(
+                [
+                    self.damage,
+                    self.travel_speed,
+                    self.projectile_range,
+                    self.hit_radius,
+                    self.start_extra_radius,
+                    self.crown_tower_damage_multiplier,
+                ],
+                [
+                    other.damage,
+                    other.travel_speed,
+                    other.projectile_range,
+                    other.hit_radius,
+                    other.start_extra_radius,
+                    other.crown_tower_damage_multiplier,
+                ],
+            )
     }
 }
 
@@ -8258,6 +8657,7 @@ impl LockedDirectCombatState {
                 ),
                 (None, None) | (Some(_), Some(_))
             )
+            && publication_option_exact_eq(&self.attack_recoil, &other.attack_recoil)
             && publication_f64_fields_eq(
                 [
                     self.range,
@@ -8315,12 +8715,14 @@ impl PointProjectileState {
             && self.ignore_buildings == other.ignore_buildings
             && self.knockback_ignores_mass == other.knockback_ignores_mass
             && self.source_entity_id == other.source_entity_id
+            && self.impact_child_provenance == other.impact_child_provenance
             && self.tracks_target == other.tracks_target
             && self.pierces == other.pierces
             && self.constructor_range == other.constructor_range
             && self.constructor_sight_range == other.constructor_sight_range
             && self.homing_time_ms == other.homing_time_ms
             && self.unsupported == other.unsupported
+            && publication_option_exact_eq(&self.impact_children, &other.impact_children)
             && match (&self.spawn_projectile_state, &other.spawn_projectile_state) {
                 (None, None) => true,
                 (Some(left), Some(right)) => left.publication_static_eq(right),
@@ -8341,6 +8743,7 @@ impl PointProjectileState {
                     self.launch_y,
                     self.homing_min_distance,
                     self.projectile_range,
+                    self.start_extra_radius,
                 ],
                 [
                     other.travel_speed,
@@ -8355,6 +8758,7 @@ impl PointProjectileState {
                     other.launch_y,
                     other.homing_min_distance,
                     other.projectile_range,
+                    other.start_extra_radius,
                 ],
             )
     }
@@ -10841,12 +11245,24 @@ impl ResidentBattle {
                     .map_or(0, |state| state.spawn_count);
                 count.checked_add(children)
             });
+        let possible_impact_children = self.entities.iter().try_fold(0_i64, |count, entity| {
+            let children = entity
+                .point_projectile
+                .as_ref()
+                .and_then(|projectile| projectile.impact_children.as_ref())
+                .filter(|_| entity.active && entity.is_alive)
+                .map_or(0, |spec| spec.spawn_count);
+            count.checked_add(children)
+        });
         possible_death_births
             .and_then(|births| {
                 possible_rolling_children.and_then(|children| births.checked_add(children))
             })
             .and_then(|count| {
                 possible_spawn_projectile_children.and_then(|children| count.checked_add(children))
+            })
+            .and_then(|count| {
+                possible_impact_children.and_then(|children| count.checked_add(children))
             })
             .and_then(|count| self.next_entity_id.checked_add(count))
             .is_some_and(|next_id| (0..i64::MAX).contains(&next_id))
@@ -11660,6 +12076,7 @@ impl ResidentBattle {
                     }
                     CombatPayload::PointProjectile(weapon) => {
                         self.launch_point_projectile(actor_index, target_index, weapon);
+                        self.begin_attack_recoil(actor_index, target_index);
                         let demolition = self.entities[actor_index]
                             .locked_combat
                             .as_mut()
@@ -11679,6 +12096,57 @@ impl ResidentBattle {
             }
         }
         Ok(())
+    }
+
+    fn begin_attack_recoil(&mut self, actor_index: usize, target_index: usize) {
+        let Some(distance) = self.entities[actor_index]
+            .locked_combat
+            .as_ref()
+            .and_then(|combat| combat.attack_recoil.as_ref())
+            .map(|recoil| recoil.recoil_distance)
+        else {
+            return;
+        };
+        let target_x = logic_units(self.entities[target_index].position_x.as_f64());
+        let target_y = logic_units(self.entities[target_index].position_y.as_f64());
+        let actor_x = logic_units(self.entities[actor_index].position_x.as_f64());
+        let actor_y = logic_units(self.entities[actor_index].position_y.as_f64());
+        let dx = actor_x - target_x;
+        let dy = actor_y - target_y;
+        if (dx == 0 && dy == 0)
+            || self.entities[actor_index]
+                .movement
+                .as_ref()
+                .is_none_or(|movement| movement.knockback_target.is_some())
+        {
+            return;
+        }
+        let distance_units = logic_units(distance).clamp(0, 10_000);
+        if distance_units <= 0 {
+            return;
+        }
+        let (move_x, move_y) = normalized_vector_logic_units(dx, dy, distance_units);
+        let target = (
+            (actor_x + move_x) as f64 / 1000.0,
+            (actor_y + move_y) as f64 / 1000.0,
+        );
+        let mut velocity_work = 0;
+        let mut accumulated_work = 0;
+        while accumulated_work < distance_units {
+            velocity_work += 25;
+            accumulated_work += velocity_work;
+        }
+        let movement = self.entities[actor_index]
+            .movement
+            .as_mut()
+            .expect("AttackRecoil requires movement state");
+        movement.knockback_target = Some(target);
+        movement.knockback_velocity_work = velocity_work;
+        movement.knockback_interrupts_combat = false;
+        movement.forced_movement_active = true;
+        self.entities[actor_index]
+            .sparse_attributes
+            .insert("_knockback_target");
     }
 
     fn start_status_nova_jump(&mut self, actor_index: usize, target_index: usize) {
@@ -11913,7 +12381,46 @@ impl ResidentBattle {
             {
                 return false;
             }
-            if projectile.pierces {
+            let catalog_impact_spec = self
+                .catalog
+                .get(&projectile.source_kind)
+                .and_then(|card| card.prototype.as_ref())
+                .and_then(|prototype| prototype.locked_combat.as_ref())
+                .and_then(|combat| combat.point_weapon.as_ref())
+                .and_then(|weapon| weapon.impact_children.as_ref());
+            if projectile.impact_child_provenance {
+                let Some(spec) = catalog_impact_spec else {
+                    return false;
+                };
+                if !projectile.pierces
+                    || projectile.projectile_range.to_bits() != 0.0_f64.to_bits()
+                    || projectile.tracks_target
+                    || projectile.primary_target_id.is_some()
+                    || projectile.source_entity_id.is_some()
+                    || projectile.impact_children.is_some()
+                    || projectile.damage_group_id.is_some()
+                    || projectile.damage_group_hit_entity_ids.is_some()
+                    || projectile.temporary_homing_remaining_ms != 0
+                    || projectile.temporary_homing_target_id.is_some()
+                    || !projectile.start_collision_resolved
+                    || projectile.splash_radius.to_bits() != spec.hit_radius.to_bits()
+                    || projectile.start_extra_radius.to_bits() != spec.start_extra_radius.to_bits()
+                    || projectile.travel_speed.to_bits() != spec.travel_speed.to_bits()
+                    || projectile.hits_air != spec.hits_air
+                    || projectile.hits_ground != spec.hits_ground
+                    || projectile.crown_tower_damage_multiplier.to_bits()
+                        != spec.crown_tower_damage_multiplier.to_bits()
+                    || entity.damage != ExactScalar::Float(spec.damage.to_bits())
+                    || projectile.constructor_range
+                        != ExactScalar::Float(spec.projectile_range.to_bits())
+                    || projectile.constructor_sight_range != ExactScalar::Float(0.0_f64.to_bits())
+                    || projectile.stun_duration.to_bits() != 0.0_f64.to_bits()
+                    || projectile.slow_duration.to_bits() != 0.0_f64.to_bits()
+                    || projectile.knockback_distance.to_bits() != 0.0_f64.to_bits()
+                {
+                    return false;
+                }
+            } else if projectile.pierces {
                 if projectile.projectile_range <= 0.0
                     || projectile.tracks_target
                     || projectile.damage_group_id.is_some()
@@ -11931,7 +12438,30 @@ impl ResidentBattle {
             } else if projectile.projectile_range != 0.0 || !projectile.hit_entity_ids.is_empty() {
                 return false;
             }
-            if let Some(target_id) = projectile.primary_target_id {
+            if let Some(children) = projectile.impact_children.as_ref() {
+                let Some(spec) = catalog_impact_spec else {
+                    return false;
+                };
+                if !children.publication_exact_eq(spec)
+                    || projectile.impact_child_provenance
+                    || projectile.pierces
+                    || projectile.splash_radius.to_bits() != 0.0_f64.to_bits()
+                    || entity.damage != ExactScalar::Float(0.0_f64.to_bits())
+                    || projectile.primary_target_id.is_none()
+                    || projectile.source_entity_id.is_none()
+                {
+                    return false;
+                }
+            } else if !projectile.impact_child_provenance
+                && projectile.start_extra_radius.to_bits() != 0.0_f64.to_bits()
+            {
+                return false;
+            }
+            if projectile.impact_child_provenance {
+                // The immutable catalog child spec above is this object's
+                // complete constructor provenance; it intentionally has no
+                // live primary/source reference.
+            } else if let Some(target_id) = projectile.primary_target_id {
                 if projectile.damage_wave_interval != 0.0 || projectile.damage_group_id.is_some() {
                     return false;
                 }
@@ -11988,6 +12518,11 @@ impl ResidentBattle {
         if !self.supports_point_projectile_phase() {
             return Err(PyRuntimeError::new_err(
                 "resident point-projectile preflight rejected unsupported object or payload",
+            ));
+        }
+        if !self.resident_object_allocation_headroom_supported() {
+            return Err(PyRuntimeError::new_err(
+                "resident point-projectile phase lacks aggregate entity-ID allocation headroom",
             ));
         }
         self.mark_publication_mutated();
@@ -13900,6 +14435,9 @@ impl ResidentBattle {
                 launch_y,
                 homing_time_ms: 0,
                 homing_min_distance: 0.0,
+                start_extra_radius: 0.0,
+                impact_children: None,
+                impact_child_provenance: false,
                 spawn_projectile_state: Some(ResidentSpawnProjectileState {
                     activation_delay: spec.activation_delay,
                     spawn_count: spec.spawn_count,
@@ -14370,6 +14908,9 @@ impl ResidentBattle {
                         launch_y,
                         homing_time_ms: 0,
                         homing_min_distance: 0.0,
+                        start_extra_radius: 0.0,
+                        impact_children: None,
+                        impact_child_provenance: false,
                         spawn_projectile_state: None,
                         unsupported: Vec::new(),
                     }),
@@ -15325,6 +15866,39 @@ impl ResidentBattle {
                     .map_or(0, |state| state.spawn_count);
                 count.checked_add(children)
             });
+        let possible_existing_impact_children =
+            self.entities.iter().try_fold(0_i64, |count, entity| {
+                let children = entity
+                    .point_projectile
+                    .as_ref()
+                    .and_then(|projectile| projectile.impact_children.as_ref())
+                    .filter(|_| entity.active && entity.is_alive)
+                    .map_or(0, |spec| spec.spawn_count);
+                count.checked_add(children)
+            });
+        let possible_combat_impact_children =
+            self.entities
+                .iter()
+                .enumerate()
+                .try_fold(0_i64, |count, (index, entity)| {
+                    let children = entity
+                        .locked_combat
+                        .as_ref()
+                        .and_then(|combat| combat.point_weapon.as_ref())
+                        .and_then(|weapon| weapon.impact_children.as_ref())
+                        .filter(|_| {
+                            entity.active
+                                && entity.is_alive
+                                && entity.deploy_delay_remaining <= 0.0
+                                && if entity.entity_kind == 1 {
+                                    self.direct_building_target_index(index).is_some()
+                                } else {
+                                    self.direct_troop_target_index(index).is_some()
+                                }
+                        })
+                        .map_or(0, |spec| spec.spawn_count);
+                    count.checked_add(children)
+                });
         due_spell_births
             .and_then(|due| possible_direct_projectiles.and_then(|value| due.checked_add(value)))
             .and_then(|count| possible_chain_launches.and_then(|value| count.checked_add(value)))
@@ -15332,6 +15906,12 @@ impl ResidentBattle {
             .and_then(|count| possible_rolling_children.and_then(|value| count.checked_add(value)))
             .and_then(|count| {
                 possible_spawn_projectile_children.and_then(|value| count.checked_add(value))
+            })
+            .and_then(|count| {
+                possible_existing_impact_children.and_then(|value| count.checked_add(value))
+            })
+            .and_then(|count| {
+                possible_combat_impact_children.and_then(|value| count.checked_add(value))
             })
             .and_then(|count| self.next_entity_id.checked_add(count))
             .is_some_and(|next_id| (0..i64::MAX).contains(&next_id))
@@ -18946,7 +19526,11 @@ impl ResidentBattle {
         let target_id = target.id;
         let player_id = source.player_id;
         let card_name = source.card_name.clone();
-        let damage = source.damage.clone();
+        let damage = if weapon.impact_children.is_some() {
+            ExactScalar::Float(0.0_f64.to_bits())
+        } else {
+            source.damage.clone()
+        };
         let (inherited_hit_planes, constructor_range) = {
             let combat = source
                 .locked_combat
@@ -19064,6 +19648,9 @@ impl ResidentBattle {
                 launch_y,
                 homing_time_ms: 0,
                 homing_min_distance: 0.0,
+                start_extra_radius: 0.0,
+                impact_children: weapon.impact_children,
+                impact_child_provenance: false,
                 spawn_projectile_state: None,
                 unsupported: Vec::new(),
             }),
@@ -19415,6 +20002,13 @@ impl ResidentBattle {
                     slow_multiplier,
                 );
             }
+            if self.entities[projectile_index]
+                .point_projectile
+                .as_ref()
+                .is_some_and(|projectile| projectile.impact_children.is_some())
+            {
+                self.spawn_impact_child_projectiles(projectile_index);
+            }
             self.entities[projectile_index].is_alive = false;
             self.entities[projectile_index]
                 .position_x
@@ -19438,6 +20032,29 @@ impl ResidentBattle {
         projectile_index: usize,
         mut remaining_dt: f64,
     ) {
+        if !self.entities[projectile_index]
+            .point_projectile
+            .as_ref()
+            .expect("piercing projectile requires point state")
+            .start_collision_resolved
+        {
+            let position_x = logic_units(self.entities[projectile_index].position_x.as_f64());
+            let position_y = logic_units(self.entities[projectile_index].position_y.as_f64());
+            let start_radius = {
+                let projectile = self.entities[projectile_index]
+                    .point_projectile
+                    .as_mut()
+                    .expect("piercing projectile retains point state");
+                projectile.start_collision_resolved = true;
+                projectile.splash_radius + projectile.start_extra_radius
+            };
+            self.apply_piercing_point_projectile_hits(
+                projectile_index,
+                position_x,
+                position_y,
+                start_radius,
+            );
+        }
         while self.entities[projectile_index].is_alive && remaining_dt > 1e-12 {
             let step_dt = remaining_dt.min(0.05);
             remaining_dt -= step_dt;
@@ -19476,77 +20093,183 @@ impl ResidentBattle {
                 .position_y
                 .set_f64(next_y as f64 / 1000.0);
 
-            let (damage, crown_tower_damage, crown_tower_damage_multiplier) = {
-                let entity = &self.entities[projectile_index];
-                let projectile = entity
-                    .point_projectile
-                    .as_ref()
-                    .expect("piercing projectile retains point state");
-                (
-                    entity.damage.as_f64(),
-                    projectile.crown_tower_damage,
-                    projectile.crown_tower_damage_multiplier,
-                )
-            };
-            let scan_len = self.entities.len();
-            let targets = (0..scan_len)
-                .filter(|&target_index| {
-                    self.piercing_point_projectile_target_valid(
-                        projectile_index,
-                        target_index,
-                        next_x,
-                        next_y,
-                    )
-                })
-                .collect::<Vec<_>>();
-            for target_index in targets {
-                if !self.piercing_point_projectile_target_valid(
-                    projectile_index,
-                    target_index,
-                    next_x,
-                    next_y,
-                ) {
-                    continue;
-                }
-                let target_id = self.entities[target_index].id;
-                self.entities[projectile_index]
-                    .point_projectile
-                    .as_mut()
-                    .expect("piercing projectile retains point state")
-                    .hit_entity_ids
-                    .push(target_id);
-                self.entities[projectile_index]
-                    .point_projectile
-                    .as_mut()
-                    .expect("piercing projectile retains point state")
-                    .hit_entity_ids
-                    .sort_unstable();
-                let crown = self.entities[target_index]
-                    .building_impact
-                    .as_ref()
-                    .is_some_and(|building| building.crown_slot.is_some());
-                let target_damage = if crown {
-                    crown_tower_damage.unwrap_or_else(|| {
-                        let base = damage.round_ties_even().max(0.0) as i64;
-                        let percentage = (crown_tower_damage_multiplier * 100.0)
-                            .round_ties_even()
-                            .max(0.0) as i64;
-                        if base == 0 || percentage == 0 {
-                            0.0
-                        } else {
-                            ((base * percentage + 99) / 100) as f64
-                        }
-                    })
-                } else {
-                    damage
-                };
-                if target_damage > 0.0 {
-                    self.apply_resident_damage(target_index, target_damage);
-                }
-            }
+            let hit_radius = self.entities[projectile_index]
+                .point_projectile
+                .as_ref()
+                .expect("piercing projectile retains point state")
+                .splash_radius;
+            self.apply_piercing_point_projectile_hits(projectile_index, next_x, next_y, hit_radius);
             if reached_endpoint {
                 self.entities[projectile_index].is_alive = false;
             }
+        }
+    }
+
+    fn apply_piercing_point_projectile_hits(
+        &mut self,
+        projectile_index: usize,
+        projectile_x: i64,
+        projectile_y: i64,
+        hit_radius: f64,
+    ) {
+        let (damage, crown_tower_damage, crown_tower_damage_multiplier) = {
+            let entity = &self.entities[projectile_index];
+            let projectile = entity
+                .point_projectile
+                .as_ref()
+                .expect("piercing projectile retains point state");
+            (
+                entity.damage.as_f64(),
+                projectile.crown_tower_damage,
+                projectile.crown_tower_damage_multiplier,
+            )
+        };
+        let scan_len = self.entities.len();
+        let targets = (0..scan_len)
+            .filter(|&target_index| {
+                self.piercing_point_projectile_target_valid(
+                    projectile_index,
+                    target_index,
+                    projectile_x,
+                    projectile_y,
+                    hit_radius,
+                )
+            })
+            .collect::<Vec<_>>();
+        for target_index in targets {
+            if !self.piercing_point_projectile_target_valid(
+                projectile_index,
+                target_index,
+                projectile_x,
+                projectile_y,
+                hit_radius,
+            ) {
+                continue;
+            }
+            let target_id = self.entities[target_index].id;
+            let projectile = self.entities[projectile_index]
+                .point_projectile
+                .as_mut()
+                .expect("piercing projectile retains point state");
+            projectile.hit_entity_ids.push(target_id);
+            projectile.hit_entity_ids.sort_unstable();
+            let crown = self.entities[target_index]
+                .building_impact
+                .as_ref()
+                .is_some_and(|building| building.crown_slot.is_some());
+            let target_damage = if crown {
+                crown_tower_damage.unwrap_or_else(|| {
+                    let base = damage.round_ties_even().max(0.0) as i64;
+                    let percentage = (crown_tower_damage_multiplier * 100.0)
+                        .round_ties_even()
+                        .max(0.0) as i64;
+                    if base == 0 || percentage == 0 {
+                        0.0
+                    } else {
+                        ((base * percentage + 99) / 100) as f64
+                    }
+                })
+            } else {
+                damage
+            };
+            if target_damage > 0.0 {
+                self.apply_resident_damage(target_index, target_damage);
+            }
+        }
+    }
+
+    fn spawn_impact_child_projectiles(&mut self, parent_index: usize) {
+        let parent = self.entities[parent_index].clone();
+        let parent_state = parent
+            .point_projectile
+            .as_ref()
+            .expect("impact carrier requires point state");
+        let spec = parent_state
+            .impact_children
+            .clone()
+            .expect("impact carrier requires child spec");
+        let origin_x = logic_units(parent_state.target_x.as_f64());
+        let origin_y = logic_units(parent_state.target_y.as_f64());
+        let origin_x_value = parent_state.target_x.as_f64();
+        let origin_y_value = parent_state.target_y.as_f64();
+        let direction_x = origin_x - logic_units(parent_state.launch_x);
+        let direction_y = origin_y - logic_units(parent_state.launch_y);
+        let base_angle = logic_vector_angle(direction_x, direction_y);
+        let range_units = logic_units(spec.projectile_range).max(0);
+        let source_id = parent_state
+            .source_entity_id
+            .expect("impact carrier requires source entity");
+        let card_name = parent_state.source_kind.clone();
+        for child_ordinal in 0..spec.spawn_count {
+            let offset_numerator = (child_ordinal - spec.spawn_count / 2) * spec.spawn_radius;
+            let offset_angle = truncating_div(i128::from(offset_numerator), spec.spawn_count);
+            let (range_x, range_y) = rotate_logic_vector(range_units, 0, base_angle + offset_angle);
+            let projectile_id = self.next_entity_id;
+            self.next_entity_id += 1;
+            let mut child = parent.clone();
+            child.id = projectile_id;
+            child.encounter_index = self.entities.iter().filter(|entity| entity.active).count();
+            child.card_name = card_name.clone();
+            child.position_x = parent_state.target_x.clone();
+            child.position_y = parent_state.target_y.clone();
+            child.damage = ExactScalar::Float(spec.damage.to_bits());
+            child.is_alive = true;
+            child.point_projectile = Some(PointProjectileState {
+                source_kind: card_name.clone(),
+                target_x: ExactScalar::Float((origin_x_value + range_x as f64 / 1000.0).to_bits()),
+                target_y: ExactScalar::Float((origin_y_value + range_y as f64 / 1000.0).to_bits()),
+                travel_speed: spec.travel_speed,
+                splash_radius: spec.hit_radius,
+                hits_air: spec.hits_air,
+                hits_ground: spec.hits_ground,
+                ignore_buildings: false,
+                crown_tower_damage: None,
+                crown_tower_damage_multiplier: spec.crown_tower_damage_multiplier,
+                stun_duration: 0.0,
+                slow_duration: 0.0,
+                slow_multiplier: 1.0,
+                knockback_distance: 0.0,
+                knockback_ignores_mass: false,
+                damage_wave_interval: 0.0,
+                damage_group_id: None,
+                damage_group_hit_entity_ids: None,
+                launch_delay: 0.0,
+                primary_target_id: None,
+                source_entity_id: None,
+                tracks_target: false,
+                temporary_homing_remaining_ms: 0,
+                temporary_homing_target_id: None,
+                permanent_homing_disabled_by_temporary: false,
+                start_collision_resolved: false,
+                pierces: true,
+                projectile_range: 0.0,
+                hit_entity_ids: Vec::new(),
+                constructor_range: ExactScalar::Float(spec.projectile_range.to_bits()),
+                constructor_sight_range: ExactScalar::Float(0.0_f64.to_bits()),
+                launch_x: origin_x_value,
+                launch_y: origin_y_value,
+                homing_time_ms: 0,
+                homing_min_distance: 0.0,
+                start_extra_radius: spec.start_extra_radius,
+                impact_children: None,
+                impact_child_provenance: true,
+                spawn_projectile_state: None,
+                unsupported: Vec::new(),
+            });
+            self.entities.push(child);
+            let child_index = self.entities.len() - 1;
+            self.entities[child_index]
+                .point_projectile
+                .as_mut()
+                .expect("impact child retains point state")
+                .start_collision_resolved = true;
+            self.apply_piercing_point_projectile_hits(
+                child_index,
+                origin_x,
+                origin_y,
+                spec.hit_radius + spec.start_extra_radius,
+            );
+            debug_assert!(self.entities.iter().any(|entity| entity.id == source_id));
         }
     }
 
@@ -19556,6 +20279,7 @@ impl ResidentBattle {
         target_index: usize,
         projectile_x: i64,
         projectile_y: i64,
+        hit_radius: f64,
     ) -> bool {
         if target_index == projectile_index {
             return false;
@@ -19595,7 +20319,7 @@ impl ResidentBattle {
         let target_x = logic_units(target.position_x.as_f64());
         let target_y = logic_units(target.position_y.as_f64());
         let target_radius = logic_units(collision_radius).max(0);
-        let radius_units = logic_units(projectile.splash_radius).max(0);
+        let radius_units = logic_units(hit_radius).max(0);
         if target.entity_kind == 1 {
             let closest_x = projectile_x.clamp(target_x - target_radius, target_x + target_radius);
             let closest_y = projectile_y.clamp(target_y - target_radius, target_y + target_radius);
@@ -20124,6 +20848,7 @@ mod tests {
             slow_multiplier: 1.0,
             pierces: false,
             projectile_range: 0.0,
+            impact_children: None,
         };
         let mut changed_static = static_config.clone();
         assert!(static_config.publication_exact_eq(&changed_static));

@@ -320,6 +320,15 @@ def _typed_basic_semantic(parts: MappingProxyType[str, Any]) -> dict[str, Any]:
                             ]
                         }
                     ),
+                    "attack_recoil": (
+                        None
+                        if combat["attack_recoil"] is None
+                        else {
+                            "recoil_distance": _float_scalar(
+                                combat["attack_recoil"]["recoil_distance"]
+                            )
+                        }
+                    ),
                     "hidden_building": combat["hidden_building"],
                     "hitpoints": _exact_scalar(row["hitpoints"]),
                     "id": row["id"],
@@ -464,9 +473,9 @@ def test_prepared_parts_are_owned_frozen_and_match_legacy_root_rows() -> None:
 
     assert isinstance(parts, MappingProxyType)
     assert parts["version"] == 1
-    assert parts["binding"]["semantic_schema_version"] == 17
+    assert parts["binding"]["semantic_schema_version"] == 18
     assert parts["binding"]["checkpoint_schema_version"] == 2
-    assert parts["binding"]["catalog_schema_version"] == 17
+    assert parts["binding"]["catalog_schema_version"] == 18
     assert parts["battle"]["tick"] == 1
     assert isinstance(parts["entities"], tuple)
     assert isinstance(parts["entities"][0], MappingProxyType)

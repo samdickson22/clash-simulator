@@ -46,8 +46,8 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 17
-RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 17
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 18
+RESIDENT_PREPARED_SEMANTIC_SCHEMA_VERSION: Final = 18
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -64,6 +64,7 @@ def _catalog_source_sha256(path: Path) -> str:
 def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str]:
     """Return data-driven reasons a card is outside resident troop actions."""
     from .cards.electro_spirit import ElectroSpiritChain
+    from .cards.firecracker import AttackRecoil
     from .cards.wallbreakers import WallBreakersDemolition
     from .mechanics.shared.damage_ramp import DamageRamp
     from .mechanics.shared.death_area import DeathAreaEffect
@@ -108,6 +109,7 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
         or mechanic_types == (ElectroSpiritChain,)
         or mechanic_types == (DamageRamp,)
         or mechanic_types == (WallBreakersDemolition,)
+        or mechanic_types == (AttackRecoil,)
         or all(
             mechanic_type in resident_death_mechanic_types
             for mechanic_type in mechanic_types
@@ -115,6 +117,17 @@ def _single_troop_capability_reasons(card_stats: Any, card_def: Any) -> list[str
     )
     if not supported_mechanic_family:
         reasons.append("executable_mechanics")
+    if mechanic_types == (AttackRecoil,):
+        projectile_data = getattr(card_stats, "projectile_data", None)
+        if type(projectile_data) is not dict or type(
+            projectile_data.get("spawnProjectileData")
+        ) is not dict:
+            reasons.append("impact_child_projectile")
+        elif (
+            "damage" in projectile_data
+            and projectile_data["damage"] is not None
+        ):
+            reasons.append("impact_child_carrier_damage")
     summon_radius = getattr(card_stats, "summon_radius", None)
     formation_radius = (
         float(summon_radius)
@@ -1955,6 +1968,36 @@ class ResidentRustBattle:
             current is attestation.card_stats
             and _normalized_sha256(current) == attestation.fingerprint
         )
+
+    def point_impact_action_birth_recipe(
+        self,
+        source_kind: str,
+    ) -> tuple[str, _ResidentCharacterBirthRecipe] | None:
+        """Return the unique attested action recipe owning impact shards."""
+        catalog = self._birth_catalog
+        if catalog is None:  # pragma: no cover - legacy direct construction
+            return None
+        candidates = [
+            (lookup_name, recipe)
+            for lookup_name, recipe in catalog.action_recipes.items()
+            if recipe.effective_name == str(source_kind)
+            and type(
+                getattr(recipe.prototype.card_stats, "projectile_data", None)
+            )
+            is dict
+            and type(
+                recipe.prototype.card_stats.projectile_data.get(
+                    "spawnProjectileData"
+                )
+            )
+            is dict
+        ]
+        if len(candidates) != 1:
+            return None
+        lookup_name, recipe = candidates[0]
+        copied = _copy_attested_birth_recipe(recipe)
+        assert copied is not None
+        return lookup_name, copied
 
     def character_death_spawn_birth_recipe(
         self,
@@ -4019,6 +4062,7 @@ def compare_ground_movement_phase(
 
 
 def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
+    from .cards.firecracker import AttackRecoil
     from .cards.tesla import HideWhenIdle
     from .cards.wallbreakers import WallBreakersDemolition
     from .mechanics.shared.damage_ramp import DamageRamp
@@ -4052,10 +4096,27 @@ def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
             ),
             None,
         )
+        attack_recoil = next(
+            (
+                mechanic
+                for mechanic in entity.mechanics
+                if type(mechanic) is AttackRecoil
+            ),
+            None,
+        )
         rows.append(
             {
                 "attack_cooldown": _exact_scalar(entity.attack_cooldown),
                 "attack_preload_blocked": bool(entity._attack_preload_blocked),
+                "attack_recoil": (
+                    None
+                    if attack_recoil is None
+                    else {
+                        "recoil_distance": _exact_scalar(
+                            attack_recoil.recoil_distance
+                        )
+                    }
+                ),
                 "attack_windup_active": bool(entity._attack_windup_active),
                 "damage_ramp": (
                     None
@@ -4209,6 +4270,7 @@ def building_lifetime_state_bytes(battle: Any) -> bytes:
 
 def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
     from .entities import Projectile, SpawnProjectile
+    from .gamedata_normalization import serialized_hit_planes
 
     group_projectile_ids: dict[int, list[int]] = {}
     for entity in battle.entities.values():
@@ -4216,6 +4278,49 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
             group_projectile_ids.setdefault(
                 id(entity.damage_group_hit_entity_ids), []
             ).append(int(entity.id))
+
+    def impact_child_spec(entity: Any) -> dict[str, Any] | None:
+        data = getattr(entity, "spawn_projectile_data", None)
+        if type(data) is not dict:
+            return None
+        scaler = getattr(entity.card_stats, "get_scaled_stat", None)
+        child_damage = (
+            float(scaler(float(data["damage"])))
+            if callable(scaler)
+            else float(data["damage"])
+        )
+        hits_air, hits_ground = serialized_hit_planes(
+            data,
+            default_air=bool(entity.hits_air),
+            default_ground=bool(entity.hits_ground),
+        )
+        crown_percent = float(data.get("crownTowerDamagePercent", 0) or 0)
+        return {
+            "spawn_count": int(data["spawnCount"]),
+            "damage": _exact_scalar(child_damage),
+            "travel_speed": _exact_scalar(float(data["speed"]) / 50.0),
+            "projectile_range": _exact_scalar(
+                float(data["projectileRange"]) / 1000.0
+            ),
+            "hit_radius": _exact_scalar(
+                float(
+                    cast(
+                        Any,
+                        data.get("projectileRadius", data.get("radius", 0)),
+                    )
+                )
+                / 1000.0
+            ),
+            "start_extra_radius": _exact_scalar(
+                float(data.get("projectileStartExtraRadius", 0)) / 1000.0
+            ),
+            "spawn_radius": int(data.get("spawnRadius", 0) or 0),
+            "hits_air": hits_air,
+            "hits_ground": hits_ground,
+            "crown_tower_damage_multiplier": _exact_scalar(
+                max(0.0, 1.0 + crown_percent / 100.0)
+            ),
+        }
 
     return [
         {
@@ -4263,6 +4368,16 @@ def point_projectile_state_rows(battle: Any) -> list[dict[str, Any]]:
             "source_entity_id": _entity_id_or_none(entity.source_entity),
             "source_kind": str(
                 getattr(entity, "spell_name", None) or entity.source_name
+            ),
+            "start_extra_radius": _exact_scalar(entity.start_extra_radius),
+            "impact_children": impact_child_spec(entity),
+            "impact_child_provenance": bool(
+                entity.pierces
+                and float(entity.projectile_range) == 0.0
+                and float(entity.start_extra_radius) > 0.0
+                and entity.source_entity is None
+                and entity.primary_target is None
+                and getattr(entity, "spawn_projectile_data", None) is None
             ),
             "start_collision_resolved": bool(entity.start_collision_resolved),
             "stun_duration": _exact_scalar(entity.stun_duration),

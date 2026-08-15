@@ -215,7 +215,7 @@ def test_area_effect_catalog_structurally_qualifies_shared_clock_families() -> N
     }
     resident = ResidentRustBattle.from_battle(battle)
 
-    assert payload["schema_version"] == 17
+    assert payload["schema_version"] == 18
     assert {
         name
         for name, card in area_cards.items()

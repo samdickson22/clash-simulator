@@ -557,6 +557,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "hidden_building",
             "hide_when_idle",
             "wall_breakers_demolition",
+            "attack_recoil",
             "hit_speed_ms",
             "initial_position",
             "is_air_unit",
@@ -593,6 +594,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
         {"hide_delay_ms", "rise_time_ms", "phase_ms"}
     ),
     "wall_breakers_demolition": frozenset({"triggered"}),
+    "attack_recoil": frozenset({"recoil_distance"}),
     "point_weapon": frozenset(
         {
             "travel_speed",
@@ -607,6 +609,21 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "slow_multiplier",
             "pierces",
             "projectile_range",
+            "impact_children",
+        }
+    ),
+    "impact_children": frozenset(
+        {
+            "spawn_count",
+            "damage",
+            "travel_speed",
+            "projectile_range",
+            "hit_radius",
+            "start_extra_radius",
+            "spawn_radius",
+            "hits_air",
+            "hits_ground",
+            "crown_tower_damage_multiplier",
         }
     ),
     "building_lifetime": frozenset(
@@ -666,6 +683,9 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "pierces",
             "projectile_range",
             "hit_entity_ids",
+            "start_extra_radius",
+            "impact_children",
+            "impact_child_provenance",
         }
     ),
     "spawn_projectile_state": frozenset(
@@ -1700,6 +1720,17 @@ def _validate_direct_combat(value: Any, entity_id: int) -> None:
             demolition_row["triggered"],
             f"entity {entity_id} WallBreakersDemolition trigger",
         )
+    attack_recoil = row["attack_recoil"]
+    if attack_recoil is not None:
+        recoil_row = _direct_dict(attack_recoil, "attack_recoil")
+        distance = _direct_float(
+            recoil_row["recoil_distance"],
+            f"entity {entity_id} AttackRecoil distance",
+        )
+        if not np.isfinite(distance) or distance <= 0.0:
+            raise ResidentPublicationError(
+                f"malformed direct entity {entity_id} AttackRecoil"
+            )
 
 
 def _validate_direct_damage_ramp(
@@ -1828,6 +1859,44 @@ def _validate_direct_hide_when_idle_topology(
         )
 
 
+def _impact_child_recipe_values(recipe: Any) -> dict[str, Any]:
+    card_stats = recipe.prototype.card_stats
+    projectile_data = card_stats.projectile_data
+    child = projectile_data["spawnProjectileData"]
+    scaler = getattr(card_stats, "get_scaled_stat", None)
+    damage = (
+        float(scaler(float(child["damage"])))
+        if callable(scaler)
+        else float(child["damage"])
+    )
+    target_type = str(child.get("tidTarget", "") or "")
+    crown_percent = float(child.get("crownTowerDamagePercent", 0) or 0)
+    return {
+        "spawn_count": int(child["spawnCount"]),
+        "damage": damage,
+        "travel_speed": float(child["speed"]) / 50.0,
+        "projectile_range": float(child["projectileRange"]) / 1000.0,
+        "hit_radius": float(
+            child.get("projectileRadius", child.get("radius", 0))
+        )
+        / 1000.0,
+        "start_extra_radius": float(
+            child.get("projectileStartExtraRadius", 0)
+        )
+        / 1000.0,
+        "spawn_radius": int(child.get("spawnRadius", 0) or 0),
+        "hits_air": "AIR" in target_type if target_type else True,
+        "hits_ground": (
+            "GROUND" in target_type or "BUILDINGS" in target_type
+            if target_type
+            else True
+        ),
+        "crown_tower_damage_multiplier": max(
+            0.0, 1.0 + crown_percent / 100.0
+        ),
+    }
+
+
 def _validate_direct_building(row: dict[str, Any], entity_id: int) -> None:
     lifetime = row["building_lifetime_state"]
     impact = row["building_impact_state"]
@@ -1871,7 +1940,11 @@ def _validate_direct_building(row: dict[str, Any], entity_id: int) -> None:
         )
 
 
-def _validate_direct_point(value: Any, entity_id: int) -> None:
+def _validate_direct_point(
+    value: Any,
+    entity_id: int,
+    resident: ResidentRustBattle,
+) -> None:
     if value is None:
         return
     row = _direct_dict(value, "point")
@@ -1896,6 +1969,7 @@ def _validate_direct_point(value: Any, entity_id: int) -> None:
         "stun_duration",
         "travel_speed",
         "projectile_range",
+        "start_extra_radius",
     ):
         _direct_float(row[field], f"entity {entity_id} projectile {field}")
     if row["crown_tower_damage"] is not None:
@@ -1914,6 +1988,7 @@ def _validate_direct_point(value: Any, entity_id: int) -> None:
         "start_collision_resolved",
         "tracks_target",
         "pierces",
+        "impact_child_provenance",
     ):
         _direct_bool(row[field], f"entity {entity_id} projectile {field}")
     hit_ids = _direct_list(
@@ -1922,7 +1997,8 @@ def _validate_direct_point(value: Any, entity_id: int) -> None:
     if (
         any(type(value) is not int or value < 0 for value in hit_ids)
         or hit_ids != sorted(set(hit_ids))
-        or row["pierces"] != (row["projectile_range"] > 0.0)
+        or row["pierces"]
+        != (row["projectile_range"] > 0.0 or row["impact_child_provenance"])
         or (not row["pierces"] and hit_ids)
     ):
         raise ResidentPublicationError(
@@ -1933,6 +2009,92 @@ def _validate_direct_point(value: Any, entity_id: int) -> None:
     )
     if any(type(value) is not str for value in unsupported) or unsupported:
         raise ResidentPublicationError(f"unsupported direct projectile {entity_id}")
+    impact = row["impact_children"]
+    provenance = row["impact_child_provenance"]
+    impact_owner = resident.point_impact_action_birth_recipe(row["source_kind"])
+    recipe = None if impact_owner is None else impact_owner[1]
+    if impact is not None:
+        impact_row = _direct_dict(impact, "impact_children")
+        _direct_int(
+            impact_row["spawn_count"],
+            f"entity {entity_id} impact child count",
+            minimum=1,
+        )
+        for field in (
+            "damage",
+            "travel_speed",
+            "projectile_range",
+            "hit_radius",
+            "start_extra_radius",
+            "crown_tower_damage_multiplier",
+        ):
+            number = _direct_float(
+                impact_row[field], f"entity {entity_id} impact child {field}"
+            )
+            if not np.isfinite(number):
+                raise ResidentPublicationError(
+                    f"malformed direct projectile {entity_id} impact child"
+                )
+        _direct_int(
+            impact_row["spawn_radius"],
+            f"entity {entity_id} impact child radius",
+            minimum=0,
+        )
+        _direct_bool(
+            impact_row["hits_air"], f"entity {entity_id} impact child air"
+        )
+        _direct_bool(
+            impact_row["hits_ground"], f"entity {entity_id} impact child ground"
+        )
+        if (
+            recipe is None
+            or provenance
+            or row["pierces"]
+            or row["projectile_range"] != 0.0
+            or row["start_extra_radius"] != 0.0
+        ):
+            raise ResidentPublicationError(
+                f"malformed direct projectile {entity_id} impact carrier"
+            )
+        expected = _impact_child_recipe_values(recipe)
+        if any(
+            impact_row[field] != expected[field]
+            for field in (
+                "spawn_count",
+                "spawn_radius",
+                "hits_air",
+                "hits_ground",
+            )
+        ) or any(
+            not _direct_f64_same(impact_row[field], expected[field])
+            for field in (
+                "damage",
+                "travel_speed",
+                "projectile_range",
+                "hit_radius",
+                "start_extra_radius",
+                "crown_tower_damage_multiplier",
+            )
+        ):
+            raise ResidentPublicationError(
+                f"direct projectile {entity_id} impact recipe changed"
+            )
+    elif provenance:
+        if (
+            recipe is None
+            or not row["pierces"]
+            or row["projectile_range"] != 0.0
+            or row["start_extra_radius"] <= 0.0
+            or row["source_entity_id"] is not None
+            or row["primary_target_id"] is not None
+        ):
+            raise ResidentPublicationError(
+                f"malformed direct projectile {entity_id} impact provenance"
+            )
+    elif row["start_extra_radius"] != 0.0:
+        raise ResidentPublicationError(
+            f"malformed direct projectile {entity_id} start radius"
+        )
     for field in (
         "damage_group_id",
         "primary_target_id",
@@ -2721,7 +2883,7 @@ def _build_direct_publication_plan(
             presence_mask,
         )
         _validate_direct_building(row, entity_id)
-        _validate_direct_point(row["point_projectile_state"], entity_id)
+        _validate_direct_point(row["point_projectile_state"], entity_id, resident)
         point_state = row["point_projectile_state"]
         if point_state is not None and any(
             hit_id >= battle_row["next_entity_id"]
@@ -3378,7 +3540,7 @@ def _validate_direct_full_delta_entity(
         presence,
     )
     _validate_direct_building(row, entity_id)
-    _validate_direct_point(row["point_projectile_state"], entity_id)
+    _validate_direct_point(row["point_projectile_state"], entity_id, resident)
     point_state = row["point_projectile_state"]
     if point_state is not None and any(
         hit_id >= next_entity_id for hit_id in point_state["hit_entity_ids"]
@@ -3762,7 +3924,7 @@ def _build_direct_delta_publication_plan(
             (_ENTITY_DELTA_MODIFIER, "modifier_state", "modifier_present", _validate_direct_modifier),
             (_ENTITY_DELTA_MOVEMENT, "movement_state", "movement_present", _validate_direct_movement),
             (_ENTITY_DELTA_COMBAT, "locked_combat_state", "locked_combat_present", _validate_direct_combat),
-            (_ENTITY_DELTA_POINT, "point_projectile_state", "point_projectile_present", _validate_direct_point),
+            (_ENTITY_DELTA_POINT, "point_projectile_state", "point_projectile_present", None),
             (_ENTITY_DELTA_ROLLING, "rolling_projectile_state", "rolling_projectile_present", _validate_direct_rolling),
             (_ENTITY_DELTA_CHAIN_LIGHTNING, "chain_lightning_state", "chain_lightning_present", _validate_direct_chain_lightning),
             (_ENTITY_DELTA_AREA, "area_effect_state", "area_effect_present", None),
@@ -3782,6 +3944,8 @@ def _build_direct_delta_publication_plan(
             elif payload is not None:
                 if bit == _ENTITY_DELTA_AREA:
                     _validate_direct_area(payload, entity_id, resident)
+                elif bit == _ENTITY_DELTA_POINT:
+                    _validate_direct_point(payload, entity_id, resident)
                 else:
                     assert validator is not None
                     validator(payload, entity_id)
@@ -4447,6 +4611,7 @@ def _typed_combat(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
     damage_ramp = state["damage_ramp"]
     hide_when_idle = state["hide_when_idle"]
     demolition = state["wall_breakers_demolition"]
+    attack_recoil = state["attack_recoil"]
     return {
         "attack_cooldown": _exact_float(state["attack_cooldown"]),
         "attack_preload_blocked": state["attack_preload_blocked"],
@@ -4491,6 +4656,15 @@ def _typed_combat(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
             None
             if demolition is None
             else {"triggered": demolition["triggered"]}
+        ),
+        "attack_recoil": (
+            None
+            if attack_recoil is None
+            else {
+                "recoil_distance": _exact_float(
+                    attack_recoil["recoil_distance"]
+                )
+            }
         ),
         "hidden_building": state["hidden_building"],
         "hitpoints": _exact(entity["hitpoints"]),
@@ -4630,6 +4804,7 @@ def _typed_point(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
     if state is None:
         return None
     spawn_state = state["spawn_projectile_state"]
+    impact_children = state["impact_children"]
     return {
         "crown_tower_damage": (
             None
@@ -4665,6 +4840,30 @@ def _typed_point(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
         "slow_multiplier": _exact_float(state["slow_multiplier"]),
         "source_entity_id": state["source_entity_id"],
         "source_kind": state["source_kind"],
+        "start_extra_radius": _exact_float(state["start_extra_radius"]),
+        "impact_child_provenance": state["impact_child_provenance"],
+        "impact_children": (
+            None
+            if impact_children is None
+            else {
+                "spawn_count": impact_children["spawn_count"],
+                "damage": _exact_float(impact_children["damage"]),
+                "travel_speed": _exact_float(impact_children["travel_speed"]),
+                "projectile_range": _exact_float(
+                    impact_children["projectile_range"]
+                ),
+                "hit_radius": _exact_float(impact_children["hit_radius"]),
+                "start_extra_radius": _exact_float(
+                    impact_children["start_extra_radius"]
+                ),
+                "spawn_radius": impact_children["spawn_radius"],
+                "hits_air": impact_children["hits_air"],
+                "hits_ground": impact_children["hits_ground"],
+                "crown_tower_damage_multiplier": _exact_float(
+                    impact_children["crown_tower_damage_multiplier"]
+                ),
+            }
+        ),
         "splash_radius": _exact_float(state["splash_radius"]),
         "start_collision_resolved": state["start_collision_resolved"],
         "stun_duration": _exact_float(state["stun_duration"]),
@@ -4911,6 +5110,11 @@ def _typed_publication_projection(parts: Any) -> _TypedPublication:
                 point_state = entity["point_projectile_state"]
                 point_constructor = {
                     "card_stats_source_id": point_state["source_entity_id"],
+                    "card_stats_source_kind": (
+                        point_state["source_kind"]
+                        if point_state["impact_child_provenance"]
+                        else None
+                    ),
                     "constructor_range": _exact(point_state["constructor_range"]),
                     "constructor_sight_range": _exact(
                         point_state["constructor_sight_range"]
@@ -4925,7 +5129,12 @@ def _typed_publication_projection(parts: Any) -> _TypedPublication:
                     "projectile_range": _exact_float(
                         point_state["projectile_range"]
                     ),
-                    "start_extra_radius": _exact_float(0.0),
+                    "start_extra_radius": _exact_float(
+                        point_state["start_extra_radius"]
+                    ),
+                    "impact_child_provenance": point_state[
+                        "impact_child_provenance"
+                    ],
                 }
                 point_group_ids = (
                     None
@@ -6155,17 +6364,33 @@ def _create_projectile_birth(
     battle: Any,
     row: dict[str, Any],
     entity_registry: dict[int, Any],
+    resident: ResidentRustBattle,
 ) -> Projectile:
     state = row["point_projectile_state"]
     constructor = row["point_projectile_constructor"]
     source_id = state["source_entity_id"]
     card_stats_source_id = constructor["card_stats_source_id"]
-    if card_stats_source_id != source_id:
+    impact_kind = constructor.get("card_stats_source_kind")
+    impact_provenance = bool(constructor.get("impact_child_provenance", False))
+    impact_children = state.get("impact_children")
+    if card_stats_source_id != source_id and impact_kind is None:
         raise ResidentPublicationError(
             f"projectile {row['id']} card-stats provenance disagrees with source"
         )
     source = None if source_id is None else entity_registry[int(source_id)]
     card_stats = None if source is None else source.card_stats
+    if impact_kind is not None:
+        impact_owner = resident.point_impact_action_birth_recipe(str(impact_kind))
+        if impact_owner is None:
+            raise ResidentPublicationError(
+                f"projectile {row['id']} impact owner disappeared"
+            )
+        lookup_name, _ = impact_owner
+        if not resident.character_action_card_stats_are_current(battle, lookup_name):
+            raise ResidentPublicationError(
+                f"projectile {row['id']} impact card stats changed"
+            )
+        card_stats = battle.card_loader.get_card(lookup_name)
     projectile = Projectile(
         id=int(row["id"]),
         position=Position(
@@ -6185,7 +6410,11 @@ def _create_projectile_birth(
         ),
         travel_speed=_float(state["travel_speed"]),
         splash_radius=_float(state["splash_radius"]),
-        source_name=(str(state["source_kind"]) if source is not None else "Unknown"),
+        source_name=(
+            str(state["source_kind"])
+            if source is not None or impact_kind is not None
+            else "Unknown"
+        ),
         stun_duration=_float(state["stun_duration"]),
         slow_duration=_float(state["slow_duration"]),
         slow_multiplier=_float(state["slow_multiplier"]),
@@ -6216,11 +6445,15 @@ def _create_projectile_birth(
         ),
         start_extra_radius=_float(constructor["start_extra_radius"]),
         start_collision_resolved=bool(state["start_collision_resolved"]),
-        spawn_projectile_data=None,
+        spawn_projectile_data=(
+            copy.deepcopy(card_stats.projectile_data["spawnProjectileData"])
+            if impact_children is not None and card_stats is not None
+            else None
+        ),
     )
     dynamic_projectile = cast(Any, projectile)
     dynamic_projectile.hit_entity_ids.update(state["hit_entity_ids"])
-    if source is None:
+    if source is None and not impact_provenance:
         dynamic_projectile.spell_name = str(state["source_kind"])
     dynamic_projectile.battle_state = battle
     return projectile
@@ -6248,7 +6481,7 @@ def _create_area_effect_birth(
             _scalar(row["position_y"]),
         ),
         player_id=int(row["player_id"]),
-        card_stats=None if source is None else source.card_stats,
+        card_stats=cast(Any, None if source is None else source.card_stats),
         hitpoints=_scalar(row["hitpoints"]),
         max_hitpoints=_scalar(row["max_hitpoints"]),
         damage=(0.0 if persistent is None else _float(persistent["damage"])),
@@ -6462,7 +6695,9 @@ def _prepare_births(
         if entity_id in entity_registry:
             continue
         if row["point_projectile_state"] is not None:
-            entity: Any = _create_projectile_birth(battle, row, available)
+            entity: Any = _create_projectile_birth(
+                battle, row, available, resident
+            )
         elif row["area_effect_state"] is not None:
             entity = _create_area_effect_birth(battle, row, available)
         elif row["character_birth"] is not None:
@@ -6489,6 +6724,31 @@ def _create_projectile_birth_direct(
     state = cast(dict[str, Any], row["point_projectile_state"])
     source_id = state["source_entity_id"]
     source = None if source_id is None else available[source_id]
+    impact_owner = resident.point_impact_action_birth_recipe(state["source_kind"])
+    impact_provenance = state["impact_child_provenance"]
+    impact_children = state["impact_children"]
+    impact_card_stats = None
+    if impact_provenance or impact_children is not None:
+        if impact_owner is None:
+            raise ResidentPublicationError(
+                f"projectile {row['id']} impact owner disappeared"
+            )
+        impact_lookup, impact_recipe = impact_owner
+        if not resident.character_action_card_stats_are_current(
+            battle, impact_lookup
+        ):
+            raise ResidentPublicationError(
+                f"projectile {row['id']} impact card stats changed"
+            )
+        impact_card_stats = battle.card_loader.get_card(impact_lookup)
+        if impact_card_stats is None:
+            raise ResidentPublicationError(
+                f"projectile {row['id']} impact card stats disappeared"
+            )
+        if impact_recipe.effective_name != state["source_kind"]:
+            raise ResidentPublicationError(
+                f"projectile {row['id']} impact source changed"
+            )
     spawn_state = state["spawn_projectile_state"]
     spawn_recipe = (
         None
@@ -6522,7 +6782,10 @@ def _create_projectile_birth_direct(
         id=row["id"],
         position=Position(_scalar(row["position_x"]), _scalar(row["position_y"])),
         player_id=row["player_id"],
-        card_stats=cast(Any, None if source is None else source.card_stats),
+        card_stats=cast(
+            Any,
+            impact_card_stats if impact_card_stats is not None else None if source is None else source.card_stats,
+        ),
         hitpoints=_scalar(row["hitpoints"]),
         max_hitpoints=_scalar(row["max_hitpoints"]),
         damage=_scalar(row["damage"]),
@@ -6533,7 +6796,11 @@ def _create_projectile_birth_direct(
         ),
         travel_speed=state["travel_speed"],
         splash_radius=state["splash_radius"],
-        source_name=state["source_kind"] if source is not None else "Unknown",
+        source_name=(
+            state["source_kind"]
+            if source is not None or impact_card_stats is not None
+            else "Unknown"
+        ),
         stun_duration=state["stun_duration"],
         slow_duration=state["slow_duration"],
         slow_multiplier=state["slow_multiplier"],
@@ -6555,14 +6822,18 @@ def _create_projectile_birth_direct(
         homing_time_ms=state["homing_time_ms"],
         homing_min_distance=state["homing_min_distance"],
         launch_position=Position(state["launch_x"], state["launch_y"]),
-        start_extra_radius=0.0,
+        start_extra_radius=state["start_extra_radius"],
         start_collision_resolved=state["start_collision_resolved"],
-        spawn_projectile_data=None,
+        spawn_projectile_data=(
+            copy.deepcopy(impact_card_stats.projectile_data["spawnProjectileData"])
+            if impact_children is not None and impact_card_stats is not None
+            else None
+        ),
         **spawn_kwargs,
     )
     dynamic = cast(Any, projectile)
     dynamic.hit_entity_ids.update(state["hit_entity_ids"])
-    if source is None:
+    if source is None and impact_card_stats is None:
         dynamic.spell_name = state["source_kind"]
     dynamic.battle_state = battle
     return projectile
@@ -6588,7 +6859,7 @@ def _create_area_effect_birth_direct(
         id=row["id"],
         position=Position(_scalar(row["position_x"]), _scalar(row["position_y"])),
         player_id=row["player_id"],
-        card_stats=None if source is None else source.card_stats,
+        card_stats=cast(Any, None if source is None else source.card_stats),
         hitpoints=_scalar(row["hitpoints"]),
         max_hitpoints=_scalar(row["max_hitpoints"]),
         damage=0.0 if persistent is None else persistent["damage"],
@@ -7076,6 +7347,26 @@ def _validate_direct_bound_entities(
         ) > 1:
             raise ResidentPublicationError(
                 f"resident entity {entity_plan.entity_id} WallBreakersDemolition topology changed"
+            )
+        attack_recoil = None if combat is None else combat["attack_recoil"]
+        recoil_mechanics = [
+            mechanic
+            for mechanic in entity.mechanics
+            if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+            == "clasher.cards.firecracker.AttackRecoil"
+        ]
+        if (attack_recoil is None) != (len(recoil_mechanics) == 0) or len(
+            recoil_mechanics
+        ) > 1:
+            raise ResidentPublicationError(
+                f"resident entity {entity_plan.entity_id} AttackRecoil topology changed"
+            )
+        if attack_recoil is not None and not _direct_f64_same(
+            float(recoil_mechanics[0].recoil_distance),
+            attack_recoil["recoil_distance"],
+        ):
+            raise ResidentPublicationError(
+                f"resident entity {entity_plan.entity_id} AttackRecoil state changed"
             )
 
 
@@ -7988,6 +8279,26 @@ def _validate_direct_delta_bound_entities(
                 raise ResidentPublicationError(
                     f"resident entity {change.entity_id} WallBreakersDemolition topology changed"
                 )
+            attack_recoil = combat["attack_recoil"]
+            recoil_mechanics = [
+                mechanic
+                for mechanic in entity.mechanics
+                if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+                == "clasher.cards.firecracker.AttackRecoil"
+            ]
+            if (attack_recoil is None) != (len(recoil_mechanics) == 0) or len(
+                recoil_mechanics
+            ) > 1:
+                raise ResidentPublicationError(
+                    f"resident entity {change.entity_id} AttackRecoil topology changed"
+                )
+            if attack_recoil is not None and not _direct_f64_same(
+                float(recoil_mechanics[0].recoil_distance),
+                attack_recoil["recoil_distance"],
+            ):
+                raise ResidentPublicationError(
+                    f"resident entity {change.entity_id} AttackRecoil state changed"
+                )
 
 
 def _plan_direct_delta_projectile_groups(
@@ -8893,6 +9204,7 @@ def publish_complete_tick_state(
         "character_spawn_projectile_birth_recipe",
         "pending_spell_action_kind",
         "area_effect_spell_recipe",
+        "point_impact_action_birth_recipe",
     }.intersection(resident.__dict__)
     if authority_overrides:
         raise ResidentPublicationError(

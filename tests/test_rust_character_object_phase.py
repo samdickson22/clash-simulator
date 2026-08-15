@@ -5,6 +5,7 @@ import pytest
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.cards.electro_spirit import ElectroSpiritChain
+from clasher.cards.firecracker import AttackRecoil
 from clasher.cards.ice_spirit import IceSpiritFreeze
 from clasher.cards.tesla import HideWhenIdle
 from clasher.cards.wallbreakers import WallBreakersDemolition
@@ -105,6 +106,7 @@ def test_character_object_phase_is_card_general_and_fail_closed(
         type(mechanic)
         in (
             ElectroSpiritChain,
+            AttackRecoil,
             IceSpiritFreeze,
             DamageRamp,
             HideWhenIdle,
