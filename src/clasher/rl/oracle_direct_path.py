@@ -13,6 +13,7 @@ class DirectPathFixedDepthThompsonOracle(FixedDepthThompsonOracle):
 
     def select_actions(self, battle: BattleState) -> dict[int, int]:
         tree: dict[tuple, _PlannerNode] = {}
+        root_tensor_fork = self._capture_tensor_fork(battle)
         root_key = self._state_key(battle)
         root_legal = {
             player_id: self._legal_actions(battle, player_id)
@@ -27,7 +28,7 @@ class DirectPathFixedDepthThompsonOracle(FixedDepthThompsonOracle):
             else None
         )
         for _ in range(self.num_simulations):
-            sim = battle.clone()
+            sim = self._clone_for_search(battle, root_tensor_fork)
             path: list[tuple[_PlannerNode, int, int]] = []
             for depth in range(self.plan_depth):
                 key = root_key if depth == 0 else self._state_key(sim)
@@ -96,4 +97,4 @@ class DirectPathFixedDepthThompsonOracle(FixedDepthThompsonOracle):
         for player_id in order:
             action = action0 if player_id == 0 else action1
             self.action_space.apply_action(battle, player_id, int(action))
-        battle.step_logic_ticks(self.decision_interval_ticks)
+        self._advance_simulation(battle)

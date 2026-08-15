@@ -6,7 +6,22 @@ from typing import Dict, Iterable, Optional
 import numpy as np
 
 from clasher.battle import BattleState
-from clasher.entities import AreaEffect, Building, Graveyard, Projectile, RollingProjectile, SpawnProjectile, TimedExplosive, Troop
+from clasher.entities import (
+    AreaEffect,
+    Building,
+    Entity,
+    Graveyard,
+    Projectile,
+    RollingProjectile,
+    SpawnProjectile,
+    TimedExplosive,
+    Troop,
+)
+from clasher.torch_sim import (
+    SimulatorBackend,
+    TensorBattleFork,
+    TorchBattleExecutor,
+)
 
 from .action_space import DiscreteTileActionSpace
 from .reward_model import objective_win_prob_p0
@@ -16,7 +31,7 @@ def _quantize(value: float, scale: float) -> int:
     return int(round(float(value) * scale))
 
 
-def _entity_kind(entity) -> int:
+def _entity_kind(entity: Entity) -> int:
     if isinstance(entity, Building):
         return 0
     if isinstance(entity, Troop):
@@ -87,18 +102,29 @@ class FixedDepthThompsonOracle:
         num_simulations: int = 48,
         rollout_action_samples: int = 96,
         seed: Optional[int] = None,
+        simulation_backend: str = "python",
+        simulation_device: str = "cpu",
     ) -> None:
-        self.action_space = action_space or DiscreteTileActionSpace(canonical_perspective=True)
+        self.action_space = action_space or DiscreteTileActionSpace(
+            canonical_perspective=True
+        )
         self.decision_interval_ticks = decision_interval_ticks
         self.plan_depth = plan_depth
         self.num_simulations = num_simulations
         self.rollout_action_samples = rollout_action_samples
         self.rng = np.random.default_rng(seed)
+        self.simulation_backend = SimulatorBackend(simulation_backend)
+        self._simulator = TorchBattleExecutor(
+            self.simulation_backend,
+            device=simulation_device,
+        )
+        self._tensor_forks = 0
 
     def select_actions(self, battle: BattleState) -> Dict[int, int]:
         tree: Dict[tuple, _PlannerNode] = {}
+        root_tensor_fork = self._capture_tensor_fork(battle)
         for _ in range(self.num_simulations):
-            sim = battle.clone()
+            sim = self._clone_for_search(battle, root_tensor_fork)
             path: list[tuple[tuple, Dict[int, int]]] = []
             for _depth in range(self.plan_depth):
                 key = self._state_key(sim)
@@ -106,7 +132,9 @@ class FixedDepthThompsonOracle:
                 chosen: Dict[int, int] = {}
                 for player_id in (0, 1):
                     legal = self._sample_legal_actions(sim, player_id)
-                    chosen[player_id] = node.by_player[player_id].sample_action(legal, self.rng)
+                    chosen[player_id] = node.by_player[player_id].sample_action(
+                        legal, self.rng
+                    )
                 path.append((key, chosen))
                 self._apply_joint_action(sim, chosen)
                 if sim.game_over:
@@ -129,6 +157,40 @@ class FixedDepthThompsonOracle:
                 out[player_id] = root.by_player[player_id].greedy_action(legal)
         return out
 
+    def _capture_tensor_fork(
+        self,
+        battle: BattleState,
+    ) -> TensorBattleFork | None:
+        if self.simulation_backend is not SimulatorBackend.PYTORCH:
+            return None
+        return TensorBattleFork.capture([battle], device=self._simulator.device)
+
+    def _clone_for_search(
+        self,
+        battle: BattleState,
+        root_tensor_fork: TensorBattleFork | None,
+    ) -> BattleState:
+        sim = battle.clone()
+        if root_tensor_fork is not None:
+            self._simulator.prime_tensor_fork([sim], root_tensor_fork)
+            self._tensor_forks += 1
+        return sim
+
+    def _advance_simulation(self, battle: BattleState) -> None:
+        if self.simulation_backend is SimulatorBackend.PYTHON:
+            for _ in range(self.decision_interval_ticks):
+                if battle.game_over:
+                    break
+                battle.step()
+            return
+        self._simulator.step_logic_ticks(battle, self.decision_interval_ticks)
+
+    def simulator_backend_metrics(self) -> dict[str, float]:
+        return {
+            **self._simulator.metrics_dict(),
+            "tensor_forks": float(self._tensor_forks),
+        }
+
     def _sample_legal_actions(self, battle: BattleState, player_id: int) -> np.ndarray:
         mask = self.action_space.legal_action_mask(battle, player_id)
         legal = np.flatnonzero(mask).astype(np.int64)
@@ -146,15 +208,16 @@ class FixedDepthThompsonOracle:
             selected.update(int(x) for x in picks.tolist())
         return np.asarray(sorted(selected), dtype=np.int64)
 
-    def _apply_joint_action(self, battle: BattleState, joint_actions: Dict[int, int]) -> None:
+    def _apply_joint_action(
+        self, battle: BattleState, joint_actions: Dict[int, int]
+    ) -> None:
         order = [0, 1]
         self.rng.shuffle(order)
         for player_id in order:
-            self.action_space.apply_action(battle, player_id, int(joint_actions[player_id]))
-        for _ in range(self.decision_interval_ticks):
-            if battle.game_over:
-                break
-            battle.step()
+            self.action_space.apply_action(
+                battle, player_id, int(joint_actions[player_id])
+            )
+        self._advance_simulation(battle)
 
     def _evaluate_state_prob(self, battle: BattleState) -> Dict[int, float]:
         p0_prob = objective_win_prob_p0(battle)

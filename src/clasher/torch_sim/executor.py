@@ -14,7 +14,7 @@ from clasher.entities import Troop
 from clasher.kinematics import LOGIC_TICK_MILLISECONDS, LOGIC_TICK_SECONDS
 
 from .diagnostics import TorchParityError, battle_snapshot, first_divergence
-from .state import WINNER_DRAW, TensorBattleState
+from .state import WINNER_DRAW, TensorBattleFork, TensorBattleState
 
 
 class SimulatorBackend(str, Enum):
@@ -333,9 +333,37 @@ class TorchBattleExecutor:
         self.metrics = BackendMetrics()
         self._state: TensorBattleState | None = None
         self._battle_identities: tuple[int, ...] = ()
+        self._primed_fork: TensorBattleFork | None = None
+
+    def prime_tensor_fork(
+        self,
+        battles: Sequence[BattleState],
+        tensor_fork: TensorBattleFork,
+    ) -> None:
+        """Bind an exact tensor fork to scalar clones for the next step.
+
+        Search code can capture a root once and cheaply clone its tensors for
+        each simulation.  Binding fails closed unless the behavior-bearing
+        scalar snapshot is still exact.  If actions mutate a bound battle
+        before the step, ``_state_for`` discards the stale fork and re-encodes
+        the new scalar state.
+        """
+
+        if self.backend is not SimulatorBackend.PYTORCH:
+            raise ValueError("tensor forks require the pytorch backend")
+        if not tensor_fork.matches_battles(battles):
+            raise ValueError("tensor fork does not match scalar battle state")
+        self._state = tensor_fork._materialize_state()
+        self._battle_identities = tuple(id(battle) for battle in battles)
+        self._primed_fork = tensor_fork
 
     def _state_for(self, battles: Sequence[BattleState]) -> TensorBattleState:
         identities = tuple(id(battle) for battle in battles)
+        if self._primed_fork is not None:
+            if not self._primed_fork.matches_battles(battles):
+                self._state = None
+                self._battle_identities = ()
+            self._primed_fork = None
         if (
             self._state is None
             or self._battle_identities != identities
@@ -354,6 +382,7 @@ class TorchBattleExecutor:
         self.metrics.unsupported_fallbacks += 1
         self._state = None
         self._battle_identities = ()
+        self._primed_fork = None
         return advanced
 
     def step_logic_ticks(self, battle: BattleState, ticks: int) -> int:
