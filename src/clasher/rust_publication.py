@@ -165,6 +165,7 @@ _ENTITY_SPARSE_ATTRIBUTE_NAMES = (
     "_temporary_homing_remaining_ms",
     "_temporary_homing_target",
     "_shield_break_count",
+    "_hidden_building",
 )
 _ENTITY_SPARSE_ATTRIBUTES = frozenset(_ENTITY_SPARSE_ATTRIBUTE_NAMES)
 
@@ -514,6 +515,7 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
             "ground_path_backwards",
             "has_attacked_once",
             "hidden_building",
+            "hide_when_idle",
             "hit_speed_ms",
             "initial_position",
             "is_air_unit",
@@ -546,6 +548,9 @@ _DIRECT_KEYS: dict[str, frozenset[str]] = {
         }
     ),
     "damage_ramp_stage": frozenset({"time_ms", "damage"}),
+    "hide_when_idle": frozenset(
+        {"hide_delay_ms", "rise_time_ms", "phase_ms"}
+    ),
     "point_weapon": frozenset(
         {
             "travel_speed",
@@ -1447,6 +1452,9 @@ def _validate_direct_combat(value: Any, entity_id: int) -> None:
     for field in ("last_combat_target_id", "movement_target_id"):
         _direct_optional_int(row[field], f"entity {entity_id} combat {field}")
     _validate_direct_damage_ramp(row["damage_ramp"], entity_id, row["damage"])
+    _validate_direct_hide_when_idle(
+        row["hide_when_idle"], entity_id, row["hidden_building"]
+    )
 
 
 def _validate_direct_damage_ramp(
@@ -1502,6 +1510,76 @@ def _validate_direct_damage_ramp(
     ):
         raise ResidentPublicationError(
             f"malformed direct entity {entity_id} DamageRamp state"
+        )
+
+
+def _validate_direct_hide_when_idle(
+    value: Any,
+    entity_id: int,
+    hidden_building: bool,
+) -> None:
+    if value is None:
+        return
+    row = _direct_dict(value, "hide_when_idle")
+    hide_delay = _direct_int(
+        row["hide_delay_ms"],
+        f"entity {entity_id} HideWhenIdle hide delay",
+        minimum=1,
+    )
+    rise_time = _direct_int(
+        row["rise_time_ms"],
+        f"entity {entity_id} HideWhenIdle rise time",
+        minimum=1,
+    )
+    phase = _direct_float(
+        row["phase_ms"], f"entity {entity_id} HideWhenIdle phase"
+    )
+    cycle = hide_delay + rise_time
+    hidden = abs(phase - hide_delay) <= 1e-9
+    if cycle <= 0 or not 0.0 <= phase < cycle or hidden_building != hidden:
+        raise ResidentPublicationError(
+            f"malformed direct entity {entity_id} HideWhenIdle state"
+        )
+
+
+def _validate_direct_hide_when_idle_presence(
+    combat: Any, entity_id: int, presence_mask: int
+) -> None:
+    if combat is None or combat["hide_when_idle"] is None:
+        return
+    _require_direct_hide_when_idle_presence(entity_id, presence_mask)
+
+
+def _require_direct_hide_when_idle_presence(
+    entity_id: int, presence_mask: int
+) -> None:
+    required_presence = (
+        1 << _ENTITY_SPARSE_ATTRIBUTE_NAMES.index("_hidden_building")
+    ) | (1 << _ENTITY_SPARSE_ATTRIBUTE_NAMES.index("_special_move_active"))
+    if presence_mask & required_presence != required_presence:
+        raise ResidentPublicationError(
+            f"resident entity {entity_id} HideWhenIdle sparse topology changed"
+        )
+
+
+def _validate_direct_hide_when_idle_topology(
+    combat: Any,
+    movement: Any,
+    target_id: Any,
+    entity_id: int,
+    presence_mask: int,
+) -> None:
+    _validate_direct_hide_when_idle_presence(combat, entity_id, presence_mask)
+    if combat is None or combat["hide_when_idle"] is None:
+        return
+    if movement is None:
+        raise ResidentPublicationError(
+            f"resident entity {entity_id} HideWhenIdle has no movement state"
+        )
+    hidden = combat["hidden_building"]
+    if movement["special_move_active"] != hidden or hidden and target_id is not None:
+        raise ResidentPublicationError(
+            f"resident entity {entity_id} HideWhenIdle topology changed"
         )
 
 
@@ -2227,6 +2305,13 @@ def _build_direct_publication_plan(
             raise ResidentPublicationError(
                 f"resident entity {entity_id} has mismatched movement/combat topology"
             )
+        _validate_direct_hide_when_idle_topology(
+            row["locked_combat_state"],
+            row["movement_state"],
+            row["target_id"],
+            entity_id,
+            presence_mask,
+        )
         _validate_direct_building(row, entity_id)
         _validate_direct_point(row["point_projectile_state"], entity_id)
         _validate_direct_spawn_projectile_recipe(row, resident, entity_id)
@@ -2845,6 +2930,13 @@ def _validate_direct_full_delta_entity(
         raise ResidentPublicationError(
             f"resident entity {entity_id} has mismatched movement/combat topology"
         )
+    _validate_direct_hide_when_idle_topology(
+        row["locked_combat_state"],
+        row["movement_state"],
+        row["target_id"],
+        entity_id,
+        presence,
+    )
     _validate_direct_building(row, entity_id)
     _validate_direct_point(row["point_projectile_state"], entity_id)
     _validate_direct_spawn_projectile_recipe(row, resident, entity_id)
@@ -3316,6 +3408,12 @@ def _build_direct_delta_publication_plan(
                 for index, field in enumerate(_ENTITY_SPARSE_ATTRIBUTE_NAMES)
                 if field in entity_fields
             )
+        if any(
+            f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+            == "clasher.cards.tesla.HideWhenIdle"
+            for mechanic in python_entity.mechanics
+        ):
+            _require_direct_hide_when_idle_presence(entity_id, presence)
         changes.append(
             _DirectDeltaEntityPublication(change, entity_id, mask, presence, None)
         )
@@ -3812,6 +3910,7 @@ def _typed_combat(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
     if state is None:
         return None
     damage_ramp = state["damage_ramp"]
+    hide_when_idle = state["hide_when_idle"]
     return {
         "attack_cooldown": _exact_float(state["attack_cooldown"]),
         "attack_preload_blocked": state["attack_preload_blocked"],
@@ -3843,6 +3942,16 @@ def _typed_combat(row: dict[str, Any], entity: Any) -> dict[str, Any] | None:
         "facing_x_units": state["facing_x_units"],
         "facing_y_units": state["facing_y_units"],
         "has_attacked_once": state["has_attacked_once"],
+        "hide_when_idle": (
+            None
+            if hide_when_idle is None
+            else {
+                "hide_delay_ms": hide_when_idle["hide_delay_ms"],
+                "phase_ms": _exact_float(hide_when_idle["phase_ms"]),
+                "rise_time_ms": hide_when_idle["rise_time_ms"],
+            }
+        ),
+        "hidden_building": state["hidden_building"],
         "hitpoints": _exact(entity["hitpoints"]),
         "id": row["id"],
         "initial_position": _optional_exact_position(
@@ -4312,6 +4421,8 @@ def _typed_publication_projection(parts: Any) -> _TypedPublication:
 
 def _validate_entity_attribute_presence(
     publication_rows: list[dict[str, Any]],
+    *,
+    hide_entity_ids: frozenset[int] = frozenset(),
 ) -> None:
     for row in publication_rows:
         presence = row.get("sparse_attribute_presence")
@@ -4322,6 +4433,12 @@ def _validate_entity_attribute_presence(
         ):
             raise ResidentPublicationError(
                 f"resident entity {row.get('id')} has malformed attribute presence"
+            )
+        if int(row["id"]) in hide_entity_ids and not (
+            presence["_hidden_building"] and presence["_special_move_active"]
+        ):
+            raise ResidentPublicationError(
+                f"resident entity {row['id']} HideWhenIdle sparse topology changed"
             )
 
 
@@ -4341,7 +4458,14 @@ def _validate_structure(
         )
 
     publication_by_id = _rows_by_id(publication_rows, label="publication entity")
-    _validate_entity_attribute_presence(publication_rows)
+    hide_entity_ids = frozenset(
+        int(row["id"])
+        for row in snapshot["locked_combat"]
+        if row["hide_when_idle"] is not None
+    )
+    _validate_entity_attribute_presence(
+        publication_rows, hide_entity_ids=hide_entity_ids
+    )
     all_ids = set(publication_by_id)
     existing_ids = set(entity_registry)
     if not existing_ids.issubset(all_ids):
@@ -4949,7 +5073,9 @@ def _apply_combat(
             row["native_target_distance_discount_sq_units"]
         )
         entity.target_id = row["target_id"]
+        entity._hidden_building = bool(row["hidden_building"])
         _apply_direct_damage_ramp(entity, row["damage_ramp"], undo)
+        _apply_direct_hide_when_idle(entity, row["hide_when_idle"], undo)
 
 
 def _apply_buildings(
@@ -5970,6 +6096,30 @@ def _validate_direct_bound_entities(
                 raise ResidentPublicationError(
                     f"resident entity {entity_plan.entity_id} DamageRamp static state changed"
                 )
+        hide_when_idle = None if combat is None else combat["hide_when_idle"]
+        hide_mechanics = [
+            mechanic
+            for mechanic in entity.mechanics
+            if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+            == "clasher.cards.tesla.HideWhenIdle"
+        ]
+        if (hide_when_idle is None) != (len(hide_mechanics) == 0) or len(
+            hide_mechanics
+        ) > 1:
+            raise ResidentPublicationError(
+                f"resident entity {entity_plan.entity_id} HideWhenIdle topology changed"
+            )
+        if hide_when_idle is not None:
+            mechanic = hide_mechanics[0]
+            if (
+                type(mechanic.hide_delay_ms) is not int
+                or mechanic.hide_delay_ms != hide_when_idle["hide_delay_ms"]
+                or type(mechanic.rise_time_ms) is not int
+                or mechanic.rise_time_ms != hide_when_idle["rise_time_ms"]
+            ):
+                raise ResidentPublicationError(
+                    f"resident entity {entity_plan.entity_id} HideWhenIdle static state changed"
+                )
 
 
 def _apply_publication_entity_rows(
@@ -6218,6 +6368,46 @@ def _apply_direct_damage_ramp(
         mechanic.__dict__.pop("_current_target_ms", None)
 
 
+def _apply_direct_hide_when_idle(
+    entity: Any,
+    state: Any,
+    undo: _UndoJournal | None,
+) -> None:
+    mechanics = [
+        mechanic
+        for mechanic in entity.mechanics
+        if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+        == "clasher.cards.tesla.HideWhenIdle"
+    ]
+    if (state is None) != (len(mechanics) == 0) or len(mechanics) > 1:
+        raise ResidentPublicationError(
+            f"resident entity {entity.id} HideWhenIdle topology changed during commit"
+        )
+    if state is None:
+        return
+    mechanic = mechanics[0]
+    if undo is not None:
+        undo.watch_attrs(mechanic)
+    mechanic._phase_ms = state["phase_ms"]
+
+
+def _apply_direct_hidden_building(
+    entity: Any,
+    hidden: bool,
+    presence_mask: int | None,
+) -> None:
+    field_bit = 1 << _ENTITY_SPARSE_ATTRIBUTE_NAMES.index("_hidden_building")
+    present = (
+        "_hidden_building" in entity.__dict__
+        if presence_mask is None
+        else bool(presence_mask & field_bit)
+    )
+    if present:
+        entity._hidden_building = hidden
+    else:
+        entity.__dict__.pop("_hidden_building", None)
+
+
 def _apply_direct_entity(
     battle: Any,
     entity: Any,
@@ -6399,7 +6589,13 @@ def _apply_direct_entity(
         entity._native_target_distance_discount_sq_units = combat[
             "native_target_distance_discount_sq_units"
         ]
+        _apply_direct_hidden_building(
+            entity,
+            combat["hidden_building"],
+            row["sparse_attribute_presence"],
+        )
         _apply_direct_damage_ramp(entity, combat["damage_ramp"], undo)
+        _apply_direct_hide_when_idle(entity, combat["hide_when_idle"], undo)
 
     lifetime = row["building_lifetime_state"]
     impact = row["building_impact_state"]
@@ -6616,6 +6812,64 @@ def _validate_direct_delta_bound_entities(
                 raise ResidentPublicationError(
                     f"resident entity {change.entity_id} changed initial-position topology"
                 )
+            hide = combat["hide_when_idle"]
+            hide_mechanics = [
+                mechanic
+                for mechanic in entity.mechanics
+                if f"{type(mechanic).__module__}.{type(mechanic).__qualname__}"
+                == "clasher.cards.tesla.HideWhenIdle"
+            ]
+            if (hide is None) != (len(hide_mechanics) == 0) or len(
+                hide_mechanics
+            ) > 1:
+                raise ResidentPublicationError(
+                    f"resident entity {change.entity_id} HideWhenIdle topology changed"
+                )
+            if hide is not None:
+                mechanic = hide_mechanics[0]
+                if (
+                    type(mechanic.hide_delay_ms) is not int
+                    or mechanic.hide_delay_ms != hide["hide_delay_ms"]
+                    or type(mechanic.rise_time_ms) is not int
+                    or mechanic.rise_time_ms != hide["rise_time_ms"]
+                ):
+                    raise ResidentPublicationError(
+                        f"resident entity {change.entity_id} HideWhenIdle static state changed"
+                    )
+                if change.full is not None:
+                    candidate_presence = change.full.raw[
+                        "sparse_attribute_presence"
+                    ]
+                elif change.dirty_mask & _ENTITY_DELTA_PRESENCE:
+                    candidate_presence = change.raw["sparse_attribute_presence"]
+                else:
+                    candidate_presence = sum(
+                        1 << index
+                        for index, name in enumerate(
+                            _ENTITY_SPARSE_ATTRIBUTE_NAMES
+                        )
+                        if name in entity.__dict__
+                    )
+                _validate_direct_hide_when_idle_presence(
+                    combat, change.entity_id, candidate_presence
+                )
+                candidate_special = (
+                    movement["special_move_active"]
+                    if movement is not None
+                    else getattr(entity, "_special_move_active", False)
+                )
+                candidate_target = (
+                    change.full.raw["target_id"]
+                    if change.full is not None
+                    else change.raw["base"]["target_id"]
+                    if change.dirty_mask & _ENTITY_DELTA_BASE
+                    else entity.target_id
+                )
+                hidden = combat["hidden_building"]
+                if candidate_special != hidden or hidden and candidate_target is not None:
+                    raise ResidentPublicationError(
+                        f"resident entity {change.entity_id} HideWhenIdle topology changed"
+                    )
 
 
 def _plan_direct_delta_projectile_groups(
@@ -6878,7 +7132,15 @@ def _apply_direct_delta_entity(
             entity._last_combat_target_id = combat["last_combat_target_id"]
             entity._movement_target_id = combat["movement_target_id"]
             entity._native_target_distance_discount_sq_units = combat["native_target_distance_discount_sq_units"]
+            _apply_direct_hidden_building(
+                entity,
+                combat["hidden_building"],
+                raw["sparse_attribute_presence"]
+                if mask & _ENTITY_DELTA_PRESENCE
+                else None,
+            )
             _apply_direct_damage_ramp(entity, combat["damage_ramp"], undo)
+            _apply_direct_hide_when_idle(entity, combat["hide_when_idle"], undo)
     if mask & _ENTITY_DELTA_BUILDING_LIFETIME:
         lifetime = raw["building_lifetime_state"]
         if lifetime is not None:

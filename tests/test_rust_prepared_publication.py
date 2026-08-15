@@ -279,6 +279,22 @@ def _typed_basic_semantic(parts: MappingProxyType[str, Any]) -> dict[str, Any]:
                     "facing_x_units": combat["facing_x_units"],
                     "facing_y_units": combat["facing_y_units"],
                     "has_attacked_once": combat["has_attacked_once"],
+                    "hide_when_idle": (
+                        None
+                        if combat["hide_when_idle"] is None
+                        else {
+                            "hide_delay_ms": combat["hide_when_idle"][
+                                "hide_delay_ms"
+                            ],
+                            "phase_ms": _float_scalar(
+                                combat["hide_when_idle"]["phase_ms"]
+                            ),
+                            "rise_time_ms": combat["hide_when_idle"][
+                                "rise_time_ms"
+                            ],
+                        }
+                    ),
+                    "hidden_building": combat["hidden_building"],
                     "hitpoints": _exact_scalar(row["hitpoints"]),
                     "id": row["id"],
                     "initial_position": None,
@@ -421,9 +437,9 @@ def test_prepared_parts_are_owned_frozen_and_match_legacy_root_rows() -> None:
 
     assert isinstance(parts, MappingProxyType)
     assert parts["version"] == 1
-    assert parts["binding"]["semantic_schema_version"] == 11
+    assert parts["binding"]["semantic_schema_version"] == 12
     assert parts["binding"]["checkpoint_schema_version"] == 2
-    assert parts["binding"]["catalog_schema_version"] == 11
+    assert parts["binding"]["catalog_schema_version"] == 12
     assert parts["battle"]["tick"] == 1
     assert isinstance(parts["entities"], tuple)
     assert isinstance(parts["entities"][0], MappingProxyType)
@@ -475,7 +491,7 @@ def test_typed_parts_match_full_legacy_basic_semantic_and_presence_schema() -> N
     )
     presence_mask = parts["battle"]["sparse_attribute_presence"]
     actual_presence = {
-        name: bool(presence_mask & (1 << (26 + index)))
+            name: bool(presence_mask & (1 << (27 + index)))
         for index, name in enumerate(battle_presence_names)
     }
     assert actual_presence == expected_presence

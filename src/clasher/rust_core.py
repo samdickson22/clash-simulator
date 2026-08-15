@@ -45,7 +45,7 @@ except ImportError:  # pragma: no cover - depends on optional compiled artifact
 FNV_OFFSET_BASIS: Final = 0xCBF29CE484222325
 FNV_PRIME: Final = 0x100000001B3
 U64_MASK: Final = (1 << 64) - 1
-RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 11
+RESIDENT_CARD_CATALOG_SCHEMA_VERSION: Final = 12
 _RESIDENT_PREVIEW_TICK_FAILURE_PREFIX: Final = (
     "resident joint-action preview failed after actions during complete ticks: "
 )
@@ -140,14 +140,24 @@ def _ordinary_building_capability_reasons(
         reasons.append("not_building")
     if str(getattr(card_stats, "card_type", "") or "").casefold() != "building":
         reasons.append("not_building_stats")
+    from .cards.tesla import HideWhenIdle
     from .mechanics.shared.damage_ramp import DamageRamp
 
     mechanic_types = tuple(
         type(mechanic)
         for mechanic in tuple(getattr(card_def, "mechanics", ()) or ())
     )
-    if mechanic_types not in ((), (DamageRamp,)):
+    if mechanic_types not in ((), (DamageRamp,), (HideWhenIdle,)):
         reasons.append("executable_mechanics")
+    if mechanic_types == (HideWhenIdle,):
+        mechanic = card_def.mechanics[0]
+        if (
+            type(mechanic.hide_delay_ms) is not int
+            or mechanic.hide_delay_ms <= 0
+            or type(mechanic.rise_time_ms) is not int
+            or mechanic.rise_time_ms <= 0
+        ):
+            reasons.append("invalid_hide_when_idle")
     if not getattr(card_stats, "summon_character_data", None):
         reasons.append("missing_character_data")
     if int(getattr(card_stats, "summon_count", None) or 1) != 1:
@@ -1474,7 +1484,7 @@ def _decode_prepared_publication_parts(value: Any) -> MappingProxyType[str, Any]
     binding = frozen.get("binding")
     if not isinstance(binding, MappingProxyType):
         raise TypeError("resident prepared publication binding is not a mapping")
-    if binding.get("semantic_schema_version") != 11:
+    if binding.get("semantic_schema_version") != 12:
         raise ValueError("unsupported resident prepared semantic schema")
     return frozen
 
@@ -1544,7 +1554,7 @@ class ResidentPreparedPublication:
         binding = value.get("binding")
         if type(binding) is not dict:
             raise TypeError("resident prepared publication binding is not a mapping")
-        if binding.get("semantic_schema_version") != 11:
+        if binding.get("semantic_schema_version") != 12:
             raise ValueError("unsupported resident prepared semantic schema")
         return cast(dict[str, Any], value)
 
@@ -1565,7 +1575,7 @@ class ResidentPreparedPublication:
             raise TypeError(
                 "resident prepared publication delta binding is not a mapping"
             )
-        if binding.get("semantic_schema_version") != 11:
+        if binding.get("semantic_schema_version") != 12:
             raise ValueError("unsupported resident prepared delta semantic schema")
         return cast(dict[str, Any], value)
 
@@ -3604,6 +3614,7 @@ def compare_ground_movement_phase(
 
 
 def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
+    from .cards.tesla import HideWhenIdle
     from .mechanics.shared.damage_ramp import DamageRamp
 
     rows: list[dict[str, Any]] = []
@@ -3616,6 +3627,14 @@ def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
                 mechanic
                 for mechanic in entity.mechanics
                 if type(mechanic) is DamageRamp
+            ),
+            None,
+        )
+        hide_when_idle = next(
+            (
+                mechanic
+                for mechanic in entity.mechanics
+                if type(mechanic) is HideWhenIdle
             ),
             None,
         )
@@ -3651,6 +3670,18 @@ def locked_direct_combat_state_rows(battle: Any) -> list[dict[str, Any]]:
                 "facing_y_units": int(entity._facing_y_units),
                 "has_attacked_once": bool(
                     getattr(entity, "_has_attacked_once", False)
+                ),
+                "hide_when_idle": (
+                    None
+                    if hide_when_idle is None
+                    else {
+                        "hide_delay_ms": int(hide_when_idle.hide_delay_ms),
+                        "phase_ms": _exact_scalar(hide_when_idle._phase_ms),
+                        "rise_time_ms": int(hide_when_idle.rise_time_ms),
+                    }
+                ),
+                "hidden_building": bool(
+                    getattr(entity, "_hidden_building", False)
                 ),
                 "hitpoints": _exact_scalar(entity.hitpoints),
                 "id": int(entity.id),

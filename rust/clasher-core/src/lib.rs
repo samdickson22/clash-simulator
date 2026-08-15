@@ -15,7 +15,7 @@ const RESIDENT_CHECKPOINT_SCHEMA_VERSION: u64 = 2;
 const PREPARED_PUBLICATION_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_DELTA_VERSION: u64 = 1;
 const PREPARED_PUBLICATION_BEST_VERSION: u64 = 1;
-const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 11;
+const PREPARED_SEMANTIC_SCHEMA_VERSION: u64 = 12;
 
 const DELTA_BATTLE: u64 = 1 << 0;
 const DELTA_PLAYERS: u64 = 1 << 1;
@@ -58,7 +58,7 @@ fn next_resident_state_token() -> u64 {
         .expect("resident publication token space exhausted")
 }
 
-const ENTITY_SPARSE_ATTRIBUTE_NAMES: [&str; 26] = [
+const ENTITY_SPARSE_ATTRIBUTE_NAMES: [&str; 27] = [
     "_spawn_hook_pending",
     "_spawn_hook_fired",
     "_ground_path_cache_key",
@@ -85,6 +85,7 @@ const ENTITY_SPARSE_ATTRIBUTE_NAMES: [&str; 26] = [
     "_temporary_homing_remaining_ms",
     "_temporary_homing_target",
     "_shield_break_count",
+    "_hidden_building",
 ];
 
 const BATTLE_SPARSE_ATTRIBUTE_NAMES: [&str; 8] = [
@@ -3025,6 +3026,52 @@ struct ResidentDamageRampState {
     current_target_ms: f64,
 }
 
+#[derive(Clone, IntoPyObject, PartialEq)]
+struct ResidentHideWhenIdleState {
+    hide_delay_ms: i64,
+    rise_time_ms: i64,
+    phase_ms: f64,
+}
+
+impl ResidentHideWhenIdleState {
+    fn from_normalized(mechanic: &Value) -> PyResult<Self> {
+        let fields = object_fields(mechanic)?;
+        let hide_delay_ms = required_i64(fields, "hide_delay_ms")?;
+        let rise_time_ms = required_i64(fields, "rise_time_ms")?;
+        let phase_ms = normalized_f64(fields, "_phase_ms")?;
+        let cycle_ms = hide_delay_ms
+            .checked_add(rise_time_ms)
+            .ok_or_else(|| PyValueError::new_err("HideWhenIdle cycle duration overflows"))?;
+        if hide_delay_ms <= 0
+            || rise_time_ms <= 0
+            || !phase_ms.is_finite()
+            || phase_ms < 0.0
+            || phase_ms >= cycle_ms as f64
+        {
+            return Err(PyValueError::new_err(
+                "HideWhenIdle state is outside the supported range",
+            ));
+        }
+        Ok(Self {
+            hide_delay_ms,
+            rise_time_ms,
+            phase_ms,
+        })
+    }
+
+    fn publication_static_eq(&self, other: &Self) -> bool {
+        self.hide_delay_ms == other.hide_delay_ms && self.rise_time_ms == other.rise_time_ms
+    }
+
+    fn diagnostic_value(&self) -> Value {
+        json!({
+            "hide_delay_ms": self.hide_delay_ms,
+            "phase_ms": exact_f64_value(self.phase_ms),
+            "rise_time_ms": self.rise_time_ms,
+        })
+    }
+}
+
 impl ResidentDamageRampState {
     fn from_normalized(mechanic: &Value) -> PyResult<Self> {
         let fields = object_fields(mechanic)?;
@@ -3184,6 +3231,7 @@ struct LockedDirectCombatState {
     direct_area: Option<DirectAreaWeapon>,
     point_weapon: Option<PointWeapon>,
     damage_ramp: Option<ResidentDamageRampState>,
+    hide_when_idle: Option<ResidentHideWhenIdleState>,
 }
 
 #[derive(Clone, IntoPyObject, PartialEq, Eq)]
@@ -3487,6 +3535,7 @@ impl LockedDirectCombatState {
             direct_area,
             point_weapon,
             damage_ramp: None,
+            hide_when_idle: None,
         })
     }
 
@@ -3520,10 +3569,14 @@ impl LockedDirectCombatState {
             "damage_ramp": self.damage_ramp.as_ref().map(
                 ResidentDamageRampState::diagnostic_value
             ),
+            "hide_when_idle": self.hide_when_idle.as_ref().map(
+                ResidentHideWhenIdleState::diagnostic_value
+            ),
             "encounter_index": entity.encounter_index,
             "facing_x_units": self.facing_x_units,
             "facing_y_units": self.facing_y_units,
             "has_attacked_once": self.has_attacked_once,
+            "hidden_building": self.hidden_building,
             "hitpoints": entity.hitpoints.diagnostic_value(),
             "id": entity.id,
             "initial_position": self.initial_position.as_ref().map(|(x, y)| json!([
@@ -3549,6 +3602,11 @@ impl ResidentEntity {
                     self.locked_combat
                         .as_ref()
                         .is_some_and(|combat| combat.damage_ramp.is_some()),
+                )
+                + usize::from(
+                    self.locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.hide_when_idle.is_some()),
                 )
     }
 
@@ -3615,6 +3673,41 @@ impl ResidentEntity {
                 .iter()
                 .any(|stage| self.damage == ExactScalar::Int(stage.damage))
             && combat.damage.to_bits() == self.damage.as_f64().to_bits()
+    }
+
+    fn hide_when_idle_state_supported(&self) -> bool {
+        let Some(combat) = self.locked_combat.as_ref() else {
+            return true;
+        };
+        let Some(hide) = combat.hide_when_idle.as_ref() else {
+            return true;
+        };
+        let Some(movement) = self.movement.as_ref() else {
+            return false;
+        };
+        let hidden = (hide.phase_ms - hide.hide_delay_ms as f64).abs() <= 1e-9;
+        self.entity_kind == 1
+            && self.sparse_attributes.contains("_hidden_building")
+            && self.sparse_attributes.contains("_special_move_active")
+            && hide.hide_delay_ms > 0
+            && hide.rise_time_ms > 0
+            && hide.phase_ms.is_finite()
+            && hide.phase_ms >= 0.0
+            && hide
+                .hide_delay_ms
+                .checked_add(hide.rise_time_ms)
+                .is_some_and(|cycle| cycle > 0 && hide.phase_ms < cycle as f64)
+            && combat.hidden_building == hidden
+            && movement.special_move_active == hidden
+            && (!hidden || self.target_id.is_none())
+    }
+
+    fn hide_when_idle_blocks_effects(&self, affects_hidden: bool) -> bool {
+        !affects_hidden
+            && self
+                .locked_combat
+                .as_ref()
+                .is_some_and(|combat| combat.hidden_building && combat.hide_when_idle.is_some())
     }
 
     fn fresh_catalog_deploy_state_supported(&self) -> bool {
@@ -3791,6 +3884,7 @@ impl ResidentEntity {
         let mut death_opcodes = Vec::new();
         let mut status_nova_jump = None;
         let mut damage_ramp = None;
+        let mut hide_when_idle = None;
         for mechanic in mechanic_values {
             match object_type(mechanic)?.as_str() {
                 "clasher.mechanics.shared.shield.Shield" => {
@@ -3830,6 +3924,14 @@ impl ResidentEntity {
                         ));
                     }
                     damage_ramp = Some(ResidentDamageRampState::from_normalized(mechanic)?);
+                }
+                "clasher.cards.tesla.HideWhenIdle" => {
+                    if hide_when_idle.is_some() {
+                        return Err(PyValueError::new_err(
+                            "entity has multiple HideWhenIdle mechanics",
+                        ));
+                    }
+                    hide_when_idle = Some(ResidentHideWhenIdleState::from_normalized(mechanic)?);
                 }
                 _ => {}
             }
@@ -3879,6 +3981,7 @@ impl ResidentEntity {
                 &mut direct_combat_unsupported,
             )?;
             state.damage_ramp = damage_ramp;
+            state.hide_when_idle = hide_when_idle;
             Some(state)
         } else {
             None
@@ -3953,6 +4056,11 @@ impl ResidentEntity {
                     .as_ref()
                     .is_some_and(|combat| combat.damage_ramp.is_some()),
             )
+            + usize::from(
+                locked_combat
+                    .as_ref()
+                    .is_some_and(|combat| combat.hide_when_idle.is_some()),
+            )
             != mechanics.len()
         {
             direct_combat_unsupported.push("executable_mechanics".to_owned());
@@ -4022,7 +4130,14 @@ impl ResidentEntity {
                     "_special_move_active" | "_special_move_consumed_tick"
                 ))
                 || (compiled_river_jump_state
-                    && matches!(field, "_river_jump_active" | "_special_move_active"));
+                    && matches!(field, "_river_jump_active" | "_special_move_active"))
+                || (locked_combat
+                    .as_ref()
+                    .is_some_and(|combat| combat.hide_when_idle.is_some())
+                    && field == "_special_move_active"
+                    && locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.hidden_building));
             if normalized_optional_bool(fields, field) && !compiled_special_state {
                 direct_combat_unsupported.push(reason.to_owned());
             }
@@ -4082,8 +4197,19 @@ impl ResidentEntity {
                 direct_combat_unsupported.push("damage_ramp_payload".to_owned());
             }
         }
+        let sparse_attributes = tracked_presence(fields, &ENTITY_SPARSE_ATTRIBUTE_NAMES);
+        if locked_combat
+            .as_ref()
+            .is_some_and(|combat| combat.hide_when_idle.is_some())
+            && (!sparse_attributes.contains("_hidden_building")
+                || !sparse_attributes.contains("_special_move_active"))
+        {
+            return Err(PyValueError::new_err(
+                "HideWhenIdle requires explicit hidden and special-move attributes",
+            ));
+        }
         Ok(Self {
-            sparse_attributes: tracked_presence(fields, &ENTITY_SPARSE_ATTRIBUTE_NAMES),
+            sparse_attributes,
             active: true,
             encounter_index,
             id: required_i64(fields, "id")?,
@@ -4431,7 +4557,7 @@ impl ResidentEntity {
     }
 }
 
-const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 11;
+const RESIDENT_CARD_CATALOG_SCHEMA_VERSION: u64 = 12;
 
 #[derive(Deserialize)]
 struct ResidentCardCatalogWire {
@@ -4652,6 +4778,7 @@ struct ResidentDirectDamageSpellSpec {
     slow_multiplier: f64,
     hits_air: bool,
     hits_ground: bool,
+    affects_hidden: bool,
     crown_tower_damage_multiplier: f64,
     crown_tower_damage: Option<f64>,
 }
@@ -5386,7 +5513,6 @@ impl ResidentCardCatalog {
                 })
             });
             let direct_damage_spell = card.direct_damage_spell.map(|spell| {
-                let _ = spell.affects_hidden;
                 let finite = [
                     spell.radius,
                     spell.damage,
@@ -5421,6 +5547,7 @@ impl ResidentCardCatalog {
                     slow_multiplier: spell.slow_multiplier,
                     hits_air: spell.hits_air,
                     hits_ground: spell.hits_ground,
+                    affects_hidden: spell.affects_hidden,
                     crown_tower_damage_multiplier: spell.crown_tower_damage_multiplier,
                     crown_tower_damage: spell.crown_tower_damage,
                 }
@@ -5463,12 +5590,22 @@ impl ResidentCardCatalog {
                         .locked_combat
                         .as_ref()
                         .is_some_and(|combat| combat.damage_ramp.is_some());
+                    let hide_when_idle_present = prototype
+                        .locked_combat
+                        .as_ref()
+                        .is_some_and(|combat| combat.hide_when_idle.is_some());
                     let mechanic_family_supported = if prototype.status_nova_jump.is_some() {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
                             && !damage_ramp_present
+                            && !hide_when_idle_present
                     } else if damage_ramp_present {
+                        prototype.mechanics.len() == 1
+                            && prototype.shields.is_empty()
+                            && prototype.death_opcodes.is_empty()
+                            && !hide_when_idle_present
+                    } else if hide_when_idle_present {
                         prototype.mechanics.len() == 1
                             && prototype.shields.is_empty()
                             && prototype.death_opcodes.is_empty()
@@ -5488,12 +5625,28 @@ impl ResidentCardCatalog {
                                 && combat.damage.to_bits() == (ramp.base_damage() as f64).to_bits()
                                 && prototype.damage == ExactScalar::Int(ramp.base_damage())
                         });
+                    let hide_when_idle_fresh = prototype
+                        .locked_combat
+                        .as_ref()
+                        .and_then(|combat| {
+                            combat.hide_when_idle.as_ref().map(|hide| (combat, hide))
+                        })
+                        .is_none_or(|(combat, hide)| {
+                            hide.phase_ms.to_bits() == 0.0_f64.to_bits()
+                                && !combat.hidden_building
+                                && prototype.target_id.is_none()
+                                && prototype.movement.as_ref().is_some_and(|movement| {
+                                    !movement.special_move_active
+                                        && !movement.special_move_consumed_tick
+                                })
+                        });
                     prototype.active
                         && prototype.is_alive
                         && prototype.card_name == expected_name
                         && prototype.has_only_compiled_mechanics()
                         && mechanic_family_supported
                         && damage_ramp_fresh
+                        && hide_when_idle_fresh
                         && prototype.shields.iter().all(|shield| {
                             shield.current == shield.maximum && shield.current.as_f64() > 0.0
                         })
@@ -6682,6 +6835,7 @@ impl PublicationExactEq for LockedDirectCombatState {
                 _ => false,
             }
             && publication_option_exact_eq(&self.damage_ramp, &other.damage_ramp)
+            && publication_option_exact_eq(&self.hide_when_idle, &other.hide_when_idle)
     }
 }
 
@@ -6693,6 +6847,12 @@ impl PublicationExactEq for ResidentDamageRampState {
             && self.current_target_id == other.current_target_id
             && self.current_target_ms_present == other.current_target_ms_present
             && publication_f64_eq(self.current_target_ms, other.current_target_ms)
+    }
+}
+
+impl PublicationExactEq for ResidentHideWhenIdleState {
+    fn publication_exact_eq(&self, other: &Self) -> bool {
+        self.publication_static_eq(other) && publication_f64_eq(self.phase_ms, other.phase_ms)
     }
 }
 
@@ -6780,7 +6940,6 @@ impl LockedDirectCombatState {
             && self.retarget_ms == other.retarget_ms
             && self.targets_only_buildings == other.targets_only_buildings
             && self.native_building_target == other.native_building_target
-            && self.hidden_building == other.hidden_building
             && self.stealth_until_ms == other.stealth_until_ms
             && self.allow_area_damage_when_invisible == other.allow_area_damage_when_invisible
             && self.direct_area == other.direct_area
@@ -6790,6 +6949,11 @@ impl LockedDirectCombatState {
                 _ => false,
             }
             && match (&self.damage_ramp, &other.damage_ramp) {
+                (None, None) => true,
+                (Some(left), Some(right)) => left.publication_static_eq(right),
+                _ => false,
+            }
+            && match (&self.hide_when_idle, &other.hide_when_idle) {
                 (None, None) => true,
                 (Some(left), Some(right)) => left.publication_static_eq(right),
                 _ => false,
@@ -8793,11 +8957,14 @@ impl ResidentBattle {
         }
         self.mark_publication_mutated();
         self.checkpoint_current = false;
-        for entity in &mut self.entities {
-            if !entity.active {
+        for entity_index in 0..self.entities.len() {
+            if !self.entities[entity_index].active {
                 continue;
             }
-            entity.advance_character_object_phase(self.dt);
+            self.entities[entity_index].advance_character_object_phase(self.dt);
+            if self.entities[entity_index].deploy_delay_remaining <= 1e-9 {
+                self.advance_hide_when_idle(entity_index);
+            }
         }
         Ok(())
     }
@@ -8877,7 +9044,12 @@ impl ResidentBattle {
                     continue;
                 }
                 match self.entities[entity_index].entity_kind {
-                    0 | 1 => self.entities[entity_index].advance_character_object_phase(self.dt),
+                    0 | 1 => {
+                        self.entities[entity_index].advance_character_object_phase(self.dt);
+                        if self.entities[entity_index].deploy_delay_remaining <= 1e-9 {
+                            self.advance_hide_when_idle(entity_index);
+                        }
+                    }
                     2 if self.entities[entity_index].rolling_projectile.is_some() => {
                         self.advance_rolling_projectile(entity_index)
                     }
@@ -8896,6 +9068,128 @@ impl ResidentBattle {
             }
         }
         Ok(())
+    }
+
+    fn hide_when_idle_has_target(&self, actor_index: usize) -> bool {
+        let actor = &self.entities[actor_index];
+        let Some(actor_combat) = actor.locked_combat.as_ref() else {
+            return false;
+        };
+        let now_ms = (self.time * 1000.0).round_ties_even() as i64;
+        self.entities
+            .iter()
+            .enumerate()
+            .any(|(target_index, target)| {
+                if actor_index == target_index
+                    || !target.active
+                    || !target.is_alive
+                    || target.player_id == actor.player_id
+                    || !matches!(target.entity_kind, 0 | 1)
+                    || target.death_spawn_target_immunity_elapsed_ms >= 0
+                    || target.blocks_effects_while_committed()
+                {
+                    return false;
+                }
+                let Some(target_combat) = target.locked_combat.as_ref() else {
+                    return false;
+                };
+                if target_combat.hidden_building || target_combat.stealth_until_ms > now_ms {
+                    return false;
+                }
+                let target_is_air = target_combat.is_airborne_for_projectile;
+                if (target_is_air && !actor_combat.can_attack_air)
+                    || (!target_is_air && !actor_combat.can_attack_ground)
+                {
+                    return false;
+                }
+                self.direct_target_distance(actor_index, target_index)
+                    <= actor_combat.range + target_combat.collision_radius + 1e-8
+            })
+    }
+
+    fn advance_hide_when_idle(&mut self, entity_index: usize) {
+        if !self.entities[entity_index].is_alive {
+            return;
+        }
+        if self.entities[entity_index]
+            .locked_combat
+            .as_ref()
+            .is_some_and(|combat| combat.hide_when_idle.is_some())
+        {
+            self.entities[entity_index]
+                .sparse_attributes
+                .extend(["_hidden_building", "_special_move_active"]);
+        }
+        let Some((hide_delay_ms, rise_time_ms, old_phase, stunned)) = self.entities[entity_index]
+            .locked_combat
+            .as_ref()
+            .and_then(|combat| {
+                combat.hide_when_idle.as_ref().map(|hide| {
+                    (
+                        hide.hide_delay_ms,
+                        hide.rise_time_ms,
+                        hide.phase_ms,
+                        combat.stun_timer > 0.0,
+                    )
+                })
+            })
+        else {
+            return;
+        };
+        if stunned {
+            return;
+        }
+        let has_target = self.hide_when_idle_has_target(entity_index);
+        let modifiers = self.entities[entity_index]
+            .modifier_state
+            .as_ref()
+            .expect("HideWhenIdle building requires modifier state");
+        let debuff_percent = (modifiers.slow_multiplier * 100.0)
+            .round_ties_even()
+            .max(0.0) as i64;
+        let buff_percent = (modifiers.movement_speed_buff_multiplier * 100.0)
+            .round_ties_even()
+            .max(0.0) as i64;
+        let native_tick_work = (50_i64 * buff_percent / 100) * debuff_percent / 100;
+        let work_ms = self.dt.max(0.0) * 1000.0 * native_tick_work as f64 / 50.0;
+        let cycle_ms = hide_delay_ms + rise_time_ms;
+        let mut next_phase = old_phase + work_ms;
+        let phase = if !has_target {
+            if next_phase >= hide_delay_ms as f64 && old_phase <= hide_delay_ms as f64 {
+                hide_delay_ms as f64
+            } else {
+                next_phase.rem_euclid(cycle_ms as f64)
+            }
+        } else {
+            if old_phase < hide_delay_ms as f64 {
+                next_phase = (old_phase - work_ms).max(0.0);
+            }
+            if next_phase > cycle_ms as f64 || old_phase == 0.0 {
+                0.0
+            } else {
+                next_phase.rem_euclid(cycle_ms as f64)
+            }
+        };
+        let hidden = (phase - hide_delay_ms as f64).abs() <= 1e-9;
+        let entity = &mut self.entities[entity_index];
+        let combat = entity
+            .locked_combat
+            .as_mut()
+            .expect("HideWhenIdle requires combat state");
+        combat
+            .hide_when_idle
+            .as_mut()
+            .expect("HideWhenIdle state disappeared")
+            .phase_ms = phase;
+        combat.hidden_building = hidden;
+        entity
+            .movement
+            .as_mut()
+            .expect("HideWhenIdle requires movement state")
+            .special_move_active = hidden;
+        if hidden {
+            entity.target_id = None;
+        }
     }
 
     fn resident_object_allocation_headroom_supported(&self) -> bool {
@@ -9339,6 +9633,7 @@ impl ResidentBattle {
                                         == ["active_river_jump", "active_special_move"]);
                         unsupported_reasons_allowed
                             && entity.damage_ramp_state_supported(self.next_entity_id)
+                            && entity.hide_when_idle_state_supported()
                             && !entity.movement.as_ref().is_some_and(|movement| {
                                 let supported_river_transition = movement.jump_height_present
                                     && !movement.special_move_active
@@ -9347,6 +9642,12 @@ impl ResidentBattle {
                                     || movement.special_move_consumed_tick)
                                     && !river_jump_active
                                     && entity.status_nova_jump.is_none()
+                                    && !entity.locked_combat.as_ref().is_some_and(|combat| {
+                                        combat.hide_when_idle.is_some()
+                                            && combat.hidden_building
+                                            && movement.special_move_active
+                                            && !movement.special_move_consumed_tick
+                                    })
                                     && !supported_river_transition
                             })
                     }
@@ -10200,10 +10501,7 @@ impl ResidentBattle {
             || !matches!(target.entity_kind, 0 | 1)
             || rolling.hit_entity_ids.contains(&target.id)
             || target.blocks_effects_while_committed()
-            || target
-                .locked_combat
-                .as_ref()
-                .is_some_and(|combat| combat.hidden_building)
+            || target.hide_when_idle_blocks_effects(false)
         {
             return false;
         }
@@ -11950,6 +12248,7 @@ impl ResidentBattle {
             || target.blocks_effects_while_committed()
             || (target_is_air && !spec.hits_air)
             || (!target_is_air && !spec.hits_ground)
+            || target.hide_when_idle_blocks_effects(spec.affects_hidden)
         {
             return false;
         }
@@ -12795,6 +13094,17 @@ impl ResidentBattle {
             movement.knockback_velocity_work = 0;
             movement.knockback_interrupts_combat = true;
             movement.forced_movement_active = false;
+            if entity
+                .locked_combat
+                .as_ref()
+                .is_some_and(|combat| combat.hide_when_idle.is_some())
+            {
+                entity
+                    .sparse_attributes
+                    .extend(["_hidden_building", "_special_move_active"]);
+                movement.special_move_active = false;
+                movement.special_move_consumed_tick = false;
+            }
         }
         if let Some(combat) = entity.locked_combat.as_mut() {
             combat.facing_x_units = 0;
@@ -12809,6 +13119,10 @@ impl ResidentBattle {
                 ramp.current_target_ms = 0.0;
                 combat.damage = ramp.base_damage() as f64;
                 entity.damage = ExactScalar::Int(ramp.base_damage());
+            }
+            if let Some(hide) = combat.hide_when_idle.as_mut() {
+                hide.phase_ms = 0.0;
+                combat.hidden_building = false;
             }
         }
         entity
@@ -13371,6 +13685,10 @@ impl ResidentBattle {
                     && movement.special_move_active
                     && !movement.special_move_consumed_tick
                     && (combat.stun_timer <= 0.0 || movement.stun_interrupt_deferred_until_landing)
+            } else if combat.hide_when_idle.is_some() && combat.hidden_building {
+                movement.special_move_active
+                    && !movement.special_move_consumed_tick
+                    && !movement.stun_interrupt_deferred_until_landing
             } else {
                 !movement.special_move_active
                     && !movement.stun_interrupt_deferred_until_landing
@@ -14181,12 +14499,7 @@ impl ResidentBattle {
         else {
             return false;
         };
-        if target
-            .locked_combat
-            .as_ref()
-            .is_some_and(|combat| combat.hidden_building)
-            && !state.affects_hidden
-        {
+        if target.hide_when_idle_blocks_effects(state.affects_hidden) {
             return false;
         }
         if (target_is_air && !state.hits_air) || (!target_is_air && !state.hits_ground) {
@@ -15262,6 +15575,7 @@ impl ResidentBattle {
             || target.player_id == actor.player_id
             || !matches!(target.entity_kind, 0 | 1)
             || target.death_spawn_target_immunity_elapsed_ms >= 0
+            || target.hide_when_idle_blocks_effects(false)
         {
             return false;
         }
@@ -15649,6 +15963,7 @@ impl ResidentBattle {
             || !matches!(target.entity_kind, 0 | 1)
             || !target.has_only_compiled_mechanics()
             || target.blocks_effects_while_committed()
+            || target.hide_when_idle_blocks_effects(spec.affects_hidden)
         {
             return false;
         }
@@ -15719,6 +16034,7 @@ impl ResidentBattle {
             || !matches!(target.entity_kind, 0 | 1)
             || target.death_spawn_target_immunity_elapsed_ms >= 0
             || target.blocks_effects_while_committed()
+            || target.hide_when_idle_blocks_effects(false)
         {
             return false;
         }
@@ -16240,6 +16556,7 @@ impl ResidentBattle {
                         if (source_is_character
                             && target.death_spawn_target_immunity_elapsed_ms >= 0)
                             || (stealth_until_ms > now_ms && !allow_invisible)
+                            || target.hide_when_idle_blocks_effects(false)
                         {
                             return None;
                         }
