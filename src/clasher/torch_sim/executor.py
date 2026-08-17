@@ -91,6 +91,43 @@ def _deployment_only_tensor_supported(battle: BattleState) -> bool:
             # Native emits a one-unit pressure vector even at exact contact.
             if troop.position.distance_to(other.position) <= minimum:
                 return False
+
+    # Static towers still run their combat component while a troop is in its
+    # character deployment state. A tower may acquire that arena-resident
+    # troop even though the troop itself cannot act yet. Admit only frames in
+    # which every active tower has inert recovery state and no deploying enemy
+    # is a valid sight target.
+    for tower in battle.entities.values():
+        if not battle._is_static_tower_entity(tower):
+            continue
+        if (
+            tower.mechanics
+            or tower.target_id is not None
+            or tower._attack_windup_active
+            or tower.attack_cooldown > tower.get_preloaded_attack_time_seconds() + 1e-9
+            or tower.stun_timer > 1e-9
+            or tower.slow_timer > 1e-9
+            or tower.haste_timer > 1e-9
+            or tower.freeze_expiry_time > battle.time + 1e-9
+            or tower._slow_effects
+            or tower._haste_effects
+            or tower._periodic_damage_effects
+            or tower.forced_movement_active
+            or tower._knockback_target is not None
+            or tower._death_spawn_travel_ticks_remaining > 0
+            or float(getattr(tower, "activation_delay_remaining", 0.0)) > 1e-9
+            or float(getattr(tower, "activation_first_hit_delay_remaining", 0.0)) > 1e-9
+        ):
+            return False
+        if not bool(getattr(tower, "_tower_active", True)):
+            continue
+        for troop in deploying:
+            if (
+                troop.player_id != tower.player_id
+                and tower._is_valid_target(troop)
+                and tower.is_within_sight(troop)
+            ):
+                return False
     return bool(deploying)
 
 

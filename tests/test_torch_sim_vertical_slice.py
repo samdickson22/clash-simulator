@@ -5,6 +5,7 @@ import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.entities import Troop
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.torch_sim import (
     TensorBattleState,
@@ -318,3 +319,31 @@ def test_complete_executor_fails_closed_on_mps_float64_state() -> None:
     assert executor.metrics_dict()["tensor_ticks"] == 0
     assert executor.metrics_dict()["python_ticks"] == 2
     assert executor.metrics_dict()["unsupported_fallbacks"] == 1
+
+
+def test_deploying_troop_in_enemy_tower_sight_uses_complete_combat_tick() -> None:
+    battle = BattleState(fast_path=False)
+    tower = battle.entities[4]
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    troop = battle._spawn_entity(
+        Troop,
+        Position(tower.position.x, tower.position.y - 3.0),
+        0,
+        stats,
+    )
+    troop.speed = 0.0
+    troop.deploy_delay_remaining = 1.0
+    troop.placement_delay_total = 1.0
+    troop.placement_pending = True
+    troop._spawn_hook_pending = True
+    expected = battle.clone()
+    expected.step_logic_ticks(1)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(battle, 1) == 1
+
+    _assert_exact_battle_match(expected, battle)
+    assert battle.entities[4].target_id == troop.id
+    assert executor.metrics_dict()["tensor_ticks"] == 1
+    assert executor.metrics_dict()["python_ticks"] == 0

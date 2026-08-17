@@ -757,6 +757,7 @@ class TensorTickRuntime:
             active[:, None]
             & self.combat.present
             & self.combat.alive
+            & (self.combat.kind == 0)
             & (self.combat.deploy_remaining <= 0.0)
             & (self.combat.target_slot >= 0)
         )
