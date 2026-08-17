@@ -183,21 +183,23 @@ def test_coverage_policy_can_require_fraction_and_fallback_limit() -> None:
 
 def test_exhaustive_manifests_have_exact_cardinality_and_lossless_shards() -> None:
     cards = ("Knight", "Archers", "Fireball")
-    one_vs_one = tuple(iter_interaction_manifests(cards, team_size=1))
-    two_vs_two = tuple(iter_interaction_manifests(cards, team_size=2))
+    one_card_per_owner = tuple(iter_interaction_manifests(cards, cards_per_owner=1))
+    two_cards_per_owner = tuple(iter_interaction_manifests(cards, cards_per_owner=2))
 
-    assert len(one_vs_one) == interaction_manifest_count(3, 1) == 9
-    assert len(two_vs_two) == interaction_manifest_count(3, 2) == 36
-    assert len({manifest.name for manifest in two_vs_two}) == 36
+    assert len(one_card_per_owner) == interaction_manifest_count(3, 1) == 9
+    assert len(two_cards_per_owner) == interaction_manifest_count(3, 2) == 36
+    assert len({manifest.name for manifest in two_cards_per_owner}) == 36
     assert any(
-        manifest.player0_cards == ("Knight", "Knight") for manifest in two_vs_two
+        manifest.player0_cards == ("Knight", "Knight")
+        for manifest in two_cards_per_owner
     )
+    assert all("2v2" not in manifest.name for manifest in two_cards_per_owner)
 
     shards = [
         tuple(
             iter_interaction_manifests(
                 cards,
-                team_size=2,
+                cards_per_owner=2,
                 shard_index=shard,
                 shard_count=5,
             )
@@ -212,7 +214,7 @@ def test_exhaustive_manifests_have_exact_cardinality_and_lossless_shards() -> No
 def test_interaction_fixture_records_public_deployments_for_both_sides() -> None:
     manifest = InteractionManifest(
         ordinal=0,
-        team_size=2,
+        cards_per_owner=2,
         player0_cards=("Knight", "Fireball"),
         player1_cards=("Archers", "Zap"),
     )

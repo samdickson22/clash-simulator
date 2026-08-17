@@ -226,7 +226,7 @@ complete tick executor:
 Current combined owned gate: 104 tests pass; Ruff F/I, mypy across all 14
 PyTorch/training source modules, and `git diff --check` pass. The manifest
 generator losslessly represents 4,356 ordered one-card matchups and 4,888,521
-ordered two-card-team compositions. These numbers are enumeration evidence,
+ordered two-card-per-owner compositions. These numbers are enumeration evidence,
 not executed full parity evidence. The standalone kernels likewise do not yet
 make ordinary combat tensor-native: `TensorBattleState`/executor wiring,
 mechanic callback opcodes, direct observation/reward projections, full episode

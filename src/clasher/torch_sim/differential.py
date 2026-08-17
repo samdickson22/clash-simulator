@@ -10,7 +10,7 @@ parity evidence.
 The module is executable without project-script installation::
 
     python -m clasher.torch_sim.differential episode --seeds 1:8
-    python -m clasher.torch_sim.differential manifest --team-size 1 --shards 8 --shard 0
+    python -m clasher.torch_sim.differential manifest --cards-per-owner 1 --shards 8 --shard 0
     python -m clasher.torch_sim.differential crowded --seeds 1,2,3 --ticks 400
 """
 
@@ -564,10 +564,10 @@ class DifferentialHarness:
 
 @dataclass(frozen=True)
 class InteractionManifest:
-    """One exhaustive card-team matchup (1v1 or 2v2 composition)."""
+    """One exhaustive interaction with one or two cards per opposing owner."""
 
     ordinal: int
-    team_size: int
+    cards_per_owner: int
     player0_cards: tuple[str, ...]
     player1_cards: tuple[str, ...]
 
@@ -575,7 +575,7 @@ class InteractionManifest:
     def name(self) -> str:
         left = "+".join(self.player0_cards)
         right = "+".join(self.player1_cards)
-        return f"{self.team_size}v{self.team_size}:{left}:vs:{right}"
+        return f"{self.cards_per_owner}-card-per-owner:{left}:vs:{right}"
 
 
 def _combinations_with_replacement(
@@ -589,47 +589,50 @@ def _combinations_with_replacement(
             yield (value, *suffix)
 
 
-def interaction_manifest_count(card_count: int, team_size: int) -> int:
+def interaction_manifest_count(card_count: int, cards_per_owner: int) -> int:
     """Return exact manifest cardinality without materializing it."""
 
     if card_count < 1:
         raise ValueError("card_count must be positive")
-    if team_size not in {1, 2}:
-        raise ValueError("team_size must be 1 or 2")
-    team_count = card_count if team_size == 1 else card_count * (card_count + 1) // 2
-    return team_count * team_count
+    if cards_per_owner not in {1, 2}:
+        raise ValueError("cards_per_owner must be 1 or 2")
+    owner_loadout_count = (
+        card_count if cards_per_owner == 1 else card_count * (card_count + 1) // 2
+    )
+    return owner_loadout_count * owner_loadout_count
 
 
 def iter_interaction_manifests(
     card_names: Sequence[str],
     *,
-    team_size: int,
+    cards_per_owner: int,
     shard_index: int = 0,
     shard_count: int = 1,
 ) -> Iterator[InteractionManifest]:
     """Yield the complete deterministic manifest, optionally index-sharded.
 
-    Cards inside a team are combinations with replacement: duplicate-card
-    interactions are included, while permutations within one side are not
-    redundantly repeated.  Player sides remain ordered because perspective
-    and deployment territory are behaviorally distinct.
+    Cards controlled by one owner are combinations with replacement:
+    duplicate-card interactions are included, while permutations within one
+    side are not redundantly repeated. Player sides remain ordered because
+    perspective and deployment territory are behaviorally distinct. Two cards
+    per owner is not a true four-controller team 2v2 match.
     """
 
-    if team_size not in {1, 2}:
-        raise ValueError("team_size must be 1 or 2")
+    if cards_per_owner not in {1, 2}:
+        raise ValueError("cards_per_owner must be 1 or 2")
     if shard_count < 1 or not 0 <= shard_index < shard_count:
         raise ValueError("shard_index must be in [0, shard_count)")
     cards = tuple(sorted(set(card_names)))
     if not cards:
         raise ValueError("at least one card is required")
-    teams = tuple(_combinations_with_replacement(cards, team_size))
+    owner_loadouts = tuple(_combinations_with_replacement(cards, cards_per_owner))
     ordinal = 0
-    for player0_cards in teams:
-        for player1_cards in teams:
+    for player0_cards in owner_loadouts:
+        for player1_cards in owner_loadouts:
             if ordinal % shard_count == shard_index:
                 yield InteractionManifest(
                     ordinal=ordinal,
-                    team_size=team_size,
+                    cards_per_owner=cards_per_owner,
                     player0_cards=player0_cards,
                     player1_cards=player1_cards,
                 )
@@ -931,7 +934,7 @@ def _argument_parser() -> argparse.ArgumentParser:
         "manifest", help="enumerate or verify exhaustive card interactions"
     )
     _add_common_arguments(manifest)
-    manifest.add_argument("--team-size", type=int, choices=(1, 2), required=True)
+    manifest.add_argument("--cards-per-owner", type=int, choices=(1, 2), required=True)
     manifest.add_argument("--shards", type=int, default=1)
     manifest.add_argument("--shard", type=int, default=0)
     manifest.add_argument("--limit", type=int)
@@ -1028,7 +1031,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         manifests: Iterator[InteractionManifest] = iter_interaction_manifests(
             cards,
-            team_size=args.team_size,
+            cards_per_owner=args.cards_per_owner,
             shard_index=args.shard,
             shard_count=args.shards,
         )
