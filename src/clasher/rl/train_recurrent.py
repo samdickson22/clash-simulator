@@ -25,7 +25,7 @@ from clasher.paths import (
 )
 
 from .model import ClasherPolicy, PolicyConfig, PolicyInputs
-from .selfplay_env import SelfPlayBattleEnv
+from .selfplay_env import BatchedSelfPlayStepper, SelfPlayBattleEnv
 from .structured_obs import StructuredObservation, StructuredObservationBuilder
 
 
@@ -148,9 +148,18 @@ def _accumulate_simulator_metrics(
     """Pop executor counters before an environment reset can discard them."""
 
     for env in envs:
-        metrics = env.pop_simulator_backend_metrics()
-        for metric_name, rollout_field in _SIMULATOR_METRIC_FIELDS.items():
-            accumulator[rollout_field] += int(metrics[metric_name])
+        _accumulate_backend_metrics(
+            accumulator,
+            env.pop_simulator_backend_metrics(),
+        )
+
+
+def _accumulate_backend_metrics(
+    accumulator: dict[str, int],
+    metrics: dict[str, float],
+) -> None:
+    for metric_name, rollout_field in _SIMULATOR_METRIC_FIELDS.items():
+        accumulator[rollout_field] += int(metrics[metric_name])
 
 
 def resolve_torch_device(name: str) -> torch.device:
@@ -450,6 +459,7 @@ def collect_rollout(
     wins = losses = draws = 0
     simulator_metrics = _empty_simulator_metrics()
     _accumulate_simulator_metrics(simulator_metrics, envs)
+    batch_stepper = BatchedSelfPlayStepper()
 
     for step in range(rollout_steps):
         with maybe_silence_stdio(quiet_engine):
@@ -497,15 +507,27 @@ def collect_rollout(
         next_previous_rewards = np.zeros((agents,), dtype=np.float32)
         next_episode_starts = np.zeros((agents,), dtype=np.bool_)
         with maybe_silence_stdio(quiet_engine):
-            for env_index, env in enumerate(envs):
+            step_results = batch_stepper.step(
+                envs,
+                [
+                    {
+                        0: int(actions[2 * env_index]),
+                        1: int(actions[2 * env_index + 1]),
+                    }
+                    for env_index in range(len(envs))
+                ],
+                pre_action_masks=[
+                    {
+                        0: action_masks[2 * env_index],
+                        1: action_masks[2 * env_index + 1],
+                    }
+                    for env_index in range(len(envs))
+                ],
+            )
+            for env_index, (env, (rewards, done, _)) in enumerate(
+                zip(envs, step_results)
+            ):
                 base = 2 * env_index
-                rewards, done, _ = env.step(
-                    {0: int(actions[base]), 1: int(actions[base + 1])},
-                    pre_action_masks={
-                        0: action_masks[base],
-                        1: action_masks[base + 1],
-                    },
-                )
                 arrays["rewards"][base, step] = float(rewards[0])
                 arrays["rewards"][base + 1, step] = float(rewards[1])
                 arrays["dones"][base : base + 2, step] = done
@@ -520,7 +542,6 @@ def collect_rollout(
                         wins += 1
                     else:
                         losses += 1
-                    _accumulate_simulator_metrics(simulator_metrics, [env])
                     env.reset()
                     next_previous_actions[base : base + 2] = (
                         env.action_space.no_op_action
@@ -544,6 +565,7 @@ def collect_rollout(
     )
     bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
     _accumulate_simulator_metrics(simulator_metrics, envs)
+    _accumulate_backend_metrics(simulator_metrics, batch_stepper.pop_metrics())
 
     rollout = RolloutBatch(
         **arrays,
@@ -635,6 +657,7 @@ def collect_rollout_stationary_opponents(
     episodes_finished = wins = losses = draws = 0
     simulator_metrics = _empty_simulator_metrics()
     _accumulate_simulator_metrics(simulator_metrics, envs)
+    batch_stepper = BatchedSelfPlayStepper()
 
     for step in range(rollout_steps):
         with maybe_silence_stdio(quiet_engine):
@@ -733,20 +756,27 @@ def collect_rollout_stationary_opponents(
         next_opponent_previous_rewards = np.zeros((agents,), dtype=np.float32)
         next_opponent_episode_starts = np.zeros((agents,), dtype=np.bool_)
         with maybe_silence_stdio(quiet_engine):
-            for env_index, (env, learner_player) in enumerate(
-                zip(envs, learner_players)
-            ):
-                opponent_player = 1 - learner_player
-                rewards, done, _ = env.step(
+            step_results = batch_stepper.step(
+                envs,
+                [
                     {
                         learner_player: int(actions[env_index]),
-                        opponent_player: int(opponent_actions[env_index]),
-                    },
-                    pre_action_masks={
+                        1 - learner_player: int(opponent_actions[env_index]),
+                    }
+                    for env_index, learner_player in enumerate(learner_players)
+                ],
+                pre_action_masks=[
+                    {
                         learner_player: action_masks[env_index],
-                        opponent_player: opponent_masks[env_index],
-                    },
-                )
+                        1 - learner_player: opponent_masks[env_index],
+                    }
+                    for env_index, learner_player in enumerate(learner_players)
+                ],
+            )
+            for env_index, (env, learner_player, (rewards, done, _)) in enumerate(
+                zip(envs, learner_players, step_results)
+            ):
+                opponent_player = 1 - learner_player
                 learner_reward = float(rewards[learner_player])
                 arrays["rewards"][env_index, step] = learner_reward
                 arrays["dones"][env_index, step] = done
@@ -763,7 +793,6 @@ def collect_rollout_stationary_opponents(
                         wins += 1
                     else:
                         losses += 1
-                    _accumulate_simulator_metrics(simulator_metrics, [env])
                     env.reset()
                     next_previous_actions[env_index] = env.action_space.no_op_action
                     next_previous_rewards[env_index] = 0.0
@@ -795,6 +824,7 @@ def collect_rollout_stationary_opponents(
     )
     bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
     _accumulate_simulator_metrics(simulator_metrics, envs)
+    _accumulate_backend_metrics(simulator_metrics, batch_stepper.pop_metrics())
     rollout = RolloutBatch(
         **arrays,
         initial_hidden=initial_hidden,
