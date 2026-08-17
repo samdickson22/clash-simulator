@@ -94,6 +94,7 @@ class TensorBatchScheduler:
                 env.advance_prepared_step(step)
                 for env, step in zip(self.envs, prepared)
             ]
+            self._simulator_metrics["python_ticks"] += float(sum(advanced))
         else:
             # Action ingress mutates player/entity state without advancing the
             # battle clock. The current executor cache validates clocks only,

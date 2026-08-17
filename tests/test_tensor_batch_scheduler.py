@@ -183,6 +183,7 @@ def test_python_schedule_preserves_local_idle_fast_forward() -> None:
     metrics = scheduler.metrics_dict()
     assert metrics["tensor_batches"] == 0
     assert metrics["tensor_ticks"] == 0
+    assert metrics["python_ticks"] == 24
 
 
 def test_scheduler_rejects_mixed_backends() -> None:

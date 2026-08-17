@@ -3,7 +3,7 @@ from __future__ import annotations
 import multiprocessing as mp
 import queue
 import traceback
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Any, Literal
@@ -63,7 +63,22 @@ def concatenate_rollouts(rollouts: Iterable[RolloutBatch]) -> RolloutBatch:
     payload: dict[str, Any] = {}
     for field in fields(RolloutBatch):
         values = [getattr(batch, field.name) for batch in batches]
-        if isinstance(values[0], np.ndarray):
+        if field.name == "simulator_metrics":
+            metric_rows = [
+                value for value in values if isinstance(value, Mapping)
+            ]
+            names = sorted(
+                {str(name) for row in metric_rows for name in row}
+            )
+            payload[field.name] = {
+                name: (
+                    max(float(row.get(name, 0.0)) for row in metric_rows)
+                    if name == "max_batch_size"
+                    else sum(float(row.get(name, 0.0)) for row in metric_rows)
+                )
+                for name in names
+            }
+        elif isinstance(values[0], np.ndarray):
             payload[field.name] = np.concatenate(values, axis=0)
         else:
             payload[field.name] = sum(int(value) for value in values)

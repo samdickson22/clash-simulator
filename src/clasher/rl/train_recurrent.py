@@ -6,6 +6,7 @@ import time
 from collections.abc import Iterator
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, ParamSpec, TypeVar
@@ -102,6 +103,7 @@ class RolloutBatch:
     wins: int
     losses: int
     draws: int
+    simulator_metrics: dict[str, float] = dataclass_field(default_factory=dict)
 
     @property
     def num_sequences(self) -> int:
@@ -114,6 +116,29 @@ class RolloutBatch:
     @property
     def transitions(self) -> int:
         return int(self.actions.size)
+
+
+def _format_simulator_metrics(metrics: dict[str, float]) -> str:
+    """Format stable raw simulator counters for production stdout."""
+
+    return (
+        f"sim_ticks={int(metrics.get('tensor_ticks', 0.0))}/"
+        f"{int(metrics.get('python_ticks', 0.0))} "
+        f"sim_fallbacks={int(metrics.get('unsupported_fallbacks', 0.0))} "
+        f"sim_shadow={int(metrics.get('shadow_mismatches', 0.0))}/"
+        f"{int(metrics.get('shadow_checks', 0.0))} "
+        f"sim_batches={int(metrics.get('tensor_batches', 0.0))} "
+        f"sim_max_batch={int(metrics.get('max_batch_size', 0.0))} "
+        f"sim_windows={int(metrics.get('battle_windows', 0.0))}"
+    )
+
+
+def _checkpoint_simulator_metrics(
+    metrics: dict[str, float],
+) -> dict[str, float]:
+    """Namespace simulator counters in checkpoint metadata."""
+
+    return {f"simulator_{key}": float(value) for key, value in metrics.items()}
 
 
 def resolve_torch_device(name: str) -> torch.device:
@@ -521,6 +546,10 @@ def collect_rollout(
         wins=wins,
         losses=losses,
         draws=draws,
+        simulator_metrics={
+            key: float(value)
+            for key, value in batch_scheduler.metrics_dict().items()
+        },
     )
     return (
         rollout,
@@ -767,6 +796,10 @@ def collect_rollout_stationary_opponents(
         wins=wins,
         losses=losses,
         draws=draws,
+        simulator_metrics={
+            key: float(value)
+            for key, value in batch_scheduler.metrics_dict().items()
+        },
     )
     return (
         rollout,
@@ -1573,7 +1606,8 @@ def main() -> None:
                 f"wld={rollout.wins}/{rollout.losses}/{rollout.draws} "
                 f"collect_s={collect_seconds:.2f} learn_s={update_seconds:.2f} "
                 f"sync_s={sync_seconds:.2f} "
-                f"tps={transition_rate:.1f} lr={learning_rate:.2e}"
+                f"tps={transition_rate:.1f} lr={learning_rate:.2e} "
+                f"{_format_simulator_metrics(rollout.simulator_metrics)}"
             )
 
         if update % args.save_every == 0 or update == args.updates:
@@ -1598,6 +1632,7 @@ def main() -> None:
                     "learn_seconds": update_seconds,
                     "sync_seconds": sync_seconds,
                     "transitions_per_second": transition_rate,
+                    **_checkpoint_simulator_metrics(rollout.simulator_metrics),
                 },
             )
             print(f"saved_checkpoint={checkpoint}")
