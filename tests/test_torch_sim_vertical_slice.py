@@ -1,6 +1,7 @@
 from collections import deque
 
 import pytest
+import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
@@ -299,3 +300,21 @@ def test_same_clock_python_mutation_refreshes_retained_tensor_storage() -> None:
 
     _assert_exact_battle_match(expected, actual)
     assert actual.players[0].elixir < 2.0
+
+
+@pytest.mark.skipif(
+    not torch.backends.mps.is_available(),
+    reason="Apple MPS is unavailable",
+)
+def test_complete_executor_fails_closed_on_mps_float64_state() -> None:
+    expected = BattleState()
+    actual = expected.clone()
+    expected.step_logic_ticks(2)
+
+    executor = TorchBattleExecutor("pytorch", device="mps")
+    assert executor.step_logic_ticks(actual, 2) == 2
+
+    _assert_exact_battle_match(expected, actual)
+    assert executor.metrics_dict()["tensor_ticks"] == 0
+    assert executor.metrics_dict()["python_ticks"] == 2
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 1

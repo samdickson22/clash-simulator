@@ -405,11 +405,19 @@ class TorchBattleExecutor:
             self.metrics.python_ticks += sum(advanced)
             return advanced
 
-        supported_indices = [
-            index
-            for index, battle in enumerate(battles)
-            if _tensor_slice_supported(battle)
-        ]
+        # The integrated battle state contains exact float64 clocks, HP, and
+        # CPython RNG projection. Apple MPS cannot represent those values, so
+        # the complete executor must fail closed to Python there until a
+        # proven fixed-point split routes only integer-safe kernels to MPS.
+        supported_indices = (
+            [
+                index
+                for index, battle in enumerate(battles)
+                if _tensor_slice_supported(battle)
+            ]
+            if self.device.type == "cpu"
+            else []
+        )
         supported_set = set(supported_indices)
         unsupported_indices = [
             index for index in range(len(battles)) if index not in supported_set
