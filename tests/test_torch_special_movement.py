@@ -271,7 +271,7 @@ def test_kamikaze_lifecycle_opcodes_match_python_once(
     assert result.events.opcode[0, 0].item() == int(SpecialEventOpcode.SELF_DEATH)
 
 
-def _dash_state(entity: Troop) -> DashState:
+def _dash_state(entity: Troop, device: str) -> DashState:
     phase = (
         DashPhase.TRAVEL
         if getattr(entity, "_bandit_dashing", False)
@@ -285,10 +285,11 @@ def _dash_state(entity: Troop) -> DashState:
     )
     destination = getattr(entity, "_bandit_dash_target", None) or origin
     return DashState(
-        phase=torch.tensor([[int(phase)]]),
-        position_units=_one_position(entity.position, "cpu"),
+        phase=torch.tensor([[int(phase)]], device=device),
+        position_units=_one_position(entity.position, device),
         origin_units=torch.tensor(
-            [[[tiles_to_logic_units(origin[0]), tiles_to_logic_units(origin[1])]]]
+            [[[tiles_to_logic_units(origin[0]), tiles_to_logic_units(origin[1])]]],
+            device=device,
         ),
         destination_units=torch.tensor(
             [
@@ -298,26 +299,32 @@ def _dash_state(entity: Troop) -> DashState:
                         tiles_to_logic_units(destination[1]),
                     ]
                 ]
-            ]
+            ],
+            device=device,
         ),
         progress_ms=torch.tensor(
             [[float(getattr(entity, "_bandit_dash_timer", 0.0))]],
             dtype=torch.float64,
+            device=device,
         ),
         travel_duration_ms=torch.tensor(
             [[float(getattr(entity, "_bandit_dash_travel_duration_ms", 0.0))]],
             dtype=torch.float64,
+            device=device,
         ),
         target_id=torch.tensor(
-            [[int(getattr(entity, "_bandit_dash_target_id", -1) or -1)]]
+            [[int(getattr(entity, "_bandit_dash_target_id", -1) or -1)]],
+            device=device,
         ),
         special_active=torch.tensor(
-            [[bool(getattr(entity, "_special_move_active", False))]]
+            [[bool(getattr(entity, "_special_move_active", False))]],
+            device=device,
         ),
-        special_consumed=torch.tensor([[False]]),
+        special_consumed=torch.tensor([[False]], device=device),
         invulnerable_until_ms=torch.tensor(
             [[float(getattr(entity, "_bandit_invulnerable_until", 0.0))]],
             dtype=torch.float64,
+            device=device,
         ),
     )
 
@@ -329,46 +336,57 @@ def _step_bandit_tensor(
     mechanic: object,
     dt_ms: int,
 ) -> DashStepResult:
+    device = state.phase.device
     return step_bandit_dash(
         state,
-        target_id=torch.tensor([[target.id]]),
-        target_position_units=_one_position(target.position, "cpu"),
+        target_id=torch.tensor([[target.id]], device=device),
+        target_position_units=_one_position(target.position, str(device)),
         target_radius_units=torch.tensor(
-            [[tiles_to_logic_units(target.get_collision_radius())]]
+            [[tiles_to_logic_units(target.get_collision_radius())]], device=device
         ),
         target_in_range=torch.tensor(
-            [[getattr(mechanic, "_target_edge_distance")(bandit, target) is not None]]
+            [[getattr(mechanic, "_target_edge_distance")(bandit, target) is not None]],
+            device=device,
         ),
-        target_valid=torch.tensor([[target.is_alive]]),
-        stunned=torch.tensor([[bandit.is_stunned()]]),
+        target_valid=torch.tensor([[target.is_alive]], device=device),
+        stunned=torch.tensor([[bandit.is_stunned()]], device=device),
         attack_rate=torch.tensor(
-            [[bandit.get_attack_rate_multiplier()]], dtype=torch.float64
+            [[bandit.get_attack_rate_multiplier()]], dtype=torch.float64, device=device
         ),
-        attack_range_units=torch.tensor([[tiles_to_logic_units(bandit.range)]]),
+        attack_range_units=torch.tensor(
+            [[tiles_to_logic_units(bandit.range)]], device=device
+        ),
         windup_ms=torch.tensor(
-            [[float(getattr(mechanic, "dash_duration_ms"))]], dtype=torch.float64
+            [[float(getattr(mechanic, "dash_duration_ms"))]],
+            dtype=torch.float64,
+            device=device,
         ),
-        jump_speed_units=torch.tensor([[round(getattr(mechanic, "jump_speed"))]]),
+        jump_speed_units=torch.tensor(
+            [[round(getattr(mechanic, "jump_speed"))]], device=device
+        ),
         dash_damage=torch.tensor(
-            [[float(getattr(mechanic, "dash_damage"))]], dtype=torch.float64
+            [[float(getattr(mechanic, "dash_damage"))]],
+            dtype=torch.float64,
+            device=device,
         ),
         post_immunity_ms=torch.tensor(
-            [[int(getattr(mechanic, "post_dash_immunity_ms"))]]
+            [[int(getattr(mechanic, "post_dash_immunity_ms"))]], device=device
         ),
         battle_time_ms=torch.tensor(
-            [[round(getattr(bandit, "battle_state").time * 1000)]]
+            [[round(getattr(bandit, "battle_state").time * 1000)]], device=device
         ),
         dt_ms=dt_ms,
     )
 
 
-def test_bandit_charge_launch_travel_and_landing_match_python() -> None:
+@pytest.mark.parametrize("device", DEVICES)
+def test_bandit_charge_launch_travel_and_landing_match_python(device: str) -> None:
     battle = _battle()
     bandit = _spawn(battle, "Bandit", 0, Position(9.0, 10.0))
     target = _spawn(battle, "Knight", 1, Position(12.0, 14.0))
     bandit.target_id = target.id
     mechanic = _mechanic(bandit, "BanditDash")
-    state = _dash_state(bandit)
+    state = _dash_state(bandit, device)
 
     getattr(mechanic, "on_tick")(bandit, 50)
     tensor = _step_bandit_tensor(state, bandit, target, mechanic, 50)
@@ -378,7 +396,7 @@ def test_bandit_charge_launch_travel_and_landing_match_python() -> None:
     tensor = _step_bandit_tensor(state, bandit, target, mechanic, 800)
     state = tensor.state
     assert state.phase.item() == int(DashPhase.TRAVEL)
-    assert state.destination_units[0, 0].tolist() == [
+    assert state.destination_units[0, 0].cpu().tolist() == [
         tiles_to_logic_units(value) for value in getattr(bandit, "_bandit_dash_target")
     ]
     assert state.travel_duration_ms.item() == getattr(
@@ -389,7 +407,7 @@ def test_bandit_charge_launch_travel_and_landing_match_python() -> None:
         getattr(mechanic, "on_movement_tick")(bandit, 50)
         tensor = _step_bandit_tensor(state, bandit, target, mechanic, 50)
         state = tensor.state
-        assert state.position_units[0, 0].tolist() == [
+        assert state.position_units[0, 0].cpu().tolist() == [
             tiles_to_logic_units(bandit.position.x),
             tiles_to_logic_units(bandit.position.y),
         ]
@@ -400,7 +418,7 @@ def test_bandit_charge_launch_travel_and_landing_match_python() -> None:
         pytest.fail("Bandit dash did not finish")
 
 
-def _leap_state(entity: Troop) -> LeapState:
+def _leap_state(entity: Troop, device: str) -> LeapState:
     raw_phase = getattr(entity, "_mk_leap_phase", None)
     phase = {
         None: LeapPhase.IDLE,
@@ -414,10 +432,11 @@ def _leap_state(entity: Troop) -> LeapState:
     )
     destination = getattr(entity, "_mk_leap_target", None) or origin
     return LeapState(
-        phase=torch.tensor([[int(phase)]]),
-        position_units=_one_position(entity.position, "cpu"),
+        phase=torch.tensor([[int(phase)]], device=device),
+        position_units=_one_position(entity.position, device),
         origin_units=torch.tensor(
-            [[[tiles_to_logic_units(origin[0]), tiles_to_logic_units(origin[1])]]]
+            [[[tiles_to_logic_units(origin[0]), tiles_to_logic_units(origin[1])]]],
+            device=device,
         ),
         destination_units=torch.tensor(
             [
@@ -427,23 +446,26 @@ def _leap_state(entity: Troop) -> LeapState:
                         tiles_to_logic_units(destination[1]),
                     ]
                 ]
-            ]
+            ],
+            device=device,
         ),
         progress_ms=torch.tensor(
             [[float(getattr(entity, "_mk_leap_progress", 0.0))]],
             dtype=torch.float64,
+            device=device,
         ),
         travel_duration_ms=torch.tensor(
             [[float(getattr(entity, "_mk_leap_travel_duration_ms", 0.0))]],
             dtype=torch.float64,
+            device=device,
         ),
         target_id=torch.tensor(
-            [[int(getattr(entity, "_mk_leap_target_id", -1) or -1)]]
+            [[int(getattr(entity, "_mk_leap_target_id", -1) or -1)]], device=device
         ),
         special_active=torch.tensor(
-            [[bool(getattr(entity, "_special_move_active", False))]]
+            [[bool(getattr(entity, "_special_move_active", False))]], device=device
         ),
-        special_consumed=torch.tensor([[False]]),
+        special_consumed=torch.tensor([[False]], device=device),
     )
 
 
@@ -454,51 +476,62 @@ def _step_leap_tensor(
     mechanic: object,
     dt_ms: int,
 ) -> LeapStepResult:
+    device = state.phase.device
     return step_mega_knight_leap(
         state,
-        target_id=torch.tensor([[target.id]]),
-        target_position_units=_one_position(target.position, "cpu"),
+        target_id=torch.tensor([[target.id]], device=device),
+        target_position_units=_one_position(target.position, str(device)),
         target_radius_units=torch.tensor(
-            [[tiles_to_logic_units(target.get_collision_radius())]]
+            [[tiles_to_logic_units(target.get_collision_radius())]], device=device
         ),
         target_in_range=torch.tensor(
-            [[getattr(mechanic, "_target_edge_distance")(mega, target) is not None]]
+            [[getattr(mechanic, "_target_edge_distance")(mega, target) is not None]],
+            device=device,
         ),
-        target_valid=torch.tensor([[target.is_alive]]),
-        stunned=torch.tensor([[mega.is_stunned()]]),
+        target_valid=torch.tensor([[target.is_alive]], device=device),
+        stunned=torch.tensor([[mega.is_stunned()]], device=device),
         attack_rate=torch.tensor(
-            [[mega.get_attack_rate_multiplier()]], dtype=torch.float64
+            [[mega.get_attack_rate_multiplier()]], dtype=torch.float64, device=device
         ),
-        attack_range_units=torch.tensor([[tiles_to_logic_units(mega.range)]]),
+        attack_range_units=torch.tensor(
+            [[tiles_to_logic_units(mega.range)]], device=device
+        ),
         windup_ms=torch.tensor(
-            [[float(getattr(mechanic, "leap_duration_ms"))]], dtype=torch.float64
+            [[float(getattr(mechanic, "leap_duration_ms"))]],
+            dtype=torch.float64,
+            device=device,
         ),
         airborne_duration_ms=torch.tensor(
             [[float(getattr(mechanic, "airborne_duration_ms"))]],
             dtype=torch.float64,
+            device=device,
         ),
         landing_duration_ms=torch.tensor(
             [[float(getattr(mechanic, "landing_duration_ms"))]],
             dtype=torch.float64,
+            device=device,
         ),
         dt_ms=dt_ms,
     )
 
 
-def test_mega_knight_charge_fixed_airborne_and_landing_match_python() -> None:
+@pytest.mark.parametrize("device", DEVICES)
+def test_mega_knight_charge_fixed_airborne_and_landing_match_python(
+    device: str,
+) -> None:
     battle = _battle()
     mega = _spawn(battle, "MegaKnight", 0, Position(3.5, 10.0))
     target = _spawn(battle, "Knight", 1, Position(3.5, 15.0))
     mega.target_id = target.id
     mechanic = _mechanic(mega, "MegaKnightSlam")
-    state = _leap_state(mega)
+    state = _leap_state(mega, device)
 
     getattr(mechanic, "on_tick")(mega, 50)
     state = _step_leap_tensor(state, mega, target, mechanic, 50).state
     getattr(mechanic, "on_tick")(mega, 900)
     state = _step_leap_tensor(state, mega, target, mechanic, 900).state
     assert state.phase.item() == int(LeapPhase.AIRBORNE)
-    assert state.destination_units[0, 0].tolist() == [
+    assert state.destination_units[0, 0].cpu().tolist() == [
         tiles_to_logic_units(value) for value in getattr(mega, "_mk_leap_target")
     ]
 
@@ -507,7 +540,7 @@ def test_mega_knight_charge_fixed_airborne_and_landing_match_python() -> None:
         getattr(mechanic, "on_movement_tick")(mega, 50)
         tensor = _step_leap_tensor(state, mega, target, mechanic, 50)
         state = tensor.state
-        assert state.position_units[0, 0].tolist() == [
+        assert state.position_units[0, 0].cpu().tolist() == [
             tiles_to_logic_units(mega.position.x),
             tiles_to_logic_units(mega.position.y),
         ]
@@ -525,30 +558,38 @@ def test_mega_knight_charge_fixed_airborne_and_landing_match_python() -> None:
     assert state.phase.item() == int(LeapPhase.IDLE)
 
 
-def _hook_state(source: Troop, target: Troop, mechanic: object) -> HookState:
+def _hook_state(
+    source: Troop,
+    target: Troop,
+    mechanic: object,
+    device: str,
+) -> HookState:
     phase = HookPhase(
         {"idle": 0, "windup": 1, "flight": 2, "drag": 3}[getattr(mechanic, "state")]
     )
     hook = getattr(mechanic, "hook_position")
     return HookState(
-        phase=torch.tensor([[int(phase)]]),
-        source_position_units=_one_position(source.position, "cpu"),
-        target_position_units=_one_position(target.position, "cpu"),
+        phase=torch.tensor([[int(phase)]], device=device),
+        source_position_units=_one_position(source.position, device),
+        target_position_units=_one_position(target.position, device),
         hook_position_units=(
-            torch.zeros((1, 1, 2), dtype=torch.int64)
+            torch.zeros((1, 1, 2), dtype=torch.int64, device=device)
             if hook is None
-            else _one_position(hook, "cpu")
+            else _one_position(hook, device)
         ),
-        target_id=torch.tensor([[int(getattr(mechanic, "hook_target_id") or -1)]]),
+        target_id=torch.tensor(
+            [[int(getattr(mechanic, "hook_target_id") or -1)]], device=device
+        ),
         windup_remaining_ms=torch.tensor(
             [[float(getattr(mechanic, "windup_remaining_ms"))]],
             dtype=torch.float64,
+            device=device,
         ),
-        target_forced=torch.tensor([[target.forced_movement_active]]),
+        target_forced=torch.tensor([[target.forced_movement_active]], device=device),
         special_active=torch.tensor(
-            [[bool(getattr(source, "_special_move_active", False))]]
+            [[bool(getattr(source, "_special_move_active", False))]], device=device
         ),
-        special_consumed=torch.tensor([[False]]),
+        special_consumed=torch.tensor([[False]], device=device),
     )
 
 
@@ -559,50 +600,58 @@ def _step_hook_tensor(
     mechanic: object,
     dt_ms: int,
 ) -> HookStepResult:
+    device = state.phase.device
     launch, _, _ = source._projectile_launch_geometry(target)
     return step_fisherman_hook(
         state,
-        acquired_target_id=torch.tensor([[target.id]]),
-        launch_position_units=_one_position(launch, "cpu"),
-        target_valid=torch.tensor([[target.is_alive]]),
+        acquired_target_id=torch.tensor([[target.id]], device=device),
+        launch_position_units=_one_position(launch, str(device)),
+        target_valid=torch.tensor([[target.is_alive]], device=device),
         target_in_range=torch.tensor(
-            [[getattr(mechanic, "_is_hook_target_in_range")(source, target)]]
+            [[getattr(mechanic, "_is_hook_target_in_range")(source, target)]],
+            device=device,
         ),
-        target_plane_valid=torch.tensor([[source.can_affect_target_plane(target)]]),
+        target_plane_valid=torch.tensor(
+            [[source.can_affect_target_plane(target)]], device=device
+        ),
         target_can_forced_move=torch.tensor(
-            [[target.can_receive_forced_movement("Fisherman", "hook")]]
+            [[target.can_receive_forced_movement("Fisherman", "hook")]],
+            device=device,
         ),
-        target_is_building=torch.tensor([[False]]),
-        move_allowed=torch.tensor([[True]]),
+        target_is_building=torch.tensor([[False]], device=device),
+        move_allowed=torch.tensor([[True]], device=device),
         attack_rate=torch.tensor(
-            [[source.get_attack_rate_multiplier()]], dtype=torch.float64
+            [[source.get_attack_rate_multiplier()]], dtype=torch.float64, device=device
         ),
         windup_ms=torch.tensor(
-            [[float(getattr(mechanic, "hook_windup_ms"))]], dtype=torch.float64
+            [[float(getattr(mechanic, "hook_windup_ms"))]],
+            dtype=torch.float64,
+            device=device,
         ),
-        projectile_speed_units=torch.tensor([[800]]),
-        drag_back_speed_units=torch.tensor([[850]]),
-        drag_self_speed_units=torch.tensor([[450]]),
+        projectile_speed_units=torch.tensor([[800]], device=device),
+        drag_back_speed_units=torch.tensor([[850]], device=device),
+        drag_self_speed_units=torch.tensor([[450]], device=device),
         drag_margin_units=torch.tensor(
-            [[tiles_to_logic_units(getattr(mechanic, "drag_margin"))]]
+            [[tiles_to_logic_units(getattr(mechanic, "drag_margin"))]], device=device
         ),
         source_radius_units=torch.tensor(
-            [[tiles_to_logic_units(source.get_collision_radius())]]
+            [[tiles_to_logic_units(source.get_collision_radius())]], device=device
         ),
         target_radius_units=torch.tensor(
-            [[tiles_to_logic_units(target.get_collision_radius())]]
+            [[tiles_to_logic_units(target.get_collision_radius())]], device=device
         ),
-        stunned=torch.tensor([[source.is_stunned()]]),
+        stunned=torch.tensor([[source.is_stunned()]], device=device),
         dt_ms=dt_ms,
     )
 
 
-def test_fisherman_windup_flight_and_victim_drag_match_python() -> None:
+@pytest.mark.parametrize("device", DEVICES)
+def test_fisherman_windup_flight_and_victim_drag_match_python(device: str) -> None:
     battle = _battle()
     fisherman = _spawn(battle, "Fisherman", 0, Position(9.0, 10.0))
     target = _spawn(battle, "Knight", 1, Position(9.0, 16.0))
     mechanic = _mechanic(fisherman, "FishermanHook")
-    state = _hook_state(fisherman, target, mechanic)
+    state = _hook_state(fisherman, target, mechanic, device)
 
     getattr(mechanic, "on_tick")(fisherman, 50)
     state = _step_hook_tensor(state, fisherman, target, mechanic, 50).state
@@ -614,11 +663,11 @@ def test_fisherman_windup_flight_and_victim_drag_match_python() -> None:
         getattr(mechanic, "on_object_tick")(fisherman, 50)
         tensor = _step_hook_tensor(state, fisherman, target, mechanic, 50)
         state = tensor.state
-        assert state.source_position_units[0, 0].tolist() == [
+        assert state.source_position_units[0, 0].cpu().tolist() == [
             tiles_to_logic_units(fisherman.position.x),
             tiles_to_logic_units(fisherman.position.y),
         ]
-        assert state.target_position_units[0, 0].tolist() == [
+        assert state.target_position_units[0, 0].cpu().tolist() == [
             tiles_to_logic_units(target.position.x),
             tiles_to_logic_units(target.position.y),
         ]
@@ -631,24 +680,33 @@ def test_fisherman_windup_flight_and_victim_drag_match_python() -> None:
     assert state.phase.item() == int(HookPhase.IDLE)
 
 
-def test_underground_transport_frames_match_miner_mechanic() -> None:
+@pytest.mark.parametrize("device", DEVICES)
+def test_underground_transport_frames_match_miner_mechanic(device: str) -> None:
     battle = _battle()
     miner = _spawn(battle, "Miner", 0, Position(12.0, 20.0), deployed=False)
     mechanic = _mechanic(miner, "UndergroundDeployment")
-    position = _one_position(miner.position, "cpu")
-    destination = _one_position(getattr(miner, "_underground_destination"), "cpu")
-    active = torch.tensor([[bool(getattr(miner, "_underground_deployment"))]])
-    total = torch.tensor([[miner.placement_delay_total]], dtype=torch.float64)
+    position = _one_position(miner.position, device)
+    destination = _one_position(getattr(miner, "_underground_destination"), device)
+    active = torch.tensor(
+        [[bool(getattr(miner, "_underground_deployment"))]], device=device
+    )
+    total = torch.tensor(
+        [[miner.placement_delay_total]], dtype=torch.float64, device=device
+    )
     travel = torch.tensor(
         [[float(getattr(miner, "_underground_travel_duration"))]],
         dtype=torch.float64,
+        device=device,
     )
     speed = torch.tensor(
-        [[round(getattr(mechanic, "travel_speed_logic_units_per_tick"))]]
+        [[round(getattr(mechanic, "travel_speed_logic_units_per_tick"))]],
+        device=device,
     )
 
     for _ in range(80):
-        remaining = torch.tensor([[miner.deploy_delay_remaining]], dtype=torch.float64)
+        remaining = torch.tensor(
+            [[miner.deploy_delay_remaining]], dtype=torch.float64, device=device
+        )
         getattr(mechanic, "on_deploy_tick")(miner, 50)
         result = step_underground_deployment(
             position,
@@ -660,7 +718,7 @@ def test_underground_transport_frames_match_miner_mechanic() -> None:
             speed_units=speed,
         )
         position = result.position_units
-        assert position[0, 0].tolist() == [
+        assert position[0, 0].cpu().tolist() == [
             tiles_to_logic_units(miner.position.x),
             tiles_to_logic_units(miner.position.y),
         ]
