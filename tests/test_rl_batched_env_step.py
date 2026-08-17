@@ -165,6 +165,27 @@ def test_python_idle_fast_forward_remains_exact_and_outside_executor() -> None:
     }
 
 
+def test_singleton_env_step_preserves_injected_executor_boundary() -> None:
+    env = _make_envs(backend="pytorch", max_ticks=(8,))[0]
+
+    class InjectedExecutor:
+        def __init__(self) -> None:
+            self.calls: list[int] = []
+
+        def step_logic_ticks(self, battle, ticks):
+            self.calls.append(ticks)
+            return battle.step_logic_ticks(ticks)
+
+    executor = InjectedExecutor()
+    env._simulator = executor  # type: ignore[assignment]
+    no_op = env.action_space.no_op_action
+
+    _, _, info = env.step({0: no_op, 1: no_op})
+
+    assert executor.calls == [8]
+    assert info.ticks_advanced == 8
+
+
 def _tiny_model(builder: StructuredObservationBuilder) -> ClasherPolicy:
     return ClasherPolicy(
         PolicyConfig(
