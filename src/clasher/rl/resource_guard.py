@@ -231,25 +231,26 @@ def _process_family_pids(
     processes: Sequence[ProcessRecord], current_pid: int
 ) -> set[int]:
     parent_by_pid = {process.pid: process.ppid for process in processes}
-    family = {current_pid}
+    ancestors = {current_pid}
     pid = current_pid
     while pid in parent_by_pid:
         parent = parent_by_pid[pid]
-        if parent <= 1 or parent in family:
+        if parent <= 1 or parent in ancestors:
             break
-        family.add(parent)
+        ancestors.add(parent)
         pid = parent
 
-    # This is normally called before actors start. Including descendants makes
-    # the helper safe to call again without treating owned actors as competitors.
+    # Include descendants of this process (such as its actor pool), but not
+    # siblings that merely share a uv/Codex/app-server ancestor.
+    descendants = {current_pid}
     changed = True
     while changed:
         changed = False
         for process in processes:
-            if process.ppid in family and process.pid not in family:
-                family.add(process.pid)
+            if process.ppid in descendants and process.pid not in descendants:
+                descendants.add(process.pid)
                 changed = True
-    return family
+    return ancestors | descendants
 
 
 def inspect_competing_claims(
