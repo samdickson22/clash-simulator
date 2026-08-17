@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import Enum
 
 import torch
 
-from clasher.balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
+from clasher.balance import (
+    DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS,
+    EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS,
+)
 from clasher.battle import BattleState
-from clasher.entities import Troop
+from clasher.entities import Building, Troop
 
 from .diagnostics import TorchParityError, battle_snapshot, first_divergence
 from .state import WINNER_DRAW, TensorBattleFork, TensorBattleState
@@ -40,16 +44,62 @@ class BackendMetrics:
         }
 
 
+def _static_tower_tensor_inert(battle: BattleState, tower: Building) -> bool:
+    """Return whether a Crown Tower has only the tensorized visual clock."""
+
+    if (
+        not tower.is_alive
+        or tower.mechanics
+        or tower.deploy_delay_remaining > 1e-9
+        or tower.target_id is not None
+        or tower._attack_windup_active
+        or tower.attack_cooldown
+        > tower.get_preloaded_attack_time_seconds() + 1e-9
+        or tower.stun_timer > 1e-9
+        or tower.slow_timer > 1e-9
+        or tower.haste_timer > 1e-9
+        or tower.freeze_expiry_time > battle.time + 1e-9
+        or tower._slow_effects
+        or tower._haste_effects
+        or tower._periodic_damage_effects
+        or bool(getattr(tower, "_buff_active", False))
+        or tower.forced_movement_active
+        or tower._knockback_target is not None
+        or tower._death_spawn_travel_ticks_remaining > 0
+        or tower.activation_delay_remaining > 1e-9
+        or tower.activation_first_hit_delay_remaining > 1e-9
+    ):
+        return False
+    if not bool(getattr(tower, "_tower_active", False)):
+        return True
+    include_crown_fallback = bool(
+        tower.range
+        > tower.sight_range
+        + float(EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS) / 1000.0
+    )
+    return (
+        tower.get_nearest_target(
+            battle.entities,
+            include_crown_fallback=include_crown_fallback,
+        )
+        is None
+    )
+
+
 def _deployment_only_tensor_supported(battle: BattleState) -> bool:
-    """Return whether every non-Crown object is an inert deploying troop."""
+    """Return whether every non-Crown object is inert and still deploying."""
 
     if battle.game_over or battle._pending_spell_casts:
         return False
-    deploying: list[Troop] = []
+    deploying_troops: list[Troop] = []
     for entity in battle.entities.values():
         if battle._is_static_tower_entity(entity):
+            if not isinstance(entity, Building) or not _static_tower_tensor_inert(
+                battle, entity
+            ):
+                return False
             continue
-        if not isinstance(entity, Troop):
+        if not isinstance(entity, (Troop, Building)):
             return False
         if (
             not entity.is_alive
@@ -64,13 +114,42 @@ def _deployment_only_tensor_supported(battle: BattleState) -> bool:
             or entity.freeze_expiry_time > battle.time
             or entity.slow_timer > 0
             or entity.haste_timer > 0
+            or entity._slow_effects
+            or entity._haste_effects
             or entity._periodic_damage_effects
-            or entity._native_avoidance != 0
+            or bool(getattr(entity, "_buff_active", False))
+            or getattr(entity, "_native_avoidance", 0) != 0
             or entity._movement_vector_count != 0
             or not entity._pending_movement_consumed
         ):
             return False
-        deploying.append(entity)
+        if isinstance(entity, Troop):
+            deploying_troops.append(entity)
+        else:
+            lifetime_ms = getattr(entity.card_stats, "lifetime_ms", None)
+            if lifetime_ms and lifetime_ms > 0:
+                deployment_frames = math.ceil(
+                    entity.deploy_delay_remaining / battle.dt - 1e-9
+                )
+                native_ticks = int(
+                    (
+                        entity.lifetime_tick_carry_ms
+                        + deployment_frames * battle.dt * 1000.0
+                        + 1e-9
+                    )
+                    // 50.0
+                )
+                decay_rate = (
+                    5000
+                    * round(entity.max_hitpoints)
+                    // int(lifetime_ms)
+                )
+                lifetime_loss = (
+                    entity.lifetime_decay_work + decay_rate * native_ticks
+                ) // 100
+                # Scalar cleanup and death hooks are outside this slice.
+                if entity.hitpoints - lifetime_loss <= 0:
+                    return False
 
     # Deployment frames still execute body-pressure collection. Restrict this
     # slice to states whose exact collision result is the zero vector.
@@ -79,7 +158,7 @@ def _deployment_only_tensor_supported(battle: BattleState) -> bool:
         for entity in battle.entities.values()
         if entity.is_alive and entity.entity_kind in {0, 1}
     ]
-    for troop in deploying:
+    for troop in deploying_troops:
         for other in collision_objects:
             if other is troop:
                 continue
@@ -87,11 +166,14 @@ def _deployment_only_tensor_supported(battle: BattleState) -> bool:
             # Native emits a one-unit pressure vector even at exact contact.
             if troop.position.distance_to(other.position) <= minimum:
                 return False
-    return bool(deploying)
+    return any(
+        not battle._is_static_tower_entity(entity)
+        for entity in battle.entities.values()
+    )
 
 
 def _tensor_slice_supported(battle: BattleState) -> bool:
-    """Current exact coverage: inert Crown state or inert deployment state."""
+    """Current exact coverage: inert Crown state or inert character deployment."""
 
     return bool(
         battle.can_fast_forward_idle()
@@ -263,7 +345,7 @@ def _check_win_conditions(state: TensorBattleState, active: torch.Tensor) -> Non
 
 
 def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> torch.Tensor:
-    """Advance a batch of idle complete ticks without Python object stepping."""
+    """Advance supported idle/deployment ticks without Python object stepping."""
 
     requested = max(0, int(ticks))
     advanced = torch.zeros((state.batch_size,), dtype=torch.int64, device=state.device)
@@ -299,6 +381,55 @@ def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> torch.Tensor
             active_towers.to(torch.float64) * state.dt[:, None]
         )
         deployment_mask = active[:, None] & deploying
+        deploying_buildings = (
+            deployment_mask
+            & (state.entity_kind == 1)
+            & (state.entity_lifetime_ms > 0)
+        )
+        lifetime_tick_ms = torch.where(
+            deploying_buildings,
+            state.dt[:, None] * 1000.0,
+            torch.zeros_like(state.entity_lifetime_tick_carry_ms),
+        )
+        state.entity_lifetime_elapsed.add_(
+            deploying_buildings.to(torch.float64) * state.dt[:, None]
+        )
+        total_lifetime_tick_ms = (
+            state.entity_lifetime_tick_carry_ms + lifetime_tick_ms
+        )
+        native_lifetime_ticks = torch.floor(
+            (total_lifetime_tick_ms + 1e-9) / 50.0
+        ).to(torch.int64)
+        state.entity_lifetime_tick_carry_ms.copy_(
+            torch.where(
+                deploying_buildings,
+                total_lifetime_tick_ms
+                - native_lifetime_ticks.to(torch.float64) * 50.0,
+                state.entity_lifetime_tick_carry_ms,
+            )
+        )
+        lifetime_work = (
+            state.entity_lifetime_decay_work
+            + state.entity_lifetime_decay_rate * native_lifetime_ticks
+        )
+        whole_hp_loss = torch.div(lifetime_work, 100, rounding_mode="floor")
+        state.entity_lifetime_decay_work.copy_(
+            torch.where(
+                deploying_buildings,
+                torch.remainder(lifetime_work, 100),
+                state.entity_lifetime_decay_work,
+            )
+        )
+        state.entity_hp.copy_(
+            torch.where(
+                deploying_buildings,
+                torch.clamp(
+                    state.entity_hp - whole_hp_loss.to(torch.float64),
+                    min=0.0,
+                ),
+                state.entity_hp,
+            )
+        )
         # Preserve the pre-tick values: ``copy_`` below mutates the retained
         # tensor in place, and an alias would make the zero-crossing predicate
         # observe only post-tick values.
