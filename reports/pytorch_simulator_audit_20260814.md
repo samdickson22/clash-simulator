@@ -199,3 +199,35 @@ Current direct evidence:
    randomized crowded states, long seeds, and complete episodes.
 7. Remove fallback only after every reachable enabled state is covered, then
    run guarded 12-worker plus oracle matched benchmarks and require at least 2x.
+
+## Parallel subsystem milestone
+
+The next standalone tensor layers are implemented behind explicit support
+boundaries and are awaiting integration into the retained battle state and
+complete tick executor:
+
+- stable monotonic entity identity, reusable physical slots, deterministic
+  ID-order selection, cleanup, death-spawn allocation, and compaction plans;
+- all-enabled-card action decoding, exact hand/cycle/elixir transitions,
+  deployment legality, placement occupancy, and stable command emission;
+- fixed-point stationary targeting, stable tie/Crown fallback selection,
+  attack clocks, direct/area damage, projectile launch events, and lethal
+  projectile reservations;
+- fixed-point projectile travel, area clocks, timed payloads, same-frame
+  dynamically growing object worklists, and ordered object event streams;
+- exact integer natural movement, collision pressure, standard-arena
+  walkability, route-head movement, and river-jump transition kernels;
+- source-slot stun/slow/haste/freeze/periodic status work and native integer
+  building lifetime decay; and
+- a sharded differential harness comparing exact battle state, scalar kinds,
+  Python/NumPy RNG, action masks, both observations, rewards, step metadata,
+  and outcomes while rejecting fallback-only coverage claims.
+
+Current combined owned gate: 104 tests pass; Ruff F/I, mypy across all 14
+PyTorch/training source modules, and `git diff --check` pass. The manifest
+generator losslessly represents 4,356 ordered one-card matchups and 4,888,521
+ordered two-card-team compositions. These numbers are enumeration evidence,
+not executed full parity evidence. The standalone kernels likewise do not yet
+make ordinary combat tensor-native: `TensorBattleState`/executor wiring,
+mechanic callback opcodes, direct observation/reward projections, full episode
+coverage, and the production throughput requirement remain incomplete.
