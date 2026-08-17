@@ -1206,6 +1206,15 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--simulation-device",
+        choices=["cpu", "mps", "cuda"],
+        default="cpu",
+        help=(
+            "device for PyTorch simulator state and kernels; independent of "
+            "learner and rollout-inference devices"
+        ),
+    )
+    parser.add_argument(
         "--device",
         choices=["auto", "cpu", "mps", "cuda"],
         default="auto",
@@ -1405,6 +1414,7 @@ def main() -> None:
                     canonical_perspective=True,
                     engine_fast_path=args.engine_fast_path,
                     simulation_backend=args.simulation_backend,
+                    simulation_device=args.simulation_device,
                 )
                 env._structured_obs_builder = builder
                 env.reset(seed=args.seed + index * 1009)
@@ -1453,6 +1463,7 @@ def main() -> None:
                 base_seed=args.seed,
                 torch_threads=args.actor_threads,
                 simulation_backend=args.simulation_backend,
+                simulation_device=args.simulation_device,
             ),
         )
         atexit.register(parallel_collector.close)
@@ -1473,7 +1484,10 @@ def main() -> None:
     opponent_episode_starts = np.ones((agents,), dtype=np.bool_)
     parameter_count = sum(parameter.numel() for parameter in model.parameters())
 
-    print(f"learner_device={learner_device} actor_device={actor_device}")
+    print(
+        f"learner_device={learner_device} actor_device={actor_device} "
+        f"simulation_device={args.simulation_device}"
+    )
     print(resource_allocation.summary())
     print(f"decks_path={decks_path}")
     print(f"checkpoint_dir={directory}")

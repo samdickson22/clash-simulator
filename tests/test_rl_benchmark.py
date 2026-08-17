@@ -47,6 +47,7 @@ def test_env_benchmark_routes_opt_in_simulation_backend():
     )
 
     assert metrics["simulation_backend"] == "pytorch"
+    assert metrics["simulation_device"] == "cpu"
 
 
 def test_async_queue_benchmark_reports_lag_stats():

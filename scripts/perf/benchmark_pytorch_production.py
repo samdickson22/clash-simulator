@@ -65,6 +65,7 @@ class RolloutConfig:
     max_ticks: int
     actor_threads: int
     engine_fast_path: str
+    simulation_device: str
 
 
 @dataclass(frozen=True)
@@ -80,6 +81,7 @@ class OracleConfig:
     simulations: int
     action_samples: int
     engine_fast_path: str
+    simulation_device: str
 
 
 class BenchmarkAdmissionError(RuntimeError):
@@ -120,6 +122,12 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--planner-action-samples", type=int, default=96)
     parser.add_argument(
         "--engine-fast-path", choices=("off", "shadow", "on"), default="on"
+    )
+    parser.add_argument(
+        "--simulation-device",
+        choices=("cpu", "mps", "cuda"),
+        default="cpu",
+        help="device used by rollout and oracle simulator kernels",
     )
     parser.add_argument(
         "--resource-policy",
@@ -264,6 +272,7 @@ def _run_rollout_shard(
             max_ticks=config.max_ticks,
             engine_fast_path=config.engine_fast_path,
             simulation_backend=backend,
+            simulation_device=config.simulation_device,
         )
         for env_index in env_indices
     ]
@@ -403,6 +412,7 @@ def _run_oracle_leg(
         rollout_action_samples=config.action_samples,
         seed=config.planner_seed,
         simulation_backend=backend,  # type: ignore[call-arg]
+        simulation_device=config.simulation_device,
     )
     evidence: list[tuple[str, Any]] = []
 
@@ -557,6 +567,7 @@ def _run_with_lease(
         max_ticks=args.max_ticks,
         actor_threads=args.actor_threads,
         engine_fast_path=args.engine_fast_path,
+        simulation_device=args.simulation_device,
     )
     oracle_config = OracleConfig(
         decks_path=rollout_config.decks_path,
@@ -570,6 +581,7 @@ def _run_with_lease(
         simulations=args.planner_simulations,
         action_samples=args.planner_action_samples,
         engine_fast_path=args.engine_fast_path,
+        simulation_device=args.simulation_device,
     )
     profile_dir = (
         Path(args.profile_dir).expanduser().resolve()

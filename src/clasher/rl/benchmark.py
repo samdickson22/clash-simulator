@@ -63,6 +63,7 @@ def run_env_benchmark(
     quiet_engine: bool,
     engine_fast_path: str = "off",
     simulation_backend: str = "python",
+    simulation_device: str = "cpu",
     target_cache_refresh: str = "reuse",
 ) -> Dict[str, float | str]:
     _configure_target_cache_refresh(target_cache_refresh)
@@ -75,6 +76,7 @@ def run_env_benchmark(
         canonical_perspective=True,
         engine_fast_path=engine_fast_path,
         simulation_backend=simulation_backend,
+        simulation_device=simulation_device,
     )
     rng = np.random.default_rng(seed + 77)
     with _maybe_silence_stdio(quiet_engine):
@@ -99,6 +101,7 @@ def run_env_benchmark(
     return {
         "elapsed_s": elapsed,
         "simulation_backend": simulation_backend,
+        "simulation_device": simulation_device,
         "decisions": float(decisions),
         "transitions": float(transitions),
         "episodes_finished": float(episodes),
@@ -118,6 +121,7 @@ def _actor_rollout_worker(
     quiet_engine: bool,
     engine_fast_path: str,
     simulation_backend: str,
+    simulation_device: str,
     target_cache_refresh: str,
     actor_rollout_steps: int,
     out_queue: mp.Queue,
@@ -133,6 +137,7 @@ def _actor_rollout_worker(
         canonical_perspective=True,
         engine_fast_path=engine_fast_path,
         simulation_backend=simulation_backend,
+        simulation_device=simulation_device,
     )
     rng = np.random.default_rng(seed + actor_id * 99_991)
     with _maybe_silence_stdio(quiet_engine):
@@ -171,6 +176,7 @@ def _actor_rollout_worker_centralized(
     quiet_engine: bool,
     engine_fast_path: str,
     simulation_backend: str,
+    simulation_device: str,
     target_cache_refresh: str,
     actor_rollout_steps: int,
     out_queue: mp.Queue,
@@ -188,6 +194,7 @@ def _actor_rollout_worker_centralized(
         canonical_perspective=True,
         engine_fast_path=engine_fast_path,
         simulation_backend=simulation_backend,
+        simulation_device=simulation_device,
     )
     with _maybe_silence_stdio(quiet_engine):
         env.reset()
@@ -262,6 +269,7 @@ def run_async_queue_benchmark(
     quiet_engine: bool,
     engine_fast_path: str = "off",
     simulation_backend: str = "python",
+    simulation_device: str = "cpu",
     target_cache_refresh: str = "reuse",
     inference_mode: str = "actor_local",
     inference_max_batch: int = 2048,
@@ -296,6 +304,7 @@ def run_async_queue_benchmark(
             canonical_perspective=True,
             engine_fast_path=engine_fast_path,
             simulation_backend=simulation_backend,
+            simulation_device=simulation_device,
         )
         with _maybe_silence_stdio(quiet_engine):
             meta_env.reset()
@@ -336,6 +345,7 @@ def run_async_queue_benchmark(
                     quiet_engine,
                     engine_fast_path,
                     simulation_backend,
+                    simulation_device,
                     target_cache_refresh,
                     actor_rollout_steps,
                     out_queue,
@@ -358,6 +368,7 @@ def run_async_queue_benchmark(
                     quiet_engine,
                     engine_fast_path,
                     simulation_backend,
+                    simulation_device,
                     target_cache_refresh,
                     actor_rollout_steps,
                     out_queue,
@@ -402,6 +413,7 @@ def run_async_queue_benchmark(
     return {
         "elapsed_s": elapsed,
         "simulation_backend": simulation_backend,
+        "simulation_device": simulation_device,
         "decisions": float(decisions),
         "transitions": float(transitions),
         "episodes_finished": float(episodes),
@@ -437,6 +449,9 @@ def _parse_args() -> argparse.Namespace:
         default="python",
     )
     env_p.add_argument(
+        "--simulation-device", choices=["cpu", "mps", "cuda"], default="cpu"
+    )
+    env_p.add_argument(
         "--target-cache-refresh", choices=["rebuild", "reuse"], default="reuse"
     )
 
@@ -456,6 +471,9 @@ def _parse_args() -> argparse.Namespace:
         "--simulation-backend",
         choices=["python", "pytorch-shadow", "pytorch"],
         default="python",
+    )
+    async_p.add_argument(
+        "--simulation-device", choices=["cpu", "mps", "cuda"], default="cpu"
     )
     async_p.add_argument(
         "--target-cache-refresh", choices=["rebuild", "reuse"], default="reuse"
@@ -489,6 +507,7 @@ def main() -> None:
             quiet_engine=args.quiet_engine,
             engine_fast_path=args.engine_fast_path,
             simulation_backend=args.simulation_backend,
+            simulation_device=args.simulation_device,
             target_cache_refresh=args.target_cache_refresh,
         )
         _print_metrics("benchmark=env", metrics)
@@ -508,6 +527,7 @@ def main() -> None:
             quiet_engine=args.quiet_engine,
             engine_fast_path=args.engine_fast_path,
             simulation_backend=args.simulation_backend,
+            simulation_device=args.simulation_device,
             target_cache_refresh=args.target_cache_refresh,
             inference_mode=args.inference_mode,
             inference_max_batch=args.inference_max_batch,

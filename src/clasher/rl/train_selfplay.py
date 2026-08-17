@@ -49,6 +49,7 @@ class RolloutWorkerTask:
     quiet_engine: bool
     seed: int
     simulation_backend: str = "python"
+    simulation_device: str = "cpu"
 
 
 _WORKER_MODEL: Optional[MaskedPolicyValueNet] = None
@@ -212,6 +213,7 @@ def _collect_rollout_worker(task: RolloutWorkerTask) -> List[Transition]:
         task.decks_path,
         task.mirror_match,
         task.simulation_backend,
+        task.simulation_device,
     )
     if _WORKER_MODEL is None or _WORKER_ENV is None or _WORKER_CONFIG != config:
         torch.manual_seed(task.seed)
@@ -231,6 +233,7 @@ def _collect_rollout_worker(task: RolloutWorkerTask) -> List[Transition]:
             mirror_match=task.mirror_match,
             canonical_perspective=True,
             simulation_backend=task.simulation_backend,
+            simulation_device=task.simulation_device,
         )
         with maybe_silence_stdio(task.quiet_engine):
             _WORKER_ENV.reset()
@@ -268,6 +271,7 @@ def collect_rollout_parallel(
     seed: int,
     worker_retries: int,
     simulation_backend: str = "python",
+    simulation_device: str = "cpu",
 ) -> List[Transition]:
     chunks = split_rollout_steps(rollout_steps, num_workers)
     if not chunks:
@@ -290,6 +294,7 @@ def collect_rollout_parallel(
             quiet_engine=quiet_engine,
             seed=seed + (worker_idx + 1) * 1009,
             simulation_backend=simulation_backend,
+            simulation_device=simulation_device,
         )
         for worker_idx, chunk_steps in enumerate(chunks)
     ]
@@ -514,6 +519,12 @@ def parse_args() -> argparse.Namespace:
             "oracle for mechanics not yet covered by tensor kernels"
         ),
     )
+    parser.add_argument(
+        "--simulation-device",
+        choices=["cpu", "mps", "cuda"],
+        default="cpu",
+        help="PyTorch simulator device, independent of the policy device",
+    )
     return parser.parse_args()
 
 
@@ -565,6 +576,7 @@ def main() -> None:
         mirror_match=args.mirror_match,
         canonical_perspective=True,
         simulation_backend=args.simulation_backend,
+        simulation_device=args.simulation_device,
     )
 
     with maybe_silence_stdio(args.quiet_engine):
@@ -602,7 +614,10 @@ def main() -> None:
 
     if args.num_workers > 1:
         print(f"rollout_workers={args.num_workers}")
-    print(f"simulation_backend={args.simulation_backend}")
+    print(
+        f"simulation_backend={args.simulation_backend} "
+        f"simulation_device={args.simulation_device}"
+    )
     print(f"decks_path={decks_path}")
     print(f"checkpoint_dir={checkpoint_dir}")
 
@@ -638,6 +653,7 @@ def main() -> None:
                             seed=args.seed + update * 100_003,
                             worker_retries=args.worker_retries,
                             simulation_backend=args.simulation_backend,
+                            simulation_device=args.simulation_device,
                         )
                     else:
                         transitions = collect_rollout(

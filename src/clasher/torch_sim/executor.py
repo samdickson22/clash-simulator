@@ -453,6 +453,12 @@ class TorchBattleExecutor:
     ) -> None:
         self.backend = SimulatorBackend(backend)
         self.device = torch.device(device)
+        if self.device.type not in {"cpu", "cuda", "mps"}:
+            raise ValueError("simulation device must be one of: cpu, cuda, mps")
+        if self.device.type == "cuda" and not torch.cuda.is_available():
+            raise RuntimeError("CUDA simulation device requested but not available")
+        if self.device.type == "mps" and not torch.backends.mps.is_available():
+            raise RuntimeError("MPS simulation device requested but not available")
         self.metrics = BackendMetrics()
         self._state: TensorBattleState | None = None
         self._battle_identities: tuple[int, ...] = ()

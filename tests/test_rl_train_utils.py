@@ -5,7 +5,7 @@ import sys
 
 import torch
 
-from clasher.rl import train_selfplay, train_selfplay_async
+from clasher.rl import train_recurrent, train_selfplay, train_selfplay_async
 from clasher.rl.train_selfplay import collect_rollout_parallel, split_rollout_steps
 
 
@@ -76,6 +76,7 @@ def test_parallel_selfplay_routes_opt_in_backend_to_every_worker() -> None:
         seed=7,
         worker_retries=0,
         simulation_backend="pytorch-shadow",
+        simulation_device="cuda",
     )
 
     assert transitions == []
@@ -83,26 +84,62 @@ def test_parallel_selfplay_routes_opt_in_backend_to_every_worker() -> None:
         "pytorch-shadow",
         "pytorch-shadow",
     ]
+    assert [task.simulation_device for task in executor.tasks] == ["cuda", "cuda"]
 
 
 def test_selfplay_backend_cli_defaults_and_opt_in(monkeypatch) -> None:
     monkeypatch.setattr(sys, "argv", ["train_selfplay"])
     assert train_selfplay.parse_args().simulation_backend == "python"
+    assert train_selfplay.parse_args().simulation_device == "cpu"
     monkeypatch.setattr(
         sys,
         "argv",
-        ["train_selfplay", "--simulation-backend", "pytorch"],
+        [
+            "train_selfplay",
+            "--simulation-backend",
+            "pytorch",
+            "--simulation-device",
+            "cuda",
+        ],
     )
     assert train_selfplay.parse_args().simulation_backend == "pytorch"
+    assert train_selfplay.parse_args().simulation_device == "cuda"
 
     monkeypatch.setattr(sys, "argv", ["train_selfplay_async"])
     assert train_selfplay_async._parse_args().simulation_backend == "python"
+    assert train_selfplay_async._parse_args().simulation_device == "cpu"
     monkeypatch.setattr(
         sys,
         "argv",
-        ["train_selfplay_async", "--simulation-backend", "pytorch-shadow"],
+        [
+            "train_selfplay_async",
+            "--simulation-backend",
+            "pytorch-shadow",
+            "--simulation-device",
+            "mps",
+        ],
     )
     assert train_selfplay_async._parse_args().simulation_backend == "pytorch-shadow"
+    assert train_selfplay_async._parse_args().simulation_device == "mps"
+
+    monkeypatch.setattr(sys, "argv", ["train_recurrent"])
+    recurrent = train_recurrent.parse_args()
+    assert recurrent.simulation_backend == "python"
+    assert recurrent.simulation_device == "cpu"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "train_recurrent",
+            "--simulation-backend",
+            "pytorch",
+            "--simulation-device",
+            "cuda",
+        ],
+    )
+    recurrent = train_recurrent.parse_args()
+    assert recurrent.simulation_backend == "pytorch"
+    assert recurrent.simulation_device == "cuda"
 
 
 def test_async_selfplay_routes_opt_in_backend_to_actor_config() -> None:
@@ -122,6 +159,7 @@ def test_async_selfplay_routes_opt_in_backend_to_actor_config() -> None:
         "engine_fast_path": "off",
         "inference_mode": "actor_local",
         "simulation_backend": "pytorch",
+        "simulation_device": "cuda",
     }
 
     processes, _ = train_selfplay_async._launch_actors(
@@ -139,4 +177,8 @@ def test_async_selfplay_routes_opt_in_backend_to_actor_config() -> None:
     assert [process.args[0].simulation_backend for process in processes] == [
         "pytorch",
         "pytorch",
+    ]
+    assert [process.args[0].simulation_device for process in processes] == [
+        "cuda",
+        "cuda",
     ]

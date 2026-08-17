@@ -463,6 +463,37 @@ def test_training_environment_rejects_unknown_backend() -> None:
         SelfPlayBattleEnv(simulation_backend="unknown")
 
 
+def test_training_environment_routes_simulation_device_through_reset(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: True)
+    env = SelfPlayBattleEnv(
+        simulation_backend="pytorch",
+        simulation_device="cuda",
+    )
+
+    assert env.simulation_device == "cuda"
+    assert env._simulator.device == torch.device("cuda")
+    env.reset(seed=2301)
+    assert env._simulator.device == torch.device("cuda")
+
+
+def test_training_environment_simulation_device_defaults_cpu() -> None:
+    env = SelfPlayBattleEnv(simulation_backend="pytorch")
+    assert env.simulation_device == "cpu"
+    assert env._simulator.device == torch.device("cpu")
+
+
+def test_training_environment_rejects_unavailable_or_unknown_simulation_device(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
+    with pytest.raises(RuntimeError, match="CUDA simulation device"):
+        SelfPlayBattleEnv(simulation_device="cuda")
+    with pytest.raises(ValueError, match="simulation device must be one of"):
+        SelfPlayBattleEnv(simulation_device="meta")
+
+
 def test_custom_tick_duration_matches_oracle_exactly() -> None:
     expected = BattleState(dt=0.1)
     actual = expected.clone()

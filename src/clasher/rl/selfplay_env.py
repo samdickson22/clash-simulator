@@ -60,6 +60,7 @@ class SelfPlayBattleEnv:
         canonical_perspective: bool = True,
         engine_fast_path: str = "off",
         simulation_backend: str = "python",
+        simulation_device: str = "cpu",
         idle_fast_forward: bool = True,
     ) -> None:
         self.decision_interval_ticks = decision_interval_ticks
@@ -94,7 +95,10 @@ class SelfPlayBattleEnv:
         self._prev_objective_p0 = 0.0
         self._mask_shadow_checks = 0
         self._mask_shadow_mismatches = 0
-        self._simulator = TorchBattleExecutor(self.simulation_backend)
+        self._simulator = TorchBattleExecutor(
+            self.simulation_backend, device=simulation_device
+        )
+        self.simulation_device = str(self._simulator.device)
 
     def _sample_and_apply_decks(self) -> None:
         assert self.battle is not None
@@ -114,7 +118,9 @@ class SelfPlayBattleEnv:
             fast_path=self.engine_fast_path in {"shadow", "on"},
             rng=self.rng,
         )
-        self._simulator = TorchBattleExecutor(self.simulation_backend)
+        self._simulator = TorchBattleExecutor(
+            self.simulation_backend, device=self.simulation_device
+        )
         self._sample_and_apply_decks()
         self._reset_reward_trackers()
 

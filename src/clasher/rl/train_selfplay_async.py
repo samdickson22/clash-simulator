@@ -66,6 +66,7 @@ class ActorConfig:
     engine_fast_path: str
     inference_mode: str
     simulation_backend: str = "python"
+    simulation_device: str = "cpu"
 
 
 def _tensorize_obs(obs):
@@ -403,6 +404,7 @@ def _actor_loop(
             canonical_perspective=True,
             engine_fast_path=actor_cfg.engine_fast_path,
             simulation_backend=actor_cfg.simulation_backend,
+            simulation_device=actor_cfg.simulation_device,
         )
         with maybe_silence_stdio(actor_cfg.quiet_engine):
             env.reset()
@@ -642,6 +644,12 @@ def _parse_args() -> argparse.Namespace:
             "oracle for mechanics not yet covered by tensor kernels"
         ),
     )
+    p.add_argument(
+        "--simulation-device",
+        choices=["cpu", "mps", "cuda"],
+        default="cpu",
+        help="PyTorch simulator device, independent of policy inference",
+    )
     p.add_argument("--inference-mode", choices=["actor_local", "centralized"], default="actor_local")
     p.add_argument("--inference-max-batch", type=int, default=2048)
     p.add_argument("--inference-max-wait-ms", type=float, default=2.0)
@@ -685,6 +693,7 @@ def _launch_actors(
             engine_fast_path=actor_cfg_base["engine_fast_path"],
             inference_mode=actor_cfg_base["inference_mode"],
             simulation_backend=actor_cfg_base["simulation_backend"],
+            simulation_device=actor_cfg_base["simulation_device"],
         )
         response_q = None
         if inference_response_queues is not None:
@@ -753,6 +762,7 @@ def _auto_pick_actor_count(
     quiet_engine: bool,
     engine_fast_path: str,
     simulation_backend: str,
+    simulation_device: str,
 ) -> int:
     cpu_cap = max(2, min(10, mp.cpu_count()))
     candidates = [n for n in (4, 6, 8, 10) if n <= cpu_cap]
@@ -773,6 +783,7 @@ def _auto_pick_actor_count(
             quiet_engine=quiet_engine,
             engine_fast_path=engine_fast_path,
             simulation_backend=simulation_backend,
+            simulation_device=simulation_device,
             inference_mode="actor_local",
         )
         dps = float(metrics["decisions_per_sec"])
@@ -811,6 +822,7 @@ def main() -> None:
         canonical_perspective=True,
         engine_fast_path=args.engine_fast_path,
         simulation_backend=args.simulation_backend,
+        simulation_device=args.simulation_device,
     )
     with maybe_silence_stdio(args.quiet_engine):
         meta_env.reset()
@@ -859,6 +871,7 @@ def main() -> None:
             quiet_engine=args.quiet_engine,
             engine_fast_path=args.engine_fast_path,
             simulation_backend=args.simulation_backend,
+            simulation_device=args.simulation_device,
         )
 
     ctx = mp.get_context("spawn")
@@ -887,6 +900,7 @@ def main() -> None:
         "engine_fast_path": args.engine_fast_path,
         "inference_mode": args.inference_mode,
         "simulation_backend": args.simulation_backend,
+        "simulation_device": args.simulation_device,
     }
 
     if args.inference_mode == "centralized":
@@ -954,6 +968,7 @@ def main() -> None:
         f"actors={len(actors)} transitions_per_update={args.transitions_per_update} "
         f"inference_mode={args.inference_mode} engine_fast_path={args.engine_fast_path} "
         f"simulation_backend={args.simulation_backend} "
+        f"simulation_device={args.simulation_device} "
         f"rollout_transport={args.rollout_transport}"
     )
 

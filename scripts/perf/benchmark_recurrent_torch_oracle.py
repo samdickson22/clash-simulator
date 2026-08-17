@@ -543,6 +543,7 @@ def _oracle_worker(
     simulations: int,
     action_samples: int,
     simulation_backend: str,
+    simulation_device: str,
 ) -> None:
     try:
         torch.set_num_threads(1)
@@ -555,6 +556,7 @@ def _oracle_worker(
             rollout_action_samples=action_samples,
             seed=planner_seed,
             simulation_backend=simulation_backend,
+            simulation_device=simulation_device,
         )
         result_queue.put(("ready", os.getpid()))
         if not start_event.wait(timeout=120.0):
@@ -619,6 +621,7 @@ def _make_collector(
             base_seed=args.seed,
             torch_threads=args.actor_threads,
             simulation_backend=backend,
+            simulation_device=args.simulation_device,
         ),
     )
 
@@ -664,6 +667,7 @@ def _run_variant(
                 "simulations": args.oracle_simulations,
                 "action_samples": args.oracle_action_samples,
                 "simulation_backend": backend,
+                "simulation_device": args.simulation_device,
             },
             name="clasher-benchmark-oracle",
             daemon=True,
@@ -761,6 +765,12 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--mirror-match", action="store_true")
     parser.add_argument(
         "--engine-fast-path", choices=("off", "shadow", "on"), default="on"
+    )
+    parser.add_argument(
+        "--simulation-device",
+        choices=("cpu", "mps", "cuda"),
+        default="cpu",
+        help="device used by rollout and oracle PyTorch simulator kernels",
     )
     parser.add_argument("--decks-path", default="decks.json")
     parser.add_argument("--max-entities", type=int, default=128)
