@@ -41,6 +41,22 @@ from clasher.rl.train_recurrent import RolloutBatch
 
 BACKENDS = ("python", "pytorch")
 _BOOTSTRAP_SAMPLES = 20_000
+_ROLLOUT_TELEMETRY_FIELDS = frozenset(
+    {
+        "simulator_tensor_ticks",
+        "simulator_python_ticks",
+        "simulator_shadow_checks",
+        "simulator_shadow_mismatches",
+        "simulator_unsupported_fallbacks",
+    }
+)
+_SIMULATOR_COUNTERS = (
+    "tensor_ticks",
+    "python_ticks",
+    "shadow_checks",
+    "shadow_mismatches",
+    "unsupported_fallbacks",
+)
 _KNOWN_HEAVY_PATTERNS = (
     re.compile(r"clasher\.rl\.train(?:_|\b)"),
     re.compile(r"train_(?:recurrent|selfplay|dagger_oracle)\.py"),
@@ -206,6 +222,8 @@ def _resource_guard(*, high_cpu_percent: float) -> dict[str, Any]:
 def _rollout_digest(rollout: RolloutBatch) -> str:
     hasher = hashlib.sha256()
     for field in fields(RolloutBatch):
+        if field.name in _ROLLOUT_TELEMETRY_FIELDS:
+            continue
         value = getattr(rollout, field.name)
         hasher.update(field.name.encode("utf-8"))
         if isinstance(value, np.ndarray):
@@ -223,6 +241,8 @@ def _first_rollout_difference(
     candidate: RolloutBatch,
 ) -> dict[str, Any] | None:
     for field in fields(RolloutBatch):
+        if field.name in _ROLLOUT_TELEMETRY_FIELDS:
+            continue
         expected = getattr(reference, field.name)
         actual = getattr(candidate, field.name)
         if isinstance(expected, np.ndarray) and isinstance(actual, np.ndarray):
@@ -259,7 +279,78 @@ def _first_rollout_difference(
     return None
 
 
-def _paired_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
+def _metrics_with_coverage(metrics: dict[str, Any]) -> dict[str, Any]:
+    counters = {name: int(metrics.get(name, 0)) for name in _SIMULATOR_COUNTERS}
+    total_ticks = counters["tensor_ticks"] + counters["python_ticks"]
+    return {
+        **counters,
+        "total_ticks": total_ticks,
+        "tensor_tick_fraction": (
+            counters["tensor_ticks"] / total_ticks if total_ticks else 0.0
+        ),
+    }
+
+
+def _rollout_simulator_metrics(rollout: RolloutBatch) -> dict[str, Any]:
+    return _metrics_with_coverage(
+        {
+            "tensor_ticks": rollout.simulator_tensor_ticks,
+            "python_ticks": rollout.simulator_python_ticks,
+            "shadow_checks": rollout.simulator_shadow_checks,
+            "shadow_mismatches": rollout.simulator_shadow_mismatches,
+            "unsupported_fallbacks": rollout.simulator_unsupported_fallbacks,
+        }
+    )
+
+
+def _audit_paired_rows(
+    rows: list[dict[str, Any]],
+    *,
+    expected_repetitions: int | None = None,
+) -> dict[str, int]:
+    repetitions = sorted({int(row["repetition"]) for row in rows})
+    if expected_repetitions is not None:
+        expected = list(range(expected_repetitions))
+        if repetitions != expected:
+            raise ValueError(
+                f"repetitions must be exactly {expected}, got {repetitions}"
+            )
+    if not repetitions:
+        raise ValueError("benchmark rows are empty")
+    for repetition in repetitions:
+        pair = [row for row in rows if int(row["repetition"]) == repetition]
+        counts = {
+            backend: sum(str(row["backend"]) == backend for row in pair)
+            for backend in BACKENDS
+        }
+        unexpected = sorted(
+            {
+                str(row["backend"])
+                for row in pair
+                if str(row["backend"]) not in BACKENDS
+            }
+        )
+        if counts != {backend: 1 for backend in BACKENDS} or unexpected:
+            raise ValueError(
+                f"repetition {repetition} must contain exactly one row per backend: "
+                f"counts={counts}, unexpected={unexpected}"
+            )
+    expected_rows = len(repetitions) * len(BACKENDS)
+    if len(rows) != expected_rows:
+        raise ValueError(f"expected {expected_rows} rows, got {len(rows)}")
+    return {
+        "expected_rows": expected_rows,
+        "actual_rows": len(rows),
+        "paired_repetitions": len(repetitions),
+    }
+
+
+def _paired_summary(
+    rows: list[dict[str, Any]],
+    *,
+    expected_repetitions: int | None = None,
+) -> dict[str, Any]:
+    _audit_paired_rows(rows, expected_repetitions=expected_repetitions)
     gains: list[float] = []
     for repetition in sorted({int(row["repetition"]) for row in rows}):
         pair = {
@@ -292,6 +383,152 @@ def _paired_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
             float(np.quantile(means, 0.975)),
         ],
     }
+
+
+def _aggregate_metrics(metrics: list[dict[str, Any]]) -> dict[str, Any]:
+    totals = {
+        name: sum(int(row.get(name, 0)) for row in metrics)
+        for name in _SIMULATOR_COUNTERS
+    }
+    return _metrics_with_coverage(totals)
+
+
+def _candidate_coverage(
+    rows: list[dict[str, Any]],
+    *,
+    min_tensor_tick_fraction: float = 0.5,
+) -> dict[str, Any]:
+    if not 0.0 < min_tensor_tick_fraction <= 1.0:
+        raise ValueError("min_tensor_tick_fraction must be in (0, 1]")
+    candidate = [row for row in rows if row["backend"] == "pytorch"]
+    if not candidate:
+        raise ValueError("candidate coverage requires at least one pytorch row")
+    rollout_metrics = [
+        _metrics_with_coverage(row["rollout_simulator_backend_metrics"])
+        for row in candidate
+    ]
+    oracle_metrics = [
+        _metrics_with_coverage(row["oracle"]["simulator_backend_metrics"])
+        for row in candidate
+    ]
+    rollout_rows_with_tensor_ticks = sum(
+        int(metrics.get("tensor_ticks", 0)) > 0 for metrics in rollout_metrics
+    )
+    oracle_rows_with_tensor_ticks = sum(
+        int(metrics.get("tensor_ticks", 0)) > 0 for metrics in oracle_metrics
+    )
+    rollout_fractions = [
+        float(metrics["tensor_tick_fraction"]) for metrics in rollout_metrics
+    ]
+    oracle_fractions = [
+        float(metrics["tensor_tick_fraction"]) for metrics in oracle_metrics
+    ]
+    rollout_rows_meeting_min_fraction = sum(
+        fraction >= min_tensor_tick_fraction for fraction in rollout_fractions
+    )
+    oracle_rows_meeting_min_fraction = sum(
+        fraction >= min_tensor_tick_fraction for fraction in oracle_fractions
+    )
+    rollout = _aggregate_metrics(rollout_metrics)
+    oracle = _aggregate_metrics(oracle_metrics)
+    sufficient = (
+        rollout_rows_meeting_min_fraction == len(candidate)
+        and oracle_rows_meeting_min_fraction == len(candidate)
+    )
+    return {
+        "candidate_rows": len(candidate),
+        "minimum_required_tensor_tick_fraction": min_tensor_tick_fraction,
+        "rollout_rows_with_tensor_ticks": rollout_rows_with_tensor_ticks,
+        "oracle_rows_with_tensor_ticks": oracle_rows_with_tensor_ticks,
+        "rollout_rows_meeting_min_fraction": rollout_rows_meeting_min_fraction,
+        "oracle_rows_meeting_min_fraction": oracle_rows_meeting_min_fraction,
+        "rollout_min_observed_tensor_tick_fraction": min(rollout_fractions),
+        "oracle_min_observed_tensor_tick_fraction": min(oracle_fractions),
+        "rollout": rollout,
+        "oracle": oracle,
+        "sufficient_for_throughput_interpretation": sufficient,
+    }
+
+
+def _exact_differential(
+    rows: list[dict[str, Any]],
+    rollouts: dict[tuple[int, str], RolloutBatch],
+    *,
+    expected_repetitions: int,
+) -> tuple[list[dict[str, Any]], bool]:
+    _audit_paired_rows(rows, expected_repetitions=expected_repetitions)
+    differential: list[dict[str, Any]] = []
+    exact = True
+    for repetition in range(expected_repetitions):
+        difference = _first_rollout_difference(
+            rollouts[(repetition, "python")],
+            rollouts[(repetition, "pytorch")],
+        )
+        pair_rows = {
+            backend: next(
+                row
+                for row in rows
+                if int(row["repetition"]) == repetition
+                and str(row["backend"]) == backend
+            )
+            for backend in BACKENDS
+        }
+        oracle_hashes = {
+            backend: str(pair_rows[backend]["oracle"]["sha256"])
+            for backend in BACKENDS
+        }
+        shadow_mismatches = {
+            backend: {
+                "rollout": int(
+                    pair_rows[backend]["rollout_simulator_backend_metrics"][
+                        "shadow_mismatches"
+                    ]
+                ),
+                "oracle": int(
+                    pair_rows[backend]["oracle"]["simulator_backend_metrics"][
+                        "shadow_mismatches"
+                    ]
+                ),
+            }
+            for backend in BACKENDS
+        }
+        pair_has_shadow_mismatch = any(
+            count > 0
+            for by_backend in shadow_mismatches.values()
+            for count in by_backend.values()
+        )
+        pair_exact = (
+            difference is None
+            and len(set(oracle_hashes.values())) == 1
+            and not pair_has_shadow_mismatch
+        )
+        exact &= pair_exact
+        differential.append(
+            {
+                "repetition": repetition,
+                "exact": pair_exact,
+                "first_rollout_difference": difference,
+                "rollout_sha256": {
+                    backend: _rollout_digest(rollouts[(repetition, backend)])
+                    for backend in BACKENDS
+                },
+                "oracle_sha256": oracle_hashes,
+                "shadow_mismatches": shadow_mismatches,
+            }
+        )
+    return differential, exact
+
+
+def _validation_exit_code(
+    *,
+    exact: bool,
+    candidate_coverage: dict[str, Any],
+) -> int:
+    if not exact:
+        return 2
+    if not candidate_coverage["sufficient_for_throughput_interpretation"]:
+        return 3
+    return 0
 
 
 def _oracle_worker(
@@ -334,6 +571,7 @@ def _oracle_worker(
             hasher.update(repr((seed, query, actions)).encode("utf-8"))
         elapsed = time.perf_counter() - started
         hasher.update(repr(planner.rng.bit_generator.state).encode("utf-8"))
+        raw_simulator_metrics = planner.simulator_backend_metrics()
         result_queue.put(
             (
                 "result",
@@ -346,7 +584,10 @@ def _oracle_worker(
                     "latency_p95_s": float(np.percentile(latencies, 95)),
                     "latency_max_s": max(latencies),
                     "sha256": hasher.hexdigest(),
-                    "simulator_backend_metrics": planner.simulator_backend_metrics(),
+                    "simulator_backend_metrics": {
+                        **raw_simulator_metrics,
+                        **_metrics_with_coverage(raw_simulator_metrics),
+                    },
                 },
             )
         )
@@ -470,6 +711,7 @@ def _run_variant(
             "environment_decisions_per_second": environment_decisions / rollout_seconds,
             "latency_ms_per_transition": 1000.0 * rollout_seconds / transitions,
             "rollout_sha256": _rollout_digest(rollout),
+            "rollout_simulator_backend_metrics": _rollout_simulator_metrics(rollout),
             "oracle": oracle,
         }
         return row, rollout
@@ -531,6 +773,15 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--oracle-depth", type=int, default=6)
     parser.add_argument("--oracle-simulations", type=int, default=32)
     parser.add_argument("--oracle-action-samples", type=int, default=64)
+    parser.add_argument(
+        "--min-tensor-tick-fraction",
+        type=float,
+        default=0.5,
+        help=(
+            "minimum tensor-tick fraction required in every candidate rollout "
+            "and oracle row before throughput is interpreted"
+        ),
+    )
     parser.add_argument("--timeout", type=float, default=600.0)
     parser.add_argument(
         "--high-cpu-percent",
@@ -577,6 +828,8 @@ def _validate_args(args: argparse.Namespace) -> None:
         raise ValueError("d_model must be divisible by num_heads")
     if args.timeout <= 0 or args.high_cpu_percent <= 0:
         raise ValueError("timeout and high_cpu_percent must be positive")
+    if not 0.0 < args.min_tensor_tick_fraction <= 1.0:
+        raise ValueError("min_tensor_tick_fraction must be in (0, 1]")
 
 
 def main() -> int:
@@ -621,35 +874,34 @@ def main() -> int:
             rollouts[(repetition, backend)] = rollout
 
     final_guard = _resource_guard(high_cpu_percent=args.high_cpu_percent)
-    differential = []
-    exact = True
-    for repetition in range(args.repetitions):
-        difference = _first_rollout_difference(
-            rollouts[(repetition, "python")],
-            rollouts[(repetition, "pytorch")],
-        )
-        oracle_hashes = {
-            backend: next(
-                row["oracle"]["sha256"]
-                for row in rows
-                if row["repetition"] == repetition and row["backend"] == backend
-            )
-            for backend in BACKENDS
-        }
-        pair_exact = difference is None and len(set(oracle_hashes.values())) == 1
-        exact &= pair_exact
-        differential.append(
-            {
-                "repetition": repetition,
-                "exact": pair_exact,
-                "first_rollout_difference": difference,
-                "rollout_sha256": {
-                    backend: _rollout_digest(rollouts[(repetition, backend)])
-                    for backend in BACKENDS
-                },
-                "oracle_sha256": oracle_hashes,
-            }
-        )
+    row_audit = _audit_paired_rows(
+        rows,
+        expected_repetitions=args.repetitions,
+    )
+    differential, exact = _exact_differential(
+        rows,
+        rollouts,
+        expected_repetitions=args.repetitions,
+    )
+
+    candidate_coverage = _candidate_coverage(
+        rows,
+        min_tensor_tick_fraction=args.min_tensor_tick_fraction,
+    )
+    throughput_interpretable = bool(
+        exact
+        and candidate_coverage["sufficient_for_throughput_interpretation"]
+    )
+    backend_summary = (
+        {backend: _summary_for_backend(rows, backend) for backend in BACKENDS}
+        if throughput_interpretable
+        else None
+    )
+    paired_summary = (
+        _paired_summary(rows, expected_repetitions=args.repetitions)
+        if throughput_interpretable
+        else None
+    )
 
     config = vars(args).copy()
     config["resolved_decks_path"] = str(config["resolved_decks_path"])
@@ -662,19 +914,28 @@ def main() -> int:
         },
         "config": config,
         "resource_guard": {"initial": initial_guard, "final": final_guard},
+        "row_audit": row_audit,
         "rows": rows,
-        "summary": {
-            backend: _summary_for_backend(rows, backend) for backend in BACKENDS
-        },
-        "paired_pytorch_vs_python_percent": _paired_summary(rows),
+        "candidate_tensor_coverage": candidate_coverage,
+        "throughput_interpretable": throughput_interpretable,
+        "summary": backend_summary,
+        "paired_pytorch_vs_python_percent": paired_summary,
         "exact_differential": differential,
         "exact": exact,
     }
     print(json.dumps(report, indent=2, sort_keys=True))
-    if not exact:
+    exit_code = _validation_exit_code(
+        exact=exact,
+        candidate_coverage=candidate_coverage,
+    )
+    if exit_code == 2:
         print("exact differential failed", file=sys.stderr)
-        return 2
-    return 0
+    elif exit_code == 3:
+        print(
+            "insufficient candidate tensor coverage; throughput was not interpreted",
+            file=sys.stderr,
+        )
+    return exit_code
 
 
 if __name__ == "__main__":
