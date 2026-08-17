@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import pytest
 import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import TargetType, Troop
 from clasher.torch_sim.diagnostics import battle_snapshot, first_divergence
+from clasher.torch_sim.executor import TorchBattleExecutor
 from clasher.torch_sim.objects import (
     ObjectBlueprint,
     ObjectOpcode,
@@ -258,3 +260,45 @@ def test_custom_phase_thresholds_match_oracle() -> None:
     _assert_exact(oracle, candidate)
     assert candidate.double_elixir
     assert candidate.triple_elixir
+
+
+@pytest.mark.parametrize("backend", ["pytorch-shadow", "pytorch"])
+def test_executor_routes_supported_stationary_combat_through_complete_runtime(
+    backend: str,
+) -> None:
+    seed = BattleState(fast_path=False)
+    attacker = _knight(seed, 1, 0, (9.0, 10.0), cooldown=0.0)
+    target = _knight(seed, 2, 1, (9.0, 10.8), hp=100.0)
+    battle = _battle_with(attacker, target)
+    expected = battle.clone()
+    expected.step_logic_ticks(1)
+
+    executor = TorchBattleExecutor(backend)
+    assert executor.step_logic_ticks(battle, 1) == 1
+
+    _assert_exact(expected, battle)
+    assert executor.metrics_dict()["tensor_ticks"] == 1
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
+def test_executor_mixed_fast_runtime_and_fallback_rows_are_isolated() -> None:
+    idle = BattleState(fast_path=False)
+    seed = BattleState(fast_path=False)
+    attacker = _knight(seed, 1, 0, (9.0, 10.0), cooldown=0.0)
+    target = _knight(seed, 2, 1, (9.0, 10.8), hp=100.0)
+    stationary = _battle_with(attacker, target)
+    unsupported = _battle_with(_knight(seed, 1, 0, (4.0, 8.0)))
+    unsupported.entities[1].speed = 1.0
+    actual = [idle, stationary, unsupported]
+    expected = [battle.clone() for battle in actual]
+    for battle in expected:
+        battle.step_logic_ticks(1)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_battles(actual, 1) == [1, 1, 1]
+
+    for reference, candidate in zip(expected, actual):
+        _assert_exact(reference, candidate)
+    assert executor.metrics_dict()["tensor_ticks"] == 2
+    assert executor.metrics_dict()["python_ticks"] == 1
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 1

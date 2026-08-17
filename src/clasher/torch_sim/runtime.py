@@ -39,7 +39,6 @@ from .combat import (
     step_stationary_combat_,
 )
 from .entity_pool import EntitySelection, TensorEntityPool
-from .executor import _check_win_conditions, _tick_players
 from .movement import (
     CollisionBatch,
     CollisionResult,
@@ -59,6 +58,7 @@ from .status import (
     TensorStatusState,
     tick_building_lifetime,
 )
+from .tick_common import check_win_conditions, tick_players
 
 
 class TickPhase(IntEnum):
@@ -680,6 +680,26 @@ class TensorTickRuntime:
         supported &= ~launched & ~crown_damage & ~contact & collision.supported_batch
         return supported, tuple(reasons)
 
+    def preflight(
+        self,
+        action_ids: torch.Tensor | None = None,
+    ) -> tuple[torch.Tensor, tuple[str | None, ...]]:
+        """Return exact per-row support without mutating retained state."""
+
+        actions = (
+            torch.full(
+                (self.batch_size, 2),
+                NO_OP_ACTION,
+                dtype=torch.int64,
+                device=self.device,
+            )
+            if action_ids is None
+            else action_ids.to(device=self.device, dtype=torch.int64)
+        )
+        if actions.shape != (self.batch_size, 2):
+            raise ValueError("action_ids must have shape [batch, 2]")
+        return self._dynamic_support(actions)
+
     def step(self, action_ids: torch.Tensor | None = None) -> RuntimeTickResult:
         """Advance one complete 50 ms frame for every preflight-supported row."""
 
@@ -709,7 +729,7 @@ class TensorTickRuntime:
         self.core.triple_elixir |= active & (
             self.core.time >= self.core.triple_elixir_start_time
         )
-        _tick_players(self.core, active)
+        tick_players(self.core, active)
 
         # Action ingress uses the exact generalized action decoder. This
         # supported slice accepts only no-ops; commands which allocate entities
@@ -839,7 +859,7 @@ class TensorTickRuntime:
         self.core.entity_active.copy_(self.pool.active & self.combat.alive)
         self.core.entity_id.copy_(self.pool.entity_id)
         self.status.expire_periodic_for_dead(dead)
-        _check_win_conditions(self.core, active)
+        check_win_conditions(self.core, active)
 
         events = self._events(
             combat_result,
