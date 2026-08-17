@@ -139,7 +139,8 @@ def _tick_players(state: TensorBattleState, active: torch.Tensor) -> None:
     )
     delta = (1.0 / base_regen) * state.dt
     next_elixir = torch.minimum(state.max_elixir, state.elixir + delta[:, None])
-    state.elixir.copy_(torch.where(active[:, None], next_elixir, state.elixir))
+    regenerate = active[:, None] & (state.elixir < state.max_elixir)
+    state.elixir.copy_(torch.where(regenerate, next_elixir, state.elixir))
 
     reduced = torch.clamp(
         state.refill_cooldown_ms - state.tick_milliseconds[:, None],
@@ -236,15 +237,17 @@ def _check_win_conditions(state: TensorBattleState, active: torch.Tensor) -> Non
     state.game_over |= sudden_win
     state.winner.copy_(torch.where(sudden_win, crown_winner, state.winner))
 
-    tiebreak = (
-        sudden_active & ~sudden_win & (state.time >= state.tiebreaker_time)
+    tiebreak = sudden_active & ~sudden_win & (
+        state.time >= state.tiebreaker_time
     )
     alive_hp = torch.where(
         state.tower_hp > 0,
         state.tower_hp,
         torch.full_like(state.tower_hp, torch.inf),
     )
-    lowest = alive_hp.min(dim=2).values
+    # The Python oracle compares fixed-point Crown Tower HP, not raw floats.
+    # Preserve its round-to-nearest-even conversion before choosing a winner.
+    lowest = torch.round(alive_hp.min(dim=2).values * 1000.0).to(torch.int64)
     tiebreak_winner = torch.where(
         lowest[:, 0] > lowest[:, 1],
         torch.zeros_like(state.winner),
