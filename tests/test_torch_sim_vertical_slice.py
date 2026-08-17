@@ -1,11 +1,13 @@
+import json
 from collections import deque
+from pathlib import Path
 
 import pytest
 import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Troop
+from clasher.entities import Building, Troop
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.torch_sim import (
     TensorBattleState,
@@ -23,8 +25,13 @@ def _assert_exact_battle_match(expected: BattleState, actual: BattleState) -> No
     assert mismatch is None, str(mismatch)
 
 
-def _battle_with_deployed_card(card_name: str) -> BattleState:
-    battle = BattleState()
+def _battle_with_deployed_card(
+    card_name: str,
+    *,
+    fast_path: bool = False,
+    dt: float = 0.05,
+) -> BattleState:
+    battle = BattleState(fast_path=fast_path, dt=dt)
     player = battle.players[0]
     player.elixir = 10.0
     player.hand = [card_name, None, None, None]
@@ -176,6 +183,208 @@ def test_deployment_window_continues_in_python_at_first_actionable_frame(
     assert executor.metrics_dict()["unsupported_fallbacks"] == 1
     expected_python_ticks = 25 if backend == "pytorch-shadow" else 5
     assert executor.metrics_dict()["python_ticks"] == expected_python_ticks
+
+
+@pytest.mark.parametrize("backend", ["pytorch-shadow", "pytorch"])
+@pytest.mark.parametrize("card_name", ["Cannon", "Xbow"])
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_mechanic_free_building_deployment_lifetime_matches_exactly(
+    backend: str,
+    card_name: str,
+    fast_path: bool,
+) -> None:
+    battle = _battle_with_deployed_card(card_name, fast_path=fast_path)
+    building = max(battle.entities.values(), key=lambda entity: entity.id)
+    expected = battle.clone()
+    expected.step_logic_ticks(8)
+
+    executor = TorchBattleExecutor(backend)
+    assert executor.step_logic_ticks(battle, 8) == 8
+
+    _assert_exact_battle_match(expected, battle)
+    assert building.lifetime_elapsed == pytest.approx(0.4)
+    assert building.hitpoints < building.max_hitpoints
+    assert executor.metrics_dict()["tensor_ticks"] == 8
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
+def test_every_enabled_mechanic_free_building_deployment_is_covered() -> None:
+    inventory = []
+    definitions = BattleState().card_loader.load_card_definitions()
+    enabled_names = {
+        card_name
+        for deck in json.loads(Path("decks.json").read_text())["decks"]
+        for card_name in deck["cards"]
+    }
+    for card_name in sorted(enabled_names):
+        definition = definitions[card_name]
+        if definition.kind != "building":
+            continue
+        battle = _battle_with_deployed_card(card_name)
+        building = max(battle.entities.values(), key=lambda entity: entity.id)
+        if not building.mechanics:
+            inventory.append(card_name)
+
+    assert inventory
+    for backend in ("pytorch-shadow", "pytorch"):
+        for card_name in inventory:
+            battle = _battle_with_deployed_card(card_name)
+            expected = battle.clone()
+            expected.step_logic_ticks(8)
+            executor = TorchBattleExecutor(backend)
+
+            assert executor.step_logic_ticks(battle, 8) == 8
+            _assert_exact_battle_match(expected, battle)
+            assert executor.metrics_dict()["tensor_ticks"] == 8
+            assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
+@pytest.mark.parametrize("hp_as_float", [False, True])
+def test_building_lifetime_preserves_hitpoint_scalar_kind(
+    hp_as_float: bool,
+) -> None:
+    battle = _battle_with_deployed_card("Cannon")
+    building = max(battle.entities.values(), key=lambda entity: entity.id)
+    if hp_as_float:
+        building.hitpoints = float(building.hitpoints) - 0.25
+    expected = battle.clone()
+    expected.step_logic_ticks(1)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(battle, 1) == 1
+
+    _assert_exact_battle_match(expected, battle)
+    assert type(building.hitpoints) is type(
+        max(expected.entities.values(), key=lambda entity: entity.id).hitpoints
+    )
+    assert executor.metrics_dict()["tensor_ticks"] == 1
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
+@pytest.mark.parametrize("backend", ["pytorch-shadow", "pytorch"])
+def test_nonzero_building_lifetime_carry_matches_exactly(backend: str) -> None:
+    battle = _battle_with_deployed_card("Cannon")
+    building = max(battle.entities.values(), key=lambda entity: entity.id)
+    building.lifetime_tick_carry_ms = 25.0
+    building.lifetime_decay_work = 99
+    expected = battle.clone()
+    expected.step_logic_ticks(3)
+
+    executor = TorchBattleExecutor(backend)
+    assert executor.step_logic_ticks(battle, 3) == 3
+
+    _assert_exact_battle_match(expected, battle)
+    assert building.lifetime_tick_carry_ms == 25.0
+    assert executor.metrics_dict()["tensor_ticks"] == 3
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
+@pytest.mark.parametrize("backend", ["pytorch-shadow", "pytorch"])
+def test_mixed_troop_and_building_batch_matches_exactly(backend: str) -> None:
+    actual = [
+        _battle_with_deployed_card("Knight"),
+        _battle_with_deployed_card("Cannon"),
+    ]
+    expected = [battle.clone() for battle in actual]
+    for battle in expected:
+        battle.step_logic_ticks(8)
+
+    executor = TorchBattleExecutor(backend)
+    assert executor.step_battles(actual, 8) == [8, 8]
+
+    for reference, candidate in zip(expected, actual):
+        _assert_exact_battle_match(reference, candidate)
+    assert executor.metrics_dict()["tensor_ticks"] == 16
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
+@pytest.mark.parametrize("backend", ["pytorch-shadow", "pytorch"])
+@pytest.mark.parametrize("fast_path", [False, True])
+def test_building_deployment_continues_in_python_when_actionable(
+    backend: str,
+    fast_path: bool,
+) -> None:
+    battle = _battle_with_deployed_card("Cannon", fast_path=fast_path)
+    expected = battle.clone()
+    expected.step_logic_ticks(25)
+
+    executor = TorchBattleExecutor(backend)
+    assert executor.step_logic_ticks(battle, 25) == 25
+
+    _assert_exact_battle_match(expected, battle)
+    assert executor.metrics_dict()["tensor_ticks"] == 20
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 1
+    expected_python_ticks = 25 if backend == "pytorch-shadow" else 5
+    assert executor.metrics_dict()["python_ticks"] == expected_python_ticks
+
+
+def test_mechanic_bearing_building_deployment_fails_closed() -> None:
+    battle = _battle_with_deployed_card("Tesla")
+    expected = battle.clone()
+    expected.step_logic_ticks(3)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(battle, 3) == 3
+
+    _assert_exact_battle_match(expected, battle)
+    assert executor.metrics_dict()["tensor_ticks"] == 0
+    assert executor.metrics_dict()["python_ticks"] == 3
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 1
+
+
+def test_deploying_building_death_uses_complete_runtime() -> None:
+    battle = _battle_with_deployed_card("Cannon")
+    building = max(battle.entities.values(), key=lambda entity: entity.id)
+    building.hitpoints = 1
+    building.lifetime_decay_work = 99
+    expected = battle.clone()
+    expected.step_logic_ticks(1)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(battle, 1) == 1
+
+    _assert_exact_battle_match(expected, battle)
+    assert executor.metrics_dict()["tensor_ticks"] == 1
+    assert executor.metrics_dict()["python_ticks"] == 0
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
+def test_deployment_in_crown_tower_sight_uses_complete_runtime() -> None:
+    battle = BattleState()
+    stats = battle.card_loader.get_card("Cannon")
+    assert stats is not None
+    battle._spawn_entity(
+        Building,
+        Position(9.0, 24.0),
+        0,
+        stats,
+    )
+    expected = battle.clone()
+    expected.step_logic_ticks(1)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(battle, 1) == 1
+
+    _assert_exact_battle_match(expected, battle)
+    assert executor.metrics_dict()["tensor_ticks"] == 1
+    assert executor.metrics_dict()["python_ticks"] == 0
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
+def test_custom_tick_duration_building_lifetime_matches_exactly() -> None:
+    battle = _battle_with_deployed_card("Cannon", dt=0.1)
+    expected = battle.clone()
+    expected.step_logic_ticks(3)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(battle, 3) == 3
+
+    _assert_exact_battle_match(expected, battle)
+    building = max(battle.entities.values(), key=lambda entity: entity.id)
+    assert building.lifetime_elapsed == pytest.approx(0.3)
+    assert executor.metrics_dict()["tensor_ticks"] == 3
+    assert executor.metrics_dict()["python_ticks"] == 0
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
 
 
 def test_mixed_batch_falls_back_only_for_unsupported_member() -> None:

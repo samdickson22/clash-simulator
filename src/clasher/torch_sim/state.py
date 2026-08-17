@@ -10,6 +10,7 @@ from typing import Any
 import torch
 
 from clasher.battle import BattleState
+from clasher.entities import Building
 from clasher.kinematics import tiles_to_logic_units
 
 from .rng import TensorPythonRandom
@@ -65,12 +66,18 @@ class TensorBattleState:
     entity_x_units: torch.Tensor
     entity_y_units: torch.Tensor
     entity_hp: torch.Tensor
+    entity_hp_integer_kind: torch.Tensor
     entity_max_hp: torch.Tensor
     entity_last_attack_time: torch.Tensor
     entity_deploy_delay: torch.Tensor
     entity_placement_pending: torch.Tensor
     entity_spawn_hook_pending: torch.Tensor
     entity_spawn_hook_fired: torch.Tensor
+    entity_lifetime_ms: torch.Tensor
+    entity_lifetime_decay_rate: torch.Tensor
+    entity_lifetime_elapsed: torch.Tensor
+    entity_lifetime_decay_work: torch.Tensor
+    entity_lifetime_tick_carry_ms: torch.Tensor
     entity_tower_slot: torch.Tensor
     entity_tower_active: torch.Tensor
 
@@ -165,12 +172,20 @@ class TensorBattleState:
             entity_x_units=zeros(batch, max_entities, dtype=torch.int32),
             entity_y_units=zeros(batch, max_entities, dtype=torch.int32),
             entity_hp=zeros(batch, max_entities, dtype=torch.float64),
+            entity_hp_integer_kind=zeros(batch, max_entities, dtype=torch.bool),
             entity_max_hp=zeros(batch, max_entities, dtype=torch.float64),
             entity_last_attack_time=zeros(batch, max_entities, dtype=torch.float64),
             entity_deploy_delay=zeros(batch, max_entities, dtype=torch.float64),
             entity_placement_pending=zeros(batch, max_entities, dtype=torch.bool),
             entity_spawn_hook_pending=zeros(batch, max_entities, dtype=torch.bool),
             entity_spawn_hook_fired=zeros(batch, max_entities, dtype=torch.bool),
+            entity_lifetime_ms=zeros(batch, max_entities, dtype=torch.int64),
+            entity_lifetime_decay_rate=zeros(batch, max_entities, dtype=torch.int64),
+            entity_lifetime_elapsed=zeros(batch, max_entities, dtype=torch.float64),
+            entity_lifetime_decay_work=zeros(batch, max_entities, dtype=torch.int64),
+            entity_lifetime_tick_carry_ms=zeros(
+                batch, max_entities, dtype=torch.float64
+            ),
             entity_tower_slot=torch.full(
                 (batch, max_entities), -1, dtype=torch.int8, device=torch_device
             ),
@@ -201,12 +216,18 @@ class TensorBattleState:
         self.entity_x_units.zero_()
         self.entity_y_units.zero_()
         self.entity_hp.zero_()
+        self.entity_hp_integer_kind.zero_()
         self.entity_max_hp.zero_()
         self.entity_last_attack_time.zero_()
         self.entity_deploy_delay.zero_()
         self.entity_placement_pending.zero_()
         self.entity_spawn_hook_pending.zero_()
         self.entity_spawn_hook_fired.zero_()
+        self.entity_lifetime_ms.zero_()
+        self.entity_lifetime_decay_rate.zero_()
+        self.entity_lifetime_elapsed.zero_()
+        self.entity_lifetime_decay_work.zero_()
+        self.entity_lifetime_tick_carry_ms.zero_()
         self.entity_tower_slot.fill_(-1)
         self.entity_tower_active.zero_()
         self.hand.zero_()
@@ -287,6 +308,9 @@ class TensorBattleState:
                     entity.position.y
                 )
                 self.entity_hp[batch_index, entity_index] = entity.hitpoints
+                self.entity_hp_integer_kind[batch_index, entity_index] = (
+                    type(entity.hitpoints) is int
+                )
                 self.entity_max_hp[batch_index, entity_index] = entity.max_hitpoints
                 self.entity_last_attack_time[batch_index, entity_index] = (
                     entity.last_attack_time
@@ -303,6 +327,25 @@ class TensorBattleState:
                 self.entity_spawn_hook_fired[batch_index, entity_index] = bool(
                     getattr(entity, "_spawn_hook_fired", False)
                 )
+                lifetime_ms = getattr(entity.card_stats, "lifetime_ms", None)
+                if entity.entity_kind == 1 and lifetime_ms and lifetime_ms > 0:
+                    self.entity_lifetime_ms[batch_index, entity_index] = int(
+                        lifetime_ms
+                    )
+                    self.entity_lifetime_decay_rate[batch_index, entity_index] = (
+                        5000
+                        * round(entity.max_hitpoints)
+                        // int(lifetime_ms)
+                    )
+                    self.entity_lifetime_elapsed[batch_index, entity_index] = float(
+                        getattr(entity, "lifetime_elapsed", 0.0)
+                    )
+                    self.entity_lifetime_decay_work[batch_index, entity_index] = int(
+                        getattr(entity, "lifetime_decay_work", 0)
+                    )
+                    self.entity_lifetime_tick_carry_ms[
+                        batch_index, entity_index
+                    ] = float(getattr(entity, "lifetime_tick_carry_ms", 0.0))
                 tower_slot = getattr(entity, "_crown_tower_slot", None)
                 self.entity_tower_slot[batch_index, entity_index] = (
                     TOWER_SLOTS.get(tower_slot, -1)
@@ -446,6 +489,40 @@ class TensorBattleState:
                         batch_index, entity_index
                     ].item()
                 )
+                if (
+                    isinstance(entity, Building)
+                    and int(
+                        self.entity_lifetime_ms[
+                            batch_index, entity_index
+                        ].item()
+                    )
+                    > 0
+                ):
+                    hp = float(self.entity_hp[batch_index, entity_index].item())
+                    entity.hitpoints = (
+                        int(hp)
+                        if bool(
+                            self.entity_hp_integer_kind[
+                                batch_index, entity_index
+                            ].item()
+                        )
+                        else hp
+                    )
+                    entity.lifetime_elapsed = float(
+                        self.entity_lifetime_elapsed[
+                            batch_index, entity_index
+                        ].item()
+                    )
+                    entity.lifetime_decay_work = int(
+                        self.entity_lifetime_decay_work[
+                            batch_index, entity_index
+                        ].item()
+                    )
+                    entity.lifetime_tick_carry_ms = float(
+                        self.entity_lifetime_tick_carry_ms[
+                            batch_index, entity_index
+                        ].item()
+                    )
         self.rng.sync_to_randoms([battle.rng for battle in battles])
 
 

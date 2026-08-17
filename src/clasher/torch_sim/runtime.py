@@ -315,6 +315,7 @@ class TensorTickRuntime:
         mass_milliunits: torch.Tensor,
         facing_x_units: torch.Tensor,
         facing_y_units: torch.Tensor,
+        hp_is_int: torch.Tensor,
         static_supported: torch.Tensor,
         static_reasons: tuple[str | None, ...],
         battle_identities: tuple[int, ...],
@@ -333,6 +334,7 @@ class TensorTickRuntime:
         self.mass_milliunits = mass_milliunits
         self.facing_x_units = facing_x_units
         self.facing_y_units = facing_y_units
+        self.hp_is_int = hp_is_int
         self.static_supported = static_supported
         self.static_reasons = static_reasons
         self.battle_identities = battle_identities
@@ -392,6 +394,7 @@ class TensorTickRuntime:
         )
         facing_x_units = torch.zeros(shape, dtype=torch.int64, device=torch_device)
         facing_y_units = torch.zeros(shape, dtype=torch.int64, device=torch_device)
+        hp_is_int = torch.zeros(shape, dtype=torch.bool, device=torch_device)
 
         reasons: list[str | None] = []
         for battle_index, battle in enumerate(battles):
@@ -410,6 +413,7 @@ class TensorTickRuntime:
                     mass_milliunits,
                     facing_x_units,
                     facing_y_units,
+                    hp_is_int,
                     battle_index,
                     slot,
                     entity,
@@ -454,6 +458,7 @@ class TensorTickRuntime:
             mass_milliunits=mass_milliunits,
             facing_x_units=facing_x_units,
             facing_y_units=facing_y_units,
+            hp_is_int=hp_is_int,
             static_supported=static_supported,
             static_reasons=tuple(reasons),
             battle_identities=tuple(id(battle) for battle in battles),
@@ -515,6 +520,7 @@ class TensorTickRuntime:
         mass_milliunits: torch.Tensor,
         facing_x_units: torch.Tensor,
         facing_y_units: torch.Tensor,
+        hp_is_int: torch.Tensor,
         battle_index: int,
         slot: int,
         entity: Entity,
@@ -534,6 +540,7 @@ class TensorTickRuntime:
             entity._native_target_distance_discount_sq_units
         )
         combat.hp[battle_index, slot] = entity.hitpoints
+        hp_is_int[battle_index, slot] = type(entity.hitpoints) is int
         combat.max_hp[battle_index, slot] = entity.max_hitpoints
         combat.damage[battle_index, slot] = entity.damage
         combat.alive[battle_index, slot] = entity.is_alive
@@ -747,6 +754,7 @@ class TensorTickRuntime:
             subset_result = step_stationary_combat_(combat_subset, LOGIC_TICK_SECONDS)
             _scatter_combat_(self.combat, rows, combat_subset)
             combat_result = _expand_combat_result(self.combat, rows, subset_result)
+            self.hp_is_int[rows] &= ~(subset_result.damage_received > 0.0)
 
         # Target observation updates the retained raw native facing vector
         # before stun/attack clock decisions in the scalar component.
@@ -788,6 +796,7 @@ class TensorTickRuntime:
         )
         self.combat.hp.copy_(lifetime.hitpoints)
         self.combat.alive.copy_(lifetime.is_alive)
+        self.hp_is_int &= ~((lifetime.hitpoint_loss > 0) & (lifetime.hitpoints <= 0.0))
         self.lifetime_elapsed.copy_(lifetime.lifetime_elapsed)
         self.lifetime_decay_work.copy_(lifetime.lifetime_decay_work)
         self.lifetime_tick_carry_ms.copy_(lifetime.lifetime_tick_carry_ms)
@@ -1045,7 +1054,12 @@ class TensorTickRuntime:
                 entity.position.y = (
                     int(self.combat.y_units[batch_index, slot]) / 1_000.0
                 )
-                tensor_hp = float(self.combat.hp[batch_index, slot].item())
+                raw_hp = float(self.combat.hp[batch_index, slot].item())
+                tensor_hp: float | int = (
+                    int(raw_hp)
+                    if bool(self.hp_is_int[batch_index, slot].item())
+                    else raw_hp
+                )
                 if tensor_hp != entity.hitpoints:
                     entity.hitpoints = tensor_hp
                 entity.is_alive = bool(self.combat.alive[batch_index, slot].item())
