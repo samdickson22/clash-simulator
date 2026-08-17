@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import random
+from collections import defaultdict
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Optional
@@ -24,6 +26,25 @@ _USE_TRUSTED_IDLE_ELIGIBILITY = True
 class StepInfo:
     action_success: Dict[int, bool]
     ticks_advanced: int
+
+
+@dataclass
+class _PreparedStep:
+    actions: Dict[int, int]
+    pre_elixir: Dict[int, float]
+    pre_can_spend: Dict[int, bool]
+    action_success: Dict[int, bool]
+    remaining_ticks: int
+    ticks_advanced: int = 0
+
+
+_BACKEND_METRIC_NAMES = (
+    "tensor_ticks",
+    "python_ticks",
+    "shadow_checks",
+    "shadow_mismatches",
+    "unsupported_fallbacks",
+)
 
 
 class SelfPlayBattleEnv:
@@ -190,14 +211,16 @@ class SelfPlayBattleEnv:
                     penalties[player_id] += 0.005
         return penalties
 
-    def step(
+    def _prepare_step(
         self,
-        actions: Dict[int, int],
+        actions: Mapping[int, int],
         *,
-        pre_action_masks: Optional[Dict[int, np.ndarray]] = None,
-    ) -> tuple[Dict[int, float], bool, StepInfo]:
-        assert self.battle is not None
+        pre_action_masks: Optional[Mapping[int, np.ndarray]],
+    ) -> _PreparedStep:
+        """Apply one environment's actions without advancing its clock."""
 
+        assert self.battle is not None
+        action_values = dict(actions)
         pre_elixir = {
             0: float(self.battle.players[0].elixir),
             1: float(self.battle.players[1].elixir),
@@ -221,55 +244,63 @@ class SelfPlayBattleEnv:
         action_success: Dict[int, bool] = {}
         order = [0, 1]
         self.rng.shuffle(order)
-
         for player_id in order:
-            action_id = actions.get(player_id, self.action_space.no_op_action)
-            success = self.action_space.apply_action(self.battle, player_id, action_id)
-            action_success[player_id] = success
+            action_id = action_values.get(
+                player_id, self.action_space.no_op_action
+            )
+            action_success[player_id] = self.action_space.apply_action(
+                self.battle, player_id, action_id
+            )
 
-        ticks = 0
-        no_op0 = actions.get(0, self.action_space.no_op_action) == self.action_space.no_op_action
-        no_op1 = actions.get(1, self.action_space.no_op_action) == self.action_space.no_op_action
-        if (
+        remaining_ticks = min(
+            self.decision_interval_ticks,
+            max(0, self.max_ticks - self.battle.tick),
+        )
+        return _PreparedStep(
+            actions=action_values,
+            pre_elixir=pre_elixir,
+            pre_can_spend=pre_can_spend,
+            action_success=action_success,
+            remaining_ticks=remaining_ticks,
+        )
+
+    def _can_fast_forward_prepared_idle(self, prepared: _PreparedStep) -> bool:
+        assert self.battle is not None
+        no_op = self.action_space.no_op_action
+        return bool(
             self.simulation_backend is SimulatorBackend.PYTHON
             and self.idle_fast_forward
-            and no_op0
-            and no_op1
+            and prepared.actions.get(0, no_op) == no_op
+            and prepared.actions.get(1, no_op) == no_op
             and hasattr(self.battle, "can_fast_forward_idle")
             and self.battle.can_fast_forward_idle()
-        ):
-            remaining_ticks = min(
-                self.decision_interval_ticks,
-                max(0, self.max_ticks - self.battle.tick),
-            )
-            if remaining_ticks > 0:
-                ticks = self.battle.fast_forward_idle_ticks(
-                    remaining_ticks,
-                    eligibility_checked=_USE_TRUSTED_IDLE_ELIGIBILITY,
-                )
-        else:
-            remaining_ticks = min(
-                self.decision_interval_ticks,
-                max(0, self.max_ticks - self.battle.tick),
-            )
-            ticks = self._simulator.step_logic_ticks(
-                self.battle,
-                remaining_ticks,
-            )
+        )
 
+    def _finish_step(
+        self,
+        prepared: _PreparedStep,
+    ) -> tuple[Dict[int, float], bool, StepInfo]:
+        """Compute the legacy post-tick reward and terminal result exactly."""
+
+        assert self.battle is not None
         done = self.battle.game_over or self.battle.tick >= self.max_ticks
         rewards = self._compute_dense_rewards()
 
         # Tiny invalid-action penalty (no-op is always valid).
         for player_id in (0, 1):
-            attempted = actions.get(player_id, self.action_space.no_op_action)
-            if attempted != self.action_space.no_op_action and not action_success.get(player_id, True):
+            attempted = prepared.actions.get(
+                player_id, self.action_space.no_op_action
+            )
+            if (
+                attempted != self.action_space.no_op_action
+                and not prepared.action_success.get(player_id, True)
+            ):
                 rewards[player_id] -= 0.01
 
         leak_penalty = self._compute_elixir_leak_penalty(
-            actions=actions,
-            pre_elixir=pre_elixir,
-            pre_can_spend=pre_can_spend,
+            actions=prepared.actions,
+            pre_elixir=prepared.pre_elixir,
+            pre_can_spend=prepared.pre_can_spend,
             done=done,
         )
         # Keep reward strictly zero-sum.
@@ -277,9 +308,169 @@ class SelfPlayBattleEnv:
         rewards[0] += leak_edge
         rewards[1] -= leak_edge
 
-        if done:
-            if self.battle.winner is not None:
-                rewards[self.battle.winner] += 1.0
-                rewards[1 - self.battle.winner] -= 1.0
+        if done and self.battle.winner is not None:
+            rewards[self.battle.winner] += 1.0
+            rewards[1 - self.battle.winner] -= 1.0
 
-        return rewards, done, StepInfo(action_success=action_success, ticks_advanced=ticks)
+        return rewards, done, StepInfo(
+            action_success=prepared.action_success,
+            ticks_advanced=prepared.ticks_advanced,
+        )
+
+    def step(
+        self,
+        actions: Dict[int, int],
+        *,
+        pre_action_masks: Optional[Dict[int, np.ndarray]] = None,
+    ) -> tuple[Dict[int, float], bool, StepInfo]:
+        return step_selfplay_envs(
+            [self],
+            [actions],
+            pre_action_masks=(
+                None if pre_action_masks is None else [pre_action_masks]
+            ),
+        )[0]
+
+
+def step_selfplay_envs(
+    envs: Sequence[SelfPlayBattleEnv],
+    actions: Sequence[Mapping[int, int]],
+    *,
+    pre_action_masks: Optional[Sequence[Mapping[int, np.ndarray]]] = None,
+) -> list[tuple[Dict[int, float], bool, StepInfo]]:
+    """One-shot batched adapter that preserves legacy per-environment metrics."""
+
+    stepper = BatchedSelfPlayStepper()
+    results = stepper.step(
+        envs,
+        actions,
+        pre_action_masks=pre_action_masks,
+    )
+    metrics = stepper.pop_metrics()
+    if envs:
+        leader_metrics = envs[0]._simulator.metrics
+        for name in _BACKEND_METRIC_NAMES:
+            setattr(
+                leader_metrics,
+                name,
+                getattr(leader_metrics, name) + int(metrics[name]),
+            )
+    return results
+
+
+class BatchedSelfPlayStepper:
+    """Stateful exact tick batching boundary for one CPU actor rollout.
+
+    Each environment still applies its two actions using its own RNG and
+    computes rewards independently. Only the clock advance is batched. Backend
+    executors and counters live here so environment resets cannot discard
+    telemetry or retained tensor batches.
+    """
+
+    def __init__(self) -> None:
+        self._executors: dict[
+            tuple[SimulatorBackend, str, int], TorchBattleExecutor
+        ] = {}
+        self._metrics = {name: 0 for name in _BACKEND_METRIC_NAMES}
+
+    def _drain_executor(
+        self,
+        key: tuple[SimulatorBackend, str, int],
+    ) -> None:
+        executor = self._executors.pop(key, None)
+        if executor is None:
+            return
+        for name, value in executor.pop_metrics().items():
+            self._metrics[name] += int(value)
+
+    def step(
+        self,
+        envs: Sequence[SelfPlayBattleEnv],
+        actions: Sequence[Mapping[int, int]],
+        *,
+        pre_action_masks: Optional[
+            Sequence[Mapping[int, np.ndarray]]
+        ] = None,
+    ) -> list[tuple[Dict[int, float], bool, StepInfo]]:
+        if len(envs) != len(actions):
+            raise ValueError("actions must have one mapping per environment")
+        if pre_action_masks is not None and len(envs) != len(pre_action_masks):
+            raise ValueError(
+                "pre_action_masks must have one mapping per environment"
+            )
+        if len({id(env) for env in envs}) != len(envs):
+            raise ValueError("an environment may appear only once per batch")
+        if not envs:
+            return []
+
+        prepared_steps: list[_PreparedStep] = []
+        advance_groups: dict[
+            tuple[SimulatorBackend, str, int], list[int]
+        ] = defaultdict(list)
+        for index, (env, env_actions) in enumerate(zip(envs, actions)):
+            masks = None if pre_action_masks is None else pre_action_masks[index]
+            prepared = env._prepare_step(
+                env_actions,
+                pre_action_masks=masks,
+            )
+            prepared_steps.append(prepared)
+            if env._can_fast_forward_prepared_idle(prepared):
+                assert env.battle is not None
+                if prepared.remaining_ticks > 0:
+                    prepared.ticks_advanced = env.battle.fast_forward_idle_ticks(
+                        prepared.remaining_ticks,
+                        eligibility_checked=_USE_TRUSTED_IDLE_ELIGIBILITY,
+                    )
+                continue
+            device = str(env._simulator.device)
+            advance_groups[
+                (env.simulation_backend, device, prepared.remaining_ticks)
+            ].append(index)
+
+        for key, indices in advance_groups.items():
+            # Successful non-noop actions can mutate tensor-backed scalar fields
+            # without necessarily changing clocks. Re-encode such a group so a
+            # retained tensor state can never overwrite the fresh action.
+            action_mutated = any(
+                any(
+                    success
+                    and prepared_steps[index].actions.get(
+                        player_id, envs[index].action_space.no_op_action
+                    )
+                    != envs[index].action_space.no_op_action
+                    for player_id, success in prepared_steps[
+                        index
+                    ].action_success.items()
+                )
+                for index in indices
+            )
+            if action_mutated:
+                self._drain_executor(key)
+            executor = self._executors.get(key)
+            if executor is None:
+                backend, device, _ = key
+                executor = TorchBattleExecutor(backend, device=device)
+                self._executors[key] = executor
+            battles = []
+            for index in indices:
+                battle = envs[index].battle
+                assert battle is not None
+                battles.append(battle)
+            advanced = executor.step_battles(
+                battles,
+                prepared_steps[indices[0]].remaining_ticks,
+            )
+            for index, ticks_advanced in zip(indices, advanced):
+                prepared_steps[index].ticks_advanced = ticks_advanced
+
+        return [
+            env._finish_step(prepared)
+            for env, prepared in zip(envs, prepared_steps)
+        ]
+
+    def pop_metrics(self) -> dict[str, float]:
+        for key in list(self._executors):
+            self._drain_executor(key)
+        result = {name: float(value) for name, value in self._metrics.items()}
+        self._metrics = {name: 0 for name in _BACKEND_METRIC_NAMES}
+        return result
