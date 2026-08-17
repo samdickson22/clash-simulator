@@ -335,6 +335,28 @@ def test_soul_collection_uses_collector_then_dead_entity_id_order_and_caps() -> 
     assert drops.formation_index.tolist() == list(range(5))
 
 
+def test_soul_drop_and_consumption_events_ignore_physical_slot_order() -> None:
+    catalog = _catalog()
+    state = _state(
+        catalog,
+        [["SkeletonKing", "SkeletonKing"]],
+        [[10, 5]],
+        [[0, 1]],
+        [[(9.0, 12.0), (9.0, 20.0)]],
+    )
+    state.souls_collected[0] = torch.tensor([28, 20])
+
+    consumed = consume_souls_(catalog, state, torch.tensor([[True, True]]))
+    drops = plan_soul_drops(catalog, state, torch.tensor([[True, True]]))
+
+    assert consumed.source_entity_id.tolist() == [5, 10]
+    assert consumed.amount.tolist() == [20.0, 20.0]
+    # ID 5 consumed its threshold and drops nothing; ID 10 retains eight souls
+    # and emits its four deterministic formation members.
+    assert drops.source_entity_id.tolist() == [10] * 4
+    assert drops.formation_index.tolist() == [0, 1, 2, 3]
+
+
 class _SpawnerEntity:
     def __init__(self) -> None:
         self.battle_state = type("BattleStub", (), {"debug_logs": False})()
