@@ -31,6 +31,12 @@ class TensorBattleState:
     card_to_id: dict[str, int]
     time: torch.Tensor
     tick: torch.Tensor
+    dt: torch.Tensor
+    tick_milliseconds: torch.Tensor
+    double_elixir_start_time: torch.Tensor
+    overtime_start_time: torch.Tensor
+    triple_elixir_start_time: torch.Tensor
+    tiebreaker_time: torch.Tensor
     active: torch.Tensor
     double_elixir: torch.Tensor
     triple_elixir: torch.Tensor
@@ -120,6 +126,12 @@ class TensorBattleState:
             card_to_id=card_to_id,
             time=zeros(batch, dtype=torch.float64),
             tick=zeros(batch, dtype=torch.int64),
+            dt=zeros(batch, dtype=torch.float64),
+            tick_milliseconds=zeros(batch, dtype=torch.int32),
+            double_elixir_start_time=zeros(batch, dtype=torch.float64),
+            overtime_start_time=zeros(batch, dtype=torch.float64),
+            triple_elixir_start_time=zeros(batch, dtype=torch.float64),
+            tiebreaker_time=zeros(batch, dtype=torch.float64),
             active=torch.ones(batch, dtype=torch.bool, device=torch_device),
             double_elixir=zeros(batch, dtype=torch.bool),
             triple_elixir=zeros(batch, dtype=torch.bool),
@@ -195,6 +207,16 @@ class TensorBattleState:
         for batch_index, battle in enumerate(battles):
             self.time[batch_index] = battle.time
             self.tick[batch_index] = battle.tick
+            self.dt[batch_index] = battle.dt
+            self.tick_milliseconds[batch_index] = round(battle.dt * 1000.0)
+            self.double_elixir_start_time[batch_index] = (
+                battle.double_elixir_start_time
+            )
+            self.overtime_start_time[batch_index] = battle.overtime_start_time
+            self.triple_elixir_start_time[batch_index] = (
+                battle.triple_elixir_start_time
+            )
+            self.tiebreaker_time[batch_index] = battle.tiebreaker_time
             self.active[batch_index] = not battle.game_over
             self.double_elixir[batch_index] = battle.double_elixir
             self.triple_elixir[batch_index] = battle.triple_elixir

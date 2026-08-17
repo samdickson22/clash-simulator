@@ -250,3 +250,52 @@ def test_training_environment_selects_simulation_backend(backend: str) -> None:
 def test_training_environment_rejects_unknown_backend() -> None:
     with pytest.raises(ValueError, match="simulation_backend must be one of"):
         SelfPlayBattleEnv(simulation_backend="unknown")
+
+
+def test_custom_tick_duration_matches_oracle_exactly() -> None:
+    expected = BattleState(dt=0.1)
+    actual = expected.clone()
+    expected.step_logic_ticks(4)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(actual, 4) == 4
+
+    _assert_exact_battle_match(expected, actual)
+    assert actual.time == 0.4
+    assert executor.metrics_dict()["tensor_ticks"] == 4
+
+
+def test_custom_phase_thresholds_match_oracle_exactly() -> None:
+    expected = BattleState(
+        double_elixir_start_time=0.05,
+        overtime_start_time=0.1,
+        triple_elixir_start_time=0.15,
+        tiebreaker_time=0.2,
+    )
+    actual = expected.clone()
+    expected.step_logic_ticks(3)
+
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(actual, 3) == 3
+
+    _assert_exact_battle_match(expected, actual)
+    assert actual.double_elixir
+    assert actual.overtime
+    assert actual.triple_elixir
+
+
+def test_same_clock_python_mutation_refreshes_retained_tensor_storage() -> None:
+    expected = BattleState()
+    actual = expected.clone()
+    executor = TorchBattleExecutor("pytorch")
+    assert executor.step_logic_ticks(actual, 1) == 1
+    expected.step_logic_ticks(1)
+    _assert_exact_battle_match(expected, actual)
+
+    expected.players[0].elixir = 1.0
+    actual.players[0].elixir = 1.0
+    expected.step_logic_ticks(1)
+    assert executor.step_logic_ticks(actual, 1) == 1
+
+    _assert_exact_battle_match(expected, actual)
+    assert actual.players[0].elixir < 2.0

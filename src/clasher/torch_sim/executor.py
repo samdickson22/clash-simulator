@@ -11,7 +11,6 @@ import torch
 from clasher.balance import DEFAULT_BATTLE_TIMELINE_NEXT_CARD_REFILL_COOLDOWN_MS
 from clasher.battle import BattleState
 from clasher.entities import Troop
-from clasher.kinematics import LOGIC_TICK_MILLISECONDS, LOGIC_TICK_SECONDS
 
 from .diagnostics import TorchParityError, battle_snapshot, first_divergence
 from .state import WINNER_DRAW, TensorBattleState
@@ -138,12 +137,12 @@ def _tick_players(state: TensorBattleState, active: torch.Tensor) -> None:
             torch.full_like(state.time, 2.8),
         ),
     )
-    delta = (1.0 / base_regen) * LOGIC_TICK_SECONDS
+    delta = (1.0 / base_regen) * state.dt
     next_elixir = torch.minimum(state.max_elixir, state.elixir + delta[:, None])
     state.elixir.copy_(torch.where(active[:, None], next_elixir, state.elixir))
 
     reduced = torch.clamp(
-        state.refill_cooldown_ms - LOGIC_TICK_MILLISECONDS,
+        state.refill_cooldown_ms - state.tick_milliseconds[:, None],
         min=0,
     )
     cooldown = torch.where(
@@ -209,7 +208,11 @@ def _check_win_conditions(state: TensorBattleState, active: torch.Tensor) -> Non
     still_active = active & ~finish_by_king
     crowns = _crowns_for_players(state)
     crown_unequal = crowns[:, 0] != crowns[:, 1]
-    regulation_boundary = still_active & (state.time >= 180.0) & ~state.sudden_death
+    regulation_boundary = (
+        still_active
+        & (state.time >= state.overtime_start_time)
+        & ~state.sudden_death
+    )
     regulation_win = regulation_boundary & crown_unequal
     crown_winner = torch.where(
         crowns[:, 0] > crowns[:, 1],
@@ -233,7 +236,9 @@ def _check_win_conditions(state: TensorBattleState, active: torch.Tensor) -> Non
     state.game_over |= sudden_win
     state.winner.copy_(torch.where(sudden_win, crown_winner, state.winner))
 
-    tiebreak = sudden_active & ~sudden_win & (state.time >= 300.0)
+    tiebreak = (
+        sudden_active & ~sudden_win & (state.time >= state.tiebreaker_time)
+    )
     alive_hp = torch.where(
         state.tower_hp > 0,
         state.tower_hp,
@@ -271,11 +276,15 @@ def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> torch.Tensor
         active = state.active & ~state.game_over & ~newly_actionable
         if not bool(active.any().item()):
             break
-        state.time.add_(torch.where(active, torch.full_like(state.time, 0.05), 0.0))
+        state.time.add_(torch.where(active, state.dt, 0.0))
         state.tick.add_(active.to(torch.int64))
-        state.double_elixir |= active & (state.time >= 120.0)
-        state.overtime |= active & (state.time >= 180.0)
-        state.triple_elixir |= active & (state.time >= 240.0)
+        state.double_elixir |= active & (
+            state.time >= state.double_elixir_start_time
+        )
+        state.overtime |= active & (state.time >= state.overtime_start_time)
+        state.triple_elixir |= active & (
+            state.time >= state.triple_elixir_start_time
+        )
         _tick_players(state, active)
         active_towers = (
             active[:, None]
@@ -284,7 +293,7 @@ def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> torch.Tensor
             & state.entity_tower_active
         )
         state.entity_last_attack_time.add_(
-            active_towers.to(torch.float64) * LOGIC_TICK_SECONDS
+            active_towers.to(torch.float64) * state.dt[:, None]
         )
         deployment_mask = active[:, None] & deploying
         # Preserve the pre-tick values: ``copy_`` below mutates the retained
@@ -292,7 +301,7 @@ def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> torch.Tensor
         # observe only post-tick values.
         previous_deploy_delay = state.entity_deploy_delay.clone()
         next_deploy_delay = torch.clamp(
-            previous_deploy_delay - LOGIC_TICK_SECONDS,
+            previous_deploy_delay - state.dt[:, None],
             min=0.0,
         )
         state.entity_deploy_delay.copy_(
@@ -310,9 +319,9 @@ def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> torch.Tensor
         state.entity_placement_pending &= ~deployment_finished
         state.entity_spawn_hook_pending &= ~deployment_finished
         state.entity_spawn_hook_fired |= deployment_finished
-        timer_boundary = (~state.sudden_death & (state.time >= 180.0)) | (
-            state.sudden_death & (state.time >= 300.0)
-        )
+        timer_boundary = (
+            ~state.sudden_death & (state.time >= state.overtime_start_time)
+        ) | (state.sudden_death & (state.time >= state.tiebreaker_time))
         if bool((active & timer_boundary).any().item()):
             _check_win_conditions(state, active)
         advanced.add_(active.to(torch.int64))
@@ -336,16 +345,31 @@ class TorchBattleExecutor:
 
     def _state_for(self, battles: Sequence[BattleState]) -> TensorBattleState:
         identities = tuple(id(battle) for battle in battles)
-        if (
+        rebuild = (
             self._state is None
             or self._battle_identities != identities
             or any(
                 not self._state.clocks_match(battle, batch_index)
                 for batch_index, battle in enumerate(battles)
             )
-        ):
+        )
+        if rebuild:
             self._state = TensorBattleState.from_battles(battles, device=self.device)
             self._battle_identities = identities
+        else:
+            # Action ingress and callers still mutate the authoritative Python
+            # battle between decision windows. Refresh the retained storage at
+            # that boundary so same-clock changes cannot be overwritten by a
+            # stale tensor snapshot. Once ingress is tensor-native this copy is
+            # removed and the state remains resident across decisions too.
+            assert self._state is not None
+            try:
+                self._state.load_battles(battles)
+            except (IndexError, ValueError):
+                self._state = TensorBattleState.from_battles(
+                    battles, device=self.device
+                )
+        assert self._state is not None
         return self._state
 
     def _fallback(self, battle: BattleState, ticks: int) -> int:
