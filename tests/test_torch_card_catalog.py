@@ -98,3 +98,8 @@ def test_catalog_compiles_shared_mechanic_parameters_without_card_switches() -> 
 def test_catalog_rejects_missing_card_definition() -> None:
     with pytest.raises(ValueError, match="missing card definitions"):
         TensorCardCatalog.compile(CardDataLoader(), ["DefinitelyMissingCard"])
+
+
+def test_global_status_payload_opcodes_are_registered_generically() -> None:
+    assert MECHANIC_OPCODE["Stun"] > 0
+    assert MECHANIC_OPCODE["FreezeDebuff"] > 0

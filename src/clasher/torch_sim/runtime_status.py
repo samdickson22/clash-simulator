@@ -27,6 +27,12 @@ from clasher.torch_sim.status import (
     TensorStatusState,
     tick_building_lifetime,
 )
+from clasher.torch_sim.status_payloads import (
+    StatusEffectOpcode,
+    StatusTriggerOpcode,
+    TensorStatusPayloadCatalog,
+    apply_status_payloads,
+)
 
 
 @dataclass
@@ -41,6 +47,8 @@ class TensorRuntimeStatusPhase:
     original_speed: torch.Tensor
     original_speed_valid: torch.Tensor
     movement_mode_multiplier: torch.Tensor
+    payload_catalog: TensorStatusPayloadCatalog
+    payload_catalog_index: torch.Tensor
 
     @property
     def batch_size(self) -> int:
@@ -77,6 +85,24 @@ class TensorRuntimeStatusPhase:
         movement_mode_multiplier = torch.ones(
             shape, dtype=torch.float64, device=runtime.device
         )
+        definitions = battles[0].card_loader.load_card_definitions()
+        payload_names = tuple(
+            name for name in runtime.battle.card_names[1:] if name in definitions
+        )
+        payload_catalog = TensorStatusPayloadCatalog.compile(
+            battles[0].card_loader,
+            payload_names,
+            device=runtime.device,
+        )
+        payload_catalog_index = torch.zeros(
+            len(runtime.battle.card_names),
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        for core_card_id, name in enumerate(runtime.battle.card_names[1:], start=1):
+            payload_catalog_index[core_card_id] = payload_catalog.name_to_id.get(
+                name, 0
+            )
 
         for battle_index, battle in enumerate(battles):
             slot_by_id = {
@@ -135,6 +161,8 @@ class TensorRuntimeStatusPhase:
             original_speed=original_speed,
             original_speed_valid=original_speed_valid,
             movement_mode_multiplier=movement_mode_multiplier,
+            payload_catalog=payload_catalog,
+            payload_catalog_index=payload_catalog_index,
         )
 
     def clone(self) -> TensorRuntimeStatusPhase:
@@ -147,6 +175,8 @@ class TensorRuntimeStatusPhase:
             original_speed=self.original_speed.clone(),
             original_speed_valid=self.original_speed_valid.clone(),
             movement_mode_multiplier=self.movement_mode_multiplier.clone(),
+            payload_catalog=self.payload_catalog,
+            payload_catalog_index=self.payload_catalog_index.clone(),
         )
 
     def sync_to_battles(
@@ -191,6 +221,13 @@ class RuntimeStatusPhaseResult:
 
 
 @dataclass(frozen=True)
+class RuntimeStatusPayloadResult:
+    supported_batch: torch.Tensor
+    applied: torch.Tensor
+    rng_draws: torch.Tensor
+
+
+@dataclass(frozen=True)
 class _PeriodicResolution:
     hitpoints: torch.Tensor
     alive: torch.Tensor
@@ -221,14 +258,30 @@ def _validate_shapes(
     phase: TensorRuntimeStatusPhase,
 ) -> None:
     expected = (runtime.batch_size, runtime.max_entities)
-    for descriptor in fields(phase):
-        value = getattr(phase, descriptor.name)
+    entity_fields = (
+        "lifetime_ms",
+        "lifetime_elapsed",
+        "lifetime_decay_work",
+        "lifetime_tick_carry_ms",
+        "movement_speed",
+        "original_speed",
+        "original_speed_valid",
+        "movement_mode_multiplier",
+    )
+    for name in entity_fields:
+        value = getattr(phase, name)
         if value.shape != expected:
             raise ValueError(
-                f"{descriptor.name} has shape {tuple(value.shape)}, expected {expected}"
+                f"{name} has shape {tuple(value.shape)}, expected {expected}"
             )
         if value.device != runtime.device:
-            raise ValueError(f"{descriptor.name} is on a different device")
+            raise ValueError(f"{name} is on a different device")
+    if phase.payload_catalog.device != runtime.device:
+        raise ValueError("status payload catalog is on a different device")
+    if phase.payload_catalog_index.shape != (len(runtime.battle.card_names),):
+        raise ValueError("status payload card-index shape differs from runtime cards")
+    if phase.payload_catalog_index.device != runtime.device:
+        raise ValueError("status payload card index is on a different device")
 
 
 def _ordered(values: torch.Tensor, selection: EntitySelection) -> torch.Tensor:
@@ -366,6 +419,145 @@ def _lifetime_events(
     ).flatten(1)
     zeros = torch.zeros_like(target)
     return event_valid, opcode, zeros, target, x, y, amount, zeros
+
+
+def apply_runtime_status_payloads_(
+    runtime: TensorBattleRuntime,
+    phase: TensorRuntimeStatusPhase,
+    source_card: torch.Tensor,
+    *,
+    trigger: StatusTriggerOpcode,
+    eligible: bool | torch.Tensor = True,
+    tick_duration_seconds: float | torch.Tensor | None = None,
+    random_rolls: torch.Tensor | None = None,
+) -> RuntimeStatusPayloadResult:
+    """Dispatch one target-aligned serialized status event wave.
+
+    ``source_card`` uses the runtime's card-ID plane, not payload-catalog IDs.
+    Attack/aura producers invoke this once per ordered event wave.  When rolls
+    are omitted, genuine ``Stun`` mechanics draw from the retained CPython
+    RNG in entity-ID then mechanic-slot order; ``SerializedOnHitBuff`` stun
+    payloads do not consume RNG, matching their Python mechanic.
+    """
+
+    runtime.assert_invariants()
+    _validate_shapes(runtime, phase)
+    core_card = torch.as_tensor(source_card, dtype=torch.int64, device=runtime.device)
+    expected = (runtime.batch_size, runtime.max_entities)
+    if core_card.shape != expected:
+        raise ValueError("source_card must have shape [batch, entity]")
+    if bool(
+        ((core_card < 0) | (core_card >= len(runtime.battle.card_names))).any().item()
+    ):
+        raise ValueError("source_card contains an out-of-range runtime card ID")
+
+    row_supported = runtime.supported & runtime.phases.supported[:, TickPhase.STATUS]
+    character = (runtime.battle.entity_kind == 0) | (runtime.battle.entity_kind == 1)
+    event_target = (
+        row_supported[:, None]
+        & runtime.entity_pool.active
+        & runtime.battle.entity_active
+        & character
+        & (core_card != 0)
+    )
+    eligible_target = runtime.status._mask(eligible) & event_target
+    payload_card = phase.payload_catalog_index[core_card]
+    catalog = phase.payload_catalog
+    payload_trigger = catalog.trigger[payload_card]
+    payload_effect = catalog.effect[payload_card]
+    duration = catalog.duration_ms[payload_card].to(torch.float64) / 1000.0
+    trigger_match = payload_trigger == int(trigger)
+    from_tick = catalog.duration_from_tick[payload_card]
+    needs_tick = event_target[:, :, None] & trigger_match & from_tick
+    if bool(needs_tick.any().item()):
+        if tick_duration_seconds is None:
+            raise ValueError("tick_duration_seconds is required for aura payloads")
+        tick_duration = runtime.status._entity_tensor(
+            tick_duration_seconds,
+            dtype=torch.float64,
+            name="tick_duration_seconds",
+        )
+        duration = torch.where(needs_tick, tick_duration[:, :, None], duration)
+
+    # Stun.on_attack_hit always draws before checking its chance.  A
+    # SerializedOnHitBuff whose three axes are zero emits a deterministic stun
+    # without a draw, and is distinguishable in the compiled multiplier plane.
+    genuine_stun = (
+        trigger_match
+        & (payload_effect == int(StatusEffectOpcode.STUN))
+        & (catalog.movement_multiplier[payload_card] == 1.0)
+        & (catalog.attack_multiplier[payload_card] == 1.0)
+        & (catalog.spawn_multiplier[payload_card] == 1.0)
+        & (duration > 0.0)
+    )
+    rng_draws = torch.zeros(
+        runtime.batch_size, dtype=torch.int32, device=runtime.device
+    )
+    if random_rolls is None:
+        rolls = torch.zeros_like(catalog.chance[payload_card])
+        ordered = runtime.entity_pool.id_order(event_target)
+        rows = torch.arange(runtime.batch_size, device=runtime.device)
+        for ordered_index in range(runtime.max_entities):
+            physical_slot = ordered.slots[:, ordered_index].clamp_min(0)
+            for payload_slot in range(catalog.max_payloads):
+                draw_row = (
+                    ordered.valid[:, ordered_index]
+                    & genuine_stun[rows, physical_slot, payload_slot]
+                )
+                draw = runtime.battle.rng.random(draw_row)
+                selected_rows = rows[draw_row]
+                rolls[
+                    selected_rows,
+                    physical_slot[draw_row],
+                    payload_slot,
+                ] = draw[draw_row]
+                rng_draws.add_(draw_row.to(torch.int32))
+    else:
+        rolls = torch.as_tensor(
+            random_rolls, dtype=torch.float64, device=runtime.device
+        )
+        if rolls.shape != payload_trigger.shape:
+            raise ValueError("random_rolls must have shape [batch, entity, payload]")
+
+    applied = (
+        eligible_target[:, :, None]
+        & trigger_match
+        & (duration > 0.0)
+        & (rolls <= catalog.chance[payload_card])
+    )
+    slow_applied = applied & (payload_effect == int(StatusEffectOpcode.SLOW))
+    slow_target = slow_applied.any(dim=2)
+    install_original = slow_target & ~phase.original_speed_valid
+    phase.original_speed.copy_(
+        torch.where(install_original, phase.movement_speed, phase.original_speed)
+    )
+    phase.original_speed_valid |= slow_target
+
+    apply_status_payloads(
+        runtime.status,
+        catalog,
+        payload_card,
+        trigger=trigger,
+        eligible=eligible_target,
+        tick_duration_seconds=tick_duration_seconds,
+        random_rolls=rolls,
+    )
+    phase.movement_speed.copy_(
+        torch.where(
+            slow_target,
+            phase.original_speed
+            * phase.movement_mode_multiplier
+            * runtime.status.slow_multiplier,
+            phase.movement_speed,
+        )
+    )
+    changed_rows = applied.any(dim=2).any(dim=1)
+    runtime.mark_dirty(changed_rows, phase=TickPhase.STATUS)
+    return RuntimeStatusPayloadResult(
+        supported_batch=row_supported,
+        applied=applied,
+        rng_draws=rng_draws,
+    )
 
 
 def step_runtime_status_phase_(

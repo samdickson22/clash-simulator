@@ -47,6 +47,7 @@ MECHANIC_NAMES = (
     "ElectroDragonChainLightning",
     "ElectroSpiritChain",
     "FishermanHook",
+    "FreezeDebuff",
     "HideWhenIdle",
     "IceSpiritFreeze",
     "InvisibilityWhenNotAttacking",
@@ -58,6 +59,7 @@ MECHANIC_NAMES = (
     "SkeletonKingSoulCollector",
     "SpawnAreaEffect",
     "SpawnPushback",
+    "Stun",
     "UndergroundDeployment",
     "WallBreakersDemolition",
 )
