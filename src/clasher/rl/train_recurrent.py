@@ -28,6 +28,7 @@ from .model import ClasherPolicy, PolicyConfig, PolicyInputs
 from .resource_guard import guard_training_resources
 from .selfplay_env import SelfPlayBattleEnv
 from .structured_obs import StructuredObservation, StructuredObservationBuilder
+from .tensor_batch_scheduler import TensorBatchScheduler
 
 
 class _NullWriter:
@@ -410,6 +411,7 @@ def collect_rollout(
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = 0
     wins = losses = draws = 0
+    batch_scheduler = TensorBatchScheduler(envs)
 
     for step in range(rollout_steps):
         with maybe_silence_stdio(quiet_engine):
@@ -456,16 +458,23 @@ def collect_rollout(
         next_previous_actions = actions.copy()
         next_previous_rewards = np.zeros((agents,), dtype=np.float32)
         next_episode_starts = np.zeros((agents,), dtype=np.bool_)
+        step_actions = [
+            {0: int(actions[2 * index]), 1: int(actions[2 * index + 1])}
+            for index in range(len(envs))
+        ]
+        step_masks = [
+            {0: action_masks[2 * index], 1: action_masks[2 * index + 1]}
+            for index in range(len(envs))
+        ]
         with maybe_silence_stdio(quiet_engine):
-            for env_index, env in enumerate(envs):
+            step_results = batch_scheduler.step(
+                step_actions,
+                pre_action_masks=step_masks,
+            )
+            for env_index, (env, (rewards, done, _)) in enumerate(
+                zip(envs, step_results)
+            ):
                 base = 2 * env_index
-                rewards, done, _ = env.step(
-                    {0: int(actions[base]), 1: int(actions[base + 1])},
-                    pre_action_masks={
-                        0: action_masks[base],
-                        1: action_masks[base + 1],
-                    },
-                )
                 arrays["rewards"][base, step] = float(rewards[0])
                 arrays["rewards"][base + 1, step] = float(rewards[1])
                 arrays["dones"][base : base + 2, step] = done
@@ -582,6 +591,7 @@ def collect_rollout_stationary_opponents(
     initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = wins = losses = draws = 0
+    batch_scheduler = TensorBatchScheduler(envs)
 
     for step in range(rollout_steps):
         with maybe_silence_stdio(quiet_engine):
@@ -679,21 +689,29 @@ def collect_rollout_stationary_opponents(
         next_opponent_previous_actions = opponent_actions.copy()
         next_opponent_previous_rewards = np.zeros((agents,), dtype=np.float32)
         next_opponent_episode_starts = np.zeros((agents,), dtype=np.bool_)
+        step_actions = [
+            {
+                learner_player: int(actions[index]),
+                1 - learner_player: int(opponent_actions[index]),
+            }
+            for index, learner_player in enumerate(learner_players)
+        ]
+        step_masks = [
+            {
+                learner_player: action_masks[index],
+                1 - learner_player: opponent_masks[index],
+            }
+            for index, learner_player in enumerate(learner_players)
+        ]
         with maybe_silence_stdio(quiet_engine):
-            for env_index, (env, learner_player) in enumerate(
-                zip(envs, learner_players)
+            step_results = batch_scheduler.step(
+                step_actions,
+                pre_action_masks=step_masks,
+            )
+            for env_index, (env, learner_player, (rewards, done, _)) in enumerate(
+                zip(envs, learner_players, step_results)
             ):
                 opponent_player = 1 - learner_player
-                rewards, done, _ = env.step(
-                    {
-                        learner_player: int(actions[env_index]),
-                        opponent_player: int(opponent_actions[env_index]),
-                    },
-                    pre_action_masks={
-                        learner_player: action_masks[env_index],
-                        opponent_player: opponent_masks[env_index],
-                    },
-                )
                 learner_reward = float(rewards[learner_player])
                 arrays["rewards"][env_index, step] = learner_reward
                 arrays["dones"][env_index, step] = done

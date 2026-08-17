@@ -26,6 +26,18 @@ class StepInfo:
     ticks_advanced: int
 
 
+@dataclass
+class PreparedBattleStep:
+    """Action-phase state needed to finish an environment step exactly once."""
+
+    actions: Dict[int, int]
+    action_success: Dict[int, bool]
+    pre_elixir: Dict[int, float]
+    pre_can_spend: Dict[int, bool]
+    remaining_ticks: int
+    use_python_idle_fast_forward: bool
+
+
 class SelfPlayBattleEnv:
     """Two-player self-play environment over the battle simulator."""
 
@@ -190,12 +202,14 @@ class SelfPlayBattleEnv:
                     penalties[player_id] += 0.005
         return penalties
 
-    def step(
+    def prepare_step(
         self,
         actions: Dict[int, int],
         *,
         pre_action_masks: Optional[Dict[int, np.ndarray]] = None,
-    ) -> tuple[Dict[int, float], bool, StepInfo]:
+    ) -> PreparedBattleStep:
+        """Apply actions and capture reward inputs before a scheduled tick window."""
+
         assert self.battle is not None
 
         pre_elixir = {
@@ -227,49 +241,74 @@ class SelfPlayBattleEnv:
             success = self.action_space.apply_action(self.battle, player_id, action_id)
             action_success[player_id] = success
 
-        ticks = 0
         no_op0 = actions.get(0, self.action_space.no_op_action) == self.action_space.no_op_action
         no_op1 = actions.get(1, self.action_space.no_op_action) == self.action_space.no_op_action
-        if (
+        remaining_ticks = min(
+            self.decision_interval_ticks,
+            max(0, self.max_ticks - self.battle.tick),
+        )
+        use_python_idle_fast_forward = (
             self.simulation_backend is SimulatorBackend.PYTHON
             and self.idle_fast_forward
             and no_op0
             and no_op1
             and hasattr(self.battle, "can_fast_forward_idle")
             and self.battle.can_fast_forward_idle()
-        ):
-            remaining_ticks = min(
-                self.decision_interval_ticks,
-                max(0, self.max_ticks - self.battle.tick),
+        )
+        return PreparedBattleStep(
+            actions=dict(actions),
+            action_success=action_success,
+            pre_elixir=pre_elixir,
+            pre_can_spend=pre_can_spend,
+            remaining_ticks=remaining_ticks,
+            use_python_idle_fast_forward=use_python_idle_fast_forward,
+        )
+
+    def advance_prepared_step(self, prepared: PreparedBattleStep) -> int:
+        """Advance a prepared step through this environment's local backend."""
+
+        assert self.battle is not None
+        if prepared.remaining_ticks <= 0:
+            return 0
+        if prepared.use_python_idle_fast_forward:
+            return self.battle.fast_forward_idle_ticks(
+                prepared.remaining_ticks,
+                eligibility_checked=_USE_TRUSTED_IDLE_ELIGIBILITY,
             )
-            if remaining_ticks > 0:
-                ticks = self.battle.fast_forward_idle_ticks(
-                    remaining_ticks,
-                    eligibility_checked=_USE_TRUSTED_IDLE_ELIGIBILITY,
-                )
-        else:
-            remaining_ticks = min(
-                self.decision_interval_ticks,
-                max(0, self.max_ticks - self.battle.tick),
-            )
-            ticks = self._simulator.step_logic_ticks(
-                self.battle,
-                remaining_ticks,
-            )
+        return self._simulator.step_logic_ticks(
+            self.battle,
+            prepared.remaining_ticks,
+        )
+
+    def finish_prepared_step(
+        self,
+        prepared: PreparedBattleStep,
+        ticks: int,
+    ) -> tuple[Dict[int, float], bool, StepInfo]:
+        """Compute rewards after an externally scheduled tick window."""
+
+        assert self.battle is not None
+        if ticks < 0 or ticks > prepared.remaining_ticks:
+            raise ValueError("ticks must be within the prepared step window")
 
         done = self.battle.game_over or self.battle.tick >= self.max_ticks
         rewards = self._compute_dense_rewards()
 
         # Tiny invalid-action penalty (no-op is always valid).
         for player_id in (0, 1):
-            attempted = actions.get(player_id, self.action_space.no_op_action)
-            if attempted != self.action_space.no_op_action and not action_success.get(player_id, True):
+            attempted = prepared.actions.get(
+                player_id, self.action_space.no_op_action
+            )
+            if (
+                attempted != self.action_space.no_op_action
+                and not prepared.action_success.get(player_id, True)
+            ):
                 rewards[player_id] -= 0.01
 
         leak_penalty = self._compute_elixir_leak_penalty(
-            actions=actions,
-            pre_elixir=pre_elixir,
-            pre_can_spend=pre_can_spend,
+            actions=prepared.actions,
+            pre_elixir=prepared.pre_elixir,
+            pre_can_spend=prepared.pre_can_spend,
             done=done,
         )
         # Keep reward strictly zero-sum.
@@ -282,4 +321,20 @@ class SelfPlayBattleEnv:
                 rewards[self.battle.winner] += 1.0
                 rewards[1 - self.battle.winner] -= 1.0
 
-        return rewards, done, StepInfo(action_success=action_success, ticks_advanced=ticks)
+        return rewards, done, StepInfo(
+            action_success=prepared.action_success,
+            ticks_advanced=ticks,
+        )
+
+    def step(
+        self,
+        actions: Dict[int, int],
+        *,
+        pre_action_masks: Optional[Dict[int, np.ndarray]] = None,
+    ) -> tuple[Dict[int, float], bool, StepInfo]:
+        prepared = self.prepare_step(
+            actions,
+            pre_action_masks=pre_action_masks,
+        )
+        ticks = self.advance_prepared_step(prepared)
+        return self.finish_prepared_step(prepared, ticks)
