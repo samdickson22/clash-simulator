@@ -231,3 +231,52 @@ not executed full parity evidence. The standalone kernels likewise do not yet
 make ordinary combat tensor-native: `TensorBattleState`/executor wiring,
 mechanic callback opcodes, direct observation/reward projections, full episode
 coverage, and the production throughput requirement remain incomplete.
+
+## Serialized mechanics and manifest evidence
+
+This lane adds reviewed standalone kernels and truthful capability audits on
+top of parent tip `642e48ee`:
+
+The current combined PyTorch gate is 131 passed and one explicitly skipped
+probabilistic-status inventory test; focused mypy, Ruff F/I, and diff checks
+pass.
+
+- nested serialized status payload compilation/dispatch for
+  `SerializedOnHitBuff`, plus global `Stun` and `FreezeDebuff` payload forms;
+- serialized `Shield` damage/break events and `ArcherQueenCloak` ownership,
+  activation, death/cancel, and lifecycle deadlines;
+- recursive enabled-root spawn inventory, exact `PeriodicSpawner` clock/event
+  scheduling, and context-carrying `DeathSpawn` child plans; and
+- an exhaustive one-tick post-deployment census of all 4,356 ordered enabled
+  1v1 pairs: 400 executed entirely in tensor kernels, 3,956 used counted Python
+  fallback, and zero oracle mismatches or execution-accounting errors.
+
+The enabled manifest SHA-256 is
+`39fd5d5fe36cc7cfa69cf049de3ea2e7e00bc143ec71b14f33ead300fb4b2944`;
+the one-tick result matrix SHA-256 is
+`2f12247533d21f4927757f46b47b2a3b1a0abd82113831f2e82af58639283db6`.
+These are deployment-window results, not complete interaction or episode
+parity. Fallback rows are never counted as tensor evidence.
+
+The repository has only owners `(0, 1)`, no controller-to-team identity, and a
+two-wide tensor player axis. True four-controller team 2v2 is therefore
+structurally unsupported by both the Python oracle and tensor backend: zero of
+66 enabled-card rows qualify. Two cards deployed by each of the existing two
+owners are now labeled `cards_per_owner`, not 2v2.
+
+All 23 enabled serialized mechanic opcodes remain unintegrated in the retained
+`TensorBattleState`/executor. Five now have standalone partial or complete
+kernel slices—`ArcherQueenCloak`, `DeathSpawn`, `PeriodicSpawner`,
+`SerializedOnHitBuff`, and `Shield`—but ordinary battles containing them still
+fall back. The 18 enabled mechanic opcodes without a dedicated serialized
+kernel are `AttackRecoil`, `BanditDash`, `BattleRamCharge`,
+`CrownTowerScaling`, `DamageRamp`, `DeathAreaEffect`, `DeathDamage`,
+`ElectroDragonChainLightning`, `ElectroSpiritChain`, `HideWhenIdle`,
+`IceSpiritFreeze`, `InvisibilityWhenNotAttacking`, `MegaKnightSlam`,
+`MultipleTargetAttack`, `SpawnAreaEffect`, `SpawnPushback`,
+`UndergroundDeployment`, and `WallBreakersDemolition`. Enabled effect opcodes
+`PeriodicArea` and `ProjectileLaunch` likewise have standalone object kernels
+but no retained executor dispatch. Global Skeleton King `SpawnUnits` ability
+effects, death-child geometry/materialization, spawn travel/pushback, first-tick
+immunity/freeze inheritance, and ordered executor wiring are still explicit
+gaps.
