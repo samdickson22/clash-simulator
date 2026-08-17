@@ -102,6 +102,10 @@ class TensorObservationProjector:
     can move into the core state without changing the projection API.
     """
 
+    _SHARED_TENSOR_NAMES = frozenset(
+        {"structured_card_lookup", "cv_card_lookup", "terrain"}
+    )
+
     def __init__(
         self,
         state: TensorBattleState,
@@ -330,6 +334,42 @@ class TensorObservationProjector:
             structured_builder=structured,
             cv_builder=cv,
         )
+
+    def fork(
+        self,
+        rows: Sequence[int] | torch.Tensor,
+    ) -> TensorObservationProjector:
+        """Fork selected resident rows with isolated observation metadata.
+
+        Repeated rows support oracle fan-out. Card lookup tables, terrain, and
+        Python builder configuration are immutable and shared; every batched
+        state or metadata plane receives independent tensor storage.
+        """
+
+        row_indices = torch.as_tensor(rows, dtype=torch.int64, device=self.device)
+        forked_state = self.state.fork(row_indices)
+        forked = object.__new__(type(self))
+        for name, value in vars(self).items():
+            if name == "state":
+                setattr(forked, name, forked_state)
+                continue
+            if (
+                isinstance(value, torch.Tensor)
+                and name not in self._SHARED_TENSOR_NAMES
+            ):
+                if value.ndim == 0 or int(value.shape[0]) != self.state.batch_size:
+                    raise ValueError(
+                        f"observation metadata tensor {name} is not batch-first"
+                    )
+                setattr(forked, name, value.index_select(0, row_indices))
+                continue
+            setattr(forked, name, value)
+        return forked
+
+    def clone(self) -> TensorObservationProjector:
+        """Clone every resident projection row with isolated mutable storage."""
+
+        return self.fork(torch.arange(self.state.batch_size, device=self.device))
 
     def _perspective_entity_features(self) -> torch.Tensor:
         state = self.state

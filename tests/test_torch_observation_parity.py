@@ -6,12 +6,15 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.rl.obs_cv import CvObservationBuilder
+from clasher.rl.reward_model import objective_win_prob_p0
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.structured_obs import StructuredObservationBuilder
+from clasher.torch_sim.diagnostics import battle_snapshot, first_divergence
 from clasher.torch_sim.executor import step_idle_tensor_ticks
 from clasher.torch_sim.observations import TensorObservationProjector
 from clasher.torch_sim.state import TensorBattleState
@@ -196,3 +199,73 @@ def test_cv_projection_supports_empty_vocab_and_configurable_status_scale() -> N
 
     _assert_structured_exact(projector, [battle])
     _assert_cv_exact(projector, [battle])
+
+
+def test_tensor_observation_fork_fans_out_duplicate_rows_exactly() -> None:
+    parents = [BattleState(), BattleState(time=119.9)]
+    parent_state = TensorBattleState.from_battles(parents, max_entities=16)
+    projector = TensorObservationProjector(
+        parent_state,
+        parents,
+        structured_builder=StructuredObservationBuilder(card_vocab=[], max_entities=16),
+        cv_builder=CvObservationBuilder(card_vocab=[]),
+    )
+    children = projector.fork(torch.tensor([1, 0, 1]))
+    expected = [parents[1].clone(), parents[0].clone(), parents[1].clone()]
+
+    assert step_idle_tensor_ticks(children.state, 3).tolist() == [3, 3, 3]
+    for battle in expected:
+        assert battle.step_logic_ticks(3) == 3
+    _assert_structured_exact(children, expected)
+    _assert_cv_exact(children, expected)
+
+    assert children.state.time.data_ptr() != parent_state.time.data_ptr()
+    assert children.entity_visible.data_ptr() != projector.entity_visible.data_ptr()
+    assert children.ability_duration.data_ptr() != projector.ability_duration.data_ptr()
+    assert children.terrain.data_ptr() == projector.terrain.data_ptr()
+    assert children.structured_card_lookup.data_ptr() == (
+        projector.structured_card_lookup.data_ptr()
+    )
+
+    children.state.time[0] += 1.0
+    children.entity_stun[0, 0] = 1.0
+    assert float(children.state.time[2].item()) != float(children.state.time[0].item())
+    assert float(parent_state.time[1].item()) == parents[1].time
+    assert float(children.entity_stun[2, 0].item()) == 0.0
+    assert float(projector.entity_stun[1, 0].item()) == 0.0
+
+
+def test_complete_idle_episode_observations_and_outcome_remain_tensor_resident() -> (
+    None
+):
+    source = BattleState()
+    expected = source.clone()
+    state = TensorBattleState.from_battles([source], max_entities=16)
+    projector = TensorObservationProjector(
+        state,
+        [source],
+        structured_builder=StructuredObservationBuilder(card_vocab=[], max_entities=16),
+        cv_builder=CvObservationBuilder(card_vocab=[]),
+    )
+
+    total_tensor_ticks = 0
+    total_python_ticks = 0
+    # Observe both sides of every standard phase boundary through the full
+    # five-minute draw. The tensor path never returns to Python for stepping.
+    for ticks in (2399, 1, 1199, 1, 1199, 1, 1199, 1):
+        python_ticks = expected.step_logic_ticks(ticks)
+        tensor_ticks = int(step_idle_tensor_ticks(state, ticks).item())
+        assert tensor_ticks == python_ticks == ticks
+        total_python_ticks += python_ticks
+        total_tensor_ticks += tensor_ticks
+        _assert_structured_exact(projector, [expected])
+        _assert_cv_exact(projector, [expected])
+
+    actual = source.clone()
+    state.sync_to_battles([actual])
+    mismatch = first_divergence(battle_snapshot(expected), battle_snapshot(actual))
+    assert mismatch is None, str(mismatch)
+    assert total_tensor_ticks == total_python_ticks == 6000
+    assert actual.game_over is True
+    assert actual.winner is None
+    assert objective_win_prob_p0(actual) == objective_win_prob_p0(expected) == 0.5
