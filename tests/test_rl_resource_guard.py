@@ -54,6 +54,21 @@ def test_process_inspection_excludes_current_process_family() -> None:
     assert claims == ()
 
 
+def test_process_inspection_does_not_exclude_clasher_sibling_of_ancestor() -> None:
+    processes = (
+        ProcessRecord(200, 1, "/Applications/Codex app-server"),
+        ProcessRecord(201, 200, "/bin/zsh owned-command"),
+        ProcessRecord(202, 201, "/usr/bin/python3 -c owned-probe"),
+        ProcessRecord(203, 200, DESKTOP_COMMAND),
+    )
+
+    claims = inspect_competing_claims(
+        processes, current_pid=202, auto_uses_mps=True
+    )
+
+    assert [claim.pid for claim in claims] == [203]
+
+
 def test_process_inspection_parses_unified_recurrent_launcher() -> None:
     command = (
         "/usr/bin/python3 run_clasher.py train -- --actor-workers 12 "
