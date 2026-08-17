@@ -323,13 +323,23 @@ class SelfPlayBattleEnv:
         *,
         pre_action_masks: Optional[Dict[int, np.ndarray]] = None,
     ) -> tuple[Dict[int, float], bool, StepInfo]:
-        return step_selfplay_envs(
-            [self],
-            [actions],
-            pre_action_masks=(
-                None if pre_action_masks is None else [pre_action_masks]
-            ),
-        )[0]
+        prepared = self._prepare_step(
+            actions,
+            pre_action_masks=pre_action_masks,
+        )
+        assert self.battle is not None
+        if self._can_fast_forward_prepared_idle(prepared):
+            if prepared.remaining_ticks > 0:
+                prepared.ticks_advanced = self.battle.fast_forward_idle_ticks(
+                    prepared.remaining_ticks,
+                    eligibility_checked=_USE_TRUSTED_IDLE_ELIGIBILITY,
+                )
+        else:
+            prepared.ticks_advanced = self._simulator.step_logic_ticks(
+                self.battle,
+                prepared.remaining_ticks,
+            )
+        return self._finish_step(prepared)
 
 
 def step_selfplay_envs(
