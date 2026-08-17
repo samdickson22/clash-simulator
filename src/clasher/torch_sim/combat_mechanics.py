@@ -62,6 +62,10 @@ SUPPORTED_MECHANIC_NAMES = tuple(
 )
 
 
+class UnsupportedCombatMechanicDeviceError(RuntimeError):
+    """Raised before allocation when exact float64 mechanics are unavailable."""
+
+
 def _serialized_multiplier(value: object, default: float = 1.0) -> float:
     if value is None:
         return default
@@ -195,6 +199,10 @@ class TensorCombatMechanicCatalog:
             ),
         )
         torch_device = torch.device(device)
+        if torch_device.type not in {"cpu", "cuda"}:
+            raise UnsupportedCombatMechanicDeviceError(
+                "exact combat mechanics support CPU and CUDA only"
+            )
         shape = (len(names), maximum)
 
         def zeros(dtype: torch.dtype, *suffix: int) -> torch.Tensor:
@@ -791,6 +799,7 @@ def emit_area_damage_events(
     stun_duration_ms: torch.Tensor | None = None,
     knockback_units: torch.Tensor | None = None,
     payload_opcode: int | torch.Tensor = 0,
+    source_enabled: torch.Tensor | None = None,
 ) -> torch.Tensor:
     targets = targets_in_native_area(
         world,
@@ -801,6 +810,8 @@ def emit_area_damage_events(
         hits_air=hits_air,
         hits_ground=hits_ground,
     )
+    if source_enabled is not None:
+        targets &= source_enabled.to(device=world.device)[:, None]
     order = torch.argsort(
         torch.where(
             targets,
@@ -990,6 +1001,7 @@ def emit_death_damage_events(
         hits_ground=catalog.hits_ground[ids, slot],
         knockback_units=catalog.knockback_units[ids, slot],
         payload_opcode=CombatMechanicOpcode.DEATH_DAMAGE,
+        source_enabled=present,
     )
     return targets & present[:, None]
 
@@ -1023,5 +1035,6 @@ def emit_ice_spirit_freeze_events(
         hits_ground=torch.ones_like(present),
         stun_duration_ms=catalog.chain_stun_ms[ids, slot],
         payload_opcode=CombatMechanicOpcode.ICE_SPIRIT_FREEZE,
+        source_enabled=present,
     )
     return targets & present[:, None]

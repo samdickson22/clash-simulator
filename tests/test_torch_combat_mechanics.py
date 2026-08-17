@@ -20,6 +20,7 @@ from clasher.torch_sim.combat_mechanics import (
     TensorDamageRampState,
     TensorMechanicEvents,
     TensorMechanicWorld,
+    UnsupportedCombatMechanicDeviceError,
     apply_crown_tower_scaling,
     emit_area_damage_events,
     emit_area_spawn_events,
@@ -176,6 +177,13 @@ def test_crown_scaling_matches_python_native_arithmetic_on_cpu_and_cuda(
     # Explicit values and native ceiling percentage share the same kernel.
     multiplier = torch.tensor([0.2], dtype=torch.float64)
     assert native_percent_damage(195, multiplier.item()) == 39
+
+
+def test_mps_fails_closed_before_exact_catalog_allocation() -> None:
+    if not torch.backends.mps.is_available():
+        pytest.skip("MPS is unavailable on this host")
+    with pytest.raises(UnsupportedCombatMechanicDeviceError):
+        _catalog("Miner", device="mps")
 
 
 def test_damage_ramp_target_clock_reset_and_stages_match_python_mechanic() -> None:
