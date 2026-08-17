@@ -24,6 +24,7 @@ from clasher.paths import (
     decks_path as resolve_decks_path,
 )
 
+from .cuda_training_config import validate_cuda_simulation_topology
 from .model import ClasherPolicy, PolicyConfig, PolicyInputs
 from .resource_guard import guard_training_resources
 from .selfplay_env import BatchedSelfPlayStepper, SelfPlayBattleEnv
@@ -1307,6 +1308,12 @@ def main() -> None:
         raise ValueError("actor_workers must be between 1 and num_envs")
     if args.actor_threads <= 0:
         raise ValueError("actor_threads must be positive")
+    simulation_topology = validate_cuda_simulation_topology(
+        simulation_device=args.simulation_device,
+        actor_workers=args.actor_workers,
+        num_envs=args.num_envs,
+        actor_device=args.actor_device,
+    )
     if args.resource_reserve_cpus < 0:
         raise ValueError("resource_reserve_cpus must be non-negative")
     if args.opponent_mode == "checkpoint" and not args.opponent_checkpoint:
@@ -1488,6 +1495,7 @@ def main() -> None:
         f"learner_device={learner_device} actor_device={actor_device} "
         f"simulation_device={args.simulation_device}"
     )
+    print(simulation_topology.summary())
     print(resource_allocation.summary())
     print(f"decks_path={decks_path}")
     print(f"checkpoint_dir={directory}")
