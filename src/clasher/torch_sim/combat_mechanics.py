@@ -94,15 +94,22 @@ def _first_action_spawn(value: object) -> dict[str, object] | None:
     return None
 
 
-def _resolved_area_data(raw: object) -> tuple[dict[str, object], int]:
+def _resolved_area_data(raw: object) -> tuple[dict[str, object], int, bool]:
     if not isinstance(raw, dict):
-        return {}, 0
+        return {}, 0, False
     action = _first_action_spawn(raw.get("onStartingActionData"))
     nested = action.get("deathAreaEffectData") if action is not None else None
     if isinstance(nested, dict):
         assert action is not None
-        return nested, int(_number(action.get("deployTime", 0)))
-    return raw, 0
+        return nested, int(_number(action.get("deployTime", 0))), True
+    buff = raw.get("buffData")
+    unsupported_buff = isinstance(buff, dict) and any(
+        key in buff for key in ("healPerSecond", "spawnCharacterData")
+    )
+    supported = (
+        action is None and "spawnCharacterData" not in raw and not unsupported_buff
+    )
+    return raw, 0, supported
 
 
 @dataclass(frozen=True)
@@ -142,6 +149,7 @@ class TensorCombatMechanicCatalog:
     area_attack_multiplier: torch.Tensor
     area_spawn_multiplier: torch.Tensor
     area_affects_hidden: torch.Tensor
+    area_payload_supported: torch.Tensor
 
     @property
     def max_mechanics(self) -> int:
@@ -224,6 +232,7 @@ class TensorCombatMechanicCatalog:
         area_attack = torch.ones(shape, dtype=torch.float64, device=torch_device)
         area_spawn = torch.ones(shape, dtype=torch.float64, device=torch_device)
         area_hidden = zeros(torch.bool)
+        area_supported = zeros(torch.bool)
 
         for card_id, name in enumerate(resolved, start=1):
             card = loader.get_card(name)
@@ -270,11 +279,9 @@ class TensorCombatMechanicCatalog:
                         operation.chain_range
                     )
                     chain_count[card_id, slot] = int(
-                        getattr(
-                            operation,
-                            "max_targets",
-                            getattr(operation, "max_bounces", 0) + 1,
-                        )
+                        max(0, operation.max_targets - 1)
+                        if hasattr(operation, "max_targets")
+                        else max(0, getattr(operation, "max_bounces", 0))
                     )
                     chain_decay[card_id, slot] = operation.damage_decay
                     chain_stun[card_id, slot] = operation.stun_duration_ms
@@ -297,7 +304,10 @@ class TensorCombatMechanicCatalog:
                     multiple_all[card_id, slot] = operation.all_targets_hit
                     multiple_scale[card_id, slot] = operation.damage_scale
                 elif mechanic_name in {"DeathAreaEffect", "SpawnAreaEffect"}:
-                    raw, delay_ms = _resolved_area_data(operation.area_data)
+                    raw, delay_ms, payload_supported = _resolved_area_data(
+                        operation.area_data
+                    )
+                    area_supported[card_id, slot] = payload_supported
                     radius[card_id, slot] = int(_number(raw.get("radius", 0)))
                     area_duration[card_id, slot] = max(
                         1, int(_number(raw.get("lifeDuration", 0)))
@@ -370,6 +380,7 @@ class TensorCombatMechanicCatalog:
             area_attack_multiplier=area_attack,
             area_spawn_multiplier=area_spawn,
             area_affects_hidden=area_hidden,
+            area_payload_supported=area_supported,
         )
 
     def mechanic_slot(
@@ -626,8 +637,11 @@ def _symmetric_nearest(
     owner: torch.Tensor,
 ) -> torch.Tensor:
     large = torch.iinfo(torch.int64).max
-    minimum = torch.where(valid, distance_sq, large).amin(dim=1)
-    tied = valid & (distance_sq == minimum[:, None])
+    distance = torch.sqrt(distance_sq.to(torch.float64)) / 1_000.0
+    minimum = torch.where(valid, distance, torch.full_like(distance, torch.inf)).amin(
+        dim=1
+    )
+    tied = valid & (distance <= minimum[:, None] + 1e-6)
     direction = torch.where(owner == 0, 1, -1).to(torch.int64)[:, None]
     x_key = direction * (world.x_units.to(torch.int64) - 9_000)
     minimum_x = torch.where(tied, x_key, large).amin(dim=1)
@@ -843,6 +857,7 @@ def emit_area_spawn_events(
 ) -> torch.Tensor:
     slot, present = catalog.mechanic_slot(card_ids, trigger)
     ids = card_ids.to(device=catalog.device, dtype=torch.int64)
+    present &= catalog.area_payload_supported[ids, slot]
     opcode = (
         MechanicEventOpcode.DEATH_AREA
         if trigger == CombatMechanicOpcode.DEATH_AREA
@@ -858,3 +873,155 @@ def emit_area_spawn_events(
         payload_opcode=int(trigger),
     )
     return present
+
+
+def emit_chain_lightning_events(
+    events: TensorMechanicEvents,
+    world: TensorMechanicWorld,
+    catalog: TensorCombatMechanicCatalog,
+    *,
+    card_ids: torch.Tensor,
+    source_id: torch.Tensor,
+    owner: torch.Tensor,
+    origin_x_units: torch.Tensor,
+    origin_y_units: torch.Tensor,
+    visited: torch.Tensor,
+    damage: torch.Tensor,
+    trigger: CombatMechanicOpcode,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Commit a serialized chain in nearest-target hop order."""
+
+    if trigger not in {
+        CombatMechanicOpcode.ELECTRO_DRAGON_CHAIN,
+        CombatMechanicOpcode.ELECTRO_SPIRIT_CHAIN,
+    }:
+        raise ValueError("trigger is not a chain-lightning mechanic")
+    slot, present = catalog.mechanic_slot(card_ids, trigger)
+    ids = card_ids.to(device=catalog.device, dtype=torch.int64)
+    count = catalog.chain_count[ids, slot]
+    maximum = max(0, int(count.max().item()))
+    selected, valid = select_chain_targets(
+        world,
+        owner=owner,
+        origin_x_units=origin_x_units,
+        origin_y_units=origin_y_units,
+        visited=visited,
+        chain_range_units=catalog.chain_range_units[ids, slot],
+        maximum_targets=maximum,
+    )
+    index = torch.arange(maximum, device=world.device)
+    valid &= present[:, None] & (index < count[:, None])
+    events.append(
+        valid=valid,
+        opcode=MechanicEventOpcode.CHAIN_LIGHTNING,
+        source_id=source_id[:, None],
+        target_id=selected,
+        amount=(damage.to(torch.float64) * catalog.chain_damage_decay[ids, slot])[
+            :, None
+        ],
+        duration_ms=catalog.chain_stun_ms[ids, slot][:, None],
+        radius_units=catalog.chain_range_units[ids, slot][:, None],
+        payload_opcode=int(trigger),
+    )
+    return selected, valid
+
+
+def emit_multiple_target_events(
+    events: TensorMechanicEvents,
+    world: TensorMechanicWorld,
+    catalog: TensorCombatMechanicCatalog,
+    *,
+    card_ids: torch.Tensor,
+    source_id: torch.Tensor,
+    owner: torch.Tensor,
+    origin_x_units: torch.Tensor,
+    origin_y_units: torch.Tensor,
+    primary_id: torch.Tensor,
+    damage: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    slot, present = catalog.mechanic_slot(
+        card_ids, CombatMechanicOpcode.MULTIPLE_TARGET
+    )
+    ids = card_ids.to(device=catalog.device, dtype=torch.int64)
+    selected, valid = select_multiple_targets(
+        world,
+        owner=owner,
+        origin_x_units=origin_x_units,
+        origin_y_units=origin_y_units,
+        primary_id=primary_id,
+        target_count=catalog.multiple_target_count[ids, slot],
+        all_targets_hit=catalog.multiple_all_hit[ids, slot],
+    )
+    valid &= present[:, None]
+    events.append(
+        valid=valid,
+        opcode=MechanicEventOpcode.SECONDARY_HIT,
+        source_id=source_id[:, None],
+        target_id=selected,
+        amount=(damage * catalog.multiple_damage_scale[ids, slot])[:, None],
+        payload_opcode=int(CombatMechanicOpcode.MULTIPLE_TARGET),
+    )
+    return selected, valid
+
+
+def emit_death_damage_events(
+    events: TensorMechanicEvents,
+    world: TensorMechanicWorld,
+    catalog: TensorCombatMechanicCatalog,
+    *,
+    card_ids: torch.Tensor,
+    source_id: torch.Tensor,
+    owner: torch.Tensor,
+    center_x_units: torch.Tensor,
+    center_y_units: torch.Tensor,
+) -> torch.Tensor:
+    slot, present = catalog.mechanic_slot(card_ids, CombatMechanicOpcode.DEATH_DAMAGE)
+    ids = card_ids.to(device=catalog.device, dtype=torch.int64)
+    targets = emit_area_damage_events(
+        events,
+        world,
+        source_id=source_id,
+        owner=owner,
+        center_x_units=center_x_units,
+        center_y_units=center_y_units,
+        radius_units=catalog.radius_units[ids, slot],
+        damage=catalog.damage[ids, slot],
+        hits_air=catalog.hits_air[ids, slot],
+        hits_ground=catalog.hits_ground[ids, slot],
+        knockback_units=catalog.knockback_units[ids, slot],
+        payload_opcode=CombatMechanicOpcode.DEATH_DAMAGE,
+    )
+    return targets & present[:, None]
+
+
+def emit_ice_spirit_freeze_events(
+    events: TensorMechanicEvents,
+    world: TensorMechanicWorld,
+    catalog: TensorCombatMechanicCatalog,
+    *,
+    card_ids: torch.Tensor,
+    source_id: torch.Tensor,
+    owner: torch.Tensor,
+    center_x_units: torch.Tensor,
+    center_y_units: torch.Tensor,
+    damage: torch.Tensor,
+) -> torch.Tensor:
+    slot, present = catalog.mechanic_slot(
+        card_ids, CombatMechanicOpcode.ICE_SPIRIT_FREEZE
+    )
+    ids = card_ids.to(device=catalog.device, dtype=torch.int64)
+    targets = emit_area_damage_events(
+        events,
+        world,
+        source_id=source_id,
+        owner=owner,
+        center_x_units=center_x_units,
+        center_y_units=center_y_units,
+        radius_units=catalog.radius_units[ids, slot],
+        damage=damage,
+        hits_air=torch.ones_like(present),
+        hits_ground=torch.ones_like(present),
+        stun_duration_ms=catalog.chain_stun_ms[ids, slot],
+        payload_opcode=CombatMechanicOpcode.ICE_SPIRIT_FREEZE,
+    )
+    return targets & present[:, None]

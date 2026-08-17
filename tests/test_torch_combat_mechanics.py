@@ -23,6 +23,10 @@ from clasher.torch_sim.combat_mechanics import (
     apply_crown_tower_scaling,
     emit_area_damage_events,
     emit_area_spawn_events,
+    emit_chain_lightning_events,
+    emit_death_damage_events,
+    emit_ice_spirit_freeze_events,
+    emit_multiple_target_events,
     select_chain_targets,
     select_multiple_targets,
     targets_in_native_area,
@@ -129,6 +133,28 @@ def test_catalog_compiles_every_named_factory_mechanic_without_card_branches() -
         422,
     ]
 
+    for name, expected_support in {
+        "ElectroWizard": True,
+        "Lumberjack": True,
+        "BattleHealer": False,
+        "TriWizards": False,
+        "SuspiciousBush": False,
+    }.items():
+        card_id = catalog.name_to_id[name]
+        area_mask = torch.isin(
+            catalog.opcode[card_id],
+            torch.tensor(
+                [
+                    CombatMechanicOpcode.SPAWN_AREA,
+                    CombatMechanicOpcode.DEATH_AREA,
+                ]
+            ),
+        )
+        area_slot = int(area_mask.to(torch.int64).argmax().item())
+        assert (
+            bool(catalog.area_payload_supported[card_id, area_slot]) is expected_support
+        )
+
 
 def test_crown_scaling_matches_python_native_arithmetic_on_cpu_and_cuda(
     tensor_device: str,
@@ -203,6 +229,47 @@ def test_chain_selection_uses_native_owner_relative_ties_and_visited_order() -> 
     # the lower world X, then continues from each committed impact origin.
     assert selected.tolist() == [[20, 30, 50, 0]]
     assert valid.tolist() == [[True, True, True, False]]
+
+
+def test_serialized_chain_and_secondary_hit_dispatch_keep_committed_order() -> None:
+    world = _world()
+    catalog = _catalog("ElectroDragon", "ElectroWizard")
+    events = TensorMechanicEvents.empty(1, 16)
+    dragon = torch.tensor([catalog.name_to_id["ElectroDragon"]])
+    selected, valid = emit_chain_lightning_events(
+        events,
+        world,
+        catalog,
+        card_ids=dragon,
+        source_id=torch.tensor([10]),
+        owner=torch.tensor([0]),
+        origin_x_units=torch.tensor([8_000]),
+        origin_y_units=torch.tensor([10_000]),
+        visited=world.entity_id == 20,
+        damage=torch.tensor([100.0]),
+        trigger=CombatMechanicOpcode.ELECTRO_DRAGON_CHAIN,
+    )
+    assert selected[0][valid[0]].tolist() == [30, 50]
+    assert events.target_id[0, : events.count[0]].tolist() == [30, 50]
+    assert events.duration_ms[0, : events.count[0]].tolist() == [300, 300]
+
+    events = TensorMechanicEvents.empty(1, 8)
+    wizard = torch.tensor([catalog.name_to_id["ElectroWizard"]])
+    secondary, secondary_valid = emit_multiple_target_events(
+        events,
+        world,
+        catalog,
+        card_ids=wizard,
+        source_id=torch.tensor([10]),
+        owner=torch.tensor([0]),
+        origin_x_units=torch.tensor([9_000]),
+        origin_y_units=torch.tensor([10_000]),
+        primary_id=torch.tensor([20]),
+        damage=torch.tensor([192.0]),
+    )
+    assert secondary[0][secondary_valid[0]].tolist() == [30]
+    assert events.opcode[0, 0].item() == MechanicEventOpcode.SECONDARY_HIT
+    assert events.amount[0, 0].item() == 192
 
 
 def test_multiple_target_selection_repeats_primary_only_when_serialized() -> None:
@@ -299,6 +366,26 @@ def test_death_damage_and_ice_freeze_event_families_keep_target_id_order() -> No
     # second status/knockback query.
     assert events.duration_ms[0, :count].tolist() == [0, 0, 1_200, 0]
 
+    ice_catalog = _catalog("IceSpirit")
+    ice_events = TensorMechanicEvents.empty(1, 16)
+    ice_targets = emit_ice_spirit_freeze_events(
+        ice_events,
+        world,
+        ice_catalog,
+        card_ids=torch.tensor([ice_catalog.name_to_id["IceSpirit"]]),
+        source_id=torch.tensor([10]),
+        owner=torch.tensor([0]),
+        center_x_units=torch.tensor([9_000]),
+        center_y_units=torch.tensor([10_000]),
+        damage=torch.tensor([120.0]),
+    )
+    assert ice_targets[0, :3].tolist() == [False, True, True]
+    assert ice_events.opcode[0, : ice_events.count[0]].tolist() == [
+        MechanicEventOpcode.DAMAGE,
+        MechanicEventOpcode.DAMAGE,
+        MechanicEventOpcode.STUN,
+    ]
+
 
 def test_death_damage_payload_matches_python_mechanic_damage_and_targets() -> None:
     battle = BattleState(fast_path=False)
@@ -331,23 +418,21 @@ def test_death_damage_payload_matches_python_mechanic_damage_and_targets() -> No
     world.collision_radius_units[0] = 500
     world.hp[0] = 500
     events = TensorMechanicEvents.empty(1, 8)
-    emit_area_damage_events(
+    emitted_targets = emit_death_damage_events(
         events,
         world,
+        catalog,
+        card_ids=torch.tensor([card_id]),
         source_id=torch.tensor([10]),
         owner=torch.tensor([0]),
         center_x_units=torch.tensor([9_000]),
         center_y_units=torch.tensor([10_000]),
-        radius_units=catalog.radius_units[card_id, slot][None].flatten(),
-        damage=catalog.damage[card_id, slot][None].flatten(),
-        hits_air=catalog.hits_air[card_id, slot][None].flatten(),
-        hits_ground=catalog.hits_ground[card_id, slot][None].flatten(),
-        payload_opcode=CombatMechanicOpcode.DEATH_DAMAGE,
     )
 
     expected_damage = before[20] - left.hitpoints
     assert expected_damage == before[30] - right.hitpoints
     assert expected_damage == catalog.damage[card_id, slot_index].item()
+    assert emitted_targets.tolist() == [[False, True, True]]
     assert events.target_id[0, : events.count[0]].tolist() == [20, 30]
     assert events.amount[0, : events.count[0]].tolist() == [
         expected_damage,
@@ -416,3 +501,28 @@ def test_spawn_and_death_area_events_expose_serialized_payloads() -> None:
     assert events.radius_units[:, 0].tolist() == [3_000, 3_000]
     assert events.duration_ms[:, 0].tolist() == [1, 5_500]
     assert events.amount[:, 0].tolist() == [192, 0]
+
+
+def test_deterministic_mechanic_kernels_do_not_consume_torch_rng() -> None:
+    torch.manual_seed(849_221)
+    before = torch.random.get_rng_state().clone()
+    world = _world()
+    select_chain_targets(
+        world,
+        owner=torch.tensor([0]),
+        origin_x_units=torch.tensor([9_000]),
+        origin_y_units=torch.tensor([10_000]),
+        visited=world.entity_id == 10,
+        chain_range_units=torch.tensor([4_000]),
+        maximum_targets=4,
+    )
+    select_multiple_targets(
+        world,
+        owner=torch.tensor([0]),
+        origin_x_units=torch.tensor([9_000]),
+        origin_y_units=torch.tensor([10_000]),
+        primary_id=torch.tensor([20]),
+        target_count=torch.tensor([3]),
+        all_targets_hit=torch.tensor([False]),
+    )
+    assert torch.equal(torch.random.get_rng_state(), before)
