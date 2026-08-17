@@ -13,7 +13,7 @@ contract auditable before later RNG-consuming phases are integrated.
 from __future__ import annotations
 
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import IntEnum
 
 import torch
@@ -435,6 +435,13 @@ def _transition_events(
         return TensorPassiveEvents.empty(state.device)
     batch = coordinates[:, 0]
     entity = coordinates[:, 1]
+    order = torch.arange(batch.numel(), device=state.device)
+    for key in (state.entity_id[batch, entity], batch):
+        order = order.index_select(
+            0, torch.argsort(key.index_select(0, order), stable=True)
+        )
+    batch = batch.index_select(0, order)
+    entity = entity.index_select(0, order)
     count = batch.numel()
     zeros = torch.zeros(count, dtype=torch.int64, device=state.device)
     return TensorPassiveEvents(
@@ -730,7 +737,13 @@ def consume_souls_(
         state, consumed, slot, PassiveEventOpcode.SOULS_CONSUMED
     )
     if events.amount.numel():
-        object.__setattr__(events, "amount", threshold[consumed].to(torch.float64))
+        source_matches = (
+            state.entity_id.index_select(0, events.batch_index)
+            == events.source_entity_id[:, None]
+        )
+        source_slot = source_matches.to(torch.int64).argmax(dim=1)
+        amount = threshold[events.batch_index, source_slot].to(torch.float64)
+        events = replace(events, amount=amount)
     return events
 
 
@@ -749,10 +762,21 @@ def plan_soul_drops(
         torch.as_tensor(died, dtype=torch.bool, device=state.device), state.shape
     )
     drop_count = torch.clamp(state.souls_collected // 2, min=0, max=10)
-    coordinates = torch.nonzero(selected & (drop_count > 0), as_tuple=False)
-    if not coordinates.numel():
+    eligible = selected & (drop_count > 0)
+    maximum_id = torch.iinfo(torch.int64).max
+    order = torch.argsort(torch.where(eligible, state.entity_id, maximum_id), dim=1)
+    ordered = eligible.gather(1, order)
+    ranked_coordinates = torch.nonzero(ordered, as_tuple=False)
+    if not ranked_coordinates.numel():
         return TensorPassiveEvents.empty(state.device)
-    counts = drop_count[selected & (drop_count > 0)]
+    coordinates = torch.stack(
+        (
+            ranked_coordinates[:, 0],
+            order[ranked_coordinates[:, 0], ranked_coordinates[:, 1]],
+        ),
+        dim=1,
+    )
+    counts = drop_count[coordinates[:, 0], coordinates[:, 1]]
     repeated = coordinates.repeat_interleave(counts, dim=0)
     local = torch.cat(
         [torch.arange(int(count), device=state.device) for count in counts.tolist()]
