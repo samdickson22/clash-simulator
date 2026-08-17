@@ -4,12 +4,14 @@ from __future__ import annotations
 
 from collections import deque
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 
 import torch
 
 from clasher.battle import BattleState
 from clasher.kinematics import tiles_to_logic_units
+
+from .rng import TensorPythonRandom
 
 WINNER_IN_PROGRESS = -2
 WINNER_DRAW = -1
@@ -27,10 +29,16 @@ class TensorBattleState:
     """
 
     device: torch.device
+    rng: TensorPythonRandom
     card_names: tuple[str, ...]
     card_to_id: dict[str, int]
     time: torch.Tensor
     tick: torch.Tensor
+    dt: torch.Tensor
+    double_elixir_start_time: torch.Tensor
+    overtime_start_time: torch.Tensor
+    triple_elixir_start_time: torch.Tensor
+    tiebreaker_time: torch.Tensor
     active: torch.Tensor
     double_elixir: torch.Tensor
     triple_elixir: torch.Tensor
@@ -116,10 +124,18 @@ class TensorBattleState:
 
         state = cls(
             device=torch_device,
+            rng=TensorPythonRandom.from_randoms(
+                [battle.rng for battle in battles], device=torch_device
+            ),
             card_names=card_names,
             card_to_id=card_to_id,
             time=zeros(batch, dtype=torch.float64),
             tick=zeros(batch, dtype=torch.int64),
+            dt=zeros(batch, dtype=torch.float64),
+            double_elixir_start_time=zeros(batch, dtype=torch.float64),
+            overtime_start_time=zeros(batch, dtype=torch.float64),
+            triple_elixir_start_time=zeros(batch, dtype=torch.float64),
+            tiebreaker_time=zeros(batch, dtype=torch.float64),
             active=torch.ones(batch, dtype=torch.bool, device=torch_device),
             double_elixir=zeros(batch, dtype=torch.bool),
             triple_elixir=zeros(batch, dtype=torch.bool),
@@ -171,6 +187,9 @@ class TensorBattleState:
     def load_battles(self, battles: Sequence[BattleState]) -> None:
         if len(battles) != self.batch_size:
             raise ValueError("battle count does not match tensor batch")
+        self.rng = TensorPythonRandom.from_randoms(
+            [battle.rng for battle in battles], device=self.device
+        )
         self.entity_active.zero_()
         self.entity_id.zero_()
         self.entity_kind.zero_()
@@ -195,6 +214,15 @@ class TensorBattleState:
         for batch_index, battle in enumerate(battles):
             self.time[batch_index] = battle.time
             self.tick[batch_index] = battle.tick
+            self.dt[batch_index] = battle.dt
+            self.double_elixir_start_time[batch_index] = (
+                battle.double_elixir_start_time
+            )
+            self.overtime_start_time[batch_index] = battle.overtime_start_time
+            self.triple_elixir_start_time[batch_index] = (
+                battle.triple_elixir_start_time
+            )
+            self.tiebreaker_time[batch_index] = battle.tiebreaker_time
             self.active[batch_index] = not battle.game_over
             self.double_elixir[batch_index] = battle.double_elixir
             self.triple_elixir[batch_index] = battle.triple_elixir
@@ -281,10 +309,62 @@ class TensorBattleState:
                     getattr(entity, "_tower_active", False)
                 )
 
+    def fork(
+        self,
+        rows: Sequence[int] | torch.Tensor,
+    ) -> TensorBattleState:
+        """Fork selected battles into independently mutable tensor rows.
+
+        Repeated row indices are allowed, which is the primitive needed to
+        fan one oracle node out into several candidate actions.  Immutable
+        card-name metadata is shared; every mutable tensor and RNG stream owns
+        new storage.
+        """
+
+        row_indices = torch.as_tensor(rows, dtype=torch.int64, device=self.device)
+        if row_indices.ndim != 1:
+            raise ValueError("fork rows must be a one-dimensional sequence")
+        if bool(((row_indices < 0) | (row_indices >= self.batch_size)).any().item()):
+            raise IndexError("fork row is outside the battle batch")
+
+        values: dict[str, object] = {}
+        for state_field in fields(self):
+            name = state_field.name
+            value = getattr(self, name)
+            if name in {"device", "card_names", "card_to_id"}:
+                values[name] = value
+            elif name == "rng":
+                values[name] = self.rng.fork(row_indices)
+            else:
+                if not isinstance(value, torch.Tensor):
+                    raise TypeError(f"unexpected mutable tensor-state field {name}")
+                if value.ndim == 0 or int(value.shape[0]) != self.batch_size:
+                    raise ValueError(f"tensor-state field {name} is not batch-first")
+                values[name] = value.index_select(0, row_indices)
+        return type(self)(**values)  # type: ignore[arg-type]
+
+    def clone(self) -> TensorBattleState:
+        """Clone the complete resident batch with isolated mutable storage."""
+
+        return self.fork(torch.arange(self.batch_size, device=self.device))
+
     def clocks_match(self, battle: BattleState, batch_index: int = 0) -> bool:
         return (
             int(self.tick[batch_index].item()) == battle.tick
             and float(self.time[batch_index].item()) == battle.time
+            # A Python-side draw does not advance either clock.  Include the
+            # complete MT19937 state so retained tensor rows cannot overwrite
+            # externally consumed randomness on the next synchronization.
+            and self.rng.python_state(batch_index) == battle.rng.getstate()
+            and float(self.dt[batch_index].item()) == battle.dt
+            and float(self.double_elixir_start_time[batch_index].item())
+            == battle.double_elixir_start_time
+            and float(self.overtime_start_time[batch_index].item())
+            == battle.overtime_start_time
+            and float(self.triple_elixir_start_time[batch_index].item())
+            == battle.triple_elixir_start_time
+            and float(self.tiebreaker_time[batch_index].item())
+            == battle.tiebreaker_time
             and tuple(
                 int(value)
                 for value in self.entity_id[batch_index][
@@ -362,3 +442,4 @@ class TensorBattleState:
                         batch_index, entity_index
                     ].item()
                 )
+        self.rng.sync_to_randoms([battle.rng for battle in battles])
