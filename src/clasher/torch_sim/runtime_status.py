@@ -403,7 +403,7 @@ def step_runtime_status_phase_(
         & runtime.phases.supported[:, TickPhase.STATUS]
     )
     supported = selected & runtime.supported & phase_support
-    if runtime.device.type != "cpu":
+    if runtime.device.type not in {"cpu", "cuda"}:
         supported &= False
 
     entity_card = runtime.battle.entity_card.clamp_min(0)

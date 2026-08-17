@@ -530,6 +530,21 @@ def test_complete_executor_fails_closed_on_mps_float64_state() -> None:
     assert executor.metrics_dict()["unsupported_fallbacks"] == 1
 
 
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
+def test_complete_executor_runs_exact_tensor_batch_on_cuda() -> None:
+    expected = BattleState()
+    actual = expected.clone()
+    expected.step_logic_ticks(8)
+
+    executor = TorchBattleExecutor("pytorch", device="cuda")
+    assert executor.step_logic_ticks(actual, 8) == 8
+
+    _assert_exact_battle_match(expected, actual)
+    assert executor.metrics_dict()["tensor_ticks"] == 8
+    assert executor.metrics_dict()["python_ticks"] == 0
+    assert executor.metrics_dict()["unsupported_fallbacks"] == 0
+
+
 def test_deploying_troop_in_enemy_tower_sight_uses_complete_combat_tick() -> None:
     battle = BattleState(fast_path=False)
     tower = battle.entities[4]

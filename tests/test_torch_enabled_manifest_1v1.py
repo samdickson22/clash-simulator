@@ -15,7 +15,7 @@ def test_exhaustive_enabled_one_vs_one_capability_matrix_is_exactly_accounted() 
         "39fd5d5fe36cc7cfa69cf049de3ea2e7e00bc143ec71b14f33ead300fb4b2944"
     )
     assert summary["matrix_sha256"] == (
-        "2f12247533d21f4927757f46b47b2a3b1a0abd82113831f2e82af58639283db6"
+        "004f2b1b48c41b8d72cda2737ec8ac25cccab3db2248af80629f6da1d9051ad7"
     )
     assert summary["oracle_mismatches"] == 0
     assert summary["execution_error_pairs"] == 0
@@ -24,8 +24,8 @@ def test_exhaustive_enabled_one_vs_one_capability_matrix_is_exactly_accounted() 
         summary["tensor_executed_exact_pairs"] + summary["counted_fallback_pairs"]
         == summary["ordered_pair_count"]
     )
-    assert summary["tensor_executed_exact_pairs"] == 400
-    assert summary["counted_fallback_pairs"] == 3_956
+    assert summary["tensor_executed_exact_pairs"] == 484
+    assert summary["counted_fallback_pairs"] == 3_872
     assert summary["fallback_is_tensor_parity"] is False
 
     for row in audit.rows:

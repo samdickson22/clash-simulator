@@ -57,8 +57,7 @@ def _static_tower_tensor_inert(battle: BattleState, tower: Building) -> bool:
         or tower.deploy_delay_remaining > 1e-9
         or tower.target_id is not None
         or tower._attack_windup_active
-        or tower.attack_cooldown
-        > tower.get_preloaded_attack_time_seconds() + 1e-9
+        or tower.attack_cooldown > tower.get_preloaded_attack_time_seconds() + 1e-9
         or tower.stun_timer > 1e-9
         or tower.slow_timer > 1e-9
         or tower.haste_timer > 1e-9
@@ -78,8 +77,7 @@ def _static_tower_tensor_inert(battle: BattleState, tower: Building) -> bool:
         return True
     include_crown_fallback = bool(
         tower.range
-        > tower.sight_range
-        + float(EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS) / 1000.0
+        > tower.sight_range + float(EXTRA_SIGHT_RANGE_TO_CROWN_TOWERS) / 1000.0
     )
     return (
         tower.get_nearest_target(
@@ -143,11 +141,7 @@ def _deployment_only_tensor_supported(battle: BattleState) -> bool:
                     )
                     // 50.0
                 )
-                decay_rate = (
-                    5000
-                    * round(entity.max_hitpoints)
-                    // int(lifetime_ms)
-                )
+                decay_rate = 5000 * round(entity.max_hitpoints) // int(lifetime_ms)
                 lifetime_loss = (
                     entity.lifetime_decay_work + decay_rate * native_ticks
                 ) // 100
@@ -373,9 +367,7 @@ def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> torch.Tensor
         )
         deployment_mask = active[:, None] & deploying
         deploying_buildings = (
-            deployment_mask
-            & (state.entity_kind == 1)
-            & (state.entity_lifetime_ms > 0)
+            deployment_mask & (state.entity_kind == 1) & (state.entity_lifetime_ms > 0)
         )
         lifetime_tick_ms = torch.where(
             deploying_buildings,
@@ -385,17 +377,14 @@ def step_idle_tensor_ticks(state: TensorBattleState, ticks: int) -> torch.Tensor
         state.entity_lifetime_elapsed.add_(
             deploying_buildings.to(torch.float64) * state.dt[:, None]
         )
-        total_lifetime_tick_ms = (
-            state.entity_lifetime_tick_carry_ms + lifetime_tick_ms
+        total_lifetime_tick_ms = state.entity_lifetime_tick_carry_ms + lifetime_tick_ms
+        native_lifetime_ticks = torch.floor((total_lifetime_tick_ms + 1e-9) / 50.0).to(
+            torch.int64
         )
-        native_lifetime_ticks = torch.floor(
-            (total_lifetime_tick_ms + 1e-9) / 50.0
-        ).to(torch.int64)
         state.entity_lifetime_tick_carry_ms.copy_(
             torch.where(
                 deploying_buildings,
-                total_lifetime_tick_ms
-                - native_lifetime_ticks.to(torch.float64) * 50.0,
+                total_lifetime_tick_ms - native_lifetime_ticks.to(torch.float64) * 50.0,
                 state.entity_lifetime_tick_carry_ms,
             )
         )
@@ -629,13 +618,14 @@ class TorchBattleExecutor:
         # CPython RNG projection. Apple MPS cannot represent those values, so
         # the complete executor must fail closed to Python there until a
         # proven fixed-point split routes only integer-safe kernels to MPS.
+        exact_device = self.device.type in {"cpu", "cuda"}
         fast_indices = (
             [
                 index
                 for index, battle in enumerate(battles)
                 if _tensor_slice_supported(battle)
             ]
-            if self.device.type == "cpu"
+            if exact_device
             else []
         )
         fast_set = set(fast_indices)
@@ -643,7 +633,7 @@ class TorchBattleExecutor:
         runtime_candidates = [
             index for index in range(len(battles)) if index not in fast_set
         ]
-        if runtime_candidates and self.device.type == "cpu":
+        if runtime_candidates and exact_device:
             try:
                 from .runtime import TensorTickRuntime
 

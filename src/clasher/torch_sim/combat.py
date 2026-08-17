@@ -114,9 +114,9 @@ class StationaryCombatState:
 
         shape = (batch_size, max_entities)
         torch_device = torch.device(device)
-        if torch_device.type != "cpu":
+        if torch_device.type not in {"cpu", "cuda"}:
             raise ValueError(
-                "exact stationary combat currently requires CPU float64; "
+                "exact stationary combat requires CPU/CUDA float64; "
                 f"route device {torch_device.type!r} through fail-closed fallback"
             )
 
@@ -228,9 +228,9 @@ def stationary_combat_support_mask(
 
     The adapter which constructs this state owns mechanic classification. It
     sets ``ordinary_combat_supported`` false for an operation not yet covered
-    by these generalized fields (for example attack-start movement). The CPU
-    requirement is intentional: Apple MPS does not implement float64, while
-    the Python oracle exposes these exact clock/HP scalar values.
+    by these generalized fields (for example attack-start movement). CPU and
+    CUDA retain exact float64 state; Apple MPS does not implement float64 and
+    therefore remains fail-closed for this integrated phase.
     """
 
     state.validate()
@@ -251,7 +251,7 @@ def stationary_combat_support_mask(
         state.incoming_damage_multiplier,
         state.last_attack_time,
     )
-    exact_layout = state.device.type == "cpu" and all(
+    exact_layout = state.device.type in {"cpu", "cuda"} and all(
         tensor.dtype == torch.float64 for tensor in float_fields
     )
     if not exact_layout:

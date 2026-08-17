@@ -248,13 +248,13 @@ pass.
 - recursive enabled-root spawn inventory, exact `PeriodicSpawner` clock/event
   scheduling, and context-carrying `DeathSpawn` child plans; and
 - an exhaustive one-tick post-deployment census of all 4,356 ordered enabled
-  1v1 pairs: 400 executed entirely in tensor kernels, 3,956 used counted Python
+  1v1 pairs: 484 executed entirely in tensor kernels, 3,872 used counted Python
   fallback, and zero oracle mismatches or execution-accounting errors.
 
 The enabled manifest SHA-256 is
 `39fd5d5fe36cc7cfa69cf049de3ea2e7e00bc143ec71b14f33ead300fb4b2944`;
 the one-tick result matrix SHA-256 is
-`2f12247533d21f4927757f46b47b2a3b1a0abd82113831f2e82af58639283db6`.
+`004f2b1b48c41b8d72cda2737ec8ac25cccab3db2248af80629f6da1d9051ad7`.
 These are deployment-window results, not complete interaction or episode
 parity. Fallback rows are never counted as tensor evidence.
 

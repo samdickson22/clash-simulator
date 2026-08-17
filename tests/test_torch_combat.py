@@ -562,8 +562,17 @@ def test_randomized_batched_stationary_mutations_match_oracle() -> None:
 
 @pytest.mark.skipif(not torch.backends.mps.is_available(), reason="MPS unavailable")
 def test_exact_float64_state_fails_closed_on_mps() -> None:
-    with pytest.raises(ValueError, match="requires CPU float64"):
+    with pytest.raises(ValueError, match="requires CPU/CUDA float64"):
         StationaryCombatState.empty(1, 2, device="mps")
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
+def test_exact_float64_combat_state_is_cuda_resident() -> None:
+    state = StationaryCombatState.empty(2, 4, device="cuda")
+
+    assert state.device.type == "cuda"
+    assert state.hp.dtype == torch.float64
+    assert stationary_combat_support_mask(state).tolist() == [True, True]
 
 
 def test_lower_id_direct_hit_activates_king_before_its_component_turn() -> None:

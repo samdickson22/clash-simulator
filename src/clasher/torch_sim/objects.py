@@ -215,15 +215,12 @@ class TensorObjectCatalog:
             payload_id=tensor("payload_id", torch.int32),
             payload_count=tensor("payload_count", torch.int16),
             terminal_blueprint=tensor("terminal_blueprint", torch.int32),
-            inherit_terminal_position=tensor(
-                "inherit_terminal_position", torch.bool
-            ),
+            inherit_terminal_position=tensor("inherit_terminal_position", torch.bool),
             inherit_player=tensor("inherit_player", torch.bool),
             feature_mask=tensor("feature_mask", torch.int32),
         )
-        invalid_children = (
-            (catalog.terminal_blueprint < 0)
-            | (catalog.terminal_blueprint >= catalog.size)
+        invalid_children = (catalog.terminal_blueprint < 0) | (
+            catalog.terminal_blueprint >= catalog.size
         )
         if bool(invalid_children.any().item()):
             raise ValueError("terminal blueprint index is outside the catalog")
@@ -253,9 +250,7 @@ class TensorObjectEvents:
         device: torch.device,
     ) -> TensorObjectEvents:
         def zeros(dtype: torch.dtype) -> torch.Tensor:
-            return torch.zeros(
-                (batch_size, capacity), dtype=dtype, device=device
-            )
+            return torch.zeros((batch_size, capacity), dtype=dtype, device=device)
 
         return cls(
             count=torch.zeros(batch_size, dtype=torch.int32, device=device),
@@ -376,7 +371,9 @@ class TensorObjectState:
             slots = torch.arange(count, device=catalog.device)
             ids = torch.tensor(blueprint_ids, dtype=torch.int64, device=catalog.device)
             state._load_blueprints(
-                torch.full((count,), batch_index, dtype=torch.int64, device=catalog.device),
+                torch.full(
+                    (count,), batch_index, dtype=torch.int64, device=catalog.device
+                ),
                 slots,
                 ids,
             )
@@ -415,26 +412,34 @@ class TensorObjectState:
         self.player[batch_indices, slots] = player
         self.x_units[batch_indices, slots] = x_units
         self.y_units[batch_indices, slots] = y_units
-        self.target_x_units[batch_indices, slots] = catalog.target_x_units[blueprint_ids]
-        self.target_y_units[batch_indices, slots] = catalog.target_y_units[blueprint_ids]
-        self.speed_units_per_tick[batch_indices, slots] = (
-            catalog.speed_units_per_tick[blueprint_ids]
-        )
-        self.launch_delay_ms[batch_indices, slots] = catalog.launch_delay_ms[blueprint_ids]
-        self.activation_delay_ms[batch_indices, slots] = (
-            catalog.activation_delay_ms[blueprint_ids]
-        )
+        self.target_x_units[batch_indices, slots] = catalog.target_x_units[
+            blueprint_ids
+        ]
+        self.target_y_units[batch_indices, slots] = catalog.target_y_units[
+            blueprint_ids
+        ]
+        self.speed_units_per_tick[batch_indices, slots] = catalog.speed_units_per_tick[
+            blueprint_ids
+        ]
+        self.launch_delay_ms[batch_indices, slots] = catalog.launch_delay_ms[
+            blueprint_ids
+        ]
+        self.activation_delay_ms[batch_indices, slots] = catalog.activation_delay_ms[
+            blueprint_ids
+        ]
         self.age_ms[batch_indices, slots] = 0
         self.duration_ms[batch_indices, slots] = catalog.duration_ms[blueprint_ids]
-        self.tick_interval_ms[batch_indices, slots] = catalog.tick_interval_ms[blueprint_ids]
+        self.tick_interval_ms[batch_indices, slots] = catalog.tick_interval_ms[
+            blueprint_ids
+        ]
         self.next_tick_ms[batch_indices, slots] = catalog.initial_tick_ms[blueprint_ids]
         self.ticks_remaining[batch_indices, slots] = catalog.max_ticks[blueprint_ids]
         self.amount[batch_indices, slots] = catalog.amount[blueprint_ids]
         self.payload_id[batch_indices, slots] = catalog.payload_id[blueprint_ids]
         self.payload_count[batch_indices, slots] = catalog.payload_count[blueprint_ids]
-        self.terminal_blueprint[batch_indices, slots] = (
-            catalog.terminal_blueprint[blueprint_ids]
-        )
+        self.terminal_blueprint[batch_indices, slots] = catalog.terminal_blueprint[
+            blueprint_ids
+        ]
         self.feature_mask[batch_indices, slots] = catalog.feature_mask[blueprint_ids]
 
     def unsupported_batches(self) -> torch.Tensor:
@@ -449,16 +454,14 @@ class TensorObjectState:
             (self.tick_interval_ms > 0)
             & (self.tick_interval_ms < LOGIC_TICK_MILLISECONDS)
         )
-        unsupported |= active & (
-            (self.launch_delay_ms % LOGIC_TICK_MILLISECONDS) != 0
-        )
+        unsupported |= active & ((self.launch_delay_ms % LOGIC_TICK_MILLISECONDS) != 0)
         return unsupported.any(dim=1)
 
 
 def _integer_sqrt(values: torch.Tensor) -> torch.Tensor:
     """Vectorized exact floor sqrt for arena-sized nonnegative int64 values."""
 
-    floating_dtype = torch.float64 if values.device.type == "cpu" else torch.float32
+    floating_dtype = torch.float32 if values.device.type == "mps" else torch.float64
     root = torch.sqrt(values.to(floating_dtype)).to(torch.int64)
     # Float estimates are already within one at arena scale; two corrections
     # make the integer result exact even at a perfect-square rounding edge.
@@ -618,9 +621,7 @@ def step_object_phase(
         for _ in range(2):
             next_tick = state.next_tick_ms[batch_range, slot]
             remaining_ticks = state.ticks_remaining[batch_range, slot]
-            deadline = torch.minimum(
-                age, state.duration_ms[batch_range, slot]
-            )
+            deadline = torch.minimum(age, state.duration_ms[batch_range, slot])
             tick_due = area & (remaining_ticks > 0) & (next_tick <= deadline)
             _emit(
                 events,
@@ -644,9 +645,7 @@ def step_object_phase(
 
         area_expired = area & (age >= state.duration_ms[batch_range, slot])
         terminal |= area_expired
-        timer_triggered = timer & (
-            age >= state.activation_delay_ms[batch_range, slot]
-        )
+        timer_triggered = timer & (age >= state.activation_delay_ms[batch_range, slot])
         terminal |= timer_triggered
 
         spawn_output = terminal & (payload_count > 0)
