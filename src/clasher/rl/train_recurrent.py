@@ -100,6 +100,11 @@ class RolloutBatch:
     wins: int
     losses: int
     draws: int
+    simulator_tensor_ticks: int = 0
+    simulator_python_ticks: int = 0
+    simulator_shadow_checks: int = 0
+    simulator_shadow_mismatches: int = 0
+    simulator_unsupported_fallbacks: int = 0
 
     @property
     def num_sequences(self) -> int:
@@ -112,6 +117,40 @@ class RolloutBatch:
     @property
     def transitions(self) -> int:
         return int(self.actions.size)
+
+    @property
+    def simulator_total_ticks(self) -> int:
+        return self.simulator_tensor_ticks + self.simulator_python_ticks
+
+    @property
+    def simulator_tensor_tick_fraction(self) -> float:
+        total = self.simulator_total_ticks
+        return 0.0 if total == 0 else self.simulator_tensor_ticks / total
+
+
+_SIMULATOR_METRIC_FIELDS = {
+    "tensor_ticks": "simulator_tensor_ticks",
+    "python_ticks": "simulator_python_ticks",
+    "shadow_checks": "simulator_shadow_checks",
+    "shadow_mismatches": "simulator_shadow_mismatches",
+    "unsupported_fallbacks": "simulator_unsupported_fallbacks",
+}
+
+
+def _empty_simulator_metrics() -> dict[str, int]:
+    return {rollout_field: 0 for rollout_field in _SIMULATOR_METRIC_FIELDS.values()}
+
+
+def _accumulate_simulator_metrics(
+    accumulator: dict[str, int],
+    envs: list[SelfPlayBattleEnv],
+) -> None:
+    """Pop executor counters before an environment reset can discard them."""
+
+    for env in envs:
+        metrics = env.pop_simulator_backend_metrics()
+        for metric_name, rollout_field in _SIMULATOR_METRIC_FIELDS.items():
+            accumulator[rollout_field] += int(metrics[metric_name])
 
 
 def resolve_torch_device(name: str) -> torch.device:
@@ -409,6 +448,8 @@ def collect_rollout(
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = 0
     wins = losses = draws = 0
+    simulator_metrics = _empty_simulator_metrics()
+    _accumulate_simulator_metrics(simulator_metrics, envs)
 
     for step in range(rollout_steps):
         with maybe_silence_stdio(quiet_engine):
@@ -479,6 +520,7 @@ def collect_rollout(
                         wins += 1
                     else:
                         losses += 1
+                    _accumulate_simulator_metrics(simulator_metrics, [env])
                     env.reset()
                     next_previous_actions[base : base + 2] = (
                         env.action_space.no_op_action
@@ -501,6 +543,7 @@ def collect_rollout(
         device,
     )
     bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
+    _accumulate_simulator_metrics(simulator_metrics, envs)
 
     rollout = RolloutBatch(
         **arrays,
@@ -511,6 +554,15 @@ def collect_rollout(
         wins=wins,
         losses=losses,
         draws=draws,
+        simulator_tensor_ticks=simulator_metrics["simulator_tensor_ticks"],
+        simulator_python_ticks=simulator_metrics["simulator_python_ticks"],
+        simulator_shadow_checks=simulator_metrics["simulator_shadow_checks"],
+        simulator_shadow_mismatches=simulator_metrics[
+            "simulator_shadow_mismatches"
+        ],
+        simulator_unsupported_fallbacks=simulator_metrics[
+            "simulator_unsupported_fallbacks"
+        ],
     )
     return (
         rollout,
@@ -581,6 +633,8 @@ def collect_rollout_stationary_opponents(
     initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = wins = losses = draws = 0
+    simulator_metrics = _empty_simulator_metrics()
+    _accumulate_simulator_metrics(simulator_metrics, envs)
 
     for step in range(rollout_steps):
         with maybe_silence_stdio(quiet_engine):
@@ -709,6 +763,7 @@ def collect_rollout_stationary_opponents(
                         wins += 1
                     else:
                         losses += 1
+                    _accumulate_simulator_metrics(simulator_metrics, [env])
                     env.reset()
                     next_previous_actions[env_index] = env.action_space.no_op_action
                     next_previous_rewards[env_index] = 0.0
@@ -739,6 +794,7 @@ def collect_rollout_stationary_opponents(
         device,
     )
     bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
+    _accumulate_simulator_metrics(simulator_metrics, envs)
     rollout = RolloutBatch(
         **arrays,
         initial_hidden=initial_hidden,
@@ -748,6 +804,15 @@ def collect_rollout_stationary_opponents(
         wins=wins,
         losses=losses,
         draws=draws,
+        simulator_tensor_ticks=simulator_metrics["simulator_tensor_ticks"],
+        simulator_python_ticks=simulator_metrics["simulator_python_ticks"],
+        simulator_shadow_checks=simulator_metrics["simulator_shadow_checks"],
+        simulator_shadow_mismatches=simulator_metrics[
+            "simulator_shadow_mismatches"
+        ],
+        simulator_unsupported_fallbacks=simulator_metrics[
+            "simulator_unsupported_fallbacks"
+        ],
     )
     return (
         rollout,
@@ -1527,6 +1592,12 @@ def main() -> None:
                 f"noop_when_playable={conditional_no_op:.3f} "
                 f"ability={ability_rate:.4f} episodes={rollout.episodes_finished} "
                 f"wld={rollout.wins}/{rollout.losses}/{rollout.draws} "
+                f"sim_tensor={rollout.simulator_tensor_ticks} "
+                f"sim_python={rollout.simulator_python_ticks} "
+                f"sim_fallbacks={rollout.simulator_unsupported_fallbacks} "
+                f"sim_shadow={rollout.simulator_shadow_mismatches}/"
+                f"{rollout.simulator_shadow_checks} "
+                f"sim_tensor_frac={rollout.simulator_tensor_tick_fraction:.4f} "
                 f"collect_s={collect_seconds:.2f} learn_s={update_seconds:.2f} "
                 f"sync_s={sync_seconds:.2f} "
                 f"tps={transition_rate:.1f} lr={learning_rate:.2e}"
@@ -1554,6 +1625,24 @@ def main() -> None:
                     "learn_seconds": update_seconds,
                     "sync_seconds": sync_seconds,
                     "transitions_per_second": transition_rate,
+                    "simulator_tensor_ticks": float(
+                        rollout.simulator_tensor_ticks
+                    ),
+                    "simulator_python_ticks": float(
+                        rollout.simulator_python_ticks
+                    ),
+                    "simulator_unsupported_fallbacks": float(
+                        rollout.simulator_unsupported_fallbacks
+                    ),
+                    "simulator_shadow_checks": float(
+                        rollout.simulator_shadow_checks
+                    ),
+                    "simulator_shadow_mismatches": float(
+                        rollout.simulator_shadow_mismatches
+                    ),
+                    "simulator_tensor_tick_fraction": (
+                        rollout.simulator_tensor_tick_fraction
+                    ),
                 },
             )
             print(f"saved_checkpoint={checkpoint}")

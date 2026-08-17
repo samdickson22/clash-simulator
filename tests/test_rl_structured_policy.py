@@ -189,6 +189,53 @@ def test_recurrent_rollout_and_ppo_update_smoke():
     np.testing.assert_array_equal(combined.actions[2:], rollout.actions)
 
 
+def test_recurrent_rollout_preserves_backend_metrics_across_episode_resets(
+    monkeypatch,
+):
+    env = SelfPlayBattleEnv(
+        seed=23,
+        decision_interval_ticks=2,
+        max_ticks=2,
+        simulation_backend="pytorch",
+    )
+    env.reset()
+    builder = StructuredObservationBuilder(decks_path="decks.json", max_entities=128)
+    env._structured_obs_builder = builder
+    model = _tiny_model(builder)
+    no_op = env.action_space.no_op_action
+    no_op_mask = np.zeros((env.action_space.num_actions,), dtype=np.bool_)
+    no_op_mask[no_op] = True
+    monkeypatch.setattr(
+        env,
+        "get_action_mask",
+        lambda _player_id: no_op_mask.copy(),
+    )
+
+    rollout, *_ = collect_rollout(
+        envs=[env],
+        builder=builder,
+        model=model,
+        device=torch.device("cpu"),
+        rollout_steps=2,
+        recurrent_state=model.initial_state(2),
+        previous_actions=np.full((2,), no_op, dtype=np.int64),
+        previous_rewards=np.zeros((2,), dtype=np.float32),
+        episode_starts=np.ones((2,), dtype=np.bool_),
+        quiet_engine=True,
+    )
+
+    assert rollout.episodes_finished == 2
+    assert rollout.simulator_tensor_ticks == 4
+    assert rollout.simulator_python_ticks == 0
+    assert rollout.simulator_unsupported_fallbacks == 0
+    assert rollout.simulator_total_ticks == 4
+    assert rollout.simulator_tensor_tick_fraction == 1.0
+
+    combined = concatenate_rollouts([rollout, rollout])
+    assert combined.simulator_tensor_ticks == 8
+    assert combined.simulator_total_ticks == 8
+
+
 def test_random_opponent_rollout_only_trains_balanced_learner_seats():
     envs = [SelfPlayBattleEnv(seed=31 + index, max_ticks=128) for index in range(2)]
     builder = StructuredObservationBuilder(decks_path="decks.json", max_entities=128)
