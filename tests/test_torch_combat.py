@@ -154,9 +154,7 @@ def _to_tensor_state(
     device: str | torch.device = "cpu",
 ) -> StationaryCombatState:
     capacity = capacity or max(len(entities) for entities in batches)
-    state = StationaryCombatState.empty(
-        len(batches), capacity, device=device
-    )
+    state = StationaryCombatState.empty(len(batches), capacity, device=device)
     for batch_index, entities in enumerate(batches):
         id_to_slot = {entity.id: slot for slot, entity in enumerate(entities)}
         for slot, entity in enumerate(entities):
@@ -181,9 +179,7 @@ def _to_tensor_state(
                 getattr(entity, "_hidden_building", False)
             )
             state.airborne[batch_index, slot] = is_airborne_target(entity)
-            state.building_target[batch_index, slot] = is_native_building_target(
-                entity
-            )
+            state.building_target[batch_index, slot] = is_native_building_target(entity)
             crown_slot = getattr(entity, "_crown_tower_slot", None)
             state.crown_slot[batch_index, slot] = {
                 None: -1,
@@ -207,9 +203,7 @@ def _to_tensor_state(
                 getattr(entity.card_stats, "targets_only_buildings", False)
             )
             state.uses_projectile[batch_index, slot] = entity._uses_projectiles()
-            state.target_slot[batch_index, slot] = id_to_slot.get(
-                entity.target_id, -1
-            )
+            state.target_slot[batch_index, slot] = id_to_slot.get(entity.target_id, -1)
             state.deploy_remaining[batch_index, slot] = entity.deploy_delay_remaining
             state.stunned[batch_index, slot] = entity.is_stunned()
             state.forced_movement[batch_index, slot] = entity.forced_movement_active
@@ -226,9 +220,7 @@ def _to_tensor_state(
             state.attack_preload_blocked[batch_index, slot] = (
                 entity._attack_preload_blocked
             )
-            state.attack_windup_active[batch_index, slot] = (
-                entity._attack_windup_active
-            )
+            state.attack_windup_active[batch_index, slot] = entity._attack_windup_active
             state.started_projectile_hit_cycle[batch_index, slot] = (
                 entity.has_started_projectile_hit_cycle()
             )
@@ -300,13 +292,9 @@ def test_exact_tie_prefers_character_before_earlier_building_like_oracle() -> No
     earlier_building = _building(2, 1, 9.0, 12.0)
     later_character = _troop(3, 1, 9.0, 12.0)
     ordered: list[Entity] = [attacker, earlier_building, later_character]
-    expected = attacker.get_nearest_target(
-        {entity.id: entity for entity in ordered}
-    )
+    expected = attacker.get_nearest_target({entity.id: entity for entity in ordered})
     state = _to_tensor_state([ordered])
-    selected, _ = select_stationary_targets(
-        state, torch.tensor([0], dtype=torch.int64)
-    )
+    selected, _ = select_stationary_targets(state, torch.tensor([0], dtype=torch.int64))
     assert expected is later_character
     assert selected.item() == 2
 
@@ -337,13 +325,9 @@ def test_crowded_enabled_card_targeting_matches_oracle(seed: int) -> None:
     ]
     rng.shuffle(targets)
     ordered = [attacker, *targets]
-    expected = attacker.get_nearest_target(
-        {entity.id: entity for entity in ordered}
-    )
+    expected = attacker.get_nearest_target({entity.id: entity for entity in ordered})
     state = _to_tensor_state([ordered])
-    selected, _ = select_stationary_targets(
-        state, torch.tensor([0], dtype=torch.int64)
-    )
+    selected, _ = select_stationary_targets(state, torch.tensor([0], dtype=torch.int64))
     actual = None if selected.item() < 0 else ordered[selected.item()]
     assert (None if expected is None else expected.id) == (
         None if actual is None else actual.id
@@ -371,14 +355,14 @@ def test_crown_fallback_and_symmetric_building_ties_match_oracle() -> None:
     selected, fallback = select_stationary_targets(
         state, torch.tensor([0, 0], dtype=torch.int64)
     )
-    actual_ids = [
-        batches[index][selected[index].item()].id for index in range(2)
-    ]
+    actual_ids = [batches[index][selected[index].item()].id for index in range(2)]
     assert fallback.tolist() == [True, True]
     assert actual_ids == expected_ids == [2, 3]
 
 
-def test_stationary_direct_hits_follow_entity_id_order_and_retarget_after_death() -> None:
+def test_stationary_direct_hits_follow_entity_id_order_and_retarget_after_death() -> (
+    None
+):
     first = _troop(1, 0, 9.0, 10.0, damage=100, cooldown=0.0)
     second = _troop(2, 0, 9.0, 10.0, damage=70, cooldown=0.0)
     victim = _troop(3, 1, 9.0, 10.7, hp=100)
@@ -406,15 +390,11 @@ def test_stationary_direct_hits_follow_entity_id_order_and_retarget_after_death(
     assert state.hp[0].tolist() == pytest.approx(
         [entity.hitpoints for entity in oracle_entities]
     )
-    assert state.alive[0].tolist() == [
-        entity.is_alive for entity in oracle_entities
-    ]
+    assert state.alive[0].tolist() == [entity.is_alive for entity in oracle_entities]
     assert state.attack_cooldown[0, :2].tolist() == pytest.approx(
         [first.attack_cooldown, second.attack_cooldown]
     )
-    assert result.damage_received[0].tolist() == pytest.approx(
-        [0.0, 0.0, 100.0, 70.0]
-    )
+    assert result.damage_received[0].tolist() == pytest.approx([0.0, 0.0, 100.0, 70.0])
 
 
 def test_stun_observes_target_but_pauses_clock_like_oracle() -> None:
@@ -584,3 +564,57 @@ def test_randomized_batched_stationary_mutations_match_oracle() -> None:
 def test_exact_float64_state_fails_closed_on_mps() -> None:
     with pytest.raises(ValueError, match="requires CPU float64"):
         StationaryCombatState.empty(1, 2, device="mps")
+
+
+def test_lower_id_direct_hit_activates_king_before_its_component_turn() -> None:
+    state = StationaryCombatState.empty(1, 2)
+    state.present[0] = True
+    state.alive[0] = True
+    state.entity_id[0] = torch.tensor([1, 3])
+    state.kind[0] = torch.tensor([0, 1], dtype=torch.int8)
+    state.owner[0] = torch.tensor([0, 1], dtype=torch.int8)
+    state.x_units[0] = torch.tensor([9_000, 9_000])
+    state.y_units[0] = torch.tensor([15_000, 15_500])
+    state.hp[0] = torch.tensor([500.0, 2_000.0], dtype=torch.float64)
+    state.max_hp[0] = state.hp[0]
+    state.damage[0, 0] = 100.0
+    state.range_units[0, 0] = 1_000
+    state.sight_range_units[0, 0] = 5_500
+    state.attack_cooldown[0, 0] = 0.0
+    state.hit_speed_ms[0, 0] = 1_000
+    state.target_slot[0, 0] = 1
+    state.tower_active[0, 1] = False
+    state.requires_activation[0, 1] = True
+    state.activation_delay_seconds[0, 1] = 3.3
+    state.activation_first_hit_delay_seconds[0, 1] = 0.7
+
+    result = step_stationary_combat_(state)
+
+    assert result.damage_received[0].tolist() == [0.0, 100.0]
+    assert state.tower_active[0, 1].item() is True
+    # Attacker ID 1 wakes King ID 3 before the King's component rank, so the
+    # activation action consumes this same 50 ms frame.
+    assert state.activation_delay_remaining[0, 1].item() == 3.25
+    assert state.activation_first_hit_delay_remaining[0, 1].item() == 0.7
+    assert state.last_attack_time[0, 1].item() == 0.0
+
+
+def test_activation_and_first_hit_delays_feed_only_remainder_to_combat() -> None:
+    state = StationaryCombatState.empty(1, 1)
+    state.present[0, 0] = True
+    state.alive[0, 0] = True
+    state.entity_id[0, 0] = 3
+    state.kind[0, 0] = 1
+    state.tower_active[0, 0] = True
+    state.requires_activation[0, 0] = True
+    state.activation_delay_remaining[0, 0] = 0.02
+    state.activation_first_hit_delay_remaining[0, 0] = 0.02
+    state.attack_cooldown[0, 0] = 0.5
+
+    result = step_stationary_combat_(state)
+
+    assert not result.attacked.any().item()
+    assert state.activation_delay_remaining[0, 0].item() == 0.0
+    assert state.activation_first_hit_delay_remaining[0, 0].item() == 0.0
+    assert state.attack_cooldown[0, 0].item() == 0.0
+    assert state.last_attack_time[0, 0].item() == pytest.approx(0.01)

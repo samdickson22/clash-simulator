@@ -71,6 +71,11 @@ class StationaryCombatState:
     ordinary_combat_supported: torch.Tensor
     combat_enabled: torch.Tensor
     tower_active: torch.Tensor
+    requires_activation: torch.Tensor
+    activation_delay_remaining: torch.Tensor
+    activation_delay_seconds: torch.Tensor
+    activation_first_hit_delay_remaining: torch.Tensor
+    activation_first_hit_delay_seconds: torch.Tensor
     attack_cooldown: torch.Tensor
     hit_speed_ms: torch.Tensor
     first_hit_ms: torch.Tensor
@@ -123,7 +128,9 @@ class StationaryCombatState:
             entity_id=full(0, torch.int64),
             encounter_order=torch.arange(
                 max_entities, dtype=torch.int64, device=torch_device
-            ).expand(batch_size, -1).clone(),
+            )
+            .expand(batch_size, -1)
+            .clone(),
             kind=full(0, torch.int8),
             owner=full(0, torch.int8),
             x_units=full(0, torch.int64),
@@ -157,6 +164,11 @@ class StationaryCombatState:
             ordinary_combat_supported=full(True, torch.bool),
             combat_enabled=full(True, torch.bool),
             tower_active=full(True, torch.bool),
+            requires_activation=full(False, torch.bool),
+            activation_delay_remaining=full(0.0, torch.float64),
+            activation_delay_seconds=full(0.0, torch.float64),
+            activation_first_hit_delay_remaining=full(0.0, torch.float64),
+            activation_first_hit_delay_seconds=full(0.0, torch.float64),
             attack_cooldown=full(0.0, torch.float64),
             hit_speed_ms=full(1_000, torch.int64),
             first_hit_ms=full(0, torch.int64),
@@ -229,6 +241,10 @@ def stationary_combat_support_mask(
         state.max_hp,
         state.damage,
         state.deploy_remaining,
+        state.activation_delay_remaining,
+        state.activation_delay_seconds,
+        state.activation_first_hit_delay_remaining,
+        state.activation_first_hit_delay_seconds,
         state.attack_cooldown,
         state.attack_rate_multiplier,
         state.outgoing_damage_multiplier,
@@ -417,7 +433,9 @@ def select_stationary_targets(
         torch.zeros_like(state.collision_radius_units),
     )
     sight_reach = sight + state.collision_radius_units + crown_extension
-    in_sight = distance <= sight_reach.to(torch.float64) / 1_000.0 + GEOMETRY_EPSILON_TILES
+    in_sight = (
+        distance <= sight_reach.to(torch.float64) / 1_000.0 + GEOMETRY_EPSILON_TILES
+    )
 
     attacker_is_crown = _gather(state.crown_slot, attacker_slots) >= 0
     clip_exempt = attacker_is_crown.unsqueeze(1) | (state.crown_slot >= 0)
@@ -428,16 +446,10 @@ def select_stationary_targets(
     owner = _gather(state.owner, attacker_slots)
     forward_delta = torch.where(owner.unsqueeze(1) == 0, dy, -dy)
     backward_limit = -torch.clamp(sight_reach - backward_clip, min=0)
-    in_sight &= (
-        clip_exempt
-        | (backward_clip <= 0)
-        | (forward_delta >= backward_limit)
-    )
+    in_sight &= clip_exempt | (backward_clip <= 0) | (forward_delta >= backward_limit)
 
     ordinary = valid & category_valid & in_sight
-    selected_ordinary = _nearest_candidate(
-        state, attacker_slots, ordinary, distance
-    )
+    selected_ordinary = _nearest_candidate(state, attacker_slots, ordinary, distance)
     has_ordinary = ordinary.any(dim=1)
 
     crowns = valid & (state.crown_slot >= 0)
@@ -461,8 +473,7 @@ def select_stationary_targets(
     attacker_is_building = _gather(state.kind, attacker_slots) == 1
     building_fallback_allowed = (
         _gather(state.range_units, attacker_slots)
-        > _gather(state.sight_range_units, attacker_slots)
-        + CROWN_SIGHT_EXTENSION_UNITS
+        > _gather(state.sight_range_units, attacker_slots) + CROWN_SIGHT_EXTENSION_UNITS
     )
     fallback_allowed = (~attacker_is_building) | building_fallback_allowed
     use_fallback = (~has_ordinary) & fallback_allowed & (selected_crown >= 0)
@@ -470,9 +481,7 @@ def select_stationary_targets(
 
     # A building's selector performs a final exact attack-range check. Mobile
     # characters may retain an out-of-range Crown fallback as a path target.
-    building_reach = _within_reach(
-        state, attacker_slots, selected, keep=False
-    )
+    building_reach = _within_reach(state, attacker_slots, selected, keep=False)
     selected = torch.where(
         attacker_is_building & ~building_reach,
         torch.full_like(selected, -1),
@@ -492,9 +501,7 @@ def _current_target_status(
     valid = in_bounds & _gather(valid_matrix, current)
     only_buildings = _gather(state.buildings_only, attacker_slots)
     valid &= (~only_buildings) | _gather(state.building_target, current)
-    keep = valid & _within_reach(
-        state, attacker_slots, current, keep=True
-    )
+    keep = valid & _within_reach(state, attacker_slots, current, keep=True)
     return current, valid, keep
 
 
@@ -502,9 +509,7 @@ def _resolve_target_for_attackers(
     state: StationaryCombatState,
     attacker_slots: torch.Tensor,
 ) -> torch.Tensor:
-    current, current_valid, current_keep = _current_target_status(
-        state, attacker_slots
-    )
+    current, current_valid, current_keep = _current_target_status(state, attacker_slots)
     selected, used_fallback = select_stationary_targets(state, attacker_slots)
     attacker_is_building = _gather(state.kind, attacker_slots) == 1
 
@@ -515,13 +520,10 @@ def _resolve_target_for_attackers(
     distance, _, _ = _distance_tiles(state, attacker_slots)
     current_distance = _gather(distance, current)
     selected_distance = _gather(distance, selected)
-    switch = (
-        (selected >= 0)
-        & (
-            used_fallback
-            | (~current_valid)
-            | (selected_distance < current_distance - TARGET_TIE_EPSILON_TILES)
-        )
+    switch = (selected >= 0) & (
+        used_fallback
+        | (~current_valid)
+        | (selected_distance < current_distance - TARGET_TIE_EPSILON_TILES)
     )
     troop_target = torch.where(
         current_keep,
@@ -575,12 +577,7 @@ def _area_recipient_mask(
     primary_one_hot = torch.nn.functional.one_hot(
         primary_slots.clamp(min=0), num_classes=state.max_entities
     ).to(torch.bool)
-    area = (
-        eligible
-        & intersects
-        & has_area.unsqueeze(1)
-        & ~primary_one_hot
-    )
+    area = eligible & intersects & has_area.unsqueeze(1) & ~primary_one_hot
     primary = (
         primary_one_hot
         & (primary_slots >= 0).unsqueeze(1)
@@ -624,7 +621,7 @@ def step_stationary_combat_(
         attacker_slots = update_order[:, rank]
         present = _gather(state.present, attacker_slots)
         kind = _gather(state.kind, attacker_slots)
-        base_actionable = (
+        component_available = (
             present
             & _gather(state.alive, attacker_slots)
             & ((kind == 0) | (kind == 1))
@@ -633,6 +630,67 @@ def step_stationary_combat_(
             & ~_gather(state.forced_movement, attacker_slots)
             & ~_gather(state.combat_blocked, attacker_slots)
             & ((kind != 1) | _gather(state.tower_active, attacker_slots))
+        )
+        component_dt = torch.full(
+            (batch,), dt_seconds, dtype=torch.float64, device=state.device
+        )
+
+        # Building activation is component-owned work which runs before stun,
+        # targeting, and the ordinary attack clock. An activation delay that
+        # consumes the entire frame returns immediately; the distinct
+        # first-hit delay may cross to zero at the boundary and still enter
+        # ordinary combat with a zero-duration remainder.
+        activation_delay = _gather(state.activation_delay_remaining, attacker_slots)
+        delay_running = component_available & (kind == 1) & (activation_delay > 0.0)
+        delay_work = torch.minimum(component_dt, activation_delay)
+        next_activation_delay = torch.clamp(activation_delay - delay_work, min=0.0)
+        _scatter_masked_(
+            state.activation_delay_remaining,
+            attacker_slots,
+            next_activation_delay,
+            delay_running,
+        )
+        component_dt = torch.where(
+            delay_running, component_dt - delay_work, component_dt
+        )
+        activation_delay_return = delay_running & (component_dt <= 1e-9)
+
+        first_delay = _gather(
+            state.activation_first_hit_delay_remaining, attacker_slots
+        )
+        first_running = (
+            component_available
+            & (kind == 1)
+            & ~activation_delay_return
+            & (first_delay > 0.0)
+        )
+        first_work = torch.minimum(component_dt, first_delay)
+        next_first_delay = torch.clamp(first_delay - first_work, min=0.0)
+        _scatter_masked_(
+            state.activation_first_hit_delay_remaining,
+            attacker_slots,
+            next_first_delay,
+            first_running,
+        )
+        component_dt = torch.where(
+            first_running, component_dt - first_work, component_dt
+        )
+        first_delay_return = first_running & (next_first_delay > 1e-9)
+        first_delay_completed = first_running & ~first_delay_return
+        _scatter_masked_(
+            state.attack_cooldown,
+            attacker_slots,
+            torch.zeros(batch, dtype=torch.float64, device=state.device),
+            first_delay_completed,
+        )
+        _scatter_masked_(
+            state.attack_preload_blocked,
+            attacker_slots,
+            torch.zeros(batch, dtype=torch.bool, device=state.device),
+            first_delay_completed,
+        )
+        base_actionable = (
+            component_available & ~activation_delay_return & ~first_delay_return
         )
 
         resolved = _resolve_target_for_attackers(state, attacker_slots)
@@ -649,7 +707,7 @@ def step_stationary_combat_(
         _scatter_masked_(
             state.last_attack_time,
             attacker_slots,
-            previous_last_attack + dt_seconds,
+            previous_last_attack + component_dt,
             base_actionable,
         )
         can_advance = base_actionable & ~_gather(state.stunned, attacker_slots)
@@ -661,7 +719,7 @@ def step_stationary_combat_(
         rate = torch.clamp(
             _gather(state.attack_rate_multiplier, attacker_slots), min=0.05
         )
-        work = dt_seconds * rate
+        work = component_dt * rate
         preload_floor = (
             _gather(state.first_hit_ms, attacker_slots).to(torch.float64) / 1_000.0
         )
@@ -715,6 +773,28 @@ def step_stationary_combat_(
             * recipients.to(torch.float64)
         ).clamp(min=0.0)
         hp_before = state.hp.clone()
+        activates = (applied > 0.0) & state.requires_activation & ~state.tower_active
+        state.tower_active |= activates
+        state.activation_delay_remaining.copy_(
+            torch.where(
+                activates,
+                torch.maximum(
+                    state.activation_delay_remaining,
+                    state.activation_delay_seconds,
+                ),
+                state.activation_delay_remaining,
+            )
+        )
+        state.activation_first_hit_delay_remaining.copy_(
+            torch.where(
+                activates,
+                torch.maximum(
+                    state.activation_first_hit_delay_remaining,
+                    state.activation_first_hit_delay_seconds,
+                ),
+                state.activation_first_hit_delay_remaining,
+            )
+        )
         state.hp.copy_(torch.clamp(state.hp - applied, min=0.0))
         state.alive &= (~recipients) | (state.hp > 0.0)
         damage_received += hp_before - state.hp
@@ -726,9 +806,7 @@ def step_stationary_combat_(
             _gather(state.hit_speed_ms, attacker_slots).to(torch.float64) / 1_000.0,
             torch.ones(batch, dtype=torch.float64, device=state.device),
         )
-        _scatter_masked_(
-            state.attack_cooldown, attacker_slots, post_cooldown, ready
-        )
+        _scatter_masked_(state.attack_cooldown, attacker_slots, post_cooldown, ready)
         _scatter_masked_(
             state.attack_windup_active,
             attacker_slots,
@@ -805,9 +883,7 @@ def projectile_lethal_reservations(
     if projectile_shape[0] != batch:
         raise ValueError("projectile batch mismatch")
 
-    valid_slot = (
-        (projectile_target_slot >= 0) & (projectile_target_slot < entities)
-    )
+    valid_slot = (projectile_target_slot >= 0) & (projectile_target_slot < entities)
     valid = (
         projectile_active
         & projectile_reserves_damage

@@ -136,18 +136,56 @@ def _catalog_card_id(entity: Entity, catalog: TensorCardCatalog) -> int | None:
     return card_id if card_id not in {None, 0} else None
 
 
+def _is_static_crown(entity: Entity) -> bool:
+    return bool(
+        isinstance(entity, Building)
+        and entity._crown_tower_slot in {"left", "right", "king"}
+    )
+
+
+def _crown_projectile_cannot_launch(
+    entity: Building,
+    dt_seconds: float,
+) -> bool:
+    """Prove a synthesized Crown weapon cannot allocate this component frame."""
+
+    if not entity.is_alive or entity.deploy_delay_remaining > 0.0:
+        return True
+    if not bool(getattr(entity, "_tower_active", True)):
+        if not entity.requires_activation:
+            return True
+        # A lower-ID direct attacker may wake the King before its own component
+        # turn. The native activation action still prevents a launch when its
+        # first phase consumes this entire frame.
+        return entity.activation_delay_seconds >= dt_seconds - 1e-12
+    if entity.is_stunned():
+        return True
+    if entity.activation_delay_remaining >= dt_seconds - 1e-12:
+        return True
+    # Crossing the separate first-hit action arms cooldown zero, so without a
+    # target probe it must remain fail-closed even when most of the frame is
+    # consumed by that transition.
+    if entity.activation_first_hit_delay_remaining > 0.0:
+        return False
+    available = max(0.0, dt_seconds - entity.activation_delay_remaining)
+    work = available * max(0.05, entity.get_attack_rate_multiplier())
+    return entity.attack_cooldown > work + 1e-12
+
+
 def _entity_unsupported_reasons(
     entity: Entity,
     catalog: TensorCardCatalog,
+    dt_seconds: float,
 ) -> tuple[UnsupportedCombatReason, ...]:
     reasons: list[UnsupportedCombatReason] = []
     if not isinstance(entity, (Troop, Building)):
         return (UnsupportedCombatReason.NON_CHARACTER_OBJECT,)
 
+    static_crown = _is_static_crown(entity)
     card_id = _catalog_card_id(entity, catalog)
-    if card_id is None:
+    if card_id is None and not static_crown:
         reasons.append(UnsupportedCombatReason.CARD_NOT_IN_CATALOG)
-    else:
+    elif card_id is not None:
         if int(catalog.mechanic_count[card_id].item()) != 0:
             reasons.append(UnsupportedCombatReason.SERIALIZED_MECHANIC)
         if int(catalog.effect_count[card_id].item()) != 0:
@@ -155,7 +193,11 @@ def _entity_unsupported_reasons(
 
     if entity.mechanics:
         reasons.append(UnsupportedCombatReason.RUNTIME_MECHANIC)
-    if entity._uses_projectiles():
+    if entity._uses_projectiles() and not (
+        static_crown
+        and isinstance(entity, Building)
+        and _crown_projectile_cannot_launch(entity, dt_seconds)
+    ):
         reasons.append(UnsupportedCombatReason.PROJECTILE_ATTACK)
 
     # The kernel stores the current target but does not yet carry the
@@ -196,14 +238,10 @@ def _entity_unsupported_reasons(
         reasons.append(UnsupportedCombatReason.SPAWN_HOOK)
 
     if isinstance(entity, Building):
-        if (
-            entity.requires_activation
-            or entity.activation_delay_remaining > 1e-9
-            or entity.activation_first_hit_delay_remaining > 1e-9
+        if entity.activation_delay_remaining < -1e-12 or (
+            entity.activation_first_hit_delay_remaining < -1e-12
         ):
             reasons.append(UnsupportedCombatReason.BUILDING_ACTIVATION)
-        if entity._crown_tower_slot is not None:
-            reasons.append(UnsupportedCombatReason.CROWN_TOWER)
 
     # Subclass lifecycle overrides can introduce callbacks invisible to the
     # dense state even when the serialized mechanic list is empty.
@@ -221,6 +259,7 @@ def project_stationary_combat(
     *,
     capacity: int | None = None,
     device: str | torch.device = "cpu",
+    dt_seconds: float = 0.05,
 ) -> StationaryCombatProjection:
     """Project battles without mutating them and classify exact support.
 
@@ -323,6 +362,22 @@ def project_stationary_combat(
             state.tower_active[battle_index, slot] = bool(
                 getattr(entity, "_tower_active", True)
             )
+            if isinstance(entity, Building):
+                state.requires_activation[battle_index, slot] = (
+                    entity.requires_activation
+                )
+                state.activation_delay_remaining[battle_index, slot] = (
+                    entity.activation_delay_remaining
+                )
+                state.activation_delay_seconds[battle_index, slot] = (
+                    entity.activation_delay_seconds
+                )
+                state.activation_first_hit_delay_remaining[battle_index, slot] = (
+                    entity.activation_first_hit_delay_remaining
+                )
+                state.activation_first_hit_delay_seconds[battle_index, slot] = (
+                    entity.activation_first_hit_delay_seconds
+                )
             state.attack_cooldown[battle_index, slot] = entity.attack_cooldown
             state.hit_speed_ms[battle_index, slot] = int(
                 getattr(entity.card_stats, "hit_speed", 0) or 0
@@ -353,7 +408,7 @@ def project_stationary_combat(
                 getattr(entity, "_has_attacked_once", False)
             )
 
-            reasons = list(_entity_unsupported_reasons(entity, catalog))
+            reasons = list(_entity_unsupported_reasons(entity, catalog, dt_seconds))
             if pending_reservation:
                 reasons.append(UnsupportedCombatReason.PENDING_PROJECTILE_RESERVATION)
             reasons = list(dict.fromkeys(reasons))
@@ -444,13 +499,31 @@ def sync_stationary_combat_(
             entity.last_attack_time = float(
                 state.last_attack_time[battle_index, slot].item()
             )
+            if isinstance(entity, Building):
+                entity._tower_active = bool(
+                    state.tower_active[battle_index, slot].item()
+                )
+                entity.activation_delay_remaining = float(
+                    state.activation_delay_remaining[battle_index, slot].item()
+                )
+                entity.activation_first_hit_delay_remaining = float(
+                    state.activation_first_hit_delay_remaining[
+                        battle_index, slot
+                    ].item()
+                )
 
             component_clock_advanced = entity.last_attack_time != float(
                 projection.last_attack_time_before[battle_index, slot].item()
             )
+            building_component_ready = not isinstance(entity, Building) or (
+                bool(getattr(entity, "_tower_active", True))
+                and entity.activation_delay_remaining <= 1e-9
+                and entity.activation_first_hit_delay_remaining <= 1e-9
+            )
             active_component = (
                 old_alive
                 and entity.deploy_delay_remaining <= 0.0
+                and building_component_ready
                 and (new_alive or component_clock_advanced or attacked)
             )
             if active_component:
@@ -458,7 +531,7 @@ def sync_stationary_combat_(
                 target: Entity | None = (
                     battle.entities.get(new_target) if new_target is not None else None
                 )
-                if target is not None:
+                if target is not None and isinstance(entity, Troop):
                     entity.face_towards(target.position)
                 if isinstance(entity, Troop):
                     if entity.initial_position is None:
@@ -516,7 +589,11 @@ def step_supported_stationary_combat_(
     """Project, execute, and synchronize one fully supported combat frame."""
 
     projection = project_stationary_combat(
-        battles, catalog, capacity=capacity, device="cpu"
+        battles,
+        catalog,
+        capacity=capacity,
+        device="cpu",
+        dt_seconds=dt_seconds,
     )
     kernel_result = step_stationary_combat_(projection.state, dt_seconds)
     events = sync_stationary_combat_(projection, kernel_result)
