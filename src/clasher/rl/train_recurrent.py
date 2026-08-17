@@ -25,6 +25,7 @@ from clasher.paths import (
 )
 
 from .model import ClasherPolicy, PolicyConfig, PolicyInputs
+from .resource_guard import guard_training_resources
 from .selfplay_env import BatchedSelfPlayStepper, SelfPlayBattleEnv
 from .structured_obs import StructuredObservation, StructuredObservationBuilder
 
@@ -1216,6 +1217,23 @@ def parse_args() -> argparse.Namespace:
         default="auto",
         help="rollout inference device; auto prefers CPU for low-latency batches",
     )
+    parser.add_argument(
+        "--resource-guard",
+        choices=["on", "off"],
+        default="on",
+        help=(
+            "fail before initialization when another Clasher job owns MPS or "
+            "the requested CPU actor slots exceed the live host budget; off "
+            "skips process admission for externally coordinated runs but "
+            "retains device-partition validation"
+        ),
+    )
+    parser.add_argument(
+        "--resource-reserve-cpus",
+        type=int,
+        default=0,
+        help="logical CPUs to keep outside the actor allocation",
+    )
     parser.add_argument("--d-model", type=int, default=128)
     parser.add_argument("--num-heads", type=int, default=4)
     parser.add_argument("--actor-layers", type=int, default=4)
@@ -1280,6 +1298,8 @@ def main() -> None:
         raise ValueError("actor_workers must be between 1 and num_envs")
     if args.actor_threads <= 0:
         raise ValueError("actor_threads must be positive")
+    if args.resource_reserve_cpus < 0:
+        raise ValueError("resource_reserve_cpus must be non-negative")
     if args.opponent_mode == "checkpoint" and not args.opponent_checkpoint:
         raise ValueError("--opponent-mode checkpoint requires --opponent-checkpoint")
     if args.opponent_mode != "checkpoint" and args.opponent_checkpoint:
@@ -1309,10 +1329,15 @@ def main() -> None:
     torch.set_num_threads(max(1, min(8, torch.get_num_threads())))
     learner_device = resolve_learner_device(args.device)
     actor_device = resolve_torch_device(args.actor_device)
-    if args.actor_workers > 1 and actor_device.type != "cpu":
-        raise ValueError(
-            "parallel rollout workers currently require --actor-device cpu"
-        )
+    resource_allocation = guard_training_resources(
+        learner_device=learner_device.type,
+        actor_device=actor_device.type,
+        actor_workers=args.actor_workers,
+        actor_threads=args.actor_threads,
+        enabled=args.resource_guard == "on",
+        reserve_cpus=args.resource_reserve_cpus,
+        auto_uses_mps=torch.backends.mps.is_available(),
+    )
     decks_path = resolve_decks_path(args.decks_path, must_exist=True)
     opponent_checkpoints = tuple(
         str(resolve_path(path, must_exist=True)) for path in args.opponent_checkpoint
@@ -1449,6 +1474,7 @@ def main() -> None:
     parameter_count = sum(parameter.numel() for parameter in model.parameters())
 
     print(f"learner_device={learner_device} actor_device={actor_device}")
+    print(resource_allocation.summary())
     print(f"decks_path={decks_path}")
     print(f"checkpoint_dir={directory}")
     print(
