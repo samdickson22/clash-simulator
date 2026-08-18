@@ -72,6 +72,15 @@ class TensorResidentWorkspace:
             is not self.engine.projectile_bridge.catalog
         ):
             raise ValueError("speculative engines must share the projectile catalog")
+        if (
+            self.scratch.dispatcher.passive_catalog
+            is not self.engine.dispatcher.passive_catalog
+        ):
+            raise ValueError("speculative engines must share dispatcher catalogs")
+        if self.scratch.dispatcher.runtime is not self.scratch.runtime:
+            raise ValueError("scratch dispatcher must own the scratch runtime")
+        if self.scratch.dispatcher.mechanics is not self.scratch.mechanics:
+            raise ValueError("scratch dispatcher must share resident mechanics")
 
     def refresh(self) -> None:
         """Reset every mutable scratch row without allocating another engine."""
@@ -97,8 +106,30 @@ class TensorResidentWorkspace:
             (destination.objects, source.objects),
             (destination.objects.objects, source.objects.objects),
             (destination.projectile_bridge, source.projectile_bridge),
+            (destination.dispatcher.passive, source.dispatcher.passive),
+            (destination.dispatcher.combat_world, source.dispatcher.combat_world),
+            (destination.dispatcher.damage_ramp, source.dispatcher.damage_ramp),
+            (destination.dispatcher.dash, source.dispatcher.dash),
+            (destination.dispatcher.leap, source.dispatcher.leap),
+            (destination.dispatcher.hook, source.dispatcher.hook),
         ):
             _copy_tensor_fields_(left, right)
+        for name in (
+            "special_triggered",
+            "forced_movement",
+            "knockback_target_units",
+            "knockback_velocity_work",
+            "initialized_entity_id",
+            "multiple_target_ids",
+            "multiple_target_valid",
+            "underground_active",
+        ):
+            getattr(destination.dispatcher, name).copy_(
+                getattr(source.dispatcher, name)
+            )
+        destination.dispatcher.runtime = destination.runtime
+        destination.dispatcher.mechanics = destination.mechanics
+        destination.runtime.battle.entity_id.copy_(source.runtime.battle.entity_id)
         destination.facing_x_units.copy_(source.facing_x_units)
         destination.facing_y_units.copy_(source.facing_y_units)
         destination.pending_projectile_max_duration_ms.copy_(

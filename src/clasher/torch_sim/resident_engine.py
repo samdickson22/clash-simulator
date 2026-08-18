@@ -41,6 +41,10 @@ from .combat import (
 from .combat_adapter import project_stationary_combat
 from .deployment import TensorCommandMaterializer, TensorDeploymentCatalog
 from .entity_pool import EntitySelection
+from .mechanic_dispatcher import (
+    MechanicTickInputs,
+    TensorMechanicDispatcher,
+)
 from .movement_adapter import TensorMovementAdapter
 from .object_adapter import RuntimeObjectKind
 from .objects import _integer_sqrt
@@ -72,6 +76,7 @@ from .runtime_status import (
     TensorRuntimeStatusPhase,
     step_runtime_status_phase_,
 )
+from .special_movement import SpecialMovementOpcode
 from .tick_common import check_win_conditions, tick_players
 
 RESIDENT_PHASE_ORDER = tuple(TickPhase)
@@ -81,6 +86,14 @@ RESIDENT_UNSUPPORTED_MECHANIC_OPCODES = {
 RESIDENT_UNSUPPORTED_EFFECT_OPCODES = {
     opcode: name for name, opcode in EFFECT_OPCODE.items()
 }
+RESIDENT_DISPATCH_MECHANIC_OPCODES = frozenset(
+    MECHANIC_OPCODE[name]
+    for name in (
+        "BanditDash",
+        "SerializedOnHitBuff",
+        "SkeletonKingSoulCollector",
+    )
+)
 
 
 class _ResidentCatalogLoader(CardDataLoader):
@@ -359,6 +372,39 @@ def _copy_projectile_bridge_rows_(
             left[blueprint_indices] = right[blueprint_indices]
 
 
+def _copy_dispatcher_rows_(
+    destination: TensorMechanicDispatcher,
+    source: TensorMechanicDispatcher,
+    rows: torch.Tensor,
+) -> None:
+    for left, right in (
+        (destination.combat_world, source.combat_world),
+        (destination.damage_ramp, source.damage_ramp),
+        (destination.dash, source.dash),
+        (destination.leap, source.leap),
+        (destination.hook, source.hook),
+    ):
+        _copy_rows_(left, right, rows)
+    for descriptor in fields(destination.passive):
+        if descriptor.name == "entity_id":
+            continue
+        left = getattr(destination.passive, descriptor.name)
+        right = getattr(source.passive, descriptor.name)
+        left[rows] = right[rows]
+    destination.passive.entity_id.copy_(destination.runtime.battle.entity_id)
+    for name in (
+        "special_triggered",
+        "forced_movement",
+        "knockback_target_units",
+        "knockback_velocity_work",
+        "initialized_entity_id",
+        "multiple_target_ids",
+        "multiple_target_valid",
+        "underground_active",
+    ):
+        getattr(destination, name)[rows] = getattr(source, name)[rows]
+
+
 def _copy_object_blueprint_rows_(
     destination: TensorRuntimeObjectPhase,
     source: TensorRuntimeObjectPhase,
@@ -433,6 +479,7 @@ class TensorResidentEngine:
         runtime: TensorBattleRuntime,
         deployment: TensorRuntimeDeployment,
         mechanics: TensorRuntimeMechanics,
+        dispatcher: TensorMechanicDispatcher,
         movement: TensorMovementAdapter,
         path_cache: TensorResidentPathCache,
         status: TensorRuntimeStatusPhase,
@@ -460,6 +507,7 @@ class TensorResidentEngine:
         self.runtime = runtime
         self.deployment = deployment
         self.mechanics = mechanics
+        self.dispatcher = dispatcher
         self.movement = movement
         self.path_cache = path_cache
         self.status = status
@@ -545,7 +593,8 @@ class TensorResidentEngine:
         mechanic_boundary = copy.copy(battles[0])
         mechanic_boundary.card_loader = catalog_loader
         mechanic_battles[0] = mechanic_boundary
-        mechanics = TensorRuntimeMechanics.from_battles(runtime, mechanic_battles)
+        dispatcher = TensorMechanicDispatcher.from_battles(runtime, mechanic_battles)
+        mechanics = dispatcher.mechanics
         status = TensorRuntimeStatusPhase.from_battles(runtime, battles)
         objects = TensorRuntimeObjectPhase.from_battles(
             runtime, battles, max_objects=max_objects
@@ -696,6 +745,7 @@ class TensorResidentEngine:
             runtime=runtime,
             deployment=deployment,
             mechanics=mechanics,
+            dispatcher=dispatcher,
             movement=movement,
             path_cache=path_cache,
             status=status,
@@ -725,10 +775,18 @@ class TensorResidentEngine:
         runtime = self.runtime.clone()
         # TensorBattleRuntime.fork currently shares this nested mutable owner.
         runtime.battle.rng = self.runtime.battle.rng.clone()
+        mechanics = self.mechanics.clone()
+        dispatcher = self.dispatcher._fork(
+            torch.arange(self.batch_size, dtype=torch.int64, device=self.device)
+        )
+        dispatcher.runtime = runtime
+        dispatcher.mechanics = mechanics
+        dispatcher.passive.entity_id = runtime.battle.entity_id
         return type(self)(
             runtime=runtime,
             deployment=self.deployment,
-            mechanics=self.mechanics.clone(),
+            mechanics=mechanics,
+            dispatcher=dispatcher,
             movement=_clone_tensor_dataclass(self.movement),  # type: ignore[arg-type]
             # Entries are immutable deterministic functions of standard-arena
             # keys and are not battle-observable. Speculative rows may safely
@@ -935,6 +993,11 @@ class TensorResidentEngine:
             & active_character[..., None, None]
             & (effect_codes > 0)
         ).any(dim=(1, 2))
+        admitted_mechanic = torch.zeros(
+            mechanic_codes.shape[0], dtype=torch.bool, device=self.device
+        )
+        admitted_mechanic[list(RESIDENT_DISPATCH_MECHANIC_OPCODES)] = True
+        unsupported_active_mechanic = mechanic_present & ~admitted_mechanic[None, :]
 
         if self.device.type not in {"cpu", "cuda"}:
             publish(torch.ones_like(base_supported), ResidentUnsupportedReason.DEVICE)
@@ -942,7 +1005,10 @@ class TensorResidentEngine:
             (~known & active_character).any(dim=1),
             ResidentUnsupportedReason.UNKNOWN_CHARACTER,
         )
-        publish(mechanic_present.any(dim=1), ResidentUnsupportedReason.ACTIVE_MECHANIC)
+        publish(
+            unsupported_active_mechanic.any(dim=1),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
         publish(effect_present.any(dim=1), ResidentUnsupportedReason.ACTIVE_EFFECT)
         core_card = self.runtime.battle.entity_card.clamp_min(0)
         bridge_projectile = self.projectile_bridge.catalog.supported[core_card] & (
@@ -1023,6 +1089,9 @@ class TensorResidentEngine:
 
         mechanic_present = scatter_opcode_presence(mechanic_present, command_mechanics)
         effect_present = scatter_opcode_presence(effect_present, command_effects)
+        # Deployment materialization still rejects every mechanic-bearing
+        # payload. Keep those actions at the preflight boundary until the
+        # materializer receives the same admitted-opcode contract.
         command_has_mechanic = (command_mechanics > 0).any(dim=1)
         command_has_effect = (command_effects > 0).any(dim=1)
         command_kind = self.runtime.catalog.kind[command_cards]
@@ -1242,6 +1311,7 @@ class TensorResidentEngine:
         self.combat.stunned.copy_(runtime.status.stun_timer > 1e-9)
         self.combat.forced_movement.zero_()
         self.combat.combat_blocked.copy_(self.mechanics.combat_blocked())
+        self.combat.combat_blocked |= self.dispatcher.dash.phase != 0
         self.combat.attack_rate_multiplier.copy_(
             self.mechanics.attack_rate_multiplier(runtime)
         )
@@ -1334,7 +1404,17 @@ class TensorResidentEngine:
         movement.effective_speed_units.copy_(
             self.runtime.catalog.speed_units_per_tick[safe].to(torch.int64)
         )
-        movement.mechanic_free.copy_(self.runtime.catalog.mechanic_count[safe] == 0)
+        movement_operations = self.runtime.catalog.mechanic_opcode[safe]
+        movement_admitted = torch.zeros(
+            max(MECHANIC_OPCODE.values()) + 1,
+            dtype=torch.bool,
+            device=self.device,
+        )
+        movement_admitted[0] = True
+        movement_admitted[list(RESIDENT_DISPATCH_MECHANIC_OPCODES)] = True
+        movement.mechanic_free.copy_(
+            movement_admitted[movement_operations.to(torch.int64)].all(dim=2)
+        )
         movement.stunned.copy_(self.combat.stunned)
         movement.forced_movement.zero_()
         movement.special_movement.zero_()
@@ -1479,6 +1559,103 @@ class TensorResidentEngine:
         runtime.mark_dirty(admitted, phase=TickPhase.COMBAT)
         return result
 
+    def _mechanic_inputs(
+        self,
+        deployment: TensorRuntimeDeploymentResult,
+        combat: CombatStepResult,
+        active: torch.Tensor,
+    ) -> MechanicTickInputs:
+        runtime = self.runtime
+        count = runtime.max_entities
+        inputs = MechanicTickInputs.empty(
+            self.dispatcher,
+            event_width=count,
+        )
+        inputs.dt_ms.copy_(torch.round(runtime.battle.dt * 1_000.0).to(torch.int64))
+        slots = torch.arange(count, dtype=torch.int64, device=self.device)[None, :]
+        slots = slots.expand(self.batch_size, count)
+        target_before = combat.target_before.clamp(min=0, max=count - 1)
+        target_after = self.combat.target_slot.clamp(min=0, max=count - 1)
+        direct_hit = (
+            active[:, None]
+            & combat.attacked
+            & ~combat.projectile_launched
+            & (combat.target_before >= 0)
+        )
+        inputs.attack_source_slot.copy_(slots)
+        inputs.attack_target_slot.copy_(target_before)
+        inputs.attack_damage.copy_(self.combat.damage)
+        inputs.attack_valid.copy_(direct_hit)
+        inputs.attack_damage_already_applied.copy_(direct_hit)
+        inputs.status_eligible.copy_(direct_hit)
+        inputs.attack_started.copy_(active[:, None] & combat.attacked)
+
+        connected = (
+            active[:, None]
+            & self.combat.present
+            & self.combat.alive
+            & (self.combat.target_slot >= 0)
+            & self.combat.present.gather(1, target_after)
+            & self.combat.alive.gather(1, target_after)
+        )
+        inputs.connected_target_slot.copy_(
+            torch.where(connected, self.combat.target_slot, -1)
+        )
+        inputs.connected.copy_(connected)
+        inputs.attack_rate.copy_(self.combat.attack_rate_multiplier)
+        inputs.has_attack_target.copy_(connected)
+        dx = self.combat.x_units.gather(1, target_after) - self.combat.x_units
+        dy = self.combat.y_units.gather(1, target_after) - self.combat.y_units
+        target_radius = self.combat.collision_radius_units.gather(1, target_after)
+        reach = self.combat.range_units + target_radius
+        inputs.has_attack_range_target.copy_(
+            connected & (dx * dx + dy * dy <= reach * reach)
+        )
+        inputs.stunned.copy_(self.runtime.status.stun_timer > 1e-9)
+
+        dash_card, dash_slot, has_dash = self.dispatcher._special_operation(
+            SpecialMovementOpcode.BANDIT_DASH
+        )
+        minimum = self.dispatcher._special_parameter(
+            self.dispatcher.special_catalog.min_range_units,
+            dash_card,
+            dash_slot,
+        )
+        maximum = self.dispatcher._special_parameter(
+            self.dispatcher.special_catalog.max_range_units,
+            dash_card,
+            dash_slot,
+        )
+        source_radius = self.combat.collision_radius_units
+        distance_sq = (
+            dx.to(torch.int64).square()
+            + dy.to(torch.int64).square()
+            - self.combat.target_distance_discount_sq_units
+        ).clamp_min(0)
+        inner = minimum + source_radius + target_radius
+        outer = maximum + target_radius
+        inputs.special_target_in_range.copy_(
+            connected
+            & has_dash
+            & (distance_sq >= inner.square())
+            & (distance_sq <= outer.square())
+        )
+
+        allocation = deployment.deployment.allocation
+        spawned = torch.zeros_like(inputs.spawned)
+        spawned.scatter_reduce_(
+            1,
+            allocation.slots.clamp_min(0),
+            allocation.valid,
+            reduce="amax",
+            include_self=True,
+        )
+        inputs.spawned.copy_(spawned & active[:, None])
+        inputs.death_triggered.copy_(
+            active[:, None] & self.combat.present & ~self.combat.alive
+        )
+        return inputs
+
     def _compile_straight_ground_routes_(
         self,
         move: torch.Tensor,
@@ -1587,10 +1764,22 @@ class TensorResidentEngine:
         self, component_consumed: torch.Tensor | None = None
     ) -> RuntimeMovementResult:
         consumed = (
-            torch.zeros(self.batch_size, dtype=torch.bool, device=self.device)
+            torch.zeros(
+                (self.batch_size, self.runtime.max_entities),
+                dtype=torch.bool,
+                device=self.device,
+            )
             if component_consumed is None
             else component_consumed.to(device=self.device, dtype=torch.bool)
         )
+        if consumed.shape == (self.batch_size,):
+            consumed = consumed[:, None].expand(
+                self.batch_size, self.runtime.max_entities
+            )
+        if consumed.shape != (self.batch_size, self.runtime.max_entities):
+            raise ValueError(
+                "component_consumed must have shape [batch] or [batch, entity]"
+            )
         saved_present = self.combat.present.clone()
         saved_slots = self.movement.slot_present.clone()
         # A direct hit can create a physical-slot hole before movement. The
@@ -1613,8 +1802,9 @@ class TensorResidentEngine:
         sorted_movement = _sorted_slot_clone(self.movement, order)
         assert isinstance(sorted_combat, StationaryCombatState)
         assert isinstance(sorted_movement, TensorMovementAdapter)
-        sorted_combat.present[consumed] = False
-        sorted_movement.slot_present[consumed] = False
+        sorted_consumed = _gather_slots(consumed, order)
+        sorted_combat.present &= ~sorted_consumed
+        sorted_movement.slot_present &= ~sorted_consumed
 
         def physical_target_to_sorted(target: torch.Tensor) -> torch.Tensor:
             safe = target.clamp_min(0)
@@ -1763,6 +1953,12 @@ class TensorResidentEngine:
             self.movement,
             self.status,
             self.mechanics,
+            self.dispatcher.passive,
+            self.dispatcher.combat_world,
+            self.dispatcher.damage_ramp,
+            self.dispatcher.dash,
+            self.dispatcher.leap,
+            self.dispatcher.hook,
         ):
             for descriptor in fields(owner):
                 value = getattr(owner, descriptor.name)
@@ -1776,6 +1972,18 @@ class TensorResidentEngine:
                         value.masked_fill_(expanded, -1)
                     else:
                         value.masked_fill_(expanded, 0)
+        for value in (
+            self.dispatcher.special_triggered,
+            self.dispatcher.forced_movement,
+            self.dispatcher.knockback_target_units,
+            self.dispatcher.knockback_velocity_work,
+            self.dispatcher.initialized_entity_id,
+            self.dispatcher.multiple_target_ids,
+            self.dispatcher.multiple_target_valid,
+            self.dispatcher.underground_active,
+        ):
+            expanded = dead.reshape(*dead.shape, *((1,) * (value.ndim - 2)))
+            value.masked_fill_(expanded, 0)
         runtime.battle.entity_id.copy_(runtime.entity_pool.entity_id)
         self.pending_projectile_max_duration_ms.masked_fill_(dead, 0)
         runtime.phases.death_pending &= ~dead
@@ -1803,6 +2011,9 @@ class TensorResidentEngine:
             (self.objects.objects, source.objects.objects),
         ):
             _copy_rows_(left, right, rows)
+        _copy_dispatcher_rows_(self.dispatcher, source.dispatcher, rows)
+        self.dispatcher.runtime = self.runtime
+        self.dispatcher.mechanics = self.mechanics
         _copy_projectile_bridge_rows_(
             self.projectile_bridge, source.projectile_bridge, rows
         )
@@ -1887,6 +2098,9 @@ class TensorResidentEngine:
         working.runtime.mark_dirty(active, phase=TickPhase.CLOCKS_AND_PLAYERS)
 
         working.mechanics.refresh_new_entities_(working.runtime)
+        # Cloak remains outside RESIDENT_DISPATCH_MECHANIC_OPCODES. The
+        # dispatcher also owns this hook for future closure, but no admitted
+        # row can currently execute both paths with a live Cloak operation.
         working.mechanics.tick_cloak_(working.runtime)
         combat = working._combat_phase(active)
         previously_allocated_objects = working.objects.objects.allocated.clone()
@@ -1901,8 +2115,52 @@ class TensorResidentEngine:
             active & ~projectile_supported,
             phase=TickPhase.COMBAT,
         )
+        mechanic_inputs = working._mechanic_inputs(deployment, combat, active)
+        mechanic_result = working.dispatcher.step(mechanic_inputs)
+        working.runtime.mark_unsupported(
+            active & ~mechanic_result.committed,
+            phase=TickPhase.COMBAT,
+        )
+        working.combat.x_units.copy_(
+            working.runtime.battle.entity_x_units.to(torch.int64)
+        )
+        working.combat.y_units.copy_(
+            working.runtime.battle.entity_y_units.to(torch.int64)
+        )
+        working.combat.hp.copy_(working.runtime.battle.entity_hp)
+        working.combat.alive.copy_(working.runtime.battle.entity_active)
+        working.movement.position_units.copy_(
+            torch.stack(
+                (
+                    working.runtime.battle.entity_x_units,
+                    working.runtime.battle.entity_y_units,
+                ),
+                dim=-1,
+            ).to(torch.int64)
+        )
+        special_consumed = (
+            working.dispatcher.dash.special_active
+            | working.dispatcher.dash.special_consumed
+        )
+        working.movement.special_movement.copy_(special_consumed)
         combat_death = (working.combat.present & ~working.combat.alive).any(dim=1)
-        movement = working._movement_phase(combat_death)
+        special_row = special_consumed.any(dim=1)
+        # Removing only the special mover creates a non-prefix physical-slot
+        # hole in the current collision kernel. A row with any other mobile
+        # ordinary troop therefore remains conservatively fail-closed; rows
+        # whose other characters are immobile may skip movement as a whole.
+        other_mobile = (
+            working.movement.slot_present
+            & working.movement.entity_active
+            & working.movement.is_troop
+            & ~working.movement.stunned
+            & ~special_consumed
+        ).any(dim=1)
+        working.runtime.mark_unsupported(
+            active & special_row & other_mobile,
+            phase=TickPhase.MOVEMENT,
+        )
+        movement = working._movement_phase(combat_death | special_row)
         status = step_runtime_status_phase_(
             working.runtime,
             working.status,

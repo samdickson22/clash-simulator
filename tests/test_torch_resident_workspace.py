@@ -64,6 +64,28 @@ def _engine_snapshot(engine: TensorResidentEngine) -> dict[str, torch.Tensor]:
         "projectile_bridge",
     ):
         result.update(_tensor_snapshot(getattr(engine, name), name))
+    for name in (
+        "passive",
+        "combat_world",
+        "damage_ramp",
+        "dash",
+        "leap",
+        "hook",
+    ):
+        result.update(
+            _tensor_snapshot(getattr(engine.dispatcher, name), f"dispatcher.{name}")
+        )
+    for name in (
+        "special_triggered",
+        "forced_movement",
+        "knockback_target_units",
+        "knockback_velocity_work",
+        "initialized_entity_id",
+        "multiple_target_ids",
+        "multiple_target_valid",
+        "underground_active",
+    ):
+        result[f"dispatcher.{name}"] = getattr(engine.dispatcher, name).cpu().clone()
     for name in ("battle", "status", "phases", "events"):
         result.update(
             _tensor_snapshot(getattr(engine.runtime, name), f"runtime.{name}")
@@ -157,6 +179,12 @@ def test_workspace_preallocates_once_and_shares_only_immutable_owners(
     assert workspace.scratch.path_cache is engine.path_cache
     assert workspace.scratch.mechanics.catalog is engine.mechanics.catalog
     assert workspace.scratch.mechanics.on_hit_catalog is engine.mechanics.on_hit_catalog
+    assert workspace.scratch.dispatcher.runtime is workspace.scratch.runtime
+    assert workspace.scratch.dispatcher.mechanics is workspace.scratch.mechanics
+    assert (
+        workspace.scratch.dispatcher.passive_catalog
+        is engine.dispatcher.passive_catalog
+    )
     assert workspace.scratch.status.payload_catalog is engine.status.payload_catalog
     assert workspace.scratch.objects.objects.catalog is engine.objects.objects.catalog
     assert (
