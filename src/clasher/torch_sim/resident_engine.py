@@ -3439,6 +3439,13 @@ class TensorResidentEngine:
             continuous_handler = (
                 command & self.continuous_areas.catalog.supported[safe] & in_range
             )
+            # A bridge-exact spell payload is a complete lifecycle owner.  Some
+            # serialized area spells are also recognized by the retained
+            # continuous-area catalog, but routing them to both owners would
+            # either duplicate the effect or reject the otherwise exact row as
+            # ambiguous.  Keep owner selection data-driven and disjoint by
+            # giving the exact bridge representation precedence.
+            continuous_handler &= ~bridge_handler
             graveyard_handler = (
                 command & in_range & self.graveyards.catalog.supported[safe]
             )

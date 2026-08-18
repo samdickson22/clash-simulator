@@ -8,7 +8,7 @@ import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Troop
+from clasher.entities import AreaEffect, Troop
 from clasher.spells import SPELL_REGISTRY
 from clasher.torch_sim.resident_engine import TensorResidentEngine
 from clasher.torch_sim.runtime_state import RuntimeEventOpcode, TickPhase
@@ -21,6 +21,7 @@ DUE_SPELLS = (
     "Freeze",
     "GiantSnowball",
     "GoblinBarrel",
+    "GlobalLightning",
     "Graveyard",
     "Log",
     "Poison",
@@ -159,6 +160,149 @@ def test_complete_retained_spell_engine_lifecycle_matches_scalar(
         torch.nonzero(engine.runtime.battle.entity_id[0] == target.id).item()
     )
     assert not engine.runtime.battle.entity_hp_integer_kind[0, target_slot]
+
+
+@pytest.mark.parametrize(
+    "device",
+    (
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ),
+)
+def test_global_lightning_overlap_uses_bridge_for_complete_lifecycle(
+    device: str,
+) -> None:
+    source, target = _battle("GlobalLightning")
+    target.position = Position(9.0, 14.0)
+    target._spawn_hook_pending = False
+    target._spawn_hook_fired = True
+    oracle = copy.deepcopy(source)
+    assert SPELL_REGISTRY["GlobalLightning"].cast(oracle, 0, Position(9.0, 14.0))
+    engine = TensorResidentEngine.from_battles(
+        [source],
+        device=device,
+        max_entities=8,
+        max_objects=4,
+        event_capacity=512,
+    )
+    card_id = engine.runtime.battle.card_to_id["GlobalLightning"]
+    assert engine.projectile_bridge.catalog.supported[card_id]
+    assert engine.continuous_areas.catalog.supported[card_id]
+    assert engine.preflight().supported.tolist() == [True]
+    _queue(engine, "GlobalLightning", y_units=14_000)
+    assert engine.preflight().supported.tolist() == [True]
+    player_order = torch.tensor([[0, 1]], device=engine.device)
+
+    for tick in range(110):
+        # The oracle command phase has already cast the spell, but command-
+        # boundary objects do not consume elapsed time until the next tick.
+        if tick:
+            _oracle_object_tick(oracle)
+        result = engine.step(player_order=player_order)
+
+        assert result.committed.tolist() == [True]
+        assert result.pending_spells.resolved_count.tolist() == [tick == 0]
+        assert not engine.pending_spells.active.any()
+        assert not engine.continuous_areas.active.any()
+        assert engine.runtime.battle.rng.python_state(0) == oracle.rng.getstate()
+        assert engine.runtime.entity_pool.next_entity_id.item() == oracle.next_entity_id
+
+        active = engine.runtime.entity_pool.active[0]
+        tensor_ids = engine.runtime.battle.entity_id[0, active].tolist()
+        assert tensor_ids == list(oracle.entities)
+        target_slot = int(
+            torch.nonzero(engine.runtime.battle.entity_id[0] == target.id).item()
+        )
+        assert (
+            engine.runtime.battle.entity_hp[0, target_slot].item()
+            == oracle.entities[target.id].hitpoints
+        )
+        python_areas = [
+            entity
+            for entity in oracle.entities.values()
+            if isinstance(entity, AreaEffect)
+        ]
+        allocated = engine.objects.objects.allocated[0]
+        assert engine.objects.objects.object_id[0, allocated].tolist() == [
+            entity.id for entity in python_areas
+        ]
+        assert engine.objects.objects.x_units[0, allocated].tolist() == [
+            round(entity.position.x * 1_000) for entity in python_areas
+        ]
+        assert engine.objects.objects.y_units[0, allocated].tolist() == [
+            round(entity.position.y * 1_000) for entity in python_areas
+        ]
+
+    count = int(engine.runtime.events.count[0])
+    command = engine.runtime.events.opcode[0, :count] == int(RuntimeEventOpcode.COMMAND)
+    assert command.sum().item() == 1
+    command_slot = int(torch.nonzero(command, as_tuple=False)[0, 0])
+    assert command_slot == 0
+    assert engine.runtime.events.payload[0, command_slot].item() == card_id
+
+
+@pytest.mark.parametrize(
+    "device",
+    (
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ),
+)
+def test_global_lightning_overlap_capacity_failure_rolls_back_row(
+    device: str,
+) -> None:
+    failed, _ = _battle("GlobalLightning")
+    successful, _ = _battle("GlobalLightning")
+    engine = TensorResidentEngine.from_battles(
+        [failed, successful],
+        device=device,
+        max_entities=8,
+        max_objects=4,
+        event_capacity=8,
+    )
+    _queue(engine, "GlobalLightning", row=0)
+    _queue(engine, "GlobalLightning", row=1)
+    engine.runtime.events.count[0] = engine.runtime.events.capacity
+    before_time = engine.runtime.battle.time.clone()
+    before_ids = engine.runtime.battle.entity_id.clone()
+    before_hp = engine.runtime.battle.entity_hp.clone()
+    before_next_id = engine.runtime.entity_pool.next_entity_id.clone()
+    before_pending = engine.pending_spells.active.clone()
+    before_rng = engine.runtime.battle.rng.python_state(0)
+
+    result = engine.step()
+
+    assert result.committed.tolist() == [False, True]
+    assert engine.runtime.battle.time[0].item() == before_time[0].item()
+    assert torch.equal(engine.runtime.battle.entity_id[0], before_ids[0])
+    assert torch.equal(engine.runtime.battle.entity_hp[0], before_hp[0])
+    assert engine.runtime.entity_pool.next_entity_id[0] == before_next_id[0]
+    assert engine.pending_spells.active[0].tolist() == before_pending[0].tolist()
+    assert engine.runtime.battle.rng.python_state(0) == before_rng
+    assert not engine.objects.objects.allocated[0].any()
+    assert not engine.continuous_areas.active[0].any()
+
+    assert not engine.pending_spells.active[1].any()
+    assert engine.objects.objects.allocated[1].sum().item() == 1
+    assert not engine.continuous_areas.active[1].any()
+    row_one_count = int(engine.runtime.events.count[1])
+    row_one_command = engine.runtime.events.opcode[1, :row_one_count] == int(
+        RuntimeEventOpcode.COMMAND
+    )
+    assert row_one_command.sum().item() == 1
+    assert engine.runtime.events.payload[1, :row_one_count][
+        row_one_command
+    ].tolist() == [engine.runtime.battle.card_to_id["GlobalLightning"]]
 
 
 def test_mixed_due_commands_follow_sequence_order() -> None:
