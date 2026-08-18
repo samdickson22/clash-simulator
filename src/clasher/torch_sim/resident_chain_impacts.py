@@ -36,6 +36,7 @@ class ChainImpactInputs:
     source_slot: torch.Tensor
     primary_slot: torch.Tensor
     primary_damage_applied: torch.Tensor
+    source_death_applied: torch.Tensor
 
     @classmethod
     def empty(
@@ -51,6 +52,7 @@ class ChainImpactInputs:
             source_slot=torch.zeros(shape, dtype=torch.int64, device=device),
             primary_slot=torch.zeros(shape, dtype=torch.int64, device=device),
             primary_damage_applied=torch.zeros(shape, dtype=torch.bool, device=device),
+            source_death_applied=torch.zeros(shape, dtype=torch.bool, device=device),
         )
 
 
@@ -486,7 +488,7 @@ def step_chain_impacts_(
                 primary_stun, RuntimeEventOpcode.STATUS, source_id, primary_id, duration
             )
 
-            self_kill = valid & spirit
+            self_kill = valid & spirit & ~impacts.source_death_applied[:, lane]
             self_amount = combat.hp[rows, source_slot].clone()
             combat.hp[rows, source_slot] = torch.where(
                 self_kill, 0.0, combat.hp[rows, source_slot]

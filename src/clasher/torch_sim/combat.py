@@ -68,6 +68,7 @@ class StationaryCombatState:
     stunned: torch.Tensor
     forced_movement: torch.Tensor
     combat_blocked: torch.Tensor
+    attack_start_special: torch.Tensor
     ordinary_combat_supported: torch.Tensor
     combat_enabled: torch.Tensor
     tower_active: torch.Tensor
@@ -120,7 +121,7 @@ class StationaryCombatState:
                 f"route device {torch_device.type!r} through fail-closed fallback"
             )
 
-        def full(value: int | float | bool, dtype: torch.dtype) -> torch.Tensor:
+        def full(value: float | bool, dtype: torch.dtype) -> torch.Tensor:
             return torch.full(shape, value, dtype=dtype, device=torch_device)
 
         return cls(
@@ -161,6 +162,7 @@ class StationaryCombatState:
             stunned=full(False, torch.bool),
             forced_movement=full(False, torch.bool),
             combat_blocked=full(False, torch.bool),
+            attack_start_special=full(False, torch.bool),
             ordinary_combat_supported=full(True, torch.bool),
             combat_enabled=full(True, torch.bool),
             tower_active=full(True, torch.bool),
@@ -208,6 +210,7 @@ class CombatStepResult:
     damage_received: torch.Tensor
     target_before: torch.Tensor
     target_after: torch.Tensor
+    special_started: torch.Tensor | None = None
 
 
 class UnsupportedStationaryCombatError(RuntimeError):
@@ -609,6 +612,7 @@ def step_stationary_combat_(
     target_before = state.target_slot.clone()
     attacked = torch.zeros_like(state.present)
     projectile_launched = torch.zeros_like(state.present)
+    special_started = torch.zeros_like(state.present)
     damage_received = torch.zeros_like(state.hp)
 
     maximum_id = torch.iinfo(torch.int64).max
@@ -758,8 +762,38 @@ def step_stationary_combat_(
 
         ready = target_in_range & (new_cooldown <= 0.0) & (current >= 0)
         projectile = _gather(state.uses_projectile, attacker_slots)
-        direct = ready & ~projectile
-        launches = ready & projectile
+        special = ready & _gather(state.attack_start_special, attacker_slots)
+        direct = ready & ~projectile & ~special
+        launches = ready & projectile & ~special
+        ordinary_ready = ready & ~special
+
+        # Some serialized attack-start callbacks turn the attacker into its
+        # own committed projectile. This transition occurs inside stable-ID
+        # combat order, before a later component can target or affect it.
+        _scatter_masked_(
+            state.targetable,
+            attacker_slots,
+            torch.zeros(batch, dtype=torch.bool, device=state.device),
+            special,
+        )
+        _scatter_masked_(
+            state.effect_receivable,
+            attacker_slots,
+            torch.zeros(batch, dtype=torch.bool, device=state.device),
+            special,
+        )
+        _scatter_masked_(
+            state.area_effect_receivable,
+            attacker_slots,
+            torch.zeros(batch, dtype=torch.bool, device=state.device),
+            special,
+        )
+        _scatter_masked_(
+            state.combat_blocked,
+            attacker_slots,
+            torch.ones(batch, dtype=torch.bool, device=state.device),
+            special,
+        )
 
         recipients = _area_recipient_mask(state, attacker_slots, current)
         recipients &= direct.unsqueeze(1)
@@ -801,35 +835,38 @@ def step_stationary_combat_(
 
         attacked[rows[ready], attacker_slots[ready]] = True
         projectile_launched[rows[launches], attacker_slots[launches]] = True
+        special_started[rows[special], attacker_slots[special]] = True
         post_cooldown = torch.where(
             _gather(state.hit_speed_ms, attacker_slots) > 0,
             _gather(state.hit_speed_ms, attacker_slots).to(torch.float64) / 1_000.0,
             torch.ones(batch, dtype=torch.float64, device=state.device),
         )
-        _scatter_masked_(state.attack_cooldown, attacker_slots, post_cooldown, ready)
+        _scatter_masked_(
+            state.attack_cooldown, attacker_slots, post_cooldown, ordinary_ready
+        )
         _scatter_masked_(
             state.attack_windup_active,
             attacker_slots,
             torch.zeros(batch, dtype=torch.bool, device=state.device),
-            ready,
+            ordinary_ready,
         )
         _scatter_masked_(
             state.attack_preload_blocked,
             attacker_slots,
             torch.zeros(batch, dtype=torch.bool, device=state.device),
-            ready,
+            ordinary_ready,
         )
         _scatter_masked_(
             state.has_attacked_once,
             attacker_slots,
             torch.ones(batch, dtype=torch.bool, device=state.device),
-            ready,
+            ordinary_ready,
         )
         _scatter_masked_(
             state.last_attack_time,
             attacker_slots,
             torch.zeros(batch, dtype=torch.float64, device=state.device),
-            ready,
+            ordinary_ready,
         )
 
     return CombatStepResult(
@@ -838,6 +875,7 @@ def step_stationary_combat_(
         damage_received=damage_received,
         target_before=target_before,
         target_after=state.target_slot.clone(),
+        special_started=special_started,
     )
 
 

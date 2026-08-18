@@ -152,6 +152,23 @@ class TensorResidentWorkspace:
             self.engine.charge_carriers.tracked_entity_id.data_ptr()
         ):
             raise ValueError("speculative charge carriers must own mutable storage")
+        for name in ("spawn_areas", "chain_impacts", "ice_spirit"):
+            scratch_owner = getattr(self.scratch, name)
+            engine_owner = getattr(self.engine, name)
+            if scratch_owner.catalog is not engine_owner.catalog:
+                raise ValueError(f"speculative engines must share {name} catalogs")
+        if self.scratch.spawn_areas.active.data_ptr() == (
+            self.engine.spawn_areas.active.data_ptr()
+        ):
+            raise ValueError("speculative spawn areas must own mutable storage")
+        if self.scratch.chain_impacts.active.data_ptr() == (
+            self.engine.chain_impacts.active.data_ptr()
+        ):
+            raise ValueError("speculative chain impacts must own mutable storage")
+        if self.scratch.ice_spirit.jump_active.data_ptr() == (
+            self.engine.ice_spirit.jump_active.data_ptr()
+        ):
+            raise ValueError("speculative Ice Spirit state must own mutable storage")
         if (
             self.scratch.death_payloads.catalog
             is not self.engine.death_payloads.catalog
@@ -221,6 +238,21 @@ class TensorResidentWorkspace:
             source.charge_carriers,
             pending_rows,
         )
+        destination.spawn_areas.reset_rows_(
+            pending_rows,
+            source.spawn_areas,
+            pending_rows,
+        )
+        destination.chain_impacts.reset_rows_(
+            pending_rows,
+            source.chain_impacts,
+            pending_rows,
+        )
+        destination.ice_spirit.reset_rows_(
+            pending_rows,
+            source.ice_spirit,
+            pending_rows,
+        )
         destination.death_payloads.reset_rows_(
             pending_rows,
             source.death_payloads,
@@ -279,6 +311,15 @@ class TensorResidentWorkspace:
             source.pending_projectile_max_duration_ms
         )
         destination.projectile_duration_ms.copy_(source.projectile_duration_ms)
+        destination.projectile_source_entity_id.copy_(
+            source.projectile_source_entity_id
+        )
+        destination.chain_runtime_slot.copy_(source.chain_runtime_slot)
+        destination.electro_jump_active.copy_(source.electro_jump_active)
+        destination.electro_jump_target_id.copy_(source.electro_jump_target_id)
+        destination.electro_jump_destination_units.copy_(
+            source.electro_jump_destination_units
+        )
         destination.path_cache = source.path_cache
         destination.runtime.assert_invariants()
 

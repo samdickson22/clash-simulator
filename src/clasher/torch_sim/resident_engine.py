@@ -58,6 +58,7 @@ from .mechanic_dispatcher import (
     MechanicTickInputs,
     TensorMechanicDispatcher,
 )
+from .movement import integer_sqrt_tensor, normalized_vector_units
 from .movement_adapter import TensorMovementAdapter
 from .object_adapter import RuntimeObjectKind
 from .objects import _integer_sqrt
@@ -68,6 +69,12 @@ from .projectile_bridge import (
 from .resident_action_router import (
     TensorResidentActionRouter,
     TensorResidentActionRouterResult,
+)
+from .resident_chain_impacts import (
+    ChainImpactInputs,
+    ChainImpactStepResult,
+    TensorChainImpactState,
+    step_chain_impacts_,
 )
 from .resident_charge_carrier import (
     ChargeCarrierStepResult,
@@ -83,6 +90,11 @@ from .resident_death_payloads import (
     step_death_payloads_,
 )
 from .resident_graveyard import GraveyardStepResult, TensorResidentGraveyards
+from .resident_ice_spirit import (
+    IceSpiritStepResult,
+    TensorIceSpiritState,
+    step_ice_spirit_lifecycle_,
+)
 from .resident_pathing import (
     TensorResidentPathCache,
     plan_standard_routes,
@@ -108,6 +120,11 @@ from .resident_rolling_spell import (
 from .resident_royal_delivery import (
     RoyalDeliveryStepResult,
     TensorResidentRoyalDelivery,
+)
+from .resident_spawn_area import (
+    SpawnAreaMaterializeResult,
+    SpawnAreaStepResult,
+    TensorResidentSpawnAreas,
 )
 from .resident_spell_ingress import (
     TensorResidentSpellActionIngress,
@@ -157,6 +174,11 @@ RESIDENT_DISPATCH_MECHANIC_OPCODES = frozenset(
         "BanditDash",
         "SerializedOnHitBuff",
         "SkeletonKingSoulCollector",
+        "MultipleTargetAttack",
+        "SpawnAreaEffect",
+        "ElectroDragonChainLightning",
+        "ElectroSpiritChain",
+        "IceSpiritFreeze",
     )
 )
 
@@ -355,6 +377,10 @@ class ResidentTickResult:
     rolling_spells: TensorRollingStepResult | None
     royal_delivery: RoyalDeliveryStepResult | None
     charge_carriers: ChargeCarrierStepResult | None
+    spawn_area_materialization: SpawnAreaMaterializeResult | None
+    spawn_areas: SpawnAreaStepResult | None
+    chain_impacts: ChainImpactStepResult | None
+    ice_spirit: IceSpiritStepResult | None
     death_payloads: DeathPayloadStepResult | None
     periodic_spawner: TensorPeriodicSpawnerResult | None
     terminal: ResidentTerminalPipelineResult | None
@@ -673,6 +699,9 @@ class TensorResidentEngine:
         rolling_spells: TensorResidentRollingSpells,
         royal_delivery: TensorResidentRoyalDelivery,
         charge_carriers: TensorResidentChargeCarriers,
+        spawn_areas: TensorResidentSpawnAreas,
+        chain_impacts: TensorChainImpactState,
+        ice_spirit: TensorIceSpiritState,
         death_payloads: TensorDeathPayloadState,
         periodic_catalog: TensorPeriodicSpawnerCatalog,
         periodic_state: TensorPeriodicSpawnerRuntimeState,
@@ -683,6 +712,11 @@ class TensorResidentEngine:
         pending_spells: TensorResidentPendingSpells,
         pending_projectile_max_duration_ms: torch.Tensor,
         projectile_duration_ms: torch.Tensor,
+        projectile_source_entity_id: torch.Tensor,
+        chain_runtime_slot: torch.Tensor,
+        electro_jump_active: torch.Tensor,
+        electro_jump_target_id: torch.Tensor,
+        electro_jump_destination_units: torch.Tensor,
         combat: StationaryCombatState,
         combat_target_entity_id: torch.Tensor,
         uses_projectile: torch.Tensor,
@@ -718,6 +752,9 @@ class TensorResidentEngine:
         self.rolling_spells = rolling_spells
         self.royal_delivery = royal_delivery
         self.charge_carriers = charge_carriers
+        self.spawn_areas = spawn_areas
+        self.chain_impacts = chain_impacts
+        self.ice_spirit = ice_spirit
         self.death_payloads = death_payloads
         self.periodic_catalog = periodic_catalog
         self.periodic_state = periodic_state
@@ -728,6 +765,11 @@ class TensorResidentEngine:
         self.pending_spells = pending_spells
         self.pending_projectile_max_duration_ms = pending_projectile_max_duration_ms
         self.projectile_duration_ms = projectile_duration_ms
+        self.projectile_source_entity_id = projectile_source_entity_id
+        self.chain_runtime_slot = chain_runtime_slot
+        self.electro_jump_active = electro_jump_active
+        self.electro_jump_target_id = electro_jump_target_id
+        self.electro_jump_destination_units = electro_jump_destination_units
         self.combat = combat
         self.combat_target_entity_id = combat_target_entity_id
         self.uses_projectile = uses_projectile
@@ -810,10 +852,31 @@ class TensorResidentEngine:
         mechanic_boundary.card_loader = catalog_loader
         mechanic_battles[0] = mechanic_boundary
         dispatcher = TensorMechanicDispatcher.from_battles(runtime, mechanic_battles)
+        dispatcher.externally_owned_mechanic_opcodes = (  # type: ignore[attr-defined]
+            MECHANIC_OPCODE["SpawnAreaEffect"],
+            MECHANIC_OPCODE["ElectroDragonChainLightning"],
+            MECHANIC_OPCODE["ElectroSpiritChain"],
+            MECHANIC_OPCODE["IceSpiritFreeze"],
+        )
         mechanics = dispatcher.mechanics
         status = TensorRuntimeStatusPhase.from_battles(runtime, battles)
         objects = TensorRuntimeObjectPhase.from_battles(
             runtime, battles, max_objects=max_objects
+        )
+        child_capacity = min(max_objects, 16)
+        spawn_areas = TensorResidentSpawnAreas.from_battles(
+            runtime,
+            mechanic_battles,
+            capacity=min(max_objects, 4),
+        )
+        chain_impacts = TensorChainImpactState.from_battles(
+            runtime,
+            mechanic_battles,
+            max_chains=child_capacity,
+        )
+        ice_spirit = TensorIceSpiritState.from_battles(
+            runtime,
+            mechanic_battles,
         )
         charge_carriers = TensorResidentChargeCarriers.from_battles(
             runtime, mechanic_battles
@@ -1002,6 +1065,38 @@ class TensorResidentEngine:
             dtype=torch.int64,
             device=runtime.device,
         )
+        projectile_source_entity_id = torch.zeros_like(objects.objects.object_id)
+        chain_runtime_slot = torch.full(
+            chain_impacts.active.shape,
+            -1,
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        electro_jump_active = torch.zeros_like(runtime.entity_pool.active)
+        electro_jump_target_id = torch.zeros_like(runtime.battle.entity_id)
+        electro_jump_destination_units = torch.zeros(
+            (*runtime.battle.entity_id.shape, 2),
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        for row, battle in enumerate(battles):
+            slot_by_id = {
+                int(entity_id): slot
+                for slot, entity_id in enumerate(runtime.battle.entity_id[row].tolist())
+                if entity_id
+            }
+            for entity_id, entity in battle.entities.items():
+                slot = slot_by_id[entity_id]
+                target_id = getattr(entity, "_electro_spirit_jump_target_id", None)
+                electro_jump_active[row, slot] = target_id is not None
+                electro_jump_target_id[row, slot] = int(target_id or 0)
+                destination = getattr(entity, "_electro_spirit_jump_destination", None)
+                if destination is not None:
+                    electro_jump_destination_units[row, slot] = torch.tensor(
+                        [round(destination[0] * 1_000), round(destination[1] * 1_000)],
+                        dtype=torch.int64,
+                        device=runtime.device,
+                    )
         for row, battle in enumerate(battles):
             for slot, entity in enumerate(
                 sorted(battle.entities.values(), key=lambda candidate: candidate.id)
@@ -1015,6 +1110,10 @@ class TensorResidentEngine:
                     continue
                 object_id = int(objects.objects.object_id[row, object_slot].item())
                 obj = by_id.get(object_id)
+                source_entity = getattr(obj, "source_entity", None)
+                projectile_source_entity_id[row, object_slot] = int(
+                    getattr(source_entity, "id", 0) or 0
+                )
                 duration = getattr(obj, "_native_pending_damage_duration_ms", None)
                 if callable(duration):
                     projectile_duration_ms[row, object_slot] = int(duration())
@@ -1149,6 +1248,27 @@ class TensorResidentEngine:
             movement_base_speed[card_id] = max(
                 1, round(float(getattr(stats, "speed", 0) or 0))
             )
+        mechanic_operations = cards.mechanic_opcode
+        ice_owned = (mechanic_operations == MECHANIC_OPCODE["IceSpiritFreeze"]).any(
+            dim=1
+        )
+        electro_spirit_owned = (
+            mechanic_operations == MECHANIC_OPCODE["ElectroSpiritChain"]
+        ).any(dim=1)
+        uses_projectile &= ~(ice_owned | electro_spirit_owned)
+
+        core_to_catalog = runtime.card_catalog_index.clamp_min(0)
+        core_operations = cards.mechanic_opcode[core_to_catalog]
+        spawn_area_projectile = (
+            core_operations == MECHANIC_OPCODE["SpawnAreaEffect"]
+        ).any(dim=1)
+        dragon_projectile = (
+            core_operations == MECHANIC_OPCODE["ElectroDragonChainLightning"]
+        ).any(dim=1)
+        owned_projectile = (spawn_area_projectile | dragon_projectile) & (
+            projectile_bridge.catalog.kind == BridgePayloadKind.COMBAT_PROJECTILE
+        )
+        projectile_bridge.catalog.supported.logical_or_(owned_projectile)
         return cls(
             runtime=runtime,
             deployment=deployment,
@@ -1165,6 +1285,9 @@ class TensorResidentEngine:
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,
+            spawn_areas=spawn_areas,
+            chain_impacts=chain_impacts,
+            ice_spirit=ice_spirit,
             death_payloads=death_payloads,
             periodic_catalog=periodic_catalog,
             periodic_state=periodic_state,
@@ -1175,6 +1298,11 @@ class TensorResidentEngine:
             pending_spells=pending_spells,
             pending_projectile_max_duration_ms=pending_projectile_max_duration_ms,
             projectile_duration_ms=projectile_duration_ms,
+            projectile_source_entity_id=projectile_source_entity_id,
+            chain_runtime_slot=chain_runtime_slot,
+            electro_jump_active=electro_jump_active,
+            electro_jump_target_id=electro_jump_target_id,
+            electro_jump_destination_units=electro_jump_destination_units,
             combat=combat,
             combat_target_entity_id=combat_target_entity_id,
             uses_projectile=uses_projectile,
@@ -1204,6 +1332,9 @@ class TensorResidentEngine:
         dispatcher = self.dispatcher._fork(
             torch.arange(self.batch_size, dtype=torch.int64, device=self.device)
         )
+        dispatcher.externally_owned_mechanic_opcodes = (  # type: ignore[attr-defined]
+            self.dispatcher.externally_owned_mechanic_opcodes  # type: ignore[attr-defined]
+        )
         dispatcher.runtime = runtime
         dispatcher.mechanics = mechanics
         dispatcher.passive.entity_id = runtime.battle.entity_id
@@ -1218,6 +1349,9 @@ class TensorResidentEngine:
         )
         royal_delivery = self.royal_delivery.clone()
         charge_carriers = self.charge_carriers.clone()
+        spawn_areas = self.spawn_areas.clone()
+        chain_impacts = self.chain_impacts.clone()
+        ice_spirit = self.ice_spirit.clone()
         death_payloads = self.death_payloads.clone()
         periodic_state = self.periodic_state.clone()
         terminal_pipeline = _clone_terminal_pipeline(self.terminal_pipeline)
@@ -1255,6 +1389,9 @@ class TensorResidentEngine:
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,
+            spawn_areas=spawn_areas,
+            chain_impacts=chain_impacts,
+            ice_spirit=ice_spirit,
             death_payloads=death_payloads,
             periodic_catalog=self.periodic_catalog,
             periodic_state=periodic_state,
@@ -1267,6 +1404,13 @@ class TensorResidentEngine:
                 self.pending_projectile_max_duration_ms.clone()
             ),
             projectile_duration_ms=self.projectile_duration_ms.clone(),
+            projectile_source_entity_id=self.projectile_source_entity_id.clone(),
+            chain_runtime_slot=self.chain_runtime_slot.clone(),
+            electro_jump_active=self.electro_jump_active.clone(),
+            electro_jump_target_id=self.electro_jump_target_id.clone(),
+            electro_jump_destination_units=(
+                self.electro_jump_destination_units.clone()
+            ),
             combat=_clone_tensor_dataclass(self.combat),  # type: ignore[arg-type]
             combat_target_entity_id=self.combat_target_entity_id.clone(),
             uses_projectile=self.uses_projectile,
@@ -1439,6 +1583,78 @@ class TensorResidentEngine:
             & (~has_death_spawn | terminal_supported)
         )
 
+    def _spawn_area_entity_supported(self) -> torch.Tensor:
+        core = self.runtime.battle
+        active = self.runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        card = core.entity_card.clamp(0, self.spawn_areas.catalog.supported.numel() - 1)
+        operations = self.runtime.catalog.mechanic_opcode[
+            self._core_catalog_id().clamp_min(0)
+        ]
+        allowed_codes = torch.zeros(
+            max(MECHANIC_OPCODE.values()) + 1,
+            dtype=torch.bool,
+            device=self.device,
+        )
+        allowed_codes[0] = True
+        allowed_codes[
+            [
+                MECHANIC_OPCODE["SpawnAreaEffect"],
+                MECHANIC_OPCODE["MultipleTargetAttack"],
+                MECHANIC_OPCODE["SerializedOnHitBuff"],
+            ]
+        ] = True
+        one_frame = self.spawn_areas.catalog.duration_ms[card] <= 50
+        return (
+            active
+            & self.spawn_areas.catalog.supported[card]
+            & one_frame
+            & allowed_codes[operations.to(torch.int64)].all(dim=2)
+        )
+
+    def _chain_entity_supported(self) -> torch.Tensor:
+        core = self.runtime.battle
+        active = self.runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        card = self.chain_impacts.entity_card.clamp_min(0)
+        _, dragon = self.chain_impacts.catalog.mechanic_slot(
+            card, CombatMechanicOpcode.ELECTRO_DRAGON_CHAIN
+        )
+        _, spirit = self.chain_impacts.catalog.mechanic_slot(
+            card, CombatMechanicOpcode.ELECTRO_SPIRIT_CHAIN
+        )
+        operations = self.runtime.catalog.mechanic_opcode[
+            self._core_catalog_id().clamp_min(0)
+        ]
+        allowed = (
+            (operations == 0)
+            | (operations == MECHANIC_OPCODE["ElectroDragonChainLightning"])
+            | (operations == MECHANIC_OPCODE["ElectroSpiritChain"])
+        ).all(dim=2)
+        return active & (dragon | spirit) & allowed
+
+    def _ice_spirit_entity_supported(self) -> torch.Tensor:
+        core = self.runtime.battle
+        active = self.runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        card = self.runtime.card_catalog_index[core.entity_card].clamp_min(0)
+        operations = self.runtime.catalog.mechanic_opcode[card]
+        sole = (
+            (operations == 0) | (operations == MECHANIC_OPCODE["IceSpiritFreeze"])
+        ).all(dim=2)
+        return active & self.ice_spirit.catalog.supported[card] & sole
+
+    def _electro_spirit_entity_supported(self) -> torch.Tensor:
+        supported = self._chain_entity_supported()
+        card = self.chain_impacts.entity_card.clamp_min(0)
+        _, spirit = self.chain_impacts.catalog.mechanic_slot(
+            card, CombatMechanicOpcode.ELECTRO_SPIRIT_CHAIN
+        )
+        return supported & spirit
+
     def _refresh_projectile_reservations_(self) -> None:
         state = self.objects.objects
         blueprints = state.blueprint_id.to(torch.int64).clamp_min(0)
@@ -1557,6 +1773,475 @@ class TensorResidentEngine:
             torch.maximum(self.pending_projectile_max_duration_ms, projected)
         )
 
+    def _record_projectile_sources_(
+        self,
+        previously_allocated: torch.Tensor,
+        combat: CombatStepResult,
+        supported: torch.Tensor,
+    ) -> None:
+        new_objects = self.objects.objects.allocated & ~previously_allocated
+        launch = combat.projectile_launched & supported[:, None]
+        counts = launch.sum(dim=1, dtype=torch.int64)
+        source_key = torch.where(
+            launch,
+            self.runtime.battle.entity_id,
+            torch.full_like(
+                self.runtime.battle.entity_id, torch.iinfo(torch.int64).max
+            ),
+        )
+        source_order = torch.argsort(source_key, dim=1, stable=True)
+        object_key = torch.where(
+            new_objects,
+            torch.arange(self.objects.objects.max_objects, device=self.device)[None, :],
+            self.objects.objects.max_objects,
+        )
+        object_order = torch.sort(object_key, dim=1).values
+        ordinal = torch.arange(self.objects.objects.max_objects, device=self.device)[
+            None, :
+        ]
+        valid = ordinal < counts[:, None]
+        rows, rank = torch.where(valid)
+        source_slot = source_order[rows, rank]
+        object_slot = object_order[rows, rank]
+        self.projectile_source_entity_id[rows, object_slot] = (
+            self.runtime.battle.entity_id[rows, source_slot]
+        )
+
+    def _step_ice_spirit_movement_(
+        self,
+        combat: CombatStepResult,
+        active: torch.Tensor,
+    ) -> IceSpiritStepResult:
+        special = (
+            torch.zeros_like(self.runtime.entity_pool.active)
+            if combat.special_started is None
+            else combat.special_started
+        ) & self._ice_spirit_entity_supported()
+        rows = torch.arange(self.batch_size, device=self.device)[:, None]
+        target = self.combat.target_slot.clamp_min(0)
+        target_id = self.runtime.battle.entity_id.gather(1, target)
+        self.ice_spirit.jump_active |= special
+        self.ice_spirit.jump_target_id.copy_(
+            torch.where(special, target_id, self.ice_spirit.jump_target_id)
+        )
+        destination = torch.stack(
+            (
+                self.runtime.battle.entity_x_units.gather(1, target),
+                self.runtime.battle.entity_y_units.gather(1, target),
+            ),
+            dim=-1,
+        ).to(torch.int64)
+        self.ice_spirit.destination_units.copy_(
+            torch.where(
+                special[..., None],
+                destination,
+                self.ice_spirit.destination_units,
+            )
+        )
+        self.ice_spirit.elapsed_ms.masked_fill_(special, 0)
+        for descriptor in fields(self.ice_spirit.combat):
+            destination_plane = getattr(self.ice_spirit.combat, descriptor.name)
+            source_plane = getattr(self.combat, descriptor.name)
+            if destination_plane.shape == source_plane.shape:
+                destination_plane.copy_(source_plane)
+        retained_card = self.ice_spirit.entity_card.clone()
+        moving = self.ice_spirit.jump_active & active[:, None]
+        self.ice_spirit.entity_card.copy_(torch.where(moving, retained_card, 0))
+        result = step_ice_spirit_lifecycle_(
+            self.runtime,
+            self.ice_spirit,
+            dt_ms=torch.round(self.runtime.battle.dt * 1_000).to(torch.int64),
+        )
+        self.ice_spirit.entity_card.copy_(retained_card)
+        for descriptor in fields(self.combat):
+            destination_plane = getattr(self.combat, descriptor.name)
+            source_plane = getattr(self.ice_spirit.combat, descriptor.name)
+            if destination_plane.shape == source_plane.shape:
+                destination_plane.copy_(source_plane)
+        self.runtime.phases.target_slot.copy_(self.combat.target_slot)
+        resolved = self.combat.target_slot.clamp_min(0)
+        resolved_id = self.runtime.battle.entity_id.gather(1, resolved)
+        self.combat_target_entity_id.copy_(
+            torch.where(self.combat.target_slot >= 0, resolved_id, -1)
+        )
+        self.movement.position_units.copy_(
+            torch.stack(
+                (
+                    self.runtime.battle.entity_x_units,
+                    self.runtime.battle.entity_y_units,
+                ),
+                dim=-1,
+            ).to(torch.int64)
+        )
+        del rows
+        return replace(
+            result,
+            acquired=result.acquired | special,
+            jumped=result.jumped | special,
+        )
+
+    def _chain_inputs_from_object_events_(
+        self,
+        *,
+        event_start: torch.Tensor,
+        object_ids: torch.Tensor,
+        blueprint_ids: torch.Tensor,
+        object_active: torch.Tensor,
+        source_entity_ids: torch.Tensor,
+    ) -> ChainImpactInputs:
+        width = object_ids.shape[1]
+        inputs = ChainImpactInputs.empty(self.batch_size, width, device=self.device)
+        event_slot = torch.arange(self.runtime.events.capacity, device=self.device)[
+            None, :
+        ]
+        marker = (
+            (event_slot >= event_start[:, None])
+            & (event_slot < self.runtime.events.count[:, None])
+            & (self.runtime.events.opcode == int(RuntimeEventOpcode.PROJECTILE))
+        )
+        impacted = (
+            marker[:, :, None]
+            & object_active[:, None, :]
+            & (self.runtime.events.source_id[:, :, None] == object_ids[:, None, :])
+        ).any(dim=1)
+        projectile_terminal = (
+            object_active
+            & ~self.objects.objects.allocated
+            & (
+                self.objects.blueprint_kind[blueprint_ids.clamp_min(0)]
+                == int(RuntimeObjectKind.PROJECTILE)
+            )
+        )
+        impacted |= projectile_terminal
+        order = torch.argsort(
+            torch.where(
+                impacted,
+                object_ids,
+                torch.full_like(object_ids, torch.iinfo(torch.int64).max),
+            ),
+            dim=1,
+            stable=True,
+        )
+        valid = impacted.gather(1, order)
+        ordered_source_id = source_entity_ids.gather(1, order)
+        source_match = (
+            self.runtime.entity_pool.active[:, None, :]
+            & (
+                self.runtime.battle.entity_id[:, None, :]
+                == ordered_source_id[:, :, None]
+            )
+            & (ordered_source_id[:, :, None] > 0)
+        )
+        source_found = source_match.any(dim=2)
+        source_slot = source_match.to(torch.int64).argmax(dim=2)
+        ordered_blueprint = blueprint_ids.gather(1, order).clamp_min(0)
+        primary_id = self.objects.blueprint_primary_target_id[ordered_blueprint]
+        primary_match = (
+            self.runtime.entity_pool.active[:, None, :]
+            & (self.runtime.battle.entity_id[:, None, :] == primary_id[:, :, None])
+            & (primary_id[:, :, None] > 0)
+        )
+        primary_found = primary_match.any(dim=2)
+        primary_slot = primary_match.to(torch.int64).argmax(dim=2)
+        source_card = self.chain_impacts.entity_card.gather(1, source_slot)
+        _, dragon = self.chain_impacts.catalog.mechanic_slot(
+            source_card, CombatMechanicOpcode.ELECTRO_DRAGON_CHAIN
+        )
+        inputs.valid.copy_(valid & source_found & primary_found & dragon)
+        inputs.source_slot.copy_(source_slot)
+        inputs.primary_slot.copy_(primary_slot)
+        inputs.primary_damage_applied.copy_(inputs.valid)
+        return inputs
+
+    def _step_electro_spirit_movement_(
+        self,
+        combat: CombatStepResult,
+        active: torch.Tensor,
+    ) -> tuple[ChainImpactInputs, torch.Tensor, torch.Tensor]:
+        count = self.runtime.max_entities
+        slots = torch.arange(count, device=self.device)[None, :].expand(
+            self.batch_size, -1
+        )
+        special = (
+            torch.zeros_like(self.runtime.entity_pool.active)
+            if combat.special_started is None
+            else combat.special_started
+        ) & self._electro_spirit_entity_supported()
+        target_slot = self.combat.target_slot.clamp_min(0)
+        target_id = self.runtime.battle.entity_id.gather(1, target_slot)
+        self.electro_jump_active |= special
+        self.electro_jump_target_id.copy_(
+            torch.where(special, target_id, self.electro_jump_target_id)
+        )
+        destination = torch.stack(
+            (
+                self.runtime.battle.entity_x_units.gather(1, target_slot),
+                self.runtime.battle.entity_y_units.gather(1, target_slot),
+            ),
+            dim=-1,
+        ).to(torch.int64)
+        self.electro_jump_destination_units.copy_(
+            torch.where(
+                special[..., None],
+                destination,
+                self.electro_jump_destination_units,
+            )
+        )
+        target_match = (
+            self.runtime.entity_pool.active[:, None, :]
+            & (
+                self.runtime.battle.entity_id[:, None, :]
+                == self.electro_jump_target_id[:, :, None]
+            )
+            & (self.electro_jump_target_id[:, :, None] > 0)
+        )
+        target_found = target_match.any(dim=2)
+        resolved_target = target_match.to(torch.int64).argmax(dim=2)
+        live_destination = torch.stack(
+            (
+                self.runtime.battle.entity_x_units.gather(1, resolved_target),
+                self.runtime.battle.entity_y_units.gather(1, resolved_target),
+            ),
+            dim=-1,
+        ).to(torch.int64)
+        moving = self.electro_jump_active & active[:, None]
+        self.electro_jump_destination_units.copy_(
+            torch.where(
+                (moving & target_found)[..., None],
+                live_destination,
+                self.electro_jump_destination_units,
+            )
+        )
+        position = torch.stack(
+            (
+                self.runtime.battle.entity_x_units,
+                self.runtime.battle.entity_y_units,
+            ),
+            dim=-1,
+        ).to(torch.int64)
+        delta = self.electro_jump_destination_units - position
+        remaining = integer_sqrt_tensor((delta * delta).sum(dim=2))
+        card = self.chain_impacts.entity_card.clamp_min(0)
+        mechanic_slot, has_spirit = self.chain_impacts.catalog.mechanic_slot(
+            card, CombatMechanicOpcode.ELECTRO_SPIRIT_CHAIN
+        )
+        speed = self.chain_impacts.catalog.chain_speed_units[card, mechanic_slot].to(
+            torch.float64
+        )
+        travel = torch.round(
+            speed * self.runtime.battle.dt[:, None] * 1_000.0 / 50.0
+        ).to(torch.int64)
+        movement = normalized_vector_units(delta, torch.minimum(travel, remaining))
+        next_position = torch.where(
+            (travel >= remaining)[..., None],
+            self.electro_jump_destination_units,
+            position + movement,
+        )
+        self.runtime.battle.entity_x_units.copy_(
+            torch.where(
+                moving,
+                next_position[..., 0],
+                position[..., 0],
+            ).to(torch.int32)
+        )
+        self.runtime.battle.entity_y_units.copy_(
+            torch.where(
+                moving,
+                next_position[..., 1],
+                position[..., 1],
+            ).to(torch.int32)
+        )
+        landed = moving & (remaining <= travel)
+        primary = resolved_target.clamp(0, count - 1)
+        primary_alive = self.runtime.battle.entity_active.gather(1, primary)
+        hit = landed & target_found & primary_alive & has_spirit
+        death_supported = self.chain_impacts.death_payload_supported.gather(1, primary)
+        before = self.runtime.battle.entity_hp.gather(1, primary)
+        source_damage = self.combat.damage
+        after = torch.clamp(before - source_damage, min=0.0)
+        killed = hit & (after <= 0.0)
+        event_additions = 3 * landed.sum(dim=1, dtype=torch.int64) + (
+            hit & ~killed
+        ).sum(dim=1, dtype=torch.int64)
+        capacity = (
+            self.runtime.events.count.to(torch.int64) + event_additions
+            <= self.runtime.events.capacity
+        )
+        supported = active & capacity & ~(killed & ~death_supported).any(dim=1)
+        hit &= supported[:, None]
+        landed &= supported[:, None]
+        killed &= supported[:, None]
+        rows = torch.arange(self.batch_size, device=self.device)[:, None]
+        flat_hit = hit.flatten()
+        hit_rows = rows.expand_as(hit).flatten()[flat_hit]
+        hit_targets = primary.flatten()[flat_hit]
+        self.runtime.battle.entity_hp[hit_rows, hit_targets] = after.flatten()[flat_hit]
+        self.runtime.battle.entity_hp_integer_kind[hit_rows, hit_targets] = False
+        flat_killed = killed.flatten()
+        killed_rows = rows.expand_as(killed).flatten()[flat_killed]
+        killed_targets = primary.flatten()[flat_killed]
+        self.runtime.battle.entity_active[killed_rows, killed_targets] = False
+        self.runtime.phases.death_pending[killed_rows, killed_targets] = True
+        duration = (
+            self.chain_impacts.catalog.chain_stun_ms[card, mechanic_slot].to(
+                torch.float64
+            )
+            / 1_000.0
+        )
+        survivor = hit & ~killed
+        stun_projection = torch.zeros_like(self.runtime.status.stun_timer)
+        stun_projection.scatter_reduce_(
+            1,
+            primary,
+            torch.where(survivor, duration, 0.0),
+            reduce="amax",
+            include_self=True,
+        )
+        self.runtime.status.stun_timer.copy_(
+            torch.maximum(self.runtime.status.stun_timer, stun_projection)
+        )
+        stun_mask = torch.zeros_like(self.runtime.battle.entity_active)
+        stun_mask.scatter_reduce_(
+            1, primary, survivor, reduce="amax", include_self=True
+        )
+        transition = apply_stun_interrupt_(
+            self._combat_clock_planes(),
+            status_applied=stun_mask,
+            hit_speed_ms=self.combat.hit_speed_ms,
+            river_jump_active=self.movement.river_jump_active,
+        )
+        self.runtime.phases.target_slot.masked_fill_(transition.transitioned, -1)
+        self.combat_target_entity_id.masked_fill_(transition.transitioned, -1)
+        source_hp = self.runtime.battle.entity_hp.clone()
+        self.runtime.battle.entity_hp.copy_(
+            torch.where(landed, 0.0, self.runtime.battle.entity_hp)
+        )
+        self.runtime.battle.entity_hp_integer_kind &= ~landed
+        self.runtime.battle.entity_active &= ~landed
+        self.runtime.phases.death_pending |= landed
+        self.runtime.events.append(
+            phase=TickPhase.MOVEMENT,
+            opcode=RuntimeEventOpcode.DAMAGE,
+            valid=hit,
+            source_id=self.runtime.battle.entity_id,
+            target_id=self.runtime.battle.entity_id.gather(1, primary),
+            amount=torch.where(hit, before - after, 0.0),
+        )
+        self.runtime.events.append(
+            phase=TickPhase.MOVEMENT,
+            opcode=RuntimeEventOpcode.STATUS,
+            valid=survivor,
+            source_id=self.runtime.battle.entity_id,
+            target_id=self.runtime.battle.entity_id.gather(1, primary),
+            amount=duration,
+        )
+        self.runtime.events.append(
+            phase=TickPhase.MOVEMENT,
+            opcode=RuntimeEventOpcode.DAMAGE,
+            valid=landed,
+            source_id=self.runtime.battle.entity_id,
+            target_id=self.runtime.battle.entity_id,
+            amount=source_hp,
+        )
+        self.runtime.events.append(
+            phase=TickPhase.MOVEMENT,
+            opcode=RuntimeEventOpcode.DEATH,
+            valid=landed,
+            source_id=self.runtime.battle.entity_id,
+            target_id=self.runtime.battle.entity_id,
+        )
+        inputs = ChainImpactInputs.empty(self.batch_size, count, device=self.device)
+        inputs.valid.copy_(hit)
+        inputs.source_slot.copy_(slots)
+        inputs.primary_slot.copy_(primary)
+        inputs.primary_damage_applied.copy_(hit)
+        inputs.source_death_applied.copy_(landed)
+        self.electro_jump_active &= ~landed
+        self.electro_jump_target_id.masked_fill_(landed, 0)
+        consumed = moving | special | landed
+        return inputs, consumed, supported
+
+    def _publish_chain_entities_(
+        self,
+        result: ChainImpactStepResult,
+    ) -> None:
+        new = result.materialized
+        counts = new.sum(dim=1, dtype=torch.int64)
+        free_key = torch.where(
+            ~self.runtime.entity_pool.active,
+            torch.arange(self.runtime.max_entities, device=self.device)[None, :],
+            self.runtime.max_entities,
+        )
+        free_slots = torch.sort(free_key, dim=1).values
+        chain_key = torch.where(
+            new,
+            self.chain_impacts.object_id,
+            torch.full_like(self.chain_impacts.object_id, torch.iinfo(torch.int64).max),
+        )
+        chain_order = torch.argsort(chain_key, dim=1, stable=True)
+        ordinal = torch.arange(self.runtime.max_entities, device=self.device)[None, :]
+        valid = ordinal < counts[:, None]
+        rows, rank = torch.where(valid)
+        chain_slot = chain_order[rows, rank]
+        runtime_slot = free_slots[rows, rank]
+        chain_id = self.chain_impacts.object_id[rows, chain_slot]
+        source_id = self.chain_impacts.source_id[rows, chain_slot]
+        source_match = self.runtime.entity_pool.active[rows] & (
+            self.runtime.battle.entity_id[rows] == source_id[:, None]
+        )
+        source_slot = source_match.to(torch.int64).argmax(dim=1)
+        source_card = self.runtime.battle.entity_card[rows, source_slot]
+        self.runtime.entity_pool.active[rows, runtime_slot] = True
+        self.runtime.battle.entity_id[rows, runtime_slot] = chain_id
+        self.runtime.battle.entity_active[rows, runtime_slot] = True
+        self.runtime.battle.entity_kind[rows, runtime_slot] = 3
+        self.runtime.battle.entity_player[rows, runtime_slot] = (
+            self.chain_impacts.owner[rows, chain_slot]
+        )
+        self.runtime.battle.entity_card[rows, runtime_slot] = source_card
+        self.runtime.battle.entity_x_units[rows, runtime_slot] = (
+            self.chain_impacts.position_units[rows, chain_slot, 0].to(torch.int32)
+        )
+        self.runtime.battle.entity_y_units[rows, runtime_slot] = (
+            self.chain_impacts.position_units[rows, chain_slot, 1].to(torch.int32)
+        )
+        self.runtime.battle.entity_hp[rows, runtime_slot] = 1.0
+        self.runtime.battle.entity_hp_integer_kind[rows, runtime_slot] = True
+        self.runtime.battle.entity_max_hp[rows, runtime_slot] = 1.0
+        self.runtime.battle.entity_tower_slot[rows, runtime_slot] = -1
+        self.chain_runtime_slot[rows, chain_slot] = runtime_slot
+
+        tracked = self.chain_runtime_slot >= 0
+        tracked_rows, tracked_chain = torch.where(tracked)
+        tracked_runtime = self.chain_runtime_slot[
+            tracked_rows, tracked_chain
+        ].clamp_min(0)
+        identity = self.runtime.entity_pool.active[tracked_rows, tracked_runtime] & (
+            self.runtime.battle.entity_id[tracked_rows, tracked_runtime]
+            == self.chain_impacts.object_id[tracked_rows, tracked_chain]
+        )
+        live = identity & self.chain_impacts.active[tracked_rows, tracked_chain]
+        self.runtime.battle.entity_x_units[
+            tracked_rows[live], tracked_runtime[live]
+        ] = self.chain_impacts.position_units[
+            tracked_rows[live], tracked_chain[live], 0
+        ].to(torch.int32)
+        self.runtime.battle.entity_y_units[
+            tracked_rows[live], tracked_runtime[live]
+        ] = self.chain_impacts.position_units[
+            tracked_rows[live], tracked_chain[live], 1
+        ].to(torch.int32)
+        terminal = identity & ~self.chain_impacts.active[tracked_rows, tracked_chain]
+        self.runtime.battle.entity_active[
+            tracked_rows[terminal], tracked_runtime[terminal]
+        ] = False
+        self.runtime.battle.entity_hp[
+            tracked_rows[terminal], tracked_runtime[terminal]
+        ] = 0.0
+        self.runtime.phases.death_pending[
+            tracked_rows[terminal], tracked_runtime[terminal]
+        ] = True
+
     def preflight(self, action_ids: torch.Tensor | None = None) -> ResidentPreflight:
         """Return production support planes without host-side row extraction."""
 
@@ -1666,6 +2351,17 @@ class TensorResidentEngine:
             (entity_mechanics == death_damage_opcode)
             | (entity_mechanics == death_area_opcode)
         ).any(dim=2)
+        spawn_area_entity = (
+            entity_mechanics == MECHANIC_OPCODE["SpawnAreaEffect"]
+        ).any(dim=2)
+        spawn_area_supported = self._spawn_area_entity_supported()
+        chain_entity = (
+            (entity_mechanics == MECHANIC_OPCODE["ElectroDragonChainLightning"])
+            | (entity_mechanics == MECHANIC_OPCODE["ElectroSpiritChain"])
+        ).any(dim=2)
+        chain_supported = self._chain_entity_supported()
+        ice_entity = (entity_mechanics == MECHANIC_OPCODE["IceSpiritFreeze"]).any(dim=2)
+        ice_supported = self._ice_spirit_entity_supported()
         death_spawn_supported = (
             terminal_entity_supported
             | periodic_entity_supported
@@ -1681,6 +2377,18 @@ class TensorResidentEngine:
         )
         publish(
             unsupported_active_mechanic,
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            (spawn_area_entity & active_character & ~spawn_area_supported).any(dim=1),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            (chain_entity & active_character & ~chain_supported).any(dim=1),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            (ice_entity & active_character & ~ice_supported).any(dim=1),
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
         )
         publish(
@@ -1763,14 +2471,33 @@ class TensorResidentEngine:
         )
         timed_live = self.terminal_pipeline.state.objects.allocated.any(dim=1)
         general_live = self.objects.objects.allocated.any(dim=1)
+        chain_live = self.chain_impacts.active.any(dim=1)
+        spawn_area_live = self.spawn_areas.active.any(dim=1)
         terminal_dead = death_spawn_supported & ~self.runtime.battle.entity_active
         publish(
             (timed_live | terminal_dead.any(dim=1)) & general_live,
             ResidentUnsupportedReason.OBJECT_PHASE,
         )
+        publish(
+            chain_live & general_live,
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
+        publish(
+            self.chain_impacts.active.sum(dim=1) > 1,
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
+        publish(
+            spawn_area_live,
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
         periodic_live = periodic_entity_supported.any(dim=1)
+        spawn_area_row = spawn_area_supported.any(dim=1)
         publish(
             periodic_live & (timed_live | general_live),
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
+        publish(
+            spawn_area_row & periodic_live,
             ResidentUnsupportedReason.OBJECT_PHASE,
         )
         area_kind_count = (
@@ -2049,9 +2776,27 @@ class TensorResidentEngine:
         self.combat.targetable.copy_(present & core.entity_active)
         self.combat.effect_receivable.fill_(True)
         self.combat.area_effect_receivable.fill_(True)
+        ice_in_flight = (
+            self.ice_spirit.jump_active
+            & present
+            & (self.ice_spirit.initialized_entity_id == self.runtime.battle.entity_id)
+        )
+        electro_in_flight = self.electro_jump_active & present
+        self_projectile_in_flight = ice_in_flight | electro_in_flight
+        self.combat.targetable &= ~self_projectile_in_flight
+        self.combat.effect_receivable &= ~self_projectile_in_flight
+        self.combat.area_effect_receivable &= ~self_projectile_in_flight
         self.combat.stunned.copy_(runtime.status.stun_timer > 1e-9)
         self.combat.forced_movement.zero_()
         self.combat.combat_blocked.copy_(self.mechanics.combat_blocked())
+        self.combat.combat_blocked |= self_projectile_in_flight
+        self.combat.attack_start_special.copy_(
+            (
+                self._ice_spirit_entity_supported()
+                | self._electro_spirit_entity_supported()
+            )
+            & ~self_projectile_in_flight
+        )
         self.combat.combat_blocked |= self.dispatcher.dash.phase != 0
         self.combat.combat_blocked |= (
             self.movement.river_jump_active | self.movement.special_move_consumed_tick
@@ -2176,6 +2921,7 @@ class TensorResidentEngine:
         movement.stunned.copy_(self.combat.stunned)
         movement.forced_movement.zero_()
         movement.special_movement.copy_(movement.river_jump_active)
+        movement.special_movement |= self_projectile_in_flight
         movement.death_spawn_travel.zero_()
         movement.knockback_active.zero_()
         movement.kamikaze_primed.zero_()
@@ -2210,9 +2956,12 @@ class TensorResidentEngine:
             | movement.is_hover
             | movement.river_jump_active
             | movement.mega_knight_airborne
+            | self_projectile_in_flight
         )
         movement.in_transit.copy_(
-            movement.river_jump_active | movement.mega_knight_airborne
+            movement.river_jump_active
+            | movement.mega_knight_airborne
+            | self_projectile_in_flight
         )
         movement.pending_vector_consumed.copy_(
             torch.where(
@@ -2239,7 +2988,64 @@ class TensorResidentEngine:
             )
         )
         self.mechanics.refresh_new_entities_(runtime)
+        self._refresh_child_owner_planes_(new)
         return new
+
+    def _refresh_child_owner_planes_(self, new: torch.Tensor) -> None:
+        """Align dedicated child owners with canonical resident slots."""
+
+        runtime = self.runtime
+        core = runtime.battle
+        catalog_id = runtime.card_catalog_index[core.entity_card].clamp_min(0)
+        for owner in (self.chain_impacts, self.ice_spirit):
+            for descriptor in fields(owner.combat):
+                destination = getattr(owner.combat, descriptor.name)
+                source = getattr(self.combat, descriptor.name)
+                if destination.shape == source.shape:
+                    destination.copy_(source)
+        self.chain_impacts.entity_card.copy_(
+            torch.tensor(
+                [
+                    self.chain_impacts.catalog.name_to_id.get(name, 0) if name else 0
+                    for name in core.card_names
+                ],
+                dtype=torch.int64,
+                device=self.device,
+            )[core.entity_card]
+        )
+        self.ice_spirit.entity_card.copy_(catalog_id)
+        self.ice_spirit.initialized_entity_id.copy_(
+            torch.where(
+                new,
+                core.entity_id,
+                self.ice_spirit.initialized_entity_id,
+            )
+        )
+        self.ice_spirit.jump_active &= ~new
+        self.ice_spirit.jump_target_id.masked_fill_(new, 0)
+        self.ice_spirit.destination_units.masked_fill_(new[..., None], 0)
+        self.ice_spirit.elapsed_ms.masked_fill_(new, 0)
+        self.ice_spirit.detonated.masked_fill_(new, False)
+        self.electro_jump_active &= ~new
+        self.electro_jump_target_id.masked_fill_(new, 0)
+        self.electro_jump_destination_units.masked_fill_(new[..., None], 0)
+
+        character = runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        self.spawn_areas.target_collision_radius_units.copy_(
+            self.combat.collision_radius_units
+        )
+        self.spawn_areas.target_airborne.copy_(self.combat.airborne)
+        self.spawn_areas.target_building.copy_(core.entity_kind == 1)
+        self.spawn_areas.target_crown.copy_(core.entity_tower_slot >= 0)
+        self.spawn_areas.target_has_shield.copy_(self.mechanics.has_shield)
+        self.spawn_areas.target_shield.copy_(self.mechanics.shield_current)
+        self.spawn_areas.target_shield_break_count.copy_(
+            self.mechanics.shield_break_count.to(torch.int32)
+        )
+        self.spawn_areas.target_damage_receivable &= character[:, None, :]
+        self.spawn_areas.target_effect_receivable &= character[:, None, :]
 
     def _refresh_area_target_planes_(self, new: torch.Tensor) -> None:
         """Refresh dynamic target metadata after canonical entity allocation."""
@@ -3318,6 +4124,9 @@ class TensorResidentEngine:
         runtime.battle.entity_id.copy_(runtime.entity_pool.entity_id)
         self.combat_target_entity_id.masked_fill_(dead, -1)
         self.pending_projectile_max_duration_ms.masked_fill_(dead, 0)
+        self.electro_jump_active.masked_fill_(dead, False)
+        self.electro_jump_target_id.masked_fill_(dead, 0)
+        self.electro_jump_destination_units.masked_fill_(dead[..., None], 0)
         runtime.phases.death_pending &= ~dead
         runtime.mark_dirty(dead.any(dim=1), phase=TickPhase.CLEANUP_AND_SPAWNS)
         return removed
@@ -3394,6 +4203,21 @@ class TensorResidentEngine:
             source.charge_carriers,
             selected_rows,
         )
+        self.spawn_areas.reset_rows_(
+            selected_rows,
+            source.spawn_areas,
+            selected_rows,
+        )
+        self.chain_impacts.reset_rows_(
+            selected_rows,
+            source.chain_impacts,
+            selected_rows,
+        )
+        self.ice_spirit.reset_rows_(
+            selected_rows,
+            source.ice_spirit,
+            selected_rows,
+        )
         self.death_payloads.reset_rows_(
             selected_rows,
             source.death_payloads,
@@ -3405,6 +4229,15 @@ class TensorResidentEngine:
             source.pending_projectile_max_duration_ms[rows]
         )
         self.projectile_duration_ms[rows] = source.projectile_duration_ms[rows]
+        self.projectile_source_entity_id[rows] = source.projectile_source_entity_id[
+            rows
+        ]
+        self.chain_runtime_slot[rows] = source.chain_runtime_slot[rows]
+        self.electro_jump_active[rows] = source.electro_jump_active[rows]
+        self.electro_jump_target_id[rows] = source.electro_jump_target_id[rows]
+        self.electro_jump_destination_units[rows] = (
+            source.electro_jump_destination_units[rows]
+        )
         # Route-cache entries are immutable consequences of standard-arena
         # keys, not battle state. Retaining the speculative cache cannot make
         # a failed row observable and lets successful rows reuse exact paths.
@@ -3552,6 +4385,11 @@ class TensorResidentEngine:
             working.combat,
             combat,
         )
+        working._record_projectile_sources_(
+            previously_allocated_objects,
+            combat,
+            projectile_supported,
+        )
         working._record_new_projectile_durations_(previously_allocated_objects)
         working.runtime.mark_unsupported(
             active & ~projectile_supported,
@@ -3578,6 +4416,50 @@ class TensorResidentEngine:
         working.runtime.mark_unsupported(
             active & ~mechanic_result.committed,
             phase=TickPhase.COMBAT,
+        )
+        active &= mechanic_result.committed
+        working.runtime.supported &= active
+        ice_before = working.ice_spirit.jump_active.clone()
+        ice_spirit = working._step_ice_spirit_movement_(combat, active)
+        working.runtime.mark_unsupported(
+            active & ~ice_spirit.committed,
+            phase=TickPhase.MOVEMENT,
+        )
+        active &= ice_spirit.committed
+        working.runtime.supported &= active
+        ice_consumed = (
+            ice_before
+            | ice_spirit.jumped
+            | ice_spirit.landed
+            | working.ice_spirit.jump_active
+        )
+        (
+            electro_chain_inputs,
+            electro_consumed,
+            electro_supported,
+        ) = working._step_electro_spirit_movement_(combat, active)
+        working.runtime.mark_unsupported(
+            active & ~electro_supported,
+            phase=TickPhase.MOVEMENT,
+        )
+        active &= electro_supported
+        working.runtime.supported &= active
+        working.combat.hp.copy_(working.runtime.battle.entity_hp)
+        working.combat.alive.copy_(working.runtime.battle.entity_active)
+        working.combat.x_units.copy_(
+            working.runtime.battle.entity_x_units.to(torch.int64)
+        )
+        working.combat.y_units.copy_(
+            working.runtime.battle.entity_y_units.to(torch.int64)
+        )
+        working.movement.position_units.copy_(
+            torch.stack(
+                (
+                    working.runtime.battle.entity_x_units,
+                    working.runtime.battle.entity_y_units,
+                ),
+                dim=-1,
+            ).to(torch.int64)
         )
         working.combat.x_units.copy_(
             working.runtime.battle.entity_x_units.to(torch.int64)
@@ -3615,15 +4497,20 @@ class TensorResidentEngine:
             & working.movement.is_troop
             & ~working.movement.stunned
             & ~special_consumed
+            & ~ice_consumed
+            & ~electro_consumed
         ).any(dim=1)
+        ice_row = (ice_consumed | electro_consumed).any(dim=1)
         working.runtime.mark_unsupported(
-            active & special_row & other_mobile,
+            active & (special_row | ice_row) & other_mobile,
             phase=TickPhase.MOVEMENT,
         )
         movement_consumed = (
-            (combat_death | special_row)[:, None]
+            (combat_death | special_row | ice_row)[:, None]
             | working.projectile_bridge.knockback_active
             | charge_entities
+            | ice_consumed
+            | electro_consumed
         )
         working.movement.slot_present &= ~charge_entities
         working.movement.entity_active &= ~charge_entities
@@ -3649,6 +4536,69 @@ class TensorResidentEngine:
         )
         working._rewrite_area_periodic_events_(status_event_start)
         completed = working._character_object_phase(active, ~charge_entities)
+        all_source_slots = torch.arange(
+            working.runtime.max_entities,
+            dtype=torch.int64,
+            device=working.device,
+        )[None, :].expand(working.batch_size, -1)
+        spawn_area_valid = completed & working._spawn_area_entity_supported()
+        spawn_source_order = torch.argsort(
+            torch.where(
+                spawn_area_valid,
+                working.runtime.battle.entity_id,
+                torch.full_like(
+                    working.runtime.battle.entity_id,
+                    torch.iinfo(torch.int64).max,
+                ),
+            ),
+            dim=1,
+            stable=True,
+        )[:, : working.spawn_areas.active.shape[1]]
+        source_slots = all_source_slots.gather(1, spawn_source_order)
+        spawn_area_valid = spawn_area_valid.gather(1, spawn_source_order)
+        spawn_area_materialization = working.spawn_areas.materialize_spawns_(
+            working.runtime,
+            source_slots=source_slots,
+            valid=spawn_area_valid,
+        )
+        working.runtime.mark_unsupported(
+            active & ~spawn_area_materialization.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= spawn_area_materialization.committed
+        working.runtime.supported &= active
+        spawn_stun_before = working.runtime.status.stun_timer.clone()
+        spawn_areas = working.spawn_areas.step_(
+            working.runtime,
+            battle_mask=active,
+        )
+        working.runtime.mark_unsupported(
+            active & ~spawn_areas.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= spawn_areas.committed
+        working.runtime.supported &= active
+        working.mechanics.shield_current.copy_(working.spawn_areas.target_shield)
+        working.mechanics.shield_break_count.copy_(
+            working.spawn_areas.target_shield_break_count.to(
+                working.mechanics.shield_break_count.dtype
+            )
+        )
+        spawn_stun = working.runtime.status.stun_timer > spawn_stun_before + 1e-9
+        spawn_stun_transition = apply_stun_interrupt_(
+            working._combat_clock_planes(),
+            status_applied=spawn_stun,
+            hit_speed_ms=working.combat.hit_speed_ms,
+            river_jump_active=working.movement.river_jump_active,
+        )
+        working.runtime.phases.target_slot.masked_fill_(
+            spawn_stun_transition.transitioned, -1
+        )
+        working.combat_target_entity_id.masked_fill_(
+            spawn_stun_transition.transitioned, -1
+        )
+        working.combat.hp.copy_(working.runtime.battle.entity_hp)
+        working.combat.alive.copy_(working.runtime.battle.entity_active)
         entity_id_before_periodic = working.runtime.battle.entity_id.clone()
         if working.periodic_catalog.spawn.periodic_rows().numel():
             periodic_spawner = step_runtime_periodic_spawners_(
@@ -3685,7 +4635,15 @@ class TensorResidentEngine:
         continuous_slow_projection, continuous_slow_rows = (
             working._project_continuous_area_slow_status()
         )
-        continuous_areas = working.continuous_areas.step_(working.runtime)
+        if bool(working.continuous_areas.active.any().item()):
+            continuous_areas = working.continuous_areas.step_(working.runtime)
+        else:
+            continuous_areas = ContinuousAreaStepResult(
+                committed=working.runtime.supported.clone(),
+                damage=torch.zeros_like(working.runtime.battle.entity_hp),
+                died=torch.zeros_like(working.runtime.battle.entity_active),
+                expired=torch.zeros_like(working.continuous_areas.active),
+            )
         working._publish_continuous_area_slow_projection_(
             continuous_slow_projection,
             continuous_slow_rows & continuous_areas.committed,
@@ -3892,8 +4850,186 @@ class TensorResidentEngine:
         # general retained object, so this cannot make a dead target hittable.
         working.runtime.battle.entity_active |= terminal_dead_before_objects
         entity_id_before_objects = working.runtime.battle.entity_id.clone()
+        object_event_start = working.runtime.events.count.clone()
+        chain_object_ids = working.objects.objects.object_id.clone()
+        chain_blueprint_ids = working.objects.objects.blueprint_id.to(
+            torch.int64
+        ).clone()
+        chain_object_active = working.objects.objects.allocated.clone()
+        chain_source_ids = working.projectile_source_entity_id.clone()
         objects = working.projectile_bridge.step_objects_(
             working.runtime, working.objects
+        )
+        chain_inputs = working._chain_inputs_from_object_events_(
+            event_start=object_event_start,
+            object_ids=chain_object_ids,
+            blueprint_ids=chain_blueprint_ids,
+            object_active=chain_object_active,
+            source_entity_ids=chain_source_ids,
+        )
+        chain_inputs = ChainImpactInputs(
+            valid=torch.cat((chain_inputs.valid, electro_chain_inputs.valid), dim=1),
+            source_slot=torch.cat(
+                (chain_inputs.source_slot, electro_chain_inputs.source_slot),
+                dim=1,
+            ),
+            primary_slot=torch.cat(
+                (chain_inputs.primary_slot, electro_chain_inputs.primary_slot),
+                dim=1,
+            ),
+            primary_damage_applied=torch.cat(
+                (
+                    chain_inputs.primary_damage_applied,
+                    electro_chain_inputs.primary_damage_applied,
+                ),
+                dim=1,
+            ),
+            source_death_applied=torch.cat(
+                (
+                    chain_inputs.source_death_applied,
+                    electro_chain_inputs.source_death_applied,
+                ),
+                dim=1,
+            ),
+        )
+        chain_entity_capacity = chain_inputs.valid.sum(dim=1, dtype=torch.int64) <= (
+            ~working.runtime.entity_pool.active
+        ).sum(dim=1, dtype=torch.int64)
+        working.runtime.mark_unsupported(
+            active & ~chain_entity_capacity,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= chain_entity_capacity
+        working.runtime.supported &= active
+        chain_active_before = working.chain_impacts.active.clone()
+        chain_position_before = working.chain_impacts.position_units.clone()
+        chain_hop_before = working.chain_impacts.hop_remaining_ms.clone()
+        chain_impacts = step_chain_impacts_(
+            working.runtime,
+            working.chain_impacts,
+            chain_inputs,
+            dt_ms=torch.round(core.dt * 1_000).to(torch.int64),
+        )
+        # ChainLightning consumes the frame remainder in a while-loop. The
+        # standalone owner advances one link per call, so feed the exact
+        # unused variable-speed budget back while one retained chain owns the
+        # row. Coexisting chains remain conservatively rejected by preflight.
+        row_chain_slot = torch.where(
+            chain_active_before,
+            torch.arange(working.chain_impacts.max_chains, device=working.device)[
+                None, :
+            ],
+            working.chain_impacts.max_chains,
+        ).amin(dim=1)
+        newly_materialized = chain_impacts.materialized.any(dim=1)
+        row_chain_slot = torch.where(
+            newly_materialized,
+            chain_impacts.materialized.to(torch.int64).argmax(dim=1),
+            row_chain_slot,
+        ).clamp_max(working.chain_impacts.max_chains - 1)
+        chain_rows = torch.arange(working.batch_size, device=working.device)
+        start_position = chain_position_before[chain_rows, row_chain_slot]
+        first_input = chain_inputs.valid.to(torch.int64).argmax(dim=1)
+        primary_slot = chain_inputs.primary_slot[chain_rows, first_input].clamp_min(0)
+        primary_position = torch.stack(
+            (
+                working.combat.x_units[chain_rows, primary_slot],
+                working.combat.y_units[chain_rows, primary_slot],
+            ),
+            dim=1,
+        )
+        start_position = torch.where(
+            newly_materialized[:, None], primary_position, start_position
+        )
+        end_position = working.chain_impacts.position_units[chain_rows, row_chain_slot]
+        distance = _integer_sqrt(
+            (end_position[:, 0] - start_position[:, 0]).square()
+            + (end_position[:, 1] - start_position[:, 1]).square()
+        )
+        speed = working.chain_impacts.speed_units_per_tick[
+            chain_rows, row_chain_slot
+        ].clamp_min(1)
+        consumed_ms = torch.div(distance * 50, speed, rounding_mode="floor")
+        fixed_ms = chain_hop_before[chain_rows, row_chain_slot]
+        consumed_ms = torch.where(
+            fixed_ms > 0,
+            torch.minimum(
+                fixed_ms,
+                torch.round(core.dt * 1_000).to(torch.int64),
+            ),
+            consumed_ms,
+        )
+        residual_ms = torch.where(
+            chain_impacts.impacted.any(dim=1),
+            torch.clamp(
+                torch.round(core.dt * 1_000).to(torch.int64) - consumed_ms,
+                min=0,
+            ),
+            0,
+        )
+        for _ in range(working.chain_impacts.max_chains - 1):
+            continue_row = (
+                (residual_ms > 0)
+                & working.chain_impacts.active.any(dim=1)
+                & chain_impacts.committed
+            )
+            if not bool(continue_row.any().item()):
+                break
+            before_position = working.chain_impacts.position_units.clone()
+            before_hop = working.chain_impacts.hop_remaining_ms.clone()
+            continuation = step_chain_impacts_(
+                working.runtime,
+                working.chain_impacts,
+                None,
+                dt_ms=torch.where(continue_row, residual_ms, 0),
+            )
+            chain_impacts = ChainImpactStepResult(
+                committed=chain_impacts.committed & continuation.committed,
+                reason=torch.where(
+                    continuation.reason != 0,
+                    continuation.reason,
+                    chain_impacts.reason,
+                ),
+                materialized=chain_impacts.materialized | continuation.materialized,
+                impacted=chain_impacts.impacted | continuation.impacted,
+                damage=chain_impacts.damage + continuation.damage,
+                died=chain_impacts.died | continuation.died,
+                stunned=chain_impacts.stunned | continuation.stunned,
+                self_died=chain_impacts.self_died | continuation.self_died,
+            )
+            after_position = working.chain_impacts.position_units[
+                chain_rows, row_chain_slot
+            ]
+            prior_position = before_position[chain_rows, row_chain_slot]
+            hop_distance = _integer_sqrt(
+                (after_position[:, 0] - prior_position[:, 0]).square()
+                + (after_position[:, 1] - prior_position[:, 1]).square()
+            )
+            hop_consumed = torch.div(hop_distance * 50, speed, rounding_mode="floor")
+            fixed_hop = before_hop[chain_rows, row_chain_slot]
+            hop_consumed = torch.where(
+                fixed_hop > 0,
+                torch.minimum(fixed_hop, residual_ms),
+                hop_consumed,
+            )
+            residual_ms = torch.where(
+                continuation.impacted.any(dim=1),
+                torch.clamp(residual_ms - hop_consumed, min=0),
+                0,
+            )
+        working.runtime.mark_unsupported(
+            active & ~chain_impacts.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= chain_impacts.committed
+        working.runtime.supported &= active
+        working._publish_chain_entities_(chain_impacts)
+        working.projectile_source_entity_id.copy_(
+            torch.where(
+                working.objects.objects.allocated,
+                working.projectile_source_entity_id,
+                torch.zeros_like(working.projectile_source_entity_id),
+            )
         )
         knockback_started = (
             working.projectile_bridge.knockback_active
@@ -3906,7 +5042,9 @@ class TensorResidentEngine:
         )
         object_stun_transition = apply_stun_interrupt_(
             working._combat_clock_planes(),
-            status_applied=working.projectile_bridge.stun_applied,
+            status_applied=(
+                working.projectile_bridge.stun_applied | chain_impacts.stunned
+            ),
             hit_speed_ms=working.combat.hit_speed_ms,
             river_jump_active=working.movement.river_jump_active,
         )
@@ -4078,6 +5216,10 @@ class TensorResidentEngine:
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,
+            spawn_area_materialization=spawn_area_materialization,
+            spawn_areas=spawn_areas,
+            chain_impacts=chain_impacts,
+            ice_spirit=ice_spirit,
             death_payloads=death_payloads,
             periodic_spawner=periodic_spawner,
             terminal=terminal,

@@ -88,6 +88,10 @@ SUPPORTED_DISPATCH_MECHANICS = frozenset(
         "MegaKnightSlam",
         "SpawnPushback",
         "UndergroundDeployment",
+        # MultipleTargetAttack is resolved directly by this dispatcher.
+        # Dedicated resident child owners opt their opcodes in explicitly on
+        # the dispatcher instance; standalone dispatch remains fail-closed.
+        "MultipleTargetAttack",
     )
 )
 
@@ -1071,6 +1075,9 @@ class TensorMechanicDispatcher:
             device=self.device,
         )
         supported_table[list(SUPPORTED_DISPATCH_MECHANICS)] = True
+        externally_owned = getattr(self, "externally_owned_mechanic_opcodes", ())
+        if externally_owned:
+            supported_table[list(externally_owned)] = True
         unsupported = operation_active & ~supported_table[operations.to(torch.int64)]
         row_unsupported = unsupported.any(dim=(1, 2))
         child_table = torch.zeros_like(supported_table)
