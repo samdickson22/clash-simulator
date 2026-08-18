@@ -217,14 +217,14 @@ def test_action_owned_entities_reach_real_post_deployment_interactions(
         classifications[scenario.card_name] = classification
 
     expected = {
-        "Archers": ResidentCoverageClassification.DIVERGED.value,
+        "Archers": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "Bowler": ResidentCoverageClassification.DIVERGED.value,
-        "DartGoblin": ResidentCoverageClassification.DIVERGED.value,
+        "DartGoblin": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "Giant": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
-        "HogRider": ResidentCoverageClassification.DIVERGED.value,
+        "HogRider": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "MegaMinion": ResidentCoverageClassification.DIVERGED.value,
-        "Musketeer": ResidentCoverageClassification.DIVERGED.value,
-        "Prince": ResidentCoverageClassification.DIVERGED.value,
+        "Musketeer": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
+        "Prince": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "RoyalHogs": ResidentCoverageClassification.DIVERGED.value,
     }
     assert {name: value.value for name, value in classifications.items()} == expected

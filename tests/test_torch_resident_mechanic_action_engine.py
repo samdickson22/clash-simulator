@@ -444,3 +444,50 @@ def test_no_death_spawn_catalog_constructs_and_admits_miner_action() -> None:
     assert preflight.supported.tolist() == [True, True]
     assert result.committed.tolist() == [True, True]
     assert engine.miner.underground_active[0].any()
+
+
+def test_inert_chain_owner_preserves_target_acquired_after_deployment() -> None:
+    battle = BattleState(fast_path=False)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    knight = battle.card_loader.get_card("Knight")
+    assert knight is not None
+    battle._spawn_unit_at_position(
+        Position(14.5, 14.5),
+        1,
+        knight,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    source = battle.entities[1]
+    source.stun_timer = 100.0
+    source.attack_cooldown = 10.0
+    player = battle.players[0]
+    player.hand = ["Knight", "Zap", "Cannon", "Fireball"]
+    player.deck = ["Knight", "Zap", "Cannon", "Fireball"]
+    player.cycle_queue = deque()
+    player.elixir = 20.0
+    oracle = battle.clone()
+    action = 12 * 18 + 14
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    assert action_space.apply_action(oracle, 0, action)
+    oracle.step_logic_ticks(1)
+    engine = TensorResidentEngine.from_battles(
+        [battle], max_entities=16, max_objects=8, event_capacity=128
+    )
+    actions = torch.tensor([[action, NO_OP_ACTION]])
+
+    assert engine.preflight(actions).supported.tolist() == [True]
+    result = engine.step(actions)
+
+    assert result.committed.tolist() == [True]
+    source_slot = int(
+        torch.nonzero(
+            engine.runtime.battle.entity_id[0] == source.id,
+            as_tuple=False,
+        )[0, 0]
+    )
+    target_slot = int(engine.runtime.phases.target_slot[0, source_slot])
+    assert engine.runtime.battle.entity_id[0, target_slot].item() == 2
+    assert engine.chain_impacts.combat.target_slot[0, source_slot].item() == target_slot
+    assert oracle.entities[source.id].target_id == 2

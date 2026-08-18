@@ -5311,6 +5311,15 @@ class TensorResidentEngine:
         chain_active_before = working.chain_impacts.active.clone()
         chain_position_before = working.chain_impacts.position_units.clone()
         chain_hop_before = working.chain_impacts.hop_remaining_ms.clone()
+        # The chain owner was refreshed before ordinary combat, but combat can
+        # acquire/clear targets and mutate clocks during this same tick. Feed
+        # the authoritative post-combat planes into the later object phase so
+        # an inert chain pass cannot publish its stale pre-combat snapshot.
+        for descriptor in fields(working.chain_impacts.combat):
+            destination = getattr(working.chain_impacts.combat, descriptor.name)
+            source = getattr(working.combat, descriptor.name)
+            if destination.shape == source.shape:
+                destination.copy_(source)
         chain_impacts = step_chain_impacts_(
             working.runtime,
             working.chain_impacts,
