@@ -18,6 +18,8 @@ from clasher.torch_sim.resident_differential import (
     ResidentCoverageDigestMismatch,
     ResidentEpisodeDifferential,
     ResidentImplementationTopology,
+    _coverage_episode_tick_budget,
+    _coverage_fixture,
     classify_resident_coverage_row,
     compare_resident_coverage_topologies,
     enumerate_enabled_resident_coverage,
@@ -523,6 +525,29 @@ def test_completed_shorter_row_is_not_reclassified_as_fallback() -> None:
     assert report.parity_rows == (0, 1)
     assert report.preflight_rejected_rows == ()
     assert report.runtime_rejected_rows == ()
+
+
+def test_xbow_coverage_budget_includes_float_terminal_tick_77() -> None:
+    probe = BattleState(fast_path=False)
+    stats = probe.card_loader.get_card("Xbow")
+    assert stats is not None
+    episode_end_time = float(stats.deploy_time) / 1_000.0 + 0.30
+    assert episode_end_time == 3.8
+    battle = _coverage_fixture(
+        "Xbow",
+        510_064,
+        episode_end_time=episode_end_time,
+    )
+
+    assert _coverage_episode_tick_budget(episode_end_time, battle.dt) == 77
+    battle.step_logic_ticks(76)
+    assert battle.tick == 76
+    assert battle.time < episode_end_time
+    assert not battle.game_over
+    battle.step_logic_ticks(1)
+    assert battle.tick == 77
+    assert battle.time >= episode_end_time
+    assert battle.game_over
 
 
 def test_wrapper_child_aliases_are_executed_not_forced_runtime_fallback() -> None:

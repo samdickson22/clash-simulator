@@ -890,6 +890,24 @@ def _coverage_fixture(
     return battle
 
 
+def _coverage_episode_tick_budget(episode_end_time: float, dt: float) -> int:
+    """Count repeated logic ticks through the configured terminal boundary."""
+
+    if not math.isfinite(episode_end_time) or episode_end_time <= 0.0:
+        raise ValueError("coverage episode end time must be finite and positive")
+    if not math.isfinite(dt) or dt <= 0.0:
+        raise ValueError("coverage logic dt must be finite and positive")
+    elapsed = 0.0
+    ticks = 0
+    # Match BattleState's repeated float addition exactly. A quotient-based
+    # ceil can stop one tick early when a decimal boundary such as Xbow's
+    # 3.8 seconds is represented below the mathematical value after 76 adds.
+    while elapsed < episode_end_time:
+        elapsed += dt
+        ticks += 1
+    return ticks
+
+
 def enumerate_enabled_resident_coverage(
     *,
     device: str | torch.device = "cpu",
@@ -986,7 +1004,7 @@ def enumerate_enabled_resident_coverage(
         battles,
         cast(ResidentActionProvider, actions),
         max_ticks=max(
-            math.ceil((end_time - 1e-9) / battles[0].dt)
+            _coverage_episode_tick_budget(end_time, battles[0].dt)
             for end_time in episode_end_by_name.values()
         ),
         stop_on_first_divergence=False,
