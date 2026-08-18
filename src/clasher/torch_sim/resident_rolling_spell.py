@@ -476,11 +476,14 @@ class TensorResidentRollingSpells:
         runtime_index = (effective_rows, entity_slot)
         _clear_entity_slots(working_runtime, effective_rows, entity_slot)
         working_runtime.battle.entity_active[runtime_index] = True
-        working_runtime.battle.entity_kind[runtime_index] = 3
+        # The scalar RollingProjectile is an object carrier with no public
+        # card_stats.  Keep its serialized spell identity only in
+        # ``working_state.card_id`` for retained lifecycle resolution.
+        working_runtime.battle.entity_kind[runtime_index] = 2
         working_runtime.battle.entity_player[runtime_index] = effective_players.to(
             torch.int8
         )
-        working_runtime.battle.entity_card[runtime_index] = effective_cards
+        working_runtime.battle.entity_card[runtime_index] = 0
         working_runtime.battle.entity_x_units[runtime_index] = effective_x.to(
             torch.int32
         )
@@ -488,11 +491,11 @@ class TensorResidentRollingSpells:
             torch.int32
         )
         working_runtime.battle.entity_hp[runtime_index] = 1.0
+        working_runtime.battle.entity_hp_integer_kind[runtime_index] = True
         working_runtime.battle.entity_max_hp[runtime_index] = 1.0
         working_runtime.battle.entity_id.copy_(working_runtime.entity_pool.entity_id)
         source = torch.zeros_like(allocation.entity_ids)
         payload = torch.zeros_like(allocation.entity_ids)
-        source[effective_rows, local] = entity_id
         payload[effective_rows, local] = effective_cards
         working_runtime.events.append(
             phase=TickPhase.COMMANDS,

@@ -18,7 +18,11 @@ from clasher.torch_sim.resident_rolling_spell import (
     TensorRollingSpellCatalog,
     TensorRollingTargets,
 )
-from clasher.torch_sim.runtime_state import RuntimeEventOpcode, TensorBattleRuntime
+from clasher.torch_sim.runtime_state import (
+    RuntimeEventOpcode,
+    TensorBattleRuntime,
+    TickPhase,
+)
 
 SPELLS = ("Log", "BarbarianBarrel")
 
@@ -113,11 +117,39 @@ def test_full_rolling_spell_lifecycle_matches_scalar(
     assert spell.cast(oracle, 0, Position(9.0, 8.0))
     runtime, pending, rolling = _stack(source, device=device)
     handoff = _queue_due(runtime, pending, rolling, spell_name)
+    spell_id = runtime.battle.card_to_id[spell_name]
+    runtime.events.append(
+        phase=TickPhase.COMMANDS,
+        opcode=RuntimeEventOpcode.COMMAND,
+        valid=torch.ones((1, 1), dtype=torch.bool, device=runtime.device),
+        x_units=9_000,
+        y_units=8_000,
+        payload=spell_id,
+    )
 
     committed = rolling.consume_due_(runtime, pending, handoff)
     assert committed.tolist() == [True]
     assert not pending.active.any()
     assert rolling.state.active.sum().item() == 1
+    roller_id = int(rolling.state.entity_id[0, 0].item())
+    roller_slot = int(torch.nonzero(runtime.battle.entity_id[0] == roller_id).item())
+    assert runtime.battle.entity_kind[0, roller_slot].item() == 2
+    assert runtime.battle.entity_card[0, roller_slot].item() == 0
+    assert runtime.battle.entity_hp[0, roller_slot].item() == 1.0
+    assert runtime.battle.entity_hp_integer_kind[0, roller_slot].item()
+    assert rolling.state.card_id[0, 0].item() == spell_id
+    assert runtime.events.count.item() == 2
+    assert runtime.events.phase[0, :2].tolist() == [
+        TickPhase.COMMANDS,
+        TickPhase.COMMANDS,
+    ]
+    assert runtime.events.opcode[0, :2].tolist() == [
+        RuntimeEventOpcode.COMMAND,
+        RuntimeEventOpcode.SPAWN,
+    ]
+    assert runtime.events.source_id[0, :2].tolist() == [0, 0]
+    assert runtime.events.target_id[0, :2].tolist() == [0, roller_id]
+    assert runtime.events.payload[0, :2].tolist() == [spell_id, spell_id]
     oracle_roller = next(
         entity
         for entity in oracle.entities.values()

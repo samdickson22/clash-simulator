@@ -444,7 +444,10 @@ class TensorResidentRoyalDelivery:
         core.entity_active[index] = True
         core.entity_kind[index] = 2
         core.entity_player[index] = player_ids[accepted].to(torch.int8)
-        core.entity_card[index] = selected_cards
+        # SpawnProjectile carriers have no public card_stats in the scalar
+        # runtime.  The retained owner keeps the serialized spell blueprint in
+        # ``working.card_id`` until impact and child materialization.
+        core.entity_card[index] = 0
         core.entity_x_units[index] = target_x_units[accepted].to(torch.int32)
         core.entity_y_units[index] = target_y_units[accepted].to(torch.int32)
         core.entity_hp[index] = 1.0
@@ -452,12 +455,13 @@ class TensorResidentRoyalDelivery:
         core.entity_max_hp[index] = 1.0
         working_runtime.events.append(
             phase=TickPhase.COMMANDS,
-            opcode=RuntimeEventOpcode.SPAWN,
+            opcode=RuntimeEventOpcode.PROJECTILE,
             valid=allocation.valid,
-            source_id=allocation.entity_ids,
+            source_id=torch.zeros_like(allocation.entity_ids),
+            target_id=allocation.entity_ids,
             x_units=core.entity_x_units.gather(1, allocation.slots.clamp_min(0)),
             y_units=core.entity_y_units.gather(1, allocation.slots.clamp_min(0)),
-            payload=core.entity_card.gather(1, allocation.slots.clamp_min(0)),
+            payload=cards[:, None],
         )
         working_runtime.mark_dirty(accepted, phase=TickPhase.COMMANDS)
         _copy_runtime_rows_(runtime, working_runtime, accepted)

@@ -116,11 +116,44 @@ def test_full_delivery_lifecycle_matches_scalar_damage_planes_child_and_events(
         if isinstance(entity, SpawnProjectile)
     )
     engine, owner = _owners(source, tensor_device)
+    royal_delivery_id = engine.runtime.battle.card_to_id["RoyalDelivery"]
+    engine.runtime.events.append(
+        phase=TickPhase.COMMANDS,
+        opcode=RuntimeEventOpcode.COMMAND,
+        valid=torch.ones((1, 1), dtype=torch.bool, device=engine.runtime.device),
+        x_units=9_000,
+        y_units=10_000,
+        payload=royal_delivery_id,
+    )
 
     materialized = _materialize(engine, owner)
 
     assert materialized.committed.tolist() == [True]
     assert materialized.carrier_entity_id.item() == scalar_carrier.id == 4
+    carrier_slot = engine.runtime.battle.entity_id[0].tolist().index(scalar_carrier.id)
+    assert engine.runtime.battle.entity_kind[0, carrier_slot].item() == 2
+    assert engine.runtime.battle.entity_card[0, carrier_slot].item() == 0
+    assert engine.runtime.battle.entity_hp[0, carrier_slot].item() == 1.0
+    assert engine.runtime.battle.entity_hp_integer_kind[0, carrier_slot].item()
+    assert owner.card_id[0, 0].item() == royal_delivery_id
+    assert engine.runtime.events.count.item() == 2
+    assert engine.runtime.events.phase[0, :2].tolist() == [
+        TickPhase.COMMANDS,
+        TickPhase.COMMANDS,
+    ]
+    assert engine.runtime.events.opcode[0, :2].tolist() == [
+        RuntimeEventOpcode.COMMAND,
+        RuntimeEventOpcode.PROJECTILE,
+    ]
+    assert engine.runtime.events.source_id[0, :2].tolist() == [0, 0]
+    assert engine.runtime.events.target_id[0, :2].tolist() == [
+        0,
+        scalar_carrier.id,
+    ]
+    assert engine.runtime.events.payload[0, :2].tolist() == [
+        royal_delivery_id,
+        royal_delivery_id,
+    ]
     assert owner.remaining_ms[0, 0].item() == 2_050
     assert (
         owner.catalog.travel_speed_units[
@@ -185,18 +218,20 @@ def test_full_delivery_lifecycle_matches_scalar_damage_planes_child_and_events(
 
     count = int(runtime.events.count.item())
     assert runtime.events.opcode[0, :count].tolist() == [
-        RuntimeEventOpcode.SPAWN,
+        RuntimeEventOpcode.COMMAND,
+        RuntimeEventOpcode.PROJECTILE,
         RuntimeEventOpcode.DAMAGE,
         RuntimeEventOpcode.DAMAGE,
         RuntimeEventOpcode.SPAWN,
     ]
     assert runtime.events.phase[0, :count].tolist() == [
         TickPhase.COMMANDS,
+        TickPhase.COMMANDS,
         TickPhase.OBJECTS,
         TickPhase.OBJECTS,
         TickPhase.OBJECTS,
     ]
-    assert runtime.events.target_id[0, 1:3].tolist() == [1, 2]
+    assert runtime.events.target_id[0, 2:4].tolist() == [1, 2]
 
 
 def test_clone_fork_and_selective_reset_own_independent_mutable_state(
