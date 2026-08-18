@@ -19,6 +19,8 @@ from typing import Any, cast
 import torch
 
 from clasher.battle import BattleState
+from clasher.data import CardDataLoader
+from clasher.factory.dynamic_factory import troop_from_character_data
 from clasher.kinematics import LOGIC_TICK_SECONDS
 from clasher.native_tilemap import (
     HALF_TILE_LOGIC_UNITS,
@@ -72,6 +74,69 @@ RESIDENT_UNSUPPORTED_MECHANIC_OPCODES = {
 RESIDENT_UNSUPPORTED_EFFECT_OPCODES = {
     opcode: name for name, opcode in EFFECT_OPCODE.items()
 }
+
+
+class _ResidentCatalogLoader(CardDataLoader):
+    """Loader-local serialized child definitions used by one resident catalog."""
+
+    def __init__(self, source: CardDataLoader) -> None:
+        # Avoid reparsing gamedata: definitions are immutable prototypes and
+        # nested compatibility cards are owned only by this overlay.
+        self.data_file = source.data_file
+        self._card_definitions = dict(source.load_card_definitions())
+        self._cards = {}
+        self._synthetic_names: set[str] = set()
+
+    def add_character(self, name: str, data: dict[str, Any], rarity: str) -> None:
+        existing = self._cards.get(name)
+        if existing is not None and name in self._synthetic_names:
+            existing_data = existing.summon_character_data or {}
+            if existing_data != data:
+                raise ValueError(
+                    f"conflicting serialized deployment payload for {name!r}"
+                )
+            return
+        stats = troop_from_character_data(
+            name,
+            data,
+            elixir=0,
+            rarity=rarity,
+        )
+        self._cards[name] = stats
+        self._card_definitions[name] = stats.card_definition
+        self._synthetic_names.add(name)
+
+
+def _resident_deployment_catalog_closure(
+    source: CardDataLoader,
+    initial_names: set[str],
+) -> tuple[_ResidentCatalogLoader, tuple[str, ...]]:
+    """Compile the recursive primary/secondary deployment character closure."""
+
+    overlay = _ResidentCatalogLoader(source)
+    discovered = set(initial_names)
+    pending = set(initial_names)
+    while pending:
+        parent_name = min(pending)
+        pending.remove(parent_name)
+        parent = overlay.get_card(parent_name)
+        if parent is None:
+            continue
+        for payload in (
+            parent.summon_character_data,
+            parent.summon_character_second_data,
+        ):
+            if not isinstance(payload, dict):
+                continue
+            child_name = str(payload.get("name", "") or "")
+            if not child_name or child_name == parent_name:
+                continue
+            rarity = str(payload.get("rarity", parent.rarity or "Common"))
+            overlay.add_character(child_name, payload, rarity)
+            if child_name not in discovered:
+                discovered.add(child_name)
+                pending.add(child_name)
+    return overlay, tuple(sorted(discovered))
 
 
 @dataclass(frozen=True)
@@ -372,8 +437,16 @@ class TensorResidentEngine:
             for entity in battle.entities.values()
             if getattr(entity.card_stats, "name", "") not in {"Tower", "KingTower"}
         }
-        cards = catalog or TensorCardCatalog.compile(
-            battles[0].card_loader, names, device=device
+        if catalog is not None:
+            names.update(catalog.names[1:])
+        catalog_loader, closure_names = _resident_deployment_catalog_closure(
+            battles[0].card_loader,
+            names,
+        )
+        cards = (
+            catalog
+            if catalog is not None and set(closure_names).issubset(catalog.name_to_id)
+            else TensorCardCatalog.compile(catalog_loader, closure_names, device=device)
         )
         runtime = TensorBattleRuntime.from_battles(
             battles,
@@ -383,14 +456,16 @@ class TensorResidentEngine:
             catalog=cards,
         )
         action_catalog = TensorActionCatalog.compile(cards)
-        deployment_catalog = TensorDeploymentCatalog.compile(
-            battles[0].card_loader, cards
-        )
+        deployment_catalog = TensorDeploymentCatalog.compile(catalog_loader, cards)
         deployment = TensorRuntimeDeployment(
             action_catalog, TensorCommandMaterializer(deployment_catalog)
         )
         deployment.prepare_runtime(runtime)
-        mechanics = TensorRuntimeMechanics.from_battles(runtime, battles)
+        mechanic_battles = list(battles)
+        mechanic_boundary = copy.copy(battles[0])
+        mechanic_boundary.card_loader = catalog_loader
+        mechanic_battles[0] = mechanic_boundary
+        mechanics = TensorRuntimeMechanics.from_battles(runtime, mechanic_battles)
         status = TensorRuntimeStatusPhase.from_battles(runtime, battles)
         objects = TensorRuntimeObjectPhase.from_battles(
             runtime, battles, max_objects=max_objects
@@ -429,7 +504,7 @@ class TensorResidentEngine:
         first_hit = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         jump_height = torch.zeros(size, dtype=torch.bool, device=runtime.device)
         for card_id, name in enumerate(cards.names[1:], start=1):
-            stats = battles[0].card_loader.get_card(name)
+            stats = catalog_loader.get_card(name)
             if stats is None:
                 continue
             uses_projectile[card_id] = bool(
