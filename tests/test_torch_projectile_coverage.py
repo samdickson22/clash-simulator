@@ -10,18 +10,22 @@ from clasher.torch_sim.projectile_coverage import (
     enumerate_enabled_projectile_bridge_coverage,
 )
 
-EXPECTED_DIGEST = "72df144bdf584fb5ed2d5b0d0622d6b179b531be658ccf7175e8d565a1b9a208"
+EXPECTED_DIGEST = "6f0a56d4be288fb944cb09c72c3e050fb2166e71ee92de2f9f17cb39da6a8783"
 EXPECTED_SUPPORTED = {
+    "ArcherQueen",
     "Archers",
     "Arrows",
     "BabyDragon",
     "Bomber",
+    "BombTower",
     "Bowler",
     "Cannon",
     "DartGoblin",
     "Fireball",
     "GiantSnowball",
     "GoblinBarrel",
+    "IceWizard",
+    "LavaHound",
     "MegaMinion",
     "Minions",
     "Musketeer",
@@ -30,6 +34,7 @@ EXPECTED_SUPPORTED = {
     "SpearGoblins",
     "Xbow",
     "Zap",
+    "Witch",
 }
 EXPECTED_UNSUPPORTED_BY_REASON = {
     "card has no projectile payload": {
@@ -70,11 +75,6 @@ EXPECTED_UNSUPPORTED_BY_REASON = {
     },
     "impact child projectile is not retained": {"Firecracker"},
     "piercing/start collision projectile is not retained": {"MagicArcher"},
-    "projectile impact callbacks are not retained: ArcherQueenCloak": {"ArcherQueen"},
-    "projectile impact callbacks are not retained: DeathSpawn": {
-        "BombTower",
-        "LavaHound",
-    },
     "projectile impact callbacks are not retained: ElectroDragonChainLightning": {
         "ElectroDragon"
     },
@@ -82,8 +82,6 @@ EXPECTED_UNSUPPORTED_BY_REASON = {
         "ElectroSpirit"
     },
     "projectile impact callbacks are not retained: IceSpiritFreeze": {"IceSpirit"},
-    "projectile impact callbacks are not retained: PeriodicSpawner": {"Witch"},
-    "projectile impact callbacks are not retained: SpawnAreaEffect": {"IceWizard"},
     "projectile impact callbacks are not retained: WallBreakersDemolition": {
         "Wallbreakers"
     },

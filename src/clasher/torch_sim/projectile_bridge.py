@@ -21,6 +21,7 @@ from clasher.formations import formation_offset
 from clasher.gamedata_normalization import serialized_hit_planes
 from clasher.kinematics import tiles_to_logic_units
 from clasher.logic_math import _SIN_TABLE
+from clasher.mechanics.mechanic_base import BaseMechanic
 from clasher.native_tilemap import (
     HALF_TILE_LOGIC_UNITS,
     STANDARD_PATH_HEIGHT,
@@ -428,10 +429,8 @@ class TensorProjectileSpellCatalog:
                 crown_damage[card_id] = explicit_crown
                 crown_damage_valid[card_id] = True
             reason = _combat_projectile_reason(operation)
-            unsupported_callbacks = tuple(
-                type(mechanic).__name__
-                for mechanic in definitions[name].mechanics
-                if type(mechanic).__name__ not in {"CrownTowerScaling", "DamageRamp"}
+            unsupported_callbacks = _projectile_attack_callback_names(
+                definitions[name].mechanics
             )
             if reason is None and unsupported_callbacks:
                 reason = "projectile impact callbacks are not retained: " + ",".join(
@@ -671,6 +670,37 @@ def _combat_projectile_reason(projectile: dict[str, Any]) -> str | None:
     if projectile.get("projectileStartExtraRadius", 0):
         return "piercing/start collision projectile is not retained"
     return None
+
+
+def _projectile_attack_callback_names(mechanics: Sequence[object]) -> tuple[str, ...]:
+    """Return mechanics that alter attack launch, impact, or damage semantics.
+
+    Parent lifecycle hooks such as periodic spawning and death payloads are
+    composed by separate retained owners and must not make an otherwise
+    ordinary serialized projectile unsupported.  Only actual attack-payload
+    hook overrides belong to the projectile bridge support decision.
+    """
+
+    represented = {"CrownTowerScaling", "DamageRamp"}
+    hooks = (
+        "on_attack_start",
+        "on_attack_committed",
+        "on_attack_hit",
+        "modify_outgoing_damage",
+        "projectile_crown_tower_damage",
+    )
+    unsupported: list[str] = []
+    for mechanic in mechanics:
+        mechanic_type = type(mechanic)
+        name = mechanic_type.__name__
+        if name in represented:
+            continue
+        if any(
+            getattr(mechanic_type, hook, None) is not getattr(BaseMechanic, hook)
+            for hook in hooks
+        ):
+            unsupported.append(name)
+    return tuple(unsupported)
 
 
 def _projectile_crown_damage(

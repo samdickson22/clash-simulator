@@ -11,7 +11,14 @@ import torch
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.card_aliases import CARD_NAME_ALIASES
-from clasher.entities import Building, Projectile, SpawnProjectile, TargetType, Troop
+from clasher.entities import (
+    Building,
+    Projectile,
+    SpawnProjectile,
+    TargetType,
+    TimedExplosive,
+    Troop,
+)
 from clasher.mechanics.shared.knockback import apply_radial_knockback
 from clasher.spells import SPELL_REGISTRY
 from clasher.torch_sim.catalog import TensorCardCatalog
@@ -26,7 +33,11 @@ from clasher.torch_sim.projectile_bridge import (
     BridgePayloadKind,
     TensorResidentProjectileSpellBridge,
 )
-from clasher.torch_sim.resident_engine import _resident_deployment_catalog_closure
+from clasher.torch_sim.resident_engine import (
+    ResidentUnsupportedReason,
+    TensorResidentEngine,
+    _resident_deployment_catalog_closure,
+)
 from clasher.torch_sim.runtime_objects import (
     TensorRuntimeObjectPhase,
 )
@@ -89,6 +100,34 @@ def _battle(*entities: Troop | Building, cards: tuple[str, ...] = ()) -> BattleS
             player.hand = hand.copy()
             player.cycle_queue.clear()
     return battle
+
+
+def _death_parent_battle(card_name: str) -> tuple[BattleState, Troop | Building, Troop]:
+    battle = BattleState(fast_path=False)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    stats = battle.card_loader.get_card(card_name)
+    assert stats is not None
+    if str(stats.card_type).casefold() == "building":
+        source = battle._spawn_entity(Building, Position(9, 10), 0, stats)
+    else:
+        battle._spawn_unit_at_position(
+            Position(9, 10),
+            0,
+            stats,
+            deploy_delay_override=0.0,
+            snap_to_valid=False,
+        )
+        source = battle.entities[1]
+    assert isinstance(source, (Troop, Building))
+    source.position = Position(9, 10)
+    source.deploy_delay_remaining = 0.0
+    source.placement_pending = False
+    source._spawn_hook_pending = False
+    source._spawn_hook_fired = True
+    target = _troop(battle, "Knight", 2, 1, Position(9, 14), hp=2_000)
+    source.target_id = target.id
+    return _battle(source, target), source, target
 
 
 def _runtime_bridge(
@@ -300,6 +339,8 @@ def test_combat_projectile_launch_travel_homing_and_impact_match_python(
         ("MegaMinion", False),
         ("Minions", False),
         ("Xbow", True),
+        ("BombTower", True),
+        ("LavaHound", False),
     ),
 )
 def test_combat_projectile_public_events_match_scalar_callsite_lifecycle(
@@ -316,6 +357,23 @@ def test_combat_projectile_public_events_match_scalar_callsite_lifecycle(
         source = seed._spawn_entity(Building, Position(9, 10), 0, stats)
         source.deploy_delay_remaining = 0.0
         source.placement_pending = False
+        source._spawn_hook_pending = False
+        source._spawn_hook_fired = True
+    elif source_name == "LavaHound":
+        seed.entities.clear()
+        seed.next_entity_id = 1
+        stats = seed.card_loader.get_card(source_name)
+        assert stats is not None
+        seed._spawn_unit_at_position(
+            Position(9, 10),
+            0,
+            stats,
+            deploy_delay_override=0.0,
+            snap_to_valid=False,
+        )
+        source = seed.entities[1]
+        assert isinstance(source, Troop)
+        source.position = Position(9, 10)
         source._spawn_hook_pending = False
         source._spawn_hook_fired = True
     else:
@@ -393,6 +451,214 @@ def test_combat_projectile_public_events_match_scalar_callsite_lifecycle(
         assert runtime.battle.entity_hp[0, target_slot].item() == expected_hp
     else:
         assert target.id not in runtime.battle.entity_id[0].tolist()
+
+
+@pytest.mark.parametrize("card_name", ("BombTower", "LavaHound"))
+def test_death_parent_projectile_survives_source_death_before_impact(
+    tensor_device: str,
+    card_name: str,
+) -> None:
+    battle, source, target = _death_parent_battle(card_name)
+    oracle = copy.deepcopy(battle)
+    runtime, objects, bridge, catalog = _runtime_bridge(
+        [battle], {card_name, "Knight"}, device=tensor_device
+    )
+    card_id = runtime.battle.card_to_id[card_name]
+    assert bridge.catalog.supported[card_id].item()
+    assert bridge.catalog.unsupported_reason[card_id] is None
+    combat = project_stationary_combat(
+        [battle], catalog, capacity=runtime.max_entities, device=tensor_device
+    ).state
+    source_slot = int(torch.where(combat.entity_id[0] == source.id)[0][0].item())
+    target_slot = int(torch.where(combat.entity_id[0] == target.id)[0][0].item())
+    combat.target_slot[0, source_slot] = target_slot
+    launched = torch.zeros_like(combat.present)
+    launched[0, source_slot] = True
+    result = CombatStepResult(
+        attacked=launched.clone(),
+        projectile_launched=launched,
+        damage_received=torch.zeros_like(combat.hp),
+        target_before=combat.target_slot.clone(),
+        target_after=combat.target_slot.clone(),
+    )
+    oracle_source = oracle.entities[source.id]
+    oracle_source._create_projectile(oracle.entities[target.id], oracle)
+    assert bridge.materialize_combat_launches_(runtime, objects, combat, result).all()
+    projectile_id = int(objects.objects.object_id[0, 0].item())
+    assert projectile_id == 3
+
+    oracle_source.is_alive = False
+    runtime.battle.entity_active[0, source_slot] = False
+    runtime.battle.entity_hp[0, source_slot] = 0.0
+    for _ in range(50):
+        identities = set(oracle.entities)
+        oracle._defer_projectile_impacts = True
+        oracle._run_object_phase(oracle.dt, identities, identities)
+        oracle._defer_projectile_impacts = False
+        oracle._resolve_pending_projectile_impacts()
+        step = bridge.step_objects_(runtime, objects)
+        assert step.supported_batch.tolist() == [True]
+        scalar_projectiles = [
+            entity
+            for entity in oracle.entities.values()
+            if isinstance(entity, Projectile) and entity.is_alive
+        ]
+        if scalar_projectiles:
+            assert objects.objects.x_units[0, 0].item() == round(
+                scalar_projectiles[0].position.x * 1_000
+            )
+            assert objects.objects.y_units[0, 0].item() == round(
+                scalar_projectiles[0].position.y * 1_000
+            )
+        else:
+            assert not objects.objects.allocated.any()
+            break
+    assert (
+        runtime.battle.entity_hp[0, target_slot].item()
+        == oracle.entities[target.id].hitpoints
+    )
+    damage = runtime.events.opcode[0] == RuntimeEventOpcode.DAMAGE
+    assert runtime.events.source_id[0, damage].tolist() == [projectile_id]
+
+
+@pytest.mark.parametrize("card_name", ("BombTower", "LavaHound"))
+def test_terminal_owner_and_live_projectile_coexistence_remains_atomic_fallback(
+    card_name: str,
+) -> None:
+    battle, source, target = _death_parent_battle(card_name)
+    oracle = copy.deepcopy(battle)
+    engine = TensorResidentEngine.from_battles(
+        [battle], max_entities=32, max_objects=16, event_capacity=256
+    )
+    source_slot = engine.runtime.battle.entity_id[0].tolist().index(source.id)
+    target_slot = engine.runtime.battle.entity_id[0].tolist().index(target.id)
+    engine.combat.target_slot[0, source_slot] = target_slot
+    launched = torch.zeros_like(engine.combat.present)
+    launched[0, source_slot] = True
+    combat_result = CombatStepResult(
+        attacked=launched.clone(),
+        projectile_launched=launched,
+        damage_received=torch.zeros_like(engine.combat.hp),
+        target_before=engine.combat.target_slot.clone(),
+        target_after=engine.combat.target_slot.clone(),
+    )
+    assert engine.projectile_bridge.materialize_combat_launches_(
+        engine.runtime, engine.objects, engine.combat, combat_result
+    ).all()
+    oracle.entities[source.id]._create_projectile(oracle.entities[target.id], oracle)
+    oracle.entities[source.id].take_damage(oracle.entities[source.id].hitpoints)
+    oracle._cleanup_dead_entities()
+    assert any(isinstance(entity, Projectile) for entity in oracle.entities.values())
+    if card_name == "BombTower":
+        assert any(
+            isinstance(entity, TimedExplosive) for entity in oracle.entities.values()
+        )
+    else:
+        assert (
+            sum(
+                getattr(entity.card_stats, "name", None) == "LavaPups"
+                for entity in oracle.entities.values()
+            )
+            == 6
+        )
+
+    engine.runtime.battle.entity_active[0, source_slot] = False
+    engine.runtime.battle.entity_hp[0, source_slot] = 0.0
+    before_ids = engine.runtime.battle.entity_id.clone()
+    before_events = engine.runtime.events.count.clone()
+    objects_before = engine.objects.objects.object_id.clone()
+    preflight = engine.preflight()
+    result = engine.step()
+
+    assert preflight.supported.tolist() == [False]
+    assert preflight.reason_code.tolist() == [
+        int(ResidentUnsupportedReason.OBJECT_PHASE)
+    ]
+    assert result.committed.tolist() == [False]
+    assert torch.equal(engine.runtime.battle.entity_id, before_ids)
+    assert torch.equal(engine.runtime.events.count, before_events)
+    assert torch.equal(engine.objects.objects.object_id, objects_before)
+
+
+@pytest.mark.parametrize("card_name", ("BombTower", "LavaHound"))
+def test_death_parent_projectile_launch_capacity_failure_is_atomic(
+    card_name: str,
+) -> None:
+    battle, source, target = _death_parent_battle(card_name)
+    runtime, objects, bridge, catalog = _runtime_bridge(
+        [battle],
+        {card_name, "Knight"},
+        event_capacity=1,
+    )
+    combat = project_stationary_combat([battle], catalog, capacity=8).state
+    source_slot = int(torch.where(combat.entity_id[0] == source.id)[0][0].item())
+    target_slot = int(torch.where(combat.entity_id[0] == target.id)[0][0].item())
+    combat.target_slot[0, source_slot] = target_slot
+    launched = torch.zeros_like(combat.present)
+    launched[0, source_slot] = True
+    result = CombatStepResult(
+        attacked=launched.clone(),
+        projectile_launched=launched,
+        damage_received=torch.zeros_like(combat.hp),
+        target_before=combat.target_slot.clone(),
+        target_after=combat.target_slot.clone(),
+    )
+    runtime.events.count[0] = 1
+    ids_before = runtime.battle.entity_id.clone()
+    next_before = runtime.entity_pool.next_entity_id.clone()
+
+    supported = bridge.materialize_combat_launches_(runtime, objects, combat, result)
+
+    assert supported.tolist() == [False]
+    assert torch.equal(runtime.battle.entity_id, ids_before)
+    assert torch.equal(runtime.entity_pool.next_entity_id, next_before)
+    assert not objects.objects.allocated.any()
+
+
+@pytest.mark.parametrize("card_name", ("BombTower", "LavaHound"))
+def test_death_parent_projectile_impact_capacity_failure_rolls_back(
+    card_name: str,
+) -> None:
+    battle, source, target = _death_parent_battle(card_name)
+    runtime, objects, bridge, catalog = _runtime_bridge(
+        [battle],
+        {card_name, "Knight"},
+        event_capacity=1,
+    )
+    combat = project_stationary_combat([battle], catalog, capacity=8).state
+    source_slot = int(torch.where(combat.entity_id[0] == source.id)[0][0].item())
+    target_slot = int(torch.where(combat.entity_id[0] == target.id)[0][0].item())
+    combat.target_slot[0, source_slot] = target_slot
+    launched = torch.zeros_like(combat.present)
+    launched[0, source_slot] = True
+    result = CombatStepResult(
+        attacked=launched.clone(),
+        projectile_launched=launched,
+        damage_received=torch.zeros_like(combat.hp),
+        target_before=combat.target_slot.clone(),
+        target_after=combat.target_slot.clone(),
+    )
+    assert bridge.materialize_combat_launches_(runtime, objects, combat, result).all()
+
+    for _ in range(50):
+        hp_before = runtime.battle.entity_hp.clone()
+        ids_before = runtime.battle.entity_id.clone()
+        objects_before = {
+            descriptor.name: getattr(objects.objects, descriptor.name).clone()
+            for descriptor in fields(objects.objects)
+            if isinstance(getattr(objects.objects, descriptor.name), torch.Tensor)
+        }
+        events_before = runtime.events.count.clone()
+        step = bridge.step_objects_(runtime, objects)
+        if not step.supported_batch.item():
+            assert torch.equal(runtime.battle.entity_hp, hp_before)
+            assert torch.equal(runtime.battle.entity_id, ids_before)
+            assert torch.equal(runtime.events.count, events_before)
+            for name, before in objects_before.items():
+                assert torch.equal(getattr(objects.objects, name), before), name
+            break
+    else:
+        raise AssertionError("projectile never reached event-capacity boundary")
 
 
 def test_combat_projectile_events_preserve_prior_building_lifetime_phase(
