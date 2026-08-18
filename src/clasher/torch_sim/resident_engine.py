@@ -3412,27 +3412,44 @@ class TensorResidentEngine:
             y_units = torch.gather(
                 pending.target_y_units.to(torch.int64), 1, slot[:, None]
             )[:, 0]
+            command_capacity = (
+                self.runtime.events.count.to(torch.int64) < self.runtime.events.capacity
+            )
+            failed_command = selected & ~command_capacity
+            supported &= ~failed_command
+            command = selected & command_capacity
+            self.runtime.events.append(
+                phase=TickPhase.COMMANDS,
+                opcode=RuntimeEventOpcode.COMMAND,
+                valid=command[:, None],
+                source_id=0,
+                target_id=0,
+                x_units=x_units[:, None],
+                y_units=y_units[:, None],
+                amount=0.0,
+                payload=cards[:, None],
+            )
             in_range = (cards >= 0) & (
                 cards < self.projectile_bridge.catalog.supported.numel()
             )
             safe = cards.clamp(0, self.projectile_bridge.catalog.supported.numel() - 1)
             bridge_handler = (
-                selected & in_range & self.projectile_bridge.catalog.supported[safe]
+                command & in_range & self.projectile_bridge.catalog.supported[safe]
             )
             continuous_handler = (
-                selected & self.continuous_areas.catalog.supported[safe] & in_range
+                command & self.continuous_areas.catalog.supported[safe] & in_range
             )
             graveyard_handler = (
-                selected & in_range & self.graveyards.catalog.supported[safe]
+                command & in_range & self.graveyards.catalog.supported[safe]
             )
             tornado_handler = (
-                selected & in_range & self.tornadoes.catalog.supported[safe]
+                command & in_range & self.tornadoes.catalog.supported[safe]
             )
             rolling_handler = (
-                selected & in_range & self.rolling_spells.catalog.supported[safe]
+                command & in_range & self.rolling_spells.catalog.supported[safe]
             )
             delivery_handler = (
-                selected & in_range & self.royal_delivery.catalog.supported[safe]
+                command & in_range & self.royal_delivery.catalog.supported[safe]
             )
             handler_count = (
                 bridge_handler.to(torch.int8)
@@ -3442,7 +3459,7 @@ class TensorResidentEngine:
                 + rolling_handler.to(torch.int8)
                 + delivery_handler.to(torch.int8)
             )
-            known = handler_count == 1
+            known = command & (handler_count == 1)
             bridge_supported = self.projectile_bridge.materialize_spell_actions_(
                 self.runtime,
                 self.objects,
