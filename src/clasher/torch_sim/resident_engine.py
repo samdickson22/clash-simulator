@@ -504,6 +504,8 @@ class TensorResidentEngine:
         sight_clip_side_units: torch.Tensor,
         first_hit_ms: torch.Tensor,
         jump_height: torch.Tensor,
+        jump_speed_units: torch.Tensor,
+        charge_range_units: torch.Tensor,
         movement_stop_after_ms: torch.Tensor,
         movement_wait_ms: torch.Tensor,
         movement_base_speed_units: torch.Tensor,
@@ -533,6 +535,8 @@ class TensorResidentEngine:
         self.sight_clip_side_units = sight_clip_side_units
         self.first_hit_ms = first_hit_ms
         self.jump_height = jump_height
+        self.jump_speed_units = jump_speed_units
+        self.charge_range_units = charge_range_units
         self.movement_stop_after_ms = movement_stop_after_ms
         self.movement_wait_ms = movement_wait_ms
         self.movement_base_speed_units = movement_base_speed_units
@@ -705,6 +709,8 @@ class TensorResidentEngine:
         sight_clip_side = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         first_hit = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         jump_height = torch.zeros(size, dtype=torch.bool, device=runtime.device)
+        jump_speed = torch.zeros(size, dtype=torch.int64, device=runtime.device)
+        charge_range = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         movement_stop_after = torch.zeros(
             size, dtype=torch.int64, device=runtime.device
         )
@@ -747,6 +753,8 @@ class TensorResidentEngine:
                 float(getattr(stats, "first_hit_time", 0.0) or 0.0)
             )
             jump_height[card_id] = bool(getattr(stats, "jump_height", None))
+            jump_speed[card_id] = round(float(getattr(stats, "jump_speed", 0) or 0))
+            charge_range[card_id] = int(getattr(stats, "charge_range", 0) or 0)
             movement_stop_after[card_id] = round(
                 float(getattr(stats, "stop_movement_after_ms", 0) or 0)
             )
@@ -778,6 +786,8 @@ class TensorResidentEngine:
             sight_clip_side_units=sight_clip_side,
             first_hit_ms=first_hit,
             jump_height=jump_height,
+            jump_speed_units=jump_speed,
+            charge_range_units=charge_range,
             movement_stop_after_ms=movement_stop_after,
             movement_wait_ms=movement_wait,
             movement_base_speed_units=movement_base_speed,
@@ -831,6 +841,8 @@ class TensorResidentEngine:
             sight_clip_side_units=self.sight_clip_side_units,
             first_hit_ms=self.first_hit_ms,
             jump_height=self.jump_height,
+            jump_speed_units=self.jump_speed_units,
+            charge_range_units=self.charge_range_units,
             movement_stop_after_ms=self.movement_stop_after_ms,
             movement_wait_ms=self.movement_wait_ms,
             movement_base_speed_units=self.movement_base_speed_units,
@@ -1418,6 +1430,7 @@ class TensorResidentEngine:
         movement.is_air.copy_(self.runtime.catalog.is_air_unit[safe])
         movement.is_hover.copy_(self.runtime.catalog.is_hover_unit[safe])
         movement.jump_height.copy_(self.jump_height[safe])
+        movement.jump_speed_units.copy_(self.jump_speed_units[safe])
         spawn_lane = _resident_native_lane_ids(movement.position_units)
         movement.lane_id.copy_(torch.where(new & troop, spawn_lane, movement.lane_id))
         movement.collision_radius_units.copy_(self.combat.collision_radius_units)
@@ -1442,20 +1455,45 @@ class TensorResidentEngine:
         )
         movement.stunned.copy_(self.combat.stunned)
         movement.forced_movement.zero_()
-        movement.special_movement.zero_()
+        movement.special_movement.copy_(movement.river_jump_active)
         movement.death_spawn_travel.zero_()
         movement.knockback_active.zero_()
         movement.kamikaze_primed.zero_()
-        movement.charge_component.zero_()
+        movement.charge_component.copy_(
+            troop & catalog_known & (self.charge_range_units[safe] > 0)
+        )
         movement.movement_cycle.copy_(
             catalog_known
             & (self.movement_stop_after_ms[safe] > 0)
             & (self.movement_wait_ms[safe] > 0)
         )
         movement.ordinary_unsupported.zero_()
-        movement.river_unsupported.fill_(1)
+        active_river_supported = (
+            troop
+            & movement.river_jump_active
+            & movement.jump_height
+            & (movement.jump_speed_units > 0)
+            & movement.river_origin_valid
+            & movement.river_target_valid
+        )
+        movement.river_unsupported.copy_(
+            torch.where(
+                active_river_supported,
+                torch.zeros_like(movement.river_unsupported),
+                torch.ones_like(movement.river_unsupported),
+            )
+        )
         movement.ordinary_supported.copy_(troop & known)
-        movement.river_jump_supported.zero_()
+        movement.river_jump_supported.copy_(active_river_supported)
+        movement.air_collision.copy_(
+            movement.is_air
+            | movement.is_hover
+            | movement.river_jump_active
+            | movement.mega_knight_airborne
+        )
+        movement.in_transit.copy_(
+            movement.river_jump_active | movement.mega_knight_airborne
+        )
         movement.pending_vector_consumed.copy_(
             torch.where(
                 new,
@@ -1872,6 +1910,10 @@ class TensorResidentEngine:
                 self.movement_base_speed_units[self._core_catalog_id().clamp_min(0)],
                 order,
             ),
+            charge_range_units=_gather_slots(
+                self.charge_range_units[self._core_catalog_id().clamp_min(0)],
+                order,
+            ),
         )
 
         def sorted_target_to_physical(target: torch.Tensor) -> torch.Tensor:
@@ -2193,7 +2235,9 @@ class TensorResidentEngine:
             working.dispatcher.dash.special_active
             | working.dispatcher.dash.special_consumed
         )
-        working.movement.special_movement.copy_(special_consumed)
+        working.movement.special_movement.copy_(
+            special_consumed | working.movement.river_jump_active
+        )
         combat_death = (working.combat.present & ~working.combat.alive).any(dim=1)
         special_row = special_consumed.any(dim=1)
         # Removing only the special mover creates a non-prefix physical-slot

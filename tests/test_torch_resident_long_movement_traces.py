@@ -21,25 +21,50 @@ from clasher.torch_sim.resident_engine import TensorResidentEngine
 
 
 @dataclass(frozen=True)
-class ExpectedTrace:
-    ticks: int
-    boundary_field: str | None
+class ExpectedBoundary:
+    tick: int
+    field: str
     boundary_kind: str = "divergent"
+
+
+@dataclass(frozen=True)
+class ExpectedTrace:
+    horizon: int
+    owner_boundaries: tuple[ExpectedBoundary | None, ExpectedBoundary | None]
 
 
 EXPECTED_TRACES = {
     # The retained StopMovementAfterMS/WaitMS clock now remains exact through
     # fifteen seconds of mirrored movement and melee combat.
-    "Giant": ExpectedTrace(300, None),
-    # Runtime entry now matches the state-six boundary exactly. Resident
-    # refresh still needs to retain the active jump support plane next tick.
-    "HogRider": ExpectedTrace(28, "resident_phase", "unsupported"),
-    "RoyalHogs": ExpectedTrace(28, "resident_phase", "unsupported"),
+    "Giant": ExpectedTrace(300, (None, None)),
+    # River entry and traversal are exact. The next boundary is the combat
+    # cooldown immediately after landing; Royal Hogs' mirrored route lands on
+    # adjacent frames, so each owner retains its own reviewed first tick.
+    "HogRider": ExpectedTrace(
+        41,
+        (
+            ExpectedBoundary(41, "attack_cooldown"),
+            ExpectedBoundary(41, "attack_cooldown"),
+        ),
+    ),
+    "RoyalHogs": ExpectedTrace(
+        42,
+        (
+            ExpectedBoundary(42, "attack_cooldown"),
+            ExpectedBoundary(41, "attack_cooldown"),
+        ),
+    ),
     # Prince accumulates native charge work from its first movement frame.
-    "Prince": ExpectedTrace(21, "native_charge_progress"),
+    "Prince": ExpectedTrace(
+        45,
+        (
+            ExpectedBoundary(45, "attack_cooldown"),
+            ExpectedBoundary(45, "attack_cooldown"),
+        ),
+    ),
     # Resident projectile integration independently closed the old tick-56
     # direct-hit boundary; the mirrored trace is exact through fifteen seconds.
-    "Bats": ExpectedTrace(300, None),
+    "Bats": ExpectedTrace(300, (None, None)),
 }
 
 
@@ -212,10 +237,10 @@ def test_current_first_resident_movement_boundary_after_exact_deployment_prefix(
         event_capacity=256,
     )
     expected_trace = EXPECTED_TRACES[card_name]
-    observed: list[tuple[str, int, str]] = []
+    observed: list[tuple[str, int, str] | None] = [None, None]
     no_op = torch.full((2, 2), NO_OP_ACTION, dtype=torch.int64)
 
-    for tick in range(1, expected_trace.ticks + 1):
+    for tick in range(1, expected_trace.horizon + 1):
         for battle in oracle:
             player_order = [0, 1]
             battle.rng.shuffle(player_order)
@@ -224,8 +249,10 @@ def test_current_first_resident_movement_boundary_after_exact_deployment_prefix(
         for row, ((_, source_id, target_id), expected) in enumerate(
             zip(cases, oracle, strict=True)
         ):
+            if observed[row] is not None:
+                continue
             if not bool(result.committed[row].item()):
-                observed.append(("unsupported", tick, "resident_phase"))
+                observed[row] = ("unsupported", tick, "resident_phase")
                 continue
             difference = _first_relevant_difference(
                 engine,
@@ -235,32 +262,38 @@ def test_current_first_resident_movement_boundary_after_exact_deployment_prefix(
                 target_id=target_id,
             )
             if difference is not None:
-                observed.append(("divergent", tick, difference))
+                observed[row] = ("divergent", tick, difference)
 
-        if observed:
+        if (
+            any(boundary is not None for boundary in expected_trace.owner_boundaries)
+            and all(
+                observed[row] is not None
+                for row, boundary in enumerate(expected_trace.owner_boundaries)
+                if boundary is not None
+            )
+            and all(
+                observed[row] is None
+                for row, boundary in enumerate(expected_trace.owner_boundaries)
+                if boundary is None
+            )
+        ):
             break
 
         # The prefix includes all twenty standard deployment frames; battle
         # clocks/RNG remain exact and no tiebreak boundary is accelerated.
-        assert engine.runtime.battle.tick.tolist() == [tick, tick]
-        assert engine.runtime.battle.time.tolist() == [battle.time for battle in oracle]
-        assert [engine.runtime.battle.rng.python_state(row) for row in range(2)] == [
-            battle.rng.getstate() for battle in oracle
-        ]
+        for row, battle in enumerate(oracle):
+            if observed[row] is not None:
+                continue
+            assert engine.runtime.battle.tick[row].item() == tick
+            assert engine.runtime.battle.time[row].item() == battle.time
+            assert engine.runtime.battle.rng.python_state(row) == battle.rng.getstate()
 
-    if expected_trace.boundary_field is None:
-        assert observed == []
-    else:
-        assert observed == [
-            (
-                expected_trace.boundary_kind,
-                expected_trace.ticks,
-                expected_trace.boundary_field,
-            ),
-            (
-                expected_trace.boundary_kind,
-                expected_trace.ticks,
-                expected_trace.boundary_field,
-            ),
-        ]
-    assert expected_trace.ticks > 20
+    assert observed == [
+        (
+            None
+            if boundary is None
+            else (boundary.boundary_kind, boundary.tick, boundary.field)
+        )
+        for boundary in expected_trace.owner_boundaries
+    ]
+    assert expected_trace.horizon > 20
