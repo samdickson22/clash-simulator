@@ -24,11 +24,33 @@ from clasher.torch_sim.resident_differential import (
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "9b61ece2b25a1bed606524d99afc6c0674bfb5f90734b13e7a67f54b754052a0"
+    "97b64d9e8de62d284a29e34cdb9e8f1441764d76f15772f769e43a10063f48b4"
 )
-EXPECTED_EVIDENCE = {"Knight", "MiniPekka", "Pekka", "Valkyrie"}
-EXPECTED_NO_INTERACTION = {"Bats", "Giant", "HogRider", "Prince", "RoyalHogs"}
-EXPECTED_DIVERGED = {"Skeletons"}
+EXPECTED_EVIDENCE = {
+    "Cannon",
+    "Knight",
+    "MiniPekka",
+    "Minions",
+    "Pekka",
+    "Skeletons",
+    "Valkyrie",
+    "Xbow",
+}
+EXPECTED_NO_INTERACTION = {
+    "BabyDragon",
+    "Bats",
+    "Bomber",
+    "Bowler",
+    "Giant",
+    "HogRider",
+    "MegaMinion",
+    "Musketeer",
+    "Prince",
+    "Princess",
+    "RoyalHogs",
+    "SpearGoblins",
+}
+EXPECTED_DIVERGED: set[str] = set()
 EXPECTED_RUNTIME_FALLBACK = {
     "Archers",
     "Bandit",
@@ -260,22 +282,25 @@ def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
         for name in names:
             expected_classifications[name] = classification.value
     matrix.assert_digest(EXPECTED_ENABLED_DIGEST, expected_classifications)
-    assert matrix.evidence_cards == ("Knight", "MiniPekka", "Pekka", "Valkyrie")
+    assert matrix.evidence_cards == (
+        "Cannon",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Pekka",
+        "Skeletons",
+        "Valkyrie",
+        "Xbow",
+    )
     assert all(
         matrix.require_evidence(name).interaction_observed
         for name in matrix.evidence_cards
     )
-    entries = {entry.card_name: entry for entry in matrix.entries}
-    # Their same-tick SPAWN + BUILDING_LIFETIME/DAMAGE event streams match.
-    # Both then fail closed when their active projectile combat reaches the
-    # next immutable preflight; fallback is not parity evidence.
-    for name in ("Cannon", "Xbow"):
-        assert (
-            entries[name].classification
-            is ResidentCoverageClassification.PREFLIGHT_FALLBACK
-        )
-        assert entries[name].divergence_path is None
-        assert not entries[name].is_evidence
+    # Classification reaches this state only from report.parity_rows
+    # (resident AND configured-episode-completed) plus interaction attributed
+    # to IDs allocated by the tested action. Bridge support alone cannot pass.
+    for name in ("Cannon", "Minions", "Skeletons", "Xbow"):
+        assert matrix.require_evidence(name).interaction_observed
     with pytest.raises(ValueError, match="not represented"):
         matrix.require_evidence("Golem")
 

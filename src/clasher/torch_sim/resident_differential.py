@@ -73,6 +73,16 @@ class ResidentEventRecord:
 
 
 @dataclass(frozen=True)
+class _OracleEntityBefore:
+    hitpoints: float | int
+    building: bool
+    max_hitpoints: float
+    lifetime_ms: int
+    lifetime_decay_work: int
+    lifetime_tick_carry_ms: float
+
+
+@dataclass(frozen=True)
 class ResidentEpisodeDivergence:
     row: int
     tick: int
@@ -282,8 +292,20 @@ def _oracle_snapshot(battle: BattleState) -> dict[str, Any]:
     }
 
 
+def _native_lifetime_damage(
+    entity: _OracleEntityBefore,
+    dt: float,
+) -> int:
+    if not entity.building or entity.lifetime_ms <= 0:
+        return 0
+    total_ms = entity.lifetime_tick_carry_ms + max(0.0, dt * 1_000.0)
+    native_ticks = int((total_ms + 1e-9) // 50.0)
+    decay_rate = 5000 * round(entity.max_hitpoints) // entity.lifetime_ms
+    return (entity.lifetime_decay_work + decay_rate * native_ticks) // 100
+
+
 def _oracle_events(
-    before: Mapping[int, tuple[float | int, int, int]],
+    before: Mapping[int, _OracleEntityBefore],
     battle: BattleState,
     engine: TensorResidentEngine,
 ) -> tuple[ResidentEventRecord, ...]:
@@ -296,6 +318,7 @@ def _oracle_events(
         for entity in battle.entities.values()
     }
     events: list[ResidentEventRecord] = []
+    lifetime_events: list[ResidentEventRecord] = []
     spawned_ids = tuple(sorted(set(after) - set(before)))
     for entity_id in spawned_ids:
         entity = battle.entities[entity_id]
@@ -322,13 +345,19 @@ def _oracle_events(
         lifetime_ms = getattr(entity.card_stats, "lifetime_ms", None)
         if not isinstance(entity, Building) or not lifetime_ms:
             continue
-        elapsed_ms = max(0.0, float(entity.lifetime_elapsed) * 1_000.0)
-        carry_ms = max(0.0, float(entity.lifetime_tick_carry_ms))
-        native_ticks = max(0, round((elapsed_ms - carry_ms) / 50.0))
-        decay_rate = 5000 * round(float(entity.max_hitpoints)) // int(lifetime_ms)
-        lifetime_damage = decay_rate * native_ticks // 100
+        lifetime_damage = _native_lifetime_damage(
+            _OracleEntityBefore(
+                hitpoints=entity.max_hitpoints,
+                building=True,
+                max_hitpoints=float(entity.max_hitpoints),
+                lifetime_ms=int(lifetime_ms),
+                lifetime_decay_work=0,
+                lifetime_tick_carry_ms=0.0,
+            ),
+            battle.dt,
+        )
         if lifetime_damage > 0:
-            events.append(
+            lifetime_events.append(
                 ResidentEventRecord(
                     int(TickPhase.BUILDING_LIFETIME),
                     int(RuntimeEventOpcode.DAMAGE),
@@ -339,21 +368,40 @@ def _oracle_events(
                 )
             )
     for entity_id in sorted(set(before) & set(after)):
-        old_hp = float(before[entity_id][0])
+        old = before[entity_id]
+        old_hp = float(old.hitpoints)
         new_hp = float(after[entity_id][0])
         if new_hp < old_hp:
-            events.append(
-                ResidentEventRecord(
-                    int(TickPhase.COMBAT),
-                    int(RuntimeEventOpcode.DAMAGE),
-                    0,
-                    entity_id,
-                    old_hp - new_hp,
-                    0,
-                )
+            total_damage = old_hp - new_hp
+            lifetime_amount = min(
+                total_damage,
+                float(_native_lifetime_damage(old, battle.dt)),
             )
+            combat_damage = total_damage - lifetime_amount
+            if combat_damage > 0:
+                events.append(
+                    ResidentEventRecord(
+                        int(TickPhase.COMBAT),
+                        int(RuntimeEventOpcode.DAMAGE),
+                        0,
+                        entity_id,
+                        combat_damage,
+                        0,
+                    )
+                )
+            if lifetime_amount > 0:
+                lifetime_events.append(
+                    ResidentEventRecord(
+                        int(TickPhase.BUILDING_LIFETIME),
+                        int(RuntimeEventOpcode.DAMAGE),
+                        0,
+                        entity_id,
+                        lifetime_amount,
+                        0,
+                    )
+                )
     for entity_id in sorted(set(before) - set(after)):
-        old_hp, _, _ = before[entity_id]
+        old_hp = before[entity_id].hitpoints
         if float(old_hp) > 0.0:
             events.extend(
                 (
@@ -375,6 +423,7 @@ def _oracle_events(
                     ),
                 )
             )
+    events.extend(lifetime_events)
     return tuple(events)
 
 
@@ -459,10 +508,19 @@ class ResidentEpisodeDifferential:
 
             before_entities = [
                 {
-                    entity.id: (
-                        entity.hitpoints,
-                        tiles_to_logic_units(entity.position.x),
-                        tiles_to_logic_units(entity.position.y),
+                    entity.id: _OracleEntityBefore(
+                        hitpoints=entity.hitpoints,
+                        building=isinstance(entity, Building),
+                        max_hitpoints=float(entity.max_hitpoints),
+                        lifetime_ms=int(
+                            getattr(entity.card_stats, "lifetime_ms", 0) or 0
+                        ),
+                        lifetime_decay_work=int(
+                            getattr(entity, "lifetime_decay_work", 0)
+                        ),
+                        lifetime_tick_carry_ms=float(
+                            getattr(entity, "lifetime_tick_carry_ms", 0.0)
+                        ),
                     )
                     for entity in battle.entities.values()
                 }
