@@ -18,10 +18,7 @@ from clasher.torch_sim.actions import (
     TensorActionKernel,
     TensorActionState,
 )
-from clasher.torch_sim.resident_engine import (
-    ResidentUnsupportedReason,
-    TensorResidentEngine,
-)
+from clasher.torch_sim.resident_engine import TensorResidentEngine
 from clasher.torch_sim.resident_spell_ingress import TensorResidentSpellActionIngress
 from clasher.torch_sim.runtime_state import RuntimeEventOpcode
 from clasher.torch_sim.state import WINNER_DRAW, WINNER_IN_PROGRESS
@@ -80,6 +77,10 @@ def _cast_at_command_boundary(battle: BattleState, spell_name: str) -> None:
     assert stats is not None
     assert battle.players[0].play_card(spell_name, stats)
     assert SPELL_REGISTRY[spell_name].cast(battle, 0, Position(9.5, 14.5))
+
+
+def _queue_at_command_boundary(battle: BattleState, spell_name: str) -> None:
+    assert battle.deploy_card(0, spell_name, Position(9.5, 14.5))
 
 
 def _compose(
@@ -263,11 +264,8 @@ def test_simultaneous_zap_order_and_rng_survive_resident_ticks(
     oracle_order = [0, 1]
     oracle.rng.shuffle(oracle_order)
     for player_id in oracle_order:
-        stats = oracle.card_loader.get_card("Zap")
-        assert stats is not None
-        assert oracle.players[player_id].play_card("Zap", stats)
         target = Position(9.5, 14.5) if player_id == 0 else Position(8.5, 17.5)
-        assert SPELL_REGISTRY["Zap"].cast(oracle, player_id, target)
+        assert oracle.deploy_card(player_id, "Zap", target)
     oracle.step_logic_ticks(1)
     result = engine.step(actions)
 
@@ -411,7 +409,7 @@ def test_engine_step_admits_episode_safe_spell_actions_exactly(
     order = torch.tensor([[0, 1]], device=engine.device)
     assert engine.preflight(actions).supported.tolist() == [True]
 
-    _cast_at_command_boundary(oracle, spell_name)
+    _queue_at_command_boundary(oracle, spell_name)
     oracle.step_logic_ticks(1)
     result = engine.step(actions, player_order=order)
     assert result.committed.tolist() == [True]
@@ -424,34 +422,3 @@ def test_engine_step_admits_episode_safe_spell_actions_exactly(
         result = engine.step(player_order=order)
         assert result.committed.tolist() == [True]
         _assert_episode_state(oracle, engine)
-
-
-def test_engine_step_fails_closed_for_mixed_spell_and_troop_row() -> None:
-    battle = _battle("Zap", simultaneous=True)
-    battle.players[1].hand[0] = "Knight"
-    battle.players[1].deck[0] = "Knight"
-    engine = TensorResidentEngine.from_battles(
-        [battle], max_entities=12, max_objects=4, event_capacity=256
-    )
-    action_space = DiscreteTileActionSpace(canonical_perspective=True)
-    actions = torch.tensor(
-        [
-            [
-                action_space.encode_action(0, 9, 14, 0),
-                action_space.encode_action(0, 9, 20, 1),
-            ]
-        ]
-    )
-    before_rng = engine.runtime.battle.rng.python_state(0)
-    before_hand = engine.runtime.battle.hand.clone()
-    preflight = engine.preflight(actions)
-    result = engine.step(actions)
-
-    assert preflight.supported.tolist() == [False]
-    assert preflight.reason_code.tolist() == [
-        int(ResidentUnsupportedReason.MIXED_PAYLOAD)
-    ]
-    assert result.committed.tolist() == [False]
-    assert engine.runtime.battle.rng.python_state(0) == before_rng
-    assert torch.equal(engine.runtime.battle.hand, before_hand)
-    assert engine.runtime.battle.tick.tolist() == [0]

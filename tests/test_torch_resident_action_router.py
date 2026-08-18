@@ -11,7 +11,6 @@ import torch
 from clasher.battle import BattleState
 from clasher.entities import Building, Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
-from clasher.spells import SPELL_REGISTRY
 from clasher.torch_sim.resident_action_router import TensorResidentActionRouter
 from clasher.torch_sim.resident_engine import TensorResidentEngine
 from clasher.torch_sim.runtime_state import RuntimeEventOpcode
@@ -55,6 +54,7 @@ def _router(
         engine.projectile_bridge,
         engine.deployment,
         engine.spell_ingress,
+        engine.pending_spells,
     )
 
 
@@ -91,16 +91,7 @@ def _apply_oracle_immediately(
 ) -> None:
     space = DiscreteTileActionSpace(canonical_perspective=True)
     for player_id in order:
-        before = len(battle._pending_spell_casts)
         assert space.apply_action(battle, player_id, actions[player_id])
-        if len(battle._pending_spell_casts) == before:
-            continue
-        cast = battle._pending_spell_casts.pop()
-        SPELL_REGISTRY[cast.spell_name].cast(
-            battle,
-            cast.player_id,
-            cast.position,
-        )
 
 
 def _assert_exact(oracle: BattleState, engine: TensorResidentEngine) -> None:
@@ -154,14 +145,7 @@ def test_mixed_spell_character_actions_match_python_in_shared_order(
     assert isinstance(spawned, Building if character == "Cannon" else Troop)
     event_count = int(engine.runtime.events.count[0].item())
     opcodes = engine.runtime.events.opcode[0, :event_count].tolist()
-    if order == (0, 1):
-        assert opcodes == [
-            int(RuntimeEventOpcode.SPAWN),
-            int(RuntimeEventOpcode.DAMAGE),
-            int(RuntimeEventOpcode.STATUS),
-        ]
-    else:
-        assert opcodes == [int(RuntimeEventOpcode.SPAWN)]
+    assert opcodes == [int(RuntimeEventOpcode.SPAWN)]
 
 
 def test_router_consumes_exactly_one_default_shuffle_draw() -> None:
@@ -206,17 +190,19 @@ def test_unsupported_second_spell_rolls_back_first_character_atomically() -> Non
     assert torch.equal(engine.runtime.events.count, before_events)
 
 
-def test_second_spell_capacity_failure_rolls_back_materialized_first_troop() -> None:
+def test_second_spell_queue_capacity_failure_rolls_back_first_troop() -> None:
     battle = _battle("Knight", spell="GoblinBarrel")
     engine = TensorResidentEngine.from_battles(
-        [battle], max_entities=8, max_objects=1, event_capacity=256
+        [battle], max_entities=12, max_objects=4, event_capacity=256
     )
+    engine.pending_spells.active.fill_(True)
     router = TensorResidentActionRouter(
         engine.runtime,
         engine.objects,
         engine.projectile_bridge,
         engine.deployment,
         engine.spell_ingress,
+        engine.pending_spells,
     )
     actions = _actions()
     before_ids = engine.runtime.battle.entity_id.clone()
@@ -257,6 +243,7 @@ def test_second_character_capacity_failure_rolls_back_rank0_materialization(
         engine.projectile_bridge,
         engine.deployment,
         engine.spell_ingress,
+        engine.pending_spells,
     )
     actions = _two_character_actions()
     before_ids = engine.runtime.battle.entity_id.clone()
@@ -294,3 +281,94 @@ def test_router_source_is_data_driven_without_card_name_dispatch() -> None:
         "GoblinBarrel",
     ):
         assert card_name not in source
+
+
+@pytest.mark.parametrize("character", ("Knight", "Cannon"))
+@pytest.mark.parametrize("order", ((0, 1), (1, 0)))
+def test_engine_step_routes_mixed_actions_in_exact_shared_order(
+    tensor_device: str,
+    character: str,
+    order: tuple[int, int],
+) -> None:
+    battle = _battle(character)
+    oracle = copy.deepcopy(battle)
+    engine = TensorResidentEngine.from_battles(
+        [battle],
+        device=tensor_device,
+        max_entities=24,
+        max_objects=8,
+        event_capacity=256,
+    )
+    actions = _actions()
+    _apply_oracle_immediately(oracle, list(order), actions)
+    oracle.step_logic_ticks(1)
+
+    result = engine.step(
+        torch.tensor([actions], device=engine.device),
+        player_order=torch.tensor([order], device=engine.device),
+    )
+
+    assert result.preflight.supported.tolist() == [True]
+    assert result.committed.tolist() == [True]
+    assert result.action_router.action_success.tolist() == [[True, True]]
+    assert result.deployment.deployment.player_order[0].tolist() == list(order)
+    _assert_exact(oracle, engine)
+    retained_order = torch.tensor([order], device=engine.device)
+    for _ in range(19):
+        oracle.step_logic_ticks(1)
+        result = engine.step(player_order=retained_order)
+        assert result.committed.tolist() == [True]
+        _assert_exact(oracle, engine)
+
+
+def test_engine_step_mixed_actions_consume_one_default_shuffle_draw() -> None:
+    battle = _battle("Knight")
+    oracle = copy.deepcopy(battle)
+    engine = TensorResidentEngine.from_battles(
+        [battle], max_entities=24, max_objects=8, event_capacity=256
+    )
+    actions = _actions()
+    order = [0, 1]
+    oracle.rng.shuffle(order)
+    _apply_oracle_immediately(oracle, order, actions)
+    oracle.step_logic_ticks(1)
+
+    result = engine.step(torch.tensor([actions]))
+
+    assert result.committed.tolist() == [True]
+    assert result.action_router.player_order[0].tolist() == order
+    _assert_exact(oracle, engine)
+    retained_order = torch.tensor([order])
+    for _ in range(19):
+        oracle.step_logic_ticks(1)
+        result = engine.step(player_order=retained_order)
+        assert result.committed.tolist() == [True]
+        _assert_exact(oracle, engine)
+
+
+@pytest.mark.parametrize("capacity", ("entity", "event"))
+def test_engine_step_keeps_capacity_failed_mixed_row_atomic(capacity: str) -> None:
+    battle = _two_character_battle("Knight")
+    engine = TensorResidentEngine.from_battles(
+        [battle],
+        max_entities=7 if capacity == "entity" else 8,
+        max_objects=1,
+        event_capacity=8 if capacity == "entity" else 1,
+    )
+    actions = _two_character_actions()
+    before_ids = engine.runtime.battle.entity_id.clone()
+    before_hand = engine.runtime.battle.hand.clone()
+    before_rng = engine.runtime.battle.rng.python_state(0)
+
+    result = engine.step(
+        torch.tensor([actions]),
+        player_order=torch.tensor([[0, 1]]),
+    )
+
+    assert result.preflight.supported.tolist() == [True]
+    assert result.committed.tolist() == [False]
+    assert result.action_router.committed.tolist() == [False]
+    assert torch.equal(engine.runtime.battle.entity_id, before_ids)
+    assert torch.equal(engine.runtime.battle.hand, before_hand)
+    assert engine.runtime.battle.rng.python_state(0) == before_rng
+    assert engine.runtime.battle.tick.tolist() == [0]

@@ -9,7 +9,9 @@ import torch
 from .actions import TensorCommandQueue, TensorIngressResult
 from .catalog import CardKindOpcode
 from .deployment import TensorDeploymentResult
+from .entity_pool import EntityAllocation
 from .projectile_bridge import TensorResidentProjectileSpellBridge
+from .resident_pending_spells import TensorResidentPendingSpells
 from .resident_spell_ingress import (
     TensorResidentSpellActionIngress,
     TensorResidentSpellIngressResult,
@@ -21,7 +23,10 @@ from .resident_spell_ingress import (
     _copy_tensor_fields,
     _refresh_runtime,
 )
-from .runtime_deployment import TensorRuntimeDeployment
+from .runtime_deployment import (
+    TensorRuntimeDeployment,
+    TensorRuntimeDeploymentResult,
+)
 from .runtime_objects import TensorRuntimeObjectPhase
 from .runtime_state import TensorBattleRuntime
 
@@ -33,6 +38,8 @@ class TensorResidentActionRouterResult:
     player_order: torch.Tensor
     ingress: TensorIngressResult
     spell_command: torch.Tensor
+    deployment: TensorRuntimeDeploymentResult
+    spell_ingress: TensorResidentSpellIngressResult
 
 
 @dataclass
@@ -41,6 +48,7 @@ class _RouterWorkspace:
     objects: TensorRuntimeObjectPhase
     bridge: TensorResidentProjectileSpellBridge
     spells: TensorResidentSpellActionIngress
+    pending_spells: TensorResidentPendingSpells
 
     @classmethod
     def create(
@@ -49,6 +57,7 @@ class _RouterWorkspace:
         objects: TensorRuntimeObjectPhase,
         bridge: TensorResidentProjectileSpellBridge,
         spells: TensorResidentSpellActionIngress,
+        pending_spells: TensorResidentPendingSpells,
     ) -> _RouterWorkspace:
         scratch_runtime = runtime.clone()
         scratch_runtime.battle.rng = runtime.battle.rng.clone()
@@ -73,6 +82,7 @@ class _RouterWorkspace:
             objects=scratch_objects,
             bridge=scratch_bridge,
             spells=scratch_spells,
+            pending_spells=pending_spells.clone(),
         )
 
     def refresh(
@@ -80,11 +90,18 @@ class _RouterWorkspace:
         runtime: TensorBattleRuntime,
         objects: TensorRuntimeObjectPhase,
         bridge: TensorResidentProjectileSpellBridge,
+        pending_spells: TensorResidentPendingSpells,
     ) -> None:
         _refresh_runtime(self.runtime, runtime)
         _copy_tensor_fields(self.objects, objects)
         _copy_tensor_fields(self.objects.objects, objects.objects)
         _copy_tensor_fields(self.bridge, bridge)
+        rows = torch.arange(
+            pending_spells.batch_size,
+            dtype=torch.int64,
+            device=pending_spells.device,
+        )
+        self.pending_spells.reset_rows_(rows, pending_spells, rows)
 
 
 def _select_commands(
@@ -133,6 +150,7 @@ class TensorResidentActionRouter:
         bridge: TensorResidentProjectileSpellBridge,
         deployment: TensorRuntimeDeployment,
         spells: TensorResidentSpellActionIngress,
+        pending_spells: TensorResidentPendingSpells,
     ) -> None:
         if spells.runtime is not runtime or spells.objects is not objects:
             raise ValueError("router spell ingress must own the routed state")
@@ -145,12 +163,15 @@ class TensorResidentActionRouter:
         self.bridge = bridge
         self.deployment = deployment
         self.spells = spells
+        self.pending_spells = pending_spells
         self.device = runtime.device
         self._rows = torch.arange(
             runtime.batch_size, dtype=torch.int64, device=self.device
         )
         self._players = torch.arange(2, dtype=torch.int64, device=self.device)[None, :]
-        self._workspace = _RouterWorkspace.create(runtime, objects, bridge, spells)
+        self._workspace = _RouterWorkspace.create(
+            runtime, objects, bridge, spells, pending_spells
+        )
 
     def _commit(self, source: _RouterWorkspace, rows: torch.Tensor) -> None:
         _copy_runtime_rows(self.runtime, source.runtime, rows)
@@ -162,6 +183,8 @@ class TensorResidentActionRouter:
             blueprint_indices,
         )
         _copy_bridge_rows(self.bridge, source.bridge, rows)
+        selected = torch.nonzero(rows, as_tuple=False).flatten()
+        self.pending_spells.reset_rows_(selected, source.pending_spells, selected)
 
     def apply(
         self,
@@ -180,7 +203,12 @@ class TensorResidentActionRouter:
             legal_mask=initial_legal,
         )
         workspace = self._workspace
-        workspace.refresh(self.runtime, self.objects, self.bridge)
+        workspace.refresh(
+            self.runtime,
+            self.objects,
+            self.bridge,
+            self.pending_spells,
+        )
         if player_order is None:
             choice = workspace.runtime.battle.rng.randrange(2)
             order = torch.stack((1 - choice, choice), dim=1)
@@ -202,6 +230,21 @@ class TensorResidentActionRouter:
             spell_static.command_supported,
             ~commands.is_ability,
         )
+        aggregate_command_supported = command_supported.clone()
+        capacity = self.runtime.max_entities
+        physical_slots = torch.arange(capacity, dtype=torch.int64, device=self.device)[
+            None, :
+        ].expand(self.runtime.batch_size, -1)
+        aggregate_valid = torch.zeros_like(physical_slots, dtype=torch.bool)
+        aggregate_entity_ids = torch.zeros_like(physical_slots)
+        aggregate_spawned_command = torch.full_like(physical_slots, -1)
+        aggregate_spawned_card = torch.zeros_like(physical_slots)
+        unsupported_spell = torch.zeros_like(command_spell)
+        unsupported_mechanic = torch.zeros_like(command_spell)
+        unsupported_payload = torch.zeros_like(command_spell)
+        unsupported_ability = commands.is_ability.clone()
+        unsupported_conflict = torch.zeros_like(command_spell)
+        unsupported_capacity = torch.zeros_like(self.runtime.supported)
         row_supported = self.runtime.supported.clone()
         if commands.battle_index.numel():
             rejected = torch.zeros_like(row_supported)
@@ -215,16 +258,22 @@ class TensorResidentActionRouter:
             row_supported &= ~rejected
         workspace.runtime.supported &= row_supported
         prior_character = torch.zeros_like(row_supported)
+        command_count = int(commands.card_id.numel())
 
         for rank in range(2):
             player = order[:, rank]
-            matches = (commands.battle_index[None, :] == self._rows[:, None]) & (
-                commands.player_id[None, :] == player[:, None]
-            )
-            found = matches.any(dim=1)
-            command_index = matches.to(torch.int64).argmax(dim=1)
-            rank_spell = found & command_spell[command_index]
-            rank_character = found & ~command_spell[command_index]
+            if command_count:
+                matches = (commands.battle_index[None, :] == self._rows[:, None]) & (
+                    commands.player_id[None, :] == player[:, None]
+                )
+                found = matches.any(dim=1)
+                command_index = matches.to(torch.int64).argmax(dim=1)
+                rank_spell = found & command_spell[command_index]
+                rank_character = found & ~command_spell[command_index]
+            else:
+                found = torch.zeros_like(row_supported)
+                rank_spell = torch.zeros_like(row_supported)
+                rank_character = torch.zeros_like(row_supported)
 
             current_state = self.deployment.action_state(workspace.runtime)
             current_legal = self.deployment.kernel.legal_action_mask(current_state)
@@ -250,6 +299,10 @@ class TensorResidentActionRouter:
                 commands,
                 command_rank & ~command_spell & row_supported[commands.battle_index],
             )
+            character_full_index = torch.nonzero(
+                command_rank & ~command_spell & row_supported[commands.battle_index],
+                as_tuple=False,
+            ).flatten()
             spell_ingress = _rank_ingress(
                 ingress,
                 current_state.hand_ids,
@@ -259,10 +312,14 @@ class TensorResidentActionRouter:
                 spell_commands,
                 spell_transition,
             )
-            spell_result: TensorResidentSpellIngressResult = workspace.spells.apply(
+            pending_result = workspace.pending_spells.enqueue_(
+                workspace.runtime,
+                workspace.bridge,
                 spell_ingress,
                 player_order=order,
             )
+            row_supported &= pending_result.committed
+            workspace.runtime.supported &= row_supported
 
             after_spell = self.deployment.action_state(workspace.runtime)
             character_ingress = _rank_ingress(
@@ -278,6 +335,7 @@ class TensorResidentActionRouter:
                 workspace.runtime,
                 character_ingress,
             )
+            unsupported_capacity |= rank_character & ~character_capacity
             row_supported &= ~rank_character | character_capacity
             workspace.runtime.supported &= row_supported
             deployment_result: TensorDeploymentResult = (
@@ -288,9 +346,55 @@ class TensorResidentActionRouter:
                     _prevalidated=True,
                 )
             )
+            if character_full_index.numel():
+                aggregate_command_supported[character_full_index] &= (
+                    deployment_result.command_supported
+                )
+                unsupported_spell[character_full_index] |= (
+                    deployment_result.unsupported_spell
+                )
+                unsupported_mechanic[character_full_index] |= (
+                    deployment_result.unsupported_mechanic
+                )
+                unsupported_payload[character_full_index] |= (
+                    deployment_result.unsupported_payload
+                )
+                unsupported_ability[character_full_index] |= (
+                    deployment_result.unsupported_ability
+                )
+                unsupported_conflict[character_full_index] |= (
+                    deployment_result.unsupported_conflict
+                )
+            allocation = deployment_result.allocation
+            allocation_rows = self._rows[:, None].expand_as(allocation.valid)
+            allocation_slots = allocation.slots.clamp_min(0)
+            valid_rows = allocation_rows[allocation.valid]
+            valid_slots = allocation_slots[allocation.valid]
+            aggregate_valid[valid_rows, valid_slots] = True
+            aggregate_entity_ids[valid_rows, valid_slots] = allocation.entity_ids[
+                allocation.valid
+            ]
+            spawned_local = deployment_result.spawned_command_index
+            spawned = spawned_local >= 0
+            if character_full_index.numel():
+                spawned_global = character_full_index[spawned_local.clamp_min(0)]
+                aggregate_spawned_command.copy_(
+                    torch.where(
+                        spawned,
+                        spawned_global,
+                        aggregate_spawned_command,
+                    )
+                )
+            aggregate_spawned_card.copy_(
+                torch.where(
+                    spawned,
+                    deployment_result.spawned_card_id,
+                    aggregate_spawned_card,
+                )
+            )
             rank_committed = torch.where(
                 rank_spell,
-                spell_result.committed,
+                pending_result.committed,
                 torch.where(
                     rank_character,
                     deployment_result.battle_supported,
@@ -302,12 +406,72 @@ class TensorResidentActionRouter:
             prior_character |= rank_character & row_supported
 
         self._commit(workspace, row_supported)
+        aggregate_command_supported &= row_supported[commands.battle_index]
+        has_character = torch.zeros_like(row_supported)
+        has_spell = torch.zeros_like(row_supported)
+        if commands.battle_index.numel():
+            has_character.scatter_reduce_(
+                0,
+                commands.battle_index,
+                ~command_spell,
+                reduce="amax",
+                include_self=True,
+            )
+            has_spell.scatter_reduce_(
+                0,
+                commands.battle_index,
+                command_spell,
+                reduce="amax",
+                include_self=True,
+            )
+        allocation = EntityAllocation(
+            slots=torch.where(
+                aggregate_valid,
+                physical_slots,
+                torch.full_like(physical_slots, -1),
+            ),
+            entity_ids=aggregate_entity_ids,
+            valid=aggregate_valid,
+        )
+        deployment_details = TensorDeploymentResult(
+            player_order=order,
+            allocation=allocation,
+            command_supported=aggregate_command_supported,
+            battle_supported=row_supported,
+            unsupported_spell=unsupported_spell,
+            unsupported_mechanic=unsupported_mechanic,
+            unsupported_payload=unsupported_payload,
+            unsupported_ability=unsupported_ability,
+            unsupported_conflict=unsupported_conflict,
+            spawned_command_index=aggregate_spawned_command,
+            spawned_card_id=aggregate_spawned_card,
+        )
+        deployment = TensorRuntimeDeploymentResult(
+            action_state=initial_state,
+            legal_mask=initial_legal,
+            ingress=ingress,
+            deployment=deployment_details,
+            committed=row_supported & has_character,
+            unsupported_capacity=unsupported_capacity,
+        )
+        aggregate_spell_result = TensorResidentSpellIngressResult(
+            committed=row_supported & has_spell,
+            unsupported=has_spell & ~row_supported,
+            unsupported_reasons=self.spells._empty_reasons,
+            action_success=(
+                ingress.accepted & row_supported[:, None] & has_spell[:, None]
+            ),
+            player_order=order,
+            spell_command=command_spell,
+        )
         return TensorResidentActionRouterResult(
             committed=row_supported,
             action_success=ingress.accepted & row_supported[:, None],
             player_order=order,
             ingress=ingress,
             spell_command=command_spell,
+            deployment=deployment,
+            spell_ingress=aggregate_spell_result,
         )
 
 

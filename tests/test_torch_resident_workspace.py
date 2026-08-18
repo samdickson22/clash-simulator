@@ -64,6 +64,7 @@ def _engine_snapshot(engine: TensorResidentEngine) -> dict[str, torch.Tensor]:
         "mechanics",
         "objects",
         "projectile_bridge",
+        "pending_spells",
     ):
         result.update(_tensor_snapshot(getattr(engine, name), name))
     for name in (

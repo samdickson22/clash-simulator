@@ -79,11 +79,30 @@ class TensorResidentWorkspace:
                 raise ValueError("spell ingress must own its engine object phase")
             if owner.spell_ingress.bridge is not owner.projectile_bridge:
                 raise ValueError("spell ingress must own its engine projectile bridge")
+            if owner.action_router.runtime is not owner.runtime:
+                raise ValueError("action router must own its engine runtime")
+            if owner.action_router.objects is not owner.objects:
+                raise ValueError("action router must own its engine object phase")
+            if owner.action_router.bridge is not owner.projectile_bridge:
+                raise ValueError("action router must own its engine projectile bridge")
+            if owner.action_router.spells is not owner.spell_ingress:
+                raise ValueError("action router must own its engine spell ingress")
+            if owner.action_router.pending_spells is not owner.pending_spells:
+                raise ValueError("action router must own its engine pending spells")
         if (
             self.scratch.spell_ingress.catalog_to_core.data_ptr()
             != self.engine.spell_ingress.catalog_to_core.data_ptr()
         ):
             raise ValueError("speculative engines must share immutable spell metadata")
+        if (
+            self.scratch.action_router._workspace
+            is not self.engine.action_router._workspace
+        ):
+            raise ValueError("speculative engines must share retained router buffers")
+        if self.scratch.pending_spells.active.data_ptr() == (
+            self.engine.pending_spells.active.data_ptr()
+        ):
+            raise ValueError("speculative pending spells must own mutable storage")
         if (
             self.scratch.dispatcher.passive_catalog
             is not self.engine.dispatcher.passive_catalog
@@ -110,6 +129,14 @@ class TensorResidentWorkspace:
         _copy_tensor_fields_(destination.runtime.events, source.runtime.events)
         destination.runtime.supported.copy_(source.runtime.supported)
         destination.runtime.dirty.copy_(source.runtime.dirty)
+        pending_rows = torch.arange(
+            self.batch_size, dtype=torch.int64, device=self.device
+        )
+        destination.pending_spells.reset_rows_(
+            pending_rows,
+            source.pending_spells,
+            pending_rows,
+        )
         for left, right in (
             (destination.combat, source.combat),
             (destination.movement, source.movement),
