@@ -451,6 +451,9 @@ class TensorResidentEngine:
         sight_clip_side_units: torch.Tensor,
         first_hit_ms: torch.Tensor,
         jump_height: torch.Tensor,
+        movement_stop_after_ms: torch.Tensor,
+        movement_wait_ms: torch.Tensor,
+        movement_base_speed_units: torch.Tensor,
         facing_x_units: torch.Tensor,
         facing_y_units: torch.Tensor,
     ) -> None:
@@ -475,6 +478,9 @@ class TensorResidentEngine:
         self.sight_clip_side_units = sight_clip_side_units
         self.first_hit_ms = first_hit_ms
         self.jump_height = jump_height
+        self.movement_stop_after_ms = movement_stop_after_ms
+        self.movement_wait_ms = movement_wait_ms
+        self.movement_base_speed_units = movement_base_speed_units
         self.facing_x_units = facing_x_units
         self.facing_y_units = facing_y_units
 
@@ -637,6 +643,13 @@ class TensorResidentEngine:
         sight_clip_side = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         first_hit = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         jump_height = torch.zeros(size, dtype=torch.bool, device=runtime.device)
+        movement_stop_after = torch.zeros(
+            size, dtype=torch.int64, device=runtime.device
+        )
+        movement_wait = torch.zeros(size, dtype=torch.int64, device=runtime.device)
+        movement_base_speed = torch.zeros(
+            size, dtype=torch.int64, device=runtime.device
+        )
         for card_id, name in enumerate(cards.names[1:], start=1):
             stats = catalog_loader.get_card(name)
             if stats is None:
@@ -672,6 +685,13 @@ class TensorResidentEngine:
                 float(getattr(stats, "first_hit_time", 0.0) or 0.0)
             )
             jump_height[card_id] = bool(getattr(stats, "jump_height", None))
+            movement_stop_after[card_id] = round(
+                float(getattr(stats, "stop_movement_after_ms", 0) or 0)
+            )
+            movement_wait[card_id] = round(float(getattr(stats, "wait_ms", 0) or 0))
+            movement_base_speed[card_id] = max(
+                1, round(float(getattr(stats, "speed", 0) or 0))
+            )
         return cls(
             runtime=runtime,
             deployment=deployment,
@@ -694,6 +714,9 @@ class TensorResidentEngine:
             sight_clip_side_units=sight_clip_side,
             first_hit_ms=first_hit,
             jump_height=jump_height,
+            movement_stop_after_ms=movement_stop_after,
+            movement_wait_ms=movement_wait,
+            movement_base_speed_units=movement_base_speed,
             facing_x_units=movement.facing_units[..., 0].clone(),
             facing_y_units=movement.facing_units[..., 1].clone(),
         )
@@ -729,6 +752,9 @@ class TensorResidentEngine:
             sight_clip_side_units=self.sight_clip_side_units,
             first_hit_ms=self.first_hit_ms,
             jump_height=self.jump_height,
+            movement_stop_after_ms=self.movement_stop_after_ms,
+            movement_wait_ms=self.movement_wait_ms,
+            movement_base_speed_units=self.movement_base_speed_units,
             facing_x_units=self.facing_x_units.clone(),
             facing_y_units=self.facing_y_units.clone(),
         )
@@ -1265,6 +1291,34 @@ class TensorResidentEngine:
                 torch.int64
             )
         )
+        new_troop = new & troop
+        spawn_facing_y = torch.where(
+            core.entity_player == 0,
+            torch.full_like(core.entity_id, 1_000),
+            torch.full_like(core.entity_id, -1_000),
+        )
+        self.facing_x_units.copy_(
+            torch.where(
+                new_troop, torch.zeros_like(self.facing_x_units), self.facing_x_units
+            )
+        )
+        self.facing_y_units.copy_(
+            torch.where(new_troop, spawn_facing_y, self.facing_y_units)
+        )
+        movement.facing_units[..., 0].copy_(
+            torch.where(
+                new_troop,
+                torch.zeros_like(movement.facing_units[..., 0]),
+                movement.facing_units[..., 0],
+            )
+        )
+        movement.facing_units[..., 1].copy_(
+            torch.where(
+                new_troop,
+                spawn_facing_y,
+                movement.facing_units[..., 1],
+            )
+        )
         movement.is_troop.copy_(troop)
         movement.is_air.copy_(self.runtime.catalog.is_air_unit[safe])
         movement.is_hover.copy_(self.runtime.catalog.is_hover_unit[safe])
@@ -1288,8 +1342,11 @@ class TensorResidentEngine:
         movement.knockback_active.zero_()
         movement.kamikaze_primed.zero_()
         movement.charge_component.zero_()
-        movement.movement_cycle.zero_()
-        movement.avoidance_prepass_required.zero_()
+        movement.movement_cycle.copy_(
+            catalog_known
+            & (self.movement_stop_after_ms[safe] > 0)
+            & (self.movement_wait_ms[safe] > 0)
+        )
         movement.ordinary_unsupported.zero_()
         movement.river_unsupported.fill_(1)
         movement.ordinary_supported.copy_(troop & known)
@@ -1588,6 +1645,18 @@ class TensorResidentEngine:
         sorted_result = step_runtime_movement_(
             cast(Any, view),
             sorted_movement,
+            movement_stop_after_ms=_gather_slots(
+                self.movement_stop_after_ms[self._core_catalog_id().clamp_min(0)],
+                order,
+            ),
+            movement_wait_ms=_gather_slots(
+                self.movement_wait_ms[self._core_catalog_id().clamp_min(0)],
+                order,
+            ),
+            movement_base_speed_units=_gather_slots(
+                self.movement_base_speed_units[self._core_catalog_id().clamp_min(0)],
+                order,
+            ),
         )
 
         def sorted_target_to_physical(target: torch.Tensor) -> torch.Tensor:

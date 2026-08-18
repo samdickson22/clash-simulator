@@ -228,25 +228,25 @@ def test_runtime_active_river_jump_matches_scalar_and_emits_finish(
     )
 
 
-def test_runtime_fails_closed_for_ordinary_avoidance_prepass() -> None:
+def test_runtime_ordinary_avoidance_prepass_matches_scalar_component() -> None:
     battle = _empty_battle()
     mover = _troop(battle, "Knight", 0, Position(9.0, 10.0))
     target = _troop(battle, "Knight", 1, Position(9.5, 10.0))
     mover._movement_target_id = target.id
+    mover._facing_x_units, mover._facing_y_units = (256, 0)
+    expected = battle.clone()
+    _movement_phase_oracle(expected)
     runtime, adapter = _runtime_and_adapter(battle, device="cpu")
-    before_runtime = runtime.combat.x_units.clone(), runtime.combat.y_units.clone()
-    before_adapter = adapter.position_units.clone(), adapter.route_count.clone()
 
     result = step_runtime_movement_(runtime, adapter)
+    adapter.sync_to_battles([battle])
 
-    assert result.supported_batch.tolist() == [False]
-    assert result.unsupported_reasons == (
-        "ordinary movement support mask rejected an active mover",
-    )
-    assert torch.equal(runtime.combat.x_units, before_runtime[0])
-    assert torch.equal(runtime.combat.y_units, before_runtime[1])
-    assert torch.equal(adapter.position_units, before_adapter[0])
-    assert torch.equal(adapter.route_count, before_adapter[1])
+    assert result.supported_batch.tolist() == [True]
+    assert result.unsupported_reasons == (None,)
+    for entity_id in sorted(expected.entities):
+        assert _movement_state(battle.entities[entity_id]) == _movement_state(
+            expected.entities[entity_id]
+        )
 
 
 def test_finished_early_river_lane_rejoins_ground_collision_for_later_ids() -> None:

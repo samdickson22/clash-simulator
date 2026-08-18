@@ -18,6 +18,8 @@ from enum import IntEnum
 
 import torch
 
+from clasher.kinematics import LOGIC_TICK_MILLISECONDS
+
 from .movement import (
     NATIVE_COLLISION_CAP_UNITS,
     CollisionBatch,
@@ -32,7 +34,8 @@ from .movement import (
     target_directed_movement_step,
     trunc_div_tensor,
 )
-from .movement_adapter import TensorMovementAdapter
+from .movement_adapter import MovementUnsupported, TensorMovementAdapter
+from .resident_avoidance import TensorAvoidanceSequence, TensorAvoidanceState
 from .runtime import TensorTickRuntime
 
 
@@ -411,12 +414,59 @@ def _emit_events(
 def step_runtime_movement_(
     runtime: TensorTickRuntime,
     adapter: TensorMovementAdapter,
+    *,
+    movement_stop_after_ms: torch.Tensor | None = None,
+    movement_wait_ms: torch.Tensor | None = None,
+    movement_base_speed_units: torch.Tensor | None = None,
 ) -> RuntimeMovementResult:
     """Run one native movement component phase over retained tensor state.
 
     The function does not advance battle clocks or run combat/status/object
     phases.  It is intended for the ``TickPhase.MOVEMENT`` integration point.
     """
+
+    cycle_values = (
+        movement_stop_after_ms,
+        movement_wait_ms,
+        movement_base_speed_units,
+    )
+    cycle_parameters_present = all(value is not None for value in cycle_values)
+    if cycle_parameters_present:
+        stop_after_ms = torch.as_tensor(
+            movement_stop_after_ms, dtype=torch.int64, device=runtime.device
+        )
+        wait_ms = torch.as_tensor(
+            movement_wait_ms, dtype=torch.int64, device=runtime.device
+        )
+        base_speed_units = torch.as_tensor(
+            movement_base_speed_units, dtype=torch.int64, device=runtime.device
+        )
+        for value in (stop_after_ms, wait_ms, base_speed_units):
+            if value.shape != adapter.entity_id.shape:
+                raise ValueError(
+                    "movement-cycle tensors must have shape [batch, entity]"
+                )
+        cycle_bit = int(MovementUnsupported.MOVEMENT_CYCLE)
+        cycle_valid = (
+            adapter.movement_cycle
+            & (stop_after_ms > 0)
+            & (wait_ms > 0)
+            & (base_speed_units > 0)
+        )
+        cycle_only = cycle_valid & ((adapter.ordinary_unsupported & ~cycle_bit) == 0)
+        adapter.ordinary_unsupported &= ~cycle_bit
+        adapter.ordinary_supported |= cycle_only
+    else:
+        stop_after_ms = torch.zeros_like(adapter.entity_id)
+        wait_ms = torch.zeros_like(adapter.entity_id)
+        base_speed_units = torch.ones_like(adapter.entity_id)
+
+    avoidance_bit = int(MovementUnsupported.AVOIDANCE_PREPASS)
+    avoidance_only = adapter.avoidance_prepass_required & (
+        (adapter.ordinary_unsupported & ~avoidance_bit) == 0
+    )
+    adapter.ordinary_unsupported &= ~avoidance_bit
+    adapter.ordinary_supported |= avoidance_only
 
     supported, reasons, ordinary_intent, river_intent = _support_and_reasons(
         runtime, adapter
@@ -439,6 +489,7 @@ def step_runtime_movement_(
     collision_counts = torch.zeros(
         entity_shape, dtype=torch.int64, device=runtime.device
     )
+    previous_route_count = adapter.route_count.clone()
 
     active_troop = (
         supported[:, None]
@@ -462,9 +513,44 @@ def step_runtime_movement_(
         )
     )
 
+    avoidance_state = TensorAvoidanceState.from_movement_adapter(
+        adapter,
+        stopped=~(ordinary_intent | river_intent)
+        | (runtime.combat.deploy_remaining > 1e-9)
+        | runtime.combat.stunned
+        | adapter.kamikaze_primed,
+        charging=torch.zeros_like(adapter.slot_present),
+        leap_clear=adapter.mega_knight_airborne,
+    )
+    # The sequence and movement kernels share this current-position plane.
+    # Each completed ID lane is therefore visible to every later avoidance
+    # scan without a host sync or Python entity round-trip.
+    avoidance_state.position_units = working_positions
+    avoidance_sequence = TensorAvoidanceSequence.begin(
+        avoidance_state, battle_mask=supported
+    )
+    lane_index = torch.arange(
+        adapter.max_entities, dtype=torch.int64, device=runtime.device
+    ).view(1, -1)
+    stable_lanes = (
+        ~avoidance_sequence.ordered_valid | (avoidance_sequence.order == lane_index)
+    ).all(dim=1)
+    avoidance_sequence.supported_batch &= stable_lanes
+    supported &= avoidance_sequence.supported_batch
+    active_troop &= supported[:, None]
+    if not bool(stable_lanes.all().item()):
+        mutable_reasons = list(reasons)
+        for row in torch.nonzero(~stable_lanes, as_tuple=False).flatten().tolist():
+            if mutable_reasons[row] is None:
+                mutable_reasons[row] = (
+                    "movement slots are not sorted in stable entity-ID order"
+                )
+        reasons = tuple(mutable_reasons)
+
     # Stable entity-ID component order. Each iteration is one tensor lane over
     # every battle row, never a Python Entity call.
     for slot in range(adapter.max_entities):
+        avoidance_sequence.step_rank_(slot)
         slot_active = active_troop[:, slot]
         slot_vector, slot_count = _collision_for_slot(
             _collision_batch(
@@ -493,10 +579,42 @@ def step_runtime_movement_(
 
         ordinary = supported & ordinary_intent[:, slot]
         if adapter.max_entities:
+            has_natural_distance = torch.any(
+                adapter.waypoint_units[:, slot] != working_positions[:, slot], dim=1
+            )
+            cycle = (
+                ordinary
+                & adapter.movement_cycle[:, slot]
+                & has_natural_distance
+                & cycle_parameters_present
+            )
+            increment = trunc_div_tensor(
+                LOGIC_TICK_MILLISECONDS * adapter.effective_speed_units[:, slot],
+                base_speed_units[:, slot].clamp_min(1),
+            )
+            advanced_timer = adapter.movement_phase_elapsed_ms[:, slot] + increment
+            cycle_length = (stop_after_ms[:, slot] + wait_ms[:, slot]).clamp_min(1)
+            wrapped = cycle & (advanced_timer >= cycle_length)
+            next_timer = torch.where(
+                wrapped,
+                torch.remainder(advanced_timer, cycle_length),
+                advanced_timer,
+            )
+            adapter.movement_phase_elapsed_ms[:, slot] = torch.where(
+                cycle,
+                next_timer,
+                adapter.movement_phase_elapsed_ms[:, slot],
+            )
+            paused = cycle & ~wrapped & (next_timer > stop_after_ms[:, slot])
+            effective_speed = torch.where(
+                paused,
+                torch.zeros_like(adapter.effective_speed_units[:, slot]),
+                adapter.effective_speed_units[:, slot],
+            )
             natural = target_directed_movement_step(
                 working_positions[:, slot],
                 adapter.waypoint_units[:, slot],
-                adapter.effective_speed_units[:, slot],
+                effective_speed,
                 supported=ordinary,
                 external_vector_units=external,
                 avoidance=adapter.avoidance[:, slot],
@@ -510,6 +628,17 @@ def step_runtime_movement_(
                     natural.position_units != adapter.position_units[:, slot], dim=-1
                 )
             )
+            lane_support = torch.zeros_like(ordinary_intent)
+            lane_support[:, slot] = ordinary
+            adapter.apply_natural_result(
+                NaturalMovementResult(
+                    position_units=ordinary_position,
+                    movement_vector_units=ordinary_vector,
+                    intended_movement_units=ordinary_intended,
+                    supported=lane_support,
+                )
+            )
+            working_positions[:, slot] = adapter.position_units[:, slot]
 
         river = supported & river_intent[:, slot]
         jump = river_jump_step(
@@ -535,6 +664,22 @@ def step_runtime_movement_(
         river_moved[:, slot] = jump.supported & (
             torch.any(jump_position != adapter.position_units[:, slot], dim=-1)
         )
+        river_facing = (
+            adapter.river_target_units[:, slot] - adapter.position_units[:, slot]
+        )
+        adapter.facing_units[:, slot] = torch.where(
+            (jump.supported & torch.any(river_facing != 0, dim=1)).unsqueeze(-1),
+            river_facing,
+            adapter.facing_units[:, slot],
+        )
+        avoidance_state.air_collision[:, slot] = torch.where(
+            jump.supported,
+            adapter.is_air[:, slot]
+            | adapter.is_hover[:, slot]
+            | jump.active
+            | adapter.mega_knight_airborne[:, slot],
+            avoidance_state.air_collision[:, slot],
+        )
 
         collision_only = slot_active & ~ordinary & ~river
         collision_position = clamp_native_positions(
@@ -548,15 +693,6 @@ def step_runtime_movement_(
         )
         collision_only_moved[:, slot] = collision_changed
 
-    previous_route_count = adapter.route_count.clone()
-    adapter.apply_natural_result(
-        NaturalMovementResult(
-            position_units=ordinary_position,
-            movement_vector_units=ordinary_vector,
-            intended_movement_units=ordinary_intended,
-            supported=ordinary_intent & supported[:, None],
-        )
-    )
     route_advanced = adapter.route_count < previous_route_count
     adapter.apply_river_result(
         RiverJumpResult(
@@ -598,14 +734,6 @@ def step_runtime_movement_(
         )
     )
     adapter.pending_vector_consumed |= processed_troop
-
-    stopped = processed_troop & ~ordinary_intent & ~river_intent
-    decayed = torch.where(
-        adapter.avoidance < 0,
-        torch.minimum(adapter.avoidance + 10, torch.zeros_like(adapter.avoidance)),
-        torch.maximum(adapter.avoidance - 10, torch.zeros_like(adapter.avoidance)),
-    )
-    adapter.avoidance.copy_(torch.where(stopped, decayed, adapter.avoidance))
 
     final_position = adapter.position_units
     runtime.combat.x_units.copy_(

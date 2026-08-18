@@ -137,49 +137,71 @@ class AvoidanceStepResult:
     avoidance_after: torch.Tensor
 
 
-def _decay(value: torch.Tensor) -> torch.Tensor:
-    return torch.where(
-        value < 0,
-        torch.minimum(value + 10, torch.zeros_like(value)),
-        torch.maximum(value - 10, torch.zeros_like(value)),
-    )
+@dataclass
+class TensorAvoidanceSequence:
+    """One retained pre-contact scan split into stable public-ID lanes.
 
+    The scalar movement manager scans avoidance immediately before each
+    entity's movement component.  Keeping this sequence open lets the caller
+    move that entity before advancing to the next rank, so later scans observe
+    the earlier entity's new position and facing.
+    """
 
-def step_precontact_avoidance_(
-    state: TensorAvoidanceState,
-    *,
-    battle_mask: torch.Tensor | None = None,
-) -> AvoidanceStepResult:
-    """Advance retained avoidance and static route-node removal one frame."""
+    state: TensorAvoidanceState
+    supported_batch: torch.Tensor
+    order: torch.Tensor
+    ordered_valid: torch.Tensor
+    contacted: torch.Tensor
+    moving_contacts: torch.Tensor
+    static_contacts: torch.Tensor
+    route_nodes_popped: torch.Tensor
+    avoidance_before: torch.Tensor
 
-    structural = state.validate()
-    selected = (
-        torch.ones(state.batch_size, dtype=torch.bool, device=state.device)
-        if battle_mask is None
-        else torch.as_tensor(battle_mask, dtype=torch.bool, device=state.device)
-    )
-    if selected.shape != (state.batch_size,):
-        raise ValueError("battle_mask must have shape [batch]")
-    supported = structural & selected
-    before = state.avoidance.clone()
-    contacted = torch.zeros_like(state.present)
-    moving_contacts = torch.zeros_like(state.avoidance, dtype=torch.int32)
-    static_contacts = torch.zeros_like(state.avoidance, dtype=torch.int32)
-    route_popped = torch.zeros_like(state.route_count, dtype=torch.int32)
+    @classmethod
+    def begin(
+        cls,
+        state: TensorAvoidanceState,
+        *,
+        battle_mask: torch.Tensor | None = None,
+    ) -> TensorAvoidanceSequence:
+        structural = state.validate()
+        selected = (
+            torch.ones(state.batch_size, dtype=torch.bool, device=state.device)
+            if battle_mask is None
+            else torch.as_tensor(battle_mask, dtype=torch.bool, device=state.device)
+        )
+        if selected.shape != (state.batch_size,):
+            raise ValueError("battle_mask must have shape [batch]")
+        active_object = (
+            state.present & state.alive & ((state.kind == 0) | (state.kind == 1))
+        )
+        keys = torch.where(active_object, state.entity_id, _ID_SENTINEL)
+        order = torch.argsort(keys, dim=1, stable=True)
+        return cls(
+            state=state,
+            supported_batch=structural & selected,
+            order=order,
+            ordered_valid=torch.gather(active_object, 1, order),
+            contacted=torch.zeros_like(state.present),
+            moving_contacts=torch.zeros_like(state.avoidance, dtype=torch.int32),
+            static_contacts=torch.zeros_like(state.avoidance, dtype=torch.int32),
+            route_nodes_popped=torch.zeros_like(state.route_count, dtype=torch.int32),
+            avoidance_before=state.avoidance.clone(),
+        )
 
-    active_object = (
-        state.present & state.alive & ((state.kind == 0) | (state.kind == 1))
-    )
-    keys = torch.where(active_object, state.entity_id, _ID_SENTINEL)
-    order = torch.argsort(keys, dim=1, stable=True)
-    ordered_valid = torch.gather(active_object, 1, order)
-    rows = torch.arange(state.batch_size, device=state.device)
+    def step_rank_(self, mover_rank: int) -> torch.Tensor:
+        """Advance exactly one stable entity-ID rank and return its slots."""
 
-    for mover_rank in range(state.max_entities):
-        mover_slot = order[:, mover_rank]
+        state = self.state
+        if not 0 <= mover_rank < state.max_entities:
+            raise IndexError("avoidance mover rank is outside entity capacity")
+        rows = torch.arange(state.batch_size, device=state.device)
+        mover_slot = self.order[:, mover_rank]
         mover_index = (rows, mover_slot)
         mover = (
-            supported & ordered_valid[:, mover_rank] & (state.kind[mover_index] == 0)
+            self.supported_batch
+            & self.ordered_valid[:, mover_rank]
+            & (state.kind[mover_index] == 0)
         )
         leap = mover & state.leap_clear[mover_index]
         leap_rows = rows[leap]
@@ -205,11 +227,11 @@ def step_precontact_avoidance_(
         own_mass = state.mass_milliunits[mover_index]
 
         for other_rank in range(state.max_entities):
-            other_slot = order[:, other_rank]
+            other_slot = self.order[:, other_rank]
             other_index = (rows, other_slot)
             candidate = (
                 scan
-                & ordered_valid[:, other_rank]
+                & self.ordered_valid[:, other_rank]
                 & (other_slot != mover_slot)
                 & (state.air_collision[other_index] == own_plane)
             )
@@ -264,7 +286,7 @@ def step_precontact_avoidance_(
                 shifted[:, -1] = 0
                 state.route_cells[pop_rows, pop_slots] = shifted
                 state.route_count[pop_rows, pop_slots] -= 1
-                route_popped[pop_rows, pop_slots] += 1
+                self.route_nodes_popped[pop_rows, pop_slots] += 1
 
         has_contact = (moving_count + static_count) > 0
         side = torch.where(static_count > 0, static_side, moving_side)
@@ -283,11 +305,11 @@ def step_precontact_avoidance_(
         write_rows = rows[write]
         write_slots = mover_slot[write]
         state.avoidance[write_rows, write_slots] = updated[write]
-        contacted[write_rows, write_slots] = has_contact[write]
-        moving_contacts[write_rows, write_slots] = moving_count[write]
-        static_contacts[write_rows, write_slots] = static_count[write]
+        self.contacted[write_rows, write_slots] = has_contact[write]
+        self.moving_contacts[write_rows, write_slots] = moving_count[write]
+        self.static_contacts[write_rows, write_slots] = static_count[write]
 
-        route_changed = route_popped[mover_index] > 0
+        route_changed = self.route_nodes_popped[mover_index] > 0
         remaining = state.route_count[mover_index] > 0
         update_waypoint = mover & route_changed & remaining
         waypoint_rows = rows[update_waypoint]
@@ -297,20 +319,45 @@ def step_precontact_avoidance_(
             state.waypoint_units[waypoint_rows, waypoint_slots] = (
                 head * HALF_TILE_LOGIC_UNITS + HALF_TILE_LOGIC_UNITS // 2
             )
+        return mover_slot
 
-    return AvoidanceStepResult(
-        supported_batch=supported,
-        contacted=contacted,
-        moving_contacts=moving_contacts,
-        static_contacts=static_contacts,
-        route_nodes_popped=route_popped,
-        avoidance_before=before,
-        avoidance_after=state.avoidance.clone(),
+    def result(self) -> AvoidanceStepResult:
+        """Snapshot aggregate evidence after the processed ranks."""
+
+        return AvoidanceStepResult(
+            supported_batch=self.supported_batch,
+            contacted=self.contacted,
+            moving_contacts=self.moving_contacts,
+            static_contacts=self.static_contacts,
+            route_nodes_popped=self.route_nodes_popped,
+            avoidance_before=self.avoidance_before,
+            avoidance_after=self.state.avoidance.clone(),
+        )
+
+
+def _decay(value: torch.Tensor) -> torch.Tensor:
+    return torch.where(
+        value < 0,
+        torch.minimum(value + 10, torch.zeros_like(value)),
+        torch.maximum(value - 10, torch.zeros_like(value)),
     )
+
+
+def step_precontact_avoidance_(
+    state: TensorAvoidanceState,
+    *,
+    battle_mask: torch.Tensor | None = None,
+) -> AvoidanceStepResult:
+    """Advance retained avoidance and static route-node removal one frame."""
+    sequence = TensorAvoidanceSequence.begin(state, battle_mask=battle_mask)
+    for mover_rank in range(state.max_entities):
+        sequence.step_rank_(mover_rank)
+    return sequence.result()
 
 
 __all__ = [
     "AvoidanceStepResult",
+    "TensorAvoidanceSequence",
     "TensorAvoidanceState",
     "step_precontact_avoidance_",
 ]

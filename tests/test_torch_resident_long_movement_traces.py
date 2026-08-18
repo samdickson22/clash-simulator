@@ -1,9 +1,9 @@
 """Long exact traces that document the resident movement frontier.
 
-These are not parity-success claims. Each case proves an exact prefix through
-ordinary 50 ms deployment ticks, then names the first currently divergent or
-unsupported state field. When a kernel closes one frontier, its expected
-boundary must move later (or the case should become a full parity test).
+These are not complete-episode parity claims. Each case proves a reviewed exact
+prefix through ordinary 50 ms deployment ticks, then either names the first
+currently divergent field or records a finite exact horizon. When a kernel
+closes one frontier, its boundary must move later or become a longer horizon.
 """
 
 from __future__ import annotations
@@ -21,23 +21,24 @@ from clasher.torch_sim.resident_engine import TensorResidentEngine
 
 
 @dataclass(frozen=True)
-class ExpectedBoundary:
-    tick: int
-    field: str
+class ExpectedTrace:
+    ticks: int
+    boundary_field: str | None
 
 
-EXPECTED_BOUNDARIES = {
-    # The scalar movement-cycle clock advances on Giant's first actionable
-    # frame; resident state does not yet own StopMovementAfterMS/WaitMS.
-    "Giant": ExpectedBoundary(21, "movement_phase_elapsed_ms"),
+EXPECTED_TRACES = {
+    # The retained StopMovementAfterMS/WaitMS clock now remains exact through
+    # fifteen seconds of mirrored movement and melee combat.
+    "Giant": ExpectedTrace(300, None),
     # River state six begins when the endpoint first enters water. Resident
     # currently follows the exact route but has not dispatched jump entry.
-    "HogRider": ExpectedBoundary(27, "position_units"),
-    "RoyalHogs": ExpectedBoundary(27, "position_units"),
+    "HogRider": ExpectedTrace(27, "position_units"),
+    "RoyalHogs": ExpectedTrace(27, "position_units"),
     # Prince accumulates native charge work from its first movement frame.
-    "Prince": ExpectedBoundary(21, "native_charge_progress"),
-    # The resident direct-hit timer commits Bats one frame after the oracle.
-    "Bats": ExpectedBoundary(56, "attack_cooldown"),
+    "Prince": ExpectedTrace(21, "native_charge_progress"),
+    # Resident projectile integration independently closed the old tick-56
+    # direct-hit boundary; the mirrored trace is exact through fifteen seconds.
+    "Bats": ExpectedTrace(300, None),
 }
 
 
@@ -197,7 +198,7 @@ def _first_relevant_difference(
     return None
 
 
-@pytest.mark.parametrize("card_name", tuple(EXPECTED_BOUNDARIES))
+@pytest.mark.parametrize("card_name", tuple(EXPECTED_TRACES))
 def test_current_first_resident_movement_boundary_after_exact_deployment_prefix(
     card_name: str,
 ) -> None:
@@ -209,11 +210,11 @@ def test_current_first_resident_movement_boundary_after_exact_deployment_prefix(
         max_objects=16,
         event_capacity=256,
     )
-    expected_boundary = EXPECTED_BOUNDARIES[card_name]
+    expected_trace = EXPECTED_TRACES[card_name]
     observed: list[tuple[str, int, str]] = []
     no_op = torch.full((2, 2), NO_OP_ACTION, dtype=torch.int64)
 
-    for tick in range(1, expected_boundary.tick + 1):
+    for tick in range(1, expected_trace.ticks + 1):
         for battle in oracle:
             player_order = [0, 1]
             battle.rng.shuffle(player_order)
@@ -246,8 +247,11 @@ def test_current_first_resident_movement_boundary_after_exact_deployment_prefix(
             battle.rng.getstate() for battle in oracle
         ]
 
-    assert observed == [
-        ("divergent", expected_boundary.tick, expected_boundary.field),
-        ("divergent", expected_boundary.tick, expected_boundary.field),
-    ]
-    assert expected_boundary.tick > 20
+    if expected_trace.boundary_field is None:
+        assert observed == []
+    else:
+        assert observed == [
+            ("divergent", expected_trace.ticks, expected_trace.boundary_field),
+            ("divergent", expected_trace.ticks, expected_trace.boundary_field),
+        ]
+    assert expected_trace.ticks > 20
