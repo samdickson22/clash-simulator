@@ -68,6 +68,12 @@ from .resident_spell_ingress import (
     TensorResidentSpellActionIngress,
     TensorResidentSpellIngressResult,
 )
+from .resident_terminal_pipeline import (
+    ResidentTerminalPipelineResult,
+    TensorResidentTerminalPipeline,
+    TensorTerminalPipelineTargets,
+)
+from .resident_timed_terminal_payloads import TensorTimedTerminalCatalog
 from .runtime_deployment import (
     TensorRuntimeDeployment,
     TensorRuntimeDeploymentResult,
@@ -173,6 +179,19 @@ def _resident_deployment_catalog_closure(
                     str(spell.spawn_character),
                 )
             )
+        definition = overlay.load_card_definitions().get(parent_name)
+        if definition is not None:
+            for mechanic in definition.mechanics:
+                unit_data = getattr(mechanic, "unit_data", None)
+                child_name = str(getattr(mechanic, "unit_name", "") or "")
+                if isinstance(unit_data, dict) and child_name:
+                    payloads.append(
+                        (
+                            unit_data,
+                            str(unit_data.get("rarity", "Common")),
+                            child_name,
+                        )
+                    )
         for payload, parent_rarity, default_child_name in payloads:
             child_name = str(payload.get("name", "") or default_child_name)
             if not child_name or child_name == parent_name:
@@ -255,6 +274,7 @@ class ResidentTickResult:
     movement: RuntimeMovementResult
     status: RuntimeStatusPhaseResult
     objects: RuntimeObjectPhaseResult
+    terminal: ResidentTerminalPipelineResult | None
     cleanup: EntitySelection
     deployment_completed: torch.Tensor
     phase_order: tuple[TickPhase, ...]
@@ -329,6 +349,25 @@ def _copy_slots_(
             left.copy_(_gather_slots(right, physical_to_sorted))
 
 
+def _removed_entities(
+    before: EntitySelection,
+    runtime: TensorBattleRuntime,
+) -> EntitySelection:
+    matches = (
+        (before.entity_ids[:, :, None] == runtime.battle.entity_id[:, None, :])
+        & runtime.entity_pool.active[:, None, :]
+        & (before.entity_ids[:, :, None] > 0)
+    )
+    removed = before.valid & ~matches.any(dim=2)
+    return EntitySelection(
+        slots=torch.where(removed, before.slots, torch.full_like(before.slots, -1)),
+        entity_ids=torch.where(
+            removed, before.entity_ids, torch.zeros_like(before.entity_ids)
+        ),
+        valid=removed,
+    )
+
+
 def _sorted_slot_clone(value: object, order: torch.Tensor) -> object:
     cloned = _clone_tensor_dataclass(value)
     for descriptor in fields(cloned):  # type: ignore[arg-type]
@@ -356,6 +395,51 @@ def _clone_object_phase(phase: TensorRuntimeObjectPhase) -> TensorRuntimeObjectP
         elif isinstance(item, torch.Tensor):
             setattr(cloned, descriptor.name, item.clone())
     return cloned
+
+
+def _clone_terminal_pipeline(
+    pipeline: TensorResidentTerminalPipeline,
+) -> TensorResidentTerminalPipeline:
+    state = copy.copy(pipeline.state)
+    state.objects = copy.copy(pipeline.state.objects)
+    for descriptor in fields(pipeline.state.objects):
+        item = getattr(pipeline.state.objects, descriptor.name)
+        if isinstance(item, torch.Tensor):
+            setattr(state.objects, descriptor.name, item.clone())
+    for descriptor in fields(pipeline.state):
+        if descriptor.name == "objects":
+            continue
+        item = getattr(pipeline.state, descriptor.name)
+        if isinstance(item, torch.Tensor):
+            setattr(state, descriptor.name, item.clone())
+    return TensorResidentTerminalPipeline(
+        pipeline.catalog,
+        state,
+        pipeline.targets.clone(),
+    )
+
+
+def _copy_terminal_pipeline_rows_(
+    destination: TensorResidentTerminalPipeline,
+    source: TensorResidentTerminalPipeline,
+    rows: torch.Tensor,
+) -> None:
+    _copy_rows_(destination.state.objects, source.state.objects, rows)
+    for name in (
+        "operation_row",
+        "facing_x_units",
+        "facing_y_units",
+        "freeze_expiry_time",
+    ):
+        getattr(destination.state, name)[rows] = getattr(source.state, name)[rows]
+    batch_size = int(rows.shape[0])
+    for descriptor in fields(destination.targets):
+        left = getattr(destination.targets, descriptor.name)
+        right = getattr(source.targets, descriptor.name)
+        if left.ndim > 0 and left.shape[0] == batch_size:
+            left[rows] = right[rows]
+        elif left.ndim > 1 and left.shape[1] == batch_size:
+            left[:, rows] = right[:, rows]
 
 
 def _clone_projectile_bridge(
@@ -499,6 +583,7 @@ class TensorResidentEngine:
         path_cache: TensorResidentPathCache,
         status: TensorRuntimeStatusPhase,
         objects: TensorRuntimeObjectPhase,
+        terminal_pipeline: TensorResidentTerminalPipeline,
         projectile_bridge: TensorResidentProjectileSpellBridge,
         spell_ingress: TensorResidentSpellActionIngress,
         action_router: TensorResidentActionRouter,
@@ -533,6 +618,7 @@ class TensorResidentEngine:
         self.path_cache = path_cache
         self.status = status
         self.objects = objects
+        self.terminal_pipeline = terminal_pipeline
         self.projectile_bridge = projectile_bridge
         self.spell_ingress = spell_ingress
         self.action_router = action_router
@@ -625,6 +711,27 @@ class TensorResidentEngine:
         status = TensorRuntimeStatusPhase.from_battles(runtime, battles)
         objects = TensorRuntimeObjectPhase.from_battles(
             runtime, battles, max_objects=max_objects
+        )
+        terminal_catalog = TensorTimedTerminalCatalog.compile(
+            catalog_loader,
+            cards,
+            list(cards.names[1:]),
+        )
+        if terminal_catalog.terminal.cards is not cards:
+            raise ValueError("resident terminal catalog expanded after runtime compile")
+        terminal_state = terminal_catalog.create_state(
+            runtime.batch_size,
+            max_objects,
+        )
+        terminal_targets = TensorTerminalPipelineTargets.from_battles(
+            runtime,
+            battles,
+            terminal_catalog,
+        )
+        terminal_pipeline = TensorResidentTerminalPipeline(
+            terminal_catalog,
+            terminal_state,
+            terminal_targets,
         )
         projectile_bridge = TensorResidentProjectileSpellBridge.from_battles(
             runtime, objects, mechanic_battles
@@ -814,6 +921,7 @@ class TensorResidentEngine:
             path_cache=path_cache,
             status=status,
             objects=objects,
+            terminal_pipeline=terminal_pipeline,
             projectile_bridge=projectile_bridge,
             spell_ingress=spell_ingress,
             action_router=action_router,
@@ -853,6 +961,7 @@ class TensorResidentEngine:
         dispatcher.mechanics = mechanics
         dispatcher.passive.entity_id = runtime.battle.entity_id
         objects = _clone_object_phase(self.objects)
+        terminal_pipeline = _clone_terminal_pipeline(self.terminal_pipeline)
         projectile_bridge = _clone_projectile_bridge(self.projectile_bridge)
         spell_ingress = self.spell_ingress.fork(
             runtime,
@@ -878,6 +987,7 @@ class TensorResidentEngine:
             path_cache=self.path_cache,
             status=self.status.clone(),
             objects=objects,
+            terminal_pipeline=terminal_pipeline,
             projectile_bridge=projectile_bridge,
             spell_ingress=spell_ingress,
             action_router=action_router,
@@ -909,6 +1019,28 @@ class TensorResidentEngine:
 
     def _core_catalog_id(self) -> torch.Tensor:
         return self.runtime.card_catalog_index[self.runtime.battle.entity_card]
+
+    def _terminal_entity_supported(self) -> torch.Tensor:
+        catalog_id = self._core_catalog_id()
+        safe = catalog_id.clamp_min(0)
+        active_character = self.runtime.entity_pool.active & (
+            (self.runtime.battle.entity_kind == 0)
+            | (self.runtime.battle.entity_kind == 1)
+        )
+        operation = self.terminal_pipeline.catalog.terminal.source_row_by_card[safe]
+        if not self.terminal_pipeline.catalog.timed_supported.numel():
+            return torch.zeros_like(active_character)
+        safe_operation = operation.clamp_min(0)
+        payload_supported = (
+            self.terminal_pipeline.catalog.terminal.direct_supported[safe_operation]
+            | self.terminal_pipeline.catalog.timed_supported[safe_operation]
+        )
+        mechanics = self.runtime.catalog.mechanic_opcode[safe]
+        death_spawn_opcode = MECHANIC_OPCODE["DeathSpawn"]
+        terminal_only = ((mechanics == 0) | (mechanics == death_spawn_opcode)).all(
+            dim=2
+        )
+        return active_character & (operation >= 0) & payload_supported & terminal_only
 
     def _refresh_projectile_reservations_(self) -> None:
         state = self.objects.objects
@@ -1059,6 +1191,7 @@ class TensorResidentEngine:
             (self.runtime.battle.entity_kind == 0)
             | (self.runtime.battle.entity_kind == 1)
         )
+        live_character = active_character & self.runtime.battle.entity_active
         safe = catalog_id.clamp_min(0)
         known = (catalog_id > 0) | (self.runtime.battle.entity_tower_slot >= 0)
         mechanic_codes = torch.arange(
@@ -1087,7 +1220,37 @@ class TensorResidentEngine:
             mechanic_codes.shape[0], dtype=torch.bool, device=self.device
         )
         admitted_mechanic[list(RESIDENT_DISPATCH_MECHANIC_OPCODES)] = True
-        unsupported_active_mechanic = mechanic_present & ~admitted_mechanic[None, :]
+        death_spawn_opcode = MECHANIC_OPCODE["DeathSpawn"]
+        mechanic_admitted = admitted_mechanic[
+            entity_mechanics.to(torch.int64).clamp_min(0)
+        ] | (entity_mechanics == death_spawn_opcode)
+        unsupported_active_mechanic = (
+            active_character[:, :, None] & (entity_mechanics > 0) & ~mechanic_admitted
+        ).any(dim=(1, 2))
+        terminal_operation = self.terminal_pipeline.catalog.terminal.source_row_by_card[
+            safe
+        ]
+        if self.terminal_pipeline.catalog.timed_supported.numel():
+            safe_terminal_operation = terminal_operation.clamp_min(0)
+            terminal_payload_supported = (
+                self.terminal_pipeline.catalog.terminal.direct_supported[
+                    safe_terminal_operation
+                ]
+                | self.terminal_pipeline.catalog.timed_supported[
+                    safe_terminal_operation
+                ]
+            )
+        else:
+            terminal_payload_supported = torch.zeros_like(active_character)
+        terminal_only_death_spawn = (
+            (entity_mechanics == 0) | (entity_mechanics == death_spawn_opcode)
+        ).all(dim=2)
+        terminal_entity_supported = (
+            active_character
+            & (terminal_operation >= 0)
+            & terminal_payload_supported
+            & terminal_only_death_spawn
+        )
 
         if self.device.type not in {"cpu", "cuda"}:
             publish(torch.ones_like(base_supported), ResidentUnsupportedReason.DEVICE)
@@ -1096,7 +1259,7 @@ class TensorResidentEngine:
             ResidentUnsupportedReason.UNKNOWN_CHARACTER,
         )
         publish(
-            unsupported_active_mechanic.any(dim=1),
+            unsupported_active_mechanic,
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
         )
         publish(effect_present.any(dim=1), ResidentUnsupportedReason.ACTIVE_EFFECT)
@@ -1134,15 +1297,25 @@ class TensorResidentEngine:
         publish(
             (
                 projectile_entity
-                & active_character
+                & live_character
                 & ~bridge_projectile
                 & ((self.runtime.battle.entity_tower_slot < 0) | crown_launch_imminent)
             ).any(dim=1),
             ResidentUnsupportedReason.PROJECTILE_COMBAT,
         )
+        death_spawn_entity = (entity_mechanics == death_spawn_opcode).any(dim=2)
         publish(
-            (self.death_spawn[safe] & active_character).any(dim=1),
+            (death_spawn_entity & active_character & ~terminal_entity_supported).any(
+                dim=1
+            ),
             ResidentUnsupportedReason.DEATH_SPAWN,
+        )
+        timed_live = self.terminal_pipeline.state.objects.allocated.any(dim=1)
+        general_live = self.objects.objects.allocated.any(dim=1)
+        terminal_dead = terminal_entity_supported & ~self.runtime.battle.entity_active
+        publish(
+            (timed_live | terminal_dead.any(dim=1)) & general_live,
+            ResidentUnsupportedReason.OBJECT_PHASE,
         )
         publish(~self.objects.static_supported, ResidentUnsupportedReason.OBJECT_PHASE)
 
@@ -2165,6 +2338,11 @@ class TensorResidentEngine:
             (self.objects.objects, source.objects.objects),
         ):
             _copy_rows_(left, right, rows)
+        _copy_terminal_pipeline_rows_(
+            self.terminal_pipeline,
+            source.terminal_pipeline,
+            rows,
+        )
         _copy_dispatcher_rows_(self.dispatcher, source.dispatcher, rows)
         self.dispatcher.runtime = self.runtime
         self.dispatcher.mechanics = self.mechanics
@@ -2290,7 +2468,17 @@ class TensorResidentEngine:
             phase=TickPhase.COMBAT,
         )
         mechanic_inputs = working._mechanic_inputs(deployment, combat, active)
+        terminal_only_entities = working._terminal_entity_supported()
+        retained_kind = working.runtime.battle.entity_kind.clone()
+        working.runtime.battle.entity_kind.copy_(
+            torch.where(
+                terminal_only_entities,
+                torch.full_like(retained_kind, 2),
+                retained_kind,
+            )
+        )
         mechanic_result = working.dispatcher.step(mechanic_inputs)
+        working.runtime.battle.entity_kind.copy_(retained_kind)
         working.runtime.mark_unsupported(
             active & ~mechanic_result.committed,
             phase=TickPhase.COMBAT,
@@ -2347,12 +2535,49 @@ class TensorResidentEngine:
         pending_new_active = working.objects.objects.active[pending_new_objects].clone()
         working.objects.objects.allocated[pending_new_objects] = False
         working.objects.objects.active[pending_new_objects] = False
+        terminal_dead_before_objects = (
+            active[:, None]
+            & working.runtime.entity_pool.active
+            & ~working.runtime.battle.entity_active
+            & (
+                (working.runtime.battle.entity_kind == 0)
+                | (working.runtime.battle.entity_kind == 1)
+            )
+        )
+        # runtime_objects historically owns cleanup as well as object updates.
+        # Keep character deaths resident until the later terminal cleanup
+        # transaction; admitted terminal rows cannot concurrently contain a
+        # general retained object, so this cannot make a dead target hittable.
+        working.runtime.battle.entity_active |= terminal_dead_before_objects
         objects = working.projectile_bridge.step_objects_(
             working.runtime, working.objects
         )
+        working.runtime.battle.entity_active &= ~terminal_dead_before_objects
         working.objects.objects.allocated[pending_new_objects] = True
         working.objects.objects.active[pending_new_objects] = pending_new_active
-        cleanup = working._cleanup(active)
+        if working.terminal_pipeline.catalog.timed_supported.numel():
+            before_terminal_cleanup = working.runtime.entity_pool.id_order()
+            terminal_dead = (
+                active[:, None]
+                & working.runtime.entity_pool.active
+                & ~working.runtime.battle.entity_active
+            )
+            terminal = working.terminal_pipeline.step(
+                working.runtime,
+                terminal_dead,
+                facing_x_units=working.facing_x_units,
+                facing_y_units=working.facing_y_units,
+            )
+            working.runtime.mark_unsupported(
+                active & ~terminal.committed,
+                phase=TickPhase.CLEANUP_AND_SPAWNS,
+            )
+            active &= terminal.committed
+            cleanup = _removed_entities(before_terminal_cleanup, working.runtime)
+            working._cleanup(active)
+        else:
+            terminal = None
+            cleanup = working._cleanup(active)
         check_win_conditions(core, active)
         working.runtime.mark_dirty(active, phase=TickPhase.WIN_CONDITIONS)
 
@@ -2370,6 +2595,7 @@ class TensorResidentEngine:
             movement=movement,
             status=status,
             objects=objects,
+            terminal=terminal,
             cleanup=cleanup,
             deployment_completed=completed,
             phase_order=RESIDENT_PHASE_ORDER,

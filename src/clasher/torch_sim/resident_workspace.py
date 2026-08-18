@@ -68,6 +68,15 @@ class TensorResidentWorkspace:
         if self.scratch.path_cache is not self.engine.path_cache:
             raise ValueError("speculative engines must share the path cache")
         if (
+            self.scratch.terminal_pipeline.catalog
+            is not self.engine.terminal_pipeline.catalog
+        ):
+            raise ValueError("speculative engines must share terminal catalogs")
+        if self.scratch.terminal_pipeline.state.objects.object_id.data_ptr() == (
+            self.engine.terminal_pipeline.state.objects.object_id.data_ptr()
+        ):
+            raise ValueError("speculative terminal state must own mutable storage")
+        if (
             self.scratch.projectile_bridge.catalog
             is not self.engine.projectile_bridge.catalog
         ):
@@ -145,6 +154,10 @@ class TensorResidentWorkspace:
             (destination.mechanics, source.mechanics),
             (destination.objects, source.objects),
             (destination.objects.objects, source.objects.objects),
+            (
+                destination.terminal_pipeline.state.objects,
+                source.terminal_pipeline.state.objects,
+            ),
             (destination.projectile_bridge, source.projectile_bridge),
             (destination.dispatcher.passive, source.dispatcher.passive),
             (destination.dispatcher.combat_world, source.dispatcher.combat_world),
@@ -154,6 +167,14 @@ class TensorResidentWorkspace:
             (destination.dispatcher.hook, source.dispatcher.hook),
         ):
             _copy_tensor_fields_(left, right)
+        _copy_tensor_fields_(
+            destination.terminal_pipeline.state,
+            source.terminal_pipeline.state,
+        )
+        _copy_tensor_fields_(
+            destination.terminal_pipeline.targets,
+            source.terminal_pipeline.targets,
+        )
         for name in (
             "special_triggered",
             "forced_movement",
