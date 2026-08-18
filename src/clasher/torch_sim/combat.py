@@ -211,6 +211,7 @@ class CombatStepResult:
     target_before: torch.Tensor
     target_after: torch.Tensor
     special_started: torch.Tensor | None = None
+    attack_clock_in_range: torch.Tensor | None = None
 
 
 class UnsupportedStationaryCombatError(RuntimeError):
@@ -329,22 +330,22 @@ def _within_reach(
     attacker_slots: torch.Tensor,
     target_slots: torch.Tensor,
     *,
-    keep: bool,
+    keep: bool | torch.Tensor,
 ) -> torch.Tensor:
     target_ok = target_slots >= 0
     distance, _, _ = _distance_tiles(state, attacker_slots)
     distance_to_target = _gather(distance, target_slots)
     target_radius = _gather(state.collision_radius_units, target_slots)
     base_range = _gather(state.range_units, attacker_slots)
-    if keep:
-        started = _gather(state.started_projectile_hit_cycle, attacker_slots)
-        extension = torch.where(
-            started,
-            torch.full_like(base_range, STARTED_PROJECTILE_KEEP_EXTENSION_UNITS),
-            torch.full_like(base_range, KEEP_TARGET_EXTENSION_UNITS),
-        )
-    else:
-        extension = torch.zeros_like(base_range)
+    keep_mask = torch.as_tensor(keep, dtype=torch.bool, device=state.device)
+    keep_mask = torch.broadcast_to(keep_mask, base_range.shape)
+    started = _gather(state.started_projectile_hit_cycle, attacker_slots)
+    keep_extension = torch.where(
+        started,
+        torch.full_like(base_range, STARTED_PROJECTILE_KEEP_EXTENSION_UNITS),
+        torch.full_like(base_range, KEEP_TARGET_EXTENSION_UNITS),
+    )
+    extension = torch.where(keep_mask, keep_extension, 0)
     reach = (base_range + target_radius + extension).to(torch.float64) / 1_000.0
     return target_ok & (distance_to_target <= reach + GEOMETRY_EPSILON_TILES)
 
@@ -614,6 +615,7 @@ def step_stationary_combat_(
     projectile_launched = torch.zeros_like(state.present)
     special_started = torch.zeros_like(state.present)
     damage_received = torch.zeros_like(state.hp)
+    attack_clock_in_range = torch.zeros_like(state.present)
 
     maximum_id = torch.iinfo(torch.int64).max
     update_order = torch.argsort(
@@ -715,8 +717,17 @@ def step_stationary_combat_(
             base_actionable,
         )
         can_advance = base_actionable & ~_gather(state.stunned, attacker_slots)
+        keep_attack_clock = _gather(
+            state.attack_windup_active, attacker_slots
+        ) | _gather(state.started_projectile_hit_cycle, attacker_slots)
         target_in_range = can_advance & _within_reach(
-            state, attacker_slots, current, keep=False
+            state,
+            attacker_slots,
+            current,
+            keep=keep_attack_clock,
+        )
+        attack_clock_in_range[rows[can_advance], attacker_slots[can_advance]] = (
+            target_in_range[can_advance]
         )
 
         cooldown = _gather(state.attack_cooldown, attacker_slots)
@@ -876,6 +887,7 @@ def step_stationary_combat_(
         target_before=target_before,
         target_after=state.target_slot.clone(),
         special_started=special_started,
+        attack_clock_in_range=attack_clock_in_range,
     )
 
 

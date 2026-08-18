@@ -125,18 +125,18 @@ def _enabled_entity(
     assert stats is not None
     hp = float(stats.scaled_hitpoints or stats.hitpoints or 100)
     damage = float(stats.scaled_damage or stats.damage or 0)
-    common = dict(
-        id=entity_id,
-        position=Position(x, y),
-        player_id=player_id,
-        card_stats=stats,
-        hitpoints=hp,
-        max_hitpoints=hp,
-        damage=damage,
-        range=float(stats.range or 0.0),
-        sight_range=float(stats.sight_range or 0.0),
-        attack_cooldown=10.0,
-    )
+    common = {
+        "id": entity_id,
+        "position": Position(x, y),
+        "player_id": player_id,
+        "card_stats": stats,
+        "hitpoints": hp,
+        "max_hitpoints": hp,
+        "damage": damage,
+        "range": float(stats.range or 0.0),
+        "sight_range": float(stats.sight_range or 0.0),
+        "attack_cooldown": 10.0,
+    }
     if str(stats.card_type).lower() == "building":
         return Building(**common)
     return Troop(
@@ -462,6 +462,56 @@ def test_projectile_lethal_reservation_aggregates_and_applies_native_gates() -> 
         projectile_duration_ms=torch.tensor([[300, 400, 300, 300]]),
     )
     assert reserved.tolist() == [[True, False, False]]
+
+
+@pytest.mark.parametrize(
+    "device",
+    (
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ),
+)
+def test_attack_clock_uses_exact_windup_and_projectile_keep_boundaries(
+    device: str,
+) -> None:
+    # Rows exercise direct windup at +25, ordinary retained acquisition at
+    # that same position, direct windup one unit outside, and a projectile
+    # cycle at its native +500 boundary.
+    state = StationaryCombatState.empty(4, 2, device=device)
+    state.present[:] = True
+    state.alive[:] = True
+    state.entity_id[:, 0] = 1
+    state.entity_id[:, 1] = 2
+    state.owner[:, 1] = 1
+    state.x_units[:, 0] = 10_000
+    state.x_units[:, 1] = torch.tensor(
+        [11_375, 11_375, 11_376, 11_850],
+        dtype=torch.int64,
+        device=device,
+    )
+    state.collision_radius_units[:, 1] = 600
+    state.range_units[:, 0] = 750
+    state.sight_range_units[:, 0] = 5_500
+    state.target_slot[:, 0] = 1
+    state.attack_cooldown[:, 0] = 0.3
+    state.first_hit_ms[:, 0] = 300
+    state.hit_speed_ms[:, 0] = 1_000
+    state.attack_windup_active[[0, 2], 0] = True
+    state.started_projectile_hit_cycle[3, 0] = True
+    state.uses_projectile[3, 0] = True
+    state.combat_enabled[:, 1] = False
+
+    result = step_stationary_combat_(state)
+
+    assert result.attack_clock_in_range is not None
+    assert result.attack_clock_in_range[:, 0].tolist() == [True, False, False, True]
+    assert state.attack_cooldown[:, 0].tolist() == pytest.approx([0.25, 0.3, 0.3, 0.25])
+    assert state.attack_windup_active[:, 0].tolist() == [True, False, False, True]
 
 
 def test_support_mask_rejects_a_mixed_unsupported_row_before_mutation() -> None:

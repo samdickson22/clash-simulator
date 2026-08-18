@@ -3851,9 +3851,9 @@ class TensorResidentEngine:
         target_y = self.combat.y_units.gather(1, target)
         dx = target_x - self.combat.x_units
         dy = target_y - self.combat.y_units
-        target_radius = self.combat.collision_radius_units.gather(1, target)
-        reach = self.combat.range_units + target_radius
-        in_range = dx * dx + dy * dy <= reach * reach
+        if result.attack_clock_in_range is None:
+            raise RuntimeError("stationary combat omitted its movement reach decision")
+        in_range = result.attack_clock_in_range
         observed = (
             active[:, None]
             & self.combat.present
