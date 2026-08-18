@@ -38,6 +38,7 @@ from clasher.unit_traits import is_knockback_immune
 
 from .catalog import MECHANIC_OPCODE
 from .combat import CombatStepResult, StationaryCombatState
+from .entity_pool import INVALID_SLOT
 from .object_adapter import RuntimeObjectKind
 from .objects import (
     ObjectBlueprint,
@@ -1754,6 +1755,10 @@ class TensorResidentProjectileSpellBridge:
             is_area, end_y, start_y
         ).to(torch.int32)
         runtime.battle.entity_hp[rows, entity_slots] = 1
+        # Scalar projectile and area-container entities are born with literal
+        # integer hitpoints. Preserve that externally visible kind even though
+        # retained numeric storage is float64.
+        runtime.battle.entity_hp_integer_kind[rows, entity_slots] = True
         runtime.battle.entity_max_hp[rows, entity_slots] = 1
         runtime.battle.entity_tower_slot[rows, entity_slots] = -1
 
@@ -2075,6 +2080,22 @@ class TensorResidentProjectileSpellBridge:
         )
         target_found = target_match.any(dim=2)
         target_slot = target_match.to(torch.int64).argmax(dim=2)
+        # Entity.take_damage casts every positive incoming amount to float
+        # before subtraction, so even an integral result changes an integer HP
+        # scalar to float. Do this from the committed projectile event plane;
+        # it also includes lethal hits whose target is no longer alive below.
+        kind_changed = (
+            valid & source_found & target_found & (runtime.events.amount > 0.0)
+        )
+        changed_by_target = torch.zeros_like(runtime.battle.entity_hp_integer_kind)
+        changed_by_target.scatter_reduce_(
+            1,
+            target_slot,
+            kind_changed,
+            reduce="amax",
+            include_self=True,
+        )
+        runtime.battle.entity_hp_integer_kind &= ~changed_by_target
         alive = torch.gather(runtime.battle.entity_active, 1, target_slot)
         apply = valid & source_found & target_found & alive
         apply = self._apply_grouped_damage_(
@@ -2266,6 +2287,18 @@ class TensorResidentProjectileSpellBridge:
         selected = candidate & (prior < hp)
         lethal = selected & (prior + actual >= hp)
         applied_damage = torch.where(selected, actual, 0.0)
+        # Grouped projectile events are initially emitted with a zero amount;
+        # their serialized damage is installed here after de-duplication.
+        # Match Entity.take_damage's float conversion at that commit point.
+        changed_by_target = torch.zeros_like(runtime.battle.entity_hp_integer_kind)
+        changed_by_target.scatter_reduce_(
+            1,
+            target_slot,
+            selected & (actual > 0.0),
+            reduce="amax",
+            include_self=True,
+        )
+        runtime.battle.entity_hp_integer_kind &= ~changed_by_target
         total = torch.zeros_like(runtime.battle.entity_hp)
         total.scatter_add_(1, target_slot, applied_damage)
         runtime.battle.entity_hp.copy_(
@@ -2437,3 +2470,6 @@ def _clear_runtime_slots(
                 and value.shape[1] == runtime.max_entities
             ):
                 value[rows, slots] = 0
+    # Physical slot zero is a live entity slot, not the no-target sentinel.
+    # Projectiles, areas, and spawned payload characters start untargeted.
+    runtime.phases.target_slot[rows, slots] = INVALID_SLOT

@@ -200,6 +200,11 @@ def test_combat_projectile_launch_travel_homing_and_impact_match_python(
     assert objects.objects.speed_units_per_tick[0, 0].item() == round(
         oracle_projectile.travel_speed * 1_000 / 20
     )
+    projectile_slot = int(
+        torch.where(runtime.battle.entity_id[0] == oracle_projectile.id)[0][0].item()
+    )
+    assert bool(runtime.battle.entity_hp_integer_kind[0, projectile_slot].item())
+    assert runtime.phases.target_slot[0, projectile_slot].item() == -1
 
     for tick in range(8):
         if tick == 1:
@@ -217,6 +222,9 @@ def test_combat_projectile_launch_travel_homing_and_impact_match_python(
         assert objects.objects.y_units[0, 0].item() == round(
             oracle_projectile.position.y * 1_000
         )
+    assert bool(runtime.battle.entity_hp_integer_kind[0, target_slot].item()) is (
+        type(oracle.entities[2].hitpoints) is int
+    )
 
     assert 3 not in oracle.entities
     assert not objects.objects.allocated.any()
@@ -829,6 +837,9 @@ def test_arrows_grouped_waves_positions_rng_damage_and_lifecycle_match_python(
         assert result.supported_batch.tolist() == [True]
         assert runtime.battle.entity_hp[0, :2].tolist() == [
             oracle.entities[entity_id].hitpoints for entity_id in (1, 2)
+        ]
+        assert runtime.battle.entity_hp_integer_kind[0, :2].tolist() == [
+            type(oracle.entities[entity_id].hitpoints) is int for entity_id in (1, 2)
         ]
         live_python = sorted(
             entity.id
