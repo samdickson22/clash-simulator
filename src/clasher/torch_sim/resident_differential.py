@@ -25,6 +25,7 @@ import torch
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.data import CardDataLoader
+from clasher.entities import Building
 from clasher.kinematics import tiles_to_logic_units
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
@@ -295,7 +296,8 @@ def _oracle_events(
         for entity in battle.entities.values()
     }
     events: list[ResidentEventRecord] = []
-    for entity_id in sorted(set(after) - set(before)):
+    spawned_ids = tuple(sorted(set(after) - set(before)))
+    for entity_id in spawned_ids:
         entity = battle.entities[entity_id]
         payload = engine.runtime.battle.card_to_id.get(
             str(getattr(entity.card_stats, "name", "")), 0
@@ -310,6 +312,32 @@ def _oracle_events(
                 payload,
             )
         )
+    # A deployed building participates in the intrinsic lifetime component in
+    # its spawn tick.  Since it did not exist in ``before``, the ordinary HP
+    # delta pass below cannot reconstruct that event.  Derive only the native
+    # lifetime component's fixed-point loss; do not use total HP loss, which
+    # could incorrectly fold combat damage into the building-lifetime phase.
+    for entity_id in spawned_ids:
+        entity = battle.entities[entity_id]
+        lifetime_ms = getattr(entity.card_stats, "lifetime_ms", None)
+        if not isinstance(entity, Building) or not lifetime_ms:
+            continue
+        elapsed_ms = max(0.0, float(entity.lifetime_elapsed) * 1_000.0)
+        carry_ms = max(0.0, float(entity.lifetime_tick_carry_ms))
+        native_ticks = max(0, round((elapsed_ms - carry_ms) / 50.0))
+        decay_rate = 5000 * round(float(entity.max_hitpoints)) // int(lifetime_ms)
+        lifetime_damage = decay_rate * native_ticks // 100
+        if lifetime_damage > 0:
+            events.append(
+                ResidentEventRecord(
+                    int(TickPhase.BUILDING_LIFETIME),
+                    int(RuntimeEventOpcode.DAMAGE),
+                    0,
+                    entity_id,
+                    float(lifetime_damage),
+                    0,
+                )
+            )
     for entity_id in sorted(set(before) & set(after)):
         old_hp = float(before[entity_id][0])
         new_hp = float(after[entity_id][0])

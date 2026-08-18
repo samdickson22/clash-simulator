@@ -24,11 +24,11 @@ from clasher.torch_sim.resident_differential import (
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "5d3028ed2a28a3d65bf7527884a32a69ab6b60304fc97b5dcc1350620f245079"
+    "9b61ece2b25a1bed606524d99afc6c0674bfb5f90734b13e7a67f54b754052a0"
 )
 EXPECTED_EVIDENCE = {"Knight", "MiniPekka", "Pekka", "Valkyrie"}
 EXPECTED_NO_INTERACTION = {"Bats", "Giant", "HogRider", "Prince", "RoyalHogs"}
-EXPECTED_DIVERGED = {"Cannon", "Skeletons", "Xbow"}
+EXPECTED_DIVERGED = {"Skeletons"}
 EXPECTED_RUNTIME_FALLBACK = {
     "Archers",
     "Bandit",
@@ -265,6 +265,17 @@ def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
         matrix.require_evidence(name).interaction_observed
         for name in matrix.evidence_cards
     )
+    entries = {entry.card_name: entry for entry in matrix.entries}
+    # Their same-tick SPAWN + BUILDING_LIFETIME/DAMAGE event streams match.
+    # Both then fail closed when their active projectile combat reaches the
+    # next immutable preflight; fallback is not parity evidence.
+    for name in ("Cannon", "Xbow"):
+        assert (
+            entries[name].classification
+            is ResidentCoverageClassification.PREFLIGHT_FALLBACK
+        )
+        assert entries[name].divergence_path is None
+        assert not entries[name].is_evidence
     with pytest.raises(ValueError, match="not represented"):
         matrix.require_evidence("Golem")
 
