@@ -24,41 +24,41 @@ from clasher.torch_sim.resident_differential import (
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "613394e90c1e5ce1a17e0956616f50dcbe51f63dcd494454000846eb19b984de"
+    "329da1abd1d127b6c2051761b523b330f760a3452ba135d4718cf17255a69d07"
 )
 EXPECTED_EVIDENCE = {
+    "BabyDragon",
+    "Bats",
+    "Bomber",
     "Cannon",
     "Knight",
     "MiniPekka",
     "Pekka",
+    "Princess",
     "Skeletons",
+    "SpearGoblins",
     "Valkyrie",
 }
 EXPECTED_NO_INTERACTION = {
     "Archers",
+    "Arrows",
     "Bowler",
     "DartGoblin",
+    "Fireball",
     "Giant",
+    "GiantSnowball",
+    "GoblinBarrel",
     "HogRider",
     "MegaMinion",
     "Musketeer",
     "Prince",
+    "Rocket",
     "RoyalHogs",
+    "Zap",
 }
 EXPECTED_DIVERGED = {
-    "Arrows",
-    "BabyDragon",
-    "Bats",
-    "Bomber",
-    "Fireball",
-    "GiantSnowball",
-    "GoblinBarrel",
     "Minions",
-    "Princess",
-    "Rocket",
-    "SpearGoblins",
     "Xbow",
-    "Zap",
 }
 EXPECTED_RUNTIME_FALLBACK: set[str] = set()
 WRAPPER_CHILD_ALIASES = {
@@ -293,11 +293,16 @@ def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
             expected_classifications[name] = classification.value
     matrix.assert_digest(EXPECTED_ENABLED_DIGEST, expected_classifications)
     assert matrix.evidence_cards == (
+        "BabyDragon",
+        "Bats",
+        "Bomber",
         "Cannon",
         "Knight",
         "MiniPekka",
         "Pekka",
+        "Princess",
         "Skeletons",
+        "SpearGoblins",
         "Valkyrie",
     )
     assert all(
@@ -325,7 +330,7 @@ def test_small_card_matrix_digest_is_device_stable(device: str) -> None:
     assert (
         comparison.batched.digest
         == comparison.scalar_exact.digest
-        == ("4f3c9a65765898a6bbd489aa9780d83c4687f8ce1c1785480c28885ce6b0b8b6")
+        == ("f69a127369b1c35635d9f53ce5569eba8571f78779be630225d95099f753187e")
     )
 
 
