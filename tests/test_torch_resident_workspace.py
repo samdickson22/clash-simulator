@@ -8,8 +8,10 @@ import pytest
 import torch
 
 from clasher.battle import BattleState
+from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.resident_engine import TensorResidentEngine
+from clasher.torch_sim.resident_spell_ingress import TensorResidentSpellActionIngress
 from clasher.torch_sim.resident_workspace import TensorResidentWorkspace
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
@@ -190,6 +192,13 @@ def test_workspace_preallocates_once_and_shares_only_immutable_owners(
     assert (
         workspace.scratch.projectile_bridge.catalog is engine.projectile_bridge.catalog
     )
+    assert workspace.scratch.spell_ingress.runtime is workspace.scratch.runtime
+    assert workspace.scratch.spell_ingress.objects is workspace.scratch.objects
+    assert workspace.scratch.spell_ingress.bridge is workspace.scratch.projectile_bridge
+    assert (
+        workspace.scratch.spell_ingress.catalog_to_core.data_ptr()
+        == engine.spell_ingress.catalog_to_core.data_ptr()
+    )
     assert workspace.scratch.runtime.battle.time.data_ptr() != (
         engine.runtime.battle.time.data_ptr()
     )
@@ -247,3 +256,41 @@ def test_unsupported_row_is_atomic_while_supported_peer_commits() -> None:
             torch.testing.assert_close(
                 after[name][1], value[1], rtol=0, atol=0, equal_nan=True, msg=name
             )
+
+
+def test_workspace_spell_action_matches_allocating_engine_without_reconstruction(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = _battle(117)
+    reference = _engine([source.clone()])
+    candidate = _engine([source.clone()])
+    workspace = TensorResidentWorkspace(candidate)
+    action = DiscreteTileActionSpace(canonical_perspective=True).encode_action(
+        1, 9, 27, 0
+    )
+    actions = torch.tensor([[action, NO_OP_ACTION]])
+    order = torch.tensor([[0, 1]])
+
+    def forbidden_init(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("workspace tick reconstructed resident spell ingress")
+
+    expected = reference.step(actions, player_order=order)
+    with monkeypatch.context() as patch:
+        patch.setattr(TensorResidentSpellActionIngress, "__init__", forbidden_init)
+        actual = workspace.step(actions, player_order=order)
+    assert expected.committed.tolist() == [True]
+    assert actual.committed.tolist() == [True]
+    assert actual.spell_ingress.committed.tolist() == [True]
+    _assert_engine_equal(reference, candidate)
+
+    for _ in range(3):
+        expected = reference.step(player_order=order)
+        with monkeypatch.context() as patch:
+            patch.setattr(
+                TensorResidentSpellActionIngress,
+                "__init__",
+                forbidden_init,
+            )
+            actual = workspace.step(player_order=order)
+        assert torch.equal(actual.committed, expected.committed)
+        _assert_engine_equal(reference, candidate)

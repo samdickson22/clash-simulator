@@ -12,7 +12,10 @@ from clasher.battle import BattleState
 
 from .actions import TensorIngressResult
 from .catalog import CardKindOpcode, TensorCardCatalog
-from .projectile_bridge import TensorResidentProjectileSpellBridge
+from .projectile_bridge import (
+    BridgePayloadKind,
+    TensorResidentProjectileSpellBridge,
+)
 from .runtime_objects import TensorRuntimeObjectPhase
 from .runtime_state import TensorBattleRuntime
 
@@ -25,6 +28,17 @@ class TensorResidentSpellIngressResult:
     action_success: torch.Tensor
     player_order: torch.Tensor
     spell_command: torch.Tensor
+
+
+@dataclass(frozen=True)
+class TensorResidentSpellPreflight:
+    """Static episode-safe spell classification for one ingress queue."""
+
+    command_spell: torch.Tensor
+    command_supported: torch.Tensor
+    row_has_spell: torch.Tensor
+    row_mixed: torch.Tensor
+    row_supported: torch.Tensor
 
 
 def _clone_tensor_owner(value: object) -> object:
@@ -121,6 +135,9 @@ class TensorResidentSpellActionIngress:
         objects: TensorRuntimeObjectPhase,
         bridge: TensorResidentProjectileSpellBridge,
         cards: TensorCardCatalog,
+        *,
+        catalog_to_core: torch.Tensor | None = None,
+        episode_supported_core: torch.Tensor | None = None,
     ) -> None:
         if runtime.catalog is not cards:
             raise ValueError("runtime and action catalog must share metadata")
@@ -131,6 +148,35 @@ class TensorResidentSpellActionIngress:
         self.bridge = bridge
         self.cards = cards
         self.device = runtime.device
+        self.catalog_to_core = (
+            torch.tensor(
+                [
+                    runtime.battle.card_to_id.get(name, -1) if name else 0
+                    for name in cards.names
+                ],
+                dtype=torch.int64,
+                device=self.device,
+            )
+            if catalog_to_core is None
+            else catalog_to_core
+        )
+        if self.catalog_to_core.shape != (len(cards.names),):
+            raise ValueError("spell catalog/core mapping has an invalid shape")
+        if episode_supported_core is None:
+            projectile = bridge.catalog.kind == int(BridgePayloadKind.PROJECTILE_SPELL)
+            # The resident bridge now closes grouped-wave lifecycle and
+            # ordinary one-tile knockback. Longer serialized knockback still
+            # differs by one fixed-point unit for some impact geometries, so
+            # those rows remain episode-level fallback until that kernel is
+            # exact as well.
+            unclosed_knockback = bridge.catalog.knockback_units > 1_000
+            self.episode_supported_core = bridge.catalog.supported & ~(
+                projectile & unclosed_knockback
+            )
+        else:
+            self.episode_supported_core = episode_supported_core
+        if self.episode_supported_core.shape != bridge.catalog.supported.shape:
+            raise ValueError("episode spell support has an invalid shape")
 
     @classmethod
     def from_battles(
@@ -145,14 +191,58 @@ class TensorResidentSpellActionIngress:
         )
         return cls(runtime, objects, bridge, cards)
 
-    def _catalog_to_core(self) -> torch.Tensor:
-        return torch.tensor(
-            [
-                self.runtime.battle.card_to_id.get(name, -1) if name else 0
-                for name in self.cards.names
-            ],
-            dtype=torch.int64,
-            device=self.device,
+    def fork(
+        self,
+        runtime: TensorBattleRuntime,
+        objects: TensorRuntimeObjectPhase,
+        bridge: TensorResidentProjectileSpellBridge,
+    ) -> TensorResidentSpellActionIngress:
+        """Bind retained immutable spell metadata to cloned mutable owners."""
+
+        return type(self)(
+            runtime,
+            objects,
+            bridge,
+            self.cards,
+            catalog_to_core=self.catalog_to_core,
+            episode_supported_core=self.episode_supported_core,
+        )
+
+    def preflight(self, ingress: TensorIngressResult) -> TensorResidentSpellPreflight:
+        commands = ingress.commands
+        command_spell = (
+            self.cards.kind[commands.card_id] == int(CardKindOpcode.SPELL)
+        ) & ~commands.is_ability
+        core_card = self.catalog_to_core[commands.card_id]
+        command_supported = (
+            command_spell
+            & (core_card >= 0)
+            & self.episode_supported_core[core_card.clamp_min(0)]
+        )
+        spell_count = torch.zeros(
+            self.runtime.batch_size, dtype=torch.int32, device=self.device
+        )
+        nonspell_count = torch.zeros_like(spell_count)
+        unsupported_count = torch.zeros_like(spell_count)
+        if commands.battle_index.numel():
+            spell_count.scatter_add_(
+                0, commands.battle_index, command_spell.to(torch.int32)
+            )
+            nonspell_count.scatter_add_(
+                0, commands.battle_index, (~command_spell).to(torch.int32)
+            )
+            unsupported_count.scatter_add_(
+                0, commands.battle_index, (~command_supported).to(torch.int32)
+            )
+        row_has_spell = spell_count > 0
+        row_mixed = row_has_spell & (nonspell_count > 0)
+        row_supported = row_has_spell & ~row_mixed & (unsupported_count == 0)
+        return TensorResidentSpellPreflight(
+            command_spell=command_spell,
+            command_supported=command_supported,
+            row_has_spell=row_has_spell,
+            row_mixed=row_mixed,
+            row_supported=row_supported,
         )
 
     def _commit_card_transition(
@@ -218,7 +308,7 @@ class TensorResidentSpellActionIngress:
             ):
                 raise ValueError("player_order rows must be permutations of (0, 1)")
 
-        catalog_to_core = self._catalog_to_core()
+        catalog_to_core = self.catalog_to_core
         command_count = int(commands.card_id.numel())
         command_spell = (
             self.cards.kind[commands.card_id] == int(CardKindOpcode.SPELL)
@@ -313,4 +403,5 @@ class TensorResidentSpellActionIngress:
 __all__ = [
     "TensorResidentSpellActionIngress",
     "TensorResidentSpellIngressResult",
+    "TensorResidentSpellPreflight",
 ]

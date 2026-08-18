@@ -473,6 +473,9 @@ def test_reused_low_slot_uses_new_card_knockback_immunity() -> None:
     runtime, objects, bridge, _ = _runtime_bridge(
         [battle], {"Fireball", "Knight", "Golem"}, max_objects=4
     )
+    bridge.knockback_active[0, 0] = True
+    bridge.knockback_entity_id[0, 0] = 1
+    bridge.knockback_velocity_work[0, 0] = 100
     # Reuse physical slot zero for a newly deployed knockback-immune Golem.
     runtime.battle.entity_id[0, 0] = 2
     runtime.entity_pool.active[0, 0] = True
@@ -501,6 +504,7 @@ def test_reused_low_slot_uses_new_card_knockback_immunity() -> None:
         is True
     )
     assert bridge.knockback_active[0, 0].item() is False
+    assert bridge.knockback_entity_id[0, 0].item() == 0
 
 
 def test_arrows_grouped_waves_positions_rng_damage_and_lifecycle_match_python(

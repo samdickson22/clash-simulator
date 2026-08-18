@@ -72,6 +72,18 @@ class TensorResidentWorkspace:
             is not self.engine.projectile_bridge.catalog
         ):
             raise ValueError("speculative engines must share the projectile catalog")
+        for owner in (self.engine, self.scratch):
+            if owner.spell_ingress.runtime is not owner.runtime:
+                raise ValueError("spell ingress must own its engine runtime")
+            if owner.spell_ingress.objects is not owner.objects:
+                raise ValueError("spell ingress must own its engine object phase")
+            if owner.spell_ingress.bridge is not owner.projectile_bridge:
+                raise ValueError("spell ingress must own its engine projectile bridge")
+        if (
+            self.scratch.spell_ingress.catalog_to_core.data_ptr()
+            != self.engine.spell_ingress.catalog_to_core.data_ptr()
+        ):
+            raise ValueError("speculative engines must share immutable spell metadata")
         if (
             self.scratch.dispatcher.passive_catalog
             is not self.engine.dispatcher.passive_catalog

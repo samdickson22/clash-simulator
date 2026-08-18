@@ -764,6 +764,7 @@ class TensorResidentProjectileSpellBridge:
     blueprint_card_id: torch.Tensor
     damage_group_seen: torch.Tensor
     knockback_active: torch.Tensor
+    knockback_entity_id: torch.Tensor
     knockback_target_units: torch.Tensor
     knockback_velocity_work: torch.Tensor
     spawn_target_distance_discount_sq_units: torch.Tensor
@@ -920,6 +921,11 @@ class TensorResidentProjectileSpellBridge:
             knockback_active=torch.zeros(
                 (runtime.batch_size, runtime.max_entities),
                 dtype=torch.bool,
+                device=runtime.device,
+            ),
+            knockback_entity_id=torch.zeros(
+                (runtime.batch_size, runtime.max_entities),
+                dtype=torch.int64,
                 device=runtime.device,
             ),
             knockback_target_units=torch.zeros(
@@ -1391,6 +1397,13 @@ class TensorResidentProjectileSpellBridge:
         def entity_plane(value: torch.Tensor) -> torch.Tensor:
             return value[:, None] if value.ndim == 1 else value
 
+        retained_identity = (
+            self.knockback_entity_id == runtime.battle.entity_id
+        ) & runtime.entity_pool.active
+        stale = self.knockback_active & ~retained_identity
+        self.knockback_active &= retained_identity
+        self.knockback_entity_id.masked_fill_(stale, 0)
+        self.knockback_velocity_work.masked_fill_(stale, 0)
         center_x_plane = entity_plane(center_x).to(torch.int64)
         center_y_plane = entity_plane(center_y).to(torch.int64)
         fallback_x_plane = entity_plane(fallback_x).to(torch.int64)
@@ -1447,6 +1460,13 @@ class TensorResidentProjectileSpellBridge:
                 eligible,
                 velocity.expand_as(self.knockback_velocity_work).to(torch.int32),
                 self.knockback_velocity_work,
+            )
+        )
+        self.knockback_entity_id.copy_(
+            torch.where(
+                eligible,
+                runtime.battle.entity_id,
+                self.knockback_entity_id,
             )
         )
         self.knockback_active |= eligible
@@ -1737,6 +1757,7 @@ class TensorResidentProjectileSpellBridge:
         runtime: TensorBattleRuntime,
         object_phase: TensorRuntimeObjectPhase,
     ) -> RuntimeObjectPhaseResult:
+        knockback_before = self.knockback_active.clone()
         before_count = runtime.events.count.clone()
         object_ids = object_phase.objects.object_id.clone()
         blueprint_ids = object_phase.objects.blueprint_id.clone().to(torch.int64)
@@ -1771,7 +1792,73 @@ class TensorResidentProjectileSpellBridge:
             impact_y,
             result.supported_batch,
         )
+        self._advance_knockback_(runtime, knockback_before)
         return result
+
+    def _advance_knockback_(
+        self,
+        runtime: TensorBattleRuntime,
+        start_of_tick: torch.Tensor,
+    ) -> None:
+        identity = (
+            self.knockback_entity_id == runtime.battle.entity_id
+        ) & runtime.entity_pool.active
+        stale = self.knockback_active & ~identity
+        self.knockback_active &= identity
+        self.knockback_entity_id.masked_fill_(stale, 0)
+        self.knockback_velocity_work.masked_fill_(stale, 0)
+        active = (
+            start_of_tick
+            & self.knockback_active
+            & runtime.battle.entity_active
+            & identity
+        )
+        next_velocity = self.knockback_velocity_work.to(torch.int64) - 25
+        dx = self.knockback_target_units[:, :, 0].to(
+            torch.int64
+        ) - runtime.battle.entity_x_units.to(torch.int64)
+        dy = self.knockback_target_units[:, :, 1].to(
+            torch.int64
+        ) - runtime.battle.entity_y_units.to(torch.int64)
+        remaining = _integer_sqrt(dx * dx + dy * dy)
+        movement = torch.minimum(
+            torch.minimum(next_velocity.clamp(0, 250), remaining),
+            remaining,
+        )
+        denominator = remaining.clamp_min(1)
+        direction_x = _trunc_div(dx << 8, denominator)
+        direction_y = _trunc_div(dy << 8, denominator)
+        move_x = torch.bitwise_right_shift(direction_x * movement, 8)
+        move_y = torch.bitwise_right_shift(direction_y * movement, 8)
+        runtime.battle.entity_x_units.copy_(
+            torch.where(
+                active,
+                (runtime.battle.entity_x_units.to(torch.int64) + move_x).clamp(
+                    250, 17_750
+                ),
+                runtime.battle.entity_x_units.to(torch.int64),
+            ).to(torch.int32)
+        )
+        runtime.battle.entity_y_units.copy_(
+            torch.where(
+                active,
+                (runtime.battle.entity_y_units.to(torch.int64) + move_y).clamp(
+                    250, 31_750
+                ),
+                runtime.battle.entity_y_units.to(torch.int64),
+            ).to(torch.int32)
+        )
+        self.knockback_velocity_work.copy_(
+            torch.where(
+                active,
+                next_velocity,
+                self.knockback_velocity_work.to(torch.int64),
+            ).to(torch.int32)
+        )
+        finished = active & (next_velocity < 0)
+        self.knockback_active &= ~finished
+        self.knockback_entity_id.masked_fill_(finished, 0)
+        self.knockback_velocity_work.masked_fill_(finished, 0)
 
     def _apply_spawn_impacts_(
         self,

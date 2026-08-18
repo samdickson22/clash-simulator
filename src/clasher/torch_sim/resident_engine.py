@@ -56,6 +56,10 @@ from .resident_pathing import (
     TensorResidentPathCache,
     plan_standard_routes,
 )
+from .resident_spell_ingress import (
+    TensorResidentSpellActionIngress,
+    TensorResidentSpellIngressResult,
+)
 from .runtime_deployment import (
     TensorRuntimeDeployment,
     TensorRuntimeDeploymentResult,
@@ -236,6 +240,7 @@ class ResidentTickResult:
     preflight: ResidentPreflight
     committed: torch.Tensor
     deployment: TensorRuntimeDeploymentResult
+    spell_ingress: TensorResidentSpellIngressResult
     combat: CombatStepResult
     movement: RuntimeMovementResult
     status: RuntimeStatusPhaseResult
@@ -485,6 +490,7 @@ class TensorResidentEngine:
         status: TensorRuntimeStatusPhase,
         objects: TensorRuntimeObjectPhase,
         projectile_bridge: TensorResidentProjectileSpellBridge,
+        spell_ingress: TensorResidentSpellActionIngress,
         pending_projectile_max_duration_ms: torch.Tensor,
         projectile_duration_ms: torch.Tensor,
         combat: StationaryCombatState,
@@ -513,6 +519,7 @@ class TensorResidentEngine:
         self.status = status
         self.objects = objects
         self.projectile_bridge = projectile_bridge
+        self.spell_ingress = spell_ingress
         self.pending_projectile_max_duration_ms = pending_projectile_max_duration_ms
         self.projectile_duration_ms = projectile_duration_ms
         self.combat = combat
@@ -601,6 +608,12 @@ class TensorResidentEngine:
         )
         projectile_bridge = TensorResidentProjectileSpellBridge.from_battles(
             runtime, objects, mechanic_battles
+        )
+        spell_ingress = TensorResidentSpellActionIngress(
+            runtime,
+            objects,
+            projectile_bridge,
+            cards,
         )
         pending_projectile_max_duration_ms = torch.zeros(
             (runtime.batch_size, runtime.max_entities),
@@ -751,6 +764,7 @@ class TensorResidentEngine:
             status=status,
             objects=objects,
             projectile_bridge=projectile_bridge,
+            spell_ingress=spell_ingress,
             pending_projectile_max_duration_ms=pending_projectile_max_duration_ms,
             projectile_duration_ms=projectile_duration_ms,
             combat=combat,
@@ -782,6 +796,8 @@ class TensorResidentEngine:
         dispatcher.runtime = runtime
         dispatcher.mechanics = mechanics
         dispatcher.passive.entity_id = runtime.battle.entity_id
+        objects = _clone_object_phase(self.objects)
+        projectile_bridge = _clone_projectile_bridge(self.projectile_bridge)
         return type(self)(
             runtime=runtime,
             deployment=self.deployment,
@@ -793,8 +809,13 @@ class TensorResidentEngine:
             # warm one shared cache, including rows which later fail closed.
             path_cache=self.path_cache,
             status=self.status.clone(),
-            objects=_clone_object_phase(self.objects),
-            projectile_bridge=_clone_projectile_bridge(self.projectile_bridge),
+            objects=objects,
+            projectile_bridge=projectile_bridge,
+            spell_ingress=self.spell_ingress.fork(
+                runtime,
+                objects,
+                projectile_bridge,
+            ),
             pending_projectile_max_duration_ms=(
                 self.pending_projectile_max_duration_ms.clone()
             ),
@@ -1094,10 +1115,10 @@ class TensorResidentEngine:
         # materializer receives the same admitted-opcode contract.
         command_has_mechanic = (command_mechanics > 0).any(dim=1)
         command_has_effect = (command_effects > 0).any(dim=1)
-        command_kind = self.runtime.catalog.kind[command_cards]
         command_payload = self.deployment.materializer.catalog.supported_payload[
             command_cards
         ]
+        spell_preflight = self.spell_ingress.preflight(ingress)
 
         def command_rows_with(mask: torch.Tensor) -> torch.Tensor:
             rows = torch.zeros(self.batch_size, dtype=torch.int32, device=self.device)
@@ -1109,19 +1130,23 @@ class TensorResidentEngine:
             ResidentUnsupportedReason.CHAMPION_ACTION,
         )
         publish(
-            command_rows_with(command_kind == 3),
+            spell_preflight.row_mixed,
+            ResidentUnsupportedReason.MIXED_PAYLOAD,
+        )
+        publish(
+            spell_preflight.row_has_spell & ~spell_preflight.row_supported,
             ResidentUnsupportedReason.SPELL_ACTION,
         )
         publish(
-            command_rows_with(command_has_mechanic),
+            command_rows_with(command_has_mechanic & ~spell_preflight.command_spell),
             ResidentUnsupportedReason.ACTION_MECHANIC,
         )
         publish(
-            command_rows_with(command_has_effect),
+            command_rows_with(command_has_effect & ~spell_preflight.command_spell),
             ResidentUnsupportedReason.ACTION_EFFECT,
         )
         publish(
-            command_rows_with(~command_payload),
+            command_rows_with(~command_payload & ~spell_preflight.command_spell),
             ResidentUnsupportedReason.MIXED_PAYLOAD,
         )
         return ResidentPreflight(
@@ -2077,14 +2102,40 @@ class TensorResidentEngine:
         if working.batch_size != self.batch_size or working.device != self.device:
             raise ValueError("resident transaction scratch layout differs")
         preflight = self.preflight(actions)
+        action_state = working.deployment.action_state(working.runtime)
+        legal_mask = working.deployment.kernel.legal_action_mask(action_state)
+        ingress = working.deployment.kernel.ingress(
+            action_state,
+            actions,
+            legal_mask=legal_mask,
+        )
+        if player_order is None:
+            choice = working.runtime.battle.rng.randrange(2)
+            resolved_order = torch.stack((1 - choice, choice), dim=1)
+        else:
+            resolved_order = torch.as_tensor(
+                player_order,
+                dtype=torch.int64,
+                device=working.device,
+            )
         working.runtime.supported &= preflight.supported
         deployment = working.deployment.apply(
-            working.runtime, actions, player_order=player_order
+            working.runtime,
+            actions,
+            player_order=resolved_order,
+        )
+        spell_preflight = working.spell_ingress.preflight(ingress)
+        spell_ingress = working.spell_ingress.apply(
+            ingress,
+            player_order=resolved_order,
+        )
+        action_committed = torch.where(
+            spell_preflight.row_has_spell,
+            spell_ingress.committed,
+            deployment.committed,
         )
         active = (
-            preflight.supported
-            & deployment.committed
-            & ~working.runtime.battle.game_over
+            preflight.supported & action_committed & ~working.runtime.battle.game_over
         )
         working.runtime.supported &= active
 
@@ -2182,6 +2233,7 @@ class TensorResidentEngine:
             preflight=preflight,
             committed=committed,
             deployment=deployment,
+            spell_ingress=spell_ingress,
             combat=combat,
             movement=movement,
             status=status,
