@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import json
 from pathlib import Path
 from typing import cast
@@ -246,6 +247,118 @@ def test_periodic_hits_and_death_events_follow_entity_then_source_order() -> Non
         assert actual.hitpoints == oracle.hitpoints
         assert actual.is_alive is oracle.is_alive
         assert actual._periodic_damage_effects == oracle._periodic_damage_effects
+
+
+@pytest.mark.parametrize(
+    "device",
+    [
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ],
+)
+def test_multiple_periodic_deadlines_are_tensor_expanded_in_exact_order(
+    device: str,
+) -> None:
+    battle = _empty_battle()
+    first = _spawn_troop(battle, 4.0)
+    second = _spawn_troop(battle, 8.0)
+    first.apply_periodic_damage(
+        source_id=20,
+        source_kind=None,
+        duration=1.0,
+        hit_interval=0.05,
+        damage=2.0,
+    )
+    first.apply_periodic_damage(
+        source_id=10,
+        source_kind=None,
+        duration=1.0,
+        hit_interval=0.1,
+        damage=3.0,
+    )
+    second.apply_periodic_damage(
+        source_id=30,
+        source_kind=None,
+        duration=1.0,
+        hit_interval=0.05,
+        damage=4.0,
+    )
+    expected = battle.clone()
+    for entity in expected.entities.values():
+        cast(Troop, entity).update_buff_component(0.2)
+
+    runtime = TensorBattleRuntime.from_battles(
+        [battle], device=device, max_entities=8, event_capacity=32
+    )
+    phase = TensorRuntimeStatusPhase.from_battles(runtime, [battle])
+    result = step_runtime_status_phase_(runtime, phase, dt=0.2)
+
+    assert result.supported_batch.tolist() == [True]
+    assert runtime.events.source_id[0, :10].tolist() == [
+        20,
+        20,
+        20,
+        20,
+        10,
+        10,
+        30,
+        30,
+        30,
+        30,
+    ]
+    candidate = battle.clone()
+    phase.sync_to_battles(runtime, [candidate])
+    for entity_id, oracle in expected.entities.items():
+        actual = candidate.entities[entity_id]
+        assert actual.hitpoints == oracle.hitpoints
+        assert actual._periodic_damage_effects == oracle._periodic_damage_effects
+
+
+def test_capacity_bounded_scheduler_drops_only_hits_after_lethal_event() -> None:
+    battle = _empty_battle()
+    target = _spawn_troop(battle, 5.0)
+    target.hitpoints = 5.0
+    target.apply_periodic_damage(
+        source_id=9,
+        source_kind=None,
+        duration=1.0,
+        hit_interval=0.01,
+        damage=5.0,
+    )
+    runtime = TensorBattleRuntime.from_battles(
+        [battle], max_entities=4, event_capacity=2
+    )
+    phase = TensorRuntimeStatusPhase.from_battles(runtime, [battle])
+
+    result = step_runtime_status_phase_(runtime, phase, dt=0.05)
+
+    assert result.supported_batch.tolist() == [True]
+    assert runtime.events.opcode[0, :2].tolist() == [
+        RuntimeEventOpcode.DAMAGE,
+        RuntimeEventOpcode.DEATH,
+    ]
+    assert runtime.events.source_id[0, :2].tolist() == [9, 9]
+
+
+def test_resident_status_step_has_no_unconditional_host_sync_or_checked_append() -> (
+    None
+):
+    from clasher.torch_sim import runtime_status
+
+    step_source = inspect.getsource(step_runtime_status_phase_)
+    periodic_source = inspect.getsource(runtime_status._periodic_resolution)
+    append_source = inspect.getsource(runtime_status._append_events_prevalidated)
+
+    assert "counts.max().item()" not in periodic_source
+    assert ".item()" not in periodic_source
+    assert "runtime.events.append(" not in step_source
+    assert "runtime.assert_invariants()" not in step_source
+    assert ".item()" not in append_source
 
 
 def test_lifetime_damage_and_death_events_are_interleaved_in_id_order() -> None:

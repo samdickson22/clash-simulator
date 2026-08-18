@@ -345,6 +345,55 @@ def _scatter_runtime(
     destination.dirty[rows] = source.dirty[rows]
 
 
+def _copy_tensor_fields_(destination: object, source: object) -> None:
+    for descriptor in fields(destination):  # type: ignore[arg-type]
+        left = getattr(destination, descriptor.name)
+        right = getattr(source, descriptor.name)
+        if isinstance(left, torch.Tensor) and isinstance(right, torch.Tensor):
+            if left.shape != right.shape or left.dtype != right.dtype:
+                raise ValueError(
+                    f"object-phase plane {descriptor.name!r} changed layout"
+                )
+            left.copy_(right)
+
+
+def _working_runtime(
+    runtime: TensorBattleRuntime,
+    phase: TensorRuntimeObjectPhase,
+) -> TensorBattleRuntime:
+    """Refresh a retained atomic object-phase buffer when its layout is stable."""
+
+    working = getattr(phase, "_working_runtime", None)
+    compatible = (
+        isinstance(working, TensorBattleRuntime)
+        and working.device == runtime.device
+        and working.catalog is runtime.catalog
+        and working.batch_size == runtime.batch_size
+        and working.max_entities == runtime.max_entities
+        and working.events.capacity == runtime.events.capacity
+        and working.card_catalog_index.shape == runtime.card_catalog_index.shape
+    )
+    if not compatible:
+        working = runtime.clone()
+        phase._working_runtime = working  # type: ignore[attr-defined]
+        return working
+
+    assert isinstance(working, TensorBattleRuntime)
+    _copy_tensor_fields_(working.battle, runtime.battle)
+    _copy_tensor_fields_(working.battle.rng, runtime.battle.rng)
+    working.battle.card_names = runtime.battle.card_names
+    working.battle.card_to_id = runtime.battle.card_to_id
+    working.card_catalog_index.copy_(runtime.card_catalog_index)
+    working.entity_pool.active.copy_(runtime.entity_pool.active)
+    working.entity_pool.next_entity_id.copy_(runtime.entity_pool.next_entity_id)
+    _copy_tensor_fields_(working.status, runtime.status)
+    _copy_tensor_fields_(working.phases, runtime.phases)
+    _copy_tensor_fields_(working.events, runtime.events)
+    working.supported.copy_(runtime.supported)
+    working.dirty.copy_(runtime.dirty)
+    return working
+
+
 def _object_source(
     state: TensorObjectState,
     source_id: torch.Tensor,
@@ -476,19 +525,36 @@ def _append_events(
     )
     supported &= ~overflow
     admitted &= supported[:, None]
-    # TensorRuntimeEvents.append is empty-mask safe. Calling it unconditionally
-    # avoids one CUDA host synchronization for every object-event wave.
-    runtime.events.append(
-        phase=TickPhase.OBJECTS,
-        opcode=opcode,
-        valid=admitted,
-        source_id=source_id,
-        target_id=target_id,
-        x_units=x_units,
-        y_units=y_units,
-        amount=amount,
-        payload=payload,
-    )
+    # Capacity is proven above, so write the padded lanes directly instead of
+    # repeating TensorRuntimeEvents.append's host-side defensive preflight.
+    events = runtime.events
+    width = admitted.shape[1]
+
+    def lanes(value: float | torch.Tensor, dtype: torch.dtype) -> torch.Tensor:
+        return torch.broadcast_to(
+            torch.as_tensor(value, dtype=dtype, device=runtime.device),
+            (runtime.batch_size, width),
+        )
+
+    local = torch.cumsum(admitted.to(torch.int64), dim=1) - 1
+    destinations = events.count.to(torch.int64)[:, None] + local
+    row_lanes = torch.arange(runtime.batch_size, device=runtime.device)[
+        :, None
+    ].expand_as(admitted)
+    row_index = row_lanes[admitted]
+    event_index = destinations[admitted]
+    for destination, value in (
+        (events.phase, lanes(int(TickPhase.OBJECTS), torch.int8)),
+        (events.opcode, lanes(opcode, torch.int16)),
+        (events.source_id, lanes(source_id, torch.int64)),
+        (events.target_id, lanes(target_id, torch.int64)),
+        (events.x_units, lanes(x_units, torch.int32)),
+        (events.y_units, lanes(y_units, torch.int32)),
+        (events.amount, lanes(amount, torch.float64)),
+        (events.payload, lanes(payload, torch.int64)),
+    ):
+        destination[row_index, event_index] = value[admitted]
+    events.count.add_(admitted.sum(dim=1, dtype=events.count.dtype))
     return overflow
 
 
@@ -618,11 +684,16 @@ def _initialize_spawned_objects(
     # Allocate its monotonic ID into the lowest free slot directly, avoiding
     # EntityPool.allocate's defensive host-side capacity synchronization.
     free = ~runtime.entity_pool.active
-    slot_numbers = torch.arange(
+    slot_numbers = getattr(phase, "_entity_slot_numbers", None)
+    if not isinstance(slot_numbers, torch.Tensor) or slot_numbers.shape != (
         runtime.entity_pool.capacity,
-        dtype=torch.int64,
-        device=runtime.device,
-    )
+    ):
+        slot_numbers = torch.arange(
+            runtime.entity_pool.capacity,
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        phase._entity_slot_numbers = slot_numbers  # type: ignore[attr-defined]
     free_keys = torch.where(
         free,
         slot_numbers[None, :],
@@ -678,7 +749,6 @@ def step_runtime_object_phase_(
 ) -> RuntimeObjectPhaseResult:
     """Advance one retained object phase without Python object stepping."""
 
-    runtime.assert_invariants()
     if phase.batch_size != runtime.batch_size or phase.device != runtime.device:
         raise ValueError("runtime object phase has incompatible batch/device")
     selected = (
@@ -696,7 +766,7 @@ def step_runtime_object_phase_(
         supported &= False
 
     event_count_before = runtime.events.count.clone()
-    working = runtime.clone()
+    working = _working_runtime(runtime, phase)
     object_preview = _clone_objects(phase.objects)
     object_result = step_object_phase(object_preview)
     supported &= ~object_result.unsupported_batch

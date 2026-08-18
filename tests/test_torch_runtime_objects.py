@@ -167,6 +167,12 @@ def test_retained_projectile_travel_and_direct_impact_are_exact_on_device(
 
     _oracle_object_tick(oracle)
     first = step_runtime_object_phase_(runtime, phase)
+    working = phase._working_runtime  # type: ignore[attr-defined]
+    working_pointers = (
+        working.battle.entity_id.data_ptr(),
+        working.events.opcode.data_ptr(),
+        working.status.stun_timer.data_ptr(),
+    )
     assert first.supported_batch.tolist() == [True]
     assert int(runtime.battle.entity_x_units[0, 1].item()) == 400
     assert oracle.entities[2].position.x == 0.4
@@ -175,12 +181,19 @@ def test_retained_projectile_travel_and_direct_impact_are_exact_on_device(
     _oracle_object_tick(oracle)
     second = step_runtime_object_phase_(runtime, phase)
     assert second.supported_batch.tolist() == [True]
+    assert phase._working_runtime is working  # type: ignore[attr-defined]
+    assert (
+        working.battle.entity_id.data_ptr(),
+        working.events.opcode.data_ptr(),
+        working.status.stun_timer.data_ptr(),
+    ) == working_pointers
     assert int(runtime.battle.entity_x_units[0, 1].item()) == 800
     assert oracle.entities[2].position.x == 0.8
 
     _oracle_object_tick(oracle)
     third = step_runtime_object_phase_(runtime, phase)
     assert third.supported_batch.tolist() == [True]
+    assert phase._working_runtime is working  # type: ignore[attr-defined]
     assert runtime.battle.entity_hp[0, 0].item() == 377
     assert runtime.battle.entity_id[0, :2].tolist() == [1, 0]
     assert third.removed.entity_ids[0, 0].item() == 2
@@ -316,6 +329,8 @@ def test_runtime_event_application_has_one_dynamic_bound_sync_only() -> None:
     assert "for object_slot in range" not in step_source
     assert ".item()" not in append_source
     assert ".item()" not in spawn_source
+    assert "events.append(" not in append_source
+    assert "runtime.assert_invariants()" not in step_source
 
 
 def test_no_python_object_update_is_called_on_retained_path(

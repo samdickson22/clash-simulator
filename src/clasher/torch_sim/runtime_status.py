@@ -242,6 +242,7 @@ class _PeriodicResolution:
     event_y_units: torch.Tensor
     event_amount: torch.Tensor
     event_payload: torch.Tensor
+    truncated: torch.Tensor
 
 
 def _clone_status(status: TensorStatusState) -> TensorStatusState:
@@ -315,57 +316,92 @@ def _periodic_resolution(
     source_ids = _ordered(schedule.source_ids, selection)
     source_kind = _ordered(schedule.source_kind, selection)
     schedule_valid = _ordered(schedule.valid, selection)
-    maximum_hits = max(1, int(counts.max().item()))
-    hit_index = torch.arange(maximum_hits, device=runtime.device)
-    raw_valid = (
-        selection.valid[:, :, None, None]
-        & schedule_valid[:, :, :, None]
-        & (hit_index < counts[:, :, :, None])
-        & alive[:, :, None, None]
+    batch_size, entity_count, source_count = counts.shape
+    event_capacity = runtime.events.capacity
+
+    # Expand due hits into a fixed event-capacity worklist. Counts remain in
+    # entity-ID/source-insertion order, so the first cumulative source crossing
+    # for each ordinal exactly matches the oracle's nested loops.
+    active_counts = torch.where(
+        selection.valid[:, :, None] & schedule_valid & alive[:, :, None],
+        counts,
+        torch.zeros_like(counts),
     )
-    raw_damage = damage[:, :, :, None].expand_as(raw_valid).to(torch.float64)
-    flat_valid = raw_valid.flatten(2)
-    flat_damage = raw_damage.flatten(2)
-    accumulated = torch.cumsum(torch.where(flat_valid, flat_damage, 0.0), dim=2)
-    exclusive = accumulated - torch.where(flat_valid, flat_damage, 0.0)
-    committed = flat_valid & (exclusive < hitpoints[:, :, None])
-    lethal = committed & (exclusive + flat_damage >= hitpoints[:, :, None])
-    committed_damage = torch.where(committed, flat_damage, 0.0)
-    next_hitpoints = (hitpoints - committed_damage.sum(dim=2)).clamp_min(0.0)
+    flat_counts = active_counts.flatten(1)
+    cumulative = torch.cumsum(flat_counts, dim=1)
+    hit_ordinal = torch.arange(event_capacity, device=runtime.device)[None, :]
+    raw_valid = hit_ordinal < cumulative[:, -1, None]
+    source_flat = (
+        (hit_ordinal[:, :, None] < cumulative[:, None, :]).to(torch.int64).argmax(dim=2)
+    )
+    target_index = torch.div(source_flat, source_count, rounding_mode="floor")
+    source_index = torch.remainder(source_flat, source_count)
+
+    flat_damage = damage.flatten(1).to(torch.float64)
+    flat_sources = source_ids.flatten(1)
+    flat_kinds = source_kind.flatten(1)
+    event_damage = torch.gather(flat_damage, 1, source_flat)
+    event_sources = torch.gather(flat_sources, 1, source_flat)
+    event_kinds = torch.gather(flat_kinds, 1, source_flat)
+    event_hitpoints = torch.gather(hitpoints, 1, target_index)
+
+    target_axis = torch.arange(entity_count, device=runtime.device)
+    target_lanes = target_index[:, :, None] == target_axis[None, None, :]
+    contribution = torch.where(raw_valid, event_damage, 0.0)[:, :, None] * target_lanes
+    accumulated = torch.cumsum(contribution, dim=1)
+    exclusive = torch.gather(
+        accumulated - contribution,
+        2,
+        target_index[:, :, None],
+    )[:, :, 0]
+    committed = raw_valid & (exclusive < event_hitpoints)
+    lethal = committed & (exclusive + event_damage >= event_hitpoints)
+    committed_damage = torch.where(committed, event_damage, 0.0)
+    damage_by_target = torch.zeros_like(hitpoints)
+    damage_by_target.scatter_add_(1, target_index, committed_damage)
+    next_hitpoints = (hitpoints - damage_by_target).clamp_min(0.0)
     next_alive = alive & (next_hitpoints > 0.0)
     died = alive & ~next_alive
     hitpoint_loss = hitpoints - next_hitpoints
 
-    flattened_sources = source_ids[:, :, :, None].expand_as(raw_valid).flatten(2)
-    flattened_kinds = source_kind[:, :, :, None].expand_as(raw_valid).flatten(2)
-    target_ids = selection.entity_ids[:, :, None].expand_as(flattened_sources)
+    target_ids = torch.gather(selection.entity_ids, 1, target_index)
     ordered_x = _ordered(runtime.battle.entity_x_units, selection)
     ordered_y = _ordered(runtime.battle.entity_y_units, selection)
-    event_x = ordered_x[:, :, None].expand_as(flattened_sources)
-    event_y = ordered_y[:, :, None].expand_as(flattened_sources)
+    event_x = torch.gather(ordered_x, 1, target_index)
+    event_y = torch.gather(ordered_y, 1, target_index)
 
-    pair_valid = torch.stack((committed, lethal), dim=3).flatten(1)
-    damage_opcode = torch.full_like(flattened_sources, RuntimeEventOpcode.DAMAGE)
-    death_opcode = torch.full_like(flattened_sources, RuntimeEventOpcode.DEATH)
-    pair_opcode = torch.stack((damage_opcode, death_opcode), dim=3).flatten(1)
-    pair_source = torch.stack((flattened_sources, flattened_sources), dim=3).flatten(1)
-    pair_target = torch.stack((target_ids, target_ids), dim=3).flatten(1)
-    pair_x = torch.stack((event_x, event_x), dim=3).flatten(1)
-    pair_y = torch.stack((event_y, event_y), dim=3).flatten(1)
+    pair_valid = torch.stack((committed, lethal), dim=2).flatten(1)
+    damage_opcode = torch.full_like(event_sources, RuntimeEventOpcode.DAMAGE)
+    death_opcode = torch.full_like(event_sources, RuntimeEventOpcode.DEATH)
+    pair_opcode = torch.stack((damage_opcode, death_opcode), dim=2).flatten(1)
+    pair_source = torch.stack((event_sources, event_sources), dim=2).flatten(1)
+    pair_target = torch.stack((target_ids, target_ids), dim=2).flatten(1)
+    pair_x = torch.stack((event_x, event_x), dim=2).flatten(1)
+    pair_y = torch.stack((event_y, event_y), dim=2).flatten(1)
     pair_amount = torch.stack(
-        (flat_damage, torch.zeros_like(flat_damage)), dim=3
+        (event_damage, torch.zeros_like(event_damage)), dim=2
     ).flatten(1)
-    pair_payload = torch.stack((flattened_kinds, flattened_kinds), dim=3).flatten(1)
-    lethal_any = lethal.any(dim=2)
-    lethal_flat_index = lethal.to(torch.int64).argmax(dim=2)
-    lethal_source_index = torch.div(
-        lethal_flat_index, maximum_hits, rounding_mode="floor"
+    pair_payload = torch.stack((event_kinds, event_kinds), dim=2).flatten(1)
+
+    first_lethal_source = torch.full(
+        (batch_size, entity_count),
+        source_count,
+        dtype=torch.int64,
+        device=runtime.device,
     )
-    source_index = torch.arange(counts.shape[2], device=runtime.device)
+    first_lethal_source.scatter_reduce_(
+        1,
+        target_index,
+        torch.where(lethal, source_index, source_count),
+        reduce="amin",
+        include_self=True,
+    )
+    lethal_any = first_lethal_source < source_count
+    source_axis = torch.arange(source_count, device=runtime.device)
     clear_ordered = (
         lethal_any[:, :, None]
         & schedule_valid
-        & (source_index >= lethal_source_index[:, :, None])
+        & (source_axis >= first_lethal_source[:, :, None])
     )
     ordered_source_slots = _ordered(schedule.source_slots, selection)
     clear_periodic = torch.zeros_like(schedule.valid)
@@ -375,6 +411,15 @@ def _periodic_resolution(
         selection.slots[clear_batch, clear_entity],
         ordered_source_slots[clear_batch, clear_entity, clear_source],
     ] = True
+
+    represented_by_target = torch.zeros_like(active_counts[:, :, 0])
+    represented_by_target.scatter_add_(
+        1,
+        target_index,
+        raw_valid.to(represented_by_target.dtype),
+    )
+    remaining_hits = active_counts.sum(dim=2) > represented_by_target
+    truncated = (remaining_hits & next_alive).any(dim=1)
     return _PeriodicResolution(
         hitpoints=next_hitpoints,
         alive=next_alive,
@@ -389,6 +434,7 @@ def _periodic_resolution(
         event_y_units=pair_y,
         event_amount=pair_amount,
         event_payload=pair_payload,
+        truncated=truncated,
     )
 
 
@@ -421,6 +467,43 @@ def _lifetime_events(
     return event_valid, opcode, zeros, target, x, y, amount, zeros
 
 
+def _append_events_prevalidated(
+    runtime: TensorBattleRuntime,
+    *,
+    phase: int,
+    valid: torch.Tensor,
+    opcode: torch.Tensor,
+    source_id: torch.Tensor,
+    target_id: torch.Tensor,
+    x_units: torch.Tensor,
+    y_units: torch.Tensor,
+    amount: torch.Tensor,
+    payload: torch.Tensor,
+) -> None:
+    """Append lanes after the combined status-capacity preflight."""
+
+    events = runtime.events
+    local = torch.cumsum(valid.to(torch.int64), dim=1) - 1
+    destinations = events.count.to(torch.int64)[:, None] + local
+    rows = torch.arange(runtime.batch_size, device=runtime.device)[:, None].expand_as(
+        valid
+    )
+    row_index = rows[valid]
+    event_index = destinations[valid]
+    for destination, value in (
+        (events.phase, torch.full_like(valid, phase, dtype=torch.int8)),
+        (events.opcode, opcode.to(torch.int16)),
+        (events.source_id, source_id.to(torch.int64)),
+        (events.target_id, target_id.to(torch.int64)),
+        (events.x_units, x_units.to(torch.int32)),
+        (events.y_units, y_units.to(torch.int32)),
+        (events.amount, amount.to(torch.float64)),
+        (events.payload, payload.to(torch.int64)),
+    ):
+        destination[row_index, event_index] = value[valid]
+    events.count.add_(valid.sum(dim=1, dtype=events.count.dtype))
+
+
 def apply_runtime_status_payloads_(
     runtime: TensorBattleRuntime,
     phase: TensorRuntimeStatusPhase,
@@ -440,7 +523,6 @@ def apply_runtime_status_payloads_(
     payloads do not consume RNG, matching their Python mechanic.
     """
 
-    runtime.assert_invariants()
     _validate_shapes(runtime, phase)
     core_card = torch.as_tensor(source_card, dtype=torch.int64, device=runtime.device)
     expected = (runtime.batch_size, runtime.max_entities)
@@ -573,7 +655,6 @@ def step_runtime_status_phase_(
     mutated. The supported path contains no Python ``Entity`` calls.
     """
 
-    runtime.assert_invariants()
     _validate_shapes(runtime, phase)
     selected = (
         torch.ones(runtime.batch_size, dtype=torch.bool, device=runtime.device)
@@ -582,8 +663,13 @@ def step_runtime_status_phase_(
     )
     if selected.shape != (runtime.batch_size,):
         raise ValueError("battle_mask must have shape [batch_size]")
+    trusted_delta = isinstance(dt, (int, float)) or (
+        isinstance(dt, torch.Tensor) and dt is runtime.battle.dt
+    )
     delta = torch.as_tensor(dt, dtype=torch.float64, device=runtime.device)
-    if bool((delta < 0).any().item()):
+    if isinstance(dt, (int, float)) and float(dt) < 0:
+        raise ValueError("dt must be non-negative")
+    if not trusted_delta and bool((delta < 0).any().item()):
         raise ValueError("dt must be non-negative")
     try:
         delta = torch.broadcast_to(delta, (runtime.batch_size,))
@@ -614,9 +700,8 @@ def step_runtime_status_phase_(
         & (~known | (mechanic_count > 0) | (runtime.battle.entity_kind == 1))
     )
     unsupported_rows = supported & unsafe_periodic.any(dim=1)
-    if bool(unsupported_rows.any().item()):
-        runtime.mark_unsupported(unsupported_rows, phase=TickPhase.STATUS)
-        supported &= ~unsupported_rows
+    runtime.mark_unsupported(unsupported_rows, phase=TickPhase.STATUS)
+    supported &= ~unsupported_rows
 
     present = runtime.entity_pool.active
     character = (runtime.battle.entity_kind == 0) | (runtime.battle.entity_kind == 1)
@@ -650,61 +735,73 @@ def step_runtime_status_phase_(
     event_delta = lifetime_event[0].sum(
         dim=1, dtype=torch.int64
     ) + periodic.event_valid.sum(dim=1, dtype=torch.int64)
-    if bool(
-        (runtime.events.count.to(torch.int64) + event_delta > runtime.events.capacity)
-        .any()
-        .item()
-    ):
-        overflow = (
-            runtime.events.count.to(torch.int64) + event_delta > runtime.events.capacity
-        ) & supported
-        runtime.mark_unsupported(overflow, phase=TickPhase.STATUS)
-        supported &= ~overflow
-        # Recompute with overflow rows masked so no phase mutation leaks.
-        component = supported[:, None] & present & character
-        building = component & (runtime.battle.entity_kind == 1)
-        lifetime = tick_building_lifetime(
-            hitpoints=runtime.battle.entity_hp,
-            max_hitpoints=runtime.battle.entity_max_hp,
-            lifetime_ms=phase.lifetime_ms,
-            lifetime_elapsed=phase.lifetime_elapsed,
-            lifetime_decay_work=phase.lifetime_decay_work,
-            lifetime_tick_carry_ms=phase.lifetime_tick_carry_ms,
-            is_alive=runtime.battle.entity_active,
-            dt=delta[:, None],
-            component_mask=building,
-        )
-        preview_status = _clone_status(runtime.status)
-        slow_was_active = runtime.status.slow_active.any(dim=2)
-        status_component = component & lifetime.is_alive
-        schedule = preview_status.tick(delta[:, None], component_mask=status_component)
-        selection = runtime.entity_pool.id_order(component)
-        periodic = _periodic_resolution(
-            runtime,
-            schedule,
-            selection,
-            _ordered(lifetime.hitpoints, selection),
-            _ordered(lifetime.is_alive, selection),
-        )
-        lifetime_event = _lifetime_events(
-            runtime, selection, lifetime.hitpoint_loss, lifetime.died
-        )
-        event_delta = lifetime_event[0].sum(
-            dim=1, dtype=torch.int64
-        ) + periodic.event_valid.sum(dim=1, dtype=torch.int64)
+    event_delta = torch.where(
+        periodic.truncated,
+        torch.full_like(event_delta, runtime.events.capacity + 1),
+        event_delta,
+    )
+    overflow = supported & (
+        runtime.events.count.to(torch.int64) + event_delta > runtime.events.capacity
+    )
+    runtime.mark_unsupported(overflow, phase=TickPhase.STATUS)
+    supported &= ~overflow
+    component = supported[:, None] & present & character
+    status_component = component & lifetime.is_alive
+    selection = EntitySelection(
+        slots=selection.slots,
+        entity_ids=selection.entity_ids,
+        valid=selection.valid & supported[:, None],
+    )
+    lifetime_event = (
+        lifetime_event[0] & supported[:, None],
+        *lifetime_event[1:],
+    )
+    periodic_event_valid = periodic.event_valid & supported[:, None]
 
     # Commit only after support and aggregate event-capacity preflight.
-    runtime.battle.entity_hp.copy_(lifetime.hitpoints)
-    runtime.battle.entity_active.copy_(lifetime.is_alive)
-    phase.lifetime_elapsed.copy_(lifetime.lifetime_elapsed)
-    phase.lifetime_decay_work.copy_(lifetime.lifetime_decay_work)
-    phase.lifetime_tick_carry_ms.copy_(lifetime.lifetime_tick_carry_ms)
+    runtime.battle.entity_hp.copy_(
+        torch.where(component, lifetime.hitpoints, runtime.battle.entity_hp)
+    )
+    runtime.battle.entity_active.copy_(
+        torch.where(component, lifetime.is_alive, runtime.battle.entity_active)
+    )
+    phase.lifetime_elapsed.copy_(
+        torch.where(component, lifetime.lifetime_elapsed, phase.lifetime_elapsed)
+    )
+    phase.lifetime_decay_work.copy_(
+        torch.where(component, lifetime.lifetime_decay_work, phase.lifetime_decay_work)
+    )
+    phase.lifetime_tick_carry_ms.copy_(
+        torch.where(
+            component,
+            lifetime.lifetime_tick_carry_ms,
+            phase.lifetime_tick_carry_ms,
+        )
+    )
     # ResidentEngine refreshes phase workspaces from the canonical core at the
     # next combat boundary. Publish every fixed-point lifetime accumulator so
     # the next tick cannot reset fractional decay progress.
-    runtime.battle.entity_lifetime_elapsed.copy_(lifetime.lifetime_elapsed)
-    runtime.battle.entity_lifetime_decay_work.copy_(lifetime.lifetime_decay_work)
-    runtime.battle.entity_lifetime_tick_carry_ms.copy_(lifetime.lifetime_tick_carry_ms)
+    runtime.battle.entity_lifetime_elapsed.copy_(
+        torch.where(
+            component,
+            lifetime.lifetime_elapsed,
+            runtime.battle.entity_lifetime_elapsed,
+        )
+    )
+    runtime.battle.entity_lifetime_decay_work.copy_(
+        torch.where(
+            component,
+            lifetime.lifetime_decay_work,
+            runtime.battle.entity_lifetime_decay_work,
+        )
+    )
+    runtime.battle.entity_lifetime_tick_carry_ms.copy_(
+        torch.where(
+            component,
+            lifetime.lifetime_tick_carry_ms,
+            runtime.battle.entity_lifetime_tick_carry_ms,
+        )
+    )
     update_speed = component & slow_was_active & phase.original_speed_valid
     phase.movement_speed.copy_(
         torch.where(
@@ -716,42 +813,46 @@ def step_runtime_status_phase_(
         )
     )
     for descriptor in fields(runtime.status):
-        getattr(runtime.status, descriptor.name).copy_(
-            getattr(preview_status, descriptor.name)
+        destination = getattr(runtime.status, descriptor.name)
+        preview = getattr(preview_status, descriptor.name)
+        mask = status_component.reshape(
+            *status_component.shape,
+            *((1,) * (destination.ndim - 2)),
         )
+        destination.copy_(torch.where(mask, preview, destination))
     _scatter_ordered(runtime.battle.entity_hp, selection, periodic.hitpoints)
     _scatter_ordered(runtime.battle.entity_active, selection, periodic.alive)
-    runtime.status._clear_periodic(periodic.clear_periodic)
-    runtime.phases.death_pending |= lifetime.died
+    runtime.status._clear_periodic(periodic.clear_periodic & supported[:, None, None])
+    runtime.phases.death_pending |= lifetime.died & component
     ordered_periodic_died = periodic.died
     periodic_died = torch.zeros_like(runtime.battle.entity_active)
     _scatter_ordered(periodic_died, selection, ordered_periodic_died)
     runtime.phases.death_pending |= periodic_died
 
-    if lifetime_event[0].any():
-        runtime.events.append(
-            phase=TickPhase.BUILDING_LIFETIME,
-            opcode=lifetime_event[1],
-            valid=lifetime_event[0],
-            source_id=lifetime_event[2],
-            target_id=lifetime_event[3],
-            x_units=lifetime_event[4],
-            y_units=lifetime_event[5],
-            amount=lifetime_event[6],
-            payload=lifetime_event[7],
-        )
-    if periodic.event_valid.any():
-        runtime.events.append(
-            phase=TickPhase.STATUS,
-            opcode=periodic.event_opcode,
-            valid=periodic.event_valid,
-            source_id=periodic.event_source_id,
-            target_id=periodic.event_target_id,
-            x_units=periodic.event_x_units,
-            y_units=periodic.event_y_units,
-            amount=periodic.event_amount,
-            payload=periodic.event_payload,
-        )
+    _append_events_prevalidated(
+        runtime,
+        phase=int(TickPhase.BUILDING_LIFETIME),
+        valid=lifetime_event[0],
+        opcode=lifetime_event[1],
+        source_id=lifetime_event[2],
+        target_id=lifetime_event[3],
+        x_units=lifetime_event[4],
+        y_units=lifetime_event[5],
+        amount=lifetime_event[6],
+        payload=lifetime_event[7],
+    )
+    _append_events_prevalidated(
+        runtime,
+        phase=int(TickPhase.STATUS),
+        valid=periodic_event_valid,
+        opcode=periodic.event_opcode,
+        source_id=periodic.event_source_id,
+        target_id=periodic.event_target_id,
+        x_units=periodic.event_x_units,
+        y_units=periodic.event_y_units,
+        amount=periodic.event_amount,
+        payload=periodic.event_payload,
+    )
     runtime.mark_dirty(supported, phase=TickPhase.BUILDING_LIFETIME)
     runtime.mark_dirty(supported, phase=TickPhase.STATUS)
 
@@ -759,8 +860,8 @@ def step_runtime_status_phase_(
     _scatter_ordered(periodic_loss, selection, periodic.hitpoint_loss)
     return RuntimeStatusPhaseResult(
         supported_batch=supported,
-        lifetime_hitpoint_loss=lifetime.hitpoint_loss,
+        lifetime_hitpoint_loss=torch.where(component, lifetime.hitpoint_loss, 0.0),
         periodic_hitpoint_loss=periodic_loss,
-        died=lifetime.died | periodic_died,
-        event_count=event_delta.to(torch.int32),
+        died=(lifetime.died & component) | periodic_died,
+        event_count=torch.where(supported, event_delta, 0).to(torch.int32),
     )
