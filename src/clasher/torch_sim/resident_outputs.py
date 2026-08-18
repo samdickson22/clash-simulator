@@ -472,6 +472,9 @@ class ResidentOutputProjector:
         safe = catalog_id.clamp_min(0)
 
         token = projection.structured_card_lookup[core.entity_card]
+        projection.entity_visible.copy_(
+            core.entity_active[:, None, :].expand(-1, 2, -1)
+        )
         projection.entity_token.copy_(
             torch.where(core.entity_card > 0, token, projection.entity_token)
         )

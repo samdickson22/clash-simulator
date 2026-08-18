@@ -54,23 +54,13 @@ def _actions(device: torch.device | str, rows: int = 2) -> torch.Tensor:
     return torch.tensor(values, dtype=torch.int64, device=device)
 
 
-def _force_rows_resident(
-    bridge: TensorResidentSelfPlay,
-    rows: torch.Tensor,
-) -> None:
-    bridge._episode_resident[rows] = True
-    bridge.engine.runtime.supported[rows] = True
-    for row in torch.nonzero(rows, as_tuple=False).flatten().tolist():
-        bridge._episode_route_reasons[row] = None
-
-
 def _slot_for_id(bridge: TensorResidentSelfPlay, row: int, entity_id: int) -> int:
     slots = torch.where(bridge.engine.runtime.battle.entity_id[row] == entity_id)[0]
     assert slots.numel() == 1
     return int(slots[0].item())
 
 
-def test_mixed_spell_rows_are_still_prerouted_by_episode_admission() -> None:
+def test_episode_admission_accepts_safe_mixed_spell_rows() -> None:
     bridge = TensorResidentSelfPlay.from_battles(
         [_mixed_battle(81_001, "Knight"), _mixed_battle(81_002, "Cannon")],
         decision_interval_ticks=1,
@@ -79,20 +69,10 @@ def test_mixed_spell_rows_are_still_prerouted_by_episode_admission() -> None:
         max_objects=8,
     )
 
-    assert bridge._episode_resident.tolist() == [False, False]
-    assert all(
-        "outside guaranteed resident coverage" in str(reason)
-        for reason in bridge._episode_route_reasons
-    )
+    assert bridge._episode_resident.tolist() == [True, True]
+    assert bridge._episode_route_reasons == [None, None]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "due spell updates runtime HP/status but actor-public structured features "
-        "remain stale"
-    ),
-)
 def test_batched_mixed_decision_card_timeline_and_delayed_visible_effect(
     tensor_device: str,
 ) -> None:
@@ -111,10 +91,7 @@ def test_batched_mixed_decision_card_timeline_and_delayed_visible_effect(
         event_capacity=256,
         include_privileged_critic=True,
     )
-    _force_rows_resident(
-        bridge,
-        torch.tensor([True, True, False], device=bridge.device),
-    )
+    assert bridge._episode_resident.tolist() == [True, True, False]
     fallback_ids = bridge.engine.runtime.battle.entity_id[2].clone()
     fallback_rng = bridge.engine.runtime.battle.rng.python_state(2)
     expected_rng = [random.Random(), random.Random()]
@@ -222,7 +199,7 @@ def test_selective_reset_clears_only_selected_pending_spell_row(
         event_capacity=128,
         include_privileged_critic=True,
     )
-    _force_rows_resident(bridge, torch.tensor([True, True], device=bridge.device))
+    assert bridge._episode_resident.tolist() == [True, True]
     first = bridge.step(_actions(bridge.device))
     assert first.action_success.tolist() == [[True, True], [True, True]]
     assert bridge.engine.pending_spells.active.sum(dim=1).tolist() == [1, 1]

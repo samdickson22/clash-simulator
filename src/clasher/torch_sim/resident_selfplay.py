@@ -209,21 +209,55 @@ class TensorResidentSelfPlay:
         remaining_episode_ticks = (self.max_ticks - state.tick).clamp_min(0)[
             :, None, None
         ]
+        dormant_until_terminal = remaining_episode_ticks <= deploy_ticks
         movement_cannot_begin = (runtime.catalog.speed_units_per_tick[safe] == 0) | (
-            remaining_episode_ticks <= deploy_ticks
+            dormant_until_terminal
         )
-        future_safe = (
+        character_safe = (
             known
             & ((kind == 1) | (kind == 2))
             & (runtime.catalog.mechanic_count[safe] == 0)
             & (runtime.catalog.effect_count[safe] == 0)
-            & ~self.engine.uses_projectile[safe]
+            & (~self.engine.uses_projectile[safe] | dormant_until_terminal)
             & ~self.engine.death_spawn[safe]
             & self.engine.deployment.materializer.catalog.supported_payload[safe]
             # Moving characters are admitted only when the complete remaining
             # episode ends before their deployment timer can reach movement.
             & movement_cannot_begin
-        ) | ~live
+        )
+        spell_core = self.engine.spell_ingress.catalog_to_core[safe]
+        safe_spell_core = spell_core.clamp_min(0)
+        spawn_core = self.engine.projectile_bridge.catalog.spawn_card_id[
+            safe_spell_core
+        ]
+        spawn_catalog = runtime.card_catalog_index[spawn_core.clamp_min(0)]
+        safe_spawn_catalog = spawn_catalog.clamp_min(0)
+        spawn_deploy_ticks = torch.ceil(
+            runtime.catalog.deploy_time_ms[safe_spawn_catalog].to(torch.float64)
+            / state.tick_milliseconds[:, None, None].clamp_min(1).to(torch.float64)
+        ).to(torch.int64)
+        spawn_cannot_move = (
+            runtime.catalog.speed_units_per_tick[safe_spawn_catalog] == 0
+        ) | (remaining_episode_ticks <= spawn_deploy_ticks)
+        spawn_safe = (spawn_core <= 0) | (
+            (spawn_catalog > 0)
+            & (runtime.catalog.mechanic_count[safe_spawn_catalog] == 0)
+            & (runtime.catalog.effect_count[safe_spawn_catalog] == 0)
+            & ~self.engine.uses_projectile[safe_spawn_catalog]
+            & ~self.engine.death_spawn[safe_spawn_catalog]
+            & self.engine.deployment.materializer.catalog.supported_payload[
+                safe_spawn_catalog
+            ]
+            & spawn_cannot_move
+        )
+        spell_safe = (
+            known
+            & (kind == 3)
+            & (spell_core >= 0)
+            & self.engine.spell_ingress.episode_supported_core[safe_spell_core]
+            & spawn_safe
+        )
+        future_safe = character_safe | spell_safe | ~live
         all_future_safe = future_safe.all(dim=2).all(dim=1)
         admitted = (preflight.supported & all_future_safe) | state.game_over
         reasons: list[str | None] = []
