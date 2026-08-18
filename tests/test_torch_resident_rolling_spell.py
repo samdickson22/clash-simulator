@@ -118,6 +118,10 @@ def test_full_rolling_spell_lifecycle_matches_scalar(
     runtime, pending, rolling = _stack(source, device=device)
     handoff = _queue_due(runtime, pending, rolling, spell_name)
     spell_id = runtime.battle.card_to_id[spell_name]
+    serialized_spell_id = runtime.battle.card_to_id[spell.name]
+    assert rolling.catalog.event_payload_card_id[spell_id].item() == (
+        serialized_spell_id
+    )
     runtime.events.append(
         phase=TickPhase.COMMANDS,
         opcode=RuntimeEventOpcode.COMMAND,
@@ -149,7 +153,12 @@ def test_full_rolling_spell_lifecycle_matches_scalar(
     ]
     assert runtime.events.source_id[0, :2].tolist() == [0, 0]
     assert runtime.events.target_id[0, :2].tolist() == [0, roller_id]
-    assert runtime.events.payload[0, :2].tolist() == [spell_id, spell_id]
+    assert runtime.events.x_units[0, :2].tolist() == [9_000, 9_000]
+    assert runtime.events.y_units[0, :2].tolist() == [8_000, 8_000]
+    assert runtime.events.payload[0, :2].tolist() == [
+        spell_id,
+        serialized_spell_id,
+    ]
     oracle_roller = next(
         entity
         for entity in oracle.entities.values()

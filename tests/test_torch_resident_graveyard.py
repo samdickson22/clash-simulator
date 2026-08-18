@@ -236,6 +236,13 @@ def test_complete_graveyard_lifecycle_matches_python_without_rng_or_terrain_snap
         target_y_units=torch.tensor([round(center.y * 1_000)], device=runtime.device),
         valid=torch.tensor([True], device=runtime.device),
     ).all()
+    assert runtime.events.phase[0, 0].item() == TickPhase.COMMANDS
+    assert runtime.events.opcode[0, 0].item() == RuntimeEventOpcode.SPAWN
+    assert runtime.events.source_id[0, 0].item() == 0
+    assert runtime.events.target_id[0, 0].item() == graveyard.id
+    assert runtime.events.x_units[0, 0].item() == round(center.x * 1_000)
+    assert runtime.events.y_units[0, 0].item() == round(center.y * 1_000)
+    assert runtime.events.payload[0, 0].item() == card
     spawn_event_count = 1
 
     for _ in range(181):

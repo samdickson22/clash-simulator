@@ -277,8 +277,13 @@ def test_complete_tornado_lifecycle_matches_python(
         valid=torch.tensor([True], device=runtime.device),
     ).all()
     assert runtime.battle.entity_card[0, 1].item() == 0
-    assert runtime.events.opcode[0, 0].item() == RuntimeEventOpcode.SPAWN
+    assert runtime.events.opcode[0, 0].item() == RuntimeEventOpcode.AREA
     assert runtime.events.phase[0, 0].item() == TickPhase.COMMANDS
+    assert runtime.events.source_id[0, 0].item() == 0
+    assert runtime.events.target_id[0, 0].item() == 2
+    assert runtime.events.x_units[0, 0].item() == 9_000
+    assert runtime.events.y_units[0, 0].item() == 14_000
+    assert runtime.events.payload[0, 0].item() == card
 
     for _ in range(25):
         before_hp = oracle.entities[1].hitpoints

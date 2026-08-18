@@ -85,6 +85,7 @@ class TensorRollingSpellCatalog:
     knockback_units: torch.Tensor
     knockback_ignores_mass: torch.Tensor
     crown_damage: torch.Tensor
+    event_payload_card_id: torch.Tensor
     child_core_id: torch.Tensor
     child_hp: torch.Tensor
     child_hp_integer_kind: torch.Tensor
@@ -119,10 +120,12 @@ class TensorRollingSpellCatalog:
         child_delay = zeros(torch.float64)
         children = [""] * size
         required_children: dict[str, dict[str, object]] = {}
+        required_serialized_names: set[str] = set()
         for core_id, name in enumerate(runtime.battle.card_names[1:], start=1):
             spell = SPELL_REGISTRY.get(name)
             if not isinstance(spell, RollingProjectileSpell):
                 continue
+            required_serialized_names.add(spell.name)
             supported[core_id] = True
             damage[core_id] = spell.damage
             rolling_radius[core_id] = round(spell.radius * 1_000)
@@ -142,9 +145,10 @@ class TensorRollingSpellCatalog:
                 children[core_id] = spell.spawn_character
                 required_children[spell.spawn_character] = spell.spawn_character_data
 
-        if required_children:
+        if required_children or required_serialized_names:
             new_children = sorted(
-                set(required_children) - set(runtime.battle.card_names)
+                (set(required_children) | required_serialized_names)
+                - set(runtime.battle.card_names)
             )
             names = (*runtime.battle.card_names, *new_children)
             if names != runtime.battle.card_names:
@@ -190,6 +194,13 @@ class TensorRollingSpellCatalog:
                     if spell.spawn_deploy_delay is None
                     else spell.spawn_deploy_delay
                 )
+        event_payload = torch.arange(size, dtype=torch.int64, device=runtime.device)
+        for core_id, name in enumerate(runtime.battle.card_names[1:size], start=1):
+            spell = SPELL_REGISTRY.get(name)
+            if isinstance(spell, RollingProjectileSpell):
+                event_payload[core_id] = runtime.battle.card_to_id.get(
+                    spell.name, core_id
+                )
         return cls(
             supported,
             damage,
@@ -202,6 +213,7 @@ class TensorRollingSpellCatalog:
             knockback,
             ignores_mass,
             crown_damage,
+            event_payload,
             child_core,
             child_hp,
             child_integer,
@@ -496,13 +508,21 @@ class TensorResidentRollingSpells:
         working_runtime.battle.entity_id.copy_(working_runtime.entity_pool.entity_id)
         source = torch.zeros_like(allocation.entity_ids)
         payload = torch.zeros_like(allocation.entity_ids)
-        payload[effective_rows, local] = effective_cards
+        payload[effective_rows, local] = self.catalog.event_payload_card_id[
+            effective_cards
+        ]
+        event_x = torch.zeros_like(allocation.slots, dtype=torch.int32)
+        event_y = torch.zeros_like(allocation.slots, dtype=torch.int32)
+        event_x[effective_rows, local] = effective_x.to(torch.int32)
+        event_y[effective_rows, local] = effective_y.to(torch.int32)
         working_runtime.events.append(
             phase=TickPhase.COMMANDS,
             opcode=RuntimeEventOpcode.SPAWN,
             valid=allocation.valid,
             source_id=source,
             target_id=allocation.entity_ids,
+            x_units=event_x,
+            y_units=event_y,
             payload=payload,
         )
         working_runtime.mark_dirty(committed, phase=TickPhase.COMMANDS)

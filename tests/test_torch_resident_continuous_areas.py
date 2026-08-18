@@ -260,9 +260,13 @@ def test_complete_continuous_area_lifecycle_matches_python(
     ).all()
     assert runtime.battle.entity_card[0, 1].item() == 0
     assert runtime.battle.entity_hp_integer_kind[0, 1].item() is True
-    assert runtime.events.opcode[0, 0].item() == RuntimeEventOpcode.SPAWN
+    assert runtime.events.opcode[0, 0].item() == RuntimeEventOpcode.AREA
     assert runtime.events.phase[0, 0].item() == TickPhase.COMMANDS
-    assert runtime.events.source_id[0, 0].item() == 2
+    assert runtime.events.source_id[0, 0].item() == 0
+    assert runtime.events.target_id[0, 0].item() == 2
+    assert runtime.events.x_units[0, 0].item() == 9_000
+    assert runtime.events.y_units[0, 0].item() == 14_000
+    assert runtime.events.payload[0, 0].item() == card
 
     for _ in range(ticks):
         before_hp = oracle.entities[1].hitpoints

@@ -362,13 +362,15 @@ class TensorResidentGraveyards:
         runtime.battle.entity_tower_slot[rows, entity_slots] = -1
         runtime.phases.target_slot[rows, entity_slots] = INVALID_SLOT
         self.target_distance_discount_sq_units[rows, entity_slots] = 0
-        source = torch.zeros_like(allocation.entity_ids)
-        source[rows, 0] = identifiers
         runtime.events.append(
             phase=TickPhase.COMMANDS,
             opcode=RuntimeEventOpcode.SPAWN,
             valid=allocation.valid,
-            source_id=source,
+            source_id=0,
+            target_id=allocation.entity_ids,
+            x_units=target_x_units[:, None],
+            y_units=target_y_units[:, None],
+            payload=safe[:, None],
         )
         return supported
 
