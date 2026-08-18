@@ -10,6 +10,7 @@ import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.card_aliases import CARD_NAME_ALIASES
 from clasher.entities import Building, Projectile, SpawnProjectile, TargetType, Troop
 from clasher.mechanics.shared.knockback import apply_radial_knockback
 from clasher.spells import SPELL_REGISTRY
@@ -152,6 +153,17 @@ def _tensor_event_tuples(
 def _oracle_event_tuples(
     events: list[OracleEventRecord], runtime: TensorBattleRuntime
 ) -> list[tuple[int, int, int, int, int, int, float, int]]:
+    def payload_id(record: OracleEventRecord) -> int:
+        name = str(record.payload)
+        direct = runtime.battle.card_to_id.get(name)
+        if direct is not None:
+            return direct
+        return next(
+            runtime.battle.card_to_id[alias]
+            for alias, serialized in CARD_NAME_ALIASES.items()
+            if serialized == name and alias in runtime.battle.card_to_id
+        )
+
     return [
         (
             event.phase,
@@ -161,7 +173,7 @@ def _oracle_event_tuples(
             event.x_units,
             event.y_units,
             float(event.amount),
-            runtime.battle.card_to_id[str(event.payload)],
+            payload_id(event),
         )
         for event in events
     ]
@@ -507,6 +519,65 @@ def test_simultaneous_combat_projectiles_preserve_source_order_and_applied_amoun
     assert runtime.events.amount[0, damage].tolist() == [81.0, 19.0]
 
 
+@pytest.mark.parametrize(
+    "spell_name",
+    ("Arrows", "Fireball", "GiantSnowball", "GoblinBarrel", "Rocket"),
+)
+def test_spell_projectile_allocations_preserve_pending_command_and_match_scalar(
+    tensor_device: str,
+    spell_name: str,
+) -> None:
+    battle = _battle(cards=(spell_name,))
+    oracle = copy.deepcopy(battle)
+    runtime, objects, bridge, _ = _runtime_bridge(
+        [battle],
+        {spell_name},
+        device=tensor_device,
+        max_entities=64,
+        max_objects=64,
+        event_capacity=256,
+    )
+    card_id = runtime.battle.card_to_id[spell_name]
+    runtime.events.append(
+        phase=TickPhase.COMMANDS,
+        opcode=RuntimeEventOpcode.COMMAND,
+        valid=torch.ones((1, 1), dtype=torch.bool, device=runtime.device),
+        x_units=9_000,
+        y_units=14_000,
+        payload=card_id,
+    )
+    with PythonOracleEventCapture(oracle) as capture:
+        assert SPELL_REGISTRY[spell_name].cast(oracle, 0, Position(9, 14))
+    assert bridge.materialize_spell_actions_(
+        runtime,
+        objects,
+        card_ids=torch.tensor([card_id], device=runtime.device),
+        player_ids=torch.tensor([0], device=runtime.device),
+        target_x_units=torch.tensor([9_000], device=runtime.device),
+        target_y_units=torch.tensor([14_000], device=runtime.device),
+        valid=torch.tensor([True], device=runtime.device),
+    ).all()
+
+    assert _tensor_event_tuples(runtime) == _oracle_event_tuples(
+        capture.events, runtime
+    )
+    count = int(runtime.events.count[0].item())
+    assert runtime.events.opcode[0, 0].item() == RuntimeEventOpcode.COMMAND
+    assert (runtime.events.opcode[0, 1:count] == RuntimeEventOpcode.PROJECTILE).all()
+    assert (runtime.events.source_id[0, 1:count] == 0).all()
+    assert runtime.events.target_id[0, 1:count].tolist() == list(range(1, count))
+    assert (runtime.events.x_units[0, 1:count] == 9_000).all()
+    assert (runtime.events.y_units[0, 1:count] == 2_500).all()
+    assert (runtime.events.payload[0, :count] == card_id).all()
+    carrier_ids = runtime.events.target_id[0, 1:count]
+    for carrier_id in carrier_ids.tolist():
+        slot = int(torch.where(runtime.battle.entity_id[0] == carrier_id)[0][0].item())
+        assert runtime.battle.entity_kind[0, slot].item() == 2
+        assert runtime.battle.entity_card[0, slot].item() == 0
+        assert runtime.battle.entity_hp_integer_kind[0, slot].item()
+    assert oracle.rng.getstate() == runtime.battle.rng.python_state(0)
+
+
 def test_zap_direct_spell_damage_stun_identity_and_events_match_python() -> None:
     seed = BattleState(fast_path=False)
     target = _troop(seed, "Knight", 1, 1, Position(9, 14), hp=500)
@@ -515,6 +586,14 @@ def test_zap_direct_spell_damage_stun_identity_and_events_match_python() -> None
     runtime, objects, bridge, _ = _runtime_bridge([battle], {"Zap", "Knight"})
     card_id = runtime.battle.card_to_id["Zap"]
     before_next = runtime.entity_pool.next_entity_id.clone()
+    runtime.events.append(
+        phase=TickPhase.COMMANDS,
+        opcode=RuntimeEventOpcode.COMMAND,
+        valid=torch.ones((1, 1), dtype=torch.bool),
+        x_units=9_000,
+        y_units=14_000,
+        payload=card_id,
+    )
 
     assert SPELL_REGISTRY["Zap"].cast(oracle, 0, Position(9, 14))
     supported = bridge.materialize_spell_actions_(
@@ -533,9 +612,20 @@ def test_zap_direct_spell_damage_stun_identity_and_events_match_python() -> None
     assert runtime.status.stun_timer[0, 0].item() == oracle.entities[1].stun_timer
     assert torch.equal(runtime.entity_pool.next_entity_id, before_next)
     assert not objects.objects.allocated.any()
-    assert runtime.events.opcode[0, : runtime.events.count[0]].tolist() == [2]
-    assert runtime.events.phase[0, 0].item() == TickPhase.COMBAT
-    assert runtime.events.payload[0, 0].item() == 0
+    assert runtime.events.opcode[0, : runtime.events.count[0]].tolist() == [
+        RuntimeEventOpcode.COMMAND,
+        RuntimeEventOpcode.DAMAGE,
+    ]
+    assert runtime.events.phase[0, :2].tolist() == [
+        TickPhase.COMMANDS,
+        TickPhase.COMMANDS,
+    ]
+    assert runtime.events.source_id[0, :2].tolist() == [0, 0]
+    assert runtime.events.target_id[0, :2].tolist() == [0, 1]
+    assert runtime.events.x_units[0, :2].tolist() == [9_000, 9_000]
+    assert runtime.events.y_units[0, :2].tolist() == [14_000, 14_000]
+    assert runtime.events.amount[0, :2].tolist() == [0.0, 192.0]
+    assert runtime.events.payload[0, :2].tolist() == [card_id, card_id]
 
 
 def test_target_death_before_projectile_impact_preserves_committed_endpoint() -> None:
@@ -1220,10 +1310,18 @@ def test_goblin_barrel_spawn_handoff_identity_formation_and_delay_match_python(
         assert bridge.spawn_target_distance_discount_sq_units[0, slot].item() == (
             entity._native_target_distance_discount_sq_units
         )
+    carrier_spawn = (
+        (runtime.events.opcode == RuntimeEventOpcode.PROJECTILE)
+        & (runtime.events.phase == TickPhase.COMMANDS)
+        & (runtime.events.payload == card_id)
+    )
+    assert runtime.events.source_id[carrier_spawn].tolist() == [0]
+    assert runtime.events.target_id[carrier_spawn].tolist() == [1]
+    assert runtime.events.x_units[carrier_spawn].tolist() == [9_000]
+    assert runtime.events.y_units[carrier_spawn].tolist() == [
+        2_500 if player_id == 0 else 29_500
+    ]
     spawn_events = runtime.events.opcode == RuntimeEventOpcode.SPAWN
-    carrier_spawn = spawn_events & (runtime.events.payload == 0)
-    assert runtime.events.source_id[carrier_spawn].tolist() == [1]
-    assert runtime.events.payload[carrier_spawn].tolist() == [0]
     child_spawn = spawn_events & (runtime.events.payload == goblin_card_id)
     assert runtime.events.source_id[child_spawn].tolist() == [2, 3, 4]
     assert runtime.events.target_id[child_spawn].tolist() == [0, 0, 0]

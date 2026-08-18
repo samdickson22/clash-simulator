@@ -1301,13 +1301,15 @@ class TensorResidentProjectileSpellBridge:
             self.catalog.crown_damage_valid[card_ids], crown, native
         )
         amount = torch.where(phase.target_crown, crown_amount[:, None], amount)
-        ordered_amount = torch.gather(amount, 1, order)
         before_alive = runtime.battle.entity_active.clone()
+        before_hp = runtime.battle.entity_hp.clone()
         candidate_hp = torch.where(
             targets,
-            (runtime.battle.entity_hp - amount).clamp_min(0),
-            runtime.battle.entity_hp,
+            (before_hp - amount).clamp_min(0),
+            before_hp,
         )
+        applied_amount = torch.where(targets, before_hp - candidate_hp, 0.0)
+        ordered_amount = torch.gather(applied_amount, 1, order)
         died = targets & before_alive & (candidate_hp <= 0)
         ordered_died = torch.gather(died, 1, order) & ordered_valid
         pair_valid = torch.stack((ordered_valid, ordered_died), dim=2).flatten(1)
@@ -1331,8 +1333,9 @@ class TensorResidentProjectileSpellBridge:
         runtime.phases.death_pending |= died
         damage_opcode = torch.full_like(ordered_ids, RuntimeEventOpcode.DAMAGE)
         death_opcode = torch.full_like(ordered_ids, RuntimeEventOpcode.DEATH)
+        ordered_payload = card_ids[:, None].expand_as(ordered_ids)
         runtime.events.append(
-            phase=TickPhase.COMBAT,
+            phase=TickPhase.COMMANDS,
             opcode=torch.stack((damage_opcode, death_opcode), dim=2).flatten(1),
             valid=pair_valid,
             source_id=0,
@@ -1342,7 +1345,7 @@ class TensorResidentProjectileSpellBridge:
             amount=torch.stack(
                 (ordered_amount, torch.zeros_like(ordered_amount)), dim=2
             ).flatten(1),
-            payload=0,
+            payload=torch.stack((ordered_payload, ordered_payload), dim=2).flatten(1),
         )
         survivors = targets & runtime.battle.entity_active
         self.stun_applied |= survivors & (stun_seconds[:, None] > 0)
@@ -1617,19 +1620,40 @@ class TensorResidentProjectileSpellBridge:
         spawn_x = torch.zeros_like(allocation.slots, dtype=torch.int32)
         spawn_y = torch.zeros_like(allocation.slots, dtype=torch.int32)
         spawn_payload = torch.zeros_like(allocation.entity_ids)
+        spawn_opcode = torch.full_like(allocation.entity_ids, RuntimeEventOpcode.SPAWN)
         if spell:
-            spawn_source[rows, launch_ordinal] = entity_id
+            serialized_projectile = (
+                kind == int(BridgePayloadKind.PROJECTILE_SPELL)
+            ) | (kind == int(BridgePayloadKind.SPAWN_PROJECTILE))
+            spawn_source[rows, launch_ordinal] = torch.where(
+                serialized_projectile, 0, entity_id
+            )
+            spawn_target[rows, launch_ordinal] = torch.where(
+                serialized_projectile, entity_id, 0
+            )
+            spawn_x[rows, launch_ordinal] = torch.where(
+                serialized_projectile, start_x, 0
+            ).to(torch.int32)
+            spawn_y[rows, launch_ordinal] = torch.where(
+                serialized_projectile, start_y, 0
+            ).to(torch.int32)
+            spawn_payload[rows, launch_ordinal] = torch.where(
+                serialized_projectile, cards, public_cards
+            )
+            spawn_opcode[rows, launch_ordinal] = torch.where(
+                serialized_projectile,
+                int(RuntimeEventOpcode.PROJECTILE),
+                int(RuntimeEventOpcode.SPAWN),
+            )
         else:
             spawn_source[rows, launch_ordinal] = source_ids[rows, source_slot]
             spawn_target[rows, launch_ordinal] = entity_id
             spawn_x[rows, launch_ordinal] = start_x.to(torch.int32)
             spawn_y[rows, launch_ordinal] = start_y.to(torch.int32)
-        spawn_payload[rows, launch_ordinal] = public_cards
+            spawn_payload[rows, launch_ordinal] = public_cards
         runtime.events.append(
             phase=TickPhase.COMMANDS if spell else TickPhase.COMBAT,
-            opcode=(
-                RuntimeEventOpcode.SPAWN if spell else RuntimeEventOpcode.PROJECTILE
-            ),
+            opcode=(spawn_opcode if spell else RuntimeEventOpcode.PROJECTILE),
             valid=install,
             source_id=spawn_source,
             target_id=spawn_target,
