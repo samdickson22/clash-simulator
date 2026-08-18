@@ -199,6 +199,10 @@ def test_workspace_preallocates_once_and_shares_only_immutable_owners(
         workspace.scratch.spell_ingress.catalog_to_core.data_ptr()
         == engine.spell_ingress.catalog_to_core.data_ptr()
     )
+    assert (
+        workspace.scratch.spell_ingress._transaction_workspace
+        is engine.spell_ingress._transaction_workspace
+    )
     assert workspace.scratch.runtime.battle.time.data_ptr() != (
         engine.runtime.battle.time.data_ptr()
     )

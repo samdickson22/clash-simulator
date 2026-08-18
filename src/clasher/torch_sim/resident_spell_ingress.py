@@ -56,6 +56,71 @@ def _clone_object_phase(phase: TensorRuntimeObjectPhase) -> TensorRuntimeObjectP
     return cloned  # type: ignore[return-value]
 
 
+def _copy_tensor_fields(destination: object, source: object) -> None:
+    for descriptor in fields(destination):  # type: ignore[arg-type]
+        left = getattr(destination, descriptor.name)
+        right = getattr(source, descriptor.name)
+        if isinstance(left, torch.Tensor) and isinstance(right, torch.Tensor):
+            if left.shape != right.shape or left.dtype != right.dtype:
+                raise ValueError(
+                    f"spell transaction plane {descriptor.name!r} changed layout"
+                )
+            left.copy_(right)
+
+
+def _refresh_runtime(
+    destination: TensorBattleRuntime,
+    source: TensorBattleRuntime,
+) -> None:
+    _copy_tensor_fields(destination.battle, source.battle)
+    _copy_tensor_fields(destination.battle.rng, source.battle.rng)
+    destination.battle.card_names = source.battle.card_names
+    destination.battle.card_to_id = source.battle.card_to_id
+    destination.card_catalog_index.copy_(source.card_catalog_index)
+    destination.entity_pool.active.copy_(source.entity_pool.active)
+    destination.entity_pool.next_entity_id.copy_(source.entity_pool.next_entity_id)
+    _copy_tensor_fields(destination.status, source.status)
+    _copy_tensor_fields(destination.phases, source.phases)
+    _copy_tensor_fields(destination.events, source.events)
+    destination.supported.copy_(source.supported)
+    destination.dirty.copy_(source.dirty)
+
+
+class _TensorResidentSpellTransactionWorkspace:
+    """One retained speculative owner set shared by bound engine clones."""
+
+    def __init__(self) -> None:
+        self.runtime: TensorBattleRuntime | None = None
+        self.objects: TensorRuntimeObjectPhase | None = None
+        self.bridge: TensorResidentProjectileSpellBridge | None = None
+
+    def acquire(
+        self,
+        runtime: TensorBattleRuntime,
+        objects: TensorRuntimeObjectPhase,
+        bridge: TensorResidentProjectileSpellBridge,
+    ) -> tuple[
+        TensorBattleRuntime,
+        TensorRuntimeObjectPhase,
+        TensorResidentProjectileSpellBridge,
+    ]:
+        if self.runtime is None:
+            self.runtime = runtime.clone()
+            self.runtime.battle.rng = runtime.battle.rng.clone()
+            self.objects = _clone_object_phase(objects)
+            cloned_bridge = _clone_tensor_owner(bridge)
+            assert isinstance(cloned_bridge, TensorResidentProjectileSpellBridge)
+            self.bridge = cloned_bridge
+        else:
+            assert self.objects is not None and self.bridge is not None
+            _refresh_runtime(self.runtime, runtime)
+            _copy_tensor_fields(self.objects, objects)
+            _copy_tensor_fields(self.objects.objects, objects.objects)
+            _copy_tensor_fields(self.bridge, bridge)
+        assert self.objects is not None and self.bridge is not None
+        return self.runtime, self.objects, self.bridge
+
+
 def _copy_batch_rows(destination: object, source: object, rows: torch.Tensor) -> None:
     batch = int(rows.shape[0])
     for descriptor in fields(destination):  # type: ignore[arg-type]
@@ -87,7 +152,6 @@ def _copy_runtime_rows(
     _copy_batch_rows(destination.events, source.events, rows)
     destination.supported[rows] = source.supported[rows]
     destination.dirty[rows] = source.dirty[rows]
-    destination.assert_invariants()
 
 
 def _copy_phase_rows(
@@ -138,6 +202,12 @@ class TensorResidentSpellActionIngress:
         *,
         catalog_to_core: torch.Tensor | None = None,
         episode_supported_core: torch.Tensor | None = None,
+        transaction_workspace: _TensorResidentSpellTransactionWorkspace | None = None,
+        collect_diagnostics: bool = False,
+        validate_inputs: bool = False,
+        batch_rows: torch.Tensor | None = None,
+        expected_player_order: torch.Tensor | None = None,
+        empty_reasons: tuple[str | None, ...] | None = None,
     ) -> None:
         if runtime.catalog is not cards:
             raise ValueError("runtime and action catalog must share metadata")
@@ -148,6 +218,26 @@ class TensorResidentSpellActionIngress:
         self.bridge = bridge
         self.cards = cards
         self.device = runtime.device
+        self._transaction_workspace = (
+            _TensorResidentSpellTransactionWorkspace()
+            if transaction_workspace is None
+            else transaction_workspace
+        )
+        self.collect_diagnostics = collect_diagnostics
+        self.validate_inputs = validate_inputs
+        self._batch_rows = (
+            torch.arange(runtime.batch_size, dtype=torch.int64, device=self.device)
+            if batch_rows is None
+            else batch_rows
+        )
+        self._expected_player_order = (
+            torch.tensor([0, 1], dtype=torch.int64, device=self.device)
+            if expected_player_order is None
+            else expected_player_order
+        )
+        self._empty_reasons = (
+            (None,) * runtime.batch_size if empty_reasons is None else empty_reasons
+        )
         self.catalog_to_core = (
             torch.tensor(
                 [
@@ -189,7 +279,14 @@ class TensorResidentSpellActionIngress:
         bridge = TensorResidentProjectileSpellBridge.from_battles(
             runtime, objects, battles
         )
-        return cls(runtime, objects, bridge, cards)
+        return cls(
+            runtime,
+            objects,
+            bridge,
+            cards,
+            collect_diagnostics=True,
+            validate_inputs=True,
+        )
 
     def fork(
         self,
@@ -206,6 +303,12 @@ class TensorResidentSpellActionIngress:
             self.cards,
             catalog_to_core=self.catalog_to_core,
             episode_supported_core=self.episode_supported_core,
+            transaction_workspace=self._transaction_workspace,
+            collect_diagnostics=self.collect_diagnostics,
+            validate_inputs=self.validate_inputs,
+            batch_rows=self._batch_rows,
+            expected_player_order=self._expected_player_order,
+            empty_reasons=self._empty_reasons,
         )
 
     def preflight(self, ingress: TensorIngressResult) -> TensorResidentSpellPreflight:
@@ -265,6 +368,65 @@ class TensorResidentSpellActionIngress:
         )
         runtime.battle.elixir[rows] = ingress.elixir[rows]
 
+    def _validate_apply_inputs(
+        self,
+        ingress: TensorIngressResult,
+        player_order: torch.Tensor | None,
+    ) -> None:
+        batch = self.runtime.batch_size
+        commands = ingress.commands
+        if ingress.hand_ids.shape[:2] != (batch, 2):
+            raise ValueError("ingress batch differs from resident runtime")
+        invalid_command = (
+            (commands.battle_index < 0)
+            | (commands.battle_index >= batch)
+            | (commands.card_id < 0)
+            | (commands.card_id >= len(self.cards.names))
+        )
+        if commands.battle_index.numel() and bool(invalid_command.any().item()):
+            raise ValueError("command index is outside resident spell catalog")
+        if player_order is None:
+            return
+        order = torch.as_tensor(player_order, dtype=torch.int64, device=self.device)
+        valid_order = order.shape == (batch, 2) and bool(
+            (torch.sort(order, dim=1).values == self._expected_player_order)
+            .all()
+            .item()
+        )
+        if not valid_order:
+            raise ValueError("player_order rows must be permutations of (0, 1)")
+
+    def _diagnostic_reasons(
+        self,
+        *,
+        runtime_supported: torch.Tensor,
+        bad_row: torch.Tensor,
+        transition_known: torch.Tensor,
+        failed_card: torch.Tensor,
+    ) -> tuple[str | None, ...]:
+        reasons: list[str | None] = [None] * self.runtime.batch_size
+        unsupported_rows = (
+            torch.nonzero(~runtime_supported, as_tuple=False).flatten().tolist()
+        )
+        bad_rows = torch.nonzero(bad_row, as_tuple=False).flatten().tolist()
+        transition_rows = (
+            torch.nonzero(~transition_known, as_tuple=False).flatten().tolist()
+        )
+        failed_rows = torch.nonzero(failed_card >= 0, as_tuple=False).flatten().tolist()
+        for row in unsupported_rows:
+            reasons[row] = "resident runtime row is unsupported"
+        for row in bad_rows:
+            reasons[row] = "non-spell command requires another ingress"
+        for row in transition_rows:
+            reasons[row] = "card transition references an unknown core card"
+        for row in failed_rows:
+            card = int(failed_card[row].item())
+            reasons[row] = (
+                self.bridge.catalog.unsupported_reason[card]
+                or "spell payload capacity is unavailable"
+            )
+        return tuple(reasons)
+
     def apply(
         self,
         ingress: TensorIngressResult,
@@ -273,40 +435,21 @@ class TensorResidentSpellActionIngress:
     ) -> TensorResidentSpellIngressResult:
         batch = self.runtime.batch_size
         commands = ingress.commands
-        if ingress.hand_ids.shape[:2] != (batch, 2):
-            raise ValueError("ingress batch differs from resident runtime")
-        if commands.battle_index.numel() and bool(
-            (
-                (commands.battle_index < 0)
-                | (commands.battle_index >= batch)
-                | (commands.card_id < 0)
-                | (commands.card_id >= len(self.cards.names))
+        if self.validate_inputs:
+            self._validate_apply_inputs(ingress, player_order)
+        speculative_runtime, speculative_objects, speculative_bridge = (
+            self._transaction_workspace.acquire(
+                self.runtime,
+                self.objects,
+                self.bridge,
             )
-            .any()
-            .item()
-        ):
-            raise ValueError("command index is outside resident spell catalog")
-
-        speculative_runtime = self.runtime.clone()
-        speculative_runtime.battle.rng = self.runtime.battle.rng.clone()
-        speculative_objects = _clone_object_phase(self.objects)
-        speculative_bridge = _clone_tensor_owner(self.bridge)
-        assert isinstance(speculative_bridge, TensorResidentProjectileSpellBridge)
+        )
 
         if player_order is None:
             choice = speculative_runtime.battle.rng.randrange(2)
             order = torch.stack((1 - choice, choice), dim=1)
         else:
             order = torch.as_tensor(player_order, dtype=torch.int64, device=self.device)
-            if order.shape != (batch, 2) or not bool(
-                (
-                    torch.sort(order, dim=1).values
-                    == torch.tensor([0, 1], dtype=torch.int64, device=self.device)
-                )
-                .all()
-                .item()
-            ):
-                raise ValueError("player_order rows must be permutations of (0, 1)")
 
         catalog_to_core = self.catalog_to_core
         command_count = int(commands.card_id.numel())
@@ -328,22 +471,13 @@ class TensorResidentSpellActionIngress:
             & (catalog_to_core[ingress.cycle_ids] >= 0).all(dim=2)
         ).all(dim=1)
         row_supported = self.runtime.supported & ~bad_row & transition_known
-        unsupported_reasons: list[str | None] = [None] * batch
-        for row in (
-            torch.nonzero(~self.runtime.supported, as_tuple=False).flatten().tolist()
-        ):
-            unsupported_reasons[row] = "resident runtime row is unsupported"
-        for row in torch.nonzero(bad_row, as_tuple=False).flatten().tolist():
-            unsupported_reasons[row] = "non-spell command requires another ingress"
-        for row in torch.nonzero(~transition_known, as_tuple=False).flatten().tolist():
-            unsupported_reasons[row] = "card transition references an unknown core card"
+        failed_card = torch.full((batch,), -1, dtype=torch.int64, device=self.device)
 
         for rank in range(2):
             player = order[:, rank]
             if command_count:
                 matches = (
-                    commands.battle_index[None, :]
-                    == torch.arange(batch, device=self.device)[:, None]
+                    commands.battle_index[None, :] == self._batch_rows[:, None]
                 ) & (commands.player_id[None, :] == player[:, None])
                 found = matches.any(dim=1)
                 command_index = matches.to(torch.int64).argmax(dim=1)
@@ -368,12 +502,7 @@ class TensorResidentSpellActionIngress:
             )
             failed = valid & ~supported
             row_supported &= ~failed
-            for row in torch.nonzero(failed, as_tuple=False).flatten().tolist():
-                card = int(core_card[row])
-                unsupported_reasons[row] = (
-                    speculative_bridge.catalog.unsupported_reason[card]
-                    or "spell payload capacity is unavailable"
-                )
+            failed_card.copy_(torch.where(failed, core_card, failed_card))
 
         self._commit_card_transition(
             speculative_runtime, ingress, row_supported, catalog_to_core
@@ -389,11 +518,23 @@ class TensorResidentSpellActionIngress:
             blueprint_indices,
         )
         _copy_bridge_rows(self.bridge, speculative_bridge, row_supported)
+        if self.validate_inputs:
+            self.runtime.assert_invariants()
         action_success = ingress.accepted & row_supported[:, None]
+        unsupported_reasons = (
+            self._diagnostic_reasons(
+                runtime_supported=self.runtime.supported,
+                bad_row=bad_row,
+                transition_known=transition_known,
+                failed_card=failed_card,
+            )
+            if self.collect_diagnostics
+            else self._empty_reasons
+        )
         return TensorResidentSpellIngressResult(
             committed=row_supported,
             unsupported=~row_supported,
-            unsupported_reasons=tuple(unsupported_reasons),
+            unsupported_reasons=unsupported_reasons,
             action_success=action_success,
             player_order=order,
             spell_command=command_spell,

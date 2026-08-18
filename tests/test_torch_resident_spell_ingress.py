@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import inspect
 from collections import deque
 from collections.abc import Iterator
 
@@ -12,6 +13,7 @@ from clasher.battle import BattleState
 from clasher.entities import AreaEffect, Projectile, SpawnProjectile, TargetType, Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.spells import SPELL_REGISTRY
+from clasher.torch_sim import resident_spell_ingress
 from clasher.torch_sim.actions import (
     NO_OP_ACTION,
     TensorActionCatalog,
@@ -20,9 +22,7 @@ from clasher.torch_sim.actions import (
 )
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.resident_engine import _resident_deployment_catalog_closure
-from clasher.torch_sim.resident_spell_ingress import (
-    TensorResidentSpellActionIngress,
-)
+from clasher.torch_sim.resident_spell_ingress import TensorResidentSpellActionIngress
 from clasher.torch_sim.runtime_objects import TensorRuntimeObjectPhase
 from clasher.torch_sim.runtime_state import TensorBattleRuntime
 
@@ -341,3 +341,71 @@ def test_second_player_unsupported_spell_rolls_back_first_direct_spell() -> None
     assert torch.equal(runtime.status.stun_timer, before_status)
     assert torch.equal(runtime.events.count, before_events)
     assert torch.equal(objects.objects.allocated, before_objects)
+
+
+def test_retained_transaction_workspace_reuses_all_speculative_planes(
+    tensor_device: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    battle = _spell_battle("Zap")
+    _, kernel, state, runtime, _, driver = _owners(
+        [battle], {"Zap", "Knight", "Archer"}, device=tensor_device
+    )
+    ingress = kernel.ingress(
+        state,
+        torch.tensor(
+            [[NO_OP_ACTION, NO_OP_ACTION]],
+            dtype=torch.int64,
+            device=runtime.device,
+        ),
+    )
+    order = torch.tensor([[0, 1]], device=runtime.device)
+    assert driver.apply(ingress, player_order=order).committed.tolist() == [True]
+    workspace = driver._transaction_workspace
+    assert workspace.runtime is not None
+    assert workspace.objects is not None
+    assert workspace.bridge is not None
+    pointers = (
+        workspace.runtime.battle.time.data_ptr(),
+        workspace.runtime.battle.rng.words.data_ptr(),
+        workspace.objects.objects.allocated.data_ptr(),
+        workspace.objects.blueprint_kind.data_ptr(),
+        workspace.bridge.blueprint_actual_damage.data_ptr(),
+    )
+
+    def forbidden_clone(*_args: object, **_kwargs: object) -> object:
+        raise AssertionError("resident spell ingress reconstructed its transaction")
+
+    monkeypatch.setattr(TensorBattleRuntime, "clone", forbidden_clone)
+    monkeypatch.setattr(
+        resident_spell_ingress,
+        "_clone_object_phase",
+        forbidden_clone,
+    )
+    monkeypatch.setattr(
+        resident_spell_ingress,
+        "_clone_tensor_owner",
+        forbidden_clone,
+    )
+    assert driver.apply(ingress, player_order=order).committed.tolist() == [True]
+    assert workspace.runtime is not None
+    assert workspace.objects is not None
+    assert workspace.bridge is not None
+    assert pointers == (
+        workspace.runtime.battle.time.data_ptr(),
+        workspace.runtime.battle.rng.words.data_ptr(),
+        workspace.objects.objects.allocated.data_ptr(),
+        workspace.objects.blueprint_kind.data_ptr(),
+        workspace.bridge.blueprint_actual_damage.data_ptr(),
+    )
+
+
+def test_production_apply_source_has_no_clone_or_host_diagnostic_conversion() -> None:
+    source = inspect.getsource(TensorResidentSpellActionIngress.apply)
+    for forbidden in (
+        "runtime.clone",
+        "_clone_object_phase",
+        ".item(",
+        ".tolist(",
+    ):
+        assert forbidden not in source
