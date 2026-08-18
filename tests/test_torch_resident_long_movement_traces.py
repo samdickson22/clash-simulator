@@ -41,15 +41,9 @@ EXPECTED_TRACES = {
     # remain exact through the same fifteen-second horizon in both directions.
     "HogRider": ExpectedTrace(300, (None, None)),
     "RoyalHogs": ExpectedTrace(300, (None, None)),
-    # Prince charge, river traversal, and post-landing combat are exact until
-    # the defeated target's later lock-lifecycle boundary.
-    "Prince": ExpectedTrace(
-        171,
-        (
-            ExpectedBoundary(171, "target_id"),
-            ExpectedBoundary(171, "target_id"),
-        ),
-    ),
+    # Prince charge, river traversal, post-landing combat, lethal cleanup, and
+    # the one-frame stale public target ID remain exact through fifteen seconds.
+    "Prince": ExpectedTrace(300, (None, None)),
     # Resident projectile integration independently closed the old tick-56
     # direct-hit boundary; the mirrored trace is exact through fifteen seconds.
     "Bats": ExpectedTrace(300, (None, None)),
@@ -124,11 +118,8 @@ def _runtime_target_id(
     row: int,
     source_slot: int,
 ) -> int | None:
-    target_slot = int(engine.runtime.phases.target_slot[row, source_slot].item())
-    if target_slot < 0:
-        return None
-    target_id = int(engine.runtime.battle.entity_id[row, target_slot].item())
-    return None if target_id == 0 else target_id
+    target_id = int(engine.combat_target_entity_id[row, source_slot].item())
+    return None if target_id <= 0 else target_id
 
 
 def _first_relevant_difference(
@@ -182,6 +173,8 @@ def _first_relevant_difference(
     ):
         return "river_jump_active"
 
+    if target_id not in oracle.entities:
+        return None
     target_slot = runtime_ids.index(target_id)
     expected_target = oracle.entities[target_id]
     actual_target_position = (

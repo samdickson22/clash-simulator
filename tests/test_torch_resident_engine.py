@@ -552,6 +552,116 @@ def test_river_active_and_landing_consume_frames_preserve_combat_clock(
             )
 
 
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_combat_block_preserves_observed_facing_but_suppresses_movement_intent(
+    device: str,
+) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    battle = _segment_battle()
+    engine = TensorResidentEngine.from_battles(
+        [battle], device=device, max_entities=8, max_objects=8
+    )
+    source_slot = engine.combat.entity_id[0].tolist().index(2)
+    target_slot = engine.combat.entity_id[0].tolist().index(1)
+    engine.dispatcher.dash.phase[0, source_slot] = 1
+    cooldown_before = engine.combat.attack_cooldown[0, source_slot].clone()
+
+    engine._combat_phase(torch.ones(1, dtype=torch.bool, device=device))
+
+    assert engine.facing_x_units[0, source_slot].item() == (
+        engine.combat.x_units[0, target_slot].item()
+        - engine.combat.x_units[0, source_slot].item()
+    )
+    assert engine.facing_y_units[0, source_slot].item() == (
+        engine.combat.y_units[0, target_slot].item()
+        - engine.combat.y_units[0, source_slot].item()
+    )
+    assert engine.movement.target_slot[0, source_slot].item() == -1
+    assert torch.equal(engine.combat.attack_cooldown[0, source_slot], cooldown_before)
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_character_deploy_zero_crossing_snaps_exactly_before_completion(
+    device: str,
+) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    battle = BattleState(fast_path=False, rng=random.Random(745_100))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    stats = battle.card_loader.get_card("Xbow")
+    assert stats is not None
+    building = battle._spawn_entity(Building, Position(9.0, 10.0), 0, stats)
+    building.deploy_delay_remaining = 0.05 + 5e-17
+    building.placement_pending = True
+    building._spawn_hook_pending = True
+    building._spawn_hook_fired = False
+    expected = battle.clone()
+    expected_building = expected.entities[1]
+    assert isinstance(expected_building, Building)
+    expected_building.tick_character_object_phase(0.05)
+    engine = TensorResidentEngine.from_battles(
+        [battle], device=device, max_entities=8, max_objects=8
+    )
+
+    completed = engine._character_object_phase(
+        torch.ones(1, dtype=torch.bool, device=device)
+    )
+
+    assert completed[0, 0].item()
+    assert engine.runtime.battle.entity_deploy_delay[0, 0].item() == 0.0
+    assert engine.runtime.battle.entity_deploy_delay[0, 0].item() == (
+        expected_building.deploy_delay_remaining
+    )
+    assert not engine.runtime.battle.entity_placement_pending[0, 0].item()
+    assert not engine.runtime.battle.entity_spawn_hook_pending[0, 0].item()
+    assert engine.runtime.battle.entity_spawn_hook_fired[0, 0].item()
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_raw_target_id_survives_cleanup_then_rejects_reused_physical_slot(
+    device: str,
+) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    battle = _segment_battle()
+    oracle = battle.clone()
+    engine = TensorResidentEngine.from_battles(
+        [battle], device=device, max_entities=8, max_objects=8
+    )
+    no_op = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=device)
+
+    for _ in range(3):
+        order = [0, 1]
+        oracle.rng.shuffle(order)
+        oracle.step_logic_ticks(1)
+        first = engine.step(no_op)
+        assert first.committed.tolist() == [True]
+        if 1 not in oracle.entities:
+            break
+    assert 1 not in oracle.entities
+    source_slot = engine.runtime.battle.entity_id[0].tolist().index(2)
+    assert oracle.entities[2].target_id == 1
+    assert engine.combat_target_entity_id[0, source_slot].item() == 1
+
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    actions = (DEPLOY_KNIGHT_FAR_FROM_COMBAT, NO_OP_ACTION)
+    order = [0, 1]
+    oracle.rng.shuffle(order)
+    for player in order:
+        assert action_space.apply_action(oracle, player, actions[player])
+    oracle.step_logic_ticks(1)
+    second = engine.step(torch.tensor([actions], dtype=torch.int64, device=device))
+
+    assert second.committed.tolist() == [True]
+    assert engine.runtime.battle.entity_id[0, 0].item() == 3
+    source_slot = engine.runtime.battle.entity_id[0].tolist().index(2)
+    assert oracle.entities[2].target_id is None
+    assert engine.combat_target_entity_id[0, source_slot].item() == -1
+    assert engine.combat_target_entity_id[0, source_slot].item() != 3
+
+
 def test_death_then_lowest_slot_reuse_routes_new_high_id_exactly() -> None:
     battle = _segment_battle()
     stats = battle.card_loader.get_card("Knight")

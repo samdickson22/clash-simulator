@@ -129,6 +129,7 @@ class TensorResidentWorkspace:
         _copy_tensor_fields_(destination.runtime.events, source.runtime.events)
         destination.runtime.supported.copy_(source.runtime.supported)
         destination.runtime.dirty.copy_(source.runtime.dirty)
+        destination.combat_target_entity_id.copy_(source.combat_target_entity_id)
         pending_rows = torch.arange(
             self.batch_size, dtype=torch.int64, device=self.device
         )

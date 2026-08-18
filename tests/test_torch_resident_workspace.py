@@ -101,6 +101,7 @@ def _engine_snapshot(engine: TensorResidentEngine) -> dict[str, torch.Tensor]:
     result["runtime.dirty"] = engine.runtime.dirty.cpu().clone()
     result["facing_x"] = engine.facing_x_units.cpu().clone()
     result["facing_y"] = engine.facing_y_units.cpu().clone()
+    result["combat_target_entity_id"] = engine.combat_target_entity_id.cpu().clone()
     result["pending_projectile_max_duration_ms"] = (
         engine.pending_projectile_max_duration_ms.cpu().clone()
     )

@@ -506,6 +506,7 @@ class TensorResidentEngine:
         pending_projectile_max_duration_ms: torch.Tensor,
         projectile_duration_ms: torch.Tensor,
         combat: StationaryCombatState,
+        combat_target_entity_id: torch.Tensor,
         uses_projectile: torch.Tensor,
         can_attack_air: torch.Tensor,
         can_attack_ground: torch.Tensor,
@@ -539,6 +540,7 @@ class TensorResidentEngine:
         self.pending_projectile_max_duration_ms = pending_projectile_max_duration_ms
         self.projectile_duration_ms = projectile_duration_ms
         self.combat = combat
+        self.combat_target_entity_id = combat_target_entity_id
         self.uses_projectile = uses_projectile
         self.can_attack_air = can_attack_air
         self.can_attack_ground = can_attack_ground
@@ -708,6 +710,20 @@ class TensorResidentEngine:
             device=device,
         )
         combat = projection.state
+        combat_target_entity_id = torch.full(
+            (runtime.batch_size, max_entities),
+            -1,
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        for row, battle in enumerate(battles):
+            for slot, entity in enumerate(
+                sorted(battle.entities.values(), key=lambda candidate: candidate.id)
+            ):
+                target_id = getattr(entity, "target_id", None)
+                combat_target_entity_id[row, slot] = (
+                    -1 if target_id is None else int(target_id)
+                )
         movement = TensorMovementAdapter.from_battles(
             battles, device=device, max_entities=max_entities
         )
@@ -805,6 +821,7 @@ class TensorResidentEngine:
             pending_projectile_max_duration_ms=pending_projectile_max_duration_ms,
             projectile_duration_ms=projectile_duration_ms,
             combat=combat,
+            combat_target_entity_id=combat_target_entity_id,
             uses_projectile=uses_projectile,
             can_attack_air=can_attack_air,
             can_attack_ground=can_attack_ground,
@@ -870,6 +887,7 @@ class TensorResidentEngine:
             ),
             projectile_duration_ms=self.projectile_duration_ms.clone(),
             combat=_clone_tensor_dataclass(self.combat),  # type: ignore[arg-type]
+            combat_target_entity_id=self.combat_target_entity_id.clone(),
             uses_projectile=self.uses_projectile,
             can_attack_air=self.can_attack_air,
             can_attack_ground=self.can_attack_ground,
@@ -1415,6 +1433,9 @@ class TensorResidentEngine:
         self.combat.attack_windup_active &= ~new
         self.combat.has_attacked_once &= ~new
         self.combat.target_slot.copy_(torch.where(new, -1, runtime.phases.target_slot))
+        self.combat_target_entity_id.copy_(
+            torch.where(new, -1, self.combat_target_entity_id)
+        )
         self.combat.target_distance_discount_sq_units.zero_()
         self.pending_projectile_max_duration_ms.copy_(
             torch.where(
@@ -1559,6 +1580,17 @@ class TensorResidentEngine:
     def _combat_phase(self, active: torch.Tensor) -> CombatStepResult:
         self._refresh_planes()
         self.combat.present &= active[:, None]
+        retained_target_slot = self.combat.target_slot.clamp_min(0)
+        retained_target_id = self.combat.entity_id.gather(1, retained_target_slot)
+        retained_target_present = self.combat.present.gather(1, retained_target_slot)
+        target_identity_matches = (
+            (self.combat.target_slot >= 0)
+            & retained_target_present
+            & (retained_target_id == self.combat_target_entity_id)
+        )
+        self.combat.target_slot.copy_(
+            torch.where(target_identity_matches, self.combat.target_slot, -1)
+        )
         consumed_special = (
             self.movement.special_move_consumed_tick
             & self.combat.present
@@ -1579,6 +1611,11 @@ class TensorResidentEngine:
             )
         )
         result = step_stationary_combat_(self.combat, LOGIC_TICK_SECONDS)
+        resolved_target_slot = self.combat.target_slot.clamp_min(0)
+        resolved_target_id = self.combat.entity_id.gather(1, resolved_target_slot)
+        self.combat_target_entity_id.copy_(
+            torch.where(self.combat.target_slot >= 0, resolved_target_id, -1)
+        )
         self.movement.special_move_consumed_tick &= ~consumed_special
         runtime = self.runtime
         runtime.battle.entity_hp.copy_(
@@ -1615,7 +1652,8 @@ class TensorResidentEngine:
             active[:, None]
             & self.combat.present
             & (self.combat.target_slot >= 0)
-            & ~self.combat.combat_blocked
+            & self.combat.present.gather(1, target)
+            & self.combat.alive.gather(1, target)
         )
         self.facing_x_units.copy_(torch.where(observed, dx, self.facing_x_units))
         self.facing_y_units.copy_(torch.where(observed, dy, self.facing_y_units))
@@ -1624,6 +1662,7 @@ class TensorResidentEngine:
             & self.combat.alive
             & (self.combat.kind == 0)
             & (self.combat.deploy_remaining <= 1e-9)
+            & ~self.combat.combat_blocked
             & ~in_range
         )
         previous_movement_target = self.movement.target_id.clone()
@@ -2042,13 +2081,9 @@ class TensorResidentEngine:
             & (core.entity_deploy_delay > 0.0)
         )
         previous = core.entity_deploy_delay.clone()
-        core.entity_deploy_delay.copy_(
-            torch.where(
-                deploying,
-                torch.clamp(previous - core.dt[:, None], min=0.0),
-                previous,
-            )
-        )
+        decremented = torch.clamp(previous - core.dt[:, None], min=0.0)
+        next_delay = torch.where(decremented <= 1e-9, 0.0, decremented)
+        core.entity_deploy_delay.copy_(torch.where(deploying, next_delay, previous))
         completed = deploying & (previous > 0.0) & (core.entity_deploy_delay <= 1e-9)
         core.entity_placement_pending &= ~completed
         core.entity_spawn_hook_pending &= ~completed
@@ -2102,6 +2137,7 @@ class TensorResidentEngine:
             expanded = dead.reshape(*dead.shape, *((1,) * (value.ndim - 2)))
             value.masked_fill_(expanded, 0)
         runtime.battle.entity_id.copy_(runtime.entity_pool.entity_id)
+        self.combat_target_entity_id.masked_fill_(dead, -1)
         self.pending_projectile_max_duration_ms.masked_fill_(dead, 0)
         runtime.phases.death_pending &= ~dead
         runtime.mark_dirty(dead.any(dim=1), phase=TickPhase.CLEANUP_AND_SPAWNS)
@@ -2119,6 +2155,7 @@ class TensorResidentEngine:
         _copy_rows_(self.runtime.events, source.runtime.events, rows)
         self.runtime.supported[rows] = source.runtime.supported[rows]
         self.runtime.dirty[rows] = source.runtime.dirty[rows]
+        self.combat_target_entity_id[rows] = source.combat_target_entity_id[rows]
         for left, right in (
             (self.combat, source.combat),
             (self.movement, source.movement),
