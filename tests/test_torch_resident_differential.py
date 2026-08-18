@@ -29,59 +29,59 @@ from clasher.torch_sim.runtime_state import RuntimeEventOpcode, TickPhase
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "200a7e2b40e85b7ba57c84fc02655d0d747f09f20eb3926efdea1d3e4eb010ba"
+    "44317185c0cbe815425c40531083678a2636d7df9545ebee90a33868d97d123a"
 )
 EXPECTED_EVIDENCE = {
+    "BabyDragon",
     "Bandit",
+    "Bomber",
     "Cannon",
     "Knight",
     "Lumberjack",
     "MiniPekka",
+    "Minions",
     "Pekka",
+    "Princess",
     "Skeletons",
+    "SpearGoblins",
     "Tombstone",
     "Valkyrie",
+    "Xbow",
 }
 EXPECTED_NO_INTERACTION = {
     "Archers",
+    "Arrows",
     "Balloon",
+    "BattleRam",
     "Bowler",
     "DartGoblin",
-    "Giant",
-    "Golem",
-    "HogRider",
-    "IceGolem",
-    "MegaMinion",
-    "Musketeer",
-    "Prince",
-    "RoyalHogs",
-}
-EXPECTED_DIVERGED = {
-    "Arrows",
-    "BabyDragon",
-    "BarbarianBarrel",
-    "BattleRam",
-    "Bats",
-    "Bomber",
     "Earthquake",
     "Fireball",
-    "Freeze",
-    "GiantSnowball",
+    "Giant",
     "GoblinBarrel",
+    "Golem",
     "Graveyard",
+    "HogRider",
+    "IceGolem",
     "Log",
-    "Miner",
-    "Minions",
+    "MegaMinion",
+    "Musketeer",
     "NightWitch",
     "Poison",
-    "Princess",
+    "Prince",
     "Rocket",
     "RoyalDelivery",
+    "RoyalHogs",
     "SkeletonBarrel",
-    "SpearGoblins",
     "Tornado",
-    "Xbow",
     "Zap",
+}
+EXPECTED_DIVERGED = {
+    "BarbarianBarrel",
+    "Bats",
+    "Freeze",
+    "GiantSnowball",
+    "Miner",
 }
 EXPECTED_RUNTIME_FALLBACK: set[str] = set()
 WRAPPER_CHILD_ALIASES = {
@@ -458,15 +458,21 @@ def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
             expected_classifications[name] = classification.value
     matrix.assert_digest(EXPECTED_ENABLED_DIGEST, expected_classifications)
     assert matrix.evidence_cards == (
+        "BabyDragon",
         "Bandit",
+        "Bomber",
         "Cannon",
         "Knight",
         "Lumberjack",
         "MiniPekka",
+        "Minions",
         "Pekka",
+        "Princess",
         "Skeletons",
+        "SpearGoblins",
         "Tombstone",
         "Valkyrie",
+        "Xbow",
     )
     assert all(
         matrix.require_evidence(name).interaction_observed
