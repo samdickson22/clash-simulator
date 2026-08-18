@@ -327,7 +327,7 @@ def test_tick_capture_does_not_clear_rejected_row_state() -> None:
     supported = BattleState()
     rejected = BattleState()
     rejected.players[0].elixir = 10.0
-    rejected.players[0].hand = ["Golem", "Zap", "Cannon", "Fireball"]
+    rejected.players[0].hand = ["ArcherQueen", "Zap", "Cannon", "Fireball"]
     engine, projection = _projection([supported, rejected])
     engine.runtime.events.append(
         phase=TickPhase.STATUS,

@@ -155,7 +155,7 @@ def test_resident_mechanic_mixed_rows_commit_atomically() -> None:
     assert preflight.supported.tolist() == [True, False]
     assert preflight.reason_code.tolist() == [
         ResidentUnsupportedReason.NONE,
-        ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        ResidentUnsupportedReason.PROJECTILE_COMBAT,
     ]
     assert preflight.mechanic_opcode_present[
         1, MECHANIC_OPCODE["PeriodicSpawner"]
@@ -168,11 +168,8 @@ def test_resident_mechanic_mixed_rows_commit_atomically() -> None:
     assert torch.equal(engine.runtime.battle.time[1], unsupported_time)
 
 
-@pytest.mark.parametrize("card_name", ("MegaKnight", "ElectroWizard", "IceGolem"))
-def test_resident_co_required_child_mechanics_remain_preflight_fallback(
-    card_name: str,
-) -> None:
-    battle, _, _ = _battle(card_name)
+def test_resident_co_required_child_mechanics_remain_preflight_fallback() -> None:
+    battle, _, _ = _battle("MegaKnight")
     engine = TensorResidentEngine.from_battles(
         [battle], max_entities=8, max_objects=8, event_capacity=64
     )
@@ -181,6 +178,45 @@ def test_resident_co_required_child_mechanics_remain_preflight_fallback(
 
     assert preflight.supported.tolist() == [False]
     assert preflight.reason_code.tolist() == [ResidentUnsupportedReason.ACTIVE_MECHANIC]
+
+
+@pytest.mark.parametrize(
+    ("card_name", "owner_opcode"),
+    (
+        ("ElectroWizard", "SpawnAreaEffect"),
+        ("IceGolem", "DeathAreaEffect"),
+    ),
+)
+def test_resident_integrated_co_mechanic_owner_preflight_and_tick_commit(
+    card_name: str,
+    owner_opcode: str,
+) -> None:
+    battle, source_id, target_id = _battle(card_name)
+    engine = TensorResidentEngine.from_battles(
+        [battle], max_entities=8, max_objects=8, event_capacity=64
+    )
+    source_slot = _slot(engine, source_id)
+    target_slot = _slot(engine, target_id)
+    hp_before = engine.runtime.battle.entity_hp[0, target_slot].item()
+
+    preflight = engine.preflight()
+    owner_supported = (
+        engine._spawn_area_entity_supported()[0, source_slot]
+        if owner_opcode == "SpawnAreaEffect"
+        else engine._death_payload_entity_supported()[0, source_slot]
+    )
+    result = engine.step()
+
+    assert preflight.supported.tolist() == [True]
+    assert preflight.reason_code.tolist() == [ResidentUnsupportedReason.NONE]
+    assert preflight.mechanic_opcode_present[0, MECHANIC_OPCODE[owner_opcode]].item()
+    assert owner_supported.item()
+    assert result.committed.tolist() == [True]
+    assert result.death_payloads is not None
+    assert result.death_payloads.committed.tolist() == [True]
+    if card_name == "ElectroWizard":
+        assert engine.runtime.battle.entity_hp[0, target_slot].item() < hp_before
+        assert engine.runtime.status.stun_timer[0, target_slot].item() > 0.0
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
