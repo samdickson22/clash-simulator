@@ -12,6 +12,7 @@ from __future__ import annotations
 import copy
 from collections.abc import Sequence
 from dataclasses import dataclass, fields
+from enum import IntEnum
 
 import torch
 
@@ -64,9 +65,59 @@ RESIDENT_UNSUPPORTED_EFFECT_OPCODES = {
 @dataclass(frozen=True)
 class ResidentPreflight:
     supported: torch.Tensor
+    reason_code: torch.Tensor
+    mechanic_opcode_present: torch.Tensor
+    effect_opcode_present: torch.Tensor
+
+
+@dataclass(frozen=True)
+class ResidentPreflightDiagnostics:
+    """Human-readable boundary view; never used by the resident step path."""
+
+    supported: tuple[bool, ...]
     reasons: tuple[str | None, ...]
     unsupported_mechanic_opcodes: tuple[tuple[int, ...], ...]
     unsupported_effect_opcodes: tuple[tuple[int, ...], ...]
+
+
+class ResidentUnsupportedReason(IntEnum):
+    NONE = 0
+    DEVICE = 1
+    UNKNOWN_CHARACTER = 2
+    ACTIVE_MECHANIC = 3
+    ACTIVE_EFFECT = 4
+    PROJECTILE_COMBAT = 5
+    DEATH_SPAWN = 6
+    OBJECT_PHASE = 7
+    CHAMPION_ACTION = 8
+    SPELL_ACTION = 9
+    ACTION_MECHANIC = 10
+    ACTION_EFFECT = 11
+    MIXED_PAYLOAD = 12
+
+
+_REASON_TEXT = {
+    ResidentUnsupportedReason.DEVICE: "resident exact phases require CPU or CUDA",
+    ResidentUnsupportedReason.UNKNOWN_CHARACTER: (
+        "active character card is absent from the catalog"
+    ),
+    ResidentUnsupportedReason.ACTIVE_MECHANIC: "unsupported active mechanic opcode",
+    ResidentUnsupportedReason.ACTIVE_EFFECT: "unsupported active effect opcode",
+    ResidentUnsupportedReason.PROJECTILE_COMBAT: (
+        "resident combat projectile launch is not integrated"
+    ),
+    ResidentUnsupportedReason.DEATH_SPAWN: (
+        "resident character death spawn is not integrated"
+    ),
+    ResidentUnsupportedReason.OBJECT_PHASE: "runtime object phase is unsupported",
+    ResidentUnsupportedReason.CHAMPION_ACTION: (
+        "champion action is not resident-integrated"
+    ),
+    ResidentUnsupportedReason.SPELL_ACTION: "spell action is not resident-integrated",
+    ResidentUnsupportedReason.ACTION_MECHANIC: "unsupported action mechanic opcode",
+    ResidentUnsupportedReason.ACTION_EFFECT: "unsupported action effect opcode",
+    ResidentUnsupportedReason.MIXED_PAYLOAD: "mixed deployment payload is unsupported",
+}
 
 
 @dataclass(frozen=True)
@@ -343,6 +394,8 @@ class TensorResidentEngine:
         return self.runtime.card_catalog_index[self.runtime.battle.entity_card]
 
     def preflight(self, action_ids: torch.Tensor | None = None) -> ResidentPreflight:
+        """Return production support planes without host-side row extraction."""
+
         actions = (
             torch.full(
                 (self.batch_size, 2),
@@ -355,14 +408,17 @@ class TensorResidentEngine:
         )
         if actions.shape != (self.batch_size, 2):
             raise ValueError("action_ids must have shape [batch, 2]")
-        supported = (
-            self.runtime.supported
-            & ~self.runtime.battle.game_over
-            & self.objects.static_supported
-        )
-        reasons: list[str | None] = [None] * self.batch_size
-        mechanic_rows: list[tuple[int, ...]] = []
-        effect_rows: list[tuple[int, ...]] = []
+        base_supported = self.runtime.supported & ~self.runtime.battle.game_over
+        reason = torch.zeros(self.batch_size, dtype=torch.int16, device=self.device)
+
+        def publish(mask: torch.Tensor, code: ResidentUnsupportedReason) -> None:
+            nonlocal reason
+            reason = torch.where(
+                (reason == 0) & mask,
+                torch.full_like(reason, int(code)),
+                reason,
+            )
+
         catalog_id = self._core_catalog_id()
         active_character = self.runtime.entity_pool.active & (
             (self.runtime.battle.entity_kind == 0)
@@ -370,66 +426,50 @@ class TensorResidentEngine:
         )
         safe = catalog_id.clamp_min(0)
         known = (catalog_id >= 0) | (self.runtime.battle.entity_tower_slot >= 0)
-        for row in range(self.batch_size):
-            mechanics = tuple(
-                sorted(
-                    {
-                        int(value)
-                        for value in self.runtime.catalog.mechanic_opcode[
-                            safe[row][active_character[row]]
-                        ]
-                        .flatten()
-                        .tolist()
-                        if int(value) != 0
-                    }
-                )
-            )
-            effects = tuple(
-                sorted(
-                    {
-                        int(value)
-                        for value in self.runtime.catalog.effect_opcode[
-                            safe[row][active_character[row]]
-                        ]
-                        .flatten()
-                        .tolist()
-                        if int(value) != 0
-                    }
-                )
-            )
-            mechanic_rows.append(mechanics)
-            effect_rows.append(effects)
-            if self.device.type not in {"cpu", "cuda"}:
-                supported[row] = False
-                reasons[row] = "resident exact phases require CPU or CUDA"
-            elif not bool(known[row][active_character[row]].all().item()):
-                supported[row] = False
-                reasons[row] = "active character card is absent from the catalog"
-            elif mechanics:
-                supported[row] = False
-                reasons[row] = f"unsupported mechanic opcodes {mechanics}"
-            elif effects:
-                supported[row] = False
-                reasons[row] = f"unsupported character effect opcodes {effects}"
-            elif bool(
-                (
-                    self.uses_projectile[safe[row]]
-                    & active_character[row]
-                    & (self.runtime.battle.entity_tower_slot[row] < 0)
-                )
-                .any()
-                .item()
-            ):
-                supported[row] = False
-                reasons[row] = "resident combat projectile launch is not integrated"
-            elif bool(
-                (self.death_spawn[safe[row]] & active_character[row]).any().item()
-            ):
-                supported[row] = False
-                reasons[row] = "resident character death spawn is not integrated"
-            elif not bool(self.objects.static_supported[row].item()):
-                supported[row] = False
-                reasons[row] = self.objects.unsupported_reasons[row]
+        mechanic_codes = torch.arange(
+            max(RESIDENT_UNSUPPORTED_MECHANIC_OPCODES) + 1,
+            dtype=torch.int64,
+            device=self.device,
+        )
+        effect_codes = torch.arange(
+            max(RESIDENT_UNSUPPORTED_EFFECT_OPCODES) + 1,
+            dtype=torch.int64,
+            device=self.device,
+        )
+        entity_mechanics = self.runtime.catalog.mechanic_opcode[safe]
+        entity_effects = self.runtime.catalog.effect_opcode[safe]
+        mechanic_present = (
+            (entity_mechanics[..., None] == mechanic_codes)
+            & active_character[..., None, None]
+            & (mechanic_codes > 0)
+        ).any(dim=(1, 2))
+        effect_present = (
+            (entity_effects[..., None] == effect_codes)
+            & active_character[..., None, None]
+            & (effect_codes > 0)
+        ).any(dim=(1, 2))
+
+        if self.device.type not in {"cpu", "cuda"}:
+            publish(torch.ones_like(base_supported), ResidentUnsupportedReason.DEVICE)
+        publish(
+            (~known & active_character).any(dim=1),
+            ResidentUnsupportedReason.UNKNOWN_CHARACTER,
+        )
+        publish(mechanic_present.any(dim=1), ResidentUnsupportedReason.ACTIVE_MECHANIC)
+        publish(effect_present.any(dim=1), ResidentUnsupportedReason.ACTIVE_EFFECT)
+        publish(
+            (
+                self.uses_projectile[safe]
+                & active_character
+                & (self.runtime.battle.entity_tower_slot < 0)
+            ).any(dim=1),
+            ResidentUnsupportedReason.PROJECTILE_COMBAT,
+        )
+        publish(
+            (self.death_spawn[safe] & active_character).any(dim=1),
+            ResidentUnsupportedReason.DEATH_SPAWN,
+        )
+        publish(~self.objects.static_supported, ResidentUnsupportedReason.OBJECT_PHASE)
 
         # Pure action ingress contributes opcodes before any speculative state
         # or RNG is mutated.
@@ -439,55 +479,121 @@ class TensorResidentEngine:
             actions,
             legal_mask=self.deployment.kernel.legal_action_mask(action_state),
         )
-        for command in range(int(ingress.commands.card_id.numel())):
-            row = int(ingress.commands.battle_index[command].item())
-            card = int(ingress.commands.card_id[command].item())
-            opcodes = tuple(
-                sorted(
-                    int(value)
-                    for value in self.runtime.catalog.mechanic_opcode[card].tolist()
-                    if int(value) != 0
-                )
+        command_rows = ingress.commands.battle_index
+        command_cards = ingress.commands.card_id
+        command_mechanics = self.runtime.catalog.mechanic_opcode[command_cards]
+        command_effects = self.runtime.catalog.effect_opcode[command_cards]
+
+        def scatter_opcode_presence(
+            destination: torch.Tensor,
+            opcodes: torch.Tensor,
+        ) -> torch.Tensor:
+            width = destination.shape[1]
+            expanded_rows = command_rows[:, None].expand_as(opcodes)
+            valid = opcodes > 0
+            flat = torch.zeros(
+                self.batch_size * width, dtype=torch.int32, device=self.device
             )
-            effects = tuple(
-                sorted(
-                    int(value)
-                    for value in self.runtime.catalog.effect_opcode[card].tolist()
-                    if int(value) != 0
-                )
+            keys = expanded_rows * width + opcodes.to(torch.int64)
+            flat.scatter_add_(
+                0,
+                keys[valid],
+                torch.ones_like(keys[valid], dtype=torch.int32),
             )
-            if opcodes:
-                mechanic_rows[row] = tuple(
-                    sorted(set(mechanic_rows[row]) | set(opcodes))
-                )
-            if effects:
-                effect_rows[row] = tuple(sorted(set(effect_rows[row]) | set(effects)))
-            kind = int(self.runtime.catalog.kind[card].item())
-            payload_supported = bool(
-                self.deployment.materializer.catalog.supported_payload[card].item()
-            )
-            if bool(ingress.commands.is_ability[command].item()):
-                supported[row] = False
-                reasons[row] = (
-                    reasons[row] or "champion action is not resident-integrated"
-                )
-            elif kind == 3:
-                supported[row] = False
-                reasons[row] = reasons[row] or "spell action is not resident-integrated"
-            elif opcodes:
-                supported[row] = False
-                reasons[row] = reasons[row] or f"unsupported mechanic opcodes {opcodes}"
-            elif effects:
-                supported[row] = False
-                reasons[row] = reasons[row] or f"unsupported effect opcodes {effects}"
-            elif not payload_supported:
-                supported[row] = False
-                reasons[row] = reasons[row] or "mixed deployment payload is unsupported"
+            return destination | (flat.reshape(self.batch_size, width) > 0)
+
+        mechanic_present = scatter_opcode_presence(mechanic_present, command_mechanics)
+        effect_present = scatter_opcode_presence(effect_present, command_effects)
+        command_has_mechanic = (command_mechanics > 0).any(dim=1)
+        command_has_effect = (command_effects > 0).any(dim=1)
+        command_kind = self.runtime.catalog.kind[command_cards]
+        command_payload = self.deployment.materializer.catalog.supported_payload[
+            command_cards
+        ]
+
+        def command_rows_with(mask: torch.Tensor) -> torch.Tensor:
+            rows = torch.zeros(self.batch_size, dtype=torch.int32, device=self.device)
+            rows.scatter_add_(0, command_rows, mask.to(torch.int32))
+            return rows > 0
+
+        publish(
+            command_rows_with(ingress.commands.is_ability),
+            ResidentUnsupportedReason.CHAMPION_ACTION,
+        )
+        publish(
+            command_rows_with(command_kind == 3),
+            ResidentUnsupportedReason.SPELL_ACTION,
+        )
+        publish(
+            command_rows_with(command_has_mechanic),
+            ResidentUnsupportedReason.ACTION_MECHANIC,
+        )
+        publish(
+            command_rows_with(command_has_effect),
+            ResidentUnsupportedReason.ACTION_EFFECT,
+        )
+        publish(
+            command_rows_with(~command_payload),
+            ResidentUnsupportedReason.MIXED_PAYLOAD,
+        )
         return ResidentPreflight(
+            supported=base_supported & (reason == 0),
+            reason_code=reason,
+            mechanic_opcode_present=mechanic_present,
+            effect_opcode_present=effect_present,
+        )
+
+    def diagnose_preflight(
+        self, action_ids: torch.Tensor | None = None
+    ) -> ResidentPreflightDiagnostics:
+        """Convert support planes to strings at an explicit debug boundary."""
+
+        result = self.preflight(action_ids)
+        reasons: list[str | None] = []
+        mechanics: list[tuple[int, ...]] = []
+        effects: list[tuple[int, ...]] = []
+        supported = tuple(bool(value) for value in result.supported.tolist())
+        for row, raw_code in enumerate(result.reason_code.tolist()):
+            code = ResidentUnsupportedReason(int(raw_code))
+            row_mechanics = tuple(
+                int(value)
+                for value in torch.nonzero(
+                    result.mechanic_opcode_present[row], as_tuple=False
+                )
+                .flatten()
+                .tolist()
+            )
+            row_effects = tuple(
+                int(value)
+                for value in torch.nonzero(
+                    result.effect_opcode_present[row], as_tuple=False
+                )
+                .flatten()
+                .tolist()
+            )
+            text = (
+                None if code is ResidentUnsupportedReason.NONE else _REASON_TEXT[code]
+            )
+            if code in {
+                ResidentUnsupportedReason.ACTIVE_MECHANIC,
+                ResidentUnsupportedReason.ACTION_MECHANIC,
+            }:
+                text = f"{text}: {row_mechanics}"
+            elif code in {
+                ResidentUnsupportedReason.ACTIVE_EFFECT,
+                ResidentUnsupportedReason.ACTION_EFFECT,
+            }:
+                text = f"{text}: {row_effects}"
+            elif code is ResidentUnsupportedReason.OBJECT_PHASE:
+                text = self.objects.unsupported_reasons[row] or text
+            reasons.append(text)
+            mechanics.append(row_mechanics)
+            effects.append(row_effects)
+        return ResidentPreflightDiagnostics(
             supported=supported,
             reasons=tuple(reasons),
-            unsupported_mechanic_opcodes=tuple(mechanic_rows),
-            unsupported_effect_opcodes=tuple(effect_rows),
+            unsupported_mechanic_opcodes=tuple(mechanics),
+            unsupported_effect_opcodes=tuple(effects),
         )
 
     def _refresh_planes(self) -> torch.Tensor:
@@ -730,38 +836,49 @@ class TensorResidentEngine:
         """Compile exact half-grid heads for unobstructed same-side movement."""
 
         movement = self.movement
-        for row, slot in torch.nonzero(changed, as_tuple=False).tolist():
-            if bool(movement.is_air[row, slot].item()):
-                movement.route_count[row, slot] = 0
-                continue
-            start_y = int(movement.position_units[row, slot, 1].item())
-            target_x = int(movement.target_position_units[row, slot, 0].item())
-            target_y = int(movement.target_position_units[row, slot, 1].item())
-            same_lower = start_y < 15_000 and target_y < 15_000
-            same_upper = start_y > 17_000 and target_y > 17_000
-            if not (same_lower or same_upper) or start_y == target_y:
-                movement.ordinary_supported[row, slot] = False
-                continue
-            direction = 1 if target_y > start_y else -1
-            first_y = start_y // 500 + direction
-            terminal_y = target_y // 500
-            y_cells = list(range(first_y, terminal_y, direction))
-            if not y_cells or len(y_cells) > movement.route_capacity:
-                movement.ordinary_supported[row, slot] = False
-                continue
-            x_cell = target_x // 500
-            movement.route_cells[row, slot].zero_()
-            movement.route_cells[row, slot, : len(y_cells), 0] = x_cell
-            movement.route_cells[row, slot, : len(y_cells), 1] = torch.tensor(
-                y_cells, dtype=torch.int64, device=self.device
-            )
-            movement.route_count[row, slot] = len(y_cells)
-            movement.waypoint_units[row, slot] = torch.tensor(
-                (x_cell * 500 + 250, y_cells[0] * 500 + 250),
-                dtype=torch.int64,
-                device=self.device,
-            )
-            movement.waypoint_valid[row, slot] = True
+        start_y = movement.position_units[..., 1]
+        target_x = movement.target_position_units[..., 0]
+        target_y = movement.target_position_units[..., 1]
+        ground_changed = changed & ~movement.is_air
+        same_side = ((start_y < 15_000) & (target_y < 15_000)) | (
+            (start_y > 17_000) & (target_y > 17_000)
+        )
+        direction = torch.where(target_y > start_y, 1, -1)
+        first_y = torch.div(start_y, 500, rounding_mode="floor") + direction
+        terminal_y = torch.div(target_y, 500, rounding_mode="floor")
+        count = torch.abs(terminal_y - first_y)
+        valid = (
+            ground_changed
+            & same_side
+            & (start_y != target_y)
+            & (count > 0)
+            & (count <= movement.route_capacity)
+        )
+        movement.ordinary_supported &= ~ground_changed | valid
+        movement.route_count.copy_(
+            torch.where(changed & movement.is_air, 0, movement.route_count)
+        )
+        movement.route_count.copy_(torch.where(valid, count, movement.route_count))
+
+        lane = torch.arange(
+            movement.route_capacity, dtype=torch.int64, device=self.device
+        ).view(1, 1, -1)
+        lane_valid = lane < count[..., None]
+        x_cell = torch.div(target_x, 500, rounding_mode="floor")
+        route_x = x_cell[..., None].expand(*x_cell.shape, movement.route_capacity)
+        route_y = first_y[..., None] + direction[..., None] * lane
+        candidate = torch.stack((route_x, route_y), dim=-1)
+        candidate = torch.where(
+            lane_valid[..., None], candidate, torch.zeros_like(candidate)
+        )
+        movement.route_cells.copy_(
+            torch.where(valid[..., None, None], candidate, movement.route_cells)
+        )
+        first_waypoint = torch.stack((x_cell * 500 + 250, first_y * 500 + 250), dim=-1)
+        movement.waypoint_units.copy_(
+            torch.where(valid[..., None], first_waypoint, movement.waypoint_units)
+        )
+        movement.waypoint_valid |= valid
 
     def _movement_phase(
         self, component_consumed: torch.Tensor | None = None
@@ -964,6 +1081,8 @@ __all__ = [
     "RESIDENT_UNSUPPORTED_EFFECT_OPCODES",
     "RESIDENT_UNSUPPORTED_MECHANIC_OPCODES",
     "ResidentPreflight",
+    "ResidentPreflightDiagnostics",
     "ResidentTickResult",
+    "ResidentUnsupportedReason",
     "TensorResidentEngine",
 ]

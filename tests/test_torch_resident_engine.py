@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import random
 from collections import deque
 from dataclasses import fields
@@ -61,6 +62,43 @@ def _segment_battle() -> BattleState:
     return battle
 
 
+def _crowded_battles(count: int = 4) -> list[BattleState]:
+    battles: list[BattleState] = []
+    for row in range(count):
+        battle = _segment_battle()
+        battle.rng = random.Random(733_000 + row)
+        stats = battle.card_loader.get_card("Knight")
+        assert stats is not None
+        for spectator in range(6):
+            battle._spawn_unit_at_position(
+                Position(1.0 + spectator * 0.6, 4.0 + (spectator % 2)),
+                0,
+                stats,
+                deploy_delay_override=0.0,
+                snap_to_valid=False,
+            )
+            entity = battle.entities[battle.next_entity_id - 1]
+            entity.stun_timer = 100.0
+            entity.attack_cooldown = 10.0
+        battles.append(battle)
+    return battles
+
+
+def _oracle_trace(battles: list[BattleState]) -> None:
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    trace = (
+        (DEPLOY_KNIGHT_FAR_FROM_COMBAT, NO_OP_ACTION),
+        (NO_OP_ACTION, NO_OP_ACTION),
+    )
+    for player_actions in trace:
+        for battle in battles:
+            order = [0, 1]
+            battle.rng.shuffle(order)
+            for player in order:
+                assert action_space.apply_action(battle, player, player_actions[player])
+            battle.step_logic_ticks(1)
+
+
 def _engine_snapshot(engine: TensorResidentEngine) -> dict[str, torch.Tensor]:
     result: dict[str, torch.Tensor] = {}
     owners = (
@@ -103,6 +141,18 @@ def test_resident_phase_order_matches_python_battle_manager() -> None:
         TickPhase.CLEANUP_AND_SPAWNS,
         TickPhase.WIN_CONDITIONS,
     )
+
+
+def test_supported_preflight_and_route_compilation_have_no_host_row_extraction() -> (
+    None
+):
+    for method in (
+        TensorResidentEngine.preflight,
+        TensorResidentEngine._compile_straight_ground_routes_,
+    ):
+        source = inspect.getsource(method)
+        assert ".item(" not in source
+        assert ".tolist(" not in source
 
 
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
@@ -159,7 +209,7 @@ def test_enabled_knight_segment_deploys_moves_attacks_and_cleans_death_without_p
         result = engine.step(actions)
         assert result.committed.tolist() == [True], (
             tick,
-            result.preflight.reasons,
+            result.preflight.reason_code.tolist(),
             result.movement.unsupported_reasons,
             result.objects.unsupported_reasons,
         )
@@ -206,9 +256,11 @@ def test_action_mechanic_opcode_is_reported_and_rejected_before_mutation() -> No
     )
     actions = torch.tensor([[DEPLOY_KNIGHT_FAR_FROM_COMBAT, NO_OP_ACTION]])
     preflight = engine.preflight(actions)
+    diagnostics = engine.diagnose_preflight(actions)
     assert not preflight.supported.item()
-    assert preflight.unsupported_mechanic_opcodes[0]
-    assert "unsupported mechanic opcodes" in str(preflight.reasons[0])
+    assert preflight.mechanic_opcode_present[0].any()
+    assert diagnostics.unsupported_mechanic_opcodes[0]
+    assert "unsupported action mechanic opcode" in str(diagnostics.reasons[0])
     before = _engine_snapshot(engine)
 
     result = engine.step(actions)
@@ -220,6 +272,73 @@ def test_action_mechanic_opcode_is_reported_and_rejected_before_mutation() -> No
         torch.testing.assert_close(
             after[name], expected, rtol=0, atol=0, equal_nan=True, msg=name
         )
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_crowded_batched_rows_match_oracle_exactly(device: str) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    sources = _crowded_battles()
+    oracle = [battle.clone() for battle in sources]
+    _oracle_trace(oracle)
+    engine = TensorResidentEngine.from_battles(
+        [battle.clone() for battle in sources],
+        device=device,
+        max_entities=24,
+        max_objects=24,
+        event_capacity=128,
+    )
+    trace = (
+        (DEPLOY_KNIGHT_FAR_FROM_COMBAT, NO_OP_ACTION),
+        (NO_OP_ACTION, NO_OP_ACTION),
+    )
+    for player_actions in trace:
+        actions = torch.tensor(
+            [player_actions for _ in sources],
+            dtype=torch.int64,
+            device=device,
+        )
+        result = engine.step(actions)
+        assert result.committed.all()
+
+    for row, expected in enumerate(oracle):
+        runtime_ids = engine.runtime.battle.entity_id[row].tolist()
+        assert {entity_id for entity_id in runtime_ids if entity_id} == set(
+            expected.entities
+        )
+        assert engine.runtime.battle.tick[row].item() == expected.tick
+        assert engine.runtime.battle.time[row].item() == expected.time
+        assert engine.runtime.battle.rng.python_state(row) == expected.rng.getstate()
+        assert engine.runtime.entity_pool.next_entity_id[row].item() == (
+            expected.next_entity_id
+        )
+        assert engine.runtime.battle.elixir[row].tolist() == [
+            player.elixir for player in expected.players
+        ]
+        for entity_id, entity in expected.entities.items():
+            slot = runtime_ids.index(entity_id)
+            assert engine.runtime.battle.entity_x_units[row, slot].item() == round(
+                entity.position.x * 1_000
+            )
+            assert engine.runtime.battle.entity_y_units[row, slot].item() == round(
+                entity.position.y * 1_000
+            )
+            assert engine.runtime.battle.entity_hp[row, slot].item() == entity.hitpoints
+            assert (
+                engine.runtime.battle.entity_deploy_delay[row, slot].item()
+                == entity.deploy_delay_remaining
+            )
+            assert engine.combat.attack_cooldown[row, slot].item() == (
+                entity.attack_cooldown
+            )
+        opcodes = engine.runtime.events.opcode[
+            row, : engine.runtime.events.count[row]
+        ].tolist()
+        assert opcodes == [
+            RuntimeEventOpcode.SPAWN,
+            RuntimeEventOpcode.DAMAGE,
+            RuntimeEventOpcode.DEATH,
+        ]
 
 
 def test_cross_phase_event_overflow_discards_whole_tick_including_rng_and_clock() -> (
