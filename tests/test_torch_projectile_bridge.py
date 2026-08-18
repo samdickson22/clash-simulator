@@ -9,7 +9,7 @@ import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Projectile, TargetType, Troop
+from clasher.entities import Projectile, SpawnProjectile, TargetType, Troop
 from clasher.spells import SPELL_REGISTRY
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.combat import CombatStepResult
@@ -18,6 +18,7 @@ from clasher.torch_sim.projectile_bridge import (
     BridgePayloadKind,
     TensorResidentProjectileSpellBridge,
 )
+from clasher.torch_sim.resident_engine import _resident_deployment_catalog_closure
 from clasher.torch_sim.runtime_objects import (
     TensorRuntimeObjectPhase,
 )
@@ -92,7 +93,10 @@ def _runtime_bridge(
     TensorResidentProjectileSpellBridge,
     TensorCardCatalog,
 ]:
-    catalog = TensorCardCatalog.compile(battles[0].card_loader, names, device=device)
+    catalog_loader, closure = _resident_deployment_catalog_closure(
+        battles[0].card_loader, names
+    )
+    catalog = TensorCardCatalog.compile(catalog_loader, closure, device=device)
     runtime = TensorBattleRuntime.from_battles(
         battles,
         device=device,
@@ -133,9 +137,9 @@ def test_serialized_payload_catalog_classifies_enabled_families_without_names() 
     expected = {
         "Archer": (BridgePayloadKind.COMBAT_PROJECTILE, True),
         "Zap": (BridgePayloadKind.DIRECT_SPELL, True),
-        "Fireball": (BridgePayloadKind.PROJECTILE_SPELL, False),
-        "Arrows": (BridgePayloadKind.PROJECTILE_SPELL, False),
-        "GoblinBarrel": (BridgePayloadKind.UNSUPPORTED, False),
+        "Fireball": (BridgePayloadKind.PROJECTILE_SPELL, True),
+        "Arrows": (BridgePayloadKind.PROJECTILE_SPELL, True),
+        "GoblinBarrel": (BridgePayloadKind.SPAWN_PROJECTILE, True),
         "GlobalLightning": (BridgePayloadKind.AREA_SPELL, True),
     }
     for name, (kind, supported) in expected.items():
@@ -412,17 +416,288 @@ def test_simple_projectile_spell_launch_and_lifecycle_match_python(
     assert runtime.battle.entity_hp[0, 0].item() == oracle.entities[1].hitpoints
 
 
+@pytest.mark.parametrize("spell_name", ["Fireball", "Snowball"])
+def test_projectile_spell_knockback_and_slow_handoffs_match_python(
+    spell_name: str,
+) -> None:
+    seed = BattleState(fast_path=False)
+    target = _troop(seed, "Knight", 1, 1, Position(9.5, 14), hp=2_000)
+    battle = _battle(target, cards=(spell_name, "Knight"))
+    oracle = copy.deepcopy(battle)
+    runtime, objects, bridge, _ = _runtime_bridge(
+        [battle], {spell_name, "Knight"}, max_objects=4
+    )
+    card_id = runtime.battle.card_to_id[spell_name]
+    spell = SPELL_REGISTRY[spell_name]
+    assert spell.cast(oracle, 0, Position(9, 14))
+    supported = bridge.materialize_spell_actions_(
+        runtime,
+        objects,
+        card_ids=torch.tensor([card_id]),
+        player_ids=torch.tensor([0]),
+        target_x_units=torch.tensor([9_000]),
+        target_y_units=torch.tensor([14_000]),
+        valid=torch.tensor([True]),
+    )
+    assert supported.tolist() == [True]
+
+    for _ in range(80):
+        _oracle_object_tick(oracle)
+        bridge.step_objects_(runtime, objects)
+        if not objects.objects.allocated.any():
+            break
+
+    oracle_target = oracle.entities[1]
+    assert runtime.battle.entity_hp[0, 0].item() == oracle_target.hitpoints
+    assert oracle_target._knockback_target is not None
+    assert bridge.knockback_active[0, 0].item() is True
+    assert bridge.knockback_target_units[0, 0].tolist() == [
+        round(oracle_target._knockback_target.x * 1_000),
+        round(oracle_target._knockback_target.y * 1_000),
+    ]
+    assert (
+        bridge.knockback_velocity_work[0, 0].item()
+        == oracle_target._knockback_velocity_work
+    )
+    if spell_name == "Snowball":
+        assert runtime.status.slow_timer[0, 0].item() == oracle_target.slow_timer
+        assert (
+            runtime.status.slow_multiplier[0, 0].item() == oracle_target.slow_multiplier
+        )
+
+
+def test_reused_low_slot_uses_new_card_knockback_immunity() -> None:
+    seed = BattleState(fast_path=False)
+    target = _troop(seed, "Knight", 1, 1, Position(9.5, 14), hp=2_000)
+    battle = _battle(target, cards=("Fireball", "Knight", "Golem"))
+    runtime, objects, bridge, _ = _runtime_bridge(
+        [battle], {"Fireball", "Knight", "Golem"}, max_objects=4
+    )
+    # Reuse physical slot zero for a newly deployed knockback-immune Golem.
+    runtime.battle.entity_id[0, 0] = 2
+    runtime.entity_pool.active[0, 0] = True
+    runtime.battle.entity_active[0, 0] = True
+    runtime.battle.entity_card[0, 0] = runtime.battle.card_to_id["Golem"]
+    runtime.battle.entity_hp[0, 0] = 5_000
+    runtime.battle.entity_max_hp[0, 0] = 5_000
+    runtime.entity_pool.next_entity_id[0] = 3
+    objects.objects.next_object_id[0] = 3
+    card_id = runtime.battle.card_to_id["Fireball"]
+    assert bridge.materialize_spell_actions_(
+        runtime,
+        objects,
+        card_ids=torch.tensor([card_id]),
+        player_ids=torch.tensor([0]),
+        target_x_units=torch.tensor([9_000]),
+        target_y_units=torch.tensor([14_000]),
+        valid=torch.tensor([True]),
+    ).all()
+    for _ in range(80):
+        bridge.step_objects_(runtime, objects)
+        if not objects.objects.allocated.any():
+            break
+    assert (
+        bridge.catalog.card_knockback_immune[runtime.battle.card_to_id["Golem"]].item()
+        is True
+    )
+    assert bridge.knockback_active[0, 0].item() is False
+
+
+def test_arrows_grouped_waves_positions_rng_damage_and_lifecycle_match_python(
+    tensor_device: str,
+) -> None:
+    seed = BattleState(fast_path=False)
+    first = _troop(seed, "Knight", 1, 1, Position(9, 14), hp=2_000)
+    second = _troop(seed, "Knight", 2, 1, Position(10, 14), hp=2_000)
+    battle = _battle(first, second, cards=("Arrows", "Knight"))
+    oracle = copy.deepcopy(battle)
+    runtime, objects, bridge, _ = _runtime_bridge(
+        [battle],
+        {"Arrows", "Knight"},
+        device=tensor_device,
+        max_entities=64,
+        max_objects=40,
+        event_capacity=4_096,
+    )
+    card_id = runtime.battle.card_to_id["Arrows"]
+
+    assert SPELL_REGISTRY["Arrows"].cast(oracle, 0, Position(9, 14))
+    supported = bridge.materialize_spell_actions_(
+        runtime,
+        objects,
+        card_ids=torch.tensor([card_id], device=runtime.device),
+        player_ids=torch.tensor([0], device=runtime.device),
+        target_x_units=torch.tensor([9_000], device=runtime.device),
+        target_y_units=torch.tensor([14_000], device=runtime.device),
+        valid=torch.tensor([True], device=runtime.device),
+    )
+    assert supported.tolist() == [True]
+    python_projectiles = [
+        entity for entity in oracle.entities.values() if isinstance(entity, Projectile)
+    ]
+    assert len(python_projectiles) == 30
+    assert objects.objects.object_id[0, :30].tolist() == list(range(3, 33))
+    assert objects.objects.target_x_units[0, :30].tolist() == [
+        round(projectile.target_position.x * 1_000) for projectile in python_projectiles
+    ]
+    assert objects.objects.target_y_units[0, :30].tolist() == [
+        round(projectile.target_position.y * 1_000) for projectile in python_projectiles
+    ]
+    assert objects.objects.launch_delay_ms[0, :30].tolist() == [
+        round(projectile.launch_delay * 1_000) for projectile in python_projectiles
+    ]
+    assert oracle.rng.getstate() == runtime.battle.rng.python_state(0)
+
+    for _ in range(50):
+        _oracle_object_tick(oracle)
+        result = bridge.step_objects_(runtime, objects)
+        assert result.supported_batch.tolist() == [True]
+        assert runtime.battle.entity_hp[0, :2].tolist() == [
+            oracle.entities[entity_id].hitpoints for entity_id in (1, 2)
+        ]
+        live_python = sorted(
+            entity.id
+            for entity in oracle.entities.values()
+            if isinstance(entity, Projectile)
+        )
+        live_tensor = sorted(
+            objects.objects.object_id[0, objects.objects.allocated[0]].tolist()
+        )
+        assert live_tensor == live_python
+        if not live_python:
+            break
+
+    assert runtime.battle.entity_hp[0, :2].tolist() == [1_634.0, 1_634.0]
+    assert oracle.rng.getstate() == runtime.battle.rng.python_state(0)
+
+
+@pytest.mark.parametrize(("player_id", "target_x"), ((0, 9), (1, 8)))
+def test_goblin_barrel_spawn_handoff_identity_formation_and_delay_match_python(
+    tensor_device: str, player_id: int, target_x: int
+) -> None:
+    battle = _battle(cards=("GoblinBarrel",))
+    oracle = copy.deepcopy(battle)
+    runtime, objects, bridge, shared_catalog = _runtime_bridge(
+        [battle],
+        {"GoblinBarrel"},
+        device=tensor_device,
+        max_entities=16,
+        max_objects=4,
+    )
+    assert runtime.catalog is shared_catalog
+    card_id = runtime.battle.card_to_id["GoblinBarrel"]
+    assert SPELL_REGISTRY["GoblinBarrel"].cast(
+        oracle, player_id, Position(target_x, 14)
+    )
+    assert isinstance(oracle.entities[1], SpawnProjectile)
+    assert bridge.materialize_spell_actions_(
+        runtime,
+        objects,
+        card_ids=torch.tensor([card_id], device=runtime.device),
+        player_ids=torch.tensor([player_id], device=runtime.device),
+        target_x_units=torch.tensor([target_x * 1_000], device=runtime.device),
+        target_y_units=torch.tensor([14_000], device=runtime.device),
+        valid=torch.tensor([True], device=runtime.device),
+    ).all()
+
+    for _ in range(50):
+        _oracle_object_tick(oracle)
+        bridge.step_objects_(runtime, objects)
+        python_carriers = [
+            entity
+            for entity in oracle.entities.values()
+            if isinstance(entity, SpawnProjectile)
+        ]
+        if python_carriers:
+            assert objects.objects.x_units[0, 0].item() == round(
+                python_carriers[0].position.x * 1_000
+            )
+            assert objects.objects.y_units[0, 0].item() == round(
+                python_carriers[0].position.y * 1_000
+            )
+        else:
+            break
+
+    assert sorted(oracle.entities) == [2, 3, 4]
+    active_slots = torch.where(runtime.entity_pool.active[0])[0]
+    assert runtime.battle.entity_id[0, active_slots].tolist() == [2, 3, 4]
+    goblin_card_id = runtime.battle.card_to_id["Goblin"]
+    goblin_catalog_id = runtime.card_catalog_index[goblin_card_id]
+    assert goblin_catalog_id.item() > 0
+    assert runtime.catalog.hitpoints[goblin_catalog_id].item() == 202
+    assert runtime.catalog.load_time_ms[goblin_catalog_id].item() == 700
+    for slot, entity_id in zip(active_slots.tolist(), (2, 3, 4), strict=True):
+        entity = oracle.entities[entity_id]
+        assert runtime.battle.entity_card[0, slot].item() == goblin_card_id
+        assert runtime.battle.entity_x_units[0, slot].item() == round(
+            entity.position.x * 1_000
+        )
+        assert runtime.battle.entity_y_units[0, slot].item() == round(
+            entity.position.y * 1_000
+        )
+        assert runtime.battle.entity_hp[0, slot].item() == entity.hitpoints
+        assert (
+            runtime.battle.entity_deploy_delay[0, slot].item()
+            == entity.deploy_delay_remaining
+        )
+        assert (
+            runtime.battle.entity_placement_pending[0, slot].item()
+            is entity.placement_pending
+        )
+        assert bridge.spawn_target_distance_discount_sq_units[0, slot].item() == (
+            entity._native_target_distance_discount_sq_units
+        )
+    spawn_events = runtime.events.opcode == RuntimeEventOpcode.SPAWN
+    assert runtime.events.target_id[spawn_events].tolist() == [2, 3, 4]
+
+
+def test_spawn_projectile_requires_exact_shared_child_catalog_without_replacement() -> (
+    None
+):
+    battle = _battle(cards=("GoblinBarrel",))
+    shared_catalog = TensorCardCatalog.compile(battle.card_loader, {"GoblinBarrel"})
+    runtime = TensorBattleRuntime.from_battles(
+        [battle], max_entities=8, event_capacity=128, catalog=shared_catalog
+    )
+    objects = TensorRuntimeObjectPhase.from_battles(runtime, [battle], max_objects=4)
+    bridge = TensorResidentProjectileSpellBridge.from_battles(
+        runtime, objects, [battle]
+    )
+    assert runtime.catalog is shared_catalog
+    card_id = runtime.battle.card_to_id["GoblinBarrel"]
+    assert bridge.catalog.supported[card_id].item() is False
+    assert "shared card catalog" in str(bridge.catalog.unsupported_reason[card_id])
+    before_ids = runtime.battle.entity_id.clone()
+    before_next = runtime.entity_pool.next_entity_id.clone()
+    before_objects = objects.objects.allocated.clone()
+
+    supported = bridge.materialize_spell_actions_(
+        runtime,
+        objects,
+        card_ids=torch.tensor([card_id]),
+        player_ids=torch.tensor([0]),
+        target_x_units=torch.tensor([9_000]),
+        target_y_units=torch.tensor([14_000]),
+        valid=torch.tensor([True]),
+    )
+
+    assert supported.tolist() == [False]
+    assert torch.equal(runtime.battle.entity_id, before_ids)
+    assert torch.equal(runtime.entity_pool.next_entity_id, before_next)
+    assert torch.equal(objects.objects.allocated, before_objects)
+
+
 def test_unsupported_spell_families_fail_atomically_without_rng_consumption() -> None:
-    cards = ("Fireball", "Arrows", "GoblinBarrel", "Knight")
+    cards = ("Freeze", "Arrows", "GoblinBarrel", "Knight")
     battles: list[BattleState] = []
     for _ in range(3):
         seed = BattleState(fast_path=False)
         target = _troop(seed, "Knight", 1, 1, Position(9, 14))
         battles.append(_battle(target, cards=cards))
     runtime, objects, bridge, _ = _runtime_bridge(
-        battles, set(cards), max_entities=8, max_objects=8
+        battles, set(cards), max_entities=4, max_objects=8
     )
-    names = ("Fireball", "Arrows", "GoblinBarrel")
+    names = ("Freeze", "Arrows", "GoblinBarrel")
     card_ids = torch.tensor([runtime.battle.card_to_id[name] for name in names])
     before_runtime = {
         (type(owner).__name__, name): value.clone()
@@ -435,7 +710,8 @@ def test_unsupported_spell_families_fail_atomically_without_rng_consumption() ->
         for name, value in vars(objects.objects).items()
         if isinstance(value, torch.Tensor)
     }
-    before_rng = bridge.rng_counter.clone()
+    before_rng_words = runtime.battle.rng.words.clone()
+    before_rng_index = runtime.battle.rng.index.clone()
 
     supported = bridge.materialize_spell_actions_(
         runtime,
@@ -448,7 +724,8 @@ def test_unsupported_spell_families_fail_atomically_without_rng_consumption() ->
     )
 
     assert supported.tolist() == [False, False, False]
-    assert torch.equal(bridge.rng_counter, before_rng)
+    assert torch.equal(runtime.battle.rng.words, before_rng_words)
+    assert torch.equal(runtime.battle.rng.index, before_rng_index)
     for owner in (runtime.battle, runtime.entity_pool, runtime.events):
         for name, value in vars(owner).items():
             if isinstance(value, torch.Tensor):
