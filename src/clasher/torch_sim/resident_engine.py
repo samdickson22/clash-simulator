@@ -604,7 +604,9 @@ class TensorResidentEngine:
         new = present & ((old_id != core.entity_id) | ~self.combat.present)
         catalog_id = runtime.card_catalog_index[core.entity_card]
         safe = catalog_id.clamp_min(0)
-        known = catalog_id >= 0
+        catalog_known = catalog_id >= 0
+        crown = core.entity_tower_slot >= 0
+        known = catalog_known | crown
         character = present & ((core.entity_kind == 0) | (core.entity_kind == 1))
         troop = character & (core.entity_kind == 0)
 
@@ -622,25 +624,99 @@ class TensorResidentEngine:
         self.combat.last_attack_time.copy_(core.entity_last_attack_time)
         self.combat.crown_slot.copy_(core.entity_tower_slot)
         self.combat.tower_active.copy_(core.entity_tower_active)
-        self.combat.damage.copy_(self.runtime.catalog.damage[safe])
+        self.combat.damage.copy_(
+            torch.where(
+                catalog_known,
+                self.runtime.catalog.damage[safe],
+                self.combat.damage,
+            )
+        )
         self.combat.range_units.copy_(
-            self.runtime.catalog.range_units[safe].to(torch.int64)
+            torch.where(
+                catalog_known,
+                self.runtime.catalog.range_units[safe].to(torch.int64),
+                self.combat.range_units,
+            )
         )
         self.combat.sight_range_units.copy_(
-            self.runtime.catalog.sight_range_units[safe].to(torch.int64)
+            torch.where(
+                catalog_known,
+                self.runtime.catalog.sight_range_units[safe].to(torch.int64),
+                self.combat.sight_range_units,
+            )
         )
         radius = self.runtime.catalog.collision_radius_units[safe].to(torch.int64)
-        self.combat.collision_radius_units.copy_(torch.where(radius > 0, radius, 500))
-        self.combat.sight_clip_units.copy_(self.sight_clip_units[safe])
-        self.combat.sight_clip_side_units.copy_(self.sight_clip_side_units[safe])
-        self.combat.can_attack_air.copy_(self.runtime.catalog.attacks_air[safe])
-        self.combat.can_attack_ground.copy_(self.runtime.catalog.attacks_ground[safe])
-        self.combat.buildings_only.copy_(self.runtime.catalog.buildings_only[safe])
-        self.combat.uses_projectile.copy_(self.uses_projectile[safe])
-        self.combat.airborne.copy_(self.runtime.catalog.is_air_unit[safe])
+        self.combat.collision_radius_units.copy_(
+            torch.where(
+                catalog_known,
+                torch.where(radius > 0, radius, 500),
+                self.combat.collision_radius_units,
+            )
+        )
+        self.combat.sight_clip_units.copy_(
+            torch.where(
+                catalog_known,
+                self.sight_clip_units[safe],
+                self.combat.sight_clip_units,
+            )
+        )
+        self.combat.sight_clip_side_units.copy_(
+            torch.where(
+                catalog_known,
+                self.sight_clip_side_units[safe],
+                self.combat.sight_clip_side_units,
+            )
+        )
+        self.combat.can_attack_air.copy_(
+            torch.where(
+                catalog_known,
+                self.runtime.catalog.attacks_air[safe],
+                self.combat.can_attack_air,
+            )
+        )
+        self.combat.can_attack_ground.copy_(
+            torch.where(
+                catalog_known,
+                self.runtime.catalog.attacks_ground[safe],
+                self.combat.can_attack_ground,
+            )
+        )
+        self.combat.buildings_only.copy_(
+            torch.where(
+                catalog_known,
+                self.runtime.catalog.buildings_only[safe],
+                self.combat.buildings_only,
+            )
+        )
+        self.combat.uses_projectile.copy_(
+            torch.where(
+                catalog_known,
+                self.uses_projectile[safe],
+                self.combat.uses_projectile,
+            )
+        )
+        self.combat.airborne.copy_(
+            torch.where(
+                catalog_known,
+                self.runtime.catalog.is_air_unit[safe],
+                self.combat.airborne,
+            )
+        )
         self.combat.building_target.copy_(core.entity_kind == 1)
-        self.combat.area_radius_units.copy_(self.area_radius_units[safe])
-        self.combat.self_as_aoe_center.copy_(self.self_as_aoe_center[safe])
+        self.combat.area_radius_units.copy_(
+            torch.where(
+                catalog_known,
+                self.area_radius_units[safe],
+                self.combat.area_radius_units,
+            )
+        )
+        self.combat.self_as_aoe_center.copy_(
+            torch.where(
+                catalog_known,
+                self.self_as_aoe_center[safe],
+                self.combat.self_as_aoe_center,
+            )
+        )
         self.combat.targetable.copy_(present & core.entity_active)
         self.combat.effect_receivable.fill_(True)
         self.combat.area_effect_receivable.fill_(True)
@@ -652,9 +728,19 @@ class TensorResidentEngine:
         )
         self.combat.ordinary_combat_supported.copy_(~present | ~character | known)
         self.combat.hit_speed_ms.copy_(
-            self.runtime.catalog.hit_speed_ms[safe].to(torch.int64)
+            torch.where(
+                catalog_known,
+                self.runtime.catalog.hit_speed_ms[safe].to(torch.int64),
+                self.combat.hit_speed_ms,
+            )
         )
-        self.combat.first_hit_ms.copy_(self.first_hit_ms[safe])
+        self.combat.first_hit_ms.copy_(
+            torch.where(
+                catalog_known,
+                self.first_hit_ms[safe],
+                self.combat.first_hit_ms,
+            )
+        )
         initial_cooldown = self.first_hit_ms[safe].to(torch.float64) / 1_000.0
         self.combat.attack_cooldown.copy_(
             torch.where(new & character, initial_cooldown, self.combat.attack_cooldown)

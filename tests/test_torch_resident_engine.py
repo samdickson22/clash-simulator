@@ -143,6 +143,38 @@ def test_resident_phase_order_matches_python_battle_manager() -> None:
     )
 
 
+def test_standard_crown_only_tick_preserves_synthesized_combat_traits() -> None:
+    battle = BattleState(fast_path=False, rng=random.Random(912_044))
+    oracle = battle.clone()
+    order = [0, 1]
+    oracle.rng.shuffle(order)
+    oracle.step_logic_ticks(1)
+    engine = TensorResidentEngine.from_battles([battle])
+
+    result = engine.step()
+
+    assert result.committed.tolist() == [True]
+    assert engine.runtime.battle.tick.item() == oracle.tick
+    assert engine.runtime.battle.time.item() == oracle.time
+    assert engine.runtime.battle.rng.python_state(0) == oracle.rng.getstate()
+    assert engine.runtime.battle.elixir[0].tolist() == [
+        player.elixir for player in oracle.players
+    ]
+    runtime_ids = engine.runtime.battle.entity_id[0].tolist()
+    assert {entity_id for entity_id in runtime_ids if entity_id} == set(oracle.entities)
+    for entity_id, entity in oracle.entities.items():
+        slot = runtime_ids.index(entity_id)
+        assert engine.runtime.battle.entity_hp[0, slot].item() == entity.hitpoints
+        assert (
+            engine.runtime.battle.entity_last_attack_time[0, slot].item()
+            == entity.last_attack_time
+        )
+        assert engine.combat.range_units[0, slot].item() == round(entity.range * 1_000)
+        assert engine.combat.hit_speed_ms[0, slot].item() == int(
+            getattr(entity.card_stats, "hit_speed", 0) or 0
+        )
+
+
 def test_supported_preflight_and_route_compilation_have_no_host_row_extraction() -> (
     None
 ):
