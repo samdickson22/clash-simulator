@@ -24,7 +24,7 @@ from clasher.torch_sim.resident_differential import (
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "329da1abd1d127b6c2051761b523b330f760a3452ba135d4718cf17255a69d07"
+    "7e21dae2da7db9d52f10210401f1eea87d23de90ac49b97224a9e6e698ad82c5"
 )
 EXPECTED_EVIDENCE = {
     "BabyDragon",
@@ -44,16 +44,21 @@ EXPECTED_NO_INTERACTION = {
     "Arrows",
     "Bowler",
     "DartGoblin",
+    "Earthquake",
     "Fireball",
+    "Freeze",
     "Giant",
     "GiantSnowball",
     "GoblinBarrel",
+    "Graveyard",
     "HogRider",
     "MegaMinion",
     "Musketeer",
     "Prince",
+    "Poison",
     "Rocket",
     "RoyalHogs",
+    "Tornado",
     "Zap",
 }
 EXPECTED_DIVERGED = {
