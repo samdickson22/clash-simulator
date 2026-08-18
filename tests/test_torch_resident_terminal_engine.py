@@ -16,12 +16,12 @@ from clasher.torch_sim.resident_workspace import TensorResidentWorkspace
 
 ROOT_MECHANICS = {
     "Balloon": (True, ("DeathSpawn",)),
-    "BattleRam": (False, ("DeathSpawn", "BattleRamCharge")),
+    "BattleRam": (True, ("DeathSpawn", "BattleRamCharge")),
     "BombTower": (True, ("DeathSpawn",)),
-    "Golem": (False, ("DeathDamage", "DeathSpawn")),
+    "Golem": (True, ("DeathDamage", "DeathSpawn")),
     "LavaHound": (True, ("DeathSpawn",)),
     "NightWitch": (True, ("DeathSpawn", "PeriodicSpawner")),
-    "SkeletonBarrel": (False, ("DeathSpawn", "BattleRamCharge")),
+    "SkeletonBarrel": (True, ("DeathSpawn", "BattleRamCharge")),
     "Tombstone": (True, ("DeathSpawn", "PeriodicSpawner")),
 }
 

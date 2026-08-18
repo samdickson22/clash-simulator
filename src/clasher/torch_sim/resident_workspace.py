@@ -144,6 +144,24 @@ class TensorResidentWorkspace:
         ):
             raise ValueError("speculative Royal Delivery must own mutable storage")
         if (
+            self.scratch.charge_carriers.catalog
+            is not self.engine.charge_carriers.catalog
+        ):
+            raise ValueError("speculative engines must share charge carrier catalogs")
+        if self.scratch.charge_carriers.tracked_entity_id.data_ptr() == (
+            self.engine.charge_carriers.tracked_entity_id.data_ptr()
+        ):
+            raise ValueError("speculative charge carriers must own mutable storage")
+        if (
+            self.scratch.death_payloads.catalog
+            is not self.engine.death_payloads.catalog
+        ):
+            raise ValueError("speculative engines must share death payload catalogs")
+        if self.scratch.death_payloads.entity_card.data_ptr() == (
+            self.engine.death_payloads.entity_card.data_ptr()
+        ):
+            raise ValueError("speculative death payloads must own mutable storage")
+        if (
             self.scratch.dispatcher.passive_catalog
             is not self.engine.dispatcher.passive_catalog
         ):
@@ -196,6 +214,16 @@ class TensorResidentWorkspace:
         destination.royal_delivery.reset_rows_(
             pending_rows,
             source.royal_delivery,
+            pending_rows,
+        )
+        destination.charge_carriers.reset_rows_(
+            pending_rows,
+            source.charge_carriers,
+            pending_rows,
+        )
+        destination.death_payloads.reset_rows_(
+            pending_rows,
+            source.death_payloads,
             pending_rows,
         )
         for left, right in (
