@@ -276,6 +276,8 @@ def _refresh_sources_(
         & runtime.battle.entity_active
         & (operation >= 0)
         & ((runtime.battle.entity_kind == 0) | (runtime.battle.entity_kind == 1))
+        & ~runtime.battle.entity_placement_pending
+        & (runtime.battle.entity_deploy_delay <= 1e-9)
     )
     identity_changed = state.source_entity_id != runtime.battle.entity_id
     state.reset_(identity_changed | ~active)

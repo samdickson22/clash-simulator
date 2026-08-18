@@ -989,6 +989,8 @@ class TensorResidentEngine:
             & runtime.battle.entity_active
             & (periodic_operation >= 0)
             & ((runtime.battle.entity_kind == 0) | (runtime.battle.entity_kind == 1))
+            & ~runtime.battle.entity_placement_pending
+            & (runtime.battle.entity_deploy_delay <= 1e-9)
         )
         periodic_state.source_entity_id.copy_(
             torch.where(
@@ -1015,6 +1017,41 @@ class TensorResidentEngine:
         periodic_state.current_wave_spawned.copy_(
             dispatcher.passive.periodic_current_wave_spawned
         )
+        dedicated_passive_ids = [
+            dispatcher.passive_catalog.name_to_id[name]
+            for card_id, name in enumerate(cards.names)
+            if card_id > 0
+            and bool((periodic_catalog.source_row_by_card[card_id] >= 0).item())
+            and name in dispatcher.passive_catalog.name_to_id
+        ]
+        if dedicated_passive_ids:
+            passive_ids = torch.tensor(
+                dedicated_passive_ids,
+                dtype=torch.int64,
+                device=runtime.device,
+            )
+            periodic_opcode = MECHANIC_OPCODE["PeriodicSpawner"]
+            passive_periodic = (
+                dispatcher.passive_catalog.mechanic_opcode[passive_ids]
+                == periodic_opcode
+            )
+            dispatcher.passive_catalog.mechanic_opcode[passive_ids] = torch.where(
+                passive_periodic,
+                torch.zeros_like(
+                    dispatcher.passive_catalog.mechanic_opcode[passive_ids]
+                ),
+                dispatcher.passive_catalog.mechanic_opcode[passive_ids],
+            )
+            dispatcher.passive_catalog.periodic_operation_row[passive_ids] = (
+                torch.where(
+                    passive_periodic,
+                    torch.full_like(
+                        dispatcher.passive_catalog.periodic_operation_row[passive_ids],
+                        -1,
+                    ),
+                    dispatcher.passive_catalog.periodic_operation_row[passive_ids],
+                )
+            )
         terminal_catalog = TensorTimedTerminalCatalog.compile(
             catalog_loader,
             cards,
@@ -3694,6 +3731,7 @@ class TensorResidentEngine:
         active: torch.Tensor,
         stun_applied: torch.Tensor | None = None,
         excluded_entities: torch.Tensor | None = None,
+        suppressed_attackers: torch.Tensor | None = None,
     ) -> CombatStepResult:
         new = self._refresh_planes()
         self._refresh_area_target_planes_(new)
@@ -3720,6 +3758,13 @@ class TensorResidentEngine:
             if excluded.shape != self.combat.present.shape:
                 raise ValueError("excluded_entities must have shape [batch, entity]")
             self.combat.present &= ~excluded
+        if suppressed_attackers is not None:
+            suppressed = torch.as_tensor(
+                suppressed_attackers, dtype=torch.bool, device=self.device
+            )
+            if suppressed.shape != self.combat.present.shape:
+                raise ValueError("suppressed_attackers must have shape [batch, entity]")
+            self.combat.combat_blocked |= suppressed & self.combat.present
         retained_target_slot = self.combat.target_slot.clamp_min(0)
         retained_target_id = self.combat.entity_id.gather(1, retained_target_slot)
         retained_target_present = self.combat.present.gather(1, retained_target_slot)
@@ -4723,6 +4768,9 @@ class TensorResidentEngine:
                 )
             ]
         )
+        charge_deployed_before = (
+            working.runtime.battle.entity_deploy_delay <= 1e-9
+        ) & ~working.runtime.battle.entity_placement_pending
         charge_carriers = working.charge_carriers.step_(
             working.runtime,
             battle_mask=active,
@@ -4733,10 +4781,17 @@ class TensorResidentEngine:
         )
         active &= charge_carriers.committed
         working.runtime.supported &= active
+        charge_attack_suppressed = charge_entities & (
+            ~charge_deployed_before
+            | charge_carriers.moved
+            | charge_carriers.impacted
+            | working.charge_carriers.kamikaze_primed
+        )
         combat = working._combat_phase(
             active,
             pending_spells.stun_applied,
-            excluded_entities=charge_entities | miner_owned,
+            excluded_entities=miner_owned,
+            suppressed_attackers=charge_attack_suppressed,
         )
         previously_allocated_objects = working.objects.objects.allocated.clone()
         projectile_supported = working.projectile_bridge.materialize_combat_launches_(

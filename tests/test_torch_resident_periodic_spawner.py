@@ -185,6 +185,7 @@ def test_simultaneous_sources_allocate_children_in_source_id_order() -> None:
     assert stats is not None
     second = battle._spawn_entity(Troop, Position(11.0, 10.0), 0, stats)
     second.deploy_delay_remaining = 0.0
+    second.placement_pending = False
     oracle = copy.deepcopy(battle)
     for entity_id in sorted(oracle.entities):
         _mechanic(oracle.entities[entity_id]).on_object_tick(
@@ -243,6 +244,64 @@ def test_source_death_resets_retained_clocks_and_emits_nothing() -> None:
     assert state.source_entity_id[0, slot].item() == 0
     assert state.operation_row[0, slot].item() == -1
     assert state.time_since_spawn_ms[0, slot].item() == 0.0
+
+
+@pytest.mark.parametrize(
+    "device",
+    [
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ],
+)
+def test_deployment_pending_clock_starts_on_zero_crossing_frame(device: str) -> None:
+    battle, source = _battle("NightWitch")
+    source.deploy_delay_remaining = 1.0
+    source.placement_pending = True
+    oracle = copy.deepcopy(battle)
+    oracle_source = oracle.entities[source.id]
+    assert isinstance(oracle_source, (Troop, Building))
+    oracle_mechanic = _mechanic(oracle_source)
+    runtime, state, catalog = _runtime(battle, device=device)
+    source_slot = int(
+        torch.nonzero(runtime.battle.entity_id[0] == source.id, as_tuple=False)[0, 0]
+    )
+
+    for tick in range(20):
+        oracle_source.tick_character_object_phase(0.05)
+        remaining = torch.clamp(
+            runtime.battle.entity_deploy_delay - 0.05,
+            min=0.0,
+        )
+        deploying = runtime.battle.entity_deploy_delay > 0.0
+        runtime.battle.entity_deploy_delay.copy_(
+            torch.where(deploying, remaining, runtime.battle.entity_deploy_delay)
+        )
+        completed = deploying & (remaining <= 1e-9)
+        runtime.battle.entity_placement_pending &= ~completed
+        runtime.battle.entity_spawn_hook_pending &= ~completed
+        result = step_runtime_periodic_spawners_(
+            runtime,
+            catalog,
+            state,
+            dt_ms=50,
+        )
+
+        assert result.committed.tolist() == [True]
+        assert not result.allocation.valid.any()
+        assert state.time_since_spawn_ms[0, source_slot].item() == (
+            oracle_mechanic.time_since_spawn_ms
+        )
+        if tick < 19:
+            assert state.source_entity_id[0, source_slot].item() == 0
+
+    assert state.source_entity_id[0, source_slot].item() == source.id
+    assert state.time_since_spawn_ms[0, source_slot].item() == 50.0
+    assert runtime.entity_pool.next_entity_id.item() == oracle.next_entity_id
 
 
 def test_state_clone_fork_and_reset_are_independent() -> None:

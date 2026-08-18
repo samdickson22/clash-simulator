@@ -63,6 +63,8 @@ def _engine_snapshot(engine: TensorResidentEngine) -> dict[str, torch.Tensor]:
         "status",
         "mechanics",
         "miner",
+        "charge_carriers",
+        "periodic_state",
         "objects",
         "projectile_bridge",
         "pending_spells",
@@ -346,6 +348,64 @@ def test_workspace_retains_miner_transport_and_rolls_back_failed_mid_tunnel_acti
     result = workspace.step(
         torch.tensor(
             [[unsupported_action, NO_OP_ACTION]],
+            dtype=torch.int64,
+            device=device,
+        )
+    )
+
+    assert result.committed.tolist() == [False]
+    after = _engine_snapshot(candidate)
+    assert before.keys() == after.keys()
+    for name in before:
+        torch.testing.assert_close(
+            after[name], before[name], rtol=0, atol=0, equal_nan=True, msg=name
+        )
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_workspace_retains_exclusive_periodic_clock_and_rolls_back_action(
+    device: str,
+) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    source = _battle(149)
+    player = source.players[0]
+    player.hand = ["NightWitch", "ElectroWizard", "Cannon", "Zap"]
+    player.deck = ["NightWitch", "ElectroWizard", "Cannon", "Zap"]
+    player.elixir = 20.0
+    reference = _engine([source.clone()], device)
+    candidate = _engine([source.clone()], device)
+    workspace = TensorResidentWorkspace(candidate)
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    deploy = action_space.encode_action(0, 9, 10, 0)
+    deploy_actions = torch.tensor(
+        [[deploy, NO_OP_ACTION]], dtype=torch.int64, device=device
+    )
+
+    for tick in range(20):
+        actions = deploy_actions if tick == 0 else None
+        expected = reference.step(actions)
+        actual = workspace.step(actions)
+        assert expected.committed.tolist() == actual.committed.tolist() == [True]
+        _assert_engine_equal(reference, candidate)
+
+    source_slot = int(
+        torch.nonzero(
+            candidate.runtime.battle.entity_id[0] == 7,
+            as_tuple=False,
+        )[0, 0]
+    )
+    assert candidate.periodic_state.time_since_spawn_ms[0, source_slot].item() == 50.0
+    assert (
+        candidate.dispatcher.passive.periodic_time_since_spawn_ms[0, source_slot].item()
+        == 0.0
+    )
+
+    before = _engine_snapshot(candidate)
+    unsupported = action_space.encode_action(1, 9, 10, 0)
+    result = workspace.step(
+        torch.tensor(
+            [[unsupported, NO_OP_ACTION]],
             dtype=torch.int64,
             device=device,
         )

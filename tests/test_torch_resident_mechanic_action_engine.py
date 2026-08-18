@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import copy
+import random
 from collections import deque
+from collections.abc import Sequence
 from typing import Any, cast
 
 import pytest
@@ -12,6 +14,7 @@ from clasher.battle import BattleState
 from clasher.entities import Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.torch_sim.actions import NO_OP_ACTION
+from clasher.torch_sim.resident_differential import ResidentEpisodeDifferential
 from clasher.torch_sim.resident_engine import (
     ResidentUnsupportedReason,
     TensorResidentEngine,
@@ -491,3 +494,70 @@ def test_inert_chain_owner_preserves_target_acquired_after_deployment() -> None:
     assert engine.runtime.battle.entity_id[0, target_slot].item() == 2
     assert engine.chain_impacts.combat.target_slot[0, source_slot].item() == target_slot
     assert oracle.entities[source.id].target_id == 2
+
+
+def _admitted_mechanic_trace_battle(root: str, seed: int) -> BattleState:
+    battle = BattleState(fast_path=False, rng=random.Random(seed))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    knight = battle.card_loader.get_card("Knight")
+    assert knight is not None
+    battle._spawn_unit_at_position(
+        Position(14.5, 14.5),
+        1,
+        knight,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    target = battle.entities[1]
+    target.stun_timer = 100.0
+    target.attack_cooldown = 10.0
+    player = battle.players[0]
+    player.hand = [root, "Knight", "Cannon", "Zap"]
+    player.deck = [root, "Knight", "Cannon", "Zap"]
+    player.cycle_queue = deque()
+    player.elixir = 20.0
+    battle.overtime_start_time = 1.0
+    battle.tiebreaker_time = 1.05
+    return battle
+
+
+@pytest.mark.parametrize(
+    "device",
+    (
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ),
+)
+def test_charge_and_periodic_action_traces_match_scalar_exactly(device: str) -> None:
+    roots = ("BattleRam", "NightWitch", "SkeletonBarrel")
+    battles = [
+        _admitted_mechanic_trace_battle(root, 997_300 + row)
+        for row, root in enumerate(roots)
+    ]
+
+    def actions(
+        tick: int, battles: Sequence[BattleState]
+    ) -> tuple[tuple[int, int], ...]:
+        action = 12 * 18 + 14 if tick == 0 else NO_OP_ACTION
+        return tuple((action, NO_OP_ACTION) for _ in battles)
+
+    report = ResidentEpisodeDifferential(
+        device=device,
+        max_entities=32,
+        max_objects=32,
+        event_capacity=256,
+    ).run(
+        battles,
+        actions,
+        max_ticks=21,
+        stop_on_first_divergence=False,
+    )
+
+    assert report.divergences == ()
+    assert report.parity_rows == (0, 1, 2)
