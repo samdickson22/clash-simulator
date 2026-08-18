@@ -699,6 +699,12 @@ def step_runtime_status_phase_(
     phase.lifetime_elapsed.copy_(lifetime.lifetime_elapsed)
     phase.lifetime_decay_work.copy_(lifetime.lifetime_decay_work)
     phase.lifetime_tick_carry_ms.copy_(lifetime.lifetime_tick_carry_ms)
+    # ResidentEngine refreshes phase workspaces from the canonical core at the
+    # next combat boundary. Publish every fixed-point lifetime accumulator so
+    # the next tick cannot reset fractional decay progress.
+    runtime.battle.entity_lifetime_elapsed.copy_(lifetime.lifetime_elapsed)
+    runtime.battle.entity_lifetime_decay_work.copy_(lifetime.lifetime_decay_work)
+    runtime.battle.entity_lifetime_tick_carry_ms.copy_(lifetime.lifetime_tick_carry_ms)
     update_speed = component & slow_was_active & phase.original_speed_valid
     phase.movement_speed.copy_(
         torch.where(

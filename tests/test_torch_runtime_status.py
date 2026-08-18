@@ -152,6 +152,43 @@ def test_standard_building_lifetime_and_status_match_oracle_phase_order() -> Non
         assert actual.lifetime_tick_carry_ms == expected_building.lifetime_tick_carry_ms
 
 
+@pytest.mark.parametrize("card_name", ("Cannon", "Xbow"))
+def test_lifetime_fixed_point_accumulators_publish_to_resident_core(
+    card_name: str,
+) -> None:
+    battle = _empty_battle()
+    building = _spawn_building(battle, card_name, 4.0)
+    expected = battle.clone()
+    runtime = TensorBattleRuntime.from_battles([battle], max_entities=8)
+    phase = TensorRuntimeStatusPhase.from_battles(runtime, [battle])
+
+    for _ in range(4):
+        cast(Building, expected.entities[building.id]).update_hitpoint_component(0.05)
+        # Match ResidentEngine._refresh_planes_: each new tick starts from the
+        # canonical core accumulators rather than trusting stale phase storage.
+        phase.lifetime_elapsed.copy_(runtime.battle.entity_lifetime_elapsed)
+        phase.lifetime_decay_work.copy_(runtime.battle.entity_lifetime_decay_work)
+        phase.lifetime_tick_carry_ms.copy_(runtime.battle.entity_lifetime_tick_carry_ms)
+        runtime.events.clear()
+        result = step_runtime_status_phase_(runtime, phase)
+        assert result.supported_batch.tolist() == [True]
+
+    slot = int(
+        runtime.entity_pool.slots_for_ids(torch.tensor([[building.id]]))[0, 0].item()
+    )
+    oracle = cast(Building, expected.entities[building.id])
+    assert runtime.battle.entity_hp[0, slot].item() == oracle.hitpoints
+    assert runtime.battle.entity_lifetime_elapsed[0, slot].item() == (
+        oracle.lifetime_elapsed
+    )
+    assert runtime.battle.entity_lifetime_decay_work[0, slot].item() == (
+        oracle.lifetime_decay_work
+    )
+    assert runtime.battle.entity_lifetime_tick_carry_ms[0, slot].item() == (
+        oracle.lifetime_tick_carry_ms
+    )
+
+
 def test_periodic_hits_and_death_events_follow_entity_then_source_order() -> None:
     battle = _empty_battle()
     first = _spawn_troop(battle, 4.0)
