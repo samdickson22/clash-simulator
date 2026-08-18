@@ -5,8 +5,9 @@ oracle battles and boundary diagnostics are intentionally allowed here. Rows
 which leave resident support are reported as fallback-only and are never
 counted as parity evidence. ``parity_rows`` proves only the explicitly
 represented snapshot fields below, not complete ``BattleState`` parity.
-Oracle event inference is intentionally limited to the current mechanic-free
-``SPAWN``/``DAMAGE``/``DEATH`` slice.
+Oracle events are captured at their scalar call sites. Event kinds which cannot
+be represented by the verifier contract are rejected instead of reconstructed
+from end-state deltas.
 """
 
 from __future__ import annotations
@@ -25,8 +26,8 @@ import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.card_aliases import CARD_NAME_ALIASES
 from clasher.data import CardDataLoader
-from clasher.entities import Building
 from clasher.kinematics import tiles_to_logic_units
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
@@ -35,6 +36,11 @@ from .actions import NO_OP_ACTION
 from .catalog import TensorCardCatalog
 from .deployment import TensorDeploymentCatalog
 from .diagnostics import StateDivergence, first_divergence
+from .oracle_event_capture import (
+    OracleEventRecord,
+    OraclePayloadKind,
+    PythonOracleEventCapture,
+)
 from .resident_engine import (
     TensorResidentEngine,
     _resident_deployment_catalog_closure,
@@ -46,7 +52,7 @@ RESIDENT_COMPARISON_SCOPE = (
     "player elixir/refill/hand/cycle/tower values",
     "resident entity identity/card/native position/HP/target/combat/deploy/status",
     "CPython RNG state",
-    "mechanic-free SPAWN/DAMAGE/DEATH events",
+    "call-site event phase/opcode/order/identity/position/amount/payload kind",
 )
 
 
@@ -68,22 +74,16 @@ ResidentMutator = Callable[[int, TensorResidentEngine], None]
 
 @dataclass(frozen=True)
 class ResidentEventRecord:
+    sequence: int
     phase: int
     opcode: int
     source_id: int
     target_id: int
+    x_units: int
+    y_units: int
     amount: float
+    payload_kind: int
     payload: int
-
-
-@dataclass(frozen=True)
-class _OracleEntityBefore:
-    hitpoints: float | int
-    building: bool
-    max_hitpoints: float
-    lifetime_ms: int
-    lifetime_decay_work: int
-    lifetime_tick_carry_ms: float
 
 
 @dataclass(frozen=True)
@@ -296,139 +296,94 @@ def _oracle_snapshot(battle: BattleState) -> dict[str, Any]:
     }
 
 
-def _native_lifetime_damage(
-    entity: _OracleEntityBefore,
-    dt: float,
-) -> int:
-    if not entity.building or entity.lifetime_ms <= 0:
+def _normalize_oracle_payload(value: object, engine: TensorResidentEngine) -> int:
+    if value is None:
         return 0
-    total_ms = entity.lifetime_tick_carry_ms + max(0.0, dt * 1_000.0)
-    native_ticks = int((total_ms + 1e-9) // 50.0)
-    decay_rate = 5000 * round(entity.max_hitpoints) // entity.lifetime_ms
-    return (entity.lifetime_decay_work + decay_rate * native_ticks) // 100
+    if isinstance(value, str):
+        card_to_id = engine.runtime.battle.card_to_id
+        if value in card_to_id:
+            return int(card_to_id[value])
+        alias = next(
+            (
+                name
+                for name, serialized in CARD_NAME_ALIASES.items()
+                if serialized == value and name in card_to_id
+            ),
+            None,
+        )
+        if alias is not None:
+            return int(card_to_id[alias])
+        raise ValueError(f"captured event payload is outside the card closure: {value}")
+    if type(value) is int:
+        return value
+    raise TypeError(
+        "captured event payload has no exact resident representation: "
+        f"{type(value).__name__}"
+    )
 
 
 def _oracle_events(
-    before: Mapping[int, _OracleEntityBefore],
-    battle: BattleState,
+    captured: Sequence[OracleEventRecord],
     engine: TensorResidentEngine,
 ) -> tuple[ResidentEventRecord, ...]:
-    after = {
-        entity.id: (
-            entity.hitpoints,
-            tiles_to_logic_units(entity.position.x),
-            tiles_to_logic_units(entity.position.y),
-        )
-        for entity in battle.entities.values()
-    }
-    events: list[ResidentEventRecord] = []
-    lifetime_events: list[ResidentEventRecord] = []
-    spawned_ids = tuple(sorted(set(after) - set(before)))
-    for entity_id in spawned_ids:
-        entity = battle.entities[entity_id]
-        payload = engine.runtime.battle.card_to_id.get(
-            str(getattr(entity.card_stats, "name", "")), 0
-        )
-        events.append(
+    result: list[ResidentEventRecord] = []
+    for sequence, event in enumerate(captured):
+        try:
+            payload_kind = int(OraclePayloadKind(event.payload_kind))
+        except ValueError as exc:
+            raise ValueError(
+                f"uncaptured oracle event payload kind: {event.payload_kind}"
+            ) from exc
+        if type(event.amount) not in {int, float}:
+            raise TypeError(
+                "captured event amount has no exact resident representation: "
+                f"{type(event.amount).__name__}"
+            )
+        amount = cast(int | float, event.amount)
+        result.append(
             ResidentEventRecord(
-                int(TickPhase.COMMANDS),
-                int(RuntimeEventOpcode.SPAWN),
-                entity_id,
-                0,
-                0.0,
-                payload,
+                sequence=sequence,
+                phase=int(event.phase),
+                opcode=int(event.opcode),
+                source_id=int(event.source_id),
+                target_id=int(event.target_id),
+                x_units=int(event.x_units),
+                y_units=int(event.y_units),
+                amount=float(amount),
+                payload_kind=payload_kind,
+                payload=_normalize_oracle_payload(event.payload, engine),
             )
         )
-    # A deployed building participates in the intrinsic lifetime component in
-    # its spawn tick.  Since it did not exist in ``before``, the ordinary HP
-    # delta pass below cannot reconstruct that event.  Derive only the native
-    # lifetime component's fixed-point loss; do not use total HP loss, which
-    # could incorrectly fold combat damage into the building-lifetime phase.
-    for entity_id in spawned_ids:
-        entity = battle.entities[entity_id]
-        lifetime_ms = getattr(entity.card_stats, "lifetime_ms", None)
-        if not isinstance(entity, Building) or not lifetime_ms:
-            continue
-        lifetime_damage = _native_lifetime_damage(
-            _OracleEntityBefore(
-                hitpoints=entity.max_hitpoints,
-                building=True,
-                max_hitpoints=float(entity.max_hitpoints),
-                lifetime_ms=int(lifetime_ms),
-                lifetime_decay_work=0,
-                lifetime_tick_carry_ms=0.0,
-            ),
-            battle.dt,
-        )
-        if lifetime_damage > 0:
-            lifetime_events.append(
-                ResidentEventRecord(
-                    int(TickPhase.BUILDING_LIFETIME),
-                    int(RuntimeEventOpcode.DAMAGE),
-                    0,
-                    entity_id,
-                    float(lifetime_damage),
-                    0,
-                )
-            )
-    for entity_id in sorted(set(before) & set(after)):
-        old = before[entity_id]
-        old_hp = float(old.hitpoints)
-        new_hp = float(after[entity_id][0])
-        if new_hp < old_hp:
-            total_damage = old_hp - new_hp
-            lifetime_amount = min(
-                total_damage,
-                float(_native_lifetime_damage(old, battle.dt)),
-            )
-            combat_damage = total_damage - lifetime_amount
-            if combat_damage > 0:
-                events.append(
-                    ResidentEventRecord(
-                        int(TickPhase.COMBAT),
-                        int(RuntimeEventOpcode.DAMAGE),
-                        0,
-                        entity_id,
-                        combat_damage,
-                        0,
-                    )
-                )
-            if lifetime_amount > 0:
-                lifetime_events.append(
-                    ResidentEventRecord(
-                        int(TickPhase.BUILDING_LIFETIME),
-                        int(RuntimeEventOpcode.DAMAGE),
-                        0,
-                        entity_id,
-                        lifetime_amount,
-                        0,
-                    )
-                )
-    for entity_id in sorted(set(before) - set(after)):
-        old_hp = before[entity_id].hitpoints
-        if float(old_hp) > 0.0:
-            events.extend(
-                (
-                    ResidentEventRecord(
-                        int(TickPhase.COMBAT),
-                        int(RuntimeEventOpcode.DAMAGE),
-                        0,
-                        entity_id,
-                        float(old_hp),
-                        0,
-                    ),
-                    ResidentEventRecord(
-                        int(TickPhase.COMBAT),
-                        int(RuntimeEventOpcode.DEATH),
-                        0,
-                        entity_id,
-                        0.0,
-                        0,
-                    ),
-                )
-            )
-    events.extend(lifetime_events)
-    return tuple(events)
+    return tuple(result)
+
+
+def _resident_payload_kind(
+    *, phase: int, opcode: int, source_id: int, target_id: int
+) -> int:
+    if opcode == int(RuntimeEventOpcode.COMMAND):
+        return int(OraclePayloadKind.SPELL_EXECUTION)
+    if opcode == int(RuntimeEventOpcode.PROJECTILE):
+        if phase == int(TickPhase.COMBAT):
+            return int(OraclePayloadKind.COMBAT_PROJECTILE)
+        if phase == int(TickPhase.COMMANDS):
+            return int(OraclePayloadKind.SPELL_PROJECTILE)
+        if phase == int(TickPhase.OBJECTS):
+            return int(OraclePayloadKind.PROJECTILE_IMPACT)
+    if opcode == int(RuntimeEventOpcode.AREA):
+        return int(OraclePayloadKind.SPELL_AREA)
+    if opcode == int(RuntimeEventOpcode.DAMAGE):
+        return int(OraclePayloadKind.DAMAGE)
+    if opcode == int(RuntimeEventOpcode.DEATH):
+        return int(OraclePayloadKind.DEATH)
+    if opcode == int(RuntimeEventOpcode.SPAWN):
+        if phase == int(TickPhase.COMMANDS) and source_id > 0 and target_id == 0:
+            return int(OraclePayloadKind.COMMAND_DEPLOYMENT)
+        if target_id > 0:
+            return int(OraclePayloadKind.OBJECT_CHARACTER)
+    # STATUS cannot be losslessly classified as STUN versus SLOW from the
+    # current resident planes. MOVEMENT has no scalar call-site capture. Keep
+    # both explicit so either event fails closed instead of being ignored.
+    return int(OraclePayloadKind.NONE)
 
 
 def _resident_events(
@@ -440,11 +395,20 @@ def _resident_events(
     events = engine.runtime.events
     return tuple(
         ResidentEventRecord(
+            sequence=slot - start,
             phase=int(events.phase[row, slot].item()),
             opcode=int(events.opcode[row, slot].item()),
             source_id=int(events.source_id[row, slot].item()),
             target_id=int(events.target_id[row, slot].item()),
+            x_units=int(events.x_units[row, slot].item()),
+            y_units=int(events.y_units[row, slot].item()),
             amount=float(events.amount[row, slot].item()),
+            payload_kind=_resident_payload_kind(
+                phase=int(events.phase[row, slot].item()),
+                opcode=int(events.opcode[row, slot].item()),
+                source_id=int(events.source_id[row, slot].item()),
+                target_id=int(events.target_id[row, slot].item()),
+            ),
             payload=int(events.payload[row, slot].item()),
         )
         for slot in range(start, stop)
@@ -511,37 +475,20 @@ class ResidentEpisodeDifferential:
             preflight_rejected |= newly_preflight_rejected
             resident &= preflight.supported | completed
 
-            before_entities = [
-                {
-                    entity.id: _OracleEntityBefore(
-                        hitpoints=entity.hitpoints,
-                        building=isinstance(entity, Building),
-                        max_hitpoints=float(entity.max_hitpoints),
-                        lifetime_ms=int(
-                            getattr(entity.card_stats, "lifetime_ms", 0) or 0
-                        ),
-                        lifetime_decay_work=int(
-                            getattr(entity, "lifetime_decay_work", 0)
-                        ),
-                        lifetime_tick_carry_ms=float(
-                            getattr(entity, "lifetime_tick_carry_ms", 0.0)
-                        ),
-                    )
-                    for entity in battle.entities.values()
-                }
-                for battle in oracle
-            ]
             event_start = engine.runtime.events.count.clone()
+            captured_events: list[tuple[OracleEventRecord, ...]] = [() for _ in oracle]
             for row, battle in enumerate(oracle):
                 if battle.game_over:
                     continue
-                order = [0, 1]
-                battle.rng.shuffle(order)
-                for player in order:
-                    action_space.apply_action(
-                        battle, player, int(action_tensor[row, player].item())
-                    )
-                battle.step_logic_ticks(1)
+                with PythonOracleEventCapture(battle) as capture:
+                    order = [0, 1]
+                    battle.rng.shuffle(order)
+                    for player in order:
+                        action_space.apply_action(
+                            battle, player, int(action_tensor[row, player].item())
+                        )
+                    capture.step_logic_ticks(1)
+                    captured_events[row] = tuple(capture.events)
 
             # An interaction is post-deployment only when that entity's
             # character component was already live at the start of the tick.
@@ -609,7 +556,7 @@ class ResidentEpisodeDifferential:
                 )
                 expected_rng = battle.rng.getstate()
                 actual_rng = engine.runtime.battle.rng.python_state(row)
-                expected_events = _oracle_events(before_entities[row], battle, engine)
+                expected_events = _oracle_events(captured_events[row], engine)
                 actual_events = _resident_events(
                     engine, row, int(event_start[row].item())
                 )

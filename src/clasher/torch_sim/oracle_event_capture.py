@@ -25,6 +25,7 @@ from clasher.entities import (
     Building,
     Entity,
     Projectile,
+    RollingProjectile,
     SpawnProjectile,
     TimedExplosive,
     Troop,
@@ -256,7 +257,40 @@ class PythonOracleEventCapture:
         wrap_phase(BattleState, "_resolve_pending_spell_casts", TickPhase.COMMANDS)
         wrap_phase(Troop, "update_combat_component", TickPhase.COMBAT)
         wrap_phase(Building, "update_combat_component", TickPhase.COMBAT)
-        wrap_phase(Building, "update_hitpoint_component", TickPhase.BUILDING_LIFETIME)
+        original_lifetime = Building.update_hitpoint_component
+
+        def building_lifetime(building: Building, dt: float) -> None:
+            if getattr(building, "battle_state", None) is not capture.battle:
+                original_lifetime(building, dt)
+                return
+            before_hp = building.hitpoints
+            before_alive = building.is_alive
+            with capture._scope(
+                phase=TickPhase.BUILDING_LIFETIME,
+                source_id=0,
+            ):
+                original_lifetime(building, dt)
+                if building.hitpoints < before_hp:
+                    capture._record(
+                        RuntimeEventOpcode.DAMAGE,
+                        target_id=building.id,
+                        x_units=_logic_units(building.position.x),
+                        y_units=_logic_units(building.position.y),
+                        amount=before_hp - building.hitpoints,
+                        payload_kind=OraclePayloadKind.DAMAGE,
+                    )
+                if before_alive and not building.is_alive:
+                    capture._record(
+                        RuntimeEventOpcode.DEATH,
+                        target_id=building.id,
+                        x_units=_logic_units(building.position.x),
+                        y_units=_logic_units(building.position.y),
+                        payload_kind=OraclePayloadKind.DEATH,
+                    )
+
+        stack.enter_context(
+            patch.object(Building, "update_hitpoint_component", building_lifetime)
+        )
         wrap_phase(Entity, "update_status_effects", TickPhase.STATUS)
         wrap_phase(BattleState, "_run_object_phase", TickPhase.OBJECTS)
         wrap_phase(BattleState, "_cleanup_dead_entities", TickPhase.CLEANUP_AND_SPAWNS)
@@ -400,7 +434,13 @@ class PythonOracleEventCapture:
 
         wrap_impact("_resolve_impact")
         wrap_impact("_deal_splash_damage")
-        for cls in (Projectile, SpawnProjectile, AreaEffect, TimedExplosive):
+        for cls in (
+            Projectile,
+            SpawnProjectile,
+            RollingProjectile,
+            AreaEffect,
+            TimedExplosive,
+        ):
             wrap_source(cls, "update")
 
     def _install_spell_wrappers(self) -> None:

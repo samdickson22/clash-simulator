@@ -4,7 +4,7 @@ import pytest
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Troop
+from clasher.entities import Building, Troop
 from clasher.torch_sim.oracle_event_capture import (
     OraclePayloadKind,
     PythonOracleEventCapture,
@@ -25,6 +25,11 @@ DELAYED_SPELLS = (
     "GoblinBarrel",
     "Rocket",
     "Zap",
+)
+ROLLING_AND_ROYAL_SPELLS = (
+    "BarbarianBarrel",
+    "Log",
+    "RoyalDelivery",
 )
 
 
@@ -133,6 +138,63 @@ def test_combat_projectile_creation_and_impact_use_actual_phase_and_source(
         assert damage.payload == card_name
         assert damage.amount_kind == "float"
         assert projectile.sequence < impact.sequence < damage.sequence
+
+
+def test_xbow_projectile_lifetime_and_impact_follow_scalar_phase_order() -> None:
+    battle = _empty_battle()
+    stats = battle.card_loader.get_card("Xbow")
+    assert stats is not None
+    source = battle._spawn_entity(Building, Position(9.0, 10.0), 0, stats)
+    assert isinstance(source, Building)
+    source.deploy_delay_remaining = 0.0
+    source.placement_pending = False
+    source._spawn_hook_pending = False
+    source._spawn_hook_fired = True
+    target = _spawn_one(battle, "Knight", 1, Position(9.0, 14.0))
+    source.target_id = target.id
+    source.attack_cooldown = 0.0
+    source.last_attack_time = -10.0
+    target.speed = 0.0
+    target.damage = 0.0
+    target.attack_cooldown = 10.0
+
+    with PythonOracleEventCapture(battle) as capture:
+        for _ in range(40):
+            capture.step_logic_ticks()
+            if any(
+                event.opcode == RuntimeEventOpcode.DAMAGE
+                and event.phase == TickPhase.OBJECTS
+                and event.target_id == target.id
+                for event in capture.events
+            ):
+                break
+
+    launch = next(
+        event
+        for event in capture.events
+        if event.payload_kind == OraclePayloadKind.COMBAT_PROJECTILE
+    )
+    lifetime = next(
+        event
+        for event in capture.events
+        if event.phase == TickPhase.BUILDING_LIFETIME
+        and event.opcode == RuntimeEventOpcode.DAMAGE
+        and event.target_id == source.id
+    )
+    impact = next(
+        event
+        for event in capture.events
+        if event.payload_kind == OraclePayloadKind.PROJECTILE_IMPACT
+    )
+    damage = next(
+        event
+        for event in capture.events
+        if event.phase == TickPhase.OBJECTS
+        and event.opcode == RuntimeEventOpcode.DAMAGE
+        and event.target_id == target.id
+    )
+    assert lifetime.amount_kind == "int"
+    assert launch.sequence < lifetime.sequence < impact.sequence < damage.sequence
 
 
 @pytest.mark.parametrize("spell_name", DELAYED_SPELLS)
@@ -266,3 +328,51 @@ def test_delayed_spell_execution_allocation_and_effect_order_is_observed(
                     )
                     assert damage.sequence < death.sequence
                     assert death.phase == TickPhase.OBJECTS
+
+
+@pytest.mark.parametrize("spell_name", ROLLING_AND_ROYAL_SPELLS)
+def test_rolling_and_royal_carrier_allocation_uses_exact_callsite_kind(
+    spell_name: str,
+) -> None:
+    battle = _empty_battle()
+    _set_hand(battle, spell_name)
+
+    with PythonOracleEventCapture(battle) as capture:
+        assert capture.deploy_card(0, spell_name, Position(9.0, 14.0))
+        for _ in range(25):
+            capture.step_logic_ticks()
+            if any(
+                event.payload_kind
+                in {
+                    OraclePayloadKind.OBJECT_CHARACTER,
+                    OraclePayloadKind.SPELL_PROJECTILE,
+                }
+                for event in capture.events
+            ):
+                break
+
+    command = next(
+        event
+        for event in capture.events
+        if event.payload_kind == OraclePayloadKind.SPELL_EXECUTION
+    )
+    carrier = next(
+        event
+        for event in capture.events
+        if event.payload_kind
+        in {
+            OraclePayloadKind.OBJECT_CHARACTER,
+            OraclePayloadKind.SPELL_PROJECTILE,
+        }
+    )
+    assert carrier.payload == command.payload
+    assert command.phase == carrier.phase == TickPhase.COMMANDS
+    assert command.sequence < carrier.sequence
+    assert carrier.source_id == 0
+    assert carrier.target_id > 0
+    if spell_name == "RoyalDelivery":
+        assert carrier.opcode == RuntimeEventOpcode.PROJECTILE
+        assert carrier.payload_kind == OraclePayloadKind.SPELL_PROJECTILE
+    else:
+        assert carrier.opcode == RuntimeEventOpcode.SPAWN
+        assert carrier.payload_kind == OraclePayloadKind.OBJECT_CHARACTER

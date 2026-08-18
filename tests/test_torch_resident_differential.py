@@ -9,8 +9,10 @@ import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.entities import Building, Troop
 from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
 from clasher.torch_sim.actions import NO_OP_ACTION
+from clasher.torch_sim.oracle_event_capture import OraclePayloadKind
 from clasher.torch_sim.resident_differential import (
     ResidentCoverageClassification,
     ResidentCoverageDigestMismatch,
@@ -21,62 +23,63 @@ from clasher.torch_sim.resident_differential import (
     enumerate_enabled_resident_coverage,
     no_op_actions,
 )
+from clasher.torch_sim.runtime_state import RuntimeEventOpcode, TickPhase
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "5440be2a6fb97523b837a4fcf3d522d1caa9cc92fd9e430b2c51833d9829cbd6"
+    "200a7e2b40e85b7ba57c84fc02655d0d747f09f20eb3926efdea1d3e4eb010ba"
 )
 EXPECTED_EVIDENCE = {
-    "BabyDragon",
     "Bandit",
-    "Bats",
-    "Bomber",
     "Cannon",
     "Knight",
     "Lumberjack",
     "MiniPekka",
     "Pekka",
-    "Princess",
     "Skeletons",
-    "SpearGoblins",
     "Tombstone",
     "Valkyrie",
 }
 EXPECTED_NO_INTERACTION = {
     "Archers",
-    "Arrows",
     "Balloon",
     "Bowler",
     "DartGoblin",
-    "Earthquake",
-    "Fireball",
-    "Freeze",
     "Giant",
-    "GiantSnowball",
-    "GoblinBarrel",
     "Golem",
-    "Graveyard",
     "HogRider",
     "IceGolem",
     "MegaMinion",
     "Musketeer",
     "Prince",
-    "Poison",
-    "Rocket",
     "RoyalHogs",
-    "Tornado",
-    "Zap",
 }
 EXPECTED_DIVERGED = {
+    "Arrows",
+    "BabyDragon",
     "BarbarianBarrel",
     "BattleRam",
+    "Bats",
+    "Bomber",
+    "Earthquake",
+    "Fireball",
+    "Freeze",
+    "GiantSnowball",
+    "GoblinBarrel",
+    "Graveyard",
     "Log",
     "Miner",
     "Minions",
     "NightWitch",
+    "Poison",
+    "Princess",
+    "Rocket",
     "RoyalDelivery",
     "SkeletonBarrel",
+    "SpearGoblins",
+    "Tornado",
     "Xbow",
+    "Zap",
 }
 EXPECTED_RUNTIME_FALLBACK: set[str] = set()
 WRAPPER_CHILD_ALIASES = {
@@ -151,6 +154,59 @@ def _combat_actions(
     return tuple((action, NO_OP_ACTION) for _ in battles)
 
 
+def _active_projectile_battle(card_name: str, seed: int) -> BattleState:
+    battle = BattleState(fast_path=False, rng=random.Random(seed))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source_stats = battle.card_loader.get_card(card_name)
+    target_stats = battle.card_loader.get_card("Knight")
+    assert source_stats is not None
+    assert target_stats is not None
+    source_type = Building if card_name == "Xbow" else Troop
+    source = battle._spawn_entity(source_type, Position(14.5, 11.5), 0, source_stats)
+    target = battle._spawn_entity(Troop, Position(14.5, 14.5), 1, target_stats)
+    for entity in (source, target):
+        entity.deploy_delay_remaining = 0.0
+        entity.placement_pending = False
+        entity._spawn_hook_pending = False
+        entity._spawn_hook_fired = True
+    source.target_id = target.id
+    source._movement_target_id = target.id
+    source.attack_cooldown = 0.0
+    source.last_attack_time = -10.0
+    source.speed = 0.0
+    target.target_id = source.id if card_name == "Xbow" else None
+    target._movement_target_id = target.target_id
+    target.attack_cooldown = 10.0
+    target.stun_timer = 100.0
+    target.speed = 0.0
+    target.damage = 0.0
+    target.sight_range = 0.0
+    target.range = 0.0
+    player = battle.players[0]
+    player.hand = [card_name, "Knight", "Cannon", "Fireball"]
+    player.deck = list(player.hand)
+    player.cycle_queue = deque()
+    player.elixir = 10.0
+    battle.overtime_start_time = 4.0
+    battle.tiebreaker_time = 5.0
+    return battle
+
+
+def _spell_event_battle(spell_name: str, seed: int) -> BattleState:
+    battle = BattleState(fast_path=False, rng=random.Random(seed))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    player = battle.players[0]
+    player.hand = [spell_name, "Knight", "Cannon", "Fireball"]
+    player.deck = list(player.hand)
+    player.cycle_queue = deque()
+    player.elixir = 20.0
+    battle.overtime_start_time = 4.0
+    battle.tiebreaker_time = 5.0
+    return battle
+
+
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
 def test_full_inert_episodes_match_the_represented_resident_subset(device: str) -> None:
     if device == "cuda" and not torch.cuda.is_available():
@@ -181,7 +237,7 @@ def test_full_inert_episodes_match_the_represented_resident_subset(device: str) 
 
 
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
-def test_supported_deployment_combat_episode_matches_represented_subset(
+def test_supported_deployment_combat_state_exposes_exact_event_identity_gap(
     device: str,
 ) -> None:
     if device == "cuda" and not torch.cuda.is_available():
@@ -194,17 +250,106 @@ def test_supported_deployment_combat_episode_matches_represented_subset(
         max_ticks=4,
     )
 
-    assert report.divergence is None
-    assert report.ticks_executed == 2
-    assert report.parity_rows == (0, 1, 2)
+    divergence = report.divergence
+    assert divergence is not None
+    assert divergence.tick == 1
+    assert divergence.path == "battle.events"
+    assert divergence.state is None
+    assert divergence.expected_rng == divergence.actual_rng
+    assert divergence.expected_events != divergence.actual_events
     assert report.fallback_only_rows == ()
+
+
+@pytest.mark.parametrize("card_name", ("Minions", "Xbow"))
+def test_projectile_event_divergence_uses_exact_oracle_callsite_tuple(
+    card_name: str,
+) -> None:
+    report = ResidentEpisodeDifferential(
+        max_entities=16, max_objects=16, event_capacity=64
+    ).run(
+        [_active_projectile_battle(card_name, 425_000)],
+        no_op_actions,
+        max_ticks=2,
+    )
+
+    divergence = report.divergence
+    assert divergence is not None
+    assert divergence.path == "battle.events"
+    assert divergence.state is None
+    launch = divergence.expected_events[0]
+    assert launch.phase == TickPhase.COMBAT
+    assert launch.opcode == RuntimeEventOpcode.PROJECTILE
+    assert launch.payload_kind == OraclePayloadKind.COMBAT_PROJECTILE
+    assert launch.source_id == 1
+    assert launch.target_id > 2
+    assert launch.x_units == 14_500
+    assert launch.y_units > 0
+    if card_name == "Xbow":
+        lifetime = next(
+            event
+            for event in divergence.expected_events
+            if event.phase == TickPhase.BUILDING_LIFETIME
+        )
+        assert launch.sequence < lifetime.sequence
+    assert divergence.actual_events != divergence.expected_events
+
+
+@pytest.mark.parametrize(
+    ("spell_name", "carrier_opcode", "payload_kind"),
+    (
+        (
+            "BarbarianBarrel",
+            RuntimeEventOpcode.SPAWN,
+            OraclePayloadKind.OBJECT_CHARACTER,
+        ),
+        ("Log", RuntimeEventOpcode.SPAWN, OraclePayloadKind.OBJECT_CHARACTER),
+        (
+            "RoyalDelivery",
+            RuntimeEventOpcode.PROJECTILE,
+            OraclePayloadKind.SPELL_PROJECTILE,
+        ),
+    ),
+)
+def test_rolling_and_royal_event_divergence_preserves_command_allocation_order(
+    spell_name: str,
+    carrier_opcode: RuntimeEventOpcode,
+    payload_kind: OraclePayloadKind,
+) -> None:
+    def actions(
+        tick: int, rows: tuple[BattleState, ...]
+    ) -> tuple[tuple[int, int], ...]:
+        action = 12 * 18 + 14 if tick == 0 else NO_OP_ACTION
+        return tuple((action, NO_OP_ACTION) for _ in rows)
+
+    report = ResidentEpisodeDifferential(
+        max_entities=16, max_objects=16, event_capacity=64
+    ).run(
+        [_spell_event_battle(spell_name, 426_000)],
+        actions,
+        max_ticks=21,
+    )
+
+    divergence = report.divergence
+    assert divergence is not None
+    assert divergence.path == "battle.events"
+    assert divergence.state is None
+    command, carrier = divergence.expected_events[:2]
+    assert command.phase == carrier.phase == TickPhase.COMMANDS
+    assert command.opcode == RuntimeEventOpcode.COMMAND
+    assert command.payload_kind == OraclePayloadKind.SPELL_EXECUTION
+    assert carrier.opcode == carrier_opcode
+    assert carrier.payload_kind == payload_kind
+    assert command.sequence < carrier.sequence
+    assert carrier.source_id == 0
+    assert carrier.target_id > 0
+    assert divergence.actual_events != divergence.expected_events
 
 
 def test_preflight_rejected_row_is_fallback_only_not_parity() -> None:
     supported = _inert_battle(430_000)
     rejected = _inert_battle(430_001)
     player = rejected.players[0]
-    player.hand = ["Golem", "Zap", "Cannon", "Fireball"]
+    player.hand = ["ArcherQueen", "Zap", "Cannon", "Fireball"]
     player.deck = list(player.hand)
     player.cycle_queue = deque()
     player.elixir = 10.0
@@ -311,18 +456,13 @@ def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
             expected_classifications[name] = classification.value
     matrix.assert_digest(EXPECTED_ENABLED_DIGEST, expected_classifications)
     assert matrix.evidence_cards == (
-        "BabyDragon",
         "Bandit",
-        "Bats",
-        "Bomber",
         "Cannon",
         "Knight",
         "Lumberjack",
         "MiniPekka",
         "Pekka",
-        "Princess",
         "Skeletons",
-        "SpearGoblins",
         "Tombstone",
         "Valkyrie",
     )
@@ -351,7 +491,7 @@ def test_small_card_matrix_digest_is_device_stable(device: str) -> None:
     assert (
         comparison.batched.digest
         == comparison.scalar_exact.digest
-        == ("f69a127369b1c35635d9f53ce5569eba8571f78779be630225d95099f753187e")
+        == ("1ce3bbdcdc3c6dd9fc0552e4cf9f750d4fee39ac39c9454e170e4a387def6f8f")
     )
 
 
