@@ -188,7 +188,6 @@ RESIDENT_DISPATCH_MECHANIC_OPCODES = frozenset(
         "BanditDash",
         "SerializedOnHitBuff",
         "SkeletonKingSoulCollector",
-        "MultipleTargetAttack",
         "SpawnAreaEffect",
         "ElectroDragonChainLightning",
         "ElectroSpiritChain",
@@ -1153,6 +1152,14 @@ class TensorResidentEngine:
         all_cards_supported = torch.ones(
             len(cards.names), dtype=torch.bool, device=runtime.device
         )
+        deployment_mechanics = cards.mechanic_opcode.to(torch.int64)
+        spawn_area_opcode = MECHANIC_OPCODE["SpawnAreaEffect"]
+        spawn_area_deployment_supported = (
+            (deployment_mechanics == 0) | (deployment_mechanics == spawn_area_opcode)
+        ).all(dim=1) & (deployment_mechanics == spawn_area_opcode).any(dim=1)
+        spawn_area_deployment_supported &= (core_by_catalog >= 0) & (
+            spawn_areas.catalog.supported[safe_core_by_catalog]
+        )
         mechanic_capabilities = TensorMechanicDeploymentCatalog.compile(
             cards,
             {
@@ -1164,6 +1171,7 @@ class TensorResidentEngine:
                 "periodic": (MECHANIC_OPCODE["PeriodicSpawner"],),
                 "charge": (MECHANIC_OPCODE["BattleRamCharge"],),
                 "combat_dispatch": (MECHANIC_OPCODE["BanditDash"],),
+                "spawn_area_deployment": (spawn_area_opcode,),
                 "special_deployment": (
                     MECHANIC_OPCODE["CrownTowerScaling"],
                     MECHANIC_OPCODE["UndergroundDeployment"],
@@ -1175,6 +1183,7 @@ class TensorResidentEngine:
                 "periodic": periodic_catalog.source_row_by_card >= 0,
                 "charge": charge_card_supported,
                 "combat_dispatch": all_cards_supported,
+                "spawn_area_deployment": spawn_area_deployment_supported,
                 "special_deployment": miner_card_supported,
             },
             loader=catalog_loader,
