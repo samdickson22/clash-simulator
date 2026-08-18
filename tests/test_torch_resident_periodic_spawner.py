@@ -257,3 +257,47 @@ def test_state_clone_fork_and_reset_are_independent() -> None:
     cloned.reset_(mask)
     assert state.time_since_spawn_ms.any()
     assert not cloned.time_since_spawn_ms.any()
+
+
+@pytest.mark.parametrize(
+    "device",
+    [
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ],
+)
+def test_per_battle_dt_broadcasts_across_non_square_entity_plane(
+    device: str,
+) -> None:
+    battles = [_battle(root)[0] for root in ROOTS]
+    catalog = _catalog(device)
+    runtime = TensorBattleRuntime.from_battles(
+        battles,
+        device=device,
+        max_entities=7,
+        event_capacity=64,
+        catalog=catalog.cards,
+    )
+    catalog.prepare_runtime(runtime)
+    state = TensorPeriodicSpawnerRuntimeState.zeros(runtime)
+    dt_ms = torch.tensor((50.0, 75.0, 125.0), device=device)
+
+    result = step_runtime_periodic_spawners_(
+        runtime,
+        catalog,
+        state,
+        dt_ms=dt_ms,
+    )
+
+    assert result.committed.tolist() == [True, True, True]
+    source_slots = runtime.entity_pool.id_order(runtime.entity_pool.active).slots[:, 0]
+    rows = torch.arange(3, dtype=torch.int64, device=runtime.device)
+    assert torch.equal(
+        state.time_since_spawn_ms[rows, source_slots],
+        dt_ms.to(torch.float64),
+    )

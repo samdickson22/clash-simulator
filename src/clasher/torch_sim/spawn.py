@@ -451,6 +451,15 @@ def step_periodic_spawners(
         raise ValueError("active and spawn_rate must match the spawner state shape")
 
     dt = torch.as_tensor(dt_ms, dtype=torch.float64, device=device)
+    if dt.ndim == 1 and dt.shape == (batch_size,):
+        dt = dt[:, None]
+    elif dt.ndim > 0 and dt.shape not in {
+        (batch_size, 1),
+        shape,
+    }:
+        raise ValueError(
+            "dt_ms must be scalar, per-battle, or match the spawner state shape"
+        )
     budget = torch.clamp(spawn_rate.to(torch.float64), min=0.0) * dt
     eligible = active & (budget > 0)
     counts = catalog.count[rows].to(torch.int64)
