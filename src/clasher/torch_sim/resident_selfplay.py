@@ -115,6 +115,10 @@ class TensorResidentSelfPlay:
             self.batch_size, dtype=torch.bool, device=self.device
         )
         self._episode_route_reasons: list[str | None] = [None] * self.batch_size
+        self._all_episode_resident = True
+        self._empty_fallback_rows = torch.empty(
+            0, dtype=torch.int64, device=self.device
+        )
 
     @property
     def device(self) -> torch.device:
@@ -173,6 +177,7 @@ class TensorResidentSelfPlay:
         admitted, reasons = bridge._episode_admission()
         bridge._episode_resident.copy_(admitted)
         bridge._episode_route_reasons = reasons
+        bridge._all_episode_resident = bool(admitted.all().item())
         bridge.engine.runtime.supported[~admitted] = False
         return bridge
 
@@ -313,19 +318,16 @@ class TensorResidentSelfPlay:
             .expand(self.batch_size, -1)
             .clone()
         )
-        first_legal = self.engine.deployment.kernel.legal_action_mask(
-            self.engine.deployment.action_state(self.engine.runtime)
-        )
+        first_legal: torch.Tensor | None = None
+        failed_any = torch.zeros(self.batch_size, dtype=torch.bool, device=self.device)
+        failed_actions = actions.clone()
 
         active = start_eligible.clone()
         for logic_tick in range(self.decision_interval_ticks):
             needs_tick = active & ~state.game_over & (state.tick < self.max_ticks)
             finished = active & ~needs_tick
-            if bool(finished.any().item()):
-                self.engine.runtime.supported[finished] = False
-                active &= ~finished
-            if not bool(needs_tick.any().item()):
-                break
+            self.engine.runtime.supported[finished] = False
+            active &= needs_tick
             tick_actions = (
                 actions if logic_tick == 0 else torch.full_like(actions, NO_OP_ACTION)
             )
@@ -336,6 +338,7 @@ class TensorResidentSelfPlay:
             )
             self.outputs.capture_tick_events(result)
             if logic_tick == 0:
+                first_legal = result.deployment.legal_mask
                 action_success = (
                     result.deployment.ingress.accepted & result.committed[:, None]
                 )
@@ -343,21 +346,27 @@ class TensorResidentSelfPlay:
             committed = result.committed & needs_tick
             ticks.add_(committed.to(torch.int64))
             failed = needs_tick & ~committed
-            if bool(failed.any().item()):
-                diagnostics = self.engine.diagnose_preflight(tick_actions)
-                failed_rows = torch.nonzero(failed, as_tuple=False).flatten().tolist()
-                details = "; ".join(
-                    f"row {row}: {diagnostics.reasons[row] or 'resident phase rejected'}"
-                    for row in failed_rows
-                )
-                raise ResidentEpisodeCoverageError(
-                    "resident episode lost guaranteed coverage after tensor "
-                    "mutation; scalar fallback is unsafe because entity identity "
-                    f"sets may have diverged ({details})"
-                )
+            failed_actions.copy_(
+                torch.where(failed[:, None], tick_actions, failed_actions)
+            )
+            failed_any |= failed
             active &= committed
 
+        if bool(failed_any.any().item()):
+            diagnostics = self.engine.diagnose_preflight(failed_actions)
+            failed_rows = torch.nonzero(failed_any, as_tuple=False).flatten().tolist()
+            details = "; ".join(
+                f"row {row}: {diagnostics.reasons[row] or 'resident phase rejected'}"
+                for row in failed_rows
+            )
+            raise ResidentEpisodeCoverageError(
+                "resident episode lost guaranteed coverage after tensor "
+                "mutation; scalar fallback is unsafe because entity identity "
+                f"sets may have diverged ({details})"
+            )
+
         resident = self._episode_resident
+        assert first_legal is not None
         pre_can_spend = (
             first_legal[:, :, :NO_OP_ACTION].any(dim=2)
             | first_legal[:, :, NO_OP_ACTION + 1]
@@ -395,14 +404,23 @@ class TensorResidentSelfPlay:
             if self.include_privileged_critic
             else None
         )
-        action_state = self.engine.deployment.action_state(self.engine.runtime)
-        action_masks = self.engine.deployment.kernel.legal_action_mask(action_state)
+        action_masks = post_mask
 
-        fallback_rows = torch.nonzero(fallback, as_tuple=False).flatten()
-        fallback_actions = actions.index_select(0, fallback_rows)
-        fallback_reasons = tuple(
-            self._episode_route_reasons[row] for row in fallback_rows.tolist()
-        )
+        if self._all_episode_resident:
+            fallback_rows = self._empty_fallback_rows
+            fallback_actions = actions[:0]
+            fallback_reasons: tuple[str | None, ...] = ()
+            fallback_scalar_battles: tuple[BattleState, ...] = ()
+        else:
+            fallback_rows = torch.nonzero(fallback, as_tuple=False).flatten()
+            fallback_actions = actions.index_select(0, fallback_rows)
+            fallback_row_list = fallback_rows.tolist()
+            fallback_reasons = tuple(
+                self._episode_route_reasons[row] for row in fallback_row_list
+            )
+            fallback_scalar_battles = tuple(
+                self._scalar_roots[row] for row in fallback_row_list
+            )
         return ResidentSelfPlayStep(
             public=public,
             privileged_critic=privileged,
@@ -422,9 +440,7 @@ class TensorResidentSelfPlay:
                 ticks_completed=ticks.index_select(0, fallback_rows),
                 tick_at_boundary=state.tick.index_select(0, fallback_rows).clone(),
                 time_at_boundary=state.time.index_select(0, fallback_rows).clone(),
-                scalar_battles=tuple(
-                    self._scalar_roots[row] for row in fallback_rows.tolist()
-                ),
+                scalar_battles=fallback_scalar_battles,
             ),
         )
 
@@ -485,6 +501,7 @@ class TensorResidentSelfPlay:
         for row in selected_rows:
             self._episode_route_reasons[row] = reasons[row]
         self.engine.runtime.supported[rows & ~admitted] = False
+        self._all_episode_resident = bool(self._episode_resident.all().item())
         return self.observe()
 
 

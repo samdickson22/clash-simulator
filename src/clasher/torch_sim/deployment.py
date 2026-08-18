@@ -282,14 +282,19 @@ class TensorCommandMaterializer:
         self,
         runtime: TensorBattleRuntime,
         player_order: torch.Tensor | None,
+        *,
+        prevalidated: bool = False,
     ) -> torch.Tensor:
         if player_order is not None:
             order = torch.as_tensor(player_order, dtype=torch.int64, device=self.device)
             if order.shape != (runtime.batch_size, 2):
                 raise ValueError("player_order must have shape [batch, 2]")
-            expected = torch.tensor([0, 1], dtype=torch.int64, device=self.device)
-            if not bool((torch.sort(order, dim=1).values == expected).all().item()):
-                raise ValueError("each player_order row must contain players 0 and 1")
+            if not prevalidated:
+                expected = torch.tensor([0, 1], dtype=torch.int64, device=self.device)
+                torch._assert_async(
+                    (torch.sort(order, dim=1).values == expected).all(),
+                    "each player_order row must contain players 0 and 1",
+                )
             return order
 
         # random.shuffle([0, 1]) performs exactly one _randbelow(2) draw.
@@ -603,6 +608,7 @@ class TensorCommandMaterializer:
         *,
         player_order: torch.Tensor | None = None,
         _prevalidated: bool = False,
+        _prevalidated_order: bool = False,
     ) -> TensorDeploymentResult:
         """Commit supported battle rows without any Python entity stepping."""
 
@@ -612,7 +618,11 @@ class TensorCommandMaterializer:
         commands = ingress.commands
         if not _prevalidated:
             self._validate_commands(runtime, commands)
-        chosen_order = self._player_order(runtime, player_order)
+        chosen_order = self._player_order(
+            runtime,
+            player_order,
+            prevalidated=_prevalidated_order,
+        )
         command_order = self._ordered_commands(commands, chosen_order)
         card = commands.card_id
         kind = self.catalog.cards.kind[card]

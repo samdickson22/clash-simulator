@@ -11,6 +11,7 @@ import torch
 from clasher.battle import BattleState
 from clasher.entities import Building, Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
+from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.resident_action_router import TensorResidentActionRouter
 from clasher.torch_sim.resident_engine import TensorResidentEngine
 from clasher.torch_sim.runtime_state import RuntimeEventOpcode
@@ -372,3 +373,56 @@ def test_engine_step_keeps_capacity_failed_mixed_row_atomic(capacity: str) -> No
     assert torch.equal(engine.runtime.battle.hand, before_hand)
     assert engine.runtime.battle.rng.python_state(0) == before_rng
     assert engine.runtime.battle.tick.tolist() == [0]
+
+
+def test_router_reuses_transaction_and_aggregation_pointers(
+    tensor_device: str,
+) -> None:
+    battle = _battle("Knight")
+    engine, router = _router(battle, tensor_device)
+    order = torch.tensor([[0, 1]], device=engine.device)
+    router.apply(torch.tensor([_actions()], device=engine.device), player_order=order)
+    buffers = router._aggregation
+    workspace = router._workspace
+    pointers = (
+        buffers.physical_slots.data_ptr(),
+        buffers.allocation_slots.data_ptr(),
+        buffers.valid.data_ptr(),
+        buffers.entity_ids.data_ptr(),
+        buffers.spawned_command.data_ptr(),
+        buffers.command_supported.data_ptr(),
+        buffers.unsupported_capacity.data_ptr(),
+        workspace.runtime.battle.time.data_ptr(),
+        workspace.objects.objects.allocated.data_ptr(),
+        workspace.pending_spells.active.data_ptr(),
+    )
+
+    router.apply(
+        torch.full(
+            (1, 2),
+            NO_OP_ACTION,
+            dtype=torch.int64,
+            device=engine.device,
+        ),
+        player_order=order,
+    )
+
+    assert pointers == (
+        buffers.physical_slots.data_ptr(),
+        buffers.allocation_slots.data_ptr(),
+        buffers.valid.data_ptr(),
+        buffers.entity_ids.data_ptr(),
+        buffers.spawned_command.data_ptr(),
+        buffers.command_supported.data_ptr(),
+        buffers.unsupported_capacity.data_ptr(),
+        workspace.runtime.battle.time.data_ptr(),
+        workspace.objects.objects.allocated.data_ptr(),
+        workspace.pending_spells.active.data_ptr(),
+    )
+
+
+def test_router_apply_source_has_no_host_sync_or_constant_rebuild() -> None:
+    source = inspect.getsource(TensorResidentActionRouter.apply)
+    assert ".item(" not in source
+    assert ".tolist(" not in source
+    assert "torch.arange(" not in source

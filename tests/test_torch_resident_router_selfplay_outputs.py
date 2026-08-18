@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import random
 from collections import deque
 from collections.abc import Iterator
@@ -220,3 +221,12 @@ def test_selective_reset_clears_only_selected_pending_spell_row(
     assert public.structured.entity_ids.shape[:2] == (2, 2)
     assert critic is not None
     assert masks[:, :, NO_OP_ACTION].all().item()
+
+
+def test_selfplay_step_reuses_masks_and_defers_host_diagnostics() -> None:
+    source = inspect.getsource(TensorResidentSelfPlay.step)
+    loop = source[source.index("for logic_tick") : source.index("if bool(failed_any")]
+    assert ".item(" not in loop
+    assert ".tolist(" not in loop
+    assert "first_legal = self.engine.deployment" not in source
+    assert "action_masks = post_mask" in source

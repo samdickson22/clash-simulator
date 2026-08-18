@@ -104,6 +104,89 @@ class _RouterWorkspace:
         self.pending_spells.reset_rows_(rows, pending_spells, rows)
 
 
+@dataclass
+class _RouterAggregationBuffers:
+    physical_slots: torch.Tensor
+    allocation_slots: torch.Tensor
+    valid: torch.Tensor
+    entity_ids: torch.Tensor
+    spawned_command: torch.Tensor
+    spawned_card: torch.Tensor
+    command_supported: torch.Tensor
+    unsupported_spell: torch.Tensor
+    unsupported_mechanic: torch.Tensor
+    unsupported_payload: torch.Tensor
+    unsupported_ability: torch.Tensor
+    unsupported_conflict: torch.Tensor
+    unsupported_capacity: torch.Tensor
+    has_character: torch.Tensor
+    has_spell: torch.Tensor
+
+    @classmethod
+    def create(
+        cls,
+        runtime: TensorBattleRuntime,
+    ) -> _RouterAggregationBuffers:
+        physical_slots = torch.arange(
+            runtime.max_entities, dtype=torch.int64, device=runtime.device
+        )[None, :].expand(runtime.batch_size, -1)
+        command_shape = (runtime.batch_size * 2,)
+        return cls(
+            physical_slots=physical_slots,
+            allocation_slots=torch.full_like(physical_slots, -1),
+            valid=torch.zeros_like(physical_slots, dtype=torch.bool),
+            entity_ids=torch.zeros_like(physical_slots),
+            spawned_command=torch.full_like(physical_slots, -1),
+            spawned_card=torch.zeros_like(physical_slots),
+            command_supported=torch.zeros(
+                command_shape, dtype=torch.bool, device=runtime.device
+            ),
+            unsupported_spell=torch.zeros(
+                command_shape, dtype=torch.bool, device=runtime.device
+            ),
+            unsupported_mechanic=torch.zeros(
+                command_shape, dtype=torch.bool, device=runtime.device
+            ),
+            unsupported_payload=torch.zeros(
+                command_shape, dtype=torch.bool, device=runtime.device
+            ),
+            unsupported_ability=torch.zeros(
+                command_shape, dtype=torch.bool, device=runtime.device
+            ),
+            unsupported_conflict=torch.zeros(
+                command_shape, dtype=torch.bool, device=runtime.device
+            ),
+            unsupported_capacity=torch.zeros(
+                runtime.batch_size, dtype=torch.bool, device=runtime.device
+            ),
+            has_character=torch.zeros(
+                runtime.batch_size, dtype=torch.bool, device=runtime.device
+            ),
+            has_spell=torch.zeros(
+                runtime.batch_size, dtype=torch.bool, device=runtime.device
+            ),
+        )
+
+    def reset(self, command_count: int) -> None:
+        self.valid.zero_()
+        self.allocation_slots.fill_(-1)
+        self.entity_ids.zero_()
+        self.spawned_command.fill_(-1)
+        self.spawned_card.zero_()
+        for value in (
+            self.command_supported,
+            self.unsupported_spell,
+            self.unsupported_mechanic,
+            self.unsupported_payload,
+            self.unsupported_ability,
+            self.unsupported_conflict,
+        ):
+            value[:command_count].zero_()
+        self.unsupported_capacity.zero_()
+        self.has_character.zero_()
+        self.has_spell.zero_()
+
+
 def _select_commands(
     commands: TensorCommandQueue,
     selected: torch.Tensor,
@@ -172,6 +255,7 @@ class TensorResidentActionRouter:
         self._workspace = _RouterWorkspace.create(
             runtime, objects, bridge, spells, pending_spells
         )
+        self._aggregation = _RouterAggregationBuffers.create(runtime)
 
     def _commit(self, source: _RouterWorkspace, rows: torch.Tensor) -> None:
         _copy_runtime_rows(self.runtime, source.runtime, rows)
@@ -214,11 +298,12 @@ class TensorResidentActionRouter:
             order = torch.stack((1 - choice, choice), dim=1)
         else:
             order = torch.as_tensor(player_order, dtype=torch.int64, device=self.device)
-            valid_order = order.shape == (self.runtime.batch_size, 2) and bool(
-                (torch.sort(order, dim=1).values == self._players).all().item()
+            if order.shape != (self.runtime.batch_size, 2):
+                raise ValueError("player_order must have shape [batch, 2]")
+            torch._assert_async(
+                (torch.sort(order, dim=1).values == self._players).all(),
+                "player_order rows must be permutations of (0, 1)",
             )
-            if not valid_order:
-                raise ValueError("player_order rows must be permutations of (0, 1)")
 
         commands = ingress.commands
         command_spell = (
@@ -230,21 +315,23 @@ class TensorResidentActionRouter:
             spell_static.command_supported,
             ~commands.is_ability,
         )
-        aggregate_command_supported = command_supported.clone()
-        capacity = self.runtime.max_entities
-        physical_slots = torch.arange(capacity, dtype=torch.int64, device=self.device)[
-            None, :
-        ].expand(self.runtime.batch_size, -1)
-        aggregate_valid = torch.zeros_like(physical_slots, dtype=torch.bool)
-        aggregate_entity_ids = torch.zeros_like(physical_slots)
-        aggregate_spawned_command = torch.full_like(physical_slots, -1)
-        aggregate_spawned_card = torch.zeros_like(physical_slots)
-        unsupported_spell = torch.zeros_like(command_spell)
-        unsupported_mechanic = torch.zeros_like(command_spell)
-        unsupported_payload = torch.zeros_like(command_spell)
-        unsupported_ability = commands.is_ability.clone()
-        unsupported_conflict = torch.zeros_like(command_spell)
-        unsupported_capacity = torch.zeros_like(self.runtime.supported)
+        command_count = int(commands.card_id.numel())
+        aggregation = self._aggregation
+        aggregation.reset(command_count)
+        aggregate_command_supported = aggregation.command_supported[:command_count]
+        aggregate_command_supported.copy_(command_supported)
+        physical_slots = aggregation.physical_slots
+        aggregate_valid = aggregation.valid
+        aggregate_entity_ids = aggregation.entity_ids
+        aggregate_spawned_command = aggregation.spawned_command
+        aggregate_spawned_card = aggregation.spawned_card
+        unsupported_spell = aggregation.unsupported_spell[:command_count]
+        unsupported_mechanic = aggregation.unsupported_mechanic[:command_count]
+        unsupported_payload = aggregation.unsupported_payload[:command_count]
+        unsupported_ability = aggregation.unsupported_ability[:command_count]
+        unsupported_ability.copy_(commands.is_ability)
+        unsupported_conflict = aggregation.unsupported_conflict[:command_count]
+        unsupported_capacity = aggregation.unsupported_capacity
         row_supported = self.runtime.supported.clone()
         if commands.battle_index.numel():
             rejected = torch.zeros_like(row_supported)
@@ -258,7 +345,6 @@ class TensorResidentActionRouter:
             row_supported &= ~rejected
         workspace.runtime.supported &= row_supported
         prior_character = torch.zeros_like(row_supported)
-        command_count = int(commands.card_id.numel())
 
         for rank in range(2):
             player = order[:, rank]
@@ -317,6 +403,7 @@ class TensorResidentActionRouter:
                 workspace.bridge,
                 spell_ingress,
                 player_order=order,
+                _prevalidated_order=True,
             )
             row_supported &= pending_result.committed
             workspace.runtime.supported &= row_supported
@@ -344,6 +431,7 @@ class TensorResidentActionRouter:
                     character_ingress,
                     player_order=order,
                     _prevalidated=True,
+                    _prevalidated_order=True,
                 )
             )
             if character_full_index.numel():
@@ -407,8 +495,8 @@ class TensorResidentActionRouter:
 
         self._commit(workspace, row_supported)
         aggregate_command_supported &= row_supported[commands.battle_index]
-        has_character = torch.zeros_like(row_supported)
-        has_spell = torch.zeros_like(row_supported)
+        has_character = aggregation.has_character
+        has_spell = aggregation.has_spell
         if commands.battle_index.numel():
             has_character.scatter_reduce_(
                 0,
@@ -424,12 +512,15 @@ class TensorResidentActionRouter:
                 reduce="amax",
                 include_self=True,
             )
-        allocation = EntityAllocation(
-            slots=torch.where(
+        aggregation.allocation_slots.copy_(
+            torch.where(
                 aggregate_valid,
                 physical_slots,
                 torch.full_like(physical_slots, -1),
-            ),
+            )
+        )
+        allocation = EntityAllocation(
+            slots=aggregation.allocation_slots,
             entity_ids=aggregate_entity_ids,
             valid=aggregate_valid,
         )
