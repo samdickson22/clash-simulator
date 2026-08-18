@@ -27,6 +27,7 @@ from .resident_outputs import (
     TensorResidentPublicOutputs,
     TensorRewardOutcome,
 )
+from .resident_workspace import TensorResidentWorkspace
 
 
 @dataclass(frozen=True)
@@ -103,6 +104,7 @@ class TensorResidentSelfPlay:
         if max_ticks < 1:
             raise ValueError("max_ticks must be positive")
         self.engine = engine
+        self.workspace = TensorResidentWorkspace(engine)
         self.outputs = outputs
         self.projector = outputs.observations
         self.decision_interval_ticks = int(decision_interval_ticks)
@@ -294,9 +296,11 @@ class TensorResidentSelfPlay:
                 actions if logic_tick == 0 else torch.full_like(actions, NO_OP_ACTION)
             )
             explicit_order = None if logic_tick == 0 else player_order
-            result = self.outputs.step_and_capture(
-                tick_actions, player_order=explicit_order
+            result = self.workspace.step(
+                tick_actions,
+                player_order=explicit_order,
             )
+            self.outputs.capture_tick_events(result)
             if logic_tick == 0:
                 action_success = (
                     result.deployment.ingress.accepted & result.committed[:, None]

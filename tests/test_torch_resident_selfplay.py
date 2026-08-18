@@ -16,6 +16,7 @@ from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.diagnostics import battle_snapshot, first_divergence
 from clasher.torch_sim.observations import TensorCvObservation
+from clasher.torch_sim.resident_engine import TensorResidentEngine
 from clasher.torch_sim.resident_outputs import TensorPublicStructuredObservation
 from clasher.torch_sim.resident_selfplay import TensorResidentSelfPlay
 
@@ -292,3 +293,25 @@ def test_repeated_short_episode_resets_do_not_grow_event_buffers() -> None:
         if episode != 11:
             fresh = _short_knight_battle(77_002 + episode)
             bridge.reset_rows([fresh], torch.tensor([True]))
+
+
+def test_selfplay_reuses_preallocated_tick_workspace(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bridge = TensorResidentSelfPlay.from_battles(
+        [_safe_battle(78_001)],
+        decision_interval_ticks=3,
+        max_ticks=3,
+        max_entities=16,
+        max_objects=16,
+        catalog=_catalog(),
+    )
+
+    def forbidden_clone(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("resident self-play allocated a new tick clone")
+
+    monkeypatch.setattr(TensorResidentEngine, "clone", forbidden_clone)
+    result = bridge.step(torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64))
+
+    assert result.ticks_advanced.tolist() == [3]
+    assert result.observation_valid.tolist() == [True]
