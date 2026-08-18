@@ -16,7 +16,7 @@ from clasher.torch_sim.actions import (
     TensorActionKernel,
     TensorActionState,
 )
-from clasher.torch_sim.catalog import CardKindOpcode, TensorCardCatalog
+from clasher.torch_sim.catalog import MECHANIC_OPCODE, CardKindOpcode, TensorCardCatalog
 from clasher.torch_sim.deployment import (
     TensorCommandMaterializer,
     TensorDeploymentCatalog,
@@ -260,6 +260,52 @@ def test_spell_mechanic_and_nested_payload_are_explicit_atomic_fallbacks(
     assert torch.equal(runtime.battle.cycle_queue, before_cycle)
     assert torch.equal(runtime.battle.elixir, before_elixir)
     assert torch.equal(runtime.battle.entity_id, before_ids)
+
+
+def test_mechanic_admission_is_opcode_driven_and_default_remains_fail_closed(
+    deployment_stack,
+) -> None:
+    cards, action_catalog, kernel, deployment, default_materializer = deployment_stack
+    sources = [
+        BattleState(rng=random.Random(151_000)),
+        BattleState(rng=random.Random(151_001)),
+    ]
+    _set_hand(sources[0], 0, "Bandit")
+    _set_hand(sources[1], 0, "DarkPrince")
+    for battle in sources:
+        _set_hand(battle, 1, "Knight")
+    state = TensorActionState.from_battles(sources, action_catalog)
+    actions = torch.tensor(
+        [[_first_slot_action(kernel, state, row, 0), NO_OP_ACTION] for row in range(2)]
+    )
+    ingress = kernel.ingress(state, actions)
+
+    default_runtime = TensorBattleRuntime.from_battles(
+        sources, catalog=cards, max_entities=32
+    )
+    default_result = default_materializer.materialize(
+        default_runtime,
+        ingress,
+        player_order=torch.tensor([[0, 1], [0, 1]]),
+    )
+    assert default_result.unsupported_mechanic.tolist() == [True, True]
+    assert not default_result.battle_supported.any()
+
+    admitted = TensorCommandMaterializer(
+        deployment,
+        admitted_mechanic_opcodes=(MECHANIC_OPCODE["BanditDash"],),
+    )
+    runtime = TensorBattleRuntime.from_battles(sources, catalog=cards, max_entities=32)
+    result = admitted.materialize(
+        runtime,
+        ingress,
+        player_order=torch.tensor([[0, 1], [0, 1]]),
+    )
+
+    assert result.unsupported_mechanic.tolist() == [False, True]
+    assert result.battle_supported.tolist() == [True, False]
+    assert (result.spawned_card_id[0] == cards.name_to_id["Bandit"]).sum() == 1
+    assert runtime.entity_pool.next_entity_id.tolist() == [8, 7]
 
 
 def test_supported_materialization_never_calls_python_deploy_card(

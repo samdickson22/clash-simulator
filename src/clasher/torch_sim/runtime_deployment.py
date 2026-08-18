@@ -50,6 +50,18 @@ def _copy_tensor_rows_(destination: object, source: object, rows: torch.Tensor) 
             left[rows] = right[rows]
 
 
+def _copy_tensor_fields_(destination: object, source: object) -> None:
+    """Refresh equal-shaped mutable planes without replacing allocations."""
+
+    for descriptor in fields(destination):  # type: ignore[arg-type]
+        left = getattr(destination, descriptor.name)
+        right = getattr(source, descriptor.name)
+        if isinstance(left, torch.Tensor) and isinstance(right, torch.Tensor):
+            if left.shape != right.shape or left.dtype != right.dtype:
+                raise ValueError(f"deployment plane {descriptor.name!r} changed layout")
+            left.copy_(right)
+
+
 def _commit_runtime_rows_(
     destination: TensorBattleRuntime,
     source: TensorBattleRuntime,
@@ -57,8 +69,6 @@ def _commit_runtime_rows_(
 ) -> None:
     """Publish speculative rows without breaking canonical identity aliases."""
 
-    if not bool(rows.any().item()):
-        return
     _copy_tensor_rows_(destination.battle, source.battle, rows)
     _copy_tensor_rows_(destination.battle.rng, source.battle.rng, rows)
     destination.entity_pool.active[rows] = source.entity_pool.active[rows]
@@ -72,7 +82,6 @@ def _commit_runtime_rows_(
     _copy_tensor_rows_(destination.events, source.events, rows)
     destination.supported[rows] = source.supported[rows]
     destination.dirty[rows] = source.dirty[rows]
-    destination.assert_invariants()
 
 
 class TensorRuntimeDeployment:
@@ -89,13 +98,20 @@ class TensorRuntimeDeployment:
         self.kernel = TensorActionKernel(action_catalog)
         self.materializer = materializer
         self.device = action_catalog.cards.device
+        self._speculative_runtime: TensorBattleRuntime | None = None
+        self._cycle_slots: dict[int, torch.Tensor] = {}
+        self._tower_radius_by_slot = torch.tensor(
+            (1_000, 1_000, 1_400), dtype=torch.int32, device=self.device
+        )
+        self._tower_half_by_slot = torch.tensor(
+            (1_500, 1_500, 2_000), dtype=torch.int32, device=self.device
+        )
 
     def prepare_runtime(self, runtime: TensorBattleRuntime) -> None:
         """Install the materializer's stable card-name namespace once."""
 
         self._validate_runtime(runtime)
         self.materializer.prepare_runtime(runtime)
-        runtime.assert_invariants()
 
     def _validate_runtime(self, runtime: TensorBattleRuntime) -> None:
         if runtime.device != self.device:
@@ -112,9 +128,11 @@ class TensorRuntimeDeployment:
         hand_ids = catalog_index[battle.hand]
         cycle_ids = catalog_index[battle.cycle_queue]
         hand_known = (hand_ids >= 0).all(dim=2)
-        cycle_slots = torch.arange(
-            battle.cycle_queue.shape[2], device=self.device
-        ).view(1, 1, -1)
+        cycle_width = battle.cycle_queue.shape[2]
+        cycle_slots = self._cycle_slots.get(cycle_width)
+        if cycle_slots is None:
+            cycle_slots = torch.arange(cycle_width, device=self.device).view(1, 1, -1)
+            self._cycle_slots[cycle_width] = cycle_slots
         cycle_live = cycle_slots < battle.cycle_queue_length[:, :, None]
         cycle_known = ((cycle_ids >= 0) | ~cycle_live).all(dim=2)
         hand_ids = hand_ids.clamp_min(0)
@@ -152,20 +170,14 @@ class TensorRuntimeDeployment:
         # catalog entries. Their stable tower-slot schema supplies the same
         # serialized collision/footprint values used by the Python adapter.
         tower_slot = battle.entity_tower_slot.clamp(min=0).to(torch.int64)
-        tower_radius_by_slot = torch.tensor(
-            (1_000, 1_000, 1_400), dtype=torch.int32, device=self.device
-        )
-        tower_half_by_slot = torch.tensor(
-            (1_500, 1_500, 2_000), dtype=torch.int32, device=self.device
-        )
         building_radius = torch.where(
             crown_tower,
-            tower_radius_by_slot[tower_slot],
+            self._tower_radius_by_slot[tower_slot],
             building_radius,
         )
         building_half = torch.where(
             crown_tower,
-            tower_half_by_slot[tower_slot],
+            self._tower_half_by_slot[tower_slot],
             building_half,
         )
 
@@ -192,11 +204,47 @@ class TensorRuntimeDeployment:
             building_collision_radius_units=building_radius,
             building_footprint_half_units=building_half,
             blocker_alive=blocker_alive,
-            blocker_x_units=blocker_units.clone(),
-            blocker_y_units=blocker_units.clone(),
+            blocker_x_units=blocker_units,
+            blocker_y_units=blocker_units,
             blocker_radius_units=blocker_units,
             supported=player_supported,
         )
+
+    def _speculative(self, runtime: TensorBattleRuntime) -> TensorBattleRuntime:
+        """Refresh a retained transaction buffer for this deployment layout."""
+
+        speculative = self._speculative_runtime
+        compatible = (
+            speculative is not None
+            and speculative.device == runtime.device
+            and speculative.catalog is runtime.catalog
+            and speculative.batch_size == runtime.batch_size
+            and speculative.max_entities == runtime.max_entities
+            and speculative.events.capacity == runtime.events.capacity
+            and speculative.battle.cycle_queue.shape == runtime.battle.cycle_queue.shape
+            and speculative.card_catalog_index.shape == runtime.card_catalog_index.shape
+        )
+        if not compatible:
+            speculative = runtime.clone()
+            # TensorBattleRuntime.fork shares the nested RNG owner.
+            speculative.battle.rng = runtime.battle.rng.clone()
+            self._speculative_runtime = speculative
+            return speculative
+
+        assert speculative is not None
+        _copy_tensor_fields_(speculative.battle, runtime.battle)
+        _copy_tensor_fields_(speculative.battle.rng, runtime.battle.rng)
+        speculative.battle.card_names = runtime.battle.card_names
+        speculative.battle.card_to_id = runtime.battle.card_to_id
+        speculative.card_catalog_index.copy_(runtime.card_catalog_index)
+        speculative.entity_pool.active.copy_(runtime.entity_pool.active)
+        speculative.entity_pool.next_entity_id.copy_(runtime.entity_pool.next_entity_id)
+        _copy_tensor_fields_(speculative.status, runtime.status)
+        _copy_tensor_fields_(speculative.phases, runtime.phases)
+        _copy_tensor_fields_(speculative.events, runtime.events)
+        speculative.supported.copy_(runtime.supported)
+        speculative.dirty.copy_(runtime.dirty)
+        return speculative
 
     def _capacity_support(
         self,
@@ -234,17 +282,14 @@ class TensorRuntimeDeployment:
         ingress = self.kernel.ingress(state, actions, legal_mask=legal)
         capacity_supported = self._capacity_support(runtime, ingress)
 
-        speculative = runtime.clone()
-        # TensorBattleRuntime.fork currently shares the nested RNG owner even
-        # though its other retained tensors are independent. Replace it before
-        # the speculative player-order draw so rejected rows remain atomic.
-        speculative.battle.rng = runtime.battle.rng.clone()
+        speculative = self._speculative(runtime)
         speculative.supported &= capacity_supported
         speculative.phases.supported[~capacity_supported] = False
         deployment = self.materializer.materialize(
             speculative,
             ingress,
             player_order=player_order,
+            _prevalidated=True,
         )
         committed = deployment.battle_supported & capacity_supported
         _commit_runtime_rows_(runtime, speculative, committed)

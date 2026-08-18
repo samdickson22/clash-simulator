@@ -6,15 +6,18 @@ allocates stable entity IDs/slots, writes retained battle state, and commits
 the tensor action kernel's hand/cycle/elixir transition without calling
 ``BattleState.deploy_card`` or constructing Python entities.
 
-Spells, abilities, attached mechanics, and nested mixed-character payloads are
-reported explicitly and fail closed at battle-row granularity. This keeps a
-later Python fallback atomic: no supported command from the same simultaneous
-decision is partially committed before the unsupported operation is known.
+Spells, abilities, non-admitted attached mechanics, and nested mixed-character
+payloads are reported explicitly and fail closed at battle-row granularity.
+Mechanic admission is an opt-in opcode-family contract; the default admits no
+mechanics. This keeps a later Python fallback atomic: no supported command from
+the same simultaneous decision is partially committed before the unsupported
+operation is known.
 """
 
 from __future__ import annotations
 
 import math
+from collections.abc import Iterable
 from dataclasses import dataclass, fields
 
 import torch
@@ -25,7 +28,7 @@ from clasher.formations import formation_offset, horizontal_line_offset
 from clasher.kinematics import LOGIC_UNITS_PER_TILE, tiles_to_logic_units
 
 from .actions import TensorCommandQueue, TensorIngressResult
-from .catalog import CardKindOpcode, TensorCardCatalog
+from .catalog import MECHANIC_OPCODE, CardKindOpcode, TensorCardCatalog
 from .entity_pool import EntityAllocation
 from .runtime_state import (
     RuntimeEventOpcode,
@@ -208,9 +211,38 @@ class TensorDeploymentResult:
 class TensorCommandMaterializer:
     """Materialize deployment queues into one retained tensor runtime."""
 
-    def __init__(self, catalog: TensorDeploymentCatalog) -> None:
+    def __init__(
+        self,
+        catalog: TensorDeploymentCatalog,
+        *,
+        admitted_mechanic_opcodes: Iterable[int] = (),
+    ) -> None:
         self.catalog = catalog
         self.device = catalog.device
+        admitted = torch.zeros(
+            len(MECHANIC_OPCODE) + 1,
+            dtype=torch.bool,
+            device=self.device,
+        )
+        for opcode in admitted_mechanic_opcodes:
+            code = int(opcode)
+            if code <= 0 or code >= admitted.shape[0]:
+                raise ValueError(f"unknown deployment mechanic opcode {code}")
+            admitted[code] = True
+        # This is an operation-family contract, not a card allowlist. The
+        # default remains fail-closed for every attached mechanic.
+        self.admitted_mechanic_opcode = admitted
+        self._required_spawn_names = tuple(
+            sorted({name for name in catalog.spawned_card_names[1:] if name})
+        )
+        self._mapping_key: tuple[str, ...] | None = None
+        self._catalog_to_core_cache: torch.Tensor | None = None
+        self._spawned_to_core_cache: torch.Tensor | None = None
+        self._slot_numbers: dict[int, torch.Tensor] = {}
+        self._batch_slot_rows: dict[tuple[int, int], torch.Tensor] = {}
+        self._summon_lane = torch.arange(
+            catalog.max_summons, dtype=torch.int64, device=self.device
+        )
 
     def prepare_runtime(self, runtime: TensorBattleRuntime) -> None:
         """Install a stable spawned-character card-name namespace once.
@@ -222,9 +254,8 @@ class TensorCommandMaterializer:
         inspected or stepped here.
         """
 
-        required = {name for name in self.catalog.spawned_card_names[1:] if name}
         current = runtime.battle.card_names
-        new_names = ("", *sorted(set(current[1:]) | required))
+        new_names = ("", *sorted(set(current[1:]) | set(self._required_spawn_names)))
         if new_names == current:
             return
         new_to_id = {name: index for index, name in enumerate(new_names)}
@@ -291,7 +322,18 @@ class TensorCommandMaterializer:
         ):
             raise ValueError("command index is outside the runtime/catalog")
 
-    def _catalog_to_core(self, runtime: TensorBattleRuntime) -> torch.Tensor:
+    def _catalog_mappings(
+        self,
+        runtime: TensorBattleRuntime,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        key = runtime.battle.card_names
+        if (
+            key == self._mapping_key
+            and self._catalog_to_core_cache is not None
+            and self._spawned_to_core_cache is not None
+        ):
+            return self._catalog_to_core_cache, self._spawned_to_core_cache
+
         reverse = torch.full(
             (len(self.catalog.cards.names),),
             -1,
@@ -305,7 +347,104 @@ class TensorCommandMaterializer:
         )
         present = runtime.card_catalog_index >= 0
         reverse[runtime.card_catalog_index[present]] = core_ids[present]
-        return reverse
+        spawned = torch.tensor(
+            [
+                runtime.battle.card_to_id.get(name, -1) if name else 0
+                for name in self.catalog.spawned_card_names
+            ],
+            dtype=torch.int64,
+            device=self.device,
+        )
+        self._mapping_key = key
+        self._catalog_to_core_cache = reverse
+        self._spawned_to_core_cache = spawned
+        return reverse, spawned
+
+    def _unsupported_mechanics(self, card_ids: torch.Tensor) -> torch.Tensor:
+        """Reject cards containing any non-admitted serialized operation."""
+
+        opcodes = self.catalog.cards.mechanic_opcode[card_ids].to(torch.int64)
+        present = opcodes > 0
+        in_range = opcodes < self.admitted_mechanic_opcode.shape[0]
+        admitted = self.admitted_mechanic_opcode[
+            opcodes.clamp(0, self.admitted_mechanic_opcode.shape[0] - 1)
+        ]
+        return (present & (~in_range | ~admitted)).any(dim=1)
+
+    def _allocate_prevalidated(
+        self,
+        runtime: TensorBattleRuntime,
+        counts: torch.Tensor,
+    ) -> EntityAllocation:
+        """Allocate after the runtime driver has proven row capacity."""
+
+        pool = runtime.entity_pool
+        capacity = pool.capacity
+        slot_numbers = self._slot_numbers.get(capacity)
+        if slot_numbers is None:
+            slot_numbers = torch.arange(capacity, dtype=torch.int64, device=self.device)
+            self._slot_numbers[capacity] = slot_numbers
+        row_key = (pool.batch_size, capacity)
+        batch_rows = self._batch_slot_rows.get(row_key)
+        if batch_rows is None:
+            batch_rows = torch.arange(
+                pool.batch_size, dtype=torch.int64, device=self.device
+            )[:, None].expand(pool.batch_size, capacity)
+            self._batch_slot_rows[row_key] = batch_rows
+
+        available_keys = torch.where(
+            ~pool.active,
+            slot_numbers[None, :],
+            torch.full_like(pool.entity_id, capacity),
+        )
+        slots = torch.sort(available_keys, dim=1).values
+        ordinal = slot_numbers[None, :].expand(pool.batch_size, -1)
+        valid = ordinal < counts[:, None]
+        entity_ids = pool.next_entity_id[:, None] + ordinal
+        rows = batch_rows[valid]
+        selected_slots = slots[valid]
+        pool.active[rows, selected_slots] = True
+        pool.entity_id[rows, selected_slots] = entity_ids[valid]
+        pool.next_entity_id.add_(counts)
+        return EntityAllocation(
+            slots=torch.where(valid, slots, torch.full_like(slots, -1)),
+            entity_ids=torch.where(valid, entity_ids, torch.zeros_like(entity_ids)),
+            valid=valid,
+        )
+
+    def _append_spawn_events_prevalidated(
+        self,
+        runtime: TensorBattleRuntime,
+        allocation: EntityAllocation,
+    ) -> None:
+        """Append spawn lanes after the driver has proven event capacity."""
+
+        events = runtime.events
+        valid = allocation.valid
+        local = torch.cumsum(valid.to(torch.int64), dim=1) - 1
+        destinations = events.count.to(torch.int64)[:, None] + local
+        row_key = (runtime.batch_size, runtime.max_entities)
+        rows = self._batch_slot_rows.get(row_key)
+        if rows is None:
+            rows = torch.arange(
+                runtime.batch_size, dtype=torch.int64, device=self.device
+            )[:, None].expand_as(valid)
+            self._batch_slot_rows[row_key] = rows
+        row_index = rows[valid]
+        event_index = destinations[valid]
+        safe_slots = allocation.slots.clamp_min(0)
+        x_units = runtime.battle.entity_x_units.gather(1, safe_slots)
+        y_units = runtime.battle.entity_y_units.gather(1, safe_slots)
+        payload = runtime.battle.entity_card.gather(1, safe_slots)
+        events.phase[row_index, event_index] = int(TickPhase.COMMANDS)
+        events.opcode[row_index, event_index] = int(RuntimeEventOpcode.SPAWN)
+        events.source_id[row_index, event_index] = allocation.entity_ids[valid]
+        events.target_id[row_index, event_index] = 0
+        events.x_units[row_index, event_index] = x_units[valid]
+        events.y_units[row_index, event_index] = y_units[valid]
+        events.amount[row_index, event_index] = 0.0
+        events.payload[row_index, event_index] = payload[valid]
+        events.count.add_(valid.sum(dim=1, dtype=events.count.dtype))
 
     def _ordered_commands(
         self,
@@ -463,6 +602,7 @@ class TensorCommandMaterializer:
         ingress: TensorIngressResult,
         *,
         player_order: torch.Tensor | None = None,
+        _prevalidated: bool = False,
     ) -> TensorDeploymentResult:
         """Commit supported battle rows without any Python entity stepping."""
 
@@ -470,13 +610,14 @@ class TensorCommandMaterializer:
             raise ValueError("runtime and deployment catalog must share card metadata")
         self.prepare_runtime(runtime)
         commands = ingress.commands
-        self._validate_commands(runtime, commands)
+        if not _prevalidated:
+            self._validate_commands(runtime, commands)
         chosen_order = self._player_order(runtime, player_order)
         command_order = self._ordered_commands(commands, chosen_order)
         card = commands.card_id
         kind = self.catalog.cards.kind[card]
         unsupported_spell = kind == int(CardKindOpcode.SPELL)
-        unsupported_mechanic = self.catalog.cards.mechanic_count[card] > 0
+        unsupported_mechanic = self._unsupported_mechanics(card)
         unsupported_payload = ~self.catalog.supported_payload[card]
         unsupported_ability = commands.is_ability
         unsupported_conflict = self._conflicts(commands, command_order)
@@ -502,19 +643,18 @@ class TensorCommandMaterializer:
         battle_supported = runtime.supported & ~bad_battle
         command_supported &= battle_supported[commands.battle_index]
 
-        catalog_to_core = self._catalog_to_core(runtime)
-        spawned_catalog_to_core = torch.tensor(
-            [
-                runtime.battle.card_to_id.get(name, -1) if name else 0
-                for name in self.catalog.spawned_card_names
-            ],
-            dtype=torch.int64,
-            device=self.device,
-        )
-        if bool((catalog_to_core[ingress.hand_ids] < 0).any().item()) or bool(
-            (catalog_to_core[ingress.cycle_ids] < 0).any().item()
+        catalog_to_core, spawned_catalog_to_core = self._catalog_mappings(runtime)
+        if not _prevalidated and (
+            bool((catalog_to_core[ingress.hand_ids] < 0).any().item())
+            or bool((catalog_to_core[ingress.cycle_ids] < 0).any().item())
         ):
             raise ValueError("action transition contains a card absent from runtime")
+        if _prevalidated:
+            transition_known = (catalog_to_core[ingress.hand_ids] >= 0).all(
+                dim=(1, 2)
+            ) & (catalog_to_core[ingress.cycle_ids] >= 0).all(dim=(1, 2))
+            battle_supported &= transition_known
+            command_supported &= battle_supported[commands.battle_index]
 
         ordered_cards = card[command_order]
         ordered_battles = commands.battle_index[command_order]
@@ -529,7 +669,7 @@ class TensorCommandMaterializer:
         )
         if ordered_battles.numel():
             counts_by_battle.scatter_add_(0, ordered_battles, spawn_counts)
-        if bool(
+        if not _prevalidated and bool(
             (
                 runtime.events.count.to(torch.int64) + counts_by_battle
                 > runtime.events.capacity
@@ -539,7 +679,11 @@ class TensorCommandMaterializer:
         ):
             raise OverflowError("runtime event capacity exhausted")
 
-        allocation = runtime.entity_pool.allocate(counts_by_battle)
+        allocation = (
+            self._allocate_prevalidated(runtime, counts_by_battle)
+            if _prevalidated
+            else runtime.entity_pool.allocate(counts_by_battle)
+        )
         spawn_mask = torch.zeros_like(runtime.entity_pool.active)
         spawn_mask.scatter_reduce_(
             1,
@@ -551,9 +695,7 @@ class TensorCommandMaterializer:
         self._reset_spawn_slots(runtime, spawn_mask)
 
         command_count = int(command_order.numel())
-        summon_lane = torch.arange(
-            self.catalog.max_summons, dtype=torch.int64, device=self.device
-        )
+        summon_lane = self._summon_lane
         lane_valid = summon_lane[None, :] < spawn_counts[:, None]
         same_battle_earlier = (ordered_battles[:, None] == ordered_battles[None, :]) & (
             torch.arange(command_count, device=self.device)[:, None]
@@ -626,21 +768,27 @@ class TensorCommandMaterializer:
         self._commit_card_transition(
             runtime, ingress, battle_supported, catalog_to_core
         )
-        runtime.events.append(
-            phase=TickPhase.COMMANDS,
-            opcode=RuntimeEventOpcode.SPAWN,
-            valid=allocation.valid,
-            source_id=allocation.entity_ids,
-            x_units=runtime.battle.entity_x_units.gather(
-                1, allocation.slots.clamp_min(0)
-            ),
-            y_units=runtime.battle.entity_y_units.gather(
-                1, allocation.slots.clamp_min(0)
-            ),
-            payload=runtime.battle.entity_card.gather(1, allocation.slots.clamp_min(0)),
-        )
+        if _prevalidated:
+            self._append_spawn_events_prevalidated(runtime, allocation)
+        else:
+            runtime.events.append(
+                phase=TickPhase.COMMANDS,
+                opcode=RuntimeEventOpcode.SPAWN,
+                valid=allocation.valid,
+                source_id=allocation.entity_ids,
+                x_units=runtime.battle.entity_x_units.gather(
+                    1, allocation.slots.clamp_min(0)
+                ),
+                y_units=runtime.battle.entity_y_units.gather(
+                    1, allocation.slots.clamp_min(0)
+                ),
+                payload=runtime.battle.entity_card.gather(
+                    1, allocation.slots.clamp_min(0)
+                ),
+            )
         runtime.mark_dirty(counts_by_battle > 0, phase=TickPhase.COMMANDS)
-        runtime.assert_invariants()
+        if not _prevalidated:
+            runtime.assert_invariants()
 
         spawned_command = torch.full_like(allocation.slots, -1)
         spawned_card = torch.zeros_like(allocation.slots)

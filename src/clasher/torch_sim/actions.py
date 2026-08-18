@@ -369,6 +369,19 @@ class TensorActionKernel:
         self.world_y = world_y.to(torch.int64)
         self.world_x_units = self.world_x * LOGIC_UNITS_PER_TILE + 500
         self.world_y_units = self.world_y * LOGIC_UNITS_PER_TILE + 500
+        self._players = torch.arange(2, device=self.device)
+        self._tower_centers = _device_tensor(
+            (
+                (3_500, 6_500, 1_500),
+                (14_500, 6_500, 1_500),
+                (9_000, 2_500, 2_000),
+                (3_500, 25_500, 1_500),
+                (14_500, 25_500, 1_500),
+                (9_000, 29_500, 2_000),
+            ),
+            dtype=torch.int64,
+            device=self.device,
+        )
 
         blocked = torch.zeros(
             (BOARD_HEIGHT, BOARD_WIDTH), dtype=torch.bool, device=self.device
@@ -397,7 +410,7 @@ class TensorActionKernel:
         safe_action = torch.where(placement, action_ids, torch.zeros_like(action_ids))
         slot = safe_action // NUM_TILES
         tile = safe_action % NUM_TILES
-        player = torch.arange(2, device=self.device).view(1, 2).expand_as(action_ids)
+        player = self._players.view(1, 2).expand_as(action_ids)
         world_x = self.world_x[player, tile]
         world_y = self.world_y[player, tile]
         return TensorActionSelection(
@@ -422,7 +435,7 @@ class TensorActionKernel:
     def _deploy_zone(self, state: TensorActionState) -> torch.Tensor:
         x = self.world_x.view(1, 2, NUM_TILES)
         y = self.world_y.view(1, 2, NUM_TILES)
-        player = torch.arange(2, device=self.device).view(1, 2, 1)
+        player = self._players.view(1, 2, 1)
         base_blue = ((y >= 1) & (y < 15)) | ((x >= 6) & (x < 12) & (y >= 0) & (y < 6))
         base_red = ((y >= 17) & (y < 31)) | ((x >= 6) & (x < 12) & (y >= 26) & (y < 32))
         base = torch.where(player == 0, base_blue, base_red)
@@ -439,18 +452,7 @@ class TensorActionKernel:
         return base | torch.where(player == 0, extra_blue, extra_red)
 
     def _tower_blocked(self, state: TensorActionState) -> torch.Tensor:
-        centers = _device_tensor(
-            (
-                (3_500, 6_500, 1_500),
-                (14_500, 6_500, 1_500),
-                (9_000, 2_500, 2_000),
-                (3_500, 25_500, 1_500),
-                (14_500, 25_500, 1_500),
-                (9_000, 29_500, 2_000),
-            ),
-            dtype=torch.int64,
-            device=self.device,
-        )
+        centers = self._tower_centers
         x = self.world_x_units.view(1, 2, NUM_TILES, 1)
         y = self.world_y_units.view(1, 2, NUM_TILES, 1)
         cx = centers[:, 0].view(1, 1, 1, 6)

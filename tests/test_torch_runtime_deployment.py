@@ -234,6 +234,105 @@ def test_supported_path_never_calls_python_deploy_card(
     assert result.committed.tolist() == [True]
 
 
+@pytest.mark.parametrize(
+    "device",
+    [
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ],
+)
+def test_repeated_transactions_reuse_speculative_planes_and_remain_exact(
+    device: str,
+) -> None:
+    source = BattleState(rng=random.Random(905_700))
+    _set_hand(source, 0, "Archers")
+    _set_hand(source, 1, "Knight")
+    expected = source.clone()
+    cards, driver = _stack(source, device=device)
+    runtime = TensorBattleRuntime.from_battles(
+        [source],
+        device=device,
+        catalog=cards,
+        max_entities=32,
+        event_capacity=64,
+    )
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    allocation_pointers: tuple[int, ...] | None = None
+
+    for iteration in range(2):
+        action = (
+            _first_placement(driver, runtime, 0, 0) if iteration == 0 else NO_OP_ACTION
+        )
+        actions = torch.tensor([[action, NO_OP_ACTION]], device=device)
+        order = [0, 1]
+        expected.rng.shuffle(order)
+        for player_id in order:
+            assert action_space.apply_action(
+                expected, player_id, int(actions[0, player_id].item())
+            )
+
+        result = driver.apply(runtime, actions)
+        assert result.committed.tolist() == [True]
+        speculative = driver._speculative_runtime
+        assert speculative is not None
+        current_pointers = (
+            speculative.battle.entity_id.data_ptr(),
+            speculative.battle.rng.words.data_ptr(),
+            speculative.events.opcode.data_ptr(),
+            speculative.status.stun_timer.data_ptr(),
+        )
+        if allocation_pointers is None:
+            allocation_pointers = current_pointers
+        else:
+            assert current_pointers == allocation_pointers
+
+    expected_runtime = TensorBattleRuntime.from_battles(
+        [expected],
+        device=device,
+        catalog=cards,
+        max_entities=32,
+        event_capacity=64,
+    )
+    driver.prepare_runtime(expected_runtime)
+    _assert_runtime_equal(runtime, expected_runtime)
+    assert runtime.events.count.tolist() == [2]
+
+
+def test_internal_transaction_bypasses_redundant_checked_boundaries(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = BattleState(rng=random.Random(905_800))
+    _set_hand(source, 0, "Knight")
+    cards, driver = _stack(source)
+    runtime = TensorBattleRuntime.from_battles(
+        [source], catalog=cards, max_entities=16, event_capacity=16
+    )
+    no_op = torch.tensor([[NO_OP_ACTION, NO_OP_ACTION]])
+    assert driver.apply(runtime, no_op).committed.tolist() == [True]
+    speculative = driver._speculative_runtime
+    assert speculative is not None
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("checked/allocation boundary entered retained fast path")
+
+    monkeypatch.setattr(runtime, "clone", forbidden)
+    monkeypatch.setattr(runtime, "assert_invariants", forbidden)
+    monkeypatch.setattr(speculative, "assert_invariants", forbidden)
+    monkeypatch.setattr(driver.materializer, "_validate_commands", forbidden)
+    monkeypatch.setattr(speculative.entity_pool, "allocate", forbidden)
+    monkeypatch.setattr(speculative.events, "append", forbidden)
+
+    result = driver.apply(runtime, no_op)
+
+    assert result.committed.tolist() == [True]
+    assert driver._speculative_runtime is speculative
+
+
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
 def test_cuda_runtime_ingress_materialization_stays_on_device(
     monkeypatch: pytest.MonkeyPatch,
