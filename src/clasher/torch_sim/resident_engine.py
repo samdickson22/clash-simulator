@@ -28,6 +28,7 @@ from clasher.native_tilemap import (
     STANDARD_PATH_ROWS,
     STANDARD_PATH_WIDTH,
 )
+from clasher.spells import SPELL_REGISTRY, SpawnProjectileSpell
 
 from .actions import NO_OP_ACTION, TensorActionCatalog
 from .catalog import EFFECT_OPCODE, MECHANIC_OPCODE, TensorCardCatalog
@@ -120,18 +121,32 @@ def _resident_deployment_catalog_closure(
         parent_name = min(pending)
         pending.remove(parent_name)
         parent = overlay.get_card(parent_name)
-        if parent is None:
-            continue
-        for payload in (
-            parent.summon_character_data,
-            parent.summon_character_second_data,
+        payloads: list[tuple[dict[str, Any], str, str]] = []
+        if parent is not None:
+            payloads.extend(
+                (payload, str(parent.rarity or "Common"), "")
+                for payload in (
+                    parent.summon_character_data,
+                    parent.summon_character_second_data,
+                )
+                if isinstance(payload, dict)
+            )
+        spell = SPELL_REGISTRY.get(parent_name)
+        if isinstance(spell, SpawnProjectileSpell) and isinstance(
+            spell.spawn_character_data, dict
         ):
-            if not isinstance(payload, dict):
-                continue
-            child_name = str(payload.get("name", "") or "")
+            payloads.append(
+                (
+                    spell.spawn_character_data,
+                    "Common",
+                    str(spell.spawn_character),
+                )
+            )
+        for payload, parent_rarity, default_child_name in payloads:
+            child_name = str(payload.get("name", "") or default_child_name)
             if not child_name or child_name == parent_name:
                 continue
-            rarity = str(payload.get("rarity", parent.rarity or "Common"))
+            rarity = str(payload.get("rarity", parent_rarity))
             overlay.add_character(child_name, payload, rarity)
             if child_name not in discovered:
                 discovered.add(child_name)

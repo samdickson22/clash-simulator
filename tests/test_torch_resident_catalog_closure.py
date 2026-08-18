@@ -8,6 +8,7 @@ import torch
 
 from clasher.battle import BattleState
 from clasher.factory.dynamic_factory import troop_from_character_data
+from clasher.spells import SPELL_REGISTRY, SpawnProjectileSpell
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.resident_engine import TensorResidentEngine
@@ -157,6 +158,18 @@ def test_mixed_secondary_payload_closure_is_present_but_transaction_stays_atomic
     assert torch.equal(engine.runtime.battle.hand, before_hand)
     assert torch.equal(engine.runtime.battle.elixir, before_elixir)
     assert engine.runtime.battle.rng.python_state(0) == before_rng
+
+
+def test_spawn_projectile_child_uses_the_shared_resident_catalog() -> None:
+    battle = _battle_with_cards(["GoblinBarrel"])
+    spell = SPELL_REGISTRY["GoblinBarrel"]
+    assert isinstance(spell, SpawnProjectileSpell)
+    child_name = str(spell.spawn_character)
+
+    engine = TensorResidentEngine.from_battles([battle])
+
+    assert child_name in engine.runtime.catalog.name_to_id
+    assert engine.runtime.catalog is engine.deployment.catalog.cards
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
