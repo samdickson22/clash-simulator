@@ -476,18 +476,19 @@ def _append_events(
     )
     supported &= ~overflow
     admitted &= supported[:, None]
-    if bool(admitted.any().item()):
-        runtime.events.append(
-            phase=TickPhase.OBJECTS,
-            opcode=opcode,
-            valid=admitted,
-            source_id=source_id,
-            target_id=target_id,
-            x_units=x_units,
-            y_units=y_units,
-            amount=amount,
-            payload=payload,
-        )
+    # TensorRuntimeEvents.append is empty-mask safe. Calling it unconditionally
+    # avoids one CUDA host synchronization for every object-event wave.
+    runtime.events.append(
+        phase=TickPhase.OBJECTS,
+        opcode=opcode,
+        valid=admitted,
+        source_id=source_id,
+        target_id=target_id,
+        x_units=x_units,
+        y_units=y_units,
+        amount=amount,
+        payload=payload,
+    )
     return overflow
 
 
@@ -613,12 +614,28 @@ def _initialize_spawned_objects(
     mismatch = valid & (expected_id != runtime.entity_pool.next_entity_id)
     supported &= ~(overflow | mismatch)
     valid &= supported
-    allocation = runtime.entity_pool.allocate(valid.to(torch.int64))
-    allocated_slot = allocation.slots[:, 0].clamp_min(0)
+    # One object event can materialize at most one canonical entity per row.
+    # Allocate its monotonic ID into the lowest free slot directly, avoiding
+    # EntityPool.allocate's defensive host-side capacity synchronization.
+    free = ~runtime.entity_pool.active
+    slot_numbers = torch.arange(
+        runtime.entity_pool.capacity,
+        dtype=torch.int64,
+        device=runtime.device,
+    )
+    free_keys = torch.where(
+        free,
+        slot_numbers[None, :],
+        torch.full_like(runtime.entity_pool.entity_id, runtime.entity_pool.capacity),
+    )
+    allocated_slot = free_keys.min(dim=1).values.clamp_max(
+        runtime.entity_pool.capacity - 1
+    )
     rows = torch.where(valid)[0]
-    if rows.numel() == 0:
-        return overflow | mismatch, torch.zeros_like(valid)
     entity_slots = allocated_slot[rows]
+    runtime.entity_pool.active[rows, entity_slots] = True
+    runtime.entity_pool.entity_id[rows, entity_slots] = expected_id[rows]
+    runtime.entity_pool.next_entity_id.add_(valid.to(torch.int64))
     source_object_slots = object_slot[rows]
     blueprint = object_state.blueprint_id[rows, source_object_slots].to(torch.int64)
     kind = phase.blueprint_kind[blueprint]
@@ -716,150 +733,124 @@ def step_runtime_object_phase_(
         kind = phase.blueprint_kind[blueprint.clamp_min(0)]
         timed_death = death & (kind == int(RuntimeObjectKind.TIMED_EXPLOSIVE))
 
-        if bool(projectile.any().item()):
-            marker_valid = projectile[:, None]
-            overflow = _append_events(
-                working,
-                supported,
-                opcode=RuntimeEventOpcode.PROJECTILE,
-                valid=marker_valid,
-                source_id=source_id[:, None],
-                x_units=center_x[:, None],
-                y_units=center_y[:, None],
-                amount=amount[:, None],
-                payload=blueprint[:, None],
+        marker_valid = projectile[:, None]
+        overflow = _append_events(
+            working,
+            supported,
+            opcode=RuntimeEventOpcode.PROJECTILE,
+            valid=marker_valid,
+            source_id=source_id[:, None],
+            x_units=center_x[:, None],
+            y_units=center_y[:, None],
+            amount=amount[:, None],
+            payload=blueprint[:, None],
+        )
+        supported &= ~overflow
+        projectile_targets = _target_mask(
+            phase,
+            working,
+            blueprint,
+            source_player,
+            center_x,
+            center_y,
+            event_opcode,
+        )
+        pending.append(
+            (
+                projectile & supported,
+                source_id.clone(),
+                blueprint.clone(),
+                projectile_targets,
+                amount.clone(),
             )
-            supported &= ~overflow
-            targets = _target_mask(
-                phase,
-                working,
-                blueprint,
-                source_player,
-                center_x,
-                center_y,
-                event_opcode,
-            )
-            pending.append(
-                (
-                    projectile & supported,
-                    source_id.clone(),
-                    blueprint.clone(),
-                    targets,
-                    amount.clone(),
-                )
-            )
+        )
 
-        if bool(area.any().item()):
-            overflow = _append_events(
-                working,
-                supported,
-                opcode=RuntimeEventOpcode.AREA,
-                valid=area[:, None],
-                source_id=source_id[:, None],
-                x_units=center_x[:, None],
-                y_units=center_y[:, None],
-                amount=amount[:, None],
-                payload=blueprint[:, None],
-            )
-            supported &= ~overflow
-            targets = _target_mask(
-                phase,
-                working,
-                blueprint,
-                source_player,
-                center_x,
-                center_y,
-                event_opcode,
-            )
-            unsupported, damage, died = _apply_damage(
-                working,
-                phase,
-                supported,
-                source_id,
-                blueprint,
-                targets & area[:, None],
-                amount,
-            )
-            supported &= ~unsupported
-            damage_total += damage
-            died_total |= died
+        overflow = _append_events(
+            working,
+            supported,
+            opcode=RuntimeEventOpcode.AREA,
+            valid=area[:, None],
+            source_id=source_id[:, None],
+            x_units=center_x[:, None],
+            y_units=center_y[:, None],
+            amount=amount[:, None],
+            payload=blueprint[:, None],
+        )
+        supported &= ~overflow
+        damage_event = area | timed_death
+        area_targets = _target_mask(
+            phase,
+            working,
+            blueprint,
+            source_player,
+            center_x,
+            center_y,
+            torch.full_like(event_opcode, ObjectEventOpcode.AREA_TICK),
+        )
+        unsupported, damage, died = _apply_damage(
+            working,
+            phase,
+            supported,
+            source_id,
+            blueprint,
+            area_targets & damage_event[:, None],
+            amount,
+        )
+        supported &= ~unsupported
+        damage_total += damage
+        died_total |= died
 
-        if bool(timed_death.any().item()):
-            targets = _target_mask(
-                phase,
-                working,
-                blueprint,
-                source_player,
-                center_x,
-                center_y,
-                torch.full_like(event_opcode, ObjectEventOpcode.AREA_TICK),
+        unsupported, spawned = _initialize_spawned_objects(
+            working, phase, object_preview, supported, spawn
+        )
+        supported &= ~unsupported
+        spawned_total |= spawned
+        child_id = (
+            torch.where(
+                spawned,
+                working.battle.entity_id,
+                torch.zeros_like(working.battle.entity_id),
             )
-            unsupported, damage, died = _apply_damage(
-                working,
-                phase,
-                supported,
-                source_id,
-                blueprint,
-                targets & timed_death[:, None],
-                amount,
-            )
-            supported &= ~unsupported
-            damage_total += damage
-            died_total |= died
-
-        if bool(spawn.any().item()):
-            unsupported, spawned = _initialize_spawned_objects(
-                working, phase, object_preview, supported, spawn
-            )
-            supported &= ~unsupported
-            spawned_total |= spawned
-            child_id = (
-                torch.where(
-                    spawned,
-                    working.battle.entity_id,
-                    torch.zeros_like(working.battle.entity_id),
-                )
-                .max(dim=1)
-                .values
-            )
-            overflow = _append_events(
-                working,
-                supported,
-                opcode=RuntimeEventOpcode.SPAWN,
-                valid=(spawn & supported)[:, None],
-                source_id=source_id[:, None],
-                target_id=child_id[:, None],
-                x_units=center_x[:, None],
-                y_units=center_y[:, None],
-                payload=object_result.events.payload_id[:, event_index, None],
-            )
-            supported &= ~overflow
+            .max(dim=1)
+            .values
+        )
+        overflow = _append_events(
+            working,
+            supported,
+            opcode=RuntimeEventOpcode.SPAWN,
+            valid=(spawn & supported)[:, None],
+            source_id=source_id[:, None],
+            target_id=child_id[:, None],
+            x_units=center_x[:, None],
+            y_units=center_y[:, None],
+            payload=object_result.events.payload_id[:, event_index, None],
+        )
+        supported &= ~overflow
 
         projectile_source = (kind == int(RuntimeObjectKind.PROJECTILE)) | (
             kind == int(RuntimeObjectKind.SPAWN_PROJECTILE)
         )
         immediate_death = death & ~projectile_source
-        if bool(immediate_death.any().item()):
-            slots = working.entity_pool.slots_for_ids(source_id[:, None])[:, 0]
-            exists = slots >= 0
-            unsupported = immediate_death & ~exists
-            supported &= ~unsupported
-            rows = torch.where(immediate_death & supported)[0]
-            entity_slots = slots[rows]
-            working.battle.entity_active[rows, entity_slots] = False
-            working.phases.death_pending[rows, entity_slots] = True
-            died_total[rows, entity_slots] = True
-            overflow = _append_events(
-                working,
-                supported,
-                opcode=RuntimeEventOpcode.DEATH,
-                valid=(immediate_death & supported)[:, None],
-                source_id=source_id[:, None],
-                x_units=center_x[:, None],
-                y_units=center_y[:, None],
-                payload=blueprint[:, None],
-            )
-            supported &= ~overflow
+        slots = working.entity_pool.slots_for_ids(source_id[:, None])[:, 0]
+        exists = slots >= 0
+        unsupported = immediate_death & ~exists
+        supported &= ~unsupported
+        rows = torch.where(immediate_death & supported)[0]
+        entity_slots = slots[rows]
+        working.battle.entity_active[rows, entity_slots] = False
+        working.phases.death_pending[rows, entity_slots] = True
+        died_total[rows, entity_slots] = True
+        overflow = _append_events(
+            working,
+            supported,
+            opcode=RuntimeEventOpcode.DEATH,
+            valid=(immediate_death & supported)[:, None],
+            source_id=source_id[:, None],
+            x_units=center_x[:, None],
+            y_units=center_y[:, None],
+            payload=blueprint[:, None],
+        )
+        supported &= ~overflow
 
     # Native projectiles commit target snapshots during the object worklist
     # and resolve them afterward in impact order.
@@ -892,19 +883,24 @@ def step_runtime_object_phase_(
         )
         supported &= ~overflow
 
-    # Publish final object coordinates for every still-canonical object.
-    for object_slot in range(object_preview.max_objects):
-        object_id = object_preview.object_id[:, object_slot]
-        valid = object_preview.allocated[:, object_slot] & supported
-        slots = working.entity_pool.slots_for_ids(object_id[:, None])[:, 0]
-        rows = torch.where(valid & (slots >= 0))[0]
-        entity_slots = slots[rows]
-        working.battle.entity_x_units[rows, entity_slots] = object_preview.x_units[
-            rows, object_slot
-        ]
-        working.battle.entity_y_units[rows, entity_slots] = object_preview.y_units[
-            rows, object_slot
-        ]
+    # Publish every still-canonical coordinate in one object/entity join.
+    object_ids = object_preview.object_id
+    matches = (
+        object_preview.allocated[:, :, None]
+        & working.entity_pool.active[:, None, :]
+        & (object_ids[:, :, None] == working.battle.entity_id[:, None, :])
+        & (object_ids[:, :, None] > 0)
+    )
+    found = matches.any(dim=2) & supported[:, None]
+    entity_slots = matches.to(torch.int64).argmax(dim=2)
+    publish_rows, object_slots = torch.where(found)
+    publish_entities = entity_slots[publish_rows, object_slots]
+    working.battle.entity_x_units[publish_rows, publish_entities] = (
+        object_preview.x_units[publish_rows, object_slots]
+    )
+    working.battle.entity_y_units[publish_rows, publish_entities] = (
+        object_preview.y_units[publish_rows, object_slots]
+    )
 
     dead = (
         supported[:, None] & working.entity_pool.active & ~working.battle.entity_active

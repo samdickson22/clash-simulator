@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import inspect
 from collections.abc import Iterator
 from typing import cast
 
@@ -21,6 +22,8 @@ from clasher.entities import (
 )
 from clasher.torch_sim.runtime_objects import (
     TensorRuntimeObjectPhase,
+    _append_events,
+    _initialize_spawned_objects,
     step_runtime_object_phase_,
 )
 from clasher.torch_sim.runtime_state import (
@@ -71,14 +74,15 @@ def _projectile(
     entity_id: int,
     target: Troop,
     *,
-    start: Position = Position(0, 0),
+    start: Position | None = None,
     target_position: Position | None = None,
     damage: float = 123,
     speed: float = 8,
 ) -> Projectile:
+    origin = Position(0, 0) if start is None else start
     return Projectile(
         id=entity_id,
-        position=Position(start.x, start.y),
+        position=Position(origin.x, origin.y),
         player_id=1 - target.player_id,
         card_stats=EMPTY_CARD_STATS,
         hitpoints=1,
@@ -102,7 +106,7 @@ def _battle(*entities: Entity, next_entity_id: int | None = None) -> BattleState
         max((entity.id for entity in entities), default=0) + 1
     )
     for entity in entities:
-        setattr(entity, "battle_state", battle)
+        entity.battle_state = battle
     return battle
 
 
@@ -189,7 +193,9 @@ def test_retained_projectile_travel_and_direct_impact_are_exact_on_device(
     ]
 
 
-def test_scheduled_area_and_timed_explosive_damage_runtime_planes_exactly() -> None:
+def test_scheduled_area_and_timed_explosive_damage_runtime_planes_exactly(
+    tensor_device: str,
+) -> None:
     area_seed = BattleState(fast_path=False)
     area_target = _troop(area_seed, 1, 1, Position(9.5, 14), hp=500)
     area = AreaEffect(
@@ -229,7 +235,9 @@ def test_scheduled_area_and_timed_explosive_damage_runtime_planes_exactly() -> N
     explosive_battle = _battle(explosive_target, explosive, next_entity_id=3)
     area_oracle = copy.deepcopy(area_battle)
     explosive_oracle = copy.deepcopy(explosive_battle)
-    runtime, phase = _runtime_phase([area_battle, explosive_battle])
+    runtime, phase = _runtime_phase(
+        [area_battle, explosive_battle], device=tensor_device
+    )
 
     _oracle_object_tick(area_oracle)
     _oracle_object_tick(explosive_oracle)
@@ -247,7 +255,9 @@ def test_scheduled_area_and_timed_explosive_damage_runtime_planes_exactly() -> N
     assert set(area_oracle.entities) == set(explosive_oracle.entities) == {1}
 
 
-def test_death_area_terminal_child_grows_then_cleans_up_in_same_frame() -> None:
+def test_death_area_terminal_child_grows_then_cleans_up_in_same_frame(
+    tensor_device: str,
+) -> None:
     seed = BattleState(fast_path=False)
     spectator = _troop(seed, 1, 1, Position(1, 1))
     container = DeathAreaEffectContainer(
@@ -270,7 +280,7 @@ def test_death_area_terminal_child_grows_then_cleans_up_in_same_frame() -> None:
     )
     battle = _battle(spectator, container, next_entity_id=3)
     oracle = copy.deepcopy(battle)
-    runtime, phase = _runtime_phase([battle], max_objects=4)
+    runtime, phase = _runtime_phase([battle], device=tensor_device, max_objects=4)
 
     _oracle_object_tick(oracle)
     result = step_runtime_object_phase_(runtime, phase)
@@ -290,6 +300,22 @@ def test_death_area_terminal_child_grows_then_cleans_up_in_same_frame() -> None:
     assert not phase.objects.allocated.any()
     assert set(oracle.entities) == {1}
     assert oracle.next_entity_id == runtime.entity_pool.next_entity_id.item() == 4
+
+
+def test_runtime_event_application_has_one_dynamic_bound_sync_only() -> None:
+    step_source = inspect.getsource(step_runtime_object_phase_)
+    append_source = inspect.getsource(_append_events)
+    spawn_source = inspect.getsource(_initialize_spawned_objects)
+
+    assert step_source.count(".item()") == 1
+    assert "if bool(projectile.any()" not in step_source
+    assert "if bool(area.any()" not in step_source
+    assert "if bool(timed_death.any()" not in step_source
+    assert "if bool(spawn.any()" not in step_source
+    assert "if bool(immediate_death.any()" not in step_source
+    assert "for object_slot in range" not in step_source
+    assert ".item()" not in append_source
+    assert ".item()" not in spawn_source
 
 
 def test_no_python_object_update_is_called_on_retained_path(
