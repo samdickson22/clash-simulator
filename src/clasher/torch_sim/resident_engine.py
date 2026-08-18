@@ -1354,8 +1354,33 @@ class TensorResidentEngine:
             if action_ids is None
             else torch.as_tensor(action_ids, dtype=torch.int64, device=self.device)
         )
+        if actions.shape != (self.batch_size, 2):
+            raise ValueError("action_ids must have shape [batch, 2]")
+        return self._step_transaction(
+            self.clone(),
+            actions,
+            player_order=player_order,
+        )
+
+    def _step_transaction(
+        self,
+        working: TensorResidentEngine,
+        actions: torch.Tensor,
+        *,
+        player_order: torch.Tensor | None,
+    ) -> ResidentTickResult:
+        """Execute one transaction in a separate, already-initialized engine.
+
+        The ordinary path supplies a fresh clone. Reusable workspaces refresh
+        a persistent scratch engine first and call this same routine, keeping
+        phase order and fail-closed publication in one implementation.
+        """
+
+        if working is self:
+            raise ValueError("resident transaction requires separate scratch state")
+        if working.batch_size != self.batch_size or working.device != self.device:
+            raise ValueError("resident transaction scratch layout differs")
         preflight = self.preflight(actions)
-        working = self.clone()
         working.runtime.supported &= preflight.supported
         deployment = working.deployment.apply(
             working.runtime, actions, player_order=player_order
