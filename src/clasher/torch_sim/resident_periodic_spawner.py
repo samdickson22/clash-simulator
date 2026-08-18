@@ -534,15 +534,21 @@ def step_runtime_periodic_spawners_(
     working.battle.entity_spawn_hook_pending[index] = pending
     working.battle.entity_spawn_hook_fired[index] = ~pending
     working.battle.entity_id.copy_(working.entity_pool.entity_id)
-    source_lanes = torch.zeros_like(allocation.entity_ids)
+    event_x = torch.zeros_like(allocation.slots, dtype=torch.int32)
+    event_y = torch.zeros_like(allocation.slots, dtype=torch.int32)
+    event_payload = torch.zeros_like(allocation.entity_ids)
     if event_batch.numel():
-        source_lanes[event_batch, local] = source_ids
+        event_x[event_batch, local] = position[:, 0].to(torch.int32)
+        event_y[event_batch, local] = position[:, 1].to(torch.int32)
+        event_payload[event_batch, local] = child_core
     working.events.append(
         phase=TickPhase.OBJECTS,
         opcode=RuntimeEventOpcode.SPAWN,
         valid=allocation.valid,
-        source_id=source_lanes,
         target_id=allocation.entity_ids,
+        x_units=event_x,
+        y_units=event_y,
+        payload=event_payload,
     )
     working.mark_dirty(committed & (counts > 0), phase=TickPhase.OBJECTS)
 

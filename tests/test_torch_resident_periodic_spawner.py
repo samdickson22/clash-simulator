@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from dataclasses import fields
 from functools import lru_cache
 from typing import cast
 
@@ -13,13 +14,21 @@ from clasher.entities import Building, Entity, Troop
 from clasher.mechanics.shared.spawner import PeriodicSpawner
 from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
 from clasher.torch_sim.catalog import TensorCardCatalog
+from clasher.torch_sim.oracle_event_capture import (
+    OracleEventRecord,
+    PythonOracleEventCapture,
+)
 from clasher.torch_sim.resident_periodic_spawner import (
     PeriodicSpawnerReason,
     TensorPeriodicSpawnerCatalog,
     TensorPeriodicSpawnerRuntimeState,
     step_runtime_periodic_spawners_,
 )
-from clasher.torch_sim.runtime_state import TensorBattleRuntime
+from clasher.torch_sim.runtime_state import (
+    RuntimeEventOpcode,
+    TensorBattleRuntime,
+    TickPhase,
+)
 
 ROOTS = ("NightWitch", "Tombstone", "Witch")
 
@@ -112,6 +121,42 @@ def _oracle(battle: BattleState) -> list[tuple[int, str, int, int, float]]:
     ]
 
 
+def _tensor_events(
+    runtime: TensorBattleRuntime, start: int = 0
+) -> list[tuple[int, int, int, int, int, int, float, int]]:
+    return [
+        (
+            int(runtime.events.phase[0, slot].item()),
+            int(runtime.events.opcode[0, slot].item()),
+            int(runtime.events.source_id[0, slot].item()),
+            int(runtime.events.target_id[0, slot].item()),
+            int(runtime.events.x_units[0, slot].item()),
+            int(runtime.events.y_units[0, slot].item()),
+            float(runtime.events.amount[0, slot].item()),
+            int(runtime.events.payload[0, slot].item()),
+        )
+        for slot in range(start, int(runtime.events.count[0].item()))
+    ]
+
+
+def _oracle_events(
+    records: list[OracleEventRecord], runtime: TensorBattleRuntime
+) -> list[tuple[int, int, int, int, int, int, float, int]]:
+    return [
+        (
+            record.phase,
+            record.opcode,
+            record.source_id,
+            record.target_id,
+            record.x_units,
+            record.y_units,
+            float(record.amount),
+            runtime.battle.card_to_id[str(record.payload)],
+        )
+        for record in records
+    ]
+
+
 @pytest.mark.parametrize("root", ROOTS)
 @pytest.mark.parametrize(
     "device",
@@ -150,21 +195,29 @@ def test_serialized_wave_timers_and_materialized_children_match_oracle(
     facing_y[0, 0] = 400
     rng_before = runtime.battle.rng.words.clone(), runtime.battle.rng.index.clone()
 
-    for dt_ms in timeline:
-        mechanic.on_object_tick(oracle_source, dt_ms)
-        result = step_runtime_periodic_spawners_(
-            runtime,
-            catalog,
-            state,
-            dt_ms=dt_ms,
-            facing_x_units=facing_x,
-            facing_y_units=facing_y,
-        )
-        assert result.committed.tolist() == [True]
-        valid = result.allocation.valid[0]
-        child_slots = result.allocation.slots[0, valid]
-        assert not runtime.status.freeze_expiry_time[0, child_slots].any()
-        assert not result.child_target_distance_discount_sq_units[0, valid].any()
+    with PythonOracleEventCapture(oracle) as capture:
+        oracle_event_start = 0
+        for dt_ms in timeline:
+            tensor_event_start = int(runtime.events.count[0].item())
+            with capture._scope(phase=TickPhase.OBJECTS):
+                mechanic.on_object_tick(oracle_source, dt_ms)
+            result = step_runtime_periodic_spawners_(
+                runtime,
+                catalog,
+                state,
+                dt_ms=dt_ms,
+                facing_x_units=facing_x,
+                facing_y_units=facing_y,
+            )
+            assert result.committed.tolist() == [True]
+            valid = result.allocation.valid[0]
+            child_slots = result.allocation.slots[0, valid]
+            assert not runtime.status.freeze_expiry_time[0, child_slots].any()
+            assert not result.child_target_distance_discount_sq_units[0, valid].any()
+            assert _tensor_events(runtime, tensor_event_start) == _oracle_events(
+                capture.events[oracle_event_start:], runtime
+            )
+            oracle_event_start = len(capture.events)
 
     assert _represented(runtime) == _oracle(oracle)
     assert runtime.entity_pool.next_entity_id.item() == oracle.next_entity_id
@@ -209,12 +262,89 @@ def test_simultaneous_sources_allocate_children_in_source_id_order() -> None:
     assert result.allocation.entity_ids[0, :2].tolist() == [3, 4]
 
 
-def test_event_capacity_failure_rolls_back_runtime_and_clocks() -> None:
+@pytest.mark.parametrize(
+    "device",
+    (
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ),
+)
+def test_forced_multi_source_partial_waves_preserve_ids_events_and_rng(
+    device: str,
+) -> None:
+    battle, first = _battle("Witch", x=7.0)
+    stats = battle.card_loader.get_card("Witch")
+    assert stats is not None
+    second = battle._spawn_entity(Troop, Position(11.0, 10.0), 0, stats)
+    second.deploy_delay_remaining = 0.0
+    second.placement_pending = False
+    second._spawn_hook_pending = False
+    second._spawn_hook_fired = True
+    second._facing_x_units = -300
+    second._facing_y_units = 400
+    oracle = copy.deepcopy(battle)
+    runtime, state, catalog = _runtime(battle, device=device)
+    facing_x = torch.zeros_like(runtime.battle.entity_x_units)
+    facing_y = torch.zeros_like(runtime.battle.entity_y_units)
+    facing_x[0, :2] = torch.tensor([300, -300], device=runtime.device)
+    facing_y[0, :2] = 400
+    rng_before = runtime.battle.rng.python_state(0)
+
+    with PythonOracleEventCapture(oracle) as capture:
+        with capture._scope(phase=TickPhase.OBJECTS):
+            for entity_id in (first.id, second.id):
+                _mechanic(oracle.entities[entity_id]).on_object_tick(
+                    oracle.entities[entity_id], 1_100
+                )
+        result = step_runtime_periodic_spawners_(
+            runtime,
+            catalog,
+            state,
+            dt_ms=1_100,
+            facing_x_units=facing_x,
+            facing_y_units=facing_y,
+        )
+
+    assert result.committed.tolist() == [True]
+    assert result.child_source_id[0, :6].tolist() == [1, 1, 1, 2, 2, 2]
+    assert result.child_formation_index[0, :6].tolist() == [0, 1, 2, 0, 1, 2]
+    assert result.allocation.entity_ids[0, :6].tolist() == [3, 4, 5, 6, 7, 8]
+    assert _tensor_events(runtime) == _oracle_events(capture.events, runtime)
+    assert _represented(runtime) == _oracle(oracle)
+    assert runtime.battle.rng.python_state(0) == rng_before == oracle.rng.getstate()
+    assert runtime.events.opcode[0, :6].tolist() == [RuntimeEventOpcode.SPAWN] * 6
+    assert runtime.events.source_id[0, :6].tolist() == [0] * 6
+
+
+@pytest.mark.parametrize(
+    "device",
+    (
+        "cpu",
+        pytest.param(
+            "cuda",
+            marks=pytest.mark.skipif(
+                not torch.cuda.is_available(), reason="CUDA unavailable"
+            ),
+        ),
+    ),
+)
+def test_event_capacity_failure_rolls_back_runtime_and_clocks(device: str) -> None:
     battle, _ = _battle("Witch")
-    runtime, state, catalog = _runtime(battle, device="cpu", event_capacity=1)
+    runtime, state, catalog = _runtime(battle, device=device, event_capacity=1)
     runtime.events.count[0] = 1
     before_ids = runtime.battle.entity_id.clone()
+    before_next = runtime.entity_pool.next_entity_id.clone()
+    before_events = {
+        descriptor.name: getattr(runtime.events, descriptor.name).clone()
+        for descriptor in fields(runtime.events)
+    }
     before_state = state.clone()
+    before_rng = runtime.battle.rng.python_state(0)
 
     result = step_runtime_periodic_spawners_(
         runtime,
@@ -226,8 +356,12 @@ def test_event_capacity_failure_rolls_back_runtime_and_clocks() -> None:
     assert result.committed.tolist() == [False]
     assert result.reason.tolist() == [PeriodicSpawnerReason.EVENT_CAPACITY]
     assert torch.equal(runtime.battle.entity_id, before_ids)
+    assert torch.equal(runtime.entity_pool.next_entity_id, before_next)
+    for name, expected in before_events.items():
+        assert torch.equal(getattr(runtime.events, name), expected), name
     for name in vars(before_state):
         assert torch.equal(getattr(state, name), getattr(before_state, name)), name
+    assert runtime.battle.rng.python_state(0) == before_rng
 
 
 def test_source_death_resets_retained_clocks_and_emits_nothing() -> None:
