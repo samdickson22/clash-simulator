@@ -1305,12 +1305,8 @@ class TensorResidentProjectileSpellBridge:
         died = targets & before_alive & (candidate_hp <= 0)
         ordered_died = torch.gather(died, 1, order) & ordered_valid
         pair_valid = torch.stack((ordered_valid, ordered_died), dim=2).flatten(1)
-        survivors = targets & ~died
         stun_seconds = self.catalog.stun_ms[card_ids].to(torch.float64) / 1_000
-        status_valid = torch.gather(survivors & (stun_seconds[:, None] > 0), 1, order)
-        additions = pair_valid.sum(dim=1, dtype=torch.int64) + status_valid.sum(
-            dim=1, dtype=torch.int64
-        )
+        additions = pair_valid.sum(dim=1, dtype=torch.int64)
         overflow = supported & (
             runtime.events.count.to(torch.int64) + additions > runtime.events.capacity
         )
@@ -1320,7 +1316,8 @@ class TensorResidentProjectileSpellBridge:
         ordered_valid &= supported[:, None]
         ordered_died &= supported[:, None]
         pair_valid = torch.stack((ordered_valid, ordered_died), dim=2).flatten(1)
-        status_valid &= supported[:, None]
+        positive_damage = targets & (amount > 0.0)
+        runtime.battle.entity_hp_integer_kind &= ~positive_damage
         runtime.battle.entity_hp.copy_(
             torch.where(targets, candidate_hp, runtime.battle.entity_hp)
         )
@@ -1329,7 +1326,7 @@ class TensorResidentProjectileSpellBridge:
         damage_opcode = torch.full_like(ordered_ids, RuntimeEventOpcode.DAMAGE)
         death_opcode = torch.full_like(ordered_ids, RuntimeEventOpcode.DEATH)
         runtime.events.append(
-            phase=TickPhase.COMMANDS,
+            phase=TickPhase.COMBAT,
             opcode=torch.stack((damage_opcode, death_opcode), dim=2).flatten(1),
             valid=pair_valid,
             source_id=0,
@@ -1339,7 +1336,7 @@ class TensorResidentProjectileSpellBridge:
             amount=torch.stack(
                 (ordered_amount, torch.zeros_like(ordered_amount)), dim=2
             ).flatten(1),
-            payload=card_ids[:, None],
+            payload=0,
         )
         survivors = targets & runtime.battle.entity_active
         runtime.status.stun_timer.copy_(
@@ -1371,14 +1368,6 @@ class TensorResidentProjectileSpellBridge:
             fallback_y=torch.zeros_like(target_y),
             distance_units=self.catalog.knockback_units[card_ids],
             ignores_mass=self.catalog.knockback_ignores_mass[card_ids],
-        )
-        runtime.events.append(
-            phase=TickPhase.COMMANDS,
-            opcode=RuntimeEventOpcode.STATUS,
-            valid=status_valid,
-            target_id=ordered_ids,
-            amount=stun_seconds[:, None],
-            payload=card_ids[:, None],
         )
         runtime.mark_dirty(valid & supported, phase=TickPhase.COMMANDS)
         return supported
@@ -1526,6 +1515,9 @@ class TensorResidentProjectileSpellBridge:
         free_objects = (~object_phase.objects.allocated).sum(dim=1)
         free_entities = (~runtime.entity_pool.active).sum(dim=1)
         row_supported &= (counts <= free_objects) & (counts <= free_entities)
+        row_supported &= (
+            runtime.events.count.to(torch.int64) + counts <= runtime.events.capacity
+        )
         counts = torch.where(row_supported, counts, 0)
         object_keys = torch.where(
             ~object_phase.objects.allocated,
@@ -1590,6 +1582,7 @@ class TensorResidentProjectileSpellBridge:
             if actual_damage is None
             else actual_damage[rows, source_slot]
         )
+        public_cards = torch.zeros_like(cards) if spell else cards
         self._install_object(
             runtime,
             object_phase,
@@ -1599,6 +1592,7 @@ class TensorResidentProjectileSpellBridge:
             entity_id,
             blueprint,
             cards,
+            public_cards,
             owners[rows, source_slot],
             start_x,
             start_y,
@@ -1610,6 +1604,17 @@ class TensorResidentProjectileSpellBridge:
             delay,
             group_slot,
             resolved_actual_damage,
+        )
+        spawn_source = torch.zeros_like(allocation.entity_ids)
+        spawn_payload = torch.zeros_like(allocation.entity_ids)
+        spawn_source[rows, launch_ordinal] = entity_id
+        spawn_payload[rows, launch_ordinal] = public_cards
+        runtime.events.append(
+            phase=TickPhase.COMMANDS,
+            opcode=RuntimeEventOpcode.SPAWN,
+            valid=install,
+            source_id=spawn_source,
+            payload=spawn_payload,
         )
         object_phase.objects.next_object_id.copy_(runtime.entity_pool.next_entity_id)
         return row_supported
@@ -1624,6 +1629,7 @@ class TensorResidentProjectileSpellBridge:
         entity_ids: torch.Tensor,
         blueprints: torch.Tensor,
         cards: torch.Tensor,
+        public_cards: torch.Tensor,
         owners: torch.Tensor,
         start_x: torch.Tensor,
         start_y: torch.Tensor,
@@ -1747,7 +1753,7 @@ class TensorResidentProjectileSpellBridge:
             torch.int8
         )
         runtime.battle.entity_player[rows, entity_slots] = owners.to(torch.int8)
-        runtime.battle.entity_card[rows, entity_slots] = cards.to(torch.int64)
+        runtime.battle.entity_card[rows, entity_slots] = public_cards.to(torch.int64)
         runtime.battle.entity_x_units[rows, entity_slots] = torch.where(
             is_area, end_x, start_x
         ).to(torch.int32)
@@ -2188,6 +2194,230 @@ class TensorResidentProjectileSpellBridge:
             fallback_y=fallback_y,
             distance_units=self.blueprint_knockback_units[chosen_blueprint],
             ignores_mass=self.blueprint_knockback_ignores_mass[chosen_blueprint],
+        )
+        self._rewrite_public_object_events_(
+            runtime,
+            before_count,
+            object_ids,
+            object_active,
+        )
+
+    def _rewrite_public_object_events_(
+        self,
+        runtime: TensorBattleRuntime,
+        before_count: torch.Tensor,
+        object_ids: torch.Tensor,
+        object_active: torch.Tensor,
+    ) -> None:
+        """Project internal object work records onto Python's public ledger."""
+
+        capacity = runtime.events.capacity
+        slots = torch.arange(capacity, dtype=torch.int64, device=runtime.device)[
+            None, :
+        ]
+        segment = (slots >= before_count[:, None]) & (
+            slots < runtime.events.count[:, None]
+        )
+        source_owned = (
+            segment[:, :, None]
+            & object_active[:, None, :]
+            & (runtime.events.source_id[:, :, None] == object_ids[:, None, :])
+        ).any(dim=2)
+        opcode = runtime.events.opcode.to(torch.int64)
+        marker = source_owned & (
+            (opcode == int(RuntimeEventOpcode.PROJECTILE))
+            | (opcode == int(RuntimeEventOpcode.AREA))
+        )
+        child_spawn = source_owned & (opcode == int(RuntimeEventOpcode.SPAWN))
+        target_event = (
+            source_owned
+            & (runtime.events.target_id > 0)
+            & (
+                (opcode == int(RuntimeEventOpcode.DAMAGE))
+                | (opcode == int(RuntimeEventOpcode.DEATH))
+            )
+        )
+        object_death = (
+            source_owned
+            & (runtime.events.target_id == 0)
+            & (opcode == int(RuntimeEventOpcode.DEATH))
+        )
+        known = marker | child_spawn | target_event | object_death
+        unknown = segment & ~known
+
+        original = {
+            name: getattr(runtime.events, name).clone()
+            for name in (
+                "phase",
+                "opcode",
+                "source_id",
+                "target_id",
+                "x_units",
+                "y_units",
+                "amount",
+                "payload",
+            )
+        }
+        output = {name: torch.zeros_like(value) for name, value in original.items()}
+        prior = slots < before_count[:, None]
+        for name, value in output.items():
+            value[prior] = original[name][prior]
+        offset = before_count.to(torch.int64).clone()
+        batch_rows = torch.arange(runtime.batch_size, device=runtime.device)[:, None]
+
+        def append_category(
+            valid: torch.Tensor,
+            planes: dict[str, torch.Tensor],
+        ) -> None:
+            nonlocal offset
+            ordinal = torch.cumsum(valid.to(torch.int64), dim=1) - 1
+            destination = offset[:, None] + ordinal
+            admitted = valid & (destination < capacity)
+            rows = batch_rows.expand_as(valid)[admitted]
+            columns = destination[admitted]
+            for name, values in planes.items():
+                output[name][rows, columns] = values[admitted].to(output[name].dtype)
+            offset += valid.sum(dim=1, dtype=torch.int64)
+
+        maximum_id = torch.iinfo(torch.int64).max
+        spawn_order = torch.argsort(
+            torch.where(child_spawn, original["target_id"], maximum_id),
+            dim=1,
+            stable=True,
+        )
+        spawn_valid = torch.gather(child_spawn, 1, spawn_order)
+        spawn_id = torch.gather(original["target_id"], 1, spawn_order)
+        append_category(
+            spawn_valid,
+            {
+                "phase": torch.full_like(spawn_id, TickPhase.COMMANDS),
+                "opcode": torch.full_like(spawn_id, RuntimeEventOpcode.SPAWN),
+                "source_id": spawn_id,
+                "target_id": torch.zeros_like(spawn_id),
+                "x_units": torch.gather(original["x_units"], 1, spawn_order),
+                "y_units": torch.gather(original["y_units"], 1, spawn_order),
+                "amount": torch.zeros_like(original["amount"]),
+                "payload": torch.gather(original["payload"], 1, spawn_order),
+            },
+        )
+
+        target_order = torch.argsort(
+            torch.where(target_event, original["target_id"], maximum_id),
+            dim=1,
+            stable=True,
+        )
+        sorted_valid = torch.gather(target_event, 1, target_order)
+        sorted_target = torch.gather(original["target_id"], 1, target_order)
+        sorted_amount = torch.gather(original["amount"], 1, target_order)
+        sorted_death = (
+            torch.gather(opcode == int(RuntimeEventOpcode.DEATH), 1, target_order)
+            & sorted_valid
+        )
+        previous_target = torch.roll(sorted_target, 1, dims=1)
+        group_start = sorted_valid & ((slots == 0) | (sorted_target != previous_target))
+        group_index = (torch.cumsum(group_start.to(torch.int64), dim=1) - 1).clamp_min(
+            0
+        )
+        grouped_target = torch.zeros_like(sorted_target)
+        grouped_amount = torch.zeros_like(sorted_amount)
+        grouped_death = torch.zeros_like(sorted_death)
+        grouped_target.scatter_reduce_(
+            1,
+            group_index,
+            torch.where(group_start, sorted_target, 0),
+            reduce="amax",
+            include_self=True,
+        )
+        grouped_amount.scatter_add_(
+            1,
+            group_index,
+            torch.where(
+                sorted_valid
+                & (
+                    torch.gather(opcode, 1, target_order)
+                    == int(RuntimeEventOpcode.DAMAGE)
+                ),
+                sorted_amount,
+                0.0,
+            ),
+        )
+        grouped_death.scatter_reduce_(
+            1,
+            group_index,
+            sorted_death,
+            reduce="amax",
+            include_self=True,
+        )
+        group_count = group_start.sum(dim=1, dtype=torch.int64)
+        group_valid = slots < group_count[:, None]
+        target_pair_valid = torch.stack((group_valid, grouped_death), dim=2).flatten(1)
+        target_pair_id = torch.stack((grouped_target, grouped_target), dim=2).flatten(1)
+        target_pair_amount = torch.stack(
+            (grouped_amount, torch.zeros_like(grouped_amount)), dim=2
+        ).flatten(1)
+        append_category(
+            target_pair_valid,
+            {
+                "phase": torch.full_like(target_pair_id, TickPhase.COMBAT),
+                "opcode": torch.stack(
+                    (
+                        torch.full_like(grouped_target, RuntimeEventOpcode.DAMAGE),
+                        torch.full_like(grouped_target, RuntimeEventOpcode.DEATH),
+                    ),
+                    dim=2,
+                ).flatten(1),
+                "source_id": torch.zeros_like(target_pair_id),
+                "target_id": target_pair_id,
+                "x_units": torch.zeros_like(target_pair_id),
+                "y_units": torch.zeros_like(target_pair_id),
+                "amount": target_pair_amount,
+                "payload": torch.zeros_like(target_pair_id),
+            },
+        )
+
+        death_order = torch.argsort(
+            torch.where(object_death, original["source_id"], maximum_id),
+            dim=1,
+            stable=True,
+        )
+        death_valid = torch.gather(object_death, 1, death_order)
+        death_id = torch.gather(original["source_id"], 1, death_order)
+        object_pair_valid = torch.stack((death_valid, death_valid), dim=2).flatten(1)
+        object_pair_id = torch.stack((death_id, death_id), dim=2).flatten(1)
+        append_category(
+            object_pair_valid,
+            {
+                "phase": torch.full_like(object_pair_id, TickPhase.COMBAT),
+                "opcode": torch.stack(
+                    (
+                        torch.full_like(death_id, RuntimeEventOpcode.DAMAGE),
+                        torch.full_like(death_id, RuntimeEventOpcode.DEATH),
+                    ),
+                    dim=2,
+                ).flatten(1),
+                "source_id": torch.zeros_like(object_pair_id),
+                "target_id": object_pair_id,
+                "x_units": torch.zeros_like(object_pair_id),
+                "y_units": torch.zeros_like(object_pair_id),
+                "amount": torch.stack(
+                    (
+                        torch.ones_like(original["amount"]),
+                        torch.zeros_like(original["amount"]),
+                    ),
+                    dim=2,
+                ).flatten(1),
+                "payload": torch.zeros_like(object_pair_id),
+            },
+        )
+        append_category(unknown, original)
+
+        for name, value in output.items():
+            getattr(runtime.events, name).copy_(value)
+        runtime.events.count.copy_(offset.clamp_max(capacity).to(torch.int32))
+        runtime.events.sequence.zero_()
+        valid_sequence = slots < runtime.events.count[:, None]
+        runtime.events.sequence.copy_(
+            torch.where(valid_sequence, slots, 0).to(torch.int32)
         )
 
     def _apply_grouped_damage_(

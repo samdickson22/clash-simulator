@@ -24,7 +24,11 @@ from clasher.torch_sim.resident_engine import _resident_deployment_catalog_closu
 from clasher.torch_sim.runtime_objects import (
     TensorRuntimeObjectPhase,
 )
-from clasher.torch_sim.runtime_state import RuntimeEventOpcode, TensorBattleRuntime
+from clasher.torch_sim.runtime_state import (
+    RuntimeEventOpcode,
+    TensorBattleRuntime,
+    TickPhase,
+)
 
 
 @pytest.fixture(params=("cpu", "cuda"))
@@ -255,10 +259,13 @@ def test_zap_direct_spell_damage_stun_identity_and_events_match_python() -> None
 
     assert supported.tolist() == [True]
     assert runtime.battle.entity_hp[0, 0].item() == oracle.entities[1].hitpoints
+    assert not runtime.battle.entity_hp_integer_kind[0, 0].item()
     assert runtime.status.stun_timer[0, 0].item() == oracle.entities[1].stun_timer
     assert torch.equal(runtime.entity_pool.next_entity_id, before_next)
     assert not objects.objects.allocated.any()
-    assert runtime.events.opcode[0, : runtime.events.count[0]].tolist() == [2, 4]
+    assert runtime.events.opcode[0, : runtime.events.count[0]].tolist() == [2]
+    assert runtime.events.phase[0, 0].item() == TickPhase.COMBAT
+    assert runtime.events.payload[0, 0].item() == 0
 
 
 def test_target_death_before_projectile_impact_preserves_committed_endpoint() -> None:
@@ -302,8 +309,8 @@ def test_target_death_before_projectile_impact_preserves_committed_endpoint() ->
 
     assert set(oracle.entities) == {1}
     assert runtime.battle.entity_id[0].nonzero().numel() == 1
-    opcodes = runtime.events.opcode[0, : runtime.events.count[0]].tolist()
-    assert RuntimeEventOpcode.DAMAGE not in opcodes
+    damage = runtime.events.opcode == RuntimeEventOpcode.DAMAGE
+    assert runtime.events.target_id[damage].tolist() == [3]
 
 
 def test_simultaneous_launch_allocation_uses_entity_ids_not_physical_slots() -> None:
@@ -885,6 +892,8 @@ def test_goblin_barrel_spawn_handoff_identity_formation_and_delay_match_python(
         target_y_units=torch.tensor([14_000], device=runtime.device),
         valid=torch.tensor([True], device=runtime.device),
     ).all()
+    carrier_slot = int(torch.where(runtime.battle.entity_id[0] == 1)[0][0].item())
+    assert runtime.battle.entity_card[0, carrier_slot].item() == 0
 
     for _ in range(50):
         _oracle_object_tick(oracle)
@@ -934,7 +943,12 @@ def test_goblin_barrel_spawn_handoff_identity_formation_and_delay_match_python(
             entity._native_target_distance_discount_sq_units
         )
     spawn_events = runtime.events.opcode == RuntimeEventOpcode.SPAWN
-    assert runtime.events.target_id[spawn_events].tolist() == [2, 3, 4]
+    carrier_spawn = spawn_events & (runtime.events.payload == 0)
+    assert runtime.events.source_id[carrier_spawn].tolist() == [1]
+    assert runtime.events.payload[carrier_spawn].tolist() == [0]
+    child_spawn = spawn_events & (runtime.events.payload == goblin_card_id)
+    assert runtime.events.source_id[child_spawn].tolist() == [2, 3, 4]
+    assert runtime.events.target_id[child_spawn].tolist() == [0, 0, 0]
 
 
 def test_spawn_projectile_requires_exact_shared_child_catalog_without_replacement() -> (
