@@ -4028,34 +4028,100 @@ class TensorResidentEngine:
         changed_target = move & (previous_movement_target != self.movement.target_id)
         self._compile_straight_ground_routes_(move, changed_target)
 
-        ordered = self.runtime.entity_pool.id_order(result.damage_received > 0)
-        slots = ordered.slots.clamp_min(0)
-        damage = result.damage_received.gather(1, slots)
-        died = ordered.valid & ~self.combat.alive.gather(1, slots)
-        valid = torch.stack((ordered.valid, died), dim=2).flatten(1)
-        additions = valid.sum(dim=1, dtype=torch.int64)
+        if result.direct_hits is None:
+            missing = active & (result.damage_received > 0).any(dim=1)
+            runtime.mark_unsupported(missing, phase=TickPhase.COMBAT)
+            runtime.mark_dirty(active & ~missing, phase=TickPhase.COMBAT)
+            return result
+        ledger = result.direct_hits
+        expected_ledger_shape = (
+            self.batch_size,
+            self.runtime.max_entities,
+            self.runtime.max_entities,
+        )
+        if (
+            ledger.target_slot.shape != expected_ledger_shape
+            or ledger.applied.shape != expected_ledger_shape
+            or ledger.lethal.shape != expected_ledger_shape
+        ):
+            raise ValueError("direct-hit ledger layout differs from resident combat")
+        source_valid = (ledger.target_slot >= 0).any(dim=2)
+        maximum_id = torch.iinfo(torch.int64).max
+        source_slots = torch.argsort(
+            torch.where(source_valid, self.combat.entity_id, maximum_id),
+            dim=1,
+            stable=True,
+        )
+        ordered_source_valid = torch.gather(source_valid, 1, source_slots)
+        ordered_source_ids = torch.gather(self.combat.entity_id, 1, source_slots)
+        source_index = source_slots[:, :, None].expand_as(ledger.target_slot)
+        target_slots = torch.gather(ledger.target_slot, 1, source_index)
+        damage = torch.gather(ledger.applied, 1, source_index)
+        died = torch.gather(ledger.lethal, 1, source_index)
+        valid_hit = ordered_source_valid[:, :, None] & (target_slots >= 0)
+        target_slots = target_slots.clamp_min(0)
+        target_ids = torch.gather(
+            self.combat.entity_id[:, None, :].expand_as(target_slots),
+            2,
+            target_slots,
+        )
+        target_x = torch.gather(
+            self.combat.x_units[:, None, :].expand_as(target_slots),
+            2,
+            target_slots,
+        )
+        target_y = torch.gather(
+            self.combat.y_units[:, None, :].expand_as(target_slots),
+            2,
+            target_slots,
+        )
+        runtime_source_slots = self.runtime.entity_pool.slots_for_ids(
+            ordered_source_ids
+        )
+        missing_source = ordered_source_valid & (runtime_source_slots < 0)
+        source_payload = torch.gather(
+            runtime.battle.entity_card,
+            1,
+            runtime_source_slots.clamp_min(0),
+        )
+        source_ids = ordered_source_ids[:, :, None].expand_as(target_ids)
+        source_payload = source_payload[:, :, None].expand_as(target_ids)
+        pair_valid = torch.stack((valid_hit, valid_hit & died), dim=3).flatten(1)
+        additions = pair_valid.sum(dim=1, dtype=torch.int64)
         overflow = active & (
             runtime.events.count.to(torch.int64) + additions > runtime.events.capacity
         )
-        runtime.mark_unsupported(overflow, phase=TickPhase.COMBAT)
-        admitted = active & ~overflow
-        if bool((valid & admitted[:, None]).any().item()):
-            ids = ordered.entity_ids
-            opcode = torch.stack(
-                (
-                    torch.full_like(ids, RuntimeEventOpcode.DAMAGE),
-                    torch.full_like(ids, RuntimeEventOpcode.DEATH),
-                ),
-                dim=2,
+        invalid_source = active & missing_source.any(dim=1)
+        runtime.mark_unsupported(overflow | invalid_source, phase=TickPhase.COMBAT)
+        admitted = active & ~overflow & ~invalid_source
+        if bool((pair_valid & admitted[:, None]).any().item()):
+            pair_target = torch.stack((target_ids, target_ids), dim=3).flatten(1)
+            pair_source = torch.stack((source_ids, source_ids), dim=3).flatten(1)
+            pair_x = torch.stack((target_x, target_x), dim=3).flatten(1)
+            pair_y = torch.stack((target_y, target_y), dim=3).flatten(1)
+            pair_payload = torch.stack((source_payload, source_payload), dim=3).flatten(
+                1
+            )
+            pair_amount = torch.stack(
+                (damage, torch.zeros_like(damage)), dim=3
             ).flatten(1)
-            target_ids = torch.stack((ids, ids), dim=2).flatten(1)
-            amount = torch.stack((damage, torch.zeros_like(damage)), dim=2).flatten(1)
+            pair_opcode = torch.stack(
+                (
+                    torch.full_like(target_ids, RuntimeEventOpcode.DAMAGE),
+                    torch.full_like(target_ids, RuntimeEventOpcode.DEATH),
+                ),
+                dim=3,
+            ).flatten(1)
             runtime.events.append(
                 phase=TickPhase.COMBAT,
-                opcode=opcode,
-                valid=valid & admitted[:, None],
-                target_id=target_ids,
-                amount=amount,
+                opcode=pair_opcode,
+                valid=pair_valid & admitted[:, None],
+                source_id=pair_source,
+                target_id=pair_target,
+                x_units=pair_x,
+                y_units=pair_y,
+                amount=pair_amount,
+                payload=pair_payload,
             )
         runtime.mark_dirty(admitted, phase=TickPhase.COMBAT)
         return result

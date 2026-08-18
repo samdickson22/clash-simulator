@@ -395,6 +395,12 @@ def test_stationary_direct_hits_follow_entity_id_order_and_retarget_after_death(
         [first.attack_cooldown, second.attack_cooldown]
     )
     assert result.damage_received[0].tolist() == pytest.approx([0.0, 0.0, 100.0, 70.0])
+    assert result.direct_hits is not None
+    assert result.direct_hits.target_slot[0, 0].tolist() == [2, -1, -1, -1]
+    assert result.direct_hits.applied[0, 0].tolist() == [100.0, 0.0, 0.0, 0.0]
+    assert result.direct_hits.lethal[0, 0].tolist() == [True, False, False, False]
+    assert result.direct_hits.target_slot[0, 1].tolist() == [3, -1, -1, -1]
+    assert result.direct_hits.applied[0, 1].tolist() == [70.0, 0.0, 0.0, 0.0]
 
 
 def test_stun_observes_target_but_pauses_clock_like_oracle() -> None:
@@ -445,6 +451,127 @@ def test_direct_area_hit_snapshots_all_stationary_recipients() -> None:
     assert result.damage_received[0].tolist() == pytest.approx(
         [0.0, 90.0, 90.0, 90.0, 0.0]
     )
+    assert result.direct_hits is not None
+    assert result.direct_hits.target_slot[0, 0].tolist() == [1, 2, 3, -1, -1]
+    assert result.direct_hits.applied[0, 0].tolist() == [90.0, 90.0, 90.0, 0.0, 0.0]
+
+
+def test_direct_hit_ledger_keeps_two_attackers_on_one_survivor_separate() -> None:
+    entities = [
+        _troop(1, 0, 9.0, 10.0, damage=40, cooldown=0.0),
+        _troop(2, 0, 9.0, 10.0, damage=70, cooldown=0.0),
+        _troop(3, 1, 9.0, 10.8, hp=150),
+    ]
+    entities[2].deploy_delay_remaining = 1.0
+    state = _to_tensor_state([entities])
+
+    result = step_stationary_combat_(state)
+
+    assert result.direct_hits is not None
+    assert result.damage_received[0].tolist() == [0.0, 0.0, 110.0]
+    assert result.direct_hits.target_slot[0, :2, 0].tolist() == [2, 2]
+    assert result.direct_hits.applied[0, :2, 0].tolist() == [40.0, 70.0]
+    assert not result.direct_hits.lethal.any().item()
+
+
+def test_direct_hit_ledger_places_primary_before_lower_id_area_recipient() -> None:
+    attacker = _troop(1, 0, 9.0, 10.0, damage=90, cooldown=0.0)
+    lower_id_secondary = _troop(2, 1, 9.6, 10.8, hp=200)
+    primary = _troop(5, 1, 9.0, 10.8, hp=200)
+    attacker.card_stats.area_damage_radius = 1_000
+    for target in (lower_id_secondary, primary):
+        target.deploy_delay_remaining = 1.0
+    state = _to_tensor_state([[attacker, lower_id_secondary, primary]])
+    state.target_slot[0, 0] = 2
+
+    result = step_stationary_combat_(state)
+
+    assert result.direct_hits is not None
+    assert result.direct_hits.target_slot[0, 0].tolist() == [2, 1, -1]
+    assert result.direct_hits.applied[0, 0].tolist() == [90.0, 90.0, 0.0]
+
+
+def test_direct_hit_ledger_source_axis_survives_physical_slot_permutation() -> None:
+    state = _to_tensor_state(
+        [
+            [
+                _troop(20, 0, 9.0, 10.0, damage=40, cooldown=0.0),
+                _troop(10, 0, 9.0, 10.0, damage=70, cooldown=0.0),
+                _troop(30, 1, 9.0, 10.8, hp=200),
+            ]
+        ]
+    )
+    state.deploy_remaining[0, 2] = 1.0
+
+    result = step_stationary_combat_(state)
+
+    assert result.direct_hits is not None
+    assert result.direct_hits.target_slot[0, 1, 0].item() == 2
+    assert result.direct_hits.applied[0, 1, 0].item() == 70.0
+    assert result.direct_hits.target_slot[0, 0, 0].item() == 2
+    assert result.direct_hits.applied[0, 0, 0].item() == 40.0
+
+
+def test_direct_hit_ledger_records_overkill_and_damage_multipliers() -> None:
+    overkill = _to_tensor_state(
+        [
+            [
+                _troop(1, 0, 9.0, 10.0, damage=150, cooldown=0.0),
+                _troop(2, 1, 9.0, 10.8, hp=100),
+            ]
+        ]
+    )
+    overkill.present[0, 1] = True
+    overkill.deploy_remaining[0, 1] = 1.0
+    overkill_result = step_stationary_combat_(overkill)
+    assert overkill_result.direct_hits is not None
+    assert overkill_result.direct_hits.applied[0, 0, 0].item() == 100.0
+    assert overkill_result.direct_hits.lethal[0, 0, 0].item()
+
+    multiplied = _to_tensor_state(
+        [
+            [
+                _troop(1, 0, 9.0, 10.0, damage=100, cooldown=0.0),
+                _troop(2, 1, 9.0, 10.8, hp=200),
+            ]
+        ]
+    )
+    multiplied.deploy_remaining[0, 1] = 1.0
+    multiplied.outgoing_damage_multiplier[0, 0] = 1.5
+    multiplied.incoming_damage_multiplier[0, 1] = 0.5
+    multiplied_result = step_stationary_combat_(multiplied)
+    assert multiplied_result.direct_hits is not None
+    assert multiplied_result.direct_hits.applied[0, 0, 0].item() == 75.0
+
+
+def test_projectile_and_special_attacks_do_not_enter_direct_hit_ledger() -> None:
+    state = _to_tensor_state(
+        [
+            [
+                _troop(1, 0, 9.0, 10.0, damage=100, cooldown=0.0),
+                _troop(2, 1, 9.0, 10.8, hp=200),
+            ]
+        ]
+    )
+    state.deploy_remaining[0, 1] = 1.0
+    state.uses_projectile[0, 0] = True
+    projectile = step_stationary_combat_(state)
+    assert projectile.direct_hits is not None
+    assert not (projectile.direct_hits.target_slot >= 0).any().item()
+
+    special_state = _to_tensor_state(
+        [
+            [
+                _troop(1, 0, 9.0, 10.0, damage=100, cooldown=0.0),
+                _troop(2, 1, 9.0, 10.8, hp=200),
+            ]
+        ]
+    )
+    special_state.deploy_remaining[0, 1] = 1.0
+    special_state.attack_start_special[0, 0] = True
+    special = step_stationary_combat_(special_state)
+    assert special.direct_hits is not None
+    assert not (special.direct_hits.target_slot >= 0).any().item()
 
 
 def test_projectile_lethal_reservation_aggregates_and_applies_native_gates() -> None:

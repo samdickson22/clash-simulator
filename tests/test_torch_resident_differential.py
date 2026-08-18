@@ -12,7 +12,6 @@ from clasher.battle import BattleState
 from clasher.entities import Building, Troop
 from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
 from clasher.torch_sim.actions import NO_OP_ACTION
-from clasher.torch_sim.oracle_event_capture import OraclePayloadKind
 from clasher.torch_sim.resident_differential import (
     ResidentCoverageClassification,
     ResidentCoverageDigestMismatch,
@@ -25,15 +24,15 @@ from clasher.torch_sim.resident_differential import (
     enumerate_enabled_resident_coverage,
     no_op_actions,
 )
-from clasher.torch_sim.runtime_state import RuntimeEventOpcode, TickPhase
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "44317185c0cbe815425c40531083678a2636d7df9545ebee90a33868d97d123a"
+    "db39caddf5545899b2c374d0fb4f028f1c08efdca2cfd9d057b4696eac15d6c0"
 )
 EXPECTED_EVIDENCE = {
     "BabyDragon",
     "Bandit",
+    "Bats",
     "Bomber",
     "Cannon",
     "Knight",
@@ -52,12 +51,15 @@ EXPECTED_NO_INTERACTION = {
     "Archers",
     "Arrows",
     "Balloon",
+    "BarbarianBarrel",
     "BattleRam",
     "Bowler",
     "DartGoblin",
     "Earthquake",
     "Fireball",
+    "Freeze",
     "Giant",
+    "GiantSnowball",
     "GoblinBarrel",
     "Golem",
     "Graveyard",
@@ -65,6 +67,7 @@ EXPECTED_NO_INTERACTION = {
     "IceGolem",
     "Log",
     "MegaMinion",
+    "Miner",
     "Musketeer",
     "NightWitch",
     "Poison",
@@ -76,13 +79,7 @@ EXPECTED_NO_INTERACTION = {
     "Tornado",
     "Zap",
 }
-EXPECTED_DIVERGED = {
-    "BarbarianBarrel",
-    "Bats",
-    "Freeze",
-    "GiantSnowball",
-    "Miner",
-}
+EXPECTED_DIVERGED: set[str] = set()
 EXPECTED_RUNTIME_FALLBACK: set[str] = set()
 WRAPPER_CHILD_ALIASES = {
     "Archers": "Archer",
@@ -239,7 +236,7 @@ def test_full_inert_episodes_match_the_represented_resident_subset(device: str) 
 
 
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
-def test_supported_deployment_combat_state_exposes_exact_event_identity_gap(
+def test_supported_deployment_combat_episode_matches_exact_event_identity(
     device: str,
 ) -> None:
     if device == "cuda" and not torch.cuda.is_available():
@@ -252,18 +249,14 @@ def test_supported_deployment_combat_state_exposes_exact_event_identity_gap(
         max_ticks=4,
     )
 
-    divergence = report.divergence
-    assert divergence is not None
-    assert divergence.tick == 1
-    assert divergence.path == "battle.events"
-    assert divergence.state is None
-    assert divergence.expected_rng == divergence.actual_rng
-    assert divergence.expected_events != divergence.actual_events
+    assert report.divergence is None
+    assert report.ticks_executed == 2
+    assert report.parity_rows == (0, 1, 2)
     assert report.fallback_only_rows == ()
 
 
 @pytest.mark.parametrize("card_name", ("Minions", "Xbow"))
-def test_projectile_event_divergence_uses_exact_oracle_callsite_tuple(
+def test_projectile_events_match_exact_oracle_callsite_tuple(
     card_name: str,
 ) -> None:
     report = ResidentEpisodeDifferential(
@@ -274,26 +267,9 @@ def test_projectile_event_divergence_uses_exact_oracle_callsite_tuple(
         max_ticks=2,
     )
 
-    divergence = report.divergence
-    assert divergence is not None
-    assert divergence.path == "battle.events"
-    assert divergence.state is None
-    launch = divergence.expected_events[0]
-    assert launch.phase == TickPhase.COMBAT
-    assert launch.opcode == RuntimeEventOpcode.PROJECTILE
-    assert launch.payload_kind == OraclePayloadKind.COMBAT_PROJECTILE
-    assert launch.source_id == 1
-    assert launch.target_id > 2
-    assert launch.x_units == 14_500
-    assert launch.y_units > 0
-    if card_name == "Xbow":
-        lifetime = next(
-            event
-            for event in divergence.expected_events
-            if event.phase == TickPhase.BUILDING_LIFETIME
-        )
-        assert launch.sequence < lifetime.sequence
-    assert divergence.actual_events != divergence.expected_events
+    assert report.divergence is None
+    assert report.resident_rows == (0,)
+    assert report.fallback_only_rows == ()
 
 
 @pytest.mark.parametrize(
@@ -320,6 +296,16 @@ def test_spell_alias_normalization_preserves_exact_command_allocation_order(
     assert report.divergence is None
     assert report.resident_rows == (0,)
     assert report.fallback_only_rows == ()
+
+
+def test_bats_direct_hit_is_exact_interaction_parity_evidence() -> None:
+    matrix = enumerate_enabled_resident_coverage(card_names=("Bats",))
+
+    entry = matrix.require_evidence("Bats")
+    assert entry.classification is (
+        ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY
+    )
+    assert entry.interaction_observed
 
 
 def test_preflight_rejected_row_is_fallback_only_not_parity() -> None:
@@ -435,6 +421,7 @@ def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
     assert matrix.evidence_cards == (
         "BabyDragon",
         "Bandit",
+        "Bats",
         "Bomber",
         "Cannon",
         "Knight",
@@ -474,7 +461,7 @@ def test_small_card_matrix_digest_is_device_stable(device: str) -> None:
     assert (
         comparison.batched.digest
         == comparison.scalar_exact.digest
-        == ("1ce3bbdcdc3c6dd9fc0552e4cf9f750d4fee39ac39c9454e170e4a387def6f8f")
+        == ("6ee76ecaf1af844a4ff24a4807c068af9c8fbce2d8dc06859b08f7b7bb9e912b")
     )
 
 

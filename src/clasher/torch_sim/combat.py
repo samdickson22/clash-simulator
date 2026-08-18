@@ -202,6 +202,20 @@ class StationaryCombatState:
 
 
 @dataclass(frozen=True)
+class DirectHitLedger:
+    """Exact direct-hit work keyed by attacker slot and recipient ordinal.
+
+    ``target_slot == -1`` marks an unused lane.  For each attacker the primary
+    recipient precedes secondary area recipients, which remain in stable
+    entity-ID order. ``applied`` is actual HP loss rather than nominal damage.
+    """
+
+    target_slot: torch.Tensor
+    applied: torch.Tensor
+    lethal: torch.Tensor
+
+
+@dataclass(frozen=True)
 class CombatStepResult:
     """Per-entity mutations and emitted payloads from one combat frame."""
 
@@ -212,6 +226,7 @@ class CombatStepResult:
     target_after: torch.Tensor
     special_started: torch.Tensor | None = None
     attack_clock_in_range: torch.Tensor | None = None
+    direct_hits: DirectHitLedger | None = None
 
 
 class UnsupportedStationaryCombatError(RuntimeError):
@@ -616,6 +631,22 @@ def step_stationary_combat_(
     special_started = torch.zeros_like(state.present)
     damage_received = torch.zeros_like(state.hp)
     attack_clock_in_range = torch.zeros_like(state.present)
+    direct_hit_target_slot = torch.full(
+        (batch, capacity, capacity),
+        -1,
+        dtype=torch.int64,
+        device=state.device,
+    )
+    direct_hit_applied = torch.zeros(
+        (batch, capacity, capacity),
+        dtype=torch.float64,
+        device=state.device,
+    )
+    direct_hit_lethal = torch.zeros(
+        (batch, capacity, capacity),
+        dtype=torch.bool,
+        device=state.device,
+    )
 
     maximum_id = torch.iinfo(torch.int64).max
     update_order = torch.argsort(
@@ -842,7 +873,40 @@ def step_stationary_combat_(
         )
         state.hp.copy_(torch.clamp(state.hp - applied, min=0.0))
         state.alive &= (~recipients) | (state.hp > 0.0)
-        damage_received += hp_before - state.hp
+        hit_applied = hp_before - state.hp
+        damage_received += hit_applied
+        hit_valid = hit_applied > 0.0
+        target_lanes = torch.arange(capacity, device=state.device)[None, :]
+        primary = target_lanes == current[:, None]
+        recipient_key = torch.where(
+            primary,
+            torch.full_like(state.entity_id, -1),
+            state.entity_id,
+        )
+        recipient_key = torch.where(
+            hit_valid,
+            recipient_key,
+            torch.full_like(recipient_key, maximum_id),
+        )
+        recipient_order = torch.argsort(recipient_key, dim=1, stable=True)
+        ordered_valid = torch.gather(hit_valid, 1, recipient_order)
+        ordered_applied = torch.gather(hit_applied, 1, recipient_order)
+        ordered_lethal = torch.gather(
+            hit_valid & (hp_before > 0.0) & (state.hp <= 0.0),
+            1,
+            recipient_order,
+        )
+        direct_hit_target_slot[rows, attacker_slots] = torch.where(
+            ordered_valid,
+            recipient_order,
+            -1,
+        )
+        direct_hit_applied[rows, attacker_slots] = torch.where(
+            ordered_valid,
+            ordered_applied,
+            0.0,
+        )
+        direct_hit_lethal[rows, attacker_slots] = ordered_lethal & ordered_valid
 
         attacked[rows[ready], attacker_slots[ready]] = True
         projectile_launched[rows[launches], attacker_slots[launches]] = True
@@ -888,6 +952,11 @@ def step_stationary_combat_(
         target_after=state.target_slot.clone(),
         special_started=special_started,
         attack_clock_in_range=attack_clock_in_range,
+        direct_hits=DirectHitLedger(
+            target_slot=direct_hit_target_slot,
+            applied=direct_hit_applied,
+            lethal=direct_hit_lethal,
+        ),
     )
 
 

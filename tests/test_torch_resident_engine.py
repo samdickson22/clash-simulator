@@ -753,3 +753,84 @@ def test_cross_phase_event_overflow_discards_whole_tick_including_rng_and_clock(
         torch.testing.assert_close(
             after[name], expected, rtol=0, atol=0, equal_nan=True, msg=name
         )
+
+
+def test_two_direct_attackers_emit_separate_source_attributed_events() -> None:
+    battle = _segment_battle()
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    battle._spawn_unit_at_position(
+        Position(14.5, 12.9),
+        0,
+        stats,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    second = battle.entities[3]
+    second.target_id = 1
+    second._movement_target_id = 1  # type: ignore[attr-defined]
+    second.attack_cooldown = 0.0
+    battle.entities[2].position = Position(14.5, 12.9)
+    battle.entities[1].hitpoints = 1_000.0
+    engine = TensorResidentEngine.from_battles(
+        [battle], max_entities=8, max_objects=8, event_capacity=16
+    )
+    result = engine.step()
+
+    assert result.committed.tolist() == [True]
+    count = int(engine.runtime.events.count[0].item())
+    damage = engine.runtime.events.opcode[0, :count] == RuntimeEventOpcode.DAMAGE
+    assert engine.runtime.events.source_id[0, :count][damage].tolist() == [2, 3]
+    assert engine.runtime.events.target_id[0, :count][damage].tolist() == [1, 1]
+    assert engine.runtime.events.x_units[0, :count][damage].tolist() == [14_500, 14_500]
+    assert engine.runtime.events.y_units[0, :count][damage].tolist() == [14_500, 14_500]
+    knight = engine.runtime.battle.card_to_id["Knight"]
+    assert engine.runtime.events.payload[0, :count][damage].tolist() == [
+        knight,
+        knight,
+    ]
+
+
+def test_direct_area_events_keep_primary_before_lower_id_secondary() -> None:
+    battle = BattleState(fast_path=False)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    stats.area_damage_radius = 1_000
+    for position in (Position(15.0, 14.5), Position(14.5, 14.5)):
+        battle._spawn_unit_at_position(
+            position,
+            1,
+            stats,
+            deploy_delay_override=0.0,
+            snap_to_valid=False,
+        )
+        target = battle.entities[battle.next_entity_id - 1]
+        target.stun_timer = 100.0
+        target.attack_cooldown = 10.0
+        target.hitpoints = 1_000.0
+    battle._spawn_unit_at_position(
+        Position(14.5, 12.9),
+        0,
+        stats,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    attacker = battle.entities[3]
+    attacker.target_id = 2
+    attacker._movement_target_id = 2  # type: ignore[attr-defined]
+    attacker.attack_cooldown = 0.0
+    _set_hand(battle, "Knight")
+    engine = TensorResidentEngine.from_battles(
+        [battle], max_entities=8, max_objects=8, event_capacity=16
+    )
+    engine.area_radius_units.fill_(1_000)
+
+    result = engine.step()
+
+    assert result.committed.tolist() == [True]
+    count = int(engine.runtime.events.count[0].item())
+    damage = engine.runtime.events.opcode[0, :count] == RuntimeEventOpcode.DAMAGE
+    assert engine.runtime.events.source_id[0, :count][damage].tolist() == [3, 3]
+    assert engine.runtime.events.target_id[0, :count][damage].tolist() == [2, 1]
