@@ -218,11 +218,11 @@ def test_action_owned_entities_reach_real_post_deployment_interactions(
 
     expected = {
         "Archers": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
-        "Bowler": ResidentCoverageClassification.DIVERGED.value,
+        "Bowler": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "DartGoblin": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "Giant": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "HogRider": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
-        "MegaMinion": ResidentCoverageClassification.DIVERGED.value,
+        "MegaMinion": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "Musketeer": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "Prince": ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value,
         "RoyalHogs": ResidentCoverageClassification.DIVERGED.value,

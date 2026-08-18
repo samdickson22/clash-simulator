@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import copy
+import random
+from collections import deque
+from collections.abc import Sequence
+from typing import cast
 
 import pytest
 import torch
@@ -8,6 +12,11 @@ import torch
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import RollingProjectile
+from clasher.torch_sim.actions import NO_OP_ACTION
+from clasher.torch_sim.resident_differential import (
+    ResidentActionProvider,
+    ResidentEpisodeDifferential,
+)
 from clasher.torch_sim.resident_engine import TensorResidentEngine
 from clasher.torch_sim.resident_workspace import TensorResidentWorkspace
 from clasher.torch_sim.runtime_state import RuntimeEventOpcode
@@ -76,6 +85,24 @@ def _engine(battles: list[BattleState], device: str) -> TensorResidentEngine:
         max_objects=8,
         event_capacity=512,
     )
+
+
+def _action_owned_bowler_battle() -> BattleState:
+    battle = BattleState(fast_path=False, rng=random.Random(740_001))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    _spawn(battle, "Knight", 1, 1, Position(14.5, 14.6))
+    target = battle.entities[1]
+    target.hitpoints = 10_000
+    target.max_hitpoints = 10_000
+    target.stun_timer = 100.0
+    target.attack_cooldown = 10.0
+    player = battle.players[0]
+    player.hand = ["Bowler", "Knight", "Zap", "Cannon"]
+    player.deck = [str(name) for name in player.hand]
+    player.cycle_queue = deque()
+    player.elixir = 20.0
+    return battle
 
 
 def _assert_public_state(oracle: BattleState, engine: TensorResidentEngine) -> None:
@@ -152,6 +179,34 @@ def test_bowler_attack_to_terminal_matches_scalar(tensor_device: str) -> None:
     assert engine.runtime.events.source_id[0, :count][spawn].tolist() == [1]
     assert engine.runtime.events.target_id[0, :count][spawn].tolist() == [launched_id]
     assert engine.runtime.events.payload[0, :count][spawn].tolist() == [bowler_card]
+
+
+def test_action_owned_bowler_interaction_differential_never_falls_back(
+    tensor_device: str,
+) -> None:
+    battle = _action_owned_bowler_battle()
+
+    def actions(
+        tick: int,
+        rows: Sequence[BattleState],
+    ) -> tuple[tuple[int, int], ...]:
+        action = 12 * 18 + 14 if tick == 0 else NO_OP_ACTION
+        return tuple((action, NO_OP_ACTION) for _ in rows)
+
+    report = ResidentEpisodeDifferential(
+        device=tensor_device,
+        max_entities=16,
+        max_objects=16,
+        event_capacity=512,
+    ).run(
+        [battle],
+        cast(ResidentActionProvider, actions),
+        max_ticks=33,
+        stop_on_first_divergence=False,
+    )
+
+    assert report.fallback_only_rows == ()
+    assert 2 in report.interaction_entity_ids[0]
 
 
 def test_rolling_launch_capacity_failure_is_row_atomic(tensor_device: str) -> None:

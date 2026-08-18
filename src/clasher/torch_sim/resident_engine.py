@@ -4509,8 +4509,9 @@ class TensorResidentEngine:
         # without moving cleanup ahead of the native object/cleanup boundary.
         physical_ids = self.runtime.battle.entity_id.to(torch.int64)
         sentinel = torch.iinfo(torch.int64).max
+        movement_component_present = self.movement.slot_present & ~consumed
         order = torch.argsort(
-            torch.where(self.movement.slot_present, physical_ids, sentinel),
+            torch.where(movement_component_present, physical_ids, sentinel),
             dim=1,
             stable=True,
         )
