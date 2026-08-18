@@ -10,7 +10,7 @@ import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Entity, Troop
+from clasher.entities import Building, Entity, Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.resident_engine import (
@@ -119,6 +119,49 @@ def _cross_river_battle(
     target.stun_timer = 100.0
     target.attack_cooldown = 10.0
     _set_hand(battle, "Knight")
+    return battle
+
+
+def _active_river_battle(owner: int) -> BattleState:
+    battle = BattleState(fast_path=False, rng=random.Random(744_900 + owner))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    hog_stats = battle.card_loader.get_card("HogRider")
+    target_stats = battle.card_loader.get_card("Cannon")
+    assert hog_stats is not None and target_stats is not None
+    source_y, landing_y, target_y = (
+        (14.75, 14.85, 18.0) if owner == 0 else (17.25, 17.15, 14.0)
+    )
+    battle._spawn_unit_at_position(
+        Position(9.25, source_y),
+        owner,
+        hog_stats,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    battle._spawn_entity(
+        Building,
+        Position(9.25, target_y),
+        1 - owner,
+        target_stats,
+    )
+    source = battle.entities[1]
+    target = battle.entities[2]
+    assert isinstance(source, Troop)
+    source.target_id = target.id
+    source._movement_target_id = target.id
+    source.attack_cooldown = 0.5
+    source._river_jump_origin = Position(9.25, source_y)
+    source._river_jump_target = Position(9.25, landing_y)
+    source._river_jump_elapsed = 0.0
+    source._river_jump_duration = 0.05
+    source._river_jump_active = True
+    source._special_move_active = True
+    target.deploy_delay_remaining = 0.0
+    target.placement_pending = False
+    target.stun_timer = 100.0
+    target.attack_cooldown = 10.0
+    _set_hand(battle, "HogRider")
     return battle
 
 
@@ -465,6 +508,48 @@ def test_exact_cross_river_both_bridge_lanes_and_owners_match_oracle(
         assert engine.movement.lane_id[row, source_slot].item() == (
             expected_source._native_lane_id
         )
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_river_active_and_landing_consume_frames_preserve_combat_clock(
+    device: str,
+) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    sources = [_active_river_battle(owner) for owner in (0, 1)]
+    oracle = [battle.clone() for battle in sources]
+    engine = TensorResidentEngine.from_battles(
+        [battle.clone() for battle in sources],
+        device=device,
+        max_entities=8,
+        max_objects=8,
+        event_capacity=64,
+    )
+    actions = torch.full((2, 2), NO_OP_ACTION, dtype=torch.int64, device=device)
+
+    for _ in range(2):
+        for battle in oracle:
+            order = [0, 1]
+            battle.rng.shuffle(order)
+            battle.step_logic_ticks(1)
+        result = engine.step(actions)
+        assert result.committed.tolist() == [True, True]
+        for row, expected in enumerate(oracle):
+            source = expected.entities[1]
+            slot = engine.movement.entity_id[row].tolist().index(1)
+            assert engine.combat.attack_cooldown[row, slot].item() == (
+                source.attack_cooldown
+            )
+            assert engine.movement.position_units[row, slot].tolist() == [
+                round(source.position.x * 1_000),
+                round(source.position.y * 1_000),
+            ]
+            assert engine.movement.river_jump_active[row, slot].item() is bool(
+                getattr(source, "_river_jump_active", False)
+            )
+            assert engine.movement.special_move_consumed_tick[row, slot].item() is bool(
+                getattr(source, "_special_move_consumed_tick", False)
+            )
 
 
 def test_death_then_lowest_slot_reuse_routes_new_high_id_exactly() -> None:

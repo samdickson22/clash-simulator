@@ -1349,6 +1349,9 @@ class TensorResidentEngine:
         self.combat.forced_movement.zero_()
         self.combat.combat_blocked.copy_(self.mechanics.combat_blocked())
         self.combat.combat_blocked |= self.dispatcher.dash.phase != 0
+        self.combat.combat_blocked |= (
+            self.movement.river_jump_active | self.movement.special_move_consumed_tick
+        )
         self.combat.attack_rate_multiplier.copy_(
             self.mechanics.attack_rate_multiplier(runtime)
         )
@@ -1519,6 +1522,12 @@ class TensorResidentEngine:
     def _combat_phase(self, active: torch.Tensor) -> CombatStepResult:
         self._refresh_planes()
         self.combat.present &= active[:, None]
+        consumed_special = (
+            self.movement.special_move_consumed_tick
+            & self.combat.present
+            & self.combat.alive
+            & (self.combat.deploy_remaining <= 1e-9)
+        )
         cooldown_work = (
             LOGIC_TICK_SECONDS * self.combat.attack_rate_multiplier.clamp_min(0.05)
         )
@@ -1533,6 +1542,7 @@ class TensorResidentEngine:
             )
         )
         result = step_stationary_combat_(self.combat, LOGIC_TICK_SECONDS)
+        self.movement.special_move_consumed_tick &= ~consumed_special
         runtime = self.runtime
         runtime.battle.entity_hp.copy_(
             torch.where(active[:, None], self.combat.hp, runtime.battle.entity_hp)
@@ -1565,7 +1575,10 @@ class TensorResidentEngine:
         reach = self.combat.range_units + target_radius
         in_range = dx * dx + dy * dy <= reach * reach
         observed = (
-            active[:, None] & self.combat.present & (self.combat.target_slot >= 0)
+            active[:, None]
+            & self.combat.present
+            & (self.combat.target_slot >= 0)
+            & ~self.combat.combat_blocked
         )
         self.facing_x_units.copy_(torch.where(observed, dx, self.facing_x_units))
         self.facing_y_units.copy_(torch.where(observed, dy, self.facing_y_units))

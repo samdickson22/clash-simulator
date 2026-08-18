@@ -37,29 +37,17 @@ EXPECTED_TRACES = {
     # The retained StopMovementAfterMS/WaitMS clock now remains exact through
     # fifteen seconds of mirrored movement and melee combat.
     "Giant": ExpectedTrace(300, (None, None)),
-    # River entry and traversal are exact. The next boundary is the combat
-    # cooldown immediately after landing; Royal Hogs' mirrored route lands on
-    # adjacent frames, so each owner retains its own reviewed first tick.
-    "HogRider": ExpectedTrace(
-        41,
-        (
-            ExpectedBoundary(41, "attack_cooldown"),
-            ExpectedBoundary(41, "attack_cooldown"),
-        ),
-    ),
-    "RoyalHogs": ExpectedTrace(
-        42,
-        (
-            ExpectedBoundary(42, "attack_cooldown"),
-            ExpectedBoundary(41, "attack_cooldown"),
-        ),
-    ),
-    # Prince accumulates native charge work from its first movement frame.
+    # River entry, traversal, the landing-consume frame, and subsequent combat
+    # remain exact through the same fifteen-second horizon in both directions.
+    "HogRider": ExpectedTrace(300, (None, None)),
+    "RoyalHogs": ExpectedTrace(300, (None, None)),
+    # Prince charge, river traversal, and post-landing combat are exact until
+    # the defeated target's later lock-lifecycle boundary.
     "Prince": ExpectedTrace(
-        45,
+        171,
         (
-            ExpectedBoundary(45, "attack_cooldown"),
-            ExpectedBoundary(45, "attack_cooldown"),
+            ExpectedBoundary(171, "target_id"),
+            ExpectedBoundary(171, "target_id"),
         ),
     ),
     # Resident projectile integration independently closed the old tick-56
