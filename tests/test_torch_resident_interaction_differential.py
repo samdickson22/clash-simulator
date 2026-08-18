@@ -13,7 +13,8 @@ import torch
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.data import CardDataLoader
-from clasher.entities import Building
+from clasher.entities import Building, Troop
+from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.deployment import TensorDeploymentCatalog
@@ -25,7 +26,10 @@ from clasher.torch_sim.resident_differential import (
     ResidentEpisodeReport,
     classify_resident_coverage_row,
 )
-from clasher.torch_sim.resident_engine import _resident_deployment_catalog_closure
+from clasher.torch_sim.resident_engine import (
+    TensorResidentEngine,
+    _resident_deployment_catalog_closure,
+)
 
 INTERACTION_CARDS = (
     "Archers",
@@ -236,3 +240,64 @@ def test_action_owned_entities_reach_real_post_deployment_interactions(
         else:
             assert row in report.completed_rows
             assert row in report.parity_rows
+
+
+def test_royal_hogs_combat_facing_drives_sequential_avoidance_exactly(
+    tensor_device: str,
+) -> None:
+    source = _scenario_battle(
+        "RoyalHogs",
+        building_target=True,
+        target_y=19.0,
+        episode_end_time=4.3,
+        seed=740_008,
+    )
+    oracle = source.clone()
+    engine = TensorResidentEngine.from_battles(
+        [source.clone()],
+        device=tensor_device,
+        max_entities=16,
+        max_objects=16,
+        event_capacity=256,
+    )
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    result = None
+
+    for tick in range(61):
+        actions = _actions(tick, (oracle,))[0]
+        order = [0, 1]
+        oracle.rng.shuffle(order)
+        for player in order:
+            assert action_space.apply_action(oracle, player, actions[player])
+        oracle.step_logic_ticks(1)
+        result = engine.step(
+            torch.tensor([actions], dtype=torch.int64, device=tensor_device)
+        )
+        assert result.committed.tolist() == [True]
+
+    assert result is not None
+    runtime_ids = engine.movement.entity_id[0].tolist()
+    hog_slot = runtime_ids.index(4)
+    earlier_slot = runtime_ids.index(2)
+    expected = oracle.entities[4]
+    assert isinstance(expected, Troop)
+    assert (
+        engine.movement.position_units[0, hog_slot].tolist()
+        == [
+            round(expected.position.x * 1_000),
+            round(expected.position.y * 1_000),
+        ]
+        == [15_068, 17_578]
+    )
+    assert (
+        engine.movement.avoidance[0, hog_slot].item()
+        == (expected._native_avoidance)
+        == 190
+    )
+    assert result.movement.collision.accumulated_vector_units[0, hog_slot].tolist() == [
+        17,
+        16,
+    ]
+    assert result.movement.collision.contact_count[0, hog_slot].item() == 1
+    assert result.movement.collision_only_moved[0, earlier_slot].item()
+    assert engine.runtime.battle.rng.python_state(0) == oracle.rng.getstate()

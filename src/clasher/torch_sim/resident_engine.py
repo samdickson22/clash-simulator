@@ -1830,6 +1830,12 @@ class TensorResidentEngine:
         )
         self.facing_x_units.copy_(torch.where(observed, dx, self.facing_x_units))
         self.facing_y_units.copy_(torch.where(observed, dy, self.facing_y_units))
+        self.movement.facing_units[..., 0].copy_(
+            torch.where(observed, dx, self.movement.facing_units[..., 0])
+        )
+        self.movement.facing_units[..., 1].copy_(
+            torch.where(observed, dy, self.movement.facing_units[..., 1])
+        )
         move = (
             observed
             & self.combat.alive
