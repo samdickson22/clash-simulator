@@ -9,7 +9,9 @@ from enum import IntEnum
 import torch
 
 from clasher.battle import BattleState
+from clasher.data import CardDataLoader
 
+from .catalog import MECHANIC_OPCODE, TensorCardCatalog
 from .combat import CombatStepResult, StationaryCombatState, step_stationary_combat_
 from .combat_adapter import project_stationary_combat
 from .runtime_mechanics import MechanicHitResult, TensorRuntimeMechanics
@@ -20,6 +22,60 @@ class ShieldLifecycleReason(IntEnum):
     NONE = 0
     UNSUPPORTED_PAYLOAD = 1
     EVENT_CAPACITY = 2
+
+
+@dataclass(frozen=True)
+class TensorResidentShieldCatalog:
+    """Exact direct-only Shield payloads admitted by the resident engine."""
+
+    supported: torch.Tensor
+    initial_integer_kind: torch.Tensor
+
+    @classmethod
+    def compile(
+        cls,
+        cards: TensorCardCatalog,
+        loader: CardDataLoader,
+    ) -> TensorResidentShieldCatalog:
+        supported = torch.zeros(len(cards.names), dtype=torch.bool, device=cards.device)
+        integer_kind = torch.zeros_like(supported)
+        definitions = loader.load_card_definitions()
+        shield_opcode = MECHANIC_OPCODE["Shield"]
+        for card_id, name in enumerate(cards.names[1:], start=1):
+            definition = definitions.get(name)
+            stats = loader.get_card(name)
+            if definition is None or stats is None:
+                continue
+            operations = cards.mechanic_opcode[card_id]
+            single_shield = bool(
+                int(cards.mechanic_count[card_id].item()) == 1
+                and int(operations[0].item()) == shield_opcode
+                and int(cards.effect_count[card_id].item()) == 0
+            )
+            shield = next(
+                (
+                    mechanic
+                    for mechanic in definition.mechanics
+                    if type(mechanic).__name__ == "Shield"
+                ),
+                None,
+            )
+            direct_only = bool(
+                not getattr(stats, "projectile_data", None)
+                and not getattr(stats, "projectile_speed", 0)
+                and float(getattr(stats, "area_damage_radius", 0.0) or 0.0) <= 0.0
+                and int(getattr(stats, "charge_range", 0) or 0) <= 0
+                and float(
+                    getattr(stats, "scaled_damage_special", 0.0)
+                    or getattr(stats, "damage_special", 0.0)
+                    or 0.0
+                )
+                <= 0.0
+            )
+            supported[card_id] = single_shield and shield is not None and direct_only
+            # Shield.on_attach always stores the scaled initial value as int.
+            integer_kind[card_id] = shield is not None
+        return cls(supported, integer_kind)
 
 
 @dataclass(frozen=True)
@@ -478,6 +534,7 @@ __all__ = [
     "ShieldDamageInputs",
     "ShieldLifecycleReason",
     "ShieldLifecycleStepResult",
+    "TensorResidentShieldCatalog",
     "TensorShieldLifecycleState",
     "step_shield_lifecycle_",
 ]

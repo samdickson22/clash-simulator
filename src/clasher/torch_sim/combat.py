@@ -46,6 +46,10 @@ class StationaryCombatState:
     target_distance_discount_sq_units: torch.Tensor
     hp: torch.Tensor
     max_hp: torch.Tensor
+    has_shield: torch.Tensor
+    shield_hp: torch.Tensor
+    shield_break_count: torch.Tensor
+    shield_integer_kind: torch.Tensor
     damage: torch.Tensor
     alive: torch.Tensor
     targetable: torch.Tensor
@@ -140,6 +144,10 @@ class StationaryCombatState:
             target_distance_discount_sq_units=full(0, torch.int64),
             hp=full(0.0, torch.float64),
             max_hp=full(0.0, torch.float64),
+            has_shield=full(False, torch.bool),
+            shield_hp=full(0.0, torch.float64),
+            shield_break_count=full(0, torch.int64),
+            shield_integer_kind=full(False, torch.bool),
             damage=full(0.0, torch.float64),
             alive=full(False, torch.bool),
             targetable=full(True, torch.bool),
@@ -213,6 +221,8 @@ class DirectHitLedger:
     target_slot: torch.Tensor
     applied: torch.Tensor
     lethal: torch.Tensor
+    shield_absorbed: torch.Tensor
+    shield_broken: torch.Tensor
 
 
 @dataclass(frozen=True)
@@ -258,6 +268,7 @@ def stationary_combat_support_mask(
     float_fields = (
         state.hp,
         state.max_hp,
+        state.shield_hp,
         state.damage,
         state.deploy_remaining,
         state.activation_delay_remaining,
@@ -647,6 +658,8 @@ def step_stationary_combat_(
         dtype=torch.bool,
         device=state.device,
     )
+    direct_hit_shield_absorbed = torch.zeros_like(direct_hit_lethal)
+    direct_hit_shield_broken = torch.zeros_like(direct_hit_lethal)
 
     maximum_id = torch.iinfo(torch.int64).max
     update_order = torch.argsort(
@@ -843,11 +856,25 @@ def step_stationary_combat_(
             _gather(state.damage, attacker_slots)
             * _gather(state.outgoing_damage_multiplier, attacker_slots)
         ).unsqueeze(1)
-        applied = (
+        nominal_damage = (
             attack_damage
             * state.incoming_damage_multiplier
             * recipients.to(torch.float64)
         ).clamp(min=0.0)
+        shield_absorbed = (
+            recipients
+            & (nominal_damage > 0.0)
+            & state.has_shield
+            & (state.shield_hp > 0.0)
+        )
+        shield_after = torch.clamp(state.shield_hp - nominal_damage, min=0.0)
+        shield_broken = shield_absorbed & (shield_after <= 0.0)
+        state.shield_hp.copy_(
+            torch.where(shield_absorbed, shield_after, state.shield_hp)
+        )
+        state.shield_break_count.add_(shield_broken.to(torch.int64))
+        state.shield_integer_kind &= ~shield_absorbed
+        applied = torch.where(shield_absorbed, 0.0, nominal_damage)
         hp_before = state.hp.clone()
         activates = (applied > 0.0) & state.requires_activation & ~state.tower_active
         state.tower_active |= activates
@@ -875,7 +902,7 @@ def step_stationary_combat_(
         state.alive &= (~recipients) | (state.hp > 0.0)
         hit_applied = hp_before - state.hp
         damage_received += hit_applied
-        hit_valid = hit_applied > 0.0
+        hit_valid = (hit_applied > 0.0) | shield_absorbed
         target_lanes = torch.arange(capacity, device=state.device)[None, :]
         primary = target_lanes == current[:, None]
         recipient_key = torch.where(
@@ -896,6 +923,16 @@ def step_stationary_combat_(
             1,
             recipient_order,
         )
+        ordered_shield_absorbed = torch.gather(
+            shield_absorbed,
+            1,
+            recipient_order,
+        )
+        ordered_shield_broken = torch.gather(
+            shield_broken,
+            1,
+            recipient_order,
+        )
         direct_hit_target_slot[rows, attacker_slots] = torch.where(
             ordered_valid,
             recipient_order,
@@ -907,6 +944,12 @@ def step_stationary_combat_(
             0.0,
         )
         direct_hit_lethal[rows, attacker_slots] = ordered_lethal & ordered_valid
+        direct_hit_shield_absorbed[rows, attacker_slots] = (
+            ordered_shield_absorbed & ordered_valid
+        )
+        direct_hit_shield_broken[rows, attacker_slots] = (
+            ordered_shield_broken & ordered_valid
+        )
 
         attacked[rows[ready], attacker_slots[ready]] = True
         projectile_launched[rows[launches], attacker_slots[launches]] = True
@@ -956,6 +999,8 @@ def step_stationary_combat_(
             target_slot=direct_hit_target_slot,
             applied=direct_hit_applied,
             lethal=direct_hit_lethal,
+            shield_absorbed=direct_hit_shield_absorbed,
+            shield_broken=direct_hit_shield_broken,
         ),
     )
 

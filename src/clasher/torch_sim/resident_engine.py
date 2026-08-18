@@ -135,6 +135,7 @@ from .resident_royal_delivery import (
     RoyalDeliveryStepResult,
     TensorResidentRoyalDelivery,
 )
+from .resident_shield import TensorResidentShieldCatalog
 from .resident_spawn_area import (
     SpawnAreaMaterializeResult,
     SpawnAreaStepResult,
@@ -242,6 +243,10 @@ def _resident_deployment_catalog_closure(
         parent = overlay.get_card(parent_name)
         payloads: list[tuple[dict[str, Any], str, str]] = []
         if parent is not None:
+            canonical_parent = str(getattr(parent, "name", "") or "")
+            if canonical_parent and canonical_parent not in discovered:
+                discovered.add(canonical_parent)
+                pending.add(canonical_parent)
             payloads.extend(
                 (payload, str(parent.rarity or "Common"), "")
                 for payload in (
@@ -704,6 +709,8 @@ class TensorResidentEngine:
         deployment: TensorRuntimeDeployment,
         mechanic_deployment: TensorResidentMechanicDeployment,
         mechanics: TensorRuntimeMechanics,
+        shield_catalog: TensorResidentShieldCatalog,
+        shield_integer_kind: torch.Tensor,
         dispatcher: TensorMechanicDispatcher,
         movement: TensorMovementAdapter,
         path_cache: TensorResidentPathCache,
@@ -761,6 +768,8 @@ class TensorResidentEngine:
         self.deployment = deployment
         self.mechanic_deployment = mechanic_deployment
         self.mechanics = mechanics
+        self.shield_catalog = shield_catalog
+        self.shield_integer_kind = shield_integer_kind
         self.dispatcher = dispatcher
         self.movement = movement
         self.path_cache = path_cache
@@ -883,6 +892,24 @@ class TensorResidentEngine:
             MECHANIC_OPCODE["IceSpiritFreeze"],
         )
         mechanics = dispatcher.mechanics
+        shield_catalog = TensorResidentShieldCatalog.compile(cards, catalog_loader)
+        shield_integer_kind = torch.zeros_like(runtime.entity_pool.active)
+        for row, battle in enumerate(battles):
+            slot_by_id = {
+                int(entity_id): slot
+                for slot, entity_id in enumerate(runtime.battle.entity_id[row].tolist())
+                if int(entity_id) > 0
+            }
+            for entity_id, entity in battle.entities.items():
+                shields = [
+                    mechanic
+                    for mechanic in entity.mechanics
+                    if type(mechanic).__name__ == "Shield"
+                ]
+                if shields:
+                    shield_integer_kind[row, slot_by_id[entity_id]] = (
+                        type(getattr(shields[0], "current_shield", 0)) is int
+                    )
         status = TensorRuntimeStatusPhase.from_battles(runtime, battles)
         objects = TensorRuntimeObjectPhase.from_battles(
             runtime, battles, max_objects=max_objects
@@ -1171,6 +1198,7 @@ class TensorResidentEngine:
                 "periodic": (MECHANIC_OPCODE["PeriodicSpawner"],),
                 "charge": (MECHANIC_OPCODE["BattleRamCharge"],),
                 "combat_dispatch": (MECHANIC_OPCODE["BanditDash"],),
+                "shield": (MECHANIC_OPCODE["Shield"],),
                 "spawn_area_deployment": (spawn_area_opcode,),
                 "special_deployment": (
                     MECHANIC_OPCODE["CrownTowerScaling"],
@@ -1183,6 +1211,7 @@ class TensorResidentEngine:
                 "periodic": periodic_catalog.source_row_by_card >= 0,
                 "charge": charge_card_supported,
                 "combat_dispatch": all_cards_supported,
+                "shield": shield_catalog.supported,
                 "spawn_area_deployment": spawn_area_deployment_supported,
                 "special_deployment": miner_card_supported,
             },
@@ -1445,6 +1474,8 @@ class TensorResidentEngine:
             deployment=deployment,
             mechanic_deployment=mechanic_deployment,
             mechanics=mechanics,
+            shield_catalog=shield_catalog,
+            shield_integer_kind=shield_integer_kind,
             dispatcher=dispatcher,
             movement=movement,
             path_cache=path_cache,
@@ -1554,6 +1585,8 @@ class TensorResidentEngine:
             deployment=self.deployment,
             mechanic_deployment=mechanic_deployment,
             mechanics=mechanics,
+            shield_catalog=self.shield_catalog,
+            shield_integer_kind=self.shield_integer_kind.clone(),
             dispatcher=dispatcher,
             movement=_clone_tensor_dataclass(self.movement),  # type: ignore[arg-type]
             # Entries are immutable deterministic functions of standard-arena
@@ -1619,6 +1652,63 @@ class TensorResidentEngine:
 
     def _core_catalog_id(self) -> torch.Tensor:
         return self.runtime.card_catalog_index[self.runtime.battle.entity_card]
+
+    def _shield_unsafe_ingress_rows(self) -> torch.Tensor:
+        """Conservatively reject non-direct damage near retained Shields."""
+
+        core = self.runtime.battle
+        catalog_id = self._core_catalog_id()
+        safe = catalog_id.clamp_min(0)
+        character = (
+            self.runtime.entity_pool.active
+            & core.entity_active
+            & ((core.entity_kind == 0) | (core.entity_kind == 1))
+        )
+        shield = character & self.shield_catalog.supported[safe]
+        unsafe_source = character & (
+            self.uses_projectile[safe]
+            | (self.area_radius_units[safe] > 0)
+            | (self.charge_range_units[safe] > 0)
+        )
+        dx = core.entity_x_units[:, :, None].to(torch.int64) - core.entity_x_units[
+            :, None, :
+        ].to(torch.int64)
+        dy = core.entity_y_units[:, :, None].to(torch.int64) - core.entity_y_units[
+            :, None, :
+        ].to(torch.int64)
+        source_sight = self.runtime.catalog.sight_range_units[safe].to(torch.int64)
+        target_radius = self.runtime.catalog.collision_radius_units[safe].to(
+            torch.int64
+        )
+        conservative_reach = (
+            source_sight[:, :, None] + target_radius[:, None, :] + 2_000
+        )
+        potential_pair = (
+            unsafe_source[:, :, None]
+            & shield[:, None, :]
+            & (core.entity_player[:, :, None] != core.entity_player[:, None, :])
+            & (dx * dx + dy * dy <= conservative_reach * conservative_reach)
+        )
+        live_object = (
+            self.objects.objects.allocated.any(dim=1)
+            | self.rolling_combat.state.active.any(dim=1)
+            | self.rolling_spells.state.active.any(dim=1)
+            | self.royal_delivery.active.any(dim=1)
+            | self.terminal_pipeline.state.objects.allocated.any(dim=1)
+            | self.continuous_areas.active.any(dim=1)
+            | self.graveyards.active.any(dim=1)
+            | self.tornadoes.active.any(dim=1)
+            | self.spawn_areas.active.any(dim=1)
+            | self.chain_impacts.active.any(dim=1)
+        )
+        shield_has_periodic = (
+            self.runtime.status.periodic_active.any(dim=2) & shield
+        ).any(dim=1)
+        return (
+            potential_pair.any(dim=(1, 2))
+            | (shield.any(dim=1) & live_object)
+            | shield_has_periodic
+        )
 
     def _terminal_entity_supported(self) -> torch.Tensor:
         catalog_id = self._core_catalog_id()
@@ -2520,6 +2610,8 @@ class TensorResidentEngine:
         death_area_opcode = MECHANIC_OPCODE["DeathAreaEffect"]
         crown_scaling_opcode = MECHANIC_OPCODE["CrownTowerScaling"]
         underground_opcode = MECHANIC_OPCODE["UndergroundDeployment"]
+        shield_opcode = MECHANIC_OPCODE["Shield"]
+        shield_card_supported = self.shield_catalog.supported[safe]
         mechanic_admitted = (
             admitted_mechanic[entity_mechanics.to(torch.int64).clamp_min(0)]
             | (entity_mechanics == death_spawn_opcode)
@@ -2529,6 +2621,7 @@ class TensorResidentEngine:
             | (entity_mechanics == death_area_opcode)
             | (entity_mechanics == crown_scaling_opcode)
             | (entity_mechanics == underground_opcode)
+            | ((entity_mechanics == shield_opcode) & shield_card_supported[:, :, None])
         )
         unsupported_active_mechanic = (
             active_character[:, :, None] & (entity_mechanics > 0) & ~mechanic_admitted
@@ -2577,6 +2670,8 @@ class TensorResidentEngine:
         chain_supported = self._chain_entity_supported()
         ice_entity = (entity_mechanics == MECHANIC_OPCODE["IceSpiritFreeze"]).any(dim=2)
         ice_supported = self._ice_spirit_entity_supported()
+        shield_entity = (entity_mechanics == shield_opcode).any(dim=2)
+        shield_supported = shield_card_supported
         miner_entity = (
             (entity_mechanics == crown_scaling_opcode)
             | (entity_mechanics == underground_opcode)
@@ -2613,6 +2708,14 @@ class TensorResidentEngine:
         )
         publish(
             (ice_entity & active_character & ~ice_supported).any(dim=1),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            (shield_entity & active_character & ~shield_supported).any(dim=1),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            self._shield_unsafe_ingress_rows(),
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
         )
         publish(
@@ -2843,6 +2946,13 @@ class TensorResidentEngine:
             ResidentUnsupportedReason.CHAMPION_ACTION,
         )
         publish(
+            (
+                (active_character & shield_supported).any(dim=1)
+                & command_rows_with(spell_preflight.command_spell)
+            ),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
             command_rows_with(
                 spell_preflight.command_spell & ~spell_preflight.command_supported
             ),
@@ -2948,6 +3058,21 @@ class TensorResidentEngine:
         self.combat.y_units.copy_(core.entity_y_units.to(torch.int64))
         self.combat.hp.copy_(core.entity_hp)
         self.combat.max_hp.copy_(core.entity_max_hp)
+        shield_active = (
+            character & self.mechanics.has_shield & self.shield_catalog.supported[safe]
+        )
+        self.shield_integer_kind.copy_(
+            torch.where(
+                new & shield_active,
+                self.shield_catalog.initial_integer_kind[safe],
+                self.shield_integer_kind,
+            )
+        )
+        self.shield_integer_kind &= shield_active
+        self.combat.has_shield.copy_(shield_active)
+        self.combat.shield_hp.copy_(self.mechanics.shield_current)
+        self.combat.shield_break_count.copy_(self.mechanics.shield_break_count)
+        self.combat.shield_integer_kind.copy_(self.shield_integer_kind)
         self.combat.alive.copy_(core.entity_active & present)
         self.combat.deploy_remaining.copy_(core.entity_deploy_delay)
         self.combat.last_attack_time.copy_(core.entity_last_attack_time)
@@ -3973,6 +4098,27 @@ class TensorResidentEngine:
         runtime.battle.entity_hp.copy_(
             torch.where(active[:, None], self.combat.hp, runtime.battle.entity_hp)
         )
+        self.mechanics.shield_current.copy_(
+            torch.where(
+                active[:, None],
+                self.combat.shield_hp,
+                self.mechanics.shield_current,
+            )
+        )
+        self.mechanics.shield_break_count.copy_(
+            torch.where(
+                active[:, None],
+                self.combat.shield_break_count,
+                self.mechanics.shield_break_count,
+            )
+        )
+        self.shield_integer_kind.copy_(
+            torch.where(
+                active[:, None],
+                self.combat.shield_integer_kind,
+                self.shield_integer_kind,
+            )
+        )
         runtime.battle.entity_hp_integer_kind &= ~(
             active[:, None] & (result.damage_received > 0.0)
         )
@@ -4055,6 +4201,8 @@ class TensorResidentEngine:
             ledger.target_slot.shape != expected_ledger_shape
             or ledger.applied.shape != expected_ledger_shape
             or ledger.lethal.shape != expected_ledger_shape
+            or ledger.shield_absorbed.shape != expected_ledger_shape
+            or ledger.shield_broken.shape != expected_ledger_shape
         ):
             raise ValueError("direct-hit ledger layout differs from resident combat")
         source_valid = (ledger.target_slot >= 0).any(dim=2)
@@ -4070,6 +4218,7 @@ class TensorResidentEngine:
         target_slots = torch.gather(ledger.target_slot, 1, source_index)
         damage = torch.gather(ledger.applied, 1, source_index)
         died = torch.gather(ledger.lethal, 1, source_index)
+        shield_absorbed = torch.gather(ledger.shield_absorbed, 1, source_index)
         valid_hit = ordered_source_valid[:, :, None] & (target_slots >= 0)
         target_slots = target_slots.clamp_min(0)
         target_ids = torch.gather(
@@ -4098,7 +4247,10 @@ class TensorResidentEngine:
         )
         source_ids = ordered_source_ids[:, :, None].expand_as(target_ids)
         source_payload = source_payload[:, :, None].expand_as(target_ids)
-        pair_valid = torch.stack((valid_hit, valid_hit & died), dim=3).flatten(1)
+        public_damage = valid_hit & ~shield_absorbed & (damage > 0.0)
+        pair_valid = torch.stack((public_damage, public_damage & died), dim=3).flatten(
+            1
+        )
         additions = pair_valid.sum(dim=1, dtype=torch.int64)
         overflow = active & (
             runtime.events.count.to(torch.int64) + additions > runtime.events.capacity
@@ -4725,10 +4877,12 @@ class TensorResidentEngine:
             value.masked_fill_(expanded, 0)
         runtime.battle.entity_id.copy_(runtime.entity_pool.entity_id)
         self.combat_target_entity_id.masked_fill_(dead, -1)
+        self.shield_integer_kind.masked_fill_(dead, False)
         self.pending_projectile_max_duration_ms.masked_fill_(dead, 0)
         self.electro_jump_active.masked_fill_(dead, False)
         self.electro_jump_target_id.masked_fill_(dead, 0)
         self.electro_jump_destination_units.masked_fill_(dead[..., None], 0)
+        self.mechanic_deployment.state.owner_entity_id.masked_fill_(dead[None, :, :], 0)
         runtime.phases.death_pending &= ~dead
         runtime.mark_dirty(dead.any(dim=1), phase=TickPhase.CLEANUP_AND_SPAWNS)
         return removed
@@ -4746,6 +4900,7 @@ class TensorResidentEngine:
         self.runtime.supported[rows] = source.runtime.supported[rows]
         self.runtime.dirty[rows] = source.runtime.dirty[rows]
         self.combat_target_entity_id[rows] = source.combat_target_entity_id[rows]
+        self.shield_integer_kind[rows] = source.shield_integer_kind[rows]
         for left, right in (
             (self.combat, source.combat),
             (self.movement, source.movement),
@@ -4972,6 +5127,13 @@ class TensorResidentEngine:
         working.runtime.supported &= active
 
         working.mechanics.refresh_new_entities_(working.runtime)
+        shield_unsafe = working._shield_unsafe_ingress_rows()
+        working.runtime.mark_unsupported(
+            active & shield_unsafe,
+            phase=TickPhase.COMBAT,
+        )
+        active &= ~shield_unsafe
+        working.runtime.supported &= active
         # Cloak remains outside RESIDENT_DISPATCH_MECHANIC_OPCODES. The
         # dispatcher also owns this hook for future closure, but no admitted
         # row can currently execute both paths with a live Cloak operation.
@@ -5338,6 +5500,10 @@ class TensorResidentEngine:
         )
         active &= spawn_area_materialization.committed
         working.runtime.supported &= active
+        working.spawn_areas.target_shield.copy_(working.mechanics.shield_current)
+        working.spawn_areas.target_shield_break_count.copy_(
+            working.mechanics.shield_break_count.to(torch.int32)
+        )
         spawn_stun_before = working.runtime.status.stun_timer.clone()
         spawn_areas = working.spawn_areas.step_(
             working.runtime,

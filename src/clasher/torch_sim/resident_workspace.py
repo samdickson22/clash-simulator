@@ -69,6 +69,12 @@ class TensorResidentWorkspace:
             raise ValueError("speculative engines must share the path cache")
         if self.scratch.periodic_catalog is not self.engine.periodic_catalog:
             raise ValueError("speculative engines must share periodic catalogs")
+        if self.scratch.shield_catalog is not self.engine.shield_catalog:
+            raise ValueError("speculative engines must share shield catalogs")
+        if self.scratch.shield_integer_kind.data_ptr() == (
+            self.engine.shield_integer_kind.data_ptr()
+        ):
+            raise ValueError("speculative shield state must own mutable storage")
         if self.scratch.periodic_state.source_entity_id.data_ptr() == (
             self.engine.periodic_state.source_entity_id.data_ptr()
         ):
@@ -229,6 +235,7 @@ class TensorResidentWorkspace:
         destination.runtime.supported.copy_(source.runtime.supported)
         destination.runtime.dirty.copy_(source.runtime.dirty)
         destination.combat_target_entity_id.copy_(source.combat_target_entity_id)
+        destination.shield_integer_kind.copy_(source.shield_integer_kind)
         pending_rows = torch.arange(
             self.batch_size, dtype=torch.int64, device=self.device
         )
