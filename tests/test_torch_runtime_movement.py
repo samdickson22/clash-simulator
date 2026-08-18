@@ -8,6 +8,7 @@ import torch
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import Building, Entity, Troop
+from clasher.pathfinding import native_jump_landing_waypoint
 from clasher.torch_sim.movement_adapter import TensorMovementAdapter
 from clasher.torch_sim.runtime import TensorTickRuntime
 from clasher.torch_sim.runtime_movement import (
@@ -99,6 +100,9 @@ def _movement_state(entity: Entity) -> tuple[object, ...]:
         entity._pending_movement_consumed,
         getattr(entity, "_native_avoidance", 0),
         getattr(entity, "_native_natural_movement_active", False),
+        getattr(entity, "_native_charge_progress", 0),
+        getattr(entity, "distance_traveled", 0.0),
+        getattr(entity, "is_charging", False),
         tuple(getattr(entity, "_native_ground_route_cells", [])),
         getattr(entity, "_ground_path_cache_key", None),
         getattr(entity, "_ground_path_cache_backwards", False),
@@ -157,6 +161,39 @@ def test_runtime_ordinary_route_movement_matches_complete_scalar_phase(
     )
     assert int(runtime.combat.y_units[0, mover_slot].item()) == round(
         expected.entities[mover.id].position.y * 1_000
+    )
+
+
+@pytest.mark.parametrize("device", DEVICES)
+@pytest.mark.parametrize("owner", (0, 1))
+def test_runtime_prince_charge_progress_matches_mirrored_scalar(
+    device: str,
+    owner: int,
+) -> None:
+    seed = _empty_battle()
+    source_y, target_y = (10.0, 13.5) if owner == 0 else (22.0, 18.5)
+    prince = _troop(seed, "Prince", owner, Position(4.0, source_y))
+    target = _troop(seed, "Knight", 1 - owner, Position(4.0, target_y))
+    prince._movement_target_id = target.id
+    expected = seed.clone()
+    candidate = seed.clone()
+    _movement_phase_oracle(expected)
+    runtime, adapter = _runtime_and_adapter(candidate, device=device)
+    charge_range = torch.zeros_like(adapter.entity_id)
+    slot = adapter.slots_for_ids(0, [prince.id])[0]
+    charge_range[0, slot] = int(prince.card_stats.charge_range or 0)
+
+    result = step_runtime_movement_(
+        runtime,
+        adapter,
+        charge_range_units=charge_range,
+    )
+    adapter.sync_to_battles([candidate])
+
+    assert result.supported_batch.tolist() == [True]
+    assert adapter.native_charge_progress[0, slot].item() > 0
+    assert _movement_state(candidate.entities[prince.id]) == _movement_state(
+        expected.entities[prince.id]
     )
 
 
@@ -225,6 +262,49 @@ def test_runtime_active_river_jump_matches_scalar_and_emits_finish(
     ) is finish
     assert _movement_state(candidate.entities[hog.id]) == _movement_state(
         expected.entities[hog.id]
+    )
+
+
+@pytest.mark.parametrize("device", DEVICES)
+@pytest.mark.parametrize("card_name", ("HogRider", "RoyalHogs"))
+@pytest.mark.parametrize("owner", (0, 1))
+def test_runtime_river_entry_matches_mirrored_scalar_state_six(
+    device: str,
+    card_name: str,
+    owner: int,
+) -> None:
+    seed = _empty_battle()
+    source_y, target_y, facing_y = (
+        (14.937, 18.75, 1_000) if owner == 0 else (17.063, 13.25, -1_000)
+    )
+    mover = _troop(seed, card_name, owner, Position(9.158, source_y))
+    target = _building(seed, "Cannon", 1 - owner, Position(9.0, target_y))
+    mover._movement_target_id = target.id
+    mover._facing_x_units, mover._facing_y_units = (0, facing_y)
+    landing = native_jump_landing_waypoint(
+        seed,
+        mover,
+        target.position,
+        target_entity=target,
+    )
+    assert landing is not None
+    # The retained resident route planner owns this already-proven landing
+    # input; the runtime kernel owns the endpoint crossing and state-6 entry.
+    mover._river_jump_target = landing
+    expected = seed.clone()
+    candidate = seed.clone()
+    _movement_phase_oracle(expected)
+    runtime, adapter = _runtime_and_adapter(candidate, device=device)
+
+    result = step_runtime_movement_(runtime, adapter)
+    adapter.sync_to_battles([candidate])
+
+    assert result.supported_batch.tolist() == [True]
+    slot = adapter.slots_for_ids(0, [mover.id])[0]
+    assert not result.ordinary_moved[0, slot].item()
+    assert adapter.river_jump_active[0, slot].item()
+    assert _movement_state(candidate.entities[mover.id]) == _movement_state(
+        expected.entities[mover.id]
     )
 
 

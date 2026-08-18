@@ -179,6 +179,60 @@ class NaturalMovementResult:
     supported: torch.Tensor
 
 
+@dataclass(frozen=True)
+class NativeChargeProgressResult:
+    progress: torch.Tensor
+    charging: torch.Tensor
+    fully_loaded: torch.Tensor
+    distance_work_units: torch.Tensor
+    supported: torch.Tensor
+
+
+def advance_native_charge_progress(
+    progress: torch.Tensor,
+    movement_work_units: torch.Tensor,
+    charge_range_units: torch.Tensor,
+    *,
+    active: torch.Tensor,
+    ordinary_movement_state: torch.Tensor | bool = True,
+) -> NativeChargeProgressResult:
+    """Advance the serialized 0..10000 charge lane without card branches."""
+
+    current = _as_int64(progress)
+    work = torch.clamp(_as_int64(movement_work_units), min=0)
+    charge_range = _as_int64(charge_range_units)
+    selected = active.to(torch.bool) & (charge_range > 0)
+    ordinary = torch.as_tensor(
+        ordinary_movement_state, dtype=torch.bool, device=current.device
+    )
+    reset = selected & ((work < 10) | ~ordinary)
+    accumulate = selected & ~reset & (current <= 9_999)
+    increment = torch.div(
+        10_000 * torch.div(work, 10, rounding_mode="floor"),
+        charge_range.clamp_min(1),
+        rounding_mode="floor",
+    )
+    next_progress = torch.where(
+        reset,
+        torch.zeros_like(current),
+        torch.where(accumulate, current + increment, current),
+    )
+    charging = selected & ~reset & (next_progress >= 10_000)
+    fully_loaded = selected & ~reset & (current >= 10_000)
+    distance_work = torch.where(
+        accumulate | fully_loaded,
+        work,
+        torch.zeros_like(work),
+    )
+    return NativeChargeProgressResult(
+        progress=torch.where(selected, next_progress, current),
+        charging=charging,
+        fully_loaded=fully_loaded,
+        distance_work_units=distance_work,
+        supported=selected,
+    )
+
+
 def natural_movement_support_mask(
     *,
     active: torch.Tensor,

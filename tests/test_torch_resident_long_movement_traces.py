@@ -24,16 +24,17 @@ from clasher.torch_sim.resident_engine import TensorResidentEngine
 class ExpectedTrace:
     ticks: int
     boundary_field: str | None
+    boundary_kind: str = "divergent"
 
 
 EXPECTED_TRACES = {
     # The retained StopMovementAfterMS/WaitMS clock now remains exact through
     # fifteen seconds of mirrored movement and melee combat.
     "Giant": ExpectedTrace(300, None),
-    # River state six begins when the endpoint first enters water. Resident
-    # currently follows the exact route but has not dispatched jump entry.
-    "HogRider": ExpectedTrace(27, "position_units"),
-    "RoyalHogs": ExpectedTrace(27, "position_units"),
+    # Runtime entry now matches the state-six boundary exactly. Resident
+    # refresh still needs to retain the active jump support plane next tick.
+    "HogRider": ExpectedTrace(28, "resident_phase", "unsupported"),
+    "RoyalHogs": ExpectedTrace(28, "resident_phase", "unsupported"),
     # Prince accumulates native charge work from its first movement frame.
     "Prince": ExpectedTrace(21, "native_charge_progress"),
     # Resident projectile integration independently closed the old tick-56
@@ -251,7 +252,15 @@ def test_current_first_resident_movement_boundary_after_exact_deployment_prefix(
         assert observed == []
     else:
         assert observed == [
-            ("divergent", expected_trace.ticks, expected_trace.boundary_field),
-            ("divergent", expected_trace.ticks, expected_trace.boundary_field),
+            (
+                expected_trace.boundary_kind,
+                expected_trace.ticks,
+                expected_trace.boundary_field,
+            ),
+            (
+                expected_trace.boundary_kind,
+                expected_trace.ticks,
+                expected_trace.boundary_field,
+            ),
         ]
     assert expected_trace.ticks > 20

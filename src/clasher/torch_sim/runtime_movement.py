@@ -27,9 +27,12 @@ from .movement import (
     NaturalMovementResult,
     RiverJumpResult,
     accumulate_collision_vectors,
+    advance_native_charge_progress,
     clamp_native_positions,
     consume_accumulated_movement,
     integer_sqrt_tensor,
+    river_boundary_crossing_mask,
+    river_jump_start_mask,
     river_jump_step,
     target_directed_movement_step,
     trunc_div_tensor,
@@ -418,6 +421,7 @@ def step_runtime_movement_(
     movement_stop_after_ms: torch.Tensor | None = None,
     movement_wait_ms: torch.Tensor | None = None,
     movement_base_speed_units: torch.Tensor | None = None,
+    charge_range_units: torch.Tensor | None = None,
 ) -> RuntimeMovementResult:
     """Run one native movement component phase over retained tensor state.
 
@@ -460,6 +464,21 @@ def step_runtime_movement_(
         stop_after_ms = torch.zeros_like(adapter.entity_id)
         wait_ms = torch.zeros_like(adapter.entity_id)
         base_speed_units = torch.ones_like(adapter.entity_id)
+
+    charge_parameters_present = charge_range_units is not None
+    charge_range = (
+        torch.as_tensor(charge_range_units, dtype=torch.int64, device=runtime.device)
+        if charge_parameters_present
+        else torch.zeros_like(adapter.entity_id)
+    )
+    if charge_range.shape != adapter.entity_id.shape:
+        raise ValueError("charge_range_units must have shape [batch, entity]")
+    if charge_parameters_present:
+        charge_bit = int(MovementUnsupported.CHARGE_COMPONENT)
+        charge_valid = adapter.charge_component & (charge_range > 0)
+        charge_only = charge_valid & ((adapter.ordinary_unsupported & ~charge_bit) == 0)
+        adapter.ordinary_unsupported &= ~charge_bit
+        adapter.ordinary_supported |= charge_only
 
     avoidance_bit = int(MovementUnsupported.AVOIDANCE_PREPASS)
     avoidance_only = adapter.avoidance_prepass_required & (
@@ -519,7 +538,7 @@ def step_runtime_movement_(
         | (runtime.combat.deploy_remaining > 1e-9)
         | runtime.combat.stunned
         | adapter.kamikaze_primed,
-        charging=torch.zeros_like(adapter.slot_present),
+        charging=adapter.charge_component & (adapter.native_charge_progress >= 10_000),
         leap_clear=adapter.mega_knight_airborne,
     )
     # The sequence and movement kernels share this current-position plane.
@@ -619,6 +638,69 @@ def step_runtime_movement_(
                 external_vector_units=external,
                 avoidance=adapter.avoidance[:, slot],
             )
+            crossing = (
+                ordinary
+                & ~adapter.is_air[:, slot]
+                & ~adapter.is_hover[:, slot]
+                & ~torch.any(external != 0, dim=1)
+                & river_boundary_crossing_mask(
+                    working_positions[:, slot], natural.position_units
+                )
+            )
+            jump_start = (
+                crossing
+                & ~adapter.river_jump_blocked[:, slot]
+                & river_jump_start_mask(
+                    natural.position_units,
+                    jump_height=adapter.jump_height[:, slot],
+                    jump_speed_units=adapter.jump_speed_units[:, slot],
+                    landing_valid=adapter.river_target_valid[:, slot],
+                )
+            )
+            landing_missing = (
+                crossing
+                & adapter.jump_height[:, slot]
+                & ~adapter.river_target_valid[:, slot]
+            )
+            adapter.river_jump_blocked[:, slot] |= landing_missing
+            natural = NaturalMovementResult(
+                position_units=torch.where(
+                    jump_start.unsqueeze(-1),
+                    working_positions[:, slot],
+                    natural.position_units,
+                ),
+                movement_vector_units=natural.movement_vector_units,
+                intended_movement_units=natural.intended_movement_units,
+                supported=natural.supported,
+            )
+            if charge_parameters_present:
+                charge = advance_native_charge_progress(
+                    adapter.native_charge_progress[:, slot],
+                    natural.intended_movement_units,
+                    charge_range[:, slot],
+                    active=ordinary & adapter.charge_component[:, slot],
+                )
+                adapter.native_charge_progress[:, slot] = charge.progress
+                distance = (
+                    adapter.distance_traveled_bits[:, slot]
+                    .contiguous()
+                    .view(torch.float64)
+                )
+                advanced_distance = (
+                    (distance + charge.distance_work_units.to(torch.float64) / 1_000.0)
+                    .contiguous()
+                    .view(torch.int64)
+                )
+                charge_reset = charge.supported & (natural.intended_movement_units < 10)
+                adapter.distance_traveled_bits[:, slot] = torch.where(
+                    charge.supported,
+                    torch.where(
+                        charge_reset,
+                        torch.zeros_like(advanced_distance),
+                        advanced_distance,
+                    ),
+                    adapter.distance_traveled_bits[:, slot],
+                )
             working_positions[:, slot] = natural.position_units
             ordinary_position[:, slot] = natural.position_units
             ordinary_vector[:, slot] = natural.movement_vector_units
@@ -639,6 +721,70 @@ def step_runtime_movement_(
                 )
             )
             working_positions[:, slot] = adapter.position_units[:, slot]
+            adapter.river_origin_units[:, slot] = torch.where(
+                jump_start.unsqueeze(-1),
+                working_positions[:, slot],
+                adapter.river_origin_units[:, slot],
+            )
+            adapter.river_origin_valid[:, slot] |= jump_start
+            jump_delta = (
+                adapter.river_target_units[:, slot] - working_positions[:, slot]
+            )
+            jump_distance = integer_sqrt_tensor(
+                torch.sum(jump_delta * jump_delta, dim=1)
+            )
+            jump_duration = torch.maximum(
+                torch.full(
+                    (adapter.batch_size,),
+                    0.05,
+                    dtype=torch.float64,
+                    device=adapter.device,
+                ),
+                jump_distance.to(torch.float64)
+                / adapter.jump_speed_units[:, slot].clamp_min(1).to(torch.float64)
+                * 0.05,
+            )
+            adapter.river_elapsed_bits[:, slot] = torch.where(
+                jump_start,
+                torch.zeros_like(adapter.river_elapsed_bits[:, slot]),
+                adapter.river_elapsed_bits[:, slot],
+            )
+            adapter.river_duration_bits[:, slot] = torch.where(
+                jump_start,
+                jump_duration.contiguous().view(torch.int64),
+                adapter.river_duration_bits[:, slot],
+            )
+            adapter.river_jump_active[:, slot] |= jump_start
+            adapter.special_movement[:, slot] |= jump_start
+            adapter.river_jump_supported[:, slot] |= jump_start
+            adapter.river_unsupported[:, slot] = torch.where(
+                jump_start,
+                torch.zeros_like(adapter.river_unsupported[:, slot]),
+                adapter.river_unsupported[:, slot],
+            )
+            working_river_active[:, slot] |= jump_start
+            river_active_after[:, slot] |= jump_start
+            avoidance_state.air_collision[:, slot] |= jump_start
+            if adapter.route_capacity:
+                retained_jump_route = torch.zeros_like(adapter.route_cells[:, slot])
+                retained_jump_route[:, 0] = torch.div(
+                    adapter.river_target_units[:, slot], 500, rounding_mode="floor"
+                )
+                adapter.route_cells[:, slot] = torch.where(
+                    jump_start[:, None, None],
+                    retained_jump_route,
+                    adapter.route_cells[:, slot],
+                )
+                adapter.route_count[:, slot] = torch.where(
+                    jump_start,
+                    torch.ones_like(adapter.route_count[:, slot]),
+                    adapter.route_count[:, slot],
+                )
+                adapter.waypoint_units[:, slot] = torch.where(
+                    jump_start.unsqueeze(-1),
+                    adapter.river_target_units[:, slot],
+                    adapter.waypoint_units[:, slot],
+                )
 
         river = supported & river_intent[:, slot]
         jump = river_jump_step(
@@ -648,6 +794,32 @@ def step_runtime_movement_(
             active=river,
             avoidance=adapter.avoidance[:, slot],
         )
+        if charge_parameters_present:
+            river_charge = advance_native_charge_progress(
+                adapter.native_charge_progress[:, slot],
+                torch.minimum(
+                    adapter.jump_speed_units[:, slot].clamp_min(0),
+                    integer_sqrt_tensor(
+                        torch.sum(
+                            (
+                                adapter.river_target_units[:, slot]
+                                - working_positions[:, slot]
+                            )
+                            ** 2,
+                            dim=1,
+                        )
+                    ),
+                ),
+                charge_range[:, slot],
+                active=river & adapter.charge_component[:, slot],
+                ordinary_movement_state=False,
+            )
+            adapter.native_charge_progress[:, slot] = river_charge.progress
+            adapter.distance_traveled_bits[:, slot] = torch.where(
+                river_charge.supported,
+                torch.zeros_like(adapter.distance_traveled_bits[:, slot]),
+                adapter.distance_traveled_bits[:, slot],
+            )
         jump_position = clamp_native_positions(jump.position_units + external)
         jump_position = torch.where(
             jump.supported.unsqueeze(-1), jump_position, working_positions[:, slot]

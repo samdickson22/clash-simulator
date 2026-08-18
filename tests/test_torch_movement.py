@@ -18,6 +18,7 @@ from clasher.kinematics import (
 from clasher.torch_sim.movement import (
     CollisionBatch,
     accumulate_collision_vectors,
+    advance_native_charge_progress,
     advance_route_node_mask,
     clamp_native_positions,
     consume_accumulated_movement,
@@ -33,6 +34,32 @@ from clasher.torch_sim.movement import (
     target_directed_movement_step,
     trunc_div_tensor,
 )
+
+
+def test_native_charge_progress_matches_integer_work_lane() -> None:
+    progress = torch.tensor([0, 9_900, 10_000, 7_500, 7_500])
+    work = torch.tensor([120, 19, 120, 9, 120])
+    charge_range = torch.tensor([500, 500, 500, 500, 0])
+    result = advance_native_charge_progress(
+        progress,
+        work,
+        charge_range,
+        active=torch.ones(5, dtype=torch.bool),
+    )
+
+    assert result.progress.tolist() == [240, 9_920, 10_000, 0, 7_500]
+    assert result.charging.tolist() == [False, False, True, False, False]
+    assert result.fully_loaded.tolist() == [False, False, True, False, False]
+    assert result.distance_work_units.tolist() == [120, 19, 120, 0, 0]
+
+    river = advance_native_charge_progress(
+        result.progress,
+        work,
+        charge_range,
+        active=torch.ones(5, dtype=torch.bool),
+        ordinary_movement_state=False,
+    )
+    assert river.progress.tolist() == [0, 0, 0, 0, 7_500]
 
 
 def test_randomized_fixed_point_vector_kernels_match_python_oracle() -> None:
