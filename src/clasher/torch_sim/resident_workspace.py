@@ -135,6 +135,15 @@ class TensorResidentWorkspace:
         ):
             raise ValueError("speculative rolling spells must own mutable storage")
         if (
+            self.scratch.rolling_combat.catalog
+            is not self.engine.rolling_combat.catalog
+        ):
+            raise ValueError("speculative engines must share rolling combat catalogs")
+        if self.scratch.rolling_combat.state.active.data_ptr() == (
+            self.engine.rolling_combat.state.active.data_ptr()
+        ):
+            raise ValueError("speculative rolling combat must own mutable storage")
+        if (
             self.scratch.royal_delivery.catalog
             is not self.engine.royal_delivery.catalog
         ):
@@ -289,6 +298,8 @@ class TensorResidentWorkspace:
             (destination.periodic_state, source.periodic_state),
             (destination.rolling_spells.state, source.rolling_spells.state),
             (destination.rolling_spells.targets, source.rolling_spells.targets),
+            (destination.rolling_combat.state, source.rolling_combat.state),
+            (destination.rolling_combat.targets, source.rolling_combat.targets),
             (
                 destination.terminal_pipeline.state.objects,
                 source.terminal_pipeline.state.objects,

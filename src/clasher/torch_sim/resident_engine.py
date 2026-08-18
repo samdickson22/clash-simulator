@@ -118,6 +118,11 @@ from .resident_periodic_spawner import (
     TensorPeriodicSpawnerRuntimeState,
     step_runtime_periodic_spawners_,
 )
+from .resident_rolling_combat import (
+    RollingCombatMaterializeResult,
+    RollingCombatStepResult,
+    TensorResidentRollingCombatProjectiles,
+)
 from .resident_rolling_spell import (
     TensorResidentRollingSpells,
     TensorRollingDueHandoff,
@@ -383,6 +388,8 @@ class ResidentTickResult:
     continuous_areas: ContinuousAreaStepResult | None
     graveyards: GraveyardStepResult | None
     tornadoes: TornadoStepResult | None
+    rolling_combat_materialization: RollingCombatMaterializeResult
+    rolling_combat: RollingCombatStepResult
     rolling_spells: TensorRollingStepResult | None
     royal_delivery: RoyalDeliveryStepResult | None
     charge_carriers: ChargeCarrierStepResult | None
@@ -707,6 +714,7 @@ class TensorResidentEngine:
         continuous_effect_deadline_seconds: torch.Tensor,
         graveyards: TensorResidentGraveyards,
         tornadoes: TensorResidentTornadoes,
+        rolling_combat: TensorResidentRollingCombatProjectiles,
         rolling_spells: TensorResidentRollingSpells,
         royal_delivery: TensorResidentRoyalDelivery,
         charge_carriers: TensorResidentChargeCarriers,
@@ -763,6 +771,7 @@ class TensorResidentEngine:
         self.continuous_effect_deadline_seconds = continuous_effect_deadline_seconds
         self.graveyards = graveyards
         self.tornadoes = tornadoes
+        self.rolling_combat = rolling_combat
         self.rolling_spells = rolling_spells
         self.royal_delivery = royal_delivery
         self.charge_carriers = charge_carriers
@@ -950,6 +959,11 @@ class TensorResidentEngine:
         )
         tornadoes = TensorResidentTornadoes.from_battles(
             runtime, battles, capacity=area_capacity
+        )
+        rolling_combat = TensorResidentRollingCombatProjectiles.from_battles(
+            runtime,
+            mechanic_battles,
+            capacity=area_capacity,
         )
         royal_delivery = TensorResidentRoyalDelivery.from_battles(
             runtime,
@@ -1431,6 +1445,7 @@ class TensorResidentEngine:
             continuous_effect_deadline_seconds=(continuous_effect_deadline_seconds),
             graveyards=graveyards,
             tornadoes=tornadoes,
+            rolling_combat=rolling_combat,
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,
@@ -1493,6 +1508,7 @@ class TensorResidentEngine:
         continuous_areas = self.continuous_areas.clone()
         graveyards = self.graveyards.clone()
         tornadoes = self.tornadoes.clone()
+        rolling_combat = self.rolling_combat.clone()
         rolling_spells = TensorResidentRollingSpells(
             self.rolling_spells.catalog,
             self.rolling_spells.state.clone(),
@@ -1543,6 +1559,7 @@ class TensorResidentEngine:
             ),
             graveyards=graveyards,
             tornadoes=tornadoes,
+            rolling_combat=rolling_combat,
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,
@@ -2613,6 +2630,8 @@ class TensorResidentEngine:
             self.projectile_bridge.catalog.kind[core_card]
             == BridgePayloadKind.COMBAT_PROJECTILE
         )
+        rolling_combat_projectile = self.rolling_combat.catalog.supported[core_card]
+        bridge_projectile &= ~rolling_combat_projectile
         retained_projectile = (
             self.combat.present
             & (self.combat.entity_id == self.runtime.battle.entity_id)
@@ -2651,7 +2670,7 @@ class TensorResidentEngine:
             (
                 projectile_entity
                 & live_character
-                & ~bridge_projectile
+                & ~(bridge_projectile | rolling_combat_projectile)
                 & (
                     (
                         (self.runtime.battle.entity_tower_slot < 0)
@@ -2715,6 +2734,49 @@ class TensorResidentEngine:
         publish(
             retained_spell_live
             & (timed_live | general_live | periodic_live | area_live),
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
+        rolling_combat_live = self.rolling_combat.state.active.any(dim=1)
+        rolling_id = torch.where(
+            self.rolling_combat.state.active,
+            self.rolling_combat.state.entity_id,
+            torch.zeros_like(self.rolling_combat.state.entity_id),
+        )
+        rolling_max_id = rolling_id.amax(dim=1)
+        general_id = torch.where(
+            self.objects.objects.allocated,
+            self.objects.objects.object_id,
+            torch.full_like(
+                self.objects.objects.object_id,
+                torch.iinfo(torch.int64).max,
+            ),
+        )
+        general_min_id = general_id.amin(dim=1)
+        rolling_before_general = rolling_max_id < general_min_id
+        general_blueprint = self.objects.objects.blueprint_id.to(torch.int64).clamp(
+            0,
+            self.projectile_bridge.blueprint_knockback_units.numel() - 1,
+        )
+        general_knockback_live = (
+            self.objects.objects.allocated
+            & (self.projectile_bridge.blueprint_knockback_units[general_blueprint] > 0)
+        ).any(dim=1)
+        publish(
+            rolling_combat_live
+            & general_live
+            & (~rolling_before_general | general_knockback_live),
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
+        publish(
+            rolling_combat_live
+            & (
+                timed_live
+                | periodic_live
+                | area_live
+                | retained_spell_live
+                | chain_live
+                | spawn_area_live
+            ),
             ResidentUnsupportedReason.OBJECT_PHASE,
         )
         publish(~self.objects.static_supported, ResidentUnsupportedReason.OBJECT_PHASE)
@@ -3359,6 +3421,57 @@ class TensorResidentEngine:
                 expanded_new,
                 expanded_receiver,
                 rolling.knockback_receivable,
+            )
+        )
+
+        rolling_combat = self.rolling_combat.targets
+        rolling_combat.collision_radius_units.copy_(
+            torch.where(
+                new,
+                radius.to(torch.int64),
+                rolling_combat.collision_radius_units,
+            )
+        )
+        rolling_combat.airborne.copy_(
+            torch.where(new, runtime.catalog.is_air_unit[safe], rolling_combat.airborne)
+        )
+        rolling_combat.building.copy_(
+            torch.where(new, core.entity_kind == 1, rolling_combat.building)
+        )
+        rolling_combat.crown.copy_(torch.where(new, crown, rolling_combat.crown))
+        rolling_combat.knockback_immune.copy_(
+            torch.where(
+                new,
+                self.royal_delivery.catalog.knockback_immune_catalog[safe],
+                rolling_combat.knockback_immune,
+            )
+        )
+        rolling_combat.death_payload_supported.copy_(
+            torch.where(
+                new,
+                ~unsupported_death,
+                rolling_combat.death_payload_supported,
+            )
+        )
+        rolling_combat.area_receivable.copy_(
+            torch.where(
+                expanded_new,
+                expanded_receiver,
+                rolling_combat.area_receivable,
+            )
+        )
+        rolling_combat.effect_receivable.copy_(
+            torch.where(
+                expanded_new,
+                expanded_receiver,
+                rolling_combat.effect_receivable,
+            )
+        )
+        rolling_combat.knockback_receivable.copy_(
+            torch.where(
+                expanded_new,
+                expanded_receiver,
+                rolling_combat.knockback_receivable,
             )
         )
 
@@ -4603,6 +4716,14 @@ class TensorResidentEngine:
         )
         _copy_rows_(self.rolling_spells.state, source.rolling_spells.state, rows)
         _copy_rows_(self.rolling_spells.targets, source.rolling_spells.targets, rows)
+        _copy_rows_(self.rolling_combat.state, source.rolling_combat.state, rows)
+        for descriptor in fields(self.rolling_combat.targets):
+            destination = getattr(self.rolling_combat.targets, descriptor.name)
+            source_value = getattr(source.rolling_combat.targets, descriptor.name)
+            if destination.ndim == 3:
+                destination[:, rows] = source_value[:, rows]
+            else:
+                destination[rows] = source_value[rows]
         self.royal_delivery.reset_rows_(
             selected_rows,
             source.royal_delivery,
@@ -4817,16 +4938,101 @@ class TensorResidentEngine:
             excluded_entities=miner_owned,
             suppressed_attackers=charge_attack_suppressed,
         )
+        launch_identity = (
+            working.combat.entity_id[:, :, None]
+            == working.runtime.battle.entity_id[:, None, :]
+        ) & working.runtime.entity_pool.active[:, None, :]
+        launch_found = launch_identity.any(dim=2)
+        launch_runtime_slot = launch_identity.to(torch.int64).argmax(dim=2)
+        launch_card = torch.gather(
+            working.runtime.battle.entity_card,
+            1,
+            launch_runtime_slot,
+        ).clamp_min(0)
+        rolling_launch = (
+            combat.projectile_launched
+            & working.combat.present
+            & launch_found
+            & working.rolling_combat.catalog.supported[launch_card]
+        )
+        generic_launch = (
+            combat.projectile_launched
+            & working.combat.present
+            & launch_found
+            & working.projectile_bridge.catalog.supported[launch_card]
+            & (
+                working.projectile_bridge.catalog.kind[launch_card]
+                == BridgePayloadKind.COMBAT_PROJECTILE
+            )
+            & ~rolling_launch
+        )
+        maximum_id = torch.iinfo(torch.int64).max
+        rolling_source_max = torch.where(
+            rolling_launch,
+            working.combat.entity_id,
+            torch.zeros_like(working.combat.entity_id),
+        ).amax(dim=1)
+        generic_source_min = torch.where(
+            generic_launch,
+            working.combat.entity_id,
+            torch.full_like(working.combat.entity_id, maximum_id),
+        ).amin(dim=1)
+        mixed_launch = rolling_launch.any(dim=1) & generic_launch.any(dim=1)
+        mixed_launch_ordered = rolling_source_max < generic_source_min
+        generic_knockback_launch = generic_launch & (
+            working.projectile_bridge.catalog.knockback_units[launch_card] > 0
+        )
+        rolling_launch_conflict = rolling_launch.any(dim=1) & (
+            working.objects.objects.allocated.any(dim=1)
+            | working.terminal_pipeline.state.objects.allocated.any(dim=1)
+            | working.continuous_areas.active.any(dim=1)
+            | working.graveyards.active.any(dim=1)
+            | working.tornadoes.active.any(dim=1)
+            | working.rolling_spells.state.active.any(dim=1)
+            | working.royal_delivery.active.any(dim=1)
+            | working.chain_impacts.active.any(dim=1)
+            | working.spawn_areas.active.any(dim=1)
+            | working._periodic_entity_supported().any(dim=1)
+        )
+        launch_order_unsupported = (
+            mixed_launch & ~mixed_launch_ordered
+        ) | rolling_launch_conflict
+        launch_order_unsupported |= (
+            working.rolling_combat.state.active.any(dim=1) | rolling_launch.any(dim=1)
+        ) & generic_knockback_launch.any(dim=1)
+        working.runtime.mark_unsupported(
+            active & launch_order_unsupported,
+            phase=TickPhase.COMBAT,
+        )
+        active &= ~launch_order_unsupported
+        working.runtime.supported &= active
+        rolling_combat_materialization = (
+            working.rolling_combat.materialize_combat_launches_(
+                working.runtime,
+                working.combat,
+                combat,
+            )
+        )
+        working.runtime.mark_unsupported(
+            active & ~rolling_combat_materialization.committed,
+            phase=TickPhase.COMBAT,
+        )
+        active &= rolling_combat_materialization.committed
+        working.runtime.supported &= active
+        generic_combat = replace(
+            combat,
+            projectile_launched=combat.projectile_launched & ~rolling_launch,
+        )
         previously_allocated_objects = working.objects.objects.allocated.clone()
         projectile_supported = working.projectile_bridge.materialize_combat_launches_(
             working.runtime,
             working.objects,
             working.combat,
-            combat,
+            generic_combat,
         )
         working._record_projectile_sources_(
             previously_allocated_objects,
-            combat,
+            generic_combat,
             projectile_supported,
         )
         working._record_new_projectile_durations_(previously_allocated_objects)
@@ -5343,8 +5549,76 @@ class TensorResidentEngine:
         ).clone()
         chain_object_active = working.objects.objects.allocated.clone()
         chain_source_ids = working.projectile_source_entity_id.clone()
+        rolling_combat = working.rolling_combat.step_(
+            working.runtime,
+            dt_ms=torch.round(core.dt * 1_000).to(torch.int64),
+            battle_mask=active,
+        )
+        working.runtime.mark_unsupported(
+            active & ~rolling_combat.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= rolling_combat.committed
+        working.runtime.supported &= active
         objects = working.projectile_bridge.step_objects_(
             working.runtime, working.objects
+        )
+        rolling_knockback = (
+            rolling_combat.knockback
+            & active[:, None]
+            & ~working.projectile_bridge.knockback_active
+        )
+        rolling_position = torch.stack(
+            (
+                working.runtime.battle.entity_x_units,
+                working.runtime.battle.entity_y_units,
+            ),
+            dim=-1,
+        ).to(torch.int64)
+        rolling_displacement = normalized_vector_units(
+            rolling_combat.knockback_direction_units,
+            rolling_combat.knockback_distance_units,
+        )
+        rolling_endpoint = rolling_position + rolling_displacement
+        rolling_velocity = torch.zeros_like(rolling_combat.knockback_distance_units)
+        rolling_accumulated = torch.zeros_like(rolling_velocity)
+        for _ in range(32):
+            rolling_advance = (
+                rolling_accumulated < rolling_combat.knockback_distance_units
+            )
+            rolling_velocity = torch.where(
+                rolling_advance,
+                rolling_velocity + 25,
+                rolling_velocity,
+            )
+            rolling_accumulated = torch.where(
+                rolling_advance,
+                rolling_accumulated + rolling_velocity,
+                rolling_accumulated,
+            )
+        working.projectile_bridge.knockback_active |= rolling_knockback
+        working.projectile_bridge.knockback_entity_id.copy_(
+            torch.where(
+                rolling_knockback,
+                working.runtime.battle.entity_id,
+                working.projectile_bridge.knockback_entity_id,
+            )
+        )
+        working.projectile_bridge.knockback_target_units.copy_(
+            torch.where(
+                rolling_knockback[..., None],
+                rolling_endpoint.to(
+                    working.projectile_bridge.knockback_target_units.dtype
+                ),
+                working.projectile_bridge.knockback_target_units,
+            )
+        )
+        working.projectile_bridge.knockback_velocity_work.copy_(
+            torch.where(
+                rolling_knockback,
+                rolling_velocity.to(torch.int32),
+                working.projectile_bridge.knockback_velocity_work,
+            )
         )
         chain_inputs = working._chain_inputs_from_object_events_(
             event_start=object_event_start,
@@ -5711,6 +5985,8 @@ class TensorResidentEngine:
             continuous_areas=continuous_areas,
             graveyards=graveyards,
             tornadoes=tornadoes,
+            rolling_combat_materialization=rolling_combat_materialization,
+            rolling_combat=rolling_combat,
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,
