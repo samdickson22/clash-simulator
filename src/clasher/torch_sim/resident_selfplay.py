@@ -289,13 +289,16 @@ class TensorResidentSelfPlay:
 
         action_state = self.engine.deployment.action_state(self.engine.runtime)
         masks = self.engine.deployment.kernel.legal_action_mask(action_state)
+        projected = self.outputs.project_all(
+            include_privileged_critic=self.include_privileged_critic
+        )
         return (
-            self.outputs.project_public(),
-            (
-                self.outputs.project_privileged_critic()
-                if self.include_privileged_critic
-                else None
+            TensorResidentPublicOutputs(
+                structured=projected.public_structured,
+                cv=projected.cv,
+                events=self.outputs.project_public_events(),
             ),
+            projected.privileged_critic,
             masks,
         )
 
@@ -394,16 +397,15 @@ class TensorResidentSelfPlay:
             winner=raw_outcome.winner,
             outcome=raw_outcome.outcome * resident[:, None],
         )
+        projected = self.outputs.project_all(
+            include_privileged_critic=self.include_privileged_critic
+        )
         public = TensorResidentPublicOutputs(
-            structured=self.outputs.project_public_structured(),
-            cv=self.outputs.project_cv(),
+            structured=projected.public_structured,
+            cv=projected.cv,
             events=self.outputs.consume_public_events(),
         )
-        privileged = (
-            self.outputs.project_privileged_critic()
-            if self.include_privileged_critic
-            else None
-        )
+        privileged = projected.privileged_critic
         action_masks = post_mask
 
         if self._all_episode_resident:

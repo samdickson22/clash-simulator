@@ -103,7 +103,14 @@ class TensorObservationProjector:
     """
 
     _SHARED_TENSOR_NAMES = frozenset(
-        {"structured_card_lookup", "cv_card_lookup", "terrain"}
+        {
+            "structured_card_lookup",
+            "cv_card_lookup",
+            "terrain",
+            "_entity_perspectives",
+            "_player_indices",
+            "_enemy_player_indices",
+        }
     )
 
     def __init__(
@@ -129,6 +136,25 @@ class TensorObservationProjector:
 
         batch = state.batch_size
         slots = state.max_entities
+        maximum_live = max((len(battle.entities) for battle in battles), default=0)
+        if maximum_live > self.max_entities:
+            raise EntityCapacityError(
+                f"alive entity count {maximum_live} exceeds configured "
+                f"max_entities={self.max_entities}"
+            )
+        self._trusted_entity_capacity = state.max_entities <= self.max_entities
+        self._entity_perspectives = torch.arange(2, device=self.device).view(1, 2, 1)
+        self._player_indices = torch.arange(2, device=self.device).view(1, 2)
+        self._enemy_player_indices = 1 - self._player_indices
+        self._entity_slot_order = (
+            torch.arange(slots, device=self.device)
+            .view(1, 1, -1)
+            .expand(batch, 2, -1)
+            .clone()
+        )
+        self._cv_ones = torch.ones(
+            (batch, 2, slots), dtype=torch.float32, device=self.device
+        )
 
         def zeros(dtype: torch.dtype, *shape: int) -> torch.Tensor:
             return torch.zeros(shape, dtype=dtype, device=self.device)
@@ -374,7 +400,7 @@ class TensorObservationProjector:
     def _perspective_entity_features(self) -> torch.Tensor:
         state = self.state
         batch, slots = state.entity_id.shape
-        perspectives = torch.arange(2, device=self.device).view(1, 2, 1)
+        perspectives = self._entity_perspectives
         owners = state.entity_player[:, None, :]
         own = owners == perspectives
         features = torch.zeros(
@@ -495,25 +521,16 @@ class TensorObservationProjector:
         features: torch.Tensor,
         valid: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        counts = valid.sum(dim=2)
-        if bool((counts > self.max_entities).any().item()):
-            maximum = int(counts.max().item())
-            raise EntityCapacityError(
-                f"alive entity count {maximum} exceeds configured "
-                f"max_entities={self.max_entities}"
+        if not self._trusted_entity_capacity:
+            torch._assert_async(
+                (valid.sum(dim=2) <= self.max_entities).all(),
+                "alive entity count exceeds configured max_entities",
             )
 
-        batch, perspectives, slots = valid.shape
         token = self.entity_token[:, None].expand(-1, 2, -1)
-        enemy = self.state.entity_player[:, None] != torch.arange(
-            2, device=self.device
-        ).view(1, 2, 1)
+        enemy = self.state.entity_player[:, None] != self._entity_perspectives
         kind = self.state.entity_kind[:, None].expand(-1, 2, -1)
-        order = (
-            torch.arange(slots, device=self.device)
-            .view(1, 1, -1)
-            .expand(batch, perspectives, -1)
-        )
+        order = self._entity_slot_order
         # Stable least-to-most-significant sorts reproduce the oracle's tuple
         # key while preserving entity creation order for rounded-coordinate ties.
         for key in (
@@ -556,8 +573,8 @@ class TensorObservationProjector:
 
     def _structured_globals(self) -> tuple[torch.Tensor, torch.Tensor]:
         state = self.state
-        player = torch.arange(2, device=self.device).view(1, 2)
-        enemy = 1 - player
+        player = self._player_indices
+        enemy = self._enemy_player_indices
         progress = (state.time / torch.clamp(self.tiebreaker_time, min=1.0)).clamp(
             0.0, 1.0
         )
@@ -630,9 +647,11 @@ class TensorObservationProjector:
         )
         critic_ids, critic_features, critic_mask = self._pack_entities(features, active)
         cards = self._card_slots()
-        player = torch.arange(2, device=self.device).view(1, 2)
         enemy_cards = cards.gather(
-            1, (1 - player)[..., None].expand(self.state.batch_size, 2, cards.shape[2])
+            1,
+            self._enemy_player_indices[..., None].expand(
+                self.state.batch_size, 2, cards.shape[2]
+            ),
         )
         actor_globals, critic_globals = self._structured_globals()
         return TensorStructuredObservation(
@@ -711,8 +730,7 @@ class TensorObservationProjector:
 
     def _cv_hud(self) -> torch.Tensor:
         state = self.state
-        player = torch.arange(2, device=self.device).view(1, 2)
-        enemy = 1 - player
+        enemy = self._enemy_player_indices
         progress = (state.time / self.tiebreaker_time).clamp(max=1.0)
         crowns = self._crowns()
         own_hp = state.tower_hp
@@ -766,14 +784,14 @@ class TensorObservationProjector:
 
     def project_cv(self) -> TensorCvObservation:
         state = self.state
-        batch, slots = state.entity_id.shape
+        batch = state.entity_id.shape[0]
         board = torch.zeros(
             (batch, 2, self.cv_builder.BOARD_CHANNELS, BOARD_HEIGHT, BOARD_WIDTH),
             dtype=torch.float32,
             device=self.device,
         )
         board[:, :, :3] = self.terrain[None]
-        perspectives = torch.arange(2, device=self.device).view(1, 2, 1)
+        perspectives = self._entity_perspectives
         own = state.entity_player[:, None] == perspectives
         x, y, in_bounds = self._cv_tiles()
         tile = (y * BOARD_WIDTH + x).clamp(0, BOARD_HEIGHT * BOARD_WIDTH - 1)
@@ -799,8 +817,7 @@ class TensorObservationProjector:
                 ),
             ),
         ).to(torch.int64)
-        ones = torch.ones((batch, 2, slots), dtype=torch.float32, device=self.device)
-        self._scatter_add_plane(board, channel, tile, ones, valid)
+        self._scatter_add_plane(board, channel, tile, self._cv_ones, valid)
         board[:, :, 3:15].clamp_(max=1.0)
 
         hp_channel = torch.where(own, 11, 12).to(torch.int64)

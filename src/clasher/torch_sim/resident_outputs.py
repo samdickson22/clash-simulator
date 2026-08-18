@@ -70,6 +70,15 @@ class TensorResidentPublicOutputs:
 
 
 @dataclass(frozen=True)
+class TensorResidentProjectionBundle:
+    """One live refresh shared by actor, optional critic, and CV projection."""
+
+    public_structured: TensorPublicStructuredObservation
+    privileged_critic: TensorPrivilegedCriticObservation | None
+    cv: TensorCvObservation
+
+
+@dataclass(frozen=True)
 class TensorRewardOutcome:
     """Batched two-player reward and terminal outputs."""
 
@@ -372,6 +381,13 @@ class ResidentOutputProjector:
         self.event_card = event_card
         self.event_x_units = event_x_units
         self.event_y_units = event_y_units
+        self._event_slots = torch.arange(
+            event_time_ms.shape[1], device=runtime.device
+        ).view(1, -1)
+        self._event_perspectives = torch.arange(2, device=runtime.device).view(1, 2, 1)
+        self._command_indices = torch.arange(
+            runtime.batch_size * 2, device=runtime.device
+        )
         self.observations.state = runtime.battle
 
     @classmethod
@@ -551,8 +567,10 @@ class ResidentOutputProjector:
         self._refresh_from_engine()
         return self.observations.project_structured()
 
-    def project_public_structured(self) -> TensorPublicStructuredObservation:
-        projected = self.project_structured()
+    @staticmethod
+    def _public_structured(
+        projected: TensorStructuredObservation,
+    ) -> TensorPublicStructuredObservation:
         return TensorPublicStructuredObservation(
             entity_ids=projected.entity_ids,
             entity_features=projected.entity_features,
@@ -561,8 +579,10 @@ class ResidentOutputProjector:
             global_features=projected.global_features,
         )
 
-    def project_privileged_critic(self) -> TensorPrivilegedCriticObservation:
-        projected = self.project_structured()
+    @staticmethod
+    def _privileged_structured(
+        projected: TensorStructuredObservation,
+    ) -> TensorPrivilegedCriticObservation:
         return TensorPrivilegedCriticObservation(
             entity_ids=projected.critic_entity_ids,
             entity_features=projected.critic_entity_features,
@@ -570,6 +590,31 @@ class ResidentOutputProjector:
             card_ids=projected.critic_card_ids,
             global_features=projected.critic_global_features,
         )
+
+    def project_all(
+        self,
+        *,
+        include_privileged_critic: bool = False,
+    ) -> TensorResidentProjectionBundle:
+        """Refresh once and share structured work across actor and critic."""
+
+        self._refresh_from_engine()
+        structured = self.observations.project_structured()
+        return TensorResidentProjectionBundle(
+            public_structured=self._public_structured(structured),
+            privileged_critic=(
+                self._privileged_structured(structured)
+                if include_privileged_critic
+                else None
+            ),
+            cv=self.observations.project_cv(),
+        )
+
+    def project_public_structured(self) -> TensorPublicStructuredObservation:
+        return self._public_structured(self.project_structured())
+
+    def project_privileged_critic(self) -> TensorPrivilegedCriticObservation:
+        return self._privileged_structured(self.project_structured())
 
     def project_cv(self) -> TensorCvObservation:
         self._refresh_from_engine()
@@ -605,24 +650,18 @@ class ResidentOutputProjector:
                     num_classes=self.batch_size,
                 ).to(torch.int64)
                 local_rank = torch.cumsum(one_hot, dim=0) - 1
-                rank = local_rank[
-                    torch.arange(battle.numel(), device=self.device), battle
-                ]
+                rank = local_rank[self._command_indices[: battle.numel()], battle]
                 destination = self.public_event_count[battle].to(torch.int64) + rank
                 additions = torch.bincount(battle, minlength=self.batch_size).to(
                     torch.int64
                 )
-                if bool(
+                torch._assert_async(
                     (
                         self.public_event_count.to(torch.int64) + additions
-                        > self.event_time_ms.shape[1]
-                    )
-                    .any()
-                    .item()
-                ):
-                    raise OverflowError(
-                        "public card-play event capacity exhausted before decision consume"
-                    )
+                        <= self.event_time_ms.shape[1]
+                    ).all(),
+                    "public card-play event capacity exhausted before decision consume",
+                )
                 core_card = self.catalog_to_core_card[card]
                 self.event_time_ms[battle, destination] = torch.round(
                     self.runtime.battle.time[battle] * 1000.0
@@ -652,12 +691,13 @@ class ResidentOutputProjector:
         """Project public clock/card/timing/deployment facts, never critic state."""
 
         capacity = self.event_time_ms.shape[1]
-        slots = torch.arange(capacity, device=self.device)[None, :]
-        valid = (slots < self.public_event_count[:, None]) & (self.event_player >= 0)
+        valid = (self._event_slots < self.public_event_count[:, None]) & (
+            self.event_player >= 0
+        )
         card = self.observations.structured_card_lookup[
             self.event_card.clamp(0, len(self.runtime.battle.card_names) - 1)
         ]
-        perspectives = torch.arange(2, device=self.device).view(1, 2, 1)
+        perspectives = self._event_perspectives
         owner = self.event_player[:, None, :].expand(-1, 2, -1)
         x = self.event_x_units.to(torch.float64)[:, None, :].expand(-1, 2, -1)
         y = self.event_y_units.to(torch.float64)[:, None, :].expand(-1, 2, -1)
@@ -701,9 +741,10 @@ class ResidentOutputProjector:
         return projected
 
     def project_public(self) -> TensorResidentPublicOutputs:
+        projected = self.project_all()
         return TensorResidentPublicOutputs(
-            structured=self.project_public_structured(),
-            cv=self.project_cv(),
+            structured=projected.public_structured,
+            cv=projected.cv,
             events=self.project_public_events(),
         )
 
@@ -776,6 +817,7 @@ __all__ = [
     "TensorPrivilegedCriticObservation",
     "TensorPublicEventObservation",
     "TensorPublicStructuredObservation",
+    "TensorResidentProjectionBundle",
     "TensorResidentPublicOutputs",
     "TensorRewardOutcome",
     "TensorRewardTracker",
