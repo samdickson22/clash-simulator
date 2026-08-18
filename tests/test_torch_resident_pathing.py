@@ -8,11 +8,14 @@ import pytest
 import torch
 
 from clasher.arena import Position
+from clasher.battle import BattleState
+from clasher.entities import Troop
 from clasher.native_tilemap import native_spawn_tile_blocked
 from clasher.pathfinding import (
     _cached_standard_grid_route,
     _cell_for_position,
     _compute_native_route_goal_cell_units,
+    ground_path_waypoint,
 )
 from clasher.torch_sim.resident_pathing import (
     HALF_TILE_LOGIC_UNITS,
@@ -261,6 +264,51 @@ def test_flying_hover_profile_retains_exact_single_goal_node() -> None:
         plan.head_units,
         plan.goal_cell * HALF_TILE_LOGIC_UNITS + 250,
     )
+
+
+def test_serialized_hover_uses_python_single_node_semantics_exactly() -> None:
+    battle = BattleState(fast_path=False)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    ghost_stats = battle.card_loader.get_card("RoyalGhost")
+    knight_stats = battle.card_loader.get_card("Knight")
+    assert ghost_stats is not None and knight_stats is not None
+    ghost = battle._spawn_entity(Troop, Position(9.0, 12.0), 0, ghost_stats)
+    target = battle._spawn_entity(Troop, Position(9.0, 20.0), 1, knight_stats)
+    assert isinstance(ghost, Troop) and isinstance(target, Troop)
+    ghost.deploy_delay_remaining = 0.0
+    target.deploy_delay_remaining = 0.0
+    assert ghost._is_hover_unit and not ghost.is_air_unit
+    expected = battle.clone()
+    expected_ghost = expected.entities[ghost.id]
+    expected_target = expected.entities[target.id]
+    waypoint = ground_path_waypoint(
+        expected,
+        expected_ghost,
+        expected_target.position,
+        target_entity=expected_target,
+        backwards_reference=expected_target.position,
+    )
+    expected_route = tuple(getattr(expected_ghost, "_native_ground_route_cells", []))
+
+    plan = plan_standard_routes(
+        entity_id=torch.tensor([[ghost.id]]),
+        active=torch.tensor([[True]]),
+        mover_position_units=torch.tensor([[[9_000, 12_000]]]),
+        target_position_units=torch.tensor([[[9_000, 20_000]]]),
+        required_range_units=torch.tensor([[round(float(ghost.range) * 1_000)]]),
+        lane_id=torch.tensor([[ghost._native_lane_id]]),
+        jump_height=torch.tensor([[False]]),
+        direct_single_node=torch.tensor([[True]]),
+    )
+
+    assert plan.supported.item()
+    assert plan.route_count.item() == len(expected_route) == 1
+    assert tuple(plan.route_cells[0, 0, 0].tolist()) == expected_route[0]
+    assert plan.head_units[0, 0].tolist() == [
+        round(waypoint.x * 1_000),
+        round(waypoint.y * 1_000),
+    ]
 
 
 def test_crowded_shared_targets_do_not_create_dynamic_obstacle_routes() -> None:

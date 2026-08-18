@@ -11,13 +11,21 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Sequence
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, fields, replace
 from enum import IntEnum
+from functools import lru_cache
+from typing import Any, cast
 
 import torch
 
 from clasher.battle import BattleState
 from clasher.kinematics import LOGIC_TICK_SECONDS
+from clasher.native_tilemap import (
+    HALF_TILE_LOGIC_UNITS,
+    STANDARD_PATH_HEIGHT,
+    STANDARD_PATH_ROWS,
+    STANDARD_PATH_WIDTH,
+)
 
 from .actions import NO_OP_ACTION, TensorActionCatalog
 from .catalog import EFFECT_OPCODE, MECHANIC_OPCODE, TensorCardCatalog
@@ -30,6 +38,10 @@ from .combat_adapter import project_stationary_combat
 from .deployment import TensorCommandMaterializer, TensorDeploymentCatalog
 from .entity_pool import EntitySelection
 from .movement_adapter import TensorMovementAdapter
+from .resident_pathing import (
+    TensorResidentPathCache,
+    plan_standard_routes,
+)
 from .runtime_deployment import (
     TensorRuntimeDeployment,
     TensorRuntimeDeploymentResult,
@@ -177,6 +189,45 @@ def _copy_rows_(destination: object, source: object, rows: torch.Tensor) -> None
             left[rows] = right[rows]
 
 
+def _gather_slots(value: torch.Tensor, order: torch.Tensor) -> torch.Tensor:
+    index = order.reshape(
+        *order.shape,
+        *((1,) * (value.ndim - 2)),
+    ).expand(*order.shape, *value.shape[2:])
+    return value.gather(1, index)
+
+
+def _copy_slots_(
+    destination: object,
+    source: object,
+    physical_to_sorted: torch.Tensor,
+) -> None:
+    for descriptor in fields(destination):  # type: ignore[arg-type]
+        left = getattr(destination, descriptor.name)
+        right = getattr(source, descriptor.name)
+        if (
+            isinstance(left, torch.Tensor)
+            and isinstance(right, torch.Tensor)
+            and left.ndim >= 2
+            and left.shape[:2] == physical_to_sorted.shape
+            and left.shape == right.shape
+        ):
+            left.copy_(_gather_slots(right, physical_to_sorted))
+
+
+def _sorted_slot_clone(value: object, order: torch.Tensor) -> object:
+    cloned = _clone_tensor_dataclass(value)
+    for descriptor in fields(cloned):  # type: ignore[arg-type]
+        item = getattr(cloned, descriptor.name)
+        if (
+            isinstance(item, torch.Tensor)
+            and item.ndim >= 2
+            and item.shape[:2] == order.shape
+        ):
+            item.copy_(_gather_slots(item, order))
+    return cloned
+
+
 def _clone_object_phase(phase: TensorRuntimeObjectPhase) -> TensorRuntimeObjectPhase:
     cloned = copy.copy(phase)
     for descriptor in fields(phase):
@@ -203,6 +254,47 @@ def _empty_combat_result(state: StationaryCombatState) -> CombatStepResult:
     )
 
 
+@lru_cache(maxsize=4)
+def _resident_lane_candidates(
+    device: torch.device,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    candidate_x = torch.arange(STANDARD_PATH_WIDTH, device=device).repeat_interleave(
+        STANDARD_PATH_HEIGHT
+    )
+    candidate_y = torch.arange(STANDARD_PATH_HEIGHT, device=device).repeat(
+        STANDARD_PATH_WIDTH
+    )
+    candidate_lane = torch.tensor(
+        [
+            ord(STANDARD_PATH_ROWS[y][x]) - ord("0")
+            for x in range(STANDARD_PATH_WIDTH)
+            for y in range(STANDARD_PATH_HEIGHT)
+        ],
+        dtype=torch.int64,
+        device=device,
+    )
+    return candidate_x, candidate_y, candidate_lane
+
+
+def _resident_native_lane_ids(position_units: torch.Tensor) -> torch.Tensor:
+    """Port the spawn-time nearest path-ID scan without Python entities."""
+
+    device = position_units.device
+    source_x = torch.div(
+        position_units[..., 0], HALF_TILE_LOGIC_UNITS, rounding_mode="trunc"
+    )
+    source_y = torch.div(
+        position_units[..., 1], HALF_TILE_LOGIC_UNITS, rounding_mode="trunc"
+    )
+    candidate_x, candidate_y, candidate_lane = _resident_lane_candidates(device)
+    distance = (candidate_x - source_x[..., None]) ** 2 + (
+        candidate_y - source_y[..., None]
+    ) ** 2
+    sentinel = torch.iinfo(torch.int64).max
+    selected = torch.argmin(torch.where(candidate_lane > 0, distance, sentinel), dim=-1)
+    return candidate_lane[selected]
+
+
 class TensorResidentEngine:
     """Retained complete-tick owner with atomic row publication."""
 
@@ -213,6 +305,7 @@ class TensorResidentEngine:
         deployment: TensorRuntimeDeployment,
         mechanics: TensorRuntimeMechanics,
         movement: TensorMovementAdapter,
+        path_cache: TensorResidentPathCache,
         status: TensorRuntimeStatusPhase,
         objects: TensorRuntimeObjectPhase,
         combat: StationaryCombatState,
@@ -223,6 +316,7 @@ class TensorResidentEngine:
         sight_clip_units: torch.Tensor,
         sight_clip_side_units: torch.Tensor,
         first_hit_ms: torch.Tensor,
+        jump_height: torch.Tensor,
         facing_x_units: torch.Tensor,
         facing_y_units: torch.Tensor,
     ) -> None:
@@ -230,6 +324,7 @@ class TensorResidentEngine:
         self.deployment = deployment
         self.mechanics = mechanics
         self.movement = movement
+        self.path_cache = path_cache
         self.status = status
         self.objects = objects
         self.combat = combat
@@ -240,6 +335,7 @@ class TensorResidentEngine:
         self.sight_clip_units = sight_clip_units
         self.sight_clip_side_units = sight_clip_side_units
         self.first_hit_ms = first_hit_ms
+        self.jump_height = jump_height
         self.facing_x_units = facing_x_units
         self.facing_y_units = facing_y_units
 
@@ -309,14 +405,19 @@ class TensorResidentEngine:
         movement = TensorMovementAdapter.from_battles(
             battles, device=device, max_entities=max_entities
         )
-        if movement.route_capacity < 64:
+        if movement.route_capacity < 128:
             expanded_routes = torch.zeros(
-                (runtime.batch_size, max_entities, 64, 2),
+                (runtime.batch_size, max_entities, 128, 2),
                 dtype=torch.int64,
                 device=runtime.device,
             )
             expanded_routes[:, :, : movement.route_capacity] = movement.route_cells
             movement.route_cells = expanded_routes
+        path_cache = TensorResidentPathCache.create(
+            capacity=2_048,
+            route_capacity=movement.route_capacity,
+            device=runtime.device,
+        )
 
         size = len(cards.names)
         uses_projectile = torch.zeros(size, dtype=torch.bool, device=runtime.device)
@@ -326,6 +427,7 @@ class TensorResidentEngine:
         sight_clip = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         sight_clip_side = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         first_hit = torch.zeros(size, dtype=torch.int64, device=runtime.device)
+        jump_height = torch.zeros(size, dtype=torch.bool, device=runtime.device)
         for card_id, name in enumerate(cards.names[1:], start=1):
             stats = battles[0].card_loader.get_card(name)
             if stats is None:
@@ -348,11 +450,13 @@ class TensorResidentEngine:
             first_hit[card_id] = round(
                 float(getattr(stats, "first_hit_time", 0.0) or 0.0)
             )
+            jump_height[card_id] = bool(getattr(stats, "jump_height", None))
         return cls(
             runtime=runtime,
             deployment=deployment,
             mechanics=mechanics,
             movement=movement,
+            path_cache=path_cache,
             status=status,
             objects=objects,
             combat=combat,
@@ -363,6 +467,7 @@ class TensorResidentEngine:
             sight_clip_units=sight_clip,
             sight_clip_side_units=sight_clip_side,
             first_hit_ms=first_hit,
+            jump_height=jump_height,
             facing_x_units=movement.facing_units[..., 0].clone(),
             facing_y_units=movement.facing_units[..., 1].clone(),
         )
@@ -376,6 +481,10 @@ class TensorResidentEngine:
             deployment=self.deployment,
             mechanics=self.mechanics.clone(),
             movement=_clone_tensor_dataclass(self.movement),  # type: ignore[arg-type]
+            # Entries are immutable deterministic functions of standard-arena
+            # keys and are not battle-observable. Speculative rows may safely
+            # warm one shared cache, including rows which later fail closed.
+            path_cache=self.path_cache,
             status=self.status.clone(),
             objects=_clone_object_phase(self.objects),
             combat=_clone_tensor_dataclass(self.combat),  # type: ignore[arg-type]
@@ -386,6 +495,7 @@ class TensorResidentEngine:
             sight_clip_units=self.sight_clip_units,
             sight_clip_side_units=self.sight_clip_side_units,
             first_hit_ms=self.first_hit_ms,
+            jump_height=self.jump_height,
             facing_x_units=self.facing_x_units.clone(),
             facing_y_units=self.facing_y_units.clone(),
         )
@@ -768,6 +878,9 @@ class TensorResidentEngine:
         movement.is_troop.copy_(troop)
         movement.is_air.copy_(self.runtime.catalog.is_air_unit[safe])
         movement.is_hover.copy_(self.runtime.catalog.is_hover_unit[safe])
+        movement.jump_height.copy_(self.jump_height[safe])
+        spawn_lane = _resident_native_lane_ids(movement.position_units)
+        movement.lane_id.copy_(torch.where(new & troop, spawn_lane, movement.lane_id))
         movement.collision_radius_units.copy_(self.combat.collision_radius_units)
         movement.mass_milliunits.copy_(
             torch.round(self.runtime.catalog.mass[safe] * 1_000.0)
@@ -872,19 +985,7 @@ class TensorResidentEngine:
             )
         )
         changed_target = move & (previous_movement_target != self.movement.target_id)
-        direct_waypoint = move & (
-            self.movement.is_air | (self.movement.route_count == 0) | changed_target
-        )
-        self.movement.waypoint_units.copy_(
-            torch.where(
-                direct_waypoint.unsqueeze(-1),
-                target_position,
-                self.movement.waypoint_units,
-            )
-        )
-        self.movement.waypoint_valid.copy_(move)
-        self.movement.ordinary_supported.copy_(move)
-        self._compile_straight_ground_routes_(changed_target)
+        self._compile_straight_ground_routes_(move, changed_target)
 
         ordered = self.runtime.entity_pool.id_order(result.damage_received > 0)
         slots = ordered.slots.clamp_min(0)
@@ -918,53 +1019,109 @@ class TensorResidentEngine:
         runtime.mark_dirty(admitted, phase=TickPhase.COMBAT)
         return result
 
-    def _compile_straight_ground_routes_(self, changed: torch.Tensor) -> None:
-        """Compile exact half-grid heads for unobstructed same-side movement."""
+    def _compile_straight_ground_routes_(
+        self,
+        move: torch.Tensor,
+        changed_target: torch.Tensor,
+    ) -> None:
+        """Compile exact cached native routes for changed target keys."""
 
         movement = self.movement
-        start_y = movement.position_units[..., 1]
-        target_x = movement.target_position_units[..., 0]
-        target_y = movement.target_position_units[..., 1]
-        ground_changed = changed & ~movement.is_air
-        same_side = ((start_y < 15_000) & (target_y < 15_000)) | (
-            (start_y > 17_000) & (target_y > 17_000)
+        plan = plan_standard_routes(
+            entity_id=movement.entity_id,
+            active=move,
+            mover_position_units=movement.position_units,
+            target_position_units=movement.target_position_units,
+            required_range_units=self.combat.range_units,
+            lane_id=movement.lane_id,
+            jump_height=movement.jump_height,
+            direct_single_node=movement.is_air | movement.is_hover,
+            route_capacity=movement.route_capacity,
+            cache=self.path_cache,
         )
-        direction = torch.where(target_y > start_y, 1, -1)
-        first_y = torch.div(start_y, 500, rounding_mode="floor") + direction
-        terminal_y = torch.div(target_y, 500, rounding_mode="floor")
-        count = torch.abs(terminal_y - first_y)
-        valid = (
-            ground_changed
-            & same_side
-            & (start_y != target_y)
-            & (count > 0)
-            & (count <= movement.route_capacity)
+        direct = movement.is_air | movement.is_hover
+        cache_kind = torch.where(direct, 2, 1)
+        changed_key = move & (
+            changed_target
+            | (movement.route_cache_kind != cache_kind)
+            | torch.any(movement.route_cache_goal != plan.goal_cell, dim=-1)
+            | (movement.route_cache_lane != movement.lane_id)
+            | (movement.route_cache_jump != movement.jump_height)
         )
-        movement.ordinary_supported &= ~ground_changed | valid
-        movement.route_count.copy_(
-            torch.where(changed & movement.is_air, 0, movement.route_count)
-        )
-        movement.route_count.copy_(torch.where(valid, count, movement.route_count))
-
-        lane = torch.arange(
-            movement.route_capacity, dtype=torch.int64, device=self.device
-        ).view(1, 1, -1)
-        lane_valid = lane < count[..., None]
-        x_cell = torch.div(target_x, 500, rounding_mode="floor")
-        route_x = x_cell[..., None].expand(*x_cell.shape, movement.route_capacity)
-        route_y = first_y[..., None] + direction[..., None] * lane
-        candidate = torch.stack((route_x, route_y), dim=-1)
-        candidate = torch.where(
-            lane_valid[..., None], candidate, torch.zeros_like(candidate)
+        accepted = changed_key & plan.supported
+        route_supported = move & (~changed_key | plan.supported)
+        movement.ordinary_supported.copy_(route_supported)
+        movement.ordinary_unsupported.copy_(
+            torch.where(
+                move & ~route_supported,
+                torch.ones_like(movement.ordinary_unsupported),
+                torch.zeros_like(movement.ordinary_unsupported),
+            )
         )
         movement.route_cells.copy_(
-            torch.where(valid[..., None, None], candidate, movement.route_cells)
+            torch.where(
+                accepted[..., None, None],
+                plan.route_cells,
+                movement.route_cells,
+            )
         )
-        first_waypoint = torch.stack((x_cell * 500 + 250, first_y * 500 + 250), dim=-1)
-        movement.waypoint_units.copy_(
-            torch.where(valid[..., None], first_waypoint, movement.waypoint_units)
+        movement.route_count.copy_(
+            torch.where(accepted, plan.route_count, movement.route_count)
         )
-        movement.waypoint_valid |= valid
+        movement.ground_path_backwards.copy_(
+            torch.where(
+                accepted,
+                plan.route_moves_backwards,
+                movement.ground_path_backwards,
+            )
+        )
+        movement.route_cache_backwards.copy_(
+            torch.where(
+                accepted,
+                plan.route_moves_backwards,
+                movement.route_cache_backwards,
+            )
+        )
+        movement.route_cache_kind.copy_(
+            torch.where(accepted, cache_kind, movement.route_cache_kind)
+        )
+        movement.route_cache_goal.copy_(
+            torch.where(accepted[..., None], plan.goal_cell, movement.route_cache_goal)
+        )
+        movement.route_cache_lane.copy_(
+            torch.where(accepted, movement.lane_id, movement.route_cache_lane)
+        )
+        movement.route_cache_jump.copy_(
+            torch.where(accepted, movement.jump_height, movement.route_cache_jump)
+        )
+        empty_cached_route = move & ~accepted & (movement.route_count == 0)
+        next_waypoint = torch.where(
+            accepted[..., None],
+            plan.head_units,
+            torch.where(
+                empty_cached_route[..., None],
+                movement.target_position_units,
+                movement.waypoint_units,
+            ),
+        )
+        movement.waypoint_units.copy_(next_waypoint)
+        movement.waypoint_valid.copy_(route_supported)
+
+        landing_units = plan.river_landing_cell * 500 + 250
+        movement.river_target_units.copy_(
+            torch.where(
+                accepted[..., None] & plan.river_landing_valid[..., None],
+                landing_units,
+                movement.river_target_units,
+            )
+        )
+        movement.river_target_valid.copy_(
+            torch.where(
+                accepted,
+                plan.river_landing_valid,
+                movement.river_target_valid,
+            )
+        )
 
     def _movement_phase(
         self, component_consumed: torch.Tensor | None = None
@@ -980,19 +1137,108 @@ class TensorResidentEngine:
         # surviving attacker has no movement component work after its target
         # died in-range; neutralize that row for the packed collision adapter
         # without moving cleanup ahead of the native object/cleanup boundary.
-        self.combat.present[consumed] = False
-        self.movement.slot_present[consumed] = False
-        view = _MovementRuntimeView(
-            core=self.runtime.battle,
-            combat=self.combat,
-            facing_x_units=self.facing_x_units,
-            facing_y_units=self.facing_y_units,
+        physical_ids = self.runtime.battle.entity_id.to(torch.int64)
+        sentinel = torch.iinfo(torch.int64).max
+        order = torch.argsort(
+            torch.where(self.runtime.entity_pool.active, physical_ids, sentinel),
+            dim=1,
+            stable=True,
         )
-        result = step_runtime_movement_(view, self.movement)  # type: ignore[arg-type]
-        self.combat.present[consumed] = saved_present[consumed]
-        self.movement.slot_present[consumed] = saved_slots[consumed]
-        self.runtime.battle.entity_x_units.copy_(view.core.entity_x_units)  # type: ignore[attr-defined]
-        self.runtime.battle.entity_y_units.copy_(view.core.entity_y_units)  # type: ignore[attr-defined]
+        physical_to_sorted = torch.empty_like(order)
+        sorted_index = torch.arange(
+            order.shape[1], dtype=torch.int64, device=self.device
+        ).expand_as(order)
+        physical_to_sorted.scatter_(1, order, sorted_index)
+        sorted_combat = _sorted_slot_clone(self.combat, order)
+        sorted_movement = _sorted_slot_clone(self.movement, order)
+        assert isinstance(sorted_combat, StationaryCombatState)
+        assert isinstance(sorted_movement, TensorMovementAdapter)
+        sorted_combat.present[consumed] = False
+        sorted_movement.slot_present[consumed] = False
+
+        def physical_target_to_sorted(target: torch.Tensor) -> torch.Tensor:
+            safe = target.clamp_min(0)
+            remapped = physical_to_sorted.gather(1, safe)
+            return torch.where(target >= 0, remapped, -1)
+
+        sorted_combat.target_slot.copy_(
+            physical_target_to_sorted(sorted_combat.target_slot)
+        )
+        sorted_movement.target_slot.copy_(
+            physical_target_to_sorted(sorted_movement.target_slot)
+        )
+        sorted_core = copy.copy(self.runtime.battle)
+        sorted_core.entity_x_units = _gather_slots(
+            self.runtime.battle.entity_x_units, order
+        )
+        sorted_core.entity_y_units = _gather_slots(
+            self.runtime.battle.entity_y_units, order
+        )
+        sorted_facing_x = _gather_slots(self.facing_x_units, order)
+        sorted_facing_y = _gather_slots(self.facing_y_units, order)
+        view = _MovementRuntimeView(
+            core=sorted_core,
+            combat=sorted_combat,
+            facing_x_units=sorted_facing_x,
+            facing_y_units=sorted_facing_y,
+        )
+        sorted_result = step_runtime_movement_(
+            cast(Any, view),
+            sorted_movement,
+        )
+
+        def sorted_target_to_physical(target: torch.Tensor) -> torch.Tensor:
+            safe = target.clamp_min(0)
+            remapped = order.gather(1, safe)
+            return torch.where(target >= 0, remapped, -1)
+
+        sorted_combat.target_slot.copy_(
+            sorted_target_to_physical(sorted_combat.target_slot)
+        )
+        sorted_movement.target_slot.copy_(
+            sorted_target_to_physical(sorted_movement.target_slot)
+        )
+        _copy_slots_(self.combat, sorted_combat, physical_to_sorted)
+        _copy_slots_(self.movement, sorted_movement, physical_to_sorted)
+        self.combat.present.copy_(saved_present)
+        self.movement.slot_present.copy_(saved_slots)
+        self.runtime.battle.entity_x_units.copy_(
+            _gather_slots(sorted_core.entity_x_units, physical_to_sorted)
+        )
+        self.runtime.battle.entity_y_units.copy_(
+            _gather_slots(sorted_core.entity_y_units, physical_to_sorted)
+        )
+        self.facing_x_units.copy_(_gather_slots(sorted_facing_x, physical_to_sorted))
+        self.facing_y_units.copy_(_gather_slots(sorted_facing_y, physical_to_sorted))
+        result = replace(
+            sorted_result,
+            ordinary_moved=_gather_slots(
+                sorted_result.ordinary_moved, physical_to_sorted
+            ),
+            collision_only_moved=_gather_slots(
+                sorted_result.collision_only_moved, physical_to_sorted
+            ),
+            river_jump_moved=_gather_slots(
+                sorted_result.river_jump_moved, physical_to_sorted
+            ),
+            route_advanced=_gather_slots(
+                sorted_result.route_advanced, physical_to_sorted
+            ),
+            river_jump_finished=_gather_slots(
+                sorted_result.river_jump_finished, physical_to_sorted
+            ),
+            collision=replace(
+                sorted_result.collision,
+                accumulated_vector_units=_gather_slots(
+                    sorted_result.collision.accumulated_vector_units,
+                    physical_to_sorted,
+                ),
+                contact_count=_gather_slots(
+                    sorted_result.collision.contact_count,
+                    physical_to_sorted,
+                ),
+            ),
+        )
         self.runtime.mark_unsupported(
             self.runtime.supported & ~result.supported_batch,
             phase=TickPhase.MOVEMENT,
@@ -1086,6 +1332,10 @@ class TensorResidentEngine:
             _copy_rows_(left, right, rows)
         self.facing_x_units[rows] = source.facing_x_units[rows]
         self.facing_y_units[rows] = source.facing_y_units[rows]
+        # Route-cache entries are immutable consequences of standard-arena
+        # keys, not battle state. Retaining the speculative cache cannot make
+        # a failed row observable and lets successful rows reuse exact paths.
+        self.path_cache = source.path_cache
         self.runtime.assert_invariants()
 
     def step(

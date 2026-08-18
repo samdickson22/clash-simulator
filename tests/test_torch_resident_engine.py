@@ -25,7 +25,7 @@ DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 def _set_hand(battle: BattleState, first: str) -> None:
     player = battle.players[0]
     player.hand = [first, "Zap", "Cannon", "Fireball"]
-    player.deck = list(player.hand)
+    player.deck = [card for card in player.hand if card is not None]
     player.cycle_queue = deque()
     player.elixir = 10.0
 
@@ -56,7 +56,7 @@ def _segment_battle() -> BattleState:
     )
     attacker = battle.entities[2]
     attacker.target_id = 1
-    attacker._movement_target_id = 1
+    attacker._movement_target_id = 1  # type: ignore[attr-defined]
     attacker.attack_cooldown = 0.0
     _set_hand(battle, "Knight")
     return battle
@@ -82,6 +82,44 @@ def _crowded_battles(count: int = 4) -> list[BattleState]:
             entity.attack_cooldown = 10.0
         battles.append(battle)
     return battles
+
+
+def _cross_river_battle(
+    *,
+    source_player: int,
+    bridge_x: float,
+) -> BattleState:
+    battle = BattleState(fast_path=False, rng=random.Random(744_100))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    source_y, target_y = (14.25, 18.75) if source_player == 0 else (17.75, 13.25)
+    battle._spawn_unit_at_position(
+        Position(bridge_x, source_y),
+        source_player,
+        stats,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    battle._spawn_unit_at_position(
+        Position(bridge_x, target_y),
+        1 - source_player,
+        stats,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    source = battle.entities[1]
+    target = battle.entities[2]
+    source.target_id = target.id
+    # Force resident combat to establish the movement lock and compile its
+    # route instead of inheriting a boundary-compiled retained route.
+    source._movement_target_id = None  # type: ignore[attr-defined]
+    source.attack_cooldown = 10.0
+    target.stun_timer = 100.0
+    target.attack_cooldown = 10.0
+    _set_hand(battle, "Knight")
+    return battle
 
 
 def _oracle_trace(battles: list[BattleState]) -> None:
@@ -371,6 +409,126 @@ def test_crowded_batched_rows_match_oracle_exactly(device: str) -> None:
             RuntimeEventOpcode.DAMAGE,
             RuntimeEventOpcode.DEATH,
         ]
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_exact_cross_river_both_bridge_lanes_and_owners_match_oracle(
+    device: str,
+) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    cases = [
+        _cross_river_battle(source_player=player, bridge_x=bridge_x)
+        for player in (0, 1)
+        for bridge_x in (3.5, 14.5)
+    ]
+    oracle = [battle.clone() for battle in cases]
+    for battle in oracle:
+        order = [0, 1]
+        battle.rng.shuffle(order)
+        battle.step_logic_ticks(1)
+    engine = TensorResidentEngine.from_battles(
+        [battle.clone() for battle in cases],
+        device=device,
+        max_entities=8,
+        max_objects=8,
+    )
+
+    result = engine.step()
+
+    assert result.committed.all()
+    assert engine.path_cache.valid.any()
+    for row, expected in enumerate(oracle):
+        runtime_ids = engine.runtime.battle.entity_id[row].tolist()
+        source_slot = runtime_ids.index(1)
+        expected_source = expected.entities[1]
+        assert engine.runtime.battle.entity_x_units[row, source_slot].item() == round(
+            expected_source.position.x * 1_000
+        )
+        assert engine.runtime.battle.entity_y_units[row, source_slot].item() == round(
+            expected_source.position.y * 1_000
+        )
+        expected_route = tuple(
+            getattr(expected_source, "_native_ground_route_cells", [])
+        )
+        route_count = int(engine.movement.route_count[row, source_slot].item())
+        actual_route = tuple(
+            tuple(value)
+            for value in engine.movement.route_cells[
+                row, source_slot, :route_count
+            ].tolist()
+        )
+        assert actual_route == expected_route
+        assert engine.movement.ground_path_backwards[row, source_slot].item() is (
+            expected_source._ground_path_backwards
+        )
+        assert engine.movement.lane_id[row, source_slot].item() == (
+            expected_source._native_lane_id
+        )
+
+
+def test_death_then_lowest_slot_reuse_routes_new_high_id_exactly() -> None:
+    battle = _segment_battle()
+    stats = battle.card_loader.get_card("Knight")
+    assert stats is not None
+    battle._spawn_unit_at_position(
+        Position(6.5, 6.0),
+        1,
+        stats,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    distant_target = battle.entities[3]
+    distant_target.stun_timer = 100.0
+    distant_target.attack_cooldown = 10.0
+    oracle = battle.clone()
+    engine = TensorResidentEngine.from_battles([battle], max_entities=8, max_objects=8)
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    trace = [
+        (NO_OP_ACTION, NO_OP_ACTION),
+        (NO_OP_ACTION, NO_OP_ACTION),
+        (DEPLOY_KNIGHT_FAR_FROM_COMBAT, NO_OP_ACTION),
+        *[(NO_OP_ACTION, NO_OP_ACTION) for _ in range(22)],
+    ]
+
+    saw_reused_slot_movement = False
+    for actions in trace:
+        order = [0, 1]
+        oracle.rng.shuffle(order)
+        for player in order:
+            assert action_space.apply_action(oracle, player, actions[player])
+        oracle.step_logic_ticks(1)
+        result = engine.step(torch.tensor([actions]))
+        assert result.committed.tolist() == [True]
+        if engine.runtime.battle.entity_id[0, 0].item() == 4:
+            saw_reused_slot_movement |= bool(
+                result.movement.ordinary_moved[0, 0].item()
+            )
+
+    assert 1 not in oracle.entities
+    assert engine.runtime.battle.entity_id[0, 0].item() == 4
+    assert saw_reused_slot_movement
+    runtime_ids = engine.runtime.battle.entity_id[0].tolist()
+    assert {entity_id for entity_id in runtime_ids if entity_id} == set(oracle.entities)
+    for entity_id, entity in oracle.entities.items():
+        slot = runtime_ids.index(entity_id)
+        assert engine.runtime.battle.entity_x_units[0, slot].item() == round(
+            entity.position.x * 1_000
+        )
+        assert engine.runtime.battle.entity_y_units[0, slot].item() == round(
+            entity.position.y * 1_000
+        )
+    assert not torch.all(
+        engine.runtime.battle.entity_id[0, :-1]
+        <= engine.runtime.battle.entity_id[0, 1:]
+    )
+
+
+def test_speculative_clone_shares_immutable_path_cache() -> None:
+    engine = TensorResidentEngine.from_battles([_segment_battle()], max_entities=8)
+    cloned = engine.clone()
+
+    assert cloned.path_cache is engine.path_cache
 
 
 def test_cross_phase_event_overflow_discards_whole_tick_including_rng_and_clock() -> (
