@@ -25,7 +25,11 @@ from clasher.torch_sim.projectile_bridge import (
 from clasher.torch_sim.resident_engine import _resident_deployment_catalog_closure
 from clasher.torch_sim.resident_pending_spells import TensorResidentPendingSpells
 from clasher.torch_sim.runtime_objects import TensorRuntimeObjectPhase
-from clasher.torch_sim.runtime_state import TensorBattleRuntime
+from clasher.torch_sim.runtime_state import (
+    RuntimeEventOpcode,
+    TensorBattleRuntime,
+    TickPhase,
+)
 
 
 @pytest.fixture(params=("cpu", "cuda"))
@@ -88,6 +92,7 @@ def _owners(
     max_entities: int = 128,
     max_objects: int = 64,
     pending_capacity: int = 8,
+    event_capacity: int = 4_096,
 ) -> tuple[
     TensorActionKernel,
     TensorActionState,
@@ -106,7 +111,7 @@ def _owners(
         device=device,
         max_entities=max_entities,
         max_cards=16,
-        event_capacity=4_096,
+        event_capacity=event_capacity,
         catalog=cards,
     )
     objects = TensorRuntimeObjectPhase.from_battles(
@@ -209,6 +214,7 @@ def test_delayed_spell_action_and_due_payload_match_python(
     assert torch.equal(runtime.entity_pool.next_entity_id, before_id)
     assert torch.equal(runtime.battle.entity_hp, before_hp)
     assert runtime.battle.rng.python_state(0) == before_rng
+    assert runtime.events.count.tolist() == [0]
     assert pending.execute_at[pending.active].tolist() == [1.0]
     assert pending.sequence[pending.active].tolist() == [0]
     assert pending.next_sequence.tolist() == [1]
@@ -225,6 +231,14 @@ def test_delayed_spell_action_and_due_payload_match_python(
     ]
 
     _advance_to_due(oracle, runtime, objects, bridge, pending)
+
+    assert runtime.events.phase[0, 0].item() == TickPhase.COMMANDS
+    assert runtime.events.opcode[0, 0].item() == RuntimeEventOpcode.COMMAND
+    assert runtime.events.source_id[0, 0].item() == 0
+    assert runtime.events.target_id[0, 0].item() == 0
+    assert runtime.events.x_units[0, 0].item() == 9_500
+    assert runtime.events.y_units[0, 0].item() == 14_500
+    assert runtime.events.payload[0, 0].item() == runtime.battle.card_to_id[spell_name]
 
     assert runtime.entity_pool.next_entity_id.tolist() == [oracle.next_entity_id]
     assert runtime.battle.rng.python_state(0) == oracle.rng.getstate()
@@ -283,6 +297,15 @@ def test_simultaneous_fireballs_due_order_rng_and_ids_match_python(
     assert pending.sequence[0, active_slots].tolist() == [0, 1]
     _advance_to_due(oracle, runtime, objects, bridge, pending)
 
+    command = runtime.events.opcode[0] == RuntimeEventOpcode.COMMAND
+    assert runtime.events.phase[0, command].tolist() == [
+        TickPhase.COMMANDS,
+        TickPhase.COMMANDS,
+    ]
+    assert runtime.events.x_units[0, command].tolist() == [8_500, 9_500]
+    assert runtime.events.y_units[0, command].tolist() == [17_500, 14_500]
+    assert runtime.events.sequence[0, command].tolist() == [0, 2]
+
     python_objects = sorted(
         (
             entity
@@ -301,6 +324,34 @@ def test_simultaneous_fireballs_due_order_rng_and_ids_match_python(
     ]
     assert runtime.entity_pool.next_entity_id.tolist() == [oracle.next_entity_id]
     assert runtime.battle.rng.python_state(0) == oracle.rng.getstate()
+
+
+def test_due_deadline_precedes_enqueue_sequence_in_global_command_order() -> None:
+    battle = _battle("Fireball", simultaneous=True)
+    kernel, state, runtime, objects, bridge, pending = _owners(
+        [battle], {"Fireball"}, device="cpu", max_entities=16, max_objects=4
+    )
+    actions = torch.tensor([[_action("Fireball", 0), _action("Fireball", 1)]])
+    ingress = kernel.ingress(state, actions)
+    assert pending.enqueue_(
+        runtime,
+        bridge,
+        ingress,
+        player_order=torch.tensor([[1, 0]]),
+    ).committed.all()
+    first, second = torch.where(pending.active[0])[0].tolist()
+    assert pending.sequence[0, [first, second]].tolist() == [0, 1]
+    pending.execute_at[0, first] = 1.0
+    pending.execute_at[0, second] = 0.95
+    runtime.battle.time.fill_(1.0)
+
+    result = pending.resolve_due_(runtime, objects, bridge)
+
+    assert result.committed.tolist() == [True]
+    assert result.resolved_count.tolist() == [2]
+    command = runtime.events.opcode[0] == RuntimeEventOpcode.COMMAND
+    assert runtime.events.x_units[0, command].tolist() == [9_500, 8_500]
+    assert runtime.events.y_units[0, command].tolist() == [14_500, 17_500]
 
 
 def test_enqueue_capacity_failure_rolls_back_whole_row() -> None:
@@ -394,6 +445,34 @@ def test_due_capacity_failure_rolls_back_first_materialization() -> None:
     assert torch.equal(runtime.entity_pool.next_entity_id, before_id)
     assert runtime.battle.rng.python_state(0) == before_rng
     assert torch.equal(pending.active, before_pending)
+    assert not objects.objects.allocated.any()
+
+
+def test_due_command_event_capacity_failure_rolls_back_whole_row() -> None:
+    battle = _battle("Fireball")
+    kernel, state, runtime, objects, bridge, pending = _owners(
+        [battle],
+        {"Fireball"},
+        device="cpu",
+        event_capacity=1,
+    )
+    action = torch.tensor([[_action("Fireball", 0), NO_OP_ACTION]])
+    ingress = kernel.ingress(state, action)
+    assert pending.enqueue_(
+        runtime, bridge, ingress, player_order=torch.tensor([[0, 1]])
+    ).committed.all()
+    runtime.battle.time.fill_(1.0)
+    before_id = runtime.entity_pool.next_entity_id.clone()
+    before_pending = pending.active.clone()
+    before_events = runtime.events.count.clone()
+
+    result = pending.resolve_due_(runtime, objects, bridge)
+
+    assert result.committed.tolist() == [False]
+    assert result.failed_rows.tolist() == [True]
+    assert torch.equal(runtime.entity_pool.next_entity_id, before_id)
+    assert torch.equal(pending.active, before_pending)
+    assert torch.equal(runtime.events.count, before_events)
     assert not objects.objects.allocated.any()
 
 

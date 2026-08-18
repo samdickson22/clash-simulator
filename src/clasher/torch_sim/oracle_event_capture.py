@@ -53,6 +53,7 @@ class OraclePayloadKind(IntEnum):
     STUN = 10
     SLOW = 11
     PROJECTILE_IMPACT = 12
+    UNDERGROUND_MOVEMENT = 13
 
 
 @dataclass(frozen=True)
@@ -211,6 +212,16 @@ class PythonOracleEventCapture:
                 payload_kind=OraclePayloadKind.COMMAND_DEPLOYMENT,
                 payload=payload,
             )
+            if getattr(entity, "_underground_deployment", False):
+                with self._scope(phase=TickPhase.MOVEMENT, source_id=entity.id):
+                    self._record(
+                        RuntimeEventOpcode.MOVEMENT,
+                        source_id=entity.id,
+                        x_units=x,
+                        y_units=y,
+                        payload_kind=OraclePayloadKind.UNDERGROUND_MOVEMENT,
+                        payload=payload,
+                    )
             return
         if isinstance(entity, AreaEffect):
             kind = OraclePayloadKind.SPELL_AREA

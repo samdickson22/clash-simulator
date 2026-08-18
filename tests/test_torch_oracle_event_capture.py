@@ -86,6 +86,28 @@ def test_command_deployment_spawn_is_not_a_projectile_allocation() -> None:
     assert len(battle.entities) == 1
 
 
+def test_miner_command_spawn_precedes_exact_underground_movement_handoff() -> None:
+    battle = _empty_battle()
+    _set_hand(battle, "Miner")
+
+    with PythonOracleEventCapture(battle) as capture:
+        assert capture.deploy_card(0, "Miner", Position(9.0, 20.0))
+
+    assert len(capture.events) == 2
+    spawn, movement = capture.events
+    assert spawn.phase == TickPhase.COMMANDS
+    assert spawn.opcode == RuntimeEventOpcode.SPAWN
+    assert spawn.payload_kind == OraclePayloadKind.COMMAND_DEPLOYMENT
+    assert movement.phase == TickPhase.MOVEMENT
+    assert movement.opcode == RuntimeEventOpcode.MOVEMENT
+    assert movement.payload_kind == OraclePayloadKind.UNDERGROUND_MOVEMENT
+    assert movement.sequence == spawn.sequence + 1
+    assert movement.source_id == spawn.source_id == 1
+    assert movement.target_id == spawn.target_id == 0
+    assert (movement.x_units, movement.y_units) == (9_000, 2_500)
+    assert movement.payload == spawn.payload == "Miner"
+
+
 @pytest.mark.parametrize("card_name", RANGED_CARDS)
 def test_combat_projectile_creation_and_impact_use_actual_phase_and_source(
     card_name: str,

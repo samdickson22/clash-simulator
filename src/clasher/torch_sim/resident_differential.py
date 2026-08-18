@@ -375,14 +375,16 @@ def _resident_payload_kind(
         return int(OraclePayloadKind.DAMAGE)
     if opcode == int(RuntimeEventOpcode.DEATH):
         return int(OraclePayloadKind.DEATH)
+    if opcode == int(RuntimeEventOpcode.MOVEMENT):
+        return int(OraclePayloadKind.UNDERGROUND_MOVEMENT)
     if opcode == int(RuntimeEventOpcode.SPAWN):
         if phase == int(TickPhase.COMMANDS) and source_id > 0 and target_id == 0:
             return int(OraclePayloadKind.COMMAND_DEPLOYMENT)
         if target_id > 0:
             return int(OraclePayloadKind.OBJECT_CHARACTER)
     # STATUS cannot be losslessly classified as STUN versus SLOW from the
-    # current resident planes. MOVEMENT has no scalar call-site capture. Keep
-    # both explicit so either event fails closed instead of being ignored.
+    # current resident planes. Keep it explicit so it fails closed instead of
+    # being ignored.
     return int(OraclePayloadKind.NONE)
 
 

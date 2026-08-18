@@ -31,7 +31,7 @@ from .resident_spell_ingress import (
     _copy_runtime_rows,
 )
 from .runtime_objects import TensorRuntimeObjectPhase
-from .runtime_state import TensorBattleRuntime
+from .runtime_state import RuntimeEventOpcode, TensorBattleRuntime, TickPhase
 
 PENDING_EPSILON = 1e-9
 
@@ -432,6 +432,24 @@ class TensorResidentPendingSpells:
             y_units = torch.gather(
                 self.target_y_units.to(torch.int64), 1, slot[:, None]
             )[:, 0]
+            command_capacity = (
+                speculative_runtime.events.count.to(torch.int64)
+                < speculative_runtime.events.capacity
+            )
+            failed_command = selected & ~command_capacity
+            supported &= ~failed_command
+            command = selected & command_capacity
+            speculative_runtime.events.append(
+                phase=TickPhase.COMMANDS,
+                opcode=RuntimeEventOpcode.COMMAND,
+                valid=command[:, None],
+                source_id=0,
+                target_id=0,
+                x_units=x_units[:, None],
+                y_units=y_units[:, None],
+                amount=0.0,
+                payload=cards[:, None],
+            )
             materialized = speculative_bridge.materialize_spell_actions_(
                 speculative_runtime,
                 speculative_objects,
@@ -439,11 +457,11 @@ class TensorResidentPendingSpells:
                 player_ids=players,
                 target_x_units=x_units,
                 target_y_units=y_units,
-                valid=selected,
+                valid=command,
             )
-            failed = selected & ~materialized
+            failed = command & ~materialized
             supported &= ~failed
-            committed = selected & materialized
+            committed = command & materialized
             selected_rows = rows[committed]
             selected_slots = slot[committed]
             working.active[selected_rows, selected_slots] = False
