@@ -2,19 +2,46 @@ from __future__ import annotations
 
 import random
 from collections import deque
+from dataclasses import replace
 
 import pytest
 import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.resident_differential import (
+    ResidentCoverageClassification,
+    ResidentCoverageDigestMismatch,
     ResidentEpisodeDifferential,
+    ResidentImplementationTopology,
+    classify_resident_coverage_row,
+    compare_resident_coverage_topologies,
+    enumerate_enabled_resident_coverage,
     no_op_actions,
 )
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
+EXPECTED_ENABLED_DIGEST = (
+    "5d3028ed2a28a3d65bf7527884a32a69ab6b60304fc97b5dcc1350620f245079"
+)
+EXPECTED_EVIDENCE = {"Knight", "MiniPekka", "Pekka", "Valkyrie"}
+EXPECTED_NO_INTERACTION = {"Bats", "Giant", "HogRider", "Prince", "RoyalHogs"}
+EXPECTED_DIVERGED = {"Cannon", "Skeletons", "Xbow"}
+EXPECTED_RUNTIME_FALLBACK = {
+    "Archers",
+    "Bandit",
+    "DartGoblin",
+    "Guards",
+    "IceGolem",
+    "IceSpirit",
+    "Lumberjack",
+    "MagicArcher",
+    "NightWitch",
+    "RoyalGhost",
+    "SkeletonBarrel",
+}
 
 
 def _accelerate_episode(battle: BattleState) -> None:
@@ -95,6 +122,10 @@ def test_full_inert_episodes_match_the_represented_resident_subset(device: str) 
     assert report.parity_rows == (0, 1, 2, 3)
     assert report.fallback_only_rows == ()
     assert report.parity_passed
+    assert report.oracle_topology is ResidentImplementationTopology.PYTHON_ORACLE
+    assert report.candidate_topology is (
+        ResidentImplementationTopology.PYTORCH_RESIDENT_BATCHED
+    )
     assert [battle.tick for battle in sources] == [0, 0, 0, 0]
     assert [battle.rng.getstate() for battle in sources] == source_rng
 
@@ -190,3 +221,103 @@ def test_first_divergence_captures_tick_action_rng_and_event_context() -> None:
     assert divergence.path == "rows[0].players[0].elixir"
     assert divergence.expected_rng == divergence.actual_rng
     assert divergence.expected_events == divergence.actual_events == ()
+
+
+@pytest.fixture(scope="module")
+def enabled_coverage_matrix():
+    return enumerate_enabled_resident_coverage()
+
+
+def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
+    enabled_coverage_matrix,
+) -> None:
+    matrix = enabled_coverage_matrix
+    enabled = tuple(sorted(set(unique_cards_from_decks(load_deck_pool()))))
+    assert tuple(entry.card_name for entry in matrix.entries) == enabled
+    assert len(matrix.entries) == 66
+    # This digest is accepted together with its reviewed classification
+    # partition. A change must pass through assert_digest so card/opcode deltas
+    # are visible; replacing only the hash is deliberately insufficient.
+    expected_classifications = {
+        name: ResidentCoverageClassification.PREFLIGHT_FALLBACK.value
+        for name in enabled
+    }
+    for names, classification in (
+        (
+            EXPECTED_EVIDENCE,
+            ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY,
+        ),
+        (
+            EXPECTED_NO_INTERACTION,
+            ResidentCoverageClassification.RESIDENT_NO_INTERACTION,
+        ),
+        (EXPECTED_DIVERGED, ResidentCoverageClassification.DIVERGED),
+        (
+            EXPECTED_RUNTIME_FALLBACK,
+            ResidentCoverageClassification.RUNTIME_FALLBACK,
+        ),
+    ):
+        for name in names:
+            expected_classifications[name] = classification.value
+    matrix.assert_digest(EXPECTED_ENABLED_DIGEST, expected_classifications)
+    assert matrix.evidence_cards == ("Knight", "MiniPekka", "Pekka", "Valkyrie")
+    assert all(
+        matrix.require_evidence(name).interaction_observed
+        for name in matrix.evidence_cards
+    )
+    with pytest.raises(ValueError, match="not represented"):
+        matrix.require_evidence("Golem")
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_small_card_matrix_digest_is_device_stable(device: str) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    comparison = compare_resident_coverage_topologies(
+        ("Knight", "Golem", "Fireball"), device=device
+    )
+    assert comparison.semantic_digest_matches
+    assert comparison.deltas == ()
+    assert (
+        comparison.batched.digest
+        == comparison.scalar_exact.digest
+        == ("4d2eb7a2c6c0b03905d4faee19c09b50ed5b3684b41ff998b33a1ef0707cf1d3")
+    )
+
+
+def test_background_activity_cannot_count_as_tested_card_interaction() -> None:
+    report = ResidentEpisodeDifferential(
+        max_entities=8, max_objects=8, event_capacity=32
+    ).run([_inert_battle(450_000)], no_op_actions, max_ticks=4)
+    background_only = replace(
+        report,
+        interaction_rows=(0,),
+        interaction_entity_ids=((1,),),
+    )
+    classification, attributed = classify_resident_coverage_row(
+        background_only, 0, deployed_entity_ids=(2,)
+    )
+    assert classification is ResidentCoverageClassification.RESIDENT_NO_INTERACTION
+    assert not attributed
+
+
+def test_digest_and_reviewed_partition_report_card_and_opcode_deltas(
+    enabled_coverage_matrix,
+) -> None:
+    matrix = enabled_coverage_matrix
+    expected = {entry.card_name: entry.classification.value for entry in matrix.entries}
+    expected["Golem"] = (
+        ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY.value
+    )
+    with pytest.raises(ResidentCoverageDigestMismatch) as exc_info:
+        # Even the current digest cannot bypass a stale/unreviewed per-card
+        # classification partition.
+        matrix.assert_digest(matrix.digest, expected)
+    delta = next(item for item in exc_info.value.deltas if item.card_name == "Golem")
+    assert delta.mechanic_opcodes
+    assert "Golem" in str(exc_info.value)
+
+
+def test_enabled_2v2_coverage_is_explicitly_unsupported() -> None:
+    with pytest.raises(NotImplementedError, match="does not support 2v2"):
+        enumerate_enabled_resident_coverage(card_names=("Knight",), team_size=2)

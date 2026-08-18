@@ -11,17 +11,27 @@ Oracle event inference is intentionally limited to the current mechanic-free
 
 from __future__ import annotations
 
+import hashlib
+import json
+import random
+from collections import deque
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any, Protocol
+from enum import Enum
+from typing import Any, Protocol, cast
 
 import torch
 
+from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.data import CardDataLoader
 from clasher.kinematics import tiles_to_logic_units
 from clasher.rl.action_space import DiscreteTileActionSpace
+from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
 
 from .actions import NO_OP_ACTION
+from .catalog import TensorCardCatalog
+from .deployment import TensorDeploymentCatalog
 from .diagnostics import StateDivergence, first_divergence
 from .resident_engine import TensorResidentEngine
 from .runtime_state import RuntimeEventOpcode, TickPhase
@@ -33,6 +43,11 @@ RESIDENT_COMPARISON_SCOPE = (
     "CPython RNG state",
     "mechanic-free SPAWN/DAMAGE/DEATH events",
 )
+
+
+class ResidentImplementationTopology(str, Enum):
+    PYTHON_ORACLE = "python_oracle"
+    PYTORCH_RESIDENT_BATCHED = "pytorch_resident_batched"
 
 
 class ResidentActionProvider(Protocol):
@@ -87,7 +102,14 @@ class ResidentEpisodeReport:
     fallback_only_rows: tuple[int, ...]
     completed_rows: tuple[int, ...]
     parity_rows: tuple[int, ...]
+    interaction_rows: tuple[int, ...]
+    interaction_entity_ids: tuple[tuple[int, ...], ...]
+    diverged_rows: tuple[int, ...]
+    divergences: tuple[ResidentEpisodeDivergence, ...]
     divergence: ResidentEpisodeDivergence | None
+    semantic_scope: tuple[str, ...]
+    oracle_topology: ResidentImplementationTopology
+    candidate_topology: ResidentImplementationTopology
 
     @property
     def parity_passed(self) -> bool:
@@ -371,6 +393,7 @@ class ResidentEpisodeDifferential:
         *,
         max_ticks: int,
         resident_mutator: ResidentMutator | None = None,
+        stop_on_first_divergence: bool = True,
     ) -> ResidentEpisodeReport:
         if not battles:
             raise ValueError("at least one battle is required")
@@ -389,6 +412,10 @@ class ResidentEpisodeDifferential:
         preflight_rejected = torch.zeros_like(resident)
         runtime_rejected = torch.zeros_like(resident)
         completed = torch.zeros_like(resident)
+        interaction = torch.zeros_like(resident)
+        interaction_ids: list[set[int]] = [set() for _ in battles]
+        diverged = torch.zeros_like(resident)
+        divergences: list[ResidentEpisodeDivergence] = []
 
         for tick in range(max_ticks):
             raw_actions = actions(tick, tuple(oracle))
@@ -429,8 +456,46 @@ class ResidentEpisodeDifferential:
             newly_runtime_rejected = resident & ~resident_result.committed
             runtime_rejected |= newly_runtime_rejected
             resident &= resident_result.committed
+            interaction |= resident & (
+                resident_result.combat.attacked.any(dim=1)
+                | resident_result.movement.ordinary_moved.any(dim=1)
+                | resident_result.movement.collision_only_moved.any(dim=1)
+                | (resident_result.status.lifetime_hitpoint_loss > 0).any(dim=1)
+                | (resident_result.status.periodic_hitpoint_loss > 0).any(dim=1)
+                | (resident_result.objects.damage > 0).any(dim=1)
+            )
+            combat_sources = resident_result.combat.attacked
+            movement_sources = (
+                resident_result.movement.ordinary_moved
+                | resident_result.movement.collision_only_moved
+                | resident_result.movement.river_jump_moved
+            )
+            status_targets = (resident_result.status.lifetime_hitpoint_loss > 0) | (
+                resident_result.status.periodic_hitpoint_loss > 0
+            )
+            object_targets = resident_result.objects.damage > 0
+            for row in range(len(battles)):
+                if not bool(resident[row].item()):
+                    continue
+                for mask, identifiers in (
+                    (combat_sources[row], engine.combat.entity_id[row]),
+                    (movement_sources[row], engine.movement.entity_id[row]),
+                    (status_targets[row], engine.combat.entity_id[row]),
+                    (object_targets[row], engine.combat.entity_id[row]),
+                ):
+                    interaction_ids[row].update(
+                        int(value)
+                        for value in identifiers[mask].tolist()
+                        if int(value) > 0
+                    )
             if resident_mutator is not None:
                 resident_mutator(tick, engine)
+
+            completed |= torch.tensor(
+                [battle.game_over for battle in oracle],
+                dtype=torch.bool,
+                device=self.device,
+            )
 
             for row, battle in enumerate(oracle):
                 if not bool(resident[row].item()):
@@ -466,19 +531,21 @@ class ResidentEpisodeDifferential:
                         expected_events=expected_events,
                         actual_events=actual_events,
                     )
-                    return self._report(
-                        tick + 1,
-                        resident,
-                        preflight_rejected,
-                        runtime_rejected,
-                        completed,
-                        divergence,
-                    )
-            completed |= torch.tensor(
-                [battle.game_over for battle in oracle],
-                dtype=torch.bool,
-                device=self.device,
-            )
+                    divergences.append(divergence)
+                    diverged[row] = True
+                    resident[row] = False
+                    if stop_on_first_divergence:
+                        return self._report(
+                            tick + 1,
+                            resident,
+                            preflight_rejected,
+                            runtime_rejected,
+                            completed,
+                            interaction,
+                            interaction_ids,
+                            diverged,
+                            tuple(divergences),
+                        )
             if bool(completed.all().item()):
                 return self._report(
                     tick + 1,
@@ -486,7 +553,10 @@ class ResidentEpisodeDifferential:
                     preflight_rejected,
                     runtime_rejected,
                     completed,
-                    None,
+                    interaction,
+                    interaction_ids,
+                    diverged,
+                    tuple(divergences),
                 )
         return self._report(
             max_ticks,
@@ -494,7 +564,10 @@ class ResidentEpisodeDifferential:
             preflight_rejected,
             runtime_rejected,
             completed,
-            None,
+            interaction,
+            interaction_ids,
+            diverged,
+            tuple(divergences),
         )
 
     @staticmethod
@@ -504,7 +577,10 @@ class ResidentEpisodeDifferential:
         preflight_rejected: torch.Tensor,
         runtime_rejected: torch.Tensor,
         completed: torch.Tensor,
-        divergence: ResidentEpisodeDivergence | None,
+        interaction: torch.Tensor,
+        interaction_ids: Sequence[set[int]],
+        diverged: torch.Tensor,
+        divergences: tuple[ResidentEpisodeDivergence, ...],
     ) -> ResidentEpisodeReport:
         def rows(mask: torch.Tensor) -> tuple[int, ...]:
             return tuple(
@@ -522,8 +598,410 @@ class ResidentEpisodeDifferential:
             fallback_only_rows=rows(fallback),
             completed_rows=rows(completed),
             parity_rows=rows(parity),
-            divergence=divergence,
+            interaction_rows=rows(interaction),
+            interaction_entity_ids=tuple(
+                tuple(sorted(values)) for values in interaction_ids
+            ),
+            diverged_rows=rows(diverged),
+            divergences=divergences,
+            divergence=divergences[0] if divergences else None,
+            semantic_scope=RESIDENT_COMPARISON_SCOPE,
+            oracle_topology=ResidentImplementationTopology.PYTHON_ORACLE,
+            candidate_topology=(
+                ResidentImplementationTopology.PYTORCH_RESIDENT_BATCHED
+            ),
         )
+
+
+class ResidentCoverageClassification(str, Enum):
+    REPRESENTED_INTERACTION_PARITY = "represented_interaction_parity"
+    RESIDENT_NO_INTERACTION = "resident_no_interaction"
+    PREFLIGHT_FALLBACK = "preflight_fallback"
+    RUNTIME_FALLBACK = "runtime_fallback"
+    DIVERGED = "diverged"
+    INCOMPLETE = "incomplete"
+
+
+class ResidentCoverageTopology(str, Enum):
+    BATCHED_RESIDENT = "batched_resident"
+    SCALAR_EXACT_RESIDENT = "scalar_exact_resident"
+
+
+@dataclass(frozen=True)
+class ResidentCardCoverageEntry:
+    card_name: str
+    card_kind: int
+    mechanic_opcodes: tuple[int, ...]
+    effect_opcodes: tuple[int, ...]
+    classification: ResidentCoverageClassification
+    interaction_observed: bool
+    divergence_path: str | None
+
+    @property
+    def is_evidence(self) -> bool:
+        return (
+            self.classification
+            is ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY
+            and self.interaction_observed
+        )
+
+
+@dataclass(frozen=True)
+class ResidentCoverageDelta:
+    card_name: str
+    expected: str | None
+    actual: str | None
+    mechanic_opcodes: tuple[int, ...]
+    effect_opcodes: tuple[int, ...]
+
+
+class ResidentCoverageDigestMismatch(AssertionError):
+    def __init__(
+        self,
+        expected_digest: str,
+        matrix: ResidentCoverageMatrix,
+        deltas: tuple[ResidentCoverageDelta, ...],
+    ) -> None:
+        self.expected_digest = expected_digest
+        self.actual_digest = matrix.digest
+        self.deltas = deltas
+        detail = "; ".join(
+            f"{delta.card_name}: {delta.expected!r}->{delta.actual!r} "
+            f"mechanics={delta.mechanic_opcodes} effects={delta.effect_opcodes}"
+            for delta in deltas
+        )
+        super().__init__(
+            f"resident coverage digest {matrix.digest} != {expected_digest}; {detail}"
+        )
+
+
+@dataclass(frozen=True)
+class ResidentCoverageMatrix:
+    entries: tuple[ResidentCardCoverageEntry, ...]
+    digest: str
+    topology: ResidentCoverageTopology
+
+    @property
+    def evidence_cards(self) -> tuple[str, ...]:
+        return tuple(entry.card_name for entry in self.entries if entry.is_evidence)
+
+    @property
+    def fallback_cards(self) -> tuple[str, ...]:
+        return tuple(
+            entry.card_name
+            for entry in self.entries
+            if entry.classification
+            in {
+                ResidentCoverageClassification.PREFLIGHT_FALLBACK,
+                ResidentCoverageClassification.RUNTIME_FALLBACK,
+            }
+        )
+
+    def require_evidence(self, card_name: str) -> ResidentCardCoverageEntry:
+        entry = next(
+            (item for item in self.entries if item.card_name == card_name), None
+        )
+        if entry is None:
+            raise KeyError(card_name)
+        if not entry.is_evidence:
+            raise ValueError(
+                f"{card_name} is {entry.classification.value}, not represented "
+                "post-deployment interaction parity evidence"
+            )
+        return entry
+
+    def deltas(
+        self,
+        expected_classifications: Mapping[str, str],
+    ) -> tuple[ResidentCoverageDelta, ...]:
+        actual = {entry.card_name: entry for entry in self.entries}
+        result: list[ResidentCoverageDelta] = []
+        for name in sorted(set(expected_classifications) | set(actual)):
+            entry = actual.get(name)
+            expected = expected_classifications.get(name)
+            current = None if entry is None else entry.classification.value
+            if expected == current:
+                continue
+            result.append(
+                ResidentCoverageDelta(
+                    card_name=name,
+                    expected=expected,
+                    actual=current,
+                    mechanic_opcodes=() if entry is None else entry.mechanic_opcodes,
+                    effect_opcodes=() if entry is None else entry.effect_opcodes,
+                )
+            )
+        return tuple(result)
+
+    def assert_digest(
+        self,
+        expected_digest: str,
+        expected_classifications: Mapping[str, str],
+    ) -> None:
+        deltas = self.deltas(expected_classifications)
+        if self.digest == expected_digest and not deltas:
+            return
+        if not deltas:
+            # A digest can change while classifications remain stable (for
+            # example an opcode or divergence-path delta). Surface the current
+            # per-card opcode matrix instead of emitting an unactionable hash.
+            deltas = tuple(
+                ResidentCoverageDelta(
+                    card_name=entry.card_name,
+                    expected=entry.classification.value,
+                    actual=entry.classification.value,
+                    mechanic_opcodes=entry.mechanic_opcodes,
+                    effect_opcodes=entry.effect_opcodes,
+                )
+                for entry in self.entries
+            )
+        raise ResidentCoverageDigestMismatch(
+            expected_digest,
+            self,
+            deltas,
+        )
+
+
+def _coverage_digest(entries: Sequence[ResidentCardCoverageEntry]) -> str:
+    payload = [
+        {
+            "card": entry.card_name,
+            "kind": entry.card_kind,
+            "mechanics": entry.mechanic_opcodes,
+            "effects": entry.effect_opcodes,
+            "classification": entry.classification.value,
+            "interaction": entry.interaction_observed,
+            "divergence": entry.divergence_path,
+        }
+        for entry in entries
+    ]
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def classify_resident_coverage_row(
+    report: ResidentEpisodeReport,
+    row: int,
+    deployed_entity_ids: Sequence[int],
+) -> tuple[ResidentCoverageClassification, bool]:
+    """Classify one card row using only interaction attributable to its IDs."""
+
+    deployed = {int(value) for value in deployed_entity_ids}
+    attributable = bool(deployed & set(report.interaction_entity_ids[row]))
+    if row in report.preflight_rejected_rows:
+        return ResidentCoverageClassification.PREFLIGHT_FALLBACK, False
+    if row in report.runtime_rejected_rows:
+        return ResidentCoverageClassification.RUNTIME_FALLBACK, False
+    if row in report.diverged_rows:
+        return ResidentCoverageClassification.DIVERGED, attributable
+    if row in report.parity_rows and attributable:
+        return (
+            ResidentCoverageClassification.REPRESENTED_INTERACTION_PARITY,
+            True,
+        )
+    if row in report.parity_rows:
+        return ResidentCoverageClassification.RESIDENT_NO_INTERACTION, False
+    return ResidentCoverageClassification.INCOMPLETE, attributable
+
+
+def _coverage_fixture(card_name: str, seed: int) -> BattleState:
+    battle = BattleState(fast_path=False, rng=random.Random(seed))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    target_stats = battle.card_loader.get_card("Knight")
+    if target_stats is None:
+        raise ValueError("Knight fixture target is unavailable")
+    battle._spawn_unit_at_position(
+        Position(14.5, 14.5),
+        1,
+        target_stats,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    target = battle.entities[1]
+    target.stun_timer = 100.0
+    target.attack_cooldown = 10.0
+    fillers = [
+        name
+        for name in ("Knight", "Zap", "Cannon", "Fireball", "Archers")
+        if name != card_name
+    ]
+    player = battle.players[0]
+    player.hand = [card_name, *fillers[:3]]
+    player.deck = [str(name) for name in player.hand if name is not None]
+    player.cycle_queue = deque()
+    player.elixir = 20.0
+    battle.overtime_start_time = 1.00
+    battle.tiebreaker_time = 1.05
+    return battle
+
+
+def enumerate_enabled_resident_coverage(
+    *,
+    device: str | torch.device = "cpu",
+    decks_path: str = "decks.json",
+    card_names: Sequence[str] | None = None,
+    team_size: int = 1,
+    topology: str
+    | ResidentCoverageTopology = ResidentCoverageTopology.BATCHED_RESIDENT,
+) -> ResidentCoverageMatrix:
+    """Execute the deterministic enabled-card resident interaction matrix.
+
+    Team-size two is explicitly unsupported; no 1v1 evidence is reused as a
+    2v2 claim.
+    """
+
+    if team_size != 1:
+        raise NotImplementedError("resident differential coverage does not support 2v2")
+    names = tuple(
+        sorted(
+            set(
+                card_names
+                if card_names is not None
+                else unique_cards_from_decks(load_deck_pool(decks_path))
+            )
+        )
+    )
+    if not names:
+        raise ValueError("coverage manifest is empty")
+    selected_topology = ResidentCoverageTopology(topology)
+    if (
+        selected_topology is ResidentCoverageTopology.SCALAR_EXACT_RESIDENT
+        and len(names) > 1
+    ):
+        scalar_entries = tuple(
+            entry
+            for name in names
+            for entry in enumerate_enabled_resident_coverage(
+                device=device,
+                decks_path=decks_path,
+                card_names=(name,),
+                team_size=team_size,
+                topology=ResidentCoverageTopology.SCALAR_EXACT_RESIDENT,
+            ).entries
+        )
+        return ResidentCoverageMatrix(
+            entries=scalar_entries,
+            digest=_coverage_digest(scalar_entries),
+            topology=selected_topology,
+        )
+    loader = CardDataLoader()
+    catalog = TensorCardCatalog.compile(loader, names)
+    deployment_catalog = TensorDeploymentCatalog.compile(loader, catalog)
+    forced_runtime_fallback = {
+        name
+        for name in names
+        if (
+            int(catalog.kind[catalog.name_to_id[name]].item()) in {1, 2, 4}
+            and deployment_catalog.spawned_card_names[catalog.name_to_id[name]]
+            not in catalog.name_to_id
+        )
+    }
+    executable_names = tuple(
+        name for name in names if name not in forced_runtime_fallback
+    )
+    battles = [
+        _coverage_fixture(name, 510_000 + index)
+        for index, name in enumerate(executable_names)
+    ]
+
+    def actions(tick: int, rows: Sequence[BattleState]) -> tuple[tuple[int, int], ...]:
+        action = 12 * 18 + 14 if tick == 0 else NO_OP_ACTION
+        return tuple((action, NO_OP_ACTION) for _ in rows)
+
+    report = ResidentEpisodeDifferential(
+        device=device,
+        max_entities=64,
+        max_objects=64,
+        event_capacity=512,
+    ).run(
+        battles,
+        cast(ResidentActionProvider, actions),
+        max_ticks=21,
+        stop_on_first_divergence=False,
+    )
+    diverged = {item.row: item for item in report.divergences}
+    report_row = {name: row for row, name in enumerate(executable_names)}
+    entries: list[ResidentCardCoverageEntry] = []
+    for name in names:
+        card_id = catalog.name_to_id[name]
+        mechanics = tuple(
+            int(value)
+            for value in catalog.mechanic_opcode[card_id].tolist()
+            if int(value) != 0
+        )
+        effects = tuple(
+            int(value)
+            for value in catalog.effect_opcode[card_id].tolist()
+            if int(value) != 0
+        )
+        row = report_row.get(name)
+        if row is None:
+            classification = ResidentCoverageClassification.RUNTIME_FALLBACK
+            attributed = False
+            divergence_path = None
+        else:
+            summon_count = int(catalog.summon_count[card_id].item())
+            deployed_ids = tuple(range(2, 2 + summon_count))
+            classification, attributed = classify_resident_coverage_row(
+                report, row, deployed_ids
+            )
+            divergence_path = None if row not in diverged else diverged[row].path
+        entries.append(
+            ResidentCardCoverageEntry(
+                card_name=name,
+                card_kind=int(catalog.kind[card_id].item()),
+                mechanic_opcodes=mechanics,
+                effect_opcodes=effects,
+                classification=classification,
+                interaction_observed=attributed,
+                divergence_path=divergence_path,
+            )
+        )
+    stable_entries = tuple(entries)
+    return ResidentCoverageMatrix(
+        entries=stable_entries,
+        digest=_coverage_digest(stable_entries),
+        topology=selected_topology,
+    )
+
+
+@dataclass(frozen=True)
+class ResidentCoverageTopologyComparison:
+    batched: ResidentCoverageMatrix
+    scalar_exact: ResidentCoverageMatrix
+
+    @property
+    def semantic_digest_matches(self) -> bool:
+        return self.batched.digest == self.scalar_exact.digest
+
+    @property
+    def deltas(self) -> tuple[ResidentCoverageDelta, ...]:
+        expected = {
+            entry.card_name: entry.classification.value
+            for entry in self.scalar_exact.entries
+        }
+        return self.batched.deltas(expected)
+
+
+def compare_resident_coverage_topologies(
+    card_names: Sequence[str],
+    *,
+    device: str | torch.device = "cpu",
+) -> ResidentCoverageTopologyComparison:
+    """Compare batched resident semantics with independent one-row execution."""
+
+    batched = enumerate_enabled_resident_coverage(
+        device=device,
+        card_names=card_names,
+        topology=ResidentCoverageTopology.BATCHED_RESIDENT,
+    )
+    scalar = enumerate_enabled_resident_coverage(
+        device=device,
+        card_names=card_names,
+        topology=ResidentCoverageTopology.SCALAR_EXACT_RESIDENT,
+    )
+    return ResidentCoverageTopologyComparison(batched, scalar)
 
 
 def no_op_actions(
@@ -536,9 +1014,20 @@ def no_op_actions(
 __all__ = [
     "RESIDENT_COMPARISON_SCOPE",
     "ResidentActionProvider",
+    "ResidentCardCoverageEntry",
+    "ResidentCoverageClassification",
+    "ResidentCoverageDelta",
+    "ResidentCoverageDigestMismatch",
+    "ResidentCoverageMatrix",
+    "ResidentCoverageTopology",
+    "ResidentCoverageTopologyComparison",
     "ResidentEpisodeDifferential",
     "ResidentEpisodeDivergence",
     "ResidentEpisodeReport",
     "ResidentEventRecord",
+    "ResidentImplementationTopology",
+    "classify_resident_coverage_row",
+    "compare_resident_coverage_topologies",
+    "enumerate_enabled_resident_coverage",
     "no_op_actions",
 ]
