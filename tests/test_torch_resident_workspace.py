@@ -62,11 +62,18 @@ def _engine_snapshot(engine: TensorResidentEngine) -> dict[str, torch.Tensor]:
         "movement",
         "status",
         "mechanics",
+        "miner",
         "objects",
         "projectile_bridge",
         "pending_spells",
     ):
         result.update(_tensor_snapshot(getattr(engine, name), name))
+    result.update(
+        _tensor_snapshot(
+            engine.mechanic_deployment.state,
+            "mechanic_deployment.state",
+        )
+    )
     for name in (
         "passive",
         "combat_world",
@@ -242,8 +249,8 @@ def test_workspace_ticks_match_allocating_engine_exactly(device: str) -> None:
 def test_unsupported_row_is_atomic_while_supported_peer_commits() -> None:
     supported = _battle(91)
     unsupported = _battle(92)
-    unsupported.players[0].hand[0] = "Golem"
-    unsupported.players[0].deck[0] = "Golem"
+    unsupported.players[0].hand[0] = "ElectroWizard"
+    unsupported.players[0].deck[0] = "ElectroWizard"
     engine = _engine([supported, unsupported])
     workspace = TensorResidentWorkspace(engine)
     before = _engine_snapshot(engine)
@@ -300,3 +307,54 @@ def test_workspace_spell_action_matches_allocating_engine_without_reconstruction
             actual = workspace.step(player_order=order)
         assert torch.equal(actual.committed, expected.committed)
         _assert_engine_equal(reference, candidate)
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_workspace_retains_miner_transport_and_rolls_back_failed_mid_tunnel_action(
+    device: str,
+) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    source = _battle(131)
+    player = source.players[0]
+    player.hand = ["Miner", "ElectroWizard", "Cannon", "Zap"]
+    player.deck = ["Miner", "ElectroWizard", "Cannon", "Zap"]
+    reference = _engine([source.clone()], device)
+    candidate = _engine([source.clone()], device)
+    workspace = TensorResidentWorkspace(candidate)
+    miner_action = DiscreteTileActionSpace(canonical_perspective=True).encode_action(
+        0, 9, 20, 0
+    )
+    miner_actions = torch.tensor(
+        [[miner_action, NO_OP_ACTION]], dtype=torch.int64, device=device
+    )
+
+    expected = reference.step(miner_actions)
+    actual = workspace.step(miner_actions)
+    assert expected.committed.tolist() == actual.committed.tolist() == [True]
+    _assert_engine_equal(reference, candidate)
+    for _ in range(4):
+        expected = reference.step()
+        actual = workspace.step()
+        assert expected.committed.tolist() == actual.committed.tolist() == [True]
+        _assert_engine_equal(reference, candidate)
+
+    before = _engine_snapshot(candidate)
+    unsupported_action = DiscreteTileActionSpace(
+        canonical_perspective=True
+    ).encode_action(1, 9, 10, 0)
+    result = workspace.step(
+        torch.tensor(
+            [[unsupported_action, NO_OP_ACTION]],
+            dtype=torch.int64,
+            device=device,
+        )
+    )
+
+    assert result.committed.tolist() == [False]
+    after = _engine_snapshot(candidate)
+    assert before.keys() == after.keys()
+    for name in before:
+        torch.testing.assert_close(
+            after[name], before[name], rtol=0, atol=0, equal_nan=True, msg=name
+        )

@@ -179,6 +179,21 @@ class TensorResidentWorkspace:
         ):
             raise ValueError("speculative death payloads must own mutable storage")
         if (
+            self.scratch.mechanic_deployment.catalog
+            is not self.engine.mechanic_deployment.catalog
+        ):
+            raise ValueError("speculative engines must share deployment capabilities")
+        if self.scratch.mechanic_deployment.state.owner_entity_id.data_ptr() == (
+            self.engine.mechanic_deployment.state.owner_entity_id.data_ptr()
+        ):
+            raise ValueError("speculative mechanic deployment must own mutable storage")
+        if self.scratch.miner.catalog is not self.engine.miner.catalog:
+            raise ValueError("speculative engines must share Miner catalogs")
+        if self.scratch.miner.tracked_entity_id.data_ptr() == (
+            self.engine.miner.tracked_entity_id.data_ptr()
+        ):
+            raise ValueError("speculative Miner must own mutable storage")
+        if (
             self.scratch.dispatcher.passive_catalog
             is not self.engine.dispatcher.passive_catalog
         ):
@@ -258,6 +273,12 @@ class TensorResidentWorkspace:
             source.death_payloads,
             pending_rows,
         )
+        destination.mechanic_deployment.state.reset_rows_(
+            pending_rows,
+            source.mechanic_deployment.state,
+            pending_rows,
+        )
+        destination.miner.reset_rows_(pending_rows, source.miner, pending_rows)
         for left, right in (
             (destination.combat, source.combat),
             (destination.movement, source.movement),

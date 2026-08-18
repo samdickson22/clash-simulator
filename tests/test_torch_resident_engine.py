@@ -361,7 +361,7 @@ def test_enabled_knight_segment_deploys_moves_attacks_and_cleans_death_without_p
     assert engine.runtime.battle.entity_id.device.type == device
 
 
-def test_action_mechanic_opcode_is_reported_and_rejected_before_mutation() -> None:
+def test_represented_action_mechanic_opcode_deploys_and_initializes_owners() -> None:
     battle = _segment_battle()
     _set_hand(battle, "Golem")
     engine = TensorResidentEngine.from_battles(
@@ -369,22 +369,16 @@ def test_action_mechanic_opcode_is_reported_and_rejected_before_mutation() -> No
     )
     actions = torch.tensor([[DEPLOY_KNIGHT_FAR_FROM_COMBAT, NO_OP_ACTION]])
     preflight = engine.preflight(actions)
-    diagnostics = engine.diagnose_preflight(actions)
-    assert not preflight.supported.item()
+    assert preflight.supported.item()
     assert preflight.mechanic_opcode_present[0].any()
-    assert diagnostics.unsupported_mechanic_opcodes[0]
-    assert "unsupported action mechanic opcode" in str(diagnostics.reasons[0])
-    before = _engine_snapshot(engine)
 
     result = engine.step(actions)
 
-    assert not result.committed.item()
-    after = _engine_snapshot(engine)
-    assert after.keys() == before.keys()
-    for name, expected in before.items():
-        torch.testing.assert_close(
-            after[name], expected, rtol=0, atol=0, equal_nan=True, msg=name
-        )
+    assert result.committed.item()
+    death_owner = engine.mechanic_deployment.catalog.owner_index("death_payload")
+    terminal_owner = engine.mechanic_deployment.catalog.owner_index("terminal")
+    assert engine.mechanic_deployment.state.owner_entity_id[death_owner].any()
+    assert engine.mechanic_deployment.state.owner_entity_id[terminal_owner].any()
 
 
 @pytest.mark.parametrize("device", ("cpu", "cuda"))

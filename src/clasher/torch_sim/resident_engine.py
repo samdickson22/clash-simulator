@@ -95,6 +95,15 @@ from .resident_ice_spirit import (
     TensorIceSpiritState,
     step_ice_spirit_lifecycle_,
 )
+from .resident_mechanic_deployment import (
+    TensorMechanicDeploymentCatalog,
+    TensorResidentMechanicDeployment,
+)
+from .resident_miner import (
+    MinerDeploymentHandoff,
+    MinerStepResult,
+    TensorResidentMiner,
+)
 from .resident_pathing import (
     TensorResidentPathCache,
     plan_standard_routes,
@@ -381,6 +390,7 @@ class ResidentTickResult:
     spawn_areas: SpawnAreaStepResult | None
     chain_impacts: ChainImpactStepResult | None
     ice_spirit: IceSpiritStepResult | None
+    miner: MinerStepResult | None
     death_payloads: DeathPayloadStepResult | None
     periodic_spawner: TensorPeriodicSpawnerResult | None
     terminal: ResidentTerminalPipelineResult | None
@@ -686,6 +696,7 @@ class TensorResidentEngine:
         *,
         runtime: TensorBattleRuntime,
         deployment: TensorRuntimeDeployment,
+        mechanic_deployment: TensorResidentMechanicDeployment,
         mechanics: TensorRuntimeMechanics,
         dispatcher: TensorMechanicDispatcher,
         movement: TensorMovementAdapter,
@@ -703,6 +714,8 @@ class TensorResidentEngine:
         chain_impacts: TensorChainImpactState,
         ice_spirit: TensorIceSpiritState,
         death_payloads: TensorDeathPayloadState,
+        death_payload_card_by_catalog: torch.Tensor,
+        miner: TensorResidentMiner,
         periodic_catalog: TensorPeriodicSpawnerCatalog,
         periodic_state: TensorPeriodicSpawnerRuntimeState,
         terminal_pipeline: TensorResidentTerminalPipeline,
@@ -739,6 +752,7 @@ class TensorResidentEngine:
     ) -> None:
         self.runtime = runtime
         self.deployment = deployment
+        self.mechanic_deployment = mechanic_deployment
         self.mechanics = mechanics
         self.dispatcher = dispatcher
         self.movement = movement
@@ -756,6 +770,8 @@ class TensorResidentEngine:
         self.chain_impacts = chain_impacts
         self.ice_spirit = ice_spirit
         self.death_payloads = death_payloads
+        self.death_payload_card_by_catalog = death_payload_card_by_catalog
+        self.miner = miner
         self.periodic_catalog = periodic_catalog
         self.periodic_state = periodic_state
         self.terminal_pipeline = terminal_pipeline
@@ -886,6 +902,7 @@ class TensorResidentEngine:
             mechanic_battles,
             max_areas=min(max_objects, 16),
         )
+        miner = TensorResidentMiner.from_battles(runtime, mechanic_battles)
         area_capacity = min(max_objects, 8)
         continuous_areas = TensorResidentContinuousAreas.from_battles(
             runtime, battles, capacity=area_capacity
@@ -1023,6 +1040,100 @@ class TensorResidentEngine:
         # pre-cleanup owner. The terminal payload owner retains DeathSpawn only.
         terminal_pipeline.catalog.terminal.has_death_damage.zero_()
         terminal_pipeline.catalog.terminal.has_death_area.zero_()
+        terminal_operation = terminal_pipeline.catalog.terminal.source_row_by_card
+        terminal_safe = terminal_operation.clamp_min(0)
+        composable_operation = torch.zeros_like(
+            terminal_pipeline.catalog.terminal.direct_supported
+        )
+        if composable_operation.numel():
+            terminal_direct_composable = (
+                (terminal_operation >= 0)
+                & ~terminal_pipeline.catalog.terminal.spawn.timed_explosive[
+                    terminal_safe
+                ]
+                & (terminal_pipeline.catalog.terminal.child_card_id[terminal_safe] >= 0)
+            )
+            composable_operation.scatter_reduce_(
+                0,
+                terminal_safe,
+                terminal_direct_composable,
+                reduce="amax",
+                include_self=True,
+            )
+            terminal_pipeline.catalog.terminal.direct_supported |= composable_operation
+            terminal_card_supported = (terminal_operation >= 0) & (
+                terminal_pipeline.catalog.terminal.direct_supported[terminal_safe]
+                | terminal_pipeline.catalog.timed_supported[terminal_safe]
+            )
+        else:
+            terminal_card_supported = torch.zeros_like(
+                terminal_operation,
+                dtype=torch.bool,
+            )
+        core_by_catalog = torch.tensor(
+            [runtime.battle.card_to_id.get(name, -1) for name in cards.names],
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        safe_core_by_catalog = core_by_catalog.clamp_min(0)
+        charge_card_supported = (core_by_catalog >= 0) & (
+            charge_carriers.catalog.supported[safe_core_by_catalog]
+        )
+        miner_card_supported = (core_by_catalog >= 0) & (
+            miner.catalog.supported[safe_core_by_catalog]
+        )
+        death_card_map = torch.tensor(
+            [
+                death_payloads.catalog.name_to_id.get(name, 0) if name else 0
+                for name in cards.names
+            ],
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        death_operations = death_payloads.catalog.opcode[death_card_map]
+        death_area_mask = death_operations == int(CombatMechanicOpcode.DEATH_AREA)
+        death_card_supported = (
+            (death_operations == int(CombatMechanicOpcode.DEATH_DAMAGE)).any(dim=1)
+            | death_area_mask.any(dim=1)
+        ) & (
+            ~death_area_mask
+            | death_payloads.catalog.area_payload_supported[death_card_map]
+        ).all(dim=1)
+        all_cards_supported = torch.ones(
+            len(cards.names), dtype=torch.bool, device=runtime.device
+        )
+        mechanic_capabilities = TensorMechanicDeploymentCatalog.compile(
+            cards,
+            {
+                "terminal": (MECHANIC_OPCODE["DeathSpawn"],),
+                "death_payload": (
+                    MECHANIC_OPCODE["DeathDamage"],
+                    MECHANIC_OPCODE["DeathAreaEffect"],
+                ),
+                "periodic": (MECHANIC_OPCODE["PeriodicSpawner"],),
+                "charge": (MECHANIC_OPCODE["BattleRamCharge"],),
+                "combat_dispatch": (MECHANIC_OPCODE["BanditDash"],),
+                "special_deployment": (
+                    MECHANIC_OPCODE["CrownTowerScaling"],
+                    MECHANIC_OPCODE["UndergroundDeployment"],
+                ),
+            },
+            owner_card_supported={
+                "terminal": terminal_card_supported,
+                "death_payload": death_card_supported,
+                "periodic": periodic_catalog.source_row_by_card >= 0,
+                "charge": charge_card_supported,
+                "combat_dispatch": all_cards_supported,
+                "special_deployment": miner_card_supported,
+            },
+            loader=catalog_loader,
+        )
+        mechanic_deployment = TensorResidentMechanicDeployment(
+            mechanic_capabilities,
+            deployment_catalog,
+            runtime,
+        )
+        deployment = mechanic_deployment.driver
         projectile_bridge = TensorResidentProjectileSpellBridge.from_battles(
             runtime, objects, mechanic_battles
         )
@@ -1272,6 +1383,7 @@ class TensorResidentEngine:
         return cls(
             runtime=runtime,
             deployment=deployment,
+            mechanic_deployment=mechanic_deployment,
             mechanics=mechanics,
             dispatcher=dispatcher,
             movement=movement,
@@ -1288,7 +1400,9 @@ class TensorResidentEngine:
             spawn_areas=spawn_areas,
             chain_impacts=chain_impacts,
             ice_spirit=ice_spirit,
+            miner=miner,
             death_payloads=death_payloads,
+            death_payload_card_by_catalog=death_card_map,
             periodic_catalog=periodic_catalog,
             periodic_state=periodic_state,
             terminal_pipeline=terminal_pipeline,
@@ -1353,6 +1467,7 @@ class TensorResidentEngine:
         chain_impacts = self.chain_impacts.clone()
         ice_spirit = self.ice_spirit.clone()
         death_payloads = self.death_payloads.clone()
+        miner = self.miner.clone()
         periodic_state = self.periodic_state.clone()
         terminal_pipeline = _clone_terminal_pipeline(self.terminal_pipeline)
         projectile_bridge = _clone_projectile_bridge(self.projectile_bridge)
@@ -1368,9 +1483,14 @@ class TensorResidentEngine:
         action_router.bridge = projectile_bridge
         action_router.spells = spell_ingress
         action_router.pending_spells = pending_spells
+        mechanic_deployment = copy.copy(self.mechanic_deployment)
+        mechanic_deployment.driver = self.deployment
+        mechanic_deployment.materializer = self.deployment.materializer
+        mechanic_deployment.state = self.mechanic_deployment.state.clone()
         return type(self)(
             runtime=runtime,
             deployment=self.deployment,
+            mechanic_deployment=mechanic_deployment,
             mechanics=mechanics,
             dispatcher=dispatcher,
             movement=_clone_tensor_dataclass(self.movement),  # type: ignore[arg-type]
@@ -1392,7 +1512,9 @@ class TensorResidentEngine:
             spawn_areas=spawn_areas,
             chain_impacts=chain_impacts,
             ice_spirit=ice_spirit,
+            miner=miner,
             death_payloads=death_payloads,
+            death_payload_card_by_catalog=self.death_payload_card_by_catalog,
             periodic_catalog=self.periodic_catalog,
             periodic_state=periodic_state,
             terminal_pipeline=terminal_pipeline,
@@ -1530,6 +1652,32 @@ class TensorResidentEngine:
             & self.charge_carriers.catalog.supported[card]
             & allowed
             & payload
+        )
+
+    def _miner_entity_supported(self) -> torch.Tensor:
+        core = self.runtime.battle
+        character = self.runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        card = core.entity_card.clamp(0, self.miner.catalog.supported.numel() - 1)
+        mechanics = self.runtime.catalog.mechanic_opcode[
+            self._core_catalog_id().clamp_min(0)
+        ]
+        crown = MECHANIC_OPCODE["CrownTowerScaling"]
+        underground = MECHANIC_OPCODE["UndergroundDeployment"]
+        allowed = (
+            (mechanics == 0) | (mechanics == crown) | (mechanics == underground)
+        ).all(dim=2)
+        identity = (
+            self.miner.tracked_entity_id == core.entity_id
+        ) & self.runtime.entity_pool.active
+        retained_transport = identity & self.miner.underground_active
+        surfaced = ~core.entity_placement_pending & (core.entity_deploy_delay <= 1e-9)
+        return (
+            character
+            & self.miner.catalog.supported[card]
+            & allowed
+            & (retained_transport | surfaced)
         )
 
     def _death_payload_entity_supported(self) -> torch.Tensor:
@@ -2307,6 +2455,8 @@ class TensorResidentEngine:
         charge_opcode = MECHANIC_OPCODE["BattleRamCharge"]
         death_damage_opcode = MECHANIC_OPCODE["DeathDamage"]
         death_area_opcode = MECHANIC_OPCODE["DeathAreaEffect"]
+        crown_scaling_opcode = MECHANIC_OPCODE["CrownTowerScaling"]
+        underground_opcode = MECHANIC_OPCODE["UndergroundDeployment"]
         mechanic_admitted = (
             admitted_mechanic[entity_mechanics.to(torch.int64).clamp_min(0)]
             | (entity_mechanics == death_spawn_opcode)
@@ -2314,6 +2464,8 @@ class TensorResidentEngine:
             | (entity_mechanics == charge_opcode)
             | (entity_mechanics == death_damage_opcode)
             | (entity_mechanics == death_area_opcode)
+            | (entity_mechanics == crown_scaling_opcode)
+            | (entity_mechanics == underground_opcode)
         )
         unsupported_active_mechanic = (
             active_character[:, :, None] & (entity_mechanics > 0) & ~mechanic_admitted
@@ -2362,6 +2514,11 @@ class TensorResidentEngine:
         chain_supported = self._chain_entity_supported()
         ice_entity = (entity_mechanics == MECHANIC_OPCODE["IceSpiritFreeze"]).any(dim=2)
         ice_supported = self._ice_spirit_entity_supported()
+        miner_entity = (
+            (entity_mechanics == crown_scaling_opcode)
+            | (entity_mechanics == underground_opcode)
+        ).any(dim=2)
+        miner_supported = self._miner_entity_supported()
         death_spawn_supported = (
             terminal_entity_supported
             | periodic_entity_supported
@@ -2377,6 +2534,10 @@ class TensorResidentEngine:
         )
         publish(
             unsupported_active_mechanic,
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            (miner_entity & active_character & ~miner_supported).any(dim=1),
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
         )
         publish(
@@ -2554,10 +2715,10 @@ class TensorResidentEngine:
 
         mechanic_present = scatter_opcode_presence(mechanic_present, command_mechanics)
         effect_present = scatter_opcode_presence(effect_present, command_effects)
-        # Deployment materialization still rejects every mechanic-bearing
-        # payload. Keep those actions at the preflight boundary until the
-        # materializer receives the same admitted-opcode contract.
         command_has_mechanic = (command_mechanics > 0).any(dim=1)
+        command_mechanic_supported = self.mechanic_deployment.catalog.card_supported[
+            command_cards
+        ]
         command_has_effect = (command_effects > 0).any(dim=1)
         command_payload = self.deployment.materializer.catalog.supported_payload[
             command_cards
@@ -2580,7 +2741,11 @@ class TensorResidentEngine:
             ResidentUnsupportedReason.SPELL_ACTION,
         )
         publish(
-            command_rows_with(command_has_mechanic & ~spell_preflight.command_spell),
+            command_rows_with(
+                command_has_mechanic
+                & ~command_mechanic_supported
+                & ~spell_preflight.command_spell
+            ),
             ResidentUnsupportedReason.ACTION_MECHANIC,
         )
         publish(
@@ -2915,6 +3080,13 @@ class TensorResidentEngine:
         )
         movement_admitted[0] = True
         movement_admitted[list(RESIDENT_DISPATCH_MECHANIC_OPCODES)] = True
+        admitted_width = min(
+            movement_admitted.numel(),
+            self.mechanic_deployment.catalog.admitted_opcode.numel(),
+        )
+        movement_admitted[:admitted_width] |= (
+            self.mechanic_deployment.catalog.admitted_opcode[:admitted_width]
+        )
         movement.mechanic_free.copy_(
             movement_admitted[movement_operations.to(torch.int64)].all(dim=2)
         )
@@ -3559,6 +3731,24 @@ class TensorResidentEngine:
         self.combat.target_slot.copy_(
             torch.where(target_identity_matches, self.combat.target_slot, -1)
         )
+        miner_card = self.runtime.battle.entity_card.clamp(
+            0, self.miner.catalog.supported.numel() - 1
+        )
+        miner_target = self.combat.target_slot.clamp_min(0)
+        miner_crown_target = self.combat.crown_slot.gather(1, miner_target) >= 0
+        miner_crown_attack = (
+            self.miner.catalog.supported[miner_card]
+            & ~self.runtime.battle.entity_placement_pending
+            & (self.combat.target_slot >= 0)
+            & miner_crown_target
+        )
+        self.combat.damage.copy_(
+            torch.where(
+                miner_crown_attack,
+                self.miner.catalog.crown_damage[miner_card],
+                self.combat.damage,
+            )
+        )
         consumed_special = (
             self.movement.special_move_consumed_tick
             & self.combat.present
@@ -3687,6 +3877,157 @@ class TensorResidentEngine:
             )
         runtime.mark_dirty(admitted, phase=TickPhase.COMBAT)
         return result
+
+    def _initialize_spawned_mechanic_owners_(
+        self,
+        spawned: torch.Tensor,
+    ) -> torch.Tensor:
+        """Install retained owner identity for newly allocated characters."""
+
+        runtime = self.runtime
+        core = runtime.battle
+        character_spawned = (
+            spawned
+            & runtime.entity_pool.active
+            & ((core.entity_kind == 0) | (core.entity_kind == 1))
+        )
+        core_card = runtime.card_catalog_index[core.entity_card].clamp_min(0)
+        owner_spawn = (
+            self.mechanic_deployment.catalog.card_owner[:, core_card]
+            & character_spawned[None, :, :]
+        )
+        owner_ids = core.entity_id[None, :, :].expand_as(owner_spawn)
+        self.mechanic_deployment.state.owner_entity_id.masked_fill_(
+            character_spawned[None, :, :], 0
+        )
+        self.mechanic_deployment.state.owner_entity_id.copy_(
+            torch.where(
+                owner_spawn,
+                owner_ids,
+                self.mechanic_deployment.state.owner_entity_id,
+            )
+        )
+
+        catalog = self.mechanic_deployment.catalog
+        charge = owner_spawn[catalog.owner_index("charge")]
+        self.charge_carriers.tracked_entity_id.copy_(
+            torch.where(charge, core.entity_id, self.charge_carriers.tracked_entity_id)
+        )
+        for value, fill in (
+            (self.charge_carriers.charge_progress, 0),
+            (self.charge_carriers.charging, False),
+            (self.charge_carriers.target_slot, -1),
+            (self.charge_carriers.target_entity_id, 0),
+            (self.charge_carriers.kamikaze_primed, False),
+            (self.charge_carriers.kamikaze_remaining_ms, 0),
+            (self.charge_carriers.charge_used, False),
+        ):
+            value.masked_fill_(charge, fill)
+
+        periodic = owner_spawn[catalog.owner_index("periodic")]
+        periodic_operation = self.periodic_catalog.source_row_by_card[core_card]
+        self.periodic_state.reset_(periodic)
+        self.periodic_state.source_entity_id.copy_(
+            torch.where(periodic, core.entity_id, self.periodic_state.source_entity_id)
+        )
+        self.periodic_state.operation_row.copy_(
+            torch.where(periodic, periodic_operation, self.periodic_state.operation_row)
+        )
+
+        death_payload = owner_spawn[catalog.owner_index("death_payload")]
+        self.death_payloads.entity_card.copy_(
+            torch.where(
+                death_payload,
+                self.death_payload_card_by_catalog[core_card],
+                self.death_payloads.entity_card,
+            )
+        )
+        source_rows, source_slots = torch.where(death_payload)
+        receiver = (
+            runtime.entity_pool.active
+            & core.entity_active
+            & ((core.entity_kind == 0) | (core.entity_kind == 1))
+        )
+        self.death_payloads.damage_receivable[source_rows, source_slots] = receiver[
+            source_rows
+        ]
+        return owner_spawn
+
+    def _initialize_mechanic_deployment_(
+        self,
+        deployment: TensorRuntimeDeploymentResult,
+        committed: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        runtime = self.runtime
+        details = deployment.deployment
+        spawned = details.allocation.valid & committed[:, None]
+        card = details.spawned_card_id.clamp(
+            0, len(self.mechanic_deployment.catalog.cards.names) - 1
+        )
+        self._initialize_spawned_mechanic_owners_(spawned)
+
+        catalog = self.mechanic_deployment.catalog
+        underground = catalog.underground_deployment[card] & spawned
+        destination = torch.stack(
+            (runtime.battle.entity_x_units, runtime.battle.entity_y_units), dim=-1
+        ).to(torch.int64)
+        origin_x = torch.full_like(runtime.battle.entity_x_units, 9_000)
+        origin_y = torch.where(
+            runtime.battle.entity_player == 0,
+            torch.full_like(runtime.battle.entity_y_units, 2_500),
+            torch.full_like(runtime.battle.entity_y_units, 29_500),
+        )
+        origin = torch.stack((origin_x, origin_y), dim=-1).to(torch.int64)
+        delta = destination - origin
+        distance = integer_sqrt_tensor((delta * delta).sum(dim=-1))
+        speed = catalog.underground_speed_units[card].clamp_min(1)
+        ticks = torch.div(
+            torch.clamp(distance - speed, min=0) + speed - 1,
+            speed,
+            rounding_mode="floor",
+        ).clamp_min(1)
+        ticks = torch.where(distance > 0, ticks, 0)
+        travel_duration = ticks.to(torch.float64) * 0.05
+        runtime.battle.entity_x_units.copy_(
+            torch.where(underground, origin_x, runtime.battle.entity_x_units)
+        )
+        runtime.battle.entity_y_units.copy_(
+            torch.where(underground, origin_y, runtime.battle.entity_y_units)
+        )
+        runtime.battle.entity_deploy_delay.copy_(
+            torch.where(
+                underground,
+                runtime.battle.entity_deploy_delay + travel_duration,
+                runtime.battle.entity_deploy_delay,
+            )
+        )
+        runtime.battle.entity_placement_pending |= underground
+        event_match = (
+            runtime.events.source_id[:, :, None] == runtime.battle.entity_id[:, None, :]
+        ) & underground[:, None, :]
+        event_underground = event_match.any(dim=2)
+        event_slot = event_match.to(torch.int64).argmax(dim=2)
+        runtime.events.x_units.copy_(
+            torch.where(
+                event_underground,
+                runtime.battle.entity_x_units.gather(1, event_slot),
+                runtime.events.x_units,
+            )
+        )
+        runtime.events.y_units.copy_(
+            torch.where(
+                event_underground,
+                runtime.battle.entity_y_units.gather(1, event_slot),
+                runtime.events.y_units,
+            )
+        )
+
+        return (
+            underground,
+            torch.where(underground[..., None], destination, 0),
+            torch.where(underground, travel_duration, 0.0),
+            committed,
+        )
 
     def _mechanic_inputs(
         self,
@@ -4223,6 +4564,12 @@ class TensorResidentEngine:
             source.death_payloads,
             selected_rows,
         )
+        self.mechanic_deployment.state.reset_rows_(
+            selected_rows,
+            source.mechanic_deployment.state,
+            selected_rows,
+        )
+        self.miner.reset_rows_(selected_rows, source.miner, selected_rows)
         self.facing_x_units[rows] = source.facing_x_units[rows]
         self.facing_y_units[rows] = source.facing_y_units[rows]
         self.pending_projectile_max_duration_ms[rows] = (
@@ -4294,9 +4641,14 @@ class TensorResidentEngine:
         )
         deployment = action_router.deployment
         spell_ingress = action_router.spell_ingress
+        mechanic_deployment_handoff = working._initialize_mechanic_deployment_(
+            deployment,
+            action_router.committed,
+        )
         active = (
             preflight.supported
             & action_router.committed
+            & mechanic_deployment_handoff[3]
             & ~working.runtime.battle.game_over
         )
         working.runtime.supported &= active
@@ -4355,6 +4707,14 @@ class TensorResidentEngine:
         # dispatcher also owns this hook for future closure, but no admitted
         # row can currently execute both paths with a live Cloak operation.
         working.mechanics.tick_cloak_(working.runtime)
+        miner_identity = (
+            working.runtime.entity_pool.active
+            & working.runtime.battle.entity_active
+            & (working.miner.tracked_entity_id == working.runtime.battle.entity_id)
+        )
+        miner_owned = (
+            miner_identity & working.miner.underground_active
+        ) | mechanic_deployment_handoff[0]
         charge_entities = (
             working.runtime.entity_pool.active
             & working.charge_carriers.catalog.supported[
@@ -4376,7 +4736,7 @@ class TensorResidentEngine:
         combat = working._combat_phase(
             active,
             pending_spells.stun_applied,
-            excluded_entities=charge_entities,
+            excluded_entities=charge_entities | miner_owned,
         )
         previously_allocated_objects = working.objects.objects.allocated.clone()
         projectile_supported = working.projectile_bridge.materialize_combat_launches_(
@@ -4400,8 +4760,14 @@ class TensorResidentEngine:
         composed_death_entities = (
             working._charge_entity_supported()
             | working._death_payload_entity_supported()
+            | miner_owned
         )
-        mechanic_inputs = working._mechanic_inputs(deployment, combat, active)
+        mechanic_inputs = working._mechanic_inputs(
+            deployment,
+            combat,
+            active,
+        )
+        mechanic_inputs.spawned &= ~miner_owned
         mechanic_inputs.death_triggered &= ~composed_death_entities
         retained_kind = working.runtime.battle.entity_kind.clone()
         working.runtime.battle.entity_kind.copy_(
@@ -4444,6 +4810,41 @@ class TensorResidentEngine:
         )
         active &= electro_supported
         working.runtime.supported &= active
+        miner_spawn = mechanic_deployment_handoff[0]
+        miner_consume = working.miner.consume_handoff_(
+            working.runtime,
+            MinerDeploymentHandoff(
+                spawn_mask=miner_spawn,
+                entity_id=torch.where(
+                    miner_spawn,
+                    working.runtime.battle.entity_id,
+                    0,
+                ),
+                destination_units=mechanic_deployment_handoff[1],
+                travel_duration_seconds=mechanic_deployment_handoff[2],
+            ),
+        )
+        working.runtime.mark_unsupported(
+            active & ~miner_consume.committed,
+            phase=TickPhase.MOVEMENT,
+        )
+        active &= miner_consume.committed
+        working.runtime.supported &= active
+        miner = working.miner.step_(
+            working.runtime,
+            ordinary_waypoint_units=working.movement.waypoint_units,
+            ordinary_waypoint_valid=working.movement.waypoint_valid,
+            battle_mask=active,
+        )
+        working.runtime.mark_unsupported(
+            active & ~miner.committed,
+            phase=TickPhase.MOVEMENT,
+        )
+        active &= miner.committed
+        working.runtime.supported &= active
+        working.miner.tracked_entity_id.masked_fill_(miner.surfaced, 0)
+        working.miner.target_slot.masked_fill_(miner.surfaced, -1)
+        working.miner.public_target_id.masked_fill_(miner.surfaced, 0)
         working.combat.hp.copy_(working.runtime.battle.entity_hp)
         working.combat.alive.copy_(working.runtime.battle.entity_active)
         working.combat.x_units.copy_(
@@ -4483,7 +4884,9 @@ class TensorResidentEngine:
             | working.dispatcher.dash.special_consumed
         )
         working.movement.special_movement.copy_(
-            special_consumed | working.movement.river_jump_active
+            special_consumed
+            | working.dispatcher.underground_active
+            | working.movement.river_jump_active
         )
         combat_death = (working.combat.present & ~working.combat.alive).any(dim=1)
         special_row = special_consumed.any(dim=1)
@@ -4511,9 +4914,11 @@ class TensorResidentEngine:
             | charge_entities
             | ice_consumed
             | electro_consumed
+            | working.dispatcher.underground_active
+            | miner_owned
         )
-        working.movement.slot_present &= ~charge_entities
-        working.movement.entity_active &= ~charge_entities
+        working.movement.slot_present &= ~(charge_entities | miner_owned)
+        working.movement.entity_active &= ~(charge_entities | miner_owned)
         movement = working._movement_phase(movement_consumed)
         working.runtime.phases.movement_vector_units.copy_(
             working.movement.accumulated_vector_units
@@ -4535,7 +4940,9 @@ class TensorResidentEngine:
             active[:, None] & (status.periodic_hitpoint_loss > 0.0)
         )
         working._rewrite_area_periodic_events_(status_event_start)
-        completed = working._character_object_phase(active, ~charge_entities)
+        completed = working._character_object_phase(
+            active, ~(charge_entities | miner_owned)
+        )
         all_source_slots = torch.arange(
             working.runtime.max_entities,
             dtype=torch.int64,
@@ -5170,24 +5577,27 @@ class TensorResidentEngine:
             )
             active &= terminal.committed
             cleanup = _removed_entities(before_terminal_cleanup, working.runtime)
-            charge_spawned = (
-                charge_carriers.handoff.valid.any(dim=1)[:, None]
-                & working.runtime.entity_pool.active
+            terminal_spawned = (
+                working.runtime.entity_pool.active
                 & (working.runtime.battle.entity_id != entity_id_before_terminal)
                 & (
                     (working.runtime.battle.entity_kind == 0)
                     | (working.runtime.battle.entity_kind == 1)
                 )
             )
+            working._initialize_spawned_mechanic_owners_(terminal_spawned)
+            charge_spawned = (
+                charge_carriers.handoff.valid.any(dim=1)[:, None] & terminal_spawned
+            )
             completed |= working._character_object_phase(active, charge_spawned)
-            working._refresh_area_target_planes_(charge_spawned)
-            charge_spawned_catalog = working.runtime.card_catalog_index[
+            working._refresh_area_target_planes_(terminal_spawned)
+            terminal_spawned_catalog = working.runtime.card_catalog_index[
                 working.runtime.battle.entity_card
             ].clamp_min(0)
             initialize_spawned_attack_clocks_(
                 working._combat_clock_planes(),
-                spawned=charge_spawned,
-                first_hit_ms=working.first_hit_ms[charge_spawned_catalog],
+                spawned=terminal_spawned,
+                first_hit_ms=working.first_hit_ms[terminal_spawned_catalog],
             )
             working._cleanup(active)
         else:
@@ -5220,6 +5630,7 @@ class TensorResidentEngine:
             spawn_areas=spawn_areas,
             chain_impacts=chain_impacts,
             ice_spirit=ice_spirit,
+            miner=miner,
             death_payloads=death_payloads,
             periodic_spawner=periodic_spawner,
             terminal=terminal,
