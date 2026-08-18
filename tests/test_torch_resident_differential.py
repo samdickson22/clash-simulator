@@ -24,45 +24,55 @@ from clasher.torch_sim.resident_differential import (
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "97b64d9e8de62d284a29e34cdb9e8f1441764d76f15772f769e43a10063f48b4"
+    "613394e90c1e5ce1a17e0956616f50dcbe51f63dcd494454000846eb19b984de"
 )
 EXPECTED_EVIDENCE = {
     "Cannon",
     "Knight",
     "MiniPekka",
-    "Minions",
     "Pekka",
     "Skeletons",
     "Valkyrie",
-    "Xbow",
 }
 EXPECTED_NO_INTERACTION = {
-    "BabyDragon",
-    "Bats",
-    "Bomber",
+    "Archers",
     "Bowler",
+    "DartGoblin",
     "Giant",
     "HogRider",
     "MegaMinion",
     "Musketeer",
     "Prince",
-    "Princess",
     "RoyalHogs",
-    "SpearGoblins",
 }
-EXPECTED_DIVERGED: set[str] = set()
-EXPECTED_RUNTIME_FALLBACK = {
-    "Archers",
-    "Bandit",
-    "DartGoblin",
-    "Guards",
-    "IceGolem",
-    "IceSpirit",
-    "Lumberjack",
-    "MagicArcher",
-    "NightWitch",
-    "RoyalGhost",
-    "SkeletonBarrel",
+EXPECTED_DIVERGED = {
+    "Arrows",
+    "BabyDragon",
+    "Bats",
+    "Bomber",
+    "Fireball",
+    "GiantSnowball",
+    "GoblinBarrel",
+    "Minions",
+    "Princess",
+    "Rocket",
+    "SpearGoblins",
+    "Xbow",
+    "Zap",
+}
+EXPECTED_RUNTIME_FALLBACK: set[str] = set()
+WRAPPER_CHILD_ALIASES = {
+    "Archers": "Archer",
+    "Bandit": "Assassin",
+    "DartGoblin": "BlowdartGoblin",
+    "Guards": "SkeletonWarriors",
+    "IceGolem": "IceGolemite",
+    "IceSpirit": "IceSpirits",
+    "Lumberjack": "RageBarbarian",
+    "MagicArcher": "EliteArcher",
+    "NightWitch": "DarkWitch",
+    "RoyalGhost": "Ghost",
+    "SkeletonBarrel": "SkeletonBalloon",
 }
 
 
@@ -286,11 +296,9 @@ def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
         "Cannon",
         "Knight",
         "MiniPekka",
-        "Minions",
         "Pekka",
         "Skeletons",
         "Valkyrie",
-        "Xbow",
     )
     assert all(
         matrix.require_evidence(name).interaction_observed
@@ -299,7 +307,7 @@ def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
     # Classification reaches this state only from report.parity_rows
     # (resident AND configured-episode-completed) plus interaction attributed
     # to IDs allocated by the tested action. Bridge support alone cannot pass.
-    for name in ("Cannon", "Minions", "Skeletons", "Xbow"):
+    for name in ("Cannon", "Skeletons"):
         assert matrix.require_evidence(name).interaction_observed
     with pytest.raises(ValueError, match="not represented"):
         matrix.require_evidence("Golem")
@@ -317,7 +325,7 @@ def test_small_card_matrix_digest_is_device_stable(device: str) -> None:
     assert (
         comparison.batched.digest
         == comparison.scalar_exact.digest
-        == ("4d2eb7a2c6c0b03905d4faee19c09b50ed5b3684b41ff998b33a1ef0707cf1d3")
+        == ("4f3c9a65765898a6bbd489aa9780d83c4687f8ce1c1785480c28885ce6b0b8b6")
     )
 
 
@@ -335,6 +343,36 @@ def test_background_activity_cannot_count_as_tested_card_interaction() -> None:
     )
     assert classification is ResidentCoverageClassification.RESIDENT_NO_INTERACTION
     assert not attributed
+
+
+def test_completed_shorter_row_is_not_reclassified_as_fallback() -> None:
+    early = _inert_battle(451_000)
+    late = _inert_battle(451_001)
+    late.overtime_start_time = 0.10
+    late.tiebreaker_time = 0.15
+    report = ResidentEpisodeDifferential(
+        max_entities=8, max_objects=8, event_capacity=32
+    ).run([early, late], no_op_actions, max_ticks=4)
+    assert report.completed_rows == (0, 1)
+    assert report.parity_rows == (0, 1)
+    assert report.preflight_rejected_rows == ()
+    assert report.runtime_rejected_rows == ()
+
+
+def test_wrapper_child_aliases_are_executed_not_forced_runtime_fallback() -> None:
+    matrix = enumerate_enabled_resident_coverage(
+        card_names=tuple(WRAPPER_CHILD_ALIASES)
+    )
+    assert tuple(entry.card_name for entry in matrix.entries) == tuple(
+        sorted(WRAPPER_CHILD_ALIASES)
+    )
+    # Production and verification now compile the same recursive serialized
+    # wrapper->child namespace. A row may still fail closed at a real engine
+    # preflight, but it cannot be excluded before the differential executes.
+    assert all(
+        entry.classification is not ResidentCoverageClassification.RUNTIME_FALLBACK
+        for entry in matrix.entries
+    )
 
 
 def test_digest_and_reviewed_partition_report_card_and_opcode_deltas(

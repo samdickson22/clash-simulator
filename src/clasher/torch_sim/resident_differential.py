@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import random
 from collections import deque
 from collections.abc import Callable, Mapping, Sequence
@@ -34,7 +35,10 @@ from .actions import NO_OP_ACTION
 from .catalog import TensorCardCatalog
 from .deployment import TensorDeploymentCatalog
 from .diagnostics import StateDivergence, first_divergence
-from .resident_engine import TensorResidentEngine
+from .resident_engine import (
+    TensorResidentEngine,
+    _resident_deployment_catalog_closure,
+)
 from .runtime_state import RuntimeEventOpcode, TickPhase
 
 RESIDENT_COMPARISON_SCOPE = (
@@ -502,9 +506,10 @@ class ResidentEpisodeDifferential:
             if action_tensor.shape != (len(battles), 2):
                 raise ValueError("action provider must return shape [batch, 2]")
             preflight = engine.preflight(action_tensor)
-            newly_preflight_rejected = resident & ~preflight.supported
+            live_resident = resident & ~completed
+            newly_preflight_rejected = live_resident & ~preflight.supported
             preflight_rejected |= newly_preflight_rejected
-            resident &= preflight.supported
+            resident &= preflight.supported | completed
 
             before_entities = [
                 {
@@ -538,28 +543,37 @@ class ResidentEpisodeDifferential:
                     )
                 battle.step_logic_ticks(1)
 
-            resident_result = engine.step(action_tensor)
-            newly_runtime_rejected = resident & ~resident_result.committed
-            runtime_rejected |= newly_runtime_rejected
-            resident &= resident_result.committed
-            interaction |= resident & (
-                resident_result.combat.attacked.any(dim=1)
-                | resident_result.movement.ordinary_moved.any(dim=1)
-                | resident_result.movement.collision_only_moved.any(dim=1)
-                | (resident_result.status.lifetime_hitpoint_loss > 0).any(dim=1)
-                | (resident_result.status.periodic_hitpoint_loss > 0).any(dim=1)
-                | (resident_result.objects.damage > 0).any(dim=1)
+            # An interaction is post-deployment only when that entity's
+            # character component was already live at the start of the tick.
+            # A delay reaching zero in the later object phase cannot make an
+            # earlier collision/movement/status phase count retroactively.
+            interaction_eligible = (
+                engine.runtime.entity_pool.active
+                & engine.runtime.battle.entity_active
+                & (engine.runtime.battle.entity_deploy_delay <= 1e-9)
             )
-            combat_sources = resident_result.combat.attacked
+            resident_result = engine.step(action_tensor)
+            live_resident = resident & ~completed
+            newly_runtime_rejected = live_resident & ~resident_result.committed
+            runtime_rejected |= newly_runtime_rejected
+            resident &= resident_result.committed | completed
+            combat_sources = resident_result.combat.attacked & interaction_eligible
             movement_sources = (
                 resident_result.movement.ordinary_moved
                 | resident_result.movement.collision_only_moved
                 | resident_result.movement.river_jump_moved
+            ) & interaction_eligible
+            status_targets = (
+                (resident_result.status.lifetime_hitpoint_loss > 0)
+                | (resident_result.status.periodic_hitpoint_loss > 0)
+            ) & interaction_eligible
+            object_targets = (resident_result.objects.damage > 0) & interaction_eligible
+            interaction |= resident & (
+                combat_sources.any(dim=1)
+                | movement_sources.any(dim=1)
+                | status_targets.any(dim=1)
+                | object_targets.any(dim=1)
             )
-            status_targets = (resident_result.status.lifetime_hitpoint_loss > 0) | (
-                resident_result.status.periodic_hitpoint_loss > 0
-            )
-            object_targets = resident_result.objects.damage > 0
             for row in range(len(battles)):
                 if not bool(resident[row].item()):
                     continue
@@ -890,7 +904,12 @@ def classify_resident_coverage_row(
     return ResidentCoverageClassification.INCOMPLETE, attributable
 
 
-def _coverage_fixture(card_name: str, seed: int) -> BattleState:
+def _coverage_fixture(
+    card_name: str,
+    seed: int,
+    *,
+    episode_end_time: float = 1.05,
+) -> BattleState:
     battle = BattleState(fast_path=False, rng=random.Random(seed))
     battle.entities.clear()
     battle.next_entity_id = 1
@@ -917,8 +936,8 @@ def _coverage_fixture(card_name: str, seed: int) -> BattleState:
     player.deck = [str(name) for name in player.hand if name is not None]
     player.cycle_queue = deque()
     player.elixir = 20.0
-    battle.overtime_start_time = 1.00
-    battle.tiebreaker_time = 1.05
+    battle.overtime_start_time = max(0.0, episode_end_time - battle.dt)
+    battle.tiebreaker_time = episode_end_time
     return battle
 
 
@@ -972,22 +991,36 @@ def enumerate_enabled_resident_coverage(
             topology=selected_topology,
         )
     loader = CardDataLoader()
-    catalog = TensorCardCatalog.compile(loader, names)
-    deployment_catalog = TensorDeploymentCatalog.compile(loader, catalog)
-    forced_runtime_fallback = {
-        name
-        for name in names
-        if (
-            int(catalog.kind[catalog.name_to_id[name]].item()) in {1, 2, 4}
-            and deployment_catalog.spawned_card_names[catalog.name_to_id[name]]
-            not in catalog.name_to_id
-        )
-    }
-    executable_names = tuple(
-        name for name in names if name not in forced_runtime_fallback
+    catalog_loader, closure_names = _resident_deployment_catalog_closure(
+        loader, set(names)
     )
+    catalog = TensorCardCatalog.compile(catalog_loader, closure_names)
+    deployment_catalog = TensorDeploymentCatalog.compile(catalog_loader, catalog)
+    executable_names = names
+    post_deployment_seconds = 0.30
+    episode_end_by_name: dict[str, float] = {}
+    for name in executable_names:
+        card_id = catalog.name_to_id[name]
+        summon_count = max(1, int(deployment_catalog.summon_count[card_id].item()))
+        deploy_delay = float(
+            deployment_catalog.deploy_delay_seconds[card_id, :summon_count].max().item()
+        )
+        simple_character = (
+            int(catalog.kind[card_id].item()) in {1, 2}
+            and int(catalog.mechanic_count[card_id].item()) == 0
+            and int(catalog.effect_count[card_id].item()) == 0
+        )
+        episode_end_by_name[name] = (
+            max(1.05, deploy_delay + post_deployment_seconds)
+            if simple_character
+            else 1.05
+        )
     battles = [
-        _coverage_fixture(name, 510_000 + index)
+        _coverage_fixture(
+            name,
+            510_000 + index,
+            episode_end_time=episode_end_by_name[name],
+        )
         for index, name in enumerate(executable_names)
     ]
 
@@ -1003,7 +1036,10 @@ def enumerate_enabled_resident_coverage(
     ).run(
         battles,
         cast(ResidentActionProvider, actions),
-        max_ticks=21,
+        max_ticks=max(
+            math.ceil((end_time - 1e-9) / battles[0].dt)
+            for end_time in episode_end_by_name.values()
+        ),
         stop_on_first_divergence=False,
     )
     diverged = {item.row: item for item in report.divergences}
@@ -1021,18 +1057,13 @@ def enumerate_enabled_resident_coverage(
             for value in catalog.effect_opcode[card_id].tolist()
             if int(value) != 0
         )
-        row = report_row.get(name)
-        if row is None:
-            classification = ResidentCoverageClassification.RUNTIME_FALLBACK
-            attributed = False
-            divergence_path = None
-        else:
-            summon_count = int(catalog.summon_count[card_id].item())
-            deployed_ids = tuple(range(2, 2 + summon_count))
-            classification, attributed = classify_resident_coverage_row(
-                report, row, deployed_ids
-            )
-            divergence_path = None if row not in diverged else diverged[row].path
+        row = report_row[name]
+        summon_count = int(catalog.summon_count[card_id].item())
+        deployed_ids = tuple(range(2, 2 + summon_count))
+        classification, attributed = classify_resident_coverage_row(
+            report, row, deployed_ids
+        )
+        divergence_path = None if row not in diverged else diverged[row].path
         entries.append(
             ResidentCardCoverageEntry(
                 card_name=name,
