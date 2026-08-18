@@ -70,6 +70,12 @@ from .resident_pending_spells import (
     PendingSpellResolveResult,
     TensorResidentPendingSpells,
 )
+from .resident_periodic_spawner import (
+    TensorPeriodicSpawnerCatalog,
+    TensorPeriodicSpawnerResult,
+    TensorPeriodicSpawnerRuntimeState,
+    step_runtime_periodic_spawners_,
+)
 from .resident_spell_ingress import (
     TensorResidentSpellActionIngress,
     TensorResidentSpellIngressResult,
@@ -280,6 +286,7 @@ class ResidentTickResult:
     movement: RuntimeMovementResult
     status: RuntimeStatusPhaseResult
     objects: RuntimeObjectPhaseResult
+    periodic_spawner: TensorPeriodicSpawnerResult | None
     terminal: ResidentTerminalPipelineResult | None
     cleanup: EntitySelection
     deployment_completed: torch.Tensor
@@ -589,6 +596,8 @@ class TensorResidentEngine:
         path_cache: TensorResidentPathCache,
         status: TensorRuntimeStatusPhase,
         objects: TensorRuntimeObjectPhase,
+        periodic_catalog: TensorPeriodicSpawnerCatalog,
+        periodic_state: TensorPeriodicSpawnerRuntimeState,
         terminal_pipeline: TensorResidentTerminalPipeline,
         projectile_bridge: TensorResidentProjectileSpellBridge,
         spell_ingress: TensorResidentSpellActionIngress,
@@ -624,6 +633,8 @@ class TensorResidentEngine:
         self.path_cache = path_cache
         self.status = status
         self.objects = objects
+        self.periodic_catalog = periodic_catalog
+        self.periodic_state = periodic_state
         self.terminal_pipeline = terminal_pipeline
         self.projectile_bridge = projectile_bridge
         self.spell_ingress = spell_ingress
@@ -717,6 +728,48 @@ class TensorResidentEngine:
         status = TensorRuntimeStatusPhase.from_battles(runtime, battles)
         objects = TensorRuntimeObjectPhase.from_battles(
             runtime, battles, max_objects=max_objects
+        )
+        periodic_catalog = TensorPeriodicSpawnerCatalog.compile(
+            catalog_loader,
+            cards,
+            list(cards.names[1:]),
+        )
+        if periodic_catalog.cards is not cards:
+            raise ValueError("resident periodic catalog expanded after runtime compile")
+        periodic_state = TensorPeriodicSpawnerRuntimeState.zeros(runtime)
+        periodic_operation = periodic_catalog.source_row_by_card[
+            runtime.card_catalog_index[runtime.battle.entity_card].clamp_min(0)
+        ]
+        periodic_active = (
+            runtime.entity_pool.active
+            & runtime.battle.entity_active
+            & (periodic_operation >= 0)
+            & ((runtime.battle.entity_kind == 0) | (runtime.battle.entity_kind == 1))
+        )
+        periodic_state.source_entity_id.copy_(
+            torch.where(
+                periodic_active,
+                runtime.battle.entity_id,
+                periodic_state.source_entity_id,
+            )
+        )
+        periodic_state.operation_row.copy_(
+            torch.where(
+                periodic_active,
+                periodic_operation,
+                periodic_state.operation_row,
+            )
+        )
+        periodic_state.time_since_spawn_ms.copy_(
+            dispatcher.passive.periodic_time_since_spawn_ms
+        )
+        periodic_state.spawns_created.copy_(dispatcher.passive.periodic_spawns_created)
+        periodic_state.pending_units.copy_(dispatcher.passive.periodic_pending_units)
+        periodic_state.time_since_unit_spawn_ms.copy_(
+            dispatcher.passive.periodic_time_since_unit_spawn_ms
+        )
+        periodic_state.current_wave_spawned.copy_(
+            dispatcher.passive.periodic_current_wave_spawned
         )
         terminal_catalog = TensorTimedTerminalCatalog.compile(
             catalog_loader,
@@ -927,6 +980,8 @@ class TensorResidentEngine:
             path_cache=path_cache,
             status=status,
             objects=objects,
+            periodic_catalog=periodic_catalog,
+            periodic_state=periodic_state,
             terminal_pipeline=terminal_pipeline,
             projectile_bridge=projectile_bridge,
             spell_ingress=spell_ingress,
@@ -967,6 +1022,7 @@ class TensorResidentEngine:
         dispatcher.mechanics = mechanics
         dispatcher.passive.entity_id = runtime.battle.entity_id
         objects = _clone_object_phase(self.objects)
+        periodic_state = self.periodic_state.clone()
         terminal_pipeline = _clone_terminal_pipeline(self.terminal_pipeline)
         projectile_bridge = _clone_projectile_bridge(self.projectile_bridge)
         spell_ingress = self.spell_ingress.fork(
@@ -993,6 +1049,8 @@ class TensorResidentEngine:
             path_cache=self.path_cache,
             status=self.status.clone(),
             objects=objects,
+            periodic_catalog=self.periodic_catalog,
+            periodic_state=periodic_state,
             terminal_pipeline=terminal_pipeline,
             projectile_bridge=projectile_bridge,
             spell_ingress=spell_ingress,
@@ -1047,6 +1105,45 @@ class TensorResidentEngine:
             dim=2
         )
         return active_character & (operation >= 0) & payload_supported & terminal_only
+
+    def _periodic_entity_supported(self) -> torch.Tensor:
+        """Return sources whose complete serialized mechanic set is resident."""
+
+        catalog_id = self._core_catalog_id()
+        safe = catalog_id.clamp_min(0)
+        active_character = self.runtime.entity_pool.active & (
+            (self.runtime.battle.entity_kind == 0)
+            | (self.runtime.battle.entity_kind == 1)
+        )
+        operation = self.periodic_catalog.source_row_by_card[safe]
+        mechanics = self.runtime.catalog.mechanic_opcode[safe]
+        periodic_opcode = MECHANIC_OPCODE["PeriodicSpawner"]
+        death_spawn_opcode = MECHANIC_OPCODE["DeathSpawn"]
+        allowed_set = (
+            (mechanics == 0)
+            | (mechanics == periodic_opcode)
+            | (mechanics == death_spawn_opcode)
+        ).all(dim=2)
+        has_death_spawn = (mechanics == death_spawn_opcode).any(dim=2)
+
+        terminal_operation = self.terminal_pipeline.catalog.terminal.source_row_by_card[
+            safe
+        ]
+        if self.terminal_pipeline.catalog.timed_supported.numel():
+            safe_terminal = terminal_operation.clamp_min(0)
+            terminal_supported = (
+                self.terminal_pipeline.catalog.terminal.direct_supported[safe_terminal]
+                | self.terminal_pipeline.catalog.timed_supported[safe_terminal]
+            )
+            terminal_supported &= terminal_operation >= 0
+        else:
+            terminal_supported = torch.zeros_like(active_character)
+        return (
+            active_character
+            & (operation >= 0)
+            & allowed_set
+            & (~has_death_spawn | terminal_supported)
+        )
 
     def _refresh_projectile_reservations_(self) -> None:
         state = self.objects.objects
@@ -1227,9 +1324,12 @@ class TensorResidentEngine:
         )
         admitted_mechanic[list(RESIDENT_DISPATCH_MECHANIC_OPCODES)] = True
         death_spawn_opcode = MECHANIC_OPCODE["DeathSpawn"]
-        mechanic_admitted = admitted_mechanic[
-            entity_mechanics.to(torch.int64).clamp_min(0)
-        ] | (entity_mechanics == death_spawn_opcode)
+        periodic_opcode = MECHANIC_OPCODE["PeriodicSpawner"]
+        mechanic_admitted = (
+            admitted_mechanic[entity_mechanics.to(torch.int64).clamp_min(0)]
+            | (entity_mechanics == death_spawn_opcode)
+            | (entity_mechanics == periodic_opcode)
+        )
         unsupported_active_mechanic = (
             active_character[:, :, None] & (entity_mechanics > 0) & ~mechanic_admitted
         ).any(dim=(1, 2))
@@ -1257,6 +1357,9 @@ class TensorResidentEngine:
             & terminal_payload_supported
             & terminal_only_death_spawn
         )
+        periodic_entity_supported = self._periodic_entity_supported()
+        periodic_entity = (entity_mechanics == periodic_opcode).any(dim=2)
+        death_spawn_supported = terminal_entity_supported | periodic_entity_supported
 
         if self.device.type not in {"cpu", "cuda"}:
             publish(torch.ones_like(base_supported), ResidentUnsupportedReason.DEVICE)
@@ -1266,6 +1369,12 @@ class TensorResidentEngine:
         )
         publish(
             unsupported_active_mechanic,
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            (periodic_entity & active_character & ~periodic_entity_supported).any(
+                dim=1
+            ),
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
         )
         publish(effect_present.any(dim=1), ResidentUnsupportedReason.ACTIVE_EFFECT)
@@ -1300,27 +1409,44 @@ class TensorResidentEngine:
             & ~self.combat.stunned
             & (self.combat.deploy_remaining <= 0.0)
         )
+        hostile_character_exists = (
+            live_character[:, :, None]
+            & live_character[:, None, :]
+            & (
+                self.runtime.battle.entity_player[:, :, None]
+                != self.runtime.battle.entity_player[:, None, :]
+            )
+        ).any(dim=2)
         publish(
             (
                 projectile_entity
                 & live_character
                 & ~bridge_projectile
-                & ((self.runtime.battle.entity_tower_slot < 0) | crown_launch_imminent)
+                & (
+                    (
+                        (self.runtime.battle.entity_tower_slot < 0)
+                        & hostile_character_exists
+                    )
+                    | crown_launch_imminent
+                )
             ).any(dim=1),
             ResidentUnsupportedReason.PROJECTILE_COMBAT,
         )
         death_spawn_entity = (entity_mechanics == death_spawn_opcode).any(dim=2)
         publish(
-            (death_spawn_entity & active_character & ~terminal_entity_supported).any(
-                dim=1
-            ),
+            (death_spawn_entity & active_character & ~death_spawn_supported).any(dim=1),
             ResidentUnsupportedReason.DEATH_SPAWN,
         )
         timed_live = self.terminal_pipeline.state.objects.allocated.any(dim=1)
         general_live = self.objects.objects.allocated.any(dim=1)
-        terminal_dead = terminal_entity_supported & ~self.runtime.battle.entity_active
+        terminal_dead = death_spawn_supported & ~self.runtime.battle.entity_active
         publish(
             (timed_live | terminal_dead.any(dim=1)) & general_live,
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
+        periodic_live = periodic_entity_supported.any(dim=1)
+        publish(
+            periodic_live & (timed_live | general_live),
             ResidentUnsupportedReason.OBJECT_PHASE,
         )
         publish(~self.objects.static_supported, ResidentUnsupportedReason.OBJECT_PHASE)
@@ -2295,14 +2421,22 @@ class TensorResidentEngine:
         self.runtime.mark_dirty(moved.any(dim=1), phase=TickPhase.MOVEMENT)
         return result
 
-    def _character_object_phase(self, active: torch.Tensor) -> torch.Tensor:
+    def _character_object_phase(
+        self,
+        active: torch.Tensor,
+        entity_mask: torch.Tensor | None = None,
+    ) -> torch.Tensor:
         core = self.runtime.battle
         character = self.runtime.entity_pool.active & (
             (core.entity_kind == 0) | (core.entity_kind == 1)
         )
+        selected = torch.ones_like(character) if entity_mask is None else entity_mask
+        if selected.shape != character.shape:
+            raise ValueError("entity_mask must have shape [batch, entity]")
         deploying = (
             active[:, None]
             & character
+            & selected
             & core.entity_active
             & (core.entity_deploy_delay > 0.0)
         )
@@ -2389,6 +2523,7 @@ class TensorResidentEngine:
             (self.mechanics, source.mechanics),
             (self.objects, source.objects),
             (self.objects.objects, source.objects.objects),
+            (self.periodic_state, source.periodic_state),
         ):
             _copy_rows_(left, right, rows)
         _copy_terminal_pipeline_rows_(
@@ -2522,10 +2657,11 @@ class TensorResidentEngine:
         )
         mechanic_inputs = working._mechanic_inputs(deployment, combat, active)
         terminal_only_entities = working._terminal_entity_supported()
+        periodic_entities = working._periodic_entity_supported()
         retained_kind = working.runtime.battle.entity_kind.clone()
         working.runtime.battle.entity_kind.copy_(
             torch.where(
-                terminal_only_entities,
+                terminal_only_entities | periodic_entities,
                 torch.full_like(retained_kind, 2),
                 retained_kind,
             )
@@ -2588,6 +2724,33 @@ class TensorResidentEngine:
             battle_mask=active,
         )
         completed = working._character_object_phase(active)
+        entity_id_before_periodic = working.runtime.battle.entity_id.clone()
+        if working.periodic_catalog.spawn.periodic_rows().numel():
+            periodic_spawner = step_runtime_periodic_spawners_(
+                working.runtime,
+                working.periodic_catalog,
+                working.periodic_state,
+                dt_ms=core.dt * 1_000.0,
+                stunned=working.runtime.status.stun_timer > 1e-9,
+                spawn_rate=working.dispatcher._native_rate(
+                    working.runtime.status.spawn_speed_debuff_multiplier,
+                    working.runtime.status.spawn_speed_buff_multiplier,
+                ),
+                facing_x_units=working.facing_x_units,
+                facing_y_units=working.facing_y_units,
+            )
+            working.runtime.mark_unsupported(
+                active & ~periodic_spawner.committed,
+                phase=TickPhase.OBJECTS,
+            )
+            active &= periodic_spawner.committed
+            working.runtime.supported &= active
+            periodic_children = working.runtime.entity_pool.active & (
+                working.runtime.battle.entity_id != entity_id_before_periodic
+            )
+            completed |= working._character_object_phase(active, periodic_children)
+        else:
+            periodic_spawner = None
         pending_new_active = working.objects.objects.active[pending_new_objects].clone()
         working.objects.objects.allocated[pending_new_objects] = False
         working.objects.objects.active[pending_new_objects] = False
@@ -2712,6 +2875,7 @@ class TensorResidentEngine:
             movement=movement,
             status=status,
             objects=objects,
+            periodic_spawner=periodic_spawner,
             terminal=terminal,
             cleanup=cleanup,
             deployment_completed=completed,

@@ -20,9 +20,9 @@ ROOT_MECHANICS = {
     "BombTower": (True, ("DeathSpawn",)),
     "Golem": (False, ("DeathDamage", "DeathSpawn")),
     "LavaHound": (True, ("DeathSpawn",)),
-    "NightWitch": (False, ("DeathSpawn", "PeriodicSpawner")),
+    "NightWitch": (True, ("DeathSpawn", "PeriodicSpawner")),
     "SkeletonBarrel": (False, ("DeathSpawn", "BattleRamCharge")),
-    "Tombstone": (False, ("DeathSpawn", "PeriodicSpawner")),
+    "Tombstone": (True, ("DeathSpawn", "PeriodicSpawner")),
 }
 
 

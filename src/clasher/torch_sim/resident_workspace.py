@@ -67,6 +67,12 @@ class TensorResidentWorkspace:
             raise ValueError("speculative engines must share deployment kernels")
         if self.scratch.path_cache is not self.engine.path_cache:
             raise ValueError("speculative engines must share the path cache")
+        if self.scratch.periodic_catalog is not self.engine.periodic_catalog:
+            raise ValueError("speculative engines must share periodic catalogs")
+        if self.scratch.periodic_state.source_entity_id.data_ptr() == (
+            self.engine.periodic_state.source_entity_id.data_ptr()
+        ):
+            raise ValueError("speculative periodic state must own mutable storage")
         if (
             self.scratch.terminal_pipeline.catalog
             is not self.engine.terminal_pipeline.catalog
@@ -154,6 +160,7 @@ class TensorResidentWorkspace:
             (destination.mechanics, source.mechanics),
             (destination.objects, source.objects),
             (destination.objects.objects, source.objects.objects),
+            (destination.periodic_state, source.periodic_state),
             (
                 destination.terminal_pipeline.state.objects,
                 source.terminal_pipeline.state.objects,
