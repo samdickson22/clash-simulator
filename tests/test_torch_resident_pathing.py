@@ -400,26 +400,48 @@ def test_lowest_slot_reuse_high_id_remains_supported_with_order_diagnostic() -> 
     assert plan.supported.all()
 
 
+@pytest.mark.parametrize("device", DEVICES)
 def test_bounded_cache_hit_bypasses_exact_heap_without_changing_plan(
     monkeypatch: pytest.MonkeyPatch,
+    device: str,
 ) -> None:
     from clasher.torch_sim import resident_pathing
 
     arguments: _PlanArguments = {
-        "entity_id": torch.tensor([[1, 2, 3, 4]]),
-        "active": torch.ones((1, 4), dtype=torch.bool),
+        "entity_id": torch.tensor([[1, 2, 3, 4]], device=device),
+        "active": torch.ones((1, 4), dtype=torch.bool, device=device),
         "mover_position_units": torch.tensor(
-            [[[3_500, 10_000], [14_500, 10_000], [3_500, 20_000], [14_500, 20_000]]]
+            [
+                [
+                    [3_500, 10_000],
+                    [14_500, 10_000],
+                    [3_500, 20_000],
+                    [14_500, 20_000],
+                ]
+            ],
+            device=device,
         ),
         "target_position_units": torch.tensor(
-            [[[3_500, 22_000], [14_500, 22_000], [3_500, 8_000], [14_500, 8_000]]]
+            [
+                [
+                    [3_500, 22_000],
+                    [14_500, 22_000],
+                    [3_500, 8_000],
+                    [14_500, 8_000],
+                ]
+            ],
+            device=device,
         ),
-        "required_range_units": torch.full((1, 4), 500),
-        "lane_id": torch.tensor([[1, 2, 1, 2]]),
-        "jump_height": torch.tensor([[False, False, True, True]]),
-        "direct_single_node": torch.zeros((1, 4), dtype=torch.bool),
+        "required_range_units": torch.full((1, 4), 500, device=device),
+        "lane_id": torch.tensor([[1, 2, 1, 2]], device=device),
+        "jump_height": torch.tensor([[False, False, True, True]], device=device),
+        "direct_single_node": torch.zeros((1, 4), dtype=torch.bool, device=device),
     }
-    cache = TensorResidentPathCache.create(capacity=64, route_capacity=128)
+    cache = TensorResidentPathCache.create(
+        capacity=64,
+        route_capacity=128,
+        device=device,
+    )
     first = plan_standard_routes(**arguments, cache=cache)
     assert first.supported.all()
     assert int(cache.valid.sum()) == 4

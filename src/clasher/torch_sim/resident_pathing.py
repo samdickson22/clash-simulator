@@ -543,6 +543,10 @@ def plan_standard_routes(
         cached = cache.lookup(cache_keys)
     cache_hit = ground & cached.hit
     ground_miss = ground & ~cache_hit
+    # One scalar miss check avoids launching the much larger exact heap on a
+    # complete cache hit. A compiled conditional/custom op can replace this
+    # synchronization later, but unconditional CUDA heap work is substantially
+    # worse and has no measured production justification.
     if bool(ground_miss.any().item()):
         parents, heap_found = _native_heap_routes(start, goal, lane, jump, ground_miss)
     else:
