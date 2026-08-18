@@ -10,12 +10,17 @@ import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Projectile, SpawnProjectile, TargetType, Troop
+from clasher.entities import Building, Projectile, SpawnProjectile, TargetType, Troop
 from clasher.mechanics.shared.knockback import apply_radial_knockback
 from clasher.spells import SPELL_REGISTRY
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.combat import CombatStepResult
 from clasher.torch_sim.combat_adapter import project_stationary_combat
+from clasher.torch_sim.oracle_event_capture import (
+    OracleEventRecord,
+    OraclePayloadKind,
+    PythonOracleEventCapture,
+)
 from clasher.torch_sim.projectile_bridge import (
     BridgePayloadKind,
     TensorResidentProjectileSpellBridge,
@@ -69,7 +74,7 @@ def _troop(
     return entity
 
 
-def _battle(*entities: Troop, cards: tuple[str, ...] = ()) -> BattleState:
+def _battle(*entities: Troop | Building, cards: tuple[str, ...] = ()) -> BattleState:
     battle = BattleState(fast_path=False)
     battle.entities = {entity.id: entity for entity in entities}
     battle.next_entity_id = max((entity.id for entity in entities), default=0) + 1
@@ -124,6 +129,42 @@ def _oracle_object_tick(battle: BattleState) -> None:
     battle._defer_projectile_impacts = False
     battle._resolve_pending_projectile_impacts()
     battle._cleanup_dead_entities()
+
+
+def _tensor_event_tuples(
+    runtime: TensorBattleRuntime, start: int = 0
+) -> list[tuple[int, int, int, int, int, int, float, int]]:
+    return [
+        (
+            int(runtime.events.phase[0, slot].item()),
+            int(runtime.events.opcode[0, slot].item()),
+            int(runtime.events.source_id[0, slot].item()),
+            int(runtime.events.target_id[0, slot].item()),
+            int(runtime.events.x_units[0, slot].item()),
+            int(runtime.events.y_units[0, slot].item()),
+            float(runtime.events.amount[0, slot].item()),
+            int(runtime.events.payload[0, slot].item()),
+        )
+        for slot in range(start, int(runtime.events.count[0].item()))
+    ]
+
+
+def _oracle_event_tuples(
+    events: list[OracleEventRecord], runtime: TensorBattleRuntime
+) -> list[tuple[int, int, int, int, int, int, float, int]]:
+    return [
+        (
+            event.phase,
+            event.opcode,
+            event.source_id,
+            event.target_id,
+            event.x_units,
+            event.y_units,
+            float(event.amount),
+            runtime.battle.card_to_id[str(event.payload)],
+        )
+        for event in events
+    ]
 
 
 def test_serialized_payload_catalog_classifies_enabled_families_without_names() -> None:
@@ -237,6 +278,235 @@ def test_combat_projectile_launch_travel_homing_and_impact_match_python(
     )
 
 
+@pytest.mark.parametrize(
+    ("source_name", "building_source"),
+    (
+        ("BabyDragon", False),
+        ("Bomber", False),
+        ("Princess", False),
+        ("SpearGoblins", False),
+        ("MegaMinion", False),
+        ("Minions", False),
+        ("Xbow", True),
+    ),
+)
+def test_combat_projectile_public_events_match_scalar_callsite_lifecycle(
+    tensor_device: str,
+    source_name: str,
+    building_source: bool,
+) -> None:
+    seed = BattleState(fast_path=False)
+    if building_source:
+        seed.entities.clear()
+        seed.next_entity_id = 1
+        stats = seed.card_loader.get_card(source_name)
+        assert stats is not None
+        source = seed._spawn_entity(Building, Position(9, 10), 0, stats)
+        source.deploy_delay_remaining = 0.0
+        source.placement_pending = False
+        source._spawn_hook_pending = False
+        source._spawn_hook_fired = True
+    else:
+        source = _troop(seed, source_name, 1, 0, Position(9, 10), hp=300)
+    target = _troop(seed, "Knight", 2, 1, Position(9, 12), hp=50)
+    source.target_id = target.id
+    battle = _battle(source, target)
+    oracle = copy.deepcopy(battle)
+    runtime, objects, bridge, catalog = _runtime_bridge(
+        [battle],
+        {source_name, "Knight"},
+        device=tensor_device,
+    )
+
+    with PythonOracleEventCapture(oracle) as capture:
+        oracle_source = oracle.entities[source.id]
+        with capture._scope(
+            phase=TickPhase.COMBAT,
+            source_id=source.id,
+            source_payload=source_name,
+        ):
+            oracle_source._create_projectile(oracle.entities[target.id], oracle)
+        assert capture.events[0].payload_kind == OraclePayloadKind.COMBAT_PROJECTILE
+
+        combat = project_stationary_combat(
+            [battle], catalog, capacity=runtime.max_entities, device=tensor_device
+        ).state
+        source_slot = int(torch.where(combat.entity_id[0] == source.id)[0][0].item())
+        target_slot = int(torch.where(combat.entity_id[0] == target.id)[0][0].item())
+        combat.target_slot[0, source_slot] = target_slot
+        launched = torch.zeros_like(combat.present)
+        launched[0, source_slot] = True
+        combat_result = CombatStepResult(
+            attacked=launched.clone(),
+            projectile_launched=launched,
+            damage_received=torch.zeros_like(combat.hp),
+            target_before=combat.target_slot.clone(),
+            target_after=combat.target_slot.clone(),
+        )
+        assert bridge.materialize_combat_launches_(
+            runtime, objects, combat, combat_result
+        ).all()
+        assert _tensor_event_tuples(runtime) == _oracle_event_tuples(
+            capture.events, runtime
+        )
+
+        oracle_event_start = len(capture.events)
+        for _ in range(30):
+            tensor_event_start = int(runtime.events.count[0].item())
+            _oracle_object_tick(oracle)
+            result = bridge.step_objects_(runtime, objects)
+            assert result.supported_batch.tolist() == [True]
+            expected = capture.events[oracle_event_start:]
+            actual = _tensor_event_tuples(runtime, tensor_event_start)
+            assert actual == _oracle_event_tuples(expected, runtime)
+            if expected:
+                assert expected[0].payload_kind == OraclePayloadKind.PROJECTILE_IMPACT
+                assert expected[1].payload_kind == OraclePayloadKind.DAMAGE
+                if len(expected) == 3:
+                    assert expected[2].payload_kind == OraclePayloadKind.DEATH
+            oracle_event_start = len(capture.events)
+            oracle_projectiles = [
+                entity
+                for entity in oracle.entities.values()
+                if isinstance(entity, Projectile)
+            ]
+            if not oracle_projectiles:
+                assert not objects.objects.allocated.any()
+                break
+        else:
+            raise AssertionError("combat projectile did not complete")
+
+    if target.id in oracle.entities:
+        expected_hp = oracle.entities[target.id].hitpoints
+        assert runtime.battle.entity_hp[0, target_slot].item() == expected_hp
+    else:
+        assert target.id not in runtime.battle.entity_id[0].tolist()
+
+
+def test_combat_projectile_events_preserve_prior_building_lifetime_phase(
+    tensor_device: str,
+) -> None:
+    seed = BattleState(fast_path=False)
+    seed.entities.clear()
+    seed.next_entity_id = 1
+    stats = seed.card_loader.get_card("Xbow")
+    assert stats is not None
+    source = seed._spawn_entity(Building, Position(9, 10), 0, stats)
+    source.deploy_delay_remaining = 0.0
+    source.placement_pending = False
+    target = _troop(seed, "Knight", 2, 1, Position(9, 12), hp=500)
+    battle = _battle(source, target)
+    runtime, objects, bridge, catalog = _runtime_bridge(
+        [battle], {"Xbow", "Knight"}, device=tensor_device
+    )
+    combat = project_stationary_combat(
+        [battle], catalog, capacity=runtime.max_entities, device=tensor_device
+    ).state
+    source_slot = int(torch.where(combat.entity_id[0] == source.id)[0][0].item())
+    target_slot = int(torch.where(combat.entity_id[0] == target.id)[0][0].item())
+    combat.target_slot[0, source_slot] = target_slot
+    launched = torch.zeros_like(combat.present)
+    launched[0, source_slot] = True
+    result = CombatStepResult(
+        attacked=launched.clone(),
+        projectile_launched=launched,
+        damage_received=torch.zeros_like(combat.hp),
+        target_before=combat.target_slot.clone(),
+        target_after=combat.target_slot.clone(),
+    )
+    assert bridge.materialize_combat_launches_(runtime, objects, combat, result).all()
+    runtime.events.append(
+        phase=TickPhase.BUILDING_LIFETIME,
+        opcode=RuntimeEventOpcode.DAMAGE,
+        valid=torch.ones((1, 1), dtype=torch.bool, device=runtime.device),
+        target_id=source.id,
+        x_units=9_000,
+        y_units=10_000,
+        amount=1.0,
+    )
+
+    bridge.step_objects_(runtime, objects)
+
+    assert runtime.events.phase[0, :4].tolist() == [
+        TickPhase.COMBAT,
+        TickPhase.BUILDING_LIFETIME,
+        TickPhase.OBJECTS,
+        TickPhase.OBJECTS,
+    ]
+    assert runtime.events.opcode[0, :4].tolist() == [
+        RuntimeEventOpcode.PROJECTILE,
+        RuntimeEventOpcode.DAMAGE,
+        RuntimeEventOpcode.PROJECTILE,
+        RuntimeEventOpcode.DAMAGE,
+    ]
+
+
+def test_simultaneous_combat_projectiles_preserve_source_order_and_applied_amounts(
+    tensor_device: str,
+) -> None:
+    seed = BattleState(fast_path=False)
+    first = _troop(seed, "SpearGoblins", 1, 0, Position(8.8, 10), hp=300)
+    second = _troop(seed, "SpearGoblins", 2, 0, Position(9.2, 10), hp=300)
+    target = _troop(seed, "Knight", 3, 1, Position(9, 12), hp=100)
+    battle = _battle(first, second, target)
+    oracle = copy.deepcopy(battle)
+    runtime, objects, bridge, catalog = _runtime_bridge(
+        [battle], {"SpearGoblins", "Knight"}, device=tensor_device
+    )
+
+    with PythonOracleEventCapture(oracle) as capture:
+        for source_id in (first.id, second.id):
+            with capture._scope(
+                phase=TickPhase.COMBAT,
+                source_id=source_id,
+                source_payload="SpearGoblins",
+            ):
+                oracle.entities[source_id]._create_projectile(
+                    oracle.entities[target.id], oracle
+                )
+        combat = project_stationary_combat(
+            [battle], catalog, capacity=runtime.max_entities, device=tensor_device
+        ).state
+        target_slot = int(torch.where(combat.entity_id[0] == target.id)[0][0].item())
+        launched = torch.zeros_like(combat.present)
+        for source_id in (first.id, second.id):
+            source_slot = int(
+                torch.where(combat.entity_id[0] == source_id)[0][0].item()
+            )
+            combat.target_slot[0, source_slot] = target_slot
+            launched[0, source_slot] = True
+        result = CombatStepResult(
+            attacked=launched.clone(),
+            projectile_launched=launched,
+            damage_received=torch.zeros_like(combat.hp),
+            target_before=combat.target_slot.clone(),
+            target_after=combat.target_slot.clone(),
+        )
+        assert bridge.materialize_combat_launches_(
+            runtime, objects, combat, result
+        ).all()
+        assert _tensor_event_tuples(runtime) == _oracle_event_tuples(
+            capture.events, runtime
+        )
+
+        oracle_event_start = len(capture.events)
+        for _ in range(10):
+            tensor_event_start = int(runtime.events.count[0].item())
+            _oracle_object_tick(oracle)
+            bridge.step_objects_(runtime, objects)
+            expected = capture.events[oracle_event_start:]
+            assert _tensor_event_tuples(
+                runtime, tensor_event_start
+            ) == _oracle_event_tuples(expected, runtime)
+            oracle_event_start = len(capture.events)
+            if not objects.objects.allocated.any():
+                break
+
+    damage = runtime.events.opcode[0] == RuntimeEventOpcode.DAMAGE
+    assert runtime.events.source_id[0, damage].tolist() == [4, 5]
+    assert runtime.events.amount[0, damage].tolist() == [81.0, 19.0]
+
+
 def test_zap_direct_spell_damage_stun_identity_and_events_match_python() -> None:
     seed = BattleState(fast_path=False)
     target = _troop(seed, "Knight", 1, 1, Position(9, 14), hp=500)
@@ -309,8 +579,16 @@ def test_target_death_before_projectile_impact_preserves_committed_endpoint() ->
 
     assert set(oracle.entities) == {1}
     assert runtime.battle.entity_id[0].nonzero().numel() == 1
-    damage = runtime.events.opcode == RuntimeEventOpcode.DAMAGE
-    assert runtime.events.target_id[damage].tolist() == [3]
+    assert runtime.events.opcode[0, : runtime.events.count[0]].tolist() == [
+        RuntimeEventOpcode.PROJECTILE,
+        RuntimeEventOpcode.PROJECTILE,
+    ]
+    assert runtime.events.phase[0, : runtime.events.count[0]].tolist() == [
+        TickPhase.COMBAT,
+        TickPhase.OBJECTS,
+    ]
+    assert runtime.events.source_id[0, : runtime.events.count[0]].tolist() == [1, 3]
+    assert runtime.events.target_id[0, : runtime.events.count[0]].tolist() == [3, 0]
 
 
 def test_simultaneous_launch_allocation_uses_entity_ids_not_physical_slots() -> None:

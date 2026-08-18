@@ -1613,14 +1613,28 @@ class TensorResidentProjectileSpellBridge:
             resolved_actual_damage,
         )
         spawn_source = torch.zeros_like(allocation.entity_ids)
+        spawn_target = torch.zeros_like(allocation.entity_ids)
+        spawn_x = torch.zeros_like(allocation.slots, dtype=torch.int32)
+        spawn_y = torch.zeros_like(allocation.slots, dtype=torch.int32)
         spawn_payload = torch.zeros_like(allocation.entity_ids)
-        spawn_source[rows, launch_ordinal] = entity_id
+        if spell:
+            spawn_source[rows, launch_ordinal] = entity_id
+        else:
+            spawn_source[rows, launch_ordinal] = source_ids[rows, source_slot]
+            spawn_target[rows, launch_ordinal] = entity_id
+            spawn_x[rows, launch_ordinal] = start_x.to(torch.int32)
+            spawn_y[rows, launch_ordinal] = start_y.to(torch.int32)
         spawn_payload[rows, launch_ordinal] = public_cards
         runtime.events.append(
-            phase=TickPhase.COMMANDS,
-            opcode=RuntimeEventOpcode.SPAWN,
+            phase=TickPhase.COMMANDS if spell else TickPhase.COMBAT,
+            opcode=(
+                RuntimeEventOpcode.SPAWN if spell else RuntimeEventOpcode.PROJECTILE
+            ),
             valid=install,
             source_id=spawn_source,
+            target_id=spawn_target,
+            x_units=spawn_x,
+            y_units=spawn_y,
             payload=spawn_payload,
         )
         object_phase.objects.next_object_id.copy_(runtime.entity_pool.next_entity_id)
@@ -1791,6 +1805,8 @@ class TensorResidentProjectileSpellBridge:
         launch_y = object_phase.objects.y_units.clone()
         impact_x = object_phase.objects.target_x_units.clone()
         impact_y = object_phase.objects.target_y_units.clone()
+        entity_ids_before = runtime.battle.entity_id.clone()
+        hitpoints_before = runtime.battle.entity_hp.clone()
         self._refresh_homing_(runtime, object_phase)
         result = step_runtime_object_phase_(runtime, object_phase)
         self._apply_spawn_impacts_(
@@ -1814,6 +1830,8 @@ class TensorResidentProjectileSpellBridge:
             launch_y,
             impact_x,
             impact_y,
+            entity_ids_before,
+            hitpoints_before,
             result.supported_batch,
         )
         self._advance_knockback_(runtime, knockback_before)
@@ -2065,6 +2083,8 @@ class TensorResidentProjectileSpellBridge:
         launch_y: torch.Tensor,
         impact_x: torch.Tensor,
         impact_y: torch.Tensor,
+        entity_ids_before: torch.Tensor,
+        hitpoints_before: torch.Tensor,
         supported: torch.Tensor,
     ) -> None:
         event_slot = torch.arange(runtime.events.capacity, device=runtime.device)[
@@ -2215,7 +2235,10 @@ class TensorResidentProjectileSpellBridge:
             runtime,
             before_count,
             object_ids,
+            blueprint_ids,
             object_active,
+            entity_ids_before,
+            hitpoints_before,
         )
 
     def _rewrite_public_object_events_(
@@ -2223,7 +2246,10 @@ class TensorResidentProjectileSpellBridge:
         runtime: TensorBattleRuntime,
         before_count: torch.Tensor,
         object_ids: torch.Tensor,
+        blueprint_ids: torch.Tensor,
         object_active: torch.Tensor,
+        entity_ids_before: torch.Tensor,
+        hitpoints_before: torch.Tensor,
     ) -> None:
         """Project internal object work records onto Python's public ledger."""
 
@@ -2239,6 +2265,20 @@ class TensorResidentProjectileSpellBridge:
             & object_active[:, None, :]
             & (runtime.events.source_id[:, :, None] == object_ids[:, None, :])
         ).any(dim=2)
+        source_object = (
+            (
+                segment[:, :, None]
+                & object_active[:, None, :]
+                & (runtime.events.source_id[:, :, None] == object_ids[:, None, :])
+            )
+            .to(torch.int64)
+            .argmax(dim=2)
+        )
+        source_blueprint = torch.gather(blueprint_ids.clamp_min(0), 1, source_object)
+        source_card = self.blueprint_card_id[source_blueprint].clamp_min(0)
+        combat_source = source_owned & (
+            self.catalog.kind[source_card] == int(BridgePayloadKind.COMBAT_PROJECTILE)
+        )
         opcode = runtime.events.opcode.to(torch.int64)
         marker = source_owned & (
             (opcode == int(RuntimeEventOpcode.PROJECTILE))
@@ -2296,6 +2336,126 @@ class TensorResidentProjectileSpellBridge:
             offset += valid.sum(dim=1, dtype=torch.int64)
 
         maximum_id = torch.iinfo(torch.int64).max
+        combat_marker = (
+            combat_source & marker & (opcode == int(RuntimeEventOpcode.PROJECTILE))
+        )
+        combat_target = combat_source & target_event
+        combat_event = combat_marker | combat_target
+        target_identity = (
+            original["target_id"][:, :, None] == entity_ids_before[:, None, :]
+        ) & (original["target_id"][:, :, None] > 0)
+        target_found = target_identity.any(dim=2)
+        target_slot = target_identity.to(torch.int64).argmax(dim=2)
+        combat_damage = (
+            combat_target & (opcode == int(RuntimeEventOpcode.DAMAGE)) & target_found
+        )
+        damage_order = torch.argsort(
+            torch.where(combat_damage, original["target_id"], maximum_id),
+            dim=1,
+            stable=True,
+        )
+        sorted_damage_valid = torch.gather(combat_damage, 1, damage_order)
+        sorted_damage_target = torch.gather(original["target_id"], 1, damage_order)
+        sorted_damage_amount = torch.where(
+            sorted_damage_valid,
+            torch.gather(original["amount"], 1, damage_order),
+            0.0,
+        )
+        cumulative_damage = sorted_damage_amount.cumsum(dim=1)
+        group_start = sorted_damage_valid & (
+            (slots == 0)
+            | (sorted_damage_target != torch.roll(sorted_damage_target, 1, dims=1))
+        )
+        group_baseline = (
+            torch.where(
+                group_start,
+                cumulative_damage - sorted_damage_amount,
+                0.0,
+            )
+            .cummax(dim=1)
+            .values
+        )
+        sorted_prior_damage = cumulative_damage - sorted_damage_amount - group_baseline
+        prior_damage = torch.zeros_like(original["amount"])
+        prior_damage.scatter_(
+            1,
+            damage_order,
+            torch.where(sorted_damage_valid, sorted_prior_damage, 0.0),
+        )
+        available_hitpoints = torch.gather(hitpoints_before, 1, target_slot)
+        applied_damage = torch.minimum(
+            original["amount"],
+            (available_hitpoints - prior_damage).clamp_min(0.0),
+        )
+        public_amount = torch.where(
+            combat_damage,
+            applied_damage,
+            original["amount"],
+        )
+        impact_target = torch.full_like(object_ids, maximum_id)
+        impact_target.scatter_reduce_(
+            1,
+            source_object,
+            torch.where(
+                combat_target & (opcode == int(RuntimeEventOpcode.DAMAGE)),
+                original["target_id"],
+                maximum_id,
+            ),
+            reduce="amin",
+            include_self=True,
+        )
+        impact_target = torch.where(impact_target == maximum_id, 0, impact_target)
+        public_target = torch.where(
+            combat_marker,
+            torch.gather(impact_target, 1, source_object),
+            original["target_id"],
+        )
+        death_rank = (opcode == int(RuntimeEventOpcode.DEATH)).to(torch.int64)
+        event_rank = torch.where(
+            combat_marker,
+            torch.zeros_like(public_target),
+            1 + public_target * 2 + death_rank,
+        )
+        event_rank_order = torch.argsort(
+            torch.where(combat_event, event_rank, maximum_id),
+            dim=1,
+            stable=True,
+        )
+        ranked_valid = torch.gather(combat_event, 1, event_rank_order)
+        ranked_source = torch.gather(original["source_id"], 1, event_rank_order)
+        source_rank_order = torch.argsort(
+            torch.where(ranked_valid, ranked_source, maximum_id),
+            dim=1,
+            stable=True,
+        )
+        combat_order = torch.gather(event_rank_order, 1, source_rank_order)
+        combat_valid = torch.gather(combat_event, 1, combat_order)
+        combat_source_object = torch.gather(source_object, 1, combat_order)
+        combat_card = self.blueprint_card_id[
+            torch.gather(blueprint_ids.clamp_min(0), 1, combat_source_object)
+        ]
+        combat_id = torch.gather(original["source_id"], 1, combat_order)
+        append_category(
+            combat_valid,
+            {
+                "phase": torch.full_like(combat_id, TickPhase.OBJECTS),
+                "opcode": torch.gather(original["opcode"], 1, combat_order),
+                "source_id": combat_id,
+                "target_id": torch.gather(public_target, 1, combat_order),
+                "x_units": torch.gather(original["x_units"], 1, combat_order),
+                "y_units": torch.gather(original["y_units"], 1, combat_order),
+                "amount": torch.where(
+                    torch.gather(combat_marker, 1, combat_order),
+                    torch.zeros_like(original["amount"]),
+                    torch.gather(public_amount, 1, combat_order),
+                ),
+                "payload": combat_card,
+            },
+        )
+
+        child_spawn &= ~combat_source
+        target_event &= ~combat_source
+        object_death &= ~combat_source
         spawn_order = torch.argsort(
             torch.where(child_spawn, original["target_id"], maximum_id),
             dim=1,

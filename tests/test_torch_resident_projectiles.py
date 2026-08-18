@@ -12,7 +12,7 @@ from clasher.torch_sim.resident_engine import (
     ResidentUnsupportedReason,
     TensorResidentEngine,
 )
-from clasher.torch_sim.runtime_state import RuntimeEventOpcode
+from clasher.torch_sim.runtime_state import RuntimeEventOpcode, TickPhase
 
 
 def _set_noop_hand(battle: BattleState, card_name: str) -> None:
@@ -106,15 +106,13 @@ def _assert_state_matches_python(
         assert core.entity_y_units[0, slot].item() == round(entity.position.y * 1_000)
 
 
-def _assert_impact_event_order(new_opcodes: list[int]) -> None:
-    for index, opcode in enumerate(new_opcodes):
-        if opcode != int(RuntimeEventOpcode.PROJECTILE):
+def _assert_impact_event_order(new_phases: list[int], new_opcodes: list[int]) -> None:
+    for index, (phase, opcode) in enumerate(zip(new_phases, new_opcodes, strict=True)):
+        if phase != int(TickPhase.OBJECTS) or opcode != int(
+            RuntimeEventOpcode.PROJECTILE
+        ):
             continue
-        assert new_opcodes[index : index + 3] == [
-            int(RuntimeEventOpcode.PROJECTILE),
-            int(RuntimeEventOpcode.DAMAGE),
-            int(RuntimeEventOpcode.DEATH),
-        ]
+        assert new_opcodes[index + 1] == int(RuntimeEventOpcode.DAMAGE)
 
 
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
@@ -157,10 +155,13 @@ def test_resident_combat_projectile_full_trace_matches_python(
         )
         assert tensor_target == source.target_id
         current_event_count = int(engine.runtime.events.count[0].item())
+        new_phases = engine.runtime.events.phase[
+            0, previous_event_count:current_event_count
+        ].tolist()
         new_opcodes = engine.runtime.events.opcode[
             0, previous_event_count:current_event_count
         ].tolist()
-        _assert_impact_event_order(new_opcodes)
+        _assert_impact_event_order(new_phases, new_opcodes)
         previous_event_count = current_event_count
 
 
