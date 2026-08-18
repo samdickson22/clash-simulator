@@ -15,11 +15,11 @@ from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.diagnostics import battle_snapshot, first_divergence
-from clasher.torch_sim.observations import (
-    TensorCvObservation,
-    TensorStructuredObservation,
-)
+from clasher.torch_sim.observations import TensorCvObservation
+from clasher.torch_sim.resident_outputs import TensorPublicStructuredObservation
 from clasher.torch_sim.resident_selfplay import TensorResidentSelfPlay
+
+DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 
 
 def _safe_battle(seed: int) -> BattleState:
@@ -41,6 +41,15 @@ def _catalog(device: str = "cpu") -> TensorCardCatalog:
     )
 
 
+def _short_knight_battle(seed: int) -> BattleState:
+    battle = _safe_battle(seed)
+    player = battle.players[0]
+    player.deck = ["Knight"]
+    player.hand = ["Knight", None, None, None]
+    player.elixir = 10.0
+    return battle
+
+
 def _oracle_noop_decision(
     battle: BattleState,
     ticks: int,
@@ -57,7 +66,7 @@ def _oracle_noop_decision(
 def _assert_observations_exact(
     bridge: TensorResidentSelfPlay,
     expected: list[BattleState],
-    structured: TensorStructuredObservation,
+    structured: TensorPublicStructuredObservation,
     cv: TensorCvObservation,
 ) -> None:
     for row, battle in enumerate(expected):
@@ -65,7 +74,7 @@ def _assert_observations_exact(
             expected_structured = bridge.projector.structured_builder.build(
                 battle, player_id
             )
-            for state in fields(expected_structured):
+            for state in fields(structured):
                 actual = getattr(structured, state.name)[row, player_id]
                 np.testing.assert_array_equal(
                     actual.cpu().numpy(), getattr(expected_structured, state.name)
@@ -113,8 +122,10 @@ def test_resident_noop_decision_returns_exact_device_tensors_and_rng_order(
     assert result.rewards.tolist() == [[0.0, -0.0], [0.0, -0.0]]
     assert not result.dones.any()
     assert not result.fallback.mask.any()
-    assert result.structured.entity_ids.device.type == device
-    assert result.cv.board.device.type == device
+    assert result.public.structured.entity_ids.device.type == device
+    assert result.public.cv.board.device.type == device
+    assert result.privileged_critic is None
+    assert not result.public.events.valid.any()
     assert result.rewards.device.type == device
     for row, battle in enumerate(expected):
         assert bridge.engine.runtime.battle.tick[row].item() == battle.tick
@@ -122,7 +133,9 @@ def test_resident_noop_decision_returns_exact_device_tensors_and_rng_order(
         assert bridge.engine.runtime.battle.rng.python_state(row) == (
             battle.rng.getstate()
         )
-    _assert_observations_exact(bridge, expected, result.structured, result.cv)
+    _assert_observations_exact(
+        bridge, expected, result.public.structured, result.public.cv
+    )
 
 
 def test_unsupported_episode_is_routed_before_any_tensor_mutation() -> None:
@@ -198,7 +211,7 @@ def test_reset_rows_replaces_only_selected_state_rng_and_episode_route() -> None
     fresh = _safe_battle(74_101)
     ignored = _safe_battle(74_102)
 
-    structured, cv, masks = bridge.reset_rows(
+    public, critic, masks = bridge.reset_rows(
         [fresh, ignored], torch.tensor([True, False])
     )
 
@@ -208,8 +221,9 @@ def test_reset_rows_replaces_only_selected_state_rng_and_episode_route() -> None
     assert bridge.engine.runtime.battle.rng.python_state(0) == fresh.rng.getstate()
     assert bridge.engine.runtime.battle.rng.python_state(1) == row_one_rng
     assert bridge._episode_resident.tolist() == [True, True]
-    assert structured.entity_ids.shape[:2] == (2, 2)
-    assert cv.board.shape[:2] == (2, 2)
+    assert public.structured.entity_ids.shape[:2] == (2, 2)
+    assert public.cv.board.shape[:2] == (2, 2)
+    assert critic is None
     assert masks.shape[:2] == (2, 2)
 
 
@@ -227,3 +241,54 @@ def test_default_full_deck_route_is_stable_across_repeated_calls() -> None:
     assert first.ticks_advanced.tolist() == second.ticks_advanced.tolist() == [0]
     assert bridge.engine.runtime.battle.rng.python_state(0) == before
     assert first.fallback.scalar_battles[0].rng.getstate() == source.rng.getstate()
+
+
+def test_first_tick_card_event_is_consumed_once_after_eight_tick_decision() -> None:
+    source = _short_knight_battle(76_001)
+    bridge = TensorResidentSelfPlay.from_battles(
+        [source],
+        decision_interval_ticks=8,
+        max_ticks=8,
+        max_entities=16,
+        max_objects=16,
+        event_capacity=16,
+        catalog=_catalog(),
+        include_privileged_critic=True,
+    )
+
+    result = bridge.step(torch.tensor([[DEPLOY_KNIGHT_FAR_FROM_COMBAT, NO_OP_ACTION]]))
+
+    assert result.observation_valid.tolist() == [True]
+    assert result.ticks_advanced.tolist() == [8]
+    assert result.public.events.valid[:, :, 0].tolist() == [[True, True]]
+    assert result.public.events.play_time_seconds[:, :, 0].tolist() == [[0.05, 0.05]]
+    assert result.public.events.age_seconds[:, :, 0].tolist() == [[0.35, 0.35]]
+    assert result.privileged_critic is not None
+    assert not hasattr(result.public.structured, "critic_card_ids")
+    assert result.privileged_critic.card_ids.shape[:2] == (1, 2)
+    assert bridge.engine.runtime.events.count.tolist() == [0]
+    assert bridge.outputs.public_event_count.tolist() == [0]
+
+
+def test_repeated_short_episode_resets_do_not_grow_event_buffers() -> None:
+    source = _short_knight_battle(77_001)
+    bridge = TensorResidentSelfPlay.from_battles(
+        [source],
+        decision_interval_ticks=8,
+        max_ticks=8,
+        max_entities=16,
+        max_objects=16,
+        event_capacity=4,
+        catalog=_catalog(),
+    )
+
+    for episode in range(12):
+        result = bridge.step(
+            torch.tensor([[DEPLOY_KNIGHT_FAR_FROM_COMBAT, NO_OP_ACTION]])
+        )
+        assert result.public.events.valid[:, :, 0].all()
+        assert bridge.engine.runtime.events.count.tolist() == [0]
+        assert bridge.outputs.public_event_count.tolist() == [0]
+        if episode != 11:
+            fresh = _short_knight_battle(77_002 + episode)
+            bridge.reset_rows([fresh], torch.tensor([True]))
