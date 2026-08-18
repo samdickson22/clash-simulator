@@ -381,6 +381,8 @@ def test_object_spell_ingress_composes_through_complete_resident_lifecycle(
     (
         ("Zap", 20, 8, 4),
         ("Fireball", 40, 12, 4),
+        ("Rocket", 50, 12, 4),
+        ("GiantSnowball", 40, 12, 4),
         ("Arrows", 50, 40, 32),
         ("GoblinBarrel", 50, 16, 4),
         ("GlobalLightning", 110, 8, 4),
@@ -422,48 +424,6 @@ def test_engine_step_admits_episode_safe_spell_actions_exactly(
         result = engine.step(player_order=order)
         assert result.committed.tolist() == [True]
         _assert_episode_state(oracle, engine)
-
-
-@pytest.mark.parametrize(
-    "spell_name",
-    ("Rocket", "GiantSnowball"),
-)
-def test_engine_step_fails_closed_before_known_unsafe_projectile_spell_episode(
-    tensor_device: str,
-    spell_name: str,
-) -> None:
-    battle = _battle(spell_name)
-    engine = TensorResidentEngine.from_battles(
-        [battle],
-        device=tensor_device,
-        max_entities=48,
-        max_objects=32,
-        event_capacity=4_096,
-    )
-    action = DiscreteTileActionSpace(canonical_perspective=True).encode_action(
-        0, 9, 14, 0
-    )
-    actions = torch.tensor([[action, NO_OP_ACTION]], device=engine.device)
-    before_hand = engine.runtime.battle.hand.clone()
-    before_elixir = engine.runtime.battle.elixir.clone()
-    before_hp = engine.runtime.battle.entity_hp.clone()
-    before_rng = engine.runtime.battle.rng.python_state(0)
-    before_objects = engine.objects.objects.allocated.clone()
-
-    preflight = engine.preflight(actions)
-    result = engine.step(actions)
-
-    assert preflight.supported.tolist() == [False]
-    assert preflight.reason_code.tolist() == [
-        int(ResidentUnsupportedReason.SPELL_ACTION)
-    ]
-    assert result.committed.tolist() == [False]
-    assert torch.equal(engine.runtime.battle.hand, before_hand)
-    assert torch.equal(engine.runtime.battle.elixir, before_elixir)
-    assert torch.equal(engine.runtime.battle.entity_hp, before_hp)
-    assert engine.runtime.battle.rng.python_state(0) == before_rng
-    assert torch.equal(engine.objects.objects.allocated, before_objects)
-    assert engine.runtime.battle.tick.tolist() == [0]
 
 
 def test_engine_step_fails_closed_for_mixed_spell_and_troop_row() -> None:

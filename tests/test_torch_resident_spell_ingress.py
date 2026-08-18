@@ -343,6 +343,40 @@ def test_second_player_unsupported_spell_rolls_back_first_direct_spell() -> None
     assert torch.equal(objects.objects.allocated, before_objects)
 
 
+@pytest.mark.parametrize("spell_name", ("Rocket", "GiantSnowball"))
+def test_long_knockback_projectile_spell_is_episode_supported_after_geometry_proof(
+    tensor_device: str,
+    spell_name: str,
+) -> None:
+    battle = _spell_battle(spell_name)
+    _, kernel, state, runtime, objects, driver = _owners(
+        [battle],
+        {spell_name, "Knight", "Archer"},
+        device=tensor_device,
+    )
+    action = DiscreteTileActionSpace(canonical_perspective=True).encode_action(
+        0, 9, 14, 0
+    )
+    ingress = kernel.ingress(
+        state,
+        torch.tensor([[action, NO_OP_ACTION]], device=runtime.device),
+    )
+    core_card = runtime.battle.card_to_id[spell_name]
+    assert driver.bridge.catalog.knockback_units[core_card].item() > 1_000
+
+    preflight = driver.preflight(ingress)
+    result = driver.apply(
+        ingress,
+        player_order=torch.tensor([[0, 1]], device=runtime.device),
+    )
+
+    assert driver.episode_supported_core[core_card].item() is True
+    assert preflight.command_supported.tolist() == [True]
+    assert preflight.row_supported.tolist() == [True]
+    assert result.committed.tolist() == [True]
+    assert objects.objects.allocated[0].sum().item() == 1
+
+
 def test_retained_transaction_workspace_reuses_all_speculative_planes(
     tensor_device: str,
     monkeypatch: pytest.MonkeyPatch,

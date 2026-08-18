@@ -12,10 +12,7 @@ from clasher.battle import BattleState
 
 from .actions import TensorIngressResult
 from .catalog import CardKindOpcode, TensorCardCatalog
-from .projectile_bridge import (
-    BridgePayloadKind,
-    TensorResidentProjectileSpellBridge,
-)
+from .projectile_bridge import TensorResidentProjectileSpellBridge
 from .runtime_objects import TensorRuntimeObjectPhase
 from .runtime_state import TensorBattleRuntime
 
@@ -253,16 +250,7 @@ class TensorResidentSpellActionIngress:
         if self.catalog_to_core.shape != (len(cards.names),):
             raise ValueError("spell catalog/core mapping has an invalid shape")
         if episode_supported_core is None:
-            projectile = bridge.catalog.kind == int(BridgePayloadKind.PROJECTILE_SPELL)
-            # The resident bridge now closes grouped-wave lifecycle and
-            # ordinary one-tile knockback. Longer serialized knockback still
-            # differs by one fixed-point unit for some impact geometries, so
-            # those rows remain episode-level fallback until that kernel is
-            # exact as well.
-            unclosed_knockback = bridge.catalog.knockback_units > 1_000
-            self.episode_supported_core = bridge.catalog.supported & ~(
-                projectile & unclosed_knockback
-            )
+            self.episode_supported_core = bridge.catalog.supported
         else:
             self.episode_supported_core = episode_supported_core
         if self.episode_supported_core.shape != bridge.catalog.supported.shape:

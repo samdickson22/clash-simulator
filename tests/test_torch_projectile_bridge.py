@@ -513,31 +513,105 @@ def test_randomized_radial_knockback_geometry_and_motion_match_python(
     tensor_device: str,
 ) -> None:
     rng = random.Random(5_820_441)
-    cases: list[tuple[BattleState, Troop, int, int, int, int, int]] = []
-    for index in range(18):
+    target_names = (
+        "Skeletons",
+        "Archer",
+        "MiniPekka",
+        "Knight",
+        "Giant",
+        "Pekka",
+        "Golem",
+    )
+    distance_boundaries = (
+        0,
+        1,
+        24,
+        25,
+        249,
+        250,
+        251,
+        999,
+        1_000,
+        1_001,
+        1_799,
+        1_800,
+        2_500,
+        9_999,
+        10_000,
+        10_001,
+    )
+    fallback_vectors = (
+        (0, 0),
+        (1, 0),
+        (0, 1),
+        (-1, 0),
+        (0, -1),
+        (1, 1),
+        (-1, 1),
+        (7_999, -8_000),
+    )
+    specifications: list[tuple[str, int, int, int, int, bool, bool]] = []
+    for mass_index, target_name in enumerate(target_names):
+        for distance_index, distance in enumerate(distance_boundaries):
+            exact_center = (mass_index + distance_index) % 2 == 0
+            fallback_x, fallback_y = fallback_vectors[
+                (mass_index * len(distance_boundaries) + distance_index)
+                % len(fallback_vectors)
+            ]
+            specifications.append(
+                (
+                    target_name,
+                    distance,
+                    fallback_x,
+                    fallback_y,
+                    distance_index,
+                    exact_center,
+                    (mass_index + distance_index) % 3 == 0,
+                )
+            )
+    for index in range(64):
+        specifications.append(
+            (
+                rng.choice(target_names),
+                rng.randrange(0, 12_001),
+                rng.randrange(-32_000, 32_001),
+                rng.randrange(-32_000, 32_001),
+                index,
+                bool(rng.randrange(2)),
+                bool(rng.randrange(2)),
+            )
+        )
+
+    cases: list[tuple[BattleState, Troop, int, int, int, int, int, bool]] = []
+    for index, (
+        target_name,
+        distance,
+        fallback_x,
+        fallback_y,
+        coordinate_seed,
+        exact_center,
+        ignores_mass,
+    ) in enumerate(specifications):
         seed = BattleState(fast_path=False)
-        x_units = rng.randrange(2_000, 16_000)
-        y_units = rng.randrange(4_000, 28_000)
+        x_units = 2_000 + (coordinate_seed * 7_919 + index * 101) % 14_000
+        y_units = 4_000 + (coordinate_seed * 4_051 + index * 211) % 24_000
         player_id = index % 2
         target = _troop(
             seed,
-            "Knight",
+            target_name,
             1,
             player_id,
             Position(x_units / 1_000, y_units / 1_000),
             hp=2_000,
         )
-        battle = _battle(target, cards=("Fireball", "Knight"))
-        if index % 3 == 0:
+        battle = _battle(target, cards=("Fireball", target_name))
+        if exact_center:
             center_x, center_y = x_units, y_units
         else:
-            center_x = x_units + rng.randrange(-1_500, 1_501)
-            center_y = y_units + rng.randrange(-1_500, 1_501)
-        fallback_x = rng.randrange(-8_000, 8_001)
-        fallback_y = rng.randrange(-8_000, 8_001)
-        if fallback_x == 0 and fallback_y == 0:
-            fallback_y = 1
-        distance = (250, 500, 1_000, 1_800, 2_500)[index % 5]
+            center_x = x_units + ((index * 577) % 3_001) - 1_500
+            center_y = y_units + ((index * 997) % 3_001) - 1_500
+            if center_x == x_units and center_y == y_units:
+                center_x += 1
         cases.append(
             (
                 battle,
@@ -547,13 +621,14 @@ def test_randomized_radial_knockback_geometry_and_motion_match_python(
                 fallback_x,
                 fallback_y,
                 distance,
+                ignores_mass,
             )
         )
 
     battles = [case[0] for case in cases]
     runtime, _, bridge, _ = _runtime_bridge(
         battles,
-        {"Fireball", "Knight"},
+        {"Fireball", *target_names},
         device=tensor_device,
         max_entities=4,
         max_objects=2,
@@ -564,6 +639,9 @@ def test_randomized_radial_knockback_geometry_and_motion_match_python(
     fallback_x_tensor = torch.tensor([case[4] for case in cases], device=device)
     fallback_y_tensor = torch.tensor([case[5] for case in cases], device=device)
     distance_tensor = torch.tensor([case[6] for case in cases], device=device)
+    ignores_mass_tensor = torch.tensor(
+        [case[7] for case in cases], dtype=torch.bool, device=device
+    )
     bridge._install_knockback_(
         runtime,
         target_mask=torch.ones_like(runtime.entity_pool.active),
@@ -572,19 +650,27 @@ def test_randomized_radial_knockback_geometry_and_motion_match_python(
         fallback_x=fallback_x_tensor,
         fallback_y=fallback_y_tensor,
         distance_units=distance_tensor,
-        ignores_mass=torch.zeros(len(cases), dtype=torch.bool, device=device),
+        ignores_mass=ignores_mass_tensor,
     )
-    for battle, target, cx, cy, fx, fy, distance_units in cases:
-        assert apply_radial_knockback(
-            target,
-            battle,
-            Position(cx / 1_000, cy / 1_000),
-            distance_units / 1_000,
-            source_kind="randomized",
-            fallback_direction=(fx / 1_000, fy / 1_000),
+    applied: list[bool] = []
+    for battle, target, cx, cy, fx, fy, distance_units, ignores_mass in cases:
+        applied.append(
+            apply_radial_knockback(
+                target,
+                battle,
+                Position(cx / 1_000, cy / 1_000),
+                distance_units / 1_000,
+                source_kind="randomized",
+                ignores_mass=ignores_mass,
+                fallback_direction=(fx / 1_000, fy / 1_000),
+            )
         )
 
     for row, (_, target, *_rest) in enumerate(cases):
+        assert bridge.knockback_active[row, 0].item() is applied[row]
+        if not applied[row]:
+            assert target._knockback_target is None
+            continue
         assert target._knockback_target is not None
         assert bridge.knockback_target_units[row, 0].tolist() == [
             round(target._knockback_target.x * 1_000),
@@ -598,8 +684,9 @@ def test_randomized_radial_knockback_geometry_and_motion_match_python(
     for _ in range(32):
         start = bridge.knockback_active.clone()
         bridge._advance_knockback_(runtime, start)
-        for battle, target, *_rest in cases:
-            target._update_knockback_movement(battle)
+        for applied_row, (battle, target, *_rest) in zip(applied, cases, strict=True):
+            if applied_row:
+                target._update_knockback_movement(battle)
         for row, (_, target, *_rest) in enumerate(cases):
             assert runtime.battle.entity_x_units[row, 0].item() == round(
                 target.position.x * 1_000
@@ -614,6 +701,81 @@ def test_randomized_radial_knockback_geometry_and_motion_match_python(
             assert bridge.knockback_active[row, 0].item() is (
                 target._knockback_target is not None
             )
+
+
+def test_active_knockback_slot_reuse_installs_exact_new_entity_lifecycle(
+    tensor_device: str,
+) -> None:
+    seed = BattleState(fast_path=False)
+    old_target = _troop(seed, "Knight", 1, 1, Position(9.5, 14.5), hp=2_000)
+    battle = _battle(old_target, cards=("Fireball", "Knight", "Archer"))
+    runtime, _, bridge, _ = _runtime_bridge(
+        [battle],
+        {"Fireball", "Knight", "Archer"},
+        device=tensor_device,
+        max_entities=4,
+        max_objects=2,
+    )
+    bridge._install_knockback_(
+        runtime,
+        target_mask=torch.tensor([[True, False, False, False]], device=runtime.device),
+        center_x=torch.tensor([9_500], device=runtime.device),
+        center_y=torch.tensor([14_500], device=runtime.device),
+        fallback_x=torch.tensor([81], device=runtime.device),
+        fallback_y=torch.tensor([1_799], device=runtime.device),
+        distance_units=torch.tensor([1_800], device=runtime.device),
+        ignores_mass=torch.tensor([False], device=runtime.device),
+    )
+    assert bridge.knockback_entity_id[0, 0].item() == 1
+
+    oracle_seed = BattleState(fast_path=False)
+    new_target = _troop(oracle_seed, "Archer", 2, 0, Position(8.25, 13.75), hp=2_000)
+    oracle = _battle(new_target, cards=("Fireball", "Knight", "Archer"))
+    runtime.battle.entity_id[0, 0] = 2
+    runtime.entity_pool.active[0, 0] = True
+    runtime.battle.entity_active[0, 0] = True
+    runtime.battle.entity_card[0, 0] = runtime.battle.card_to_id["Archer"]
+    runtime.battle.entity_player[0, 0] = 0
+    runtime.battle.entity_x_units[0, 0] = 8_250
+    runtime.battle.entity_y_units[0, 0] = 13_750
+    bridge._install_knockback_(
+        runtime,
+        target_mask=torch.tensor([[True, False, False, False]], device=runtime.device),
+        center_x=torch.tensor([8_000], device=runtime.device),
+        center_y=torch.tensor([13_000], device=runtime.device),
+        fallback_x=torch.tensor([-5_000], device=runtime.device),
+        fallback_y=torch.tensor([7_000], device=runtime.device),
+        distance_units=torch.tensor([2_500], device=runtime.device),
+        ignores_mass=torch.tensor([False], device=runtime.device),
+    )
+    assert apply_radial_knockback(
+        new_target,
+        oracle,
+        Position(8, 13),
+        2.5,
+        source_kind="slot-reuse",
+        fallback_direction=(-5, 7),
+    )
+    assert bridge.knockback_entity_id[0, 0].item() == 2
+    assert new_target._knockback_target is not None
+    assert bridge.knockback_target_units[0, 0].tolist() == [
+        round(new_target._knockback_target.x * 1_000),
+        round(new_target._knockback_target.y * 1_000),
+    ]
+
+    for _ in range(32):
+        start = bridge.knockback_active.clone()
+        bridge._advance_knockback_(runtime, start)
+        new_target._update_knockback_movement(oracle)
+        assert runtime.battle.entity_x_units[0, 0].item() == round(
+            new_target.position.x * 1_000
+        )
+        assert runtime.battle.entity_y_units[0, 0].item() == round(
+            new_target.position.y * 1_000
+        )
+        assert bridge.knockback_active[0, 0].item() is (
+            new_target._knockback_target is not None
+        )
 
 
 def test_arrows_grouped_waves_positions_rng_damage_and_lifecycle_match_python(
