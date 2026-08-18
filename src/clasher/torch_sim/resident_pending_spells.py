@@ -220,6 +220,7 @@ class TensorResidentPendingSpells:
         ingress: TensorIngressResult,
         *,
         player_order: torch.Tensor,
+        payload_supported_core: torch.Tensor | None = None,
         _prevalidated_order: bool = False,
     ) -> PendingSpellEnqueueResult:
         """Commit card transitions and enqueue commands without payload work."""
@@ -241,10 +242,15 @@ class TensorResidentPendingSpells:
             self.cards.kind[commands.card_id] == int(CardKindOpcode.SPELL)
         ) & ~commands.is_ability
         core_card = self.catalog_to_core[commands.card_id]
+        supported_core = (
+            bridge.catalog.supported
+            if payload_supported_core is None
+            else payload_supported_core
+        )
+        if supported_core.shape != bridge.catalog.supported.shape:
+            raise ValueError("pending spell support plane has an invalid shape")
         payload_supported = (
-            command_spell
-            & (core_card >= 0)
-            & bridge.catalog.supported[core_card.clamp_min(0)]
+            command_spell & (core_card >= 0) & supported_core[core_card.clamp_min(0)]
         )
         spell_count = torch.zeros(
             self.batch_size, dtype=torch.int64, device=self.device

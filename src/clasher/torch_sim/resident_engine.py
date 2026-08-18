@@ -28,7 +28,11 @@ from clasher.native_tilemap import (
     STANDARD_PATH_ROWS,
     STANDARD_PATH_WIDTH,
 )
-from clasher.spells import SPELL_REGISTRY, SpawnProjectileSpell
+from clasher.spells import (
+    SPELL_REGISTRY,
+    GraveyardSpell,
+    SpawnProjectileSpell,
+)
 
 from .actions import NO_OP_ACTION, TensorActionCatalog
 from .catalog import EFFECT_OPCODE, MECHANIC_OPCODE, TensorCardCatalog
@@ -62,6 +66,11 @@ from .resident_action_router import (
     TensorResidentActionRouter,
     TensorResidentActionRouterResult,
 )
+from .resident_continuous_areas import (
+    ContinuousAreaStepResult,
+    TensorResidentContinuousAreas,
+)
+from .resident_graveyard import GraveyardStepResult, TensorResidentGraveyards
 from .resident_pathing import (
     TensorResidentPathCache,
     plan_standard_routes,
@@ -86,6 +95,7 @@ from .resident_terminal_pipeline import (
     TensorTerminalPipelineTargets,
 )
 from .resident_timed_terminal_payloads import TensorTimedTerminalCatalog
+from .resident_tornado import TensorResidentTornadoes, TornadoStepResult
 from .runtime_deployment import (
     TensorRuntimeDeployment,
     TensorRuntimeDeploymentResult,
@@ -107,6 +117,7 @@ from .runtime_status import (
     step_runtime_status_phase_,
 )
 from .special_movement import SpecialMovementOpcode
+from .status import TensorStatusState
 from .tick_common import check_win_conditions, tick_players
 
 RESIDENT_PHASE_ORDER = tuple(TickPhase)
@@ -188,6 +199,14 @@ def _resident_deployment_catalog_closure(
                 (
                     spell.spawn_character_data,
                     "Common",
+                    str(spell.spawn_character),
+                )
+            )
+        if isinstance(spell, GraveyardSpell) and isinstance(spell.skeleton_data, dict):
+            payloads.append(
+                (
+                    spell.skeleton_data,
+                    str(spell.skeleton_data.get("rarity", "Common")),
                     str(spell.spawn_character),
                 )
             )
@@ -286,6 +305,9 @@ class ResidentTickResult:
     movement: RuntimeMovementResult
     status: RuntimeStatusPhaseResult
     objects: RuntimeObjectPhaseResult
+    continuous_areas: ContinuousAreaStepResult | None
+    graveyards: GraveyardStepResult | None
+    tornadoes: TornadoStepResult | None
     periodic_spawner: TensorPeriodicSpawnerResult | None
     terminal: ResidentTerminalPipelineResult | None
     cleanup: EntitySelection
@@ -596,6 +618,10 @@ class TensorResidentEngine:
         path_cache: TensorResidentPathCache,
         status: TensorRuntimeStatusPhase,
         objects: TensorRuntimeObjectPhase,
+        continuous_areas: TensorResidentContinuousAreas,
+        continuous_effect_deadline_seconds: torch.Tensor,
+        graveyards: TensorResidentGraveyards,
+        tornadoes: TensorResidentTornadoes,
         periodic_catalog: TensorPeriodicSpawnerCatalog,
         periodic_state: TensorPeriodicSpawnerRuntimeState,
         terminal_pipeline: TensorResidentTerminalPipeline,
@@ -633,6 +659,10 @@ class TensorResidentEngine:
         self.path_cache = path_cache
         self.status = status
         self.objects = objects
+        self.continuous_areas = continuous_areas
+        self.continuous_effect_deadline_seconds = continuous_effect_deadline_seconds
+        self.graveyards = graveyards
+        self.tornadoes = tornadoes
         self.periodic_catalog = periodic_catalog
         self.periodic_state = periodic_state
         self.terminal_pipeline = terminal_pipeline
@@ -729,6 +759,54 @@ class TensorResidentEngine:
         objects = TensorRuntimeObjectPhase.from_battles(
             runtime, battles, max_objects=max_objects
         )
+        area_capacity = min(max_objects, 8)
+        continuous_areas = TensorResidentContinuousAreas.from_battles(
+            runtime, battles, capacity=area_capacity
+        )
+        continuous_duration_ms = (
+            continuous_areas.catalog.duration_ms.detach().cpu().tolist()
+        )
+        continuous_interval_ms = (
+            continuous_areas.catalog.effect_interval_ms.detach().cpu().tolist()
+        )
+        maximum_effect_scans = max(
+            (
+                (int(duration) + max(1, int(interval)) - 1) // max(1, int(interval))
+                for duration, interval in zip(
+                    continuous_duration_ms,
+                    continuous_interval_ms,
+                    strict=True,
+                )
+            ),
+            default=1,
+        )
+        continuous_effect_deadline_seconds = torch.zeros(
+            (continuous_areas.catalog.size, max(1, maximum_effect_scans)),
+            dtype=torch.float64,
+            device=runtime.device,
+        )
+        deadline_rows: list[list[float]] = []
+        for interval_ms in continuous_interval_ms:
+            interval_seconds = max(1, int(interval_ms)) / 1_000.0
+            deadline = interval_seconds
+            deadline_row: list[float] = []
+            for _ in range(continuous_effect_deadline_seconds.shape[1]):
+                deadline_row.append(deadline)
+                deadline += interval_seconds
+            deadline_rows.append(deadline_row)
+        continuous_effect_deadline_seconds.copy_(
+            torch.tensor(
+                deadline_rows,
+                dtype=torch.float64,
+                device=runtime.device,
+            )
+        )
+        graveyards = TensorResidentGraveyards.from_battles(
+            runtime, battles, capacity=area_capacity
+        )
+        tornadoes = TensorResidentTornadoes.from_battles(
+            runtime, battles, capacity=area_capacity
+        )
         periodic_catalog = TensorPeriodicSpawnerCatalog.compile(
             catalog_loader,
             cards,
@@ -795,11 +873,18 @@ class TensorResidentEngine:
         projectile_bridge = TensorResidentProjectileSpellBridge.from_battles(
             runtime, objects, mechanic_battles
         )
+        spell_payload_supported_core = (
+            projectile_bridge.catalog.supported
+            | continuous_areas.catalog.supported
+            | graveyards.catalog.supported
+            | tornadoes.catalog.supported
+        )
         spell_ingress = TensorResidentSpellActionIngress(
             runtime,
             objects,
             projectile_bridge,
             cards,
+            episode_supported_core=spell_payload_supported_core,
         )
         pending_spells = TensorResidentPendingSpells.from_battles(
             runtime,
@@ -813,6 +898,7 @@ class TensorResidentEngine:
             deployment,
             spell_ingress,
             pending_spells,
+            spell_payload_supported_core,
         )
         pending_projectile_max_duration_ms = torch.zeros(
             (runtime.batch_size, runtime.max_entities),
@@ -980,6 +1066,10 @@ class TensorResidentEngine:
             path_cache=path_cache,
             status=status,
             objects=objects,
+            continuous_areas=continuous_areas,
+            continuous_effect_deadline_seconds=(continuous_effect_deadline_seconds),
+            graveyards=graveyards,
+            tornadoes=tornadoes,
             periodic_catalog=periodic_catalog,
             periodic_state=periodic_state,
             terminal_pipeline=terminal_pipeline,
@@ -1022,6 +1112,9 @@ class TensorResidentEngine:
         dispatcher.mechanics = mechanics
         dispatcher.passive.entity_id = runtime.battle.entity_id
         objects = _clone_object_phase(self.objects)
+        continuous_areas = self.continuous_areas.clone()
+        graveyards = self.graveyards.clone()
+        tornadoes = self.tornadoes.clone()
         periodic_state = self.periodic_state.clone()
         terminal_pipeline = _clone_terminal_pipeline(self.terminal_pipeline)
         projectile_bridge = _clone_projectile_bridge(self.projectile_bridge)
@@ -1049,6 +1142,12 @@ class TensorResidentEngine:
             path_cache=self.path_cache,
             status=self.status.clone(),
             objects=objects,
+            continuous_areas=continuous_areas,
+            continuous_effect_deadline_seconds=(
+                self.continuous_effect_deadline_seconds
+            ),
+            graveyards=graveyards,
+            tornadoes=tornadoes,
             periodic_catalog=self.periodic_catalog,
             periodic_state=periodic_state,
             terminal_pipeline=terminal_pipeline,
@@ -1449,6 +1548,17 @@ class TensorResidentEngine:
             periodic_live & (timed_live | general_live),
             ResidentUnsupportedReason.OBJECT_PHASE,
         )
+        area_kind_count = (
+            self.continuous_areas.active.any(dim=1).to(torch.int8)
+            + self.graveyards.active.any(dim=1).to(torch.int8)
+            + self.tornadoes.active.any(dim=1).to(torch.int8)
+        )
+        area_live = area_kind_count > 0
+        publish(
+            (area_kind_count > 1)
+            | (area_live & (timed_live | general_live | periodic_live)),
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
         publish(~self.objects.static_supported, ResidentUnsupportedReason.OBJECT_PHASE)
 
         # Pure action ingress contributes opcodes before any speculative state
@@ -1595,7 +1705,8 @@ class TensorResidentEngine:
         character = present & ((core.entity_kind == 0) | (core.entity_kind == 1))
         troop = character & (core.entity_kind == 0)
 
-        self.combat.present.copy_(present)
+        component_present = present & character
+        self.combat.present.copy_(component_present)
         self.combat.entity_id.copy_(core.entity_id)
         self.combat.encounter_order.copy_(core.entity_id)
         self.combat.kind.copy_(core.entity_kind)
@@ -1764,7 +1875,7 @@ class TensorResidentEngine:
         self.combat.incoming_damage_multiplier.fill_(1.0)
 
         movement = self.movement
-        movement.slot_present.copy_(present)
+        movement.slot_present.copy_(component_present)
         movement.entity_id.copy_(core.entity_id)
         movement.entity_active.copy_(core.entity_active & present)
         movement.entity_kind.copy_(core.entity_kind.to(torch.int64))
@@ -1877,6 +1988,11 @@ class TensorResidentEngine:
                 movement.pending_vector_consumed,
             )
         )
+        movement.accumulated_vector_units.copy_(runtime.phases.movement_vector_units)
+        movement.accumulated_vector_count.copy_(runtime.phases.movement_vector_count)
+        movement.accumulated_vector_bypasses_cap.copy_(
+            runtime.phases.movement_vector_bypasses_cap
+        )
 
         self.status.lifetime_ms.copy_(core.entity_lifetime_ms)
         self.status.lifetime_elapsed.copy_(core.entity_lifetime_elapsed)
@@ -1892,6 +2008,64 @@ class TensorResidentEngine:
         self.mechanics.refresh_new_entities_(runtime)
         return new
 
+    def _refresh_area_target_planes_(self, new: torch.Tensor) -> None:
+        """Refresh dynamic target metadata after canonical entity allocation."""
+
+        runtime = self.runtime
+        core = runtime.battle
+        catalog_id = runtime.card_catalog_index[core.entity_card]
+        safe = catalog_id.clamp_min(0)
+        known = catalog_id > 0
+        character = runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        receiver = new & character & core.entity_active & known
+        radius = runtime.catalog.collision_radius_units[safe].to(torch.int32)
+        radius = torch.where(radius > 0, radius, 500)
+        crown = core.entity_tower_slot >= 0
+
+        continuous = self.continuous_areas.targets
+        continuous.entity_id.copy_(core.entity_id)
+        continuous.collision_radius_units.copy_(
+            torch.where(new, radius, continuous.collision_radius_units)
+        )
+        continuous.airborne.copy_(
+            torch.where(new, runtime.catalog.is_air_unit[safe], continuous.airborne)
+        )
+        continuous.building.copy_(
+            torch.where(new, core.entity_kind == 1, continuous.building)
+        )
+        continuous.crown.copy_(torch.where(new, crown, continuous.crown))
+        continuous.freeze_carrier.masked_fill_(new, False)
+        continuous.damage_receivable[new] = receiver[new][:, None]
+        continuous.effect_receivable[new] = receiver[new][:, None]
+
+        tornado = self.tornadoes.targets
+        tornado.entity_id.copy_(core.entity_id)
+        tornado.collision_radius_units.copy_(
+            torch.where(new, radius, tornado.collision_radius_units)
+        )
+        tornado.airborne.copy_(
+            torch.where(new, runtime.catalog.is_air_unit[safe], tornado.airborne)
+        )
+        tornado.building.copy_(
+            torch.where(new, core.entity_kind == 1, tornado.building)
+        )
+        tornado.crown.copy_(torch.where(new, crown, tornado.crown))
+        tornado.base_speed.copy_(
+            torch.where(
+                new,
+                runtime.catalog.speed_units_per_tick[safe].to(torch.int64),
+                tornado.base_speed,
+            )
+        )
+        tornado.area_displaceable.masked_fill_(new, False)
+        tornado.effect_receivable[new] = receiver[new][:, None]
+        tornado.damage_receivable[new] = receiver[new][:, None]
+        tornado.transit_supported.copy_(
+            ~self.movement.in_transit | self.movement.river_jump_active
+        )
+
     def _combat_clock_planes(self) -> TensorCombatClockPlanes:
         return TensorCombatClockPlanes(
             attack_cooldown=self.combat.attack_cooldown,
@@ -1901,12 +2075,335 @@ class TensorResidentEngine:
             has_attacked_once=self.combat.has_attacked_once,
         )
 
+    def _resolve_pending_spells_(self) -> PendingSpellResolveResult:
+        """Resolve due commands through one globally ordered handler worklist."""
+
+        pending = self.pending_spells
+        due = pending.active & (
+            pending.execute_at <= self.runtime.battle.time[:, None] + 1e-9
+        )
+        due_rows = due.any(dim=1)
+        supported = self.runtime.supported.clone()
+        processed = torch.zeros_like(due)
+        resolved_count = torch.zeros(
+            self.batch_size, dtype=torch.int64, device=self.device
+        )
+        rows = torch.arange(self.batch_size, device=self.device)
+        maximum_sequence = torch.iinfo(torch.int64).max
+        infinity = torch.full_like(pending.execute_at, torch.inf)
+        self.projectile_bridge.stun_applied.zero_()
+
+        for _ in range(pending.capacity):
+            candidate = due & ~processed & supported[:, None]
+            selected_time = torch.where(candidate, pending.execute_at, infinity).amin(
+                dim=1
+            )
+            at_time = candidate & (pending.execute_at == selected_time[:, None])
+            sequence = torch.where(
+                at_time,
+                pending.sequence,
+                torch.full_like(pending.sequence, maximum_sequence),
+            )
+            selected_sequence, slot = sequence.min(dim=1)
+            selected = selected_sequence != maximum_sequence
+            cards = torch.gather(pending.card_id, 1, slot[:, None])[:, 0]
+            players = torch.gather(pending.player_id.to(torch.int64), 1, slot[:, None])[
+                :, 0
+            ]
+            x_units = torch.gather(
+                pending.target_x_units.to(torch.int64), 1, slot[:, None]
+            )[:, 0]
+            y_units = torch.gather(
+                pending.target_y_units.to(torch.int64), 1, slot[:, None]
+            )[:, 0]
+            in_range = (cards >= 0) & (
+                cards < self.projectile_bridge.catalog.supported.numel()
+            )
+            safe = cards.clamp(0, self.projectile_bridge.catalog.supported.numel() - 1)
+            bridge_handler = (
+                selected & in_range & self.projectile_bridge.catalog.supported[safe]
+            )
+            continuous_handler = (
+                selected & self.continuous_areas.catalog.supported[safe] & in_range
+            )
+            graveyard_handler = (
+                selected & in_range & self.graveyards.catalog.supported[safe]
+            )
+            tornado_handler = (
+                selected & in_range & self.tornadoes.catalog.supported[safe]
+            )
+            handler_count = (
+                bridge_handler.to(torch.int8)
+                + continuous_handler.to(torch.int8)
+                + graveyard_handler.to(torch.int8)
+                + tornado_handler.to(torch.int8)
+            )
+            known = handler_count == 1
+            bridge_supported = self.projectile_bridge.materialize_spell_actions_(
+                self.runtime,
+                self.objects,
+                card_ids=cards,
+                player_ids=players,
+                target_x_units=x_units,
+                target_y_units=y_units,
+                valid=bridge_handler & known,
+            )
+            continuous_supported = self.continuous_areas.materialize_due_spell_actions_(
+                self.runtime,
+                card_ids=cards,
+                player_ids=players,
+                target_x_units=x_units,
+                target_y_units=y_units,
+                valid=continuous_handler & known,
+            )
+            graveyard_supported = self.graveyards.materialize_due_spell_actions_(
+                self.runtime,
+                card_ids=cards,
+                player_ids=players,
+                target_x_units=x_units,
+                target_y_units=y_units,
+                valid=graveyard_handler & known,
+            )
+            tornado_supported = self.tornadoes.materialize_due_spell_actions_(
+                self.runtime,
+                card_ids=cards,
+                player_ids=players,
+                target_x_units=x_units,
+                target_y_units=y_units,
+                valid=tornado_handler & known,
+            )
+            materialized = (
+                (~bridge_handler | bridge_supported)
+                & (~continuous_handler | continuous_supported)
+                & (~graveyard_handler | graveyard_supported)
+                & (~tornado_handler | tornado_supported)
+            )
+            failed = selected & (~known | ~materialized)
+            supported &= ~failed
+            committed = selected & known & materialized
+            selected_rows = rows[committed]
+            selected_slots = slot[committed]
+            pending.active[selected_rows, selected_slots] = False
+            pending.execute_at[selected_rows, selected_slots] = 0.0
+            pending.sequence[selected_rows, selected_slots] = 0
+            pending.card_id[selected_rows, selected_slots] = 0
+            pending.player_id[selected_rows, selected_slots] = 0
+            pending.target_x_units[selected_rows, selected_slots] = 0
+            pending.target_y_units[selected_rows, selected_slots] = 0
+            resolved_count += committed.to(torch.int64)
+            processed[rows[selected], slot[selected]] = True
+
+        commit_rows = due_rows & supported
+        return PendingSpellResolveResult(
+            committed=~due_rows | commit_rows,
+            due_rows=due_rows,
+            resolved_count=torch.where(
+                commit_rows, resolved_count, torch.zeros_like(resolved_count)
+            ),
+            failed_rows=due_rows & ~supported,
+            stun_applied=self.projectile_bridge.stun_applied & commit_rows[:, None],
+        )
+
+    def _rewrite_area_periodic_events_(self, start: torch.Tensor) -> None:
+        """Project target-local area damage onto the public Python ledger."""
+
+        events = self.runtime.events
+        slots = torch.arange(events.capacity, device=self.device)[None, :]
+        segment = (slots >= start[:, None]) & (slots < events.count[:, None])
+        safe_payload = events.payload.clamp(0, self.continuous_areas.catalog.size - 1)
+        area_payload = (
+            self.continuous_areas.catalog.target_local_damage[safe_payload]
+            | self.tornadoes.catalog.supported[safe_payload]
+        )
+        public = (
+            segment
+            & area_payload
+            & (
+                (events.opcode == int(RuntimeEventOpcode.DAMAGE))
+                | (events.opcode == int(RuntimeEventOpcode.DEATH))
+            )
+        )
+        events.phase.copy_(torch.where(public, int(TickPhase.COMBAT), events.phase))
+        events.source_id.masked_fill_(public, 0)
+        events.payload.masked_fill_(public, 0)
+
+    def _project_continuous_area_slow_status(
+        self,
+    ) -> tuple[Any, torch.Tensor]:
+        """Reproduce scalar repeated-add deadlines for continuous slows.
+
+        The retained area owner schedules work in exact integer milliseconds.
+        Python's public slow duration is nevertheless computed from the
+        repeatedly incremented binary64 ``next_effect_time``.  The immutable
+        deadline table preserves those scalar bits on every device while this
+        projection mirrors the owner's signature/slot order without host
+        stepping.
+        """
+
+        owner = self.continuous_areas
+        runtime = self.runtime
+        cards = owner.card_id.clamp(0, owner.catalog.size - 1)
+        selected = owner.active & runtime.supported[:, None]
+        age_after = (
+            owner.age_ms.to(torch.int64)
+            + (runtime.battle.tick_milliseconds.to(torch.int64)[:, None])
+        )
+        duration_ms = owner.catalog.duration_ms[cards].to(torch.int64)
+        deadline_ms = torch.minimum(age_after, duration_ms)
+        targets, identity_supported, freeze_carrier = owner._target_mask(runtime, cards)
+        supported = runtime.supported & identity_supported
+        supported &= ~(
+            freeze_carrier & owner.catalog.freeze_snapshot[cards][:, :, None]
+        ).any(dim=(1, 2))
+        card_index = cards[:, :, None, None].expand(
+            self.batch_size,
+            owner.capacity,
+            runtime.max_entities,
+            1,
+        )
+        effect_receivable = torch.gather(
+            owner.targets.effect_receivable[:, None, :, :].expand(
+                self.batch_size,
+                owner.capacity,
+                runtime.max_entities,
+                -1,
+            ),
+            3,
+            card_index,
+        )[:, :, :, 0]
+        projection = cast(
+            TensorStatusState,
+            _clone_tensor_dataclass(runtime.status),
+        )
+
+        freeze_area = (
+            selected
+            & owner.catalog.freeze_snapshot[cards]
+            & ~owner.freeze_applied
+            & supported[:, None]
+        )
+        freeze_targets = (
+            targets
+            & effect_receivable
+            & freeze_area[:, :, None]
+            & runtime.battle.entity_active[:, None, :]
+        )
+        freeze_matches = (
+            projection.slow_active
+            & (projection.slow_movement == 0.0)
+            & (projection.slow_attack == 0.0)
+            & (projection.slow_spawn == 0.0)
+        ).any(dim=2)
+        freeze_capacity = freeze_matches | (~projection.slow_active).any(dim=2)
+        supported &= ~(freeze_targets & ~freeze_capacity[:, None, :]).any(dim=(1, 2))
+        freeze_targets &= supported[:, None, None]
+        expiry = runtime.battle.time[:, None, None] + (
+            duration_ms.to(torch.float64)[:, :, None] / 1_000.0
+        )
+        maximum_expiry = torch.where(freeze_targets, expiry, 0.0).amax(dim=1)
+        projection.apply_freeze_until(
+            maximum_expiry,
+            runtime.battle.time[:, None],
+            mask=maximum_expiry > runtime.battle.time[:, None],
+        )
+
+        effect_due = (
+            selected
+            & ~owner.catalog.freeze_snapshot[cards]
+            & (owner.next_effect_ms.to(torch.int64) <= deadline_ms)
+            & (owner.next_effect_ms.to(torch.int64) < duration_ms)
+            & supported[:, None]
+        )
+        projected_rows = torch.zeros(
+            self.batch_size, dtype=torch.bool, device=self.device
+        )
+        for area_slot in range(owner.capacity):
+            area_cards = cards[:, area_slot]
+            slow_targets = (
+                targets[:, area_slot]
+                & effect_receivable[:, area_slot]
+                & runtime.battle.entity_active
+                & effect_due[:, area_slot, None]
+                & (owner.catalog.movement_multiplier[area_cards][:, None] < 1.0)
+            )
+            movement = owner.catalog.movement_multiplier[area_cards][:, None]
+            attack = owner.catalog.attack_multiplier[area_cards][:, None]
+            spawn = owner.catalog.spawn_multiplier[area_cards][:, None]
+            slow_matches = (
+                projection.slow_active
+                & (projection.slow_movement == movement[:, :, None])
+                & (projection.slow_attack == attack[:, :, None])
+                & (projection.slow_spawn == spawn[:, :, None])
+            ).any(dim=2)
+            slow_capacity = slow_matches | (~projection.slow_active).any(dim=2)
+            supported &= ~(slow_targets & ~slow_capacity).any(dim=1)
+            slow_targets &= supported[:, None]
+
+            interval_ms = owner.catalog.effect_interval_ms[area_cards].to(torch.int64)
+            ordinal = torch.div(
+                owner.next_effect_ms[:, area_slot].to(torch.int64),
+                interval_ms.clamp_min(1),
+                rounding_mode="floor",
+            ).clamp_min(1)
+            ordinal = (ordinal - 1).clamp_max(
+                self.continuous_effect_deadline_seconds.shape[1] - 1
+            )
+            exact_deadline = self.continuous_effect_deadline_seconds[
+                area_cards, ordinal
+            ]
+            refresh = torch.maximum(
+                owner.catalog.slow_refresh_ms[area_cards].to(torch.float64) / 1_000.0,
+                interval_ms.to(torch.float64) / 1_000.0,
+            )
+            exact_remaining = (
+                duration_ms[:, area_slot].to(torch.float64) / 1_000.0 - exact_deadline
+            ).clamp_min(0.0)
+            refresh = torch.where(
+                owner.catalog.cap_slow_to_area[area_cards],
+                torch.minimum(refresh, exact_remaining),
+                refresh,
+            )
+            projection.apply_slow(
+                refresh[:, None],
+                movement,
+                attack_speed_multiplier=attack,
+                spawn_speed_multiplier=spawn,
+                mask=slow_targets & (refresh[:, None] > 1e-9),
+            )
+            projected_rows |= slow_targets.any(dim=1)
+        return projection, projected_rows & supported
+
+    def _publish_continuous_area_slow_projection_(
+        self,
+        projection: Any,
+        rows: torch.Tensor,
+    ) -> None:
+        for name in (
+            "slow_active",
+            "slow_remaining",
+            "slow_movement",
+            "slow_attack",
+            "slow_spawn",
+            "slow_timer",
+            "slow_multiplier",
+            "attack_speed_debuff_multiplier",
+            "spawn_speed_debuff_multiplier",
+        ):
+            destination = getattr(self.runtime.status, name)
+            source = getattr(projection, name)
+            row_mask = rows.reshape(
+                self.batch_size,
+                *((1,) * (destination.ndim - 1)),
+            )
+            destination.copy_(torch.where(row_mask, source, destination))
+
     def _combat_phase(
         self,
         active: torch.Tensor,
         stun_applied: torch.Tensor | None = None,
     ) -> CombatStepResult:
-        self._refresh_planes()
+        new = self._refresh_planes()
+        self._refresh_area_target_planes_(new)
         if stun_applied is not None:
             accepted_stun = stun_applied & active[:, None] & self.combat.present
             stun_transition = apply_stun_interrupt_(
@@ -2293,7 +2790,7 @@ class TensorResidentEngine:
         physical_ids = self.runtime.battle.entity_id.to(torch.int64)
         sentinel = torch.iinfo(torch.int64).max
         order = torch.argsort(
-            torch.where(self.runtime.entity_pool.active, physical_ids, sentinel),
+            torch.where(self.movement.slot_present, physical_ids, sentinel),
             dim=1,
             stable=True,
         )
@@ -2548,6 +3045,21 @@ class TensorResidentEngine:
             source.pending_spells,
             selected_rows,
         )
+        self.continuous_areas.reset_rows_(
+            selected_rows,
+            source.continuous_areas,
+            selected_rows,
+        )
+        self.graveyards.reset_rows_(
+            selected_rows,
+            source.graveyards,
+            selected_rows,
+        )
+        self.tornadoes.reset_rows_(
+            selected_rows,
+            source.tornadoes,
+            selected_rows,
+        )
         self.facing_x_units[rows] = source.facing_x_units[rows]
         self.facing_y_units[rows] = source.facing_y_units[rows]
         self.pending_projectile_max_duration_ms[rows] = (
@@ -2626,16 +3138,35 @@ class TensorResidentEngine:
         tick_players(core, active)
         working.runtime.mark_dirty(active, phase=TickPhase.CLOCKS_AND_PLAYERS)
         objects_before_pending = working.objects.objects.allocated.clone()
-        pending_spells = working.pending_spells.resolve_due_(
-            working.runtime,
-            working.objects,
-            working.projectile_bridge,
-        )
+        continuous_before_pending = working.continuous_areas.active.clone()
+        graveyards_before_pending = working.graveyards.active.clone()
+        tornadoes_before_pending = working.tornadoes.active.clone()
+        pending_spells = working._resolve_pending_spells_()
         active &= pending_spells.committed
         working.runtime.supported &= active
         pending_new_objects = (
             working.objects.objects.allocated & ~objects_before_pending
         )
+        pending_new_continuous = (
+            working.continuous_areas.active & ~continuous_before_pending
+        )
+        pending_new_graveyards = working.graveyards.active & ~graveyards_before_pending
+        pending_new_tornadoes = working.tornadoes.active & ~tornadoes_before_pending
+        area_kind_count = (
+            working.continuous_areas.active.any(dim=1).to(torch.int8)
+            + working.graveyards.active.any(dim=1).to(torch.int8)
+            + working.tornadoes.active.any(dim=1).to(torch.int8)
+        )
+        area_live = area_kind_count > 0
+        area_conflict = (area_kind_count > 1) | (
+            area_live & working.objects.objects.allocated.any(dim=1)
+        )
+        working.runtime.mark_unsupported(
+            active & area_conflict,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= ~area_conflict
+        working.runtime.supported &= active
 
         working.mechanics.refresh_new_entities_(working.runtime)
         # Cloak remains outside RESIDENT_DISPATCH_MECHANIC_OPCODES. The
@@ -2717,12 +3248,26 @@ class TensorResidentEngine:
             :, None
         ] | working.projectile_bridge.knockback_active
         movement = working._movement_phase(movement_consumed)
+        working.runtime.phases.movement_vector_units.copy_(
+            working.movement.accumulated_vector_units
+        )
+        working.runtime.phases.movement_vector_count.copy_(
+            working.movement.accumulated_vector_count
+        )
+        working.runtime.phases.movement_vector_bypasses_cap.copy_(
+            working.movement.accumulated_vector_bypasses_cap
+        )
+        status_event_start = working.runtime.events.count.clone()
         status = step_runtime_status_phase_(
             working.runtime,
             working.status,
             dt=core.dt,
             battle_mask=active,
         )
+        working.runtime.battle.entity_hp_integer_kind &= ~(
+            active[:, None] & (status.periodic_hitpoint_loss > 0.0)
+        )
+        working._rewrite_area_periodic_events_(status_event_start)
         completed = working._character_object_phase(active)
         entity_id_before_periodic = working.runtime.battle.entity_id.clone()
         if working.periodic_catalog.spawn.periodic_rows().numel():
@@ -2749,8 +3294,96 @@ class TensorResidentEngine:
                 working.runtime.battle.entity_id != entity_id_before_periodic
             )
             completed |= working._character_object_phase(active, periodic_children)
+            working._refresh_area_target_planes_(periodic_children)
         else:
             periodic_spawner = None
+        working.continuous_areas.active[pending_new_continuous] = False
+        working.graveyards.active[pending_new_graveyards] = False
+        working.tornadoes.active[pending_new_tornadoes] = False
+        area_entity_ids_before = working.runtime.battle.entity_id.clone()
+        area_freeze_before = working.runtime.status.freeze_expiry_time.clone()
+        continuous_slow_projection, continuous_slow_rows = (
+            working._project_continuous_area_slow_status()
+        )
+        continuous_areas = working.continuous_areas.step_(working.runtime)
+        working._publish_continuous_area_slow_projection_(
+            continuous_slow_projection,
+            continuous_slow_rows & continuous_areas.committed,
+        )
+        working.runtime.mark_unsupported(
+            active & ~continuous_areas.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= continuous_areas.committed
+        working.runtime.supported &= active
+        graveyards = working.graveyards.step_(working.runtime)
+        working.runtime.mark_unsupported(
+            active & ~graveyards.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= graveyards.committed
+        working.runtime.supported &= active
+        graveyard_spawned = (
+            working.runtime.entity_pool.active
+            & (working.runtime.battle.entity_id != area_entity_ids_before)
+            & (
+                (working.runtime.battle.entity_kind == 0)
+                | (working.runtime.battle.entity_kind == 1)
+            )
+        )
+        working._refresh_area_target_planes_(graveyard_spawned)
+        tornadoes = working.tornadoes.step_(working.runtime)
+        working.runtime.mark_unsupported(
+            active & ~tornadoes.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= tornadoes.committed
+        working.runtime.supported &= active
+
+        area_stun_applied = (
+            working.runtime.status.freeze_expiry_time > area_freeze_before + 1e-9
+        ) & active[:, None]
+        area_stun_transition = apply_stun_interrupt_(
+            working._combat_clock_planes(),
+            status_applied=area_stun_applied,
+            hit_speed_ms=working.combat.hit_speed_ms,
+            river_jump_active=working.movement.river_jump_active,
+        )
+        working.runtime.phases.target_slot.masked_fill_(
+            area_stun_transition.transitioned, -1
+        )
+        working.combat_target_entity_id.masked_fill_(
+            area_stun_transition.transitioned, -1
+        )
+        area_charge_reset = (
+            area_stun_transition.charge_reset & working.movement.charge_component
+        )
+        working.movement.native_charge_progress.masked_fill_(area_charge_reset, 0)
+        working.movement.distance_traveled_bits.masked_fill_(area_charge_reset, 0)
+        working.combat.stunned |= area_stun_applied
+        working.combat.combat_blocked |= area_stun_applied
+
+        area_spawned = (
+            working.runtime.entity_pool.active
+            & (working.runtime.battle.entity_id != area_entity_ids_before)
+            & (
+                (working.runtime.battle.entity_kind == 0)
+                | (working.runtime.battle.entity_kind == 1)
+            )
+        )
+        working._refresh_area_target_planes_(area_spawned)
+        completed |= working._character_object_phase(active, area_spawned)
+        area_spawned_catalog = working.runtime.card_catalog_index[
+            working.runtime.battle.entity_card
+        ].clamp_min(0)
+        initialize_spawned_attack_clocks_(
+            working._combat_clock_planes(),
+            spawned=area_spawned,
+            first_hit_ms=working.first_hit_ms[area_spawned_catalog],
+        )
+        working.continuous_areas.active[pending_new_continuous] = True
+        working.graveyards.active[pending_new_graveyards] = True
+        working.tornadoes.active[pending_new_tornadoes] = True
         pending_new_active = working.objects.objects.active[pending_new_objects].clone()
         working.objects.objects.allocated[pending_new_objects] = False
         working.objects.objects.active[pending_new_objects] = False
@@ -2875,6 +3508,9 @@ class TensorResidentEngine:
             movement=movement,
             status=status,
             objects=objects,
+            continuous_areas=continuous_areas,
+            graveyards=graveyards,
+            tornadoes=tornadoes,
             periodic_spawner=periodic_spawner,
             terminal=terminal,
             cleanup=cleanup,

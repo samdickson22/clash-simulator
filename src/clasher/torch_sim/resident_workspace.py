@@ -118,6 +118,13 @@ class TensorResidentWorkspace:
             self.engine.pending_spells.active.data_ptr()
         ):
             raise ValueError("speculative pending spells must own mutable storage")
+        for name in ("continuous_areas", "graveyards", "tornadoes"):
+            scratch_owner = getattr(self.scratch, name)
+            engine_owner = getattr(self.engine, name)
+            if scratch_owner.catalog is not engine_owner.catalog:
+                raise ValueError(f"speculative engines must share {name} catalogs")
+            if scratch_owner.active.data_ptr() == engine_owner.active.data_ptr():
+                raise ValueError(f"speculative {name} must own mutable storage")
         if (
             self.scratch.dispatcher.passive_catalog
             is not self.engine.dispatcher.passive_catalog
@@ -151,6 +158,21 @@ class TensorResidentWorkspace:
         destination.pending_spells.reset_rows_(
             pending_rows,
             source.pending_spells,
+            pending_rows,
+        )
+        destination.continuous_areas.reset_rows_(
+            pending_rows,
+            source.continuous_areas,
+            pending_rows,
+        )
+        destination.graveyards.reset_rows_(
+            pending_rows,
+            source.graveyards,
+            pending_rows,
+        )
+        destination.tornadoes.reset_rows_(
+            pending_rows,
+            source.tornadoes,
             pending_rows,
         )
         for left, right in (

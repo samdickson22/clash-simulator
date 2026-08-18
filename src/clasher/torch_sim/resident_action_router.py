@@ -234,6 +234,7 @@ class TensorResidentActionRouter:
         deployment: TensorRuntimeDeployment,
         spells: TensorResidentSpellActionIngress,
         pending_spells: TensorResidentPendingSpells,
+        spell_payload_supported_core: torch.Tensor | None = None,
     ) -> None:
         if spells.runtime is not runtime or spells.objects is not objects:
             raise ValueError("router spell ingress must own the routed state")
@@ -247,6 +248,13 @@ class TensorResidentActionRouter:
         self.deployment = deployment
         self.spells = spells
         self.pending_spells = pending_spells
+        self.spell_payload_supported_core = (
+            bridge.catalog.supported
+            if spell_payload_supported_core is None
+            else spell_payload_supported_core
+        )
+        if self.spell_payload_supported_core.shape != bridge.catalog.supported.shape:
+            raise ValueError("router spell support plane has an invalid shape")
         self.device = runtime.device
         self._rows = torch.arange(
             runtime.batch_size, dtype=torch.int64, device=self.device
@@ -403,6 +411,7 @@ class TensorResidentActionRouter:
                 workspace.bridge,
                 spell_ingress,
                 player_order=order,
+                payload_supported_core=self.spell_payload_supported_core,
                 _prevalidated_order=True,
             )
             row_supported &= pending_result.committed
