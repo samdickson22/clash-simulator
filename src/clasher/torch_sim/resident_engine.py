@@ -35,12 +35,19 @@ from .catalog import EFFECT_OPCODE, MECHANIC_OPCODE, TensorCardCatalog
 from .combat import (
     CombatStepResult,
     StationaryCombatState,
+    projectile_lethal_reservations,
     step_stationary_combat_,
 )
 from .combat_adapter import project_stationary_combat
 from .deployment import TensorCommandMaterializer, TensorDeploymentCatalog
 from .entity_pool import EntitySelection
 from .movement_adapter import TensorMovementAdapter
+from .object_adapter import RuntimeObjectKind
+from .objects import _integer_sqrt
+from .projectile_bridge import (
+    BridgePayloadKind,
+    TensorResidentProjectileSpellBridge,
+)
 from .resident_pathing import (
     TensorResidentPathCache,
     plan_standard_routes,
@@ -54,7 +61,6 @@ from .runtime_movement import RuntimeMovementResult, step_runtime_movement_
 from .runtime_objects import (
     RuntimeObjectPhaseResult,
     TensorRuntimeObjectPhase,
-    step_runtime_object_phase_,
 )
 from .runtime_state import (
     RuntimeEventOpcode,
@@ -324,6 +330,49 @@ def _clone_object_phase(phase: TensorRuntimeObjectPhase) -> TensorRuntimeObjectP
     return cloned
 
 
+def _clone_projectile_bridge(
+    bridge: TensorResidentProjectileSpellBridge,
+) -> TensorResidentProjectileSpellBridge:
+    cloned = copy.copy(bridge)
+    for descriptor in fields(bridge):
+        item = getattr(bridge, descriptor.name)
+        if isinstance(item, torch.Tensor):
+            setattr(cloned, descriptor.name, item.clone())
+    return cloned
+
+
+def _copy_projectile_bridge_rows_(
+    destination: TensorResidentProjectileSpellBridge,
+    source: TensorResidentProjectileSpellBridge,
+    rows: torch.Tensor,
+) -> None:
+    batch_size = destination.blueprint_for_slot.shape[0]
+    blueprint_indices = source.blueprint_for_slot[rows].flatten()
+    for descriptor in fields(destination):
+        left = getattr(destination, descriptor.name)
+        right = getattr(source, descriptor.name)
+        if not isinstance(left, torch.Tensor) or not isinstance(right, torch.Tensor):
+            continue
+        if left.ndim > 0 and left.shape[0] == batch_size:
+            left[rows] = right[rows]
+        elif descriptor.name.startswith("blueprint_") and left.ndim == 1:
+            left[blueprint_indices] = right[blueprint_indices]
+
+
+def _copy_object_blueprint_rows_(
+    destination: TensorRuntimeObjectPhase,
+    source: TensorRuntimeObjectPhase,
+    blueprint_indices: torch.Tensor,
+) -> None:
+    for descriptor in fields(destination):
+        if not descriptor.name.startswith("blueprint_"):
+            continue
+        left = getattr(destination, descriptor.name)
+        right = getattr(source, descriptor.name)
+        if isinstance(left, torch.Tensor) and left.ndim == 1:
+            left[blueprint_indices] = right[blueprint_indices]
+
+
 def _empty_combat_result(state: StationaryCombatState) -> CombatStepResult:
     return CombatStepResult(
         attacked=torch.zeros_like(state.present),
@@ -388,8 +437,13 @@ class TensorResidentEngine:
         path_cache: TensorResidentPathCache,
         status: TensorRuntimeStatusPhase,
         objects: TensorRuntimeObjectPhase,
+        projectile_bridge: TensorResidentProjectileSpellBridge,
+        pending_projectile_max_duration_ms: torch.Tensor,
+        projectile_duration_ms: torch.Tensor,
         combat: StationaryCombatState,
         uses_projectile: torch.Tensor,
+        can_attack_air: torch.Tensor,
+        can_attack_ground: torch.Tensor,
         death_spawn: torch.Tensor,
         area_radius_units: torch.Tensor,
         self_as_aoe_center: torch.Tensor,
@@ -407,8 +461,13 @@ class TensorResidentEngine:
         self.path_cache = path_cache
         self.status = status
         self.objects = objects
+        self.projectile_bridge = projectile_bridge
+        self.pending_projectile_max_duration_ms = pending_projectile_max_duration_ms
+        self.projectile_duration_ms = projectile_duration_ms
         self.combat = combat
         self.uses_projectile = uses_projectile
+        self.can_attack_air = can_attack_air
+        self.can_attack_ground = can_attack_ground
         self.death_spawn = death_spawn
         self.area_radius_units = area_radius_units
         self.self_as_aoe_center = self_as_aoe_center
@@ -485,6 +544,64 @@ class TensorResidentEngine:
         objects = TensorRuntimeObjectPhase.from_battles(
             runtime, battles, max_objects=max_objects
         )
+        projectile_bridge = TensorResidentProjectileSpellBridge.from_battles(
+            runtime, objects, mechanic_battles
+        )
+        pending_projectile_max_duration_ms = torch.zeros(
+            (runtime.batch_size, runtime.max_entities),
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        projectile_duration_ms = torch.zeros(
+            (runtime.batch_size, objects.objects.max_objects),
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        for row, battle in enumerate(battles):
+            for slot, entity in enumerate(
+                sorted(battle.entities.values(), key=lambda candidate: candidate.id)
+            ):
+                pending_projectile_max_duration_ms[row, slot] = int(
+                    getattr(entity, "_pending_projectile_max_duration_ms", 0) or 0
+                )
+            by_id = battle.entities
+            for object_slot in range(objects.objects.max_objects):
+                if not bool(objects.objects.allocated[row, object_slot].item()):
+                    continue
+                object_id = int(objects.objects.object_id[row, object_slot].item())
+                obj = by_id.get(object_id)
+                duration = getattr(obj, "_native_pending_damage_duration_ms", None)
+                if callable(duration):
+                    projectile_duration_ms[row, object_slot] = int(duration())
+                blueprint = int(objects.objects.blueprint_id[row, object_slot].item())
+                projectile_bridge.blueprint_tracks_target[blueprint] = bool(
+                    getattr(obj, "reserves_pending_damage", False)
+                )
+                projectile_bridge.blueprint_actual_damage[blueprint] = float(
+                    objects.objects.amount[row, object_slot].item()
+                )
+            if (
+                objects.unsupported_reasons[row]
+                == "live target tracking is not represented"
+            ):
+                allocated = objects.objects.allocated[row]
+                object_cards = runtime.battle.entity_card[row][
+                    runtime.battle.entity_kind[row] == 2
+                ]
+                supported_objects = projectile_bridge.catalog.supported[
+                    object_cards
+                ] & (
+                    projectile_bridge.catalog.kind[object_cards]
+                    == BridgePayloadKind.COMBAT_PROJECTILE
+                )
+                if int(allocated.sum().item()) == int(
+                    supported_objects.sum().item()
+                ) and bool(supported_objects.all().item()):
+                    objects.static_supported[row] = True
+                    objects.objects.feature_mask[row, allocated] = 0
+                    reasons = list(objects.unsupported_reasons)
+                    reasons[row] = None
+                    objects.unsupported_reasons = tuple(reasons)
         projection = project_stationary_combat(
             battles,
             cards,
@@ -511,6 +628,8 @@ class TensorResidentEngine:
 
         size = len(cards.names)
         uses_projectile = torch.zeros(size, dtype=torch.bool, device=runtime.device)
+        can_attack_air = torch.zeros(size, dtype=torch.bool, device=runtime.device)
+        can_attack_ground = torch.zeros(size, dtype=torch.bool, device=runtime.device)
         death_spawn = torch.zeros(size, dtype=torch.bool, device=runtime.device)
         area_radius = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         self_center = torch.zeros(size, dtype=torch.bool, device=runtime.device)
@@ -526,6 +645,18 @@ class TensorResidentEngine:
                 getattr(stats, "projectile_speed", 0)
                 or getattr(stats, "projectile_data", None)
             )
+            target_type = str(getattr(stats, "target_type", "") or "")
+            can_attack_air[card_id] = target_type in {
+                "TID_TARGETS_AIR",
+                "TID_TARGETS_AIR_AND_GROUND",
+            } or bool(getattr(stats, "attacks_air", False))
+            can_attack_ground[card_id] = target_type in {
+                "TID_TARGETS_GROUND",
+                "TID_TARGETS_AIR_AND_GROUND",
+                "TID_TARGETS_BUILDINGS",
+                "TID_TARGETS_GROUND_AND_BUILDINGS",
+                "TID_TARGETS_BUILDINGS_AND_GROUND",
+            } or bool(getattr(stats, "attacks_ground", True))
             death_spawn[card_id] = bool(getattr(stats, "death_spawn_character", None))
             area_radius[card_id] = round(
                 float(getattr(stats, "area_damage_radius", 0.0) or 0.0) * 1_000
@@ -549,8 +680,13 @@ class TensorResidentEngine:
             path_cache=path_cache,
             status=status,
             objects=objects,
+            projectile_bridge=projectile_bridge,
+            pending_projectile_max_duration_ms=pending_projectile_max_duration_ms,
+            projectile_duration_ms=projectile_duration_ms,
             combat=combat,
             uses_projectile=uses_projectile,
+            can_attack_air=can_attack_air,
+            can_attack_ground=can_attack_ground,
             death_spawn=death_spawn,
             area_radius_units=area_radius,
             self_as_aoe_center=self_center,
@@ -577,8 +713,15 @@ class TensorResidentEngine:
             path_cache=self.path_cache,
             status=self.status.clone(),
             objects=_clone_object_phase(self.objects),
+            projectile_bridge=_clone_projectile_bridge(self.projectile_bridge),
+            pending_projectile_max_duration_ms=(
+                self.pending_projectile_max_duration_ms.clone()
+            ),
+            projectile_duration_ms=self.projectile_duration_ms.clone(),
             combat=_clone_tensor_dataclass(self.combat),  # type: ignore[arg-type]
             uses_projectile=self.uses_projectile,
+            can_attack_air=self.can_attack_air,
+            can_attack_ground=self.can_attack_ground,
             death_spawn=self.death_spawn,
             area_radius_units=self.area_radius_units,
             self_as_aoe_center=self.self_as_aoe_center,
@@ -592,6 +735,124 @@ class TensorResidentEngine:
 
     def _core_catalog_id(self) -> torch.Tensor:
         return self.runtime.card_catalog_index[self.runtime.battle.entity_card]
+
+    def _refresh_projectile_reservations_(self) -> None:
+        state = self.objects.objects
+        blueprints = state.blueprint_id.to(torch.int64).clamp_min(0)
+        projectile_active = (
+            state.allocated
+            & state.active
+            & (
+                self.objects.blueprint_kind[blueprints]
+                == int(RuntimeObjectKind.PROJECTILE)
+            )
+        )
+        target_id = self.objects.blueprint_primary_target_id[blueprints]
+        matches = (
+            (target_id[:, :, None] == self.runtime.battle.entity_id[:, None, :])
+            & self.runtime.entity_pool.active[:, None, :]
+            & (target_id[:, :, None] > 0)
+        )
+        target_found = matches.any(dim=2)
+        target_slot = matches.to(torch.int64).argmax(dim=2)
+        base_damage = state.amount
+        target_crown = torch.gather(self.objects.target_crown, 1, target_slot)
+        base_integer = torch.round(base_damage).to(torch.int64).clamp_min(0)
+        percentage = (
+            torch.round(self.objects.blueprint_crown_multiplier[blueprints] * 100.0)
+            .to(torch.int64)
+            .clamp_min(0)
+        )
+        native_crown = torch.where(
+            (base_integer > 0) & (percentage > 0),
+            torch.div(
+                base_integer * percentage + 99,
+                100,
+                rounding_mode="floor",
+            ),
+            0,
+        ).to(torch.float64)
+        expected_damage = torch.where(
+            target_crown,
+            torch.where(
+                self.objects.blueprint_crown_damage_valid[blueprints],
+                self.objects.blueprint_crown_damage[blueprints],
+                native_crown,
+            ),
+            base_damage,
+        )
+        self.combat.reserved_lethal.copy_(
+            projectile_lethal_reservations(
+                target_hp=self.runtime.battle.entity_hp,
+                target_alive=(
+                    self.runtime.entity_pool.active & self.runtime.battle.entity_active
+                ),
+                target_shield_hp=torch.zeros_like(self.runtime.battle.entity_hp),
+                prior_max_duration_ms=self.pending_projectile_max_duration_ms,
+                projectile_active=projectile_active & target_found,
+                projectile_reserves_damage=(
+                    self.projectile_bridge.blueprint_tracks_target[blueprints]
+                ),
+                projectile_target_slot=target_slot,
+                projectile_expected_damage=expected_damage,
+                projectile_duration_ms=self.projectile_duration_ms,
+            )
+        )
+
+    def _record_new_projectile_durations_(
+        self, previously_allocated: torch.Tensor
+    ) -> None:
+        state = self.objects.objects
+        blueprints = state.blueprint_id.to(torch.int64).clamp_min(0)
+        new_projectile = (
+            state.allocated
+            & ~previously_allocated
+            & (
+                self.objects.blueprint_kind[blueprints]
+                == int(RuntimeObjectKind.PROJECTILE)
+            )
+            & self.projectile_bridge.blueprint_tracks_target[blueprints]
+        )
+        dx = state.target_x_units.to(torch.int64) - state.x_units.to(torch.int64)
+        dy = state.target_y_units.to(torch.int64) - state.y_units.to(torch.int64)
+        distance = _integer_sqrt(dx * dx + dy * dy)
+        speed = state.speed_units_per_tick.to(torch.int64)
+        raw_duration = torch.div(
+            distance * 50,
+            speed.clamp_min(1),
+            rounding_mode="floor",
+        )
+        duration = torch.where(
+            speed > 0,
+            torch.div(raw_duration + 49, 50, rounding_mode="floor") * 50,
+            1_000,
+        ).clamp_max(1_000)
+        self.projectile_duration_ms.copy_(
+            torch.where(
+                new_projectile,
+                duration,
+                self.projectile_duration_ms,
+            )
+        )
+        target_id = self.objects.blueprint_primary_target_id[blueprints]
+        matches = (
+            (target_id[:, :, None] == self.runtime.battle.entity_id[:, None, :])
+            & self.runtime.entity_pool.active[:, None, :]
+            & (target_id[:, :, None] > 0)
+        )
+        found = matches.any(dim=2)
+        target_slot = matches.to(torch.int64).argmax(dim=2)
+        projected = torch.zeros_like(self.pending_projectile_max_duration_ms)
+        projected.scatter_reduce_(
+            1,
+            target_slot,
+            torch.where(new_projectile & found, duration, 0),
+            reduce="amax",
+            include_self=True,
+        )
+        self.pending_projectile_max_duration_ms.copy_(
+            torch.maximum(self.pending_projectile_max_duration_ms, projected)
+        )
 
     def preflight(self, action_ids: torch.Tensor | None = None) -> ResidentPreflight:
         """Return production support planes without host-side row extraction."""
@@ -625,7 +886,7 @@ class TensorResidentEngine:
             | (self.runtime.battle.entity_kind == 1)
         )
         safe = catalog_id.clamp_min(0)
-        known = (catalog_id >= 0) | (self.runtime.battle.entity_tower_slot >= 0)
+        known = (catalog_id > 0) | (self.runtime.battle.entity_tower_slot >= 0)
         mechanic_codes = torch.arange(
             max(RESIDENT_UNSUPPORTED_MECHANIC_OPCODES) + 1,
             dtype=torch.int64,
@@ -657,11 +918,43 @@ class TensorResidentEngine:
         )
         publish(mechanic_present.any(dim=1), ResidentUnsupportedReason.ACTIVE_MECHANIC)
         publish(effect_present.any(dim=1), ResidentUnsupportedReason.ACTIVE_EFFECT)
+        core_card = self.runtime.battle.entity_card.clamp_min(0)
+        bridge_projectile = self.projectile_bridge.catalog.supported[core_card] & (
+            self.projectile_bridge.catalog.kind[core_card]
+            == BridgePayloadKind.COMBAT_PROJECTILE
+        )
+        retained_projectile = (
+            self.combat.present
+            & (self.combat.entity_id == self.runtime.battle.entity_id)
+            & self.combat.uses_projectile
+        )
+        projectile_entity = self.uses_projectile[safe] | retained_projectile
+        target_slot = self.combat.target_slot.clamp_min(0)
+        target_x = torch.gather(self.combat.x_units, 1, target_slot)
+        target_y = torch.gather(self.combat.y_units, 1, target_slot)
+        target_radius = torch.gather(self.combat.collision_radius_units, 1, target_slot)
+        dx = target_x - self.combat.x_units
+        dy = target_y - self.combat.y_units
+        reach = self.combat.range_units + target_radius
+        crown_launch_imminent = (
+            (self.runtime.battle.entity_tower_slot >= 0)
+            & (self.combat.target_slot >= 0)
+            & (dx * dx + dy * dy <= reach * reach)
+            & (
+                self.combat.attack_cooldown
+                <= LOGIC_TICK_SECONDS
+                * self.combat.attack_rate_multiplier.clamp_min(0.05)
+                + 1e-9
+            )
+            & ~self.combat.stunned
+            & (self.combat.deploy_remaining <= 0.0)
+        )
         publish(
             (
-                self.uses_projectile[safe]
+                projectile_entity
                 & active_character
-                & (self.runtime.battle.entity_tower_slot < 0)
+                & ~bridge_projectile
+                & ((self.runtime.battle.entity_tower_slot < 0) | crown_launch_imminent)
             ).any(dim=1),
             ResidentUnsupportedReason.PROJECTILE_COMBAT,
         )
@@ -804,7 +1097,7 @@ class TensorResidentEngine:
         new = present & ((old_id != core.entity_id) | ~self.combat.present)
         catalog_id = runtime.card_catalog_index[core.entity_card]
         safe = catalog_id.clamp_min(0)
-        catalog_known = catalog_id >= 0
+        catalog_known = catalog_id > 0
         crown = core.entity_tower_slot >= 0
         known = catalog_known | crown
         character = present & ((core.entity_kind == 0) | (core.entity_kind == 1))
@@ -870,14 +1163,14 @@ class TensorResidentEngine:
         self.combat.can_attack_air.copy_(
             torch.where(
                 catalog_known,
-                self.runtime.catalog.attacks_air[safe],
+                self.can_attack_air[safe],
                 self.combat.can_attack_air,
             )
         )
         self.combat.can_attack_ground.copy_(
             torch.where(
                 catalog_known,
-                self.runtime.catalog.attacks_ground[safe],
+                self.can_attack_ground[safe],
                 self.combat.can_attack_ground,
             )
         )
@@ -950,7 +1243,14 @@ class TensorResidentEngine:
         self.combat.has_attacked_once &= ~new
         self.combat.target_slot.copy_(torch.where(new, -1, runtime.phases.target_slot))
         self.combat.target_distance_discount_sq_units.zero_()
-        self.combat.reserved_lethal.zero_()
+        self.pending_projectile_max_duration_ms.copy_(
+            torch.where(
+                new,
+                torch.zeros_like(self.pending_projectile_max_duration_ms),
+                self.pending_projectile_max_duration_ms,
+            )
+        )
+        self._refresh_projectile_reservations_()
         self.combat.outgoing_damage_multiplier.fill_(1.0)
         self.combat.incoming_damage_multiplier.fill_(1.0)
 
@@ -1019,6 +1319,19 @@ class TensorResidentEngine:
     def _combat_phase(self, active: torch.Tensor) -> CombatStepResult:
         self._refresh_planes()
         self.combat.present &= active[:, None]
+        cooldown_work = (
+            LOGIC_TICK_SECONDS * self.combat.attack_rate_multiplier.clamp_min(0.05)
+        )
+        cooldown_boundary = (self.combat.attack_cooldown > 0.0) & (
+            (self.combat.attack_cooldown - cooldown_work).abs() <= 1e-9
+        )
+        self.combat.attack_cooldown.copy_(
+            torch.where(
+                cooldown_boundary,
+                cooldown_work,
+                self.combat.attack_cooldown,
+            )
+        )
         result = step_stationary_combat_(self.combat, LOGIC_TICK_SECONDS)
         runtime = self.runtime
         runtime.battle.entity_hp.copy_(
@@ -1395,6 +1708,7 @@ class TensorResidentEngine:
                     else:
                         value.masked_fill_(expanded, 0)
         runtime.battle.entity_id.copy_(runtime.entity_pool.entity_id)
+        self.pending_projectile_max_duration_ms.masked_fill_(dead, 0)
         runtime.phases.death_pending &= ~dead
         runtime.mark_dirty(dead.any(dim=1), phase=TickPhase.CLEANUP_AND_SPAWNS)
         return removed
@@ -1420,8 +1734,20 @@ class TensorResidentEngine:
             (self.objects.objects, source.objects.objects),
         ):
             _copy_rows_(left, right, rows)
+        _copy_projectile_bridge_rows_(
+            self.projectile_bridge, source.projectile_bridge, rows
+        )
+        _copy_object_blueprint_rows_(
+            self.objects,
+            source.objects,
+            source.projectile_bridge.blueprint_for_slot[rows].flatten(),
+        )
         self.facing_x_units[rows] = source.facing_x_units[rows]
         self.facing_y_units[rows] = source.facing_y_units[rows]
+        self.pending_projectile_max_duration_ms[rows] = (
+            source.pending_projectile_max_duration_ms[rows]
+        )
+        self.projectile_duration_ms[rows] = source.projectile_duration_ms[rows]
         # Route-cache entries are immutable consequences of standard-arena
         # keys, not battle state. Retaining the speculative cache cannot make
         # a failed row observable and lets successful rows reuse exact paths.
@@ -1494,6 +1820,18 @@ class TensorResidentEngine:
         working.mechanics.refresh_new_entities_(working.runtime)
         working.mechanics.tick_cloak_(working.runtime)
         combat = working._combat_phase(active)
+        previously_allocated_objects = working.objects.objects.allocated.clone()
+        projectile_supported = working.projectile_bridge.materialize_combat_launches_(
+            working.runtime,
+            working.objects,
+            working.combat,
+            combat,
+        )
+        working._record_new_projectile_durations_(previously_allocated_objects)
+        working.runtime.mark_unsupported(
+            active & ~projectile_supported,
+            phase=TickPhase.COMBAT,
+        )
         combat_death = (working.combat.present & ~working.combat.alive).any(dim=1)
         movement = working._movement_phase(combat_death)
         status = step_runtime_status_phase_(
@@ -1503,8 +1841,8 @@ class TensorResidentEngine:
             battle_mask=active,
         )
         completed = working._character_object_phase(active)
-        objects = step_runtime_object_phase_(
-            working.runtime, working.objects, battle_mask=active
+        objects = working.projectile_bridge.step_objects_(
+            working.runtime, working.objects
         )
         cleanup = working._cleanup(active)
         check_win_conditions(core, active)

@@ -61,6 +61,7 @@ def _engine_snapshot(engine: TensorResidentEngine) -> dict[str, torch.Tensor]:
         "status",
         "mechanics",
         "objects",
+        "projectile_bridge",
     ):
         result.update(_tensor_snapshot(getattr(engine, name), name))
     for name in ("battle", "status", "phases", "events"):
@@ -75,6 +76,10 @@ def _engine_snapshot(engine: TensorResidentEngine) -> dict[str, torch.Tensor]:
     result["runtime.dirty"] = engine.runtime.dirty.cpu().clone()
     result["facing_x"] = engine.facing_x_units.cpu().clone()
     result["facing_y"] = engine.facing_y_units.cpu().clone()
+    result["pending_projectile_max_duration_ms"] = (
+        engine.pending_projectile_max_duration_ms.cpu().clone()
+    )
+    result["projectile_duration_ms"] = engine.projectile_duration_ms.cpu().clone()
     return result
 
 
@@ -98,6 +103,10 @@ def _mutable_pointers(engine: TensorResidentEngine) -> dict[str, int]:
             value = engine.facing_x_units
         elif parts[0] == "facing_y":
             value = engine.facing_y_units
+        elif parts[0] == "pending_projectile_max_duration_ms":
+            value = engine.pending_projectile_max_duration_ms
+        elif parts[0] == "projectile_duration_ms":
+            value = engine.projectile_duration_ms
         else:
             for part in parts:
                 owner = getattr(owner, part)
@@ -150,8 +159,17 @@ def test_workspace_preallocates_once_and_shares_only_immutable_owners(
     assert workspace.scratch.mechanics.on_hit_catalog is engine.mechanics.on_hit_catalog
     assert workspace.scratch.status.payload_catalog is engine.status.payload_catalog
     assert workspace.scratch.objects.objects.catalog is engine.objects.objects.catalog
+    assert (
+        workspace.scratch.projectile_bridge.catalog is engine.projectile_bridge.catalog
+    )
     assert workspace.scratch.runtime.battle.time.data_ptr() != (
         engine.runtime.battle.time.data_ptr()
+    )
+    assert workspace.scratch.pending_projectile_max_duration_ms.data_ptr() != (
+        engine.pending_projectile_max_duration_ms.data_ptr()
+    )
+    assert workspace.scratch.projectile_duration_ms.data_ptr() != (
+        engine.projectile_duration_ms.data_ptr()
     )
 
 

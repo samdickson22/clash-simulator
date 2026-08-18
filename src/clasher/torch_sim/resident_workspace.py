@@ -67,6 +67,11 @@ class TensorResidentWorkspace:
             raise ValueError("speculative engines must share deployment kernels")
         if self.scratch.path_cache is not self.engine.path_cache:
             raise ValueError("speculative engines must share the path cache")
+        if (
+            self.scratch.projectile_bridge.catalog
+            is not self.engine.projectile_bridge.catalog
+        ):
+            raise ValueError("speculative engines must share the projectile catalog")
 
     def refresh(self) -> None:
         """Reset every mutable scratch row without allocating another engine."""
@@ -91,10 +96,15 @@ class TensorResidentWorkspace:
             (destination.mechanics, source.mechanics),
             (destination.objects, source.objects),
             (destination.objects.objects, source.objects.objects),
+            (destination.projectile_bridge, source.projectile_bridge),
         ):
             _copy_tensor_fields_(left, right)
         destination.facing_x_units.copy_(source.facing_x_units)
         destination.facing_y_units.copy_(source.facing_y_units)
+        destination.pending_projectile_max_duration_ms.copy_(
+            source.pending_projectile_max_duration_ms
+        )
+        destination.projectile_duration_ms.copy_(source.projectile_duration_ms)
         destination.path_cache = source.path_cache
         destination.runtime.assert_invariants()
 
