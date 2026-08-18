@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import random
 from collections.abc import Iterator
 from dataclasses import fields
 
@@ -10,6 +11,7 @@ import torch
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import Projectile, SpawnProjectile, TargetType, Troop
+from clasher.mechanics.shared.knockback import apply_radial_knockback
 from clasher.spells import SPELL_REGISTRY
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.combat import CombatStepResult
@@ -505,6 +507,113 @@ def test_reused_low_slot_uses_new_card_knockback_immunity() -> None:
     )
     assert bridge.knockback_active[0, 0].item() is False
     assert bridge.knockback_entity_id[0, 0].item() == 0
+
+
+def test_randomized_radial_knockback_geometry_and_motion_match_python(
+    tensor_device: str,
+) -> None:
+    rng = random.Random(5_820_441)
+    cases: list[tuple[BattleState, Troop, int, int, int, int, int]] = []
+    for index in range(18):
+        seed = BattleState(fast_path=False)
+        x_units = rng.randrange(2_000, 16_000)
+        y_units = rng.randrange(4_000, 28_000)
+        player_id = index % 2
+        target = _troop(
+            seed,
+            "Knight",
+            1,
+            player_id,
+            Position(x_units / 1_000, y_units / 1_000),
+            hp=2_000,
+        )
+        battle = _battle(target, cards=("Fireball", "Knight"))
+        if index % 3 == 0:
+            center_x, center_y = x_units, y_units
+        else:
+            center_x = x_units + rng.randrange(-1_500, 1_501)
+            center_y = y_units + rng.randrange(-1_500, 1_501)
+        fallback_x = rng.randrange(-8_000, 8_001)
+        fallback_y = rng.randrange(-8_000, 8_001)
+        if fallback_x == 0 and fallback_y == 0:
+            fallback_y = 1
+        distance = (250, 500, 1_000, 1_800, 2_500)[index % 5]
+        cases.append(
+            (
+                battle,
+                target,
+                center_x,
+                center_y,
+                fallback_x,
+                fallback_y,
+                distance,
+            )
+        )
+
+    battles = [case[0] for case in cases]
+    runtime, _, bridge, _ = _runtime_bridge(
+        battles,
+        {"Fireball", "Knight"},
+        device=tensor_device,
+        max_entities=4,
+        max_objects=2,
+    )
+    device = runtime.device
+    center_x_tensor = torch.tensor([case[2] for case in cases], device=device)
+    center_y_tensor = torch.tensor([case[3] for case in cases], device=device)
+    fallback_x_tensor = torch.tensor([case[4] for case in cases], device=device)
+    fallback_y_tensor = torch.tensor([case[5] for case in cases], device=device)
+    distance_tensor = torch.tensor([case[6] for case in cases], device=device)
+    bridge._install_knockback_(
+        runtime,
+        target_mask=torch.ones_like(runtime.entity_pool.active),
+        center_x=center_x_tensor,
+        center_y=center_y_tensor,
+        fallback_x=fallback_x_tensor,
+        fallback_y=fallback_y_tensor,
+        distance_units=distance_tensor,
+        ignores_mass=torch.zeros(len(cases), dtype=torch.bool, device=device),
+    )
+    for battle, target, cx, cy, fx, fy, distance_units in cases:
+        assert apply_radial_knockback(
+            target,
+            battle,
+            Position(cx / 1_000, cy / 1_000),
+            distance_units / 1_000,
+            source_kind="randomized",
+            fallback_direction=(fx / 1_000, fy / 1_000),
+        )
+
+    for row, (_, target, *_rest) in enumerate(cases):
+        assert target._knockback_target is not None
+        assert bridge.knockback_target_units[row, 0].tolist() == [
+            round(target._knockback_target.x * 1_000),
+            round(target._knockback_target.y * 1_000),
+        ]
+        assert (
+            bridge.knockback_velocity_work[row, 0].item()
+            == target._knockback_velocity_work
+        )
+
+    for _ in range(32):
+        start = bridge.knockback_active.clone()
+        bridge._advance_knockback_(runtime, start)
+        for battle, target, *_rest in cases:
+            target._update_knockback_movement(battle)
+        for row, (_, target, *_rest) in enumerate(cases):
+            assert runtime.battle.entity_x_units[row, 0].item() == round(
+                target.position.x * 1_000
+            )
+            assert runtime.battle.entity_y_units[row, 0].item() == round(
+                target.position.y * 1_000
+            )
+            assert (
+                bridge.knockback_velocity_work[row, 0].item()
+                == target._knockback_velocity_work
+            )
+            assert bridge.knockback_active[row, 0].item() is (
+                target._knockback_target is not None
+            )
 
 
 def test_arrows_grouped_waves_positions_rng_damage_and_lifecycle_match_python(

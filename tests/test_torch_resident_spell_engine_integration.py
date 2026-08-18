@@ -312,6 +312,8 @@ def test_rejected_second_spell_leaves_engine_safe_for_scalar_episode_fallback(
         engine.objects,
         engine.projectile_bridge,
         engine.runtime.catalog,
+        collect_diagnostics=True,
+        validate_inputs=True,
     )
     before_hand = engine.runtime.battle.hand.clone()
     before_elixir = engine.runtime.battle.elixir.clone()
@@ -339,6 +341,8 @@ def test_rejected_second_spell_leaves_engine_safe_for_scalar_episode_fallback(
     ("spell_name", "ticks", "max_entities", "max_objects"),
     (
         ("Fireball", 40, 12, 4),
+        ("Rocket", 50, 12, 4),
+        ("GiantSnowball", 40, 12, 4),
         ("Arrows", 50, 40, 32),
         pytest.param(
             "GoblinBarrel",

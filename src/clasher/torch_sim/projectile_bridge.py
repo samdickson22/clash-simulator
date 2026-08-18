@@ -1426,8 +1426,13 @@ class TensorResidentProjectileSpellBridge:
         dx = runtime.battle.entity_x_units.to(torch.int64) - center_x_plane
         dy = runtime.battle.entity_y_units.to(torch.int64) - center_y_plane
         exact_center = (dx == 0) & (dy == 0)
-        dx = torch.where(exact_center, fallback_x_plane, dx)
-        dy = torch.where(exact_center, fallback_y_plane, dy)
+        # Scalar radial knockback promotes the exact-center projectile fallback
+        # from arena tiles to millionths before normalization.  Keeping that
+        # extra three decimal digits matters for diagonal integer square roots;
+        # normalizing the ordinary logic-unit vector first can overshoot one
+        # component by several native units.
+        dx = torch.where(exact_center, fallback_x_plane * 1_000, dx)
+        dy = torch.where(exact_center, fallback_y_plane * 1_000, dy)
         still_center = (dx == 0) & (dy == 0)
         owner_direction = torch.where(
             runtime.battle.entity_player == 0,
