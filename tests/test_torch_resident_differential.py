@@ -24,24 +24,28 @@ from clasher.torch_sim.resident_differential import (
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "bf46e873169bfd8f9ae002b1c17fa720acf9c8937d1d2b53f81ec10429f84fb0"
+    "5440be2a6fb97523b837a4fcf3d522d1caa9cc92fd9e430b2c51833d9829cbd6"
 )
 EXPECTED_EVIDENCE = {
     "BabyDragon",
+    "Bandit",
     "Bats",
     "Bomber",
     "Cannon",
     "Knight",
+    "Lumberjack",
     "MiniPekka",
     "Pekka",
     "Princess",
     "Skeletons",
     "SpearGoblins",
+    "Tombstone",
     "Valkyrie",
 }
 EXPECTED_NO_INTERACTION = {
     "Archers",
     "Arrows",
+    "Balloon",
     "Bowler",
     "DartGoblin",
     "Earthquake",
@@ -50,8 +54,10 @@ EXPECTED_NO_INTERACTION = {
     "Giant",
     "GiantSnowball",
     "GoblinBarrel",
+    "Golem",
     "Graveyard",
     "HogRider",
+    "IceGolem",
     "MegaMinion",
     "Musketeer",
     "Prince",
@@ -63,9 +69,13 @@ EXPECTED_NO_INTERACTION = {
 }
 EXPECTED_DIVERGED = {
     "BarbarianBarrel",
+    "BattleRam",
     "Log",
+    "Miner",
     "Minions",
+    "NightWitch",
     "RoyalDelivery",
+    "SkeletonBarrel",
     "Xbow",
 }
 EXPECTED_RUNTIME_FALLBACK: set[str] = set()
@@ -302,15 +312,18 @@ def test_enabled_card_matrix_has_reviewed_stable_digest_and_strict_evidence(
     matrix.assert_digest(EXPECTED_ENABLED_DIGEST, expected_classifications)
     assert matrix.evidence_cards == (
         "BabyDragon",
+        "Bandit",
         "Bats",
         "Bomber",
         "Cannon",
         "Knight",
+        "Lumberjack",
         "MiniPekka",
         "Pekka",
         "Princess",
         "Skeletons",
         "SpearGoblins",
+        "Tombstone",
         "Valkyrie",
     )
     assert all(
