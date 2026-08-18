@@ -51,6 +51,7 @@ class TensorContinuousAreaCatalog:
     building_damage: torch.Tensor
     building_damage_valid: torch.Tensor
     effect_interval_ms: torch.Tensor
+    effect_deadline_seconds: torch.Tensor
     slow_refresh_ms: torch.Tensor
     cap_slow_to_area: torch.Tensor
     target_local_damage: torch.Tensor
@@ -166,6 +167,35 @@ class TensorContinuousAreaCatalog:
             )
             periodic_parent[card_id] = spell.periodic_damage_controlled_by_parent
 
+        duration_values = duration.detach().cpu().tolist()
+        interval_values = effect_interval.detach().cpu().tolist()
+        maximum_effect_scans = max(
+            (
+                (int(card_duration) + max(1, int(card_interval)) - 1)
+                // max(1, int(card_interval))
+                for card_duration, card_interval in zip(
+                    duration_values,
+                    interval_values,
+                    strict=True,
+                )
+            ),
+            default=1,
+        )
+        deadline_rows: list[list[float]] = []
+        for interval_ms in interval_values:
+            interval_seconds = max(1, int(interval_ms)) / 1_000.0
+            deadline = interval_seconds
+            deadline_row: list[float] = []
+            for _ in range(max(1, maximum_effect_scans)):
+                deadline_row.append(deadline)
+                deadline += interval_seconds
+            deadline_rows.append(deadline_row)
+        effect_deadlines = torch.tensor(
+            deadline_rows,
+            dtype=torch.float64,
+            device=device,
+        )
+
         return cls(
             supported=supported,
             reason=tuple(reasons),
@@ -189,6 +219,7 @@ class TensorContinuousAreaCatalog:
             building_damage=building_damage,
             building_damage_valid=building_damage_valid,
             effect_interval_ms=effect_interval,
+            effect_deadline_seconds=effect_deadlines,
             slow_refresh_ms=slow_refresh,
             cap_slow_to_area=cap_slow,
             target_local_damage=target_local,
@@ -759,11 +790,105 @@ class TensorResidentContinuousAreas:
             ).to(torch.float64)
             / 1_000
         )
+        effect_due = (
+            selected
+            & ~owner.catalog.freeze_snapshot[cards]
+            & (owner.next_effect_ms.to(torch.int64) <= deadline)
+            & (owner.next_effect_ms.to(torch.int64) < duration)
+            & supported[:, None]
+        )
+        slow_targets_by_area = (
+            targets
+            & effect_receivable
+            & working.battle.entity_active[:, None, :]
+            & effect_due[:, :, None]
+            & (owner.catalog.movement_multiplier[cards][:, :, None] < 1.0)
+        )
+        effect_interval = owner.catalog.effect_interval_ms[cards].to(torch.int64)
+        effect_ordinal = torch.div(
+            owner.next_effect_ms.to(torch.int64),
+            effect_interval.clamp_min(1),
+            rounding_mode="floor",
+        ).clamp_min(1)
+        effect_ordinal = (effect_ordinal - 1).clamp_max(
+            owner.catalog.effect_deadline_seconds.shape[1] - 1
+        )
+        exact_deadline = owner.catalog.effect_deadline_seconds[cards, effect_ordinal]
+        slow_refresh_by_area = torch.maximum(
+            owner.catalog.slow_refresh_ms[cards].to(torch.float64) / 1_000,
+            effect_interval.to(torch.float64) / 1_000,
+        )
+        exact_remaining = (
+            duration.to(torch.float64) / 1_000 - exact_deadline
+        ).clamp_min(0.0)
+        slow_refresh_by_area = torch.where(
+            owner.catalog.cap_slow_to_area[cards],
+            torch.minimum(slow_refresh_by_area, exact_remaining),
+            slow_refresh_by_area,
+        )
+        slow_event_valid_by_area = torch.zeros_like(slow_targets_by_area)
+        projected_active = working.status.slow_active.clone()
+        projected_remaining = working.status.slow_remaining.clone()
+        projected_movement = working.status.slow_movement.clone()
+        projected_attack = working.status.slow_attack.clone()
+        projected_spawn = working.status.slow_spawn.clone()
+        slow_supported = supported.clone()
+        for area_slot in range(self.capacity):
+            area_cards = cards[:, area_slot]
+            movement = owner.catalog.movement_multiplier[area_cards][:, None]
+            attack = owner.catalog.attack_multiplier[area_cards][:, None]
+            spawn = owner.catalog.spawn_multiplier[area_cards][:, None]
+            matches = (
+                projected_active
+                & (projected_movement == movement[:, :, None])
+                & (projected_attack == attack[:, :, None])
+                & (projected_spawn == spawn[:, :, None])
+            )
+            found = matches.any(dim=2)
+            free = ~projected_active
+            capacity = found | free.any(dim=2)
+            selected_slow = slow_targets_by_area[:, area_slot]
+            slow_supported &= ~(selected_slow & ~capacity).any(dim=1)
+            selected_slow &= slow_supported[:, None]
+            slots = torch.where(
+                found,
+                matches.to(torch.int64).argmax(dim=2),
+                free.to(torch.int64).argmax(dim=2),
+            )
+            old_remaining = torch.gather(
+                projected_remaining,
+                2,
+                slots[:, :, None],
+            )[:, :, 0]
+            refresh = slow_refresh_by_area[:, area_slot, None].expand_as(
+                working.battle.entity_hp
+            )
+            slow_event_valid_by_area[:, area_slot] = selected_slow & (
+                ~found | (refresh > old_remaining)
+            )
+            selected_slow &= refresh > AREA_EPSILON_MS / 1_000
+            batch, entity = torch.where(selected_slow)
+            status_slot = slots[batch, entity]
+            projected_active[batch, entity, status_slot] = True
+            projected_remaining[batch, entity, status_slot] = torch.where(
+                found[batch, entity],
+                torch.maximum(
+                    projected_remaining[batch, entity, status_slot],
+                    refresh[batch, entity],
+                ),
+                refresh[batch, entity],
+            )
+            projected_movement[batch, entity, status_slot] = movement[batch, entity]
+            projected_attack[batch, entity, status_slot] = attack[batch, entity]
+            projected_spawn[batch, entity, status_slot] = spawn[batch, entity]
+        supported &= slow_supported
+        slow_targets_by_area &= supported[:, None, None]
+        slow_event_valid_by_area &= supported[:, None, None]
         additions = (
             target_damage.sum(dim=1, dtype=torch.int64)
             + died.sum(dim=1, dtype=torch.int64)
             + freeze_valid.sum(dim=1, dtype=torch.int64)
-            + 2 * expired.sum(dim=1, dtype=torch.int64)
+            + slow_event_valid_by_area.sum(dim=(1, 2), dtype=torch.int64)
         )
         supported &= (
             working.events.count.to(torch.int64) + additions <= working.events.capacity
@@ -772,6 +897,9 @@ class TensorResidentContinuousAreas:
         died &= supported[:, None]
         freeze_targets &= supported[:, None, None]
         freeze_valid &= supported[:, None]
+        effect_due &= supported[:, None]
+        slow_targets_by_area &= supported[:, None, None]
+        slow_event_valid_by_area &= supported[:, None, None]
         working.battle.entity_hp_integer_kind &= ~target_damage
         working.battle.entity_hp.copy_(
             torch.where(
@@ -808,13 +936,6 @@ class TensorResidentContinuousAreas:
             freeze_amount,
         )
 
-        effect_due = (
-            selected
-            & ~owner.catalog.freeze_snapshot[cards]
-            & (owner.next_effect_ms.to(torch.int64) <= deadline)
-            & (owner.next_effect_ms.to(torch.int64) < duration)
-            & supported[:, None]
-        )
         for area_slot in range(self.capacity):
             area_cards = cards[:, area_slot]
             area_targets = (
@@ -884,9 +1005,7 @@ class TensorResidentContinuousAreas:
                 affects_hidden=hidden,
                 mask=periodic_targets & controlled[:, None],
             )
-            slow_targets = area_targets & (
-                owner.catalog.movement_multiplier[area_cards][:, None] < 1.0
-            )
+            slow_targets = slow_targets_by_area[:, area_slot]
             movement = owner.catalog.movement_multiplier[area_cards][:, None]
             attack = owner.catalog.attack_multiplier[area_cards][:, None]
             spawn = owner.catalog.spawn_multiplier[area_cards][:, None]
@@ -899,22 +1018,20 @@ class TensorResidentContinuousAreas:
             slow_capacity = slow_matches | (~working.status.slow_active).any(dim=2)
             supported &= ~(slow_targets & ~slow_capacity).any(dim=1)
             slow_targets &= supported[:, None]
-            refresh = owner.catalog.slow_refresh_ms[area_cards].to(torch.int64)
-            remaining = (
-                duration[:, area_slot]
-                - owner.next_effect_ms[:, area_slot].to(torch.int64)
-            ).clamp_min(0)
-            refresh = torch.where(
-                owner.catalog.cap_slow_to_area[area_cards],
-                torch.minimum(refresh, remaining),
-                refresh,
-            )
+            refresh = slow_refresh_by_area[:, area_slot]
             working.status.apply_slow(
-                refresh[:, None].to(torch.float64) / 1_000,
+                refresh[:, None],
                 movement,
                 attack_speed_multiplier=attack,
                 spawn_speed_multiplier=spawn,
-                mask=slow_targets,
+                mask=slow_targets & (refresh[:, None] > AREA_EPSILON_MS / 1_000),
+            )
+            _append_status_events(
+                working,
+                slow_event_valid_by_area[:, area_slot],
+                owner.area_id[:, area_slot, None].expand_as(slow_targets),
+                area_cards[:, None].expand_as(slow_targets),
+                refresh[:, None].expand_as(working.battle.entity_hp),
             )
 
         owner.age_ms.copy_(
@@ -957,29 +1074,7 @@ class TensorResidentContinuousAreas:
         valid_expired = expired & (area_slots >= 0)
         rows, lanes = torch.where(valid_expired)
         physical = area_slots[rows, lanes]
-        expired_ids = owner.area_id.clone()
         working.battle.entity_active[rows, physical] = False
-        death_valid = torch.stack((valid_expired, valid_expired), dim=2).flatten(1)
-        death_ids = torch.stack((expired_ids, expired_ids), dim=2).flatten(1)
-        working.events.append(
-            phase=TickPhase.COMBAT,
-            opcode=torch.stack(
-                (
-                    torch.full_like(expired_ids, RuntimeEventOpcode.DAMAGE),
-                    torch.full_like(expired_ids, RuntimeEventOpcode.DEATH),
-                ),
-                dim=2,
-            ).flatten(1),
-            valid=death_valid,
-            target_id=death_ids,
-            amount=torch.stack(
-                (
-                    torch.ones_like(expired_ids, dtype=torch.float64),
-                    torch.zeros_like(expired_ids, dtype=torch.float64),
-                ),
-                dim=2,
-            ).flatten(1),
-        )
         dead = torch.zeros_like(working.entity_pool.active)
         dead[rows, physical] = True
         working.entity_pool.cleanup(dead)

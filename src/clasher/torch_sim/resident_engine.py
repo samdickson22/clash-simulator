@@ -3689,8 +3689,11 @@ class TensorResidentEngine:
                 | (events.opcode == int(RuntimeEventOpcode.DEATH))
             )
         )
-        events.phase.copy_(torch.where(public, int(TickPhase.COMBAT), events.phase))
-        events.source_id.masked_fill_(public, 0)
+        # Target-local periodic damage resolves from Entity.update_status_effects.
+        # The scalar callsite is therefore scoped to the target entity itself,
+        # rather than to the area object which installed the private buff.
+        events.phase.copy_(torch.where(public, int(TickPhase.STATUS), events.phase))
+        events.source_id.copy_(torch.where(public, events.target_id, events.source_id))
         events.payload.masked_fill_(public, 0)
 
     def _project_continuous_area_slow_status(

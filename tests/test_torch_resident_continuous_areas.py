@@ -11,6 +11,10 @@ from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.entities import AreaEffect, TargetType, Troop
 from clasher.spells import SPELL_REGISTRY, AreaEffectSpell
+from clasher.torch_sim.oracle_event_capture import (
+    OraclePayloadKind,
+    PythonOracleEventCapture,
+)
 from clasher.torch_sim.resident_continuous_areas import (
     TensorContinuousAreaCatalog,
     TensorResidentContinuousAreas,
@@ -227,6 +231,40 @@ def test_freeze_damage_status_event_capacity_failure_is_atomic() -> None:
     assert torch.equal(owner.freeze_applied, before_owner.freeze_applied)
 
 
+def test_continuous_slow_status_event_capacity_failure_is_atomic() -> None:
+    battle = _battle()
+    runtime, owner = _runtime_owner(battle, event_capacity=1)
+    card = runtime.battle.card_to_id["Earthquake"]
+    assert owner.materialize_due_spell_actions_(
+        runtime,
+        card_ids=torch.tensor([card]),
+        player_ids=torch.tensor([0]),
+        target_x_units=torch.tensor([9_000]),
+        target_y_units=torch.tensor([14_000]),
+        valid=torch.tensor([True]),
+    ).all()
+    runtime.events.clear()
+    runtime.battle.time += runtime.battle.dt
+    runtime.battle.tick += 1
+    assert owner.step_(runtime).committed.tolist() == [True]
+    runtime.events.count.fill_(runtime.events.capacity)
+    before_runtime = runtime.clone()
+    before_owner = owner.clone()
+    runtime.battle.time += runtime.battle.dt
+    runtime.battle.tick += 1
+
+    result = owner.step_(runtime)
+
+    assert result.committed.tolist() == [False]
+    assert torch.equal(runtime.status.slow_active, before_runtime.status.slow_active)
+    assert torch.equal(
+        runtime.status.slow_remaining, before_runtime.status.slow_remaining
+    )
+    assert torch.equal(runtime.events.count, before_runtime.events.count)
+    assert torch.equal(owner.age_ms, before_owner.age_ms)
+    assert torch.equal(owner.next_effect_ms, before_owner.next_effect_ms)
+
+
 def test_stale_target_plane_identity_fails_closed_without_area_progress() -> None:
     battle = _battle()
     runtime, owner = _runtime_owner(battle)
@@ -301,10 +339,15 @@ def test_complete_continuous_area_lifecycle_matches_python(
 
     for _ in range(ticks):
         before_hp = oracle.entities[1].hitpoints
-        before_slow = tuple(oracle.entities[1]._slow_effects)
-        before_ids = set(oracle.entities)
         event_start = int(runtime.events.count[0].item())
-        _advance_oracle_area_tick(oracle)
+        with PythonOracleEventCapture(oracle) as capture:
+            _advance_oracle_area_tick(oracle)
+        oracle_status = tuple(
+            event
+            for event in capture.events
+            if event.opcode == RuntimeEventOpcode.STATUS
+            and event.payload_kind == OraclePayloadKind.SLOW
+        )
         runtime.battle.time += runtime.battle.dt
         runtime.battle.tick += 1
         status_result = owner.step_status_(runtime)
@@ -366,19 +409,10 @@ def test_complete_continuous_area_lifecycle_matches_python(
         damage = float(before_hp) - float(oracle_target.hitpoints)
         if damage > 0:
             expected.append((RuntimeEventOpcode.DAMAGE, 1, damage))
-        if (
-            spell_name == "Freeze"
-            and not before_slow
-            and tuple(oracle_target._slow_effects)
-        ):
-            expected.append((RuntimeEventOpcode.STATUS, 1, spell.duration))
-        if 2 in before_ids and 2 not in oracle.entities:
-            expected.extend(
-                (
-                    (RuntimeEventOpcode.DAMAGE, 2, 1.0),
-                    (RuntimeEventOpcode.DEATH, 2, 0.0),
-                )
-            )
+        expected.extend(
+            (RuntimeEventOpcode.STATUS, event.target_id, float(event.amount))
+            for event in oracle_status
+        )
         stop = int(runtime.events.count[0].item())
         actual = [
             (
@@ -408,7 +442,11 @@ def test_complete_continuous_area_lifecycle_matches_python(
             assert runtime.events.payload[0, event_start:stop].tolist() == [card, card]
         for slot in range(event_start, stop):
             if runtime.events.target_id[0, slot].item() == 1:
-                if spell_name == "Poison":
+                if runtime.events.opcode[0, slot].item() == RuntimeEventOpcode.STATUS:
+                    assert runtime.events.phase[0, slot].item() == TickPhase.OBJECTS
+                    assert runtime.events.source_id[0, slot].item() == 2
+                    assert runtime.events.payload[0, slot].item() == card
+                elif spell_name == "Poison":
                     assert runtime.events.phase[0, slot].item() == TickPhase.COMBAT
                     assert runtime.events.source_id[0, slot].item() == 0
                     assert runtime.events.payload[0, slot].item() == 0

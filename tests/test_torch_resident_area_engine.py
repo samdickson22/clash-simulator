@@ -9,14 +9,14 @@ import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.entities import Building, TargetType, Troop
+from clasher.entities import TargetType, Troop
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.diagnostics import first_divergence
+from clasher.torch_sim.oracle_event_capture import PythonOracleEventCapture
 from clasher.torch_sim.resident_differential import (
     _oracle_events,
     _oracle_snapshot,
-    _OracleEntityBefore,
     _resident_events,
     _resident_snapshot,
 )
@@ -68,22 +68,6 @@ def _battle(spell_name: str, *, target_hp: int = 10_000) -> BattleState:
     return battle
 
 
-def _before_entities(battle: BattleState) -> dict[int, _OracleEntityBefore]:
-    return {
-        entity.id: _OracleEntityBefore(
-            hitpoints=entity.hitpoints,
-            building=isinstance(entity, Building),
-            max_hitpoints=float(entity.max_hitpoints),
-            lifetime_ms=int(getattr(entity.card_stats, "lifetime_ms", 0) or 0),
-            lifetime_decay_work=int(getattr(entity, "lifetime_decay_work", 0)),
-            lifetime_tick_carry_ms=float(
-                getattr(entity, "lifetime_tick_carry_ms", 0.0)
-            ),
-        )
-        for entity in battle.entities.values()
-    }
-
-
 def test_complete_area_spell_engine_lifetimes_are_exact(
     tensor_device: str,
 ) -> None:
@@ -104,13 +88,14 @@ def test_complete_area_spell_engine_lifetimes_are_exact(
     order = torch.tensor([[0, 1]] * len(seeds), device=engine.device)
 
     for tick in range(205):
-        before = [_before_entities(battle) for battle in oracle]
         event_start = engine.runtime.events.count.clone()
-        if tick == 0:
-            for battle, name in zip(oracle, AREA_SPELLS, strict=True):
-                assert battle.deploy_card(0, name, Position(9.5, 14.5))
-        for battle in oracle:
-            battle.step_logic_ticks(1)
+        captured_events = []
+        for battle, name in zip(oracle, AREA_SPELLS, strict=True):
+            with PythonOracleEventCapture(battle) as capture:
+                if tick == 0:
+                    assert capture.deploy_card(0, name, Position(9.5, 14.5))
+                capture.step_logic_ticks(1)
+                captured_events.append(tuple(capture.events))
         result = workspace.step(
             actions if tick == 0 else None,
             player_order=order,
@@ -131,9 +116,12 @@ def test_complete_area_spell_engine_lifetimes_are_exact(
             )
             assert divergence is None, f"tick={tick} card={name}: {divergence}"
             assert engine.runtime.battle.rng.python_state(row) == battle.rng.getstate()
-            assert _resident_events(
-                engine, row, int(event_start[row].item())
-            ) == _oracle_events(before[row], battle, engine)
+            actual_events = _resident_events(engine, row, int(event_start[row].item()))
+            expected_events = _oracle_events(captured_events[row], engine)
+            assert actual_events == expected_events, (
+                f"tick={tick} card={name}: expected={expected_events} "
+                f"actual={actual_events}"
+            )
 
     assert not engine.continuous_areas.active.any()
     assert not engine.graveyards.active.any()

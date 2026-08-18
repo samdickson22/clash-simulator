@@ -170,6 +170,38 @@ def test_periodic_slot_capacity_failure_rolls_back_pull_and_area_clock() -> None
     assert torch.equal(runtime.events.count, before_events)
 
 
+def test_periodic_event_capacity_failure_is_atomic() -> None:
+    battle = _battle()
+    runtime, owner = _runtime_owner([battle], event_capacity=2)
+    card = runtime.battle.card_to_id["Tornado"]
+    assert owner.materialize_due_spell_actions_(
+        runtime,
+        card_ids=torch.tensor([card]),
+        player_ids=torch.tensor([0]),
+        target_x_units=torch.tensor([9_000]),
+        target_y_units=torch.tensor([14_000]),
+        valid=torch.tensor([True]),
+    ).all()
+    assert owner.step_(runtime).committed.tolist() == [True]
+    runtime.status.periodic_next_hit[runtime.status.periodic_active] = (
+        runtime.battle.dt[0]
+    )
+    runtime.events.count.fill_(runtime.events.capacity)
+    before = runtime.clone()
+
+    result = owner.step_status_(runtime)
+
+    assert result.committed.tolist() == [False]
+    assert torch.equal(runtime.battle.entity_hp, before.battle.entity_hp)
+    assert torch.equal(
+        runtime.status.periodic_remaining, before.status.periodic_remaining
+    )
+    assert torch.equal(
+        runtime.status.periodic_next_hit, before.status.periodic_next_hit
+    )
+    assert torch.equal(runtime.events.count, before.events.count)
+
+
 def _consume_tensor_attraction(runtime: TensorBattleRuntime) -> None:
     count = runtime.phases.movement_vector_count.to(torch.int64)
     has = runtime.entity_pool.active & (count > 0)
@@ -287,7 +319,6 @@ def test_complete_tornado_lifecycle_matches_python(
 
     for _ in range(25):
         before_hp = oracle.entities[1].hitpoints
-        before_ids = set(oracle.entities)
         event_start = int(runtime.events.count[0].item())
         oracle.time += oracle.dt
         oracle.tick += 1
@@ -352,13 +383,6 @@ def test_complete_tornado_lifecycle_matches_python(
         hp_loss = float(before_hp) - float(target.hitpoints)
         if hp_loss > 0:
             expected.append((RuntimeEventOpcode.DAMAGE, 1, hp_loss))
-        if 2 in before_ids and 2 not in oracle.entities:
-            expected.extend(
-                (
-                    (RuntimeEventOpcode.DAMAGE, 2, 1.0),
-                    (RuntimeEventOpcode.DEATH, 2, 0.0),
-                )
-            )
         stop = int(runtime.events.count[0].item())
         actual = [
             (
@@ -369,12 +393,11 @@ def test_complete_tornado_lifecycle_matches_python(
             for index in range(event_start, stop)
         ]
         assert actual == expected
-        assert all(
-            runtime.events.phase[0, index].item() == TickPhase.COMBAT
-            and runtime.events.source_id[0, index].item() == 0
-            and runtime.events.payload[0, index].item() == 0
-            for index in range(event_start, stop)
-        )
+        for index in range(event_start, stop):
+            target_id = runtime.events.target_id[0, index].item()
+            assert runtime.events.phase[0, index].item() == TickPhase.STATUS
+            assert runtime.events.source_id[0, index].item() == target_id
+            assert runtime.events.payload[0, index].item() == 0
 
     assert not owner.active.any()
     assert set(oracle.entities) == {1}

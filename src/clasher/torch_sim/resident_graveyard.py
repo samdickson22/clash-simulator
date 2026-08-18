@@ -404,9 +404,7 @@ class TensorResidentGraveyards:
             runtime.supported
             & (due_count <= (~runtime.entity_pool.active).sum(dim=1))
             & (
-                runtime.events.count.to(torch.int64)
-                + due_count
-                + 2 * expired.sum(dim=1, dtype=torch.int64)
+                runtime.events.count.to(torch.int64) + due_count
                 <= runtime.events.capacity
             )
         )
@@ -485,19 +483,18 @@ class TensorResidentGraveyards:
         runtime.phases.target_slot[rows, entity_slots] = INVALID_SLOT
         owner.target_distance_discount_sq_units[rows, entity_slots] = 0
 
-        spawn_source = torch.zeros_like(allocation.entity_ids)
         spawn_payload = torch.zeros_like(allocation.entity_ids)
         spawn_x_plane = torch.zeros_like(allocation.slots, dtype=torch.int32)
         spawn_y_plane = torch.zeros_like(allocation.slots, dtype=torch.int32)
-        spawn_source[rows, ordinal] = entity_ids
         spawn_payload[rows, ordinal] = child_card
         spawn_x_plane[rows, ordinal] = spawn_x
         spawn_y_plane[rows, ordinal] = spawn_y
         runtime.events.append(
-            phase=TickPhase.COMMANDS,
+            phase=TickPhase.OBJECTS,
             opcode=RuntimeEventOpcode.SPAWN,
             valid=allocation.valid,
-            source_id=spawn_source,
+            source_id=0,
+            target_id=allocation.entity_ids,
             x_units=spawn_x_plane,
             y_units=spawn_y_plane,
             payload=spawn_payload,
@@ -521,28 +518,6 @@ class TensorResidentGraveyards:
 
         area_slots = runtime.entity_pool.slots_for_ids(owner.graveyard_id)
         valid_expired = expired & (area_slots >= 0)
-        death_ids = owner.graveyard_id.clone()
-        pair_valid = torch.stack((valid_expired, valid_expired), dim=2).flatten(1)
-        pair_ids = torch.stack((death_ids, death_ids), dim=2).flatten(1)
-        runtime.events.append(
-            phase=TickPhase.COMBAT,
-            opcode=torch.stack(
-                (
-                    torch.full_like(death_ids, RuntimeEventOpcode.DAMAGE),
-                    torch.full_like(death_ids, RuntimeEventOpcode.DEATH),
-                ),
-                dim=2,
-            ).flatten(1),
-            valid=pair_valid,
-            target_id=pair_ids,
-            amount=torch.stack(
-                (
-                    torch.ones_like(death_ids, dtype=torch.float64),
-                    torch.zeros_like(death_ids, dtype=torch.float64),
-                ),
-                dim=2,
-            ).flatten(1),
-        )
         expire_rows, expire_lanes = torch.where(valid_expired)
         physical = area_slots[expire_rows, expire_lanes]
         runtime.battle.entity_active[expire_rows, physical] = False

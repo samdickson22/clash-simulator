@@ -594,11 +594,6 @@ class TensorResidentTornadoes:
         periodic_targets &= scan_count[:, :, None] > 0
         supported = runtime.supported & identity_supported
         expired = selected & (age_after >= duration)
-        supported &= (
-            working.events.count.to(torch.int64)
-            + 2 * expired.sum(dim=1, dtype=torch.int64)
-            <= working.events.capacity
-        )
 
         total_vector = torch.zeros(
             (self.batch_size, runtime.max_entities, 2),
@@ -719,26 +714,6 @@ class TensorResidentTornadoes:
         expired &= supported[:, None]
         area_slots = working.entity_pool.slots_for_ids(owner.tornado_id)
         valid_expired = expired & (area_slots >= 0)
-        ids = owner.tornado_id.clone()
-        working.events.append(
-            phase=TickPhase.COMBAT,
-            opcode=torch.stack(
-                (
-                    torch.full_like(ids, RuntimeEventOpcode.DAMAGE),
-                    torch.full_like(ids, RuntimeEventOpcode.DEATH),
-                ),
-                dim=2,
-            ).flatten(1),
-            valid=torch.stack((valid_expired, valid_expired), dim=2).flatten(1),
-            target_id=torch.stack((ids, ids), dim=2).flatten(1),
-            amount=torch.stack(
-                (
-                    torch.ones_like(ids, dtype=torch.float64),
-                    torch.zeros_like(ids, dtype=torch.float64),
-                ),
-                dim=2,
-            ).flatten(1),
-        )
         rows, lanes = torch.where(valid_expired)
         physical = area_slots[rows, lanes]
         working.battle.entity_active[rows, physical] = False
@@ -779,10 +754,13 @@ def _append_damage_events(
     order = runtime.entity_pool.id_order(valid)
     slots = order.slots.clamp_min(0)
     runtime.events.append(
-        phase=TickPhase.COMBAT,
+        phase=TickPhase.STATUS,
         opcode=RuntimeEventOpcode.DAMAGE,
         valid=order.valid,
+        source_id=order.entity_ids,
         target_id=order.entity_ids,
+        x_units=torch.gather(runtime.battle.entity_x_units, 1, slots),
+        y_units=torch.gather(runtime.battle.entity_y_units, 1, slots),
         amount=torch.gather(damage, 1, slots),
     )
 

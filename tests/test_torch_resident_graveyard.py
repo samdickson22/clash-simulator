@@ -147,6 +147,38 @@ def test_scheduled_spawn_capacity_failure_rolls_back_area_clock_and_ids() -> Non
     assert runtime.battle.rng.python_state(0) == before_rng
 
 
+def test_scheduled_spawn_event_capacity_failure_is_atomic() -> None:
+    battle = _battle()
+    runtime, owner = _runtime_owner(
+        [battle], max_entities=4, event_capacity=1, graveyard_capacity=1
+    )
+    card = runtime.battle.card_to_id["Graveyard"]
+    assert owner.materialize_due_spell_actions_(
+        runtime,
+        card_ids=torch.tensor([card]),
+        player_ids=torch.tensor([0]),
+        target_x_units=torch.tensor([9_000]),
+        target_y_units=torch.tensor([14_000]),
+        valid=torch.tensor([True]),
+    ).all()
+    for _ in range(23):
+        assert owner.step_(runtime).committed.tolist() == [True]
+    before_runtime = runtime.clone()
+    before_owner = owner.clone()
+
+    result = owner.step_(runtime)
+
+    assert result.committed.tolist() == [False]
+    assert torch.equal(owner.age_ms, before_owner.age_ms)
+    assert torch.equal(owner.next_spawn_index, before_owner.next_spawn_index)
+    assert torch.equal(
+        runtime.entity_pool.next_entity_id,
+        before_runtime.entity_pool.next_entity_id,
+    )
+    assert torch.equal(runtime.entity_pool.active, before_runtime.entity_pool.active)
+    assert torch.equal(runtime.events.count, before_runtime.events.count)
+
+
 def test_clone_fork_and_selective_reset_are_independent() -> None:
     battles = [_battle(), _battle()]
     runtime, owner = _runtime_owner(battles)
@@ -298,18 +330,10 @@ def test_complete_graveyard_lifecycle_matches_python_without_rng_or_terrain_snap
                 spawned_entity._native_target_distance_discount_sq_units
             )
 
-        removed_area = 1 in before_ids and 1 not in oracle.entities
         expected = [
-            (TickPhase.COMMANDS, RuntimeEventOpcode.SPAWN, entity_id, 0)
+            (TickPhase.OBJECTS, RuntimeEventOpcode.SPAWN, 0, entity_id)
             for entity_id in new_ids
         ]
-        if removed_area:
-            expected.extend(
-                (
-                    (TickPhase.COMBAT, RuntimeEventOpcode.DAMAGE, 0, 1),
-                    (TickPhase.COMBAT, RuntimeEventOpcode.DEATH, 0, 1),
-                )
-            )
         stop = int(runtime.events.count[0].item())
         actual = [
             (
@@ -321,9 +345,7 @@ def test_complete_graveyard_lifecycle_matches_python_without_rng_or_terrain_snap
             for slot in range(event_start, stop)
         ]
         assert actual == expected
-        expected_payloads = [runtime.battle.card_to_id["Skeleton"] for _ in new_ids] + (
-            [0, 0] if removed_area else []
-        )
+        expected_payloads = [runtime.battle.card_to_id["Skeleton"] for _ in new_ids]
         assert runtime.events.payload[0, event_start:stop].tolist() == expected_payloads
         spawn_event_count += len(new_ids)
 
