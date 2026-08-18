@@ -126,6 +126,24 @@ class TensorResidentWorkspace:
             if scratch_owner.active.data_ptr() == engine_owner.active.data_ptr():
                 raise ValueError(f"speculative {name} must own mutable storage")
         if (
+            self.scratch.rolling_spells.catalog
+            is not self.engine.rolling_spells.catalog
+        ):
+            raise ValueError("speculative engines must share rolling spell catalogs")
+        if self.scratch.rolling_spells.state.active.data_ptr() == (
+            self.engine.rolling_spells.state.active.data_ptr()
+        ):
+            raise ValueError("speculative rolling spells must own mutable storage")
+        if (
+            self.scratch.royal_delivery.catalog
+            is not self.engine.royal_delivery.catalog
+        ):
+            raise ValueError("speculative engines must share Royal Delivery catalogs")
+        if self.scratch.royal_delivery.active.data_ptr() == (
+            self.engine.royal_delivery.active.data_ptr()
+        ):
+            raise ValueError("speculative Royal Delivery must own mutable storage")
+        if (
             self.scratch.dispatcher.passive_catalog
             is not self.engine.dispatcher.passive_catalog
         ):
@@ -175,6 +193,11 @@ class TensorResidentWorkspace:
             source.tornadoes,
             pending_rows,
         )
+        destination.royal_delivery.reset_rows_(
+            pending_rows,
+            source.royal_delivery,
+            pending_rows,
+        )
         for left, right in (
             (destination.combat, source.combat),
             (destination.movement, source.movement),
@@ -183,6 +206,8 @@ class TensorResidentWorkspace:
             (destination.objects, source.objects),
             (destination.objects.objects, source.objects.objects),
             (destination.periodic_state, source.periodic_state),
+            (destination.rolling_spells.state, source.rolling_spells.state),
+            (destination.rolling_spells.targets, source.rolling_spells.targets),
             (
                 destination.terminal_pipeline.state.objects,
                 source.terminal_pipeline.state.objects,
