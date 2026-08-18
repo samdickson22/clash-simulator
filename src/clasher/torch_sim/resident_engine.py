@@ -39,6 +39,12 @@ from .combat import (
     step_stationary_combat_,
 )
 from .combat_adapter import project_stationary_combat
+from .combat_clock_transitions import (
+    TensorCombatClockPlanes,
+    apply_forced_movement_interrupt_,
+    apply_stun_interrupt_,
+    initialize_spawned_attack_clocks_,
+)
 from .deployment import TensorCommandMaterializer, TensorDeploymentCatalog
 from .entity_pool import EntitySelection
 from .mechanic_dispatcher import (
@@ -1580,6 +1586,16 @@ class TensorResidentEngine:
         self.combat.combat_blocked |= (
             self.movement.river_jump_active | self.movement.special_move_consumed_tick
         )
+        retained_knockback = (
+            self.projectile_bridge.knockback_active
+            & self.runtime.entity_pool.active
+            & (
+                self.projectile_bridge.knockback_entity_id
+                == self.runtime.battle.entity_id
+            )
+        )
+        self.combat.forced_movement |= retained_knockback
+        self.combat.combat_blocked |= retained_knockback
         self.combat.attack_rate_multiplier.copy_(
             self.mechanics.attack_rate_multiplier(runtime)
         )
@@ -1750,8 +1766,36 @@ class TensorResidentEngine:
         self.mechanics.refresh_new_entities_(runtime)
         return new
 
-    def _combat_phase(self, active: torch.Tensor) -> CombatStepResult:
+    def _combat_clock_planes(self) -> TensorCombatClockPlanes:
+        return TensorCombatClockPlanes(
+            attack_cooldown=self.combat.attack_cooldown,
+            target_slot=self.combat.target_slot,
+            attack_windup_active=self.combat.attack_windup_active,
+            attack_preload_blocked=self.combat.attack_preload_blocked,
+            has_attacked_once=self.combat.has_attacked_once,
+        )
+
+    def _combat_phase(
+        self,
+        active: torch.Tensor,
+        stun_applied: torch.Tensor | None = None,
+    ) -> CombatStepResult:
         self._refresh_planes()
+        if stun_applied is not None:
+            accepted_stun = stun_applied & active[:, None] & self.combat.present
+            stun_transition = apply_stun_interrupt_(
+                self._combat_clock_planes(),
+                status_applied=accepted_stun,
+                hit_speed_ms=self.combat.hit_speed_ms,
+                river_jump_active=self.movement.river_jump_active,
+            )
+            self.runtime.phases.target_slot.masked_fill_(
+                stun_transition.transitioned, -1
+            )
+            self.combat_target_entity_id.masked_fill_(stun_transition.transitioned, -1)
+            charge_reset = stun_transition.charge_reset & self.movement.charge_component
+            self.movement.native_charge_progress.masked_fill_(charge_reset, 0)
+            self.movement.distance_traveled_bits.masked_fill_(charge_reset, 0)
         self.combat.present &= active[:, None]
         retained_target_slot = self.combat.target_slot.clamp_min(0)
         retained_target_id = self.combat.entity_id.gather(1, retained_target_slot)
@@ -1793,6 +1837,9 @@ class TensorResidentEngine:
         runtime = self.runtime
         runtime.battle.entity_hp.copy_(
             torch.where(active[:, None], self.combat.hp, runtime.battle.entity_hp)
+        )
+        runtime.battle.entity_hp_integer_kind &= ~(
+            active[:, None] & (result.damage_received > 0.0)
         )
         runtime.battle.entity_active.copy_(
             torch.where(
@@ -2460,7 +2507,7 @@ class TensorResidentEngine:
         # dispatcher also owns this hook for future closure, but no admitted
         # row can currently execute both paths with a live Cloak operation.
         working.mechanics.tick_cloak_(working.runtime)
-        combat = working._combat_phase(active)
+        combat = working._combat_phase(active, pending_spells.stun_applied)
         previously_allocated_objects = working.objects.objects.allocated.clone()
         projectile_supported = working.projectile_bridge.materialize_combat_launches_(
             working.runtime,
@@ -2530,7 +2577,10 @@ class TensorResidentEngine:
             active & special_row & other_mobile,
             phase=TickPhase.MOVEMENT,
         )
-        movement = working._movement_phase(combat_death | special_row)
+        movement_consumed = (combat_death | special_row)[
+            :, None
+        ] | working.projectile_bridge.knockback_active
+        movement = working._movement_phase(movement_consumed)
         status = step_runtime_status_phase_(
             working.runtime,
             working.status,
@@ -2555,8 +2605,69 @@ class TensorResidentEngine:
         # transaction; admitted terminal rows cannot concurrently contain a
         # general retained object, so this cannot make a dead target hittable.
         working.runtime.battle.entity_active |= terminal_dead_before_objects
+        entity_id_before_objects = working.runtime.battle.entity_id.clone()
+        knockback_before_objects = working.projectile_bridge.knockback_active.clone()
         objects = working.projectile_bridge.step_objects_(
             working.runtime, working.objects
+        )
+        knockback_started = (
+            working.projectile_bridge.knockback_active
+            & ~knockback_before_objects
+            & working.runtime.entity_pool.active
+            & (
+                working.projectile_bridge.knockback_entity_id
+                == working.runtime.battle.entity_id
+            )
+        )
+        object_stun_transition = apply_stun_interrupt_(
+            working._combat_clock_planes(),
+            status_applied=working.projectile_bridge.stun_applied,
+            hit_speed_ms=working.combat.hit_speed_ms,
+            river_jump_active=working.movement.river_jump_active,
+        )
+        working.runtime.phases.target_slot.masked_fill_(
+            object_stun_transition.transitioned, -1
+        )
+        working.combat_target_entity_id.masked_fill_(
+            object_stun_transition.transitioned, -1
+        )
+        stun_charge_reset = (
+            object_stun_transition.charge_reset & working.movement.charge_component
+        )
+        working.movement.native_charge_progress.masked_fill_(stun_charge_reset, 0)
+        working.movement.distance_traveled_bits.masked_fill_(stun_charge_reset, 0)
+        charged_before_interrupt = working.movement.charge_component & (
+            working.movement.native_charge_progress >= 10_000
+        )
+        forced_transition = apply_forced_movement_interrupt_(
+            working._combat_clock_planes(),
+            movement_started=knockback_started,
+            hit_speed_ms=working.combat.hit_speed_ms,
+            first_hit_ms=working.combat.first_hit_ms,
+            charged_attack_ready=charged_before_interrupt,
+        )
+        charge_reset = (
+            forced_transition.charge_reset & working.movement.charge_component
+        )
+        working.movement.native_charge_progress.masked_fill_(charge_reset, 0)
+        working.movement.distance_traveled_bits.masked_fill_(charge_reset, 0)
+        working.combat.combat_blocked |= forced_transition.combat_blocked
+
+        spawned_character = (
+            working.runtime.entity_pool.active
+            & (working.runtime.battle.entity_id != entity_id_before_objects)
+            & (
+                (working.runtime.battle.entity_kind == 0)
+                | (working.runtime.battle.entity_kind == 1)
+            )
+        )
+        spawned_catalog = working.runtime.card_catalog_index[
+            working.runtime.battle.entity_card
+        ].clamp_min(0)
+        initialize_spawned_attack_clocks_(
+            working._combat_clock_planes(),
+            spawned=spawned_character,
+            first_hit_ms=working.first_hit_ms[spawned_catalog],
         )
         working.runtime.battle.entity_active &= ~terminal_dead_before_objects
         working.objects.objects.allocated[pending_new_objects] = True

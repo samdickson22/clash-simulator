@@ -764,6 +764,7 @@ class TensorResidentProjectileSpellBridge:
     blueprint_damage_group_slot: torch.Tensor
     blueprint_card_id: torch.Tensor
     damage_group_seen: torch.Tensor
+    stun_applied: torch.Tensor
     knockback_active: torch.Tensor
     knockback_entity_id: torch.Tensor
     knockback_target_units: torch.Tensor
@@ -916,6 +917,11 @@ class TensorResidentProjectileSpellBridge:
                     object_phase.objects.max_objects,
                     runtime.max_entities,
                 ),
+                dtype=torch.bool,
+                device=runtime.device,
+            ),
+            stun_applied=torch.zeros(
+                (runtime.batch_size, runtime.max_entities),
                 dtype=torch.bool,
                 device=runtime.device,
             ),
@@ -1339,6 +1345,7 @@ class TensorResidentProjectileSpellBridge:
             payload=0,
         )
         survivors = targets & runtime.battle.entity_active
+        self.stun_applied |= survivors & (stun_seconds[:, None] > 0)
         runtime.status.stun_timer.copy_(
             torch.where(
                 survivors & (stun_seconds[:, None] > 0),
@@ -1773,6 +1780,7 @@ class TensorResidentProjectileSpellBridge:
         runtime: TensorBattleRuntime,
         object_phase: TensorRuntimeObjectPhase,
     ) -> RuntimeObjectPhaseResult:
+        self.stun_applied.zero_()
         knockback_before = self.knockback_active.clone()
         before_count = runtime.events.count.clone()
         object_ids = object_phase.objects.object_id.clone()
@@ -2115,6 +2123,14 @@ class TensorResidentProjectileSpellBridge:
         )
         stun = self.blueprint_stun_ms[blueprint].to(torch.float64) / 1_000
         stun = torch.where(apply, stun, 0.0)
+        stun_event = apply & (stun > 0.0)
+        self.stun_applied.scatter_reduce_(
+            1,
+            target_slot,
+            stun_event,
+            reduce="amax",
+            include_self=True,
+        )
         projected = torch.zeros_like(runtime.status.stun_timer)
         projected.scatter_reduce_(
             1,

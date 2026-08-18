@@ -193,6 +193,27 @@ def test_projectile_knockback_interrupt_and_next_combat_block_match_scalar(
     assert tensor_last_attack.item() == scalar.last_attack_time == 4.0
 
 
+def test_charged_forced_movement_restores_first_hit_clock() -> None:
+    clocks = _planes(
+        "cpu",
+        cooldown=0.0,
+        target=5,
+        windup=True,
+        preload_blocked=True,
+        attacked=True,
+    )
+    apply_forced_movement_interrupt_(
+        clocks,
+        movement_started=torch.tensor([[True]]),
+        hit_speed_ms=torch.tensor([[1_400]]),
+        first_hit_ms=torch.tensor([[500]]),
+        charged_attack_ready=torch.tensor([[True]]),
+    )
+    assert clocks.attack_cooldown.item() == 0.5
+    assert not clocks.attack_preload_blocked.item()
+    assert clocks.target_slot.item() == 5
+
+
 def test_object_phase_spawn_publishes_first_hit_clock_on_birth_tick(
     tensor_device: str,
 ) -> None:

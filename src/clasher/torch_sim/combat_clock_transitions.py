@@ -107,6 +107,7 @@ def apply_forced_movement_interrupt_(
     *,
     movement_started: torch.Tensor,
     hit_speed_ms: torch.Tensor,
+    first_hit_ms: torch.Tensor | int = 0,
     interrupts_combat: torch.Tensor | bool = True,
     charged_attack_ready: torch.Tensor | bool = False,
 ) -> CombatClockTransitionResult:
@@ -128,11 +129,22 @@ def apply_forced_movement_interrupt_(
         torch.where(
             ordinary,
             torch.maximum(clocks.attack_cooldown, base_interval),
-            clocks.attack_cooldown,
+            torch.where(
+                charged,
+                torch.maximum(
+                    clocks.attack_cooldown,
+                    _milliseconds(first_hit_ms, clocks.attack_cooldown).to(
+                        torch.float64
+                    )
+                    / 1_000.0,
+                ),
+                clocks.attack_cooldown,
+            ),
         )
     )
     clocks.attack_windup_active &= ~transitioned
     clocks.attack_preload_blocked |= ordinary
+    clocks.attack_preload_blocked &= ~charged
     clocks.has_attacked_once &= ~transitioned
     return CombatClockTransitionResult(
         transitioned=transitioned,

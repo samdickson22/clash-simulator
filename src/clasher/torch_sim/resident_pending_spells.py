@@ -52,6 +52,7 @@ class PendingSpellResolveResult:
     due_rows: torch.Tensor
     resolved_count: torch.Tensor
     failed_rows: torch.Tensor
+    stun_applied: torch.Tensor
 
 
 @dataclass
@@ -219,17 +220,21 @@ class TensorResidentPendingSpells:
         ingress: TensorIngressResult,
         *,
         player_order: torch.Tensor,
+        _prevalidated_order: bool = False,
     ) -> PendingSpellEnqueueResult:
         """Commit card transitions and enqueue commands without payload work."""
 
         if runtime.batch_size != self.batch_size or runtime.device != self.device:
             raise ValueError("pending spell owner and runtime layouts differ")
         order = torch.as_tensor(player_order, dtype=torch.int64, device=self.device)
-        expected = torch.tensor([0, 1], dtype=torch.int64, device=self.device)
-        if order.shape != (self.batch_size, 2) or not bool(
-            (torch.sort(order, dim=1).values == expected).all().item()
-        ):
-            raise ValueError("player_order rows must be permutations of (0, 1)")
+        if order.shape != (self.batch_size, 2):
+            raise ValueError("player_order must have shape [batch, 2]")
+        if not _prevalidated_order:
+            expected = torch.tensor([0, 1], dtype=torch.int64, device=self.device)
+            torch._assert_async(
+                (torch.sort(order, dim=1).values == expected).all(),
+                "player_order rows must be permutations of (0, 1)",
+            )
         commands = ingress.commands
         command_count = int(commands.card_id.numel())
         command_spell = (
@@ -374,6 +379,11 @@ class TensorResidentPendingSpells:
                     self.batch_size, dtype=torch.int64, device=self.device
                 ),
                 failed_rows=torch.zeros_like(due_rows),
+                stun_applied=torch.zeros(
+                    (self.batch_size, runtime.max_entities),
+                    dtype=torch.bool,
+                    device=self.device,
+                ),
             )
 
         speculative_runtime = runtime.clone()
@@ -383,6 +393,7 @@ class TensorResidentPendingSpells:
             TensorResidentProjectileSpellBridge,
             _clone_tensor_owner(bridge),
         )
+        speculative_bridge.stun_applied.zero_()
         working = self.clone()
         supported = runtime.supported.clone()
         processed = torch.zeros_like(due)
@@ -474,6 +485,7 @@ class TensorResidentPendingSpells:
                 commit_rows, resolved_count, torch.zeros_like(resolved_count)
             ),
             failed_rows=failed_rows,
+            stun_applied=speculative_bridge.stun_applied & commit_rows[:, None],
         )
 
 
