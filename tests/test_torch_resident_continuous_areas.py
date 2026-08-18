@@ -196,6 +196,37 @@ def test_status_source_capacity_failure_rolls_back_the_whole_row() -> None:
     assert torch.equal(owner.next_effect_ms, before_owner.next_effect_ms)
 
 
+def test_freeze_damage_status_event_capacity_failure_is_atomic() -> None:
+    battle = _battle()
+    runtime, owner = _runtime_owner(battle, event_capacity=1)
+    card = runtime.battle.card_to_id["Freeze"]
+    assert owner.materialize_due_spell_actions_(
+        runtime,
+        card_ids=torch.tensor([card]),
+        player_ids=torch.tensor([0]),
+        target_x_units=torch.tensor([9_000]),
+        target_y_units=torch.tensor([14_000]),
+        valid=torch.tensor([True]),
+    ).all()
+    runtime.events.clear()
+    before_runtime = runtime.clone()
+    before_owner = owner.clone()
+    runtime.battle.time += runtime.battle.dt
+    runtime.battle.tick += 1
+
+    result = owner.step_(runtime)
+
+    assert result.committed.tolist() == [False]
+    assert torch.equal(runtime.battle.entity_hp, before_runtime.battle.entity_hp)
+    assert torch.equal(
+        runtime.status.freeze_expiry_time,
+        before_runtime.status.freeze_expiry_time,
+    )
+    assert torch.equal(runtime.events.count, before_runtime.events.count)
+    assert torch.equal(owner.age_ms, before_owner.age_ms)
+    assert torch.equal(owner.freeze_applied, before_owner.freeze_applied)
+
+
 def test_stale_target_plane_identity_fails_closed_without_area_progress() -> None:
     battle = _battle()
     runtime, owner = _runtime_owner(battle)
@@ -270,6 +301,7 @@ def test_complete_continuous_area_lifecycle_matches_python(
 
     for _ in range(ticks):
         before_hp = oracle.entities[1].hitpoints
+        before_slow = tuple(oracle.entities[1]._slow_effects)
         before_ids = set(oracle.entities)
         event_start = int(runtime.events.count[0].item())
         _advance_oracle_area_tick(oracle)
@@ -334,6 +366,12 @@ def test_complete_continuous_area_lifecycle_matches_python(
         damage = float(before_hp) - float(oracle_target.hitpoints)
         if damage > 0:
             expected.append((RuntimeEventOpcode.DAMAGE, 1, damage))
+        if (
+            spell_name == "Freeze"
+            and not before_slow
+            and tuple(oracle_target._slow_effects)
+        ):
+            expected.append((RuntimeEventOpcode.STATUS, 1, spell.duration))
         if 2 in before_ids and 2 not in oracle.entities:
             expected.extend(
                 (
@@ -351,12 +389,37 @@ def test_complete_continuous_area_lifecycle_matches_python(
             for slot in range(event_start, stop)
         ]
         assert actual == expected
-        assert all(
-            runtime.events.phase[0, slot].item() == TickPhase.COMBAT
-            and runtime.events.source_id[0, slot].item() == 0
-            and runtime.events.payload[0, slot].item() == 0
-            for slot in range(event_start, stop)
-        )
+        if spell_name == "Freeze" and damage > 0:
+            assert runtime.events.phase[0, event_start:stop].tolist() == [
+                TickPhase.OBJECTS,
+                TickPhase.OBJECTS,
+            ]
+            assert runtime.events.source_id[0, event_start:stop].tolist() == [2, 2]
+            target_x = int(runtime.battle.entity_x_units[0, target_slot].item())
+            target_y = int(runtime.battle.entity_y_units[0, target_slot].item())
+            assert runtime.events.x_units[0, event_start:stop].tolist() == [
+                target_x,
+                target_x,
+            ]
+            assert runtime.events.y_units[0, event_start:stop].tolist() == [
+                target_y,
+                target_y,
+            ]
+            assert runtime.events.payload[0, event_start:stop].tolist() == [card, card]
+        for slot in range(event_start, stop):
+            if runtime.events.target_id[0, slot].item() == 1:
+                if spell_name == "Poison":
+                    assert runtime.events.phase[0, slot].item() == TickPhase.COMBAT
+                    assert runtime.events.source_id[0, slot].item() == 0
+                    assert runtime.events.payload[0, slot].item() == 0
+                else:
+                    assert runtime.events.phase[0, slot].item() == TickPhase.OBJECTS
+                    assert runtime.events.source_id[0, slot].item() == 2
+                    assert runtime.events.payload[0, slot].item() == card
+            else:
+                assert runtime.events.phase[0, slot].item() == TickPhase.COMBAT
+                assert runtime.events.source_id[0, slot].item() == 0
+                assert runtime.events.payload[0, slot].item() == 0
 
     assert not owner.active.any()
     assert set(oracle.entities) == {1}

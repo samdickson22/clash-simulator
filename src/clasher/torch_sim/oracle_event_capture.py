@@ -20,6 +20,7 @@ from typing_extensions import Self
 
 from clasher.arena import Position
 from clasher.battle import BattleState
+from clasher.cards.miner import UndergroundDeployment
 from clasher.entities import (
     AreaEffect,
     Building,
@@ -308,6 +309,41 @@ class PythonOracleEventCapture:
 
     def _install_payload_wrappers(self, stack: ExitStack) -> None:
         capture = self
+        original_underground_tick = UndergroundDeployment.on_deploy_tick
+
+        def underground_tick(
+            mechanic: UndergroundDeployment,
+            entity: Entity,
+            dt_ms: int,
+        ) -> None:
+            destination = getattr(entity, "_underground_destination", None)
+            before = (_logic_units(entity.position.x), _logic_units(entity.position.y))
+            original_underground_tick(mechanic, entity, dt_ms)
+            if (
+                getattr(entity, "battle_state", None) is capture.battle
+                and destination is not None
+                and before != (_logic_units(destination.x), _logic_units(destination.y))
+                and (_logic_units(entity.position.x), _logic_units(entity.position.y))
+                == (_logic_units(destination.x), _logic_units(destination.y))
+            ):
+                payload = getattr(getattr(entity, "card_stats", None), "name", None)
+                with capture._scope(
+                    phase=TickPhase.MOVEMENT,
+                    source_id=entity.id,
+                    source_payload=payload,
+                ):
+                    capture._record(
+                        RuntimeEventOpcode.MOVEMENT,
+                        source_id=entity.id,
+                        x_units=_logic_units(entity.position.x),
+                        y_units=_logic_units(entity.position.y),
+                        payload_kind=OraclePayloadKind.UNDERGROUND_MOVEMENT,
+                        payload=payload,
+                    )
+
+        stack.enter_context(
+            patch.object(UndergroundDeployment, "on_deploy_tick", underground_tick)
+        )
         original_damage = Entity.take_damage
         original_damage_any: Any = original_damage
 

@@ -297,25 +297,11 @@ def test_projectile_event_divergence_uses_exact_oracle_callsite_tuple(
 
 
 @pytest.mark.parametrize(
-    ("spell_name", "carrier_opcode", "payload_kind"),
-    (
-        (
-            "BarbarianBarrel",
-            RuntimeEventOpcode.SPAWN,
-            OraclePayloadKind.OBJECT_CHARACTER,
-        ),
-        ("Log", RuntimeEventOpcode.SPAWN, OraclePayloadKind.OBJECT_CHARACTER),
-        (
-            "RoyalDelivery",
-            RuntimeEventOpcode.PROJECTILE,
-            OraclePayloadKind.SPELL_PROJECTILE,
-        ),
-    ),
+    "spell_name",
+    ("BarbarianBarrel", "GiantSnowball", "Log", "RoyalDelivery"),
 )
-def test_rolling_and_royal_event_divergence_preserves_command_allocation_order(
+def test_spell_alias_normalization_preserves_exact_command_allocation_order(
     spell_name: str,
-    carrier_opcode: RuntimeEventOpcode,
-    payload_kind: OraclePayloadKind,
 ) -> None:
     def actions(
         tick: int, rows: tuple[BattleState, ...]
@@ -331,20 +317,9 @@ def test_rolling_and_royal_event_divergence_preserves_command_allocation_order(
         max_ticks=21,
     )
 
-    divergence = report.divergence
-    assert divergence is not None
-    assert divergence.path == "battle.events"
-    assert divergence.state is None
-    command, carrier = divergence.expected_events[:2]
-    assert command.phase == carrier.phase == TickPhase.COMMANDS
-    assert command.opcode == RuntimeEventOpcode.COMMAND
-    assert command.payload_kind == OraclePayloadKind.SPELL_EXECUTION
-    assert carrier.opcode == carrier_opcode
-    assert carrier.payload_kind == payload_kind
-    assert command.sequence < carrier.sequence
-    assert carrier.source_id == 0
-    assert carrier.target_id > 0
-    assert divergence.actual_events != divergence.expected_events
+    assert report.divergence is None
+    assert report.resident_rows == (0,)
+    assert report.fallback_only_rows == ()
 
 
 def test_preflight_rejected_row_is_fallback_only_not_parity() -> None:

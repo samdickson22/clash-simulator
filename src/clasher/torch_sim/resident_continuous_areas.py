@@ -706,8 +706,16 @@ class TensorResidentContinuousAreas:
             building,
             actual,
         )
-        damage = torch.where(direct_targets, actual, 0.0).sum(dim=1)
+        damage_by_area = torch.where(direct_targets, actual, 0.0)
+        damage = damage_by_area.sum(dim=1)
         target_damage = damage > 0
+        damage_sources = damage_by_area > 0
+        supported &= ~(damage_sources.any(dim=2).sum(dim=1) > 1)
+        damage_source_count = damage_sources.sum(dim=1, dtype=torch.int64)
+        supported &= ~(damage_source_count > 1).any(dim=1)
+        damage_source_lane = damage_sources.to(torch.int64).argmax(dim=1)
+        damage_source_id = torch.gather(owner.area_id, 1, damage_source_lane)
+        damage_payload = torch.gather(cards, 1, damage_source_lane)
         died = (
             target_damage
             & working.battle.entity_active
@@ -717,28 +725,6 @@ class TensorResidentContinuousAreas:
         # pipeline. Keep this owner atomic until that integration is composed.
         supported &= ~died.any(dim=1)
         expired = selected & (age_after >= duration)
-        additions = (
-            target_damage.sum(dim=1, dtype=torch.int64)
-            + died.sum(dim=1, dtype=torch.int64)
-            + 2 * expired.sum(dim=1, dtype=torch.int64)
-        )
-        supported &= (
-            working.events.count.to(torch.int64) + additions <= working.events.capacity
-        )
-        target_damage &= supported[:, None]
-        died &= supported[:, None]
-        working.battle.entity_hp_integer_kind &= ~target_damage
-        working.battle.entity_hp.copy_(
-            torch.where(
-                target_damage,
-                (working.battle.entity_hp - damage).clamp_min(0.0),
-                working.battle.entity_hp,
-            )
-        )
-        working.battle.entity_active &= ~died
-        working.phases.death_pending |= died
-        _append_damage_events(working, target_damage, damage, died)
-
         freeze_area = (
             selected
             & owner.catalog.freeze_snapshot[cards]
@@ -756,6 +742,55 @@ class TensorResidentContinuousAreas:
         freeze_capacity = freeze_matches | (~working.status.slow_active).any(dim=2)
         supported &= ~(freeze_targets & ~freeze_capacity[:, None, :]).any(dim=(1, 2))
         freeze_targets &= supported[:, None, None]
+        supported &= ~(freeze_targets.any(dim=2).sum(dim=1) > 1)
+        freeze_targets &= supported[:, None, None]
+        freeze_source_count = freeze_targets.sum(dim=1, dtype=torch.int64)
+        supported &= ~(freeze_source_count > 1).any(dim=1)
+        freeze_targets &= supported[:, None, None]
+        freeze_valid = freeze_targets.any(dim=1)
+        freeze_source_lane = freeze_targets.to(torch.int64).argmax(dim=1)
+        freeze_source_id = torch.gather(owner.area_id, 1, freeze_source_lane)
+        freeze_payload = torch.gather(cards, 1, freeze_source_lane)
+        freeze_amount = (
+            torch.gather(
+                owner.catalog.duration_ms[cards],
+                1,
+                freeze_source_lane,
+            ).to(torch.float64)
+            / 1_000
+        )
+        additions = (
+            target_damage.sum(dim=1, dtype=torch.int64)
+            + died.sum(dim=1, dtype=torch.int64)
+            + freeze_valid.sum(dim=1, dtype=torch.int64)
+            + 2 * expired.sum(dim=1, dtype=torch.int64)
+        )
+        supported &= (
+            working.events.count.to(torch.int64) + additions <= working.events.capacity
+        )
+        target_damage &= supported[:, None]
+        died &= supported[:, None]
+        freeze_targets &= supported[:, None, None]
+        freeze_valid &= supported[:, None]
+        working.battle.entity_hp_integer_kind &= ~target_damage
+        working.battle.entity_hp.copy_(
+            torch.where(
+                target_damage,
+                (working.battle.entity_hp - damage).clamp_min(0.0),
+                working.battle.entity_hp,
+            )
+        )
+        working.battle.entity_active &= ~died
+        working.phases.death_pending |= died
+        _append_damage_events(
+            working,
+            target_damage,
+            damage,
+            died,
+            source_id=damage_source_id,
+            payload=damage_payload,
+            phase=TickPhase.OBJECTS,
+        )
         expiry = working.battle.time[:, None, None] + (
             owner.catalog.duration_ms[cards].to(torch.float64)[:, :, None] / 1_000
         )
@@ -764,6 +799,13 @@ class TensorResidentContinuousAreas:
             maximum_expiry,
             working.battle.time[:, None],
             mask=maximum_expiry > working.battle.time[:, None],
+        )
+        _append_status_events(
+            working,
+            freeze_valid,
+            freeze_source_id,
+            freeze_payload,
+            freeze_amount,
         )
 
         effect_due = (
@@ -972,15 +1014,31 @@ def _append_damage_events(
     valid: torch.Tensor,
     damage: torch.Tensor,
     died: torch.Tensor,
+    *,
+    source_id: torch.Tensor | None = None,
+    payload: torch.Tensor | None = None,
+    phase: TickPhase = TickPhase.COMBAT,
 ) -> None:
     order = runtime.entity_pool.id_order(valid)
     slots = order.slots.clamp_min(0)
     amount = torch.gather(damage, 1, slots)
     ordered_died = torch.gather(died, 1, slots) & order.valid
+    ordered_source = (
+        torch.zeros_like(order.entity_ids)
+        if source_id is None
+        else torch.gather(source_id, 1, slots)
+    )
+    ordered_payload = (
+        torch.zeros_like(order.entity_ids)
+        if payload is None
+        else torch.gather(payload, 1, slots)
+    )
+    ordered_x = torch.gather(runtime.battle.entity_x_units, 1, slots)
+    ordered_y = torch.gather(runtime.battle.entity_y_units, 1, slots)
     pair_valid = torch.stack((order.valid, ordered_died), dim=2).flatten(1)
     ids = torch.stack((order.entity_ids, order.entity_ids), dim=2).flatten(1)
     runtime.events.append(
-        phase=TickPhase.COMBAT,
+        phase=phase,
         opcode=torch.stack(
             (
                 torch.full_like(order.entity_ids, RuntimeEventOpcode.DAMAGE),
@@ -989,8 +1047,34 @@ def _append_damage_events(
             dim=2,
         ).flatten(1),
         valid=pair_valid,
+        source_id=torch.stack((ordered_source, ordered_source), dim=2).flatten(1),
         target_id=ids,
+        x_units=torch.stack((ordered_x, ordered_x), dim=2).flatten(1),
+        y_units=torch.stack((ordered_y, ordered_y), dim=2).flatten(1),
         amount=torch.stack((amount, torch.zeros_like(amount)), dim=2).flatten(1),
+        payload=torch.stack((ordered_payload, ordered_payload), dim=2).flatten(1),
+    )
+
+
+def _append_status_events(
+    runtime: TensorBattleRuntime,
+    valid: torch.Tensor,
+    source_id: torch.Tensor,
+    payload: torch.Tensor,
+    amount: torch.Tensor,
+) -> None:
+    order = runtime.entity_pool.id_order(valid)
+    slots = order.slots.clamp_min(0)
+    runtime.events.append(
+        phase=TickPhase.OBJECTS,
+        opcode=RuntimeEventOpcode.STATUS,
+        valid=order.valid,
+        source_id=torch.gather(source_id, 1, slots),
+        target_id=order.entity_ids,
+        x_units=torch.gather(runtime.battle.entity_x_units, 1, slots),
+        y_units=torch.gather(runtime.battle.entity_y_units, 1, slots),
+        amount=torch.gather(amount, 1, slots),
+        payload=torch.gather(payload, 1, slots),
     )
 
 

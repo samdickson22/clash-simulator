@@ -31,6 +31,7 @@ from clasher.data import CardDataLoader
 from clasher.kinematics import tiles_to_logic_units
 from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
+from clasher.spells import SPELL_REGISTRY
 
 from .actions import NO_OP_ACTION
 from .catalog import TensorCardCatalog
@@ -296,13 +297,15 @@ def _oracle_snapshot(battle: BattleState) -> dict[str, Any]:
     }
 
 
-def _normalize_oracle_payload(value: object, engine: TensorResidentEngine) -> int:
+def _normalize_oracle_payload(
+    value: object,
+    engine: TensorResidentEngine,
+    payload_kind: OraclePayloadKind,
+) -> int:
     if value is None:
         return 0
     if isinstance(value, str):
         card_to_id = engine.runtime.battle.card_to_id
-        if value in card_to_id:
-            return int(card_to_id[value])
         alias = next(
             (
                 name
@@ -311,6 +314,17 @@ def _normalize_oracle_payload(value: object, engine: TensorResidentEngine) -> in
             ),
             None,
         )
+        if (
+            payload_kind
+            in {
+                OraclePayloadKind.SPELL_EXECUTION,
+                OraclePayloadKind.SPELL_PROJECTILE,
+            }
+            and alias is not None
+        ):
+            return int(card_to_id[alias])
+        if value in card_to_id:
+            return int(card_to_id[value])
         if alias is not None:
             return int(card_to_id[alias])
         raise ValueError(f"captured event payload is outside the card closure: {value}")
@@ -329,7 +343,8 @@ def _oracle_events(
     result: list[ResidentEventRecord] = []
     for sequence, event in enumerate(captured):
         try:
-            payload_kind = int(OraclePayloadKind(event.payload_kind))
+            oracle_payload_kind = OraclePayloadKind(event.payload_kind)
+            payload_kind = int(oracle_payload_kind)
         except ValueError as exc:
             raise ValueError(
                 f"uncaptured oracle event payload kind: {event.payload_kind}"
@@ -351,14 +366,22 @@ def _oracle_events(
                 y_units=int(event.y_units),
                 amount=float(amount),
                 payload_kind=payload_kind,
-                payload=_normalize_oracle_payload(event.payload, engine),
+                payload=_normalize_oracle_payload(
+                    event.payload, engine, oracle_payload_kind
+                ),
             )
         )
     return tuple(result)
 
 
 def _resident_payload_kind(
-    *, phase: int, opcode: int, source_id: int, target_id: int
+    engine: TensorResidentEngine,
+    *,
+    phase: int,
+    opcode: int,
+    source_id: int,
+    target_id: int,
+    payload: int,
 ) -> int:
     if opcode == int(RuntimeEventOpcode.COMMAND):
         return int(OraclePayloadKind.SPELL_EXECUTION)
@@ -375,6 +398,21 @@ def _resident_payload_kind(
         return int(OraclePayloadKind.DAMAGE)
     if opcode == int(RuntimeEventOpcode.DEATH):
         return int(OraclePayloadKind.DEATH)
+    if opcode == int(RuntimeEventOpcode.STATUS):
+        name = (
+            engine.runtime.battle.card_names[payload]
+            if 0 < payload < len(engine.runtime.battle.card_names)
+            else ""
+        )
+        spell = SPELL_REGISTRY.get(name)
+        if spell is not None and float(getattr(spell, "stun_duration", 0.0)) > 0:
+            return int(OraclePayloadKind.STUN)
+        if spell is not None and (
+            float(getattr(spell, "slow_duration", 0.0)) > 0
+            or bool(getattr(spell, "freeze_effect", False))
+            or float(getattr(spell, "speed_multiplier", 1.0)) < 1.0
+        ):
+            return int(OraclePayloadKind.SLOW)
     if opcode == int(RuntimeEventOpcode.MOVEMENT):
         return int(OraclePayloadKind.UNDERGROUND_MOVEMENT)
     if opcode == int(RuntimeEventOpcode.SPAWN):
@@ -406,10 +444,12 @@ def _resident_events(
             y_units=int(events.y_units[row, slot].item()),
             amount=float(events.amount[row, slot].item()),
             payload_kind=_resident_payload_kind(
+                engine,
                 phase=int(events.phase[row, slot].item()),
                 opcode=int(events.opcode[row, slot].item()),
                 source_id=int(events.source_id[row, slot].item()),
                 target_id=int(events.target_id[row, slot].item()),
+                payload=int(events.payload[row, slot].item()),
             ),
             payload=int(events.payload[row, slot].item()),
         )

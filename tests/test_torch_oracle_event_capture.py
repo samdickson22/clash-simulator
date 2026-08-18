@@ -92,9 +92,13 @@ def test_miner_command_spawn_precedes_exact_underground_movement_handoff() -> No
 
     with PythonOracleEventCapture(battle) as capture:
         assert capture.deploy_card(0, "Miner", Position(9.0, 20.0))
+        for _ in range(60):
+            capture.step_logic_ticks()
+            if len(capture.events) >= 3:
+                break
 
-    assert len(capture.events) == 2
-    spawn, movement = capture.events
+    assert len(capture.events) == 3
+    spawn, movement, reached = capture.events
     assert spawn.phase == TickPhase.COMMANDS
     assert spawn.opcode == RuntimeEventOpcode.SPAWN
     assert spawn.payload_kind == OraclePayloadKind.COMMAND_DEPLOYMENT
@@ -106,6 +110,14 @@ def test_miner_command_spawn_precedes_exact_underground_movement_handoff() -> No
     assert movement.target_id == spawn.target_id == 0
     assert (movement.x_units, movement.y_units) == (9_000, 2_500)
     assert movement.payload == spawn.payload == "Miner"
+    assert reached.phase == TickPhase.MOVEMENT
+    assert reached.opcode == RuntimeEventOpcode.MOVEMENT
+    assert reached.payload_kind == OraclePayloadKind.UNDERGROUND_MOVEMENT
+    assert reached.sequence == movement.sequence + 1
+    assert reached.source_id == spawn.source_id
+    assert reached.target_id == 0
+    assert (reached.x_units, reached.y_units) == (9_000, 20_000)
+    assert reached.payload == "Miner"
 
 
 @pytest.mark.parametrize("card_name", RANGED_CARDS)
