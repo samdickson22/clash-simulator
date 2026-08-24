@@ -1732,6 +1732,58 @@ class TensorResidentEngine:
         )
         return active_character & (operation >= 0) & payload_supported & terminal_only
 
+    def _timed_terminal_entity_supported(self) -> torch.Tensor:
+        """Return terminal sources whose cleanup payload is a timed parent."""
+
+        terminal = self._terminal_entity_supported()
+        operation = self.terminal_pipeline.catalog.terminal.source_row_by_card[
+            self._core_catalog_id().clamp_min(0)
+        ]
+        if not self.terminal_pipeline.catalog.timed_supported.numel():
+            return torch.zeros_like(terminal)
+        safe = operation.clamp_min(0)
+        return (
+            terminal
+            & (operation >= 0)
+            & (self.terminal_pipeline.catalog.timed_supported[safe])
+        )
+
+    def _generic_before_timed_order_safe(self) -> torch.Tensor:
+        """Verify the engine's generic-before-timed phase split matches ID order."""
+
+        generic = self.objects.objects.allocated
+        timed = self.terminal_pipeline.state.objects.allocated
+        maximum_id = torch.iinfo(torch.int64).max
+        generic_max = torch.where(
+            generic,
+            self.objects.objects.object_id,
+            torch.zeros_like(self.objects.objects.object_id),
+        ).amax(dim=1)
+        timed_min = torch.where(
+            timed,
+            self.terminal_pipeline.state.objects.object_id,
+            torch.full_like(
+                self.terminal_pipeline.state.objects.object_id,
+                maximum_id,
+            ),
+        ).amin(dim=1)
+        coexist = generic.any(dim=1) & timed.any(dim=1)
+        return ~coexist | (generic_max < timed_min)
+
+    def _unsafe_terminal_general_coexistence(self) -> torch.Tensor:
+        """Reject unordered owners and non-timed deaths beside generic objects."""
+
+        general_live = self.objects.objects.allocated.any(dim=1)
+        terminal_dead = self._terminal_entity_supported() & (
+            ~self.runtime.battle.entity_active
+        )
+        timed_dead = self._timed_terminal_entity_supported() & terminal_dead
+        all_dead_are_timed = (~terminal_dead | timed_dead).all(dim=1)
+        return general_live & (
+            ~self._generic_before_timed_order_safe()
+            | (terminal_dead.any(dim=1) & ~all_dead_are_timed)
+        )
+
     def _periodic_entity_supported(self) -> torch.Tensor:
         """Return sources whose complete serialized mechanic set is resident."""
 
@@ -2802,9 +2854,8 @@ class TensorResidentEngine:
         general_live = self.objects.objects.allocated.any(dim=1)
         chain_live = self.chain_impacts.active.any(dim=1)
         spawn_area_live = self.spawn_areas.active.any(dim=1)
-        terminal_dead = death_spawn_supported & ~self.runtime.battle.entity_active
         publish(
-            (timed_live | terminal_dead.any(dim=1)) & general_live,
+            self._unsafe_terminal_general_coexistence(),
             ResidentUnsupportedReason.OBJECT_PHASE,
         )
         publish(
@@ -5089,6 +5140,9 @@ class TensorResidentEngine:
         continuous_before_pending = working.continuous_areas.active.clone()
         graveyards_before_pending = working.graveyards.active.clone()
         tornadoes_before_pending = working.tornadoes.active.clone()
+        timed_before_pending = working.terminal_pipeline.state.objects.allocated.any(
+            dim=1
+        )
         pending_spells = working._resolve_pending_spells_()
         active &= pending_spells.committed
         working.runtime.supported &= active
@@ -5100,6 +5154,13 @@ class TensorResidentEngine:
         )
         pending_new_graveyards = working.graveyards.active & ~graveyards_before_pending
         pending_new_tornadoes = working.tornadoes.active & ~tornadoes_before_pending
+        pending_generic_conflict = timed_before_pending & pending_new_objects.any(dim=1)
+        working.runtime.mark_unsupported(
+            active & pending_generic_conflict,
+            phase=TickPhase.COMMANDS,
+        )
+        active &= ~pending_generic_conflict
+        working.runtime.supported &= active
         area_kind_count = (
             working.continuous_areas.active.any(dim=1).to(torch.int8)
             + working.graveyards.active.any(dim=1).to(torch.int8)
@@ -5179,6 +5240,8 @@ class TensorResidentEngine:
             excluded_entities=miner_owned,
             suppressed_attackers=charge_attack_suppressed,
         )
+        combat_alive_after_attacks = working.combat.alive.clone()
+        working.combat.alive |= combat.projectile_launched & working.combat.present
         launch_identity = (
             working.combat.entity_id[:, :, None]
             == working.runtime.battle.entity_id[:, None, :]
@@ -5241,6 +5304,10 @@ class TensorResidentEngine:
         launch_order_unsupported |= (
             working.rolling_combat.state.active.any(dim=1) | rolling_launch.any(dim=1)
         ) & generic_knockback_launch.any(dim=1)
+        launch_order_unsupported |= (
+            working.terminal_pipeline.state.objects.allocated.any(dim=1)
+            & generic_launch.any(dim=1)
+        )
         working.runtime.mark_unsupported(
             active & launch_order_unsupported,
             phase=TickPhase.COMBAT,
@@ -5277,6 +5344,7 @@ class TensorResidentEngine:
             projectile_supported,
         )
         working._record_new_projectile_durations_(previously_allocated_objects)
+        working.combat.alive.copy_(combat_alive_after_attacks)
         working.runtime.mark_unsupported(
             active & ~projectile_supported,
             phase=TickPhase.COMBAT,
@@ -5772,6 +5840,13 @@ class TensorResidentEngine:
         pending_new_active = working.objects.objects.active[pending_new_objects].clone()
         working.objects.objects.allocated[pending_new_objects] = False
         working.objects.objects.active[pending_new_objects] = False
+        terminal_general_conflict = working._unsafe_terminal_general_coexistence()
+        working.runtime.mark_unsupported(
+            active & terminal_general_conflict,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= ~terminal_general_conflict
+        working.runtime.supported &= active
         terminal_dead_before_objects = (
             active[:, None]
             & working.runtime.entity_pool.active
@@ -5784,8 +5859,18 @@ class TensorResidentEngine:
         # runtime_objects historically owns cleanup as well as object updates.
         # Keep character deaths resident until the later terminal cleanup
         # transaction; admitted terminal rows cannot concurrently contain a
-        # general retained object, so this cannot make a dead target hittable.
+        # general retained object unless every generic ID precedes a timed
+        # parent. Reclassify retained dead characters as object-kind while the
+        # generic owner runs so they stay canonical without becoming targets.
+        terminal_dead_kind = working.runtime.battle.entity_kind.clone()
         working.runtime.battle.entity_active |= terminal_dead_before_objects
+        working.runtime.battle.entity_kind.copy_(
+            torch.where(
+                terminal_dead_before_objects,
+                torch.full_like(terminal_dead_kind, 2),
+                terminal_dead_kind,
+            )
+        )
         entity_id_before_objects = working.runtime.battle.entity_id.clone()
         object_event_start = working.runtime.events.count.clone()
         chain_object_ids = working.objects.objects.object_id.clone()
@@ -5808,6 +5893,14 @@ class TensorResidentEngine:
         objects = working.projectile_bridge.step_objects_(
             working.runtime, working.objects
         )
+        working.runtime.battle.entity_kind.copy_(
+            torch.where(
+                terminal_dead_before_objects,
+                terminal_dead_kind,
+                working.runtime.battle.entity_kind,
+            )
+        )
+        working.runtime.battle.entity_active &= ~terminal_dead_before_objects
         rolling_knockback = (
             rolling_combat.knockback
             & active[:, None]

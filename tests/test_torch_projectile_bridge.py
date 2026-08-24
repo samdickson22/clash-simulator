@@ -522,7 +522,7 @@ def test_death_parent_projectile_survives_source_death_before_impact(
 
 
 @pytest.mark.parametrize("card_name", ("BombTower", "LavaHound"))
-def test_terminal_owner_and_live_projectile_coexistence_remains_atomic_fallback(
+def test_terminal_owner_and_live_projectile_coexistence_admits_only_ordered_timed(
     card_name: str,
 ) -> None:
     battle, source, target = _death_parent_battle(card_name)
@@ -569,6 +569,21 @@ def test_terminal_owner_and_live_projectile_coexistence_remains_atomic_fallback(
     objects_before = engine.objects.objects.object_id.clone()
     preflight = engine.preflight()
     result = engine.step()
+
+    if card_name == "BombTower":
+        assert preflight.supported.tolist() == [True]
+        assert result.committed.tolist() == [True]
+        assert source.id not in engine.runtime.battle.entity_id[0].tolist()
+        assert engine.terminal_pipeline.state.objects.object_id[
+            engine.terminal_pipeline.state.objects.allocated
+        ].tolist() == [4]
+        assert engine.terminal_pipeline.state.objects.age_ms[
+            engine.terminal_pipeline.state.objects.allocated
+        ].tolist() == [0]
+        assert engine.objects.objects.object_id[
+            engine.objects.objects.allocated
+        ].tolist() == [3]
+        return
 
     assert preflight.supported.tolist() == [False]
     assert preflight.reason_code.tolist() == [
