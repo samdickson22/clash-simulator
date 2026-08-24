@@ -11,7 +11,7 @@ import torch
 from clasher.data import CardDataLoader
 from clasher.factory.dynamic_factory import troop_from_character_data
 
-from .catalog import CardKindOpcode, TensorCardCatalog
+from .catalog import TensorCardCatalog
 from .deployment import TensorDeploymentCatalog
 from .entity_pool import EntityAllocation
 from .resident_terminal_payloads import _SPAWN_BLOCKED, _sin, _vector_angle
@@ -510,7 +510,9 @@ def step_runtime_periodic_spawners_(
     child_card = catalog.child_card_id[event_operation]
     child_core = catalog.child_core_ids(working)[event_operation]
     working.battle.entity_active[index] = True
-    working.battle.entity_kind[index] = int(CardKindOpcode.TROOP)
+    # TensorBattleCore uses the scalar entity runtime convention (troop=0,
+    # building=1), not the serialized card-catalog opcode values.
+    working.battle.entity_kind[index] = 0
     working.battle.entity_player[index] = working.battle.entity_player[
         event_batch, source_slots
     ]

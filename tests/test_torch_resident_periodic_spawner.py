@@ -14,10 +14,12 @@ from clasher.entities import Building, Entity, Troop
 from clasher.mechanics.shared.spawner import PeriodicSpawner
 from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
 from clasher.torch_sim.catalog import TensorCardCatalog
+from clasher.torch_sim.combat import select_stationary_targets
 from clasher.torch_sim.oracle_event_capture import (
     OracleEventRecord,
     PythonOracleEventCapture,
 )
+from clasher.torch_sim.resident_engine import TensorResidentEngine
 from clasher.torch_sim.resident_periodic_spawner import (
     PeriodicSpawnerReason,
     TensorPeriodicSpawnerCatalog,
@@ -150,7 +152,7 @@ def _oracle_events(
             record.target_id,
             record.x_units,
             record.y_units,
-            float(record.amount),
+            float(cast(float, record.amount)),
             runtime.battle.card_to_id[str(record.payload)],
         )
         for record in records
@@ -436,6 +438,45 @@ def test_deployment_pending_clock_starts_on_zero_crossing_frame(device: str) -> 
     assert state.source_entity_id[0, source_slot].item() == source.id
     assert state.time_since_spawn_ms[0, source_slot].item() == 50.0
     assert runtime.entity_pool.next_entity_id.item() == oracle.next_entity_id
+
+
+def test_periodic_child_uses_runtime_troop_kind_and_is_target_eligible() -> None:
+    battle, source = _battle("Witch")
+    target_stats = battle.card_loader.get_card("Knight")
+    assert target_stats is not None
+    target = battle._spawn_entity(Troop, Position(9.0, 12.0), 1, target_stats)
+    target.deploy_delay_remaining = 0.0
+    target.placement_pending = False
+    target._spawn_hook_pending = False
+    target._spawn_hook_fired = True
+    target.attack_cooldown = 10.0
+    source.attack_cooldown = 10.0
+    engine = TensorResidentEngine.from_battles(
+        [battle], max_entities=8, event_capacity=64
+    )
+    source_slot = int(
+        torch.where(engine.runtime.battle.entity_id[0] == source.id)[0][0]
+    )
+    operation = int(engine.periodic_state.operation_row[0, source_slot])
+    first_spawn = int(engine.periodic_catalog.spawn.first_spawn_delay_ms[operation])
+    engine.periodic_state.time_since_spawn_ms[0, source_slot] = first_spawn - 50
+
+    result = engine.step(player_order=torch.tensor([[0, 1]]))
+
+    assert result.committed.tolist() == [True]
+    assert result.periodic_spawner is not None
+    allocated = result.periodic_spawner.allocation.valid[0]
+    child_slot = int(result.periodic_spawner.allocation.slots[0, allocated][0])
+    assert engine.runtime.battle.entity_kind[0, child_slot].item() == 0
+
+    engine._refresh_planes()
+    target_slot = int(
+        torch.where(engine.runtime.battle.entity_id[0] == target.id)[0][0]
+    )
+    selected, _ = select_stationary_targets(engine.combat, torch.tensor([child_slot]))
+    assert engine.combat.kind[0, child_slot].item() == 0
+    assert not engine.combat.building_target[0, child_slot].item()
+    assert selected.tolist() == [target_slot]
 
 
 def test_state_clone_fork_and_reset_are_independent() -> None:
