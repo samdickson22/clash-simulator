@@ -150,6 +150,15 @@ class TensorResidentWorkspace:
         ):
             raise ValueError("speculative rolling combat must own mutable storage")
         if (
+            self.scratch.piercing_projectiles.catalog
+            is not self.engine.piercing_projectiles.catalog
+        ):
+            raise ValueError("speculative engines must share piercing catalogs")
+        if self.scratch.piercing_projectiles.active.data_ptr() == (
+            self.engine.piercing_projectiles.active.data_ptr()
+        ):
+            raise ValueError("speculative piercing projectiles need mutable storage")
+        if (
             self.scratch.royal_delivery.catalog
             is not self.engine.royal_delivery.catalog
         ):
@@ -257,6 +266,11 @@ class TensorResidentWorkspace:
         destination.tornadoes.reset_rows_(
             pending_rows,
             source.tornadoes,
+            pending_rows,
+        )
+        destination.piercing_projectiles.reset_rows_(
+            pending_rows,
+            source.piercing_projectiles,
             pending_rows,
         )
         destination.royal_delivery.reset_rows_(

@@ -278,6 +278,61 @@ def test_start_collision_is_enlarged_once_and_event_order_is_exact(
         )
 
 
+def test_start_collision_shield_absorb_has_no_public_damage_event(
+    tensor_device: str,
+) -> None:
+    seed = BattleState(fast_path=False, rng=random.Random(1_001_713))
+    seed.entities.clear()
+    seed.next_entity_id = 1
+    source = _spawn(seed, "MagicArcher", 0, Position(9.0, 10.0))
+    guard_stats = seed.card_loader.get_card("Guards")
+    assert guard_stats is not None
+    guard = seed._spawn_entity(Troop, Position(9.0, 10.8), 1, guard_stats)
+    primary = _spawn(seed, "Knight", 1, Position(9.0, 15.0))
+    assert isinstance(guard, Troop)
+    oracle = copy.deepcopy(seed)
+    runtime, owner = _owners(seed, tensor_device)
+    scalar_source = cast(Troop, oracle.entities[source.id])
+    scalar_guard = cast(Troop, oracle.entities[guard.id])
+    capture = PythonOracleEventCapture(oracle)
+
+    with capture:
+        with _phase_scope(capture, TickPhase.COMBAT, scalar_source.id):
+            scalar_source._create_projectile(
+                cast(Troop, oracle.entities[primary.id]), oracle
+            )
+        launch = owner.commit_attacks_(
+            runtime,
+            source_slots=torch.tensor(
+                [[_slot(runtime, source.id)]], device=runtime.device
+            ),
+            target_slots=torch.tensor(
+                [[_slot(runtime, primary.id)]], device=runtime.device
+            ),
+            valid=torch.tensor([[True]], device=runtime.device),
+        )
+
+    shield = cast(
+        Any,
+        next(
+            mechanic
+            for mechanic in scalar_guard.mechanics
+            if type(mechanic).__name__ == "Shield"
+        ),
+    )
+    guard_slot = _slot(runtime, guard.id)
+    assert launch.committed.tolist() == [True]
+    assert _event_tuples(runtime, 0) == _oracle_tuples(capture.events)
+    assert owner.target_shield[0, guard_slot].item() == float(shield.current_shield)
+    assert owner.target_shield_break_count[0, guard_slot].item() == getattr(
+        scalar_guard, "_shield_break_count", 0
+    )
+    assert runtime.battle.entity_hp[0, guard_slot].item() == scalar_guard.hitpoints
+    assert runtime.battle.entity_hp_integer_kind[0, guard_slot].item() is (
+        type(scalar_guard.hitpoints) is int
+    )
+
+
 def test_live_boundary_projectile_checks_tick_points_not_swept_segments(
     tensor_device: str,
 ) -> None:

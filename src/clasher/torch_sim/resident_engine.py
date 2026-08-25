@@ -118,6 +118,11 @@ from .resident_periodic_spawner import (
     TensorPeriodicSpawnerRuntimeState,
     step_runtime_periodic_spawners_,
 )
+from .resident_piercing_projectile import (
+    PiercingLaunchResult,
+    PiercingStepResult,
+    TensorResidentPiercingProjectiles,
+)
 from .resident_rolling_combat import (
     RollingCombatMaterializeResult,
     RollingCombatStepResult,
@@ -394,6 +399,8 @@ class ResidentTickResult:
     tornadoes: TornadoStepResult | None
     rolling_combat_materialization: RollingCombatMaterializeResult
     rolling_combat: RollingCombatStepResult
+    piercing_launch: PiercingLaunchResult
+    piercing_projectiles: PiercingStepResult
     rolling_spells: TensorRollingStepResult | None
     royal_delivery: RoyalDeliveryStepResult | None
     charge_carriers: ChargeCarrierStepResult | None
@@ -720,6 +727,7 @@ class TensorResidentEngine:
         continuous_effect_deadline_seconds: torch.Tensor,
         graveyards: TensorResidentGraveyards,
         tornadoes: TensorResidentTornadoes,
+        piercing_projectiles: TensorResidentPiercingProjectiles,
         rolling_combat: TensorResidentRollingCombatProjectiles,
         rolling_spells: TensorResidentRollingSpells,
         royal_delivery: TensorResidentRoyalDelivery,
@@ -779,6 +787,7 @@ class TensorResidentEngine:
         self.continuous_effect_deadline_seconds = continuous_effect_deadline_seconds
         self.graveyards = graveyards
         self.tornadoes = tornadoes
+        self.piercing_projectiles = piercing_projectiles
         self.rolling_combat = rolling_combat
         self.rolling_spells = rolling_spells
         self.royal_delivery = royal_delivery
@@ -915,6 +924,40 @@ class TensorResidentEngine:
             runtime, battles, max_objects=max_objects
         )
         child_capacity = min(max_objects, 16)
+        piercing_projectiles = TensorResidentPiercingProjectiles.from_battles(
+            runtime,
+            battles,
+            capacity=child_capacity,
+        )
+        piercing_ids = torch.where(
+            piercing_projectiles.active,
+            piercing_projectiles.entity_id,
+            torch.zeros_like(piercing_projectiles.entity_id),
+        )
+        piercing_object = (
+            objects.objects.allocated[:, :, None]
+            & (objects.objects.object_id[:, :, None] == piercing_ids[:, None, :])
+            & (piercing_ids[:, None, :] > 0)
+        ).any(dim=2)
+        objects.objects.allocated &= ~piercing_object
+        objects.objects.active &= ~piercing_object
+        runtime_object = runtime.entity_pool.active & (runtime.battle.entity_kind == 2)
+        runtime_piercing = (
+            runtime_object[:, :, None]
+            & (runtime.battle.entity_id[:, :, None] == piercing_ids[:, None, :])
+            & (piercing_ids[:, None, :] > 0)
+        ).any(dim=2)
+        piercing_only_rows = piercing_object.any(dim=1) & (
+            runtime_object == runtime_piercing
+        ).all(dim=1)
+        if bool(piercing_only_rows.any().item()):
+            objects.static_supported[piercing_only_rows] = True
+            reasons = list(objects.unsupported_reasons)
+            for row in (
+                torch.nonzero(piercing_only_rows, as_tuple=False).flatten().tolist()
+            ):
+                reasons[row] = None
+            objects.unsupported_reasons = tuple(reasons)
         spawn_areas = TensorResidentSpawnAreas.from_battles(
             runtime,
             mechanic_battles,
@@ -1485,6 +1528,7 @@ class TensorResidentEngine:
             continuous_effect_deadline_seconds=(continuous_effect_deadline_seconds),
             graveyards=graveyards,
             tornadoes=tornadoes,
+            piercing_projectiles=piercing_projectiles,
             rolling_combat=rolling_combat,
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
@@ -1548,6 +1592,7 @@ class TensorResidentEngine:
         continuous_areas = self.continuous_areas.clone()
         graveyards = self.graveyards.clone()
         tornadoes = self.tornadoes.clone()
+        piercing_projectiles = self.piercing_projectiles.clone()
         rolling_combat = self.rolling_combat.clone()
         rolling_spells = TensorResidentRollingSpells(
             self.rolling_spells.catalog,
@@ -1601,6 +1646,7 @@ class TensorResidentEngine:
             ),
             graveyards=graveyards,
             tornadoes=tornadoes,
+            piercing_projectiles=piercing_projectiles,
             rolling_combat=rolling_combat,
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
@@ -1665,8 +1711,12 @@ class TensorResidentEngine:
             & ((core.entity_kind == 0) | (core.entity_kind == 1))
         )
         shield = character & self.shield_catalog.supported[safe]
+        core_card = core.entity_card.clamp(
+            0, self.piercing_projectiles.catalog.supported.numel() - 1
+        )
+        piercing_source = self.piercing_projectiles.catalog.supported[core_card]
         unsafe_source = character & (
-            self.uses_projectile[safe]
+            (self.uses_projectile[safe] & ~piercing_source)
             | (self.area_radius_units[safe] > 0)
             | (self.charge_range_units[safe] > 0)
         )
@@ -1999,6 +2049,85 @@ class TensorResidentEngine:
             (operations == 0) | (operations == MECHANIC_OPCODE["IceSpiritFreeze"])
         ).all(dim=2)
         return active & self.ice_spirit.catalog.supported[card] & sole
+
+    def _sync_piercing_targets_from_canonical_(self) -> None:
+        owner = self.piercing_projectiles
+        core = self.runtime.battle
+        catalog = self._core_catalog_id().clamp_min(0)
+        character = self.runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        shield = (
+            character
+            & self.mechanics.has_shield
+            & self.shield_catalog.supported[catalog]
+        )
+        owner.target_entity_id.copy_(core.entity_id)
+        owner.target_has_shield.copy_(shield)
+        owner.target_shield.copy_(self.mechanics.shield_current)
+        owner.target_shield_integer_kind.copy_(self.shield_integer_kind)
+        owner.target_shield_break_count.copy_(
+            self.mechanics.shield_break_count.to(torch.int32)
+        )
+        operations = self.runtime.catalog.mechanic_opcode[catalog]
+        terminal_on_death = (
+            (operations == MECHANIC_OPCODE["DeathDamage"])
+            | (operations == MECHANIC_OPCODE["DeathAreaEffect"])
+            | (operations == MECHANIC_OPCODE["DeathSpawn"])
+        ).any(dim=2)
+        owner.target_death_payload_supported.copy_(~(character & terminal_on_death))
+
+    def _publish_piercing_targets_to_canonical_(self, rows: torch.Tensor) -> None:
+        selected = rows[:, None]
+        owner = self.piercing_projectiles
+        self.mechanics.shield_current.copy_(
+            torch.where(selected, owner.target_shield, self.mechanics.shield_current)
+        )
+        self.mechanics.shield_break_count.copy_(
+            torch.where(
+                selected,
+                owner.target_shield_break_count.to(
+                    self.mechanics.shield_break_count.dtype
+                ),
+                self.mechanics.shield_break_count,
+            )
+        )
+        self.shield_integer_kind.copy_(
+            torch.where(
+                selected,
+                owner.target_shield_integer_kind,
+                self.shield_integer_kind,
+            )
+        )
+        self.combat.hp.copy_(
+            torch.where(selected, self.runtime.battle.entity_hp, self.combat.hp)
+        )
+        self.combat.alive.copy_(
+            torch.where(
+                selected,
+                self.runtime.battle.entity_active & self.runtime.entity_pool.active,
+                self.combat.alive,
+            )
+        )
+        self.combat.shield_hp.copy_(
+            torch.where(selected, owner.target_shield, self.combat.shield_hp)
+        )
+        self.combat.shield_break_count.copy_(
+            torch.where(
+                selected,
+                owner.target_shield_break_count.to(
+                    self.combat.shield_break_count.dtype
+                ),
+                self.combat.shield_break_count,
+            )
+        )
+        self.combat.shield_integer_kind.copy_(
+            torch.where(
+                selected,
+                owner.target_shield_integer_kind,
+                self.combat.shield_integer_kind,
+            )
+        )
 
     def _electro_spirit_entity_supported(self) -> torch.Tensor:
         supported = self._chain_entity_supported()
@@ -2795,7 +2924,9 @@ class TensorResidentEngine:
             == BridgePayloadKind.COMBAT_PROJECTILE
         )
         rolling_combat_projectile = self.rolling_combat.catalog.supported[core_card]
-        bridge_projectile &= ~rolling_combat_projectile
+        piercing_projectile = self.piercing_projectiles.catalog.supported[core_card]
+        bridge_projectile &= ~(rolling_combat_projectile | piercing_projectile)
+        rolling_combat_projectile &= ~piercing_projectile
         retained_projectile = (
             self.combat.present
             & (self.combat.entity_id == self.runtime.battle.entity_id)
@@ -2834,7 +2965,7 @@ class TensorResidentEngine:
             (
                 projectile_entity
                 & live_character
-                & ~(bridge_projectile | rolling_combat_projectile)
+                & ~(bridge_projectile | rolling_combat_projectile | piercing_projectile)
                 & (
                     (
                         (self.runtime.battle.entity_tower_slot < 0)
@@ -2900,6 +3031,28 @@ class TensorResidentEngine:
             ResidentUnsupportedReason.OBJECT_PHASE,
         )
         rolling_combat_live = self.rolling_combat.state.active.any(dim=1)
+        piercing_live_count = self.piercing_projectiles.active.sum(
+            dim=1, dtype=torch.int64
+        )
+        piercing_live = piercing_live_count > 0
+        publish(
+            piercing_live_count > 1,
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
+        publish(
+            piercing_live
+            & (
+                general_live
+                | timed_live
+                | periodic_live
+                | area_live
+                | retained_spell_live
+                | chain_live
+                | spawn_area_live
+                | rolling_combat_live
+            ),
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
         rolling_id = torch.where(
             self.rolling_combat.state.active,
             self.rolling_combat.state.entity_id,
@@ -4999,6 +5152,11 @@ class TensorResidentEngine:
             source.tornadoes,
             selected_rows,
         )
+        self.piercing_projectiles.reset_rows_(
+            selected_rows,
+            source.piercing_projectiles,
+            selected_rows,
+        )
         _copy_rows_(self.rolling_spells.state, source.rolling_spells.state, rows)
         _copy_rows_(self.rolling_spells.targets, source.rolling_spells.targets, rows)
         _copy_rows_(self.rolling_combat.state, source.rolling_combat.state, rows)
@@ -5180,6 +5338,17 @@ class TensorResidentEngine:
             | working._periodic_entity_supported().any(dim=1)
         )
         area_conflict |= retained_spell_conflict
+        piercing_live = working.piercing_projectiles.active.any(dim=1)
+        area_conflict |= piercing_live & (
+            area_live
+            | working.objects.objects.allocated.any(dim=1)
+            | working.terminal_pipeline.state.objects.allocated.any(dim=1)
+            | retained_spell_live
+            | working.rolling_combat.state.active.any(dim=1)
+            | working.chain_impacts.active.any(dim=1)
+            | working.spawn_areas.active.any(dim=1)
+            | working._periodic_entity_supported().any(dim=1)
+        )
         working.runtime.mark_unsupported(
             active & area_conflict,
             phase=TickPhase.OBJECTS,
@@ -5253,11 +5422,29 @@ class TensorResidentEngine:
             1,
             launch_runtime_slot,
         ).clamp_min(0)
+        launch_target_combat_slot = combat.target_after.clamp_min(0)
+        launch_target_id = torch.gather(
+            working.combat.entity_id,
+            1,
+            launch_target_combat_slot,
+        )
+        launch_target_runtime_slot = working.runtime.entity_pool.slots_for_ids(
+            launch_target_id
+        )
+        piercing_launch_mask = (
+            combat.projectile_launched
+            & working.combat.present
+            & launch_found
+            & (combat.target_after >= 0)
+            & (launch_target_runtime_slot >= 0)
+            & working.piercing_projectiles.catalog.supported[launch_card]
+        )
         rolling_launch = (
             combat.projectile_launched
             & working.combat.present
             & launch_found
             & working.rolling_combat.catalog.supported[launch_card]
+            & ~piercing_launch_mask
         )
         generic_launch = (
             combat.projectile_launched
@@ -5268,7 +5455,7 @@ class TensorResidentEngine:
                 working.projectile_bridge.catalog.kind[launch_card]
                 == BridgePayloadKind.COMBAT_PROJECTILE
             )
-            & ~rolling_launch
+            & ~(piercing_launch_mask | rolling_launch)
         )
         maximum_id = torch.iinfo(torch.int64).max
         rolling_source_max = torch.where(
@@ -5308,11 +5495,43 @@ class TensorResidentEngine:
             working.terminal_pipeline.state.objects.allocated.any(dim=1)
             & generic_launch.any(dim=1)
         )
+        piercing_launch_row = piercing_launch_mask.any(dim=1)
+        piercing_launch_conflict = piercing_launch_row & (
+            (piercing_launch_mask.sum(dim=1, dtype=torch.int64) > 1)
+            | working.piercing_projectiles.active.any(dim=1)
+            | rolling_launch.any(dim=1)
+            | generic_launch.any(dim=1)
+            | working.objects.objects.allocated.any(dim=1)
+            | working.terminal_pipeline.state.objects.allocated.any(dim=1)
+            | working.continuous_areas.active.any(dim=1)
+            | working.graveyards.active.any(dim=1)
+            | working.tornadoes.active.any(dim=1)
+            | working.rolling_spells.state.active.any(dim=1)
+            | working.royal_delivery.active.any(dim=1)
+            | working.rolling_combat.state.active.any(dim=1)
+            | working.chain_impacts.active.any(dim=1)
+            | working.spawn_areas.active.any(dim=1)
+            | working._periodic_entity_supported().any(dim=1)
+        )
+        launch_order_unsupported |= piercing_launch_conflict
         working.runtime.mark_unsupported(
             active & launch_order_unsupported,
             phase=TickPhase.COMBAT,
         )
         active &= ~launch_order_unsupported
+        working.runtime.supported &= active
+        working._sync_piercing_targets_from_canonical_()
+        piercing_launch = working.piercing_projectiles.commit_attacks_(
+            working.runtime,
+            source_slots=launch_runtime_slot,
+            target_slots=launch_target_runtime_slot.clamp_min(0),
+            valid=piercing_launch_mask & active[:, None],
+        )
+        working.runtime.mark_unsupported(
+            active & ~piercing_launch.committed,
+            phase=TickPhase.COMBAT,
+        )
+        active &= piercing_launch.committed
         working.runtime.supported &= active
         rolling_combat_materialization = (
             working.rolling_combat.materialize_combat_launches_(
@@ -5329,7 +5548,9 @@ class TensorResidentEngine:
         working.runtime.supported &= active
         generic_combat = replace(
             combat,
-            projectile_launched=combat.projectile_launched & ~rolling_launch,
+            projectile_launched=(
+                combat.projectile_launched & ~piercing_launch_mask & ~rolling_launch
+            ),
         )
         previously_allocated_objects = working.objects.objects.allocated.clone()
         projectile_supported = working.projectile_bridge.materialize_combat_launches_(
@@ -5345,6 +5566,9 @@ class TensorResidentEngine:
         )
         working._record_new_projectile_durations_(previously_allocated_objects)
         working.combat.alive.copy_(combat_alive_after_attacks)
+        working._publish_piercing_targets_to_canonical_(
+            piercing_launch.accepted & active
+        )
         working.runtime.mark_unsupported(
             active & ~projectile_supported,
             phase=TickPhase.COMBAT,
@@ -5879,6 +6103,19 @@ class TensorResidentEngine:
         ).clone()
         chain_object_active = working.objects.objects.allocated.clone()
         chain_source_ids = working.projectile_source_entity_id.clone()
+        working._sync_piercing_targets_from_canonical_()
+        piercing_projectiles = working.piercing_projectiles.step_(
+            working.runtime,
+            dt_ms=50,
+            battle_mask=active,
+        )
+        working.runtime.mark_unsupported(
+            active & ~piercing_projectiles.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= piercing_projectiles.committed
+        working.runtime.supported &= active
+        working._publish_piercing_targets_to_canonical_(active)
         rolling_combat = working.rolling_combat.step_(
             working.runtime,
             dt_ms=torch.round(core.dt * 1_000).to(torch.int64),
@@ -6325,6 +6562,8 @@ class TensorResidentEngine:
             tornadoes=tornadoes,
             rolling_combat_materialization=rolling_combat_materialization,
             rolling_combat=rolling_combat,
+            piercing_launch=piercing_launch,
+            piercing_projectiles=piercing_projectiles,
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,

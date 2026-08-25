@@ -624,7 +624,10 @@ class TensorResidentPiercingProjectiles:
             new_hp = torch.clamp(old_hp - hp_damage, min=0.0)
             hit_index = (rows[target_valid], target_slot[target_valid])
             core.entity_hp[hit_index] = new_hp[target_valid]
-            core.entity_hp_integer_kind[hit_index] = False
+            hp_mutated = target_valid & ~shielded & (hp_damage > 0.0)
+            core.entity_hp_integer_kind[rows[hp_mutated], target_slot[hp_mutated]] = (
+                False
+            )
             killed = target_valid & (new_hp <= 0.0)
             core.entity_active[rows[killed], target_slot[killed]] = False
             runtime.phases.death_pending[rows[killed], target_slot[killed]] = True
@@ -641,7 +644,7 @@ class TensorResidentPiercingProjectiles:
             runtime.events.append(
                 phase=phase,
                 opcode=RuntimeEventOpcode.DAMAGE,
-                valid=target_valid[:, None],
+                valid=(target_valid & ~shielded & (applied > 0.0))[:, None],
                 source_id=projectile_id[:, None],
                 target_id=target_id[:, None],
                 x_units=core.entity_x_units[rows, target_slot][:, None],
