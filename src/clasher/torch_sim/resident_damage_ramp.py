@@ -26,6 +26,7 @@ class TensorResidentRampCatalog:
     combat: TensorCombatMechanicCatalog
     core_to_combat: torch.Tensor
     supported: torch.Tensor
+    direct_building_supported: torch.Tensor
     hit_speed_ms: torch.Tensor
     retarget_ms: torch.Tensor
     range_units: torch.Tensor
@@ -114,9 +115,10 @@ class TensorResidentDamageRamp:
             raise ValueError("battle count does not match damage-ramp runtime")
         device = runtime.device
         names = runtime.battle.card_names
+        definitions = battles[0].card_loader.load_card_definitions()
         combat = TensorCombatMechanicCatalog.compile(
             battles[0].card_loader,
-            names[1:],
+            (name for name in names[1:] if name in definitions),
             device=device,
         )
         core_to_combat = torch.tensor(
@@ -130,6 +132,7 @@ class TensorResidentDamageRamp:
             return torch.zeros(size, dtype=dtype, device=device)
 
         supported = plane(torch.bool)
+        direct_building_supported = plane(torch.bool)
         hit_speed = plane(torch.int64)
         retarget = plane(torch.int64)
         attack_range = plane(torch.int64)
@@ -137,7 +140,6 @@ class TensorResidentDamageRamp:
         hits_air = plane(torch.bool)
         hits_ground = plane(torch.bool)
         projectile = plane(torch.bool)
-        definitions = battles[0].card_loader.load_card_definitions()
         for core_id, name in enumerate(names):
             stats = battles[0].card_loader.get_card(name) if name else None
             definition = definitions.get(name)
@@ -161,6 +163,14 @@ class TensorResidentDamageRamp:
             hits_air[core_id] = air
             hits_ground[core_id] = ground
             projectile[core_id] = bool(stats.projectile_data)
+            direct_building_supported[core_id] = bool(
+                str(stats.card_type).lower() == "building"
+                and not stats.projectile_data
+                and len(definition.mechanics) == 1
+                and len(ramps[0].stages) == 3
+                and tuple(int(stage[0]) for stage in ramps[0].stages)
+                == (0, 2_000, 4_000)
+            )
 
         shape = runtime.battle.entity_id.shape
         core = runtime.battle
@@ -243,6 +253,7 @@ class TensorResidentDamageRamp:
                 combat,
                 core_to_combat,
                 supported,
+                direct_building_supported,
                 hit_speed,
                 retarget,
                 attack_range,

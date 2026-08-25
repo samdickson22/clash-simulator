@@ -71,6 +71,8 @@ class TensorResidentWorkspace:
             raise ValueError("speculative engines must share periodic catalogs")
         if self.scratch.shield_catalog is not self.engine.shield_catalog:
             raise ValueError("speculative engines must share shield catalogs")
+        if self.scratch.damage_ramp_catalog is not self.engine.damage_ramp_catalog:
+            raise ValueError("speculative engines must share damage-ramp catalogs")
         if self.scratch.shield_integer_kind.data_ptr() == (
             self.engine.shield_integer_kind.data_ptr()
         ):

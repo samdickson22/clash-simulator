@@ -42,6 +42,7 @@ from .combat import (
     CombatStepResult,
     StationaryCombatState,
     projectile_lethal_reservations,
+    reset_damage_ramp_,
     step_stationary_combat_,
 )
 from .combat_adapter import project_stationary_combat
@@ -83,6 +84,10 @@ from .resident_charge_carrier import (
 from .resident_continuous_areas import (
     ContinuousAreaStepResult,
     TensorResidentContinuousAreas,
+)
+from .resident_damage_ramp import (
+    TensorResidentDamageRamp,
+    TensorResidentRampCatalog,
 )
 from .resident_death_payloads import (
     DeathPayloadStepResult,
@@ -207,6 +212,7 @@ RESIDENT_STEALTH_MECHANIC_OPCODES = frozenset(
         MECHANIC_OPCODE["InvisibilityWhenNotAttacking"],
     )
 )
+RESIDENT_DIRECT_COMBAT_MECHANIC_OPCODES = frozenset((MECHANIC_OPCODE["DamageRamp"],))
 
 
 class _ResidentCatalogLoader(CardDataLoader):
@@ -726,6 +732,7 @@ class TensorResidentEngine:
         mechanics: TensorRuntimeMechanics,
         shield_catalog: TensorResidentShieldCatalog,
         shield_integer_kind: torch.Tensor,
+        damage_ramp_catalog: TensorResidentRampCatalog,
         dispatcher: TensorMechanicDispatcher,
         movement: TensorMovementAdapter,
         path_cache: TensorResidentPathCache,
@@ -787,6 +794,7 @@ class TensorResidentEngine:
         self.mechanics = mechanics
         self.shield_catalog = shield_catalog
         self.shield_integer_kind = shield_integer_kind
+        self.damage_ramp_catalog = damage_ramp_catalog
         self.dispatcher = dispatcher
         self.movement = movement
         self.path_cache = path_cache
@@ -910,8 +918,28 @@ class TensorResidentEngine:
             MECHANIC_OPCODE["ElectroSpiritChain"],
             MECHANIC_OPCODE["IceSpiritFreeze"],
             *RESIDENT_STEALTH_MECHANIC_OPCODES,
+            *RESIDENT_DIRECT_COMBAT_MECHANIC_OPCODES,
         )
         mechanics = dispatcher.mechanics
+        retained_damage_ramp = TensorResidentDamageRamp.from_battles(
+            runtime,
+            mechanic_battles,
+        )
+        damage_ramp_catalog = retained_damage_ramp.catalog
+        damage_ramp_opcode = MECHANIC_OPCODE["DamageRamp"]
+        for core_card, name in enumerate(runtime.battle.card_names):
+            if not bool(
+                damage_ramp_catalog.direct_building_supported[core_card].item()
+            ):
+                continue
+            dispatcher_card = dispatcher.combat_catalog.name_to_id.get(name, 0)
+            dispatcher_ramp = (
+                dispatcher.combat_catalog.opcode[dispatcher_card] == damage_ramp_opcode
+            )
+            dispatcher.combat_catalog.opcode[dispatcher_card].masked_fill_(
+                dispatcher_ramp,
+                0,
+            )
         stealth = TensorResidentStealth.from_battles(runtime, mechanic_battles)
         shield_catalog = TensorResidentShieldCatalog.compile(cards, catalog_loader)
         shield_integer_kind = torch.zeros_like(runtime.entity_pool.active)
@@ -1276,6 +1304,7 @@ class TensorResidentEngine:
                     MECHANIC_OPCODE["UndergroundDeployment"],
                 ),
                 "stealth": tuple(RESIDENT_STEALTH_MECHANIC_OPCODES),
+                "damage_ramp": tuple(RESIDENT_DIRECT_COMBAT_MECHANIC_OPCODES),
             },
             owner_card_supported={
                 "terminal": terminal_card_supported,
@@ -1287,6 +1316,12 @@ class TensorResidentEngine:
                 "spawn_area_deployment": spawn_area_deployment_supported,
                 "special_deployment": miner_card_supported,
                 "stealth": all_cards_supported,
+                "damage_ramp": (
+                    (core_by_catalog >= 0)
+                    & damage_ramp_catalog.direct_building_supported[
+                        safe_core_by_catalog
+                    ]
+                ),
             },
             loader=catalog_loader,
         )
@@ -1426,6 +1461,85 @@ class TensorResidentEngine:
             device=device,
         )
         combat = projection.state
+        ramp_core_card = runtime.battle.entity_card.clamp(
+            0,
+            damage_ramp_catalog.supported.numel() - 1,
+        )
+        ramp_combat_card = damage_ramp_catalog.core_to_combat[ramp_core_card]
+        ramp_slot, ramp_present = damage_ramp_catalog.combat.mechanic_slot(
+            ramp_combat_card,
+            CombatMechanicOpcode.DAMAGE_RAMP,
+        )
+        ramp_enabled = (
+            runtime.entity_pool.active
+            & runtime.battle.entity_active
+            & damage_ramp_catalog.direct_building_supported[ramp_core_card]
+            & ramp_present
+        )
+        ramp_stage_time = damage_ramp_catalog.combat.ramp_stage_time_ms[
+            ramp_combat_card,
+            ramp_slot,
+        ]
+        ramp_stage_damage = damage_ramp_catalog.combat.ramp_stage_damage[
+            ramp_combat_card,
+            ramp_slot,
+        ]
+        combat.damage_ramp_enabled.copy_(ramp_enabled)
+        objects.target_payload_supported |= ramp_enabled
+        combat.damage_ramp_source_id.copy_(
+            torch.where(ramp_enabled, retained_damage_ramp.tracked_entity_id, 0)
+        )
+        combat.damage_ramp_observed_target_id.copy_(
+            torch.where(ramp_enabled, retained_damage_ramp.public_target_id, 0)
+        )
+        combat.damage_ramp_target_id.copy_(
+            torch.where(ramp_enabled, retained_damage_ramp.ramp.target_id, 0)
+        )
+        combat.damage_ramp_connected_ms.copy_(
+            torch.where(
+                ramp_enabled,
+                retained_damage_ramp.ramp.target_time_ms,
+                0.0,
+            )
+        )
+        stage_width = ramp_stage_time.shape[-1]
+        combat.damage_ramp_stage_1_ms.copy_(
+            ramp_stage_time[..., min(1, stage_width - 1)]
+        )
+        combat.damage_ramp_stage_2_ms.copy_(
+            ramp_stage_time[..., min(2, stage_width - 1)]
+        )
+        combat.damage_ramp_stage_0_damage.copy_(ramp_stage_damage[..., 0])
+        combat.damage_ramp_stage_1_damage.copy_(
+            ramp_stage_damage[..., min(1, stage_width - 1)]
+        )
+        combat.damage_ramp_stage_2_damage.copy_(
+            ramp_stage_damage[..., min(2, stage_width - 1)]
+        )
+        combat.damage_ramp_beam_range_units.copy_(
+            damage_ramp_catalog.range_units[ramp_core_card]
+        )
+        combat.damage_ramp_retarget_ms.copy_(
+            damage_ramp_catalog.retarget_ms[ramp_core_card]
+        )
+        combat.damage_ramp_stage.copy_(
+            torch.where(
+                combat.damage_ramp_connected_ms >= combat.damage_ramp_stage_2_ms,
+                2,
+                torch.where(
+                    combat.damage_ramp_connected_ms >= combat.damage_ramp_stage_1_ms,
+                    1,
+                    0,
+                ),
+            ).to(torch.int8)
+        )
+        combat.damage.copy_(
+            torch.where(
+                ramp_enabled,
+                retained_damage_ramp.ramp.damage,
+                combat.damage,
+            )
+        )
         combat_target_entity_id = torch.full(
             (runtime.batch_size, max_entities),
             -1,
@@ -1549,6 +1663,7 @@ class TensorResidentEngine:
             mechanics=mechanics,
             shield_catalog=shield_catalog,
             shield_integer_kind=shield_integer_kind,
+            damage_ramp_catalog=damage_ramp_catalog,
             dispatcher=dispatcher,
             movement=movement,
             path_cache=path_cache,
@@ -1664,6 +1779,7 @@ class TensorResidentEngine:
             mechanics=mechanics,
             shield_catalog=self.shield_catalog,
             shield_integer_kind=self.shield_integer_kind.clone(),
+            damage_ramp_catalog=self.damage_ramp_catalog,
             dispatcher=dispatcher,
             movement=_clone_tensor_dataclass(self.movement),  # type: ignore[arg-type]
             # Entries are immutable deterministic functions of standard-arena
@@ -2625,6 +2741,7 @@ class TensorResidentEngine:
             hit_speed_ms=self.combat.hit_speed_ms,
             river_jump_active=self.movement.river_jump_active,
         )
+        reset_damage_ramp_(self.combat, transition.transitioned)
         self.runtime.phases.target_slot.masked_fill_(transition.transitioned, -1)
         self.combat_target_entity_id.masked_fill_(transition.transitioned, -1)
         source_hp = self.runtime.battle.entity_hp.clone()
@@ -2831,6 +2948,7 @@ class TensorResidentEngine:
         )
         admitted_mechanic[list(RESIDENT_DISPATCH_MECHANIC_OPCODES)] = True
         admitted_mechanic[list(RESIDENT_STEALTH_MECHANIC_OPCODES)] = True
+        admitted_mechanic[list(RESIDENT_DIRECT_COMBAT_MECHANIC_OPCODES)] = True
         death_spawn_opcode = MECHANIC_OPCODE["DeathSpawn"]
         periodic_opcode = MECHANIC_OPCODE["PeriodicSpawner"]
         charge_opcode = MECHANIC_OPCODE["BattleRamCharge"]
@@ -2839,6 +2957,7 @@ class TensorResidentEngine:
         crown_scaling_opcode = MECHANIC_OPCODE["CrownTowerScaling"]
         underground_opcode = MECHANIC_OPCODE["UndergroundDeployment"]
         shield_opcode = MECHANIC_OPCODE["Shield"]
+        damage_ramp_opcode = MECHANIC_OPCODE["DamageRamp"]
         shield_card_supported = self.shield_catalog.supported[safe]
         mechanic_admitted = (
             admitted_mechanic[entity_mechanics.to(torch.int64).clamp_min(0)]
@@ -2900,6 +3019,14 @@ class TensorResidentEngine:
         ice_supported = self._ice_spirit_entity_supported()
         shield_entity = (entity_mechanics == shield_opcode).any(dim=2)
         shield_supported = shield_card_supported
+        damage_ramp_entity = (entity_mechanics == damage_ramp_opcode).any(dim=2)
+        core_card = self.runtime.battle.entity_card.clamp(
+            0,
+            self.damage_ramp_catalog.direct_building_supported.numel() - 1,
+        )
+        damage_ramp_supported = self.damage_ramp_catalog.direct_building_supported[
+            core_card
+        ]
         miner_entity = (
             (entity_mechanics == crown_scaling_opcode)
             | (entity_mechanics == underground_opcode)
@@ -2944,6 +3071,10 @@ class TensorResidentEngine:
         )
         publish(
             (shield_entity & active_character & ~shield_supported).any(dim=1),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            (damage_ramp_entity & active_character & ~damage_ramp_supported).any(dim=1),
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
         )
         publish(
@@ -3381,6 +3512,102 @@ class TensorResidentEngine:
                 self.runtime.catalog.damage[safe],
                 self.combat.damage,
             )
+        )
+        ramp_core_card = core.entity_card.clamp(
+            0,
+            self.damage_ramp_catalog.direct_building_supported.numel() - 1,
+        )
+        ramp_combat_card = self.damage_ramp_catalog.core_to_combat[ramp_core_card]
+        ramp_slot, ramp_present = self.damage_ramp_catalog.combat.mechanic_slot(
+            ramp_combat_card,
+            CombatMechanicOpcode.DAMAGE_RAMP,
+        )
+        ramp_enabled = (
+            component_present
+            & self.damage_ramp_catalog.direct_building_supported[ramp_core_card]
+            & ramp_present
+        )
+        ramp_identity = self.combat.damage_ramp_source_id == core.entity_id
+        ramp_reset = ramp_enabled & (~ramp_identity | new)
+        self.combat.damage_ramp_enabled.copy_(ramp_enabled)
+        # Inferno Tower's only attached mechanic is fully resident-owned, so
+        # direct spell/projectile target payloads may safely affect it.
+        self.objects.target_payload_supported |= ramp_enabled
+        self.combat.damage_ramp_source_id.copy_(
+            torch.where(ramp_enabled, core.entity_id, 0)
+        )
+        for value in (
+            self.combat.damage_ramp_observed_target_id,
+            self.combat.damage_ramp_target_id,
+            self.combat.damage_ramp_connected_ms,
+            self.combat.damage_ramp_stage,
+        ):
+            value.masked_fill_(~ramp_enabled | ramp_reset, 0)
+        ramp_stage_time = self.damage_ramp_catalog.combat.ramp_stage_time_ms[
+            ramp_combat_card,
+            ramp_slot,
+        ]
+        ramp_stage_damage = self.damage_ramp_catalog.combat.ramp_stage_damage[
+            ramp_combat_card,
+            ramp_slot,
+        ]
+        ramp_stage_width = ramp_stage_time.shape[-1]
+        self.combat.damage_ramp_stage_1_ms.copy_(
+            torch.where(
+                ramp_enabled,
+                ramp_stage_time[..., min(1, ramp_stage_width - 1)],
+                0,
+            )
+        )
+        self.combat.damage_ramp_stage_2_ms.copy_(
+            torch.where(
+                ramp_enabled,
+                ramp_stage_time[..., min(2, ramp_stage_width - 1)],
+                0,
+            )
+        )
+        self.combat.damage_ramp_stage_0_damage.copy_(
+            torch.where(ramp_enabled, ramp_stage_damage[..., 0], 0.0)
+        )
+        self.combat.damage_ramp_stage_1_damage.copy_(
+            torch.where(
+                ramp_enabled,
+                ramp_stage_damage[..., min(1, ramp_stage_width - 1)],
+                0.0,
+            )
+        )
+        self.combat.damage_ramp_stage_2_damage.copy_(
+            torch.where(
+                ramp_enabled,
+                ramp_stage_damage[..., min(2, ramp_stage_width - 1)],
+                0.0,
+            )
+        )
+        self.combat.damage_ramp_beam_range_units.copy_(
+            torch.where(
+                ramp_enabled,
+                self.damage_ramp_catalog.range_units[ramp_core_card],
+                0,
+            )
+        )
+        self.combat.damage_ramp_retarget_ms.copy_(
+            torch.where(
+                ramp_enabled,
+                self.damage_ramp_catalog.retarget_ms[ramp_core_card],
+                0,
+            )
+        )
+        retained_ramp_damage = torch.where(
+            self.combat.damage_ramp_stage == 2,
+            self.combat.damage_ramp_stage_2_damage,
+            torch.where(
+                self.combat.damage_ramp_stage == 1,
+                self.combat.damage_ramp_stage_1_damage,
+                self.combat.damage_ramp_stage_0_damage,
+            ),
+        )
+        self.combat.damage.copy_(
+            torch.where(ramp_enabled, retained_ramp_damage, self.combat.damage)
         )
         self.combat.range_units.copy_(
             torch.where(
@@ -4375,6 +4602,7 @@ class TensorResidentEngine:
                 hit_speed_ms=self.combat.hit_speed_ms,
                 river_jump_active=self.movement.river_jump_active,
             )
+            reset_damage_ramp_(self.combat, stun_transition.transitioned)
             self.runtime.phases.target_slot.masked_fill_(
                 stun_transition.transitioned, -1
             )
@@ -6029,6 +6257,7 @@ class TensorResidentEngine:
             hit_speed_ms=working.combat.hit_speed_ms,
             river_jump_active=working.movement.river_jump_active,
         )
+        reset_damage_ramp_(working.combat, spawn_stun_transition.transitioned)
         working.runtime.phases.target_slot.masked_fill_(
             spawn_stun_transition.transitioned, -1
         )
@@ -6235,6 +6464,7 @@ class TensorResidentEngine:
             hit_speed_ms=working.combat.hit_speed_ms,
             river_jump_active=working.movement.river_jump_active,
         )
+        reset_damage_ramp_(working.combat, area_stun_transition.transitioned)
         working.runtime.phases.target_slot.masked_fill_(
             area_stun_transition.transitioned, -1
         )
@@ -6601,6 +6831,7 @@ class TensorResidentEngine:
             hit_speed_ms=working.combat.hit_speed_ms,
             river_jump_active=working.movement.river_jump_active,
         )
+        reset_damage_ramp_(working.combat, object_stun_transition.transitioned)
         working.runtime.phases.target_slot.masked_fill_(
             object_stun_transition.transitioned, -1
         )
@@ -6622,6 +6853,12 @@ class TensorResidentEngine:
             first_hit_ms=working.combat.first_hit_ms,
             charged_attack_ready=charged_before_interrupt,
         )
+        ramp_forced = (
+            forced_transition.transitioned & working.combat.damage_ramp_enabled
+        )
+        reset_damage_ramp_(working.combat, ramp_forced)
+        working.runtime.phases.target_slot.masked_fill_(ramp_forced, -1)
+        working.combat_target_entity_id.masked_fill_(ramp_forced, -1)
         charge_reset = (
             forced_transition.charge_reset & working.movement.charge_component
         )

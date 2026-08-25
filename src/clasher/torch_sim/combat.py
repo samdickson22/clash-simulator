@@ -95,6 +95,19 @@ class StationaryCombatState:
     incoming_damage_multiplier: torch.Tensor
     last_attack_time: torch.Tensor
     has_attacked_once: torch.Tensor
+    damage_ramp_enabled: torch.Tensor
+    damage_ramp_source_id: torch.Tensor
+    damage_ramp_observed_target_id: torch.Tensor
+    damage_ramp_target_id: torch.Tensor
+    damage_ramp_connected_ms: torch.Tensor
+    damage_ramp_stage: torch.Tensor
+    damage_ramp_stage_1_ms: torch.Tensor
+    damage_ramp_stage_2_ms: torch.Tensor
+    damage_ramp_stage_0_damage: torch.Tensor
+    damage_ramp_stage_1_damage: torch.Tensor
+    damage_ramp_stage_2_damage: torch.Tensor
+    damage_ramp_beam_range_units: torch.Tensor
+    damage_ramp_retarget_ms: torch.Tensor
 
     @property
     def batch_size(self) -> int:
@@ -194,6 +207,19 @@ class StationaryCombatState:
             incoming_damage_multiplier=full(1.0, torch.float64),
             last_attack_time=full(0.0, torch.float64),
             has_attacked_once=full(False, torch.bool),
+            damage_ramp_enabled=full(False, torch.bool),
+            damage_ramp_source_id=full(0, torch.int64),
+            damage_ramp_observed_target_id=full(0, torch.int64),
+            damage_ramp_target_id=full(0, torch.int64),
+            damage_ramp_connected_ms=full(0.0, torch.float64),
+            damage_ramp_stage=full(0, torch.int8),
+            damage_ramp_stage_1_ms=full(0, torch.int64),
+            damage_ramp_stage_2_ms=full(0, torch.int64),
+            damage_ramp_stage_0_damage=full(0.0, torch.float64),
+            damage_ramp_stage_1_damage=full(0.0, torch.float64),
+            damage_ramp_stage_2_damage=full(0.0, torch.float64),
+            damage_ramp_beam_range_units=full(0, torch.int64),
+            damage_ramp_retarget_ms=full(0, torch.int64),
         )
 
     def validate(self) -> None:
@@ -282,6 +308,10 @@ def stationary_combat_support_mask(
         state.outgoing_damage_multiplier,
         state.incoming_damage_multiplier,
         state.last_attack_time,
+        state.damage_ramp_connected_ms,
+        state.damage_ramp_stage_0_damage,
+        state.damage_ramp_stage_1_damage,
+        state.damage_ramp_stage_2_damage,
     )
     exact_layout = state.device.type in {"cpu", "cuda"} and all(
         tensor.dtype == torch.float64 for tensor in float_fields
@@ -344,6 +374,8 @@ def _target_base_valid(
         & ((state.kind == 0) | (state.kind == 1))
         & plane
     )
+    damage_ramp = _gather(state.damage_ramp_enabled, attacker_slots)
+    valid &= (~damage_ramp.unsqueeze(1)) | state.effect_receivable
     # Current globals reject lethally reserved targets for projectile weapons,
     # including an already-retained target.
     if current:
@@ -351,6 +383,47 @@ def _target_base_valid(
     else:
         valid &= ~(projectile.unsqueeze(1) & state.reserved_lethal)
     return valid
+
+
+def _within_damage_ramp_beam_reach(
+    state: StationaryCombatState,
+    attacker_slots: torch.Tensor,
+    target_slots: torch.Tensor,
+) -> torch.Tensor:
+    """Return exact connected-beam reach without keep-target extensions."""
+
+    target_ok = target_slots >= 0
+    distance, _, _ = _distance_tiles(state, attacker_slots)
+    distance_to_target = _gather(distance, target_slots)
+    target_radius = _gather(state.collision_radius_units, target_slots)
+    beam_range = _gather(state.damage_ramp_beam_range_units, attacker_slots)
+    reach = (beam_range + target_radius).to(torch.float64) / 1_000.0
+    return target_ok & (distance_to_target <= reach + GEOMETRY_EPSILON_TILES)
+
+
+def reset_damage_ramp_(
+    state: StationaryCombatState,
+    mask: torch.Tensor,
+    *,
+    clear_target: bool = True,
+    clear_observed_target: bool = True,
+) -> None:
+    """Reset retained direct-ramp channels for central combat interruptions."""
+
+    selected = torch.as_tensor(mask, dtype=torch.bool, device=state.device)
+    if selected.shape != state.present.shape:
+        raise ValueError("damage-ramp reset mask must have shape [batch, entity]")
+    selected &= state.damage_ramp_enabled
+    state.damage_ramp_target_id.masked_fill_(selected, 0)
+    state.damage_ramp_connected_ms.masked_fill_(selected, 0.0)
+    state.damage_ramp_stage.masked_fill_(selected, 0)
+    state.damage.copy_(
+        torch.where(selected, state.damage_ramp_stage_0_damage, state.damage)
+    )
+    if clear_observed_target:
+        state.damage_ramp_observed_target_id.masked_fill_(selected, 0)
+    if clear_target:
+        state.target_slot.masked_fill_(selected, -1)
 
 
 def _within_reach(
@@ -755,6 +828,125 @@ def step_stationary_combat_(
         )
         current = torch.where(base_actionable, resolved, old_target)
 
+        # Continuous direct-damage weapons observe their target before the
+        # ordinary attack clock advances. The connected channel deliberately
+        # uses raw beam reach, not the wider keep-target reach used to retain a
+        # combat lock. Source identity makes slot reuse reset-safe.
+        ramp_enabled = _gather(state.damage_ramp_enabled, attacker_slots)
+        source_id = _gather(state.entity_id, attacker_slots)
+        retained_source_id = _gather(state.damage_ramp_source_id, attacker_slots)
+        source_changed = ramp_enabled & (retained_source_id != source_id)
+        _scatter_masked_(
+            state.damage_ramp_source_id,
+            attacker_slots,
+            source_id,
+            ramp_enabled,
+        )
+        target_id = _gather(state.entity_id, current)
+        target_receivable = _gather(state.effect_receivable, current)
+        observed_target_id = torch.where(base_actionable & (current >= 0), target_id, 0)
+        previous_observed = _gather(
+            state.damage_ramp_observed_target_id, attacker_slots
+        )
+        retargeted = (
+            ramp_enabled
+            & base_actionable
+            & (previous_observed > 0)
+            & (observed_target_id != previous_observed)
+        )
+        retarget_seconds = (
+            _gather(state.damage_ramp_retarget_ms, attacker_slots).to(torch.float64)
+            / 1_000.0
+        )
+        ramp_cooldown = _gather(state.attack_cooldown, attacker_slots)
+        _scatter_masked_(
+            state.attack_cooldown,
+            attacker_slots,
+            torch.maximum(ramp_cooldown, retarget_seconds),
+            retargeted,
+        )
+        _scatter_masked_(
+            state.damage_ramp_observed_target_id,
+            attacker_slots,
+            observed_target_id,
+            ramp_enabled & base_actionable,
+        )
+        beam_connected = (
+            ramp_enabled
+            & base_actionable
+            & ~_gather(state.stunned, attacker_slots)
+            & (current >= 0)
+            & target_receivable
+            & _within_damage_ramp_beam_reach(state, attacker_slots, current)
+        )
+        previous_ramp_target = _gather(state.damage_ramp_target_id, attacker_slots)
+        same_channel = (
+            beam_connected
+            & ~source_changed
+            & (previous_ramp_target == target_id)
+            & (previous_ramp_target > 0)
+        )
+        previous_connected_ms = _gather(state.damage_ramp_connected_ms, attacker_slots)
+        ramp_rate = torch.clamp(
+            _gather(state.attack_rate_multiplier, attacker_slots), min=0.0
+        )
+        connected_ms = torch.where(
+            same_channel,
+            previous_connected_ms,
+            torch.zeros_like(previous_connected_ms),
+        ) + torch.where(beam_connected, component_dt * ramp_rate * 1_000.0, 0.0)
+        connected_ms = torch.where(
+            beam_connected, connected_ms, torch.zeros_like(connected_ms)
+        )
+        stage_1 = _gather(state.damage_ramp_stage_1_ms, attacker_slots).to(
+            torch.float64
+        )
+        stage_2 = _gather(state.damage_ramp_stage_2_ms, attacker_slots).to(
+            torch.float64
+        )
+        ramp_stage = torch.where(
+            connected_ms >= stage_2,
+            torch.full_like(source_id, 2, dtype=torch.int8),
+            torch.where(
+                connected_ms >= stage_1,
+                torch.full_like(source_id, 1, dtype=torch.int8),
+                torch.zeros_like(source_id, dtype=torch.int8),
+            ),
+        )
+        stage_damage = torch.where(
+            ramp_stage == 2,
+            _gather(state.damage_ramp_stage_2_damage, attacker_slots),
+            torch.where(
+                ramp_stage == 1,
+                _gather(state.damage_ramp_stage_1_damage, attacker_slots),
+                _gather(state.damage_ramp_stage_0_damage, attacker_slots),
+            ),
+        )
+        _scatter_masked_(
+            state.damage_ramp_target_id,
+            attacker_slots,
+            torch.where(beam_connected, target_id, 0),
+            ramp_enabled,
+        )
+        _scatter_masked_(
+            state.damage_ramp_connected_ms,
+            attacker_slots,
+            connected_ms,
+            ramp_enabled,
+        )
+        _scatter_masked_(
+            state.damage_ramp_stage,
+            attacker_slots,
+            ramp_stage,
+            ramp_enabled,
+        )
+        _scatter_masked_(
+            state.damage,
+            attacker_slots,
+            stage_damage,
+            ramp_enabled,
+        )
+
         previous_last_attack = _gather(state.last_attack_time, attacker_slots)
         _scatter_masked_(
             state.last_attack_time,
@@ -900,6 +1092,19 @@ def step_stationary_combat_(
         )
         state.shield_break_count.add_(shield_broken.to(torch.int64))
         state.shield_integer_kind &= ~shield_absorbed
+        # Shield loss is globally broadcast in stable combat order. Reset any
+        # connected direct-ramp observer now, so a later higher-ID attacker
+        # uses stage zero for its same-frame hit.
+        broken_ramp = state.damage_ramp_enabled & (
+            (state.damage_ramp_target_id[:, :, None] == state.entity_id[:, None, :])
+            & shield_broken[:, None, :]
+        ).any(dim=2)
+        reset_damage_ramp_(
+            state,
+            broken_ramp,
+            clear_target=False,
+            clear_observed_target=False,
+        )
         applied = torch.where(shield_absorbed, 0.0, nominal_damage)
         hp_before = state.hp.clone()
         activates = (applied > 0.0) & state.requires_activation & ~state.tower_active
