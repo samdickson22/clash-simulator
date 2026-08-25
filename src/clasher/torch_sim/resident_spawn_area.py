@@ -476,7 +476,6 @@ class TensorResidentSpawnAreas:
         )
         owner_slots = torch.sort(free_key, dim=1).values
         rows = torch.arange(self.batch_size, device=self.device)
-        event_targets = torch.zeros_like(entity_allocation.entity_ids)
         for rank in range(valid.shape[1]):
             selected = accepted[:, rank]
             source_slot = ordered_source[:, rank]
@@ -541,15 +540,12 @@ class TensorResidentSpawnAreas:
             allocation.battle.entity_hp[runtime_index] = 1.0
             allocation.battle.entity_hp_integer_kind[runtime_index] = True
             allocation.battle.entity_max_hp[runtime_index] = 1.0
-            event_targets[:, rank] = core.entity_id.gather(1, source_slot[:, None])[
-                :, 0
-            ]
         allocation.events.append(
             phase=TickPhase.OBJECTS,
-            opcode=RuntimeEventOpcode.SPAWN,
+            opcode=RuntimeEventOpcode.AREA,
             valid=entity_allocation.valid,
-            source_id=entity_allocation.entity_ids,
-            target_id=event_targets,
+            source_id=torch.zeros_like(entity_allocation.entity_ids),
+            target_id=entity_allocation.entity_ids,
             x_units=allocation.battle.entity_x_units.gather(
                 1, entity_allocation.slots.clamp_min(0)
             ),
@@ -726,6 +722,14 @@ class TensorResidentSpawnAreas:
                     < 1.0
                 )[:, None]
             )
+            stun_before = working_runtime.status.stun_timer.clone()
+            slow_before = (
+                working_runtime.status.slow_active.clone(),
+                working_runtime.status.slow_remaining.clone(),
+                working_runtime.status.slow_movement.clone(),
+                working_runtime.status.slow_attack.clone(),
+                working_runtime.status.slow_spawn.clone(),
+            )
             working_runtime.status.apply_stun(
                 working.catalog.status_duration[card, None], mask=stun
             )
@@ -736,6 +740,30 @@ class TensorResidentSpawnAreas:
                 spawn_speed_multiplier=working.catalog.spawn_multiplier[card, None],
                 mask=slow,
             )
+            stun_applied = stun & (working_runtime.status.stun_timer != stun_before)
+            slow_applied = slow & (
+                (working_runtime.status.slow_active != slow_before[0]).any(dim=2)
+                | (working_runtime.status.slow_remaining != slow_before[1]).any(dim=2)
+                | (working_runtime.status.slow_movement != slow_before[2]).any(dim=2)
+                | (working_runtime.status.slow_attack != slow_before[3]).any(dim=2)
+                | (working_runtime.status.slow_spawn != slow_before[4]).any(dim=2)
+            )
+            status_applied = stun_applied | slow_applied
+            ordered_status = working_runtime.entity_pool.id_order(status_applied)
+            for status_rank in range(runtime.max_entities):
+                status_valid = ordered_status.valid[:, status_rank]
+                status_slot = ordered_status.slots[:, status_rank].clamp_min(0)
+                working_runtime.events.append(
+                    phase=TickPhase.OBJECTS,
+                    opcode=RuntimeEventOpcode.STATUS,
+                    valid=status_valid[:, None],
+                    source_id=area_id[:, None],
+                    target_id=ordered_status.entity_ids[:, status_rank, None],
+                    x_units=core.entity_x_units[rows, status_slot][:, None],
+                    y_units=core.entity_y_units[rows, status_slot][:, None],
+                    amount=working.catalog.status_duration[card, None],
+                    payload=card[:, None],
+                )
             distance = working.catalog.knockback_units[card]
             knock = (
                 status

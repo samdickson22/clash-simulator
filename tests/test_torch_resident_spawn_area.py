@@ -199,12 +199,16 @@ def test_spawn_area_full_snapshot_damage_status_planes_match_scalar(
     assert torch.equal(runtime.entity_pool.next_entity_id, next_id)
     count = int(runtime.events.count.item())
     assert runtime.events.opcode[0, :count].tolist() == [
-        RuntimeEventOpcode.SPAWN,
+        RuntimeEventOpcode.AREA,
         RuntimeEventOpcode.DAMAGE,
         RuntimeEventOpcode.DAMAGE,
         RuntimeEventOpcode.DAMAGE,
+        RuntimeEventOpcode.STATUS,
+        RuntimeEventOpcode.STATUS,
+        RuntimeEventOpcode.STATUS,
     ]
     assert runtime.events.target_id[0, 1:4].tolist() == [1, 2, 3]
+    assert runtime.events.target_id[0, 4:7].tolist() == [1, 2, 3]
 
 
 def test_snapshot_retains_later_target_after_geometry_changes(

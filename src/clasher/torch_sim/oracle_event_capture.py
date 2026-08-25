@@ -429,9 +429,9 @@ class PythonOracleEventCapture:
                 if getattr(entity, "battle_state", None) is capture.battle or (
                     args and args[-1] is capture.battle
                 ):
-                    payload = getattr(entity, "spell_name", None) or getattr(
+                    payload = getattr(
                         getattr(entity, "card_stats", None), "name", None
-                    )
+                    ) or getattr(entity, "spell_name", None)
                     with capture._scope(source_id=entity.id, source_payload=payload):
                         return original(entity, *args, **kwargs)
                 return original(entity, *args, **kwargs)
@@ -453,9 +453,9 @@ class PythonOracleEventCapture:
                 )
                 if battle is not capture.battle:
                     return original(projectile, *args, **kwargs)
-                payload = getattr(projectile, "spell_name", None) or getattr(
+                payload = getattr(
                     getattr(projectile, "card_stats", None), "name", None
-                )
+                ) or getattr(projectile, "spell_name", None)
                 target_id = 0
                 if method_name == "_resolve_impact" and len(args) >= 2:
                     candidates = args[1]

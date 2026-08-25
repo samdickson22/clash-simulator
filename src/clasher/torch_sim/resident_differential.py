@@ -413,6 +413,18 @@ def _resident_payload_kind(
             or float(getattr(spell, "speed_multiplier", 1.0)) < 1.0
         ):
             return int(OraclePayloadKind.SLOW)
+        if 0 <= payload < engine.spawn_areas.catalog.supported.numel() and bool(
+            engine.spawn_areas.catalog.supported[payload].item()
+        ):
+            movement = float(
+                engine.spawn_areas.catalog.movement_multiplier[payload].item()
+            )
+            attack = float(engine.spawn_areas.catalog.attack_multiplier[payload].item())
+            spawn = float(engine.spawn_areas.catalog.spawn_multiplier[payload].item())
+            if movement == attack == spawn == 0.0:
+                return int(OraclePayloadKind.STUN)
+            if min(movement, attack, spawn) < 1.0:
+                return int(OraclePayloadKind.SLOW)
     if opcode == int(RuntimeEventOpcode.MOVEMENT):
         return int(OraclePayloadKind.UNDERGROUND_MOVEMENT)
     if opcode == int(RuntimeEventOpcode.SPAWN):

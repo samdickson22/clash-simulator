@@ -6173,6 +6173,14 @@ class TensorResidentEngine:
         completed = working._character_object_phase(
             active, ~(charge_entities | miner_owned)
         )
+        # Combat may allocate retained projectile/object entities after the
+        # tick's initial canonical-plane refresh.  Stealth validates identity
+        # for every active public slot, including non-character objects, so
+        # initialize those new identities before its object-phase transition.
+        post_combat_new = working.runtime.entity_pool.active & (
+            working.stealth.target_entity_id != working.runtime.battle.entity_id
+        )
+        working._refresh_stealth_owner_(post_combat_new)
         working.stealth.combat_target_entity_id.copy_(
             torch.where(
                 working.combat_target_entity_id > 0,

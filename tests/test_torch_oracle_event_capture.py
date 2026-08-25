@@ -86,6 +86,35 @@ def test_command_deployment_spawn_is_not_a_projectile_allocation() -> None:
     assert len(battle.entities) == 1
 
 
+def test_spawn_area_damage_uses_root_card_identity_not_auxiliary_spell_name() -> None:
+    battle = _empty_battle()
+    target = _spawn_one(battle, "Knight", 1, Position(14.5, 15.0))
+    target.hitpoints = 10_000
+    target.max_hitpoints = 10_000
+    target.stun_timer = 100.0
+    target.attack_cooldown = 10.0
+    _set_hand(battle, "IceWizard")
+
+    with PythonOracleEventCapture(battle) as capture:
+        assert capture.deploy_card(0, "IceWizard", Position(14.0, 12.0))
+        for _ in range(30):
+            capture.step_logic_ticks()
+            if any(
+                event.opcode == RuntimeEventOpcode.DAMAGE
+                and event.target_id == target.id
+                for event in capture.events
+            ):
+                break
+
+    damage = next(
+        event
+        for event in capture.events
+        if event.opcode == RuntimeEventOpcode.DAMAGE and event.target_id == target.id
+    )
+    assert damage.payload == "IceWizard"
+    assert damage.payload != "IceWizardCold"
+
+
 def test_miner_command_spawn_precedes_exact_underground_movement_handoff() -> None:
     battle = _empty_battle()
     _set_hand(battle, "Miner")

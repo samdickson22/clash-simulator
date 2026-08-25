@@ -398,7 +398,9 @@ def test_mixed_supported_and_unsupported_projectile_rows_are_atomic(
     if device == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
     supported = _projectile_battle("Archer")
-    unsupported = _projectile_battle("MagicArcher")
+    # Magic Archer now has an exact retained piercing owner. Firecracker's
+    # recoil/fan-out lifecycle remains intentionally fail-closed here.
+    unsupported = _projectile_battle("Firecracker")
     oracle = supported.clone()
     engine = TensorResidentEngine.from_battles(
         [supported, unsupported],

@@ -377,3 +377,32 @@ def test_stealth_slot_reuse_reinitializes_identity_and_visibility() -> None:
     assert new_id > ghost_id
     assert engine.stealth.state.entity_id[0, old_slot].item() == new_id
     assert result.stealth.invisible[0, old_slot]
+
+
+def test_combat_projectile_allocation_refreshes_stealth_object_identity(
+    tensor_device: str,
+) -> None:
+    battle = BattleState(fast_path=False, rng=random.Random(8_242_006))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    source = _spawn(battle, Troop, "BabyDragon", 0, Position(9.0, 10.0))
+    target = _spawn(battle, Troop, "Knight", 1, Position(9.0, 13.0))
+    source.target_id = target.id
+    target.target_id = source.id
+    source.attack_cooldown = 0.0
+    source.last_attack_time = -10.0
+    target.speed = 0.0
+    target.damage = 0.0
+    target.attack_cooldown = 10.0
+    target.stun_timer = 100.0
+    engine = _engine([battle], tensor_device)
+
+    result = engine.step(player_order=torch.tensor([[0, 1]], device=engine.device))
+
+    assert result.committed.tolist() == [True]
+    object_slots = torch.where(engine.runtime.battle.entity_kind[0] == 2)[0]
+    assert object_slots.numel() == 1
+    object_slot = int(object_slots.item())
+    object_id = int(engine.runtime.battle.entity_id[0, object_slot].item())
+    assert engine.stealth.target_entity_id[0, object_slot].item() == object_id
+    assert engine.stealth.state.entity_id[0, object_slot].item() == object_id
