@@ -73,6 +73,7 @@ class StationaryCombatState:
     forced_movement: torch.Tensor
     combat_blocked: torch.Tensor
     attack_start_special: torch.Tensor
+    reveal_on_attack: torch.Tensor
     ordinary_combat_supported: torch.Tensor
     combat_enabled: torch.Tensor
     tower_active: torch.Tensor
@@ -171,6 +172,7 @@ class StationaryCombatState:
             forced_movement=full(False, torch.bool),
             combat_blocked=full(False, torch.bool),
             attack_start_special=full(False, torch.bool),
+            reveal_on_attack=full(False, torch.bool),
             ordinary_combat_supported=full(True, torch.bool),
             combat_enabled=full(True, torch.bool),
             tower_active=full(True, torch.bool),
@@ -821,6 +823,30 @@ def step_stationary_combat_(
         direct = ready & ~projectile & ~special
         launches = ready & projectile & ~special
         ordinary_ready = ready & ~special
+
+        # Inactivity stealth is removed by the serialized on-attack-start
+        # callback.  Publish that visibility transition inside the same
+        # stable entity-ID component iteration so later attackers in this
+        # frame validate/acquire against the now-visible source.
+        revealed = ready & _gather(state.reveal_on_attack, attacker_slots)
+        _scatter_masked_(
+            state.targetable,
+            attacker_slots,
+            torch.ones(batch, dtype=torch.bool, device=state.device),
+            revealed,
+        )
+        _scatter_masked_(
+            state.effect_receivable,
+            attacker_slots,
+            torch.ones(batch, dtype=torch.bool, device=state.device),
+            revealed,
+        )
+        _scatter_masked_(
+            state.area_effect_receivable,
+            attacker_slots,
+            torch.ones(batch, dtype=torch.bool, device=state.device),
+            revealed,
+        )
 
         # Some serialized attack-start callbacks turn the attacker into its
         # own committed projectile. This transition occurs inside stable-ID

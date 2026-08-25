@@ -217,6 +217,12 @@ class TensorResidentWorkspace:
             self.engine.miner.tracked_entity_id.data_ptr()
         ):
             raise ValueError("speculative Miner must own mutable storage")
+        if self.scratch.stealth.catalog is not self.engine.stealth.catalog:
+            raise ValueError("speculative engines must share stealth catalogs")
+        if self.scratch.stealth.state.entity_id.data_ptr() == (
+            self.engine.stealth.state.entity_id.data_ptr()
+        ):
+            raise ValueError("speculative stealth must own mutable storage")
         if (
             self.scratch.dispatcher.passive_catalog
             is not self.engine.dispatcher.passive_catalog
@@ -309,6 +315,7 @@ class TensorResidentWorkspace:
             pending_rows,
         )
         destination.miner.reset_rows_(pending_rows, source.miner, pending_rows)
+        destination.stealth.reset_rows_(pending_rows, source.stealth, pending_rows)
         for left, right in (
             (destination.combat, source.combat),
             (destination.movement, source.movement),

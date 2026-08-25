@@ -150,6 +150,7 @@ from .resident_spell_ingress import (
     TensorResidentSpellActionIngress,
     TensorResidentSpellIngressResult,
 )
+from .resident_stealth import ResidentStealthStepResult, TensorResidentStealth
 from .resident_terminal_pipeline import (
     ResidentTerminalPipelineResult,
     TensorResidentTerminalPipeline,
@@ -198,6 +199,12 @@ RESIDENT_DISPATCH_MECHANIC_OPCODES = frozenset(
         "ElectroDragonChainLightning",
         "ElectroSpiritChain",
         "IceSpiritFreeze",
+    )
+)
+RESIDENT_STEALTH_MECHANIC_OPCODES = frozenset(
+    (
+        MECHANIC_OPCODE["HideWhenIdle"],
+        MECHANIC_OPCODE["InvisibilityWhenNotAttacking"],
     )
 )
 
@@ -409,6 +416,7 @@ class ResidentTickResult:
     chain_impacts: ChainImpactStepResult | None
     ice_spirit: IceSpiritStepResult | None
     miner: MinerStepResult | None
+    stealth: ResidentStealthStepResult
     death_payloads: DeathPayloadStepResult | None
     periodic_spawner: TensorPeriodicSpawnerResult | None
     terminal: ResidentTerminalPipelineResult | None
@@ -738,6 +746,7 @@ class TensorResidentEngine:
         death_payloads: TensorDeathPayloadState,
         death_payload_card_by_catalog: torch.Tensor,
         miner: TensorResidentMiner,
+        stealth: TensorResidentStealth,
         periodic_catalog: TensorPeriodicSpawnerCatalog,
         periodic_state: TensorPeriodicSpawnerRuntimeState,
         terminal_pipeline: TensorResidentTerminalPipeline,
@@ -798,6 +807,7 @@ class TensorResidentEngine:
         self.death_payloads = death_payloads
         self.death_payload_card_by_catalog = death_payload_card_by_catalog
         self.miner = miner
+        self.stealth = stealth
         self.periodic_catalog = periodic_catalog
         self.periodic_state = periodic_state
         self.terminal_pipeline = terminal_pipeline
@@ -899,8 +909,10 @@ class TensorResidentEngine:
             MECHANIC_OPCODE["ElectroDragonChainLightning"],
             MECHANIC_OPCODE["ElectroSpiritChain"],
             MECHANIC_OPCODE["IceSpiritFreeze"],
+            *RESIDENT_STEALTH_MECHANIC_OPCODES,
         )
         mechanics = dispatcher.mechanics
+        stealth = TensorResidentStealth.from_battles(runtime, mechanic_battles)
         shield_catalog = TensorResidentShieldCatalog.compile(cards, catalog_loader)
         shield_integer_kind = torch.zeros_like(runtime.entity_pool.active)
         for row, battle in enumerate(battles):
@@ -1135,6 +1147,22 @@ class TensorResidentEngine:
                     dispatcher.passive_catalog.periodic_operation_row[passive_ids],
                 )
             )
+        # The dedicated resident stealth owner is the sole executor for these
+        # passive operations.  Retain every unrelated passive row in the
+        # dispatcher while erasing only its duplicated opcode lanes.
+        stealth_opcode = torch.zeros_like(
+            dispatcher.passive_catalog.mechanic_opcode,
+            dtype=torch.bool,
+        )
+        for opcode in RESIDENT_STEALTH_MECHANIC_OPCODES:
+            stealth_opcode |= dispatcher.passive_catalog.mechanic_opcode == int(opcode)
+        dispatcher.passive_catalog.mechanic_opcode.copy_(
+            torch.where(
+                stealth_opcode,
+                torch.zeros_like(dispatcher.passive_catalog.mechanic_opcode),
+                dispatcher.passive_catalog.mechanic_opcode,
+            )
+        )
         terminal_catalog = TensorTimedTerminalCatalog.compile(
             catalog_loader,
             cards,
@@ -1247,6 +1275,7 @@ class TensorResidentEngine:
                     MECHANIC_OPCODE["CrownTowerScaling"],
                     MECHANIC_OPCODE["UndergroundDeployment"],
                 ),
+                "stealth": tuple(RESIDENT_STEALTH_MECHANIC_OPCODES),
             },
             owner_card_supported={
                 "terminal": terminal_card_supported,
@@ -1257,6 +1286,7 @@ class TensorResidentEngine:
                 "shield": shield_catalog.supported,
                 "spawn_area_deployment": spawn_area_deployment_supported,
                 "special_deployment": miner_card_supported,
+                "stealth": all_cards_supported,
             },
             loader=catalog_loader,
         )
@@ -1537,6 +1567,7 @@ class TensorResidentEngine:
             chain_impacts=chain_impacts,
             ice_spirit=ice_spirit,
             miner=miner,
+            stealth=stealth,
             death_payloads=death_payloads,
             death_payload_card_by_catalog=death_card_map,
             periodic_catalog=periodic_catalog,
@@ -1606,6 +1637,7 @@ class TensorResidentEngine:
         ice_spirit = self.ice_spirit.clone()
         death_payloads = self.death_payloads.clone()
         miner = self.miner.clone()
+        stealth = self.stealth.clone()
         periodic_state = self.periodic_state.clone()
         terminal_pipeline = _clone_terminal_pipeline(self.terminal_pipeline)
         projectile_bridge = _clone_projectile_bridge(self.projectile_bridge)
@@ -1655,6 +1687,7 @@ class TensorResidentEngine:
             chain_impacts=chain_impacts,
             ice_spirit=ice_spirit,
             miner=miner,
+            stealth=stealth,
             death_payloads=death_payloads,
             death_payload_card_by_catalog=self.death_payload_card_by_catalog,
             periodic_catalog=self.periodic_catalog,
@@ -2780,10 +2813,24 @@ class TensorResidentEngine:
             & active_character[..., None, None]
             & (effect_codes > 0)
         ).any(dim=(1, 2))
+        stealth_opcode = torch.zeros_like(entity_mechanics, dtype=torch.bool)
+        for opcode in RESIDENT_STEALTH_MECHANIC_OPCODES:
+            stealth_opcode |= entity_mechanics == int(opcode)
+        stealth_entity = active_character & stealth_opcode.any(dim=2)
+        stealth_row = stealth_entity.any(dim=1)
+        other_mechanic_entity = active_character & (
+            (entity_mechanics > 0) & ~stealth_opcode
+        ).any(dim=2)
+        other_complex_attacker = (
+            active_character
+            & ~stealth_entity
+            & (self.uses_projectile[safe] | (self.area_radius_units[safe] > 0))
+        )
         admitted_mechanic = torch.zeros(
             mechanic_codes.shape[0], dtype=torch.bool, device=self.device
         )
         admitted_mechanic[list(RESIDENT_DISPATCH_MECHANIC_OPCODES)] = True
+        admitted_mechanic[list(RESIDENT_STEALTH_MECHANIC_OPCODES)] = True
         death_spawn_opcode = MECHANIC_OPCODE["DeathSpawn"]
         periodic_opcode = MECHANIC_OPCODE["PeriodicSpawner"]
         charge_opcode = MECHANIC_OPCODE["BattleRamCharge"]
@@ -2873,6 +2920,10 @@ class TensorResidentEngine:
         )
         publish(
             unsupported_active_mechanic,
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            stealth_row & (other_mechanic_entity | other_complex_attacker).any(dim=1),
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
         )
         publish(
@@ -3096,6 +3147,21 @@ class TensorResidentEngine:
             ResidentUnsupportedReason.OBJECT_PHASE,
         )
         publish(~self.objects.static_supported, ResidentUnsupportedReason.OBJECT_PHASE)
+        publish(
+            stealth_row
+            & (
+                general_live
+                | timed_live
+                | periodic_live
+                | area_live
+                | retained_spell_live
+                | rolling_combat_live
+                | piercing_live
+                | chain_live
+                | spawn_area_live
+            ),
+            ResidentUnsupportedReason.OBJECT_PHASE,
+        )
 
         # Pure action ingress contributes opcodes before any speculative state
         # or RNG is mutated.
@@ -3139,11 +3205,38 @@ class TensorResidentEngine:
             command_cards
         ]
         spell_preflight = self.spell_ingress.preflight(ingress)
+        command_stealth = torch.zeros_like(command_mechanics, dtype=torch.bool)
+        for opcode in RESIDENT_STEALTH_MECHANIC_OPCODES:
+            command_stealth |= command_mechanics == int(opcode)
+        command_is_stealth = command_stealth.any(dim=1)
+        command_other_mechanic = ((command_mechanics > 0) & ~command_stealth).any(dim=1)
+        command_complex = (
+            command_other_mechanic
+            | spell_preflight.command_spell
+            | (
+                ~command_is_stealth
+                & (
+                    self.uses_projectile[command_cards]
+                    | (self.area_radius_units[command_cards] > 0)
+                )
+            )
+        )
 
         def command_rows_with(mask: torch.Tensor) -> torch.Tensor:
             rows = torch.zeros(self.batch_size, dtype=torch.int32, device=self.device)
             rows.scatter_add_(0, command_rows, mask.to(torch.int32))
             return rows > 0
+
+        command_stealth_rows = command_rows_with(command_is_stealth)
+        command_complex_rows = command_rows_with(command_complex)
+        existing_complex_rows = (other_mechanic_entity | other_complex_attacker).any(
+            dim=1
+        )
+        publish(
+            (stealth_row & command_complex_rows)
+            | (command_stealth_rows & (command_complex_rows | existing_complex_rows)),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
 
         publish(
             command_rows_with(ingress.commands.is_ability),
@@ -3399,6 +3492,7 @@ class TensorResidentEngine:
             )
             & ~self_projectile_in_flight
         )
+        self.combat.reveal_on_attack.zero_()
         self.combat.combat_blocked |= self.dispatcher.dash.phase != 0
         self.combat.combat_blocked |= (
             self.movement.river_jump_active | self.movement.special_move_consumed_tick
@@ -3517,6 +3611,7 @@ class TensorResidentEngine:
         )
         movement_admitted[0] = True
         movement_admitted[list(RESIDENT_DISPATCH_MECHANIC_OPCODES)] = True
+        movement_admitted[list(RESIDENT_STEALTH_MECHANIC_OPCODES)] = True
         admitted_width = min(
             movement_admitted.numel(),
             self.mechanic_deployment.catalog.admitted_opcode.numel(),
@@ -3598,7 +3693,66 @@ class TensorResidentEngine:
         )
         self.mechanics.refresh_new_entities_(runtime)
         self._refresh_child_owner_planes_(new)
+        self._refresh_stealth_owner_(new)
         return new
+
+    def _stealth_sources(self) -> torch.Tensor:
+        core = self.runtime.battle
+        cards = core.entity_card.clamp(
+            0, self.stealth.catalog.hide_supported_core.numel() - 1
+        )
+        return self.runtime.entity_pool.active & (
+            self.stealth.catalog.hide_supported_core[cards]
+            | self.stealth.catalog.fade_supported_core[cards]
+        )
+
+    def _refresh_stealth_owner_(self, new: torch.Tensor) -> None:
+        """Align stealth identity and publish the pre-combat visibility planes."""
+
+        self.stealth.refresh_new_entities_(
+            self.runtime,
+            new,
+            base_targetable=(
+                self.runtime.entity_pool.active
+                & self.runtime.battle.entity_active
+                & (
+                    (self.runtime.battle.entity_kind == 0)
+                    | (self.runtime.battle.entity_kind == 1)
+                )
+            ),
+            blocks_secondary=torch.zeros_like(self.runtime.entity_pool.active),
+            collision_radius_units=self.combat.collision_radius_units,
+            distance_discount_sq_units=(self.combat.target_distance_discount_sq_units),
+        )
+        self.stealth.combat_target_entity_id.copy_(
+            torch.where(
+                self.combat_target_entity_id > 0,
+                self.combat_target_entity_id,
+                torch.zeros_like(self.combat_target_entity_id),
+            )
+        )
+        self.stealth.state.target_slot.copy_(self.runtime.phases.target_slot)
+        invisible, targetable, _, effect, area = self.stealth.visibility_planes(
+            self.runtime
+        )
+        sources = self._stealth_sources()
+        self.combat.targetable.copy_(
+            torch.where(sources, targetable, self.combat.targetable)
+        )
+        self.combat.effect_receivable.copy_(
+            torch.where(sources, effect, self.combat.effect_receivable)
+        )
+        self.combat.area_effect_receivable.copy_(
+            torch.where(sources, area, self.combat.area_effect_receivable)
+        )
+        hidden = sources & self.stealth.state.hidden_building
+        self.movement.special_movement |= hidden
+        cards = self.runtime.battle.entity_card.clamp(
+            0, self.stealth.catalog.fade_supported_core.numel() - 1
+        )
+        self.combat.reveal_on_attack.copy_(
+            sources & invisible & self.stealth.catalog.fade_supported_core[cards]
+        )
 
     def _refresh_child_owner_planes_(self, new: torch.Tensor) -> None:
         """Align dedicated child owners with canonical resident slots."""
@@ -5054,6 +5208,7 @@ class TensorResidentEngine:
             self.dispatcher.dash,
             self.dispatcher.leap,
             self.dispatcher.hook,
+            self.stealth.state,
         ):
             for descriptor in fields(owner):
                 value = getattr(owner, descriptor.name)
@@ -5081,6 +5236,32 @@ class TensorResidentEngine:
             value.masked_fill_(expanded, 0)
         runtime.battle.entity_id.copy_(runtime.entity_pool.entity_id)
         self.combat_target_entity_id.masked_fill_(dead, -1)
+        stealth_stale = (self.stealth.state.entity_id > 0) & (
+            ~runtime.entity_pool.active
+            | (self.stealth.state.entity_id != runtime.battle.entity_id)
+        )
+        for descriptor in fields(self.stealth.state):
+            value = getattr(self.stealth.state, descriptor.name)
+            expanded = stealth_stale.reshape(
+                *stealth_stale.shape,
+                *((1,) * (value.ndim - 2)),
+            )
+            if descriptor.name == "target_slot":
+                value.masked_fill_(expanded, -1)
+            else:
+                value.masked_fill_(expanded, 0)
+        for value in (
+            self.stealth.combat_target_entity_id,
+            self.stealth.target_entity_id,
+            self.stealth.target_base_targetable,
+            self.stealth.target_blocks_secondary,
+            self.stealth.target_collision_radius_units,
+            self.stealth.target_distance_discount_sq_units,
+        ):
+            expanded = (dead | stealth_stale).reshape(
+                *dead.shape, *((1,) * (value.ndim - 2))
+            )
+            value.masked_fill_(expanded, 0)
         self.shield_integer_kind.masked_fill_(dead, False)
         self.pending_projectile_max_duration_ms.masked_fill_(dead, 0)
         self.electro_jump_active.masked_fill_(dead, False)
@@ -5203,6 +5384,7 @@ class TensorResidentEngine:
             selected_rows,
         )
         self.miner.reset_rows_(selected_rows, source.miner, selected_rows)
+        self.stealth.reset_rows_(selected_rows, source.stealth, selected_rows)
         self.facing_x_units[rows] = source.facing_x_units[rows]
         self.facing_y_units[rows] = source.facing_y_units[rows]
         self.pending_projectile_max_duration_ms[rows] = (
@@ -5705,6 +5887,7 @@ class TensorResidentEngine:
             special_consumed
             | working.dispatcher.underground_active
             | working.movement.river_jump_active
+            | working.stealth.state.hidden_building
         )
         combat_death = (working.combat.present & ~working.combat.alive).any(dim=1)
         special_row = special_consumed.any(dim=1)
@@ -5734,6 +5917,7 @@ class TensorResidentEngine:
             | electro_consumed
             | working.dispatcher.underground_active
             | miner_owned
+            | working.stealth.state.hidden_building
         )
         working.movement.slot_present &= ~(charge_entities | miner_owned)
         working.movement.entity_active &= ~(charge_entities | miner_owned)
@@ -5760,6 +5944,31 @@ class TensorResidentEngine:
         working._rewrite_area_periodic_events_(status_event_start)
         completed = working._character_object_phase(
             active, ~(charge_entities | miner_owned)
+        )
+        working.stealth.combat_target_entity_id.copy_(
+            torch.where(
+                working.combat_target_entity_id > 0,
+                working.combat_target_entity_id,
+                torch.zeros_like(working.combat_target_entity_id),
+            )
+        )
+        stealth = working.stealth.step_(
+            working.runtime,
+            attack_started=combat.attacked,
+            battle_mask=active,
+        )
+        working.runtime.mark_unsupported(
+            active & ~stealth.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= stealth.committed
+        working.runtime.supported &= active
+        working.combat_target_entity_id.copy_(
+            torch.where(
+                working.stealth.combat_target_entity_id > 0,
+                working.stealth.combat_target_entity_id,
+                torch.full_like(working.combat_target_entity_id, -1),
+            )
         )
         all_source_slots = torch.arange(
             working.runtime.max_entities,
@@ -6572,6 +6781,7 @@ class TensorResidentEngine:
             chain_impacts=chain_impacts,
             ice_spirit=ice_spirit,
             miner=miner,
+            stealth=stealth,
             death_payloads=death_payloads,
             periodic_spawner=periodic_spawner,
             terminal=terminal,

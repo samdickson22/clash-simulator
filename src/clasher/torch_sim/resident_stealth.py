@@ -127,9 +127,14 @@ class TensorResidentStealth:
         loader = battles[0].card_loader
         definitions = loader.load_card_definitions()
         core_names = runtime.battle.card_names
+        passive_names = tuple(
+            name
+            for name in core_names
+            if name and resolve_card_name(name, definitions) in definitions
+        )
         passive = TensorPassiveCatalog.compile(
             loader,
-            (name for name in core_names if name),
+            passive_names,
             device=device,
         )
         core_to_passive = torch.zeros(len(core_names), dtype=torch.int64, device=device)
@@ -143,7 +148,7 @@ class TensorResidentStealth:
             if not name:
                 continue
             resolved = resolve_card_name(name, definitions)
-            passive_id = passive.name_to_id[resolved]
+            passive_id = passive.name_to_id.get(resolved, 0)
             core_to_passive[core_id] = passive_id
             operations = passive.mechanic_opcode[passive_id]
             hide[core_id] = bool(
@@ -331,6 +336,73 @@ class TensorResidentStealth:
             self.catalog.hide_supported_core[cards]
             | self.catalog.fade_supported_core[cards]
         )
+
+    def refresh_new_entities_(
+        self,
+        runtime: TensorBattleRuntime,
+        new: torch.Tensor,
+        *,
+        base_targetable: torch.Tensor,
+        blocks_secondary: torch.Tensor,
+        collision_radius_units: torch.Tensor,
+        distance_discount_sq_units: torch.Tensor,
+    ) -> None:
+        """Initialize newly allocated or reused canonical slots exactly once."""
+
+        fresh = TensorPassiveState.from_entities(
+            self.catalog.passive,
+            entity_id=runtime.battle.entity_id,
+            card_id=self.catalog.core_to_passive[
+                runtime.battle.entity_card.clamp(
+                    0, self.catalog.core_to_passive.numel() - 1
+                )
+            ],
+            player=runtime.battle.entity_player,
+            x_units=runtime.battle.entity_x_units,
+            y_units=runtime.battle.entity_y_units,
+            active=runtime.entity_pool.active,
+            alive=runtime.battle.entity_active,
+            target_slot=runtime.phases.target_slot,
+        )
+        if new.shape != self.state.shape:
+            raise ValueError("stealth new-entity mask must have shape [batch, entity]")
+        for descriptor in fields(self.state):
+            destination = getattr(self.state, descriptor.name)
+            source = getattr(fresh, descriptor.name)
+            expanded = new
+            while expanded.ndim < destination.ndim:
+                expanded = expanded.unsqueeze(-1)
+            destination.copy_(torch.where(expanded, source, destination))
+        self.target_entity_id.copy_(
+            torch.where(new, runtime.battle.entity_id, self.target_entity_id)
+        )
+        self.combat_target_entity_id.copy_(
+            torch.where(new, 0, self.combat_target_entity_id)
+        )
+        self.target_base_targetable.copy_(
+            torch.where(new, base_targetable, self.target_base_targetable)
+        )
+        self.target_blocks_secondary.copy_(
+            torch.where(new, blocks_secondary, self.target_blocks_secondary)
+        )
+        self.target_collision_radius_units.copy_(
+            torch.where(new, collision_radius_units, self.target_collision_radius_units)
+        )
+        self.target_distance_discount_sq_units.copy_(
+            torch.where(
+                new,
+                distance_discount_sq_units,
+                self.target_distance_discount_sq_units,
+            )
+        )
+
+    def visibility_planes(
+        self,
+        runtime: TensorBattleRuntime,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Return current pre-component visibility without advancing clocks."""
+
+        return self._visibility_planes(runtime, self.state)
 
     def _visibility_planes(
         self,

@@ -519,7 +519,23 @@ class ResidentOutputProjector:
             | engine.movement.river_jump_active
             | engine.movement.charge_component
         )
-        projection.entity_stealth_until_ms.copy_(engine.mechanics.stealth_until_ms)
+        stealth_cards = core.entity_card.clamp(
+            0, engine.stealth.catalog.hide_supported_core.numel() - 1
+        )
+        stealth_owned = (
+            engine.stealth.catalog.hide_supported_core[stealth_cards]
+            | engine.stealth.catalog.fade_supported_core[stealth_cards]
+        )
+        projection.entity_stealth_until_ms.copy_(
+            torch.where(
+                stealth_owned,
+                engine.stealth.state.stealth_until_ms,
+                engine.mechanics.stealth_until_ms,
+            )
+        )
+        projection.entity_hidden_building.copy_(
+            stealth_owned & engine.stealth.state.hidden_building
+        )
         projection.entity_forced_movement.copy_(engine.movement.forced_movement)
         projection.entity_attack_windup.copy_(engine.combat.attack_windup_active)
         projection.entity_charging.copy_(engine.movement.charge_component)
