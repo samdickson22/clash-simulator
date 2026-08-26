@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/clasher-d3513f66/scripts/validate_simple_full_matches.py", line 423, in <module>
+    raise SystemExit(main())
+  File "/home/ubuntu/clasher-d3513f66/scripts/validate_simple_full_matches.py", line 412, in main
+    result = validate(args)
+  File "/home/ubuntu/clasher-d3513f66/scripts/validate_simple_full_matches.py", line 321, in validate
+    repeated = [
+  File "/home/ubuntu/clasher-d3513f66/scripts/validate_simple_full_matches.py", line 322, in <listcomp>
+    run_episode(
+  File "/home/ubuntu/clasher-d3513f66/scripts/validate_simple_full_matches.py", line 241, in run_episode
+    runtime = build_simple_runtime(
+  File "/home/ubuntu/clasher-d3513f66/scripts/validate_simple_full_matches.py", line 123, in build_simple_runtime
+    return setup.create_runtime(
+  File "/home/ubuntu/clasher-d3513f66/src/clasher/torch_sim/simple_standard.py", line 234, in create_runtime
+    return SimpleGymRuntime(
+  File "/home/ubuntu/clasher-d3513f66/src/clasher/torch_sim/simple_runtime.py", line 207, in __init__
+    raise ValueError("spawn blueprints and catalog must share a device")
+ValueError: spawn blueprints and catalog must share a device
+validator_exit_code=1

@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "tested_commit": "d3513f669aaeb794c79c52320283581729609dc9",
+  "provider": {
+    "pod_id": "10fe775ff54d48dc926d3eba93561347",
+    "provider": "massedcompute",
+    "gpu": "NVIDIA RTX A6000",
+    "gpu_memory_mib": 49140,
+    "driver": "580.126.09",
+    "image": "ubuntu_22_cuda_12"
+  },
+  "runtime": {
+    "python": "3.10.12",
+    "torch": "2.10.0+cu128",
+    "torch_cuda": "12.8",
+    "cuda_available": true
+  },
+  "representative_cuda": {
+    "command": ".venv/bin/pytest -q tests/test_torch_simple_representative_cards.py -k cuda",
+    "result": "interrupted_after_bounded_window",
+    "passed": 14,
+    "deselected": 19,
+    "failures": 0,
+    "elapsed_seconds": 232.62,
+    "log": "reports/simple_gym_cuda_a6000_representative_20260826.txt",
+    "log_sha256": "fd040615153bf9055cc27aa09c128f90d37bd48eee6f40377eb5e8b35e3787e9"
+  },
+  "primitive_cuda_subset": {
+    "result": "failed",
+    "passed": 25,
+    "failed": 4,
+    "deselected": 40,
+    "elapsed_seconds": 55.87,
+    "failure_class": "unindexed_cuda_device_metadata_mismatch",
+    "failure_detail": "state metadata retained cuda while allocated tensors reported cuda:0",
+    "log": "reports/simple_gym_cuda_a6000_primitive_subset_20260826.txt",
+    "log_sha256": "da3898615f72fcac290d2c508ce224dec010e87512b24787d12851ad0760e9eb"
+  },
+  "benchmark": {
+    "command": ".venv/bin/python scripts/perf/benchmark_simple_gym.py --device cuda --preset smoke --profile-cuda --out reports/simple_gym_cuda_a6000_smoke_20260826.json",
+    "result": "failed_before_first_tick",
+    "exit_code": 1,
+    "failure": "ValueError: spawn blueprints and catalog must share a device",
+    "kernel_launches": null,
+    "explicit_host_synchronizations": null,
+    "row_ticks_per_second": null,
+    "transition_digest": null,
+    "log": "reports/simple_gym_cuda_a6000_benchmark_failure_20260826.txt",
+    "log_sha256": "e4f0aca836e85cc3fe9d1e30a64d67c849312c690706fb98d95604aa1e7c373d"
+  },
+  "full_validator": {
+    "command": ".venv/bin/python scripts/validate_simple_full_matches.py --device cuda --out reports/simple_gym_cuda_a6000_full_validation_20260826.json",
+    "result": "failed_before_first_tick",
+    "exit_code": 1,
+    "failure": "ValueError: spawn blueprints and catalog must share a device",
+    "episode_digest": null,
+    "log": "reports/simple_gym_cuda_a6000_full_validator_failure_20260826.txt",
+    "log_sha256": "1e0d0a395cd87ceb255d2721a39d51b02e2985e50ab01b304cee0a0c049391a5"
+  },
+  "acceptance": {
+    "cuda_device_available": true,
+    "representative_subset_without_functional_failure": true,
+    "full_simple_suite": false,
+    "deterministic_full_episode": false,
+    "kernel_launch_gate": false,
+    "explicit_sync_gate": false,
+    "absolute_throughput_gate": false,
+    "accepted": false
+  }
+}

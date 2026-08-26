@@ -1,0 +1,5 @@
+..............
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! KeyboardInterrupt !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/home/ubuntu/clasher-d3513f66/src/clasher/torch_sim/simple_chain_topology.py:158: KeyboardInterrupt
+(to show a full traceback on KeyboardInterrupt use --full-trace)
+14 passed, 19 deselected in 232.62s (0:03:52)

@@ -1,0 +1,11 @@
+/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/profiler/profiler.py:217: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+Traceback (most recent call last):
+  File "/home/ubuntu/clasher-50321067/scripts/perf/benchmark_simple_gym.py", line 382, in <module>
+    raise SystemExit(main())
+  File "/home/ubuntu/clasher-50321067/scripts/perf/benchmark_simple_gym.py", line 371, in main
+    result = benchmark(args)
+  File "/home/ubuntu/clasher-50321067/scripts/perf/benchmark_simple_gym.py", line 301, in benchmark
+    raise RuntimeError(
+RuntimeError: simple Gym CUDA tick exceeded launch/synchronization gates: launches=1, host_sync=2
+benchmark_exit_code=1

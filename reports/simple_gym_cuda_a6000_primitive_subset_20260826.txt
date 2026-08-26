@@ -1,0 +1,272 @@
+..................FFFF.......                                            [100%]
+=================================== FAILURES ===================================
+________ test_serialized_witch_night_witch_and_tombstone_cadence[cuda] _________
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_serialized_witch_night_witch_and_tombstone_cadence(
+        device_name: str,
+    ) -> None:
+        catalog, ids = _catalog(device_name)
+        state = FastPeriodicSpawnState.empty(1, 3, device=catalog.device)
+        active, stable, cards = _inputs(
+            [ids["Witch"], ids["NightWitch"], ids["Tombstone"]],
+            [30, 10, 20],
+            device=catalog.device,
+        )
+    
+>       initial = step_periodic_spawns_(
+            catalog,
+            state,
+            tick=0,
+            active=active,
+            source_stable_id=stable,
+            source_card_id=cards,
+        )
+
+tests/test_torch_simple_periodic_spawn.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+catalog = FastPeriodicSpawnCatalog(device=device(type='cuda'), periodic_blueprint_by_card=tensor([-1, -1, -1,  1,  3,  4], devic...se, False, False, False], device='cuda:0'), row_supported=tensor([False,  True, False,  True,  True], device='cuda:0'))
+state = FastPeriodicSpawnState(device=device(type='cuda'), source_stable_id=tensor([[0, 0, 0]], device='cuda:0'), blueprint_ro...ext_tick=tensor([[0, 0, 0]], device='cuda:0'), waves_remaining=tensor([[0, 0, 0]], device='cuda:0', dtype=torch.int32))
+
+    def step_periodic_spawns_(
+        catalog: FastPeriodicSpawnCatalog,
+        state: FastPeriodicSpawnState,
+        *,
+        tick: int | torch.Tensor,
+        active: torch.Tensor,
+        source_stable_id: torch.Tensor,
+        source_card_id: torch.Tensor,
+        stunned: torch.Tensor | None = None,
+    ) -> FastPeriodicSpawnCommands:
+        """Advance all live sources and emit one padded command plane.
+    
+        The practical Gym advances one native tick per call.  When a blueprint's
+        optional pause flag is set, a stunned source shifts its deadline by one
+        tick.  Without that flag, stun has no effect on the production clock.
+        """
+    
+        shape = (state.batch_size, state.max_entities)
+        if catalog.device != state.device:
+            raise ValueError("catalog and periodic state must use the same device")
+        for name, value, dtype in (
+            ("active", active, torch.bool),
+            ("source_stable_id", source_stable_id, torch.int64),
+            ("source_card_id", source_card_id, torch.int64),
+        ):
+            if tuple(value.shape) != shape or value.device != state.device:
+>               raise ValueError(f"{name} must match periodic state shape and device")
+E               ValueError: active must match periodic state shape and device
+
+src/clasher/torch_sim/simple_periodic_spawn.py:246: ValueError
+______ test_finite_and_unlimited_waves_advance_without_host_events[cuda] _______
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_finite_and_unlimited_waves_advance_without_host_events(
+        device_name: str,
+    ) -> None:
+        catalog, ids = _catalog(device_name)
+        witch_row = int(catalog.periodic_blueprint_by_card[ids["Witch"]].cpu())
+        finite_waves = catalog.max_waves.clone()
+        finite_waves[witch_row] = 2
+        catalog = replace(catalog, max_waves=finite_waves)
+        state = FastPeriodicSpawnState.empty(1, 2, device=catalog.device)
+        active, stable, cards = _inputs(
+            [ids["Witch"], ids["NightWitch"]],
+            [4, 8],
+            device=catalog.device,
+        )
+>       step_periodic_spawns_(
+            catalog,
+            state,
+            tick=0,
+            active=active,
+            source_stable_id=stable,
+            source_card_id=cards,
+        )
+
+tests/test_torch_simple_periodic_spawn.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+catalog = FastPeriodicSpawnCatalog(device=device(type='cuda'), periodic_blueprint_by_card=tensor([-1, -1, -1,  1,  3,  4], devic...se, False, False, False], device='cuda:0'), row_supported=tensor([False,  True, False,  True,  True], device='cuda:0'))
+state = FastPeriodicSpawnState(device=device(type='cuda'), source_stable_id=tensor([[0, 0]], device='cuda:0'), blueprint_row=t...0'), next_tick=tensor([[0, 0]], device='cuda:0'), waves_remaining=tensor([[0, 0]], device='cuda:0', dtype=torch.int32))
+
+    def step_periodic_spawns_(
+        catalog: FastPeriodicSpawnCatalog,
+        state: FastPeriodicSpawnState,
+        *,
+        tick: int | torch.Tensor,
+        active: torch.Tensor,
+        source_stable_id: torch.Tensor,
+        source_card_id: torch.Tensor,
+        stunned: torch.Tensor | None = None,
+    ) -> FastPeriodicSpawnCommands:
+        """Advance all live sources and emit one padded command plane.
+    
+        The practical Gym advances one native tick per call.  When a blueprint's
+        optional pause flag is set, a stunned source shifts its deadline by one
+        tick.  Without that flag, stun has no effect on the production clock.
+        """
+    
+        shape = (state.batch_size, state.max_entities)
+        if catalog.device != state.device:
+            raise ValueError("catalog and periodic state must use the same device")
+        for name, value, dtype in (
+            ("active", active, torch.bool),
+            ("source_stable_id", source_stable_id, torch.int64),
+            ("source_card_id", source_card_id, torch.int64),
+        ):
+            if tuple(value.shape) != shape or value.device != state.device:
+>               raise ValueError(f"{name} must match periodic state shape and device")
+E               ValueError: active must match periodic state shape and device
+
+src/clasher/torch_sim/simple_periodic_spawn.py:246: ValueError
+_________ test_death_stun_policy_and_slot_reuse_reset_deadlines[cuda] __________
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_death_stun_policy_and_slot_reuse_reset_deadlines(device_name: str) -> None:
+        catalog, ids = _catalog(device_name)
+        witch_row = int(catalog.periodic_blueprint_by_card[ids["Witch"]].cpu())
+        pause = catalog.pause_while_stunned.clone()
+        pause[witch_row] = True
+        catalog = replace(catalog, pause_while_stunned=pause)
+        state = FastPeriodicSpawnState.empty(1, 2, device=catalog.device)
+        active, stable, cards = _inputs(
+            [ids["Witch"], ids["NightWitch"]],
+            [11, 12],
+            device=catalog.device,
+        )
+>       step_periodic_spawns_(
+            catalog,
+            state,
+            tick=0,
+            active=active,
+            source_stable_id=stable,
+            source_card_id=cards,
+        )
+
+tests/test_torch_simple_periodic_spawn.py:153: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+catalog = FastPeriodicSpawnCatalog(device=device(type='cuda'), periodic_blueprint_by_card=tensor([-1, -1, -1,  1,  3,  4], devic...se, False, False,  True], device='cuda:0'), row_supported=tensor([False,  True, False,  True,  True], device='cuda:0'))
+state = FastPeriodicSpawnState(device=device(type='cuda'), source_stable_id=tensor([[0, 0]], device='cuda:0'), blueprint_row=t...0'), next_tick=tensor([[0, 0]], device='cuda:0'), waves_remaining=tensor([[0, 0]], device='cuda:0', dtype=torch.int32))
+
+    def step_periodic_spawns_(
+        catalog: FastPeriodicSpawnCatalog,
+        state: FastPeriodicSpawnState,
+        *,
+        tick: int | torch.Tensor,
+        active: torch.Tensor,
+        source_stable_id: torch.Tensor,
+        source_card_id: torch.Tensor,
+        stunned: torch.Tensor | None = None,
+    ) -> FastPeriodicSpawnCommands:
+        """Advance all live sources and emit one padded command plane.
+    
+        The practical Gym advances one native tick per call.  When a blueprint's
+        optional pause flag is set, a stunned source shifts its deadline by one
+        tick.  Without that flag, stun has no effect on the production clock.
+        """
+    
+        shape = (state.batch_size, state.max_entities)
+        if catalog.device != state.device:
+            raise ValueError("catalog and periodic state must use the same device")
+        for name, value, dtype in (
+            ("active", active, torch.bool),
+            ("source_stable_id", source_stable_id, torch.int64),
+            ("source_card_id", source_card_id, torch.int64),
+        ):
+            if tuple(value.shape) != shape or value.device != state.device:
+>               raise ValueError(f"{name} must match periodic state shape and device")
+E               ValueError: active must match periodic state shape and device
+
+src/clasher/torch_sim/simple_periodic_spawn.py:246: ValueError
+________________ test_periodic_scheduler_replays_exactly[cuda] _________________
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_periodic_scheduler_replays_exactly(device_name: str) -> None:
+        catalog, ids = _catalog(device_name)
+        left = FastPeriodicSpawnState.empty(2, 4, device=catalog.device)
+        right = left.clone()
+        active = torch.tensor(
+            [[True, True, False, True], [True, False, True, True]],
+            dtype=torch.bool,
+            device=catalog.device,
+        )
+        stable = torch.tensor(
+            [[40, 10, 0, 30], [8, 0, 5, 2]],
+            dtype=torch.int64,
+            device=catalog.device,
+        )
+        cards = torch.tensor(
+            [
+                [ids["Witch"], ids["NightWitch"], 0, ids["Tombstone"]],
+                [ids["NightWitch"], 0, ids["Witch"], ids["Tombstone"]],
+            ],
+            dtype=torch.int64,
+            device=catalog.device,
+        )
+        stunned = torch.zeros_like(active)
+        for tick in (0, 20, 70, 120, 140, 160, 220):
+>           left_command = step_periodic_spawns_(
+                catalog,
+                left,
+                tick=torch.tensor([tick, tick], device=catalog.device),
+                active=active,
+                source_stable_id=stable,
+                source_card_id=cards,
+                stunned=stunned,
+            )
+
+tests/test_torch_simple_periodic_spawn.py:249: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+catalog = FastPeriodicSpawnCatalog(device=device(type='cuda'), periodic_blueprint_by_card=tensor([-1, -1, -1,  1,  3,  4], devic...se, False, False, False], device='cuda:0'), row_supported=tensor([False,  True, False,  True,  True], device='cuda:0'))
+state = FastPeriodicSpawnState(device=device(type='cuda'), source_stable_id=tensor([[0, 0, 0, 0],
+        [0, 0, 0, 0]], devic...]], device='cuda:0'), waves_remaining=tensor([[0, 0, 0, 0],
+        [0, 0, 0, 0]], device='cuda:0', dtype=torch.int32))
+
+    def step_periodic_spawns_(
+        catalog: FastPeriodicSpawnCatalog,
+        state: FastPeriodicSpawnState,
+        *,
+        tick: int | torch.Tensor,
+        active: torch.Tensor,
+        source_stable_id: torch.Tensor,
+        source_card_id: torch.Tensor,
+        stunned: torch.Tensor | None = None,
+    ) -> FastPeriodicSpawnCommands:
+        """Advance all live sources and emit one padded command plane.
+    
+        The practical Gym advances one native tick per call.  When a blueprint's
+        optional pause flag is set, a stunned source shifts its deadline by one
+        tick.  Without that flag, stun has no effect on the production clock.
+        """
+    
+        shape = (state.batch_size, state.max_entities)
+        if catalog.device != state.device:
+            raise ValueError("catalog and periodic state must use the same device")
+        for name, value, dtype in (
+            ("active", active, torch.bool),
+            ("source_stable_id", source_stable_id, torch.int64),
+            ("source_card_id", source_card_id, torch.int64),
+        ):
+            if tuple(value.shape) != shape or value.device != state.device:
+>               raise ValueError(f"{name} must match periodic state shape and device")
+E               ValueError: active must match periodic state shape and device
+
+src/clasher/torch_sim/simple_periodic_spawn.py:246: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_torch_simple_periodic_spawn.py::test_serialized_witch_night_witch_and_tombstone_cadence[cuda]
+FAILED tests/test_torch_simple_periodic_spawn.py::test_finite_and_unlimited_waves_advance_without_host_events[cuda]
+FAILED tests/test_torch_simple_periodic_spawn.py::test_death_stun_policy_and_slot_reuse_reset_deadlines[cuda]
+FAILED tests/test_torch_simple_periodic_spawn.py::test_periodic_scheduler_replays_exactly[cuda]
+4 failed, 25 passed, 40 deselected in 55.87s

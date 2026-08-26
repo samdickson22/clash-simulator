@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/clasher-d3513f66/scripts/perf/benchmark_simple_gym.py", line 382, in <module>
+    raise SystemExit(main())
+  File "/home/ubuntu/clasher-d3513f66/scripts/perf/benchmark_simple_gym.py", line 371, in main
+    result = benchmark(args)
+  File "/home/ubuntu/clasher-d3513f66/scripts/perf/benchmark_simple_gym.py", line 274, in benchmark
+    trials_and_devices = [
+  File "/home/ubuntu/clasher-d3513f66/scripts/perf/benchmark_simple_gym.py", line 275, in <listcomp>
+    _run_trial(args, decks=decks, repetition=repetition)
+  File "/home/ubuntu/clasher-d3513f66/scripts/perf/benchmark_simple_gym.py", line 78, in _run_trial
+    runtime = build_simple_runtime(
+  File "/home/ubuntu/clasher-d3513f66/scripts/validate_simple_full_matches.py", line 123, in build_simple_runtime
+    return setup.create_runtime(
+  File "/home/ubuntu/clasher-d3513f66/src/clasher/torch_sim/simple_standard.py", line 234, in create_runtime
+    return SimpleGymRuntime(
+  File "/home/ubuntu/clasher-d3513f66/src/clasher/torch_sim/simple_runtime.py", line 207, in __init__
+    raise ValueError("spawn blueprints and catalog must share a device")
+ValueError: spawn blueprints and catalog must share a device
+benchmark_exit_code=1

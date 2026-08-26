@@ -1,0 +1,76 @@
+C0826 23:28:37.171000 6003 torch/_inductor/scheduler.py:1712] [0/0] Error in codegen for ComputedBuffer(name='buf170', layout=FixedLayout('cuda:0', torch.int64, size=[2, 130], stride=[130, 1]), data=SplitScan(device=device(type='cuda', index=0), dtype=torch.int64, inner_fn=<function make_pointwise.<locals>.inner.<locals>.inner_fn at 0x76c3015cecb0>, ranges=[2], scan_ranges=[130], size=[2, 130], combine_fn=<function cumsum.<locals>.combine_fn at 0x76c30158d5a0>, reindex=<function Scan.create.<locals>.reindex at 0x76c3015ce950>, reduction_hint=<ReductionHint.OUTER: 1>, output_index=0, dtypes=(torch.int64,), inner_fns=(<function make_pointwise.<locals>.inner.<locals>.inner_fn at 0x76c3015cecb0>,)), _split_size=None, _original_inner_fn=None, _original_ranges=None, _original_reduction_ranges=None)
+{
+  "error": "TypeError: list indices must be integers or slices, not NoneType\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n",
+  "error_type": "InductorError",
+  "fullgraph": false,
+  "mode": "reduce-overhead",
+  "result": "error",
+  "tested_commit": "503210670ebf1d0b0da04748e00d86b67aad28ee",
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 27, in <module>\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py\", line 967, in compile_wrapper\n    raise e.remove_dynamo_frames() from None  # see TORCHDYNAMO_VERBOSE=1\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/compile_fx.py\", line 1019, in _compile_fx_inner\n    raise InductorError(e, currentframe()).with_traceback(\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/compile_fx.py\", line 1003, in _compile_fx_inner\n    mb_compiled_graph = fx_codegen_and_compile(\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/compile_fx.py\", line 1766, in fx_codegen_and_compile\n    return scheme.codegen_and_compile(gm, example_inputs, inputs_to_check, graph_kwargs)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/compile_fx.py\", line 1537, in codegen_and_compile\n    compiled_module = graph.compile_to_module()\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/graph.py\", line 2416, in compile_to_module\n    return self._compile_to_module()\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/graph.py\", line 2422, in _compile_to_module\n    self.codegen_with_cpp_wrapper() if self.cpp_wrapper else self.codegen()\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/graph.py\", line 2358, in codegen\n    self.scheduler.codegen()\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py\", line 6019, in codegen\n    self._codegen_partitions()\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py\", line 6163, in _codegen_partitions\n    self._codegen_partition_wrapper(partition, signature)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py\", line 6042, in _codegen_partition_wrapper\n    self._codegen(partition)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py\", line 6266, in _codegen\n    self.get_backend(device).codegen_node(node)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/cuda_combined_scheduling.py\", line 130, in codegen_node\n    return self._triton_scheduling.codegen_node(node)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py\", line 1822, in codegen_node\n    return self._codegen_nodes(nodes, coalesce_analysis)  # type: ignore[arg-type]\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py\", line 1795, in _codegen_nodes\n    return self.codegen_node_schedule(\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py\", line 1881, in codegen_node_schedule\n    self.codegen_node_schedule_with_kernel(node_schedule, kernel)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py\", line 1988, in codegen_node_schedule_with_kernel\n    node.codegen(index_vars)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py\", line 1710, in codegen\n    self._body(*index_vars)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/loop_body.py\", line 484, in __call__\n    result = self.root_block()\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/loop_body.py\", line 581, in __call__\n    return InterpreterShim(graph, submodules).run(V.get_ops_handler())\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/loop_body.py\", line 61, in run\n    return super().run(*args, **kwargs)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/fx/interpreter.py\", line 200, in run\n    self.env[node] = self.run_node(node)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/loop_body.py\", line 57, in run_node\n    return super().run_node(n)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/fx/interpreter.py\", line 295, in run_node\n    return getattr(self, n.op)(n.target, args, kwargs)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/fx/interpreter.py\", line 399, in call_method\n    return getattr(self_obj, target)(*args_tail, **kwargs)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/sizevars.py\", line 1193, in load\n    return self._inner.load(name, self._simplify(index))\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/common.py\", line 2771, in load\n    out = self.kernel.load(name, index)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py\", line 3470, in load\n    shape = TritonSymbols.get_block_shape(indexing.index)\n  File \"/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py\", line 273, in get_block_shape\n    shape[tree_match[0].tensor_dim] = str(cls.get_block_size(tree_match[0]))\ntorch._inductor.exc.InductorError: TypeError: list indices must be integers or slices, not NoneType\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n\n",
+  "wrapper_creation_seconds": 3.0254989349998596
+}
+Traceback (most recent call last):
+  File "<stdin>", line 27, in <module>
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 967, in compile_wrapper
+    raise e.remove_dynamo_frames() from None  # see TORCHDYNAMO_VERBOSE=1
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1019, in _compile_fx_inner
+    raise InductorError(e, currentframe()).with_traceback(
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1003, in _compile_fx_inner
+    mb_compiled_graph = fx_codegen_and_compile(
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1766, in fx_codegen_and_compile
+    return scheme.codegen_and_compile(gm, example_inputs, inputs_to_check, graph_kwargs)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/compile_fx.py", line 1537, in codegen_and_compile
+    compiled_module = graph.compile_to_module()
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2416, in compile_to_module
+    return self._compile_to_module()
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2422, in _compile_to_module
+    self.codegen_with_cpp_wrapper() if self.cpp_wrapper else self.codegen()
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/graph.py", line 2358, in codegen
+    self.scheduler.codegen()
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 6019, in codegen
+    self._codegen_partitions()
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 6163, in _codegen_partitions
+    self._codegen_partition_wrapper(partition, signature)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 6042, in _codegen_partition_wrapper
+    self._codegen(partition)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 6266, in _codegen
+    self.get_backend(device).codegen_node(node)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/cuda_combined_scheduling.py", line 130, in codegen_node
+    return self._triton_scheduling.codegen_node(node)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py", line 1822, in codegen_node
+    return self._codegen_nodes(nodes, coalesce_analysis)  # type: ignore[arg-type]
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py", line 1795, in _codegen_nodes
+    return self.codegen_node_schedule(
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py", line 1881, in codegen_node_schedule
+    self.codegen_node_schedule_with_kernel(node_schedule, kernel)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/simd.py", line 1988, in codegen_node_schedule_with_kernel
+    node.codegen(index_vars)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/scheduler.py", line 1710, in codegen
+    self._body(*index_vars)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/loop_body.py", line 484, in __call__
+    result = self.root_block()
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/loop_body.py", line 581, in __call__
+    return InterpreterShim(graph, submodules).run(V.get_ops_handler())
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/loop_body.py", line 61, in run
+    return super().run(*args, **kwargs)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/fx/interpreter.py", line 200, in run
+    self.env[node] = self.run_node(node)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/loop_body.py", line 57, in run_node
+    return super().run_node(n)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/fx/interpreter.py", line 295, in run_node
+    return getattr(self, n.op)(n.target, args, kwargs)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/fx/interpreter.py", line 399, in call_method
+    return getattr(self_obj, target)(*args_tail, **kwargs)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/sizevars.py", line 1193, in load
+    return self._inner.load(name, self._simplify(index))
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/common.py", line 2771, in load
+    out = self.kernel.load(name, index)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py", line 3470, in load
+    shape = TritonSymbols.get_block_shape(indexing.index)
+  File "/home/ubuntu/clasher-50321067/.venv/lib/python3.10/site-packages/torch/_inductor/codegen/triton.py", line 273, in get_block_shape
+    shape[tree_match[0].tensor_dim] = str(cls.get_block_size(tree_match[0]))
+torch._inductor.exc.InductorError: TypeError: list indices must be integers or slices, not NoneType
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+compile_experiment_exit_code=1
