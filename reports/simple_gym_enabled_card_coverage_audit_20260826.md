@@ -3,9 +3,9 @@
 ## Scope and method
 
 This is a structural audit of the 66 unique cards in `decks.json` on the active
-practical-Gym branch. `TensorCardCatalog` and `FastCardCatalog` were compiled
-with a real `CardDataLoader`, first for the enabled-card union and then for all
-171 public card definitions. No long interaction matrix or simulation was used.
+practical-Gym branch. `TensorCardCatalog`, `FastCardCatalog`, and the expanded
+`FastSpawnBlueprintCatalog` were compiled with a real `CardDataLoader`. No long
+interaction matrix or simulation was used.
 
 The admission contract in `FastActionKernel` is deliberately small:
 
@@ -19,18 +19,22 @@ The admission contract in `FastActionKernel` is deliberately small:
 
 ## Inventory result
 
-- All 52 entity cards and 12 of 14 spells are structurally allocatable, while
-  truthful training admission accepts 52/66 cards.
-- Training admission rejects 14: two unsupported spawn-payload spells, three
-  zero-payload projectiles, and nine enabled-only unresolved death-child
-  parents.
-- Newly admitted since the prior 47-card inventory: Earthquake, Freeze,
-  Poison, Tornado, and Zap.
+- All 52 entity cards and 12 of 14 spells are structurally allocatable. The
+  blueprint-expanded truthful training inventory accepts 54/66 public roots.
+- Training admission rejects 12: two unsupported spawn-payload spells, two
+  zero-payload rolling projectiles, and eight roots with unsupported spawn
+  payloads/triggers.
+- Newly admitted by the spawn integration: Battle Ram, Goblin Barrel, and Lava
+  Hound. Witch is newly rejected because its defining periodic Skeleton
+  payload is now discovered but periodic triggering is not implemented.
 - Primitive assignment across all 66 cards is 27 direct, 29 projectile, 6
   area, and 4 unsupported (Graveyard, Royal Delivery, Skeleton Barrel, and
   Tombstone).
 - The raw 64/66 allocatable count is therefore not exposed as legal training
   support.
+- The 54-card count requires constructing `SimpleGymRuntime` with the matching
+  expanded `spawn_blueprints`. A bare `FastCardCatalog` retains its conservative
+  52-card support plane and does not make the three spawn-root claim.
 - Multi-summon represents a homogeneous numeric ring. It covers Archers, Bats,
   Guards, Minions, Royal Hogs, Skeletons, Spear Goblins, and Wall Breakers at
   their serialized counts. Goblin Gang silently emits only its three stab
@@ -50,12 +54,13 @@ The following partition lists every enabled card exactly once. “Baseline” is
 only a card-shape judgment inside the current straight-line approximate combat
 model; it is not scalar-Python parity or real-game acceptance.
 
-### Baseline primitive is useful (28)
+### Baseline primitive is useful (31)
 
-Archers, Arrows, Baby Dragon, Bats, Bomber, Cannon, Dart Goblin, Fireball,
-Earthquake, Freeze, Giant, Hog Rider, Ice Spirit, Knight, Mega Minion, Mini
-P.E.K.K.A, Minions, Musketeer, P.E.K.K.A, Poison, Rocket, Royal Hogs,
-Skeletons, Spear Goblins, Tornado, Wall Breakers, X-Bow, Zap.
+Archers, Arrows, Baby Dragon, Bats, Battle Ram, Bomber, Cannon, Dart Goblin,
+Earthquake, Fireball, Freeze, Giant, Goblin Barrel, Hog Rider, Ice Spirit,
+Knight, Lava Hound, Mega Minion, Mini P.E.K.K.A, Minions, Musketeer, P.E.K.K.A,
+Poison, Rocket, Royal Hogs, Skeletons, Spear Goblins, Tornado, Wall Breakers,
+X-Bow, Zap.
 
 Important approximation notes: Arrows collapses its waves into one immediate
 area hit; Fireball omits pushback; Ice Spirit approximates its jump as a homing
@@ -63,19 +68,20 @@ projectile and splash stun; Wall Breakers use projectile-impact splash plus
 source consumption. Tornado preserves its damage/cadence but explicitly omits
 attraction; the other newly admitted areas preserve serialized cadence,
 target-domain filters, tower/building scaling, and available slow/stun state.
+Battle Ram and Lava Hound now materialize their typed death children, while
+Goblin Barrel materializes three typed Goblins on projectile impact.
 
-### Useful base primitive, but defining mechanics are absent or materially wrong (31)
+### Useful base primitive, but defining mechanics are absent or materially wrong (29)
 
-Seven rows in this table have unresolved death children and are masked from
-training even though their ordinary base primitive can execute structurally;
-Skeleton Barrel and Tombstone are classified separately below.
+Six rows in this table have unsupported spawn payloads/triggers and are masked
+from training even though their ordinary base primitive can execute
+structurally; Skeleton Barrel and Tombstone are classified separately below.
 
 | Card | Represented now | Materially missing or wrong |
 |---|---|---|
 | Archer Queen | ranged projectile | Cloak/ability, ability mask closed |
 | Balloon | building-target direct hit | death bomb |
 | Bandit | ordinary direct melee | dash, dash immunity/damage |
-| Battle Ram | building-target direct hit, source consumed | charge and two-Barbarian death payload |
 | Bomb Tower | building lifetime and splash projectile | death bomb |
 | Bowler | projectile splash | rolling line/pierce and pushback |
 | Dark Prince | ordinary direct melee | shield, charge, 1.1-tile melee splash |
@@ -91,7 +97,6 @@ Skeleton Barrel and Tombstone are classified separately below.
 | Ice Wizard | splash projectile | on-hit slow and spawn-area semantics |
 | Inferno Dragon | ordinary direct hit | per-target damage ramp/reset |
 | Inferno Tower | lifetime and ordinary direct hit | per-target damage ramp/reset |
-| Lava Hound | building-target projectile | six Lava Pups |
 | Lumberjack | ordinary direct melee | death Rage area/payload |
 | Magic Archer | narrow projectile impact | piercing line continuation |
 | Mega Knight | ordinary direct melee | normal melee splash, spawn slam/pushback, jump/slam state |
@@ -104,14 +109,13 @@ Skeleton Barrel and Tombstone are classified separately below.
 | Valkyrie | ordinary direct melee | 2-tile radial attack |
 | Witch | splash projectile | periodic Skeleton spawning |
 
-### Former silent false positives, now masked from training (5)
+### Former silent false positives, now masked from training (4)
 
 These should be treated as higher priority than ordinary approximation gaps.
 
 | Card | Why admission is false-positive |
 |---|---|
 | Barbarian Barrel | legal projectile with zero damage; nested rolling damage and Barbarian spawn are ignored |
-| Goblin Barrel | legal projectile with zero damage; three Goblins on impact are ignored |
 | Log | legal projectile with zero damage; nested rolling damage, path hit, and pushback are ignored |
 | Skeleton Barrel | entity deploys with zero damage and unsupported attack; it cannot complete its building impact and its two-stage death payload is unresolved |
 | Tombstone | entity deploys as an inert lifetime blocker; periodic Skeletons and death Skeletons are unresolved in the enabled-only catalog |
@@ -125,6 +129,22 @@ materialize. Earthquake, Freeze, Poison, Tornado, and Zap are newly admitted by
 the generalized periodic-area compiler; spawn-bearing areas remain honestly
 closed rather than silently dropping their defining payload.
 
+### Exact blueprint-expanded support inventory
+
+Supported public roots (54): Archer Queen, Archers, Arrows, Baby Dragon,
+Bandit, Bats, Battle Ram, Bomber, Bowler, Cannon, Dark Prince, Dart Goblin,
+Earthquake, Electro Dragon, Electro Spirit, Electro Wizard, Fireball,
+Firecracker, Freeze, Giant, Giant Snowball, Goblin Barrel, Goblin Gang, Guards,
+Hog Rider, Ice Golem, Ice Spirit, Ice Wizard, Inferno Dragon, Inferno Tower,
+Knight, Lava Hound, Magic Archer, Mega Knight, Mega Minion, Miner, Mini P.E.K.K.A,
+Minions, Musketeer, P.E.K.K.A, Poison, Prince, Princess, Rocket, Royal Ghost,
+Royal Hogs, Skeletons, Spear Goblins, Tesla, Tornado, Valkyrie, Wall Breakers,
+X-Bow, Zap.
+
+Rejected public roots (12): Balloon, Barbarian Barrel, Bomb Tower, Golem,
+Graveyard, Log, Lumberjack, Night Witch, Royal Delivery, Skeleton Barrel,
+Tombstone, Witch.
+
 ## Death-child identity result
 
 Nine enabled parents declare a death child: Balloon -> BalloonBomb, Battle Ram
@@ -132,21 +152,21 @@ Nine enabled parents declare a death child: Balloon -> BalloonBomb, Battle Ram
 LavaPups, Night Witch -> Bat, Skeleton Barrel -> SkeletonContainerNew,
 Tombstone -> Skeleton, and Lumberjack -> RageBarbarianBottle.
 
-With the enabled-only catalog used by the current validation/runtime setup,
-all nine child IDs are zero. Compiling all 171 public definitions resolves only
-Night Witch -> Bat and Tombstone -> Skeleton. The other seven identities are
-internal serialized payloads absent from the public definition registry, so
-the current exact-typed lookup correctly fails closed but leaves the card
-mechanic absent. A child/payload compiler must retain an explicit typed
-internal identity rather than mapping it to an unrelated enabled card.
+The bare enabled-only catalog leaves all nine child IDs zero. The expanded
+blueprint catalog creates private typed child rows and fully supports Battle
+Ram -> two Barbarians and Lava Hound -> six Lava Pups. It also supports Goblin
+Barrel's non-death impact spawn. Other roots remain closed when the child has
+unrepresented mechanics, the trigger is periodic/scheduled/rolling, or the
+payload is a no-HP container. Synthetic rows are never public hand identities.
 
 ## Ranked generalized primitive work
 
 1. **Serialized child/payload materialization.** Compile typed internal child
    descriptors and impact/death/periodic spawn commands. This cluster unlocks
-   Barbarian Barrel, Goblin Barrel, Royal Delivery, Graveyard, Balloon, Battle
-   Ram, Bomb Tower, Golem, Lava Hound, Night Witch, Skeleton Barrel, Tombstone,
-   and Witch. It also provides the right seam for Lumberjack's death payload.
+   Barbarian Barrel, Royal Delivery, Graveyard, Balloon, Bomb Tower, Golem,
+   Night Witch, Skeleton Barrel, Tombstone, and Witch. It also provides the
+   right seam for Lumberjack's death payload. Battle Ram, Goblin Barrel, and
+   Lava Hound are now complete for their bounded spawn shapes.
 2. **Attack topology.** Represent radial melee splash, line/piercing projectiles,
    nested projectile fan-out, and bounded chain/multi-target attacks. Immediate
    beneficiaries are Valkyrie, Dark Prince, Royal Ghost, Princess, Magic
