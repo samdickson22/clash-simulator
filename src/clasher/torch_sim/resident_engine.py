@@ -1272,13 +1272,17 @@ class TensorResidentEngine:
                 ]
                 & (terminal_pipeline.catalog.terminal.child_card_id[terminal_safe] >= 0)
             )
-            composable_operation.scatter_reduce_(
+            composable_counts = torch.zeros_like(
+                composable_operation, dtype=torch.int32
+            )
+            composable_counts.scatter_reduce_(
                 0,
                 terminal_safe,
-                terminal_direct_composable,
+                terminal_direct_composable.to(torch.int32),
                 reduce="amax",
                 include_self=True,
             )
+            composable_operation.copy_(composable_counts > 0)
             terminal_pipeline.catalog.terminal.direct_supported |= composable_operation
             terminal_card_supported = (terminal_operation >= 0) & (
                 terminal_pipeline.catalog.terminal.direct_supported[terminal_safe]
