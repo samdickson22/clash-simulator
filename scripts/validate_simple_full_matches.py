@@ -21,6 +21,7 @@ import torch
 from clasher.data import CardDataLoader
 from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
 from clasher.torch_sim.actions import NO_OP_ACTION
+from clasher.torch_sim.simple_cuda_graph import SimpleCudaGraphRunner
 from clasher.torch_sim.simple_outcomes import FastMatchRules
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime, SimpleGymRuntimeStep
 from clasher.torch_sim.simple_standard import (
@@ -31,7 +32,6 @@ from clasher.torch_sim.simple_standard import (
     SimpleStandardSetup,
     compile_standard_simple_setup,
 )
-
 
 # Backwards-compatible script names. The production values now come from the
 # same standard setup authority used by training-facing runtime construction.
@@ -198,7 +198,7 @@ def select_actions(mask: torch.Tensor, policy: str) -> torch.Tensor:
     )
 
 
-def update_digest(digest: "hashlib._Hash", value: torch.Tensor) -> None:
+def update_digest(digest: hashlib._Hash, value: torch.Tensor) -> None:
     cpu = value.detach().contiguous().cpu()
     digest.update(str(cpu.dtype).encode())
     digest.update(str(tuple(cpu.shape)).encode())
@@ -206,7 +206,7 @@ def update_digest(digest: "hashlib._Hash", value: torch.Tensor) -> None:
 
 
 def update_step_digest(
-    digest: "hashlib._Hash", step: SimpleGymRuntimeStep, actions: torch.Tensor
+    digest: hashlib._Hash, step: SimpleGymRuntimeStep, actions: torch.Tensor
 ) -> None:
     actor = step.observation.actor
     for value in (
@@ -237,6 +237,7 @@ def run_episode(
     max_effects: int,
     regulation_ticks: int,
     tiebreak_ticks: int,
+    cuda_graph: bool = False,
 ) -> SimpleEpisodeSummary:
     runtime = build_simple_runtime(
         seed=seed,
@@ -249,6 +250,15 @@ def run_episode(
         tiebreak_ticks=tiebreak_ticks,
     )
     observation = runtime.observe()
+    if cuda_graph:
+        if runtime.device.type != "cuda":
+            raise ValueError("CUDA Graph validation requires --device cuda")
+        example_actions = select_actions(observation.legal_mask, policy)
+        stepper: SimpleGymRuntime | SimpleCudaGraphRunner = SimpleCudaGraphRunner(
+            runtime, example_actions
+        )
+    else:
+        stepper = runtime
     digest = hashlib.sha256()
     cumulative_reward = torch.zeros((1, 2), dtype=torch.float64, device=runtime.device)
     row_ticks = 0
@@ -258,7 +268,7 @@ def run_episode(
 
     for _ in range(tiebreak_ticks):
         actions = select_actions(observation.legal_mask, policy)
-        last = runtime.step_tick(actions)
+        last = stepper.step_tick(actions)
         update_step_digest(digest, last, actions)
         cumulative_reward += last.reward.to(torch.float64)
         row_ticks += runtime.batch_size
@@ -305,6 +315,7 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
     tiebreak_ticks = int(getattr(args, "tiebreak_ticks", EXACT_TIEBREAK_TICKS))
     replays = int(getattr(args, "replays", 2))
     require_exact = bool(getattr(args, "require_exact_timeline", True))
+    cuda_graph = bool(getattr(args, "cuda_graph", False))
     if replays < 2:
         raise ValueError("deterministic validation requires at least two replays")
     if regulation_ticks < 1 or tiebreak_ticks <= regulation_ticks:
@@ -313,7 +324,9 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
         EXACT_REGULATION_TICKS,
         EXACT_TIEBREAK_TICKS,
     ):
-        raise ValueError("exact validation requires regulation/tiebreak ticks 3600/6000")
+        raise ValueError(
+            "exact validation requires regulation/tiebreak ticks 3600/6000"
+        )
 
     summaries: list[SimpleEpisodeSummary] = []
     for policy in args.policy:
@@ -328,6 +341,7 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
                     max_effects=args.max_effects,
                     regulation_ticks=regulation_ticks,
                     tiebreak_ticks=tiebreak_ticks,
+                    cuda_graph=cuda_graph,
                 )
                 for _ in range(replays)
             ]
@@ -336,7 +350,10 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
                 raise RuntimeError(
                     f"simple Gym replay is nondeterministic for seed={seed} policy={policy}"
                 )
-            if first.committed_rows != first.row_ticks or first.native_ticks != first.row_ticks:
+            if (
+                first.committed_rows != first.row_ticks
+                or first.native_ticks != first.row_ticks
+            ):
                 raise RuntimeError(
                     f"simple Gym episode was not fully native for seed={seed} policy={policy}"
                 )
@@ -349,12 +366,15 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
                 and first.entered_overtime
                 and first.terminal_reason == "tiebreak"
             ):
-                raise RuntimeError("no-op episode did not traverse regulation, OT, and tiebreak")
+                raise RuntimeError(
+                    "no-op episode did not traverse regulation, OT, and tiebreak"
+                )
             summaries.append(first)
 
     return {
         "schema_version": 1,
         "engine": "SimpleGymRuntime",
+        "execution_mode": "cuda-graph" if cuda_graph else "eager",
         "device": args.device,
         "timeline": {
             "regulation_ticks": regulation_ticks,
@@ -397,6 +417,7 @@ def _parser() -> argparse.ArgumentParser:
         "--policy", choices=("noop", "first-legal"), action="append", default=[]
     )
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--cuda-graph", action="store_true")
     return parser
 
 

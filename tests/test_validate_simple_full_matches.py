@@ -39,6 +39,7 @@ def _args(tmp_path: Path, **overrides: object) -> argparse.Namespace:
         "seed": [202_608_263],
         "policy": ["noop"],
         "out": None,
+        "cuda_graph": False,
     }
     values.update(overrides)
     return argparse.Namespace(**values)
@@ -48,6 +49,8 @@ def test_noop_episode_replays_through_regulation_overtime_and_tiebreak(
     tmp_path: Path,
 ) -> None:
     result = validate(_args(tmp_path))
+
+    assert result["execution_mode"] == "eager"
 
     assert result["acceptance"] == {
         "deterministic_replay": True,
@@ -72,6 +75,11 @@ def test_noop_episode_replays_through_regulation_overtime_and_tiebreak(
 def test_exact_timeline_gate_rejects_short_test_rules(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="3600/6000"):
         validate(_args(tmp_path, require_exact_timeline=True))
+
+
+def test_cuda_graph_validation_requires_cuda_device(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="requires --device cuda"):
+        validate(_args(tmp_path, cuda_graph=True))
 
 
 def test_runtime_builder_uses_standard_expanded_catalog_and_phase_authority() -> None:
