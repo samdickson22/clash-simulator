@@ -23,6 +23,7 @@ from clasher.torch_sim.resident_selfplay import (
 )
 from clasher.torch_sim.runtime_state import (
     RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+    RESIDENT_EXECUTION_PROFILE_GYM_FAST,
     RESIDENT_EXECUTION_PROFILES,
 )
 
@@ -109,7 +110,11 @@ def _run_once(
         max_ticks=max_ticks,
         max_entities=max_entities,
         max_objects=max_objects,
-        event_capacity=1_024,
+        event_capacity=(
+            1
+            if execution_profile == RESIDENT_EXECUTION_PROFILE_GYM_FAST
+            else 1_024
+        ),
         execution_profile=execution_profile,
         validation_profile=PROJECTED_GYM_TRANSITION_PROFILE,
     )
