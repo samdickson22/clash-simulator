@@ -70,6 +70,11 @@ def _knight_actions(device: torch.device) -> torch.Tensor:
     return torch.tensor([[tile, tile]], dtype=torch.int64, device=device)
 
 
+def _far_knight_actions(device: torch.device) -> torch.Tensor:
+    tile = 7 * BOARD_WIDTH + 8
+    return torch.tensor([[tile, tile]], dtype=torch.int64, device=device)
+
+
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
 def test_runtime_knight_action_moves_hits_and_replays_deterministically(
     device_name: str,
@@ -103,6 +108,34 @@ def test_runtime_knight_action_moves_hits_and_replays_deterministically(
                 getattr(first.state, descriptor.name),
                 getattr(replay.state, descriptor.name),
             )
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_far_knights_navigate_before_sight_then_deal_damage(
+    device_name: str,
+) -> None:
+    runtime, _ = _runtime(device_name)
+    deployed = runtime.step_tick(_far_knight_actions(runtime.device))
+    assert deployed.action_success.tolist() == [[True, True]]
+    initial_positions = runtime.state.y_units[0, 6:8].clone()
+    noop = torch.full(
+        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device
+    )
+
+    # Deployment completes while the troops are still much farther apart than
+    # Knight sight. Both then receive enemy Crown navigation identities.
+    for _ in range(22):
+        result = runtime.step_tick(noop)
+    assert not torch.equal(runtime.state.y_units[0, 6:8], initial_positions)
+    assert runtime.state.target_id[0, 6:8].gt(0).all()
+    assert not result.effects.impacted.any()
+
+    for _ in range(170):
+        result = runtime.step_tick(noop)
+        if bool((runtime.state.hp < runtime.state.max_hp).any()):
+            break
+
+    assert bool((runtime.state.hp < runtime.state.max_hp).any())
 
 
 def test_dead_tower_slot_is_never_reused_by_deployment() -> None:

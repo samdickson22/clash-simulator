@@ -99,6 +99,62 @@ class FastTensorGym:
             ),
         )
 
+    def _navigation_targets(
+        self,
+        can_act: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Choose an enemy reserved building when ordinary sight is empty."""
+
+        state = self.state
+        delta_x = (
+            state.x_units[:, :, None].to(torch.int64)
+            - state.x_units[:, None, :].to(torch.int64)
+        )
+        delta_y = (
+            state.y_units[:, :, None].to(torch.int64)
+            - state.y_units[:, None, :].to(torch.int64)
+        )
+        distance_sq = delta_x.square() + delta_y.square()
+        reserved_building = (
+            (self._slots < self.reserved_slot_floor)
+            & state.active
+            & (state.hp > 0)
+            & (state.kind == FAST_KIND_BUILDING)
+            & (state.stable_id > 0)
+            & ~self._target_unavailable
+        )
+        candidate = (
+            can_act[:, :, None]
+            & (state.kind[:, :, None] == 0)
+            & reserved_building[:, None, :]
+            & (state.owner[:, :, None] != state.owner[:, None, :])
+        )
+        maximum = torch.iinfo(torch.int64).max
+        nearest_distance = torch.where(
+            candidate,
+            distance_sq,
+            torch.full_like(distance_sq, maximum),
+        ).amin(dim=2)
+        distance_tie = candidate & (distance_sq == nearest_distance[:, :, None])
+        candidate_id = state.stable_id[:, None, :].expand_as(distance_sq)
+        selected_id = torch.where(
+            distance_tie,
+            candidate_id,
+            torch.full_like(candidate_id, maximum),
+        ).amin(dim=2)
+        found = distance_tie.any(dim=2)
+        selected = distance_tie & (candidate_id == selected_id[:, :, None])
+        slot = selected.to(torch.int64).argmax(dim=2)
+        distance = torch.sqrt(
+            distance_sq.gather(2, slot[:, :, None]).squeeze(2).to(torch.float32)
+        )
+        return (
+            found,
+            slot,
+            torch.where(found, selected_id, 0),
+            torch.where(found, distance, torch.inf),
+        )
+
     def _validate_request(self, request: FastDeploymentRequest) -> None:
         expected = (self.state.batch_size,)
         for name in (
@@ -285,24 +341,37 @@ class FastTensorGym:
             target_unavailable=self._target_unavailable,
         )
         found = targets.found
-        nearest_slot = targets.target_slot.clamp(min=0)
-        state.target_id.copy_(targets.target_id)
+        navigation_found, navigation_slot, navigation_id, navigation_distance = (
+            self._navigation_targets(can_act & ~found)
+        )
+        has_destination = found | navigation_found
+        nearest_slot = torch.where(
+            found,
+            targets.target_slot.clamp(min=0),
+            navigation_slot,
+        )
+        state.target_id.copy_(torch.where(found, targets.target_id, navigation_id))
 
         target_x = state.x_units.gather(1, nearest_slot).to(torch.float32)
         target_y = state.y_units.gather(1, nearest_slot).to(torch.float32)
         delta_x = target_x - state.x_units.to(torch.float32)
         delta_y = target_y - state.y_units.to(torch.float32)
-        distance = targets.center_distance
+        distance = torch.where(found, targets.center_distance, navigation_distance)
         attack_range = state.range_units.to(torch.float32).clamp(min=0)
-        travel = torch.minimum(
+        approach_travel = torch.minimum(
             state.speed_units_per_tick.to(torch.float32).clamp(min=0),
             (targets.edge_distance - attack_range).clamp(min=0),
         )
+        travel = torch.where(
+            found,
+            approach_travel,
+            state.speed_units_per_tick.to(torch.float32).clamp(min=0),
+        )
         mobile = (
-            found
+            has_destination
             & can_act
             & (state.kind == 0)
-            & ~targets.within_attack_range
+            & (~found | ~targets.within_attack_range)
             & (travel > 0)
         )
         denominator = distance.clamp(min=1.0)
