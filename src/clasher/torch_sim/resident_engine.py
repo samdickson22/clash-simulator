@@ -191,6 +191,7 @@ from .runtime_status import (
 )
 from .special_movement import LeapPhase, SpecialMovementOpcode
 from .status import TensorStatusState
+from .tensor_ops import scatter_any_
 from .tick_common import check_win_conditions, tick_players
 
 RESIDENT_PHASE_ORDER = tuple(TickPhase)
@@ -2981,9 +2982,7 @@ class TensorResidentEngine:
             torch.maximum(self.runtime.status.stun_timer, stun_projection)
         )
         stun_mask = torch.zeros_like(self.runtime.battle.entity_active)
-        stun_mask.scatter_reduce_(
-            1, primary, survivor, reduce="amax", include_self=True
-        )
+        scatter_any_(stun_mask, 1, primary, survivor)
         transition = apply_stun_interrupt_(
             self._combat_clock_planes(),
             status_applied=stun_mask,
@@ -5556,12 +5555,11 @@ class TensorResidentEngine:
 
         allocation = deployment.deployment.allocation
         spawned = torch.zeros_like(inputs.spawned)
-        spawned.scatter_reduce_(
+        scatter_any_(
+            spawned,
             1,
             allocation.slots.clamp_min(0),
             allocation.valid,
-            reduce="amax",
-            include_self=True,
         )
         immediate_spawn = spawned & ~runtime.battle.entity_spawn_hook_pending
         spawn_hook_due = (
