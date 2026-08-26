@@ -1,190 +1,152 @@
 # Simple Gym enabled-card coverage audit (2026-08-26)
 
-## Scope and method
+## Scope and authority
 
-This is a structural audit of the 66 unique cards in `decks.json` on the active
-practical-Gym branch. `TensorCardCatalog`, `FastCardCatalog`, and the expanded
-`FastSpawnBlueprintCatalog` were compiled with a real `CardDataLoader`. No long
-interaction matrix or simulation was used.
+This report audits the 66 unique public cards and 33 decks in `decks.json` at
+clean commit `37e4fff3`. The authoritative path is
+`compile_standard_simple_setup` with `canonical_lane_globals=true`, including
+the expanded `FastSpawnBlueprintCatalog`; a bare `FastCardCatalog` is not the
+production admission boundary.
 
-The admission contract in `FastActionKernel` is deliberately small:
+The frozen artifact was regenerated in memory and checked byte-for-byte with:
 
-- every known troop, building, or champion with `FastCardCatalog.kind >= 0` is
-  admitted as an entity;
-- a spell is admitted when `effect_kind >= 0`;
-- champion abilities fail closed;
-- the separate data-derived `training_supported` plane rejects zero-payload
-  effects, inert entities, and declared-but-unresolved death children; the
-  legal action mask requires this plane.
+```text
+uv run python scripts/build_simple_supported_decks.py --check
+```
 
-## Inventory result
+The check reported support-profile SHA-256
+`9e8dbfe1edf10835bd2138f237dcc917b65dc1f44f39bc26ff221da4d6aaefab`.
+Focused support tests passed 11 tests with 2 CUDA skips. No broad CPU suite or
+long simulation was run for this inventory refresh.
 
-- All 52 entity cards and 12 of 14 spells are structurally allocatable. The
-  blueprint-expanded truthful training inventory accepts 60/66 public roots.
-- Training admission rejects 6: two zero-payload rolling projectiles and four
-  roots with unsupported nested spawn/action payloads.
-- Newly admitted since the 54-card inventory: Balloon, Bomb Tower, Night Witch,
-  Skeleton Barrel, Tombstone, and Witch.
-- Primitive assignment across all 66 cards is 27 direct, 29 projectile, 6
-  area, and 4 unsupported (Graveyard, Royal Delivery, Skeleton Barrel, and
-  Tombstone).
-- The raw 64/66 allocatable count is therefore not exposed as legal training
-  support.
-- The 60-card count requires constructing `SimpleGymRuntime` with the matching
-  expanded `spawn_blueprints`. A bare `FastCardCatalog` retains its conservative
-  support plane and does not make the spawn-root claim.
-- Multi-summon represents a homogeneous numeric ring. It covers Archers, Bats,
-  Guards, Minions, Royal Hogs, Skeletons, Spear Goblins, and Wall Breakers at
-  their serialized counts. Goblin Gang silently emits only its three stab
-  goblins and drops the serialized three Spear Goblins.
-- Lifetime is represented for Bomb Tower, Cannon, Inferno Tower, Tesla,
-  Tombstone, and X-Bow.
-- Ice Spirit retains its radius-1.5 stun/freeze plus source consumption. The
-  generalized area compiler now also emits stun for Freeze and Zap and slow
-  for Earthquake and Poison.
-- Shield and charge primitives are now initialized and advanced by
-  `SimpleGymRuntime`; their focused runtime coverage is separate from this
-  broader admission audit.
+## Authoritative admission result
+
+- Public roots: **66/66 training-supported; 0 rejected**.
+- Source decks: **33/33 training-supported; 0 rejected**.
+- The committed `training_decks/simple_gym_supported_v1.json` contains all 33
+  source decks and preserves public-action-mask contract v2 and canonical lane
+  globals.
+- Public attack-plane assignment is 27 direct, 27 projectile, 8 area, and 4
+  attack-unsupported. The four attack-unsupported roots—Barbarian Barrel, Log,
+  Skeleton Barrel, and Tombstone—are nevertheless truthfully admitted through
+  their separate rolling or spawn/payload runtime owners.
+- All 14 public roots with defining spawn payloads are supported by the
+  expanded blueprint compiler/runtime.
+
+Admission means the root has a bounded, deterministic, zero-fallback practical
+Gym execution path. It does **not** mean exact scalar-Python parity or exact
+current-game mechanics.
+
+## What closed the final six admission gaps
+
+The previous inventory admitted 60 roots. The final six became eligible through
+generalized runtime owners rather than card-name tick dispatch:
+
+- Barbarian Barrel and Log: fixed-shape rolling paths, swept hits, damage,
+  impulse, and Barbarian Barrel's terminal Barbarian spawn.
+- Golem: death burst plus typed Golemite materialization and nested death
+  processing.
+- Graveyard and Royal Delivery: fixed-shape scheduled/delayed spawn execution.
+- Lumberjack: typed death payload plus bounded positive Rage area state.
+
+These were true admission gains. The chain, line, fan, circle, multi-target,
+damage-ramp, shield, and charge integrations primarily corrected transition
+fidelity for roots that were already admitted.
 
 ## Complete 66-card classification
 
-The following partition lists every enabled card exactly once. “Baseline” is
-only a card-shape judgment inside the current straight-line approximate combat
-model; it is not scalar-Python parity or real-game acceptance.
+The partition below lists every enabled public root exactly once. “Useful
+baseline” means no additional card-specific omission is currently called out
+by this audit; the global movement/physics limitations later in the report
+still apply to every card.
 
-### Baseline primitive is useful (47)
+### Useful baseline within the practical Gym (49)
 
-Archers, Arrows, Baby Dragon, Balloon, Bats, Battle Ram, Bomb Tower, Bomber,
-Cannon, Dark Prince, Dart Goblin, Earthquake, Electro Dragon, Electro Spirit,
-Fireball, Freeze, Giant, Goblin Barrel, Guards, Hog Rider, Ice Spirit, Inferno
-Dragon, Inferno Tower, Knight, Lava Hound, Magic Archer, Mega Minion, Mini
-P.E.K.K.A, Minions, Musketeer, Night Witch, P.E.K.K.A, Poison, Prince, Princess,
-Rocket, Royal Hogs, Skeleton Barrel, Skeletons, Spear Goblins, Tombstone,
-Tornado, Valkyrie, Wall Breakers, Witch, X-Bow, Zap.
+Archers, Baby Dragon, Balloon, Barbarian Barrel, Bats, Battle Ram, Bomb Tower,
+Bomber, Cannon, Dark Prince, Dart Goblin, Earthquake, Electro Dragon, Electro
+Spirit, Freeze, Giant, Goblin Barrel, Golem, Graveyard, Guards, Hog Rider,
+Inferno Dragon, Inferno Tower, Knight, Lava Hound, Log, Lumberjack, Magic Archer,
+Mega Minion, Mini P.E.K.K.A, Minions, Musketeer, Night Witch, P.E.K.K.A, Poison,
+Prince, Princess, Rocket, Royal Delivery, Royal Hogs, Skeleton Barrel,
+Skeletons, Spear Goblins, Tombstone, Valkyrie, Wall Breakers, Witch, X-Bow,
+Zap.
 
-Important approximation notes: Arrows collapses its waves into one immediate
-area hit; Fireball omits pushback; Ice Spirit approximates its jump as a homing
-projectile and splash stun; Wall Breakers use projectile-impact splash plus
-source consumption. Tornado preserves its damage/cadence but explicitly omits
-attraction; the other newly admitted areas preserve serialized cadence,
-target-domain filters, tower/building scaling, and available slow/stun state.
-Battle Ram and Lava Hound now materialize their typed death children, while
-Goblin Barrel materializes three typed Goblins on projectile impact. Balloon,
-Bomb Tower, and Skeleton Barrel now execute bounded delayed payload containers;
-Night Witch, Tombstone, and Witch execute serialized periodic waves. Chain,
-line, damage-ramp, circle, multi-target, shield, and charge primitives cover
-the corresponding cards listed above.
+Representative mechanics now present in this group include typed impact/death
+children, periodic waves, delayed payload containers, scheduled casts, rolling
+spells, death bursts, Rage, chain attacks, piercing lines, damage ramps, radial
+splash, shields, and charges.
 
-### Useful base primitive, but defining mechanics are absent or materially wrong (15)
+### Training-supported with known card-specific approximations (17)
 
-Golem and Lumberjack are masked because their nested payloads remain
-unsupported; the other rows remain admitted approximations.
-
-| Card | Represented now | Materially missing or wrong |
+| Card | Represented now | Known omission or approximation |
 |---|---|---|
-| Archer Queen | ranged projectile | Cloak/ability, ability mask closed |
-| Bandit | ordinary direct melee | dash, dash immunity/damage |
-| Bowler | rolling line projectile | pushback |
-| Electro Wizard | two-target direct hit with on-hit stun | spawn zap |
-| Firecracker | five-ray impact fan | recoil |
-| Giant Snowball | projectile splash damage | slow and pushback |
-| Goblin Gang | three homogeneous stab goblins | three additional Spear Goblins and heterogeneous child stats |
-| Golem | ordinary building-target melee | death damage, two Golemites, Golemite death payload |
-| Ice Golem | ordinary building-target melee | death damage and slow area |
-| Ice Wizard | splash projectile | on-hit slow and spawn-area semantics |
-| Lumberjack | ordinary direct melee | death Rage area/payload |
-| Mega Knight | splash melee | spawn slam/pushback, jump/slam state |
-| Miner | enemy-side placement and ordinary melee | underground travel and Crown Tower scaling |
-| Royal Ghost | splash melee | invisibility |
-| Tesla | lifetime and ordinary direct hit | hidden/rise targetability state |
+| Archer Queen | ordinary ranged projectile | Cloak ability is closed at the ability-action mask |
+| Arrows | target-area damage | serialized waves are collapsed into one bounded area event |
+| Bandit | ordinary direct melee | dash travel, immunity, and dash damage are absent |
+| Bowler | swept rolling line damage | pushback is explicitly omitted |
+| Electro Wizard | two-target attack with on-hit stun | deployment spawn zap is absent |
+| Fireball | projectile splash damage and tower scaling | pushback is absent |
+| Firecracker | five-ray impact fan | recoil is explicitly omitted |
+| Giant Snowball | projectile splash damage and slow | pushback is absent |
+| Goblin Gang | three homogeneous stab Goblins | three heterogeneous Spear Goblins are absent |
+| Ice Golem | building-target melee and death damage burst | death slow area is absent |
+| Ice Spirit | homing impact, splash freeze, source consumption | hop trajectory/timing is approximate |
+| Ice Wizard | splash projectile | on-hit slow and spawn-area semantics are absent |
+| Mega Knight | target-centered splash melee | spawn slam/pushback and jump/slam travel are absent |
+| Miner | enemy-side placement and ordinary melee | underground travel timing is absent; Crown Tower scaling needs calibration |
+| Royal Ghost | target-centered splash melee | invisibility/fade targetability is absent |
+| Tesla | lifetime and ordinary attack | hidden/rise targetability state is absent |
+| Tornado | periodic damage/cadence | attraction/displacement is explicitly omitted |
 
-### Zero-payload rolling projectiles, masked from training (2)
+The catalog's explicit fidelity flags currently mark Bowler and Tornado for
+omitted displacement and Firecracker for omitted recoil. The table also records
+important omissions that are not yet represented by a catalog flag.
 
-These should be treated as higher priority than ordinary approximation gaps.
+## Spawn and payload status
 
-| Card | Why admission is false-positive |
-|---|---|
-| Barbarian Barrel | structurally allocatable zero-damage projectile; nested rolling damage and Barbarian spawn are ignored |
-| Log | structurally allocatable zero-damage projectile; nested rolling damage, path hit, and pushback are ignored |
+The expanded catalog uses private typed child rows that are never hand-facing
+public identities. It supports, among other paths:
 
-### Explicit fail-closed unsupported spells (2)
+- Battle Ram -> two Barbarians;
+- Lava Hound -> six Lava Pups;
+- Golem -> death burst, two Golemites, and nested child death handling;
+- Night Witch, Tombstone, and Witch periodic/death children;
+- Goblin Barrel impact Goblins;
+- Balloon and Bomb Tower delayed bombs;
+- Skeleton Barrel's delayed container and Skeleton payload;
+- Royal Delivery and Graveyard scheduled payloads;
+- Lumberjack's death Rage area; and
+- Barbarian Barrel's rolling terminal spawn.
 
-Graveyard, Royal Delivery.
+Capacity rejection remains explicit and deterministic. Synthetic child rows
+require typed entity tokens and cannot appear in public decks or actor hands.
 
-Both declare spawned-unit/action payloads that the area kernel cannot
-materialize. Earthquake, Freeze, Poison, Tornado, and Zap are newly admitted by
-the generalized periodic-area compiler; spawn-bearing areas remain honestly
-closed rather than silently dropping their defining payload.
+## Remaining practical-RL fidelity risks
 
-### Exact blueprint-expanded support inventory
+1. **Movement, navigation, and body physics.** The dense Gym uses simplified
+   objective navigation rather than full production pathfinding, bridge/river
+   routing, collision resolution, mass, push chains, and every airborne/hover
+   interaction. These global dynamics can bias positioning policies even when
+   a card's local damage primitive is correct.
+2. **Impulse and recoil.** Tornado attraction and Bowler pushback are explicit
+   omissions; Firecracker recoil is omitted. Fireball, Giant Snowball, and some
+   spawn/death push effects also need direct calibration against game traces.
+3. **Visibility and special travel.** Royal Ghost invisibility, Tesla hide/rise,
+   Bandit dash, Miner underground travel, and Mega Knight leap phases remain
+   simplified or absent.
+4. **Abilities and secondary areas.** Archer Queen Cloak is intentionally
+   unavailable. Electro Wizard deployment zap, Ice Wizard slow, and Ice Golem
+   death slow remain missing.
+5. **Heterogeneous summons.** Goblin Gang still deploys only its homogeneous
+   primary group rather than both serialized child types.
+6. **Real-game calibration.** Serialized mechanics and deterministic tests are
+   not sufficient evidence that damage timing, ranges, movement, elixir pace,
+   targeting, or outcome distributions match the live game. Promotion should
+   still depend on held-out real-state traces and free-running episode metrics.
 
-Supported public roots (60): Archer Queen, Archers, Arrows, Baby Dragon,
-Balloon, Bandit, Bats, Battle Ram, Bomb Tower, Bomber, Bowler, Cannon, Dark
-Prince, Dart Goblin, Earthquake, Electro Dragon, Electro Spirit, Electro
-Wizard, Fireball, Firecracker, Freeze, Giant, Giant Snowball, Goblin Barrel,
-Goblin Gang, Guards, Hog Rider, Ice Golem, Ice Spirit, Ice Wizard, Inferno
-Dragon, Inferno Tower, Knight, Lava Hound, Magic Archer, Mega Knight, Mega
-Minion, Miner, Mini P.E.K.K.A, Minions, Musketeer, Night Witch, P.E.K.K.A,
-Poison, Prince, Princess, Rocket, Royal Ghost, Royal Hogs, Skeleton Barrel,
-Skeletons, Spear Goblins, Tesla, Tombstone, Tornado, Valkyrie, Wall Breakers,
-Witch, X-Bow, Zap.
+## Evidence boundary
 
-Rejected public roots (6): Barbarian Barrel, Golem, Graveyard, Log, Lumberjack,
-Royal Delivery.
-
-### Whole-deck training coverage
-
-The frozen supported-deck builder accepts 9/33 source decks: Pekka Bandit EWiz
-Bridge Spam; MK Miner ID Bats; Giant; WB Valk Log Bait 2.8; Pekka Bandit EWiz
-Poison; Hog 2.6 (Zap); Pekka Loon IWiz EDrag; LavaLoon Miner; and Giant Double
-Prince. The other 24 decks contain at least one of the six rejected roots.
-
-## Death-child identity result
-
-Nine enabled parents declare a death child: Balloon -> BalloonBomb, Battle Ram
--> Barbarian, Bomb Tower -> BombTowerBomb, Golem -> Golemite, Lava Hound ->
-LavaPups, Night Witch -> Bat, Skeleton Barrel -> SkeletonContainerNew,
-Tombstone -> Skeleton, and Lumberjack -> RageBarbarianBottle.
-
-The expanded blueprint catalog creates private typed child rows and supports
-Battle Ram -> two Barbarians, Lava Hound -> six Lava Pups, Night Witch's Bats,
-Tombstone's Skeletons, and Witch's Skeleton waves. Goblin Barrel has a typed
-impact spawn. Balloon, Bomb Tower, and Skeleton Barrel use bounded delayed
-payload containers. Golem and Lumberjack remain closed because their nested
-payload shapes are not yet representable. Synthetic rows are never public hand
-identities.
-
-## Ranked generalized primitive work
-
-1. **Remaining nested payloads.** Golem/Golemite recursion, Lumberjack's Rage
-   action/container, Graveyard scheduling, Royal Delivery's action payload,
-   and the rolling Barbarian Barrel/Log shapes remain fail closed.
-2. **Impulse and displacement.** The periodic-area/status kernel now covers
-   damage, cadence, target domains, scaling, slow, and stun. Generalize
-   pushback/attraction for Tornado, Fireball, Giant Snowball, Bowler, Ice Golem,
-   and spawn/death impacts without card-name dispatch.
-3. **Visibility/travel/ability state.** Add target-unavailable state and timed
-   transitions for Royal Ghost and Tesla; bounded underground/dash/leap travel
-   for Miner, Bandit, and Mega Knight; then Archer Queen ability ingress. These
-   remain the largest fidelity gaps among already admitted roots.
-
-## Admission gains versus fidelity corrections
-
-The increase from 54 to 60 supported roots comes only from periodic-spawn and
-delayed-payload execution: Balloon, Bomb Tower, Night Witch, Skeleton Barrel,
-Tombstone, and Witch. Chain topology (Electro Dragon/Spirit), line topology
-(Magic Archer/Bowler), fan topology (Firecracker), and damage ramps (Inferno
-Dragon/Tower) did not increase admission because those roots were already
-training-supported; those changes correct the transition dynamics seen by RL.
-Likewise circle/multi-target, shield, and charge work improved already-admitted
-cards without changing the support count.
-
-## Admission recommendation
-
-The data-derived `training_supported` bit is now separate from entity/spell
-allocatability and required by the legal mask. It fails closed for zero-payload
-spells, inert entities, and unresolved declared death children. The loader's
-top-level projectile overlay is also restricted to actual spells, so
-`MegaKnightAppear` no longer replaces Mega Knight's ordinary direct attack.
-This prevents the broad raw “64 allocatable cards” number from silently
-training policies against inert or qualitatively inverted card behavior.
+The 66/66 and 33/33 numbers prove fail-closed admission coverage for the
+current public root/deck manifest. They do not prove exact mechanics, policy
+quality, real-game calibration, CUDA throughput, or safe promotion of a
+trained checkpoint. Those remain separate gates.
