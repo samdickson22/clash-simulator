@@ -127,6 +127,27 @@ def test_dead_tower_slot_is_never_reused_by_deployment() -> None:
     assert full_mask[:, :, NO_OP_ACTION].all()
 
 
+def test_one_free_slot_prefers_player_zero_and_rolls_back_player_one() -> None:
+    runtime, _ = _runtime("cpu", max_entities=7)
+    before_hand = runtime.action_state.hand_ids.clone()
+    before_cycle = runtime.action_state.cycle_ids.clone()
+    before_head = runtime.action_state.cycle_head.clone()
+    before_elixir = runtime.action_state.elixir.clone()
+
+    result = runtime.step_tick(_knight_actions(runtime.device))
+
+    assert result.action_success.tolist() == [[True, False]]
+    assert int(runtime.state.owner[0, 6]) == 0
+    assert not torch.equal(runtime.action_state.cycle_head[0, 0], before_head[0, 0])
+    assert runtime.action_state.elixir[0, 0] < before_elixir[0, 0]
+    assert torch.equal(runtime.action_state.hand_ids[0, 1], before_hand[0, 1])
+    assert torch.equal(runtime.action_state.cycle_ids[0, 1], before_cycle[0, 1])
+    assert torch.equal(runtime.action_state.cycle_head[0, 1], before_head[0, 1])
+    torch.testing.assert_close(
+        runtime.action_state.elixir[0, 1], before_elixir[0, 1] + 0.05 / 2.8
+    )
+
+
 def test_runtime_advances_owned_effect_and_status_planes() -> None:
     runtime, _ = _runtime("cpu")
     runtime.step_tick(_knight_actions(runtime.device))
