@@ -26,7 +26,12 @@ from .simple_catalog import FastCardCatalog
 from .simple_effects import FastEffectState, FastEffectStepResult, step_fast_effects
 from .simple_engine import FastTensorGym
 from .simple_lifecycle import FastLifecycleState, step_fast_lifecycle_
-from .simple_modifiers import FastModifierState
+from .simple_modifiers import (
+    FastChargeParameters,
+    FastModifierState,
+    advance_fast_charge_,
+    pre_move_charge_multipliers,
+)
 from .simple_outcomes import (
     FAST_TOWER_SLOT_COUNT,
     FastMatchRules,
@@ -287,6 +292,21 @@ class SimpleGymRuntime:
         self.modifiers.charge_progress_distance_units.masked_fill_(mask, 0)
         self.modifiers.charge_ready.masked_fill_(mask, False)
 
+    def _charge_parameters(self) -> FastChargeParameters:
+        """Gather numeric charge descriptors for the current slot identities."""
+
+        catalog = self.action_kernel.catalog
+        safe_card = self.state.card_id.clamp(0, catalog.size - 1)
+        known = (self.state.card_id > 0) & (self.state.card_id < catalog.size)
+        threshold_distance = catalog.charge_threshold_distance_units[safe_card]
+        return FastChargeParameters(
+            enabled=known & (threshold_distance > 0),
+            threshold_ticks=catalog.charge_threshold_ticks[safe_card],
+            threshold_distance_units=threshold_distance,
+            ready_speed_multiplier=catalog.charge_ready_speed_multiplier[safe_card],
+            ready_damage_multiplier=catalog.charge_ready_damage_multiplier[safe_card],
+        )
+
     def _initialize_spawned_combat_(self, mask: torch.Tensor) -> None:
         """Fill ordinary combat planes for data-resolved death-spawn children."""
 
@@ -336,12 +356,14 @@ class SimpleGymRuntime:
         self,
         ingress: FastActionIngressResult,
         attack_ready: torch.Tensor,
+        attack_damage_multiplier: torch.Tensor,
     ) -> FastEffectCommands:
         """Put policy spell casts before entity-slot-ordered attacks."""
 
         spell_source_x = self.state.x_units.index_select(1, self._spell_source_slots)
         spell_source_y = self.state.y_units.index_select(1, self._spell_source_slots)
         zeros_i64 = torch.zeros_like(ingress.selected_card_ids)
+        ones_spell = torch.ones_like(ingress.selected_card_ids, dtype=torch.float32)
         spell = FastEffectCommands(
             ready=ingress.spell_cast,
             source_id=zeros_i64,
@@ -352,6 +374,7 @@ class SimpleGymRuntime:
             target_id=zeros_i64,
             target_x_units=ingress.selection.world_x_units.to(torch.int32),
             target_y_units=ingress.selection.world_y_units.to(torch.int32),
+            damage_multiplier=ones_spell,
         )
         zeros_entity = torch.zeros_like(self.state.x_units)
         attack = FastEffectCommands(
@@ -364,6 +387,7 @@ class SimpleGymRuntime:
             target_id=self.state.target_id,
             target_x_units=zeros_entity,
             target_y_units=zeros_entity,
+            damage_multiplier=attack_damage_multiplier,
         )
 
         def combined(name: str) -> torch.Tensor:
@@ -379,6 +403,7 @@ class SimpleGymRuntime:
             target_id=combined("target_id"),
             target_x_units=combined("target_x_units"),
             target_y_units=combined("target_y_units"),
+            damage_multiplier=combined("damage_multiplier"),
         )
 
     def step_tick(self, action_ids: torch.Tensor) -> SimpleGymRuntimeStep:
@@ -403,8 +428,15 @@ class SimpleGymRuntime:
         self._initialize_lifecycle_(self.combat.spawned_mask)
         self._initialize_modifiers_(self.combat.spawned_mask)
 
-        combat = self.combat.step_tick(disabled=self.entity_status_ticks > 0)
-        commands = self._effect_commands(ingress, combat.attack_ready)
+        charge_parameters = self._charge_parameters()
+        charge_view = pre_move_charge_multipliers(self.modifiers, charge_parameters)
+        combat = self.combat.step_tick(
+            disabled=self.entity_status_ticks > 0,
+            speed_multiplier=charge_view.speed,
+        )
+        commands = self._effect_commands(
+            ingress, combat.attack_ready, charge_view.damage
+        )
         allocation = allocate_fast_attack_effects_(
             self.state,
             self.effects,
@@ -414,7 +446,16 @@ class SimpleGymRuntime:
         )
         spell_allocated = allocation.accepted[:, :2]
         attack_allocated = allocation.accepted[:, 2:]
-        self.combat.commit_attacks_(combat.attack_ready, attack_allocated)
+        committed_attacks = self.combat.commit_attacks_(
+            combat.attack_ready, attack_allocated
+        )
+        advance_fast_charge_(
+            self.modifiers,
+            charge_parameters,
+            active=self.state.active,
+            moved_distance_units=combat.moved_distance_units,
+            attacked=committed_attacks,
+        )
 
         failed_deployment = (ingress.entity_deployment & ~deployed) | (
             ingress.spell_cast & ~spell_allocated

@@ -17,7 +17,9 @@ def _runtime(device_name: str) -> tuple[SimpleGymRuntime, dict[str, int]]:
         pytest.skip("CUDA unavailable")
     device = torch.device(device_name)
     loader = BattleState().card_loader
-    full = TensorCardCatalog.compile(loader, ["Guards", "Knight"], device=device)
+    full = TensorCardCatalog.compile(
+        loader, ["Guards", "Knight", "Prince"], device=device
+    )
     catalog = FastCardCatalog.from_tensor_catalog(full, loader=loader)
     guards = full.name_to_id["Guards"]
     decks = torch.full((1, 2, 8), guards, dtype=torch.int64, device=device)
@@ -118,3 +120,81 @@ def test_guards_multisummon_shields_and_knight_whole_hits(device_name: str) -> N
     assert not bool(runtime.state.active[0, guard_slot])
     assert float(runtime.state.hp[0, guard_slot]) == 0.0
     assert float(runtime.modifiers.max_shield[0, guard_slot]) == 0.0
+
+
+def _seed_prince_trace(
+    runtime: SimpleGymRuntime, ids: dict[str, int]
+) -> tuple[int, int]:
+    state = runtime.state
+    catalog = runtime.action_kernel.catalog
+    prince_slot, target_slot = 6, 7
+    prince = ids["Prince"]
+    state.active[0, prince_slot : target_slot + 1] = True
+    state.stable_id[0, prince_slot : target_slot + 1] = torch.tensor(
+        [7, 8], device=runtime.device
+    )
+    state.next_stable_id[0] = 9
+    state.owner[0, prince_slot : target_slot + 1] = torch.tensor(
+        [0, 1], device=runtime.device
+    )
+    state.card_id[0, prince_slot] = prince
+    state.kind[0, prince_slot : target_slot + 1] = 0
+    state.x_units[0, prince_slot : target_slot + 1] = 9_000
+    state.y_units[0, prince_slot : target_slot + 1] = torch.tensor(
+        [10_000, 15_000], device=runtime.device
+    )
+    state.hp[0, prince_slot] = catalog.hitpoints[prince]
+    state.max_hp[0, prince_slot] = catalog.hitpoints[prince]
+    state.hp[0, target_slot] = 5_000.0
+    state.max_hp[0, target_slot] = 5_000.0
+    state.damage[0, prince_slot] = catalog.damage[prince]
+    state.range_units[0, prince_slot] = catalog.range_units[prince]
+    state.sight_range_units[0, prince_slot] = catalog.sight_range_units[prince]
+    state.speed_units_per_tick[0, prince_slot] = catalog.speed_units_per_tick[prince]
+    state.hit_cooldown_ticks[0, prince_slot] = catalog.hit_cooldown_ticks[prince]
+    runtime.entity_status_ticks[0, target_slot] = 1_000
+    mask = torch.zeros_like(state.active)
+    mask[0, prince_slot : target_slot + 1] = True
+    runtime._initialize_modifiers_(mask)
+    return prince_slot, target_slot
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_prince_charge_threshold_speed_damage_and_reset(device_name: str) -> None:
+    runtime, ids = _runtime(device_name)
+    prince_slot, target_slot = _seed_prince_trace(runtime, ids)
+    catalog = runtime.action_kernel.catalog
+    prince = ids["Prince"]
+    assert int(catalog.charge_threshold_distance_units[prince]) == 2_500
+    assert float(catalog.charge_ready_speed_multiplier[prince]) == 2.0
+    assert float(catalog.effect_damage[prince]) == 391.0
+
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
+    for _ in range(42):
+        runtime.step_tick(noop)
+    assert bool(runtime.modifiers.charge_ready[0, prince_slot])
+    assert (
+        int(runtime.modifiers.charge_progress_distance_units[0, prince_slot]) == 2_520
+    )
+
+    before_y = int(runtime.state.y_units[0, prince_slot])
+    runtime.step_tick(noop)
+    assert int(runtime.state.y_units[0, prince_slot]) - before_y == 120
+
+    before_hp = float(runtime.state.hp[0, target_slot])
+    accepted = False
+    effect_damage = 0.0
+    for _ in range(20):
+        result = runtime.step_tick(noop)
+        command = 2 + prince_slot
+        if bool(result.effect_allocation.accepted[0, command]):
+            effect_slot = int(result.effect_allocation.effect_slot[0, command])
+            effect_damage = float(runtime.effects.damage[0, effect_slot])
+            accepted = True
+            break
+    assert accepted
+    assert effect_damage == pytest.approx(783.0)
+    assert before_hp - float(runtime.state.hp[0, target_slot]) == pytest.approx(783.0)
+    assert not bool(runtime.modifiers.charge_ready[0, prince_slot])
+    assert int(runtime.modifiers.charge_progress_ticks[0, prince_slot]) == 0
+    assert int(runtime.modifiers.charge_progress_distance_units[0, prince_slot]) == 0

@@ -56,6 +56,10 @@ class FastCardCatalog:
     death_spawn_radius_units: torch.Tensor
     death_spawn_deploy_ticks: torch.Tensor
     shield_hitpoints: torch.Tensor
+    charge_threshold_ticks: torch.Tensor
+    charge_threshold_distance_units: torch.Tensor
+    charge_ready_speed_multiplier: torch.Tensor
+    charge_ready_damage_multiplier: torch.Tensor
     deploy_w_tile_margin: torch.Tensor
     can_deploy_on_enemy_side: torch.Tensor
     effect_kind: torch.Tensor
@@ -114,6 +118,18 @@ class FastCardCatalog:
             catalog.range_units, dtype=torch.int32
         )
         shield_hitpoints = torch.zeros_like(catalog.hitpoints, dtype=torch.float32)
+        charge_threshold_ticks = torch.zeros_like(
+            catalog.range_units, dtype=torch.int32
+        )
+        charge_threshold_distance_units = torch.zeros_like(
+            catalog.range_units, dtype=torch.int32
+        )
+        charge_ready_speed_multiplier = torch.ones_like(
+            catalog.hitpoints, dtype=torch.float32
+        )
+        charge_ready_damage_multiplier = torch.ones_like(
+            catalog.hitpoints, dtype=torch.float32
+        )
         shield_opcode = int(MECHANIC_OPCODE["Shield"])
         shield_slots = catalog.mechanic_opcode == shield_opcode
         if "shield_hp" in catalog.mechanic_parameter_names:
@@ -227,6 +243,30 @@ class FastCardCatalog:
                     "TID_TARGETS_BUILDINGS",
                 }
                 buildings_only[card_id] = target_type == "TID_TARGETS_BUILDINGS"
+                charge_range = int(getattr(card, "charge_range", 0) or 0)
+                if charge_range > 0:
+                    # Serialized charge work is measured in ten-unit chunks;
+                    # the simple mover accumulates absolute logic distance.
+                    charge_threshold_distance_units[card_id] = charge_range * 10
+                    charge_ready_speed_multiplier[card_id] = max(
+                        0.0,
+                        float(getattr(card, "charge_speed_multiplier", 100) or 100)
+                        / 100.0,
+                    )
+                    base_damage = float(
+                        getattr(card, "scaled_damage", 0.0)
+                        or getattr(card, "damage", 0.0)
+                        or 0.0
+                    )
+                    charged_damage = float(
+                        getattr(card, "scaled_damage_special", 0.0)
+                        or getattr(card, "damage_special", 0.0)
+                        or base_damage
+                    )
+                    if base_damage > 0:
+                        charge_ready_damage_multiplier[card_id] = max(
+                            0.0, charged_damage / base_damage
+                        )
                 character = (
                     raw.get("summonCharacterData") or raw.get("summonSpellData") or {}
                 )
@@ -356,6 +396,10 @@ class FastCardCatalog:
             death_spawn_radius_units=death_spawn_radius_units,
             death_spawn_deploy_ticks=death_spawn_deploy_ticks,
             shield_hitpoints=shield_hitpoints,
+            charge_threshold_ticks=charge_threshold_ticks,
+            charge_threshold_distance_units=charge_threshold_distance_units,
+            charge_ready_speed_multiplier=charge_ready_speed_multiplier,
+            charge_ready_damage_multiplier=charge_ready_damage_multiplier,
             deploy_w_tile_margin=catalog.deploy_w_tile_margin.to(torch.int8),
             can_deploy_on_enemy_side=catalog.can_deploy_on_enemy_side.to(torch.bool),
             effect_kind=effect_kind,

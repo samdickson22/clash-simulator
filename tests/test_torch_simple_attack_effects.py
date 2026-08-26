@@ -125,11 +125,14 @@ def test_ready_attacks_and_spell_commands_allocate_effects(device: str) -> None:
             dtype=torch.int32,
             device=state.device,
         ),
+        damage_multiplier=torch.tensor(
+            [[1.0], [1.0], [1.0], [1.0], [2.0]],
+            dtype=torch.float32,
+            device=state.device,
+        ),
     )
 
-    result = allocate_fast_attack_effects_(
-        state, effects, consumed, catalog, commands
-    )
+    result = allocate_fast_attack_effects_(state, effects, consumed, catalog, commands)
 
     assert result.accepted.tolist() == [[True]] * 5
     assert result.projectile[:, 0].tolist() == [True, True, False, True, False]
@@ -147,6 +150,9 @@ def test_ready_attacks_and_spell_commands_allocate_effects(device: str) -> None:
     assert effects.damage[1, 0].item() == pytest.approx(269.0)
     assert effects.tower_damage_multiplier[1, 0].item() == pytest.approx(0.25)
     assert effects.damage[2, 0].item() == pytest.approx(144.0)
+    assert effects.damage[4, 0].item() == pytest.approx(
+        float(catalog.effect_damage[ids["Knight"]]) * 2.0
+    )
     assert effects.tower_damage_multiplier[2, 0].item() == pytest.approx(0.20)
     assert effects.tracks_target[:, 0].tolist() == [True, False, False, True, False]
     assert effects.target_x_units[1:3, 0].tolist() == [1000, 9000]
@@ -173,11 +179,10 @@ def test_attack_effect_allocation_fails_closed_and_preserves_live_pool() -> None
         target_id=torch.zeros((1, 2), dtype=torch.int64),
         target_x_units=torch.zeros((1, 2), dtype=torch.int32),
         target_y_units=torch.zeros((1, 2), dtype=torch.int32),
+        damage_multiplier=torch.ones((1, 2), dtype=torch.float32),
     )
 
-    result = allocate_fast_attack_effects_(
-        state, effects, consumed, catalog, commands
-    )
+    result = allocate_fast_attack_effects_(state, effects, consumed, catalog, commands)
 
     assert result.accepted.tolist() == [[False, False]]
     assert result.capacity_rejected.tolist() == [[True, False]]

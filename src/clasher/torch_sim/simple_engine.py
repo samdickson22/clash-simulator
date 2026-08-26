@@ -39,6 +39,7 @@ class FastGymTickResult:
     done: torch.Tensor
     winner: torch.Tensor
     attack_ready: torch.Tensor
+    moved_distance_units: torch.Tensor
 
 
 class FastTensorGym:
@@ -106,14 +107,12 @@ class FastTensorGym:
         """Choose an enemy reserved building when ordinary sight is empty."""
 
         state = self.state
-        delta_x = (
-            state.x_units[:, :, None].to(torch.int64)
-            - state.x_units[:, None, :].to(torch.int64)
-        )
-        delta_y = (
-            state.y_units[:, :, None].to(torch.int64)
-            - state.y_units[:, None, :].to(torch.int64)
-        )
+        delta_x = state.x_units[:, :, None].to(torch.int64) - state.x_units[
+            :, None, :
+        ].to(torch.int64)
+        delta_y = state.y_units[:, :, None].to(torch.int64) - state.y_units[
+            :, None, :
+        ].to(torch.int64)
         distance_sq = delta_x.square() + delta_y.square()
         reserved_building = (
             (self._slots < self.reserved_slot_floor)
@@ -321,7 +320,11 @@ class FastTensorGym:
         self.spawned_mask.copy_(spawned)
         return torch.stack(tuple(accepted), dim=1)
 
-    def _ordinary_troop_phase(self, disabled: torch.Tensor) -> torch.Tensor:
+    def _ordinary_troop_phase(
+        self,
+        disabled: torch.Tensor,
+        speed_multiplier: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """Acquire and approach, returning attacks ready for effect allocation.
 
         Disabled entities remain present as targets but cannot acquire a
@@ -358,14 +361,17 @@ class FastTensorGym:
         delta_y = target_y - state.y_units.to(torch.float32)
         distance = torch.where(found, targets.center_distance, navigation_distance)
         attack_range = state.range_units.to(torch.float32).clamp(min=0)
+        effective_speed = state.speed_units_per_tick.to(
+            torch.float32
+        ) * speed_multiplier.clamp(min=0.0)
         approach_travel = torch.minimum(
-            state.speed_units_per_tick.to(torch.float32).clamp(min=0),
+            effective_speed,
             (targets.edge_distance - attack_range).clamp(min=0),
         )
         travel = torch.where(
             found,
             approach_travel,
-            state.speed_units_per_tick.to(torch.float32).clamp(min=0),
+            effective_speed,
         )
         mobile = (
             has_destination
@@ -379,6 +385,16 @@ class FastTensorGym:
         move_y = torch.round(delta_y * travel / denominator).to(torch.int32)
         state.x_units.add_(torch.where(mobile, move_x, 0))
         state.y_units.add_(torch.where(mobile, move_y, 0))
+        moved_distance = torch.where(
+            mobile,
+            torch.round(
+                torch.sqrt(
+                    move_x.to(torch.float32).square()
+                    + move_y.to(torch.float32).square()
+                )
+            ).to(torch.int32),
+            0,
+        )
 
         target_x = state.x_units.gather(1, nearest_slot).to(torch.float32)
         target_y = state.y_units.gather(1, nearest_slot).to(torch.float32)
@@ -388,13 +404,14 @@ class FastTensorGym:
         post_edge_distance = (
             torch.sqrt(post_dx.square() + post_dy.square()) - target_radius
         ).clamp_min(0.0)
-        return (
+        attack_ready = (
             found
             & can_act
             & (state.cooldown_ticks == 0)
             & (post_edge_distance <= attack_range)
             & (state.damage > 0)
         )
+        return attack_ready, moved_distance
 
     def commit_attacks_(
         self, attack_ready: torch.Tensor, effect_allocated: torch.Tensor
@@ -427,6 +444,7 @@ class FastTensorGym:
         request: FastDeploymentRequest | None = None,
         *,
         disabled: torch.Tensor | None = None,
+        speed_multiplier: torch.Tensor | None = None,
     ) -> FastGymTickResult:
         """Advance every live row once and optionally allocate one entity.
 
@@ -444,6 +462,14 @@ class FastTensorGym:
             raise ValueError("disabled must use the state device")
         elif disabled.dtype != torch.bool:
             raise ValueError("disabled must be bool")
+        if speed_multiplier is None:
+            speed_multiplier = torch.ones_like(state.damage)
+        elif speed_multiplier.shape != state.active.shape:
+            raise ValueError("speed_multiplier must have shape [batch, entities]")
+        elif speed_multiplier.device != state.device:
+            raise ValueError("speed_multiplier must use the state device")
+        elif speed_multiplier.dtype != torch.float32:
+            raise ValueError("speed_multiplier must be float32")
         live = ~state.game_over
         if request is None:
             success = torch.zeros(
@@ -466,7 +492,9 @@ class FastTensorGym:
         state.deploy_ticks.sub_(ready.to(torch.int32)).clamp_(min=0)
         cooling = state.active & ~disabled & (state.cooldown_ticks > 0)
         state.cooldown_ticks.sub_(cooling.to(torch.int32)).clamp_(min=0)
-        attack_ready = self._ordinary_troop_phase(disabled)
+        attack_ready, moved_distance = self._ordinary_troop_phase(
+            disabled, speed_multiplier
+        )
         state.tick.add_(live.to(torch.int64))
         return FastGymTickResult(
             committed=live,
@@ -475,4 +503,5 @@ class FastTensorGym:
             done=state.game_over.clone(),
             winner=state.winner.clone(),
             attack_ready=attack_ready,
+            moved_distance_units=moved_distance,
         )

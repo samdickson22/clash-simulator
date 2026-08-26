@@ -43,6 +43,7 @@ class FastEffectCommands:
     target_id: torch.Tensor
     target_x_units: torch.Tensor
     target_y_units: torch.Tensor
+    damage_multiplier: torch.Tensor
 
     @property
     def batch_size(self) -> int:
@@ -96,10 +97,15 @@ def _validate(
         raise ValueError("card_id must be int64")
     if commands.target_id.dtype != torch.int64:
         raise ValueError("target_id must be int64")
+    if commands.damage_multiplier.dtype != torch.float32:
+        raise ValueError("damage_multiplier must be float32")
     expected_pool = (state.batch_size, effects.max_effects)
     if tuple(consume_source_id.shape) != expected_pool:
         raise ValueError("consume_source_id must have shape [batch, effects]")
-    if consume_source_id.device != state.device or consume_source_id.dtype != torch.int64:
+    if (
+        consume_source_id.device != state.device
+        or consume_source_id.dtype != torch.int64
+    ):
         raise ValueError("consume_source_id must be int64 on the state device")
 
 
@@ -194,11 +200,20 @@ def allocate_fast_attack_effects_(
     )
     free = ~effects.active
     slots = torch.arange(max_effects, dtype=torch.int64, device=state.device)
-    free_slots = torch.where(
-        free,
-        slots.view(1, -1),
-        torch.full((batch, max_effects), max_effects, dtype=torch.int64, device=state.device),
-    ).sort(dim=1).values
+    free_slots = (
+        torch.where(
+            free,
+            slots.view(1, -1),
+            torch.full(
+                (batch, max_effects),
+                max_effects,
+                dtype=torch.int64,
+                device=state.device,
+            ),
+        )
+        .sort(dim=1)
+        .values
+    )
     command_rank = candidate.to(torch.int64).cumsum(dim=1) - 1
     available = free.sum(dim=1, dtype=torch.int64)
     accepted = candidate & (command_rank < available[:, None])
@@ -206,9 +221,12 @@ def allocate_fast_attack_effects_(
     allocated_slot = free_slots.gather(1, safe_rank)
     effect_slot = torch.where(accepted, allocated_slot, -1)
 
-    destination = functional.one_hot(
-        effect_slot.clamp(min=0), num_classes=max_effects
-    ).to(torch.bool) & accepted[:, :, None]
+    destination = (
+        functional.one_hot(effect_slot.clamp(min=0), num_classes=max_effects).to(
+            torch.bool
+        )
+        & accepted[:, :, None]
+    )
     written = destination.any(dim=1)
 
     def write(field: torch.Tensor, value: torch.Tensor) -> None:
@@ -219,7 +237,9 @@ def allocate_fast_attack_effects_(
     effect_kind = torch.where(projectile, FAST_EFFECT_PROJECTILE, FAST_EFFECT_AREA)
     effect_x = torch.where(projectile, source_x, target_x)
     effect_y = torch.where(projectile, source_y, target_y)
-    damage = catalog.effect_damage[safe_card]
+    damage = catalog.effect_damage[safe_card] * commands.damage_multiplier.clamp(
+        min=0.0
+    )
     dx = target_x.to(torch.float32) - source_x.to(torch.float32)
     dy = target_y.to(torch.float32) - source_y.to(torch.float32)
     distance = torch.sqrt(dx.square() + dy.square())
