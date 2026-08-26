@@ -78,6 +78,16 @@ from .simple_projection import (
     SimpleProjectionInputs,
     SimpleTensorProjector,
 )
+from .simple_scheduled_spawns import (
+    FastScheduledAreaEffectCommands,
+    FastScheduledCastAllocationResult,
+    FastScheduledCastCommands,
+    FastScheduledCastState,
+    FastScheduledCastStepResult,
+    FastScheduledSpawnCommands,
+    allocate_fast_scheduled_casts_,
+    step_fast_scheduled_casts_,
+)
 from .simple_spawn_blueprints import (
     FastSpawnAllocationResult,
     FastSpawnBlueprintCatalog,
@@ -110,6 +120,10 @@ class SimpleGymRuntimeStep:
     spawn_allocation: FastSpawnAllocationResult | None
     payload_spawn_allocation: FastSpawnAllocationResult | None
     periodic_spawn_allocation: FastSpawnAllocationResult | None
+    scheduled_cast_allocation: FastScheduledCastAllocationResult | None
+    scheduled_casts: FastScheduledCastStepResult | None
+    scheduled_effect_allocation: FastPayloadEffectAllocationResult | None
+    scheduled_spawn_allocation: FastSpawnAllocationResult | None
     death_bursts: tuple[FastDeathBurstStepResult, FastDeathBurstStepResult]
     death_burst_effects: tuple[FastEffectStepResult, FastEffectStepResult]
 
@@ -129,6 +143,7 @@ class SimpleGymRuntime:
         max_entities: int = 64,
         max_effects: int = 64,
         max_payload_containers: int = 32,
+        max_scheduled_casts: int = 16,
         starting_elixir: float = 6.0,
         max_elixir: float = 10.0,
         include_privileged_critic: bool = False,
@@ -253,6 +268,15 @@ class SimpleGymRuntime:
                 device=self.state.device,
             )
             if self.periodic_catalog is not None
+            else None
+        )
+        self.scheduled_casts = (
+            FastScheduledCastState.empty(
+                self.state.batch_size,
+                max_casts=max_scheduled_casts,
+                device=self.state.device,
+            )
+            if spawn_blueprints is not None
             else None
         )
         entity_shape = (self.state.batch_size, self.state.max_entities)
@@ -387,6 +411,8 @@ class SimpleGymRuntime:
         }
         if self.periodic_spawns is not None:
             templates["periodic_spawns"] = self._tensor_fields(self.periodic_spawns)
+        if self.scheduled_casts is not None:
+            templates["scheduled_casts"] = self._tensor_fields(self.scheduled_casts)
         return templates
 
     @staticmethod
@@ -452,6 +478,8 @@ class SimpleGymRuntime:
         }
         if self.periodic_spawns is not None:
             objects["periodic_spawns"] = self.periodic_spawns
+        if self.scheduled_casts is not None:
+            objects["scheduled_casts"] = self.scheduled_casts
         for group, owner in objects.items():
             for name, template in self._initial_templates[group].items():
                 self._restore_rows_(getattr(owner, name), template, reset_mask)
@@ -727,6 +755,98 @@ class SimpleGymRuntime:
         )
         return burst, effect
 
+    def _scheduled_cast_commands(
+        self,
+        ingress: FastActionIngressResult,
+    ) -> tuple[torch.Tensor, FastScheduledCastCommands] | None:
+        """Decode supported spell rows into the numeric delayed-cast pool."""
+
+        if self.spawn_blueprints is None or self.scheduled_casts is None:
+            return None
+        catalog = self.spawn_blueprints
+        safe_card = ingress.selected_card_ids.clamp(0, catalog.fast_cards.size - 1)
+        row = catalog.scheduled_blueprint_by_card[safe_card]
+        scheduled = ingress.spell_cast & (row >= 0)
+        safe_row = row.clamp(0, max(0, catalog.blueprint_count - 1))
+        zeros_i8 = torch.zeros_like(ingress.selected_card_ids, dtype=torch.int8)
+        zeros_i32 = torch.zeros_like(ingress.selected_card_ids, dtype=torch.int32)
+        return scheduled, FastScheduledCastCommands(
+            ready=scheduled,
+            owner=self._effect_owners,
+            source_card_id=ingress.selected_card_ids,
+            x_units=ingress.selection.world_x_units.to(torch.int32),
+            y_units=ingress.selection.world_y_units.to(torch.int32),
+            first_delay_ticks=catalog.first_delay_ticks[safe_row],
+            interval_ticks=catalog.interval_ticks[safe_row],
+            waves=catalog.max_waves[safe_row],
+            child_card_id=catalog.child_card_id[safe_row],
+            count=catalog.count[safe_row].to(torch.int32),
+            radius_units=catalog.radius_units[safe_row],
+            deploy_ticks=catalog.deploy_ticks[safe_row],
+            initial_damage=catalog.scheduled_initial_damage[safe_row],
+            initial_radius_units=(catalog.scheduled_initial_radius_units[safe_row]),
+            initial_status_kind=zeros_i8,
+            initial_status_duration_ticks=zeros_i32,
+            tower_damage_multiplier=(
+                catalog.scheduled_tower_damage_multiplier[safe_row]
+            ),
+            building_damage_multiplier=(
+                catalog.scheduled_building_damage_multiplier[safe_row]
+            ),
+            hits_air=catalog.scheduled_hits_air[safe_row],
+            hits_ground=catalog.scheduled_hits_ground[safe_row],
+        )
+
+    @staticmethod
+    def _scheduled_effect_commands(
+        commands: FastScheduledAreaEffectCommands,
+    ) -> FastPayloadEffectCommands:
+        return FastPayloadEffectCommands(
+            ready=commands.ready,
+            payload_stable_id=commands.cast_stable_id,
+            source_id=commands.cast_stable_id,
+            owner=commands.owner,
+            effect_card_id=commands.source_card_id,
+            x_units=commands.x_units,
+            y_units=commands.y_units,
+            damage=commands.damage,
+            radius_units=commands.radius_units,
+            status_kind=commands.status_kind,
+            status_duration_ticks=commands.status_duration_ticks,
+            tower_damage_multiplier=commands.tower_damage_multiplier,
+            building_damage_multiplier=commands.building_damage_multiplier,
+            hits_air=commands.hits_air,
+            hits_ground=commands.hits_ground,
+        )
+
+    def _scheduled_spawn_commands(
+        self,
+        commands: FastScheduledSpawnCommands,
+    ) -> FastSpawnCommands:
+        """Spread single-child waves deterministically within their cast area."""
+
+        single = commands.ready & (commands.count == 1) & (commands.radius_units > 0)
+        phase = torch.remainder(
+            commands.cast_stable_id * 1_103_515_245
+            + self.state.tick[:, None] * 12_345,
+            65_536,
+        ).to(torch.float32) * (2.0 * torch.pi / 65_536.0)
+        distance = torch.round(commands.radius_units.to(torch.float32) * 0.75)
+        offset_x = torch.round(torch.cos(phase) * distance).to(torch.int32)
+        offset_y = torch.round(torch.sin(phase) * distance).to(torch.int32)
+        return FastSpawnCommands(
+            ready=commands.ready,
+            owner=commands.owner,
+            child_card_id=commands.child_card_id,
+            x_units=torch.where(single, commands.x_units + offset_x, commands.x_units),
+            y_units=torch.where(single, commands.y_units + offset_y, commands.y_units),
+            count=commands.count,
+            radius_units=torch.where(
+                single, torch.zeros_like(commands.radius_units), commands.radius_units
+            ),
+            deploy_ticks=commands.deploy_ticks,
+        )
+
     def _legal_action_mask(self) -> torch.Tensor:
         mask = self.action_kernel.legal_action_mask(self.action_state)
         free_deploy_slots = (~self.state.active[:, FAST_TOWER_SLOT_COUNT:]).sum(dim=1)
@@ -750,11 +870,42 @@ class SimpleGymRuntime:
                 impact_count,
                 required_slots,
             )
+            scheduled_row = self.spawn_blueprints.scheduled_blueprint_by_card[
+                safe_card
+            ]
+            has_scheduled = scheduled_row >= 0
+            safe_scheduled = scheduled_row.clamp(
+                0, self.spawn_blueprints.blueprint_count - 1
+            )
+            scheduled_count = self.spawn_blueprints.count[safe_scheduled].to(
+                torch.int64
+            )
+            required_slots = torch.where(
+                has_scheduled,
+                scheduled_count,
+                required_slots,
+            )
+        else:
+            has_scheduled = torch.zeros_like(spell)
         enough_deploy_slots = free_deploy_slots[:, None, None] >= required_slots
+        has_cast_slot = (
+            (~self.scheduled_casts.active).any(dim=1)
+            if self.scheduled_casts is not None
+            else torch.zeros(self.batch_size, dtype=torch.bool, device=self.device)
+        )
+        scheduled_capacity = (
+            has_cast_slot[:, None, None]
+            & has_effect_slot[:, None, None]
+            & enough_deploy_slots
+        )
         capacity = torch.where(
-            spell,
-            has_effect_slot[:, None, None] & enough_deploy_slots,
-            enough_deploy_slots,
+            has_scheduled,
+            scheduled_capacity,
+            torch.where(
+                spell,
+                has_effect_slot[:, None, None] & enough_deploy_slots,
+                enough_deploy_slots,
+            ),
         )
         placement_capacity = (
             capacity[..., None]
@@ -769,6 +920,7 @@ class SimpleGymRuntime:
         ingress: FastActionIngressResult,
         attack_ready: torch.Tensor,
         attack_damage_multiplier: torch.Tensor,
+        scheduled_spell: torch.Tensor,
     ) -> FastEffectCommands:
         """Put policy spell casts before entity-slot-ordered attacks."""
 
@@ -777,7 +929,7 @@ class SimpleGymRuntime:
         zeros_i64 = torch.zeros_like(ingress.selected_card_ids)
         ones_spell = torch.ones_like(ingress.selected_card_ids, dtype=torch.float32)
         spell = FastEffectCommands(
-            ready=ingress.spell_cast,
+            ready=ingress.spell_cast & ~scheduled_spell,
             source_id=zeros_i64,
             owner=self._effect_owners,
             card_id=ingress.selected_card_ids,
@@ -836,6 +988,16 @@ class SimpleGymRuntime:
         ingress = self.action_kernel.ingress(
             self.action_state, action_ids, legal_mask=legal_mask
         )
+        scheduled_spell = torch.zeros_like(ingress.spell_cast)
+        scheduled_cast_allocation: FastScheduledCastAllocationResult | None = None
+        scheduled_request = self._scheduled_cast_commands(ingress)
+        if scheduled_request is not None and self.scheduled_casts is not None:
+            scheduled_spell, scheduled_commands = scheduled_request
+            scheduled_cast_allocation = allocate_fast_scheduled_casts_(
+                self.scheduled_casts,
+                scheduled_commands,
+                tick=self.state.tick,
+            )
         deployed = self.combat.deploy_many_once(ingress.requests)
         self._initialize_lifecycle_(self.combat.spawned_mask)
         self._initialize_modifiers_(self.combat.spawned_mask)
@@ -869,7 +1031,10 @@ class SimpleGymRuntime:
         attack_ready = combat.attack_ready & (ramp.retarget_delay_ticks == 0)
         attack_damage_multiplier = charge_view.damage * ramp.damage_multiplier
         commands = self._effect_commands(
-            ingress, attack_ready, attack_damage_multiplier
+            ingress,
+            attack_ready,
+            attack_damage_multiplier,
+            scheduled_spell,
         )
         allocation = allocate_fast_attack_effects_(
             self.state,
@@ -878,7 +1043,16 @@ class SimpleGymRuntime:
             self.action_kernel.catalog,
             commands,
         )
-        spell_allocated = allocation.accepted[:, :2]
+        immediate_spell_allocated = allocation.accepted[:, :2]
+        spell_allocated = (
+            torch.where(
+                scheduled_spell,
+                scheduled_cast_allocation.accepted,
+                immediate_spell_allocated,
+            )
+            if scheduled_cast_allocation is not None
+            else immediate_spell_allocated
+        )
         attack_allocated = allocation.accepted[:, 2:]
         committed_attacks = self.combat.commit_attacks_(attack_ready, attack_allocated)
         advance_fast_charge_(
@@ -923,6 +1097,33 @@ class SimpleGymRuntime:
             self.effect_consume_source_id,
             payload_result.effect_commands,
         )
+        scheduled_step: FastScheduledCastStepResult | None = None
+        scheduled_effect_allocation: FastPayloadEffectAllocationResult | None = None
+        scheduled_spawn_allocation: FastSpawnAllocationResult | None = None
+        if self.scheduled_casts is not None:
+            scheduled_step = step_fast_scheduled_casts_(
+                self.scheduled_casts,
+                tick=self.state.tick,
+            )
+            scheduled_effect_allocation = allocate_fast_payload_effects_(
+                self.state,
+                self.effects,
+                self.effect_consume_source_id,
+                self._scheduled_effect_commands(scheduled_step.effect_commands),
+            )
+            scheduled_spawn_allocation = allocate_fast_spawns_(
+                self.state,
+                self.action_kernel.catalog,
+                self._scheduled_spawn_commands(scheduled_step.spawn_commands),
+                reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+            )
+            scheduled_spawned = scheduled_spawn_allocation.spawned_mask
+            self.entity_status_kind.masked_fill_(scheduled_spawned, 0)
+            self.entity_status_ticks.masked_fill_(scheduled_spawned, 0)
+            self._initialize_spawned_combat_(scheduled_spawned)
+            self._initialize_lifecycle_(scheduled_spawned)
+            self._initialize_modifiers_(scheduled_spawned)
+            self._clear_damage_ramp_(scheduled_spawned)
         effect_result = step_fast_effects(
             self.state,
             self.effects,
@@ -1058,6 +1259,10 @@ class SimpleGymRuntime:
             spawn_allocation=spawn_allocation,
             payload_spawn_allocation=payload_spawn_allocation,
             periodic_spawn_allocation=periodic_spawn_allocation,
+            scheduled_cast_allocation=scheduled_cast_allocation,
+            scheduled_casts=scheduled_step,
+            scheduled_effect_allocation=scheduled_effect_allocation,
+            scheduled_spawn_allocation=scheduled_spawn_allocation,
             death_bursts=(death_burst_first, death_burst_second),
             death_burst_effects=(death_effect_first, death_effect_second),
         )

@@ -13,15 +13,15 @@
   },
   "counts": {
     "candidate_decks": 33,
-    "supported_decks": 9,
-    "rejected_decks": 24,
+    "supported_decks": 10,
+    "rejected_decks": 23,
     "public_cards": 66,
-    "supported_public_cards": 60,
-    "unsupported_public_cards": 6
+    "supported_public_cards": 63,
+    "unsupported_public_cards": 3
   },
   "support_profile": {
     "version": 1,
-    "sha256": "47677cee362f0c9fd424de9598c9101a798ac8c65e96aa51d1bb1953128e9094",
+    "sha256": "2e8fcc490ac86a25a799666a149adf942b5341d09a75c654f8f0765a812c5b38",
     "supported_public_cards": [
       "ArcherQueen",
       "Archers",
@@ -48,6 +48,8 @@
       "GiantSnowball",
       "GoblinBarrel",
       "GoblinGang",
+      "Golem",
+      "Graveyard",
       "Guards",
       "HogRider",
       "IceGolem",
@@ -70,6 +72,7 @@
       "Prince",
       "Princess",
       "Rocket",
+      "RoyalDelivery",
       "RoyalGhost",
       "RoyalHogs",
       "SkeletonBarrel",
@@ -86,14 +89,24 @@
     ],
     "unsupported_public_cards": [
       "BarbarianBarrel",
-      "Golem",
-      "Graveyard",
       "Log",
-      "Lumberjack",
-      "RoyalDelivery"
+      "Lumberjack"
     ]
   },
   "decks": [
+    {
+      "name": "Giant GY Bowler Witch",
+      "cards": [
+        "Arrows",
+        "Bowler",
+        "Giant",
+        "GiantSnowball",
+        "Graveyard",
+        "Guards",
+        "Minions",
+        "Witch"
+      ]
+    },
     {
       "name": "Pekka Bandit EWiz Bridge Spam",
       "cards": [

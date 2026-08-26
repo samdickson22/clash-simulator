@@ -30,7 +30,7 @@ from clasher.mechanics.shared.death_effects import DeathDamage, DeathSpawn
 from clasher.mechanics.shared.spawner import PeriodicSpawner
 
 from .catalog import TensorCardCatalog
-from .simple_catalog import FastCardCatalog
+from .simple_catalog import FAST_CARD_EFFECT_AREA, FastCardCatalog
 from .simple_death_burst import FastDeathBurstCatalog
 from .simple_effects import FastEffectState
 from .simple_payload_containers import (
@@ -285,31 +285,73 @@ def _spawn_requirements(
         action = area.get("onStartingActionData")
         if isinstance(action, dict):
             subactions = action.get("subActionsData") or []
-            if any(
-                isinstance(value, dict)
-                and (value.get("spawnCharacter") or value.get("spawnCharacterData"))
+            spawn_actions = [
+                value
                 for value in subactions
-            ):
-                first = next(value for value in subactions if isinstance(value, dict))
+                if isinstance(value, dict)
+                and (value.get("spawnCharacter") or value.get("spawnCharacterData"))
+            ]
+            if spawn_actions:
+                first = spawn_actions[0]
                 child = first.get("spawnCharacterData")
+                delays = action.get("subActionsDelay") or []
+                delay_ticks = [_ticks(value) for value in delays]
+                same_child = all(
+                    str(
+                        ((value.get("spawnCharacterData") or {}).get("name"))
+                        or value.get("spawnCharacter")
+                        or ""
+                    )
+                    == str(
+                        (child or {}).get("name")
+                        or first.get("spawnCharacter")
+                        or ""
+                    )
+                    for value in spawn_actions
+                )
+                regular_schedule = bool(
+                    len(delay_ticks) == len(spawn_actions)
+                    and delay_ticks
+                    and all(
+                        right > left
+                        for left, right in zip(delay_ticks, delay_ticks[1:])
+                    )
+                )
+                interval = (
+                    max(
+                        1,
+                        round(
+                            (delay_ticks[-1] - delay_ticks[0])
+                            / max(1, len(delay_ticks) - 1)
+                        ),
+                    )
+                    if len(delay_ticks) > 1
+                    else 0
+                )
+                schedule_child = str(
+                    (child or {}).get("name")
+                    or first.get("spawnCharacter")
+                    or ""
+                )
+                # The production scheduler is a deliberately compact cadence
+                # approximation. Fail closed unless every serialized action
+                # is the same typed child and has an ordered deadline.
+                if not same_child or not regular_schedule or not schedule_child:
+                    continue
                 requirements.append(
                     _SpawnRequirement(
                         root_name=root_name,
                         trigger=FastSpawnTrigger.SCHEDULED_ACTION,
-                        child_name=str(
-                            (child or {}).get("name")
-                            or first.get("spawnCharacter")
-                            or ""
-                        ),
+                        child_name=schedule_child,
                         child_data=(
                             copy.deepcopy(child) if isinstance(child, dict) else None
                         ),
-                        count=len(subactions),
+                        count=1,
                         radius_units=max(0, int(area.get("radius", 0) or 0)),
                         deploy_ticks=_ticks(first.get("deployTime")),
-                        first_delay_ticks=0,
-                        interval_ticks=0,
-                        max_waves=1,
+                        first_delay_ticks=delay_ticks[0],
+                        interval_ticks=interval,
+                        max_waves=len(spawn_actions),
                         source_path=(
                             f"{root_name}.areaEffectObjectData."
                             "onStartingActionData.subActionsData"
@@ -355,6 +397,13 @@ class FastSpawnBlueprintCatalog:
     container_nested_count: torch.Tensor
     container_nested_radius_units: torch.Tensor
     container_nested_deploy_ticks: torch.Tensor
+    scheduled_blueprint_by_card: torch.Tensor
+    scheduled_initial_damage: torch.Tensor
+    scheduled_initial_radius_units: torch.Tensor
+    scheduled_tower_damage_multiplier: torch.Tensor
+    scheduled_building_damage_multiplier: torch.Tensor
+    scheduled_hits_air: torch.Tensor
+    scheduled_hits_ground: torch.Tensor
     public_card_mask: torch.Tensor
 
     @property
@@ -399,7 +448,15 @@ class FastSpawnBlueprintCatalog:
             visible_by_label[label] = name
             overlay.add_character(label, name, data)
 
-        expanded_names = tuple(sorted({*roots, *visible_by_label}))
+        referenced_names = {
+            requirement.child_name
+            for requirement in requirements
+            if requirement.child_data is None
+            and loader.get_card(requirement.child_name) is not None
+        }
+        expanded_names = tuple(
+            sorted({*roots, *visible_by_label, *referenced_names})
+        )
         cards = TensorCardCatalog.compile(
             overlay,
             expanded_names,
@@ -451,6 +508,12 @@ class FastSpawnBlueprintCatalog:
         nested_counts: list[int] = []
         nested_radii: list[int] = []
         nested_deploy: list[int] = []
+        scheduled_damage: list[float] = []
+        scheduled_effect_radius: list[int] = []
+        scheduled_tower_scale: list[float] = []
+        scheduled_building_scale: list[float] = []
+        scheduled_hits_air: list[bool] = []
+        scheduled_hits_ground: list[bool] = []
         supported: list[bool] = []
         for requirement in requirements:
             data = requirement.child_data
@@ -461,18 +524,20 @@ class FastSpawnBlueprintCatalog:
                 label = label_by_key[key]
                 child_id = cards.name_to_id[label]
                 child_definition = overlay.get_card(label)
-                child_mechanics = (
-                    child_definition.card_definition.mechanics
-                    if child_definition is not None
-                    else ()
-                )
                 child_supported = bool(
                     child_definition is not None
                     and child_definition.scaled_hitpoints
-                    and all(
-                        isinstance(mechanic, DeathDamage)
-                        for mechanic in child_mechanics
-                    )
+                    and fast_cards.kind[child_id] >= 0
+                    and fast_cards.training_supported[child_id]
+                )
+            elif requirement.child_name in cards.name_to_id:
+                child_id = cards.name_to_id[requirement.child_name]
+                child_definition = overlay.get_card(requirement.child_name)
+                child_supported = bool(
+                    child_definition is not None
+                    and child_definition.scaled_hitpoints
+                    and fast_cards.kind[child_id] >= 0
+                    and fast_cards.training_supported[child_id]
                 )
             container = bool(
                 requirement.trigger == FastSpawnTrigger.DEATH
@@ -560,6 +625,56 @@ class FastSpawnBlueprintCatalog:
             nested_deploy.append(
                 _ticks(data.get("deathSpawnDeployTime")) if container and data else 0
             )
+            scheduled = requirement.trigger in {
+                FastSpawnTrigger.DELAYED_IMPACT,
+                FastSpawnTrigger.SCHEDULED_ACTION,
+            }
+            root_raw = root_stats._raw_entry if root_stats is not None else {}
+            scheduled_area = root_raw.get("areaEffectObjectData") or {}
+            scheduled_projectile = scheduled_area.get("projectileData") or {}
+            scheduled_raw_damage = (
+                int(scheduled_projectile.get("damage", 0) or 0)
+                if requirement.trigger == FastSpawnTrigger.DELAYED_IMPACT
+                else 0
+            )
+            scheduled_scaled_damage = (
+                float(root_stats.get_scaled_stat(scheduled_raw_damage) or 0)
+                if root_stats is not None and scheduled_raw_damage > 0
+                else 0.0
+            )
+            scheduled_radius = (
+                max(
+                    0,
+                    int(
+                        scheduled_projectile.get(
+                            "radius", scheduled_area.get("radius", 0)
+                        )
+                        or 0
+                    ),
+                )
+                if scheduled
+                else 0
+            )
+            scheduled_target = str(
+                scheduled_projectile.get("tidTarget", "") if scheduled else ""
+            )
+            scheduled_damage.append(scheduled_scaled_damage)
+            scheduled_effect_radius.append(scheduled_radius)
+            crown_percent = float(
+                scheduled_projectile.get("crownTowerDamagePercent", 0) or 0
+            )
+            scheduled_tower_scale.append(max(0.0, 1.0 + crown_percent / 100.0))
+            scheduled_building_scale.append(1.0)
+            scheduled_hits_air.append(
+                bool(scheduled_area.get("hitsAir", False))
+                or "AIR" in scheduled_target
+                or not scheduled_target
+            )
+            scheduled_hits_ground.append(
+                bool(scheduled_area.get("hitsGround", False))
+                or "GROUND" in scheduled_target
+                or not scheduled_target
+            )
             supported.append(
                 (
                     container
@@ -570,6 +685,26 @@ class FastSpawnBlueprintCatalog:
                     and nested_supported
                 )
                 or (trigger_supported and child_supported and requirement.count > 0)
+                or (
+                    scheduled
+                    and child_supported
+                    and requirement.count > 0
+                    and requirement.first_delay_ticks >= 0
+                    and (
+                        requirement.max_waves == 1
+                        or (
+                            requirement.max_waves > 1
+                            and requirement.interval_ticks > 0
+                        )
+                    )
+                    and (
+                        requirement.trigger != FastSpawnTrigger.DELAYED_IMPACT
+                        or (
+                            scheduled_scaled_damage > 0
+                            and scheduled_radius > 0
+                        )
+                    )
+                )
             )
 
         root_required = torch.zeros(
@@ -598,6 +733,7 @@ class FastSpawnBlueprintCatalog:
             (len(cards.names),), -1, dtype=torch.int64, device=cards.device
         )
         container_by_card = torch.full_like(impact_by_card, -1)
+        scheduled_by_card = torch.full_like(impact_by_card, -1)
         for root_id, operation_rows in root_rows.items():
             if not bool(root_supported[root_id]):
                 continue
@@ -619,6 +755,24 @@ class FastSpawnBlueprintCatalog:
                     )
                 elif requirement.trigger == FastSpawnTrigger.PROJECTILE_IMPACT:
                     impact_by_card[root_id] = row
+                elif requirement.trigger in {
+                    FastSpawnTrigger.DELAYED_IMPACT,
+                    FastSpawnTrigger.SCHEDULED_ACTION,
+                }:
+                    if scheduled_by_card[root_id] >= 0:
+                        root_supported[root_id] = False
+                        scheduled_by_card[root_id] = -1
+                    else:
+                        scheduled_by_card[root_id] = row
+
+        scheduled_root = scheduled_by_card >= 0
+        fast_cards.effect_kind.copy_(
+            torch.where(
+                scheduled_root & root_supported,
+                torch.full_like(fast_cards.effect_kind, FAST_CARD_EFFECT_AREA),
+                fast_cards.effect_kind,
+            )
+        )
 
         # Public cards with defining spawn payloads are admitted iff their
         # entire reachable payload shape is one of the deliberately bounded
@@ -679,6 +833,19 @@ class FastSpawnBlueprintCatalog:
             container_nested_count=tensor(nested_counts, torch.int32),
             container_nested_radius_units=tensor(nested_radii, torch.int32),
             container_nested_deploy_ticks=tensor(nested_deploy, torch.int32),
+            scheduled_blueprint_by_card=scheduled_by_card,
+            scheduled_initial_damage=tensor(scheduled_damage, torch.float32),
+            scheduled_initial_radius_units=tensor(
+                scheduled_effect_radius, torch.int32
+            ),
+            scheduled_tower_damage_multiplier=tensor(
+                scheduled_tower_scale, torch.float32
+            ),
+            scheduled_building_damage_multiplier=tensor(
+                scheduled_building_scale, torch.float32
+            ),
+            scheduled_hits_air=tensor(scheduled_hits_air, torch.bool),
+            scheduled_hits_ground=tensor(scheduled_hits_ground, torch.bool),
             public_card_mask=public_card_mask,
         )
 

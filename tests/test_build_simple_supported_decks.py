@@ -15,6 +15,7 @@ from scripts.build_simple_supported_decks import (
 )
 
 EXPECTED_SUPPORTED_DECKS = [
+    "Giant GY Bowler Witch",
     "Pekka Bandit EWiz Bridge Spam",
     "MK Miner ID Bats",
     "Giant",
@@ -40,11 +41,11 @@ def test_current_public_manifest_has_exact_supported_training_pool() -> None:
     }
     assert artifact["counts"] == {
         "candidate_decks": 33,
-        "supported_decks": 9,
-        "rejected_decks": 24,
+        "supported_decks": 10,
+        "rejected_decks": 23,
         "public_cards": 66,
-        "supported_public_cards": 60,
-        "unsupported_public_cards": 6,
+        "supported_public_cards": 63,
+        "unsupported_public_cards": 3,
     }
     assert [deck["name"] for deck in artifact["decks"]] == (EXPECTED_SUPPORTED_DECKS)
     source_by_name = {deck["name"]: deck for deck in source["decks"]}
