@@ -235,8 +235,17 @@ def allocate_fast_attack_effects_(
         field.copy_(torch.where(written, selected, field))
 
     effect_kind = torch.where(projectile, FAST_EFFECT_PROJECTILE, FAST_EFFECT_AREA)
-    effect_x = torch.where(projectile, source_x, target_x)
-    effect_y = torch.where(projectile, source_y, target_y)
+    center_on_source = catalog.effect_center_on_source[safe_card]
+    effect_x = torch.where(
+        projectile | center_on_source,
+        source_x,
+        target_x,
+    )
+    effect_y = torch.where(
+        projectile | center_on_source,
+        source_y,
+        target_y,
+    )
     damage = catalog.effect_damage[safe_card] * commands.damage_multiplier.clamp(
         min=0.0
     )
@@ -258,12 +267,14 @@ def allocate_fast_attack_effects_(
     write(effects.kind, effect_kind)
     write(effects.source_owner, commands.owner)
     write(effects.source_card_id, commands.card_id)
+    write(effects.source_x_units, source_x)
+    write(effects.source_y_units, source_y)
     write(effects.x_units, effect_x)
     write(effects.y_units, effect_y)
     tracked_projectile = projectile & entity_command
     write(
         effects.target_id,
-        torch.where(tracked_projectile, commands.target_id, 0),
+        torch.where(entity_command, commands.target_id, 0),
     )
     write(effects.target_x_units, target_x)
     write(effects.target_y_units, target_y)
@@ -301,6 +312,9 @@ def allocate_fast_attack_effects_(
     write(effects.status_scans_remaining, catalog.max_status_scans[safe_card])
     write(effects.hits_air, catalog.hits_air[safe_card])
     write(effects.hits_ground, catalog.hits_ground[safe_card])
+    write(effects.multi_target_count, catalog.multi_target_count[safe_card])
+    write(effects.multi_target_range_units, catalog.range_units[safe_card])
+    write(effects.multi_repeat_primary, catalog.multi_repeat_primary[safe_card])
     write(consume_source_id, consumed)
 
     return FastEffectAllocationResult(

@@ -36,6 +36,8 @@ class FastEffectState:
     kind: torch.Tensor
     source_owner: torch.Tensor
     source_card_id: torch.Tensor
+    source_x_units: torch.Tensor
+    source_y_units: torch.Tensor
     x_units: torch.Tensor
     y_units: torch.Tensor
     target_id: torch.Tensor
@@ -59,6 +61,9 @@ class FastEffectState:
     status_scans_remaining: torch.Tensor
     hits_air: torch.Tensor
     hits_ground: torch.Tensor
+    multi_target_count: torch.Tensor
+    multi_target_range_units: torch.Tensor
+    multi_repeat_primary: torch.Tensor
 
     @property
     def batch_size(self) -> int:
@@ -94,6 +99,8 @@ class FastEffectState:
             kind=zeros(torch.int8),
             source_owner=zeros(torch.int8),
             source_card_id=zeros(torch.int64),
+            source_x_units=zeros(torch.int32),
+            source_y_units=zeros(torch.int32),
             x_units=zeros(torch.int32),
             y_units=zeros(torch.int32),
             target_id=zeros(torch.int64),
@@ -116,9 +123,7 @@ class FastEffectState:
                 shape, dtype=torch.int32, device=tensor_device
             ),
             next_damage_tick=zeros(torch.int32),
-            damage_on_spawn=torch.ones(
-                shape, dtype=torch.bool, device=tensor_device
-            ),
+            damage_on_spawn=torch.ones(shape, dtype=torch.bool, device=tensor_device),
             damage_hits_remaining=torch.ones(
                 shape, dtype=torch.int32, device=tensor_device
             ),
@@ -131,6 +136,11 @@ class FastEffectState:
             ),
             hits_air=torch.ones(shape, dtype=torch.bool, device=tensor_device),
             hits_ground=torch.ones(shape, dtype=torch.bool, device=tensor_device),
+            multi_target_count=torch.ones(
+                shape, dtype=torch.int16, device=tensor_device
+            ),
+            multi_target_range_units=zeros(torch.int32),
+            multi_repeat_primary=zeros(torch.bool),
         )
 
     def clone(self) -> FastEffectState:
@@ -158,6 +168,7 @@ def _validate_inputs(
     entity_status_ticks: torch.Tensor,
     consume_source_id: torch.Tensor | None,
     entity_is_air: torch.Tensor | None,
+    entity_collision_radius_units: torch.Tensor | None,
 ) -> None:
     if effects.device != state.device:
         raise ValueError("effects and state must use the same device")
@@ -197,6 +208,18 @@ def _validate_inputs(
             raise ValueError("entity_is_air must have shape [batch, entities]")
         if entity_is_air.device != state.device or entity_is_air.dtype != torch.bool:
             raise ValueError("entity_is_air must be bool on the state device")
+    if entity_collision_radius_units is not None:
+        if entity_collision_radius_units.shape != entity_shape:
+            raise ValueError(
+                "entity_collision_radius_units must have shape [batch, entities]"
+            )
+        if (
+            entity_collision_radius_units.device != state.device
+            or entity_collision_radius_units.dtype != torch.int32
+        ):
+            raise ValueError(
+                "entity_collision_radius_units must be int32 on the state device"
+            )
 
 
 def step_fast_effects(
@@ -209,6 +232,7 @@ def step_fast_effects(
     cleanup_dead: bool = True,
     modifiers: FastModifierState | None = None,
     entity_is_air: torch.Tensor | None = None,
+    entity_collision_radius_units: torch.Tensor | None = None,
 ) -> FastEffectStepResult:
     """Advance homing effects, resolve splash, install statuses, and clean up.
 
@@ -229,6 +253,7 @@ def step_fast_effects(
         entity_status_ticks,
         consume_source_id,
         entity_is_air,
+        entity_collision_radius_units,
     )
     batch, max_effects = effects.active.shape
     max_entities = state.max_entities
@@ -298,21 +323,93 @@ def step_fast_effects(
         entity_is_air = torch.zeros(
             (batch, max_entities), dtype=torch.bool, device=state.device
         )
+    if entity_collision_radius_units is None:
+        entity_collision_radius_units = torch.zeros(
+            (batch, max_entities), dtype=torch.int32, device=state.device
+        )
     target_plane = torch.where(
         entity_is_air[:, None, :],
         effects.hits_air[:, :, None],
         effects.hits_ground[:, :, None],
     )
-    target_candidates = (
+    base_candidates = (
         state.active[:, None, :]
         & (state.hp[:, None, :] > 0)
         & (state.owner[:, None, :] != effects.source_owner[:, :, None])
-        & (dx.square() + dy.square() <= radius_sq[:, :, None])
         & target_plane
     )
-    damage_targets = damage_due[:, :, None] & target_candidates
-    status_targets = status_due[:, :, None] & target_candidates
-    targets_hit = (damage_targets | status_targets)
+    circle_candidates = base_candidates & (
+        dx.square() + dy.square() <= radius_sq[:, :, None]
+    )
+
+    # Direct and projectile attacks retain their committed primary identity.
+    # This makes zero-radius ordinary hits robust to target movement while
+    # leaving position-targeted spells on the ordinary circle path.
+    primary_match = (
+        base_candidates
+        & (effects.target_id[:, :, None] > 0)
+        & (effects.target_id[:, :, None] == state.stable_id[:, None, :])
+    )
+    circle_candidates |= primary_match
+
+    # Multi-recipient attacks remain one effect. Current serialized public
+    # data has at most two recipients, so one dense nearest-secondary query is
+    # both the truthful bounded primitive and substantially cheaper than an
+    # every-effect sort. The catalog fails larger counts closed for training.
+    source_dx = state.x_units[:, None, :].to(torch.int64) - effects.source_x_units[
+        :, :, None
+    ].to(torch.int64)
+    source_dy = state.y_units[:, None, :].to(torch.int64) - effects.source_y_units[
+        :, :, None
+    ].to(torch.int64)
+    source_distance_sq = source_dx.square() + source_dy.square()
+    multi_reach = effects.multi_target_range_units.to(torch.int64)[:, :, None].clamp(
+        min=0
+    ) + entity_collision_radius_units.to(torch.int64)[:, None, :].clamp(min=0)
+    multi_candidates = (
+        base_candidates
+        & ~primary_match
+        & (source_distance_sq <= multi_reach.square())
+        & (effects.multi_target_count[:, :, None] > 1)
+    )
+    maximum = torch.iinfo(torch.int64).max
+    candidate_distance = torch.where(
+        multi_candidates,
+        source_distance_sq,
+        torch.full_like(source_distance_sq, maximum),
+    )
+    nearest_distance = candidate_distance.amin(dim=2)
+    nearest_at_distance = multi_candidates & (
+        source_distance_sq == nearest_distance[:, :, None]
+    )
+    selected_id = torch.where(
+        nearest_at_distance,
+        state.stable_id[:, None, :],
+        torch.full_like(source_distance_sq, maximum),
+    ).amin(dim=2)
+    selected_secondary = nearest_at_distance & (
+        state.stable_id[:, None, :] == selected_id[:, :, None]
+    )
+    secondary_needed = effects.multi_target_count > 1
+    selected_any = selected_secondary.any(dim=2)
+    repeated_primary = torch.where(
+        effects.multi_repeat_primary,
+        secondary_needed & ~selected_any,
+        False,
+    )
+    multi_hit_count = selected_secondary.to(torch.int16) + primary_match.to(
+        torch.int16
+    ) * (1 + repeated_primary[:, :, None].to(torch.int16))
+    multi = effects.multi_target_count > 1
+    hit_count = torch.where(
+        multi[:, :, None],
+        multi_hit_count,
+        circle_candidates.to(torch.int16),
+    )
+    has_hit = hit_count > 0
+    damage_targets = damage_due[:, :, None] & has_hit
+    status_targets = status_due[:, :, None] & has_hit
+    targets_hit = damage_targets | status_targets
     entity_slot = torch.arange(
         max_entities, dtype=torch.int64, device=state.device
     ).view(1, 1, -1)
@@ -331,15 +428,16 @@ def step_fast_effects(
         * tower_multiplier
         * building_multiplier
     )
+    weighted_damage = per_hit_damage * hit_count.to(torch.float32)
     if modifiers is None:
-        grouped_damage = (damage_targets.to(torch.float32) * per_hit_damage).sum(dim=1)
+        grouped_damage = (damage_targets.to(torch.float32) * weighted_damage).sum(dim=1)
     else:
         hit_target_slot = entity_slot.expand(batch, max_effects, max_entities)
         shield_result = intercept_fast_shield_hits_(
             modifiers,
             valid=damage_targets.reshape(batch, max_effects * max_entities),
             target_slot=hit_target_slot.reshape(batch, max_effects * max_entities),
-            damage=per_hit_damage.expand(-1, -1, max_entities).reshape(
+            damage=weighted_damage.expand(-1, -1, max_entities).reshape(
                 batch, max_effects * max_entities
             ),
         )

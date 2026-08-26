@@ -26,6 +26,7 @@ FAST_CARD_EFFECT_UNSUPPORTED = -1
 FAST_CARD_EFFECT_DIRECT = 0
 FAST_CARD_EFFECT_PROJECTILE = 1
 FAST_CARD_EFFECT_AREA = 2
+FAST_MAX_MULTI_TARGETS = 2
 
 
 @dataclass(frozen=True)
@@ -66,6 +67,9 @@ class FastCardCatalog:
     effect_kind: torch.Tensor
     effect_damage: torch.Tensor
     effect_radius_units: torch.Tensor
+    effect_center_on_source: torch.Tensor
+    multi_target_count: torch.Tensor
+    multi_repeat_primary: torch.Tensor
     projectile_speed_units_per_tick: torch.Tensor
     tower_damage_multiplier: torch.Tensor
     building_damage_multiplier: torch.Tensor
@@ -183,6 +187,10 @@ class FastCardCatalog:
         )
         effect_damage = catalog.damage.to(torch.float32).clone()
         effect_radius_units = torch.zeros_like(catalog.range_units)
+        effect_center_on_source = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        multi_target_count = torch.ones_like(catalog.kind, dtype=torch.int16)
+        multi_target_count[0] = 0
+        multi_repeat_primary = torch.zeros_like(catalog.kind, dtype=torch.bool)
         projectile_speed = torch.zeros_like(catalog.range_units)
         tower_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
         building_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
@@ -331,6 +339,40 @@ class FastCardCatalog:
                     effect_kind[card_id] = FAST_CARD_EFFECT_PROJECTILE
                     projectile_speed[card_id] = int(projectile.get("speed", 0) or 0)
                     effect_radius_units[card_id] = int(projectile.get("radius", 0) or 0)
+
+                # Ordinary attack topology is fully serialized on the spawned
+                # character.  A target-centered radius covers melee and ranged
+                # splash; ``selfAsAoeCenter`` moves only the circle anchor.
+                # ``multipleTargets`` is distinct from presentation-only
+                # ``multipleProjectiles`` and may repeat the primary when the
+                # payload explicitly requests ``allTargetsHit``.
+                area_damage_radius = int(character.get("areaDamageRadius", 0) or 0)
+                if area_damage_radius > 0:
+                    effect_radius_units[card_id] = area_damage_radius
+                    effect_center_on_source[card_id] = bool(
+                        character.get("selfAsAoeCenter", False)
+                    )
+                target_count = max(
+                    1,
+                    int(character.get("multipleTargets", 1) or 1),
+                )
+                multi_target_count[card_id] = target_count
+                multi_repeat_primary[card_id] = bool(
+                    target_count > 1 and character.get("allTargetsHit", False)
+                )
+
+                # Reuse the existing status primitive for serialized on-hit
+                # buffs.  This keeps multi-recipient effects compositionally
+                # correct without adding an Electro-Wizard-specific branch.
+                on_hit_buff = character.get("buffOnDamageData") or {}
+                on_hit_buff_ms = int(character.get("buffOnDamageTime", 0) or 0)
+                if (
+                    on_hit_buff_ms > 0
+                    and float(on_hit_buff.get("speedMultiplier", 0) or 0) <= -100
+                    and float(on_hit_buff.get("hitSpeedMultiplier", 0) or 0) <= -100
+                ):
+                    status_kind[card_id] = FAST_STATUS_STUN
+                    status_ticks[card_id] = (on_hit_buff_ms + 49) // 50
                 if spell_projectile_data and int(catalog.kind[card_id]) == int(
                     CardKindOpcode.SPELL
                 ):
@@ -404,31 +446,26 @@ class FastCardCatalog:
                             getattr(spell, "damage_tick_interval", 0.0) or 0.0
                         )
                         interval = max(1, round(interval_s / 0.05))
-                        damage_on_spawn = bool(
-                            getattr(spell, "damage_on_spawn", False)
-                        ) or interval_s <= 0.0
+                        damage_on_spawn = (
+                            bool(getattr(spell, "damage_on_spawn", False))
+                            or interval_s <= 0.0
+                        )
                         delay_s = getattr(spell, "initial_damage_delay", None)
                         delay = (
                             max(0, round(float(delay_s) / 0.05))
                             if delay_s is not None
                             else (0 if damage_on_spawn else interval)
                         )
-                        declared_hits = int(
-                            getattr(spell, "max_damage_ticks", 0) or 0
-                        )
+                        declared_hits = int(getattr(spell, "max_damage_ticks", 0) or 0)
                         hits = declared_hits or (
                             max(1, int(duration_s / interval_s + 1e-9))
                             if damage_per_hit > 0 and interval_s > 0
                             else int(damage_per_hit > 0)
                         )
                         buff = area_data.get("buffData") or {}
-                        speed_percent = float(
-                            buff.get("speedMultiplier", 0) or 0
-                        )
+                        speed_percent = float(buff.get("speedMultiplier", 0) or 0)
                         buff_ms = int(area_data.get("buffTime", 0) or 0)
-                        effect_interval_ms = int(
-                            area_data.get("hitSpeed", 50) or 50
-                        )
+                        effect_interval_ms = int(area_data.get("hitSpeed", 50) or 50)
                         has_status = speed_percent < 0 and buff_ms > 0
                         freeze_snapshot = speed_percent <= -100
                         effect_kind[card_id] = FAST_CARD_EFFECT_AREA
@@ -484,9 +521,7 @@ class FastCardCatalog:
                             else max(
                                 0.0,
                                 float(
-                                    getattr(
-                                        spell, "crown_tower_damage_multiplier", 1.0
-                                    )
+                                    getattr(spell, "crown_tower_damage_multiplier", 1.0)
                                     or 0.0
                                 ),
                             )
@@ -567,6 +602,7 @@ class FastCardCatalog:
             ordinary & ((catalog.damage > 0) | effectful | resolved_death_spawn),
         )
         training_supported &= ~(declares_death_spawn & (death_spawn_card_id <= 0))
+        training_supported &= multi_target_count <= FAST_MAX_MULTI_TARGETS
         training_supported[0] = False
 
         return cls(
@@ -604,6 +640,9 @@ class FastCardCatalog:
             effect_kind=effect_kind,
             effect_damage=effect_damage,
             effect_radius_units=effect_radius_units,
+            effect_center_on_source=effect_center_on_source,
+            multi_target_count=multi_target_count,
+            multi_repeat_primary=multi_repeat_primary,
             projectile_speed_units_per_tick=projectile_speed,
             tower_damage_multiplier=tower_multiplier,
             building_damage_multiplier=building_multiplier,

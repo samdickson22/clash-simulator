@@ -626,6 +626,11 @@ class SimpleGymRuntime:
             entity_is_air=self.action_kernel.catalog.is_air[
                 self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
             ],
+            entity_collision_radius_units=(
+                self.action_kernel.catalog.collision_radius_units[
+                    self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
+                ]
+            ),
         )
         lifecycle_result = step_fast_lifecycle_(
             self.state,
