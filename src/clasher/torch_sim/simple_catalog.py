@@ -19,6 +19,7 @@ from .catalog import (
     CardKindOpcode,
     TensorCardCatalog,
 )
+from .simple_chain_topology import FAST_MAX_CHAIN_TARGETS
 from .simple_effects import FAST_STATUS_NONE, FAST_STATUS_SLOW, FAST_STATUS_STUN
 from .simple_state import FAST_KIND_BUILDING, FAST_KIND_TROOP
 
@@ -70,6 +71,8 @@ class FastCardCatalog:
     effect_center_on_source: torch.Tensor
     multi_target_count: torch.Tensor
     multi_repeat_primary: torch.Tensor
+    chain_target_count: torch.Tensor
+    chain_hop_radius_units: torch.Tensor
     projectile_speed_units_per_tick: torch.Tensor
     tower_damage_multiplier: torch.Tensor
     building_damage_multiplier: torch.Tensor
@@ -191,6 +194,10 @@ class FastCardCatalog:
         multi_target_count = torch.ones_like(catalog.kind, dtype=torch.int16)
         multi_target_count[0] = 0
         multi_repeat_primary = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        chain_target_count = torch.zeros_like(catalog.kind, dtype=torch.int16)
+        chain_hop_radius_units = torch.zeros_like(
+            catalog.range_units, dtype=torch.int32
+        )
         projectile_speed = torch.zeros_like(catalog.range_units)
         tower_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
         building_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
@@ -339,6 +346,26 @@ class FastCardCatalog:
                     effect_kind[card_id] = FAST_CARD_EFFECT_PROJECTILE
                     projectile_speed[card_id] = int(projectile.get("speed", 0) or 0)
                     effect_radius_units[card_id] = int(projectile.get("radius", 0) or 0)
+                    serialized_chain_count = int(
+                        projectile.get("chainedHitCount", 0) or 0
+                    )
+                    serialized_chain_radius = int(
+                        projectile.get("chainedHitRadius", 0) or 0
+                    )
+                    if serialized_chain_count > 1 and serialized_chain_radius > 0:
+                        chain_target_count[card_id] = serialized_chain_count
+                        chain_hop_radius_units[card_id] = serialized_chain_radius
+                    projectile_buff = projectile.get("targetBuffData") or {}
+                    projectile_buff_ms = int(projectile.get("buffTime", 0) or 0)
+                    if (
+                        projectile_buff_ms > 0
+                        and float(projectile_buff.get("speedMultiplier", 0) or 0)
+                        <= -100
+                        and float(projectile_buff.get("hitSpeedMultiplier", 0) or 0)
+                        <= -100
+                    ):
+                        status_kind[card_id] = FAST_STATUS_STUN
+                        status_ticks[card_id] = (projectile_buff_ms + 49) // 50
 
                 # Ordinary attack topology is fully serialized on the spawned
                 # character.  A target-centered radius covers melee and ranged
@@ -603,6 +630,7 @@ class FastCardCatalog:
         )
         training_supported &= ~(declares_death_spawn & (death_spawn_card_id <= 0))
         training_supported &= multi_target_count <= FAST_MAX_MULTI_TARGETS
+        training_supported &= chain_target_count <= FAST_MAX_CHAIN_TARGETS
         training_supported[0] = False
 
         return cls(
@@ -643,6 +671,8 @@ class FastCardCatalog:
             effect_center_on_source=effect_center_on_source,
             multi_target_count=multi_target_count,
             multi_repeat_primary=multi_repeat_primary,
+            chain_target_count=chain_target_count,
+            chain_hop_radius_units=chain_hop_radius_units,
             projectile_speed_units_per_tick=projectile_speed,
             tower_damage_multiplier=tower_multiplier,
             building_damage_multiplier=building_multiplier,

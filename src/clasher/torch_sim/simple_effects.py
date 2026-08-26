@@ -13,6 +13,7 @@ from dataclasses import dataclass, fields
 
 import torch
 
+from .simple_chain_topology import FastChainTopologyInputs, fast_chain_hit_count
 from .simple_modifiers import FastModifierState, intercept_fast_shield_hits_
 from .simple_state import FAST_KIND_BUILDING, FastGymState
 
@@ -64,6 +65,8 @@ class FastEffectState:
     multi_target_count: torch.Tensor
     multi_target_range_units: torch.Tensor
     multi_repeat_primary: torch.Tensor
+    chain_target_count: torch.Tensor
+    chain_hop_radius_units: torch.Tensor
 
     @property
     def batch_size(self) -> int:
@@ -141,6 +144,8 @@ class FastEffectState:
             ),
             multi_target_range_units=zeros(torch.int32),
             multi_repeat_primary=zeros(torch.bool),
+            chain_target_count=zeros(torch.int16),
+            chain_hop_radius_units=zeros(torch.int32),
         )
 
     def clone(self) -> FastEffectState:
@@ -401,10 +406,31 @@ def step_fast_effects(
         torch.int16
     ) * (1 + repeated_primary[:, :, None].to(torch.int16))
     multi = effects.multi_target_count > 1
-    hit_count = torch.where(
+    ordinary_hit_count = torch.where(
         multi[:, :, None],
         multi_hit_count,
         circle_candidates.to(torch.int16),
+    )
+    chain_hit_count = fast_chain_hit_count(
+        FastChainTopologyInputs(
+            source_x_units=effects.source_x_units,
+            source_y_units=effects.source_y_units,
+            primary_target_id=effects.target_id,
+            primary_x_units=effects.x_units,
+            primary_y_units=effects.y_units,
+            entity_stable_id=state.stable_id,
+            entity_x_units=state.x_units,
+            entity_y_units=state.y_units,
+            eligible=base_candidates,
+            hop_radius_units=effects.chain_hop_radius_units,
+            target_count=effects.chain_target_count,
+        )
+    )
+    chain = effects.chain_target_count > 1
+    hit_count = torch.where(
+        chain[:, :, None],
+        chain_hit_count,
+        ordinary_hit_count,
     )
     has_hit = hit_count > 0
     damage_targets = damage_due[:, :, None] & has_hit

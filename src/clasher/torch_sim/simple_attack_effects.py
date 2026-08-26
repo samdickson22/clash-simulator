@@ -315,6 +315,8 @@ def allocate_fast_attack_effects_(
     write(effects.multi_target_count, catalog.multi_target_count[safe_card])
     write(effects.multi_target_range_units, catalog.range_units[safe_card])
     write(effects.multi_repeat_primary, catalog.multi_repeat_primary[safe_card])
+    write(effects.chain_target_count, catalog.chain_target_count[safe_card])
+    write(effects.chain_hop_radius_units, catalog.chain_hop_radius_units[safe_card])
     write(consume_source_id, consumed)
 
     return FastEffectAllocationResult(
