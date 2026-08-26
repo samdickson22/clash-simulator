@@ -130,7 +130,6 @@ class TensorResidentWorkspace:
             "continuous_areas",
             "graveyards",
             "tornadoes",
-            "burst_projectiles",
         ):
             scratch_owner = getattr(self.scratch, name)
             engine_owner = getattr(self.engine, name)
@@ -138,6 +137,18 @@ class TensorResidentWorkspace:
                 raise ValueError(f"speculative engines must share {name} catalogs")
             if scratch_owner.active.data_ptr() == engine_owner.active.data_ptr():
                 raise ValueError(f"speculative {name} must own mutable storage")
+        if (
+            self.scratch.burst_projectiles.catalog
+            is not self.engine.burst_projectiles.catalog
+        ):
+            raise ValueError("speculative engines must share burst projectile catalogs")
+        for name in ("parent_active", "child_active", "recoil_active"):
+            if getattr(self.scratch.burst_projectiles, name).data_ptr() == getattr(
+                self.engine.burst_projectiles, name
+            ).data_ptr():
+                raise ValueError(
+                    f"speculative burst projectile {name} must own mutable storage"
+                )
         if (
             self.scratch.rolling_spells.catalog
             is not self.engine.rolling_spells.catalog

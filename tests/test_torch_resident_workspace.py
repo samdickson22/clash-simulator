@@ -251,8 +251,8 @@ def test_workspace_ticks_match_allocating_engine_exactly(device: str) -> None:
 def test_unsupported_row_is_atomic_while_supported_peer_commits() -> None:
     supported = _battle(91)
     unsupported = _battle(92)
-    unsupported.players[0].hand[0] = "ElectroWizard"
-    unsupported.players[0].deck[0] = "ElectroWizard"
+    unsupported.players[0].hand[0] = "Fisherman"
+    unsupported.players[0].deck[0] = "Fisherman"
     engine = _engine([supported, unsupported])
     workspace = TensorResidentWorkspace(engine)
     before = _engine_snapshot(engine)
