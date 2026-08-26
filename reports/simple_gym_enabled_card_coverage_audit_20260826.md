@@ -2,10 +2,10 @@
 
 ## Scope and method
 
-This is a read-only structural audit of the 66 unique cards in `decks.json` at
-commit `8d77c6d1`. `TensorCardCatalog` and `FastCardCatalog` were compiled with a
-real `CardDataLoader`, first for the enabled-card union and then for all 171
-public card definitions. No long interaction matrix or simulation was used.
+This is a structural audit of the 66 unique cards in `decks.json` on the active
+practical-Gym branch. `TensorCardCatalog` and `FastCardCatalog` were compiled
+with a real `CardDataLoader`, first for the enabled-card union and then for all
+171 public card definitions. No long interaction matrix or simulation was used.
 
 The admission contract in `FastActionKernel` is deliberately small:
 
@@ -13,18 +13,21 @@ The admission contract in `FastActionKernel` is deliberately small:
   admitted as an entity;
 - a spell is admitted when `effect_kind >= 0`;
 - champion abilities fail closed;
-- admission does **not** check whether a nonzero effect or the card's defining
-  mechanics are represented.
+- the separate data-derived `training_supported` plane rejects zero-payload
+  effects, inert entities, and declared-but-unresolved death children; the
+  legal action mask requires this plane.
 
 ## Inventory result
 
-- 52 entity cards are admitted.
-- 7 of 14 spells are admitted and 7 fail closed.
-- Primitive assignment across all 66 cards is 26 direct, 30 projectile, 1
+- 52 entity cards and 7 spells remain structurally allocatable, but truthful
+  training admission accepts only 47/66 cards.
+- Training admission rejects 19: seven unsupported spells, three zero-payload
+  spells, and nine enabled-only unresolved death-child parents.
+- Primitive assignment across all 66 cards is 27 direct, 29 projectile, 1
   area, and 9 unsupported (the 7 closed spells plus Skeleton Barrel and
   Tombstone).
-- 59/66 cards are therefore action-mask admitted, but that number is not a
-  mechanics-coverage claim.
+- The raw 59/66 allocatable count is therefore not exposed as legal training
+  support.
 - Multi-summon represents a homogeneous numeric ring. It covers Archers, Bats,
   Guards, Minions, Royal Hogs, Skeletons, Spear Goblins, and Wall Breakers at
   their serialized counts. Goblin Gang silently emits only its three stab
@@ -34,9 +37,9 @@ The admission contract in `FastActionKernel` is deliberately small:
 - Ice Spirit has the one supported combat status: a radius-1.5 stun/freeze for
   24 ticks plus source consumption. Slow exists in the effect kernel but no
   enabled card currently compiles to it.
-- Standalone shield/charge tensor primitives exist, but `SimpleGymRuntime`
-  does not own, initialize, or call them. They therefore provide zero current
-  enabled-card runtime coverage.
+- Shield and charge primitives are now initialized and advanced by
+  `SimpleGymRuntime`; their focused runtime coverage is separate from this
+  broader admission audit.
 
 ## Complete 66-card classification
 
@@ -56,7 +59,10 @@ area hit; Fireball omits pushback; Ice Spirit approximates its jump as a homing
 projectile and splash stun; Wall Breakers use projectile-impact splash plus
 source consumption.
 
-### Admitted with a useful base primitive, but defining mechanics are absent or materially wrong (31)
+### Useful base primitive, but defining mechanics are absent or materially wrong (31)
+
+The nine rows with unresolved death children are now masked from training even
+though their ordinary base primitive can execute structurally.
 
 | Card | Represented now | Materially missing or wrong |
 |---|---|---|
@@ -92,7 +98,7 @@ source consumption.
 | Valkyrie | ordinary direct melee | 2-tile radial attack |
 | Witch | splash projectile | periodic Skeleton spawning |
 
-### Silent false-positive admission (5)
+### Former silent false positives, now masked from training (5)
 
 These should be treated as higher priority than ordinary approximation gaps.
 
@@ -104,7 +110,7 @@ These should be treated as higher priority than ordinary approximation gaps.
 | Skeleton Barrel | entity deploys with zero damage and unsupported attack; it cannot complete its building impact and its two-stage death payload is unresolved |
 | Tombstone | entity deploys as an inert lifetime blocker; periodic Skeletons and death Skeletons are unresolved in the enabled-only catalog |
 
-### Explicit fail-closed spells (7)
+### Explicit fail-closed unsupported spells (7)
 
 Earthquake, Freeze, Graveyard, Poison, Royal Delivery, Tornado, Zap.
 
@@ -145,11 +151,10 @@ internal identity rather than mapping it to an unrelated enabled card.
    and Mega Knight. Also restrict the top-level spell-projectile overlay to
    spell/explicit spawn commands so `MegaKnightAppear` cannot replace normal
    attacks.
-4. **Wire existing modifier primitives into runtime.** Serialize and initialize
-   shield/charge tables, intercept grouped damage, apply movement/damage
-   multipliers, and reset charge on attack. This directly covers Guards, Dark
-   Prince, Prince, and Battle Ram. Damage ramp is the same per-target timer seam
-   for Inferno Dragon and Inferno Tower.
+4. **Finish modifier coverage.** Shield and charge tables are now runtime-wired
+   for Guards, Dark Prince, Prince, and Battle Ram. The remaining generalized
+   modifier gap is a per-target timer/ramp seam for Inferno Dragon and Inferno
+   Tower.
 5. **Visibility/travel/ability state.** Add target-unavailable state and timed
    transitions for Royal Ghost and Tesla; bounded underground/dash/leap travel
    for Miner, Bandit, and Mega Knight; then Archer Queen ability ingress. These
@@ -157,9 +162,10 @@ internal identity rather than mapping it to an unrelated enabled card.
 
 ## Admission recommendation
 
-Until the first three clusters land, keep a separate data-derived
-`mechanics_complete_enough` bit from entity/spell allocatability. At minimum,
-fail closed for the five silent false positives and for Mega Knight's ordinary
-attack when the top-level spawn projectile is the only compiled effect. This
-prevents a broad “59 supported cards” number from silently training policies
-against inert or qualitatively inverted card behavior.
+The data-derived `training_supported` bit is now separate from entity/spell
+allocatability and required by the legal mask. It fails closed for zero-payload
+spells, inert entities, and unresolved declared death children. The loader's
+top-level projectile overlay is also restricted to actual spells, so
+`MegaKnightAppear` no longer replaces Mega Knight's ordinary direct attack.
+This prevents the broad raw “59 allocatable cards” number from silently
+training policies against inert or qualitatively inverted card behavior.

@@ -70,6 +70,7 @@ class FastCardCatalog:
     status_kind: torch.Tensor
     status_duration_ticks: torch.Tensor
     consume_source_on_impact: torch.Tensor
+    training_supported: torch.Tensor
 
     @classmethod
     def from_tensor_catalog(
@@ -178,6 +179,10 @@ class FastCardCatalog:
         attacks_ground = catalog.attacks_ground.to(torch.bool).clone()
         buildings_only = catalog.buildings_only.to(torch.bool).clone()
         is_air = catalog.is_air_unit.to(torch.bool).clone()
+        death_spawn_opcode = int(MECHANIC_OPCODE["DeathSpawn"])
+        declares_death_spawn = (catalog.mechanic_opcode == death_spawn_opcode).any(
+            dim=1
+        )
 
         # ProjectileLaunch is itself a serialized primitive, so spell cards
         # can remain useful even when the optional source-data loader is not
@@ -271,6 +276,8 @@ class FastCardCatalog:
                     raw.get("summonCharacterData") or raw.get("summonSpellData") or {}
                 )
                 child_name = getattr(card, "death_spawn_character", None)
+                if child_name:
+                    declares_death_spawn[card_id] = True
                 child_id = catalog.name_to_id.get(str(child_name), 0)
                 if child_id > 0:
                     # Exact typed identity is mandatory. Internal-only child
@@ -293,7 +300,9 @@ class FastCardCatalog:
                     effect_kind[card_id] = FAST_CARD_EFFECT_PROJECTILE
                     projectile_speed[card_id] = int(projectile.get("speed", 0) or 0)
                     effect_radius_units[card_id] = int(projectile.get("radius", 0) or 0)
-                if spell_projectile_data:
+                if spell_projectile_data and int(catalog.kind[card_id]) == int(
+                    CardKindOpcode.SPELL
+                ):
                     waves = int(raw.get("projectileWaves", 1) or 1)
                     grouped = int(raw.get("multipleProjectiles", 1) or 1) > 1
                     effect_kind[card_id] = (
@@ -370,6 +379,22 @@ class FastCardCatalog:
                             * 1_000.0
                         ).to(torch.int32)
                         consume_source[card_id] = True
+        is_spell = catalog.kind == int(CardKindOpcode.SPELL)
+        effectful = (effect_kind >= 0) & (effect_damage > 0)
+        resolved_death_spawn = (
+            (death_spawn_card_id > 0) & (death_spawn_count > 0) & (death_spawn_hp > 0)
+        )
+        # Allocation is intentionally a weaker condition than admission to
+        # training. A zero-payload effect or unresolved defining death child
+        # can execute structurally, but teaches a qualitatively false card.
+        training_supported = torch.where(
+            is_spell,
+            effectful,
+            ordinary & ((catalog.damage > 0) | effectful | resolved_death_spawn),
+        )
+        training_supported &= ~(declares_death_spawn & (death_spawn_card_id <= 0))
+        training_supported[0] = False
+
         return cls(
             device=catalog.kind.device,
             kind=ordinary_kind,
@@ -410,6 +435,7 @@ class FastCardCatalog:
             status_kind=status_kind,
             status_duration_ticks=status_ticks,
             consume_source_on_impact=consume_source,
+            training_supported=training_supported.to(torch.bool),
         )
 
     @property

@@ -273,7 +273,11 @@ class FastActionKernel:
         safe_card = card_ids.clamp(0, self.catalog.size - 1)
         entity_card = self.catalog.kind[safe_card] >= 0
         spell_card = ~entity_card & (self.catalog.effect_kind[safe_card] >= 0)
-        supported = known & (entity_card | spell_card)
+        supported = (
+            known
+            & (entity_card | spell_card)
+            & self.catalog.training_supported[safe_card]
+        )
         affordable = state.elixir[..., None] >= self.catalog.elixir_cost[safe_card]
         playable = supported & affordable & state.player_alive[..., None]
 
