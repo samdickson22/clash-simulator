@@ -21,6 +21,7 @@ from .catalog import (
 )
 from .simple_chain_topology import FAST_MAX_CHAIN_TARGETS
 from .simple_effects import FAST_STATUS_NONE, FAST_STATUS_SLOW, FAST_STATUS_STUN
+from .simple_fan_topology import FAST_FAN_MAX_RAYS
 from .simple_state import FAST_KIND_BUILDING, FAST_KIND_TROOP
 
 FAST_CARD_EFFECT_UNSUPPORTED = -1
@@ -75,6 +76,10 @@ class FastCardCatalog:
     chain_hop_radius_units: torch.Tensor
     line_range_units: torch.Tensor
     line_half_width_units: torch.Tensor
+    fan_ray_count: torch.Tensor
+    fan_range_units: torch.Tensor
+    fan_radius_units: torch.Tensor
+    fan_spread_degrees: torch.Tensor
     projectile_speed_units_per_tick: torch.Tensor
     tower_damage_multiplier: torch.Tensor
     building_damage_multiplier: torch.Tensor
@@ -91,6 +96,7 @@ class FastCardCatalog:
     hits_air: torch.Tensor
     hits_ground: torch.Tensor
     omits_displacement: torch.Tensor
+    omits_recoil: torch.Tensor
     consume_source_on_impact: torch.Tensor
     training_supported: torch.Tensor
 
@@ -201,9 +207,13 @@ class FastCardCatalog:
             catalog.range_units, dtype=torch.int32
         )
         line_range_units = torch.zeros_like(catalog.range_units, dtype=torch.int32)
-        line_half_width_units = torch.zeros_like(
-            catalog.range_units, dtype=torch.int32
-        )
+        line_half_width_units = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        fan_ray_count = torch.zeros_like(catalog.kind, dtype=torch.int16)
+        fan_range_units = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        fan_radius_units = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        fan_spread_degrees = torch.zeros_like(catalog.damage, dtype=torch.float32)
+        declares_fan = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        valid_fan = torch.zeros_like(catalog.kind, dtype=torch.bool)
         projectile_speed = torch.zeros_like(catalog.range_units)
         tower_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
         building_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
@@ -218,6 +228,7 @@ class FastCardCatalog:
         initial_status_delay_ticks = torch.zeros_like(catalog.range_units)
         max_status_scans = torch.ones_like(catalog.range_units)
         omits_displacement = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        omits_recoil = torch.zeros_like(catalog.kind, dtype=torch.bool)
         consume_source = torch.zeros_like(catalog.kind, dtype=torch.bool)
         attacks_air = catalog.attacks_air.to(torch.bool).clone()
         attacks_ground = catalog.attacks_ground.to(torch.bool).clone()
@@ -356,12 +367,8 @@ class FastCardCatalog:
                     # and range fields compile to one line effect.  The two
                     # numeric tables are sufficient runtime dispatch; names
                     # and scalar projectile classes never enter the hot path.
-                    projectile_range = int(
-                        projectile.get("projectileRange", 0) or 0
-                    )
-                    projectile_width = int(
-                        projectile.get("projectileRadius", 0) or 0
-                    )
+                    projectile_range = int(projectile.get("projectileRange", 0) or 0)
+                    projectile_width = int(projectile.get("projectileRadius", 0) or 0)
                     explicit_non_homing = projectile.get("homing") is False
                     if (
                         projectile_range > 1
@@ -396,6 +403,78 @@ class FastCardCatalog:
                     ):
                         status_kind[card_id] = FAST_STATUS_STUN
                         status_ticks[card_id] = (projectile_buff_ms + 49) // 50
+
+                    # A projectile can serialize a second projectile payload
+                    # emitted at its impact point. Compile that payload as one
+                    # bounded fan primitive rather than materializing five
+                    # independent effects or dispatching on the source card.
+                    child_projectile = projectile.get("spawnProjectileData") or {}
+                    if child_projectile:
+                        declares_fan[card_id] = True
+                        child_count = int(child_projectile.get("spawnCount", 0) or 0)
+                        child_range = int(
+                            child_projectile.get("projectileRange", 0) or 0
+                        )
+                        child_radius = int(
+                            child_projectile.get(
+                                "projectileRadius",
+                                child_projectile.get("radius", 0),
+                            )
+                            or 0
+                        )
+                        child_spread = float(
+                            child_projectile.get("spawnRadius", 0) or 0
+                        )
+                        raw_child_damage = int(child_projectile.get("damage", 0) or 0)
+                        scaled_child_damage = float(
+                            card.get_scaled_stat(raw_child_damage) or 0.0
+                        )
+                        child_valid = (
+                            1 <= child_count <= FAST_FAN_MAX_RAYS
+                            and child_range > 0
+                            and child_radius >= 0
+                            and child_spread >= 0.0
+                            and scaled_child_damage > 0.0
+                        )
+                        valid_fan[card_id] = child_valid
+                        if child_valid:
+                            fan_ray_count[card_id] = child_count
+                            fan_range_units[card_id] = child_range
+                            fan_radius_units[card_id] = child_radius
+                            fan_spread_degrees[card_id] = child_spread
+                            effect_damage[card_id] = scaled_child_damage
+                            # Fan topology replaces the carrier's ordinary
+                            # primary/circle damage at impact.
+                            effect_radius_units[card_id] = 0
+                            child_target = str(
+                                child_projectile.get("tidTarget", "") or ""
+                            )
+                            if "AIR_AND_GROUND" in child_target:
+                                effect_hits_air[card_id] = True
+                                effect_hits_ground[card_id] = True
+                            elif "AIR" in child_target:
+                                effect_hits_air[card_id] = True
+                                effect_hits_ground[card_id] = False
+                            elif "GROUND" in child_target:
+                                effect_hits_air[card_id] = False
+                                effect_hits_ground[card_id] = True
+                            else:
+                                effect_hits_air[card_id] = bool(
+                                    child_projectile.get("hitsAir", True)
+                                )
+                                effect_hits_ground[card_id] = bool(
+                                    child_projectile.get("hitsGround", True)
+                                )
+                        else:
+                            effect_kind[card_id] = FAST_CARD_EFFECT_UNSUPPORTED
+                            effect_damage[card_id] = 0.0
+
+                # Attack pushback/recoil is deliberately outside fan damage.
+                # Keep it visible as an explicit fidelity omission until the
+                # movement owner gains a generalized recoil primitive.
+                omits_recoil[card_id] = bool(
+                    float(getattr(card, "attack_pushback", 0.0) or 0.0)
+                )
 
                 # Ordinary attack topology is fully serialized on the spawned
                 # character.  A target-centered radius covers melee and ranged
@@ -648,8 +727,13 @@ class FastCardCatalog:
         # Character payload inspection above is more complete than the compact
         # TensorCardCatalog attack planes (notably splash attackers and
         # kamikaze units), so finalize ordinary effect planes after that pass.
-        effect_hits_air = torch.where(is_spell, effect_hits_air, attacks_air)
-        effect_hits_ground = torch.where(is_spell, effect_hits_ground, attacks_ground)
+        preserve_payload_planes = is_spell | declares_fan
+        effect_hits_air = torch.where(
+            preserve_payload_planes, effect_hits_air, attacks_air
+        )
+        effect_hits_ground = torch.where(
+            preserve_payload_planes, effect_hits_ground, attacks_ground
+        )
         effectful = (effect_kind >= 0) & (effect_damage > 0)
         resolved_death_spawn = (
             (death_spawn_card_id > 0) & (death_spawn_count > 0) & (death_spawn_hp > 0)
@@ -665,6 +749,7 @@ class FastCardCatalog:
         training_supported &= ~(declares_death_spawn & (death_spawn_card_id <= 0))
         training_supported &= multi_target_count <= FAST_MAX_MULTI_TARGETS
         training_supported &= chain_target_count <= FAST_MAX_CHAIN_TARGETS
+        training_supported &= ~declares_fan | valid_fan
         training_supported[0] = False
 
         return cls(
@@ -709,6 +794,10 @@ class FastCardCatalog:
             chain_hop_radius_units=chain_hop_radius_units,
             line_range_units=line_range_units,
             line_half_width_units=line_half_width_units,
+            fan_ray_count=fan_ray_count,
+            fan_range_units=fan_range_units,
+            fan_radius_units=fan_radius_units,
+            fan_spread_degrees=fan_spread_degrees,
             projectile_speed_units_per_tick=projectile_speed,
             tower_damage_multiplier=tower_multiplier,
             building_damage_multiplier=building_multiplier,
@@ -725,6 +814,7 @@ class FastCardCatalog:
             hits_air=effect_hits_air,
             hits_ground=effect_hits_ground,
             omits_displacement=omits_displacement,
+            omits_recoil=omits_recoil,
             consume_source_on_impact=consume_source,
             training_supported=training_supported.to(torch.bool),
         )

@@ -336,6 +336,10 @@ def allocate_fast_attack_effects_(
         effects.line_half_width_units,
         catalog.line_half_width_units[safe_card],
     )
+    write(effects.fan_ray_count, catalog.fan_ray_count[safe_card])
+    write(effects.fan_range_units, catalog.fan_range_units[safe_card])
+    write(effects.fan_radius_units, catalog.fan_radius_units[safe_card])
+    write(effects.fan_spread_degrees, catalog.fan_spread_degrees[safe_card])
     write(consume_source_id, consumed)
 
     return FastEffectAllocationResult(

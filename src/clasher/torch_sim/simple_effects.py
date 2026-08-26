@@ -14,6 +14,7 @@ from dataclasses import dataclass, fields
 import torch
 
 from .simple_chain_topology import FastChainTopologyInputs, fast_chain_hit_count
+from .simple_fan_topology import resolve_fast_fan_topology
 from .simple_line_topology import select_line_capsule_hits
 from .simple_modifiers import FastModifierState, intercept_fast_shield_hits_
 from .simple_state import FAST_KIND_BUILDING, FastGymState
@@ -70,6 +71,10 @@ class FastEffectState:
     chain_hop_radius_units: torch.Tensor
     line_range_units: torch.Tensor
     line_half_width_units: torch.Tensor
+    fan_ray_count: torch.Tensor
+    fan_range_units: torch.Tensor
+    fan_radius_units: torch.Tensor
+    fan_spread_degrees: torch.Tensor
 
     @property
     def batch_size(self) -> int:
@@ -151,6 +156,10 @@ class FastEffectState:
             chain_hop_radius_units=zeros(torch.int32),
             line_range_units=zeros(torch.int32),
             line_half_width_units=zeros(torch.int32),
+            fan_ray_count=zeros(torch.int16),
+            fan_range_units=zeros(torch.int32),
+            fan_radius_units=zeros(torch.int32),
+            fan_spread_degrees=zeros(torch.float32),
         )
 
     def clone(self) -> FastEffectState:
@@ -444,13 +453,32 @@ def step_fast_effects(
         eligible=base_candidates,
     )
     line = effects.line_range_units > 0
+    fan_topology = resolve_fast_fan_topology(
+        launch_x_units=effects.source_x_units,
+        launch_y_units=effects.source_y_units,
+        impact_x_units=effects.x_units,
+        impact_y_units=effects.y_units,
+        range_units=effects.fan_range_units,
+        radius_units=effects.fan_radius_units,
+        spread_degrees=effects.fan_spread_degrees,
+        ray_count=effects.fan_ray_count,
+        eligibility=base_candidates,
+        entity_x_units=state.x_units,
+        entity_y_units=state.y_units,
+        entity_collision_radius_units=entity_collision_radius_units,
+    )
+    fan = effects.fan_ray_count > 0
     hit_count = torch.where(
-        chain[:, :, None],
-        chain_hit_count,
+        fan[:, :, None],
+        fan_topology.hit_count.to(torch.int16),
         torch.where(
-            line[:, :, None],
-            line_topology.hit.to(torch.int16),
-            ordinary_hit_count,
+            chain[:, :, None],
+            chain_hit_count,
+            torch.where(
+                line[:, :, None],
+                line_topology.hit.to(torch.int16),
+                ordinary_hit_count,
+            ),
         ),
     )
     has_hit = hit_count > 0
