@@ -25,6 +25,7 @@ from .resident_timed_terminal_payloads import TensorTimedTerminalEvents
 from .runtime_state import RuntimeEventOpcode, TensorBattleRuntime, TickPhase
 from .shield_champion import apply_shield_damage_
 from .special_movement import install_radial_knockback
+from .tensor_ops import scatter_any_
 
 
 class TimedExplosionReason(IntEnum):
@@ -344,7 +345,8 @@ def resolve_timed_terminal_explosions_(
         broken[:, lane_index] = valid & result.shield_broken
 
     unsupported_death = torch.zeros(batch, dtype=torch.bool, device=device)
-    unsupported_death.scatter_reduce_(
+    scatter_any_(
+        unsupported_death,
         0,
         row_grid.expand_as(died)[died],
         (
@@ -352,8 +354,6 @@ def resolve_timed_terminal_explosions_(
                 row_grid.expand_as(ordered_slot), ordered_slot
             ]
         )[died],
-        reduce="amax",
-        include_self=True,
     )
     additions = effective_hit.sum(dim=1, dtype=torch.int64) + died.sum(
         dim=1, dtype=torch.int64

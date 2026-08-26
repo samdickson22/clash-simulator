@@ -22,6 +22,7 @@ from .spawn import (
     TensorSpawnEvents,
     step_periodic_spawners,
 )
+from .tensor_ops import scatter_any_
 
 
 class PeriodicSpawnerReason(IntEnum):
@@ -450,13 +451,7 @@ def step_runtime_periodic_spawners_(
     unknown = torch.zeros(runtime.batch_size, dtype=torch.bool, device=runtime.device)
     if schedule.catalog_row.numel():
         invalid = catalog.child_card_id[schedule.catalog_row] < 0
-        unknown.scatter_reduce_(
-            0,
-            schedule.batch_index,
-            invalid,
-            reduce="amax",
-            include_self=True,
-        )
+        scatter_any_(unknown, 0, schedule.batch_index, invalid)
     committed = runtime.supported & ~entity_overflow & ~event_overflow & ~unknown
     reason = torch.where(
         entity_overflow,

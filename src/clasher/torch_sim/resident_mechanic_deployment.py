@@ -15,6 +15,7 @@ from .deployment import TensorCommandMaterializer, TensorDeploymentCatalog
 from .movement import integer_sqrt_tensor
 from .runtime_deployment import TensorRuntimeDeployment, TensorRuntimeDeploymentResult
 from .runtime_state import TensorBattleRuntime
+from .tensor_ops import scatter_any_
 
 
 @dataclass(frozen=True)
@@ -290,21 +291,14 @@ class TensorResidentMechanicDeployment:
         command_supported = self.catalog.card_supported[commands.card_id]
         rejected = torch.zeros(runtime.batch_size, dtype=torch.bool, device=self.device)
         if commands.card_id.numel():
-            rejected.scatter_reduce_(
-                0,
-                commands.battle_index,
-                ~command_supported,
-                reduce="amax",
-                include_self=True,
-            )
+            scatter_any_(rejected, 0, commands.battle_index, ~command_supported)
         committed = deployment.committed & ~rejected
         spawned = torch.zeros_like(runtime.entity_pool.active)
-        spawned.scatter_reduce_(
+        scatter_any_(
+            spawned,
             1,
             deployment.deployment.allocation.slots.clamp_min(0),
             deployment.deployment.allocation.valid & committed[:, None],
-            reduce="amax",
-            include_self=True,
         )
         spawned_card = deployment.deployment.spawned_card_id.clamp(
             0, len(self.catalog.cards.names) - 1

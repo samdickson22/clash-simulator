@@ -23,6 +23,7 @@ from .combat_mechanics import (
 )
 from .runtime_mechanics import MechanicHitResult, TensorRuntimeMechanics
 from .runtime_state import RuntimeEventOpcode, TensorBattleRuntime, TickPhase
+from .tensor_ops import scatter_any_
 
 if TYPE_CHECKING:
     from clasher.battle import BattleState
@@ -357,12 +358,11 @@ def _resolve_ordered_hits_(
         target_died=grouped("target_died"),
     )
     changed = torch.zeros_like(runtime.battle.entity_active)
-    changed.scatter_reduce_(
+    scatter_any_(
+        changed,
         1,
         target_slot.reshape(batch, -1),
         (result.hitpoint_damage > 0.0).reshape(batch, -1),
-        reduce="amax",
-        include_self=True,
     )
     runtime.battle.entity_hp_integer_kind &= ~changed
     return result

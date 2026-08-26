@@ -16,6 +16,7 @@ from .combat import CombatStepResult, StationaryCombatState, step_stationary_com
 from .combat_adapter import project_stationary_combat
 from .runtime_mechanics import MechanicHitResult, TensorRuntimeMechanics
 from .runtime_state import RuntimeEventOpcode, TensorBattleRuntime, TickPhase
+from .tensor_ops import scatter_any_
 
 
 class ShieldLifecycleReason(IntEnum):
@@ -428,21 +429,19 @@ def step_shield_lifecycle_(
     )
     rows = torch.arange(selected.numel(), device=state.device)[:, None]
     changed = torch.zeros_like(speculative.battle.entity_hp_integer_kind)
-    changed.scatter_reduce_(
+    scatter_any_(
+        changed,
         1,
         target.clamp(0, working.max_entities - 1),
         valid & (hit.hitpoint_damage > 0.0),
-        reduce="amax",
-        include_self=True,
     )
     speculative.battle.entity_hp_integer_kind &= ~changed
     absorbed = torch.zeros_like(working.shield_integer_kind)
-    absorbed.scatter_reduce_(
+    scatter_any_(
+        absorbed,
         1,
         target.clamp(0, working.max_entities - 1),
         hit.shield_absorbed,
-        reduce="amax",
-        include_self=True,
     )
     working.shield_integer_kind &= ~absorbed
     speculative.events.append(

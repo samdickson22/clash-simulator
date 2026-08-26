@@ -15,6 +15,7 @@ from .catalog import CardKindOpcode, TensorCardCatalog
 from .projectile_bridge import TensorResidentProjectileSpellBridge
 from .runtime_objects import TensorRuntimeObjectPhase
 from .runtime_state import TensorBattleRuntime
+from .tensor_ops import scatter_any_
 
 
 @dataclass(frozen=True)
@@ -447,13 +448,7 @@ class TensorResidentSpellActionIngress:
         non_spell = ~command_spell
         bad_row = torch.zeros(batch, dtype=torch.bool, device=self.device)
         if command_count:
-            bad_row.scatter_reduce_(
-                0,
-                commands.battle_index,
-                non_spell,
-                reduce="amax",
-                include_self=True,
-            )
+            scatter_any_(bad_row, 0, commands.battle_index, non_spell)
         transition_known = (
             (catalog_to_core[ingress.hand_ids] >= 0).all(dim=2)
             & (catalog_to_core[ingress.cycle_ids] >= 0).all(dim=2)
