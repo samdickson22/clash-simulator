@@ -67,6 +67,7 @@ from .special_movement import (
     step_mega_knight_leap,
     step_underground_deployment,
 )
+from .tensor_ops import scatter_any_
 
 SUPPORTED_DISPATCH_MECHANICS = frozenset(
     MECHANIC_OPCODE[name]
@@ -1359,12 +1360,11 @@ class TensorMechanicDispatcher:
             status_eligible=grouped_status.reshape(self.batch_size, -1),
         )
         used = torch.zeros_like(self.runtime.battle.entity_active)
-        used.scatter_reduce_(
+        scatter_any_(
+            used,
             1,
             source_slot,
             valid,
-            reduce="amax",
-            include_self=True,
         )
         self.multiple_target_ids.masked_fill_(used[..., None], 0)
         self.multiple_target_valid.masked_fill_(used[..., None], False)

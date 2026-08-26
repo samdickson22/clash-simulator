@@ -969,3 +969,21 @@ def test_cuda_transactional_dispatch_smoke() -> None:
     assert result.committed.item()
     assert dispatcher.dash.phase[0, source_slot].item() != 0
     assert runtime.events.count.device.type == "cuda"
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_empty_attack_lanes_commit_on_cpu_and_cuda(device: str) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    battle = _battle()
+    _spawn(battle, "Knight", 0, Position(9.0, 10.0))
+    runtime = TensorBattleRuntime.from_battles(
+        [battle], device=device, max_entities=8, event_capacity=32
+    )
+    dispatcher = TensorMechanicDispatcher.from_battles(runtime, [battle])
+
+    result = dispatcher.step(MechanicTickInputs.empty(dispatcher))
+
+    assert result.preflight.supported.tolist() == [True]
+    assert result.committed.tolist() == [True]
+    assert result.preflight.reason.tolist() == [DispatchReason.NONE]
