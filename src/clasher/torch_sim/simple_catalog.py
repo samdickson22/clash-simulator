@@ -42,6 +42,10 @@ class FastCardCatalog:
     elixir_cost: torch.Tensor
     deploy_ticks: torch.Tensor
     collision_radius_units: torch.Tensor
+    attacks_air: torch.Tensor
+    attacks_ground: torch.Tensor
+    buildings_only: torch.Tensor
+    is_air: torch.Tensor
     summon_count: torch.Tensor
     summon_radius_units: torch.Tensor
     deploy_w_tile_margin: torch.Tensor
@@ -117,6 +121,10 @@ class FastCardCatalog:
         status_kind = torch.full_like(catalog.kind, FAST_STATUS_NONE, dtype=torch.int8)
         status_ticks = torch.zeros_like(catalog.range_units)
         consume_source = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        attacks_air = catalog.attacks_air.to(torch.bool).clone()
+        attacks_ground = catalog.attacks_ground.to(torch.bool).clone()
+        buildings_only = catalog.buildings_only.to(torch.bool).clone()
+        is_air = catalog.is_air_unit.to(torch.bool).clone()
 
         # ProjectileLaunch is itself a serialized primitive, so spell cards
         # can remain useful even when the optional source-data loader is not
@@ -169,6 +177,18 @@ class FastCardCatalog:
                 if card is None:
                     continue
                 raw = card._raw_entry or {}
+                target_type = str(getattr(card, "target_type", "") or "")
+                attacks_air[card_id] = bool(
+                    getattr(card, "attacks_air", False)
+                ) or target_type == "TID_TARGETS_AIR_AND_GROUND"
+                attacks_ground[card_id] = bool(
+                    getattr(card, "attacks_ground", False)
+                ) or target_type in {
+                    "TID_TARGETS_GROUND",
+                    "TID_TARGETS_AIR_AND_GROUND",
+                    "TID_TARGETS_BUILDINGS",
+                }
+                buildings_only[card_id] = target_type == "TID_TARGETS_BUILDINGS"
                 character = (
                     raw.get("summonCharacterData") or raw.get("summonSpellData") or {}
                 )
@@ -267,6 +287,10 @@ class FastCardCatalog:
             elixir_cost=catalog.elixir.to(torch.float32),
             deploy_ticks=deploy_ticks,
             collision_radius_units=catalog.collision_radius_units.to(torch.int32),
+            attacks_air=attacks_air,
+            attacks_ground=attacks_ground,
+            buildings_only=buildings_only,
+            is_air=is_air,
             summon_count=summon_count,
             summon_radius_units=summon_radius_units,
             deploy_w_tile_margin=catalog.deploy_w_tile_margin.to(torch.int8),

@@ -9,7 +9,8 @@ from dataclasses import dataclass
 import torch
 
 from .simple_catalog import FastCardCatalog
-from .simple_state import FastGymState
+from .simple_state import FAST_KIND_BUILDING, FastGymState
+from .simple_targeting import FastTargetTraits, select_nearest_targets
 
 
 @dataclass(frozen=True)
@@ -64,6 +65,39 @@ class FastTensorGym:
         # It is overwritten on every deployment call and contains every child
         # materialized by the most recent atomic request group.
         self.spawned_mask = torch.zeros_like(state.active)
+        self._target_unavailable = torch.zeros_like(state.active)
+
+    def _target_traits(self) -> FastTargetTraits:
+        """Project card tables onto dense slots without card dispatch."""
+
+        state = self.state
+        building = state.kind == FAST_KIND_BUILDING
+        if self.catalog is None:
+            # Preserve the former permissive plane behavior for catalog-free
+            # structural fixtures. Production always supplies a catalog.
+            return FastTargetTraits(
+                airborne=torch.zeros_like(state.active),
+                building=building,
+                attacks_air=torch.ones_like(state.active),
+                attacks_ground=torch.ones_like(state.active),
+                buildings_only=torch.zeros_like(state.active),
+                collision_radius=torch.zeros_like(state.x_units),
+            )
+        safe_card = state.card_id.clamp(0, self.catalog.size - 1)
+        known = (state.card_id > 0) & (state.card_id < self.catalog.size)
+        tower = (state.card_id == 0) & building
+        return FastTargetTraits(
+            airborne=self.catalog.is_air[safe_card] & known,
+            building=building,
+            attacks_air=(self.catalog.attacks_air[safe_card] & known) | tower,
+            attacks_ground=(self.catalog.attacks_ground[safe_card] & known) | tower,
+            buildings_only=self.catalog.buildings_only[safe_card] & known,
+            collision_radius=torch.where(
+                known,
+                self.catalog.collision_radius_units[safe_card],
+                0,
+            ),
+        )
 
     def _validate_request(self, request: FastDeploymentRequest) -> None:
         expected = (self.state.batch_size,)
@@ -243,50 +277,32 @@ class FastTensorGym:
         state = self.state
         present = state.active & (state.hp > 0) & (state.deploy_ticks == 0)
         can_act = present & ~disabled
-        dx = state.x_units[:, None, :].to(torch.int64) - state.x_units[:, :, None].to(
-            torch.int64
+        traits = self._target_traits()
+        targets = select_nearest_targets(
+            state,
+            traits,
+            source_disabled=disabled,
+            target_unavailable=self._target_unavailable,
         )
-        dy = state.y_units[:, None, :].to(torch.int64) - state.y_units[:, :, None].to(
-            torch.int64
-        )
-        distance_sq = dx.square() + dy.square()
-        sight_sq = state.sight_range_units.to(torch.int64).square()[:, :, None]
-        candidate = (
-            can_act[:, :, None]
-            & present[:, None, :]
-            & (state.owner[:, :, None] != state.owner[:, None, :])
-            & (distance_sq <= sight_sq)
-        )
-        maximum = torch.iinfo(torch.int64).max
-        unreachable = torch.full_like(distance_sq, maximum)
-        nearest_distance = torch.where(candidate, distance_sq, unreachable).amin(dim=2)
-        found = candidate.any(dim=2)
-        distance_tie = candidate & (distance_sq == nearest_distance[:, :, None])
-        candidate_id = state.stable_id[:, None, :].expand_as(distance_sq)
-        selected_id = torch.where(
-            distance_tie,
-            candidate_id,
-            torch.full_like(candidate_id, maximum),
-        ).amin(dim=2)
-        selected_slot = distance_tie & (candidate_id == selected_id[:, :, None])
-        nearest_slot = selected_slot.to(torch.int64).argmax(dim=2)
-        state.target_id.copy_(torch.where(found, selected_id, 0))
+        found = targets.found
+        nearest_slot = targets.target_slot.clamp(min=0)
+        state.target_id.copy_(targets.target_id)
 
         target_x = state.x_units.gather(1, nearest_slot).to(torch.float32)
         target_y = state.y_units.gather(1, nearest_slot).to(torch.float32)
         delta_x = target_x - state.x_units.to(torch.float32)
         delta_y = target_y - state.y_units.to(torch.float32)
-        distance = torch.sqrt(delta_x.square() + delta_y.square())
+        distance = targets.center_distance
         attack_range = state.range_units.to(torch.float32).clamp(min=0)
         travel = torch.minimum(
             state.speed_units_per_tick.to(torch.float32).clamp(min=0),
-            (distance - attack_range).clamp(min=0),
+            (targets.edge_distance - attack_range).clamp(min=0),
         )
         mobile = (
             found
             & can_act
             & (state.kind == 0)
-            & (distance > attack_range)
+            & ~targets.within_attack_range
             & (travel > 0)
         )
         denominator = distance.clamp(min=1.0)
@@ -299,12 +315,15 @@ class FastTensorGym:
         target_y = state.y_units.gather(1, nearest_slot).to(torch.float32)
         post_dx = target_x - state.x_units.to(torch.float32)
         post_dy = target_y - state.y_units.to(torch.float32)
-        post_distance_sq = post_dx.square() + post_dy.square()
+        target_radius = traits.collision_radius.gather(1, nearest_slot).clamp(min=0)
+        post_edge_distance = (
+            torch.sqrt(post_dx.square() + post_dy.square()) - target_radius
+        ).clamp_min(0.0)
         return (
             found
             & can_act
             & (state.cooldown_ticks == 0)
-            & (post_distance_sq <= attack_range.square())
+            & (post_edge_distance <= attack_range)
             & (state.damage > 0)
         )
 

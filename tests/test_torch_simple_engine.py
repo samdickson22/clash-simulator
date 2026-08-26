@@ -12,6 +12,32 @@ from clasher.torch_sim.simple_engine import FastDeploymentRequest, FastTensorGym
 from clasher.torch_sim.simple_state import FAST_KIND_TROOP, FastGymState
 
 
+def _seed_catalog_entity(
+    state: FastGymState,
+    catalog: FastCardCatalog,
+    *,
+    slot: int,
+    stable_id: int,
+    owner: int,
+    card_id: int,
+    x_units: int,
+) -> None:
+    state.active[0, slot] = True
+    state.stable_id[0, slot] = stable_id
+    state.owner[0, slot] = owner
+    state.card_id[0, slot] = card_id
+    state.kind[0, slot] = catalog.kind[card_id]
+    state.x_units[0, slot] = x_units
+    state.y_units[0, slot] = 10_000
+    state.hp[0, slot] = catalog.hitpoints[card_id]
+    state.max_hp[0, slot] = catalog.hitpoints[card_id]
+    state.damage[0, slot] = catalog.damage[card_id]
+    state.range_units[0, slot] = catalog.range_units[card_id]
+    state.sight_range_units[0, slot] = catalog.sight_range_units[card_id]
+    state.speed_units_per_tick[0, slot] = catalog.speed_units_per_tick[card_id]
+    state.hit_cooldown_ticks[0, slot] = catalog.hit_cooldown_ticks[card_id]
+
+
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
 def test_simple_noop_clock_and_deterministic_low_slot_deployment(
     device: str,
@@ -141,3 +167,98 @@ def test_simple_target_tie_uses_stable_id_not_reused_physical_slot() -> None:
     FastTensorGym(state).step_tick()
 
     assert int(state.target_id[0, 0]) == 2
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_full_engine_giant_ignores_nearer_troop_for_building(device: str) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    battle = BattleState()
+    full = TensorCardCatalog.compile(
+        battle.card_loader, ["Giant", "Knight", "Cannon"], device=device
+    )
+    catalog = FastCardCatalog.from_tensor_catalog(full, loader=battle.card_loader)
+    state = FastGymState.empty(1, max_entities=4, device=device)
+    _seed_catalog_entity(
+        state,
+        catalog,
+        slot=0,
+        stable_id=1,
+        owner=0,
+        card_id=full.name_to_id["Giant"],
+        x_units=0,
+    )
+    _seed_catalog_entity(
+        state,
+        catalog,
+        slot=1,
+        stable_id=2,
+        owner=1,
+        card_id=full.name_to_id["Knight"],
+        x_units=1_000,
+    )
+    _seed_catalog_entity(
+        state,
+        catalog,
+        slot=2,
+        stable_id=3,
+        owner=1,
+        card_id=full.name_to_id["Cannon"],
+        x_units=3_000,
+    )
+    state.next_stable_id[0] = 4
+
+    FastTensorGym(state, catalog).step_tick()
+
+    assert state.target_id[0, 0].item() == 3
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_full_engine_baby_dragon_acquires_air_then_ground(device: str) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    battle = BattleState()
+    full = TensorCardCatalog.compile(
+        battle.card_loader,
+        ["BabyDragon", "Minions", "Knight"],
+        device=device,
+    )
+    catalog = FastCardCatalog.from_tensor_catalog(full, loader=battle.card_loader)
+    state = FastGymState.empty(1, max_entities=4, device=device)
+    _seed_catalog_entity(
+        state,
+        catalog,
+        slot=0,
+        stable_id=1,
+        owner=0,
+        card_id=full.name_to_id["BabyDragon"],
+        x_units=0,
+    )
+    _seed_catalog_entity(
+        state,
+        catalog,
+        slot=1,
+        stable_id=2,
+        owner=1,
+        card_id=full.name_to_id["Minions"],
+        x_units=1_000,
+    )
+    _seed_catalog_entity(
+        state,
+        catalog,
+        slot=2,
+        stable_id=3,
+        owner=1,
+        card_id=full.name_to_id["Knight"],
+        x_units=2_000,
+    )
+    state.next_stable_id[0] = 4
+    gym = FastTensorGym(state, catalog)
+
+    gym.step_tick()
+    assert state.target_id[0, 0].item() == 2
+
+    state.active[0, 1] = False
+    state.hp[0, 1] = 0
+    gym.step_tick()
+    assert state.target_id[0, 0].item() == 3
