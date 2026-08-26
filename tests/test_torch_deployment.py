@@ -225,7 +225,7 @@ def test_twelve_battle_mixed_formations_preserve_rng_ids_slots_and_state(
     _assert_runtime_representation_exact(runtime, expected, materializer)
 
 
-def test_spell_mechanic_and_nested_payload_are_explicit_atomic_fallbacks(
+def test_spell_and_mechanic_fallbacks_remain_atomic_beside_mixed_deployment(
     deployment_stack,
 ) -> None:
     cards, action_catalog, kernel, _, materializer = deployment_stack
@@ -253,13 +253,15 @@ def test_spell_mechanic_and_nested_payload_are_explicit_atomic_fallbacks(
 
     assert result.unsupported_spell.tolist() == [True, False, False]
     assert result.unsupported_mechanic.tolist() == [False, True, False]
-    assert result.unsupported_payload.tolist() == [True, False, True]
-    assert not result.command_supported.any()
-    assert not result.battle_supported.any()
-    assert torch.equal(runtime.battle.hand, before_hand)
-    assert torch.equal(runtime.battle.cycle_queue, before_cycle)
-    assert torch.equal(runtime.battle.elixir, before_elixir)
-    assert torch.equal(runtime.battle.entity_id, before_ids)
+    assert result.unsupported_payload.tolist() == [True, False, False]
+    assert result.command_supported.tolist() == [False, False, True]
+    assert result.battle_supported.tolist() == [False, False, True]
+    assert torch.equal(runtime.battle.hand[:2], before_hand[:2])
+    assert torch.equal(runtime.battle.cycle_queue[:2], before_cycle[:2])
+    assert torch.equal(runtime.battle.elixir[:2], before_elixir[:2])
+    assert torch.equal(runtime.battle.entity_id[:2], before_ids[:2])
+    assert not torch.equal(runtime.battle.hand[2], before_hand[2])
+    assert not torch.equal(runtime.battle.entity_id[2], before_ids[2])
 
 
 def test_mechanic_admission_is_opcode_driven_and_default_remains_fail_closed(

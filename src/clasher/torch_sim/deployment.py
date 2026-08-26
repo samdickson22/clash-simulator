@@ -49,8 +49,11 @@ class TensorDeploymentCatalog:
     symmetric_snap: torch.Tensor
     building_footprint_half_units: torch.Tensor
     supported_payload: torch.Tensor
-    hitpoints_integer_kind: torch.Tensor
-    spawned_card_names: tuple[str, ...]
+    spawned_card_names: tuple[tuple[str, ...], ...]
+    spawned_kind: torch.Tensor
+    spawned_hitpoints: torch.Tensor
+    spawned_hitpoints_integer_kind: torch.Tensor
+    spawned_lifetime_ms: torch.Tensor
 
     @property
     def device(self) -> torch.device:
@@ -79,6 +82,7 @@ class TensorDeploymentCatalog:
             1,
             max(
                 int(getattr(stats, "summon_count", None) or 1)
+                + int(getattr(stats, "summon_character_second_count", None) or 0)
                 for stats in stats_by_id[1:]
                 if stats is not None
             ),
@@ -92,28 +96,48 @@ class TensorDeploymentCatalog:
         symmetric_snap = torch.zeros(size, dtype=torch.bool, device=cards.device)
         footprint_half = torch.zeros(size, dtype=torch.int32, device=cards.device)
         supported_payload = torch.zeros(size, dtype=torch.bool, device=cards.device)
-        hp_integer = torch.zeros(size, dtype=torch.bool, device=cards.device)
-        spawned_names = [""] * size
+        spawned_names = [[""] * maximum for _ in range(size)]
+        spawned_kind = torch.zeros(
+            (size, maximum), dtype=torch.int8, device=cards.device
+        )
+        spawned_hp = torch.zeros(
+            (size, maximum), dtype=torch.float64, device=cards.device
+        )
+        spawned_hp_integer = torch.zeros(
+            (size, maximum), dtype=torch.bool, device=cards.device
+        )
+        spawned_lifetime_ms = torch.zeros(
+            (size, maximum), dtype=torch.int32, device=cards.device
+        )
 
         for card_id, stats in enumerate(stats_by_id[1:], start=1):
             assert stats is not None
             kind = int(cards.kind[card_id])
             is_troop = kind == int(CardKindOpcode.TROOP)
             is_building = kind == int(CardKindOpcode.BUILDING)
-            count = 1 if is_building else int(stats.summon_count or 1)
-            spawned_names[card_id] = str(stats.name or cards.names[card_id])
+            primary_count = 1 if is_building else int(stats.summon_count or 1)
+            second_count = int(
+                getattr(stats, "summon_character_second_count", None) or 0
+            )
+            count = primary_count + second_count
             hp_value = stats.scaled_hitpoints
             if hp_value is None and is_troop:
                 hp_value = stats.hitpoints
             if hp_value is None:
                 hp_value = 100
-            hp_integer[card_id] = type(hp_value) is int
-            second_count = int(
-                getattr(stats, "summon_character_second_count", None) or 0
-            )
             summon_count[card_id] = count
-            supported_payload[card_id] = bool(
-                (is_troop or is_building) and second_count == 0
+            supported_payload[card_id] = is_troop or is_building
+
+            primary_data = getattr(stats, "summon_character_data", None)
+            primary_raw_hp = (
+                primary_data.get("hitpoints")
+                if isinstance(primary_data, dict)
+                else None
+            )
+            level_scale = (
+                float(hp_value) / float(primary_raw_hp)
+                if isinstance(primary_raw_hp, (int, float)) and primary_raw_hp != 0
+                else 1.0
             )
 
             collision_radius = float(stats.collision_radius or 0.5)
@@ -126,8 +150,44 @@ class TensorDeploymentCatalog:
             width = float(getattr(stats, "summon_width", 0.0) or 0.0)
             angle_shift = float(getattr(stats, "spawn_angle_shift", 0.0) or 0.0)
             stagger_ms = float(getattr(stats, "summon_deploy_delay", 0.0) or 0.0)
-            base_delay = max(0.0, float(stats.deploy_time or 0.0) / 1000.0)
             for spawn_index in range(count):
+                child_name = str(stats.name or cards.names[card_id])
+                child_data = primary_data
+                if second_count > 0:
+                    child_data = (
+                        primary_data
+                        if spawn_index < primary_count
+                        else getattr(stats, "summon_character_second_data", None)
+                    )
+                    if isinstance(child_data, dict):
+                        child_name = str(child_data.get("name", "") or child_name)
+                spawned_names[card_id][spawn_index] = child_name
+                supported_payload[card_id] &= bool(child_name)
+                child_raw_hp = (
+                    child_data.get("hitpoints")
+                    if isinstance(child_data, dict)
+                    else None
+                )
+                child_hp = (
+                    round(float(child_raw_hp) * level_scale)
+                    if second_count > 0 and child_raw_hp is not None
+                    else hp_value
+                )
+                child_deploy_ms = (
+                    child_data.get("deployTime")
+                    if isinstance(child_data, dict)
+                    else None
+                )
+                spawned_kind[card_id, spawn_index] = kind
+                spawned_hp[card_id, spawn_index] = float(child_hp)
+                spawned_hp_integer[card_id, spawn_index] = type(child_hp) is int
+                spawned_lifetime_ms[card_id, spawn_index] = round(
+                    float(getattr(stats, "lifetime_ms", None) or 0.0)
+                )
+                base_delay = max(
+                    0.0,
+                    float(child_deploy_ms or stats.deploy_time or 0.0) / 1000.0,
+                )
                 delays[card_id, spawn_index] = (
                     base_delay + spawn_index * stagger_ms / 1000.0
                 )
@@ -140,7 +200,17 @@ class TensorDeploymentCatalog:
                     continue
                 for player_id in (0, 1):
                     for lane_index, lane_id in enumerate((1, 2)):
-                        if width > 0.0:
+                        if second_count > 0:
+                            offset = formation_offset(
+                                spawn_index,
+                                primary_count,
+                                radius,
+                                player_id,
+                                angle_shift_degrees=angle_shift,
+                                secondary_count=second_count,
+                                lane_id=lane_id,
+                            )
+                        elif width > 0.0:
                             offset = horizontal_line_offset(
                                 spawn_index,
                                 count,
@@ -186,8 +256,11 @@ class TensorDeploymentCatalog:
             symmetric_snap=symmetric_snap,
             building_footprint_half_units=footprint_half,
             supported_payload=supported_payload,
-            hitpoints_integer_kind=hp_integer,
-            spawned_card_names=tuple(spawned_names),
+            spawned_card_names=tuple(tuple(row) for row in spawned_names),
+            spawned_kind=spawned_kind,
+            spawned_hitpoints=spawned_hp,
+            spawned_hitpoints_integer_kind=spawned_hp_integer,
+            spawned_lifetime_ms=spawned_lifetime_ms,
         )
 
 
@@ -233,7 +306,7 @@ class TensorCommandMaterializer:
         # default remains fail-closed for every attached mechanic.
         self.admitted_mechanic_opcode = admitted
         self._required_spawn_names = tuple(
-            sorted({name for name in catalog.spawned_card_names[1:] if name})
+            sorted({name for row in catalog.spawned_card_names for name in row if name})
         )
         self._mapping_key: tuple[str, ...] | None = None
         self._catalog_to_core_cache: torch.Tensor | None = None
@@ -354,8 +427,8 @@ class TensorCommandMaterializer:
         reverse[runtime.card_catalog_index[present]] = core_ids[present]
         spawned = torch.tensor(
             [
-                runtime.battle.card_to_id.get(name, -1) if name else 0
-                for name in self.catalog.spawned_card_names
+                [runtime.battle.card_to_id.get(name, -1) if name else 0 for name in row]
+                for row in self.catalog.spawned_card_names
             ],
             dtype=torch.int64,
             device=self.device,
@@ -743,34 +816,39 @@ class TensorCommandMaterializer:
         rows = ordered_battles[:, None].expand_as(entity_slots)[lane_valid]
         slots = entity_slots[lane_valid]
         card_lanes = ordered_cards[:, None].expand_as(entity_slots)[lane_valid]
+        spawned_core_lanes = spawned_catalog_to_core[ordered_cards]
         player_lanes = ordered_players[:, None].expand_as(entity_slots)[lane_valid]
         index = (rows, slots)
-        core_card = spawned_catalog_to_core[card_lanes]
-        building = self.catalog.cards.kind[card_lanes] == int(CardKindOpcode.BUILDING)
+        core_card = spawned_core_lanes[lane_valid]
+        spawned_kind = self.catalog.spawned_kind[ordered_cards][lane_valid]
+        building = spawned_kind == int(CardKindOpcode.BUILDING)
         runtime.battle.entity_kind[index] = building.to(torch.int8)
         runtime.battle.entity_player[index] = player_lanes.to(torch.int8)
         runtime.battle.entity_card[index] = core_card
         runtime.battle.entity_x_units[index] = x[lane_valid]
         runtime.battle.entity_y_units[index] = y[lane_valid]
-        runtime.battle.entity_hp[index] = self.catalog.cards.hitpoints[card_lanes]
+        lane_hitpoints = self.catalog.spawned_hitpoints[ordered_cards][lane_valid]
+        runtime.battle.entity_hp[index] = lane_hitpoints
         runtime.battle.entity_hp_integer_kind[index] = (
-            self.catalog.hitpoints_integer_kind[card_lanes]
+            self.catalog.spawned_hitpoints_integer_kind[ordered_cards][lane_valid]
         )
-        runtime.battle.entity_max_hp[index] = self.catalog.cards.hitpoints[card_lanes]
+        runtime.battle.entity_max_hp[index] = lane_hitpoints
         runtime.battle.entity_deploy_delay[index] = delays[lane_valid]
         pending = delays[lane_valid] > 1e-9
         runtime.battle.entity_placement_pending[index] = pending
         runtime.battle.entity_spawn_hook_pending[index] = pending
         runtime.battle.entity_spawn_hook_fired[index] = ~pending
         runtime.battle.entity_tower_active[index] = building
-        lifetime_ms = self.catalog.cards.lifetime_ms[card_lanes].to(torch.int64)
+        lifetime_ms = self.catalog.spawned_lifetime_ms[ordered_cards][lane_valid].to(
+            torch.int64
+        )
         runtime.battle.entity_lifetime_ms[index] = torch.where(
             building, lifetime_ms, torch.zeros_like(lifetime_ms)
         )
         runtime.battle.entity_lifetime_decay_rate[index] = torch.where(
             building & (lifetime_ms > 0),
             5000
-            * torch.round(self.catalog.cards.hitpoints[card_lanes]).to(torch.int64)
+            * torch.round(lane_hitpoints).to(torch.int64)
             // lifetime_ms.clamp_min(1).to(torch.int64),
             torch.zeros_like(lifetime_ms, dtype=torch.int64),
         ).to(runtime.battle.entity_lifetime_decay_rate.dtype)

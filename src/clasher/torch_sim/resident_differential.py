@@ -36,7 +36,11 @@ from clasher.spells import SPELL_REGISTRY
 from .actions import NO_OP_ACTION
 from .catalog import TensorCardCatalog
 from .deployment import TensorDeploymentCatalog
-from .diagnostics import StateDivergence, first_divergence
+from .diagnostics import (
+    StateDivergence,
+    first_approximate_state_divergence,
+    first_divergence,
+)
 from .oracle_event_capture import (
     OracleEventRecord,
     OraclePayloadKind,
@@ -55,11 +59,22 @@ RESIDENT_COMPARISON_SCOPE = (
     "CPython RNG state",
     "call-site event phase/opcode/order/identity/position/amount/payload kind",
 )
+APPROXIMATE_STATE_COMPARISON_SCOPE = (
+    "oracle snapshot structure and discrete state",
+    "numeric HP/elixir/status/outcome equality without Python scalar-kind identity",
+    "positions within 0.25 tile and component timers within one 50ms tick",
+    "RNG and diagnostic event ledger excluded",
+)
 
 
 class ResidentImplementationTopology(str, Enum):
     PYTHON_ORACLE = "python_oracle"
     PYTORCH_RESIDENT_BATCHED = "pytorch_resident_batched"
+
+
+class ResidentValidationProfile(str, Enum):
+    STRICT_ORACLE = "strict_oracle"
+    APPROXIMATE_ORACLE_STATE = "approximate_oracle_state"
 
 
 class ResidentActionProvider(Protocol):
@@ -479,11 +494,14 @@ class ResidentEpisodeDifferential:
         max_entities: int = 128,
         max_objects: int = 128,
         event_capacity: int = 512,
+        validation_profile: str
+        | ResidentValidationProfile = ResidentValidationProfile.STRICT_ORACLE,
     ) -> None:
         self.device = torch.device(device)
         self.max_entities = max_entities
         self.max_objects = max_objects
         self.event_capacity = event_capacity
+        self.validation_profile = ResidentValidationProfile(validation_profile)
 
     def run(
         self,
@@ -603,10 +621,21 @@ class ResidentEpisodeDifferential:
                     continue
                 expected_snapshot = _oracle_snapshot(battle)
                 actual_snapshot = _resident_snapshot(engine, row)
-                mismatch = first_divergence(
-                    expected_snapshot,
-                    actual_snapshot,
-                    path=f"rows[{row}]",
+                strict = (
+                    self.validation_profile is ResidentValidationProfile.STRICT_ORACLE
+                )
+                mismatch = (
+                    first_divergence(
+                        expected_snapshot,
+                        actual_snapshot,
+                        path=f"rows[{row}]",
+                    )
+                    if strict
+                    else first_approximate_state_divergence(
+                        expected_snapshot,
+                        actual_snapshot,
+                        path=f"rows[{row}]",
+                    )
                 )
                 expected_rng = battle.rng.getstate()
                 actual_rng = engine.runtime.battle.rng.python_state(row)
@@ -616,8 +645,8 @@ class ResidentEpisodeDifferential:
                 )
                 if (
                     mismatch is not None
-                    or expected_rng != actual_rng
-                    or expected_events != actual_events
+                    or (strict and expected_rng != actual_rng)
+                    or (strict and expected_events != actual_events)
                 ):
                     divergence = ResidentEpisodeDivergence(
                         row=row,
@@ -671,8 +700,8 @@ class ResidentEpisodeDifferential:
             tuple(divergences),
         )
 
-    @staticmethod
     def _report(
+        self,
         ticks: int,
         resident: torch.Tensor,
         preflight_rejected: torch.Tensor,
@@ -706,7 +735,11 @@ class ResidentEpisodeDifferential:
             diverged_rows=rows(diverged),
             divergences=divergences,
             divergence=divergences[0] if divergences else None,
-            semantic_scope=RESIDENT_COMPARISON_SCOPE,
+            semantic_scope=(
+                RESIDENT_COMPARISON_SCOPE
+                if self.validation_profile is ResidentValidationProfile.STRICT_ORACLE
+                else APPROXIMATE_STATE_COMPARISON_SCOPE
+            ),
             oracle_topology=ResidentImplementationTopology.PYTHON_ORACLE,
             candidate_topology=(
                 ResidentImplementationTopology.PYTORCH_RESIDENT_BATCHED
@@ -1148,6 +1181,7 @@ def no_op_actions(
 
 
 __all__ = [
+    "APPROXIMATE_STATE_COMPARISON_SCOPE",
     "RESIDENT_COMPARISON_SCOPE",
     "ResidentActionProvider",
     "ResidentCardCoverageEntry",
@@ -1162,6 +1196,7 @@ __all__ = [
     "ResidentEpisodeReport",
     "ResidentEventRecord",
     "ResidentImplementationTopology",
+    "ResidentValidationProfile",
     "classify_resident_coverage_row",
     "compare_resident_coverage_topologies",
     "enumerate_enabled_resident_coverage",

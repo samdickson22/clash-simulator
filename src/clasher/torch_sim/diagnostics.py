@@ -33,6 +33,140 @@ class TorchParityError(AssertionError):
         super().__init__(str(divergence))
 
 
+@dataclass(frozen=True)
+class ApproximateOracleStateTolerance:
+    """Policy-facing state tolerance, distinct from exact oracle parity.
+
+    Real spectator-derived actor state localizes sprite centers rather than
+    native hitboxes.  A 250-logic-unit position tolerance is 0.25 arena tiles,
+    half the native path grid and about 1.39% of board width. All discrete,
+    card, HP, clock, status, and outcome fields remain exact;
+    tiny float tolerance only removes binary arithmetic residue.
+    """
+
+    position_units: int = 250
+    position_tiles: float = 0.25
+    component_seconds: float = 0.050000001
+    float_atol: float = 1e-9
+
+
+_DEFAULT_APPROXIMATE_STATE_TOLERANCE = ApproximateOracleStateTolerance()
+
+
+def _numeric(value: object) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def _policy_numeric_equal(
+    expected: float,
+    actual: float,
+    *,
+    path: str,
+    tolerance: ApproximateOracleStateTolerance,
+) -> bool:
+    if ".position_units[" in path:
+        return abs(float(expected) - float(actual)) <= tolerance.position_units
+    if ".position[" in path:
+        return abs(float(expected) - float(actual)) <= tolerance.position_tiles
+    if path.rsplit(".", 1)[-1] in {
+        "attack_cooldown",
+        "last_attack_time",
+        "deploy_delay",
+        "deploy_delay_remaining",
+        "stun_timer",
+        "slow_timer",
+        "haste_timer",
+    }:
+        return abs(float(expected) - float(actual)) <= tolerance.component_seconds
+    if isinstance(expected, float) or isinstance(actual, float):
+        return abs(float(expected) - float(actual)) <= tolerance.float_atol
+    return int(expected) == int(actual)
+
+
+def first_approximate_state_divergence(
+    expected: Any,
+    actual: Any,
+    *,
+    path: str = "battle",
+    tolerance: ApproximateOracleStateTolerance = _DEFAULT_APPROXIMATE_STATE_TOLERANCE,
+) -> StateDivergence | None:
+    """Return the first policy-material mismatch without Python-only quirks.
+
+    Exact :func:`first_divergence` remains the regression/debug contract. This
+    comparator deliberately treats numeric scalar kinds as equivalent and
+    permits only sub-quarter-tile position differences; identities, cards, HP,
+    clocks, statuses, actions, and outcomes remain exact.
+    """
+
+    if _numeric(expected) and _numeric(actual):
+        if _policy_numeric_equal(expected, actual, path=path, tolerance=tolerance):
+            return None
+        return StateDivergence(
+            path,
+            expected,
+            actual,
+            type(expected).__name__,
+            type(actual).__name__,
+        )
+    if type(expected) is not type(actual):
+        return StateDivergence(
+            path,
+            expected,
+            actual,
+            type(expected).__name__,
+            type(actual).__name__,
+        )
+    if isinstance(expected, dict):
+        expected_keys = tuple(expected)
+        actual_keys = tuple(actual)
+        if expected_keys != actual_keys:
+            return StateDivergence(
+                f"{path}.keys",
+                expected_keys,
+                actual_keys,
+                type(expected_keys).__name__,
+                type(actual_keys).__name__,
+            )
+        for key in expected_keys:
+            mismatch = first_approximate_state_divergence(
+                expected[key],
+                actual[key],
+                path=f"{path}.{key}",
+                tolerance=tolerance,
+            )
+            if mismatch is not None:
+                return mismatch
+        return None
+    if isinstance(expected, (tuple, list)):
+        if len(expected) != len(actual):
+            return StateDivergence(
+                f"{path}.length",
+                len(expected),
+                len(actual),
+                "int",
+                "int",
+            )
+        for index, (left, right) in enumerate(zip(expected, actual)):
+            mismatch = first_approximate_state_divergence(
+                left,
+                right,
+                path=f"{path}[{index}]",
+                tolerance=tolerance,
+            )
+            if mismatch is not None:
+                return mismatch
+        return None
+    if expected != actual:
+        return StateDivergence(
+            path,
+            expected,
+            actual,
+            type(expected).__name__,
+            type(actual).__name__,
+        )
+    return None
+
+
 def _entity_snapshot(entity: Entity) -> dict[str, Any]:
     """Return behavior-bearing entity state without derived Python caches."""
 

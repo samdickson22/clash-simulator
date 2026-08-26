@@ -8,9 +8,12 @@ import torch
 
 from clasher.battle import BattleState
 from clasher.factory.dynamic_factory import troop_from_character_data
+from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.spells import SPELL_REGISTRY, SpawnProjectileSpell
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
+from clasher.torch_sim.diagnostics import first_divergence
+from clasher.torch_sim.resident_differential import _oracle_snapshot, _resident_snapshot
 from clasher.torch_sim.resident_engine import TensorResidentEngine
 
 
@@ -133,10 +136,11 @@ def test_catalog_child_ids_are_stable_across_parent_order_and_existing_closure()
     assert "Archer" in rebuilt.runtime.catalog.name_to_id
 
 
-def test_mixed_secondary_payload_closure_is_present_but_transaction_stays_atomic() -> (
+def test_mixed_secondary_payload_materializes_typed_children_exactly() -> (
     None
 ):
     battle = _battle_with_cards(["GoblinGang"])
+    oracle = battle.clone()
     engine = TensorResidentEngine.from_battles(
         [battle], max_entities=32, max_objects=16
     )
@@ -144,20 +148,27 @@ def test_mixed_secondary_payload_closure_is_present_but_transaction_stays_atomic
     action = _first_slot_action(engine)
     actions = torch.tensor([[action, NO_OP_ACTION]])
     diagnostics = engine.diagnose_preflight(actions)
-    assert diagnostics.supported == (False,)
-    assert diagnostics.reasons == ("mixed deployment payload is unsupported",)
-    before_ids = engine.runtime.battle.entity_id.clone()
-    before_hand = engine.runtime.battle.hand.clone()
-    before_elixir = engine.runtime.battle.elixir.clone()
-    before_rng = engine.runtime.battle.rng.python_state(0)
+    assert diagnostics.supported == (True,)
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    assert action_space.apply_action(oracle, 0, action)
+    oracle.step_logic_ticks(1)
 
-    result = engine.step(actions)
+    result = engine.step(actions, player_order=torch.tensor([[0, 1]]))
 
-    assert result.committed.tolist() == [False]
-    assert torch.equal(engine.runtime.battle.entity_id, before_ids)
-    assert torch.equal(engine.runtime.battle.hand, before_hand)
-    assert torch.equal(engine.runtime.battle.elixir, before_elixir)
-    assert engine.runtime.battle.rng.python_state(0) == before_rng
+    assert result.committed.tolist() == [True]
+    assert first_divergence(
+        _oracle_snapshot(oracle), _resident_snapshot(engine, 0)
+    ) is None
+    spawned = result.deployment.deployment.allocation
+    slots = spawned.slots[0][spawned.valid[0]]
+    assert slots.numel() == 6
+    names = [
+        engine.runtime.battle.card_names[
+            int(engine.runtime.battle.entity_card[0, slot].item())
+        ]
+        for slot in slots.tolist()
+    ]
+    assert names == ["Goblin_Stab"] * 3 + ["SpearGoblin"] * 3
 
 
 def test_spawn_projectile_child_uses_the_shared_resident_catalog() -> None:
