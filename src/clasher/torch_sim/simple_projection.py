@@ -264,7 +264,7 @@ class SimpleTensorProjector:
         )
         critic: TensorPrivilegedCriticObservation | None = None
         if self.include_privileged_critic:
-            critic_mask = alive[:, None, :] & known[:, None, :]
+            critic_mask = (alive[:, None, :] & known[:, None, :]).expand(-1, 2, -1)
             enemy_hand = hand_tokens[:, [1, 0], :]
             critic = TensorPrivilegedCriticObservation(
                 entity_ids=torch.where(critic_mask, tokens, torch.zeros_like(tokens)),

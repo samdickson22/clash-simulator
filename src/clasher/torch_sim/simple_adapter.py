@@ -313,6 +313,42 @@ class SimpleGymAdapter:
         )
         return observation
 
+    def reset_history_rows(self, reset_mask: torch.Tensor) -> SimpleGymHistory:
+        """Reset recurrent history for selected episode rows in-place logically.
+
+        The adapter owns history independently from the simulator so a batched
+        collector can reset completed rows without rebuilding either object.
+        All selection remains device-resident and unselected values are copied
+        exactly into the replacement immutable history record.
+        """
+
+        _require_tensor(
+            "reset_mask",
+            reset_mask,
+            shape=(self.batch_size,),
+            device=self.device,
+            dtypes=(torch.bool,),
+        )
+        selected = reset_mask[:, None]
+        self.history = SimpleGymHistory(
+            previous_actions=torch.where(
+                selected,
+                torch.full_like(self.history.previous_actions, self.no_op_action),
+                self.history.previous_actions,
+            ),
+            previous_rewards=torch.where(
+                selected,
+                torch.zeros_like(self.history.previous_rewards),
+                self.history.previous_rewards,
+            ),
+            episode_starts=torch.where(
+                selected,
+                torch.ones_like(self.history.episode_starts),
+                self.history.episode_starts,
+            ),
+        )
+        return self.history
+
     def step(
         self,
         action_ids: torch.Tensor,
