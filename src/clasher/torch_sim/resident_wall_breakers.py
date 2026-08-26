@@ -345,6 +345,9 @@ class TensorResidentDemolition:
             & core.entity_active
             & working.catalog.supported[cards]
         )
+        deployed = (core.entity_deploy_delay <= 1e-9) & (
+            ~core.entity_placement_pending
+        )
         identity = working.tracked_entity_id == core.entity_id
         stale = (working.tracked_entity_id > 0) & ~(live & identity)
         new = live & ((working.tracked_entity_id == 0) | ~identity)
@@ -358,7 +361,20 @@ class TensorResidentDemolition:
         working.tracked_entity_id.copy_(
             torch.where(new, core.entity_id, working.tracked_entity_id)
         )
-        order = working_runtime.entity_pool.id_order(live & supported[:, None])
+        actionable = live & deployed & supported[:, None]
+        working.attack_cooldown.copy_(
+            torch.where(
+                actionable,
+                torch.clamp(working.attack_cooldown - dt_ms / 1_000.0, min=0.0),
+                working.attack_cooldown,
+            )
+        )
+        # Deployment clocks are advanced by the engine's shared character
+        # object phase.  This owner must still remain inert until that phase
+        # makes a bomber actionable: direct owner use and future phase-order
+        # refactors must never let a deploying Wall Breaker acquire, move, or
+        # detonate early.
+        order = working_runtime.entity_pool.id_order(actionable)
         moved = torch.zeros_like(core.entity_active)
         primed_now = torch.zeros_like(core.entity_active)
         detonated = torch.zeros_like(core.entity_active)
