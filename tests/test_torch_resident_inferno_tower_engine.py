@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import deque
 from copy import deepcopy
-from typing import Any
+from typing import Any, cast
 
 import pytest
 import torch
@@ -14,7 +14,10 @@ from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.combat import StationaryCombatState, step_stationary_combat_
 from clasher.torch_sim.oracle_event_capture import PythonOracleEventCapture
-from clasher.torch_sim.resident_differential import _oracle_events, _resident_events
+from clasher.torch_sim.resident_differential import (
+    _oracle_events,
+    _resident_events,
+)
 from clasher.torch_sim.resident_engine import (
     ResidentUnsupportedReason,
     TensorResidentEngine,
@@ -151,7 +154,7 @@ def test_active_inferno_tower_multistage_state_rng_and_events_match_oracle(
     assert observed_stages[78:80] == [1, 2]
 
 
-def test_inferno_tower_action_is_admitted_but_inferno_dragon_fails_closed(
+def test_inferno_tower_and_dragon_actions_are_admitted(
     tensor_device: str,
 ) -> None:
     battle = BattleState(fast_path=False)
@@ -191,8 +194,13 @@ def test_inferno_tower_action_is_admitted_but_inferno_dragon_fails_closed(
 
     dragon = BattleState(fast_path=False)
     _set_hand(dragon, 0, "InfernoDragon")
+    dragon_oracle = dragon.clone()
     dragon_engine = TensorResidentEngine.from_battles(
-        [dragon], max_entities=24, max_objects=16, event_capacity=128
+        [dragon],
+        device=tensor_device,
+        max_entities=24,
+        max_objects=16,
+        event_capacity=128,
     )
     dragon_legal = dragon_engine.deployment.kernel.legal_action_mask(
         dragon_engine.deployment.action_state(dragon_engine.runtime)
@@ -200,28 +208,148 @@ def test_inferno_tower_action_is_admitted_but_inferno_dragon_fails_closed(
     dragon_action = int(
         torch.nonzero(dragon_legal[0, 0, : 18 * 32], as_tuple=False)[0, 0]
     )
-    dragon_actions = torch.tensor([[dragon_action, NO_OP_ACTION]])
-    before = dragon_engine.runtime.battle.entity_id.clone()
-    dragon_result = dragon_engine.step(dragon_actions)
-    assert dragon_engine.preflight(dragon_actions).reason_code.tolist() == [
-        ResidentUnsupportedReason.ACTION_MECHANIC
-    ]
-    assert dragon_result.committed.tolist() == [False]
-    assert torch.equal(dragon_engine.runtime.battle.entity_id, before)
-
-    active_dragon = BattleState(fast_path=False)
-    active_dragon.entities.clear()
-    active_dragon.next_entity_id = 1
-    _set_hand(active_dragon, 0, "InfernoDragon")
-    dragon_source = _spawn(active_dragon, "InfernoDragon", 0, Position(9.0, 12.0))
-    dragon_target = _spawn(active_dragon, "Knight", 1, Position(9.0, 14.0))
-    dragon_source.target_id = dragon_target.id
-    active_engine = TensorResidentEngine.from_battles(
-        [active_dragon], max_entities=16, max_objects=16, event_capacity=128
+    dragon_actions = torch.tensor(
+        [[dragon_action, NO_OP_ACTION]], device=dragon_engine.device
     )
-    assert active_engine.preflight().reason_code.tolist() == [
-        ResidentUnsupportedReason.ACTIVE_MECHANIC
+    dragon_action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    with PythonOracleEventCapture(dragon_oracle) as dragon_capture:
+        assert dragon_capture.command(
+            lambda: dragon_action_space.apply_action(dragon_oracle, 0, dragon_action)
+        )
+        dragon_capture.step_logic_ticks(1)
+    dragon_result = dragon_engine.step(
+        dragon_actions,
+        player_order=torch.tensor([[0, 1]], device=dragon_engine.device),
+    )
+    assert dragon_engine.preflight(dragon_actions).reason_code.tolist() == [
+        ResidentUnsupportedReason.NONE
     ]
+    assert dragon_result.committed.tolist() == [True]
+    assert _resident_events(dragon_engine, 0, 0) == _oracle_events(
+        dragon_capture.events, dragon_engine
+    )
+    owner = dragon_engine.mechanic_deployment.catalog.owner_index("damage_ramp")
+    dragon_ids = dragon_engine.mechanic_deployment.state.owner_entity_id[owner, 0]
+    dragon_id = int(dragon_ids.max().item())
+    dragon_slot = _slot(dragon_engine, dragon_id)
+    assert dragon_engine.combat.damage_ramp_enabled[0, dragon_slot]
+    assert (
+        dragon_engine.combat.damage_ramp_approach_reduction_units[0, dragon_slot].item()
+        == 500
+    )
+
+
+def test_inferno_dragon_mobile_channel_full_trace_matches_oracle(
+    tensor_device: str,
+) -> None:
+    battle = BattleState(fast_path=False)
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    _set_hand(battle, 0, "InfernoDragon")
+    _set_hand(battle, 1, "Cannon")
+    dragon = _spawn(battle, "InfernoDragon", 0, Position(9.0, 10.0))
+    target = _spawn(battle, "Cannon", 1, Position(9.0, 13.4))
+    dragon.target_id = target.id
+    cast(Any, dragon)._movement_target_id = target.id
+    target.target_id = dragon.id
+    target.attack_cooldown = 100.0
+    target.speed = 0.0
+    target.hitpoints = 100_000.0
+    target.max_hitpoints = 100_000.0
+    oracle = deepcopy(battle)
+    engine = TensorResidentEngine.from_battles(
+        [battle],
+        device=tensor_device,
+        max_entities=16,
+        max_objects=16,
+        event_capacity=2_048,
+    )
+    saw_connected = False
+
+    for tick in range(90):
+        event_start = int(engine.runtime.events.count[0].item())
+        with PythonOracleEventCapture(oracle) as capture:
+            capture.step_logic_ticks(1)
+        result = engine.step(player_order=torch.tensor([[0, 1]], device=engine.device))
+
+        assert result.committed.tolist() == [True], tick
+        assert _resident_events(engine, 0, event_start) == _oracle_events(
+            capture.events, engine
+        )
+        assert engine.runtime.battle.rng.python_state(0) == oracle.rng.getstate()
+        dragon_slot = _slot(engine, dragon.id)
+        target_slot = _slot(engine, target.id)
+        scalar_dragon = oracle.entities[dragon.id]
+        scalar_target = oracle.entities[target.id]
+        assert engine.runtime.battle.entity_x_units[0, dragon_slot].item() == round(
+            scalar_dragon.position.x * 1_000
+        )
+        assert engine.runtime.battle.entity_y_units[0, dragon_slot].item() == round(
+            scalar_dragon.position.y * 1_000
+        )
+        assert engine.runtime.battle.entity_hp[0, target_slot].item() == (
+            scalar_target.hitpoints
+        )
+        assert engine.combat_target_entity_id[0, dragon_slot].item() == target.id
+        assert engine.combat.attack_cooldown[0, dragon_slot].item() == pytest.approx(
+            scalar_dragon.attack_cooldown
+        )
+        scalar_ramp = _ramp(oracle.entities[dragon.id])
+        tensor_connected = engine.combat.damage_ramp_target_id[0, dragon_slot].item()
+        saw_connected |= tensor_connected == target.id
+        assert engine.combat.damage_ramp_connected_ms[0, dragon_slot].item() == (
+            pytest.approx(scalar_ramp._current_target_ms)
+        )
+
+    assert saw_connected
+
+
+def test_mobile_ramp_requires_reduced_range_before_channel_connection(
+    tensor_device: str,
+) -> None:
+    state = StationaryCombatState.empty(1, 2, device=tensor_device)
+    state.present[0] = True
+    state.alive[0] = True
+    state.entity_id[0] = torch.tensor([10, 20], device=state.device)
+    state.owner[0, 1] = 1
+    state.kind[0] = torch.tensor([0, 1], device=state.device)
+    state.x_units[0] = 9_000
+    state.y_units[0] = torch.tensor([10_000, 14_000], device=state.device)
+    state.hp[0] = 10_000.0
+    state.max_hp[0] = 10_000.0
+    state.range_units[0, 0] = 3_500
+    state.sight_range_units[0, 0] = 5_500
+    state.collision_radius_units[0, 1] = 500
+    state.can_attack_ground[0, 0] = True
+    state.combat_enabled[0, 1] = False
+    state.target_slot[0, 0] = 1
+    state.attack_cooldown[0, 0] = 10.0
+    state.damage_ramp_enabled[0, 0] = True
+    state.damage_ramp_source_id[0, 0] = 10
+    state.damage_ramp_observed_target_id[0, 0] = 20
+    state.damage_ramp_stage_1_ms[0, 0] = 2_000
+    state.damage_ramp_stage_2_ms[0, 0] = 4_000
+    state.damage_ramp_stage_0_damage[0, 0] = 14.0
+    state.damage_ramp_stage_1_damage[0, 0] = 47.0
+    state.damage_ramp_stage_2_damage[0, 0] = 165.0
+    state.damage_ramp_beam_range_units[0, 0] = 3_500
+    state.damage_ramp_approach_reduction_units[0, 0] = 500
+    state.damage_ramp_retarget_ms[0, 0] = 800
+
+    outside = step_stationary_combat_(state)
+
+    assert outside.attack_clock_in_range is not None
+    assert not outside.attack_clock_in_range[0, 0]
+    assert state.damage_ramp_target_id[0, 0].item() == 0
+    assert state.damage_ramp_connected_ms[0, 0].item() == 0.0
+
+    state.y_units[0, 1] = 13_500
+    inside = step_stationary_combat_(state)
+
+    assert inside.attack_clock_in_range is not None
+    assert inside.attack_clock_in_range[0, 0]
+    assert state.damage_ramp_target_id[0, 0].item() == 20
+    assert state.damage_ramp_connected_ms[0, 0].item() == 50.0
 
 
 def test_target_death_reacquire_uses_exact_retarget_clock(

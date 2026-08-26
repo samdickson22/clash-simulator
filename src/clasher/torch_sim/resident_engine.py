@@ -928,9 +928,7 @@ class TensorResidentEngine:
         damage_ramp_catalog = retained_damage_ramp.catalog
         damage_ramp_opcode = MECHANIC_OPCODE["DamageRamp"]
         for core_card, name in enumerate(runtime.battle.card_names):
-            if not bool(
-                damage_ramp_catalog.direct_building_supported[core_card].item()
-            ):
+            if not bool(damage_ramp_catalog.direct_supported[core_card].item()):
                 continue
             dispatcher_card = dispatcher.combat_catalog.name_to_id.get(name, 0)
             dispatcher_ramp = (
@@ -1318,9 +1316,7 @@ class TensorResidentEngine:
                 "stealth": all_cards_supported,
                 "damage_ramp": (
                     (core_by_catalog >= 0)
-                    & damage_ramp_catalog.direct_building_supported[
-                        safe_core_by_catalog
-                    ]
+                    & damage_ramp_catalog.direct_supported[safe_core_by_catalog]
                 ),
             },
             loader=catalog_loader,
@@ -1473,7 +1469,7 @@ class TensorResidentEngine:
         ramp_enabled = (
             runtime.entity_pool.active
             & runtime.battle.entity_active
-            & damage_ramp_catalog.direct_building_supported[ramp_core_card]
+            & damage_ramp_catalog.direct_supported[ramp_core_card]
             & ramp_present
         )
         ramp_stage_time = damage_ramp_catalog.combat.ramp_stage_time_ms[
@@ -1518,6 +1514,9 @@ class TensorResidentEngine:
         )
         combat.damage_ramp_beam_range_units.copy_(
             damage_ramp_catalog.range_units[ramp_core_card]
+        )
+        combat.damage_ramp_approach_reduction_units.copy_(
+            damage_ramp_catalog.approach_reduction_units[ramp_core_card]
         )
         combat.damage_ramp_retarget_ms.copy_(
             damage_ramp_catalog.retarget_ms[ramp_core_card]
@@ -3022,11 +3021,9 @@ class TensorResidentEngine:
         damage_ramp_entity = (entity_mechanics == damage_ramp_opcode).any(dim=2)
         core_card = self.runtime.battle.entity_card.clamp(
             0,
-            self.damage_ramp_catalog.direct_building_supported.numel() - 1,
+            self.damage_ramp_catalog.direct_supported.numel() - 1,
         )
-        damage_ramp_supported = self.damage_ramp_catalog.direct_building_supported[
-            core_card
-        ]
+        damage_ramp_supported = self.damage_ramp_catalog.direct_supported[core_card]
         miner_entity = (
             (entity_mechanics == crown_scaling_opcode)
             | (entity_mechanics == underground_opcode)
@@ -3515,7 +3512,7 @@ class TensorResidentEngine:
         )
         ramp_core_card = core.entity_card.clamp(
             0,
-            self.damage_ramp_catalog.direct_building_supported.numel() - 1,
+            self.damage_ramp_catalog.direct_supported.numel() - 1,
         )
         ramp_combat_card = self.damage_ramp_catalog.core_to_combat[ramp_core_card]
         ramp_slot, ramp_present = self.damage_ramp_catalog.combat.mechanic_slot(
@@ -3524,7 +3521,7 @@ class TensorResidentEngine:
         )
         ramp_enabled = (
             component_present
-            & self.damage_ramp_catalog.direct_building_supported[ramp_core_card]
+            & self.damage_ramp_catalog.direct_supported[ramp_core_card]
             & ramp_present
         )
         ramp_identity = self.combat.damage_ramp_source_id == core.entity_id
@@ -3587,6 +3584,13 @@ class TensorResidentEngine:
             torch.where(
                 ramp_enabled,
                 self.damage_ramp_catalog.range_units[ramp_core_card],
+                0,
+            )
+        )
+        self.combat.damage_ramp_approach_reduction_units.copy_(
+            torch.where(
+                ramp_enabled,
+                self.damage_ramp_catalog.approach_reduction_units[ramp_core_card],
                 0,
             )
         )

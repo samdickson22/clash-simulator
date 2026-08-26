@@ -107,6 +107,7 @@ class StationaryCombatState:
     damage_ramp_stage_1_damage: torch.Tensor
     damage_ramp_stage_2_damage: torch.Tensor
     damage_ramp_beam_range_units: torch.Tensor
+    damage_ramp_approach_reduction_units: torch.Tensor
     damage_ramp_retarget_ms: torch.Tensor
 
     @property
@@ -219,6 +220,7 @@ class StationaryCombatState:
             damage_ramp_stage_1_damage=full(0.0, torch.float64),
             damage_ramp_stage_2_damage=full(0.0, torch.float64),
             damage_ramp_beam_range_units=full(0, torch.int64),
+            damage_ramp_approach_reduction_units=full(0, torch.int64),
             damage_ramp_retarget_ms=full(0, torch.int64),
         )
 
@@ -397,6 +399,15 @@ def _within_damage_ramp_beam_reach(
     distance_to_target = _gather(distance, target_slots)
     target_radius = _gather(state.collision_radius_units, target_slots)
     beam_range = _gather(state.damage_ramp_beam_range_units, attacker_slots)
+    target_id = _gather(state.entity_id, target_slots)
+    connected_id = _gather(state.damage_ramp_target_id, attacker_slots)
+    approach = _gather(state.damage_ramp_approach_reduction_units, attacker_slots)
+    reduction = torch.where(
+        (connected_id > 0) & (connected_id == target_id),
+        torch.zeros_like(approach),
+        approach,
+    )
+    beam_range = torch.clamp(beam_range - reduction, min=0)
     reach = (beam_range + target_radius).to(torch.float64) / 1_000.0
     return target_ok & (distance_to_target <= reach + GEOMETRY_EPSILON_TILES)
 
@@ -438,6 +449,15 @@ def _within_reach(
     distance_to_target = _gather(distance, target_slots)
     target_radius = _gather(state.collision_radius_units, target_slots)
     base_range = _gather(state.range_units, attacker_slots)
+    ramp_enabled = _gather(state.damage_ramp_enabled, attacker_slots)
+    target_id = _gather(state.entity_id, target_slots)
+    connected_id = _gather(state.damage_ramp_target_id, attacker_slots)
+    approach = _gather(state.damage_ramp_approach_reduction_units, attacker_slots)
+    reduce_range = ramp_enabled & ((connected_id <= 0) | (connected_id != target_id))
+    base_range = torch.clamp(
+        base_range - torch.where(reduce_range, approach, 0),
+        min=0,
+    )
     keep_mask = torch.as_tensor(keep, dtype=torch.bool, device=state.device)
     keep_mask = torch.broadcast_to(keep_mask, base_range.shape)
     started = _gather(state.started_projectile_hit_cycle, attacker_slots)

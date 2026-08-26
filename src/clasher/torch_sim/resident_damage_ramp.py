@@ -8,6 +8,7 @@ from dataclasses import dataclass, fields
 
 import torch
 
+from clasher.balance import LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER
 from clasher.battle import BattleState
 from clasher.gamedata_normalization import serialized_hit_planes
 from clasher.mechanics.shared import DamageRamp
@@ -26,7 +27,10 @@ class TensorResidentRampCatalog:
     combat: TensorCombatMechanicCatalog
     core_to_combat: torch.Tensor
     supported: torch.Tensor
+    direct_supported: torch.Tensor
     direct_building_supported: torch.Tensor
+    direct_mobile_supported: torch.Tensor
+    approach_reduction_units: torch.Tensor
     hit_speed_ms: torch.Tensor
     retarget_ms: torch.Tensor
     range_units: torch.Tensor
@@ -132,7 +136,10 @@ class TensorResidentDamageRamp:
             return torch.zeros(size, dtype=dtype, device=device)
 
         supported = plane(torch.bool)
+        direct_supported = plane(torch.bool)
         direct_building_supported = plane(torch.bool)
+        direct_mobile_supported = plane(torch.bool)
+        approach_reduction = plane(torch.int64)
         hit_speed = plane(torch.int64)
         retarget = plane(torch.int64)
         attack_range = plane(torch.int64)
@@ -163,13 +170,21 @@ class TensorResidentDamageRamp:
             hits_air[core_id] = air
             hits_ground[core_id] = ground
             projectile[core_id] = bool(stats.projectile_data)
-            direct_building_supported[core_id] = bool(
-                str(stats.card_type).lower() == "building"
-                and not stats.projectile_data
+            direct = bool(
+                not stats.projectile_data
                 and len(definition.mechanics) == 1
                 and len(ramps[0].stages) == 3
                 and tuple(int(stage[0]) for stage in ramps[0].stages)
                 == (0, 2_000, 4_000)
+            )
+            kind = str(stats.card_type).lower()
+            direct_supported[core_id] = direct and kind in {"building", "troop"}
+            direct_building_supported[core_id] = direct and kind == "building"
+            direct_mobile_supported[core_id] = direct and kind == "troop"
+            approach_reduction[core_id] = (
+                LOGIC_CHARACTER_CONTINUOUS_DAMAGE_ATTACK_CLOSER
+                if direct and kind == "troop"
+                else 0
             )
 
         shape = runtime.battle.entity_id.shape
@@ -253,7 +268,10 @@ class TensorResidentDamageRamp:
                 combat,
                 core_to_combat,
                 supported,
+                direct_supported,
                 direct_building_supported,
+                direct_mobile_supported,
+                approach_reduction,
                 hit_speed,
                 retarget,
                 attack_range,
