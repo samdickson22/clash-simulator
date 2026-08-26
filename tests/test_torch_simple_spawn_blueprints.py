@@ -69,10 +69,10 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
         card_id = catalog.cards.name_to_id[name]
         assert bool(catalog.public_card_mask[card_id])
         assert bool(catalog.fast_cards.training_supported[card_id])
-    for name in (
-        "BarbarianBarrel",
-        "Lumberjack",
-    ):
+    assert _root_support(catalog, "BarbarianBarrel")
+    barrel = catalog.cards.name_to_id["BarbarianBarrel"]
+    assert int(catalog.rolling_blueprint_by_card[barrel]) >= 0
+    for name in ("Lumberjack",):
         assert bool(catalog.root_payload_required[catalog.cards.name_to_id[name]])
         assert not _root_support(catalog, name)
 

@@ -14,18 +14,7 @@ from scripts.build_simple_supported_decks import (
     check_artifact,
 )
 
-EXPECTED_SUPPORTED_DECKS = [
-    "Giant GY Bowler Witch",
-    "Pekka Bandit EWiz Bridge Spam",
-    "MK Miner ID Bats",
-    "Giant",
-    "WB Valk Log Bait 2.8",
-    "Pekka Bandit EWiz Poison",
-    "Hog 2.6 (Zap)",
-    "Pekka Loon IWiz EDrag",
-    "LavaLoon Miner",
-    "Giant Double Prince",
-]
+EXPECTED_UNSUPPORTED_CARDS = ["Lumberjack"]
 
 
 def test_current_public_manifest_has_exact_supported_training_pool() -> None:
@@ -41,17 +30,21 @@ def test_current_public_manifest_has_exact_supported_training_pool() -> None:
     }
     assert artifact["counts"] == {
         "candidate_decks": 33,
-        "supported_decks": 10,
-        "rejected_decks": 23,
+        "supported_decks": 31,
+        "rejected_decks": 2,
         "public_cards": 66,
-        "supported_public_cards": 63,
-        "unsupported_public_cards": 3,
+        "supported_public_cards": 65,
+        "unsupported_public_cards": 1,
     }
-    assert [deck["name"] for deck in artifact["decks"]] == (EXPECTED_SUPPORTED_DECKS)
-    source_by_name = {deck["name"]: deck for deck in source["decks"]}
-    assert artifact["decks"] == [
-        source_by_name[name] for name in EXPECTED_SUPPORTED_DECKS
+    assert artifact["support_profile"]["unsupported_public_cards"] == (
+        EXPECTED_UNSUPPORTED_CARDS
+    )
+    expected_decks = [
+        deck
+        for deck in source["decks"]
+        if not set(deck["cards"]).intersection(EXPECTED_UNSUPPORTED_CARDS)
     ]
+    assert artifact["decks"] == expected_decks
     assert len(artifact["source"]["sha256"]) == 64
     assert len(artifact["support_profile"]["sha256"]) == 64
 

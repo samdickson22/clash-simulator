@@ -18,6 +18,7 @@ import json
 from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import IntEnum
+from itertools import pairwise
 from typing import Any
 
 import torch
@@ -37,6 +38,7 @@ from .simple_payload_containers import (
     FastPayloadContainerCommands,
     FastPayloadSpawnTriggers,
 )
+from .simple_rolling_spells import FastRollingSpawnTriggers
 from .simple_state import FastGymState
 
 
@@ -314,7 +316,7 @@ def _spawn_requirements(
                     and delay_ticks
                     and all(
                         right > left
-                        for left, right in zip(delay_ticks, delay_ticks[1:])
+                        for left, right in pairwise(delay_ticks)
                     )
                 )
                 interval = (
@@ -385,6 +387,7 @@ class FastSpawnBlueprintCatalog:
     root_payload_required: torch.Tensor
     root_payload_supported: torch.Tensor
     impact_blueprint_by_card: torch.Tensor
+    rolling_blueprint_by_card: torch.Tensor
     container_blueprint_by_card: torch.Tensor
     container_lifetime_ticks: torch.Tensor
     container_damage: torch.Tensor
@@ -600,6 +603,7 @@ class FastSpawnBlueprintCatalog:
             trigger_supported = requirement.trigger in {
                 FastSpawnTrigger.DEATH,
                 FastSpawnTrigger.PROJECTILE_IMPACT,
+                FastSpawnTrigger.ROLLING_IMPACT,
             } or (
                 requirement.trigger == FastSpawnTrigger.PERIODIC
                 and requirement.first_delay_ticks >= 0
@@ -732,6 +736,7 @@ class FastSpawnBlueprintCatalog:
         impact_by_card = torch.full(
             (len(cards.names),), -1, dtype=torch.int64, device=cards.device
         )
+        rolling_by_card = torch.full_like(impact_by_card, -1)
         container_by_card = torch.full_like(impact_by_card, -1)
         scheduled_by_card = torch.full_like(impact_by_card, -1)
         for root_id, operation_rows in root_rows.items():
@@ -755,6 +760,8 @@ class FastSpawnBlueprintCatalog:
                     )
                 elif requirement.trigger == FastSpawnTrigger.PROJECTILE_IMPACT:
                     impact_by_card[root_id] = row
+                elif requirement.trigger == FastSpawnTrigger.ROLLING_IMPACT:
+                    rolling_by_card[root_id] = row
                 elif requirement.trigger in {
                     FastSpawnTrigger.DELAYED_IMPACT,
                     FastSpawnTrigger.SCHEDULED_ACTION,
@@ -817,6 +824,7 @@ class FastSpawnBlueprintCatalog:
             root_payload_required=root_required,
             root_payload_supported=root_supported,
             impact_blueprint_by_card=impact_by_card,
+            rolling_blueprint_by_card=rolling_by_card,
             container_blueprint_by_card=container_by_card,
             container_lifetime_ticks=tensor(container_lifetime, torch.int32),
             container_damage=tensor(container_damage, torch.float32),
@@ -1048,6 +1056,18 @@ def impact_spawn_commands(
         raise ValueError("impacted must be bool on the blueprint device")
     if effects.device != catalog.device:
         raise ValueError("effects and blueprints must use the same device")
+    if catalog.blueprint_count == 0:
+        shape = (effects.batch_size, effects.max_effects)
+        return FastSpawnCommands(
+            ready=torch.zeros(shape, dtype=torch.bool, device=catalog.device),
+            owner=effects.source_owner,
+            child_card_id=torch.zeros(shape, dtype=torch.int64, device=catalog.device),
+            x_units=effects.x_units,
+            y_units=effects.y_units,
+            count=torch.zeros(shape, dtype=torch.int32, device=catalog.device),
+            radius_units=torch.zeros(shape, dtype=torch.int32, device=catalog.device),
+            deploy_ticks=torch.zeros(shape, dtype=torch.int32, device=catalog.device),
+        )
 
     source_card = effects.source_card_id
     known_source = (source_card > 0) & (source_card < len(catalog.cards.names))
@@ -1071,6 +1091,51 @@ def impact_spawn_commands(
             torch.int32
         ),
         deploy_ticks=catalog.deploy_ticks[safe_blueprint],
+    )
+
+
+def rolling_spawn_commands(
+    catalog: FastSpawnBlueprintCatalog,
+    triggers: FastRollingSpawnTriggers,
+) -> FastSpawnCommands:
+    """Resolve rolling terminal triggers through the typed child catalog."""
+
+    shape = tuple(triggers.ready.shape)
+    if len(shape) != 2:
+        raise ValueError("rolling spawn triggers must have shape [batch, commands]")
+    if triggers.ready.device != catalog.device:
+        raise ValueError("rolling triggers and blueprints must share a device")
+    if catalog.blueprint_count == 0:
+        return FastSpawnCommands(
+            ready=torch.zeros_like(triggers.ready),
+            owner=triggers.owner,
+            child_card_id=torch.zeros_like(triggers.source_card_id),
+            x_units=triggers.x_units,
+            y_units=triggers.y_units,
+            count=torch.zeros_like(triggers.count),
+            radius_units=torch.zeros_like(triggers.x_units),
+            deploy_ticks=torch.zeros_like(triggers.deploy_ticks),
+        )
+    known = (triggers.blueprint_id >= 0) & (
+        triggers.blueprint_id < catalog.blueprint_count
+    )
+    row = triggers.blueprint_id.clamp(0, max(0, catalog.blueprint_count - 1))
+    child = catalog.child_card_id[row]
+    raw_radius = catalog.radius_units[row]
+    child_radius = catalog.fast_cards.collision_radius_units[
+        child.clamp(0, catalog.fast_cards.size - 1)
+    ]
+    return FastSpawnCommands(
+        ready=triggers.ready & known & catalog.blueprint_supported[row],
+        owner=triggers.owner,
+        child_card_id=child,
+        x_units=triggers.x_units,
+        y_units=triggers.y_units,
+        count=triggers.count,
+        radius_units=torch.where(raw_radius > 0, raw_radius, child_radius).to(
+            torch.int32
+        ),
+        deploy_ticks=triggers.deploy_ticks,
     )
 
 
@@ -1200,4 +1265,5 @@ __all__ = [
     "death_payload_container_commands",
     "impact_spawn_commands",
     "payload_spawn_commands",
+    "rolling_spawn_commands",
 ]

@@ -272,7 +272,10 @@ class FastActionKernel:
         known = (card_ids > 0) & (card_ids < self.catalog.size)
         safe_card = card_ids.clamp(0, self.catalog.size - 1)
         entity_card = self.catalog.kind[safe_card] >= 0
-        spell_card = ~entity_card & (self.catalog.effect_kind[safe_card] >= 0)
+        spell_card = ~entity_card & (
+            (self.catalog.effect_kind[safe_card] >= 0)
+            | self.catalog.rolling_enabled[safe_card]
+        )
         supported = (
             known
             & (entity_card | spell_card)

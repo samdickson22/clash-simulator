@@ -13,15 +13,15 @@
   },
   "counts": {
     "candidate_decks": 33,
-    "supported_decks": 10,
-    "rejected_decks": 23,
+    "supported_decks": 31,
+    "rejected_decks": 2,
     "public_cards": 66,
-    "supported_public_cards": 63,
-    "unsupported_public_cards": 3
+    "supported_public_cards": 65,
+    "unsupported_public_cards": 1
   },
   "support_profile": {
     "version": 1,
-    "sha256": "2e8fcc490ac86a25a799666a149adf942b5341d09a75c654f8f0765a812c5b38",
+    "sha256": "55dadc3bfab7c0f85d5fe957d17d5bb91b63c46dc02301073b9f8db26155b3f5",
     "supported_public_cards": [
       "ArcherQueen",
       "Archers",
@@ -29,6 +29,7 @@
       "BabyDragon",
       "Balloon",
       "Bandit",
+      "BarbarianBarrel",
       "Bats",
       "BattleRam",
       "BombTower",
@@ -59,6 +60,7 @@
       "InfernoTower",
       "Knight",
       "LavaHound",
+      "Log",
       "MagicArcher",
       "MegaKnight",
       "MegaMinion",
@@ -88,12 +90,101 @@
       "Zap"
     ],
     "unsupported_public_cards": [
-      "BarbarianBarrel",
-      "Log",
       "Lumberjack"
     ]
   },
   "decks": [
+    {
+      "name": "Hog 2.6 Cycle",
+      "cards": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceGolem",
+        "IceSpirit",
+        "Musketeer",
+        "Skeletons",
+        "Log"
+      ]
+    },
+    {
+      "name": "Log Bait",
+      "cards": [
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "InfernoTower",
+        "Knight",
+        "Princess",
+        "Rocket",
+        "Log"
+      ]
+    },
+    {
+      "name": "X-Bow 3.0 Cycle (ESpirit)",
+      "cards": [
+        "Archers",
+        "ElectroSpirit",
+        "Fireball",
+        "Knight",
+        "Skeletons",
+        "Tesla",
+        "Log",
+        "Xbow"
+      ]
+    },
+    {
+      "name": "X-Bow 3.0 Cycle (ISpirit)",
+      "cards": [
+        "Archers",
+        "Fireball",
+        "IceSpirit",
+        "Knight",
+        "Skeletons",
+        "Tesla",
+        "Log",
+        "Xbow"
+      ]
+    },
+    {
+      "name": "Valk Log Bait",
+      "cards": [
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "InfernoTower",
+        "Princess",
+        "Rocket",
+        "Log",
+        "Valkyrie"
+      ]
+    },
+    {
+      "name": "Log Bait (Tesla)",
+      "cards": [
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "Knight",
+        "Princess",
+        "Rocket",
+        "Tesla",
+        "Log"
+      ]
+    },
+    {
+      "name": "Hog Valk FC 2.8 Cycle",
+      "cards": [
+        "Earthquake",
+        "Firecracker",
+        "HogRider",
+        "IceSpirit",
+        "Skeletons",
+        "Tesla",
+        "Log",
+        "Valkyrie"
+      ]
+    },
     {
       "name": "Giant GY Bowler Witch",
       "cards": [
@@ -105,6 +196,19 @@
         "Guards",
         "Minions",
         "Witch"
+      ]
+    },
+    {
+      "name": "Log Bait 2.9 Cycle",
+      "cards": [
+        "DartGoblin",
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "InfernoTower",
+        "Knight",
+        "Princess",
+        "Log"
       ]
     },
     {
@@ -121,6 +225,97 @@
       ]
     },
     {
+      "name": "Hog 2.8 Cycle",
+      "cards": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceSpirit",
+        "Knight",
+        "Musketeer",
+        "Skeletons",
+        "Log"
+      ]
+    },
+    {
+      "name": "WB Miner MA Nado",
+      "cards": [
+        "BombTower",
+        "Knight",
+        "MagicArcher",
+        "Miner",
+        "SpearGoblins",
+        "Log",
+        "Tornado",
+        "Wallbreakers"
+      ]
+    },
+    {
+      "name": "Log Bait 3.0 Cycle",
+      "cards": [
+        "Fireball",
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "InfernoTower",
+        "Knight",
+        "Princess",
+        "Log"
+      ]
+    },
+    {
+      "name": "RHogs AQ 2.9 Cycle",
+      "cards": [
+        "ArcherQueen",
+        "Cannon",
+        "Earthquake",
+        "IceSpirit",
+        "RoyalDelivery",
+        "RoyalHogs",
+        "Skeletons",
+        "Log"
+      ]
+    },
+    {
+      "name": "Log Bait 2.6 Cycle",
+      "cards": [
+        "Cannon",
+        "DartGoblin",
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "Knight",
+        "Princess",
+        "Log"
+      ]
+    },
+    {
+      "name": "Hog FC 2.6 Cycle",
+      "cards": [
+        "Earthquake",
+        "Firecracker",
+        "HogRider",
+        "IceSpirit",
+        "Knight",
+        "Skeletons",
+        "Tesla",
+        "Log"
+      ]
+    },
+    {
+      "name": "Log Bait 3.0 (Rocket)",
+      "cards": [
+        "Cannon",
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "Knight",
+        "Princess",
+        "Rocket",
+        "Log"
+      ]
+    },
+    {
       "name": "MK Miner ID Bats",
       "cards": [
         "Bats",
@@ -134,6 +329,32 @@
       ]
     },
     {
+      "name": "X-Bow IWiz Nado",
+      "cards": [
+        "IceWizard",
+        "Knight",
+        "Rocket",
+        "Skeletons",
+        "Tesla",
+        "Log",
+        "Tornado",
+        "Xbow"
+      ]
+    },
+    {
+      "name": "Loon Miner 2.9 Cycle",
+      "cards": [
+        "Balloon",
+        "BarbarianBarrel",
+        "BombTower",
+        "GiantSnowball",
+        "IceGolem",
+        "Miner",
+        "Musketeer",
+        "Skeletons"
+      ]
+    },
+    {
       "name": "Giant",
       "cards": [
         "Archers",
@@ -144,6 +365,32 @@
         "MiniPekka",
         "Minions",
         "Musketeer"
+      ]
+    },
+    {
+      "name": "Valk Log Bait (Tesla)",
+      "cards": [
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "Princess",
+        "Rocket",
+        "Tesla",
+        "Log",
+        "Valkyrie"
+      ]
+    },
+    {
+      "name": "GY IWiz BBD Nado",
+      "cards": [
+        "BabyDragon",
+        "BarbarianBarrel",
+        "Graveyard",
+        "IceWizard",
+        "Knight",
+        "Poison",
+        "Tombstone",
+        "Tornado"
       ]
     },
     {
@@ -186,6 +433,19 @@
       ]
     },
     {
+      "name": "Hog 2.6 (Barbarian Barrel)",
+      "cards": [
+        "BarbarianBarrel",
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceGolem",
+        "IceSpirit",
+        "Musketeer",
+        "Skeletons"
+      ]
+    },
+    {
       "name": "Pekka Loon IWiz EDrag",
       "cards": [
         "Arrows",
@@ -196,6 +456,19 @@
         "Pekka",
         "Skeletons",
         "Tornado"
+      ]
+    },
+    {
+      "name": "Golem Hog Fireball 3.4",
+      "cards": [
+        "Cannon",
+        "Fireball",
+        "Golem",
+        "HogRider",
+        "IceSpirit",
+        "Musketeer",
+        "Skeletons",
+        "Log"
       ]
     },
     {

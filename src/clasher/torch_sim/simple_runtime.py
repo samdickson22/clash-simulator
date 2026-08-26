@@ -78,6 +78,15 @@ from .simple_projection import (
     SimpleProjectionInputs,
     SimpleTensorProjector,
 )
+from .simple_rolling_spells import (
+    FAST_ROLLING_NO_SPAWN,
+    FastRollingAllocationResult,
+    FastRollingSpellCommands,
+    FastRollingSpellState,
+    FastRollingStepResult,
+    allocate_fast_rolling_spells_,
+    step_fast_rolling_spells_,
+)
 from .simple_scheduled_spawns import (
     FastScheduledAreaEffectCommands,
     FastScheduledCastAllocationResult,
@@ -96,6 +105,7 @@ from .simple_spawn_blueprints import (
     death_payload_container_commands,
     impact_spawn_commands,
     payload_spawn_commands,
+    rolling_spawn_commands,
 )
 from .simple_state import FastGymState
 
@@ -124,6 +134,9 @@ class SimpleGymRuntimeStep:
     scheduled_casts: FastScheduledCastStepResult | None
     scheduled_effect_allocation: FastPayloadEffectAllocationResult | None
     scheduled_spawn_allocation: FastSpawnAllocationResult | None
+    rolling_allocation: FastRollingAllocationResult
+    rolling: FastRollingStepResult
+    rolling_spawn_allocation: FastSpawnAllocationResult | None
     death_bursts: tuple[FastDeathBurstStepResult, FastDeathBurstStepResult]
     death_burst_effects: tuple[FastEffectStepResult, FastEffectStepResult]
 
@@ -144,6 +157,7 @@ class SimpleGymRuntime:
         max_effects: int = 64,
         max_payload_containers: int = 32,
         max_scheduled_casts: int = 16,
+        max_rolling_spells: int = 16,
         starting_elixir: float = 6.0,
         max_elixir: float = 10.0,
         include_privileged_critic: bool = False,
@@ -279,6 +293,12 @@ class SimpleGymRuntime:
             if spawn_blueprints is not None
             else None
         )
+        self.rolling_spells = FastRollingSpellState.empty(
+            self.state.batch_size,
+            max_rollers=max_rolling_spells,
+            max_hit_records=max_entities,
+            device=self.state.device,
+        )
         entity_shape = (self.state.batch_size, self.state.max_entities)
         self.entity_status_kind = torch.zeros(
             entity_shape, dtype=torch.int8, device=self.state.device
@@ -385,6 +405,7 @@ class SimpleGymRuntime:
             "lifecycle": self._tensor_fields(self.lifecycle),
             "modifiers": self._tensor_fields(self.modifiers),
             "damage_ramp": self._tensor_fields(self.damage_ramp),
+            "rolling_spells": self._tensor_fields(self.rolling_spells),
             "outcomes": {
                 "initial_tower_hp": self.outcomes.initial_tower_hp.clone(),
                 "previous_tower_hp": self.outcomes.previous_tower_hp.clone(),
@@ -474,6 +495,7 @@ class SimpleGymRuntime:
             "lifecycle": self.lifecycle,
             "modifiers": self.modifiers,
             "damage_ramp": self.damage_ramp,
+            "rolling_spells": self.rolling_spells,
             "outcomes": self.outcomes,
         }
         if self.periodic_spawns is not None:
@@ -761,7 +783,11 @@ class SimpleGymRuntime:
     ) -> tuple[torch.Tensor, FastScheduledCastCommands] | None:
         """Decode supported spell rows into the numeric delayed-cast pool."""
 
-        if self.spawn_blueprints is None or self.scheduled_casts is None:
+        if (
+            self.spawn_blueprints is None
+            or self.scheduled_casts is None
+            or self.spawn_blueprints.blueprint_count == 0
+        ):
             return None
         catalog = self.spawn_blueprints
         safe_card = ingress.selected_card_ids.clamp(0, catalog.fast_cards.size - 1)
@@ -847,6 +873,66 @@ class SimpleGymRuntime:
             deploy_ticks=commands.deploy_ticks,
         )
 
+    def _rolling_commands(
+        self,
+        ingress: FastActionIngressResult,
+    ) -> tuple[torch.Tensor, FastRollingSpellCommands]:
+        """Compile accepted spell actions into numeric rolling commands."""
+
+        catalog = self.action_kernel.catalog
+        safe_card = ingress.selected_card_ids.clamp(0, catalog.size - 1)
+        selected = ingress.spell_cast & catalog.rolling_enabled[safe_card]
+        source_x = self.state.x_units.index_select(1, self._spell_source_slots)
+        source_y = self.state.y_units.index_select(1, self._spell_source_slots)
+        shape = ingress.selected_card_ids.shape
+        no_spawn = torch.full(
+            shape,
+            FAST_ROLLING_NO_SPAWN,
+            dtype=torch.int64,
+            device=self.device,
+        )
+        spawn_count = torch.zeros(shape, dtype=torch.int32, device=self.device)
+        spawn_deploy = torch.zeros_like(spawn_count)
+        blueprint = no_spawn
+        if self.spawn_blueprints is not None:
+            rows = self.spawn_blueprints.rolling_blueprint_by_card[safe_card]
+            blueprint = rows
+            if self.spawn_blueprints.blueprint_count > 0:
+                safe_row = rows.clamp(0, self.spawn_blueprints.blueprint_count - 1)
+                has_spawn = rows >= 0
+                spawn_count = torch.where(
+                    has_spawn,
+                    self.spawn_blueprints.count[safe_row].to(torch.int32),
+                    spawn_count,
+                )
+                spawn_deploy = torch.where(
+                    has_spawn,
+                    self.spawn_blueprints.deploy_ticks[safe_row],
+                    spawn_deploy,
+                )
+        return selected, FastRollingSpellCommands(
+            ready=selected,
+            owner=self._effect_owners,
+            source_card_id=ingress.selected_card_ids,
+            origin_x_units=source_x,
+            origin_y_units=source_y,
+            target_x_units=ingress.selection.world_x_units.to(torch.int32),
+            target_y_units=ingress.selection.world_y_units.to(torch.int32),
+            travel_range_units=catalog.rolling_travel_range_units[safe_card],
+            speed_units_per_tick=catalog.rolling_speed_units_per_tick[safe_card],
+            half_width_units=catalog.rolling_half_width_units[safe_card],
+            damage=catalog.rolling_damage[safe_card],
+            ground_only=catalog.rolling_ground_only[safe_card],
+            tower_damage_multiplier=(
+                catalog.rolling_tower_damage_multiplier[safe_card]
+            ),
+            radial_push_units=catalog.rolling_radial_push_units[safe_card],
+            forward_push_units=catalog.rolling_forward_push_units[safe_card],
+            impact_spawn_blueprint_id=blueprint,
+            impact_spawn_count=spawn_count,
+            impact_spawn_deploy_ticks=spawn_deploy,
+        )
+
     def _legal_action_mask(self) -> torch.Tensor:
         mask = self.action_kernel.legal_action_mask(self.action_state)
         free_deploy_slots = (~self.state.active[:, FAST_TOWER_SLOT_COUNT:]).sum(dim=1)
@@ -854,39 +940,65 @@ class SimpleGymRuntime:
         hand = self.action_state.hand_ids
         safe_card = hand.clamp(0, self.action_kernel.catalog.size - 1)
         spell = (self.action_kernel.catalog.kind[safe_card] < 0) & (
-            self.action_kernel.catalog.effect_kind[safe_card] >= 0
+            (self.action_kernel.catalog.effect_kind[safe_card] >= 0)
+            | self.action_kernel.catalog.rolling_enabled[safe_card]
         )
+        rolling = self.action_kernel.catalog.rolling_enabled[safe_card]
         required_slots = self.action_kernel.catalog.summon_count[safe_card].to(
             torch.int64
         )
+        required_slots = torch.where(
+            rolling, torch.zeros_like(required_slots), required_slots
+        )
         if self.spawn_blueprints is not None:
             impact_row = self.spawn_blueprints.impact_blueprint_by_card[safe_card]
-            has_impact_spawn = impact_row >= 0
-            impact_count = self.spawn_blueprints.count[
-                impact_row.clamp(0, self.spawn_blueprints.blueprint_count - 1)
-            ].to(torch.int64)
-            required_slots = torch.where(
-                has_impact_spawn,
-                impact_count,
-                required_slots,
-            )
+            has_impact_spawn = torch.zeros_like(impact_row, dtype=torch.bool)
+            rolling_row = self.spawn_blueprints.rolling_blueprint_by_card[safe_card]
+            has_rolling_spawn = torch.zeros_like(rolling_row, dtype=torch.bool)
             scheduled_row = self.spawn_blueprints.scheduled_blueprint_by_card[
                 safe_card
             ]
-            has_scheduled = scheduled_row >= 0
-            safe_scheduled = scheduled_row.clamp(
-                0, self.spawn_blueprints.blueprint_count - 1
-            )
-            scheduled_count = self.spawn_blueprints.count[safe_scheduled].to(
-                torch.int64
-            )
-            required_slots = torch.where(
-                has_scheduled,
-                scheduled_count,
-                required_slots,
-            )
+            has_scheduled = torch.zeros_like(scheduled_row, dtype=torch.bool)
+            if self.spawn_blueprints.blueprint_count > 0:
+                safe_impact = impact_row.clamp(
+                    0, self.spawn_blueprints.blueprint_count - 1
+                )
+                has_impact_spawn = impact_row >= 0
+                impact_count = self.spawn_blueprints.count[safe_impact].to(
+                    torch.int64
+                )
+                required_slots = torch.where(
+                    has_impact_spawn,
+                    impact_count,
+                    required_slots,
+                )
+                safe_rolling = rolling_row.clamp(
+                    0, self.spawn_blueprints.blueprint_count - 1
+                )
+                has_rolling_spawn = rolling_row >= 0
+                rolling_count = self.spawn_blueprints.count[safe_rolling].to(
+                    torch.int64
+                )
+                required_slots = torch.where(
+                    has_rolling_spawn,
+                    rolling_count,
+                    required_slots,
+                )
+                safe_scheduled = scheduled_row.clamp(
+                    0, self.spawn_blueprints.blueprint_count - 1
+                )
+                has_scheduled = scheduled_row >= 0
+                scheduled_count = self.spawn_blueprints.count[safe_scheduled].to(
+                    torch.int64
+                )
+                required_slots = torch.where(
+                    has_scheduled,
+                    scheduled_count,
+                    required_slots,
+                )
         else:
             has_scheduled = torch.zeros_like(spell)
+        has_rolling_slot = (~self.rolling_spells.active).any(dim=1)
         enough_deploy_slots = free_deploy_slots[:, None, None] >= required_slots
         has_cast_slot = (
             (~self.scheduled_casts.active).any(dim=1)
@@ -899,12 +1011,16 @@ class SimpleGymRuntime:
             & enough_deploy_slots
         )
         capacity = torch.where(
-            has_scheduled,
-            scheduled_capacity,
+            rolling,
+            has_rolling_slot[:, None, None] & enough_deploy_slots,
             torch.where(
-                spell,
-                has_effect_slot[:, None, None] & enough_deploy_slots,
-                enough_deploy_slots,
+                has_scheduled,
+                scheduled_capacity,
+                torch.where(
+                    spell,
+                    has_effect_slot[:, None, None] & enough_deploy_slots,
+                    enough_deploy_slots,
+                ),
             ),
         )
         placement_capacity = (
@@ -921,6 +1037,7 @@ class SimpleGymRuntime:
         attack_ready: torch.Tensor,
         attack_damage_multiplier: torch.Tensor,
         scheduled_spell: torch.Tensor,
+        rolling_spell: torch.Tensor,
     ) -> FastEffectCommands:
         """Put policy spell casts before entity-slot-ordered attacks."""
 
@@ -929,7 +1046,7 @@ class SimpleGymRuntime:
         zeros_i64 = torch.zeros_like(ingress.selected_card_ids)
         ones_spell = torch.ones_like(ingress.selected_card_ids, dtype=torch.float32)
         spell = FastEffectCommands(
-            ready=ingress.spell_cast & ~scheduled_spell,
+            ready=ingress.spell_cast & ~scheduled_spell & ~rolling_spell,
             source_id=zeros_i64,
             owner=self._effect_owners,
             card_id=ingress.selected_card_ids,
@@ -988,6 +1105,12 @@ class SimpleGymRuntime:
         ingress = self.action_kernel.ingress(
             self.action_state, action_ids, legal_mask=legal_mask
         )
+        rolling_spell, rolling_commands = self._rolling_commands(ingress)
+        rolling_allocation = allocate_fast_rolling_spells_(
+            self.rolling_spells,
+            rolling_commands,
+            game_over=self.state.game_over,
+        )
         scheduled_spell = torch.zeros_like(ingress.spell_cast)
         scheduled_cast_allocation: FastScheduledCastAllocationResult | None = None
         scheduled_request = self._scheduled_cast_commands(ingress)
@@ -1035,6 +1158,7 @@ class SimpleGymRuntime:
             attack_ready,
             attack_damage_multiplier,
             scheduled_spell,
+            rolling_spell,
         )
         allocation = allocate_fast_attack_effects_(
             self.state,
@@ -1044,7 +1168,7 @@ class SimpleGymRuntime:
             commands,
         )
         immediate_spell_allocated = allocation.accepted[:, :2]
-        spell_allocated = (
+        scheduled_or_immediate = (
             torch.where(
                 scheduled_spell,
                 scheduled_cast_allocation.accepted,
@@ -1052,6 +1176,11 @@ class SimpleGymRuntime:
             )
             if scheduled_cast_allocation is not None
             else immediate_spell_allocated
+        )
+        spell_allocated = torch.where(
+            rolling_spell,
+            rolling_allocation.accepted,
+            scheduled_or_immediate,
         )
         attack_allocated = allocation.accepted[:, 2:]
         committed_attacks = self.combat.commit_attacks_(attack_ready, attack_allocated)
@@ -1141,6 +1270,45 @@ class SimpleGymRuntime:
                 ]
             ),
         )
+        safe_entity_card = self.state.card_id.clamp(
+            0, self.action_kernel.catalog.size - 1
+        )
+        crown_slots = (
+            torch.arange(
+                self.state.max_entities, dtype=torch.int64, device=self.device
+            )[None, :]
+            < FAST_TOWER_SLOT_COUNT
+        ).expand(self.batch_size, -1)
+        rolling_result = step_fast_rolling_spells_(
+            self.state,
+            self.rolling_spells,
+            entity_is_air=self.action_kernel.catalog.is_air[safe_entity_card],
+            entity_collision_radius_units=(
+                self.action_kernel.catalog.collision_radius_units[safe_entity_card]
+            ),
+            entity_is_crown_tower=crown_slots,
+            modifiers=self.modifiers,
+        )
+        self.state.x_units.add_(rolling_result.impulse_dx_units).clamp_(0, 18_000)
+        self.state.y_units.add_(rolling_result.impulse_dy_units).clamp_(0, 32_000)
+        rolling_spawn_allocation: FastSpawnAllocationResult | None = None
+        if self.spawn_blueprints is not None:
+            rolling_spawn_allocation = allocate_fast_spawns_(
+                self.state,
+                self.action_kernel.catalog,
+                rolling_spawn_commands(
+                    self.spawn_blueprints,
+                    rolling_result.spawn,
+                ),
+                reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+            )
+            rolling_spawned = rolling_spawn_allocation.spawned_mask
+            self.entity_status_kind.masked_fill_(rolling_spawned, 0)
+            self.entity_status_ticks.masked_fill_(rolling_spawned, 0)
+            self._initialize_spawned_combat_(rolling_spawned)
+            self._initialize_lifecycle_(rolling_spawned)
+            self._initialize_modifiers_(rolling_spawned)
+            self._clear_damage_ramp_(rolling_spawned)
         # Two fixed passes cover the current serialized terminal depth
         # (Golem -> Golemite) without a host-driven work queue. The first pass
         # commits all already-lethal novas simultaneously; the second catches
@@ -1263,6 +1431,9 @@ class SimpleGymRuntime:
             scheduled_casts=scheduled_step,
             scheduled_effect_allocation=scheduled_effect_allocation,
             scheduled_spawn_allocation=scheduled_spawn_allocation,
+            rolling_allocation=rolling_allocation,
+            rolling=rolling_result,
+            rolling_spawn_allocation=rolling_spawn_allocation,
             death_bursts=(death_burst_first, death_burst_second),
             death_burst_effects=(death_effect_first, death_effect_second),
         )

@@ -41,7 +41,8 @@ BASELINE_USEFUL = (
     "Xbow",
 )
 
-ZERO_PAYLOAD_SPELLS = ("BarbarianBarrel", "GoblinBarrel", "Log")
+ZERO_PAYLOAD_SPELLS = ("BarbarianBarrel", "GoblinBarrel")
+ROLLING_SPELLS = ("Log",)
 UNRESOLVED_DEATH_PARENTS = (
     "Balloon",
     "BattleRam",
@@ -76,11 +77,19 @@ def test_training_admission_fails_closed_for_false_positive_payloads() -> None:
     assert catalog.training_supported[
         torch.tensor([tensor.name_to_id[name] for name in BASELINE_USEFUL])
     ].all()
+    assert catalog.training_supported[
+        torch.tensor([tensor.name_to_id[name] for name in ROLLING_SPELLS])
+    ].all()
 
 
 def test_action_mask_requires_truthful_training_admission() -> None:
     tensor, catalog = _enabled_catalog()
-    names = (*ZERO_PAYLOAD_SPELLS, *UNRESOLVED_DEATH_PARENTS, *BASELINE_USEFUL)
+    names = (
+        *ZERO_PAYLOAD_SPELLS,
+        *UNRESOLVED_DEATH_PARENTS,
+        *BASELINE_USEFUL,
+        *ROLLING_SPELLS,
+    )
     card_ids = torch.tensor([tensor.name_to_id[name] for name in names])
     decks = card_ids[:, None, None].expand(-1, 2, 8).clone()
     state = FastActionState.from_decks(decks, starting_elixir=10.0)

@@ -17,7 +17,8 @@ from dataclasses import dataclass, fields
 
 import torch
 
-from .simple_state import FastGymState
+from .simple_modifiers import FastModifierState, intercept_fast_shield_hits_
+from .simple_state import FAST_KIND_TROOP, FastGymState
 
 FAST_ROLLING_NO_SPAWN = -1
 
@@ -418,6 +419,7 @@ def step_fast_rolling_spells_(
     entity_is_air: torch.Tensor,
     entity_collision_radius_units: torch.Tensor,
     entity_is_crown_tower: torch.Tensor,
+    modifiers: FastModifierState | None = None,
 ) -> FastRollingStepResult:
     """Advance one tick, apply once-only damage, and return dense side effects.
 
@@ -563,9 +565,22 @@ def step_fast_rolling_spells_(
         rolling.tower_damage_multiplier.clamp(min=0.0)[:, :, None],
         1.0,
     )
-    damage_by_entity = (
+    weighted_damage = (
         hit.to(torch.float32) * rolling.damage.clamp(min=0.0)[:, :, None] * tower_scale
-    ).sum(dim=1)
+    )
+    if modifiers is None:
+        damage_by_entity = weighted_damage.sum(dim=1)
+    else:
+        entity_slot = torch.arange(
+            entities, dtype=torch.int64, device=gym.device
+        ).view(1, 1, entities).expand(batch, rollers, entities)
+        shield = intercept_fast_shield_hits_(
+            modifiers,
+            valid=hit.reshape(batch, rollers * entities),
+            target_slot=entity_slot.reshape(batch, rollers * entities),
+            damage=weighted_damage.reshape(batch, rollers * entities),
+        )
+        damage_by_entity = shield.hp_damage
     gym.hp.sub_(damage_by_entity).clamp_(min=0.0)
 
     radial_distance = torch.sqrt(distance_sq)
@@ -591,13 +606,18 @@ def step_fast_rolling_spells_(
         radial_unit_y * rolling.radial_push_units.to(torch.float32)[:, :, None]
         + unit_y[:, :, None] * rolling.forward_push_units.to(torch.float32)[:, :, None]
     )
+    displacement_hit = (
+        hit
+        & (gym.kind[:, None, :] == FAST_KIND_TROOP)
+        & ~entity_is_crown_tower[:, None, :]
+    )
     impulse_dx = _clamp_int32(
-        torch.where(hit, torch.round(push_x).to(torch.int64), 0).sum(
+        torch.where(displacement_hit, torch.round(push_x).to(torch.int64), 0).sum(
             dim=1, dtype=torch.int64
         )
     )
     impulse_dy = _clamp_int32(
-        torch.where(hit, torch.round(push_y).to(torch.int64), 0).sum(
+        torch.where(displacement_hit, torch.round(push_y).to(torch.int64), 0).sum(
             dim=1, dtype=torch.int64
         )
     )

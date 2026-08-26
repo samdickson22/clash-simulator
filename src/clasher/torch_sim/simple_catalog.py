@@ -88,6 +88,15 @@ class FastCardCatalog:
     fan_radius_units: torch.Tensor
     fan_spread_degrees: torch.Tensor
     projectile_speed_units_per_tick: torch.Tensor
+    rolling_enabled: torch.Tensor
+    rolling_travel_range_units: torch.Tensor
+    rolling_speed_units_per_tick: torch.Tensor
+    rolling_half_width_units: torch.Tensor
+    rolling_damage: torch.Tensor
+    rolling_ground_only: torch.Tensor
+    rolling_tower_damage_multiplier: torch.Tensor
+    rolling_radial_push_units: torch.Tensor
+    rolling_forward_push_units: torch.Tensor
     tower_damage_multiplier: torch.Tensor
     building_damage_multiplier: torch.Tensor
     status_kind: torch.Tensor
@@ -241,6 +250,16 @@ class FastCardCatalog:
         declares_fan = torch.zeros_like(catalog.kind, dtype=torch.bool)
         valid_fan = torch.zeros_like(catalog.kind, dtype=torch.bool)
         projectile_speed = torch.zeros_like(catalog.range_units)
+        rolling_enabled = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        rolling_requires_spawn = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        rolling_travel_range = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        rolling_speed = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        rolling_half_width = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        rolling_damage = torch.zeros_like(catalog.damage, dtype=torch.float32)
+        rolling_ground_only = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        rolling_tower_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
+        rolling_radial_push = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        rolling_forward_push = torch.zeros_like(catalog.range_units, dtype=torch.int32)
         tower_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
         building_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
         status_kind = torch.full_like(catalog.kind, FAST_STATUS_NONE, dtype=torch.int8)
@@ -438,6 +457,65 @@ class FastCardCatalog:
                 projectile = character.get("projectileData") or {}
                 spell_projectile_data = raw.get("projectileData") or {}
                 area_data = raw.get("areaEffectObjectData") or {}
+                rolling_projectile = (
+                    spell_projectile_data.get("spawnProjectileData") or {}
+                )
+                if rolling_projectile and int(catalog.kind[card_id]) == int(
+                    CardKindOpcode.SPELL
+                ):
+                    rolling_target = str(
+                        rolling_projectile.get("tidTarget", "") or ""
+                    )
+                    rolling_raw_damage = int(
+                        rolling_projectile.get("damage", 0) or 0
+                    )
+                    rolling_scaled_damage = float(
+                        card.get_scaled_stat(rolling_raw_damage) or 0.0
+                    )
+                    rolling_range = int(
+                        rolling_projectile.get("projectileRange", 0) or 0
+                    )
+                    rolling_width = int(
+                        rolling_projectile.get(
+                            "projectileRadius",
+                            rolling_projectile.get("radius", 0),
+                        )
+                        or 0
+                    )
+                    rolling_child_speed = int(
+                        rolling_projectile.get("speed", 0) or 0
+                    )
+                    rolling_shape = (
+                        rolling_scaled_damage > 0.0
+                        and rolling_range > 0
+                        and rolling_width > 0
+                        and rolling_child_speed > 0
+                        and "GROUND" in rolling_target
+                    )
+                    if rolling_shape:
+                        rolling_enabled[card_id] = True
+                        rolling_requires_spawn[card_id] = bool(
+                            rolling_projectile.get("spawnCharacterData")
+                        )
+                        rolling_travel_range[card_id] = rolling_range
+                        rolling_speed[card_id] = rolling_child_speed
+                        rolling_half_width[card_id] = rolling_width
+                        rolling_damage[card_id] = rolling_scaled_damage
+                        rolling_ground_only[card_id] = True
+                        rolling_forward_push[card_id] = int(
+                            rolling_projectile.get("pushback", 0) or 0
+                        )
+                        crown_percent = float(
+                            rolling_projectile.get(
+                                "crownTowerDamagePercent", 0
+                            )
+                            or 0
+                        )
+                        rolling_tower_multiplier[card_id] = max(
+                            0.0, 1.0 + crown_percent / 100.0
+                        )
+                        effect_kind[card_id] = FAST_CARD_EFFECT_UNSUPPORTED
+                        effect_damage[card_id] = 0.0
                 if projectile:
                     effect_kind[card_id] = FAST_CARD_EFFECT_PROJECTILE
                     projectile_speed[card_id] = int(projectile.get("speed", 0) or 0)
@@ -588,8 +666,10 @@ class FastCardCatalog:
                 ):
                     status_kind[card_id] = FAST_STATUS_STUN
                     status_ticks[card_id] = (on_hit_buff_ms + 49) // 50
-                if spell_projectile_data and int(catalog.kind[card_id]) == int(
-                    CardKindOpcode.SPELL
+                if (
+                    spell_projectile_data
+                    and int(catalog.kind[card_id]) == int(CardKindOpcode.SPELL)
+                    and not bool(rolling_enabled[card_id])
                 ):
                     waves = int(raw.get("projectileWaves", 1) or 1)
                     grouped = int(raw.get("multipleProjectiles", 1) or 1) > 1
@@ -847,7 +927,7 @@ class FastCardCatalog:
         # can execute structurally, but teaches a qualitatively false card.
         training_supported = torch.where(
             is_spell,
-            effectful,
+            effectful | (rolling_enabled & ~rolling_requires_spawn),
             ordinary & ((catalog.damage > 0) | effectful | resolved_death_spawn),
         )
         training_supported &= ~(declares_death_spawn & (death_spawn_card_id <= 0))
@@ -913,6 +993,15 @@ class FastCardCatalog:
             fan_radius_units=fan_radius_units,
             fan_spread_degrees=fan_spread_degrees,
             projectile_speed_units_per_tick=projectile_speed,
+            rolling_enabled=rolling_enabled,
+            rolling_travel_range_units=rolling_travel_range,
+            rolling_speed_units_per_tick=rolling_speed,
+            rolling_half_width_units=rolling_half_width,
+            rolling_damage=rolling_damage,
+            rolling_ground_only=rolling_ground_only,
+            rolling_tower_damage_multiplier=rolling_tower_multiplier,
+            rolling_radial_push_units=rolling_radial_push,
+            rolling_forward_push_units=rolling_forward_push,
             tower_damage_multiplier=tower_multiplier,
             building_damage_multiplier=building_multiplier,
             status_kind=status_kind,
