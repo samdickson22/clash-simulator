@@ -156,10 +156,19 @@ class FastTensorGym:
             & (state.owner[:, :, None] != state.owner[:, None, :])
             & (distance_sq <= sight_sq)
         )
-        unreachable = torch.full_like(distance_sq, torch.iinfo(torch.int64).max)
-        nearest_slot = torch.where(candidate, distance_sq, unreachable).argmin(dim=2)
+        maximum = torch.iinfo(torch.int64).max
+        unreachable = torch.full_like(distance_sq, maximum)
+        nearest_distance = torch.where(candidate, distance_sq, unreachable).amin(dim=2)
         found = candidate.any(dim=2)
-        selected_id = state.stable_id.gather(1, nearest_slot)
+        distance_tie = candidate & (distance_sq == nearest_distance[:, :, None])
+        candidate_id = state.stable_id[:, None, :].expand_as(distance_sq)
+        selected_id = torch.where(
+            distance_tie,
+            candidate_id,
+            torch.full_like(candidate_id, maximum),
+        ).amin(dim=2)
+        selected_slot = distance_tie & (candidate_id == selected_id[:, :, None])
+        nearest_slot = selected_slot.to(torch.int64).argmax(dim=2)
         state.target_id.copy_(torch.where(found, selected_id, 0))
 
         target_x = state.x_units.gather(1, nearest_slot).to(torch.float32)

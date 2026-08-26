@@ -112,3 +112,20 @@ def test_simple_combat_hot_path_has_no_host_sync_or_dynamic_compaction() -> None
     source += inspect.getsource(FastTensorGym.step_tick)
     for forbidden in (".item(", ".tolist(", ".cpu(", ".nonzero("):
         assert forbidden not in source
+
+
+def test_simple_target_tie_uses_stable_id_not_reused_physical_slot() -> None:
+    state = FastGymState.empty(1, max_entities=4)
+    state.active[0, :3] = True
+    state.stable_id[0, :3] = torch.tensor([1, 9, 2])
+    state.next_stable_id[0] = 10
+    state.owner[0, :3] = torch.tensor([0, 1, 1])
+    state.x_units[0, :3] = torch.tensor([5_000, 4_000, 6_000])
+    state.y_units[0, :3] = 10_000
+    state.hp[0, :3] = 1_000
+    state.max_hp[0, :3] = 1_000
+    state.sight_range_units[0, :3] = 10_000
+
+    FastTensorGym(state).step_tick()
+
+    assert int(state.target_id[0, 0]) == 2
