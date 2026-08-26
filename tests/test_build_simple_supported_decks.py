@@ -16,10 +16,13 @@ from scripts.build_simple_supported_decks import (
 
 EXPECTED_SUPPORTED_DECKS = [
     "Pekka Bandit EWiz Bridge Spam",
+    "MK Miner ID Bats",
     "Giant",
     "WB Valk Log Bait 2.8",
     "Pekka Bandit EWiz Poison",
     "Hog 2.6 (Zap)",
+    "Pekka Loon IWiz EDrag",
+    "LavaLoon Miner",
     "Giant Double Prince",
 ]
 
@@ -37,11 +40,11 @@ def test_current_public_manifest_has_exact_supported_training_pool() -> None:
     }
     assert artifact["counts"] == {
         "candidate_decks": 33,
-        "supported_decks": 6,
-        "rejected_decks": 27,
+        "supported_decks": 9,
+        "rejected_decks": 24,
         "public_cards": 66,
-        "supported_public_cards": 57,
-        "unsupported_public_cards": 9,
+        "supported_public_cards": 60,
+        "unsupported_public_cards": 6,
     }
     assert [deck["name"] for deck in artifact["decks"]] == (EXPECTED_SUPPORTED_DECKS)
     source_by_name = {deck["name"]: deck for deck in source["decks"]}

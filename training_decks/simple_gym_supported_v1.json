@@ -13,23 +13,25 @@
   },
   "counts": {
     "candidate_decks": 33,
-    "supported_decks": 6,
-    "rejected_decks": 27,
+    "supported_decks": 9,
+    "rejected_decks": 24,
     "public_cards": 66,
-    "supported_public_cards": 57,
-    "unsupported_public_cards": 9
+    "supported_public_cards": 60,
+    "unsupported_public_cards": 6
   },
   "support_profile": {
     "version": 1,
-    "sha256": "bc0f93fb6101620f3eabcf0bb7270eff1561a53761dad8fbad6a43fcc1b6384a",
+    "sha256": "47677cee362f0c9fd424de9598c9101a798ac8c65e96aa51d1bb1953128e9094",
     "supported_public_cards": [
       "ArcherQueen",
       "Archers",
       "Arrows",
       "BabyDragon",
+      "Balloon",
       "Bandit",
       "Bats",
       "BattleRam",
+      "BombTower",
       "Bomber",
       "Bowler",
       "Cannon",
@@ -70,6 +72,7 @@
       "Rocket",
       "RoyalGhost",
       "RoyalHogs",
+      "SkeletonBarrel",
       "Skeletons",
       "SpearGoblins",
       "Tesla",
@@ -82,15 +85,12 @@
       "Zap"
     ],
     "unsupported_public_cards": [
-      "Balloon",
       "BarbarianBarrel",
-      "BombTower",
       "Golem",
       "Graveyard",
       "Log",
       "Lumberjack",
-      "RoyalDelivery",
-      "SkeletonBarrel"
+      "RoyalDelivery"
     ]
   },
   "decks": [
@@ -104,6 +104,19 @@
         "MagicArcher",
         "Pekka",
         "RoyalGhost",
+        "Zap"
+      ]
+    },
+    {
+      "name": "MK Miner ID Bats",
+      "cards": [
+        "Bats",
+        "GoblinGang",
+        "InfernoDragon",
+        "MegaKnight",
+        "Miner",
+        "SkeletonBarrel",
+        "SpearGoblins",
         "Zap"
       ]
     },
@@ -157,6 +170,32 @@
         "Musketeer",
         "Skeletons",
         "Zap"
+      ]
+    },
+    {
+      "name": "Pekka Loon IWiz EDrag",
+      "cards": [
+        "Arrows",
+        "Balloon",
+        "Cannon",
+        "ElectroDragon",
+        "IceWizard",
+        "Pekka",
+        "Skeletons",
+        "Tornado"
+      ]
+    },
+    {
+      "name": "LavaLoon Miner",
+      "cards": [
+        "Arrows",
+        "Balloon",
+        "Fireball",
+        "LavaHound",
+        "MegaMinion",
+        "Miner",
+        "Minions",
+        "Tombstone"
       ]
     },
     {
