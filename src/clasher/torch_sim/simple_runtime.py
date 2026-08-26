@@ -9,7 +9,7 @@ entities, or the retained resident verifier.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 
 import torch
 
@@ -187,6 +187,7 @@ class SimpleGymRuntime:
             include_privileged_critic=include_privileged_critic,
         )
         self._refresh_policy_state()
+        self._initial_templates = self._capture_initial_templates()
 
     @property
     def device(self) -> torch.device:
@@ -195,6 +196,136 @@ class SimpleGymRuntime:
     @property
     def batch_size(self) -> int:
         return int(self.state.batch_size)
+
+    @staticmethod
+    def _tensor_fields(value: object) -> dict[str, torch.Tensor]:
+        """Clone batch-leading tensor fields without retaining object graphs."""
+
+        return {
+            descriptor.name: tensor.clone()
+            for descriptor in fields(value)
+            if isinstance((tensor := getattr(value, descriptor.name)), torch.Tensor)
+        }
+
+    def _capture_initial_templates(self) -> dict[str, dict[str, torch.Tensor]]:
+        """Capture the constructed episode state as device-resident tensors.
+
+        These templates deliberately contain no ``BattleState`` or scalar
+        simulator objects.  Selective resets therefore remain ordinary dense
+        tensor mutations and do not rebuild the runtime, catalog, or projector.
+        """
+
+        return {
+            "state": self._tensor_fields(self.state),
+            "action": self._tensor_fields(self.action_state),
+            "effects": self._tensor_fields(self.effects),
+            "lifecycle": self._tensor_fields(self.lifecycle),
+            "modifiers": self._tensor_fields(self.modifiers),
+            "outcomes": {
+                "initial_tower_hp": self.outcomes.initial_tower_hp.clone(),
+                "previous_tower_hp": self.outcomes.previous_tower_hp.clone(),
+                "previous_crowns": self.outcomes.previous_crowns.clone(),
+                "overtime": self.outcomes.overtime.clone(),
+            },
+            "runtime": {
+                "entity_status_kind": self.entity_status_kind.clone(),
+                "entity_status_ticks": self.entity_status_ticks.clone(),
+                "effect_consume_source_id": self.effect_consume_source_id.clone(),
+                "projection_hand_ids": self._projection_hand_ids.clone(),
+                "double_elixir": self._double_elixir.clone(),
+                "triple_elixir": self._triple_elixir.clone(),
+                "ability_cooldown": self._ability_cooldown.clone(),
+                "ability_duration": self._ability_duration.clone(),
+                "refill_cooldown_ms": self._refill_cooldown_ms.clone(),
+                "public_visibility": self.projector.inputs.public_visibility.clone(),
+                "combat_spawned_mask": self.combat.spawned_mask.clone(),
+                "combat_target_unavailable": self.combat._target_unavailable.clone(),
+            },
+        }
+
+    @staticmethod
+    def _restore_rows_(
+        destination: torch.Tensor,
+        template: torch.Tensor,
+        reset_mask: torch.Tensor,
+    ) -> None:
+        row_mask = reset_mask.view(
+            reset_mask.shape[0], *((1,) * (destination.ndim - 1))
+        )
+        destination.copy_(torch.where(row_mask, template, destination))
+
+    def reset_rows(
+        self,
+        reset_mask: torch.Tensor,
+        deck_ids: torch.Tensor | None = None,
+    ) -> SimpleProjectedObservation:
+        """Start fresh episodes for selected batch rows in-place.
+
+        ``reset_mask`` is a boolean ``[batch]`` tensor on the runtime device.
+        Optional ordered decks replace the initial hand and cycle for selected
+        rows only.  Runtime templates, outcome reward baselines, effect pools,
+        and episode-local stable IDs are restored without reconstructing any
+        Python simulator objects.  Recurrent policy history remains adapter
+        owned and is intentionally unaffected by this method.
+        """
+
+        if reset_mask.shape != (self.batch_size,):
+            raise ValueError("reset_mask must have shape [batch]")
+        if reset_mask.device != self.device:
+            raise ValueError("reset_mask must use the runtime device")
+        if reset_mask.dtype != torch.bool:
+            raise ValueError("reset_mask must be bool")
+        if deck_ids is not None:
+            if deck_ids.shape != (self.batch_size, 2, 8):
+                raise ValueError("deck_ids must have shape [batch, 2, 8]")
+            if deck_ids.device != self.device:
+                raise ValueError("deck_ids must use the runtime device")
+            if deck_ids.dtype != torch.int64:
+                raise ValueError("deck_ids must be int64")
+
+        objects = {
+            "state": self.state,
+            "action": self.action_state,
+            "effects": self.effects,
+            "lifecycle": self.lifecycle,
+            "modifiers": self.modifiers,
+            "outcomes": self.outcomes,
+        }
+        for group, owner in objects.items():
+            for name, template in self._initial_templates[group].items():
+                self._restore_rows_(getattr(owner, name), template, reset_mask)
+
+        runtime_tensors = {
+            "entity_status_kind": self.entity_status_kind,
+            "entity_status_ticks": self.entity_status_ticks,
+            "effect_consume_source_id": self.effect_consume_source_id,
+            "projection_hand_ids": self._projection_hand_ids,
+            "double_elixir": self._double_elixir,
+            "triple_elixir": self._triple_elixir,
+            "ability_cooldown": self._ability_cooldown,
+            "ability_duration": self._ability_duration,
+            "refill_cooldown_ms": self._refill_cooldown_ms,
+            "public_visibility": self.projector.inputs.public_visibility,
+            "combat_spawned_mask": self.combat.spawned_mask,
+            "combat_target_unavailable": self.combat._target_unavailable,
+        }
+        for name, destination in runtime_tensors.items():
+            self._restore_rows_(
+                destination, self._initial_templates["runtime"][name], reset_mask
+            )
+
+        if deck_ids is not None:
+            hand = deck_ids[:, :, :NUM_HAND_SLOTS]
+            cycle = deck_ids[:, :, NUM_HAND_SLOTS:]
+            self._restore_rows_(self.action_state.hand_ids, hand, reset_mask)
+            self._restore_rows_(self.action_state.cycle_ids, cycle, reset_mask)
+
+        projected_hand = torch.cat(
+            (self.action_state.hand_ids, self.action_state.own_next[..., None]),
+            dim=2,
+        )
+        self._restore_rows_(self._projection_hand_ids, projected_hand, reset_mask)
+        return self.projector.project(self._legal_action_mask())
 
     def _phase_multiplier(self) -> torch.Tensor:
         multiplier = torch.ones(
