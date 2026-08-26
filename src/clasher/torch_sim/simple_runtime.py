@@ -73,11 +73,6 @@ from .simple_periodic_spawn import (
     FastPeriodicSpawnState,
     step_periodic_spawns_,
 )
-from .simple_projection import (
-    SimpleProjectedObservation,
-    SimpleProjectionInputs,
-    SimpleTensorProjector,
-)
 from .simple_positive_buffs import (
     FastPositiveBuffAdvanceResult,
     FastPositiveBuffApplyResult,
@@ -91,6 +86,11 @@ from .simple_positive_buffs import (
     fast_positive_attack_clock_decrement_,
     fast_positive_buff_view,
     step_fast_positive_buff_areas_,
+)
+from .simple_projection import (
+    SimpleProjectedObservation,
+    SimpleProjectionInputs,
+    SimpleTensorProjector,
 )
 from .simple_rolling_spells import (
     FAST_ROLLING_NO_SPAWN,
@@ -123,6 +123,14 @@ from .simple_spawn_blueprints import (
     rolling_spawn_commands,
 )
 from .simple_state import FastGymState
+
+
+def _same_device(left: torch.device, right: torch.device) -> bool:
+    """Treat an unspecified accelerator index as its current concrete device."""
+
+    return left.type == right.type and (
+        left.index is None or right.index is None or left.index == right.index
+    )
 
 
 @dataclass(frozen=True)
@@ -203,7 +211,7 @@ class SimpleGymRuntime:
                 raise ValueError(
                     "spawn_blueprints must own the supplied expanded fast catalog"
                 )
-            if spawn_blueprints.device != catalog.device:
+            if not _same_device(spawn_blueprints.device, catalog.device):
                 raise ValueError("spawn blueprints and catalog must share a device")
             safe_deck = deck_ids.clamp(0, catalog.size - 1)
             public_deck = (

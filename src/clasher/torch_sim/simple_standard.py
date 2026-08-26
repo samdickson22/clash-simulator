@@ -9,8 +9,8 @@ the generalized fast-card and spawn-blueprint compilers.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 import torch
 
@@ -27,7 +27,6 @@ from .catalog import TensorCardCatalog
 from .simple_outcomes import FastMatchRules, FastTowerSpec
 from .simple_runtime import SimpleGymRuntime
 from .simple_spawn_blueprints import FastSpawnBlueprintCatalog
-
 
 # The current-client match phases expressed in the one authoritative 50 ms
 # logic clock.  Keeping the source durations beside the conversion makes the
@@ -57,10 +56,12 @@ def _required_tower_stat(tower_name: str, field: str) -> int:
 def _ceil_logic_ticks(milliseconds: int) -> int:
     if milliseconds < 0:
         raise ValueError("tower timing must be non-negative")
-    return max(
-        1,
-        (milliseconds + LOGIC_TICK_MILLISECONDS - 1)
-        // LOGIC_TICK_MILLISECONDS,
+    return int(
+        max(
+            1,
+            (milliseconds + LOGIC_TICK_MILLISECONDS - 1)
+            // LOGIC_TICK_MILLISECONDS,
+        )
     )
 
 
@@ -77,6 +78,8 @@ def standard_tower_spec(
     """
 
     torch_device = torch.device(device)
+    if torch_device.type == "cuda" and torch_device.index is None:
+        torch_device = torch.device("cuda", torch.cuda.current_device())
     princess = load_princess_tower_character_data(loader.data_file)
     princess_hp = _required_tower_stat("PrincessTower", "hitpoints")
     princess_damage = _required_tower_stat("PrincessTower", "damage")
@@ -145,7 +148,7 @@ def standard_tower_spec(
 
 
 def _ordered_deck_ids(
-    setup: "SimpleStandardSetup",
+    setup: SimpleStandardSetup,
     deck_names: Sequence[Sequence[Sequence[str]]],
 ) -> torch.Tensor:
     if len(deck_names) < 1:
@@ -175,14 +178,10 @@ def _ordered_deck_ids(
         rows.append(owners)
 
     if unknown:
-        raise ValueError(
-            "deck cards are not compiled public roots: "
-            f"{sorted(unknown)}"
-        )
+        raise ValueError(f"deck cards are not compiled public roots: {sorted(unknown)}")
     if unsupported:
         raise ValueError(
-            "unsupported standard simple Gym deck cards: "
-            f"{sorted(unsupported)}"
+            f"unsupported standard simple Gym deck cards: {sorted(unsupported)}"
         )
     return torch.tensor(rows, dtype=torch.int64, device=setup.device)
 
@@ -227,9 +226,7 @@ class SimpleStandardSetup:
             raise RuntimeError("compiled setup lost canonical_lane_globals contract")
         deck_ids = _ordered_deck_ids(self, deck_names)
         runtime_blueprints = (
-            self.spawn_blueprints
-            if self.spawn_blueprints.blueprint_count > 0
-            else None
+            self.spawn_blueprints if self.spawn_blueprints.blueprint_count > 0 else None
         )
         return SimpleGymRuntime(
             deck_ids,
@@ -271,9 +268,7 @@ def compile_standard_simple_setup(
     )
     blueprints = FastSpawnBlueprintCatalog.compile(loader, base_cards)
     public_mask = blueprints.public_card_mask.clone()
-    supported_mask = (
-        public_mask & blueprints.fast_cards.training_supported
-    ).clone()
+    supported_mask = (public_mask & blueprints.fast_cards.training_supported).clone()
     public_names = tuple(
         name
         for card_id, name in enumerate(blueprints.cards.names)

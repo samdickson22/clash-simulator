@@ -44,6 +44,8 @@ class FastDeathBurstCatalog:
         if card_count < 1:
             raise ValueError("card_count must be positive")
         torch_device = torch.device(device)
+        if torch_device.type == "cuda" and torch_device.index is None:
+            torch_device = torch.device("cuda", torch.cuda.current_device())
         shape = (card_count,)
         return cls(
             device=torch_device,

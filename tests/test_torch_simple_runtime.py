@@ -15,7 +15,7 @@ from clasher.torch_sim.simple_adapter import SimpleGymAdapter
 from clasher.torch_sim.simple_catalog import FastCardCatalog
 from clasher.torch_sim.simple_effects import FAST_EFFECT_AREA, FAST_STATUS_STUN
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
-from clasher.torch_sim.simple_runtime import SimpleGymRuntime
+from clasher.torch_sim.simple_runtime import SimpleGymRuntime, _same_device
 
 
 def _runtime(
@@ -73,6 +73,13 @@ def _knight_actions(device: torch.device) -> torch.Tensor:
 def _far_knight_actions(device: torch.device) -> torch.Tensor:
     tile = 7 * BOARD_WIDTH + 8
     return torch.tensor([[tile, tile]], dtype=torch.int64, device=device)
+
+
+def test_device_aliases_match_the_same_accelerator() -> None:
+    assert _same_device(torch.device("cuda"), torch.device("cuda:0"))
+    assert _same_device(torch.device("cpu"), torch.device("cpu"))
+    assert not _same_device(torch.device("cuda:0"), torch.device("cuda:1"))
+    assert not _same_device(torch.device("cpu"), torch.device("cuda"))
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))

@@ -815,7 +815,7 @@ class FastSpawnBlueprintCatalog:
         root_required = torch.zeros(
             len(cards.names),
             dtype=torch.bool,
-            device=cards.device,
+            device=fast_cards.device,
         )
         root_supported = torch.zeros_like(root_required)
         public_card_mask = torch.zeros_like(root_required)

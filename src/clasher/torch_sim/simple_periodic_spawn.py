@@ -167,6 +167,8 @@ class FastPeriodicSpawnState:
         if batch_size < 1 or max_entities < 1:
             raise ValueError("batch_size and max_entities must be positive")
         torch_device = torch.device(device)
+        if torch_device.type == "cuda" and torch_device.index is None:
+            torch_device = torch.device("cuda", torch.cuda.current_device())
         shape = (batch_size, max_entities)
         return cls(
             device=torch_device,
