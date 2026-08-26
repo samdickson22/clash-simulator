@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "contract": {
+    "name": "clasher.simple_gym_supported_decks",
+    "version": 1,
+    "deck_size": 8,
+    "canonical_lane_globals": true,
+    "public_action_mask_contract_version": 2
+  },
+  "source": {
+    "path": "decks.json",
+    "sha256": "39fd5d5fe36cc7cfa69cf049de3ea2e7e00bc143ec71b14f33ead300fb4b2944"
+  },
+  "counts": {
+    "candidate_decks": 33,
+    "supported_decks": 6,
+    "rejected_decks": 27,
+    "public_cards": 66,
+    "supported_public_cards": 57,
+    "unsupported_public_cards": 9
+  },
+  "support_profile": {
+    "version": 1,
+    "sha256": "bc0f93fb6101620f3eabcf0bb7270eff1561a53761dad8fbad6a43fcc1b6384a",
+    "supported_public_cards": [
+      "ArcherQueen",
+      "Archers",
+      "Arrows",
+      "BabyDragon",
+      "Bandit",
+      "Bats",
+      "BattleRam",
+      "Bomber",
+      "Bowler",
+      "Cannon",
+      "DarkPrince",
+      "DartGoblin",
+      "Earthquake",
+      "ElectroDragon",
+      "ElectroSpirit",
+      "ElectroWizard",
+      "Fireball",
+      "Firecracker",
+      "Freeze",
+      "Giant",
+      "GiantSnowball",
+      "GoblinBarrel",
+      "GoblinGang",
+      "Guards",
+      "HogRider",
+      "IceGolem",
+      "IceSpirit",
+      "IceWizard",
+      "InfernoDragon",
+      "InfernoTower",
+      "Knight",
+      "LavaHound",
+      "MagicArcher",
+      "MegaKnight",
+      "MegaMinion",
+      "Miner",
+      "MiniPekka",
+      "Minions",
+      "Musketeer",
+      "NightWitch",
+      "Pekka",
+      "Poison",
+      "Prince",
+      "Princess",
+      "Rocket",
+      "RoyalGhost",
+      "RoyalHogs",
+      "Skeletons",
+      "SpearGoblins",
+      "Tesla",
+      "Tombstone",
+      "Tornado",
+      "Valkyrie",
+      "Wallbreakers",
+      "Witch",
+      "Xbow",
+      "Zap"
+    ],
+    "unsupported_public_cards": [
+      "Balloon",
+      "BarbarianBarrel",
+      "BombTower",
+      "Golem",
+      "Graveyard",
+      "Log",
+      "Lumberjack",
+      "RoyalDelivery",
+      "SkeletonBarrel"
+    ]
+  },
+  "decks": [
+    {
+      "name": "Pekka Bandit EWiz Bridge Spam",
+      "cards": [
+        "Bandit",
+        "BattleRam",
+        "ElectroWizard",
+        "Fireball",
+        "MagicArcher",
+        "Pekka",
+        "RoyalGhost",
+        "Zap"
+      ]
+    },
+    {
+      "name": "Giant",
+      "cards": [
+        "Archers",
+        "Arrows",
+        "Fireball",
+        "Giant",
+        "Knight",
+        "MiniPekka",
+        "Minions",
+        "Musketeer"
+      ]
+    },
+    {
+      "name": "WB Valk Log Bait 2.8",
+      "cards": [
+        "Cannon",
+        "DartGoblin",
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "Princess",
+        "Valkyrie",
+        "Wallbreakers"
+      ]
+    },
+    {
+      "name": "Pekka Bandit EWiz Poison",
+      "cards": [
+        "Bandit",
+        "BattleRam",
+        "ElectroWizard",
+        "MagicArcher",
+        "Pekka",
+        "Poison",
+        "RoyalGhost",
+        "Zap"
+      ]
+    },
+    {
+      "name": "Hog 2.6 (Zap)",
+      "cards": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceGolem",
+        "IceSpirit",
+        "Musketeer",
+        "Skeletons",
+        "Zap"
+      ]
+    },
+    {
+      "name": "Giant Double Prince",
+      "cards": [
+        "DarkPrince",
+        "Fireball",
+        "Giant",
+        "MegaMinion",
+        "Minions",
+        "Miner",
+        "Prince",
+        "Zap"
+      ]
+    }
+  ]
+}
