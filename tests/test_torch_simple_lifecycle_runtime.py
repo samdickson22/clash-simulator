@@ -138,7 +138,9 @@ def test_runtime_resolvable_death_spawn_uses_child_catalog_and_clears_status(
     assert runtime.state.stable_id[children].tolist() == [8, 9, 10, 11]
     torch.testing.assert_close(
         runtime.state.damage[children],
-        torch.full_like(runtime.state.damage[children], catalog.damage[skeleton]),
+        torch.full_like(
+            runtime.state.damage[children], float(catalog.damage[skeleton])
+        ),
     )
     assert not bool(runtime.entity_status_ticks[children].any())
     assert bool(result.observation.actor.entity_mask[:, :, 6:10].all())
