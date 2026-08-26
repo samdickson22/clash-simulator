@@ -1296,6 +1296,17 @@ class TensorResidentEngine:
             chain_card_by_catalog,
             CombatMechanicOpcode.ELECTRO_SPIRIT_CHAIN,
         )
+        _, electro_dragon_card = chain_impacts.catalog.mechanic_slot(
+            chain_card_by_catalog,
+            CombatMechanicOpcode.ELECTRO_DRAGON_CHAIN,
+        )
+        chain_projectile_opcode = (
+            (deployment_mechanics == 0)
+            | (deployment_mechanics == MECHANIC_OPCODE["ElectroDragonChainLightning"])
+        ).all(dim=1)
+        chain_projectile_card_supported = (
+            (core_by_catalog >= 0) & chain_projectile_opcode & electro_dragon_card
+        )
         # IceSpiritCatalog is indexed by the shared TensorCardCatalog, unlike
         # core-indexed retained owners. Do not accidentally address it with a
         # runtime card-table ID after deployment adds typed child names.
@@ -1329,6 +1340,7 @@ class TensorResidentEngine:
                 ),
                 "stealth": tuple(RESIDENT_STEALTH_MECHANIC_OPCODES),
                 "damage_ramp": tuple(RESIDENT_DIRECT_COMBAT_MECHANIC_OPCODES),
+                "chain_projectile": (MECHANIC_OPCODE["ElectroDragonChainLightning"],),
                 "impact_spirit": (
                     MECHANIC_OPCODE["ElectroSpiritChain"],
                     MECHANIC_OPCODE["IceSpiritFreeze"],
@@ -1348,6 +1360,7 @@ class TensorResidentEngine:
                     (core_by_catalog >= 0)
                     & damage_ramp_catalog.direct_supported[safe_core_by_catalog]
                 ),
+                "chain_projectile": chain_projectile_card_supported,
                 "impact_spirit": impact_spirit_card_supported,
             },
             loader=catalog_loader,

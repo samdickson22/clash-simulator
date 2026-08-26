@@ -149,8 +149,6 @@ def test_ice_wizard_action_owner_matches_complete_real_interaction(
 @pytest.mark.parametrize(
     ("card_name", "opcode"),
     (
-        ("ElectroDragon", "ElectroDragonChainLightning"),
-        ("ElectroSpirit", "ElectroSpiritChain"),
         ("ElectroWizard", "MultipleTargetAttack"),
         ("MegaKnight", "MegaKnightSlam"),
     ),
