@@ -35,6 +35,7 @@ def _args(tmp_path: Path, **overrides: object) -> argparse.Namespace:
         "max_effects": 16,
         "min_row_ticks_per_second": 1.0,
         "profile_cuda": False,
+        "cuda_graph": False,
         "out": None,
     }
     values.update(overrides)
@@ -91,6 +92,7 @@ def test_simple_benchmark_reports_absolute_native_row_throughput(
     assert all(trial["committed_rows"] == 8 for trial in trials)
     assert all(trial["native_ticks"] == 8 for trial in trials)
     assert result["median"]["row_ticks_per_second"] > 0.0
+    assert result["execution_mode"] == "eager"
     assert result["deck_pool"] == {
         "candidate_decks": 1,
         "supported_decks": 1,
@@ -101,6 +103,11 @@ def test_simple_benchmark_reports_absolute_native_row_throughput(
 def test_simple_benchmark_enforces_absolute_throughput_gate(tmp_path: Path) -> None:
     with pytest.raises(RuntimeError, match="below gate"):
         benchmark(_args(tmp_path, min_row_ticks_per_second=1e30))
+
+
+def test_simple_benchmark_rejects_cuda_graph_on_cpu(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="requires --device cuda"):
+        benchmark(_args(tmp_path, cuda_graph=True))
 
 
 def test_simple_benchmark_uses_standard_tiebreak_window_gate(tmp_path: Path) -> None:

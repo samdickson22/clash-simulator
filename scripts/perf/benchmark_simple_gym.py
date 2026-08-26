@@ -22,6 +22,7 @@ from typing import Any
 import torch
 
 from clasher.rl.deck_pool import load_deck_pool
+from clasher.torch_sim.simple_cuda_graph import SimpleCudaGraphRunner
 from clasher.torch_sim.simple_standard import (
     STANDARD_REGULATION_TICK,
     STANDARD_TIEBREAK_TICK,
@@ -90,6 +91,10 @@ def _run_trial(
     for _ in range(args.warmup_ticks):
         actions = select_actions(observation.legal_mask, args.policy)
         observation = runtime.step_tick(actions).observation
+    step_tick = runtime.step_tick
+    if bool(getattr(args, "cuda_graph", False)):
+        example_actions = select_actions(observation.legal_mask, args.policy)
+        step_tick = SimpleCudaGraphRunner(runtime, example_actions).step_tick
 
     _synchronize(runtime.device)
     if runtime.device.type == "cuda":
@@ -100,13 +105,19 @@ def _run_trial(
     started = time.perf_counter()
     for _ in range(args.measured_ticks):
         actions = select_actions(observation.legal_mask, args.policy)
-        step = runtime.step_tick(actions)
-        # These result tensors are newly allocated per tick. Keeping references
-        # adds no device operation to the timed native path; reductions happen
-        # only after the closing synchronization.
-        committed_snapshots.append(step.committed)
-        native_snapshots.append(step.native_ticks)
-        done_snapshots.append(step.done)
+        step = step_tick(actions)
+        if bool(getattr(args, "cuda_graph", False)):
+            # Graph outputs reuse fixed addresses. Preserve each tick so the
+            # all-native/committed gate covers the complete measured window.
+            committed_snapshots.append(step.committed.clone())
+            native_snapshots.append(step.native_ticks.clone())
+            done_snapshots.append(step.done.clone())
+        else:
+            # Eager result tensors are newly allocated each tick. Keeping their
+            # references adds no device operation to the measured native path.
+            committed_snapshots.append(step.committed)
+            native_snapshots.append(step.native_ticks)
+            done_snapshots.append(step.done)
         observation = step.observation
     _synchronize(runtime.device)
     elapsed = time.perf_counter() - started
@@ -163,10 +174,14 @@ def _replay_digest(args: argparse.Namespace, decks: list[list[str]]) -> str:
     for _ in range(args.warmup_ticks):
         actions = select_actions(observation.legal_mask, args.policy)
         observation = runtime.step_tick(actions).observation
+    step_tick = runtime.step_tick
+    if bool(getattr(args, "cuda_graph", False)):
+        example_actions = select_actions(observation.legal_mask, args.policy)
+        step_tick = SimpleCudaGraphRunner(runtime, example_actions).step_tick
     digest = hashlib.sha256()
     for _ in range(args.measured_ticks):
         actions = select_actions(observation.legal_mask, args.policy)
-        step = runtime.step_tick(actions)
+        step = step_tick(actions)
         update_step_digest(digest, step, actions)
         observation = step.observation
     return digest.hexdigest()
@@ -218,6 +233,10 @@ def _profile_cuda_tick(args: argparse.Namespace, decks: list[list[str]]) -> Cuda
     for _ in range(max(1, args.warmup_ticks)):
         actions = select_actions(observation.legal_mask, args.policy)
         observation = runtime.step_tick(actions).observation
+    step_tick = runtime.step_tick
+    if bool(getattr(args, "cuda_graph", False)):
+        example_actions = select_actions(observation.legal_mask, args.policy)
+        step_tick = SimpleCudaGraphRunner(runtime, example_actions).step_tick
     _synchronize(runtime.device)
 
     marker = "simple_gym_measured_tick"
@@ -232,7 +251,7 @@ def _profile_cuda_tick(args: argparse.Namespace, decks: list[list[str]]) -> Cuda
     ) as profile:
         with torch.profiler.record_function(marker):
             actions = select_actions(observation.legal_mask, args.policy)
-            runtime.step_tick(actions)
+            step_tick(actions)
 
     events = list(profile.events())
     launches = sum(
@@ -276,6 +295,8 @@ def _resolve_preset(args: argparse.Namespace) -> argparse.Namespace:
 
 def benchmark(args: argparse.Namespace) -> dict[str, object]:
     args = _resolve_preset(args)
+    if bool(getattr(args, "cuda_graph", False)) and args.device != "cuda":
+        raise ValueError("--cuda-graph requires --device cuda")
     if min(
         args.batch_size,
         args.measured_ticks,
@@ -324,6 +345,9 @@ def benchmark(args: argparse.Namespace) -> dict[str, object]:
     return {
         "schema_version": 1,
         "engine": "SimpleGymRuntime",
+        "execution_mode": (
+            "cuda-graph" if bool(getattr(args, "cuda_graph", False)) else "eager"
+        ),
         "preset": args.preset,
         "device": device,
         "policy": args.policy,
@@ -379,6 +403,11 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-effects", type=int, default=128)
     parser.add_argument("--min-row-ticks-per-second", type=float, default=1.0)
     parser.add_argument("--profile-cuda", action="store_true")
+    parser.add_argument(
+        "--cuda-graph",
+        action="store_true",
+        help="capture the fixed-shape CUDA tick and replay it as one graph launch",
+    )
     parser.add_argument("--out", type=Path)
     return parser
 
