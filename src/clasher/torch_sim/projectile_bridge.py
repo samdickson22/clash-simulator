@@ -1105,6 +1105,12 @@ class TensorResidentProjectileSpellBridge:
             direct,
         )
         object_action = valid & ~direct
+        # The fan-out geometry below contains fixed-width RNG loops sized for
+        # the worst supported spell.  Inactive lanes consume no RNG and cannot
+        # mutate object state, so one eager admission check avoids hundreds of
+        # empty accelerator synchronizations on ordinary ticks.
+        if not bool(object_action.any().item()):
+            return direct_supported
         safe_cards = card_ids.clamp_min(0)
         projectile = payload_kind == BridgePayloadKind.PROJECTILE_SPELL
         projectile_count = torch.where(
