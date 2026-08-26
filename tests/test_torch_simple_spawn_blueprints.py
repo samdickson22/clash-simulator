@@ -61,17 +61,17 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
         "GoblinBarrel",
         "NightWitch",
         "Tombstone",
+        "Balloon",
+        "BombTower",
+        "SkeletonBarrel",
     ):
         card_id = catalog.cards.name_to_id[name]
         assert bool(catalog.public_card_mask[card_id])
         assert bool(catalog.fast_cards.training_supported[card_id])
     for name in (
-        "Balloon",
         "BarbarianBarrel",
-        "BombTower",
         "Golem",
         "Lumberjack",
-        "SkeletonBarrel",
     ):
         assert bool(catalog.root_payload_required[catalog.cards.name_to_id[name]])
         assert not _root_support(catalog, name)
@@ -86,6 +86,31 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
     assert int(catalog.radius_units[pups_row]) == 2_500
     assert int(catalog.trigger[barrel_row]) == int(FastSpawnTrigger.PROJECTILE_IMPACT)
     assert int(catalog.count[barrel_row]) == 3
+    expected_containers = {
+        "Balloon": (60, 240.0, 3_000, 0, 0),
+        "BombTower": (60, 222.0, 3_000, 0, 0),
+        "SkeletonBarrel": (12, 145.0, 2_000, 7, 10),
+    }
+    for name, (
+        lifetime,
+        damage,
+        radius,
+        nested_count,
+        nested_deploy,
+    ) in expected_containers.items():
+        card_id = catalog.cards.name_to_id[name]
+        row = int(catalog.container_blueprint_by_card[card_id])
+        assert row == rows_by_root[name][0]
+        assert int(catalog.container_lifetime_ticks[row]) == lifetime
+        assert float(catalog.container_damage[row]) == damage
+        assert int(catalog.container_radius_units[row]) == radius
+        assert int(catalog.container_nested_count[row]) == nested_count
+        assert int(catalog.container_nested_deploy_ticks[row]) == nested_deploy
+    skeleton_row = rows_by_root["SkeletonBarrel"][0]
+    skeleton_id = int(catalog.container_nested_child_card_id[skeleton_row])
+    assert catalog.visible_names[skeleton_id] == "Skeleton"
+    assert float(catalog.fast_cards.hitpoints[skeleton_id]) == 81.0
+    assert float(catalog.fast_cards.damage[skeleton_id]) == 81.0
     assert int(
         catalog.fast_cards.death_spawn_card_id[catalog.cards.name_to_id["BattleRam"]]
     ) == int(catalog.child_card_id[ram_row])

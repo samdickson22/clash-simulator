@@ -32,6 +32,10 @@ from clasher.mechanics.shared.spawner import PeriodicSpawner
 from .catalog import TensorCardCatalog
 from .simple_catalog import FastCardCatalog
 from .simple_effects import FastEffectState
+from .simple_payload_containers import (
+    FastPayloadContainerCommands,
+    FastPayloadSpawnTriggers,
+)
 from .simple_state import FastGymState
 
 
@@ -337,6 +341,18 @@ class FastSpawnBlueprintCatalog:
     root_payload_required: torch.Tensor
     root_payload_supported: torch.Tensor
     impact_blueprint_by_card: torch.Tensor
+    container_blueprint_by_card: torch.Tensor
+    container_lifetime_ticks: torch.Tensor
+    container_damage: torch.Tensor
+    container_radius_units: torch.Tensor
+    container_tower_damage_multiplier: torch.Tensor
+    container_building_damage_multiplier: torch.Tensor
+    container_hits_air: torch.Tensor
+    container_hits_ground: torch.Tensor
+    container_nested_child_card_id: torch.Tensor
+    container_nested_count: torch.Tensor
+    container_nested_radius_units: torch.Tensor
+    container_nested_deploy_ticks: torch.Tensor
     public_card_mask: torch.Tensor
 
     @property
@@ -356,10 +372,22 @@ class FastSpawnBlueprintCatalog:
         payloads: dict[tuple[str, str], dict[str, Any]] = {}
         for requirement in requirements:
             data = requirement.child_data
-            if not isinstance(data, dict) or data.get("hitpoints") is None:
+            if not isinstance(data, dict):
                 continue
-            key = _payload_key(requirement.child_name, data)
-            payloads[key] = data
+            if data.get("hitpoints") is not None:
+                key = _payload_key(requirement.child_name, data)
+                payloads[key] = data
+            nested = data.get("deathSpawnCharacterData") or {}
+            nested_name = str(
+                nested.get("name") or data.get("deathSpawnCharacter") or ""
+            )
+            if (
+                nested_name
+                and isinstance(nested, dict)
+                and nested.get("hitpoints") is not None
+            ):
+                key = _payload_key(nested_name, nested)
+                payloads[key] = nested
 
         label_by_key: dict[tuple[str, str], str] = {}
         visible_by_label: dict[str, str] = {}
@@ -382,6 +410,18 @@ class FastSpawnBlueprintCatalog:
             return torch.tensor(tuple(values), dtype=dtype, device=cards.device)
 
         child_ids: list[int] = []
+        container_rows: list[bool] = []
+        container_lifetime: list[int] = []
+        container_damage: list[float] = []
+        container_radius: list[int] = []
+        container_tower_scale: list[float] = []
+        container_building_scale: list[float] = []
+        container_hits_air: list[bool] = []
+        container_hits_ground: list[bool] = []
+        nested_child_ids: list[int] = []
+        nested_counts: list[int] = []
+        nested_radii: list[int] = []
+        nested_deploy: list[int] = []
         supported: list[bool] = []
         for requirement in requirements:
             data = requirement.child_data
@@ -397,6 +437,64 @@ class FastSpawnBlueprintCatalog:
                     and child_definition.scaled_hitpoints
                     and not child_definition.card_definition.mechanics
                 )
+            container = bool(
+                requirement.trigger == FastSpawnTrigger.DEATH
+                and isinstance(data, dict)
+                and data.get("hitpoints") is None
+                and data.get("deathDamage") is not None
+            )
+            timer = _ticks(data.get("deployTime")) if container and data else 0
+            radius = (
+                max(
+                    0,
+                    int(data.get("deathDamageRadius") or data.get("deathRadius") or 0),
+                )
+                if container and data
+                else 0
+            )
+            raw_damage = (
+                int(data.get("deathDamage", 0) or 0) if container and data else 0
+            )
+            root_stats = loader.get_card(requirement.root_name)
+            scaled_damage = (
+                float(root_stats.get_scaled_stat(raw_damage) or 0)
+                if container and root_stats is not None
+                else float(raw_damage)
+            )
+            target = str(data.get("tidTarget", "") if data else "")
+            hits_air = "AIR" in target or not target
+            hits_ground = "GROUND" in target or not target
+            nested = (
+                (data.get("deathSpawnCharacterData") or {})
+                if container and data
+                else {}
+            )
+            nested_name = str(
+                (nested.get("name") if isinstance(nested, dict) else "")
+                or (data.get("deathSpawnCharacter") if data else "")
+                or ""
+            )
+            nested_count = (
+                max(0, int(data.get("deathSpawnCount", 0) or 0))
+                if container and data
+                else 0
+            )
+            nested_id = 0
+            nested_supported = not nested_name and nested_count == 0
+            if (
+                nested_name
+                and nested_count > 0
+                and isinstance(nested, dict)
+                and nested.get("hitpoints") is not None
+            ):
+                nested_label = label_by_key[_payload_key(nested_name, nested)]
+                nested_id = cards.name_to_id[nested_label]
+                nested_definition = overlay.get_card(nested_label)
+                nested_supported = bool(
+                    nested_definition is not None
+                    and nested_definition.scaled_hitpoints
+                    and not nested_definition.card_definition.mechanics
+                )
             trigger_supported = requirement.trigger in {
                 FastSpawnTrigger.DEATH,
                 FastSpawnTrigger.PROJECTILE_IMPACT,
@@ -407,12 +505,38 @@ class FastSpawnBlueprintCatalog:
                 and (requirement.max_waves == -1 or requirement.max_waves > 0)
             )
             child_ids.append(child_id)
+            container_rows.append(container)
+            container_lifetime.append(timer)
+            container_damage.append(scaled_damage)
+            container_radius.append(radius)
+            container_tower_scale.append(1.0)
+            container_building_scale.append(1.0)
+            container_hits_air.append(hits_air)
+            container_hits_ground.append(hits_ground)
+            nested_child_ids.append(nested_id)
+            nested_counts.append(nested_count)
+            nested_radii.append(
+                max(0, int(data.get("deathSpawnRadius", 0) or 0))
+                if container and data
+                else 0
+            )
+            nested_deploy.append(
+                _ticks(data.get("deathSpawnDeployTime")) if container and data else 0
+            )
             supported.append(
-                trigger_supported and child_supported and requirement.count > 0
+                (
+                    container
+                    and requirement.count == 1
+                    and timer > 0
+                    and scaled_damage > 0
+                    and radius > 0
+                    and nested_supported
+                )
+                or (trigger_supported and child_supported and requirement.count > 0)
             )
 
         root_required = torch.zeros(
-            cards.size if hasattr(cards, "size") else len(cards.names),
+            len(cards.names),
             dtype=torch.bool,
             device=cards.device,
         )
@@ -436,13 +560,16 @@ class FastSpawnBlueprintCatalog:
         impact_by_card = torch.full(
             (len(cards.names),), -1, dtype=torch.int64, device=cards.device
         )
+        container_by_card = torch.full_like(impact_by_card, -1)
         for root_id, operation_rows in root_rows.items():
             if not bool(root_supported[root_id]):
                 continue
             for row in operation_rows:
                 requirement = requirements[row]
                 child_id = child_ids[row]
-                if requirement.trigger == FastSpawnTrigger.DEATH:
+                if container_rows[row]:
+                    container_by_card[root_id] = row
+                elif requirement.trigger == FastSpawnTrigger.DEATH:
                     fast_cards.death_spawn_count[root_id] = requirement.count
                     fast_cards.death_spawn_card_id[root_id] = child_id
                     fast_cards.death_spawn_kind[root_id] = fast_cards.kind[child_id]
@@ -498,6 +625,22 @@ class FastSpawnBlueprintCatalog:
             root_payload_required=root_required,
             root_payload_supported=root_supported,
             impact_blueprint_by_card=impact_by_card,
+            container_blueprint_by_card=container_by_card,
+            container_lifetime_ticks=tensor(container_lifetime, torch.int32),
+            container_damage=tensor(container_damage, torch.float32),
+            container_radius_units=tensor(container_radius, torch.int32),
+            container_tower_damage_multiplier=tensor(
+                container_tower_scale, torch.float32
+            ),
+            container_building_damage_multiplier=tensor(
+                container_building_scale, torch.float32
+            ),
+            container_hits_air=tensor(container_hits_air, torch.bool),
+            container_hits_ground=tensor(container_hits_ground, torch.bool),
+            container_nested_child_card_id=tensor(nested_child_ids, torch.int64),
+            container_nested_count=tensor(nested_counts, torch.int32),
+            container_nested_radius_units=tensor(nested_radii, torch.int32),
+            container_nested_deploy_ticks=tensor(nested_deploy, torch.int32),
             public_card_mask=public_card_mask,
         )
 
@@ -523,6 +666,167 @@ class FastSpawnAllocationResult:
     capacity_rejected: torch.Tensor
     spawned_mask: torch.Tensor
     source_command: torch.Tensor
+
+
+def death_payload_container_commands(
+    catalog: FastSpawnBlueprintCatalog,
+    state: FastGymState,
+) -> FastPayloadContainerCommands:
+    """Decode dead entity rows into stable-ordered timed-container requests."""
+
+    if state.device != catalog.device:
+        raise ValueError("state and blueprints must use the same device")
+    shape = tuple(state.active.shape)
+    if catalog.blueprint_count == 0:
+        ready = torch.zeros(shape, dtype=torch.bool, device=state.device)
+        zeros_i64 = torch.zeros(shape, dtype=torch.int64, device=state.device)
+        zeros_i32 = torch.zeros(shape, dtype=torch.int32, device=state.device)
+        zeros_i8 = torch.zeros(shape, dtype=torch.int8, device=state.device)
+        zeros_f32 = torch.zeros(shape, dtype=torch.float32, device=state.device)
+        return FastPayloadContainerCommands(
+            ready=ready,
+            source_id=zeros_i64,
+            owner=zeros_i8,
+            x_units=zeros_i32,
+            y_units=zeros_i32,
+            lifetime_ticks=zeros_i32,
+            effect_card_id=zeros_i64,
+            effect_damage=zeros_f32,
+            effect_radius_units=zeros_i32,
+            effect_status_kind=zeros_i8,
+            effect_status_duration_ticks=zeros_i32,
+            tower_damage_multiplier=zeros_f32,
+            building_damage_multiplier=zeros_f32,
+            hits_air=ready,
+            hits_ground=ready,
+            nested_spawn_blueprint_id=zeros_i64,
+        )
+
+    known_card = (state.card_id > 0) & (state.card_id < len(catalog.cards.names))
+    safe_card = state.card_id.clamp(0, len(catalog.cards.names) - 1)
+    blueprint = catalog.container_blueprint_by_card[safe_card]
+    candidate = (
+        state.active
+        & (state.hp <= 0)
+        & known_card
+        & (blueprint >= 0)
+        & ~state.game_over[:, None]
+    )
+    safe_blueprint = blueprint.clamp(0, catalog.blueprint_count - 1)
+
+    # Stable IDs, not physical entity slots, define simultaneous creation
+    # order. The padded command plane remains fixed at entity capacity.
+    capacity = state.max_entities
+    slots = torch.arange(capacity, dtype=torch.int64, device=state.device)
+    id_i = state.stable_id[:, :, None]
+    id_j = state.stable_id[:, None, :]
+    slot_i = slots.view(1, capacity, 1)
+    slot_j = slots.view(1, 1, capacity)
+    predecessor = candidate[:, None, :] & (
+        (id_j < id_i) | ((id_j == id_i) & (slot_j < slot_i))
+    )
+    rank = predecessor.sum(dim=2, dtype=torch.int64)
+    output = slots.view(1, capacity)
+    ready = output < candidate.sum(dim=1, dtype=torch.int64)[:, None]
+    claims = (
+        ready[:, :, None]
+        & candidate[:, None, :]
+        & (output[:, :, None] == rank[:, None, :])
+    )
+    source_slot = claims.to(torch.int64).argmax(dim=2)
+
+    def ordered(value: torch.Tensor) -> torch.Tensor:
+        gathered = value.gather(1, source_slot)
+        return torch.where(ready, gathered, torch.zeros_like(gathered))
+
+    ordered_blueprint = ordered(safe_blueprint)
+    nested_child = catalog.container_nested_child_card_id[ordered_blueprint]
+    return FastPayloadContainerCommands(
+        ready=ready,
+        source_id=ordered(state.stable_id),
+        owner=ordered(state.owner),
+        x_units=ordered(state.x_units),
+        y_units=ordered(state.y_units),
+        lifetime_ticks=catalog.container_lifetime_ticks[ordered_blueprint],
+        effect_card_id=ordered(state.card_id),
+        effect_damage=catalog.container_damage[ordered_blueprint],
+        effect_radius_units=catalog.container_radius_units[ordered_blueprint],
+        effect_status_kind=torch.zeros_like(ready, dtype=torch.int8),
+        effect_status_duration_ticks=torch.zeros_like(ready, dtype=torch.int32),
+        tower_damage_multiplier=(
+            catalog.container_tower_damage_multiplier[ordered_blueprint]
+        ),
+        building_damage_multiplier=(
+            catalog.container_building_damage_multiplier[ordered_blueprint]
+        ),
+        hits_air=catalog.container_hits_air[ordered_blueprint],
+        hits_ground=catalog.container_hits_ground[ordered_blueprint],
+        nested_spawn_blueprint_id=torch.where(
+            ready & (nested_child > 0),
+            ordered_blueprint + 1,
+            torch.zeros_like(ordered_blueprint),
+        ),
+    )
+
+
+def payload_spawn_commands(
+    catalog: FastSpawnBlueprintCatalog,
+    triggers: FastPayloadSpawnTriggers,
+) -> FastSpawnCommands:
+    """Decode stable-ordered container terminals into ordinary spawn waves."""
+
+    shape = tuple(triggers.ready.shape)
+    if len(shape) != 2:
+        raise ValueError("payload spawn triggers must have shape [batch, commands]")
+    for name, dtype in (
+        ("ready", torch.bool),
+        ("payload_stable_id", torch.int64),
+        ("source_id", torch.int64),
+        ("owner", torch.int8),
+        ("blueprint_id", torch.int64),
+        ("x_units", torch.int32),
+        ("y_units", torch.int32),
+    ):
+        value = getattr(triggers, name)
+        if tuple(value.shape) != shape or value.device != catalog.device:
+            raise ValueError(f"{name} must match trigger shape and device")
+        if value.dtype != dtype:
+            raise ValueError(f"{name} must use {dtype}")
+    if catalog.blueprint_count == 0:
+        zeros_i64 = torch.zeros(shape, dtype=torch.int64, device=catalog.device)
+        zeros_i32 = torch.zeros(shape, dtype=torch.int32, device=catalog.device)
+        return FastSpawnCommands(
+            ready=torch.zeros(shape, dtype=torch.bool, device=catalog.device),
+            owner=triggers.owner,
+            child_card_id=zeros_i64,
+            x_units=triggers.x_units,
+            y_units=triggers.y_units,
+            count=zeros_i32,
+            radius_units=zeros_i32,
+            deploy_ticks=zeros_i32,
+        )
+    known = (triggers.blueprint_id > 0) & (
+        triggers.blueprint_id <= catalog.blueprint_count
+    )
+    row = (triggers.blueprint_id - 1).clamp(0, catalog.blueprint_count - 1)
+    child = catalog.container_nested_child_card_id[row]
+    ready = triggers.ready & known & (child > 0)
+    raw_radius = catalog.container_nested_radius_units[row]
+    child_radius = catalog.fast_cards.collision_radius_units[
+        child.clamp(0, catalog.fast_cards.size - 1)
+    ]
+    return FastSpawnCommands(
+        ready=ready,
+        owner=triggers.owner,
+        child_card_id=child,
+        x_units=triggers.x_units,
+        y_units=triggers.y_units,
+        count=catalog.container_nested_count[row],
+        radius_units=torch.where(raw_radius > 0, raw_radius, child_radius).to(
+            torch.int32
+        ),
+        deploy_ticks=catalog.container_nested_deploy_ticks[row],
+    )
 
 
 def impact_spawn_commands(
@@ -688,5 +992,7 @@ __all__ = [
     "FastSpawnCommands",
     "FastSpawnTrigger",
     "allocate_fast_spawns_",
+    "death_payload_container_commands",
     "impact_spawn_commands",
+    "payload_spawn_commands",
 ]

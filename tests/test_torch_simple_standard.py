@@ -13,8 +13,7 @@ from clasher.torch_sim.simple_standard import (
     compile_standard_simple_setup,
 )
 
-
-PUBLIC_ROOTS = ("Knight", "Balloon")
+PUBLIC_ROOTS = ("Knight", "Balloon", "Golem")
 
 
 def _setup(device_name: str) -> SimpleStandardSetup:
@@ -61,13 +60,15 @@ def test_standard_setup_constructs_native_runtime_from_authoritative_data(
     assert setup.rules.regulation_ticks == STANDARD_REGULATION_TICK
     assert setup.rules.tiebreak_ticks == STANDARD_TIEBREAK_TICK
     assert setup.canonical_lane_globals is True
-    assert setup.public_root_names == ("Balloon", "Knight")
-    assert setup.supported_public_root_names == ("Knight",)
+    assert setup.public_root_names == ("Balloon", "Golem", "Knight")
+    assert setup.supported_public_root_names == ("Balloon", "Knight")
     balloon = setup.cards.name_to_id["Balloon"]
+    golem = setup.cards.name_to_id["Golem"]
     knight = setup.cards.name_to_id["Knight"]
     assert bool(setup.public_root_mask[balloon])
     assert bool(setup.public_root_mask[knight])
-    assert not bool(setup.supported_public_root_mask[balloon])
+    assert bool(setup.supported_public_root_mask[balloon])
+    assert not bool(setup.supported_public_root_mask[golem])
     assert bool(setup.supported_public_root_mask[knight])
 
     princess = load_princess_tower_character_data(CardDataLoader().data_file)
@@ -79,9 +80,7 @@ def test_standard_setup_constructs_native_runtime_from_authoritative_data(
         [6_500, 6_500, 2_500],
         [25_500, 25_500, 29_500],
     ]
-    assert setup.tower_spec.range_units[:, :2].unique().item() == int(
-        princess["range"]
-    )
+    assert setup.tower_spec.range_units[:, :2].unique().item() == int(princess["range"])
 
     runtime = setup.create_runtime(
         _deck("Knight"),
@@ -98,6 +97,15 @@ def test_standard_setup_constructs_native_runtime_from_authoritative_data(
     assert runtime.outcomes.rules.tiebreak_ticks == 6_000
     assert runtime.spawn_blueprints is setup.spawn_blueprints
     assert runtime.observe().actor.hand_ids.shape == (1, 2, 5)
+    balloon_runtime = setup.create_runtime(
+        _deck("Balloon"),
+        entity_token_lookup=entity_lookup,
+        hand_token_lookup=hand_lookup,
+        canonical_lane_globals=True,
+        max_entities=16,
+        max_effects=16,
+    )
+    assert balloon_runtime.spawn_blueprints is setup.spawn_blueprints
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
@@ -107,9 +115,9 @@ def test_standard_setup_fails_closed_for_unsupported_or_nonpublic_decks(
     setup = _setup(device_name)
     entity_lookup, hand_lookup = _typed_lookups(setup)
 
-    with pytest.raises(ValueError, match="unsupported.*Balloon"):
+    with pytest.raises(ValueError, match="unsupported.*Golem"):
         setup.create_runtime(
-            _deck("Balloon"),
+            _deck("Golem"),
             entity_token_lookup=entity_lookup,
             hand_token_lookup=hand_lookup,
             canonical_lane_globals=True,

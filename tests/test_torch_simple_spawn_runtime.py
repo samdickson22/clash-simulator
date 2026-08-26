@@ -19,6 +19,7 @@ def _runtime(
     *,
     device_name: str,
     max_entities: int,
+    max_payload_containers: int = 32,
 ) -> tuple[SimpleGymRuntime, FastSpawnBlueprintCatalog, int]:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -69,6 +70,7 @@ def _runtime(
         entity_token_lookup=entity_lookup,
         hand_token_lookup=hand_lookup,
         max_entities=max_entities,
+        max_payload_containers=max_payload_containers,
         starting_elixir=10.0,
         spawn_blueprints=blueprints,
     )
@@ -268,3 +270,173 @@ def test_incomplete_spawn_blueprint_root_remains_illegal(device_name: str) -> No
     assert not bool(blueprints.root_payload_supported[root])
     assert not bool(blueprints.fast_cards.training_supported[root])
     assert not bool(runtime.observe().legal_mask[0, 0, :NO_OP_ACTION].any())
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize(
+    ("root_name", "lifetime_ticks", "damage", "radius_units"),
+    (
+        ("Balloon", 60, 240.0, 3_000),
+        ("BombTower", 60, 222.0, 3_000),
+        ("SkeletonBarrel", 12, 145.0, 2_000),
+    ),
+)
+def test_full_runtime_delayed_payload_damage_nested_spawn_and_replay(
+    device_name: str,
+    root_name: str,
+    lifetime_ticks: int,
+    damage: float,
+    radius_units: int,
+) -> None:
+    first, blueprints, root = _runtime(
+        root_name,
+        device_name=device_name,
+        max_entities=20,
+    )
+    replay, replay_blueprints, replay_root = _runtime(
+        root_name,
+        device_name=device_name,
+        max_entities=20,
+    )
+    assert root == replay_root
+    assert blueprints.cards.names == replay_blueprints.cards.names
+    action = _slot_zero_action(first, tile_x=8, tile_y=14)
+    first_deploy = first.step_tick(action)
+    replay_deploy = replay.step_tick(action.clone())
+    assert first_deploy.action_success.tolist() == [[True, True]]
+    assert replay_deploy.action_success.tolist() == [[True, True]]
+
+    enemy_tower_slot = 3
+    tower_x = int(first.state.x_units[0, enemy_tower_slot])
+    tower_y = int(first.state.y_units[0, enemy_tower_slot])
+    for runtime in (first, replay):
+        parent = runtime.state.active & (runtime.state.card_id == root)
+        parent[:, :6] = False
+        assert int(parent.sum()) == 1
+        slot = int(parent.to(torch.int8).argmax(dim=1)[0])
+        runtime.state.x_units[0, slot] = tower_x
+        runtime.state.y_units[0, slot] = tower_y
+        runtime.state.hp[0, slot] = 0.0
+
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=first.device)
+    first_death = first.step_tick(noop)
+    replay_death = replay.step_tick(noop)
+    assert first_death.payload_container_allocation is not None
+    assert replay_death.payload_container_allocation is not None
+    assert first_death.payload_container_allocation.accepted[0, 0]
+    assert replay_death.payload_container_allocation.accepted[0, 0]
+    assert int(
+        first.payload_containers.lifetime_ticks[first.payload_containers.active]
+    ) == (lifetime_ticks)
+    assert int(
+        first.payload_containers.effect_radius_units[first.payload_containers.active]
+    ) == (radius_units)
+    assert float(
+        first.payload_containers.effect_damage[first.payload_containers.active]
+    ) == (damage)
+    # The delayed object never occupies or projects through the combat pool.
+    assert not bool(
+        (first.state.active[:, 6:] & (first.state.card_id[:, 6:] == root)).any()
+    )
+    root_kind = int(first.action_kernel.catalog.kind[root])
+    root_token = int(first.projector.inputs.entity_token_lookup[root_kind, root])
+    visible = first_death.observation.actor.entity_ids[
+        first_death.observation.actor.entity_mask
+    ]
+    assert not bool((visible == root_token).any())
+
+    tower_hp = float(first.state.hp[0, enemy_tower_slot])
+    for _ in range(lifetime_ticks - 1):
+        first_step = first.step_tick(noop)
+        replay_step = replay.step_tick(noop)
+        assert not bool(first_step.payloads.effect_commands.ready.any())
+        assert not bool(replay_step.payloads.effect_commands.ready.any())
+        assert float(first.state.hp[0, enemy_tower_slot]) == tower_hp
+
+    first_step = first.step_tick(noop)
+    replay_step = replay.step_tick(noop)
+    assert first_step.payloads.effect_commands.ready[0, 0]
+    assert replay_step.payloads.effect_commands.ready[0, 0]
+    assert first_step.payload_effect_allocation.accepted[0, 0]
+    assert replay_step.payload_effect_allocation.accepted[0, 0]
+    assert float(first.state.hp[0, enemy_tower_slot]) == pytest.approx(
+        tower_hp - damage
+    )
+    assert float(replay.state.hp[0, enemy_tower_slot]) == pytest.approx(
+        tower_hp - damage
+    )
+    assert not bool(first.payload_containers.active.any())
+
+    if root_name == "SkeletonBarrel":
+        assert first_step.payload_spawn_allocation is not None
+        assert first_step.payload_spawn_allocation.accepted[0, 0]
+        skeleton = next(
+            index
+            for index, name in enumerate(blueprints.visible_names)
+            if name == "Skeleton"
+        )
+        children = first.state.active & (first.state.card_id == skeleton)
+        assert int(children.sum()) == 7
+        assert first.state.deploy_ticks[children].tolist() == [10] * 7
+        expected_token = int(first.projector.inputs.entity_token_lookup[0, skeleton])
+        visible_ids = first_step.observation.actor.entity_ids[0, 0][
+            first_step.observation.actor.entity_mask[0, 0]
+        ]
+        assert int((visible_ids == expected_token).sum()) == 7
+        assert int(first.projector.inputs.hand_token_lookup[skeleton]) == 0
+    else:
+        assert first_step.payload_spawn_allocation is not None
+        assert not bool(first_step.payload_spawn_allocation.accepted.any())
+
+    for owner_name in ("state", "payload_containers"):
+        left = getattr(first, owner_name)
+        right = getattr(replay, owner_name)
+        for descriptor in fields(left):
+            if descriptor.name != "device":
+                assert torch.equal(
+                    getattr(left, descriptor.name),
+                    getattr(right, descriptor.name),
+                )
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_full_runtime_payload_container_capacity_is_explicit_and_stable(
+    device_name: str,
+) -> None:
+    runtime, _, root = _runtime(
+        "Balloon",
+        device_name=device_name,
+        max_entities=12,
+        max_payload_containers=1,
+    )
+    runtime.step_tick(_slot_zero_action(runtime, tile_x=8, tile_y=14))
+    first_slot = 6
+    second_slot = 7
+    for descriptor in fields(runtime.state):
+        value = getattr(runtime.state, descriptor.name)
+        if (
+            descriptor.name != "device"
+            and isinstance(value, torch.Tensor)
+            and value.ndim == 2
+            and value.shape[1] == runtime.state.max_entities
+        ):
+            value[0, second_slot] = value[0, first_slot]
+    runtime.state.active[0, second_slot] = True
+    runtime.state.stable_id[0, second_slot] = 8
+    runtime.state.next_stable_id[0] = 9
+    runtime.state.hp[0, [first_slot, second_slot]] = 0.0
+    assert runtime.state.card_id[0, [first_slot, second_slot]].tolist() == [
+        root,
+        root,
+    ]
+
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
+    result = runtime.step_tick(noop)
+    assert result.payload_container_allocation is not None
+    allocation = result.payload_container_allocation
+    assert allocation.accepted[0, :2].tolist() == [True, False]
+    assert allocation.capacity_rejected[0, :2].tolist() == [False, True]
+    assert allocation.capacity_rejected_count.tolist() == [1]
+    assert runtime.payload_containers.active.tolist() == [[True]]
+    # Lower source stable ID wins independently of the reusable entity slots.
+    assert runtime.payload_containers.source_id.tolist() == [[7]]

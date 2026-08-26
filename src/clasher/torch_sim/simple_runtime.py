@@ -50,6 +50,15 @@ from .simple_outcomes import (
     crown_tower_hp,
     initialize_crown_towers_,
 )
+from .simple_payload_containers import (
+    FastPayloadAllocationResult,
+    FastPayloadContainerState,
+    FastPayloadEffectAllocationResult,
+    FastPayloadStepResult,
+    allocate_fast_payload_containers_,
+    allocate_fast_payload_effects_,
+    step_fast_payload_containers_,
+)
 from .simple_periodic_spawn import (
     FastPeriodicSpawnCatalog,
     FastPeriodicSpawnCommands,
@@ -66,7 +75,9 @@ from .simple_spawn_blueprints import (
     FastSpawnBlueprintCatalog,
     FastSpawnCommands,
     allocate_fast_spawns_,
+    death_payload_container_commands,
     impact_spawn_commands,
+    payload_spawn_commands,
 )
 from .simple_state import FastGymState
 
@@ -85,7 +96,11 @@ class SimpleGymRuntimeStep:
     effect_allocation: FastEffectAllocationResult
     effects: FastEffectStepResult
     lifecycle: FastLifecycleStepResult
+    payloads: FastPayloadStepResult
+    payload_effect_allocation: FastPayloadEffectAllocationResult
+    payload_container_allocation: FastPayloadAllocationResult | None
     spawn_allocation: FastSpawnAllocationResult | None
+    payload_spawn_allocation: FastSpawnAllocationResult | None
     periodic_spawn_allocation: FastSpawnAllocationResult | None
 
 
@@ -103,6 +118,7 @@ class SimpleGymRuntime:
         hand_token_lookup: torch.Tensor,
         max_entities: int = 64,
         max_effects: int = 64,
+        max_payload_containers: int = 32,
         starting_elixir: float = 6.0,
         max_elixir: float = 10.0,
         include_privileged_critic: bool = False,
@@ -155,8 +171,12 @@ class SimpleGymRuntime:
                 )
             )
             child = spawn_blueprints.child_card_id[runtime_blueprint]
-            child_kind = catalog.kind[child].to(torch.int64)
-            body_token = entity_token_lookup[child_kind, child]
+            child = child[child > 0]
+            nested_child = spawn_blueprints.container_nested_child_card_id
+            nested_child = nested_child[nested_child > 0]
+            typed_child = torch.cat((child, nested_child)).unique()
+            child_kind = catalog.kind[typed_child].to(torch.int64)
+            body_token = entity_token_lookup[child_kind, typed_child]
             if bool((body_token <= 0).any()):
                 raise ValueError(
                     "every runtime-supported synthetic child needs a typed entity token"
@@ -182,6 +202,11 @@ class SimpleGymRuntime:
         self.effects = FastEffectState.empty(
             self.state.batch_size,
             max_effects=max_effects,
+            device=self.state.device,
+        )
+        self.payload_containers = FastPayloadContainerState.empty(
+            self.state.batch_size,
+            max_containers=max_payload_containers,
             device=self.state.device,
         )
         self.lifecycle = FastLifecycleState.empty_like(self.state)
@@ -304,6 +329,7 @@ class SimpleGymRuntime:
             "state": self._tensor_fields(self.state),
             "action": self._tensor_fields(self.action_state),
             "effects": self._tensor_fields(self.effects),
+            "payload_containers": self._tensor_fields(self.payload_containers),
             "lifecycle": self._tensor_fields(self.lifecycle),
             "modifiers": self._tensor_fields(self.modifiers),
             "damage_ramp": self._tensor_fields(self.damage_ramp),
@@ -385,6 +411,7 @@ class SimpleGymRuntime:
             "state": self.state,
             "action": self.action_state,
             "effects": self.effects,
+            "payload_containers": self.payload_containers,
             "lifecycle": self.lifecycle,
             "modifiers": self.modifiers,
             "damage_ramp": self.damage_ramp,
@@ -565,9 +592,7 @@ class SimpleGymRuntime:
             stage_2_damage_multiplier=(
                 catalog.damage_ramp_stage_2_multiplier[safe_card]
             ),
-            retarget_grace_ticks=(
-                catalog.damage_ramp_retarget_grace_ticks[safe_card]
-            ),
+            retarget_grace_ticks=(catalog.damage_ramp_retarget_grace_ticks[safe_card]),
         )
 
     def _initialize_spawned_combat_(self, mask: torch.Tensor) -> None:
@@ -761,9 +786,7 @@ class SimpleGymRuntime:
         )
         spell_allocated = allocation.accepted[:, :2]
         attack_allocated = allocation.accepted[:, 2:]
-        committed_attacks = self.combat.commit_attacks_(
-            attack_ready, attack_allocated
-        )
+        committed_attacks = self.combat.commit_attacks_(attack_ready, attack_allocated)
         advance_fast_charge_(
             self.modifiers,
             charge_parameters,
@@ -799,6 +822,13 @@ class SimpleGymRuntime:
             multiplier=multiplier,
             live=(~self.state.game_over)[:, None].expand(-1, 2),
         )
+        payload_result = step_fast_payload_containers_(self.payload_containers)
+        payload_effect_allocation = allocate_fast_payload_effects_(
+            self.state,
+            self.effects,
+            self.effect_consume_source_id,
+            payload_result.effect_commands,
+        )
         effect_result = step_fast_effects(
             self.state,
             self.effects,
@@ -816,6 +846,15 @@ class SimpleGymRuntime:
                 ]
             ),
         )
+        payload_container_allocation: FastPayloadAllocationResult | None = None
+        if self.spawn_blueprints is not None:
+            payload_container_allocation = allocate_fast_payload_containers_(
+                self.payload_containers,
+                death_payload_container_commands(
+                    self.spawn_blueprints,
+                    self.state,
+                ),
+            )
         lifecycle_result = step_fast_lifecycle_(
             self.state,
             self.lifecycle,
@@ -845,6 +884,24 @@ class SimpleGymRuntime:
             self._initialize_lifecycle_(spawn_allocation.spawned_mask)
             self._initialize_modifiers_(spawn_allocation.spawned_mask)
             self._clear_damage_ramp_(spawn_allocation.spawned_mask)
+        payload_spawn_allocation: FastSpawnAllocationResult | None = None
+        if self.spawn_blueprints is not None:
+            payload_spawn_allocation = allocate_fast_spawns_(
+                self.state,
+                self.action_kernel.catalog,
+                payload_spawn_commands(
+                    self.spawn_blueprints,
+                    payload_result.spawn_triggers,
+                ),
+                reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+            )
+            payload_spawned = payload_spawn_allocation.spawned_mask
+            self.entity_status_kind.masked_fill_(payload_spawned, 0)
+            self.entity_status_ticks.masked_fill_(payload_spawned, 0)
+            self._initialize_spawned_combat_(payload_spawned)
+            self._initialize_lifecycle_(payload_spawned)
+            self._initialize_modifiers_(payload_spawned)
+            self._clear_damage_ramp_(payload_spawned)
         periodic_spawn_allocation: FastSpawnAllocationResult | None = None
         if self.periodic_catalog is not None and self.periodic_spawns is not None:
             periodic_commands = step_periodic_spawns_(
@@ -895,7 +952,11 @@ class SimpleGymRuntime:
             effect_allocation=allocation,
             effects=effect_result,
             lifecycle=lifecycle_result,
+            payloads=payload_result,
+            payload_effect_allocation=payload_effect_allocation,
+            payload_container_allocation=payload_container_allocation,
             spawn_allocation=spawn_allocation,
+            payload_spawn_allocation=payload_spawn_allocation,
             periodic_spawn_allocation=periodic_spawn_allocation,
         )
 

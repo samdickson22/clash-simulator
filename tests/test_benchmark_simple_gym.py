@@ -13,9 +13,7 @@ from scripts.perf.benchmark_simple_gym import _resolve_preset, benchmark
 def _args(tmp_path: Path, **overrides: object) -> argparse.Namespace:
     path = tmp_path / "decks.json"
     path.write_text(
-        json.dumps(
-            {"decks": [{"name": "fixture", "cards": ["Knight"] * 8}]}
-        )
+        json.dumps({"decks": [{"name": "fixture", "cards": ["Knight"] * 8}]})
     )
     values: dict[str, object] = {
         "preset": "smoke",
@@ -103,7 +101,7 @@ def test_simple_benchmark_reports_truthful_supported_deck_filter(
             {
                 "decks": [
                     {"name": "supported", "cards": ["Knight"] * 8},
-                    {"name": "unsupported", "cards": ["Balloon"] * 8},
+                    {"name": "unsupported", "cards": ["Golem"] * 8},
                 ]
             }
         )
