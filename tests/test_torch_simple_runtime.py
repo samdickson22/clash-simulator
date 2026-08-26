@@ -13,6 +13,7 @@ from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.policy_validation import PUBLIC_ACTION_MASK_CONTRACT_V2
 from clasher.torch_sim.simple_adapter import SimpleGymAdapter
 from clasher.torch_sim.simple_catalog import FastCardCatalog
+from clasher.torch_sim.simple_effects import FAST_EFFECT_AREA, FAST_STATUS_STUN
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 
@@ -119,6 +120,36 @@ def test_dead_tower_slot_is_never_reused_by_deployment() -> None:
     assert int(runtime.state.card_id[0, 0]) == knight
     assert bool(runtime.state.active[0, 6])
     assert int(runtime.state.card_id[0, 6]) == knight
+
+    # A full ordinary pool fails placement masks closed without hiding no-op.
+    full_mask = runtime.observe().legal_mask
+    assert not full_mask[:, :, :NO_OP_ACTION].any()
+    assert full_mask[:, :, NO_OP_ACTION].all()
+
+
+def test_runtime_advances_owned_effect_and_status_planes() -> None:
+    runtime, _ = _runtime("cpu")
+    runtime.step_tick(_knight_actions(runtime.device))
+    knight_slot = 6
+    hp_before = runtime.state.hp[0, knight_slot].clone()
+    runtime.effects.active[0, 0] = True
+    runtime.effects.kind[0, 0] = FAST_EFFECT_AREA
+    runtime.effects.source_owner[0, 0] = 1
+    runtime.effects.x_units[0, 0] = runtime.state.x_units[0, knight_slot]
+    runtime.effects.y_units[0, 0] = runtime.state.y_units[0, knight_slot]
+    runtime.effects.damage[0, 0] = 50.0
+    runtime.effects.radius_units[0, 0] = 100
+    runtime.effects.status_kind[0, 0] = FAST_STATUS_STUN
+    runtime.effects.status_duration_ticks[0, 0] = 3
+    runtime.effects.lifetime_ticks[0, 0] = 1
+
+    result = runtime.step_tick(torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64))
+
+    assert bool(result.effects.impacted[0, 0])
+    assert not bool(runtime.effects.active[0, 0])
+    torch.testing.assert_close(runtime.state.hp[0, knight_slot], hp_before - 50.0)
+    assert int(runtime.entity_status_kind[0, knight_slot]) == FAST_STATUS_STUN
+    assert int(runtime.entity_status_ticks[0, knight_slot]) == 3
 
 
 def test_real_runtime_is_mask_v2_adapter_compatible() -> None:

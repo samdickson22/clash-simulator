@@ -13,8 +13,10 @@ from dataclasses import dataclass
 
 import torch
 
+from .actions import NO_OP_ACTION
 from .simple_actions import FastActionKernel, FastActionState
 from .simple_catalog import FastCardCatalog
+from .simple_effects import FastEffectState, FastEffectStepResult, step_fast_effects
 from .simple_engine import FastTensorGym
 from .simple_outcomes import (
     FAST_TOWER_SLOT_COUNT,
@@ -43,6 +45,7 @@ class SimpleGymRuntimeStep:
     winner: torch.Tensor
     native_ticks: torch.Tensor
     committed: torch.Tensor
+    effects: FastEffectStepResult
 
 
 class SimpleGymRuntime:
@@ -58,6 +61,7 @@ class SimpleGymRuntime:
         entity_token_lookup: torch.Tensor,
         hand_token_lookup: torch.Tensor,
         max_entities: int = 64,
+        max_effects: int = 64,
         starting_elixir: float = 6.0,
         max_elixir: float = 10.0,
         include_privileged_critic: bool = False,
@@ -94,6 +98,23 @@ class SimpleGymRuntime:
             self.state,
             catalog,
             reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+        )
+        self.effects = FastEffectState.empty(
+            self.state.batch_size,
+            max_effects=max_effects,
+            device=self.state.device,
+        )
+        entity_shape = (self.state.batch_size, self.state.max_entities)
+        self.entity_status_kind = torch.zeros(
+            entity_shape, dtype=torch.int8, device=self.state.device
+        )
+        self.entity_status_ticks = torch.zeros(
+            entity_shape, dtype=torch.int32, device=self.state.device
+        )
+        self.effect_consume_source_id = torch.zeros(
+            (self.state.batch_size, max_effects),
+            dtype=torch.int64,
+            device=self.state.device,
         )
         self.outcomes = FastOutcomeTracker(self.state, rules)
         self.tick_seconds = float(tick_seconds)
@@ -190,9 +211,13 @@ class SimpleGymRuntime:
 
     def observe(self) -> SimpleProjectedObservation:
         self._refresh_policy_state()
-        return self.projector.project(
-            self.action_kernel.legal_action_mask(self.action_state)
-        )
+        return self.projector.project(self._legal_action_mask())
+
+    def _legal_action_mask(self) -> torch.Tensor:
+        mask = self.action_kernel.legal_action_mask(self.action_state)
+        has_deploy_slot = (~self.state.active[:, FAST_TOWER_SLOT_COUNT:]).any(dim=1)
+        mask[:, :, :NO_OP_ACTION] &= has_deploy_slot[:, None, None]
+        return mask
 
     def step_tick(self, action_ids: torch.Tensor) -> SimpleGymRuntimeStep:
         """Apply both requests, advance one native tick, and project its result."""
@@ -204,7 +229,7 @@ class SimpleGymRuntime:
         if action_ids.dtype != torch.int64:
             raise ValueError("action_ids must be int64")
 
-        legal_mask = self.action_kernel.legal_action_mask(self.action_state)
+        legal_mask = self._legal_action_mask()
         pre_hand = self.action_state.hand_ids.clone()
         pre_cycle = self.action_state.cycle_ids.clone()
         pre_head = self.action_state.cycle_head.clone()
@@ -240,11 +265,16 @@ class SimpleGymRuntime:
             multiplier=multiplier,
             live=(~self.state.game_over)[:, None].expand(-1, 2),
         )
+        effect_result = step_fast_effects(
+            self.state,
+            self.effects,
+            self.entity_status_kind,
+            self.entity_status_ticks,
+            consume_source_id=self.effect_consume_source_id,
+        )
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
-        observation = self.projector.project(
-            self.action_kernel.legal_action_mask(self.action_state)
-        )
+        observation = self.projector.project(self._legal_action_mask())
         action_success = (
             torch.where(
                 ingress.deployment_accepted,
@@ -261,6 +291,7 @@ class SimpleGymRuntime:
             winner=outcome.winner,
             native_ticks=combat.native_ticks,
             committed=combat.committed,
+            effects=effect_result,
         )
 
 
