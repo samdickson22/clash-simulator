@@ -16,16 +16,26 @@ from clasher.torch_sim.simple_adapter import (
 )
 from clasher.torch_sim.simple_catalog import FastCardCatalog
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
+from clasher.torch_sim.simple_reward_v2 import (
+    SIMPLE_REWARD_V2_CONTRACT_ID,
+    SimpleRewardV2Config,
+    simple_reward_v2_digest,
+)
 from clasher.torch_sim.simple_rollout import (
+    SIMPLE_REWARD_V1_CONTRACT_ID,
     SimpleGymRolloutBridge,
     SimpleGymRolloutObservation,
     SimpleGymRolloutStep,
 )
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
+from clasher.torch_sim.simple_state import FastGymState
 
 
 def _bridge(
-    device_name: str, *, decision_interval: int = 1
+    device_name: str,
+    *,
+    decision_interval: int = 1,
+    reward_v2_config: SimpleRewardV2Config | None = None,
 ) -> tuple[SimpleGymRolloutBridge, dict[str, int]]:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -70,7 +80,14 @@ def _bridge(
         max_effects=8,
         include_privileged_critic=True,
     )
-    return SimpleGymRolloutBridge(runtime, decision_interval=decision_interval), ids
+    return (
+        SimpleGymRolloutBridge(
+            runtime,
+            decision_interval=decision_interval,
+            reward_v2_config=reward_v2_config,
+        ),
+        ids,
+    )
 
 
 def _placement_actions(bridge: SimpleGymRolloutBridge) -> torch.Tensor:
@@ -115,6 +132,9 @@ def _assert_rollout_equal(
     assert (
         actual.simulator_action_mask_profile == expected.simulator_action_mask_profile
     )
+    assert actual.reward_contract_id == expected.reward_contract_id
+    assert actual.reward_contract_digest == expected.reward_contract_digest
+    assert actual.reward_contract_metadata == expected.reward_contract_metadata
     if isinstance(actual, SimpleGymRolloutStep):
         assert isinstance(expected, SimpleGymRolloutStep)
         _assert_structured_equal(actual.next_actor, expected.next_actor)
@@ -218,8 +238,9 @@ def test_rollout_v1_mask_fails_closed_before_runtime_mutation(
 def test_seedless_simple_rollout_is_deterministic_and_emits_fixed_telemetry(
     device_name: str,
 ) -> None:
-    left, _ = _bridge(device_name, decision_interval=8)
-    right, _ = _bridge(device_name, decision_interval=8)
+    config = SimpleRewardV2Config(gamma=0.995)
+    left, _ = _bridge(device_name, decision_interval=8, reward_v2_config=config)
+    right, _ = _bridge(device_name, decision_interval=8, reward_v2_config=config)
     _assert_rollout_equal(left.observe(), right.observe())
 
     for index in range(2):
@@ -267,6 +288,8 @@ def test_seedless_simple_rollout_is_deterministic_and_emits_fixed_telemetry(
         assert step_left.fallback_rows.device == left.device
         assert step_left.all_rows_admitted.shape == (left.batch_size,)
         assert step_left.all_rows_admitted.all()
+        assert step_left.reward_contract_id == SIMPLE_REWARD_V2_CONTRACT_ID
+        assert step_left.reward_contract_digest == simple_reward_v2_digest(config)
         assert torch.equal(
             step_left.recurrent_inputs["hidden"], recurrent_left["hidden"]
         )
@@ -301,6 +324,11 @@ def test_decision_interval_matches_eight_native_ticks_and_returns_pre_action(
     assert torch.equal(actual.next_legal_mask, post_actual.legal_mask)
     assert actual.public_action_masks is public_masks
     assert actual.public_action_mask_contract_version == 2
+    assert actual.reward_contract_id == SIMPLE_REWARD_V1_CONTRACT_ID
+    assert len(actual.reward_contract_digest) == 64
+    assert actual.reward_contract_metadata["reward_contract_id"] == (
+        SIMPLE_REWARD_V1_CONTRACT_ID
+    )
     assert torch.equal(
         actual.rewards,
         torch.stack([step.rewards for step in reference_steps]).sum(dim=0),
@@ -381,6 +409,109 @@ def test_decision_interval_must_be_a_positive_integer() -> None:
     for invalid in (0, -1, True, 1.5):
         with pytest.raises(ValueError, match="positive integer"):
             SimpleGymRolloutBridge(bridge.runtime, decision_interval=invalid)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_reward_v2_interval8_matches_hand_computed_objective_shaping(
+    device_name: str,
+) -> None:
+    config = SimpleRewardV2Config(
+        gamma=0.9,
+        crown_weight=0.0,
+        princess_pressure_weight=1.0,
+        king_pressure_weight=0.0,
+        tiebreak_edge_weight=0.0,
+        early_king_chip_penalty_weight=0.0,
+        potential_clip=2.0,
+        terminal_weight=1.0,
+    )
+    bridge, _ = _bridge(device_name, decision_interval=8, reward_v2_config=config)
+    # Enemy left Princess Tower at half HP makes Phi(row0)=0.25 exactly.
+    bridge.runtime.state.hp[0, 3] = 1_000.0
+    noop = torch.full(
+        (bridge.batch_size, 2),
+        NO_OP_ACTION,
+        dtype=torch.int64,
+        device=bridge.device,
+    )
+
+    result = bridge.step(noop)
+
+    expected = torch.tensor(
+        [[-0.025, 0.025], [0.0, 0.0]],
+        dtype=torch.float32,
+        device=bridge.device,
+    )
+    torch.testing.assert_close(result.rewards, expected, atol=1.0e-6, rtol=0.0)
+    assert result.native_ticks.eq(8).all()
+    assert result.reward_contract_id == SIMPLE_REWARD_V2_CONTRACT_ID
+    assert result.reward_contract_digest == simple_reward_v2_digest(config)
+    assert result.reward_contract_metadata["reward_contract_spec"] == config.to_spec()
+    assert torch.equal(bridge.adapter.history.previous_rewards, result.rewards)
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_reward_v2_terminal_is_one_shot_and_reset_is_row_isolated(
+    device_name: str,
+) -> None:
+    config = SimpleRewardV2Config(
+        gamma=0.9,
+        crown_weight=0.0,
+        princess_pressure_weight=0.0,
+        king_pressure_weight=0.0,
+        tiebreak_edge_weight=0.0,
+        early_king_chip_penalty_weight=0.0,
+        terminal_weight=1.5,
+    )
+    bridge, _ = _bridge(device_name, decision_interval=8, reward_v2_config=config)
+    bridge.runtime.state.hp[0, 5] = 0.0
+    noop = torch.full(
+        (bridge.batch_size, 2),
+        NO_OP_ACTION,
+        dtype=torch.int64,
+        device=bridge.device,
+    )
+
+    terminal = bridge.step(noop)
+
+    torch.testing.assert_close(
+        terminal.rewards,
+        torch.tensor(
+            [[1.5, -1.5], [0.0, 0.0]],
+            dtype=torch.float32,
+            device=bridge.device,
+        ),
+    )
+    assert terminal.done.tolist() == [True, False]
+    reset_mask = torch.tensor([True, False], dtype=torch.bool, device=bridge.device)
+    bridge.reset_done(reset_mask)
+    resumed = bridge.step(noop)
+    assert not resumed.done.any()
+    assert resumed.rewards.eq(0.0).all()
+    assert bridge.runtime.state.tick.tolist() == [8, 16]
+
+
+def test_reward_v2_rollout_hot_path_does_not_clone_fast_state(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bridge, _ = _bridge(
+        "cpu",
+        decision_interval=8,
+        reward_v2_config=SimpleRewardV2Config(gamma=0.995),
+    )
+
+    def forbidden_clone(self: FastGymState) -> FastGymState:
+        raise AssertionError("reward hot path cloned FastGymState")
+
+    monkeypatch.setattr(FastGymState, "clone", forbidden_clone)
+    noop = torch.full(
+        (bridge.batch_size, 2),
+        NO_OP_ACTION,
+        dtype=torch.int64,
+        device=bridge.device,
+    )
+    result = bridge.step(noop)
+    assert result.native_ticks.eq(8).all()
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))

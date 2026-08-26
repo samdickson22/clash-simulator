@@ -324,6 +324,80 @@ def simple_objective_v1_breakdown(
     )
 
 
+def simple_objective_v1_potential_from_tower_hp(
+    tower_hp: torch.Tensor,
+    initial_tower_hp: torch.Tensor,
+    config: SimpleRewardV2Config,
+) -> torch.Tensor:
+    """Return objective-v1 potential directly from ``[batch, 2, 3]`` HP.
+
+    Rollout collectors use this boundary to capture decision-level pre/post
+    potentials without cloning the much larger mutable ``FastGymState``.
+    """
+
+    if tower_hp.ndim != 3 or tuple(tower_hp.shape[1:]) != (
+        2,
+        FAST_TOWER_SLOTS_PER_PLAYER,
+    ):
+        raise SimpleRewardV2ContractError("tower_hp must have shape [batch, 2, 3]")
+    if tuple(initial_tower_hp.shape) != tuple(tower_hp.shape):
+        raise SimpleRewardV2ContractError("initial_tower_hp must match tower_hp shape")
+    if tower_hp.device != initial_tower_hp.device:
+        raise SimpleRewardV2ContractError("tower HP devices differ")
+    if not tower_hp.is_floating_point() or not initial_tower_hp.is_floating_point():
+        raise SimpleRewardV2ContractError("tower HP tensors must be floating point")
+    return _objective_v1_breakdown_from_hp(tower_hp, initial_tower_hp, config).potential
+
+
+def simple_reward_v2_from_potentials(
+    pre_potential: torch.Tensor,
+    post_potential: torch.Tensor,
+    done: torch.Tensor,
+    winner: torch.Tensor,
+    config: SimpleRewardV2Config,
+) -> torch.Tensor:
+    """Return objective-v1-gamma-v1 reward from decision potentials."""
+
+    if pre_potential.ndim != 1 or post_potential.shape != pre_potential.shape:
+        raise SimpleRewardV2ContractError(
+            "pre/post potential must be matching [batch] tensors"
+        )
+    batch = int(pre_potential.shape[0])
+    if tuple(done.shape) != (batch,) or done.dtype != torch.bool:
+        raise SimpleRewardV2ContractError("done must be bool [batch]")
+    if tuple(winner.shape) != (batch,) or winner.dtype not in (
+        torch.int8,
+        torch.int16,
+        torch.int32,
+        torch.int64,
+    ):
+        raise SimpleRewardV2ContractError("winner must be integer [batch]")
+    if not pre_potential.is_floating_point() or not post_potential.is_floating_point():
+        raise SimpleRewardV2ContractError("potentials must be floating point")
+    if not (
+        pre_potential.device == post_potential.device == done.device == winner.device
+    ):
+        raise SimpleRewardV2ContractError("reward tensors use different devices")
+    shaped_p0 = torch.where(
+        done,
+        -pre_potential,
+        config.gamma * post_potential - pre_potential,
+    )
+    terminal_sign = torch.where(
+        winner == 0,
+        torch.ones_like(shaped_p0),
+        torch.where(
+            winner == 1,
+            -torch.ones_like(shaped_p0),
+            torch.zeros_like(shaped_p0),
+        ),
+    )
+    reward_p0 = shaped_p0 + (
+        config.terminal_weight * terminal_sign * done.to(shaped_p0.dtype)
+    )
+    return torch.stack((reward_p0, -reward_p0), dim=1)
+
+
 def simple_reward_v2(
     pre_state: FastGymState,
     post_state: FastGymState,
@@ -340,26 +414,13 @@ def simple_reward_v2(
     """
 
     _validate_state_pair(pre_state, post_state, initial_tower_hp, done, winner)
-    pre = _objective_v1_breakdown_from_hp(
+    pre = simple_objective_v1_potential_from_tower_hp(
         crown_tower_hp(pre_state), initial_tower_hp, config
-    ).potential
-    post = _objective_v1_breakdown_from_hp(
+    )
+    post = simple_objective_v1_potential_from_tower_hp(
         crown_tower_hp(post_state), initial_tower_hp, config
-    ).potential
-    shaped_p0 = torch.where(done, -pre, config.gamma * post - pre)
-    terminal_sign = torch.where(
-        winner == 0,
-        torch.ones_like(shaped_p0),
-        torch.where(
-            winner == 1,
-            -torch.ones_like(shaped_p0),
-            torch.zeros_like(shaped_p0),
-        ),
     )
-    reward_p0 = shaped_p0 + (
-        config.terminal_weight * terminal_sign * done.to(shaped_p0.dtype)
-    )
-    return torch.stack((reward_p0, -reward_p0), dim=1)
+    return simple_reward_v2_from_potentials(pre, post, done, winner, config)
 
 
 __all__ = [
@@ -369,8 +430,10 @@ __all__ = [
     "SimpleRewardV2Config",
     "SimpleRewardV2ContractError",
     "simple_objective_v1_breakdown",
+    "simple_objective_v1_potential_from_tower_hp",
     "simple_reward_v2",
     "simple_reward_v2_digest",
+    "simple_reward_v2_from_potentials",
     "simple_reward_v2_metadata",
     "validate_simple_reward_v2_metadata",
 ]

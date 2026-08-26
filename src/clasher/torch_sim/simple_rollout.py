@@ -8,8 +8,11 @@ episode resets, and reports the absence of fallback as fixed-shape tensors.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Any, Final
 
 import torch
 
@@ -25,7 +28,16 @@ from .simple_adapter import (
     SimpleGymHistory,
     SimpleGymObservation,
 )
+from .simple_outcomes import crown_tower_hp
+from .simple_reward_v2 import (
+    SimpleRewardV2Config,
+    simple_objective_v1_potential_from_tower_hp,
+    simple_reward_v2_from_potentials,
+    simple_reward_v2_metadata,
+)
 from .simple_runtime import SimpleGymRuntime
+
+SIMPLE_REWARD_V1_CONTRACT_ID: Final = "simple-tower-delta-v1"
 
 
 @dataclass(frozen=True)
@@ -38,6 +50,9 @@ class SimpleGymRolloutObservation:
     public_action_masks: torch.Tensor | None
     public_action_mask_contract_version: int | None
     simulator_action_mask_profile: str
+    reward_contract_id: str
+    reward_contract_digest: str
+    reward_contract_metadata: Mapping[str, Any]
     previous_actions: torch.Tensor
     previous_rewards: torch.Tensor
     episode_starts: torch.Tensor
@@ -70,6 +85,7 @@ class SimpleGymRolloutBridge:
         *,
         no_op_action: int = NO_OP_ACTION,
         decision_interval: int = 1,
+        reward_v2_config: SimpleRewardV2Config | None = None,
         adapter: SimpleGymAdapter | None = None,
     ) -> None:
         if (
@@ -85,6 +101,39 @@ class SimpleGymRolloutBridge:
         self.device = self.adapter.device
         self.batch_size = self.adapter.batch_size
         self.decision_interval = int(decision_interval)
+        self.reward_v2_config = reward_v2_config
+        self._initial_tower_hp = runtime.outcomes.initial_tower_hp.clone()
+        if reward_v2_config is None:
+            rules = runtime.outcomes.rules
+            reward_spec = {
+                "contract_id": SIMPLE_REWARD_V1_CONTRACT_ID,
+                "schema_version": 1,
+                "evaluation_boundary": "native-tick-summed-at-policy-decision",
+                "tower_damage_weight": rules.tower_damage_weight,
+                "crown_weight": rules.crown_weight,
+                "terminal_weight": rules.terminal_weight,
+                "zero_sum": True,
+            }
+            canonical = json.dumps(
+                reward_spec,
+                sort_keys=True,
+                separators=(",", ":"),
+                allow_nan=False,
+            )
+            digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+            self.reward_contract_metadata: Mapping[str, Any] = {
+                "reward_contract_id": SIMPLE_REWARD_V1_CONTRACT_ID,
+                "reward_contract_digest": digest,
+                "reward_contract_spec": reward_spec,
+            }
+        else:
+            self.reward_contract_metadata = simple_reward_v2_metadata(reward_v2_config)
+        self.reward_contract_id = str(
+            self.reward_contract_metadata["reward_contract_id"]
+        )
+        self.reward_contract_digest = str(
+            self.reward_contract_metadata["reward_contract_digest"]
+        )
         self._no_op_actions = torch.full(
             (self.batch_size, 2),
             self.adapter.no_op_action,
@@ -97,8 +146,8 @@ class SimpleGymRolloutBridge:
         self._all_rows_admitted = torch.ones_like(self._no_fallback_rows)
         self.needs_reset = torch.zeros_like(self._no_fallback_rows)
 
-    @staticmethod
     def _boundary(
+        self,
         observation: SimpleGymObservation,
         history: SimpleGymHistory,
         public_action_masks: torch.Tensor | None,
@@ -111,6 +160,9 @@ class SimpleGymRolloutBridge:
             public_action_masks=public_action_masks,
             public_action_mask_contract_version=public_action_mask_contract_version,
             simulator_action_mask_profile=SIMPLIFIED_GYM_ACTION_MASK_PROFILE,
+            reward_contract_id=self.reward_contract_id,
+            reward_contract_digest=self.reward_contract_digest,
+            reward_contract_metadata=self.reward_contract_metadata,
             previous_actions=history.previous_actions,
             previous_rewards=history.previous_rewards,
             episode_starts=history.episode_starts,
@@ -218,6 +270,13 @@ class SimpleGymRolloutBridge:
             )
         pre_observation = self.adapter.observe()
         history_before = self.adapter.history
+        pre_reward_potential: torch.Tensor | None = None
+        if self.reward_v2_config is not None:
+            pre_reward_potential = simple_objective_v1_potential_from_tower_hp(
+                crown_tower_hp(self.runtime.state),
+                self._initial_tower_hp,
+                self.reward_v2_config,
+            )
         first = self.adapter.step(
             actions,
             recurrent_inputs=recurrent_inputs,
@@ -233,6 +292,13 @@ class SimpleGymRolloutBridge:
         next_actor = first.observation.actor
         next_critic = first.observation.critic
         next_legal_mask = first.observation.legal_mask
+        post_reward_potential: torch.Tensor | None = None
+        if self.reward_v2_config is not None:
+            post_reward_potential = simple_objective_v1_potential_from_tower_hp(
+                crown_tower_hp(self.runtime.state),
+                self._initial_tower_hp,
+                self.reward_v2_config,
+            )
         live = ~done
         for _ in range(1, self.decision_interval):
             native = self.runtime.step_tick(self._no_op_actions)
@@ -245,11 +311,32 @@ class SimpleGymRolloutBridge:
                 active,
             )
             rewards.add_(torch.where(active[:, None], native.reward, 0.0))
+            if self.reward_v2_config is not None:
+                assert post_reward_potential is not None
+                current_potential = simple_objective_v1_potential_from_tower_hp(
+                    crown_tower_hp(self.runtime.state),
+                    self._initial_tower_hp,
+                    self.reward_v2_config,
+                )
+                post_reward_potential = torch.where(
+                    active, current_potential, post_reward_potential
+                )
             native_ticks.add_(torch.where(active, native.native_ticks, 0))
             committed &= (~active) | native.committed
             winner = torch.where(active & native.done, native.winner, winner)
             done |= active & native.done
             live &= ~native.done
+
+        if self.reward_v2_config is not None:
+            assert pre_reward_potential is not None
+            assert post_reward_potential is not None
+            rewards = simple_reward_v2_from_potentials(
+                pre_reward_potential,
+                post_reward_potential,
+                done,
+                winner,
+                self.reward_v2_config,
+            )
 
         terminal = done[:, None]
         self.adapter.history = SimpleGymHistory(
@@ -273,6 +360,9 @@ class SimpleGymRolloutBridge:
                 boundary.public_action_mask_contract_version
             ),
             simulator_action_mask_profile=boundary.simulator_action_mask_profile,
+            reward_contract_id=boundary.reward_contract_id,
+            reward_contract_digest=boundary.reward_contract_digest,
+            reward_contract_metadata=boundary.reward_contract_metadata,
             previous_actions=boundary.previous_actions,
             previous_rewards=boundary.previous_rewards,
             episode_starts=boundary.episode_starts,
@@ -305,6 +395,7 @@ class SimpleGymRolloutBridge:
 
 
 __all__ = [
+    "SIMPLE_REWARD_V1_CONTRACT_ID",
     "SimpleGymRolloutBridge",
     "SimpleGymRolloutObservation",
     "SimpleGymRolloutStep",
