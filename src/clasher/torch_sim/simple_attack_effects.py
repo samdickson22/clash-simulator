@@ -281,10 +281,26 @@ def allocate_fast_attack_effects_(
         effects.tower_damage_multiplier,
         catalog.tower_damage_multiplier[safe_card],
     )
+    write(
+        effects.building_damage_multiplier,
+        catalog.building_damage_multiplier[safe_card],
+    )
     write(effects.radius_units, catalog.effect_radius_units[safe_card])
     write(effects.status_kind, catalog.status_kind[safe_card])
     write(effects.status_duration_ticks, catalog.status_duration_ticks[safe_card])
-    write(effects.lifetime_ticks, lifetime)
+    write(
+        effects.lifetime_ticks,
+        torch.where(projectile, lifetime, catalog.effect_duration_ticks[safe_card]),
+    )
+    write(effects.damage_interval_ticks, catalog.damage_interval_ticks[safe_card])
+    write(effects.next_damage_tick, catalog.initial_damage_delay_ticks[safe_card])
+    write(effects.damage_on_spawn, catalog.damage_on_spawn[safe_card])
+    write(effects.damage_hits_remaining, catalog.max_damage_hits[safe_card])
+    write(effects.status_interval_ticks, catalog.status_interval_ticks[safe_card])
+    write(effects.next_status_tick, catalog.initial_status_delay_ticks[safe_card])
+    write(effects.status_scans_remaining, catalog.max_status_scans[safe_card])
+    write(effects.hits_air, catalog.hits_air[safe_card])
+    write(effects.hits_ground, catalog.hits_ground[safe_card])
     write(consume_source_id, consumed)
 
     return FastEffectAllocationResult(

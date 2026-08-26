@@ -623,6 +623,9 @@ class SimpleGymRuntime:
             consume_source_id=self.effect_consume_source_id,
             cleanup_dead=False,
             modifiers=self.modifiers,
+            entity_is_air=self.action_kernel.catalog.is_air[
+                self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
+            ],
         )
         lifecycle_result = step_fast_lifecycle_(
             self.state,

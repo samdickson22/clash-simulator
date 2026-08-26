@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import torch
 
 from clasher.data import CardDataLoader
+from clasher.dynamic_spells import create_spell_from_json
 
 from .catalog import (
     EFFECT_OPCODE,
@@ -18,7 +19,7 @@ from .catalog import (
     CardKindOpcode,
     TensorCardCatalog,
 )
-from .simple_effects import FAST_STATUS_NONE, FAST_STATUS_STUN
+from .simple_effects import FAST_STATUS_NONE, FAST_STATUS_SLOW, FAST_STATUS_STUN
 from .simple_state import FAST_KIND_BUILDING, FAST_KIND_TROOP
 
 FAST_CARD_EFFECT_UNSUPPORTED = -1
@@ -67,8 +68,20 @@ class FastCardCatalog:
     effect_radius_units: torch.Tensor
     projectile_speed_units_per_tick: torch.Tensor
     tower_damage_multiplier: torch.Tensor
+    building_damage_multiplier: torch.Tensor
     status_kind: torch.Tensor
     status_duration_ticks: torch.Tensor
+    effect_duration_ticks: torch.Tensor
+    damage_interval_ticks: torch.Tensor
+    initial_damage_delay_ticks: torch.Tensor
+    damage_on_spawn: torch.Tensor
+    max_damage_hits: torch.Tensor
+    status_interval_ticks: torch.Tensor
+    initial_status_delay_ticks: torch.Tensor
+    max_status_scans: torch.Tensor
+    hits_air: torch.Tensor
+    hits_ground: torch.Tensor
+    omits_displacement: torch.Tensor
     consume_source_on_impact: torch.Tensor
     training_supported: torch.Tensor
 
@@ -172,11 +185,28 @@ class FastCardCatalog:
         effect_radius_units = torch.zeros_like(catalog.range_units)
         projectile_speed = torch.zeros_like(catalog.range_units)
         tower_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
+        building_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
         status_kind = torch.full_like(catalog.kind, FAST_STATUS_NONE, dtype=torch.int8)
         status_ticks = torch.zeros_like(catalog.range_units)
+        effect_duration_ticks = torch.ones_like(catalog.range_units)
+        damage_interval_ticks = torch.ones_like(catalog.range_units)
+        initial_damage_delay_ticks = torch.zeros_like(catalog.range_units)
+        damage_on_spawn_table = torch.ones_like(catalog.kind, dtype=torch.bool)
+        max_damage_hits = torch.ones_like(catalog.range_units)
+        status_interval_ticks = torch.ones_like(catalog.range_units)
+        initial_status_delay_ticks = torch.zeros_like(catalog.range_units)
+        max_status_scans = torch.ones_like(catalog.range_units)
+        omits_displacement = torch.zeros_like(catalog.kind, dtype=torch.bool)
         consume_source = torch.zeros_like(catalog.kind, dtype=torch.bool)
         attacks_air = catalog.attacks_air.to(torch.bool).clone()
         attacks_ground = catalog.attacks_ground.to(torch.bool).clone()
+        serialized_spell = catalog.kind == int(CardKindOpcode.SPELL)
+        effect_hits_air = torch.where(
+            serialized_spell, torch.ones_like(attacks_air), attacks_air
+        )
+        effect_hits_ground = torch.where(
+            serialized_spell, torch.ones_like(attacks_ground), attacks_ground
+        )
         buildings_only = catalog.buildings_only.to(torch.bool).clone()
         is_air = catalog.is_air_unit.to(torch.bool).clone()
         death_spawn_opcode = int(MECHANIC_OPCODE["DeathSpawn"])
@@ -296,6 +326,7 @@ class FastCardCatalog:
                     ) // 50
                 projectile = character.get("projectileData") or {}
                 spell_projectile_data = raw.get("projectileData") or {}
+                area_data = raw.get("areaEffectObjectData") or {}
                 if projectile:
                     effect_kind[card_id] = FAST_CARD_EFFECT_PROJECTILE
                     projectile_speed[card_id] = int(projectile.get("speed", 0) or 0)
@@ -337,6 +368,144 @@ class FastCardCatalog:
                         status_ticks[card_id] = (
                             int(spell_projectile_data["buffTime"]) + 49
                         ) // 50
+
+                # Compile center-targeted spell areas from their normalized
+                # serialized payload. Complex spawn/action groups remain
+                # closed: an AOE that silently omits its spawned unit is not a
+                # truthful training primitive. Attraction is admitted as a
+                # declared approximation because damage/cadence remain useful.
+                if area_data and int(catalog.kind[card_id]) == int(
+                    CardKindOpcode.SPELL
+                ):
+                    nested_action = area_data.get("onStartingActionData")
+                    nested_projectile = area_data.get("projectileData") or {}
+                    spawns_character = bool(
+                        nested_projectile.get("spawnCharacterData")
+                        or nested_projectile.get("spawnCharacterCount")
+                    )
+                    if nested_action or spawns_character:
+                        effect_kind[card_id] = FAST_CARD_EFFECT_UNSUPPORTED
+                        effect_damage[card_id] = 0.0
+                        max_damage_hits[card_id] = 0
+                        max_status_scans[card_id] = 0
+                    else:
+                        spell = create_spell_from_json(raw)
+                        duration_s = max(
+                            0.05,
+                            float(getattr(spell, "duration", 0.0) or 0.05),
+                        )
+                        duration = max(1, round(duration_s / 0.05))
+                        damage_per_hit = float(
+                            getattr(spell, "damage_per_hit", 0.0)
+                            or getattr(spell, "damage", 0.0)
+                            or 0.0
+                        )
+                        interval_s = float(
+                            getattr(spell, "damage_tick_interval", 0.0) or 0.0
+                        )
+                        interval = max(1, round(interval_s / 0.05))
+                        damage_on_spawn = bool(
+                            getattr(spell, "damage_on_spawn", False)
+                        ) or interval_s <= 0.0
+                        delay_s = getattr(spell, "initial_damage_delay", None)
+                        delay = (
+                            max(0, round(float(delay_s) / 0.05))
+                            if delay_s is not None
+                            else (0 if damage_on_spawn else interval)
+                        )
+                        declared_hits = int(
+                            getattr(spell, "max_damage_ticks", 0) or 0
+                        )
+                        hits = declared_hits or (
+                            max(1, int(duration_s / interval_s + 1e-9))
+                            if damage_per_hit > 0 and interval_s > 0
+                            else int(damage_per_hit > 0)
+                        )
+                        buff = area_data.get("buffData") or {}
+                        speed_percent = float(
+                            buff.get("speedMultiplier", 0) or 0
+                        )
+                        buff_ms = int(area_data.get("buffTime", 0) or 0)
+                        effect_interval_ms = int(
+                            area_data.get("hitSpeed", 50) or 50
+                        )
+                        has_status = speed_percent < 0 and buff_ms > 0
+                        freeze_snapshot = speed_percent <= -100
+                        effect_kind[card_id] = FAST_CARD_EFFECT_AREA
+                        effect_damage[card_id] = damage_per_hit
+                        effect_radius_units[card_id] = int(
+                            area_data.get("radius", raw.get("radius", 0)) or 0
+                        )
+                        effect_duration_ticks[card_id] = duration
+                        damage_interval_ticks[card_id] = interval
+                        # Allocation and the first effect advance share one
+                        # native frame, so store the countdown after that
+                        # frame. This keeps N-tick serialized deadlines N
+                        # runtime steps apart without extending the area.
+                        initial_damage_delay_ticks[card_id] = max(0, delay - 1)
+                        damage_on_spawn_table[card_id] = damage_on_spawn
+                        max_damage_hits[card_id] = hits
+                        status_kind[card_id] = (
+                            FAST_STATUS_STUN
+                            if freeze_snapshot
+                            else (FAST_STATUS_SLOW if has_status else FAST_STATUS_NONE)
+                        )
+                        status_ticks[card_id] = (
+                            max(1, (buff_ms + 49) // 50) if has_status else 0
+                        )
+                        status_interval_ticks[card_id] = max(
+                            1, (effect_interval_ms + 49) // 50
+                        )
+                        initial_status_delay_ticks[card_id] = (
+                            0
+                            if freeze_snapshot
+                            else max(0, int(status_interval_ticks[card_id]) - 1)
+                        )
+                        max_status_scans[card_id] = (
+                            1
+                            if freeze_snapshot
+                            else (
+                                max(1, duration // status_interval_ticks[card_id])
+                                if has_status
+                                else 0
+                            )
+                        )
+                        effect_hits_air[card_id] = bool(
+                            getattr(spell, "hits_air", True)
+                        )
+                        effect_hits_ground[card_id] = bool(
+                            getattr(spell, "hits_ground", True)
+                        )
+                        crown_damage = getattr(spell, "crown_tower_damage", None)
+                        building_damage = getattr(spell, "building_damage", None)
+                        tower_multiplier[card_id] = (
+                            max(0.0, float(crown_damage) / damage_per_hit)
+                            if crown_damage is not None and damage_per_hit > 0
+                            else max(
+                                0.0,
+                                float(
+                                    getattr(
+                                        spell, "crown_tower_damage_multiplier", 1.0
+                                    )
+                                    or 0.0
+                                ),
+                            )
+                        )
+                        building_multiplier[card_id] = (
+                            max(0.0, float(building_damage) / damage_per_hit)
+                            if building_damage is not None and damage_per_hit > 0
+                            else max(
+                                0.0,
+                                float(
+                                    getattr(spell, "building_damage_multiplier", 1.0)
+                                    or 0.0
+                                ),
+                            )
+                        )
+                        omits_displacement[card_id] = bool(
+                            float(getattr(spell, "attract_percentage", 0.0) or 0.0)
+                            or float(getattr(spell, "push_speed_factor", 0.0) or 0.0)
+                        )
 
                 consume_source[card_id] = bool(character.get("kamikaze", False))
 
@@ -380,6 +549,11 @@ class FastCardCatalog:
                         ).to(torch.int32)
                         consume_source[card_id] = True
         is_spell = catalog.kind == int(CardKindOpcode.SPELL)
+        # Character payload inspection above is more complete than the compact
+        # TensorCardCatalog attack planes (notably splash attackers and
+        # kamikaze units), so finalize ordinary effect planes after that pass.
+        effect_hits_air = torch.where(is_spell, effect_hits_air, attacks_air)
+        effect_hits_ground = torch.where(is_spell, effect_hits_ground, attacks_ground)
         effectful = (effect_kind >= 0) & (effect_damage > 0)
         resolved_death_spawn = (
             (death_spawn_card_id > 0) & (death_spawn_count > 0) & (death_spawn_hp > 0)
@@ -432,8 +606,20 @@ class FastCardCatalog:
             effect_radius_units=effect_radius_units,
             projectile_speed_units_per_tick=projectile_speed,
             tower_damage_multiplier=tower_multiplier,
+            building_damage_multiplier=building_multiplier,
             status_kind=status_kind,
             status_duration_ticks=status_ticks,
+            effect_duration_ticks=effect_duration_ticks,
+            damage_interval_ticks=damage_interval_ticks,
+            initial_damage_delay_ticks=initial_damage_delay_ticks,
+            damage_on_spawn=damage_on_spawn_table,
+            max_damage_hits=max_damage_hits,
+            status_interval_ticks=status_interval_ticks,
+            initial_status_delay_ticks=initial_status_delay_ticks,
+            max_status_scans=max_status_scans,
+            hits_air=effect_hits_air,
+            hits_ground=effect_hits_ground,
+            omits_displacement=omits_displacement,
             consume_source_on_impact=consume_source,
             training_supported=training_supported.to(torch.bool),
         )

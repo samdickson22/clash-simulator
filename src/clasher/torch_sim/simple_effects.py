@@ -14,7 +14,7 @@ from dataclasses import dataclass, fields
 import torch
 
 from .simple_modifiers import FastModifierState, intercept_fast_shield_hits_
-from .simple_state import FastGymState
+from .simple_state import FAST_KIND_BUILDING, FastGymState
 
 FAST_EFFECT_PROJECTILE = 0
 FAST_EFFECT_AREA = 1
@@ -45,10 +45,20 @@ class FastEffectState:
     speed_units_per_tick: torch.Tensor
     damage: torch.Tensor
     tower_damage_multiplier: torch.Tensor
+    building_damage_multiplier: torch.Tensor
     radius_units: torch.Tensor
     status_kind: torch.Tensor
     status_duration_ticks: torch.Tensor
     lifetime_ticks: torch.Tensor
+    damage_interval_ticks: torch.Tensor
+    next_damage_tick: torch.Tensor
+    damage_on_spawn: torch.Tensor
+    damage_hits_remaining: torch.Tensor
+    status_interval_ticks: torch.Tensor
+    next_status_tick: torch.Tensor
+    status_scans_remaining: torch.Tensor
+    hits_air: torch.Tensor
+    hits_ground: torch.Tensor
 
     @property
     def batch_size(self) -> int:
@@ -95,10 +105,32 @@ class FastEffectState:
             tower_damage_multiplier=torch.ones(
                 shape, dtype=torch.float32, device=tensor_device
             ),
+            building_damage_multiplier=torch.ones(
+                shape, dtype=torch.float32, device=tensor_device
+            ),
             radius_units=zeros(torch.int32),
             status_kind=zeros(torch.int8),
             status_duration_ticks=zeros(torch.int32),
             lifetime_ticks=zeros(torch.int32),
+            damage_interval_ticks=torch.ones(
+                shape, dtype=torch.int32, device=tensor_device
+            ),
+            next_damage_tick=zeros(torch.int32),
+            damage_on_spawn=torch.ones(
+                shape, dtype=torch.bool, device=tensor_device
+            ),
+            damage_hits_remaining=torch.ones(
+                shape, dtype=torch.int32, device=tensor_device
+            ),
+            status_interval_ticks=torch.ones(
+                shape, dtype=torch.int32, device=tensor_device
+            ),
+            next_status_tick=zeros(torch.int32),
+            status_scans_remaining=torch.ones(
+                shape, dtype=torch.int32, device=tensor_device
+            ),
+            hits_air=torch.ones(shape, dtype=torch.bool, device=tensor_device),
+            hits_ground=torch.ones(shape, dtype=torch.bool, device=tensor_device),
         )
 
     def clone(self) -> FastEffectState:
@@ -125,6 +157,7 @@ def _validate_inputs(
     entity_status_kind: torch.Tensor,
     entity_status_ticks: torch.Tensor,
     consume_source_id: torch.Tensor | None,
+    entity_is_air: torch.Tensor | None,
 ) -> None:
     if effects.device != state.device:
         raise ValueError("effects and state must use the same device")
@@ -159,6 +192,11 @@ def _validate_inputs(
             raise ValueError("consume_source_id is on a different device")
         if consume_source_id.dtype != torch.int64:
             raise ValueError("consume_source_id must be int64")
+    if entity_is_air is not None:
+        if entity_is_air.shape != entity_shape:
+            raise ValueError("entity_is_air must have shape [batch, entities]")
+        if entity_is_air.device != state.device or entity_is_air.dtype != torch.bool:
+            raise ValueError("entity_is_air must be bool on the state device")
 
 
 def step_fast_effects(
@@ -170,6 +208,7 @@ def step_fast_effects(
     consume_source_id: torch.Tensor | None = None,
     cleanup_dead: bool = True,
     modifiers: FastModifierState | None = None,
+    entity_is_air: torch.Tensor | None = None,
 ) -> FastEffectStepResult:
     """Advance homing effects, resolve splash, install statuses, and clean up.
 
@@ -189,6 +228,7 @@ def step_fast_effects(
         entity_status_kind,
         entity_status_ticks,
         consume_source_id,
+        entity_is_air,
     )
     batch, max_effects = effects.active.shape
     max_entities = state.max_entities
@@ -233,7 +273,20 @@ def step_fast_effects(
     effects.x_units.copy_(torch.where(projectile_impact, target_x, effects.x_units))
     effects.y_units.copy_(torch.where(projectile_impact, target_y, effects.y_units))
 
-    impacted = projectile_impact | valid_area
+    area_damage_due = (
+        valid_area
+        & (effects.damage_hits_remaining > 0)
+        & (effects.next_damage_tick <= 0)
+    )
+    area_status_due = (
+        valid_area
+        & (effects.status_scans_remaining > 0)
+        & (effects.next_status_tick <= 0)
+        & (effects.status_kind != FAST_STATUS_NONE)
+    )
+    damage_due = projectile_impact | area_damage_due
+    status_due = projectile_impact | area_status_due
+    impacted = damage_due | status_due
     dx = state.x_units[:, None, :].to(torch.int64) - effects.x_units[:, :, None].to(
         torch.int64
     )
@@ -241,29 +294,50 @@ def step_fast_effects(
         torch.int64
     )
     radius_sq = effects.radius_units.to(torch.int64).clamp(min=0).square()
-    targets_hit = (
-        impacted[:, :, None]
-        & state.active[:, None, :]
+    if entity_is_air is None:
+        entity_is_air = torch.zeros(
+            (batch, max_entities), dtype=torch.bool, device=state.device
+        )
+    target_plane = torch.where(
+        entity_is_air[:, None, :],
+        effects.hits_air[:, :, None],
+        effects.hits_ground[:, :, None],
+    )
+    target_candidates = (
+        state.active[:, None, :]
         & (state.hp[:, None, :] > 0)
         & (state.owner[:, None, :] != effects.source_owner[:, :, None])
         & (dx.square() + dy.square() <= radius_sq[:, :, None])
+        & target_plane
     )
+    damage_targets = damage_due[:, :, None] & target_candidates
+    status_targets = status_due[:, :, None] & target_candidates
+    targets_hit = (damage_targets | status_targets)
     entity_slot = torch.arange(
         max_entities, dtype=torch.int64, device=state.device
     ).view(1, 1, -1)
-    hit_multiplier = torch.where(
+    tower_multiplier = torch.where(
         entity_slot < 6,
         effects.tower_damage_multiplier.clamp(min=0.0)[:, :, None],
         1.0,
     )
-    per_hit_damage = effects.damage.clamp(min=0.0)[:, :, None] * hit_multiplier
+    building_multiplier = torch.where(
+        (entity_slot >= 6) & (state.kind[:, None, :] == FAST_KIND_BUILDING),
+        effects.building_damage_multiplier.clamp(min=0.0)[:, :, None],
+        1.0,
+    )
+    per_hit_damage = (
+        effects.damage.clamp(min=0.0)[:, :, None]
+        * tower_multiplier
+        * building_multiplier
+    )
     if modifiers is None:
-        grouped_damage = (targets_hit.to(torch.float32) * per_hit_damage).sum(dim=1)
+        grouped_damage = (damage_targets.to(torch.float32) * per_hit_damage).sum(dim=1)
     else:
         hit_target_slot = entity_slot.expand(batch, max_effects, max_entities)
         shield_result = intercept_fast_shield_hits_(
             modifiers,
-            valid=targets_hit.reshape(batch, max_effects * max_entities),
+            valid=damage_targets.reshape(batch, max_effects * max_entities),
             target_slot=hit_target_slot.reshape(batch, max_effects * max_entities),
             damage=per_hit_damage.expand(-1, -1, max_entities).reshape(
                 batch, max_effects * max_entities
@@ -274,12 +348,12 @@ def step_fast_effects(
 
     duration = effects.status_duration_ticks.clamp(min=0)[:, :, None]
     stun_duration = torch.where(
-        targets_hit & (effects.status_kind[:, :, None] == FAST_STATUS_STUN),
+        status_targets & (effects.status_kind[:, :, None] == FAST_STATUS_STUN),
         duration,
         0,
     ).amax(dim=1)
     slow_duration = torch.where(
-        targets_hit & (effects.status_kind[:, :, None] == FAST_STATUS_SLOW),
+        status_targets & (effects.status_kind[:, :, None] == FAST_STATUS_SLOW),
         duration,
         0,
     ).amax(dim=1)
@@ -333,12 +407,37 @@ def step_fast_effects(
         entity_status_kind.masked_fill_(died, FAST_STATUS_NONE)
         entity_status_ticks.masked_fill_(died, 0)
 
-    ticking = alive & ~impacted
-    effects.lifetime_ticks.sub_(ticking.to(torch.int32)).clamp_(min=0)
+    effects.damage_hits_remaining.sub_(area_damage_due.to(torch.int32)).clamp_(min=0)
+    effects.status_scans_remaining.sub_(area_status_due.to(torch.int32)).clamp_(min=0)
+    effects.next_damage_tick.copy_(
+        torch.where(
+            area_damage_due,
+            effects.damage_interval_ticks,
+            effects.next_damage_tick,
+        )
+    )
+    effects.next_status_tick.copy_(
+        torch.where(
+            area_status_due,
+            effects.status_interval_ticks,
+            effects.next_status_tick,
+        )
+    )
+    retained_area = valid_area & (effects.lifetime_ticks > 0)
+    effects.next_damage_tick.sub_(
+        (retained_area & (effects.next_damage_tick > 0)).to(torch.int32)
+    )
+    effects.next_status_tick.sub_(
+        (retained_area & (effects.next_status_tick > 0)).to(torch.int32)
+    )
+    effects.lifetime_ticks.sub_(alive.to(torch.int32)).clamp_(min=0)
     missing_target = tracks_entity & ~target_found
     invalid_kind = alive & ~(valid_projectile | valid_area)
     cleaned = effects.active & (
-        impacted | missing_target | invalid_kind | (effects.lifetime_ticks <= 0)
+        projectile_impact
+        | missing_target
+        | invalid_kind
+        | (effects.lifetime_ticks <= 0)
     )
     effects.active.logical_and_(~cleaned)
     effects.target_id.masked_fill_(cleaned, 0)
