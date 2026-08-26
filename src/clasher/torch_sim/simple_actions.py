@@ -85,9 +85,7 @@ class FastActionState:
                 device=device,
             ),
             player_alive=torch.ones(player_shape, dtype=torch.bool, device=device),
-            tower_alive=torch.ones(
-                (*player_shape, 3), dtype=torch.bool, device=device
-            ),
+            tower_alive=torch.ones((*player_shape, 3), dtype=torch.bool, device=device),
         )
 
     def clone(self) -> FastActionState:
@@ -232,12 +230,8 @@ class FastActionKernel:
         x = self.world_x.view(1, 2, NUM_TILES)
         y = self.world_y.view(1, 2, NUM_TILES)
         player = self._players.view(1, 2, 1)
-        blue = ((y >= 1) & (y < 15)) | (
-            (x >= 6) & (x < 12) & (y >= 0) & (y < 6)
-        )
-        red = ((y >= 17) & (y < 31)) | (
-            (x >= 6) & (x < 12) & (y >= 26) & (y < 32)
-        )
+        blue = ((y >= 1) & (y < 15)) | ((x >= 6) & (x < 12) & (y >= 0) & (y < 6))
+        red = ((y >= 17) & (y < 31)) | ((x >= 6) & (x < 12) & (y >= 26) & (y < 32))
         base = torch.where(player == 0, blue, red)
         enemy = 1 - player.expand(state.batch_size, 2, 1)
         enemy_towers = state.tower_alive.gather(1, enemy.expand(-1, -1, 3))
@@ -256,10 +250,11 @@ class FastActionKernel:
         x = self.world_x_units.view(1, 2, NUM_TILES, 1)
         y = self.world_y_units.view(1, 2, NUM_TILES, 1)
         covered = (
-            (torch.abs(x - centers[:, 0].view(1, 1, 1, 6))
-             <= centers[:, 2].view(1, 1, 1, 6))
-            & (torch.abs(y - centers[:, 1].view(1, 1, 1, 6))
-               <= centers[:, 2].view(1, 1, 1, 6))
+            torch.abs(x - centers[:, 0].view(1, 1, 1, 6))
+            <= centers[:, 2].view(1, 1, 1, 6)
+        ) & (
+            torch.abs(y - centers[:, 1].view(1, 1, 1, 6))
+            <= centers[:, 2].view(1, 1, 1, 6)
         )
         alive = state.tower_alive.reshape(state.batch_size, 1, 1, 6)
         return (covered & alive).any(dim=-1)
@@ -286,12 +281,12 @@ class FastActionKernel:
         non_blocked = self.non_blocked.view(1, 2, 1, NUM_TILES)
         tower_free = ~self._tower_blocked(state).unsqueeze(2)
         enemy_side = self.catalog.can_deploy_on_enemy_side[safe_card][..., None]
-        entity_candidates = non_blocked & tower_free & torch.where(
-            enemy_side, torch.ones_like(zone), zone
+        entity_candidates = (
+            non_blocked
+            & tower_free
+            & torch.where(enemy_side, torch.ones_like(zone), zone)
         )
-        margin = self.catalog.deploy_w_tile_margin[safe_card].to(torch.int64)[
-            ..., None
-        ]
+        margin = self.catalog.deploy_w_tile_margin[safe_card].to(torch.int64)[..., None]
         x = self.world_x.view(1, 2, 1, NUM_TILES)
         entity_candidates &= (x >= margin) & (x < BOARD_WIDTH - margin)
         # Spells target absolute arena coordinates rather than occupying a
@@ -354,9 +349,7 @@ class FastActionKernel:
         state.cycle_head.copy_(
             torch.where(deployment, (head + 1) % FAST_CYCLE_SIZE, head)
         )
-        cost = self.catalog.elixir_cost[
-            card_ids.clamp(0, self.catalog.size - 1)
-        ]
+        cost = self.catalog.elixir_cost[card_ids.clamp(0, self.catalog.size - 1)]
         state.elixir.sub_(torch.where(deployment, cost, torch.zeros_like(cost)))
 
         requests: list[FastDeploymentRequest] = []
@@ -377,6 +370,8 @@ class FastActionKernel:
                     y_units=selection.world_y_units[:, player_id].to(torch.int32),
                     hp=self.catalog.hitpoints[player_card],
                     deploy_ticks=self.catalog.deploy_ticks[player_card],
+                    summon_count=self.catalog.summon_count[player_card],
+                    summon_radius_units=self.catalog.summon_radius_units[player_card],
                 )
             )
         return FastActionIngressResult(

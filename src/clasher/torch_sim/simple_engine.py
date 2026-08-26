@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from dataclasses import dataclass
 
 import torch
-from torch.nn import functional
 
 from .simple_catalog import FastCardCatalog
 from .simple_state import FastGymState
@@ -14,7 +14,7 @@ from .simple_state import FastGymState
 
 @dataclass(frozen=True)
 class FastDeploymentRequest:
-    """At most one ordinary deployment request per batch row."""
+    """At most one atomic card deployment request per batch row."""
 
     valid: torch.Tensor
     owner: torch.Tensor
@@ -24,6 +24,8 @@ class FastDeploymentRequest:
     y_units: torch.Tensor
     hp: torch.Tensor
     deploy_ticks: torch.Tensor
+    summon_count: torch.Tensor
+    summon_radius_units: torch.Tensor
 
 
 @dataclass(frozen=True)
@@ -58,6 +60,10 @@ class FastTensorGym:
         self._slots = torch.arange(
             state.max_entities, dtype=torch.int64, device=state.device
         ).view(1, -1)
+        # Destination-aligned hook for lifecycle/modifier initialization.
+        # It is overwritten on every deployment call and contains every child
+        # materialized by the most recent atomic request group.
+        self.spawned_mask = torch.zeros_like(state.active)
 
     def _validate_request(self, request: FastDeploymentRequest) -> None:
         expected = (self.state.batch_size,)
@@ -70,6 +76,8 @@ class FastTensorGym:
             "y_units",
             "hp",
             "deploy_ticks",
+            "summon_count",
+            "summon_radius_units",
         ):
             value = getattr(request, name)
             if value.shape != expected:
@@ -81,14 +89,16 @@ class FastTensorGym:
         self._validate_request(request)
         state = self.state
         free = ~state.active & (self._slots >= self.reserved_slot_floor)
-        first_free = torch.where(
-            free,
-            self._slots,
-            torch.full_like(self._slots, state.max_entities),
-        ).amin(dim=1)
         known_card = request.card_id > 0
         if self.catalog is not None:
             known_card &= request.card_id < self.catalog.size
+            safe_card = request.card_id.clamp(0, self.catalog.size - 1)
+            summon_count = self.catalog.summon_count[safe_card].to(torch.int64)
+            summon_radius = self.catalog.summon_radius_units[safe_card].to(torch.int32)
+        else:
+            summon_count = request.summon_count.to(torch.int64)
+            summon_radius = request.summon_radius_units.to(torch.int32)
+        enough_slots = free.sum(dim=1) >= summon_count
         success = (
             request.valid
             & ~state.game_over
@@ -96,55 +106,104 @@ class FastTensorGym:
             & (request.owner < 2)
             & known_card
             & (request.hp > 0)
-            & (first_free < state.max_entities)
+            & (summon_count > 0)
+            & (summon_count <= state.max_entities - self.reserved_slot_floor)
+            & enough_slots
         )
-        safe_slot = first_free.clamp(max=state.max_entities - 1)
+        lanes = self._slots.expand(state.batch_size, -1)
+        child_valid = (lanes < summon_count[:, None]) & success[:, None]
+        free_rank = free.to(torch.int64).cumsum(dim=1) - 1
         destination = (
-            functional.one_hot(safe_slot, num_classes=state.max_entities).to(torch.bool)
-            & success[:, None]
+            free[:, None, :]
+            & (free_rank[:, None, :] == lanes[:, :, None])
+            & child_valid[:, :, None]
+        )
+        destination_slot = destination.any(dim=1)
+        child_for_slot = destination.to(torch.int64).argmax(dim=1)
+
+        # A single numeric ring serves every ordinary multi-summon.  The
+        # first point is forward, subsequent points proceed counter-clockwise,
+        # and the forward component mirrors by owner.  One-child cards remain
+        # exactly on the requested anchor.
+        count_float = summon_count.clamp(min=1).to(torch.float32)[:, None]
+        angles = lanes.to(torch.float32) * (2.0 * math.pi) / count_float + math.pi / 2.0
+        multi = summon_count[:, None] > 1
+        offset_x = torch.where(
+            multi,
+            torch.round(torch.cos(angles) * summon_radius[:, None]),
+            torch.zeros_like(angles),
+        ).to(torch.int32)
+        forward = torch.where(
+            request.owner[:, None] == 0,
+            torch.ones_like(offset_x),
+            torch.full_like(offset_x, -1),
+        )
+        offset_y = torch.where(
+            multi,
+            torch.round(torch.sin(angles) * summon_radius[:, None]).to(torch.int32)
+            * forward,
+            torch.zeros_like(offset_x),
         )
 
-        def write(field: torch.Tensor, value: torch.Tensor) -> None:
-            field.copy_(torch.where(destination, value[:, None], field))
+        def write(field: torch.Tensor, child_value: torch.Tensor) -> None:
+            value_for_slot = child_value.gather(1, child_for_slot)
+            field.copy_(torch.where(destination_slot, value_for_slot, field))
 
-        write(state.active, torch.ones_like(success))
-        write(state.stable_id, state.next_stable_id)
-        write(state.kind, request.kind.to(torch.int8))
-        write(state.owner, request.owner.to(torch.int8))
-        write(state.card_id, request.card_id.to(torch.int64))
-        write(state.x_units, request.x_units.to(torch.int32))
-        write(state.y_units, request.y_units.to(torch.int32))
-        write(state.hp, request.hp.to(torch.float32))
-        write(state.max_hp, request.hp.to(torch.float32))
-        write(state.target_id, torch.zeros_like(request.card_id))
+        def repeat(value: torch.Tensor) -> torch.Tensor:
+            return value[:, None].expand(-1, state.max_entities)
+
+        write(state.active, torch.ones_like(child_valid))
+        write(state.stable_id, state.next_stable_id[:, None] + lanes)
+        write(state.kind, repeat(request.kind.to(torch.int8)))
+        write(state.owner, repeat(request.owner.to(torch.int8)))
+        write(state.card_id, repeat(request.card_id.to(torch.int64)))
+        write(state.x_units, request.x_units[:, None].to(torch.int32) + offset_x)
+        write(state.y_units, request.y_units[:, None].to(torch.int32) + offset_y)
+        write(state.hp, repeat(request.hp.to(torch.float32)))
+        write(state.max_hp, repeat(request.hp.to(torch.float32)))
+        write(state.target_id, torch.zeros_like(lanes))
         if self.catalog is None:
-            write(state.damage, torch.zeros_like(request.hp))
-            write(state.range_units, torch.zeros_like(request.x_units))
-            write(state.sight_range_units, torch.zeros_like(request.x_units))
-            write(state.speed_units_per_tick, torch.zeros_like(request.x_units))
-            write(state.hit_cooldown_ticks, torch.zeros_like(request.deploy_ticks))
-        else:
-            safe_card = request.card_id.clamp(0, self.catalog.size - 1)
-            write(state.kind, self.catalog.kind[safe_card])
-            write(state.hp, self.catalog.hitpoints[safe_card])
-            write(state.max_hp, self.catalog.hitpoints[safe_card])
-            write(state.damage, self.catalog.damage[safe_card])
-            write(state.range_units, self.catalog.range_units[safe_card])
+            write(state.damage, torch.zeros_like(lanes, dtype=torch.float32))
+            write(state.range_units, torch.zeros_like(lanes, dtype=torch.int32))
             write(
                 state.sight_range_units,
-                self.catalog.sight_range_units[safe_card],
+                torch.zeros_like(lanes, dtype=torch.int32),
             )
             write(
                 state.speed_units_per_tick,
-                self.catalog.speed_units_per_tick[safe_card],
+                torch.zeros_like(lanes, dtype=torch.int32),
             )
             write(
                 state.hit_cooldown_ticks,
-                self.catalog.hit_cooldown_ticks[safe_card],
+                torch.zeros_like(lanes, dtype=torch.int32),
             )
-        write(state.deploy_ticks, request.deploy_ticks.clamp(min=0).to(torch.int32))
-        write(state.cooldown_ticks, torch.zeros_like(request.deploy_ticks))
-        state.next_stable_id.add_(success.to(torch.int64))
+        else:
+            write(state.kind, repeat(self.catalog.kind[safe_card]))
+            write(state.hp, repeat(self.catalog.hitpoints[safe_card]))
+            write(state.max_hp, repeat(self.catalog.hitpoints[safe_card]))
+            write(state.damage, repeat(self.catalog.damage[safe_card]))
+            write(state.range_units, repeat(self.catalog.range_units[safe_card]))
+            write(
+                state.sight_range_units,
+                repeat(self.catalog.sight_range_units[safe_card]),
+            )
+            write(
+                state.speed_units_per_tick,
+                repeat(self.catalog.speed_units_per_tick[safe_card]),
+            )
+            write(
+                state.hit_cooldown_ticks,
+                repeat(self.catalog.hit_cooldown_ticks[safe_card]),
+            )
+        write(
+            state.deploy_ticks,
+            repeat(request.deploy_ticks.clamp(min=0).to(torch.int32)),
+        )
+        write(state.cooldown_ticks, torch.zeros_like(lanes, dtype=torch.int32))
+        state.next_stable_id.add_(
+            torch.where(success, summon_count, torch.zeros_like(summon_count))
+        )
+        self.spawned_mask.copy_(destination_slot)
         return success
 
     def deploy_many_once(
@@ -158,12 +217,19 @@ class FastTensorGym:
         """
 
         if not requests:
+            self.spawned_mask.zero_()
             return torch.zeros(
                 (self.state.batch_size, 0),
                 dtype=torch.bool,
                 device=self.state.device,
             )
-        return torch.stack(tuple(self._deploy(request) for request in requests), dim=1)
+        accepted: list[torch.Tensor] = []
+        spawned = torch.zeros_like(self.state.active)
+        for request in requests:
+            accepted.append(self._deploy(request))
+            spawned |= self.spawned_mask
+        self.spawned_mask.copy_(spawned)
+        return torch.stack(tuple(accepted), dim=1)
 
     def _ordinary_troop_phase(self, disabled: torch.Tensor) -> torch.Tensor:
         """Acquire and approach, returning attacks ready for effect allocation.

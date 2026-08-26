@@ -141,9 +141,11 @@ class SimpleGymRuntime:
         )
         self._ability_duration = torch.zeros_like(self._ability_cooldown)
         self._refill_cooldown_ms = torch.zeros_like(self._ability_cooldown)
-        self._effect_owners = torch.arange(
-            2, dtype=torch.int8, device=device
-        ).view(1, 2).expand(batch, -1)
+        self._effect_owners = (
+            torch.arange(2, dtype=torch.int8, device=device)
+            .view(1, 2)
+            .expand(batch, -1)
+        )
         self._spell_source_slots = torch.tensor(
             (2, 5), dtype=torch.int64, device=device
         )
@@ -229,21 +231,26 @@ class SimpleGymRuntime:
 
     def _legal_action_mask(self) -> torch.Tensor:
         mask = self.action_kernel.legal_action_mask(self.action_state)
-        has_deploy_slot = (~self.state.active[:, FAST_TOWER_SLOT_COUNT:]).any(dim=1)
+        free_deploy_slots = (~self.state.active[:, FAST_TOWER_SLOT_COUNT:]).sum(dim=1)
         has_effect_slot = (~self.effects.active).any(dim=1)
         hand = self.action_state.hand_ids
         safe_card = hand.clamp(0, self.action_kernel.catalog.size - 1)
         spell = (self.action_kernel.catalog.kind[safe_card] < 0) & (
             self.action_kernel.catalog.effect_kind[safe_card] >= 0
         )
+        enough_deploy_slots = free_deploy_slots[:, None, None] >= (
+            self.action_kernel.catalog.summon_count[safe_card].to(torch.int64)
+        )
         capacity = torch.where(
             spell,
             has_effect_slot[:, None, None],
-            has_deploy_slot[:, None, None],
+            enough_deploy_slots,
         )
-        placement_capacity = capacity[..., None].expand(
-            -1, -1, NUM_HAND_SLOTS, NUM_TILES
-        ).reshape(self.batch_size, 2, NO_OP_ACTION)
+        placement_capacity = (
+            capacity[..., None]
+            .expand(-1, -1, NUM_HAND_SLOTS, NUM_TILES)
+            .reshape(self.batch_size, 2, NO_OP_ACTION)
+        )
         mask[:, :, :NO_OP_ACTION] &= placement_capacity
         return mask
 
@@ -254,12 +261,8 @@ class SimpleGymRuntime:
     ) -> FastEffectCommands:
         """Put policy spell casts before entity-slot-ordered attacks."""
 
-        spell_source_x = self.state.x_units.index_select(
-            1, self._spell_source_slots
-        )
-        spell_source_y = self.state.y_units.index_select(
-            1, self._spell_source_slots
-        )
+        spell_source_x = self.state.x_units.index_select(1, self._spell_source_slots)
+        spell_source_y = self.state.y_units.index_select(1, self._spell_source_slots)
         zeros_i64 = torch.zeros_like(ingress.selected_card_ids)
         spell = FastEffectCommands(
             ready=ingress.spell_cast,
@@ -284,6 +287,7 @@ class SimpleGymRuntime:
             target_x_units=zeros_entity,
             target_y_units=zeros_entity,
         )
+
         def combined(name: str) -> torch.Tensor:
             return torch.cat((getattr(spell, name), getattr(attack, name)), dim=1)
 
@@ -332,9 +336,8 @@ class SimpleGymRuntime:
         attack_allocated = allocation.accepted[:, 2:]
         self.combat.commit_attacks_(combat.attack_ready, attack_allocated)
 
-        failed_deployment = (
-            (ingress.entity_deployment & ~deployed)
-            | (ingress.spell_cast & ~spell_allocated)
+        failed_deployment = (ingress.entity_deployment & ~deployed) | (
+            ingress.spell_cast & ~spell_allocated
         )
         self.action_state.hand_ids.copy_(
             torch.where(

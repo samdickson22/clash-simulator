@@ -36,6 +36,8 @@ def test_simple_noop_clock_and_deterministic_low_slot_deployment(
         y_units=torch.tensor([20_500, 11_500], device=device),
         hp=torch.tensor([720.0, 720.0], device=device),
         deploy_ticks=torch.tensor([2, 2], device=device),
+        summon_count=torch.ones(2, dtype=torch.int16, device=device),
+        summon_radius_units=torch.full((2,), 500, dtype=torch.int32, device=device),
     )
     deployed = gym.step_tick(request)
 

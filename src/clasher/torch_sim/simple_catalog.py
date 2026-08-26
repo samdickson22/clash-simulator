@@ -21,7 +21,6 @@ from .catalog import (
 from .simple_effects import FAST_STATUS_NONE, FAST_STATUS_STUN
 from .simple_state import FAST_KIND_BUILDING, FAST_KIND_TROOP
 
-
 FAST_CARD_EFFECT_UNSUPPORTED = -1
 FAST_CARD_EFFECT_DIRECT = 0
 FAST_CARD_EFFECT_PROJECTILE = 1
@@ -43,6 +42,8 @@ class FastCardCatalog:
     elixir_cost: torch.Tensor
     deploy_ticks: torch.Tensor
     collision_radius_units: torch.Tensor
+    summon_count: torch.Tensor
+    summon_radius_units: torch.Tensor
     deploy_w_tile_margin: torch.Tensor
     can_deploy_on_enemy_side: torch.Tensor
     effect_kind: torch.Tensor
@@ -74,6 +75,16 @@ class FastCardCatalog:
             rounding_mode="floor",
         ).clamp(min=0)
         deploy_ticks[0] = 0
+        summon_count = catalog.summon_count.to(torch.int16).clamp(min=0)
+        # Native deployment uses the character collision radius when a card
+        # does not serialize SummonRadius.  Keep that setup-time rule in the
+        # dense table so the runtime formation remains entirely numeric.
+        summon_radius_units = torch.where(
+            catalog.summon_radius_units > 0,
+            catalog.summon_radius_units,
+            catalog.collision_radius_units,
+        ).to(torch.int32)
+        summon_radius_units[0] = 0
         ordinary_kind = torch.full_like(catalog.kind, -1, dtype=torch.int8)
         ordinary_kind = torch.where(
             (catalog.kind == int(CardKindOpcode.TROOP))
@@ -103,9 +114,7 @@ class FastCardCatalog:
         effect_radius_units = torch.zeros_like(catalog.range_units)
         projectile_speed = torch.zeros_like(catalog.range_units)
         tower_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
-        status_kind = torch.full_like(
-            catalog.kind, FAST_STATUS_NONE, dtype=torch.int8
-        )
+        status_kind = torch.full_like(catalog.kind, FAST_STATUS_NONE, dtype=torch.int8)
         status_ticks = torch.zeros_like(catalog.range_units)
         consume_source = torch.zeros_like(catalog.kind, dtype=torch.bool)
 
@@ -131,8 +140,10 @@ class FastCardCatalog:
         serialized_radius = effect_parameter("splash_radius_tiles")
         serialized_speed = effect_parameter("travel_speed")
         spell_projectile = (
-            catalog.kind == int(CardKindOpcode.SPELL)
-        ) & has_projectile & (serialized_damage > 0)
+            (catalog.kind == int(CardKindOpcode.SPELL))
+            & has_projectile
+            & (serialized_damage > 0)
+        )
         effect_kind = torch.where(
             spell_projectile, FAST_CARD_EFFECT_PROJECTILE, effect_kind
         )
@@ -159,20 +170,14 @@ class FastCardCatalog:
                     continue
                 raw = card._raw_entry or {}
                 character = (
-                    raw.get("summonCharacterData")
-                    or raw.get("summonSpellData")
-                    or {}
+                    raw.get("summonCharacterData") or raw.get("summonSpellData") or {}
                 )
                 projectile = character.get("projectileData") or {}
                 spell_projectile_data = raw.get("projectileData") or {}
                 if projectile:
                     effect_kind[card_id] = FAST_CARD_EFFECT_PROJECTILE
-                    projectile_speed[card_id] = int(
-                        projectile.get("speed", 0) or 0
-                    )
-                    effect_radius_units[card_id] = int(
-                        projectile.get("radius", 0) or 0
-                    )
+                    projectile_speed[card_id] = int(projectile.get("speed", 0) or 0)
+                    effect_radius_units[card_id] = int(projectile.get("radius", 0) or 0)
                 if spell_projectile_data:
                     waves = int(raw.get("projectileWaves", 1) or 1)
                     grouped = int(raw.get("multipleProjectiles", 1) or 1) > 1
@@ -181,9 +186,9 @@ class FastCardCatalog:
                         if waves > 1 or grouped
                         else FAST_CARD_EFFECT_PROJECTILE
                     )
-                    effect_damage[card_id] = float(
-                        spell_projectile_data.get("damage", 0) or 0
-                    ) * waves
+                    effect_damage[card_id] = (
+                        float(spell_projectile_data.get("damage", 0) or 0) * waves
+                    )
                     effect_radius_units[card_id] = int(
                         (
                             raw.get("radius")
@@ -196,19 +201,13 @@ class FastCardCatalog:
                         spell_projectile_data.get("speed", 0) or 0
                     )
                     crown_percent = float(
-                        spell_projectile_data.get(
-                            "crownTowerDamagePercent", 0
-                        )
-                        or 0
+                        spell_projectile_data.get("crownTowerDamagePercent", 0) or 0
                     )
-                    tower_multiplier[card_id] = max(
-                        0.0, 1.0 + crown_percent / 100.0
-                    )
+                    tower_multiplier[card_id] = max(0.0, 1.0 + crown_percent / 100.0)
                     buff = spell_projectile_data.get("targetBuffData") or {}
                     if (
                         float(buff.get("speedMultiplier", 0) or 0) <= -100
-                        and int(spell_projectile_data.get("buffTime", 0) or 0)
-                        > 0
+                        and int(spell_projectile_data.get("buffTime", 0) or 0) > 0
                     ):
                         status_kind[card_id] = FAST_STATUS_STUN
                         status_ticks[card_id] = (
@@ -268,6 +267,8 @@ class FastCardCatalog:
             elixir_cost=catalog.elixir.to(torch.float32),
             deploy_ticks=deploy_ticks,
             collision_radius_units=catalog.collision_radius_units.to(torch.int32),
+            summon_count=summon_count,
+            summon_radius_units=summon_radius_units,
             deploy_w_tile_margin=catalog.deploy_w_tile_margin.to(torch.int8),
             can_deploy_on_enemy_side=catalog.can_deploy_on_enemy_side.to(torch.bool),
             effect_kind=effect_kind,
