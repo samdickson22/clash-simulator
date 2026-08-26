@@ -203,6 +203,7 @@ RESIDENT_DISPATCH_MECHANIC_OPCODES = frozenset(
     for name in (
         "BanditDash",
         "MegaKnightSlam",
+        "MultipleTargetAttack",
         "SpawnPushback",
         "SerializedOnHitBuff",
         "SkeletonKingSoulCollector",
@@ -1299,10 +1300,9 @@ class TensorResidentEngine:
         deployment_mechanics = cards.mechanic_opcode.to(torch.int64)
         spawn_area_opcode = MECHANIC_OPCODE["SpawnAreaEffect"]
         spawn_area_deployment_supported = (
-            (deployment_mechanics == 0) | (deployment_mechanics == spawn_area_opcode)
-        ).all(dim=1) & (deployment_mechanics == spawn_area_opcode).any(dim=1)
-        spawn_area_deployment_supported &= (core_by_catalog >= 0) & (
-            spawn_areas.catalog.supported[safe_core_by_catalog]
+            (deployment_mechanics == spawn_area_opcode).any(dim=1)
+            & (core_by_catalog >= 0)
+            & spawn_areas.catalog.supported[safe_core_by_catalog]
         )
         chain_card_by_catalog = torch.tensor(
             [
@@ -1355,6 +1355,8 @@ class TensorResidentEngine:
                 "combat_dispatch": (
                     MECHANIC_OPCODE["BanditDash"],
                     MECHANIC_OPCODE["MegaKnightSlam"],
+                    MECHANIC_OPCODE["MultipleTargetAttack"],
+                    MECHANIC_OPCODE["SerializedOnHitBuff"],
                     MECHANIC_OPCODE["SpawnPushback"],
                 ),
                 "shield": (MECHANIC_OPCODE["Shield"],),

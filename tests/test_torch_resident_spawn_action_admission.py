@@ -149,8 +149,8 @@ def test_ice_wizard_action_owner_matches_complete_real_interaction(
 @pytest.mark.parametrize(
     ("card_name", "opcode"),
     (
-        ("ElectroWizard", "MultipleTargetAttack"),
-        ("MegaKnight", "MegaKnightSlam"),
+        ("ArcherQueen", "ArcherQueenCloak"),
+        ("Fisherman", "FishermanHook"),
     ),
 )
 def test_action_full_co_mechanic_closure_remains_fail_closed(
@@ -181,7 +181,7 @@ def test_mixed_supported_and_rejected_actions_commit_atomically(
     tensor_device: str,
 ) -> None:
     supported = _action_battle("IceWizard", seed=810_001)
-    rejected = _action_battle("ElectroWizard", seed=810_002)
+    rejected = _action_battle("Fisherman", seed=810_002)
     engine = _engine([supported, rejected], tensor_device)
     actions = torch.tensor(
         [[DEPLOY_SLOT_ZERO, NO_OP_ACTION], [DEPLOY_SLOT_ZERO, NO_OP_ACTION]],
@@ -241,29 +241,40 @@ def test_workspace_retains_spawn_area_deployment_owner(tensor_device: str) -> No
     )
 
 
-def test_active_multiple_target_row_fails_closed_without_mutation(
+def test_active_multiple_target_row_commits_both_hits_and_status(
     tensor_device: str,
 ) -> None:
-    engine = _engine([_active_battle("ElectroWizard")], tensor_device)
-    before_time = engine.runtime.battle.time.clone()
-    before_ids = engine.runtime.battle.entity_id.clone()
-    before_hp = engine.runtime.battle.entity_hp.clone()
-    before_status = engine.runtime.status.stun_timer.clone()
-    before_events = engine.runtime.events.count.clone()
-    before_rng = engine.runtime.battle.rng.python_state(0)
+    boundary = _active_battle("ElectroWizard")
+    target_stats = boundary.card_loader.get_card("Knight")
+    assert target_stats is not None
+    boundary._spawn_unit_at_position(
+        Position(10.0, 11.0),
+        1,
+        target_stats,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
+    secondary = boundary.entities[3]
+    secondary.placement_pending = False
+    secondary._spawn_hook_pending = False
+    secondary._spawn_hook_fired = True
+    secondary.attack_cooldown = 10.0
+    oracle = copy.deepcopy(boundary)
+    engine = _engine([boundary], tensor_device)
+    oracle.step_logic_ticks(1)
 
     preflight = engine.preflight()
     result = engine.step(player_order=torch.tensor([[0, 1]], device=engine.device))
 
-    assert preflight.supported.tolist() == [False]
-    assert preflight.reason_code.tolist() == [ResidentUnsupportedReason.ACTIVE_MECHANIC]
+    assert preflight.supported.tolist() == [True]
     assert preflight.mechanic_opcode_present[
         0, MECHANIC_OPCODE["MultipleTargetAttack"]
     ].item()
-    assert result.committed.tolist() == [False]
-    assert torch.equal(engine.runtime.battle.time, before_time)
-    assert torch.equal(engine.runtime.battle.entity_id, before_ids)
-    assert torch.equal(engine.runtime.battle.entity_hp, before_hp)
-    assert torch.equal(engine.runtime.status.stun_timer, before_status)
-    assert torch.equal(engine.runtime.events.count, before_events)
-    assert engine.runtime.battle.rng.python_state(0) == before_rng
+    assert result.committed.tolist() == [True]
+    for slot, entity_id in ((1, 2), (2, 3)):
+        assert engine.runtime.battle.entity_hp[0, slot].item() == (
+            oracle.entities[entity_id].hitpoints
+        )
+        assert engine.runtime.status.stun_timer[0, slot].item() == (
+            oracle.entities[entity_id].stun_timer
+        )

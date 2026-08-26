@@ -1320,11 +1320,10 @@ class TensorMechanicDispatcher:
         primary_damage = torch.where(
             damage_already_applied, torch.zeros_like(damage), damage
         )
-        secondary_damage = torch.where(
-            damage_already_applied[..., None],
-            torch.zeros_like(secondary_id, dtype=torch.float64),
-            damage[..., None] * scale[..., None],
-        )
+        # The ordinary combat phase applies only the primary hit.  A retained
+        # multiple-target snapshot still owns every secondary hit, even when
+        # that upstream primary damage must be suppressed here.
+        secondary_damage = damage[..., None] * scale[..., None]
         grouped_source = source_slot[..., None].expand(*source_slot.shape, width + 1)
         grouped_target = torch.cat((target_slot[..., None], secondary_slot), dim=2)
         grouped_damage = torch.cat((primary_damage[..., None], secondary_damage), dim=2)

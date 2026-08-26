@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import copy
+import random
+from collections import deque
 from typing import cast
 
 import pytest
@@ -11,13 +13,19 @@ from clasher.battle import BattleState
 from clasher.entities import Entity, Troop
 from clasher.mechanics.shared.multi_target import MultipleTargetAttack
 from clasher.mechanics.shared.on_hit_buff import SerializedOnHitBuff
+from clasher.rl.action_space import DiscreteTileActionSpace
 from clasher.rl.obs_cv import CvObservationBuilder
 from clasher.rl.structured_obs import StructuredObservationBuilder
+from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.mechanic_dispatcher import TensorMechanicDispatcher
 from clasher.torch_sim.observations import TensorObservationProjector
+from clasher.torch_sim.resident_engine import TensorResidentEngine
 from clasher.torch_sim.resident_multi_target import TensorResidentMultiTargetAttacks
+from clasher.torch_sim.resident_outputs import ResidentOutputProjector
 from clasher.torch_sim.resident_spawn_area import TensorResidentSpawnAreas
 from clasher.torch_sim.runtime_state import TensorBattleRuntime
+
+DEPLOY_ELECTRO_WIZARD = 12 * 18 + 14
 
 
 @pytest.fixture(params=("cpu", "cuda"))
@@ -71,6 +79,28 @@ def _boundary() -> tuple[BattleState, Troop, tuple[Troop, Troop]]:
         if type(mechanic).__name__ == "SpawnAreaEffect":
             mechanic._applied = False  # type: ignore[attr-defined]
     return battle, source, targets
+
+
+def _action_boundary() -> BattleState:
+    battle = BattleState(fast_path=False, rng=random.Random(8_260_202))
+    battle.entities.clear()
+    battle.next_entity_id = 1
+    targets = (
+        _spawn(battle, "Knight", 1, Position(13.5, 15.0)),
+        _spawn(battle, "Knight", 1, Position(15.5, 15.0)),
+    )
+    for target in targets:
+        target.hitpoints = 10_000
+        target.max_hitpoints = 10_000
+        target.attack_cooldown = 10.0
+        target._spawn_hook_pending = False
+        target._spawn_hook_fired = True
+    player = battle.players[0]
+    player.hand = ["ElectroWizard", "Knight", "Zap", "Cannon"]
+    player.deck = [str(name) for name in player.hand if name is not None]
+    player.cycle_queue = deque()
+    player.elixir = 20.0
+    return battle
 
 
 def _mechanic(entity: Entity, kind: type[object]) -> object:
@@ -188,3 +218,86 @@ def test_landing_zap_then_two_target_attack_updates_policy_visible_state(
     enemy = enemy[observation.entity_mask[0, 0] & (enemy[:, 3] > 0.5)]
     assert int((enemy[:, 9] < 0.9999).sum().item()) == 2
     assert int((enemy[:, 14] > 0.0).sum().item()) == 2
+
+
+def test_full_action_lands_and_commits_first_dual_attack_without_fallback(
+    tensor_device: str,
+) -> None:
+    boundary = _action_boundary()
+    oracle = copy.deepcopy(boundary)
+    engine = TensorResidentEngine.from_battles(
+        [boundary],
+        device=tensor_device,
+        max_entities=16,
+        max_objects=16,
+        event_capacity=2_048,
+    )
+    projector = ResidentOutputProjector.from_engine(
+        engine,
+        [boundary],
+        structured_builder=StructuredObservationBuilder(max_entities=16),
+        cv_builder=CvObservationBuilder(),
+    )
+    action_space = DiscreteTileActionSpace(canonical_perspective=True)
+    target_ids = (1, 2)
+    initial_hp = {
+        entity_id: oracle.entities[entity_id].hitpoints for entity_id in target_ids
+    }
+    landing_damage = 192.0
+    attack_damage = 117.0
+    saw_landing = False
+    saw_dual_attack = False
+
+    for tick in range(48):
+        action = DEPLOY_ELECTRO_WIZARD if tick == 0 else NO_OP_ACTION
+        actions = (action, NO_OP_ACTION)
+        player_order = [0, 1]
+        oracle.rng.shuffle(player_order)
+        for player_id in player_order:
+            assert action_space.apply_action(
+                oracle,
+                player_id,
+                actions[player_id],
+            )
+        oracle.step_logic_ticks(1)
+
+        action_tensor = torch.tensor(
+            [actions], dtype=torch.int64, device=engine.device
+        )
+        assert engine.preflight(action_tensor).supported.tolist() == [True]
+        result = engine.step(
+            action_tensor,
+            player_order=torch.tensor([player_order], device=engine.device),
+        )
+        assert result.committed.tolist() == [True], engine.diagnose_preflight(
+            action_tensor
+        )
+
+        resident_ids = engine.runtime.battle.entity_id[0].tolist()
+        for entity_id in target_ids:
+            slot = resident_ids.index(entity_id)
+            assert float(engine.runtime.battle.entity_hp[0, slot]) == pytest.approx(
+                float(oracle.entities[entity_id].hitpoints), abs=1e-6
+            )
+            assert float(engine.runtime.status.stun_timer[0, slot]) == pytest.approx(
+                float(oracle.entities[entity_id].stun_timer), abs=0.05 + 1e-9
+            )
+        damage = {
+            entity_id: initial_hp[entity_id] - oracle.entities[entity_id].hitpoints
+            for entity_id in target_ids
+        }
+        saw_landing |= all(value >= landing_damage for value in damage.values())
+        saw_dual_attack |= all(
+            value >= landing_damage + attack_damage for value in damage.values()
+        )
+        if saw_dual_attack:
+            break
+    else:
+        pytest.fail("Electro Wizard did not complete its first two-target attack")
+
+    assert saw_landing
+    observation = projector.project_public_structured()
+    enemy = observation.entity_features[0, 0]
+    enemy = enemy[observation.entity_mask[0, 0] & (enemy[:, 3] > 0.5)]
+    assert int((enemy[:, 9] < 0.9999).sum().item()) >= 2
+    assert int((enemy[:, 14] > 0.0).sum().item()) >= 2
