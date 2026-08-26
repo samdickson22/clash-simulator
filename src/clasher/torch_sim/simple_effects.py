@@ -15,7 +15,6 @@ import torch
 
 from .simple_state import FastGymState
 
-
 FAST_EFFECT_PROJECTILE = 0
 FAST_EFFECT_AREA = 1
 
@@ -168,6 +167,7 @@ def step_fast_effects(
     entity_status_ticks: torch.Tensor,
     *,
     consume_source_id: torch.Tensor | None = None,
+    cleanup_dead: bool = True,
 ) -> FastEffectStepResult:
     """Advance homing effects, resolve splash, install statuses, and clean up.
 
@@ -326,11 +326,12 @@ def step_fast_effects(
     state.hp.masked_fill_(sources_consumed, 0.0)
 
     died = state.active & (state.hp <= 0)
-    state.active.logical_and_(~died)
-    state.stable_id.masked_fill_(died, 0)
-    state.target_id.masked_fill_(died, 0)
-    entity_status_kind.masked_fill_(died, FAST_STATUS_NONE)
-    entity_status_ticks.masked_fill_(died, 0)
+    if cleanup_dead:
+        state.active.logical_and_(~died)
+        state.stable_id.masked_fill_(died, 0)
+        state.target_id.masked_fill_(died, 0)
+        entity_status_kind.masked_fill_(died, FAST_STATUS_NONE)
+        entity_status_ticks.masked_fill_(died, 0)
 
     ticking = alive & ~impacted
     effects.lifetime_ticks.sub_(ticking.to(torch.int32)).clamp_(min=0)

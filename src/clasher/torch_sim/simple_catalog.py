@@ -48,6 +48,13 @@ class FastCardCatalog:
     is_air: torch.Tensor
     summon_count: torch.Tensor
     summon_radius_units: torch.Tensor
+    lifetime_ticks: torch.Tensor
+    death_spawn_count: torch.Tensor
+    death_spawn_card_id: torch.Tensor
+    death_spawn_kind: torch.Tensor
+    death_spawn_hp: torch.Tensor
+    death_spawn_radius_units: torch.Tensor
+    death_spawn_deploy_ticks: torch.Tensor
     deploy_w_tile_margin: torch.Tensor
     can_deploy_on_enemy_side: torch.Tensor
     effect_kind: torch.Tensor
@@ -89,6 +96,22 @@ class FastCardCatalog:
             catalog.collision_radius_units,
         ).to(torch.int32)
         summon_radius_units[0] = 0
+        lifetime_ticks = torch.div(
+            catalog.lifetime_ms.to(torch.int32) + 49,
+            50,
+            rounding_mode="floor",
+        ).clamp(min=0)
+        lifetime_ticks[0] = 0
+        death_spawn_count = torch.zeros_like(catalog.kind, dtype=torch.int32)
+        death_spawn_card_id = torch.zeros_like(catalog.kind, dtype=torch.int64)
+        death_spawn_kind = torch.zeros_like(catalog.kind, dtype=torch.int8)
+        death_spawn_hp = torch.zeros_like(catalog.hitpoints, dtype=torch.float32)
+        death_spawn_radius_units = torch.zeros_like(
+            catalog.range_units, dtype=torch.int32
+        )
+        death_spawn_deploy_ticks = torch.zeros_like(
+            catalog.range_units, dtype=torch.int32
+        )
         ordinary_kind = torch.full_like(catalog.kind, -1, dtype=torch.int8)
         ordinary_kind = torch.where(
             (catalog.kind == int(CardKindOpcode.TROOP))
@@ -192,6 +215,24 @@ class FastCardCatalog:
                 character = (
                     raw.get("summonCharacterData") or raw.get("summonSpellData") or {}
                 )
+                child_name = getattr(card, "death_spawn_character", None)
+                child_id = catalog.name_to_id.get(str(child_name), 0)
+                if child_id > 0:
+                    # Exact typed identity is mandatory. Internal-only child
+                    # names absent from this catalog remain all-zero/fail closed.
+                    death_spawn_count[card_id] = int(
+                        getattr(card, "death_spawn_count", None) or 1
+                    )
+                    death_spawn_card_id[card_id] = child_id
+                    death_spawn_kind[card_id] = ordinary_kind[child_id]
+                    death_spawn_hp[card_id] = catalog.hitpoints[child_id]
+                    death_spawn_radius_units[card_id] = round(
+                        float(getattr(card, "death_spawn_radius", 0.0) or 0.0)
+                        * 1_000.0
+                    )
+                    death_spawn_deploy_ticks[card_id] = (
+                        int(getattr(card, "death_spawn_deploy_time", 0) or 0) + 49
+                    ) // 50
                 projectile = character.get("projectileData") or {}
                 spell_projectile_data = raw.get("projectileData") or {}
                 if projectile:
@@ -293,6 +334,13 @@ class FastCardCatalog:
             is_air=is_air,
             summon_count=summon_count,
             summon_radius_units=summon_radius_units,
+            lifetime_ticks=lifetime_ticks,
+            death_spawn_count=death_spawn_count,
+            death_spawn_card_id=death_spawn_card_id,
+            death_spawn_kind=death_spawn_kind,
+            death_spawn_hp=death_spawn_hp,
+            death_spawn_radius_units=death_spawn_radius_units,
+            death_spawn_deploy_ticks=death_spawn_deploy_ticks,
             deploy_w_tile_margin=catalog.deploy_w_tile_margin.to(torch.int8),
             can_deploy_on_enemy_side=catalog.can_deploy_on_enemy_side.to(torch.bool),
             effect_kind=effect_kind,

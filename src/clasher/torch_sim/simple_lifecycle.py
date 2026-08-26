@@ -150,6 +150,7 @@ def step_fast_lifecycle_(
     requested_count = lifecycle.death_spawn_count.clamp(min=0).to(torch.int64)
     spawn_parent = (
         dead
+        & ~reserved
         & (requested_count > 0)
         & (lifecycle.death_spawn_card_id > 0)
         & (lifecycle.death_spawn_hp > 0)
@@ -217,23 +218,24 @@ def step_fast_lifecycle_(
 
     # Resolve parents before writing children, so a dead parent's own physical
     # slot may be deterministically recycled without retaining stale fields.
+    ordinary_dead = dead & ~reserved
     state.active.masked_fill_(dead, False)
     state.stable_id.masked_fill_(dead, 0)
-    state.kind.masked_fill_(dead, 0)
-    state.owner.masked_fill_(dead, 0)
-    state.card_id.masked_fill_(dead, 0)
-    state.x_units.masked_fill_(dead, 0)
-    state.y_units.masked_fill_(dead, 0)
-    state.hp.masked_fill_(dead, 0)
-    state.max_hp.masked_fill_(dead, 0)
     state.target_id.masked_fill_(dead, 0)
-    state.damage.masked_fill_(dead, 0)
-    state.range_units.masked_fill_(dead, 0)
-    state.sight_range_units.masked_fill_(dead, 0)
-    state.speed_units_per_tick.masked_fill_(dead, 0)
-    state.hit_cooldown_ticks.masked_fill_(dead, 0)
-    state.deploy_ticks.masked_fill_(dead, 0)
-    state.cooldown_ticks.masked_fill_(dead, 0)
+    state.kind.masked_fill_(ordinary_dead, 0)
+    state.owner.masked_fill_(ordinary_dead, 0)
+    state.card_id.masked_fill_(ordinary_dead, 0)
+    state.x_units.masked_fill_(ordinary_dead, 0)
+    state.y_units.masked_fill_(ordinary_dead, 0)
+    state.hp.masked_fill_(ordinary_dead, 0)
+    state.max_hp.masked_fill_(ordinary_dead, 0)
+    state.damage.masked_fill_(ordinary_dead, 0)
+    state.range_units.masked_fill_(ordinary_dead, 0)
+    state.sight_range_units.masked_fill_(ordinary_dead, 0)
+    state.speed_units_per_tick.masked_fill_(ordinary_dead, 0)
+    state.hit_cooldown_ticks.masked_fill_(ordinary_dead, 0)
+    state.deploy_ticks.masked_fill_(ordinary_dead, 0)
+    state.cooldown_ticks.masked_fill_(ordinary_dead, 0)
     for descriptor in fields(lifecycle):
         getattr(lifecycle, descriptor.name).masked_fill_(dead, 0)
 

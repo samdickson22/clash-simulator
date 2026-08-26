@@ -25,6 +25,7 @@ from .simple_attack_effects import (
 from .simple_catalog import FastCardCatalog
 from .simple_effects import FastEffectState, FastEffectStepResult, step_fast_effects
 from .simple_engine import FastTensorGym
+from .simple_lifecycle import FastLifecycleState, step_fast_lifecycle_
 from .simple_outcomes import (
     FAST_TOWER_SLOT_COUNT,
     FastMatchRules,
@@ -112,6 +113,7 @@ class SimpleGymRuntime:
             max_effects=max_effects,
             device=self.state.device,
         )
+        self.lifecycle = FastLifecycleState.empty_like(self.state)
         entity_shape = (self.state.batch_size, self.state.max_entities)
         self.entity_status_kind = torch.zeros(
             entity_shape, dtype=torch.int8, device=self.state.device
@@ -181,7 +183,7 @@ class SimpleGymRuntime:
 
     @property
     def batch_size(self) -> int:
-        return self.state.batch_size
+        return int(self.state.batch_size)
 
     def _phase_multiplier(self) -> torch.Tensor:
         multiplier = torch.ones(
@@ -228,6 +230,51 @@ class SimpleGymRuntime:
     def observe(self) -> SimpleProjectedObservation:
         self._refresh_policy_state()
         return self.projector.project(self._legal_action_mask())
+
+    def _initialize_lifecycle_(self, mask: torch.Tensor) -> None:
+        """Install card-indexed lifecycle payloads on newly occupied slots."""
+
+        catalog = self.action_kernel.catalog
+        safe_card = self.state.card_id.clamp(0, catalog.size - 1)
+        known = (self.state.card_id > 0) & (self.state.card_id < catalog.size)
+        selected = mask & known
+
+        def write(field: torch.Tensor, table: torch.Tensor) -> None:
+            field.copy_(torch.where(selected, table[safe_card], field))
+
+        write(self.lifecycle.lifetime_ticks, catalog.lifetime_ticks)
+        write(self.lifecycle.death_spawn_count, catalog.death_spawn_count)
+        write(self.lifecycle.death_spawn_card_id, catalog.death_spawn_card_id)
+        write(self.lifecycle.death_spawn_kind, catalog.death_spawn_kind)
+        write(self.lifecycle.death_spawn_hp, catalog.death_spawn_hp)
+        write(
+            self.lifecycle.death_spawn_radius_units,
+            catalog.death_spawn_radius_units,
+        )
+        write(
+            self.lifecycle.death_spawn_deploy_ticks,
+            catalog.death_spawn_deploy_ticks,
+        )
+
+    def _initialize_spawned_combat_(self, mask: torch.Tensor) -> None:
+        """Fill ordinary combat planes for data-resolved death-spawn children."""
+
+        catalog = self.action_kernel.catalog
+        safe_card = self.state.card_id.clamp(0, catalog.size - 1)
+        known = (self.state.card_id > 0) & (self.state.card_id < catalog.size)
+        selected = mask & known
+
+        def write(field: torch.Tensor, table: torch.Tensor) -> None:
+            field.copy_(torch.where(selected, table[safe_card], field))
+
+        write(self.state.kind, catalog.kind)
+        write(self.state.hp, catalog.hitpoints)
+        write(self.state.max_hp, catalog.hitpoints)
+        write(self.state.damage, catalog.damage)
+        write(self.state.range_units, catalog.range_units)
+        write(self.state.sight_range_units, catalog.sight_range_units)
+        write(self.state.speed_units_per_tick, catalog.speed_units_per_tick)
+        write(self.state.hit_cooldown_ticks, catalog.hit_cooldown_ticks)
 
     def _legal_action_mask(self) -> torch.Tensor:
         mask = self.action_kernel.legal_action_mask(self.action_state)
@@ -322,6 +369,7 @@ class SimpleGymRuntime:
             self.action_state, action_ids, legal_mask=legal_mask
         )
         deployed = self.combat.deploy_many_once(ingress.requests)
+        self._initialize_lifecycle_(self.combat.spawned_mask)
 
         combat = self.combat.step_tick(disabled=self.entity_status_ticks > 0)
         commands = self._effect_commands(ingress, combat.attack_ready)
@@ -369,7 +417,21 @@ class SimpleGymRuntime:
             self.entity_status_kind,
             self.entity_status_ticks,
             consume_source_id=self.effect_consume_source_id,
+            cleanup_dead=False,
         )
+        lifecycle_result = step_fast_lifecycle_(
+            self.state,
+            self.lifecycle,
+            reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+        )
+        self.entity_status_kind.masked_fill_(
+            lifecycle_result.resolved_parent_mask, 0
+        )
+        self.entity_status_ticks.masked_fill_(
+            lifecycle_result.resolved_parent_mask, 0
+        )
+        self._initialize_spawned_combat_(lifecycle_result.spawned_mask)
+        self._initialize_lifecycle_(lifecycle_result.spawned_mask)
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())
