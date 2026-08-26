@@ -26,6 +26,11 @@ class FastCardCatalog:
     sight_range_units: torch.Tensor
     speed_units_per_tick: torch.Tensor
     hit_cooldown_ticks: torch.Tensor
+    elixir_cost: torch.Tensor
+    deploy_ticks: torch.Tensor
+    collision_radius_units: torch.Tensor
+    deploy_w_tile_margin: torch.Tensor
+    can_deploy_on_enemy_side: torch.Tensor
 
     @classmethod
     def from_tensor_catalog(cls, catalog: TensorCardCatalog) -> FastCardCatalog:
@@ -36,6 +41,12 @@ class FastCardCatalog:
             rounding_mode="floor",
         ).clamp(min=1)
         cooldown[0] = 0
+        deploy_ticks = torch.div(
+            catalog.deploy_time_ms.to(torch.int32) + 49,
+            50,
+            rounding_mode="floor",
+        ).clamp(min=0)
+        deploy_ticks[0] = 0
         ordinary_kind = torch.full_like(catalog.kind, -1, dtype=torch.int8)
         ordinary_kind = torch.where(
             (catalog.kind == int(CardKindOpcode.TROOP))
@@ -57,6 +68,11 @@ class FastCardCatalog:
             sight_range_units=catalog.sight_range_units.to(torch.int32),
             speed_units_per_tick=catalog.speed_units_per_tick.to(torch.int32),
             hit_cooldown_ticks=cooldown,
+            elixir_cost=catalog.elixir.to(torch.float32),
+            deploy_ticks=deploy_ticks,
+            collision_radius_units=catalog.collision_radius_units.to(torch.int32),
+            deploy_w_tile_margin=catalog.deploy_w_tile_margin.to(torch.int8),
+            can_deploy_on_enemy_side=catalog.can_deploy_on_enemy_side.to(torch.bool),
         )
 
     @property
