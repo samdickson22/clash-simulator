@@ -55,6 +55,10 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
     assert _root_support(catalog, "BattleRam")
     assert _root_support(catalog, "LavaHound")
     assert _root_support(catalog, "GoblinBarrel")
+    for name in ("BattleRam", "LavaHound", "GoblinBarrel"):
+        card_id = catalog.cards.name_to_id[name]
+        assert bool(catalog.public_card_mask[card_id])
+        assert bool(catalog.fast_cards.training_supported[card_id])
     for name in (
         "Balloon",
         "BarbarianBarrel",
@@ -78,6 +82,16 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
     assert int(catalog.radius_units[pups_row]) == 2_500
     assert int(catalog.trigger[barrel_row]) == int(FastSpawnTrigger.PROJECTILE_IMPACT)
     assert int(catalog.count[barrel_row]) == 3
+    assert int(
+        catalog.fast_cards.death_spawn_card_id[catalog.cards.name_to_id["BattleRam"]]
+    ) == int(catalog.child_card_id[ram_row])
+    assert int(
+        catalog.fast_cards.death_spawn_card_id[catalog.cards.name_to_id["LavaHound"]]
+    ) == int(catalog.child_card_id[pups_row])
+    assert (
+        int(catalog.impact_blueprint_by_card[catalog.cards.name_to_id["GoblinBarrel"]])
+        == barrel_row
+    )
 
     expected_stats = {
         ram_row: ("Barbarian", 691.0, 192.0),

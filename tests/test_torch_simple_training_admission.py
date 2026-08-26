@@ -102,5 +102,7 @@ def test_loader_spell_overlay_does_not_replace_mega_knight_attack() -> None:
     assert float(catalog.effect_damage[mega_knight]) == float(
         tensor.damage[mega_knight]
     )
-    assert int(catalog.effect_radius_units[mega_knight]) == 0
+    # The root MegaKnightAppear payload must not replace ordinary attacks, but
+    # the normal melee hit still carries its serialized target-centered splash.
+    assert int(catalog.effect_radius_units[mega_knight]) == 1_300
     assert bool(catalog.training_supported[mega_knight])

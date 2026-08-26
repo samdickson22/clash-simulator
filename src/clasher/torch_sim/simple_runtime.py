@@ -10,6 +10,7 @@ entities, or the retained resident verifier.
 from __future__ import annotations
 
 from dataclasses import dataclass, fields
+from typing import Any
 
 import torch
 
@@ -25,7 +26,11 @@ from .simple_attack_effects import (
 from .simple_catalog import FastCardCatalog
 from .simple_effects import FastEffectState, FastEffectStepResult, step_fast_effects
 from .simple_engine import FastTensorGym
-from .simple_lifecycle import FastLifecycleState, step_fast_lifecycle_
+from .simple_lifecycle import (
+    FastLifecycleState,
+    FastLifecycleStepResult,
+    step_fast_lifecycle_,
+)
 from .simple_modifiers import (
     FastChargeParameters,
     FastModifierState,
@@ -45,6 +50,12 @@ from .simple_projection import (
     SimpleProjectionInputs,
     SimpleTensorProjector,
 )
+from .simple_spawn_blueprints import (
+    FastSpawnAllocationResult,
+    FastSpawnBlueprintCatalog,
+    allocate_fast_spawns_,
+    impact_spawn_commands,
+)
 from .simple_state import FastGymState
 
 
@@ -61,6 +72,8 @@ class SimpleGymRuntimeStep:
     committed: torch.Tensor
     effect_allocation: FastEffectAllocationResult
     effects: FastEffectStepResult
+    lifecycle: FastLifecycleStepResult
+    spawn_allocation: FastSpawnAllocationResult | None
 
 
 class SimpleGymRuntime:
@@ -83,6 +96,7 @@ class SimpleGymRuntime:
         tick_seconds: float = 0.05,
         double_elixir_tick: int | None = None,
         triple_elixir_tick: int | None = None,
+        spawn_blueprints: FastSpawnBlueprintCatalog | None = None,
     ) -> None:
         if deck_ids.ndim != 3 or tuple(deck_ids.shape[1:]) != (2, 8):
             raise ValueError("deck_ids must have shape [batch, 2, 8]")
@@ -96,6 +110,44 @@ class SimpleGymRuntime:
             raise ValueError("double_elixir_tick must be non-negative")
         if triple_elixir_tick is not None and triple_elixir_tick < 0:
             raise ValueError("triple_elixir_tick must be non-negative")
+        if spawn_blueprints is not None:
+            if spawn_blueprints.fast_cards is not catalog:
+                raise ValueError(
+                    "spawn_blueprints must own the supplied expanded fast catalog"
+                )
+            if spawn_blueprints.device != catalog.device:
+                raise ValueError("spawn blueprints and catalog must share a device")
+            safe_deck = deck_ids.clamp(0, catalog.size - 1)
+            public_deck = (
+                (deck_ids >= 0)
+                & (deck_ids < catalog.size)
+                & spawn_blueprints.public_card_mask[safe_deck]
+            )
+            if not bool(public_deck.all()):
+                raise ValueError("deck_ids may contain only public catalog rows")
+        if entity_token_lookup.ndim != 2 or entity_token_lookup.shape[1] < catalog.size:
+            raise ValueError("entity_token_lookup must cover every catalog row")
+        if hand_token_lookup.ndim != 1 or hand_token_lookup.shape[0] < catalog.size:
+            raise ValueError("hand_token_lookup must cover every catalog row")
+        if spawn_blueprints is not None:
+            synthetic = ~spawn_blueprints.public_card_mask
+            if bool((hand_token_lookup[: catalog.size][synthetic] != 0).any()):
+                raise ValueError("synthetic child rows must not have hand tokens")
+            runtime_blueprint = (
+                spawn_blueprints.blueprint_supported
+                & (
+                    spawn_blueprints.root_payload_supported[
+                        spawn_blueprints.root_card_id
+                    ]
+                )
+            )
+            child = spawn_blueprints.child_card_id[runtime_blueprint]
+            child_kind = catalog.kind[child].to(torch.int64)
+            body_token = entity_token_lookup[child_kind, child]
+            if bool((body_token <= 0).any()):
+                raise ValueError(
+                    "every runtime-supported synthetic child needs a typed entity token"
+                )
 
         self.state = FastGymState.empty(
             int(deck_ids.shape[0]),
@@ -141,6 +193,7 @@ class SimpleGymRuntime:
         self.tick_seconds = float(tick_seconds)
         self.double_elixir_tick = double_elixir_tick
         self.triple_elixir_tick = triple_elixir_tick
+        self.spawn_blueprints = spawn_blueprints
 
         batch = self.state.batch_size
         device = self.state.device
@@ -198,7 +251,7 @@ class SimpleGymRuntime:
         return int(self.state.batch_size)
 
     @staticmethod
-    def _tensor_fields(value: object) -> dict[str, torch.Tensor]:
+    def _tensor_fields(value: Any) -> dict[str, torch.Tensor]:
         """Clone batch-leading tensor fields without retaining object graphs."""
 
         return {
@@ -282,6 +335,15 @@ class SimpleGymRuntime:
                 raise ValueError("deck_ids must use the runtime device")
             if deck_ids.dtype != torch.int64:
                 raise ValueError("deck_ids must be int64")
+            if self.spawn_blueprints is not None:
+                safe_deck = deck_ids.clamp(0, self.action_kernel.catalog.size - 1)
+                public_deck = (
+                    (deck_ids >= 0)
+                    & (deck_ids < self.action_kernel.catalog.size)
+                    & self.spawn_blueprints.public_card_mask[safe_deck]
+                )
+                if not bool(public_deck.all()):
+                    raise ValueError("deck_ids may contain only public catalog rows")
 
         objects = {
             "state": self.state,
@@ -467,12 +529,24 @@ class SimpleGymRuntime:
         spell = (self.action_kernel.catalog.kind[safe_card] < 0) & (
             self.action_kernel.catalog.effect_kind[safe_card] >= 0
         )
-        enough_deploy_slots = free_deploy_slots[:, None, None] >= (
-            self.action_kernel.catalog.summon_count[safe_card].to(torch.int64)
+        required_slots = self.action_kernel.catalog.summon_count[safe_card].to(
+            torch.int64
         )
+        if self.spawn_blueprints is not None:
+            impact_row = self.spawn_blueprints.impact_blueprint_by_card[safe_card]
+            has_impact_spawn = impact_row >= 0
+            impact_count = self.spawn_blueprints.count[
+                impact_row.clamp(0, self.spawn_blueprints.blueprint_count - 1)
+            ].to(torch.int64)
+            required_slots = torch.where(
+                has_impact_spawn,
+                impact_count,
+                required_slots,
+            )
+        enough_deploy_slots = free_deploy_slots[:, None, None] >= required_slots
         capacity = torch.where(
             spell,
-            has_effect_slot[:, None, None],
+            has_effect_slot[:, None, None] & enough_deploy_slots,
             enough_deploy_slots,
         )
         placement_capacity = (
@@ -643,6 +717,21 @@ class SimpleGymRuntime:
         self._initialize_spawned_combat_(lifecycle_result.spawned_mask)
         self._initialize_lifecycle_(lifecycle_result.spawned_mask)
         self._initialize_modifiers_(lifecycle_result.spawned_mask)
+        spawn_allocation: FastSpawnAllocationResult | None = None
+        if self.spawn_blueprints is not None:
+            spawn_commands = impact_spawn_commands(
+                self.spawn_blueprints,
+                self.effects,
+                effect_result.impacted,
+            )
+            spawn_allocation = allocate_fast_spawns_(
+                self.state,
+                self.action_kernel.catalog,
+                spawn_commands,
+                reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+            )
+            self._initialize_lifecycle_(spawn_allocation.spawned_mask)
+            self._initialize_modifiers_(spawn_allocation.spawned_mask)
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())
@@ -668,6 +757,8 @@ class SimpleGymRuntime:
             committed=combat.committed,
             effect_allocation=allocation,
             effects=effect_result,
+            lifecycle=lifecycle_result,
+            spawn_allocation=spawn_allocation,
         )
 
 

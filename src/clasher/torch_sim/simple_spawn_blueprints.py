@@ -31,6 +31,7 @@ from clasher.mechanics.shared.spawner import PeriodicSpawner
 
 from .catalog import TensorCardCatalog
 from .simple_catalog import FastCardCatalog
+from .simple_effects import FastEffectState
 from .simple_state import FastGymState
 
 
@@ -335,6 +336,8 @@ class FastSpawnBlueprintCatalog:
     blueprint_supported: torch.Tensor
     root_payload_required: torch.Tensor
     root_payload_supported: torch.Tensor
+    impact_blueprint_by_card: torch.Tensor
+    public_card_mask: torch.Tensor
 
     @property
     def blueprint_count(self) -> int:
@@ -409,6 +412,14 @@ class FastSpawnBlueprintCatalog:
             device=cards.device,
         )
         root_supported = torch.zeros_like(root_required)
+        public_card_mask = torch.zeros_like(root_required)
+        public_card_mask[
+            torch.tensor(
+                [cards.name_to_id[name] for name in roots],
+                dtype=torch.int64,
+                device=cards.device,
+            )
+        ] = True
         root_rows: dict[int, list[int]] = {}
         for row, requirement in enumerate(requirements):
             root_id = cards.name_to_id[requirement.root_name]
@@ -416,6 +427,40 @@ class FastSpawnBlueprintCatalog:
             root_rows.setdefault(root_id, []).append(row)
         for root_id, operation_rows in root_rows.items():
             root_supported[root_id] = all(supported[row] for row in operation_rows)
+
+        impact_by_card = torch.full(
+            (len(cards.names),), -1, dtype=torch.int64, device=cards.device
+        )
+        for root_id, operation_rows in root_rows.items():
+            if not bool(root_supported[root_id]):
+                continue
+            for row in operation_rows:
+                requirement = requirements[row]
+                child_id = child_ids[row]
+                if requirement.trigger == FastSpawnTrigger.DEATH:
+                    fast_cards.death_spawn_count[root_id] = requirement.count
+                    fast_cards.death_spawn_card_id[root_id] = child_id
+                    fast_cards.death_spawn_kind[root_id] = fast_cards.kind[child_id]
+                    fast_cards.death_spawn_hp[root_id] = fast_cards.hitpoints[child_id]
+                    fast_cards.death_spawn_radius_units[root_id] = (
+                        requirement.radius_units
+                    )
+                    fast_cards.death_spawn_deploy_ticks[root_id] = (
+                        requirement.deploy_ticks
+                    )
+                elif requirement.trigger == FastSpawnTrigger.PROJECTILE_IMPACT:
+                    impact_by_card[root_id] = row
+
+        # Public cards with defining spawn payloads are admitted iff their
+        # entire reachable payload shape is one of the deliberately bounded
+        # runtime triggers above. Internal child rows are never hand-facing.
+        fast_cards.training_supported.copy_(
+            torch.where(
+                root_required,
+                root_supported,
+                fast_cards.training_supported,
+            )
+        )
 
         return cls(
             device=cards.device,
@@ -447,6 +492,8 @@ class FastSpawnBlueprintCatalog:
             blueprint_supported=tensor(supported, torch.bool),
             root_payload_required=root_required,
             root_payload_supported=root_supported,
+            impact_blueprint_by_card=impact_by_card,
+            public_card_mask=public_card_mask,
         )
 
 
@@ -471,6 +518,46 @@ class FastSpawnAllocationResult:
     capacity_rejected: torch.Tensor
     spawned_mask: torch.Tensor
     source_command: torch.Tensor
+
+
+def impact_spawn_commands(
+    catalog: FastSpawnBlueprintCatalog,
+    effects: FastEffectState,
+    impacted: torch.Tensor,
+) -> FastSpawnCommands:
+    """Decode supported projectile impacts into fixed-shape spawn commands."""
+
+    expected = (effects.batch_size, effects.max_effects)
+    if tuple(impacted.shape) != expected:
+        raise ValueError("impacted must have shape [batch, effects]")
+    if impacted.device != catalog.device or impacted.dtype != torch.bool:
+        raise ValueError("impacted must be bool on the blueprint device")
+    if effects.device != catalog.device:
+        raise ValueError("effects and blueprints must use the same device")
+
+    source_card = effects.source_card_id
+    known_source = (source_card > 0) & (source_card < len(catalog.cards.names))
+    safe_source = source_card.clamp(0, len(catalog.cards.names) - 1)
+    blueprint = catalog.impact_blueprint_by_card[safe_source]
+    has_blueprint = known_source & (blueprint >= 0)
+    safe_blueprint = blueprint.clamp(0, max(0, catalog.blueprint_count - 1))
+    child = catalog.child_card_id[safe_blueprint]
+    raw_radius = catalog.radius_units[safe_blueprint]
+    child_radius = catalog.fast_cards.collision_radius_units[
+        child.clamp(0, catalog.fast_cards.size - 1)
+    ]
+    return FastSpawnCommands(
+        ready=impacted & has_blueprint,
+        owner=effects.source_owner,
+        child_card_id=child,
+        x_units=effects.x_units,
+        y_units=effects.y_units,
+        count=catalog.count[safe_blueprint].to(torch.int32),
+        radius_units=torch.where(raw_radius > 0, raw_radius, child_radius).to(
+            torch.int32
+        ),
+        deploy_ticks=catalog.deploy_ticks[safe_blueprint],
+    )
 
 
 def allocate_fast_spawns_(
@@ -596,4 +683,5 @@ __all__ = [
     "FastSpawnCommands",
     "FastSpawnTrigger",
     "allocate_fast_spawns_",
+    "impact_spawn_commands",
 ]
