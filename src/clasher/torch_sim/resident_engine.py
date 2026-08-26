@@ -901,6 +901,10 @@ class TensorResidentEngine:
     ) -> TensorResidentEngine:
         if not battles:
             raise ValueError("at least one battle is required")
+        resolved_device = torch.device(device)
+        if resolved_device.type == "cuda" and resolved_device.index is None:
+            resolved_device = torch.device("cuda", torch.cuda.current_device())
+        device = resolved_device
         names = {
             str(name)
             for battle in battles
