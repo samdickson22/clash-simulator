@@ -400,7 +400,12 @@ class FastSpawnBlueprintCatalog:
             trigger_supported = requirement.trigger in {
                 FastSpawnTrigger.DEATH,
                 FastSpawnTrigger.PROJECTILE_IMPACT,
-            }
+            } or (
+                requirement.trigger == FastSpawnTrigger.PERIODIC
+                and requirement.first_delay_ticks >= 0
+                and requirement.interval_ticks > 0
+                and (requirement.max_waves == -1 or requirement.max_waves > 0)
+            )
             child_ids.append(child_id)
             supported.append(
                 trigger_supported and child_supported and requirement.count > 0

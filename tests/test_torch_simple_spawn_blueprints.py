@@ -55,7 +55,13 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
     assert _root_support(catalog, "BattleRam")
     assert _root_support(catalog, "LavaHound")
     assert _root_support(catalog, "GoblinBarrel")
-    for name in ("BattleRam", "LavaHound", "GoblinBarrel"):
+    for name in (
+        "BattleRam",
+        "LavaHound",
+        "GoblinBarrel",
+        "NightWitch",
+        "Tombstone",
+    ):
         card_id = catalog.cards.name_to_id[name]
         assert bool(catalog.public_card_mask[card_id])
         assert bool(catalog.fast_cards.training_supported[card_id])
@@ -65,9 +71,7 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
         "BombTower",
         "Golem",
         "Lumberjack",
-        "NightWitch",
         "SkeletonBarrel",
-        "Tombstone",
     ):
         assert bool(catalog.root_payload_required[catalog.cards.name_to_id[name]])
         assert not _root_support(catalog, name)

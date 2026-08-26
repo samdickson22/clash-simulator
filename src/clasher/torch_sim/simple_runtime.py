@@ -50,6 +50,12 @@ from .simple_outcomes import (
     crown_tower_hp,
     initialize_crown_towers_,
 )
+from .simple_periodic_spawn import (
+    FastPeriodicSpawnCatalog,
+    FastPeriodicSpawnCommands,
+    FastPeriodicSpawnState,
+    step_periodic_spawns_,
+)
 from .simple_projection import (
     SimpleProjectedObservation,
     SimpleProjectionInputs,
@@ -58,6 +64,7 @@ from .simple_projection import (
 from .simple_spawn_blueprints import (
     FastSpawnAllocationResult,
     FastSpawnBlueprintCatalog,
+    FastSpawnCommands,
     allocate_fast_spawns_,
     impact_spawn_commands,
 )
@@ -79,6 +86,7 @@ class SimpleGymRuntimeStep:
     effects: FastEffectStepResult
     lifecycle: FastLifecycleStepResult
     spawn_allocation: FastSpawnAllocationResult | None
+    periodic_spawn_allocation: FastSpawnAllocationResult | None
 
 
 class SimpleGymRuntime:
@@ -187,6 +195,20 @@ class SimpleGymRuntime:
             max_entities=self.state.max_entities,
             device=self.state.device,
         )
+        self.periodic_catalog = (
+            FastPeriodicSpawnCatalog.from_spawn_blueprints(spawn_blueprints)
+            if spawn_blueprints is not None
+            else None
+        )
+        self.periodic_spawns = (
+            FastPeriodicSpawnState.empty(
+                self.state.batch_size,
+                self.state.max_entities,
+                device=self.state.device,
+            )
+            if self.periodic_catalog is not None
+            else None
+        )
         entity_shape = (self.state.batch_size, self.state.max_entities)
         self.entity_status_kind = torch.zeros(
             entity_shape, dtype=torch.int8, device=self.state.device
@@ -278,7 +300,7 @@ class SimpleGymRuntime:
         tensor mutations and do not rebuild the runtime, catalog, or projector.
         """
 
-        return {
+        templates = {
             "state": self._tensor_fields(self.state),
             "action": self._tensor_fields(self.action_state),
             "effects": self._tensor_fields(self.effects),
@@ -306,6 +328,9 @@ class SimpleGymRuntime:
                 "combat_target_unavailable": self.combat._target_unavailable.clone(),
             },
         }
+        if self.periodic_spawns is not None:
+            templates["periodic_spawns"] = self._tensor_fields(self.periodic_spawns)
+        return templates
 
     @staticmethod
     def _restore_rows_(
@@ -365,6 +390,8 @@ class SimpleGymRuntime:
             "damage_ramp": self.damage_ramp,
             "outcomes": self.outcomes,
         }
+        if self.periodic_spawns is not None:
+            objects["periodic_spawns"] = self.periodic_spawns
         for group, owner in objects.items():
             for name, template in self._initial_templates[group].items():
                 self._restore_rows_(getattr(owner, name), template, reset_mask)
@@ -562,6 +589,24 @@ class SimpleGymRuntime:
         write(self.state.sight_range_units, catalog.sight_range_units)
         write(self.state.speed_units_per_tick, catalog.speed_units_per_tick)
         write(self.state.hit_cooldown_ticks, catalog.hit_cooldown_ticks)
+
+    def _periodic_materialization_commands(
+        self,
+        commands: FastPeriodicSpawnCommands,
+    ) -> FastSpawnCommands:
+        """Attach current source transforms to stable-ordered wave triggers."""
+
+        source_slot = commands.source_slot.clamp(0, self.state.max_entities - 1)
+        return FastSpawnCommands(
+            ready=commands.ready,
+            owner=self.state.owner.gather(1, source_slot),
+            child_card_id=commands.child_card_id,
+            x_units=self.state.x_units.gather(1, source_slot),
+            y_units=self.state.y_units.gather(1, source_slot),
+            count=commands.count,
+            radius_units=commands.radius_units,
+            deploy_ticks=commands.deploy_ticks,
+        )
 
     def _legal_action_mask(self) -> torch.Tensor:
         mask = self.action_kernel.legal_action_mask(self.action_state)
@@ -800,6 +845,30 @@ class SimpleGymRuntime:
             self._initialize_lifecycle_(spawn_allocation.spawned_mask)
             self._initialize_modifiers_(spawn_allocation.spawned_mask)
             self._clear_damage_ramp_(spawn_allocation.spawned_mask)
+        periodic_spawn_allocation: FastSpawnAllocationResult | None = None
+        if self.periodic_catalog is not None and self.periodic_spawns is not None:
+            periodic_commands = step_periodic_spawns_(
+                self.periodic_catalog,
+                self.periodic_spawns,
+                tick=self.state.tick,
+                active=self.state.active,
+                source_stable_id=self.state.stable_id,
+                source_card_id=self.state.card_id,
+                stunned=self.entity_status_ticks > 0,
+            )
+            periodic_spawn_allocation = allocate_fast_spawns_(
+                self.state,
+                self.action_kernel.catalog,
+                self._periodic_materialization_commands(periodic_commands),
+                reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+            )
+            periodic_spawned = periodic_spawn_allocation.spawned_mask
+            self.entity_status_kind.masked_fill_(periodic_spawned, 0)
+            self.entity_status_ticks.masked_fill_(periodic_spawned, 0)
+            self._initialize_spawned_combat_(periodic_spawned)
+            self._initialize_lifecycle_(periodic_spawned)
+            self._initialize_modifiers_(periodic_spawned)
+            self._clear_damage_ramp_(periodic_spawned)
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())
@@ -827,6 +896,7 @@ class SimpleGymRuntime:
             effects=effect_result,
             lifecycle=lifecycle_result,
             spawn_allocation=spawn_allocation,
+            periodic_spawn_allocation=periodic_spawn_allocation,
         )
 
 

@@ -92,10 +92,11 @@ class FastPeriodicSpawnCatalog:
         )
         max_waves = blueprints.max_waves.to(torch.int32)
         interval = blueprints.interval_ticks.to(torch.int32)
-        valid_waves = max_waves >= FAST_PERIODIC_UNLIMITED
-        valid_cadence = (max_waves == 0) | (interval > 0)
+        valid_waves = (max_waves == FAST_PERIODIC_UNLIMITED) | (max_waves > 0)
+        valid_cadence = interval > 0
         row_supported = (
             periodic
+            & blueprints.blueprint_supported
             & known_child
             & child_is_entity
             & (blueprints.count > 0)
