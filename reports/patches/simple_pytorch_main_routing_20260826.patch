@@ -1,0 +1,4117 @@
+diff --git a/reports/simple_pytorch_main_isolated_integration_20260826.md b/reports/simple_pytorch_main_isolated_integration_20260826.md
+new file mode 100644
+index 00000000..d6c4868d
+--- /dev/null
++++ b/reports/simple_pytorch_main_isolated_integration_20260826.md
+@@ -0,0 +1,127 @@
++# Simple PyTorch main-stack isolated integration (2026-08-26)
++
++Status: isolated review candidate only. Nothing in `/Users/sam/Desktop/code/clasher`
++was modified, committed, stashed, or reset.
++
++## Provenance
++
++- Isolated worktree: `/private/tmp/clasher-simple-main-integration.Vxp0Xq`
++- Main committed base: `20cc861b23937ec884fc22335c62d5b03a027f51`
++- Simple Gym source tip: `5af7ec7ce22db6df95fc76cd57b67567f8ba8620`
++- Simple Gym source tree: `src/clasher/torch_sim` tree
++  `fd28c39ee7f38558a5baab686cb865da394421cc`
++- Generic collector source blob: `75dbedbf3f966ebe95206919bd0c9aa0b50f7f24`
++- Supported-deck source blob: `96da8171849f47eb604b8a33d18f7d7e3d70b3d4`
++- Typed vocabulary SHA-256:
++  `960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704`
++
++The following current dirty-main dependency closure was overlaid byte-for-byte
++before integration edits:
++
++- `train_recurrent.py` `9881490e7f6d35eff776d8ca61051eb1c432f08a6946002f75dbfe050a8ac5c8`
++- `model.py` `a7ad78b2ab88205a06585aaeaa0414f5c97134929063cffe20a16107556243aa`
++- `structured_obs.py` `089db674c16dd2bfeb7a08f28ac5629befd095e604024f1f37e4a950a6f6b1ab`
++- `public_action_mask.py` `361695730ba9d16db17ebda7ef3f3a0f23e835d8acf6d107098bb5f89f638739`
++- `reward_model.py` `e81b39bea0107a83b63388d11cae68e6b832958013eea167662080504b155d73`
++- `selfplay_env.py` `3a81d6207e738c11794ec01e5b095f97a2e5e38e9a54a5846c198d351d2e004f`
++- `parallel_rollout.py` `acc97eeafa6ec0f2c65473d02358c853f4a169d0333a8216ad1c73ce36662c13`
++- `data.py` `82392818b00a1e7d0995801a94c1f19fb990273cb448beb5126d8cdf1aa21046`
++- `action_space.py` `48d5db4b53e2f16467ca3d6e92ece726d42c7cb6a64de704a5faf9d025fe3acf`
++- `deck_pool.py` `ea16ad0d900d3edf008737ca6d8e926b4ece02462c9e9a91e050d048a42a8d70`
++- `imitation_objective.py` `88507e9bfe6230387a8feb5153ae640429f4539cdd897fe87aa6ea95a872d4dd`
++- `card_semantics.py` `706522955f31fbed2ad6e88beb01c548d527742fe00db8a4b1b32163bcf615c4`
++- `causal_rehearsal.py` `75e3a71ac3d0f064c5bc6189c418b4bee9f7bb639515a1c619f377f7eb5d815d`
++- `causal_vision.py` `b2e523991591ce062a95ae2d1d482b6097308c0850c84a2bd4713da6c7ff7c44`
++- `defense_scenarios.py` `02bb23040eb3a43dc6c3e69654ec0badcf79a8405576ce3604afd208ae94778c`
++- `hierarchical_imitation.py` `8de4b550e1027c3295579b9540d184f2a99ad346652e5f23a9b943cc0bcffff3`
++- `public_observation.py` `274c137f62b8d75cdbf148b6e267592d385f91434621a46c2dfb5b5882cd06fa`
++- `strategy_bots.py` `146a1cc997038192795de8dff84ae1fe30c5c614bd0ad54bfcff496006213bc0`
++- `structured_memory.py` `c25222600af2c9cd368db0a1b6fcc72ed9b1298aa3a354049081fd7d937fb39c`
++
++`data.py` then received only the simple-branch cached Princess-tower data helper
++needed by `simple_standard.py`. `train_recurrent.py` then received the isolated
++routing patch described below.
++
++## Route implemented
++
++- New CLI backend: `--simulation-backend simple-pytorch`.
++- New supported-deck and typed-vocabulary artifact arguments.
++- Fresh-only admission: resume is rejected until exact resume metadata is gated.
++- `actor_workers=1`, self-play, standard horizon, exact public projection,
++  canonical lane globals, no legacy fast path, and no legacy deck/scenario
++  sampling are required.
++- The 494-token manifest is reconstructed by explicit numeric token IDs.
++- Hero and Evolution variants are required as separate typed keys. Unknown
++  variants return no token; there is no base-family collapse.
++- Contextual card aliases plus serialized primary body names and blueprint
++  visible child names resolve all 66 public actions and every admitted runtime
++  troop/building body with zero unknown-token substitutions.
++- `SimplePublicMaskV2Adapter` is tensor-native and consumes actor tensors only.
++  It never reads the critic, simulator legal mask, or labels. Simulator
++  legality remains a separate tensor in the collector. The retained host
++  adapter is reference-only and exact trace comparisons gate the tensor path.
++- `SimpleTensorCollector` feeds an actual `ClasherPolicy`, preserves recurrent
++  hidden/cell state, converts to the existing `RolloutBatch`, and persists
++  explicit backend/domain/reward/artifact metadata in checkpoints.
++- Reward is fresh-only `objective-v1-gamma-v1`, with gamma persisted, absorbing
++  terminal potential, zero invalid-action penalty, and zero elixir-leak penalty.
++
++## Conflicts and resolutions
++
++- Textual merge conflicts: none. All tracked dirty-main overlays applied cleanly
++  with three-way `git apply`.
++- Initial import conflict: main committed HEAD lacked the current dirty training
++  dependency closure and the simple tower-data helper. The bounded closure above
++  makes all target imports succeed.
++- Initial typed lookup mismatch: 13 public action aliases and 25 troop-body
++  labels did not resolve by raw catalog name. Context-aware resolution reduced
++  this to zero action, troop, and building misses without using unknown IDs.
++- The four vocabulary-declared ambiguous normalized aliases (`clone`,
++  `lightning`, `royalrecruits`, `spiritempress`) fail closed unless the exact
++  typed stable key is supplied.
++
++## Verification
++
++Focused suite:
++
++```text
++12 passed, 2 skipped in 3.72s
++```
++
++Command covered the new backend tests, generic collector tests, and supported
++deck artifact tests. The two skips were expected local CUDA variants. The
++public-mask test is parametrized for CPU and CUDA and proves exact tensor/NumPy
++mask equality across four free-running decision boundaries; the CPU trace
++passed and the CUDA trace remains pending a CUDA host.
++
++One-update CPU smoke used one Gym row, two seats, one decision, and a 32-wide
++fresh policy. It completed one rollout, GAE/PPO update, and checkpoint save:
++
++```text
++simulation_backend=simple-pytorch
++tokens=494
++transitions=2
++collect_s=0.14 learn_s=0.12 tps=7.7
++```
++
++Checkpoint:
++
++- Path: `/private/tmp/clasher-simple-ppo-tensor-mask-smoke.Vxp0Xq/policy_v2_update_000001.pt`
++- SHA-256: `1ae784a96d510b1a7a3357c18f383b488e93f5d071785b6d18e65e81112ea1f4`
++- Backend metadata digest:
++  `b057b2169829618fdbe8a7af0eb18938e3e8a08da83e50f59ab91b071d704f65`
++- Reward digest:
++  `ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66`
++- Supported-deck artifact SHA-256:
++  `c93de9989841743b535fe5fde182abe19e1983c8f67a0a27d0c191ea9ccd212f`
++
++Static compile and Ruff checks pass for the new adapter, trainer route, and
++focused test.
++
++## Remaining gate
++
++This proves the isolated CPU training seam and tensor-native mask equivalence,
++not production CUDA performance. The CUDA-parametrized mask trace and the full
++CUDA rollout/throughput gate remain unexecuted on this host. Exact resume remains
++rejected rather than silently accepting incompatible backend/reward/domain
++metadata.
+diff --git a/src/clasher/data.py b/src/clasher/data.py
+index b5bb171f..aff8851f 100644
+--- a/src/clasher/data.py
++++ b/src/clasher/data.py
+@@ -1,6 +1,7 @@
+ from pathlib import Path
+ from typing import Dict, Any, Optional, List
+ from functools import lru_cache
++import copy
+ import json
+ 
+ from .card_types import CardDefinition, CardStatsCompat
+@@ -47,6 +48,39 @@ def _load_definition_snapshot(
+     return alias_card_map(card_definitions)
+ 
+ 
++@lru_cache(maxsize=4)
++def _load_princess_tower_character_snapshot(
++    data_file: str,
++    modified_ns: int,
++    file_size: int,
++) -> dict[str, Any]:
++    """Parse one revision's support-tower character payload once."""
++    del modified_ns, file_size
++    with open(data_file, "r") as source:
++        spells = json.load(source).get("items", {}).get("spells", [])
++    for entry in spells:
++        if entry.get("name") != "King_PrincessTowers":
++            continue
++        data = entry.get("statCharacterData")
++        if isinstance(data, dict):
++            return data
++        raise ValueError("King_PrincessTowers has no statCharacterData")
++    raise ValueError("King_PrincessTowers is missing from game data")
++
++
++def load_princess_tower_character_data(data_file: str | Path) -> dict[str, Any]:
++    """Return an isolated copy of cached immutable-revision support data."""
++    path = Path(data_file)
++    file_stat = path.stat()
++    return copy.deepcopy(
++        _load_princess_tower_character_snapshot(
++            str(path),
++            file_stat.st_mtime_ns,
++            file_stat.st_size,
++        )
++    )
++
++
+ class CardDataLoader:
+     def __init__(self, data_file: str | Path | None = None):
+         self.data_file = gamedata_path(data_file, must_exist=True)
+@@ -80,12 +114,28 @@ class CardDataLoader:
+         self._cards = cards
+         return cards
+ 
++    def clone_lazy(self) -> "CardDataLoader":
++        """Return an independent loader sharing only frozen card definitions."""
++
++        clone = object.__new__(CardDataLoader)
++        clone.data_file = self.data_file
++        clone._card_definitions = dict(self.load_card_definitions())
++        clone._cards = {}
++        return clone
++
+     def get_card(self, name: str) -> Optional[CardStatsCompat]:
+         """Get card stats by name using compatibility wrappers."""
+-        if not self._cards:
+-            self.load_cards()
+-        resolved_name = resolve_card_name(name, self._cards)
+-        return self._cards.get(resolved_name)
++        definitions = self.load_card_definitions()
++        resolved_name = resolve_card_name(name, definitions)
++        cached = self._cards.get(resolved_name)
++        if cached is not None:
++            return cached
++        definition = definitions.get(resolved_name)
++        if definition is None:
++            return None
++        card = CardStatsCompat.from_card_definition(definition)
++        self._cards[resolved_name] = card
++        return card
+ 
+     def get_card_definition(self, name: str) -> Optional[CardDefinition]:
+         """Get card definition by name."""
+diff --git a/src/clasher/rl/simple_pytorch_backend.py b/src/clasher/rl/simple_pytorch_backend.py
+new file mode 100644
+index 00000000..670599f4
+--- /dev/null
++++ b/src/clasher/rl/simple_pytorch_backend.py
+@@ -0,0 +1,958 @@
++"""Isolated training adapter for the practical dense PyTorch Gym.
++
++The simulator-facing legal mask and the actor-facing public mask are separate
++contracts.  This module builds the latter only from projected public tensors,
++adapts the recurrent policy without exposing simulator-private state, and
++serializes the device-resident collector into the existing PPO rollout shape.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import math
++from collections.abc import Mapping
++from dataclasses import dataclass
++from pathlib import Path
++from typing import Any, Final
++
++import numpy as np
++import torch
++
++from clasher.arena import TileGrid
++from clasher.card_aliases import resolve_card_name
++from clasher.data import CardDataLoader
++from clasher.spells import SPELL_REGISTRY
++from clasher.torch_sim.policy_validation import PUBLIC_ACTION_MASK_CONTRACT_V2
++from clasher.torch_sim.simple_reward_v2 import (
++    SIMPLE_REWARD_V2_CONTRACT_ID,
++    SimpleRewardV2Config,
++    simple_reward_v2_metadata,
++)
++from clasher.torch_sim.simple_rollout import SimpleGymRolloutBridge
++from clasher.torch_sim.simple_standard import (
++    STANDARD_TIEBREAK_TICK,
++    compile_standard_simple_setup,
++)
++
++from .common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
++from .model import ClasherPolicy, PolicyInputs
++from .public_action_mask import PublicActionMaskBuilder, PublicActionMaskInput
++from .simple_tensor_collector import (
++    SIMPLE_TENSOR_ACTOR_SEMANTICS_ID,
++    SIMPLE_TENSOR_BACKEND_ID,
++    SimplePublicActionMaskV2,
++    SimpleTensorCollector,
++    SimpleTensorDecisionBatch,
++    SimpleTensorMaskRequest,
++    SimpleTensorPolicyBoundary,
++    SimpleTensorPolicyDecision,
++)
++from .structured_obs import StructuredObservationBuilder
++
++SIMPLE_PYTORCH_BACKEND: Final = "simple-pytorch"
++SIMPLE_SUPPORTED_DECK_CONTRACT: Final = "clasher.simple_gym_supported_decks"
++CURRENT_CLIENT_VOCABULARY_SCHEMA: Final = (
++    "clasher.current_client.youtube_stable_vocabulary.v1"
++)
++DEFAULT_SIMPLE_SUPPORTED_DECKS: Final = Path(
++    "training_decks/simple_gym_supported_v1.json"
++)
++DEFAULT_SIMPLE_TOKEN_VOCABULARY: Final = Path(
++    "reports/current_client_youtube_stable_vocabulary_v1.json"
++)
++
++
++class SimplePytorchBackendError(RuntimeError):
++    """Raised before collection when an integration contract is incomplete."""
++
++
++def _sha256(raw: bytes) -> str:
++    return hashlib.sha256(raw).hexdigest()
++
++
++def _canonical_digest(value: Mapping[str, Any]) -> str:
++    return _sha256(
++        json.dumps(
++            value,
++            sort_keys=True,
++            separators=(",", ":"),
++            allow_nan=False,
++        ).encode("utf-8")
++    )
++
++
++def _read_json(path: str | Path) -> tuple[dict[str, Any], str]:
++    source = Path(path)
++    try:
++        raw = source.read_bytes()
++        payload = json.loads(raw)
++    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
++        raise SimplePytorchBackendError(f"cannot read {source}: {error}") from error
++    if not isinstance(payload, dict):
++        raise SimplePytorchBackendError(f"{source} must contain a JSON object")
++    return payload, _sha256(raw)
++
++
++@dataclass(frozen=True)
++class CurrentClientTypedVocabulary:
++    token_names: tuple[str, ...]
++    token_by_key: Mapping[str, int]
++    card_action_aliases: Mapping[str, str]
++    ambiguous_card_action_aliases: frozenset[str]
++    sha256: str
++
++    @staticmethod
++    def _normalize(label: str) -> str:
++        return "".join(character for character in label.lower() if character.isalnum())
++
++    def resolve(self, label: str, namespace: str) -> int:
++        direct = self.token_by_key.get(f"{namespace}:{label}")
++        if direct is not None:
++            return int(direct)
++        normalized = self._normalize(label)
++        if normalized in self.ambiguous_card_action_aliases:
++            return 0
++        candidates: list[str] = []
++        canonical = self.card_action_aliases.get(normalized)
++        if canonical is not None:
++            candidates.append(canonical)
++        for candidate in candidates:
++            token = self.token_by_key.get(f"{namespace}:{candidate}")
++            if token is not None:
++                return int(token)
++        return 0
++
++
++def load_current_client_typed_vocabulary(
++    path: str | Path = DEFAULT_SIMPLE_TOKEN_VOCABULARY,
++) -> CurrentClientTypedVocabulary:
++    payload, digest = _read_json(path)
++    if payload.get("schema") != CURRENT_CLIENT_VOCABULARY_SCHEMA:
++        raise SimplePytorchBackendError("current-client vocabulary schema mismatch")
++    counts = payload.get("counts")
++    entries = payload.get("entries")
++    aliases = payload.get("aliases")
++    if not isinstance(counts, dict) or not isinstance(entries, list):
++        raise SimplePytorchBackendError("current-client vocabulary is incomplete")
++    if not isinstance(aliases, list):
++        raise SimplePytorchBackendError("current-client aliases are missing")
++    count = counts.get("actor_tokens_including_reserved")
++    if not isinstance(count, int) or count < 2:
++        raise SimplePytorchBackendError("invalid actor token count")
++    names = [""] * count
++    names[0] = "<pad>"
++    names[1] = "<unknown>"
++    token_by_key: dict[str, int] = {names[0]: 0, names[1]: 1}
++    for row in entries:
++        if not isinstance(row, dict) or row.get("actor_token_id") is None:
++            continue
++        token = row.get("actor_token_id")
++        stable_key = row.get("stable_key")
++        if (
++            not isinstance(token, int)
++            or not 2 <= token < count
++            or not isinstance(stable_key, str)
++            or not stable_key
++            or names[token]
++        ):
++            raise SimplePytorchBackendError("invalid or duplicate actor token row")
++        names[token] = stable_key
++        token_by_key[stable_key] = token
++    if any(not name for name in names):
++        raise SimplePytorchBackendError("actor token IDs are not contiguous")
++    action_aliases: dict[str, str] = {}
++    ambiguous_aliases: set[str] = set()
++    for row in aliases:
++        if not isinstance(row, dict) or row.get("context") != "card_action":
++            continue
++        normalized = row.get("normalized_label")
++        target = row.get("target_stable_key")
++        if not isinstance(normalized, str) or not isinstance(target, str):
++            raise SimplePytorchBackendError("invalid card-action alias row")
++        namespace, separator, canonical = target.partition(":")
++        if not separator or namespace != "card_action" or not canonical:
++            raise SimplePytorchBackendError("card-action alias target is not typed")
++        if normalized in ambiguous_aliases:
++            continue
++        previous = action_aliases.setdefault(normalized, canonical)
++        if previous != canonical:
++            action_aliases.pop(normalized, None)
++            ambiguous_aliases.add(normalized)
++    # Variant identity is mechanics-bearing. Its absence is a hard contract
++    # failure; no base-family fallback is allowed here.
++    for section in ("evolution_variants", "hero_variants"):
++        rows = payload.get(section)
++        if not isinstance(rows, list):
++            raise SimplePytorchBackendError(f"{section} is missing")
++        for row in rows:
++            variant = row.get("variant") if isinstance(row, dict) else None
++            if not isinstance(variant, str):
++                raise SimplePytorchBackendError(f"invalid {section} row")
++            if f"card_action:{variant}" not in token_by_key:
++                raise SimplePytorchBackendError(
++                    f"typed variant is absent from actor vocabulary: {variant}"
++                )
++    return CurrentClientTypedVocabulary(
++        token_names=tuple(names),
++        token_by_key=token_by_key,
++        card_action_aliases=action_aliases,
++        ambiguous_card_action_aliases=frozenset(ambiguous_aliases),
++        sha256=digest,
++    )
++
++
++@dataclass(frozen=True)
++class SimpleSupportedDeckArtifact:
++    decks: tuple[tuple[str, ...], ...]
++    public_cards: tuple[str, ...]
++    sha256: str
++    support_profile_sha256: str
++
++
++def load_simple_supported_decks(
++    path: str | Path = DEFAULT_SIMPLE_SUPPORTED_DECKS,
++) -> SimpleSupportedDeckArtifact:
++    payload, digest = _read_json(path)
++    contract = payload.get("contract")
++    profile = payload.get("support_profile")
++    rows = payload.get("decks")
++    if payload.get("schema_version") != 1 or not isinstance(contract, dict):
++        raise SimplePytorchBackendError("supported-deck artifact schema mismatch")
++    if contract.get("name") != SIMPLE_SUPPORTED_DECK_CONTRACT:
++        raise SimplePytorchBackendError("supported-deck contract name mismatch")
++    if contract.get("canonical_lane_globals") is not True:
++        raise SimplePytorchBackendError("supported decks require canonical lanes")
++    if contract.get("public_action_mask_contract_version") != 2:
++        raise SimplePytorchBackendError("supported decks require public mask v2")
++    if not isinstance(profile, dict) or not isinstance(rows, list) or not rows:
++        raise SimplePytorchBackendError("supported-deck artifact is incomplete")
++    public_cards = profile.get("supported_public_cards")
++    profile_digest = profile.get("sha256")
++    if not isinstance(public_cards, list) or not isinstance(profile_digest, str):
++        raise SimplePytorchBackendError("supported-card profile is incomplete")
++    supported = set(public_cards)
++    decks: list[tuple[str, ...]] = []
++    for index, row in enumerate(rows):
++        cards = row.get("cards") if isinstance(row, dict) else None
++        if (
++            not isinstance(cards, list)
++            or len(cards) != 8
++            or len(set(cards)) != 8
++            or any(not isinstance(card, str) or card not in supported for card in cards)
++        ):
++            raise SimplePytorchBackendError(
++                f"supported-deck row {index} is invalid or out of profile"
++            )
++        decks.append(tuple(cards))
++    return SimpleSupportedDeckArtifact(
++        decks=tuple(decks),
++        public_cards=tuple(str(name) for name in public_cards),
++        sha256=digest,
++        support_profile_sha256=profile_digest,
++    )
++
++
++class ReferenceSimplePublicMaskV2Adapter:
++    """Host reference for trace-checking the tensor-native public mask."""
++
++    def __init__(self, builder: StructuredObservationBuilder) -> None:
++        self.builder = PublicActionMaskBuilder(builder)
++        self.semantics: Mapping[str, Any] = {
++            "schema": "clasher.simple-pytorch.public-mask-adapter.v1",
++            "contract_version": PUBLIC_ACTION_MASK_CONTRACT_V2,
++            "inputs": "projected-public-actor-only",
++            "uses_expert_labels": False,
++            "uses_privileged_critic": False,
++            "uses_simulator_legal_mask": False,
++            "canonical_lane_globals": True,
++            "token_names_sha256": _sha256(
++                "\0".join(builder.token_names).encode("utf-8")
++            ),
++        }
++
++    def __call__(self, request: SimpleTensorMaskRequest) -> SimplePublicActionMaskV2:
++        actor = request.observation.actor
++        entity_ids = actor.entity_ids.detach().cpu().numpy()
++        entity_features = actor.entity_features.detach().cpu().numpy()
++        entity_mask = actor.entity_mask.detach().cpu().numpy()
++        hand_ids = actor.hand_ids.detach().cpu().numpy()
++        global_features = actor.global_features.detach().cpu().numpy()
++        batch, seats = hand_ids.shape[:2]
++        rows: list[list[np.ndarray]] = []
++        for batch_index in range(batch):
++            seat_rows: list[np.ndarray] = []
++            for seat in range(seats):
++                visible = entity_mask[batch_index, seat]
++                source = PublicActionMaskInput(
++                    entity_ids=entity_ids[batch_index, seat],
++                    entity_features=entity_features[batch_index, seat],
++                    entity_mask=visible,
++                    hand_ids=hand_ids[batch_index, seat],
++                    global_features=global_features[batch_index, seat],
++                    entity_id_confidence=visible.astype(np.float32, copy=False),
++                    hand_id_confidence=np.ones(hand_ids.shape[-1], dtype=np.float32),
++                    global_feature_confidence=np.ones(
++                        global_features.shape[-1], dtype=np.float32
++                    ),
++                )
++                seat_rows.append(self.builder.build(source))
++            rows.append(seat_rows)
++        masks = torch.as_tensor(
++            np.asarray(rows, dtype=np.bool_),
++            dtype=torch.bool,
++            device=request.observation.legal_mask.device,
++        )
++        return SimplePublicActionMaskV2(
++            masks=masks,
++            semantics_id="public-action-mask-v2/actor-projection-v1",
++            semantics=self.semantics,
++        )
++
++
++class SimplePublicMaskV2Adapter:
++    """Tensor-native public-mask-v2 adapter over projected actor state.
++
++    Card semantics are compiled once from the authoritative public builder.
++    Runtime evaluation is fixed-shape Torch math and never consults labels,
++    critic tensors, or the simulator legality mask.
++    """
++
++    def __init__(self, builder: StructuredObservationBuilder) -> None:
++        self.builder = builder
++        token_count = len(builder.token_names)
++        definitions = builder.loader.load_card_definitions()
++        tile_grid = TileGrid()
++
++        valid = torch.zeros(token_count, dtype=torch.bool)
++        cost = torch.zeros(token_count, dtype=torch.float64)
++        is_spell = torch.zeros(token_count, dtype=torch.bool)
++        non_rolling_spell = torch.zeros(token_count, dtype=torch.bool)
++        is_building = torch.zeros(token_count, dtype=torch.bool)
++        enemy_side = torch.zeros(token_count, dtype=torch.bool)
++        margin = torch.zeros(token_count, dtype=torch.int64)
++        deploy_radius = torch.full((token_count,), 0.5, dtype=torch.float64)
++        building_half = torch.zeros(token_count, dtype=torch.float64)
++        blocker_radius = torch.as_tensor(
++            [float(value) * 3.0 for value in builder.card_stat_features[:, 12]],
++            dtype=torch.float64,
++        )
++        blocker_radius.clamp_(min=0.5)
++
++        for token in range(1, token_count):
++            card_name = builder.card_name_for_token_id(token)
++            if card_name is None:
++                continue
++            stats = builder.loader.get_card(card_name)
++            if stats is None:
++                continue
++            raw_cost = float(getattr(stats, "mana_cost", 0.0) or 0.0)
++            if not math.isfinite(raw_cost):
++                continue
++            resolved = resolve_card_name(card_name, definitions)
++            spell = resolved in SPELL_REGISTRY
++            spell_object = SPELL_REGISTRY.get(resolved) if spell else None
++            non_rolling = bool(
++                spell
++                and not tile_grid._requires_deploy_zone_spell(spell_object)
++                and not getattr(spell_object, "requires_walkable_target", False)
++            )
++            building = bool(
++                not spell
++                and str(getattr(stats, "card_type", "") or "").lower()
++                == "building"
++            )
++            radius = float(getattr(stats, "collision_radius", 0.5) or 0.5)
++            valid[token] = True
++            cost[token] = raw_cost
++            is_spell[token] = spell
++            non_rolling_spell[token] = non_rolling
++            is_building[token] = building
++            enemy_side[token] = bool(
++                not spell and getattr(stats, "can_deploy_on_enemy_side", False)
++            )
++            margin[token] = int(getattr(stats, "deploy_w_tile_margin", 0) or 0)
++            deploy_radius[token] = radius
++            if building:
++                building_half[token] = (
++                    max(1, math.ceil(max(0.0, radius) * 2.0) + 1) / 2.0
++                )
++
++        tile_x = torch.arange(NUM_TILES, dtype=torch.int64) % BOARD_WIDTH
++        tile_y = torch.arange(NUM_TILES, dtype=torch.int64) // BOARD_WIDTH
++        center_x = tile_x.to(torch.float64) + 0.5
++        center_y = tile_y.to(torch.float64) + 0.5
++        non_blocked = torch.ones(NUM_TILES, dtype=torch.bool)
++        for x, y in TileGrid.BLOCKED_TILES:
++            if 0 <= x < BOARD_WIDTH and 0 <= y < BOARD_HEIGHT:
++                non_blocked[y * BOARD_WIDTH + x] = False
++        base_zone = (
++            ((tile_y >= 1) & (tile_y < 15))
++            | ((tile_x >= 6) & (tile_x < 12) & (tile_y < 6))
++        )
++        left_extension = (tile_x < 9) & (tile_y >= 17) & (tile_y < 21)
++        right_extension = (tile_x >= 9) & (tile_y >= 17) & (tile_y < 21)
++
++        self._cpu_tables = {
++            "valid": valid,
++            "cost": cost,
++            "is_spell": is_spell,
++            "non_rolling_spell": non_rolling_spell,
++            "is_building": is_building,
++            "enemy_side": enemy_side,
++            "margin": margin,
++            "deploy_radius": deploy_radius,
++            "building_half": building_half,
++            "blocker_radius": blocker_radius,
++            "center_x": center_x,
++            "center_y": center_y,
++            "non_blocked": non_blocked,
++            "base_zone": base_zone,
++            "left_extension": left_extension,
++            "right_extension": right_extension,
++        }
++        self._tables_by_device: dict[torch.device, Mapping[str, torch.Tensor]] = {}
++        self.semantics: Mapping[str, Any] = {
++            "schema": "clasher.simple-pytorch.tensor-public-mask-v2.v1",
++            "contract_version": PUBLIC_ACTION_MASK_CONTRACT_V2,
++            "inputs": "projected-public-actor-only",
++            "uses_expert_labels": False,
++            "uses_privileged_critic": False,
++            "uses_simulator_legal_mask": False,
++            "canonical_lane_globals": True,
++            "authority": "PublicActionMaskBuilder trace-equivalent",
++            "token_names_sha256": _sha256(
++                "\0".join(builder.token_names).encode("utf-8")
++            ),
++        }
++
++    def _tables(self, device: torch.device) -> Mapping[str, torch.Tensor]:
++        canonical = torch.device(device)
++        if canonical.type == "cuda" and canonical.index is None:
++            canonical = torch.device("cuda", torch.cuda.current_device())
++        cached = self._tables_by_device.get(canonical)
++        if cached is None:
++            cached = {
++                name: value.to(device=canonical)
++                for name, value in self._cpu_tables.items()
++            }
++            self._tables_by_device[canonical] = cached
++        return cached
++
++    def __call__(self, request: SimpleTensorMaskRequest) -> SimplePublicActionMaskV2:
++        actor = request.observation.actor
++        device = actor.hand_ids.device
++        tables = self._tables(device)
++        hand = actor.hand_ids[..., :NUM_HAND_SLOTS]
++        safe_hand = hand.clamp(0, len(self.builder.token_names) - 1)
++        known_hand = (hand > 0) & (hand < len(self.builder.token_names))
++        valid_hand = known_hand & tables["valid"][safe_hand]
++        elixir = actor.global_features[..., 5].to(torch.float64) * 10.0
++        affordable = tables["cost"][safe_hand] <= elixir[..., None] + 1.0e-6
++
++        left_dead = actor.global_features[..., 11] <= 1.0e-4
++        right_dead = actor.global_features[..., 12] <= 1.0e-4
++        zone = tables["base_zone"].view(1, 1, NUM_TILES).expand(
++            *hand.shape[:2], -1
++        )
++        zone = zone | (
++            left_dead[..., None] & tables["left_extension"].view(1, 1, -1)
++        )
++        zone = zone | (
++            right_dead[..., None] & tables["right_extension"].view(1, 1, -1)
++        )
++
++        unrestricted = tables["non_rolling_spell"][safe_hand] | tables[
++            "enemy_side"
++        ][safe_hand]
++        candidates = torch.where(
++            unrestricted[..., None],
++            tables["non_blocked"].view(1, 1, 1, -1),
++            zone[:, :, None, :] & tables["non_blocked"].view(1, 1, 1, -1),
++        )
++        margin = tables["margin"][safe_hand]
++        within_margin = (margin[..., None] == 0) | (
++            (tables["center_x"].view(1, 1, 1, -1) >= margin[..., None])
++            & (
++                tables["center_x"].view(1, 1, 1, -1)
++                < BOARD_WIDTH - margin[..., None]
++            )
++        )
++
++        entity_token = actor.entity_ids
++        safe_entity = entity_token.clamp(0, len(self.builder.token_names) - 1)
++        blocker = (
++            actor.entity_mask
++            & (actor.entity_features[..., 5] > 0.5)
++            & (entity_token >= 0)
++            & (entity_token < len(self.builder.token_names))
++        )
++        blocker_x = actor.entity_features[..., 0].to(torch.float64) * BOARD_WIDTH
++        blocker_y = actor.entity_features[..., 1].to(torch.float64) * BOARD_HEIGHT
++        blocker_radius = tables["blocker_radius"][safe_entity]
++        blocker_half = (
++            torch.clamp(torch.ceil(torch.clamp(blocker_radius, min=0.0) * 2.0) + 1.0, min=1.0)
++            / 2.0
++            + 0.5
++        )
++        dx = torch.abs(
++            tables["center_x"].view(1, 1, 1, NUM_TILES, 1)
++            - blocker_x[:, :, None, None, :]
++        )
++        dy = torch.abs(
++            tables["center_y"].view(1, 1, 1, NUM_TILES, 1)
++            - blocker_y[:, :, None, None, :]
++        )
++        blocker_plane = blocker[:, :, None, None, :]
++        building_card = tables["is_building"][safe_hand]
++        building_occupied = (
++            (dx < tables["building_half"][safe_hand][..., None, None] + blocker_half[:, :, None, None, :])
++            & (dy < tables["building_half"][safe_hand][..., None, None] + blocker_half[:, :, None, None, :])
++            & blocker_plane
++        ).any(dim=-1)
++        troop_circle = (
++            dx.square() + dy.square()
++            < (
++                tables["deploy_radius"][safe_hand][..., None, None]
++                + blocker_radius[:, :, None, None, :]
++            ).square()
++        )
++        troop_square = (dx < blocker_half[:, :, None, None, :]) & (
++            dy < blocker_half[:, :, None, None, :]
++        )
++        troop_occupied = ((troop_circle | troop_square) & blocker_plane).any(dim=-1)
++        occupied = torch.where(
++            building_card[..., None], building_occupied, troop_occupied
++        )
++        occupied &= ~tables["is_spell"][safe_hand][..., None]
++
++        placements = (
++            candidates
++            & within_margin
++            & ~occupied
++            & valid_hand[..., None]
++            & affordable[..., None]
++        )
++        mask = torch.zeros(
++            (*hand.shape[:2], NUM_HAND_SLOTS * NUM_TILES + 2),
++            dtype=torch.bool,
++            device=device,
++        )
++        mask[..., : NUM_HAND_SLOTS * NUM_TILES] = placements.flatten(2)
++        mask[..., NUM_HAND_SLOTS * NUM_TILES] = True
++        return SimplePublicActionMaskV2(
++            masks=mask,
++            semantics_id="public-action-mask-v2/tensor-actor-projection-v1",
++            semantics=self.semantics,
++        )
++
++
++class SimpleClasherPolicyAdapter:
++    """Adapt two-seat simple-Gym boundaries to ``ClasherPolicy``."""
++
++    def __init__(self, model: ClasherPolicy) -> None:
++        self.model = model
++
++    @staticmethod
++    def _flatten(value: torch.Tensor) -> torch.Tensor:
++        return value.reshape(value.shape[0] * value.shape[1], 1, *value.shape[2:])
++
++    @staticmethod
++    def _flatten_state(value: torch.Tensor) -> torch.Tensor:
++        return value.reshape(value.shape[0] * value.shape[1], *value.shape[2:])
++
++    def inputs(self, boundary: SimpleTensorPolicyBoundary) -> PolicyInputs:
++        actor = boundary.actor
++        critic = boundary.critic
++        inputs = PolicyInputs(
++            entity_ids=self._flatten(actor.entity_ids),
++            entity_features=self._flatten(actor.entity_features),
++            entity_mask=self._flatten(actor.entity_mask),
++            hand_ids=self._flatten(actor.hand_ids),
++            global_features=self._flatten(actor.global_features),
++            action_mask=self._flatten(boundary.public_action_masks),
++            previous_actions=self._flatten(boundary.previous_actions),
++            previous_rewards=self._flatten(boundary.previous_rewards),
++            episode_starts=self._flatten(boundary.episode_starts),
++            critic_entity_ids=(
++                None if critic is None else self._flatten(critic.entity_ids)
++            ),
++            critic_entity_features=(
++                None if critic is None else self._flatten(critic.entity_features)
++            ),
++            critic_entity_mask=(
++                None if critic is None else self._flatten(critic.entity_mask)
++            ),
++            critic_card_ids=(
++                None if critic is None else self._flatten(critic.card_ids)
++            ),
++            critic_global_features=(
++                None if critic is None else self._flatten(critic.global_features)
++            ),
++        )
++        if self.model.config.public_observation_confidence:
++            inputs = inputs.with_exact_actor_confidence()
++        return inputs
++
++    @staticmethod
++    def state_from_mapping(
++        values: Mapping[str, torch.Tensor] | None,
++    ) -> tuple[torch.Tensor, torch.Tensor] | None:
++        if values is None:
++            return None
++        if tuple(values) != ("hidden", "cell"):
++            raise SimplePytorchBackendError("recurrent state must be hidden/cell")
++        return (
++            SimpleClasherPolicyAdapter._flatten_state(values["hidden"]),
++            SimpleClasherPolicyAdapter._flatten_state(values["cell"]),
++        )
++
++    @staticmethod
++    def state_to_mapping(
++        state: tuple[torch.Tensor, torch.Tensor], batch_size: int
++    ) -> Mapping[str, torch.Tensor]:
++        return {
++            "hidden": state[0].reshape(batch_size, 2, -1),
++            "cell": state[1].reshape(batch_size, 2, -1),
++        }
++
++    def __call__(
++        self, boundary: SimpleTensorPolicyBoundary
++    ) -> SimpleTensorPolicyDecision:
++        self.model.eval()
++        state = self.state_from_mapping(boundary.recurrent_inputs)
++        actions, log_prob, values, next_state, _ = self.model.act(
++            self.inputs(boundary), state, deterministic=False
++        )
++        batch = boundary.actor.entity_ids.shape[0]
++        return SimpleTensorPolicyDecision(
++            actions=actions[:, 0].reshape(batch, 2),
++            next_recurrent_inputs=self.state_to_mapping(next_state, batch),
++            storage={
++                "log_prob": log_prob[:, 0].reshape(batch, 2),
++                "value": values[:, 0].reshape(batch, 2),
++            },
++        )
++
++    def bootstrap_values(self, boundary: SimpleTensorPolicyBoundary) -> torch.Tensor:
++        output = self.model.forward(
++            self.inputs(boundary), self.state_from_mapping(boundary.recurrent_inputs)
++        )
++        return output.values[:, 0]
++
++
++def _primary_body_name(loader: CardDataLoader, root_name: str) -> str | None:
++    stats = loader.get_card(root_name)
++    raw = getattr(stats, "_raw_entry", {}) if stats is not None else {}
++    child = raw.get("summonCharacterData") if isinstance(raw, dict) else None
++    name = child.get("name") if isinstance(child, dict) else None
++    return str(name) if name else None
++
++
++def _typed_lookups(
++    setup: Any,
++    loader: CardDataLoader,
++    vocabulary: CurrentClientTypedVocabulary,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    size = len(setup.cards.names)
++    device = setup.device
++    entity = torch.zeros((5, size), dtype=torch.int64, device=device)
++    hand = torch.zeros(size, dtype=torch.int64, device=device)
++    for card_id, visible_name in enumerate(setup.spawn_blueprints.visible_names):
++        if card_id == 0:
++            tower = vocabulary.resolve("KingTower", "tower")
++            if tower == 0:
++                raise SimplePytorchBackendError("typed Crown tower token is missing")
++            entity[:, card_id] = tower
++            continue
++        is_public = bool(setup.public_root_mask[card_id])
++        if is_public:
++            action_token = vocabulary.resolve(visible_name, "card_action")
++            if action_token == 0:
++                raise SimplePytorchBackendError(
++                    f"public card lacks exact typed action identity: {visible_name}"
++                )
++            hand[card_id] = action_token
++        kind = int(setup.spawn_blueprints.fast_cards.kind[card_id])
++        if kind not in (0, 1):
++            continue
++        namespace = "troop_body" if kind == 0 else "building_body"
++        candidates: list[str] = []
++        if is_public:
++            primary = _primary_body_name(loader, setup.cards.names[card_id])
++            if primary is not None:
++                candidates.append(primary)
++        candidates.append(visible_name)
++        body_token = next(
++            (
++                token
++                for candidate in candidates
++                if (token := vocabulary.resolve(candidate, namespace)) != 0
++            ),
++            0,
++        )
++        if body_token == 0:
++            raise SimplePytorchBackendError(
++                f"runtime card lacks exact typed body identity: {visible_name}"
++            )
++        entity[kind, card_id] = body_token
++    return entity, hand
++
++
++def _deck_rows(
++    artifact: SimpleSupportedDeckArtifact,
++    *,
++    batch_size: int,
++    mirror_match: bool,
++) -> tuple[tuple[tuple[str, ...], tuple[str, ...]], ...]:
++    result = []
++    for index in range(batch_size):
++        first = artifact.decks[(2 * index) % len(artifact.decks)]
++        second = first if mirror_match else artifact.decks[(2 * index + 1) % len(artifact.decks)]
++        result.append((first, second))
++    return tuple(result)
++
++
++@dataclass(frozen=True)
++class SimplePytorchBackendMetadata:
++    backend_id: str
++    actor_semantics_id: str
++    fresh_only: bool
++    canonical_lane_globals: bool
++    public_action_mask_contract_version: int
++    supported_decks_sha256: str
++    support_profile_sha256: str
++    typed_vocabulary_sha256: str
++    reward_contract_id: str
++    reward_contract_digest: str
++    reward_contract_metadata: Mapping[str, Any]
++
++
++class SimplePytorchTrainingCollector:
++    """One-process route from the dense Gym into the existing PPO batch."""
++
++    def __init__(
++        self,
++        *,
++        model: ClasherPolicy,
++        builder: StructuredObservationBuilder,
++        batch_size: int,
++        device: torch.device,
++        decision_interval: int,
++        gamma: float,
++        supported_decks_path: str | Path,
++        typed_vocabulary_path: str | Path,
++        mirror_match: bool,
++    ) -> None:
++        if batch_size < 1:
++            raise SimplePytorchBackendError("simple backend needs at least one row")
++        if not builder.canonical_lane_globals or not model.config.canonical_lane_globals:
++            raise SimplePytorchBackendError("simple backend requires canonical lanes")
++        if model.config.actor_observation_domain != "simulator-exact":
++            raise SimplePytorchBackendError(
++                "fresh simple backend uses its exact public projection domain"
++            )
++        if builder.public_history_slots or builder.public_seen_card_slots:
++            raise SimplePytorchBackendError(
++                "fresh simple backend does not consume legacy accumulated history"
++            )
++        vocabulary = load_current_client_typed_vocabulary(typed_vocabulary_path)
++        if tuple(builder.token_names) != vocabulary.token_names:
++            raise SimplePytorchBackendError("builder does not use the typed vocabulary")
++        artifact = load_simple_supported_decks(supported_decks_path)
++        loader = CardDataLoader()
++        setup = compile_standard_simple_setup(
++            loader,
++            artifact.public_cards,
++            device=device,
++            canonical_lane_globals=True,
++        )
++        if set(setup.supported_public_root_names) != set(artifact.public_cards):
++            raise SimplePytorchBackendError(
++                "supported-deck artifact drifted from the current compiler"
++            )
++        entity_lookup, hand_lookup = _typed_lookups(setup, loader, vocabulary)
++        runtime = setup.create_runtime(
++            _deck_rows(artifact, batch_size=batch_size, mirror_match=mirror_match),
++            entity_token_lookup=entity_lookup,
++            hand_token_lookup=hand_lookup,
++            canonical_lane_globals=True,
++            max_entities=builder.max_entities,
++            include_privileged_critic=True,
++        )
++        reward = SimpleRewardV2Config(gamma=gamma)
++        bridge = SimpleGymRolloutBridge(
++            runtime,
++            decision_interval=decision_interval,
++            reward_v2_config=reward,
++            strict_reset_check=False,
++        )
++        self.policy = SimpleClasherPolicyAdapter(model)
++        self.collector = SimpleTensorCollector(
++            bridge,
++            public_mask_provider=SimplePublicMaskV2Adapter(builder),
++            policy=self.policy,
++            strict_host_validation=False,
++        )
++        reward_metadata = simple_reward_v2_metadata(reward)
++        self.metadata = SimplePytorchBackendMetadata(
++            backend_id=SIMPLE_TENSOR_BACKEND_ID,
++            actor_semantics_id=SIMPLE_TENSOR_ACTOR_SEMANTICS_ID,
++            fresh_only=True,
++            canonical_lane_globals=True,
++            public_action_mask_contract_version=PUBLIC_ACTION_MASK_CONTRACT_V2,
++            supported_decks_sha256=artifact.sha256,
++            support_profile_sha256=artifact.support_profile_sha256,
++            typed_vocabulary_sha256=vocabulary.sha256,
++            reward_contract_id=SIMPLE_REWARD_V2_CONTRACT_ID,
++            reward_contract_digest=str(reward_metadata["reward_contract_digest"]),
++            reward_contract_metadata=reward_metadata,
++        )
++
++    @property
++    def batch_size(self) -> int:
++        return self.collector.batch_size
++
++    @staticmethod
++    def _agent_major(value: torch.Tensor) -> np.ndarray:
++        order = (1, 2, 0, *range(3, value.ndim))
++        arranged = value.permute(order).reshape(
++            value.shape[1] * value.shape[2], value.shape[0], *value.shape[3:]
++        )
++        return arranged.detach().cpu().numpy()
++
++    @staticmethod
++    def _confidence_arrays(batch: SimpleTensorDecisionBatch) -> tuple[np.ndarray, ...]:
++        entity = batch.actor.entity_mask.to(torch.float32)
++        entity_features = entity[..., None].expand_as(batch.actor.entity_features)
++        hand = torch.ones_like(batch.actor.hand_ids, dtype=torch.float32)
++        global_features = torch.ones_like(batch.actor.global_features)
++        return tuple(
++            SimplePytorchTrainingCollector._agent_major(value)
++            for value in (entity, entity_features, hand, global_features)
++        )
++
++    @torch.no_grad()
++    def collect(
++        self,
++        rollout_steps: int,
++        recurrent_state: tuple[torch.Tensor, torch.Tensor],
++    ) -> tuple[
++        dict[str, Any],
++        tuple[torch.Tensor, torch.Tensor],
++        np.ndarray,
++        np.ndarray,
++        np.ndarray,
++    ]:
++        batch = self.batch_size
++        initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
++        initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
++        recurrent_inputs = {
++            "hidden": recurrent_state[0].reshape(batch, 2, -1),
++            "cell": recurrent_state[1].reshape(batch, 2, -1),
++        }
++        decision = self.collector.collect(
++            rollout_steps, recurrent_inputs=recurrent_inputs
++        )
++        if decision.critic is None:
++            raise SimplePytorchBackendError("training collection requires a critic")
++        confidence = self._confidence_arrays(decision)
++        steps, rows, seats = decision.actions.shape
++        agents = rows * seats
++        history_slots = self.policy.model.config.public_history_slots
++        seen_slots = self.policy.model.config.public_seen_card_slots
++        zeros_history_i64 = np.zeros((agents, steps, history_slots), dtype=np.int64)
++        zeros_history_f32 = np.zeros((agents, steps, history_slots), dtype=np.float32)
++        zeros_seen = np.zeros((agents, steps, seen_slots), dtype=np.int64)
++        bootstrap_values = self.policy.bootstrap_values(decision.bootstrap)
++        storage = decision.policy_storage
++        required_storage = {"log_prob", "value"}
++        if set(storage) != required_storage:
++            raise SimplePytorchBackendError("policy storage contract changed")
++        winner = decision.winner.detach().cpu()
++        done = decision.done.detach().cpu()
++        terminal_winner = winner[done]
++        arrays: dict[str, Any] = {
++            "entity_ids": self._agent_major(decision.actor.entity_ids),
++            "entity_features": self._agent_major(decision.actor.entity_features),
++            "entity_mask": self._agent_major(decision.actor.entity_mask),
++            "hand_ids": self._agent_major(decision.actor.hand_ids),
++            "global_features": self._agent_major(decision.actor.global_features),
++            "entity_id_confidence": confidence[0],
++            "entity_feature_confidence": confidence[1],
++            "hand_id_confidence": confidence[2],
++            "global_feature_confidence": confidence[3],
++            "opponent_history_ids": zeros_history_i64,
++            "opponent_history_ages": zeros_history_f32,
++            "opponent_seen_card_ids": zeros_seen,
++            "opponent_play_event_ids": np.zeros((agents, steps), dtype=np.int64),
++            "opponent_play_event_confidence": np.zeros(
++                (agents, steps), dtype=np.float32
++            ),
++            "action_masks": self._agent_major(decision.public_action_masks),
++            "previous_actions": self._agent_major(decision.previous_actions),
++            "previous_rewards": self._agent_major(decision.previous_rewards),
++            "episode_starts": self._agent_major(decision.episode_starts),
++            "critic_entity_ids": self._agent_major(decision.critic.entity_ids),
++            "critic_entity_features": self._agent_major(
++                decision.critic.entity_features
++            ),
++            "critic_entity_mask": self._agent_major(decision.critic.entity_mask),
++            "critic_card_ids": self._agent_major(decision.critic.card_ids),
++            "critic_global_features": self._agent_major(
++                decision.critic.global_features
++            ),
++            "actions": self._agent_major(decision.actions),
++            "old_log_probs": self._agent_major(storage["log_prob"]),
++            "old_values": self._agent_major(storage["value"]),
++            "rewards": self._agent_major(decision.rewards),
++            "dones": self._agent_major(
++                decision.done[..., None].expand(-1, -1, 2)
++            ),
++            "initial_hidden": initial_hidden,
++            "initial_cell": initial_cell,
++            "bootstrap_values": bootstrap_values.detach().cpu().numpy(),
++            "episodes_finished": int(done.sum().item()),
++            "wins": int((terminal_winner == 0).sum().item()),
++            "losses": int((terminal_winner == 1).sum().item()),
++            "draws": int((terminal_winner < 0).sum().item()),
++        }
++        bootstrap_state = self.policy.state_from_mapping(
++            decision.bootstrap.recurrent_inputs
++        )
++        if bootstrap_state is None:
++            raise SimplePytorchBackendError("collector lost recurrent bootstrap state")
++        previous_actions = decision.bootstrap.previous_actions.reshape(-1)
++        previous_rewards = decision.bootstrap.previous_rewards.reshape(-1)
++        episode_starts = decision.bootstrap.episode_starts.reshape(-1)
++        return (
++            arrays,
++            (bootstrap_state[0].detach(), bootstrap_state[1].detach()),
++            previous_actions.detach().cpu().numpy(),
++            previous_rewards.detach().cpu().numpy(),
++            episode_starts.detach().cpu().numpy(),
++        )
++
++    def checkpoint_metadata(self) -> dict[str, Any]:
++        return {
++            **self.metadata.__dict__,
++            "standard_tiebreak_tick": STANDARD_TIEBREAK_TICK,
++            "metadata_digest": _canonical_digest(self.metadata.__dict__),
++        }
++
++
++__all__ = [
++    "CURRENT_CLIENT_VOCABULARY_SCHEMA",
++    "DEFAULT_SIMPLE_SUPPORTED_DECKS",
++    "DEFAULT_SIMPLE_TOKEN_VOCABULARY",
++    "SIMPLE_PYTORCH_BACKEND",
++    "CurrentClientTypedVocabulary",
++    "ReferenceSimplePublicMaskV2Adapter",
++    "SimplePublicMaskV2Adapter",
++    "SimplePytorchBackendError",
++    "SimplePytorchBackendMetadata",
++    "SimplePytorchTrainingCollector",
++    "SimpleSupportedDeckArtifact",
++    "load_current_client_typed_vocabulary",
++    "load_simple_supported_decks",
++]
+diff --git a/src/clasher/rl/train_recurrent.py b/src/clasher/rl/train_recurrent.py
+index 8dc8c3e0..80af9424 100644
+--- a/src/clasher/rl/train_recurrent.py
++++ b/src/clasher/rl/train_recurrent.py
+@@ -2,12 +2,14 @@ from __future__ import annotations
+ 
+ import argparse
+ import atexit
++import json
+ import time
+-from collections.abc import Iterator
++from collections.abc import Callable, Iterator
+ from contextlib import contextmanager, redirect_stderr, redirect_stdout
+-from dataclasses import dataclass
++from dataclasses import dataclass, replace
++from functools import wraps
+ from pathlib import Path
+-from typing import Any
++from typing import Any, Literal, ParamSpec, TypeVar
+ 
+ import numpy as np
+ import torch
+@@ -23,8 +25,18 @@ from clasher.paths import (
+     decks_path as resolve_decks_path,
+ )
+ 
+-from .model import ClasherPolicy, PolicyConfig, PolicyInputs
++from .causal_rehearsal import CausalDecisionRehearsal
++from .imitation_objective import (
++    PLACEMENT_ACTIONS,
++    SpatialImitationConfig,
++    TokenSpatialSemantics,
++    build_token_spatial_semantics,
++    factorized_spatial_imitation_loss,
++)
++from .model import ClasherPolicy, PolicyConfig, PolicyInputs, PolicyOutput
++from .reward_model import OBJECTIVE_V1, REWARD_PROFILES
+ from .selfplay_env import SelfPlayBattleEnv
++from .strategy_bots import STRATEGY_NAMES, StrategyBot, allocate_pfsp_slots
+ from .structured_obs import StructuredObservation, StructuredObservationBuilder
+ 
+ 
+@@ -37,6 +49,30 @@ class _NullWriter:
+ 
+ 
+ _NULL_WRITER = _NullWriter()
++# Experimental until the authoritative-branch random and strategy screens agree.
++_USE_ROLLOUT_INFERENCE_MODE = False
++_USE_TRIMMED_ROLLOUT_ENTITY_PADDING = False
++PUBLIC_BELIEF_PARAMETER_PREFIXES = (
++    "public_history_",
++    "public_seen_card_",
++    "public_belief_",
++)
++_P = ParamSpec("_P")
++_R = TypeVar("_R")
++
++
++def _rollout_grad_mode(function: Callable[_P, _R]) -> Callable[_P, _R]:
++    """Select benchmarkable inference-only execution for actor rollouts."""
++
++    @wraps(function)
++    def wrapped(*args: _P.args, **kwargs: _P.kwargs) -> _R:
++        context = (
++            torch.inference_mode() if _USE_ROLLOUT_INFERENCE_MODE else torch.no_grad()
++        )
++        with context:
++            return function(*args, **kwargs)
++
++    return wrapped
+ 
+ 
+ @contextmanager
+@@ -55,6 +91,15 @@ class RolloutBatch:
+     entity_mask: np.ndarray
+     hand_ids: np.ndarray
+     global_features: np.ndarray
++    entity_id_confidence: np.ndarray
++    entity_feature_confidence: np.ndarray
++    hand_id_confidence: np.ndarray
++    global_feature_confidence: np.ndarray
++    opponent_history_ids: np.ndarray
++    opponent_history_ages: np.ndarray
++    opponent_seen_card_ids: np.ndarray
++    opponent_play_event_ids: np.ndarray
++    opponent_play_event_confidence: np.ndarray
+     action_masks: np.ndarray
+     previous_actions: np.ndarray
+     previous_rewards: np.ndarray
+@@ -90,6 +135,201 @@ class RolloutBatch:
+         return int(self.actions.size)
+ 
+ 
++@dataclass
++class PlacementRehearsal:
++    """Episode-contiguous expert actions sampled as an auxiliary PPO task."""
++
++    source: Path
++    arrays: dict[str, np.ndarray]
++    chunks: np.ndarray
++    spatial_semantics: TokenSpatialSemantics
++    rng: np.random.Generator
++    loss_component: Literal["joint", "location", "type"] = "joint"
++
++    @classmethod
++    def load(
++        cls,
++        path: Path,
++        *,
++        builder: StructuredObservationBuilder,
++        device: torch.device,
++        sequence_length: int,
++        seed: int,
++        loss_component: Literal["joint", "location", "type"] = "joint",
++    ) -> PlacementRehearsal:
++        if sequence_length <= 0:
++            raise ValueError("rehearsal sequence length must be positive")
++        if loss_component not in {"joint", "location", "type"}:
++            raise ValueError(
++                "rehearsal loss component must be joint, location, or type"
++            )
++        names = (
++            "entity_ids",
++            "entity_features",
++            "entity_mask",
++            "hand_ids",
++            "global_features",
++            "action_masks",
++            "previous_actions",
++            "previous_rewards",
++            "episode_starts",
++            "expert_actions",
++            "episode_ids",
++        )
++        with np.load(path, allow_pickle=False) as payload:
++            metadata = json.loads(str(payload["metadata_json"].item()))
++            arrays = {name: payload[name].copy() for name in names}
++        if tuple(metadata["token_names"]) != tuple(builder.token_names):
++            raise ValueError("rehearsal corpus token vocabulary differs")
++        if int(metadata["max_entities"]) != builder.max_entities:
++            raise ValueError("rehearsal corpus max_entities differs")
++        samples = int(arrays["expert_actions"].shape[0])
++        if any(array.shape[0] != samples for array in arrays.values()):
++            raise ValueError("rehearsal corpus arrays have different lengths")
++        legal = arrays["action_masks"][np.arange(samples), arrays["expert_actions"]]
++        if not np.all(legal):
++            raise ValueError("rehearsal corpus contains an illegal expert action")
++
++        episode_ids = arrays["episode_ids"]
++        chunks: list[np.ndarray] = []
++        start = 0
++        while start < samples:
++            end = start + 1
++            while end < samples and episode_ids[end] == episode_ids[start]:
++                end += 1
++            for chunk_start in range(start, end - sequence_length + 1, sequence_length):
++                chunk: np.ndarray = np.arange(
++                    chunk_start, chunk_start + sequence_length, dtype=np.int64
++                )
++                targets = arrays["expert_actions"][chunk]
++                informative = (
++                    np.count_nonzero(arrays["action_masks"][chunk], axis=-1) > 1
++                )
++                supervised = (
++                    informative
++                    if loss_component == "type"
++                    else (targets < PLACEMENT_ACTIONS) & informative
++                )
++                if np.any(supervised):
++                    chunks.append(chunk)
++            start = end
++        if not chunks:
++            raise ValueError("rehearsal corpus has no supervised sequence chunks")
++        return cls(
++            source=path,
++            arrays=arrays,
++            chunks=np.stack(chunks),
++            spatial_semantics=build_token_spatial_semantics(
++                builder, device=device, config=SpatialImitationConfig()
++            ),
++            rng=np.random.default_rng(seed),
++            loss_component=loss_component,
++        )
++
++    def loss(
++        self,
++        model: ClasherPolicy,
++        *,
++        device: torch.device,
++        batch_sequences: int,
++    ) -> Tensor:
++        if batch_sequences <= 0:
++            raise ValueError("rehearsal batch size must be positive")
++        selected = self.chunks[
++            self.rng.integers(0, len(self.chunks), size=batch_sequences)
++        ]
++
++        def tensor(name: str, dtype: torch.dtype) -> Tensor:
++            return torch.as_tensor(
++                self.arrays[name][selected], dtype=dtype, device=device
++            )
++
++        inputs = PolicyInputs(
++            entity_ids=tensor("entity_ids", torch.long),
++            entity_features=tensor("entity_features", torch.float32),
++            entity_mask=tensor("entity_mask", torch.bool),
++            hand_ids=tensor("hand_ids", torch.long),
++            global_features=tensor("global_features", torch.float32),
++            action_mask=tensor("action_masks", torch.bool),
++            previous_actions=tensor("previous_actions", torch.long),
++            previous_rewards=tensor("previous_rewards", torch.float32),
++            episode_starts=tensor("episode_starts", torch.bool),
++        )
++        if model.config.public_observation_confidence:
++            inputs = inputs.with_exact_actor_confidence()
++        targets = tensor("expert_actions", torch.long)
++        output = model(inputs)
++        flat_logits = output.joint_logits.reshape(-1, output.joint_logits.shape[-1])
++        flat_targets = targets.reshape(-1)
++        flat_masks = inputs.action_mask.reshape(-1, inputs.action_mask.shape[-1])
++        flat_hands = inputs.hand_ids.reshape(-1, inputs.hand_ids.shape[-1])
++        informative = flat_masks.count_nonzero(dim=-1) > 1
++        supervised = (
++            informative
++            if self.loss_component == "type"
++            else (flat_targets < PLACEMENT_ACTIONS) & informative
++        )
++        breakdown = factorized_spatial_imitation_loss(
++            flat_logits,
++            flat_targets,
++            flat_masks,
++            flat_hands,
++            self.spatial_semantics,
++            reduction="none",
++        )
++        if self.loss_component == "location":
++            losses = breakdown.location
++        elif self.loss_component == "type":
++            losses = breakdown.action_type
++        else:
++            losses = breakdown.total
++        return losses[supervised].mean()
++
++    def anchor_policy_kl(
++        self,
++        model: ClasherPolicy,
++        anchor_model: ClasherPolicy,
++        *,
++        device: torch.device,
++        batch_sequences: int,
++    ) -> Tensor:
++        """Preserve a frozen policy on sampled recurrent corpus states."""
++
++        if batch_sequences <= 0:
++            raise ValueError("rehearsal batch size must be positive")
++        selected = self.chunks[
++            self.rng.integers(0, len(self.chunks), size=batch_sequences)
++        ]
++
++        def tensor(name: str, dtype: torch.dtype) -> Tensor:
++            return torch.as_tensor(
++                self.arrays[name][selected], dtype=dtype, device=device
++            )
++
++        inputs = PolicyInputs(
++            entity_ids=tensor("entity_ids", torch.long),
++            entity_features=tensor("entity_features", torch.float32),
++            entity_mask=tensor("entity_mask", torch.bool),
++            hand_ids=tensor("hand_ids", torch.long),
++            global_features=tensor("global_features", torch.float32),
++            action_mask=tensor("action_masks", torch.bool),
++            previous_actions=tensor("previous_actions", torch.long),
++            previous_rewards=tensor("previous_rewards", torch.float32),
++            episode_starts=tensor("episode_starts", torch.bool),
++        )
++        if model.config.public_observation_confidence:
++            inputs = inputs.with_exact_actor_confidence()
++        output = model(inputs)
++        with torch.no_grad():
++            anchor_output = anchor_model(inputs)
++        return factorized_policy_anchor_kl(
++            output,
++            anchor_output,
++            inputs.action_mask,
++            component=self.loss_component,
++        )
++
++
+ def resolve_torch_device(name: str) -> torch.device:
+     if name == "cpu":
+         return torch.device("cpu")
+@@ -145,17 +385,49 @@ def _stack_step_inputs(
+     previous_rewards: np.ndarray,
+     episode_starts: np.ndarray,
+     device: torch.device,
++    *,
++    public_observation_confidence: bool = False,
+ ) -> PolicyInputs:
++    actor_width: int | None = None
++    critic_width: int | None = None
++    if _USE_TRIMMED_ROLLOUT_ENTITY_PADDING:
++
++        def trailing_width(name: str) -> int:
++            width = 1
++            for observation in observations:
++                valid = np.flatnonzero(getattr(observation, name))
++                if valid.size:
++                    width = max(width, int(valid[-1]) + 1)
++            return width
++
++        actor_width = trailing_width("entity_mask")
++        critic_width = trailing_width("critic_entity_mask")
++
+     def stack(name: str, dtype: torch.dtype) -> Tensor:
+         array = np.stack([getattr(observation, name) for observation in observations])
++        if name.startswith("critic_entity_") and critic_width is not None:
++            array = array[:, :critic_width]
++        elif name.startswith("entity_") and actor_width is not None:
++            array = array[:, :actor_width]
+         return torch.as_tensor(array, dtype=dtype, device=device).unsqueeze(1)
+ 
+-    return PolicyInputs(
++    event_ids, event_confidence = _current_opponent_play_events(observations)
++
++    inputs = PolicyInputs(
+         entity_ids=stack("entity_ids", torch.long),
+         entity_features=stack("entity_features", torch.float32),
+         entity_mask=stack("entity_mask", torch.bool),
+         hand_ids=stack("hand_ids", torch.long),
+         global_features=stack("global_features", torch.float32),
++        opponent_history_ids=stack("opponent_history_ids", torch.long),
++        opponent_history_ages=stack("opponent_history_ages", torch.float32),
++        opponent_seen_card_ids=stack("opponent_seen_card_ids", torch.long),
++        opponent_play_event_ids=torch.as_tensor(
++            event_ids, dtype=torch.long, device=device
++        ).unsqueeze(1),
++        opponent_play_event_confidence=torch.as_tensor(
++            event_confidence, dtype=torch.float32, device=device
++        ).unsqueeze(1),
+         action_mask=torch.as_tensor(
+             action_masks, dtype=torch.bool, device=device
+         ).unsqueeze(1),
+@@ -174,6 +446,29 @@ def _stack_step_inputs(
+         critic_card_ids=stack("critic_card_ids", torch.long),
+         critic_global_features=stack("critic_global_features", torch.float32),
+     )
++    if not public_observation_confidence:
++        return inputs
++    confidence_names = (
++        "entity_id_confidence",
++        "entity_feature_confidence",
++        "hand_id_confidence",
++        "global_feature_confidence",
++    )
++    supplied = [
++        all(getattr(observation, name) is not None for observation in observations)
++        for name in confidence_names
++    ]
++    if all(supplied):
++        return replace(
++            inputs,
++            entity_id_confidence=stack("entity_id_confidence", torch.float32),
++            entity_feature_confidence=stack("entity_feature_confidence", torch.float32),
++            hand_id_confidence=stack("hand_id_confidence", torch.float32),
++            global_feature_confidence=stack("global_feature_confidence", torch.float32),
++        )
++    if any(supplied):
++        raise ValueError("structured actor confidence must be supplied together")
++    return inputs.with_exact_actor_confidence()
+ 
+ 
+ def _empty_rollout_arrays(
+@@ -195,6 +490,28 @@ def _empty_rollout_arrays(
+         "global_features": np.zeros(
+             (agents, steps, spec.actor_global_size), dtype=np.float32
+         ),
++        "entity_id_confidence": np.zeros(
++            (agents, steps, spec.max_entities), dtype=np.float32
++        ),
++        "entity_feature_confidence": np.zeros(
++            (agents, steps, spec.max_entities, spec.entity_feature_size),
++            dtype=np.float32,
++        ),
++        "hand_id_confidence": np.zeros((agents, steps, 5), dtype=np.float32),
++        "global_feature_confidence": np.zeros(
++            (agents, steps, spec.actor_global_size), dtype=np.float32
++        ),
++        "opponent_history_ids": np.zeros(
++            (agents, steps, spec.public_history_slots), dtype=np.int64
++        ),
++        "opponent_history_ages": np.zeros(
++            (agents, steps, spec.public_history_slots), dtype=np.float32
++        ),
++        "opponent_seen_card_ids": np.zeros(
++            (agents, steps, spec.public_seen_card_slots), dtype=np.int64
++        ),
++        "opponent_play_event_ids": np.zeros((agents, steps), dtype=np.int64),
++        "opponent_play_event_confidence": np.zeros((agents, steps), dtype=np.float32),
+         "action_masks": np.zeros((agents, steps, num_actions), dtype=np.bool_),
+         "previous_actions": np.zeros((agents, steps), dtype=np.int64),
+         "previous_rewards": np.zeros((agents, steps), dtype=np.float32),
+@@ -236,6 +553,9 @@ def _store_observations(
+         "entity_mask",
+         "hand_ids",
+         "global_features",
++        "opponent_history_ids",
++        "opponent_history_ages",
++        "opponent_seen_card_ids",
+         "critic_entity_ids",
+         "critic_entity_features",
+         "critic_entity_mask",
+@@ -246,39 +566,126 @@ def _store_observations(
+         arrays[field][:, step] = np.stack(
+             [getattr(observation, field) for observation in observations]
+         )
++    event_ids, event_confidence = _current_opponent_play_events(observations)
++    arrays["opponent_play_event_ids"][:, step] = event_ids
++    arrays["opponent_play_event_confidence"][:, step] = event_confidence
++    for observation_index, observation in enumerate(observations):
++        entity_known = observation.entity_mask.astype(np.float32, copy=False)
++        arrays["entity_id_confidence"][observation_index, step] = (
++            entity_known
++            if observation.entity_id_confidence is None
++            else observation.entity_id_confidence
++        )
++        arrays["entity_feature_confidence"][observation_index, step] = (
++            np.broadcast_to(entity_known[..., None], observation.entity_features.shape)
++            if observation.entity_feature_confidence is None
++            else observation.entity_feature_confidence
++        )
++        arrays["hand_id_confidence"][observation_index, step] = (
++            1.0
++            if observation.hand_id_confidence is None
++            else observation.hand_id_confidence
++        )
++        arrays["global_feature_confidence"][observation_index, step] = (
++            1.0
++            if observation.global_feature_confidence is None
++            else observation.global_feature_confidence
++        )
+     arrays["action_masks"][:, step] = action_masks
+     arrays["previous_actions"][:, step] = previous_actions
+     arrays["previous_rewards"][:, step] = previous_rewards
+     arrays["episode_starts"][:, step] = episode_starts
+ 
+ 
++def _current_opponent_play_events(
++    observations: list[StructuredObservation],
++) -> tuple[np.ndarray, np.ndarray]:
++    """Adapt exact simulator teacher history to current-frame event pulses.
++
++    This adapter is only a training/simulator label source.  The deployed
++    policy interface consumes these two current-frame tensors directly from
++    its visual event encoder and never receives the simulator's accumulated
++    ``public_card_play_history``.
++    """
++
++    event_ids = np.zeros((len(observations),), dtype=np.int64)
++    confidence = np.zeros((len(observations),), dtype=np.float32)
++    for index, observation in enumerate(observations):
++        if not observation.opponent_history_ids.size:
++            continue
++        card_id = int(observation.opponent_history_ids[0])
++        age = float(observation.opponent_history_ages[0])
++        # History age is normalized by 60 seconds.  A one-second pulse is long
++        # enough to cross the normal 0.4-second policy cadence; the model-owned
++        # rising-edge latch deduplicates the repeated visual observation.
++        if card_id > 0 and 0.0 <= age <= (1.0 / 60.0 + 1e-7):
++            event_ids[index] = card_id
++            confidence[index] = 1.0
++    return event_ids, confidence
++
++
+ def _current_observations(
+     envs: list[SelfPlayBattleEnv],
++    *,
++    actor_observation_domain: str = "simulator-exact",
+ ) -> tuple[list[StructuredObservation], np.ndarray]:
+     observations: list[StructuredObservation] = []
+     masks: list[np.ndarray] = []
+     for env in envs:
+         for player_id in (0, 1):
+-            observations.append(env.get_structured_observation(player_id))
+-            masks.append(env.get_action_mask(player_id))
++            observation = env.get_structured_observation(
++                player_id,
++                actor_observation_domain=actor_observation_domain,
++            )
++            observations.append(observation)
++            masks.append(
++                env.get_action_mask(
++                    player_id,
++                    actor_observation_domain=actor_observation_domain,
++                    structured_observation=observation,
++                )
++            )
+     return observations, np.stack(masks)
+ 
+ 
+ def _current_learner_observations(
+     envs: list[SelfPlayBattleEnv],
+     learner_players: tuple[int, ...],
++    *,
++    actor_observation_domain: str = "simulator-exact",
+ ) -> tuple[list[StructuredObservation], np.ndarray]:
+     if len(envs) != len(learner_players):
+         raise ValueError("learner_players must have one seat per environment")
+     observations: list[StructuredObservation] = []
+     masks: list[np.ndarray] = []
+     for env, player_id in zip(envs, learner_players):
+-        observations.append(env.get_structured_observation(player_id))
+-        masks.append(env.get_action_mask(player_id))
++        observation = env.get_structured_observation(
++            player_id,
++            actor_observation_domain=actor_observation_domain,
++        )
++        observations.append(observation)
++        masks.append(
++            env.get_action_mask(
++                player_id,
++                actor_observation_domain=actor_observation_domain,
++                structured_observation=observation,
++            )
++        )
+     return observations, np.stack(masks)
+ 
+ 
+-@torch.no_grad()
++def _current_action_masks(
++    envs: list[SelfPlayBattleEnv],
++    players: tuple[int, ...],
++) -> np.ndarray:
++    if len(envs) != len(players):
++        raise ValueError("players must have one seat per environment")
++    return np.stack(
++        [env.get_action_mask(player_id) for env, player_id in zip(envs, players)]
++    )
++
++
++@_rollout_grad_mode
+ def collect_rollout(
+     *,
+     envs: list[SelfPlayBattleEnv],
+@@ -293,6 +700,12 @@ def collect_rollout(
+     quiet_engine: bool,
+ ) -> tuple[RolloutBatch, tuple[Tensor, Tensor], np.ndarray, np.ndarray, np.ndarray]:
+     model.eval()
++    causal_actor = model.config.actor_observation_domain in {
++        "causal-vision-v1",
++        "causal-frame-v1",
++    }
++    if causal_actor:
++        previous_rewards = np.zeros_like(previous_rewards, dtype=np.float32)
+     agents = len(envs) * 2
+     num_actions = envs[0].action_space.num_actions
+     arrays = _empty_rollout_arrays(
+@@ -308,7 +721,10 @@ def collect_rollout(
+ 
+     for step in range(rollout_steps):
+         with maybe_silence_stdio(quiet_engine):
+-            observations, action_masks = _current_observations(envs)
++            observations, action_masks = _current_observations(
++                envs,
++                actor_observation_domain=model.config.actor_observation_domain,
++            )
+         _store_observations(
+             arrays,
+             observations,
+@@ -325,6 +741,7 @@ def collect_rollout(
+             previous_rewards,
+             episode_starts,
+             device,
++            public_observation_confidence=model.config.public_observation_confidence,
+         )
+         actions_t, log_probs_t, values_t, recurrent_state, _ = model.act(
+             inputs, recurrent_state, deterministic=False
+@@ -350,8 +767,9 @@ def collect_rollout(
+                 arrays["rewards"][base, step] = float(rewards[0])
+                 arrays["rewards"][base + 1, step] = float(rewards[1])
+                 arrays["dones"][base : base + 2, step] = done
+-                next_previous_rewards[base] = float(rewards[0])
+-                next_previous_rewards[base + 1] = float(rewards[1])
++                if not causal_actor:
++                    next_previous_rewards[base] = float(rewards[0])
++                    next_previous_rewards[base + 1] = float(rewards[1])
+                 if done:
+                     episodes_finished += 1
+                     assert env.battle is not None
+@@ -373,7 +791,10 @@ def collect_rollout(
+         episode_starts = next_episode_starts
+ 
+     with maybe_silence_stdio(quiet_engine):
+-        bootstrap_observations, bootstrap_masks = _current_observations(envs)
++        bootstrap_observations, bootstrap_masks = _current_observations(
++            envs,
++            actor_observation_domain=model.config.actor_observation_domain,
++        )
+     bootstrap_inputs = _stack_step_inputs(
+         bootstrap_observations,
+         bootstrap_masks,
+@@ -381,6 +802,7 @@ def collect_rollout(
+         previous_rewards,
+         episode_starts,
+         device,
++        public_observation_confidence=model.config.public_observation_confidence,
+     )
+     bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
+ 
+@@ -403,7 +825,7 @@ def collect_rollout(
+     )
+ 
+ 
+-@torch.no_grad()
++@_rollout_grad_mode
+ def collect_rollout_stationary_opponents(
+     *,
+     envs: list[SelfPlayBattleEnv],
+@@ -422,6 +844,8 @@ def collect_rollout_stationary_opponents(
+     opponent_previous_rewards: np.ndarray,
+     opponent_episode_starts: np.ndarray,
+     quiet_engine: bool,
++    opponent_bot: StrategyBot | None = None,
++    opponent_noop: bool = False,
+ ) -> tuple[
+     RolloutBatch,
+     tuple[Tensor, Tensor],
+@@ -433,7 +857,7 @@ def collect_rollout_stationary_opponents(
+     np.ndarray,
+     np.ndarray,
+ ]:
+-    """Collect one learner seat against a random or frozen recurrent policy.
++    """Collect one learner seat against a random, scripted, or frozen policy.
+ 
+     Seats alternate across environments, and only learner-controlled decisions
+     enter the rollout. This gives PPO a stationary anchor without contaminating
+@@ -441,10 +865,23 @@ def collect_rollout_stationary_opponents(
+     """
+ 
+     model.eval()
++    causal_actor = model.config.actor_observation_domain in {
++        "causal-vision-v1",
++        "causal-frame-v1",
++    }
++    if causal_actor:
++        previous_rewards = np.zeros_like(previous_rewards, dtype=np.float32)
+     if opponent_model is not None:
+         opponent_model.eval()
+         if opponent_recurrent_state is None:
+             raise ValueError("checkpoint opponent requires recurrent state")
++        if opponent_model.config.actor_observation_domain in {
++            "causal-vision-v1",
++            "causal-frame-v1",
++        }:
++            opponent_previous_rewards = np.zeros_like(
++                opponent_previous_rewards, dtype=np.float32
++            )
+     agents = len(envs)
+     if agents != len(learner_players):
+         raise ValueError("learner_players must have one seat per environment")
+@@ -462,7 +899,9 @@ def collect_rollout_stationary_opponents(
+     for step in range(rollout_steps):
+         with maybe_silence_stdio(quiet_engine):
+             observations, action_masks = _current_learner_observations(
+-                envs, learner_players
++                envs,
++                learner_players,
++                actor_observation_domain=model.config.actor_observation_domain,
+             )
+         _store_observations(
+             arrays,
+@@ -480,6 +919,7 @@ def collect_rollout_stationary_opponents(
+             previous_rewards,
+             episode_starts,
+             device,
++            public_observation_confidence=model.config.public_observation_confidence,
+         )
+         actions_t, log_probs_t, values_t, recurrent_state, _ = model.act(
+             inputs, recurrent_state, deterministic=False
+@@ -491,10 +931,21 @@ def collect_rollout_stationary_opponents(
+ 
+         opponent_players = tuple(1 - player_id for player_id in learner_players)
+         with maybe_silence_stdio(quiet_engine):
+-            opponent_observations, opponent_masks = _current_learner_observations(
+-                envs, opponent_players
+-            )
++            if opponent_model is None:
++                # Random and scripted opponents consume only legal masks. Avoid
++                # building their unused public and privileged observation tables.
++                opponent_observations = None
++                opponent_masks = _current_action_masks(envs, opponent_players)
++            else:
++                opponent_observations, opponent_masks = _current_learner_observations(
++                    envs,
++                    opponent_players,
++                    actor_observation_domain=(
++                        opponent_model.config.actor_observation_domain
++                    ),
++                )
+         if opponent_model is not None:
++            assert opponent_observations is not None
+             opponent_inputs = _stack_step_inputs(
+                 opponent_observations,
+                 opponent_masks,
+@@ -502,6 +953,9 @@ def collect_rollout_stationary_opponents(
+                 opponent_previous_rewards,
+                 opponent_episode_starts,
+                 device,
++                public_observation_confidence=(
++                    opponent_model.config.public_observation_confidence
++                ),
+             )
+             (
+                 opponent_actions_t,
+@@ -517,6 +971,26 @@ def collect_rollout_stationary_opponents(
+             opponent_actions = (
+                 opponent_actions_t[:, 0].cpu().numpy().astype(np.int64, copy=False)
+             )
++        elif opponent_noop:
++            opponent_actions = np.full(
++                (agents,), envs[0].action_space.no_op_action, dtype=np.int64
++            )
++        elif opponent_bot is not None:
++            opponent_actions = np.asarray(
++                [
++                    opponent_bot.select_action(
++                        env,
++                        player_id,
++                        action_mask=mask,
++                    )
++                    for env, player_id, mask in zip(
++                        envs,
++                        opponent_players,
++                        opponent_masks,
++                    )
++                ],
++                dtype=np.int64,
++            )
+         else:
+             opponent_actions = np.asarray(
+                 [
+@@ -528,6 +1002,19 @@ def collect_rollout_stationary_opponents(
+                 dtype=np.int64,
+             )
+ 
++        # A procedural defense episode owns its initial enemy push. The
++        # stationary opponent must not add new cards during that short task,
++        # while non-scenario environments in the same rollout keep their
++        # configured random/scripted/checkpoint opponent. This is what makes a
++        # genuine mixed full-game + causal-defense batch possible.
++        scenario_opponents = np.asarray(
++            [env.defense_scenario is not None for env in envs],
++            dtype=np.bool_,
++        )
++        if np.any(scenario_opponents):
++            opponent_actions = opponent_actions.copy()
++            opponent_actions[scenario_opponents] = envs[0].action_space.no_op_action
++
+         next_previous_actions = actions.copy()
+         next_previous_rewards = np.zeros((agents,), dtype=np.float32)
+         next_episode_starts = np.zeros((agents,), dtype=np.bool_)
+@@ -552,10 +1039,16 @@ def collect_rollout_stationary_opponents(
+                 learner_reward = float(rewards[learner_player])
+                 arrays["rewards"][env_index, step] = learner_reward
+                 arrays["dones"][env_index, step] = done
+-                next_previous_rewards[env_index] = learner_reward
+-                next_opponent_previous_rewards[env_index] = float(
+-                    rewards[opponent_player]
+-                )
++                if not causal_actor:
++                    next_previous_rewards[env_index] = learner_reward
++                if (
++                    opponent_model is not None
++                    and opponent_model.config.actor_observation_domain
++                    not in {"causal-vision-v1", "causal-frame-v1"}
++                ):
++                    next_opponent_previous_rewards[env_index] = float(
++                        rewards[opponent_player]
++                    )
+                 if done:
+                     episodes_finished += 1
+                     assert env.battle is not None
+@@ -584,7 +1077,9 @@ def collect_rollout_stationary_opponents(
+ 
+     with maybe_silence_stdio(quiet_engine):
+         bootstrap_observations, bootstrap_masks = _current_learner_observations(
+-            envs, learner_players
++            envs,
++            learner_players,
++            actor_observation_domain=model.config.actor_observation_domain,
+         )
+     bootstrap_inputs = _stack_step_inputs(
+         bootstrap_observations,
+@@ -593,6 +1088,7 @@ def collect_rollout_stationary_opponents(
+         previous_rewards,
+         episode_starts,
+         device,
++        public_observation_confidence=model.config.public_observation_confidence,
+     )
+     bootstrap_values = model.forward(bootstrap_inputs, recurrent_state).values[:, 0]
+     rollout = RolloutBatch(
+@@ -663,10 +1159,21 @@ def _sequence_inputs(
+         entity_mask=tensor("entity_mask", torch.bool),
+         hand_ids=tensor("hand_ids", torch.long),
+         global_features=tensor("global_features", torch.float32),
++        opponent_history_ids=tensor("opponent_history_ids", torch.long),
++        opponent_history_ages=tensor("opponent_history_ages", torch.float32),
++        opponent_seen_card_ids=tensor("opponent_seen_card_ids", torch.long),
++        opponent_play_event_ids=tensor("opponent_play_event_ids", torch.long),
++        opponent_play_event_confidence=tensor(
++            "opponent_play_event_confidence", torch.float32
++        ),
+         action_mask=tensor("action_masks", torch.bool),
+         previous_actions=tensor("previous_actions", torch.long),
+         previous_rewards=tensor("previous_rewards", torch.float32),
+         episode_starts=tensor("episode_starts", torch.bool),
++        entity_id_confidence=tensor("entity_id_confidence", torch.float32),
++        entity_feature_confidence=tensor("entity_feature_confidence", torch.float32),
++        hand_id_confidence=tensor("hand_id_confidence", torch.float32),
++        global_feature_confidence=tensor("global_feature_confidence", torch.float32),
+         critic_entity_ids=tensor("critic_entity_ids", torch.long),
+         critic_entity_features=tensor("critic_entity_features", torch.float32),
+         critic_entity_mask=tensor("critic_entity_mask", torch.bool),
+@@ -685,10 +1192,19 @@ def _index_policy_inputs(inputs: PolicyInputs, indices: Tensor) -> PolicyInputs:
+         entity_mask=inputs.entity_mask.index_select(0, indices),
+         hand_ids=inputs.hand_ids.index_select(0, indices),
+         global_features=inputs.global_features.index_select(0, indices),
++        opponent_history_ids=select(inputs.opponent_history_ids),
++        opponent_history_ages=select(inputs.opponent_history_ages),
++        opponent_seen_card_ids=select(inputs.opponent_seen_card_ids),
++        opponent_play_event_ids=select(inputs.opponent_play_event_ids),
++        opponent_play_event_confidence=select(inputs.opponent_play_event_confidence),
+         action_mask=inputs.action_mask.index_select(0, indices),
+         previous_actions=inputs.previous_actions.index_select(0, indices),
+         previous_rewards=inputs.previous_rewards.index_select(0, indices),
+         episode_starts=inputs.episode_starts.index_select(0, indices),
++        entity_id_confidence=select(inputs.entity_id_confidence),
++        entity_feature_confidence=select(inputs.entity_feature_confidence),
++        hand_id_confidence=select(inputs.hand_id_confidence),
++        global_feature_confidence=select(inputs.global_feature_confidence),
+         critic_entity_ids=select(inputs.critic_entity_ids),
+         critic_entity_features=select(inputs.critic_entity_features),
+         critic_entity_mask=select(inputs.critic_entity_mask),
+@@ -712,6 +1228,95 @@ def _opponent_hand_targets(card_ids: Tensor, num_tokens: int) -> Tensor:
+     return targets.clamp_(0.0, 1.0)
+ 
+ 
++def parameter_anchor_l2(
++    model: ClasherPolicy,
++    anchor_parameters: tuple[Tensor | None, ...],
++) -> Tensor:
++    """Half squared distance over parameters shared with a frozen anchor.
++
++    A ``None`` entry denotes a parameter introduced by a zero-output architecture
++    upgrade.  Such parameters have no corresponding value in the source checkpoint
++    and must not be pulled toward an unrelated random initialization.
++    """
++    parameters = tuple(model.parameters())
++    if len(parameters) != len(anchor_parameters):
++        raise ValueError("anchor parameter count does not match model")
++    penalty = torch.zeros((), dtype=parameters[0].dtype, device=parameters[0].device)
++    for parameter, anchor in zip(parameters, anchor_parameters, strict=True):
++        if anchor is None:
++            continue
++        if parameter.shape != anchor.shape:
++            raise ValueError("anchor parameter shape does not match model")
++        penalty = penalty + 0.5 * (parameter - anchor).square().sum()
++    return penalty
++
++
++def policy_anchor_kl(
++    current_joint_logits: Tensor, anchor_joint_logits: Tensor
++) -> Tensor:
++    """Mean forward KL from a frozen anchor policy to the current policy."""
++    if current_joint_logits.shape != anchor_joint_logits.shape:
++        raise ValueError("anchor and current policy logits must have matching shapes")
++    current_log_prob = torch.log_softmax(current_joint_logits, dim=-1)
++    anchor_log_prob = torch.log_softmax(anchor_joint_logits, dim=-1)
++    anchor_prob = anchor_log_prob.exp()
++    return (anchor_prob * (anchor_log_prob - current_log_prob)).sum(dim=-1).mean()
++
++
++def factorized_policy_anchor_kl(
++    current: PolicyOutput,
++    anchor: PolicyOutput,
++    action_mask: Tensor,
++    *,
++    component: Literal["joint", "location", "type"],
++) -> Tensor:
++    """Preserve a frozen policy at the requested factorized decision level.
++
++    Joint KL is the historical behavior. Location KL compares the conditional
++    tile distribution independently for every playable hand slot, preventing
++    spatial drift from being diluted by card/no-op choice. Type KL preserves
++    slot/no-op/ability choice while allowing placement geometry to move.
++    """
++
++    if component == "joint":
++        return policy_anchor_kl(current.joint_logits, anchor.joint_logits)
++    if component not in {"location", "type"}:
++        raise ValueError("anchor component must be joint, location, or type")
++    if current.joint_logits.shape != anchor.joint_logits.shape:
++        raise ValueError("anchor and current policy logits must have matching shapes")
++    if action_mask.shape != current.joint_logits.shape:
++        raise ValueError("action mask shape must match policy logits")
++
++    placement_mask = action_mask[..., :PLACEMENT_ACTIONS].reshape(
++        *action_mask.shape[:-1], 4, -1
++    )
++    if component == "location":
++        current_logits = current.location_logits
++        anchor_logits = anchor.location_logits
++        mask = placement_mask
++    else:
++        slot_mask = placement_mask.any(dim=-1)
++        mask = torch.cat([slot_mask, action_mask[..., PLACEMENT_ACTIONS:]], dim=-1)
++        current_logits = current.action_type_logits
++        anchor_logits = anchor.action_type_logits
++    if (
++        current_logits.shape != anchor_logits.shape
++        or mask.shape != current_logits.shape
++    ):
++        raise ValueError("factorized anchor logits and mask must have matching shapes")
++
++    valid = mask.count_nonzero(dim=-1) > 1
++    if not bool(valid.any()):
++        return current_logits.sum() * 0.0
++    current_log_prob = torch.log_softmax(
++        current_logits.masked_fill(~mask, -1e9), dim=-1
++    )
++    anchor_log_prob = torch.log_softmax(anchor_logits.masked_fill(~mask, -1e9), dim=-1)
++    anchor_prob = anchor_log_prob.exp()
++    per_decision = (anchor_prob * (anchor_log_prob - current_log_prob)).sum(dim=-1)
++    return per_decision[valid].mean()
++
++
+ def ppo_update(
+     *,
+     model: ClasherPolicy,
+@@ -728,6 +1333,26 @@ def ppo_update(
+     hand_aux_coef: float,
+     elixir_aux_coef: float,
+     target_kl: float,
++    action_type_entropy_coef: float | None = None,
++    location_entropy_coef: float | None = None,
++    conditional_slot_entropy_coef: float = 0.0,
++    anchor_parameters: tuple[Tensor | None, ...] | None = None,
++    anchor_l2_coef: float = 0.0,
++    anchor_model: ClasherPolicy | None = None,
++    anchor_policy_kl_coef: float = 0.0,
++    rehearsal: PlacementRehearsal | None = None,
++    rehearsal_coef: float = 0.0,
++    rehearsal_batch_sequences: int = 1,
++    causal_rehearsal: CausalDecisionRehearsal | None = None,
++    causal_rehearsal_coef: float = 0.0,
++    causal_rehearsal_decision_coef: float = 1.0,
++    causal_rehearsal_decision_positive_weight: float | None = None,
++    causal_rehearsal_card_coef: float = 0.0,
++    causal_rehearsal_tile_coef: float = 0.0,
++    causal_rehearsal_batch_sequences: int = 1,
++    anchor_rehearsal: PlacementRehearsal | None = None,
++    anchor_rehearsal_coef: float = 0.0,
++    anchor_rehearsal_batch_sequences: int = 1,
+ ) -> dict[str, float]:
+     model.train()
+     normalized_advantages = (advantages - float(advantages.mean())) / (
+@@ -738,6 +1363,19 @@ def ppo_update(
+         "policy_loss": 0.0,
+         "value_loss": 0.0,
+         "entropy": 0.0,
++        "action_type_entropy": 0.0,
++        "location_entropy": 0.0,
++        "conditional_slot_entropy": 0.0,
++        "anchor_l2": 0.0,
++        "anchor_loss": 0.0,
++        "anchor_policy_kl": 0.0,
++        "anchor_policy_kl_loss": 0.0,
++        "rehearsal_loss": 0.0,
++        "rehearsal_weighted_loss": 0.0,
++        "causal_rehearsal_loss": 0.0,
++        "causal_rehearsal_weighted_loss": 0.0,
++        "anchor_rehearsal_kl": 0.0,
++        "anchor_rehearsal_loss": 0.0,
+         "hand_loss": 0.0,
+         "elixir_loss": 0.0,
+         "approx_kl": 0.0,
+@@ -752,6 +1390,8 @@ def ppo_update(
+         device=device,
+     )
+     all_inputs = _sequence_inputs(rollout, slice(None), device)
++    if model.config.public_observation_confidence:
++        all_inputs = all_inputs.with_exact_actor_confidence()
+     all_initial_hidden = torch.as_tensor(
+         rollout.initial_hidden, dtype=torch.float32, device=device
+     )
+@@ -803,6 +1443,10 @@ def ppo_update(
+                 0.5 * torch.maximum(value_loss_unclipped, value_loss_clipped).mean()
+             )
+             entropy = distribution.entropy().mean()
++            action_type_entropy, location_entropy = output.entropy_components()
++            action_type_entropy = action_type_entropy.mean()
++            location_entropy = location_entropy.mean()
++            conditional_slot_entropy = output.conditional_slot_entropy().mean()
+ 
+             assert inputs.critic_card_ids is not None
+             assert inputs.critic_global_features is not None
+@@ -816,18 +1460,143 @@ def ppo_update(
+             )
+             enemy_elixir_target = inputs.critic_global_features[..., -2]
+             elixir_loss = F.smooth_l1_loss(output.opponent_elixir, enemy_elixir_target)
++            if action_type_entropy_coef is None and location_entropy_coef is None:
++                entropy_bonus = entropy_coef * entropy
++            else:
++                effective_type_coef = (
++                    entropy_coef
++                    if action_type_entropy_coef is None
++                    else action_type_entropy_coef
++                )
++                effective_location_coef = (
++                    entropy_coef
++                    if location_entropy_coef is None
++                    else location_entropy_coef
++                )
++                entropy_bonus = (
++                    effective_type_coef * action_type_entropy
++                    + effective_location_coef * location_entropy
++                )
++            entropy_bonus = (
++                entropy_bonus + conditional_slot_entropy_coef * conditional_slot_entropy
++            )
++            anchor_l2 = (
++                parameter_anchor_l2(model, anchor_parameters)
++                if anchor_parameters is not None
++                else torch.zeros((), dtype=output.values.dtype, device=device)
++            )
++            anchor_loss = anchor_l2_coef * anchor_l2
++            if anchor_model is None:
++                anchor_policy_kl = torch.zeros(
++                    (), dtype=output.values.dtype, device=device
++                )
++            else:
++                with torch.no_grad():
++                    anchor_output = anchor_model(inputs, initial_state)
++                anchor_policy_kl = policy_anchor_kl(
++                    output.joint_logits, anchor_output.joint_logits
++                )
++            anchor_policy_kl_loss = anchor_policy_kl_coef * anchor_policy_kl
++            if rehearsal is None:
++                rehearsal_loss = torch.zeros(
++                    (), dtype=output.values.dtype, device=device
++                )
++            else:
++                rehearsal_loss = rehearsal.loss(
++                    model,
++                    device=device,
++                    batch_sequences=rehearsal_batch_sequences,
++                )
++            rehearsal_weighted_loss = rehearsal_coef * rehearsal_loss
++            if causal_rehearsal is None:
++                causal_rehearsal_loss = torch.zeros(
++                    (), dtype=output.values.dtype, device=device
++                )
++            else:
++                causal_rehearsal_loss = causal_rehearsal.loss(
++                    model,
++                    device=device,
++                    batch_sequences=causal_rehearsal_batch_sequences,
++                    decision_loss_coef=causal_rehearsal_decision_coef,
++                    decision_positive_weight=(
++                        causal_rehearsal_decision_positive_weight
++                    ),
++                    card_loss_coef=causal_rehearsal_card_coef,
++                    tile_loss_coef=causal_rehearsal_tile_coef,
++                )
++            causal_rehearsal_weighted_loss = (
++                causal_rehearsal_coef * causal_rehearsal_loss
++            )
++            if anchor_rehearsal is None:
++                anchor_rehearsal_kl = torch.zeros(
++                    (), dtype=output.values.dtype, device=device
++                )
++            else:
++                if anchor_model is None:
++                    raise ValueError("anchor rehearsal requires a frozen anchor model")
++                anchor_rehearsal_kl = anchor_rehearsal.anchor_policy_kl(
++                    model,
++                    anchor_model,
++                    device=device,
++                    batch_sequences=anchor_rehearsal_batch_sequences,
++                )
++            anchor_rehearsal_loss = anchor_rehearsal_coef * anchor_rehearsal_kl
+             loss = (
+                 policy_loss
+                 + value_coef * value_loss
+-                - entropy_coef * entropy
++                - entropy_bonus
++                + anchor_loss
++                + anchor_policy_kl_loss
++                + rehearsal_weighted_loss
++                + causal_rehearsal_weighted_loss
++                + anchor_rehearsal_loss
+                 + hand_aux_coef * hand_loss
+                 + elixir_aux_coef * elixir_loss
+             )
+ 
++            if not bool(torch.isfinite(loss)):
++                raise FloatingPointError(
++                    "non-finite PPO loss before backward: "
++                    f"policy={float(policy_loss.detach()):.9g} "
++                    f"value={float(value_loss.detach()):.9g} "
++                    f"entropy={float(entropy.detach()):.9g} "
++                    f"anchor_l2={float(anchor_l2.detach()):.9g} "
++                    f"anchor_kl={float(anchor_policy_kl.detach()):.9g} "
++                    f"rehearsal={float(rehearsal_loss.detach()):.9g} "
++                    "causal_rehearsal="
++                    f"{float(causal_rehearsal_loss.detach()):.9g} "
++                    "anchor_rehearsal_kl="
++                    f"{float(anchor_rehearsal_kl.detach()):.9g}"
++                )
++
+             optimizer.zero_grad(set_to_none=True)
+             loss.backward()
++            nonfinite_gradients = [
++                name
++                for name, parameter in model.named_parameters()
++                if parameter.grad is not None
++                and not bool(torch.isfinite(parameter.grad).all())
++            ]
++            if nonfinite_gradients:
++                raise FloatingPointError(
++                    "non-finite PPO gradients: " + ", ".join(nonfinite_gradients)
++                )
+             grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 0.5)
++            if not bool(torch.isfinite(grad_norm)):
++                raise FloatingPointError(
++                    f"non-finite PPO gradient norm: {float(grad_norm.detach()):.9g}"
++                )
+             optimizer.step()
++            nonfinite_parameters = [
++                name
++                for name, parameter in model.named_parameters()
++                if not bool(torch.isfinite(parameter).all())
++            ]
++            if nonfinite_parameters:
++                raise FloatingPointError(
++                    "non-finite PPO parameters after optimizer step: "
++                    + ", ".join(nonfinite_parameters)
++                )
+ 
+             with torch.no_grad():
+                 approx_kl = ((ratio - 1.0) - log_ratio).mean()
+@@ -837,6 +1606,19 @@ def ppo_update(
+                 "policy_loss": policy_loss,
+                 "value_loss": value_loss,
+                 "entropy": entropy,
++                "action_type_entropy": action_type_entropy,
++                "location_entropy": location_entropy,
++                "conditional_slot_entropy": conditional_slot_entropy,
++                "anchor_l2": anchor_l2,
++                "anchor_loss": anchor_loss,
++                "anchor_policy_kl": anchor_policy_kl,
++                "anchor_policy_kl_loss": anchor_policy_kl_loss,
++                "rehearsal_loss": rehearsal_loss,
++                "rehearsal_weighted_loss": rehearsal_weighted_loss,
++                "causal_rehearsal_loss": causal_rehearsal_loss,
++                "causal_rehearsal_weighted_loss": causal_rehearsal_weighted_loss,
++                "anchor_rehearsal_kl": anchor_rehearsal_kl,
++                "anchor_rehearsal_loss": anchor_rehearsal_loss,
+                 "hand_loss": hand_loss,
+                 "elixir_loss": elixir_loss,
+                 "approx_kl": approx_kl,
+@@ -881,6 +1663,7 @@ def save_checkpoint(
+     update: int,
+     total_transitions: int,
+     metrics: dict[str, float] | None = None,
++    simulation_backend_metadata: dict[str, Any] | None = None,
+ ) -> None:
+     torch.save(
+         {
+@@ -894,6 +1677,7 @@ def save_checkpoint(
+             "update": update,
+             "total_transitions": total_transitions,
+             "metrics": metrics or {},
++            "simulation_backend_metadata": simulation_backend_metadata,
+         },
+         path,
+     )
+@@ -904,6 +1688,71 @@ def parse_args() -> argparse.Namespace:
+         description="Train the recurrent entity-spatial policy with PPO self-play"
+     )
+     parser.add_argument("--decks-path", default="decks.json")
++    parser.add_argument(
++        "--simulation-backend",
++        choices=("python", "simple-pytorch"),
++        default="python",
++        help="battle backend; simple-pytorch is a fresh-only dense tensor Gym",
++    )
++    parser.add_argument(
++        "--simple-supported-decks-path",
++        default="training_decks/simple_gym_supported_v1.json",
++        help="fail-closed supported-deck artifact for --simulation-backend simple-pytorch",
++    )
++    parser.add_argument(
++        "--simple-token-vocabulary-path",
++        default="reports/current_client_youtube_stable_vocabulary_v1.json",
++        help="typed current-client actor vocabulary for the simple PyTorch backend",
++    )
++    parser.add_argument(
++        "--card-semantics-version",
++        type=int,
++        choices=(1, 2, 3),
++        default=1,
++        help=(
++            "public card descriptor schema for a fresh model; v2 replaces the "
++            "legacy table, while v3 preserves it and adds a zero-initialized "
++            "shared mechanics adapter"
++        ),
++    )
++    parser.add_argument(
++        "--actor-observation-domain",
++        choices=("simulator-exact", "causal-vision-v1", "causal-frame-v1"),
++        default="simulator-exact",
++        help=(
++            "fresh-model actor domain; causal-frame-v1 additionally removes "
++            "external temporal stabilization so private model state owns history"
++        ),
++    )
++    parser.add_argument(
++        "--sampling-decks-path",
++        default=None,
++        help=(
++            "optional deck pool used only for training matchup sampling; "
++            "--decks-path still defines the full observation vocabulary"
++        ),
++    )
++    parser.add_argument(
++        "--learner-sampling-decks-path",
++        default=None,
++        help="optional learner-only deck pool for stationary-opponent curricula",
++    )
++    parser.add_argument(
++        "--opponent-sampling-decks-path",
++        default=None,
++        help="optional opponent-only deck pool for stationary-opponent curricula",
++    )
++    parser.add_argument(
++        "--matchups-path",
++        default=None,
++        help="optional weighted exact learner/opponent matchup curriculum",
++    )
++    parser.add_argument(
++        "--matchup-probability",
++        type=float,
++        default=0.0,
++        help="probability of sampling an exact pair from --matchups-path",
++    )
+     parser.add_argument("--checkpoint-dir", default="checkpoints/entity_selfplay")
+     parser.add_argument("--resume-latest", action="store_true")
+     parser.add_argument("--resume-from", default=None)
+@@ -922,21 +1771,63 @@ def parse_args() -> argparse.Namespace:
+         default=2,
+         help="PyTorch CPU threads per rollout process",
+     )
++    parser.add_argument(
++        "--trim-rollout-entity-padding",
++        action="store_true",
++        help=(
++            "new-lineage experiment: crop trailing masked entity slots before "
++            "CPU actor inference; changes floating reductions but not observations"
++        ),
++    )
+     parser.add_argument("--rollout-steps", type=int, default=48)
+     parser.add_argument("--decision-interval", type=int, default=8)
+     parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
+     parser.add_argument("--mirror-match", action="store_true")
++    parser.add_argument(
++        "--reward-profile",
++        choices=REWARD_PROFILES,
++        default=OBJECTIVE_V1,
++        help="objective-v1 preserves existing checkpoints; defense-v2 adds board and danger potentials",
++    )
++    parser.add_argument(
++        "--reward-shaping-gamma",
++        type=float,
++        default=None,
++        help=(
++            "opt-in policy-invariant shaping gamma with terminal potential zero; "
++            "omit to preserve legacy checkpoint rewards"
++        ),
++    )
++    parser.add_argument(
++        "--elixir-leak-penalty-scale",
++        type=float,
++        default=1.0,
++        help="scale the legacy full-elixir no-op penalty; use 0 for the no-leak arm",
++    )
++    parser.add_argument("--defense-scenario-probability", type=float, default=0.0)
++    parser.add_argument("--defense-scenario-minimum-elixir", type=int, default=4)
++    parser.add_argument("--defense-scenario-maximum-elixir", type=int, default=7)
++    parser.add_argument("--defense-scenario-horizon-ticks", type=int, default=240)
++    parser.add_argument("--defense-scenario-reward-scale", type=float, default=1.0)
+     parser.add_argument(
+         "--opponent-mode",
+-        choices=["selfplay", "random", "checkpoint", "league"],
++        choices=["selfplay", "noop", "random", "strategy", "checkpoint", "league"],
+         default="selfplay",
+         help=(
+             "selfplay trains both seats with the current policy; random trains "
+             "one balanced learner seat per environment against a stationary "
+-            "uniform-legal opponent; checkpoint uses frozen policies; league "
+-            "mixes repeated random/checkpoint specifications across workers"
++            "uniform-legal opponent; noop supplies no further opponent actions; "
++            "strategy uses a deterministic public-info "
++            "bot; checkpoint uses frozen policies; league mixes repeated "
++            "random/strategy/checkpoint specifications across workers"
+         ),
+     )
++    parser.add_argument(
++        "--opponent-strategy",
++        choices=STRATEGY_NAMES,
++        default=None,
++        help="public-information strategy used by --opponent-mode strategy",
++    )
+     parser.add_argument(
+         "--opponent-checkpoint",
+         action="append",
+@@ -947,12 +1838,26 @@ def parse_args() -> argparse.Namespace:
+         "--league-opponent",
+         action="append",
+         default=[],
+-        metavar="RANDOM_OR_CHECKPOINT",
++        metavar="RANDOM_STRATEGY_OR_CHECKPOINT",
++        help=(
++            "repeat in league mode; each value is 'random', 'strategy:NAME', "
++            "or a frozen V2 checkpoint path, distributed across workers"
++        ),
++    )
++    parser.add_argument(
++        "--pfsp-report",
++        default=None,
+         help=(
+-            "repeat in league mode; each value is 'random' or a frozen V2 "
+-            "checkpoint path, distributed round-robin across workers"
++            "strategy-benchmark JSON whose PFSP weights fill strategy worker "
++            "slots in league mode"
+         ),
+     )
++    parser.add_argument(
++        "--pfsp-strategy-workers",
++        type=int,
++        default=None,
++        help="number of league worker slots allocated from --pfsp-report",
++    )
+     parser.add_argument(
+         "--engine-fast-path", choices=["off", "shadow", "on"], default="off"
+     )
+@@ -973,12 +1878,309 @@ def parse_args() -> argparse.Namespace:
+     parser.add_argument("--actor-layers", type=int, default=4)
+     parser.add_argument("--critic-layers", type=int, default=2)
+     parser.add_argument("--memory-size", type=int, default=256)
++    parser.add_argument(
++        "--encoder-kind",
++        choices=("attention", "deepsets"),
++        default="attention",
++        help="entity interaction encoder for a fresh policy",
++    )
++    parser.add_argument(
++        "--memory-kind",
++        choices=("lstm", "gru", "structured", "feedforward"),
++        default="lstm",
++        help="temporal core for a fresh policy",
++    )
++    parser.add_argument(
++        "--decoder-kind",
++        choices=("attention", "global"),
++        default="attention",
++        help="tile decoder for a fresh policy",
++    )
++    parser.add_argument(
++        "--card-input-mode",
++        choices=("hybrid", "residual-hybrid", "id-only", "mechanics-only"),
++        default="hybrid",
++        help="learned card identity, exact mechanics, or both",
++    )
++    parser.add_argument(
++        "--add-placement-prior",
++        action="store_true",
++        help=(
++            "add a zero-initialized card-conditioned placement prior while "
++            "resuming a checkpoint"
++        ),
++    )
++    parser.add_argument(
++        "--add-public-history-slots",
++        type=int,
++        default=0,
++        help=(
++            "add a zero-output residual over this many recent public opponent "
++            "card plays while resuming a checkpoint"
++        ),
++    )
++    parser.add_argument(
++        "--add-public-seen-card-slots",
++        type=int,
++        default=0,
++        help=(
++            "add persistent public opponent-card discovery slots while resuming; "
++            "requires public history in the resulting model"
++        ),
++    )
++    parser.add_argument(
++        "--add-action-type-adapter",
++        action="store_true",
++        help=(
++            "add a zero-initialized contextual residual over only the six "
++            "deploy/wait/ability logits while resuming a checkpoint"
++        ),
++    )
++    parser.add_argument(
++        "--add-structured-resource-policy-gate",
++        action="store_true",
++        help=(
++            "add a zero-initialized gate between a structured opponent-resource "
++            "belief and the policy while resuming a checkpoint"
++        ),
++    )
++    parser.add_argument(
++        "--add-play-hazard-adapter-size",
++        type=int,
++        default=0,
++        help=(
++            "add a zero-initialized scalar contextual residual to the play "
++            "hazard while resuming a checkpoint"
++        ),
++    )
++    parser.add_argument(
++        "--play-hazard-adapter-enemy-y-gate",
++        type=float,
++        default=1.0,
++        help=(
++            "canonical public enemy-troop y threshold below which a newly "
++            "added hazard adapter may change timing"
++        ),
++    )
++    parser.add_argument(
++        "--enable-structured-deterministic-resource",
++        action="store_true",
++        help=(
++            "replace learned opponent-resource updates with exact clock regen "
++            "minus public observed card costs while resuming a structured checkpoint"
++        ),
++    )
++    parser.add_argument(
++        "--add-repair-adapter-size",
++        type=int,
++        default=0,
++        help=(
++            "add a zero-initialized dense repair adapter while resuming a "
++            "checkpoint; the saved base and prototype policy remain unchanged"
++        ),
++    )
++    parser.add_argument(
++        "--add-repair-stage-size",
++        type=int,
++        default=0,
++        help=(
++            "append a zero-initialized dense repair stage while resuming a "
++            "checkpoint; earlier repair stages and guards remain unchanged"
++        ),
++    )
++    parser.add_argument(
++        "--trainable-prefix",
++        action="append",
++        default=[],
++        help=(
++            "restrict optimization to parameter names beginning with this prefix; "
++            "repeat for multiple prefixes and use with --reset-optimizer"
++        ),
++    )
+     parser.add_argument("--learning-rate", type=float, default=2.5e-4)
++    parser.add_argument(
++        "--reset-optimizer",
++        action="store_true",
++        help="resume model weights and counters without restoring optimizer moments",
++    )
+     parser.add_argument("--gamma", type=float, default=0.995)
+     parser.add_argument("--gae-lambda", type=float, default=0.95)
+     parser.add_argument("--clip-ratio", type=float, default=0.2)
+     parser.add_argument("--value-coef", type=float, default=0.5)
+     parser.add_argument("--entropy-coef", type=float, default=0.01)
++    parser.add_argument(
++        "--action-type-entropy-coef",
++        type=float,
++        default=None,
++        help="override entropy regularization for card/wait/ability selection",
++    )
++    parser.add_argument(
++        "--location-entropy-coef",
++        type=float,
++        default=None,
++        help="override entropy regularization for placement conditional on card choice",
++    )
++    parser.add_argument(
++        "--conditional-slot-entropy-coef",
++        type=float,
++        default=0.0,
++        help=(
++            "additional entropy regularization among legal hand slots, "
++            "conditional on playing; does not reward play over wait"
++        ),
++    )
++    parser.add_argument(
++        "--anchor-checkpoint",
++        default=None,
++        help="frozen V2 checkpoint used for parameter-space anti-forgetting",
++    )
++    parser.add_argument(
++        "--anchor-l2-coef",
++        type=float,
++        default=0.0,
++        help="coefficient on half squared distance from --anchor-checkpoint",
++    )
++    parser.add_argument(
++        "--anchor-policy-kl-coef",
++        type=float,
++        default=0.0,
++        help=(
++            "coefficient on forward action-distribution KL from the frozen "
++            "--anchor-checkpoint on learner rollout states"
++        ),
++    )
++    parser.add_argument(
++        "--rehearsal-corpus",
++        default=None,
++        help=("expert corpus supplying recurrent action rehearsal during PPO updates"),
++    )
++    parser.add_argument(
++        "--rehearsal-sequence-length",
++        type=int,
++        default=None,
++        help=(
++            "expert recurrent chunk length; defaults to --rollout-steps for "
++            "backward compatibility"
++        ),
++    )
++    parser.add_argument(
++        "--rehearsal-coef",
++        type=float,
++        default=0.0,
++        help="coefficient on the auxiliary recurrent rehearsal loss",
++    )
++    parser.add_argument(
++        "--rehearsal-loss-component",
++        choices=("joint", "location", "type"),
++        default="joint",
++        help=(
++            "train expert joint actions, only placement location conditional "
++            "on the expert slot, or only deploy/wait/card-slot action type"
++        ),
++    )
++    parser.add_argument(
++        "--rehearsal-batch-sequences",
++        type=int,
++        default=1,
++        help="expert sequence chunks sampled per PPO optimizer step",
++    )
++    parser.add_argument(
++        "--causal-rehearsal-corpus",
++        default=None,
++        help="causal recurrent corpus supplying trusted play/wait supervision",
++    )
++    parser.add_argument(
++        "--causal-rehearsal-public-sidecar",
++        default=None,
++        help="aligned public-v2 observations and label-independent masks",
++    )
++    parser.add_argument(
++        "--causal-rehearsal-sequence-length",
++        type=int,
++        default=None,
++        help="causal rehearsal recurrent chunk length; defaults to rollout steps",
++    )
++    parser.add_argument(
++        "--causal-rehearsal-coef",
++        type=float,
++        default=0.0,
++        help="coefficient on trusted public-frame play/wait/ability loss",
++    )
++    parser.add_argument(
++        "--causal-rehearsal-decision-coef",
++        type=float,
++        default=1.0,
++        help="play/wait/ability loss relative to the causal rehearsal coefficient",
++    )
++    parser.add_argument(
++        "--causal-rehearsal-decision-positive-weight",
++        type=float,
++        default=None,
++        help=(
++            "optional corpus-specific positive weight for the play hazard BCE; "
++            "defaults to the checkpoint's human rare-event calibration"
++        ),
++    )
++    parser.add_argument(
++        "--causal-rehearsal-card-coef",
++        type=float,
++        default=0.0,
++        help=(
++            "card-choice loss relative to the causal rehearsal timing loss; "
++            "uses only trusted public-mask-compatible placement labels"
++        ),
++    )
++    parser.add_argument(
++        "--causal-rehearsal-tile-coef",
++        type=float,
++        default=0.0,
++        help=(
++            "placement-tile loss relative to causal rehearsal timing; rows "
++            "must carry explicit trusted tile supervision"
++        ),
++    )
++    parser.add_argument(
++        "--causal-rehearsal-batch-sequences",
++        type=int,
++        default=1,
++        help="causal public-frame chunks sampled per PPO optimizer step",
++    )
++    parser.add_argument(
++        "--anchor-rehearsal-corpus",
++        default=None,
++        help=(
++            "recurrent corpus states on which to preserve the frozen "
++            "--anchor-checkpoint action distribution"
++        ),
++    )
++    parser.add_argument(
++        "--anchor-rehearsal-sequence-length",
++        type=int,
++        default=None,
++        help=("anchor-rehearsal recurrent chunk length; defaults to --rollout-steps"),
++    )
++    parser.add_argument(
++        "--anchor-rehearsal-coef",
++        type=float,
++        default=0.0,
++        help="coefficient on frozen-policy KL over anchor rehearsal states",
++    )
++    parser.add_argument(
++        "--anchor-rehearsal-batch-sequences",
++        type=int,
++        default=1,
++        help="anchor-rehearsal chunks sampled per PPO optimizer step",
++    )
++    parser.add_argument(
++        "--anchor-rehearsal-loss-component",
++        choices=("joint", "location", "type"),
++        default="joint",
++        help=(
++            "preserve the frozen anchor's joint distribution, conditional "
++            "placement geometry, or slot/no-op/ability distribution on "
++            "anchor-rehearsal states"
++        ),
++    )
+     parser.add_argument("--hand-aux-coef", type=float, default=0.02)
+     parser.add_argument("--elixir-aux-coef", type=float, default=0.05)
+     parser.add_argument("--epochs", type=int, default=2)
+@@ -1024,35 +2226,227 @@ def restore_optimizer_state(
+         group["lr"] = learning_rate
+ 
+ 
++def _canonical_lane_globals_for_run(
++    *,
++    actor_observation_domain: str,
++    resume_config: PolicyConfig | None,
++    simulation_backend: str = "python",
++) -> bool:
++    """Keep the observation builder and checkpoint contract on one lane frame."""
++
++    if resume_config is not None:
++        return bool(resume_config.canonical_lane_globals)
++    if simulation_backend == "simple-pytorch":
++        return True
++    return actor_observation_domain in {"causal-vision-v1", "causal-frame-v1"}
++
++
++def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
++    """Fail before side effects unless the fresh dense-Gym contract is exact."""
++
++    if args.simulation_backend != "simple-pytorch":
++        return
++    if args.actor_workers != 1:
++        raise ValueError("simple-pytorch requires --actor-workers 1")
++    if args.resume_latest or args.resume_from:
++        raise ValueError("simple-pytorch is fresh-only until exact resume is gated")
++    if args.opponent_mode != "selfplay":
++        raise ValueError("simple-pytorch currently requires selfplay")
++    if args.actor_observation_domain != "simulator-exact":
++        raise ValueError(
++            "simple-pytorch owns an exact public projection actor domain"
++        )
++    if args.reward_profile != OBJECTIVE_V1 or args.reward_shaping_gamma is not None:
++        raise ValueError(
++            "simple-pytorch uses only its persisted objective-v1-gamma-v1 reward"
++        )
++    if args.elixir_leak_penalty_scale != 0.0:
++        raise ValueError(
++            "simple-pytorch requires --elixir-leak-penalty-scale 0"
++        )
++    if args.engine_fast_path != "off":
++        raise ValueError("simple-pytorch does not compose the legacy engine fast path")
++    if args.max_ticks != STANDARD_MATCH_TICKS:
++        raise ValueError("simple-pytorch currently requires the standard match horizon")
++    if (
++        args.sampling_decks_path is not None
++        or args.learner_sampling_decks_path is not None
++        or args.opponent_sampling_decks_path is not None
++        or args.matchups_path is not None
++        or args.defense_scenario_probability != 0.0
++    ):
++        raise ValueError(
++            "simple-pytorch deck sampling is owned by its supported-deck artifact"
++        )
++
++
+ def main() -> None:
++    global _USE_TRIMMED_ROLLOUT_ENTITY_PADDING
+     args = parse_args()
++    _validate_simple_pytorch_args(args)
++    _USE_TRIMMED_ROLLOUT_ENTITY_PADDING = bool(args.trim_rollout_entity_padding)
+     if args.num_envs <= 0 or args.rollout_steps <= 0:
+         raise ValueError("num_envs and rollout_steps must be positive")
+     if args.actor_workers <= 0 or args.actor_workers > args.num_envs:
+         raise ValueError("actor_workers must be between 1 and num_envs")
+     if args.actor_threads <= 0:
+         raise ValueError("actor_threads must be positive")
++    if args.reward_shaping_gamma is not None and not (
++        0.0 < args.reward_shaping_gamma <= 1.0
++    ):
++        raise ValueError("--reward-shaping-gamma must be in (0, 1]")
++    if args.elixir_leak_penalty_scale < 0.0:
++        raise ValueError("--elixir-leak-penalty-scale must be non-negative")
++    if args.anchor_l2_coef < 0.0:
++        raise ValueError("--anchor-l2-coef must be non-negative")
++    if args.anchor_policy_kl_coef < 0.0:
++        raise ValueError("--anchor-policy-kl-coef must be non-negative")
++    if args.rehearsal_coef < 0.0:
++        raise ValueError("--rehearsal-coef must be non-negative")
++    if args.rehearsal_batch_sequences <= 0:
++        raise ValueError("--rehearsal-batch-sequences must be positive")
++    if (
++        args.rehearsal_sequence_length is not None
++        and args.rehearsal_sequence_length <= 0
++    ):
++        raise ValueError("--rehearsal-sequence-length must be positive")
++    if bool(args.rehearsal_corpus) != (args.rehearsal_coef > 0.0):
++        raise ValueError(
++            "--rehearsal-corpus and a positive --rehearsal-coef require each other"
++        )
++    if args.causal_rehearsal_coef < 0.0:
++        raise ValueError("--causal-rehearsal-coef must be non-negative")
++    if args.causal_rehearsal_decision_coef < 0.0:
++        raise ValueError("--causal-rehearsal-decision-coef must be non-negative")
++    if (
++        args.causal_rehearsal_decision_positive_weight is not None
++        and args.causal_rehearsal_decision_positive_weight <= 0.0
++    ):
++        raise ValueError(
++            "--causal-rehearsal-decision-positive-weight must be positive"
++        )
++    if args.causal_rehearsal_card_coef < 0.0:
++        raise ValueError("--causal-rehearsal-card-coef must be non-negative")
++    if args.causal_rehearsal_tile_coef < 0.0:
++        raise ValueError("--causal-rehearsal-tile-coef must be non-negative")
++    if args.causal_rehearsal_batch_sequences <= 0:
++        raise ValueError("--causal-rehearsal-batch-sequences must be positive")
++    if (
++        args.causal_rehearsal_sequence_length is not None
++        and args.causal_rehearsal_sequence_length <= 0
++    ):
++        raise ValueError("--causal-rehearsal-sequence-length must be positive")
++    causal_rehearsal_paths = bool(args.causal_rehearsal_corpus) and bool(
++        args.causal_rehearsal_public_sidecar
++    )
++    if bool(args.causal_rehearsal_corpus) != bool(
++        args.causal_rehearsal_public_sidecar
++    ) or causal_rehearsal_paths != (args.causal_rehearsal_coef > 0.0):
++        raise ValueError(
++            "--causal-rehearsal-corpus, --causal-rehearsal-public-sidecar, "
++            "and a positive --causal-rehearsal-coef require each other"
++        )
++    if args.anchor_rehearsal_coef < 0.0:
++        raise ValueError("--anchor-rehearsal-coef must be non-negative")
++    if args.anchor_rehearsal_batch_sequences <= 0:
++        raise ValueError("--anchor-rehearsal-batch-sequences must be positive")
++    if (
++        args.anchor_rehearsal_sequence_length is not None
++        and args.anchor_rehearsal_sequence_length <= 0
++    ):
++        raise ValueError("--anchor-rehearsal-sequence-length must be positive")
++    if bool(args.anchor_rehearsal_corpus) != (args.anchor_rehearsal_coef > 0.0):
++        raise ValueError(
++            "--anchor-rehearsal-corpus and a positive "
++            "--anchor-rehearsal-coef require each other"
++        )
++    if args.add_repair_adapter_size < 0:
++        raise ValueError("--add-repair-adapter-size must be non-negative")
++    if args.add_play_hazard_adapter_size < 0:
++        raise ValueError("--add-play-hazard-adapter-size must be non-negative")
++    if not 0.0 < args.play_hazard_adapter_enemy_y_gate <= 1.0:
++        raise ValueError("--play-hazard-adapter-enemy-y-gate must be in (0, 1]")
++    if (
++        args.play_hazard_adapter_enemy_y_gate < 1.0
++        and not args.add_play_hazard_adapter_size
++    ):
++        raise ValueError(
++            "--play-hazard-adapter-enemy-y-gate requires a new hazard adapter"
++        )
++    if args.add_public_history_slots < 0:
++        raise ValueError("--add-public-history-slots must be non-negative")
++    if args.add_repair_stage_size < 0:
++        raise ValueError("--add-repair-stage-size must be non-negative")
++    if args.add_repair_adapter_size and args.add_repair_stage_size:
++        raise ValueError("add only one repair adapter or repair stage per run")
++    if args.add_play_hazard_adapter_size and not args.reset_optimizer:
++        raise ValueError("--add-play-hazard-adapter-size requires --reset-optimizer")
++    if args.add_placement_prior and not args.reset_optimizer:
++        raise ValueError("--add-placement-prior requires --reset-optimizer")
++    if args.add_public_history_slots and not args.reset_optimizer:
++        raise ValueError("--add-public-history-slots requires --reset-optimizer")
++    if args.trainable_prefix and not args.reset_optimizer:
++        raise ValueError("--trainable-prefix requires --reset-optimizer")
++    anchor_regularization = (
++        args.anchor_l2_coef > 0.0
++        or args.anchor_policy_kl_coef > 0.0
++        or args.anchor_rehearsal_coef > 0.0
++    )
++    if bool(args.anchor_checkpoint) != anchor_regularization:
++        raise ValueError(
++            "--anchor-checkpoint requires a positive anchor regularization "
++            "coefficient and vice versa"
++        )
+     if args.opponent_mode == "checkpoint" and not args.opponent_checkpoint:
+         raise ValueError("--opponent-mode checkpoint requires --opponent-checkpoint")
+     if args.opponent_mode != "checkpoint" and args.opponent_checkpoint:
+         raise ValueError("--opponent-checkpoint requires --opponent-mode checkpoint")
+-    if args.opponent_mode == "league" and not args.league_opponent:
+-        raise ValueError("--opponent-mode league requires --league-opponent")
+-    if args.opponent_mode != "league" and args.league_opponent:
+-        raise ValueError("--league-opponent requires --opponent-mode league")
++    if args.opponent_mode == "strategy" and not args.opponent_strategy:
++        raise ValueError("--opponent-mode strategy requires --opponent-strategy")
++    if args.opponent_mode != "strategy" and args.opponent_strategy:
++        raise ValueError("--opponent-strategy requires --opponent-mode strategy")
++    if not 0.0 <= args.defense_scenario_probability <= 1.0:
++        raise ValueError("--defense-scenario-probability must be between zero and one")
++    if args.defense_scenario_probability > 0.0 and args.opponent_mode == "selfplay":
++        raise ValueError("defense scenarios require a stationary opponent mode")
++    if not (
++        1
++        <= args.defense_scenario_minimum_elixir
++        <= args.defense_scenario_maximum_elixir
++    ):
++        raise ValueError("defense scenario elixir bounds are invalid")
++    if args.defense_scenario_horizon_ticks <= 0:
++        raise ValueError("defense scenario horizon must be positive")
++    if args.defense_scenario_reward_scale < 0.0:
++        raise ValueError("defense scenario reward scale must be non-negative")
++    if args.opponent_mode == "league" and not (
++        args.league_opponent or args.pfsp_report
++    ):
++        raise ValueError(
++            "--opponent-mode league requires --league-opponent or --pfsp-report"
++        )
++    if args.opponent_mode != "league" and (
++        args.league_opponent or args.pfsp_report or args.pfsp_strategy_workers
++    ):
++        raise ValueError("league/PFSP options require --opponent-mode league")
++    if args.pfsp_strategy_workers is not None and not args.pfsp_report:
++        raise ValueError("--pfsp-strategy-workers requires --pfsp-report")
+     if args.opponent_mode in {"checkpoint", "league"} and args.actor_workers == 1:
+         raise ValueError(
+             "checkpoint and league opponents currently require parallel actors"
+         )
+-    if args.opponent_mode == "league":
+-        league_kinds = {
+-            "random" if spec == "random" else "checkpoint"
+-            for spec in args.league_opponent
+-        }
+-        if league_kinds != {"random", "checkpoint"}:
+-            raise ValueError(
+-                "league mode requires at least one random and one checkpoint opponent"
+-            )
++    if args.opponent_mode == "league" and args.league_opponent:
++        league_kinds = set()
++        for spec in args.league_opponent:
++            if spec == "random":
++                league_kinds.add("random")
++            elif spec.startswith("strategy:"):
++                strategy_name = spec.removeprefix("strategy:")
++                if strategy_name not in STRATEGY_NAMES:
++                    raise ValueError(f"unknown league strategy {strategy_name!r}")
++                league_kinds.add("strategy")
++            else:
++                league_kinds.add("checkpoint")
+     if args.d_model % args.num_heads != 0:
+         raise ValueError("d_model must be divisible by num_heads")
+ 
+@@ -1066,36 +2460,262 @@ def main() -> None:
+             "parallel rollout workers currently require --actor-device cpu"
+         )
+     decks_path = resolve_decks_path(args.decks_path, must_exist=True)
++    sampling_decks_path = (
++        resolve_decks_path(args.sampling_decks_path, must_exist=True)
++        if args.sampling_decks_path is not None
++        else decks_path
++    )
++    learner_sampling_decks_path = (
++        resolve_decks_path(args.learner_sampling_decks_path, must_exist=True)
++        if args.learner_sampling_decks_path is not None
++        else sampling_decks_path
++    )
++    opponent_sampling_decks_path = (
++        resolve_decks_path(args.opponent_sampling_decks_path, must_exist=True)
++        if args.opponent_sampling_decks_path is not None
++        else sampling_decks_path
++    )
++    matchups_path = (
++        resolve_decks_path(args.matchups_path, must_exist=True)
++        if args.matchups_path is not None
++        else None
++    )
++    if not 0.0 <= args.matchup_probability <= 1.0:
++        raise ValueError("--matchup-probability must be between zero and one")
++    if (matchups_path is None) != (args.matchup_probability == 0.0):
++        raise ValueError(
++            "--matchups-path and a positive --matchup-probability must be used together"
++        )
++    if matchups_path is not None and args.opponent_mode == "selfplay":
++        raise ValueError("exact matchup curricula require a stationary opponent mode")
++    if matchups_path is not None and args.mirror_match:
++        raise ValueError("exact matchup curricula are incompatible with --mirror-match")
++    if args.opponent_mode == "selfplay" and (
++        args.learner_sampling_decks_path is not None
++        or args.opponent_sampling_decks_path is not None
++    ):
++        raise ValueError(
++            "asymmetric learner/opponent deck pools require a stationary opponent mode"
++        )
+     opponent_checkpoints = tuple(
+         str(resolve_path(path, must_exist=True)) for path in args.opponent_checkpoint
+     )
+     league_opponents = tuple(
+         ("random", None)
+         if spec == "random"
+-        else ("checkpoint", str(resolve_path(spec, must_exist=True)))
++        else (
++            ("strategy", spec.removeprefix("strategy:"))
++            if spec.startswith("strategy:")
++            else ("checkpoint", str(resolve_path(spec, must_exist=True)))
++        )
+         for spec in args.league_opponent
+     )
++    if args.pfsp_report:
++        report_path = resolve_path(args.pfsp_report, must_exist=True)
++        report = json.loads(report_path.read_text(encoding="utf-8"))
++        report_weights = report.get("pfsp", {}).get("weights")
++        if not isinstance(report_weights, dict):
++            raise ValueError("--pfsp-report has no pfsp.weights object")
++        strategy_workers = (
++            args.pfsp_strategy_workers
++            if args.pfsp_strategy_workers is not None
++            else args.actor_workers - len(league_opponents)
++        )
++        strategy_names = allocate_pfsp_slots(report_weights, strategy_workers)
++        league_opponents += tuple(("strategy", name) for name in strategy_names)
++    if args.opponent_mode == "league":
++        if len(league_opponents) > args.actor_workers:
++            raise ValueError("league opponent slots cannot exceed actor workers")
++        kinds = {kind for kind, _ in league_opponents}
++        if len(kinds) < 2:
++            raise ValueError("league mode requires at least two opponent kinds")
+     directory = checkpoints_dir(args.checkpoint_dir, create=True)
+     resume, resume_path = _load_resume_state(args, directory, learner_device)
+ 
+     token_names = resume.get("token_names") if resume is not None else None
++    if args.simulation_backend == "simple-pytorch":
++        from .simple_pytorch_backend import load_current_client_typed_vocabulary
++
++        token_names = load_current_client_typed_vocabulary(
++            resolve_path(args.simple_token_vocabulary_path, must_exist=True)
++        ).token_names
+     resume_config = (
+         PolicyConfig.from_dict(resume["model_config"]) if resume is not None else None
+     )
++    canonical_lane_globals = _canonical_lane_globals_for_run(
++        actor_observation_domain=args.actor_observation_domain,
++        resume_config=resume_config,
++        simulation_backend=args.simulation_backend,
++    )
++    target_public_history_slots = (
++        args.add_public_history_slots
++        if args.add_public_history_slots
++        else (resume_config.public_history_slots if resume_config else 0)
++    )
++    # Deterministic-state training needs one exact teacher event pulse.  This
++    # does not change the model's public-history input contract: the adapter
++    # below converts simulator history to a current-frame event before forward.
++    teacher_public_history_slots = max(
++        target_public_history_slots,
++        int(
++            args.enable_structured_deterministic_resource
++            or (
++                resume_config is not None
++                and resume_config.structured_deterministic_resource_enabled
++            )
++        ),
++    )
++    target_public_seen_card_slots = (
++        args.add_public_seen_card_slots
++        if args.add_public_seen_card_slots
++        else (resume_config.public_seen_card_slots if resume_config else 0)
++    )
+     builder = StructuredObservationBuilder(
+         decks_path=decks_path,
+         max_entities=(resume_config.max_entities if resume_config else 128),
+         token_names=token_names,
++        card_semantics_version=(
++            resume_config.card_semantics_version
++            if resume_config is not None
++            else args.card_semantics_version
++        ),
++        canonical_lane_globals=canonical_lane_globals,
++        public_history_slots=teacher_public_history_slots,
++        public_seen_card_slots=target_public_seen_card_slots,
+     )
++    if args.add_repair_adapter_size and resume_config is None:
++        raise ValueError("--add-repair-adapter-size requires a resumed checkpoint")
++    if args.add_action_type_adapter and resume_config is None:
++        raise ValueError("--add-action-type-adapter requires a resumed checkpoint")
++    if args.add_structured_resource_policy_gate and resume_config is None:
++        raise ValueError(
++            "--add-structured-resource-policy-gate requires a resumed checkpoint"
++        )
++    if args.enable_structured_deterministic_resource and resume_config is None:
++        raise ValueError(
++            "--enable-structured-deterministic-resource requires a resumed checkpoint"
++        )
++    if args.add_repair_stage_size and resume_config is None:
++        raise ValueError("--add-repair-stage-size requires a resumed checkpoint")
++    if args.add_placement_prior and resume_config is None:
++        raise ValueError("--add-placement-prior requires a resumed checkpoint")
++    if args.add_public_history_slots and resume_config is None:
++        raise ValueError("--add-public-history-slots requires a resumed checkpoint")
++    if args.add_public_seen_card_slots and resume_config is None:
++        raise ValueError("--add-public-seen-card-slots requires a resumed checkpoint")
++    if args.add_public_seen_card_slots and target_public_history_slots <= 0:
++        raise ValueError("public seen-card slots require public history slots")
++    if (
++        args.add_public_history_slots
++        and resume_config is not None
++        and resume_config.public_history_slots > 0
++    ):
++        raise ValueError("resumed checkpoint already has public history")
++    if (
++        args.add_public_seen_card_slots
++        and resume_config is not None
++        and resume_config.public_seen_card_slots > 0
++    ):
++        raise ValueError("resumed checkpoint already has public seen-card memory")
++    if (
++        args.add_placement_prior
++        and resume_config is not None
++        and resume_config.placement_prior_enabled
++    ):
++        raise ValueError("resumed checkpoint already has a placement prior")
++    if (
++        args.add_action_type_adapter
++        and resume_config is not None
++        and resume_config.action_type_adapter_enabled
++    ):
++        raise ValueError("resumed checkpoint already has an action-type adapter")
++    if args.add_structured_resource_policy_gate and resume_config is not None:
++        if resume_config.memory_kind != "structured":
++            raise ValueError(
++                "structured resource policy gate requires structured memory"
++            )
++        if resume_config.structured_resource_policy_gate_enabled:
++            raise ValueError("resumed checkpoint already has a resource policy gate")
++    if args.enable_structured_deterministic_resource and resume_config is not None:
++        if resume_config.memory_kind != "structured":
++            raise ValueError(
++                "structured deterministic resource requires structured memory"
++            )
++        if resume_config.structured_deterministic_resource_enabled:
++            raise ValueError(
++                "resumed checkpoint already has deterministic resource tracking"
++            )
++    if (
++        args.add_repair_adapter_size
++        and resume_config is not None
++        and resume_config.repair_adapter_size > 0
++    ):
++        raise ValueError("resumed checkpoint already has a dense repair adapter")
++    if args.add_play_hazard_adapter_size and resume_config is None:
++        raise ValueError("play hazard adapter requires a resumed checkpoint")
++    if (
++        args.add_play_hazard_adapter_size
++        and resume_config is not None
++        and resume_config.play_hazard_adapter_size > 0
++    ):
++        raise ValueError("resumed checkpoint already has a play hazard adapter")
+     config = resume_config or PolicyConfig(
+         num_tokens=builder.spec.num_tokens,
+         max_entities=builder.spec.max_entities,
++        card_semantics_version=args.card_semantics_version,
++        public_observation_confidence=(
++            args.actor_observation_domain in {"causal-vision-v1", "causal-frame-v1"}
++        ),
++        actor_observation_domain=args.actor_observation_domain,
++        canonical_lane_globals=canonical_lane_globals,
+         d_model=args.d_model,
+         num_heads=args.num_heads,
+         actor_layers=args.actor_layers,
+         critic_layers=args.critic_layers,
+         memory_size=args.memory_size,
++        encoder_kind=args.encoder_kind,
++        decoder_kind=args.decoder_kind,
++        memory_kind=args.memory_kind,
++        card_input_mode=args.card_input_mode,
+     )
++    if args.add_repair_adapter_size:
++        config = replace(config, repair_adapter_size=args.add_repair_adapter_size)
++    if args.add_play_hazard_adapter_size:
++        config = replace(
++            config,
++            play_hazard_adapter_size=args.add_play_hazard_adapter_size,
++            play_hazard_adapter_enemy_y_gate=(
++                args.play_hazard_adapter_enemy_y_gate
++            ),
++        )
++    if args.add_action_type_adapter:
++        config = replace(config, action_type_adapter_enabled=True)
++    if args.add_structured_resource_policy_gate:
++        config = replace(config, structured_resource_policy_gate_enabled=True)
++    if args.enable_structured_deterministic_resource:
++        config = replace(config, structured_deterministic_resource_enabled=True)
++    if args.add_placement_prior:
++        config = replace(config, placement_prior_enabled=True)
++    if args.add_public_history_slots:
++        config = replace(
++            config,
++            public_history_slots=args.add_public_history_slots,
++        )
++    if args.add_public_seen_card_slots:
++        config = replace(
++            config,
++            public_seen_card_slots=args.add_public_seen_card_slots,
++        )
++    added_stage_index: int | None = None
++    if args.add_repair_stage_size:
++        added_stage_index = len(config.repair_stage_sizes)
++        config = replace(
++            config,
++            repair_stage_sizes=(
++                *config.repair_stage_sizes,
++                args.add_repair_stage_size,
++            ),
++        )
+     model = ClasherPolicy(config, builder.card_stat_features).to(learner_device)
+     if actor_device == learner_device:
+         actor_model = model
+@@ -1107,8 +2727,87 @@ def main() -> None:
+     start_update = 1
+     total_transitions = 0
+     if resume is not None:
+-        model.load_state_dict(resume["model_state_dict"])
+-        if "optimizer_state_dict" in resume:
++        incompatible = model.load_state_dict(
++            resume["model_state_dict"],
++            strict=not bool(
++                args.add_placement_prior
++                or args.add_public_history_slots
++                or args.add_action_type_adapter
++                or args.add_structured_resource_policy_gate
++                or args.add_repair_adapter_size
++                or args.add_repair_stage_size
++                or args.add_play_hazard_adapter_size
++            ),
++        )
++        if args.add_placement_prior and (
++            incompatible.unexpected_keys
++            or incompatible.missing_keys != ["placement_prior.weight"]
++        ):
++            raise ValueError(
++                "only placement-prior parameters may be absent while resuming"
++            )
++        if args.add_public_history_slots:
++            if incompatible.unexpected_keys or not incompatible.missing_keys:
++                raise ValueError(
++                    "unexpected checkpoint mismatch while adding public history"
++                )
++            if not all(
++                name.startswith("public_history_") for name in incompatible.missing_keys
++            ):
++                raise ValueError(
++                    "only public-history parameters may be absent while resuming"
++                )
++        if args.add_action_type_adapter and (
++            incompatible.unexpected_keys
++            or not incompatible.missing_keys
++            or not all(
++                name.startswith("action_type_adapter.")
++                for name in incompatible.missing_keys
++            )
++        ):
++            raise ValueError(
++                "only action-type-adapter parameters may be absent while resuming"
++            )
++        if args.add_structured_resource_policy_gate and (
++            incompatible.unexpected_keys
++            or incompatible.missing_keys != ["structured_resource_policy_gate"]
++        ):
++            raise ValueError(
++                "only the structured resource policy gate may be absent while resuming"
++            )
++        if args.add_repair_adapter_size:
++            if incompatible.unexpected_keys or not incompatible.missing_keys:
++                raise ValueError("unexpected checkpoint mismatch while adding adapter")
++            if not all(
++                name.startswith("repair_adapter.") for name in incompatible.missing_keys
++            ):
++                raise ValueError(
++                    "only dense repair-adapter parameters may be absent while resuming"
++                )
++        if args.add_play_hazard_adapter_size and (
++            incompatible.unexpected_keys
++            or not incompatible.missing_keys
++            or not all(
++                name.startswith("play_hazard_adapter.")
++                for name in incompatible.missing_keys
++            )
++        ):
++            raise ValueError(
++                "only play-hazard-adapter parameters may be absent while resuming"
++            )
++        if args.add_repair_stage_size:
++            assert added_stage_index is not None
++            expected_prefix = f"repair_stages.{added_stage_index}."
++            if incompatible.unexpected_keys or not incompatible.missing_keys:
++                raise ValueError("unexpected checkpoint mismatch while adding stage")
++            if not all(
++                name.startswith(expected_prefix) for name in incompatible.missing_keys
++            ):
++                raise ValueError(
++                    "only the appended repair-stage parameters may be absent while "
++                    "resuming"
++                )
++        if "optimizer_state_dict" in resume and not args.reset_optimizer:
+             restore_optimizer_state(
+                 optimizer,
+                 resume["optimizer_state_dict"],
+@@ -1116,21 +2815,256 @@ def main() -> None:
+             )
+         start_update = int(resume.get("update", 0)) + 1
+         total_transitions = int(resume.get("total_transitions", 0))
++    if args.trainable_prefix:
++        prefixes = tuple(args.trainable_prefix)
++        for name, parameter in model.named_parameters():
++            parameter.requires_grad = name.startswith(prefixes)
++        trainable_parameters = [
++            parameter for parameter in model.parameters() if parameter.requires_grad
++        ]
++        if not trainable_parameters:
++            raise ValueError("--trainable-prefix matched no model parameters")
++        optimizer = torch.optim.AdamW(
++            trainable_parameters,
++            lr=args.learning_rate,
++            eps=1e-5,
++            weight_decay=1e-5,
++        )
++    anchor_parameters: tuple[Tensor | None, ...] | None = None
++    anchor_model: ClasherPolicy | None = None
++    anchor_path: Path | None = None
++    if args.anchor_checkpoint:
++        anchor_path = resolve_path(args.anchor_checkpoint, must_exist=True)
++        anchor = torch.load(
++            anchor_path, map_location=learner_device, weights_only=False
++        )
++        anchor_config = PolicyConfig.from_dict(anchor["model_config"])
++        compatible_zero_prior = (
++            config.placement_prior_enabled
++            and not anchor_config.placement_prior_enabled
++            and replace(config, placement_prior_enabled=False) == anchor_config
++        )
++        compatible_zero_history = (
++            config.public_history_slots > 0
++            and anchor_config.public_history_slots == 0
++            and anchor_config.public_seen_card_slots == 0
++            and replace(
++                config,
++                public_history_slots=0,
++                public_seen_card_slots=0,
++            )
++            == anchor_config
++        )
++        compatible_zero_action_type_adapter = (
++            config.action_type_adapter_enabled
++            and not anchor_config.action_type_adapter_enabled
++            and replace(config, action_type_adapter_enabled=False) == anchor_config
++        )
++        compatible_zero_resource_gate = (
++            config.structured_resource_policy_gate_enabled
++            and not anchor_config.structured_resource_policy_gate_enabled
++            and replace(config, structured_resource_policy_gate_enabled=False)
++            == anchor_config
++        )
++        compatible_zero_repair_adapter = (
++            config.repair_adapter_size > 0
++            and anchor_config.repair_adapter_size == 0
++            and replace(config, repair_adapter_size=0) == anchor_config
++        )
++        compatible_zero_hazard_adapter = (
++            config.play_hazard_adapter_size > 0
++            and anchor_config.play_hazard_adapter_size == 0
++            and replace(
++                config,
++                play_hazard_adapter_size=0,
++                play_hazard_adapter_enemy_y_gate=1.0,
++            )
++            == anchor_config
++        )
++        if (
++            anchor_config != config
++            and not compatible_zero_prior
++            and not compatible_zero_history
++            and not compatible_zero_action_type_adapter
++            and not compatible_zero_resource_gate
++            and not compatible_zero_repair_adapter
++            and not compatible_zero_hazard_adapter
++        ):
++            raise ValueError(
++                "anchor checkpoint model config does not match training model"
++            )
++        if tuple(anchor["token_names"]) != tuple(builder.token_names):
++            raise ValueError(
++                "anchor checkpoint token vocabulary does not match training model"
++            )
++        anchor_state = anchor["model_state_dict"]
++        anchor_reference = ClasherPolicy(config, builder.card_stat_features).to(
++            learner_device
++        )
++        anchor_incompatible = anchor_reference.load_state_dict(
++            anchor_state,
++            strict=not (
++                compatible_zero_prior
++                or compatible_zero_history
++                or compatible_zero_action_type_adapter
++                or compatible_zero_resource_gate
++                or compatible_zero_repair_adapter
++                or compatible_zero_hazard_adapter
++            ),
++        )
++        if compatible_zero_prior and (
++            anchor_incompatible.unexpected_keys
++            or anchor_incompatible.missing_keys != ["placement_prior.weight"]
++        ):
++            raise ValueError("unexpected zero-prior anchor checkpoint mismatch")
++        if compatible_zero_history and (
++            anchor_incompatible.unexpected_keys
++            or not anchor_incompatible.missing_keys
++            or not all(
++                name.startswith(PUBLIC_BELIEF_PARAMETER_PREFIXES)
++                for name in anchor_incompatible.missing_keys
++            )
++        ):
++            raise ValueError("unexpected zero-history anchor checkpoint mismatch")
++        if compatible_zero_action_type_adapter and (
++            anchor_incompatible.unexpected_keys
++            or not anchor_incompatible.missing_keys
++            or not all(
++                name.startswith("action_type_adapter.")
++                for name in anchor_incompatible.missing_keys
++            )
++        ):
++            raise ValueError(
++                "unexpected zero-action-type-adapter anchor checkpoint mismatch"
++            )
++        if compatible_zero_resource_gate and (
++            anchor_incompatible.unexpected_keys
++            or anchor_incompatible.missing_keys != ["structured_resource_policy_gate"]
++        ):
++            raise ValueError("unexpected zero-resource-gate anchor checkpoint mismatch")
++        if compatible_zero_repair_adapter and (
++            anchor_incompatible.unexpected_keys
++            or not anchor_incompatible.missing_keys
++            or not all(
++                name.startswith("repair_adapter.")
++                for name in anchor_incompatible.missing_keys
++            )
++        ):
++            raise ValueError("unexpected zero-repair-adapter anchor checkpoint mismatch")
++        if compatible_zero_hazard_adapter and (
++            anchor_incompatible.unexpected_keys
++            or not anchor_incompatible.missing_keys
++            or not all(
++                name.startswith("play_hazard_adapter.")
++                for name in anchor_incompatible.missing_keys
++            )
++        ):
++            raise ValueError("unexpected zero-hazard-adapter anchor checkpoint mismatch")
++        anchor_parameters = tuple(
++            parameter.detach().clone() if name in anchor_state else None
++            for name, parameter in anchor_reference.named_parameters()
++        )
++        if args.anchor_policy_kl_coef > 0.0 or args.anchor_rehearsal_coef > 0.0:
++            anchor_model = anchor_reference.eval()
++            anchor_model.requires_grad_(False)
++    rehearsal: PlacementRehearsal | None = None
++    if args.rehearsal_corpus:
++        rehearsal = PlacementRehearsal.load(
++            resolve_path(args.rehearsal_corpus, must_exist=True),
++            builder=builder,
++            device=learner_device,
++            sequence_length=(args.rehearsal_sequence_length or args.rollout_steps),
++            seed=args.seed + 67_867,
++            loss_component=args.rehearsal_loss_component,
++        )
++    causal_rehearsal: CausalDecisionRehearsal | None = None
++    if args.causal_rehearsal_corpus:
++        assert args.causal_rehearsal_public_sidecar is not None
++        causal_rehearsal = CausalDecisionRehearsal.load(
++            resolve_path(args.causal_rehearsal_corpus, must_exist=True),
++            resolve_path(args.causal_rehearsal_public_sidecar, must_exist=True),
++            token_names=tuple(builder.token_names),
++            max_entities=builder.max_entities,
++            sequence_length=(
++                args.causal_rehearsal_sequence_length or args.rollout_steps
++            ),
++            seed=args.seed + 101_333,
++        )
++    anchor_rehearsal: PlacementRehearsal | None = None
++    if args.anchor_rehearsal_corpus:
++        anchor_rehearsal = PlacementRehearsal.load(
++            resolve_path(args.anchor_rehearsal_corpus, must_exist=True),
++            builder=builder,
++            device=learner_device,
++            sequence_length=(
++                args.anchor_rehearsal_sequence_length or args.rollout_steps
++            ),
++            seed=args.seed + 81_211,
++            loss_component=args.anchor_rehearsal_loss_component,
++        )
+     synchronize_actor_model(model, actor_model)
+ 
+     envs: list[SelfPlayBattleEnv] = []
+     parallel_collector: Any = None
+-    if args.actor_workers == 1:
++    simple_collector: Any = None
++    simulation_backend_metadata: dict[str, Any] | None = None
++    if args.simulation_backend == "simple-pytorch":
++        from .simple_pytorch_backend import SimplePytorchTrainingCollector
++
++        simple_collector = SimplePytorchTrainingCollector(
++            model=actor_model,
++            builder=builder,
++            batch_size=args.num_envs,
++            device=actor_device,
++            decision_interval=args.decision_interval,
++            gamma=args.gamma,
++            supported_decks_path=resolve_path(
++                args.simple_supported_decks_path, must_exist=True
++            ),
++            typed_vocabulary_path=resolve_path(
++                args.simple_token_vocabulary_path, must_exist=True
++            ),
++            mirror_match=args.mirror_match,
++        )
++        simulation_backend_metadata = simple_collector.checkpoint_metadata()
++    elif args.actor_workers == 1:
+         with maybe_silence_stdio(args.quiet_engine):
+             for index in range(args.num_envs):
++                learner_player = index % 2
++                player_sampling_paths = (
++                    (learner_sampling_decks_path, opponent_sampling_decks_path)
++                    if learner_player == 0
++                    else (opponent_sampling_decks_path, learner_sampling_decks_path)
++                )
+                 env = SelfPlayBattleEnv(
+                     decision_interval_ticks=args.decision_interval,
+                     max_ticks=args.max_ticks,
+                     decks_path=decks_path,
++                    sampling_decks_path=sampling_decks_path,
++                    player0_sampling_decks_path=player_sampling_paths[0],
++                    player1_sampling_decks_path=player_sampling_paths[1],
++                    matchups_path=matchups_path,
++                    matchup_probability=args.matchup_probability,
++                    learner_player_id=learner_player,
+                     seed=args.seed + index * 1009,
+                     mirror_match=args.mirror_match,
+                     canonical_perspective=True,
++                    canonical_lane_globals=config.canonical_lane_globals,
+                     engine_fast_path=args.engine_fast_path,
++                    reward_profile=args.reward_profile,
++                    reward_shaping_gamma=args.reward_shaping_gamma,
++                    elixir_leak_penalty_scale=args.elixir_leak_penalty_scale,
++                    defense_scenario_probability=args.defense_scenario_probability,
++                    defense_scenario_minimum_elixir=(
++                        args.defense_scenario_minimum_elixir
++                    ),
++                    defense_scenario_maximum_elixir=(
++                        args.defense_scenario_maximum_elixir
++                    ),
++                    defense_scenario_horizon_ticks=(
++                        args.defense_scenario_horizon_ticks
++                    ),
++                    defense_scenario_reward_scale=(args.defense_scenario_reward_scale),
+                 )
+                 env._structured_obs_builder = builder
+                 env.reset(seed=args.seed + index * 1009)
+@@ -1143,8 +3077,14 @@ def main() -> None:
+         )
+ 
+         opponent_pool: tuple[OpponentSpec, ...]
+-        if args.opponent_mode == "random":
++        if args.opponent_mode == "noop":
++            opponent_pool = (OpponentSpec(kind="noop"),)
++        elif args.opponent_mode == "random":
+             opponent_pool = (OpponentSpec(kind="random"),)
++        elif args.opponent_mode == "strategy":
++            opponent_pool = (
++                OpponentSpec(kind="strategy", strategy=args.opponent_strategy),
++            )
+         elif args.opponent_mode == "checkpoint":
+             opponent_pool = tuple(
+                 OpponentSpec(kind="checkpoint", checkpoint=path)
+@@ -1155,7 +3095,11 @@ def main() -> None:
+                 (
+                     OpponentSpec(kind="random")
+                     if kind == "random"
+-                    else OpponentSpec(kind="checkpoint", checkpoint=path)
++                    else (
++                        OpponentSpec(kind="strategy", strategy=path)
++                        if kind == "strategy"
++                        else OpponentSpec(kind="checkpoint", checkpoint=path)
++                    )
+                 )
+                 for kind, path in league_opponents
+             )
+@@ -1178,13 +3122,34 @@ def main() -> None:
+                 quiet_engine=args.quiet_engine,
+                 base_seed=args.seed,
+                 torch_threads=args.actor_threads,
++                reward_profile=args.reward_profile,
++                reward_shaping_gamma=args.reward_shaping_gamma,
++                elixir_leak_penalty_scale=args.elixir_leak_penalty_scale,
++                defense_scenario_probability=args.defense_scenario_probability,
++                defense_scenario_minimum_elixir=(args.defense_scenario_minimum_elixir),
++                defense_scenario_maximum_elixir=(args.defense_scenario_maximum_elixir),
++                defense_scenario_horizon_ticks=args.defense_scenario_horizon_ticks,
++                defense_scenario_reward_scale=args.defense_scenario_reward_scale,
++                sampling_decks_path=str(sampling_decks_path),
++                learner_sampling_decks_path=str(learner_sampling_decks_path),
++                opponent_sampling_decks_path=str(opponent_sampling_decks_path),
++                matchups_path=str(matchups_path) if matchups_path is not None else None,
++                matchup_probability=args.matchup_probability,
++                trim_rollout_entity_padding=args.trim_rollout_entity_padding,
+             ),
+         )
+         atexit.register(parallel_collector.close)
+ 
+     agents = (
+         args.num_envs
+-        if args.opponent_mode in {"random", "checkpoint", "league"}
++        if args.opponent_mode
++        in {
++            "noop",
++            "random",
++            "strategy",
++            "checkpoint",
++            "league",
++        }
+         else 2 * args.num_envs
+     )
+     learner_players = tuple(index % 2 for index in range(args.num_envs))
+@@ -1199,22 +3164,80 @@ def main() -> None:
+     parameter_count = sum(parameter.numel() for parameter in model.parameters())
+ 
+     print(f"learner_device={learner_device} actor_device={actor_device}")
++    print(f"simulation_backend={args.simulation_backend}")
+     print(f"decks_path={decks_path}")
++    print(f"sampling_decks_path={sampling_decks_path}")
++    print(f"learner_sampling_decks_path={learner_sampling_decks_path}")
++    print(f"opponent_sampling_decks_path={opponent_sampling_decks_path}")
++    print(
++        f"matchups_path={matchups_path} matchup_probability={args.matchup_probability}"
++    )
+     print(f"checkpoint_dir={directory}")
+     print(
+         f"model=entity_spatial_recurrent params={parameter_count:,} "
+         f"tokens={config.num_tokens} max_entities={config.max_entities} "
+         f"d_model={config.d_model} memory={config.memory_size}"
+     )
++    if anchor_path is not None:
++        print(
++            f"anchor_checkpoint={anchor_path} anchor_l2_coef={args.anchor_l2_coef} "
++            f"anchor_policy_kl_coef={args.anchor_policy_kl_coef} "
++            f"anchor_rehearsal_coef={args.anchor_rehearsal_coef}"
++        )
++    if rehearsal is not None:
++        print(
++            f"rehearsal_corpus={rehearsal.source} "
++            f"rehearsal_chunks={len(rehearsal.chunks)} "
++            f"rehearsal_coef={args.rehearsal_coef} "
++            f"rehearsal_loss_component={rehearsal.loss_component} "
++            f"rehearsal_sequence_length={rehearsal.chunks.shape[1]} "
++            f"rehearsal_batch_sequences={args.rehearsal_batch_sequences}"
++        )
++    if causal_rehearsal is not None:
++        print(
++            f"causal_rehearsal_corpus={causal_rehearsal.corpus} "
++            f"causal_rehearsal_public_sidecar={causal_rehearsal.sidecar} "
++            f"causal_rehearsal_chunks={len(causal_rehearsal.chunks)} "
++            f"causal_rehearsal_coef={args.causal_rehearsal_coef} "
++            "causal_rehearsal_decision_coef="
++            f"{args.causal_rehearsal_decision_coef} "
++            "causal_rehearsal_decision_positive_weight="
++            f"{args.causal_rehearsal_decision_positive_weight} "
++            "causal_rehearsal_card_coef="
++            f"{args.causal_rehearsal_card_coef} "
++            "causal_rehearsal_tile_coef="
++            f"{args.causal_rehearsal_tile_coef} "
++            "causal_rehearsal_sequence_length="
++            f"{causal_rehearsal.chunks.shape[1]} "
++            "causal_rehearsal_batch_sequences="
++            f"{args.causal_rehearsal_batch_sequences}"
++        )
++    if anchor_rehearsal is not None:
++        print(
++            f"anchor_rehearsal_corpus={anchor_rehearsal.source} "
++            f"anchor_rehearsal_chunks={len(anchor_rehearsal.chunks)} "
++            f"anchor_rehearsal_coef={args.anchor_rehearsal_coef} "
++            "anchor_rehearsal_sequence_length="
++            f"{anchor_rehearsal.chunks.shape[1]} "
++            "anchor_rehearsal_batch_sequences="
++            f"{args.anchor_rehearsal_batch_sequences} "
++            "anchor_rehearsal_loss_component="
++            f"{anchor_rehearsal.loss_component}"
++        )
+     print(
+         f"envs={args.num_envs} agents={agents} opponent={args.opponent_mode} "
+         f"actor_workers={args.actor_workers} "
+         f"actor_threads={args.actor_threads} rollout_steps={args.rollout_steps} "
+-        f"transitions_per_update={agents * args.rollout_steps}"
++        f"transitions_per_update={agents * args.rollout_steps} "
++        f"reward_profile={args.reward_profile} "
++        f"reward_shaping_gamma={args.reward_shaping_gamma} "
++        f"elixir_leak_penalty_scale={args.elixir_leak_penalty_scale}"
+     )
+     if args.opponent_mode == "league":
+         league_labels = [
+-            "random" if kind == "random" else str(path)
++            "random"
++            if kind == "random"
++            else (f"strategy:{path}" if kind == "strategy" else str(path))
+             for kind, path in league_opponents
+         ]
+         print(f"league_opponents={league_labels}")
+@@ -1233,6 +3256,7 @@ def main() -> None:
+             args=args,
+             update=0,
+             total_transitions=0,
++            simulation_backend_metadata=simulation_backend_metadata,
+         )
+         print(f"saved_initial_checkpoint={initial_checkpoint}")
+ 
+@@ -1255,7 +3279,16 @@ def main() -> None:
+             learning_rate = float(optimizer.param_groups[0]["lr"])
+ 
+         collect_start = time.perf_counter()
+-        if parallel_collector is None:
++        if simple_collector is not None:
++            (
++                simple_arrays,
++                recurrent_state,
++                previous_actions,
++                previous_rewards,
++                episode_starts,
++            ) = simple_collector.collect(args.rollout_steps, recurrent_state)
++            rollout = RolloutBatch(**simple_arrays)
++        elif parallel_collector is None:
+             (
+                 rollout,
+                 recurrent_state,
+@@ -1284,8 +3317,14 @@ def main() -> None:
+                     opponent_previous_rewards=opponent_previous_rewards,
+                     opponent_episode_starts=opponent_episode_starts,
+                     quiet_engine=args.quiet_engine,
++                    opponent_bot=(
++                        StrategyBot(args.opponent_strategy)
++                        if args.opponent_mode == "strategy"
++                        else None
++                    ),
++                    opponent_noop=args.opponent_mode == "noop",
+                 )
+-                if args.opponent_mode == "random"
++                if args.opponent_mode in {"noop", "random", "strategy"}
+                 else collect_rollout(
+                     envs=envs,
+                     builder=builder,
+@@ -1328,6 +3367,32 @@ def main() -> None:
+             clip_ratio=args.clip_ratio,
+             value_coef=args.value_coef,
+             entropy_coef=args.entropy_coef,
++            action_type_entropy_coef=args.action_type_entropy_coef,
++            location_entropy_coef=args.location_entropy_coef,
++            conditional_slot_entropy_coef=args.conditional_slot_entropy_coef,
++            anchor_parameters=anchor_parameters,
++            anchor_l2_coef=args.anchor_l2_coef,
++            anchor_model=anchor_model,
++            anchor_policy_kl_coef=args.anchor_policy_kl_coef,
++            rehearsal=rehearsal,
++            rehearsal_coef=args.rehearsal_coef,
++            rehearsal_batch_sequences=args.rehearsal_batch_sequences,
++            causal_rehearsal=causal_rehearsal,
++            causal_rehearsal_coef=args.causal_rehearsal_coef,
++            causal_rehearsal_decision_coef=(
++                args.causal_rehearsal_decision_coef
++            ),
++            causal_rehearsal_decision_positive_weight=(
++                args.causal_rehearsal_decision_positive_weight
++            ),
++            causal_rehearsal_card_coef=args.causal_rehearsal_card_coef,
++            causal_rehearsal_tile_coef=args.causal_rehearsal_tile_coef,
++            causal_rehearsal_batch_sequences=(
++                args.causal_rehearsal_batch_sequences
++            ),
++            anchor_rehearsal=anchor_rehearsal,
++            anchor_rehearsal_coef=args.anchor_rehearsal_coef,
++            anchor_rehearsal_batch_sequences=(args.anchor_rehearsal_batch_sequences),
+             hand_aux_coef=args.hand_aux_coef,
+             elixir_aux_coef=args.elixir_aux_coef,
+             target_kl=args.target_kl,
+@@ -1363,6 +3428,20 @@ def main() -> None:
+                 f"abs_reward={float(np.abs(rollout.rewards).mean()):.5f} "
+                 f"loss={stats['loss']:.4f} policy={stats['policy_loss']:.4f} "
+                 f"value={stats['value_loss']:.4f} entropy={stats['entropy']:.3f} "
++                f"type_ent={stats['action_type_entropy']:.3f} "
++                f"loc_ent={stats['location_entropy']:.3f} "
++                f"slot_ent={stats['conditional_slot_entropy']:.3f} "
++                f"anchor_l2={stats['anchor_l2']:.3f} "
++                f"anchor_loss={stats['anchor_loss']:.4f} "
++                f"anchor_policy_kl={stats['anchor_policy_kl']:.5f} "
++                f"anchor_policy_kl_loss={stats['anchor_policy_kl_loss']:.4f} "
++                f"rehearsal={stats['rehearsal_loss']:.3f} "
++                f"rehearsal_loss={stats['rehearsal_weighted_loss']:.4f} "
++                f"causal_rehearsal={stats['causal_rehearsal_loss']:.3f} "
++                "causal_rehearsal_loss="
++                f"{stats['causal_rehearsal_weighted_loss']:.4f} "
++                f"anchor_rehearsal_kl={stats['anchor_rehearsal_kl']:.5f} "
++                f"anchor_rehearsal_loss={stats['anchor_rehearsal_loss']:.4f} "
+                 f"hand={stats['hand_loss']:.3f} elixir={stats['elixir_loss']:.4f} "
+                 f"kl={stats['approx_kl']:.5f} clip={stats['clip_fraction']:.3f} "
+                 f"opt_steps={int(stats['optimizer_steps'])} "
+@@ -1387,6 +3466,7 @@ def main() -> None:
+                 args=args,
+                 update=update,
+                 total_transitions=total_transitions,
++                simulation_backend_metadata=simulation_backend_metadata,
+                 metrics={
+                     **stats,
+                     "reward_mean": float(rollout.rewards.mean()),
+diff --git a/tests/test_rl_simple_pytorch_backend.py b/tests/test_rl_simple_pytorch_backend.py
+new file mode 100644
+index 00000000..cba72ada
+--- /dev/null
++++ b/tests/test_rl_simple_pytorch_backend.py
+@@ -0,0 +1,159 @@
++from __future__ import annotations
++
++import inspect
++from argparse import Namespace
++
++import pytest
++import torch
++
++from clasher.rl.model import ClasherPolicy, PolicyConfig
++from clasher.rl.simple_pytorch_backend import (
++    SIMPLE_PYTORCH_BACKEND,
++    ReferenceSimplePublicMaskV2Adapter,
++    SimplePublicMaskV2Adapter,
++    SimplePytorchTrainingCollector,
++    load_current_client_typed_vocabulary,
++    load_simple_supported_decks,
++)
++from clasher.rl.simple_tensor_collector import SimpleTensorMaskRequest
++from clasher.rl.structured_obs import StructuredObservationBuilder
++from clasher.rl.train_recurrent import RolloutBatch, _validate_simple_pytorch_args
++
++
++def _simple_args(**overrides: object) -> Namespace:
++    values: dict[str, object] = {
++        "simulation_backend": SIMPLE_PYTORCH_BACKEND,
++        "actor_workers": 1,
++        "resume_latest": False,
++        "resume_from": None,
++        "opponent_mode": "selfplay",
++        "actor_observation_domain": "simulator-exact",
++        "reward_profile": "objective-v1",
++        "reward_shaping_gamma": None,
++        "elixir_leak_penalty_scale": 0.0,
++        "engine_fast_path": "off",
++        "max_ticks": 6_000,
++        "sampling_decks_path": None,
++        "learner_sampling_decks_path": None,
++        "opponent_sampling_decks_path": None,
++        "matchups_path": None,
++        "defense_scenario_probability": 0.0,
++    }
++    values.update(overrides)
++    return Namespace(**values)
++
++
++def test_simple_backend_contract_and_typed_variants_fail_closed() -> None:
++    vocabulary = load_current_client_typed_vocabulary()
++    artifact = load_simple_supported_decks()
++
++    assert len(vocabulary.token_names) == 494
++    assert len(artifact.public_cards) == 66
++    assert vocabulary.resolve("Archers", "card_action") == vocabulary.resolve(
++        "Archer", "card_action"
++    )
++    base = vocabulary.resolve("Knight", "card_action")
++    hero = vocabulary.resolve("Knight_hero", "card_action")
++    evolution = vocabulary.resolve("Knight_EV1", "card_action")
++    assert base > 1 and hero > 1 and evolution > 1
++    assert len({base, hero, evolution}) == 3
++    assert vocabulary.resolve("Unknown_hero", "card_action") == 0
++    _validate_simple_pytorch_args(_simple_args())
++
++
++def _training_collector(device_name: str = "cpu") -> SimplePytorchTrainingCollector:
++    if device_name == "cuda" and not torch.cuda.is_available():
++        pytest.skip("CUDA unavailable")
++    device = torch.device(device_name)
++    torch.manual_seed(7)
++    vocabulary = load_current_client_typed_vocabulary()
++    builder = StructuredObservationBuilder(
++        decks_path="decks.json",
++        token_names=vocabulary.token_names,
++        max_entities=128,
++        canonical_lane_globals=True,
++    )
++    config = PolicyConfig(
++        num_tokens=builder.spec.num_tokens,
++        max_entities=builder.spec.max_entities,
++        canonical_lane_globals=True,
++        d_model=32,
++        num_heads=4,
++        actor_layers=1,
++        critic_layers=1,
++        memory_size=32,
++        dropout=0.0,
++    )
++    model = ClasherPolicy(config, builder.card_stat_features).to(device)
++    return SimplePytorchTrainingCollector(
++        model=model,
++        builder=builder,
++        batch_size=1,
++        device=device,
++        decision_interval=2,
++        gamma=0.995,
++        supported_decks_path="training_decks/simple_gym_supported_v1.json",
++        typed_vocabulary_path=(
++            "reports/current_client_youtube_stable_vocabulary_v1.json"
++        ),
++        mirror_match=False,
++    )
++
++
++def test_one_decision_collects_existing_ppo_rollout_shape() -> None:
++    collector = _training_collector()
++    model = collector.policy.model
++    arrays, next_state, previous_actions, previous_rewards, episode_starts = (
++        collector.collect(1, model.initial_state(2, device="cpu"))
++    )
++    rollout = RolloutBatch(**arrays)
++
++    assert rollout.actions.shape == (2, 1)
++    assert rollout.action_masks.shape == (2, 1, model.num_actions)
++    assert rollout.entity_ids.shape == (2, 1, 128)
++    assert rollout.transitions == 2
++    assert rollout.action_masks[
++        torch.arange(2).numpy(), 0, rollout.actions[:, 0]
++    ].all()
++    assert next_state[0].shape == (2, 32)
++    assert previous_actions.shape == previous_rewards.shape == episode_starts.shape == (
++        2,
++    )
++    metadata = collector.checkpoint_metadata()
++    assert metadata["public_action_mask_contract_version"] == 2
++    assert metadata["reward_contract_id"] == "objective-v1-gamma-v1"
++    assert metadata["fresh_only"] is True
++
++
++@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
++def test_tensor_public_mask_matches_authoritative_trace(device_name: str) -> None:
++    collector = _training_collector(device_name)
++    bridge = collector.collector.bridge
++    # Both adapters consume the exact same actor-only boundary. The reference
++    # intentionally round-trips to NumPy; the production path must not.
++    structured_builder = collector.collector.public_mask_provider.builder
++    assert isinstance(structured_builder, StructuredObservationBuilder)
++    tensor = SimplePublicMaskV2Adapter(structured_builder)
++    reference = ReferenceSimplePublicMaskV2Adapter(structured_builder)
++
++    for decision_index in range(4):
++        observation = bridge.observe()
++        request = SimpleTensorMaskRequest(observation, decision_index, False)
++        actual = tensor(request).masks
++        expected = reference(request).masks
++        assert torch.equal(actual, expected)
++        placements = actual[..., : 4 * 18 * 32]
++        first = placements.to(torch.int64).argmax(dim=-1)
++        actions = torch.where(
++            placements.any(dim=-1), first, torch.full_like(first, 4 * 18 * 32)
++        )
++        step = bridge.step(
++            actions,
++            public_action_masks=actual,
++            public_action_mask_contract_version=2,
++        )
++        bridge.reset_done(step.done)
++
++    source = inspect.getsource(SimplePublicMaskV2Adapter.__call__)
++    for forbidden in (".cpu(", ".numpy(", ".item(", ".tolist("):
++        assert forbidden not in source
