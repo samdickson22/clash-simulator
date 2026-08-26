@@ -142,7 +142,7 @@ def test_resident_bandit_full_dash_matches_stationary_python_target() -> None:
 
 def test_resident_mechanic_mixed_rows_commit_atomically() -> None:
     supported, _, target_id = _battle("MiniSparkys")
-    unsupported, _, _ = _battle("MegaKnight")
+    unsupported, _, _ = _battle("ArcherQueen")
     engine = TensorResidentEngine.from_battles(
         [supported, unsupported], max_entities=8, max_objects=8, event_capacity=64
     )
@@ -158,7 +158,7 @@ def test_resident_mechanic_mixed_rows_commit_atomically() -> None:
         ResidentUnsupportedReason.ACTIVE_MECHANIC,
     ]
     assert preflight.mechanic_opcode_present[
-        1, MECHANIC_OPCODE["MegaKnightSlam"]
+        1, MECHANIC_OPCODE["ArcherQueenCloak"]
     ].item()
     assert result.committed.tolist() == [True, False]
     assert engine.runtime.battle.entity_hp[0, _slot(engine, target_id, 0)].item() < (
@@ -168,8 +168,8 @@ def test_resident_mechanic_mixed_rows_commit_atomically() -> None:
     assert torch.equal(engine.runtime.battle.time[1], unsupported_time)
 
 
-def test_resident_co_required_child_mechanics_remain_preflight_fallback() -> None:
-    battle, _, _ = _battle("MegaKnight")
+def test_unintegrated_champion_mechanic_remains_preflight_fallback() -> None:
+    battle, _, _ = _battle("ArcherQueen")
     engine = TensorResidentEngine.from_battles(
         [battle], max_entities=8, max_objects=8, event_capacity=64
     )
@@ -205,7 +205,7 @@ def test_resident_integrated_death_area_owner_preflight_and_tick_commit() -> Non
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
 def test_cuda_resident_mechanic_mixed_rows_smoke() -> None:
     battle, source_id, target_id = _battle("Bandit", distance=5.0)
-    unsupported, _, _ = _battle("MegaKnight")
+    unsupported, _, _ = _battle("ArcherQueen")
     battle.entities[target_id].stun_timer = 100.0
     engine = TensorResidentEngine.from_battles(
         [battle, unsupported],

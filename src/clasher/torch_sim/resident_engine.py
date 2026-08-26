@@ -187,7 +187,7 @@ from .runtime_status import (
     TensorRuntimeStatusPhase,
     step_runtime_status_phase_,
 )
-from .special_movement import SpecialMovementOpcode
+from .special_movement import LeapPhase, SpecialMovementOpcode
 from .status import TensorStatusState
 from .tick_common import check_win_conditions, tick_players
 
@@ -202,6 +202,8 @@ RESIDENT_DISPATCH_MECHANIC_OPCODES = frozenset(
     MECHANIC_OPCODE[name]
     for name in (
         "BanditDash",
+        "MegaKnightSlam",
+        "SpawnPushback",
         "SerializedOnHitBuff",
         "SkeletonKingSoulCollector",
         "SpawnAreaEffect",
@@ -1350,7 +1352,11 @@ class TensorResidentEngine:
                 "periodic": (MECHANIC_OPCODE["PeriodicSpawner"],),
                 "charge": (MECHANIC_OPCODE["BattleRamCharge"],),
                 "demolition": (MECHANIC_OPCODE["WallBreakersDemolition"],),
-                "combat_dispatch": (MECHANIC_OPCODE["BanditDash"],),
+                "combat_dispatch": (
+                    MECHANIC_OPCODE["BanditDash"],
+                    MECHANIC_OPCODE["MegaKnightSlam"],
+                    MECHANIC_OPCODE["SpawnPushback"],
+                ),
                 "shield": (MECHANIC_OPCODE["Shield"],),
                 "spawn_area_deployment": (spawn_area_opcode,),
                 "special_deployment": (
@@ -3864,6 +3870,9 @@ class TensorResidentEngine:
         self.combat.targetable &= ~self_projectile_in_flight
         self.combat.effect_receivable &= ~self_projectile_in_flight
         self.combat.area_effect_receivable &= ~self_projectile_in_flight
+        leap_active = self.dispatcher.leap.phase != int(LeapPhase.IDLE)
+        leap_airborne = self.dispatcher.leap.phase == int(LeapPhase.AIRBORNE)
+        self.combat.area_effect_receivable &= ~leap_airborne
         self.combat.stunned.copy_(runtime.status.stun_timer > 1e-9)
         self.combat.forced_movement.zero_()
         self.combat.combat_blocked.copy_(self.mechanics.combat_blocked())
@@ -3878,6 +3887,7 @@ class TensorResidentEngine:
         )
         self.combat.reveal_on_attack.zero_()
         self.combat.combat_blocked |= self.dispatcher.dash.phase != 0
+        self.combat.combat_blocked |= leap_active
         self.combat.combat_blocked |= (
             self.movement.river_jump_active | self.movement.special_move_consumed_tick
         )
@@ -4022,8 +4032,10 @@ class TensorResidentEngine:
         )
         movement.stunned.copy_(self.combat.stunned)
         movement.forced_movement.zero_()
+        movement.mega_knight_airborne.copy_(leap_airborne)
         movement.special_movement.copy_(movement.river_jump_active)
         movement.special_movement |= self_projectile_in_flight
+        movement.special_movement |= leap_active
         movement.death_spawn_travel.zero_()
         movement.knockback_active.zero_()
         movement.kamikaze_primed.zero_()
@@ -5344,15 +5356,21 @@ class TensorResidentEngine:
         dash_card, dash_slot, has_dash = self.dispatcher._special_operation(
             SpecialMovementOpcode.BANDIT_DASH
         )
+        leap_card, leap_slot, has_leap = self.dispatcher._special_operation(
+            SpecialMovementOpcode.MEGA_KNIGHT_SLAM
+        )
+        range_card = torch.where(has_leap, leap_card, dash_card)
+        range_slot = torch.where(has_leap, leap_slot, dash_slot)
+        has_range_special = has_dash | has_leap
         minimum = self.dispatcher._special_parameter(
             self.dispatcher.special_catalog.min_range_units,
-            dash_card,
-            dash_slot,
+            range_card,
+            range_slot,
         )
         maximum = self.dispatcher._special_parameter(
             self.dispatcher.special_catalog.max_range_units,
-            dash_card,
-            dash_slot,
+            range_card,
+            range_slot,
         )
         source_radius = self.combat.collision_radius_units
         distance_sq = (
@@ -5364,7 +5382,7 @@ class TensorResidentEngine:
         outer = maximum + target_radius
         inputs.special_target_in_range.copy_(
             connected
-            & has_dash
+            & has_range_special
             & (distance_sq >= inner.square())
             & (distance_sq <= outer.square())
         )
@@ -5378,7 +5396,16 @@ class TensorResidentEngine:
             reduce="amax",
             include_self=True,
         )
-        inputs.spawned.copy_(spawned & active[:, None])
+        immediate_spawn = spawned & ~runtime.battle.entity_spawn_hook_pending
+        spawn_hook_due = (
+            active[:, None]
+            & runtime.battle.entity_spawn_hook_pending
+            & (
+                runtime.battle.entity_deploy_delay
+                <= runtime.battle.dt[:, None] + 1e-12
+            )
+        )
+        inputs.spawned.copy_(immediate_spawn | spawn_hook_due)
         inputs.death_triggered.copy_(
             active[:, None] & self.combat.present & ~self.combat.alive
         )
@@ -6280,6 +6307,11 @@ class TensorResidentEngine:
         )
         active &= mechanic_result.committed
         working.runtime.supported &= active
+        dispatcher_knockback = (
+            active[:, None]
+            & working.dispatcher.forced_movement
+            & (working.dispatcher.knockback_velocity_work > 0)
+        )
         ice_owned = working._ice_spirit_entity_supported()
         ice_before = working.ice_spirit.jump_active.clone()
         ice_spirit = working._step_ice_spirit_movement_(combat, active)
@@ -6397,7 +6429,12 @@ class TensorResidentEngine:
         special_consumed = (
             working.dispatcher.dash.special_active
             | working.dispatcher.dash.special_consumed
+            | working.dispatcher.leap.special_active
+            | working.dispatcher.leap.special_consumed
         )
+        leap_airborne = working.dispatcher.leap.phase == int(LeapPhase.AIRBORNE)
+        working.movement.mega_knight_airborne.copy_(leap_airborne)
+        working.combat.area_effect_receivable &= ~leap_airborne
         working.movement.special_movement.copy_(
             special_consumed
             | working.dispatcher.underground_active
@@ -6405,27 +6442,10 @@ class TensorResidentEngine:
             | working.stealth.state.hidden_building
         )
         combat_death = (working.combat.present & ~working.combat.alive).any(dim=1)
-        special_row = special_consumed.any(dim=1)
-        # Removing only a dispatcher-owned mover creates a non-prefix physical
-        # slot hole in the exact collision kernel, so those rows still fail
-        # closed. Impact Spirits instead consume this movement frame for the
-        # row: the resulting ordinary-unit displacement error is bounded to
-        # one 50 ms tick and remains below the quarter-tile gym contract.
-        other_mobile = (
-            working.movement.slot_present
-            & working.movement.entity_active
-            & working.movement.is_troop
-            & ~working.movement.stunned
-            & ~special_consumed
-            & ~ice_consumed
-            & ~electro_consumed
-        ).any(dim=1)
-        working.runtime.mark_unsupported(
-            active & special_row & other_mobile,
-            phase=TickPhase.MOVEMENT,
-        )
         movement_consumed = (
-            (combat_death | special_row)[:, None]
+            combat_death[:, None]
+            | special_consumed
+            | dispatcher_knockback
             | working.projectile_bridge.knockback_active
             | charge_entities
             | ice_owned
@@ -6653,6 +6673,39 @@ class TensorResidentEngine:
         working.runtime.supported &= active
 
         spell_knockback_before = working.projectile_bridge.knockback_active.clone()
+        working.projectile_bridge.knockback_active |= dispatcher_knockback
+        working.projectile_bridge.knockback_entity_id.copy_(
+            torch.where(
+                dispatcher_knockback,
+                working.runtime.battle.entity_id,
+                working.projectile_bridge.knockback_entity_id,
+            )
+        )
+        working.projectile_bridge.knockback_target_units.copy_(
+            torch.where(
+                dispatcher_knockback[..., None],
+                working.dispatcher.knockback_target_units.to(
+                    working.projectile_bridge.knockback_target_units.dtype
+                ),
+                working.projectile_bridge.knockback_target_units,
+            )
+        )
+        working.projectile_bridge.knockback_velocity_work.copy_(
+            torch.where(
+                dispatcher_knockback,
+                working.dispatcher.knockback_velocity_work.to(
+                    working.projectile_bridge.knockback_velocity_work.dtype
+                ),
+                working.projectile_bridge.knockback_velocity_work,
+            )
+        )
+        working.dispatcher.forced_movement &= ~dispatcher_knockback
+        working.dispatcher.knockback_target_units.masked_fill_(
+            dispatcher_knockback[..., None], 0
+        )
+        working.dispatcher.knockback_velocity_work.masked_fill_(
+            dispatcher_knockback, 0
+        )
         rolling_ids_before = working.runtime.battle.entity_id.clone()
         rolling_spells = working.rolling_spells.step_(working.runtime)
         working.runtime.mark_unsupported(
@@ -7122,8 +7175,13 @@ class TensorResidentEngine:
             )
         )
         knockback_started = (
-            working.projectile_bridge.knockback_active
-            & ~spell_knockback_before
+            (
+                dispatcher_knockback
+                | (
+                    working.projectile_bridge.knockback_active
+                    & ~spell_knockback_before
+                )
+            )
             & working.runtime.entity_pool.active
             & (
                 working.projectile_bridge.knockback_entity_id
