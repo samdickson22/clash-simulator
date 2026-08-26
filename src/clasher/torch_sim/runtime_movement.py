@@ -573,7 +573,18 @@ def step_runtime_movement_(
 
     # Stable entity-ID component order. Each iteration is one tensor lane over
     # every battle row, never a Python Entity call.
-    for slot in range(adapter.max_entities):
+    # Stable-lane admission guarantees live entities occupy an ID-ordered
+    # prefix.  Synchronize its bounded high-water mark once instead of
+    # launching every inactive capacity lane on an accelerator.  This is an
+    # eager-mode optimization; a future graph-captured path should retain the
+    # bound as a device-side loop condition.
+    active_entity = (
+        supported[:, None] & runtime.combat.present & runtime.combat.alive
+    )
+    active_slot_count = int(
+        torch.where(active_entity, lane_index + 1, 0).amax().item()
+    )
+    for slot in range(active_slot_count):
         avoidance_sequence.step_rank_(slot)
         slot_active = active_troop[:, slot]
         slot_vector, slot_count = _collision_for_slot(

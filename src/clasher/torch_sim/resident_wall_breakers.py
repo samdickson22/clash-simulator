@@ -342,6 +342,29 @@ class TensorResidentDemolition:
         )
         if entity_mask.shape != shape:
             raise ValueError("demolition entity_actionable must match entity layout")
+        core = runtime.battle
+        cards = core.entity_card.clamp(0, len(self.catalog.supported) - 1)
+        live_owner = (
+            runtime.entity_pool.active
+            & core.entity_active
+            & self.catalog.supported[cards]
+        )
+        retained_owner = self.tracked_entity_id > 0
+        owner_activity = selected[:, None] & (live_owner | retained_owner)
+        if not bool(owner_activity.any().item()):
+            return DemolitionStepResult(
+                committed=torch.ones_like(selected),
+                capacity_rejected=torch.zeros_like(selected),
+                acquired_target_id=torch.where(
+                    selected[:, None], self.target_entity_id, 0
+                ),
+                moved=torch.zeros_like(core.entity_active),
+                primed=torch.zeros_like(core.entity_active),
+                detonated=torch.zeros_like(core.entity_active),
+                projectile_entity_ids=torch.zeros_like(core.entity_id),
+                damage=torch.zeros_like(core.entity_hp),
+                deaths=torch.zeros_like(core.entity_active),
+            )
         capacity_rejected = torch.zeros_like(selected)
         supported = selected.clone()
         working_runtime = runtime.clone()

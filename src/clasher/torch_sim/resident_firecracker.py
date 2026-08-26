@@ -453,6 +453,28 @@ class TensorResidentBurstProjectiles:
             raise ValueError("burst attack planes must have shape [batch, lane]")
         if valid.shape[1] > runtime.max_entities:
             raise ValueError("burst attack lane count exceeds entity capacity")
+        requested = valid.to(self.device, torch.bool)
+        if not bool(requested.any().item()):
+            return BurstCommitResult(
+                committed=torch.ones(
+                    self.batch_size, dtype=torch.bool, device=self.device
+                ),
+                accepted=torch.zeros(
+                    self.batch_size, dtype=torch.bool, device=self.device
+                ),
+                unsupported=torch.zeros(
+                    self.batch_size, dtype=torch.bool, device=self.device
+                ),
+                capacity_rejected=torch.zeros(
+                    self.batch_size, dtype=torch.bool, device=self.device
+                ),
+                parent_entity_ids=torch.zeros(
+                    (self.batch_size, runtime.max_entities),
+                    dtype=torch.int64,
+                    device=self.device,
+                ),
+                recoil_started=torch.zeros_like(requested),
+            )
         core = runtime.battle
         source = source_slots.to(self.device, torch.int64).clamp(
             0, runtime.max_entities - 1
@@ -460,7 +482,6 @@ class TensorResidentBurstProjectiles:
         target = target_slots.to(self.device, torch.int64).clamp(
             0, runtime.max_entities - 1
         )
-        requested = valid.to(self.device, torch.bool)
         cards = core.entity_card.gather(1, source)
         live = (
             runtime.entity_pool.active.gather(1, source)
@@ -758,6 +779,23 @@ class TensorResidentBurstProjectiles:
         if ticks != 1:
             raise ValueError(
                 "retained burst lifecycle currently requires one logic tick"
+            )
+        retained_activity = (
+            self.parent_active.any(dim=1)
+            | self.child_active.any(dim=1)
+            | self.recoil_active.any(dim=1)
+        ) & selected
+        if not bool(retained_activity.any().item()):
+            return BurstStepResult(
+                committed=torch.ones_like(selected),
+                capacity_rejected=torch.zeros_like(selected),
+                parent_impacted=torch.zeros_like(selected),
+                spawned_children=torch.zeros(
+                    self.batch_size, dtype=torch.int64, device=self.device
+                ),
+                damage=torch.zeros_like(runtime.battle.entity_hp),
+                deaths=torch.zeros_like(runtime.battle.entity_active),
+                recoil_active=self.recoil_active.clone(),
             )
         parent_delta = self.parent_target_units - self.parent_position_units
         parent_remaining = integer_sqrt_tensor(

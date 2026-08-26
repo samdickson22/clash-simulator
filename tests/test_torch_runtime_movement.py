@@ -10,6 +10,7 @@ from clasher.battle import BattleState
 from clasher.entities import Building, Entity, Troop
 from clasher.pathfinding import native_jump_landing_waypoint
 from clasher.torch_sim.movement_adapter import TensorMovementAdapter
+from clasher.torch_sim.resident_avoidance import TensorAvoidanceSequence
 from clasher.torch_sim.runtime import TensorTickRuntime
 from clasher.torch_sim.runtime_movement import (
     MovementEventOpcode,
@@ -162,6 +163,50 @@ def test_runtime_ordinary_route_movement_matches_complete_scalar_phase(
     assert int(runtime.combat.y_units[0, mover_slot].item()) == round(
         expected.entities[mover.id].position.y * 1_000
     )
+
+
+@pytest.mark.parametrize("device", DEVICES)
+def test_runtime_sparse_capacity_matches_dense_prefix_and_bounds_lane_work(
+    device: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    seed = _empty_battle()
+    mover = _troop(seed, "Knight", 0, Position(4.25, 10.25))
+    target = _troop(seed, "Knight", 1, Position(5.25, 13.75))
+    mover._movement_target_id = target.id
+    sparse_battle = seed.clone()
+    dense_battle = seed.clone()
+    sparse_runtime, sparse_adapter = _runtime_and_adapter(
+        sparse_battle, device=device, capacity=4
+    )
+    dense_runtime, dense_adapter = _runtime_and_adapter(
+        dense_battle, device=device, capacity=64
+    )
+
+    sparse = step_runtime_movement_(sparse_runtime, sparse_adapter)
+    visited: list[int] = []
+    original = TensorAvoidanceSequence.step_rank_
+
+    def record_rank(sequence: TensorAvoidanceSequence, rank: int) -> torch.Tensor:
+        visited.append(rank)
+        return original(sequence, rank)
+
+    monkeypatch.setattr(TensorAvoidanceSequence, "step_rank_", record_rank)
+    dense = step_runtime_movement_(dense_runtime, dense_adapter)
+    sparse_adapter.sync_to_battles([sparse_battle])
+    dense_adapter.sync_to_battles([dense_battle])
+
+    assert visited == [0, 1]
+    assert dense.supported_batch.tolist() == sparse.supported_batch.tolist() == [True]
+    assert torch.equal(dense.ordinary_moved[:, :4], sparse.ordinary_moved)
+    assert torch.equal(
+        dense_adapter.position_units[:, :4], sparse_adapter.position_units
+    )
+    assert not dense.ordinary_moved[:, 4:].any().item()
+    for entity_id in sorted(seed.entities):
+        assert _movement_state(dense_battle.entities[entity_id]) == _movement_state(
+            sparse_battle.entities[entity_id]
+        )
 
 
 @pytest.mark.parametrize("device", DEVICES)

@@ -679,6 +679,25 @@ class TensorResidentPiercingProjectiles:
             raise ValueError("piercing attack planes must share [batch, lane]")
         if valid.ndim != 2 or valid.shape[0] != self.batch_size:
             raise ValueError("piercing attack planes must have shape [batch, lane]")
+        requested = valid.to(self.device, torch.bool)
+        if not bool(requested.any().item()):
+            return PiercingLaunchResult(
+                committed=torch.ones(
+                    self.batch_size, dtype=torch.bool, device=self.device
+                ),
+                accepted=torch.zeros(
+                    self.batch_size, dtype=torch.bool, device=self.device
+                ),
+                unsupported=torch.zeros(
+                    self.batch_size, dtype=torch.bool, device=self.device
+                ),
+                capacity_rejected=torch.zeros(
+                    self.batch_size, dtype=torch.bool, device=self.device
+                ),
+                projectile_entity_ids=torch.zeros_like(requested, dtype=torch.int64),
+                damage=torch.zeros_like(runtime.battle.entity_hp),
+                deaths=torch.zeros_like(runtime.battle.entity_active),
+            )
         core = runtime.battle
         source = source_slots.to(self.device, torch.int64).clamp(
             0, runtime.max_entities - 1
@@ -686,7 +705,6 @@ class TensorResidentPiercingProjectiles:
         target = target_slots.to(self.device, torch.int64).clamp(
             0, runtime.max_entities - 1
         )
-        requested = valid.to(self.device, torch.bool)
         cards = core.entity_card.gather(1, source)
         eligible = (
             requested
@@ -883,6 +901,15 @@ class TensorResidentPiercingProjectiles:
         )
         if selected.shape != (self.batch_size,):
             raise ValueError("piercing battle_mask must have shape [batch]")
+        retained_activity = self.active.any(dim=1) & selected
+        if not bool(retained_activity.any().item()):
+            return PiercingStepResult(
+                committed=torch.ones_like(selected),
+                capacity_rejected=torch.zeros_like(selected),
+                expired=torch.zeros_like(self.active),
+                damage=torch.zeros_like(runtime.battle.entity_hp),
+                deaths=torch.zeros_like(runtime.battle.entity_active),
+            )
         maximum_events = (
             self.active.sum(dim=1, dtype=torch.int64) * runtime.max_entities * 2
         )

@@ -247,9 +247,18 @@ def _native_heap_routes(
     found = torch.zeros(route_count, dtype=torch.bool, device=device)
     rows = torch.arange(route_count, device=device)
 
-    for _ in range(CELL_COUNT):
+    # An exhausted/found search used to keep launching the complete fixed
+    # CUDA loop because checking every iteration would synchronize the host.
+    # Check in small blocks instead: route results stay identical, while a
+    # typical short arena route avoids hundreds of no-op heap iterations and
+    # their thousands of tiny CUDA kernels.
+    completion_check_interval = 1 if device.type == "cpu" else 16
+    for iteration in range(CELL_COUNT):
         expanding = active & ~found & (heap_size > 0)
-        if device.type == "cpu" and not bool(expanding.any().item()):
+        if (
+            iteration % completion_check_interval == 0
+            and not bool(expanding.any().item())
+        ):
             break
         current = _heap_pop(heap, heap_size, priorities, expanding)
         reached = expanding & (current == goal)

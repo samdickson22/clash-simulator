@@ -103,6 +103,31 @@ def _scalar_demolish(battle: BattleState) -> list[Projectile]:
     return projectiles
 
 
+def test_inactive_gate_still_initializes_new_and_clears_stale_owners() -> None:
+    source = _battle(995_090)
+    runtime, owner = _owners(source, "cpu")
+    first_slot = _slot(runtime, 1)
+    second_slot = _slot(runtime, 2)
+    owner.tracked_entity_id[0, [first_slot, second_slot]] = 0
+
+    initialized = owner.step_(runtime)
+
+    assert initialized.committed.tolist() == [True]
+    assert initialized.detonated[0, [first_slot, second_slot]].tolist() == [True, True]
+
+    stale_runtime, stale_owner = _owners(source, "cpu")
+    stale_slots = torch.tensor(
+        [_slot(stale_runtime, 1), _slot(stale_runtime, 2)], dtype=torch.int64
+    )
+    stale_runtime.battle.entity_active[0, stale_slots] = False
+
+    cleared = stale_owner.step_(stale_runtime)
+
+    assert cleared.committed.tolist() == [True]
+    assert stale_owner.tracked_entity_id[0, stale_slots].tolist() == [0, 0]
+    assert not cleared.detonated.any().item()
+
+
 def test_dual_demolition_ids_snapshot_damage_and_self_death_match_scalar(
     tensor_device: str,
 ) -> None:

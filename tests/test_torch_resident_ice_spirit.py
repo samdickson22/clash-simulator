@@ -86,6 +86,31 @@ def _slot(runtime: TensorBattleRuntime, row: int, entity_id: int) -> int:
     return int(found[0].item())
 
 
+def test_inactive_gate_skips_speculative_clones(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source, spirit, _ = _battle()
+    runtime = TensorBattleRuntime.from_battles(
+        [source], max_entities=8, event_capacity=16
+    )
+    state = TensorIceSpiritState.from_battles(runtime, [source])
+    spirit_slot = _slot(runtime, 0, spirit.id)
+    state.combat.present[0, spirit_slot] = False
+    state.combat.alive[0, spirit_slot] = False
+
+    def reject_clone(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("inactive Ice Spirit path cloned speculative state")
+
+    monkeypatch.setattr(TensorIceSpiritState, "clone", reject_clone)
+    monkeypatch.setattr(TensorBattleRuntime, "clone", reject_clone)
+
+    result = step_ice_spirit_lifecycle_(runtime, state)
+
+    assert result.committed.tolist() == [True]
+    assert not result.jumped.any().item()
+    assert not result.landed.any().item()
+
+
 def test_full_attack_jump_landing_freeze_lifecycle_matches_scalar(
     tensor_device: str,
 ) -> None:

@@ -351,6 +351,29 @@ def step_ice_spirit_lifecycle_(
         raise ValueError("runtime and Ice Spirit state differ")
     batch, count = state.entity_card.shape
     device = state.device
+    delta_ms = torch.broadcast_to(
+        torch.as_tensor(dt_ms, dtype=torch.int64, device=device), (batch,)
+    )
+    source_mask = (
+        state.combat.present
+        & state.combat.alive
+        & state.catalog.supported[state.entity_card]
+        & (state.initialized_entity_id == state.combat.entity_id)
+    )
+    if not bool((source_mask & runtime.supported[:, None]).any().item()):
+        inactive = torch.zeros_like(source_mask)
+        return IceSpiritStepResult(
+            runtime.supported.clone(),
+            torch.zeros(batch, dtype=torch.int16, device=device),
+            inactive,
+            inactive.clone(),
+            inactive.clone(),
+            state.jump_active & source_mask,
+            torch.zeros_like(state.combat.hp),
+            inactive.clone(),
+            inactive.clone(),
+            inactive.clone(),
+        )
     working = state.clone()
     speculative = runtime.clone()
     combat = working.combat
@@ -358,9 +381,6 @@ def step_ice_spirit_lifecycle_(
     combat.alive.copy_(speculative.battle.entity_active)
     combat.x_units.copy_(speculative.battle.entity_x_units.to(torch.int64))
     combat.y_units.copy_(speculative.battle.entity_y_units.to(torch.int64))
-    delta_ms = torch.broadcast_to(
-        torch.as_tensor(dt_ms, dtype=torch.int64, device=device), (batch,)
-    )
     source_mask = (
         combat.present
         & combat.alive
