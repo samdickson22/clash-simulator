@@ -26,11 +26,12 @@ from clasher.card_types import CardStatsCompat
 from clasher.data import CardDataLoader
 from clasher.factory.card_factory import card_from_gamedata
 from clasher.factory.dynamic_factory import troop_from_character_data
-from clasher.mechanics.shared.death_effects import DeathSpawn
+from clasher.mechanics.shared.death_effects import DeathDamage, DeathSpawn
 from clasher.mechanics.shared.spawner import PeriodicSpawner
 
 from .catalog import TensorCardCatalog
 from .simple_catalog import FastCardCatalog
+from .simple_death_burst import FastDeathBurstCatalog
 from .simple_effects import FastEffectState
 from .simple_payload_containers import (
     FastPayloadContainerCommands,
@@ -325,6 +326,7 @@ class FastSpawnBlueprintCatalog:
     device: torch.device
     cards: TensorCardCatalog
     fast_cards: FastCardCatalog
+    death_burst_catalog: FastDeathBurstCatalog
     visible_names: tuple[str, ...]
     root_names: tuple[str, ...]
     source_paths: tuple[str, ...]
@@ -406,6 +408,33 @@ class FastSpawnBlueprintCatalog:
         fast_cards = FastCardCatalog.from_tensor_catalog(cards, loader=overlay)
         visible_names = tuple(visible_by_label.get(name, name) for name in cards.names)
 
+        death_burst_catalog = FastDeathBurstCatalog.empty(
+            len(cards.names), device=cards.device
+        )
+        for label, card_id in cards.name_to_id.items():
+            if not label:
+                continue
+            stats = overlay.get_card(label)
+            if stats is None:
+                continue
+            bursts = [
+                mechanic
+                for mechanic in stats.card_definition.mechanics
+                if isinstance(mechanic, DeathDamage)
+            ]
+            if len(bursts) != 1:
+                continue
+            burst = bursts[0]
+            death_burst_catalog.enabled[card_id] = True
+            death_burst_catalog.damage[card_id] = float(
+                stats.get_scaled_stat(burst.damage) or 0
+            )
+            death_burst_catalog.radius_units[card_id] = round(
+                max(0.0, burst.radius_tiles) * 1_000
+            )
+            death_burst_catalog.hits_air[card_id] = bool(burst.hits_air)
+            death_burst_catalog.hits_ground[card_id] = bool(burst.hits_ground)
+
         def tensor(values: Iterable[object], dtype: torch.dtype) -> torch.Tensor:
             return torch.tensor(tuple(values), dtype=dtype, device=cards.device)
 
@@ -432,10 +461,18 @@ class FastSpawnBlueprintCatalog:
                 label = label_by_key[key]
                 child_id = cards.name_to_id[label]
                 child_definition = overlay.get_card(label)
+                child_mechanics = (
+                    child_definition.card_definition.mechanics
+                    if child_definition is not None
+                    else ()
+                )
                 child_supported = bool(
                     child_definition is not None
                     and child_definition.scaled_hitpoints
-                    and not child_definition.card_definition.mechanics
+                    and all(
+                        isinstance(mechanic, DeathDamage)
+                        for mechanic in child_mechanics
+                    )
                 )
             container = bool(
                 requirement.trigger == FastSpawnTrigger.DEATH
@@ -598,6 +635,7 @@ class FastSpawnBlueprintCatalog:
             device=cards.device,
             cards=cards,
             fast_cards=fast_cards,
+            death_burst_catalog=death_burst_catalog,
             visible_names=visible_names,
             root_names=tuple(value.root_name for value in requirements),
             source_paths=tuple(value.source_path for value in requirements),

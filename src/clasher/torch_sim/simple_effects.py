@@ -252,6 +252,7 @@ def step_fast_effects(
     modifiers: FastModifierState | None = None,
     entity_is_air: torch.Tensor | None = None,
     entity_collision_radius_units: torch.Tensor | None = None,
+    tick_status: bool = True,
 ) -> FastEffectStepResult:
     """Advance homing effects, resolve splash, install statuses, and clean up.
 
@@ -277,9 +278,10 @@ def step_fast_effects(
     batch, max_effects = effects.active.shape
     max_entities = state.max_entities
 
-    status_running = entity_status_ticks > 0
-    entity_status_ticks.sub_(status_running.to(torch.int32)).clamp_(min=0)
-    entity_status_kind.masked_fill_(entity_status_ticks == 0, FAST_STATUS_NONE)
+    if tick_status:
+        status_running = entity_status_ticks > 0
+        entity_status_ticks.sub_(status_running.to(torch.int32)).clamp_(min=0)
+        entity_status_kind.masked_fill_(entity_status_ticks == 0, FAST_STATUS_NONE)
 
     alive = effects.active & (effects.lifetime_ticks > 0)
     valid_projectile = alive & (effects.kind == FAST_EFFECT_PROJECTILE)

@@ -101,7 +101,7 @@ def test_simple_benchmark_reports_truthful_supported_deck_filter(
             {
                 "decks": [
                     {"name": "supported", "cards": ["Knight"] * 8},
-                    {"name": "unsupported", "cards": ["Golem"] * 8},
+                    {"name": "unsupported", "cards": ["Lumberjack"] * 8},
                 ]
             }
         )

@@ -264,7 +264,7 @@ def test_impact_spawn_capacity_is_masked_before_spending_card(device_name: str) 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
 def test_incomplete_spawn_blueprint_root_remains_illegal(device_name: str) -> None:
     runtime, blueprints, root = _runtime(
-        "Golem", device_name=device_name, max_entities=16
+        "Lumberjack", device_name=device_name, max_entities=16
     )
     assert bool(blueprints.root_payload_required[root])
     assert not bool(blueprints.root_payload_supported[root])
@@ -440,3 +440,63 @@ def test_full_runtime_payload_container_capacity_is_explicit_and_stable(
     assert runtime.payload_containers.active.tolist() == [[True]]
     # Lower source stable ID wins independently of the reusable entity slots.
     assert runtime.payload_containers.source_id.tolist() == [[7]]
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_full_runtime_golem_and_golemites_emit_nested_death_bursts(
+    device_name: str,
+) -> None:
+    first, blueprints, root = _runtime(
+        "Golem", device_name=device_name, max_entities=14
+    )
+    replay, _, _ = _runtime("Golem", device_name=device_name, max_entities=14)
+    action = _slot_zero_action(first, tile_x=8, tile_y=14)
+    first.step_tick(action)
+    replay.step_tick(action.clone())
+    assert bool(blueprints.root_payload_supported[root])
+    assert bool(blueprints.death_burst_catalog.enabled[root])
+    assert float(blueprints.death_burst_catalog.damage[root]) == 225.0
+
+    # Put the enemy left Princess tower at the lethal source so the public HP
+    # delta proves the burst uses the ordinary shield/scaling effect path.
+    for runtime in (first, replay):
+        runtime.state.x_units[0, 3] = runtime.state.x_units[0, 6]
+        runtime.state.y_units[0, 3] = runtime.state.y_units[0, 6]
+        runtime.state.hp[0, 6] = 0.0
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=first.device)
+    first_parent = first.step_tick(noop)
+    replay_parent = replay.step_tick(noop)
+    assert float(first.state.hp[0, 3]) == pytest.approx(20_000.0 - 225.0)
+    assert int(first_parent.death_bursts[0].emitted_count[0]) == 1
+
+    golemite = next(
+        card_id
+        for card_id, name in enumerate(blueprints.visible_names)
+        if name == "Golemite"
+    )
+    children = first.state.active & (first.state.card_id == golemite)
+    replay_children = replay.state.active & (replay.state.card_id == golemite)
+    assert int(children.sum()) == 2
+    assert first.state.stable_id[children].tolist() == [8, 9]
+    assert bool(blueprints.death_burst_catalog.enabled[golemite])
+    assert float(blueprints.death_burst_catalog.damage[golemite]) == 99.0
+
+    first.state.hp.masked_fill_(children, 0.0)
+    replay.state.hp.masked_fill_(replay_children, 0.0)
+    first_children = first.step_tick(noop)
+    replay_children_step = replay.step_tick(noop)
+    assert float(first.state.hp[0, 3]) == pytest.approx(20_000.0 - 225.0 - 198.0)
+    assert int(first_children.death_bursts[0].emitted_count[0]) == 2
+    assert not bool((first.state.active & (first.state.card_id == golemite)).any())
+
+    for owner_name in ("state", "death_effects", "death_bursts"):
+        left = getattr(first, owner_name)
+        right = getattr(replay, owner_name)
+        for descriptor in fields(left):
+            if descriptor.name != "device":
+                assert torch.equal(
+                    getattr(left, descriptor.name),
+                    getattr(right, descriptor.name),
+                )
+    assert torch.equal(first_parent.reward, replay_parent.reward)
+    assert torch.equal(first_children.reward, replay_children_step.reward)

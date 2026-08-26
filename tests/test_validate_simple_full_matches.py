@@ -100,10 +100,10 @@ def test_runtime_builder_uses_standard_expanded_catalog_and_phase_authority() ->
 
 
 def test_runtime_builder_remains_strict_for_unsupported_validation_deck() -> None:
-    with pytest.raises(ValueError, match="unsupported.*Golem"):
+    with pytest.raises(ValueError, match="unsupported.*Lumberjack"):
         build_simple_runtime(
             seed=202_608_263,
-            decks=[["Golem"] * 8],
+            decks=[["Lumberjack"] * 8],
             batch_size=1,
             device="cpu",
             max_entities=16,

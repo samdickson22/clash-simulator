@@ -29,6 +29,13 @@ from .simple_damage_ramp import (
     FastDamageRampState,
     pre_attack_damage_ramp_,
 )
+from .simple_death_burst import (
+    FastDeathBurstCatalog,
+    FastDeathBurstCommands,
+    FastDeathBurstState,
+    FastDeathBurstStepResult,
+    step_fast_death_bursts_,
+)
 from .simple_effects import FastEffectState, FastEffectStepResult, step_fast_effects
 from .simple_engine import FastTensorGym
 from .simple_lifecycle import (
@@ -54,6 +61,7 @@ from .simple_payload_containers import (
     FastPayloadAllocationResult,
     FastPayloadContainerState,
     FastPayloadEffectAllocationResult,
+    FastPayloadEffectCommands,
     FastPayloadStepResult,
     allocate_fast_payload_containers_,
     allocate_fast_payload_effects_,
@@ -102,6 +110,8 @@ class SimpleGymRuntimeStep:
     spawn_allocation: FastSpawnAllocationResult | None
     payload_spawn_allocation: FastSpawnAllocationResult | None
     periodic_spawn_allocation: FastSpawnAllocationResult | None
+    death_bursts: tuple[FastDeathBurstStepResult, FastDeathBurstStepResult]
+    death_burst_effects: tuple[FastEffectStepResult, FastEffectStepResult]
 
 
 class SimpleGymRuntime:
@@ -204,6 +214,17 @@ class SimpleGymRuntime:
             max_effects=max_effects,
             device=self.state.device,
         )
+        self.death_effects = FastEffectState.empty(
+            self.state.batch_size,
+            max_effects=max_entities,
+            device=self.state.device,
+        )
+        self.death_burst_catalog = (
+            spawn_blueprints.death_burst_catalog
+            if spawn_blueprints is not None
+            else FastDeathBurstCatalog.empty(catalog.size, device=self.state.device)
+        )
+        self.death_bursts = FastDeathBurstState.empty_like(self.state)
         self.payload_containers = FastPayloadContainerState.empty(
             self.state.batch_size,
             max_containers=max_payload_containers,
@@ -243,6 +264,11 @@ class SimpleGymRuntime:
         )
         self.effect_consume_source_id = torch.zeros(
             (self.state.batch_size, max_effects),
+            dtype=torch.int64,
+            device=self.state.device,
+        )
+        self.death_effect_consume_source_id = torch.zeros(
+            (self.state.batch_size, max_entities),
             dtype=torch.int64,
             device=self.state.device,
         )
@@ -329,6 +355,8 @@ class SimpleGymRuntime:
             "state": self._tensor_fields(self.state),
             "action": self._tensor_fields(self.action_state),
             "effects": self._tensor_fields(self.effects),
+            "death_effects": self._tensor_fields(self.death_effects),
+            "death_bursts": self._tensor_fields(self.death_bursts),
             "payload_containers": self._tensor_fields(self.payload_containers),
             "lifecycle": self._tensor_fields(self.lifecycle),
             "modifiers": self._tensor_fields(self.modifiers),
@@ -343,6 +371,9 @@ class SimpleGymRuntime:
                 "entity_status_kind": self.entity_status_kind.clone(),
                 "entity_status_ticks": self.entity_status_ticks.clone(),
                 "effect_consume_source_id": self.effect_consume_source_id.clone(),
+                "death_effect_consume_source_id": (
+                    self.death_effect_consume_source_id.clone()
+                ),
                 "projection_hand_ids": self._projection_hand_ids.clone(),
                 "double_elixir": self._double_elixir.clone(),
                 "triple_elixir": self._triple_elixir.clone(),
@@ -411,6 +442,8 @@ class SimpleGymRuntime:
             "state": self.state,
             "action": self.action_state,
             "effects": self.effects,
+            "death_effects": self.death_effects,
+            "death_bursts": self.death_bursts,
             "payload_containers": self.payload_containers,
             "lifecycle": self.lifecycle,
             "modifiers": self.modifiers,
@@ -427,6 +460,7 @@ class SimpleGymRuntime:
             "entity_status_kind": self.entity_status_kind,
             "entity_status_ticks": self.entity_status_ticks,
             "effect_consume_source_id": self.effect_consume_source_id,
+            "death_effect_consume_source_id": self.death_effect_consume_source_id,
             "projection_hand_ids": self._projection_hand_ids,
             "double_elixir": self._double_elixir,
             "triple_elixir": self._triple_elixir,
@@ -632,6 +666,66 @@ class SimpleGymRuntime:
             radius_units=commands.radius_units,
             deploy_ticks=commands.deploy_ticks,
         )
+
+    @staticmethod
+    def _death_burst_effect_commands(
+        commands: FastDeathBurstCommands,
+    ) -> FastPayloadEffectCommands:
+        """Project lethal novas into the common numeric area-effect path."""
+
+        zeros_i8 = torch.zeros_like(commands.source_owner, dtype=torch.int8)
+        zeros_i32 = torch.zeros_like(commands.source_x_units, dtype=torch.int32)
+        return FastPayloadEffectCommands(
+            ready=commands.ready,
+            payload_stable_id=commands.source_stable_id,
+            source_id=commands.source_stable_id,
+            owner=commands.source_owner,
+            effect_card_id=commands.source_card_id,
+            x_units=commands.source_x_units,
+            y_units=commands.source_y_units,
+            damage=commands.damage,
+            radius_units=commands.radius_units,
+            status_kind=zeros_i8,
+            status_duration_ticks=zeros_i32,
+            tower_damage_multiplier=commands.tower_damage_multiplier,
+            building_damage_multiplier=commands.building_damage_multiplier,
+            hits_air=commands.hits_air,
+            hits_ground=commands.hits_ground,
+        )
+
+    def _step_death_burst_pass(
+        self,
+    ) -> tuple[FastDeathBurstStepResult, FastEffectStepResult]:
+        burst = step_fast_death_bursts_(
+            self.state,
+            self.death_burst_catalog,
+            self.death_bursts,
+        )
+        allocate_fast_payload_effects_(
+            self.state,
+            self.death_effects,
+            self.death_effect_consume_source_id,
+            self._death_burst_effect_commands(burst.commands),
+        )
+        effect = step_fast_effects(
+            self.state,
+            self.death_effects,
+            self.entity_status_kind,
+            self.entity_status_ticks,
+            consume_source_id=self.death_effect_consume_source_id,
+            cleanup_dead=False,
+            modifiers=self.modifiers,
+            entity_is_air=self.action_kernel.catalog.is_air[
+                self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
+            ],
+            entity_collision_radius_units=(
+                self.action_kernel.catalog.collision_radius_units[
+                    self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
+                ]
+            ),
+            tick_status=False,
+        )
+        return burst, effect
 
     def _legal_action_mask(self) -> torch.Tensor:
         mask = self.action_kernel.legal_action_mask(self.action_state)
@@ -846,6 +940,12 @@ class SimpleGymRuntime:
                 ]
             ),
         )
+        # Two fixed passes cover the current serialized terminal depth
+        # (Golem -> Golemite) without a host-driven work queue. The first pass
+        # commits all already-lethal novas simultaneously; the second catches
+        # supported children killed by that committed damage before cleanup.
+        death_burst_first, death_effect_first = self._step_death_burst_pass()
+        death_burst_second, death_effect_second = self._step_death_burst_pass()
         payload_container_allocation: FastPayloadAllocationResult | None = None
         if self.spawn_blueprints is not None:
             payload_container_allocation = allocate_fast_payload_containers_(
@@ -958,6 +1058,8 @@ class SimpleGymRuntime:
             spawn_allocation=spawn_allocation,
             payload_spawn_allocation=payload_spawn_allocation,
             periodic_spawn_allocation=periodic_spawn_allocation,
+            death_bursts=(death_burst_first, death_burst_second),
+            death_burst_effects=(death_effect_first, death_effect_second),
         )
 
 

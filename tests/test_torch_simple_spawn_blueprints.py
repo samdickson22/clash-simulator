@@ -63,6 +63,7 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
         "Tombstone",
         "Balloon",
         "BombTower",
+        "Golem",
         "SkeletonBarrel",
     ):
         card_id = catalog.cards.name_to_id[name]
@@ -70,7 +71,6 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
         assert bool(catalog.fast_cards.training_supported[card_id])
     for name in (
         "BarbarianBarrel",
-        "Golem",
         "Lumberjack",
     ):
         assert bool(catalog.root_payload_required[catalog.cards.name_to_id[name]])

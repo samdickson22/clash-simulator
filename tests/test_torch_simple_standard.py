@@ -13,7 +13,7 @@ from clasher.torch_sim.simple_standard import (
     compile_standard_simple_setup,
 )
 
-PUBLIC_ROOTS = ("Knight", "Balloon", "Golem")
+PUBLIC_ROOTS = ("Knight", "Balloon", "Golem", "Lumberjack")
 
 
 def _setup(device_name: str) -> SimpleStandardSetup:
@@ -60,16 +60,18 @@ def test_standard_setup_constructs_native_runtime_from_authoritative_data(
     assert setup.rules.regulation_ticks == STANDARD_REGULATION_TICK
     assert setup.rules.tiebreak_ticks == STANDARD_TIEBREAK_TICK
     assert setup.canonical_lane_globals is True
-    assert setup.public_root_names == ("Balloon", "Golem", "Knight")
-    assert setup.supported_public_root_names == ("Balloon", "Knight")
+    assert setup.public_root_names == ("Balloon", "Golem", "Knight", "Lumberjack")
+    assert setup.supported_public_root_names == ("Balloon", "Golem", "Knight")
     balloon = setup.cards.name_to_id["Balloon"]
     golem = setup.cards.name_to_id["Golem"]
     knight = setup.cards.name_to_id["Knight"]
+    lumberjack = setup.cards.name_to_id["Lumberjack"]
     assert bool(setup.public_root_mask[balloon])
     assert bool(setup.public_root_mask[knight])
     assert bool(setup.supported_public_root_mask[balloon])
-    assert not bool(setup.supported_public_root_mask[golem])
+    assert bool(setup.supported_public_root_mask[golem])
     assert bool(setup.supported_public_root_mask[knight])
+    assert not bool(setup.supported_public_root_mask[lumberjack])
 
     princess = load_princess_tower_character_data(CardDataLoader().data_file)
     assert setup.tower_spec.x_units.tolist() == [
@@ -115,9 +117,9 @@ def test_standard_setup_fails_closed_for_unsupported_or_nonpublic_decks(
     setup = _setup(device_name)
     entity_lookup, hand_lookup = _typed_lookups(setup)
 
-    with pytest.raises(ValueError, match="unsupported.*Golem"):
+    with pytest.raises(ValueError, match="unsupported.*Lumberjack"):
         setup.create_runtime(
-            _deck("Golem"),
+            _deck("Lumberjack"),
             entity_token_lookup=entity_lookup,
             hand_token_lookup=hand_lookup,
             canonical_lane_globals=True,
