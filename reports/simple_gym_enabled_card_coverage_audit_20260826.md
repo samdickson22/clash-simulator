@@ -19,14 +19,17 @@ The admission contract in `FastActionKernel` is deliberately small:
 
 ## Inventory result
 
-- 52 entity cards and 7 spells remain structurally allocatable, but truthful
-  training admission accepts only 47/66 cards.
-- Training admission rejects 19: seven unsupported spells, three zero-payload
-  spells, and nine enabled-only unresolved death-child parents.
-- Primitive assignment across all 66 cards is 27 direct, 29 projectile, 1
-  area, and 9 unsupported (the 7 closed spells plus Skeleton Barrel and
+- All 52 entity cards and 12 of 14 spells are structurally allocatable, while
+  truthful training admission accepts 52/66 cards.
+- Training admission rejects 14: two unsupported spawn-payload spells, three
+  zero-payload projectiles, and nine enabled-only unresolved death-child
+  parents.
+- Newly admitted since the prior 47-card inventory: Earthquake, Freeze,
+  Poison, Tornado, and Zap.
+- Primitive assignment across all 66 cards is 27 direct, 29 projectile, 6
+  area, and 4 unsupported (Graveyard, Royal Delivery, Skeleton Barrel, and
   Tombstone).
-- The raw 59/66 allocatable count is therefore not exposed as legal training
+- The raw 64/66 allocatable count is therefore not exposed as legal training
   support.
 - Multi-summon represents a homogeneous numeric ring. It covers Archers, Bats,
   Guards, Minions, Royal Hogs, Skeletons, Spear Goblins, and Wall Breakers at
@@ -34,9 +37,9 @@ The admission contract in `FastActionKernel` is deliberately small:
   goblins and drops the serialized three Spear Goblins.
 - Lifetime is represented for Bomb Tower, Cannon, Inferno Tower, Tesla,
   Tombstone, and X-Bow.
-- Ice Spirit has the one supported combat status: a radius-1.5 stun/freeze for
-  24 ticks plus source consumption. Slow exists in the effect kernel but no
-  enabled card currently compiles to it.
+- Ice Spirit retains its radius-1.5 stun/freeze plus source consumption. The
+  generalized area compiler now also emits stun for Freeze and Zap and slow
+  for Earthquake and Poison.
 - Shield and charge primitives are now initialized and advanced by
   `SimpleGymRuntime`; their focused runtime coverage is separate from this
   broader admission audit.
@@ -47,22 +50,25 @@ The following partition lists every enabled card exactly once. “Baseline” is
 only a card-shape judgment inside the current straight-line approximate combat
 model; it is not scalar-Python parity or real-game acceptance.
 
-### Baseline primitive is useful (23)
+### Baseline primitive is useful (28)
 
 Archers, Arrows, Baby Dragon, Bats, Bomber, Cannon, Dart Goblin, Fireball,
-Giant, Hog Rider, Ice Spirit, Knight, Mega Minion, Mini P.E.K.K.A, Minions,
-Musketeer, P.E.K.K.A, Rocket, Royal Hogs, Skeletons, Spear Goblins, Wall
-Breakers, X-Bow.
+Earthquake, Freeze, Giant, Hog Rider, Ice Spirit, Knight, Mega Minion, Mini
+P.E.K.K.A, Minions, Musketeer, P.E.K.K.A, Poison, Rocket, Royal Hogs,
+Skeletons, Spear Goblins, Tornado, Wall Breakers, X-Bow, Zap.
 
 Important approximation notes: Arrows collapses its waves into one immediate
 area hit; Fireball omits pushback; Ice Spirit approximates its jump as a homing
 projectile and splash stun; Wall Breakers use projectile-impact splash plus
-source consumption.
+source consumption. Tornado preserves its damage/cadence but explicitly omits
+attraction; the other newly admitted areas preserve serialized cadence,
+target-domain filters, tower/building scaling, and available slow/stun state.
 
 ### Useful base primitive, but defining mechanics are absent or materially wrong (31)
 
-The nine rows with unresolved death children are now masked from training even
-though their ordinary base primitive can execute structurally.
+Seven rows in this table have unresolved death children and are masked from
+training even though their ordinary base primitive can execute structurally;
+Skeleton Barrel and Tombstone are classified separately below.
 
 | Card | Represented now | Materially missing or wrong |
 |---|---|---|
@@ -88,7 +94,7 @@ though their ordinary base primitive can execute structurally.
 | Lava Hound | building-target projectile | six Lava Pups |
 | Lumberjack | ordinary direct melee | death Rage area/payload |
 | Magic Archer | narrow projectile impact | piercing line continuation |
-| Mega Knight | **wrongly uses top-level `MegaKnightAppear` as every attack** | normal melee splash, spawn slam/pushback, jump/slam state |
+| Mega Knight | ordinary direct melee | normal melee splash, spawn slam/pushback, jump/slam state |
 | Miner | enemy-side placement and ordinary melee | underground travel and Crown Tower scaling |
 | Night Witch | ordinary direct melee | periodic Bats and death Bat |
 | Prince | ordinary direct melee | charge speed/damage |
@@ -110,12 +116,14 @@ These should be treated as higher priority than ordinary approximation gaps.
 | Skeleton Barrel | entity deploys with zero damage and unsupported attack; it cannot complete its building impact and its two-stage death payload is unresolved |
 | Tombstone | entity deploys as an inert lifetime blocker; periodic Skeletons and death Skeletons are unresolved in the enabled-only catalog |
 
-### Explicit fail-closed unsupported spells (7)
+### Explicit fail-closed unsupported spells (2)
 
-Earthquake, Freeze, Graveyard, Poison, Royal Delivery, Tornado, Zap.
+Graveyard, Royal Delivery.
 
-All seven serialize as `PeriodicArea`, but `FastCardCatalog` has no area-object
-compiler. This is honest rejection rather than silent support.
+Both declare spawned-unit/action payloads that the area kernel cannot
+materialize. Earthquake, Freeze, Poison, Tornado, and Zap are newly admitted by
+the generalized periodic-area compiler; spawn-bearing areas remain honestly
+closed rather than silently dropping their defining payload.
 
 ## Death-child identity result
 
@@ -139,19 +147,16 @@ internal identity rather than mapping it to an unrelated enabled card.
    Barbarian Barrel, Goblin Barrel, Royal Delivery, Graveyard, Balloon, Battle
    Ram, Bomb Tower, Golem, Lava Hound, Night Witch, Skeleton Barrel, Tombstone,
    and Witch. It also provides the right seam for Lumberjack's death payload.
-2. **Area-object/status/impulse primitive.** Add immediate and periodic area
-   damage, duration/tick cadence, target-domain filters, tower/building
-   multipliers, slow/stun, pushback, and attraction. This covers the seven
-   closed spells plus Fireball, Giant Snowball, Ice Golem, Ice Wizard,
-   Electro Wizard, Lumberjack, and Bowler without card-name dispatch.
-3. **Attack topology.** Represent radial melee splash, line/piercing projectiles,
+2. **Attack topology.** Represent radial melee splash, line/piercing projectiles,
    nested projectile fan-out, and bounded chain/multi-target attacks. Immediate
    beneficiaries are Valkyrie, Dark Prince, Royal Ghost, Princess, Magic
    Archer, Bowler, Firecracker, Electro Dragon, Electro Spirit, Electro Wizard,
-   and Mega Knight. Also restrict the top-level spell-projectile overlay to
-   spell/explicit spawn commands so `MegaKnightAppear` cannot replace normal
-   attacks.
-4. **Finish modifier coverage.** Shield and charge tables are now runtime-wired
+   and Mega Knight.
+3. **Impulse and displacement.** The periodic-area/status kernel now covers
+   damage, cadence, target domains, scaling, slow, and stun. Generalize
+   pushback/attraction for Tornado, Fireball, Giant Snowball, Bowler, Ice Golem,
+   and spawn/death impacts without card-name dispatch.
+4. **Finish modifier coverage.** Shield and charge tables are runtime-wired
    for Guards, Dark Prince, Prince, and Battle Ram. The remaining generalized
    modifier gap is a per-target timer/ramp seam for Inferno Dragon and Inferno
    Tower.
@@ -167,5 +172,5 @@ allocatability and required by the legal mask. It fails closed for zero-payload
 spells, inert entities, and unresolved declared death children. The loader's
 top-level projectile overlay is also restricted to actual spells, so
 `MegaKnightAppear` no longer replaces Mega Knight's ordinary direct attack.
-This prevents the broad raw “59 allocatable cards” number from silently
+This prevents the broad raw “64 allocatable cards” number from silently
 training policies against inert or qualitatively inverted card behavior.
