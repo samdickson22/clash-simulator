@@ -39,8 +39,12 @@ class FastEffectState:
     x_units: torch.Tensor
     y_units: torch.Tensor
     target_id: torch.Tensor
+    target_x_units: torch.Tensor
+    target_y_units: torch.Tensor
+    tracks_target: torch.Tensor
     speed_units_per_tick: torch.Tensor
     damage: torch.Tensor
+    tower_damage_multiplier: torch.Tensor
     radius_units: torch.Tensor
     status_kind: torch.Tensor
     status_duration_ticks: torch.Tensor
@@ -83,8 +87,14 @@ class FastEffectState:
             x_units=zeros(torch.int32),
             y_units=zeros(torch.int32),
             target_id=zeros(torch.int64),
+            target_x_units=zeros(torch.int32),
+            target_y_units=zeros(torch.int32),
+            tracks_target=torch.ones(shape, dtype=torch.bool, device=tensor_device),
             speed_units_per_tick=zeros(torch.int32),
             damage=zeros(torch.float32),
+            tower_damage_multiplier=torch.ones(
+                shape, dtype=torch.float32, device=tensor_device
+            ),
             radius_units=zeros(torch.int32),
             status_kind=zeros(torch.int8),
             status_duration_ticks=zeros(torch.int32),
@@ -188,8 +198,11 @@ def step_fast_effects(
     alive = effects.active & (effects.lifetime_ticks > 0)
     valid_projectile = alive & (effects.kind == FAST_EFFECT_PROJECTILE)
     valid_area = alive & (effects.kind == FAST_EFFECT_AREA)
+    tracks_entity = (
+        valid_projectile & effects.tracks_target & (effects.target_id > 0)
+    )
     target_match = (
-        valid_projectile[:, :, None]
+        tracks_entity[:, :, None]
         & state.active[:, None, :]
         & (state.hp[:, None, :] > 0)
         & (effects.target_id[:, :, None] > 0)
@@ -197,16 +210,24 @@ def step_fast_effects(
     )
     target_found = target_match.any(dim=2)
     target_slot = target_match.to(torch.int8).argmax(dim=2).to(torch.int64)
-    target_x = state.x_units.gather(1, target_slot)
-    target_y = state.y_units.gather(1, target_slot)
+    tracked_x = state.x_units.gather(1, target_slot)
+    tracked_y = state.y_units.gather(1, target_slot)
+    target_x = torch.where(tracks_entity, tracked_x, effects.target_x_units)
+    target_y = torch.where(tracks_entity, tracked_y, effects.target_y_units)
+    destination_available = ~tracks_entity | target_found
 
     delta_x = target_x.to(torch.float32) - effects.x_units.to(torch.float32)
     delta_y = target_y.to(torch.float32) - effects.y_units.to(torch.float32)
     distance = torch.sqrt(delta_x.square() + delta_y.square())
     speed = effects.speed_units_per_tick.to(torch.float32).clamp(min=0.0)
-    projectile_impact = valid_projectile & target_found & (distance <= speed)
+    projectile_impact = valid_projectile & destination_available & (distance <= speed)
     travel = torch.minimum(speed, distance)
-    moving = valid_projectile & target_found & ~projectile_impact & (travel > 0)
+    moving = (
+        valid_projectile
+        & destination_available
+        & ~projectile_impact
+        & (travel > 0)
+    )
     denominator = distance.clamp(min=1.0)
     move_x = torch.round(delta_x * travel / denominator).to(torch.int32)
     move_y = torch.round(delta_y * travel / denominator).to(torch.int32)
@@ -234,8 +255,18 @@ def step_fast_effects(
         & (state.owner[:, None, :] != effects.source_owner[:, :, None])
         & (dx.square() + dy.square() <= radius_sq[:, :, None])
     )
+    entity_slot = torch.arange(
+        max_entities, dtype=torch.int64, device=state.device
+    ).view(1, 1, -1)
+    hit_multiplier = torch.where(
+        entity_slot < 6,
+        effects.tower_damage_multiplier.clamp(min=0.0)[:, :, None],
+        1.0,
+    )
     grouped_damage = (
-        targets_hit.to(torch.float32) * effects.damage.clamp(min=0.0)[:, :, None]
+        targets_hit.to(torch.float32)
+        * effects.damage.clamp(min=0.0)[:, :, None]
+        * hit_multiplier
     ).sum(dim=1)
     state.hp.sub_(grouped_damage).clamp_(min=0.0)
 
@@ -303,7 +334,7 @@ def step_fast_effects(
 
     ticking = alive & ~impacted
     effects.lifetime_ticks.sub_(ticking.to(torch.int32)).clamp_(min=0)
-    missing_target = valid_projectile & ~target_found
+    missing_target = tracks_entity & ~target_found
     invalid_kind = alive & ~(valid_projectile | valid_area)
     cleaned = (
         effects.active

@@ -117,6 +117,90 @@ def test_homing_freeze_impact_consumes_ice_spirit_source(device: str) -> None:
 
 
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_fireball_mixed_splash_scales_only_tower_slots(device: str) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    state = FastGymState.empty(1, max_entities=8, device=device)
+    # Slots 0..5 are reserved for towers; ordinary entities begin at slot 6.
+    state.active[0, [0, 6, 7]] = True
+    state.stable_id[0, [0, 6, 7]] = torch.tensor(
+        [1, 20, 21], device=state.device
+    )
+    state.owner[0, [0, 6, 7]] = 1
+    state.x_units[0, [0, 6, 7]] = torch.tensor(
+        [1000, 1100, 1800], dtype=torch.int32, device=state.device
+    )
+    state.y_units[0, [0, 6, 7]] = 1000
+    state.hp[0, [0, 6, 7]] = 1000.0
+    state.max_hp[0, [0, 6, 7]] = 1000.0
+    effects = FastEffectState.empty(1, max_effects=1, device=device)
+    effects.active[0, 0] = True
+    effects.kind[0, 0] = FAST_EFFECT_AREA
+    effects.source_owner[0, 0] = 0
+    effects.x_units[0, 0] = 1000
+    effects.y_units[0, 0] = 1000
+    effects.damage[0, 0] = 200.0
+    effects.tower_damage_multiplier[0, 0] = 0.3
+    effects.radius_units[0, 0] = 300
+    effects.lifetime_ticks[0, 0] = 1
+    status_kind, status_ticks = _entity_status(state)
+
+    result = step_fast_effects(state, effects, status_kind, status_ticks)
+
+    assert result.targets_hit[0, 0].tolist() == [
+        True,
+        False,
+        False,
+        False,
+        False,
+        False,
+        True,
+        False,
+    ]
+    assert float(state.hp[0, 0]) == pytest.approx(940.0)
+    assert float(state.hp[0, 6]) == pytest.approx(800.0)
+    assert float(state.hp[0, 7]) == pytest.approx(1000.0)
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_untracked_projectile_flies_to_fixed_absolute_target(device: str) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    state = FastGymState.empty(1, max_entities=8, device=device)
+    state.active[0, 6] = True
+    state.stable_id[0, 6] = 31
+    state.owner[0, 6] = 1
+    state.x_units[0, 6] = 1000
+    state.y_units[0, 6] = 500
+    state.hp[0, 6] = 300.0
+    state.max_hp[0, 6] = 300.0
+    effects = FastEffectState.empty(1, max_effects=1, device=device)
+    effects.active[0, 0] = True
+    effects.kind[0, 0] = FAST_EFFECT_PROJECTILE
+    effects.source_owner[0, 0] = 0
+    effects.y_units[0, 0] = 500
+    effects.target_id[0, 0] = 0
+    effects.target_x_units[0, 0] = 1000
+    effects.target_y_units[0, 0] = 500
+    effects.speed_units_per_tick[0, 0] = 600
+    effects.damage[0, 0] = 75.0
+    effects.radius_units[0, 0] = 10
+    effects.lifetime_ticks[0, 0] = 3
+    status_kind, status_ticks = _entity_status(state)
+
+    first = step_fast_effects(state, effects, status_kind, status_ticks)
+    assert not bool(first.impacted[0, 0])
+    assert int(effects.x_units[0, 0]) == 600
+    assert bool(effects.active[0, 0])
+
+    second = step_fast_effects(state, effects, status_kind, status_ticks)
+    assert bool(second.impacted[0, 0])
+    assert int(effects.x_units[0, 0]) == 1000
+    assert float(state.hp[0, 6]) == pytest.approx(225.0)
+    assert not bool(effects.active[0, 0])
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
 def test_projectile_homes_then_expires_and_statuses_tick(device: str) -> None:
     if device == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
