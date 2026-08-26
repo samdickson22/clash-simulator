@@ -71,6 +71,7 @@ class TensorEntityPool:
     next_entity_id: torch.Tensor
     active: torch.Tensor
     entity_id: torch.Tensor
+    validation_enabled: bool = True
 
     @property
     def device(self) -> torch.device:
@@ -92,6 +93,7 @@ class TensorEntityPool:
         *,
         next_entity_id: int | torch.Tensor = 1,
         device: str | torch.device = "cpu",
+        validation_enabled: bool = True,
     ) -> TensorEntityPool:
         if batch_size < 1:
             raise ValueError("batch_size must be positive")
@@ -109,7 +111,7 @@ class TensorEntityPool:
                 dtype=torch.int64,
                 device=torch_device,
             )
-        if bool((next_ids < 1).any().item()):
+        if validation_enabled and bool((next_ids < 1).any().item()):
             raise ValueError("next_entity_id values must be positive")
         return cls(
             next_entity_id=next_ids,
@@ -119,6 +121,7 @@ class TensorEntityPool:
             entity_id=torch.zeros(
                 (batch_size, capacity), dtype=torch.int64, device=torch_device
             ),
+            validation_enabled=validation_enabled,
         )
 
     @classmethod
@@ -129,6 +132,7 @@ class TensorEntityPool:
         capacity: int,
         next_entity_ids: Sequence[int] | None = None,
         device: str | torch.device = "cpu",
+        validation_enabled: bool = True,
     ) -> TensorEntityPool:
         """Construct from oracle state at the Python/tensor boundary.
 
@@ -137,7 +141,12 @@ class TensorEntityPool:
         object-by-object adapter.
         """
 
-        pool = cls.empty(len(entity_ids), capacity, device=device)
+        pool = cls.empty(
+            len(entity_ids),
+            capacity,
+            device=device,
+            validation_enabled=validation_enabled,
+        )
         inferred_next: list[int] = []
         for batch_index, ids in enumerate(entity_ids):
             ids_tuple = tuple(int(entity_id) for entity_id in ids)
@@ -166,7 +175,7 @@ class TensorEntityPool:
             raise ValueError("next_entity_ids must have one value per battle")
         next_ids = torch.tensor(supplied, dtype=torch.int64, device=pool.device)
         maximum = pool.entity_id.max(dim=1).values
-        if bool((next_ids <= maximum).any().item()):
+        if validation_enabled and bool((next_ids <= maximum).any().item()):
             raise ValueError("next entity ID must exceed every live entity ID")
         pool.next_entity_id.copy_(next_ids)
         pool.assert_invariants()
@@ -177,6 +186,7 @@ class TensorEntityPool:
             next_entity_id=self.next_entity_id.clone(),
             active=self.active.clone(),
             entity_id=self.entity_id.clone(),
+            validation_enabled=self.validation_enabled,
         )
 
     def assert_invariants(self) -> None:
@@ -190,18 +200,19 @@ class TensorEntityPool:
             raise ValueError("active and entity_id shapes differ")
         if self.next_entity_id.shape != (self.batch_size,):
             raise ValueError("next_entity_id shape differs from batch size")
-        if bool((self.entity_id[~self.active] != EMPTY_ENTITY_ID).any().item()):
-            raise ValueError("inactive slots must contain the empty entity ID")
-        if bool((self.entity_id[self.active] <= EMPTY_ENTITY_ID).any().item()):
-            raise ValueError("active slots must contain positive entity IDs")
-        if bool((self.entity_id >= self.next_entity_id[:, None]).any().item()):
-            raise ValueError("live IDs must be lower than next_entity_id")
-        ordered = self.id_order()
-        duplicate = ordered.valid[:, 1:] & (
-            ordered.entity_ids[:, 1:] == ordered.entity_ids[:, :-1]
-        )
-        if bool(duplicate.any().item()):
-            raise ValueError("entity IDs must be unique within a battle")
+        if self.validation_enabled:
+            if bool((self.entity_id[~self.active] != EMPTY_ENTITY_ID).any().item()):
+                raise ValueError("inactive slots must contain the empty entity ID")
+            if bool((self.entity_id[self.active] <= EMPTY_ENTITY_ID).any().item()):
+                raise ValueError("active slots must contain positive entity IDs")
+            if bool((self.entity_id >= self.next_entity_id[:, None]).any().item()):
+                raise ValueError("live IDs must be lower than next_entity_id")
+            ordered = self.id_order()
+            duplicate = ordered.valid[:, 1:] & (
+                ordered.entity_ids[:, 1:] == ordered.entity_ids[:, :-1]
+            )
+            if bool(duplicate.any().item()):
+                raise ValueError("entity IDs must be unique within a battle")
 
     def _validate_batch_matrix(self, tensor: torch.Tensor, name: str) -> torch.Tensor:
         value = tensor.to(device=self.device)
@@ -213,10 +224,11 @@ class TensorEntityPool:
         value = counts.to(device=self.device, dtype=torch.int64)
         if value.shape != (self.batch_size,):
             raise ValueError("counts must have shape [batch_size]")
-        if bool((value < 0).any().item()):
-            raise ValueError("allocation counts cannot be negative")
-        if bool((value > self.capacity).any().item()):
-            raise OverflowError("one allocation request exceeds pool capacity")
+        if self.validation_enabled:
+            if bool((value < 0).any().item()):
+                raise ValueError("allocation counts cannot be negative")
+            if bool((value > self.capacity).any().item()):
+                raise OverflowError("one allocation request exceeds pool capacity")
         return value
 
     def _selection(self, mask: torch.Tensor) -> EntitySelection:
@@ -265,7 +277,9 @@ class TensorEntityPool:
         request_counts = self._validate_counts(counts)
         available = ~self.active
         available_counts = available.sum(dim=1, dtype=torch.int64)
-        if bool((request_counts > available_counts).any().item()):
+        if self.validation_enabled and bool(
+            (request_counts > available_counts).any().item()
+        ):
             raise OverflowError("entity pool capacity exhausted")
 
         slot_numbers = torch.arange(
@@ -327,10 +341,13 @@ class TensorEntityPool:
         spawn_counts = self._validate_batch_matrix(
             spawn_counts_by_slot, "spawn_counts_by_slot"
         ).to(dtype=torch.int64)
-        if bool((spawn_counts < 0).any().item()):
-            raise ValueError("spawn counts cannot be negative")
-        if bool((spawn_counts.masked_select(~dead_mask) != 0).any().item()):
-            raise ValueError("spawn counts may only be attached to dead active parents")
+        if self.validation_enabled:
+            if bool((spawn_counts < 0).any().item()):
+                raise ValueError("spawn counts cannot be negative")
+            if bool((spawn_counts.masked_select(~dead_mask) != 0).any().item()):
+                raise ValueError(
+                    "spawn counts may only be attached to dead active parents"
+                )
 
         removed = self._selection(dead_mask)
         ordered_parent_counts = torch.gather(
@@ -343,7 +360,9 @@ class TensorEntityPool:
         )
         total_spawns = ordered_parent_counts.sum(dim=1, dtype=torch.int64)
         live_after = self.active.sum(dim=1, dtype=torch.int64) - removed.counts
-        if bool((live_after + total_spawns > self.capacity).any().item()):
+        if self.validation_enabled and bool(
+            (live_after + total_spawns > self.capacity).any().item()
+        ):
             raise OverflowError("death spawns exceed entity pool capacity")
 
         request_index = torch.arange(

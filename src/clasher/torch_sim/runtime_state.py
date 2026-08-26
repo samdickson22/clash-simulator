@@ -410,6 +410,9 @@ class TensorBattleRuntime:
             ),
             active=presence,
             entity_id=core.entity_id,
+            validation_enabled=(
+                execution_profile == RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG
+            ),
         )
         pool.assert_invariants()
 
@@ -647,7 +650,9 @@ class TensorBattleRuntime:
         )
         if indices.ndim != 1 or indices.numel() < 1:
             raise ValueError("battle_indices must be a non-empty vector")
-        if bool(((indices < 0) | (indices >= self.batch_size)).any().item()):
+        if self.entity_pool.validation_enabled and bool(
+            ((indices < 0) | (indices >= self.batch_size)).any().item()
+        ):
             raise IndexError("battle index outside runtime batch")
         indices = torch.repeat_interleave(indices, copies)
         battle = _select_tensor_dataclass(self.battle, indices)
@@ -658,6 +663,7 @@ class TensorBattleRuntime:
             ).clone(),
             active=presence,
             entity_id=battle.entity_id,
+            validation_enabled=self.entity_pool.validation_enabled,
         )
         forked = TensorBattleRuntime(
             battle=battle,

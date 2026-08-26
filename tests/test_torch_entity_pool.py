@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+from collections.abc import Callable
 
 import pytest
 import torch
@@ -197,3 +198,70 @@ def test_rejects_capacity_overflow_without_partial_mutation() -> None:
     assert torch.equal(pool.active, before.active)
     assert torch.equal(pool.entity_id, before.entity_id)
     assert torch.equal(pool.next_entity_id, before.next_entity_id)
+
+
+def test_validation_is_enabled_by_default_and_preserves_exact_failures() -> None:
+    with pytest.raises(ValueError, match="next_entity_id values must be positive"):
+        TensorEntityPool.empty(1, 4, next_entity_id=0)
+
+    pool = TensorEntityPool.empty(1, 4)
+    assert pool.validation_enabled
+    with pytest.raises(ValueError, match="allocation counts cannot be negative"):
+        pool.allocate(torch.tensor([-1]))
+
+    pool.active[0, 0] = True
+    pool.entity_id[0, 0] = 0
+    with pytest.raises(ValueError, match="positive entity IDs"):
+        pool.assert_invariants()
+
+
+def test_disabled_validation_preserves_valid_allocation_math_without_item_syncs(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    exact = TensorEntityPool.from_id_sequences(
+        [[1, 3], [2]], capacity=6, next_entity_ids=[4, 3]
+    )
+    fast = TensorEntityPool.from_id_sequences(
+        [[1, 3], [2]],
+        capacity=6,
+        next_entity_ids=[4, 3],
+        validation_enabled=False,
+    )
+    original_item: Callable[..., object] = torch.Tensor.item
+    item_calls = {"exact": 0, "fast": 0}
+    active_profile = ""
+
+    def counted_item(tensor: torch.Tensor, *args: object) -> object:
+        item_calls[active_profile] += 1
+        return original_item(tensor, *args)
+
+    monkeypatch.setattr(torch.Tensor, "item", counted_item)
+
+    def exercise(pool: TensorEntityPool, profile: str) -> None:
+        nonlocal active_profile
+        active_profile = profile
+        pool.assert_invariants()
+        pool.allocate(torch.tensor([1, 2]))
+        dead = torch.zeros_like(pool.active)
+        dead[:, 0] = True
+        spawn_counts = torch.zeros_like(pool.entity_id)
+        spawn_counts[:, 0] = torch.tensor([2, 1])
+        pool.cleanup_with_spawns(dead, spawn_counts)
+        pool.assert_invariants()
+
+    exercise(exact, "exact")
+    exercise(fast, "fast")
+
+    assert item_calls["exact"] > 0
+    assert item_calls["fast"] == 0
+    assert torch.equal(fast.active, exact.active)
+    assert torch.equal(fast.entity_id, exact.entity_id)
+    assert torch.equal(fast.next_entity_id, exact.next_entity_id)
+
+
+def test_disabled_validation_still_checks_structural_inputs() -> None:
+    pool = TensorEntityPool.empty(2, 4, validation_enabled=False)
+    with pytest.raises(ValueError, match="counts must have shape"):
+        pool.allocate(torch.tensor([1]))
+    with pytest.raises(ValueError, match="mask must have shape"):
+        pool.id_order(torch.zeros(2, 3, dtype=torch.bool))

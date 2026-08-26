@@ -199,6 +199,49 @@ def test_implicit_execution_profile_remains_exact_debug() -> None:
     explicit_result = explicit.step(torch.tensor([[DEPLOY_KNIGHT, NO_OP_ACTION]]))
 
     assert implicit.execution_profile == RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG
+    assert implicit.runtime.entity_pool.validation_enabled
+    assert explicit.runtime.entity_pool.validation_enabled
     assert implicit_result.committed.tolist() == explicit_result.committed.tolist()
     _assert_tensor_dataclass_equal(implicit.runtime.battle, explicit.runtime.battle)
     _assert_tensor_dataclass_equal(implicit.runtime.events, explicit.runtime.events)
+
+
+def test_gym_fast_disables_pool_validation_across_clones_and_forks(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    exact = TensorResidentEngine.from_battles(
+        [_knight_battle()],
+        max_entities=16,
+        max_objects=16,
+        event_capacity=64,
+    )
+    fast = TensorResidentEngine.from_battles(
+        [_knight_battle()],
+        max_entities=16,
+        max_objects=16,
+        event_capacity=64,
+        execution_profile=RESIDENT_EXECUTION_PROFILE_GYM_FAST,
+    )
+    original_item = torch.Tensor.item
+    item_calls = {"exact": 0, "fast": 0}
+    active_profile = ""
+
+    def counted_item(tensor: torch.Tensor, *args: object) -> Any:
+        item_calls[active_profile] += 1
+        return original_item(tensor, *args)
+
+    monkeypatch.setattr(torch.Tensor, "item", counted_item)
+
+    active_profile = "exact"
+    exact_fork = exact.runtime.fork([0], copies=2)
+    active_profile = "fast"
+    fast_clone = fast.runtime.clone()
+    fast_fork = fast.runtime.fork([0], copies=2)
+
+    assert exact_fork.entity_pool.validation_enabled
+    assert not fast.runtime.entity_pool.validation_enabled
+    assert not fast_clone.entity_pool.validation_enabled
+    assert not fast_fork.entity_pool.validation_enabled
+    assert item_calls["exact"] > 0
+    assert item_calls["fast"] == 0
+    _assert_tensor_dataclass_equal(exact_fork.battle, fast_fork.battle)
