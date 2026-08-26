@@ -12,21 +12,21 @@
   "engine": "SimpleGymRuntime",
   "episodes": [
     {
-      "committed_rows": 6000,
+      "committed_rows": 3600,
       "cumulative_rewards": [
-        0.0,
-        0.0
+        1.2949152067303658,
+        -1.2949152067303658
       ],
-      "digest": "36ae5b150c6f9c5a2cbcf44c0c9bb9f05a9386b398432fb44955bcfbcf87b552",
+      "digest": "7ca74bc224540a1ad432944e13e6253d196e1b9eb062e660d9f4b55e24feb136",
       "done": true,
-      "entered_overtime": true,
-      "final_tick": 6000,
-      "native_ticks": 6000,
+      "entered_overtime": false,
+      "final_tick": 3600,
+      "native_ticks": 3600,
       "policy": "first-legal",
-      "row_ticks": 6000,
+      "row_ticks": 3600,
       "seed": 202608264,
-      "terminal_reason": "tiebreak",
-      "winner": -1
+      "terminal_reason": "regulation_crown",
+      "winner": 0
     }
   ],
   "replays": 2,
