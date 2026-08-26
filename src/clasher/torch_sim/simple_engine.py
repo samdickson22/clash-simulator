@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import torch
 from torch.nn import functional
 
+from .simple_catalog import FastCardCatalog
 from .simple_state import FastGymState
 
 
@@ -38,8 +39,13 @@ class FastGymTickResult:
 class FastTensorGym:
     """Mutation-only tensor engine with deterministic lowest-slot allocation."""
 
-    def __init__(self, state: FastGymState) -> None:
+    def __init__(
+        self, state: FastGymState, catalog: FastCardCatalog | None = None
+    ) -> None:
         self.state = state
+        if catalog is not None and catalog.device != state.device:
+            raise ValueError("catalog and state must use the same device")
+        self.catalog = catalog
         self._slots = torch.arange(
             state.max_entities, dtype=torch.int64, device=state.device
         ).view(1, -1)
@@ -71,12 +77,15 @@ class FastTensorGym:
             self._slots,
             torch.full_like(self._slots, state.max_entities),
         ).amin(dim=1)
+        known_card = request.card_id > 0
+        if self.catalog is not None:
+            known_card &= request.card_id < self.catalog.size
         success = (
             request.valid
             & ~state.game_over
             & (request.owner >= 0)
             & (request.owner < 2)
-            & (request.card_id > 0)
+            & known_card
             & (request.hp > 0)
             & (first_free < state.max_entities)
         )
@@ -97,10 +106,110 @@ class FastTensorGym:
         write(state.y_units, request.y_units.to(torch.int32))
         write(state.hp, request.hp.to(torch.float32))
         write(state.max_hp, request.hp.to(torch.float32))
+        write(state.target_id, torch.zeros_like(request.card_id))
+        if self.catalog is None:
+            write(state.damage, torch.zeros_like(request.hp))
+            write(state.range_units, torch.zeros_like(request.x_units))
+            write(state.sight_range_units, torch.zeros_like(request.x_units))
+            write(state.speed_units_per_tick, torch.zeros_like(request.x_units))
+            write(state.hit_cooldown_ticks, torch.zeros_like(request.deploy_ticks))
+        else:
+            safe_card = request.card_id.clamp(0, self.catalog.size - 1)
+            write(state.kind, self.catalog.kind[safe_card])
+            write(state.hp, self.catalog.hitpoints[safe_card])
+            write(state.max_hp, self.catalog.hitpoints[safe_card])
+            write(state.damage, self.catalog.damage[safe_card])
+            write(state.range_units, self.catalog.range_units[safe_card])
+            write(
+                state.sight_range_units,
+                self.catalog.sight_range_units[safe_card],
+            )
+            write(
+                state.speed_units_per_tick,
+                self.catalog.speed_units_per_tick[safe_card],
+            )
+            write(
+                state.hit_cooldown_ticks,
+                self.catalog.hit_cooldown_ticks[safe_card],
+            )
         write(state.deploy_ticks, request.deploy_ticks.clamp(min=0).to(torch.int32))
         write(state.cooldown_ticks, torch.zeros_like(request.deploy_ticks))
         state.next_stable_id.add_(success.to(torch.int64))
         return success
+
+    def _ordinary_troop_phase(self) -> None:
+        """Acquire, approach, and directly hit the nearest visible enemy."""
+
+        state = self.state
+        present = state.active & (state.hp > 0) & (state.deploy_ticks == 0)
+        dx = state.x_units[:, None, :].to(torch.int64) - state.x_units[
+            :, :, None
+        ].to(torch.int64)
+        dy = state.y_units[:, None, :].to(torch.int64) - state.y_units[
+            :, :, None
+        ].to(torch.int64)
+        distance_sq = dx.square() + dy.square()
+        sight_sq = state.sight_range_units.to(torch.int64).square()[:, :, None]
+        candidate = (
+            present[:, :, None]
+            & present[:, None, :]
+            & (state.owner[:, :, None] != state.owner[:, None, :])
+            & (distance_sq <= sight_sq)
+        )
+        unreachable = torch.full_like(distance_sq, torch.iinfo(torch.int64).max)
+        nearest_slot = torch.where(candidate, distance_sq, unreachable).argmin(dim=2)
+        found = candidate.any(dim=2)
+        selected_id = state.stable_id.gather(1, nearest_slot)
+        state.target_id.copy_(torch.where(found, selected_id, 0))
+
+        target_x = state.x_units.gather(1, nearest_slot).to(torch.float32)
+        target_y = state.y_units.gather(1, nearest_slot).to(torch.float32)
+        delta_x = target_x - state.x_units.to(torch.float32)
+        delta_y = target_y - state.y_units.to(torch.float32)
+        distance = torch.sqrt(delta_x.square() + delta_y.square())
+        attack_range = state.range_units.to(torch.float32).clamp(min=0)
+        travel = torch.minimum(
+            state.speed_units_per_tick.to(torch.float32).clamp(min=0),
+            (distance - attack_range).clamp(min=0),
+        )
+        mobile = (
+            found
+            & present
+            & (state.kind == 0)
+            & (distance > attack_range)
+            & (travel > 0)
+        )
+        denominator = distance.clamp(min=1.0)
+        move_x = torch.round(delta_x * travel / denominator).to(torch.int32)
+        move_y = torch.round(delta_y * travel / denominator).to(torch.int32)
+        state.x_units.add_(torch.where(mobile, move_x, 0))
+        state.y_units.add_(torch.where(mobile, move_y, 0))
+
+        target_x = state.x_units.gather(1, nearest_slot).to(torch.float32)
+        target_y = state.y_units.gather(1, nearest_slot).to(torch.float32)
+        post_dx = target_x - state.x_units.to(torch.float32)
+        post_dy = target_y - state.y_units.to(torch.float32)
+        post_distance_sq = post_dx.square() + post_dy.square()
+        attack = (
+            found
+            & present
+            & (state.cooldown_ticks == 0)
+            & (post_distance_sq <= attack_range.square())
+            & (state.damage > 0)
+        )
+        hp_delta = torch.zeros_like(state.hp).scatter_add(
+            1,
+            nearest_slot,
+            torch.where(attack, -state.damage, 0.0),
+        )
+        state.hp.add_(hp_delta).clamp_(min=0.0)
+        state.cooldown_ticks.copy_(
+            torch.where(attack, state.hit_cooldown_ticks, state.cooldown_ticks)
+        )
+        died = state.active & (state.hp <= 0)
+        state.active.logical_and_(~died)
+        state.stable_id.masked_fill_(died, 0)
+        state.target_id.masked_fill_(died, 0)
 
     def step_tick(
         self, request: FastDeploymentRequest | None = None
@@ -135,6 +244,7 @@ class FastTensorGym:
         state.deploy_ticks.sub_(ready.to(torch.int32)).clamp_(min=0)
         cooling = state.active & (state.cooldown_ticks > 0)
         state.cooldown_ticks.sub_(cooling.to(torch.int32)).clamp_(min=0)
+        self._ordinary_troop_phase()
         state.tick.add_(live.to(torch.int64))
         return FastGymTickResult(
             committed=live,

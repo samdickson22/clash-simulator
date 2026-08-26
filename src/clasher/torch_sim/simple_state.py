@@ -34,6 +34,12 @@ class FastGymState:
     y_units: torch.Tensor
     hp: torch.Tensor
     max_hp: torch.Tensor
+    target_id: torch.Tensor
+    damage: torch.Tensor
+    range_units: torch.Tensor
+    sight_range_units: torch.Tensor
+    speed_units_per_tick: torch.Tensor
+    hit_cooldown_ticks: torch.Tensor
     deploy_ticks: torch.Tensor
     cooldown_ticks: torch.Tensor
 
@@ -89,6 +95,12 @@ class FastGymState:
             y_units=zeros(*entity_shape, dtype=torch.int32),
             hp=zeros(*entity_shape, dtype=torch.float32),
             max_hp=zeros(*entity_shape, dtype=torch.float32),
+            target_id=zeros(*entity_shape, dtype=torch.int64),
+            damage=zeros(*entity_shape, dtype=torch.float32),
+            range_units=zeros(*entity_shape, dtype=torch.int32),
+            sight_range_units=zeros(*entity_shape, dtype=torch.int32),
+            speed_units_per_tick=zeros(*entity_shape, dtype=torch.int32),
+            hit_cooldown_ticks=zeros(*entity_shape, dtype=torch.int32),
             deploy_ticks=zeros(*entity_shape, dtype=torch.int32),
             cooldown_ticks=zeros(*entity_shape, dtype=torch.int32),
         )
