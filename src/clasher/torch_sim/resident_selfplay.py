@@ -9,6 +9,7 @@ fallback and are never silently stepped through a different implementation.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, fields
 
 import torch
@@ -20,6 +21,11 @@ from clasher.rl.structured_obs import StructuredObservationBuilder
 from .actions import NO_OP_ACTION
 from .catalog import TensorCardCatalog
 from .observations import TensorObservationProjector
+from .policy_validation import (
+    PROJECTED_GYM_TRANSITION_PROFILE,
+    ProjectedGymTransition,
+    ProjectedGymTransitionComparison,
+)
 from .resident_engine import TensorResidentEngine
 from .resident_outputs import (
     ResidentOutputProjector,
@@ -28,6 +34,8 @@ from .resident_outputs import (
     TensorRewardOutcome,
 )
 from .resident_workspace import TensorResidentWorkspace
+
+SIMULATOR_EXACT_ACTION_MASK_PROFILE = "simulator_exact_legal_v1"
 
 
 @dataclass(frozen=True)
@@ -59,10 +67,60 @@ class ResidentSelfPlayStep:
     ticks_advanced: torch.Tensor
     player_order: torch.Tensor
     fallback: ResidentFallbackRows
+    validation: ResidentGymValidationBoundary | None = None
+
+
+@dataclass(frozen=True)
+class ResidentGymTransitionInputs:
+    """Policy-owned recurrent inputs paired with one resident transition.
+
+    The simulator cannot infer these values safely: the rollout owner decides
+    when a terminal row is reset and owns recurrent hidden/cell state.  Keeping
+    them explicit prevents the runtime from manufacturing policy history.
+    """
+
+    previous_actions: torch.Tensor
+    previous_rewards: torch.Tensor
+    episode_starts: torch.Tensor
+    recurrent_inputs: Mapping[str, torch.Tensor] | None = None
+    public_action_masks: torch.Tensor | None = None
+    public_action_mask_contract_version: int | None = None
+
+
+@dataclass(frozen=True)
+class ResidentGymValidationMetadata:
+    """Admission evidence for a projected resident Gym transition."""
+
+    profile: str
+    simulator_action_mask_profile: str
+    public_action_mask_contract_version: int | None
+    requested_native_ticks: torch.Tensor
+    native_ticks: torch.Tensor
+    fallback_rows: tuple[int, ...]
+    all_rows_admitted: bool
+
+
+@dataclass(frozen=True)
+class ResidentGymValidationBoundary:
+    """Projected transition and the native-execution evidence behind it."""
+
+    transition: ProjectedGymTransition
+    metadata: ResidentGymValidationMetadata
+    comparison: ProjectedGymTransitionComparison | None = None
+
+
+ResidentGymTransitionValidator = Callable[
+    [ProjectedGymTransition, ResidentGymValidationMetadata],
+    ProjectedGymTransitionComparison | None,
+]
 
 
 class ResidentEpisodeCoverageError(RuntimeError):
     """Raised instead of unsafe mid-episode scalar rehydration."""
+
+
+class ResidentGymValidationError(RuntimeError):
+    """Raised when an opt-in projected Gym transition is not admissible."""
 
 
 def _copy_projector_rows(
@@ -96,6 +154,8 @@ class TensorResidentSelfPlay:
         decision_interval_ticks: int = 8,
         max_ticks: int = STANDARD_MATCH_TICKS,
         include_privileged_critic: bool = False,
+        validation_profile: str | None = None,
+        transition_validator: ResidentGymTransitionValidator | None = None,
     ) -> None:
         if outputs.runtime is not engine.runtime or outputs.engine is not engine:
             raise ValueError("output projector must own the resident engine")
@@ -103,6 +163,15 @@ class TensorResidentSelfPlay:
             raise ValueError("decision_interval_ticks must be positive")
         if max_ticks < 1:
             raise ValueError("max_ticks must be positive")
+        if validation_profile not in {None, PROJECTED_GYM_TRANSITION_PROFILE}:
+            raise ValueError(
+                "validation_profile must be None or "
+                f"{PROJECTED_GYM_TRANSITION_PROFILE!r}"
+            )
+        if transition_validator is not None and validation_profile is None:
+            raise ValueError(
+                "transition_validator requires an explicit validation_profile"
+            )
         self.engine = engine
         self.workspace = TensorResidentWorkspace(engine)
         self.outputs = outputs
@@ -110,6 +179,8 @@ class TensorResidentSelfPlay:
         self.decision_interval_ticks = int(decision_interval_ticks)
         self.max_ticks = int(max_ticks)
         self.include_privileged_critic = bool(include_privileged_critic)
+        self.validation_profile = validation_profile
+        self.transition_validator = transition_validator
         self._scalar_roots: list[BattleState] = []
         self._episode_resident = torch.ones(
             self.batch_size, dtype=torch.bool, device=self.device
@@ -143,6 +214,8 @@ class TensorResidentSelfPlay:
         structured_builder: StructuredObservationBuilder | None = None,
         cv_builder: CvObservationBuilder | None = None,
         include_privileged_critic: bool = False,
+        validation_profile: str | None = None,
+        transition_validator: ResidentGymTransitionValidator | None = None,
     ) -> TensorResidentSelfPlay:
         if not battles:
             raise ValueError("at least one battle is required")
@@ -172,6 +245,8 @@ class TensorResidentSelfPlay:
             decision_interval_ticks=decision_interval_ticks,
             max_ticks=max_ticks,
             include_privileged_critic=include_privileged_critic,
+            validation_profile=validation_profile,
+            transition_validator=transition_validator,
         )
         bridge._scalar_roots = [battle.clone() for battle in battles]
         admitted, reasons = bridge._episode_admission()
@@ -302,16 +377,39 @@ class TensorResidentSelfPlay:
             masks,
         )
 
-    def step(self, action_ids: torch.Tensor) -> ResidentSelfPlayStep:
+    def step(
+        self,
+        action_ids: torch.Tensor,
+        *,
+        validation_inputs: ResidentGymTransitionInputs | None = None,
+    ) -> ResidentSelfPlayStep:
         actions = torch.as_tensor(action_ids, dtype=torch.int64, device=self.device)
         if actions.shape != (self.batch_size, 2):
             raise ValueError("action_ids must have shape [batch, 2]")
         state = self.engine.runtime.battle
+        if self.validation_profile is not None:
+            if validation_inputs is None:
+                raise ResidentGymValidationError(
+                    "projected Gym validation requires explicit policy history inputs"
+                )
+            rejected = ~self._episode_resident
+            if bool(rejected.any().item()):
+                rows = tuple(
+                    int(row)
+                    for row in torch.nonzero(rejected, as_tuple=False)
+                    .flatten()
+                    .tolist()
+                )
+                raise ResidentGymValidationError(
+                    "projected Gym transition requires zero fallback before "
+                    f"mutation; rejected rows: {rows}"
+                )
         pre_elixir = state.elixir.clone()
         start_eligible = (
             self._episode_resident & ~state.game_over & (state.tick < self.max_ticks)
         )
         ticks = torch.zeros(self.batch_size, dtype=torch.int64, device=self.device)
+        requested_native_ticks = torch.zeros_like(ticks)
         fallback = ~self._episode_resident & ~state.game_over
         action_success = torch.zeros(
             (self.batch_size, 2), dtype=torch.bool, device=self.device
@@ -328,6 +426,7 @@ class TensorResidentSelfPlay:
         active = start_eligible.clone()
         for logic_tick in range(self.decision_interval_ticks):
             needs_tick = active & ~state.game_over & (state.tick < self.max_ticks)
+            requested_native_ticks.add_(needs_tick.to(torch.int64))
             finished = active & ~needs_tick
             self.engine.runtime.supported[finished] = False
             active &= needs_tick
@@ -423,6 +522,71 @@ class TensorResidentSelfPlay:
             fallback_scalar_battles = tuple(
                 self._scalar_roots[row] for row in fallback_row_list
             )
+        fallback_result = ResidentFallbackRows(
+            mask=fallback,
+            row_indices=fallback_rows,
+            action_ids=fallback_actions,
+            reasons=fallback_reasons,
+            ticks_completed=ticks.index_select(0, fallback_rows),
+            tick_at_boundary=state.tick.index_select(0, fallback_rows).clone(),
+            time_at_boundary=state.time.index_select(0, fallback_rows).clone(),
+            scalar_battles=fallback_scalar_battles,
+        )
+        validation: ResidentGymValidationBoundary | None = None
+        if self.validation_profile is not None:
+            assert validation_inputs is not None
+            fallback_row_tuple = tuple(
+                int(row) for row in fallback_rows.detach().cpu().tolist()
+            )
+            all_native = bool(torch.equal(ticks, requested_native_ticks))
+            all_rows_admitted = bool(resident.all().item())
+            metadata = ResidentGymValidationMetadata(
+                profile=self.validation_profile,
+                simulator_action_mask_profile=SIMULATOR_EXACT_ACTION_MASK_PROFILE,
+                public_action_mask_contract_version=(
+                    validation_inputs.public_action_mask_contract_version
+                ),
+                requested_native_ticks=requested_native_ticks.clone(),
+                native_ticks=ticks.clone(),
+                fallback_rows=fallback_row_tuple,
+                all_rows_admitted=(
+                    all_rows_admitted and not fallback_row_tuple and all_native
+                ),
+            )
+            if not metadata.all_rows_admitted:
+                raise ResidentGymValidationError(
+                    "projected Gym transition requires all requested ticks to "
+                    "execute natively with zero fallback"
+                )
+            transition = ProjectedGymTransition(
+                actor=public.structured,
+                critic=privileged,
+                public_action_masks=validation_inputs.public_action_masks,
+                public_action_mask_contract_version=(
+                    validation_inputs.public_action_mask_contract_version
+                ),
+                action_success=action_success,
+                rewards=reward_outcome.reward,
+                done=reward_outcome.done,
+                winner=reward_outcome.winner,
+                previous_actions=validation_inputs.previous_actions,
+                previous_rewards=validation_inputs.previous_rewards,
+                episode_starts=validation_inputs.episode_starts,
+                recurrent_inputs=validation_inputs.recurrent_inputs,
+            )
+            comparison = (
+                self.transition_validator(transition, metadata)
+                if self.transition_validator is not None
+                else None
+            )
+            if comparison is not None and not comparison.passed:
+                assert comparison.divergence is not None
+                raise ResidentGymValidationError(str(comparison.divergence))
+            validation = ResidentGymValidationBoundary(
+                transition=transition,
+                metadata=metadata,
+                comparison=comparison,
+            )
         return ResidentSelfPlayStep(
             public=public,
             privileged_critic=privileged,
@@ -434,16 +598,8 @@ class TensorResidentSelfPlay:
             action_masks=action_masks,
             ticks_advanced=ticks,
             player_order=player_order,
-            fallback=ResidentFallbackRows(
-                mask=fallback,
-                row_indices=fallback_rows,
-                action_ids=fallback_actions,
-                reasons=fallback_reasons,
-                ticks_completed=ticks.index_select(0, fallback_rows),
-                tick_at_boundary=state.tick.index_select(0, fallback_rows).clone(),
-                time_at_boundary=state.time.index_select(0, fallback_rows).clone(),
-                scalar_battles=fallback_scalar_battles,
-            ),
+            fallback=fallback_result,
+            validation=validation,
         )
 
     def reset_rows(
@@ -508,8 +664,14 @@ class TensorResidentSelfPlay:
 
 
 __all__ = [
+    "SIMULATOR_EXACT_ACTION_MASK_PROFILE",
     "ResidentEpisodeCoverageError",
     "ResidentFallbackRows",
+    "ResidentGymTransitionInputs",
+    "ResidentGymTransitionValidator",
+    "ResidentGymValidationBoundary",
+    "ResidentGymValidationError",
+    "ResidentGymValidationMetadata",
     "ResidentSelfPlayStep",
     "TensorResidentSelfPlay",
 ]
