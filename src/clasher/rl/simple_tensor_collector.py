@@ -242,6 +242,10 @@ class SimpleTensorCollector:
             raise SimpleTensorCollectorError(
                 "simple tensor training requires objective-v1-gamma-v1"
             )
+        if bridge.strict_reset_check:
+            raise SimpleTensorCollectorError(
+                "production collection requires strict_reset_check=False"
+            )
         self.bridge = bridge
         self.public_mask_provider = public_mask_provider
         self.policy = policy

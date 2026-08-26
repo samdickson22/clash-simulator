@@ -86,6 +86,7 @@ class SimpleGymRolloutBridge:
         no_op_action: int = NO_OP_ACTION,
         decision_interval: int = 1,
         reward_v2_config: SimpleRewardV2Config | None = None,
+        strict_reset_check: bool = True,
         adapter: SimpleGymAdapter | None = None,
     ) -> None:
         if (
@@ -101,6 +102,7 @@ class SimpleGymRolloutBridge:
         self.device = self.adapter.device
         self.batch_size = self.adapter.batch_size
         self.decision_interval = int(decision_interval)
+        self.strict_reset_check = bool(strict_reset_check)
         self.reward_v2_config = reward_v2_config
         self._initial_tower_hp = runtime.outcomes.initial_tower_hp.clone()
         if reward_v2_config is None:
@@ -264,7 +266,7 @@ class SimpleGymRolloutBridge:
         scratch planes are not a supported observation boundary before reset.
         """
 
-        if bool(self.needs_reset.any().item()):
+        if self.strict_reset_check and bool(self.needs_reset.any().item()):
             raise SimpleGymContractError(
                 "terminal rows must be passed to reset_done before the next step"
             )

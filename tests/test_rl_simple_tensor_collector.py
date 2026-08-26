@@ -96,6 +96,7 @@ def _bridge(
         runtime,
         decision_interval=8,
         reward_v2_config=SimpleRewardV2Config(gamma=0.995),
+        strict_reset_check=False,
     )
     return bridge, ids
 
