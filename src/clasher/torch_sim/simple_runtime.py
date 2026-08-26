@@ -257,7 +257,7 @@ class SimpleGymRuntime:
             torch.where(failed_deployment, pre_elixir, self.action_state.elixir)
         )
 
-        combat = self.combat.step_tick()
+        combat = self.combat.step_tick(disabled=self.entity_status_ticks > 0)
         multiplier = self._phase_multiplier()[:, None]
         self.action_kernel.regenerate_elixir_(
             self.action_state,

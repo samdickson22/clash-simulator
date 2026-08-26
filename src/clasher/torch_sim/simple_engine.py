@@ -164,11 +164,16 @@ class FastTensorGym:
             )
         return torch.stack(tuple(self._deploy(request) for request in requests), dim=1)
 
-    def _ordinary_troop_phase(self) -> None:
-        """Acquire, approach, and directly hit the nearest visible enemy."""
+    def _ordinary_troop_phase(self, disabled: torch.Tensor) -> None:
+        """Acquire, approach, and directly hit the nearest visible enemy.
+
+        Disabled entities remain present as targets but cannot acquire a
+        target, move, or attack during this phase.
+        """
 
         state = self.state
         present = state.active & (state.hp > 0) & (state.deploy_ticks == 0)
+        can_act = present & ~disabled
         dx = state.x_units[:, None, :].to(torch.int64) - state.x_units[:, :, None].to(
             torch.int64
         )
@@ -178,7 +183,7 @@ class FastTensorGym:
         distance_sq = dx.square() + dy.square()
         sight_sq = state.sight_range_units.to(torch.int64).square()[:, :, None]
         candidate = (
-            present[:, :, None]
+            can_act[:, :, None]
             & present[:, None, :]
             & (state.owner[:, :, None] != state.owner[:, None, :])
             & (distance_sq <= sight_sq)
@@ -210,7 +215,7 @@ class FastTensorGym:
         )
         mobile = (
             found
-            & present
+            & can_act
             & (state.kind == 0)
             & (distance > attack_range)
             & (travel > 0)
@@ -228,7 +233,7 @@ class FastTensorGym:
         post_distance_sq = post_dx.square() + post_dy.square()
         attack = (
             found
-            & present
+            & can_act
             & (state.cooldown_ticks == 0)
             & (post_distance_sq <= attack_range.square())
             & (state.damage > 0)
@@ -248,7 +253,10 @@ class FastTensorGym:
         state.target_id.masked_fill_(died, 0)
 
     def step_tick(
-        self, request: FastDeploymentRequest | None = None
+        self,
+        request: FastDeploymentRequest | None = None,
+        *,
+        disabled: torch.Tensor | None = None,
     ) -> FastGymTickResult:
         """Advance every live row once and optionally allocate one entity.
 
@@ -258,6 +266,14 @@ class FastTensorGym:
         """
 
         state = self.state
+        if disabled is None:
+            disabled = torch.zeros_like(state.active)
+        elif disabled.shape != state.active.shape:
+            raise ValueError("disabled must have shape [batch, entities]")
+        elif disabled.device != state.device:
+            raise ValueError("disabled must use the state device")
+        elif disabled.dtype != torch.bool:
+            raise ValueError("disabled must be bool")
         live = ~state.game_over
         if request is None:
             success = torch.zeros(
@@ -278,9 +294,9 @@ class FastTensorGym:
             )
         ready = state.active & (state.deploy_ticks > 0)
         state.deploy_ticks.sub_(ready.to(torch.int32)).clamp_(min=0)
-        cooling = state.active & (state.cooldown_ticks > 0)
+        cooling = state.active & ~disabled & (state.cooldown_ticks > 0)
         state.cooldown_ticks.sub_(cooling.to(torch.int32)).clamp_(min=0)
-        self._ordinary_troop_phase()
+        self._ordinary_troop_phase(disabled)
         state.tick.add_(live.to(torch.int64))
         return FastGymTickResult(
             committed=live,

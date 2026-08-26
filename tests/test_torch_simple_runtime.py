@@ -148,29 +148,83 @@ def test_one_free_slot_prefers_player_zero_and_rolls_back_player_one() -> None:
     )
 
 
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_stunned_knight_is_targetable_but_does_not_move_or_cool_down(
+    device_name: str,
+) -> None:
+    frozen, _ = _runtime(device_name)
+    ordinary, _ = _runtime(device_name)
+    frozen.step_tick(_knight_actions(frozen.device))
+    ordinary.step_tick(_knight_actions(ordinary.device))
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=frozen.device)
+    # Leave both Knights one tick from completing deployment.
+    for _ in range(18):
+        frozen.step_tick(noop)
+        ordinary.step_tick(noop)
+    assert int(frozen.state.deploy_ticks[0, 6]) == 1
+
+    frozen.entity_status_kind[0, 6] = FAST_STATUS_STUN
+    frozen.entity_status_ticks[0, 6] = 2
+    frozen.state.cooldown_ticks[0, 6] = 5
+    ordinary.state.cooldown_ticks[0, 6] = 5
+    frozen_x = frozen.state.x_units[0, 6].clone()
+    frozen_y = frozen.state.y_units[0, 6].clone()
+    ordinary_x = ordinary.state.x_units[0, 6].clone()
+    ordinary_y = ordinary.state.y_units[0, 6].clone()
+
+    frozen.step_tick(noop)
+    ordinary.step_tick(noop)
+
+    assert torch.equal(frozen.state.x_units[0, 6], frozen_x)
+    assert torch.equal(frozen.state.y_units[0, 6], frozen_y)
+    assert int(frozen.state.cooldown_ticks[0, 6]) == 5
+    assert int(frozen.state.target_id[0, 6]) == 0
+    # The enemy can still acquire the disabled Knight by its stable identity.
+    assert int(frozen.state.target_id[0, 7]) == 7
+    assert not (
+        torch.equal(ordinary.state.x_units[0, 6], ordinary_x)
+        and torch.equal(ordinary.state.y_units[0, 6], ordinary_y)
+    )
+    assert int(ordinary.state.cooldown_ticks[0, 6]) == 4
+
+
 def test_runtime_advances_owned_effect_and_status_planes() -> None:
     runtime, _ = _runtime("cpu")
     runtime.step_tick(_knight_actions(runtime.device))
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64)
+    for _ in range(18):
+        runtime.step_tick(noop)
     knight_slot = 6
     hp_before = runtime.state.hp[0, knight_slot].clone()
+    position_before_impact = runtime.state.y_units[0, knight_slot].clone()
     runtime.effects.active[0, 0] = True
     runtime.effects.kind[0, 0] = FAST_EFFECT_AREA
     runtime.effects.source_owner[0, 0] = 1
     runtime.effects.x_units[0, 0] = runtime.state.x_units[0, knight_slot]
     runtime.effects.y_units[0, 0] = runtime.state.y_units[0, knight_slot]
     runtime.effects.damage[0, 0] = 50.0
-    runtime.effects.radius_units[0, 0] = 100
+    runtime.effects.radius_units[0, 0] = 1_000
     runtime.effects.status_kind[0, 0] = FAST_STATUS_STUN
     runtime.effects.status_duration_ticks[0, 0] = 3
     runtime.effects.lifetime_ticks[0, 0] = 1
 
-    result = runtime.step_tick(torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64))
+    result = runtime.step_tick(noop)
 
     assert bool(result.effects.impacted[0, 0])
     assert not bool(runtime.effects.active[0, 0])
+    assert not torch.equal(
+        runtime.state.y_units[0, knight_slot], position_before_impact
+    )
     torch.testing.assert_close(runtime.state.hp[0, knight_slot], hp_before - 50.0)
     assert int(runtime.entity_status_kind[0, knight_slot]) == FAST_STATUS_STUN
     assert int(runtime.entity_status_ticks[0, knight_slot]) == 3
+    position_after_impact = runtime.state.y_units[0, knight_slot].clone()
+
+    # Effects resolve after combat, so the new stun becomes mechanics-bearing
+    # on the following tick rather than retroactively suppressing this one.
+    runtime.step_tick(noop)
+    assert torch.equal(runtime.state.y_units[0, knight_slot], position_after_impact)
+    assert int(runtime.entity_status_ticks[0, knight_slot]) == 2
 
 
 def test_real_runtime_is_mask_v2_adapter_compatible() -> None:
