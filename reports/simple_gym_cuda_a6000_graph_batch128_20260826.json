@@ -1,0 +1,70 @@
+{
+  "acceptance": {
+    "absolute_throughput_gate": true,
+    "all_row_ticks_native": true,
+    "all_rows_committed": true,
+    "cuda_launches_lt_1000": true,
+    "cuda_zero_explicit_host_sync": true,
+    "deterministic_replay": true,
+    "no_terminal_rows_in_window": true,
+    "python_parity_evaluated": false,
+    "speedup_evaluated": false,
+    "zero_fallback": true
+  },
+  "cuda_profile": {
+    "explicit_host_synchronizations": 0,
+    "kernel_launches": 10,
+    "launch_gate_lt_1000": true,
+    "zero_explicit_host_sync": true
+  },
+  "deck_pool": {
+    "candidate_decks": 33,
+    "rejected_decks": 0,
+    "supported_decks": 33
+  },
+  "device": "cuda:0",
+  "engine": "SimpleGymRuntime",
+  "execution_mode": "cuda-graph",
+  "median": {
+    "actor_transitions_per_second": 1194.5669028306502,
+    "elapsed_seconds": 2.143036196000139,
+    "row_ticks_per_second": 597.2834514153251
+  },
+  "policy": "first-legal",
+  "preset": "profile",
+  "schema_version": 1,
+  "seed": 202608264,
+  "throughput_gate": {
+    "minimum_row_ticks_per_second": 1.0
+  },
+  "trials": [
+    {
+      "actor_transitions_per_second": 1194.815993415298,
+      "batch_size": 128,
+      "committed_rows": 1280,
+      "digest": "7f26ea702473eaf1a4f47083eb6f7c453f0174f62c9d38bf479ea0ef5c27f3ab",
+      "elapsed_seconds": 2.142589331000181,
+      "measured_ticks": 10,
+      "native_ticks": 1280,
+      "peak_device_memory_bytes": 48897024,
+      "repetition": 0,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 597.407996707649,
+      "terminal_rows": 0
+    },
+    {
+      "actor_transitions_per_second": 1194.3178122460022,
+      "batch_size": 128,
+      "committed_rows": 1280,
+      "digest": "7f26ea702473eaf1a4f47083eb6f7c453f0174f62c9d38bf479ea0ef5c27f3ab",
+      "elapsed_seconds": 2.1434830610000972,
+      "measured_ticks": 10,
+      "native_ticks": 1280,
+      "peak_device_memory_bytes": 48897024,
+      "repetition": 1,
+      "row_ticks": 1280,
+      "row_ticks_per_second": 597.1589061230011,
+      "terminal_rows": 0
+    }
+  ]
+}

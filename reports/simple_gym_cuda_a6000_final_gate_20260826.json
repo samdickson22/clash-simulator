@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "tested_commit": "5890e092",
+  "provider": {
+    "pod_id": "10fe775ff54d48dc926d3eba93561347",
+    "provider": "massedcompute",
+    "gpu": "NVIDIA RTX A6000",
+    "gpu_memory_mib": 49140,
+    "driver": "580.126.09",
+    "image": "ubuntu_22_cuda_12"
+  },
+  "runtime": {
+    "python": "3.10.12",
+    "torch": "2.10.0+cu128",
+    "torch_cuda": "12.8",
+    "cuda_available": true
+  },
+  "focused_cuda_tests": {
+    "periodic_spawn": {
+      "passed": 4,
+      "deselected": 5,
+      "elapsed_seconds": 6.89
+    },
+    "async_collector": {
+      "passed": 1,
+      "deselected": 5,
+      "elapsed_seconds": 13.81
+    }
+  },
+  "deterministic_smoke": {
+    "batch_size": 2,
+    "measured_ticks": 4,
+    "repetitions": 2,
+    "all_rows_committed": true,
+    "all_row_ticks_native": true,
+    "zero_fallback": true,
+    "deterministic_replay": true,
+    "transition_digest": "5aede2b7217a15efa65ce4395b00749f90962ee95f786075629ce58c60f33330",
+    "median_row_ticks_per_second": 8.400361980809366,
+    "median_actor_transitions_per_second": 16.800723961618733,
+    "peak_device_memory_bytes": 98038272
+  },
+  "profiled_tick": {
+    "actual_cuda_launch_api_events": 7706,
+    "explicit_host_synchronizations": 2,
+    "synchronization_names": {
+      "cudaStreamSynchronize": 2
+    },
+    "synchronization_parent": {
+      "aten::copy_": 2
+    },
+    "script_reported_cuda_device_events_with_marker_ancestor": 1,
+    "script_launch_counter_valid": false,
+    "script_counter_failure_reason": "CUDA device events do not retain the CPU record_function marker ancestry under torch 2.10; cudaLaunchKernel CPU runtime events do",
+    "dominant_launch_parents": {
+      "aten::where": 1148,
+      "aten::bitwise_and": 1132,
+      "aten::copy_": 808,
+      "aten::fill_": 556,
+      "aten::index": 372,
+      "aten::gather": 322,
+      "aten::gt": 302,
+      "aten::masked_fill_": 255,
+      "aten::eq": 243,
+      "aten::clamp": 220
+    }
+  },
+  "whole_tick_compile_experiment": {
+    "mode": "reduce-overhead",
+    "fullgraph": false,
+    "wrapper_creation_seconds": 3.0254989349998596,
+    "result": "failed_before_first_compiled_tick",
+    "error_type": "torch._inductor.exc.InductorError",
+    "error": "CUDA SplitScan cumsum codegen failed in TritonSymbols.get_block_shape: TypeError: list indices must be integers or slices, not NoneType",
+    "warm_ticks_completed": 0,
+    "kernel_launches": null,
+    "explicit_host_synchronizations": null,
+    "row_ticks_per_second": null
+  },
+  "cuda_graph_runner": {
+    "result": "passed",
+    "source_commit": "5890e092",
+    "device_native_prerequisite_commit": "01f0349a",
+    "capture_seconds": 0.29929580000020906,
+    "focused_cuda_tests": {
+      "passed": 2,
+      "failed": 0,
+      "elapsed_seconds": 6.01
+    },
+    "eager_equivalence": {
+      "replays": 5,
+      "all_runtime_state_planes_exact": true,
+      "all_action_effect_lifecycle_modifier_outcome_planes_exact": true,
+      "actor_observation_and_legal_mask_exact": true,
+      "reward_done_winner_native_committed_exact": true
+    },
+    "profiled_tick": {
+      "cuda_launch_api_events": 10,
+      "cuda_launch_kernel_events": 9,
+      "cuda_graph_launch_events": 1,
+      "explicit_host_synchronizations": 0
+    },
+    "batch_2_smoke": {
+      "measured_ticks": 4,
+      "repetitions": 2,
+      "median_row_ticks_per_second": 63.78103172530612,
+      "eager_baseline_row_ticks_per_second": 8.400361980809366,
+      "observed_speedup": 7.59265271260804,
+      "transition_digest": "5aede2b7217a15efa65ce4395b00749f90962ee95f786075629ce58c60f33330"
+    },
+    "batch_128_gate": {
+      "measured_ticks": 10,
+      "repetitions": 2,
+      "row_ticks_per_trial": 1280,
+      "all_rows_committed_per_trial": 1280,
+      "all_row_ticks_native_per_trial": 1280,
+      "median_row_ticks_per_second": 597.2834514153251,
+      "median_actor_transitions_per_second": 1194.5669028306502,
+      "deterministic_transition_digest": "7f26ea702473eaf1a4f47083eb6f7c453f0174f62c9d38bf479ea0ef5c27f3ab"
+    }
+  },
+  "acceptance": {
+    "cuda_runtime_operational": true,
+    "focused_cuda_tests": true,
+    "deterministic_zero_fallback_smoke": true,
+    "kernel_launch_gate_lt_1000": true,
+    "zero_explicit_host_sync": true,
+    "credible_absolute_throughput_gate": true,
+    "cuda_graph_performance_gate": true,
+    "full_cuda_episode_validation": false,
+    "accepted": false
+  },
+  "artifacts": {
+    "smoke_json": {
+      "path": "reports/simple_gym_cuda_a6000_smoke_no_profile_20260826.json",
+      "sha256": "868c52bc0e2029b3c65f21bd205f6697cb3a5235fbe90ab4bb7d67e7ca2c7289"
+    },
+    "profiler_diagnostic": {
+      "path": "reports/simple_gym_cuda_a6000_profiler_diagnostic_20260826.json",
+      "sha256": "757055944babb68dc339d6a6b0f8dbade8c149d9048fe9485fa5fb901297e1fc"
+    },
+    "operator_summary": {
+      "path": "reports/simple_gym_cuda_a6000_operator_summary_20260826.json",
+      "sha256": "0772f2d0677c60c1d35fcfd0e4fa831f8461e6995457ef8a3f8d5b14a899b07e"
+    },
+    "operator_tables": {
+      "path": "reports/simple_gym_cuda_a6000_operator_tables_20260826.txt",
+      "sha256": "9a31cc9c5011befb816b57a82fe54c888fabd1f6eb0f6eddc4e3793bb8a55828"
+    },
+    "compile_experiment": {
+      "path": "reports/simple_gym_cuda_a6000_compile_experiment_20260826.json",
+      "sha256": "fbf2f1ae2186c3ebf592fb26e5c7a61344a592150f80fcaf0d3b73cf97be6ad0"
+    },
+    "cuda_graph_smoke": {
+      "path": "reports/simple_gym_cuda_a6000_graph_smoke_20260826.json",
+      "sha256": "c9266fb380d32b171b955cc87783da2ee2a884d4f7ee9cc205a38ff4b593c25b"
+    },
+    "cuda_graph_batch128": {
+      "path": "reports/simple_gym_cuda_a6000_graph_batch128_20260826.json",
+      "sha256": "0507d578f5872fcf89e44d88bbac394e3e551d664569b6844b8729082ba5c478"
+    }
+  }
+}

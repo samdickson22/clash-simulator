@@ -1,0 +1,70 @@
+{
+  "acceptance": {
+    "absolute_throughput_gate": true,
+    "all_row_ticks_native": true,
+    "all_rows_committed": true,
+    "cuda_launches_lt_1000": true,
+    "cuda_zero_explicit_host_sync": true,
+    "deterministic_replay": true,
+    "no_terminal_rows_in_window": true,
+    "python_parity_evaluated": false,
+    "speedup_evaluated": false,
+    "zero_fallback": true
+  },
+  "cuda_profile": {
+    "explicit_host_synchronizations": 0,
+    "kernel_launches": 10,
+    "launch_gate_lt_1000": true,
+    "zero_explicit_host_sync": true
+  },
+  "deck_pool": {
+    "candidate_decks": 33,
+    "rejected_decks": 0,
+    "supported_decks": 33
+  },
+  "device": "cuda:0",
+  "engine": "SimpleGymRuntime",
+  "execution_mode": "cuda-graph",
+  "median": {
+    "actor_transitions_per_second": 127.56206345061224,
+    "elapsed_seconds": 0.12549793549999322,
+    "row_ticks_per_second": 63.78103172530612
+  },
+  "policy": "first-legal",
+  "preset": "smoke",
+  "schema_version": 1,
+  "seed": 202608264,
+  "throughput_gate": {
+    "minimum_row_ticks_per_second": 1.0
+  },
+  "trials": [
+    {
+      "actor_transitions_per_second": 124.57543523779131,
+      "batch_size": 2,
+      "committed_rows": 8,
+      "digest": "5aede2b7217a15efa65ce4395b00749f90962ee95f786075629ce58c60f33330",
+      "elapsed_seconds": 0.12843623599997045,
+      "measured_ticks": 4,
+      "native_ticks": 8,
+      "peak_device_memory_bytes": 1213440,
+      "repetition": 0,
+      "row_ticks": 8,
+      "row_ticks_per_second": 62.287717618895655,
+      "terminal_rows": 0
+    },
+    {
+      "actor_transitions_per_second": 130.54869166343317,
+      "batch_size": 2,
+      "committed_rows": 8,
+      "digest": "5aede2b7217a15efa65ce4395b00749f90962ee95f786075629ce58c60f33330",
+      "elapsed_seconds": 0.12255963500001599,
+      "measured_ticks": 4,
+      "native_ticks": 8,
+      "peak_device_memory_bytes": 1213440,
+      "repetition": 1,
+      "row_ticks": 8,
+      "row_ticks_per_second": 65.27434583171659,
+      "terminal_rows": 0
+    }
+  ]
+}
