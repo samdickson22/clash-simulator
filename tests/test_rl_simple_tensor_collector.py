@@ -253,6 +253,62 @@ def test_deterministic_mixed_done_reset_stays_device_resident(
             assert value.device == left.device
 
 
+def test_collector_snapshots_reused_graph_style_observation_buffers(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    collector, _ = _collector("cpu")
+    original = collector.bridge.step
+    static_actor: Any = None
+    static_critic: Any = None
+
+    def graph_style_step(*args: object, **kwargs: object) -> SimpleGymRolloutStep:
+        nonlocal static_actor, static_critic
+        fresh = cast(SimpleGymRolloutStep, cast(Any, original)(*args, **kwargs))
+        if static_actor is None:
+            static_actor = replace(
+                fresh.actor,
+                **{
+                    descriptor.name: getattr(fresh.actor, descriptor.name).clone()
+                    for descriptor in fields(fresh.actor)
+                },
+            )
+            assert fresh.critic is not None
+            static_critic = replace(
+                fresh.critic,
+                **{
+                    descriptor.name: getattr(
+                        fresh.critic, descriptor.name
+                    ).clone()
+                    for descriptor in fields(fresh.critic)
+                },
+            )
+        else:
+            for descriptor in fields(fresh.actor):
+                getattr(static_actor, descriptor.name).copy_(
+                    getattr(fresh.actor, descriptor.name)
+                )
+            assert fresh.critic is not None and static_critic is not None
+            for descriptor in fields(fresh.critic):
+                getattr(static_critic, descriptor.name).copy_(
+                    getattr(fresh.critic, descriptor.name)
+                )
+        return replace(fresh, actor=static_actor, critic=static_critic)
+
+    monkeypatch.setattr(collector.bridge, "step", graph_style_step)
+    batch = collector.collect(
+        3,
+        recurrent_inputs={"hidden": torch.zeros((2, 2, 3))},
+    )
+
+    assert batch.actor.global_features[:, 1, 0, 0].tolist() == pytest.approx(
+        [0.0, 0.1, 0.2]
+    )
+    assert batch.critic is not None
+    assert batch.critic.global_features[:, 1, 0, 0].tolist() == pytest.approx(
+        [0.0, 0.1, 0.2]
+    )
+
+
 def test_v1_public_mask_fails_before_runtime_mutation() -> None:
     bridge, _ = _bridge("cpu")
     collector = SimpleTensorCollector(

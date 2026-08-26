@@ -10,7 +10,12 @@ from __future__ import annotations
 
 import torch
 
+from .simple_actions import FastActionKernel, FastActionState
+from .simple_outcomes import FastOutcomeTracker
+from .simple_projection import SimpleProjectedObservation, SimpleTensorProjector
 from .simple_runtime import SimpleGymRuntime, SimpleGymRuntimeStep
+from .simple_spawn_blueprints import FastSpawnBlueprintCatalog
+from .simple_state import FastGymState
 
 
 class SimpleCudaGraphRunner:
@@ -48,6 +53,42 @@ class SimpleCudaGraphRunner:
     def batch_size(self) -> int:
         return self.runtime.batch_size
 
+    @property
+    def state(self) -> FastGymState:
+        return self.runtime.state
+
+    @property
+    def outcomes(self) -> FastOutcomeTracker:
+        return self.runtime.outcomes
+
+    @property
+    def action_state(self) -> FastActionState:
+        return self.runtime.action_state
+
+    @property
+    def action_kernel(self) -> FastActionKernel:
+        return self.runtime.action_kernel
+
+    @property
+    def projector(self) -> SimpleTensorProjector:
+        return self.runtime.projector
+
+    @property
+    def tick_seconds(self) -> float:
+        return self.runtime.tick_seconds
+
+    @property
+    def double_elixir_tick(self) -> int | None:
+        return self.runtime.double_elixir_tick
+
+    @property
+    def triple_elixir_tick(self) -> int | None:
+        return self.runtime.triple_elixir_tick
+
+    @property
+    def spawn_blueprints(self) -> FastSpawnBlueprintCatalog | None:
+        return self.runtime.spawn_blueprints
+
     def _validate_actions(self, action_ids: torch.Tensor) -> None:
         if action_ids.shape != (self.batch_size, 2):
             raise ValueError("action_ids must have shape [batch, 2]")
@@ -63,6 +104,20 @@ class SimpleCudaGraphRunner:
         self._action_ids.copy_(action_ids)
         self._graph.replay()
         return self._step
+
+    def observe(self) -> SimpleProjectedObservation:
+        """Project current state outside the graph without advancing it."""
+
+        return self.runtime.observe()
+
+    def reset_rows(
+        self,
+        reset_mask: torch.Tensor,
+        deck_ids: torch.Tensor | None = None,
+    ) -> SimpleProjectedObservation:
+        """Reset selected rows while retaining the captured tensor addresses."""
+
+        return self.runtime.reset_rows(reset_mask, deck_ids=deck_ids)
 
 
 __all__ = ["SimpleCudaGraphRunner"]

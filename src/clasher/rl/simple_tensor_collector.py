@@ -182,6 +182,32 @@ def _stack_public(
     )
 
 
+def _clone_public(
+    value: TensorPublicStructuredObservation,
+) -> TensorPublicStructuredObservation:
+    """Detach one decision from reusable CUDA Graph output addresses."""
+
+    return TensorPublicStructuredObservation(
+        **{
+            descriptor.name: getattr(value, descriptor.name).clone()
+            for descriptor in fields(TensorPublicStructuredObservation)
+        }
+    )
+
+
+def _clone_critic(
+    value: TensorPrivilegedCriticObservation | None,
+) -> TensorPrivilegedCriticObservation | None:
+    if value is None:
+        return None
+    return TensorPrivilegedCriticObservation(
+        **{
+            descriptor.name: getattr(value, descriptor.name).clone()
+            for descriptor in fields(TensorPrivilegedCriticObservation)
+        }
+    )
+
+
 def _stack_critic(
     values: list[TensorPrivilegedCriticObservation | None],
 ) -> TensorPrivilegedCriticObservation | None:
@@ -460,8 +486,10 @@ class SimpleTensorCollector:
                     "simulator action-mask profile changed during collection"
                 )
 
-            actors.append(step.actor)
-            critics.append(step.critic)
+            # A graph-backed bridge reuses output addresses on its next
+            # replay. Snapshot every policy input before collection advances.
+            actors.append(_clone_public(step.actor))
+            critics.append(_clone_critic(step.critic))
             legal_masks.append(step.legal_mask.clone())
             assert step.public_action_masks is not None
             public_masks.append(step.public_action_masks.clone())

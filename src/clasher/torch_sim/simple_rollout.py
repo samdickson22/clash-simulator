@@ -11,8 +11,8 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Mapping
-from dataclasses import dataclass
-from typing import Any, Final
+from dataclasses import dataclass, fields
+from typing import Any, Final, Protocol
 
 import torch
 
@@ -21,23 +21,45 @@ from .resident_outputs import (
     TensorPrivilegedCriticObservation,
     TensorPublicStructuredObservation,
 )
+from .simple_actions import FastActionState
 from .simple_adapter import (
     SIMPLIFIED_GYM_ACTION_MASK_PROFILE,
     SimpleGymAdapter,
     SimpleGymContractError,
+    SimpleGymEngine,
     SimpleGymHistory,
     SimpleGymObservation,
 )
-from .simple_outcomes import crown_tower_hp
+from .simple_outcomes import FastOutcomeTracker, crown_tower_hp
+from .simple_projection import SimpleProjectedObservation
 from .simple_reward_v2 import (
     SimpleRewardV2Config,
     simple_objective_v1_potential_from_tower_hp,
     simple_reward_v2_from_potentials,
     simple_reward_v2_metadata,
 )
-from .simple_runtime import SimpleGymRuntime
+from .simple_state import FastGymState
 
 SIMPLE_REWARD_V1_CONTRACT_ID: Final = "simple-tower-delta-v1"
+
+
+class SimpleGymRolloutRuntime(SimpleGymEngine, Protocol):
+    """Structural runtime surface needed by the recurrent rollout bridge."""
+
+    @property
+    def state(self) -> FastGymState: ...
+
+    @property
+    def outcomes(self) -> FastOutcomeTracker: ...
+
+    @property
+    def action_state(self) -> FastActionState: ...
+
+    def reset_rows(
+        self,
+        reset_mask: torch.Tensor,
+        deck_ids: torch.Tensor | None = None,
+    ) -> SimpleProjectedObservation: ...
 
 
 @dataclass(frozen=True)
@@ -81,7 +103,7 @@ class SimpleGymRolloutBridge:
 
     def __init__(
         self,
-        runtime: SimpleGymRuntime,
+        runtime: SimpleGymRolloutRuntime,
         *,
         no_op_action: int = NO_OP_ACTION,
         decision_interval: int = 1,
@@ -291,9 +313,31 @@ class SimpleGymRolloutBridge:
         winner = first.winner.clone()
         native_ticks = first.admission.native_ticks.clone()
         committed = first.admission.committed.clone()
-        next_actor = first.observation.actor
-        next_critic = first.observation.critic
-        next_legal_mask = first.observation.legal_mask
+        # A CUDA Graph reuses its output buffers on every replay. Preserve the
+        # first tick before the remaining decision-interval ticks overwrite it,
+        # especially for terminal rows whose bootstrap boundary must freeze.
+        next_actor = TensorPublicStructuredObservation(
+            **{
+                descriptor.name: getattr(
+                    first.observation.actor, descriptor.name
+                ).clone()
+                for descriptor in fields(TensorPublicStructuredObservation)
+            }
+        )
+        next_critic = (
+            None
+            if first.observation.critic is None
+            else TensorPrivilegedCriticObservation(
+                **{
+                    descriptor.name: getattr(
+                        first.observation.critic, descriptor.name
+                    ).clone()
+                    for descriptor in fields(TensorPrivilegedCriticObservation)
+                }
+            )
+        )
+        next_legal_mask = first.observation.legal_mask.clone()
+        first_action_success = first.action_success.clone()
         post_reward_potential: torch.Tensor | None = None
         if self.reward_v2_config is not None:
             post_reward_potential = simple_objective_v1_potential_from_tower_hp(
@@ -374,7 +418,7 @@ class SimpleGymRolloutBridge:
             rewards=rewards,
             done=done,
             winner=winner,
-            action_success=first.action_success,
+            action_success=first_action_success,
             native_ticks=native_ticks,
             committed=committed,
             fallback_rows=self._no_fallback_rows,
@@ -400,5 +444,6 @@ __all__ = [
     "SIMPLE_REWARD_V1_CONTRACT_ID",
     "SimpleGymRolloutBridge",
     "SimpleGymRolloutObservation",
+    "SimpleGymRolloutRuntime",
     "SimpleGymRolloutStep",
 ]
