@@ -51,7 +51,7 @@ class SimpleCudaGraphRunner:
 
     @property
     def batch_size(self) -> int:
-        return self.runtime.batch_size
+        return int(self.runtime.batch_size)
 
     @property
     def state(self) -> FastGymState:
@@ -75,15 +75,17 @@ class SimpleCudaGraphRunner:
 
     @property
     def tick_seconds(self) -> float:
-        return self.runtime.tick_seconds
+        return float(self.runtime.tick_seconds)
 
     @property
     def double_elixir_tick(self) -> int | None:
-        return self.runtime.double_elixir_tick
+        value = self.runtime.double_elixir_tick
+        return None if value is None else int(value)
 
     @property
     def triple_elixir_tick(self) -> int | None:
-        return self.runtime.triple_elixir_tick
+        value = self.runtime.triple_elixir_tick
+        return None if value is None else int(value)
 
     @property
     def spawn_blueprints(self) -> FastSpawnBlueprintCatalog | None:
