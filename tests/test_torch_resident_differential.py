@@ -27,7 +27,7 @@ from clasher.torch_sim.resident_differential import (
 
 DEPLOY_KNIGHT_FAR_FROM_COMBAT = 1 * 18 + 6
 EXPECTED_ENABLED_DIGEST = (
-    "093896a583fc45ef8f94a43044a6e6a2ce99dcd41c3dedceefb576621b5346e6"
+    "521a9f38ab50237e09c63ddaa2c7355335dedaf85477d5770600be1f31090bb7"
 )
 EXPECTED_EVIDENCE = {
     "BabyDragon",
@@ -71,6 +71,7 @@ EXPECTED_NO_INTERACTION = {
     "HogRider",
     "IceGolem",
     "IceWizard",
+    "InfernoDragon",
     "LavaHound",
     "Log",
     "MagicArcher",
