@@ -35,6 +35,7 @@ from .runtime_state import (
     TensorBattleRuntime,
     TickPhase,
 )
+from .tensor_ops import scatter_any_
 
 
 @dataclass(frozen=True)
@@ -723,12 +724,11 @@ class TensorCommandMaterializer:
             runtime.batch_size, dtype=torch.bool, device=self.device
         )
         if commands.battle_index.numel():
-            bad_battle.scatter_reduce_(
+            scatter_any_(
+                bad_battle,
                 0,
                 commands.battle_index,
                 ~command_supported,
-                reduce="amax",
-                include_self=True,
             )
         battle_supported = runtime.supported & ~bad_battle
         command_supported &= battle_supported[commands.battle_index]
@@ -775,12 +775,11 @@ class TensorCommandMaterializer:
             else runtime.entity_pool.allocate(counts_by_battle)
         )
         spawn_mask = torch.zeros_like(runtime.entity_pool.active)
-        spawn_mask.scatter_reduce_(
+        scatter_any_(
+            spawn_mask,
             1,
             allocation.slots.clamp_min(0),
             allocation.valid,
-            reduce="amax",
-            include_self=True,
         )
         self._reset_spawn_slots(runtime, spawn_mask)
 
