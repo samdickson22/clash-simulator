@@ -6,6 +6,7 @@ from collections import deque
 import pytest
 import torch
 
+from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.torch_sim.actions import NO_OP_ACTION
@@ -181,9 +182,45 @@ def test_projected_profile_requires_history_before_any_mutation() -> None:
     assert bridge.engine.runtime.battle.rng.python_state(0) == rng_before
 
 
+def test_projected_profile_admits_moving_deck_and_aborts_only_on_real_failure() -> (
+    None
+):
+    battle = _safe_battle(96_251)
+    for player in battle.players:
+        player.hand = ["Knight", None, None, None]
+        player.deck = ["Knight"]
+        player.cycle_queue = deque()
+    bridge = TensorResidentSelfPlay.from_battles(
+        [battle],
+        decision_interval_ticks=1,
+        max_ticks=100,
+        max_entities=16,
+        max_objects=16,
+        catalog=_catalog(),
+        validation_profile=PROJECTED_GYM_TRANSITION_PROFILE,
+    )
+
+    assert bridge._episode_resident.tolist() == [True]
+    result = bridge.step(
+        torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64),
+        validation_inputs=_history(1),
+    )
+    assert result.validation is not None
+    assert result.validation.metadata.all_rows_admitted
+
+
 def test_projected_profile_rejects_fallback_row_before_safe_rows_mutate() -> None:
     safe = _safe_battle(96_301)
     unsupported = BattleState(rng=random.Random(96_302))
+    unsupported_stats = unsupported.card_loader.get_card("ArcherQueen")
+    assert unsupported_stats is not None
+    unsupported._spawn_unit_at_position(
+        Position(9.0, 12.0),
+        0,
+        unsupported_stats,
+        deploy_delay_override=0.0,
+        snap_to_valid=False,
+    )
     bridge = TensorResidentSelfPlay.from_battles(
         [safe, unsupported],
         decision_interval_ticks=2,

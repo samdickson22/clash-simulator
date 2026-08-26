@@ -269,6 +269,19 @@ class TensorResidentSelfPlay:
         )
         preflight = self.engine.preflight(noops)
         diagnostics = self.engine.diagnose_preflight(noops)
+        if self.validation_profile == PROJECTED_GYM_TRANSITION_PROFILE:
+            # Native validation is an abort-on-failure path, not a scalar
+            # fallback router. Admit the currently supported state and let
+            # exact per-tick accounting reject the whole rollout if a future
+            # action reaches an unsupported mechanic. Requiring every moving
+            # card to remain dormant until terminal would make a useful Gym
+            # episode impossible.
+            admitted = preflight.supported | state.game_over
+            native_reasons = [
+                None if bool(admitted[row].item()) else diagnostics.reasons[row]
+                for row in range(self.batch_size)
+            ]
+            return admitted, native_reasons
         core_cards = torch.cat(
             (
                 state.deck,
