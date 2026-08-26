@@ -28,12 +28,17 @@ class EpisodeSummary:
     seed: int
     policy: str
     decisions: int
+    requested_native_ticks: int
     native_ticks: int
     fallback_rows: int
     final_tick: int
     final_time: float
     done: bool
     winner: int
+    reached_regulation_end: bool
+    entered_overtime: bool
+    reached_tiebreak: bool
+    terminal_reason: str
     digest: str
 
 
@@ -109,6 +114,7 @@ def _run_once(
     episode_starts = torch.ones((1, 2), dtype=torch.bool, device=bridge.device)
     digest = hashlib.sha256()
     native_ticks = 0
+    requested_native_ticks = 0
     decisions = 0
     fallback_rows = 0
     done = False
@@ -130,6 +136,7 @@ def _run_once(
         metadata = result.validation.metadata
         if not metadata.all_rows_admitted:
             raise RuntimeError("resident episode lost native admission")
+        requested_native_ticks += int(metadata.requested_native_ticks.sum().item())
         native_ticks += int(metadata.native_ticks.sum().item())
         fallback_rows += len(metadata.fallback_rows)
         transition = result.validation.transition
@@ -158,16 +165,41 @@ def _run_once(
         if decisions > (max_ticks + decision_interval - 1) // decision_interval + 1:
             raise RuntimeError("resident episode exceeded its decision budget")
 
+    state = bridge.engine.runtime.battle
+    final_tick = int(state.tick[0].item())
+    final_time = float(state.time[0].item())
+    game_over = bool(state.game_over[0].item())
+    entered_overtime = bool(state.sudden_death[0].item())
+    overtime_start_time = float(state.overtime_start_time[0].item())
+    tiebreaker_time = float(state.tiebreaker_time[0].item())
+    reached_regulation_end = final_time >= overtime_start_time
+    reached_tiebreak = final_time >= tiebreaker_time
+    if reached_tiebreak and game_over:
+        terminal_reason = "tiebreak"
+    elif entered_overtime and game_over:
+        terminal_reason = "overtime_crown"
+    elif game_over:
+        terminal_reason = "regulation_crown"
+    elif final_tick >= max_ticks:
+        terminal_reason = "configured_tick_limit"
+    else:
+        terminal_reason = "unknown"
+
     return EpisodeSummary(
         seed=seed,
         policy=policy,
         decisions=decisions,
+        requested_native_ticks=requested_native_ticks,
         native_ticks=native_ticks,
         fallback_rows=fallback_rows,
-        final_tick=int(bridge.engine.runtime.battle.tick[0].item()),
-        final_time=float(bridge.engine.runtime.battle.time[0].item()),
+        final_tick=final_tick,
+        final_time=final_time,
         done=done,
         winner=winner,
+        reached_regulation_end=reached_regulation_end,
+        entered_overtime=entered_overtime,
+        reached_tiebreak=reached_tiebreak,
+        terminal_reason=terminal_reason,
         digest=digest.hexdigest(),
     )
 
@@ -175,43 +207,76 @@ def _run_once(
 def validate(args: argparse.Namespace) -> dict[str, object]:
     decks = [list(deck) for deck in load_deck_pool(args.decks_path)]
     summaries: list[EpisodeSummary] = []
+    replay_count = int(getattr(args, "replays", 2))
+    require_tiebreak = bool(getattr(args, "require_tiebreak", False))
+    if replay_count < 2:
+        raise ValueError("deterministic validation requires at least two replays")
+    if require_tiebreak and args.max_ticks < STANDARD_MATCH_TICKS:
+        raise ValueError(
+            "tiebreak validation requires max_ticks >= STANDARD_MATCH_TICKS"
+        )
     for policy in args.policy:
         for seed in args.seed:
-            first = _run_once(
-                seed=seed,
-                decks=decks,
-                policy=policy,
-                device=args.device,
-                max_ticks=args.max_ticks,
-                decision_interval=args.decision_interval,
-                max_entities=args.max_entities,
-                max_objects=args.max_objects,
-            )
-            second = _run_once(
-                seed=seed,
-                decks=decks,
-                policy=policy,
-                device=args.device,
-                max_ticks=args.max_ticks,
-                decision_interval=args.decision_interval,
-                max_entities=args.max_entities,
-                max_objects=args.max_objects,
-            )
-            if first != second:
+            replays = [
+                _run_once(
+                    seed=seed,
+                    decks=decks,
+                    policy=policy,
+                    device=args.device,
+                    max_ticks=args.max_ticks,
+                    decision_interval=args.decision_interval,
+                    max_entities=args.max_entities,
+                    max_objects=args.max_objects,
+                )
+                for _ in range(replay_count)
+            ]
+            first = replays[0]
+            if any(replay != first for replay in replays[1:]):
                 raise RuntimeError(
                     f"resident replay is nondeterministic for seed={seed} policy={policy}"
                 )
-            if first.fallback_rows or first.native_ticks != first.final_tick:
+            if (
+                first.fallback_rows
+                or first.native_ticks != first.requested_native_ticks
+                or first.native_ticks != first.final_tick
+            ):
                 raise RuntimeError(
                     f"resident episode is not fully native for seed={seed} policy={policy}"
                 )
+            if not first.done or first.terminal_reason == "unknown":
+                raise RuntimeError(
+                    f"resident episode did not reach a terminal boundary for "
+                    f"seed={seed} policy={policy}"
+                )
+            if require_tiebreak and not (
+                first.reached_regulation_end
+                and first.entered_overtime
+                and first.reached_tiebreak
+                and first.terminal_reason == "tiebreak"
+            ):
+                raise RuntimeError(
+                    f"resident episode did not traverse regulation, overtime, "
+                    f"and tiebreak for seed={seed} policy={policy}"
+                )
             summaries.append(first)
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "profile": PROJECTED_GYM_TRANSITION_PROFILE,
         "device": args.device,
         "max_ticks": args.max_ticks,
         "decision_interval": args.decision_interval,
+        "replays": replay_count,
+        "acceptance": {
+            "deterministic_replay": True,
+            "all_requested_ticks_native": True,
+            "zero_fallback": True,
+            "terminal_boundary_reached": True,
+            "required_tiebreak_timeline_reached": (
+                True if require_tiebreak else None
+            ),
+            "python_parity_evaluated": False,
+        },
+        "requirements": {"tiebreak_timeline": require_tiebreak},
         "episodes": [asdict(summary) for summary in summaries],
     }
 
@@ -224,6 +289,17 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--decision-interval", type=int, default=8)
     parser.add_argument("--max-entities", type=int, default=128)
     parser.add_argument("--max-objects", type=int, default=128)
+    parser.add_argument(
+        "--replays",
+        type=int,
+        default=2,
+        help="identical executions required per seed/policy (minimum: 2)",
+    )
+    parser.add_argument(
+        "--require-tiebreak",
+        action="store_true",
+        help="require every replay to traverse regulation, overtime, and tiebreak",
+    )
     parser.add_argument("--seed", type=int, action="append", default=[])
     parser.add_argument(
         "--policy", choices=("noop", "first-legal"), action="append", default=[]
@@ -243,6 +319,7 @@ def main() -> int:
         args.decision_interval,
         args.max_entities,
         args.max_objects,
+        args.replays,
     ) < 1:
         raise ValueError("tick intervals and capacities must be positive")
     result = validate(args)
