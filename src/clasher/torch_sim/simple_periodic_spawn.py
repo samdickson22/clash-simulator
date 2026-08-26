@@ -124,7 +124,7 @@ class FastPeriodicSpawnCatalog:
             torch.full_like(mapping, _EMPTY_BLUEPRINT),
         )
         return cls(
-            device=device,
+            device=mapping.device,
             periodic_blueprint_by_card=mapping,
             child_card_id=child.clone(),
             count=blueprints.count.to(torch.int32).clone(),

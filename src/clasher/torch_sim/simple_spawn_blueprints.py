@@ -894,7 +894,7 @@ class FastSpawnBlueprintCatalog:
         )
 
         return cls(
-            device=cards.device,
+            device=fast_cards.device,
             cards=cards,
             fast_cards=fast_cards,
             death_burst_catalog=death_burst_catalog,
