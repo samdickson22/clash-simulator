@@ -62,7 +62,7 @@ from .mechanic_dispatcher import (
 from .movement import integer_sqrt_tensor, normalized_vector_units
 from .movement_adapter import TensorMovementAdapter
 from .object_adapter import RuntimeObjectKind
-from .objects import _integer_sqrt
+from .objects import ObjectEventOpcode, TensorObjectEvents, _integer_sqrt
 from .projectile_bridge import (
     BridgePayloadKind,
     TensorResidentProjectileSpellBridge,
@@ -180,6 +180,8 @@ from .runtime_objects import (
     TensorRuntimeObjectPhase,
 )
 from .runtime_state import (
+    RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+    RESIDENT_EXECUTION_PROFILES,
     RuntimeEventOpcode,
     TensorBattleRuntime,
     TickPhase,
@@ -877,6 +879,10 @@ class TensorResidentEngine:
     def batch_size(self) -> int:
         return int(self.runtime.batch_size)
 
+    @property
+    def execution_profile(self) -> str:
+        return self.runtime.events.execution_profile
+
     def action_state(self) -> TensorActionState:
         """Return the retained policy action state, including Champion buttons."""
 
@@ -899,9 +905,15 @@ class TensorResidentEngine:
         max_objects: int = 128,
         event_capacity: int = 512,
         catalog: TensorCardCatalog | None = None,
+        execution_profile: str = RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
     ) -> TensorResidentEngine:
         if not battles:
             raise ValueError("at least one battle is required")
+        if execution_profile not in RESIDENT_EXECUTION_PROFILES:
+            raise ValueError(
+                "execution_profile must be one of "
+                f"{sorted(RESIDENT_EXECUTION_PROFILES)!r}"
+            )
         resolved_device = torch.device(device)
         if resolved_device.type == "cuda" and resolved_device.index is None:
             resolved_device = torch.device("cuda", torch.cuda.current_device())
@@ -935,6 +947,7 @@ class TensorResidentEngine:
             max_entities=max_entities,
             event_capacity=event_capacity,
             catalog=cards,
+            execution_profile=execution_profile,
         )
         action_catalog = TensorActionCatalog.compile(cards)
         deployment_catalog = TensorDeploymentCatalog.compile(catalog_loader, cards)
@@ -2764,7 +2777,7 @@ class TensorResidentEngine:
     def _chain_inputs_from_object_events_(
         self,
         *,
-        event_start: torch.Tensor,
+        object_events: TensorObjectEvents,
         object_ids: torch.Tensor,
         blueprint_ids: torch.Tensor,
         object_active: torch.Tensor,
@@ -2772,18 +2785,17 @@ class TensorResidentEngine:
     ) -> ChainImpactInputs:
         width = object_ids.shape[1]
         inputs = ChainImpactInputs.empty(self.batch_size, width, device=self.device)
-        event_slot = torch.arange(self.runtime.events.capacity, device=self.device)[
+        event_slot = torch.arange(object_events.opcode.shape[1], device=self.device)[
             None, :
         ]
         marker = (
-            (event_slot >= event_start[:, None])
-            & (event_slot < self.runtime.events.count[:, None])
-            & (self.runtime.events.opcode == int(RuntimeEventOpcode.PROJECTILE))
+            (event_slot < object_events.count[:, None])
+            & (object_events.opcode == int(ObjectEventOpcode.PROJECTILE_IMPACT))
         )
         impacted = (
             marker[:, :, None]
             & object_active[:, None, :]
-            & (self.runtime.events.source_id[:, :, None] == object_ids[:, None, :])
+            & (object_events.source_id[:, :, None] == object_ids[:, None, :])
         ).any(dim=1)
         projectile_terminal = (
             object_active
@@ -7098,7 +7110,6 @@ class TensorResidentEngine:
             )
         )
         entity_id_before_objects = working.runtime.battle.entity_id.clone()
-        object_event_start = working.runtime.events.count.clone()
         chain_object_ids = working.objects.objects.object_id.clone()
         chain_blueprint_ids = working.objects.objects.blueprint_id.to(
             torch.int64
@@ -7198,7 +7209,7 @@ class TensorResidentEngine:
             )
         )
         chain_inputs = working._chain_inputs_from_object_events_(
-            event_start=object_event_start,
+            object_events=objects.object_result.events,
             object_ids=chain_object_ids,
             blueprint_ids=chain_blueprint_ids,
             object_active=chain_object_active,

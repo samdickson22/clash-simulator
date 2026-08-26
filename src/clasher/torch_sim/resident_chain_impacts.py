@@ -20,7 +20,12 @@ from .combat_mechanics import (
     select_chain_targets,
 )
 from .movement import integer_sqrt_tensor, normalized_vector_units, trunc_div_tensor
-from .runtime_state import RuntimeEventOpcode, TensorBattleRuntime, TickPhase
+from .runtime_state import (
+    RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+    RuntimeEventOpcode,
+    TensorBattleRuntime,
+    TickPhase,
+)
 
 
 class ChainImpactReason(IntEnum):
@@ -758,6 +763,9 @@ def step_chain_impacts_(
     overflow = (
         speculative.events.count.to(torch.int64) + valid.sum(dim=1)
         > speculative.events.capacity
+    ) & (
+        speculative.events.execution_profile
+        == RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG
     )
     committed = runtime.supported & ~object_overflow & ~unsupported_death & ~overflow
     reason = torch.where(

@@ -34,6 +34,7 @@ from .resident_outputs import (
     TensorRewardOutcome,
 )
 from .resident_workspace import TensorResidentWorkspace
+from .runtime_state import RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG
 
 SIMULATOR_EXACT_ACTION_MASK_PROFILE = "simulator_exact_legal_v1"
 
@@ -211,6 +212,7 @@ class TensorResidentSelfPlay:
         max_objects: int = 128,
         event_capacity: int = 512,
         catalog: TensorCardCatalog | None = None,
+        execution_profile: str = RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
         structured_builder: StructuredObservationBuilder | None = None,
         cv_builder: CvObservationBuilder | None = None,
         include_privileged_critic: bool = False,
@@ -226,6 +228,7 @@ class TensorResidentSelfPlay:
             max_objects=max_objects,
             event_capacity=event_capacity,
             catalog=catalog,
+            execution_profile=execution_profile,
         )
         structured = structured_builder or StructuredObservationBuilder(
             max_entities=max_entities
@@ -636,6 +639,7 @@ class TensorResidentSelfPlay:
             max_objects=self.engine.objects.objects.max_objects,
             event_capacity=self.engine.runtime.events.capacity,
             catalog=self.engine.runtime.catalog,
+            execution_profile=self.engine.execution_profile,
         )
         replacement_outputs = ResidentOutputProjector.from_engine(
             replacement,

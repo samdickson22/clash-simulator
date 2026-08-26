@@ -13,7 +13,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import dataclass, fields
 from enum import IntEnum
-from typing import TypeVar
+from typing import ClassVar, TypeVar
 
 import torch
 
@@ -44,6 +44,15 @@ class TickPhase(IntEnum):
 
 
 PHASE_COUNT = len(TickPhase)
+
+RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG = "exact_debug"
+RESIDENT_EXECUTION_PROFILE_GYM_FAST = "gym_fast"
+RESIDENT_EXECUTION_PROFILES = frozenset(
+    (
+        RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+        RESIDENT_EXECUTION_PROFILE_GYM_FAST,
+    )
+)
 
 
 class RuntimeEventOpcode(IntEnum):
@@ -163,6 +172,8 @@ class TensorRuntimeEvents:
     amount: torch.Tensor
     payload: torch.Tensor
 
+    execution_profile: ClassVar[str] = RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG
+
     @property
     def batch_size(self) -> int:
         return int(self.count.shape[0])
@@ -273,6 +284,21 @@ class TensorRuntimeEvents:
         self.count.add_(additions.to(torch.int32))
 
 
+class TensorGymFastRuntimeEvents(TensorRuntimeEvents):
+    """Gameplay scratch events without exact diagnostic ledger appends.
+
+    Object-phase kernels may still write their compact gameplay handoff into
+    these tensors directly.  General resident mechanics call ``append`` only
+    to reproduce the scalar diagnostic ledger, which is deliberately omitted
+    by the fast Gym profile.
+    """
+
+    execution_profile: ClassVar[str] = RESIDENT_EXECUTION_PROFILE_GYM_FAST
+
+    def append(self, **_: object) -> None:
+        return
+
+
 _T = TypeVar("_T")
 
 
@@ -334,9 +360,15 @@ class TensorBattleRuntime:
         max_status_sources: int = 8,
         event_capacity: int = 256,
         catalog: TensorCardCatalog | None = None,
+        execution_profile: str = RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
     ) -> TensorBattleRuntime:
         if not battles:
             raise ValueError("at least one battle is required")
+        if execution_profile not in RESIDENT_EXECUTION_PROFILES:
+            raise ValueError(
+                "execution_profile must be one of "
+                f"{sorted(RESIDENT_EXECUTION_PROFILES)!r}"
+            )
         core = TensorBattleState.from_battles(
             battles,
             device=device,
@@ -515,7 +547,11 @@ class TensorBattleRuntime:
             card_catalog_index=catalog_index,
             status=status,
             phases=phases,
-            events=TensorRuntimeEvents.empty(
+            events=(
+                TensorRuntimeEvents
+                if execution_profile == RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG
+                else TensorGymFastRuntimeEvents
+            ).empty(
                 len(battles), event_capacity, device=core.device
             ),
             supported=torch.ones(len(battles), dtype=torch.bool, device=core.device),

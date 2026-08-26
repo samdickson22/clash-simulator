@@ -53,7 +53,13 @@ from .runtime_objects import (
     TensorRuntimeObjectPhase,
     step_runtime_object_phase_,
 )
-from .runtime_state import RuntimeEventOpcode, TensorBattleRuntime, TickPhase
+from .runtime_state import (
+    RESIDENT_EXECUTION_PROFILE_GYM_FAST,
+    RuntimeEventOpcode,
+    TensorBattleRuntime,
+    TensorGymFastRuntimeEvents,
+    TickPhase,
+)
 from .tensor_ops import scatter_any_
 
 
@@ -1849,48 +1855,76 @@ class TensorResidentProjectileSpellBridge:
         runtime: TensorBattleRuntime,
         object_phase: TensorRuntimeObjectPhase,
     ) -> RuntimeObjectPhaseResult:
-        self.stun_applied.zero_()
-        knockback_before = self.knockback_active.clone()
-        before_count = runtime.events.count.clone()
-        object_ids = object_phase.objects.object_id.clone()
-        blueprint_ids = object_phase.objects.blueprint_id.clone().to(torch.int64)
-        active = object_phase.objects.allocated.clone()
-        object_player = object_phase.objects.player.clone()
-        launch_x = object_phase.objects.x_units.clone()
-        launch_y = object_phase.objects.y_units.clone()
-        impact_x = object_phase.objects.target_x_units.clone()
-        impact_y = object_phase.objects.target_y_units.clone()
-        entity_ids_before = runtime.battle.entity_id.clone()
-        hitpoints_before = runtime.battle.entity_hp.clone()
-        self._refresh_homing_(runtime, object_phase)
-        result = step_runtime_object_phase_(runtime, object_phase)
-        self._apply_spawn_impacts_(
-            runtime,
-            object_phase,
-            before_count,
-            object_ids,
-            blueprint_ids,
-            active,
-            object_player,
-            result.supported_batch,
+        diagnostic_events = runtime.events
+        fast_profile = (
+            diagnostic_events.execution_profile
+            == RESIDENT_EXECUTION_PROFILE_GYM_FAST
         )
-        self._apply_status_events_(
-            runtime,
-            object_phase,
-            before_count,
-            object_ids,
-            blueprint_ids,
-            active,
-            launch_x,
-            launch_y,
-            impact_x,
-            impact_y,
-            entity_ids_before,
-            hitpoints_before,
-            result.supported_batch,
-        )
-        self._advance_knockback_(runtime, knockback_before)
-        return result
+        if fast_profile:
+            capacity = max(64, runtime.max_entities * 8)
+            gameplay_events = getattr(self, "_gym_fast_gameplay_events", None)
+            compatible = (
+                isinstance(gameplay_events, TensorGymFastRuntimeEvents)
+                and gameplay_events.batch_size == runtime.batch_size
+                and gameplay_events.capacity == capacity
+                and gameplay_events.device == runtime.device
+            )
+            if not compatible:
+                gameplay_events = TensorGymFastRuntimeEvents.empty(
+                    runtime.batch_size,
+                    capacity,
+                    device=runtime.device,
+                )
+                self._gym_fast_gameplay_events = gameplay_events
+            assert isinstance(gameplay_events, TensorGymFastRuntimeEvents)
+            gameplay_events.clear()
+            runtime.events = gameplay_events
+        try:
+            self.stun_applied.zero_()
+            knockback_before = self.knockback_active.clone()
+            before_count = runtime.events.count.clone()
+            object_ids = object_phase.objects.object_id.clone()
+            blueprint_ids = object_phase.objects.blueprint_id.clone().to(torch.int64)
+            active = object_phase.objects.allocated.clone()
+            object_player = object_phase.objects.player.clone()
+            launch_x = object_phase.objects.x_units.clone()
+            launch_y = object_phase.objects.y_units.clone()
+            impact_x = object_phase.objects.target_x_units.clone()
+            impact_y = object_phase.objects.target_y_units.clone()
+            entity_ids_before = runtime.battle.entity_id.clone()
+            hitpoints_before = runtime.battle.entity_hp.clone()
+            self._refresh_homing_(runtime, object_phase)
+            result = step_runtime_object_phase_(runtime, object_phase)
+            self._apply_spawn_impacts_(
+                runtime,
+                object_phase,
+                before_count,
+                object_ids,
+                blueprint_ids,
+                active,
+                object_player,
+                result.supported_batch,
+            )
+            self._apply_status_events_(
+                runtime,
+                object_phase,
+                before_count,
+                object_ids,
+                blueprint_ids,
+                active,
+                launch_x,
+                launch_y,
+                impact_x,
+                impact_y,
+                entity_ids_before,
+                hitpoints_before,
+                result.supported_batch,
+            )
+            self._advance_knockback_(runtime, knockback_before)
+            return result
+        finally:
+            if fast_profile:
+                runtime.events = diagnostic_events
 
     def _advance_knockback_(
         self,
@@ -2305,6 +2339,12 @@ class TensorResidentProjectileSpellBridge:
         hitpoints_before: torch.Tensor,
     ) -> None:
         """Project internal object work records onto Python's public ledger."""
+
+        if (
+            runtime.events.execution_profile
+            == RESIDENT_EXECUTION_PROFILE_GYM_FAST
+        ):
+            return
 
         capacity = runtime.events.capacity
         slots = torch.arange(capacity, dtype=torch.int64, device=runtime.device)[
