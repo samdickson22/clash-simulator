@@ -181,6 +181,25 @@ def _has_marker_ancestor(event: Any, marker_name: str) -> bool:
     return False
 
 
+def _is_cuda_launch_api_event(event: Any) -> bool:
+    """Return whether a profiler CPU event submits GPU work.
+
+    Recent Kineto/PyTorch releases do not attach CUDA device events to the
+    ``record_function`` CPU ancestry that submitted them.  Counting marked
+    ``DeviceType.CUDA`` events therefore reports the annotation kernel itself
+    (usually one) instead of the thousands of launches made by an eager tick.
+    CUDA runtime launch API events do retain that ancestry and are the correct
+    quantity for the host-launch gate.
+    """
+
+    name = str(getattr(event, "name", "")).lower()
+    return (
+        "cudalaunchkernel" in name
+        or "cudalaunchcooperativekernel" in name
+        or "cudagraphlaunch" in name
+    )
+
+
 def _profile_cuda_tick(args: argparse.Namespace, decks: list[list[str]]) -> CudaProfileEvidence:
     if args.device != "cuda" or not torch.cuda.is_available():
         raise ValueError("CUDA profiling requires --device cuda on a CUDA host")
@@ -216,12 +235,10 @@ def _profile_cuda_tick(args: argparse.Namespace, decks: list[list[str]]) -> Cuda
             runtime.step_tick(actions)
 
     events = list(profile.events())
-    cuda_device_type = torch.autograd.DeviceType.CUDA
     launches = sum(
         1
         for event in events
-        if getattr(event, "device_type", None) == cuda_device_type
-        and _has_marker_ancestor(event, marker)
+        if _has_marker_ancestor(event, marker) and _is_cuda_launch_api_event(event)
     )
     synchronization_names = (
         "cudadevicesynchronize",

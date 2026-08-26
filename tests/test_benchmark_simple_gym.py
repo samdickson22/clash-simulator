@@ -3,11 +3,17 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from clasher.torch_sim.simple_standard import STANDARD_TIEBREAK_TICK
-from scripts.perf.benchmark_simple_gym import _resolve_preset, benchmark
+from scripts.perf.benchmark_simple_gym import (
+    _has_marker_ancestor,
+    _is_cuda_launch_api_event,
+    _resolve_preset,
+    benchmark,
+)
 
 
 def _args(tmp_path: Path, **overrides: object) -> argparse.Namespace:
@@ -42,6 +48,23 @@ def test_simple_smoke_preset_is_bounded_and_replayed(tmp_path: Path) -> None:
     assert args.warmup_ticks == 1
     assert args.measured_ticks == 4
     assert args.repetitions == 2
+
+
+def test_cuda_launch_counter_uses_marked_runtime_api_events() -> None:
+    marker = SimpleNamespace(name="simple_gym_measured_tick", cpu_parent=None)
+    launch = SimpleNamespace(name="cudaLaunchKernel", cpu_parent=marker)
+    launch_ex = SimpleNamespace(name="cudaLaunchKernelExC", cpu_parent=marker)
+    graph = SimpleNamespace(name="cudaGraphLaunch", cpu_parent=marker)
+    device_kernel = SimpleNamespace(
+        name="void at::native::vectorized_elementwise_kernel()",
+        cpu_parent=None,
+    )
+
+    assert _has_marker_ancestor(launch, marker.name)
+    assert _is_cuda_launch_api_event(launch)
+    assert _is_cuda_launch_api_event(launch_ex)
+    assert _is_cuda_launch_api_event(graph)
+    assert not _is_cuda_launch_api_event(device_kernel)
 
 
 def test_simple_benchmark_reports_absolute_native_row_throughput(
