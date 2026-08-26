@@ -14,6 +14,7 @@ from dataclasses import dataclass, fields
 import torch
 
 from .simple_chain_topology import FastChainTopologyInputs, fast_chain_hit_count
+from .simple_line_topology import select_line_capsule_hits
 from .simple_modifiers import FastModifierState, intercept_fast_shield_hits_
 from .simple_state import FAST_KIND_BUILDING, FastGymState
 
@@ -67,6 +68,8 @@ class FastEffectState:
     multi_repeat_primary: torch.Tensor
     chain_target_count: torch.Tensor
     chain_hop_radius_units: torch.Tensor
+    line_range_units: torch.Tensor
+    line_half_width_units: torch.Tensor
 
     @property
     def batch_size(self) -> int:
@@ -146,6 +149,8 @@ class FastEffectState:
             multi_repeat_primary=zeros(torch.bool),
             chain_target_count=zeros(torch.int16),
             chain_hop_radius_units=zeros(torch.int32),
+            line_range_units=zeros(torch.int32),
+            line_half_width_units=zeros(torch.int32),
         )
 
     def clone(self) -> FastEffectState:
@@ -427,10 +432,26 @@ def step_fast_effects(
         )
     )
     chain = effects.chain_target_count > 1
+    line_topology = select_line_capsule_hits(
+        source_x_units=effects.source_x_units,
+        source_y_units=effects.source_y_units,
+        primary_x_units=effects.target_x_units,
+        primary_y_units=effects.target_y_units,
+        range_units=effects.line_range_units,
+        half_width_units=effects.line_half_width_units,
+        candidate_x_units=state.x_units,
+        candidate_y_units=state.y_units,
+        eligible=base_candidates,
+    )
+    line = effects.line_range_units > 0
     hit_count = torch.where(
         chain[:, :, None],
         chain_hit_count,
-        ordinary_hit_count,
+        torch.where(
+            line[:, :, None],
+            line_topology.hit.to(torch.int16),
+            ordinary_hit_count,
+        ),
     )
     has_hit = hit_count > 0
     damage_targets = damage_due[:, :, None] & has_hit

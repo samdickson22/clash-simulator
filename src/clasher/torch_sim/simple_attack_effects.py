@@ -236,6 +236,20 @@ def allocate_fast_attack_effects_(
 
     effect_kind = torch.where(projectile, FAST_EFFECT_PROJECTILE, FAST_EFFECT_AREA)
     center_on_source = catalog.effect_center_on_source[safe_card]
+    line_range = catalog.line_range_units[safe_card]
+    line = line_range > 0
+    aim_dx = target_x.to(torch.float32) - source_x.to(torch.float32)
+    aim_dy = target_y.to(torch.float32) - source_y.to(torch.float32)
+    aim_distance = torch.sqrt(aim_dx.square() + aim_dy.square())
+    aim_denominator = aim_distance.clamp_min(1.0)
+    line_target_x = source_x + torch.round(
+        aim_dx * line_range.to(torch.float32) / aim_denominator
+    ).to(torch.int32)
+    line_target_y = source_y + torch.round(
+        aim_dy * line_range.to(torch.float32) / aim_denominator
+    ).to(torch.int32)
+    target_x = torch.where(line, line_target_x, target_x)
+    target_y = torch.where(line, line_target_y, target_y)
     effect_x = torch.where(
         projectile | center_on_source,
         source_x,
@@ -271,7 +285,7 @@ def allocate_fast_attack_effects_(
     write(effects.source_y_units, source_y)
     write(effects.x_units, effect_x)
     write(effects.y_units, effect_y)
-    tracked_projectile = projectile & entity_command
+    tracked_projectile = projectile & entity_command & ~line
     write(
         effects.target_id,
         torch.where(entity_command, commands.target_id, 0),
@@ -317,6 +331,11 @@ def allocate_fast_attack_effects_(
     write(effects.multi_repeat_primary, catalog.multi_repeat_primary[safe_card])
     write(effects.chain_target_count, catalog.chain_target_count[safe_card])
     write(effects.chain_hop_radius_units, catalog.chain_hop_radius_units[safe_card])
+    write(effects.line_range_units, line_range)
+    write(
+        effects.line_half_width_units,
+        catalog.line_half_width_units[safe_card],
+    )
     write(consume_source_id, consumed)
 
     return FastEffectAllocationResult(

@@ -73,6 +73,8 @@ class FastCardCatalog:
     multi_repeat_primary: torch.Tensor
     chain_target_count: torch.Tensor
     chain_hop_radius_units: torch.Tensor
+    line_range_units: torch.Tensor
+    line_half_width_units: torch.Tensor
     projectile_speed_units_per_tick: torch.Tensor
     tower_damage_multiplier: torch.Tensor
     building_damage_multiplier: torch.Tensor
@@ -196,6 +198,10 @@ class FastCardCatalog:
         multi_repeat_primary = torch.zeros_like(catalog.kind, dtype=torch.bool)
         chain_target_count = torch.zeros_like(catalog.kind, dtype=torch.int16)
         chain_hop_radius_units = torch.zeros_like(
+            catalog.range_units, dtype=torch.int32
+        )
+        line_range_units = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        line_half_width_units = torch.zeros_like(
             catalog.range_units, dtype=torch.int32
         )
         projectile_speed = torch.zeros_like(catalog.range_units)
@@ -346,6 +352,30 @@ class FastCardCatalog:
                     effect_kind[card_id] = FAST_CARD_EFFECT_PROJECTILE
                     projectile_speed[card_id] = int(projectile.get("speed", 0) or 0)
                     effect_radius_units[card_id] = int(projectile.get("radius", 0) or 0)
+                    # Finite non-homing projectiles with explicit swept-width
+                    # and range fields compile to one line effect.  The two
+                    # numeric tables are sufficient runtime dispatch; names
+                    # and scalar projectile classes never enter the hot path.
+                    projectile_range = int(
+                        projectile.get("projectileRange", 0) or 0
+                    )
+                    projectile_width = int(
+                        projectile.get("projectileRadius", 0) or 0
+                    )
+                    explicit_non_homing = projectile.get("homing") is False
+                    if (
+                        projectile_range > 1
+                        and projectile_width > 0
+                        and explicit_non_homing
+                    ):
+                        line_range_units[card_id] = projectile_range
+                        line_half_width_units[card_id] = projectile_width
+                        # Directional push remains an explicit fidelity flag.
+                        # Line damage is useful for the practical Gym without
+                        # pretending that displacement has been implemented.
+                        omits_displacement[card_id] |= bool(
+                            int(projectile.get("pushback", 0) or 0)
+                        )
                     serialized_chain_count = int(
                         projectile.get("chainedHitCount", 0) or 0
                     )
@@ -463,7 +493,7 @@ class FastCardCatalog:
                             0.05,
                             float(getattr(spell, "duration", 0.0) or 0.05),
                         )
-                        duration = max(1, round(duration_s / 0.05))
+                        duration_ticks = max(1, round(duration_s / 0.05))
                         damage_per_hit = float(
                             getattr(spell, "damage_per_hit", 0.0)
                             or getattr(spell, "damage", 0.0)
@@ -500,7 +530,7 @@ class FastCardCatalog:
                         effect_radius_units[card_id] = int(
                             area_data.get("radius", raw.get("radius", 0)) or 0
                         )
-                        effect_duration_ticks[card_id] = duration
+                        effect_duration_ticks[card_id] = duration_ticks
                         damage_interval_ticks[card_id] = interval
                         # Allocation and the first effect advance share one
                         # native frame, so store the countdown after that
@@ -529,7 +559,11 @@ class FastCardCatalog:
                             1
                             if freeze_snapshot
                             else (
-                                max(1, duration // status_interval_ticks[card_id])
+                                max(
+                                    1,
+                                    duration_ticks
+                                    // int(status_interval_ticks[card_id]),
+                                )
                                 if has_status
                                 else 0
                             )
@@ -592,12 +626,12 @@ class FastCardCatalog:
                         parameter = catalog.mechanic_parameter_names.index(
                             duration_name
                         )
-                        duration = catalog.mechanic_parameters[
+                        mechanic_duration = catalog.mechanic_parameters[
                             card_id, mechanic_slot, parameter
                         ]
-                        if not bool(torch.isnan(duration)):
+                        if not bool(torch.isnan(mechanic_duration)):
                             status_ticks[card_id] = (
-                                duration.to(torch.int32) + 49
+                                mechanic_duration.to(torch.int32) + 49
                             ) // 50
                     if opcode == int(MECHANIC_OPCODE["IceSpiritFreeze"]):
                         radius_parameter = catalog.mechanic_parameter_names.index(
@@ -673,6 +707,8 @@ class FastCardCatalog:
             multi_repeat_primary=multi_repeat_primary,
             chain_target_count=chain_target_count,
             chain_hop_radius_units=chain_hop_radius_units,
+            line_range_units=line_range_units,
+            line_half_width_units=line_half_width_units,
             projectile_speed_units_per_tick=projectile_speed,
             tower_damage_multiplier=tower_multiplier,
             building_damage_multiplier=building_multiplier,
