@@ -13,6 +13,7 @@ from dataclasses import dataclass, fields
 
 import torch
 
+from .simple_modifiers import FastModifierState, intercept_fast_shield_hits_
 from .simple_state import FastGymState
 
 FAST_EFFECT_PROJECTILE = 0
@@ -168,6 +169,7 @@ def step_fast_effects(
     *,
     consume_source_id: torch.Tensor | None = None,
     cleanup_dead: bool = True,
+    modifiers: FastModifierState | None = None,
 ) -> FastEffectStepResult:
     """Advance homing effects, resolve splash, install statuses, and clean up.
 
@@ -198,9 +200,7 @@ def step_fast_effects(
     alive = effects.active & (effects.lifetime_ticks > 0)
     valid_projectile = alive & (effects.kind == FAST_EFFECT_PROJECTILE)
     valid_area = alive & (effects.kind == FAST_EFFECT_AREA)
-    tracks_entity = (
-        valid_projectile & effects.tracks_target & (effects.target_id > 0)
-    )
+    tracks_entity = valid_projectile & effects.tracks_target & (effects.target_id > 0)
     target_match = (
         tracks_entity[:, :, None]
         & state.active[:, None, :]
@@ -223,30 +223,23 @@ def step_fast_effects(
     projectile_impact = valid_projectile & destination_available & (distance <= speed)
     travel = torch.minimum(speed, distance)
     moving = (
-        valid_projectile
-        & destination_available
-        & ~projectile_impact
-        & (travel > 0)
+        valid_projectile & destination_available & ~projectile_impact & (travel > 0)
     )
     denominator = distance.clamp(min=1.0)
     move_x = torch.round(delta_x * travel / denominator).to(torch.int32)
     move_y = torch.round(delta_y * travel / denominator).to(torch.int32)
     effects.x_units.add_(torch.where(moving, move_x, 0))
     effects.y_units.add_(torch.where(moving, move_y, 0))
-    effects.x_units.copy_(
-        torch.where(projectile_impact, target_x, effects.x_units)
-    )
-    effects.y_units.copy_(
-        torch.where(projectile_impact, target_y, effects.y_units)
-    )
+    effects.x_units.copy_(torch.where(projectile_impact, target_x, effects.x_units))
+    effects.y_units.copy_(torch.where(projectile_impact, target_y, effects.y_units))
 
     impacted = projectile_impact | valid_area
-    dx = state.x_units[:, None, :].to(torch.int64) - effects.x_units[
-        :, :, None
-    ].to(torch.int64)
-    dy = state.y_units[:, None, :].to(torch.int64) - effects.y_units[
-        :, :, None
-    ].to(torch.int64)
+    dx = state.x_units[:, None, :].to(torch.int64) - effects.x_units[:, :, None].to(
+        torch.int64
+    )
+    dy = state.y_units[:, None, :].to(torch.int64) - effects.y_units[:, :, None].to(
+        torch.int64
+    )
     radius_sq = effects.radius_units.to(torch.int64).clamp(min=0).square()
     targets_hit = (
         impacted[:, :, None]
@@ -263,23 +256,30 @@ def step_fast_effects(
         effects.tower_damage_multiplier.clamp(min=0.0)[:, :, None],
         1.0,
     )
-    grouped_damage = (
-        targets_hit.to(torch.float32)
-        * effects.damage.clamp(min=0.0)[:, :, None]
-        * hit_multiplier
-    ).sum(dim=1)
+    per_hit_damage = effects.damage.clamp(min=0.0)[:, :, None] * hit_multiplier
+    if modifiers is None:
+        grouped_damage = (targets_hit.to(torch.float32) * per_hit_damage).sum(dim=1)
+    else:
+        hit_target_slot = entity_slot.expand(batch, max_effects, max_entities)
+        shield_result = intercept_fast_shield_hits_(
+            modifiers,
+            valid=targets_hit.reshape(batch, max_effects * max_entities),
+            target_slot=hit_target_slot.reshape(batch, max_effects * max_entities),
+            damage=per_hit_damage.expand(-1, -1, max_entities).reshape(
+                batch, max_effects * max_entities
+            ),
+        )
+        grouped_damage = shield_result.hp_damage
     state.hp.sub_(grouped_damage).clamp_(min=0.0)
 
     duration = effects.status_duration_ticks.clamp(min=0)[:, :, None]
     stun_duration = torch.where(
-        targets_hit
-        & (effects.status_kind[:, :, None] == FAST_STATUS_STUN),
+        targets_hit & (effects.status_kind[:, :, None] == FAST_STATUS_STUN),
         duration,
         0,
     ).amax(dim=1)
     slow_duration = torch.where(
-        targets_hit
-        & (effects.status_kind[:, :, None] == FAST_STATUS_SLOW),
+        targets_hit & (effects.status_kind[:, :, None] == FAST_STATUS_SLOW),
         duration,
         0,
     ).amax(dim=1)
@@ -337,14 +337,8 @@ def step_fast_effects(
     effects.lifetime_ticks.sub_(ticking.to(torch.int32)).clamp_(min=0)
     missing_target = tracks_entity & ~target_found
     invalid_kind = alive & ~(valid_projectile | valid_area)
-    cleaned = (
-        effects.active
-        & (
-            impacted
-            | missing_target
-            | invalid_kind
-            | (effects.lifetime_ticks <= 0)
-        )
+    cleaned = effects.active & (
+        impacted | missing_target | invalid_kind | (effects.lifetime_ticks <= 0)
     )
     effects.active.logical_and_(~cleaned)
     effects.target_id.masked_fill_(cleaned, 0)

@@ -55,6 +55,7 @@ class FastCardCatalog:
     death_spawn_hp: torch.Tensor
     death_spawn_radius_units: torch.Tensor
     death_spawn_deploy_ticks: torch.Tensor
+    shield_hitpoints: torch.Tensor
     deploy_w_tile_margin: torch.Tensor
     can_deploy_on_enemy_side: torch.Tensor
     effect_kind: torch.Tensor
@@ -112,6 +113,19 @@ class FastCardCatalog:
         death_spawn_deploy_ticks = torch.zeros_like(
             catalog.range_units, dtype=torch.int32
         )
+        shield_hitpoints = torch.zeros_like(catalog.hitpoints, dtype=torch.float32)
+        shield_opcode = int(MECHANIC_OPCODE["Shield"])
+        shield_slots = catalog.mechanic_opcode == shield_opcode
+        if "shield_hp" in catalog.mechanic_parameter_names:
+            shield_parameter = catalog.mechanic_parameter_names.index("shield_hp")
+            shield_values = torch.nan_to_num(
+                catalog.mechanic_parameters[:, :, shield_parameter], nan=0.0
+            )
+            shield_hitpoints = (
+                torch.where(shield_slots, shield_values, 0.0)
+                .amax(dim=1)
+                .to(torch.float32)
+            )
         ordinary_kind = torch.full_like(catalog.kind, -1, dtype=torch.int8)
         ordinary_kind = torch.where(
             (catalog.kind == int(CardKindOpcode.TROOP))
@@ -201,9 +215,10 @@ class FastCardCatalog:
                     continue
                 raw = card._raw_entry or {}
                 target_type = str(getattr(card, "target_type", "") or "")
-                attacks_air[card_id] = bool(
-                    getattr(card, "attacks_air", False)
-                ) or target_type == "TID_TARGETS_AIR_AND_GROUND"
+                attacks_air[card_id] = (
+                    bool(getattr(card, "attacks_air", False))
+                    or target_type == "TID_TARGETS_AIR_AND_GROUND"
+                )
                 attacks_ground[card_id] = bool(
                     getattr(card, "attacks_ground", False)
                 ) or target_type in {
@@ -227,8 +242,7 @@ class FastCardCatalog:
                     death_spawn_kind[card_id] = ordinary_kind[child_id]
                     death_spawn_hp[card_id] = catalog.hitpoints[child_id]
                     death_spawn_radius_units[card_id] = round(
-                        float(getattr(card, "death_spawn_radius", 0.0) or 0.0)
-                        * 1_000.0
+                        float(getattr(card, "death_spawn_radius", 0.0) or 0.0) * 1_000.0
                     )
                     death_spawn_deploy_ticks[card_id] = (
                         int(getattr(card, "death_spawn_deploy_time", 0) or 0) + 49
@@ -341,6 +355,7 @@ class FastCardCatalog:
             death_spawn_hp=death_spawn_hp,
             death_spawn_radius_units=death_spawn_radius_units,
             death_spawn_deploy_ticks=death_spawn_deploy_ticks,
+            shield_hitpoints=shield_hitpoints,
             deploy_w_tile_margin=catalog.deploy_w_tile_margin.to(torch.int8),
             can_deploy_on_enemy_side=catalog.can_deploy_on_enemy_side.to(torch.bool),
             effect_kind=effect_kind,

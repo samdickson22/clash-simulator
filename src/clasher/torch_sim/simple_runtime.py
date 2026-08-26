@@ -26,6 +26,7 @@ from .simple_catalog import FastCardCatalog
 from .simple_effects import FastEffectState, FastEffectStepResult, step_fast_effects
 from .simple_engine import FastTensorGym
 from .simple_lifecycle import FastLifecycleState, step_fast_lifecycle_
+from .simple_modifiers import FastModifierState
 from .simple_outcomes import (
     FAST_TOWER_SLOT_COUNT,
     FastMatchRules,
@@ -114,6 +115,11 @@ class SimpleGymRuntime:
             device=self.state.device,
         )
         self.lifecycle = FastLifecycleState.empty_like(self.state)
+        self.modifiers = FastModifierState.empty(
+            self.state.batch_size,
+            max_entities=self.state.max_entities,
+            device=self.state.device,
+        )
         entity_shape = (self.state.batch_size, self.state.max_entities)
         self.entity_status_kind = torch.zeros(
             entity_shape, dtype=torch.int8, device=self.state.device
@@ -256,6 +262,31 @@ class SimpleGymRuntime:
             catalog.death_spawn_deploy_ticks,
         )
 
+    def _initialize_modifiers_(self, mask: torch.Tensor) -> None:
+        """Initialize numeric modifiers on newly occupied entity slots."""
+
+        catalog = self.action_kernel.catalog
+        safe_card = self.state.card_id.clamp(0, catalog.size - 1)
+        known = (self.state.card_id > 0) & (self.state.card_id < catalog.size)
+        selected = mask & known
+        initial_shield = catalog.shield_hitpoints[safe_card]
+        self.modifiers.shield.copy_(
+            torch.where(selected, initial_shield, self.modifiers.shield)
+        )
+        self.modifiers.max_shield.copy_(
+            torch.where(selected, initial_shield, self.modifiers.max_shield)
+        )
+        self.modifiers.charge_progress_ticks.masked_fill_(mask, 0)
+        self.modifiers.charge_progress_distance_units.masked_fill_(mask, 0)
+        self.modifiers.charge_ready.masked_fill_(mask, False)
+
+    def _clear_modifiers_(self, mask: torch.Tensor) -> None:
+        self.modifiers.shield.masked_fill_(mask, 0.0)
+        self.modifiers.max_shield.masked_fill_(mask, 0.0)
+        self.modifiers.charge_progress_ticks.masked_fill_(mask, 0)
+        self.modifiers.charge_progress_distance_units.masked_fill_(mask, 0)
+        self.modifiers.charge_ready.masked_fill_(mask, False)
+
     def _initialize_spawned_combat_(self, mask: torch.Tensor) -> None:
         """Fill ordinary combat planes for data-resolved death-spawn children."""
 
@@ -370,6 +401,7 @@ class SimpleGymRuntime:
         )
         deployed = self.combat.deploy_many_once(ingress.requests)
         self._initialize_lifecycle_(self.combat.spawned_mask)
+        self._initialize_modifiers_(self.combat.spawned_mask)
 
         combat = self.combat.step_tick(disabled=self.entity_status_ticks > 0)
         commands = self._effect_commands(ingress, combat.attack_ready)
@@ -418,20 +450,19 @@ class SimpleGymRuntime:
             self.entity_status_ticks,
             consume_source_id=self.effect_consume_source_id,
             cleanup_dead=False,
+            modifiers=self.modifiers,
         )
         lifecycle_result = step_fast_lifecycle_(
             self.state,
             self.lifecycle,
             reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
         )
-        self.entity_status_kind.masked_fill_(
-            lifecycle_result.resolved_parent_mask, 0
-        )
-        self.entity_status_ticks.masked_fill_(
-            lifecycle_result.resolved_parent_mask, 0
-        )
+        self.entity_status_kind.masked_fill_(lifecycle_result.resolved_parent_mask, 0)
+        self.entity_status_ticks.masked_fill_(lifecycle_result.resolved_parent_mask, 0)
+        self._clear_modifiers_(lifecycle_result.resolved_parent_mask)
         self._initialize_spawned_combat_(lifecycle_result.spawned_mask)
         self._initialize_lifecycle_(lifecycle_result.spawned_mask)
+        self._initialize_modifiers_(lifecycle_result.spawned_mask)
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())
