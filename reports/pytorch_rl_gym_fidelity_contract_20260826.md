@@ -112,3 +112,29 @@ incompatible resumes.
 Stable IDs/order, 50-ms phase ordering, integer geometry, actor-private
 boundaries, typed Hero/Evolution identity, public action history, reward, and
 win semantics are not simplification targets.
+
+## Current production frontier
+
+As of commit `20ea555c`, all 66 cards in the enabled deck pool pass tensor
+action preflight and commit their first native action tick together in one
+batch. The default production smoke is
+`tests/test_torch_resident_enabled_action_smoke.py`; CUDA coverage is present
+and skips on hosts without CUDA.
+
+Focused policy-visible lifecycle gates now cover the previously rejected
+Archer Queen, Dark Prince, Electro Dragon, Electro Spirit, Electro Wizard,
+Firecracker, Goblin Gang, Ice Spirit, Mega Knight, and Wall Breakers paths.
+These integrations use serialized capability composition and entity-local
+movement ownership. The full exact Python 66-card matrix remains available via
+`CLASHER_STRICT_RESIDENT_MATRIX=1`, but is opt-in diagnostic evidence rather
+than the production acceptance gate.
+
+Still required before a training promotion:
+
+- full seeded native episodes for both seats through regulation, overtime, and
+  tiebreak, with zero fallback and projected-transition validation;
+- a representative accelerator throughput gate and deterministic replay digest
+  under the selected Gym semantics profile;
+- checkpoint/profile compatibility wiring in the newer main training stack;
+- more independently labelled real-game position, HP, action-recall, and
+  outcome evidence. The current video corpus cannot certify these channels.
