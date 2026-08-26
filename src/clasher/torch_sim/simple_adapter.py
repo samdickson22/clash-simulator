@@ -356,6 +356,7 @@ class SimpleGymAdapter:
         recurrent_inputs: Mapping[str, torch.Tensor] | None = None,
         public_action_masks: torch.Tensor | None = None,
         public_action_mask_contract_version: int | None = None,
+        update_history: bool = True,
     ) -> SimpleGymAdapterStep:
         shape = (self.batch_size, 2)
         _require_tensor(
@@ -457,7 +458,8 @@ class SimpleGymAdapter:
             ),
             episode_starts=terminal.expand(-1, 2),
         )
-        self.history = history_after
+        if update_history:
+            self.history = history_after
         return SimpleGymAdapterStep(
             observation=result.observation,
             legal_mask=result.observation.legal_mask,

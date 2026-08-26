@@ -24,7 +24,9 @@ from clasher.torch_sim.simple_rollout import (
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 
 
-def _bridge(device_name: str) -> tuple[SimpleGymRolloutBridge, dict[str, int]]:
+def _bridge(
+    device_name: str, *, decision_interval: int = 1
+) -> tuple[SimpleGymRolloutBridge, dict[str, int]]:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
     device = torch.device(device_name)
@@ -68,7 +70,7 @@ def _bridge(device_name: str) -> tuple[SimpleGymRolloutBridge, dict[str, int]]:
         max_effects=8,
         include_privileged_critic=True,
     )
-    return SimpleGymRolloutBridge(runtime), ids
+    return SimpleGymRolloutBridge(runtime, decision_interval=decision_interval), ids
 
 
 def _placement_actions(bridge: SimpleGymRolloutBridge) -> torch.Tensor:
@@ -115,7 +117,10 @@ def _assert_rollout_equal(
     )
     if isinstance(actual, SimpleGymRolloutStep):
         assert isinstance(expected, SimpleGymRolloutStep)
+        _assert_structured_equal(actual.next_actor, expected.next_actor)
+        _assert_structured_equal(actual.next_critic, expected.next_critic)
         for name in (
+            "next_legal_mask",
             "rewards",
             "done",
             "winner",
@@ -213,11 +218,11 @@ def test_rollout_v1_mask_fails_closed_before_runtime_mutation(
 def test_seedless_simple_rollout_is_deterministic_and_emits_fixed_telemetry(
     device_name: str,
 ) -> None:
-    left, _ = _bridge(device_name)
-    right, _ = _bridge(device_name)
+    left, _ = _bridge(device_name, decision_interval=8)
+    right, _ = _bridge(device_name, decision_interval=8)
     _assert_rollout_equal(left.observe(), right.observe())
 
-    for index in range(4):
+    for index in range(2):
         left_actions = (
             _placement_actions(left)
             if index == 0
@@ -265,6 +270,117 @@ def test_seedless_simple_rollout_is_deterministic_and_emits_fixed_telemetry(
         assert torch.equal(
             step_left.recurrent_inputs["hidden"], recurrent_left["hidden"]
         )
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_decision_interval_matches_eight_native_ticks_and_returns_pre_action(
+    device_name: str,
+) -> None:
+    interval, _ = _bridge(device_name, decision_interval=8)
+    reference, _ = _bridge(device_name)
+    pre_action = interval.observe()
+    actions = _placement_actions(interval)
+    public_masks = pre_action.legal_mask.clone()
+
+    actual = interval.step(
+        actions,
+        public_action_masks=public_masks,
+        public_action_mask_contract_version=PUBLIC_ACTION_MASK_CONTRACT_V2,
+    )
+    reference_steps = [reference.step(actions.clone())]
+    noop = torch.full_like(actions, NO_OP_ACTION)
+    for _ in range(7):
+        reference_steps.append(reference.step(noop))
+
+    _assert_structured_equal(actual.actor, pre_action.actor)
+    _assert_structured_equal(actual.critic, pre_action.critic)
+    assert torch.equal(actual.legal_mask, pre_action.legal_mask)
+    post_actual = interval.observe()
+    _assert_structured_equal(actual.next_actor, post_actual.actor)
+    _assert_structured_equal(actual.next_critic, post_actual.critic)
+    assert torch.equal(actual.next_legal_mask, post_actual.legal_mask)
+    assert actual.public_action_masks is public_masks
+    assert actual.public_action_mask_contract_version == 2
+    assert torch.equal(
+        actual.rewards,
+        torch.stack([step.rewards for step in reference_steps]).sum(dim=0),
+    )
+    assert torch.equal(
+        actual.native_ticks,
+        torch.stack([step.native_ticks for step in reference_steps]).sum(dim=0),
+    )
+    assert actual.native_ticks.eq(8).all()
+    assert interval.runtime.state.tick.eq(8).all()
+    assert interval.runtime.action_state.cycle_head.eq(1).all()
+    assert torch.equal(interval.adapter.history.previous_actions, actions)
+    assert torch.equal(interval.adapter.history.previous_rewards, actual.rewards)
+    assert not interval.adapter.history.episode_starts.any()
+
+    post_interval = interval.observe()
+    post_reference = reference.observe()
+    _assert_structured_equal(post_interval.actor, post_reference.actor)
+    _assert_structured_equal(post_interval.critic, post_reference.critic)
+    assert torch.equal(post_interval.legal_mask, post_reference.legal_mask)
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_decision_interval_stops_terminal_row_without_resetting_other_row(
+    device_name: str,
+) -> None:
+    bridge, _ = _bridge(device_name, decision_interval=8)
+    one_tick, _ = _bridge(device_name)
+    bridge.runtime.state.hp[0, 2] = 0.0
+    one_tick.runtime.state.hp[0, 2] = 0.0
+    actions = _placement_actions(bridge)
+
+    result = bridge.step(actions)
+    reference = one_tick.step(actions.clone())
+
+    assert result.done.tolist() == [True, False]
+    assert result.native_ticks.tolist() == [1, 8]
+    assert bridge.runtime.state.tick.tolist() == [1, 8]
+    assert bridge.runtime.state.game_over.tolist() == [True, False]
+    for name in (
+        "entity_ids",
+        "entity_features",
+        "entity_mask",
+        "hand_ids",
+        "global_features",
+    ):
+        assert torch.equal(
+            getattr(result.next_actor, name)[0],
+            getattr(reference.next_actor, name)[0],
+        ), name
+    assert result.next_critic is not None
+    assert reference.next_critic is not None
+    for descriptor in fields(result.next_critic):
+        assert torch.equal(
+            getattr(result.next_critic, descriptor.name)[0],
+            getattr(reference.next_critic, descriptor.name)[0],
+        ), descriptor.name
+    assert torch.equal(result.next_legal_mask[0], reference.next_legal_mask[0])
+    assert bridge.needs_reset.tolist() == [True, False]
+    with pytest.raises(SimpleGymContractError, match="reset_done"):
+        bridge.step(actions)
+    bridge.reset_done(
+        torch.tensor([True, False], dtype=torch.bool, device=bridge.device)
+    )
+    assert not bridge.needs_reset.any()
+    assert bridge.adapter.history.previous_actions[0].eq(NO_OP_ACTION).all()
+    assert bridge.adapter.history.previous_rewards[0].eq(0).all()
+    assert bridge.adapter.history.episode_starts[0].all()
+    assert torch.equal(bridge.adapter.history.previous_actions[1], actions[1])
+    assert torch.equal(bridge.adapter.history.previous_rewards[1], result.rewards[1])
+    assert not bridge.adapter.history.episode_starts[1].any()
+    assert not result.fallback_rows.any()
+    assert result.all_rows_admitted.all()
+
+
+def test_decision_interval_must_be_a_positive_integer() -> None:
+    bridge, _ = _bridge("cpu")
+    for invalid in (0, -1, True, 1.5):
+        with pytest.raises(ValueError, match="positive integer"):
+            SimpleGymRolloutBridge(bridge.runtime, decision_interval=invalid)  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
