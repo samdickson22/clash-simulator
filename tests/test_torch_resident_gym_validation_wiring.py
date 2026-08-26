@@ -212,7 +212,7 @@ def test_projected_profile_admits_moving_deck_and_aborts_only_on_real_failure() 
 def test_projected_profile_rejects_fallback_row_before_safe_rows_mutate() -> None:
     safe = _safe_battle(96_301)
     unsupported = BattleState(rng=random.Random(96_302))
-    unsupported_stats = unsupported.card_loader.get_card("ArcherQueen")
+    unsupported_stats = unsupported.card_loader.get_card("Fisherman")
     assert unsupported_stats is not None
     unsupported._spawn_unit_at_position(
         Position(9.0, 12.0),
