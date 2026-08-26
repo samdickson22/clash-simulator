@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 import torch
@@ -40,12 +41,19 @@ class FastTensorGym:
     """Mutation-only tensor engine with deterministic lowest-slot allocation."""
 
     def __init__(
-        self, state: FastGymState, catalog: FastCardCatalog | None = None
+        self,
+        state: FastGymState,
+        catalog: FastCardCatalog | None = None,
+        *,
+        reserved_slot_floor: int = 0,
     ) -> None:
         self.state = state
         if catalog is not None and catalog.device != state.device:
             raise ValueError("catalog and state must use the same device")
+        if not 0 <= reserved_slot_floor < state.max_entities:
+            raise ValueError("reserved_slot_floor must identify an entity slot")
         self.catalog = catalog
+        self.reserved_slot_floor = int(reserved_slot_floor)
         self._slots = torch.arange(
             state.max_entities, dtype=torch.int64, device=state.device
         ).view(1, -1)
@@ -71,7 +79,7 @@ class FastTensorGym:
     def _deploy(self, request: FastDeploymentRequest) -> torch.Tensor:
         self._validate_request(request)
         state = self.state
-        free = ~state.active
+        free = ~state.active & (self._slots >= self.reserved_slot_floor)
         first_free = torch.where(
             free,
             self._slots,
@@ -90,9 +98,10 @@ class FastTensorGym:
             & (first_free < state.max_entities)
         )
         safe_slot = first_free.clamp(max=state.max_entities - 1)
-        destination = functional.one_hot(
-            safe_slot, num_classes=state.max_entities
-        ).to(torch.bool) & success[:, None]
+        destination = (
+            functional.one_hot(safe_slot, num_classes=state.max_entities).to(torch.bool)
+            & success[:, None]
+        )
 
         def write(field: torch.Tensor, value: torch.Tensor) -> None:
             field.copy_(torch.where(destination, value[:, None], field))
@@ -137,17 +146,35 @@ class FastTensorGym:
         state.next_stable_id.add_(success.to(torch.int64))
         return success
 
+    def deploy_many_once(
+        self, requests: Sequence[FastDeploymentRequest]
+    ) -> torch.Tensor:
+        """Allocate each request once, in caller-provided deterministic order.
+
+        This is separate from :meth:`step_tick` so both players' simultaneous
+        policy requests can be resolved before combat advances.  The returned
+        tensor is player/request-major with shape ``[batch, requests]``.
+        """
+
+        if not requests:
+            return torch.zeros(
+                (self.state.batch_size, 0),
+                dtype=torch.bool,
+                device=self.state.device,
+            )
+        return torch.stack(tuple(self._deploy(request) for request in requests), dim=1)
+
     def _ordinary_troop_phase(self) -> None:
         """Acquire, approach, and directly hit the nearest visible enemy."""
 
         state = self.state
         present = state.active & (state.hp > 0) & (state.deploy_ticks == 0)
-        dx = state.x_units[:, None, :].to(torch.int64) - state.x_units[
-            :, :, None
-        ].to(torch.int64)
-        dy = state.y_units[:, None, :].to(torch.int64) - state.y_units[
-            :, :, None
-        ].to(torch.int64)
+        dx = state.x_units[:, None, :].to(torch.int64) - state.x_units[:, :, None].to(
+            torch.int64
+        )
+        dy = state.y_units[:, None, :].to(torch.int64) - state.y_units[:, :, None].to(
+            torch.int64
+        )
         distance_sq = dx.square() + dy.square()
         sight_sq = state.sight_range_units.to(torch.int64).square()[:, :, None]
         candidate = (
