@@ -782,6 +782,8 @@ class TensorResidentEngine:
         jump_height: torch.Tensor,
         jump_speed_units: torch.Tensor,
         charge_range_units: torch.Tensor,
+        charge_special_damage: torch.Tensor,
+        charge_speed_percent: torch.Tensor,
         movement_stop_after_ms: torch.Tensor,
         movement_wait_ms: torch.Tensor,
         movement_base_speed_units: torch.Tensor,
@@ -844,6 +846,8 @@ class TensorResidentEngine:
         self.jump_height = jump_height
         self.jump_speed_units = jump_speed_units
         self.charge_range_units = charge_range_units
+        self.charge_special_damage = charge_special_damage
+        self.charge_speed_percent = charge_speed_percent
         self.movement_stop_after_ms = movement_stop_after_ms
         self.movement_wait_ms = movement_wait_ms
         self.movement_base_speed_units = movement_base_speed_units
@@ -1627,6 +1631,12 @@ class TensorResidentEngine:
         jump_height = torch.zeros(size, dtype=torch.bool, device=runtime.device)
         jump_speed = torch.zeros(size, dtype=torch.int64, device=runtime.device)
         charge_range = torch.zeros(size, dtype=torch.int64, device=runtime.device)
+        charge_special_damage = torch.zeros(
+            size, dtype=torch.float64, device=runtime.device
+        )
+        charge_speed_percent = torch.full(
+            (size,), 100, dtype=torch.int64, device=runtime.device
+        )
         movement_stop_after = torch.zeros(
             size, dtype=torch.int64, device=runtime.device
         )
@@ -1656,7 +1666,7 @@ class TensorResidentEngine:
             } or bool(getattr(stats, "attacks_ground", True))
             death_spawn[card_id] = bool(getattr(stats, "death_spawn_character", None))
             area_radius[card_id] = round(
-                float(getattr(stats, "area_damage_radius", 0.0) or 0.0) * 1_000
+                float(getattr(stats, "area_damage_radius", 0.0) or 0.0)
             )
             self_center[card_id] = bool(getattr(stats, "self_as_aoe_center", False))
             sight_clip[card_id] = round(
@@ -1671,6 +1681,16 @@ class TensorResidentEngine:
             jump_height[card_id] = bool(getattr(stats, "jump_height", None))
             jump_speed[card_id] = round(float(getattr(stats, "jump_speed", 0) or 0))
             charge_range[card_id] = int(getattr(stats, "charge_range", 0) or 0)
+            charge_special_damage[card_id] = float(
+                getattr(stats, "scaled_damage_special", 0.0)
+                or getattr(stats, "damage_special", 0.0)
+                or getattr(stats, "scaled_damage", 0.0)
+                or getattr(stats, "damage", 0.0)
+                or 0.0
+            )
+            charge_speed_percent[card_id] = round(
+                float(getattr(stats, "charge_speed_multiplier", 200) or 200)
+            )
             movement_stop_after[card_id] = round(
                 float(getattr(stats, "stop_movement_after_ms", 0) or 0)
             )
@@ -1756,6 +1776,8 @@ class TensorResidentEngine:
             jump_height=jump_height,
             jump_speed_units=jump_speed,
             charge_range_units=charge_range,
+            charge_special_damage=charge_special_damage,
+            charge_speed_percent=charge_speed_percent,
             movement_stop_after_ms=movement_stop_after,
             movement_wait_ms=movement_wait,
             movement_base_speed_units=movement_base_speed,
@@ -1881,6 +1903,8 @@ class TensorResidentEngine:
             jump_height=self.jump_height,
             jump_speed_units=self.jump_speed_units,
             charge_range_units=self.charge_range_units,
+            charge_special_damage=self.charge_special_damage,
+            charge_speed_percent=self.charge_speed_percent,
             movement_stop_after_ms=self.movement_stop_after_ms,
             movement_wait_ms=self.movement_wait_ms,
             movement_base_speed_units=self.movement_base_speed_units,
@@ -1908,9 +1932,7 @@ class TensorResidentEngine:
         )
         piercing_source = self.piercing_projectiles.catalog.supported[core_card]
         unsafe_source = character & (
-            (self.uses_projectile[safe] & ~piercing_source)
-            | (self.area_radius_units[safe] > 0)
-            | (self.charge_range_units[safe] > 0)
+            self.uses_projectile[safe] & ~piercing_source
         )
         dx = core.entity_x_units[:, :, None].to(torch.int64) - core.entity_x_units[
             :, None, :
@@ -3682,6 +3704,19 @@ class TensorResidentEngine:
         self.combat.damage.copy_(
             torch.where(ramp_enabled, retained_ramp_damage, self.combat.damage)
         )
+        charge_ready = (
+            troop
+            & catalog_known
+            & (self.charge_range_units[safe] > 0)
+            & (self.movement.native_charge_progress >= 10_000)
+        )
+        self.combat.damage.copy_(
+            torch.where(
+                charge_ready,
+                self.charge_special_damage[safe],
+                self.combat.damage,
+            )
+        )
         self.combat.range_units.copy_(
             torch.where(
                 catalog_known,
@@ -3900,8 +3935,14 @@ class TensorResidentEngine:
             .to(torch.int64)
             .clamp_min(1)
         )
+        base_speed = self.runtime.catalog.speed_units_per_tick[safe].to(torch.int64)
+        charged_speed = torch.div(
+            base_speed * self.charge_speed_percent[safe],
+            100,
+            rounding_mode="floor",
+        )
         movement.effective_speed_units.copy_(
-            self.runtime.catalog.speed_units_per_tick[safe].to(torch.int64)
+            torch.where(charge_ready, charged_speed, base_speed)
         )
         movement_operations = self.runtime.catalog.mechanic_opcode[safe]
         movement_admitted = torch.zeros(
@@ -4817,7 +4858,25 @@ class TensorResidentEngine:
                 self.combat.attack_cooldown,
             )
         )
+        charge_ready = self.movement.charge_component & (
+            self.movement.native_charge_progress >= 10_000
+        )
         result = step_stationary_combat_(self.combat, LOGIC_TICK_SECONDS)
+        charge_consumed = active[:, None] & charge_ready & result.attacked
+        self.movement.native_charge_progress.masked_fill_(charge_consumed, 0)
+        self.movement.distance_traveled_bits.masked_fill_(charge_consumed, 0)
+        self.movement.natural_movement_active &= ~charge_consumed
+        core_catalog = self._core_catalog_id().clamp_min(0)
+        base_speed = self.runtime.catalog.speed_units_per_tick[core_catalog].to(
+            torch.int64
+        )
+        self.movement.effective_speed_units.copy_(
+            torch.where(
+                charge_consumed,
+                base_speed,
+                self.movement.effective_speed_units,
+            )
+        )
         resolved_target_slot = self.combat.target_slot.clamp_min(0)
         resolved_target_id = self.combat.entity_id.gather(1, resolved_target_slot)
         self.combat_target_entity_id.copy_(
@@ -6299,7 +6358,16 @@ class TensorResidentEngine:
         )
         working.movement.slot_present &= ~(charge_entities | miner_owned)
         working.movement.entity_active &= ~(charge_entities | miner_owned)
+        charge_preload = (
+            active[:, None]
+            & working.movement.slot_present
+            & working.movement.charge_component
+            & (working.movement.native_charge_progress >= 10_000)
+        )
         movement = working._movement_phase(movement_consumed)
+        charge_preload &= movement.ordinary_moved
+        working.combat.attack_cooldown.masked_fill_(charge_preload, 0.0)
+        working.combat.attack_preload_blocked &= ~charge_preload
         working.runtime.phases.movement_vector_units.copy_(
             working.movement.accumulated_vector_units
         )

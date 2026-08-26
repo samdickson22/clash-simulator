@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import deque
 from copy import deepcopy
-from typing import Any
+from typing import Any, cast
 
 import pytest
 import torch
@@ -266,7 +266,7 @@ def test_guards_action_materializes_exact_three_unit_formation(
     ).sum().item() == 3
 
 
-def test_dark_prince_and_nearby_projectile_rows_remain_fail_closed() -> None:
+def test_dark_prince_direct_shield_row_commits_while_projectile_fails_closed() -> None:
     safe = _direct_battle()
     dark_prince = _direct_battle(target_name="DarkPrince")
 
@@ -288,15 +288,16 @@ def test_dark_prince_and_nearby_projectile_rows_remain_fail_closed() -> None:
     preflight = engine.preflight()
     result = engine.step()
 
-    assert preflight.supported.tolist() == [True, False, False]
-    assert result.committed.tolist() == [True, False, False]
-    assert engine.runtime.battle.time.tolist() == [0.05, 0.0, 0.0]
+    assert preflight.supported.tolist() == [True, True, False]
+    assert result.committed.tolist() == [True, True, False]
+    assert engine.runtime.battle.time.tolist() == [0.05, 0.05, 0.0]
     assert engine.mechanics.shield_current[0, 1].item() == 54.0
-    assert torch.equal(engine.runtime.battle.time[1:], before_time[1:])
-    assert torch.equal(engine.runtime.battle.entity_hp[1:], before_hp[1:])
+    assert engine.mechanics.shield_current[1, 1].item() == 38.0
+    assert torch.equal(engine.runtime.battle.time[2:], before_time[2:])
+    assert torch.equal(engine.runtime.battle.entity_hp[2:], before_hp[2:])
 
 
-def test_guards_action_commits_while_dark_prince_action_rolls_back() -> None:
+def test_guards_and_dark_prince_shield_actions_both_commit() -> None:
     guards = BattleState(fast_path=False)
     dark_prince = BattleState(fast_path=False)
     _set_hand(guards, "Guards")
@@ -312,10 +313,7 @@ def test_guards_action_commits_while_dark_prince_action_rolls_back() -> None:
         [[action, NO_OP_ACTION], [action, NO_OP_ACTION]],
         device=engine.device,
     )
-    before_ids = engine.runtime.battle.entity_id[1].clone()
     before_elixir = engine.runtime.battle.elixir[1].clone()
-    before_hand = engine.runtime.battle.hand[1].clone()
-    before_rng = engine.runtime.battle.rng.python_state(1)
 
     preflight = engine.preflight(actions)
     result = engine.step(
@@ -323,20 +321,24 @@ def test_guards_action_commits_while_dark_prince_action_rolls_back() -> None:
         player_order=torch.tensor([[0, 1], [0, 1]]),
     )
 
-    assert preflight.supported.tolist() == [True, False]
-    assert result.committed.tolist() == [True, False]
+    assert preflight.supported.tolist() == [True, True]
+    assert result.committed.tolist() == [True, True]
     assert (
         engine.runtime.battle.entity_id[0] >= guards.next_entity_id
     ).sum().item() == 3
-    assert torch.equal(engine.runtime.battle.entity_id[1], before_ids)
-    assert torch.equal(engine.runtime.battle.elixir[1], before_elixir)
-    assert torch.equal(engine.runtime.battle.hand[1], before_hand)
-    assert engine.runtime.battle.rng.python_state(1) == before_rng
+    assert (
+        engine.runtime.battle.entity_id[1] >= dark_prince.next_entity_id
+    ).sum().item() == 1
+    assert not torch.equal(engine.runtime.battle.elixir[1], before_elixir)
+    allocation = result.deployment.deployment.allocation
+    dark_prince_slot = int(allocation.slots[1][allocation.valid[1]][0].item())
+    assert engine.mechanics.shield_current[1, dark_prince_slot].item() > 0.0
+    assert engine.movement.charge_component[1, dark_prince_slot].item()
 
 
 def test_direct_damage_event_capacity_failure_rolls_back_shield_row() -> None:
     battle = _direct_battle()
-    shield = _shield(battle.entities[2])
+    shield = _shield(cast(Troop, battle.entities[2]))
     shield.current_shield = 0.0
     engine = TensorResidentEngine.from_battles(
         [battle], max_entities=8, max_objects=8, event_capacity=1

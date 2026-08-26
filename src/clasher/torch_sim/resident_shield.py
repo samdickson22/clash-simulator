@@ -60,19 +60,11 @@ class TensorResidentShieldCatalog:
                 ),
                 None,
             )
-            direct_only = bool(
+            direct_attack = bool(
                 not getattr(stats, "projectile_data", None)
                 and not getattr(stats, "projectile_speed", 0)
-                and float(getattr(stats, "area_damage_radius", 0.0) or 0.0) <= 0.0
-                and int(getattr(stats, "charge_range", 0) or 0) <= 0
-                and float(
-                    getattr(stats, "scaled_damage_special", 0.0)
-                    or getattr(stats, "damage_special", 0.0)
-                    or 0.0
-                )
-                <= 0.0
             )
-            supported[card_id] = single_shield and shield is not None and direct_only
+            supported[card_id] = single_shield and shield is not None and direct_attack
             # Shield.on_attach always stores the scaled initial value as int.
             integer_kind[card_id] = shield is not None
         return cls(supported, integer_kind)
