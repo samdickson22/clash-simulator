@@ -21,6 +21,10 @@ from clasher.torch_sim.resident_selfplay import (
     ResidentGymTransitionInputs,
     TensorResidentSelfPlay,
 )
+from clasher.torch_sim.runtime_state import (
+    RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+    RESIDENT_EXECUTION_PROFILES,
+)
 
 
 @dataclass(frozen=True)
@@ -95,6 +99,7 @@ def _run_once(
     decision_interval: int,
     max_entities: int,
     max_objects: int,
+    execution_profile: str = RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
 ) -> EpisodeSummary:
     battle = _battle(seed, decks)
     bridge = TensorResidentSelfPlay.from_battles(
@@ -105,6 +110,7 @@ def _run_once(
         max_entities=max_entities,
         max_objects=max_objects,
         event_capacity=1_024,
+        execution_profile=execution_profile,
         validation_profile=PROJECTED_GYM_TRANSITION_PROFILE,
     )
     previous_actions = torch.full(
@@ -227,6 +233,11 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
                     decision_interval=args.decision_interval,
                     max_entities=args.max_entities,
                     max_objects=args.max_objects,
+                    execution_profile=getattr(
+                        args,
+                        "execution_profile",
+                        RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+                    ),
                 )
                 for _ in range(replay_count)
             ]
@@ -265,6 +276,11 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
         "device": args.device,
         "max_ticks": args.max_ticks,
         "decision_interval": args.decision_interval,
+        "execution_profile": getattr(
+            args,
+            "execution_profile",
+            RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+        ),
         "replays": replay_count,
         "acceptance": {
             "deterministic_replay": True,
@@ -289,6 +305,11 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--decision-interval", type=int, default=8)
     parser.add_argument("--max-entities", type=int, default=128)
     parser.add_argument("--max-objects", type=int, default=128)
+    parser.add_argument(
+        "--execution-profile",
+        choices=sorted(RESIDENT_EXECUTION_PROFILES),
+        default=RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+    )
     parser.add_argument(
         "--replays",
         type=int,

@@ -31,6 +31,10 @@ from clasher.torch_sim.resident_selfplay import (
     ResidentSelfPlayStep,
     TensorResidentSelfPlay,
 )
+from clasher.torch_sim.runtime_state import (
+    RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+    RESIDENT_EXECUTION_PROFILES,
+)
 
 
 @dataclass(frozen=True)
@@ -138,6 +142,9 @@ def _run_trial(
         max_entities=args.max_entities,
         max_objects=args.max_objects,
         event_capacity=1_024,
+        execution_profile=getattr(
+            args, "execution_profile", RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG
+        ),
         validation_profile=PROJECTED_GYM_TRANSITION_PROFILE,
     )
     shape = (args.batch_size, 2)
@@ -333,6 +340,11 @@ def benchmark(args: argparse.Namespace) -> dict[str, object]:
             "max_ticks": args.max_ticks,
             "max_entities": args.max_entities,
             "max_objects": args.max_objects,
+            "execution_profile": getattr(
+                args,
+                "execution_profile",
+                RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+            ),
         },
         "timing_scope": {
             "included": "observe, deterministic action selection, validated resident step, and output snapshot clones",
@@ -374,6 +386,11 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-ticks", type=int)
     parser.add_argument("--max-entities", type=int, default=32)
     parser.add_argument("--max-objects", type=int, default=32)
+    parser.add_argument(
+        "--execution-profile",
+        choices=sorted(RESIDENT_EXECUTION_PROFILES),
+        default=RESIDENT_EXECUTION_PROFILE_EXACT_DEBUG,
+    )
     parser.add_argument("--out", type=Path)
     return parser
 
