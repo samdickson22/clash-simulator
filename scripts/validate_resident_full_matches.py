@@ -1,0 +1,259 @@
+"""Validate complete resident Gym episodes and within-profile determinism."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import random
+from collections import deque
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from typing import cast
+
+import torch
+
+from clasher.battle import STANDARD_MATCH_TICKS, BattleState
+from clasher.rl.deck_pool import load_deck_pool
+from clasher.torch_sim.actions import NO_OP_ACTION
+from clasher.torch_sim.policy_validation import PROJECTED_GYM_TRANSITION_PROFILE
+from clasher.torch_sim.resident_selfplay import (
+    ResidentGymTransitionInputs,
+    TensorResidentSelfPlay,
+)
+
+
+@dataclass(frozen=True)
+class EpisodeSummary:
+    seed: int
+    policy: str
+    decisions: int
+    native_ticks: int
+    fallback_rows: int
+    final_tick: int
+    final_time: float
+    done: bool
+    winner: int
+    digest: str
+
+
+def _battle(seed: int, decks: list[list[str]]) -> BattleState:
+    rng = random.Random(seed)
+    battle = BattleState(fast_path=False, rng=rng)
+    for player in battle.players:
+        deck = list(rng.choice(decks))
+        rng.shuffle(deck)
+        player.hand = cast(list[str | None], deck[:4])
+        player.deck = list(deck)
+        player.cycle_queue = deque(deck[4:])
+        player.elixir = 5.0
+    return battle
+
+
+def _actions(mask: torch.Tensor, policy: str) -> torch.Tensor:
+    batch, seats, action_count = mask.shape
+    if policy == "noop":
+        return torch.full(
+            (batch, seats),
+            NO_OP_ACTION,
+            dtype=torch.int64,
+            device=mask.device,
+        )
+    indices = torch.arange(action_count, dtype=torch.int64, device=mask.device)
+    candidates = torch.where(
+        mask & (indices != NO_OP_ACTION),
+        indices,
+        torch.full_like(indices, action_count),
+    )
+    selected = candidates.amin(dim=2)
+    return torch.where(
+        selected < action_count,
+        selected,
+        torch.full_like(selected, NO_OP_ACTION),
+    )
+
+
+def _update_digest(digest: hashlib._Hash, value: torch.Tensor) -> None:
+    cpu = value.detach().contiguous().cpu()
+    digest.update(str(cpu.dtype).encode())
+    digest.update(str(tuple(cpu.shape)).encode())
+    digest.update(cpu.numpy().tobytes())
+
+
+def _run_once(
+    *,
+    seed: int,
+    decks: list[list[str]],
+    policy: str,
+    device: str,
+    max_ticks: int,
+    decision_interval: int,
+    max_entities: int,
+    max_objects: int,
+) -> EpisodeSummary:
+    battle = _battle(seed, decks)
+    bridge = TensorResidentSelfPlay.from_battles(
+        [battle],
+        device=device,
+        decision_interval_ticks=decision_interval,
+        max_ticks=max_ticks,
+        max_entities=max_entities,
+        max_objects=max_objects,
+        event_capacity=1_024,
+        validation_profile=PROJECTED_GYM_TRANSITION_PROFILE,
+    )
+    previous_actions = torch.full(
+        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=bridge.device
+    )
+    previous_rewards = torch.zeros((1, 2), dtype=torch.float32, device=bridge.device)
+    episode_starts = torch.ones((1, 2), dtype=torch.bool, device=bridge.device)
+    digest = hashlib.sha256()
+    native_ticks = 0
+    decisions = 0
+    fallback_rows = 0
+    done = False
+    winner = -1
+
+    while not done:
+        _, _, legal = bridge.observe()
+        actions = _actions(legal, policy)
+        result = bridge.step(
+            actions,
+            validation_inputs=ResidentGymTransitionInputs(
+                previous_actions=previous_actions,
+                previous_rewards=previous_rewards,
+                episode_starts=episode_starts,
+            ),
+        )
+        if result.validation is None:
+            raise RuntimeError("projected Gym validation boundary is missing")
+        metadata = result.validation.metadata
+        if not metadata.all_rows_admitted:
+            raise RuntimeError("resident episode lost native admission")
+        native_ticks += int(metadata.native_ticks.sum().item())
+        fallback_rows += len(metadata.fallback_rows)
+        transition = result.validation.transition
+        for tensor in (
+            transition.actor.entity_ids,
+            transition.actor.entity_features,
+            transition.actor.entity_mask,
+            transition.actor.hand_ids,
+            transition.actor.global_features,
+            result.action_masks,
+            transition.action_success,
+            transition.rewards,
+            transition.done,
+            transition.winner,
+            transition.previous_actions,
+            transition.previous_rewards,
+            transition.episode_starts,
+        ):
+            _update_digest(digest, torch.as_tensor(tensor))
+        previous_actions = actions.clone()
+        previous_rewards = result.rewards.to(torch.float32).clone()
+        episode_starts.zero_()
+        decisions += 1
+        done = bool(result.dones[0].item())
+        winner = int(result.reward_outcome.winner[0].item())
+        if decisions > (max_ticks + decision_interval - 1) // decision_interval + 1:
+            raise RuntimeError("resident episode exceeded its decision budget")
+
+    return EpisodeSummary(
+        seed=seed,
+        policy=policy,
+        decisions=decisions,
+        native_ticks=native_ticks,
+        fallback_rows=fallback_rows,
+        final_tick=int(bridge.engine.runtime.battle.tick[0].item()),
+        final_time=float(bridge.engine.runtime.battle.time[0].item()),
+        done=done,
+        winner=winner,
+        digest=digest.hexdigest(),
+    )
+
+
+def validate(args: argparse.Namespace) -> dict[str, object]:
+    decks = [list(deck) for deck in load_deck_pool(args.decks_path)]
+    summaries: list[EpisodeSummary] = []
+    for policy in args.policy:
+        for seed in args.seed:
+            first = _run_once(
+                seed=seed,
+                decks=decks,
+                policy=policy,
+                device=args.device,
+                max_ticks=args.max_ticks,
+                decision_interval=args.decision_interval,
+                max_entities=args.max_entities,
+                max_objects=args.max_objects,
+            )
+            second = _run_once(
+                seed=seed,
+                decks=decks,
+                policy=policy,
+                device=args.device,
+                max_ticks=args.max_ticks,
+                decision_interval=args.decision_interval,
+                max_entities=args.max_entities,
+                max_objects=args.max_objects,
+            )
+            if first != second:
+                raise RuntimeError(
+                    f"resident replay is nondeterministic for seed={seed} policy={policy}"
+                )
+            if first.fallback_rows or first.native_ticks != first.final_tick:
+                raise RuntimeError(
+                    f"resident episode is not fully native for seed={seed} policy={policy}"
+                )
+            summaries.append(first)
+    return {
+        "schema_version": 1,
+        "profile": PROJECTED_GYM_TRANSITION_PROFILE,
+        "device": args.device,
+        "max_ticks": args.max_ticks,
+        "decision_interval": args.decision_interval,
+        "episodes": [asdict(summary) for summary in summaries],
+    }
+
+
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--decks-path", default="decks.json")
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
+    parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
+    parser.add_argument("--decision-interval", type=int, default=8)
+    parser.add_argument("--max-entities", type=int, default=128)
+    parser.add_argument("--max-objects", type=int, default=128)
+    parser.add_argument("--seed", type=int, action="append", default=[])
+    parser.add_argument(
+        "--policy", choices=("noop", "first-legal"), action="append", default=[]
+    )
+    parser.add_argument("--out", type=Path)
+    return parser
+
+
+def main() -> int:
+    args = _parser().parse_args()
+    if not args.seed:
+        args.seed = [202_608_260]
+    if not args.policy:
+        args.policy = ["noop", "first-legal"]
+    if min(
+        args.max_ticks,
+        args.decision_interval,
+        args.max_entities,
+        args.max_objects,
+    ) < 1:
+        raise ValueError("tick intervals and capacities must be positive")
+    result = validate(args)
+    encoded = json.dumps(result, indent=2, sort_keys=True) + "\n"
+    if args.out is None:
+        print(encoded, end="")
+    else:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(encoded)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
