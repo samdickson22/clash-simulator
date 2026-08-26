@@ -75,6 +75,10 @@ class SimpleTensorProjector:
         self._perspectives = torch.arange(
             2, dtype=torch.int64, device=state.device
         ).view(1, 2, 1)
+        self._seats = self._perspectives[..., 0]
+        self._canonical_tower_order = torch.tensor(
+            (1, 0, 2), dtype=torch.int64, device=state.device
+        )
 
     def _validate_metadata(self) -> None:
         state = self.state
@@ -177,7 +181,7 @@ class SimpleTensorProjector:
         state = self.state
         inputs = self.inputs
         batch = state.batch_size
-        seat = torch.arange(2, device=state.device).view(1, 2)
+        seat = self._seats
         enemy = 1 - seat
         progress = (state.tick.to(torch.float32) / float(inputs.max_ticks)).clamp(
             0.0, 1.0
@@ -189,12 +193,15 @@ class SimpleTensorProjector:
         enemy_tower = tower_fraction.gather(
             1, enemy[..., None].expand(batch, 2, 3)
         )
-        lanes = torch.tensor([1, 0, 2], dtype=torch.int64, device=state.device)
         own_tower = torch.where(
-            (seat == 1)[..., None], own_tower.index_select(2, lanes), own_tower
+            (seat == 1)[..., None],
+            own_tower.index_select(2, self._canonical_tower_order),
+            own_tower,
         )
         enemy_tower = torch.where(
-            (seat == 1)[..., None], enemy_tower.index_select(2, lanes), enemy_tower
+            (seat == 1)[..., None],
+            enemy_tower.index_select(2, self._canonical_tower_order),
+            enemy_tower,
         )
         own_elixir = inputs.elixir.gather(1, seat.expand(batch, 2))
         own_max = inputs.max_elixir.gather(1, seat.expand(batch, 2))
@@ -265,7 +272,8 @@ class SimpleTensorProjector:
         critic: TensorPrivilegedCriticObservation | None = None
         if self.include_privileged_critic:
             critic_mask = (alive[:, None, :] & known[:, None, :]).expand(-1, 2, -1)
-            enemy_hand = hand_tokens[:, [1, 0], :]
+            # Keep the fixed two-player swap device-native and capturable.
+            enemy_hand = hand_tokens.flip(1)
             critic = TensorPrivilegedCriticObservation(
                 entity_ids=torch.where(critic_mask, tokens, torch.zeros_like(tokens)),
                 entity_features=torch.where(

@@ -173,7 +173,11 @@ def crowns_for_players(tower_hp: torch.Tensor) -> torch.Tensor:
     king_dead = tower_hp[:, :, FAST_TOWER_KING] <= 0
     side_lost = (tower_hp[:, :, :FAST_TOWER_KING] <= 0).sum(dim=2).to(torch.int8)
     towers_lost = torch.where(king_dead, torch.full_like(side_lost, 3), side_lost)
-    return towers_lost[:, [1, 0]]
+    # ``[:, [1, 0]]`` materializes a host index tensor on CUDA.  Besides an
+    # unnecessary synchronization every tick, that copy is illegal during
+    # CUDA Graph capture.  The player axis always has length two, so reversing
+    # the view expresses the same ownership swap entirely on device.
+    return towers_lost.flip(1)
 
 
 class FastOutcomeTracker:
