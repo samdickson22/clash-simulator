@@ -13,6 +13,7 @@ import argparse
 import hashlib
 import json
 import statistics
+import sys
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -21,6 +22,12 @@ from typing import Any
 import torch
 
 from clasher.rl.deck_pool import load_deck_pool
+
+# Support both ``python -m scripts.perf.benchmark_simple_gym`` and executing
+# this file directly from the repository checkout.
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 from scripts.validate_simple_full_matches import (
     EXACT_REGULATION_TICKS,
     EXACT_TIEBREAK_TICKS,
@@ -83,23 +90,27 @@ def _run_trial(
     _synchronize(runtime.device)
     if runtime.device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(runtime.device)
-    digest = hashlib.sha256()
-    committed_rows = 0
-    native_ticks = 0
-    terminal_rows = 0
+    committed_snapshots: list[torch.Tensor] = []
+    native_snapshots: list[torch.Tensor] = []
+    done_snapshots: list[torch.Tensor] = []
     started = time.perf_counter()
     for _ in range(args.measured_ticks):
         actions = select_actions(observation.legal_mask, args.policy)
         step = runtime.step_tick(actions)
-        update_step_digest(digest, step, actions)
-        committed_rows += int(step.committed.sum().item())
-        native_ticks += int(step.native_ticks.sum().item())
-        terminal_rows += int(step.done.sum().item())
+        # These result tensors are newly allocated per tick. Keeping references
+        # adds no device operation to the timed native path; reductions happen
+        # only after the closing synchronization.
+        committed_snapshots.append(step.committed)
+        native_snapshots.append(step.native_ticks)
+        done_snapshots.append(step.done)
         observation = step.observation
     _synchronize(runtime.device)
     elapsed = time.perf_counter() - started
 
     row_ticks = args.batch_size * args.measured_ticks
+    committed_rows = int(torch.stack(committed_snapshots).sum().item())
+    native_ticks = int(torch.stack(native_snapshots).sum().item())
+    terminal_rows = int(torch.stack(done_snapshots).sum().item())
     if elapsed <= 0:
         raise RuntimeError("simple Gym benchmark timer did not advance")
     if committed_rows != row_ticks or native_ticks != row_ticks:
@@ -124,10 +135,36 @@ def _run_trial(
             row_ticks_per_second=row_ticks / elapsed,
             actor_transitions_per_second=(row_ticks * 2) / elapsed,
             peak_device_memory_bytes=peak_memory,
-            digest=digest.hexdigest(),
+            digest=_replay_digest(args, decks),
         ),
         str(runtime.device),
     )
+
+
+def _replay_digest(args: argparse.Namespace, decks: list[list[str]]) -> str:
+    """Hash an identical full transition window outside the timed region."""
+
+    runtime = build_simple_runtime(
+        seed=args.seed,
+        decks=decks,
+        batch_size=args.batch_size,
+        device=args.device,
+        max_entities=args.max_entities,
+        max_effects=args.max_effects,
+        regulation_ticks=EXACT_REGULATION_TICKS,
+        tiebreak_ticks=EXACT_TIEBREAK_TICKS,
+    )
+    observation = runtime.observe()
+    for _ in range(args.warmup_ticks):
+        actions = select_actions(observation.legal_mask, args.policy)
+        observation = runtime.step_tick(actions).observation
+    digest = hashlib.sha256()
+    for _ in range(args.measured_ticks):
+        actions = select_actions(observation.legal_mask, args.policy)
+        step = runtime.step_tick(actions)
+        update_step_digest(digest, step, actions)
+        observation = step.observation
+    return digest.hexdigest()
 
 
 def _has_marker_ancestor(event: Any, marker_name: str) -> bool:
@@ -156,7 +193,6 @@ def _profile_cuda_tick(args: argparse.Namespace, decks: list[list[str]]) -> Cuda
     for _ in range(max(1, args.warmup_ticks)):
         actions = select_actions(observation.legal_mask, args.policy)
         observation = runtime.step_tick(actions).observation
-    actions = select_actions(observation.legal_mask, args.policy)
     _synchronize(runtime.device)
 
     marker = "simple_gym_measured_tick"
@@ -170,6 +206,7 @@ def _profile_cuda_tick(args: argparse.Namespace, decks: list[list[str]]) -> Cuda
         with_stack=False,
     ) as profile:
         with torch.profiler.record_function(marker):
+            actions = select_actions(observation.legal_mask, args.policy)
             runtime.step_tick(actions)
 
     events = list(profile.events())

@@ -70,6 +70,5 @@ def test_noop_episode_replays_through_regulation_overtime_and_tiebreak(
 
 
 def test_exact_timeline_gate_rejects_short_test_rules(tmp_path: Path) -> None:
-    with pytest.raises(ValueError, match="2400/6000"):
+    with pytest.raises(ValueError, match="3600/6000"):
         validate(_args(tmp_path, require_exact_timeline=True))
-

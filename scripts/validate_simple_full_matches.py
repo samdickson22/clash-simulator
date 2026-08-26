@@ -28,7 +28,9 @@ from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime, SimpleGymRuntimeStep
 
 
-EXACT_REGULATION_TICKS = 2_400
+EXACT_DOUBLE_ELIXIR_TICKS = 2_400
+EXACT_REGULATION_TICKS = 3_600
+EXACT_TRIPLE_ELIXIR_TICKS = 4_800
 EXACT_TIEBREAK_TICKS = 6_000
 
 
@@ -155,8 +157,8 @@ def build_simple_runtime(
         hand_token_lookup=hand_lookup,
         max_entities=max_entities,
         max_effects=max_effects,
-        double_elixir_tick=EXACT_REGULATION_TICKS,
-        triple_elixir_tick=4_800,
+        double_elixir_tick=EXACT_DOUBLE_ELIXIR_TICKS,
+        triple_elixir_tick=EXACT_TRIPLE_ELIXIR_TICKS,
     )
 
 
@@ -299,7 +301,7 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
         EXACT_REGULATION_TICKS,
         EXACT_TIEBREAK_TICKS,
     ):
-        raise ValueError("exact validation requires regulation/tiebreak ticks 2400/6000")
+        raise ValueError("exact validation requires regulation/tiebreak ticks 3600/6000")
 
     summaries: list[SimpleEpisodeSummary] = []
     for policy in args.policy:
@@ -345,7 +347,7 @@ def validate(args: argparse.Namespace) -> dict[str, object]:
         "timeline": {
             "regulation_ticks": regulation_ticks,
             "tiebreak_ticks": tiebreak_ticks,
-            "exact_2400_6000": (regulation_ticks, tiebreak_ticks)
+            "exact_3600_6000": (regulation_ticks, tiebreak_ticks)
             == (EXACT_REGULATION_TICKS, EXACT_TIEBREAK_TICKS),
         },
         "replays": replays,
