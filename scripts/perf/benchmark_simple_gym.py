@@ -22,6 +22,10 @@ from typing import Any
 import torch
 
 from clasher.rl.deck_pool import load_deck_pool
+from clasher.torch_sim.simple_standard import (
+    STANDARD_REGULATION_TICK,
+    STANDARD_TIEBREAK_TICK,
+)
 
 # Support both ``python -m scripts.perf.benchmark_simple_gym`` and executing
 # this file directly from the repository checkout.
@@ -29,10 +33,9 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.validate_simple_full_matches import (
-    EXACT_REGULATION_TICKS,
-    EXACT_TIEBREAK_TICKS,
     build_simple_runtime,
     select_actions,
+    supported_simple_decks,
     update_step_digest,
 )
 
@@ -79,8 +82,9 @@ def _run_trial(
         device=args.device,
         max_entities=args.max_entities,
         max_effects=args.max_effects,
-        regulation_ticks=EXACT_REGULATION_TICKS,
-        tiebreak_ticks=EXACT_TIEBREAK_TICKS,
+        regulation_ticks=STANDARD_REGULATION_TICK,
+        tiebreak_ticks=STANDARD_TIEBREAK_TICK,
+        supported_only=True,
     )
     observation = runtime.observe()
     for _ in range(args.warmup_ticks):
@@ -151,8 +155,9 @@ def _replay_digest(args: argparse.Namespace, decks: list[list[str]]) -> str:
         device=args.device,
         max_entities=args.max_entities,
         max_effects=args.max_effects,
-        regulation_ticks=EXACT_REGULATION_TICKS,
-        tiebreak_ticks=EXACT_TIEBREAK_TICKS,
+        regulation_ticks=STANDARD_REGULATION_TICK,
+        tiebreak_ticks=STANDARD_TIEBREAK_TICK,
+        supported_only=True,
     )
     observation = runtime.observe()
     for _ in range(args.warmup_ticks):
@@ -186,8 +191,9 @@ def _profile_cuda_tick(args: argparse.Namespace, decks: list[list[str]]) -> Cuda
         device=args.device,
         max_entities=args.max_entities,
         max_effects=args.max_effects,
-        regulation_ticks=EXACT_REGULATION_TICKS,
-        tiebreak_ticks=EXACT_TIEBREAK_TICKS,
+        regulation_ticks=STANDARD_REGULATION_TICK,
+        tiebreak_ticks=STANDARD_TIEBREAK_TICK,
+        supported_only=True,
     )
     observation = runtime.observe()
     for _ in range(max(1, args.warmup_ticks)):
@@ -261,9 +267,10 @@ def benchmark(args: argparse.Namespace) -> dict[str, object]:
         args.max_effects,
     ) < 1 or args.warmup_ticks < 0:
         raise ValueError("benchmark sizes must be positive and warmup non-negative")
-    if args.warmup_ticks + args.measured_ticks >= EXACT_TIEBREAK_TICKS:
+    if args.warmup_ticks + args.measured_ticks >= STANDARD_TIEBREAK_TICK:
         raise ValueError("benchmark window must end before the tiebreak boundary")
-    decks = [list(deck) for deck in load_deck_pool(args.decks_path)]
+    candidate_decks = [list(deck) for deck in load_deck_pool(args.decks_path)]
+    decks = supported_simple_decks(candidate_decks, device=args.device)
     trials_and_devices = [
         _run_trial(args, decks=decks, repetition=repetition)
         for repetition in range(args.repetitions)
@@ -304,6 +311,11 @@ def benchmark(args: argparse.Namespace) -> dict[str, object]:
         "device": device,
         "policy": args.policy,
         "seed": args.seed,
+        "deck_pool": {
+            "candidate_decks": len(candidate_decks),
+            "supported_decks": len(decks),
+            "rejected_decks": len(candidate_decks) - len(decks),
+        },
         "acceptance": {
             "deterministic_replay": True,
             "all_rows_committed": True,

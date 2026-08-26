@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from clasher.torch_sim.simple_standard import STANDARD_TIEBREAK_TICK
 from scripts.perf.benchmark_simple_gym import _resolve_preset, benchmark
 
 
@@ -69,9 +70,57 @@ def test_simple_benchmark_reports_absolute_native_row_throughput(
     assert all(trial["committed_rows"] == 8 for trial in trials)
     assert all(trial["native_ticks"] == 8 for trial in trials)
     assert result["median"]["row_ticks_per_second"] > 0.0
+    assert result["deck_pool"] == {
+        "candidate_decks": 1,
+        "supported_decks": 1,
+        "rejected_decks": 0,
+    }
 
 
 def test_simple_benchmark_enforces_absolute_throughput_gate(tmp_path: Path) -> None:
     with pytest.raises(RuntimeError, match="below gate"):
         benchmark(_args(tmp_path, min_row_ticks_per_second=1e30))
 
+
+def test_simple_benchmark_uses_standard_tiebreak_window_gate(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="before the tiebreak boundary"):
+        benchmark(
+            _args(
+                tmp_path,
+                warmup_ticks=0,
+                measured_ticks=STANDARD_TIEBREAK_TICK,
+                repetitions=1,
+            )
+        )
+
+
+def test_simple_benchmark_reports_truthful_supported_deck_filter(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "mixed-decks.json"
+    path.write_text(
+        json.dumps(
+            {
+                "decks": [
+                    {"name": "supported", "cards": ["Knight"] * 8},
+                    {"name": "unsupported", "cards": ["Balloon"] * 8},
+                ]
+            }
+        )
+    )
+
+    result = benchmark(
+        _args(
+            tmp_path,
+            decks_path=path,
+            repetitions=1,
+            measured_ticks=1,
+            warmup_ticks=0,
+        )
+    )
+
+    assert result["deck_pool"] == {
+        "candidate_decks": 2,
+        "supported_decks": 1,
+        "rejected_decks": 1,
+    }

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.validate_simple_full_matches import validate
+from scripts.validate_simple_full_matches import build_simple_runtime, validate
 
 
 def _deck_file(tmp_path: Path) -> Path:
@@ -72,6 +72,45 @@ def test_noop_episode_replays_through_regulation_overtime_and_tiebreak(
 def test_exact_timeline_gate_rejects_short_test_rules(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="3600/6000"):
         validate(_args(tmp_path, require_exact_timeline=True))
+
+
+def test_runtime_builder_uses_standard_expanded_catalog_and_phase_authority() -> None:
+    runtime = build_simple_runtime(
+        seed=202_608_263,
+        decks=[["BattleRam"] * 8],
+        batch_size=1,
+        device="cpu",
+        max_entities=16,
+        max_effects=16,
+        regulation_ticks=3_600,
+        tiebreak_ticks=6_000,
+    )
+
+    assert runtime.spawn_blueprints is not None
+    root = runtime.spawn_blueprints.cards.name_to_id["BattleRam"]
+    child = int(runtime.spawn_blueprints.fast_cards.death_spawn_card_id[root])
+    assert child > 0
+    assert not bool(runtime.spawn_blueprints.public_card_mask[child])
+    assert runtime.projector.inputs.hand_token_lookup[child].item() == 0
+    assert runtime.projector.inputs.entity_token_lookup[:, child].gt(0).all()
+    assert runtime.double_elixir_tick == 2_400
+    assert runtime.outcomes.rules.regulation_ticks == 3_600
+    assert runtime.triple_elixir_tick == 4_800
+    assert runtime.outcomes.rules.tiebreak_ticks == 6_000
+
+
+def test_runtime_builder_remains_strict_for_unsupported_validation_deck() -> None:
+    with pytest.raises(ValueError, match="unsupported.*Balloon"):
+        build_simple_runtime(
+            seed=202_608_263,
+            decks=[["Balloon"] * 8],
+            batch_size=1,
+            device="cpu",
+            max_entities=16,
+            max_effects=16,
+            regulation_ticks=3_600,
+            tiebreak_ticks=6_000,
+        )
 
 
 def test_first_legal_episode_is_bounded_terminal_and_replayed(

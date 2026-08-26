@@ -138,3 +138,26 @@ def test_standard_setup_refuses_noncanonical_compilation() -> None:
             device="cpu",
             canonical_lane_globals=False,
         )
+
+
+def test_standard_setup_uses_optional_runtime_path_for_zero_blueprints() -> None:
+    setup = compile_standard_simple_setup(
+        CardDataLoader(),
+        ("Knight",),
+        device="cpu",
+        canonical_lane_globals=True,
+    )
+    entity_lookup, hand_lookup = _typed_lookups(setup)
+
+    assert setup.spawn_blueprints.blueprint_count == 0
+    runtime = setup.create_runtime(
+        _deck("Knight"),
+        entity_token_lookup=entity_lookup,
+        hand_token_lookup=hand_lookup,
+        canonical_lane_globals=True,
+        max_entities=16,
+        max_effects=16,
+    )
+
+    assert runtime.spawn_blueprints is None
+    assert runtime.observe().actor.hand_ids.shape == (1, 2, 5)

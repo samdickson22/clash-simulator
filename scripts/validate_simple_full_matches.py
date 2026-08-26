@@ -13,25 +13,32 @@ import argparse
 import hashlib
 import json
 import random
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 
 import torch
 
-from clasher.balance import tournament_tower_stat
-from clasher.data import CardDataLoader, load_princess_tower_character_data
+from clasher.data import CardDataLoader
 from clasher.rl.deck_pool import load_deck_pool, unique_cards_from_decks
 from clasher.torch_sim.actions import NO_OP_ACTION
-from clasher.torch_sim.catalog import TensorCardCatalog
-from clasher.torch_sim.simple_catalog import FastCardCatalog
-from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
+from clasher.torch_sim.simple_outcomes import FastMatchRules
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime, SimpleGymRuntimeStep
+from clasher.torch_sim.simple_standard import (
+    STANDARD_DOUBLE_ELIXIR_TICK,
+    STANDARD_REGULATION_TICK,
+    STANDARD_TIEBREAK_TICK,
+    STANDARD_TRIPLE_ELIXIR_TICK,
+    SimpleStandardSetup,
+    compile_standard_simple_setup,
+)
 
 
-EXACT_DOUBLE_ELIXIR_TICKS = 2_400
-EXACT_REGULATION_TICKS = 3_600
-EXACT_TRIPLE_ELIXIR_TICKS = 4_800
-EXACT_TIEBREAK_TICKS = 6_000
+# Backwards-compatible script names. The production values now come from the
+# same standard setup authority used by training-facing runtime construction.
+EXACT_DOUBLE_ELIXIR_TICKS = STANDARD_DOUBLE_ELIXIR_TICK
+EXACT_REGULATION_TICKS = STANDARD_REGULATION_TICK
+EXACT_TRIPLE_ELIXIR_TICKS = STANDARD_TRIPLE_ELIXIR_TICK
+EXACT_TIEBREAK_TICKS = STANDARD_TIEBREAK_TICK
 
 
 @dataclass(frozen=True)
@@ -50,63 +57,6 @@ class SimpleEpisodeSummary:
     digest: str
 
 
-def _tower_spec(loader: CardDataLoader, device: torch.device) -> FastTowerSpec:
-    """Materialize fixed arena towers from serialized support/balance data."""
-
-    princess = load_princess_tower_character_data(loader.data_file)
-    princess_hp = float(tournament_tower_stat("PrincessTower", "hitpoints") or 3_052)
-    princess_damage = float(tournament_tower_stat("PrincessTower", "damage") or 109)
-    king_hp = float(tournament_tower_stat("KingTower", "hitpoints") or 4_824)
-    king_damage = float(tournament_tower_stat("KingTower", "damage") or 109)
-    princess_cooldown = max(1, (int(princess["hitSpeed"]) + 49) // 50)
-
-    return FastTowerSpec(
-        # Crown Towers are arena fixtures rather than playable catalog cards.
-        card_id=torch.zeros((2, 3), dtype=torch.int64, device=device),
-        x_units=torch.tensor(
-            ((3_500, 14_500, 9_000), (3_500, 14_500, 9_000)),
-            dtype=torch.int32,
-            device=device,
-        ),
-        y_units=torch.tensor(
-            ((6_500, 6_500, 2_500), (25_500, 25_500, 29_500)),
-            dtype=torch.int32,
-            device=device,
-        ),
-        hitpoints=torch.tensor(
-            ((princess_hp, princess_hp, king_hp),) * 2,
-            dtype=torch.float32,
-            device=device,
-        ),
-        damage=torch.tensor(
-            ((princess_damage, princess_damage, king_damage),) * 2,
-            dtype=torch.float32,
-            device=device,
-        ),
-        range_units=torch.tensor(
-            (
-                (int(princess["range"]), int(princess["range"]), 7_000),
-            )
-            * 2,
-            dtype=torch.int32,
-            device=device,
-        ),
-        sight_range_units=torch.tensor(
-            (
-                (int(princess["sightRange"]), int(princess["sightRange"]), 7_000),
-            )
-            * 2,
-            dtype=torch.int32,
-            device=device,
-        ),
-        hit_cooldown_ticks=torch.tensor(
-            ((princess_cooldown, princess_cooldown, 20),) * 2,
-            dtype=torch.int32,
-            device=device,
-        ),
-    )
-
-
 def build_simple_runtime(
     *,
     seed: int,
@@ -117,6 +67,7 @@ def build_simple_runtime(
     max_effects: int,
     regulation_ticks: int,
     tiebreak_ticks: int,
+    supported_only: bool = False,
 ) -> SimpleGymRuntime:
     """Construct the native runtime at its serialized-data boundary."""
 
@@ -125,41 +76,102 @@ def build_simple_runtime(
     torch_device = torch.device(device)
     loader = CardDataLoader()
     card_names = unique_cards_from_decks(decks)
-    tensor_catalog = TensorCardCatalog.compile(loader, card_names, device=torch_device)
-    catalog = FastCardCatalog.from_tensor_catalog(tensor_catalog, loader=loader)
+    setup = compile_standard_simple_setup(
+        loader,
+        card_names,
+        device=torch_device,
+        canonical_lane_globals=True,
+    )
+    if supported_only:
+        decks = _supported_decks(setup, decks)
+    if (regulation_ticks, tiebreak_ticks) != (
+        STANDARD_REGULATION_TICK,
+        STANDARD_TIEBREAK_TICK,
+    ):
+        # Short timelines are retained for bounded validator tests only. All
+        # arena/catalog/phase setup still comes from the standard authority.
+        setup = replace(
+            setup,
+            rules=FastMatchRules(
+                regulation_ticks=regulation_ticks,
+                tiebreak_ticks=tiebreak_ticks,
+            ),
+        )
 
     rng = random.Random(seed)
-    ordered_decks: list[list[list[int]]] = []
+    ordered_decks: list[list[list[str]]] = []
     for _ in range(batch_size):
-        seats: list[list[int]] = []
+        seats: list[list[str]] = []
         for _seat in range(2):
             names = list(rng.choice(decks))
             rng.shuffle(names)
-            seats.append([tensor_catalog.name_to_id[name] for name in names])
+            seats.append(names)
         ordered_decks.append(seats)
-    deck_ids = torch.tensor(ordered_decks, dtype=torch.int64, device=torch_device)
 
     # These benchmark-local lookup values retain exact typed catalog identity;
     # the runtime never root-collapses a Hero/Evolution variant.
-    hand_lookup = torch.arange(
-        catalog.size, dtype=torch.int64, device=torch_device
-    ) + 1
-    entity_lookup = hand_lookup.view(1, -1).expand(5, -1).clone()
-    return SimpleGymRuntime(
-        deck_ids,
-        catalog,
-        _tower_spec(loader, torch_device),
-        FastMatchRules(
-            regulation_ticks=regulation_ticks,
-            tiebreak_ticks=tiebreak_ticks,
-        ),
+    catalog = setup.spawn_blueprints.fast_cards
+    tokens = torch.arange(catalog.size, dtype=torch.int64, device=torch_device) + 1
+    hand_lookup = torch.where(
+        setup.public_root_mask,
+        tokens,
+        torch.zeros_like(tokens),
+    )
+    # Internal child rows remain absent from the public hand vocabulary but
+    # retain their own typed entity tokens when materialized in combat.
+    entity_lookup = tokens.view(1, -1).expand(5, -1).clone()
+    return setup.create_runtime(
+        ordered_decks,
         entity_token_lookup=entity_lookup,
         hand_token_lookup=hand_lookup,
+        canonical_lane_globals=True,
         max_entities=max_entities,
         max_effects=max_effects,
-        double_elixir_tick=EXACT_DOUBLE_ELIXIR_TICKS,
-        triple_elixir_tick=EXACT_TRIPLE_ELIXIR_TICKS,
     )
+
+
+def _supported_decks(
+    setup: SimpleStandardSetup,
+    decks: list[list[str]],
+) -> list[list[str]]:
+    """Return well-formed decks whose every public root is training-safe."""
+
+    supported: list[list[str]] = []
+    for deck in decks:
+        if len(deck) != 8:
+            raise ValueError("every deck must contain exactly eight cards")
+        card_ids = [setup.cards.name_to_id.get(name) for name in deck]
+        if any(card_id is None for card_id in card_ids):
+            raise ValueError("deck contains a card outside the compiled public roots")
+        concrete_ids = [int(card_id) for card_id in card_ids if card_id is not None]
+        if all(
+            bool(setup.public_root_mask[card_id])
+            and bool(setup.supported_public_root_mask[card_id])
+            for card_id in concrete_ids
+        ):
+            supported.append(deck)
+    if not supported:
+        raise ValueError("deck pool contains no fully supported simple Gym decks")
+    return supported
+
+
+def supported_simple_decks(
+    decks: list[list[str]],
+    *,
+    device: str,
+) -> list[list[str]]:
+    """Compile truthful support once and filter a benchmark candidate pool."""
+
+    if not decks:
+        raise ValueError("deck pool must not be empty")
+    loader = CardDataLoader()
+    setup = compile_standard_simple_setup(
+        loader,
+        unique_cards_from_decks(decks),
+        device=device,
+        canonical_lane_globals=True,
+    )
+    return _supported_decks(setup, decks)
 
 
 def select_actions(mask: torch.Tensor, policy: str) -> torch.Tensor:

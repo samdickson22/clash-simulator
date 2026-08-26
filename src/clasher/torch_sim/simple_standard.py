@@ -225,6 +225,11 @@ class SimpleStandardSetup:
         if not self.canonical_lane_globals:
             raise RuntimeError("compiled setup lost canonical_lane_globals contract")
         deck_ids = _ordered_deck_ids(self, deck_names)
+        runtime_blueprints = (
+            self.spawn_blueprints
+            if self.spawn_blueprints.blueprint_count > 0
+            else None
+        )
         return SimpleGymRuntime(
             deck_ids,
             self.spawn_blueprints.fast_cards,
@@ -240,7 +245,7 @@ class SimpleStandardSetup:
             tick_seconds=LOGIC_TICK_SECONDS,
             double_elixir_tick=STANDARD_DOUBLE_ELIXIR_TICK,
             triple_elixir_tick=STANDARD_TRIPLE_ELIXIR_TICK,
-            spawn_blueprints=self.spawn_blueprints,
+            spawn_blueprints=runtime_blueprints,
         )
 
 
