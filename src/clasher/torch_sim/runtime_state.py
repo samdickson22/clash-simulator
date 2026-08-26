@@ -306,7 +306,15 @@ def _select_tensor_dataclass(value: _T, indices: torch.Tensor) -> _T:
     """Clone a mutable tensor dataclass while selecting its batch dimension."""
 
     selected: dict[str, object] = {}
-    source_batch = int(indices.max().item()) + 1 if indices.numel() else 0
+    # Every retained state dataclass exposes its batch size from tensor shape.
+    # Using that structural value avoids a device-to-host synchronization for
+    # every nested owner selected during speculative forks.
+    source_batch = next(
+        int(item.shape[0])
+        for descriptor in fields(value)  # type: ignore[arg-type]
+        if isinstance((item := getattr(value, descriptor.name)), torch.Tensor)
+        and item.ndim
+    )
     for descriptor in fields(value):  # type: ignore[arg-type]
         item = getattr(value, descriptor.name)
         if (
