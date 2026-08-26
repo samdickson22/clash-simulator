@@ -24,6 +24,11 @@ from .simple_attack_effects import (
     allocate_fast_attack_effects_,
 )
 from .simple_catalog import FastCardCatalog
+from .simple_damage_ramp import (
+    FastDamageRampParameters,
+    FastDamageRampState,
+    pre_attack_damage_ramp_,
+)
 from .simple_effects import FastEffectState, FastEffectStepResult, step_fast_effects
 from .simple_engine import FastTensorGym
 from .simple_lifecycle import (
@@ -177,6 +182,11 @@ class SimpleGymRuntime:
             max_entities=self.state.max_entities,
             device=self.state.device,
         )
+        self.damage_ramp = FastDamageRampState.empty(
+            self.state.batch_size,
+            max_entities=self.state.max_entities,
+            device=self.state.device,
+        )
         entity_shape = (self.state.batch_size, self.state.max_entities)
         self.entity_status_kind = torch.zeros(
             entity_shape, dtype=torch.int8, device=self.state.device
@@ -274,6 +284,7 @@ class SimpleGymRuntime:
             "effects": self._tensor_fields(self.effects),
             "lifecycle": self._tensor_fields(self.lifecycle),
             "modifiers": self._tensor_fields(self.modifiers),
+            "damage_ramp": self._tensor_fields(self.damage_ramp),
             "outcomes": {
                 "initial_tower_hp": self.outcomes.initial_tower_hp.clone(),
                 "previous_tower_hp": self.outcomes.previous_tower_hp.clone(),
@@ -351,6 +362,7 @@ class SimpleGymRuntime:
             "effects": self.effects,
             "lifecycle": self.lifecycle,
             "modifiers": self.modifiers,
+            "damage_ramp": self.damage_ramp,
             "outcomes": self.outcomes,
         }
         for group, owner in objects.items():
@@ -485,6 +497,13 @@ class SimpleGymRuntime:
         self.modifiers.charge_progress_distance_units.masked_fill_(mask, 0)
         self.modifiers.charge_ready.masked_fill_(mask, False)
 
+    def _clear_damage_ramp_(self, mask: torch.Tensor) -> None:
+        """Clear connection history before a physical slot is reused."""
+
+        self.damage_ramp.observed_target_stable_id.masked_fill_(mask, 0)
+        self.damage_ramp.connected_ticks.masked_fill_(mask, 0)
+        self.damage_ramp.stage.masked_fill_(mask, 0)
+
     def _charge_parameters(self) -> FastChargeParameters:
         """Gather numeric charge descriptors for the current slot identities."""
 
@@ -498,6 +517,30 @@ class SimpleGymRuntime:
             threshold_distance_units=threshold_distance,
             ready_speed_multiplier=catalog.charge_ready_speed_multiplier[safe_card],
             ready_damage_multiplier=catalog.charge_ready_damage_multiplier[safe_card],
+        )
+
+    def _damage_ramp_parameters(self) -> FastDamageRampParameters:
+        """Gather serialized ramp descriptors for current slot identities."""
+
+        catalog = self.action_kernel.catalog
+        safe_card = self.state.card_id.clamp(0, catalog.size - 1)
+        known = (self.state.card_id > 0) & (self.state.card_id < catalog.size)
+        return FastDamageRampParameters(
+            enabled=known & catalog.damage_ramp_enabled[safe_card],
+            stage_1_ticks=catalog.damage_ramp_stage_1_ticks[safe_card],
+            stage_2_ticks=catalog.damage_ramp_stage_2_ticks[safe_card],
+            stage_0_damage_multiplier=(
+                catalog.damage_ramp_stage_0_multiplier[safe_card]
+            ),
+            stage_1_damage_multiplier=(
+                catalog.damage_ramp_stage_1_multiplier[safe_card]
+            ),
+            stage_2_damage_multiplier=(
+                catalog.damage_ramp_stage_2_multiplier[safe_card]
+            ),
+            retarget_grace_ticks=(
+                catalog.damage_ramp_retarget_grace_ticks[safe_card]
+            ),
         )
 
     def _initialize_spawned_combat_(self, mask: torch.Tensor) -> None:
@@ -632,15 +675,37 @@ class SimpleGymRuntime:
         deployed = self.combat.deploy_many_once(ingress.requests)
         self._initialize_lifecycle_(self.combat.spawned_mask)
         self._initialize_modifiers_(self.combat.spawned_mask)
+        self._clear_damage_ramp_(self.combat.spawned_mask)
 
         charge_parameters = self._charge_parameters()
         charge_view = pre_move_charge_multipliers(self.modifiers, charge_parameters)
+        stunned = self.entity_status_ticks > 0
         combat = self.combat.step_tick(
-            disabled=self.entity_status_ticks > 0,
+            disabled=stunned,
             speed_multiplier=charge_view.speed,
         )
+        ramp_parameters = self._damage_ramp_parameters()
+        ramp_target = torch.where(
+            combat.target_in_attack_range,
+            self.state.target_id,
+            torch.zeros_like(self.state.target_id),
+        )
+        ramp = pre_attack_damage_ramp_(
+            self.damage_ramp,
+            ramp_parameters,
+            current_target_stable_id=ramp_target,
+            stunned=stunned,
+        )
+        self.state.cooldown_ticks.copy_(
+            torch.maximum(
+                self.state.cooldown_ticks,
+                ramp.retarget_delay_ticks,
+            )
+        )
+        attack_ready = combat.attack_ready & (ramp.retarget_delay_ticks == 0)
+        attack_damage_multiplier = charge_view.damage * ramp.damage_multiplier
         commands = self._effect_commands(
-            ingress, combat.attack_ready, charge_view.damage
+            ingress, attack_ready, attack_damage_multiplier
         )
         allocation = allocate_fast_attack_effects_(
             self.state,
@@ -652,7 +717,7 @@ class SimpleGymRuntime:
         spell_allocated = allocation.accepted[:, :2]
         attack_allocated = allocation.accepted[:, 2:]
         committed_attacks = self.combat.commit_attacks_(
-            combat.attack_ready, attack_allocated
+            attack_ready, attack_allocated
         )
         advance_fast_charge_(
             self.modifiers,
@@ -714,9 +779,11 @@ class SimpleGymRuntime:
         self.entity_status_kind.masked_fill_(lifecycle_result.resolved_parent_mask, 0)
         self.entity_status_ticks.masked_fill_(lifecycle_result.resolved_parent_mask, 0)
         self._clear_modifiers_(lifecycle_result.resolved_parent_mask)
+        self._clear_damage_ramp_(lifecycle_result.resolved_parent_mask)
         self._initialize_spawned_combat_(lifecycle_result.spawned_mask)
         self._initialize_lifecycle_(lifecycle_result.spawned_mask)
         self._initialize_modifiers_(lifecycle_result.spawned_mask)
+        self._clear_damage_ramp_(lifecycle_result.spawned_mask)
         spawn_allocation: FastSpawnAllocationResult | None = None
         if self.spawn_blueprints is not None:
             spawn_commands = impact_spawn_commands(
@@ -732,6 +799,7 @@ class SimpleGymRuntime:
             )
             self._initialize_lifecycle_(spawn_allocation.spawned_mask)
             self._initialize_modifiers_(spawn_allocation.spawned_mask)
+            self._clear_damage_ramp_(spawn_allocation.spawned_mask)
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())

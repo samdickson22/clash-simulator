@@ -260,9 +260,17 @@ def allocate_fast_attack_effects_(
         source_y,
         target_y,
     )
-    damage = catalog.effect_damage[safe_card] * commands.damage_multiplier.clamp(
-        min=0.0
-    )
+    # Charge, continuous-target ramp, and future numeric modifiers are
+    # composed by the runtime into this one plane.  Allocation still writes a
+    # single effect payload, leaving HP mutation exclusively to the effect
+    # kernel rather than adding a mechanic-specific damage path.
+    damage_multiplier = torch.nan_to_num(
+        commands.damage_multiplier,
+        nan=0.0,
+        posinf=0.0,
+        neginf=0.0,
+    ).clamp(min=0.0)
+    damage = catalog.effect_damage[safe_card] * damage_multiplier
     dx = target_x.to(torch.float32) - source_x.to(torch.float32)
     dy = target_y.to(torch.float32) - source_y.to(torch.float32)
     distance = torch.sqrt(dx.square() + dy.square())

@@ -64,6 +64,13 @@ class FastCardCatalog:
     charge_threshold_distance_units: torch.Tensor
     charge_ready_speed_multiplier: torch.Tensor
     charge_ready_damage_multiplier: torch.Tensor
+    damage_ramp_enabled: torch.Tensor
+    damage_ramp_stage_1_ticks: torch.Tensor
+    damage_ramp_stage_2_ticks: torch.Tensor
+    damage_ramp_stage_0_multiplier: torch.Tensor
+    damage_ramp_stage_1_multiplier: torch.Tensor
+    damage_ramp_stage_2_multiplier: torch.Tensor
+    damage_ramp_retarget_grace_ticks: torch.Tensor
     deploy_w_tile_margin: torch.Tensor
     can_deploy_on_enemy_side: torch.Tensor
     effect_kind: torch.Tensor
@@ -159,6 +166,25 @@ class FastCardCatalog:
         charge_ready_damage_multiplier = torch.ones_like(
             catalog.hitpoints, dtype=torch.float32
         )
+        damage_ramp_enabled = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        damage_ramp_stage_1_ticks = torch.zeros_like(
+            catalog.range_units, dtype=torch.int32
+        )
+        damage_ramp_stage_2_ticks = torch.zeros_like(
+            catalog.range_units, dtype=torch.int32
+        )
+        damage_ramp_stage_0 = torch.zeros_like(
+            catalog.hitpoints, dtype=torch.float32
+        )
+        damage_ramp_stage_1 = torch.zeros_like(
+            catalog.hitpoints, dtype=torch.float32
+        )
+        damage_ramp_stage_2 = torch.zeros_like(
+            catalog.hitpoints, dtype=torch.float32
+        )
+        damage_ramp_retarget_grace_ticks = torch.zeros_like(
+            catalog.range_units, dtype=torch.int32
+        )
         shield_opcode = int(MECHANIC_OPCODE["Shield"])
         shield_slots = catalog.mechanic_opcode == shield_opcode
         if "shield_hp" in catalog.mechanic_parameter_names:
@@ -245,6 +271,10 @@ class FastCardCatalog:
         declares_death_spawn = (catalog.mechanic_opcode == death_spawn_opcode).any(
             dim=1
         )
+        damage_ramp_opcode = int(MECHANIC_OPCODE["DamageRamp"])
+        declares_damage_ramp = (
+            catalog.mechanic_opcode == damage_ramp_opcode
+        ).any(dim=1)
 
         # ProjectileLaunch is itself a serialized primitive, so spell cards
         # can remain useful even when the optional source-data loader is not
@@ -292,6 +322,7 @@ class FastCardCatalog:
         if loader is not None:
             # This is setup-time serialization only. Runtime kernels consume
             # the resulting tensors and never branch on card identities.
+            definitions = loader.load_card_definitions()
             for card_id, name in enumerate(catalog.names[1:], start=1):
                 card = loader.get_card(name)
                 if card is None:
@@ -337,6 +368,54 @@ class FastCardCatalog:
                 character = (
                     raw.get("summonCharacterData") or raw.get("summonSpellData") or {}
                 )
+                if bool(declares_damage_ramp[card_id]):
+                    definition = definitions.get(name)
+                    ramps = (
+                        [
+                            mechanic
+                            for mechanic in definition.mechanics
+                            if type(mechanic).__name__ == "DamageRamp"
+                        ]
+                        if definition is not None
+                        else []
+                    )
+                    ramp_stages = (
+                        tuple(getattr(ramps[0], "stages", ()))
+                        if len(ramps) == 1
+                        else ()
+                    )
+                    if len(ramp_stages) == 3:
+                        stages = ramp_stages
+                        times = tuple(int(stage[0]) for stage in stages)
+                        scaler = getattr(card, "get_scaled_stat", None)
+                        scaled = tuple(
+                            float(scaler(stage[1]))
+                            if callable(scaler)
+                            else float(stage[1])
+                            for stage in stages
+                        )
+                        valid_ramp = (
+                            times[0] == 0
+                            and 0 < times[1] <= times[2]
+                            and all(value > 0.0 for value in scaled)
+                        )
+                        if valid_ramp:
+                            damage_ramp_enabled[card_id] = True
+                            damage_ramp_stage_1_ticks[card_id] = (
+                                times[1] + 49
+                            ) // 50
+                            damage_ramp_stage_2_ticks[card_id] = (
+                                times[2] + 49
+                            ) // 50
+                            damage_ramp_stage_0[card_id] = scaled[0]
+                            damage_ramp_stage_1[card_id] = scaled[1]
+                            damage_ramp_stage_2[card_id] = scaled[2]
+                            retarget_ms = max(
+                                0, int(getattr(card, "retarget_time", 0) or 0)
+                            )
+                            damage_ramp_retarget_grace_ticks[card_id] = (
+                                retarget_ms + 49
+                            ) // 50
                 child_name = getattr(card, "death_spawn_character", None)
                 if child_name:
                     declares_death_spawn[card_id] = True
@@ -734,6 +813,31 @@ class FastCardCatalog:
         effect_hits_ground = torch.where(
             preserve_payload_planes, effect_hits_ground, attacks_ground
         )
+        # A ramp's first stage is the one ordinary effect payload. Later
+        # stages remain multipliers composed immediately before allocation.
+        # This preserves one damage path even if a future loader exposes a
+        # presentation projectile with a different scalar damage field.
+        effect_damage = torch.where(
+            damage_ramp_enabled,
+            damage_ramp_stage_0,
+            effect_damage,
+        )
+        safe_ramp_base = damage_ramp_stage_0.clamp(min=torch.finfo(torch.float32).tiny)
+        damage_ramp_stage_0_multiplier = torch.where(
+            damage_ramp_enabled,
+            damage_ramp_stage_0 / safe_ramp_base,
+            torch.ones_like(damage_ramp_stage_0),
+        )
+        damage_ramp_stage_1_multiplier = torch.where(
+            damage_ramp_enabled,
+            damage_ramp_stage_1 / safe_ramp_base,
+            torch.ones_like(damage_ramp_stage_1),
+        )
+        damage_ramp_stage_2_multiplier = torch.where(
+            damage_ramp_enabled,
+            damage_ramp_stage_2 / safe_ramp_base,
+            torch.ones_like(damage_ramp_stage_2),
+        )
         effectful = (effect_kind >= 0) & (effect_damage > 0)
         resolved_death_spawn = (
             (death_spawn_card_id > 0) & (death_spawn_count > 0) & (death_spawn_hp > 0)
@@ -750,6 +854,7 @@ class FastCardCatalog:
         training_supported &= multi_target_count <= FAST_MAX_MULTI_TARGETS
         training_supported &= chain_target_count <= FAST_MAX_CHAIN_TARGETS
         training_supported &= ~declares_fan | valid_fan
+        training_supported &= ~declares_damage_ramp | damage_ramp_enabled
         training_supported[0] = False
 
         return cls(
@@ -782,6 +887,15 @@ class FastCardCatalog:
             charge_threshold_distance_units=charge_threshold_distance_units,
             charge_ready_speed_multiplier=charge_ready_speed_multiplier,
             charge_ready_damage_multiplier=charge_ready_damage_multiplier,
+            damage_ramp_enabled=damage_ramp_enabled,
+            damage_ramp_stage_1_ticks=damage_ramp_stage_1_ticks,
+            damage_ramp_stage_2_ticks=damage_ramp_stage_2_ticks,
+            damage_ramp_stage_0_multiplier=damage_ramp_stage_0_multiplier,
+            damage_ramp_stage_1_multiplier=damage_ramp_stage_1_multiplier,
+            damage_ramp_stage_2_multiplier=damage_ramp_stage_2_multiplier,
+            damage_ramp_retarget_grace_ticks=(
+                damage_ramp_retarget_grace_ticks
+            ),
             deploy_w_tile_margin=catalog.deploy_w_tile_margin.to(torch.int8),
             can_deploy_on_enemy_side=catalog.can_deploy_on_enemy_side.to(torch.bool),
             effect_kind=effect_kind,

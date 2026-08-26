@@ -39,6 +39,7 @@ class FastGymTickResult:
     done: torch.Tensor
     winner: torch.Tensor
     attack_ready: torch.Tensor
+    target_in_attack_range: torch.Tensor
     moved_distance_units: torch.Tensor
 
 
@@ -324,7 +325,7 @@ class FastTensorGym:
         self,
         disabled: torch.Tensor,
         speed_multiplier: torch.Tensor,
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Acquire and approach, returning attacks ready for effect allocation.
 
         Disabled entities remain present as targets but cannot acquire a
@@ -404,14 +405,14 @@ class FastTensorGym:
         post_edge_distance = (
             torch.sqrt(post_dx.square() + post_dy.square()) - target_radius
         ).clamp_min(0.0)
-        attack_ready = (
+        target_in_attack_range = (
             found
             & can_act
-            & (state.cooldown_ticks == 0)
             & (post_edge_distance <= attack_range)
             & (state.damage > 0)
         )
-        return attack_ready, moved_distance
+        attack_ready = target_in_attack_range & (state.cooldown_ticks == 0)
+        return attack_ready, target_in_attack_range, moved_distance
 
     def commit_attacks_(
         self, attack_ready: torch.Tensor, effect_allocated: torch.Tensor
@@ -492,9 +493,11 @@ class FastTensorGym:
         state.deploy_ticks.sub_(ready.to(torch.int32)).clamp_(min=0)
         cooling = state.active & ~disabled & (state.cooldown_ticks > 0)
         state.cooldown_ticks.sub_(cooling.to(torch.int32)).clamp_(min=0)
-        attack_ready, moved_distance = self._ordinary_troop_phase(
-            disabled, speed_multiplier
-        )
+        (
+            attack_ready,
+            target_in_attack_range,
+            moved_distance,
+        ) = self._ordinary_troop_phase(disabled, speed_multiplier)
         state.tick.add_(live.to(torch.int64))
         return FastGymTickResult(
             committed=live,
@@ -503,5 +506,6 @@ class FastTensorGym:
             done=state.game_over.clone(),
             winner=state.winner.clone(),
             attack_ready=attack_ready,
+            target_in_attack_range=target_in_attack_range,
             moved_distance_units=moved_distance,
         )
