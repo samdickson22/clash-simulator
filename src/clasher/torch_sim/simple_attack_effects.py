@@ -21,7 +21,6 @@ from .simple_catalog import (
     FastCardCatalog,
 )
 from .simple_effects import FAST_EFFECT_AREA, FAST_EFFECT_PROJECTILE, FastEffectState
-from .simple_outcomes import FAST_TOWER_SLOT_COUNT
 from .simple_state import FastGymState
 
 
@@ -114,14 +113,13 @@ def allocate_fast_attack_effects_(
     """Allocate every supported ready command into deterministic low slots.
 
     Allocation is simultaneous and stable in command order. Existing effects
-    are never overwritten. Tower scaling is selected from the primary target's
-    reserved slot; all other targets receive the ordinary serialized damage.
+    are never overwritten. Tower scaling remains an effect field so the impact
+    kernel can apply it independently to every Crown Tower in splash range.
     The hot path contains no host synchronization or dynamic compaction.
     """
 
     _validate(state, effects, consume_source_id, catalog, commands)
-    batch, command_count = commands.ready.shape
-    max_entities = state.max_entities
+    batch = commands.ready.shape[0]
     max_effects = effects.max_effects
 
     known_card = (commands.card_id > 0) & (commands.card_id < catalog.size)
@@ -182,7 +180,7 @@ def allocate_fast_attack_effects_(
         state.y_units.gather(1, target_slot),
         commands.target_y_units.to(torch.int32),
     )
-    requires_entity_target = direct | projectile
+    requires_entity_target = direct | (projectile & entity_command)
     valid_target = ~requires_entity_target | target_found
 
     candidate = (
@@ -221,13 +219,7 @@ def allocate_fast_attack_effects_(
     effect_kind = torch.where(projectile, FAST_EFFECT_PROJECTILE, FAST_EFFECT_AREA)
     effect_x = torch.where(projectile, source_x, target_x)
     effect_y = torch.where(projectile, source_y, target_y)
-    is_tower = target_found & (target_slot < FAST_TOWER_SLOT_COUNT)
     damage = catalog.effect_damage[safe_card]
-    damage = torch.where(
-        is_tower,
-        damage * catalog.tower_damage_multiplier[safe_card],
-        damage,
-    )
     dx = target_x.to(torch.float32) - source_x.to(torch.float32)
     dy = target_y.to(torch.float32) - source_y.to(torch.float32)
     distance = torch.sqrt(dx.square() + dy.square())
@@ -248,7 +240,14 @@ def allocate_fast_attack_effects_(
     write(effects.source_card_id, commands.card_id)
     write(effects.x_units, effect_x)
     write(effects.y_units, effect_y)
-    write(effects.target_id, torch.where(projectile, commands.target_id, 0))
+    tracked_projectile = projectile & entity_command
+    write(
+        effects.target_id,
+        torch.where(tracked_projectile, commands.target_id, 0),
+    )
+    write(effects.target_x_units, target_x)
+    write(effects.target_y_units, target_y)
+    write(effects.tracks_target, tracked_projectile)
     write(
         effects.speed_units_per_tick,
         torch.where(
@@ -258,6 +257,10 @@ def allocate_fast_attack_effects_(
         ),
     )
     write(effects.damage, damage)
+    write(
+        effects.tower_damage_multiplier,
+        catalog.tower_damage_multiplier[safe_card],
+    )
     write(effects.radius_units, catalog.effect_radius_units[safe_card])
     write(effects.status_kind, catalog.status_kind[safe_card])
     write(effects.status_duration_ticks, catalog.status_duration_ticks[safe_card])

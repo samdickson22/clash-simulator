@@ -35,6 +35,7 @@ class FastGymTickResult:
     native_ticks: torch.Tensor
     done: torch.Tensor
     winner: torch.Tensor
+    attack_ready: torch.Tensor
 
 
 class FastTensorGym:
@@ -164,11 +165,13 @@ class FastTensorGym:
             )
         return torch.stack(tuple(self._deploy(request) for request in requests), dim=1)
 
-    def _ordinary_troop_phase(self, disabled: torch.Tensor) -> None:
-        """Acquire, approach, and directly hit the nearest visible enemy.
+    def _ordinary_troop_phase(self, disabled: torch.Tensor) -> torch.Tensor:
+        """Acquire and approach, returning attacks ready for effect allocation.
 
         Disabled entities remain present as targets but cannot acquire a
-        target, move, or attack during this phase.
+        target, move, or attack during this phase. HP and cooldown are not
+        mutated here: the unified runtime commits both exactly once after an
+        effect slot has been allocated.
         """
 
         state = self.state
@@ -231,26 +234,39 @@ class FastTensorGym:
         post_dx = target_x - state.x_units.to(torch.float32)
         post_dy = target_y - state.y_units.to(torch.float32)
         post_distance_sq = post_dx.square() + post_dy.square()
-        attack = (
+        return (
             found
             & can_act
             & (state.cooldown_ticks == 0)
             & (post_distance_sq <= attack_range.square())
             & (state.damage > 0)
         )
-        hp_delta = torch.zeros_like(state.hp).scatter_add(
-            1,
-            nearest_slot,
-            torch.where(attack, -state.damage, 0.0),
+
+    def commit_attacks_(
+        self, attack_ready: torch.Tensor, effect_allocated: torch.Tensor
+    ) -> torch.Tensor:
+        """Start cooldown once for attacks that obtained an effect slot."""
+
+        expected = self.state.active.shape
+        for name, value in (
+            ("attack_ready", attack_ready),
+            ("effect_allocated", effect_allocated),
+        ):
+            if value.shape != expected:
+                raise ValueError(f"{name} must have shape [batch, entities]")
+            if value.device != self.state.device:
+                raise ValueError(f"{name} must use the state device")
+            if value.dtype != torch.bool:
+                raise ValueError(f"{name} must be bool")
+        committed = attack_ready & effect_allocated & self.state.active
+        self.state.cooldown_ticks.copy_(
+            torch.where(
+                committed,
+                self.state.hit_cooldown_ticks,
+                self.state.cooldown_ticks,
+            )
         )
-        state.hp.add_(hp_delta).clamp_(min=0.0)
-        state.cooldown_ticks.copy_(
-            torch.where(attack, state.hit_cooldown_ticks, state.cooldown_ticks)
-        )
-        died = state.active & (state.hp <= 0)
-        state.active.logical_and_(~died)
-        state.stable_id.masked_fill_(died, 0)
-        state.target_id.masked_fill_(died, 0)
+        return committed
 
     def step_tick(
         self,
@@ -296,7 +312,7 @@ class FastTensorGym:
         state.deploy_ticks.sub_(ready.to(torch.int32)).clamp_(min=0)
         cooling = state.active & ~disabled & (state.cooldown_ticks > 0)
         state.cooldown_ticks.sub_(cooling.to(torch.int32)).clamp_(min=0)
-        self._ordinary_troop_phase(disabled)
+        attack_ready = self._ordinary_troop_phase(disabled)
         state.tick.add_(live.to(torch.int64))
         return FastGymTickResult(
             committed=live,
@@ -304,4 +320,5 @@ class FastTensorGym:
             native_ticks=live.to(torch.int64),
             done=state.game_over.clone(),
             winner=state.winner.clone(),
+            attack_ready=attack_ready,
         )

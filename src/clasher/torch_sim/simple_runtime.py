@@ -13,8 +13,15 @@ from dataclasses import dataclass
 
 import torch
 
+from clasher.rl.common import NUM_HAND_SLOTS, NUM_TILES
+
 from .actions import NO_OP_ACTION
-from .simple_actions import FastActionKernel, FastActionState
+from .simple_actions import FastActionIngressResult, FastActionKernel, FastActionState
+from .simple_attack_effects import (
+    FastEffectAllocationResult,
+    FastEffectCommands,
+    allocate_fast_attack_effects_,
+)
 from .simple_catalog import FastCardCatalog
 from .simple_effects import FastEffectState, FastEffectStepResult, step_fast_effects
 from .simple_engine import FastTensorGym
@@ -45,6 +52,7 @@ class SimpleGymRuntimeStep:
     winner: torch.Tensor
     native_ticks: torch.Tensor
     committed: torch.Tensor
+    effect_allocation: FastEffectAllocationResult
     effects: FastEffectStepResult
 
 
@@ -133,6 +141,12 @@ class SimpleGymRuntime:
         )
         self._ability_duration = torch.zeros_like(self._ability_cooldown)
         self._refill_cooldown_ms = torch.zeros_like(self._ability_cooldown)
+        self._effect_owners = torch.arange(
+            2, dtype=torch.int8, device=device
+        ).view(1, 2).expand(batch, -1)
+        self._spell_source_slots = torch.tensor(
+            (2, 5), dtype=torch.int64, device=device
+        )
         projection_inputs = SimpleProjectionInputs(
             entity_token_lookup=entity_token_lookup,
             hand_token_lookup=hand_token_lookup,
@@ -216,8 +230,74 @@ class SimpleGymRuntime:
     def _legal_action_mask(self) -> torch.Tensor:
         mask = self.action_kernel.legal_action_mask(self.action_state)
         has_deploy_slot = (~self.state.active[:, FAST_TOWER_SLOT_COUNT:]).any(dim=1)
-        mask[:, :, :NO_OP_ACTION] &= has_deploy_slot[:, None, None]
+        has_effect_slot = (~self.effects.active).any(dim=1)
+        hand = self.action_state.hand_ids
+        safe_card = hand.clamp(0, self.action_kernel.catalog.size - 1)
+        spell = (self.action_kernel.catalog.kind[safe_card] < 0) & (
+            self.action_kernel.catalog.effect_kind[safe_card] >= 0
+        )
+        capacity = torch.where(
+            spell,
+            has_effect_slot[:, None, None],
+            has_deploy_slot[:, None, None],
+        )
+        placement_capacity = capacity[..., None].expand(
+            -1, -1, NUM_HAND_SLOTS, NUM_TILES
+        ).reshape(self.batch_size, 2, NO_OP_ACTION)
+        mask[:, :, :NO_OP_ACTION] &= placement_capacity
         return mask
+
+    def _effect_commands(
+        self,
+        ingress: FastActionIngressResult,
+        attack_ready: torch.Tensor,
+    ) -> FastEffectCommands:
+        """Put policy spell casts before entity-slot-ordered attacks."""
+
+        spell_source_x = self.state.x_units.index_select(
+            1, self._spell_source_slots
+        )
+        spell_source_y = self.state.y_units.index_select(
+            1, self._spell_source_slots
+        )
+        zeros_i64 = torch.zeros_like(ingress.selected_card_ids)
+        spell = FastEffectCommands(
+            ready=ingress.spell_cast,
+            source_id=zeros_i64,
+            owner=self._effect_owners,
+            card_id=ingress.selected_card_ids,
+            source_x_units=spell_source_x,
+            source_y_units=spell_source_y,
+            target_id=zeros_i64,
+            target_x_units=ingress.selection.world_x_units.to(torch.int32),
+            target_y_units=ingress.selection.world_y_units.to(torch.int32),
+        )
+        zeros_entity = torch.zeros_like(self.state.x_units)
+        attack = FastEffectCommands(
+            ready=attack_ready,
+            source_id=self.state.stable_id,
+            owner=self.state.owner,
+            card_id=self.state.card_id,
+            source_x_units=self.state.x_units,
+            source_y_units=self.state.y_units,
+            target_id=self.state.target_id,
+            target_x_units=zeros_entity,
+            target_y_units=zeros_entity,
+        )
+        def combined(name: str) -> torch.Tensor:
+            return torch.cat((getattr(spell, name), getattr(attack, name)), dim=1)
+
+        return FastEffectCommands(
+            ready=combined("ready"),
+            source_id=combined("source_id"),
+            owner=combined("owner"),
+            card_id=combined("card_id"),
+            source_x_units=combined("source_x_units"),
+            source_y_units=combined("source_y_units"),
+            target_id=combined("target_id"),
+            target_x_units=combined("target_x_units"),
+            target_y_units=combined("target_y_units"),
+        )
 
     def step_tick(self, action_ids: torch.Tensor) -> SimpleGymRuntimeStep:
         """Apply both requests, advance one native tick, and project its result."""
@@ -239,7 +319,23 @@ class SimpleGymRuntime:
         )
         deployed = self.combat.deploy_many_once(ingress.requests)
 
-        failed_deployment = ingress.deployment_accepted & ~deployed
+        combat = self.combat.step_tick(disabled=self.entity_status_ticks > 0)
+        commands = self._effect_commands(ingress, combat.attack_ready)
+        allocation = allocate_fast_attack_effects_(
+            self.state,
+            self.effects,
+            self.effect_consume_source_id,
+            self.action_kernel.catalog,
+            commands,
+        )
+        spell_allocated = allocation.accepted[:, :2]
+        attack_allocated = allocation.accepted[:, 2:]
+        self.combat.commit_attacks_(combat.attack_ready, attack_allocated)
+
+        failed_deployment = (
+            (ingress.entity_deployment & ~deployed)
+            | (ingress.spell_cast & ~spell_allocated)
+        )
         self.action_state.hand_ids.copy_(
             torch.where(
                 failed_deployment[..., None], pre_hand, self.action_state.hand_ids
@@ -257,7 +353,6 @@ class SimpleGymRuntime:
             torch.where(failed_deployment, pre_elixir, self.action_state.elixir)
         )
 
-        combat = self.combat.step_tick(disabled=self.entity_status_ticks > 0)
         multiplier = self._phase_multiplier()[:, None]
         self.action_kernel.regenerate_elixir_(
             self.action_state,
@@ -277,9 +372,13 @@ class SimpleGymRuntime:
         observation = self.projector.project(self._legal_action_mask())
         action_success = (
             torch.where(
-                ingress.deployment_accepted,
+                ingress.entity_deployment,
                 deployed,
-                ingress.accepted,
+                torch.where(
+                    ingress.spell_cast,
+                    spell_allocated,
+                    ingress.accepted,
+                ),
             )
             & combat.committed[:, None]
         )
@@ -291,6 +390,7 @@ class SimpleGymRuntime:
             winner=outcome.winner,
             native_ticks=combat.native_ticks,
             committed=combat.committed,
+            effect_allocation=allocation,
             effects=effect_result,
         )
 

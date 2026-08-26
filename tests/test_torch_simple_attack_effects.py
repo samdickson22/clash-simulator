@@ -144,8 +144,13 @@ def test_ready_attacks_and_spell_commands_allocate_effects(device: str) -> None:
     ]
     assert effects.speed_units_per_tick[:, 0].tolist() == [600, 600, 0, 400, 0]
     assert effects.radius_units[:, 0].tolist() == [0, 2500, 3500, 1500, 0]
-    assert effects.damage[1, 0].item() == pytest.approx(269.0 * 0.25)
+    assert effects.damage[1, 0].item() == pytest.approx(269.0)
+    assert effects.tower_damage_multiplier[1, 0].item() == pytest.approx(0.25)
     assert effects.damage[2, 0].item() == pytest.approx(144.0)
+    assert effects.tower_damage_multiplier[2, 0].item() == pytest.approx(0.20)
+    assert effects.tracks_target[:, 0].tolist() == [True, False, False, True, False]
+    assert effects.target_x_units[1:3, 0].tolist() == [1000, 9000]
+    assert effects.target_y_units[1:3, 0].tolist() == [1500, 16000]
     assert int(effects.status_kind[3, 0]) == FAST_STATUS_STUN
     assert int(effects.status_duration_ticks[3, 0]) == 24
     assert consumed[:, 0].tolist() == [0, 0, 0, 7, 0]

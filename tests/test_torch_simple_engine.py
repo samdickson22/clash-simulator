@@ -60,7 +60,9 @@ def test_simple_noop_clock_and_deterministic_low_slot_deployment(
 
 
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
-def test_simple_knights_acquire_move_hit_and_clean_up(device: str) -> None:
+def test_simple_knights_acquire_move_and_emit_one_committable_attack(
+    device: str,
+) -> None:
     if device == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
     battle = BattleState()
@@ -94,17 +96,25 @@ def test_simple_knights_acquire_move_hit_and_clean_up(device: str) -> None:
     assert 0 < after_gap < before_gap
 
     for _ in range(80):
-        gym.step_tick()
-    assert bool((state.hp[0, :2] < state.max_hp[0, :2]).all())
-    assert bool((state.cooldown_ticks[0, :2] >= 0).all())
+        result = gym.step_tick()
+        if bool(result.attack_ready.all()):
+            break
+    assert result.attack_ready[0, :2].tolist() == [True, True]
+    assert not result.attack_ready[0, 2:].any()
+    assert state.hp[0, :2].tolist() == state.max_hp[0, :2].tolist()
+    assert state.cooldown_ticks[0, :2].tolist() == [0, 0]
 
-    state.hp[0, 1] = state.damage[0, 0]
-    state.cooldown_ticks[0, 0] = 0
-    state.x_units[0, 1] = state.x_units[0, 0]
-    state.y_units[0, 1] = state.y_units[0, 0]
-    gym.step_tick()
-    assert not bool(state.active[0, 1])
-    assert int(state.stable_id[0, 1]) == 0
+    committed = gym.commit_attacks_(result.attack_ready, result.attack_ready)
+    assert committed[0, :2].tolist() == [True, True]
+    assert not committed[0, 2:].any()
+    assert state.cooldown_ticks[0, :2].tolist() == (
+        state.hit_cooldown_ticks[0, :2].tolist()
+    )
+    following = gym.step_tick()
+    assert not bool(following.attack_ready.any())
+    assert state.cooldown_ticks[0, :2].tolist() == (
+        state.hit_cooldown_ticks[0, :2].sub(1).tolist()
+    )
 
 
 def test_simple_combat_hot_path_has_no_host_sync_or_dynamic_compaction() -> None:

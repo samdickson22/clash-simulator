@@ -137,6 +137,9 @@ class FastActionIngressResult:
 
     accepted: torch.Tensor
     deployment_accepted: torch.Tensor
+    entity_deployment: torch.Tensor
+    spell_cast: torch.Tensor
+    selected_card_ids: torch.Tensor
     selection: FastActionSelection
     requests: tuple[FastDeploymentRequest, FastDeploymentRequest]
 
@@ -273,7 +276,9 @@ class FastActionKernel:
         card_ids = state.hand_ids
         known = (card_ids > 0) & (card_ids < self.catalog.size)
         safe_card = card_ids.clamp(0, self.catalog.size - 1)
-        supported = known & (self.catalog.kind[safe_card] >= 0)
+        entity_card = self.catalog.kind[safe_card] >= 0
+        spell_card = ~entity_card & (self.catalog.effect_kind[safe_card] >= 0)
+        supported = known & (entity_card | spell_card)
         affordable = state.elixir[..., None] >= self.catalog.elixir_cost[safe_card]
         playable = supported & affordable & state.player_alive[..., None]
 
@@ -281,14 +286,22 @@ class FastActionKernel:
         non_blocked = self.non_blocked.view(1, 2, 1, NUM_TILES)
         tower_free = ~self._tower_blocked(state).unsqueeze(2)
         enemy_side = self.catalog.can_deploy_on_enemy_side[safe_card][..., None]
-        candidates = non_blocked & tower_free & torch.where(
+        entity_candidates = non_blocked & tower_free & torch.where(
             enemy_side, torch.ones_like(zone), zone
         )
         margin = self.catalog.deploy_w_tile_margin[safe_card].to(torch.int64)[
             ..., None
         ]
         x = self.world_x.view(1, 2, 1, NUM_TILES)
-        candidates &= (x >= margin) & (x < BOARD_WIDTH - margin)
+        entity_candidates &= (x >= margin) & (x < BOARD_WIDTH - margin)
+        # Spells target absolute arena coordinates rather than occupying a
+        # deployment tile, so river/tower/entity placement blockers do not
+        # apply. Unsupported spell shapes already fail closed above.
+        candidates = torch.where(
+            spell_card[..., None],
+            torch.ones_like(entity_candidates),
+            entity_candidates,
+        )
 
         mask = torch.zeros(
             (state.batch_size, 2, NUM_ACTIONS),
@@ -327,6 +340,9 @@ class FastActionKernel:
 
         safe_slot = selection.slot.clamp(0, NUM_HAND_SLOTS - 1)
         card_ids = state.hand_ids.gather(2, safe_slot.unsqueeze(-1)).squeeze(-1)
+        selected_card = card_ids.clamp(0, self.catalog.size - 1)
+        entity_deployment = deployment & (self.catalog.kind[selected_card] >= 0)
+        spell_cast = deployment & ~entity_deployment
         next_ids = state.own_next
         replacement = torch.where(deployment, next_ids, card_ids)
         state.hand_ids.scatter_(2, safe_slot.unsqueeze(-1), replacement.unsqueeze(-1))
@@ -345,10 +361,10 @@ class FastActionKernel:
 
         requests: list[FastDeploymentRequest] = []
         for player_id in (0, 1):
-            selected_card = card_ids[:, player_id].clamp(0, self.catalog.size - 1)
+            player_card = selected_card[:, player_id]
             requests.append(
                 FastDeploymentRequest(
-                    valid=deployment[:, player_id],
+                    valid=entity_deployment[:, player_id],
                     owner=torch.full(
                         (state.batch_size,),
                         player_id,
@@ -356,16 +372,19 @@ class FastActionKernel:
                         device=self.device,
                     ),
                     card_id=card_ids[:, player_id],
-                    kind=self.catalog.kind[selected_card],
+                    kind=self.catalog.kind[player_card],
                     x_units=selection.world_x_units[:, player_id].to(torch.int32),
                     y_units=selection.world_y_units[:, player_id].to(torch.int32),
-                    hp=self.catalog.hitpoints[selected_card],
-                    deploy_ticks=self.catalog.deploy_ticks[selected_card],
+                    hp=self.catalog.hitpoints[player_card],
+                    deploy_ticks=self.catalog.deploy_ticks[player_card],
                 )
             )
         return FastActionIngressResult(
             accepted=accepted,
             deployment_accepted=deployment,
+            entity_deployment=entity_deployment,
+            spell_cast=spell_cast,
+            selected_card_ids=card_ids,
             selection=selection,
             requests=(requests[0], requests[1]),
         )
