@@ -49,6 +49,7 @@ class TensorDeploymentCatalog:
     symmetric_snap: torch.Tensor
     building_footprint_half_units: torch.Tensor
     supported_payload: torch.Tensor
+    hitpoints_integer_kind: torch.Tensor
     spawned_card_names: tuple[tuple[str, ...], ...]
     spawned_kind: torch.Tensor
     spawned_hitpoints: torch.Tensor
@@ -96,6 +97,7 @@ class TensorDeploymentCatalog:
         symmetric_snap = torch.zeros(size, dtype=torch.bool, device=cards.device)
         footprint_half = torch.zeros(size, dtype=torch.int32, device=cards.device)
         supported_payload = torch.zeros(size, dtype=torch.bool, device=cards.device)
+        hp_integer = torch.zeros(size, dtype=torch.bool, device=cards.device)
         spawned_names = [[""] * maximum for _ in range(size)]
         spawned_kind = torch.zeros(
             (size, maximum), dtype=torch.int8, device=cards.device
@@ -125,6 +127,7 @@ class TensorDeploymentCatalog:
                 hp_value = stats.hitpoints
             if hp_value is None:
                 hp_value = 100
+            hp_integer[card_id] = type(hp_value) is int
             summon_count[card_id] = count
             supported_payload[card_id] = is_troop or is_building
 
@@ -256,6 +259,7 @@ class TensorDeploymentCatalog:
             symmetric_snap=symmetric_snap,
             building_footprint_half_units=footprint_half,
             supported_payload=supported_payload,
+            hitpoints_integer_kind=hp_integer,
             spawned_card_names=tuple(tuple(row) for row in spawned_names),
             spawned_kind=spawned_kind,
             spawned_hitpoints=spawned_hp,

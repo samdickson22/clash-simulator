@@ -138,9 +138,14 @@ def _identity_support(
         raise ValueError("movement adapter and runtime devices differ")
     runtime_slots = runtime.combat.present
     adapter_slots = adapter.slot_present
+    # The movement adapter may deliberately omit a live entity whose movement
+    # component is owned by a jump, dash, or other special transition. That
+    # entity remains present in combat so ordinary movers can still target it.
+    # Every adapter slot must therefore be a matching live runtime slot, while
+    # extra runtime-only targets are valid.
     return torch.all(
-        (runtime_slots == adapter_slots)
-        & (~runtime_slots | (runtime.combat.entity_id == adapter.entity_id)),
+        (~adapter_slots | runtime_slots)
+        & (~adapter_slots | (runtime.combat.entity_id == adapter.entity_id)),
         dim=1,
     )
 

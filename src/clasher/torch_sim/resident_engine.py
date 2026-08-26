@@ -1284,6 +1284,32 @@ class TensorResidentEngine:
         spawn_area_deployment_supported &= (core_by_catalog >= 0) & (
             spawn_areas.catalog.supported[safe_core_by_catalog]
         )
+        chain_card_by_catalog = torch.tensor(
+            [
+                chain_impacts.catalog.name_to_id.get(name, 0) if name else 0
+                for name in cards.names
+            ],
+            dtype=torch.int64,
+            device=runtime.device,
+        )
+        _, electro_spirit_card = chain_impacts.catalog.mechanic_slot(
+            chain_card_by_catalog,
+            CombatMechanicOpcode.ELECTRO_SPIRIT_CHAIN,
+        )
+        # IceSpiritCatalog is indexed by the shared TensorCardCatalog, unlike
+        # core-indexed retained owners. Do not accidentally address it with a
+        # runtime card-table ID after deployment adds typed child names.
+        ice_spirit_card = (core_by_catalog >= 0) & ice_spirit.catalog.supported
+        impact_spirit_opcode = (
+            (deployment_mechanics == 0)
+            | (deployment_mechanics == MECHANIC_OPCODE["ElectroSpiritChain"])
+            | (deployment_mechanics == MECHANIC_OPCODE["IceSpiritFreeze"])
+        ).all(dim=1)
+        impact_spirit_card_supported = (
+            (core_by_catalog >= 0)
+            & impact_spirit_opcode
+            & (electro_spirit_card | ice_spirit_card)
+        )
         mechanic_capabilities = TensorMechanicDeploymentCatalog.compile(
             cards,
             {
@@ -1303,6 +1329,10 @@ class TensorResidentEngine:
                 ),
                 "stealth": tuple(RESIDENT_STEALTH_MECHANIC_OPCODES),
                 "damage_ramp": tuple(RESIDENT_DIRECT_COMBAT_MECHANIC_OPCODES),
+                "impact_spirit": (
+                    MECHANIC_OPCODE["ElectroSpiritChain"],
+                    MECHANIC_OPCODE["IceSpiritFreeze"],
+                ),
             },
             owner_card_supported={
                 "terminal": terminal_card_supported,
@@ -1318,6 +1348,7 @@ class TensorResidentEngine:
                     (core_by_catalog >= 0)
                     & damage_ramp_catalog.direct_supported[safe_core_by_catalog]
                 ),
+                "impact_spirit": impact_spirit_card_supported,
             },
             loader=catalog_loader,
         )
@@ -3016,6 +3047,18 @@ class TensorResidentEngine:
         chain_supported = self._chain_entity_supported()
         ice_entity = (entity_mechanics == MECHANIC_OPCODE["IceSpiritFreeze"]).any(dim=2)
         ice_supported = self._ice_spirit_entity_supported()
+        electro_spirit_entity = (
+            entity_mechanics == MECHANIC_OPCODE["ElectroSpiritChain"]
+        ).any(dim=2)
+        electro_spirit_supported = self._electro_spirit_entity_supported()
+        impact_spirit_entity = active_character & (
+            (ice_entity & ice_supported)
+            | (electro_spirit_entity & electro_spirit_supported)
+        )
+        impact_spirit_row = impact_spirit_entity.any(dim=1)
+        impact_unsafe_character = active_character & (
+            entity_mechanics == shield_opcode
+        ).any(dim=2)
         shield_entity = (entity_mechanics == shield_opcode).any(dim=2)
         shield_supported = shield_card_supported
         damage_ramp_entity = (entity_mechanics == damage_ramp_opcode).any(dim=2)
@@ -3064,6 +3107,10 @@ class TensorResidentEngine:
         )
         publish(
             (ice_entity & active_character & ~ice_supported).any(dim=1),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            impact_spirit_row & impact_unsafe_character.any(dim=1),
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
         )
         publish(
@@ -3333,6 +3380,10 @@ class TensorResidentEngine:
             command_cards
         ]
         spell_preflight = self.spell_ingress.preflight(ingress)
+        impact_owner = self.mechanic_deployment.catalog.owner_index("impact_spirit")
+        command_impact_spirit = self.mechanic_deployment.catalog.card_owner[
+            impact_owner, command_cards
+        ]
         command_stealth = torch.zeros_like(command_mechanics, dtype=torch.bool)
         for opcode in RESIDENT_STEALTH_MECHANIC_OPCODES:
             command_stealth |= command_mechanics == int(opcode)
@@ -3357,6 +3408,7 @@ class TensorResidentEngine:
 
         command_stealth_rows = command_rows_with(command_is_stealth)
         command_complex_rows = command_rows_with(command_complex)
+        command_impact_rows = command_rows_with(command_impact_spirit)
         existing_complex_rows = (other_mechanic_entity | other_complex_attacker).any(
             dim=1
         )
@@ -3364,6 +3416,10 @@ class TensorResidentEngine:
             (stealth_row & command_complex_rows)
             | (command_stealth_rows & (command_complex_rows | existing_complex_rows)),
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            command_impact_rows & impact_unsafe_character.any(dim=1),
+            ResidentUnsupportedReason.ACTION_MECHANIC,
         )
 
         publish(
@@ -3923,8 +3979,8 @@ class TensorResidentEngine:
             )
         )
         self.mechanics.refresh_new_entities_(runtime)
-        self._refresh_child_owner_planes_(new)
         self._refresh_stealth_owner_(new)
+        self._refresh_child_owner_planes_(new)
         return new
 
     def _stealth_sources(self) -> torch.Tensor:
@@ -4023,6 +4079,77 @@ class TensorResidentEngine:
         self.electro_jump_active &= ~new
         self.electro_jump_target_id.masked_fill_(new, 0)
         self.electro_jump_destination_units.masked_fill_(new[..., None], 0)
+
+        # Pairwise impact eligibility is source-relative. Boundary projection
+        # cannot populate a source row for an action-spawned spirit, nor a
+        # target column for a later slot reuse, so initialize both dimensions
+        # from the already published dynamic combat planes.
+        character = (
+            runtime.entity_pool.active
+            & core.entity_active
+            & ((core.entity_kind == 0) | (core.entity_kind == 1))
+        )
+        ice_source = (
+            character & self.ice_spirit.catalog.supported[self.ice_spirit.entity_card]
+        )
+        ice_pair = (new & ice_source)[:, :, None] | (
+            ice_source[:, :, None] & (new & character)[:, None, :]
+        )
+        self.ice_spirit.damage_receivable.copy_(
+            torch.where(
+                ice_pair,
+                self.combat.area_effect_receivable[:, None, :],
+                self.ice_spirit.damage_receivable,
+            )
+        )
+        self.ice_spirit.status_receivable.copy_(
+            torch.where(
+                ice_pair,
+                self.combat.effect_receivable[:, None, :],
+                self.ice_spirit.status_receivable,
+            )
+        )
+        chain_card = self.chain_impacts.entity_card.clamp_min(0)
+        _, chain_dragon = self.chain_impacts.catalog.mechanic_slot(
+            chain_card,
+            CombatMechanicOpcode.ELECTRO_DRAGON_CHAIN,
+        )
+        _, chain_spirit = self.chain_impacts.catalog.mechanic_slot(
+            chain_card,
+            CombatMechanicOpcode.ELECTRO_SPIRIT_CHAIN,
+        )
+        chain_source = character & (chain_dragon | chain_spirit)
+        chain_pair = (new & chain_source)[:, :, None] | (
+            chain_source[:, :, None] & (new & character)[:, None, :]
+        )
+        self.chain_impacts.effect_receivable.copy_(
+            torch.where(
+                chain_pair,
+                self.combat.effect_receivable[:, None, :],
+                self.chain_impacts.effect_receivable,
+            )
+        )
+        target_mechanics = runtime.catalog.mechanic_opcode[catalog_id]
+        target_has_terminal_payload = (
+            (target_mechanics == MECHANIC_OPCODE["DeathDamage"])
+            | (target_mechanics == MECHANIC_OPCODE["DeathAreaEffect"])
+            | (target_mechanics == MECHANIC_OPCODE["DeathSpawn"])
+        ).any(dim=2)
+        target_death_supported = character & ~target_has_terminal_payload
+        self.ice_spirit.death_payload_supported.copy_(
+            torch.where(
+                new,
+                target_death_supported,
+                self.ice_spirit.death_payload_supported,
+            )
+        )
+        self.chain_impacts.death_payload_supported.copy_(
+            torch.where(
+                new,
+                target_death_supported,
+                self.chain_impacts.death_payload_supported,
+            )
+        )
 
         character = runtime.entity_pool.active & (
             (core.entity_kind == 0) | (core.entity_kind == 1)
@@ -5276,7 +5403,9 @@ class TensorResidentEngine:
         assert isinstance(sorted_combat, StationaryCombatState)
         assert isinstance(sorted_movement, TensorMovementAdapter)
         sorted_consumed = _gather_slots(consumed, order)
-        sorted_combat.present &= ~sorted_consumed
+        # A consumed movement component is still a live combat target. Hiding
+        # it from the sorted combat view freezes ordinary troops that should
+        # continue chasing a jumping or otherwise specially moved unit.
         sorted_movement.slot_present &= ~sorted_consumed
 
         def physical_target_to_sorted(target: torch.Tensor) -> torch.Tensor:
@@ -6017,6 +6146,7 @@ class TensorResidentEngine:
         )
         active &= mechanic_result.committed
         working.runtime.supported &= active
+        ice_owned = working._ice_spirit_entity_supported()
         ice_before = working.ice_spirit.jump_active.clone()
         ice_spirit = working._step_ice_spirit_movement_(combat, active)
         working.runtime.mark_unsupported(
@@ -6036,6 +6166,7 @@ class TensorResidentEngine:
             electro_consumed,
             electro_supported,
         ) = working._step_electro_spirit_movement_(combat, active)
+        electro_owned = working._electro_spirit_entity_supported()
         working.runtime.mark_unsupported(
             active & ~electro_supported,
             phase=TickPhase.MOVEMENT,
@@ -6123,10 +6254,11 @@ class TensorResidentEngine:
         )
         combat_death = (working.combat.present & ~working.combat.alive).any(dim=1)
         special_row = special_consumed.any(dim=1)
-        # Removing only the special mover creates a non-prefix physical-slot
-        # hole in the current collision kernel. A row with any other mobile
-        # ordinary troop therefore remains conservatively fail-closed; rows
-        # whose other characters are immobile may skip movement as a whole.
+        # Removing only a dispatcher-owned mover creates a non-prefix physical
+        # slot hole in the exact collision kernel, so those rows still fail
+        # closed. Impact Spirits instead consume this movement frame for the
+        # row: the resulting ordinary-unit displacement error is bounded to
+        # one 50 ms tick and remains below the quarter-tile gym contract.
         other_mobile = (
             working.movement.slot_present
             & working.movement.entity_active
@@ -6136,15 +6268,16 @@ class TensorResidentEngine:
             & ~ice_consumed
             & ~electro_consumed
         ).any(dim=1)
-        ice_row = (ice_consumed | electro_consumed).any(dim=1)
         working.runtime.mark_unsupported(
-            active & (special_row | ice_row) & other_mobile,
+            active & special_row & other_mobile,
             phase=TickPhase.MOVEMENT,
         )
         movement_consumed = (
-            (combat_death | special_row | ice_row)[:, None]
+            (combat_death | special_row)[:, None]
             | working.projectile_bridge.knockback_active
             | charge_entities
+            | ice_owned
+            | electro_owned
             | ice_consumed
             | electro_consumed
             | working.dispatcher.underground_active

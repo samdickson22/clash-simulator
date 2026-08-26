@@ -195,6 +195,18 @@ class TensorResidentWorkspace:
             self.engine.ice_spirit.jump_active.data_ptr()
         ):
             raise ValueError("speculative Ice Spirit state must own mutable storage")
+        for name in (
+            "electro_jump_active",
+            "electro_jump_target_id",
+            "electro_jump_destination_units",
+        ):
+            if (
+                getattr(self.scratch, name).data_ptr()
+                == getattr(self.engine, name).data_ptr()
+            ):
+                raise ValueError(
+                    "speculative Electro Spirit state must own mutable storage"
+                )
         if (
             self.scratch.death_payloads.catalog
             is not self.engine.death_payloads.catalog
