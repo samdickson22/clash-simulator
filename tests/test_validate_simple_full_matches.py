@@ -72,3 +72,18 @@ def test_noop_episode_replays_through_regulation_overtime_and_tiebreak(
 def test_exact_timeline_gate_rejects_short_test_rules(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="3600/6000"):
         validate(_args(tmp_path, require_exact_timeline=True))
+
+
+def test_first_legal_episode_is_bounded_terminal_and_replayed(
+    tmp_path: Path,
+) -> None:
+    result = validate(_args(tmp_path, policy=["first-legal"]))
+
+    episode = result["episodes"][0]
+    assert episode["policy"] == "first-legal"
+    assert episode["done"]
+    assert episode["final_tick"] <= 4
+    assert episode["committed_rows"] == episode["native_ticks"]
+    assert episode["winner"] in (-1, 0, 1)
+    assert len(episode["cumulative_rewards"]) == 2
+    assert len(episode["digest"]) == 64
