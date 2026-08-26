@@ -54,6 +54,7 @@ from .runtime_objects import (
     step_runtime_object_phase_,
 )
 from .runtime_state import RuntimeEventOpcode, TensorBattleRuntime, TickPhase
+from .tensor_ops import scatter_any_
 
 
 class BridgePayloadKind(IntEnum):
@@ -2176,12 +2177,11 @@ class TensorResidentProjectileSpellBridge:
             valid & source_found & target_found & (runtime.events.amount > 0.0)
         )
         changed_by_target = torch.zeros_like(runtime.battle.entity_hp_integer_kind)
-        changed_by_target.scatter_reduce_(
+        scatter_any_(
+            changed_by_target,
             1,
             target_slot,
             kind_changed,
-            reduce="amax",
-            include_self=True,
         )
         runtime.battle.entity_hp_integer_kind &= ~changed_by_target
         alive = torch.gather(runtime.battle.entity_active, 1, target_slot)
@@ -2198,12 +2198,11 @@ class TensorResidentProjectileSpellBridge:
         stun = self.blueprint_stun_ms[blueprint].to(torch.float64) / 1_000
         stun = torch.where(apply, stun, 0.0)
         stun_event = apply & (stun > 0.0)
-        self.stun_applied.scatter_reduce_(
+        scatter_any_(
+            self.stun_applied,
             1,
             target_slot,
             stun_event,
-            reduce="amax",
-            include_self=True,
         )
         projected = torch.zeros_like(runtime.status.stun_timer)
         projected.scatter_reduce_(
@@ -2571,12 +2570,11 @@ class TensorResidentProjectileSpellBridge:
                 0.0,
             ),
         )
-        grouped_death.scatter_reduce_(
+        scatter_any_(
+            grouped_death,
             1,
             group_index,
             sorted_death,
-            reduce="amax",
-            include_self=True,
         )
         group_count = group_start.sum(dim=1, dtype=torch.int64)
         group_valid = slots < group_count[:, None]
@@ -2751,12 +2749,11 @@ class TensorResidentProjectileSpellBridge:
         # their serialized damage is installed here after de-duplication.
         # Match Entity.take_damage's float conversion at that commit point.
         changed_by_target = torch.zeros_like(runtime.battle.entity_hp_integer_kind)
-        changed_by_target.scatter_reduce_(
+        scatter_any_(
+            changed_by_target,
             1,
             target_slot,
             selected & (actual > 0.0),
-            reduce="amax",
-            include_self=True,
         )
         runtime.battle.entity_hp_integer_kind &= ~changed_by_target
         total = torch.zeros_like(runtime.battle.entity_hp)
@@ -2765,12 +2762,11 @@ class TensorResidentProjectileSpellBridge:
             (runtime.battle.entity_hp - total).clamp_min(0.0)
         )
         lethal_targets = torch.zeros_like(runtime.battle.entity_active)
-        lethal_targets.scatter_reduce_(
+        scatter_any_(
+            lethal_targets,
             1,
             target_slot,
             lethal,
-            reduce="amax",
-            include_self=True,
         )
         runtime.battle.entity_active &= ~lethal_targets
         runtime.phases.death_pending |= lethal_targets
