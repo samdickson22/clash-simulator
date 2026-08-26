@@ -17,6 +17,7 @@ from clasher.battle import STANDARD_MATCH_TICKS, BattleState
 from clasher.rl.obs_cv import CvObservationBuilder
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.torch_sim.observations import (
+    TOWER_ENTITY_TOKEN_NAMESPACE_INDEX,
     TensorCvObservation,
     TensorObservationProjector,
     TensorStructuredObservation,
@@ -487,7 +488,16 @@ class ResidentOutputProjector:
         known = catalog_id >= 0
         safe = catalog_id.clamp_min(0)
 
-        token = projection.structured_card_lookup[core.entity_card]
+        entity_kind = core.entity_kind.to(torch.int64).clamp(0, 4)
+        token_namespace = torch.where(
+            core.entity_tower_slot >= 0,
+            torch.full_like(entity_kind, TOWER_ENTITY_TOKEN_NAMESPACE_INDEX),
+            entity_kind,
+        )
+        token = projection.structured_entity_lookup[
+            token_namespace,
+            core.entity_card,
+        ]
         projection.entity_visible.copy_(
             core.entity_active[:, None, :].expand(-1, 2, -1)
         )

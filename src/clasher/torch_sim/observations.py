@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from typing import cast
 
 import torch
 
@@ -20,6 +21,36 @@ from clasher.rl.structured_obs import (
 from clasher.unit_traits import is_airborne_target
 
 from .state import TensorBattleState
+
+_ENTITY_TOKEN_NAMESPACES = (
+    "troop_body",
+    "building_body",
+    "projectile",
+    "area_effect",
+    "card_action",
+)
+TOWER_ENTITY_TOKEN_NAMESPACE_INDEX = len(_ENTITY_TOKEN_NAMESPACES)
+
+
+def _structured_token_id(
+    builder: StructuredObservationBuilder,
+    name: str,
+    *,
+    namespace: str,
+) -> int:
+    """Resolve one token without weakening legacy or typed vocabularies.
+
+    Older builders expose a single untyped namespace. Current-client builders
+    declare ``_uses_typed_tokens`` and require the visible runtime kind to
+    distinguish a played card from its troop/building/projectile body. Unknown
+    typed variants deliberately stay on the builder's unknown token instead of
+    being root-collapsed here.
+    """
+
+    if bool(getattr(builder, "_uses_typed_tokens", False)):
+        typed_token_id = cast(Callable[..., int], builder.token_id)
+        return typed_token_id(name, namespace=namespace)
+    return builder.token_id(name)
 
 
 @dataclass(frozen=True)
@@ -105,11 +136,13 @@ class TensorObservationProjector:
     _SHARED_TENSOR_NAMES = frozenset(
         {
             "structured_card_lookup",
+            "structured_entity_lookup",
             "cv_card_lookup",
             "terrain",
             "_entity_perspectives",
             "_player_indices",
             "_enemy_player_indices",
+            "_canonical_lane_order",
         }
     )
 
@@ -132,6 +165,9 @@ class TensorObservationProjector:
         self.device = state.device
         self.max_entities = structured_builder.max_entities
         self.canonical_structured = structured_builder.canonical_perspective
+        self.canonical_lane_globals = bool(
+            getattr(structured_builder, "canonical_lane_globals", False)
+        )
         self.canonical_cv = cv_builder.canonical_perspective
 
         batch = state.batch_size
@@ -146,6 +182,9 @@ class TensorObservationProjector:
         self._entity_perspectives = torch.arange(2, device=self.device).view(1, 2, 1)
         self._player_indices = torch.arange(2, device=self.device).view(1, 2)
         self._enemy_player_indices = 1 - self._player_indices
+        self._canonical_lane_order = torch.tensor(
+            (1, 0, 2, 4, 3, 5), dtype=torch.int64, device=self.device
+        )
         self._entity_slot_order = (
             torch.arange(slots, device=self.device)
             .view(1, 1, -1)
@@ -194,13 +233,35 @@ class TensorObservationProjector:
         self.ability_duration = zeros(torch.float64, batch, 2)
 
         structured_card_lookup = zeros(torch.int64, len(state.card_names))
+        structured_entity_lookup = zeros(
+            torch.int64,
+            TOWER_ENTITY_TOKEN_NAMESPACE_INDEX + 1,
+            len(state.card_names),
+        )
         cv_card_lookup = torch.full(
             (len(state.card_names),), -1, dtype=torch.int64, device=self.device
         )
         for card_id, name in enumerate(state.card_names):
             if not name:
                 continue
-            structured_card_lookup[card_id] = structured_builder.token_id(name)
+            structured_card_lookup[card_id] = _structured_token_id(
+                structured_builder,
+                name,
+                namespace="card_action",
+            )
+            for kind, namespace in enumerate(_ENTITY_TOKEN_NAMESPACES):
+                structured_entity_lookup[kind, card_id] = _structured_token_id(
+                    structured_builder,
+                    name,
+                    namespace=namespace,
+                )
+            structured_entity_lookup[
+                TOWER_ENTITY_TOKEN_NAMESPACE_INDEX, card_id
+            ] = _structured_token_id(
+                structured_builder,
+                name,
+                namespace="tower",
+            )
             cv_index = cv_builder._card_to_idx.get(name)
             if cv_index is None:
                 from clasher.card_aliases import resolve_card_name
@@ -209,6 +270,7 @@ class TensorObservationProjector:
             if cv_index is not None:
                 cv_card_lookup[card_id] = cv_index
         self.structured_card_lookup = structured_card_lookup
+        self.structured_entity_lookup = structured_entity_lookup
         self.cv_card_lookup = cv_card_lookup
 
         for batch_index, battle in enumerate(battles):
@@ -246,7 +308,22 @@ class TensorObservationProjector:
                 sorted(battle.entities.values(), key=lambda value: value.id)
             ):
                 name = _visible_name(entity)
-                self.entity_token[batch_index, slot] = structured_builder.token_id(name)
+                cv_name = _cv_visible_name(entity)
+                is_crown = bool(
+                    isinstance(entity, Building)
+                    and cv_name in {"Tower", "KingTower"}
+                )
+                entity_kind = max(0, min(4, int(entity.entity_kind)))
+                namespace = (
+                    "tower"
+                    if is_crown
+                    else _ENTITY_TOKEN_NAMESPACES[entity_kind]
+                )
+                self.entity_token[batch_index, slot] = _structured_token_id(
+                    structured_builder,
+                    name,
+                    namespace=namespace,
+                )
                 for perspective in range(2):
                     self.entity_visible[batch_index, perspective, slot] = (
                         entity.is_visible_to(perspective)
@@ -255,9 +332,8 @@ class TensorObservationProjector:
                 self.entity_is_building[batch_index, slot] = isinstance(
                     entity, Building
                 )
-                cv_name = _cv_visible_name(entity)
                 self.entity_is_crown[batch_index, slot] = bool(
-                    isinstance(entity, Building) and cv_name in {"Tower", "KingTower"}
+                    is_crown
                 )
                 shield_current, shield_max = _shield_values(entity)
                 self.entity_shield_current[batch_index, slot] = shield_current
@@ -602,6 +678,15 @@ class TensorObservationProjector:
             ),
             dim=2,
         ).clamp(0.0, 1.0)
+        if self.canonical_structured and self.canonical_lane_globals:
+            lane_canonical = tower_fractions.index_select(
+                2, self._canonical_lane_order
+            )
+            tower_fractions = torch.where(
+                (player == 1)[..., None],
+                lane_canonical,
+                tower_fractions,
+            )
         own_cooldown = state.refill_cooldown_ms.gather(
             1, player.expand(state.batch_size, -1)
         )
