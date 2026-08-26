@@ -1,0 +1,59 @@
+{
+  "acceptance": {
+    "absolute_throughput_gate": true,
+    "all_row_ticks_native": true,
+    "all_rows_committed": true,
+    "cuda_launches_lt_1000": null,
+    "cuda_zero_explicit_host_sync": null,
+    "deterministic_replay": true,
+    "no_terminal_rows_in_window": true,
+    "python_parity_evaluated": false,
+    "speedup_evaluated": false,
+    "zero_fallback": true
+  },
+  "cuda_profile": null,
+  "device": "cpu",
+  "engine": "SimpleGymRuntime",
+  "median": {
+    "actor_transitions_per_second": 1209.2270935306851,
+    "elapsed_seconds": 0.013244853995274752,
+    "row_ticks_per_second": 604.6135467653426
+  },
+  "policy": "noop",
+  "preset": "smoke",
+  "schema_version": 1,
+  "seed": 202608264,
+  "throughput_gate": {
+    "minimum_row_ticks_per_second": 1.0
+  },
+  "trials": [
+    {
+      "actor_transitions_per_second": 1170.963791494439,
+      "batch_size": 2,
+      "committed_rows": 8,
+      "digest": "2f3ba05d6ed55bf72920a26d843afe008a49cd40ff482dcd282a0abeb7333a24",
+      "elapsed_seconds": 0.013663957943208516,
+      "measured_ticks": 4,
+      "native_ticks": 8,
+      "peak_device_memory_bytes": null,
+      "repetition": 0,
+      "row_ticks": 8,
+      "row_ticks_per_second": 585.4818957472195,
+      "terminal_rows": 0
+    },
+    {
+      "actor_transitions_per_second": 1247.4903955669315,
+      "batch_size": 2,
+      "committed_rows": 8,
+      "digest": "2f3ba05d6ed55bf72920a26d843afe008a49cd40ff482dcd282a0abeb7333a24",
+      "elapsed_seconds": 0.012825750047340989,
+      "measured_ticks": 4,
+      "native_ticks": 8,
+      "peak_device_memory_bytes": null,
+      "repetition": 1,
+      "row_ticks": 8,
+      "row_ticks_per_second": 623.7451977834658,
+      "terminal_rows": 0
+    }
+  ]
+}
