@@ -34,6 +34,7 @@ from .runtime_deployment import (
 from .runtime_mechanics import TensorRuntimeMechanics
 from .runtime_objects import TensorRuntimeObjectPhase
 from .runtime_state import TensorBattleRuntime
+from .tensor_ops import scatter_any_
 
 
 @dataclass(frozen=True)
@@ -389,12 +390,11 @@ class TensorResidentActionRouter:
         row_supported = self.runtime.supported.clone()
         if commands.battle_index.numel():
             rejected = torch.zeros_like(row_supported)
-            rejected.scatter_reduce_(
+            scatter_any_(
+                rejected,
                 0,
                 commands.battle_index,
                 ~command_supported,
-                reduce="amax",
-                include_self=True,
             )
             row_supported &= ~rejected
         workspace.runtime.supported &= row_supported
@@ -586,19 +586,17 @@ class TensorResidentActionRouter:
         has_character = aggregation.has_character
         has_spell = aggregation.has_spell
         if commands.battle_index.numel():
-            has_character.scatter_reduce_(
+            scatter_any_(
+                has_character,
                 0,
                 commands.battle_index,
                 ~command_spell & ~commands.is_ability,
-                reduce="amax",
-                include_self=True,
             )
-            has_spell.scatter_reduce_(
+            scatter_any_(
+                has_spell,
                 0,
                 commands.battle_index,
                 command_spell,
-                reduce="amax",
-                include_self=True,
             )
         aggregation.allocation_slots.copy_(
             torch.where(
