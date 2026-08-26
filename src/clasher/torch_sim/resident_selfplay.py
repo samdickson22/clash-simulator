@@ -375,8 +375,7 @@ class TensorResidentSelfPlay:
     ]:
         """Project separated actor/critic outputs and resident action masks."""
 
-        action_state = self.engine.deployment.action_state(self.engine.runtime)
-        masks = self.engine.deployment.kernel.legal_action_mask(action_state)
+        masks = self.engine.legal_action_mask()
         projected = self.outputs.project_all(
             include_privileged_critic=self.include_privileged_critic
         )
@@ -486,8 +485,7 @@ class TensorResidentSelfPlay:
             first_legal[:, :, :NO_OP_ACTION].any(dim=2)
             | first_legal[:, :, NO_OP_ACTION + 1]
         )
-        post_state = self.engine.deployment.action_state(self.engine.runtime)
-        post_mask = self.engine.deployment.kernel.legal_action_mask(post_state)
+        post_mask = self.engine.legal_action_mask()
         post_can_spend = (
             post_mask[:, :, :NO_OP_ACTION].any(dim=2)
             | post_mask[:, :, NO_OP_ACTION + 1]

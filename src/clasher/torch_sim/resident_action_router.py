@@ -11,6 +11,10 @@ from .catalog import CardKindOpcode
 from .deployment import TensorDeploymentResult
 from .entity_pool import EntityAllocation
 from .projectile_bridge import TensorResidentProjectileSpellBridge
+from .resident_champion_actions import (
+    publish_champion_legality_,
+    route_champion_commands_,
+)
 from .resident_pending_spells import TensorResidentPendingSpells
 from .resident_spell_ingress import (
     TensorResidentSpellActionIngress,
@@ -27,6 +31,7 @@ from .runtime_deployment import (
     TensorRuntimeDeployment,
     TensorRuntimeDeploymentResult,
 )
+from .runtime_mechanics import TensorRuntimeMechanics
 from .runtime_objects import TensorRuntimeObjectPhase
 from .runtime_state import TensorBattleRuntime
 
@@ -49,6 +54,7 @@ class _RouterWorkspace:
     bridge: TensorResidentProjectileSpellBridge
     spells: TensorResidentSpellActionIngress
     pending_spells: TensorResidentPendingSpells
+    mechanics: TensorRuntimeMechanics | None
 
     @classmethod
     def create(
@@ -58,6 +64,7 @@ class _RouterWorkspace:
         bridge: TensorResidentProjectileSpellBridge,
         spells: TensorResidentSpellActionIngress,
         pending_spells: TensorResidentPendingSpells,
+        mechanics: TensorRuntimeMechanics | None,
     ) -> _RouterWorkspace:
         scratch_runtime = runtime.clone()
         scratch_runtime.battle.rng = runtime.battle.rng.clone()
@@ -83,6 +90,7 @@ class _RouterWorkspace:
             bridge=scratch_bridge,
             spells=scratch_spells,
             pending_spells=pending_spells.clone(),
+            mechanics=None if mechanics is None else mechanics.clone(),
         )
 
     def refresh(
@@ -91,6 +99,7 @@ class _RouterWorkspace:
         objects: TensorRuntimeObjectPhase,
         bridge: TensorResidentProjectileSpellBridge,
         pending_spells: TensorResidentPendingSpells,
+        mechanics: TensorRuntimeMechanics | None,
     ) -> None:
         _refresh_runtime(self.runtime, runtime)
         _copy_tensor_fields(self.objects, objects)
@@ -102,6 +111,10 @@ class _RouterWorkspace:
             device=pending_spells.device,
         )
         self.pending_spells.reset_rows_(rows, pending_spells, rows)
+        if (self.mechanics is None) != (mechanics is None):
+            raise ValueError("router mechanic ownership changed after construction")
+        if self.mechanics is not None and mechanics is not None:
+            _copy_tensor_fields(self.mechanics, mechanics)
 
 
 @dataclass
@@ -198,6 +211,27 @@ def _select_commands(
     return TensorCommandQueue(**values)
 
 
+def _copy_mechanic_rows(
+    destination: TensorRuntimeMechanics,
+    source: TensorRuntimeMechanics,
+    rows: torch.Tensor,
+) -> None:
+    batch_size = destination.batch_size
+    for descriptor in fields(destination):
+        if descriptor.name == "core_card_to_mechanic_card":
+            continue
+        left = getattr(destination, descriptor.name)
+        right = getattr(source, descriptor.name)
+        if (
+            isinstance(left, torch.Tensor)
+            and isinstance(right, torch.Tensor)
+            and left.shape == right.shape
+            and left.ndim > 0
+            and left.shape[0] == batch_size
+        ):
+            left[rows] = right[rows]
+
+
 def _rank_ingress(
     full: TensorIngressResult,
     current_hand: torch.Tensor,
@@ -235,6 +269,7 @@ class TensorResidentActionRouter:
         spells: TensorResidentSpellActionIngress,
         pending_spells: TensorResidentPendingSpells,
         spell_payload_supported_core: torch.Tensor | None = None,
+        mechanics: TensorRuntimeMechanics | None = None,
     ) -> None:
         if spells.runtime is not runtime or spells.objects is not objects:
             raise ValueError("router spell ingress must own the routed state")
@@ -248,6 +283,12 @@ class TensorResidentActionRouter:
         self.deployment = deployment
         self.spells = spells
         self.pending_spells = pending_spells
+        self.mechanics = mechanics
+        if mechanics is not None:
+            if mechanics.device != runtime.device:
+                raise ValueError("router mechanics must share the resident device")
+            if mechanics.batch_size != runtime.batch_size:
+                raise ValueError("router mechanics must share the resident batch")
         self.spell_payload_supported_core = (
             bridge.catalog.supported
             if spell_payload_supported_core is None
@@ -261,7 +302,7 @@ class TensorResidentActionRouter:
         )
         self._players = torch.arange(2, dtype=torch.int64, device=self.device)[None, :]
         self._workspace = _RouterWorkspace.create(
-            runtime, objects, bridge, spells, pending_spells
+            runtime, objects, bridge, spells, pending_spells, mechanics
         )
         self._aggregation = _RouterAggregationBuffers.create(runtime)
 
@@ -275,6 +316,8 @@ class TensorResidentActionRouter:
             blueprint_indices,
         )
         _copy_bridge_rows(self.bridge, source.bridge, rows)
+        if self.mechanics is not None and source.mechanics is not None:
+            _copy_mechanic_rows(self.mechanics, source.mechanics, rows)
         selected = torch.nonzero(rows, as_tuple=False).flatten()
         self.pending_spells.reset_rows_(selected, source.pending_spells, selected)
 
@@ -288,6 +331,8 @@ class TensorResidentActionRouter:
         if actions.shape != (self.runtime.batch_size, 2):
             raise ValueError("action_ids must have shape [batch, 2]")
         initial_state = self.deployment.action_state(self.runtime)
+        if self.mechanics is not None:
+            publish_champion_legality_(initial_state, self.mechanics, self.runtime)
         initial_legal = self.deployment.kernel.legal_action_mask(initial_state)
         ingress = self.deployment.kernel.ingress(
             initial_state,
@@ -300,6 +345,7 @@ class TensorResidentActionRouter:
             self.objects,
             self.bridge,
             self.pending_spells,
+            self.mechanics,
         )
         if player_order is None:
             choice = workspace.runtime.battle.rng.randrange(2)
@@ -321,7 +367,7 @@ class TensorResidentActionRouter:
         command_supported = torch.where(
             command_spell,
             spell_static.command_supported,
-            ~commands.is_ability,
+            ~commands.is_ability | (self.mechanics is not None),
         )
         command_count = int(commands.card_id.numel())
         aggregation = self._aggregation
@@ -337,7 +383,7 @@ class TensorResidentActionRouter:
         unsupported_mechanic = aggregation.unsupported_mechanic[:command_count]
         unsupported_payload = aggregation.unsupported_payload[:command_count]
         unsupported_ability = aggregation.unsupported_ability[:command_count]
-        unsupported_ability.copy_(commands.is_ability)
+        unsupported_ability.copy_(commands.is_ability & (self.mechanics is None))
         unsupported_conflict = aggregation.unsupported_conflict[:command_count]
         unsupported_capacity = aggregation.unsupported_capacity
         row_supported = self.runtime.supported.clone()
@@ -363,13 +409,21 @@ class TensorResidentActionRouter:
                 found = matches.any(dim=1)
                 command_index = matches.to(torch.int64).argmax(dim=1)
                 rank_spell = found & command_spell[command_index]
-                rank_character = found & ~command_spell[command_index]
+                rank_ability = found & commands.is_ability[command_index]
+                rank_character = found & ~rank_spell & ~rank_ability
             else:
                 found = torch.zeros_like(row_supported)
                 rank_spell = torch.zeros_like(row_supported)
+                rank_ability = torch.zeros_like(row_supported)
                 rank_character = torch.zeros_like(row_supported)
 
             current_state = self.deployment.action_state(workspace.runtime)
+            if workspace.mechanics is not None:
+                publish_champion_legality_(
+                    current_state,
+                    workspace.mechanics,
+                    workspace.runtime,
+                )
             current_legal = self.deployment.kernel.legal_action_mask(current_state)
             safe_action = (
                 actions.gather(1, player[:, None])
@@ -397,6 +451,31 @@ class TensorResidentActionRouter:
                 command_rank & ~command_spell & row_supported[commands.battle_index],
                 as_tuple=False,
             ).flatten()
+            ability_commands = _select_commands(
+                commands,
+                command_rank & commands.is_ability & row_supported[commands.battle_index],
+            )
+            ability_full_index = torch.nonzero(
+                command_rank & commands.is_ability & row_supported[commands.battle_index],
+                as_tuple=False,
+            ).flatten()
+            if workspace.mechanics is not None:
+                champion_result = route_champion_commands_(
+                    workspace.mechanics,
+                    workspace.runtime,
+                    ability_commands,
+                )
+                ability_success = torch.ones_like(row_supported)
+                if ability_commands.battle_index.numel():
+                    ability_success[ability_commands.battle_index] = (
+                        champion_result.command_success
+                    )
+                row_supported &= ~rank_ability | ability_success
+                workspace.runtime.supported &= row_supported
+                if ability_full_index.numel():
+                    aggregate_command_supported[ability_full_index] &= (
+                        champion_result.command_success
+                    )
             spell_ingress = _rank_ingress(
                 ingress,
                 current_state.hand_ids,
@@ -495,7 +574,7 @@ class TensorResidentActionRouter:
                 torch.where(
                     rank_character,
                     deployment_result.battle_supported,
-                    torch.ones_like(row_supported),
+                    torch.where(rank_ability, row_supported, torch.ones_like(row_supported)),
                 ),
             )
             row_supported &= rank_committed
@@ -510,7 +589,7 @@ class TensorResidentActionRouter:
             has_character.scatter_reduce_(
                 0,
                 commands.battle_index,
-                ~command_spell,
+                ~command_spell & ~commands.is_ability,
                 reduce="amax",
                 include_self=True,
             )

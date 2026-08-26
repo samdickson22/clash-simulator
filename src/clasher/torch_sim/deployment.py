@@ -115,7 +115,10 @@ class TensorDeploymentCatalog:
         for card_id, stats in enumerate(stats_by_id[1:], start=1):
             assert stats is not None
             kind = int(cards.kind[card_id])
-            is_troop = kind == int(CardKindOpcode.TROOP)
+            is_troop = kind in {
+                int(CardKindOpcode.TROOP),
+                int(CardKindOpcode.CHAMPION),
+            }
             is_building = kind == int(CardKindOpcode.BUILDING)
             primary_count = 1 if is_building else int(stats.summon_count or 1)
             second_count = int(
@@ -812,7 +815,10 @@ class TensorCommandMaterializer:
             anchor_y[:, None]
             + self.catalog.offset_y_units[ordered_cards, ordered_players, lane_index]
         )
-        is_troop = self.catalog.cards.kind[ordered_cards] == int(CardKindOpcode.TROOP)
+        is_troop = (
+            (self.catalog.cards.kind[ordered_cards] == int(CardKindOpcode.TROOP))
+            | (self.catalog.cards.kind[ordered_cards] == int(CardKindOpcode.CHAMPION))
+        )
         x = torch.where(is_troop[:, None], x.clamp(250, 17_750), x)
         y = torch.where(is_troop[:, None], y.clamp(250, 31_750), y)
         delays = self.catalog.deploy_delay_seconds[ordered_cards]

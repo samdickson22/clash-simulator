@@ -36,7 +36,7 @@ from clasher.spells import (
     SpawnProjectileSpell,
 )
 
-from .actions import NO_OP_ACTION, TensorActionCatalog
+from .actions import NO_OP_ACTION, TensorActionCatalog, TensorActionState
 from .catalog import EFFECT_OPCODE, MECHANIC_OPCODE, TensorCardCatalog
 from .combat import (
     CombatStepResult,
@@ -77,6 +77,7 @@ from .resident_chain_impacts import (
     TensorChainImpactState,
     step_chain_impacts_,
 )
+from .resident_champion_actions import publish_champion_legality_
 from .resident_charge_carrier import (
     ChargeCarrierStepResult,
     TensorResidentChargeCarriers,
@@ -875,6 +876,18 @@ class TensorResidentEngine:
     def batch_size(self) -> int:
         return int(self.runtime.batch_size)
 
+    def action_state(self) -> TensorActionState:
+        """Return the retained policy action state, including Champion buttons."""
+
+        state = self.deployment.action_state(self.runtime)
+        publish_champion_legality_(state, self.mechanics, self.runtime)
+        return state
+
+    def legal_action_mask(self) -> torch.Tensor:
+        """Return the complete resident action mask for both players."""
+
+        return self.deployment.kernel.legal_action_mask(self.action_state())
+
     @classmethod
     def from_battles(
         cls,
@@ -1374,6 +1387,7 @@ class TensorResidentEngine:
                     MECHANIC_OPCODE["SpawnPushback"],
                 ),
                 "shield": (MECHANIC_OPCODE["Shield"],),
+                "champion_ability": (MECHANIC_OPCODE["ArcherQueenCloak"],),
                 "spawn_area_deployment": (spawn_area_opcode,),
                 "special_deployment": (
                     MECHANIC_OPCODE["CrownTowerScaling"],
@@ -1396,6 +1410,7 @@ class TensorResidentEngine:
                 "burst_projectile": burst_card_supported,
                 "combat_dispatch": all_cards_supported,
                 "shield": shield_catalog.supported,
+                "champion_ability": all_cards_supported,
                 "spawn_area_deployment": spawn_area_deployment_supported,
                 "special_deployment": miner_card_supported,
                 "stealth": all_cards_supported,
@@ -1445,6 +1460,7 @@ class TensorResidentEngine:
             spell_ingress,
             pending_spells,
             spell_payload_supported_core,
+            mechanics,
         )
         pending_projectile_max_duration_ms = torch.zeros(
             (runtime.batch_size, runtime.max_entities),
@@ -1876,6 +1892,7 @@ class TensorResidentEngine:
         action_router.bridge = projectile_bridge
         action_router.spells = spell_ingress
         action_router.pending_spells = pending_spells
+        action_router.mechanics = mechanics
         mechanic_deployment = copy.copy(self.mechanic_deployment)
         mechanic_deployment.driver = self.deployment
         mechanic_deployment.materializer = self.deployment.materializer
@@ -3183,6 +3200,7 @@ class TensorResidentEngine:
         crown_scaling_opcode = MECHANIC_OPCODE["CrownTowerScaling"]
         underground_opcode = MECHANIC_OPCODE["UndergroundDeployment"]
         shield_opcode = MECHANIC_OPCODE["Shield"]
+        champion_ability_opcode = MECHANIC_OPCODE["ArcherQueenCloak"]
         damage_ramp_opcode = MECHANIC_OPCODE["DamageRamp"]
         shield_card_supported = self.shield_catalog.supported[safe]
         mechanic_admitted = (
@@ -3200,6 +3218,7 @@ class TensorResidentEngine:
             | (entity_mechanics == crown_scaling_opcode)
             | (entity_mechanics == underground_opcode)
             | ((entity_mechanics == shield_opcode) & shield_card_supported[:, :, None])
+            | (entity_mechanics == champion_ability_opcode)
         )
         unsupported_active_mechanic = (
             active_character[:, :, None] & (entity_mechanics > 0) & ~mechanic_admitted
@@ -3568,6 +3587,7 @@ class TensorResidentEngine:
         # Pure action ingress contributes opcodes before any speculative state
         # or RNG is mutated.
         action_state = self.deployment.action_state(self.runtime)
+        publish_champion_legality_(action_state, self.mechanics, self.runtime)
         ingress = self.deployment.kernel.ingress(
             action_state,
             actions,
@@ -3650,10 +3670,6 @@ class TensorResidentEngine:
         )
 
         publish(
-            command_rows_with(ingress.commands.is_ability),
-            ResidentUnsupportedReason.CHAMPION_ACTION,
-        )
-        publish(
             (
                 (active_character & shield_supported).any(dim=1)
                 & command_rows_with(spell_preflight.command_spell)
@@ -3679,7 +3695,11 @@ class TensorResidentEngine:
             ResidentUnsupportedReason.ACTION_EFFECT,
         )
         publish(
-            command_rows_with(~command_payload & ~spell_preflight.command_spell),
+            command_rows_with(
+                ~command_payload
+                & ~spell_preflight.command_spell
+                & ~ingress.commands.is_ability
+            ),
             ResidentUnsupportedReason.MIXED_PAYLOAD,
         )
         return ResidentPreflight(
@@ -4241,6 +4261,7 @@ class TensorResidentEngine:
         )
         self.mechanics.refresh_new_entities_(runtime)
         self._refresh_stealth_owner_(new)
+        self.combat.targetable &= ~self.mechanics.hidden_from_enemies(runtime)
         self._refresh_child_owner_planes_(new)
         return new
 
@@ -6211,10 +6232,6 @@ class TensorResidentEngine:
         )
         active &= ~shield_unsafe
         working.runtime.supported &= active
-        # Cloak remains outside RESIDENT_DISPATCH_MECHANIC_OPCODES. The
-        # dispatcher also owns this hook for future closure, but no admitted
-        # row can currently execute both paths with a live Cloak operation.
-        working.mechanics.tick_cloak_(working.runtime)
         miner_identity = (
             working.runtime.entity_pool.active
             & working.runtime.battle.entity_active
