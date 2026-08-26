@@ -126,7 +126,12 @@ class TensorResidentWorkspace:
             self.engine.pending_spells.active.data_ptr()
         ):
             raise ValueError("speculative pending spells must own mutable storage")
-        for name in ("continuous_areas", "graveyards", "tornadoes"):
+        for name in (
+            "continuous_areas",
+            "graveyards",
+            "tornadoes",
+            "burst_projectiles",
+        ):
             scratch_owner = getattr(self.scratch, name)
             engine_owner = getattr(self.engine, name)
             if scratch_owner.catalog is not engine_owner.catalog:
@@ -292,6 +297,11 @@ class TensorResidentWorkspace:
         destination.tornadoes.reset_rows_(
             pending_rows,
             source.tornadoes,
+            pending_rows,
+        )
+        destination.burst_projectiles.reset_rows_(
+            pending_rows,
+            source.burst_projectiles,
             pending_rows,
         )
         destination.piercing_projectiles.reset_rows_(

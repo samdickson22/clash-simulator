@@ -94,6 +94,7 @@ from .resident_death_payloads import (
     TensorDeathPayloadState,
     step_death_payloads_,
 )
+from .resident_firecracker import TensorResidentBurstProjectiles
 from .resident_graveyard import GraveyardStepResult, TensorResidentGraveyards
 from .resident_ice_spirit import (
     IceSpiritStepResult,
@@ -750,6 +751,7 @@ class TensorResidentEngine:
         continuous_effect_deadline_seconds: torch.Tensor,
         graveyards: TensorResidentGraveyards,
         tornadoes: TensorResidentTornadoes,
+        burst_projectiles: TensorResidentBurstProjectiles,
         piercing_projectiles: TensorResidentPiercingProjectiles,
         rolling_combat: TensorResidentRollingCombatProjectiles,
         rolling_spells: TensorResidentRollingSpells,
@@ -815,6 +817,7 @@ class TensorResidentEngine:
         self.continuous_effect_deadline_seconds = continuous_effect_deadline_seconds
         self.graveyards = graveyards
         self.tornadoes = tornadoes
+        self.burst_projectiles = burst_projectiles
         self.piercing_projectiles = piercing_projectiles
         self.rolling_combat = rolling_combat
         self.rolling_spells = rolling_spells
@@ -932,6 +935,7 @@ class TensorResidentEngine:
             MECHANIC_OPCODE["ElectroSpiritChain"],
             MECHANIC_OPCODE["IceSpiritFreeze"],
             MECHANIC_OPCODE["WallBreakersDemolition"],
+            MECHANIC_OPCODE["AttackRecoil"],
             *RESIDENT_STEALTH_MECHANIC_OPCODES,
             *RESIDENT_DIRECT_COMBAT_MECHANIC_OPCODES,
         )
@@ -1084,6 +1088,12 @@ class TensorResidentEngine:
         )
         tornadoes = TensorResidentTornadoes.from_battles(
             runtime, battles, capacity=area_capacity
+        )
+        burst_projectiles = TensorResidentBurstProjectiles.from_battles(
+            runtime,
+            mechanic_battles,
+            parent_capacity=max(2, min(max_objects, 8)),
+            child_capacity=max(10, min(max_entities, max_objects * 5)),
         )
         rolling_combat = TensorResidentRollingCombatProjectiles.from_battles(
             runtime,
@@ -1274,6 +1284,9 @@ class TensorResidentEngine:
         demolition_card_supported = (core_by_catalog >= 0) & (
             demolition.catalog.supported[safe_core_by_catalog]
         )
+        burst_card_supported = (core_by_catalog >= 0) & (
+            burst_projectiles.catalog.supported[safe_core_by_catalog]
+        )
         miner_card_supported = (core_by_catalog >= 0) & (
             miner.catalog.supported[safe_core_by_catalog]
         )
@@ -1352,6 +1365,7 @@ class TensorResidentEngine:
                 "periodic": (MECHANIC_OPCODE["PeriodicSpawner"],),
                 "charge": (MECHANIC_OPCODE["BattleRamCharge"],),
                 "demolition": (MECHANIC_OPCODE["WallBreakersDemolition"],),
+                "burst_projectile": (MECHANIC_OPCODE["AttackRecoil"],),
                 "combat_dispatch": (
                     MECHANIC_OPCODE["BanditDash"],
                     MECHANIC_OPCODE["MegaKnightSlam"],
@@ -1379,6 +1393,7 @@ class TensorResidentEngine:
                 "periodic": periodic_catalog.source_row_by_card >= 0,
                 "charge": charge_card_supported,
                 "demolition": demolition_card_supported,
+                "burst_projectile": burst_card_supported,
                 "combat_dispatch": all_cards_supported,
                 "shield": shield_catalog.supported,
                 "spawn_area_deployment": spawn_area_deployment_supported,
@@ -1760,6 +1775,7 @@ class TensorResidentEngine:
             continuous_effect_deadline_seconds=(continuous_effect_deadline_seconds),
             graveyards=graveyards,
             tornadoes=tornadoes,
+            burst_projectiles=burst_projectiles,
             piercing_projectiles=piercing_projectiles,
             rolling_combat=rolling_combat,
             rolling_spells=rolling_spells,
@@ -1828,6 +1844,7 @@ class TensorResidentEngine:
         continuous_areas = self.continuous_areas.clone()
         graveyards = self.graveyards.clone()
         tornadoes = self.tornadoes.clone()
+        burst_projectiles = self.burst_projectiles.clone()
         piercing_projectiles = self.piercing_projectiles.clone()
         rolling_combat = self.rolling_combat.clone()
         rolling_spells = TensorResidentRollingSpells(
@@ -1885,6 +1902,7 @@ class TensorResidentEngine:
             ),
             graveyards=graveyards,
             tornadoes=tornadoes,
+            burst_projectiles=burst_projectiles,
             piercing_projectiles=piercing_projectiles,
             rolling_combat=rolling_combat,
             rolling_spells=rolling_spells,
@@ -1958,8 +1976,9 @@ class TensorResidentEngine:
             0, self.piercing_projectiles.catalog.supported.numel() - 1
         )
         piercing_source = self.piercing_projectiles.catalog.supported[core_card]
+        burst_source = self.burst_projectiles.catalog.supported[core_card]
         unsafe_source = character & (
-            self.uses_projectile[safe] & ~piercing_source
+            self.uses_projectile[safe] & ~(piercing_source | burst_source)
         )
         dx = core.entity_x_units[:, :, None].to(torch.int64) - core.entity_x_units[
             :, None, :
@@ -2165,6 +2184,25 @@ class TensorResidentEngine:
         allowed = ((mechanics == 0) | (mechanics == opcode)).all(dim=2)
         return active_character & self.demolition.catalog.supported[card] & allowed
 
+    def _burst_entity_supported(self) -> torch.Tensor:
+        core = self.runtime.battle
+        active_character = self.runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        card = core.entity_card.clamp(
+            0, self.burst_projectiles.catalog.supported.numel() - 1
+        )
+        mechanics = self.runtime.catalog.mechanic_opcode[
+            self._core_catalog_id().clamp_min(0)
+        ]
+        recoil_opcode = MECHANIC_OPCODE["AttackRecoil"]
+        allowed = ((mechanics == 0) | (mechanics == recoil_opcode)).all(dim=2)
+        return (
+            active_character
+            & self.burst_projectiles.catalog.supported[card]
+            & allowed
+        )
+
     def _miner_entity_supported(self) -> torch.Tensor:
         core = self.runtime.battle
         character = self.runtime.entity_pool.active & (
@@ -2332,6 +2370,85 @@ class TensorResidentEngine:
             | (operations == MECHANIC_OPCODE["DeathSpawn"])
         ).any(dim=2)
         owner.target_death_payload_supported.copy_(~(character & terminal_on_death))
+
+    def _sync_burst_targets_from_canonical_(self) -> None:
+        owner = self.burst_projectiles
+        core = self.runtime.battle
+        catalog = self._core_catalog_id().clamp_min(0)
+        character = self.runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        shield = (
+            character
+            & self.mechanics.has_shield
+            & self.shield_catalog.supported[catalog]
+        )
+        owner.target_airborne.copy_(self.combat.airborne)
+        owner.target_has_shield.copy_(shield)
+        owner.target_shield.copy_(self.mechanics.shield_current)
+        owner.target_shield_integer_kind.copy_(self.shield_integer_kind)
+        owner.target_shield_break_count.copy_(
+            self.mechanics.shield_break_count.to(torch.int32)
+        )
+        operations = self.runtime.catalog.mechanic_opcode[catalog]
+        terminal_on_death = (
+            (operations == MECHANIC_OPCODE["DeathDamage"])
+            | (operations == MECHANIC_OPCODE["DeathAreaEffect"])
+            | (operations == MECHANIC_OPCODE["DeathSpawn"])
+        ).any(dim=2)
+        owner.target_death_payload_supported.copy_(~(character & terminal_on_death))
+
+    def _publish_burst_targets_to_canonical_(self, rows: torch.Tensor) -> None:
+        selected = rows[:, None]
+        owner = self.burst_projectiles
+        self.mechanics.shield_current.copy_(
+            torch.where(selected, owner.target_shield, self.mechanics.shield_current)
+        )
+        self.mechanics.shield_break_count.copy_(
+            torch.where(
+                selected,
+                owner.target_shield_break_count.to(
+                    self.mechanics.shield_break_count.dtype
+                ),
+                self.mechanics.shield_break_count,
+            )
+        )
+        self.shield_integer_kind.copy_(
+            torch.where(
+                selected,
+                owner.target_shield_integer_kind,
+                self.shield_integer_kind,
+            )
+        )
+        self.combat.hp.copy_(
+            torch.where(selected, self.runtime.battle.entity_hp, self.combat.hp)
+        )
+        self.combat.alive.copy_(
+            torch.where(
+                selected,
+                self.runtime.battle.entity_active & self.runtime.entity_pool.active,
+                self.combat.alive,
+            )
+        )
+        self.combat.shield_hp.copy_(
+            torch.where(selected, owner.target_shield, self.combat.shield_hp)
+        )
+        self.combat.shield_break_count.copy_(
+            torch.where(
+                selected,
+                owner.target_shield_break_count.to(
+                    self.combat.shield_break_count.dtype
+                ),
+                self.combat.shield_break_count,
+            )
+        )
+        self.combat.shield_integer_kind.copy_(
+            torch.where(
+                selected,
+                owner.target_shield_integer_kind,
+                self.combat.shield_integer_kind,
+            )
+        )
 
     def _publish_piercing_targets_to_canonical_(self, rows: torch.Tensor) -> None:
         selected = rows[:, None]
@@ -3060,6 +3177,7 @@ class TensorResidentEngine:
         periodic_opcode = MECHANIC_OPCODE["PeriodicSpawner"]
         charge_opcode = MECHANIC_OPCODE["BattleRamCharge"]
         demolition_opcode = MECHANIC_OPCODE["WallBreakersDemolition"]
+        attack_recoil_opcode = MECHANIC_OPCODE["AttackRecoil"]
         death_damage_opcode = MECHANIC_OPCODE["DeathDamage"]
         death_area_opcode = MECHANIC_OPCODE["DeathAreaEffect"]
         crown_scaling_opcode = MECHANIC_OPCODE["CrownTowerScaling"]
@@ -3073,6 +3191,10 @@ class TensorResidentEngine:
             | (entity_mechanics == periodic_opcode)
             | (entity_mechanics == charge_opcode)
             | (entity_mechanics == demolition_opcode)
+            | (
+                (entity_mechanics == attack_recoil_opcode)
+                & self._burst_entity_supported()[:, :, None]
+            )
             | (entity_mechanics == death_damage_opcode)
             | (entity_mechanics == death_area_opcode)
             | (entity_mechanics == crown_scaling_opcode)
@@ -3148,6 +3270,8 @@ class TensorResidentEngine:
             self.damage_ramp_catalog.direct_supported.numel() - 1,
         )
         damage_ramp_supported = self.damage_ramp_catalog.direct_supported[core_card]
+        burst_entity = (entity_mechanics == attack_recoil_opcode).any(dim=2)
+        burst_supported = self._burst_entity_supported()
         miner_entity = (
             (entity_mechanics == crown_scaling_opcode)
             | (entity_mechanics == underground_opcode)
@@ -3225,6 +3349,10 @@ class TensorResidentEngine:
             ResidentUnsupportedReason.ACTIVE_MECHANIC,
         )
         publish(
+            (burst_entity & active_character & ~burst_supported).any(dim=1),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
             (
                 death_payload_entity
                 & active_character
@@ -3240,7 +3368,10 @@ class TensorResidentEngine:
         )
         rolling_combat_projectile = self.rolling_combat.catalog.supported[core_card]
         piercing_projectile = self.piercing_projectiles.catalog.supported[core_card]
-        bridge_projectile &= ~(rolling_combat_projectile | piercing_projectile)
+        burst_projectile = self.burst_projectiles.catalog.supported[core_card]
+        bridge_projectile &= ~(
+            rolling_combat_projectile | piercing_projectile | burst_projectile
+        )
         rolling_combat_projectile &= ~piercing_projectile
         retained_projectile = (
             self.combat.present
@@ -3282,7 +3413,12 @@ class TensorResidentEngine:
             (
                 projectile_entity
                 & live_character
-                & ~(bridge_projectile | rolling_combat_projectile | piercing_projectile)
+                & ~(
+                    bridge_projectile
+                    | rolling_combat_projectile
+                    | piercing_projectile
+                    | burst_projectile
+                )
                 & (
                     (
                         (self.runtime.battle.entity_tower_slot < 0)
@@ -5852,6 +5988,11 @@ class TensorResidentEngine:
             source.tornadoes,
             selected_rows,
         )
+        self.burst_projectiles.reset_rows_(
+            selected_rows,
+            source.burst_projectiles,
+            selected_rows,
+        )
         self.piercing_projectiles.reset_rows_(
             selected_rows,
             source.piercing_projectiles,
@@ -6137,6 +6278,14 @@ class TensorResidentEngine:
         launch_target_runtime_slot = working.runtime.entity_pool.slots_for_ids(
             launch_target_id
         )
+        burst_launch_mask = (
+            combat.projectile_launched
+            & working.combat.present
+            & launch_found
+            & (combat.target_after >= 0)
+            & (launch_target_runtime_slot >= 0)
+            & working.burst_projectiles.catalog.supported[launch_card]
+        )
         piercing_launch_mask = (
             combat.projectile_launched
             & working.combat.present
@@ -6144,13 +6293,14 @@ class TensorResidentEngine:
             & (combat.target_after >= 0)
             & (launch_target_runtime_slot >= 0)
             & working.piercing_projectiles.catalog.supported[launch_card]
+            & ~burst_launch_mask
         )
         rolling_launch = (
             combat.projectile_launched
             & working.combat.present
             & launch_found
             & working.rolling_combat.catalog.supported[launch_card]
-            & ~piercing_launch_mask
+            & ~(piercing_launch_mask | burst_launch_mask)
         )
         generic_launch = (
             combat.projectile_launched
@@ -6161,7 +6311,7 @@ class TensorResidentEngine:
                 working.projectile_bridge.catalog.kind[launch_card]
                 == BridgePayloadKind.COMBAT_PROJECTILE
             )
-            & ~(piercing_launch_mask | rolling_launch)
+            & ~(burst_launch_mask | piercing_launch_mask | rolling_launch)
         )
         maximum_id = torch.iinfo(torch.int64).max
         rolling_source_max = torch.where(
@@ -6226,6 +6376,19 @@ class TensorResidentEngine:
         )
         active &= ~launch_order_unsupported
         working.runtime.supported &= active
+        working._sync_burst_targets_from_canonical_()
+        burst_launch = working.burst_projectiles.commit_attacks_(
+            working.runtime,
+            source_slots=launch_runtime_slot,
+            target_slots=launch_target_runtime_slot.clamp_min(0),
+            valid=burst_launch_mask & active[:, None],
+        )
+        working.runtime.mark_unsupported(
+            active & ~burst_launch.committed,
+            phase=TickPhase.COMBAT,
+        )
+        active &= burst_launch.committed
+        working.runtime.supported &= active
         working._sync_piercing_targets_from_canonical_()
         piercing_launch = working.piercing_projectiles.commit_attacks_(
             working.runtime,
@@ -6256,6 +6419,7 @@ class TensorResidentEngine:
             combat,
             projectile_launched=(
                 combat.projectile_launched & ~piercing_launch_mask & ~rolling_launch
+                & ~burst_launch_mask
             ),
         )
         previously_allocated_objects = working.objects.objects.allocated.clone()
@@ -6457,6 +6621,7 @@ class TensorResidentEngine:
             | working.dispatcher.underground_active
             | miner_owned
             | demolition_owned
+            | working.burst_projectiles.recoil_active
             | working.stealth.state.hidden_building
         )
         working.movement.slot_present &= ~(charge_entities | miner_owned)
@@ -6872,6 +7037,19 @@ class TensorResidentEngine:
         )
         active &= ~terminal_general_conflict
         working.runtime.supported &= active
+        working._sync_burst_targets_from_canonical_()
+        burst_projectiles = working.burst_projectiles.step_(
+            working.runtime,
+            dt_ms=50,
+            battle_mask=active,
+        )
+        working.runtime.mark_unsupported(
+            active & ~burst_projectiles.committed,
+            phase=TickPhase.OBJECTS,
+        )
+        active &= burst_projectiles.committed
+        working.runtime.supported &= active
+        working._publish_burst_targets_to_canonical_(active)
         terminal_dead_before_objects = (
             active[:, None]
             & working.runtime.entity_pool.active

@@ -508,7 +508,11 @@ class TensorResidentBurstProjectiles:
         parent_slots = torch.sort(free_key, dim=1).values
         rows = torch.arange(self.batch_size, device=self.device)
         recoil_started = torch.zeros_like(valid, dtype=torch.bool)
-        for rank in range(valid.shape[1]):
+        # The combat plane is entity-wide while this owner retains only its
+        # bounded number of simultaneous parents. Capacity admission above
+        # guarantees every requested launch fits, so ranks beyond the owner
+        # width are necessarily inactive and need no indexing.
+        for rank in range(min(valid.shape[1], self.parent_active.shape[1])):
             selected = accepted_lanes[:, rank]
             source_slot = ordered_source[:, rank]
             target_slot = ordered_target[:, rank]
