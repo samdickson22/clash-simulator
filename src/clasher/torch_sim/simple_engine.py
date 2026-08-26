@@ -446,6 +446,7 @@ class FastTensorGym:
         *,
         disabled: torch.Tensor | None = None,
         speed_multiplier: torch.Tensor | None = None,
+        cooldown_decrement: torch.Tensor | None = None,
     ) -> FastGymTickResult:
         """Advance every live row once and optionally allocate one entity.
 
@@ -471,6 +472,16 @@ class FastTensorGym:
             raise ValueError("speed_multiplier must use the state device")
         elif speed_multiplier.dtype != torch.float32:
             raise ValueError("speed_multiplier must be float32")
+        if cooldown_decrement is None:
+            cooldown_decrement = torch.ones_like(
+                state.cooldown_ticks, dtype=torch.int32
+            )
+        elif cooldown_decrement.shape != state.active.shape:
+            raise ValueError("cooldown_decrement must have shape [batch, entities]")
+        elif cooldown_decrement.device != state.device:
+            raise ValueError("cooldown_decrement must use the state device")
+        elif cooldown_decrement.dtype != torch.int32:
+            raise ValueError("cooldown_decrement must be int32")
         live = ~state.game_over
         if request is None:
             success = torch.zeros(
@@ -492,7 +503,9 @@ class FastTensorGym:
         ready = state.active & (state.deploy_ticks > 0)
         state.deploy_ticks.sub_(ready.to(torch.int32)).clamp_(min=0)
         cooling = state.active & ~disabled & (state.cooldown_ticks > 0)
-        state.cooldown_ticks.sub_(cooling.to(torch.int32)).clamp_(min=0)
+        state.cooldown_ticks.sub_(
+            torch.where(cooling, cooldown_decrement.clamp(min=0), 0)
+        ).clamp_(min=0)
         (
             attack_ready,
             target_in_attack_range,

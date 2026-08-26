@@ -30,6 +30,7 @@ class FastPositiveBuffState:
     remaining_ticks: torch.Tensor
     movement_speed_multiplier: torch.Tensor
     attack_cooldown_multiplier: torch.Tensor
+    attack_clock_fraction: torch.Tensor
 
     @property
     def batch_size(self) -> int:
@@ -69,6 +70,9 @@ class FastPositiveBuffState:
             attack_cooldown_multiplier=torch.ones(
                 shape, dtype=torch.float32, device=tensor_device
             ),
+            attack_clock_fraction=torch.zeros(
+                shape, dtype=torch.float32, device=tensor_device
+            ),
         )
 
     def clone(self) -> FastPositiveBuffState:
@@ -94,6 +98,126 @@ class FastPositiveBuffState:
         self.attack_cooldown_multiplier.copy_(
             torch.where(selected, 1.0, self.attack_cooldown_multiplier)
         )
+        self.attack_clock_fraction.masked_fill_(selected, 0.0)
+
+
+@dataclass
+class FastPositiveBuffAreaState:
+    """Fixed-capacity persistent friendly-area pool."""
+
+    device: torch.device
+    active: torch.Tensor
+    stable_id: torch.Tensor
+    owner: torch.Tensor
+    center_x_units: torch.Tensor
+    center_y_units: torch.Tensor
+    radius_units: torch.Tensor
+    remaining_ticks: torch.Tensor
+    scan_interval_ticks: torch.Tensor
+    next_scan_ticks: torch.Tensor
+    recipient_duration_ticks: torch.Tensor
+    movement_speed_multiplier: torch.Tensor
+    attack_cooldown_multiplier: torch.Tensor
+
+    @property
+    def batch_size(self) -> int:
+        return int(self.active.shape[0])
+
+    @property
+    def max_areas(self) -> int:
+        return int(self.active.shape[1])
+
+    @classmethod
+    def empty(
+        cls,
+        batch_size: int,
+        *,
+        max_areas: int = 32,
+        device: str | torch.device = "cpu",
+    ) -> FastPositiveBuffAreaState:
+        if batch_size < 1:
+            raise ValueError("batch_size must be positive")
+        if max_areas < 1:
+            raise ValueError("max_areas must be positive")
+        tensor_device = torch.device(device)
+        if tensor_device.type == "cuda" and tensor_device.index is None:
+            tensor_device = torch.device("cuda", torch.cuda.current_device())
+        shape = (batch_size, max_areas)
+
+        def zeros(dtype: torch.dtype) -> torch.Tensor:
+            return torch.zeros(shape, dtype=dtype, device=tensor_device)
+
+        return cls(
+            device=tensor_device,
+            active=zeros(torch.bool),
+            stable_id=zeros(torch.int64),
+            owner=zeros(torch.int8),
+            center_x_units=zeros(torch.int32),
+            center_y_units=zeros(torch.int32),
+            radius_units=zeros(torch.int32),
+            remaining_ticks=zeros(torch.int32),
+            scan_interval_ticks=zeros(torch.int32),
+            next_scan_ticks=zeros(torch.int32),
+            recipient_duration_ticks=zeros(torch.int32),
+            movement_speed_multiplier=torch.ones(
+                shape, dtype=torch.float32, device=tensor_device
+            ),
+            attack_cooldown_multiplier=torch.ones(
+                shape, dtype=torch.float32, device=tensor_device
+            ),
+        )
+
+    def reset_rows_(self, reset_mask: torch.Tensor) -> None:
+        if tuple(reset_mask.shape) != (self.batch_size,):
+            raise ValueError("reset_mask must have shape [batch]")
+        if reset_mask.device != self.device or reset_mask.dtype != torch.bool:
+            raise ValueError("reset_mask must be bool on the area device")
+        selected = reset_mask[:, None]
+        for descriptor in fields(self):
+            if descriptor.name == "device":
+                continue
+            value = getattr(self, descriptor.name)
+            if value.dtype == torch.bool:
+                value.masked_fill_(selected, False)
+            elif descriptor.name in {
+                "movement_speed_multiplier",
+                "attack_cooldown_multiplier",
+            }:
+                value.masked_fill_(selected, 1.0)
+            else:
+                value.masked_fill_(selected, 0)
+
+
+@dataclass(frozen=True)
+class FastPositiveBuffAreaAllocationCommands:
+    """Persistent-area creation requests with shape ``[batch, commands]``."""
+
+    ready: torch.Tensor
+    stable_id: torch.Tensor
+    owner: torch.Tensor
+    center_x_units: torch.Tensor
+    center_y_units: torch.Tensor
+    radius_units: torch.Tensor
+    lifetime_ticks: torch.Tensor
+    scan_interval_ticks: torch.Tensor
+    recipient_duration_ticks: torch.Tensor
+    movement_speed_multiplier: torch.Tensor
+    attack_cooldown_multiplier: torch.Tensor
+
+
+@dataclass(frozen=True)
+class FastPositiveBuffAreaAllocationResult:
+    accepted: torch.Tensor
+    invalid: torch.Tensor
+    capacity_rejected: torch.Tensor
+    capacity_rejected_count: torch.Tensor
+    allocated_mask: torch.Tensor
+
+
+@dataclass(frozen=True)
+class FastPositiveBuffAreaStepResult:
+    scans: FastPositiveBuffAreaCommands
+    expired: torch.Tensor
 
 
 @dataclass(frozen=True)
@@ -154,6 +278,7 @@ def _validate_buff_state(
         "remaining_ticks": torch.int32,
         "movement_speed_multiplier": torch.float32,
         "attack_cooldown_multiplier": torch.float32,
+        "attack_clock_fraction": torch.float32,
     }
     for name, dtype in expected.items():
         value = getattr(buffs, name)
@@ -225,6 +350,7 @@ def clear_stale_fast_positive_buffs_(
     buffs.attack_cooldown_multiplier.copy_(
         torch.where(stale, 1.0, buffs.attack_cooldown_multiplier)
     )
+    buffs.attack_clock_fraction.masked_fill_(stale, 0.0)
     return stale
 
 
@@ -381,8 +507,190 @@ def advance_fast_positive_buffs_(
     buffs.attack_cooldown_multiplier.copy_(
         torch.where(expired, 1.0, buffs.attack_cooldown_multiplier)
     )
+    buffs.attack_clock_fraction.masked_fill_(expired, 0.0)
     return FastPositiveBuffAdvanceResult(
         decremented=decremented,
         expired=expired,
         stale_cleared=stale,
     )
+
+
+def fast_positive_attack_clock_decrement_(
+    state: FastGymState,
+    buffs: FastPositiveBuffState,
+    *,
+    cooling: torch.Tensor,
+) -> torch.Tensor:
+    """Return integer cooldown progress and retain fractional haste credit.
+
+    The caller supplies the exact slots whose attack clock advances this tick.
+    This makes a 1.3 multiplier produce three extra cooldown ticks per ten
+    native ticks without rounding it away or decrementing the same clock in a
+    second subsystem.
+    """
+
+    _validate_buff_state(state, buffs)
+    if cooling.shape != state.active.shape:
+        raise ValueError("cooling must have shape [batch, entities]")
+    if cooling.device != state.device or cooling.dtype != torch.bool:
+        raise ValueError("cooling must be bool on the state device")
+    view = fast_positive_buff_view(state, buffs)
+    total = buffs.attack_clock_fraction + view.cooldown_decrement_multiplier
+    decrement = torch.floor(total).to(torch.int32)
+    buffs.attack_clock_fraction.copy_(
+        torch.where(cooling, total - decrement.to(torch.float32), 0.0)
+    )
+    return torch.where(cooling, decrement.clamp(min=1), 0)
+
+
+def _validate_area_state(areas: FastPositiveBuffAreaState) -> None:
+    shape = tuple(areas.active.shape)
+    if len(shape) != 2:
+        raise ValueError("positive area state must have shape [batch, areas]")
+    expected = {
+        "active": torch.bool,
+        "stable_id": torch.int64,
+        "owner": torch.int8,
+        "center_x_units": torch.int32,
+        "center_y_units": torch.int32,
+        "radius_units": torch.int32,
+        "remaining_ticks": torch.int32,
+        "scan_interval_ticks": torch.int32,
+        "next_scan_ticks": torch.int32,
+        "recipient_duration_ticks": torch.int32,
+        "movement_speed_multiplier": torch.float32,
+        "attack_cooldown_multiplier": torch.float32,
+    }
+    for name, dtype in expected.items():
+        value = getattr(areas, name)
+        if tuple(value.shape) != shape or value.device != areas.device:
+            raise ValueError(f"{name} must match the area shape and device")
+        if value.dtype != dtype:
+            raise ValueError(f"{name} must use {dtype}")
+
+
+def allocate_fast_positive_buff_areas_(
+    areas: FastPositiveBuffAreaState,
+    commands: FastPositiveBuffAreaAllocationCommands,
+) -> FastPositiveBuffAreaAllocationResult:
+    """Allocate persistent friendly fields in command order without eviction."""
+
+    _validate_area_state(areas)
+    shape = tuple(commands.ready.shape)
+    if len(shape) != 2 or shape[0] != areas.batch_size:
+        raise ValueError("positive area commands must have shape [batch, commands]")
+    expected = {
+        "ready": torch.bool,
+        "stable_id": torch.int64,
+        "owner": torch.int8,
+        "center_x_units": torch.int32,
+        "center_y_units": torch.int32,
+        "radius_units": torch.int32,
+        "lifetime_ticks": torch.int32,
+        "scan_interval_ticks": torch.int32,
+        "recipient_duration_ticks": torch.int32,
+        "movement_speed_multiplier": torch.float32,
+        "attack_cooldown_multiplier": torch.float32,
+    }
+    for name, dtype in expected.items():
+        value = getattr(commands, name)
+        if tuple(value.shape) != shape or value.device != areas.device:
+            raise ValueError(f"{name} must match command shape and device")
+        if value.dtype != dtype:
+            raise ValueError(f"{name} must use {dtype}")
+    finite = torch.isfinite(commands.movement_speed_multiplier) & torch.isfinite(
+        commands.attack_cooldown_multiplier
+    )
+    valid = (
+        commands.ready
+        & (commands.stable_id > 0)
+        & (commands.owner >= 0)
+        & (commands.owner < 2)
+        & (commands.radius_units >= 0)
+        & (commands.lifetime_ticks > 0)
+        & (commands.scan_interval_ticks > 0)
+        & (commands.recipient_duration_ticks > 0)
+        & finite
+        & (
+            (commands.movement_speed_multiplier > 1.0)
+            | (commands.attack_cooldown_multiplier > 1.0)
+        )
+    )
+    command_rank = valid.to(torch.int64).cumsum(dim=1) - 1
+    free = ~areas.active
+    free_rank = free.to(torch.int64).cumsum(dim=1) - 1
+    free_count = free.sum(dim=1, dtype=torch.int64)
+    accepted = valid & (command_rank < free_count[:, None])
+    accepted_count = accepted.sum(dim=1, dtype=torch.int64)
+    allocated = free & (free_rank >= 0) & (free_rank < accepted_count[:, None])
+    claims = (
+        allocated[:, :, None]
+        & accepted[:, None, :]
+        & (free_rank[:, :, None] == command_rank[:, None, :])
+    )
+    source = claims.to(torch.int64).argmax(dim=2)
+
+    def gather(value: torch.Tensor) -> torch.Tensor:
+        return value.gather(1, source)
+
+    def write(field: torch.Tensor, value: torch.Tensor) -> None:
+        field.copy_(torch.where(allocated, value.to(field.dtype), field))
+
+    write(areas.active, torch.ones_like(allocated))
+    for name in (
+        "stable_id",
+        "owner",
+        "center_x_units",
+        "center_y_units",
+        "radius_units",
+        "recipient_duration_ticks",
+        "movement_speed_multiplier",
+        "attack_cooldown_multiplier",
+    ):
+        write(getattr(areas, name), gather(getattr(commands, name)))
+    write(areas.remaining_ticks, gather(commands.lifetime_ticks))
+    write(areas.scan_interval_ticks, gather(commands.scan_interval_ticks))
+    write(areas.next_scan_ticks, gather(commands.scan_interval_ticks))
+    rejected = valid & ~accepted
+    return FastPositiveBuffAreaAllocationResult(
+        accepted=accepted,
+        invalid=commands.ready & ~valid,
+        capacity_rejected=rejected,
+        capacity_rejected_count=rejected.sum(dim=1, dtype=torch.int32),
+        allocated_mask=allocated,
+    )
+
+
+def step_fast_positive_buff_areas_(
+    areas: FastPositiveBuffAreaState,
+) -> FastPositiveBuffAreaStepResult:
+    """Advance fields once and emit their serialized-cadence friendly scans."""
+
+    _validate_area_state(areas)
+    active = areas.active
+    areas.remaining_ticks.sub_(active.to(torch.int32)).clamp_(min=0)
+    areas.next_scan_ticks.sub_(active.to(torch.int32))
+    expired = active & (areas.remaining_ticks == 0)
+    scan = active & ~expired & (areas.next_scan_ticks <= 0)
+    areas.next_scan_ticks.copy_(
+        torch.where(
+            scan,
+            areas.next_scan_ticks + areas.scan_interval_ticks,
+            areas.next_scan_ticks,
+        )
+    )
+    commands = FastPositiveBuffAreaCommands(
+        active=scan,
+        owner=areas.owner,
+        center_x_units=areas.center_x_units,
+        center_y_units=areas.center_y_units,
+        radius_units=areas.radius_units,
+        duration_ticks=areas.recipient_duration_ticks,
+        movement_speed_multiplier=areas.movement_speed_multiplier,
+        attack_cooldown_multiplier=areas.attack_cooldown_multiplier,
+    )
+    areas.active.masked_fill_(expired, False)
+    areas.stable_id.masked_fill_(expired, 0)
+    areas.remaining_ticks.masked_fill_(expired, 0)
+    areas.next_scan_ticks.masked_fill_(expired, 0)
+    return FastPositiveBuffAreaStepResult(scans=commands, expired=expired)

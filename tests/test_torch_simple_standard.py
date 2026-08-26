@@ -61,7 +61,12 @@ def test_standard_setup_constructs_native_runtime_from_authoritative_data(
     assert setup.rules.tiebreak_ticks == STANDARD_TIEBREAK_TICK
     assert setup.canonical_lane_globals is True
     assert setup.public_root_names == ("Balloon", "Golem", "Knight", "Lumberjack")
-    assert setup.supported_public_root_names == ("Balloon", "Golem", "Knight")
+    assert setup.supported_public_root_names == (
+        "Balloon",
+        "Golem",
+        "Knight",
+        "Lumberjack",
+    )
     balloon = setup.cards.name_to_id["Balloon"]
     golem = setup.cards.name_to_id["Golem"]
     knight = setup.cards.name_to_id["Knight"]
@@ -71,7 +76,7 @@ def test_standard_setup_constructs_native_runtime_from_authoritative_data(
     assert bool(setup.supported_public_root_mask[balloon])
     assert bool(setup.supported_public_root_mask[golem])
     assert bool(setup.supported_public_root_mask[knight])
-    assert not bool(setup.supported_public_root_mask[lumberjack])
+    assert bool(setup.supported_public_root_mask[lumberjack])
 
     princess = load_princess_tower_character_data(CardDataLoader().data_file)
     assert setup.tower_spec.x_units.tolist() == [
@@ -111,19 +116,19 @@ def test_standard_setup_constructs_native_runtime_from_authoritative_data(
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
-def test_standard_setup_fails_closed_for_unsupported_or_nonpublic_decks(
+def test_standard_setup_admits_complete_roots_and_rejects_nonpublic_decks(
     device_name: str,
 ) -> None:
     setup = _setup(device_name)
     entity_lookup, hand_lookup = _typed_lookups(setup)
 
-    with pytest.raises(ValueError, match="unsupported.*Lumberjack"):
-        setup.create_runtime(
-            _deck("Lumberjack"),
-            entity_token_lookup=entity_lookup,
-            hand_token_lookup=hand_lookup,
-            canonical_lane_globals=True,
-        )
+    lumberjack = setup.create_runtime(
+        _deck("Lumberjack"),
+        entity_token_lookup=entity_lookup,
+        hand_token_lookup=hand_lookup,
+        canonical_lane_globals=True,
+    )
+    assert bool(lumberjack.observe().legal_mask[:, :, :-1].any())
     with pytest.raises(ValueError, match="not compiled public roots.*Arrows"):
         setup.create_runtime(
             _deck("Arrows"),

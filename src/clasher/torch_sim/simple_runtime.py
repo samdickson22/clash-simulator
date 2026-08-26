@@ -9,7 +9,7 @@ entities, or the retained resident verifier.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, fields, replace
 from typing import Any
 
 import torch
@@ -78,6 +78,20 @@ from .simple_projection import (
     SimpleProjectionInputs,
     SimpleTensorProjector,
 )
+from .simple_positive_buffs import (
+    FastPositiveBuffAdvanceResult,
+    FastPositiveBuffApplyResult,
+    FastPositiveBuffAreaAllocationResult,
+    FastPositiveBuffAreaState,
+    FastPositiveBuffAreaStepResult,
+    FastPositiveBuffState,
+    advance_fast_positive_buffs_,
+    allocate_fast_positive_buff_areas_,
+    apply_fast_positive_area_buffs_,
+    fast_positive_attack_clock_decrement_,
+    fast_positive_buff_view,
+    step_fast_positive_buff_areas_,
+)
 from .simple_rolling_spells import (
     FAST_ROLLING_NO_SPAWN,
     FastRollingAllocationResult,
@@ -105,6 +119,7 @@ from .simple_spawn_blueprints import (
     death_payload_container_commands,
     impact_spawn_commands,
     payload_spawn_commands,
+    positive_area_activation_commands,
     rolling_spawn_commands,
 )
 from .simple_state import FastGymState
@@ -126,6 +141,11 @@ class SimpleGymRuntimeStep:
     lifecycle: FastLifecycleStepResult
     payloads: FastPayloadStepResult
     payload_effect_allocation: FastPayloadEffectAllocationResult
+    positive_area_step: FastPositiveBuffAreaStepResult
+    positive_buff_apply: FastPositiveBuffApplyResult
+    positive_buff_advance: FastPositiveBuffAdvanceResult
+    positive_area_allocation: FastPositiveBuffAreaAllocationResult | None
+    positive_area_effect_allocation: FastPayloadEffectAllocationResult | None
     payload_container_allocation: FastPayloadAllocationResult | None
     spawn_allocation: FastSpawnAllocationResult | None
     payload_spawn_allocation: FastSpawnAllocationResult | None
@@ -257,6 +277,16 @@ class SimpleGymRuntime:
         self.payload_containers = FastPayloadContainerState.empty(
             self.state.batch_size,
             max_containers=max_payload_containers,
+            device=self.state.device,
+        )
+        self.positive_buff_areas = FastPositiveBuffAreaState.empty(
+            self.state.batch_size,
+            max_areas=max_payload_containers,
+            device=self.state.device,
+        )
+        self.positive_buffs = FastPositiveBuffState.empty(
+            self.state.batch_size,
+            max_entities=max_entities,
             device=self.state.device,
         )
         self.lifecycle = FastLifecycleState.empty_like(self.state)
@@ -402,6 +432,8 @@ class SimpleGymRuntime:
             "death_effects": self._tensor_fields(self.death_effects),
             "death_bursts": self._tensor_fields(self.death_bursts),
             "payload_containers": self._tensor_fields(self.payload_containers),
+            "positive_buff_areas": self._tensor_fields(self.positive_buff_areas),
+            "positive_buffs": self._tensor_fields(self.positive_buffs),
             "lifecycle": self._tensor_fields(self.lifecycle),
             "modifiers": self._tensor_fields(self.modifiers),
             "damage_ramp": self._tensor_fields(self.damage_ramp),
@@ -492,6 +524,8 @@ class SimpleGymRuntime:
             "death_effects": self.death_effects,
             "death_bursts": self.death_bursts,
             "payload_containers": self.payload_containers,
+            "positive_buff_areas": self.positive_buff_areas,
+            "positive_buffs": self.positive_buffs,
             "lifecycle": self.lifecycle,
             "modifiers": self.modifiers,
             "damage_ramp": self.damage_ramp,
@@ -1126,12 +1160,33 @@ class SimpleGymRuntime:
         self._initialize_modifiers_(self.combat.spawned_mask)
         self._clear_damage_ramp_(self.combat.spawned_mask)
 
+        positive_area_step = step_fast_positive_buff_areas_(
+            self.positive_buff_areas
+        )
+        positive_buff_apply = apply_fast_positive_area_buffs_(
+            self.state,
+            self.positive_buffs,
+            positive_area_step.scans,
+        )
         charge_parameters = self._charge_parameters()
         charge_view = pre_move_charge_multipliers(self.modifiers, charge_parameters)
         stunned = self.entity_status_ticks > 0
+        positive_view = fast_positive_buff_view(self.state, self.positive_buffs)
+        cooldown_decrement = fast_positive_attack_clock_decrement_(
+            self.state,
+            self.positive_buffs,
+            cooling=(
+                self.state.active
+                & ~stunned
+                & (self.state.cooldown_ticks > 0)
+            ),
+        )
         combat = self.combat.step_tick(
             disabled=stunned,
-            speed_multiplier=charge_view.speed,
+            speed_multiplier=(
+                charge_view.speed * positive_view.movement_speed_multiplier
+            ),
+            cooldown_decrement=cooldown_decrement,
         )
         ramp_parameters = self._damage_ramp_parameters()
         ramp_target = torch.where(
@@ -1226,6 +1281,31 @@ class SimpleGymRuntime:
             self.effect_consume_source_id,
             payload_result.effect_commands,
         )
+        positive_area_allocation: FastPositiveBuffAreaAllocationResult | None = None
+        positive_area_effect_allocation: FastPayloadEffectAllocationResult | None = None
+        if self.spawn_blueprints is not None:
+            positive_area_commands, positive_area_effect_commands = (
+                positive_area_activation_commands(
+                    self.spawn_blueprints,
+                    payload_result.spawn_triggers,
+                )
+            )
+            positive_area_allocation = allocate_fast_positive_buff_areas_(
+                self.positive_buff_areas,
+                positive_area_commands,
+            )
+            positive_area_effect_allocation = allocate_fast_payload_effects_(
+                self.state,
+                self.effects,
+                self.effect_consume_source_id,
+                replace(
+                    positive_area_effect_commands,
+                    ready=(
+                        positive_area_effect_commands.ready
+                        & positive_area_allocation.accepted
+                    ),
+                ),
+            )
         scheduled_step: FastScheduledCastStepResult | None = None
         scheduled_effect_allocation: FastPayloadEffectAllocationResult | None = None
         scheduled_spawn_allocation: FastSpawnAllocationResult | None = None
@@ -1395,6 +1475,10 @@ class SimpleGymRuntime:
             self._initialize_lifecycle_(periodic_spawned)
             self._initialize_modifiers_(periodic_spawned)
             self._clear_damage_ramp_(periodic_spawned)
+        positive_buff_advance = advance_fast_positive_buffs_(
+            self.state,
+            self.positive_buffs,
+        )
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())
@@ -1423,6 +1507,11 @@ class SimpleGymRuntime:
             lifecycle=lifecycle_result,
             payloads=payload_result,
             payload_effect_allocation=payload_effect_allocation,
+            positive_area_step=positive_area_step,
+            positive_buff_apply=positive_buff_apply,
+            positive_buff_advance=positive_buff_advance,
+            positive_area_allocation=positive_area_allocation,
+            positive_area_effect_allocation=positive_area_effect_allocation,
             payload_container_allocation=payload_container_allocation,
             spawn_allocation=spawn_allocation,
             payload_spawn_allocation=payload_spawn_allocation,

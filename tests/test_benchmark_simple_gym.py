@@ -92,7 +92,7 @@ def test_simple_benchmark_uses_standard_tiebreak_window_gate(tmp_path: Path) -> 
         )
 
 
-def test_simple_benchmark_reports_truthful_supported_deck_filter(
+def test_simple_benchmark_reports_all_completed_public_decks_supported(
     tmp_path: Path,
 ) -> None:
     path = tmp_path / "mixed-decks.json"
@@ -101,7 +101,7 @@ def test_simple_benchmark_reports_truthful_supported_deck_filter(
             {
                 "decks": [
                     {"name": "supported", "cards": ["Knight"] * 8},
-                    {"name": "unsupported", "cards": ["Lumberjack"] * 8},
+                    {"name": "completed-payload", "cards": ["Lumberjack"] * 8},
                 ]
             }
         )
@@ -119,6 +119,6 @@ def test_simple_benchmark_reports_truthful_supported_deck_filter(
 
     assert result["deck_pool"] == {
         "candidate_decks": 2,
-        "supported_decks": 1,
-        "rejected_decks": 1,
+        "supported_decks": 2,
+        "rejected_decks": 0,
     }

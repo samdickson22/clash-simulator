@@ -72,9 +72,30 @@ def test_compiler_materializes_internal_rows_and_fails_closed_by_trigger_shape()
     assert _root_support(catalog, "BarbarianBarrel")
     barrel = catalog.cards.name_to_id["BarbarianBarrel"]
     assert int(catalog.rolling_blueprint_by_card[barrel]) >= 0
-    for name in ("Lumberjack",):
-        assert bool(catalog.root_payload_required[catalog.cards.name_to_id[name]])
-        assert not _root_support(catalog, name)
+    lumberjack = catalog.cards.name_to_id["Lumberjack"]
+    assert bool(catalog.root_payload_required[lumberjack])
+    assert _root_support(catalog, "Lumberjack")
+    lumberjack_row = rows_by_root["Lumberjack"][0]
+    assert bool(catalog.container_positive_area_enabled[lumberjack_row])
+    assert int(catalog.container_lifetime_ticks[lumberjack_row]) == 10
+    assert int(catalog.container_positive_area_lifetime_ticks[lumberjack_row]) == 110
+    assert int(catalog.container_positive_area_scan_interval_ticks[lumberjack_row]) == 6
+    assert int(
+        catalog.container_positive_area_recipient_duration_ticks[lumberjack_row]
+    ) == 20
+    assert float(
+        catalog.container_positive_area_movement_multiplier[lumberjack_row]
+    ) == pytest.approx(1.3)
+    assert float(
+        catalog.container_positive_area_attack_multiplier[lumberjack_row]
+    ) == pytest.approx(1.3)
+    assert float(catalog.container_positive_area_damage[lumberjack_row]) == 179.0
+    assert int(
+        catalog.container_positive_area_damage_radius_units[lumberjack_row]
+    ) == 3_000
+    assert float(
+        catalog.container_positive_area_tower_damage_multiplier[lumberjack_row]
+    ) == pytest.approx(0.3)
 
     ram_row = rows_by_root["BattleRam"][0]
     pups_row = rows_by_root["LavaHound"][0]

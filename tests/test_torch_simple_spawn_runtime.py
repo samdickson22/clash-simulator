@@ -262,15 +262,188 @@ def test_impact_spawn_capacity_is_masked_before_spending_card(device_name: str) 
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
-def test_incomplete_spawn_blueprint_root_remains_illegal(device_name: str) -> None:
+def test_lumberjack_positive_area_payload_root_is_legal(device_name: str) -> None:
     runtime, blueprints, root = _runtime(
         "Lumberjack", device_name=device_name, max_entities=16
     )
     assert bool(blueprints.root_payload_required[root])
-    assert not bool(blueprints.root_payload_supported[root])
-    assert not bool(blueprints.fast_cards.training_supported[root])
-    assert not bool(runtime.observe().legal_mask[0, 0, :NO_OP_ACTION].any())
+    assert bool(blueprints.root_payload_supported[root])
+    assert bool(blueprints.fast_cards.training_supported[root])
+    assert bool(runtime.observe().legal_mask[0, 0, :NO_OP_ACTION].any())
 
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_full_runtime_lumberjack_delayed_rage_damage_and_friendly_haste(
+    device_name: str,
+) -> None:
+    runtime, blueprints, root = _runtime(
+        "Lumberjack",
+        device_name=device_name,
+        max_entities=20,
+        max_payload_containers=1,
+    )
+    action = _slot_zero_action(runtime, tile_x=8, tile_y=14)
+    deployed = runtime.step_tick(action)
+    assert deployed.action_success.tolist() == [[True, True]]
+
+    parent = runtime.state.active & (runtime.state.card_id == root)
+    parent[:, :6] = False
+    assert int(parent.sum()) == 1
+    parent_slot = int(parent.to(torch.int8).argmax(dim=1)[0])
+    enemy_tower_slot = 3
+    friendly_tower_slot = 0
+    center_x = int(runtime.state.x_units[0, enemy_tower_slot])
+    center_y = int(runtime.state.y_units[0, enemy_tower_slot])
+    runtime.state.x_units[0, parent_slot] = center_x
+    runtime.state.y_units[0, parent_slot] = center_y
+    runtime.state.x_units[0, friendly_tower_slot] = center_x
+    runtime.state.y_units[0, friendly_tower_slot] = center_y
+    runtime.state.hp[0, parent_slot] = 0.0
+
+    noop = torch.full(
+        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device
+    )
+    death = runtime.step_tick(noop)
+    assert death.payload_container_allocation is not None
+    assert bool(death.payload_container_allocation.accepted.any())
+    assert int(runtime.payload_containers.lifetime_ticks.max()) == 10
+
+    for _ in range(9):
+        step = runtime.step_tick(noop)
+        assert not bool(step.positive_area_allocation.accepted.any())
+    friendly_hp = float(runtime.state.hp[0, friendly_tower_slot])
+    enemy_hp = float(runtime.state.hp[0, enemy_tower_slot])
+    activated = runtime.step_tick(noop)
+    assert activated.positive_area_allocation is not None
+    assert activated.positive_area_effect_allocation is not None
+    assert bool(activated.positive_area_allocation.accepted.any())
+    assert bool(activated.positive_area_effect_allocation.accepted.any())
+    assert int(runtime.positive_buff_areas.remaining_ticks.max()) == 110
+    assert float(runtime.state.hp[0, friendly_tower_slot]) == friendly_hp
+    assert float(runtime.state.hp[0, enemy_tower_slot]) == pytest.approx(
+        enemy_hp - 179.0 * 0.3,
+        abs=1e-3,
+    )
+
+    runtime.state.cooldown_ticks[0, friendly_tower_slot] = 30
+    runtime.state.cooldown_ticks[0, enemy_tower_slot] = 30
+    for _ in range(10):
+        runtime.step_tick(noop)
+    assert bool(runtime.positive_buffs.remaining_ticks[0, friendly_tower_slot] > 0)
+    assert not bool(runtime.positive_buffs.remaining_ticks[0, enemy_tower_slot] > 0)
+    assert float(
+        runtime.positive_buffs.movement_speed_multiplier[0, friendly_tower_slot]
+    ) == pytest.approx(1.3)
+    assert int(runtime.state.cooldown_ticks[0, friendly_tower_slot]) < int(
+        runtime.state.cooldown_ticks[0, enemy_tower_slot]
+    )
+
+    # A second bottle can exist while the first field is live, but the bounded
+    # field pool rejects its activation atomically: neither the haste field nor
+    # its paired damage nova is emitted.
+    runtime.action_state.elixir.fill_(10.0)
+    second_deploy = runtime.step_tick(action)
+    assert second_deploy.action_success.tolist() == [[True, True]]
+    parents = runtime.state.active & (runtime.state.card_id == root)
+    parents[:, :6] = False
+    second_slot = int(
+        torch.where(
+            parents,
+            runtime.state.stable_id,
+            torch.zeros_like(runtime.state.stable_id),
+        ).argmax(dim=1)[0]
+    )
+    runtime.state.x_units[0, second_slot] = center_x
+    runtime.state.y_units[0, second_slot] = center_y
+    runtime.state.hp[0, second_slot] = 0.0
+    runtime.step_tick(noop)
+    for _ in range(9):
+        runtime.step_tick(noop)
+    hp_before_rejection = runtime.state.hp[0, enemy_tower_slot].clone()
+    rejected = runtime.step_tick(noop)
+    assert rejected.positive_area_allocation is not None
+    assert rejected.positive_area_effect_allocation is not None
+    assert bool(rejected.positive_area_allocation.capacity_rejected.any())
+    assert not bool(rejected.positive_area_effect_allocation.accepted.any())
+    assert torch.equal(runtime.state.hp[0, enemy_tower_slot], hp_before_rejection)
+
+    # Expiry releases capacity; the recipient's independent 20-tick falloff
+    # also clears, and a later death can reuse the physical field slot.
+    remaining = int(runtime.positive_buff_areas.remaining_ticks.max())
+    for _ in range(remaining):
+        runtime.step_tick(noop)
+    assert not bool(runtime.positive_buff_areas.active.any())
+    for _ in range(20):
+        runtime.step_tick(noop)
+    assert not bool(runtime.positive_buffs.remaining_ticks.any())
+
+    runtime.action_state.elixir.fill_(10.0)
+    runtime.step_tick(action)
+    parents = runtime.state.active & (runtime.state.card_id == root)
+    parents[:, :6] = False
+    third_slot = int(
+        torch.where(
+            parents,
+            runtime.state.stable_id,
+            torch.zeros_like(runtime.state.stable_id),
+        ).argmax(dim=1)[0]
+    )
+    runtime.state.hp[0, third_slot] = 0.0
+    runtime.step_tick(noop)
+    for _ in range(10):
+        reused = runtime.step_tick(noop)
+    assert reused.positive_area_allocation is not None
+    assert bool(reused.positive_area_allocation.accepted.any())
+    runtime.reset_rows(torch.ones(1, dtype=torch.bool, device=runtime.device))
+    assert not bool(runtime.positive_buff_areas.active.any())
+    assert not bool(runtime.positive_buffs.remaining_ticks.any())
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_full_runtime_lumberjack_replay_is_tensor_exact(device_name: str) -> None:
+    first, _, root = _runtime(
+        "Lumberjack", device_name=device_name, max_entities=20
+    )
+    replay, _, replay_root = _runtime(
+        "Lumberjack", device_name=device_name, max_entities=20
+    )
+    assert replay_root == root
+    action = _slot_zero_action(first, tile_x=8, tile_y=14)
+    noop = torch.full(
+        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=first.device
+    )
+    first.step_tick(action)
+    replay.step_tick(action.clone())
+    for runtime in (first, replay):
+        parent = runtime.state.active & (runtime.state.card_id == root)
+        parent[:, :6] = False
+        runtime.state.hp.masked_fill_(parent, 0.0)
+
+    for _ in range(24):
+        first_step = first.step_tick(noop)
+        replay_step = replay.step_tick(noop.clone())
+        assert torch.equal(first_step.reward, replay_step.reward)
+        assert torch.equal(first_step.action_success, replay_step.action_success)
+        assert torch.equal(
+            first_step.positive_area_step.scans.active,
+            replay_step.positive_area_step.scans.active,
+        )
+
+    for owner_name in (
+        "state",
+        "effects",
+        "payload_containers",
+        "positive_buff_areas",
+        "positive_buffs",
+    ):
+        left = getattr(first, owner_name)
+        right = getattr(replay, owner_name)
+        for descriptor in fields(left):
+            if descriptor.name != "device":
+                assert torch.equal(
+                    getattr(left, descriptor.name),
+                    getattr(right, descriptor.name),
+                )
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
 @pytest.mark.parametrize(

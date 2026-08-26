@@ -36,8 +36,10 @@ from .simple_death_burst import FastDeathBurstCatalog
 from .simple_effects import FastEffectState
 from .simple_payload_containers import (
     FastPayloadContainerCommands,
+    FastPayloadEffectCommands,
     FastPayloadSpawnTriggers,
 )
+from .simple_positive_buffs import FastPositiveBuffAreaAllocationCommands
 from .simple_rolling_spells import FastRollingSpawnTriggers
 from .simple_state import FastGymState
 
@@ -400,6 +402,19 @@ class FastSpawnBlueprintCatalog:
     container_nested_count: torch.Tensor
     container_nested_radius_units: torch.Tensor
     container_nested_deploy_ticks: torch.Tensor
+    container_positive_area_enabled: torch.Tensor
+    container_positive_area_lifetime_ticks: torch.Tensor
+    container_positive_area_radius_units: torch.Tensor
+    container_positive_area_scan_interval_ticks: torch.Tensor
+    container_positive_area_recipient_duration_ticks: torch.Tensor
+    container_positive_area_movement_multiplier: torch.Tensor
+    container_positive_area_attack_multiplier: torch.Tensor
+    container_positive_area_damage: torch.Tensor
+    container_positive_area_damage_radius_units: torch.Tensor
+    container_positive_area_tower_damage_multiplier: torch.Tensor
+    container_positive_area_building_damage_multiplier: torch.Tensor
+    container_positive_area_damage_hits_air: torch.Tensor
+    container_positive_area_damage_hits_ground: torch.Tensor
     scheduled_blueprint_by_card: torch.Tensor
     scheduled_initial_damage: torch.Tensor
     scheduled_initial_radius_units: torch.Tensor
@@ -511,6 +526,19 @@ class FastSpawnBlueprintCatalog:
         nested_counts: list[int] = []
         nested_radii: list[int] = []
         nested_deploy: list[int] = []
+        positive_area_enabled: list[bool] = []
+        positive_area_lifetime: list[int] = []
+        positive_area_radius: list[int] = []
+        positive_area_interval: list[int] = []
+        positive_area_recipient_duration: list[int] = []
+        positive_area_movement: list[float] = []
+        positive_area_attack: list[float] = []
+        positive_area_damage: list[float] = []
+        positive_area_damage_radius: list[int] = []
+        positive_area_tower_scale: list[float] = []
+        positive_area_building_scale: list[float] = []
+        positive_area_damage_hits_air: list[bool] = []
+        positive_area_damage_hits_ground: list[bool] = []
         scheduled_damage: list[float] = []
         scheduled_effect_radius: list[int] = []
         scheduled_tower_scale: list[float] = []
@@ -542,11 +570,19 @@ class FastSpawnBlueprintCatalog:
                     and fast_cards.kind[child_id] >= 0
                     and fast_cards.training_supported[child_id]
                 )
+            death_area: dict[str, Any] = {}
+            if isinstance(data, dict):
+                raw_death_area = data.get("deathAreaEffectData")
+                if isinstance(raw_death_area, dict):
+                    death_area = raw_death_area
             container = bool(
                 requirement.trigger == FastSpawnTrigger.DEATH
                 and isinstance(data, dict)
                 and data.get("hitpoints") is None
-                and data.get("deathDamage") is not None
+                and (
+                    data.get("deathDamage") is not None
+                    or bool(death_area)
+                )
             )
             timer = _ticks(data.get("deployTime")) if container and data else 0
             radius = (
@@ -629,6 +665,66 @@ class FastSpawnBlueprintCatalog:
             nested_deploy.append(
                 _ticks(data.get("deathSpawnDeployTime")) if container and data else 0
             )
+            buff_data: dict[str, Any] = {}
+            raw_buff_data = death_area.get("buffData")
+            if isinstance(raw_buff_data, dict):
+                buff_data = raw_buff_data
+            nested_area_damage: dict[str, Any] = {}
+            raw_nested_area_damage = death_area.get("spawnAreaEffectObjectData")
+            if isinstance(raw_nested_area_damage, dict):
+                nested_area_damage = raw_nested_area_damage
+            area_lifetime = _ticks(death_area.get("lifeDuration"))
+            area_radius = max(0, int(death_area.get("radius", 0) or 0))
+            area_interval = _ticks(death_area.get("hitSpeed"))
+            area_recipient_duration = _ticks(death_area.get("buffTime"))
+            movement_multiplier = max(
+                0.0, float(buff_data.get("speedMultiplier", 0) or 0) / 100.0
+            )
+            attack_multiplier = max(
+                0.0,
+                float(buff_data.get("hitSpeedMultiplier", 0) or 0) / 100.0,
+            )
+            nested_raw_damage = int(nested_area_damage.get("damage", 0) or 0)
+            nested_scaled_damage = (
+                float(root_stats.get_scaled_stat(nested_raw_damage) or 0)
+                if root_stats is not None and nested_raw_damage > 0
+                else 0.0
+            )
+            nested_area_radius = max(
+                0, int(nested_area_damage.get("radius", 0) or 0)
+            )
+            crown_percent = float(
+                nested_area_damage.get("crownTowerDamagePercent", 0) or 0
+            )
+            positive_complete = bool(
+                death_area
+                and buff_data
+                and area_lifetime > 0
+                and area_radius > 0
+                and area_interval > 0
+                and area_recipient_duration > 0
+                and (movement_multiplier > 1.0 or attack_multiplier > 1.0)
+                and nested_scaled_damage > 0
+                and nested_area_radius > 0
+                and nested_area_damage.get("onlyEnemies") is True
+            )
+            positive_area_enabled.append(positive_complete)
+            positive_area_lifetime.append(area_lifetime)
+            positive_area_radius.append(area_radius)
+            positive_area_interval.append(area_interval)
+            positive_area_recipient_duration.append(area_recipient_duration)
+            positive_area_movement.append(movement_multiplier)
+            positive_area_attack.append(attack_multiplier)
+            positive_area_damage.append(nested_scaled_damage)
+            positive_area_damage_radius.append(nested_area_radius)
+            positive_area_tower_scale.append(max(0.0, 1.0 + crown_percent / 100.0))
+            positive_area_building_scale.append(1.0)
+            positive_area_damage_hits_air.append(
+                bool(nested_area_damage.get("hitsAir", False))
+            )
+            positive_area_damage_hits_ground.append(
+                bool(nested_area_damage.get("hitsGround", False))
+            )
             scheduled = requirement.trigger in {
                 FastSpawnTrigger.DELAYED_IMPACT,
                 FastSpawnTrigger.SCHEDULED_ACTION,
@@ -684,9 +780,14 @@ class FastSpawnBlueprintCatalog:
                     container
                     and requirement.count == 1
                     and timer > 0
-                    and scaled_damage > 0
-                    and radius > 0
-                    and nested_supported
+                    and (
+                        (
+                            scaled_damage > 0
+                            and radius > 0
+                            and nested_supported
+                        )
+                        or positive_complete
+                    )
                 )
                 or (trigger_supported and child_supported and requirement.count > 0)
                 or (
@@ -841,6 +942,45 @@ class FastSpawnBlueprintCatalog:
             container_nested_count=tensor(nested_counts, torch.int32),
             container_nested_radius_units=tensor(nested_radii, torch.int32),
             container_nested_deploy_ticks=tensor(nested_deploy, torch.int32),
+            container_positive_area_enabled=tensor(
+                positive_area_enabled, torch.bool
+            ),
+            container_positive_area_lifetime_ticks=tensor(
+                positive_area_lifetime, torch.int32
+            ),
+            container_positive_area_radius_units=tensor(
+                positive_area_radius, torch.int32
+            ),
+            container_positive_area_scan_interval_ticks=tensor(
+                positive_area_interval, torch.int32
+            ),
+            container_positive_area_recipient_duration_ticks=tensor(
+                positive_area_recipient_duration, torch.int32
+            ),
+            container_positive_area_movement_multiplier=tensor(
+                positive_area_movement, torch.float32
+            ),
+            container_positive_area_attack_multiplier=tensor(
+                positive_area_attack, torch.float32
+            ),
+            container_positive_area_damage=tensor(
+                positive_area_damage, torch.float32
+            ),
+            container_positive_area_damage_radius_units=tensor(
+                positive_area_damage_radius, torch.int32
+            ),
+            container_positive_area_tower_damage_multiplier=tensor(
+                positive_area_tower_scale, torch.float32
+            ),
+            container_positive_area_building_damage_multiplier=tensor(
+                positive_area_building_scale, torch.float32
+            ),
+            container_positive_area_damage_hits_air=tensor(
+                positive_area_damage_hits_air, torch.bool
+            ),
+            container_positive_area_damage_hits_ground=tensor(
+                positive_area_damage_hits_ground, torch.bool
+            ),
             scheduled_blueprint_by_card=scheduled_by_card,
             scheduled_initial_damage=tensor(scheduled_damage, torch.float32),
             scheduled_initial_radius_units=tensor(
@@ -954,6 +1094,7 @@ def death_payload_container_commands(
 
     ordered_blueprint = ordered(safe_blueprint)
     nested_child = catalog.container_nested_child_card_id[ordered_blueprint]
+    positive_area = catalog.container_positive_area_enabled[ordered_blueprint]
     return FastPayloadContainerCommands(
         ready=ready,
         source_id=ordered(state.stable_id),
@@ -975,7 +1116,7 @@ def death_payload_container_commands(
         hits_air=catalog.container_hits_air[ordered_blueprint],
         hits_ground=catalog.container_hits_ground[ordered_blueprint],
         nested_spawn_blueprint_id=torch.where(
-            ready & (nested_child > 0),
+            ready & ((nested_child > 0) | positive_area),
             ordered_blueprint + 1,
             torch.zeros_like(ordered_blueprint),
         ),
@@ -1039,6 +1180,129 @@ def payload_spawn_commands(
             torch.int32
         ),
         deploy_ticks=catalog.container_nested_deploy_ticks[row],
+    )
+
+
+def positive_area_activation_commands(
+    catalog: FastSpawnBlueprintCatalog,
+    triggers: FastPayloadSpawnTriggers,
+) -> tuple[FastPositiveBuffAreaAllocationCommands, FastPayloadEffectCommands]:
+    """Decode a delayed payload terminal into a field and enemy damage nova."""
+
+    shape = tuple(triggers.ready.shape)
+    if len(shape) != 2:
+        raise ValueError("payload spawn triggers must have shape [batch, commands]")
+    for name, dtype in (
+        ("ready", torch.bool),
+        ("payload_stable_id", torch.int64),
+        ("source_id", torch.int64),
+        ("owner", torch.int8),
+        ("blueprint_id", torch.int64),
+        ("x_units", torch.int32),
+        ("y_units", torch.int32),
+    ):
+        value = getattr(triggers, name)
+        if tuple(value.shape) != shape or value.device != catalog.device:
+            raise ValueError(f"{name} must match trigger shape and device")
+        if value.dtype != dtype:
+            raise ValueError(f"{name} must use {dtype}")
+    if catalog.blueprint_count == 0:
+        ready = torch.zeros(shape, dtype=torch.bool, device=catalog.device)
+        zeros_i8 = torch.zeros(shape, dtype=torch.int8, device=catalog.device)
+        zeros_i32 = torch.zeros(shape, dtype=torch.int32, device=catalog.device)
+        zeros_i64 = torch.zeros(shape, dtype=torch.int64, device=catalog.device)
+        zeros_f32 = torch.zeros(shape, dtype=torch.float32, device=catalog.device)
+        ones_f32 = torch.ones(shape, dtype=torch.float32, device=catalog.device)
+        return (
+            FastPositiveBuffAreaAllocationCommands(
+                ready=ready,
+                stable_id=triggers.payload_stable_id,
+                owner=triggers.owner,
+                center_x_units=triggers.x_units,
+                center_y_units=triggers.y_units,
+                radius_units=zeros_i32,
+                lifetime_ticks=zeros_i32,
+                scan_interval_ticks=zeros_i32,
+                recipient_duration_ticks=zeros_i32,
+                movement_speed_multiplier=ones_f32,
+                attack_cooldown_multiplier=ones_f32,
+            ),
+            FastPayloadEffectCommands(
+                ready=ready,
+                payload_stable_id=triggers.payload_stable_id,
+                source_id=zeros_i64,
+                owner=triggers.owner,
+                effect_card_id=zeros_i64,
+                x_units=triggers.x_units,
+                y_units=triggers.y_units,
+                damage=zeros_f32,
+                radius_units=zeros_i32,
+                status_kind=zeros_i8,
+                status_duration_ticks=zeros_i32,
+                tower_damage_multiplier=ones_f32,
+                building_damage_multiplier=ones_f32,
+                hits_air=ready,
+                hits_ground=ready,
+            ),
+        )
+    known = (triggers.blueprint_id > 0) & (
+        triggers.blueprint_id <= catalog.blueprint_count
+    )
+    row = (triggers.blueprint_id - 1).clamp(0, catalog.blueprint_count - 1)
+    ready = (
+        triggers.ready
+        & known
+        & catalog.container_positive_area_enabled[row]
+    )
+    zeros_i8 = torch.zeros(shape, dtype=torch.int8, device=catalog.device)
+    zeros_i32 = torch.zeros(shape, dtype=torch.int32, device=catalog.device)
+    return (
+        FastPositiveBuffAreaAllocationCommands(
+            ready=ready,
+            stable_id=triggers.payload_stable_id,
+            owner=triggers.owner,
+            center_x_units=triggers.x_units,
+            center_y_units=triggers.y_units,
+            radius_units=catalog.container_positive_area_radius_units[row],
+            lifetime_ticks=(
+                catalog.container_positive_area_lifetime_ticks[row]
+            ),
+            scan_interval_ticks=(
+                catalog.container_positive_area_scan_interval_ticks[row]
+            ),
+            recipient_duration_ticks=(
+                catalog.container_positive_area_recipient_duration_ticks[row]
+            ),
+            movement_speed_multiplier=(
+                catalog.container_positive_area_movement_multiplier[row]
+            ),
+            attack_cooldown_multiplier=(
+                catalog.container_positive_area_attack_multiplier[row]
+            ),
+        ),
+        FastPayloadEffectCommands(
+            ready=ready,
+            payload_stable_id=triggers.payload_stable_id,
+            source_id=torch.zeros_like(triggers.source_id),
+            owner=triggers.owner,
+            effect_card_id=catalog.root_card_id[row],
+            x_units=triggers.x_units,
+            y_units=triggers.y_units,
+            damage=catalog.container_positive_area_damage[row],
+            radius_units=(
+                catalog.container_positive_area_damage_radius_units[row]
+            ),
+            status_kind=zeros_i8,
+            status_duration_ticks=zeros_i32,
+            tower_damage_multiplier=(
+                catalog.container_positive_area_tower_damage_multiplier[row]
+            ),
+            building_damage_multiplier=(
+                catalog.container_positive_area_building_damage_multiplier[row]
+            ),
+            hits_air=catalog.container_positive_area_damage_hits_air[row],
+            hits_ground=catalog.container_positive_area_damage_hits_ground[row],
+        ),
     )
 
 
@@ -1265,5 +1529,6 @@ __all__ = [
     "death_payload_container_commands",
     "impact_spawn_commands",
     "payload_spawn_commands",
+    "positive_area_activation_commands",
     "rolling_spawn_commands",
 ]

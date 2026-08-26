@@ -14,7 +14,7 @@ from scripts.build_simple_supported_decks import (
     check_artifact,
 )
 
-EXPECTED_UNSUPPORTED_CARDS = ["Lumberjack"]
+EXPECTED_UNSUPPORTED_CARDS: list[str] = []
 
 
 def test_current_public_manifest_has_exact_supported_training_pool() -> None:
@@ -30,11 +30,11 @@ def test_current_public_manifest_has_exact_supported_training_pool() -> None:
     }
     assert artifact["counts"] == {
         "candidate_decks": 33,
-        "supported_decks": 31,
-        "rejected_decks": 2,
+        "supported_decks": 33,
+        "rejected_decks": 0,
         "public_cards": 66,
-        "supported_public_cards": 65,
-        "unsupported_public_cards": 1,
+        "supported_public_cards": 66,
+        "unsupported_public_cards": 0,
     }
     assert artifact["support_profile"]["unsupported_public_cards"] == (
         EXPECTED_UNSUPPORTED_CARDS

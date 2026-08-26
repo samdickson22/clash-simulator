@@ -13,15 +13,15 @@
   },
   "counts": {
     "candidate_decks": 33,
-    "supported_decks": 31,
-    "rejected_decks": 2,
+    "supported_decks": 33,
+    "rejected_decks": 0,
     "public_cards": 66,
-    "supported_public_cards": 65,
-    "unsupported_public_cards": 1
+    "supported_public_cards": 66,
+    "unsupported_public_cards": 0
   },
   "support_profile": {
     "version": 1,
-    "sha256": "55dadc3bfab7c0f85d5fe957d17d5bb91b63c46dc02301073b9f8db26155b3f5",
+    "sha256": "9e8dbfe1edf10835bd2138f237dcc917b65dc1f44f39bc26ff221da4d6aaefab",
     "supported_public_cards": [
       "ArcherQueen",
       "Archers",
@@ -61,6 +61,7 @@
       "Knight",
       "LavaHound",
       "Log",
+      "Lumberjack",
       "MagicArcher",
       "MegaKnight",
       "MegaMinion",
@@ -89,9 +90,7 @@
       "Xbow",
       "Zap"
     ],
-    "unsupported_public_cards": [
-      "Lumberjack"
-    ]
+    "unsupported_public_cards": []
   },
   "decks": [
     {
@@ -420,6 +419,19 @@
       ]
     },
     {
+      "name": "LumberLoon Double Dragon Bowler Freeze",
+      "cards": [
+        "Balloon",
+        "BarbarianBarrel",
+        "Bowler",
+        "ElectroDragon",
+        "Freeze",
+        "InfernoDragon",
+        "Lumberjack",
+        "Tornado"
+      ]
+    },
+    {
       "name": "Hog 2.6 (Zap)",
       "cards": [
         "Cannon",
@@ -494,6 +506,19 @@
         "Minions",
         "Miner",
         "Prince",
+        "Zap"
+      ]
+    },
+    {
+      "name": "Golem Night Witch Beatdown",
+      "cards": [
+        "BabyDragon",
+        "BarbarianBarrel",
+        "Bomber",
+        "Golem",
+        "Lumberjack",
+        "NightWitch",
+        "Tornado",
         "Zap"
       ]
     }
