@@ -110,6 +110,8 @@ class TensorBattleState:
             raise ValueError("max_cards is smaller than a deck or cycle queue")
 
         torch_device = torch.device(device)
+        if torch_device.type == "cuda" and torch_device.index is None:
+            torch_device = torch.device("cuda", torch.cuda.current_device())
         names = sorted(
             {
                 str(name)
