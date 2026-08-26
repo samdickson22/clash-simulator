@@ -163,6 +163,10 @@ from .resident_terminal_pipeline import (
 )
 from .resident_timed_terminal_payloads import TensorTimedTerminalCatalog
 from .resident_tornado import TensorResidentTornadoes, TornadoStepResult
+from .resident_wall_breakers import (
+    DemolitionStepResult,
+    TensorResidentDemolition,
+)
 from .runtime_deployment import (
     TensorRuntimeDeployment,
     TensorRuntimeDeploymentResult,
@@ -417,6 +421,7 @@ class ResidentTickResult:
     rolling_spells: TensorRollingStepResult | None
     royal_delivery: RoyalDeliveryStepResult | None
     charge_carriers: ChargeCarrierStepResult | None
+    demolition: DemolitionStepResult | None
     spawn_area_materialization: SpawnAreaMaterializeResult | None
     spawn_areas: SpawnAreaStepResult | None
     chain_impacts: ChainImpactStepResult | None
@@ -747,6 +752,7 @@ class TensorResidentEngine:
         rolling_spells: TensorResidentRollingSpells,
         royal_delivery: TensorResidentRoyalDelivery,
         charge_carriers: TensorResidentChargeCarriers,
+        demolition: TensorResidentDemolition,
         spawn_areas: TensorResidentSpawnAreas,
         chain_impacts: TensorChainImpactState,
         ice_spirit: TensorIceSpiritState,
@@ -811,6 +817,7 @@ class TensorResidentEngine:
         self.rolling_spells = rolling_spells
         self.royal_delivery = royal_delivery
         self.charge_carriers = charge_carriers
+        self.demolition = demolition
         self.spawn_areas = spawn_areas
         self.chain_impacts = chain_impacts
         self.ice_spirit = ice_spirit
@@ -921,6 +928,7 @@ class TensorResidentEngine:
             MECHANIC_OPCODE["ElectroDragonChainLightning"],
             MECHANIC_OPCODE["ElectroSpiritChain"],
             MECHANIC_OPCODE["IceSpiritFreeze"],
+            MECHANIC_OPCODE["WallBreakersDemolition"],
             *RESIDENT_STEALTH_MECHANIC_OPCODES,
             *RESIDENT_DIRECT_COMBAT_MECHANIC_OPCODES,
         )
@@ -1015,6 +1023,9 @@ class TensorResidentEngine:
             mechanic_battles,
         )
         charge_carriers = TensorResidentChargeCarriers.from_battles(
+            runtime, mechanic_battles
+        )
+        demolition = TensorResidentDemolition.from_battles(
             runtime, mechanic_battles
         )
         death_payloads = TensorDeathPayloadState.from_battles(
@@ -1257,6 +1268,9 @@ class TensorResidentEngine:
         charge_card_supported = (core_by_catalog >= 0) & (
             charge_carriers.catalog.supported[safe_core_by_catalog]
         )
+        demolition_card_supported = (core_by_catalog >= 0) & (
+            demolition.catalog.supported[safe_core_by_catalog]
+        )
         miner_card_supported = (core_by_catalog >= 0) & (
             miner.catalog.supported[safe_core_by_catalog]
         )
@@ -1335,6 +1349,7 @@ class TensorResidentEngine:
                 ),
                 "periodic": (MECHANIC_OPCODE["PeriodicSpawner"],),
                 "charge": (MECHANIC_OPCODE["BattleRamCharge"],),
+                "demolition": (MECHANIC_OPCODE["WallBreakersDemolition"],),
                 "combat_dispatch": (MECHANIC_OPCODE["BanditDash"],),
                 "shield": (MECHANIC_OPCODE["Shield"],),
                 "spawn_area_deployment": (spawn_area_opcode,),
@@ -1355,6 +1370,7 @@ class TensorResidentEngine:
                 "death_payload": death_card_supported,
                 "periodic": periodic_catalog.source_row_by_card >= 0,
                 "charge": charge_card_supported,
+                "demolition": demolition_card_supported,
                 "combat_dispatch": all_cards_supported,
                 "shield": shield_catalog.supported,
                 "spawn_area_deployment": spawn_area_deployment_supported,
@@ -1741,6 +1757,7 @@ class TensorResidentEngine:
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,
+            demolition=demolition,
             spawn_areas=spawn_areas,
             chain_impacts=chain_impacts,
             ice_spirit=ice_spirit,
@@ -1812,6 +1829,7 @@ class TensorResidentEngine:
         )
         royal_delivery = self.royal_delivery.clone()
         charge_carriers = self.charge_carriers.clone()
+        demolition = self.demolition.clone()
         spawn_areas = self.spawn_areas.clone()
         chain_impacts = self.chain_impacts.clone()
         ice_spirit = self.ice_spirit.clone()
@@ -1864,6 +1882,7 @@ class TensorResidentEngine:
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,
+            demolition=demolition,
             spawn_areas=spawn_areas,
             chain_impacts=chain_impacts,
             ice_spirit=ice_spirit,
@@ -2122,6 +2141,21 @@ class TensorResidentEngine:
             & allowed
             & payload
         )
+
+    def _demolition_entity_supported(self) -> torch.Tensor:
+        core = self.runtime.battle
+        active_character = self.runtime.entity_pool.active & (
+            (core.entity_kind == 0) | (core.entity_kind == 1)
+        )
+        card = core.entity_card.clamp(
+            0, self.demolition.catalog.supported.numel() - 1
+        )
+        mechanics = self.runtime.catalog.mechanic_opcode[
+            self._core_catalog_id().clamp_min(0)
+        ]
+        opcode = MECHANIC_OPCODE["WallBreakersDemolition"]
+        allowed = ((mechanics == 0) | (mechanics == opcode)).all(dim=2)
+        return active_character & self.demolition.catalog.supported[card] & allowed
 
     def _miner_entity_supported(self) -> torch.Tensor:
         core = self.runtime.battle
@@ -3017,6 +3051,7 @@ class TensorResidentEngine:
         death_spawn_opcode = MECHANIC_OPCODE["DeathSpawn"]
         periodic_opcode = MECHANIC_OPCODE["PeriodicSpawner"]
         charge_opcode = MECHANIC_OPCODE["BattleRamCharge"]
+        demolition_opcode = MECHANIC_OPCODE["WallBreakersDemolition"]
         death_damage_opcode = MECHANIC_OPCODE["DeathDamage"]
         death_area_opcode = MECHANIC_OPCODE["DeathAreaEffect"]
         crown_scaling_opcode = MECHANIC_OPCODE["CrownTowerScaling"]
@@ -3029,6 +3064,7 @@ class TensorResidentEngine:
             | (entity_mechanics == death_spawn_opcode)
             | (entity_mechanics == periodic_opcode)
             | (entity_mechanics == charge_opcode)
+            | (entity_mechanics == demolition_opcode)
             | (entity_mechanics == death_damage_opcode)
             | (entity_mechanics == death_area_opcode)
             | (entity_mechanics == crown_scaling_opcode)
@@ -3066,6 +3102,8 @@ class TensorResidentEngine:
         periodic_entity = (entity_mechanics == periodic_opcode).any(dim=2)
         charge_entity_supported = self._charge_entity_supported()
         charge_entity = (entity_mechanics == charge_opcode).any(dim=2)
+        demolition_entity_supported = self._demolition_entity_supported()
+        demolition_entity = (entity_mechanics == demolition_opcode).any(dim=2)
         death_payload_entity_supported = self._death_payload_entity_supported()
         death_payload_entity = (
             (entity_mechanics == death_damage_opcode)
@@ -3172,6 +3210,14 @@ class TensorResidentEngine:
         )
         publish(
             (
+                demolition_entity
+                & active_character
+                & ~demolition_entity_supported
+            ).any(dim=1),
+            ResidentUnsupportedReason.ACTIVE_MECHANIC,
+        )
+        publish(
+            (
                 death_payload_entity
                 & active_character
                 & ~death_payload_entity_supported
@@ -3193,7 +3239,9 @@ class TensorResidentEngine:
             & (self.combat.entity_id == self.runtime.battle.entity_id)
             & self.combat.uses_projectile
         )
-        projectile_entity = self.uses_projectile[safe] | retained_projectile
+        projectile_entity = (
+            self.uses_projectile[safe] | retained_projectile
+        ) & ~demolition_entity_supported
         target_slot = self.combat.target_slot.clamp_min(0)
         target_x = torch.gather(self.combat.x_units, 1, target_slot)
         target_y = torch.gather(self.combat.y_units, 1, target_slot)
@@ -3824,6 +3872,7 @@ class TensorResidentEngine:
             (
                 self._ice_spirit_entity_supported()
                 | self._electro_spirit_entity_supported()
+                | self._demolition_entity_supported()
             )
             & ~self_projectile_in_flight
         )
@@ -3863,6 +3912,14 @@ class TensorResidentEngine:
         initial_cooldown = self.first_hit_ms[safe].to(torch.float64) / 1_000.0
         self.combat.attack_cooldown.copy_(
             torch.where(new & character, initial_cooldown, self.combat.attack_cooldown)
+        )
+        demolition_new = new & self._demolition_entity_supported()
+        self.demolition.attack_cooldown.copy_(
+            torch.where(
+                demolition_new,
+                initial_cooldown,
+                self.demolition.attack_cooldown,
+            )
         )
         self.combat.attack_preload_blocked &= ~new
         self.combat.attack_windup_active &= ~new
@@ -5791,6 +5848,11 @@ class TensorResidentEngine:
             source.charge_carriers,
             selected_rows,
         )
+        self.demolition.reset_rows_(
+            selected_rows,
+            source.demolition,
+            selected_rows,
+        )
         self.spawn_areas.reset_rows_(
             selected_rows,
             source.spawn_areas,
@@ -6280,6 +6342,24 @@ class TensorResidentEngine:
         working.miner.tracked_entity_id.masked_fill_(miner.surfaced, 0)
         working.miner.target_slot.masked_fill_(miner.surfaced, -1)
         working.miner.public_target_id.masked_fill_(miner.surfaced, 0)
+        demolition_owned = working._demolition_entity_supported()
+        demolition = working.demolition.step_(
+            working.runtime,
+            waypoint_units=working.movement.waypoint_units,
+            waypoint_valid=working.movement.waypoint_valid,
+            entity_actionable=(
+                ~working.combat.stunned
+                & ~working.combat.forced_movement
+                & ~working.dispatcher.dash.special_active
+            ),
+            battle_mask=active,
+        )
+        working.runtime.mark_unsupported(
+            active & ~demolition.committed,
+            phase=TickPhase.MOVEMENT,
+        )
+        active &= demolition.committed
+        working.runtime.supported &= active
         working.combat.hp.copy_(working.runtime.battle.entity_hp)
         working.combat.alive.copy_(working.runtime.battle.entity_active)
         working.combat.x_units.copy_(
@@ -6354,6 +6434,7 @@ class TensorResidentEngine:
             | electro_consumed
             | working.dispatcher.underground_active
             | miner_owned
+            | demolition_owned
             | working.stealth.state.hidden_building
         )
         working.movement.slot_present &= ~(charge_entities | miner_owned)
@@ -7239,6 +7320,7 @@ class TensorResidentEngine:
             rolling_spells=rolling_spells,
             royal_delivery=royal_delivery,
             charge_carriers=charge_carriers,
+            demolition=demolition,
             spawn_area_materialization=spawn_area_materialization,
             spawn_areas=spawn_areas,
             chain_impacts=chain_impacts,

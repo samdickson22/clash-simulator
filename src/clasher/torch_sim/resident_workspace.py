@@ -178,6 +178,12 @@ class TensorResidentWorkspace:
             self.engine.charge_carriers.tracked_entity_id.data_ptr()
         ):
             raise ValueError("speculative charge carriers must own mutable storage")
+        if self.scratch.demolition.catalog is not self.engine.demolition.catalog:
+            raise ValueError("speculative engines must share demolition catalogs")
+        if self.scratch.demolition.tracked_entity_id.data_ptr() == (
+            self.engine.demolition.tracked_entity_id.data_ptr()
+        ):
+            raise ValueError("speculative demolition must own mutable storage")
         for name in ("spawn_areas", "chain_impacts", "ice_spirit"):
             scratch_owner = getattr(self.scratch, name)
             engine_owner = getattr(self.engine, name)
@@ -301,6 +307,11 @@ class TensorResidentWorkspace:
         destination.charge_carriers.reset_rows_(
             pending_rows,
             source.charge_carriers,
+            pending_rows,
+        )
+        destination.demolition.reset_rows_(
+            pending_rows,
+            source.demolition,
             pending_rows,
         )
         destination.spawn_areas.reset_rows_(

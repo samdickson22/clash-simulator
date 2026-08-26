@@ -16,14 +16,15 @@ from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import MECHANIC_OPCODE, TensorCardCatalog
 from clasher.torch_sim.deployment import TensorDeploymentCatalog
+from clasher.torch_sim.observations import TensorObservationProjector
+from clasher.torch_sim.resident_engine import TensorResidentEngine
 from clasher.torch_sim.resident_mechanic_deployment import (
     TensorMechanicDeploymentCatalog,
     TensorResidentMechanicDeployment,
 )
-from clasher.torch_sim.observations import TensorObservationProjector
+from clasher.torch_sim.resident_outputs import ResidentOutputProjector
 from clasher.torch_sim.resident_wall_breakers import TensorResidentDemolition
 from clasher.torch_sim.runtime_state import TensorBattleRuntime
-
 
 DEPLOY_WALL_BREAKERS = 14 * 18 + 9
 
@@ -219,3 +220,94 @@ def test_wall_breakers_action_to_demolition_is_native_and_policy_visible(
         expected_fraction,
         abs=1e-6,
     )
+
+
+def test_engine_runs_dual_wall_breakers_to_policy_visible_demolition(
+    tensor_device: str,
+) -> None:
+    boundary, target_id = _battle()
+    engine = TensorResidentEngine.from_battles(
+        [boundary],
+        device=tensor_device,
+        max_entities=12,
+        max_objects=8,
+        event_capacity=512,
+    )
+    projector = ResidentOutputProjector.from_engine(
+        engine,
+        [boundary],
+        structured_builder=StructuredObservationBuilder(max_entities=12),
+        cv_builder=CvObservationBuilder(),
+    )
+    actions = torch.tensor(
+        [[DEPLOY_WALL_BREAKERS, NO_OP_ACTION]],
+        dtype=torch.int64,
+        device=engine.device,
+    )
+    target_slot = engine.runtime.battle.entity_id[0].tolist().index(target_id)
+    target_hp_before = float(engine.runtime.battle.entity_hp[0, target_slot].item())
+    spawned_slots: torch.Tensor | None = None
+    spawned_ids: list[int] = []
+    detonation_count = 0
+    demolition_damage = 0.0
+
+    for tick in range(32):
+        tick_actions = actions if tick == 0 else None
+        assert engine.preflight(tick_actions).supported.tolist() == [True]
+        result = engine.step(
+            tick_actions,
+            player_order=torch.tensor([[0, 1]], device=engine.device),
+        )
+        assert result.committed.tolist() == [True]
+        assert result.demolition is not None
+        if tick == 0:
+            allocation = result.deployment.deployment.allocation
+            spawned_slots = allocation.slots[0][allocation.valid[0]]
+            spawned_ids = allocation.entity_ids[0][allocation.valid[0]].tolist()
+            assert spawned_slots.numel() == 2
+            assert torch.equal(
+                torch.stack(
+                    (
+                        engine.runtime.battle.entity_x_units[0, spawned_slots],
+                        engine.runtime.battle.entity_y_units[0, spawned_slots],
+                    ),
+                    dim=1,
+                ).cpu(),
+                torch.tensor(
+                    [[8_750, 14_500], [10_250, 14_500]],
+                    dtype=torch.int32,
+                ),
+            )
+        detonation_count += int(result.demolition.detonated.sum().item())
+        demolition_damage += float(result.demolition.damage[0, target_slot].item())
+        if spawned_slots is not None and not engine.runtime.battle.entity_active[
+            0, spawned_slots
+        ].any():
+            break
+    else:
+        pytest.fail("resident engine did not finish both Wall Breakers")
+
+    assert detonation_count == 2
+    assert engine.runtime.supported.tolist() == [True]
+    assert spawned_slots is not None
+    assert engine.runtime.battle.entity_hp[0, spawned_slots].tolist() == [0.0, 0.0]
+    target_hp_after = float(engine.runtime.battle.entity_hp[0, target_slot].item())
+    assert demolition_damage == 700.0
+    # The building's ordinary lifetime decay continues during the approach;
+    # the policy-visible total loss therefore includes more than demolition.
+    assert target_hp_before - target_hp_after >= demolition_damage
+
+    public = projector.project_public_structured()
+    active_tokens = public.entity_ids[0, 0][public.entity_mask[0, 0]].tolist()
+    wall_breaker_token = int(
+        projector.observations.entity_token[0, spawned_slots[0]].item()
+    )
+    assert wall_breaker_token not in active_tokens
+    target_token = int(projector.observations.entity_token[0, target_slot].item())
+    target_index = public.entity_ids[0, 0].tolist().index(target_token)
+    assert public.entity_features[0, 0, target_index, 9].item() == pytest.approx(
+        target_hp_after
+        / float(engine.runtime.battle.entity_max_hp[0, target_slot].item()),
+        abs=1e-6,
+    )
+    assert len(spawned_ids) == 2

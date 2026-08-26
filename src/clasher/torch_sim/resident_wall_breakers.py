@@ -307,6 +307,7 @@ class TensorResidentDemolition:
         *,
         waypoint_units: torch.Tensor | None = None,
         waypoint_valid: torch.Tensor | None = None,
+        entity_actionable: torch.Tensor | None = None,
         dt_ms: int = 50,
         battle_mask: torch.Tensor | None = None,
     ) -> DemolitionStepResult:
@@ -332,6 +333,15 @@ class TensorResidentDemolition:
         )
         if waypoints.shape != (*shape, 2) or waypoint_mask.shape != shape:
             raise ValueError("demolition waypoint planes differ from entity layout")
+        entity_mask = (
+            torch.ones(shape, dtype=torch.bool, device=self.device)
+            if entity_actionable is None
+            else torch.as_tensor(
+                entity_actionable, dtype=torch.bool, device=self.device
+            )
+        )
+        if entity_mask.shape != shape:
+            raise ValueError("demolition entity_actionable must match entity layout")
         capacity_rejected = torch.zeros_like(selected)
         supported = selected.clone()
         working_runtime = runtime.clone()
@@ -361,7 +371,7 @@ class TensorResidentDemolition:
         working.tracked_entity_id.copy_(
             torch.where(new, core.entity_id, working.tracked_entity_id)
         )
-        actionable = live & deployed & supported[:, None]
+        actionable = live & deployed & entity_mask & supported[:, None]
         working.attack_cooldown.copy_(
             torch.where(
                 actionable,
