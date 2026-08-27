@@ -1,0 +1,761 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.0.2, pluggy-1.6.0 -- /home/ubuntu/clasher/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/clasher
+configfile: pyproject.toml
+collecting ... collected 173 items
+
+tests/test_torch_simple_collision_navigation.py::test_dense_same_and_opponent_congestion_separates_simultaneously[cpu] PASSED [  0%]
+tests/test_torch_simple_collision_navigation.py::test_dense_same_and_opponent_congestion_separates_simultaneously[cuda] PASSED [  1%]
+tests/test_torch_simple_collision_navigation.py::test_mass_asymmetry_moves_light_body_farther[cpu] PASSED [  1%]
+tests/test_torch_simple_collision_navigation.py::test_mass_asymmetry_moves_light_body_farther[cuda] PASSED [  2%]
+tests/test_torch_simple_collision_navigation.py::test_exact_overlap_uses_stable_identity_not_slot[cpu] PASSED [  2%]
+tests/test_torch_simple_collision_navigation.py::test_exact_overlap_uses_stable_identity_not_slot[cuda] PASSED [  3%]
+tests/test_torch_simple_collision_navigation.py::test_building_is_immobile_and_mover_steers_while_progressing[cpu] PASSED [  4%]
+tests/test_torch_simple_collision_navigation.py::test_building_is_immobile_and_mover_steers_while_progressing[cuda] PASSED [  4%]
+tests/test_torch_simple_collision_navigation.py::test_air_ignores_ground_and_hover_uses_air_contact_plane[cpu] PASSED [  5%]
+tests/test_torch_simple_collision_navigation.py::test_air_ignores_ground_and_hover_uses_air_contact_plane[cuda] PASSED [  5%]
+tests/test_torch_simple_collision_navigation.py::test_bridge_queue_is_constrained_but_hover_crosses_river_directly[cpu] PASSED [  6%]
+tests/test_torch_simple_collision_navigation.py::test_bridge_queue_is_constrained_but_hover_crosses_river_directly[cuda] PASSED [  6%]
+tests/test_torch_simple_collision_navigation.py::test_replay_exclusion_reset_and_slot_reuse_are_deterministic[cpu] PASSED [  7%]
+tests/test_torch_simple_collision_navigation.py::test_replay_exclusion_reset_and_slot_reuse_are_deterministic[cuda] PASSED [  8%]
+tests/test_torch_simple_collision_navigation.py::test_collision_hot_path_has_no_host_sync_card_dispatch_or_dynamic_compaction PASSED [  8%]
+tests/test_torch_simple_collision_navigation.py::test_engine_steers_around_friendly_building_toward_actual_target[cpu] PASSED [  9%]
+tests/test_torch_simple_collision_navigation.py::test_engine_steers_around_friendly_building_toward_actual_target[cuda] PASSED [  9%]
+tests/test_torch_simple_collision_navigation.py::test_runtime_river_jump_flows_route_jump_collision_and_resets[cpu] PASSED [ 10%]
+tests/test_torch_simple_collision_navigation.py::test_runtime_river_jump_flows_route_jump_collision_and_resets[cuda] PASSED [ 10%]
+tests/test_torch_simple_river_jump.py::test_catalog_compiles_exact_enabled_serialized_profiles[cpu] PASSED [ 11%]
+tests/test_torch_simple_river_jump.py::test_catalog_compiles_exact_enabled_serialized_profiles[cuda] PASSED [ 12%]
+tests/test_torch_simple_river_jump.py::test_partial_or_malformed_serialized_declaration_fails_closed[None] PASSED [ 12%]
+tests/test_torch_simple_river_jump.py::test_partial_or_malformed_serialized_declaration_fails_closed[0] PASSED [ 13%]
+tests/test_torch_simple_river_jump.py::test_partial_or_malformed_serialized_declaration_fails_closed[-1] PASSED [ 13%]
+tests/test_torch_simple_river_jump.py::test_partial_or_malformed_serialized_declaration_fails_closed[nan] PASSED [ 14%]
+tests/test_torch_simple_river_jump.py::test_partial_or_malformed_serialized_declaration_fails_closed[160.5] PASSED [ 15%]
+tests/test_torch_simple_river_jump.py::test_partial_or_malformed_serialized_declaration_fails_closed[True] PASSED [ 15%]
+tests/test_torch_simple_river_jump.py::test_partial_or_malformed_serialized_declaration_fails_closed[160] PASSED [ 16%]
+tests/test_torch_simple_river_jump.py::test_partial_or_malformed_serialized_declaration_fails_closed[missing] PASSED [ 16%]
+tests/test_torch_simple_river_jump.py::test_off_bridge_crossing_starts_mirrored_committed_jump[cpu] PASSED [ 17%]
+tests/test_torch_simple_river_jump.py::test_off_bridge_crossing_starts_mirrored_committed_jump[cuda] PASSED [ 17%]
+tests/test_torch_simple_river_jump.py::test_bridge_route_and_nonjump_character_remain_ordinary[cpu] PASSED [ 18%]
+tests/test_torch_simple_river_jump.py::test_bridge_route_and_nonjump_character_remain_ordinary[cuda] PASSED [ 19%]
+tests/test_torch_simple_river_jump.py::test_committed_flight_timing_landing_and_attack_plane[cpu] PASSED [ 19%]
+tests/test_torch_simple_river_jump.py::test_committed_flight_timing_landing_and_attack_plane[cuda] PASSED [ 20%]
+tests/test_torch_simple_river_jump.py::test_only_removal_or_stable_slot_reuse_cancels_flight[cpu] PASSED [ 20%]
+tests/test_torch_simple_river_jump.py::test_only_removal_or_stable_slot_reuse_cancels_flight[cuda] PASSED [ 21%]
+tests/test_torch_simple_river_jump.py::test_reset_reuse_and_replay_are_deterministic[cpu] PASSED [ 21%]
+tests/test_torch_simple_river_jump.py::test_reset_reuse_and_replay_are_deterministic[cuda] PASSED [ 22%]
+tests/test_torch_simple_river_jump.py::test_tick_contract_input_validation_and_hot_path_are_explicit PASSED [ 23%]
+tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_rejects_cpu_runtime PASSED [ 23%]
+tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_matches_eager_replays FAILED [ 24%]
+tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_matches_interval_bridge_and_reset FAILED [ 24%]
+tests/test_torch_simple_tower_combat.py::test_standard_princess_projectile_first_hit_damage_cadence_and_mirror[cpu] PASSED [ 25%]
+tests/test_torch_simple_tower_combat.py::test_standard_princess_projectile_first_hit_damage_cadence_and_mirror[cuda] PASSED [ 26%]
+tests/test_torch_simple_tower_combat.py::test_numeric_tower_profile_supports_serialized_direct_hit[cpu] PASSED [ 26%]
+tests/test_torch_simple_tower_combat.py::test_numeric_tower_profile_supports_serialized_direct_hit[cuda] PASSED [ 27%]
+tests/test_torch_simple_tower_combat.py::test_tower_hit_uses_common_shield_interception[cpu] PASSED [ 27%]
+tests/test_torch_simple_tower_combat.py::test_tower_hit_uses_common_shield_interception[cuda] PASSED [ 28%]
+tests/test_torch_simple_tower_combat.py::test_king_is_inactive_then_latches_owner_local_activation[cpu-king-chip] PASSED [ 28%]
+tests/test_torch_simple_tower_combat.py::test_king_is_inactive_then_latches_owner_local_activation[cpu-princess-death] PASSED [ 29%]
+tests/test_torch_simple_tower_combat.py::test_king_is_inactive_then_latches_owner_local_activation[cuda-king-chip] PASSED [ 30%]
+tests/test_torch_simple_tower_combat.py::test_king_is_inactive_then_latches_owner_local_activation[cuda-princess-death] PASSED [ 30%]
+tests/test_torch_simple_tower_combat.py::test_tower_lock_survives_new_closer_target_and_capacity_rejection_rolls_back[cpu] PASSED [ 31%]
+tests/test_torch_simple_tower_combat.py::test_tower_lock_survives_new_closer_target_and_capacity_rejection_rolls_back[cuda] PASSED [ 31%]
+tests/test_torch_simple_tower_combat.py::test_committed_tower_projectile_obeys_common_receivability_gate[cpu-hidden] PASSED [ 32%]
+tests/test_torch_simple_tower_combat.py::test_committed_tower_projectile_obeys_common_receivability_gate[cpu-travel-immune] PASSED [ 32%]
+tests/test_torch_simple_tower_combat.py::test_committed_tower_projectile_obeys_common_receivability_gate[cuda-hidden] PASSED [ 33%]
+tests/test_torch_simple_tower_combat.py::test_committed_tower_projectile_obeys_common_receivability_gate[cuda-travel-immune] PASSED [ 34%]
+tests/test_torch_simple_tower_combat.py::test_tower_combat_replay_and_selective_reset[cpu] PASSED [ 34%]
+tests/test_torch_simple_tower_combat.py::test_tower_combat_replay_and_selective_reset[cuda] PASSED [ 35%]
+tests/test_torch_simple_tower_combat.py::test_tower_combat_cuda_graph_matches_eager FAILED [ 35%]
+tests/test_torch_simple_tower_combat.py::test_tower_numeric_effect_hot_path_has_no_host_round_trip PASSED [ 36%]
+tests/test_torch_simple_attack_locks.py::test_enabled_card_timing_catalog_audits_all_66_serialized_rows PASSED [ 36%]
+tests/test_torch_simple_attack_locks.py::test_distinct_load_first_hit_flag_is_compiled_without_timing_heuristic PASSED [ 37%]
+tests/test_torch_simple_attack_locks.py::test_timing_catalog_fails_closed_on_catalog_source_mismatch PASSED [ 38%]
+tests/test_torch_simple_attack_locks.py::test_melee_first_hit_preload_and_effect_commit_cycle[cpu] PASSED [ 38%]
+tests/test_torch_simple_attack_locks.py::test_melee_first_hit_preload_and_effect_commit_cycle[cuda] PASSED [ 39%]
+tests/test_torch_simple_attack_locks.py::test_split_seam_consumes_clock_against_post_movement_range[cpu] PASSED [ 39%]
+tests/test_torch_simple_attack_locks.py::test_split_seam_consumes_clock_against_post_movement_range[cuda] PASSED [ 40%]
+tests/test_torch_simple_attack_locks.py::test_ranged_source_retains_valid_lock_when_nearer_enemy_arrives[cpu] PASSED [ 41%]
+tests/test_torch_simple_attack_locks.py::test_ranged_source_retains_valid_lock_when_nearer_enemy_arrives[cuda] PASSED [ 41%]
+tests/test_torch_simple_attack_locks.py::test_buildings_only_source_ignores_nearer_troop[cpu] PASSED [ 42%]
+tests/test_torch_simple_attack_locks.py::test_buildings_only_source_ignores_nearer_troop[cuda] PASSED [ 42%]
+tests/test_torch_simple_attack_locks.py::test_inferno_switch_installs_inverted_retarget_clock[cpu] PASSED [ 43%]
+tests/test_torch_simple_attack_locks.py::test_inferno_switch_installs_inverted_retarget_clock[cuda] PASSED [ 43%]
+tests/test_torch_simple_attack_locks.py::test_target_death_unavailable_and_out_of_sight_cancel_lock[cpu] PASSED [ 44%]
+tests/test_torch_simple_attack_locks.py::test_target_death_unavailable_and_out_of_sight_cancel_lock[cuda] PASSED [ 45%]
+tests/test_torch_simple_attack_locks.py::test_target_and_source_slot_reuse_are_stable_id_safe[cpu] PASSED [ 45%]
+tests/test_torch_simple_attack_locks.py::test_target_and_source_slot_reuse_are_stable_id_safe[cuda] PASSED [ 46%]
+tests/test_torch_simple_attack_locks.py::test_explicit_row_reset_clears_only_selected_battle PASSED [ 46%]
+tests/test_torch_simple_attack_locks.py::test_seedless_replay_is_exact_on_each_device[cpu] PASSED [ 47%]
+tests/test_torch_simple_attack_locks.py::test_seedless_replay_is_exact_on_each_device[cuda] PASSED [ 47%]
+tests/test_torch_simple_attack_locks.py::test_hot_path_has_no_card_names_or_host_synchronization PASSED [ 48%]
+tests/test_torch_simple_attack_locks.py::test_runtime_planes_fail_closed_on_malformed_dtype PASSED [ 49%]
+tests/test_torch_simple_attack_locks.py::test_duplicate_live_stable_ids_fail_closed PASSED [ 49%]
+tests/test_torch_simple_attack_lock_runtime.py::test_standard_runtime_uses_serialized_first_hit_and_full_commit_cycle[Knight-10-False-cpu] PASSED [ 50%]
+tests/test_torch_simple_attack_lock_runtime.py::test_standard_runtime_uses_serialized_first_hit_and_full_commit_cycle[Knight-10-False-cuda] PASSED [ 50%]
+tests/test_torch_simple_attack_lock_runtime.py::test_standard_runtime_uses_serialized_first_hit_and_full_commit_cycle[Musketeer-14-False-cpu] PASSED [ 51%]
+tests/test_torch_simple_attack_lock_runtime.py::test_standard_runtime_uses_serialized_first_hit_and_full_commit_cycle[Musketeer-14-False-cuda] PASSED [ 52%]
+tests/test_torch_simple_attack_lock_runtime.py::test_standard_runtime_uses_serialized_first_hit_and_full_commit_cycle[Giant-10-True-cpu] PASSED [ 52%]
+tests/test_torch_simple_attack_lock_runtime.py::test_standard_runtime_uses_serialized_first_hit_and_full_commit_cycle[Giant-10-True-cuda] PASSED [ 53%]
+tests/test_torch_simple_attack_lock_runtime.py::test_standard_runtime_uses_serialized_first_hit_and_full_commit_cycle[InfernoTower-8-False-cpu] PASSED [ 53%]
+tests/test_torch_simple_attack_lock_runtime.py::test_standard_runtime_uses_serialized_first_hit_and_full_commit_cycle[InfernoTower-8-False-cuda] PASSED [ 54%]
+tests/test_torch_simple_attack_lock_runtime.py::test_runtime_retains_then_switches_and_loses_stable_lock[cpu] PASSED [ 54%]
+tests/test_torch_simple_attack_lock_runtime.py::test_runtime_retains_then_switches_and_loses_stable_lock[cuda] PASSED [ 55%]
+tests/test_torch_simple_attack_lock_runtime.py::test_invisible_target_breaks_lock_and_visible_target_reacquires[cpu] PASSED [ 56%]
+tests/test_torch_simple_attack_lock_runtime.py::test_invisible_target_breaks_lock_and_visible_target_reacquires[cuda] PASSED [ 56%]
+tests/test_torch_simple_attack_lock_runtime.py::test_effect_capacity_rejection_does_not_commit_attack_cycle PASSED [ 57%]
+tests/test_torch_simple_attack_lock_runtime.py::test_stun_slot_reuse_selective_reset_and_tower_lock_coexistence PASSED [ 57%]
+tests/test_torch_simple_attack_lock_runtime.py::test_integrated_attack_lock_hot_path_has_no_host_synchronization PASSED [ 58%]
+tests/test_torch_simple_ability_runtime.py::test_archer_queen_runtime_ability_is_atomic_visible_and_replayable[cpu] PASSED [ 58%]
+tests/test_torch_simple_ability_runtime.py::test_archer_queen_runtime_ability_is_atomic_visible_and_replayable[cuda] PASSED [ 59%]
+tests/test_torch_simple_ability_runtime.py::test_standard_setup_compiles_exact_archer_queen_ability_profile PASSED [ 60%]
+tests/test_torch_simple_public_mask.py::test_tensor_mask_matches_free_running_numpy_trace[cpu] PASSED [ 60%]
+tests/test_torch_simple_public_mask.py::test_tensor_mask_matches_free_running_numpy_trace[cuda] PASSED [ 61%]
+tests/test_torch_simple_public_mask.py::test_collector_accepts_semantics_digest_without_mask_domain_leak PASSED [ 61%]
+tests/test_torch_simple_public_mask.py::test_typed_lookup_is_explicit_and_fail_closed PASSED [ 62%]
+tests/test_torch_simple_public_mask.py::test_ability_uses_only_actor_visible_typed_state_and_fails_closed[cpu] PASSED [ 63%]
+tests/test_torch_simple_public_mask.py::test_ability_uses_only_actor_visible_typed_state_and_fails_closed[cuda] PASSED [ 63%]
+tests/test_torch_simple_public_mask.py::test_ability_bit_matches_authoritative_runtime_trace[cpu] PASSED [ 64%]
+tests/test_torch_simple_public_mask.py::test_ability_bit_matches_authoritative_runtime_trace[cuda] PASSED [ 64%]
+tests/test_torch_simple_public_mask.py::test_hot_path_has_no_host_sync_or_privileged_inputs PASSED [ 65%]
+tests/test_torch_simple_public_mask.py::test_provider_is_cuda_graph_capturable_after_table_move PASSED [ 65%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_ghost_runtime_reveal_melee_hold_fade_and_public_features[cpu] PASSED [ 66%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_ghost_runtime_reveal_melee_hold_fade_and_public_features[cuda] PASSED [ 67%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_tesla_runtime_freeze_hide_reveal_targeting_and_reset[cpu] PASSED [ 67%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_tesla_runtime_freeze_hide_reveal_targeting_and_reset[cuda] PASSED [ 68%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_standard_runtime_owns_visibility_catalog_and_admission_plane PASSED [ 68%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_standard_admission_rejects_declared_malformed_visibility_profile PASSED [ 69%]
+tests/test_torch_simple_travel.py::test_current_serialized_profiles_compile_exact_calibration PASSED [ 69%]
+tests/test_torch_simple_travel.py::test_duplicate_travel_opcode_fails_closed PASSED [ 70%]
+tests/test_torch_simple_travel.py::test_malformed_raw_profile_fails_closed PASSED [ 71%]
+tests/test_torch_simple_travel.py::test_dash_range_boundaries_windup_cancel_and_terminal_command PASSED [ 71%]
+tests/test_torch_simple_travel.py::test_leap_spawn_slam_and_phase_boundaries PASSED [ 72%]
+tests/test_torch_simple_travel.py::test_miner_mirrored_origin_and_unavailable_until_emergence PASSED [ 72%]
+tests/test_torch_simple_travel.py::test_slot_reuse_and_row_reset_clear_every_plane PASSED [ 73%]
+tests/test_torch_simple_travel.py::test_seedless_replay_is_device_deterministic[cpu] PASSED [ 73%]
+tests/test_torch_simple_travel.py::test_seedless_replay_is_device_deterministic[cuda] PASSED [ 74%]
+tests/test_torch_simple_travel.py::test_area_impact_structurally_adapts_to_shared_impulse PASSED [ 75%]
+tests/test_torch_simple_travel.py::test_hot_path_has_no_names_or_host_sync PASSED [ 75%]
+tests/test_torch_simple_travel_runtime.py::test_bandit_dash_and_mega_knight_spawn_leap_use_common_runtime[cpu] PASSED [ 76%]
+tests/test_torch_simple_travel_runtime.py::test_bandit_dash_and_mega_knight_spawn_leap_use_common_runtime[cuda] PASSED [ 76%]
+tests/test_torch_simple_travel_runtime.py::test_miner_transport_mirrors_origin_and_scales_crown_damage[cpu] PASSED [ 77%]
+tests/test_torch_simple_travel_runtime.py::test_miner_transport_mirrors_origin_and_scales_crown_damage[cuda] PASSED [ 78%]
+tests/test_torch_simple_travel_runtime.py::test_travel_cancellation_mixed_movers_replay_and_reset[cpu] PASSED [ 78%]
+tests/test_torch_simple_travel_runtime.py::test_travel_cancellation_mixed_movers_replay_and_reset[cuda] PASSED [ 79%]
+tests/test_torch_simple_travel_runtime.py::test_public_target_snapshot_and_travel_capacity_fail_closed PASSED [ 79%]
+tests/test_torch_simple_travel_runtime.py::test_mega_knight_spawn_impact_waits_for_deployment_completion PASSED [ 80%]
+tests/test_torch_simple_travel_runtime.py::test_integrated_travel_hot_path_has_no_card_dispatch_or_host_sync PASSED [ 80%]
+tests/test_torch_simple_triggered_impacts.py::test_live_serialized_trigger_profiles_compile_exactly[cpu] PASSED [ 81%]
+tests/test_torch_simple_triggered_impacts.py::test_live_serialized_trigger_profiles_compile_exactly[cuda] PASSED [ 82%]
+tests/test_torch_simple_triggered_impacts.py::test_fixed_resolution_geometry_effect_and_impulse_adapters[cpu] PASSED [ 82%]
+tests/test_torch_simple_triggered_impacts.py::test_fixed_resolution_geometry_effect_and_impulse_adapters[cuda] PASSED [ 83%]
+tests/test_torch_simple_triggered_impacts.py::test_cpu_replay_is_exact_and_wrong_triggers_or_ids_fail_closed PASSED [ 83%]
+tests/test_torch_simple_triggered_impacts.py::test_duplicate_recognized_mechanic_fails_card_closed PASSED [ 84%]
+tests/test_torch_simple_triggered_impacts.py::test_nested_source_mismatch_and_expansion_overflow_fail_closed PASSED [ 84%]
+tests/test_torch_simple_triggered_impacts.py::test_full_enabled_corpus_has_no_false_malformed_or_duplicate_profiles PASSED [ 85%]
+tests/test_torch_simple_triggered_impacts.py::test_runtime_paths_have_no_host_sync_compaction_or_card_dispatch PASSED [ 86%]
+tests/test_torch_simple_triggered_runtime.py::test_deploy_area_fires_only_on_exact_deploy_crossing[cpu] PASSED [ 86%]
+tests/test_torch_simple_triggered_runtime.py::test_deploy_area_fires_only_on_exact_deploy_crossing[cuda] PASSED [ 87%]
+tests/test_torch_simple_triggered_runtime.py::test_firecracker_recoil_runs_on_committed_attack[cpu] PASSED [ 87%]
+tests/test_torch_simple_triggered_runtime.py::test_firecracker_recoil_runs_on_committed_attack[cuda] PASSED [ 88%]
+tests/test_torch_simple_triggered_runtime.py::test_projectile_impact_adds_push_without_duplicate_damage[cpu] PASSED [ 89%]
+tests/test_torch_simple_triggered_runtime.py::test_projectile_impact_adds_push_without_duplicate_damage[cuda] PASSED [ 89%]
+tests/test_torch_simple_triggered_runtime.py::test_death_secondary_effects_compose_without_double_burst_damage[cpu] PASSED [ 90%]
+tests/test_torch_simple_triggered_runtime.py::test_death_secondary_effects_compose_without_double_burst_damage[cuda] PASSED [ 90%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_goblin_gang_compiles_two_typed_groups_as_one_private_atomic_event PASSED [ 91%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_goblin_gang_allocation_is_six_member_atomic_and_replay_stable[cpu] PASSED [ 91%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_goblin_gang_allocation_is_six_member_atomic_and_replay_stable[cuda] PASSED [ 92%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_incomplete_secondary_group_fails_closed_without_allocating_primary PASSED [ 93%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_heterogeneous_event_ids_and_member_order_ignore_public_root_order PASSED [ 93%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_runtime_materializes_exact_typed_three_plus_three_action[cpu] PASSED [ 94%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_runtime_materializes_exact_typed_three_plus_three_action[cuda] PASSED [ 94%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_exact_capacity_is_player_ordered_and_rolls_back_whole_action PASSED [ 95%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_one_slot_short_fails_mask_closed_without_transaction_mutation PASSED [ 95%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_mixed_homogeneous_and_atomic_actions_preserve_global_player_order[Archers-GoblinGang-expected_cards0-expected_success0] PASSED [ 96%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_mixed_homogeneous_and_atomic_actions_preserve_global_player_order[GoblinGang-Archers-expected_cards1-expected_success1] PASSED [ 97%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_spawned_ledger_reinitializes_every_entity_bound_plane PASSED [ 97%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_replay_and_reset_reproduce_atomic_runtime_state PASSED [ 98%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_cuda_graph_matches_eager_atomic_runtime_tick FAILED [ 98%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_standard_setup_requires_a_supported_atomic_action_event PASSED [ 99%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_atomic_action_hot_path_has_no_sync_compaction_or_name_dispatch PASSED [100%]
+
+=================================== FAILURES ===================================
+_________________ test_cuda_graph_runner_matches_eager_replays _________________
+
+self = <clasher.torch_sim.simple_cuda_graph.SimpleCudaGraphRunner object at 0x77dfdb7db4a0>
+runtime = <clasher.torch_sim.simple_runtime.SimpleGymRuntime object at 0x77dfdb823a10>
+example_action_ids = tensor([[6, 6],
+        [0, 0]], device='cuda:0')
+
+    def __init__(
+        self,
+        runtime: SimpleGymRuntime,
+        example_action_ids: torch.Tensor,
+    ) -> None:
+        if runtime.device.type != "cuda" or not torch.cuda.is_available():
+            raise ValueError("SimpleCudaGraphRunner requires a CUDA runtime")
+        self.runtime = runtime
+        self._validate_actions(example_action_ids)
+        self._action_ids = example_action_ids.clone()
+        self._graph = torch.cuda.CUDAGraph()
+    
+        torch.cuda.synchronize(runtime.device)
+        with torch.cuda.device(runtime.device), torch.cuda.graph(self._graph):
+>           self._step = runtime.step_tick(self._action_ids)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src/clasher/torch_sim/simple_cuda_graph.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/clasher/torch_sim/simple_runtime.py:2617: in step_tick
+    combat = self.combat.step_tick(
+src/clasher/torch_sim/simple_engine.py:1070: in step_tick
+    ) = self._ordinary_troop_phase(
+src/clasher/torch_sim/simple_engine.py:820: in _ordinary_troop_phase
+    collision = resolve_fast_collision_navigation(
+src/clasher/torch_sim/simple_collision_navigation.py:202: in resolve_fast_collision_navigation
+    tie_x, tie_y = _stable_overlap_normal(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+own_id = tensor([[[1],
+         [2],
+         [3],
+         [4],
+         [5],
+         [6],
+         [0],
+         [0],
+      ...],
+         [0],
+         [0],
+         [0],
+         [0],
+         [0],
+         [0],
+         [0]]], device='cuda:0')
+other_id = tensor([[[1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0]],
+...3, 4, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0]]], device='cuda:0')
+
+    def _stable_overlap_normal(
+        own_id: torch.Tensor,
+        other_id: torch.Tensor,
+        *,
+        dtype: torch.dtype,
+        device: torch.device,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return an antisymmetric deterministic unit vector for exact overlap."""
+    
+        low = torch.minimum(own_id, other_id)
+        high = torch.maximum(own_id, other_id)
+        direction_index = torch.bitwise_and(low * 31 + high * 17, 7)
+        diagonal = 2.0**-0.5
+>       directions = torch.tensor(
+            (
+                (1.0, 0.0),
+                (diagonal, diagonal),
+                (0.0, 1.0),
+                (-diagonal, diagonal),
+                (-1.0, 0.0),
+                (-diagonal, -diagonal),
+                (0.0, -1.0),
+                (diagonal, -diagonal),
+            ),
+            dtype=dtype,
+            device=device,
+        )
+E       torch.AcceleratorError: CUDA error: operation not permitted when stream is capturing
+E       Search for `cudaErrorStreamCaptureUnsupported' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+E       CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+E       For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+E       Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+src/clasher/torch_sim/simple_collision_navigation.py:79: AcceleratorError
+
+During handling of the above exception, another exception occurred:
+
+    @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
+    def test_cuda_graph_runner_matches_eager_replays() -> None:
+        decks = supported_simple_decks(
+            [list(deck) for deck in load_deck_pool("decks.json")],
+            device="cuda",
+        )
+        kwargs: Any = {
+            "seed": 202_608_264,
+            "decks": decks,
+            "batch_size": 2,
+            "device": "cuda",
+            "max_entities": 32,
+            "max_effects": 32,
+            "regulation_ticks": STANDARD_REGULATION_TICK,
+            "tiebreak_ticks": STANDARD_TIEBREAK_TICK,
+            "supported_only": True,
+        }
+        runtime = build_simple_runtime(**kwargs)
+        reference = build_simple_runtime(**kwargs)
+        observation = runtime.observe()
+        reference_observation = reference.observe()
+        example = select_actions(observation.legal_mask, "first-legal")
+>       runner = SimpleCudaGraphRunner(runtime, example)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_cuda_graph.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/clasher/torch_sim/simple_cuda_graph.py:44: in __init__
+    with torch.cuda.device(runtime.device), torch.cuda.graph(self._graph):
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/torch/cuda/graphs.py:268: in __exit__
+    self.cuda_graph.capture_end()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <torch.cuda.graphs.CUDAGraph object at 0x77dfd9507ef0>
+
+    def capture_end(self) -> None:
+        r"""End CUDA graph capture on the current stream.
+    
+        After ``capture_end``, ``replay`` may be called on this instance.
+    
+        Typically, you shouldn't call ``capture_end`` yourself.
+        Use :class:`~torch.cuda.graph` or :func:`~torch.cuda.make_graphed_callables`,
+        which call ``capture_end`` internally.
+        """
+>       super().capture_end()
+E       torch.AcceleratorError: CUDA error: operation failed due to a previous error during capture
+E       Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+E       CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+E       For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+E       Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+.venv/lib/python3.12/site-packages/torch/cuda/graphs.py:130: AcceleratorError
+___________ test_cuda_graph_runner_matches_interval_bridge_and_reset ___________
+
+self = <clasher.torch_sim.simple_cuda_graph.SimpleCudaGraphRunner object at 0x77e1191305f0>
+runtime = <clasher.torch_sim.simple_runtime.SimpleGymRuntime object at 0x77dfdb138500>
+example_action_ids = tensor([[2304, 2304],
+        [2304, 2304]], device='cuda:0')
+
+    def __init__(
+        self,
+        runtime: SimpleGymRuntime,
+        example_action_ids: torch.Tensor,
+    ) -> None:
+        if runtime.device.type != "cuda" or not torch.cuda.is_available():
+            raise ValueError("SimpleCudaGraphRunner requires a CUDA runtime")
+        self.runtime = runtime
+        self._validate_actions(example_action_ids)
+        self._action_ids = example_action_ids.clone()
+        self._graph = torch.cuda.CUDAGraph()
+    
+        torch.cuda.synchronize(runtime.device)
+        with torch.cuda.device(runtime.device), torch.cuda.graph(self._graph):
+>           self._step = runtime.step_tick(self._action_ids)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src/clasher/torch_sim/simple_cuda_graph.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/clasher/torch_sim/simple_runtime.py:2617: in step_tick
+    combat = self.combat.step_tick(
+src/clasher/torch_sim/simple_engine.py:1070: in step_tick
+    ) = self._ordinary_troop_phase(
+src/clasher/torch_sim/simple_engine.py:820: in _ordinary_troop_phase
+    collision = resolve_fast_collision_navigation(
+src/clasher/torch_sim/simple_collision_navigation.py:202: in resolve_fast_collision_navigation
+    tie_x, tie_y = _stable_overlap_normal(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+own_id = tensor([[[1],
+         [2],
+         [3],
+         [4],
+         [5],
+         [6],
+         [0],
+         [0],
+      ...],
+         [0],
+         [0],
+         [0],
+         [0],
+         [0],
+         [0],
+         [0]]], device='cuda:0')
+other_id = tensor([[[1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0]],
+...3, 4, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0]]], device='cuda:0')
+
+    def _stable_overlap_normal(
+        own_id: torch.Tensor,
+        other_id: torch.Tensor,
+        *,
+        dtype: torch.dtype,
+        device: torch.device,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return an antisymmetric deterministic unit vector for exact overlap."""
+    
+        low = torch.minimum(own_id, other_id)
+        high = torch.maximum(own_id, other_id)
+        direction_index = torch.bitwise_and(low * 31 + high * 17, 7)
+        diagonal = 2.0**-0.5
+>       directions = torch.tensor(
+            (
+                (1.0, 0.0),
+                (diagonal, diagonal),
+                (0.0, 1.0),
+                (-diagonal, diagonal),
+                (-1.0, 0.0),
+                (-diagonal, -diagonal),
+                (0.0, -1.0),
+                (diagonal, -diagonal),
+            ),
+            dtype=dtype,
+            device=device,
+        )
+E       torch.AcceleratorError: CUDA error: operation not permitted when stream is capturing
+E       Search for `cudaErrorStreamCaptureUnsupported' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+E       CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+E       For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+E       Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+src/clasher/torch_sim/simple_collision_navigation.py:79: AcceleratorError
+
+During handling of the above exception, another exception occurred:
+
+    @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
+    def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
+        decks = supported_simple_decks(
+            [list(deck) for deck in load_deck_pool("decks.json")],
+            device="cuda",
+        )
+        kwargs: Any = {
+            "seed": 202_608_265,
+            "decks": decks,
+            "batch_size": 2,
+            "device": "cuda",
+            "max_entities": 32,
+            "max_effects": 32,
+            "regulation_ticks": STANDARD_REGULATION_TICK,
+            "tiebreak_ticks": STANDARD_TIEBREAK_TICK,
+            "supported_only": True,
+        }
+        runtime = build_simple_runtime(**kwargs)
+        reference = build_simple_runtime(**kwargs)
+        no_op = torch.full((2, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
+>       runner = SimpleCudaGraphRunner(runtime, no_op)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_cuda_graph.py:169: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/clasher/torch_sim/simple_cuda_graph.py:44: in __init__
+    with torch.cuda.device(runtime.device), torch.cuda.graph(self._graph):
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/torch/cuda/graphs.py:268: in __exit__
+    self.cuda_graph.capture_end()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <torch.cuda.graphs.CUDAGraph object at 0x77dfcc108e90>
+
+    def capture_end(self) -> None:
+        r"""End CUDA graph capture on the current stream.
+    
+        After ``capture_end``, ``replay`` may be called on this instance.
+    
+        Typically, you shouldn't call ``capture_end`` yourself.
+        Use :class:`~torch.cuda.graph` or :func:`~torch.cuda.make_graphed_callables`,
+        which call ``capture_end`` internally.
+        """
+>       super().capture_end()
+E       torch.AcceleratorError: CUDA error: operation failed due to a previous error during capture
+E       Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+E       CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+E       For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+E       Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+.venv/lib/python3.12/site-packages/torch/cuda/graphs.py:130: AcceleratorError
+__________________ test_tower_combat_cuda_graph_matches_eager __________________
+
+self = <clasher.torch_sim.simple_cuda_graph.SimpleCudaGraphRunner object at 0x77e118b5d4c0>
+runtime = <clasher.torch_sim.simple_runtime.SimpleGymRuntime object at 0x77e118b5e2a0>
+example_action_ids = tensor([[2304, 2304]], device='cuda:0')
+
+    def __init__(
+        self,
+        runtime: SimpleGymRuntime,
+        example_action_ids: torch.Tensor,
+    ) -> None:
+        if runtime.device.type != "cuda" or not torch.cuda.is_available():
+            raise ValueError("SimpleCudaGraphRunner requires a CUDA runtime")
+        self.runtime = runtime
+        self._validate_actions(example_action_ids)
+        self._action_ids = example_action_ids.clone()
+        self._graph = torch.cuda.CUDAGraph()
+    
+        torch.cuda.synchronize(runtime.device)
+        with torch.cuda.device(runtime.device), torch.cuda.graph(self._graph):
+>           self._step = runtime.step_tick(self._action_ids)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src/clasher/torch_sim/simple_cuda_graph.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/clasher/torch_sim/simple_runtime.py:2617: in step_tick
+    combat = self.combat.step_tick(
+src/clasher/torch_sim/simple_engine.py:1070: in step_tick
+    ) = self._ordinary_troop_phase(
+src/clasher/torch_sim/simple_engine.py:820: in _ordinary_troop_phase
+    collision = resolve_fast_collision_navigation(
+src/clasher/torch_sim/simple_collision_navigation.py:202: in resolve_fast_collision_navigation
+    tie_x, tie_y = _stable_overlap_normal(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+own_id = tensor([[[ 1],
+         [ 2],
+         [ 3],
+         [ 4],
+         [ 5],
+         [ 6],
+         [20],
+         [ 0]...     [ 0],
+         [ 0],
+         [ 0],
+         [ 0],
+         [ 0],
+         [ 0],
+         [ 0]]], device='cuda:0')
+other_id = tensor([[[ 1,  2,  3,  4,  5,  6, 20,  0,  0,  0,  0,  0,  0,  0,  0,  0]]],
+       device='cuda:0')
+
+    def _stable_overlap_normal(
+        own_id: torch.Tensor,
+        other_id: torch.Tensor,
+        *,
+        dtype: torch.dtype,
+        device: torch.device,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return an antisymmetric deterministic unit vector for exact overlap."""
+    
+        low = torch.minimum(own_id, other_id)
+        high = torch.maximum(own_id, other_id)
+        direction_index = torch.bitwise_and(low * 31 + high * 17, 7)
+        diagonal = 2.0**-0.5
+>       directions = torch.tensor(
+            (
+                (1.0, 0.0),
+                (diagonal, diagonal),
+                (0.0, 1.0),
+                (-diagonal, diagonal),
+                (-1.0, 0.0),
+                (-diagonal, -diagonal),
+                (0.0, -1.0),
+                (diagonal, -diagonal),
+            ),
+            dtype=dtype,
+            device=device,
+        )
+E       torch.AcceleratorError: CUDA error: operation not permitted when stream is capturing
+E       Search for `cudaErrorStreamCaptureUnsupported' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+E       CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+E       For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+E       Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+src/clasher/torch_sim/simple_collision_navigation.py:79: AcceleratorError
+
+During handling of the above exception, another exception occurred:
+
+    @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
+    def test_tower_combat_cuda_graph_matches_eager() -> None:
+        runtime, knight = _runtime("cuda")
+        reference, _ = _runtime("cuda")
+        for candidate in (runtime, reference):
+            candidate.state.damage[:, :FAST_TOWER_SLOT_COUNT] = 0.0
+            candidate.state.damage[0, 0] = 109.0
+            _seed_stationary_knight(
+                candidate,
+                knight,
+                row=0,
+                slot=6,
+                stable_id=20,
+                owner=1,
+                x_units=3_500,
+                y_units=8_000,
+            )
+        actions = _noop(runtime)
+>       runner = SimpleCudaGraphRunner(runtime, actions)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_tower_combat.py:471: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/clasher/torch_sim/simple_cuda_graph.py:44: in __init__
+    with torch.cuda.device(runtime.device), torch.cuda.graph(self._graph):
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/torch/cuda/graphs.py:268: in __exit__
+    self.cuda_graph.capture_end()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <torch.cuda.graphs.CUDAGraph object at 0x77dfcc1ae150>
+
+    def capture_end(self) -> None:
+        r"""End CUDA graph capture on the current stream.
+    
+        After ``capture_end``, ``replay`` may be called on this instance.
+    
+        Typically, you shouldn't call ``capture_end`` yourself.
+        Use :class:`~torch.cuda.graph` or :func:`~torch.cuda.make_graphed_callables`,
+        which call ``capture_end`` internally.
+        """
+>       super().capture_end()
+E       torch.AcceleratorError: CUDA error: operation failed due to a previous error during capture
+E       Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+E       CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+E       For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+E       Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+.venv/lib/python3.12/site-packages/torch/cuda/graphs.py:130: AcceleratorError
+______________ test_cuda_graph_matches_eager_atomic_runtime_tick _______________
+
+self = <clasher.torch_sim.simple_cuda_graph.SimpleCudaGraphRunner object at 0x77e118c1bc20>
+runtime = <clasher.torch_sim.simple_runtime.SimpleGymRuntime object at 0x77e118a44440>
+example_action_ids = tensor([[260, 260]], device='cuda:0')
+
+    def __init__(
+        self,
+        runtime: SimpleGymRuntime,
+        example_action_ids: torch.Tensor,
+    ) -> None:
+        if runtime.device.type != "cuda" or not torch.cuda.is_available():
+            raise ValueError("SimpleCudaGraphRunner requires a CUDA runtime")
+        self.runtime = runtime
+        self._validate_actions(example_action_ids)
+        self._action_ids = example_action_ids.clone()
+        self._graph = torch.cuda.CUDAGraph()
+    
+        torch.cuda.synchronize(runtime.device)
+        with torch.cuda.device(runtime.device), torch.cuda.graph(self._graph):
+>           self._step = runtime.step_tick(self._action_ids)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src/clasher/torch_sim/simple_cuda_graph.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/clasher/torch_sim/simple_runtime.py:2617: in step_tick
+    combat = self.combat.step_tick(
+src/clasher/torch_sim/simple_engine.py:1070: in step_tick
+    ) = self._ordinary_troop_phase(
+src/clasher/torch_sim/simple_engine.py:820: in _ordinary_troop_phase
+    collision = resolve_fast_collision_navigation(
+src/clasher/torch_sim/simple_collision_navigation.py:202: in resolve_fast_collision_navigation
+    tie_x, tie_y = _stable_overlap_normal(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+own_id = tensor([[[1],
+         [2],
+         [3],
+         [4],
+         [5],
+         [6],
+         [0],
+         [0],
+      ...],
+         [0],
+         [0],
+         [0],
+         [0],
+         [0],
+         [0],
+         [0]]], device='cuda:0')
+other_id = tensor([[[1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]],
+       device='cuda:0')
+
+    def _stable_overlap_normal(
+        own_id: torch.Tensor,
+        other_id: torch.Tensor,
+        *,
+        dtype: torch.dtype,
+        device: torch.device,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return an antisymmetric deterministic unit vector for exact overlap."""
+    
+        low = torch.minimum(own_id, other_id)
+        high = torch.maximum(own_id, other_id)
+        direction_index = torch.bitwise_and(low * 31 + high * 17, 7)
+        diagonal = 2.0**-0.5
+>       directions = torch.tensor(
+            (
+                (1.0, 0.0),
+                (diagonal, diagonal),
+                (0.0, 1.0),
+                (-diagonal, diagonal),
+                (-1.0, 0.0),
+                (-diagonal, -diagonal),
+                (0.0, -1.0),
+                (diagonal, -diagonal),
+            ),
+            dtype=dtype,
+            device=device,
+        )
+E       torch.AcceleratorError: CUDA error: operation not permitted when stream is capturing
+E       Search for `cudaErrorStreamCaptureUnsupported' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+E       CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+E       For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+E       Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+src/clasher/torch_sim/simple_collision_navigation.py:79: AcceleratorError
+
+During handling of the above exception, another exception occurred:
+
+    @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
+    def test_cuda_graph_matches_eager_atomic_runtime_tick() -> None:
+        captured, _, _ = _runtime("cuda", max_entities=18)
+        eager, _, _ = _runtime("cuda", max_entities=18)
+        actions = _actions(captured)
+>       runner = SimpleCudaGraphRunner(captured, actions)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_heterogeneous_spawn_runtime.py:349: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/clasher/torch_sim/simple_cuda_graph.py:44: in __init__
+    with torch.cuda.device(runtime.device), torch.cuda.graph(self._graph):
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/torch/cuda/graphs.py:268: in __exit__
+    self.cuda_graph.capture_end()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <torch.cuda.graphs.CUDAGraph object at 0x77df8d1c8ad0>
+
+    def capture_end(self) -> None:
+        r"""End CUDA graph capture on the current stream.
+    
+        After ``capture_end``, ``replay`` may be called on this instance.
+    
+        Typically, you shouldn't call ``capture_end`` yourself.
+        Use :class:`~torch.cuda.graph` or :func:`~torch.cuda.make_graphed_callables`,
+        which call ``capture_end`` internally.
+        """
+>       super().capture_end()
+E       torch.AcceleratorError: CUDA error: operation failed due to a previous error during capture
+E       Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+E       CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+E       For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+E       Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+.venv/lib/python3.12/site-packages/torch/cuda/graphs.py:130: AcceleratorError
+=========================== short test summary info ============================
+FAILED tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_matches_eager_replays - torch.AcceleratorError: CUDA error: operation failed due to a previous error during capture
+Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+FAILED tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_matches_interval_bridge_and_reset - torch.AcceleratorError: CUDA error: operation failed due to a previous error during capture
+Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+FAILED tests/test_torch_simple_tower_combat.py::test_tower_combat_cuda_graph_matches_eager - torch.AcceleratorError: CUDA error: operation failed due to a previous error during capture
+Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+FAILED tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_cuda_graph_matches_eager_atomic_runtime_tick - torch.AcceleratorError: CUDA error: operation failed due to a previous error during capture
+Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+================== 4 failed, 169 passed in 146.20s (0:02:26) ===================

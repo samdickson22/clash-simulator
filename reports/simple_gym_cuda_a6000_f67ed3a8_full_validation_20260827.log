@@ -1,0 +1,54 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/clasher/src/clasher/torch_sim/simple_cuda_graph.py", line 45, in __init__
+    self._step = runtime.step_tick(self._action_ids)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/clasher/src/clasher/torch_sim/simple_runtime.py", line 2617, in step_tick
+    combat = self.combat.step_tick(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/clasher/src/clasher/torch_sim/simple_engine.py", line 1070, in step_tick
+    ) = self._ordinary_troop_phase(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/clasher/src/clasher/torch_sim/simple_engine.py", line 820, in _ordinary_troop_phase
+    collision = resolve_fast_collision_navigation(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/clasher/src/clasher/torch_sim/simple_collision_navigation.py", line 202, in resolve_fast_collision_navigation
+    tie_x, tie_y = _stable_overlap_normal(
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/clasher/src/clasher/torch_sim/simple_collision_navigation.py", line 79, in _stable_overlap_normal
+    directions = torch.tensor(
+                 ^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: operation not permitted when stream is capturing
+Search for `cudaErrorStreamCaptureUnsupported' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/clasher/scripts/validate_simple_full_matches.py", line 444, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/ubuntu/clasher/scripts/validate_simple_full_matches.py", line 433, in main
+    result = validate(args)
+             ^^^^^^^^^^^^^^
+  File "/home/ubuntu/clasher/scripts/validate_simple_full_matches.py", line 335, in validate
+    run_episode(
+  File "/home/ubuntu/clasher/scripts/validate_simple_full_matches.py", line 257, in run_episode
+    stepper: SimpleGymRuntime | SimpleCudaGraphRunner = SimpleCudaGraphRunner(
+                                                        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/clasher/src/clasher/torch_sim/simple_cuda_graph.py", line 44, in __init__
+    with torch.cuda.device(runtime.device), torch.cuda.graph(self._graph):
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/clasher/.venv/lib/python3.12/site-packages/torch/cuda/graphs.py", line 268, in __exit__
+    self.cuda_graph.capture_end()
+  File "/home/ubuntu/clasher/.venv/lib/python3.12/site-packages/torch/cuda/graphs.py", line 130, in capture_end
+    super().capture_end()
+torch.AcceleratorError: CUDA error: operation failed due to a previous error during capture
+Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+validator_exit=1

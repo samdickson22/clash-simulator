@@ -1,0 +1,9 @@
+source_git_sha=f67ed3a82a6a413c4dda00be215e3b35cc1fa8d5
+archive_sha256=183705b8eb538ef42230ac7f3a1ad3177b6798afd01893455fdc05461e0dc7c0
+183705b8eb538ef42230ac7f3a1ad3177b6798afd01893455fdc05461e0dc7c0  /tmp/clasher-f67ed3a8.tar.gz
+Python 3.12.14
+torch=2.10.0+cu128
+cuda_runtime=12.8
+cuda_available=True
+gpu=NVIDIA RTX A6000
+NVIDIA RTX A6000, 49140 MiB, 580.126.09

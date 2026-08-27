@@ -1,0 +1,84 @@
+{
+  "acceptance": {
+    "absolute_throughput_gate": true,
+    "all_row_ticks_native": true,
+    "all_rows_committed": true,
+    "cuda_launches_lt_1000": true,
+    "cuda_zero_explicit_host_sync": true,
+    "deterministic_replay": true,
+    "no_terminal_rows_in_window": true,
+    "python_parity_evaluated": false,
+    "speedup_evaluated": false,
+    "zero_fallback": true
+  },
+  "cuda_profile": {
+    "explicit_host_synchronizations": 0,
+    "kernel_launches": 10,
+    "launch_gate_lt_1000": true,
+    "zero_explicit_host_sync": true
+  },
+  "deck_pool": {
+    "candidate_decks": 33,
+    "rejected_decks": 0,
+    "supported_decks": 33
+  },
+  "device": "cuda:0",
+  "engine": "SimpleGymRuntime",
+  "execution_mode": "cuda-graph",
+  "median": {
+    "actor_transitions_per_second": 820.1060993807299,
+    "elapsed_seconds": 31.215473240999927,
+    "row_ticks_per_second": 410.05304969036496
+  },
+  "policy": "first-legal",
+  "preset": "smoke",
+  "schema_version": 1,
+  "seed": 202608264,
+  "throughput_gate": {
+    "minimum_row_ticks_per_second": 400.0
+  },
+  "trials": [
+    {
+      "actor_transitions_per_second": 821.4164701178428,
+      "batch_size": 128,
+      "committed_rows": 12800,
+      "digest": "f6f5ed8e3224734aa4f7a76012ebb995ab2c689f5eb59ae57113a3bc8034fc93",
+      "elapsed_seconds": 31.16567652499998,
+      "measured_ticks": 100,
+      "native_ticks": 12800,
+      "peak_device_memory_bytes": 79849472,
+      "repetition": 0,
+      "row_ticks": 12800,
+      "row_ticks_per_second": 410.7082350589214,
+      "terminal_rows": 0
+    },
+    {
+      "actor_transitions_per_second": 820.1060993807299,
+      "batch_size": 128,
+      "committed_rows": 12800,
+      "digest": "f6f5ed8e3224734aa4f7a76012ebb995ab2c689f5eb59ae57113a3bc8034fc93",
+      "elapsed_seconds": 31.215473240999927,
+      "measured_ticks": 100,
+      "native_ticks": 12800,
+      "peak_device_memory_bytes": 79849472,
+      "repetition": 1,
+      "row_ticks": 12800,
+      "row_ticks_per_second": 410.05304969036496,
+      "terminal_rows": 0
+    },
+    {
+      "actor_transitions_per_second": 819.2744291287333,
+      "batch_size": 128,
+      "committed_rows": 12800,
+      "digest": "f6f5ed8e3224734aa4f7a76012ebb995ab2c689f5eb59ae57113a3bc8034fc93",
+      "elapsed_seconds": 31.247161012000106,
+      "measured_ticks": 100,
+      "native_ticks": 12800,
+      "peak_device_memory_bytes": 79849472,
+      "repetition": 2,
+      "row_ticks": 12800,
+      "row_ticks_per_second": 409.6372145643667,
+      "terminal_rows": 0
+    }
+  ]
+}

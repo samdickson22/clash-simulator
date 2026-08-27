@@ -1,0 +1,207 @@
+{
+  "acceptance": {
+    "actor_v2_mask_authority": true,
+    "all_committed": true,
+    "all_native": true,
+    "all_rows_admitted": true,
+    "metadata_preserved": true,
+    "public_mask_v2_selected_actions_legal": true,
+    "real_494_token_clasher_policy": true,
+    "recurrent_outputs_present": true,
+    "training_wrapper_rollout_shape": true,
+    "zero_fallback": true
+  },
+  "archive_sha256": "599686cc4886792f5a2668cc5fc4bfd8474f87493c264aae116ce15b4171966b",
+  "checkpoint_metadata": {
+    "actor_semantics_id": "typed-public-structured-canonical-v1",
+    "backend_id": "simple-pytorch-gym-v1",
+    "canonical_lane_globals": true,
+    "fresh_only": true,
+    "metadata_digest": "474c662d9ad97cd099699c7898965c354127ae64f221e686edf6978a3dda7e6a",
+    "public_action_mask_contract_version": 2,
+    "public_action_mask_semantics": {
+      "ability_inputs": "own-visible-live-typed-entity,deploy-ready,elixir,cooldown-ready,duration-ready",
+      "ability_multiple_owner_policy": "fail-closed-without-public-stable-owner-id",
+      "ability_owner_selection": "exactly-one-supported-own-live-entity",
+      "ability_policy": "actor-visible-supported-champion-v1",
+      "ability_stun_policy": "not-a-legality-gate",
+      "authority": "serialized-card-data-and-current-client-typed-vocabulary-v1",
+      "canonical_lane_globals": true,
+      "contract_version": 2,
+      "inputs": "simple-actor-projection-only",
+      "lookup_digest": "49457323412a6c47edb0a399efd225c4225a7a9f237d2846f24f4feec44275b1",
+      "numeric_profile": "float64-authoritative-comparison-v1",
+      "schema": "clasher.simple-public-mask.tensor-v2",
+      "semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+      "token_count": 494,
+      "typed_tokens_required": true,
+      "uses_critic": false,
+      "uses_labels": false,
+      "uses_simulator_legal_mask": false
+    },
+    "public_action_mask_semantics_digest": "269eaba783a8c8ef7b11488cd1c1bf7d9ec15b7ab9b91aefeb5ba565565cfd05",
+    "public_action_mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+    "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+    "reward_contract_id": "objective-v1-gamma-v1",
+    "reward_contract_metadata": {
+      "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+      "reward_contract_id": "objective-v1-gamma-v1",
+      "reward_contract_spec": {
+        "contract_id": "objective-v1-gamma-v1",
+        "crown_weight": 0.55,
+        "early_king_chip_penalty_weight": 0.2,
+        "elixir_leak_penalty_scale": 0.0,
+        "evaluation_boundary": "policy-decision",
+        "gamma": 0.995,
+        "invalid_action_penalty": 0.0,
+        "king_activation_inference": "live-king-and-hp-below-initial-or-princess-destroyed-v1",
+        "king_pressure_weight": 0.1,
+        "potential_clip": 1.5,
+        "princess_pressure_weight": 0.25,
+        "schema_version": 1,
+        "terminal_potential": "absorbing-zero",
+        "terminal_weight": 1.0,
+        "tiebreak_edge_weight": 0.1,
+        "tiebreak_fixed_point_scale": 1000,
+        "zero_sum": true
+      }
+    },
+    "standard_tiebreak_tick": 6000,
+    "support_profile_sha256": "9e8dbfe1edf10835bd2138f237dcc917b65dc1f44f39bc26ff221da4d6aaefab",
+    "supported_decks_sha256": "c93de9989841743b535fe5fde182abe19e1983c8f67a0a27d0c191ea9ccd212f",
+    "typed_vocabulary_sha256": "960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704"
+  },
+  "collector_metadata": {
+    "actor_semantics_id": "typed-public-structured-canonical-v1",
+    "admission_validation": "device-async-after-rollout",
+    "backend_id": "simple-pytorch-gym-v1",
+    "decision_interval": 2,
+    "public_action_mask_contract_version": 2,
+    "public_action_mask_semantics": {
+      "ability_inputs": "own-visible-live-typed-entity,deploy-ready,elixir,cooldown-ready,duration-ready",
+      "ability_multiple_owner_policy": "fail-closed-without-public-stable-owner-id",
+      "ability_owner_selection": "exactly-one-supported-own-live-entity",
+      "ability_policy": "actor-visible-supported-champion-v1",
+      "ability_stun_policy": "not-a-legality-gate",
+      "authority": "serialized-card-data-and-current-client-typed-vocabulary-v1",
+      "canonical_lane_globals": true,
+      "contract_version": 2,
+      "inputs": "simple-actor-projection-only",
+      "lookup_digest": "49457323412a6c47edb0a399efd225c4225a7a9f237d2846f24f4feec44275b1",
+      "numeric_profile": "float64-authoritative-comparison-v1",
+      "schema": "clasher.simple-public-mask.tensor-v2",
+      "semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+      "token_count": 494,
+      "typed_tokens_required": true,
+      "uses_critic": false,
+      "uses_labels": false,
+      "uses_simulator_legal_mask": false
+    },
+    "public_action_mask_semantics_digest": "269eaba783a8c8ef7b11488cd1c1bf7d9ec15b7ab9b91aefeb5ba565565cfd05",
+    "public_action_mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+    "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+    "reward_contract_id": "objective-v1-gamma-v1",
+    "reward_contract_metadata": {
+      "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+      "reward_contract_id": "objective-v1-gamma-v1",
+      "reward_contract_spec": {
+        "contract_id": "objective-v1-gamma-v1",
+        "crown_weight": 0.55,
+        "early_king_chip_penalty_weight": 0.2,
+        "elixir_leak_penalty_scale": 0.0,
+        "evaluation_boundary": "policy-decision",
+        "gamma": 0.995,
+        "invalid_action_penalty": 0.0,
+        "king_activation_inference": "live-king-and-hp-below-initial-or-princess-destroyed-v1",
+        "king_pressure_weight": 0.1,
+        "potential_clip": 1.5,
+        "princess_pressure_weight": 0.25,
+        "schema_version": 1,
+        "terminal_potential": "absorbing-zero",
+        "terminal_weight": 1.0,
+        "tiebreak_edge_weight": 0.1,
+        "tiebreak_fixed_point_scale": 1000,
+        "zero_sum": true
+      }
+    },
+    "schema_version": 1,
+    "simulator_action_mask_profile": "simulator_exact_legal_v1"
+  },
+  "device": "cuda:0",
+  "gpu": "NVIDIA RTX A6000",
+  "integrated_simple_source_sha": "504444ea400ff8bf595c0386ff000afe2c1f3490",
+  "policy": {
+    "class": "ClasherPolicy",
+    "memory_size": 32,
+    "num_actions": 2306,
+    "parameter_count": 119095,
+    "typed_actor_tokens": 494
+  },
+  "raw_collector_boundary": {
+    "actions": [
+      [
+        [
+          49,
+          1991
+        ]
+      ]
+    ],
+    "all_committed": true,
+    "all_native": true,
+    "all_rows_admitted": true,
+    "fallback_rows": 0,
+    "native_ticks": [
+      [
+        2
+      ]
+    ],
+    "policy_storage_keys": [
+      "log_prob",
+      "value"
+    ],
+    "recurrent_bootstrap_cell_shape": [
+      1,
+      2,
+      32
+    ],
+    "recurrent_bootstrap_hidden_shape": [
+      1,
+      2,
+      32
+    ],
+    "selected_actions_public_legal": true
+  },
+  "schema_version": 1,
+  "tested_integration_commit": "b1ff9f1e2e1380071cca62afab68afdbb5dfdef9",
+  "tested_integration_tree": "e734ab7eaa12d201d2edb9679a39f9b886b36993",
+  "torch": "2.10.0+cu128",
+  "training_wrapper": {
+    "action_masks_shape": [
+      2,
+      1,
+      2306
+    ],
+    "actions_shape": [
+      2,
+      1
+    ],
+    "episode_starts_shape": [
+      2
+    ],
+    "next_cell_shape": [
+      2,
+      32
+    ],
+    "next_hidden_shape": [
+      2,
+      32
+    ],
+    "previous_actions_shape": [
+      2
+    ],
+    "previous_rewards_shape": [
+      2
+    ],
+    "selected_actions_public_legal": true
+  }
+}

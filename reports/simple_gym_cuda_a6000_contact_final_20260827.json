@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-27",
+  "scope": "final contact, river-jump, terminal, throughput, and newer-main CUDA certification",
+  "hardware": {
+    "provider": "massedcompute",
+    "pod_id": "feb7d59651eb4fcbb98d82f203a9bf0f",
+    "gpu": "NVIDIA RTX A6000",
+    "gpu_memory_mib": 49140,
+    "driver": "580.126.09",
+    "torch": "2.10.0+cu128",
+    "cuda_runtime": "12.8",
+    "python": "3.12.14",
+    "image": "ubuntu_22_cuda_12",
+    "terminated": true,
+    "active_pods_after_teardown": 0
+  },
+  "diagnostic_pre_fix_snapshot": {
+    "git_sha": "f67ed3a82a6a413c4dda00be215e3b35cc1fa8d5",
+    "archive_sha256": "183705b8eb538ef42230ac7f3a1ad3177b6798afd01893455fdc05461e0dc7c0",
+    "focused_tests": {
+      "passed": 169,
+      "failed": 4,
+      "cause": "collision overlap direction table allocated a CUDA tensor during graph capture",
+      "accepted": false
+    },
+    "graph_full_validation": "failed during CUDA Graph capture",
+    "graph_throughput": "failed during CUDA Graph capture",
+    "evidence": {
+      "environment": {
+        "path": "reports/simple_gym_cuda_a6000_f67ed3a8_environment_20260827.log",
+        "sha256": "c9d697a885c255888d5c0b1968148e12aaa301398eecde02843d6914b883e620"
+      },
+      "focused_tests": {
+        "path": "reports/simple_gym_cuda_a6000_f67ed3a8_focused_tests_20260827.log",
+        "sha256": "837a2e96c90ce9df5d89d05442ccd9f92b1526517bba7b2d28bce91c892a7be1"
+      },
+      "full_validation_failure": {
+        "path": "reports/simple_gym_cuda_a6000_f67ed3a8_full_validation_20260827.log",
+        "sha256": "e0ec3cbde9e87a5aa8fde80682f94dcb00e3574bf15c2232b3e4407396173d70"
+      },
+      "throughput_failure": {
+        "path": "reports/simple_gym_cuda_a6000_f67ed3a8_graph_batch128_20260827.log",
+        "sha256": "0a626816f2ecc6c93ad26064d24137ccccb79a867184444dd5033af8dde6414c"
+      }
+    }
+  },
+  "certified_source_snapshot": {
+    "git_sha": "504444ea400ff8bf595c0386ff000afe2c1f3490",
+    "archive_sha256": "9b0dd8839675c5f5d59e6e7d1174d5c40c8406deb59776b90563de9f27452d4a",
+    "focused_tests": {
+      "passed": 222,
+      "failed": 0,
+      "scope": [
+        "dense collision and owner-mirrored exact-overlap fallback",
+        "river jump and CUDA Graph equivalence",
+        "pending deployed body targeting and attack locks",
+        "Skeleton Barrel stun-paused contact self-pop",
+        "tower combat and attack locks",
+        "Champion ability and public-mask v2",
+        "policy visibility and special travel",
+        "triggered effects and heterogeneous spawns"
+      ]
+    },
+    "full_episode_validation": {
+      "execution_mode": "cuda-graph",
+      "replays_per_policy": 2,
+      "seed": 202608263,
+      "noop": {
+        "final_tick": 6000,
+        "terminal_reason": "tiebreak",
+        "entered_overtime": true,
+        "winner": -1,
+        "digest": "d14d2c7b5d41fed9784b521c9ee31c27b7d9a10903954dbf792abf73cd0c4226"
+      },
+      "first_legal": {
+        "final_tick": 3600,
+        "terminal_reason": "regulation_crown",
+        "entered_overtime": false,
+        "winner": 1,
+        "digest": "0430c8f45ab028d590bbdb293ff25dd3f936ec172aa6f9bbd7af786e83981fc1"
+      },
+      "deterministic": true,
+      "all_native": true,
+      "all_committed": true,
+      "zero_fallback": true
+    },
+    "throughput": {
+      "batch_size": 128,
+      "max_entities": 128,
+      "max_effects": 128,
+      "measured_ticks_per_trial": 100,
+      "trials": 3,
+      "trial_row_ticks_per_second": [
+        410.7082350589214,
+        410.05304969036496,
+        409.6372145643667
+      ],
+      "median_row_ticks_per_second": 410.05304969036496,
+      "median_actor_transitions_per_second": 820.1060993807299,
+      "minimum_row_ticks_per_second": 400.0,
+      "pre_contact_median_row_ticks_per_second": 417.4230550835088,
+      "relative_regression_percent": -1.7655961508090234,
+      "kernel_launches": 10,
+      "explicit_host_synchronizations": 0,
+      "all_measured_row_ticks_native_and_committed": true,
+      "digest": "f6f5ed8e3224734aa4f7a76012ebb995ab2c689f5eb59ae57113a3bc8034fc93"
+    },
+    "accepted": true
+  },
+  "certified_newer_main_integration": {
+    "integration_commit": "b1ff9f1e2e1380071cca62afab68afdbb5dfdef9",
+    "integration_tree": "e734ab7eaa12d201d2edb9679a39f9b886b36993",
+    "integrated_simple_source_sha": "504444ea400ff8bf595c0386ff000afe2c1f3490",
+    "simple_source_paths": 196,
+    "simple_source_blob_mismatches": 0,
+    "archive_sha256": "599686cc4886792f5a2668cc5fc4bfd8474f87493c264aae116ce15b4171966b",
+    "focused_tests": {
+      "passed": 191,
+      "failed": 0
+    },
+    "policy_smoke": {
+      "policy": "ClasherPolicy",
+      "typed_actor_tokens": 494,
+      "parameter_count": 119095,
+      "public_mask_contract_version": 2,
+      "public_mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+      "reward_contract_id": "objective-v1-gamma-v1",
+      "selected_actions_public_legal": true,
+      "recurrent_hidden_shape": [1, 2, 32],
+      "recurrent_cell_shape": [1, 2, 32],
+      "native_ticks": 2,
+      "all_committed": true,
+      "all_rows_admitted": true,
+      "zero_fallback": true,
+      "metadata_digest": "474c662d9ad97cd099699c7898965c354127ae64f221e686edf6978a3dda7e6a",
+      "evidence_sha256": "e918127530d09c464b90da15c54e047e3d6a9b997f3df7bee2f43e4026c04ca4"
+    },
+    "accepted": true
+  },
+  "evidence": {
+    "source_environment": {
+      "path": "reports/simple_gym_cuda_a6000_504444ea_environment_20260827.log",
+      "sha256": "4b9b9131521c9c5082895c2c8389214812abf9a9db8fd8ff2c39c94566f03434"
+    },
+    "source_focused_tests": {
+      "path": "reports/simple_gym_cuda_a6000_504444ea_focused_tests_20260827.log",
+      "sha256": "30d9d64f0dd4f6e5b36b2103d4d94610fa3526b3733a5cffe691b2dec2120126"
+    },
+    "source_full_validation": {
+      "path": "reports/simple_gym_cuda_a6000_504444ea_full_validation_20260827.json",
+      "sha256": "d40ca2c836ef26184c69e2ddf314d37b5a620824e4354c72e29161d98269bcfc"
+    },
+    "source_full_validation_log": {
+      "path": "reports/simple_gym_cuda_a6000_504444ea_full_validation_20260827.log",
+      "sha256": "c20887cb0b530be9334a8e2e0ed7b59234527c1de3351f4533285f86da69c427"
+    },
+    "source_throughput": {
+      "path": "reports/simple_gym_cuda_a6000_504444ea_graph_batch128_20260827.json",
+      "sha256": "aa72fa0e35774a095f7e1aa724197a21e9bce151c03289e021773012d2290794"
+    },
+    "source_throughput_log": {
+      "path": "reports/simple_gym_cuda_a6000_504444ea_graph_batch128_20260827.log",
+      "sha256": "2023624125da8ef4360d074b20ddc1b890f1ed138df2951d244b3d6546eaf6ff"
+    },
+    "integration_environment": {
+      "path": "reports/simple_gym_cuda_a6000_b1ff9f1e_environment_20260827.log",
+      "sha256": "458eb23fe08182571f6eccf49015beb1052e1471f598bc41bb3d4833976d95ef"
+    },
+    "integration_focused_tests": {
+      "path": "reports/simple_gym_cuda_a6000_b1ff9f1e_integrated_tests_20260827.log",
+      "sha256": "70181735526d18161ed69f6a386f2569bf4a38cb782e2fb737d44ada97cc19e2"
+    },
+    "integration_policy_smoke": {
+      "path": "reports/simple_gym_cuda_a6000_b1ff9f1e_policy_smoke_20260827.json",
+      "sha256": "e918127530d09c464b90da15c54e047e3d6a9b997f3df7bee2f43e4026c04ca4"
+    }
+  },
+  "acceptance": {
+    "exact_504444ea_source_cuda_certified": true,
+    "exact_b1ff9f1e_newer_main_cuda_route_certified": true,
+    "terminal_episode_gate": true,
+    "absolute_throughput_gate": true,
+    "launch_and_sync_gate": true,
+    "overall_final_promotion_accepted": true
+  }
+}
