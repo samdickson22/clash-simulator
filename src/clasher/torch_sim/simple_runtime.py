@@ -163,6 +163,19 @@ from .simple_travel_effects import (
     FastTravelEffectAllocationResult,
     allocate_fast_travel_effects_,
 )
+from .simple_triggered_impacts import (
+    FAST_TRIGGER_ATTACK_COMMIT,
+    FAST_TRIGGER_DEATH,
+    FAST_TRIGGER_DEPLOY_COMPLETE,
+    FAST_TRIGGER_IMPACT,
+    FastTriggeredImpactCatalog,
+    FastTriggeredImpactCommands,
+    FastTriggeredImpactEvents,
+    FastTriggeredImpactTargets,
+    resolve_fast_triggered_impacts,
+    triggered_commands_to_effect_state,
+    triggered_commands_to_impulse_inputs,
+)
 
 
 def _same_device(left: torch.device, right: torch.device) -> bool:
@@ -214,6 +227,38 @@ class SimpleGymRuntimeStep:
     travel_effect_allocation: FastTravelEffectAllocationResult | None
     travel_effects: FastEffectStepResult | None
     travel_impulse: FastRadialImpulseResult | None
+    triggered: FastTriggeredRuntimeStep | None
+
+
+@dataclass(frozen=True)
+class FastTriggeredEventAllocation:
+    """Stable bounded admission telemetry for one tick's trigger candidates."""
+
+    accepted: torch.Tensor
+    capacity_rejected: torch.Tensor
+    accepted_count: torch.Tensor
+    capacity_rejected_count: torch.Tensor
+
+
+@dataclass(frozen=True)
+class FastTriggeredEffectAllocation:
+    """Stable allocation telemetry for persistent triggered area effects."""
+
+    accepted: torch.Tensor
+    capacity_rejected: torch.Tensor
+    effect_slot: torch.Tensor
+
+
+@dataclass(frozen=True)
+class FastTriggeredRuntimeStep:
+    """Device-resident telemetry for the generalized triggered-impact seam."""
+
+    event_allocation: FastTriggeredEventAllocation
+    events: FastTriggeredImpactEvents
+    commands: FastTriggeredImpactCommands
+    effect_allocation: FastTriggeredEffectAllocation
+    effects: FastEffectStepResult
+    impulse: FastRadialImpulseResult
 
 
 class SimpleGymRuntime:
@@ -243,7 +288,10 @@ class SimpleGymRuntime:
         policy_mechanics: FastPolicyMechanicCatalog | None = None,
         ability_catalog: FastAbilityCatalog | None = None,
         travel_catalog: FastTravelCatalog | None = None,
+        triggered_impact_catalog: FastTriggeredImpactCatalog | None = None,
         knockback_immune_by_card: torch.Tensor | None = None,
+        max_triggered_events: int = 8,
+        max_triggered_effects: int = 32,
     ) -> None:
         if deck_ids.ndim != 3 or tuple(deck_ids.shape[1:]) != (2, 8):
             raise ValueError("deck_ids must have shape [batch, 2, 8]")
@@ -272,6 +320,13 @@ class SimpleGymRuntime:
                 raise ValueError("travel catalog must align with cards")
             if not _same_device(travel_catalog.device, catalog.device):
                 raise ValueError("travel catalog and cards must share a device")
+        if triggered_impact_catalog is not None:
+            if triggered_impact_catalog.card_capacity != catalog.size:
+                raise ValueError("triggered impact catalog must align with cards")
+            if not _same_device(triggered_impact_catalog.device, catalog.device):
+                raise ValueError("triggered impacts and cards must share a device")
+        if max_triggered_events < 1 or max_triggered_effects < 1:
+            raise ValueError("triggered pool capacities must be positive")
         if knockback_immune_by_card is not None:
             if knockback_immune_by_card.shape != (catalog.size,):
                 raise ValueError("knockback immunity must align with cards")
@@ -352,6 +407,7 @@ class SimpleGymRuntime:
         self.ability_catalog = ability_catalog
         self.abilities = FastAbilityState.empty_like(self.state)
         self.travel_catalog = travel_catalog
+        self.triggered_impact_catalog = triggered_impact_catalog
         self.travel = FastTravelState.empty(
             self.state.batch_size,
             max_entities=self.state.max_entities,
@@ -372,6 +428,17 @@ class SimpleGymRuntime:
             max_effects=max_entities,
             device=self.state.device,
         )
+        self.triggered_events = FastTriggeredImpactEvents.empty(
+            self.state.batch_size,
+            max_events=max_triggered_events,
+            device=self.state.device,
+        )
+        self.triggered_effects = FastEffectState.empty(
+            self.state.batch_size,
+            max_effects=max_triggered_effects,
+            device=self.state.device,
+        )
+        self._triggered_death_stable_id = torch.zeros_like(self.state.stable_id)
         self.death_burst_catalog = (
             spawn_blueprints.death_burst_catalog
             if spawn_blueprints is not None
@@ -564,6 +631,8 @@ class SimpleGymRuntime:
             "travel": self._tensor_fields(self.travel),
             "travel_effects": self._tensor_fields(self.travel_effects),
             "death_effects": self._tensor_fields(self.death_effects),
+            "triggered_events": self._tensor_fields(self.triggered_events),
+            "triggered_effects": self._tensor_fields(self.triggered_effects),
             "death_bursts": self._tensor_fields(self.death_bursts),
             "payload_containers": self._tensor_fields(self.payload_containers),
             "positive_buff_areas": self._tensor_fields(self.positive_buff_areas),
@@ -597,6 +666,7 @@ class SimpleGymRuntime:
                 ),
                 "travel_spawned": self._travel_spawned.clone(),
                 "travel_interrupted": self._travel_interrupted.clone(),
+                "triggered_death_stable_id": (self._triggered_death_stable_id.clone()),
                 "projection_hand_ids": self._projection_hand_ids.clone(),
                 "double_elixir": self._double_elixir.clone(),
                 "triple_elixir": self._triple_elixir.clone(),
@@ -673,6 +743,8 @@ class SimpleGymRuntime:
             "travel": self.travel,
             "travel_effects": self.travel_effects,
             "death_effects": self.death_effects,
+            "triggered_events": self.triggered_events,
+            "triggered_effects": self.triggered_effects,
             "death_bursts": self.death_bursts,
             "payload_containers": self.payload_containers,
             "positive_buff_areas": self.positive_buff_areas,
@@ -704,6 +776,7 @@ class SimpleGymRuntime:
             "travel_effect_consume_source_id": self.travel_effect_consume_source_id,
             "travel_spawned": self._travel_spawned,
             "travel_interrupted": self._travel_interrupted,
+            "triggered_death_stable_id": self._triggered_death_stable_id,
             "projection_hand_ids": self._projection_hand_ids,
             "double_elixir": self._double_elixir,
             "triple_elixir": self._triple_elixir,
@@ -1499,6 +1572,362 @@ class SimpleGymRuntime:
             impact_spawn_deploy_ticks=spawn_deploy,
         )
 
+    @staticmethod
+    def _allocate_triggered_effects_(
+        destination: FastEffectState,
+        incoming: FastEffectState,
+    ) -> FastTriggeredEffectAllocation:
+        """Allocate fixed command lanes into a persistent low-slot pool."""
+
+        if incoming.batch_size != destination.batch_size:
+            raise ValueError("triggered effect pools must share a batch size")
+        if incoming.device != destination.device:
+            raise ValueError("triggered effect pools must share a device")
+        ready = incoming.active
+        free = ~destination.active
+        ready_rank = ready.to(torch.int64).cumsum(dim=1) - 1
+        free_rank = free.to(torch.int64).cumsum(dim=1) - 1
+        selected = (
+            ready[:, :, None]
+            & free[:, None, :]
+            & (ready_rank[:, :, None] == free_rank[:, None, :])
+        )
+        accepted = selected.any(dim=2)
+        written = selected.any(dim=1)
+        effect_slot = torch.where(
+            accepted,
+            selected.to(torch.int8).argmax(dim=2).to(torch.int64),
+            -1,
+        )
+        for descriptor in fields(destination):
+            if descriptor.name == "device":
+                continue
+            target = getattr(destination, descriptor.name)
+            source = getattr(incoming, descriptor.name)
+            neutral = torch.zeros((), dtype=source.dtype, device=source.device)
+            value = torch.where(
+                selected,
+                source[:, :, None],
+                neutral,
+            ).sum(dim=1, dtype=source.dtype)
+            target.copy_(torch.where(written, value, target))
+        return FastTriggeredEffectAllocation(
+            accepted=accepted,
+            capacity_rejected=ready & ~accepted,
+            effect_slot=effect_slot,
+        )
+
+    def _allocate_triggered_events_(
+        self,
+        candidates: FastTriggeredImpactEvents,
+    ) -> FastTriggeredEventAllocation:
+        """Admit candidates to the bounded per-tick queue in stable order."""
+
+        queue = self.triggered_events
+        queue.active.zero_()
+        ready = candidates.active
+        rank = ready.to(torch.int64).cumsum(dim=1) - 1
+        lanes = torch.arange(
+            queue.active.shape[1], dtype=torch.int64, device=self.device
+        ).view(1, 1, -1)
+        selected = ready[:, :, None] & (rank[:, :, None] == lanes)
+        accepted = selected.any(dim=2)
+        written = selected.any(dim=1)
+        for descriptor in fields(queue):
+            target = getattr(queue, descriptor.name)
+            source = getattr(candidates, descriptor.name)
+            neutral = torch.zeros((), dtype=source.dtype, device=source.device)
+            value = torch.where(
+                selected,
+                source[:, :, None],
+                neutral,
+            ).sum(dim=1, dtype=source.dtype)
+            target.copy_(torch.where(written, value, target))
+        queue.repeat_count.copy_(torch.where(queue.active, queue.repeat_count, 1))
+        return FastTriggeredEventAllocation(
+            accepted=accepted,
+            capacity_rejected=ready & ~accepted,
+            accepted_count=accepted.sum(dim=1, dtype=torch.int64),
+            capacity_rejected_count=(ready & ~accepted).sum(dim=1, dtype=torch.int64),
+        )
+
+    def _triggered_candidates(
+        self,
+        *,
+        deploy_completed: torch.Tensor,
+        committed_attacks: torch.Tensor,
+        effect_result: FastEffectStepResult,
+        rolling_result: FastRollingStepResult,
+        travel_result: FastTravelStepResult | None,
+    ) -> FastTriggeredImpactEvents:
+        """Form one fixed candidate ledger from generalized runtime hooks."""
+
+        state = self.state
+        travel_spawn_owned = (
+            travel_result.impact.spawn_impact
+            if travel_result is not None
+            else torch.zeros_like(state.active)
+        )
+        deploy = deploy_completed & ~travel_spawn_owned
+        impact = effect_result.impacted
+        rolling = rolling_result.hit.any(dim=2)
+        death = (
+            state.active
+            & (state.stable_id > 0)
+            & (state.hp <= 0)
+            & (self._triggered_death_stable_id != state.stable_id)
+        )
+        self._triggered_death_stable_id.copy_(
+            torch.where(death, state.stable_id, self._triggered_death_stable_id)
+        )
+
+        target_match = (
+            state.active[:, None, :]
+            & (state.target_id[:, :, None] > 0)
+            & (state.target_id[:, :, None] == state.stable_id[:, None, :])
+        )
+        target_slot = target_match.to(torch.int8).argmax(dim=2).to(torch.int64)
+        target_found = target_match.any(dim=2)
+        attack_target_x = torch.where(
+            target_found,
+            state.x_units.gather(1, target_slot),
+            state.x_units,
+        )
+        attack_target_y = torch.where(
+            target_found,
+            state.y_units.gather(1, target_slot),
+            state.y_units,
+        )
+
+        maximum = torch.iinfo(torch.int64).max
+        rolling_target_id = torch.where(
+            rolling_result.hit,
+            state.stable_id[:, None, :],
+            maximum,
+        ).amin(dim=2)
+        rolling_target_id = torch.where(
+            rolling_target_id == maximum, 0, rolling_target_id
+        )
+        rolling_target_match = (rolling_target_id[:, :, None] > 0) & (
+            rolling_target_id[:, :, None] == state.stable_id[:, None, :]
+        )
+        rolling_target_slot = (
+            rolling_target_match.to(torch.int8).argmax(dim=2).to(torch.int64)
+        )
+        rolling_target_x = state.x_units.gather(1, rolling_target_slot)
+        rolling_target_y = state.y_units.gather(1, rolling_target_slot)
+
+        active = torch.cat((deploy, committed_attacks, impact, rolling, death), dim=1)
+        zeros_entity = torch.zeros_like(state.stable_id)
+        zeros_effect = torch.zeros_like(self.effects.target_id)
+        zeros_rolling = torch.zeros_like(self.rolling_spells.source_card_id)
+
+        def cat(*values: torch.Tensor) -> torch.Tensor:
+            return torch.cat(values, dim=1)
+
+        return FastTriggeredImpactEvents(
+            active=active,
+            card_id=cat(
+                state.card_id,
+                state.card_id,
+                self.effects.source_card_id,
+                self.rolling_spells.source_card_id,
+                state.card_id,
+            ),
+            trigger=cat(
+                torch.full_like(state.owner, FAST_TRIGGER_DEPLOY_COMPLETE),
+                torch.full_like(state.owner, FAST_TRIGGER_ATTACK_COMMIT),
+                torch.full_like(self.effects.kind, FAST_TRIGGER_IMPACT),
+                torch.full_like(self.rolling_spells.owner, FAST_TRIGGER_IMPACT),
+                torch.full_like(state.owner, FAST_TRIGGER_DEATH),
+            ).to(torch.int8),
+            source_owner=cat(
+                state.owner,
+                state.owner,
+                self.effects.source_owner,
+                self.rolling_spells.owner,
+                state.owner,
+            ).to(torch.int8),
+            source_entity_id=cat(
+                state.stable_id,
+                state.stable_id,
+                zeros_effect,
+                zeros_rolling,
+                state.stable_id,
+            ),
+            target_entity_id=cat(
+                zeros_entity,
+                state.target_id,
+                self.effects.target_id,
+                rolling_target_id,
+                zeros_entity,
+            ),
+            source_x_units=cat(
+                state.x_units,
+                state.x_units,
+                self.effects.source_x_units,
+                self.rolling_spells.x_units,
+                state.x_units,
+            ),
+            source_y_units=cat(
+                state.y_units,
+                state.y_units,
+                self.effects.source_y_units,
+                self.rolling_spells.y_units,
+                state.y_units,
+            ),
+            target_x_units=cat(
+                state.x_units,
+                attack_target_x,
+                self.effects.x_units,
+                rolling_target_x,
+                state.x_units,
+            ),
+            target_y_units=cat(
+                state.y_units,
+                attack_target_y,
+                self.effects.y_units,
+                rolling_target_y,
+                state.y_units,
+            ),
+            self_x_units=cat(
+                state.x_units,
+                state.x_units,
+                self.effects.source_x_units,
+                self.rolling_spells.x_units,
+                state.x_units,
+            ),
+            self_y_units=cat(
+                state.y_units,
+                state.y_units,
+                self.effects.source_y_units,
+                self.rolling_spells.y_units,
+                state.y_units,
+            ),
+            repeat_count=torch.ones_like(active, dtype=torch.int32),
+        )
+
+    def _resolve_triggered_impacts_(
+        self,
+        candidates: FastTriggeredImpactEvents,
+    ) -> FastTriggeredRuntimeStep | None:
+        """Resolve admitted hooks through shared effect and impulse kernels."""
+
+        if self.triggered_impact_catalog is None:
+            return None
+        event_allocation = self._allocate_triggered_events_(candidates)
+        commands = resolve_fast_triggered_impacts(
+            self.triggered_impact_catalog,
+            self.triggered_events,
+        )
+        commands = replace(
+            commands,
+            repeat_count=torch.where(
+                commands.trigger == FAST_TRIGGER_IMPACT,
+                commands.repeat_count * commands.impulse_scan_count.clamp_min(1),
+                commands.repeat_count,
+            ),
+        )
+        # Ordinary effect payloads own IMPACT damage/status, while the death
+        # burst subsystem owns DeathDamage. These lanes contribute only the
+        # defining secondary impulse. DeathArea status remains independent.
+        base_impact = commands.trigger == FAST_TRIGGER_IMPACT
+        death_damage_owned = commands.trigger == FAST_TRIGGER_DEATH
+        effect_commands = replace(
+            commands,
+            damage=torch.where(
+                base_impact | death_damage_owned,
+                torch.zeros_like(commands.damage),
+                commands.damage,
+            ),
+            status_kind=torch.where(
+                base_impact,
+                torch.zeros_like(commands.status_kind),
+                commands.status_kind,
+            ),
+            max_damage_hits=torch.where(
+                base_impact | death_damage_owned,
+                torch.zeros_like(commands.max_damage_hits),
+                commands.max_damage_hits,
+            ),
+        )
+        incoming_effects = triggered_commands_to_effect_state(effect_commands)
+        effect_allocation = self._allocate_triggered_effects_(
+            self.triggered_effects,
+            incoming_effects,
+        )
+        visibility = self._policy_visibility_view()
+        travel = self._travel_view()
+        receivable = ~travel.immune
+        safe_card = self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
+        effects = step_fast_effects(
+            self.state,
+            self.triggered_effects,
+            self.entity_status_kind,
+            self.entity_status_ticks,
+            cleanup_dead=False,
+            modifiers=self.modifiers,
+            entity_is_air=self.action_kernel.catalog.is_air[safe_card],
+            entity_collision_radius_units=(
+                self.action_kernel.catalog.collision_radius_units[safe_card]
+            ),
+            tick_status=False,
+            entity_slow_ticks=self.entity_slow_ticks,
+            slow_movement_multiplier_by_card=(
+                self.action_kernel.catalog.slow_movement_multiplier
+            ),
+            slow_attack_multiplier_by_card=(
+                self.action_kernel.catalog.slow_attack_multiplier
+            ),
+            entity_committed_direct_receivable=(
+                visibility.effect_receivable_affects_hidden & receivable
+            ),
+            entity_secondary_targetable=(visibility.secondary_targetable & receivable),
+            entity_area_receivable=visibility.area_receivable & receivable,
+            entity_effect_receivable_affects_hidden=(
+                visibility.effect_receivable_affects_hidden & receivable
+            ),
+        )
+        targets = FastTriggeredImpactTargets(
+            active=(
+                self.state.active
+                & (self.state.hp > 0)
+                & ~self.knockback_immune_by_card[safe_card]
+                & receivable
+            ),
+            stable_id=self.state.stable_id,
+            owner=self.state.owner,
+            x_units=self.state.x_units,
+            y_units=self.state.y_units,
+            collision_radius_units=(
+                self.action_kernel.catalog.collision_radius_units[safe_card]
+            ),
+            base_speed_units_per_tick=(
+                self.action_kernel.catalog.speed_units_per_tick[safe_card]
+            ),
+            is_air=self.action_kernel.catalog.is_air[safe_card],
+            is_building=self.state.kind == FAST_KIND_BUILDING,
+            area_receivable=visibility.area_receivable & receivable,
+            effect_receivable_affects_hidden=(
+                visibility.effect_receivable_affects_hidden & receivable
+            ),
+            max_displacement_units=torch.full_like(self.state.x_units, -1),
+        )
+        impulse = compute_fast_radial_impulse(
+            triggered_commands_to_impulse_inputs(commands, targets)
+        )
+        self.state.x_units.add_(impulse.dx_units).clamp_(0, 18_000)
+        self.state.y_units.add_(impulse.dy_units).clamp_(0, 32_000)
+        self._travel_interrupted.logical_or_(impulse.affected)
+        return FastTriggeredRuntimeStep(
+            event_allocation=event_allocation,
+            events=self.triggered_events,
+            commands=commands,
+            effect_allocation=effect_allocation,
+            effects=effects,
+            impulse=impulse,
+        )
+
     def _legal_action_mask(self) -> torch.Tensor:
         ability = self._ability_player_view()
         mask = self.action_kernel.legal_action_mask(
@@ -1746,6 +2175,7 @@ class SimpleGymRuntime:
         self._clear_damage_ramp_(self.combat.spawned_mask)
         self._initialize_policy_mechanics_(self.combat.spawned_mask)
         self._queue_travel_spawned_(self.combat.spawned_mask)
+        pending_deploy_complete = self.state.active & (self.state.deploy_ticks == 1)
         pre_visibility = self._policy_visibility_view()
         self._publish_policy_visibility_(pre_visibility)
         self._publish_ability_mechanics_(abilities_before)
@@ -2096,11 +2526,25 @@ class SimpleGymRuntime:
             self._clear_damage_ramp_(rolling_spawned)
             self._initialize_policy_mechanics_(rolling_spawned)
             self._queue_travel_spawned_(rolling_spawned)
+        # The first death pass commits defining DeathDamage before a triggered
+        # secondary push can move recipients out of the source radius. The
+        # second pass retains the fixed current-corpus cascade depth and also
+        # catches entities killed by deploy-complete triggered areas.
+        death_burst_first, death_effect_first = self._step_death_burst_pass()
+        deploy_completed = pending_deploy_complete & (self.state.deploy_ticks == 0)
+        triggered = self._resolve_triggered_impacts_(
+            self._triggered_candidates(
+                deploy_completed=deploy_completed,
+                committed_attacks=committed_attacks,
+                effect_result=effect_result,
+                rolling_result=rolling_result,
+                travel_result=travel_result,
+            )
+        )
         # Two fixed passes cover the current serialized terminal depth
         # (Golem -> Golemite) without a host-driven work queue. The first pass
         # commits all already-lethal novas simultaneously; the second catches
         # supported children killed by that committed damage before cleanup.
-        death_burst_first, death_effect_first = self._step_death_burst_pass()
         death_burst_second, death_effect_second = self._step_death_burst_pass()
         payload_container_allocation: FastPayloadAllocationResult | None = None
         if self.spawn_blueprints is not None:
@@ -2277,7 +2721,14 @@ class SimpleGymRuntime:
             travel_effect_allocation=travel_effect_allocation,
             travel_effects=travel_effect_result,
             travel_impulse=travel_impulse,
+            triggered=triggered,
         )
 
 
-__all__ = ["SimpleGymRuntime", "SimpleGymRuntimeStep"]
+__all__ = [
+    "FastTriggeredEffectAllocation",
+    "FastTriggeredEventAllocation",
+    "FastTriggeredRuntimeStep",
+    "SimpleGymRuntime",
+    "SimpleGymRuntimeStep",
+]

@@ -1146,15 +1146,13 @@ def triggered_commands_to_impulse_inputs(
 ) -> FastRadialImpulseInputs:
     """Adapt radial commands to the existing exact integer impulse kernel.
 
-    Each command-target pair becomes one fixed impulse lane.  The expansion
-    allows attraction magnitude to depend on the target's serialized base
-    speed while still reusing the shared radial normalization and sum/cap
-    semantics.  The explicit shape ceiling fails before allocation if a
-    caller proposes a production-unreasonable event pool; a fused runtime can
-    consume the same command tensors without changing their contract.
+    Attraction magnitude is retained as ``[batch, commands, targets]`` while
+    the shared impulse kernel fuses normalization and reduction. The explicit
+    logical-pair ceiling fails before allocation if a caller proposes a
+    production-unreasonable event pool.
     """
 
-    batch, command_count, entity_count = _validate_targets(commands, targets)
+    _, command_count, entity_count = _validate_targets(commands, targets)
     expanded_count = command_count * entity_count
     if expanded_count < 1 or expanded_count > max_expanded_impulses:
         raise ValueError("expanded impulse pool exceeds the configured bound")
@@ -1226,26 +1224,14 @@ def triggered_commands_to_impulse_inputs(
     int32 = torch.iinfo(torch.int32)
     magnitude = magnitude.clamp(min=int32.min, max=int32.max).to(torch.int32)
 
-    # One-hot recipient lanes prevent a target-specific magnitude from being
-    # applied to every entity by the shared impulse primitive.
-    identity = torch.eye(
-        entity_count, dtype=torch.bool, device=commands.active.device
-    ).view(1, 1, entity_count, entity_count)
-    eligible = (eligible_by_target[:, :, :, None] & identity).reshape(
-        batch, expanded_count, entity_count
-    )
     return FastRadialImpulseInputs(
-        center_x_units=commands.center_x_units[:, :, None]
-        .expand(-1, -1, entity_count)
-        .reshape(batch, expanded_count),
-        center_y_units=commands.center_y_units[:, :, None]
-        .expand(-1, -1, entity_count)
-        .reshape(batch, expanded_count),
+        center_x_units=commands.center_x_units,
+        center_y_units=commands.center_y_units,
         target_x_units=targets.x_units,
         target_y_units=targets.y_units,
         target_stable_id=targets.stable_id,
-        eligible=eligible,
-        magnitude_units=magnitude.reshape(batch, expanded_count),
+        eligible=eligible_by_target,
+        magnitude_units=magnitude,
         distance_percentage=None,
         max_displacement_units=targets.max_displacement_units,
     )

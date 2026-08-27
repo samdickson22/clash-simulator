@@ -31,6 +31,7 @@ from .simple_policy_mechanics import FastPolicyMechanicCatalog
 from .simple_runtime import SimpleGymRuntime
 from .simple_spawn_blueprints import FastSpawnBlueprintCatalog
 from .simple_travel import FastTravelCatalog
+from .simple_triggered_impacts import FastTriggeredImpactCatalog
 
 # The current-client match phases expressed in the one authoritative 50 ms
 # logic clock.  Keeping the source durations beside the conversion makes the
@@ -198,6 +199,7 @@ class SimpleStandardSetup:
     policy_mechanics: FastPolicyMechanicCatalog
     ability_catalog: FastAbilityCatalog
     travel_catalog: FastTravelCatalog
+    triggered_impact_catalog: FastTriggeredImpactCatalog
     knockback_immune_by_card: torch.Tensor
     tower_spec: FastTowerSpec
     rules: FastMatchRules
@@ -255,6 +257,7 @@ class SimpleStandardSetup:
             policy_mechanics=self.policy_mechanics,
             ability_catalog=self.ability_catalog,
             travel_catalog=self.travel_catalog,
+            triggered_impact_catalog=self.triggered_impact_catalog,
             knockback_immune_by_card=self.knockback_immune_by_card,
         )
 
@@ -281,6 +284,9 @@ def compile_standard_simple_setup(
     policy_mechanics = FastPolicyMechanicCatalog.compile(blueprints.cards, loader)
     ability_catalog = FastAbilityCatalog.compile(blueprints.cards, loader)
     travel_catalog = FastTravelCatalog.compile(blueprints.cards, loader)
+    triggered_impact_catalog = FastTriggeredImpactCatalog.compile(
+        blueprints.cards, loader
+    )
     knockback_immune = torch.zeros(
         len(blueprints.cards.names),
         dtype=torch.bool,
@@ -298,6 +304,8 @@ def compile_standard_simple_setup(
         & ~ability_catalog.malformed
         & ~ability_catalog.duplicate
         & travel_catalog.profile_supported
+        & ~triggered_impact_catalog.malformed
+        & ~triggered_impact_catalog.duplicate
     ).clone()
     public_names = tuple(
         name
@@ -315,6 +323,7 @@ def compile_standard_simple_setup(
         policy_mechanics=policy_mechanics,
         ability_catalog=ability_catalog,
         travel_catalog=travel_catalog,
+        triggered_impact_catalog=triggered_impact_catalog,
         knockback_immune_by_card=knockback_immune,
         tower_spec=standard_tower_spec(loader, device),
         rules=standard_match_rules(),

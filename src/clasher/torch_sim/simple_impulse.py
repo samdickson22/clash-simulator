@@ -18,7 +18,10 @@ class FastRadialImpulseInputs:
     """Dense radial commands and their shared target pool.
 
     Effect tensors use shape ``[B, I]``, target tensors use ``[B, E]``, and
-    ``eligible`` uses ``[B, I, E]``.  ``distance_percentage`` is an integer
+    ``eligible`` uses ``[B, I, E]``. ``magnitude_units`` may use either the
+    shared-command shape ``[B, I]`` or a target-specific ``[B, I, E]`` shape.
+    The latter keeps data-driven attraction fused without expanding every
+    command-target pair into a one-hot impulse lane. ``distance_percentage`` is an integer
     percentage of the current center-to-target distance (``100`` means the
     full distance).  It is added to ``magnitude_units`` before normalization.
 
@@ -61,21 +64,29 @@ def _validate(inputs: FastRadialImpulseInputs) -> tuple[int, int, int]:
             raise ValueError(f"{name} is on a different device")
         if value.dtype != torch.int32:
             raise ValueError(f"{name} must be int32")
-    for name in ("magnitude_units", "distance_percentage"):
-        value = getattr(inputs, name)
-        if value is None:
-            continue
-        if tuple(value.shape) != impulse_shape:
-            raise ValueError(f"{name} must have shape [batch, impulses]")
-        if value.device != device:
-            raise ValueError(f"{name} is on a different device")
-        if value.dtype != torch.int32:
-            raise ValueError(f"{name} must be int32")
+    percentage = inputs.distance_percentage
+    if percentage is not None:
+        if tuple(percentage.shape) != impulse_shape:
+            raise ValueError("distance_percentage must have shape [batch, impulses]")
+        if percentage.device != device or percentage.dtype != torch.int32:
+            raise ValueError("distance_percentage must be int32 on the effect device")
 
     target_shape = tuple(inputs.target_stable_id.shape)
     if len(target_shape) != 2 or target_shape[0] != batch:
         raise ValueError("target tensors must have shape [batch, entities]")
     _, entities = target_shape
+    magnitude = inputs.magnitude_units
+    if magnitude is not None:
+        if tuple(magnitude.shape) not in {
+            impulse_shape,
+            (batch, impulses, entities),
+        }:
+            raise ValueError(
+                "magnitude_units must have shape [batch, impulses] or "
+                "[batch, impulses, entities]"
+            )
+        if magnitude.device != device or magnitude.dtype != torch.int32:
+            raise ValueError("magnitude_units must be int32 on the effect device")
     for name in ("target_x_units", "target_y_units"):
         value = getattr(inputs, name)
         if tuple(value.shape) != target_shape:
@@ -97,9 +108,7 @@ def _validate(inputs: FastRadialImpulseInputs) -> tuple[int, int, int]:
     cap = inputs.max_displacement_units
     if cap is not None:
         if tuple(cap.shape) != target_shape:
-            raise ValueError(
-                "max_displacement_units must have shape [batch, entities]"
-            )
+            raise ValueError("max_displacement_units must have shape [batch, entities]")
         if cap.device != device or cap.dtype != torch.int32:
             raise ValueError(
                 "max_displacement_units must be int32 on the effect device"
@@ -144,14 +153,12 @@ def compute_fast_radial_impulse(
 
     _validate(inputs)
     target_id = inputs.target_stable_id
-    delta_x = (
-        inputs.target_x_units[:, None, :].to(torch.int64)
-        - inputs.center_x_units[:, :, None].to(torch.int64)
-    )
-    delta_y = (
-        inputs.target_y_units[:, None, :].to(torch.int64)
-        - inputs.center_y_units[:, :, None].to(torch.int64)
-    )
+    delta_x = inputs.target_x_units[:, None, :].to(torch.int64) - inputs.center_x_units[
+        :, :, None
+    ].to(torch.int64)
+    delta_y = inputs.target_y_units[:, None, :].to(torch.int64) - inputs.center_y_units[
+        :, :, None
+    ].to(torch.int64)
     distance_sq = delta_x.square() + delta_y.square()
     distance = _integer_sqrt(distance_sq)
 
@@ -162,9 +169,7 @@ def compute_fast_radial_impulse(
         torch.ones_like(target_id),
         -torch.ones_like(target_id),
     )
-    fallback_on_x = torch.bitwise_and(
-        torch.bitwise_right_shift(target_id, 1), 1
-    ) == 0
+    fallback_on_x = torch.bitwise_and(torch.bitwise_right_shift(target_id, 1), 1) == 0
     fallback_x = torch.where(fallback_on_x, fallback_sign, 0)[:, None, :]
     fallback_y = torch.where(fallback_on_x, 0, fallback_sign)[:, None, :]
     coincident = distance == 0
@@ -184,7 +189,8 @@ def compute_fast_radial_impulse(
     if absolute is None:
         magnitude = percentage_units
     else:
-        magnitude = absolute[:, :, None].to(torch.int64) + percentage_units
+        absolute_by_target = absolute[:, :, None] if absolute.ndim == 2 else absolute
+        magnitude = absolute_by_target.to(torch.int64) + percentage_units
     active = inputs.eligible & (target_id[:, None, :] > 0) & (magnitude != 0)
     move_x = torch.where(
         active,

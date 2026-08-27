@@ -53,6 +53,12 @@ def _assert_policy_planes_equal(left: Any, right: Any) -> None:
     _assert_tensor_fields_equal(left.abilities, right.abilities)
     _assert_tensor_fields_equal(left.travel, right.travel)
     _assert_tensor_fields_equal(left.travel_effects, right.travel_effects)
+    _assert_tensor_fields_equal(left.triggered_events, right.triggered_events)
+    _assert_tensor_fields_equal(left.triggered_effects, right.triggered_effects)
+    assert torch.equal(
+        left._triggered_death_stable_id,
+        right._triggered_death_stable_id,
+    )
     assert torch.equal(left._travel_spawned, right._travel_spawned)
     assert torch.equal(left._travel_interrupted, right._travel_interrupted)
     assert torch.equal(
