@@ -17,7 +17,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, fields
 from numbers import Real
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -735,7 +735,9 @@ class FastTriggeredImpactCatalog:
         maximum = max(1, max(len(value) for value in per_card))
         size = len(catalog.names)
         shape = (size, maximum)
-        device = catalog.device
+        # Canonicalize metadata from an allocated tensor rather than retaining
+        # an unindexed ``cuda`` alias that compares unequal to ``cuda:0``.
+        device = catalog.mechanic_opcode.device
 
         def zeros(dtype: torch.dtype) -> torch.Tensor:
             return torch.zeros(shape, dtype=dtype, device=device)
@@ -950,7 +952,7 @@ def resolve_fast_triggered_impacts(
     safe_card = events.card_id.clamp(min=0, max=catalog.card_capacity - 1)
 
     def lookup(name: str) -> torch.Tensor:
-        return getattr(catalog, name)[safe_card]
+        return cast(torch.Tensor, getattr(catalog, name))[safe_card]
 
     trigger = lookup("trigger")
     center = lookup("center")

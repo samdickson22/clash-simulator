@@ -180,3 +180,4 @@ def test_tower_inputs_fail_closed_on_shape_capacity_and_clock_rules() -> None:
     )
     with pytest.raises(ValueError, match="card_id must have shape"):
         initialize_crown_towers_(state, bad)
+
