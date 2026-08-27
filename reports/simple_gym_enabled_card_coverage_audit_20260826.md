@@ -1,214 +1,126 @@
-# Simple Gym enabled-card coverage audit (refreshed 2026-08-27)
+# Simple Gym enabled-card coverage audit — final refresh 2026-08-27
 
-## Scope and authority
+## Scope
 
-This report audits the 66 unique public roots and 33 source decks in
-`decks.json` at clean commit `1a641bb81ea4d866d8923bd1c841803b24280091`.
-The admission authority is `compile_standard_simple_setup` with
-`canonical_lane_globals=true`. That path composes the expanded
-`FastSpawnBlueprintCatalog`, policy-visibility, Champion-ability,
-special-travel, triggered-impact, and atomic heterogeneous-spawn catalogs; a
-bare `FastCardCatalog` is not the production admission boundary.
+This audit covers the 66 unique public roots and 33 source decks in `decks.json`
+at source `504444ea400ff8bf595c0386ff000afe2c1f3490`. The authority is
+`compile_standard_simple_setup` with `canonical_lane_globals=true`, not the
+bare attack catalog.
 
-The frozen artifact was regenerated in memory and checked byte-for-byte with:
+The byte-exact artifact check reports:
 
 ```text
-uv run --frozen --python 3.12 python \
-  scripts/build_simple_supported_decks.py --check
+candidate_decks=33
+supported_decks=33
+rejected_decks=0
+public_cards=66
+supported_public_cards=66
+unsupported_public_cards=0
+support_profile_sha256=9e8dbfe1edf10835bd2138f237dcc917b65dc1f44f39bc26ff221da4d6aaefab
 ```
 
-The check reported support-profile SHA-256
-`9e8dbfe1edf10835bd2138f237dcc917b65dc1f44f39bc26ff221da4d6aaefab`.
-A focused CPU gate covering admission plus navigation, visibility, abilities,
-special travel, triggered impacts, and heterogeneous action spawns passed
-**99 tests**, with **50 CUDA variants skipped** on the Mac. No full-suite,
-terminal-episode, or accelerator claim is derived from that focused run.
+The public attack-plane partition is 27 direct, 27 projectile, 8 area, and 4
+ordinary-attack-unsupported roots. The latter four are admitted through
+rolling/payload owners, not as inert attacks. Required typed children and
+atomic heterogeneous groups compile fail-closed.
 
-## Authoritative admission result
+## Generalized mechanic coverage
 
-- Public roots: **66/66 training-supported; 0 rejected**.
-- Source decks: **33/33 training-supported; 0 rejected**.
-- The committed `training_decks/simple_gym_supported_v1.json` contains all 33
-  source decks and pins public-action-mask contract v2 and canonical lane
-  globals.
-- Public attack-plane assignment remains 27 direct, 27 projectile, 8 area,
-  and 4 attack-unsupported. Barbarian Barrel, Log, Skeleton Barrel, and
-  Tombstone are nevertheless admitted through their rolling or payload owners.
-- All **15/15** public roots which require a defining spawn payload are
-  supported. Goblin Gang is now one six-slot atomic action event with both
-  typed child groups rather than a partial homogeneous deployment.
-- The enabled corpus compiles 13 triggered descriptors across 11 roots, with
-  zero malformed and zero duplicate profiles. All declared visibility,
-  Champion-ability, and special-travel profiles in the enabled corpus compile
-  successfully.
+The production compiler/runtime covers:
 
-Admission means each public root has a bounded, deterministic, zero-Python-
-fallback practical-Gym execution path. It does **not** establish exact live-
-game mechanics, exercise every root in a terminal episode, or promote a
-training backend/checkpoint.
+- native action formations, typed private children, and atomic heterogeneous
+  spawns;
+- death, delayed, periodic, scheduled, rolling-terminal, and payload children;
+- direct/projectile/area, multi-target, chain, line, fan, periodic, rolling,
+  charge, ramp, and Crown Tower combat;
+- first-hit/retarget locks, shields, statuses, buffs, death bursts, recoil,
+  push, and attraction;
+- tower retaliation and King activation;
+- visibility, Archer Queen ability, and public-v2 ability legality;
+- Bandit, Mega Knight, and Miner special travel;
+- river jumps for Dark Prince, Hog Rider, Mega Knight, Prince, and Royal Hogs;
+- Royal Ghost hover on the air body plane while remaining a ground target;
+- mass-weighted separation, pending-body contact/targetability, building
+  avoidance, bridge/river bounds, and owner-mirrored exact overlaps; and
+- Skeleton Barrel's serialized 100 ms first-hit remainder plus stun-paused
+  500 ms contact self-pop into its bomb/Skeleton payload.
 
-## Former omissions closed since the previous audit
-
-The following are runtime integrations, not admission-by-assertion:
-
-- Archer Queen: typed ability ownership, legal simulator ability action,
-  elixir/cooldown/cast/duration state, Cloak multipliers, invisibility, and
-  target unavailability.
-- Royal Ghost and Tesla: serialized fade/hide/rise state shared by targeting,
-  secondary effects, structured observation, reset, and replay.
-- Bandit, Mega Knight, and Miner: fixed-shape dash/leap/underground phases,
-  interruption/immunity gates, damage, Crown Tower scaling, spawn/landing
-  effects, and displacement.
-- Bowler, Fireball, Firecracker, Giant Snowball, Rocket, and Tornado:
-  serialized impact/recoil/impulse commands. Tornado attraction retains its
-  serialized scan cadence and target-speed percentages.
-- Electro Wizard and Ice Wizard: deployment-area damage/status; Ice Golem:
-  death-area slow in addition to death damage.
-- Goblin Gang: one all-or-nothing, stable-order deployment of three typed stab
-  Goblins and three typed Spear Goblins, including capacity rollback.
-
-Triggered integration suppresses duplicate damage where the ordinary attack,
-travel, or death-burst owner already commits it. The focused runtime tests cover
-those ownership seams as well as reset and deterministic replay.
-
-## Stale omission flags
-
-Three legacy `FastCardCatalog` diagnostics are still set at this commit:
-
-- `Bowler.omits_displacement=true`;
-- `Tornado.omits_displacement=true`; and
-- `Firecracker.omits_recoil=true`.
-
-They no longer describe production-runtime omissions. Each root has one valid
-triggered descriptor, and the integrated runtime consumes it. No production
-path reads either flag; they are stale catalog-local diagnostics left from the
-earlier attack-only owner. Report tooling must not count them as open gameplay
-gaps. Removing or redefining them remains bookkeeping debt so future audits do
-not mistake them for authority.
+Legacy fast-catalog omission flags remain set for Bowler displacement, Tornado
+displacement, and Firecracker recoil. They are not production gaps: each has a
+compiled triggered descriptor consumed by the unified runtime.
 
 ## Complete 66-card classification
 
-The partition below lists every enabled public root exactly once. “Useful
-baseline” means this audit found no additional card-specific gap beyond the
-shared physics, calibration, and evidence limits in the next sections. It does
-not mean live-game equivalence.
+Every enabled public root appears exactly once. “Useful baseline” means its
+defining policy-visible mechanic is represented within the declared shared
+practical-Gym limits; it is not a live-client parity claim.
 
-### Useful baseline within the practical Gym (50)
+### Useful baseline within the practical Gym (62)
 
-Baby Dragon, Balloon, Bandit, Barbarian Barrel, Battle Ram, Bomb Tower, Bomber,
-Bowler, Cannon, Dart Goblin, Earthquake, Electro Dragon, Electro Spirit,
-Electro Wizard, Fireball, Firecracker, Freeze, Giant, Giant Snowball, Goblin
-Barrel, Goblin Gang, Golem, Ice Golem, Ice Wizard, Inferno Dragon, Inferno
-Tower, Knight, Lava Hound, Log, Lumberjack, Magic Archer, Mega Knight, Mega
-Minion, Miner, Mini P.E.K.K.A, Musketeer, Night Witch, P.E.K.K.A, Poison,
-Princess, Rocket, Royal Delivery, Skeleton Barrel, Tesla, Tombstone, Tornado,
-Valkyrie, Witch, X-Bow, Zap.
+Archer Queen, Archers, Baby Dragon, Balloon, Bandit, Barbarian Barrel, Bats,
+Battle Ram, Bomb Tower, Bomber, Bowler, Cannon, Dark Prince, Dart Goblin,
+Earthquake, Electro Dragon, Electro Wizard, Fireball, Firecracker, Freeze,
+Giant, Giant Snowball, Goblin Barrel, Goblin Gang, Golem, Guards, Hog Rider,
+Ice Golem, Ice Wizard, Inferno Dragon, Inferno Tower, Knight, Lava Hound, Log,
+Lumberjack, Magic Archer, Mega Knight, Mega Minion, Miner, Mini P.E.K.K.A,
+Minions, Musketeer, Night Witch, P.E.K.K.A, Poison, Prince, Princess, Rocket,
+Royal Delivery, Royal Ghost, Royal Hogs, Skeleton Barrel, Skeletons, Spear
+Goblins, Tesla, Tombstone, Tornado, Valkyrie, Wall Breakers, Witch, X-Bow, Zap.
 
-### Training-supported with bounded card-specific approximations (16 roots)
+### Training-supported with bounded card-specific approximations (4)
 
-| Card | Represented now | Remaining approximation or policy boundary |
+| Card | Represented | Accepted approximation |
 |---|---|---|
-| Archer Queen | full simulator ability lifecycle and Cloak effects | public-mask-v2 deliberately hard-masks the ability action, so the production policy cannot select the defining mechanic; this is a promotion blocker for Archer Queen policy coverage |
-| Arrows | travelling target-area damage | serialized arrow waves are collapsed into one bounded impact event, losing between-wave shield/death/spawn timing |
-| Archers, Bats, Guards, Minions, Skeletons, Spear Goblins, Wall Breakers | correct homogeneous count and typed bodies | ordinary multi-summons use one generalized circular formation rather than each native formation/contact relaxation |
-| Dark Prince | shield, charge, ordinary bridge routing | serialized river-jump capability is not modeled; the unit routes through a bridge |
-| Graveyard | serialized cast cadence and 12 typed Skeleton waves | each one-child wave uses deterministic hashed geometry on a fixed-radius ring rather than live-game spatial RNG across the area |
-| Hog Rider | building targeting and ordinary bridge routing | serialized river-jump capability is not modeled; the unit routes through a bridge |
-| Ice Spirit | homing impact, splash freeze, source consumption | the hop trajectory/timing is represented by the ordinary homing effect |
-| Prince | charge and ordinary bridge routing | serialized river-jump capability is not modeled; the unit routes through a bridge |
-| Royal Hogs | four-unit deployment, building targeting, bridge routing | serialized river-jump capability is not modeled; the units route through bridges |
-| Royal Ghost | serialized fade/invisibility/targetability | `is_hover_unit` is dropped by the fast catalog, so navigation/body-plane behavior is ordinary ground movement |
+| Arrows | travelling air/ground area damage and total/tower scaling | waves collapse into one impact, so between-wave shield/death/spawn timing is absent |
+| Electro Spirit | homing source-consuming chained damage plus stun | leap presentation/trajectory uses the homing effect path |
+| Graveyard | 12 typed Skeleton waves with serialized deadlines | deterministic bounded geometry replaces live spatial RNG and exact offsets |
+| Ice Spirit | homing source-consuming splash freeze | hop presentation/trajectory uses the homing effect path |
 
-Bandit, Mega Knight, and Miner now have fixed-step special-travel phases;
-Bowler, Fireball, Firecracker, Golem, Giant Snowball, Ice Golem, Mega Knight,
-Rocket, and Tornado now have serialized displacement/recoil commands. Their
-straight-line, presentation-free travel is acceptable for the current 2-D
-projection, but every one still inherits the shared lack of body collision,
-mass-chain resolution, and calibrated contact physics. That shared blocker is
-not counted again as a unique card omission. Archer Queen's unavailable public
-action is different: it removes a policy choice and remains a direct promotion
-blocker.
+These retain decision-relevant damage/status/spawn ownership and timing closely
+enough for the accepted Gym. None removes a public action or invokes Python
+fallback.
 
-## Spawn and payload status
+## Typed Hero/Evolution boundary
 
-The expanded catalog uses private typed child rows which never become
-hand-facing public identities. It supports, among other paths:
+The 494-token vocabulary has distinct namespaced Hero/Evolution keys, and the
+projector/adapter require exact typed lookup. Unknown or ambiguous variants
+return no token; there is no base-family collapse.
 
-- Battle Ram -> two Barbarians;
-- Goblin Gang -> three stab Goblins plus three Spear Goblins atomically;
-- Lava Hound -> six Lava Pups;
-- Golem -> death burst, two Golemites, and nested child death handling;
-- Night Witch, Tombstone, and Witch periodic/death children;
-- Goblin Barrel impact Goblins;
-- Balloon and Bomb Tower delayed bombs;
-- Skeleton Barrel's delayed container and Skeleton payload;
-- Royal Delivery and Graveyard scheduled payloads;
-- Lumberjack's death Rage area; and
-- Barbarian Barrel's rolling terminal spawn.
+The 66 admitted roots contain no `_hero` or `_EV1` root, and the source
+vocabulary labels those entries representation-only/not exposed by the loader.
+This audit therefore proves identity preservation and fail-closed behavior,
+not Hero/Evolution gameplay mechanics.
 
-Capacity rejection is explicit and deterministic. Synthetic rows require typed
-entity tokens and cannot appear in public decks or actor hands.
+## Shared practical approximations
 
-## Remaining practical-RL promotion blockers
+- deterministic dense contact and tangent building avoidance rather than the
+  client's full obstacle graph and avoidance heuristics;
+- fixed-step, presentation-free travel;
+- bounded fixed-shape capacity with explicit atomic rejection;
+- no independent video calibration for exact combat HP/damage/status/contact;
+- no claim that terminal policies free-run every mechanic in every card.
 
-1. **Crown Tower combat is inert.** `standard_tower_spec` gives all six tower
-   rows `card_id=0`. The combat selector special-cases those rows so they can
-   acquire air/ground targets, but the ordinary effect allocator rejects every
-   attack command whose card ID is not positive. A tower can therefore point
-   `target_id` at an enemy while never allocating damage. King activation is
-   also absent: the King row can acquire from battle start rather than waking
-   on damage or Princess Tower loss. Existing standard tests cover tower
-   positions/stats and terminal tests cover deterministic outcomes, but no
-   current Simple-runtime test proves Princess/King retaliation. This alone
-   prevents a high-fidelity combat or trained-policy promotion claim.
-2. **First-hit clocks and target retention.** `TensorCardCatalog` preserves
-   serialized `load_time_ms`, but `FastCardCatalog` does not carry it and new
-   entities initialize `cooldown_ticks=0`. Fifty enabled attacking roots carry
-   a nonzero serialized load value; 49 have a positive derived first-hit delay,
-   yet an in-range Simple entity can currently attack as soon as deployment
-   completes. Ordinary targeting also recomputes the nearest legal target every
-   tick instead of retaining a target and applying general retarget timing;
-   only the damage-ramp family has a bounded retarget-grace owner. This is a
-   broad combat/DPS and focus-selection gap.
-3. **Navigation and body physics.** The new retained two-bridge state machine
-   prevents ordinary ground units from walking straight across the river. It
-   is still not native pathfinding: placed buildings do not participate in a
-   full obstacle/route graph, and the Gym lacks general collision avoidance,
-   body separation, serialized mass/hover behavior, push chains, and river-jump
-   travel. These are policy-visible positioning dynamics, not cosmetic
-   differences.
-4. **Deployment targetability.** Ordinary target selection excludes every
-   entity with nonzero deployment ticks. Whether and when a deploying body can
-   be damaged is policy-visible and has not been calibrated against live-game
-   traces for this Gym.
-5. **Public ability policy.** The simulator legal mask exposes Archer Queen's
-   implemented ability, while `SimplePublicMaskV2Provider` intentionally emits
-   `ability=false`. The two masks are correctly kept as different domains, but
-   current production collection cannot learn to press Cloak.
-6. **Current-source accelerator recertification.** The committed terminal CUDA
-   and 10-launch/zero-sync throughput artifacts were produced before the
-   navigation, visibility, ability, travel, triggered-impact, and
-   heterogeneous-spawn integrations. They remain valid historical evidence,
-   not certification of commit `1a641bb8`.
-7. **Current training-stack assembly.** The isolated newer-main routing gate
-   was built from an older Simple Gym source snapshot. The current mechanics
-   tree has not yet been assembled, recurrent-policy tested, CUDA-tested, and
-   committed on a safe stabilized-main integration branch.
-8. **Real-game calibration.** The current read-only corpus gate is `fail`:
-   37/37 observed regulation-to-overtime transitions are correct, but the 95%
-   Wilson lower bound is 0.905942 rather than the required 0.95. Exact tensor
-   public-mask equivalence and independently labelled combat trajectories, HP,
-   statuses, and outcomes are unavailable. Admission and serialized values do
-   not substitute for those channels.
-9. **Exercise coverage.** Focused mechanic tests prove their declared seams;
-   seeded terminal episodes prove only the cards/actions actually exercised by
-   their policies. No current evidence establishes full free-running mechanic
-   visitation over all 66 roots.
+These fit the requested practical RL Gym. The Resident engine remains available
+when Python/event parity is required.
 
-## Evidence boundary
+## Validation evidence
 
-The 66/66 and 33/33 numbers prove fail-closed admission for the current public
-manifest. The 13 triggered descriptors and atomic Goblin Gang event prove
-compiled ownership, while focused tests prove the exercised transition seams.
-None of those facts independently proves live-game calibration, current-HEAD
-CUDA performance, recurrent-policy behavior, or safe checkpoint promotion.
+- exact isolated-main CPU suite: **406 passed, 248 CUDA skips**;
+- exact-source A6000 mechanics suite: **222/222 passed**;
+- exact newer-main CUDA route/mechanics suite: **191/191 passed**;
+- two deterministic CUDA-Graph terminal replays per policy, all native and
+  committed, zero fallback;
+- no-op reaches tick 6000 tiebreak; first-legal reaches tick 3600 crown;
+- batch-128 median 410.053 row-ticks/s, 10 launches, zero explicit sync; and
+- actual 494-token recurrent policy smoke passes public-mask, metadata,
+  recurrent, admission, native, commit, and fallback checks.
+
+The failed `f67ed3a8` CUDA capture and mirror audit are preserved as diagnostic
+evidence. Source `504444ea` fixes both and is the only accepted source.
+
+## Final decision
+
+**66/66 enabled base roots and 33/33 source decks are accepted for fresh
+practical RL training.** The four card-specific approximations and shared
+limits remain explicit; no material enabled-card policy mechanic is knowingly
+inert or routed through Python fallback.
