@@ -42,6 +42,7 @@ class FastTowerSpec:
     range_units: torch.Tensor
     sight_range_units: torch.Tensor
     hit_cooldown_ticks: torch.Tensor
+    collision_radius_units: torch.Tensor | None = None
     initial_cooldown_ticks: torch.Tensor | None = None
     preload_cooldown_floor_ticks: torch.Tensor | None = None
     effect_kind: torch.Tensor | None = None
@@ -127,6 +128,7 @@ def _validate_tower_spec(state: FastGymState, spec: FastTowerSpec) -> None:
         raise ValueError("all tower effect tensors must be supplied together")
     for name in (
         "initial_cooldown_ticks",
+        "collision_radius_units",
         "preload_cooldown_floor_ticks",
         *optional_effect_fields,
     ):
@@ -139,6 +141,11 @@ def _validate_tower_spec(state: FastGymState, spec: FastTowerSpec) -> None:
             raise ValueError(f"{name} is on a different device")
     if spec.effect_kind is not None and spec.effect_kind.dtype != torch.int8:
         raise ValueError("effect_kind must be int8")
+    if (
+        spec.collision_radius_units is not None
+        and spec.collision_radius_units.dtype != torch.int32
+    ):
+        raise ValueError("collision_radius_units must be int32")
     for name in ("hits_air", "hits_ground", "affects_hidden"):
         value = getattr(spec, name)
         if value is not None and value.dtype != torch.bool:

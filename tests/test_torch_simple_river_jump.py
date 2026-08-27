@@ -31,7 +31,7 @@ def _catalog(
     loader = CardDataLoader()
     core = TensorCardCatalog.compile(
         loader,
-        ["DarkPrince", "HogRider", "Knight", "Prince", "RoyalHogs"],
+        ["Bandit", "DarkPrince", "HogRider", "Knight", "Prince", "RoyalHogs"],
         device=device,
     )
     return FastRiverJumpCatalog.compile(core, loader), core, core.name_to_id
@@ -92,6 +92,10 @@ def test_catalog_compiles_exact_enabled_serialized_profiles(device_name: str) ->
     assert not bool(catalog.declares_jump[ordinary])
     assert bool(catalog.profile_supported[ordinary])
     assert not bool(catalog.jump_capable[ordinary])
+    dash_only = ids["Bandit"]
+    assert not bool(catalog.declares_jump[dash_only])
+    assert bool(catalog.profile_supported[dash_only])
+    assert not bool(catalog.jump_capable[dash_only])
 
 
 @pytest.mark.parametrize(

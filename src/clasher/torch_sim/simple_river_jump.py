@@ -120,7 +120,11 @@ class FastRiverJumpCatalog:
             )
             has_height = "jumpHeight" in character
             has_speed = "jumpSpeed" in character
-            if not has_height and not has_speed:
+            # ``jumpSpeed`` alone is also serialized by dash profiles (Bandit)
+            # and is not a river-jump declaration. River capability is
+            # declared by jumpHeight; a missing/malformed paired speed then
+            # remains a fail-closed river profile.
+            if not has_height:
                 continue
 
             declares[card_id] = True

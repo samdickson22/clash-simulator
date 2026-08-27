@@ -285,7 +285,12 @@ def test_knight_direct_hit_and_giant_building_only_navigation(
     # Slots 3--5 are the enemy Crown buildings; the nearby troop is slot 7.
     assert int(giant.state.target_id[0, 6]) in (4, 5, 6)
     assert int(giant.state.target_id[0, 6]) != 8
-    assert int(giant.state.y_units[0, 6]) > y_before
+    # The fixture starts the Giant and Knight with deeply overlapping bodies.
+    # Building-only acquisition remains correct, while the new mass-weighted
+    # contact pass first increases physical separation instead of allowing the
+    # Giant to phase forward through the troop.
+    assert int(giant.state.y_units[0, 6]) != y_before
+    assert abs(int(giant.state.y_units[0, 7]) - int(giant.state.y_units[0, 6])) > 500
     torch.testing.assert_close(giant.state.hp[0, 7], troop_hp)
     assert result.observation.actor.entity_mask[0, :, 6:8].all()
 

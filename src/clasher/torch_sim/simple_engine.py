@@ -16,7 +16,14 @@ from .simple_attack_locks import (
     step_fast_attack_locks_,
 )
 from .simple_catalog import FastCardCatalog
+from .simple_collision_navigation import resolve_fast_collision_navigation
 from .simple_navigation import FastArenaNavigation, FastNavigationState
+from .simple_river_jump import (
+    FastRiverJumpCatalog,
+    FastRiverJumpState,
+    FastRiverJumpStep,
+    step_fast_river_jump_,
+)
 from .simple_state import FAST_KIND_BUILDING, FAST_KIND_TROOP, FastGymState
 from .simple_targeting import FastTargetTraits, select_nearest_targets
 
@@ -72,6 +79,16 @@ class FastTargetSnapshot:
     within_attack_range: torch.Tensor
 
 
+@dataclass(frozen=True)
+class FastBodyTraits:
+    """Serialized movement/contact planes projected onto dense entity slots."""
+
+    collision_radius_units: torch.Tensor
+    mass: torch.Tensor
+    airborne: torch.Tensor
+    hover: torch.Tensor
+
+
 class FastTensorGym:
     """Mutation-only tensor engine with deterministic lowest-slot allocation."""
 
@@ -83,6 +100,9 @@ class FastTensorGym:
         reserved_slot_floor: int = 0,
         attack_timings: FastAttackTimingCatalog | None = None,
         attack_locks: FastAttackLockState | None = None,
+        collision_radius_override_units: torch.Tensor | None = None,
+        river_jump_catalog: FastRiverJumpCatalog | None = None,
+        river_jump_state: FastRiverJumpState | None = None,
     ) -> None:
         self.state = state
         if catalog is not None and catalog.device != state.device:
@@ -93,6 +113,18 @@ class FastTensorGym:
             raise ValueError(
                 "attack_timings and attack_locks must be supplied together"
             )
+        if (river_jump_catalog is None) != (river_jump_state is None):
+            raise ValueError("river jump catalog and state must be supplied together")
+        if river_jump_catalog is not None:
+            assert river_jump_state is not None
+            if catalog is None or river_jump_catalog.size != catalog.size:
+                raise ValueError("river jump catalog must align with the card catalog")
+            if river_jump_catalog.device != state.device:
+                raise ValueError("river jump catalog must use the state device")
+            if river_jump_state.device != state.device:
+                raise ValueError("river jump state must use the state device")
+            if river_jump_state.shape != state.active.shape:
+                raise ValueError("river jump state must have shape [batch, entities]")
         if attack_timings is not None:
             if catalog is None:
                 raise ValueError("attack timings require a card catalog")
@@ -109,6 +141,9 @@ class FastTensorGym:
         self.reserved_slot_floor = int(reserved_slot_floor)
         self.attack_timings = attack_timings
         self.attack_locks = attack_locks
+        self.river_jump_catalog = river_jump_catalog
+        self.river_jumps = river_jump_state
+        self.last_river_jump_step: FastRiverJumpStep | None = None
         self._slots = torch.arange(
             state.max_entities, dtype=torch.int64, device=state.device
         ).view(1, -1)
@@ -117,6 +152,19 @@ class FastTensorGym:
         # materialized by the most recent atomic request group.
         self.spawned_mask = torch.zeros_like(state.active)
         self._target_unavailable = torch.zeros_like(state.active)
+        self._collision_radius_override_units = torch.zeros_like(state.x_units)
+        if collision_radius_override_units is not None:
+            if collision_radius_override_units.shape != state.active.shape:
+                raise ValueError(
+                    "collision radius override must have shape [batch, entities]"
+                )
+            if collision_radius_override_units.device != state.device:
+                raise ValueError("collision radius override must use the state device")
+            if collision_radius_override_units.dtype != torch.int32:
+                raise ValueError("collision radius override must be int32")
+            self._collision_radius_override_units.copy_(
+                collision_radius_override_units.clamp_min(0)
+            )
         self.navigation = FastArenaNavigation(
             FastNavigationState.empty(
                 state.batch_size,
@@ -125,27 +173,64 @@ class FastTensorGym:
             )
         )
 
+    def _body_traits(self) -> FastBodyTraits:
+        """Project serialized contact fields without runtime card dispatch."""
+
+        state = self.state
+        if self.catalog is None:
+            return FastBodyTraits(
+                collision_radius_units=self._collision_radius_override_units,
+                mass=torch.ones_like(state.hp),
+                airborne=torch.zeros_like(state.active),
+                hover=torch.zeros_like(state.active),
+            )
+        safe_card = state.card_id.clamp(0, self.catalog.size - 1)
+        known = (state.card_id > 0) & (state.card_id < self.catalog.size)
+        serialized_radius = torch.where(
+            known,
+            self.catalog.collision_radius_units[safe_card],
+            0,
+        )
+        return FastBodyTraits(
+            collision_radius_units=torch.maximum(
+                serialized_radius,
+                self._collision_radius_override_units,
+            ),
+            mass=torch.where(
+                known,
+                self.catalog.mass[safe_card],
+                torch.ones_like(state.hp),
+            ).clamp_min(0.1),
+            airborne=self.catalog.is_air[safe_card] & known,
+            hover=self.catalog.is_hover[safe_card] & known,
+        )
+
     def _target_traits(self) -> FastTargetTraits:
         """Project card tables onto dense slots without card dispatch."""
 
         state = self.state
         building = state.kind == FAST_KIND_BUILDING
+        river_airborne = (
+            self.river_jumps.active
+            if self.river_jumps is not None
+            else torch.zeros_like(state.active)
+        )
         if self.catalog is None:
             # Preserve the former permissive plane behavior for catalog-free
             # structural fixtures. Production always supplies a catalog.
             return FastTargetTraits(
-                airborne=torch.zeros_like(state.active),
+                airborne=river_airborne,
                 building=building,
                 attacks_air=torch.ones_like(state.active),
                 attacks_ground=torch.ones_like(state.active),
                 buildings_only=torch.zeros_like(state.active),
-                collision_radius=torch.zeros_like(state.x_units),
+                collision_radius=self._collision_radius_override_units,
             )
         safe_card = state.card_id.clamp(0, self.catalog.size - 1)
         known = (state.card_id > 0) & (state.card_id < self.catalog.size)
         tower = (state.card_id == 0) & building
         return FastTargetTraits(
-            airborne=self.catalog.is_air[safe_card] & known,
+            airborne=(self.catalog.is_air[safe_card] & known) | river_airborne,
             building=building,
             attacks_air=(self.catalog.attacks_air[safe_card] & known) | tower,
             attacks_ground=(self.catalog.attacks_ground[safe_card] & known) | tower,
@@ -154,7 +239,7 @@ class FastTensorGym:
                 known,
                 self.catalog.collision_radius_units[safe_card],
                 0,
-            ),
+            ).maximum(self._collision_radius_override_units),
         )
 
     def has_attack_range_target(self) -> torch.Tensor:
@@ -460,6 +545,8 @@ class FastTensorGym:
         cooldown_floor_ticks: torch.Tensor,
         clear_source_lock: torch.Tensor,
         reload_source_attack: torch.Tensor,
+        collision_excluded: torch.Tensor,
+        river_jump_stunned: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Acquire and approach, returning attacks ready for effect allocation.
 
@@ -471,8 +558,15 @@ class FastTensorGym:
 
         state = self.state
         present = state.active & (state.hp > 0) & (state.deploy_ticks == 0)
-        can_act = present & ~disabled
+        jump_active_before = (
+            self.river_jumps.active
+            if self.river_jumps is not None
+            else torch.zeros_like(state.active)
+        )
+        phase_disabled = disabled | jump_active_before
+        can_act = present & ~phase_disabled
         traits = self._target_traits()
+        body_traits = self._body_traits()
         lock_step = None
         locked_source = torch.zeros_like(state.active)
         if self.attack_timings is not None:
@@ -500,7 +594,7 @@ class FastTensorGym:
                 )
             )
             reloaded = (
-                reload_source_attack
+                (reload_source_attack | jump_active_before)
                 & locked_source
                 & same_generation
                 & state.active
@@ -521,15 +615,15 @@ class FastTensorGym:
                 self.attack_timings,
                 state,
                 traits,
-                source_disabled=disabled,
+                source_disabled=phase_disabled,
                 target_unavailable=self._target_unavailable,
-                clear_source_lock=clear_source_lock,
+                clear_source_lock=clear_source_lock | jump_active_before,
                 cooldown_decrement=torch.zeros_like(cooldown_decrement),
             )
         targets = select_nearest_targets(
             state,
             traits,
-            source_disabled=disabled | locked_source,
+            source_disabled=phase_disabled | locked_source,
             target_unavailable=self._target_unavailable,
         )
         # Reserved arena fixtures retain their stable-ID target while it
@@ -644,6 +738,7 @@ class FastTensorGym:
             mover_stable_id=state.stable_id,
             owner=state.owner,
             airborne=traits.airborne,
+            hover=body_traits.hover,
             x_units=state.x_units,
             y_units=state.y_units,
             target_stable_id=state.target_id,
@@ -651,6 +746,24 @@ class FastTensorGym:
             target_x_units=target_x_units,
             target_y_units=target_y_units,
         )
+        river_jump: FastRiverJumpStep | None = None
+        if self.river_jump_catalog is not None:
+            assert self.river_jumps is not None
+            river_jump = step_fast_river_jump_(
+                self.river_jumps,
+                self.river_jump_catalog,
+                entity_active=present & (state.kind == FAST_KIND_TROOP),
+                stable_id=state.stable_id,
+                card_id=state.card_id,
+                owner=state.owner,
+                permanent_airborne=body_traits.airborne,
+                stunned=river_jump_stunned | disabled | ~has_destination,
+                x_units=state.x_units,
+                y_units=state.y_units,
+                route_x_units=target_x_units,
+                route_y_units=target_y_units,
+            )
+        self.last_river_jump_step = river_jump
         delta_x = route.waypoint_x_units.to(torch.float32) - state.x_units.to(
             torch.float32
         )
@@ -679,21 +792,49 @@ class FastTensorGym:
             & (~found | (selected_edge_distance > attack_range))
             & (travel > 0)
         )
+        if river_jump is not None:
+            mobile &= ~river_jump.ordinary_movement_blocked
         denominator = waypoint_distance.clamp(min=1.0)
         move_x = torch.round(delta_x * travel / denominator).to(torch.int32)
         move_y = torch.round(delta_y * travel / denominator).to(torch.int32)
-        state.x_units.add_(torch.where(mobile, move_x, 0))
-        state.y_units.add_(torch.where(mobile, move_y, 0))
-        moved_distance = torch.where(
-            mobile,
-            torch.round(
-                torch.sqrt(
-                    move_x.to(torch.float32).square()
-                    + move_y.to(torch.float32).square()
-                )
-            ).to(torch.int32),
-            0,
+        intended_move_x = torch.where(mobile, move_x, 0)
+        intended_move_y = torch.where(mobile, move_y, 0)
+        collision_airborne = body_traits.airborne
+        collision_moving = mobile
+        if river_jump is not None:
+            jump_move_x = river_jump.x_units - state.x_units
+            jump_move_y = river_jump.y_units - state.y_units
+            intended_move_x = torch.where(
+                river_jump.ordinary_movement_blocked,
+                jump_move_x,
+                intended_move_x,
+            )
+            intended_move_y = torch.where(
+                river_jump.ordinary_movement_blocked,
+                jump_move_y,
+                intended_move_y,
+            )
+            collision_airborne = collision_airborne | river_jump.airborne_target
+            collision_moving = collision_moving | river_jump.ordinary_movement_blocked
+            can_act &= ~river_jump.combat_blocked
+        collision = resolve_fast_collision_navigation(
+            active=present,
+            stable_id=state.stable_id,
+            kind=state.kind,
+            x_units=state.x_units,
+            y_units=state.y_units,
+            intended_x_units=intended_move_x,
+            intended_y_units=intended_move_y,
+            collision_radius_units=body_traits.collision_radius_units,
+            mass=body_traits.mass,
+            airborne=collision_airborne,
+            hover=body_traits.hover,
+            movement_enabled=collision_moving,
+            collision_excluded=collision_excluded,
         )
+        state.x_units.copy_(collision.x_units)
+        state.y_units.copy_(collision.y_units)
+        moved_distance = collision.moved_distance_units
 
         target_x = state.x_units.gather(1, nearest_slot).to(torch.float32)
         target_y = state.y_units.gather(1, nearest_slot).to(torch.float32)
@@ -706,6 +847,13 @@ class FastTensorGym:
         selected_in_attack_range = (
             found & can_act & (post_edge_distance <= attack_range) & (state.damage > 0)
         )
+        if river_jump is not None:
+            target_jump_airborne = river_jump.airborne_target.gather(1, nearest_slot)
+            selected_in_attack_range &= torch.where(
+                target_jump_airborne,
+                traits.attacks_air,
+                traits.attacks_ground,
+            )
         idle_floor = torch.where(
             selected_in_attack_range,
             torch.zeros_like(cooldown_floor_ticks),
@@ -734,8 +882,8 @@ class FastTensorGym:
                 self.attack_timings,
                 state,
                 target_in_attack_range=selected_in_attack_range & locked_source,
-                source_disabled=disabled,
-                clear_source_lock=clear_source_lock,
+                source_disabled=phase_disabled,
+                clear_source_lock=clear_source_lock | jump_active_before,
                 cooldown_decrement=cooldown_decrement,
             )
             state.cooldown_ticks.copy_(
@@ -818,6 +966,8 @@ class FastTensorGym:
         cooldown_floor_ticks: torch.Tensor | None = None,
         clear_source_lock: torch.Tensor | None = None,
         reload_source_attack: torch.Tensor | None = None,
+        collision_excluded: torch.Tensor | None = None,
+        river_jump_stunned: torch.Tensor | None = None,
     ) -> FastGymTickResult:
         """Advance every live row once and optionally allocate one entity.
 
@@ -877,6 +1027,22 @@ class FastTensorGym:
             raise ValueError("reload_source_attack must use the state device")
         elif reload_source_attack.dtype != torch.bool:
             raise ValueError("reload_source_attack must be bool")
+        if collision_excluded is None:
+            collision_excluded = torch.zeros_like(state.active)
+        elif collision_excluded.shape != state.active.shape:
+            raise ValueError("collision_excluded must have shape [batch, entities]")
+        elif collision_excluded.device != state.device:
+            raise ValueError("collision_excluded must use the state device")
+        elif collision_excluded.dtype != torch.bool:
+            raise ValueError("collision_excluded must be bool")
+        if river_jump_stunned is None:
+            river_jump_stunned = torch.zeros_like(state.active)
+        elif river_jump_stunned.shape != state.active.shape:
+            raise ValueError("river_jump_stunned must have shape [batch, entities]")
+        elif river_jump_stunned.device != state.device:
+            raise ValueError("river_jump_stunned must use the state device")
+        elif river_jump_stunned.dtype != torch.bool:
+            raise ValueError("river_jump_stunned must be bool")
         live = ~state.game_over
         if request is None:
             success = torch.zeros(
@@ -908,6 +1074,8 @@ class FastTensorGym:
             cooldown_floor_ticks,
             clear_source_lock,
             reload_source_attack,
+            collision_excluded,
+            river_jump_stunned,
         )
         state.tick.add_(live.to(torch.int64))
         return FastGymTickResult(
