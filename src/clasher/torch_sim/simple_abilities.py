@@ -84,7 +84,11 @@ class FastAbilityCatalog:
         numeric payload kernels exist.
         """
 
-        device = catalog.device
+        # TensorCardCatalog may retain an unindexed accelerator alias
+        # (``cuda``), while allocated tensors expose the concrete device
+        # (``cuda:0``).  Runtime metadata follows an authoritative tensor so
+        # strict same-device checks remain meaningful on accelerators.
+        device = catalog.mechanic_opcode.device
         size = len(catalog.names)
 
         def zeros(dtype: torch.dtype) -> torch.Tensor:
