@@ -1,0 +1,25 @@
+/home/ubuntu/clasher-1a641bb8/.venv/lib/python3.12/site-packages/torch/profiler/profiler.py:217: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+	Command being timed: ".venv/bin/python -m scripts.perf.benchmark_simple_gym --preset profile --decks-path training_decks/simple_gym_supported_v1.json --device cuda --cuda-graph --profile-cuda --batch-size 128 --max-entities 128 --max-effects 128 --min-row-ticks-per-second 400 --out reports/simple_gym_cuda_a6000_graph_batch128_20260827_v2.json"
+	User time (seconds): 176.76
+	System time (seconds): 48.78
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:44.83
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1910212
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1
+	Minor (reclaiming a frame) page faults: 639223
+	Voluntary context switches: 2738
+	Involuntary context switches: 943
+	Swaps: 0
+	File system inputs: 104
+	File system outputs: 49208
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

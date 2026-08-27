@@ -1,0 +1,36 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/ubuntu/clasher-1a641bb8/scripts/perf/benchmark_simple_gym.py", line 428, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/ubuntu/clasher-1a641bb8/scripts/perf/benchmark_simple_gym.py", line 417, in main
+    result = benchmark(args)
+             ^^^^^^^^^^^^^^^
+  File "/home/ubuntu/clasher-1a641bb8/scripts/perf/benchmark_simple_gym.py", line 327, in benchmark
+    raise RuntimeError(
+RuntimeError: median throughput 420.450 row-ticks/s is below gate 500.000
+Command exited with non-zero status 1
+	Command being timed: ".venv/bin/python -m scripts.perf.benchmark_simple_gym --preset profile --decks-path training_decks/simple_gym_supported_v1.json --device cuda --cuda-graph --profile-cuda --batch-size 128 --max-entities 128 --max-effects 128 --min-row-ticks-per-second 500 --out reports/simple_gym_cuda_a6000_graph_batch128_20260827.json"
+	User time (seconds): 169.41
+	System time (seconds): 47.16
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:35.89
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1740032
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 610002
+	Voluntary context switches: 2627
+	Involuntary context switches: 603
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 232
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1

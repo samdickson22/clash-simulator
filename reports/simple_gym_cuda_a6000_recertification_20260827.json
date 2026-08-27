@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "date": "2026-08-27",
+  "scope": "bounded A6000 CUDA recertification",
+  "hardware": {
+    "provider": "massedcompute",
+    "pod_id": "56acd177de924772b04a8de1d58c9faf",
+    "gpu": "NVIDIA RTX A6000",
+    "gpu_memory_mib": 49140,
+    "driver": "580.126.09",
+    "torch": "2.10.0+cu128",
+    "cuda_runtime": "12.8",
+    "python": "3.12.14",
+    "image": "ubuntu_22_cuda_12",
+    "terminated": true,
+    "active_pods_after_teardown": 0
+  },
+  "source_snapshots": {
+    "initial_failure": {
+      "git_sha": "8e4309136ebad0a4c7c206aaf6443766c83ad360",
+      "archive_sha256": "5fcfa3dc8dd133dccdd768d8fa39a687e4061b3385ed30a178403476c55e2b8f",
+      "focused_tests": "47 passed, 13 failed",
+      "cause": "unindexed cuda catalog device metadata compared unequal to concrete cuda:0 runtime tensors",
+      "evidence": "reports/simple_gym_cuda_a6000_focused_tests_20260827.log",
+      "evidence_sha256": "a66d765e60486c84e9e5ca09713f2786391fbec4e4d7d3ce4318c51471392053"
+    },
+    "device_fix_baseline": {
+      "git_sha": "1a641bb81ea4d866d8923bd1c841803b24280091",
+      "archive_sha256": "3f1d71af0e960d149f49633aeaf40dfba3c2c2f19a1799def5e06cd059edc76d",
+      "focused_tests": "60 passed",
+      "full_episode_validation": {
+        "execution_mode": "cuda-graph",
+        "replays_per_policy": 2,
+        "noop_final_tick": 6000,
+        "noop_digest": "d14d2c7b5d41fed9784b521c9ee31c27b7d9a10903954dbf792abf73cd0c4226",
+        "first_legal_final_tick": 1220,
+        "first_legal_digest": "7b486631353470f2f4073e5d78ab5ef35e5b97c1d24a90987d6616ea472038cc",
+        "all_native": true,
+        "all_committed": true,
+        "zero_fallback": true
+      },
+      "throughput": {
+        "batch_size": 128,
+        "max_entities": 128,
+        "max_effects": 128,
+        "measured_ticks_per_trial": 100,
+        "trials": 3,
+        "minimum_row_ticks_per_second": 400.0,
+        "median_row_ticks_per_second": 420.30218606284694,
+        "median_actor_transitions_per_second": 840.6043721256939,
+        "kernel_launches": 10,
+        "explicit_host_synchronizations": 0,
+        "digest": "3e196667b4e6036a554774b29259588b7adbf6d1222d69868b57e27377eaed16",
+        "note": "A separate explicit 500 row-ticks/s attempt failed at 420.450 and is preserved; the 400 gate is the declared current absolute threshold, not a claim that the older 500 threshold passed."
+      }
+    },
+    "certified_pre_contact_baseline": {
+      "git_sha": "d4e9dd9572408f21bfe4d09966a8553b684981ab",
+      "archive_sha256": "862317e63f9787bd85e0ca4fb35934612ee43563a130f6d4d60c128c5b33f71e",
+      "focused_tests": "99 passed",
+      "focused_scope": [
+        "ability runtime",
+        "policy visibility",
+        "special travel",
+        "triggered impacts",
+        "heterogeneous spawns",
+        "public mask v2 champion ability",
+        "serialized attack locks",
+        "Crown Tower combat",
+        "CUDA Graph eager and reset equivalence"
+      ],
+      "full_episode_validation": {
+        "execution_mode": "cuda-graph",
+        "replays_per_policy": 2,
+        "noop": {
+          "final_tick": 6000,
+          "terminal_reason": "tiebreak",
+          "entered_overtime": true,
+          "winner": -1,
+          "digest": "d14d2c7b5d41fed9784b521c9ee31c27b7d9a10903954dbf792abf73cd0c4226"
+        },
+        "first_legal": {
+          "final_tick": 3600,
+          "terminal_reason": "regulation_crown",
+          "entered_overtime": false,
+          "winner": 1,
+          "digest": "407a6bd1a7efa75294fb8c4a4f7481a5c291eaa4b094656deb2b478a817e17c0"
+        },
+        "all_native": true,
+        "all_committed": true,
+        "zero_fallback": true,
+        "deterministic": true
+      },
+      "throughput": {
+        "batch_size": 128,
+        "max_entities": 128,
+        "max_effects": 128,
+        "measured_ticks_per_trial": 100,
+        "trials": 3,
+        "minimum_row_ticks_per_second": 400.0,
+        "trial_row_ticks_per_second": [
+          417.34489013880574,
+          417.62023137986967,
+          417.4230550835088
+        ],
+        "median_row_ticks_per_second": 417.4230550835088,
+        "median_actor_transitions_per_second": 834.8461101670176,
+        "kernel_launches": 10,
+        "explicit_host_synchronizations": 0,
+        "all_measured_row_ticks_native_and_committed": true,
+        "digest": "3e196667b4e6036a554774b29259588b7adbf6d1222d69868b57e27377eaed16"
+      },
+      "snapshot_accepted": true,
+      "promotion_status": "certified pre-contact baseline only"
+    },
+    "isolated_newer_main_integration": {
+      "git_sha": "0ddaaaa653b2d7dccba6db804091dd66625db598",
+      "integrated_simple_source_sha": "d4e9dd9572408f21bfe4d09966a8553b684981ab",
+      "archive_sha256": "c51ae9a9677999a8220a97283fbf681a9f33376f75c4b6deac54b4989499b32b",
+      "route_tests": "15 passed",
+      "policy_smoke": {
+        "policy": "ClasherPolicy",
+        "typed_actor_tokens": 494,
+        "parameter_count": 119095,
+        "public_mask_contract_version": 2,
+        "public_mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+        "champion_ability_authority": "actor-visible-supported-champion-v1",
+        "selected_actions_public_legal": true,
+        "recurrent_hidden_shape": [1, 2, 32],
+        "recurrent_cell_shape": [1, 2, 32],
+        "native_ticks": 2,
+        "all_committed": true,
+        "all_rows_admitted": true,
+        "zero_fallback": true,
+        "metadata_preserved": true
+      },
+      "snapshot_accepted": true
+    }
+  },
+  "evidence": {
+    "final_environment": {
+      "path": "reports/simple_gym_cuda_a6000_final_environment_20260827.log",
+      "sha256": "47395f88c2ff989e7c4226fbe3334f04814a519d79f27cc503bc0e6a8a506d4f"
+    },
+    "final_focused_tests": {
+      "path": "reports/simple_gym_cuda_a6000_final_focused_tests_20260827.log",
+      "sha256": "d6b6d00d6d3befc0bd5c6f3b30bc67d8a2074cf0b1820294d2c3fc608692cacc"
+    },
+    "final_full_validation": {
+      "path": "reports/simple_gym_cuda_a6000_final_full_validation_20260827.json",
+      "sha256": "b7b95c004ee82b63fd581b16871859863240583cd4f129191d13baee6be850e0"
+    },
+    "final_throughput": {
+      "path": "reports/simple_gym_cuda_a6000_final_graph_batch128_20260827.json",
+      "sha256": "3870a76222fde9a0a12fd54855d4b613fbf6516ee7c47a9feb9a84f1a60ca1fa"
+    },
+    "final_integrated_route_tests": {
+      "path": "reports/simple_gym_cuda_a6000_final_integrated_route_tests_20260827.log",
+      "sha256": "5d1957e33d4c3efbc8eb70f30626cc46d014088585baf4c57d7db7e25ad23f0b"
+    },
+    "final_integrated_policy_smoke": {
+      "path": "reports/simple_gym_cuda_a6000_final_integrated_policy_smoke_20260827.json",
+      "sha256": "ab2f6b19df512b9c4b1cb583777775978fce5bcadb6eefa9acfbcfcdaaf8d665"
+    }
+  },
+  "acceptance": {
+    "d4_pre_contact_snapshot_cuda_certified": true,
+    "isolated_newer_main_route_cuda_certified": true,
+    "overall_final_promotion_accepted": false,
+    "reason": "movement/contact audit opened subsequent collision and river-jump source changes after d4e9dd95; those later sources require a new exact-tip CUDA recertification"
+  }
+}

@@ -1,0 +1,12 @@
+tested_git_sha d4e9dd9572408f21bfe4d09966a8553b684981ab
+archive_sha256 862317e63f9787bd85e0ca4fb35934612ee43563a130f6d4d60c128c5b33f71e
+provider massedcompute
+pod_id 56acd177de924772b04a8de1d58c9faf
+image ubuntu_22_cuda_12
+hostname 0126-dsm3-sma6-prxmx260003
+kernel Linux 6.8.0-90-generic x86_64 GNU/Linux
+gpu NVIDIA RTX A6000, GPU-232e2d8f-0fc7-3a17-5bb7-638bbf5b209e, 580.126.09, 49140 MiB
+cuda_runtime 12.8
+torch 2.10.0+cu128
+python Python 3.12.14
+uv uv 0.12.6 (x86_64-unknown-linux-gnu)

@@ -1,0 +1,715 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.0.2, pluggy-1.6.0 -- /home/ubuntu/clasher/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/clasher
+configfile: pyproject.toml
+collecting ... collected 60 items
+
+tests/test_torch_simple_ability_runtime.py::test_archer_queen_runtime_ability_is_atomic_visible_and_replayable[cpu] PASSED [  1%]
+tests/test_torch_simple_ability_runtime.py::test_archer_queen_runtime_ability_is_atomic_visible_and_replayable[cuda] FAILED [  3%]
+tests/test_torch_simple_ability_runtime.py::test_standard_setup_compiles_exact_archer_queen_ability_profile PASSED [  5%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_ghost_runtime_reveal_melee_hold_fade_and_public_features[cpu] PASSED [  6%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_ghost_runtime_reveal_melee_hold_fade_and_public_features[cuda] FAILED [  8%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_tesla_runtime_freeze_hide_reveal_targeting_and_reset[cpu] PASSED [ 10%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_tesla_runtime_freeze_hide_reveal_targeting_and_reset[cuda] FAILED [ 11%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_standard_runtime_owns_visibility_catalog_and_admission_plane PASSED [ 13%]
+tests/test_torch_simple_policy_visibility_runtime.py::test_standard_admission_rejects_declared_malformed_visibility_profile PASSED [ 15%]
+tests/test_torch_simple_travel_runtime.py::test_bandit_dash_and_mega_knight_spawn_leap_use_common_runtime[cpu] PASSED [ 16%]
+tests/test_torch_simple_travel_runtime.py::test_bandit_dash_and_mega_knight_spawn_leap_use_common_runtime[cuda] FAILED [ 18%]
+tests/test_torch_simple_travel_runtime.py::test_miner_transport_mirrors_origin_and_scales_crown_damage[cpu] PASSED [ 20%]
+tests/test_torch_simple_travel_runtime.py::test_miner_transport_mirrors_origin_and_scales_crown_damage[cuda] FAILED [ 21%]
+tests/test_torch_simple_travel_runtime.py::test_travel_cancellation_mixed_movers_replay_and_reset[cpu] PASSED [ 23%]
+tests/test_torch_simple_travel_runtime.py::test_travel_cancellation_mixed_movers_replay_and_reset[cuda] FAILED [ 25%]
+tests/test_torch_simple_travel_runtime.py::test_public_target_snapshot_and_travel_capacity_fail_closed PASSED [ 26%]
+tests/test_torch_simple_travel_runtime.py::test_mega_knight_spawn_impact_waits_for_deployment_completion PASSED [ 28%]
+tests/test_torch_simple_travel_runtime.py::test_integrated_travel_hot_path_has_no_card_dispatch_or_host_sync PASSED [ 30%]
+tests/test_torch_simple_triggered_impacts.py::test_live_serialized_trigger_profiles_compile_exactly[cpu] PASSED [ 31%]
+tests/test_torch_simple_triggered_impacts.py::test_live_serialized_trigger_profiles_compile_exactly[cuda] PASSED [ 33%]
+tests/test_torch_simple_triggered_impacts.py::test_fixed_resolution_geometry_effect_and_impulse_adapters[cpu] PASSED [ 35%]
+tests/test_torch_simple_triggered_impacts.py::test_fixed_resolution_geometry_effect_and_impulse_adapters[cuda] FAILED [ 36%]
+tests/test_torch_simple_triggered_impacts.py::test_cpu_replay_is_exact_and_wrong_triggers_or_ids_fail_closed PASSED [ 38%]
+tests/test_torch_simple_triggered_impacts.py::test_duplicate_recognized_mechanic_fails_card_closed PASSED [ 40%]
+tests/test_torch_simple_triggered_impacts.py::test_nested_source_mismatch_and_expansion_overflow_fail_closed PASSED [ 41%]
+tests/test_torch_simple_triggered_impacts.py::test_full_enabled_corpus_has_no_false_malformed_or_duplicate_profiles PASSED [ 43%]
+tests/test_torch_simple_triggered_impacts.py::test_runtime_paths_have_no_host_sync_compaction_or_card_dispatch PASSED [ 45%]
+tests/test_torch_simple_triggered_runtime.py::test_deploy_area_fires_only_on_exact_deploy_crossing[cpu] PASSED [ 46%]
+tests/test_torch_simple_triggered_runtime.py::test_deploy_area_fires_only_on_exact_deploy_crossing[cuda] FAILED [ 48%]
+tests/test_torch_simple_triggered_runtime.py::test_firecracker_recoil_runs_on_committed_attack[cpu] PASSED [ 50%]
+tests/test_torch_simple_triggered_runtime.py::test_firecracker_recoil_runs_on_committed_attack[cuda] FAILED [ 51%]
+tests/test_torch_simple_triggered_runtime.py::test_projectile_impact_adds_push_without_duplicate_damage[cpu] PASSED [ 53%]
+tests/test_torch_simple_triggered_runtime.py::test_projectile_impact_adds_push_without_duplicate_damage[cuda] FAILED [ 55%]
+tests/test_torch_simple_triggered_runtime.py::test_death_secondary_effects_compose_without_double_burst_damage[cpu] PASSED [ 56%]
+tests/test_torch_simple_triggered_runtime.py::test_death_secondary_effects_compose_without_double_burst_damage[cuda] FAILED [ 58%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_runtime_materializes_exact_typed_three_plus_three_action[cpu] PASSED [ 60%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_runtime_materializes_exact_typed_three_plus_three_action[cuda] PASSED [ 61%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_exact_capacity_is_player_ordered_and_rolls_back_whole_action PASSED [ 63%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_one_slot_short_fails_mask_closed_without_transaction_mutation PASSED [ 65%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_mixed_homogeneous_and_atomic_actions_preserve_global_player_order[Archers-GoblinGang-expected_cards0-expected_success0] PASSED [ 66%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_mixed_homogeneous_and_atomic_actions_preserve_global_player_order[GoblinGang-Archers-expected_cards1-expected_success1] PASSED [ 68%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_spawned_ledger_reinitializes_every_entity_bound_plane PASSED [ 70%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_replay_and_reset_reproduce_atomic_runtime_state PASSED [ 71%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_cuda_graph_matches_eager_atomic_runtime_tick PASSED [ 73%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_standard_setup_requires_a_supported_atomic_action_event PASSED [ 75%]
+tests/test_torch_simple_heterogeneous_spawn_runtime.py::test_atomic_action_hot_path_has_no_sync_compaction_or_name_dispatch PASSED [ 76%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_goblin_gang_compiles_two_typed_groups_as_one_private_atomic_event PASSED [ 78%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_goblin_gang_allocation_is_six_member_atomic_and_replay_stable[cpu] PASSED [ 80%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_goblin_gang_allocation_is_six_member_atomic_and_replay_stable[cuda] PASSED [ 81%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_incomplete_secondary_group_fails_closed_without_allocating_primary PASSED [ 83%]
+tests/test_torch_simple_heterogeneous_spawn_blueprints.py::test_heterogeneous_event_ids_and_member_order_ignore_public_root_order PASSED [ 85%]
+tests/test_torch_simple_public_mask.py::test_tensor_mask_matches_free_running_numpy_trace[cpu] PASSED [ 86%]
+tests/test_torch_simple_public_mask.py::test_tensor_mask_matches_free_running_numpy_trace[cuda] PASSED [ 88%]
+tests/test_torch_simple_public_mask.py::test_collector_accepts_semantics_digest_without_mask_domain_leak PASSED [ 90%]
+tests/test_torch_simple_public_mask.py::test_typed_lookup_is_explicit_and_fail_closed PASSED [ 91%]
+tests/test_torch_simple_public_mask.py::test_hot_path_has_no_host_sync_or_privileged_inputs PASSED [ 93%]
+tests/test_torch_simple_public_mask.py::test_provider_is_cuda_graph_capturable_after_table_move PASSED [ 95%]
+tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_rejects_cpu_runtime PASSED [ 96%]
+tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_matches_eager_replays FAILED [ 98%]
+tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_matches_interval_bridge_and_reset FAILED [100%]
+
+=================================== FAILURES ===================================
+___ test_archer_queen_runtime_ability_is_atomic_visible_and_replayable[cuda] ___
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_archer_queen_runtime_ability_is_atomic_visible_and_replayable(
+        device_name: str,
+    ) -> None:
+>       first, ids = _runtime(device_name)
+                     ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_ability_runtime.py:53: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_ability_runtime.py:33: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False,  True, False], device='cuda:0'), malformed=ten...([1.0000, 0.7500, 1.0000], device='cuda:0'), can_activate_while_stunned=tensor([False,  True, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+_____ test_ghost_runtime_reveal_melee_hold_fade_and_public_features[cuda] ______
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_ghost_runtime_reveal_melee_hold_fade_and_public_features(
+        device_name: str,
+    ) -> None:
+>       runtime, ids = _runtime(device_name, left_first="RoyalGhost")
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_policy_visibility_runtime.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_policy_visibility_runtime.py:43: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False], device='cuda:0'), malfor...r([1., 1., 1., 1.], device='cuda:0'), can_activate_while_stunned=tensor([False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+_______ test_tesla_runtime_freeze_hide_reveal_targeting_and_reset[cuda] ________
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_tesla_runtime_freeze_hide_reveal_targeting_and_reset(device_name: str) -> None:
+>       runtime, ids = _runtime(device_name, left_first="Tesla")
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_policy_visibility_runtime.py:132: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_policy_visibility_runtime.py:43: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False], device='cuda:0'), malfor...r([1., 1., 1., 1.], device='cuda:0'), can_activate_while_stunned=tensor([False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+_____ test_bandit_dash_and_mega_knight_spawn_leap_use_common_runtime[cuda] _____
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_bandit_dash_and_mega_knight_spawn_leap_use_common_runtime(
+        device_name: str,
+    ) -> None:
+>       runtime, ids = _runtime(device_name)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_travel_runtime.py:106: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_travel_runtime.py:43: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False, False], device='cuda:0'),...1., 1., 1.], device='cuda:0'), can_activate_while_stunned=tensor([False, False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+______ test_miner_transport_mirrors_origin_and_scales_crown_damage[cuda] _______
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_miner_transport_mirrors_origin_and_scales_crown_damage(
+        device_name: str,
+    ) -> None:
+>       runtime, ids = _runtime(device_name)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_travel_runtime.py:190: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_travel_runtime.py:43: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False, False], device='cuda:0'),...1., 1., 1.], device='cuda:0'), can_activate_while_stunned=tensor([False, False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+_________ test_travel_cancellation_mixed_movers_replay_and_reset[cuda] _________
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_travel_cancellation_mixed_movers_replay_and_reset(device_name: str) -> None:
+>       left, ids = _runtime(device_name)
+                    ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_travel_runtime.py:242: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_travel_runtime.py:43: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False, False], device='cuda:0'),...1., 1., 1.], device='cuda:0'), can_activate_while_stunned=tensor([False, False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+_______ test_fixed_resolution_geometry_effect_and_impulse_adapters[cuda] _______
+
+requested_device = 'cuda'
+
+    @pytest.mark.parametrize("requested_device", ("cpu", "cuda"))
+    def test_fixed_resolution_geometry_effect_and_impulse_adapters(
+        requested_device: str,
+    ) -> None:
+        device = torch.device(_device(requested_device))
+        source, catalog = _catalog(str(device))
+        events = _event_fixture(source, device)
+        preserved = clone_fast_triggered_events(events)
+    
+>       commands = resolve_fast_triggered_impacts(catalog, events)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_triggered_impacts.py:308: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/clasher/torch_sim/simple_triggered_impacts.py:947: in resolve_fast_triggered_impacts
+    batch, event_count = _validate_events(catalog, events)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+catalog = FastTriggeredImpactCatalog(device=device(type='cuda'), supported=tensor([False,  True,  True,  True,  True,  True,  Tr...[ 1,  0],
+        [ 1,  1],
+        [ 1,  0],
+        [ 1,  0],
+        [20,  0]], device='cuda:0', dtype=torch.int32))
+events = FastTriggeredImpactEvents(active=tensor([[True, True, True, True]], device='cuda:0'), card_id=tensor([[ 4,  1, 10,  2]..., 1000]], device='cuda:0', dtype=torch.int32), repeat_count=tensor([[1, 1, 2, 1]], device='cuda:0', dtype=torch.int32))
+
+    def _validate_events(
+        catalog: FastTriggeredImpactCatalog,
+        events: FastTriggeredImpactEvents,
+    ) -> tuple[int, int]:
+        shape = tuple(events.active.shape)
+        if len(shape) != 2:
+            raise ValueError("event tensors must have shape [batch, events]")
+        device = events.active.device
+        if device != catalog.device or events.active.dtype != torch.bool:
+>           raise ValueError("events and catalog must share a device")
+E           ValueError: events and catalog must share a device
+
+src/clasher/torch_sim/simple_triggered_impacts.py:915: ValueError
+__________ test_deploy_area_fires_only_on_exact_deploy_crossing[cuda] __________
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_deploy_area_fires_only_on_exact_deploy_crossing(
+        device_name: str,
+    ) -> None:
+>       runtime, ids = _runtime(device_name)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_triggered_runtime.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_triggered_runtime.py:62: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False, False, False, False, Fals..., False, False, False, False, False, False, False, False, False,
+        False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+____________ test_firecracker_recoil_runs_on_committed_attack[cuda] ____________
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_firecracker_recoil_runs_on_committed_attack(device_name: str) -> None:
+>       runtime, ids = _runtime(device_name)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_triggered_runtime.py:175: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_triggered_runtime.py:62: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False, False, False, False, Fals..., False, False, False, False, False, False, False, False, False,
+        False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+_______ test_projectile_impact_adds_push_without_duplicate_damage[cuda] ________
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_projectile_impact_adds_push_without_duplicate_damage(
+        device_name: str,
+    ) -> None:
+>       runtime, ids = _runtime(device_name)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_triggered_runtime.py:247: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_triggered_runtime.py:62: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False, False, False, False, Fals..., False, False, False, False, False, False, False, False, False,
+        False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+____ test_death_secondary_effects_compose_without_double_burst_damage[cuda] ____
+
+device_name = 'cuda'
+
+    @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+    def test_death_secondary_effects_compose_without_double_burst_damage(
+        device_name: str,
+    ) -> None:
+>       runtime, ids = _runtime(device_name)
+                       ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_triggered_runtime.py:287: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_torch_simple_triggered_runtime.py:62: in _runtime
+    runtime = setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0], device='cuda:0'), game_over=tensor([False], device=...icks=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+       device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...False, False, False, False, False]],
+       device='cuda:0'), newest_owner_stable_id=tensor([[0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False, False, False, False, Fals..., False, False, False, False, False, False, False, False, False,
+        False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+_________________ test_cuda_graph_runner_matches_eager_replays _________________
+
+    @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
+    def test_cuda_graph_runner_matches_eager_replays() -> None:
+        decks = supported_simple_decks(
+            [list(deck) for deck in load_deck_pool("decks.json")],
+            device="cuda",
+        )
+        kwargs: Any = {
+            "seed": 202_608_264,
+            "decks": decks,
+            "batch_size": 2,
+            "device": "cuda",
+            "max_entities": 32,
+            "max_effects": 32,
+            "regulation_ticks": STANDARD_REGULATION_TICK,
+            "tiebreak_ticks": STANDARD_TIEBREAK_TICK,
+            "supported_only": True,
+        }
+>       runtime = build_simple_runtime(**kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_cuda_graph.py:89: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/validate_simple_full_matches.py:123: in build_simple_runtime
+    return setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0, 0], device='cuda:0'), game_over=tensor([False, False...0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0]], device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...e,
+         False, False]], device='cuda:0'), newest_owner_stable_id=tensor([[0, 0],
+        [0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False, False, False, False, Fals..., False, False, False, False, False, False,
+        False, False, False, False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+___________ test_cuda_graph_runner_matches_interval_bridge_and_reset ___________
+
+    @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
+    def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
+        decks = supported_simple_decks(
+            [list(deck) for deck in load_deck_pool("decks.json")],
+            device="cuda",
+        )
+        kwargs: Any = {
+            "seed": 202_608_265,
+            "decks": decks,
+            "batch_size": 2,
+            "device": "cuda",
+            "max_entities": 32,
+            "max_effects": 32,
+            "regulation_ticks": STANDARD_REGULATION_TICK,
+            "tiebreak_ticks": STANDARD_TIEBREAK_TICK,
+            "supported_only": True,
+        }
+>       runtime = build_simple_runtime(**kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_torch_simple_cuda_graph.py:166: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/validate_simple_full_matches.py:123: in build_simple_runtime
+    return setup.create_runtime(
+src/clasher/torch_sim/simple_standard.py:240: in create_runtime
+    return SimpleGymRuntime(
+src/clasher/torch_sim/simple_runtime.py:601: in __init__
+    self._refresh_policy_state()
+src/clasher/torch_sim/simple_runtime.py:860: in _refresh_policy_state
+    ability = self._ability_player_view()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/clasher/torch_sim/simple_runtime.py:844: in _ability_player_view
+    return fast_ability_player_view(
+src/clasher/torch_sim/simple_abilities.py:545: in fast_ability_player_view
+    refresh_fast_abilities_(state, abilities, catalog)
+src/clasher/torch_sim/simple_abilities.py:422: in refresh_fast_abilities_
+    _validate_runtime(state, abilities, catalog)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+state = FastGymState(device=device(type='cuda', index=0), tick=tensor([0, 0], device='cuda:0'), game_over=tensor([False, False...0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0]], device='cuda:0', dtype=torch.int32))
+abilities = FastAbilityState(device=device(type='cuda', index=0), bound_stable_id=tensor([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...e,
+         False, False]], device='cuda:0'), newest_owner_stable_id=tensor([[0, 0],
+        [0, 0]], device='cuda:0'))
+catalog = FastAbilityCatalog(device=device(type='cuda'), supported=tensor([False, False, False, False, False, False, False, Fals..., False, False, False, False, False, False,
+        False, False, False, False, False, False, False], device='cuda:0'))
+
+    def _validate_runtime(
+        state: FastGymState,
+        abilities: FastAbilityState,
+        catalog: FastAbilityCatalog,
+    ) -> None:
+        entity_shape = state.active.shape
+        if abilities.device != state.device or catalog.device != state.device:
+>           raise ValueError("Gym state, ability state, and catalog must share a device")
+E           ValueError: Gym state, ability state, and catalog must share a device
+
+src/clasher/torch_sim/simple_abilities.py:375: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_torch_simple_ability_runtime.py::test_archer_queen_runtime_ability_is_atomic_visible_and_replayable[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_policy_visibility_runtime.py::test_ghost_runtime_reveal_melee_hold_fade_and_public_features[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_policy_visibility_runtime.py::test_tesla_runtime_freeze_hide_reveal_targeting_and_reset[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_travel_runtime.py::test_bandit_dash_and_mega_knight_spawn_leap_use_common_runtime[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_travel_runtime.py::test_miner_transport_mirrors_origin_and_scales_crown_damage[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_travel_runtime.py::test_travel_cancellation_mixed_movers_replay_and_reset[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_triggered_impacts.py::test_fixed_resolution_geometry_effect_and_impulse_adapters[cuda] - ValueError: events and catalog must share a device
+FAILED tests/test_torch_simple_triggered_runtime.py::test_deploy_area_fires_only_on_exact_deploy_crossing[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_triggered_runtime.py::test_firecracker_recoil_runs_on_committed_attack[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_triggered_runtime.py::test_projectile_impact_adds_push_without_duplicate_damage[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_triggered_runtime.py::test_death_secondary_effects_compose_without_double_burst_damage[cuda] - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_matches_eager_replays - ValueError: Gym state, ability state, and catalog must share a device
+FAILED tests/test_torch_simple_cuda_graph.py::test_cuda_graph_runner_matches_interval_bridge_and_reset - ValueError: Gym state, ability state, and catalog must share a device
+======================== 13 failed, 47 passed in 27.01s ========================

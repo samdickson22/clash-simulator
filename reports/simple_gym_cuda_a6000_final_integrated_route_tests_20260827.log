@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.0.2, pluggy-1.6.0 -- /home/ubuntu/clasher-main-integrated-final-0ddaaaa6/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/clasher-main-integrated-final-0ddaaaa6
+configfile: pyproject.toml
+collecting ... collected 15 items
+
+tests/test_torch_simple_public_mask.py::test_tensor_mask_matches_free_running_numpy_trace[cpu] PASSED [  6%]
+tests/test_torch_simple_public_mask.py::test_tensor_mask_matches_free_running_numpy_trace[cuda] PASSED [ 13%]
+tests/test_torch_simple_public_mask.py::test_collector_accepts_semantics_digest_without_mask_domain_leak PASSED [ 20%]
+tests/test_torch_simple_public_mask.py::test_typed_lookup_is_explicit_and_fail_closed PASSED [ 26%]
+tests/test_torch_simple_public_mask.py::test_ability_uses_only_actor_visible_typed_state_and_fails_closed[cpu] PASSED [ 33%]
+tests/test_torch_simple_public_mask.py::test_ability_uses_only_actor_visible_typed_state_and_fails_closed[cuda] PASSED [ 40%]
+tests/test_torch_simple_public_mask.py::test_ability_bit_matches_authoritative_runtime_trace[cpu] PASSED [ 46%]
+tests/test_torch_simple_public_mask.py::test_ability_bit_matches_authoritative_runtime_trace[cuda] PASSED [ 53%]
+tests/test_torch_simple_public_mask.py::test_hot_path_has_no_host_sync_or_privileged_inputs PASSED [ 60%]
+tests/test_torch_simple_public_mask.py::test_provider_is_cuda_graph_capturable_after_table_move PASSED [ 66%]
+tests/test_rl_simple_pytorch_backend.py::test_simple_backend_contract_and_typed_variants_fail_closed PASSED [ 73%]
+tests/test_rl_simple_pytorch_backend.py::test_one_decision_collects_existing_ppo_rollout_shape PASSED [ 80%]
+tests/test_rl_simple_pytorch_backend.py::test_route_uses_committed_actor_v2_mask_authority[cpu] PASSED [ 86%]
+tests/test_rl_simple_pytorch_backend.py::test_route_uses_committed_actor_v2_mask_authority[cuda] PASSED [ 93%]
+tests/test_rl_simple_pytorch_backend.py::test_integrated_actor_v2_mask_exposes_archer_queen_ability PASSED [100%]
+
+============================= 15 passed in 51.65s ==============================

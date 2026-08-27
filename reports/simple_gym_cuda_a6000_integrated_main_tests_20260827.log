@@ -1,0 +1,26 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.0.2, pluggy-1.6.0 -- /home/ubuntu/clasher-main-integrated-1f9d32bb/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/clasher-main-integrated-1f9d32bb
+configfile: pyproject.toml
+collecting ... collected 17 items
+
+tests/test_rl_simple_pytorch_backend.py::test_simple_backend_contract_and_typed_variants_fail_closed PASSED [  5%]
+tests/test_rl_simple_pytorch_backend.py::test_one_decision_collects_existing_ppo_rollout_shape PASSED [ 11%]
+tests/test_rl_simple_pytorch_backend.py::test_tensor_public_mask_matches_authoritative_trace[cpu] PASSED [ 17%]
+tests/test_rl_simple_pytorch_backend.py::test_tensor_public_mask_matches_authoritative_trace[cuda] PASSED [ 23%]
+tests/test_rl_simple_tensor_collector.py::test_deterministic_mixed_done_reset_stays_device_resident[cpu] PASSED [ 29%]
+tests/test_rl_simple_tensor_collector.py::test_deterministic_mixed_done_reset_stays_device_resident[cuda] PASSED [ 35%]
+tests/test_rl_simple_tensor_collector.py::test_collector_snapshots_reused_graph_style_observation_buffers PASSED [ 41%]
+tests/test_rl_simple_tensor_collector.py::test_v1_public_mask_fails_before_runtime_mutation PASSED [ 47%]
+tests/test_rl_simple_tensor_collector.py::test_collector_rejects_noncommitted_transition PASSED [ 52%]
+tests/test_rl_simple_tensor_collector.py::test_collector_requires_objective_reward_contract PASSED [ 58%]
+tests/test_rl_simple_tensor_collector.py::test_production_collect_loop_has_no_explicit_host_tensor_sync PASSED [ 64%]
+tests/test_torch_simple_public_mask.py::test_tensor_mask_matches_free_running_numpy_trace[cpu] PASSED [ 70%]
+tests/test_torch_simple_public_mask.py::test_tensor_mask_matches_free_running_numpy_trace[cuda] PASSED [ 76%]
+tests/test_torch_simple_public_mask.py::test_collector_accepts_semantics_digest_without_mask_domain_leak PASSED [ 82%]
+tests/test_torch_simple_public_mask.py::test_typed_lookup_is_explicit_and_fail_closed PASSED [ 88%]
+tests/test_torch_simple_public_mask.py::test_hot_path_has_no_host_sync_or_privileged_inputs PASSED [ 94%]
+tests/test_torch_simple_public_mask.py::test_provider_is_cuda_graph_capturable_after_table_move PASSED [100%]
+
+============================= 17 passed in 20.31s ==============================

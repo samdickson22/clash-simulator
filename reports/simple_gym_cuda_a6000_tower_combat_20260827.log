@@ -1,0 +1,29 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.0.2, pluggy-1.6.0 -- /home/ubuntu/clasher-tower-191e84e1/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/ubuntu/clasher-tower-191e84e1
+configfile: pyproject.toml
+collecting ... collected 20 items
+
+tests/test_torch_simple_tower_combat.py::test_standard_princess_projectile_first_hit_damage_cadence_and_mirror[cpu] PASSED [  5%]
+tests/test_torch_simple_tower_combat.py::test_standard_princess_projectile_first_hit_damage_cadence_and_mirror[cuda] PASSED [ 10%]
+tests/test_torch_simple_tower_combat.py::test_numeric_tower_profile_supports_serialized_direct_hit[cpu] PASSED [ 15%]
+tests/test_torch_simple_tower_combat.py::test_numeric_tower_profile_supports_serialized_direct_hit[cuda] PASSED [ 20%]
+tests/test_torch_simple_tower_combat.py::test_tower_hit_uses_common_shield_interception[cpu] PASSED [ 25%]
+tests/test_torch_simple_tower_combat.py::test_tower_hit_uses_common_shield_interception[cuda] PASSED [ 30%]
+tests/test_torch_simple_tower_combat.py::test_king_is_inactive_then_latches_owner_local_activation[cpu-king-chip] PASSED [ 35%]
+tests/test_torch_simple_tower_combat.py::test_king_is_inactive_then_latches_owner_local_activation[cpu-princess-death] PASSED [ 40%]
+tests/test_torch_simple_tower_combat.py::test_king_is_inactive_then_latches_owner_local_activation[cuda-king-chip] PASSED [ 45%]
+tests/test_torch_simple_tower_combat.py::test_king_is_inactive_then_latches_owner_local_activation[cuda-princess-death] PASSED [ 50%]
+tests/test_torch_simple_tower_combat.py::test_tower_lock_survives_new_closer_target_and_capacity_rejection_rolls_back[cpu] PASSED [ 55%]
+tests/test_torch_simple_tower_combat.py::test_tower_lock_survives_new_closer_target_and_capacity_rejection_rolls_back[cuda] PASSED [ 60%]
+tests/test_torch_simple_tower_combat.py::test_committed_tower_projectile_obeys_common_receivability_gate[cpu-hidden] PASSED [ 65%]
+tests/test_torch_simple_tower_combat.py::test_committed_tower_projectile_obeys_common_receivability_gate[cpu-travel-immune] PASSED [ 70%]
+tests/test_torch_simple_tower_combat.py::test_committed_tower_projectile_obeys_common_receivability_gate[cuda-hidden] PASSED [ 75%]
+tests/test_torch_simple_tower_combat.py::test_committed_tower_projectile_obeys_common_receivability_gate[cuda-travel-immune] PASSED [ 80%]
+tests/test_torch_simple_tower_combat.py::test_tower_combat_replay_and_selective_reset[cpu] PASSED [ 85%]
+tests/test_torch_simple_tower_combat.py::test_tower_combat_replay_and_selective_reset[cuda] PASSED [ 90%]
+tests/test_torch_simple_tower_combat.py::test_tower_combat_cuda_graph_matches_eager PASSED [ 95%]
+tests/test_torch_simple_tower_combat.py::test_tower_numeric_effect_hot_path_has_no_host_round_trip PASSED [100%]
+
+============================= 20 passed in 45.72s ==============================

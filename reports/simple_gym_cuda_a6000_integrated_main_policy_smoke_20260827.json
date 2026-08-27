@@ -1,0 +1,144 @@
+{
+  "acceptance": {
+    "all_committed": true,
+    "all_native": true,
+    "all_rows_admitted": true,
+    "metadata_preserved": true,
+    "public_mask_v2_selected_actions_legal": true,
+    "real_494_token_clasher_policy": true,
+    "recurrent_outputs_present": true,
+    "zero_fallback": true
+  },
+  "checkpoint_metadata": {
+    "actor_semantics_id": "typed-public-structured-canonical-v1",
+    "backend_id": "simple-pytorch-gym-v1",
+    "canonical_lane_globals": true,
+    "fresh_only": true,
+    "metadata_digest": "b057b2169829618fdbe8a7af0eb18938e3e8a08da83e50f59ab91b071d704f65",
+    "public_action_mask_contract_version": 2,
+    "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+    "reward_contract_id": "objective-v1-gamma-v1",
+    "reward_contract_metadata": {
+      "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+      "reward_contract_id": "objective-v1-gamma-v1",
+      "reward_contract_spec": {
+        "contract_id": "objective-v1-gamma-v1",
+        "crown_weight": 0.55,
+        "early_king_chip_penalty_weight": 0.2,
+        "elixir_leak_penalty_scale": 0.0,
+        "evaluation_boundary": "policy-decision",
+        "gamma": 0.995,
+        "invalid_action_penalty": 0.0,
+        "king_activation_inference": "live-king-and-hp-below-initial-or-princess-destroyed-v1",
+        "king_pressure_weight": 0.1,
+        "potential_clip": 1.5,
+        "princess_pressure_weight": 0.25,
+        "schema_version": 1,
+        "terminal_potential": "absorbing-zero",
+        "terminal_weight": 1.0,
+        "tiebreak_edge_weight": 0.1,
+        "tiebreak_fixed_point_scale": 1000,
+        "zero_sum": true
+      }
+    },
+    "standard_tiebreak_tick": 6000,
+    "support_profile_sha256": "9e8dbfe1edf10835bd2138f237dcc917b65dc1f44f39bc26ff221da4d6aaefab",
+    "supported_decks_sha256": "c93de9989841743b535fe5fde182abe19e1983c8f67a0a27d0c191ea9ccd212f",
+    "typed_vocabulary_sha256": "960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704"
+  },
+  "collector_metadata": {
+    "actor_semantics_id": "typed-public-structured-canonical-v1",
+    "admission_validation": "device-async-after-rollout",
+    "backend_id": "simple-pytorch-gym-v1",
+    "decision_interval": 2,
+    "public_action_mask_contract_version": 2,
+    "public_action_mask_semantics": {
+      "authority": "PublicActionMaskBuilder trace-equivalent",
+      "canonical_lane_globals": true,
+      "contract_version": 2,
+      "inputs": "projected-public-actor-only",
+      "schema": "clasher.simple-pytorch.tensor-public-mask-v2.v1",
+      "token_names_sha256": "bac00626d446be056d5985957b0bd91d64938aba71d8cfa232453f9be816b930",
+      "uses_expert_labels": false,
+      "uses_privileged_critic": false,
+      "uses_simulator_legal_mask": false
+    },
+    "public_action_mask_semantics_digest": "a7f406dbf58c8429c884e82a00c64cd9dd4fbdfd4de5349bfaa65fe955cc7dc4",
+    "public_action_mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v1",
+    "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+    "reward_contract_id": "objective-v1-gamma-v1",
+    "reward_contract_metadata": {
+      "reward_contract_digest": "ef3914ce85d8c820cd02cef18de4dbe52460c7ddee70cfd615ef7538a8d50d66",
+      "reward_contract_id": "objective-v1-gamma-v1",
+      "reward_contract_spec": {
+        "contract_id": "objective-v1-gamma-v1",
+        "crown_weight": 0.55,
+        "early_king_chip_penalty_weight": 0.2,
+        "elixir_leak_penalty_scale": 0.0,
+        "evaluation_boundary": "policy-decision",
+        "gamma": 0.995,
+        "invalid_action_penalty": 0.0,
+        "king_activation_inference": "live-king-and-hp-below-initial-or-princess-destroyed-v1",
+        "king_pressure_weight": 0.1,
+        "potential_clip": 1.5,
+        "princess_pressure_weight": 0.25,
+        "schema_version": 1,
+        "terminal_potential": "absorbing-zero",
+        "terminal_weight": 1.0,
+        "tiebreak_edge_weight": 0.1,
+        "tiebreak_fixed_point_scale": 1000,
+        "zero_sum": true
+      }
+    },
+    "schema_version": 1,
+    "simulator_action_mask_profile": "simulator_exact_legal_v1"
+  },
+  "decision": {
+    "actions": [
+      [
+        [
+          49,
+          1991
+        ]
+      ]
+    ],
+    "all_committed": true,
+    "all_rows_admitted": true,
+    "batch_size": 1,
+    "fallback_rows": 0,
+    "native_ticks": [
+      [
+        2
+      ]
+    ],
+    "policy_storage_keys": [
+      "log_prob",
+      "value"
+    ],
+    "recurrent_bootstrap_cell_shape": [
+      1,
+      2,
+      32
+    ],
+    "recurrent_bootstrap_hidden_shape": [
+      1,
+      2,
+      32
+    ],
+    "seats": 2,
+    "selected_actions_public_legal": true,
+    "steps": 1
+  },
+  "device": "cuda",
+  "gpu": "NVIDIA RTX A6000",
+  "policy": {
+    "class": "ClasherPolicy",
+    "memory_size": 32,
+    "num_actions": 2306,
+    "parameter_count": 119095,
+    "typed_actor_tokens": 494
+  },
+  "schema_version": 1,
+  "tested_git_sha": "1f9d32bb4a062c0703c7c85e50fd477037129fc1",
+  "torch": "2.10.0+cu128"
+}
