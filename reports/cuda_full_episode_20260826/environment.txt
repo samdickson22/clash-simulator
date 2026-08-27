@@ -1,0 +1,13 @@
+source_commit=5a8cc34ecdb6b58fd63abb2c3c2d89111fca8c4b
+Linux 0139-ict-prxmx50136 6.8.0-90-generic #91~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Nov 20 15:20:45 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+NVIDIA RTX A6000, GPU-25003a06-81e2-4e16-def9-5ac8da08480d, 580.126.09, 49140 MiB
+uv 0.12.6 (x86_64-unknown-linux-gnu)
+3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]
+2.10.0+cu128
+12.8
+True
+NVIDIA RTX A6000
+10ed5fb058cabaca72fdc514311dccb6cdda242dfeb9f4187659c530c77f5621  uv.lock
+d032869aa5c1b4808f933a81cfbf4de9dd8b348d67d02ebd163d4946a86b7f4e  pyproject.toml
+c93de9989841743b535fe5fde182abe19e1983c8f67a0a27d0c191ea9ccd212f  training_decks/simple_gym_supported_v1.json
+14fc6d678e6e7ee8df3c89013d83b0463821b70bb8664fad6bbc85c37d629a39  scripts/validate_simple_full_matches.py

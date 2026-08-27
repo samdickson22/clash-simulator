@@ -1,0 +1,57 @@
+{
+  "acceptance": {
+    "all_row_ticks_native": true,
+    "all_rows_committed": true,
+    "deterministic_replay": true,
+    "noop_regulation_ot_tiebreak": true,
+    "python_parity_evaluated": false,
+    "terminal_boundary_reached": true,
+    "zero_fallback": true
+  },
+  "device": "cuda",
+  "engine": "SimpleGymRuntime",
+  "episodes": [
+    {
+      "committed_rows": 6000,
+      "cumulative_rewards": [
+        0.0,
+        0.0
+      ],
+      "digest": "0e1b4d056b8de9b2d0a82480e7cd2424a13b882a47486b89253f7aab3630b96c",
+      "done": true,
+      "entered_overtime": true,
+      "final_tick": 6000,
+      "native_ticks": 6000,
+      "policy": "noop",
+      "row_ticks": 6000,
+      "seed": 202608263,
+      "terminal_reason": "tiebreak",
+      "winner": -1
+    },
+    {
+      "committed_rows": 909,
+      "cumulative_rewards": [
+        -1.6137444720370695,
+        1.6137444720370695
+      ],
+      "digest": "c699977f76b9feb278b3f4768d5b92232d16008723bef977e8877aaa7034058d",
+      "done": true,
+      "entered_overtime": false,
+      "final_tick": 909,
+      "native_ticks": 909,
+      "policy": "first-legal",
+      "row_ticks": 909,
+      "seed": 202608263,
+      "terminal_reason": "regulation_crown",
+      "winner": 1
+    }
+  ],
+  "execution_mode": "cuda-graph",
+  "replays": 2,
+  "schema_version": 1,
+  "timeline": {
+    "exact_3600_6000": true,
+    "regulation_ticks": 3600,
+    "tiebreak_ticks": 6000
+  }
+}
