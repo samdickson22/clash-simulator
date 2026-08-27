@@ -8,7 +8,7 @@ from clasher.rl.common import BOARD_WIDTH
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.simple_catalog import FastCardCatalog
-from clasher.torch_sim.simple_effects import FAST_EFFECT_AREA
+from clasher.torch_sim.simple_effects import FAST_EFFECT_AREA, FAST_STATUS_STUN
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 
@@ -43,9 +43,7 @@ def _runtime(
         damage=torch.zeros((2, 3), device=device),
         range_units=torch.full((2, 3), 7_500, device=device),
         sight_range_units=torch.full((2, 3), 9_500, device=device),
-        hit_cooldown_ticks=torch.full(
-            (2, 3), 16, dtype=torch.int32, device=device
-        ),
+        hit_cooldown_ticks=torch.full((2, 3), 16, dtype=torch.int32, device=device),
     )
     entity_lookup = torch.arange(
         2 * catalog.size, dtype=torch.int64, device=device
@@ -85,9 +83,7 @@ def test_runtime_cannon_expires_on_catalog_lifetime_and_reopens_capacity(
     assert int(runtime.lifecycle.lifetime_ticks[0, 6]) == 599
     assert not runtime.observe().legal_mask[:, :, :NO_OP_ACTION].any()
 
-    noop = torch.full(
-        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device
-    )
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
     for _ in range(598):
         runtime.step_tick(noop)
     assert bool(runtime.state.active[0, 6])
@@ -118,6 +114,7 @@ def test_runtime_resolvable_death_spawn_uses_child_catalog_and_clears_status(
     parent_slot = 6
     runtime.entity_status_kind[0, parent_slot] = 1
     runtime.entity_status_ticks[0, parent_slot] = 8
+    runtime.entity_status_kind[0, parent_slot] = FAST_STATUS_STUN
     runtime.effects.active[0, 0] = True
     runtime.effects.kind[0, 0] = FAST_EFFECT_AREA
     runtime.effects.source_owner[0, 0] = 1
@@ -126,9 +123,7 @@ def test_runtime_resolvable_death_spawn_uses_child_catalog_and_clears_status(
     runtime.effects.damage[0, 0] = runtime.state.hp[0, parent_slot]
     runtime.effects.radius_units[0, 0] = 1
     runtime.effects.lifetime_ticks[0, 0] = 1
-    noop = torch.full(
-        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device
-    )
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
     result = runtime.step_tick(noop)
 
     assert bool(result.effects.impacted[0, 0])

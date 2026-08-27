@@ -7,6 +7,7 @@ catalog tensors and never branches on card names or runtime Python classes.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import torch
 
@@ -101,6 +102,8 @@ class FastCardCatalog:
     building_damage_multiplier: torch.Tensor
     status_kind: torch.Tensor
     status_duration_ticks: torch.Tensor
+    slow_movement_multiplier: torch.Tensor
+    slow_attack_multiplier: torch.Tensor
     effect_duration_ticks: torch.Tensor
     damage_interval_ticks: torch.Tensor
     initial_damage_delay_ticks: torch.Tensor
@@ -182,15 +185,9 @@ class FastCardCatalog:
         damage_ramp_stage_2_ticks = torch.zeros_like(
             catalog.range_units, dtype=torch.int32
         )
-        damage_ramp_stage_0 = torch.zeros_like(
-            catalog.hitpoints, dtype=torch.float32
-        )
-        damage_ramp_stage_1 = torch.zeros_like(
-            catalog.hitpoints, dtype=torch.float32
-        )
-        damage_ramp_stage_2 = torch.zeros_like(
-            catalog.hitpoints, dtype=torch.float32
-        )
+        damage_ramp_stage_0 = torch.zeros_like(catalog.hitpoints, dtype=torch.float32)
+        damage_ramp_stage_1 = torch.zeros_like(catalog.hitpoints, dtype=torch.float32)
+        damage_ramp_stage_2 = torch.zeros_like(catalog.hitpoints, dtype=torch.float32)
         damage_ramp_retarget_grace_ticks = torch.zeros_like(
             catalog.range_units, dtype=torch.int32
         )
@@ -264,6 +261,8 @@ class FastCardCatalog:
         building_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
         status_kind = torch.full_like(catalog.kind, FAST_STATUS_NONE, dtype=torch.int8)
         status_ticks = torch.zeros_like(catalog.range_units)
+        slow_movement_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
+        slow_attack_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
         effect_duration_ticks = torch.ones_like(catalog.range_units)
         damage_interval_ticks = torch.ones_like(catalog.range_units)
         initial_damage_delay_ticks = torch.zeros_like(catalog.range_units)
@@ -275,6 +274,27 @@ class FastCardCatalog:
         omits_displacement = torch.zeros_like(catalog.kind, dtype=torch.bool)
         omits_recoil = torch.zeros_like(catalog.kind, dtype=torch.bool)
         consume_source = torch.zeros_like(catalog.kind, dtype=torch.bool)
+
+        def compile_status_buff_(
+            card_id: int,
+            buff: dict[str, Any],
+            duration_ms: int,
+        ) -> None:
+            """Compile serialized negative movement/attack axes without names."""
+
+            movement_percent = float(buff.get("speedMultiplier", 0) or 0)
+            attack_percent = float(buff.get("hitSpeedMultiplier", 0) or 0)
+            has_slow = duration_ms > 0 and (movement_percent < 0 or attack_percent < 0)
+            if not has_slow:
+                return
+            freezes_actions = movement_percent <= -100 and attack_percent <= -100
+            status_kind[card_id] = (
+                FAST_STATUS_STUN if freezes_actions else FAST_STATUS_SLOW
+            )
+            status_ticks[card_id] = (duration_ms + 49) // 50
+            slow_movement_multiplier[card_id] = max(0.0, 1.0 + movement_percent / 100.0)
+            slow_attack_multiplier[card_id] = max(0.0, 1.0 + attack_percent / 100.0)
+
         attacks_air = catalog.attacks_air.to(torch.bool).clone()
         attacks_ground = catalog.attacks_ground.to(torch.bool).clone()
         serialized_spell = catalog.kind == int(CardKindOpcode.SPELL)
@@ -291,9 +311,9 @@ class FastCardCatalog:
             dim=1
         )
         damage_ramp_opcode = int(MECHANIC_OPCODE["DamageRamp"])
-        declares_damage_ramp = (
-            catalog.mechanic_opcode == damage_ramp_opcode
-        ).any(dim=1)
+        declares_damage_ramp = (catalog.mechanic_opcode == damage_ramp_opcode).any(
+            dim=1
+        )
 
         # ProjectileLaunch is itself a serialized primitive, so spell cards
         # can remain useful even when the optional source-data loader is not
@@ -420,12 +440,8 @@ class FastCardCatalog:
                         )
                         if valid_ramp:
                             damage_ramp_enabled[card_id] = True
-                            damage_ramp_stage_1_ticks[card_id] = (
-                                times[1] + 49
-                            ) // 50
-                            damage_ramp_stage_2_ticks[card_id] = (
-                                times[2] + 49
-                            ) // 50
+                            damage_ramp_stage_1_ticks[card_id] = (times[1] + 49) // 50
+                            damage_ramp_stage_2_ticks[card_id] = (times[2] + 49) // 50
                             damage_ramp_stage_0[card_id] = scaled[0]
                             damage_ramp_stage_1[card_id] = scaled[1]
                             damage_ramp_stage_2[card_id] = scaled[2]
@@ -463,12 +479,8 @@ class FastCardCatalog:
                 if rolling_projectile and int(catalog.kind[card_id]) == int(
                     CardKindOpcode.SPELL
                 ):
-                    rolling_target = str(
-                        rolling_projectile.get("tidTarget", "") or ""
-                    )
-                    rolling_raw_damage = int(
-                        rolling_projectile.get("damage", 0) or 0
-                    )
+                    rolling_target = str(rolling_projectile.get("tidTarget", "") or "")
+                    rolling_raw_damage = int(rolling_projectile.get("damage", 0) or 0)
                     rolling_scaled_damage = float(
                         card.get_scaled_stat(rolling_raw_damage) or 0.0
                     )
@@ -482,9 +494,7 @@ class FastCardCatalog:
                         )
                         or 0
                     )
-                    rolling_child_speed = int(
-                        rolling_projectile.get("speed", 0) or 0
-                    )
+                    rolling_child_speed = int(rolling_projectile.get("speed", 0) or 0)
                     rolling_shape = (
                         rolling_scaled_damage > 0.0
                         and rolling_range > 0
@@ -506,10 +516,7 @@ class FastCardCatalog:
                             rolling_projectile.get("pushback", 0) or 0
                         )
                         crown_percent = float(
-                            rolling_projectile.get(
-                                "crownTowerDamagePercent", 0
-                            )
-                            or 0
+                            rolling_projectile.get("crownTowerDamagePercent", 0) or 0
                         )
                         rolling_tower_multiplier[card_id] = max(
                             0.0, 1.0 + crown_percent / 100.0
@@ -551,15 +558,7 @@ class FastCardCatalog:
                         chain_hop_radius_units[card_id] = serialized_chain_radius
                     projectile_buff = projectile.get("targetBuffData") or {}
                     projectile_buff_ms = int(projectile.get("buffTime", 0) or 0)
-                    if (
-                        projectile_buff_ms > 0
-                        and float(projectile_buff.get("speedMultiplier", 0) or 0)
-                        <= -100
-                        and float(projectile_buff.get("hitSpeedMultiplier", 0) or 0)
-                        <= -100
-                    ):
-                        status_kind[card_id] = FAST_STATUS_STUN
-                        status_ticks[card_id] = (projectile_buff_ms + 49) // 50
+                    compile_status_buff_(card_id, projectile_buff, projectile_buff_ms)
 
                     # A projectile can serialize a second projectile payload
                     # emitted at its impact point. Compile that payload as one
@@ -659,13 +658,7 @@ class FastCardCatalog:
                 # correct without adding an Electro-Wizard-specific branch.
                 on_hit_buff = character.get("buffOnDamageData") or {}
                 on_hit_buff_ms = int(character.get("buffOnDamageTime", 0) or 0)
-                if (
-                    on_hit_buff_ms > 0
-                    and float(on_hit_buff.get("speedMultiplier", 0) or 0) <= -100
-                    and float(on_hit_buff.get("hitSpeedMultiplier", 0) or 0) <= -100
-                ):
-                    status_kind[card_id] = FAST_STATUS_STUN
-                    status_ticks[card_id] = (on_hit_buff_ms + 49) // 50
+                compile_status_buff_(card_id, on_hit_buff, on_hit_buff_ms)
                 if (
                     spell_projectile_data
                     and int(catalog.kind[card_id]) == int(CardKindOpcode.SPELL)
@@ -697,14 +690,11 @@ class FastCardCatalog:
                     )
                     tower_multiplier[card_id] = max(0.0, 1.0 + crown_percent / 100.0)
                     buff = spell_projectile_data.get("targetBuffData") or {}
-                    if (
-                        float(buff.get("speedMultiplier", 0) or 0) <= -100
-                        and int(spell_projectile_data.get("buffTime", 0) or 0) > 0
-                    ):
-                        status_kind[card_id] = FAST_STATUS_STUN
-                        status_ticks[card_id] = (
-                            int(spell_projectile_data["buffTime"]) + 49
-                        ) // 50
+                    compile_status_buff_(
+                        card_id,
+                        buff,
+                        int(spell_projectile_data.get("buffTime", 0) or 0),
+                    )
 
                 # Compile center-targeted spell areas from their normalized
                 # serialized payload. Complex spawn/action groups remain
@@ -761,8 +751,13 @@ class FastCardCatalog:
                         speed_percent = float(buff.get("speedMultiplier", 0) or 0)
                         buff_ms = int(area_data.get("buffTime", 0) or 0)
                         effect_interval_ms = int(area_data.get("hitSpeed", 50) or 50)
-                        has_status = speed_percent < 0 and buff_ms > 0
-                        freeze_snapshot = speed_percent <= -100
+                        attack_percent = float(buff.get("hitSpeedMultiplier", 0) or 0)
+                        has_status = (
+                            speed_percent < 0 or attack_percent < 0
+                        ) and buff_ms > 0
+                        freeze_snapshot = (
+                            speed_percent <= -100 and attack_percent <= -100
+                        )
                         effect_kind[card_id] = FAST_CARD_EFFECT_AREA
                         effect_damage[card_id] = damage_per_hit
                         effect_radius_units[card_id] = int(
@@ -777,14 +772,7 @@ class FastCardCatalog:
                         initial_damage_delay_ticks[card_id] = max(0, delay - 1)
                         damage_on_spawn_table[card_id] = damage_on_spawn
                         max_damage_hits[card_id] = hits
-                        status_kind[card_id] = (
-                            FAST_STATUS_STUN
-                            if freeze_snapshot
-                            else (FAST_STATUS_SLOW if has_status else FAST_STATUS_NONE)
-                        )
-                        status_ticks[card_id] = (
-                            max(1, (buff_ms + 49) // 50) if has_status else 0
-                        )
+                        compile_status_buff_(card_id, buff, buff_ms)
                         status_interval_ticks[card_id] = max(
                             1, (effect_interval_ms + 49) // 50
                         )
@@ -973,9 +961,7 @@ class FastCardCatalog:
             damage_ramp_stage_0_multiplier=damage_ramp_stage_0_multiplier,
             damage_ramp_stage_1_multiplier=damage_ramp_stage_1_multiplier,
             damage_ramp_stage_2_multiplier=damage_ramp_stage_2_multiplier,
-            damage_ramp_retarget_grace_ticks=(
-                damage_ramp_retarget_grace_ticks
-            ),
+            damage_ramp_retarget_grace_ticks=(damage_ramp_retarget_grace_ticks),
             deploy_w_tile_margin=catalog.deploy_w_tile_margin.to(torch.int8),
             can_deploy_on_enemy_side=catalog.can_deploy_on_enemy_side.to(torch.bool),
             effect_kind=effect_kind,
@@ -1006,6 +992,8 @@ class FastCardCatalog:
             building_damage_multiplier=building_multiplier,
             status_kind=status_kind,
             status_duration_ticks=status_ticks,
+            slow_movement_multiplier=slow_movement_multiplier,
+            slow_attack_multiplier=slow_attack_multiplier,
             effect_duration_ticks=effect_duration_ticks,
             damage_interval_ticks=damage_interval_ticks,
             initial_damage_delay_ticks=initial_damage_delay_ticks,

@@ -10,6 +10,7 @@ from clasher.data import CardDataLoader
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.simple_catalog import FastCardCatalog
+from clasher.torch_sim.simple_effects import FAST_STATUS_STUN
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 
@@ -49,15 +50,9 @@ def _runtime(
         ),
         hitpoints=torch.full((2, 3), 100_000.0, device=device),
         damage=torch.zeros((2, 3), device=device),
-        range_units=torch.full(
-            (2, 3), 7_500, dtype=torch.int32, device=device
-        ),
-        sight_range_units=torch.full(
-            (2, 3), 9_500, dtype=torch.int32, device=device
-        ),
-        hit_cooldown_ticks=torch.full(
-            (2, 3), 16, dtype=torch.int32, device=device
-        ),
+        range_units=torch.full((2, 3), 7_500, dtype=torch.int32, device=device),
+        sight_range_units=torch.full((2, 3), 9_500, dtype=torch.int32, device=device),
+        hit_cooldown_ticks=torch.full((2, 3), 16, dtype=torch.int32, device=device),
     )
     entity_lookup = torch.arange(
         2 * catalog.size, dtype=torch.int64, device=device
@@ -120,6 +115,7 @@ def _seed_connected_pair(
             (table[source], table[target])
         )
     runtime.entity_status_ticks[0, target_slot] = 1_000
+    runtime.entity_status_kind[0, target_slot] = FAST_STATUS_STUN
     return source_slot, target_slot
 
 
@@ -142,9 +138,7 @@ def test_serialized_ramp_catalog_and_full_runtime_damage_trace(
         int(catalog.damage_ramp_retarget_grace_ticks[source]),
     ) == (40, 80, 16)
     expected_damage = (
-        (43.0, 158.0, 847.0)
-        if source_name == "InfernoTower"
-        else (35.0, 120.0, 422.0)
+        (43.0, 158.0, 847.0) if source_name == "InfernoTower" else (35.0, 120.0, 422.0)
     )
     base = float(catalog.effect_damage[source])
     compiled_damage = tuple(
@@ -157,9 +151,7 @@ def test_serialized_ramp_catalog_and_full_runtime_damage_trace(
     )
     assert compiled_damage == pytest.approx(expected_damage)
 
-    noop = torch.full(
-        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device
-    )
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
     attacks: list[tuple[int, float]] = []
     initial_hp = float(runtime.state.hp[0, target_slot])
     for tick in range(1, 82):
@@ -196,12 +188,8 @@ def test_runtime_retarget_loss_stun_and_slot_reuse_reset_ramp(
     tensor_device: torch.device,
 ) -> None:
     runtime, ids = _runtime(tensor_device, "InfernoTower")
-    source_slot, target_slot = _seed_connected_pair(
-        runtime, ids, "InfernoTower"
-    )
-    noop = torch.full(
-        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device
-    )
+    source_slot, target_slot = _seed_connected_pair(runtime, ids, "InfernoTower")
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
     for _ in range(4):
         runtime.step_tick(noop)
     assert int(runtime.damage_ramp.connected_ticks[0, source_slot]) == 4
@@ -218,6 +206,7 @@ def test_runtime_retarget_loss_stun_and_slot_reuse_reset_ramp(
     runtime.state.hp[0, replacement_slot] = 100_000.0
     runtime.state.max_hp[0, replacement_slot] = 100_000.0
     runtime.entity_status_ticks[0, replacement_slot] = 1_000
+    runtime.entity_status_kind[0, replacement_slot] = FAST_STATUS_STUN
     runtime.state.cooldown_ticks[0, source_slot] = 0
 
     retarget = runtime.step_tick(noop)
@@ -238,6 +227,7 @@ def test_runtime_retarget_loss_stun_and_slot_reuse_reset_ramp(
     runtime.step_tick(noop)
     assert int(runtime.damage_ramp.connected_ticks[0, source_slot]) == 1
     runtime.entity_status_ticks[0, source_slot] = 2
+    runtime.entity_status_kind[0, source_slot] = FAST_STATUS_STUN
     runtime.step_tick(noop)
     assert int(runtime.damage_ramp.observed_target_stable_id[0, source_slot]) == 0
     assert int(runtime.damage_ramp.connected_ticks[0, source_slot]) == 0
@@ -245,6 +235,7 @@ def test_runtime_retarget_loss_stun_and_slot_reuse_reset_ramp(
     # Lifecycle resolution and a subsequent deployment into the same physical
     # slot must not preserve a prior entity's beam history.
     runtime.entity_status_ticks[0, source_slot] = 0
+    runtime.entity_status_kind[0, source_slot] = 0
     runtime.damage_ramp.observed_target_stable_id[0, source_slot] = 8
     runtime.damage_ramp.connected_ticks[0, source_slot] = 80
     runtime.damage_ramp.stage[0, source_slot] = 2

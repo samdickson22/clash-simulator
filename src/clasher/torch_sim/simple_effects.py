@@ -188,6 +188,9 @@ def _validate_inputs(
     consume_source_id: torch.Tensor | None,
     entity_is_air: torch.Tensor | None,
     entity_collision_radius_units: torch.Tensor | None,
+    entity_slow_ticks: torch.Tensor | None,
+    slow_movement_multiplier_by_card: torch.Tensor | None,
+    slow_attack_multiplier_by_card: torch.Tensor | None,
 ) -> None:
     if effects.device != state.device:
         raise ValueError("effects and state must use the same device")
@@ -206,6 +209,41 @@ def _validate_inputs(
         raise ValueError("entity_status_kind must be int8")
     if entity_status_ticks.dtype != torch.int32:
         raise ValueError("entity_status_ticks must be int32")
+    slow_inputs = (
+        entity_slow_ticks,
+        slow_movement_multiplier_by_card,
+        slow_attack_multiplier_by_card,
+    )
+    if any(value is not None for value in slow_inputs):
+        if any(value is None for value in slow_inputs):
+            raise ValueError("all serialized slow tensors must be supplied together")
+        assert entity_slow_ticks is not None
+        assert slow_movement_multiplier_by_card is not None
+        assert slow_attack_multiplier_by_card is not None
+        if entity_slow_ticks.ndim != 3 or entity_slow_ticks.shape[:2] != entity_shape:
+            raise ValueError(
+                "entity_slow_ticks must have shape [batch, entities, cards]"
+            )
+        catalog_size = entity_slow_ticks.shape[2]
+        if slow_movement_multiplier_by_card.shape != (catalog_size,):
+            raise ValueError("slow movement table must have shape [cards]")
+        if slow_attack_multiplier_by_card.shape != (catalog_size,):
+            raise ValueError("slow attack table must have shape [cards]")
+        for name, value, dtype in (
+            ("entity_slow_ticks", entity_slow_ticks, torch.int32),
+            (
+                "slow_movement_multiplier_by_card",
+                slow_movement_multiplier_by_card,
+                torch.float32,
+            ),
+            (
+                "slow_attack_multiplier_by_card",
+                slow_attack_multiplier_by_card,
+                torch.float32,
+            ),
+        ):
+            if value.device != state.device or value.dtype != dtype:
+                raise ValueError(f"{name} has the wrong device or dtype")
     effect_shape = (state.batch_size, effects.max_effects)
     for descriptor in fields(effects):
         if descriptor.name == "device":
@@ -253,6 +291,9 @@ def step_fast_effects(
     entity_is_air: torch.Tensor | None = None,
     entity_collision_radius_units: torch.Tensor | None = None,
     tick_status: bool = True,
+    entity_slow_ticks: torch.Tensor | None = None,
+    slow_movement_multiplier_by_card: torch.Tensor | None = None,
+    slow_attack_multiplier_by_card: torch.Tensor | None = None,
 ) -> FastEffectStepResult:
     """Advance homing effects, resolve splash, install statuses, and clean up.
 
@@ -274,14 +315,40 @@ def step_fast_effects(
         consume_source_id,
         entity_is_air,
         entity_collision_radius_units,
+        entity_slow_ticks,
+        slow_movement_multiplier_by_card,
+        slow_attack_multiplier_by_card,
     )
     batch, max_effects = effects.active.shape
     max_entities = state.max_entities
 
+    serialized_slows = entity_slow_ticks is not None
     if tick_status:
-        status_running = entity_status_ticks > 0
-        entity_status_ticks.sub_(status_running.to(torch.int32)).clamp_(min=0)
-        entity_status_kind.masked_fill_(entity_status_ticks == 0, FAST_STATUS_NONE)
+        if serialized_slows:
+            assert entity_slow_ticks is not None
+            stun_running = (entity_status_kind == FAST_STATUS_STUN) & (
+                entity_status_ticks > 0
+            )
+            entity_status_ticks.sub_(stun_running.to(torch.int32)).clamp_(min=0)
+            slow_running = entity_slow_ticks > 0
+            entity_slow_ticks.sub_(slow_running.to(torch.int32)).clamp_(min=0)
+            slow_remaining = entity_slow_ticks.amax(dim=2)
+            stun_remaining = stun_running & (entity_status_ticks > 0)
+            has_slow = slow_remaining > 0
+            entity_status_kind.copy_(
+                torch.where(
+                    stun_remaining,
+                    FAST_STATUS_STUN,
+                    torch.where(has_slow, FAST_STATUS_SLOW, FAST_STATUS_NONE),
+                ).to(torch.int8)
+            )
+            entity_status_ticks.copy_(
+                torch.where(stun_remaining, entity_status_ticks, slow_remaining)
+            )
+        else:
+            status_running = entity_status_ticks > 0
+            entity_status_ticks.sub_(status_running.to(torch.int32)).clamp_(min=0)
+            entity_status_kind.masked_fill_(entity_status_ticks == 0, FAST_STATUS_NONE)
 
     alive = effects.active & (effects.lifetime_ticks > 0)
     valid_projectile = alive & (effects.kind == FAST_EFFECT_PROJECTILE)
@@ -533,33 +600,75 @@ def step_fast_effects(
         0,
     ).amax(dim=1)
     incoming_stun = stun_duration > 0
-    incoming_slow = (slow_duration > 0) & ~incoming_stun
-    same_stun = entity_status_kind == FAST_STATUS_STUN
-    same_slow = entity_status_kind == FAST_STATUS_SLOW
-    entity_status_ticks.copy_(
-        torch.where(
-            incoming_stun,
-            torch.maximum(
-                stun_duration,
-                torch.where(same_stun, entity_status_ticks, 0),
-            ),
-            torch.where(
-                incoming_slow,
-                torch.maximum(
-                    slow_duration,
-                    torch.where(same_slow, entity_status_ticks, 0),
-                ),
-                entity_status_ticks,
-            ),
+    if serialized_slows:
+        assert entity_slow_ticks is not None
+        catalog_size = entity_slow_ticks.shape[2]
+        safe_source_card = effects.source_card_id.clamp(0, catalog_size - 1)
+        known_source_card = (effects.source_card_id > 0) & (
+            effects.source_card_id < catalog_size
         )
-    )
-    entity_status_kind.copy_(
-        torch.where(
-            incoming_stun,
-            FAST_STATUS_STUN,
-            torch.where(incoming_slow, FAST_STATUS_SLOW, entity_status_kind),
-        ).to(torch.int8)
-    )
+        slow_hits = (
+            status_targets
+            & (effects.status_kind[:, :, None] == FAST_STATUS_SLOW)
+            & known_source_card[:, :, None]
+        )
+        entity_slot = torch.arange(
+            max_entities, dtype=torch.int64, device=state.device
+        ).view(1, 1, -1)
+        slow_destination = (
+            entity_slot * catalog_size + safe_source_card[:, :, None]
+        ).expand(batch, max_effects, max_entities)
+        slow_updates = torch.where(slow_hits, duration.expand_as(slow_hits), 0)
+        entity_slow_ticks.view(batch, max_entities * catalog_size).scatter_reduce_(
+            1,
+            slow_destination.reshape(batch, max_effects * max_entities),
+            slow_updates.reshape(batch, max_effects * max_entities),
+            reduce="amax",
+            include_self=True,
+        )
+        slow_remaining = entity_slow_ticks.amax(dim=2)
+        existing_stun = torch.where(
+            entity_status_kind == FAST_STATUS_STUN, entity_status_ticks, 0
+        )
+        stun_remaining = torch.maximum(existing_stun, stun_duration)
+        has_stun = stun_remaining > 0
+        has_slow = slow_remaining > 0
+        entity_status_kind.copy_(
+            torch.where(
+                has_stun,
+                FAST_STATUS_STUN,
+                torch.where(has_slow, FAST_STATUS_SLOW, FAST_STATUS_NONE),
+            ).to(torch.int8)
+        )
+        entity_status_ticks.copy_(torch.where(has_stun, stun_remaining, slow_remaining))
+    else:
+        incoming_slow = (slow_duration > 0) & ~incoming_stun
+        same_stun = entity_status_kind == FAST_STATUS_STUN
+        same_slow = entity_status_kind == FAST_STATUS_SLOW
+        entity_status_ticks.copy_(
+            torch.where(
+                incoming_stun,
+                torch.maximum(
+                    stun_duration,
+                    torch.where(same_stun, entity_status_ticks, 0),
+                ),
+                torch.where(
+                    incoming_slow,
+                    torch.maximum(
+                        slow_duration,
+                        torch.where(same_slow, entity_status_ticks, 0),
+                    ),
+                    entity_status_ticks,
+                ),
+            )
+        )
+        entity_status_kind.copy_(
+            torch.where(
+                incoming_stun,
+                FAST_STATUS_STUN,
+                torch.where(incoming_slow, FAST_STATUS_SLOW, entity_status_kind),
+            ).to(torch.int8)
+        )
 
     if consume_source_id is None:
         consume_source_id = torch.zeros(
@@ -581,6 +690,8 @@ def step_fast_effects(
         state.target_id.masked_fill_(died, 0)
         entity_status_kind.masked_fill_(died, FAST_STATUS_NONE)
         entity_status_ticks.masked_fill_(died, 0)
+        if entity_slow_ticks is not None:
+            entity_slow_ticks.masked_fill_(died[:, :, None], 0)
 
     effects.damage_hits_remaining.sub_(area_damage_due.to(torch.int32)).clamp_(min=0)
     effects.status_scans_remaining.sub_(area_status_due.to(torch.int32)).clamp_(min=0)

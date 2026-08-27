@@ -10,6 +10,7 @@ from clasher.rl.common import BOARD_WIDTH
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.simple_catalog import FastCardCatalog
+from clasher.torch_sim.simple_effects import FAST_STATUS_STUN
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime, SimpleGymRuntimeStep
 
@@ -333,7 +334,9 @@ def test_representative_projectiles_travel_and_respect_target_planes(
                 y_units=14_000,
                 hp=5_000.0,
             )
-        runtime.entity_status_ticks[0, 7:9] = 1_000
+        # Hold recipients in the splash fixture without installing an
+        # unrelated pre-existing stun that would correctly outlast the hit.
+        runtime.state.speed_units_per_tick[0, 7:9] = 0
     catalog = first.action_kernel.catalog
     card_id = ids[card_name]
     assert bool(catalog.attacks_ground[card_id])
@@ -412,6 +415,7 @@ def test_representative_spells_area_timing_and_tower_scaling(
             hp=5_000.0,
         )
         runtime.entity_status_ticks[0, 6] = 1_000
+        runtime.entity_status_kind[0, 6] = FAST_STATUS_STUN
     tower_before = first.state.hp[0, 3].clone()
     troop_before = first.state.hp[0, 6].clone()
 
@@ -473,6 +477,7 @@ def test_prince_charge_speed_damage_and_reset(device_name: str) -> None:
             hp=5_000.0,
         )
         runtime.entity_status_ticks[0, 7] = 1_000
+        runtime.entity_status_kind[0, 7] = FAST_STATUS_STUN
     catalog = first.action_kernel.catalog
     prince = ids["Prince"]
     threshold = int(catalog.charge_threshold_distance_units[prince])
@@ -546,7 +551,9 @@ def test_ice_spirit_homing_splash_freezes_and_consumes_source(
             y_units=13_000,
             hp=5_000.0,
         )
-        runtime.entity_status_ticks[0, 7:9] = 1_000
+        # Keep the intended splash recipients fixed without preloading a
+        # stronger stun that would win the duration-max composition rule.
+        runtime.state.speed_units_per_tick[0, 7:9] = 0
     catalog = first.action_kernel.catalog
     spirit = ids["IceSpirit"]
     assert bool(catalog.consume_source_on_impact[spirit])

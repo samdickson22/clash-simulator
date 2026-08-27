@@ -10,7 +10,7 @@ from clasher.battle import BattleState
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.simple_catalog import FastCardCatalog
-from clasher.torch_sim.simple_effects import step_fast_effects
+from clasher.torch_sim.simple_effects import FAST_STATUS_STUN, step_fast_effects
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime, SimpleGymRuntimeStep
 
@@ -163,6 +163,7 @@ def test_firecracker_runtime_emits_one_scaled_fan_without_carrier_damage(
                 inert=True,
             )
         runtime.entity_status_ticks[0, 7:12] = 1_000
+        runtime.entity_status_kind[0, 7:12] = FAST_STATUS_STUN
         # Put an enemy Crown Tower on the same outer ray. It shares the normal
         # eligibility and tower-scaling path rather than a fan-specific path.
         runtime.state.x_units[0, 3] = 11_385

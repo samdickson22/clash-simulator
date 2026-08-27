@@ -11,6 +11,7 @@ from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.simple_adapter import SimpleGymAdapter, SimpleGymHistory
 from clasher.torch_sim.simple_catalog import FastCardCatalog
+from clasher.torch_sim.simple_effects import FAST_STATUS_STUN
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 
@@ -132,6 +133,7 @@ def test_selective_reset_restores_exact_episode_and_preserves_live_row(
     runtime.effects.active[0, 0] = True
     runtime.effects.damage[0, 0] = 123.0
     runtime.entity_status_ticks[0, 6] = 9
+    runtime.entity_status_kind[0, 6] = FAST_STATUS_STUN
     runtime.modifiers.shield[0, 6] = 77.0
     runtime.lifecycle.lifetime_ticks[0, 6] = 11
     runtime.effect_consume_source_id[0, 0] = 7

@@ -36,7 +36,12 @@ from .simple_death_burst import (
     FastDeathBurstStepResult,
     step_fast_death_bursts_,
 )
-from .simple_effects import FastEffectState, FastEffectStepResult, step_fast_effects
+from .simple_effects import (
+    FAST_STATUS_STUN,
+    FastEffectState,
+    FastEffectStepResult,
+    step_fast_effects,
+)
 from .simple_engine import FastTensorGym
 from .simple_lifecycle import (
     FastLifecycleState,
@@ -83,7 +88,6 @@ from .simple_positive_buffs import (
     advance_fast_positive_buffs_,
     allocate_fast_positive_buff_areas_,
     apply_fast_positive_area_buffs_,
-    fast_positive_attack_clock_decrement_,
     fast_positive_buff_view,
     step_fast_positive_buff_areas_,
 )
@@ -344,6 +348,14 @@ class SimpleGymRuntime:
         self.entity_status_ticks = torch.zeros(
             entity_shape, dtype=torch.int32, device=self.state.device
         )
+        self.entity_slow_ticks = torch.zeros(
+            (*entity_shape, self.action_kernel.catalog.size),
+            dtype=torch.int32,
+            device=self.state.device,
+        )
+        self.entity_attack_clock_fraction = torch.zeros(
+            entity_shape, dtype=torch.float32, device=self.state.device
+        )
         self.effect_consume_source_id = torch.zeros(
             (self.state.batch_size, max_effects),
             dtype=torch.int64,
@@ -455,6 +467,10 @@ class SimpleGymRuntime:
             "runtime": {
                 "entity_status_kind": self.entity_status_kind.clone(),
                 "entity_status_ticks": self.entity_status_ticks.clone(),
+                "entity_slow_ticks": self.entity_slow_ticks.clone(),
+                "entity_attack_clock_fraction": (
+                    self.entity_attack_clock_fraction.clone()
+                ),
                 "effect_consume_source_id": self.effect_consume_source_id.clone(),
                 "death_effect_consume_source_id": (
                     self.death_effect_consume_source_id.clone()
@@ -551,6 +567,8 @@ class SimpleGymRuntime:
         runtime_tensors = {
             "entity_status_kind": self.entity_status_kind,
             "entity_status_ticks": self.entity_status_ticks,
+            "entity_slow_ticks": self.entity_slow_ticks,
+            "entity_attack_clock_fraction": self.entity_attack_clock_fraction,
             "effect_consume_source_id": self.effect_consume_source_id,
             "death_effect_consume_source_id": self.death_effect_consume_source_id,
             "projection_hand_ids": self._projection_hand_ids,
@@ -684,6 +702,60 @@ class SimpleGymRuntime:
         self.damage_ramp.connected_ticks.masked_fill_(mask, 0)
         self.damage_ramp.stage.masked_fill_(mask, 0)
 
+    def _clear_status_(self, mask: torch.Tensor) -> None:
+        """Clear all independently timed status sources for reused slots."""
+
+        self.entity_status_kind.masked_fill_(mask, 0)
+        self.entity_status_ticks.masked_fill_(mask, 0)
+        self.entity_slow_ticks.masked_fill_(mask[:, :, None], 0)
+        self.entity_attack_clock_fraction.masked_fill_(mask, 0.0)
+
+    def _slow_multipliers(self) -> tuple[torch.Tensor, torch.Tensor]:
+        """Reduce active serialized slow sources independently on each axis."""
+
+        active = self.entity_slow_ticks > 0
+        any_active = active.any(dim=2)
+        catalog = self.action_kernel.catalog
+        infinity = torch.full_like(
+            self.entity_slow_ticks, torch.inf, dtype=torch.float32
+        )
+        movement = torch.where(
+            active,
+            catalog.slow_movement_multiplier[None, None, :],
+            infinity,
+        ).amin(dim=2)
+        attack = torch.where(
+            active,
+            catalog.slow_attack_multiplier[None, None, :],
+            infinity,
+        ).amin(dim=2)
+        one = torch.ones_like(movement)
+        return (
+            torch.where(any_active, movement, one),
+            torch.where(any_active, attack, one),
+        )
+
+    def _attack_clock_decrement_(
+        self,
+        *,
+        cooling: torch.Tensor,
+        rate_multiplier: torch.Tensor,
+    ) -> torch.Tensor:
+        """Advance cooldowns at a fractional composed haste/slow rate."""
+
+        total = self.entity_attack_clock_fraction + rate_multiplier.clamp(min=0.0)
+        # Float32 catalog percentages such as 0.7 must earn exactly seven
+        # ticks over ten frames instead of stalling at 6.999999.
+        decrement = torch.floor(total + 1e-6).to(torch.int32)
+        self.entity_attack_clock_fraction.copy_(
+            torch.where(
+                cooling,
+                (total - decrement.to(torch.float32)).clamp(min=0.0),
+                0.0,
+            )
+        )
+        return torch.where(cooling, decrement.clamp(min=0), 0)
+
     def _charge_parameters(self) -> FastChargeParameters:
         """Gather numeric charge descriptors for the current slot identities."""
 
@@ -816,6 +888,13 @@ class SimpleGymRuntime:
                 ]
             ),
             tick_status=False,
+            entity_slow_ticks=self.entity_slow_ticks,
+            slow_movement_multiplier_by_card=(
+                self.action_kernel.catalog.slow_movement_multiplier
+            ),
+            slow_attack_multiplier_by_card=(
+                self.action_kernel.catalog.slow_attack_multiplier
+            ),
         )
         return burst, effect
 
@@ -895,8 +974,7 @@ class SimpleGymRuntime:
 
         single = commands.ready & (commands.count == 1) & (commands.radius_units > 0)
         phase = torch.remainder(
-            commands.cast_stable_id * 1_103_515_245
-            + self.state.tick[:, None] * 12_345,
+            commands.cast_stable_id * 1_103_515_245 + self.state.tick[:, None] * 12_345,
             65_536,
         ).to(torch.float32) * (2.0 * torch.pi / 65_536.0)
         distance = torch.round(commands.radius_units.to(torch.float32) * 0.75)
@@ -997,18 +1075,14 @@ class SimpleGymRuntime:
             has_impact_spawn = torch.zeros_like(impact_row, dtype=torch.bool)
             rolling_row = self.spawn_blueprints.rolling_blueprint_by_card[safe_card]
             has_rolling_spawn = torch.zeros_like(rolling_row, dtype=torch.bool)
-            scheduled_row = self.spawn_blueprints.scheduled_blueprint_by_card[
-                safe_card
-            ]
+            scheduled_row = self.spawn_blueprints.scheduled_blueprint_by_card[safe_card]
             has_scheduled = torch.zeros_like(scheduled_row, dtype=torch.bool)
             if self.spawn_blueprints.blueprint_count > 0:
                 safe_impact = impact_row.clamp(
                     0, self.spawn_blueprints.blueprint_count - 1
                 )
                 has_impact_spawn = impact_row >= 0
-                impact_count = self.spawn_blueprints.count[safe_impact].to(
-                    torch.int64
-                )
+                impact_count = self.spawn_blueprints.count[safe_impact].to(torch.int64)
                 required_slots = torch.where(
                     has_impact_spawn,
                     impact_count,
@@ -1164,13 +1238,12 @@ class SimpleGymRuntime:
                 tick=self.state.tick,
             )
         deployed = self.combat.deploy_many_once(ingress.requests)
+        self._clear_status_(self.combat.spawned_mask)
         self._initialize_lifecycle_(self.combat.spawned_mask)
         self._initialize_modifiers_(self.combat.spawned_mask)
         self._clear_damage_ramp_(self.combat.spawned_mask)
 
-        positive_area_step = step_fast_positive_buff_areas_(
-            self.positive_buff_areas
-        )
+        positive_area_step = step_fast_positive_buff_areas_(self.positive_buff_areas)
         positive_buff_apply = apply_fast_positive_area_buffs_(
             self.state,
             self.positive_buffs,
@@ -1178,21 +1251,21 @@ class SimpleGymRuntime:
         )
         charge_parameters = self._charge_parameters()
         charge_view = pre_move_charge_multipliers(self.modifiers, charge_parameters)
-        stunned = self.entity_status_ticks > 0
+        stunned = (self.entity_status_kind == FAST_STATUS_STUN) & (
+            self.entity_status_ticks > 0
+        )
+        slow_movement, slow_attack = self._slow_multipliers()
         positive_view = fast_positive_buff_view(self.state, self.positive_buffs)
-        cooldown_decrement = fast_positive_attack_clock_decrement_(
-            self.state,
-            self.positive_buffs,
-            cooling=(
-                self.state.active
-                & ~stunned
-                & (self.state.cooldown_ticks > 0)
-            ),
+        cooldown_decrement = self._attack_clock_decrement_(
+            cooling=(self.state.active & ~stunned & (self.state.cooldown_ticks > 0)),
+            rate_multiplier=(positive_view.cooldown_decrement_multiplier * slow_attack),
         )
         combat = self.combat.step_tick(
             disabled=stunned,
             speed_multiplier=(
-                charge_view.speed * positive_view.movement_speed_multiplier
+                charge_view.speed
+                * positive_view.movement_speed_multiplier
+                * slow_movement
             ),
             cooldown_decrement=cooldown_decrement,
         )
@@ -1335,8 +1408,7 @@ class SimpleGymRuntime:
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
             scheduled_spawned = scheduled_spawn_allocation.spawned_mask
-            self.entity_status_kind.masked_fill_(scheduled_spawned, 0)
-            self.entity_status_ticks.masked_fill_(scheduled_spawned, 0)
+            self._clear_status_(scheduled_spawned)
             self._initialize_spawned_combat_(scheduled_spawned)
             self._initialize_lifecycle_(scheduled_spawned)
             self._initialize_modifiers_(scheduled_spawned)
@@ -1356,6 +1428,13 @@ class SimpleGymRuntime:
                 self.action_kernel.catalog.collision_radius_units[
                     self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
                 ]
+            ),
+            entity_slow_ticks=self.entity_slow_ticks,
+            slow_movement_multiplier_by_card=(
+                self.action_kernel.catalog.slow_movement_multiplier
+            ),
+            slow_attack_multiplier_by_card=(
+                self.action_kernel.catalog.slow_attack_multiplier
             ),
         )
         safe_entity_card = self.state.card_id.clamp(
@@ -1391,8 +1470,7 @@ class SimpleGymRuntime:
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
             rolling_spawned = rolling_spawn_allocation.spawned_mask
-            self.entity_status_kind.masked_fill_(rolling_spawned, 0)
-            self.entity_status_ticks.masked_fill_(rolling_spawned, 0)
+            self._clear_status_(rolling_spawned)
             self._initialize_spawned_combat_(rolling_spawned)
             self._initialize_lifecycle_(rolling_spawned)
             self._initialize_modifiers_(rolling_spawned)
@@ -1417,11 +1495,11 @@ class SimpleGymRuntime:
             self.lifecycle,
             reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
         )
-        self.entity_status_kind.masked_fill_(lifecycle_result.resolved_parent_mask, 0)
-        self.entity_status_ticks.masked_fill_(lifecycle_result.resolved_parent_mask, 0)
+        self._clear_status_(lifecycle_result.resolved_parent_mask)
         self._clear_modifiers_(lifecycle_result.resolved_parent_mask)
         self._clear_damage_ramp_(lifecycle_result.resolved_parent_mask)
         self._initialize_spawned_combat_(lifecycle_result.spawned_mask)
+        self._clear_status_(lifecycle_result.spawned_mask)
         self._initialize_lifecycle_(lifecycle_result.spawned_mask)
         self._initialize_modifiers_(lifecycle_result.spawned_mask)
         self._clear_damage_ramp_(lifecycle_result.spawned_mask)
@@ -1438,6 +1516,7 @@ class SimpleGymRuntime:
                 spawn_commands,
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
+            self._clear_status_(spawn_allocation.spawned_mask)
             self._initialize_lifecycle_(spawn_allocation.spawned_mask)
             self._initialize_modifiers_(spawn_allocation.spawned_mask)
             self._clear_damage_ramp_(spawn_allocation.spawned_mask)
@@ -1453,8 +1532,7 @@ class SimpleGymRuntime:
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
             payload_spawned = payload_spawn_allocation.spawned_mask
-            self.entity_status_kind.masked_fill_(payload_spawned, 0)
-            self.entity_status_ticks.masked_fill_(payload_spawned, 0)
+            self._clear_status_(payload_spawned)
             self._initialize_spawned_combat_(payload_spawned)
             self._initialize_lifecycle_(payload_spawned)
             self._initialize_modifiers_(payload_spawned)
@@ -1468,7 +1546,10 @@ class SimpleGymRuntime:
                 active=self.state.active,
                 source_stable_id=self.state.stable_id,
                 source_card_id=self.state.card_id,
-                stunned=self.entity_status_ticks > 0,
+                stunned=(
+                    (self.entity_status_kind == FAST_STATUS_STUN)
+                    & (self.entity_status_ticks > 0)
+                ),
             )
             periodic_spawn_allocation = allocate_fast_spawns_(
                 self.state,
@@ -1477,8 +1558,7 @@ class SimpleGymRuntime:
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
             periodic_spawned = periodic_spawn_allocation.spawned_mask
-            self.entity_status_kind.masked_fill_(periodic_spawned, 0)
-            self.entity_status_ticks.masked_fill_(periodic_spawned, 0)
+            self._clear_status_(periodic_spawned)
             self._initialize_spawned_combat_(periodic_spawned)
             self._initialize_lifecycle_(periodic_spawned)
             self._initialize_modifiers_(periodic_spawned)

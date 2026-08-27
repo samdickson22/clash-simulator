@@ -8,6 +8,7 @@ from clasher.rl.common import BOARD_WIDTH
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.simple_catalog import FastCardCatalog
+from clasher.torch_sim.simple_effects import FAST_STATUS_STUN
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 
@@ -106,6 +107,7 @@ def test_guards_multisummon_shields_and_knight_whole_hits(device_name: str) -> N
     knight_slot = _seed_knight(runtime, ids, guard_slot)
     runtime.state.deploy_ticks[0, guard_slot] = 0
     runtime.entity_status_ticks[0, 6:9] = 100
+    runtime.entity_status_kind[0, 6:9] = FAST_STATUS_STUN
     guard_hp = float(runtime.state.hp[0, guard_slot])
     noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
 
@@ -153,6 +155,7 @@ def _seed_prince_trace(
     state.speed_units_per_tick[0, prince_slot] = catalog.speed_units_per_tick[prince]
     state.hit_cooldown_ticks[0, prince_slot] = catalog.hit_cooldown_ticks[prince]
     runtime.entity_status_ticks[0, target_slot] = 1_000
+    runtime.entity_status_kind[0, target_slot] = FAST_STATUS_STUN
     mask = torch.zeros_like(state.active)
     mask[0, prince_slot : target_slot + 1] = True
     runtime._initialize_modifiers_(mask)
