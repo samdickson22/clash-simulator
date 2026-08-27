@@ -1,4 +1,4 @@
-# PyTorch RL-gym fidelity contract — 2026-08-26
+# PyTorch RL-gym fidelity contract — refreshed 2026-08-27
 
 ## Objective
 
@@ -38,29 +38,30 @@ the production Gym path.
 
 ## Current real-game evidence boundary
 
-The 2026-08-25 persistent corpus contains 37 hash-verified native videos
-(6.113 GB, 9,935.617 seconds, 99,356 contiguous 10-Hz frames). Twenty-nine have
-reviewed deck closure. The new 29-game extraction contains 76,148 neutral rows,
-65,285 clock-valid rows, 971,838 detections, 802,536 accepted typed identities,
-and 471,866 accepted HP detections. The broader 33-replay audit contains 1,059
-offline targets, of which 923 are clocked, 821 are public-mask legal, 711 are
-legal-and-clocked action components, 220 have complete HUD, and 24 replays are
-fully verified.
+The refreshed read-only calibration gate covers every manifest in two complete,
+disjoint local clocked corpora: 42 matches, 111,404 neutral 10-Hz rows, 95,500
+accepted clock rows, 1,525 valid visual play events, 1,380 aligned actor
+targets, and 111,426 actor projection/mask rows.
 
-This evidence can currently validate accepted typed action-card identity,
-label-independent public-mask-v2 legality, own HUD missingness, clock-conditioned
-action components, and coarse deployment-tile distributions. It cannot yet
-validate continuous trajectories, hitboxes/collision, exact HP values,
-exhaustive entity counts, projectile targets, status durations, hidden RNG, full
-action recall, or outcomes. Those channels remain simulator/balance driven and
-must not be described as video-proven.
+Artifact integrity, 100-ms sampling, public-clock local rate, typed-key
+compatibility, slot/action encoding, canonical orientation, and coarse placement
+encoding pass their bounded checks. The overall gate is nevertheless **fail**:
+37/37 observed regulation-to-overtime transitions are correct, but the 95%
+Wilson lower bound is 0.905942 rather than the configured 0.95. Exact
+tensor-provider public-mask equality is unavailable because the corpus does not
+pin complete projected tower state and engine semantics authority.
 
-Primary external artifacts:
+This evidence does not validate continuous trajectories, hitboxes/collision,
+exact HP or damage, exhaustive entity counts, projectile targets, statuses,
+hidden RNG, Hero/Evolution variant accuracy, full action recall, or outcomes.
+Those channels remain serialized-data/invariant driven and must not be
+described as video-proven.
 
-- `/Users/sam/Desktop/code/clasher/reports/persistent_batch_v1/local_closure_and_causal_gate_20260825.md`
-- `/Users/sam/Desktop/code/clasher/reports/persistent_batch_v1/deck_closed_causal_corpus_audit_33games.json`
-- `/Users/sam/Desktop/code/clasher/reports/persistent_batch_v1/reviewed_deck_decisions_v1.json`
-- `/Users/sam/Desktop/code/clasher/datasets/derived/tv_royale_youtube_persistent_batch_causal_clocked_20260825`
+Primary repository artifact and read-only corpus roots:
+
+- `reports/simple_gym_real_corpus_calibration_gate_20260826.md`;
+- `/Users/sam/Desktop/code/clasher/datasets/derived/tv_royale_youtube_persistent_batch_causal_clocked_20260825`; and
+- `/Users/sam/Desktop/code/clasher/datasets/derived/tv_royale_youtube_1000_causal_clocked_20260826`.
 
 ## Validation profiles
 
@@ -95,19 +96,25 @@ Position differences may be accepted only after projection and only within
 digest. Checkpoint metadata must record the semantics profile and reject
 incompatible resumes.
 
-## Simplification order
+These are normative acceptance requirements. They have not yet been proven
+collectively for the current production source head. In particular, historical
+terminal validators do not include a full frozen-policy recurrent transition
+comparison, and current checkpoint metadata does not fingerprint every runtime
+catalog/mechanic semantic.
 
-1. Replace the chain mechanic's dependency on diagnostic events with a direct
-   projectile-impact handoff, then disable the detailed event ledger in Gym
-   mode while preserving public card-play history.
-2. Disable Python scalar-kind shadow planes in Gym mode; retain numeric HP and
-   shield values.
-3. Wire the existing native RNG profile for training, with exact Python RNG
-   retained only for strict debug.
-4. Use integer-millisecond deadlines in Gym mode; retain binary-float projection
-   only in strict debug.
-5. Consolidate duplicate owner target/shield snapshots and speculative copies
-   only after the policy-transition gate is green.
+## Implemented simplification boundary
+
+The earlier resident-to-Gym workplan is now embodied by a parallel
+`SimpleGymRuntime`, rather than by weakening `TensorResidentEngine`:
+
+1. card-name and Python-object setup compiles into fixed numeric catalogs;
+2. production state uses dense entity planes plus bounded fixed-shape mechanic
+   pools, without the resident diagnostic event ledger or scalar-kind shadows;
+3. the production clock is integer 50-ms ticks with stable phase/order rules;
+4. chain/line/fan/area/travel/triggered payloads hand off through direct numeric
+   commands with one declared mutation owner; and
+5. exact Python snapshots, CPython RNG behavior, and detailed diagnostic state
+   stay in the resident verifier profile.
 
 Stable IDs/order, 50-ms phase ordering, integer geometry, actor-private
 boundaries, typed Hero/Evolution identity, public action history, reward, and
@@ -115,26 +122,38 @@ win semantics are not simplification targets.
 
 ## Current production frontier
 
-As of commit `20ea555c`, all 66 cards in the enabled deck pool pass tensor
-action preflight and commit their first native action tick together in one
-batch. The default production smoke is
-`tests/test_torch_resident_enabled_action_smoke.py`; CUDA coverage is present
-and skips on hosts without CUDA.
+At clean commit `1a641bb81ea4d866d8923bd1c841803b24280091`, the authoritative
+Simple Gym artifact check admits all **66/66** enabled public roots and all
+**33/33** source decks under canonical lane globals and public-mask contract
+v2. The production executor is `SimpleGymRuntime`, not the Resident enabled-
+action smoke. Its fixed-shape generalized catalogs/runtime now include typed
+spawns and payloads, navigation, visibility, Champion ability state, special
+travel, triggered impact/status/impulse, and atomic heterogeneous summons.
 
-Focused policy-visible lifecycle gates now cover the previously rejected
-Archer Queen, Dark Prince, Electro Dragon, Electro Spirit, Electro Wizard,
-Firecracker, Goblin Gang, Ice Spirit, Mega Knight, and Wall Breakers paths.
-These integrations use serialized capability composition and entity-local
-movement ownership. The full exact Python 66-card matrix remains available via
-`CLASHER_STRICT_RESIDENT_MATRIX=1`, but is opt-in diagnostic evidence rather
-than the production acceptance gate.
+`TensorResidentEngine` remains the exact-debug verifier; its strict matrices
+are diagnostic evidence rather than production acceptance. Simple admission is
+also not live-game fidelity or mechanic-visitation proof. The detailed current
+classification lives in `simple_gym_enabled_card_coverage_audit_20260826.md`.
+
+Historical seeded CPU/CUDA terminal and accelerator artifacts show that the
+architecture can run deterministic zero-fallback matches and can reach 10 CUDA
+launches, zero explicit sync, and 597.283 row-ticks/s at batch 128. Those
+artifacts predate the current navigation/visibility/ability/travel/triggered/
+heterogeneous mechanics delta and do not certify this head. They also exercised
+the now-known inert Crown Tower combat path, so terminal completion is not
+high-fidelity tower-retaliation evidence.
 
 Still required before a training promotion:
 
-- full seeded native episodes for both seats through regulation, overtime, and
-  tiebreak, with zero fallback and projected-transition validation;
-- a representative accelerator throughput gate and deterministic replay digest
-  under the selected Gym semantics profile;
-- checkpoint/profile compatibility wiring in the newer main training stack;
-- more independently labelled real-game position, HP, action-recall, and
-  outcome evidence. The current video corpus cannot certify these channels.
+- working Princess Tower retaliation, correct King activation, and direct
+  runtime regressions for both;
+- current-head seeded CPU and CUDA terminal/digest gates with zero fallback;
+- current-head accelerator launch, synchronization, absolute-throughput, and
+  production-shaped recurrent-policy collection evidence;
+- complete engine-semantics checkpoint metadata and compatible resume tests;
+- refreshed safe assembly into the stabilized newer main training stack;
+- a production policy path for Archer Queen's currently public-v2-masked
+  ability, or an explicit bounded exclusion; and
+- resolution or explicit bounded acceptance of omitted first-hit/ordinary
+  retarget clocks, deployment targetability, navigation/body physics, and the
+  failing/unavailable real-game calibration channels.
