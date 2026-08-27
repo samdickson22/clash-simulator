@@ -176,10 +176,9 @@ class FastTensorGym:
         target_radius = traits.collision_radius.gather(1, safe_slot).clamp(min=0)
         delta_x = target_x.to(torch.float32) - state.x_units.to(torch.float32)
         delta_y = target_y.to(torch.float32) - state.y_units.to(torch.float32)
-        stop_distance = (
-            state.range_units.clamp(min=0).to(torch.float32)
-            + target_radius.to(torch.float32)
-        )
+        stop_distance = state.range_units.clamp(min=0).to(
+            torch.float32
+        ) + target_radius.to(torch.float32)
         travel_distance = (selected.center_distance - stop_distance).clamp(min=0.0)
         scale = travel_distance / selected.center_distance.clamp_min(1.0)
         destination_x = state.x_units + torch.round(delta_x * scale).to(torch.int32)
@@ -430,6 +429,8 @@ class FastTensorGym:
         self,
         disabled: torch.Tensor,
         speed_multiplier: torch.Tensor,
+        cooldown_decrement: torch.Tensor,
+        cooldown_floor_ticks: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Acquire and approach, returning attacks ready for effect allocation.
 
@@ -449,17 +450,74 @@ class FastTensorGym:
             source_disabled=disabled,
             target_unavailable=self._target_unavailable,
         )
-        found = targets.found
+        # Reserved arena fixtures retain their stable-ID target while it
+        # remains legal and in sight. Ordinary public-card sources will move
+        # to the generalized attack-lock subsystem separately; keeping this
+        # adapter tower-only avoids introducing a second broad lock policy.
+        current_match = (
+            state.active[:, None, :]
+            & (state.hp[:, None, :] > 0)
+            & (state.target_id[:, :, None] > 0)
+            & (state.target_id[:, :, None] == state.stable_id[:, None, :])
+        )
+        current_found = current_match.any(dim=2)
+        current_slot = current_match.to(torch.int8).argmax(dim=2).to(torch.int64)
+        current_air = traits.airborne.gather(1, current_slot)
+        current_building = traits.building.gather(1, current_slot)
+        current_plane_allowed = torch.where(
+            current_air,
+            traits.attacks_air,
+            traits.attacks_ground,
+        )
+        current_category_allowed = ~traits.buildings_only | current_building
+        current_dx = state.x_units.gather(1, current_slot).to(
+            torch.float32
+        ) - state.x_units.to(torch.float32)
+        current_dy = state.y_units.gather(1, current_slot).to(
+            torch.float32
+        ) - state.y_units.to(torch.float32)
+        current_edge_distance = (
+            torch.sqrt(current_dx.square() + current_dy.square())
+            - traits.collision_radius.gather(1, current_slot)
+            .clamp(min=0)
+            .to(torch.float32)
+        ).clamp_min(0.0)
+        retain_current = (
+            (self._slots < self.reserved_slot_floor)
+            & can_act
+            & current_found
+            & ~self._target_unavailable.gather(1, current_slot)
+            & (state.owner != state.owner.gather(1, current_slot))
+            & current_plane_allowed
+            & current_category_allowed
+            & (current_edge_distance <= state.sight_range_units.clamp(min=0))
+        )
+        found = targets.found | retain_current
+        selected_target_slot = torch.where(
+            retain_current,
+            current_slot,
+            targets.target_slot.clamp(min=0),
+        )
+        selected_target_id = torch.where(
+            retain_current,
+            state.target_id,
+            targets.target_id,
+        )
+        selected_edge_distance = torch.where(
+            retain_current,
+            current_edge_distance,
+            targets.edge_distance,
+        )
         navigation_found, navigation_slot, navigation_id, _ = self._navigation_targets(
             can_act & ~found
         )
         has_destination = found | navigation_found
         nearest_slot = torch.where(
             found,
-            targets.target_slot.clamp(min=0),
+            selected_target_slot,
             navigation_slot,
         )
-        state.target_id.copy_(torch.where(found, targets.target_id, navigation_id))
+        state.target_id.copy_(torch.where(found, selected_target_id, navigation_id))
 
         target_x_units = state.x_units.gather(1, nearest_slot)
         target_y_units = state.y_units.gather(1, nearest_slot)
@@ -489,7 +547,7 @@ class FastTensorGym:
         ) * speed_multiplier.clamp(min=0.0)
         approach_travel = torch.minimum(
             effective_speed,
-            (targets.edge_distance - attack_range).clamp(min=0),
+            (selected_edge_distance - attack_range).clamp(min=0),
         )
         travel = torch.where(
             found,
@@ -501,7 +559,7 @@ class FastTensorGym:
             has_destination
             & can_act
             & (state.kind == FAST_KIND_TROOP)
-            & (~found | ~targets.within_attack_range)
+            & (~found | (selected_edge_distance > attack_range))
             & (travel > 0)
         )
         denominator = waypoint_distance.clamp(min=1.0)
@@ -530,6 +588,22 @@ class FastTensorGym:
         ).clamp_min(0.0)
         target_in_attack_range = (
             found & can_act & (post_edge_distance <= attack_range) & (state.damage > 0)
+        )
+        idle_floor = torch.where(
+            target_in_attack_range,
+            torch.zeros_like(cooldown_floor_ticks),
+            cooldown_floor_ticks.clamp(min=0),
+        )
+        cooling = can_act & (state.cooldown_ticks > idle_floor)
+        state.cooldown_ticks.copy_(
+            torch.where(
+                cooling,
+                torch.maximum(
+                    state.cooldown_ticks - cooldown_decrement.clamp(min=0),
+                    idle_floor,
+                ),
+                state.cooldown_ticks,
+            )
         )
         attack_ready = target_in_attack_range & (state.cooldown_ticks == 0)
         return attack_ready, target_in_attack_range, moved_distance
@@ -567,6 +641,7 @@ class FastTensorGym:
         disabled: torch.Tensor | None = None,
         speed_multiplier: torch.Tensor | None = None,
         cooldown_decrement: torch.Tensor | None = None,
+        cooldown_floor_ticks: torch.Tensor | None = None,
     ) -> FastGymTickResult:
         """Advance every live row once and optionally allocate one entity.
 
@@ -602,6 +677,14 @@ class FastTensorGym:
             raise ValueError("cooldown_decrement must use the state device")
         elif cooldown_decrement.dtype != torch.int32:
             raise ValueError("cooldown_decrement must be int32")
+        if cooldown_floor_ticks is None:
+            cooldown_floor_ticks = torch.zeros_like(state.cooldown_ticks)
+        elif cooldown_floor_ticks.shape != state.active.shape:
+            raise ValueError("cooldown_floor_ticks must have shape [batch, entities]")
+        elif cooldown_floor_ticks.device != state.device:
+            raise ValueError("cooldown_floor_ticks must use the state device")
+        elif cooldown_floor_ticks.dtype != torch.int32:
+            raise ValueError("cooldown_floor_ticks must be int32")
         live = ~state.game_over
         if request is None:
             success = torch.zeros(
@@ -622,15 +705,16 @@ class FastTensorGym:
             )
         ready = state.active & (state.deploy_ticks > 0)
         state.deploy_ticks.sub_(ready.to(torch.int32)).clamp_(min=0)
-        cooling = state.active & ~disabled & (state.cooldown_ticks > 0)
-        state.cooldown_ticks.sub_(
-            torch.where(cooling, cooldown_decrement.clamp(min=0), 0)
-        ).clamp_(min=0)
         (
             attack_ready,
             target_in_attack_range,
             moved_distance,
-        ) = self._ordinary_troop_phase(disabled, speed_multiplier)
+        ) = self._ordinary_troop_phase(
+            disabled,
+            speed_multiplier,
+            cooldown_decrement,
+            cooldown_floor_ticks,
+        )
         state.tick.add_(live.to(torch.int64))
         return FastGymTickResult(
             committed=live,

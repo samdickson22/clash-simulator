@@ -17,6 +17,7 @@ import torch
 from clasher.arena import TileGrid
 from clasher.balance import tournament_tower_stat
 from clasher.data import CardDataLoader, load_princess_tower_character_data
+from clasher.gamedata_normalization import serialized_hit_planes
 from clasher.kinematics import (
     LOGIC_TICK_MILLISECONDS,
     LOGIC_TICK_SECONDS,
@@ -26,6 +27,7 @@ from clasher.unit_traits import is_knockback_immune
 
 from .catalog import TensorCardCatalog
 from .simple_abilities import FastAbilityCatalog
+from .simple_catalog import FAST_CARD_EFFECT_PROJECTILE
 from .simple_outcomes import FastMatchRules, FastTowerSpec
 from .simple_policy_mechanics import FastPolicyMechanicCatalog
 from .simple_runtime import SimpleGymRuntime
@@ -113,11 +115,24 @@ def standard_tower_spec(
     princess_range = int(princess["range"])
     princess_sight = int(princess["sightRange"])
     princess_cooldown = _ceil_logic_ticks(int(princess["hitSpeed"]))
+    princess_projectile = princess.get("projectileData")
+    if not isinstance(princess_projectile, dict):
+        raise TypeError("standard Princess Tower is missing projectile data")
+    princess_projectile_speed = int(princess_projectile.get("speed", 0) or 0)
+    if princess_projectile_speed <= 0:
+        raise ValueError("standard Princess Tower projectile speed must be positive")
+    princess_hits_air, princess_hits_ground = serialized_hit_planes(princess)
+    princess_muzzle = _required_tower_stat("PrincessTower", "projectile_start_radius")
     # BattleState's shared KingTower construction uses 7 tiles and a 1000 ms
     # hit speed. Those arena-fixture values are not present in the compact
     # support-tower payload, so they are converted here once at setup.
     king_range = tiles_to_logic_units(7)
     king_cooldown = _ceil_logic_ticks(1_000)
+    king_activation = _ceil_logic_ticks(
+        _required_tower_stat("KingTower", "activation_duration")
+    ) + _ceil_logic_ticks(
+        _required_tower_stat("KingTower", "activation_first_hit_delay")
+    )
 
     return FastTowerSpec(
         card_id=torch.zeros((2, 3), dtype=torch.int64, device=torch_device),
@@ -147,6 +162,47 @@ def standard_tower_spec(
             ((princess_cooldown, princess_cooldown, king_cooldown),) * 2,
             dtype=torch.int32,
             device=torch_device,
+        ),
+        initial_cooldown_ticks=torch.tensor(
+            ((princess_cooldown, princess_cooldown, 0),) * 2,
+            dtype=torch.int32,
+            device=torch_device,
+        ),
+        preload_cooldown_floor_ticks=torch.tensor(
+            ((princess_cooldown, princess_cooldown, _ceil_logic_ticks(500)),) * 2,
+            dtype=torch.int32,
+            device=torch_device,
+        ),
+        effect_kind=torch.full(
+            (2, 3),
+            FAST_CARD_EFFECT_PROJECTILE,
+            dtype=torch.int8,
+            device=torch_device,
+        ),
+        projectile_speed_units_per_tick=torch.tensor(
+            ((princess_projectile_speed, princess_projectile_speed, 1_000),) * 2,
+            dtype=torch.int32,
+            device=torch_device,
+        ),
+        projectile_start_radius_units=torch.tensor(
+            ((princess_muzzle, princess_muzzle, 750),) * 2,
+            dtype=torch.int32,
+            device=torch_device,
+        ),
+        effect_radius_units=torch.zeros((2, 3), dtype=torch.int32, device=torch_device),
+        hits_air=torch.tensor(
+            ((princess_hits_air, princess_hits_air, True),) * 2,
+            dtype=torch.bool,
+            device=torch_device,
+        ),
+        hits_ground=torch.tensor(
+            ((princess_hits_ground, princess_hits_ground, True),) * 2,
+            dtype=torch.bool,
+            device=torch_device,
+        ),
+        affects_hidden=torch.zeros((2, 3), dtype=torch.bool, device=torch_device),
+        king_activation_ticks=torch.full(
+            (2,), king_activation, dtype=torch.int32, device=torch_device
         ),
     )
 

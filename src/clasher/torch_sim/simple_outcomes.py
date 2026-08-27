@@ -13,7 +13,6 @@ import torch
 
 from .simple_state import (
     FAST_KIND_BUILDING,
-    FAST_WINNER_IN_PROGRESS,
     FastGymState,
 )
 
@@ -43,6 +42,16 @@ class FastTowerSpec:
     range_units: torch.Tensor
     sight_range_units: torch.Tensor
     hit_cooldown_ticks: torch.Tensor
+    initial_cooldown_ticks: torch.Tensor | None = None
+    preload_cooldown_floor_ticks: torch.Tensor | None = None
+    effect_kind: torch.Tensor | None = None
+    projectile_speed_units_per_tick: torch.Tensor | None = None
+    projectile_start_radius_units: torch.Tensor | None = None
+    effect_radius_units: torch.Tensor | None = None
+    hits_air: torch.Tensor | None = None
+    hits_ground: torch.Tensor | None = None
+    affects_hidden: torch.Tensor | None = None
+    king_activation_ticks: torch.Tensor | None = None
 
 
 @dataclass(frozen=True)
@@ -60,11 +69,14 @@ class FastMatchRules:
             raise ValueError("regulation_ticks must be positive")
         if self.tiebreak_ticks <= self.regulation_ticks:
             raise ValueError("tiebreak_ticks must be greater than regulation_ticks")
-        if min(
-            self.tower_damage_weight,
-            self.crown_weight,
-            self.terminal_weight,
-        ) < 0.0:
+        if (
+            min(
+                self.tower_damage_weight,
+                self.crown_weight,
+                self.terminal_weight,
+            )
+            < 0.0
+        ):
             raise ValueError("reward weights must be non-negative")
 
 
@@ -99,6 +111,45 @@ def _validate_tower_spec(state: FastGymState, spec: FastTowerSpec) -> None:
             raise ValueError(f"{name} is on a different device")
     if spec.card_id.dtype != torch.int64:
         raise ValueError("card_id must be int64")
+    optional_effect_fields = (
+        "effect_kind",
+        "projectile_speed_units_per_tick",
+        "projectile_start_radius_units",
+        "effect_radius_units",
+        "hits_air",
+        "hits_ground",
+        "affects_hidden",
+    )
+    supplied_effect_fields = tuple(
+        getattr(spec, name) is not None for name in optional_effect_fields
+    )
+    if any(supplied_effect_fields) and not all(supplied_effect_fields):
+        raise ValueError("all tower effect tensors must be supplied together")
+    for name in (
+        "initial_cooldown_ticks",
+        "preload_cooldown_floor_ticks",
+        *optional_effect_fields,
+    ):
+        value = getattr(spec, name)
+        if value is None:
+            continue
+        if tuple(value.shape) != expected:
+            raise ValueError(f"{name} must have shape {expected}")
+        if value.device != state.device:
+            raise ValueError(f"{name} is on a different device")
+    if spec.effect_kind is not None and spec.effect_kind.dtype != torch.int8:
+        raise ValueError("effect_kind must be int8")
+    for name in ("hits_air", "hits_ground", "affects_hidden"):
+        value = getattr(spec, name)
+        if value is not None and value.dtype != torch.bool:
+            raise ValueError(f"{name} must be bool")
+    if spec.king_activation_ticks is not None:
+        if tuple(spec.king_activation_ticks.shape) != (2,):
+            raise ValueError("king_activation_ticks must have shape (2,)")
+        if spec.king_activation_ticks.device != state.device:
+            raise ValueError("king_activation_ticks is on a different device")
+        if spec.king_activation_ticks.dtype != torch.int32:
+            raise ValueError("king_activation_ticks must be int32")
 
 
 def initialize_crown_towers_(state: FastGymState, spec: FastTowerSpec) -> None:
@@ -142,17 +193,76 @@ def initialize_crown_towers_(state: FastGymState, spec: FastTowerSpec) -> None:
         torch.int32
     )
     state.speed_units_per_tick[:, tower_slice] = 0
-    state.hit_cooldown_ticks[:, tower_slice] = rows(
-        spec.hit_cooldown_ticks
-    ).to(torch.int32)
+    state.hit_cooldown_ticks[:, tower_slice] = rows(spec.hit_cooldown_ticks).to(
+        torch.int32
+    )
     state.deploy_ticks[:, tower_slice] = 0
-    state.cooldown_ticks[:, tower_slice] = 0
+    initial_cooldown = (
+        rows(spec.initial_cooldown_ticks).to(torch.int32)
+        if spec.initial_cooldown_ticks is not None
+        else torch.zeros(
+            (batch, FAST_TOWER_SLOT_COUNT),
+            dtype=torch.int32,
+            device=state.device,
+        )
+    )
+    state.cooldown_ticks[:, tower_slice] = initial_cooldown
+    state.king_active.zero_()
+    state.king_activation_ticks.zero_()
     state.next_stable_id.copy_(
         torch.maximum(
             state.next_stable_id,
             torch.full_like(state.next_stable_id, FAST_TOWER_SLOT_COUNT + 1),
         )
     )
+
+
+def update_king_activation_(
+    state: FastGymState,
+    activation_delay_ticks: torch.Tensor,
+    *,
+    advance_clock: bool,
+) -> torch.Tensor:
+    """Latch King activation from public tower HP and advance its wake-up.
+
+    A King becomes active after either friendly Princess tower dies or its own
+    HP falls below the initialized maximum.  The boolean latch is permanent
+    for the episode.  A separate integer wake-up clock preserves the native
+    activation action without overloading ordinary attack cooldowns; unlike
+    those cooldowns, it advances while the King is stunned.
+    """
+
+    if activation_delay_ticks.shape != (2,):
+        raise ValueError("activation_delay_ticks must have shape (2,)")
+    if activation_delay_ticks.device != state.device:
+        raise ValueError("activation_delay_ticks must use the state device")
+    if activation_delay_ticks.dtype != torch.int32:
+        raise ValueError("activation_delay_ticks must be int32")
+    hp = crown_tower_hp(state)
+    max_hp = state.max_hp[:, :FAST_TOWER_SLOT_COUNT].view(
+        state.batch_size, 2, FAST_TOWER_SLOTS_PER_PLAYER
+    )
+    triggered = (hp[:, :, :FAST_TOWER_KING] <= 0).any(dim=2) | (
+        hp[:, :, FAST_TOWER_KING] < max_hp[:, :, FAST_TOWER_KING]
+    )
+    newly_active = triggered & ~state.king_active
+    state.king_active.logical_or_(triggered)
+    state.king_activation_ticks.copy_(
+        torch.where(
+            newly_active,
+            activation_delay_ticks.view(1, 2).expand(state.batch_size, -1),
+            state.king_activation_ticks,
+        )
+    )
+    if advance_clock:
+        running = (
+            state.king_active
+            & ~newly_active
+            & (state.king_activation_ticks > 0)
+            & ~state.game_over[:, None]
+        )
+        state.king_activation_ticks.sub_(running.to(torch.int32)).clamp_(min=0)
+    return newly_active
 
 
 def crown_tower_hp(state: FastGymState) -> torch.Tensor:
@@ -221,9 +331,7 @@ class FastOutcomeTracker:
         still_active = was_active & ~finish_by_king
         crown_unequal = crowns[:, 0] != crowns[:, 1]
         at_regulation = (
-            still_active
-            & ~self.overtime
-            & (state.tick >= self.rules.regulation_ticks)
+            still_active & ~self.overtime & (state.tick >= self.rules.regulation_ticks)
         )
         crown_winner = torch.where(
             crowns[:, 0] > crowns[:, 1],
@@ -241,13 +349,9 @@ class FastOutcomeTracker:
         state.winner.copy_(torch.where(sudden_win, crown_winner, state.winner))
 
         tiebreak = (
-            sudden_active
-            & ~sudden_win
-            & (state.tick >= self.rules.tiebreak_ticks)
+            sudden_active & ~sudden_win & (state.tick >= self.rules.tiebreak_ticks)
         )
-        standing_hp = torch.where(
-            hp > 0, hp, torch.full_like(hp, torch.inf)
-        )
+        standing_hp = torch.where(hp > 0, hp, torch.full_like(hp, torch.inf))
         lowest = torch.round(standing_hp.amin(dim=2) * 1000.0).to(torch.int64)
         tiebreak_winner = torch.where(
             lowest[:, 0] > lowest[:, 1],
@@ -268,10 +372,14 @@ class FastOutcomeTracker:
             self.rules.tower_damage_weight * damage_edge_p0 / common_hp_scale
         )
         crown_delta = crowns - self.previous_crowns
-        crown_reward = self.rules.crown_weight * (
-            crown_delta[:, 0].to(torch.float32)
-            - crown_delta[:, 1].to(torch.float32)
-        ) / 3.0
+        crown_reward = (
+            self.rules.crown_weight
+            * (
+                crown_delta[:, 0].to(torch.float32)
+                - crown_delta[:, 1].to(torch.float32)
+            )
+            / 3.0
+        )
         newly_done = was_active & state.game_over
         terminal_sign = torch.where(
             state.winner == 0,

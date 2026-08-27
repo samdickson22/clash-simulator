@@ -44,6 +44,7 @@ class FastEffectCommands:
     target_x_units: torch.Tensor
     target_y_units: torch.Tensor
     damage_multiplier: torch.Tensor
+    numeric: FastNumericEffectCommands | None = None
 
     @property
     def batch_size(self) -> int:
@@ -69,6 +70,29 @@ class FastEffectAllocationResult:
     area: torch.Tensor
 
 
+@dataclass(frozen=True)
+class FastNumericEffectCommands:
+    """Optional serialized effect payloads aligned with command lanes.
+
+    This is the neutral adapter for combat sources that intentionally have no
+    public card row, such as arena fixtures.  An enabled lane supplies its
+    primitive and payload directly while retaining the command's real source
+    identity.  Disabled lanes continue through the ordinary card catalog.
+    """
+
+    enabled: torch.Tensor
+    effect_kind: torch.Tensor
+    projectile_speed_units_per_tick: torch.Tensor
+    projectile_start_radius_units: torch.Tensor
+    damage: torch.Tensor
+    radius_units: torch.Tensor
+    tower_damage_multiplier: torch.Tensor
+    building_damage_multiplier: torch.Tensor
+    hits_air: torch.Tensor
+    hits_ground: torch.Tensor
+    affects_hidden: torch.Tensor
+
+
 def _validate(
     state: FastGymState,
     effects: FastEffectState,
@@ -84,6 +108,8 @@ def _validate(
         raise ValueError("command tensors must have shape [batch, commands]")
     shape = tuple(commands.ready.shape)
     for descriptor in fields(commands):
+        if descriptor.name == "numeric":
+            continue
         value = getattr(commands, descriptor.name)
         if tuple(value.shape) != shape:
             raise ValueError(f"{descriptor.name} must have shape [batch, commands]")
@@ -99,6 +125,25 @@ def _validate(
         raise ValueError("target_id must be int64")
     if commands.damage_multiplier.dtype != torch.float32:
         raise ValueError("damage_multiplier must be float32")
+    if commands.numeric is not None:
+        for descriptor in fields(commands.numeric):
+            value = getattr(commands.numeric, descriptor.name)
+            if tuple(value.shape) != shape:
+                raise ValueError(
+                    f"numeric.{descriptor.name} must have shape [batch, commands]"
+                )
+            if value.device != state.device:
+                raise ValueError(f"numeric.{descriptor.name} is on a different device")
+        for name in ("enabled", "hits_air", "hits_ground", "affects_hidden"):
+            if getattr(commands.numeric, name).dtype != torch.bool:
+                raise ValueError(f"numeric.{name} must be bool")
+        if commands.numeric.effect_kind.dtype != torch.int8:
+            raise ValueError("numeric.effect_kind must be int8")
+        if commands.numeric.damage.dtype != torch.float32:
+            raise ValueError("numeric.damage must be float32")
+        for name in ("tower_damage_multiplier", "building_damage_multiplier"):
+            if getattr(commands.numeric, name).dtype != torch.float32:
+                raise ValueError(f"numeric.{name} must be float32")
     expected_pool = (state.batch_size, effects.max_effects)
     if tuple(consume_source_id.shape) != expected_pool:
         raise ValueError("consume_source_id must have shape [batch, effects]")
@@ -128,17 +173,33 @@ def allocate_fast_attack_effects_(
     batch = commands.ready.shape[0]
     max_effects = effects.max_effects
 
+    numeric = commands.numeric
+    numeric_enabled = (
+        numeric.enabled if numeric is not None else torch.zeros_like(commands.ready)
+    )
     known_card = (commands.card_id > 0) & (commands.card_id < catalog.size)
     safe_card = commands.card_id.clamp(0, catalog.size - 1)
-    primitive = catalog.effect_kind[safe_card]
+    primitive = torch.where(
+        numeric_enabled,
+        numeric.effect_kind if numeric is not None else catalog.effect_kind[safe_card],
+        catalog.effect_kind[safe_card],
+    )
     direct = primitive == FAST_CARD_EFFECT_DIRECT
     projectile = primitive == FAST_CARD_EFFECT_PROJECTILE
     area = primitive == FAST_CARD_EFFECT_AREA
-    supported = (
+    catalog_supported = (
         known_card
         & (primitive >= 0)
         & (~projectile | (catalog.projectile_speed_units_per_tick[safe_card] > 0))
     )
+    numeric_supported = (
+        numeric_enabled
+        & (primitive >= FAST_CARD_EFFECT_DIRECT)
+        & (primitive <= FAST_CARD_EFFECT_AREA)
+    )
+    if numeric is not None:
+        numeric_supported &= ~projectile | (numeric.projectile_speed_units_per_tick > 0)
+    supported = torch.where(numeric_enabled, numeric_supported, catalog_supported)
 
     source_match = (
         state.active[:, None, :]
@@ -153,7 +214,7 @@ def allocate_fast_attack_effects_(
     entity_command = commands.source_id > 0
     valid_entity_source = (
         source_found
-        & (source_card == commands.card_id)
+        & (numeric_enabled | (source_card == commands.card_id))
         & (source_owner == commands.owner.to(torch.int64))
     )
     valid_source = torch.where(entity_command, valid_entity_source, True)
@@ -235,8 +296,16 @@ def allocate_fast_attack_effects_(
         field.copy_(torch.where(written, selected, field))
 
     effect_kind = torch.where(projectile, FAST_EFFECT_PROJECTILE, FAST_EFFECT_AREA)
-    center_on_source = catalog.effect_center_on_source[safe_card]
-    line_range = catalog.line_range_units[safe_card]
+    center_on_source = torch.where(
+        numeric_enabled,
+        torch.zeros_like(commands.ready),
+        catalog.effect_center_on_source[safe_card],
+    )
+    line_range = torch.where(
+        numeric_enabled,
+        torch.zeros_like(commands.target_x_units, dtype=torch.int32),
+        catalog.line_range_units[safe_card],
+    )
     line = line_range > 0
     aim_dx = target_x.to(torch.float32) - source_x.to(torch.float32)
     aim_dy = target_y.to(torch.float32) - source_y.to(torch.float32)
@@ -250,16 +319,29 @@ def allocate_fast_attack_effects_(
     ).to(torch.int32)
     target_x = torch.where(line, line_target_x, target_x)
     target_y = torch.where(line, line_target_y, target_y)
-    effect_x = torch.where(
-        projectile | center_on_source,
-        source_x,
-        target_x,
+    projectile_start_radius = torch.where(
+        numeric_enabled,
+        (
+            numeric.projectile_start_radius_units
+            if numeric is not None
+            else torch.zeros_like(source_x)
+        ),
+        torch.zeros_like(source_x),
+    ).clamp(min=0)
+    muzzle_distance = torch.minimum(
+        projectile_start_radius.to(torch.float32),
+        aim_distance,
     )
-    effect_y = torch.where(
-        projectile | center_on_source,
-        source_y,
-        target_y,
+    muzzle_x = source_x + torch.trunc(aim_dx * muzzle_distance / aim_denominator).to(
+        torch.int32
     )
+    muzzle_y = source_y + torch.trunc(aim_dy * muzzle_distance / aim_denominator).to(
+        torch.int32
+    )
+    launch_x = torch.where(projectile, muzzle_x, source_x)
+    launch_y = torch.where(projectile, muzzle_y, source_y)
+    effect_x = torch.where(projectile | center_on_source, launch_x, target_x)
+    effect_y = torch.where(projectile | center_on_source, launch_y, target_y)
     # Charge, continuous-target ramp, and future numeric modifiers are
     # composed by the runtime into this one plane.  Allocation still writes a
     # single effect payload, leaving HP mutation exclusively to the effect
@@ -270,17 +352,30 @@ def allocate_fast_attack_effects_(
         posinf=0.0,
         neginf=0.0,
     ).clamp(min=0.0)
-    damage = catalog.effect_damage[safe_card] * damage_multiplier
-    dx = target_x.to(torch.float32) - source_x.to(torch.float32)
-    dy = target_y.to(torch.float32) - source_y.to(torch.float32)
+    base_damage = torch.where(
+        numeric_enabled,
+        numeric.damage if numeric is not None else torch.zeros_like(damage_multiplier),
+        catalog.effect_damage[safe_card],
+    )
+    damage = base_damage * damage_multiplier
+    dx = target_x.to(torch.float32) - launch_x.to(torch.float32)
+    dy = target_y.to(torch.float32) - launch_y.to(torch.float32)
     distance = torch.sqrt(dx.square() + dy.square())
-    speed = catalog.projectile_speed_units_per_tick[safe_card].clamp(min=1)
+    speed = torch.where(
+        numeric_enabled,
+        (
+            numeric.projectile_speed_units_per_tick
+            if numeric is not None
+            else torch.zeros_like(source_x)
+        ),
+        catalog.projectile_speed_units_per_tick[safe_card],
+    ).clamp(min=1)
     projectile_lifetime = (
         torch.ceil(distance / speed.to(torch.float32)).to(torch.int32) + 1
     ).clamp(min=1)
     lifetime = torch.where(projectile, projectile_lifetime, 1)
     consumed = torch.where(
-        entity_command & catalog.consume_source_on_impact[safe_card],
+        entity_command & ~numeric_enabled & catalog.consume_source_on_impact[safe_card],
         commands.source_id,
         0,
     )
@@ -305,50 +400,176 @@ def allocate_fast_attack_effects_(
         effects.speed_units_per_tick,
         torch.where(
             projectile,
-            catalog.projectile_speed_units_per_tick[safe_card],
+            speed,
             0,
         ),
     )
     write(effects.damage, damage)
     write(
         effects.tower_damage_multiplier,
-        catalog.tower_damage_multiplier[safe_card],
+        torch.where(
+            numeric_enabled,
+            (
+                numeric.tower_damage_multiplier
+                if numeric is not None
+                else torch.ones_like(damage_multiplier)
+            ),
+            catalog.tower_damage_multiplier[safe_card],
+        ),
     )
     write(
         effects.building_damage_multiplier,
-        catalog.building_damage_multiplier[safe_card],
+        torch.where(
+            numeric_enabled,
+            (
+                numeric.building_damage_multiplier
+                if numeric is not None
+                else torch.ones_like(damage_multiplier)
+            ),
+            catalog.building_damage_multiplier[safe_card],
+        ),
     )
-    write(effects.radius_units, catalog.effect_radius_units[safe_card])
-    write(effects.status_kind, catalog.status_kind[safe_card])
-    write(effects.status_duration_ticks, catalog.status_duration_ticks[safe_card])
+    write(
+        effects.radius_units,
+        torch.where(
+            numeric_enabled,
+            numeric.radius_units if numeric is not None else torch.zeros_like(source_x),
+            catalog.effect_radius_units[safe_card],
+        ),
+    )
+    write(
+        effects.status_kind,
+        torch.where(numeric_enabled, 0, catalog.status_kind[safe_card]),
+    )
+    write(
+        effects.status_duration_ticks,
+        torch.where(numeric_enabled, 0, catalog.status_duration_ticks[safe_card]),
+    )
     write(
         effects.lifetime_ticks,
-        torch.where(projectile, lifetime, catalog.effect_duration_ticks[safe_card]),
+        torch.where(
+            projectile,
+            lifetime,
+            torch.where(
+                numeric_enabled,
+                torch.ones_like(lifetime),
+                catalog.effect_duration_ticks[safe_card],
+            ),
+        ),
     )
-    write(effects.damage_interval_ticks, catalog.damage_interval_ticks[safe_card])
-    write(effects.next_damage_tick, catalog.initial_damage_delay_ticks[safe_card])
-    write(effects.damage_on_spawn, catalog.damage_on_spawn[safe_card])
-    write(effects.damage_hits_remaining, catalog.max_damage_hits[safe_card])
-    write(effects.status_interval_ticks, catalog.status_interval_ticks[safe_card])
-    write(effects.next_status_tick, catalog.initial_status_delay_ticks[safe_card])
-    write(effects.status_scans_remaining, catalog.max_status_scans[safe_card])
-    write(effects.hits_air, catalog.hits_air[safe_card])
-    write(effects.hits_ground, catalog.hits_ground[safe_card])
-    write(effects.affects_hidden, catalog.affects_hidden[safe_card])
-    write(effects.multi_target_count, catalog.multi_target_count[safe_card])
-    write(effects.multi_target_range_units, catalog.range_units[safe_card])
-    write(effects.multi_repeat_primary, catalog.multi_repeat_primary[safe_card])
-    write(effects.chain_target_count, catalog.chain_target_count[safe_card])
-    write(effects.chain_hop_radius_units, catalog.chain_hop_radius_units[safe_card])
+    one_i32 = torch.ones_like(source_x, dtype=torch.int32)
+    zero_i32 = torch.zeros_like(source_x, dtype=torch.int32)
+    write(
+        effects.damage_interval_ticks,
+        torch.where(numeric_enabled, one_i32, catalog.damage_interval_ticks[safe_card]),
+    )
+    write(
+        effects.next_damage_tick,
+        torch.where(
+            numeric_enabled, zero_i32, catalog.initial_damage_delay_ticks[safe_card]
+        ),
+    )
+    write(
+        effects.damage_on_spawn,
+        torch.where(
+            numeric_enabled,
+            torch.ones_like(commands.ready),
+            catalog.damage_on_spawn[safe_card],
+        ),
+    )
+    write(
+        effects.damage_hits_remaining,
+        torch.where(numeric_enabled, one_i32, catalog.max_damage_hits[safe_card]),
+    )
+    write(
+        effects.status_interval_ticks,
+        torch.where(numeric_enabled, one_i32, catalog.status_interval_ticks[safe_card]),
+    )
+    write(
+        effects.next_status_tick,
+        torch.where(
+            numeric_enabled, zero_i32, catalog.initial_status_delay_ticks[safe_card]
+        ),
+    )
+    write(
+        effects.status_scans_remaining,
+        torch.where(numeric_enabled, zero_i32, catalog.max_status_scans[safe_card]),
+    )
+    write(
+        effects.hits_air,
+        torch.where(
+            numeric_enabled,
+            numeric.hits_air
+            if numeric is not None
+            else torch.ones_like(commands.ready),
+            catalog.hits_air[safe_card],
+        ),
+    )
+    write(
+        effects.hits_ground,
+        torch.where(
+            numeric_enabled,
+            numeric.hits_ground
+            if numeric is not None
+            else torch.ones_like(commands.ready),
+            catalog.hits_ground[safe_card],
+        ),
+    )
+    write(
+        effects.affects_hidden,
+        torch.where(
+            numeric_enabled,
+            numeric.affects_hidden
+            if numeric is not None
+            else torch.zeros_like(commands.ready),
+            catalog.affects_hidden[safe_card],
+        ),
+    )
+    write(
+        effects.multi_target_count,
+        torch.where(numeric_enabled, 1, catalog.multi_target_count[safe_card]),
+    )
+    write(
+        effects.multi_target_range_units,
+        torch.where(numeric_enabled, zero_i32, catalog.range_units[safe_card]),
+    )
+    write(
+        effects.multi_repeat_primary,
+        torch.where(numeric_enabled, False, catalog.multi_repeat_primary[safe_card]),
+    )
+    write(
+        effects.chain_target_count,
+        torch.where(numeric_enabled, 0, catalog.chain_target_count[safe_card]),
+    )
+    write(
+        effects.chain_hop_radius_units,
+        torch.where(
+            numeric_enabled, zero_i32, catalog.chain_hop_radius_units[safe_card]
+        ),
+    )
     write(effects.line_range_units, line_range)
     write(
         effects.line_half_width_units,
-        catalog.line_half_width_units[safe_card],
+        torch.where(
+            numeric_enabled, zero_i32, catalog.line_half_width_units[safe_card]
+        ),
     )
-    write(effects.fan_ray_count, catalog.fan_ray_count[safe_card])
-    write(effects.fan_range_units, catalog.fan_range_units[safe_card])
-    write(effects.fan_radius_units, catalog.fan_radius_units[safe_card])
-    write(effects.fan_spread_degrees, catalog.fan_spread_degrees[safe_card])
+    write(
+        effects.fan_ray_count,
+        torch.where(numeric_enabled, 0, catalog.fan_ray_count[safe_card]),
+    )
+    write(
+        effects.fan_range_units,
+        torch.where(numeric_enabled, zero_i32, catalog.fan_range_units[safe_card]),
+    )
+    write(
+        effects.fan_radius_units,
+        torch.where(numeric_enabled, zero_i32, catalog.fan_radius_units[safe_card]),
+    )
+    write(
+        effects.fan_spread_degrees,
+        torch.where(numeric_enabled, 0.0, catalog.fan_spread_degrees[safe_card]),
+    )
     write(consume_source_id, consumed)
 
     return FastEffectAllocationResult(
