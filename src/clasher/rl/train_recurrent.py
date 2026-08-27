@@ -1663,6 +1663,7 @@ def save_checkpoint(
     update: int,
     total_transitions: int,
     metrics: dict[str, float] | None = None,
+    simulation_backend_metadata: dict[str, Any] | None = None,
 ) -> None:
     torch.save(
         {
@@ -1676,6 +1677,7 @@ def save_checkpoint(
             "update": update,
             "total_transitions": total_transitions,
             "metrics": metrics or {},
+            "simulation_backend_metadata": simulation_backend_metadata,
         },
         path,
     )
@@ -1686,6 +1688,22 @@ def parse_args() -> argparse.Namespace:
         description="Train the recurrent entity-spatial policy with PPO self-play"
     )
     parser.add_argument("--decks-path", default="decks.json")
+    parser.add_argument(
+        "--simulation-backend",
+        choices=("python", "simple-pytorch"),
+        default="python",
+        help="battle backend; simple-pytorch is a fresh-only dense tensor Gym",
+    )
+    parser.add_argument(
+        "--simple-supported-decks-path",
+        default="training_decks/simple_gym_supported_v1.json",
+        help="fail-closed supported-deck artifact for --simulation-backend simple-pytorch",
+    )
+    parser.add_argument(
+        "--simple-token-vocabulary-path",
+        default="reports/current_client_youtube_stable_vocabulary_v1.json",
+        help="typed current-client actor vocabulary for the simple PyTorch backend",
+    )
     parser.add_argument(
         "--card-semantics-version",
         type=int,
@@ -2212,17 +2230,60 @@ def _canonical_lane_globals_for_run(
     *,
     actor_observation_domain: str,
     resume_config: PolicyConfig | None,
+    simulation_backend: str = "python",
 ) -> bool:
     """Keep the observation builder and checkpoint contract on one lane frame."""
 
     if resume_config is not None:
         return bool(resume_config.canonical_lane_globals)
+    if simulation_backend == "simple-pytorch":
+        return True
     return actor_observation_domain in {"causal-vision-v1", "causal-frame-v1"}
+
+
+def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
+    """Fail before side effects unless the fresh dense-Gym contract is exact."""
+
+    if args.simulation_backend != "simple-pytorch":
+        return
+    if args.actor_workers != 1:
+        raise ValueError("simple-pytorch requires --actor-workers 1")
+    if args.resume_latest or args.resume_from:
+        raise ValueError("simple-pytorch is fresh-only until exact resume is gated")
+    if args.opponent_mode != "selfplay":
+        raise ValueError("simple-pytorch currently requires selfplay")
+    if args.actor_observation_domain != "simulator-exact":
+        raise ValueError(
+            "simple-pytorch owns an exact public projection actor domain"
+        )
+    if args.reward_profile != OBJECTIVE_V1 or args.reward_shaping_gamma is not None:
+        raise ValueError(
+            "simple-pytorch uses only its persisted objective-v1-gamma-v1 reward"
+        )
+    if args.elixir_leak_penalty_scale != 0.0:
+        raise ValueError(
+            "simple-pytorch requires --elixir-leak-penalty-scale 0"
+        )
+    if args.engine_fast_path != "off":
+        raise ValueError("simple-pytorch does not compose the legacy engine fast path")
+    if args.max_ticks != STANDARD_MATCH_TICKS:
+        raise ValueError("simple-pytorch currently requires the standard match horizon")
+    if (
+        args.sampling_decks_path is not None
+        or args.learner_sampling_decks_path is not None
+        or args.opponent_sampling_decks_path is not None
+        or args.matchups_path is not None
+        or args.defense_scenario_probability != 0.0
+    ):
+        raise ValueError(
+            "simple-pytorch deck sampling is owned by its supported-deck artifact"
+        )
 
 
 def main() -> None:
     global _USE_TRIMMED_ROLLOUT_ENTITY_PADDING
     args = parse_args()
+    _validate_simple_pytorch_args(args)
     _USE_TRIMMED_ROLLOUT_ENTITY_PADDING = bool(args.trim_rollout_entity_padding)
     if args.num_envs <= 0 or args.rollout_steps <= 0:
         raise ValueError("num_envs and rollout_steps must be positive")
@@ -2472,12 +2533,19 @@ def main() -> None:
     resume, resume_path = _load_resume_state(args, directory, learner_device)
 
     token_names = resume.get("token_names") if resume is not None else None
+    if args.simulation_backend == "simple-pytorch":
+        from .simple_pytorch_backend import load_current_client_typed_vocabulary
+
+        token_names = load_current_client_typed_vocabulary(
+            resolve_path(args.simple_token_vocabulary_path, must_exist=True)
+        ).token_names
     resume_config = (
         PolicyConfig.from_dict(resume["model_config"]) if resume is not None else None
     )
     canonical_lane_globals = _canonical_lane_globals_for_run(
         actor_observation_domain=args.actor_observation_domain,
         resume_config=resume_config,
+        simulation_backend=args.simulation_backend,
     )
     target_public_history_slots = (
         args.add_public_history_slots
@@ -2938,7 +3006,28 @@ def main() -> None:
 
     envs: list[SelfPlayBattleEnv] = []
     parallel_collector: Any = None
-    if args.actor_workers == 1:
+    simple_collector: Any = None
+    simulation_backend_metadata: dict[str, Any] | None = None
+    if args.simulation_backend == "simple-pytorch":
+        from .simple_pytorch_backend import SimplePytorchTrainingCollector
+
+        simple_collector = SimplePytorchTrainingCollector(
+            model=actor_model,
+            builder=builder,
+            batch_size=args.num_envs,
+            device=actor_device,
+            decision_interval=args.decision_interval,
+            gamma=args.gamma,
+            supported_decks_path=resolve_path(
+                args.simple_supported_decks_path, must_exist=True
+            ),
+            typed_vocabulary_path=resolve_path(
+                args.simple_token_vocabulary_path, must_exist=True
+            ),
+            mirror_match=args.mirror_match,
+        )
+        simulation_backend_metadata = simple_collector.checkpoint_metadata()
+    elif args.actor_workers == 1:
         with maybe_silence_stdio(args.quiet_engine):
             for index in range(args.num_envs):
                 learner_player = index % 2
@@ -3075,6 +3164,7 @@ def main() -> None:
     parameter_count = sum(parameter.numel() for parameter in model.parameters())
 
     print(f"learner_device={learner_device} actor_device={actor_device}")
+    print(f"simulation_backend={args.simulation_backend}")
     print(f"decks_path={decks_path}")
     print(f"sampling_decks_path={sampling_decks_path}")
     print(f"learner_sampling_decks_path={learner_sampling_decks_path}")
@@ -3166,6 +3256,7 @@ def main() -> None:
             args=args,
             update=0,
             total_transitions=0,
+            simulation_backend_metadata=simulation_backend_metadata,
         )
         print(f"saved_initial_checkpoint={initial_checkpoint}")
 
@@ -3188,7 +3279,16 @@ def main() -> None:
             learning_rate = float(optimizer.param_groups[0]["lr"])
 
         collect_start = time.perf_counter()
-        if parallel_collector is None:
+        if simple_collector is not None:
+            (
+                simple_arrays,
+                recurrent_state,
+                previous_actions,
+                previous_rewards,
+                episode_starts,
+            ) = simple_collector.collect(args.rollout_steps, recurrent_state)
+            rollout = RolloutBatch(**simple_arrays)
+        elif parallel_collector is None:
             (
                 rollout,
                 recurrent_state,
@@ -3366,6 +3466,7 @@ def main() -> None:
                 args=args,
                 update=update,
                 total_transitions=total_transitions,
+                simulation_backend_metadata=simulation_backend_metadata,
                 metrics={
                     **stats,
                     "reward_mean": float(rollout.rewards.mean()),
