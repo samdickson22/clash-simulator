@@ -627,6 +627,10 @@ class SimpleGymRuntime:
         self.entity_attack_clock_fraction = torch.zeros(
             entity_shape, dtype=torch.float32, device=self.state.device
         )
+        self.entity_kamikaze_ticks = torch.zeros(
+            entity_shape, dtype=torch.int32, device=self.state.device
+        )
+        self.entity_kamikaze_windup_ticks = torch.zeros_like(self.entity_kamikaze_ticks)
         self.effect_consume_source_id = torch.zeros(
             (self.state.batch_size, max_effects),
             dtype=torch.int64,
@@ -854,6 +858,10 @@ class SimpleGymRuntime:
                 "entity_attack_clock_fraction": (
                     self.entity_attack_clock_fraction.clone()
                 ),
+                "entity_kamikaze_ticks": self.entity_kamikaze_ticks.clone(),
+                "entity_kamikaze_windup_ticks": (
+                    self.entity_kamikaze_windup_ticks.clone()
+                ),
                 "effect_consume_source_id": self.effect_consume_source_id.clone(),
                 "death_effect_consume_source_id": (
                     self.death_effect_consume_source_id.clone()
@@ -976,6 +984,8 @@ class SimpleGymRuntime:
             "entity_status_ticks": self.entity_status_ticks,
             "entity_slow_ticks": self.entity_slow_ticks,
             "entity_attack_clock_fraction": self.entity_attack_clock_fraction,
+            "entity_kamikaze_ticks": self.entity_kamikaze_ticks,
+            "entity_kamikaze_windup_ticks": self.entity_kamikaze_windup_ticks,
             "effect_consume_source_id": self.effect_consume_source_id,
             "death_effect_consume_source_id": self.death_effect_consume_source_id,
             "travel_effect_consume_source_id": self.travel_effect_consume_source_id,
@@ -1444,6 +1454,8 @@ class SimpleGymRuntime:
         self.entity_status_ticks.masked_fill_(mask, 0)
         self.entity_slow_ticks.masked_fill_(mask[:, :, None], 0)
         self.entity_attack_clock_fraction.masked_fill_(mask, 0.0)
+        self.entity_kamikaze_ticks.masked_fill_(mask, 0)
+        self.entity_kamikaze_windup_ticks.masked_fill_(mask, 0)
 
     def _initialize_action_spawns_(self, spawned: torch.Tensor) -> None:
         """Initialize every entity-bound plane from one action spawn ledger.
@@ -2572,6 +2584,7 @@ class SimpleGymRuntime:
             == 0
         )
         inactive_king = self._king_source_mask & ~(king_owner_active & king_owner_ready)
+        kamikaze_primed = self.entity_kamikaze_ticks > 0
         attack_clock_positive = self.state.cooldown_ticks > 0
         if self.attack_timings is not None:
             assert self.attack_locks is not None
@@ -2606,6 +2619,7 @@ class SimpleGymRuntime:
                 & ~pre_visibility.combat_blocked
                 & ~ability_cast_locked
                 & ~active_travel_view.combat_blocked
+                & ~kamikaze_primed
                 & attack_clock_positive
             ),
             rate_multiplier=(
@@ -2621,6 +2635,7 @@ class SimpleGymRuntime:
                 | pre_visibility.combat_blocked
                 | ability_cast_locked
                 | active_travel_view.combat_blocked
+                | kamikaze_primed
             ),
             speed_multiplier=(
                 charge_view.speed
@@ -2634,11 +2649,70 @@ class SimpleGymRuntime:
                 stunned
                 | pre_visibility.combat_blocked
                 | active_travel_view.combat_blocked
+                | kamikaze_primed
             ),
             reload_source_attack=(stunned | active_travel_view.combat_blocked),
             collision_excluded=active_travel_view.immune,
             river_jump_stunned=stunned,
         )
+        safe_kamikaze_card = self.state.card_id.clamp(
+            0, self.action_kernel.catalog.size - 1
+        )
+        kamikaze_delay = self.action_kernel.catalog.kamikaze_delay_ticks[
+            safe_kamikaze_card
+        ]
+        kamikaze_prime_delay = self.action_kernel.catalog.kamikaze_prime_delay_ticks[
+            safe_kamikaze_card
+        ]
+        kamikaze_known = (self.state.card_id > 0) & (
+            self.state.card_id < self.action_kernel.catalog.size
+        )
+        delayed_kamikaze = kamikaze_known & (kamikaze_delay > 0)
+        contact = combat.target_in_contact_range & delayed_kamikaze
+        windup_before = self.entity_kamikaze_windup_ticks > 0
+        start_windup = contact & ~kamikaze_primed & ~windup_before & ~stunned
+        start_remaining = (kamikaze_prime_delay - 1).clamp_min(0)
+        advance_windup = windup_before & contact & ~stunned
+        advanced_windup = (self.entity_kamikaze_windup_ticks - 1).clamp_min(0)
+        windup_completed = advance_windup & (advanced_windup == 0)
+        immediate_prime = start_windup & (kamikaze_prime_delay <= 1)
+        reset_windup = windup_before & ~contact & ~stunned
+        windup_next = torch.where(
+            start_windup,
+            start_remaining,
+            torch.where(
+                advance_windup,
+                advanced_windup,
+                torch.where(
+                    reset_windup,
+                    torch.zeros_like(self.entity_kamikaze_windup_ticks),
+                    self.entity_kamikaze_windup_ticks,
+                ),
+            ),
+        )
+        kamikaze_prime = immediate_prime | windup_completed
+        live_primed = kamikaze_primed & self.state.active & (self.state.hp > 0)
+        decrement_primed = live_primed & ~stunned
+        decremented_timer = (self.entity_kamikaze_ticks - 1).clamp_min(0)
+        kamikaze_next = torch.where(
+            decrement_primed,
+            decremented_timer,
+            torch.where(
+                live_primed,
+                self.entity_kamikaze_ticks,
+                torch.where(
+                    kamikaze_prime,
+                    kamikaze_delay,
+                    torch.zeros_like(self.entity_kamikaze_ticks),
+                ),
+            ),
+        )
+        kamikaze_expired = decrement_primed & (kamikaze_next == 0)
+        self.entity_kamikaze_windup_ticks.copy_(
+            torch.where(kamikaze_prime, 0, windup_next)
+        )
+        self.entity_kamikaze_ticks.copy_(kamikaze_next)
+        self.state.hp.masked_fill_(kamikaze_expired, 0.0)
         ramp_parameters = self._damage_ramp_parameters()
         ramp_target = torch.where(
             combat.target_in_attack_range,
@@ -3023,6 +3097,7 @@ class SimpleGymRuntime:
         self._publish_ability_mechanics_(abilities_after)
         self._publish_travel_mechanics_(self._travel_view())
         self._publish_river_jump_mechanics_()
+        self._entity_special.logical_or_(self.entity_kamikaze_ticks > 0)
         update_king_activation_(
             self.state,
             self._king_activation_delay_ticks,

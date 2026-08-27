@@ -120,6 +120,8 @@ class FastCardCatalog:
     omits_displacement: torch.Tensor
     omits_recoil: torch.Tensor
     consume_source_on_impact: torch.Tensor
+    kamikaze_prime_delay_ticks: torch.Tensor
+    kamikaze_delay_ticks: torch.Tensor
     training_supported: torch.Tensor
 
     @classmethod
@@ -277,6 +279,19 @@ class FastCardCatalog:
         omits_displacement = torch.zeros_like(catalog.kind, dtype=torch.bool)
         omits_recoil = torch.zeros_like(catalog.kind, dtype=torch.bool)
         consume_source = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        kamikaze_delay_ticks = torch.zeros_like(catalog.range_units)
+        kamikaze_prime_delay_ticks = torch.zeros_like(catalog.range_units)
+        inverted_load = catalog.load_time_ms > catalog.hit_speed_ms
+        first_hit_ms = torch.where(
+            inverted_load,
+            catalog.hit_speed_ms,
+            (catalog.hit_speed_ms - catalog.load_time_ms).clamp_min(0),
+        ).to(torch.int32)
+        first_hit_ticks = torch.div(
+            first_hit_ms + 49,
+            50,
+            rounding_mode="floor",
+        )
 
         def compile_status_buff_(
             card_id: int,
@@ -841,7 +856,15 @@ class FastCardCatalog:
                             or float(getattr(spell, "push_speed_factor", 0.0) or 0.0)
                         )
 
-                consume_source[card_id] = bool(character.get("kamikaze", False))
+                is_kamikaze = bool(character.get("kamikaze", False))
+                consume_source[card_id] = is_kamikaze
+                if is_kamikaze:
+                    delay_ms = int(character.get("kamikazeTime", 0) or 0)
+                    kamikaze_delay_ticks[card_id] = (
+                        (delay_ms + 49) // 50 if delay_ms > 0 else 0
+                    )
+                    if delay_ms > 0:
+                        kamikaze_prime_delay_ticks[card_id] = first_hit_ticks[card_id]
 
                 # Serialized attack mechanics can refine the generic payload
                 # without card-name cases. Stun/freeze share the simple Gym's
@@ -1022,6 +1045,8 @@ class FastCardCatalog:
             omits_displacement=omits_displacement,
             omits_recoil=omits_recoil,
             consume_source_on_impact=consume_source,
+            kamikaze_prime_delay_ticks=kamikaze_prime_delay_ticks,
+            kamikaze_delay_ticks=kamikaze_delay_ticks,
             training_supported=training_supported.to(torch.bool),
         )
 

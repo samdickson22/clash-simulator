@@ -31,9 +31,7 @@ class FastTargetTraits:
         for descriptor in fields(self):
             value = getattr(self, descriptor.name)
             if tuple(value.shape) != expected:
-                raise ValueError(
-                    f"{descriptor.name} must have shape [batch, entities]"
-                )
+                raise ValueError(f"{descriptor.name} must have shape [batch, entities]")
             if value.device != state.device:
                 raise ValueError(f"{descriptor.name} must use the state device")
         for name in (
@@ -101,14 +99,11 @@ def select_nearest_targets(
             raise ValueError(f"{name} must be bool")
 
     # Sources index dimension 1; candidate targets index dimension 2.
-    present = (
-        state.active
-        & (state.hp > 0)
-        & (state.deploy_ticks == 0)
-        & (state.stable_id > 0)
-    )
-    source_can_act = present & ~source_disabled
-    target_present = present & ~target_unavailable
+    body_present = state.active & (state.hp > 0) & (state.stable_id > 0)
+    # Deployment gates only the source's actions. Pending bodies already exist
+    # in the arena and remain targetable/effectable under the public contract.
+    source_can_act = body_present & (state.deploy_ticks == 0) & ~source_disabled
+    target_present = body_present & ~target_unavailable
 
     target_plane_allowed = torch.where(
         traits.airborne[:, None, :],
@@ -119,20 +114,16 @@ def select_nearest_targets(
         ~traits.buildings_only[:, :, None] | traits.building[:, None, :]
     )
 
-    delta_x = (
-        state.x_units[:, :, None].to(torch.int64)
-        - state.x_units[:, None, :].to(torch.int64)
+    delta_x = state.x_units[:, :, None].to(torch.int64) - state.x_units[:, None, :].to(
+        torch.int64
     )
-    delta_y = (
-        state.y_units[:, :, None].to(torch.int64)
-        - state.y_units[:, None, :].to(torch.int64)
+    delta_y = state.y_units[:, :, None].to(torch.int64) - state.y_units[:, None, :].to(
+        torch.int64
     )
     center_distance_sq = delta_x.square() + delta_y.square()
     target_radius = traits.collision_radius.clamp(min=0).to(torch.float32)
     center_distance = torch.sqrt(center_distance_sq.to(torch.float32))
-    edge_distance = (
-        center_distance - target_radius[:, None, :]
-    ).clamp_min(0.0)
+    edge_distance = (center_distance - target_radius[:, None, :]).clamp_min(0.0)
 
     candidate = (
         source_can_act[:, :, None]

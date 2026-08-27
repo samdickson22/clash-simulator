@@ -66,37 +66,81 @@ def _validate_inputs(
 def _stable_overlap_normal(
     own_id: torch.Tensor,
     other_id: torch.Tensor,
+    own_owner: torch.Tensor,
+    other_owner: torch.Tensor,
     *,
     dtype: torch.dtype,
-    device: torch.device,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Return an antisymmetric deterministic unit vector for exact overlap."""
 
     low = torch.minimum(own_id, other_id)
     high = torch.maximum(own_id, other_id)
     direction_index = torch.bitwise_and(low * 31 + high * 17, 7)
-    diagonal = 2.0**-0.5
-    directions = torch.tensor(
-        (
-            (1.0, 0.0),
-            (diagonal, diagonal),
-            (0.0, 1.0),
-            (-diagonal, diagonal),
-            (-1.0, 0.0),
-            (-diagonal, -diagonal),
-            (0.0, -1.0),
-            (diagonal, -diagonal),
+    one = torch.ones_like(direction_index, dtype=dtype)
+    zero = one - one
+    diagonal = one * (2.0**-0.5)
+    selected_x = torch.where(
+        direction_index == 0,
+        one,
+        torch.where(
+            direction_index == 1,
+            diagonal,
+            torch.where(
+                direction_index == 2,
+                zero,
+                torch.where(
+                    direction_index == 3,
+                    -diagonal,
+                    torch.where(
+                        direction_index == 4,
+                        -one,
+                        torch.where(
+                            direction_index == 5,
+                            -diagonal,
+                            torch.where(direction_index == 6, zero, diagonal),
+                        ),
+                    ),
+                ),
+            ),
         ),
-        dtype=dtype,
-        device=device,
     )
-    selected = directions[direction_index]
+    selected_y = torch.where(
+        direction_index == 0,
+        zero,
+        torch.where(
+            direction_index == 1,
+            diagonal,
+            torch.where(
+                direction_index == 2,
+                one,
+                torch.where(
+                    direction_index == 3,
+                    diagonal,
+                    torch.where(
+                        direction_index == 4,
+                        zero,
+                        torch.where(
+                            direction_index == 5,
+                            -diagonal,
+                            torch.where(direction_index == 6, -one, -diagonal),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+    low_owner = torch.where(own_id < other_id, own_owner, other_owner)
+    perspective = torch.where(
+        low_owner == 0,
+        torch.ones_like(selected_x),
+        -torch.ones_like(selected_x),
+    )
     sign = torch.where(
         own_id < other_id,
-        torch.ones_like(selected[..., 0]),
-        -torch.ones_like(selected[..., 0]),
+        torch.ones_like(selected_x),
+        -torch.ones_like(selected_x),
     )
-    return selected[..., 0] * sign, selected[..., 1] * sign
+    return selected_x * sign * perspective, selected_y * sign * perspective
 
 
 def _clamp_vector_length(
@@ -116,6 +160,7 @@ def resolve_fast_collision_navigation(
     *,
     active: torch.Tensor,
     stable_id: torch.Tensor,
+    owner: torch.Tensor,
     kind: torch.Tensor,
     x_units: torch.Tensor,
     y_units: torch.Tensor,
@@ -140,10 +185,11 @@ def resolve_fast_collision_navigation(
 
     if collision_excluded is None:
         collision_excluded = torch.zeros_like(active)
-    shape, device = _validate_inputs(
+    shape, _device = _validate_inputs(
         (
             ("active", active, torch.bool),
             ("stable_id", stable_id, torch.int64),
+            ("owner", owner, torch.int8),
             ("kind", kind, torch.int8),
             ("x_units", x_units, torch.int32),
             ("y_units", y_units, torch.int32),
@@ -183,6 +229,8 @@ def resolve_fast_collision_navigation(
     distance = torch.sqrt(distance_sq)
     own_id = stable_id[:, :, None]
     other_id = stable_id[:, None, :]
+    own_owner = owner[:, :, None]
+    other_owner = owner[:, None, :]
     same_body = own_id == other_id
     contact_plane = airborne | hover
     pair = (
@@ -202,8 +250,9 @@ def resolve_fast_collision_navigation(
     tie_x, tie_y = _stable_overlap_normal(
         own_id,
         other_id,
+        own_owner,
+        other_owner,
         dtype=proposed_x.dtype,
-        device=device,
     )
     ordinary_x = delta_x / distance.clamp_min(1.0)
     ordinary_y = delta_y / distance.clamp_min(1.0)

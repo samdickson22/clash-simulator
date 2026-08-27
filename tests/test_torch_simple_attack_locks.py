@@ -225,6 +225,27 @@ def test_melee_first_hit_preload_and_effect_commit_cycle(device_name: str) -> No
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_pending_body_is_lockable_but_pending_source_cannot_acquire(
+    device_name: str,
+) -> None:
+    state, traits, locks, timings, _, disabled, unavailable = _combat_fixture(
+        device_name, "Knight", entities=2
+    )
+    state.x_units[0] = torch.tensor([0, 1_000], device=state.device)
+    state.deploy_ticks[0, 1] = 10
+
+    selected = _step(state, traits, locks, timings, disabled, unavailable)
+    assert selected.target_stable_id[0, 0].item() == 2
+
+    reset_fast_attack_locks_(
+        locks, torch.ones(1, dtype=torch.bool, device=state.device)
+    )
+    state.deploy_ticks[0, 0] = 10
+    blocked = _step(state, traits, locks, timings, disabled, unavailable)
+    assert not blocked.target_found[0, 0]
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
 def test_split_seam_consumes_clock_against_post_movement_range(
     device_name: str,
 ) -> None:

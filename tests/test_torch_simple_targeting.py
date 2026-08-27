@@ -120,9 +120,7 @@ def test_ground_only_source_ignores_air_and_disabled_source_cannot_acquire(
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
 def test_collision_edge_controls_sight_and_attack_range(device_name: str) -> None:
-    state, traits, disabled, unavailable = _state_and_traits(
-        device_name, entities=2
-    )
+    state, traits, disabled, unavailable = _state_and_traits(device_name, entities=2)
     state.owner[0] = torch.tensor([0, 1], device=state.device)
     state.x_units[0] = torch.tensor([0, 1_500], device=state.device)
     state.sight_range_units[0, 0] = 700
@@ -146,9 +144,7 @@ def test_collision_edge_controls_sight_and_attack_range(device_name: str) -> Non
 def test_stable_id_breaks_equal_distance_tie_after_slot_reuse(
     device_name: str,
 ) -> None:
-    state, traits, disabled, unavailable = _state_and_traits(
-        device_name, entities=3
-    )
+    state, traits, disabled, unavailable = _state_and_traits(device_name, entities=3)
     state.owner[0] = torch.tensor([0, 1, 1], device=state.device)
     # Slot one has been reused for a later spawn (ID 9); slot two retains ID 2.
     state.stable_id[0] = torch.tensor([1, 9, 2], device=state.device)
@@ -170,9 +166,7 @@ def test_stable_id_breaks_equal_distance_tie_after_slot_reuse(
 def test_unavailable_target_is_fail_closed_but_disabled_target_remains_visible(
     device_name: str,
 ) -> None:
-    state, traits, disabled, unavailable = _state_and_traits(
-        device_name, entities=3
-    )
+    state, traits, disabled, unavailable = _state_and_traits(device_name, entities=3)
     state.owner[0] = torch.tensor([0, 1, 1], device=state.device)
     state.x_units[0] = torch.tensor([0, 500, 1_000], device=state.device)
     disabled[0, 1] = True
@@ -193,3 +187,22 @@ def test_unavailable_target_is_fail_closed_but_disabled_target_remains_visible(
 
     assert disabled_target.target_id[0, 0].item() == 2
     assert hidden_target.target_id[0, 0].item() == 3
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_pending_deployment_is_targetable_but_cannot_act(device_name: str) -> None:
+    state, traits, disabled, unavailable = _state_and_traits(device_name, entities=3)
+    state.owner[0] = torch.tensor([0, 1, 0], device=state.device)
+    state.x_units[0] = torch.tensor([0, 500, 1_000], device=state.device)
+    state.deploy_ticks[0, 1] = 10
+    state.deploy_ticks[0, 2] = 10
+
+    selected = select_nearest_targets(
+        state,
+        traits,
+        source_disabled=disabled,
+        target_unavailable=unavailable,
+    )
+
+    assert selected.target_id[0, 0].item() == 2
+    assert not selected.found[0, 2]
