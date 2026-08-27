@@ -109,6 +109,23 @@ class FastTensorGym:
             ),
         )
 
+    def has_attack_range_target(self) -> torch.Tensor:
+        """Return range presence without requiring the source to be actionable.
+
+        Idle-hide mechanics must sense a nearby enemy while their source is
+        itself combat-blocked. Candidate targets still obey the shared
+        unavailable plane, deployment state, target categories, and air/ground
+        capabilities used by ordinary acquisition.
+        """
+
+        targets = select_nearest_targets(
+            self.state,
+            self._target_traits(),
+            source_disabled=torch.zeros_like(self.state.active),
+            target_unavailable=self._target_unavailable,
+        )
+        return targets.within_attack_range
+
     def _navigation_targets(
         self,
         can_act: torch.Tensor,

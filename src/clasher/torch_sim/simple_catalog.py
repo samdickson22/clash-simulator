@@ -114,6 +114,7 @@ class FastCardCatalog:
     max_status_scans: torch.Tensor
     hits_air: torch.Tensor
     hits_ground: torch.Tensor
+    affects_hidden: torch.Tensor
     omits_displacement: torch.Tensor
     omits_recoil: torch.Tensor
     consume_source_on_impact: torch.Tensor
@@ -304,6 +305,7 @@ class FastCardCatalog:
         effect_hits_ground = torch.where(
             serialized_spell, torch.ones_like(attacks_ground), attacks_ground
         )
+        effect_affects_hidden = torch.zeros_like(catalog.kind, dtype=torch.bool)
         buildings_only = catalog.buildings_only.to(torch.bool).clone()
         is_air = catalog.is_air_unit.to(torch.bool).clone()
         death_spawn_opcode = int(MECHANIC_OPCODE["DeathSpawn"])
@@ -475,6 +477,14 @@ class FastCardCatalog:
                 area_data = raw.get("areaEffectObjectData") or {}
                 rolling_projectile = (
                     spell_projectile_data.get("spawnProjectileData") or {}
+                )
+                effect_affects_hidden[card_id] = bool(
+                    raw.get("affectsHidden", False)
+                    or character.get("affectsHidden", False)
+                    or projectile.get("affectsHidden", False)
+                    or spell_projectile_data.get("affectsHidden", False)
+                    or area_data.get("affectsHidden", False)
+                    or rolling_projectile.get("affectsHidden", False)
                 )
                 if rolling_projectile and int(catalog.kind[card_id]) == int(
                     CardKindOpcode.SPELL
@@ -1004,6 +1014,7 @@ class FastCardCatalog:
             max_status_scans=max_status_scans,
             hits_air=effect_hits_air,
             hits_ground=effect_hits_ground,
+            affects_hidden=effect_affects_hidden,
             omits_displacement=omits_displacement,
             omits_recoil=omits_recoil,
             consume_source_on_impact=consume_source,

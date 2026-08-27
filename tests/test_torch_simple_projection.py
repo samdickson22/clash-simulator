@@ -40,6 +40,9 @@ def test_mirrored_actor_views_are_canonical_and_private_state_stays_critic_only(
         ability_cooldown=torch.zeros((1, 2)),
         ability_duration=torch.zeros((1, 2)),
         refill_cooldown_ms=torch.tensor([[100.0, 700.0]]),
+        entity_special=torch.tensor([[True, False]]),
+        entity_invisible=torch.tensor([[True, False]]),
+        entity_hidden=torch.tensor([[False, False]]),
         max_ticks=100,
     )
 
@@ -55,6 +58,9 @@ def test_mirrored_actor_views_are_canonical_and_private_state_stays_critic_only(
     assert actor.entity_features[0, 1, 0, 0].item() == 0.75
     assert actor.entity_features[0, 1, 0, 1].item() == 0.75
     assert actor.entity_features[0, :, 0, 9].tolist() == [0.5, 0.5]
+    assert actor.entity_features[0, :, 0, 17].tolist() == [1.0, 1.0]
+    assert actor.entity_features[0, :, 0, 18].tolist() == [1.0, 1.0]
+    assert actor.entity_features[0, :, 0, 19].tolist() == [0.0, 0.0]
     assert actor.hand_ids[0, 0].tolist() == [201, 202, 203, 204, 205]
     assert actor.hand_ids[0, 1].tolist() == [206, 205, 204, 203, 202]
     torch.testing.assert_close(

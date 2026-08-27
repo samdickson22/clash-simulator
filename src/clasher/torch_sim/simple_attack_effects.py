@@ -334,6 +334,7 @@ def allocate_fast_attack_effects_(
     write(effects.status_scans_remaining, catalog.max_status_scans[safe_card])
     write(effects.hits_air, catalog.hits_air[safe_card])
     write(effects.hits_ground, catalog.hits_ground[safe_card])
+    write(effects.affects_hidden, catalog.affects_hidden[safe_card])
     write(effects.multi_target_count, catalog.multi_target_count[safe_card])
     write(effects.multi_target_range_units, catalog.range_units[safe_card])
     write(effects.multi_repeat_primary, catalog.multi_repeat_primary[safe_card])

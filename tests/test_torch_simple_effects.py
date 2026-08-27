@@ -70,6 +70,53 @@ def test_grouped_fireball_area_damage_and_status_precedence(device: str) -> None
 
 
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
+def test_visibility_uses_distinct_committed_secondary_and_area_planes(
+    device: str,
+) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    state = FastGymState.empty(1, max_entities=3, device=device)
+    state.active[0] = True
+    state.stable_id[0] = torch.tensor([10, 11, 12], device=state.device)
+    state.owner[0] = 1
+    state.x_units[0] = 1_000
+    state.y_units[0] = 1_000
+    state.hp[0] = 500.0
+    state.max_hp[0] = 500.0
+    effects = FastEffectState.empty(1, max_effects=3, device=device)
+    effects.active[0] = True
+    effects.kind[0] = FAST_EFFECT_AREA
+    effects.source_owner[0] = 0
+    effects.x_units[0] = 1_000
+    effects.y_units[0] = 1_000
+    effects.damage[0] = 100.0
+    effects.radius_units[0] = torch.tensor([0, 500, 500], device=state.device)
+    effects.affects_hidden[0, 2] = True
+    effects.target_id[0, 0] = 10
+    effects.lifetime_ticks[0] = 1
+    status_kind, status_ticks = _entity_status(state)
+    committed = torch.ones_like(state.active)
+    secondary = torch.tensor([[False, True, True]], device=state.device)
+    area = torch.tensor([[False, True, True]], device=state.device)
+
+    result = step_fast_effects(
+        state,
+        effects,
+        status_kind,
+        status_ticks,
+        entity_committed_direct_receivable=committed,
+        entity_secondary_targetable=secondary,
+        entity_area_receivable=area,
+        entity_effect_receivable_affects_hidden=committed,
+    )
+
+    assert result.targets_hit[0, 0].tolist() == [True, False, False]
+    assert result.targets_hit[0, 1].tolist() == [False, True, True]
+    assert result.targets_hit[0, 2].tolist() == [True, True, True]
+    assert state.hp[0].tolist() == [300.0, 300.0, 300.0]
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
 def test_homing_freeze_impact_consumes_ice_spirit_source(device: str) -> None:
     if device == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")

@@ -314,6 +314,52 @@ def test_barrel_like_terminal_spawn_replays_and_pool_slot_reuses(
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_rolling_path_respects_hidden_area_receivability(device_name: str) -> None:
+    device = _device(device_name)
+    gym = FastGymState.empty(1, max_entities=2, device=device)
+    for slot, stable_id in enumerate((81, 82)):
+        _seed_entity(
+            gym,
+            slot=slot,
+            stable_id=stable_id,
+            owner=1,
+            x_units=1_000,
+            y_units=0,
+        )
+    air, radii, towers = _traits(gym)
+    rolling = FastRollingSpellState.empty(
+        1, max_rollers=1, max_hit_records=2, device=device
+    )
+    allocate_fast_rolling_spells_(
+        rolling,
+        _commands(
+            device,
+            origins=[(0, 0)],
+            targets=[(2_000, 0)],
+            ranges=[1_000],
+            speeds=[1_000],
+            widths=[100],
+            damages=[120.0],
+            forward_push=[300],
+        ),
+    )
+    area_receivable = torch.tensor([[False, True]], device=device)
+
+    result = step_fast_rolling_spells_(
+        gym,
+        rolling,
+        entity_is_air=air,
+        entity_collision_radius_units=radii,
+        entity_is_crown_tower=towers,
+        entity_area_receivable=area_receivable,
+    )
+
+    assert result.hit[0, 0].tolist() == [False, True]
+    assert gym.hp[0].tolist() == [1_000.0, 880.0]
+    assert result.impulse_dx_units[0].tolist() == [0, 300]
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
 def test_allocation_is_stable_and_invalid_commands_fail_closed(
     device_name: str,
 ) -> None:

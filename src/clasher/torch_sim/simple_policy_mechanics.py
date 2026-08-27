@@ -60,6 +60,48 @@ class FastPolicyMechanicCatalog:
         return int(self.visibility_kind.shape[0])
 
     @classmethod
+    def empty(
+        cls,
+        size: int,
+        *,
+        device: str | torch.device,
+    ) -> FastPolicyMechanicCatalog:
+        """Return an all-ordinary profile for direct low-level runtimes."""
+
+        if size < 1:
+            raise ValueError("size must be positive")
+        tensor_device = torch.device(device)
+        if tensor_device.type == "cuda" and tensor_device.index is None:
+            tensor_device = torch.device("cuda", torch.cuda.current_device())
+        return cls(
+            device=tensor_device,
+            visibility_kind=torch.zeros(
+                size, dtype=torch.int8, device=tensor_device
+            ),
+            declares_visibility=torch.zeros(
+                size, dtype=torch.bool, device=tensor_device
+            ),
+            profile_supported=torch.ones(
+                size, dtype=torch.bool, device=tensor_device
+            ),
+            fade_delay_ticks=torch.zeros(
+                size, dtype=torch.int32, device=tensor_device
+            ),
+            fade_use_attack_range=torch.zeros(
+                size, dtype=torch.bool, device=tensor_device
+            ),
+            hide_delay_ticks=torch.zeros(
+                size, dtype=torch.int32, device=tensor_device
+            ),
+            rise_time_ticks=torch.zeros(
+                size, dtype=torch.int32, device=tensor_device
+            ),
+            area_receivable_while_invisible=torch.zeros(
+                size, dtype=torch.bool, device=tensor_device
+            ),
+        )
+
+    @classmethod
     def compile(
         cls,
         catalog: TensorCardCatalog,
@@ -397,16 +439,35 @@ def fast_policy_visibility_view(
     if catalog.device != state.device:
         raise ValueError("catalog and mechanic state must share a device")
 
-    current = (
+    bound_current = (
         active
         & (state.bound_stable_id > 0)
         & (state.bound_stable_id == stable_id)
         & (state.bound_card_id == card_id)
     )
-    rejected = current & (state.visibility_kind == FAST_VISIBILITY_UNSUPPORTED)
-    invisible = current & state.invisible & ~rejected
-    hidden = current & state.hidden & ~rejected
-    safe_card = state.bound_card_id.clamp(0, catalog.size - 1)
+    # Card row zero is the intentional neutral identity used by reserved Crown
+    # towers and some test/runtime-internal bodies.  It has no declared policy
+    # mechanic and therefore follows ordinary target/effect semantics.
+    input_known = (stable_id > 0) & (card_id >= 0) & (card_id < catalog.size)
+    safe_input_card = card_id.clamp(0, catalog.size - 1)
+    declares = catalog.declares_visibility[safe_input_card]
+    # Ordinary entities have no retained visibility state to bind.  They must
+    # remain targetable and effect-receivable even when a test harness or
+    # reserved-tower initializer did not pass through a spawn callback.  A
+    # declared visibility profile, by contrast, fails closed until it is bound
+    # to the exact stable entity identity.
+    ordinary_current = active & input_known & ~declares
+    current = bound_current | ordinary_current
+    rejected = (
+        bound_current & (state.visibility_kind == FAST_VISIBILITY_UNSUPPORTED)
+    ) | (active & input_known & declares & ~bound_current)
+    invisible = bound_current & state.invisible & ~rejected
+    hidden = bound_current & state.hidden & ~rejected
+    safe_card = torch.where(
+        bound_current,
+        state.bound_card_id,
+        safe_input_card,
+    ).clamp(0, catalog.size - 1)
     direct = current & ~hidden & ~rejected
     area = direct & (~invisible | catalog.area_receivable_while_invisible[safe_card])
     unavailable = invisible | hidden | rejected

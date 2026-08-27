@@ -64,6 +64,7 @@ class FastEffectState:
     status_scans_remaining: torch.Tensor
     hits_air: torch.Tensor
     hits_ground: torch.Tensor
+    affects_hidden: torch.Tensor
     multi_target_count: torch.Tensor
     multi_target_range_units: torch.Tensor
     multi_repeat_primary: torch.Tensor
@@ -147,6 +148,7 @@ class FastEffectState:
             ),
             hits_air=torch.ones(shape, dtype=torch.bool, device=tensor_device),
             hits_ground=torch.ones(shape, dtype=torch.bool, device=tensor_device),
+            affects_hidden=zeros(torch.bool),
             multi_target_count=torch.ones(
                 shape, dtype=torch.int16, device=tensor_device
             ),
@@ -191,6 +193,10 @@ def _validate_inputs(
     entity_slow_ticks: torch.Tensor | None,
     slow_movement_multiplier_by_card: torch.Tensor | None,
     slow_attack_multiplier_by_card: torch.Tensor | None,
+    entity_committed_direct_receivable: torch.Tensor | None,
+    entity_secondary_targetable: torch.Tensor | None,
+    entity_area_receivable: torch.Tensor | None,
+    entity_effect_receivable_affects_hidden: torch.Tensor | None,
 ) -> None:
     if effects.device != state.device:
         raise ValueError("effects and state must use the same device")
@@ -277,6 +283,24 @@ def _validate_inputs(
             raise ValueError(
                 "entity_collision_radius_units must be int32 on the state device"
             )
+    for eligibility_name, eligibility_value in (
+        ("entity_committed_direct_receivable", entity_committed_direct_receivable),
+        ("entity_secondary_targetable", entity_secondary_targetable),
+        ("entity_area_receivable", entity_area_receivable),
+        (
+            "entity_effect_receivable_affects_hidden",
+            entity_effect_receivable_affects_hidden,
+        ),
+    ):
+        if eligibility_value is None:
+            continue
+        if eligibility_value.shape != entity_shape:
+            raise ValueError(f"{eligibility_name} must have shape [batch, entities]")
+        if (
+            eligibility_value.device != state.device
+            or eligibility_value.dtype != torch.bool
+        ):
+            raise ValueError(f"{eligibility_name} must be bool on the state device")
 
 
 def step_fast_effects(
@@ -294,6 +318,10 @@ def step_fast_effects(
     entity_slow_ticks: torch.Tensor | None = None,
     slow_movement_multiplier_by_card: torch.Tensor | None = None,
     slow_attack_multiplier_by_card: torch.Tensor | None = None,
+    entity_committed_direct_receivable: torch.Tensor | None = None,
+    entity_secondary_targetable: torch.Tensor | None = None,
+    entity_area_receivable: torch.Tensor | None = None,
+    entity_effect_receivable_affects_hidden: torch.Tensor | None = None,
 ) -> FastEffectStepResult:
     """Advance homing effects, resolve splash, install statuses, and clean up.
 
@@ -318,6 +346,10 @@ def step_fast_effects(
         entity_slow_ticks,
         slow_movement_multiplier_by_card,
         slow_attack_multiplier_by_card,
+        entity_committed_direct_receivable,
+        entity_secondary_targetable,
+        entity_area_receivable,
+        entity_effect_receivable_affects_hidden,
     )
     batch, max_effects = effects.active.shape
     max_entities = state.max_entities
@@ -415,6 +447,15 @@ def step_fast_effects(
         entity_collision_radius_units = torch.zeros(
             (batch, max_entities), dtype=torch.int32, device=state.device
         )
+    default_receivable = state.active & (state.hp > 0)
+    if entity_committed_direct_receivable is None:
+        entity_committed_direct_receivable = default_receivable
+    if entity_secondary_targetable is None:
+        entity_secondary_targetable = default_receivable
+    if entity_area_receivable is None:
+        entity_area_receivable = default_receivable
+    if entity_effect_receivable_affects_hidden is None:
+        entity_effect_receivable_affects_hidden = default_receivable
     target_plane = torch.where(
         entity_is_air[:, None, :],
         effects.hits_air[:, :, None],
@@ -426,18 +467,37 @@ def step_fast_effects(
         & (state.owner[:, None, :] != effects.source_owner[:, :, None])
         & target_plane
     )
-    circle_candidates = base_candidates & (
+    area_receivable = torch.where(
+        effects.affects_hidden[:, :, None],
+        entity_effect_receivable_affects_hidden[:, None, :],
+        entity_area_receivable[:, None, :],
+    )
+    area_candidates = base_candidates & area_receivable
+    secondary_candidates = base_candidates & entity_secondary_targetable[:, None, :]
+    circle_candidates = area_candidates & (
         dx.square() + dy.square() <= radius_sq[:, :, None]
     )
 
     # Direct and projectile attacks retain their committed primary identity.
     # This makes zero-radius ordinary hits robust to target movement while
     # leaving position-targeted spells on the ordinary circle path.
+    committed_direct_shape = (
+        (effects.radius_units <= 0)
+        & (effects.line_range_units <= 0)
+        & (effects.fan_ray_count <= 0)
+    )
+    primary_receivable = torch.where(
+        committed_direct_shape[:, :, None],
+        entity_committed_direct_receivable[:, None, :],
+        area_receivable,
+    )
     primary_match = (
         base_candidates
+        & primary_receivable
         & (effects.target_id[:, :, None] > 0)
         & (effects.target_id[:, :, None] == state.stable_id[:, None, :])
     )
+    circle_candidates &= ~committed_direct_shape[:, :, None]
     circle_candidates |= primary_match
 
     # Multi-recipient attacks remain one effect. Current serialized public
@@ -455,7 +515,7 @@ def step_fast_effects(
         min=0
     ) + entity_collision_radius_units.to(torch.int64)[:, None, :].clamp(min=0)
     multi_candidates = (
-        base_candidates
+        secondary_candidates
         & ~primary_match
         & (source_distance_sq <= multi_reach.square())
         & (effects.multi_target_count[:, :, None] > 1)
@@ -504,7 +564,7 @@ def step_fast_effects(
             entity_stable_id=state.stable_id,
             entity_x_units=state.x_units,
             entity_y_units=state.y_units,
-            eligible=base_candidates,
+            eligible=secondary_candidates | primary_match,
             hop_radius_units=effects.chain_hop_radius_units,
             target_count=effects.chain_target_count,
         )
@@ -519,7 +579,7 @@ def step_fast_effects(
         half_width_units=effects.line_half_width_units,
         candidate_x_units=state.x_units,
         candidate_y_units=state.y_units,
-        eligible=base_candidates,
+        eligible=area_candidates,
     )
     line = effects.line_range_units > 0
     fan_topology = resolve_fast_fan_topology(
@@ -531,7 +591,7 @@ def step_fast_effects(
         radius_units=effects.fan_radius_units,
         spread_degrees=effects.fan_spread_degrees,
         ray_count=effects.fan_ray_count,
-        eligibility=base_candidates,
+        eligibility=area_candidates,
         entity_x_units=state.x_units,
         entity_y_units=state.y_units,
         entity_collision_radius_units=entity_collision_radius_units,

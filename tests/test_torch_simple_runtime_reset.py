@@ -79,6 +79,7 @@ def _row_snapshot(runtime: SimpleGymRuntime, row: int) -> dict[str, torch.Tensor
         ("lifecycle", runtime.lifecycle),
         ("modifiers", runtime.modifiers),
         ("navigation", runtime.combat.navigation.state),
+        ("policy", runtime.policy_mechanics),
     ):
         for descriptor in fields(group):
             value = getattr(group, descriptor.name)
@@ -97,6 +98,9 @@ def _row_snapshot(runtime: SimpleGymRuntime, row: int) -> dict[str, torch.Tensor
         ("visibility", runtime.projector.inputs.public_visibility),
         ("spawned", runtime.combat.spawned_mask),
         ("target_unavailable", runtime.combat._target_unavailable),
+        ("entity_special", runtime._entity_special),
+        ("entity_invisible", runtime._entity_invisible),
+        ("entity_hidden", runtime._entity_hidden),
         ("initial_hp", runtime.outcomes.initial_tower_hp),
         ("previous_hp", runtime.outcomes.previous_tower_hp),
         ("previous_crowns", runtime.outcomes.previous_crowns),
@@ -169,6 +173,10 @@ def test_selective_reset_restores_exact_episode_and_preserves_live_row(
     assert not runtime.combat.navigation.state.route_phase[0].any()
     assert runtime.combat.navigation.state.bridge_index[0].eq(-1).all()
     assert not runtime.combat.navigation.state.travel_direction[0].any()
+    assert not runtime.policy_mechanics.bound_stable_id[0].any()
+    assert not runtime._entity_special[0].any()
+    assert not runtime._entity_invisible[0].any()
+    assert not runtime._entity_hidden[0].any()
     assert not runtime.outcomes.overtime[0]
     _assert_actor_row_equal(reset_observation.actor, initial.actor, 0)
     assert torch.equal(reset_observation.legal_mask[0], initial.legal_mask[0])

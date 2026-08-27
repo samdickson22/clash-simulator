@@ -78,6 +78,14 @@ from .simple_periodic_spawn import (
     FastPeriodicSpawnState,
     step_periodic_spawns_,
 )
+from .simple_policy_mechanics import (
+    FastPolicyMechanicCatalog,
+    FastPolicyMechanicState,
+    FastPolicyVisibilityStep,
+    FastPolicyVisibilityView,
+    fast_policy_visibility_view,
+    step_fast_policy_visibility_,
+)
 from .simple_positive_buffs import (
     FastPositiveBuffAdvanceResult,
     FastPositiveBuffApplyResult,
@@ -171,6 +179,7 @@ class SimpleGymRuntimeStep:
     rolling_spawn_allocation: FastSpawnAllocationResult | None
     death_bursts: tuple[FastDeathBurstStepResult, FastDeathBurstStepResult]
     death_burst_effects: tuple[FastEffectStepResult, FastEffectStepResult]
+    policy_visibility: FastPolicyVisibilityStep
 
 
 class SimpleGymRuntime:
@@ -197,6 +206,7 @@ class SimpleGymRuntime:
         double_elixir_tick: int | None = None,
         triple_elixir_tick: int | None = None,
         spawn_blueprints: FastSpawnBlueprintCatalog | None = None,
+        policy_mechanics: FastPolicyMechanicCatalog | None = None,
     ) -> None:
         if deck_ids.ndim != 3 or tuple(deck_ids.shape[1:]) != (2, 8):
             raise ValueError("deck_ids must have shape [batch, 2, 8]")
@@ -210,6 +220,11 @@ class SimpleGymRuntime:
             raise ValueError("double_elixir_tick must be non-negative")
         if triple_elixir_tick is not None and triple_elixir_tick < 0:
             raise ValueError("triple_elixir_tick must be non-negative")
+        if policy_mechanics is not None:
+            if policy_mechanics.size != catalog.size:
+                raise ValueError("policy mechanic catalog must align with cards")
+            if not _same_device(policy_mechanics.device, catalog.device):
+                raise ValueError("policy mechanics and cards must share a device")
         if spawn_blueprints is not None:
             if spawn_blueprints.fast_cards is not catalog:
                 raise ValueError(
@@ -269,6 +284,16 @@ class SimpleGymRuntime:
             self.state,
             catalog,
             reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+        )
+        self.policy_catalog = (
+            policy_mechanics
+            if policy_mechanics is not None
+            else FastPolicyMechanicCatalog.empty(catalog.size, device=self.state.device)
+        )
+        self.policy_mechanics = FastPolicyMechanicState.empty(
+            self.state.batch_size,
+            max_entities=self.state.max_entities,
+            device=self.state.device,
         )
         self.effects = FastEffectState.empty(
             self.state.batch_size,
@@ -384,6 +409,11 @@ class SimpleGymRuntime:
         )
         self._ability_duration = torch.zeros_like(self._ability_cooldown)
         self._refill_cooldown_ms = torch.zeros_like(self._ability_cooldown)
+        self._entity_special = torch.zeros(
+            entity_shape, dtype=torch.bool, device=device
+        )
+        self._entity_invisible = torch.zeros_like(self._entity_special)
+        self._entity_hidden = torch.zeros_like(self._entity_special)
         self._effect_owners = (
             torch.arange(2, dtype=torch.int8, device=device)
             .view(1, 2)
@@ -409,6 +439,9 @@ class SimpleGymRuntime:
             ability_cooldown=self._ability_cooldown,
             ability_duration=self._ability_duration,
             refill_cooldown_ms=self._refill_cooldown_ms,
+            entity_special=self._entity_special,
+            entity_invisible=self._entity_invisible,
+            entity_hidden=self._entity_hidden,
             max_ticks=rules.tiebreak_ticks,
         )
         self.projector = SimpleTensorProjector(
@@ -459,6 +492,7 @@ class SimpleGymRuntime:
             "damage_ramp": self._tensor_fields(self.damage_ramp),
             "rolling_spells": self._tensor_fields(self.rolling_spells),
             "navigation": self._tensor_fields(self.combat.navigation.state),
+            "policy_mechanics": self._tensor_fields(self.policy_mechanics),
             "outcomes": {
                 "initial_tower_hp": self.outcomes.initial_tower_hp.clone(),
                 "previous_tower_hp": self.outcomes.previous_tower_hp.clone(),
@@ -485,6 +519,9 @@ class SimpleGymRuntime:
                 "public_visibility": self.projector.inputs.public_visibility.clone(),
                 "combat_spawned_mask": self.combat.spawned_mask.clone(),
                 "combat_target_unavailable": self.combat._target_unavailable.clone(),
+                "entity_special": self._entity_special.clone(),
+                "entity_invisible": self._entity_invisible.clone(),
+                "entity_hidden": self._entity_hidden.clone(),
             },
         }
         if self.periodic_spawns is not None:
@@ -556,6 +593,7 @@ class SimpleGymRuntime:
             "damage_ramp": self.damage_ramp,
             "rolling_spells": self.rolling_spells,
             "navigation": self.combat.navigation.state,
+            "policy_mechanics": self.policy_mechanics,
             "outcomes": self.outcomes,
         }
         if self.periodic_spawns is not None:
@@ -582,6 +620,9 @@ class SimpleGymRuntime:
             "public_visibility": self.projector.inputs.public_visibility,
             "combat_spawned_mask": self.combat.spawned_mask,
             "combat_target_unavailable": self.combat._target_unavailable,
+            "entity_special": self._entity_special,
+            "entity_invisible": self._entity_invisible,
+            "entity_hidden": self._entity_hidden,
         }
         for name, destination in runtime_tensors.items():
             self._restore_rows_(
@@ -644,8 +685,37 @@ class SimpleGymRuntime:
         )
 
     def observe(self) -> SimpleProjectedObservation:
+        self._publish_policy_visibility_(self._policy_visibility_view())
         self._refresh_policy_state()
         return self.projector.project(self._legal_action_mask())
+
+    def _policy_visibility_view(self) -> FastPolicyVisibilityView:
+        return fast_policy_visibility_view(
+            self.policy_catalog,
+            self.policy_mechanics,
+            active=self.state.active & (self.state.hp > 0),
+            stable_id=self.state.stable_id,
+            card_id=self.state.card_id,
+        )
+
+    def _publish_policy_visibility_(
+        self,
+        view: FastPolicyVisibilityView,
+    ) -> None:
+        """Publish one common availability view to combat and observation."""
+
+        self.combat._target_unavailable.copy_(view.target_unavailable)
+        self._entity_special.copy_(view.special_active)
+        self._entity_invisible.copy_(view.invisible)
+        self._entity_hidden.copy_(view.hidden)
+
+    def _initialize_policy_mechanics_(self, spawned: torch.Tensor) -> None:
+        self.policy_mechanics.initialize_spawned_(
+            self.policy_catalog,
+            stable_id=self.state.stable_id,
+            card_id=self.state.card_id,
+            spawned=spawned,
+        )
 
     def _initialize_lifecycle_(self, mask: torch.Tensor) -> None:
         """Install card-indexed lifecycle payloads on newly occupied slots."""
@@ -873,6 +943,7 @@ class SimpleGymRuntime:
             self.death_effect_consume_source_id,
             self._death_burst_effect_commands(burst.commands),
         )
+        visibility = self._policy_visibility_view()
         effect = step_fast_effects(
             self.state,
             self.death_effects,
@@ -896,6 +967,14 @@ class SimpleGymRuntime:
             ),
             slow_attack_multiplier_by_card=(
                 self.action_kernel.catalog.slow_attack_multiplier
+            ),
+            entity_committed_direct_receivable=(
+                visibility.effect_receivable_affects_hidden
+            ),
+            entity_secondary_targetable=visibility.secondary_targetable,
+            entity_area_receivable=visibility.area_receivable,
+            entity_effect_receivable_affects_hidden=(
+                visibility.effect_receivable_affects_hidden
             ),
         )
         return burst, effect
@@ -1146,7 +1225,13 @@ class SimpleGymRuntime:
             .expand(-1, -1, NUM_HAND_SLOTS, NUM_TILES)
             .reshape(self.batch_size, 2, NO_OP_ACTION)
         )
-        mask[:, :, :NO_OP_ACTION] &= placement_capacity
+        profile_supported = self.policy_catalog.profile_supported[safe_card]
+        placement_profile = (
+            profile_supported[..., None]
+            .expand(-1, -1, NUM_HAND_SLOTS, NUM_TILES)
+            .reshape(self.batch_size, 2, NO_OP_ACTION)
+        )
+        mask[:, :, :NO_OP_ACTION] &= placement_capacity & placement_profile
         return mask
 
     def _effect_commands(
@@ -1244,6 +1329,9 @@ class SimpleGymRuntime:
         self._initialize_lifecycle_(self.combat.spawned_mask)
         self._initialize_modifiers_(self.combat.spawned_mask)
         self._clear_damage_ramp_(self.combat.spawned_mask)
+        self._initialize_policy_mechanics_(self.combat.spawned_mask)
+        pre_visibility = self._policy_visibility_view()
+        self._publish_policy_visibility_(pre_visibility)
 
         positive_area_step = step_fast_positive_buff_areas_(self.positive_buff_areas)
         positive_buff_apply = apply_fast_positive_area_buffs_(
@@ -1259,11 +1347,16 @@ class SimpleGymRuntime:
         slow_movement, slow_attack = self._slow_multipliers()
         positive_view = fast_positive_buff_view(self.state, self.positive_buffs)
         cooldown_decrement = self._attack_clock_decrement_(
-            cooling=(self.state.active & ~stunned & (self.state.cooldown_ticks > 0)),
+            cooling=(
+                self.state.active
+                & ~stunned
+                & ~pre_visibility.combat_blocked
+                & (self.state.cooldown_ticks > 0)
+            ),
             rate_multiplier=(positive_view.cooldown_decrement_multiplier * slow_attack),
         )
         combat = self.combat.step_tick(
-            disabled=stunned,
+            disabled=stunned | pre_visibility.combat_blocked,
             speed_multiplier=(
                 charge_view.speed
                 * positive_view.movement_speed_multiplier
@@ -1329,6 +1422,22 @@ class SimpleGymRuntime:
             moved_distance_units=combat.moved_distance_units,
             attacked=committed_attacks,
         )
+        policy_visibility = step_fast_policy_visibility_(
+            self.policy_catalog,
+            self.policy_mechanics,
+            active=self.state.active & (self.state.hp > 0),
+            stable_id=self.state.stable_id,
+            card_id=self.state.card_id,
+            deployed=(
+                self.state.active & (self.state.hp > 0) & (self.state.deploy_ticks == 0)
+            ),
+            attack_started=committed_attacks,
+            has_attack_range_target=combat.target_in_attack_range,
+            has_attack_target=self.combat.has_attack_range_target(),
+            stunned=stunned,
+        )
+        self.state.target_id.masked_fill_(policy_visibility.clear_source_target, 0)
+        self._publish_policy_visibility_(policy_visibility.view)
 
         failed_deployment = (ingress.entity_deployment & ~deployed) | (
             ingress.spell_cast & ~spell_allocated
@@ -1415,6 +1524,8 @@ class SimpleGymRuntime:
             self._initialize_lifecycle_(scheduled_spawned)
             self._initialize_modifiers_(scheduled_spawned)
             self._clear_damage_ramp_(scheduled_spawned)
+            self._initialize_policy_mechanics_(scheduled_spawned)
+        effect_visibility = self._policy_visibility_view()
         effect_result = step_fast_effects(
             self.state,
             self.effects,
@@ -1438,6 +1549,14 @@ class SimpleGymRuntime:
             slow_attack_multiplier_by_card=(
                 self.action_kernel.catalog.slow_attack_multiplier
             ),
+            entity_committed_direct_receivable=(
+                effect_visibility.effect_receivable_affects_hidden
+            ),
+            entity_secondary_targetable=effect_visibility.secondary_targetable,
+            entity_area_receivable=effect_visibility.area_receivable,
+            entity_effect_receivable_affects_hidden=(
+                effect_visibility.effect_receivable_affects_hidden
+            ),
         )
         safe_entity_card = self.state.card_id.clamp(
             0, self.action_kernel.catalog.size - 1
@@ -1457,6 +1576,7 @@ class SimpleGymRuntime:
             ),
             entity_is_crown_tower=crown_slots,
             modifiers=self.modifiers,
+            entity_area_receivable=effect_visibility.area_receivable,
         )
         self.state.x_units.add_(rolling_result.impulse_dx_units).clamp_(0, 18_000)
         self.state.y_units.add_(rolling_result.impulse_dy_units).clamp_(0, 32_000)
@@ -1477,6 +1597,7 @@ class SimpleGymRuntime:
             self._initialize_lifecycle_(rolling_spawned)
             self._initialize_modifiers_(rolling_spawned)
             self._clear_damage_ramp_(rolling_spawned)
+            self._initialize_policy_mechanics_(rolling_spawned)
         # Two fixed passes cover the current serialized terminal depth
         # (Golem -> Golemite) without a host-driven work queue. The first pass
         # commits all already-lethal novas simultaneously; the second catches
@@ -1500,11 +1621,13 @@ class SimpleGymRuntime:
         self._clear_status_(lifecycle_result.resolved_parent_mask)
         self._clear_modifiers_(lifecycle_result.resolved_parent_mask)
         self._clear_damage_ramp_(lifecycle_result.resolved_parent_mask)
+        self.policy_mechanics.clear_(lifecycle_result.resolved_parent_mask)
         self._initialize_spawned_combat_(lifecycle_result.spawned_mask)
         self._clear_status_(lifecycle_result.spawned_mask)
         self._initialize_lifecycle_(lifecycle_result.spawned_mask)
         self._initialize_modifiers_(lifecycle_result.spawned_mask)
         self._clear_damage_ramp_(lifecycle_result.spawned_mask)
+        self._initialize_policy_mechanics_(lifecycle_result.spawned_mask)
         spawn_allocation: FastSpawnAllocationResult | None = None
         if self.spawn_blueprints is not None:
             spawn_commands = impact_spawn_commands(
@@ -1522,6 +1645,7 @@ class SimpleGymRuntime:
             self._initialize_lifecycle_(spawn_allocation.spawned_mask)
             self._initialize_modifiers_(spawn_allocation.spawned_mask)
             self._clear_damage_ramp_(spawn_allocation.spawned_mask)
+            self._initialize_policy_mechanics_(spawn_allocation.spawned_mask)
         payload_spawn_allocation: FastSpawnAllocationResult | None = None
         if self.spawn_blueprints is not None:
             payload_spawn_allocation = allocate_fast_spawns_(
@@ -1539,6 +1663,7 @@ class SimpleGymRuntime:
             self._initialize_lifecycle_(payload_spawned)
             self._initialize_modifiers_(payload_spawned)
             self._clear_damage_ramp_(payload_spawned)
+            self._initialize_policy_mechanics_(payload_spawned)
         periodic_spawn_allocation: FastSpawnAllocationResult | None = None
         if self.periodic_catalog is not None and self.periodic_spawns is not None:
             periodic_commands = step_periodic_spawns_(
@@ -1565,10 +1690,12 @@ class SimpleGymRuntime:
             self._initialize_lifecycle_(periodic_spawned)
             self._initialize_modifiers_(periodic_spawned)
             self._clear_damage_ramp_(periodic_spawned)
+            self._initialize_policy_mechanics_(periodic_spawned)
         positive_buff_advance = advance_fast_positive_buffs_(
             self.state,
             self.positive_buffs,
         )
+        self._publish_policy_visibility_(self._policy_visibility_view())
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())
@@ -1615,6 +1742,7 @@ class SimpleGymRuntime:
             rolling_spawn_allocation=rolling_spawn_allocation,
             death_bursts=(death_burst_first, death_burst_second),
             death_burst_effects=(death_effect_first, death_effect_second),
+            policy_visibility=policy_visibility,
         )
 
 

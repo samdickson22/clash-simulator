@@ -48,6 +48,12 @@ def _assert_status_planes_equal(left: Any, right: Any) -> None:
         assert torch.equal(getattr(left, name), getattr(right, name))
 
 
+def _assert_policy_planes_equal(left: Any, right: Any) -> None:
+    _assert_tensor_fields_equal(left.policy_mechanics, right.policy_mechanics)
+    for name in ("_entity_special", "_entity_invisible", "_entity_hidden"):
+        assert torch.equal(getattr(left, name), getattr(right, name))
+
+
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
 def test_cuda_graph_runner_matches_eager_replays() -> None:
     decks = supported_simple_decks(
@@ -89,6 +95,7 @@ def test_cuda_graph_runner_matches_eager_replays() -> None:
         )
         _assert_tensor_fields_equal(runtime.action_state, reference.action_state)
         _assert_status_planes_equal(runtime, reference)
+        _assert_policy_planes_equal(runtime, reference)
         assert torch.equal(step.reward, reference_step.reward)
         assert torch.equal(step.done, reference_step.done)
         assert torch.equal(
@@ -167,6 +174,7 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
     )
     _assert_tensor_fields_equal(runtime.action_state, reference.action_state)
     _assert_status_planes_equal(runtime, reference)
+    _assert_policy_planes_equal(runtime, reference)
 
     reset = bridge.reset_done(step.done)
     reference_reset = reference_bridge.reset_done(reference_step.done)
@@ -180,6 +188,7 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
     )
     _assert_tensor_fields_equal(runtime.action_state, reference.action_state)
     _assert_status_planes_equal(runtime, reference)
+    _assert_policy_planes_equal(runtime, reference)
 
     second = bridge.step(no_op)
     reference_second = reference_bridge.step(no_op)
@@ -193,3 +202,4 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
         reference.combat.navigation.state,
     )
     _assert_status_planes_equal(runtime, reference)
+    _assert_policy_planes_equal(runtime, reference)

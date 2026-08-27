@@ -603,6 +603,7 @@ def allocate_fast_payload_effects_(
     )
     write(effects.hits_air, gather(commands.hits_air))
     write(effects.hits_ground, gather(commands.hits_ground))
+    write(effects.affects_hidden, torch.zeros_like(allocated))
     write(effects.multi_target_count, ones_i16)
     write(effects.multi_target_range_units, zeros_i32)
     write(effects.multi_repeat_primary, torch.zeros_like(allocated))

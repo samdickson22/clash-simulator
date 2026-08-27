@@ -387,6 +387,7 @@ def _validate_step_inputs(
     entity_is_air: torch.Tensor,
     entity_collision_radius_units: torch.Tensor,
     entity_is_crown_tower: torch.Tensor,
+    entity_area_receivable: torch.Tensor | None,
 ) -> None:
     _validate_state(rolling)
     if gym.device != rolling.device or gym.batch_size != rolling.batch_size:
@@ -405,6 +406,12 @@ def _validate_step_inputs(
             raise ValueError(f"{name} must match Gym entity shape and device")
         if value.dtype != dtype:
             raise ValueError(f"{name} must use {dtype}")
+    if entity_area_receivable is not None and (
+        tuple(entity_area_receivable.shape) != entity_shape
+        or entity_area_receivable.device != gym.device
+        or entity_area_receivable.dtype != torch.bool
+    ):
+        raise ValueError("entity_area_receivable must be bool with Gym entity shape")
 
 
 def _clamp_int32(value: torch.Tensor) -> torch.Tensor:
@@ -420,6 +427,7 @@ def step_fast_rolling_spells_(
     entity_collision_radius_units: torch.Tensor,
     entity_is_crown_tower: torch.Tensor,
     modifiers: FastModifierState | None = None,
+    entity_area_receivable: torch.Tensor | None = None,
 ) -> FastRollingStepResult:
     """Advance one tick, apply once-only damage, and return dense side effects.
 
@@ -435,10 +443,13 @@ def step_fast_rolling_spells_(
         entity_is_air,
         entity_collision_radius_units,
         entity_is_crown_tower,
+        entity_area_receivable,
     )
     batch = gym.batch_size
     rollers = rolling.max_rollers
     entities = gym.max_entities
+    if entity_area_receivable is None:
+        entity_area_receivable = gym.active & (gym.hp > 0)
 
     active = rolling.active
     previous_x = rolling.x_units.clone()
@@ -508,6 +519,7 @@ def step_fast_rolling_spells_(
         & (gym.stable_id[:, None, :] > 0)
         & (gym.owner[:, None, :] != rolling.owner[:, :, None])
         & target_plane
+        & entity_area_receivable[:, None, :]
     )
     within_capsule = distance_sq <= reach.square()
     already_hit = (
@@ -571,9 +583,11 @@ def step_fast_rolling_spells_(
     if modifiers is None:
         damage_by_entity = weighted_damage.sum(dim=1)
     else:
-        entity_slot = torch.arange(
-            entities, dtype=torch.int64, device=gym.device
-        ).view(1, 1, entities).expand(batch, rollers, entities)
+        entity_slot = (
+            torch.arange(entities, dtype=torch.int64, device=gym.device)
+            .view(1, 1, entities)
+            .expand(batch, rollers, entities)
+        )
         shield = intercept_fast_shield_hits_(
             modifiers,
             valid=hit.reshape(batch, rollers * entities),

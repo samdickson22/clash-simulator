@@ -25,6 +25,7 @@ from clasher.kinematics import (
 
 from .catalog import TensorCardCatalog
 from .simple_outcomes import FastMatchRules, FastTowerSpec
+from .simple_policy_mechanics import FastPolicyMechanicCatalog
 from .simple_runtime import SimpleGymRuntime
 from .simple_spawn_blueprints import FastSpawnBlueprintCatalog
 
@@ -192,6 +193,7 @@ class SimpleStandardSetup:
 
     cards: TensorCardCatalog
     spawn_blueprints: FastSpawnBlueprintCatalog
+    policy_mechanics: FastPolicyMechanicCatalog
     tower_spec: FastTowerSpec
     rules: FastMatchRules
     public_root_mask: torch.Tensor
@@ -245,6 +247,7 @@ class SimpleStandardSetup:
             double_elixir_tick=STANDARD_DOUBLE_ELIXIR_TICK,
             triple_elixir_tick=STANDARD_TRIPLE_ELIXIR_TICK,
             spawn_blueprints=runtime_blueprints,
+            policy_mechanics=self.policy_mechanics,
         )
 
 
@@ -267,8 +270,13 @@ def compile_standard_simple_setup(
         device=device,
     )
     blueprints = FastSpawnBlueprintCatalog.compile(loader, base_cards)
+    policy_mechanics = FastPolicyMechanicCatalog.compile(blueprints.cards, loader)
     public_mask = blueprints.public_card_mask.clone()
-    supported_mask = (public_mask & blueprints.fast_cards.training_supported).clone()
+    supported_mask = (
+        public_mask
+        & blueprints.fast_cards.training_supported
+        & policy_mechanics.profile_supported
+    ).clone()
     public_names = tuple(
         name
         for card_id, name in enumerate(blueprints.cards.names)
@@ -282,6 +290,7 @@ def compile_standard_simple_setup(
     return SimpleStandardSetup(
         cards=blueprints.cards,
         spawn_blueprints=blueprints,
+        policy_mechanics=policy_mechanics,
         tower_spec=standard_tower_spec(loader, device),
         rules=standard_match_rules(),
         public_root_mask=public_mask,

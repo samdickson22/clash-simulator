@@ -48,6 +48,9 @@ class SimpleProjectionInputs:
     ability_cooldown: torch.Tensor
     ability_duration: torch.Tensor
     refill_cooldown_ms: torch.Tensor
+    entity_special: torch.Tensor
+    entity_invisible: torch.Tensor
+    entity_hidden: torch.Tensor
     max_ticks: int
 
 
@@ -98,6 +101,9 @@ class SimpleTensorProjector:
             "ability_cooldown": (batch, 2),
             "ability_duration": (batch, 2),
             "refill_cooldown_ms": (batch, 2),
+            "entity_special": (batch, entities),
+            "entity_invisible": (batch, entities),
+            "entity_hidden": (batch, entities),
         }
         for name, shape in expected.items():
             value = getattr(inputs, name)
@@ -121,6 +127,9 @@ class SimpleTensorProjector:
             raise ValueError("hand_card_ids must be int64")
         if inputs.public_visibility.dtype != torch.bool:
             raise ValueError("public_visibility must be bool")
+        for name in ("entity_special", "entity_invisible", "entity_hidden"):
+            if getattr(inputs, name).dtype != torch.bool:
+                raise ValueError(f"{name} must be bool")
         if inputs.max_ticks < 1:
             raise ValueError("max_ticks must be positive")
 
@@ -175,6 +184,9 @@ class SimpleTensorProjector:
         features[..., 13] = (
             state.deploy_ticks.to(torch.float32) / 20.0
         )[:, None, :].clamp(0.0, 1.0)
+        features[..., 17] = self.inputs.entity_special[:, None, :]
+        features[..., 18] = self.inputs.entity_invisible[:, None, :]
+        features[..., 19] = self.inputs.entity_hidden[:, None, :]
         return features
 
     def _globals(self) -> tuple[torch.Tensor, torch.Tensor]:
