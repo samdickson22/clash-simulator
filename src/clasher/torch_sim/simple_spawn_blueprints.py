@@ -15,6 +15,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import math
 from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import IntEnum
@@ -27,6 +28,8 @@ from clasher.card_types import CardStatsCompat
 from clasher.data import CardDataLoader
 from clasher.factory.card_factory import card_from_gamedata
 from clasher.factory.dynamic_factory import troop_from_character_data
+from clasher.formations import formation_offset
+from clasher.kinematics import tiles_to_logic_units
 from clasher.mechanics.shared.death_effects import DeathDamage, DeathSpawn
 from clasher.mechanics.shared.spawner import PeriodicSpawner
 
@@ -53,6 +56,7 @@ class FastSpawnTrigger(IntEnum):
     ROLLING_IMPACT = 4
     DELAYED_IMPACT = 5
     SCHEDULED_ACTION = 6
+    DEPLOY_ACTION = 7
 
 
 @dataclass(frozen=True)
@@ -138,6 +142,57 @@ def _spawn_requirements(
 
     for root_name in sorted(set(root_names)):
         definition = definitions[root_name]
+        raw = definition.raw or {}
+        primary = raw.get("summonCharacterData")
+        secondary = raw.get("summonCharacterSecondData")
+        secondary_declared = (
+            "summonCharacterSecondCount" in raw or "summonCharacterSecondData" in raw
+        )
+        if secondary_declared:
+            primary_data = primary if isinstance(primary, dict) else None
+            secondary_data = secondary if isinstance(secondary, dict) else None
+            radius_units = max(0, int(raw.get("summonRadius", 0) or 0))
+            for label, child_data, count_key, fallback_count in (
+                (
+                    "summonCharacterData",
+                    primary_data,
+                    "summonNumber",
+                    1,
+                ),
+                (
+                    "summonCharacterSecondData",
+                    secondary_data,
+                    "summonCharacterSecondCount",
+                    0,
+                ),
+            ):
+                child_name = str(
+                    child_data.get("name", "") if isinstance(child_data, dict) else ""
+                )
+                count = max(0, int(raw.get(count_key, fallback_count) or 0))
+                requirements.append(
+                    _SpawnRequirement(
+                        root_name=root_name,
+                        trigger=FastSpawnTrigger.DEPLOY_ACTION,
+                        child_name=child_name,
+                        child_data=(
+                            copy.deepcopy(child_data)
+                            if isinstance(child_data, dict)
+                            else None
+                        ),
+                        count=count,
+                        radius_units=radius_units,
+                        deploy_ticks=_ticks(
+                            child_data.get("deployTime")
+                            if isinstance(child_data, dict)
+                            else 0
+                        ),
+                        first_delay_ticks=0,
+                        interval_ticks=0,
+                        max_waves=1,
+                        source_path=f"{root_name}.{label}",
+                    )
+                )
         mechanic_death_children: set[str] = set()
         for slot, mechanic in enumerate(definition.mechanics):
             if isinstance(mechanic, DeathSpawn):
@@ -184,7 +239,6 @@ def _spawn_requirements(
                     )
                 )
 
-        raw = definition.raw or {}
         character = raw.get("summonCharacterData") or raw.get("summonSpellData") or {}
         raw_death_child = character.get("deathSpawnCharacterData") or {}
         raw_death_name = str(
@@ -423,10 +477,33 @@ class FastSpawnBlueprintCatalog:
     scheduled_hits_air: torch.Tensor
     scheduled_hits_ground: torch.Tensor
     public_card_mask: torch.Tensor
+    atomic_event_id: torch.Tensor
+    atomic_event_root_card_id: torch.Tensor
+    atomic_event_trigger: torch.Tensor
+    atomic_event_first_row: torch.Tensor
+    atomic_event_row_count: torch.Tensor
+    atomic_event_row_valid: torch.Tensor
+    atomic_event_row_id: torch.Tensor
+    atomic_event_required_capacity: torch.Tensor
+    atomic_event_supported: torch.Tensor
+    atomic_member_valid: torch.Tensor
+    atomic_member_child_card_id: torch.Tensor
+    atomic_member_deploy_ticks: torch.Tensor
+    atomic_member_offset_x_units: torch.Tensor
+    atomic_member_offset_y_units: torch.Tensor
+    action_atomic_event_by_card: torch.Tensor
 
     @property
     def blueprint_count(self) -> int:
         return len(self.root_names)
+
+    @property
+    def atomic_event_count(self) -> int:
+        return int(self.atomic_event_root_card_id.shape[0])
+
+    @property
+    def maximum_atomic_members(self) -> int:
+        return int(self.atomic_member_child_card_id.shape[1])
 
     @classmethod
     def compile(
@@ -435,6 +512,7 @@ class FastSpawnBlueprintCatalog:
         base_cards: TensorCardCatalog,
     ) -> FastSpawnBlueprintCatalog:
         roots = tuple(base_cards.names[1:])
+        definitions = loader.load_card_definitions()
         requirements = _spawn_requirements(loader, roots)
         overlay = _SpawnCatalogLoader(loader)
 
@@ -640,6 +718,7 @@ class FastSpawnBlueprintCatalog:
                 FastSpawnTrigger.DEATH,
                 FastSpawnTrigger.PROJECTILE_IMPACT,
                 FastSpawnTrigger.ROLLING_IMPACT,
+                FastSpawnTrigger.DEPLOY_ACTION,
             } or (
                 requirement.trigger == FastSpawnTrigger.PERIODIC
                 and requirement.first_delay_ticks >= 0
@@ -834,12 +913,134 @@ class FastSpawnBlueprintCatalog:
         for root_id, operation_rows in root_rows.items():
             root_supported[root_id] = all(supported[row] for row in operation_rows)
 
+        event_rows: list[list[int]] = []
+        event_keys: dict[tuple[str, FastSpawnTrigger], int] = {}
+        event_id_by_row = [-1] * len(requirements)
+        for row, requirement in enumerate(requirements):
+            event_key = (requirement.root_name, requirement.trigger)
+            event_id = event_keys.get(event_key)
+            if event_id is None:
+                event_id = len(event_rows)
+                event_keys[event_key] = event_id
+                event_rows.append([])
+            event_id_by_row[row] = event_id
+            event_rows[event_id].append(row)
+
+        event_count = len(event_rows)
+        maximum_event_rows = max((len(rows) for rows in event_rows), default=0)
+        event_required = [
+            sum(requirements[row].count for row in rows) for rows in event_rows
+        ]
+        maximum_members = max(event_required, default=0)
+        event_root_ids = [
+            cards.name_to_id[requirements[rows[0]].root_name] for rows in event_rows
+        ]
+        event_triggers = [int(requirements[rows[0]].trigger) for rows in event_rows]
+        event_supported = [
+            bool(
+                event_required[event_id] > 0
+                and all(
+                    supported[row]
+                    and requirements[row].count > 0
+                    and child_ids[row] > 0
+                    for row in rows
+                )
+            )
+            for event_id, rows in enumerate(event_rows)
+        ]
+        event_row_valid = torch.zeros(
+            (event_count, maximum_event_rows),
+            dtype=torch.bool,
+            device=cards.device,
+        )
+        event_row_id = torch.zeros(
+            (event_count, maximum_event_rows),
+            dtype=torch.int64,
+            device=cards.device,
+        )
+        member_valid = torch.zeros(
+            (event_count, maximum_members),
+            dtype=torch.bool,
+            device=cards.device,
+        )
+        member_child_id = torch.zeros(
+            (event_count, maximum_members),
+            dtype=torch.int64,
+            device=cards.device,
+        )
+        member_deploy = torch.zeros(
+            (event_count, maximum_members),
+            dtype=torch.int32,
+            device=cards.device,
+        )
+        member_offset_x = torch.zeros(
+            (event_count, 2, 2, maximum_members),
+            dtype=torch.int32,
+            device=cards.device,
+        )
+        member_offset_y = torch.zeros_like(member_offset_x)
+        for event_id, rows in enumerate(event_rows):
+            for event_row_index, row in enumerate(rows):
+                event_row_valid[event_id, event_row_index] = True
+                event_row_id[event_id, event_row_index] = row
+
+            root_raw = definitions[requirements[rows[0]].root_name].raw or {}
+            is_action = requirements[rows[0]].trigger == FastSpawnTrigger.DEPLOY_ACTION
+            stagger_ticks = _ticks(root_raw.get("summonDeployDelay"))
+            primary_count = requirements[rows[0]].count if is_action else 0
+            secondary_count = (
+                requirements[rows[1]].count if is_action and len(rows) > 1 else 0
+            )
+            member_index = 0
+            for row in rows:
+                requirement = requirements[row]
+                for local_index in range(requirement.count):
+                    member_valid[event_id, member_index] = child_ids[row] > 0
+                    member_child_id[event_id, member_index] = child_ids[row]
+                    member_deploy[event_id, member_index] = requirement.deploy_ticks + (
+                        member_index * stagger_ticks if is_action else 0
+                    )
+                    for owner in (0, 1):
+                        for lane_index, lane_id in enumerate((1, 2)):
+                            if is_action:
+                                offset_x, offset_y = formation_offset(
+                                    member_index,
+                                    primary_count,
+                                    requirement.radius_units / 1_000.0,
+                                    owner,
+                                    secondary_count=secondary_count,
+                                    lane_id=lane_id,
+                                )
+                                x_units = tiles_to_logic_units(offset_x)
+                                y_units = tiles_to_logic_units(offset_y)
+                            else:
+                                phase = (
+                                    local_index
+                                    * 2.0
+                                    * math.pi
+                                    / max(1, requirement.count)
+                                )
+                                x_units = round(
+                                    math.cos(phase) * requirement.radius_units
+                                )
+                                y_units = round(
+                                    math.sin(phase) * requirement.radius_units
+                                )
+                            member_offset_x[
+                                event_id, owner, lane_index, member_index
+                            ] = x_units
+                            member_offset_y[
+                                event_id, owner, lane_index, member_index
+                            ] = y_units
+                    member_index += 1
+
         impact_by_card = torch.full(
             (len(cards.names),), -1, dtype=torch.int64, device=cards.device
         )
         rolling_by_card = torch.full_like(impact_by_card, -1)
         container_by_card = torch.full_like(impact_by_card, -1)
         scheduled_by_card = torch.full_like(impact_by_card, -1)
+        action_atomic_by_card = torch.full_like(impact_by_card, -1)
         for root_id, operation_rows in root_rows.items():
             if not bool(root_supported[root_id]):
                 continue
@@ -872,6 +1073,15 @@ class FastSpawnBlueprintCatalog:
                         scheduled_by_card[root_id] = -1
                     else:
                         scheduled_by_card[root_id] = row
+
+        for event_id, trigger_value in enumerate(event_triggers):
+            root_id = event_root_ids[event_id]
+            if (
+                trigger_value == int(FastSpawnTrigger.DEPLOY_ACTION)
+                and event_supported[event_id]
+                and bool(root_supported[root_id])
+            ):
+                action_atomic_by_card[root_id] = event_id
 
         scheduled_root = scheduled_by_card >= 0
         fast_cards.effect_kind.copy_(
@@ -995,6 +1205,25 @@ class FastSpawnBlueprintCatalog:
             scheduled_hits_air=tensor(scheduled_hits_air, torch.bool),
             scheduled_hits_ground=tensor(scheduled_hits_ground, torch.bool),
             public_card_mask=public_card_mask,
+            atomic_event_id=tensor(event_id_by_row, torch.int64),
+            atomic_event_root_card_id=tensor(event_root_ids, torch.int64),
+            atomic_event_trigger=tensor(event_triggers, torch.int8),
+            atomic_event_first_row=tensor(
+                (rows[0] for rows in event_rows), torch.int64
+            ),
+            atomic_event_row_count=tensor(
+                (len(rows) for rows in event_rows), torch.int16
+            ),
+            atomic_event_row_valid=event_row_valid,
+            atomic_event_row_id=event_row_id,
+            atomic_event_required_capacity=tensor(event_required, torch.int32),
+            atomic_event_supported=tensor(event_supported, torch.bool),
+            atomic_member_valid=member_valid,
+            atomic_member_child_card_id=member_child_id,
+            atomic_member_deploy_ticks=member_deploy,
+            atomic_member_offset_x_units=member_offset_x,
+            atomic_member_offset_y_units=member_offset_y,
+            action_atomic_event_by_card=action_atomic_by_card,
         )
 
 
@@ -1010,6 +1239,23 @@ class FastSpawnCommands:
     count: torch.Tensor
     radius_units: torch.Tensor
     deploy_ticks: torch.Tensor
+
+
+@dataclass(frozen=True)
+class FastAtomicSpawnCommands:
+    """One fixed-shape command per all-or-nothing serialized spawn event.
+
+    ``atomic_event_id`` selects setup-compiled typed members. Public hand IDs
+    are deliberately absent: materialized entities can only receive private
+    child rows from :class:`FastSpawnBlueprintCatalog`.
+    """
+
+    ready: torch.Tensor
+    owner: torch.Tensor
+    atomic_event_id: torch.Tensor
+    x_units: torch.Tensor
+    y_units: torch.Tensor
+    lane_index: torch.Tensor
 
 
 @dataclass(frozen=True)
@@ -1403,6 +1649,159 @@ def rolling_spawn_commands(
     )
 
 
+def allocate_fast_atomic_spawns_(
+    state: FastGymState,
+    catalog: FastSpawnBlueprintCatalog,
+    commands: FastAtomicSpawnCommands,
+    *,
+    reserved_slot_floor: int = 0,
+) -> FastSpawnAllocationResult:
+    """Materialize heterogeneous events with one capacity decision per event.
+
+    Command order and setup-compiled member order jointly define stable-ID and
+    physical-slot order. A command is rejected in full when even one member
+    would exceed the available entity capacity.
+    """
+
+    shape = tuple(commands.ready.shape)
+    if len(shape) != 2 or shape[0] != state.batch_size:
+        raise ValueError("atomic spawn commands must have shape [batch, commands]")
+    if catalog.device != state.device:
+        raise ValueError("state and blueprints must use the same device")
+    for name, dtype in (
+        ("ready", torch.bool),
+        ("owner", torch.int8),
+        ("atomic_event_id", torch.int64),
+        ("x_units", torch.int32),
+        ("y_units", torch.int32),
+        ("lane_index", torch.int8),
+    ):
+        value = getattr(commands, name)
+        if tuple(value.shape) != shape or value.device != state.device:
+            raise ValueError(f"{name} must match command shape and device")
+        if value.dtype != dtype:
+            raise ValueError(f"{name} must use {dtype}")
+    if not 0 <= reserved_slot_floor <= state.max_entities:
+        raise ValueError("reserved_slot_floor must be within entity capacity")
+
+    slots = torch.arange(state.max_entities, device=state.device).view(1, -1)
+    free = ~state.active & (slots >= reserved_slot_floor)
+    if catalog.atomic_event_count == 0:
+        ready = commands.ready
+        return FastSpawnAllocationResult(
+            accepted=torch.zeros_like(ready),
+            invalid=ready.clone(),
+            capacity_rejected=torch.zeros_like(ready),
+            spawned_mask=torch.zeros_like(state.active),
+            source_command=torch.full_like(state.stable_id, -1),
+        )
+
+    known = (commands.atomic_event_id >= 0) & (
+        commands.atomic_event_id < catalog.atomic_event_count
+    )
+    safe_event = commands.atomic_event_id.clamp(0, catalog.atomic_event_count - 1)
+    requested_capacity = catalog.atomic_event_required_capacity[safe_event].to(
+        torch.int64
+    )
+    valid = (
+        commands.ready
+        & known
+        & catalog.atomic_event_supported[safe_event]
+        & (commands.owner >= 0)
+        & (commands.owner < 2)
+        & (commands.lane_index >= 0)
+        & (commands.lane_index < 2)
+        & (requested_capacity > 0)
+        & ~state.game_over[:, None]
+    )
+    requested = torch.where(valid, requested_capacity, 0)
+    requested_start = requested.cumsum(dim=1) - requested
+    available = free.sum(dim=1, dtype=torch.int64)
+    accepted = valid & (requested_start + requested <= available[:, None])
+    accepted_count = torch.where(accepted, requested, 0)
+    accepted_start = accepted_count.cumsum(dim=1) - accepted_count
+    total = accepted_count.sum(dim=1)
+
+    free_rank = free.to(torch.int64).cumsum(dim=1) - 1
+    spawned = free & (free_rank >= 0) & (free_rank < total[:, None])
+    claims = (
+        spawned[:, :, None]
+        & accepted[:, None, :]
+        & (free_rank[:, :, None] >= accepted_start[:, None, :])
+        & (
+            free_rank[:, :, None]
+            < accepted_start[:, None, :] + accepted_count[:, None, :]
+        )
+    )
+    source_command = claims.to(torch.int64).argmax(dim=2)
+    source_start = accepted_start.gather(1, source_command)
+    member_index = (free_rank - source_start).clamp(
+        min=0,
+        max=max(0, catalog.maximum_atomic_members - 1),
+    )
+    source_event = safe_event.gather(1, source_command)
+    source_owner = commands.owner.gather(1, source_command)
+    source_lane = commands.lane_index.gather(1, source_command)
+    child_card = catalog.atomic_member_child_card_id[source_event, member_index]
+    safe_child = child_card.clamp(0, catalog.fast_cards.size - 1)
+    offset_x = catalog.atomic_member_offset_x_units[
+        source_event,
+        source_owner.clamp(0, 1).to(torch.int64),
+        source_lane.clamp(0, 1).to(torch.int64),
+        member_index,
+    ]
+    offset_y = catalog.atomic_member_offset_y_units[
+        source_event,
+        source_owner.clamp(0, 1).to(torch.int64),
+        source_lane.clamp(0, 1).to(torch.int64),
+        member_index,
+    ]
+
+    def gather(value: torch.Tensor) -> torch.Tensor:
+        return value.gather(1, source_command)
+
+    def write(field: torch.Tensor, value: torch.Tensor) -> None:
+        field.copy_(torch.where(spawned, value.to(field.dtype), field))
+
+    write(state.active, torch.ones_like(spawned))
+    write(state.stable_id, state.next_stable_id[:, None] + free_rank)
+    write(state.kind, catalog.fast_cards.kind[safe_child])
+    write(state.owner, source_owner)
+    write(state.card_id, child_card)
+    write(state.x_units, gather(commands.x_units) + offset_x)
+    write(state.y_units, gather(commands.y_units) + offset_y)
+    write(state.hp, catalog.fast_cards.hitpoints[safe_child])
+    write(state.max_hp, catalog.fast_cards.hitpoints[safe_child])
+    write(state.target_id, torch.zeros_like(free_rank))
+    write(state.damage, catalog.fast_cards.damage[safe_child])
+    write(state.range_units, catalog.fast_cards.range_units[safe_child])
+    write(
+        state.sight_range_units,
+        catalog.fast_cards.sight_range_units[safe_child],
+    )
+    write(
+        state.speed_units_per_tick,
+        catalog.fast_cards.speed_units_per_tick[safe_child],
+    )
+    write(
+        state.hit_cooldown_ticks,
+        catalog.fast_cards.hit_cooldown_ticks[safe_child],
+    )
+    write(
+        state.deploy_ticks,
+        catalog.atomic_member_deploy_ticks[source_event, member_index],
+    )
+    write(state.cooldown_ticks, torch.zeros_like(free_rank))
+    state.next_stable_id.add_(total)
+    return FastSpawnAllocationResult(
+        accepted=accepted,
+        invalid=commands.ready & ~valid,
+        capacity_rejected=valid & ~accepted,
+        spawned_mask=spawned,
+        source_command=torch.where(spawned, source_command, -1),
+    )
+
+
 def allocate_fast_spawns_(
     state: FastGymState,
     catalog: FastCardCatalog,
@@ -1521,10 +1920,12 @@ def allocate_fast_spawns_(
 
 
 __all__ = [
+    "FastAtomicSpawnCommands",
     "FastSpawnAllocationResult",
     "FastSpawnBlueprintCatalog",
     "FastSpawnCommands",
     "FastSpawnTrigger",
+    "allocate_fast_atomic_spawns_",
     "allocate_fast_spawns_",
     "death_payload_container_commands",
     "impact_spawn_commands",
