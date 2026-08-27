@@ -1,6 +1,6 @@
-# Simple PyTorch final isolated main integration refresh (2026-08-27)
+# Simple PyTorch final contact-semantics main integration refresh (2026-08-27)
 
-Status: CPU-validated isolated integration candidate. The live checkout at
+Status: CPU- and A6000-validated final isolated integration. The live checkout at
 `/Users/sam/Desktop/code/clasher` was read only throughout this refresh. No
 source file, process, dataset, or checkpoint there was modified, copied,
 stashed, reset, or committed.
@@ -13,13 +13,13 @@ stashed, reset, or committed.
 - Committed main base:
   `20cc861b23937ec884fc22335c62d5b03a027f51`
 - Exact clean Simple Gym source:
-  `d4e9dd9572408f21bfe4d09966a8553b684981ab`
+  `504444ea400ff8bf595c0386ff000afe2c1f3490`
 - Exact source and integrated `src/clasher/torch_sim` tree:
-  `29aa9a4429a103968771c9443d782d56ad042c56`
+  `cad04dbbc9cd8d4a39c9c79227dcbf65caae38b0`
 - Integrated code tip before this report refresh:
-  `2d2431880f583c13b93c14a298e1980cb79a7074`
+  `b1ff9f1e`
 - Integrated code tree before this report refresh:
-  `4761f58c9043088e134b39da159a7a24547de4b2`
+  `e734ab7eaa12d201d2edb9679a39f9b886b36993`
 
 Logical implementation commits, in order:
 
@@ -36,34 +36,44 @@ Logical implementation commits, in order:
    Crown Tower combat.
 6. `2d243188` — remove the stale route-local public-mask algorithms and route
    training through the committed actor-v2 tensor authority.
+7. `f290a495` — overlay the serialized dense river-jump foundation exactly from
+   source `83873115`.
+8. `b45fcb73` — overlay dense collision, hover, and integrated river movement
+   exactly from source `f67ed3a8`.
+9. `b1ff9f1e` — overlay capture-safe, owner-mirrored contact plus pending-body
+   and kamikaze semantics exactly from source `504444ea`.
 
 The earlier documentation-only commit `1f9d32bb` is superseded by this report.
 
 ## Exact additive closure
 
-The selected additive closure now contains 192 paths:
+The selected additive closure now contains 196 paths:
 
-- all 122 files under `src/clasher/torch_sim`;
+- all 124 files under `src/clasher/torch_sim`;
 - `src/clasher/rl/simple_tensor_collector.py`;
 - the four Simple Gym builder/calibration/benchmark/full-match scripts;
-- 64 focused Simple Gym/collector/builder/benchmark/validator tests; and
+- 66 focused Simple Gym/collector/builder/benchmark/validator tests; and
 - `training_decks/simple_gym_supported_v1.json`.
 
 Every selected path at the integrated code tip has the same Git blob ID as
-`d4e9dd95`. The mismatch count is zero.
+`504444ea`. The mismatch count is zero.
 
 - Sorted path-manifest SHA-256:
-  `35159634d6b62aac81ddd588ce967e7eec1835fdc6c7a3a58b703a5cbec63b97`
+  `20501fd10751cf9b1284a662a3c1396b79d77ced904f3e1f133111cf83647900`
 - Ordered `blob-id path` manifest SHA-256:
-  `234fa320eae572d73cf4ebef7a7eaddfcc2cfa31bf85701162bed8fc34dad51a`
+  `0c72eb05b872a91ca633fdf99655c05e9985675e907bf1fadb63d08e43b3d0f4`
 
 Representative refreshed file SHA-256 values:
 
 ```text
 9d458adfb5910a123456dd787a506043c7acf31ab2a1592248442ac1fb120ead src/clasher/torch_sim/simple_public_mask.py
 1395dc52772eaa6dc23a97709492f59f5ae9966bfdfcdb7f6386e9533ddb3bb2 src/clasher/torch_sim/simple_attack_locks.py
+978e33fd6eb65b83783da73033f5f55ee2e77d582d8487c2ca881d34a8d8b17e src/clasher/torch_sim/simple_collision_navigation.py
+297621e470ba3af5ac2f7245cbcf1f6baaa419076612ca326e0b5af26ce93648 src/clasher/torch_sim/simple_river_jump.py
 c7be4cde72fe63614ca639b125119a3d1c78aeaa636f60805833d0c85028c324 tests/test_torch_simple_public_mask.py
 009f429a7dd2c84af96d355ae7a12aa2b48972fb7a02e362104daf87940229b5 tests/test_torch_simple_tower_combat.py
+d4a0dfac0fb8e5b2ff59196e878e1d27ceb36d8e3ccfcd603a6c8b0cd22ce653 tests/test_torch_simple_collision_navigation.py
+e0754f5ac897e46c76397f51a853bde48c360df0601116060bb7d280746e026d tests/test_torch_simple_river_jump.py
 c93de9989841743b535fe5fde182abe19e1983c8f67a0a27d0c191ea9ccd212f training_decks/simple_gym_supported_v1.json
 ```
 
@@ -83,10 +93,16 @@ a7ad78b2ab88205a06585aaeaa0414f5c97134929063cffe20a16107556243aa src/clasher/rl/
 960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704 reports/current_client_youtube_stable_vocabulary_v1.json
 ```
 
-After the refresh, the Desktop checkout still reports branch
+Throughout the isolated refresh, the Desktop checkout remained on branch
 `codex-enabled-deck-parity-handoff` at committed HEAD
-`20cc861b23937ec884fc22335c62d5b03a027f51`. Its dirty state and all checked
-dependency hashes are unchanged.
+`20cc861b23937ec884fc22335c62d5b03a027f51`. Its tracked binary diff hash and
+all checked dependency hashes remained unchanged. Live training independently
+changed untracked/checkpoint state during the work, so this report deliberately
+does not claim that the porcelain-status hash stayed static.
+
+```text
+7fca1024186a26660501a30af31dc87c8e05be776aecd108dc1c8d0c211c8b34  tracked binary diff, initial and final snapshots
+```
 
 Final integration file SHA-256 values:
 
@@ -123,12 +139,13 @@ The integrated route test deploys Archer Queen through the real standard
 runtime and proves the actor-v2 ability bit becomes available at the same
 boundary as the simulator ability action.
 
-## CPU verification
+## CPU verification status
 
-The complete 65-file Simple Gym/current routing/collector suite passed:
+The exact `504444ea` integration completed the 67-file Simple Gym/current
+routing/collector suite:
 
 ```text
-381 passed, 233 skipped in 73.99s
+409 passed, 251 skipped in 79.56s
 ```
 
 The skips are CUDA-parametrized cases on the Mac. The command covered every
@@ -136,11 +153,17 @@ The skips are CUDA-parametrized cases on the Mac. The command covered every
 builder, benchmark, and full-match validator.
 
 The current source checkout's strategy behavior and direct action-geometry
-tests were executed against this isolated integration's `PYTHONPATH`:
+tests were also executed against that isolated predecessor's `PYTHONPATH`:
 
 ```text
-85 passed in 3.99s
+85 passed in 5.12s
 ```
+
+The final `f67ed3a8..504444ea` delta changes only `src/clasher/torch_sim` and
+its focused tests; it does not change either external strategy test artifact or
+the strategy/action-geometry implementation paths they exercise. The result is
+therefore retained as unchanged-path evidence rather than rerun against an
+actively training shared checkout.
 
 The exact external test artifacts remain:
 
@@ -152,20 +175,29 @@ The exact external test artifacts remain:
 Test-log SHA-256 values:
 
 ```text
-98d6a530ee2f4af62d457234bddbb346c0d36692cabc19338313a428feb0a332 final-simple-tests-refresh-20260827.log
-3036ff5817eb2a49cac3fa0b670d944590d2c508e7059a34848682c2b11fb735 final-strategy-tests-refresh-20260827.log
+c3fd0d3051c8664f5452ef4cdbe79c75522ba439bc6d4fc6faa2d78b7c094069 final-simple-tests-contact-refresh-20260827.log
+cb5e946ffb27bd1f4b6bac4c44656702de0de39a83caf83e9f24cda6e772b222 final-strategy-tests-collision-refresh-20260827.log
 ```
 
-Scoped Ruff passed for the route, collector, and their tests. The byte-exact
-production scripts pass with the two already-audited upstream rules excluded:
-`EXE001` (source executable bit) and `SIM117` (nested profiler context).
-`compileall`, `py_compile`, and `git diff --check` passed across the full tensor
-engine and integration surface. The exact imported source was not reformatted.
+On the final exact overlay, scoped Ruff passed for all 11 files changed by
+`504444ea`, the route, collector, and route tests. `compileall` and
+`git diff --check` passed across the tensor engine and integration surface. The
+byte-exact production scripts retain their previously audited `EXE001` and
+`SIM117` exclusions. The imported source was not reformatted.
 
-## Actual 494-token PPO smoke
+A final eager-CPU full-match validator was started against the stale
+`f67ed3a8` predecessor, then stopped by its owner without an artifact when the
+new source superseded it and the protected 12-worker Desktop training job
+resumed. The broad final-`504444ea` CPU suite and one-update PPO smoke later ran
+in released windows. The resource-heavy eager-CPU terminal replay was not
+repeated; the exact CUDA-Graph regulation/overtime/tiebreak gate below provides
+the final full-episode evidence without competing with local training.
+
+## Actual final-source 494-token PPO smoke
 
 A fresh `ClasherPolicy` with its LSTM core ran one real PPO update through
-`--simulation-backend simple-pytorch` on CPU:
+`--simulation-backend simple-pytorch` on CPU at exact integration code commit
+`b1ff9f1e`:
 
 ```text
 model parameters: 119,095
@@ -174,19 +206,21 @@ Gym rows: 1
 actor seats: 2
 rollout decisions: 1
 transitions: 2
-collect_s: 0.55
-learn_s: 0.05
+collect_s: 0.51
+learn_s: 0.06
 saved update: 1
 ```
 
 The temporary checkpoint was not copied into either repository:
 
 - Path:
-  `/private/tmp/clasher-simple-ppo-refresh.j5knrc/policy_v2_update_000001.pt`
+  `/private/tmp/clasher-simple-ppo-final-contact.VGSX8Y/policy_v2_update_000001.pt`
 - Checkpoint SHA-256:
-  `9b351e223c72c48249da9a58245f1db993e4dc07eebddc31759ec109deea486f`
+  `fdd7266d51975979134709f637e56396732f8df9f06b490c48a9432f42583592`
 - Smoke stdout SHA-256:
-  `cc88811432ae4e89aec261fd9f50425b9699766661080bb605d9cf0b5408128f`
+  `b2ff1a50e3511a2319dd2ba248e2edc35b3bebef77c26ecbf7435183398368ca`
+- Loaded-metadata assertion SHA-256:
+  `a31ee82636d453d1b767c1635284ff7bd90b33b98b69449132d38c035fbc8eee`
 
 The checkpoint was loaded back and its persisted contract asserted:
 
@@ -214,42 +248,112 @@ The route remains deliberately fresh-only. Resume stays rejected until exact
 resume compatibility for backend, reward, observation, mask, and artifact
 metadata is implemented and gated.
 
-## Exact-tip CUDA gate still required
+## Final contact repair closure and remaining limits
 
-Earlier A6000 evidence either predates `d4e9dd95` or used the old isolated
-route at `1f9d32bb`; neither certifies this refreshed integration. Promotion
-requires these commands against the final report commit descended from
-`2d243188`:
+The predecessor `f67ed3a8` overlay exposed two hard failures before promotion:
+exact-overlap tie directions were not 180-degree owner-mirror equivariant, and
+an eight-direction tensor was allocated inside every collision tick, which
+made CUDA Graph capture fail. The independent mirror reproduction output has
+SHA-256
+`b27e0ff9b3ba30bc00fb1b57fb831b28f7e7fa188eb9f7d3940fc1498d6834cf`.
 
-```bash
-uv run --frozen --python 3.12 pytest -q \
-  tests/test_torch_simple_public_mask.py \
-  tests/test_rl_simple_pytorch_backend.py \
-  tests/test_torch_simple_cuda_graph.py \
-  tests/test_torch_simple_attack_lock_runtime.py \
-  tests/test_torch_simple_tower_combat.py \
-  tests/test_torch_simple_ability_runtime.py \
-  tests/test_torch_simple_travel_runtime.py \
-  tests/test_torch_simple_triggered_runtime.py \
-  tests/test_torch_simple_heterogeneous_spawn_runtime.py
+Source `504444ea` repairs both through generalized owner-oriented tensor
+selection with no per-tick lookup allocation and adds the direct mirror
+regression. The same source delta makes pending deployed bodies occupy contact
+space and remain targetable while still unable to act, and models serialized
+Skeleton Barrel contact as a stun-pausable kamikaze countdown that self-pops
+into the existing payload/death-spawn path without direct tower damage. All 11
+changed implementation/test blobs are imported exactly; no integration-local
+card-name branch was added.
 
-uv run --frozen --python 3.12 python -m scripts.validate_simple_full_matches \
-  --device cuda --cuda-graph --replays 2 --seed 20260827 \
-  --out reports/simple_gym_cuda_integrated_full_validation_20260827.json
+Collision, hover, river jump, projection privacy, public-mask authority,
+reward/outcomes, recurrent collection, and reset still have some compositional
+rather than single end-to-end coverage. In particular, the training collector
+does not force an active jump/hover contact or a collision-driven terminal
+reward. Typed Hero/Evolution identities remain fail-closed and distinct in the
+494-token vocabulary, but the current 66-card supported deck artifact has no
+`_hero` or `_EV1` runtime root. These are explicit remaining coverage items,
+not implicit acceptance.
 
-uv run --frozen --python 3.12 python -m scripts.perf.benchmark_simple_gym \
-  --preset profile --device cuda --cuda-graph --profile-cuda \
-  --batch-size 128 --warmup-ticks 10 --measured-ticks 100 --repetitions 3 \
-  --min-row-ticks-per-second 400 \
-  --out reports/simple_gym_cuda_integrated_graph_batch128_20260827.json
+## Exact-tip CUDA acceptance
+
+The failed `f67ed3a8` capture attempt remains diagnostic evidence only. Exact
+source `504444ea` passed 222/222 focused CUDA tests and then completed two
+CUDA-Graph replays for each terminal policy at seed `202608263`:
+
+```text
+noop:
+  final_tick=6000
+  terminal=tiebreak
+  entered_overtime=true
+  digest=d14d2c7b5d41fed9784b521c9ee31c27b7d9a10903954dbf792abf73cd0c4226
+first-legal:
+  final_tick=3600
+  terminal=regulation_crown
+  winner=1
+  digest=0430c8f45ab028d590bbdb293ff25dd3f936ec172aa6f9bbd7af786e83981fc1
 ```
 
-The CUDA collector smoke must additionally instantiate the real 494-token
-`ClasherPolicy`, collect at least one recurrent decision with
-`SimplePytorchTrainingCollector`, and assert: selected actions are public-mask
-legal, recurrent outputs exist, metadata exactly matches the actor-v2 values
-above, every row is admitted/committed/native, and fallback rows are zero.
+Every replay was deterministic, terminal, fully native, fully committed, and
+zero-fallback. The no-op episode traversed regulation, overtime, and tiebreak.
+The full-validation JSON SHA-256 is
+`d40ca2c836ef26184c69e2ddf314d37b5a620824e4354c72e29161d98269bcfc`.
 
-These are exact-current regression gates, not a claim that the prior CUDA
-results are invalid. The refreshed branch is being archived for that CUDA run
-before the A6000 worker is torn down.
+The exact final contact engine then passed the batch-128 CUDA-Graph production
+profile with 100 measured ticks across three repetitions:
+
+```text
+row-ticks/s: 410.708235, 410.053050, 409.637215
+median row-ticks/s: 410.053050
+median actor transitions/s: 820.106099
+acceptance floor: 400 row-ticks/s
+digest: f6f5ed8e3224734aa4f7a76012ebb995ab2c689f5eb59ae57113a3bc8034fc93
+CUDA launches: 10
+explicit host synchronizations: 0
+native/committed rows per trial: 12800/12800
+```
+
+This is about 1.8 percent below the accepted pre-contact median of 417.423
+row-ticks/s while retaining the same launch count and zero-sync boundary. The
+profile JSON SHA-256 is
+`aa72fa0e35774a095f7e1aa724197a21e9bce151c03289e021773012d2290794`.
+
+The immutable `b1ff9f1e` integration archive was independently SHA-verified on
+the worker, then passed 191/191 CUDA-focused integration tests in 249.67s. The
+suite covered the actor-v2 route/mask, Graph replay, collision, river jump,
+pending target/lock behavior, Skeleton Barrel contact, tower combat, abilities,
+and policy-visible runtime boundaries. Its log SHA-256 is
+`70181735526d18161ed69f6a386f2569bf4a38cb782e2fb737d44ada97cc19e2`.
+
+Finally, a real 494-token, 119,095-parameter `ClasherPolicy` ran through both
+`SimplePytorchTrainingCollector` and the raw tensor collector on CUDA. Selected
+actions were public-mask legal, recurrent hidden/cell outputs were present,
+actor-v2/reward metadata was exact, both rows were native/committed/admitted,
+and fallback rows were zero. The policy-smoke JSON SHA-256 is
+`e918127530d09c464b90da15c54e047e3d6a9b997f3df7bee2f43e4026c04ca4`.
+
+The evidence artifacts are preserved on the final source branch as:
+
+```text
+reports/simple_gym_cuda_a6000_504444ea_full_validation_20260827.json
+reports/simple_gym_cuda_a6000_504444ea_graph_batch128_20260827.json
+reports/simple_gym_cuda_a6000_b1ff9f1e_integrated_tests_20260827.log
+reports/simple_gym_cuda_a6000_b1ff9f1e_policy_smoke_20260827.json
+```
+
+They are committed by source evidence commit `10b2153a`. The authoritative
+aggregator is
+`reports/simple_gym_cuda_a6000_contact_final_20260827.json`, SHA-256
+`0dc2f070feadf11a15eb55ae43deb410be89759afdf2db7ad0261be820f42b0b`.
+
+The A6000 pod was terminated successfully after evidence copy; the provider
+reported zero active pods.
+
+The immutable code archive handed to the CUDA worker is:
+
+```text
+commit  b1ff9f1e2e1380071cca62afab68afdbb5dfdef9
+tree    e734ab7eaa12d201d2edb9679a39f9b886b36993
+archive /private/tmp/clasher-main-final-integration-504444ea-b1ff9f1e.tar
+sha256  599686cc4886792f5a2668cc5fc4bfd8474f87493c264aae116ce15b4171966b
+```
