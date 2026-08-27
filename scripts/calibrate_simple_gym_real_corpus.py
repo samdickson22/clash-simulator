@@ -23,6 +23,10 @@ from clasher.card_aliases import resolve_card_name
 from clasher.data import CardDataLoader
 from clasher.rl.common import BOARD_HEIGHT, BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 from clasher.torch_sim.actions import NO_OP_ACTION, NUM_ACTIONS
+from clasher.torch_sim.simple_public_mask import (
+    SIMPLE_PUBLIC_MASK_SEMANTICS_ID,
+    SimplePublicMaskV2Provider,
+)
 from clasher.torch_sim.simple_standard import compile_standard_simple_setup
 
 CALIBRATION_SCHEMA = "clasher.simple_gym.real_corpus_calibration.v1"
@@ -50,6 +54,8 @@ class EngineCalibrationContract:
     regulation_ticks: int
     tiebreak_ticks: int
     real_frame_public_mask_adapter: bool = False
+    tensor_public_mask_provider: bool = True
+    tensor_public_mask_semantics_id: str = SIMPLE_PUBLIC_MASK_SEMANTICS_ID
 
 
 def _object(value: object, *, context: str) -> Mapping[str, Any]:
@@ -191,6 +197,36 @@ def _rate_channel(
     }
 
 
+def _additional_successes_for_wilson(
+    successes: int,
+    total: int,
+    *,
+    minimum_rate: float = MINIMUM_SUCCESS_RATE,
+) -> int:
+    """Return the smallest all-success continuation meeting the confidence gate."""
+
+    additional = 0
+    while True:
+        lower = _wilson_lower(successes + additional, total + additional)
+        if lower is not None and lower >= minimum_rate:
+            return additional
+        additional += 1
+
+
+def _resolved_corpus_roots(
+    root: str | Path,
+    additional_roots: Sequence[str | Path],
+) -> tuple[Path, ...]:
+    candidates = (root, *additional_roots)
+    resolved = tuple(Path(value).expanduser().resolve() for value in candidates)
+    if len(resolved) != len(set(resolved)):
+        raise CalibrationError("corpus roots must be distinct")
+    for corpus_root in resolved:
+        if not corpus_root.is_dir():
+            raise CalibrationError(f"corpus root does not exist: {corpus_root}")
+    return resolved
+
+
 def load_engine_contract(path: str | Path) -> EngineCalibrationContract:
     """Compile the manifest roots through the actual standard simple setup."""
 
@@ -253,21 +289,32 @@ def load_engine_contract(path: str | Path) -> EngineCalibrationContract:
         logic_tick_ms=LOGIC_TICK_MS,
         regulation_ticks=setup.rules.regulation_ticks,
         tiebreak_ticks=setup.rules.tiebreak_ticks,
+        tensor_public_mask_provider=callable(
+            getattr(SimplePublicMaskV2Provider, "build", None)
+        ),
     )
 
 
 def audit_real_corpus(
     root: str | Path,
     engine: EngineCalibrationContract,
+    *,
+    additional_roots: Sequence[str | Path] = (),
+    vocabulary_manifest: str | Path | None = None,
 ) -> dict[str, object]:
     """Compare locally materialized corpus contracts to the simple engine."""
 
-    corpus_root = Path(root).expanduser().resolve()
-    if not corpus_root.is_dir():
-        raise CalibrationError(f"corpus root does not exist: {corpus_root}")
-    manifests = sorted(corpus_root.glob("*/manifest.json"))
+    corpus_roots = _resolved_corpus_roots(root, additional_roots)
+    manifests = sorted(
+        (corpus_root, manifest)
+        for corpus_root in corpus_roots
+        for manifest in corpus_root.glob("*/manifest.json")
+    )
     if not manifests:
-        raise CalibrationError(f"corpus root contains no manifests: {corpus_root}")
+        raise CalibrationError(
+            "corpus roots contain no manifests: "
+            + ", ".join(str(value) for value in corpus_roots)
+        )
 
     integrity_errors: list[str] = []
     digest_records: list[str] = []
@@ -286,8 +333,21 @@ def audit_real_corpus(
     targets: list[Mapping[str, Any]] = []
     play_events: list[Mapping[str, Any]] = []
     public_mask_versions: Counter[int] = Counter()
+    vocabulary_manifest_shas: Counter[str] = Counter()
+    provider_semantics_ids: Counter[str] = Counter()
+    provider_semantics_digests: Counter[str] = Counter()
+    provider_lookup_digests: Counter[str] = Counter()
+    actor_artifacts = 0
+    actor_rows = 0
+    actor_rows_with_join = 0
+    actor_rows_with_stored_mask = 0
+    actor_rows_with_tensor_projection = 0
+    matches_by_root: Counter[str] = Counter()
+    seen_manifest_match_ids: dict[str, str] = {}
 
-    for manifest_path in manifests:
+    for corpus_root, manifest_path in manifests:
+        match_label = f"{corpus_root.name}/{manifest_path.parent.name}"
+        matches_by_root[str(corpus_root)] += 1
         manifest = _object(_load_json(manifest_path), context=str(manifest_path))
         artifacts = _object(
             manifest.get("artifacts"), context=f"{manifest_path}: artifacts"
@@ -304,6 +364,22 @@ def audit_real_corpus(
             context=f"{manifest_path}: public mask version",
         )
         public_mask_versions[version] += 1
+        models = _object(manifest.get("models"), context=f"{manifest_path}: models")
+        vocabulary_sha = models.get("vocabulary_manifest_sha256")
+        if isinstance(vocabulary_sha, str) and len(vocabulary_sha) == 64:
+            vocabulary_manifest_shas[vocabulary_sha] += 1
+        else:
+            integrity_errors.append(
+                f"{match_label}: vocabulary manifest SHA-256 is missing"
+            )
+        for key, counter in (
+            ("simple_provider_semantics_id", provider_semantics_ids),
+            ("simple_provider_semantics_digest", provider_semantics_digests),
+            ("simple_provider_lookup_digest", provider_lookup_digests),
+        ):
+            value = mask_contract.get(key)
+            if isinstance(value, str) and value:
+                counter[value] += 1
         if (
             version != engine.public_mask_contract_version
             or mask_contract.get("contract")
@@ -312,11 +388,11 @@ def audit_real_corpus(
             or mask_contract.get("exact_simulator_state_used") is not False
         ):
             integrity_errors.append(
-                f"{manifest_path.parent.name}: public mask contract mismatch"
+                f"{match_label}: public mask contract mismatch"
             )
         if sampling.get("output_time_base") != "1/10":
             integrity_errors.append(
-                f"{manifest_path.parent.name}: output time base is not 1/10"
+                f"{match_label}: output time base is not 1/10"
             )
 
         resolved: dict[str, tuple[Path, Mapping[str, Any]]] = {}
@@ -337,13 +413,15 @@ def audit_real_corpus(
             declared_sha = descriptor.get("sha256")
             if actual_sha != declared_sha:
                 integrity_errors.append(
-                    f"{manifest_path.parent.name}: {name} SHA-256 mismatch"
+                    f"{match_label}: {name} SHA-256 mismatch"
                 )
-            digest_records.append(f"{manifest_path.parent.name}/{name}:{actual_sha}")
+            digest_records.append(f"{match_label}/{name}:{actual_sha}")
             resolved[name] = (artifact_path, descriptor)
 
         neutral_path, neutral_descriptor = resolved["neutral_sequence"]
         neutral_rows = 0
+        neutral_snapshot_ids: set[str] = set()
+        current_manifest_match_ids: set[str] = set()
         previous_timestamp: int | None = None
         previous_clock: tuple[int, int] | None = None
         for line_number, row in _jsonl(neutral_path):
@@ -354,6 +432,10 @@ def audit_real_corpus(
                     f"{neutral_path}:{line_number}: match_id is missing"
                 )
             match_ids.add(match_id)
+            current_manifest_match_ids.add(match_id)
+            snapshot_id = row.get("snapshot_id")
+            if isinstance(snapshot_id, str) and snapshot_id:
+                neutral_snapshot_ids.add(snapshot_id)
             timestamp = _integer(
                 row.get("timestamp_ms"),
                 context=f"{neutral_path}:{line_number}: timestamp_ms",
@@ -369,7 +451,7 @@ def audit_real_corpus(
             )
             if public.get("coordinate_frame") != "absolute_world":
                 integrity_errors.append(
-                    f"{manifest_path.parent.name}: non-absolute coordinate frame"
+                    f"{match_label}: non-absolute coordinate frame"
                 )
             clock = _object(
                 public.get("clock"),
@@ -384,7 +466,7 @@ def audit_real_corpus(
             clock_rows += 1
             if not 0 <= value <= 180:
                 integrity_errors.append(
-                    f"{manifest_path.parent.name}: public clock outside 0..180"
+                    f"{match_label}: public clock outside 0..180"
                 )
             if previous_clock is not None:
                 clock_pairs += 1
@@ -411,8 +493,115 @@ def audit_real_corpus(
         )
         if neutral_rows != declared_neutral_rows:
             integrity_errors.append(
-                f"{manifest_path.parent.name}: neutral rows "
+                f"{match_label}: neutral rows "
                 f"declared={declared_neutral_rows} observed={neutral_rows}"
+            )
+        if len(current_manifest_match_ids) != 1:
+            integrity_errors.append(
+                f"{match_label}: neutral rows do not contain exactly one match_id"
+            )
+        else:
+            manifest_match_id = next(iter(current_manifest_match_ids))
+            previous_source = seen_manifest_match_ids.get(manifest_match_id)
+            if previous_source is not None:
+                integrity_errors.append(
+                    f"{match_label}: duplicate match_id also present in "
+                    f"{previous_source}"
+                )
+            else:
+                seen_manifest_match_ids[manifest_match_id] = match_label
+
+        actor_descriptors = _array(
+            artifacts.get("actor_trajectories"),
+            context=f"{manifest_path}: artifacts.actor_trajectories",
+        )
+        observed_actor_ids: set[int] = set()
+        for raw_descriptor in actor_descriptors:
+            descriptor = _object(
+                raw_descriptor,
+                context=f"{manifest_path}: actor trajectory descriptor",
+            )
+            actor_id = _integer(
+                descriptor.get("actor_id"),
+                context=f"{manifest_path}: actor trajectory actor_id",
+            )
+            observed_actor_ids.add(actor_id)
+            actor_path = _artifact_path(
+                manifest_path,
+                descriptor,
+                context=f"{manifest_path}: actor trajectory {actor_id}",
+            )
+            actual_sha = _sha256(actor_path)
+            if actual_sha != descriptor.get("sha256"):
+                integrity_errors.append(
+                    f"{match_label}: actor trajectory {actor_id} SHA-256 mismatch"
+                )
+            digest_records.append(
+                f"{match_label}/actor_trajectory_{actor_id}:{actual_sha}"
+            )
+            if descriptor.get("neutral_join_key") != "snapshot_id":
+                integrity_errors.append(
+                    f"{match_label}: actor trajectory {actor_id} has no "
+                    "snapshot_id join contract"
+                )
+            observed_rows = 0
+            for line_number, actor_row in _jsonl(actor_path):
+                observed_rows += 1
+                actor_rows += 1
+                row_actor_id = _integer(
+                    actor_row.get("actor_id"),
+                    context=f"{actor_path}:{line_number}: actor_id",
+                )
+                if row_actor_id != actor_id:
+                    integrity_errors.append(
+                        f"{match_label}: actor trajectory descriptor/row mismatch"
+                    )
+                snapshot_id = actor_row.get("snapshot_id")
+                actor_rows_with_join += int(
+                    isinstance(snapshot_id, str)
+                    and snapshot_id in neutral_snapshot_ids
+                )
+                stored_mask = actor_row.get("public_action_mask")
+                if isinstance(stored_mask, Mapping):
+                    legal = stored_mask.get("legal_action_indices")
+                    if (
+                        stored_mask.get("schema")
+                        == "clasher.youtube.public_action_mask.v2"
+                        and stored_mask.get("contract_version") == version
+                        and stored_mask.get("contract")
+                        == "label_independent_public_action_mask_v2"
+                        and stored_mask.get("valid") is True
+                        and isinstance(legal, list)
+                        and all(
+                            isinstance(action, int)
+                            and not isinstance(action, bool)
+                            and 0 <= action < NUM_ACTIONS
+                            for action in legal
+                        )
+                        and legal == sorted(set(legal))
+                        and NO_OP_ACTION in legal
+                        and stored_mask.get("non_noop_legal_actions")
+                        == sum(action != NO_OP_ACTION for action in legal)
+                    ):
+                        actor_rows_with_stored_mask += 1
+                projection = actor_row.get("tensor_public_structured_observation")
+                if isinstance(projection, Mapping):
+                    globals_raw = projection.get("global_features")
+                    if isinstance(globals_raw, list) and len(globals_raw) > 12:
+                        actor_rows_with_tensor_projection += 1
+            actor_artifacts += 1
+            declared_rows = _integer(
+                descriptor.get("rows"),
+                context=f"{manifest_path}: actor trajectory {actor_id} rows",
+            )
+            if observed_rows != declared_rows:
+                integrity_errors.append(
+                    f"{match_label}: actor trajectory {actor_id} rows "
+                    f"declared={declared_rows} observed={observed_rows}"
+                )
+        if observed_actor_ids != {0, 1}:
+            integrity_errors.append(
+                f"{match_label}: actor trajectories must cover actors 0 and 1"
             )
 
         target_path, target_descriptor = resolved["offline_actor_targets"]
@@ -421,7 +610,7 @@ def audit_real_corpus(
             target_descriptor.get("rows"), context=f"{manifest_path}: target rows"
         ):
             integrity_errors.append(
-                f"{manifest_path.parent.name}: target row count mismatch"
+                f"{match_label}: target row count mismatch"
             )
         targets.extend(
             _object(row, context=f"{target_path}: target") for row in target_rows
@@ -433,7 +622,7 @@ def audit_real_corpus(
             event_descriptor.get("rows"), context=f"{manifest_path}: event rows"
         ):
             integrity_errors.append(
-                f"{manifest_path.parent.name}: event row count mismatch"
+                f"{match_label}: event row count mismatch"
             )
         for raw_event in event_rows:
             event = _object(raw_event, context=f"{event_path}: event")
@@ -524,6 +713,51 @@ def audit_real_corpus(
         placement_distances.append(distance)
         placement_success += int(distance <= 1.0)
 
+    verified_vocabulary_path: str | None = None
+    verified_vocabulary_sha: str | None = None
+    if vocabulary_manifest is not None:
+        vocabulary_path = Path(vocabulary_manifest).expanduser().resolve()
+        if not vocabulary_path.is_file():
+            raise CalibrationError(
+                f"vocabulary manifest does not exist: {vocabulary_path}"
+            )
+        verified_vocabulary_path = str(vocabulary_path)
+        verified_vocabulary_sha = _sha256(vocabulary_path)
+        if verified_vocabulary_sha not in vocabulary_manifest_shas:
+            integrity_errors.append(
+                "local vocabulary manifest SHA-256 is absent from corpus manifests"
+            )
+
+    projection_mapping_complete = bool(
+        actor_rows
+        and actor_rows_with_join == actor_rows
+        and actor_rows_with_stored_mask == actor_rows
+        and actor_rows_with_tensor_projection == actor_rows
+        and len(provider_semantics_ids) == 1
+        and engine.tensor_public_mask_semantics_id in provider_semantics_ids
+        and len(provider_semantics_digests) == 1
+        and len(provider_lookup_digests) == 1
+    )
+    missing_mask_mapping_requirements: list[str] = []
+    if actor_rows_with_tensor_projection != actor_rows:
+        missing_mask_mapping_requirements.append(
+            "actor.global_features[11:13] Crown Tower alive/HP state is not "
+            "serialized; the source builder confidence-gated tower-zone "
+            "extensions, while the tensor provider interprets zero HP as destroyed"
+        )
+    if not provider_semantics_ids:
+        missing_mask_mapping_requirements.append(
+            "manifests do not pin the tensor provider semantics_id"
+        )
+    if not provider_semantics_digests:
+        missing_mask_mapping_requirements.append(
+            "manifests do not pin the tensor provider semantics_digest"
+        )
+    if not provider_lookup_digests:
+        missing_mask_mapping_requirements.append(
+            "manifests do not pin the typed card/entity lookup_digest and card-data authority"
+        )
+
     integrity: dict[str, object] = {
         "status": "pass" if not integrity_errors else "fail",
         "successes": int(not integrity_errors),
@@ -541,6 +775,10 @@ def audit_real_corpus(
     action_encoding = _rate_channel(target_encoding_success, len(targets))
     orientation = _rate_channel(orientation_success, len(play_events))
     coarse_placement = _rate_channel(placement_success, len(play_events))
+    phase_additional_successes = _additional_successes_for_wilson(
+        clock_reset_success,
+        clock_resets,
+    )
 
     required_statuses = (
         integrity["status"],
@@ -569,7 +807,8 @@ def audit_real_corpus(
         "scope": {
             "statement": (
                 "Only 100-ms clock/phase, typed action geometry, canonical "
-                "orientation, and coarse placement encoding are compared."
+                "orientation, coarse placement encoding, and stored public-mask "
+                "projection/provenance completeness are compared."
             ),
             "overall_real_game_calibration_complete": False,
             "minimum_examples": MINIMUM_EXAMPLES,
@@ -590,9 +829,15 @@ def audit_real_corpus(
             "tiebreak_ticks": engine.tiebreak_ticks,
             "tiebreak_seconds": (engine.tiebreak_ticks * engine.logic_tick_ms / 1000.0),
             "real_frame_public_mask_adapter": (engine.real_frame_public_mask_adapter),
+            "tensor_public_mask_provider": engine.tensor_public_mask_provider,
+            "tensor_public_mask_semantics_id": (
+                engine.tensor_public_mask_semantics_id
+            ),
         },
         "corpus": {
-            "root": str(corpus_root),
+            "root": str(corpus_roots[0]),
+            "roots": [str(value) for value in corpus_roots],
+            "matches_by_root": dict(sorted(matches_by_root.items())),
             "artifact_set_sha256": corpus_digest,
             "matches": len(manifests),
             "distinct_match_ids": len(match_ids),
@@ -600,6 +845,13 @@ def audit_real_corpus(
             "clock_valid_rows": clock_rows,
             "valid_play_events": len(play_events),
             "actor_targets": len(targets),
+            "actor_trajectory_artifacts": actor_artifacts,
+            "actor_trajectory_rows": actor_rows,
+            "vocabulary_manifest_sha256s": dict(
+                sorted(vocabulary_manifest_shas.items())
+            ),
+            "verified_local_vocabulary_manifest_path": verified_vocabulary_path,
+            "verified_local_vocabulary_manifest_sha256": verified_vocabulary_sha,
         },
         "channels": {
             "artifact_integrity": {
@@ -621,8 +873,19 @@ def audit_real_corpus(
                 "maximum_media_time_error_seconds": (
                     None if not reset_time_errors else max(reset_time_errors)
                 ),
+                "minimum_example_count_met": clock_resets >= MINIMUM_EXAMPLES,
+                "additional_all_success_examples_needed_for_confidence_gate": (
+                    phase_additional_successes
+                ),
+                "selection_policy": (
+                    "All manifests from every declared root and all observed "
+                    "clock resets are counted; duplicate match IDs fail integrity."
+                ),
                 "limitation": (
-                    "Only 26 reset examples exist; fewer than 30 is not a pass."
+                    f"Observed {clock_resets} reset examples; the count floor is "
+                    f"{MINIMUM_EXAMPLES}, but the Wilson lower-bound gate also "
+                    f"requires {phase_additional_successes} additional successful "
+                    "examples at the current failure count."
                 ),
             },
             "overtime_to_tiebreak_phase": {
@@ -658,10 +921,47 @@ def audit_real_corpus(
                 "engine_overlap_targets_in_corpus_mask": (overlap_public_mask_legal),
                 "engine_overlap_targets": engine_overlap,
                 "engine_equivalence": "unavailable",
+                "tensor_provider_available": engine.tensor_public_mask_provider,
+                "tensor_provider_semantics_id": (
+                    engine.tensor_public_mask_semantics_id
+                ),
+                "actor_trajectory_artifacts": actor_artifacts,
+                "actor_rows": actor_rows,
+                "actor_rows_joinable_to_neutral_public_state": (
+                    actor_rows_with_join
+                ),
+                "actor_rows_with_valid_stored_mask_contract": (
+                    actor_rows_with_stored_mask
+                ),
+                "actor_rows_with_complete_tensor_projection": (
+                    actor_rows_with_tensor_projection
+                ),
+                "manifests_with_vocabulary_sha256": sum(
+                    vocabulary_manifest_shas.values()
+                ),
+                "declared_vocabulary_sha256s": dict(
+                    sorted(vocabulary_manifest_shas.items())
+                ),
+                "verified_local_vocabulary_manifest_sha256": (
+                    verified_vocabulary_sha
+                ),
+                "manifests_with_provider_semantics_id": sum(
+                    provider_semantics_ids.values()
+                ),
+                "manifests_with_provider_semantics_digest": sum(
+                    provider_semantics_digests.values()
+                ),
+                "manifests_with_provider_lookup_digest": sum(
+                    provider_lookup_digests.values()
+                ),
+                "projection_mapping_complete": projection_mapping_complete,
+                "missing_mapping_requirements": missing_mask_mapping_requirements,
                 "reason": (
-                    "No callable real-frame-to-simple-engine mask adapter is "
-                    "installed in this worktree; stored label-independent masks "
-                    "cannot prove engine mask equality."
+                    "The tensor provider is callable, but the corpus cannot be "
+                    "losslessly projected into its inputs and does not pin its "
+                    "semantics/lookup digests. Running it would require inventing "
+                    "tower state or lookup authority, so stored label-independent "
+                    "masks cannot prove engine equality."
                 ),
             },
             "canonical_orientation": orientation,
@@ -744,7 +1044,7 @@ def render_markdown(report: Mapping[str, Any]) -> str:
         "play_timestamp_100ms_grid": "valid visual play timestamps",
         "typed_action_identity": "engine-overlap typed keys only",
         "hand_slot_action_encoding": "slot x tile-index structure",
-        "public_mask_v2": "contract metadata; no engine adapter",
+        "public_mask_v2": "stored contract; incomplete tensor input mapping",
         "canonical_orientation": "actor-1 180-degree rotation",
         "coarse_placement_encoding": "derived point to encoded tile center",
     }
@@ -764,11 +1064,17 @@ def render_markdown(report: Mapping[str, Any]) -> str:
     elif phase["status"] == "pass":
         phase_sentence = "The regulation-to-overtime phase channel passes."
     else:
-        phase_sentence = "The regulation-to-overtime phase channel fails."
+        phase_sentence = (
+            "The complete multi-root sample crosses the count floor but the "
+            "regulation-to-overtime phase channel fails its configured Wilson "
+            f"gate; it needs {phase['additional_all_success_examples_needed_for_confidence_gate']} "
+            "additional successful examples at the current failure count."
+        )
     mask = _object(channels["public_mask_v2"], context="report.channels.public_mask_v2")
     mask_sentence = (
-        "Public-mask v2 metadata is compatible, but equality with the engine is "
-        "unavailable because this worktree has no callable real-frame mask adapter."
+        "The tensor public-mask-v2 provider is callable, but equality is unavailable "
+        "because the corpus omits Crown Tower state and the provider "
+        "semantics/lookup digests needed for a lossless input mapping."
         if mask["engine_equivalence"] == "unavailable"
         else "Public-mask v2 engine equivalence is available."
     )
@@ -776,6 +1082,29 @@ def render_markdown(report: Mapping[str, Any]) -> str:
         (
             "",
             f"{phase_sentence} {mask_sentence}",
+            "",
+            "## Public-mask mapping audit",
+            "",
+            (
+                f"All {mask['actor_rows']} actor rows join to neutral public state "
+                f"and {mask['actor_rows_with_valid_stored_mask_contract']} carry a "
+                "structurally valid stored v2 mask. However, "
+                f"{mask['actor_rows_with_complete_tensor_projection']} rows carry "
+                "the complete tensor projection, and zero manifests pin each of "
+                "the provider semantics ID, semantics digest, and typed lookup digest."
+            ),
+            "",
+            "Missing requirements:",
+            "",
+        )
+    )
+    for requirement in _array(
+        mask["missing_mapping_requirements"],
+        context="report.channels.public_mask_v2.missing_mapping_requirements",
+    ):
+        lines.append(f"- {requirement}.")
+    lines.extend(
+        (
             "",
             "## Explicitly unavailable",
             "",
@@ -808,9 +1137,23 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("corpus_root", type=Path)
     parser.add_argument(
+        "--additional-corpus-root",
+        action="append",
+        default=[],
+        type=Path,
+        help=(
+            "include another complete, disjoint corpus root; may be repeated"
+        ),
+    )
+    parser.add_argument(
         "--engine-manifest",
         type=Path,
         default=Path("training_decks/simple_gym_supported_v1.json"),
+    )
+    parser.add_argument(
+        "--vocabulary-manifest",
+        type=Path,
+        help="optional local vocabulary artifact to verify against corpus SHA-256",
     )
     parser.add_argument("--format", choices=("json", "markdown"), default="json")
     return parser.parse_args(argv)
@@ -825,7 +1168,12 @@ def main(
     args = parse_args(argv)
     try:
         engine = load_engine_contract(args.engine_manifest)
-        report = audit_real_corpus(args.corpus_root, engine)
+        report = audit_real_corpus(
+            args.corpus_root,
+            engine,
+            additional_roots=args.additional_corpus_root,
+            vocabulary_manifest=args.vocabulary_manifest,
+        )
     except CalibrationError as exc:
         stderr.write(f"error: {exc}\n")
         return 2

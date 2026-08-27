@@ -42,15 +42,23 @@ def _engine() -> EngineCalibrationContract:
     )
 
 
-def _corpus(tmp_path: Path, *, corrupt_hash: bool = False) -> Path:
-    match = tmp_path / "one"
+def _corpus(
+    tmp_path: Path,
+    *,
+    corrupt_hash: bool = False,
+    match_name: str = "one",
+    match_id: str = "youtube-one",
+    vocabulary_sha: str = "b" * 64,
+) -> Path:
+    match = tmp_path / match_name
     match.mkdir(parents=True)
     neutral_rows: list[dict[str, Any]] = []
     for index in range(101):
         value = 2 if index < 30 else (1 if index < 60 else 120)
         neutral_rows.append(
             {
-                "match_id": "youtube-one",
+                "match_id": match_id,
+                "snapshot_id": f"{match_id}-{index:06d}",
                 "timestamp_ms": 174_000 + index * 100,
                 "public": {
                     "coordinate_frame": "absolute_world",
@@ -84,6 +92,36 @@ def _corpus(tmp_path: Path, *, corrupt_hash: bool = False) -> Path:
         for index in range(100)
     ]
     event_sha = _write_json(match / "events.json", events)
+    actor_artifacts: list[dict[str, object]] = []
+    for actor_id in (0, 1):
+        actor_path = match / f"actor_{actor_id}.jsonl.gz"
+        actor_sha = _write_jsonl_gz(
+            actor_path,
+            [
+                {
+                    "actor_id": actor_id,
+                    "snapshot_id": f"{match_id}-000000",
+                    "own_hud": {"hand": [], "elixir": {}},
+                    "public_action_mask": {
+                        "schema": "clasher.youtube.public_action_mask.v2",
+                        "contract": "label_independent_public_action_mask_v2",
+                        "contract_version": 2,
+                        "legal_action_indices": [2304],
+                        "non_noop_legal_actions": 0,
+                        "valid": True,
+                    },
+                }
+            ],
+        )
+        actor_artifacts.append(
+            {
+                "actor_id": actor_id,
+                "neutral_join_key": "snapshot_id",
+                "path": f"/copied/source/{actor_path.name}",
+                "rows": 1,
+                "sha256": actor_sha,
+            }
+        )
     manifest = {
         "artifacts": {
             "neutral_sequence": {
@@ -101,7 +139,9 @@ def _corpus(tmp_path: Path, *, corrupt_hash: bool = False) -> Path:
                 "rows": len(events),
                 "sha256": event_sha,
             },
+            "actor_trajectories": actor_artifacts,
         },
+        "models": {"vocabulary_manifest_sha256": vocabulary_sha},
         "public_mask_v3": {
             "contract": "label_independent_public_action_mask_v2",
             "contract_version": 2,
@@ -133,6 +173,25 @@ def test_bounded_channels_pass_but_single_phase_reset_is_insufficient(
     )
     assert channels["public_mask_v2"]["status"] == "contract_only"
     assert channels["public_mask_v2"]["engine_equivalence"] == "unavailable"
+    assert channels["public_mask_v2"]["tensor_provider_available"] is True
+    assert channels["public_mask_v2"]["actor_rows"] == 2
+    assert (
+        channels["public_mask_v2"][
+            "actor_rows_joinable_to_neutral_public_state"
+        ]
+        == 2
+    )
+    assert channels["public_mask_v2"]["projection_mapping_complete"] is False
+    assert channels["public_mask_v2"]["missing_mapping_requirements"] == [
+        (
+            "actor.global_features[11:13] Crown Tower alive/HP state is not "
+            "serialized; the source builder confidence-gated tower-zone "
+            "extensions, while the tensor provider interprets zero HP as destroyed"
+        ),
+        "manifests do not pin the tensor provider semantics_id",
+        "manifests do not pin the tensor provider semantics_digest",
+        "manifests do not pin the typed card/entity lookup_digest and card-data authority",
+    ]
     assert set(report["unavailable_channels"]) >= {
         "exact_hp_and_damage",
         "projectile_source_target_and_flight",
@@ -148,7 +207,43 @@ def test_hash_mismatch_fails_integrity_without_upgrading_other_channels(
     assert report["decision"] == "fail"
     integrity = report["channels"]["artifact_integrity"]
     assert integrity["status"] == "fail"
-    assert integrity["errors"] == ["one: neutral_sequence SHA-256 mismatch"]
+    assert integrity["errors"] == [
+        f"{tmp_path.name}/one: neutral_sequence SHA-256 mismatch"
+    ]
+
+
+def test_complete_disjoint_additional_root_preserves_reset_denominator(
+    tmp_path: Path,
+) -> None:
+    vocabulary = tmp_path / "vocabulary.json"
+    vocabulary_sha = _write_json(vocabulary, {"entries": []})
+    first = _corpus(
+        tmp_path / "first",
+        match_id="youtube-first",
+        vocabulary_sha=vocabulary_sha,
+    )
+    second = _corpus(
+        tmp_path / "second",
+        match_id="youtube-second",
+        vocabulary_sha=vocabulary_sha,
+    )
+
+    report = audit_real_corpus(
+        first,
+        _engine(),
+        additional_roots=(second,),
+        vocabulary_manifest=vocabulary,
+    )
+
+    assert report["corpus"]["matches"] == 2
+    assert report["corpus"]["roots"] == [str(first.resolve()), str(second.resolve())]
+    phase = report["channels"]["regulation_to_overtime_phase"]
+    assert phase["successes"] == 2
+    assert phase["total"] == 2
+    assert "All manifests from every declared root" in phase["selection_policy"]
+    mask = report["channels"]["public_mask_v2"]
+    assert mask["verified_local_vocabulary_manifest_sha256"] == vocabulary_sha
+    assert mask["manifests_with_vocabulary_sha256"] == 2
 
 
 def test_markdown_names_blockers_and_cli_missing_root_fails(tmp_path: Path) -> None:
@@ -156,7 +251,7 @@ def test_markdown_names_blockers_and_cli_missing_root_fails(tmp_path: Path) -> N
     markdown = render_markdown(report)
     assert "Decision: `insufficient_evidence`" in markdown
     assert "1 regulation-to-overtime resets" in markdown
-    assert "no callable real-frame mask adapter" in markdown
+    assert "tensor public-mask-v2 provider is callable" in markdown
     assert (
         "does not calibrate HP/damage, projectiles, statuses, or outcomes" in markdown
     )
