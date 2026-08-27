@@ -78,6 +78,7 @@ def _row_snapshot(runtime: SimpleGymRuntime, row: int) -> dict[str, torch.Tensor
         ("effects", runtime.effects),
         ("lifecycle", runtime.lifecycle),
         ("modifiers", runtime.modifiers),
+        ("navigation", runtime.combat.navigation.state),
     ):
         for descriptor in fields(group):
             value = getattr(group, descriptor.name)
@@ -136,6 +137,11 @@ def test_selective_reset_restores_exact_episode_and_preserves_live_row(
     runtime.entity_status_kind[0, 6] = FAST_STATUS_STUN
     runtime.modifiers.shield[0, 6] = 77.0
     runtime.lifecycle.lifetime_ticks[0, 6] = 11
+    runtime.combat.navigation.state.mover_stable_id[0, 6] = 7
+    runtime.combat.navigation.state.target_stable_id[0, 6] = 4
+    runtime.combat.navigation.state.route_phase[0, 6] = 2
+    runtime.combat.navigation.state.bridge_index[0, 6] = 0
+    runtime.combat.navigation.state.travel_direction[0, 6] = 1
     runtime.effect_consume_source_id[0, 0] = 7
     runtime.projector.inputs.public_visibility[0, :, 6] = False
     runtime.state.hp[0, 2] = 0.0
@@ -158,6 +164,11 @@ def test_selective_reset_restores_exact_episode_and_preserves_live_row(
     assert not runtime.entity_status_ticks[0].any()
     assert not runtime.lifecycle.lifetime_ticks[0].any()
     assert not runtime.modifiers.shield[0].any()
+    assert not runtime.combat.navigation.state.mover_stable_id[0].any()
+    assert not runtime.combat.navigation.state.target_stable_id[0].any()
+    assert not runtime.combat.navigation.state.route_phase[0].any()
+    assert runtime.combat.navigation.state.bridge_index[0].eq(-1).all()
+    assert not runtime.combat.navigation.state.travel_direction[0].any()
     assert not runtime.outcomes.overtime[0]
     _assert_actor_row_equal(reset_observation.actor, initial.actor, 0)
     assert torch.equal(reset_observation.legal_mask[0], initial.legal_mask[0])

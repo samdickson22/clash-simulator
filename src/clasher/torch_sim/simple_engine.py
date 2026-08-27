@@ -9,7 +9,8 @@ from dataclasses import dataclass
 import torch
 
 from .simple_catalog import FastCardCatalog
-from .simple_state import FAST_KIND_BUILDING, FastGymState
+from .simple_navigation import FastArenaNavigation, FastNavigationState
+from .simple_state import FAST_KIND_BUILDING, FAST_KIND_TROOP, FastGymState
 from .simple_targeting import FastTargetTraits, select_nearest_targets
 
 
@@ -68,6 +69,13 @@ class FastTensorGym:
         # materialized by the most recent atomic request group.
         self.spawned_mask = torch.zeros_like(state.active)
         self._target_unavailable = torch.zeros_like(state.active)
+        self.navigation = FastArenaNavigation(
+            FastNavigationState.empty(
+                state.batch_size,
+                state.max_entities,
+                device=state.device,
+            )
+        )
 
     def _target_traits(self) -> FastTargetTraits:
         """Project card tables onto dense slots without card dispatch."""
@@ -345,8 +353,8 @@ class FastTensorGym:
             target_unavailable=self._target_unavailable,
         )
         found = targets.found
-        navigation_found, navigation_slot, navigation_id, navigation_distance = (
-            self._navigation_targets(can_act & ~found)
+        navigation_found, navigation_slot, navigation_id, _ = self._navigation_targets(
+            can_act & ~found
         )
         has_destination = found | navigation_found
         nearest_slot = torch.where(
@@ -356,11 +364,28 @@ class FastTensorGym:
         )
         state.target_id.copy_(torch.where(found, targets.target_id, navigation_id))
 
-        target_x = state.x_units.gather(1, nearest_slot).to(torch.float32)
-        target_y = state.y_units.gather(1, nearest_slot).to(torch.float32)
-        delta_x = target_x - state.x_units.to(torch.float32)
-        delta_y = target_y - state.y_units.to(torch.float32)
-        distance = torch.where(found, targets.center_distance, navigation_distance)
+        target_x_units = state.x_units.gather(1, nearest_slot)
+        target_y_units = state.y_units.gather(1, nearest_slot)
+        target_owner = state.owner.gather(1, nearest_slot)
+        route = self.navigation.route_(
+            active=has_destination & can_act & (state.kind == FAST_KIND_TROOP),
+            mover_stable_id=state.stable_id,
+            owner=state.owner,
+            airborne=traits.airborne,
+            x_units=state.x_units,
+            y_units=state.y_units,
+            target_stable_id=state.target_id,
+            target_owner=target_owner,
+            target_x_units=target_x_units,
+            target_y_units=target_y_units,
+        )
+        delta_x = route.waypoint_x_units.to(torch.float32) - state.x_units.to(
+            torch.float32
+        )
+        delta_y = route.waypoint_y_units.to(torch.float32) - state.y_units.to(
+            torch.float32
+        )
+        waypoint_distance = torch.sqrt(delta_x.square() + delta_y.square())
         attack_range = state.range_units.to(torch.float32).clamp(min=0)
         effective_speed = state.speed_units_per_tick.to(
             torch.float32
@@ -374,14 +399,15 @@ class FastTensorGym:
             approach_travel,
             effective_speed,
         )
+        travel = torch.minimum(travel, waypoint_distance)
         mobile = (
             has_destination
             & can_act
-            & (state.kind == 0)
+            & (state.kind == FAST_KIND_TROOP)
             & (~found | ~targets.within_attack_range)
             & (travel > 0)
         )
-        denominator = distance.clamp(min=1.0)
+        denominator = waypoint_distance.clamp(min=1.0)
         move_x = torch.round(delta_x * travel / denominator).to(torch.int32)
         move_y = torch.round(delta_y * travel / denominator).to(torch.int32)
         state.x_units.add_(torch.where(mobile, move_x, 0))
@@ -406,10 +432,7 @@ class FastTensorGym:
             torch.sqrt(post_dx.square() + post_dy.square()) - target_radius
         ).clamp_min(0.0)
         target_in_attack_range = (
-            found
-            & can_act
-            & (post_edge_distance <= attack_range)
-            & (state.damage > 0)
+            found & can_act & (post_edge_distance <= attack_range) & (state.damage > 0)
         )
         attack_ready = target_in_attack_range & (state.cooldown_ticks == 0)
         return attack_ready, target_in_attack_range, moved_distance

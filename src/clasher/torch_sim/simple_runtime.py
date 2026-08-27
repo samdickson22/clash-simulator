@@ -458,6 +458,7 @@ class SimpleGymRuntime:
             "modifiers": self._tensor_fields(self.modifiers),
             "damage_ramp": self._tensor_fields(self.damage_ramp),
             "rolling_spells": self._tensor_fields(self.rolling_spells),
+            "navigation": self._tensor_fields(self.combat.navigation.state),
             "outcomes": {
                 "initial_tower_hp": self.outcomes.initial_tower_hp.clone(),
                 "previous_tower_hp": self.outcomes.previous_tower_hp.clone(),
@@ -554,6 +555,7 @@ class SimpleGymRuntime:
             "modifiers": self.modifiers,
             "damage_ramp": self.damage_ramp,
             "rolling_spells": self.rolling_spells,
+            "navigation": self.combat.navigation.state,
             "outcomes": self.outcomes,
         }
         if self.periodic_spawns is not None:

@@ -83,6 +83,10 @@ def test_cuda_graph_runner_matches_eager_replays() -> None:
         torch.cuda.synchronize(runtime.device)
 
         _assert_tensor_fields_equal(runtime.state, reference.state)
+        _assert_tensor_fields_equal(
+            runtime.combat.navigation.state,
+            reference.combat.navigation.state,
+        )
         _assert_tensor_fields_equal(runtime.action_state, reference.action_state)
         _assert_status_planes_equal(runtime, reference)
         assert torch.equal(step.reward, reference_step.reward)
@@ -157,6 +161,10 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
     assert torch.equal(step.legal_mask, reference_step.legal_mask)
     assert torch.equal(step.next_legal_mask, reference_step.next_legal_mask)
     _assert_tensor_fields_equal(runtime.state, reference.state)
+    _assert_tensor_fields_equal(
+        runtime.combat.navigation.state,
+        reference.combat.navigation.state,
+    )
     _assert_tensor_fields_equal(runtime.action_state, reference.action_state)
     _assert_status_planes_equal(runtime, reference)
 
@@ -166,6 +174,10 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
     _assert_tensor_fields_equal(reset.actor, reference_reset.actor)
     assert torch.equal(reset.legal_mask, reference_reset.legal_mask)
     _assert_tensor_fields_equal(runtime.state, reference.state)
+    _assert_tensor_fields_equal(
+        runtime.combat.navigation.state,
+        reference.combat.navigation.state,
+    )
     _assert_tensor_fields_equal(runtime.action_state, reference.action_state)
     _assert_status_planes_equal(runtime, reference)
 
@@ -176,4 +188,8 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
     assert torch.equal(second.done, reference_second.done)
     _assert_tensor_fields_equal(second.next_actor, reference_second.next_actor)
     _assert_tensor_fields_equal(runtime.state, reference.state)
+    _assert_tensor_fields_equal(
+        runtime.combat.navigation.state,
+        reference.combat.navigation.state,
+    )
     _assert_status_planes_equal(runtime, reference)
