@@ -29,7 +29,7 @@ from .simple_abilities import FastAbilityCatalog
 from .simple_outcomes import FastMatchRules, FastTowerSpec
 from .simple_policy_mechanics import FastPolicyMechanicCatalog
 from .simple_runtime import SimpleGymRuntime
-from .simple_spawn_blueprints import FastSpawnBlueprintCatalog
+from .simple_spawn_blueprints import FastSpawnBlueprintCatalog, FastSpawnTrigger
 from .simple_travel import FastTravelCatalog
 from .simple_triggered_impacts import FastTriggeredImpactCatalog
 
@@ -307,6 +307,17 @@ def compile_standard_simple_setup(
         & ~triggered_impact_catalog.malformed
         & ~triggered_impact_catalog.duplicate
     ).clone()
+    # A public action which declares multiple serialized child groups is
+    # admissible only when setup compiled one complete all-or-nothing event.
+    # This remains a numeric setup gate: runtime never dispatches on card names.
+    action_atomic_required = torch.zeros_like(public_mask)
+    deploy_events = blueprints.atomic_event_trigger == int(
+        FastSpawnTrigger.DEPLOY_ACTION
+    )
+    action_atomic_required[blueprints.atomic_event_root_card_id[deploy_events]] = True
+    supported_mask &= ~action_atomic_required | (
+        blueprints.action_atomic_event_by_card >= 0
+    )
     public_names = tuple(
         name
         for card_id, name in enumerate(blueprints.cards.names)

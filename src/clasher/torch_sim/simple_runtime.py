@@ -135,9 +135,11 @@ from .simple_scheduled_spawns import (
     step_fast_scheduled_casts_,
 )
 from .simple_spawn_blueprints import (
+    FastAtomicSpawnCommands,
     FastSpawnAllocationResult,
     FastSpawnBlueprintCatalog,
     FastSpawnCommands,
+    allocate_fast_atomic_spawns_,
     allocate_fast_spawns_,
     death_payload_container_commands,
     impact_spawn_commands,
@@ -210,6 +212,7 @@ class SimpleGymRuntimeStep:
     positive_area_allocation: FastPositiveBuffAreaAllocationResult | None
     positive_area_effect_allocation: FastPayloadEffectAllocationResult | None
     payload_container_allocation: FastPayloadAllocationResult | None
+    atomic_spawn_allocation: FastSpawnAllocationResult | None
     spawn_allocation: FastSpawnAllocationResult | None
     payload_spawn_allocation: FastSpawnAllocationResult | None
     periodic_spawn_allocation: FastSpawnAllocationResult | None
@@ -1218,6 +1221,34 @@ class SimpleGymRuntime:
         self.entity_slow_ticks.masked_fill_(mask[:, :, None], 0)
         self.entity_attack_clock_fraction.masked_fill_(mask, 0.0)
 
+    def _initialize_action_spawns_(self, spawned: torch.Tensor) -> None:
+        """Initialize every entity-bound plane from one action spawn ledger.
+
+        Both ordinary homogeneous deployments and setup-compiled heterogeneous
+        deployments enter through this seam.  Clearing identity-bound state
+        before rebinding makes physical-slot reuse independent of the previous
+        occupant without adding card-specific runtime dispatch.
+        """
+
+        self._initialize_spawned_combat_(spawned)
+        self.combat.navigation.state.reset_(spawned)
+        self._clear_status_(spawned)
+        self._initialize_lifecycle_(spawned)
+        self._initialize_modifiers_(spawned)
+        self._clear_damage_ramp_(spawned)
+        self.policy_mechanics.clear_(spawned)
+        self._initialize_policy_mechanics_(spawned)
+        self.travel.clear_(spawned)
+        self._travel_spawned.masked_fill_(spawned, False)
+        self._travel_interrupted.masked_fill_(spawned, False)
+        for descriptor in fields(self.abilities):
+            if descriptor.name in {"device", "newest_owner_stable_id"}:
+                continue
+            getattr(self.abilities, descriptor.name).masked_fill_(spawned, 0)
+        self.death_bursts.emitted_source_stable_id.masked_fill_(spawned, 0)
+        self._triggered_death_stable_id.masked_fill_(spawned, 0)
+        self._queue_travel_spawned_(spawned)
+
     def _slow_multipliers(self) -> tuple[torch.Tensor, torch.Tensor]:
         """Reduce active serialized slow sources independently on each axis."""
 
@@ -1928,6 +1959,30 @@ class SimpleGymRuntime:
             impulse=impulse,
         )
 
+    def _action_atomic_commands(
+        self,
+        ingress: FastActionIngressResult,
+    ) -> tuple[torch.Tensor, FastAtomicSpawnCommands] | None:
+        """Map selected public entity actions to compiled private spawn events."""
+
+        catalog = self.spawn_blueprints
+        if catalog is None:
+            return None
+        safe_card = ingress.selected_card_ids.clamp(
+            0, self.action_kernel.catalog.size - 1
+        )
+        event_id = catalog.action_atomic_event_by_card[safe_card]
+        mapped = ingress.entity_deployment & (event_id >= 0)
+        lane_index = (ingress.selection.world_x_units >= 9_000).to(torch.int8)
+        return mapped, FastAtomicSpawnCommands(
+            ready=mapped,
+            owner=self._effect_owners,
+            atomic_event_id=event_id,
+            x_units=ingress.selection.world_x_units.to(torch.int32),
+            y_units=ingress.selection.world_y_units.to(torch.int32),
+            lane_index=lane_index,
+        )
+
     def _legal_action_mask(self) -> torch.Tensor:
         ability = self._ability_player_view()
         mask = self.action_kernel.legal_action_mask(
@@ -1950,6 +2005,20 @@ class SimpleGymRuntime:
             rolling, torch.zeros_like(required_slots), required_slots
         )
         if self.spawn_blueprints is not None:
+            atomic_event = self.spawn_blueprints.action_atomic_event_by_card[safe_card]
+            has_atomic_event = atomic_event >= 0
+            if self.spawn_blueprints.atomic_event_count > 0:
+                safe_atomic_event = atomic_event.clamp(
+                    0, self.spawn_blueprints.atomic_event_count - 1
+                )
+                atomic_count = self.spawn_blueprints.atomic_event_required_capacity[
+                    safe_atomic_event
+                ].to(torch.int64)
+                required_slots = torch.where(
+                    has_atomic_event,
+                    atomic_count,
+                    required_slots,
+                )
             impact_row = self.spawn_blueprints.impact_blueprint_by_card[safe_card]
             has_impact_spawn = torch.zeros_like(impact_row, dtype=torch.bool)
             rolling_row = self.spawn_blueprints.rolling_blueprint_by_card[safe_card]
@@ -2168,13 +2237,41 @@ class SimpleGymRuntime:
                 scheduled_commands,
                 tick=self.state.tick,
             )
-        deployed = self.combat.deploy_many_once(ingress.requests)
-        self._clear_status_(self.combat.spawned_mask)
-        self._initialize_lifecycle_(self.combat.spawned_mask)
-        self._initialize_modifiers_(self.combat.spawned_mask)
-        self._clear_damage_ramp_(self.combat.spawned_mask)
-        self._initialize_policy_mechanics_(self.combat.spawned_mask)
-        self._queue_travel_spawned_(self.combat.spawned_mask)
+        atomic_spawn_allocation: FastSpawnAllocationResult | None = None
+        atomic_request = self._action_atomic_commands(ingress)
+        if atomic_request is None:
+            deployed = self.combat.deploy_many_once(ingress.requests)
+        else:
+            atomic_selected, atomic_commands = atomic_request
+            player_zero = replace(
+                ingress.requests[0],
+                valid=ingress.requests[0].valid & ~atomic_selected[:, 0],
+            )
+            player_one = replace(
+                ingress.requests[1],
+                valid=ingress.requests[1].valid & ~atomic_selected[:, 1],
+            )
+
+            ordinary_zero = self.combat.deploy_many_once((player_zero,))[:, 0]
+            action_spawned = self.combat.spawned_mask.clone()
+            assert self.spawn_blueprints is not None
+            atomic_spawn_allocation = allocate_fast_atomic_spawns_(
+                self.state,
+                self.spawn_blueprints,
+                atomic_commands,
+                reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+            )
+            action_spawned.logical_or_(atomic_spawn_allocation.spawned_mask)
+            ordinary_one = self.combat.deploy_many_once((player_one,))[:, 0]
+            action_spawned.logical_or_(self.combat.spawned_mask)
+            self.combat.spawned_mask.copy_(action_spawned)
+            ordinary_deployed = torch.stack((ordinary_zero, ordinary_one), dim=1)
+            deployed = torch.where(
+                atomic_selected,
+                atomic_spawn_allocation.accepted,
+                ordinary_deployed,
+            )
+        self._initialize_action_spawns_(self.combat.spawned_mask)
         pending_deploy_complete = self.state.active & (self.state.deploy_ticks == 1)
         pre_visibility = self._policy_visibility_view()
         self._publish_policy_visibility_(pre_visibility)
@@ -2704,6 +2801,7 @@ class SimpleGymRuntime:
             positive_area_allocation=positive_area_allocation,
             positive_area_effect_allocation=positive_area_effect_allocation,
             payload_container_allocation=payload_container_allocation,
+            atomic_spawn_allocation=atomic_spawn_allocation,
             spawn_allocation=spawn_allocation,
             payload_spawn_allocation=payload_spawn_allocation,
             periodic_spawn_allocation=periodic_spawn_allocation,
