@@ -17,6 +17,16 @@ import torch
 from clasher.rl.common import NUM_HAND_SLOTS, NUM_TILES
 
 from .actions import NO_OP_ACTION
+from .simple_abilities import (
+    FastAbilityActivationResult,
+    FastAbilityCatalog,
+    FastAbilityPlayerView,
+    FastAbilityState,
+    FastAbilityStepResult,
+    activate_fast_abilities_,
+    fast_ability_player_view,
+    step_fast_abilities_,
+)
 from .simple_actions import FastActionIngressResult, FastActionKernel, FastActionState
 from .simple_attack_effects import (
     FastEffectAllocationResult,
@@ -156,6 +166,8 @@ class SimpleGymRuntimeStep:
     winner: torch.Tensor
     native_ticks: torch.Tensor
     committed: torch.Tensor
+    ability_activation: FastAbilityActivationResult | None
+    abilities: FastAbilityStepResult | None
     effect_allocation: FastEffectAllocationResult
     effects: FastEffectStepResult
     lifecycle: FastLifecycleStepResult
@@ -207,6 +219,7 @@ class SimpleGymRuntime:
         triple_elixir_tick: int | None = None,
         spawn_blueprints: FastSpawnBlueprintCatalog | None = None,
         policy_mechanics: FastPolicyMechanicCatalog | None = None,
+        ability_catalog: FastAbilityCatalog | None = None,
     ) -> None:
         if deck_ids.ndim != 3 or tuple(deck_ids.shape[1:]) != (2, 8):
             raise ValueError("deck_ids must have shape [batch, 2, 8]")
@@ -225,6 +238,11 @@ class SimpleGymRuntime:
                 raise ValueError("policy mechanic catalog must align with cards")
             if not _same_device(policy_mechanics.device, catalog.device):
                 raise ValueError("policy mechanics and cards must share a device")
+        if ability_catalog is not None:
+            if ability_catalog.card_capacity != catalog.size:
+                raise ValueError("ability catalog must align with cards")
+            if not _same_device(ability_catalog.device, catalog.device):
+                raise ValueError("ability catalog and cards must share a device")
         if spawn_blueprints is not None:
             if spawn_blueprints.fast_cards is not catalog:
                 raise ValueError(
@@ -295,6 +313,8 @@ class SimpleGymRuntime:
             max_entities=self.state.max_entities,
             device=self.state.device,
         )
+        self.ability_catalog = ability_catalog
+        self.abilities = FastAbilityState.empty_like(self.state)
         self.effects = FastEffectState.empty(
             self.state.batch_size,
             max_effects=max_effects,
@@ -493,6 +513,7 @@ class SimpleGymRuntime:
             "rolling_spells": self._tensor_fields(self.rolling_spells),
             "navigation": self._tensor_fields(self.combat.navigation.state),
             "policy_mechanics": self._tensor_fields(self.policy_mechanics),
+            "abilities": self._tensor_fields(self.abilities),
             "outcomes": {
                 "initial_tower_hp": self.outcomes.initial_tower_hp.clone(),
                 "previous_tower_hp": self.outcomes.previous_tower_hp.clone(),
@@ -594,6 +615,7 @@ class SimpleGymRuntime:
             "rolling_spells": self.rolling_spells,
             "navigation": self.combat.navigation.state,
             "policy_mechanics": self.policy_mechanics,
+            "abilities": self.abilities,
             "outcomes": self.outcomes,
         }
         if self.periodic_spawns is not None:
@@ -660,6 +682,27 @@ class SimpleGymRuntime:
             )
         return multiplier
 
+    def _stunned(self) -> torch.Tensor:
+        """Return the shared independently-timed stun plane."""
+
+        return (self.entity_status_kind == FAST_STATUS_STUN) & (
+            self.entity_status_ticks > 0
+        )
+
+    def _ability_player_view(self) -> FastAbilityPlayerView | None:
+        """Refresh entity ownership and expose only player-ordered ability state."""
+
+        if self.ability_catalog is None:
+            return None
+        return fast_ability_player_view(
+            self.state,
+            self.abilities,
+            self.ability_catalog,
+            elixir=self.action_state.elixir,
+            stunned=self._stunned(),
+            player_alive=self.action_state.player_alive,
+        )
+
     def _refresh_policy_state(self) -> None:
         tower_hp = crown_tower_hp(self.state)
         tower_alive = tower_hp > 0
@@ -667,6 +710,13 @@ class SimpleGymRuntime:
         self.action_state.player_alive.copy_(
             tower_alive[:, :, 2] & ~self.state.game_over[:, None]
         )
+        ability = self._ability_player_view()
+        if ability is None:
+            self._ability_cooldown.zero_()
+            self._ability_duration.zero_()
+        else:
+            self._ability_cooldown.copy_(ability.cooldown_fraction)
+            self._ability_duration.copy_(ability.duration_fraction)
         self._projection_hand_ids[:, :, :4].copy_(self.action_state.hand_ids)
         self._projection_hand_ids[:, :, 4].copy_(self.action_state.own_next)
         if self.double_elixir_tick is not None:
@@ -708,6 +758,20 @@ class SimpleGymRuntime:
         self._entity_special.copy_(view.special_active)
         self._entity_invisible.copy_(view.invisible)
         self._entity_hidden.copy_(view.hidden)
+
+    def _publish_ability_mechanics_(
+        self,
+        abilities: FastAbilityStepResult | None,
+    ) -> None:
+        """Compose Champion state into common targeting and observation planes."""
+
+        if abilities is None:
+            return
+        self.combat._target_unavailable.logical_or_(abilities.effect_active)
+        self._entity_special.logical_or_(abilities.pending | abilities.effect_active)
+        # Cloaked Champions remain publicly represented, but the structured
+        # invisible flag and target-unavailable plane carry their semantics.
+        self._entity_invisible.logical_or_(abilities.effect_active)
 
     def _initialize_policy_mechanics_(self, spawned: torch.Tensor) -> None:
         self.policy_mechanics.initialize_spawned_(
@@ -1135,7 +1199,11 @@ class SimpleGymRuntime:
         )
 
     def _legal_action_mask(self) -> torch.Tensor:
-        mask = self.action_kernel.legal_action_mask(self.action_state)
+        ability = self._ability_player_view()
+        mask = self.action_kernel.legal_action_mask(
+            self.action_state,
+            ability_legal=None if ability is None else ability.legal,
+        )
         free_deploy_slots = (~self.state.active[:, FAST_TOWER_SLOT_COUNT:]).sum(dim=1)
         has_effect_slot = (~self.effects.active).any(dim=1)
         hand = self.action_state.hand_ids
@@ -1308,6 +1376,27 @@ class SimpleGymRuntime:
         ingress = self.action_kernel.ingress(
             self.action_state, action_ids, legal_mask=legal_mask
         )
+        ability_activation: FastAbilityActivationResult | None = None
+        abilities_before: FastAbilityStepResult | None = None
+        if self.ability_catalog is not None:
+            ability_activation = activate_fast_abilities_(
+                self.state,
+                self.abilities,
+                self.ability_catalog,
+                ingress.ability_activation,
+                elixir=self.action_state.elixir,
+                stunned=self._stunned(),
+                player_alive=self.action_state.player_alive,
+            )
+            self.action_state.elixir.add_(ability_activation.elixir_delta)
+            abilities_before = step_fast_abilities_(
+                self.state,
+                self.abilities,
+                self.ability_catalog,
+                elixir=self.action_state.elixir,
+                stunned=self._stunned(),
+                player_alive=self.action_state.player_alive,
+            )
         rolling_spell, rolling_commands = self._rolling_commands(ingress)
         rolling_allocation = allocate_fast_rolling_spells_(
             self.rolling_spells,
@@ -1332,6 +1421,7 @@ class SimpleGymRuntime:
         self._initialize_policy_mechanics_(self.combat.spawned_mask)
         pre_visibility = self._policy_visibility_view()
         self._publish_policy_visibility_(pre_visibility)
+        self._publish_ability_mechanics_(abilities_before)
 
         positive_area_step = step_fast_positive_buff_areas_(self.positive_buff_areas)
         positive_buff_apply = apply_fast_positive_area_buffs_(
@@ -1346,21 +1436,42 @@ class SimpleGymRuntime:
         )
         slow_movement, slow_attack = self._slow_multipliers()
         positive_view = fast_positive_buff_view(self.state, self.positive_buffs)
+        ability_attack = (
+            abilities_before.attack_speed_multiplier
+            if abilities_before is not None
+            else torch.ones_like(self.state.damage)
+        )
+        ability_movement = (
+            abilities_before.movement_speed_multiplier
+            if abilities_before is not None
+            else torch.ones_like(self.state.damage)
+        )
+        ability_cast_locked = (
+            abilities_before.cast_locked
+            if abilities_before is not None
+            else torch.zeros_like(self.state.active)
+        )
         cooldown_decrement = self._attack_clock_decrement_(
             cooling=(
                 self.state.active
                 & ~stunned
                 & ~pre_visibility.combat_blocked
+                & ~ability_cast_locked
                 & (self.state.cooldown_ticks > 0)
             ),
-            rate_multiplier=(positive_view.cooldown_decrement_multiplier * slow_attack),
+            rate_multiplier=(
+                positive_view.cooldown_decrement_multiplier
+                * slow_attack
+                * ability_attack
+            ),
         )
         combat = self.combat.step_tick(
-            disabled=stunned | pre_visibility.combat_blocked,
+            disabled=stunned | pre_visibility.combat_blocked | ability_cast_locked,
             speed_multiplier=(
                 charge_view.speed
                 * positive_view.movement_speed_multiplier
                 * slow_movement
+                * ability_movement
             ),
             cooldown_decrement=cooldown_decrement,
         )
@@ -1438,6 +1549,7 @@ class SimpleGymRuntime:
         )
         self.state.target_id.masked_fill_(policy_visibility.clear_source_target, 0)
         self._publish_policy_visibility_(policy_visibility.view)
+        self._publish_ability_mechanics_(abilities_before)
 
         failed_deployment = (ingress.entity_deployment & ~deployed) | (
             ingress.spell_cast & ~spell_allocated
@@ -1552,7 +1664,14 @@ class SimpleGymRuntime:
             entity_committed_direct_receivable=(
                 effect_visibility.effect_receivable_affects_hidden
             ),
-            entity_secondary_targetable=effect_visibility.secondary_targetable,
+            entity_secondary_targetable=(
+                effect_visibility.secondary_targetable
+                & (
+                    ~abilities_before.effect_active
+                    if abilities_before is not None
+                    else torch.ones_like(self.state.active)
+                )
+            ),
             entity_area_receivable=effect_visibility.area_receivable,
             entity_effect_receivable_affects_hidden=(
                 effect_visibility.effect_receivable_affects_hidden
@@ -1696,17 +1815,36 @@ class SimpleGymRuntime:
             self.positive_buffs,
         )
         self._publish_policy_visibility_(self._policy_visibility_view())
+        abilities_after: FastAbilityStepResult | None = None
+        if self.ability_catalog is not None:
+            abilities_after = step_fast_abilities_(
+                self.state,
+                self.abilities,
+                self.ability_catalog,
+                elixir=self.action_state.elixir,
+                stunned=self._stunned(),
+                player_alive=self.action_state.player_alive,
+            )
+        self._publish_ability_mechanics_(abilities_after)
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())
         action_success = (
             torch.where(
-                ingress.entity_deployment,
-                deployed,
+                ingress.ability_activation,
+                (
+                    ability_activation.activated
+                    if ability_activation is not None
+                    else torch.zeros_like(ingress.accepted)
+                ),
                 torch.where(
-                    ingress.spell_cast,
-                    spell_allocated,
-                    ingress.accepted,
+                    ingress.entity_deployment,
+                    deployed,
+                    torch.where(
+                        ingress.spell_cast,
+                        spell_allocated,
+                        ingress.accepted,
+                    ),
                 ),
             )
             & combat.committed[:, None]
@@ -1719,6 +1857,8 @@ class SimpleGymRuntime:
             winner=outcome.winner,
             native_ticks=combat.native_ticks,
             committed=combat.committed,
+            ability_activation=ability_activation,
+            abilities=abilities_after,
             effect_allocation=allocation,
             effects=effect_result,
             lifecycle=lifecycle_result,

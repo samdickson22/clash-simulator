@@ -50,6 +50,7 @@ def _assert_status_planes_equal(left: Any, right: Any) -> None:
 
 def _assert_policy_planes_equal(left: Any, right: Any) -> None:
     _assert_tensor_fields_equal(left.policy_mechanics, right.policy_mechanics)
+    _assert_tensor_fields_equal(left.abilities, right.abilities)
     for name in ("_entity_special", "_entity_invisible", "_entity_hidden"):
         assert torch.equal(getattr(left, name), getattr(right, name))
 

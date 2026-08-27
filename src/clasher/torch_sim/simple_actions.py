@@ -135,6 +135,7 @@ class FastActionIngressResult:
 
     accepted: torch.Tensor
     deployment_accepted: torch.Tensor
+    ability_activation: torch.Tensor
     entity_deployment: torch.Tensor
     spell_cast: torch.Tensor
     selected_card_ids: torch.Tensor
@@ -259,7 +260,12 @@ class FastActionKernel:
         alive = state.tower_alive.reshape(state.batch_size, 1, 1, 6)
         return (covered & alive).any(dim=-1)
 
-    def legal_action_mask(self, state: FastActionState) -> torch.Tensor:
+    def legal_action_mask(
+        self,
+        state: FastActionState,
+        *,
+        ability_legal: torch.Tensor | None = None,
+    ) -> torch.Tensor:
         """Return an exact mask for the ordinary fast-engine action contract.
 
         The result depends only on pre-action public mechanics state and the
@@ -314,8 +320,21 @@ class FastActionKernel:
             state.batch_size, 2, NO_OP_ACTION
         )
         mask[:, :, NO_OP_ACTION] = True
-        # Champion abilities are mechanic-owned and intentionally fail closed.
-        mask[:, :, ABILITY_ACTION] = False
+        # The ability subsystem owns every semantic legality gate.  The action
+        # kernel only publishes that already player-ordered result into the
+        # shared public-mask-v2 action space.  Low-level runtimes which do not
+        # supply an ability subsystem therefore continue to fail closed.
+        if ability_legal is None:
+            ability_legal = torch.zeros(
+                (state.batch_size, 2), dtype=torch.bool, device=self.device
+            )
+        elif ability_legal.shape != (state.batch_size, 2):
+            raise ValueError("ability_legal must have shape [batch, 2]")
+        elif ability_legal.device != self.device:
+            raise ValueError("ability_legal must use the action device")
+        elif ability_legal.dtype != torch.bool:
+            raise ValueError("ability_legal must be bool")
+        mask[:, :, ABILITY_ACTION] = ability_legal & state.player_alive
         return mask
 
     def ingress(
@@ -339,6 +358,7 @@ class FastActionKernel:
         selected_legal = legal_mask.gather(2, safe_action.unsqueeze(-1)).squeeze(-1)
         accepted = selection.valid_input & selected_legal
         deployment = accepted & (selection.action_ids < NO_OP_ACTION)
+        ability_activation = accepted & (selection.action_ids == ABILITY_ACTION)
 
         safe_slot = selection.slot.clamp(0, NUM_HAND_SLOTS - 1)
         card_ids = state.hand_ids.gather(2, safe_slot.unsqueeze(-1)).squeeze(-1)
@@ -384,6 +404,7 @@ class FastActionKernel:
         return FastActionIngressResult(
             accepted=accepted,
             deployment_accepted=deployment,
+            ability_activation=ability_activation,
             entity_deployment=entity_deployment,
             spell_cast=spell_cast,
             selected_card_ids=card_ids,

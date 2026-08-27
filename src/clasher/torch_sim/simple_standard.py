@@ -24,6 +24,7 @@ from clasher.kinematics import (
 )
 
 from .catalog import TensorCardCatalog
+from .simple_abilities import FastAbilityCatalog
 from .simple_outcomes import FastMatchRules, FastTowerSpec
 from .simple_policy_mechanics import FastPolicyMechanicCatalog
 from .simple_runtime import SimpleGymRuntime
@@ -60,8 +61,7 @@ def _ceil_logic_ticks(milliseconds: int) -> int:
     return int(
         max(
             1,
-            (milliseconds + LOGIC_TICK_MILLISECONDS - 1)
-            // LOGIC_TICK_MILLISECONDS,
+            (milliseconds + LOGIC_TICK_MILLISECONDS - 1) // LOGIC_TICK_MILLISECONDS,
         )
     )
 
@@ -194,6 +194,7 @@ class SimpleStandardSetup:
     cards: TensorCardCatalog
     spawn_blueprints: FastSpawnBlueprintCatalog
     policy_mechanics: FastPolicyMechanicCatalog
+    ability_catalog: FastAbilityCatalog
     tower_spec: FastTowerSpec
     rules: FastMatchRules
     public_root_mask: torch.Tensor
@@ -248,6 +249,7 @@ class SimpleStandardSetup:
             triple_elixir_tick=STANDARD_TRIPLE_ELIXIR_TICK,
             spawn_blueprints=runtime_blueprints,
             policy_mechanics=self.policy_mechanics,
+            ability_catalog=self.ability_catalog,
         )
 
 
@@ -271,11 +273,14 @@ def compile_standard_simple_setup(
     )
     blueprints = FastSpawnBlueprintCatalog.compile(loader, base_cards)
     policy_mechanics = FastPolicyMechanicCatalog.compile(blueprints.cards, loader)
+    ability_catalog = FastAbilityCatalog.compile(blueprints.cards, loader)
     public_mask = blueprints.public_card_mask.clone()
     supported_mask = (
         public_mask
         & blueprints.fast_cards.training_supported
         & policy_mechanics.profile_supported
+        & ~ability_catalog.malformed
+        & ~ability_catalog.duplicate
     ).clone()
     public_names = tuple(
         name
@@ -291,6 +296,7 @@ def compile_standard_simple_setup(
         cards=blueprints.cards,
         spawn_blueprints=blueprints,
         policy_mechanics=policy_mechanics,
+        ability_catalog=ability_catalog,
         tower_spec=standard_tower_spec(loader, device),
         rules=standard_match_rules(),
         public_root_mask=public_mask,
