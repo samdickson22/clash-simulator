@@ -9,8 +9,6 @@ import torch
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.simple_pytorch_backend import (
     SIMPLE_PYTORCH_BACKEND,
-    ReferenceSimplePublicMaskV2Adapter,
-    SimplePublicMaskV2Adapter,
     SimplePytorchTrainingCollector,
     load_current_client_typed_vocabulary,
     load_simple_supported_decks,
@@ -18,6 +16,12 @@ from clasher.rl.simple_pytorch_backend import (
 from clasher.rl.simple_tensor_collector import SimpleTensorMaskRequest
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rl.train_recurrent import RolloutBatch, _validate_simple_pytorch_args
+from clasher.torch_sim.actions import ABILITY_ACTION, NO_OP_ACTION
+from clasher.torch_sim.simple_public_mask import (
+    SIMPLE_PUBLIC_MASK_SEMANTICS_ID,
+    SimpleCollectorPublicMaskV2Provider,
+    SimplePublicMaskV2Provider,
+)
 
 
 def _simple_args(**overrides: object) -> Namespace:
@@ -61,7 +65,9 @@ def test_simple_backend_contract_and_typed_variants_fail_closed() -> None:
     _validate_simple_pytorch_args(_simple_args())
 
 
-def _training_collector(device_name: str = "cpu") -> SimplePytorchTrainingCollector:
+def _training_collector(
+    device_name: str = "cpu", *, batch_size: int = 1
+) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
     device = torch.device(device_name)
@@ -88,7 +94,7 @@ def _training_collector(device_name: str = "cpu") -> SimplePytorchTrainingCollec
     return SimplePytorchTrainingCollector(
         model=model,
         builder=builder,
-        batch_size=1,
+        batch_size=batch_size,
         device=device,
         decision_interval=2,
         gamma=0.995,
@@ -112,36 +118,39 @@ def test_one_decision_collects_existing_ppo_rollout_shape() -> None:
     assert rollout.action_masks.shape == (2, 1, model.num_actions)
     assert rollout.entity_ids.shape == (2, 1, 128)
     assert rollout.transitions == 2
-    assert rollout.action_masks[
-        torch.arange(2).numpy(), 0, rollout.actions[:, 0]
-    ].all()
+    assert rollout.action_masks[torch.arange(2).numpy(), 0, rollout.actions[:, 0]].all()
     assert next_state[0].shape == (2, 32)
-    assert previous_actions.shape == previous_rewards.shape == episode_starts.shape == (
-        2,
+    assert (
+        previous_actions.shape == previous_rewards.shape == episode_starts.shape == (2,)
     )
     metadata = collector.checkpoint_metadata()
     assert metadata["public_action_mask_contract_version"] == 2
+    assert metadata["public_action_mask_semantics_id"] == (
+        SIMPLE_PUBLIC_MASK_SEMANTICS_ID
+    )
+    assert metadata["public_action_mask_semantics"]["ability_policy"] == (
+        "actor-visible-supported-champion-v1"
+    )
     assert metadata["reward_contract_id"] == "objective-v1-gamma-v1"
     assert metadata["fresh_only"] is True
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
-def test_tensor_public_mask_matches_authoritative_trace(device_name: str) -> None:
+def test_route_uses_committed_actor_v2_mask_authority(device_name: str) -> None:
     collector = _training_collector(device_name)
     bridge = collector.collector.bridge
-    # Both adapters consume the exact same actor-only boundary. The reference
-    # intentionally round-trips to NumPy; the production path must not.
-    structured_builder = collector.collector.public_mask_provider.builder
-    assert isinstance(structured_builder, StructuredObservationBuilder)
-    tensor = SimplePublicMaskV2Adapter(structured_builder)
-    reference = ReferenceSimplePublicMaskV2Adapter(structured_builder)
+    adapter = collector.collector.public_mask_provider
+    assert isinstance(adapter, SimpleCollectorPublicMaskV2Provider)
+    assert isinstance(adapter.provider, SimplePublicMaskV2Provider)
+    assert adapter.provider.tables is collector.public_mask_tables
+    assert collector.public_mask_tables.semantics_id == (
+        SIMPLE_PUBLIC_MASK_SEMANTICS_ID
+    )
 
     for decision_index in range(4):
         observation = bridge.observe()
         request = SimpleTensorMaskRequest(observation, decision_index, False)
-        actual = tensor(request).masks
-        expected = reference(request).masks
-        assert torch.equal(actual, expected)
+        actual = adapter(request).masks
         placements = actual[..., : 4 * 18 * 32]
         first = placements.to(torch.int64).argmax(dim=-1)
         actions = torch.where(
@@ -154,6 +163,59 @@ def test_tensor_public_mask_matches_authoritative_trace(device_name: str) -> Non
         )
         bridge.reset_done(step.done)
 
-    source = inspect.getsource(SimplePublicMaskV2Adapter.__call__)
+    source = inspect.getsource(SimplePublicMaskV2Provider.build)
     for forbidden in (".cpu(", ".numpy(", ".item(", ".tolist("):
         assert forbidden not in source
+
+
+def test_integrated_actor_v2_mask_exposes_archer_queen_ability() -> None:
+    collector = _training_collector(batch_size=7)
+    bridge = collector.collector.bridge
+    adapter = collector.collector.public_mask_provider
+    vocabulary = load_current_client_typed_vocabulary()
+    queen_action = vocabulary.resolve("ArcherQueen", "card_action")
+    queen_body = vocabulary.resolve("ArcherQueen", "troop_body")
+    assert queen_action > 1 and queen_body > 1
+    assert collector.public_mask_tables.ability_supported[queen_body]
+    assert collector.public_mask_tables.ability_elixir_cost[queen_body] == 1.0
+
+    observation = bridge.observe()
+    locations = (observation.actor.hand_ids[..., :4] == queen_action).nonzero()
+    assert locations.shape[0] == 1
+    batch, seat, slot = (int(value) for value in locations[0])
+    public_mask = adapter(SimpleTensorMaskRequest(observation, 0, False)).masks
+    placements = public_mask[batch, seat, slot * 18 * 32 : (slot + 1) * 18 * 32]
+    assert placements.any()
+    actions = torch.full(
+        (collector.batch_size, 2),
+        NO_OP_ACTION,
+        dtype=torch.int64,
+        device=observation.actor.hand_ids.device,
+    )
+    actions[batch, seat] = slot * 18 * 32 + int(placements.to(torch.int64).argmax())
+    bridge.step(
+        actions,
+        public_action_masks=public_mask,
+        public_action_mask_contract_version=2,
+    )
+
+    became_legal = False
+    for decision_index in range(1, 65):
+        observation = bridge.observe()
+        public_mask = adapter(
+            SimpleTensorMaskRequest(observation, decision_index, False)
+        ).masks
+        assert (
+            public_mask[batch, seat, ABILITY_ACTION]
+            == (observation.legal_mask[batch, seat, ABILITY_ACTION])
+        )
+        if public_mask[batch, seat, ABILITY_ACTION]:
+            became_legal = True
+            break
+        actions.fill_(NO_OP_ACTION)
+        bridge.step(
+            actions,
+            public_action_masks=public_mask,
+            public_action_mask_contract_version=2,
+        )
+    assert became_legal
