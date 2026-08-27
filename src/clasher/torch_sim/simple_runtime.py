@@ -34,6 +34,7 @@ from .simple_attack_effects import (
     FastNumericEffectCommands,
     allocate_fast_attack_effects_,
 )
+from .simple_attack_locks import FastAttackLockState, FastAttackTimingCatalog
 from .simple_catalog import FastCardCatalog
 from .simple_damage_ramp import (
     FastDamageRampParameters,
@@ -294,6 +295,7 @@ class SimpleGymRuntime:
         ability_catalog: FastAbilityCatalog | None = None,
         travel_catalog: FastTravelCatalog | None = None,
         triggered_impact_catalog: FastTriggeredImpactCatalog | None = None,
+        attack_timings: FastAttackTimingCatalog | None = None,
         knockback_immune_by_card: torch.Tensor | None = None,
         max_triggered_events: int = 8,
         max_triggered_effects: int = 32,
@@ -330,6 +332,11 @@ class SimpleGymRuntime:
                 raise ValueError("triggered impact catalog must align with cards")
             if not _same_device(triggered_impact_catalog.device, catalog.device):
                 raise ValueError("triggered impacts and cards must share a device")
+        if attack_timings is not None:
+            if attack_timings.size != catalog.size:
+                raise ValueError("attack timings must align with cards")
+            if not _same_device(attack_timings.device, catalog.device):
+                raise ValueError("attack timings and cards must share a device")
         if max_triggered_events < 1 or max_triggered_effects < 1:
             raise ValueError("triggered pool capacities must be positive")
         if knockback_immune_by_card is not None:
@@ -455,10 +462,22 @@ class SimpleGymRuntime:
             max_elixir=max_elixir,
         )
         self.action_kernel = FastActionKernel(catalog)
+        self.attack_timings = attack_timings
+        self.attack_locks = (
+            FastAttackLockState.empty(
+                self.state.batch_size,
+                self.state.max_entities,
+                device=self.state.device,
+            )
+            if attack_timings is not None
+            else None
+        )
         self.combat = FastTensorGym(
             self.state,
             catalog,
             reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+            attack_timings=attack_timings,
+            attack_locks=self.attack_locks,
         )
         self.policy_catalog = (
             policy_mechanics
@@ -832,6 +851,8 @@ class SimpleGymRuntime:
                 "entity_hidden": self._entity_hidden.clone(),
             },
         }
+        if self.attack_locks is not None:
+            templates["attack_locks"] = self._tensor_fields(self.attack_locks)
         if self.periodic_spawns is not None:
             templates["periodic_spawns"] = self._tensor_fields(self.periodic_spawns)
         if self.scheduled_casts is not None:
@@ -909,6 +930,8 @@ class SimpleGymRuntime:
             "abilities": self.abilities,
             "outcomes": self.outcomes,
         }
+        if self.attack_locks is not None:
+            objects["attack_locks"] = self.attack_locks
         if self.periodic_spawns is not None:
             objects["periodic_spawns"] = self.periodic_spawns
         if self.scheduled_casts is not None:
@@ -2504,6 +2527,32 @@ class SimpleGymRuntime:
             == 0
         )
         inactive_king = self._king_source_mask & ~(king_owner_active & king_owner_ready)
+        attack_clock_positive = self.state.cooldown_ticks > 0
+        if self.attack_timings is not None:
+            assert self.attack_locks is not None
+            safe_attack_card = self.state.card_id.clamp(0, self.attack_timings.size - 1)
+            timed_source = (
+                self.state.active
+                & (self.state.hp > 0)
+                & (self.state.deploy_ticks == 0)
+                & (self.state.stable_id > 0)
+                & (self.state.card_id > 0)
+                & (self.state.card_id < self.attack_timings.size)
+                & self.attack_timings.ordinary_attack_supported[safe_attack_card]
+            )
+            same_attack_generation = (
+                self.attack_locks.source_stable_id == self.state.stable_id
+            )
+            timed_clock_positive = torch.where(
+                same_attack_generation,
+                self.attack_locks.cooldown_ticks > 0,
+                self.attack_timings.first_hit_delay_ticks[safe_attack_card] > 0,
+            )
+            attack_clock_positive = torch.where(
+                timed_source,
+                timed_clock_positive,
+                attack_clock_positive,
+            )
         cooldown_decrement = self._attack_clock_decrement_(
             cooling=(
                 self.state.active
@@ -2512,7 +2561,7 @@ class SimpleGymRuntime:
                 & ~pre_visibility.combat_blocked
                 & ~ability_cast_locked
                 & ~active_travel_view.combat_blocked
-                & (self.state.cooldown_ticks > 0)
+                & attack_clock_positive
             ),
             rate_multiplier=(
                 positive_view.cooldown_decrement_multiplier
@@ -2536,6 +2585,12 @@ class SimpleGymRuntime:
             ),
             cooldown_decrement=cooldown_decrement,
             cooldown_floor_ticks=self._cooldown_floor_ticks,
+            clear_source_lock=(
+                stunned
+                | pre_visibility.combat_blocked
+                | active_travel_view.combat_blocked
+            ),
+            reload_source_attack=(stunned | active_travel_view.combat_blocked),
         )
         ramp_parameters = self._damage_ramp_parameters()
         ramp_target = torch.where(
@@ -2549,13 +2604,19 @@ class SimpleGymRuntime:
             current_target_stable_id=ramp_target,
             stunned=stunned,
         )
-        self.state.cooldown_ticks.copy_(
-            torch.maximum(
-                self.state.cooldown_ticks,
-                ramp.retarget_delay_ticks,
+        if self.attack_timings is None:
+            self.state.cooldown_ticks.copy_(
+                torch.maximum(
+                    self.state.cooldown_ticks,
+                    ramp.retarget_delay_ticks,
+                )
             )
-        )
-        attack_ready = combat.attack_ready & (ramp.retarget_delay_ticks == 0)
+            attack_ready = combat.attack_ready & (ramp.retarget_delay_ticks == 0)
+        else:
+            # Stable attack locks are the sole retarget-clock authority. The
+            # ramp state still owns continuous-target stage progression and
+            # its damage multiplier, but cannot install a second delay.
+            attack_ready = combat.attack_ready
         attack_damage_multiplier = charge_view.damage * ramp.damage_multiplier
         commands = self._effect_commands(
             ingress,

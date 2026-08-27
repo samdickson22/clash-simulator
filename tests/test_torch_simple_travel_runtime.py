@@ -228,9 +228,12 @@ def test_miner_transport_mirrors_origin_and_scales_crown_damage(
     assert surfaced is not None
     assert int(runtime.travel.phase[0, 6]) == FAST_TRAVEL_IDLE
     assert not runtime.combat._target_unavailable[0, 6]
-    # The first ordinary hit can land on the emergence tick; either way the
-    # first crown delta is the serialized 39 rather than ordinary 194.
-    for _ in range(4):
+    # Travel interruption reloads the complete ordinary cycle. The first
+    # crown delta after that cycle is the serialized 39 rather than ordinary
+    # 194.
+    assert runtime.attack_timings is not None
+    hit_cycle_ticks = int(runtime.attack_timings.hit_cycle_ticks[ids["Miner"]])
+    for _ in range(hit_cycle_ticks + 1):
         if float(runtime.state.hp[0, 3]) < tower_before:
             break
         runtime.step_tick(_noop(runtime))

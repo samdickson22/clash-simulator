@@ -27,6 +27,7 @@ from clasher.unit_traits import is_knockback_immune
 
 from .catalog import TensorCardCatalog
 from .simple_abilities import FastAbilityCatalog
+from .simple_attack_locks import FastAttackTimingCatalog
 from .simple_catalog import FAST_CARD_EFFECT_PROJECTILE
 from .simple_outcomes import FastMatchRules, FastTowerSpec
 from .simple_policy_mechanics import FastPolicyMechanicCatalog
@@ -256,6 +257,7 @@ class SimpleStandardSetup:
     ability_catalog: FastAbilityCatalog
     travel_catalog: FastTravelCatalog
     triggered_impact_catalog: FastTriggeredImpactCatalog
+    attack_timings: FastAttackTimingCatalog
     knockback_immune_by_card: torch.Tensor
     tower_spec: FastTowerSpec
     rules: FastMatchRules
@@ -314,6 +316,7 @@ class SimpleStandardSetup:
             ability_catalog=self.ability_catalog,
             travel_catalog=self.travel_catalog,
             triggered_impact_catalog=self.triggered_impact_catalog,
+            attack_timings=self.attack_timings,
             knockback_immune_by_card=self.knockback_immune_by_card,
         )
 
@@ -343,6 +346,7 @@ def compile_standard_simple_setup(
     triggered_impact_catalog = FastTriggeredImpactCatalog.compile(
         blueprints.cards, loader
     )
+    attack_timings = blueprints.attack_timings
     knockback_immune = torch.zeros(
         len(blueprints.cards.names),
         dtype=torch.bool,
@@ -391,6 +395,7 @@ def compile_standard_simple_setup(
         ability_catalog=ability_catalog,
         travel_catalog=travel_catalog,
         triggered_impact_catalog=triggered_impact_catalog,
+        attack_timings=attack_timings,
         knockback_immune_by_card=knockback_immune,
         tower_spec=standard_tower_spec(loader, device),
         rules=standard_match_rules(),

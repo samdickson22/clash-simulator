@@ -8,6 +8,13 @@ from dataclasses import dataclass
 
 import torch
 
+from .simple_attack_locks import (
+    FastAttackLockState,
+    FastAttackTimingCatalog,
+    advance_fast_attack_lock_clocks_,
+    commit_fast_attack_locks_,
+    step_fast_attack_locks_,
+)
 from .simple_catalog import FastCardCatalog
 from .simple_navigation import FastArenaNavigation, FastNavigationState
 from .simple_state import FAST_KIND_BUILDING, FAST_KIND_TROOP, FastGymState
@@ -74,14 +81,34 @@ class FastTensorGym:
         catalog: FastCardCatalog | None = None,
         *,
         reserved_slot_floor: int = 0,
+        attack_timings: FastAttackTimingCatalog | None = None,
+        attack_locks: FastAttackLockState | None = None,
     ) -> None:
         self.state = state
         if catalog is not None and catalog.device != state.device:
             raise ValueError("catalog and state must use the same device")
         if not 0 <= reserved_slot_floor < state.max_entities:
             raise ValueError("reserved_slot_floor must identify an entity slot")
+        if (attack_timings is None) != (attack_locks is None):
+            raise ValueError(
+                "attack_timings and attack_locks must be supplied together"
+            )
+        if attack_timings is not None:
+            if catalog is None:
+                raise ValueError("attack timings require a card catalog")
+            if attack_timings.size != catalog.size:
+                raise ValueError("attack timings must align with the card catalog")
+            if attack_timings.device != state.device:
+                raise ValueError("attack timings must use the state device")
+            assert attack_locks is not None
+            if attack_locks.device != state.device:
+                raise ValueError("attack locks must use the state device")
+            if tuple(attack_locks.source_stable_id.shape) != tuple(state.active.shape):
+                raise ValueError("attack locks must have shape [batch, entities]")
         self.catalog = catalog
         self.reserved_slot_floor = int(reserved_slot_floor)
+        self.attack_timings = attack_timings
+        self.attack_locks = attack_locks
         self._slots = torch.arange(
             state.max_entities, dtype=torch.int64, device=state.device
         ).view(1, -1)
@@ -431,23 +458,78 @@ class FastTensorGym:
         speed_multiplier: torch.Tensor,
         cooldown_decrement: torch.Tensor,
         cooldown_floor_ticks: torch.Tensor,
+        clear_source_lock: torch.Tensor,
+        reload_source_attack: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Acquire and approach, returning attacks ready for effect allocation.
 
         Disabled entities remain present as targets but cannot acquire a
-        target, move, or attack during this phase. HP and cooldown are not
-        mutated here: the unified runtime commits both exactly once after an
-        effect slot has been allocated.
+        target, move, or attack during this phase. HP is not mutated here;
+        attack work advances in the lock-owned clock, while a complete cycle
+        is installed only after the unified runtime allocates an effect slot.
         """
 
         state = self.state
         present = state.active & (state.hp > 0) & (state.deploy_ticks == 0)
         can_act = present & ~disabled
         traits = self._target_traits()
+        lock_step = None
+        locked_source = torch.zeros_like(state.active)
+        if self.attack_timings is not None:
+            assert self.attack_locks is not None
+            safe_card = state.card_id.clamp(0, self.attack_timings.size - 1)
+            known = (state.card_id > 0) & (state.card_id < self.attack_timings.size)
+            locked_source = (
+                known & self.attack_timings.ordinary_attack_supported[safe_card]
+            )
+            same_generation = (
+                self.attack_locks.source_stable_id == state.stable_id
+            ) & (state.stable_id > 0)
+            # ``FastGymState.cooldown_ticks`` remains the shared observation
+            # and mechanic-facing plane.  A subsystem may impose a longer
+            # cooldown between ticks; absorb only that monotonic extension
+            # into the lock owner, never a shorter external overwrite.
+            self.attack_locks.cooldown_ticks.copy_(
+                torch.where(
+                    same_generation & locked_source,
+                    torch.maximum(
+                        self.attack_locks.cooldown_ticks,
+                        state.cooldown_ticks.clamp(min=0),
+                    ),
+                    self.attack_locks.cooldown_ticks,
+                )
+            )
+            reloaded = (
+                reload_source_attack
+                & locked_source
+                & same_generation
+                & state.active
+                & (state.hp > 0)
+            )
+            self.attack_locks.cooldown_ticks.copy_(
+                torch.where(
+                    reloaded,
+                    torch.maximum(
+                        self.attack_locks.cooldown_ticks,
+                        self.attack_timings.hit_cycle_ticks[safe_card],
+                    ),
+                    self.attack_locks.cooldown_ticks,
+                )
+            )
+            lock_step = step_fast_attack_locks_(
+                self.attack_locks,
+                self.attack_timings,
+                state,
+                traits,
+                source_disabled=disabled,
+                target_unavailable=self._target_unavailable,
+                clear_source_lock=clear_source_lock,
+                cooldown_decrement=torch.zeros_like(cooldown_decrement),
+            )
         targets = select_nearest_targets(
             state,
             traits,
-            source_disabled=disabled,
+            source_disabled=disabled | locked_source,
             target_unavailable=self._target_unavailable,
         )
         # Reserved arena fixtures retain their stable-ID target while it
@@ -492,22 +574,57 @@ class FastTensorGym:
             & current_category_allowed
             & (current_edge_distance <= state.sight_range_units.clamp(min=0))
         )
-        found = targets.found | retain_current
-        selected_target_slot = torch.where(
+        legacy_found = targets.found | retain_current
+        legacy_target_slot = torch.where(
             retain_current,
             current_slot,
             targets.target_slot.clamp(min=0),
         )
-        selected_target_id = torch.where(
+        legacy_target_id = torch.where(
             retain_current,
             state.target_id,
             targets.target_id,
         )
-        selected_edge_distance = torch.where(
+        legacy_edge_distance = torch.where(
             retain_current,
             current_edge_distance,
             targets.edge_distance,
         )
+        if lock_step is None:
+            found = legacy_found
+            selected_target_slot = legacy_target_slot
+            selected_target_id = legacy_target_id
+            selected_edge_distance = legacy_edge_distance
+        else:
+            safe_lock_slot = lock_step.target_slot.clamp(min=0)
+            lock_dx = state.x_units.gather(1, safe_lock_slot).to(
+                torch.float32
+            ) - state.x_units.to(torch.float32)
+            lock_dy = state.y_units.gather(1, safe_lock_slot).to(
+                torch.float32
+            ) - state.y_units.to(torch.float32)
+            lock_edge_distance = (
+                torch.sqrt(lock_dx.square() + lock_dy.square())
+                - traits.collision_radius.gather(1, safe_lock_slot)
+                .clamp(min=0)
+                .to(torch.float32)
+            ).clamp_min(0.0)
+            found = torch.where(locked_source, lock_step.target_found, legacy_found)
+            selected_target_slot = torch.where(
+                locked_source,
+                safe_lock_slot,
+                legacy_target_slot,
+            )
+            selected_target_id = torch.where(
+                locked_source,
+                lock_step.target_stable_id,
+                legacy_target_id,
+            )
+            selected_edge_distance = torch.where(
+                locked_source,
+                lock_edge_distance,
+                legacy_edge_distance,
+            )
         navigation_found, navigation_slot, navigation_id, _ = self._navigation_targets(
             can_act & ~found
         )
@@ -586,15 +703,15 @@ class FastTensorGym:
         post_edge_distance = (
             torch.sqrt(post_dx.square() + post_dy.square()) - target_radius
         ).clamp_min(0.0)
-        target_in_attack_range = (
+        selected_in_attack_range = (
             found & can_act & (post_edge_distance <= attack_range) & (state.damage > 0)
         )
         idle_floor = torch.where(
-            target_in_attack_range,
+            selected_in_attack_range,
             torch.zeros_like(cooldown_floor_ticks),
             cooldown_floor_ticks.clamp(min=0),
         )
-        cooling = can_act & (state.cooldown_ticks > idle_floor)
+        cooling = can_act & ~locked_source & (state.cooldown_ticks > idle_floor)
         state.cooldown_ticks.copy_(
             torch.where(
                 cooling,
@@ -605,7 +722,35 @@ class FastTensorGym:
                 state.cooldown_ticks,
             )
         )
-        attack_ready = target_in_attack_range & (state.cooldown_ticks == 0)
+        legacy_attack_ready = selected_in_attack_range & (state.cooldown_ticks == 0)
+        if lock_step is None:
+            attack_ready = legacy_attack_ready
+            target_in_attack_range = selected_in_attack_range
+        else:
+            assert self.attack_locks is not None
+            assert self.attack_timings is not None
+            lock_clock = advance_fast_attack_lock_clocks_(
+                self.attack_locks,
+                self.attack_timings,
+                state,
+                target_in_attack_range=selected_in_attack_range & locked_source,
+                source_disabled=disabled,
+                clear_source_lock=clear_source_lock,
+                cooldown_decrement=cooldown_decrement,
+            )
+            state.cooldown_ticks.copy_(
+                torch.where(
+                    locked_source,
+                    lock_clock.cooldown_ticks,
+                    state.cooldown_ticks,
+                )
+            )
+            attack_ready = torch.where(
+                locked_source,
+                lock_clock.attack_allowed,
+                legacy_attack_ready,
+            )
+            target_in_attack_range = selected_in_attack_range
         return attack_ready, target_in_attack_range, moved_distance
 
     def commit_attacks_(
@@ -624,14 +769,43 @@ class FastTensorGym:
                 raise ValueError(f"{name} must use the state device")
             if value.dtype != torch.bool:
                 raise ValueError(f"{name} must be bool")
-        committed = attack_ready & effect_allocated & self.state.active
+        locked_source = torch.zeros_like(self.state.active)
+        locked_committed = torch.zeros_like(self.state.active)
+        if self.attack_timings is not None:
+            assert self.attack_locks is not None
+            safe_card = self.state.card_id.clamp(0, self.attack_timings.size - 1)
+            known = (self.state.card_id > 0) & (
+                self.state.card_id < self.attack_timings.size
+            )
+            locked_source = (
+                known & self.attack_timings.ordinary_attack_supported[safe_card]
+            )
+            locked_committed = commit_fast_attack_locks_(
+                self.attack_locks,
+                self.attack_timings,
+                self.state,
+                attack_allowed=attack_ready & locked_source,
+                effect_allocated=effect_allocated,
+            )
+        legacy_committed = (
+            attack_ready & effect_allocated & self.state.active & ~locked_source
+        )
+        committed = locked_committed | legacy_committed
         self.state.cooldown_ticks.copy_(
             torch.where(
-                committed,
+                legacy_committed,
                 self.state.hit_cooldown_ticks,
                 self.state.cooldown_ticks,
             )
         )
+        if self.attack_locks is not None:
+            self.state.cooldown_ticks.copy_(
+                torch.where(
+                    locked_source,
+                    self.attack_locks.cooldown_ticks,
+                    self.state.cooldown_ticks,
+                )
+            )
         return committed
 
     def step_tick(
@@ -642,6 +816,8 @@ class FastTensorGym:
         speed_multiplier: torch.Tensor | None = None,
         cooldown_decrement: torch.Tensor | None = None,
         cooldown_floor_ticks: torch.Tensor | None = None,
+        clear_source_lock: torch.Tensor | None = None,
+        reload_source_attack: torch.Tensor | None = None,
     ) -> FastGymTickResult:
         """Advance every live row once and optionally allocate one entity.
 
@@ -685,6 +861,22 @@ class FastTensorGym:
             raise ValueError("cooldown_floor_ticks must use the state device")
         elif cooldown_floor_ticks.dtype != torch.int32:
             raise ValueError("cooldown_floor_ticks must be int32")
+        if clear_source_lock is None:
+            clear_source_lock = torch.zeros_like(state.active)
+        elif clear_source_lock.shape != state.active.shape:
+            raise ValueError("clear_source_lock must have shape [batch, entities]")
+        elif clear_source_lock.device != state.device:
+            raise ValueError("clear_source_lock must use the state device")
+        elif clear_source_lock.dtype != torch.bool:
+            raise ValueError("clear_source_lock must be bool")
+        if reload_source_attack is None:
+            reload_source_attack = torch.zeros_like(state.active)
+        elif reload_source_attack.shape != state.active.shape:
+            raise ValueError("reload_source_attack must have shape [batch, entities]")
+        elif reload_source_attack.device != state.device:
+            raise ValueError("reload_source_attack must use the state device")
+        elif reload_source_attack.dtype != torch.bool:
+            raise ValueError("reload_source_attack must be bool")
         live = ~state.game_over
         if request is None:
             success = torch.zeros(
@@ -714,6 +906,8 @@ class FastTensorGym:
             speed_multiplier,
             cooldown_decrement,
             cooldown_floor_ticks,
+            clear_source_lock,
+            reload_source_attack,
         )
         state.tick.add_(live.to(torch.int64))
         return FastGymTickResult(
