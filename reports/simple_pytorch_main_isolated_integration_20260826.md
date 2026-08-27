@@ -7,10 +7,11 @@ was modified, committed, stashed, or reset.
 
 - Isolated worktree: `/private/tmp/clasher-simple-main-integration.Vxp0Xq`
 - Main committed base: `20cc861b23937ec884fc22335c62d5b03a027f51`
-- Simple Gym source tip: `5af7ec7ce22db6df95fc76cd57b67567f8ba8620`
+- Simple branch HEAD at refreshed gate: `5a8cc34ecdb6b58fd63abb2c3c2d89111fca8c4b`
+- Current Simple Gym source tip: `37e4fff3907a8b812595f95cc9c6bf53b1062488`
 - Simple Gym source tree: `src/clasher/torch_sim` tree
-  `fd28c39ee7f38558a5baab686cb865da394421cc`
-- Generic collector source blob: `75dbedbf3f966ebe95206919bd0c9aa0b50f7f24`
+  `bfe7134acbf2122006fc1b42daa0cbc02ef5eb67`
+- Generic collector source blob: `b8594d3c93599928bb09ecba589fee04081f6b17`
 - Supported-deck source blob: `96da8171849f47eb604b8a33d18f7d7e3d70b3d4`
 - Typed vocabulary SHA-256:
   `960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704`
@@ -41,6 +42,104 @@ before integration edits:
 `data.py` then received only the simple-branch cached Princess-tower data helper
 needed by `simple_standard.py`. `train_recurrent.py` then received the isolated
 routing patch described below.
+
+## Refreshed final integration gate
+
+The read-only refresh at `2026-08-26T17:00:08-0700` found the active main-tree
+training process healthy and unchanged:
+
+- Trainer PID: `72506` (running; it was not signalled or modified).
+- Target: update 146.
+- Latest completed update: 59, with 241,664 transitions.
+- Latest checkpoint:
+  `checkpoints/hog26_strategy_majority_seed1075001/policy_v2_update_000059.pt`.
+- Main committed HEAD remained
+  `20cc861b23937ec884fc22335c62d5b03a027f51`.
+- Dirty `data.py` SHA-256 remained
+  `82392818b00a1e7d0995801a94c1f19fb990273cb448beb5126d8cdf1aa21046`.
+- Dirty `train_recurrent.py` SHA-256 remained
+  `9881490e7f6d35eff776d8ca61051eb1c432f08a6946002f75dbfe050a8ac5c8`.
+- Typed vocabulary SHA-256 remained
+  `960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704`.
+
+The preserved routing patch remains byte-identical at
+`reports/patches/simple_pytorch_main_routing_20260826.patch`, SHA-256
+`2f7935a94e2fe79297e3dc98ba1485c95b779dbece990b8e537da613bd9131f5`.
+It still applies cleanly to committed main base `20cc861b`, but must not be
+applied whole to the current dirty main tree: its already-overlaid
+`src/clasher/data.py` and `src/clasher/rl/train_recurrent.py` hunks conflict.
+No other routing-file conflict was found.
+
+The rebased, current-dirty two-file delta is preserved at
+`reports/patches/simple_pytorch_main_current_dirty_route_delta_20260826.patch`,
+SHA-256
+`bb7f9d4a6280c5effe389129ea01a146520931a28538b7db008e3bf6855c7968`.
+It passes `git apply --check` against the current dirty main snapshot. The
+three new routing/report files from the preserved routing patch also pass a
+filtered apply check. All 168 current-simple source, test, script, and deck
+artifact paths selected from `37e4fff3` are absent in main, so that portion is
+strictly additive.
+
+The exact rebased assembly was reproduced in disposable worktree
+`/private/tmp/clasher-current-integration-gate.0QnSg3` from:
+
+1. committed main `20cc861b`;
+2. the byte-exact dirty-main training dependency closure;
+3. all current-simple additive paths from `37e4fff3`;
+4. the filtered new routing files; and
+5. the rebased current-dirty `data.py`/`train_recurrent.py` delta.
+
+That assembly passed:
+
+```text
+259 passed, 166 skipped in 53.27s
+```
+
+The skips were CUDA variants on the Mac. `py_compile`, Ruff, and
+`git diff --check` also passed for the assembled source and report changes.
+
+### Exact safe application sequence
+
+Do not apply while PID `72506` or any of its actor children are running.
+After it exits naturally:
+
+1. Require the log to end with update 146 and its saved checkpoint; hash the
+   final checkpoint before changing source.
+2. Reassert main HEAD and the `data.py`, `train_recurrent.py`, and typed-vocab
+   hashes above. If any differ, regenerate and re-run the rebased gate.
+3. Create a new integration branch/worktree. Do not apply first in the dirty
+   training checkout.
+4. Overlay the same byte-exact dirty-main dependency closure into that worktree.
+5. Restore the 168 additive simple paths from `37e4fff3`; fail if any selected
+   target already exists.
+6. Apply only these paths from the preserved routing patch:
+   `src/clasher/rl/simple_pytorch_backend.py`,
+   `tests/test_rl_simple_pytorch_backend.py`, and this report.
+7. Apply
+   `reports/patches/simple_pytorch_main_current_dirty_route_delta_20260826.patch`.
+8. Run the full simple suite and static checks shown below, then the one-update
+   CPU smoke. On a CUDA host, also run the tensor public-mask equivalence and
+   CUDA-Graph tests. Commit or merge only after all gates pass.
+
+Minimum CPU verification command:
+
+```bash
+PYTHONPATH=src .venv/bin/python -m pytest -q \
+  tests/test_rl_simple_pytorch_backend.py \
+  tests/test_rl_simple_tensor_collector.py \
+  tests/test_build_simple_supported_decks.py \
+  tests/test_benchmark_simple_gym.py \
+  tests/test_validate_simple_full_matches.py \
+  tests/test_torch_simple_*.py
+```
+
+Minimum CUDA-specific verification:
+
+```bash
+PYTHONPATH=src .venv/bin/python -m pytest -q \
+  tests/test_rl_simple_pytorch_backend.py \
+  tests/test_torch_simple_cuda_graph.py
+```
 
 ## Route implemented
 
