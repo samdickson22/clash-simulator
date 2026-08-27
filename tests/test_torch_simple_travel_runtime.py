@@ -362,6 +362,31 @@ def test_public_target_snapshot_and_travel_capacity_fail_closed() -> None:
     assert not bool(result.travel_impulse.affected.any())
 
 
+def test_mega_knight_spawn_impact_waits_for_deployment_completion() -> None:
+    runtime, ids = _runtime("cpu")
+    _seed(
+        runtime,
+        slot=6,
+        stable_id=95,
+        owner=0,
+        card_id=ids["MegaKnight"],
+        x_units=9_000,
+        y_units=10_000,
+    )
+    runtime.state.deploy_ticks[0, 6] = 2
+    runtime._queue_travel_spawned_(
+        runtime.state.active & (runtime.state.stable_id == 95)
+    )
+    first = runtime.step_tick(_noop(runtime))
+    assert first.travel is not None
+    assert not bool(first.travel.initialized[0, 6])
+    assert not bool(first.travel.impact.spawn_impact[0, 6])
+    second = runtime.step_tick(_noop(runtime))
+    assert second.travel is not None
+    assert second.travel.initialized[0, 6]
+    assert second.travel.impact.spawn_impact[0, 6]
+
+
 def test_integrated_travel_hot_path_has_no_card_dispatch_or_host_sync() -> None:
     for function in (
         SimpleGymRuntime._step_travel_,

@@ -147,6 +147,7 @@ from .simple_spawn_blueprints import (
 )
 from .simple_state import FAST_KIND_BUILDING, FastGymState
 from .simple_travel import (
+    FAST_TRAVEL_LEAP,
     FAST_TRAVEL_TRANSIT,
     FAST_TRAVEL_UNDERGROUND,
     FAST_TRAVEL_WINDUP,
@@ -923,11 +924,18 @@ class SimpleGymRuntime:
             card_id=self.state.card_id,
         )
         paused_windup = (
-            current_before.current
-            & (self.travel.phase == FAST_TRAVEL_WINDUP)
-            & stunned
+            current_before.current & (self.travel.phase == FAST_TRAVEL_WINDUP) & stunned
         )
         snapshot = self.combat.target_snapshot()
+        safe_pending_card = self.state.card_id.clamp(0, self.travel_catalog.size - 1)
+        pending_kind = self.travel_catalog.kind[safe_pending_card]
+        # Spawn impacts belong to the deployment-complete hook, not the action
+        # allocation frame. The core decrements deploy time later in this same
+        # tick, so a single remaining tick is ready here. Other travel profiles
+        # bind immediately because their transport begins at placement.
+        ready_spawn = self._travel_spawned & (
+            (pending_kind != FAST_TRAVEL_LEAP) | (self.state.deploy_ticks <= 1)
+        )
         result = advance_fast_travel_(
             self.travel_catalog,
             self.travel,
@@ -937,7 +945,7 @@ class SimpleGymRuntime:
             owner=self.state.owner,
             x_units=self.state.x_units,
             y_units=self.state.y_units,
-            spawned=self._travel_spawned,
+            spawned=ready_spawn,
             trigger=(
                 snapshot.found
                 & ~stunned
@@ -982,7 +990,9 @@ class SimpleGymRuntime:
                 card_id=self.state.card_id,
             ),
         )
-        self._travel_spawned.zero_()
+        self._travel_spawned.logical_and_(
+            ~ready_spawn & self.state.active & (self.state.hp > 0)
+        )
         self._travel_interrupted.zero_()
         return result
 
@@ -1030,9 +1040,7 @@ class SimpleGymRuntime:
             entity_committed_direct_receivable=(
                 policy_view.effect_receivable_affects_hidden & receivable
             ),
-            entity_secondary_targetable=(
-                policy_view.secondary_targetable & receivable
-            ),
+            entity_secondary_targetable=(policy_view.secondary_targetable & receivable),
             entity_area_receivable=policy_view.area_receivable & receivable,
             entity_effect_receivable_affects_hidden=(
                 policy_view.effect_receivable_affects_hidden & receivable
@@ -1043,10 +1051,7 @@ class SimpleGymRuntime:
             allocation.accepted[:, :, None]
             & self.state.active[:, None, :]
             & (self.state.hp[:, None, :] > 0)
-            & (
-                self.state.owner[:, None, :]
-                != travel.impact.source_owner[:, :, None]
-            )
+            & (self.state.owner[:, None, :] != travel.impact.source_owner[:, :, None])
             & ~entity_is_air[:, None, :]
             & (self.state.kind[:, None, :] != FAST_KIND_BUILDING)
             & ~self.knockback_immune_by_card[safe_card][:, None, :]
@@ -1631,10 +1636,7 @@ class SimpleGymRuntime:
                 self.state.active[:, None, :]
                 & (self.state.hp[:, None, :] > 0)
                 & (self.state.target_id[:, :, None] > 0)
-                & (
-                    self.state.target_id[:, :, None]
-                    == self.state.stable_id[:, None, :]
-                )
+                & (self.state.target_id[:, :, None] == self.state.stable_id[:, None, :])
             )
             target_found = target_match.any(dim=2)
             target_slot = target_match.to(torch.int8).argmax(dim=2).to(torch.int64)
@@ -1645,7 +1647,9 @@ class SimpleGymRuntime:
             ordinary_damage = self.action_kernel.catalog.effect_damage[
                 safe_source
             ].clamp_min(torch.finfo(torch.float32).tiny)
-            tower_scale = self.travel_catalog.tower_damage[safe_source] / ordinary_damage
+            tower_scale = (
+                self.travel_catalog.tower_damage[safe_source] / ordinary_damage
+            )
             attack_damage_multiplier = attack_damage_multiplier * torch.where(
                 crown_target & underground,
                 tower_scale,
@@ -1757,21 +1761,15 @@ class SimpleGymRuntime:
         active_travel_view = self._travel_view()
         if travel_result is not None:
             assert self.travel_catalog is not None
-            safe_travel_card = self.state.card_id.clamp(
-                0, self.travel_catalog.size - 1
-            )
+            safe_travel_card = self.state.card_id.clamp(0, self.travel_catalog.size - 1)
             consumed_tick = travel_result.completed | (
                 travel_result.initialized
                 & self.travel_catalog.declares_travel[safe_travel_card]
             )
             active_travel_view = replace(
                 active_travel_view,
-                combat_blocked=(
-                    active_travel_view.combat_blocked | consumed_tick
-                ),
-                movement_blocked=(
-                    active_travel_view.movement_blocked | consumed_tick
-                ),
+                combat_blocked=(active_travel_view.combat_blocked | consumed_tick),
+                movement_blocked=(active_travel_view.movement_blocked | consumed_tick),
             )
         self._publish_policy_visibility_(pre_visibility)
         self._publish_ability_mechanics_(abilities_before)
@@ -2036,8 +2034,7 @@ class SimpleGymRuntime:
                 self.action_kernel.catalog.slow_attack_multiplier
             ),
             entity_committed_direct_receivable=(
-                effect_visibility.effect_receivable_affects_hidden
-                & effect_receivable
+                effect_visibility.effect_receivable_affects_hidden & effect_receivable
             ),
             entity_secondary_targetable=(
                 effect_visibility.secondary_targetable
@@ -2052,8 +2049,7 @@ class SimpleGymRuntime:
                 effect_visibility.area_receivable & effect_receivable
             ),
             entity_effect_receivable_affects_hidden=(
-                effect_visibility.effect_receivable_affects_hidden
-                & effect_receivable
+                effect_visibility.effect_receivable_affects_hidden & effect_receivable
             ),
         )
         safe_entity_card = self.state.card_id.clamp(
@@ -2125,9 +2121,7 @@ class SimpleGymRuntime:
         self._clear_damage_ramp_(lifecycle_result.resolved_parent_mask)
         self.policy_mechanics.clear_(lifecycle_result.resolved_parent_mask)
         self.travel.clear_(lifecycle_result.resolved_parent_mask)
-        self._travel_spawned.masked_fill_(
-            lifecycle_result.resolved_parent_mask, False
-        )
+        self._travel_spawned.masked_fill_(lifecycle_result.resolved_parent_mask, False)
         self._travel_interrupted.masked_fill_(
             lifecycle_result.resolved_parent_mask, False
         )
