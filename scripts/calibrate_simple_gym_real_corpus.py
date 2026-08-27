@@ -751,16 +751,31 @@ def render_markdown(report: Mapping[str, Any]) -> str:
     for name, summary in summaries.items():
         channel = _object(channels[name], context=f"report.channels.{name}")
         lines.append(f"| {name} | `{channel['status']}` | {summary} |")
+    phase = _object(
+        channels["regulation_to_overtime_phase"],
+        context="report.channels.regulation_to_overtime_phase",
+    )
+    if phase["status"] == "insufficient_evidence":
+        phase_sentence = (
+            "The phase channel remains insufficient because the complete corpus "
+            f"contains {phase['observed_resets']} regulation-to-overtime resets, "
+            "below the configured example gate."
+        )
+    elif phase["status"] == "pass":
+        phase_sentence = "The regulation-to-overtime phase channel passes."
+    else:
+        phase_sentence = "The regulation-to-overtime phase channel fails."
+    mask = _object(channels["public_mask_v2"], context="report.channels.public_mask_v2")
+    mask_sentence = (
+        "Public-mask v2 metadata is compatible, but equality with the engine is "
+        "unavailable because this worktree has no callable real-frame mask adapter."
+        if mask["engine_equivalence"] == "unavailable"
+        else "Public-mask v2 engine equivalence is available."
+    )
     lines.extend(
         (
             "",
-            (
-                "The phase channel remains insufficient because the complete corpus "
-                f"contains {channels['regulation_to_overtime_phase']['observed_resets']} "
-                "regulation-to-overtime resets, below the 30-example gate. Public-mask "
-                "v2 metadata is compatible, but equality with the engine is unavailable "
-                "because this worktree has no callable real-frame mask adapter."
-            ),
+            f"{phase_sentence} {mask_sentence}",
             "",
             "## Explicitly unavailable",
             "",
