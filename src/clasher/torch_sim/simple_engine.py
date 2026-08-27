@@ -54,6 +54,7 @@ class FastGymTickResult:
     done: torch.Tensor
     winner: torch.Tensor
     attack_ready: torch.Tensor
+    target_in_contact_range: torch.Tensor
     target_in_attack_range: torch.Tensor
     moved_distance_units: torch.Tensor
 
@@ -547,7 +548,7 @@ class FastTensorGym:
         reload_source_attack: torch.Tensor,
         collision_excluded: torch.Tensor,
         river_jump_stunned: torch.Tensor,
-    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Acquire and approach, returning attacks ready for effect allocation.
 
         Disabled entities remain present as targets but cannot acquire a
@@ -557,7 +558,8 @@ class FastTensorGym:
         """
 
         state = self.state
-        present = state.active & (state.hp > 0) & (state.deploy_ticks == 0)
+        body_present = state.active & (state.hp > 0)
+        present = body_present & (state.deploy_ticks == 0)
         jump_active_before = (
             self.river_jumps.active
             if self.river_jumps is not None
@@ -818,8 +820,9 @@ class FastTensorGym:
             collision_moving = collision_moving | river_jump.ordinary_movement_blocked
             can_act &= ~river_jump.combat_blocked
         collision = resolve_fast_collision_navigation(
-            active=present,
+            active=body_present,
             stable_id=state.stable_id,
+            owner=state.owner,
             kind=state.kind,
             x_units=state.x_units,
             y_units=state.y_units,
@@ -844,16 +847,27 @@ class FastTensorGym:
         post_edge_distance = (
             torch.sqrt(post_dx.square() + post_dy.square()) - target_radius
         ).clamp_min(0.0)
+        selected_in_contact_range = (
+            found
+            & can_act
+            & (
+                post_edge_distance
+                <= body_traits.collision_radius_units.to(torch.float32).clamp_min(0)
+            )
+        )
         selected_in_attack_range = (
-            found & can_act & (post_edge_distance <= attack_range) & (state.damage > 0)
+            found & can_act & (post_edge_distance <= attack_range)
         )
         if river_jump is not None:
             target_jump_airborne = river_jump.airborne_target.gather(1, nearest_slot)
-            selected_in_attack_range &= torch.where(
+            target_plane_allowed = torch.where(
                 target_jump_airborne,
                 traits.attacks_air,
                 traits.attacks_ground,
             )
+            selected_in_contact_range &= target_plane_allowed
+            selected_in_attack_range &= target_plane_allowed
+        selected_in_attack_range &= state.damage > 0
         idle_floor = torch.where(
             selected_in_attack_range,
             torch.zeros_like(cooldown_floor_ticks),
@@ -899,7 +913,12 @@ class FastTensorGym:
                 legacy_attack_ready,
             )
             target_in_attack_range = selected_in_attack_range
-        return attack_ready, target_in_attack_range, moved_distance
+        return (
+            attack_ready,
+            selected_in_contact_range,
+            target_in_attack_range,
+            moved_distance,
+        )
 
     def commit_attacks_(
         self, attack_ready: torch.Tensor, effect_allocated: torch.Tensor
@@ -1065,6 +1084,7 @@ class FastTensorGym:
         state.deploy_ticks.sub_(ready.to(torch.int32)).clamp_(min=0)
         (
             attack_ready,
+            target_in_contact_range,
             target_in_attack_range,
             moved_distance,
         ) = self._ordinary_troop_phase(
@@ -1085,6 +1105,7 @@ class FastTensorGym:
             done=state.game_over.clone(),
             winner=state.winner.clone(),
             attack_ready=attack_ready,
+            target_in_contact_range=target_in_contact_range,
             target_in_attack_range=target_in_attack_range,
             moved_distance_units=moved_distance,
         )

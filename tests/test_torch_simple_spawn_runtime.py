@@ -9,6 +9,7 @@ from clasher.battle import BattleState
 from clasher.rl.common import BOARD_WIDTH, NUM_TILES
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
+from clasher.torch_sim.simple_effects import FAST_STATUS_STUN
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 from clasher.torch_sim.simple_spawn_blueprints import FastSpawnBlueprintCatalog
@@ -276,7 +277,7 @@ def test_lumberjack_positive_area_payload_root_is_legal(device_name: str) -> Non
 def test_full_runtime_lumberjack_delayed_rage_damage_and_friendly_haste(
     device_name: str,
 ) -> None:
-    runtime, blueprints, root = _runtime(
+    runtime, _blueprints, root = _runtime(
         "Lumberjack",
         device_name=device_name,
         max_entities=20,
@@ -300,9 +301,7 @@ def test_full_runtime_lumberjack_delayed_rage_damage_and_friendly_haste(
     runtime.state.y_units[0, friendly_tower_slot] = center_y
     runtime.state.hp[0, parent_slot] = 0.0
 
-    noop = torch.full(
-        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device
-    )
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
     death = runtime.step_tick(noop)
     assert death.payload_container_allocation is not None
     assert bool(death.payload_container_allocation.accepted.any())
@@ -401,17 +400,13 @@ def test_full_runtime_lumberjack_delayed_rage_damage_and_friendly_haste(
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
 def test_full_runtime_lumberjack_replay_is_tensor_exact(device_name: str) -> None:
-    first, _, root = _runtime(
-        "Lumberjack", device_name=device_name, max_entities=20
-    )
+    first, _, root = _runtime("Lumberjack", device_name=device_name, max_entities=20)
     replay, _, replay_root = _runtime(
         "Lumberjack", device_name=device_name, max_entities=20
     )
     assert replay_root == root
     action = _slot_zero_action(first, tile_x=8, tile_y=14)
-    noop = torch.full(
-        (1, 2), NO_OP_ACTION, dtype=torch.int64, device=first.device
-    )
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=first.device)
     first.step_tick(action)
     replay.step_tick(action.clone())
     for runtime in (first, replay):
@@ -444,6 +439,7 @@ def test_full_runtime_lumberjack_replay_is_tensor_exact(device_name: str) -> Non
                     getattr(left, descriptor.name),
                     getattr(right, descriptor.name),
                 )
+
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
 @pytest.mark.parametrize(
@@ -570,6 +566,61 @@ def test_full_runtime_delayed_payload_damage_nested_spawn_and_replay(
                     getattr(left, descriptor.name),
                     getattr(right, descriptor.name),
                 )
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_skeleton_barrel_contact_primes_and_self_pops_without_tower_damage(
+    device_name: str,
+) -> None:
+    runtime, _, root = _runtime(
+        "SkeletonBarrel", device_name=device_name, max_entities=20
+    )
+    deployed = runtime.step_tick(_slot_zero_action(runtime, tile_x=8, tile_y=14))
+    assert deployed.action_success.tolist() == [[True, True]]
+    parent_mask = runtime.state.active & (runtime.state.card_id == root)
+    parent_mask[:, :6] = False
+    parent = int(parent_mask.to(torch.int64).argmax(dim=1)[0])
+    tower = 3
+    traits = runtime.combat._target_traits()
+    separation = int(traits.collision_radius[0, parent]) + int(
+        traits.collision_radius[0, tower]
+    )
+    runtime.state.deploy_ticks[0, parent] = 0
+    runtime.state.speed_units_per_tick[0, parent] = 0
+    runtime.state.x_units[0, parent] = runtime.state.x_units[0, tower]
+    runtime.state.y_units[0, parent] = runtime.state.y_units[0, tower] - separation
+    runtime.state.hp[0, parent] = 10_000.0
+    runtime.state.max_hp[0, parent] = 10_000.0
+
+    noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
+    runtime.step_tick(noop)
+    assert int(runtime.entity_kamikaze_windup_ticks[0, parent]) == 1
+    assert int(runtime.entity_kamikaze_ticks[0, parent]) == 0
+    primed = runtime.step_tick(noop)
+    assert int(runtime.entity_kamikaze_windup_ticks[0, parent]) == 0
+    assert int(runtime.entity_kamikaze_ticks[0, parent]) == 10
+    assert primed.observation.actor.entity_features[0, :, parent, 17].tolist() == [
+        1.0,
+        1.0,
+    ]
+    runtime.entity_status_kind[0, parent] = FAST_STATUS_STUN
+    runtime.entity_status_ticks[0, parent] = 2
+    paused = runtime.step_tick(noop)
+    assert int(runtime.entity_kamikaze_ticks[0, parent]) == 10
+    assert paused.payload_container_allocation is not None
+    runtime.entity_status_kind[0, parent] = 0
+    runtime.entity_status_ticks[0, parent] = 0
+    for _ in range(9):
+        ticking = runtime.step_tick(noop)
+        assert bool(runtime.state.active[0, parent])
+        assert ticking.payload_container_allocation is not None
+        assert not bool(ticking.payload_container_allocation.accepted.any())
+
+    popped = runtime.step_tick(noop)
+    assert popped.payload_container_allocation is not None
+    assert popped.payload_container_allocation.accepted[0, 0]
+    assert not bool(runtime.state.active[0, parent])
+    assert int(runtime.entity_kamikaze_ticks[0, parent]) == 0
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))

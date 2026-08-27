@@ -345,16 +345,12 @@ def step_fast_attack_locks_(
 
     safe_card = state.card_id.clamp(0, timings.size - 1)
     known_card = (state.card_id > 0) & (state.card_id < timings.size)
-    present = (
-        state.active
-        & (state.hp > 0)
-        & (state.deploy_ticks == 0)
-        & (state.stable_id > 0)
-    )
+    body_present = state.active & (state.hp > 0) & (state.stable_id > 0)
+    source_ready = body_present & (state.deploy_ticks == 0)
     identity_match = state.stable_id[:, :, None] == state.stable_id[:, None, :]
-    unique_identity = (identity_match & present[:, None, :]).sum(dim=2) == 1
+    unique_identity = (identity_match & body_present[:, None, :]).sum(dim=2) == 1
     supported = known_card & timings.ordinary_attack_supported[safe_card]
-    source_present = present & supported & unique_identity
+    source_present = source_ready & supported & unique_identity
     same_source = source_present & (locks.source_stable_id == state.stable_id)
     new_source = source_present & ~same_source
 
@@ -373,7 +369,7 @@ def step_fast_attack_locks_(
 
     # Candidate legality mirrors ordinary acquisition, but stable-ID matching
     # makes a reused target slot unable to inherit the old lock.
-    target_present = present & ~target_unavailable
+    target_present = body_present & ~target_unavailable
     target_plane_allowed = torch.where(
         traits.airborne[:, None, :],
         traits.attacks_air[:, :, None],

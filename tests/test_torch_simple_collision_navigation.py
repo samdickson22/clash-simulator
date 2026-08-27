@@ -40,6 +40,7 @@ def _inputs(
         "stable_id": torch.arange(
             1, entities + 1, dtype=torch.int64, device=device
         ).view(shape),
+        "owner": torch.zeros(shape, dtype=torch.int8, device=device),
         "kind": torch.full(shape, FAST_KIND_TROOP, dtype=torch.int8, device=device),
         "x_units": torch.zeros(shape, dtype=torch.int32, device=device),
         "y_units": torch.full(shape, 10_000, dtype=torch.int32, device=device),
@@ -102,6 +103,7 @@ def test_exact_overlap_uses_stable_identity_not_slot(device_name: str) -> None:
     inputs["x_units"].fill_(9_000)
     inputs["y_units"].fill_(10_000)
     inputs["stable_id"][0] = torch.tensor([17, 3], device=device)
+    inputs["owner"][0] = torch.tensor([0, 1], dtype=torch.int8, device=device)
 
     first = resolve_fast_collision_navigation(**inputs)
     swapped = {name: value.flip(1) for name, value in inputs.items()}
@@ -112,6 +114,14 @@ def test_exact_overlap_uses_stable_identity_not_slot(device_name: str) -> None:
     ) or not torch.equal(first.y_units[0, 0:1], first.y_units[0, 1:2])
     assert torch.equal(first.x_units, second.x_units.flip(1))
     assert torch.equal(first.y_units, second.y_units.flip(1))
+
+    mirrored = {name: value.clone() for name, value in inputs.items()}
+    mirrored["x_units"] = 18_000 - inputs["x_units"]
+    mirrored["y_units"] = 32_000 - inputs["y_units"]
+    mirrored["owner"] = 1 - inputs["owner"]
+    mirrored_result = resolve_fast_collision_navigation(**mirrored)
+    assert torch.equal(mirrored_result.x_units, 18_000 - first.x_units)
+    assert torch.equal(mirrored_result.y_units, 32_000 - first.y_units)
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
@@ -248,12 +258,15 @@ def test_engine_steers_around_friendly_building_toward_actual_target(
     state.sight_range_units[0, :3] = catalog.sight_range_units[card_ids]
     state.speed_units_per_tick[0, :3] = catalog.speed_units_per_tick[card_ids]
     state.hit_cooldown_ticks[0, :3] = catalog.hit_cooldown_ticks[card_ids]
+    # Pending buildings already occupy arena space even though they cannot act.
+    state.deploy_ticks[0, 1] = 10
 
     FastTensorGym(state, catalog).step_tick()
 
     assert state.target_id[0, 0].item() == 12
     assert state.x_units[0, 1].item() == 9_000
     assert state.y_units[0, 1].item() == 10_000
+    assert state.deploy_ticks[0, 1].item() == 9
     assert state.x_units[0, 0].item() >= 7_900
     assert state.y_units[0, 0].item() != 10_000
 
