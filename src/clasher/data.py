@@ -80,12 +80,28 @@ class CardDataLoader:
         self._cards = cards
         return cards
 
+    def clone_lazy(self) -> "CardDataLoader":
+        """Return an independent loader sharing only frozen card definitions."""
+
+        clone = object.__new__(CardDataLoader)
+        clone.data_file = self.data_file
+        clone._card_definitions = dict(self.load_card_definitions())
+        clone._cards = {}
+        return clone
+
     def get_card(self, name: str) -> Optional[CardStatsCompat]:
         """Get card stats by name using compatibility wrappers."""
-        if not self._cards:
-            self.load_cards()
-        resolved_name = resolve_card_name(name, self._cards)
-        return self._cards.get(resolved_name)
+        definitions = self.load_card_definitions()
+        resolved_name = resolve_card_name(name, definitions)
+        cached = self._cards.get(resolved_name)
+        if cached is not None:
+            return cached
+        definition = definitions.get(resolved_name)
+        if definition is None:
+            return None
+        card = CardStatsCompat.from_card_definition(definition)
+        self._cards[resolved_name] = card
+        return card
 
     def get_card_definition(self, name: str) -> Optional[CardDefinition]:
         """Get card definition by name."""

@@ -1,32 +1,76 @@
 from __future__ import annotations
 
-from collections import deque
 import json
 import random
+from collections import deque
+from collections.abc import Sequence
 from pathlib import Path
-from typing import List, Sequence, Tuple
+from typing import NamedTuple, cast
 
-from clasher.player import PlayerState
 from clasher.paths import decks_path as resolve_decks_path
+from clasher.player import PlayerState
 
 
-def load_deck_pool(path: str | Path = "decks.json") -> List[List[str]]:
+class DeckMatchup(NamedTuple):
+    learner_cards: list[str]
+    opponent_cards: list[str]
+    weight: float
+
+
+class DeckPool(list[list[str]]):
+    """List-compatible deck pool with optional sampling weights."""
+
+    def __init__(self, decks: Sequence[Sequence[str]], weights: Sequence[float]) -> None:
+        super().__init__(list(cards) for cards in decks)
+        if len(self) != len(weights):
+            raise ValueError("deck and weight counts must match")
+        self.weights = tuple(float(weight) for weight in weights)
+
+
+def load_deck_pool(path: str | Path = "decks.json") -> DeckPool:
     deck_path = resolve_decks_path(path, must_exist=True)
     with deck_path.open("r", encoding="utf-8") as f:
         payload = json.load(f)
 
-    decks: List[List[str]] = []
+    decks: list[list[str]] = []
+    weights: list[float] = []
     for raw_deck in payload.get("decks", []):
         cards = list(raw_deck.get("cards", []))
         if len(cards) >= 8:
             decks.append(cards[:8])
+            weight = float(raw_deck.get("sampling_weight", 1.0))
+            if weight <= 0.0:
+                raise ValueError(f"deck sampling weight must be positive in {deck_path}")
+            weights.append(weight)
 
     if not decks:
         raise ValueError(f"No decks found in {deck_path}")
-    return decks
+    return DeckPool(decks, weights)
 
 
-def unique_cards_from_decks(decks: Sequence[Sequence[str]]) -> List[str]:
+def load_matchup_pool(path: str | Path) -> list[DeckMatchup]:
+    matchup_path = resolve_decks_path(path, must_exist=True)
+    with matchup_path.open("r", encoding="utf-8") as f:
+        payload = json.load(f)
+
+    matchups: list[DeckMatchup] = []
+    for index, raw_matchup in enumerate(payload.get("matchups", [])):
+        learner_cards = list(raw_matchup.get("learner_cards", []))
+        opponent_cards = list(raw_matchup.get("opponent_cards", []))
+        weight = float(raw_matchup.get("weight", 1.0))
+        if len(learner_cards) < 8 or len(opponent_cards) < 8:
+            raise ValueError(f"matchup {index} must contain two eight-card decks")
+        if weight <= 0.0:
+            raise ValueError(f"matchup {index} weight must be positive")
+        matchups.append(
+            DeckMatchup(learner_cards[:8], opponent_cards[:8], weight)
+        )
+    if not matchups:
+        raise ValueError(f"No matchups found in {matchup_path}")
+    return matchups
+
+
+def unique_cards_from_decks(decks: Sequence[Sequence[str]]) -> list[str]:
     return sorted({card for deck in decks for card in deck})
 
 
@@ -38,7 +82,7 @@ def apply_deck_to_player(player: PlayerState, deck: Sequence[str], rng: random.R
     rng.shuffle(shuffled)
 
     player.deck = shuffled
-    player.hand = shuffled[:4]
+    player.hand = cast(list[str | None], shuffled[:4])
     player.cycle_queue = deque(shuffled[4:])
     player.next_card_refill_cooldown_ms = 0
 
@@ -47,9 +91,21 @@ def sample_decks(
     decks: Sequence[Sequence[str]],
     rng: random.Random,
     mirror_match: bool = False,
-) -> Tuple[List[str], List[str]]:
-    first = list(rng.choice(decks))
+) -> tuple[list[str], list[str]]:
+    weights = decks.weights if isinstance(decks, DeckPool) else None
+    weighted = weights is not None and any(
+        weight != weights[0] for weight in weights[1:]
+    )
+    first = list(
+        rng.choices(decks, weights=weights, k=1)[0]
+        if weighted
+        else rng.choice(decks)
+    )
     if mirror_match:
         return first, list(first)
-    second = list(rng.choice(decks))
+    second = list(
+        rng.choices(decks, weights=weights, k=1)[0]
+        if weighted
+        else rng.choice(decks)
+    )
     return first, second

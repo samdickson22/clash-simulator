@@ -13,7 +13,9 @@ import torch
 from typing_extensions import Self
 
 from .model import ClasherPolicy, PolicyConfig
+from .reward_model import OBJECTIVE_V1
 from .selfplay_env import SelfPlayBattleEnv
+from .strategy_bots import STRATEGY_NAMES, StrategyBot
 from .structured_obs import StructuredObservationBuilder
 from .train_recurrent import (
     RolloutBatch,
@@ -25,14 +27,19 @@ from .train_recurrent import (
 
 @dataclass(frozen=True)
 class OpponentSpec:
-    kind: Literal["random", "checkpoint"]
+    kind: Literal["noop", "random", "strategy", "checkpoint"]
     checkpoint: str | None = None
+    strategy: str | None = None
 
     def __post_init__(self) -> None:
-        if self.kind == "random" and self.checkpoint is not None:
-            raise ValueError("random opponent cannot have a checkpoint")
+        if self.kind != "checkpoint" and self.checkpoint is not None:
+            raise ValueError(f"{self.kind} opponent cannot have a checkpoint")
         if self.kind == "checkpoint" and not self.checkpoint:
             raise ValueError("checkpoint opponent requires a path")
+        if self.kind == "strategy" and self.strategy not in STRATEGY_NAMES:
+            raise ValueError("strategy opponent requires a known strategy")
+        if self.kind != "strategy" and self.strategy is not None:
+            raise ValueError(f"{self.kind} opponent cannot have a strategy")
 
 
 @dataclass(frozen=True)
@@ -49,6 +56,20 @@ class ActorWorkerConfig:
     quiet_engine: bool
     base_seed: int
     torch_threads: int
+    reward_profile: str = OBJECTIVE_V1
+    reward_shaping_gamma: float | None = None
+    elixir_leak_penalty_scale: float = 1.0
+    defense_scenario_probability: float = 0.0
+    defense_scenario_minimum_elixir: int = 4
+    defense_scenario_maximum_elixir: int = 7
+    defense_scenario_horizon_ticks: int = 240
+    defense_scenario_reward_scale: float = 1.0
+    sampling_decks_path: str | None = None
+    learner_sampling_decks_path: str | None = None
+    opponent_sampling_decks_path: str | None = None
+    matchups_path: str | None = None
+    matchup_probability: float = 0.0
+    trim_rollout_entity_padding: bool = False
 
 
 def concatenate_rollouts(rollouts: Iterable[RolloutBatch]) -> RolloutBatch:
@@ -83,11 +104,82 @@ def opponent_spec_for_worker(
 ) -> OpponentSpec | None:
     if config.opponent_mode == "selfplay":
         return None
-    if config.opponent_mode not in {"random", "checkpoint", "league"}:
+    if config.opponent_mode not in {
+        "noop",
+        "random",
+        "strategy",
+        "checkpoint",
+        "league",
+    }:
         raise ValueError(f"unknown opponent mode {config.opponent_mode!r}")
     if not config.opponent_pool:
         raise ValueError(f"{config.opponent_mode} opponent mode requires a pool")
     return config.opponent_pool[worker_id % len(config.opponent_pool)]
+
+
+def load_checkpoint_opponent(
+    path: str | Path,
+    *,
+    device: torch.device,
+    builder: StructuredObservationBuilder,
+    learner_config: PolicyConfig,
+    token_names: tuple[str, ...],
+) -> ClasherPolicy:
+    """Load an actor-compatible V2 opponent with its own model architecture."""
+    payload = torch.load(path, map_location=device, weights_only=False)
+    if int(payload.get("format_version", 0)) != 2:
+        raise ValueError(f"not a V2 opponent checkpoint: {path}")
+    if tuple(payload["token_names"]) != token_names:
+        raise ValueError("opponent and learner token vocabularies differ")
+    opponent_config = PolicyConfig.from_dict(payload["model_config"])
+    compatibility_fields = (
+        "num_tokens",
+        "entity_feature_size",
+        "actor_global_size",
+        "critic_global_size",
+    )
+    incompatible = [
+        name
+        for name in compatibility_fields
+        if getattr(opponent_config, name) != getattr(learner_config, name)
+    ]
+    if incompatible:
+        raise ValueError(
+            "opponent and learner observation schemas differ: "
+            + ", ".join(incompatible)
+        )
+    opponent_builder = build_policy_observation_builder(
+        opponent_config,
+        decks_path="decks.json",
+        card_vocab=builder.card_vocab,
+        token_names=token_names,
+    )
+    model = ClasherPolicy(opponent_config, opponent_builder.card_stat_features).to(
+        device
+    )
+    model.load_state_dict(payload["model_state_dict"])
+    model.eval()
+    return model
+
+
+def build_policy_observation_builder(
+    config: PolicyConfig,
+    *,
+    decks_path: str | Path,
+    token_names: tuple[str, ...],
+    card_vocab: tuple[str, ...] | list[str] | None = None,
+) -> StructuredObservationBuilder:
+    """Build the complete observation schema declared by a policy config."""
+    return StructuredObservationBuilder(
+        decks_path=decks_path,
+        card_vocab=card_vocab,
+        max_entities=config.max_entities,
+        token_names=token_names,
+        card_semantics_version=config.card_semantics_version,
+        canonical_lane_globals=config.canonical_lane_globals,
+        public_history_slots=config.public_history_slots,
+        public_seen_card_slots=config.public_seen_card_slots,
+    )
 
 
 def _actor_worker_main(
@@ -98,64 +190,100 @@ def _actor_worker_main(
     result_queue: Any,
 ) -> None:
     try:
+        from . import train_recurrent as train_recurrent_module
+
+        train_recurrent_module._USE_TRIMMED_ROLLOUT_ENTITY_PADDING = (
+            config.trim_rollout_entity_padding
+        )
         torch.set_num_threads(max(1, config.torch_threads))
         torch.manual_seed(config.base_seed + 1_000_003 * (worker_id + 1))
         np.random.seed(config.base_seed + 1_000_033 * (worker_id + 1))
         device = torch.device("cpu")
         policy_config = PolicyConfig.from_dict(config.model_config)
-        builder = StructuredObservationBuilder(
+        builder = build_policy_observation_builder(
+            policy_config,
             decks_path=config.decks_path,
-            max_entities=policy_config.max_entities,
             token_names=config.token_names,
         )
         model = ClasherPolicy(policy_config, builder.card_stat_features).to(device)
         opponent_model: ClasherPolicy | None = None
         opponent_spec = opponent_spec_for_worker(config, worker_id)
+        opponent_bot: StrategyBot | None = None
+        if opponent_spec is not None and opponent_spec.kind == "strategy":
+            assert opponent_spec.strategy is not None
+            opponent_bot = StrategyBot(opponent_spec.strategy)
         if opponent_spec is not None and opponent_spec.kind == "checkpoint":
             assert opponent_spec.checkpoint is not None
-            opponent_path = opponent_spec.checkpoint
-            opponent_payload = torch.load(
-                opponent_path, map_location=device, weights_only=False
+            opponent_model = load_checkpoint_opponent(
+                opponent_spec.checkpoint,
+                device=device,
+                builder=builder,
+                learner_config=policy_config,
+                token_names=config.token_names,
             )
-            if int(opponent_payload.get("format_version", 0)) != 2:
-                raise ValueError(f"not a V2 opponent checkpoint: {opponent_path}")
-            if opponent_payload["model_config"] != config.model_config:
-                raise ValueError("opponent and learner model configs differ")
-            if tuple(opponent_payload["token_names"]) != config.token_names:
-                raise ValueError("opponent and learner token vocabularies differ")
-            opponent_model = ClasherPolicy(
-                policy_config, builder.card_stat_features
-            ).to(device)
-            opponent_model.load_state_dict(opponent_payload["model_state_dict"])
-            opponent_model.eval()
 
         envs: list[SelfPlayBattleEnv] = []
         with maybe_silence_stdio(config.quiet_engine):
             for env_index in env_indices:
                 seed = config.base_seed + env_index * 1009
+                learner_player = env_index % 2
+                player_sampling_paths = (
+                    (
+                        config.learner_sampling_decks_path,
+                        config.opponent_sampling_decks_path,
+                    )
+                    if learner_player == 0
+                    else (
+                        config.opponent_sampling_decks_path,
+                        config.learner_sampling_decks_path,
+                    )
+                )
                 env = SelfPlayBattleEnv(
                     decision_interval_ticks=config.decision_interval,
                     max_ticks=config.max_ticks,
                     decks_path=Path(config.decks_path),
+                    sampling_decks_path=(
+                        Path(config.sampling_decks_path)
+                        if config.sampling_decks_path is not None
+                        else None
+                    ),
+                    player0_sampling_decks_path=player_sampling_paths[0],
+                    player1_sampling_decks_path=player_sampling_paths[1],
+                    matchups_path=config.matchups_path,
+                    matchup_probability=config.matchup_probability,
+                    learner_player_id=learner_player,
                     seed=seed,
                     mirror_match=config.mirror_match,
                     canonical_perspective=True,
+                    canonical_lane_globals=policy_config.canonical_lane_globals,
                     engine_fast_path=config.engine_fast_path,
+                    reward_profile=config.reward_profile,
+                    reward_shaping_gamma=config.reward_shaping_gamma,
+                    elixir_leak_penalty_scale=config.elixir_leak_penalty_scale,
+                    defense_scenario_probability=config.defense_scenario_probability,
+                    defense_scenario_minimum_elixir=(
+                        config.defense_scenario_minimum_elixir
+                    ),
+                    defense_scenario_maximum_elixir=(
+                        config.defense_scenario_maximum_elixir
+                    ),
+                    defense_scenario_horizon_ticks=(
+                        config.defense_scenario_horizon_ticks
+                    ),
+                    defense_scenario_reward_scale=config.defense_scenario_reward_scale,
                 )
                 env._structured_obs_builder = builder
                 env.reset(seed=seed)
                 envs.append(env)
 
         stationary_opponents = config.opponent_mode in {
+            "noop",
             "random",
+            "strategy",
             "checkpoint",
             "league",
         }
-        agents = (
-            len(envs)
-            if stationary_opponents
-            else 2 * len(envs)
-        )
+        agents = len(envs) if stationary_opponents else 2 * len(envs)
         learner_players = tuple(env_index % 2 for env_index in env_indices)
         recurrent_state = model.initial_state(agents, device=device)
         no_op = envs[0].action_space.no_op_action
@@ -208,6 +336,10 @@ def _actor_worker_main(
                     opponent_previous_rewards=opponent_previous_rewards,
                     opponent_episode_starts=opponent_episode_starts,
                     quiet_engine=config.quiet_engine,
+                    opponent_bot=opponent_bot,
+                    opponent_noop=(
+                        opponent_spec is not None and opponent_spec.kind == "noop"
+                    ),
                 )
                 if stationary_opponents
                 else collect_rollout(
