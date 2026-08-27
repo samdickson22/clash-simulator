@@ -54,6 +54,16 @@ _UPPER_BANK_WAYPOINT_UNITS = _UPPER_RIVER_EDGE_UNITS + HALF_TILE_LOGIC_UNITS
 
 FAST_ARENA_WIDTH_UNITS = STANDARD_PATH_WIDTH * HALF_TILE_LOGIC_UNITS
 FAST_ARENA_HEIGHT_UNITS = STANDARD_PATH_HEIGHT * HALF_TILE_LOGIC_UNITS
+# Collision uses the physical opening edges; route cells use their centre
+# envelope above. A mover radius is subtracted once by the terrain resolver.
+FAST_BRIDGE_MIN_X_UNITS = tuple(
+    value - HALF_TILE_LOGIC_UNITS for value in _BRIDGE_MIN_X_UNITS
+)
+FAST_BRIDGE_MAX_X_UNITS = tuple(
+    value + HALF_TILE_LOGIC_UNITS for value in _BRIDGE_MAX_X_UNITS
+)
+FAST_LOWER_RIVER_EDGE_UNITS = _LOWER_RIVER_EDGE_UNITS
+FAST_UPPER_RIVER_EDGE_UNITS = _UPPER_RIVER_EDGE_UNITS
 
 
 def _canonical_device(device: str | torch.device) -> torch.device:
@@ -193,6 +203,7 @@ class FastArenaNavigation:
         mover_stable_id: torch.Tensor,
         owner: torch.Tensor,
         airborne: torch.Tensor,
+        hover: torch.Tensor | None = None,
         x_units: torch.Tensor,
         y_units: torch.Tensor,
         target_stable_id: torch.Tensor,
@@ -208,11 +219,14 @@ class FastArenaNavigation:
         reached or either stable identity changes.
         """
 
+        if hover is None:
+            hover = torch.zeros_like(airborne)
         named = (
             ("active", active, torch.bool),
             ("mover_stable_id", mover_stable_id, torch.int64),
             ("owner", owner, torch.int8),
             ("airborne", airborne, torch.bool),
+            ("hover", hover, torch.bool),
             ("x_units", x_units, torch.int32),
             ("y_units", y_units, torch.int32),
             ("target_stable_id", target_stable_id, torch.int64),
@@ -224,7 +238,8 @@ class FastArenaNavigation:
 
         state = self.state
         valid = active & (mover_stable_id > 0) & (target_stable_id > 0)
-        ground = valid & ~airborne
+        terrain_bypass = airborne | hover
+        ground = valid & ~terrain_bypass
         identity_changed = (state.mover_stable_id != mover_stable_id) | (
             state.target_stable_id != target_stable_id
         )
@@ -277,7 +292,7 @@ class FastArenaNavigation:
             torch.ones_like(state.bridge_index),
         )
 
-        clear = ~valid | airborne | (identity_changed & ~needs_crossing)
+        clear = ~valid | terrain_bypass | (identity_changed & ~needs_crossing)
         state.route_phase.copy_(
             torch.where(clear, FAST_ROUTE_DIRECT, state.route_phase)
         )
@@ -334,7 +349,7 @@ class FastArenaNavigation:
             torch.where(finish_crossing, 0, state.travel_direction)
         )
 
-        retain_identity = valid & ~airborne
+        retain_identity = valid & ~terrain_bypass
         state.mover_stable_id.copy_(torch.where(retain_identity, mover_stable_id, 0))
         state.target_stable_id.copy_(torch.where(retain_identity, target_stable_id, 0))
 

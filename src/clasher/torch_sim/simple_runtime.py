@@ -118,6 +118,7 @@ from .simple_projection import (
     SimpleProjectionInputs,
     SimpleTensorProjector,
 )
+from .simple_river_jump import FastRiverJumpCatalog, FastRiverJumpState
 from .simple_rolling_spells import (
     FAST_ROLLING_NO_SPAWN,
     FastRollingAllocationResult,
@@ -294,6 +295,7 @@ class SimpleGymRuntime:
         policy_mechanics: FastPolicyMechanicCatalog | None = None,
         ability_catalog: FastAbilityCatalog | None = None,
         travel_catalog: FastTravelCatalog | None = None,
+        river_jump_catalog: FastRiverJumpCatalog | None = None,
         triggered_impact_catalog: FastTriggeredImpactCatalog | None = None,
         attack_timings: FastAttackTimingCatalog | None = None,
         knockback_immune_by_card: torch.Tensor | None = None,
@@ -327,6 +329,11 @@ class SimpleGymRuntime:
                 raise ValueError("travel catalog must align with cards")
             if not _same_device(travel_catalog.device, catalog.device):
                 raise ValueError("travel catalog and cards must share a device")
+        if river_jump_catalog is not None:
+            if river_jump_catalog.size != catalog.size:
+                raise ValueError("river jump catalog must align with cards")
+            if not _same_device(river_jump_catalog.device, catalog.device):
+                raise ValueError("river jump catalog and cards must share a device")
         if triggered_impact_catalog is not None:
             if triggered_impact_catalog.card_capacity != catalog.size:
                 raise ValueError("triggered impact catalog must align with cards")
@@ -472,12 +479,32 @@ class SimpleGymRuntime:
             if attack_timings is not None
             else None
         )
+        self.river_jump_catalog = river_jump_catalog
+        self.river_jumps = (
+            FastRiverJumpState.empty(
+                self.state.batch_size,
+                self.state.max_entities,
+                device=self.state.device,
+            )
+            if river_jump_catalog is not None
+            else None
+        )
+        collision_radius_override = torch.zeros_like(self.state.x_units)
+        if tower_spec.collision_radius_units is not None:
+            collision_radius_override[:, :FAST_TOWER_SLOT_COUNT] = tower_rows(
+                tower_spec.collision_radius_units,
+                dtype=torch.int32,
+                fill=0,
+            )
         self.combat = FastTensorGym(
             self.state,
             catalog,
             reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             attack_timings=attack_timings,
             attack_locks=self.attack_locks,
+            collision_radius_override_units=collision_radius_override,
+            river_jump_catalog=river_jump_catalog,
+            river_jump_state=self.river_jumps,
         )
         self.policy_catalog = (
             policy_mechanics
@@ -853,6 +880,8 @@ class SimpleGymRuntime:
         }
         if self.attack_locks is not None:
             templates["attack_locks"] = self._tensor_fields(self.attack_locks)
+        if self.river_jumps is not None:
+            templates["river_jumps"] = self._tensor_fields(self.river_jumps)
         if self.periodic_spawns is not None:
             templates["periodic_spawns"] = self._tensor_fields(self.periodic_spawns)
         if self.scheduled_casts is not None:
@@ -932,6 +961,8 @@ class SimpleGymRuntime:
         }
         if self.attack_locks is not None:
             objects["attack_locks"] = self.attack_locks
+        if self.river_jumps is not None:
+            objects["river_jumps"] = self.river_jumps
         if self.periodic_spawns is not None:
             objects["periodic_spawns"] = self.periodic_spawns
         if self.scheduled_casts is not None:
@@ -1007,6 +1038,23 @@ class SimpleGymRuntime:
             self.entity_status_ticks > 0
         )
 
+    def _entity_airborne_target(self) -> torch.Tensor:
+        """Compose permanent and temporary serialized target planes."""
+
+        safe_card = self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
+        airborne = self.action_kernel.catalog.is_air[safe_card]
+        if self.river_jumps is not None:
+            airborne = airborne | self.river_jumps.active
+        return airborne
+
+    def _entity_collision_radius_units(self) -> torch.Tensor:
+        """Return the common serialized body edge for combat and movement."""
+
+        safe_card = self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
+        return self.action_kernel.catalog.collision_radius_units[safe_card].maximum(
+            self.combat._collision_radius_override_units
+        )
+
     def _ability_player_view(self) -> FastAbilityPlayerView | None:
         """Refresh entity ownership and expose only player-ordered ability state."""
 
@@ -1055,6 +1103,7 @@ class SimpleGymRuntime:
     def observe(self) -> SimpleProjectedObservation:
         self._publish_policy_visibility_(self._policy_visibility_view())
         self._publish_travel_mechanics_(self._travel_view())
+        self._publish_river_jump_mechanics_()
         self._refresh_policy_state()
         return self.projector.project(self._legal_action_mask())
 
@@ -1140,6 +1189,12 @@ class SimpleGymRuntime:
                 self.travel_catalog.kind[safe_card] == FAST_TRAVEL_UNDERGROUND
             )
         self._entity_hidden.logical_or_(underground)
+
+    def _publish_river_jump_mechanics_(self) -> None:
+        """Expose committed river flight as public special movement."""
+
+        if self.river_jumps is not None:
+            self._entity_special.logical_or_(self.river_jumps.active)
 
     def _queue_travel_spawned_(self, spawned: torch.Tensor) -> None:
         if spawned.shape != self.state.active.shape:
@@ -1272,10 +1327,8 @@ class SimpleGymRuntime:
             consume_source_id=self.travel_effect_consume_source_id,
             cleanup_dead=False,
             modifiers=self.modifiers,
-            entity_is_air=self.action_kernel.catalog.is_air[safe_card],
-            entity_collision_radius_units=(
-                self.action_kernel.catalog.collision_radius_units[safe_card]
-            ),
+            entity_is_air=self._entity_airborne_target(),
+            entity_collision_radius_units=self._entity_collision_radius_units(),
             tick_status=False,
             entity_slow_ticks=self.entity_slow_ticks,
             slow_movement_multiplier_by_card=(
@@ -1293,7 +1346,7 @@ class SimpleGymRuntime:
                 policy_view.effect_receivable_affects_hidden & receivable
             ),
         )
-        entity_is_air = self.action_kernel.catalog.is_air[safe_card]
+        entity_is_air = self._entity_airborne_target()
         eligible = (
             allocation.accepted[:, :, None]
             & self.state.active[:, None, :]
@@ -1592,14 +1645,8 @@ class SimpleGymRuntime:
             consume_source_id=self.death_effect_consume_source_id,
             cleanup_dead=False,
             modifiers=self.modifiers,
-            entity_is_air=self.action_kernel.catalog.is_air[
-                self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
-            ],
-            entity_collision_radius_units=(
-                self.action_kernel.catalog.collision_radius_units[
-                    self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
-                ]
-            ),
+            entity_is_air=self._entity_airborne_target(),
+            entity_collision_radius_units=self._entity_collision_radius_units(),
             tick_status=False,
             entity_slow_ticks=self.entity_slow_ticks,
             slow_movement_multiplier_by_card=(
@@ -2069,10 +2116,8 @@ class SimpleGymRuntime:
             self.entity_status_ticks,
             cleanup_dead=False,
             modifiers=self.modifiers,
-            entity_is_air=self.action_kernel.catalog.is_air[safe_card],
-            entity_collision_radius_units=(
-                self.action_kernel.catalog.collision_radius_units[safe_card]
-            ),
+            entity_is_air=self._entity_airborne_target(),
+            entity_collision_radius_units=self._entity_collision_radius_units(),
             tick_status=False,
             entity_slow_ticks=self.entity_slow_ticks,
             slow_movement_multiplier_by_card=(
@@ -2101,13 +2146,11 @@ class SimpleGymRuntime:
             owner=self.state.owner,
             x_units=self.state.x_units,
             y_units=self.state.y_units,
-            collision_radius_units=(
-                self.action_kernel.catalog.collision_radius_units[safe_card]
-            ),
+            collision_radius_units=self._entity_collision_radius_units(),
             base_speed_units_per_tick=(
                 self.action_kernel.catalog.speed_units_per_tick[safe_card]
             ),
-            is_air=self.action_kernel.catalog.is_air[safe_card],
+            is_air=self._entity_airborne_target(),
             is_building=self.state.kind == FAST_KIND_BUILDING,
             area_receivable=visibility.area_receivable & receivable,
             effect_receivable_affects_hidden=(
@@ -2449,6 +2492,7 @@ class SimpleGymRuntime:
         self._publish_policy_visibility_(pre_visibility)
         self._publish_ability_mechanics_(abilities_before)
         self._publish_travel_mechanics_(self._travel_view())
+        self._publish_river_jump_mechanics_()
         stunned = (self.entity_status_kind == FAST_STATUS_STUN) & (
             self.entity_status_ticks > 0
         )
@@ -2473,6 +2517,7 @@ class SimpleGymRuntime:
         self._publish_policy_visibility_(pre_visibility)
         self._publish_ability_mechanics_(abilities_before)
         self._publish_travel_mechanics_(active_travel_view)
+        self._publish_river_jump_mechanics_()
         travel_effect_allocation: FastTravelEffectAllocationResult | None = None
         travel_effect_result: FastEffectStepResult | None = None
         travel_impulse: FastRadialImpulseResult | None = None
@@ -2591,6 +2636,8 @@ class SimpleGymRuntime:
                 | active_travel_view.combat_blocked
             ),
             reload_source_attack=(stunned | active_travel_view.combat_blocked),
+            collision_excluded=active_travel_view.immune,
+            river_jump_stunned=stunned,
         )
         ramp_parameters = self._damage_ramp_parameters()
         ramp_target = torch.where(
@@ -2674,6 +2721,7 @@ class SimpleGymRuntime:
         self._publish_policy_visibility_(policy_visibility.view)
         self._publish_ability_mechanics_(abilities_before)
         self._publish_travel_mechanics_(self._travel_view())
+        self._publish_river_jump_mechanics_()
 
         failed_deployment = (ingress.entity_deployment & ~deployed) | (
             ingress.spell_cast & ~spell_allocated
@@ -2773,14 +2821,8 @@ class SimpleGymRuntime:
             consume_source_id=self.effect_consume_source_id,
             cleanup_dead=False,
             modifiers=self.modifiers,
-            entity_is_air=self.action_kernel.catalog.is_air[
-                self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
-            ],
-            entity_collision_radius_units=(
-                self.action_kernel.catalog.collision_radius_units[
-                    self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
-                ]
-            ),
+            entity_is_air=self._entity_airborne_target(),
+            entity_collision_radius_units=self._entity_collision_radius_units(),
             entity_slow_ticks=self.entity_slow_ticks,
             slow_movement_multiplier_by_card=(
                 self.action_kernel.catalog.slow_movement_multiplier
@@ -2807,9 +2849,6 @@ class SimpleGymRuntime:
                 effect_visibility.effect_receivable_affects_hidden & effect_receivable
             ),
         )
-        safe_entity_card = self.state.card_id.clamp(
-            0, self.action_kernel.catalog.size - 1
-        )
         crown_slots = (
             torch.arange(
                 self.state.max_entities, dtype=torch.int64, device=self.device
@@ -2819,10 +2858,8 @@ class SimpleGymRuntime:
         rolling_result = step_fast_rolling_spells_(
             self.state,
             self.rolling_spells,
-            entity_is_air=self.action_kernel.catalog.is_air[safe_entity_card],
-            entity_collision_radius_units=(
-                self.action_kernel.catalog.collision_radius_units[safe_entity_card]
-            ),
+            entity_is_air=self._entity_airborne_target(),
+            entity_collision_radius_units=self._entity_collision_radius_units(),
             entity_is_crown_tower=crown_slots,
             modifiers=self.modifiers,
             entity_area_receivable=(
@@ -2985,6 +3022,7 @@ class SimpleGymRuntime:
             )
         self._publish_ability_mechanics_(abilities_after)
         self._publish_travel_mechanics_(self._travel_view())
+        self._publish_river_jump_mechanics_()
         update_king_activation_(
             self.state,
             self._king_activation_delay_ticks,

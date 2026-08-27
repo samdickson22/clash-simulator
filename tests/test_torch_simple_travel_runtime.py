@@ -331,8 +331,10 @@ def test_public_target_snapshot_and_travel_capacity_fail_closed() -> None:
     assert snapshot.target_stable_id[0, 6].item() == 4
     assert snapshot.target_x_units[0, 6].item() == 3_500
     assert snapshot.target_y_units[0, 6].item() == 25_500
-    assert snapshot.edge_distance_units[0, 6].item() == 4_500
-    assert snapshot.destination_y_units[0, 6].item() == 24_750
+    # Crown Tower collision geometry now comes from the same serialized body
+    # radius used by movement obstruction and effect edges.
+    assert snapshot.edge_distance_units[0, 6].item() == 3_500
+    assert snapshot.destination_y_units[0, 6].item() == 23_750
 
     blocked, blocked_ids = _runtime("cpu")
     _seed(

@@ -51,6 +51,8 @@ class FastCardCatalog:
     attacks_ground: torch.Tensor
     buildings_only: torch.Tensor
     is_air: torch.Tensor
+    is_hover: torch.Tensor
+    mass: torch.Tensor
     summon_count: torch.Tensor
     summon_radius_units: torch.Tensor
     lifetime_ticks: torch.Tensor
@@ -951,6 +953,8 @@ class FastCardCatalog:
             attacks_ground=attacks_ground,
             buildings_only=buildings_only,
             is_air=is_air,
+            is_hover=catalog.is_hover_unit.to(torch.bool),
+            mass=catalog.mass.to(torch.float32).clamp_min(0.1),
             summon_count=summon_count,
             summon_radius_units=summon_radius_units,
             lifetime_ticks=lifetime_ticks,

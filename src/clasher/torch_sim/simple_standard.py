@@ -31,6 +31,7 @@ from .simple_attack_locks import FastAttackTimingCatalog
 from .simple_catalog import FAST_CARD_EFFECT_PROJECTILE
 from .simple_outcomes import FastMatchRules, FastTowerSpec
 from .simple_policy_mechanics import FastPolicyMechanicCatalog
+from .simple_river_jump import FastRiverJumpCatalog
 from .simple_runtime import SimpleGymRuntime
 from .simple_spawn_blueprints import FastSpawnBlueprintCatalog, FastSpawnTrigger
 from .simple_travel import FastTravelCatalog
@@ -115,6 +116,7 @@ def standard_tower_spec(
     )
     princess_range = int(princess["range"])
     princess_sight = int(princess["sightRange"])
+    princess_collision_radius = int(princess["collisionRadius"])
     princess_cooldown = _ceil_logic_ticks(int(princess["hitSpeed"]))
     princess_projectile = princess.get("projectileData")
     if not isinstance(princess_projectile, dict):
@@ -161,6 +163,11 @@ def standard_tower_spec(
         ),
         hit_cooldown_ticks=torch.tensor(
             ((princess_cooldown, princess_cooldown, king_cooldown),) * 2,
+            dtype=torch.int32,
+            device=torch_device,
+        ),
+        collision_radius_units=torch.tensor(
+            ((princess_collision_radius, princess_collision_radius, 1_400),) * 2,
             dtype=torch.int32,
             device=torch_device,
         ),
@@ -256,6 +263,7 @@ class SimpleStandardSetup:
     policy_mechanics: FastPolicyMechanicCatalog
     ability_catalog: FastAbilityCatalog
     travel_catalog: FastTravelCatalog
+    river_jump_catalog: FastRiverJumpCatalog
     triggered_impact_catalog: FastTriggeredImpactCatalog
     attack_timings: FastAttackTimingCatalog
     knockback_immune_by_card: torch.Tensor
@@ -315,6 +323,7 @@ class SimpleStandardSetup:
             policy_mechanics=self.policy_mechanics,
             ability_catalog=self.ability_catalog,
             travel_catalog=self.travel_catalog,
+            river_jump_catalog=self.river_jump_catalog,
             triggered_impact_catalog=self.triggered_impact_catalog,
             attack_timings=self.attack_timings,
             knockback_immune_by_card=self.knockback_immune_by_card,
@@ -343,6 +352,7 @@ def compile_standard_simple_setup(
     policy_mechanics = FastPolicyMechanicCatalog.compile(blueprints.cards, loader)
     ability_catalog = FastAbilityCatalog.compile(blueprints.cards, loader)
     travel_catalog = FastTravelCatalog.compile(blueprints.cards, loader)
+    river_jump_catalog = FastRiverJumpCatalog.compile(blueprints.cards, loader)
     triggered_impact_catalog = FastTriggeredImpactCatalog.compile(
         blueprints.cards, loader
     )
@@ -364,6 +374,7 @@ def compile_standard_simple_setup(
         & ~ability_catalog.malformed
         & ~ability_catalog.duplicate
         & travel_catalog.profile_supported
+        & river_jump_catalog.profile_supported
         & ~triggered_impact_catalog.malformed
         & ~triggered_impact_catalog.duplicate
     ).clone()
@@ -394,6 +405,7 @@ def compile_standard_simple_setup(
         policy_mechanics=policy_mechanics,
         ability_catalog=ability_catalog,
         travel_catalog=travel_catalog,
+        river_jump_catalog=river_jump_catalog,
         triggered_impact_catalog=triggered_impact_catalog,
         attack_timings=attack_timings,
         knockback_immune_by_card=knockback_immune,
