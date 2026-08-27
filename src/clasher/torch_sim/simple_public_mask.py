@@ -26,9 +26,9 @@ from .policy_validation import PUBLIC_ACTION_MASK_CONTRACT_V2
 from .resident_outputs import TensorPublicStructuredObservation
 
 SIMPLE_PUBLIC_MASK_SEMANTICS_ID: Final = (
-    "public-action-mask-v2/tensor-actor-projection-v1"
+    "public-action-mask-v2/tensor-actor-projection-v2"
 )
-SIMPLE_PUBLIC_MASK_SCHEMA: Final = "clasher.simple-public-mask.tensor-v1"
+SIMPLE_PUBLIC_MASK_SCHEMA: Final = "clasher.simple-public-mask.tensor-v2"
 SIMPLE_PUBLIC_MASK_ACTIONS: Final = NUM_HAND_SLOTS * NUM_TILES + 2
 SIMPLE_PUBLIC_MASK_NO_OP: Final = NUM_HAND_SLOTS * NUM_TILES
 SIMPLE_PUBLIC_MASK_ABILITY: Final = SIMPLE_PUBLIC_MASK_NO_OP + 1
@@ -98,6 +98,8 @@ class SimplePublicMaskTypedTables:
     deploy_margin_tiles: torch.Tensor
     deploy_radius_tiles: torch.Tensor
     blocker_radius_tiles: torch.Tensor
+    ability_supported: torch.Tensor
+    ability_elixir_cost: torch.Tensor
     tile_center_x: torch.Tensor
     tile_center_y: torch.Tensor
     non_blocked_tiles: torch.Tensor
@@ -131,6 +133,8 @@ class SimplePublicMaskTypedTables:
             "deploy_margin_tiles",
             "deploy_radius_tiles",
             "blocker_radius_tiles",
+            "ability_supported",
+            "ability_elixir_cost",
         )
         expected_dtypes = {
             "hand_playable": torch.bool,
@@ -142,6 +146,8 @@ class SimplePublicMaskTypedTables:
             "deploy_margin_tiles": torch.int64,
             "deploy_radius_tiles": torch.float64,
             "blocker_radius_tiles": torch.float64,
+            "ability_supported": torch.bool,
+            "ability_elixir_cost": torch.float64,
             "tile_center_x": torch.float64,
             "tile_center_y": torch.float64,
             "non_blocked_tiles": torch.bool,
@@ -187,6 +193,22 @@ class SimplePublicMaskTypedTables:
                 raise SimplePublicMaskContractError(
                     f"playable hand token is not card_action typed: {token!r}"
                 )
+        supported_ability = self.ability_supported
+        if bool((supported_ability & self.hand_playable).any()):
+            raise SimplePublicMaskContractError(
+                "ability-supported token must identify an entity, not a hand action"
+            )
+        invalid_ability_cost = supported_ability & (
+            (self.ability_elixir_cost <= 0.0) | (self.ability_elixir_cost > 10.0)
+        )
+        if bool(invalid_ability_cost.any()):
+            raise SimplePublicMaskContractError(
+                "supported ability cost must be in (0, 10]"
+            )
+        if bool(((~supported_ability) & (self.ability_elixir_cost != 0.0)).any()):
+            raise SimplePublicMaskContractError(
+                "unsupported ability tokens must have zero cost"
+            )
         if self.semantics.get("contract_version") != PUBLIC_ACTION_MASK_CONTRACT_V2:
             raise SimplePublicMaskContractError("public-mask contract v2 is required")
         if hashlib.sha256(_canonical_json(self.semantics)).hexdigest() != (
@@ -212,6 +234,8 @@ class SimplePublicMaskTypedTables:
         deploy_margin_tiles: torch.Tensor | Sequence[int],
         deploy_radius_tiles: torch.Tensor | Sequence[float],
         blocker_radius_tiles: torch.Tensor | Sequence[float],
+        ability_supported: torch.Tensor | Sequence[bool],
+        ability_elixir_cost: torch.Tensor | Sequence[float],
         blocked_tiles: Sequence[tuple[int, int]],
         authority: str,
         semantics_id: str = SIMPLE_PUBLIC_MASK_SEMANTICS_ID,
@@ -223,22 +247,22 @@ class SimplePublicMaskTypedTables:
             "hand_playable": _cpu_tensor(hand_playable, dtype=torch.bool),
             "elixir_cost": _cpu_tensor(elixir_cost, dtype=torch.float64),
             "is_spell": _cpu_tensor(is_spell, dtype=torch.bool),
-            "non_rolling_spell": _cpu_tensor(
-                non_rolling_spell, dtype=torch.bool
-            ),
+            "non_rolling_spell": _cpu_tensor(non_rolling_spell, dtype=torch.bool),
             "is_building": _cpu_tensor(is_building, dtype=torch.bool),
             "can_deploy_enemy_side": _cpu_tensor(
                 can_deploy_enemy_side, dtype=torch.bool
             ),
-            "deploy_margin_tiles": _cpu_tensor(
-                deploy_margin_tiles, dtype=torch.int64
-            ),
+            "deploy_margin_tiles": _cpu_tensor(deploy_margin_tiles, dtype=torch.int64),
             "deploy_radius_tiles": _cpu_tensor(
                 deploy_radius_tiles, dtype=torch.float64
             ),
             "blocker_radius_tiles": _cpu_tensor(
                 blocker_radius_tiles, dtype=torch.float64
             ).clamp_min(0.5),
+            "ability_supported": _cpu_tensor(ability_supported, dtype=torch.bool),
+            "ability_elixir_cost": _cpu_tensor(
+                ability_elixir_cost, dtype=torch.float64
+            ),
         }
         lookup_digest = _tensor_digest(typed_keys, token_tensors)
         tile_index = torch.arange(NUM_TILES, dtype=torch.int64)
@@ -256,12 +280,8 @@ class SimplePublicMaskTypedTables:
                 ((tile_y >= 1) & (tile_y < 15))
                 | ((tile_x >= 6) & (tile_x < 12) & (tile_y < 6))
             ),
-            "left_tower_extension": (
-                (tile_x < 9) & (tile_y >= 17) & (tile_y < 21)
-            ),
-            "right_tower_extension": (
-                (tile_x >= 9) & (tile_y >= 17) & (tile_y < 21)
-            ),
+            "left_tower_extension": ((tile_x < 9) & (tile_y >= 17) & (tile_y < 21)),
+            "right_tower_extension": ((tile_x >= 9) & (tile_y >= 17) & (tile_y < 21)),
         }
         semantics: Mapping[str, Any] = {
             "schema": SIMPLE_PUBLIC_MASK_SCHEMA,
@@ -273,7 +293,16 @@ class SimplePublicMaskTypedTables:
             "uses_simulator_legal_mask": False,
             "uses_labels": False,
             "typed_tokens_required": True,
-            "ability_policy": "fail-closed",
+            "ability_policy": "actor-visible-supported-champion-v1",
+            "ability_inputs": (
+                "own-visible-live-typed-entity,deploy-ready,elixir,"
+                "cooldown-ready,duration-ready"
+            ),
+            "ability_owner_selection": "exactly-one-supported-own-live-entity",
+            "ability_multiple_owner_policy": (
+                "fail-closed-without-public-stable-owner-id"
+            ),
+            "ability_stun_policy": "not-a-legality-gate",
             "canonical_lane_globals": True,
             "numeric_profile": "float64-authoritative-comparison-v1",
             "lookup_digest": lookup_digest,
@@ -348,7 +377,7 @@ class SimplePublicMaskV2Provider:
             raise SimplePublicMaskContractError("actor entity features are incomplete")
         if actor.global_features.shape[:2] != actor.hand_ids.shape[:2]:
             raise SimplePublicMaskContractError("actor global feature shape mismatch")
-        if actor.global_features.shape[-1] <= 12:
+        if actor.global_features.shape[-1] <= 15:
             raise SimplePublicMaskContractError("actor global features are incomplete")
 
         token_count = len(tables.token_keys)
@@ -361,17 +390,16 @@ class SimplePublicMaskV2Provider:
 
         left_dead = actor.global_features[..., 11] <= 1.0e-4
         right_dead = actor.global_features[..., 12] <= 1.0e-4
-        zone = tables.base_deploy_zone.view(1, 1, NUM_TILES).expand(
-            *hand.shape[:2], -1
-        )
+        zone = tables.base_deploy_zone.view(1, 1, NUM_TILES).expand(*hand.shape[:2], -1)
         zone = zone | (
             left_dead[..., None] & tables.left_tower_extension.view(1, 1, -1)
         )
         zone = zone | (
             right_dead[..., None] & tables.right_tower_extension.view(1, 1, -1)
         )
-        unrestricted = tables.non_rolling_spell[safe_hand] | (
-            tables.can_deploy_enemy_side[safe_hand]
+        unrestricted = (
+            tables.non_rolling_spell[safe_hand]
+            | (tables.can_deploy_enemy_side[safe_hand])
         )
         non_blocked = tables.non_blocked_tiles.view(1, 1, 1, -1)
         candidates = torch.where(
@@ -383,8 +411,7 @@ class SimplePublicMaskV2Provider:
         margin = tables.deploy_margin_tiles[safe_hand]
         tile_x = tables.tile_center_x.view(1, 1, 1, -1)
         within_margin = (margin[..., None] == 0) | (
-            (tile_x >= margin[..., None])
-            & (tile_x < BOARD_WIDTH - margin[..., None])
+            (tile_x >= margin[..., None]) & (tile_x < BOARD_WIDTH - margin[..., None])
         )
 
         entity_token = actor.entity_ids
@@ -418,10 +445,7 @@ class SimplePublicMaskV2Provider:
         building_half = (
             torch.clamp(
                 torch.ceil(
-                    torch.clamp(
-                        tables.deploy_radius_tiles[safe_hand], min=0.0
-                    )
-                    * 2.0
+                    torch.clamp(tables.deploy_radius_tiles[safe_hand], min=0.0) * 2.0
                 )
                 + 1.0,
                 min=1.0,
@@ -429,16 +453,8 @@ class SimplePublicMaskV2Provider:
             / 2.0
         )
         building_occupied = (
-            (
-                dx
-                < building_half[..., None, None]
-                + blocker_half[:, :, None, None, :]
-            )
-            & (
-                dy
-                < building_half[..., None, None]
-                + blocker_half[:, :, None, None, :]
-            )
+            (dx < building_half[..., None, None] + blocker_half[:, :, None, None, :])
+            & (dy < building_half[..., None, None] + blocker_half[:, :, None, None, :])
             & blocker_plane
         ).any(dim=-1)
         troop_circle = (
@@ -473,7 +489,29 @@ class SimplePublicMaskV2Provider:
         )
         masks[..., :SIMPLE_PUBLIC_MASK_NO_OP] = placements.flatten(2)
         masks[..., SIMPLE_PUBLIC_MASK_NO_OP] = True
-        masks[..., SIMPLE_PUBLIC_MASK_ABILITY] = False
+
+        ability_candidate = (
+            actor.entity_mask
+            & (actor.entity_features[..., 2] > 0.5)
+            & (actor.entity_features[..., 9] > 0.0)
+            & (actor.entity_features[..., 12] <= 0.5)
+            & (entity_token > 0)
+            & (entity_token < token_count)
+            & tables.ability_supported[safe_entity]
+        )
+        ability_candidate_count = ability_candidate.to(torch.int64).sum(dim=-1)
+        ability_cost = torch.where(
+            ability_candidate,
+            tables.ability_elixir_cost[safe_entity],
+            torch.zeros_like(blocker_radius),
+        ).sum(dim=-1)
+        ability_ready = (
+            (ability_candidate_count == 1)
+            & (actor.global_features[..., 14] <= 1.0e-4)
+            & (actor.global_features[..., 15] <= 1.0e-4)
+            & (ability_cost <= elixir + 1.0e-6)
+        )
+        masks[..., SIMPLE_PUBLIC_MASK_ABILITY] = ability_ready
         return SimplePublicMaskV2Result(
             masks=masks,
             semantics_id=tables.semantics_id,
