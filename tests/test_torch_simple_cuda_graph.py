@@ -38,6 +38,16 @@ def _assert_tensor_fields_equal(left: Any, right: Any) -> None:
             assert torch.equal(left_value, getattr(right, descriptor.name))
 
 
+def _assert_status_planes_equal(left: Any, right: Any) -> None:
+    for name in (
+        "entity_status_kind",
+        "entity_status_ticks",
+        "entity_slow_ticks",
+        "entity_attack_clock_fraction",
+    ):
+        assert torch.equal(getattr(left, name), getattr(right, name))
+
+
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
 def test_cuda_graph_runner_matches_eager_replays() -> None:
     decks = supported_simple_decks(
@@ -74,6 +84,7 @@ def test_cuda_graph_runner_matches_eager_replays() -> None:
 
         _assert_tensor_fields_equal(runtime.state, reference.state)
         _assert_tensor_fields_equal(runtime.action_state, reference.action_state)
+        _assert_status_planes_equal(runtime, reference)
         assert torch.equal(step.reward, reference_step.reward)
         assert torch.equal(step.done, reference_step.done)
         assert torch.equal(
@@ -111,9 +122,7 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
     }
     runtime = build_simple_runtime(**kwargs)
     reference = build_simple_runtime(**kwargs)
-    no_op = torch.full(
-        (2, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device
-    )
+    no_op = torch.full((2, 2), NO_OP_ACTION, dtype=torch.int64, device=runtime.device)
     runner = SimpleCudaGraphRunner(runtime, no_op)
     reward = SimpleRewardV2Config(gamma=0.995)
     bridge = SimpleGymRolloutBridge(
@@ -149,6 +158,7 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
     assert torch.equal(step.next_legal_mask, reference_step.next_legal_mask)
     _assert_tensor_fields_equal(runtime.state, reference.state)
     _assert_tensor_fields_equal(runtime.action_state, reference.action_state)
+    _assert_status_planes_equal(runtime, reference)
 
     reset = bridge.reset_done(step.done)
     reference_reset = reference_bridge.reset_done(reference_step.done)
@@ -157,6 +167,7 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
     assert torch.equal(reset.legal_mask, reference_reset.legal_mask)
     _assert_tensor_fields_equal(runtime.state, reference.state)
     _assert_tensor_fields_equal(runtime.action_state, reference.action_state)
+    _assert_status_planes_equal(runtime, reference)
 
     second = bridge.step(no_op)
     reference_second = reference_bridge.step(no_op)
@@ -165,3 +176,4 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
     assert torch.equal(second.done, reference_second.done)
     _assert_tensor_fields_equal(second.next_actor, reference_second.next_actor)
     _assert_tensor_fields_equal(runtime.state, reference.state)
+    _assert_status_planes_equal(runtime, reference)
