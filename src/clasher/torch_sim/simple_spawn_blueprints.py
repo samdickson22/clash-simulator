@@ -34,6 +34,7 @@ from clasher.mechanics.shared.death_effects import DeathDamage, DeathSpawn
 from clasher.mechanics.shared.spawner import PeriodicSpawner
 
 from .catalog import TensorCardCatalog
+from .simple_attack_locks import FastAttackTimingCatalog
 from .simple_catalog import FAST_CARD_EFFECT_AREA, FastCardCatalog
 from .simple_death_burst import FastDeathBurstCatalog
 from .simple_effects import FastEffectState
@@ -427,6 +428,7 @@ class FastSpawnBlueprintCatalog:
     cards: TensorCardCatalog
     fast_cards: FastCardCatalog
     death_burst_catalog: FastDeathBurstCatalog
+    attack_timings: FastAttackTimingCatalog
     visible_names: tuple[str, ...]
     root_names: tuple[str, ...]
     source_paths: tuple[str, ...]
@@ -559,6 +561,7 @@ class FastSpawnBlueprintCatalog:
             device=base_cards.device,
         )
         fast_cards = FastCardCatalog.from_tensor_catalog(cards, loader=overlay)
+        attack_timings = FastAttackTimingCatalog.compile(cards, overlay)
         visible_names = tuple(visible_by_label.get(name, name) for name in cards.names)
 
         death_burst_catalog = FastDeathBurstCatalog.empty(
@@ -1108,6 +1111,7 @@ class FastSpawnBlueprintCatalog:
             cards=cards,
             fast_cards=fast_cards,
             death_burst_catalog=death_burst_catalog,
+            attack_timings=attack_timings,
             visible_names=visible_names,
             root_names=tuple(value.root_name for value in requirements),
             source_paths=tuple(value.source_path for value in requirements),

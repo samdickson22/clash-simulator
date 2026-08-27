@@ -25,6 +25,8 @@ class FastGymState:
     game_over: torch.Tensor
     winner: torch.Tensor
     next_stable_id: torch.Tensor
+    king_active: torch.Tensor
+    king_activation_ticks: torch.Tensor
     active: torch.Tensor
     stable_id: torch.Tensor
     kind: torch.Tensor
@@ -86,6 +88,8 @@ class FastGymState:
             next_stable_id=torch.ones(
                 batch_size, dtype=torch.int64, device=tensor_device
             ),
+            king_active=zeros(batch_size, 2, dtype=torch.bool),
+            king_activation_ticks=zeros(batch_size, 2, dtype=torch.int32),
             active=zeros(*entity_shape, dtype=torch.bool),
             stable_id=zeros(*entity_shape, dtype=torch.int64),
             kind=zeros(*entity_shape, dtype=torch.int8),

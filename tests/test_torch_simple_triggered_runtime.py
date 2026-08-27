@@ -193,9 +193,28 @@ def test_firecracker_recoil_runs_on_committed_attack(device_name: str) -> None:
         x=9_000,
         y=14_000,
     )
+    runtime.state.speed_units_per_tick[0, 7] = 0
 
-    step = runtime.step_tick(_noop(runtime))
+    assert runtime.attack_timings is not None
+    first_hit_ticks = int(
+        runtime.attack_timings.first_hit_delay_ticks[ids["Firecracker"]]
+    )
+    step = None
+    for _ in range(first_hit_ticks):
+        candidate = runtime.step_tick(_noop(runtime))
+        if candidate.triggered is not None and bool(
+            (
+                candidate.triggered.commands.active
+                & (
+                    candidate.triggered.commands.trigger
+                    == FAST_TRIGGER_ATTACK_COMMIT
+                )
+            ).any()
+        ):
+            step = candidate
+            break
 
+    assert step is not None
     assert step.triggered is not None
     selected = step.triggered.commands.active & (
         step.triggered.commands.trigger == FAST_TRIGGER_ATTACK_COMMIT

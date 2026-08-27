@@ -31,8 +31,10 @@ from .simple_actions import FastActionIngressResult, FastActionKernel, FastActio
 from .simple_attack_effects import (
     FastEffectAllocationResult,
     FastEffectCommands,
+    FastNumericEffectCommands,
     allocate_fast_attack_effects_,
 )
+from .simple_attack_locks import FastAttackLockState, FastAttackTimingCatalog
 from .simple_catalog import FastCardCatalog
 from .simple_damage_ramp import (
     FastDamageRampParameters,
@@ -72,6 +74,7 @@ from .simple_outcomes import (
     FastTowerSpec,
     crown_tower_hp,
     initialize_crown_towers_,
+    update_king_activation_,
 )
 from .simple_payload_containers import (
     FastPayloadAllocationResult,
@@ -292,6 +295,7 @@ class SimpleGymRuntime:
         ability_catalog: FastAbilityCatalog | None = None,
         travel_catalog: FastTravelCatalog | None = None,
         triggered_impact_catalog: FastTriggeredImpactCatalog | None = None,
+        attack_timings: FastAttackTimingCatalog | None = None,
         knockback_immune_by_card: torch.Tensor | None = None,
         max_triggered_events: int = 8,
         max_triggered_effects: int = 32,
@@ -328,6 +332,11 @@ class SimpleGymRuntime:
                 raise ValueError("triggered impact catalog must align with cards")
             if not _same_device(triggered_impact_catalog.device, catalog.device):
                 raise ValueError("triggered impacts and cards must share a device")
+        if attack_timings is not None:
+            if attack_timings.size != catalog.size:
+                raise ValueError("attack timings must align with cards")
+            if not _same_device(attack_timings.device, catalog.device):
+                raise ValueError("attack timings and cards must share a device")
         if max_triggered_events < 1 or max_triggered_effects < 1:
             raise ValueError("triggered pool capacities must be positive")
         if knockback_immune_by_card is not None:
@@ -386,16 +395,89 @@ class SimpleGymRuntime:
             device=catalog.device,
         )
         initialize_crown_towers_(self.state, tower_spec)
+        tower_shape = (self.state.batch_size, FAST_TOWER_SLOT_COUNT)
+
+        def tower_rows(
+            value: torch.Tensor | None,
+            *,
+            dtype: torch.dtype,
+            fill: float | bool,
+        ) -> torch.Tensor:
+            if value is None:
+                return torch.full(
+                    tower_shape, fill, dtype=dtype, device=self.state.device
+                )
+            return value.reshape(1, FAST_TOWER_SLOT_COUNT).expand(
+                self.state.batch_size, -1
+            )
+
+        self._tower_effect_kind = tower_rows(
+            tower_spec.effect_kind,
+            dtype=torch.int8,
+            fill=-1,
+        )
+        self._tower_preload_cooldown_floor = tower_rows(
+            tower_spec.preload_cooldown_floor_ticks,
+            dtype=torch.int32,
+            fill=0,
+        )
+        self._tower_projectile_speed = tower_rows(
+            tower_spec.projectile_speed_units_per_tick,
+            dtype=torch.int32,
+            fill=0,
+        )
+        self._tower_projectile_start_radius = tower_rows(
+            tower_spec.projectile_start_radius_units,
+            dtype=torch.int32,
+            fill=0,
+        )
+        self._tower_effect_radius = tower_rows(
+            tower_spec.effect_radius_units,
+            dtype=torch.int32,
+            fill=0,
+        )
+        self._tower_hits_air = tower_rows(
+            tower_spec.hits_air,
+            dtype=torch.bool,
+            fill=True,
+        )
+        self._tower_hits_ground = tower_rows(
+            tower_spec.hits_ground,
+            dtype=torch.bool,
+            fill=True,
+        )
+        self._tower_affects_hidden = tower_rows(
+            tower_spec.affects_hidden,
+            dtype=torch.bool,
+            fill=False,
+        )
+        self._king_activation_delay_ticks = (
+            tower_spec.king_activation_ticks
+            if tower_spec.king_activation_ticks is not None
+            else torch.zeros(2, dtype=torch.int32, device=self.state.device)
+        )
         self.action_state = FastActionState.from_decks(
             deck_ids,
             starting_elixir=starting_elixir,
             max_elixir=max_elixir,
         )
         self.action_kernel = FastActionKernel(catalog)
+        self.attack_timings = attack_timings
+        self.attack_locks = (
+            FastAttackLockState.empty(
+                self.state.batch_size,
+                self.state.max_entities,
+                device=self.state.device,
+            )
+            if attack_timings is not None
+            else None
+        )
         self.combat = FastTensorGym(
             self.state,
             catalog,
             reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
+            attack_timings=attack_timings,
+            attack_locks=self.attack_locks,
         )
         self.policy_catalog = (
             policy_mechanics
@@ -571,6 +653,91 @@ class SimpleGymRuntime:
         self._spell_source_slots = torch.tensor(
             (2, 5), dtype=torch.int64, device=device
         )
+        command_shape = (batch, 2 + self.state.max_entities)
+
+        def tower_command_profile(
+            tower_value: torch.Tensor,
+            *,
+            dtype: torch.dtype,
+            fill: float | bool,
+        ) -> torch.Tensor:
+            result = torch.full(command_shape, fill, dtype=dtype, device=device)
+            result[:, 2 : 2 + FAST_TOWER_SLOT_COUNT] = tower_value
+            return result
+
+        numeric_enabled = torch.zeros(command_shape, dtype=torch.bool, device=device)
+        numeric_enabled[:, 2 : 2 + FAST_TOWER_SLOT_COUNT] = (
+            self._tower_effect_kind >= 0
+        ) & (self.state.card_id[:, :FAST_TOWER_SLOT_COUNT] == 0)
+        self._numeric_effect_commands = FastNumericEffectCommands(
+            enabled=numeric_enabled,
+            effect_kind=tower_command_profile(
+                self._tower_effect_kind, dtype=torch.int8, fill=-1
+            ),
+            projectile_speed_units_per_tick=tower_command_profile(
+                self._tower_projectile_speed, dtype=torch.int32, fill=0
+            ),
+            projectile_start_radius_units=tower_command_profile(
+                self._tower_projectile_start_radius, dtype=torch.int32, fill=0
+            ),
+            damage=tower_command_profile(
+                self.state.damage[:, :FAST_TOWER_SLOT_COUNT],
+                dtype=torch.float32,
+                fill=0.0,
+            ),
+            radius_units=tower_command_profile(
+                self._tower_effect_radius, dtype=torch.int32, fill=0
+            ),
+            tower_damage_multiplier=torch.ones(
+                command_shape, dtype=torch.float32, device=device
+            ),
+            building_damage_multiplier=torch.ones(
+                command_shape, dtype=torch.float32, device=device
+            ),
+            hits_air=tower_command_profile(
+                self._tower_hits_air, dtype=torch.bool, fill=True
+            ),
+            hits_ground=tower_command_profile(
+                self._tower_hits_ground, dtype=torch.bool, fill=True
+            ),
+            affects_hidden=tower_command_profile(
+                self._tower_affects_hidden, dtype=torch.bool, fill=False
+            ),
+        )
+        tower_command_slice = slice(2, 2 + FAST_TOWER_SLOT_COUNT)
+        self._tower_effect_kind = self._numeric_effect_commands.effect_kind[
+            :, tower_command_slice
+        ]
+        self._tower_projectile_speed = (
+            self._numeric_effect_commands.projectile_speed_units_per_tick[
+                :, tower_command_slice
+            ]
+        )
+        self._tower_projectile_start_radius = (
+            self._numeric_effect_commands.projectile_start_radius_units[
+                :, tower_command_slice
+            ]
+        )
+        self._tower_effect_radius = self._numeric_effect_commands.radius_units[
+            :, tower_command_slice
+        ]
+        self._tower_hits_air = self._numeric_effect_commands.hits_air[
+            :, tower_command_slice
+        ]
+        self._tower_hits_ground = self._numeric_effect_commands.hits_ground[
+            :, tower_command_slice
+        ]
+        self._tower_affects_hidden = self._numeric_effect_commands.affects_hidden[
+            :, tower_command_slice
+        ]
+        entity_slots = torch.arange(
+            self.state.max_entities, dtype=torch.int64, device=device
+        ).view(1, -1)
+        self._king_source_mask = (entity_slots == 2) | (entity_slots == 5)
+        self._cooldown_floor_ticks = torch.zeros_like(self.state.cooldown_ticks)
+        self._cooldown_floor_ticks[:, :FAST_TOWER_SLOT_COUNT] = (
+            self._tower_preload_cooldown_floor
+        )
         projection_inputs = SimpleProjectionInputs(
             entity_token_lookup=entity_token_lookup,
             hand_token_lookup=hand_token_lookup,
@@ -684,6 +851,8 @@ class SimpleGymRuntime:
                 "entity_hidden": self._entity_hidden.clone(),
             },
         }
+        if self.attack_locks is not None:
+            templates["attack_locks"] = self._tensor_fields(self.attack_locks)
         if self.periodic_spawns is not None:
             templates["periodic_spawns"] = self._tensor_fields(self.periodic_spawns)
         if self.scheduled_casts is not None:
@@ -761,6 +930,8 @@ class SimpleGymRuntime:
             "abilities": self.abilities,
             "outcomes": self.outcomes,
         }
+        if self.attack_locks is not None:
+            objects["attack_locks"] = self.attack_locks
         if self.periodic_spawns is not None:
             objects["periodic_spawns"] = self.periodic_spawns
         if self.scheduled_casts is not None:
@@ -2180,6 +2351,7 @@ class SimpleGymRuntime:
             target_x_units=combined("target_x_units"),
             target_y_units=combined("target_y_units"),
             damage_multiplier=combined("damage_multiplier"),
+            numeric=self._numeric_effect_commands,
         )
 
     def step_tick(self, action_ids: torch.Tensor) -> SimpleGymRuntimeStep:
@@ -2340,14 +2512,56 @@ class SimpleGymRuntime:
             if abilities_before is not None
             else torch.zeros_like(self.state.active)
         )
+        update_king_activation_(
+            self.state,
+            self._king_activation_delay_ticks,
+            advance_clock=True,
+        )
+        king_owner_active = self.state.king_active.gather(
+            1, self.state.owner.to(torch.int64).clamp(0, 1)
+        )
+        king_owner_ready = (
+            self.state.king_activation_ticks.gather(
+                1, self.state.owner.to(torch.int64).clamp(0, 1)
+            )
+            == 0
+        )
+        inactive_king = self._king_source_mask & ~(king_owner_active & king_owner_ready)
+        attack_clock_positive = self.state.cooldown_ticks > 0
+        if self.attack_timings is not None:
+            assert self.attack_locks is not None
+            safe_attack_card = self.state.card_id.clamp(0, self.attack_timings.size - 1)
+            timed_source = (
+                self.state.active
+                & (self.state.hp > 0)
+                & (self.state.deploy_ticks == 0)
+                & (self.state.stable_id > 0)
+                & (self.state.card_id > 0)
+                & (self.state.card_id < self.attack_timings.size)
+                & self.attack_timings.ordinary_attack_supported[safe_attack_card]
+            )
+            same_attack_generation = (
+                self.attack_locks.source_stable_id == self.state.stable_id
+            )
+            timed_clock_positive = torch.where(
+                same_attack_generation,
+                self.attack_locks.cooldown_ticks > 0,
+                self.attack_timings.first_hit_delay_ticks[safe_attack_card] > 0,
+            )
+            attack_clock_positive = torch.where(
+                timed_source,
+                timed_clock_positive,
+                attack_clock_positive,
+            )
         cooldown_decrement = self._attack_clock_decrement_(
             cooling=(
                 self.state.active
                 & ~stunned
+                & ~inactive_king
                 & ~pre_visibility.combat_blocked
                 & ~ability_cast_locked
                 & ~active_travel_view.combat_blocked
-                & (self.state.cooldown_ticks > 0)
+                & attack_clock_positive
             ),
             rate_multiplier=(
                 positive_view.cooldown_decrement_multiplier
@@ -2358,6 +2572,7 @@ class SimpleGymRuntime:
         combat = self.combat.step_tick(
             disabled=(
                 stunned
+                | inactive_king
                 | pre_visibility.combat_blocked
                 | ability_cast_locked
                 | active_travel_view.combat_blocked
@@ -2369,6 +2584,13 @@ class SimpleGymRuntime:
                 * ability_movement
             ),
             cooldown_decrement=cooldown_decrement,
+            cooldown_floor_ticks=self._cooldown_floor_ticks,
+            clear_source_lock=(
+                stunned
+                | pre_visibility.combat_blocked
+                | active_travel_view.combat_blocked
+            ),
+            reload_source_attack=(stunned | active_travel_view.combat_blocked),
         )
         ramp_parameters = self._damage_ramp_parameters()
         ramp_target = torch.where(
@@ -2382,13 +2604,19 @@ class SimpleGymRuntime:
             current_target_stable_id=ramp_target,
             stunned=stunned,
         )
-        self.state.cooldown_ticks.copy_(
-            torch.maximum(
-                self.state.cooldown_ticks,
-                ramp.retarget_delay_ticks,
+        if self.attack_timings is None:
+            self.state.cooldown_ticks.copy_(
+                torch.maximum(
+                    self.state.cooldown_ticks,
+                    ramp.retarget_delay_ticks,
+                )
             )
-        )
-        attack_ready = combat.attack_ready & (ramp.retarget_delay_ticks == 0)
+            attack_ready = combat.attack_ready & (ramp.retarget_delay_ticks == 0)
+        else:
+            # Stable attack locks are the sole retarget-clock authority. The
+            # ramp state still owns continuous-target stage progression and
+            # its damage multiplier, but cannot install a second delay.
+            attack_ready = combat.attack_ready
         attack_damage_multiplier = charge_view.damage * ramp.damage_multiplier
         commands = self._effect_commands(
             ingress,
@@ -2757,6 +2985,11 @@ class SimpleGymRuntime:
             )
         self._publish_ability_mechanics_(abilities_after)
         self._publish_travel_mechanics_(self._travel_view())
+        update_king_activation_(
+            self.state,
+            self._king_activation_delay_ticks,
+            advance_clock=False,
+        )
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())

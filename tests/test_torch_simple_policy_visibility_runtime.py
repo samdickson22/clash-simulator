@@ -88,6 +88,7 @@ def test_ghost_runtime_reveal_melee_hold_fade_and_public_features(
     state.y_units[0, knight] = 16_500
     state.hp[0, ghost] = state.max_hp[0, ghost] = 1_000_000.0
     state.hp[0, knight] = state.max_hp[0, knight] = 1_000_000.0
+    state.speed_units_per_tick[0, knight] = 0
     state.cooldown_ticks[0, ghost] = 0
 
     initial = runtime.observe()
@@ -95,7 +96,15 @@ def test_ghost_runtime_reveal_melee_hold_fade_and_public_features(
     assert initial.actor.entity_features[0, :, ghost, 18].tolist() == [1.0, 1.0]
     assert initial.actor.entity_mask[0, :, ghost].tolist() == [True, True]
 
-    revealed = runtime.step_tick(_noop(runtime))
+    assert runtime.attack_timings is not None
+    first_hit_ticks = int(runtime.attack_timings.first_hit_delay_ticks[ids["RoyalGhost"]])
+    revealed = None
+    for _ in range(first_hit_ticks):
+        candidate = runtime.step_tick(_noop(runtime))
+        if bool(candidate.policy_visibility.became_visible[0, ghost]):
+            revealed = candidate
+            break
+    assert revealed is not None
     assert bool(revealed.policy_visibility.became_visible[0, ghost])
     assert not bool(runtime.combat._target_unavailable[0, ghost])
     assert revealed.observation.actor.entity_features[0, :, ghost, 18].tolist() == [
