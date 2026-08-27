@@ -44,6 +44,27 @@ class FastGymTickResult:
     moved_distance_units: torch.Tensor
 
 
+@dataclass(frozen=True)
+class FastTargetSnapshot:
+    """One fixed-shape target observation for every dense source slot.
+
+    Coordinates retain both the target center and the native stop point at the
+    source's ordinary range from its hitbox. Every plane is ``[B, E]`` and
+    remains on the state device.
+    """
+
+    found: torch.Tensor
+    target_slot: torch.Tensor
+    target_stable_id: torch.Tensor
+    target_x_units: torch.Tensor
+    target_y_units: torch.Tensor
+    destination_x_units: torch.Tensor
+    destination_y_units: torch.Tensor
+    center_distance_units: torch.Tensor
+    edge_distance_units: torch.Tensor
+    within_attack_range: torch.Tensor
+
+
 class FastTensorGym:
     """Mutation-only tensor engine with deterministic lowest-slot allocation."""
 
@@ -125,6 +146,65 @@ class FastTensorGym:
             target_unavailable=self._target_unavailable,
         )
         return targets.within_attack_range
+
+    def target_snapshot(
+        self,
+        *,
+        source_disabled: torch.Tensor | None = None,
+    ) -> FastTargetSnapshot:
+        """Expose the shared deterministic acquisition result as dense tensors."""
+
+        state = self.state
+        if source_disabled is None:
+            source_disabled = torch.zeros_like(state.active)
+        elif source_disabled.shape != state.active.shape:
+            raise ValueError("source_disabled must have shape [batch, entities]")
+        elif source_disabled.device != state.device:
+            raise ValueError("source_disabled must use the state device")
+        elif source_disabled.dtype != torch.bool:
+            raise ValueError("source_disabled must be bool")
+        traits = self._target_traits()
+        selected = select_nearest_targets(
+            state,
+            traits,
+            source_disabled=source_disabled,
+            target_unavailable=self._target_unavailable,
+        )
+        safe_slot = selected.target_slot.clamp(min=0)
+        target_x = state.x_units.gather(1, safe_slot)
+        target_y = state.y_units.gather(1, safe_slot)
+        target_radius = traits.collision_radius.gather(1, safe_slot).clamp(min=0)
+        delta_x = target_x.to(torch.float32) - state.x_units.to(torch.float32)
+        delta_y = target_y.to(torch.float32) - state.y_units.to(torch.float32)
+        stop_distance = (
+            state.range_units.clamp(min=0).to(torch.float32)
+            + target_radius.to(torch.float32)
+        )
+        travel_distance = (selected.center_distance - stop_distance).clamp(min=0.0)
+        scale = travel_distance / selected.center_distance.clamp_min(1.0)
+        destination_x = state.x_units + torch.round(delta_x * scale).to(torch.int32)
+        destination_y = state.y_units + torch.round(delta_y * scale).to(torch.int32)
+        zeros = torch.zeros_like(state.x_units)
+        return FastTargetSnapshot(
+            found=selected.found,
+            target_slot=selected.target_slot,
+            target_stable_id=selected.target_id,
+            target_x_units=torch.where(selected.found, target_x, zeros),
+            target_y_units=torch.where(selected.found, target_y, zeros),
+            destination_x_units=torch.where(selected.found, destination_x, zeros),
+            destination_y_units=torch.where(selected.found, destination_y, zeros),
+            center_distance_units=torch.where(
+                selected.found,
+                torch.round(selected.center_distance).to(torch.int32),
+                zeros,
+            ),
+            edge_distance_units=torch.where(
+                selected.found,
+                torch.round(selected.edge_distance).to(torch.int32),
+                zeros,
+            ),
+            within_attack_range=selected.within_attack_range,
+        )
 
     def _navigation_targets(
         self,

@@ -53,6 +53,7 @@ from .simple_effects import (
     step_fast_effects,
 )
 from .simple_engine import FastTensorGym
+from .simple_impulse import FastRadialImpulseResult, compute_fast_radial_impulse
 from .simple_lifecycle import (
     FastLifecycleState,
     FastLifecycleStepResult,
@@ -144,7 +145,23 @@ from .simple_spawn_blueprints import (
     positive_area_activation_commands,
     rolling_spawn_commands,
 )
-from .simple_state import FastGymState
+from .simple_state import FAST_KIND_BUILDING, FastGymState
+from .simple_travel import (
+    FAST_TRAVEL_TRANSIT,
+    FAST_TRAVEL_UNDERGROUND,
+    FAST_TRAVEL_WINDUP,
+    FastTravelCatalog,
+    FastTravelState,
+    FastTravelStepResult,
+    FastTravelView,
+    advance_fast_travel_,
+    fast_travel_view,
+    travel_impact_radial_impulse_inputs,
+)
+from .simple_travel_effects import (
+    FastTravelEffectAllocationResult,
+    allocate_fast_travel_effects_,
+)
 
 
 def _same_device(left: torch.device, right: torch.device) -> bool:
@@ -192,6 +209,10 @@ class SimpleGymRuntimeStep:
     death_bursts: tuple[FastDeathBurstStepResult, FastDeathBurstStepResult]
     death_burst_effects: tuple[FastEffectStepResult, FastEffectStepResult]
     policy_visibility: FastPolicyVisibilityStep
+    travel: FastTravelStepResult | None
+    travel_effect_allocation: FastTravelEffectAllocationResult | None
+    travel_effects: FastEffectStepResult | None
+    travel_impulse: FastRadialImpulseResult | None
 
 
 class SimpleGymRuntime:
@@ -220,6 +241,8 @@ class SimpleGymRuntime:
         spawn_blueprints: FastSpawnBlueprintCatalog | None = None,
         policy_mechanics: FastPolicyMechanicCatalog | None = None,
         ability_catalog: FastAbilityCatalog | None = None,
+        travel_catalog: FastTravelCatalog | None = None,
+        knockback_immune_by_card: torch.Tensor | None = None,
     ) -> None:
         if deck_ids.ndim != 3 or tuple(deck_ids.shape[1:]) != (2, 8):
             raise ValueError("deck_ids must have shape [batch, 2, 8]")
@@ -243,6 +266,18 @@ class SimpleGymRuntime:
                 raise ValueError("ability catalog must align with cards")
             if not _same_device(ability_catalog.device, catalog.device):
                 raise ValueError("ability catalog and cards must share a device")
+        if travel_catalog is not None:
+            if travel_catalog.size != catalog.size:
+                raise ValueError("travel catalog must align with cards")
+            if not _same_device(travel_catalog.device, catalog.device):
+                raise ValueError("travel catalog and cards must share a device")
+        if knockback_immune_by_card is not None:
+            if knockback_immune_by_card.shape != (catalog.size,):
+                raise ValueError("knockback immunity must align with cards")
+            if knockback_immune_by_card.device != catalog.device:
+                raise ValueError("knockback immunity must use the catalog device")
+            if knockback_immune_by_card.dtype != torch.bool:
+                raise ValueError("knockback immunity must be bool")
         if spawn_blueprints is not None:
             if spawn_blueprints.fast_cards is not catalog:
                 raise ValueError(
@@ -315,9 +350,20 @@ class SimpleGymRuntime:
         )
         self.ability_catalog = ability_catalog
         self.abilities = FastAbilityState.empty_like(self.state)
+        self.travel_catalog = travel_catalog
+        self.travel = FastTravelState.empty(
+            self.state.batch_size,
+            max_entities=self.state.max_entities,
+            device=self.state.device,
+        )
         self.effects = FastEffectState.empty(
             self.state.batch_size,
             max_effects=max_effects,
+            device=self.state.device,
+        )
+        self.travel_effects = FastEffectState.empty(
+            self.state.batch_size,
+            max_effects=max_entities,
             device=self.state.device,
         )
         self.death_effects = FastEffectState.empty(
@@ -411,6 +457,18 @@ class SimpleGymRuntime:
             dtype=torch.int64,
             device=self.state.device,
         )
+        self.travel_effect_consume_source_id = torch.zeros(
+            (self.state.batch_size, max_entities),
+            dtype=torch.int64,
+            device=self.state.device,
+        )
+        self._travel_spawned = torch.zeros_like(self.state.active)
+        self._travel_interrupted = torch.zeros_like(self.state.active)
+        self.knockback_immune_by_card = (
+            knockback_immune_by_card
+            if knockback_immune_by_card is not None
+            else torch.zeros(catalog.size, dtype=torch.bool, device=self.state.device)
+        )
         self.outcomes = FastOutcomeTracker(self.state, rules)
         self.tick_seconds = float(tick_seconds)
         self.double_elixir_tick = double_elixir_tick
@@ -502,6 +560,8 @@ class SimpleGymRuntime:
             "state": self._tensor_fields(self.state),
             "action": self._tensor_fields(self.action_state),
             "effects": self._tensor_fields(self.effects),
+            "travel": self._tensor_fields(self.travel),
+            "travel_effects": self._tensor_fields(self.travel_effects),
             "death_effects": self._tensor_fields(self.death_effects),
             "death_bursts": self._tensor_fields(self.death_bursts),
             "payload_containers": self._tensor_fields(self.payload_containers),
@@ -531,6 +591,11 @@ class SimpleGymRuntime:
                 "death_effect_consume_source_id": (
                     self.death_effect_consume_source_id.clone()
                 ),
+                "travel_effect_consume_source_id": (
+                    self.travel_effect_consume_source_id.clone()
+                ),
+                "travel_spawned": self._travel_spawned.clone(),
+                "travel_interrupted": self._travel_interrupted.clone(),
                 "projection_hand_ids": self._projection_hand_ids.clone(),
                 "double_elixir": self._double_elixir.clone(),
                 "triple_elixir": self._triple_elixir.clone(),
@@ -604,6 +669,8 @@ class SimpleGymRuntime:
             "state": self.state,
             "action": self.action_state,
             "effects": self.effects,
+            "travel": self.travel,
+            "travel_effects": self.travel_effects,
             "death_effects": self.death_effects,
             "death_bursts": self.death_bursts,
             "payload_containers": self.payload_containers,
@@ -633,6 +700,9 @@ class SimpleGymRuntime:
             "entity_attack_clock_fraction": self.entity_attack_clock_fraction,
             "effect_consume_source_id": self.effect_consume_source_id,
             "death_effect_consume_source_id": self.death_effect_consume_source_id,
+            "travel_effect_consume_source_id": self.travel_effect_consume_source_id,
+            "travel_spawned": self._travel_spawned,
+            "travel_interrupted": self._travel_interrupted,
             "projection_hand_ids": self._projection_hand_ids,
             "double_elixir": self._double_elixir,
             "triple_elixir": self._triple_elixir,
@@ -736,6 +806,7 @@ class SimpleGymRuntime:
 
     def observe(self) -> SimpleProjectedObservation:
         self._publish_policy_visibility_(self._policy_visibility_view())
+        self._publish_travel_mechanics_(self._travel_view())
         self._refresh_policy_state()
         return self.projector.project(self._legal_action_mask())
 
@@ -772,6 +843,229 @@ class SimpleGymRuntime:
         # Cloaked Champions remain publicly represented, but the structured
         # invisible flag and target-unavailable plane carry their semantics.
         self._entity_invisible.logical_or_(abilities.effect_active)
+
+    def _travel_view(self) -> FastTravelView:
+        """Return current travel gates, including not-yet-advanced spawns."""
+
+        view = fast_travel_view(
+            self.travel,
+            active=self.state.active & (self.state.hp > 0),
+            stable_id=self.state.stable_id,
+            card_id=self.state.card_id,
+        )
+        if self.travel_catalog is None:
+            return view
+        safe_card = self.state.card_id.clamp(0, self.travel_catalog.size - 1)
+        known = (self.state.card_id > 0) & (
+            self.state.card_id < self.travel_catalog.size
+        )
+        pending = (
+            self._travel_spawned
+            & self.state.active
+            & (self.state.hp > 0)
+            & known
+            & self.travel_catalog.declares_travel[safe_card]
+        )
+        rejected = pending & ~self.travel_catalog.profile_supported[safe_card]
+        protected = pending & ~rejected
+        return FastTravelView(
+            current=view.current | pending,
+            profile_rejected=view.profile_rejected | rejected,
+            special_active=view.special_active | protected,
+            target_unavailable=view.target_unavailable | pending,
+            immune=view.immune | protected,
+            combat_blocked=view.combat_blocked | pending,
+            movement_blocked=view.movement_blocked | pending,
+        )
+
+    def _publish_travel_mechanics_(self, view: FastTravelView) -> None:
+        """Compose travel state into shared targeting and observation planes."""
+
+        self.combat._target_unavailable.logical_or_(view.target_unavailable)
+        self._entity_special.logical_or_(view.special_active)
+        underground = (self.travel.kind == FAST_TRAVEL_UNDERGROUND) & (
+            view.target_unavailable
+        )
+        if self.travel_catalog is not None:
+            safe_card = self.state.card_id.clamp(0, self.travel_catalog.size - 1)
+            underground |= self._travel_spawned & (
+                self.travel_catalog.kind[safe_card] == FAST_TRAVEL_UNDERGROUND
+            )
+        self._entity_hidden.logical_or_(underground)
+
+    def _queue_travel_spawned_(self, spawned: torch.Tensor) -> None:
+        if spawned.shape != self.state.active.shape:
+            raise ValueError("spawned must have shape [batch, entities]")
+        self._travel_spawned.logical_or_(spawned)
+
+    def _step_travel_(
+        self,
+        *,
+        stunned: torch.Tensor,
+        policy_view: FastPolicyVisibilityView,
+        abilities: FastAbilityStepResult | None,
+    ) -> FastTravelStepResult | None:
+        """Advance special movement once before ordinary movement and combat."""
+
+        if self.travel_catalog is None:
+            self._travel_spawned.zero_()
+            self._travel_interrupted.zero_()
+            return None
+        ability_locked = (
+            abilities.cast_locked
+            if abilities is not None
+            else torch.zeros_like(self.state.active)
+        )
+        current_before = fast_travel_view(
+            self.travel,
+            active=self.state.active & (self.state.hp > 0),
+            stable_id=self.state.stable_id,
+            card_id=self.state.card_id,
+        )
+        paused_windup = (
+            current_before.current
+            & (self.travel.phase == FAST_TRAVEL_WINDUP)
+            & stunned
+        )
+        snapshot = self.combat.target_snapshot()
+        result = advance_fast_travel_(
+            self.travel_catalog,
+            self.travel,
+            active=self.state.active & (self.state.hp > 0),
+            stable_id=self.state.stable_id,
+            card_id=self.state.card_id,
+            owner=self.state.owner,
+            x_units=self.state.x_units,
+            y_units=self.state.y_units,
+            spawned=self._travel_spawned,
+            trigger=(
+                snapshot.found
+                & ~stunned
+                & ~policy_view.combat_blocked
+                & ~ability_locked
+            ),
+            target_stable_id=snapshot.target_stable_id,
+            target_x_units=snapshot.destination_x_units,
+            target_y_units=snapshot.destination_y_units,
+            target_distance_units=snapshot.edge_distance_units,
+            target_valid=snapshot.found,
+            interrupted=self._travel_interrupted,
+        )
+        self.state.x_units.copy_(result.x_units)
+        self.state.y_units.copy_(result.y_units)
+        paused_windup &= ~result.cancelled
+        launched_while_paused = paused_windup & (
+            self.travel.phase == FAST_TRAVEL_TRANSIT
+        )
+        safe_card = self.state.card_id.clamp(0, self.travel_catalog.size - 1)
+        restored_ticks = torch.where(
+            launched_while_paused,
+            self.travel_catalog.windup_ticks[safe_card].clamp_min(1) - 1,
+            (self.travel.phase_ticks - 1).clamp_min(0),
+        )
+        self.travel.phase.copy_(
+            torch.where(
+                paused_windup,
+                torch.full_like(self.travel.phase, FAST_TRAVEL_WINDUP),
+                self.travel.phase,
+            )
+        )
+        self.travel.phase_ticks.copy_(
+            torch.where(paused_windup, restored_ticks, self.travel.phase_ticks)
+        )
+        result = replace(
+            result,
+            view=fast_travel_view(
+                self.travel,
+                active=self.state.active & (self.state.hp > 0),
+                stable_id=self.state.stable_id,
+                card_id=self.state.card_id,
+            ),
+        )
+        self._travel_spawned.zero_()
+        self._travel_interrupted.zero_()
+        return result
+
+    def _resolve_travel_impacts_(
+        self,
+        travel: FastTravelStepResult,
+        *,
+        policy_view: FastPolicyVisibilityView,
+        travel_view: FastTravelView,
+    ) -> tuple[
+        FastTravelEffectAllocationResult,
+        FastEffectStepResult,
+        FastRadialImpulseResult,
+    ]:
+        """Commit travel damage and push through shared numeric kernels."""
+
+        allocation = allocate_fast_travel_effects_(
+            self.state,
+            self.travel_effects,
+            self.travel_effect_consume_source_id,
+            travel.impact,
+        )
+        safe_card = self.state.card_id.clamp(0, self.action_kernel.catalog.size - 1)
+        receivable = ~travel_view.immune
+        effects = step_fast_effects(
+            self.state,
+            self.travel_effects,
+            self.entity_status_kind,
+            self.entity_status_ticks,
+            consume_source_id=self.travel_effect_consume_source_id,
+            cleanup_dead=False,
+            modifiers=self.modifiers,
+            entity_is_air=self.action_kernel.catalog.is_air[safe_card],
+            entity_collision_radius_units=(
+                self.action_kernel.catalog.collision_radius_units[safe_card]
+            ),
+            tick_status=False,
+            entity_slow_ticks=self.entity_slow_ticks,
+            slow_movement_multiplier_by_card=(
+                self.action_kernel.catalog.slow_movement_multiplier
+            ),
+            slow_attack_multiplier_by_card=(
+                self.action_kernel.catalog.slow_attack_multiplier
+            ),
+            entity_committed_direct_receivable=(
+                policy_view.effect_receivable_affects_hidden & receivable
+            ),
+            entity_secondary_targetable=(
+                policy_view.secondary_targetable & receivable
+            ),
+            entity_area_receivable=policy_view.area_receivable & receivable,
+            entity_effect_receivable_affects_hidden=(
+                policy_view.effect_receivable_affects_hidden & receivable
+            ),
+        )
+        entity_is_air = self.action_kernel.catalog.is_air[safe_card]
+        eligible = (
+            allocation.accepted[:, :, None]
+            & self.state.active[:, None, :]
+            & (self.state.hp[:, None, :] > 0)
+            & (
+                self.state.owner[:, None, :]
+                != travel.impact.source_owner[:, :, None]
+            )
+            & ~entity_is_air[:, None, :]
+            & (self.state.kind[:, None, :] != FAST_KIND_BUILDING)
+            & ~self.knockback_immune_by_card[safe_card][:, None, :]
+            & policy_view.area_receivable[:, None, :]
+            & ~travel_view.immune[:, None, :]
+        )
+        impulse = compute_fast_radial_impulse(
+            travel_impact_radial_impulse_inputs(
+                travel.impact,
+                target_x_units=self.state.x_units,
+                target_y_units=self.state.y_units,
+                target_stable_id=self.state.stable_id,
+                eligible=eligible,
+            )
+        )
+        self.state.x_units.add_(impulse.dx_units).clamp_(0, 18_000)
+        self.state.y_units.add_(impulse.dy_units).clamp_(0, 32_000)
+        self._travel_interrupted.logical_or_(impulse.affected)
+        return allocation, effects, impulse
 
     def _initialize_policy_mechanics_(self, spawned: torch.Tensor) -> None:
         self.policy_mechanics.initialize_spawned_(
@@ -1008,6 +1302,8 @@ class SimpleGymRuntime:
             self._death_burst_effect_commands(burst.commands),
         )
         visibility = self._policy_visibility_view()
+        travel_view = self._travel_view()
+        receivable = ~travel_view.immune
         effect = step_fast_effects(
             self.state,
             self.death_effects,
@@ -1033,12 +1329,12 @@ class SimpleGymRuntime:
                 self.action_kernel.catalog.slow_attack_multiplier
             ),
             entity_committed_direct_receivable=(
-                visibility.effect_receivable_affects_hidden
+                visibility.effect_receivable_affects_hidden & receivable
             ),
-            entity_secondary_targetable=visibility.secondary_targetable,
-            entity_area_receivable=visibility.area_receivable,
+            entity_secondary_targetable=(visibility.secondary_targetable & receivable),
+            entity_area_receivable=visibility.area_receivable & receivable,
             entity_effect_receivable_affects_hidden=(
-                visibility.effect_receivable_affects_hidden
+                visibility.effect_receivable_affects_hidden & receivable
             ),
         )
         return burst, effect
@@ -1329,6 +1625,32 @@ class SimpleGymRuntime:
             damage_multiplier=ones_spell,
         )
         zeros_entity = torch.zeros_like(self.state.x_units)
+        if self.travel_catalog is not None:
+            safe_source = self.state.card_id.clamp(0, self.travel_catalog.size - 1)
+            target_match = (
+                self.state.active[:, None, :]
+                & (self.state.hp[:, None, :] > 0)
+                & (self.state.target_id[:, :, None] > 0)
+                & (
+                    self.state.target_id[:, :, None]
+                    == self.state.stable_id[:, None, :]
+                )
+            )
+            target_found = target_match.any(dim=2)
+            target_slot = target_match.to(torch.int8).argmax(dim=2).to(torch.int64)
+            crown_target = target_found & (target_slot < FAST_TOWER_SLOT_COUNT)
+            underground = (
+                self.travel_catalog.kind[safe_source] == FAST_TRAVEL_UNDERGROUND
+            ) & self.travel_catalog.profile_supported[safe_source]
+            ordinary_damage = self.action_kernel.catalog.effect_damage[
+                safe_source
+            ].clamp_min(torch.finfo(torch.float32).tiny)
+            tower_scale = self.travel_catalog.tower_damage[safe_source] / ordinary_damage
+            attack_damage_multiplier = attack_damage_multiplier * torch.where(
+                crown_target & underground,
+                tower_scale,
+                torch.ones_like(tower_scale),
+            )
         attack = FastEffectCommands(
             ready=attack_ready,
             source_id=self.state.stable_id,
@@ -1419,9 +1741,54 @@ class SimpleGymRuntime:
         self._initialize_modifiers_(self.combat.spawned_mask)
         self._clear_damage_ramp_(self.combat.spawned_mask)
         self._initialize_policy_mechanics_(self.combat.spawned_mask)
+        self._queue_travel_spawned_(self.combat.spawned_mask)
         pre_visibility = self._policy_visibility_view()
         self._publish_policy_visibility_(pre_visibility)
         self._publish_ability_mechanics_(abilities_before)
+        self._publish_travel_mechanics_(self._travel_view())
+        stunned = (self.entity_status_kind == FAST_STATUS_STUN) & (
+            self.entity_status_ticks > 0
+        )
+        travel_result = self._step_travel_(
+            stunned=stunned,
+            policy_view=pre_visibility,
+            abilities=abilities_before,
+        )
+        active_travel_view = self._travel_view()
+        if travel_result is not None:
+            assert self.travel_catalog is not None
+            safe_travel_card = self.state.card_id.clamp(
+                0, self.travel_catalog.size - 1
+            )
+            consumed_tick = travel_result.completed | (
+                travel_result.initialized
+                & self.travel_catalog.declares_travel[safe_travel_card]
+            )
+            active_travel_view = replace(
+                active_travel_view,
+                combat_blocked=(
+                    active_travel_view.combat_blocked | consumed_tick
+                ),
+                movement_blocked=(
+                    active_travel_view.movement_blocked | consumed_tick
+                ),
+            )
+        self._publish_policy_visibility_(pre_visibility)
+        self._publish_ability_mechanics_(abilities_before)
+        self._publish_travel_mechanics_(active_travel_view)
+        travel_effect_allocation: FastTravelEffectAllocationResult | None = None
+        travel_effect_result: FastEffectStepResult | None = None
+        travel_impulse: FastRadialImpulseResult | None = None
+        if travel_result is not None:
+            (
+                travel_effect_allocation,
+                travel_effect_result,
+                travel_impulse,
+            ) = self._resolve_travel_impacts_(
+                travel_result,
+                policy_view=pre_visibility,
+                travel_view=active_travel_view,
+            )
 
         positive_area_step = step_fast_positive_buff_areas_(self.positive_buff_areas)
         positive_buff_apply = apply_fast_positive_area_buffs_(
@@ -1431,9 +1798,6 @@ class SimpleGymRuntime:
         )
         charge_parameters = self._charge_parameters()
         charge_view = pre_move_charge_multipliers(self.modifiers, charge_parameters)
-        stunned = (self.entity_status_kind == FAST_STATUS_STUN) & (
-            self.entity_status_ticks > 0
-        )
         slow_movement, slow_attack = self._slow_multipliers()
         positive_view = fast_positive_buff_view(self.state, self.positive_buffs)
         ability_attack = (
@@ -1457,6 +1821,7 @@ class SimpleGymRuntime:
                 & ~stunned
                 & ~pre_visibility.combat_blocked
                 & ~ability_cast_locked
+                & ~active_travel_view.combat_blocked
                 & (self.state.cooldown_ticks > 0)
             ),
             rate_multiplier=(
@@ -1466,7 +1831,12 @@ class SimpleGymRuntime:
             ),
         )
         combat = self.combat.step_tick(
-            disabled=stunned | pre_visibility.combat_blocked | ability_cast_locked,
+            disabled=(
+                stunned
+                | pre_visibility.combat_blocked
+                | ability_cast_locked
+                | active_travel_view.combat_blocked
+            ),
             speed_multiplier=(
                 charge_view.speed
                 * positive_view.movement_speed_multiplier
@@ -1550,6 +1920,7 @@ class SimpleGymRuntime:
         self.state.target_id.masked_fill_(policy_visibility.clear_source_target, 0)
         self._publish_policy_visibility_(policy_visibility.view)
         self._publish_ability_mechanics_(abilities_before)
+        self._publish_travel_mechanics_(self._travel_view())
 
         failed_deployment = (ingress.entity_deployment & ~deployed) | (
             ingress.spell_cast & ~spell_allocated
@@ -1637,7 +2008,10 @@ class SimpleGymRuntime:
             self._initialize_modifiers_(scheduled_spawned)
             self._clear_damage_ramp_(scheduled_spawned)
             self._initialize_policy_mechanics_(scheduled_spawned)
+            self._queue_travel_spawned_(scheduled_spawned)
         effect_visibility = self._policy_visibility_view()
+        effect_travel_view = self._travel_view()
+        effect_receivable = ~effect_travel_view.immune
         effect_result = step_fast_effects(
             self.state,
             self.effects,
@@ -1663,6 +2037,7 @@ class SimpleGymRuntime:
             ),
             entity_committed_direct_receivable=(
                 effect_visibility.effect_receivable_affects_hidden
+                & effect_receivable
             ),
             entity_secondary_targetable=(
                 effect_visibility.secondary_targetable
@@ -1671,10 +2046,14 @@ class SimpleGymRuntime:
                     if abilities_before is not None
                     else torch.ones_like(self.state.active)
                 )
+                & effect_receivable
             ),
-            entity_area_receivable=effect_visibility.area_receivable,
+            entity_area_receivable=(
+                effect_visibility.area_receivable & effect_receivable
+            ),
             entity_effect_receivable_affects_hidden=(
                 effect_visibility.effect_receivable_affects_hidden
+                & effect_receivable
             ),
         )
         safe_entity_card = self.state.card_id.clamp(
@@ -1695,10 +2074,13 @@ class SimpleGymRuntime:
             ),
             entity_is_crown_tower=crown_slots,
             modifiers=self.modifiers,
-            entity_area_receivable=effect_visibility.area_receivable,
+            entity_area_receivable=(
+                effect_visibility.area_receivable & effect_receivable
+            ),
         )
         self.state.x_units.add_(rolling_result.impulse_dx_units).clamp_(0, 18_000)
         self.state.y_units.add_(rolling_result.impulse_dy_units).clamp_(0, 32_000)
+        self._travel_interrupted.logical_or_(rolling_result.impulse_affected)
         rolling_spawn_allocation: FastSpawnAllocationResult | None = None
         if self.spawn_blueprints is not None:
             rolling_spawn_allocation = allocate_fast_spawns_(
@@ -1717,6 +2099,7 @@ class SimpleGymRuntime:
             self._initialize_modifiers_(rolling_spawned)
             self._clear_damage_ramp_(rolling_spawned)
             self._initialize_policy_mechanics_(rolling_spawned)
+            self._queue_travel_spawned_(rolling_spawned)
         # Two fixed passes cover the current serialized terminal depth
         # (Golem -> Golemite) without a host-driven work queue. The first pass
         # commits all already-lethal novas simultaneously; the second catches
@@ -1741,12 +2124,20 @@ class SimpleGymRuntime:
         self._clear_modifiers_(lifecycle_result.resolved_parent_mask)
         self._clear_damage_ramp_(lifecycle_result.resolved_parent_mask)
         self.policy_mechanics.clear_(lifecycle_result.resolved_parent_mask)
+        self.travel.clear_(lifecycle_result.resolved_parent_mask)
+        self._travel_spawned.masked_fill_(
+            lifecycle_result.resolved_parent_mask, False
+        )
+        self._travel_interrupted.masked_fill_(
+            lifecycle_result.resolved_parent_mask, False
+        )
         self._initialize_spawned_combat_(lifecycle_result.spawned_mask)
         self._clear_status_(lifecycle_result.spawned_mask)
         self._initialize_lifecycle_(lifecycle_result.spawned_mask)
         self._initialize_modifiers_(lifecycle_result.spawned_mask)
         self._clear_damage_ramp_(lifecycle_result.spawned_mask)
         self._initialize_policy_mechanics_(lifecycle_result.spawned_mask)
+        self._queue_travel_spawned_(lifecycle_result.spawned_mask)
         spawn_allocation: FastSpawnAllocationResult | None = None
         if self.spawn_blueprints is not None:
             spawn_commands = impact_spawn_commands(
@@ -1760,11 +2151,13 @@ class SimpleGymRuntime:
                 spawn_commands,
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
+            self._initialize_spawned_combat_(spawn_allocation.spawned_mask)
             self._clear_status_(spawn_allocation.spawned_mask)
             self._initialize_lifecycle_(spawn_allocation.spawned_mask)
             self._initialize_modifiers_(spawn_allocation.spawned_mask)
             self._clear_damage_ramp_(spawn_allocation.spawned_mask)
             self._initialize_policy_mechanics_(spawn_allocation.spawned_mask)
+            self._queue_travel_spawned_(spawn_allocation.spawned_mask)
         payload_spawn_allocation: FastSpawnAllocationResult | None = None
         if self.spawn_blueprints is not None:
             payload_spawn_allocation = allocate_fast_spawns_(
@@ -1783,6 +2176,7 @@ class SimpleGymRuntime:
             self._initialize_modifiers_(payload_spawned)
             self._clear_damage_ramp_(payload_spawned)
             self._initialize_policy_mechanics_(payload_spawned)
+            self._queue_travel_spawned_(payload_spawned)
         periodic_spawn_allocation: FastSpawnAllocationResult | None = None
         if self.periodic_catalog is not None and self.periodic_spawns is not None:
             periodic_commands = step_periodic_spawns_(
@@ -1810,6 +2204,7 @@ class SimpleGymRuntime:
             self._initialize_modifiers_(periodic_spawned)
             self._clear_damage_ramp_(periodic_spawned)
             self._initialize_policy_mechanics_(periodic_spawned)
+            self._queue_travel_spawned_(periodic_spawned)
         positive_buff_advance = advance_fast_positive_buffs_(
             self.state,
             self.positive_buffs,
@@ -1826,6 +2221,7 @@ class SimpleGymRuntime:
                 player_alive=self.action_state.player_alive,
             )
         self._publish_ability_mechanics_(abilities_after)
+        self._publish_travel_mechanics_(self._travel_view())
         outcome = self.outcomes.evaluate()
         self._refresh_policy_state()
         observation = self.projector.project(self._legal_action_mask())
@@ -1883,6 +2279,10 @@ class SimpleGymRuntime:
             death_bursts=(death_burst_first, death_burst_second),
             death_burst_effects=(death_effect_first, death_effect_second),
             policy_visibility=policy_visibility,
+            travel=travel_result,
+            travel_effect_allocation=travel_effect_allocation,
+            travel_effects=travel_effect_result,
+            travel_impulse=travel_impulse,
         )
 
 

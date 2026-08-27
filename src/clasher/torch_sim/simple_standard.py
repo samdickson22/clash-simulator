@@ -22,6 +22,7 @@ from clasher.kinematics import (
     LOGIC_TICK_SECONDS,
     tiles_to_logic_units,
 )
+from clasher.unit_traits import is_knockback_immune
 
 from .catalog import TensorCardCatalog
 from .simple_abilities import FastAbilityCatalog
@@ -29,6 +30,7 @@ from .simple_outcomes import FastMatchRules, FastTowerSpec
 from .simple_policy_mechanics import FastPolicyMechanicCatalog
 from .simple_runtime import SimpleGymRuntime
 from .simple_spawn_blueprints import FastSpawnBlueprintCatalog
+from .simple_travel import FastTravelCatalog
 
 # The current-client match phases expressed in the one authoritative 50 ms
 # logic clock.  Keeping the source durations beside the conversion makes the
@@ -195,6 +197,8 @@ class SimpleStandardSetup:
     spawn_blueprints: FastSpawnBlueprintCatalog
     policy_mechanics: FastPolicyMechanicCatalog
     ability_catalog: FastAbilityCatalog
+    travel_catalog: FastTravelCatalog
+    knockback_immune_by_card: torch.Tensor
     tower_spec: FastTowerSpec
     rules: FastMatchRules
     public_root_mask: torch.Tensor
@@ -250,6 +254,8 @@ class SimpleStandardSetup:
             spawn_blueprints=runtime_blueprints,
             policy_mechanics=self.policy_mechanics,
             ability_catalog=self.ability_catalog,
+            travel_catalog=self.travel_catalog,
+            knockback_immune_by_card=self.knockback_immune_by_card,
         )
 
 
@@ -274,6 +280,16 @@ def compile_standard_simple_setup(
     blueprints = FastSpawnBlueprintCatalog.compile(loader, base_cards)
     policy_mechanics = FastPolicyMechanicCatalog.compile(blueprints.cards, loader)
     ability_catalog = FastAbilityCatalog.compile(blueprints.cards, loader)
+    travel_catalog = FastTravelCatalog.compile(blueprints.cards, loader)
+    knockback_immune = torch.zeros(
+        len(blueprints.cards.names),
+        dtype=torch.bool,
+        device=blueprints.device,
+    )
+    for card_id, name in enumerate(blueprints.cards.names[1:], start=1):
+        card = loader.get_card(name)
+        if card is not None:
+            knockback_immune[card_id] = is_knockback_immune(card)
     public_mask = blueprints.public_card_mask.clone()
     supported_mask = (
         public_mask
@@ -281,6 +297,7 @@ def compile_standard_simple_setup(
         & policy_mechanics.profile_supported
         & ~ability_catalog.malformed
         & ~ability_catalog.duplicate
+        & travel_catalog.profile_supported
     ).clone()
     public_names = tuple(
         name
@@ -297,6 +314,8 @@ def compile_standard_simple_setup(
         spawn_blueprints=blueprints,
         policy_mechanics=policy_mechanics,
         ability_catalog=ability_catalog,
+        travel_catalog=travel_catalog,
+        knockback_immune_by_card=knockback_immune,
         tower_spec=standard_tower_spec(loader, device),
         rules=standard_match_rules(),
         public_root_mask=public_mask,

@@ -51,6 +51,14 @@ def _assert_status_planes_equal(left: Any, right: Any) -> None:
 def _assert_policy_planes_equal(left: Any, right: Any) -> None:
     _assert_tensor_fields_equal(left.policy_mechanics, right.policy_mechanics)
     _assert_tensor_fields_equal(left.abilities, right.abilities)
+    _assert_tensor_fields_equal(left.travel, right.travel)
+    _assert_tensor_fields_equal(left.travel_effects, right.travel_effects)
+    assert torch.equal(left._travel_spawned, right._travel_spawned)
+    assert torch.equal(left._travel_interrupted, right._travel_interrupted)
+    assert torch.equal(
+        left.travel_effect_consume_source_id,
+        right.travel_effect_consume_source_id,
+    )
     for name in ("_entity_special", "_entity_invisible", "_entity_hidden"):
         assert torch.equal(getattr(left, name), getattr(right, name))
 
@@ -99,6 +107,23 @@ def test_cuda_graph_runner_matches_eager_replays() -> None:
         _assert_policy_planes_equal(runtime, reference)
         assert torch.equal(step.reward, reference_step.reward)
         assert torch.equal(step.done, reference_step.done)
+        assert step.travel is not None
+        assert reference_step.travel is not None
+        _assert_tensor_fields_equal(step.travel, reference_step.travel)
+        _assert_tensor_fields_equal(step.travel.view, reference_step.travel.view)
+        _assert_tensor_fields_equal(step.travel.impact, reference_step.travel.impact)
+        assert step.travel_effect_allocation is not None
+        assert reference_step.travel_effect_allocation is not None
+        _assert_tensor_fields_equal(
+            step.travel_effect_allocation,
+            reference_step.travel_effect_allocation,
+        )
+        assert step.travel_effects is not None
+        assert reference_step.travel_effects is not None
+        _assert_tensor_fields_equal(step.travel_effects, reference_step.travel_effects)
+        assert step.travel_impulse is not None
+        assert reference_step.travel_impulse is not None
+        _assert_tensor_fields_equal(step.travel_impulse, reference_step.travel_impulse)
         assert torch.equal(
             step.observation.actor.entity_ids,
             reference_step.observation.actor.entity_ids,
