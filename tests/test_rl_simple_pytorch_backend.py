@@ -23,7 +23,12 @@ from clasher.rl.simple_pytorch_backend import (
 )
 from clasher.rl.simple_tensor_collector import SimpleTensorMaskRequest
 from clasher.rl.structured_obs import StructuredObservationBuilder
-from clasher.rl.train_recurrent import RolloutBatch, _validate_simple_pytorch_args
+from clasher.rl.train_recurrent import (
+    RolloutBatch,
+    _load_initial_policy_state,
+    _validate_simple_initial_policy_contract,
+    _validate_simple_pytorch_args,
+)
 from clasher.torch_sim.actions import ABILITY_ACTION, NO_OP_ACTION
 from clasher.torch_sim.simple_cuda_graph import SimpleCudaGraphRunner
 from clasher.torch_sim.simple_public_mask import (
@@ -39,6 +44,7 @@ def _simple_args(**overrides: object) -> Namespace:
         "actor_workers": 1,
         "resume_latest": False,
         "resume_from": None,
+        "initialize_policy_from": None,
         "opponent_mode": "selfplay",
         "actor_observation_domain": "simulator-exact",
         "reward_profile": "objective-v1",
@@ -90,6 +96,65 @@ def test_simple_backend_capacity_arguments_fail_closed(
         _validate_simple_pytorch_args(_simple_args(**overrides))
 
 
+def test_simple_initial_policy_is_weights_only_and_capacity_exact(
+    tmp_path: Any,
+) -> None:
+    vocabulary = load_current_client_typed_vocabulary()
+    config = PolicyConfig(
+        num_tokens=len(vocabulary.token_names),
+        max_entities=48,
+        canonical_lane_globals=True,
+        card_semantics_version=3,
+        actor_observation_domain="causal-frame-v1",
+        public_observation_confidence=True,
+        memory_kind="structured",
+        memory_size=64,
+    )
+    path = tmp_path / "imitation.pt"
+    torch.save(
+        {
+            "format_version": 2,
+            "model_type": "entity_spatial_recurrent",
+            "model_config": config.to_dict(),
+            "model_state_dict": {"weight": torch.ones(1)},
+            "token_names": vocabulary.token_names,
+            "optimizer_state_dict": {"must_not_load": True},
+            "update": 91,
+            "total_transitions": 123_456,
+        },
+        path,
+    )
+    payload, loaded_path = _load_initial_policy_state(
+        _simple_args(initialize_policy_from=str(path)), torch.device("cpu")
+    )
+    assert payload is not None
+    assert loaded_path == path.resolve()
+    assert _validate_simple_initial_policy_contract(
+        payload,
+        token_names=vocabulary.token_names,
+        max_entities=48,
+    ) == config
+    with pytest.raises(ValueError, match="entity capacity"):
+        _validate_simple_initial_policy_contract(
+            payload,
+            token_names=vocabulary.token_names,
+            max_entities=64,
+        )
+
+
+def test_simple_initial_policy_rejects_resume_combination(tmp_path: Any) -> None:
+    path = tmp_path / "imitation.pt"
+    path.write_bytes(b"not-loaded")
+    with pytest.raises(ValueError, match="cannot be combined"):
+        _load_initial_policy_state(
+            _simple_args(
+                initialize_policy_from=str(path),
+                resume_from="other.pt",
+            ),
+            torch.device("cpu"),
+        )
+
+
 def _training_collector(
     device_name: str = "cpu",
     *,
@@ -97,6 +162,7 @@ def _training_collector(
     execution_mode: str | None = None,
     max_entities: int = 128,
     max_effects: int = 128,
+    actor_observation_domain: str = "simulator-exact",
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -121,6 +187,10 @@ def _training_collector(
         critic_layers=1,
         memory_size=32,
         dropout=0.0,
+        actor_observation_domain=actor_observation_domain,
+        public_observation_confidence=(
+            actor_observation_domain in {"causal-frame-v1", "causal-vision-v1"}
+        ),
     )
     model = ClasherPolicy(config, builder.card_stat_features).to(device)
     return SimplePytorchTrainingCollector(
@@ -138,6 +208,13 @@ def _training_collector(
         max_effects=max_effects,
         _execution_mode_override=execution_mode,
     )
+
+
+def test_simple_backend_accepts_causal_frame_policy_but_not_stabilized_vision() -> None:
+    collector = _training_collector(actor_observation_domain="causal-frame-v1")
+    assert collector.policy.model.config.public_observation_confidence
+    with pytest.raises(SimplePytorchBackendError, match="policy input"):
+        _training_collector(actor_observation_domain="causal-vision-v1")
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "mps", "cuda"))

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import atexit
+import hashlib
 import json
 import time
 from collections.abc import Callable, Iterator
@@ -1768,6 +1769,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--checkpoint-dir", default="checkpoints/entity_selfplay")
     parser.add_argument("--resume-latest", action="store_true")
     parser.add_argument("--resume-from", default=None)
+    parser.add_argument(
+        "--initialize-policy-from",
+        default=None,
+        help=(
+            "initialize only model weights/config/vocabulary from a V2 policy; "
+            "optimizer, update counters, simulator state, and RNG start fresh"
+        ),
+    )
     parser.add_argument("--seed", type=int, default=23)
     parser.add_argument("--updates", type=int, default=500)
     parser.add_argument("--num-envs", type=int, default=6)
@@ -2225,6 +2234,73 @@ def _load_resume_state(
     return torch.load(path, map_location=device, weights_only=False), path
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _load_initial_policy_state(
+    args: argparse.Namespace,
+    device: torch.device,
+) -> tuple[dict[str, Any] | None, Path | None]:
+    if not args.initialize_policy_from:
+        return None, None
+    if args.simulation_backend != "simple-pytorch":
+        raise ValueError(
+            "--initialize-policy-from is currently gated only for simple-pytorch"
+        )
+    if args.resume_latest or args.resume_from:
+        raise ValueError(
+            "--initialize-policy-from cannot be combined with checkpoint resume"
+        )
+    path = resolve_path(args.initialize_policy_from, must_exist=True)
+    payload = torch.load(path, map_location=device, weights_only=False)
+    if int(payload.get("format_version", 0)) != 2:
+        raise ValueError("initial policy is not a V2 checkpoint")
+    if payload.get("model_type") != "entity_spatial_recurrent":
+        raise ValueError("initial policy has an unsupported model type")
+    if not isinstance(payload.get("model_config"), dict):
+        raise TypeError("initial policy has no model configuration")
+    if not isinstance(payload.get("model_state_dict"), dict):
+        raise TypeError("initial policy has no model state")
+    token_names = payload.get("token_names")
+    if not isinstance(token_names, (list, tuple)) or not token_names:
+        raise ValueError("initial policy has no token vocabulary")
+    return payload, path
+
+
+def _validate_simple_initial_policy_contract(
+    payload: dict[str, Any],
+    *,
+    token_names: tuple[str, ...],
+    max_entities: int,
+) -> PolicyConfig:
+    """Accept only policy state the fresh Simple Gym can consume exactly."""
+
+    configured_tokens = tuple(str(name) for name in payload["token_names"])
+    if configured_tokens != token_names:
+        raise ValueError("initial policy token vocabulary does not match Simple Gym")
+    config = PolicyConfig.from_dict(payload["model_config"])
+    if config.num_tokens != len(token_names):
+        raise ValueError("initial policy token count does not match its vocabulary")
+    if config.max_entities != max_entities:
+        raise ValueError("initial policy entity capacity does not match Simple Gym")
+    if not config.canonical_lane_globals:
+        raise ValueError("initial policy must use canonical lane globals")
+    if config.public_history_slots or config.public_seen_card_slots:
+        raise ValueError("Simple Gym initialization does not support history slots")
+    if config.structured_deterministic_resource_enabled:
+        raise ValueError(
+            "Simple Gym initialization does not support deterministic resource state"
+        )
+    if config.play_hazard_enabled:
+        raise ValueError("Simple Gym initialization does not support play-hazard gating")
+    return config
+
+
 def restore_optimizer_state(
     optimizer: torch.optim.Optimizer,
     state_dict: dict[str, Any],
@@ -2547,6 +2623,9 @@ def main() -> None:
             raise ValueError("league mode requires at least two opponent kinds")
     directory = checkpoints_dir(args.checkpoint_dir, create=True)
     resume, resume_path = _load_resume_state(args, directory, learner_device)
+    initial_policy, initial_policy_path = _load_initial_policy_state(
+        args, learner_device
+    )
 
     token_names = resume.get("token_names") if resume is not None else None
     if args.simulation_backend == "simple-pytorch":
@@ -2558,15 +2637,25 @@ def main() -> None:
     resume_config = (
         PolicyConfig.from_dict(resume["model_config"]) if resume is not None else None
     )
+    initial_policy_config: PolicyConfig | None = None
+    if initial_policy is not None:
+        if token_names is None:
+            raise ValueError("initial policy requires an explicit run vocabulary")
+        initial_policy_config = _validate_simple_initial_policy_contract(
+            initial_policy,
+            token_names=tuple(str(name) for name in token_names),
+            max_entities=args.simple_max_entities,
+        )
+    base_config = resume_config or initial_policy_config
     canonical_lane_globals = _canonical_lane_globals_for_run(
         actor_observation_domain=args.actor_observation_domain,
-        resume_config=resume_config,
+        resume_config=base_config,
         simulation_backend=args.simulation_backend,
     )
     target_public_history_slots = (
         args.add_public_history_slots
         if args.add_public_history_slots
-        else (resume_config.public_history_slots if resume_config else 0)
+        else (base_config.public_history_slots if base_config else 0)
     )
     # Deterministic-state training needs one exact teacher event pulse.  This
     # does not change the model's public-history input contract: the adapter
@@ -2584,13 +2673,13 @@ def main() -> None:
     target_public_seen_card_slots = (
         args.add_public_seen_card_slots
         if args.add_public_seen_card_slots
-        else (resume_config.public_seen_card_slots if resume_config else 0)
+        else (base_config.public_seen_card_slots if base_config else 0)
     )
     builder = StructuredObservationBuilder(
         decks_path=decks_path,
         max_entities=(
-            resume_config.max_entities
-            if resume_config is not None
+            base_config.max_entities
+            if base_config is not None
             else (
                 args.simple_max_entities
                 if args.simulation_backend == "simple-pytorch"
@@ -2599,8 +2688,8 @@ def main() -> None:
         ),
         token_names=token_names,
         card_semantics_version=(
-            resume_config.card_semantics_version
-            if resume_config is not None
+            base_config.card_semantics_version
+            if base_config is not None
             else args.card_semantics_version
         ),
         canonical_lane_globals=canonical_lane_globals,
@@ -2683,7 +2772,7 @@ def main() -> None:
         and resume_config.play_hazard_adapter_size > 0
     ):
         raise ValueError("resumed checkpoint already has a play hazard adapter")
-    config = resume_config or PolicyConfig(
+    config = base_config or PolicyConfig(
         num_tokens=builder.spec.num_tokens,
         max_entities=builder.spec.max_entities,
         card_semantics_version=args.card_semantics_version,
@@ -2839,6 +2928,8 @@ def main() -> None:
             )
         start_update = int(resume.get("update", 0)) + 1
         total_transitions = int(resume.get("total_transitions", 0))
+    elif initial_policy is not None:
+        model.load_state_dict(initial_policy["model_state_dict"], strict=True)
     if args.trainable_prefix:
         prefixes = tuple(args.trainable_prefix)
         for name, parameter in model.named_parameters():
@@ -3052,6 +3143,21 @@ def main() -> None:
             max_effects=args.simple_max_effects,
         )
         simulation_backend_metadata = simple_collector.checkpoint_metadata()
+        simulation_backend_metadata["collector_actor_projection_domain"] = (
+            "simulator-exact-public"
+        )
+        simulation_backend_metadata["policy_actor_observation_domain"] = (
+            model.config.actor_observation_domain
+        )
+        if initial_policy_path is not None:
+            simulation_backend_metadata["initial_policy"] = {
+                "path": str(initial_policy_path),
+                "sha256": _sha256(initial_policy_path),
+                "weights_only": True,
+                "optimizer_reset": True,
+                "update_reset": True,
+                "simulator_state_reset": True,
+            }
     elif args.actor_workers == 1:
         with maybe_silence_stdio(args.quiet_engine):
             for index in range(args.num_envs):
@@ -3284,6 +3390,8 @@ def main() -> None:
             simulation_backend_metadata=simulation_backend_metadata,
         )
         print(f"saved_initial_checkpoint={initial_checkpoint}")
+        if initial_policy_path is not None:
+            print(f"initialized_policy_from={initial_policy_path}")
 
     if start_update > args.updates:
         print(

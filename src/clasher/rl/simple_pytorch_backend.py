@@ -647,9 +647,12 @@ class SimplePytorchTrainingCollector:
             or not model.config.canonical_lane_globals
         ):
             raise SimplePytorchBackendError("simple backend requires canonical lanes")
-        if model.config.actor_observation_domain != "simulator-exact":
+        if model.config.actor_observation_domain not in {
+            "simulator-exact",
+            "causal-frame-v1",
+        }:
             raise SimplePytorchBackendError(
-                "fresh simple backend uses its exact public projection domain"
+                "simple backend requires simulator-exact or causal-frame policy input"
             )
         if builder.public_history_slots or builder.public_seen_card_slots:
             raise SimplePytorchBackendError(
