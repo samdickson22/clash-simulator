@@ -1,0 +1,59 @@
+{
+  "batch_size": 128,
+  "capacity": {
+    "max_effects": 64,
+    "max_entities": 48
+  },
+  "decision_interval": 8,
+  "device": "cuda",
+  "model": {
+    "actor_layers": 4,
+    "critic_layers": 2,
+    "d_model": 128,
+    "memory_size": 256,
+    "num_heads": 4
+  },
+  "repetitions": 3,
+  "rollout_steps": 8,
+  "schema_version": 1,
+  "scope": "real recurrent Simple-PyTorch collector including PPO CPU handoff",
+  "seed": 202608287,
+  "summary": {
+    "maximum_actor_decisions_per_second": 629.3585636920777,
+    "median_actor_decisions_per_second": 629.2962002426887,
+    "minimum_actor_decisions_per_second": 621.6537957249894
+  },
+  "trials": [
+    {
+      "actor_decisions": 2048,
+      "actor_decisions_per_second": 621.6537957249894,
+      "elapsed_seconds": 3.2944381810000323,
+      "execution_mode": "cuda-graph",
+      "max_effects": 64,
+      "max_entities": 48,
+      "repetition": 0,
+      "transition_digest": "ed69aae0603b0df361a2a3adfce9f3334c22a5e4d23caedf183b1a7072ae16f0"
+    },
+    {
+      "actor_decisions": 2048,
+      "actor_decisions_per_second": 629.2962002426887,
+      "elapsed_seconds": 3.2544293119999566,
+      "execution_mode": "cuda-graph",
+      "max_effects": 64,
+      "max_entities": 48,
+      "repetition": 1,
+      "transition_digest": "ed69aae0603b0df361a2a3adfce9f3334c22a5e4d23caedf183b1a7072ae16f0"
+    },
+    {
+      "actor_decisions": 2048,
+      "actor_decisions_per_second": 629.3585636920777,
+      "elapsed_seconds": 3.2541068289999657,
+      "execution_mode": "cuda-graph",
+      "max_effects": 64,
+      "max_entities": 48,
+      "repetition": 2,
+      "transition_digest": "ed69aae0603b0df361a2a3adfce9f3334c22a5e4d23caedf183b1a7072ae16f0"
+    }
+  ],
+  "warmup_steps": 1
+}

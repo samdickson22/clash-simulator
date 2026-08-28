@@ -131,3 +131,43 @@ total_transitions=4
 
 This proves the MPS trainer/collector/checkpoint route, not useful learning or
 MPS production throughput.
+
+## Production recurrent collector
+
+The final production-shaped benchmark includes the default 2.61M-parameter
+recurrent policy, public-mask-v2, eight native ticks per decision, recurrent
+state, reward/outcome handling, and the PPO NumPy handoff. Batch size is 128,
+rollout length is eight decisions, and each arm has three deterministic trials.
+
+| Device | Capacity | Median actor decisions/s | Capacity gain |
+|---|---:|---:|---:|
+| MPS eager | 128/128 | 20.63 | 1.00x |
+| MPS eager | 48/64 | 143.83 | 6.97x |
+| A6000 CUDA Graph | 128/128 | 101.77 | 1.00x |
+| A6000 CUDA Graph | 48/64 | 629.30 | 6.18x |
+
+The 48/64 CUDA collector alone exceeds the historical Python trainer's full
+255--360 learner-decision/s range, but that is not an end-to-end comparison
+because this collector timer excludes PPO learning. The sweep below supplies
+the comparable complete-update number. The capacity gain itself survives every
+production collector boundary; it is not a raw tick-only artifact.
+
+## PPO learner batch sweep
+
+Two-update CUDA smokes used the same 128 environments, 48/64 runtime, eight
+rollout decisions, four PPO epochs, 2.61M-parameter policy, and seed. Only the
+sequence minibatch changed. Values below are update-two checkpoint metrics.
+
+| Sequence batch | Optimizer steps | Collect | Learn | Total transitions/s | KL | Clip |
+|---:|---:|---:|---:|---:|---:|---:|
+| 8 | 128 | 3.32 s | 15.55 s | 108.55 | 0.00152 | 0.0249 |
+| 32 | 32 | 3.31 s | 4.04 s | 278.62 | 0.00148 | 0.0245 |
+| 64 | 16 | 3.31 s | 2.49 s | 352.70 | 0.00104 | 0.0137 |
+| 128 | 8 | 3.33 s | 1.85 s | 395.40 | 0.00061 | 0.0044 |
+
+The simulator is no longer the only dominant phase: at sequence batch eight,
+learning consumes 82% of update wall time. Batch 64 is the recommended first
+real-training arm because it retains 16 optimizer steps while reaching the top
+of the historical Python throughput range. Batch 128 is a throughput ceiling,
+not yet a learning-quality recommendation; it needs matched multi-update
+sample-efficiency and gameplay gates.
