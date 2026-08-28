@@ -20,7 +20,7 @@ from clasher.torch_sim.simple_attack_locks import (
     step_fast_attack_locks_,
 )
 from clasher.torch_sim.simple_state import FAST_KIND_BUILDING, FastGymState
-from clasher.torch_sim.simple_targeting import FastTargetTraits
+from clasher.torch_sim.simple_targeting import FastTargetTraits, select_nearest_targets
 
 
 def _device(name: str) -> torch.device:
@@ -124,6 +124,143 @@ def _step(
     )
 
 
+def _legacy_full_scan_step_reference(
+    state: FastGymState,
+    traits: FastTargetTraits,
+    locks: FastAttackLockState,
+    timings: FastAttackTimingCatalog,
+    disabled: torch.Tensor,
+    unavailable: torch.Tensor,
+    clear: torch.Tensor,
+    decrement: torch.Tensor,
+) -> dict[str, torch.Tensor]:
+    """Former O(E^2) retained-ID algorithm for valid-state parity tests."""
+
+    safe_card = state.card_id.clamp(0, timings.size - 1)
+    known_card = (state.card_id > 0) & (state.card_id < timings.size)
+    body_present = state.active & (state.hp > 0) & (state.stable_id > 0)
+    source_ready = body_present & (state.deploy_ticks == 0)
+    identity_match = state.stable_id[:, :, None] == state.stable_id[:, None, :]
+    unique_identity = (identity_match & body_present[:, None, :]).sum(dim=2) == 1
+    supported = known_card & timings.ordinary_attack_supported[safe_card]
+    source_present = source_ready & supported & unique_identity
+    same_source = source_present & (locks.source_stable_id == state.stable_id)
+    new_source = source_present & ~same_source
+    previous_target_id = torch.where(
+        same_source, locks.target_stable_id, torch.zeros_like(locks.target_stable_id)
+    )
+    cooldown = torch.where(
+        new_source,
+        timings.first_hit_delay_ticks[safe_card],
+        torch.where(
+            same_source,
+            locks.cooldown_ticks.clamp(min=0),
+            torch.zeros_like(locks.cooldown_ticks),
+        ),
+    )
+    target_present = body_present & ~unavailable
+    target_plane_allowed = torch.where(
+        traits.airborne[:, None, :],
+        traits.attacks_air[:, :, None],
+        traits.attacks_ground[:, :, None],
+    )
+    target_category_allowed = (
+        ~traits.buildings_only[:, :, None] | traits.building[:, None, :]
+    )
+    delta_x = state.x_units[:, :, None].to(torch.int64) - state.x_units[:, None, :].to(
+        torch.int64
+    )
+    delta_y = state.y_units[:, :, None].to(torch.int64) - state.y_units[:, None, :].to(
+        torch.int64
+    )
+    edge_distance = (
+        torch.sqrt((delta_x.square() + delta_y.square()).to(torch.float32))
+        - traits.collision_radius.clamp(min=0).to(torch.float32)[:, None, :]
+    ).clamp_min(0.0)
+    legal_target = (
+        source_present[:, :, None]
+        & target_present[:, None, :]
+        & (state.owner[:, :, None] != state.owner[:, None, :])
+        & target_plane_allowed
+        & target_category_allowed
+        & (edge_distance <= state.sight_range_units.clamp(min=0)[:, :, None])
+    )
+    retained_match = (
+        (previous_target_id[:, :, None] > 0)
+        & (previous_target_id[:, :, None] == state.stable_id[:, None, :])
+        & legal_target
+    )
+    retained_valid = retained_match.sum(dim=2) == 1
+    retained_slot = retained_match.to(torch.int64).argmax(dim=2)
+    acquisition = select_nearest_targets(
+        state,
+        traits,
+        source_disabled=(disabled | ~source_present | clear),
+        target_unavailable=unavailable,
+    )
+    acquisition_identity_match = (
+        (acquisition.target_id[:, :, None] > 0)
+        & (acquisition.target_id[:, :, None] == state.stable_id[:, None, :])
+        & target_present[:, None, :]
+    )
+    acquisition_found = acquisition.found & (acquisition_identity_match.sum(dim=2) == 1)
+    use_retained = retained_valid & ~clear
+    target_found = use_retained | (~use_retained & acquisition_found)
+    target_slot = torch.where(
+        use_retained,
+        retained_slot,
+        torch.where(acquisition_found, acquisition.target_slot, -1),
+    )
+    target_id = torch.where(
+        use_retained,
+        previous_target_id,
+        torch.where(acquisition_found, acquisition.target_id, 0),
+    )
+    had_target = previous_target_id > 0
+    has_target = target_id > 0
+    switched = had_target & has_target & (previous_target_id != target_id)
+    acquired = ~had_target & has_target
+    lost = had_target & ~has_target
+    cooldown = torch.where(
+        lost | switched,
+        torch.maximum(cooldown, timings.retarget_delay_ticks[safe_card]),
+        cooldown,
+    )
+    selected_edge = edge_distance.gather(
+        2, target_slot.clamp(min=0)[:, :, None]
+    ).squeeze(2)
+    in_range = target_found & (
+        selected_edge <= state.range_units.clamp(min=0).to(torch.float32)
+    )
+    can_advance = source_present & ~disabled & ~clear
+    decremented = (cooldown - decrement.clamp(min=0)).clamp(min=0)
+    preload_floor = timings.first_hit_delay_ticks[safe_card]
+    cooldown = torch.where(
+        can_advance & (cooldown > 0),
+        torch.where(
+            in_range,
+            decremented,
+            torch.maximum(preload_floor, decremented),
+        ),
+        cooldown,
+    )
+    cooldown = torch.where(source_present, cooldown, 0)
+    return {
+        "target_found": target_found,
+        "target_slot": target_slot,
+        "target_stable_id": target_id,
+        "target_in_attack_range": in_range,
+        "attack_allowed": (
+            can_advance & in_range & (cooldown == 0) & (state.damage > 0)
+        ),
+        "cooldown_ticks": cooldown,
+        "acquired": acquired,
+        "lost": lost,
+        "switched": switched,
+        "source_stable_id": torch.where(source_present, state.stable_id, 0),
+    }
+
+
 def test_enabled_card_timing_catalog_audits_all_66_serialized_rows() -> None:
     loader, catalog, timings = _catalogs("cpu")
 
@@ -190,6 +327,143 @@ def test_timing_catalog_fails_closed_on_catalog_source_mismatch() -> None:
         FastAttackTimingCatalog.compile(
             replace(catalog, load_time_ms=malformed), loader
         )
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_slot_retention_matches_full_id_scan_on_random_valid_states(
+    device_name: str,
+) -> None:
+    _, catalog, timings = _catalogs(device_name)
+    device = catalog.device
+    generator = torch.Generator().manual_seed(20260827)
+    batch_size = 32
+    entities = 12
+    shape = (batch_size, entities)
+    state = FastGymState.empty(batch_size, max_entities=entities, device=device)
+
+    active = torch.rand(shape, generator=generator) > 0.12
+    hp = torch.randint(0, 2_000, shape, generator=generator).to(torch.float32)
+    stable_id = torch.arange(1, batch_size * entities + 1, dtype=torch.int64).view(
+        shape
+    )
+    owner = torch.randint(0, 2, shape, generator=generator, dtype=torch.int8)
+    card_choices = torch.tensor(
+        [
+            catalog.name_to_id["Knight"],
+            catalog.name_to_id["Musketeer"],
+            catalog.name_to_id["Giant"],
+            catalog.name_to_id["InfernoDragon"],
+        ],
+        dtype=torch.int64,
+    )
+    card_id = card_choices[
+        torch.randint(0, len(card_choices), shape, generator=generator)
+    ]
+    state.active.copy_(active.to(device))
+    state.hp.copy_(hp.to(device))
+    state.stable_id.copy_(stable_id.to(device))
+    state.owner.copy_(owner.to(device))
+    state.card_id.copy_(card_id.to(device))
+    state.deploy_ticks.copy_(
+        torch.randint(0, 3, shape, generator=generator, dtype=torch.int32).to(device)
+    )
+    state.x_units.copy_(
+        torch.randint(0, 18_001, shape, generator=generator, dtype=torch.int32).to(
+            device
+        )
+    )
+    state.y_units.copy_(
+        torch.randint(0, 32_001, shape, generator=generator, dtype=torch.int32).to(
+            device
+        )
+    )
+    state.sight_range_units.copy_(
+        torch.randint(1_000, 12_001, shape, generator=generator, dtype=torch.int32).to(
+            device
+        )
+    )
+    state.range_units.copy_(
+        torch.randint(0, 6_001, shape, generator=generator, dtype=torch.int32).to(
+            device
+        )
+    )
+    state.damage.fill_(100.0)
+
+    building = (torch.rand(shape, generator=generator) < 0.25).to(device)
+    traits = FastTargetTraits(
+        airborne=(torch.rand(shape, generator=generator) < 0.2).to(device),
+        building=building,
+        attacks_air=(torch.rand(shape, generator=generator) > 0.25).to(device),
+        attacks_ground=(torch.rand(shape, generator=generator) > 0.1).to(device),
+        buildings_only=(torch.rand(shape, generator=generator) < 0.15).to(device),
+        collision_radius=torch.randint(
+            0, 1_001, shape, generator=generator, dtype=torch.int32
+        ).to(device),
+    )
+    disabled = (torch.rand(shape, generator=generator) < 0.1).to(device)
+    unavailable = (torch.rand(shape, generator=generator) < 0.1).to(device)
+    clear = (torch.rand(shape, generator=generator) < 0.05).to(device)
+    decrement = torch.randint(0, 3, shape, generator=generator, dtype=torch.int32).to(
+        device
+    )
+
+    locks = FastAttackLockState.empty(batch_size, entities, device=device)
+    same_source = (torch.rand(shape, generator=generator) > 0.25).to(device)
+    locks.source_stable_id.copy_(torch.where(same_source, state.stable_id, 0))
+    initial_slot = torch.randint(
+        0, entities, shape, generator=generator, dtype=torch.int64
+    ).to(device)
+    initial_id = state.stable_id.gather(1, initial_slot)
+    has_lock = (torch.rand(shape, generator=generator) > 0.35).to(device)
+    locks.target_slot.copy_(torch.where(has_lock, initial_slot, -1))
+    locks.target_stable_id.copy_(torch.where(has_lock, initial_id, 0))
+    locks.cooldown_ticks.copy_(
+        torch.randint(0, 31, shape, generator=generator, dtype=torch.int32).to(device)
+    )
+    before = locks.clone()
+    expected = _legacy_full_scan_step_reference(
+        state,
+        traits,
+        before,
+        timings,
+        disabled,
+        unavailable,
+        clear,
+        decrement,
+    )
+
+    actual = step_fast_attack_locks_(
+        locks,
+        timings,
+        state,
+        traits,
+        source_disabled=disabled,
+        target_unavailable=unavailable,
+        clear_source_lock=clear,
+        cooldown_decrement=decrement,
+    )
+
+    for name in (
+        "target_found",
+        "target_slot",
+        "target_stable_id",
+        "target_in_attack_range",
+        "attack_allowed",
+        "cooldown_ticks",
+        "acquired",
+        "lost",
+        "switched",
+    ):
+        assert torch.equal(getattr(actual, name), expected[name]), name
+    assert torch.equal(locks.source_stable_id, expected["source_stable_id"])
+    expected_slot = torch.where(
+        (expected["source_stable_id"] > 0) & expected["target_found"],
+        expected["target_slot"],
+        -1,
+    )
+    assert torch.equal(locks.target_slot, expected_slot)
+    assert torch.equal(locks.target_stable_id, expected["target_stable_id"])
+    assert torch.equal(locks.cooldown_ticks, expected["cooldown_ticks"])
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
@@ -327,8 +601,8 @@ def test_inferno_switch_installs_inverted_retarget_clock(device_name: str) -> No
 
     assert switched.switched[0, 0]
     assert int(switched.target_stable_id[0, 0]) == 3
+    assert int(locks.target_slot[0, 0]) == 2
     assert int(switched.cooldown_ticks[0, 0]) == 16
-    assert int(locks.last_switch_tick[0, 0]) == 7
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
@@ -364,6 +638,7 @@ def test_target_death_unavailable_and_out_of_sight_cancel_lock(
     state.hp[0, 1] = 0
     dead = _step(state, traits, locks, timings, disabled, unavailable)
     assert not dead.target_found[0, 0]
+    assert int(locks.target_slot[0, 0]) == -1
     assert int(locks.target_stable_id[0, 0]) == 0
 
 
@@ -380,6 +655,7 @@ def test_target_and_source_slot_reuse_are_stable_id_safe(device_name: str) -> No
     state.stable_id[0, 1] = 9
     target_reused = _step(state, traits, locks, timings, disabled, unavailable)
     assert target_reused.switched[0, 0]
+    assert int(locks.target_slot[0, 0]) == 1
     assert int(target_reused.target_stable_id[0, 0]) == 9
 
     state.tick.fill_(9)
@@ -388,7 +664,7 @@ def test_target_and_source_slot_reuse_are_stable_id_safe(device_name: str) -> No
     assert source_reused.acquired[0, 0]
     assert not source_reused.switched[0, 0]
     assert int(locks.source_stable_id[0, 0]) == 10
-    assert int(locks.last_switch_tick[0, 0]) == -1
+    assert int(locks.target_slot[0, 0]) == 1
 
 
 def test_explicit_row_reset_clears_only_selected_battle() -> None:
@@ -403,8 +679,8 @@ def test_explicit_row_reset_clears_only_selected_battle() -> None:
 
     assert not locks.source_stable_id[0].any()
     assert locks.source_stable_id[1].eq(5).all()
-    assert locks.last_acquire_tick[0].eq(-1).all()
-    assert locks.last_acquire_tick[1].eq(5).all()
+    assert locks.target_slot[0].eq(-1).all()
+    assert locks.target_slot[1].eq(5).all()
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
@@ -444,9 +720,9 @@ def test_seedless_replay_is_exact_on_each_device(device_name: str) -> None:
         snapshots.extend(
             (
                 locks.source_stable_id.clone(),
-                locks.last_acquire_tick.clone(),
-                locks.last_loss_tick.clone(),
-                locks.last_switch_tick.clone(),
+                locks.target_slot.clone(),
+                locks.target_stable_id.clone(),
+                locks.cooldown_ticks.clone(),
             )
         )
         return tuple(snapshots)
@@ -472,6 +748,13 @@ def test_hot_path_has_no_card_names_or_host_synchronization() -> None:
         "Inferno",
     ):
         assert forbidden not in source
+    for removed_pairwise_scan in (
+        "[:, :, None]",
+        "[:, None, :]",
+        ".sum(dim=2)",
+        ".argmax(dim=2)",
+    ):
+        assert removed_pairwise_scan not in source
 
 
 def test_runtime_planes_fail_closed_on_malformed_dtype() -> None:
@@ -491,7 +774,7 @@ def test_runtime_planes_fail_closed_on_malformed_dtype() -> None:
         )
 
 
-def test_duplicate_live_stable_ids_fail_closed() -> None:
+def test_duplicate_live_stable_ids_are_outside_production_state_contract() -> None:
     state, traits, locks, timings, _, disabled, unavailable = _combat_fixture(
         "cpu", "Musketeer", entities=3
     )
@@ -500,5 +783,9 @@ def test_duplicate_live_stable_ids_fail_closed() -> None:
 
     result = _step(state, traits, locks, timings, disabled, unavailable)
 
-    assert not result.target_found[0, 0]
-    assert int(result.target_stable_id[0, 0]) == 0
+    # FastGymState's allocator guarantees unique positive generations. The
+    # production lock therefore need not pay an O(E^2) uniqueness scan for a
+    # malformed state; deterministic nearest-slot acquisition remains defined.
+    assert result.target_found[0, 0]
+    assert int(result.target_slot[0, 0]) == 1
+    assert int(result.target_stable_id[0, 0]) == 2

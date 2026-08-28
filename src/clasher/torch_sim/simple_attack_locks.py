@@ -3,8 +3,9 @@
 This module is the data-driven combat-lock seam for the practical tensor Gym.
 Setup compiles Clash's serialized ``hitSpeed``, ``loadTime``, and distinct
 ``loadFirstHit`` flag into card-aligned tensors.  The tick path then retains a
-target by stable entity ID until it becomes illegal, unavailable, dead, or
-leaves sight.  It contains no card-name dispatch and no host synchronization.
+target by physical slot plus stable entity ID until it becomes illegal,
+unavailable, dead, or leaves sight.  It contains no card-name dispatch and no
+host synchronization.
 
 The retained :class:`TensorResidentEngine` remains the exact-debug oracle.
 These clocks intentionally model the production Gym's fixed 50 ms frames:
@@ -183,21 +184,18 @@ class FastAttackTimingCatalog:
 
 @dataclass
 class FastAttackLockState:
-    """Persistent stable-ID lock and clock planes with shape ``[B, E]``.
+    """Persistent stable-generation lock and clock planes with shape ``[B, E]``.
 
-    ``source_stable_id`` makes dense-slot reuse self-invalidating.  Transition
-    clock planes record the native tick of the most recent acquisition, loss,
-    and direct switch; ``-1`` means that transition has not occurred for the
-    current source generation.
+    ``source_stable_id`` makes source-slot reuse self-invalidating.  A retained
+    target stores its slot for O(BE) lookup and its stable ID for generation
+    validation, so target-slot reuse cannot inherit the old lock.
     """
 
     device: torch.device
     source_stable_id: torch.Tensor
+    target_slot: torch.Tensor
     target_stable_id: torch.Tensor
     cooldown_ticks: torch.Tensor
-    last_acquire_tick: torch.Tensor
-    last_loss_tick: torch.Tensor
-    last_switch_tick: torch.Tensor
 
     @classmethod
     def empty(
@@ -217,17 +215,9 @@ class FastAttackLockState:
         return cls(
             device=tensor_device,
             source_stable_id=zeros_i64.clone(),
+            target_slot=torch.full(shape, -1, dtype=torch.int64, device=tensor_device),
             target_stable_id=zeros_i64.clone(),
             cooldown_ticks=torch.zeros(shape, dtype=torch.int32, device=tensor_device),
-            last_acquire_tick=torch.full(
-                shape, -1, dtype=torch.int64, device=tensor_device
-            ),
-            last_loss_tick=torch.full(
-                shape, -1, dtype=torch.int64, device=tensor_device
-            ),
-            last_switch_tick=torch.full(
-                shape, -1, dtype=torch.int64, device=tensor_device
-            ),
         )
 
     def clone(self) -> FastAttackLockState:
@@ -280,11 +270,9 @@ def _validate_lock_inputs(
     expected = tuple(state.active.shape)
     required_lock_dtypes = {
         "source_stable_id": torch.int64,
+        "target_slot": torch.int64,
         "target_stable_id": torch.int64,
         "cooldown_ticks": torch.int32,
-        "last_acquire_tick": torch.int64,
-        "last_loss_tick": torch.int64,
-        "last_switch_tick": torch.int64,
     }
     for name, dtype in required_lock_dtypes.items():
         value = getattr(locks, name)
@@ -320,12 +308,12 @@ def step_fast_attack_locks_(
 ) -> FastAttackLockStep:
     """Advance retained targeting and finite idle preload for one tick.
 
-    A retained target wins over a newly nearer candidate.  Identity must match
-    exactly one live slot and the target must remain legal, visible, and in
-    sight.  Invalid IDs and unknown card rows fail closed.  ``source_disabled``
-    pauses acquisition and clock work but does not itself erase a lock;
-    callers pass stun, concealment, or travel interruptions through
-    ``clear_source_lock`` when those mechanics explicitly break combat state.
+    A retained target wins over a newly nearer candidate.  Its recorded slot
+    must still contain the same stable generation and remain legal, visible,
+    alive, and in sight.  Unknown card rows fail closed. ``source_disabled``
+    pauses acquisition and clock work but does not itself erase a lock; callers
+    pass stun, concealment, or travel interruptions through ``clear_source_lock``
+    when those mechanics explicitly break combat state.
     """
 
     if clear_source_lock is None:
@@ -347,15 +335,18 @@ def step_fast_attack_locks_(
     known_card = (state.card_id > 0) & (state.card_id < timings.size)
     body_present = state.active & (state.hp > 0) & (state.stable_id > 0)
     source_ready = body_present & (state.deploy_ticks == 0)
-    identity_match = state.stable_id[:, :, None] == state.stable_id[:, None, :]
-    unique_identity = (identity_match & body_present[:, None, :]).sum(dim=2) == 1
     supported = known_card & timings.ordinary_attack_supported[safe_card]
-    source_present = source_ready & supported & unique_identity
+    source_present = source_ready & supported
     same_source = source_present & (locks.source_stable_id == state.stable_id)
     new_source = source_present & ~same_source
 
     previous_target_id = torch.where(
         same_source, locks.target_stable_id, torch.zeros_like(locks.target_stable_id)
+    )
+    previous_target_slot = torch.where(
+        same_source,
+        locks.target_slot,
+        torch.full_like(locks.target_slot, -1),
     )
     cooldown = torch.where(
         new_source,
@@ -367,45 +358,45 @@ def step_fast_attack_locks_(
         ),
     )
 
-    # Candidate legality mirrors ordinary acquisition, but stable-ID matching
-    # makes a reused target slot unable to inherit the old lock.
+    # Retained legality mirrors ordinary acquisition. The saved slot makes the
+    # lookup linear in entity count; stable-ID validation makes reuse safe.
     target_present = body_present & ~target_unavailable
-    target_plane_allowed = torch.where(
-        traits.airborne[:, None, :],
-        traits.attacks_air[:, :, None],
-        traits.attacks_ground[:, :, None],
+    target_slot_in_bounds = (previous_target_slot >= 0) & (
+        previous_target_slot < state.max_entities
     )
-    target_category_allowed = (
-        ~traits.buildings_only[:, :, None] | traits.building[:, None, :]
+    retained_slot = previous_target_slot.clamp(0, state.max_entities - 1)
+    retained_target_id = state.stable_id.gather(1, retained_slot)
+    retained_target_airborne = traits.airborne.gather(1, retained_slot)
+    retained_target_building = traits.building.gather(1, retained_slot)
+    retained_plane_allowed = torch.where(
+        retained_target_airborne,
+        traits.attacks_air,
+        traits.attacks_ground,
     )
-    delta_x = state.x_units[:, :, None].to(torch.int64) - state.x_units[:, None, :].to(
-        torch.int64
-    )
-    delta_y = state.y_units[:, :, None].to(torch.int64) - state.y_units[:, None, :].to(
-        torch.int64
-    )
-    center_distance = torch.sqrt(
-        (delta_x.square() + delta_y.square()).to(torch.float32)
-    )
-    edge_distance = (
-        center_distance
-        - traits.collision_radius.clamp(min=0).to(torch.float32)[:, None, :]
+    retained_category_allowed = ~traits.buildings_only | retained_target_building
+    retained_dx = state.x_units.gather(1, retained_slot).to(
+        torch.float32
+    ) - state.x_units.to(torch.float32)
+    retained_dy = state.y_units.gather(1, retained_slot).to(
+        torch.float32
+    ) - state.y_units.to(torch.float32)
+    retained_edge_distance = (
+        torch.sqrt(retained_dx.square() + retained_dy.square())
+        - traits.collision_radius.gather(1, retained_slot)
+        .clamp(min=0)
+        .to(torch.float32)
     ).clamp_min(0.0)
-    legal_target = (
-        source_present[:, :, None]
-        & target_present[:, None, :]
-        & (state.owner[:, :, None] != state.owner[:, None, :])
-        & target_plane_allowed
-        & target_category_allowed
-        & (edge_distance <= state.sight_range_units.clamp(min=0)[:, :, None])
+    retained_valid = (
+        source_present
+        & (previous_target_id > 0)
+        & target_slot_in_bounds
+        & target_present.gather(1, retained_slot)
+        & (retained_target_id == previous_target_id)
+        & (state.owner != state.owner.gather(1, retained_slot))
+        & retained_plane_allowed
+        & retained_category_allowed
+        & (retained_edge_distance <= state.sight_range_units.clamp(min=0))
     )
-    retained_match = (
-        (previous_target_id[:, :, None] > 0)
-        & (previous_target_id[:, :, None] == state.stable_id[:, None, :])
-        & legal_target
-    )
-    retained_valid = retained_match.sum(dim=2) == 1
-    retained_slot = retained_match.to(torch.int64).argmax(dim=2)
 
     acquisition = select_nearest_targets(
         state,
@@ -413,13 +404,7 @@ def step_fast_attack_locks_(
         source_disabled=(source_disabled | ~source_present | clear_source_lock),
         target_unavailable=target_unavailable,
     )
-    acquisition_identity_match = (
-        (acquisition.target_id[:, :, None] > 0)
-        & (acquisition.target_id[:, :, None] == state.stable_id[:, None, :])
-        & target_present[:, None, :]
-    )
-    acquisition_unique = acquisition_identity_match.sum(dim=2) == 1
-    acquisition_found = acquisition.found & acquisition_unique
+    acquisition_found = acquisition.found
     use_retained = retained_valid & ~clear_source_lock
     target_found = use_retained | (~use_retained & acquisition_found)
     target_slot = torch.where(
@@ -446,10 +431,11 @@ def step_fast_attack_locks_(
         cooldown,
     )
 
-    safe_target_slot = target_slot.clamp(min=0)
-    selected_edge_distance = edge_distance.gather(
-        2, safe_target_slot[:, :, None]
-    ).squeeze(2)
+    selected_edge_distance = torch.where(
+        use_retained,
+        retained_edge_distance,
+        acquisition.edge_distance,
+    )
     target_in_attack_range = target_found & (
         selected_edge_distance <= state.range_units.clamp(min=0).to(torch.float32)
     )
@@ -468,18 +454,14 @@ def step_fast_attack_locks_(
         can_advance & target_in_attack_range & (cooldown == 0) & (state.damage > 0)
     )
 
-    # Transition clocks belong to a source stable-ID generation.  Slot reuse
-    # clears all old timestamps before recording this tick's transition.
-    invalid_generation = ~same_source
-    minus_one = torch.full_like(locks.last_acquire_tick, -1)
-    acquire_clock = torch.where(invalid_generation, minus_one, locks.last_acquire_tick)
-    loss_clock = torch.where(invalid_generation, minus_one, locks.last_loss_tick)
-    switch_clock = torch.where(invalid_generation, minus_one, locks.last_switch_tick)
-    current_tick = state.tick[:, None].expand_as(locks.last_acquire_tick)
-    locks.last_acquire_tick.copy_(torch.where(acquired, current_tick, acquire_clock))
-    locks.last_loss_tick.copy_(torch.where(lost, current_tick, loss_clock))
-    locks.last_switch_tick.copy_(torch.where(switched, current_tick, switch_clock))
     locks.source_stable_id.copy_(torch.where(source_present, state.stable_id, 0))
+    locks.target_slot.copy_(
+        torch.where(
+            source_present & target_found,
+            target_slot,
+            torch.full_like(target_slot, -1),
+        )
+    )
     locks.target_stable_id.copy_(torch.where(source_present, target_stable_id, 0))
     locks.cooldown_ticks.copy_(cooldown)
 
@@ -642,6 +624,4 @@ def reset_fast_attack_locks_(
     for name in ("source_stable_id", "target_stable_id", "cooldown_ticks"):
         value = getattr(locks, name)
         value.masked_fill_(mask, 0)
-    for name in ("last_acquire_tick", "last_loss_tick", "last_switch_tick"):
-        value = getattr(locks, name)
-        value.masked_fill_(mask, -1)
+    locks.target_slot.masked_fill_(mask, -1)

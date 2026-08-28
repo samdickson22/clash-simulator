@@ -197,19 +197,17 @@ def test_runtime_retains_then_switches_and_loses_stable_lock(device_name: str) -
     )
     runtime.step_tick(_noop(runtime))
     assert int(runtime.attack_locks.target_stable_id[0, 6]) == 8
-    assert int(runtime.attack_locks.last_switch_tick[0, 6]) == -1
+    assert int(runtime.attack_locks.target_slot[0, 6]) == 7
 
     runtime.state.hp[0, 7] = 0
-    switch_tick = int(runtime.state.tick[0])
     runtime.step_tick(_noop(runtime))
     assert int(runtime.attack_locks.target_stable_id[0, 6]) == 9
-    assert int(runtime.attack_locks.last_switch_tick[0, 6]) == switch_tick
+    assert int(runtime.attack_locks.target_slot[0, 6]) == 8
 
     runtime.state.hp[0, 8] = 0
-    loss_tick = int(runtime.state.tick[0])
     runtime.step_tick(_noop(runtime))
     assert int(runtime.attack_locks.target_stable_id[0, 6]) == 0
-    assert int(runtime.attack_locks.last_loss_tick[0, 6]) == loss_tick
+    assert int(runtime.attack_locks.target_slot[0, 6]) == -1
     # The public target plane may carry a far Crown Tower navigation goal, but
     # the combat lock remains empty until an enemy actually enters sight.
     assert int(runtime.state.target_id[0, 6]) > 0
@@ -255,10 +253,9 @@ def test_invisible_target_breaks_lock_and_visible_target_reacquires(
     assert int(runtime.attack_locks.target_stable_id[0, 6]) == 8
 
     runtime.policy_mechanics.invisible[0, 7] = True
-    loss_tick = int(runtime.state.tick[0])
     runtime.step_tick(_noop(runtime))
     assert int(runtime.attack_locks.target_stable_id[0, 6]) == 0
-    assert int(runtime.attack_locks.last_loss_tick[0, 6]) == loss_tick
+    assert int(runtime.attack_locks.target_slot[0, 6]) == -1
 
 
 def test_effect_capacity_rejection_does_not_commit_attack_cycle() -> None:
@@ -329,7 +326,9 @@ def test_stun_slot_reuse_selective_reset_and_tower_lock_coexistence() -> None:
     assert runtime.attack_locks is not None
     assert runtime.attack_timings is not None
     assert int(runtime.attack_locks.target_stable_id[0, 6]) == 8
-    assert int(runtime.attack_locks.source_stable_id[0, :FAST_TOWER_SLOT_COUNT].sum()) == 0
+    assert (
+        int(runtime.attack_locks.source_stable_id[0, :FAST_TOWER_SLOT_COUNT].sum()) == 0
+    )
     assert int(runtime.state.target_id[0, 0]) == 8
 
     runtime.entity_status_ticks[0, 6] = 2
@@ -345,12 +344,12 @@ def test_stun_slot_reuse_selective_reset_and_tower_lock_coexistence() -> None:
     runtime.state.stable_id[0, 6] = 20
     runtime.step_tick(_noop(runtime))
     assert int(runtime.attack_locks.source_stable_id[0, 6]) == 20
-    assert int(runtime.attack_locks.last_switch_tick[0, 6]) == -1
+    assert int(runtime.attack_locks.target_slot[0, 6]) == 7
 
     runtime.reset_rows(torch.tensor([True]))
     assert not bool(runtime.attack_locks.source_stable_id.any())
     assert not bool(runtime.attack_locks.target_stable_id.any())
-    assert bool(runtime.attack_locks.last_acquire_tick.eq(-1).all())
+    assert bool(runtime.attack_locks.target_slot.eq(-1).all())
     assert bool(runtime.state.active[0, :FAST_TOWER_SLOT_COUNT].all())
 
 
