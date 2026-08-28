@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import inspect
 from argparse import Namespace
+from dataclasses import fields, replace
+from typing import Any
 
 import pytest
 import torch
@@ -9,6 +11,9 @@ import torch
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.simple_pytorch_backend import (
     SIMPLE_PYTORCH_BACKEND,
+    SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH,
+    SIMPLE_PYTORCH_EXECUTION_EAGER,
+    SimplePytorchBackendError,
     SimplePytorchTrainingCollector,
     load_current_client_typed_vocabulary,
     load_simple_supported_decks,
@@ -17,6 +22,7 @@ from clasher.rl.simple_tensor_collector import SimpleTensorMaskRequest
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rl.train_recurrent import RolloutBatch, _validate_simple_pytorch_args
 from clasher.torch_sim.actions import ABILITY_ACTION, NO_OP_ACTION
+from clasher.torch_sim.simple_cuda_graph import SimpleCudaGraphRunner
 from clasher.torch_sim.simple_public_mask import (
     SIMPLE_PUBLIC_MASK_SEMANTICS_ID,
     SimpleCollectorPublicMaskV2Provider,
@@ -66,7 +72,10 @@ def test_simple_backend_contract_and_typed_variants_fail_closed() -> None:
 
 
 def _training_collector(
-    device_name: str = "cpu", *, batch_size: int = 1
+    device_name: str = "cpu",
+    *,
+    batch_size: int = 1,
+    execution_mode: str | None = None,
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -103,6 +112,7 @@ def _training_collector(
             "reports/current_client_youtube_stable_vocabulary_v1.json"
         ),
         mirror_match=False,
+        _execution_mode_override=execution_mode,
     )
 
 
@@ -132,7 +142,25 @@ def test_one_decision_collects_existing_ppo_rollout_shape() -> None:
         "actor-visible-supported-champion-v1"
     )
     assert metadata["reward_contract_id"] == "objective-v1-gamma-v1"
+    assert metadata["execution_mode"] == SIMPLE_PYTORCH_EXECUTION_EAGER
     assert metadata["fresh_only"] is True
+
+
+def test_execution_mode_metadata_fails_closed() -> None:
+    collector = _training_collector()
+    collector.metadata = replace(
+        collector.metadata,
+        execution_mode=SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH,
+    )
+
+    with pytest.raises(SimplePytorchBackendError, match="does not match"):
+        collector.checkpoint_metadata()
+
+    with pytest.raises(SimplePytorchBackendError, match="unsupported"):
+        _training_collector(execution_mode="automatic-fallback")
+
+    with pytest.raises(SimplePytorchBackendError, match="requires a CUDA"):
+        _training_collector(execution_mode=SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH)
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
@@ -145,6 +173,15 @@ def test_route_uses_committed_actor_v2_mask_authority(device_name: str) -> None:
     assert adapter.provider.tables is collector.public_mask_tables
     assert collector.public_mask_tables.semantics_id == (
         SIMPLE_PUBLIC_MASK_SEMANTICS_ID
+    )
+    expected_mode = (
+        SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH
+        if device_name == "cuda"
+        else SIMPLE_PYTORCH_EXECUTION_EAGER
+    )
+    assert collector.metadata.execution_mode == expected_mode
+    assert isinstance(bridge.runtime, SimpleCudaGraphRunner) == (
+        expected_mode == SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH
     )
 
     for decision_index in range(4):
@@ -166,6 +203,106 @@ def test_route_uses_committed_actor_v2_mask_authority(device_name: str) -> None:
     source = inspect.getsource(SimplePublicMaskV2Provider.build)
     for forbidden in (".cpu(", ".numpy(", ".item(", ".tolist("):
         assert forbidden not in source
+
+
+def _assert_tensor_fields_equal(left: Any, right: Any) -> None:
+    assert type(left) is type(right)
+    for descriptor in fields(left):
+        left_value = getattr(left, descriptor.name)
+        right_value = getattr(right, descriptor.name)
+        if isinstance(left_value, torch.Tensor):
+            assert torch.equal(left_value, right_value), descriptor.name
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
+def test_cuda_graph_collector_matches_eager_real_recurrent_boundaries() -> None:
+    graph = _training_collector(
+        "cuda",
+        batch_size=2,
+        execution_mode=SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH,
+    )
+    eager = _training_collector(
+        "cuda",
+        batch_size=2,
+        execution_mode=SIMPLE_PYTORCH_EXECUTION_EAGER,
+    )
+    eager.policy.model.load_state_dict(graph.policy.model.state_dict())
+    graph.policy.model.eval()
+    eager.policy.model.eval()
+    graph_initial = graph.policy.model.initial_state(4, device="cuda")
+    eager_initial = tuple(value.clone() for value in graph_initial)
+    graph_recurrent = {
+        "hidden": graph_initial[0].reshape(2, 2, -1),
+        "cell": graph_initial[1].reshape(2, 2, -1),
+    }
+    eager_recurrent = {
+        "hidden": eager_initial[0].reshape(2, 2, -1),
+        "cell": eager_initial[1].reshape(2, 2, -1),
+    }
+
+    torch.manual_seed(91)
+    graph_batch = graph.collector.collect(3, recurrent_inputs=graph_recurrent)
+    torch.manual_seed(91)
+    eager_batch = eager.collector.collect(3, recurrent_inputs=eager_recurrent)
+    torch.cuda.synchronize()
+
+    _assert_tensor_fields_equal(graph_batch.actor, eager_batch.actor)
+    assert graph_batch.critic is not None and eager_batch.critic is not None
+    _assert_tensor_fields_equal(graph_batch.critic, eager_batch.critic)
+    for name in (
+        "legal_masks",
+        "public_action_masks",
+        "previous_actions",
+        "previous_rewards",
+        "episode_starts",
+        "actions",
+        "rewards",
+        "done",
+        "winner",
+        "action_success",
+        "native_ticks",
+        "committed",
+        "fallback_rows",
+        "all_rows_admitted",
+        "reset_masks",
+    ):
+        assert torch.equal(getattr(graph_batch, name), getattr(eager_batch, name)), name
+    assert graph_batch.recurrent_inputs is not None
+    assert eager_batch.recurrent_inputs is not None
+    for name in ("hidden", "cell"):
+        assert torch.equal(
+            graph_batch.recurrent_inputs[name], eager_batch.recurrent_inputs[name]
+        )
+        assert torch.equal(
+            graph_batch.bootstrap.recurrent_inputs[name],
+            eager_batch.bootstrap.recurrent_inputs[name],
+        )
+    for name in ("log_prob", "value"):
+        assert torch.equal(
+            graph_batch.policy_storage[name], eager_batch.policy_storage[name]
+        )
+    _assert_tensor_fields_equal(
+        graph_batch.bootstrap.actor,
+        eager_batch.bootstrap.actor,
+    )
+    assert graph_batch.bootstrap.critic is not None
+    assert eager_batch.bootstrap.critic is not None
+    _assert_tensor_fields_equal(
+        graph_batch.bootstrap.critic,
+        eager_batch.bootstrap.critic,
+    )
+    for name in (
+        "legal_mask",
+        "public_action_masks",
+        "previous_actions",
+        "previous_rewards",
+        "episode_starts",
+    ):
+        assert torch.equal(
+            getattr(graph_batch.bootstrap, name),
+            getattr(eager_batch.bootstrap, name),
+        ), name
+    assert graph_batch.metadata == eager_batch.metadata
 
 
 def test_integrated_actor_v2_mask_exposes_archer_queen_ability() -> None:

@@ -14,7 +14,7 @@ import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Final
+from typing import Any, Final, cast
 
 import numpy as np
 import torch
@@ -23,7 +23,9 @@ from clasher.arena import TileGrid
 from clasher.card_aliases import resolve_card_name
 from clasher.data import CardDataLoader
 from clasher.spells import SPELL_REGISTRY
+from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.policy_validation import PUBLIC_ACTION_MASK_CONTRACT_V2
+from clasher.torch_sim.simple_cuda_graph import SimpleCudaGraphRunner
 from clasher.torch_sim.simple_public_mask import (
     SimpleCollectorPublicMaskV2Provider,
     SimplePublicMaskTypedTables,
@@ -52,6 +54,11 @@ from .simple_tensor_collector import (
 from .structured_obs import StructuredObservationBuilder
 
 SIMPLE_PYTORCH_BACKEND: Final = "simple-pytorch"
+SIMPLE_PYTORCH_EXECUTION_EAGER: Final = "eager"
+SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH: Final = "cuda-graph"
+SIMPLE_PYTORCH_EXECUTION_MODES: Final = frozenset(
+    (SIMPLE_PYTORCH_EXECUTION_EAGER, SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH)
+)
 SIMPLE_SUPPORTED_DECK_CONTRACT: Final = "clasher.simple_gym_supported_decks"
 CURRENT_CLIENT_VOCABULARY_SCHEMA: Final = (
     "clasher.current_client.youtube_stable_vocabulary.v1"
@@ -526,6 +533,7 @@ def _deck_rows(
 @dataclass(frozen=True)
 class SimplePytorchBackendMetadata:
     backend_id: str
+    execution_mode: str
     actor_semantics_id: str
     fresh_only: bool
     canonical_lane_globals: bool
@@ -556,6 +564,7 @@ class SimplePytorchTrainingCollector:
         supported_decks_path: str | Path,
         typed_vocabulary_path: str | Path,
         mirror_match: bool,
+        _execution_mode_override: str | None = None,
     ) -> None:
         if batch_size < 1:
             raise SimplePytorchBackendError("simple backend needs at least one row")
@@ -596,9 +605,25 @@ class SimplePytorchTrainingCollector:
             max_entities=builder.max_entities,
             include_privileged_critic=True,
         )
+        execution_mode = self._resolve_execution_mode(
+            runtime.device,
+            override=_execution_mode_override,
+        )
+        rollout_runtime = runtime
+        if execution_mode == SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH:
+            example_actions = torch.full(
+                (batch_size, 2),
+                NO_OP_ACTION,
+                dtype=torch.int64,
+                device=runtime.device,
+            )
+            # Capture failure is a hard construction failure. Production must
+            # never silently fall back to the eager CUDA path, whose thousands
+            # of per-tick submissions violate this backend's execution contract.
+            rollout_runtime = SimpleCudaGraphRunner(runtime, example_actions)
         reward = SimpleRewardV2Config(gamma=gamma)
         bridge = SimpleGymRolloutBridge(
-            runtime,
+            rollout_runtime,
             decision_interval=decision_interval,
             reward_v2_config=reward,
             strict_reset_check=False,
@@ -619,6 +644,7 @@ class SimplePytorchTrainingCollector:
         reward_metadata = simple_reward_v2_metadata(reward)
         self.metadata = SimplePytorchBackendMetadata(
             backend_id=SIMPLE_TENSOR_BACKEND_ID,
+            execution_mode=execution_mode,
             actor_semantics_id=SIMPLE_TENSOR_ACTOR_SEMANTICS_ID,
             fresh_only=True,
             canonical_lane_globals=True,
@@ -636,9 +662,46 @@ class SimplePytorchTrainingCollector:
             reward_contract_metadata=reward_metadata,
         )
 
+    @staticmethod
+    def _resolve_execution_mode(
+        device: torch.device,
+        *,
+        override: str | None,
+    ) -> str:
+        """Select one explicit execution contract without fallback."""
+
+        requested = (
+            SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH
+            if override is None and device.type == "cuda"
+            else SIMPLE_PYTORCH_EXECUTION_EAGER
+            if override is None
+            else override
+        )
+        if requested not in SIMPLE_PYTORCH_EXECUTION_MODES:
+            raise SimplePytorchBackendError(
+                f"unsupported simple-pytorch execution mode: {requested!r}"
+            )
+        if requested == SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH and device.type != "cuda":
+            raise SimplePytorchBackendError(
+                "cuda-graph execution requires a CUDA actor device"
+            )
+        return requested
+
+    def _assert_execution_mode(self) -> None:
+        runtime = self.collector.bridge.runtime
+        actual = (
+            SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH
+            if isinstance(runtime, SimpleCudaGraphRunner)
+            else SIMPLE_PYTORCH_EXECUTION_EAGER
+        )
+        if self.metadata.execution_mode != actual:
+            raise SimplePytorchBackendError(
+                "simple-pytorch execution mode metadata does not match the runtime"
+            )
+
     @property
     def batch_size(self) -> int:
-        return self.collector.batch_size
+        return cast(int, self.collector.batch_size)
 
     @staticmethod
     def _agent_major(value: torch.Tensor) -> np.ndarray:
@@ -646,7 +709,7 @@ class SimplePytorchTrainingCollector:
         arranged = value.permute(order).reshape(
             value.shape[1] * value.shape[2], value.shape[0], *value.shape[3:]
         )
-        return arranged.detach().cpu().numpy()
+        return cast(np.ndarray, arranged.detach().cpu().numpy())
 
     @staticmethod
     def _confidence_arrays(batch: SimpleTensorDecisionBatch) -> tuple[np.ndarray, ...]:
@@ -759,6 +822,7 @@ class SimplePytorchTrainingCollector:
         )
 
     def checkpoint_metadata(self) -> dict[str, Any]:
+        self._assert_execution_mode()
         return {
             **self.metadata.__dict__,
             "standard_tiebreak_tick": STANDARD_TIEBREAK_TICK,
@@ -771,6 +835,9 @@ __all__ = [
     "DEFAULT_SIMPLE_SUPPORTED_DECKS",
     "DEFAULT_SIMPLE_TOKEN_VOCABULARY",
     "SIMPLE_PYTORCH_BACKEND",
+    "SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH",
+    "SIMPLE_PYTORCH_EXECUTION_EAGER",
+    "SIMPLE_PYTORCH_EXECUTION_MODES",
     "CurrentClientTypedVocabulary",
     "SimplePytorchBackendError",
     "SimplePytorchBackendMetadata",
