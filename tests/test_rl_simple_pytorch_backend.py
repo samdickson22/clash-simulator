@@ -5,9 +5,11 @@ from argparse import Namespace
 from dataclasses import fields, replace
 from typing import Any
 
+import numpy as np
 import pytest
 import torch
 
+import clasher.rl.simple_pytorch_backend as simple_backend
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.simple_pytorch_backend import (
     SIMPLE_PYTORCH_BACKEND,
@@ -15,6 +17,7 @@ from clasher.rl.simple_pytorch_backend import (
     SIMPLE_PYTORCH_EXECUTION_EAGER,
     SimplePytorchBackendError,
     SimplePytorchTrainingCollector,
+    _CoalescedCpuStaging,
     load_current_client_typed_vocabulary,
     load_simple_supported_decks,
 )
@@ -129,6 +132,37 @@ def test_one_decision_collects_existing_ppo_rollout_shape() -> None:
     assert rollout.entity_ids.shape == (2, 1, 128)
     assert rollout.transitions == 2
     assert rollout.action_masks[torch.arange(2).numpy(), 0, rollout.actions[:, 0]].all()
+    expected_layout = {
+        "entity_ids": ((2, 1, 128), np.dtype(np.int64)),
+        "entity_features": ((2, 1, 128, 32), np.dtype(np.float32)),
+        "entity_mask": ((2, 1, 128), np.dtype(np.bool_)),
+        "hand_ids": ((2, 1, 5), np.dtype(np.int64)),
+        "global_features": ((2, 1, 18), np.dtype(np.float32)),
+        "entity_id_confidence": ((2, 1, 128), np.dtype(np.float32)),
+        "entity_feature_confidence": ((2, 1, 128, 32), np.dtype(np.float32)),
+        "hand_id_confidence": ((2, 1, 5), np.dtype(np.float32)),
+        "global_feature_confidence": ((2, 1, 18), np.dtype(np.float32)),
+        "action_masks": ((2, 1, model.num_actions), np.dtype(np.bool_)),
+        "previous_actions": ((2, 1), np.dtype(np.int64)),
+        "previous_rewards": ((2, 1), np.dtype(np.float32)),
+        "episode_starts": ((2, 1), np.dtype(np.bool_)),
+        "critic_entity_ids": ((2, 1, 128), np.dtype(np.int64)),
+        "critic_entity_features": ((2, 1, 128, 32), np.dtype(np.float32)),
+        "critic_entity_mask": ((2, 1, 128), np.dtype(np.bool_)),
+        "critic_card_ids": ((2, 1, 10), np.dtype(np.int64)),
+        "critic_global_features": ((2, 1, 20), np.dtype(np.float32)),
+        "actions": ((2, 1), np.dtype(np.int64)),
+        "old_log_probs": ((2, 1), np.dtype(np.float32)),
+        "old_values": ((2, 1), np.dtype(np.float32)),
+        "rewards": ((2, 1), np.dtype(np.float32)),
+        "dones": ((2, 1), np.dtype(np.bool_)),
+        "initial_hidden": ((2, 32), np.dtype(np.float32)),
+        "initial_cell": ((2, 32), np.dtype(np.float32)),
+        "bootstrap_values": ((2,), np.dtype(np.float32)),
+    }
+    for name, (shape, dtype) in expected_layout.items():
+        assert arrays[name].shape == shape, name
+        assert arrays[name].dtype == dtype, name
     assert next_state[0].shape == (2, 32)
     assert (
         previous_actions.shape == previous_rewards.shape == episode_starts.shape == (2,)
@@ -144,6 +178,96 @@ def test_one_decision_collects_existing_ppo_rollout_shape() -> None:
     assert metadata["reward_contract_id"] == "objective-v1-gamma-v1"
     assert metadata["execution_mode"] == SIMPLE_PYTORCH_EXECUTION_EAGER
     assert metadata["fresh_only"] is True
+
+
+def test_cpu_coalesced_handoff_preserves_shapes_dtypes_and_values() -> None:
+    source = {
+        "float": torch.arange(24, dtype=torch.float32).reshape(2, 3, 4).transpose(0, 1),
+        "integer": torch.arange(10, dtype=torch.int64).reshape(2, 5),
+        "boolean": (torch.arange(12).reshape(3, 4) % 3) == 0,
+        "empty": torch.empty((2, 0, 3), dtype=torch.float32),
+    }
+    expected = {name: value.numpy().copy() for name, value in source.items()}
+
+    actual = _CoalescedCpuStaging(source).finish()
+
+    assert set(actual) == set(expected)
+    for name, expected_value in expected.items():
+        assert actual[name].shape == expected_value.shape
+        assert actual[name].dtype == expected_value.dtype
+        assert np.array_equal(actual[name], expected_value)
+        assert not np.shares_memory(actual[name], expected_value)
+
+
+def test_training_handoff_has_no_per_tensor_blocking_transfer() -> None:
+    source = inspect.getsource(SimplePytorchTrainingCollector.collect)
+    for forbidden in (".cpu(", ".numpy(", ".item("):
+        assert forbidden not in source
+    staging_source = inspect.getsource(_CoalescedCpuStaging)
+    assert "non_blocking=True" in staging_source
+    assert staging_source.count("_synchronize_cuda_stream(") == 1
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
+def test_cuda_coalesced_handoff_matches_blocking_with_one_sync(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = {
+        "float": torch.arange(24, dtype=torch.float32, device="cuda")
+        .reshape(2, 3, 4)
+        .transpose(0, 1),
+        "integer": torch.arange(10, dtype=torch.int64, device="cuda").reshape(2, 5),
+        "boolean": (torch.arange(12, device="cuda").reshape(3, 4) % 3) == 0,
+        "empty": torch.empty((2, 0, 3), dtype=torch.float32, device="cuda"),
+    }
+    expected = {name: value.cpu().numpy() for name, value in source.items()}
+    calls = 0
+    original = simple_backend._synchronize_cuda_stream
+
+    def counted(stream: torch.cuda.Stream) -> None:
+        nonlocal calls
+        calls += 1
+        original(stream)
+
+    monkeypatch.setattr(simple_backend, "_synchronize_cuda_stream", counted)
+    actual = _CoalescedCpuStaging(source).finish()
+
+    assert calls == 1
+    for name, expected_value in expected.items():
+        assert actual[name].shape == expected_value.shape
+        assert actual[name].dtype == expected_value.dtype
+        assert np.array_equal(actual[name], expected_value)
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
+def test_cuda_training_wrapper_uses_one_handoff_sync(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    collector = _training_collector("cuda", batch_size=2)
+    model = collector.policy.model
+    calls = 0
+    original = simple_backend._synchronize_cuda_stream
+
+    def counted(stream: torch.cuda.Stream) -> None:
+        nonlocal calls
+        calls += 1
+        original(stream)
+
+    monkeypatch.setattr(simple_backend, "_synchronize_cuda_stream", counted)
+    arrays, next_state, previous_actions, previous_rewards, episode_starts = (
+        collector.collect(2, model.initial_state(4, device="cuda"))
+    )
+
+    assert calls == 1
+    rollout = RolloutBatch(**arrays)
+    assert rollout.transitions == 8
+    assert rollout.action_masks[
+        np.arange(4)[:, None], np.arange(2)[None, :], rollout.actions
+    ].all()
+    assert next_state[0].shape == next_state[1].shape == (4, 32)
+    assert (
+        previous_actions.shape == previous_rewards.shape == episode_starts.shape == (4,)
+    )
 
 
 def test_execution_mode_metadata_fails_closed() -> None:

@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+from collections import defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -88,6 +89,72 @@ def _canonical_digest(value: Mapping[str, Any]) -> str:
             allow_nan=False,
         ).encode("utf-8")
     )
+
+
+def _synchronize_cuda_stream(stream: torch.cuda.Stream) -> None:
+    """Complete one coalesced rollout handoff after every copy is enqueued."""
+
+    stream.synchronize()
+
+
+class _CoalescedCpuStaging:
+    """Stage heterogeneous rollout tensors into pinned dtype-group slabs.
+
+    All CUDA copies are non-blocking and issued on the current actor stream.
+    Calling :meth:`finish` performs the sole explicit synchronization, after
+    which NumPy views retain their Torch storage owners. CPU collection uses
+    independent ordinary CPU clones and requires no synchronization.
+    """
+
+    def __init__(self, values: Mapping[str, torch.Tensor]) -> None:
+        if not values:
+            raise SimplePytorchBackendError("rollout handoff cannot be empty")
+        devices = {value.device for value in values.values()}
+        if len(devices) != 1:
+            raise SimplePytorchBackendError(
+                "rollout handoff tensors must share one device"
+            )
+        self.device = next(iter(devices))
+        self._cpu: dict[str, torch.Tensor] = {}
+        self._device_slabs: list[torch.Tensor] = []
+        self._stream: torch.cuda.Stream | None = None
+        if self.device.type != "cuda":
+            self._cpu = {
+                name: value.detach().to(device="cpu").clone()
+                for name, value in values.items()
+            }
+            return
+
+        self._stream = torch.cuda.current_stream(self.device)
+        by_dtype: dict[torch.dtype, list[tuple[str, torch.Tensor]]] = defaultdict(list)
+        for name, value in values.items():
+            by_dtype[value.dtype].append((name, value.detach()))
+        for dtype, entries in by_dtype.items():
+            device_slab = torch.cat(
+                tuple(value.reshape(-1) for _name, value in entries),
+                dim=0,
+            )
+            slab = torch.empty(
+                device_slab.numel(),
+                dtype=dtype,
+                device="cpu",
+                pin_memory=True,
+            )
+            slab.copy_(device_slab, non_blocking=True)
+            self._device_slabs.append(device_slab)
+            offset = 0
+            for name, value in entries:
+                count = value.numel()
+                destination = slab.narrow(0, offset, count).view(value.shape)
+                self._cpu[name] = destination
+                offset += count
+
+    def finish(self) -> dict[str, np.ndarray]:
+        if self._stream is not None:
+            _synchronize_cuda_stream(self._stream)
+        return {
+            name: cast(np.ndarray, value.numpy()) for name, value in self._cpu.items()
+        }
 
 
 def _read_json(path: str | Path) -> tuple[dict[str, Any], str]:
@@ -704,23 +771,21 @@ class SimplePytorchTrainingCollector:
         return cast(int, self.collector.batch_size)
 
     @staticmethod
-    def _agent_major(value: torch.Tensor) -> np.ndarray:
+    def _agent_major(value: torch.Tensor) -> torch.Tensor:
         order = (1, 2, 0, *range(3, value.ndim))
-        arranged = value.permute(order).reshape(
+        return value.permute(order).reshape(
             value.shape[1] * value.shape[2], value.shape[0], *value.shape[3:]
         )
-        return cast(np.ndarray, arranged.detach().cpu().numpy())
 
     @staticmethod
-    def _confidence_arrays(batch: SimpleTensorDecisionBatch) -> tuple[np.ndarray, ...]:
+    def _confidence_tensors(
+        batch: SimpleTensorDecisionBatch,
+    ) -> tuple[torch.Tensor, ...]:
         entity = batch.actor.entity_mask.to(torch.float32)
         entity_features = entity[..., None].expand_as(batch.actor.entity_features)
         hand = torch.ones_like(batch.actor.hand_ids, dtype=torch.float32)
         global_features = torch.ones_like(batch.actor.global_features)
-        return tuple(
-            SimplePytorchTrainingCollector._agent_major(value)
-            for value in (entity, entity_features, hand, global_features)
-        )
+        return entity, entity_features, hand, global_features
 
     @torch.no_grad()
     def collect(
@@ -735,8 +800,8 @@ class SimplePytorchTrainingCollector:
         np.ndarray,
     ]:
         batch = self.batch_size
-        initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
-        initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
+        initial_hidden = recurrent_state[0].detach().clone()
+        initial_cell = recurrent_state[1].detach().clone()
         recurrent_inputs = {
             "hidden": recurrent_state[0].reshape(batch, 2, -1),
             "cell": recurrent_state[1].reshape(batch, 2, -1),
@@ -746,7 +811,7 @@ class SimplePytorchTrainingCollector:
         )
         if decision.critic is None:
             raise SimplePytorchBackendError("training collection requires a critic")
-        confidence = self._confidence_arrays(decision)
+        confidence = self._confidence_tensors(decision)
         steps, rows, seats = decision.actions.shape
         agents = rows * seats
         history_slots = self.policy.model.config.public_history_slots
@@ -759,26 +824,16 @@ class SimplePytorchTrainingCollector:
         required_storage = {"log_prob", "value"}
         if set(storage) != required_storage:
             raise SimplePytorchBackendError("policy storage contract changed")
-        winner = decision.winner.detach().cpu()
-        done = decision.done.detach().cpu()
-        terminal_winner = winner[done]
-        arrays: dict[str, Any] = {
+        device_exports = {
             "entity_ids": self._agent_major(decision.actor.entity_ids),
             "entity_features": self._agent_major(decision.actor.entity_features),
             "entity_mask": self._agent_major(decision.actor.entity_mask),
             "hand_ids": self._agent_major(decision.actor.hand_ids),
             "global_features": self._agent_major(decision.actor.global_features),
-            "entity_id_confidence": confidence[0],
-            "entity_feature_confidence": confidence[1],
-            "hand_id_confidence": confidence[2],
-            "global_feature_confidence": confidence[3],
-            "opponent_history_ids": zeros_history_i64,
-            "opponent_history_ages": zeros_history_f32,
-            "opponent_seen_card_ids": zeros_seen,
-            "opponent_play_event_ids": np.zeros((agents, steps), dtype=np.int64),
-            "opponent_play_event_confidence": np.zeros(
-                (agents, steps), dtype=np.float32
-            ),
+            "entity_id_confidence": self._agent_major(confidence[0]),
+            "entity_feature_confidence": self._agent_major(confidence[1]),
+            "hand_id_confidence": self._agent_major(confidence[2]),
+            "global_feature_confidence": self._agent_major(confidence[3]),
             "action_masks": self._agent_major(decision.public_action_masks),
             "previous_actions": self._agent_major(decision.previous_actions),
             "previous_rewards": self._agent_major(decision.previous_rewards),
@@ -799,26 +854,51 @@ class SimplePytorchTrainingCollector:
             "dones": self._agent_major(decision.done[..., None].expand(-1, -1, 2)),
             "initial_hidden": initial_hidden,
             "initial_cell": initial_cell,
-            "bootstrap_values": bootstrap_values.detach().cpu().numpy(),
-            "episodes_finished": int(done.sum().item()),
-            "wins": int((terminal_winner == 0).sum().item()),
-            "losses": int((terminal_winner == 1).sum().item()),
-            "draws": int((terminal_winner < 0).sum().item()),
+            "bootstrap_values": bootstrap_values.detach(),
+            "_done_rows": decision.done.detach(),
+            "_winner_rows": decision.winner.detach(),
+            "_bootstrap_previous_actions": (
+                decision.bootstrap.previous_actions.reshape(-1)
+            ),
+            "_bootstrap_previous_rewards": (
+                decision.bootstrap.previous_rewards.reshape(-1)
+            ),
+            "_bootstrap_episode_starts": (
+                decision.bootstrap.episode_starts.reshape(-1)
+            ),
+        }
+        staged = _CoalescedCpuStaging(device_exports).finish()
+        done = staged.pop("_done_rows")
+        winner = staged.pop("_winner_rows")
+        terminal_winner = winner[done]
+        previous_actions = staged.pop("_bootstrap_previous_actions")
+        previous_rewards = staged.pop("_bootstrap_previous_rewards")
+        episode_starts = staged.pop("_bootstrap_episode_starts")
+        arrays: dict[str, Any] = {
+            **staged,
+            "opponent_history_ids": zeros_history_i64,
+            "opponent_history_ages": zeros_history_f32,
+            "opponent_seen_card_ids": zeros_seen,
+            "opponent_play_event_ids": np.zeros((agents, steps), dtype=np.int64),
+            "opponent_play_event_confidence": np.zeros(
+                (agents, steps), dtype=np.float32
+            ),
+            "episodes_finished": int(np.count_nonzero(done)),
+            "wins": int(np.count_nonzero(terminal_winner == 0)),
+            "losses": int(np.count_nonzero(terminal_winner == 1)),
+            "draws": int(np.count_nonzero(terminal_winner < 0)),
         }
         bootstrap_state = self.policy.state_from_mapping(
             decision.bootstrap.recurrent_inputs
         )
         if bootstrap_state is None:
             raise SimplePytorchBackendError("collector lost recurrent bootstrap state")
-        previous_actions = decision.bootstrap.previous_actions.reshape(-1)
-        previous_rewards = decision.bootstrap.previous_rewards.reshape(-1)
-        episode_starts = decision.bootstrap.episode_starts.reshape(-1)
         return (
             arrays,
             (bootstrap_state[0].detach(), bootstrap_state[1].detach()),
-            previous_actions.detach().cpu().numpy(),
-            previous_rewards.detach().cpu().numpy(),
-            episode_starts.detach().cpu().numpy(),
+            previous_actions,
+            previous_rewards,
+            episode_starts,
         )
 
     def checkpoint_metadata(self) -> dict[str, Any]:
