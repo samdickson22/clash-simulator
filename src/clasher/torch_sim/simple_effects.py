@@ -322,6 +322,7 @@ def step_fast_effects(
     entity_secondary_targetable: torch.Tensor | None = None,
     entity_area_receivable: torch.Tensor | None = None,
     entity_effect_receivable_affects_hidden: torch.Tensor | None = None,
+    complex_topology: bool = True,
 ) -> FastEffectStepResult:
     """Advance homing effects, resolve splash, install statuses, and clean up.
 
@@ -554,62 +555,65 @@ def step_fast_effects(
         multi_hit_count,
         circle_candidates.to(torch.int16),
     )
-    chain_hit_count = fast_chain_hit_count(
-        FastChainTopologyInputs(
+    if complex_topology:
+        chain_hit_count = fast_chain_hit_count(
+            FastChainTopologyInputs(
+                source_x_units=effects.source_x_units,
+                source_y_units=effects.source_y_units,
+                primary_target_id=effects.target_id,
+                primary_x_units=effects.x_units,
+                primary_y_units=effects.y_units,
+                entity_stable_id=state.stable_id,
+                entity_x_units=state.x_units,
+                entity_y_units=state.y_units,
+                eligible=secondary_candidates | primary_match,
+                hop_radius_units=effects.chain_hop_radius_units,
+                target_count=effects.chain_target_count,
+            )
+        )
+        chain = effects.chain_target_count > 1
+        line_topology = select_line_capsule_hits(
             source_x_units=effects.source_x_units,
             source_y_units=effects.source_y_units,
-            primary_target_id=effects.target_id,
-            primary_x_units=effects.x_units,
-            primary_y_units=effects.y_units,
-            entity_stable_id=state.stable_id,
+            primary_x_units=effects.target_x_units,
+            primary_y_units=effects.target_y_units,
+            range_units=effects.line_range_units,
+            half_width_units=effects.line_half_width_units,
+            candidate_x_units=state.x_units,
+            candidate_y_units=state.y_units,
+            eligible=area_candidates,
+        )
+        line = effects.line_range_units > 0
+        fan_topology = resolve_fast_fan_topology(
+            launch_x_units=effects.source_x_units,
+            launch_y_units=effects.source_y_units,
+            impact_x_units=effects.x_units,
+            impact_y_units=effects.y_units,
+            range_units=effects.fan_range_units,
+            radius_units=effects.fan_radius_units,
+            spread_degrees=effects.fan_spread_degrees,
+            ray_count=effects.fan_ray_count,
+            eligibility=area_candidates,
             entity_x_units=state.x_units,
             entity_y_units=state.y_units,
-            eligible=secondary_candidates | primary_match,
-            hop_radius_units=effects.chain_hop_radius_units,
-            target_count=effects.chain_target_count,
+            entity_collision_radius_units=entity_collision_radius_units,
         )
-    )
-    chain = effects.chain_target_count > 1
-    line_topology = select_line_capsule_hits(
-        source_x_units=effects.source_x_units,
-        source_y_units=effects.source_y_units,
-        primary_x_units=effects.target_x_units,
-        primary_y_units=effects.target_y_units,
-        range_units=effects.line_range_units,
-        half_width_units=effects.line_half_width_units,
-        candidate_x_units=state.x_units,
-        candidate_y_units=state.y_units,
-        eligible=area_candidates,
-    )
-    line = effects.line_range_units > 0
-    fan_topology = resolve_fast_fan_topology(
-        launch_x_units=effects.source_x_units,
-        launch_y_units=effects.source_y_units,
-        impact_x_units=effects.x_units,
-        impact_y_units=effects.y_units,
-        range_units=effects.fan_range_units,
-        radius_units=effects.fan_radius_units,
-        spread_degrees=effects.fan_spread_degrees,
-        ray_count=effects.fan_ray_count,
-        eligibility=area_candidates,
-        entity_x_units=state.x_units,
-        entity_y_units=state.y_units,
-        entity_collision_radius_units=entity_collision_radius_units,
-    )
-    fan = effects.fan_ray_count > 0
-    hit_count = torch.where(
-        fan[:, :, None],
-        fan_topology.hit_count.to(torch.int16),
-        torch.where(
-            chain[:, :, None],
-            chain_hit_count,
+        fan = effects.fan_ray_count > 0
+        hit_count = torch.where(
+            fan[:, :, None],
+            fan_topology.hit_count.to(torch.int16),
             torch.where(
-                line[:, :, None],
-                line_topology.hit.to(torch.int16),
-                ordinary_hit_count,
+                chain[:, :, None],
+                chain_hit_count,
+                torch.where(
+                    line[:, :, None],
+                    line_topology.hit.to(torch.int16),
+                    ordinary_hit_count,
+                ),
             ),
-        ),
-    )
+        )
+    else:
+        hit_count = ordinary_hit_count
     has_hit = hit_count > 0
     damage_targets = damage_due[:, :, None] & has_hit
     status_targets = status_due[:, :, None] & has_hit

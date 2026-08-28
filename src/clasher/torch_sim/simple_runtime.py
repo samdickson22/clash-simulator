@@ -1355,6 +1355,7 @@ class SimpleGymRuntime:
             entity_effect_receivable_affects_hidden=(
                 policy_view.effect_receivable_affects_hidden & receivable
             ),
+            complex_topology=False,
         )
         entity_is_air = self._entity_airborne_target()
         eligible = (
@@ -1692,6 +1693,7 @@ class SimpleGymRuntime:
             entity_effect_receivable_affects_hidden=(
                 visibility.effect_receivable_affects_hidden & receivable
             ),
+            complex_topology=False,
         )
         return burst, effect
 
@@ -2163,6 +2165,7 @@ class SimpleGymRuntime:
             entity_effect_receivable_affects_hidden=(
                 visibility.effect_receivable_affects_hidden & receivable
             ),
+            complex_topology=False,
         )
         targets = FastTriggeredImpactTargets(
             active=(
