@@ -334,7 +334,6 @@ def test_cuda_graph_runner_matches_interval_bridge_and_reset() -> None:
         decision_interval=8,
         reward_v2_config=reward,
         strict_reset_check=False,
-        compact_noop_ticks=False,
     )
     runtime.state.hp[0, 2] = 0.0
     reference.state.hp[0, 2] = 0.0

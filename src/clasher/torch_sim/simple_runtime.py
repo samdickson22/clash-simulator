@@ -238,18 +238,6 @@ class SimpleGymRuntimeStep:
 
 
 @dataclass(frozen=True)
-class SimpleGymCompactRuntimeStep:
-    """Policy-invisible native tick result for decision-interval unrolling."""
-
-    action_success: torch.Tensor
-    reward: torch.Tensor
-    done: torch.Tensor
-    winner: torch.Tensor
-    native_ticks: torch.Tensor
-    committed: torch.Tensor
-
-
-@dataclass(frozen=True)
 class FastTriggeredEventAllocation:
     """Stable bounded admission telemetry for one tick's trigger candidates."""
 
@@ -481,20 +469,6 @@ class SimpleGymRuntime:
             max_elixir=max_elixir,
         )
         self.action_kernel = FastActionKernel(catalog)
-        self._no_op_action_ids = torch.full(
-            (self.state.batch_size, 2),
-            NO_OP_ACTION,
-            dtype=torch.int64,
-            device=self.state.device,
-        )
-        # Build the structurally empty ingress once. Internal decision-interval
-        # ticks never deploy or activate cards, so repeating legality, hand
-        # gathers, scatters, and transactional snapshots is pure overhead.
-        self._no_op_ingress = self.action_kernel.ingress(
-            self.action_state,
-            self._no_op_action_ids,
-            legal_mask=self.action_kernel.legal_action_mask(self.action_state),
-        )
         self.attack_timings = attack_timings
         self.attack_locks = (
             FastAttackLockState.empty(
@@ -1105,18 +1079,13 @@ class SimpleGymRuntime:
             player_alive=self.action_state.player_alive,
         )
 
-    def _refresh_player_state(self) -> None:
-        """Refresh gameplay-facing player liveness without policy projection."""
-
+    def _refresh_policy_state(self) -> None:
         tower_hp = crown_tower_hp(self.state)
         tower_alive = tower_hp > 0
         self.action_state.tower_alive.copy_(tower_alive)
         self.action_state.player_alive.copy_(
             tower_alive[:, :, 2] & ~self.state.game_over[:, None]
         )
-
-    def _refresh_policy_state(self) -> None:
-        self._refresh_player_state()
         ability = self._ability_player_view()
         if ability is None:
             self._ability_cooldown.zero_()
@@ -2457,35 +2426,24 @@ class SimpleGymRuntime:
             numeric=self._numeric_effect_commands,
         )
 
-    def _step_tick(
-        self,
-        action_ids: torch.Tensor,
-        *,
-        compact_noop: bool,
-    ) -> SimpleGymRuntimeStep | SimpleGymCompactRuntimeStep:
-        """Advance one native tick with an optional policy-invisible boundary."""
+    def step_tick(self, action_ids: torch.Tensor) -> SimpleGymRuntimeStep:
+        """Apply both requests, advance one native tick, and project its result."""
 
-        if compact_noop:
-            ingress = self._no_op_ingress
-            pre_hand = self.action_state.hand_ids
-            pre_cycle = self.action_state.cycle_ids
-            pre_head = self.action_state.cycle_head
-            pre_elixir = self.action_state.elixir
-        else:
-            if action_ids.shape != (self.batch_size, 2):
-                raise ValueError("action_ids must have shape [batch, 2]")
-            if action_ids.device != self.device:
-                raise ValueError("action_ids must use the runtime device")
-            if action_ids.dtype != torch.int64:
-                raise ValueError("action_ids must be int64")
-            legal_mask = self._legal_action_mask()
-            pre_hand = self.action_state.hand_ids.clone()
-            pre_cycle = self.action_state.cycle_ids.clone()
-            pre_head = self.action_state.cycle_head.clone()
-            pre_elixir = self.action_state.elixir.clone()
-            ingress = self.action_kernel.ingress(
-                self.action_state, action_ids, legal_mask=legal_mask
-            )
+        if action_ids.shape != (self.batch_size, 2):
+            raise ValueError("action_ids must have shape [batch, 2]")
+        if action_ids.device != self.device:
+            raise ValueError("action_ids must use the runtime device")
+        if action_ids.dtype != torch.int64:
+            raise ValueError("action_ids must be int64")
+
+        legal_mask = self._legal_action_mask()
+        pre_hand = self.action_state.hand_ids.clone()
+        pre_cycle = self.action_state.cycle_ids.clone()
+        pre_head = self.action_state.cycle_head.clone()
+        pre_elixir = self.action_state.elixir.clone()
+        ingress = self.action_kernel.ingress(
+            self.action_state, action_ids, legal_mask=legal_mask
+        )
         ability_activation: FastAbilityActivationResult | None = None
         abilities_before: FastAbilityStepResult | None = None
         if self.ability_catalog is not None:
@@ -2856,28 +2814,25 @@ class SimpleGymRuntime:
         self._publish_travel_mechanics_(self._travel_view())
         self._publish_river_jump_mechanics_()
 
-        if not compact_noop:
-            failed_deployment = (ingress.entity_deployment & ~deployed) | (
-                ingress.spell_cast & ~spell_allocated
+        failed_deployment = (ingress.entity_deployment & ~deployed) | (
+            ingress.spell_cast & ~spell_allocated
+        )
+        self.action_state.hand_ids.copy_(
+            torch.where(
+                failed_deployment[..., None], pre_hand, self.action_state.hand_ids
             )
-            self.action_state.hand_ids.copy_(
-                torch.where(
-                    failed_deployment[..., None], pre_hand, self.action_state.hand_ids
-                )
+        )
+        self.action_state.cycle_ids.copy_(
+            torch.where(
+                failed_deployment[..., None], pre_cycle, self.action_state.cycle_ids
             )
-            self.action_state.cycle_ids.copy_(
-                torch.where(
-                    failed_deployment[..., None],
-                    pre_cycle,
-                    self.action_state.cycle_ids,
-                )
-            )
-            self.action_state.cycle_head.copy_(
-                torch.where(failed_deployment, pre_head, self.action_state.cycle_head)
-            )
-            self.action_state.elixir.copy_(
-                torch.where(failed_deployment, pre_elixir, self.action_state.elixir)
-            )
+        )
+        self.action_state.cycle_head.copy_(
+            torch.where(failed_deployment, pre_head, self.action_state.cycle_head)
+        )
+        self.action_state.elixir.copy_(
+            torch.where(failed_deployment, pre_elixir, self.action_state.elixir)
+        )
 
         multiplier = self._phase_multiplier()[:, None]
         self.action_kernel.regenerate_elixir_(
@@ -3133,6 +3088,8 @@ class SimpleGymRuntime:
             advance_clock=False,
         )
         outcome = self.outcomes.evaluate()
+        self._refresh_policy_state()
+        observation = self.projector.project(self._legal_action_mask())
         action_success = (
             torch.where(
                 ingress.ability_activation,
@@ -3153,18 +3110,6 @@ class SimpleGymRuntime:
             )
             & combat.committed[:, None]
         )
-        if compact_noop:
-            self._refresh_player_state()
-            return SimpleGymCompactRuntimeStep(
-                action_success=action_success,
-                reward=outcome.reward,
-                done=outcome.done,
-                winner=outcome.winner,
-                native_ticks=combat.native_ticks,
-                committed=combat.committed,
-            )
-        self._refresh_policy_state()
-        observation = self.projector.project(self._legal_action_mask())
         return SimpleGymRuntimeStep(
             observation=observation,
             action_success=action_success,
@@ -3207,26 +3152,11 @@ class SimpleGymRuntime:
             triggered=triggered,
         )
 
-    def step_tick(self, action_ids: torch.Tensor) -> SimpleGymRuntimeStep:
-        """Apply both requests, advance one native tick, and project its result."""
-
-        result = self._step_tick(action_ids, compact_noop=False)
-        assert isinstance(result, SimpleGymRuntimeStep)
-        return result
-
-    def step_noop_tick_compact(self) -> SimpleGymCompactRuntimeStep:
-        """Advance one policy-invisible no-op tick without legality/projection."""
-
-        result = self._step_tick(self._no_op_action_ids, compact_noop=True)
-        assert isinstance(result, SimpleGymCompactRuntimeStep)
-        return result
-
 
 __all__ = [
     "FastTriggeredEffectAllocation",
     "FastTriggeredEventAllocation",
     "FastTriggeredRuntimeStep",
-    "SimpleGymCompactRuntimeStep",
     "SimpleGymRuntime",
     "SimpleGymRuntimeStep",
 ]
