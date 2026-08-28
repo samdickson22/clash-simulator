@@ -34,6 +34,7 @@ if __package__ in (None, ""):
 from clasher.rl.deck_pool import load_deck_pool
 from clasher.rl.public_action_mask import PublicActionMaskBuilder
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
+from clasher.torch_sim.simple_cuda_graph import SimpleCudaGraphRunner
 from clasher.torch_sim.simple_standard import (
     STANDARD_REGULATION_TICK,
     STANDARD_TIEBREAK_TICK,
@@ -211,10 +212,17 @@ def _simple_digest(args: argparse.Namespace, decks: list[list[str]]) -> str:
         supported_only=True,
     )
     observation = runtime.observe()
-    digest = hashlib.sha256()
-    for _ in range(args.warmup_ticks + args.measured_ticks):
+    for _ in range(args.warmup_ticks):
         actions = select_actions(observation.legal_mask, "first-legal")
-        step = runtime.step_tick(actions)
+        observation = runtime.step_tick(actions).observation
+    step_tick = runtime.step_tick
+    if args.cuda_graph:
+        example_actions = select_actions(observation.legal_mask, "first-legal")
+        step_tick = SimpleCudaGraphRunner(runtime, example_actions).step_tick
+    digest = hashlib.sha256()
+    for _ in range(args.measured_ticks):
+        actions = select_actions(observation.legal_mask, "first-legal")
+        step = step_tick(actions)
         update_step_digest(digest, step, actions)
         observation = step.observation
     return digest.hexdigest()
@@ -238,11 +246,15 @@ def _run_simple(
     for _ in range(args.warmup_ticks):
         actions = select_actions(observation.legal_mask, "first-legal")
         observation = runtime.step_tick(actions).observation
+    step_tick = runtime.step_tick
+    if args.cuda_graph:
+        example_actions = select_actions(observation.legal_mask, "first-legal")
+        step_tick = SimpleCudaGraphRunner(runtime, example_actions).step_tick
     _synchronize(runtime.device)
     started = time.perf_counter()
     for _ in range(args.measured_ticks):
         actions = select_actions(observation.legal_mask, "first-legal")
-        step = runtime.step_tick(actions)
+        step = step_tick(actions)
         observation = step.observation
     _synchronize(runtime.device)
     elapsed = time.perf_counter() - started
@@ -259,6 +271,8 @@ def _run_simple(
 
 
 def benchmark(args: argparse.Namespace) -> dict[str, Any]:
+    if args.cuda_graph and args.simple_device != "cuda":
+        raise ValueError("--cuda-graph requires --simple-device cuda")
     if min(
         args.batch_size,
         args.warmup_ticks,
@@ -284,6 +298,7 @@ def benchmark(args: argparse.Namespace) -> dict[str, Any]:
         "schema_version": 1,
         "scope": "matched raw policy-visible tick without neural inference",
         "simple_device": str(torch.device(args.simple_device)),
+        "simple_execution_mode": "cuda-graph" if args.cuda_graph else "eager",
         "seed": args.seed,
         "batch_size": args.batch_size,
         "warmup_ticks": args.warmup_ticks,
@@ -309,6 +324,7 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--python-vocabulary-decks", default="decks.json")
     parser.add_argument("--simple-device", choices=("cpu", "mps", "cuda"), default="mps")
+    parser.add_argument("--cuda-graph", action="store_true")
     parser.add_argument("--seed", type=int, default=202_608_281)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--warmup-ticks", type=int, default=2)
