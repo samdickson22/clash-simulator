@@ -1,0 +1,59 @@
+{
+  "batch_size": 128,
+  "capacity": {
+    "max_effects": 64,
+    "max_entities": 48
+  },
+  "decision_interval": 8,
+  "device": "mps",
+  "model": {
+    "actor_layers": 4,
+    "critic_layers": 2,
+    "d_model": 128,
+    "memory_size": 256,
+    "num_heads": 4
+  },
+  "repetitions": 3,
+  "rollout_steps": 8,
+  "schema_version": 1,
+  "scope": "real recurrent Simple-PyTorch collector including PPO CPU handoff",
+  "seed": 202608287,
+  "summary": {
+    "maximum_actor_decisions_per_second": 147.7819520185909,
+    "median_actor_decisions_per_second": 143.82724227560905,
+    "minimum_actor_decisions_per_second": 143.5904614976709
+  },
+  "trials": [
+    {
+      "actor_decisions": 2048,
+      "actor_decisions_per_second": 147.7819520185909,
+      "elapsed_seconds": 13.858255165978335,
+      "execution_mode": "eager",
+      "max_effects": 64,
+      "max_entities": 48,
+      "repetition": 0,
+      "transition_digest": "f39b0d142f33f05eee460a5e1a7dea29d3c8e1743685c3e58c4bd0fe0d0dc8c8"
+    },
+    {
+      "actor_decisions": 2048,
+      "actor_decisions_per_second": 143.5904614976709,
+      "elapsed_seconds": 14.262785832979716,
+      "execution_mode": "eager",
+      "max_effects": 64,
+      "max_entities": 48,
+      "repetition": 1,
+      "transition_digest": "f39b0d142f33f05eee460a5e1a7dea29d3c8e1743685c3e58c4bd0fe0d0dc8c8"
+    },
+    {
+      "actor_decisions": 2048,
+      "actor_decisions_per_second": 143.82724227560905,
+      "elapsed_seconds": 14.239305208087899,
+      "execution_mode": "eager",
+      "max_effects": 64,
+      "max_entities": 48,
+      "repetition": 2,
+      "transition_digest": "f39b0d142f33f05eee460a5e1a7dea29d3c8e1743685c3e58c4bd0fe0d0dc8c8"
+    }
+  ],
+  "warmup_steps": 1
+}
