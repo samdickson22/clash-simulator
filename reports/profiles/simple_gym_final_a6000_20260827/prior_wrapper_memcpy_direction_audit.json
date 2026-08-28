@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "purpose": "direction audit of the prior c91ca56d production wrapper traces",
+  "method": "count trace event names containing explicit Memcpy direction labels",
+  "source_evidence_root": "/Users/sam/.codex/evidence/clasher-pytorch-optimization-20260827/optimized",
+  "profiles": {
+    "batch6": {
+      "trace": "integrated_accepted_eager_batch6_wrapper_one_decision_interval8.trace.json.gz",
+      "trace_sha256": "d8781505a936688462f346b96b5927a9ba7d6ba66dda1d26d50b8b91163fd573",
+      "device_to_device_events": 8135,
+      "device_to_host_events": 31
+    },
+    "batch128": {
+      "trace": "integrated_accepted_eager_batch128_wrapper_one_decision_interval8.trace.json.gz",
+      "trace_sha256": "2af91a89f6cafb120832c880a5c64b8429b15f87a95d6e7ad8570d87feeeb468",
+      "device_to_device_events": 8135,
+      "device_to_host_events": 31
+    }
+  },
+  "limitations": [
+    "This audit classifies explicit Kineto device event names and does not infer copy direction from CPU annotation ancestry.",
+    "CUDA runtime API events named cudaMemcpyAsync are reported separately in the structured profiles and are not counted as device-direction events here."
+  ]
+}
