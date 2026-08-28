@@ -25,6 +25,7 @@ from .simple_actions import FastActionState
 from .simple_adapter import (
     SIMPLIFIED_GYM_ACTION_MASK_PROFILE,
     SimpleGymAdapter,
+    SimpleGymCompactStepResult,
     SimpleGymContractError,
     SimpleGymEngine,
     SimpleGymHistory,
@@ -60,6 +61,8 @@ class SimpleGymRolloutRuntime(SimpleGymEngine, Protocol):
         reset_mask: torch.Tensor,
         deck_ids: torch.Tensor | None = None,
     ) -> SimpleProjectedObservation: ...
+
+    def step_noop_tick_compact(self) -> SimpleGymCompactStepResult: ...
 
 
 @dataclass(frozen=True)
@@ -109,6 +112,7 @@ class SimpleGymRolloutBridge:
         decision_interval: int = 1,
         reward_v2_config: SimpleRewardV2Config | None = None,
         strict_reset_check: bool = True,
+        compact_noop_ticks: bool = True,
         adapter: SimpleGymAdapter | None = None,
     ) -> None:
         if (
@@ -125,6 +129,7 @@ class SimpleGymRolloutBridge:
         self.batch_size = self.adapter.batch_size
         self.decision_interval = int(decision_interval)
         self.strict_reset_check = bool(strict_reset_check)
+        self.compact_noop_ticks = bool(compact_noop_ticks)
         self.reward_v2_config = reward_v2_config
         self._initial_tower_hp = runtime.outcomes.initial_tower_hp.clone()
         if reward_v2_config is None:
@@ -298,6 +303,26 @@ class SimpleGymRolloutBridge:
         boundary = (
             self.observe() if pre_action_boundary is None else pre_action_boundary
         )
+        # A captured observation graph and the following tick graph may reuse
+        # static storage. Freeze the policy boundary before advancing so the
+        # transition cannot observe post-action overwrites.
+        boundary_actor = TensorPublicStructuredObservation(
+            **{
+                descriptor.name: getattr(boundary.actor, descriptor.name).clone()
+                for descriptor in fields(TensorPublicStructuredObservation)
+            }
+        )
+        boundary_critic = (
+            None
+            if boundary.critic is None
+            else TensorPrivilegedCriticObservation(
+                **{
+                    descriptor.name: getattr(boundary.critic, descriptor.name).clone()
+                    for descriptor in fields(TensorPrivilegedCriticObservation)
+                }
+            )
+        )
+        boundary_legal_mask = boundary.legal_mask.clone()
         pre_reward_potential: torch.Tensor | None = None
         if self.reward_v2_config is not None:
             pre_reward_potential = simple_objective_v1_potential_from_tower_hp(
@@ -350,16 +375,21 @@ class SimpleGymRolloutBridge:
                 self.reward_v2_config,
             )
         live = ~done
+        terminal_after_first = done.clone()
         for _ in range(1, self.decision_interval):
-            native = self.runtime.step_tick(self._no_op_actions)
             active = live
-            next_actor, next_critic, next_legal_mask = self._merge_observation_rows(
-                next_actor,
-                next_critic,
-                next_legal_mask,
-                native.observation,
-                active,
-            )
+            if self.compact_noop_ticks:
+                native = self.runtime.step_noop_tick_compact()
+            else:
+                projected_native = self.runtime.step_tick(self._no_op_actions)
+                native = projected_native
+                next_actor, next_critic, next_legal_mask = self._merge_observation_rows(
+                    next_actor,
+                    next_critic,
+                    next_legal_mask,
+                    projected_native.observation,
+                    active,
+                )
             rewards.add_(torch.where(active[:, None], native.reward, 0.0))
             if self.reward_v2_config is not None:
                 assert post_reward_potential is not None
@@ -376,6 +406,16 @@ class SimpleGymRolloutBridge:
             winner = torch.where(active & native.done, native.winner, winner)
             done |= active & native.done
             live &= ~native.done
+
+        if self.compact_noop_ticks and self.decision_interval > 1:
+            final_observation = self.runtime.observe()
+            next_actor, next_critic, next_legal_mask = self._merge_observation_rows(
+                next_actor,
+                next_critic,
+                next_legal_mask,
+                final_observation,
+                ~terminal_after_first,
+            )
 
         if self.reward_v2_config is not None:
             assert pre_reward_potential is not None
@@ -396,9 +436,9 @@ class SimpleGymRolloutBridge:
         )
         self.needs_reset.copy_(done)
         return SimpleGymRolloutStep(
-            actor=boundary.actor,
-            critic=boundary.critic,
-            legal_mask=boundary.legal_mask,
+            actor=boundary_actor,
+            critic=boundary_critic,
+            legal_mask=boundary_legal_mask,
             public_action_masks=public_action_masks,
             public_action_mask_contract_version=public_action_mask_contract_version,
             simulator_action_mask_profile=boundary.simulator_action_mask_profile,

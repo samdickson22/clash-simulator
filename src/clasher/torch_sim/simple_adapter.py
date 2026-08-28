@@ -73,6 +73,28 @@ class SimpleGymStepResult(Protocol):
     def committed(self) -> torch.Tensor: ...
 
 
+class SimpleGymCompactStepResult(Protocol):
+    """Policy-invisible result used by fixed decision-interval unrolling."""
+
+    @property
+    def action_success(self) -> torch.Tensor: ...
+
+    @property
+    def reward(self) -> torch.Tensor: ...
+
+    @property
+    def done(self) -> torch.Tensor: ...
+
+    @property
+    def winner(self) -> torch.Tensor: ...
+
+    @property
+    def native_ticks(self) -> torch.Tensor: ...
+
+    @property
+    def committed(self) -> torch.Tensor: ...
+
+
 class SimpleGymEngine(Protocol):
     """Structural interface implemented by the simplified Gym kernel."""
 
@@ -109,9 +131,7 @@ class SimpleGymHistory:
             previous_actions=torch.full(
                 shape, no_op_action, dtype=torch.int64, device=device
             ),
-            previous_rewards=torch.zeros(
-                shape, dtype=reward_dtype, device=device
-            ),
+            previous_rewards=torch.zeros(shape, dtype=reward_dtype, device=device),
             episode_starts=torch.ones(shape, dtype=torch.bool, device=device),
         )
 
@@ -222,9 +242,7 @@ def _validate_observation(
 
     actions = tuple(observation.legal_mask.shape)
     if len(actions) != 3 or actions[:2] != (batch_size, 2):
-        raise SimpleGymContractError(
-            "legal_mask must have shape [batch, 2, actions]"
-        )
+        raise SimpleGymContractError("legal_mask must have shape [batch, 2, actions]")
     _require_tensor(
         "legal_mask",
         observation.legal_mask,
@@ -246,9 +264,7 @@ def _validate_observation(
         value = getattr(critic, name)
         shape = tuple(value.shape)
         if len(shape) < 3 or shape[:2] != (batch_size, 2):
-            raise SimpleGymContractError(
-                f"critic.{name} must begin with [batch, 2]"
-            )
+            raise SimpleGymContractError(f"critic.{name} must begin with [batch, 2]")
         dtype = (
             (torch.bool,)
             if name == "entity_mask"
@@ -483,6 +499,7 @@ __all__ = [
     "SimpleGymAdapter",
     "SimpleGymAdapterStep",
     "SimpleGymAdmission",
+    "SimpleGymCompactStepResult",
     "SimpleGymContractError",
     "SimpleGymEngine",
     "SimpleGymHistory",

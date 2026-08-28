@@ -15,7 +15,11 @@ from clasher.rl.common import NUM_HAND_SLOTS
 from .simple_actions import FastActionKernel, FastActionState
 from .simple_outcomes import FastOutcomeTracker
 from .simple_projection import SimpleProjectedObservation, SimpleTensorProjector
-from .simple_runtime import SimpleGymRuntime, SimpleGymRuntimeStep
+from .simple_runtime import (
+    SimpleGymCompactRuntimeStep,
+    SimpleGymRuntime,
+    SimpleGymRuntimeStep,
+)
 from .simple_spawn_blueprints import FastSpawnBlueprintCatalog
 from .simple_state import FastGymState
 
@@ -41,6 +45,8 @@ class SimpleCudaGraphRunner:
         self._validate_actions(example_action_ids)
         self._action_ids = example_action_ids.clone()
         self._graph = torch.cuda.CUDAGraph()
+        self._compact_graph = torch.cuda.CUDAGraph()
+        self._observe_graph = torch.cuda.CUDAGraph()
         self._reset_mask = torch.zeros(
             self.batch_size,
             dtype=torch.bool,
@@ -57,6 +63,10 @@ class SimpleCudaGraphRunner:
         with torch.cuda.device(runtime.device):
             with torch.cuda.graph(self._graph):
                 self._step = runtime.step_tick(self._action_ids)
+            with torch.cuda.graph(self._compact_graph):
+                self._compact_step = runtime.step_noop_tick_compact()
+            with torch.cuda.graph(self._observe_graph):
+                self._observation = runtime.observe()
             with torch.cuda.graph(self._reset_graph):
                 self._reset_observation = runtime.reset_rows(self._reset_mask)
             with torch.cuda.graph(self._reset_with_decks_graph):
@@ -184,10 +194,17 @@ class SimpleCudaGraphRunner:
         self._graph.replay()
         return self._step
 
+    def step_noop_tick_compact(self) -> SimpleGymCompactRuntimeStep:
+        """Replay one policy-invisible no-op native transition."""
+
+        self._compact_graph.replay()
+        return self._compact_step
+
     def observe(self) -> SimpleProjectedObservation:
         """Project current state outside the graph without advancing it."""
 
-        return self.runtime.observe()
+        self._observe_graph.replay()
+        return self._observation
 
     def reset_rows(
         self,
