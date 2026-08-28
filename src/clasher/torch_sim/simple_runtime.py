@@ -280,6 +280,8 @@ class SimpleGymRuntime:
         *,
         entity_token_lookup: torch.Tensor,
         hand_token_lookup: torch.Tensor,
+        tower_token_lookup: torch.Tensor | None = None,
+        canonical_entity_order: bool = False,
         max_entities: int = 64,
         max_effects: int = 64,
         max_payload_containers: int = 32,
@@ -676,6 +678,7 @@ class SimpleGymRuntime:
         )
         self._entity_invisible = torch.zeros_like(self._entity_special)
         self._entity_hidden = torch.zeros_like(self._entity_special)
+        self._projection_airborne = torch.zeros_like(self._entity_special)
         self._effect_owners = (
             torch.arange(2, dtype=torch.int8, device=device)
             .view(1, 2)
@@ -790,6 +793,21 @@ class SimpleGymRuntime:
             entity_invisible=self._entity_invisible,
             entity_hidden=self._entity_hidden,
             max_ticks=rules.tiebreak_ticks,
+            tower_token_lookup=tower_token_lookup,
+            canonical_entity_order=canonical_entity_order,
+            entity_collision_radius_lookup=(
+                self.action_kernel.catalog.collision_radius_units
+            ),
+            entity_collision_radius_override=(
+                self.combat._collision_radius_override_units
+            ),
+            entity_airborne=self._projection_airborne,
+            entity_shield=self.modifiers.shield,
+            entity_max_shield=self.modifiers.max_shield,
+            entity_status_kind=self.entity_status_kind,
+            entity_status_ticks=self.entity_status_ticks,
+            entity_haste_ticks=self.positive_buffs.remaining_ticks,
+            entity_charge_ready=self.modifiers.charge_ready,
         )
         self.projector = SimpleTensorProjector(
             self.state,
@@ -1095,6 +1113,7 @@ class SimpleGymRuntime:
             self._ability_duration.copy_(ability.duration_fraction)
         self._projection_hand_ids[:, :, :4].copy_(self.action_state.hand_ids)
         self._projection_hand_ids[:, :, 4].copy_(self.action_state.own_next)
+        self._projection_airborne.copy_(self._entity_airborne_target())
         if self.double_elixir_tick is not None:
             self._double_elixir.copy_(self.state.tick >= self.double_elixir_tick)
         if self.triple_elixir_tick is not None:

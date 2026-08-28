@@ -1705,6 +1705,26 @@ def parse_args() -> argparse.Namespace:
         help="typed current-client actor vocabulary for the simple PyTorch backend",
     )
     parser.add_argument(
+        "--simple-max-entities",
+        type=int,
+        default=56,
+        help=(
+            "dense Simple Gym entity capacity; 56 is the audited diverse-deck "
+            "starting point, while 48 is specialist-only"
+        ),
+    )
+    parser.add_argument(
+        "--simple-max-effects",
+        type=int,
+        default=64,
+        help="dense Simple Gym effect capacity",
+    )
+    parser.add_argument(
+        "--simple-opponent-deterministic",
+        action="store_true",
+        help="use deterministic action selection for a frozen checkpoint opponent",
+    )
+    parser.add_argument(
         "--card-semantics-version",
         type=int,
         choices=(1, 2, 3),
@@ -2250,34 +2270,39 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
         raise ValueError("simple-pytorch requires --actor-workers 1")
     if args.resume_latest or args.resume_from:
         raise ValueError("simple-pytorch is fresh-only until exact resume is gated")
-    if args.opponent_mode != "selfplay":
-        raise ValueError("simple-pytorch currently requires selfplay")
+    if args.opponent_mode not in {
+        "selfplay",
+        "noop",
+        "random",
+        "strategy",
+        "checkpoint",
+    }:
+        raise ValueError("simple-pytorch supports selfplay or one stationary opponent")
     if args.actor_observation_domain != "simulator-exact":
-        raise ValueError(
-            "simple-pytorch owns an exact public projection actor domain"
-        )
+        raise ValueError("simple-pytorch owns an exact public projection actor domain")
     if args.reward_profile != OBJECTIVE_V1 or args.reward_shaping_gamma is not None:
         raise ValueError(
             "simple-pytorch uses only its persisted objective-v1-gamma-v1 reward"
         )
     if args.elixir_leak_penalty_scale != 0.0:
-        raise ValueError(
-            "simple-pytorch requires --elixir-leak-penalty-scale 0"
-        )
+        raise ValueError("simple-pytorch requires --elixir-leak-penalty-scale 0")
     if args.engine_fast_path != "off":
         raise ValueError("simple-pytorch does not compose the legacy engine fast path")
     if args.max_ticks != STANDARD_MATCH_TICKS:
         raise ValueError("simple-pytorch currently requires the standard match horizon")
-    if (
-        args.sampling_decks_path is not None
-        or args.learner_sampling_decks_path is not None
-        or args.opponent_sampling_decks_path is not None
-        or args.matchups_path is not None
-        or args.defense_scenario_probability != 0.0
-    ):
+    if args.matchups_path is not None or args.defense_scenario_probability != 0.0:
         raise ValueError(
-            "simple-pytorch deck sampling is owned by its supported-deck artifact"
+            "simple-pytorch does not yet support exact matchups or defense scenarios"
         )
+    if args.opponent_mode == "selfplay" and (
+        args.learner_sampling_decks_path is not None
+        or args.opponent_sampling_decks_path is not None
+    ):
+        raise ValueError("asymmetric Simple deck pools require a stationary opponent")
+    if args.simple_max_entities < 8:
+        raise ValueError("--simple-max-entities must be at least 8")
+    if args.simple_max_effects < 1:
+        raise ValueError("--simple-max-effects must be positive")
 
 
 def main() -> None:
@@ -2322,9 +2347,7 @@ def main() -> None:
         args.causal_rehearsal_decision_positive_weight is not None
         and args.causal_rehearsal_decision_positive_weight <= 0.0
     ):
-        raise ValueError(
-            "--causal-rehearsal-decision-positive-weight must be positive"
-        )
+        raise ValueError("--causal-rehearsal-decision-positive-weight must be positive")
     if args.causal_rehearsal_card_coef < 0.0:
         raise ValueError("--causal-rehearsal-card-coef must be non-negative")
     if args.causal_rehearsal_tile_coef < 0.0:
@@ -2431,9 +2454,21 @@ def main() -> None:
         raise ValueError("league/PFSP options require --opponent-mode league")
     if args.pfsp_strategy_workers is not None and not args.pfsp_report:
         raise ValueError("--pfsp-strategy-workers requires --pfsp-report")
-    if args.opponent_mode in {"checkpoint", "league"} and args.actor_workers == 1:
+    if (
+        args.opponent_mode in {"checkpoint", "league"}
+        and args.actor_workers == 1
+        and args.simulation_backend != "simple-pytorch"
+    ):
         raise ValueError(
             "checkpoint and league opponents currently require parallel actors"
+        )
+    if (
+        args.simulation_backend == "simple-pytorch"
+        and args.opponent_mode == "checkpoint"
+        and len(args.opponent_checkpoint) != 1
+    ):
+        raise ValueError(
+            "simple-pytorch checkpoint mode requires exactly one opponent checkpoint"
         )
     if args.opponent_mode == "league" and args.league_opponent:
         league_kinds = set()
@@ -2684,9 +2719,7 @@ def main() -> None:
         config = replace(
             config,
             play_hazard_adapter_size=args.add_play_hazard_adapter_size,
-            play_hazard_adapter_enemy_y_gate=(
-                args.play_hazard_adapter_enemy_y_gate
-            ),
+            play_hazard_adapter_enemy_y_gate=(args.play_hazard_adapter_enemy_y_gate),
         )
     if args.add_action_type_adapter:
         config = replace(config, action_type_adapter_enabled=True)
@@ -2950,7 +2983,9 @@ def main() -> None:
                 for name in anchor_incompatible.missing_keys
             )
         ):
-            raise ValueError("unexpected zero-repair-adapter anchor checkpoint mismatch")
+            raise ValueError(
+                "unexpected zero-repair-adapter anchor checkpoint mismatch"
+            )
         if compatible_zero_hazard_adapter and (
             anchor_incompatible.unexpected_keys
             or not anchor_incompatible.missing_keys
@@ -2959,7 +2994,9 @@ def main() -> None:
                 for name in anchor_incompatible.missing_keys
             )
         ):
-            raise ValueError("unexpected zero-hazard-adapter anchor checkpoint mismatch")
+            raise ValueError(
+                "unexpected zero-hazard-adapter anchor checkpoint mismatch"
+            )
         anchor_parameters = tuple(
             parameter.detach().clone() if name in anchor_state else None
             for name, parameter in anchor_reference.named_parameters()
@@ -3025,6 +3062,27 @@ def main() -> None:
                 args.simple_token_vocabulary_path, must_exist=True
             ),
             mirror_match=args.mirror_match,
+            opponent_mode=args.opponent_mode,
+            opponent_checkpoint=(
+                opponent_checkpoints[0] if args.opponent_mode == "checkpoint" else None
+            ),
+            opponent_strategy=(
+                args.opponent_strategy if args.opponent_mode == "strategy" else None
+            ),
+            opponent_seed=args.seed + 91_337,
+            opponent_deterministic=args.simple_opponent_deterministic,
+            learner_decks_path=(
+                learner_sampling_decks_path
+                if args.opponent_mode != "selfplay"
+                else None
+            ),
+            opponent_decks_path=(
+                opponent_sampling_decks_path
+                if args.opponent_mode != "selfplay"
+                else None
+            ),
+            max_entities=args.simple_max_entities,
+            max_effects=args.simple_max_effects,
         )
         simulation_backend_metadata = simple_collector.checkpoint_metadata()
     elif args.actor_workers == 1:
@@ -3379,17 +3437,13 @@ def main() -> None:
             rehearsal_batch_sequences=args.rehearsal_batch_sequences,
             causal_rehearsal=causal_rehearsal,
             causal_rehearsal_coef=args.causal_rehearsal_coef,
-            causal_rehearsal_decision_coef=(
-                args.causal_rehearsal_decision_coef
-            ),
+            causal_rehearsal_decision_coef=(args.causal_rehearsal_decision_coef),
             causal_rehearsal_decision_positive_weight=(
                 args.causal_rehearsal_decision_positive_weight
             ),
             causal_rehearsal_card_coef=args.causal_rehearsal_card_coef,
             causal_rehearsal_tile_coef=args.causal_rehearsal_tile_coef,
-            causal_rehearsal_batch_sequences=(
-                args.causal_rehearsal_batch_sequences
-            ),
+            causal_rehearsal_batch_sequences=(args.causal_rehearsal_batch_sequences),
             anchor_rehearsal=anchor_rehearsal,
             anchor_rehearsal_coef=args.anchor_rehearsal_coef,
             anchor_rehearsal_batch_sequences=(args.anchor_rehearsal_batch_sequences),

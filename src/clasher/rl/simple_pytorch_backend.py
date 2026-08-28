@@ -38,12 +38,27 @@ from clasher.torch_sim.simple_reward_v2 import (
     simple_reward_v2_metadata,
 )
 from clasher.torch_sim.simple_rollout import SimpleGymRolloutBridge
+from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 from clasher.torch_sim.simple_standard import (
     STANDARD_TIEBREAK_TICK,
     compile_standard_simple_setup,
 )
 
-from .model import ClasherPolicy, PolicyInputs
+from .model import ClasherPolicy, PolicyConfig, PolicyInputs
+from .simple_asymmetric_collector import (
+    SIMPLE_ALTERNATING_LEARNER_SEAT_PROFILE,
+    SimpleTensorAsymmetricCollector,
+    SimpleTensorAsymmetricDecisionBatch,
+    alternating_learner_seats,
+)
+from .simple_opponents import (
+    SIMPLE_NOOP_OPPONENT_CONTRACT,
+    SIMPLE_STRATEGY_OPPONENT_CONTRACT,
+    SIMPLE_UNIFORM_OPPONENT_CONTRACT,
+    SimpleNoopOpponentPolicy,
+    SimpleTensorStrategyOpponentPolicy,
+    SimpleUniformLegalOpponentPolicy,
+)
 from .simple_tensor_collector import (
     SIMPLE_TENSOR_ACTOR_SEMANTICS_ID,
     SIMPLE_TENSOR_BACKEND_ID,
@@ -285,6 +300,13 @@ class SimpleSupportedDeckArtifact:
     support_profile_sha256: str
 
 
+@dataclass(frozen=True)
+class SimpleDeckPool:
+    decks: tuple[tuple[str, ...], ...]
+    sha256: str
+    source: str
+
+
 def load_simple_supported_decks(
     path: str | Path = DEFAULT_SIMPLE_SUPPORTED_DECKS,
 ) -> SimpleSupportedDeckArtifact:
@@ -325,6 +347,44 @@ def load_simple_supported_decks(
         public_cards=tuple(str(name) for name in public_cards),
         sha256=digest,
         support_profile_sha256=profile_digest,
+    )
+
+
+def load_simple_deck_pool(
+    path: str | Path | None,
+    *,
+    supported: SimpleSupportedDeckArtifact,
+) -> SimpleDeckPool:
+    """Load one bounded learner/opponent pool within the admitted profile."""
+
+    if path is None:
+        return SimpleDeckPool(
+            decks=supported.decks,
+            sha256=supported.sha256,
+            source="supported-artifact",
+        )
+    payload, digest = _read_json(path)
+    rows = payload.get("decks")
+    if not isinstance(rows, list) or not rows:
+        raise SimplePytorchBackendError("simple deck pool has no decks")
+    admitted = set(supported.public_cards)
+    decks: list[tuple[str, ...]] = []
+    for index, row in enumerate(rows):
+        cards = row.get("cards") if isinstance(row, dict) else None
+        if (
+            not isinstance(cards, list)
+            or len(cards) != 8
+            or len(set(cards)) != 8
+            or any(not isinstance(card, str) or card not in admitted for card in cards)
+        ):
+            raise SimplePytorchBackendError(
+                f"simple deck-pool row {index} is invalid or unsupported"
+            )
+        decks.append(tuple(cards))
+    return SimpleDeckPool(
+        decks=tuple(decks),
+        sha256=digest,
+        source=str(Path(path)),
     )
 
 
@@ -430,8 +490,9 @@ def _compile_public_mask_v2_tables(
 class SimpleClasherPolicyAdapter:
     """Adapt two-seat simple-Gym boundaries to ``ClasherPolicy``."""
 
-    def __init__(self, model: ClasherPolicy) -> None:
+    def __init__(self, model: ClasherPolicy, *, deterministic: bool = False) -> None:
         self.model = model
+        self.deterministic = bool(deterministic)
 
     @staticmethod
     def _flatten(value: torch.Tensor) -> torch.Tensor:
@@ -489,11 +550,15 @@ class SimpleClasherPolicyAdapter:
 
     @staticmethod
     def state_to_mapping(
-        state: tuple[torch.Tensor, torch.Tensor], batch_size: int
+        state: tuple[torch.Tensor, torch.Tensor],
+        batch_size: int,
+        seat_count: int = 2,
     ) -> Mapping[str, torch.Tensor]:
+        if seat_count not in (1, 2):
+            raise SimplePytorchBackendError("policy seat count must be one or two")
         return {
-            "hidden": state[0].reshape(batch_size, 2, -1),
-            "cell": state[1].reshape(batch_size, 2, -1),
+            "hidden": state[0].reshape(batch_size, seat_count, -1),
+            "cell": state[1].reshape(batch_size, seat_count, -1),
         }
 
     def __call__(
@@ -502,15 +567,16 @@ class SimpleClasherPolicyAdapter:
         self.model.eval()
         state = self.state_from_mapping(boundary.recurrent_inputs)
         actions, log_prob, values, next_state, _ = self.model.act(
-            self.inputs(boundary), state, deterministic=False
+            self.inputs(boundary), state, deterministic=self.deterministic
         )
         batch = boundary.actor.entity_ids.shape[0]
+        seats = boundary.actor.entity_ids.shape[1]
         return SimpleTensorPolicyDecision(
-            actions=actions[:, 0].reshape(batch, 2),
-            next_recurrent_inputs=self.state_to_mapping(next_state, batch),
+            actions=actions[:, 0].reshape(batch, seats),
+            next_recurrent_inputs=self.state_to_mapping(next_state, batch, seats),
             storage={
-                "log_prob": log_prob[:, 0].reshape(batch, 2),
-                "value": values[:, 0].reshape(batch, 2),
+                "log_prob": log_prob[:, 0].reshape(batch, seats),
+                "value": values[:, 0].reshape(batch, seats),
             },
         )
 
@@ -533,7 +599,7 @@ def _typed_lookups(
     setup: Any,
     loader: CardDataLoader,
     vocabulary: CurrentClientTypedVocabulary,
-) -> tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     size = len(setup.cards.names)
     device = setup.device
     entity = torch.zeros((5, size), dtype=torch.int64, device=device)
@@ -576,7 +642,14 @@ def _typed_lookups(
                 f"runtime card lacks exact typed body identity: {visible_name}"
             )
         entity[kind, card_id] = body_token
-    return entity, hand
+    king_tower = vocabulary.resolve("KingTower", "tower")
+    princess_tower = vocabulary.resolve("Tower", "tower")
+    if king_tower == 0 or princess_tower == 0:
+        raise SimplePytorchBackendError("typed Crown tower identities are incomplete")
+    tower_tokens = torch.tensor(
+        (king_tower, princess_tower), dtype=torch.int64, device=device
+    )
+    return entity, hand, tower_tokens
 
 
 def _deck_rows(
@@ -597,11 +670,83 @@ def _deck_rows(
     return tuple(result)
 
 
+def _asymmetric_deck_rows(
+    *,
+    batch_size: int,
+    learner_pool: SimpleDeckPool,
+    opponent_pool: SimpleDeckPool,
+) -> tuple[tuple[tuple[str, ...], tuple[str, ...]], ...]:
+    result: list[tuple[tuple[str, ...], tuple[str, ...]]] = []
+    for row in range(batch_size):
+        learner = learner_pool.decks[row % len(learner_pool.decks)]
+        opponent = opponent_pool.decks[row % len(opponent_pool.decks)]
+        result.append((learner, opponent) if row % 2 == 0 else (opponent, learner))
+    return tuple(result)
+
+
+def _load_frozen_simple_opponent(
+    path: str | Path,
+    *,
+    device: torch.device,
+    builder: StructuredObservationBuilder,
+    learner_model: ClasherPolicy,
+) -> tuple[ClasherPolicy, str, str]:
+    source = Path(path)
+    try:
+        raw = source.read_bytes()
+        payload = torch.load(source, map_location=device, weights_only=False)
+    except (OSError, RuntimeError, TypeError, ValueError) as error:
+        raise SimplePytorchBackendError(
+            f"cannot load frozen simple opponent {source}: {error}"
+        ) from error
+    if int(payload.get("format_version", 0)) != 2:
+        raise SimplePytorchBackendError("frozen simple opponent is not V2")
+    if tuple(payload.get("token_names", ())) != tuple(builder.token_names):
+        raise SimplePytorchBackendError(
+            "frozen simple opponent uses a different typed vocabulary"
+        )
+    config_payload = payload.get("model_config")
+    if not isinstance(config_payload, dict):
+        raise SimplePytorchBackendError("frozen simple opponent has no model config")
+    opponent_config = PolicyConfig.from_dict(config_payload)
+    if opponent_config.actor_observation_domain != "simulator-exact":
+        raise SimplePytorchBackendError(
+            "frozen simple opponent requires simulator-exact actor inputs"
+        )
+    compatibility = (
+        "num_tokens",
+        "entity_feature_size",
+        "actor_global_size",
+        "critic_global_size",
+        "canonical_lane_globals",
+    )
+    mismatched = [
+        name
+        for name in compatibility
+        if getattr(opponent_config, name) != getattr(learner_model.config, name)
+    ]
+    if mismatched:
+        raise SimplePytorchBackendError(
+            "frozen simple opponent schema differs: " + ", ".join(mismatched)
+        )
+    opponent = ClasherPolicy(opponent_config, builder.card_stat_features).to(device)
+    try:
+        opponent.load_state_dict(payload["model_state_dict"])
+    except (KeyError, RuntimeError) as error:
+        raise SimplePytorchBackendError(
+            f"frozen simple opponent weights are incompatible: {error}"
+        ) from error
+    opponent.eval()
+    opponent.requires_grad_(False)
+    return opponent, _sha256(raw), _canonical_digest(config_payload)
+
+
 @dataclass(frozen=True)
 class SimplePytorchBackendMetadata:
     backend_id: str
     execution_mode: str
     actor_semantics_id: str
+    entity_projection_profile: str
     fresh_only: bool
     canonical_lane_globals: bool
     public_action_mask_contract_version: int
@@ -614,6 +759,17 @@ class SimplePytorchBackendMetadata:
     reward_contract_id: str
     reward_contract_digest: str
     reward_contract_metadata: Mapping[str, Any]
+    rollout_ownership_profile: str
+    learner_seat_profile: str | None
+    opponent_contract_id: str | None
+    opponent_contract_digest: str | None
+    opponent_contract: Mapping[str, Any] | None
+    learner_deck_pool_sha256: str
+    opponent_deck_pool_sha256: str
+    deck_assignment_profile: str
+    deck_assignment_digest: str
+    max_entities: int
+    max_effects: int
 
 
 class SimplePytorchTrainingCollector:
@@ -631,6 +787,15 @@ class SimplePytorchTrainingCollector:
         supported_decks_path: str | Path,
         typed_vocabulary_path: str | Path,
         mirror_match: bool,
+        opponent_mode: str = "selfplay",
+        opponent_checkpoint: str | Path | None = None,
+        opponent_strategy: str | None = None,
+        opponent_seed: int = 0,
+        opponent_deterministic: bool = False,
+        learner_decks_path: str | Path | None = None,
+        opponent_decks_path: str | Path | None = None,
+        max_entities: int | None = None,
+        max_effects: int = 128,
         _execution_mode_override: str | None = None,
     ) -> None:
         if batch_size < 1:
@@ -648,10 +813,43 @@ class SimplePytorchTrainingCollector:
             raise SimplePytorchBackendError(
                 "fresh simple backend does not consume legacy accumulated history"
             )
+        opponent_modes = {"selfplay", "noop", "random", "strategy", "checkpoint"}
+        if opponent_mode not in opponent_modes:
+            raise SimplePytorchBackendError(
+                f"unsupported simple opponent mode: {opponent_mode!r}"
+            )
+        stationary = opponent_mode != "selfplay"
+        if stationary and mirror_match:
+            raise SimplePytorchBackendError(
+                "stationary simple opponents are incompatible with mirror_match"
+            )
+        if (opponent_mode == "checkpoint") != (opponent_checkpoint is not None):
+            raise SimplePytorchBackendError(
+                "checkpoint opponent mode requires exactly one checkpoint"
+            )
+        if (opponent_mode == "strategy") != (opponent_strategy is not None):
+            raise SimplePytorchBackendError(
+                "strategy opponent mode requires exactly one strategy"
+            )
+        entity_capacity = builder.max_entities if max_entities is None else max_entities
+        if not 8 <= entity_capacity <= builder.max_entities:
+            raise SimplePytorchBackendError(
+                "simple entity capacity must be between 8 and builder.max_entities"
+            )
+        if max_effects < 1:
+            raise SimplePytorchBackendError("simple effect capacity must be positive")
         vocabulary = load_current_client_typed_vocabulary(typed_vocabulary_path)
         if tuple(builder.token_names) != vocabulary.token_names:
             raise SimplePytorchBackendError("builder does not use the typed vocabulary")
         artifact = load_simple_supported_decks(supported_decks_path)
+        learner_pool = load_simple_deck_pool(
+            learner_decks_path,
+            supported=artifact,
+        )
+        opponent_pool = load_simple_deck_pool(
+            opponent_decks_path,
+            supported=artifact,
+        )
         loader = CardDataLoader()
         setup = compile_standard_simple_setup(
             loader,
@@ -663,20 +861,56 @@ class SimplePytorchTrainingCollector:
             raise SimplePytorchBackendError(
                 "supported-deck artifact drifted from the current compiler"
             )
-        entity_lookup, hand_lookup = _typed_lookups(setup, loader, vocabulary)
+        entity_lookup, hand_lookup, tower_lookup = _typed_lookups(
+            setup, loader, vocabulary
+        )
+        deck_rows = (
+            _asymmetric_deck_rows(
+                batch_size=batch_size,
+                learner_pool=learner_pool,
+                opponent_pool=opponent_pool,
+            )
+            if stationary
+            else _deck_rows(
+                artifact,
+                batch_size=batch_size,
+                mirror_match=mirror_match,
+            )
+        )
+        deck_assignment_profile = (
+            "alternating-learner-row-cyclic-pools-v1"
+            if stationary
+            else "joint-row-cyclic-supported-pool-v1"
+        )
+        deck_assignment_digest = _canonical_digest(
+            {
+                "profile": deck_assignment_profile,
+                "rows": [
+                    {
+                        "learner_seat": row % 2 if stationary else None,
+                        "player0": list(player0),
+                        "player1": list(player1),
+                    }
+                    for row, (player0, player1) in enumerate(deck_rows)
+                ],
+            }
+        )
         runtime = setup.create_runtime(
-            _deck_rows(artifact, batch_size=batch_size, mirror_match=mirror_match),
+            deck_rows,
             entity_token_lookup=entity_lookup,
             hand_token_lookup=hand_lookup,
+            tower_token_lookup=tower_lookup,
+            canonical_entity_order=True,
             canonical_lane_globals=True,
-            max_entities=builder.max_entities,
+            max_entities=entity_capacity,
+            max_effects=max_effects,
             include_privileged_critic=True,
         )
         execution_mode = self._resolve_execution_mode(
             runtime.device,
             override=_execution_mode_override,
         )
-        rollout_runtime = runtime
+        rollout_runtime: SimpleGymRuntime | SimpleCudaGraphRunner = runtime
         if execution_mode == SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH:
             example_actions = torch.full(
                 (batch_size, 2),
@@ -702,17 +936,102 @@ class SimplePytorchTrainingCollector:
             SimplePublicMaskV2Provider(self.public_mask_tables)
         )
         self.policy = SimpleClasherPolicyAdapter(model)
-        self.collector = SimpleTensorCollector(
-            bridge,
-            public_mask_provider=public_mask_provider,
-            policy=self.policy,
-            strict_host_validation=False,
-        )
+        self.opponent_model: ClasherPolicy | None = None
+        self.opponent_policy: Any = None
+        self._opponent_recurrent_inputs: Mapping[str, torch.Tensor] | None = None
+        opponent_contract_id: str | None = None
+        opponent_contract: Mapping[str, Any] | None = None
+        self.collector: Any
+        if not stationary:
+            self.collector = SimpleTensorCollector(
+                bridge,
+                public_mask_provider=public_mask_provider,
+                policy=self.policy,
+                strict_host_validation=False,
+            )
+        else:
+            if opponent_mode == "noop":
+                self.opponent_policy = SimpleNoopOpponentPolicy()
+                opponent_contract_id = SIMPLE_NOOP_OPPONENT_CONTRACT
+                opponent_contract = {"kind": "noop"}
+            elif opponent_mode == "random":
+                self.opponent_policy = SimpleUniformLegalOpponentPolicy(
+                    seed=opponent_seed
+                )
+                opponent_contract_id = SIMPLE_UNIFORM_OPPONENT_CONTRACT
+                opponent_contract = {
+                    "kind": "uniform-legal",
+                    "seed": int(opponent_seed),
+                    "selection": "counter-ranked-public-mask-v1",
+                }
+            elif opponent_mode == "strategy":
+                assert opponent_strategy is not None
+                self.opponent_policy = SimpleTensorStrategyOpponentPolicy(
+                    opponent_strategy,
+                    self.public_mask_tables,
+                    device=device,
+                )
+                opponent_contract_id = SIMPLE_STRATEGY_OPPONENT_CONTRACT
+                opponent_contract = {
+                    "kind": "public-strategy",
+                    "name": opponent_strategy,
+                    "profile": "card-agnostic-placement-weights-v1",
+                }
+            else:
+                assert opponent_checkpoint is not None
+                (
+                    self.opponent_model,
+                    checkpoint_sha256,
+                    checkpoint_config_digest,
+                ) = _load_frozen_simple_opponent(
+                    opponent_checkpoint,
+                    device=device,
+                    builder=builder,
+                    learner_model=model,
+                )
+                self.opponent_policy = SimpleClasherPolicyAdapter(
+                    self.opponent_model,
+                    deterministic=opponent_deterministic,
+                )
+                initial_opponent_state = self.opponent_model.initial_state(
+                    batch_size,
+                    device=device,
+                )
+                self._opponent_recurrent_inputs = dict(
+                    SimpleClasherPolicyAdapter.state_to_mapping(
+                        initial_opponent_state,
+                        batch_size,
+                        1,
+                    )
+                )
+                opponent_contract_id = "simple-opponent/frozen-checkpoint-v1"
+                opponent_contract = {
+                    "kind": "checkpoint",
+                    "checkpoint_sha256": checkpoint_sha256,
+                    "model_config_digest": checkpoint_config_digest,
+                    "deterministic": bool(opponent_deterministic),
+                }
+            assert opponent_contract_id is not None
+            assert opponent_contract is not None
+            self.collector = SimpleTensorAsymmetricCollector(
+                bridge,
+                public_mask_provider=public_mask_provider,
+                learner_policy=self.policy,
+                opponent_policy=self.opponent_policy,
+                learner_seats=alternating_learner_seats(
+                    batch_size,
+                    device=device,
+                ),
+                opponent_contract_id=opponent_contract_id,
+                opponent_contract=opponent_contract,
+                strict_host_validation=False,
+            )
         reward_metadata = simple_reward_v2_metadata(reward)
         self.metadata = SimplePytorchBackendMetadata(
             backend_id=SIMPLE_TENSOR_BACKEND_ID,
             execution_mode=execution_mode,
             actor_semantics_id=SIMPLE_TENSOR_ACTOR_SEMANTICS_ID,
+            entity_projection_profile="python-semantic-entity-order-v1",
             fresh_only=True,
             canonical_lane_globals=True,
             public_action_mask_contract_version=PUBLIC_ACTION_MASK_CONTRACT_V2,
@@ -727,7 +1046,28 @@ class SimplePytorchTrainingCollector:
             reward_contract_id=SIMPLE_REWARD_V2_CONTRACT_ID,
             reward_contract_digest=str(reward_metadata["reward_contract_digest"]),
             reward_contract_metadata=reward_metadata,
+            rollout_ownership_profile=(
+                "learner-only-stationary-v1" if stationary else "joint-two-seat-v1"
+            ),
+            learner_seat_profile=(
+                SIMPLE_ALTERNATING_LEARNER_SEAT_PROFILE if stationary else None
+            ),
+            opponent_contract_id=opponent_contract_id,
+            opponent_contract_digest=(
+                None
+                if opponent_contract is None
+                else _canonical_digest(opponent_contract)
+            ),
+            opponent_contract=opponent_contract,
+            learner_deck_pool_sha256=learner_pool.sha256,
+            opponent_deck_pool_sha256=opponent_pool.sha256,
+            deck_assignment_profile=deck_assignment_profile,
+            deck_assignment_digest=deck_assignment_digest,
+            max_entities=entity_capacity,
+            max_effects=max_effects,
         )
+        self.stationary_opponent = stationary
+        self._learner_seats_cpu = np.arange(batch_size, dtype=np.int64) % 2
 
     @staticmethod
     def _resolve_execution_mode(
@@ -803,12 +1143,35 @@ class SimplePytorchTrainingCollector:
         initial_hidden = recurrent_state[0].detach().clone()
         initial_cell = recurrent_state[1].detach().clone()
         recurrent_inputs = {
-            "hidden": recurrent_state[0].reshape(batch, 2, -1),
-            "cell": recurrent_state[1].reshape(batch, 2, -1),
+            "hidden": recurrent_state[0].reshape(
+                batch,
+                1 if self.stationary_opponent else 2,
+                -1,
+            ),
+            "cell": recurrent_state[1].reshape(
+                batch,
+                1 if self.stationary_opponent else 2,
+                -1,
+            ),
         }
-        decision = self.collector.collect(
-            rollout_steps, recurrent_inputs=recurrent_inputs
-        )
+        asymmetric: SimpleTensorAsymmetricDecisionBatch | None = None
+        if self.stationary_opponent:
+            assert isinstance(self.collector, SimpleTensorAsymmetricCollector)
+            asymmetric = self.collector.collect(
+                rollout_steps,
+                learner_recurrent_inputs=recurrent_inputs,
+                opponent_recurrent_inputs=self._opponent_recurrent_inputs,
+            )
+            decision = asymmetric.learner
+            self._opponent_recurrent_inputs = (
+                asymmetric.opponent_bootstrap.recurrent_inputs
+            )
+        else:
+            assert isinstance(self.collector, SimpleTensorCollector)
+            decision = self.collector.collect(
+                rollout_steps,
+                recurrent_inputs=recurrent_inputs,
+            )
         if decision.critic is None:
             raise SimplePytorchBackendError("training collection requires a critic")
         confidence = self._confidence_tensors(decision)
@@ -851,7 +1214,9 @@ class SimplePytorchTrainingCollector:
             "old_log_probs": self._agent_major(storage["log_prob"]),
             "old_values": self._agent_major(storage["value"]),
             "rewards": self._agent_major(decision.rewards),
-            "dones": self._agent_major(decision.done[..., None].expand(-1, -1, 2)),
+            "dones": self._agent_major(
+                decision.done[..., None].expand(-1, -1, decision.actions.shape[2])
+            ),
             "initial_hidden": initial_hidden,
             "initial_cell": initial_cell,
             "bootstrap_values": bootstrap_values.detach(),
@@ -874,6 +1239,23 @@ class SimplePytorchTrainingCollector:
         previous_actions = staged.pop("_bootstrap_previous_actions")
         previous_rewards = staged.pop("_bootstrap_previous_rewards")
         episode_starts = staged.pop("_bootstrap_episode_starts")
+        if self.stationary_opponent:
+            learner_grid = np.broadcast_to(
+                self._learner_seats_cpu[None, :],
+                done.shape,
+            )
+            terminal_learner = learner_grid[done]
+            wins = int(np.count_nonzero(terminal_winner == terminal_learner))
+            losses = int(
+                np.count_nonzero(
+                    (terminal_winner >= 0) & (terminal_winner != terminal_learner)
+                )
+            )
+            draws = int(np.count_nonzero(terminal_winner < 0))
+        else:
+            wins = int(np.count_nonzero(terminal_winner == 0))
+            losses = int(np.count_nonzero(terminal_winner == 1))
+            draws = int(np.count_nonzero(terminal_winner < 0))
         arrays: dict[str, Any] = {
             **staged,
             "opponent_history_ids": zeros_history_i64,
@@ -884,9 +1266,9 @@ class SimplePytorchTrainingCollector:
                 (agents, steps), dtype=np.float32
             ),
             "episodes_finished": int(np.count_nonzero(done)),
-            "wins": int(np.count_nonzero(terminal_winner == 0)),
-            "losses": int(np.count_nonzero(terminal_winner == 1)),
-            "draws": int(np.count_nonzero(terminal_winner < 0)),
+            "wins": wins,
+            "losses": losses,
+            "draws": draws,
         }
         bootstrap_state = self.policy.state_from_mapping(
             decision.bootstrap.recurrent_inputs

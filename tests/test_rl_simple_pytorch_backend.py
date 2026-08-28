@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import hashlib
 import inspect
+import json
 from argparse import Namespace
+from collections import deque
 from dataclasses import fields, replace
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -11,6 +15,8 @@ import torch
 
 import clasher.rl.simple_pytorch_backend as simple_backend
 from clasher.rl.model import ClasherPolicy, PolicyConfig
+from clasher.rl.selfplay_env import SelfPlayBattleEnv
+from clasher.rl.simple_asymmetric_collector import SimpleTensorAsymmetricCollector
 from clasher.rl.simple_pytorch_backend import (
     SIMPLE_PYTORCH_BACKEND,
     SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH,
@@ -51,6 +57,8 @@ def _simple_args(**overrides: object) -> Namespace:
         "opponent_sampling_decks_path": None,
         "matchups_path": None,
         "defense_scenario_probability": 0.0,
+        "simple_max_entities": 56,
+        "simple_max_effects": 64,
     }
     values.update(overrides)
     return Namespace(**values)
@@ -79,6 +87,13 @@ def _training_collector(
     *,
     batch_size: int = 1,
     execution_mode: str | None = None,
+    opponent_mode: str = "selfplay",
+    opponent_checkpoint: str | None = None,
+    opponent_strategy: str | None = None,
+    learner_decks_path: str | None = None,
+    opponent_decks_path: str | None = None,
+    max_entities: int | None = None,
+    max_effects: int = 128,
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -117,6 +132,13 @@ def _training_collector(
             "reports/current_client_youtube_stable_vocabulary_v1.json"
         ),
         mirror_match=False,
+        opponent_mode=opponent_mode,
+        opponent_checkpoint=opponent_checkpoint,
+        opponent_strategy=opponent_strategy,
+        learner_decks_path=learner_decks_path,
+        opponent_decks_path=opponent_decks_path,
+        max_entities=max_entities,
+        max_effects=max_effects,
         _execution_mode_override=execution_mode,
     )
 
@@ -351,6 +373,346 @@ def test_mps_training_wrapper_collects_one_recurrent_decision() -> None:
     assert previous_actions.shape == (2,)
     assert previous_rewards.shape == (2,)
     assert episode_starts.shape == (2,)
+
+
+def _write_deck_pool(path: Path, cards: tuple[str, ...]) -> None:
+    path.write_text(
+        json.dumps({"decks": [{"name": path.stem, "cards": list(cards)}]}),
+        encoding="utf-8",
+    )
+
+
+def _observation_digest(values: dict[str, np.ndarray]) -> str:
+    digest = hashlib.sha256()
+    for name in sorted(values):
+        value = np.ascontiguousarray(values[name])
+        if np.issubdtype(value.dtype, np.floating):
+            value = value.copy()
+            value[value == 0] = 0.0
+        digest.update(name.encode("utf-8"))
+        digest.update(value.dtype.str.encode("ascii"))
+        digest.update(np.asarray(value.shape, dtype=np.int64).tobytes())
+        digest.update(value.tobytes())
+    return digest.hexdigest()
+
+
+def test_simple_boundary_hash_matches_python_stationary_observation(
+    tmp_path: Path,
+) -> None:
+    learner_deck = (
+        "IceWizard",
+        "Knight",
+        "Rocket",
+        "Skeletons",
+        "Tesla",
+        "Log",
+        "Tornado",
+        "Xbow",
+    )
+    opponent_deck = (
+        "Arrows",
+        "Balloon",
+        "Cannon",
+        "ElectroDragon",
+        "IceWizard",
+        "Pekka",
+        "Skeletons",
+        "Tornado",
+    )
+    learner_path = tmp_path / "learner-direct-token.json"
+    opponent_path = tmp_path / "opponent-direct-token.json"
+    _write_deck_pool(learner_path, learner_deck)
+    _write_deck_pool(opponent_path, opponent_deck)
+    collector = _training_collector(
+        batch_size=2,
+        opponent_mode="noop",
+        learner_decks_path=str(learner_path),
+        opponent_decks_path=str(opponent_path),
+        max_entities=48,
+        max_effects=64,
+    )
+    boundary = collector.collector.bridge.observe()
+    runtime = collector.collector.bridge.runtime
+    assert not isinstance(runtime, SimpleCudaGraphRunner)
+    assert runtime.spawn_blueprints is not None
+    visible_names = runtime.spawn_blueprints.visible_names
+    vocabulary = load_current_client_typed_vocabulary()
+    builder = StructuredObservationBuilder(
+        decks_path="decks.json",
+        token_names=vocabulary.token_names,
+        max_entities=48,
+        canonical_lane_globals=True,
+    )
+
+    actual: dict[str, list[np.ndarray]] = {
+        name: []
+        for name in (
+            "entity_ids",
+            "entity_features",
+            "entity_mask",
+            "hand_ids",
+            "global_features",
+            "critic_entity_ids",
+            "critic_entity_features",
+            "critic_entity_mask",
+            "critic_card_ids",
+            "critic_global_features",
+        )
+    }
+    expected: dict[str, list[np.ndarray]] = {name: [] for name in actual}
+    assert boundary.critic is not None
+    for row in range(2):
+        learner_seat = row % 2
+        env = SelfPlayBattleEnv(
+            seed=90 + row,
+            max_ticks=6_000,
+            canonical_lane_globals=True,
+            idle_fast_forward=False,
+            reward_shaping_gamma=0.995,
+            elixir_leak_penalty_scale=0.0,
+        )
+        env._structured_obs_builder = builder
+        env.reset()
+        assert env.battle is not None
+        for player in range(2):
+            hand = [
+                visible_names[int(card)]
+                for card in runtime.action_state.hand_ids[row, player]
+            ]
+            cycle = [
+                visible_names[int(card)]
+                for card in runtime.action_state.cycle_ids[row, player]
+            ]
+            env.battle.players[player].hand = hand
+            env.battle.players[player].cycle_queue = deque(cycle)
+            env.battle.players[player].deck = [*hand, *cycle]
+            env.battle.players[player].elixir = float(
+                runtime.action_state.elixir[row, player]
+            )
+        python_observation = builder.build(env.battle, learner_seat)
+        tensor_fields = {
+            "entity_ids": boundary.actor.entity_ids,
+            "entity_features": boundary.actor.entity_features,
+            "entity_mask": boundary.actor.entity_mask,
+            "hand_ids": boundary.actor.hand_ids,
+            "global_features": boundary.actor.global_features,
+            "critic_entity_ids": boundary.critic.entity_ids,
+            "critic_entity_features": boundary.critic.entity_features,
+            "critic_entity_mask": boundary.critic.entity_mask,
+            "critic_card_ids": boundary.critic.card_ids,
+            "critic_global_features": boundary.critic.global_features,
+        }
+        for name, tensor in tensor_fields.items():
+            actual[name].append(tensor[row, learner_seat].detach().numpy())
+            expected[name].append(getattr(python_observation, name))
+
+    actual_arrays = {name: np.stack(rows) for name, rows in actual.items()}
+    expected_arrays = {name: np.stack(rows) for name, rows in expected.items()}
+    for name, actual_value in actual_arrays.items():
+        assert actual_value.dtype == expected_arrays[name].dtype, name
+        np.testing.assert_array_equal(actual_value, expected_arrays[name])
+    assert _observation_digest(actual_arrays) == _observation_digest(expected_arrays)
+    assert collector.metadata.entity_projection_profile == (
+        "python-semantic-entity-order-v1"
+    )
+
+
+def test_stationary_backend_exports_only_alternating_learner_seats(
+    tmp_path: Path,
+) -> None:
+    artifact = load_simple_supported_decks()
+    learner_deck = next(deck for deck in artifact.decks if "HogRider" in deck)
+    opponent_deck = next(deck for deck in artifact.decks if "HogRider" not in deck)
+    learner_path = tmp_path / "learner.json"
+    opponent_path = tmp_path / "opponent.json"
+    _write_deck_pool(learner_path, learner_deck)
+    _write_deck_pool(opponent_path, opponent_deck)
+    collector = _training_collector(
+        batch_size=2,
+        opponent_mode="noop",
+        learner_decks_path=str(learner_path),
+        opponent_decks_path=str(opponent_path),
+        max_entities=48,
+        max_effects=64,
+    )
+    assert isinstance(collector.collector, SimpleTensorAsymmetricCollector)
+    model = collector.policy.model
+    hog_token = load_current_client_typed_vocabulary().resolve(
+        "HogRider", "card_action"
+    )
+    actor = collector.collector.bridge.observe().actor.hand_ids
+    assert actor[0, 0].eq(hog_token).any()
+    assert not actor[0, 1].eq(hog_token).any()
+    assert actor[1, 1].eq(hog_token).any()
+    assert not actor[1, 0].eq(hog_token).any()
+
+    arrays, next_state, *_ = collector.collect(
+        2,
+        model.initial_state(2, device="cpu"),
+    )
+
+    assert RolloutBatch(**arrays).num_sequences == 2
+    assert arrays["actions"].shape == (2, 2)
+    assert arrays["dones"].shape == (2, 2)
+    assert arrays["entity_ids"].shape == (2, 2, 48)
+    assert next_state[0].shape == (2, model.config.memory_size)
+    assert collector.metadata.rollout_ownership_profile == (
+        "learner-only-stationary-v1"
+    )
+    assert collector.metadata.learner_seat_profile == "alternating-row-parity-v1"
+    assert collector.metadata.max_entities == 48
+    assert collector.metadata.max_effects == 64
+    assert collector.metadata.learner_deck_pool_sha256 != (
+        collector.metadata.opponent_deck_pool_sha256
+    )
+    assert collector.metadata.deck_assignment_profile == (
+        "alternating-learner-row-cyclic-pools-v1"
+    )
+    assert len(collector.metadata.deck_assignment_digest) == 64
+
+
+@pytest.mark.parametrize(
+    ("opponent_mode", "opponent_strategy"),
+    (("random", None), ("strategy", "balanced")),
+)
+def test_device_resident_stationary_opponents_export_legal_learner_rollouts(
+    opponent_mode: str,
+    opponent_strategy: str | None,
+) -> None:
+    collector = _training_collector(
+        batch_size=2,
+        opponent_mode=opponent_mode,
+        opponent_strategy=opponent_strategy,
+        max_entities=48,
+        max_effects=64,
+    )
+    model = collector.policy.model
+
+    arrays, *_ = collector.collect(1, model.initial_state(2, device="cpu"))
+
+    assert arrays["actions"].shape == (2, 1)
+    assert arrays["action_masks"][np.arange(2), 0, arrays["actions"][:, 0]].all()
+    assert collector.metadata.opponent_contract_id is not None
+    assert collector.metadata.opponent_contract_digest is not None
+
+
+def test_frozen_checkpoint_opponent_keeps_independent_recurrent_state(
+    tmp_path: Path,
+) -> None:
+    source = _training_collector()
+    source_model = source.policy.model
+    checkpoint = tmp_path / "opponent.pt"
+    torch.save(
+        {
+            "format_version": 2,
+            "token_names": list(load_current_client_typed_vocabulary().token_names),
+            "model_config": source_model.config.to_dict(),
+            "model_state_dict": source_model.state_dict(),
+        },
+        checkpoint,
+    )
+    collector = _training_collector(
+        batch_size=2,
+        opponent_mode="checkpoint",
+        opponent_checkpoint=str(checkpoint),
+        max_entities=48,
+        max_effects=64,
+    )
+    assert collector.opponent_model is not None
+    assert all(
+        not parameter.requires_grad
+        for parameter in collector.opponent_model.parameters()
+    )
+    assert collector._opponent_recurrent_inputs is not None
+    before = {
+        name: value.clone()
+        for name, value in collector._opponent_recurrent_inputs.items()
+    }
+    model = collector.policy.model
+
+    arrays, *_ = collector.collect(2, model.initial_state(2, device="cpu"))
+
+    assert arrays["actions"].shape == (2, 2)
+    assert collector._opponent_recurrent_inputs is not None
+    assert any(
+        not torch.equal(before[name], collector._opponent_recurrent_inputs[name])
+        for name in before
+    )
+    assert collector.metadata.opponent_contract is not None
+    assert collector.metadata.opponent_contract["checkpoint_sha256"] == (
+        simple_backend._sha256(checkpoint.read_bytes())
+    )
+
+
+def test_stationary_backend_rejects_mirror_and_unsupported_pool(
+    tmp_path: Path,
+) -> None:
+    invalid = tmp_path / "invalid.json"
+    _write_deck_pool(
+        invalid,
+        ("Knight", "Archers", "Arrows", "Fireball", "Zap", "Log", "Giant", "X"),
+    )
+    with pytest.raises(SimplePytorchBackendError, match="invalid or unsupported"):
+        _training_collector(
+            opponent_mode="noop",
+            learner_decks_path=str(invalid),
+        )
+    with pytest.raises(SimplePytorchBackendError, match="mirror_match"):
+        # Constructor coverage uses the same authoritative helper inputs.
+        vocabulary = load_current_client_typed_vocabulary()
+        builder = StructuredObservationBuilder(
+            decks_path="decks.json",
+            token_names=vocabulary.token_names,
+            max_entities=128,
+            canonical_lane_globals=True,
+        )
+        config = PolicyConfig(
+            num_tokens=builder.spec.num_tokens,
+            max_entities=builder.spec.max_entities,
+            canonical_lane_globals=True,
+            d_model=32,
+            num_heads=4,
+            actor_layers=1,
+            critic_layers=1,
+            memory_size=32,
+            dropout=0.0,
+        )
+        SimplePytorchTrainingCollector(
+            model=ClasherPolicy(config, builder.card_stat_features),
+            builder=builder,
+            batch_size=1,
+            device=torch.device("cpu"),
+            decision_interval=2,
+            gamma=0.995,
+            supported_decks_path="training_decks/simple_gym_supported_v1.json",
+            typed_vocabulary_path=(
+                "reports/current_client_youtube_stable_vocabulary_v1.json"
+            ),
+            mirror_match=True,
+            opponent_mode="noop",
+        )
+
+
+def test_simple_cli_contract_allows_stationary_modes_and_bounded_capacity() -> None:
+    for opponent_mode in ("noop", "random", "strategy", "checkpoint"):
+        _validate_simple_pytorch_args(
+            _simple_args(
+                opponent_mode=opponent_mode,
+                learner_sampling_decks_path="learner.json",
+                opponent_sampling_decks_path="opponent.json",
+            )
+        )
+    with pytest.raises(ValueError, match="one stationary opponent"):
+        _validate_simple_pytorch_args(_simple_args(opponent_mode="league"))
+    with pytest.raises(ValueError, match="at least 8"):
+        _validate_simple_pytorch_args(_simple_args(simple_max_entities=7))
+    with pytest.raises(ValueError, match="stationary opponent"):
+        _validate_simple_pytorch_args(
+            _simple_args(
+                opponent_mode="selfplay",
+                learner_sampling_decks_path="learner.json",
+            )
+        )
 
     source = inspect.getsource(SimplePublicMaskV2Provider.build)
     for forbidden in (".cpu(", ".numpy(", ".item(", ".tolist("):
