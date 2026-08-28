@@ -119,10 +119,11 @@ def _validate(inputs: FastRadialImpulseInputs) -> tuple[int, int, int]:
 def _integer_sqrt(values: torch.Tensor) -> torch.Tensor:
     """Exact floor square root at arena scale without host synchronization."""
 
-    # Coordinates in the Gym are native arena units, so a float64 estimate is
-    # within one integer.  Exact integer comparisons repair perfect-square
-    # boundaries and make the result identical on CPU and CUDA.
-    root = torch.sqrt(values.to(torch.float64)).to(torch.int64)
+    # Coordinates in the Gym are native arena units, so the supported hardware
+    # estimate is within one integer. Exact comparisons repair perfect-square
+    # boundaries. MPS uses float32 because it has no float64 tensor support.
+    sqrt_dtype = torch.float32 if values.device.type == "mps" else torch.float64
+    root = torch.sqrt(values.to(sqrt_dtype)).to(torch.int64)
     for _ in range(2):
         root = torch.where(root.square() > values, root - 1, root)
         following = root + 1

@@ -408,7 +408,10 @@ class SimpleTensorCollector:
                 ((~done) & (native_ticks != self.bridge.decision_interval)).any(),
             )
         ).any()
-        if self.strict_host_validation:
+        if self.strict_host_validation or invalid.device.type == "mps":
+            # PyTorch MPS does not implement aten::_assert_async. MPS already
+            # uses an exact CPU public-mask boundary, so validate the scalar at
+            # that host boundary while CUDA retains the asynchronous assertion.
             self._enforce_native_admission_host(invalid)
         else:
             torch._assert_async(

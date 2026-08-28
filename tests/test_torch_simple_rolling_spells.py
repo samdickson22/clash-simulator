@@ -533,4 +533,5 @@ def test_rolling_hot_paths_have_no_sync_compaction_or_card_dispatch() -> None:
         assert card_name not in source
     assert "[:, :, :, None]" not in inspect.getsource(_record_fast_rolling_hits_)
     assert "[:, :, None, :]" not in inspect.getsource(_record_fast_rolling_hits_)
-    assert "scatter_reduce_(" in inspect.getsource(_record_fast_rolling_hits_)
+    assert "scatter_(" in inspect.getsource(_record_fast_rolling_hits_)
+    assert "scatter_reduce_(" not in inspect.getsource(_record_fast_rolling_hits_)

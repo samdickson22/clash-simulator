@@ -16,6 +16,8 @@ from clasher.torch_sim.simple_impulse import (
 def _device(name: str) -> torch.device:
     if name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
+    if name == "mps" and not torch.backends.mps.is_available():
+        pytest.skip("MPS unavailable")
     return torch.device(name)
 
 
@@ -67,7 +69,7 @@ def _inputs(
     )
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_tornado_like_absolute_and_percentage_pulls(device_name: str) -> None:
     inputs = _inputs(
         device_name,
@@ -99,7 +101,7 @@ def test_tornado_like_absolute_and_percentage_pulls(device_name: str) -> None:
     ]
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_knockback_push_uses_integer_radial_normalization(device_name: str) -> None:
     inputs = _inputs(
         device_name,
@@ -115,7 +117,7 @@ def test_knockback_push_uses_integer_radial_normalization(device_name: str) -> N
     assert result.dy_units[0].tolist() == [800, 800]
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_exact_center_fallback_depends_on_stable_identity_not_slot(
     device_name: str,
 ) -> None:
@@ -133,7 +135,7 @@ def test_exact_center_fallback_depends_on_stable_identity_not_slot(
     assert result.dy_units[0].tolist() == [0, 200, -200, 0]
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_simultaneous_effects_sum_then_use_per_target_cap(device_name: str) -> None:
     inputs = _inputs(
         device_name,
@@ -153,7 +155,7 @@ def test_simultaneous_effects_sum_then_use_per_target_cap(device_name: str) -> N
     assert result.dy_units[0].tolist() == [480, 0]
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_invalid_id_and_ineligible_lanes_fail_closed(device_name: str) -> None:
     inputs = _inputs(
         device_name,
@@ -172,7 +174,7 @@ def test_invalid_id_and_ineligible_lanes_fail_closed(device_name: str) -> None:
     assert not result.affected.any()
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_impulse_replay_is_exact_and_inputs_are_not_mutated(device_name: str) -> None:
     inputs = _inputs(
         device_name,

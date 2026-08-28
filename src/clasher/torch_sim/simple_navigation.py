@@ -70,8 +70,10 @@ def _canonical_device(device: str | torch.device) -> torch.device:
     result = torch.device(device)
     if result.type == "cuda" and result.index is None:
         result = torch.device("cuda", torch.cuda.current_device())
-    if result.type not in {"cpu", "cuda"}:
-        raise ValueError("fast arena navigation supports CPU and CUDA only")
+    if result.type == "mps" and result.index is None:
+        result = torch.empty(0, device=result).device
+    if result.type not in {"cpu", "cuda", "mps"}:
+        raise ValueError("fast arena navigation supports CPU, CUDA, and MPS only")
     return result
 
 
