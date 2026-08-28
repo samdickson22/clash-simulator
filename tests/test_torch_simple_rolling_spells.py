@@ -10,6 +10,7 @@ from clasher.torch_sim.simple_rolling_spells import (
     FAST_ROLLING_NO_SPAWN,
     FastRollingSpellCommands,
     FastRollingSpellState,
+    _record_fast_rolling_hits_,
     allocate_fast_rolling_spells_,
     step_fast_rolling_spells_,
 )
@@ -115,6 +116,120 @@ def _traits(
     for slot in tower_slots:
         tower[0, slot] = True
     return air, radius, tower
+
+
+def _stable_order_rolling_hit_reference_(
+    hit_candidate: torch.Tensor,
+    entity_stable_id: torch.Tensor,
+    hit_stable_ids: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Previous pairwise stable-order implementation used as a test oracle."""
+
+    batch, rollers, entities = hit_candidate.shape
+    maximum_id = torch.iinfo(torch.int64).max
+    candidate_id = torch.where(
+        hit_candidate,
+        entity_stable_id[:, None, :],
+        torch.full(
+            (batch, rollers, entities),
+            maximum_id,
+            dtype=torch.int64,
+            device=hit_candidate.device,
+        ),
+    )
+    entity_slot = torch.arange(
+        entities, dtype=torch.int64, device=hit_candidate.device
+    ).view(1, 1, entities)
+    other_before = hit_candidate[:, :, None, :] & (
+        (candidate_id[:, :, None, :] < candidate_id[:, :, :, None])
+        | (
+            (candidate_id[:, :, None, :] == candidate_id[:, :, :, None])
+            & (entity_slot[:, :, None, :] < entity_slot[:, :, :, None])
+        )
+    )
+    hit_rank = other_before.sum(dim=3, dtype=torch.int64)
+    free_record = hit_stable_ids == 0
+    free_record_rank = free_record.to(torch.int64).cumsum(dim=2) - 1
+    free_record_count = free_record.sum(dim=2, dtype=torch.int64)
+    hit = hit_candidate & (hit_rank < free_record_count[:, :, None])
+    ledger_destination = (
+        hit[:, :, :, None]
+        & free_record[:, :, None, :]
+        & (hit_rank[:, :, :, None] == free_record_rank[:, :, None, :])
+    )
+    ledger_written = ledger_destination.any(dim=2)
+    ledger_value = torch.where(
+        ledger_destination,
+        entity_stable_id[:, None, :, None],
+        0,
+    ).sum(dim=2, dtype=torch.int64)
+    hit_stable_ids.copy_(torch.where(ledger_written, ledger_value, hit_stable_ids))
+    return hit, hit_candidate & ~hit
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_prefix_scatter_ledger_matches_stable_reference_membership_randomized(
+    device_name: str,
+) -> None:
+    device = _device(device_name)
+    generator = torch.Generator().manual_seed(0xC1A5_4E2)
+    batch, rollers, entities = 24, 5, 19
+    stable_rows = []
+    candidate_rows = []
+    ledger_rows = []
+    for batch_index in range(batch):
+        stable_ids = torch.randperm(entities, generator=generator) + (
+            1 + batch_index * entities
+        )
+        roller_candidates = []
+        roller_ledgers = []
+        for _roller in range(rollers):
+            prior_count = int(
+                torch.randint(0, entities, (1,), generator=generator).item()
+            )
+            prior_slots = torch.randperm(entities, generator=generator)[:prior_count]
+            prior_ids = stable_ids[prior_slots]
+            ledger_positions = torch.randperm(entities, generator=generator)[
+                :prior_count
+            ]
+            ledger = torch.zeros(entities, dtype=torch.int64)
+            ledger[ledger_positions] = prior_ids[
+                torch.randperm(prior_count, generator=generator)
+            ]
+            candidate = torch.rand(entities, generator=generator) < 0.55
+            if prior_count:
+                candidate &= ~(stable_ids[:, None] == prior_ids[None, :]).any(dim=1)
+            roller_candidates.append(candidate)
+            roller_ledgers.append(ledger)
+        stable_rows.append(stable_ids)
+        candidate_rows.append(torch.stack(roller_candidates))
+        ledger_rows.append(torch.stack(roller_ledgers))
+
+    stable_id = torch.stack(stable_rows).to(device)
+    hit_candidate = torch.stack(candidate_rows).to(device)
+    previous = torch.stack(ledger_rows).to(device)
+    reference_ledger = previous.clone()
+    prefix_ledger = previous.clone()
+
+    reference_hit, reference_rejected = _stable_order_rolling_hit_reference_(
+        hit_candidate,
+        stable_id,
+        reference_ledger,
+    )
+    prefix_hit, prefix_rejected = _record_fast_rolling_hits_(
+        hit_candidate,
+        stable_id,
+        prefix_ledger,
+    )
+
+    assert torch.equal(prefix_hit, reference_hit)
+    assert not bool(reference_rejected.any())
+    assert not bool(prefix_rejected.any())
+    assert torch.equal(
+        prefix_ledger.sort(dim=2).values,
+        reference_ledger.sort(dim=2).values,
+    )
+    assert torch.equal(prefix_hit, hit_candidate)
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
@@ -400,8 +515,10 @@ def test_allocation_is_stable_and_invalid_commands_fail_closed(
 
 
 def test_rolling_hot_paths_have_no_sync_compaction_or_card_dispatch() -> None:
-    source = inspect.getsource(allocate_fast_rolling_spells_) + inspect.getsource(
-        step_fast_rolling_spells_
+    source = (
+        inspect.getsource(allocate_fast_rolling_spells_)
+        + inspect.getsource(_record_fast_rolling_hits_)
+        + inspect.getsource(step_fast_rolling_spells_)
     )
     for forbidden in (
         ".item(",
@@ -414,3 +531,6 @@ def test_rolling_hot_paths_have_no_sync_compaction_or_card_dispatch() -> None:
         assert forbidden not in source
     for card_name in ("TheLog", "BarbarianBarrel"):
         assert card_name not in source
+    assert "[:, :, :, None]" not in inspect.getsource(_record_fast_rolling_hits_)
+    assert "[:, :, None, :]" not in inspect.getsource(_record_fast_rolling_hits_)
+    assert "scatter_reduce_(" in inspect.getsource(_record_fast_rolling_hits_)
