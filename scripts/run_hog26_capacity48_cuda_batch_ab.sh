@@ -9,8 +9,17 @@ python_bin=${PYTHON_BIN:-python}
 initializer=${INITIALIZER:-/home/ubuntu/candidate_play_gate.pt}
 output_root=${OUTPUT_ROOT:-checkpoints/hog26_capacity48_cuda_batch_ab_seed1158001}
 report_root=${REPORT_ROOT:-reports/hog26_capacity48_cuda_batch_ab_seed1158001}
-updates=${UPDATES:-80}
+updates=${UPDATES:-120}
 seed=${SEED:-1158001}
+
+# Eight rollout decisions at eight simulator ticks each advance a persistent
+# row by 64 ticks/update. Require enough uninterrupted updates to cross the
+# 6,000-tick tiebreak boundary; checkpoint resume does not persist battle state.
+minimum_terminal_updates=$(((6000 + 8 * 8 - 1) / (8 * 8)))
+if ((updates < minimum_terminal_updates)); then
+  echo "UPDATES=$updates cannot reach the 6000-tick terminal boundary; need >=$minimum_terminal_updates" >&2
+  exit 1
+fi
 
 for required in \
   "$initializer" \
