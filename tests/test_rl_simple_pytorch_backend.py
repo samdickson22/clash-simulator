@@ -82,6 +82,8 @@ def _training_collector(
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
+    if device_name == "mps" and not torch.backends.mps.is_available():
+        pytest.skip("MPS unavailable")
     device = torch.device(device_name)
     torch.manual_seed(7)
     vocabulary = load_current_client_typed_vocabulary()
@@ -287,7 +289,7 @@ def test_execution_mode_metadata_fails_closed() -> None:
         _training_collector(execution_mode=SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH)
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_route_uses_committed_actor_v2_mask_authority(device_name: str) -> None:
     collector = _training_collector(device_name)
     bridge = collector.collector.bridge
@@ -323,6 +325,32 @@ def test_route_uses_committed_actor_v2_mask_authority(device_name: str) -> None:
             public_action_mask_contract_version=2,
         )
         bridge.reset_done(step.done)
+
+
+@pytest.mark.skipif(
+    not torch.backends.mps.is_available(),
+    reason="MPS unavailable",
+)
+def test_mps_training_wrapper_collects_one_recurrent_decision() -> None:
+    collector = _training_collector("mps")
+    model = collector.policy.model
+
+    arrays, next_state, previous_actions, previous_rewards, episode_starts = (
+        collector.collect(1, model.initial_state(2, device="mps"))
+    )
+    torch.mps.synchronize()
+
+    assert collector.metadata.execution_mode == SIMPLE_PYTORCH_EXECUTION_EAGER
+    assert arrays["actions"].shape == (2, 1)
+    assert arrays["action_masks"].shape == (2, 1, model.num_actions)
+    assert arrays["action_masks"][
+        torch.arange(2).numpy(), 0, arrays["actions"][:, 0]
+    ].all()
+    assert next_state[0].device.type == "mps"
+    assert next_state[1].device.type == "mps"
+    assert previous_actions.shape == (2,)
+    assert previous_rewards.shape == (2,)
+    assert episode_starts.shape == (2,)
 
     source = inspect.getsource(SimplePublicMaskV2Provider.build)
     for forbidden in (".cpu(", ".numpy(", ".item(", ".tolist("):
