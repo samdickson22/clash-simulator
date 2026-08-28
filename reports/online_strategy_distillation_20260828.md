@@ -78,3 +78,13 @@ rate `1e-5`, and anchor-policy KL coefficient `0.1`. It deliberately runs only
 No promotion is implied by teacher loss or teacher agreement. Every checkpoint
 must still be screened in free-running paired gameplay against strategy,
 random, Hog mirror, and held-out archetype gates.
+
+## Result
+
+The exact tuned pilot is rejected. The parent scored 4-8 in the matched
+balanced/bridge/random screen; the best trained checkpoints scored 3-9 and no
+checkpoint matched the parent. See
+`reports/hog26_simple_tuned_teacher_pilot_seed1164521/decision_20260828.md`.
+This closes coefficient/configuration tuning of StrategyBot distillation as the
+next move. A future spatial repair must use outcome- or value-ranked targets
+and pass free-running gates before policy fine-tuning.
