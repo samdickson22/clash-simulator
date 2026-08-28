@@ -309,6 +309,29 @@ def test_collector_snapshots_reused_graph_style_observation_buffers(
     )
 
 
+def test_collector_reuses_each_pre_action_boundary(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    collector, _ = _collector("cpu")
+    original = collector.bridge.observe
+    calls = 0
+
+    def counted_observe() -> Any:
+        nonlocal calls
+        calls += 1
+        return original()
+
+    monkeypatch.setattr(collector.bridge, "observe", counted_observe)
+    collector.collect(
+        3,
+        recurrent_inputs={"hidden": torch.zeros((2, 2, 3))},
+    )
+
+    # One boundary per decision plus the final bootstrap boundary. The bridge
+    # step consumes the current boundary instead of projecting it a second time.
+    assert calls == 4
+
+
 def test_v1_public_mask_fails_before_runtime_mutation() -> None:
     bridge, _ = _bridge("cpu")
     collector = SimpleTensorCollector(

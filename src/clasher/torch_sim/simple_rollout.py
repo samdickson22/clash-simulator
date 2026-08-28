@@ -275,6 +275,7 @@ class SimpleGymRolloutBridge:
         recurrent_inputs: Mapping[str, torch.Tensor] | None = None,
         public_action_masks: torch.Tensor | None = None,
         public_action_mask_contract_version: int | None = None,
+        pre_action_boundary: SimpleGymRolloutObservation | None = None,
     ) -> SimpleGymRolloutStep:
         """Advance one policy decision and return its pre-action boundary.
 
@@ -286,14 +287,17 @@ class SimpleGymRolloutBridge:
         finish the configured interval. Call :meth:`reset_done` for every
         terminal row before requesting another decision; internal terminal-row
         scratch planes are not a supported observation boundary before reset.
+        A caller that already obtained the current boundary may pass it back to
+        avoid repeating legality and projection before the action mutates state.
         """
 
         if self.strict_reset_check and bool(self.needs_reset.any().item()):
             raise SimpleGymContractError(
                 "terminal rows must be passed to reset_done before the next step"
             )
-        pre_observation = self.adapter.observe()
-        history_before = self.adapter.history
+        boundary = (
+            self.observe() if pre_action_boundary is None else pre_action_boundary
+        )
         pre_reward_potential: torch.Tensor | None = None
         if self.reward_v2_config is not None:
             pre_reward_potential = simple_objective_v1_potential_from_tower_hp(
@@ -391,20 +395,12 @@ class SimpleGymRolloutBridge:
             episode_starts=terminal.expand(-1, 2),
         )
         self.needs_reset.copy_(done)
-        boundary = self._boundary(
-            pre_observation,
-            history_before,
-            public_action_masks,
-            public_action_mask_contract_version,
-        )
         return SimpleGymRolloutStep(
             actor=boundary.actor,
             critic=boundary.critic,
             legal_mask=boundary.legal_mask,
-            public_action_masks=boundary.public_action_masks,
-            public_action_mask_contract_version=(
-                boundary.public_action_mask_contract_version
-            ),
+            public_action_masks=public_action_masks,
+            public_action_mask_contract_version=public_action_mask_contract_version,
             simulator_action_mask_profile=boundary.simulator_action_mask_profile,
             reward_contract_id=boundary.reward_contract_id,
             reward_contract_digest=boundary.reward_contract_digest,

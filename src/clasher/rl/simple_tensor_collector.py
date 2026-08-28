@@ -478,6 +478,7 @@ class SimpleTensorCollector:
                 recurrent_inputs=current_recurrent,
                 public_action_masks=packet.masks,
                 public_action_mask_contract_version=packet.contract_version,
+                pre_action_boundary=observation,
             )
             if simulator_mask_profile is None:
                 simulator_mask_profile = step.simulator_action_mask_profile
