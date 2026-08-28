@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from dataclasses import fields
+
 import pytest
 import torch
 
 from clasher.data import CardDataLoader, load_princess_tower_character_data
+from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.simple_standard import (
     STANDARD_DOUBLE_ELIXIR_TICK,
     STANDARD_REGULATION_TICK,
@@ -19,6 +22,8 @@ PUBLIC_ROOTS = ("Knight", "Balloon", "Golem", "Lumberjack")
 def _setup(device_name: str) -> SimpleStandardSetup:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
+    if device_name == "mps" and not torch.backends.mps.is_available():
+        pytest.skip("MPS unavailable")
     return compile_standard_simple_setup(
         CardDataLoader(),
         PUBLIC_ROOTS,
@@ -32,10 +37,10 @@ def _typed_lookups(setup: SimpleStandardSetup) -> tuple[torch.Tensor, torch.Tens
     entity = torch.zeros((2, fast.size), dtype=torch.int64, device=setup.device)
     hand = torch.zeros(fast.size, dtype=torch.int64, device=setup.device)
     for card_id in range(1, fast.size):
-        kind = int(fast.kind[card_id])
+        kind = int(fast.kind[card_id].cpu())
         if kind >= 0:
             entity[kind, card_id] = 1_000 + card_id
-        if bool(setup.public_root_mask[card_id]):
+        if bool(setup.public_root_mask[card_id].cpu()):
             hand[card_id] = 2_000 + card_id
     return entity, hand
 
@@ -176,3 +181,47 @@ def test_standard_setup_uses_optional_runtime_path_for_zero_blueprints() -> None
 
     assert runtime.spawn_blueprints is None
     assert runtime.observe().actor.hand_ids.shape == (1, 2, 5)
+
+
+def test_standard_mps_runtime_matches_cpu_after_deployment() -> None:
+    if not torch.backends.mps.is_available():
+        pytest.skip("MPS unavailable")
+    cpu_setup = _setup("cpu")
+    mps_setup = _setup("mps")
+    cpu_entity, cpu_hand = _typed_lookups(cpu_setup)
+    mps_entity, mps_hand = _typed_lookups(mps_setup)
+    cpu = cpu_setup.create_runtime(
+        _deck("Knight"),
+        entity_token_lookup=cpu_entity,
+        hand_token_lookup=cpu_hand,
+        canonical_lane_globals=True,
+        max_entities=32,
+        max_effects=32,
+        include_privileged_critic=True,
+    )
+    mps = mps_setup.create_runtime(
+        _deck("Knight"),
+        entity_token_lookup=mps_entity,
+        hand_token_lookup=mps_hand,
+        canonical_lane_globals=True,
+        max_entities=32,
+        max_effects=32,
+        include_privileged_critic=True,
+    )
+    first = cpu.observe().legal_mask[:, :, :-1].to(torch.int64).argmax(dim=2)
+    no_op = torch.full_like(first, NO_OP_ACTION)
+
+    cpu_result = cpu.step_tick(first)
+    mps_result = mps.step_tick(first.to(mps.device))
+    for _ in range(23):
+        cpu_result = cpu.step_tick(no_op)
+        mps_result = mps.step_tick(no_op.to(mps.device))
+    torch.mps.synchronize()
+
+    for descriptor in fields(cpu.state):
+        expected = getattr(cpu.state, descriptor.name)
+        actual = getattr(mps.state, descriptor.name)
+        if isinstance(expected, torch.Tensor):
+            assert torch.equal(actual.cpu(), expected)
+    for name in ("reward", "done", "winner", "native_ticks", "committed"):
+        assert torch.equal(getattr(mps_result, name).cpu(), getattr(cpu_result, name))

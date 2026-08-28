@@ -10,7 +10,8 @@ the generalized fast-card and spawn-blueprint compilers.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, fields, is_dataclass, replace
+from typing import Any, cast
 
 import torch
 
@@ -44,6 +45,35 @@ STANDARD_DOUBLE_ELIXIR_TICK = 120_000 // LOGIC_TICK_MILLISECONDS
 STANDARD_REGULATION_TICK = 180_000 // LOGIC_TICK_MILLISECONDS
 STANDARD_TRIPLE_ELIXIR_TICK = 240_000 // LOGIC_TICK_MILLISECONDS
 STANDARD_TIEBREAK_TICK = 300_000 // LOGIC_TICK_MILLISECONDS
+
+
+def _move_production_setup(value: Any, device: torch.device) -> Any:
+    """Move production catalogs while retaining float64 setup authority on CPU.
+
+    ``TensorCardCatalog`` is a setup/debug authority with float64 serialized
+    parameters, which Apple MPS intentionally does not implement. The Simple
+    runtime consumes the derived float32/integer catalogs, so those tensors are
+    transferred recursively while the authority object and its names stay on
+    CPU.
+    """
+
+    if isinstance(value, TensorCardCatalog):
+        return value
+    if isinstance(value, torch.Tensor):
+        return value.to(device)
+    if isinstance(value, torch.device):
+        return device
+    if is_dataclass(value) and not isinstance(value, type):
+        return replace(
+            value,
+            **{
+                descriptor.name: _move_production_setup(
+                    getattr(value, descriptor.name), device
+                )
+                for descriptor in fields(value)
+            },
+        )
+    return value
 
 
 def standard_match_rules() -> FastMatchRules:
@@ -277,7 +307,7 @@ class SimpleStandardSetup:
 
     @property
     def device(self) -> torch.device:
-        return self.cards.device
+        return self.spawn_blueprints.device
 
     def create_runtime(
         self,
@@ -343,10 +373,16 @@ def compile_standard_simple_setup(
         raise ValueError("standard simple Gym requires canonical_lane_globals=true")
     if not public_root_names:
         raise ValueError("public_root_names must not be empty")
+    requested_device = torch.device(device)
+    if requested_device.type == "mps":
+        requested_device = torch.empty(0, device=requested_device).device
+    compile_device = (
+        torch.device("cpu") if requested_device.type == "mps" else requested_device
+    )
     base_cards = TensorCardCatalog.compile(
         loader,
         public_root_names,
-        device=device,
+        device=compile_device,
     )
     blueprints = FastSpawnBlueprintCatalog.compile(loader, base_cards)
     policy_mechanics = FastPolicyMechanicCatalog.compile(blueprints.cards, loader)
@@ -399,7 +435,7 @@ def compile_standard_simple_setup(
         for card_id, name in enumerate(blueprints.cards.names)
         if bool(supported_mask[card_id])
     )
-    return SimpleStandardSetup(
+    setup = SimpleStandardSetup(
         cards=blueprints.cards,
         spawn_blueprints=blueprints,
         policy_mechanics=policy_mechanics,
@@ -409,7 +445,7 @@ def compile_standard_simple_setup(
         triggered_impact_catalog=triggered_impact_catalog,
         attack_timings=attack_timings,
         knockback_immune_by_card=knockback_immune,
-        tower_spec=standard_tower_spec(loader, device),
+        tower_spec=standard_tower_spec(loader, compile_device),
         rules=standard_match_rules(),
         public_root_mask=public_mask,
         supported_public_root_mask=supported_mask,
@@ -417,6 +453,12 @@ def compile_standard_simple_setup(
         supported_public_root_names=supported_names,
         canonical_lane_globals=True,
     )
+    if requested_device.type == "mps":
+        setup = cast(
+            SimpleStandardSetup,
+            _move_production_setup(setup, requested_device),
+        )
+    return setup
 
 
 __all__ = [

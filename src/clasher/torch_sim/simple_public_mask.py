@@ -319,11 +319,18 @@ class SimplePublicMaskTypedTables:
         )
 
     def to(self, device: str | torch.device) -> SimplePublicMaskTypedTables:
-        """Move immutable tables before entering a CUDA capture or hot loop."""
+        """Move immutable tables before entering a device hot loop.
+
+        MPS retains the authoritative float64 tables on CPU because Apple MPS
+        does not implement float64 tensors. The provider uses an exact CPU
+        evaluation fallback for MPS actors and returns the mask to MPS.
+        """
 
         target = torch.device(device)
         if target.type == "cuda" and target.index is None:
             target = torch.device("cuda", torch.cuda.current_device())
+        if target.type == "mps":
+            target = torch.device("cpu")
         values: dict[str, Any] = {}
         for descriptor in fields(self):
             value = getattr(self, descriptor.name)
@@ -357,6 +364,8 @@ class SimplePublicMaskV2Provider:
 
         tables = self.tables
         if actor.hand_ids.device != tables.device:
+            if actor.hand_ids.device.type == "mps" and tables.device.type == "cpu":
+                return _build_mps_public_mask(actor, tables)
             raise SimplePublicMaskContractError(
                 "actor and public-mask tables must share one device"
             )
@@ -518,6 +527,28 @@ class SimplePublicMaskV2Provider:
             semantics=tables.semantics,
             semantics_digest=tables.semantics_digest,
         )
+
+
+def _build_mps_public_mask(
+    actor: TensorPublicStructuredObservation,
+    tables: SimplePublicMaskTypedTables,
+) -> SimplePublicMaskV2Result:
+    """Evaluate the float64-authoritative mask on CPU for an MPS actor."""
+
+    cpu_actor = TensorPublicStructuredObservation(
+        **{
+            descriptor.name: getattr(actor, descriptor.name).to("cpu")
+            for descriptor in fields(TensorPublicStructuredObservation)
+        }
+    )
+    result = SimplePublicMaskV2Provider(tables).build(cpu_actor)
+    return SimplePublicMaskV2Result(
+        masks=result.masks.to(actor.hand_ids.device),
+        semantics_id=result.semantics_id,
+        semantics=result.semantics,
+        semantics_digest=result.semantics_digest,
+        contract_version=result.contract_version,
+    )
 
 
 class SimpleCollectorPublicMaskV2Provider:

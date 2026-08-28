@@ -58,8 +58,8 @@ def _validate_inputs(
             raise ValueError(f"{name} must use the collision state device")
         if value.dtype != dtype:
             raise ValueError(f"{name} must use {dtype}")
-    if device.type not in {"cpu", "cuda"}:
-        raise ValueError("collision navigation supports CPU and CUDA only")
+    if device.type not in {"cpu", "cuda", "mps"}:
+        raise ValueError("collision navigation supports CPU, CUDA, and MPS only")
     return shape, device
 
 

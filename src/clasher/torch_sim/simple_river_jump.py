@@ -49,8 +49,10 @@ def _canonical_device(device: str | torch.device) -> torch.device:
     result = torch.device(device)
     if result.type == "cuda" and result.index is None:
         result = torch.device("cuda", torch.cuda.current_device())
-    if result.type not in {"cpu", "cuda"}:
-        raise ValueError("fast river jumps support CPU and CUDA only")
+    if result.type == "mps" and result.index is None:
+        result = torch.empty(0, device=result).device
+    if result.type not in {"cpu", "cuda", "mps"}:
+        raise ValueError("fast river jumps support CPU, CUDA, and MPS only")
     return result
 
 
@@ -275,16 +277,17 @@ def _trunc_div(numerator: torch.Tensor, denominator: torch.Tensor) -> torch.Tens
 def _integer_sqrt(value: torch.Tensor) -> torch.Tensor:
     """Return exact arena-scale integer roots without a tensor iteration loop.
 
-    River geometry is bounded by int32 arena coordinates, so its nonnegative
-    squared distances are exactly representable as float64.  The hardware
-    square root supplies the candidate and two integer comparisons correct a
-    possible one-ULP rounding error on either side of a perfect square.  This
-    retains ``math.isqrt`` semantics while avoiding the former 32 unrolled
-    tensor iterations in every captured tick.
+    River geometry is bounded by int32 arena coordinates. The hardware square
+    root supplies a candidate and two integer comparisons correct rounding on
+    either side of a perfect square. CUDA and CPU use float64; Apple MPS uses
+    its supported float32 path, whose arena-bounded error is still below one
+    integer root step before correction. This retains ``math.isqrt`` semantics
+    while avoiding the former 32 unrolled tensor iterations in every tick.
     """
 
     bounded = torch.clamp(value.to(torch.int64), min=0)
-    root = torch.sqrt(bounded.to(torch.float64)).to(torch.int64)
+    sqrt_dtype = torch.float32 if bounded.device.type == "mps" else torch.float64
+    root = torch.sqrt(bounded.to(sqrt_dtype)).to(torch.int64)
     root -= (root.square() > bounded).to(torch.int64)
     successor = root + 1
     root += (successor.square() <= bounded).to(torch.int64)

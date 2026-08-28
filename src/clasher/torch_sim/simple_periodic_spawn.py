@@ -107,10 +107,13 @@ class FastPeriodicSpawnCatalog:
 
         card_count = len(blueprints.cards.names)
         sentinel = row_count
-        row = torch.arange(row_count, dtype=torch.int64, device=device)
+        row = torch.arange(row_count, dtype=torch.int32, device=device)
         candidate = torch.where(row_supported, row, sentinel)
         root = blueprints.root_card_id.clamp(0, max(0, card_count - 1))
-        mapping = torch.full((card_count,), sentinel, dtype=torch.int64, device=device)
+        # MPS does not implement int64 scatter-reduce. Blueprint counts are
+        # setup-bounded int32 values, so reduce there and widen the final card
+        # lookup table to the runtime's stable int64 index type.
+        mapping = torch.full((card_count,), sentinel, dtype=torch.int32, device=device)
         mapping.scatter_reduce_(0, root, candidate, reduce="amin", include_self=True)
 
         # A fixed per-entity clock deliberately supports one periodic operation.
@@ -122,7 +125,7 @@ class FastPeriodicSpawnCatalog:
             (mapping < sentinel) & (multiplicity == 1),
             mapping,
             torch.full_like(mapping, _EMPTY_BLUEPRINT),
-        )
+        ).to(torch.int64)
         return cls(
             device=mapping.device,
             periodic_blueprint_by_card=mapping,

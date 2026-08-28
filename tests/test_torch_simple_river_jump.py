@@ -18,11 +18,14 @@ from clasher.torch_sim.simple_river_jump import (
     fast_river_jump_target_eligible,
     step_fast_river_jump_,
 )
+from clasher.torch_sim.simple_standard import compile_standard_simple_setup
 
 
 def _device(name: str) -> torch.device:
     if name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
+    if name == "mps" and not torch.backends.mps.is_available():
+        pytest.skip("MPS unavailable")
     return torch.device(name)
 
 
@@ -31,9 +34,18 @@ def _catalog(
 ) -> tuple[FastRiverJumpCatalog, TensorCardCatalog, dict[str, int]]:
     device = _device(device_name)
     loader = CardDataLoader()
+    names = ("Bandit", "DarkPrince", "HogRider", "Knight", "Prince", "RoyalHogs")
+    if device.type == "mps":
+        setup = compile_standard_simple_setup(
+            loader,
+            names,
+            device=device,
+            canonical_lane_globals=True,
+        )
+        return setup.river_jump_catalog, setup.cards, setup.cards.name_to_id
     core = TensorCardCatalog.compile(
         loader,
-        ["Bandit", "DarkPrince", "HogRider", "Knight", "Prince", "RoyalHogs"],
+        names,
         device=device,
     )
     return FastRiverJumpCatalog.compile(core, loader), core, core.name_to_id
@@ -78,7 +90,7 @@ def _planes(
     return catalog, state, ids, planes
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_integer_sqrt_is_exact_at_every_arena_discontinuity(
     device_name: str,
 ) -> None:
@@ -106,7 +118,7 @@ def test_integer_sqrt_is_exact_at_every_arena_discontinuity(
     assert torch.equal(actual, expected)
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_catalog_compiles_exact_enabled_serialized_profiles(device_name: str) -> None:
     catalog, _, ids = _catalog(device_name)
 
@@ -161,7 +173,7 @@ def test_partial_or_malformed_serialized_declaration_fails_closed(
     assert int(catalog.jump_speed_units_per_tick[card_id]) == 0
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_off_bridge_crossing_starts_mirrored_committed_jump(device_name: str) -> None:
     catalog, state, _, planes = _planes(device_name, entities=2)
     device = state.device
@@ -196,7 +208,7 @@ def test_off_bridge_crossing_starts_mirrored_committed_jump(device_name: str) ->
     assert state.duration_ticks.tolist() == [[21, 21]]
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_bridge_route_and_nonjump_character_remain_ordinary(device_name: str) -> None:
     catalog, state, ids, planes = _planes(device_name, entities=2)
     device = state.device
@@ -217,7 +229,7 @@ def test_bridge_route_and_nonjump_character_remain_ordinary(device_name: str) ->
     assert not result.profile_rejected.any()
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_committed_flight_timing_landing_and_attack_plane(device_name: str) -> None:
     catalog, state, _, planes = _planes(device_name)
     started = step_fast_river_jump_(state, catalog, **planes)
@@ -254,7 +266,7 @@ def test_committed_flight_timing_landing_and_attack_plane(device_name: str) -> N
     assert eligible.tolist() == [[False, True, True]]
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_only_removal_or_stable_slot_reuse_cancels_flight(device_name: str) -> None:
     catalog, state, _, planes = _planes(device_name)
     step_fast_river_jump_(state, catalog, **planes)
@@ -276,7 +288,7 @@ def test_only_removal_or_stable_slot_reuse_cancels_flight(device_name: str) -> N
     assert state.bound_stable_id.tolist() == [[13]]
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_reset_reuse_and_replay_are_deterministic(device_name: str) -> None:
     catalog, first, _, first_planes = _planes(device_name)
     second = FastRiverJumpState.empty(1, 1, device=first.device)

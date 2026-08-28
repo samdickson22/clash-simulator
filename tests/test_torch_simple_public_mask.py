@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 import math
 from collections.abc import Sequence
-from dataclasses import replace
+from dataclasses import fields, replace
 
 import numpy as np
 import pytest
@@ -108,7 +108,41 @@ def _tables(device_name: str = "cpu") -> SimplePublicMaskTypedTables:
 def _runtime(device_name: str = "cpu") -> SimpleGymRuntime:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
+    if device_name == "mps" and not torch.backends.mps.is_available():
+        pytest.skip("MPS unavailable")
     device = torch.device(device_name)
+    if device.type == "mps":
+        setup = compile_standard_simple_setup(
+            CardDataLoader(),
+            ("Knight", "Cannon", "Fireball"),
+            device=device,
+            canonical_lane_globals=True,
+        )
+        fast = setup.spawn_blueprints.fast_cards
+        knight = setup.cards.name_to_id["Knight"]
+        cannon = setup.cards.name_to_id["Cannon"]
+        fireball = setup.cards.name_to_id["Fireball"]
+        hand_lookup = torch.zeros(fast.size, dtype=torch.int64, device=setup.device)
+        hand_lookup[knight] = 2
+        hand_lookup[cannon] = 3
+        hand_lookup[fireball] = 4
+        entity_lookup = torch.zeros(
+            (5, fast.size), dtype=torch.int64, device=setup.device
+        )
+        entity_lookup[:, 0] = 8
+        entity_lookup[0, knight] = 5
+        entity_lookup[1, cannon] = 6
+        first_names = ("Knight", "Cannon", "Fireball", "Knight") * 2
+        second_names = ("Cannon", "Knight", "Fireball", "Cannon") * 2
+        return setup.create_runtime(
+            [[first_names, second_names], [second_names, first_names]],
+            entity_token_lookup=entity_lookup,
+            hand_token_lookup=hand_lookup,
+            canonical_lane_globals=True,
+            max_entities=24,
+            max_effects=16,
+            include_privileged_critic=True,
+        )
     full = TensorCardCatalog.compile(
         BattleState().card_loader,
         ("Knight", "Cannon", "Fireball"),
@@ -282,7 +316,7 @@ def _reference_mask(
     return torch.as_tensor(result, dtype=torch.bool, device=actor.hand_ids.device)
 
 
-@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
 def test_tensor_mask_matches_free_running_numpy_trace(device_name: str) -> None:
     runtime = _runtime(device_name)
     tables = _tables(device_name)
@@ -324,9 +358,12 @@ class _NoopPolicy:
         )
 
 
-def test_collector_accepts_semantics_digest_without_mask_domain_leak() -> None:
-    runtime = _runtime()
-    tables = _tables()
+@pytest.mark.parametrize("device_name", ("cpu", "mps"))
+def test_collector_accepts_semantics_digest_without_mask_domain_leak(
+    device_name: str,
+) -> None:
+    runtime = _runtime(device_name)
+    tables = _tables(device_name)
     provider = SimpleCollectorPublicMaskV2Provider(SimplePublicMaskV2Provider(tables))
     collector = SimpleTensorCollector(
         SimpleGymRolloutBridge(
@@ -584,6 +621,31 @@ def test_hot_path_has_no_host_sync_or_privileged_inputs() -> None:
         "label",
     ):
         assert forbidden not in source
+
+
+@pytest.mark.skipif(
+    not torch.backends.mps.is_available(),
+    reason="MPS unavailable",
+)
+def test_provider_mps_fallback_matches_float64_cpu_authority() -> None:
+    actor = _runtime("cpu").observe().actor
+    cpu_tables = _tables("cpu")
+    expected = SimplePublicMaskV2Provider(cpu_tables).build(actor)
+    mps_actor = TensorPublicStructuredObservation(
+        **{
+            descriptor.name: getattr(actor, descriptor.name).to("mps")
+            for descriptor in fields(TensorPublicStructuredObservation)
+        }
+    )
+    mps_tables = cpu_tables.to("mps")
+
+    actual = SimplePublicMaskV2Provider(mps_tables).build(mps_actor)
+    torch.mps.synchronize()
+
+    assert mps_tables.device.type == "cpu"
+    assert actual.masks.device.type == "mps"
+    assert torch.equal(actual.masks.cpu(), expected.masks)
+    assert actual.semantics_digest == expected.semantics_digest
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")

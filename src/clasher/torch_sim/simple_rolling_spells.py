@@ -449,29 +449,46 @@ def _record_fast_rolling_hits_(
     entity_slot = torch.arange(
         entities, dtype=torch.int64, device=hit_candidate.device
     ).view(1, 1, entities)
-    free_slot_by_rank = torch.full_like(free_rank, entities)
-    free_slot_by_rank.scatter_reduce_(
-        2,
-        free_rank.clamp(min=0, max=entities - 1),
-        torch.where(free_record, entity_slot.expand(batch, rollers, -1), entities),
-        reduce="amin",
-        include_self=True,
+    # Each valid free rank is unique. Route non-free rows to one sentinel slot
+    # so ordinary scatter works on MPS, which lacks int64 scatter-reduce.
+    free_slot_by_rank = torch.full(
+        (*free_rank.shape[:2], entities + 1),
+        entities,
+        dtype=torch.int64,
+        device=hit_candidate.device,
     )
-    destination_slot = free_slot_by_rank.gather(
-        2, candidate_rank.clamp(min=0, max=entities - 1)
-    ).clamp(max=entities - 1)
+    free_slot_by_rank.scatter_(
+        2,
+        torch.where(free_record, free_rank, entities),
+        entity_slot.expand(batch, rollers, -1),
+    )
+    destination_slot = (
+        free_slot_by_rank[:, :, :entities]
+        .gather(2, candidate_rank.clamp(min=0, max=entities - 1))
+        .clamp(max=entities - 1)
+    )
     ledger_value = torch.where(
         hit,
         entity_stable_id[:, None, :].expand(batch, rollers, entities),
         0,
     )
-    hit_stable_ids.scatter_reduce_(
-        2,
-        destination_slot,
-        ledger_value,
-        reduce="amax",
-        include_self=True,
+    ledger_with_sentinel = torch.cat(
+        (
+            hit_stable_ids,
+            torch.zeros(
+                (batch, rollers, 1),
+                dtype=hit_stable_ids.dtype,
+                device=hit_stable_ids.device,
+            ),
+        ),
+        dim=2,
     )
+    ledger_with_sentinel.scatter_(
+        2,
+        torch.where(hit, destination_slot, entities),
+        ledger_value,
+    )
+    hit_stable_ids.copy_(ledger_with_sentinel[:, :, :entities])
     return hit, hit_candidate & ~hit
 
 
