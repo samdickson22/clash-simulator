@@ -1466,14 +1466,8 @@ class SimpleGymRuntime:
         occupant without adding card-specific runtime dispatch.
         """
 
-        self._initialize_spawned_combat_(spawned)
         self.combat.navigation.state.reset_(spawned)
-        self._clear_status_(spawned)
-        self._initialize_lifecycle_(spawned)
-        self._initialize_modifiers_(spawned)
-        self._clear_damage_ramp_(spawned)
         self.policy_mechanics.clear_(spawned)
-        self._initialize_policy_mechanics_(spawned)
         self.travel.clear_(spawned)
         self._travel_spawned.masked_fill_(spawned, False)
         self._travel_interrupted.masked_fill_(spawned, False)
@@ -1483,6 +1477,29 @@ class SimpleGymRuntime:
             getattr(self.abilities, descriptor.name).masked_fill_(spawned, 0)
         self.death_bursts.emitted_source_stable_id.masked_fill_(spawned, 0)
         self._triggered_death_stable_id.masked_fill_(spawned, 0)
+        self._initialize_spawn_sidecars_(spawned)
+
+    def _initialize_spawn_sidecars_(
+        self,
+        spawned: torch.Tensor,
+        *,
+        core_from_catalog: bool = False,
+    ) -> None:
+        """Initialize retained mechanics for newly allocated entity slots.
+
+        All ordinary, atomic, scheduled, rolling, impact, payload, and periodic
+        allocators already materialize the core combat fields. Lifecycle
+        children are the sole exception, so only that caller requests the
+        catalog-backed core write.
+        """
+
+        if core_from_catalog:
+            self._initialize_spawned_combat_(spawned)
+        self._clear_status_(spawned)
+        self._initialize_lifecycle_(spawned)
+        self._initialize_modifiers_(spawned)
+        self._clear_damage_ramp_(spawned)
+        self._initialize_policy_mechanics_(spawned)
         self._queue_travel_spawned_(spawned)
 
     def _slow_multipliers(self) -> tuple[torch.Tensor, torch.Tensor]:
@@ -2877,13 +2894,7 @@ class SimpleGymRuntime:
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
             scheduled_spawned = scheduled_spawn_allocation.spawned_mask
-            self._clear_status_(scheduled_spawned)
-            self._initialize_spawned_combat_(scheduled_spawned)
-            self._initialize_lifecycle_(scheduled_spawned)
-            self._initialize_modifiers_(scheduled_spawned)
-            self._clear_damage_ramp_(scheduled_spawned)
-            self._initialize_policy_mechanics_(scheduled_spawned)
-            self._queue_travel_spawned_(scheduled_spawned)
+            self._initialize_spawn_sidecars_(scheduled_spawned)
         effect_visibility = self._policy_visibility_view()
         effect_travel_view = self._travel_view()
         effect_receivable = ~effect_travel_view.immune
@@ -2955,13 +2966,7 @@ class SimpleGymRuntime:
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
             rolling_spawned = rolling_spawn_allocation.spawned_mask
-            self._clear_status_(rolling_spawned)
-            self._initialize_spawned_combat_(rolling_spawned)
-            self._initialize_lifecycle_(rolling_spawned)
-            self._initialize_modifiers_(rolling_spawned)
-            self._clear_damage_ramp_(rolling_spawned)
-            self._initialize_policy_mechanics_(rolling_spawned)
-            self._queue_travel_spawned_(rolling_spawned)
+            self._initialize_spawn_sidecars_(rolling_spawned)
         # The first death pass commits defining DeathDamage before a triggered
         # secondary push can move recipients out of the source radius. The
         # second pass retains the fixed current-corpus cascade depth and also
@@ -3005,13 +3010,10 @@ class SimpleGymRuntime:
         self._travel_interrupted.masked_fill_(
             lifecycle_result.resolved_parent_mask, False
         )
-        self._initialize_spawned_combat_(lifecycle_result.spawned_mask)
-        self._clear_status_(lifecycle_result.spawned_mask)
-        self._initialize_lifecycle_(lifecycle_result.spawned_mask)
-        self._initialize_modifiers_(lifecycle_result.spawned_mask)
-        self._clear_damage_ramp_(lifecycle_result.spawned_mask)
-        self._initialize_policy_mechanics_(lifecycle_result.spawned_mask)
-        self._queue_travel_spawned_(lifecycle_result.spawned_mask)
+        self._initialize_spawn_sidecars_(
+            lifecycle_result.spawned_mask,
+            core_from_catalog=True,
+        )
         spawn_allocation: FastSpawnAllocationResult | None = None
         if self.spawn_blueprints is not None:
             spawn_commands = impact_spawn_commands(
@@ -3025,13 +3027,7 @@ class SimpleGymRuntime:
                 spawn_commands,
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
-            self._initialize_spawned_combat_(spawn_allocation.spawned_mask)
-            self._clear_status_(spawn_allocation.spawned_mask)
-            self._initialize_lifecycle_(spawn_allocation.spawned_mask)
-            self._initialize_modifiers_(spawn_allocation.spawned_mask)
-            self._clear_damage_ramp_(spawn_allocation.spawned_mask)
-            self._initialize_policy_mechanics_(spawn_allocation.spawned_mask)
-            self._queue_travel_spawned_(spawn_allocation.spawned_mask)
+            self._initialize_spawn_sidecars_(spawn_allocation.spawned_mask)
         payload_spawn_allocation: FastSpawnAllocationResult | None = None
         if self.spawn_blueprints is not None:
             payload_spawn_allocation = allocate_fast_spawns_(
@@ -3044,13 +3040,7 @@ class SimpleGymRuntime:
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
             payload_spawned = payload_spawn_allocation.spawned_mask
-            self._clear_status_(payload_spawned)
-            self._initialize_spawned_combat_(payload_spawned)
-            self._initialize_lifecycle_(payload_spawned)
-            self._initialize_modifiers_(payload_spawned)
-            self._clear_damage_ramp_(payload_spawned)
-            self._initialize_policy_mechanics_(payload_spawned)
-            self._queue_travel_spawned_(payload_spawned)
+            self._initialize_spawn_sidecars_(payload_spawned)
         periodic_spawn_allocation: FastSpawnAllocationResult | None = None
         if self.periodic_catalog is not None and self.periodic_spawns is not None:
             periodic_commands = step_periodic_spawns_(
@@ -3072,13 +3062,7 @@ class SimpleGymRuntime:
                 reserved_slot_floor=FAST_TOWER_SLOT_COUNT,
             )
             periodic_spawned = periodic_spawn_allocation.spawned_mask
-            self._clear_status_(periodic_spawned)
-            self._initialize_spawned_combat_(periodic_spawned)
-            self._initialize_lifecycle_(periodic_spawned)
-            self._initialize_modifiers_(periodic_spawned)
-            self._clear_damage_ramp_(periodic_spawned)
-            self._initialize_policy_mechanics_(periodic_spawned)
-            self._queue_travel_spawned_(periodic_spawned)
+            self._initialize_spawn_sidecars_(periodic_spawned)
         positive_buff_advance = advance_fast_positive_buffs_(
             self.state,
             self.positive_buffs,
