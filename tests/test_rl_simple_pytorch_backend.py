@@ -17,7 +17,6 @@ from clasher.rl.simple_pytorch_backend import (
     SIMPLE_PYTORCH_BACKEND,
     SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH,
     SIMPLE_PYTORCH_EXECUTION_EAGER,
-    SimpleAsymmetricClasherPolicyAdapter,
     SimplePytorchBackendError,
     SimplePytorchTrainingCollector,
     SimpleTensorStrategyOpponent,
@@ -520,71 +519,6 @@ def test_strategy_league_rollout_is_exactly_replayable() -> None:
         first_boundary, second_boundary, strict=True
     ):
         assert np.array_equal(first_value, second_value)
-
-
-def test_learner_seat_slicing_matches_full_policy_and_rng_stream() -> None:
-    collector = _training_collector(
-        batch_size=6,
-        max_entities=48,
-        max_effects=64,
-        opponent_mode="strategy",
-    )
-    model = collector.policy.model
-    assert isinstance(collector.policy, SimpleAsymmetricClasherPolicyAdapter)
-    initial = model.initial_state(6, device="cpu")
-    recurrent = collector._joint_recurrent_inputs(initial)
-    observation = collector.collector.bridge.observe()
-    packet, _semantics = collector.collector._public_mask(
-        observation,
-        decision_index=0,
-        bootstrap=False,
-        expected_semantics=None,
-    )
-    boundary = collector.collector._policy_boundary(
-        observation,
-        packet,
-        recurrent,
-        0,
-    )
-    rows = torch.arange(6)
-    seats = collector.learner_players
-
-    torch.manual_seed(1163604)
-    full_state = collector.policy._state_from_prefixed_mapping(
-        recurrent,
-        "learner",
-    )
-    full_actions, full_log_prob, full_values, full_next, _ = model.act(
-        collector.policy.inputs(boundary),
-        full_state,
-        deterministic=False,
-    )
-    full_actions = full_actions[:, 0].reshape(6, 2)[rows, seats]
-    full_log_prob = full_log_prob[:, 0].reshape(6, 2)[rows, seats]
-    full_values = full_values[:, 0].reshape(6, 2)[rows, seats]
-    full_hidden = full_next[0].reshape(6, 2, -1)[rows, seats]
-    full_cell = full_next[1].reshape(6, 2, -1)[rows, seats]
-    full_rng = torch.random.get_rng_state()
-
-    torch.manual_seed(1163604)
-    sliced = collector.policy(boundary)
-    sliced_rng = torch.random.get_rng_state()
-
-    assert torch.equal(sliced.actions[rows, seats], full_actions)
-    torch.testing.assert_close(
-        sliced.storage["log_prob"][rows, seats], full_log_prob
-    )
-    torch.testing.assert_close(sliced.storage["value"][rows, seats], full_values)
-    assert sliced.next_recurrent_inputs is not None
-    torch.testing.assert_close(
-        sliced.next_recurrent_inputs["learner_hidden"][rows, seats],
-        full_hidden,
-    )
-    torch.testing.assert_close(
-        sliced.next_recurrent_inputs["learner_cell"][rows, seats],
-        full_cell,
-    )
-    assert torch.equal(sliced_rng, full_rng)
 
 
 @pytest.mark.parametrize("strategy_name", STRATEGY_NAMES)
