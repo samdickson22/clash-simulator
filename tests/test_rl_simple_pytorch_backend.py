@@ -73,6 +73,7 @@ def _simple_args(**overrides: object) -> Namespace:
         "defense_scenario_probability": 0.0,
         "simple_max_entities": 128,
         "simple_max_effects": 128,
+        "simple_checkpoint_opponent_deck_name": None,
     }
     values.update(overrides)
     return Namespace(**values)
@@ -184,6 +185,8 @@ def _training_collector(
     max_effects: int = 128,
     actor_observation_domain: str = "simulator-exact",
     opponent_mode: str = "selfplay",
+    opponent_league_schedule: tuple[tuple[str, str | None], ...] = (),
+    checkpoint_opponent_deck_name: str | None = None,
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -216,7 +219,9 @@ def _training_collector(
     model = ClasherPolicy(config, builder.card_stat_features).to(device)
     opponent_model = None
     opponent_sha256 = None
-    if opponent_mode == "checkpoint":
+    if opponent_mode == "checkpoint" or any(
+        kind == "checkpoint" for kind, _value in opponent_league_schedule
+    ):
         opponent_model = ClasherPolicy(config, builder.card_stat_features).to(device)
         opponent_model.load_state_dict(model.state_dict())
         opponent_sha256 = "f" * 64
@@ -238,10 +243,12 @@ def _training_collector(
         opponent_strategy=("balanced" if opponent_mode == "strategy" else None),
         opponent_strategy_schedule=(
             ("bridge-pressure", "slow-push")
-            if opponent_mode == "league"
+            if opponent_mode == "league" and not opponent_league_schedule
             else ()
         ),
+        opponent_league_schedule=opponent_league_schedule,
         learner_deck_name="Hog 2.6 Cycle",
+        checkpoint_opponent_deck_name=checkpoint_opponent_deck_name,
         max_effects=max_effects,
         _execution_mode_override=execution_mode,
     )
@@ -424,10 +431,11 @@ def test_stationary_simple_backend_exports_only_learner_rows(
     if opponent_mode == "league":
         assert metadata["opponent_strategy_schedule"] == (
             "bridge-pressure",
-            "slow-push",
             "bridge-pressure",
             "slow-push",
+            "slow-push",
         )
+        assert metadata["opponent_schedule_unit"] == "logical-matchup-pair"
 
     current = collector.collector.bridge.observe().previous_actions
     rows = torch.arange(4)
@@ -452,9 +460,19 @@ def test_simple_argument_gate_accepts_stationary_modes_fail_closed() -> None:
         _simple_args(
             opponent_mode="league",
             league_opponent=[
+                "random",
                 "strategy:bridge-pressure",
-                "strategy:slow-push",
+                "frozen.pt",
             ],
+            simple_checkpoint_opponent_deck_name="Hog 2.6 Cycle",
+        )
+    )
+    _validate_simple_pytorch_args(
+        _simple_args(
+            opponent_mode="league",
+            league_opponent=["random", "frozen.pt"],
+            pfsp_report="pfsp.json",
+            pfsp_strategy_workers=2,
         )
     )
     _validate_simple_pytorch_args(
@@ -474,12 +492,102 @@ def test_simple_argument_gate_accepts_stationary_modes_fail_closed() -> None:
     _validate_simple_pytorch_args(
         _simple_args(opponent_mode="league", pfsp_report="pfsp.json")
     )
-    with pytest.raises(ValueError, match="at least two explicit strategy"):
+    with pytest.raises(ValueError, match="at least two explicit"):
         _validate_simple_pytorch_args(
             _simple_args(
                 opponent_mode="league",
                 league_opponent=["strategy:balanced"],
             )
+        )
+    with pytest.raises(ValueError, match="requires a checkpoint opponent"):
+        _validate_simple_pytorch_args(
+            _simple_args(
+                opponent_mode="league",
+                league_opponent=[
+                    "strategy:balanced",
+                    "strategy:bridge-pressure",
+                ],
+                simple_checkpoint_opponent_deck_name="Hog 2.6 Cycle",
+            )
+        )
+
+
+def test_mixed_simple_league_is_exactly_replayable_and_state_is_row_scoped() -> None:
+    schedule = (
+        ("random", None),
+        ("strategy", "balanced"),
+        ("checkpoint", "frozen.pt"),
+    )
+    first = _training_collector(
+        batch_size=6,
+        max_entities=48,
+        max_effects=64,
+        opponent_mode="league",
+        opponent_league_schedule=schedule,
+        checkpoint_opponent_deck_name="Hog 2.6 Cycle",
+    )
+    second = _training_collector(
+        batch_size=6,
+        max_entities=48,
+        max_effects=64,
+        opponent_mode="league",
+        opponent_league_schedule=schedule,
+        checkpoint_opponent_deck_name="Hog 2.6 Cycle",
+    )
+    torch.manual_seed(1163703)
+    first_arrays, first_state, *first_boundary = first.collect(
+        3, first.policy.model.initial_state(6, device="cpu")
+    )
+    torch.manual_seed(1163703)
+    second_arrays, second_state, *second_boundary = second.collect(
+        3, second.policy.model.initial_state(6, device="cpu")
+    )
+
+    assert set(first_arrays) == set(second_arrays)
+    for name in first_arrays:
+        first_value = first_arrays[name]
+        second_value = second_arrays[name]
+        if isinstance(first_value, np.ndarray):
+            assert np.array_equal(first_value, second_value), name
+        else:
+            assert first_value == second_value, name
+    assert torch.equal(first_state[0], second_state[0])
+    assert torch.equal(first_state[1], second_state[1])
+    for first_value, second_value in zip(
+        first_boundary, second_boundary, strict=True
+    ):
+        assert np.array_equal(first_value, second_value)
+
+    metadata = first.checkpoint_metadata()
+    assert metadata["opponent_strategy_schedule"] == ()
+    assert metadata["opponent_league_schedule"] == (
+        "random",
+        "random",
+        "strategy:balanced",
+        "strategy:balanced",
+        f"checkpoint:{'f' * 64}",
+        f"checkpoint:{'f' * 64}",
+    )
+    assert metadata["opponent_schedule_unit"] == "logical-matchup-pair"
+    assert metadata["checkpoint_opponent_deck_name"] == "Hog 2.6 Cycle"
+    assert metadata["opponent_deck_names"] == (
+        "Log Bait",
+        "Log Bait",
+        "X-Bow 3.0 Cycle (ESpirit)",
+        "X-Bow 3.0 Cycle (ESpirit)",
+        "Hog 2.6 Cycle",
+        "Hog 2.6 Cycle",
+    )
+    assert first._opponent_recurrent_state is not None
+    noncheckpoint_rows = torch.tensor([0, 1, 2, 3])
+    checkpoint_rows = torch.tensor([4, 5])
+    for value in first._opponent_recurrent_state:
+        assert torch.equal(
+            value.index_select(0, noncheckpoint_rows),
+            torch.zeros_like(value.index_select(0, noncheckpoint_rows)),
+        )
+        assert bool(
+            (value.index_select(0, checkpoint_rows).abs().sum(dim=1) > 0).all()
         )
 
 

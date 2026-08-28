@@ -10,7 +10,7 @@ from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass, replace
 from functools import wraps
 from pathlib import Path
-from typing import Any, Literal, ParamSpec, TypeVar
+from typing import Any, Literal, ParamSpec, TypeVar, cast
 
 import numpy as np
 import torch
@@ -1723,6 +1723,14 @@ def parse_args() -> argparse.Namespace:
         help="exact supported-deck name assigned to every stationary learner row",
     )
     parser.add_argument(
+        "--simple-checkpoint-opponent-deck-name",
+        default=None,
+        help=(
+            "optional exact supported deck assigned to frozen checkpoint rows; "
+            "use the learner deck for a true frozen-parent mirror"
+        ),
+    )
+    parser.add_argument(
         "--card-semantics-version",
         type=int,
         choices=(1, 2, 3),
@@ -1882,7 +1890,10 @@ def parse_args() -> argparse.Namespace:
         "--pfsp-strategy-workers",
         type=int,
         default=None,
-        help="number of league worker slots allocated from --pfsp-report",
+        help=(
+            "number of league slots allocated from --pfsp-report; one slot is "
+            "one paired logical matchup on simple-pytorch"
+        ),
     )
     parser.add_argument(
         "--engine-fast-path", choices=["off", "shadow", "on"], default="off"
@@ -2373,18 +2384,43 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
         )
     if args.opponent_mode == "league":
         simple_league = tuple(args.league_opponent)
-        if not args.pfsp_report and (
-            len(set(simple_league)) < 2
-            or any(not value.startswith("strategy:") for value in simple_league)
-        ):
+        unknown_strategies = [
+            value.removeprefix("strategy:")
+            for value in simple_league
+            if value.startswith("strategy:")
+            and value.removeprefix("strategy:") not in STRATEGY_NAMES
+        ]
+        if unknown_strategies:
+            raise ValueError(
+                "simple-pytorch league contains unknown strategies: "
+                + ", ".join(sorted(set(unknown_strategies)))
+            )
+        checkpoint_specs = {
+            value
+            for value in simple_league
+            if value != "random" and not value.startswith("strategy:")
+        }
+        if len(checkpoint_specs) > 1:
+            raise ValueError(
+                "simple-pytorch league supports one unique checkpoint policy"
+            )
+        if not args.pfsp_report and len(set(simple_league)) < 2:
             raise ValueError(
                 "simple-pytorch league currently requires at least two explicit "
-                "strategy opponents or a PFSP report"
+                "opponents or a PFSP report"
             )
-        if args.pfsp_report and simple_league:
+    if args.simple_checkpoint_opponent_deck_name is not None:
+        has_checkpoint = args.opponent_mode == "checkpoint" or (
+            args.opponent_mode == "league"
+            and any(
+                value != "random" and not value.startswith("strategy:")
+                for value in args.league_opponent
+            )
+        )
+        if not has_checkpoint:
             raise ValueError(
-                "simple-pytorch league accepts either explicit strategies or PFSP, "
-                "not both"
+                "--simple-checkpoint-opponent-deck-name requires a checkpoint "
+                "opponent"
             )
     if args.actor_observation_domain != "simulator-exact":
         raise ValueError(
@@ -2654,17 +2690,40 @@ def main() -> None:
         report_weights = report.get("pfsp", {}).get("weights")
         if not isinstance(report_weights, dict):
             raise ValueError("--pfsp-report has no pfsp.weights object")
+        simple_matchup_slots = args.num_envs // 2
+        if args.simulation_backend == "simple-pytorch" and args.num_envs % 2:
+            raise ValueError("simple league requires an even number of environments")
         strategy_workers = (
             args.pfsp_strategy_workers
             if args.pfsp_strategy_workers is not None
             else (
-                args.num_envs
+                simple_matchup_slots - len(league_opponents)
                 if args.simulation_backend == "simple-pytorch"
                 else args.actor_workers - len(league_opponents)
             )
         )
+        if strategy_workers <= 0:
+            raise ValueError("PFSP strategy allocation has no remaining worker slots")
         strategy_names = allocate_pfsp_slots(report_weights, strategy_workers)
         league_opponents += tuple(("strategy", name) for name in strategy_names)
+    if args.opponent_mode == "league" and args.simulation_backend == "simple-pytorch":
+        if args.num_envs % 2:
+            raise ValueError("simple league requires an even number of environments")
+        if len(league_opponents) > args.num_envs // 2:
+            raise ValueError(
+                "simple league opponent slots exceed paired matchup rows"
+            )
+        if len(set(league_opponents)) < 2:
+            raise ValueError("simple league requires at least two distinct opponents")
+        checkpoint_paths = {
+            path
+            for kind, path in league_opponents
+            if kind == "checkpoint" and path is not None
+        }
+        if len(checkpoint_paths) > 1:
+            raise ValueError(
+                "simple-pytorch league supports one unique checkpoint policy"
+            )
     if args.opponent_mode == "league" and args.simulation_backend != "simple-pytorch":
         if len(league_opponents) > args.actor_workers:
             raise ValueError("league opponent slots cannot exceed actor workers")
@@ -3181,18 +3240,28 @@ def main() -> None:
 
         simple_opponent_model: ClasherPolicy | None = None
         simple_opponent_sha256: str | None = None
+        simple_checkpoint_path: Path | None = None
         if args.opponent_mode == "checkpoint":
+            simple_checkpoint_path = Path(opponent_checkpoints[0])
+        elif args.opponent_mode == "league":
+            simple_checkpoint_paths: set[str] = {
+                path
+                for kind, path in league_opponents
+                if kind == "checkpoint" and path is not None
+            }
+            if simple_checkpoint_paths:
+                simple_checkpoint_path = Path(next(iter(simple_checkpoint_paths)))
+        if simple_checkpoint_path is not None:
             from .parallel_rollout import load_checkpoint_opponent
 
-            opponent_path = Path(opponent_checkpoints[0])
             simple_opponent_model = load_checkpoint_opponent(
-                opponent_path,
+                simple_checkpoint_path,
                 device=actor_device,
                 builder=builder,
                 learner_config=config,
                 token_names=tuple(builder.token_names),
             )
-            simple_opponent_sha256 = _sha256(opponent_path)
+            simple_opponent_sha256 = _sha256(simple_checkpoint_path)
 
         simple_collector = SimplePytorchTrainingCollector(
             model=actor_model,
@@ -3225,7 +3294,24 @@ def main() -> None:
                 if args.opponent_mode == "league"
                 else ()
             ),
+            opponent_league_schedule=(
+                cast(
+                    tuple[
+                        tuple[
+                            Literal["random", "strategy", "checkpoint"],
+                            str | None,
+                        ],
+                        ...,
+                    ],
+                    league_opponents,
+                )
+                if args.opponent_mode == "league"
+                else ()
+            ),
             learner_deck_name=args.simple_learner_deck_name,
+            checkpoint_opponent_deck_name=(
+                args.simple_checkpoint_opponent_deck_name
+            ),
             max_effects=args.simple_max_effects,
         )
         simulation_backend_metadata = simple_collector.checkpoint_metadata()

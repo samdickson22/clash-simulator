@@ -81,6 +81,11 @@ DEFAULT_SIMPLE_SUPPORTED_DECKS: Final = Path(
 DEFAULT_SIMPLE_TOKEN_VOCABULARY: Final = Path(
     "reports/current_client_youtube_stable_vocabulary_v1.json"
 )
+SIMPLE_LEAGUE_RANDOM: Final = 0
+SIMPLE_LEAGUE_STRATEGY: Final = 1
+SIMPLE_LEAGUE_CHECKPOINT: Final = 2
+SimpleLeagueKind = Literal["random", "strategy", "checkpoint"]
+SimpleLeagueSpec = tuple[SimpleLeagueKind, str | None]
 
 
 class SimplePytorchBackendError(RuntimeError):
@@ -964,13 +969,16 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         model: ClasherPolicy,
         *,
         learner_players: torch.Tensor,
-        opponent_mode: Literal["noop", "random", "strategy", "checkpoint"],
+        opponent_mode: Literal[
+            "noop", "random", "strategy", "checkpoint", "league"
+        ],
         opponent_model: ClasherPolicy | None = None,
         opponent_strategy: (
             SimpleTensorStrategyOpponent
             | SimpleTensorStrategyLeagueOpponent
             | None
         ) = None,
+        opponent_league_kinds: torch.Tensor | None = None,
     ) -> None:
         super().__init__(model)
         if learner_players.ndim != 1 or learner_players.dtype != torch.int64:
@@ -979,21 +987,57 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
             )
         if bool(((learner_players < 0) | (learner_players > 1)).any().item()):
             raise SimplePytorchBackendError("learner player seats must be 0 or 1")
-        if opponent_mode == "checkpoint" and opponent_model is None:
+        checkpoint_required = opponent_mode == "checkpoint" or (
+            opponent_mode == "league"
+            and opponent_league_kinds is not None
+            and bool((opponent_league_kinds == SIMPLE_LEAGUE_CHECKPOINT).any().item())
+        )
+        strategy_required = opponent_mode == "strategy" or (
+            opponent_mode == "league"
+            and opponent_league_kinds is not None
+            and bool((opponent_league_kinds == SIMPLE_LEAGUE_STRATEGY).any().item())
+        )
+        if checkpoint_required and opponent_model is None:
             raise SimplePytorchBackendError(
                 "checkpoint opponent requires a loaded policy"
             )
-        if opponent_mode != "checkpoint" and opponent_model is not None:
+        if not checkpoint_required and opponent_model is not None:
             raise SimplePytorchBackendError(
                 f"{opponent_mode} opponent cannot own a policy"
             )
-        if opponent_mode == "strategy" and opponent_strategy is None:
+        if strategy_required and opponent_strategy is None:
             raise SimplePytorchBackendError(
                 "strategy opponent requires a tensor strategy"
             )
-        if opponent_mode != "strategy" and opponent_strategy is not None:
+        if not strategy_required and opponent_strategy is not None:
             raise SimplePytorchBackendError(
                 f"{opponent_mode} opponent cannot own a tensor strategy"
+            )
+        if opponent_mode == "league":
+            if opponent_league_kinds is None:
+                raise SimplePytorchBackendError(
+                    "league opponent requires one kind per battle row"
+                )
+            if opponent_league_kinds.shape != learner_players.shape:
+                raise SimplePytorchBackendError(
+                    "league kind schedule must match the battle rows"
+                )
+            if opponent_league_kinds.dtype != torch.int64:
+                raise SimplePytorchBackendError(
+                    "league kind schedule must use int64 codes"
+                )
+            known = (
+                (opponent_league_kinds == SIMPLE_LEAGUE_RANDOM)
+                | (opponent_league_kinds == SIMPLE_LEAGUE_STRATEGY)
+                | (opponent_league_kinds == SIMPLE_LEAGUE_CHECKPOINT)
+            )
+            if not bool(known.all().item()):
+                raise SimplePytorchBackendError(
+                    "league kind schedule contains an unknown code"
+                )
+        elif opponent_league_kinds is not None:
+            raise SimplePytorchBackendError(
+                f"{opponent_mode} opponent cannot own a league kind schedule"
             )
         self.learner_players = learner_players
         self.opponent_mode = opponent_mode
@@ -1004,6 +1048,19 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
             else None
         )
         self.opponent_strategy = opponent_strategy
+        self.opponent_league_kinds = opponent_league_kinds
+        self._league_rows = (
+            {
+                kind: torch.nonzero(opponent_league_kinds == kind).flatten()
+                for kind in (
+                    SIMPLE_LEAGUE_RANDOM,
+                    SIMPLE_LEAGUE_STRATEGY,
+                    SIMPLE_LEAGUE_CHECKPOINT,
+                )
+            }
+            if opponent_league_kinds is not None
+            else {}
+        )
 
     def _seat_mask(self, *, trailing: int = 0) -> torch.Tensor:
         seats = torch.arange(2, device=self.learner_players.device)
@@ -1039,6 +1096,38 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
             f"{prefix}_cell": state[1].reshape(batch_size, 2, -1),
         }
 
+    @staticmethod
+    def _slice_boundary(
+        boundary: SimpleTensorPolicyBoundary,
+        rows: torch.Tensor,
+    ) -> SimpleTensorPolicyBoundary:
+        return SimpleTensorPolicyBoundary(
+            actor=SimpleTensorStrategyLeagueOpponent._slice_public(
+                boundary.actor, rows
+            ),
+            critic=(
+                None
+                if boundary.critic is None
+                else SimpleTensorStrategyLeagueOpponent._slice_public(
+                    boundary.critic, rows
+                )
+            ),
+            legal_mask=boundary.legal_mask.index_select(0, rows),
+            public_action_masks=boundary.public_action_masks.index_select(0, rows),
+            previous_actions=boundary.previous_actions.index_select(0, rows),
+            previous_rewards=boundary.previous_rewards.index_select(0, rows),
+            episode_starts=boundary.episode_starts.index_select(0, rows),
+            recurrent_inputs=(
+                None
+                if boundary.recurrent_inputs is None
+                else {
+                    name: value.index_select(0, rows)
+                    for name, value in boundary.recurrent_inputs.items()
+                }
+            ),
+            decision_index=boundary.decision_index,
+        )
+
     def _opponent_actions(
         self,
         boundary: SimpleTensorPolicyBoundary,
@@ -1066,6 +1155,82 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         if self.opponent_mode == "strategy":
             assert self.opponent_strategy is not None
             return self.opponent_strategy(boundary), None
+        if self.opponent_mode == "league":
+            assert self.opponent_league_kinds is not None
+            result = torch.full(
+                (batch, 2),
+                NO_OP_ACTION,
+                dtype=torch.int64,
+                device=self.learner_players.device,
+            )
+            random_rows = self._league_rows[SIMPLE_LEAGUE_RANDOM]
+            if random_rows.numel():
+                random_boundary = self._slice_boundary(boundary, random_rows)
+                random_weights = random_boundary.public_action_masks.to(
+                    torch.float32
+                ).reshape(random_rows.numel() * 2, -1)
+                random_actions = torch.multinomial(random_weights, 1).reshape(
+                    random_rows.numel(), 2
+                )
+                result.index_copy_(0, random_rows, random_actions)
+            if self.opponent_strategy is not None:
+                strategy_rows = self._league_rows[SIMPLE_LEAGUE_STRATEGY]
+                strategy_boundary = self._slice_boundary(
+                    boundary, strategy_rows
+                )
+                strategy_actions = self.opponent_strategy(strategy_boundary)
+                result.index_copy_(0, strategy_rows, strategy_actions)
+            checkpoint_next: tuple[torch.Tensor, torch.Tensor] | None = None
+            if self.opponent_model is not None:
+                assert self.opponent_adapter is not None
+                self.opponent_model.eval()
+                checkpoint_rows = self._league_rows[SIMPLE_LEAGUE_CHECKPOINT]
+                checkpoint_boundary = self._slice_boundary(
+                    boundary, checkpoint_rows
+                )
+                state = self._state_from_prefixed_mapping(
+                    checkpoint_boundary.recurrent_inputs, "opponent"
+                )
+                (
+                    checkpoint_actions,
+                    _log_prob,
+                    _values,
+                    checkpoint_next,
+                    _,
+                ) = self.opponent_model.act(
+                    self.opponent_adapter.inputs(checkpoint_boundary),
+                    state,
+                    deterministic=True,
+                )
+                result.index_copy_(
+                    0,
+                    checkpoint_rows,
+                    checkpoint_actions[:, 0].reshape(
+                        checkpoint_rows.numel(), 2
+                    ),
+                )
+                checkpoint_hidden, checkpoint_cell = checkpoint_next
+
+                def scatter_checkpoint_state(value: torch.Tensor) -> torch.Tensor:
+                    return (
+                        torch.zeros(
+                            (batch, 2, value.shape[-1]),
+                            dtype=value.dtype,
+                            device=value.device,
+                        )
+                        .index_copy(
+                            0,
+                            checkpoint_rows,
+                            value.reshape(checkpoint_rows.numel(), 2, -1),
+                        )
+                        .reshape(batch * 2, -1)
+                    )
+
+                checkpoint_next = (
+                    scatter_checkpoint_state(checkpoint_hidden),
+                    scatter_checkpoint_state(checkpoint_cell),
+                )
+            return result, checkpoint_next
         assert self.opponent_model is not None
         assert self.opponent_adapter is not None
         self.opponent_model.eval()
@@ -1115,6 +1280,16 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
                     next_mapping[name],
                     torch.zeros_like(next_mapping[name]),
                 )
+                if self.opponent_mode == "league":
+                    assert self.opponent_league_kinds is not None
+                    checkpoint_rows = (
+                        self.opponent_league_kinds == SIMPLE_LEAGUE_CHECKPOINT
+                    )[:, None, None]
+                    next_mapping[name] = torch.where(
+                        checkpoint_rows,
+                        next_mapping[name],
+                        torch.zeros_like(next_mapping[name]),
+                    )
         return SimpleTensorPolicyDecision(
             actions=joint_actions,
             next_recurrent_inputs=next_mapping,
@@ -1215,6 +1390,7 @@ def _learner_deck_rows(
     *,
     batch_size: int,
     learner_deck_name: str,
+    opponent_deck_name_by_row: tuple[str | None, ...] = (),
 ) -> tuple[
     tuple[tuple[tuple[str, ...], tuple[str, ...]], ...],
     tuple[int, ...],
@@ -1238,12 +1414,31 @@ def _learner_deck_rows(
         raise SimplePytorchBackendError(
             "stationary training requires at least one opponent deck"
         )
+    if opponent_deck_name_by_row and len(opponent_deck_name_by_row) != batch_size:
+        raise SimplePytorchBackendError(
+            "opponent deck override must have one entry per battle row"
+        )
     rows: list[tuple[tuple[str, ...], tuple[str, ...]]] = []
     learner_players: list[int] = []
     opponent_names: list[str] = []
     for row in range(batch_size):
         learner_player = row % 2
-        opponent_name, opponent_deck = opponents[(row // 2) % len(opponents)]
+        override_name = (
+            opponent_deck_name_by_row[row]
+            if opponent_deck_name_by_row
+            else None
+        )
+        if override_name is None:
+            opponent_name, opponent_deck = opponents[(row // 2) % len(opponents)]
+        else:
+            try:
+                override_index = artifact.deck_names.index(override_name)
+            except ValueError as error:
+                raise SimplePytorchBackendError(
+                    f"unknown checkpoint opponent deck {override_name!r}"
+                ) from error
+            opponent_name = artifact.deck_names[override_index]
+            opponent_deck = artifact.decks[override_index]
         rows.append(
             (learner_deck, opponent_deck)
             if learner_player == 0
@@ -1265,8 +1460,11 @@ class SimplePytorchBackendMetadata:
     learner_players: tuple[int, ...]
     opponent_deck_names: tuple[str, ...]
     opponent_checkpoint_sha256: str | None
+    checkpoint_opponent_deck_name: str | None
     opponent_strategy: str | None
     opponent_strategy_schedule: tuple[str, ...]
+    opponent_league_schedule: tuple[str, ...]
+    opponent_schedule_unit: str | None
     fresh_only: bool
     canonical_lane_globals: bool
     public_action_mask_contract_version: int
@@ -1305,7 +1503,9 @@ class SimplePytorchTrainingCollector:
         opponent_checkpoint_sha256: str | None = None,
         opponent_strategy: str | None = None,
         opponent_strategy_schedule: tuple[str, ...] = (),
+        opponent_league_schedule: tuple[SimpleLeagueSpec, ...] = (),
         learner_deck_name: str = "Hog 2.6 Cycle",
+        checkpoint_opponent_deck_name: str | None = None,
         max_effects: int = 128,
         _execution_mode_override: str | None = None,
     ) -> None:
@@ -1330,11 +1530,30 @@ class SimplePytorchTrainingCollector:
             raise SimplePytorchBackendError(
                 "stationary simple opponents require asymmetric deck rows"
             )
+        normalized_league = (
+            opponent_league_schedule
+            if opponent_league_schedule
+            else tuple(("strategy", name) for name in opponent_strategy_schedule)
+        )
         if opponent_mode == "checkpoint" and opponent_model is None:
             raise SimplePytorchBackendError(
                 "checkpoint simple opponent requires a loaded policy"
             )
-        if opponent_mode != "checkpoint" and opponent_model is not None:
+        league_checkpoint_values = {
+            value for kind, value in normalized_league if kind == "checkpoint"
+        }
+        if opponent_mode == "league" and len(league_checkpoint_values) > 1:
+            raise SimplePytorchBackendError(
+                "simple mixed league supports one unique checkpoint policy"
+            )
+        checkpoint_required = opponent_mode == "checkpoint" or bool(
+            league_checkpoint_values
+        )
+        if checkpoint_required and opponent_model is None:
+            raise SimplePytorchBackendError(
+                "checkpoint simple opponent requires a loaded policy"
+            )
+        if not checkpoint_required and opponent_model is not None:
             raise SimplePytorchBackendError(
                 f"{opponent_mode} simple opponent cannot own a policy"
             )
@@ -1351,18 +1570,52 @@ class SimplePytorchTrainingCollector:
                 f"{opponent_mode} simple opponent cannot name a strategy"
             )
         if opponent_mode == "league":
-            if len(set(opponent_strategy_schedule)) < 2:
+            if batch_size % 2:
                 raise SimplePytorchBackendError(
-                    "simple strategy league requires at least two strategies"
+                    "simple league requires an even batch for paired seats"
                 )
-            if any(name not in STRATEGY_NAMES for name in opponent_strategy_schedule):
+            if len(set(normalized_league)) < 2:
                 raise SimplePytorchBackendError(
-                    "simple strategy league contains an unknown strategy"
+                    "simple league requires at least two distinct opponents"
                 )
-        elif opponent_strategy_schedule:
+            if any(
+                kind not in {"random", "strategy", "checkpoint"}
+                for kind, _value in normalized_league
+            ):
+                raise SimplePytorchBackendError(
+                    "simple league contains an unknown opponent kind"
+                )
+            if any(
+                kind == "strategy" and value not in STRATEGY_NAMES
+                for kind, value in normalized_league
+            ):
+                raise SimplePytorchBackendError(
+                    "simple league contains an unknown strategy"
+                )
+            if any(
+                (kind == "random" and value is not None)
+                or (kind != "random" and value is None)
+                for kind, value in normalized_league
+            ):
+                raise SimplePytorchBackendError(
+                    "simple league opponent payload is malformed"
+                )
+        elif normalized_league:
             raise SimplePytorchBackendError(
-                f"{opponent_mode} simple opponent cannot own a strategy schedule"
+                f"{opponent_mode} simple opponent cannot own a league schedule"
             )
+        if checkpoint_opponent_deck_name is not None and not checkpoint_required:
+            raise SimplePytorchBackendError(
+                "checkpoint opponent deck requires a checkpoint policy"
+            )
+        row_league_schedule = (
+            tuple(
+                normalized_league[(index // 2) % len(normalized_league)]
+                for index in range(batch_size)
+            )
+            if opponent_mode == "league"
+            else ()
+        )
         if (
             not builder.canonical_lane_globals
             or not model.config.canonical_lane_globals
@@ -1402,6 +1655,23 @@ class SimplePytorchTrainingCollector:
                     artifact,
                     batch_size=batch_size,
                     learner_deck_name=learner_deck_name,
+                    opponent_deck_name_by_row=(
+                        tuple(
+                            checkpoint_opponent_deck_name
+                            if kind == "checkpoint"
+                            else None
+                            for kind, _value in row_league_schedule
+                        )
+                        if opponent_mode == "league"
+                        and checkpoint_opponent_deck_name is not None
+                        else tuple(
+                            checkpoint_opponent_deck_name
+                            for _index in range(batch_size)
+                        )
+                        if opponent_mode == "checkpoint"
+                        and checkpoint_opponent_deck_name is not None
+                        else ()
+                    ),
                 )
             )
         else:
@@ -1459,13 +1729,10 @@ class SimplePytorchTrainingCollector:
         self.opponent_model = opponent_model
         self.policy: SimpleClasherPolicyAdapter
         if learner_only:
-            row_strategy_schedule = (
-                tuple(
-                    opponent_strategy_schedule[index % len(opponent_strategy_schedule)]
-                    for index in range(batch_size)
-                )
-                if opponent_mode == "league"
-                else ()
+            row_strategy_schedule = tuple(
+                cast(str, value)
+                for kind, value in row_league_schedule
+                if kind == "strategy"
             )
             tensor_strategy = (
                 SimpleTensorStrategyLeagueOpponent(
@@ -1473,7 +1740,7 @@ class SimplePytorchTrainingCollector:
                     strategy_names=row_strategy_schedule,
                     device=device,
                 )
-                if opponent_mode == "league"
+                if opponent_mode == "league" and row_strategy_schedule
                 else SimpleTensorStrategyOpponent(
                     builder,
                     strategy_name=cast(str, opponent_strategy),
@@ -1486,11 +1753,29 @@ class SimplePytorchTrainingCollector:
                 model,
                 learner_players=self.learner_players,
                 opponent_mode=cast(
-                    Literal["noop", "random", "strategy", "checkpoint"],
-                    "strategy" if opponent_mode == "league" else opponent_mode,
+                    Literal[
+                        "noop", "random", "strategy", "checkpoint", "league"
+                    ],
+                    opponent_mode,
                 ),
                 opponent_model=opponent_model,
                 opponent_strategy=tensor_strategy,
+                opponent_league_kinds=(
+                    torch.as_tensor(
+                        [
+                            {
+                                "random": SIMPLE_LEAGUE_RANDOM,
+                                "strategy": SIMPLE_LEAGUE_STRATEGY,
+                                "checkpoint": SIMPLE_LEAGUE_CHECKPOINT,
+                            }[kind]
+                            for kind, _value in row_league_schedule
+                        ],
+                        dtype=torch.int64,
+                        device=device,
+                    )
+                    if opponent_mode == "league"
+                    else None
+                ),
             )
         else:
             self.policy = SimpleClasherPolicyAdapter(model)
@@ -1511,9 +1796,28 @@ class SimplePytorchTrainingCollector:
             learner_players=learner_players_tuple,
             opponent_deck_names=opponent_deck_names,
             opponent_checkpoint_sha256=opponent_checkpoint_sha256,
+            checkpoint_opponent_deck_name=checkpoint_opponent_deck_name,
             opponent_strategy=opponent_strategy,
             opponent_strategy_schedule=(
-                row_strategy_schedule if opponent_mode == "league" else ()
+                row_strategy_schedule
+                if opponent_mode == "league"
+                and all(kind == "strategy" for kind, _value in row_league_schedule)
+                else ()
+            ),
+            opponent_league_schedule=(
+                tuple(
+                    "random"
+                    if kind == "random"
+                    else f"strategy:{value}"
+                    if kind == "strategy"
+                    else f"checkpoint:{opponent_checkpoint_sha256}"
+                    for kind, value in row_league_schedule
+                )
+                if opponent_mode == "league"
+                else ()
+            ),
+            opponent_schedule_unit=(
+                "logical-matchup-pair" if opponent_mode == "league" else None
             ),
             fresh_only=True,
             canonical_lane_globals=True,
