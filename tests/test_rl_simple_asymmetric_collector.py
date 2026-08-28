@@ -299,7 +299,11 @@ def test_asymmetric_collector_matches_python_stationary_ownership_hash() -> None
         opponent_state={"hidden": opponent_state["hidden"].clone()},
     )
 
-    assert _hash_tensors(actual_values) == expected_digest
+    actual_digest = _hash_tensors(actual_values)
+    assert actual_digest == expected_digest
+    assert actual_digest == (
+        "7c29456d6bdcdc3d489c4712d78d480efb8dcbfd96523e8c17b6cdd5cc80b8ba"
+    )
     assert actual.learner.actions.shape == (3, 2, 1)
     assert actual.learner.done.tolist() == [
         [True, False],

@@ -513,7 +513,11 @@ def test_simple_boundary_hash_matches_python_stationary_observation(
     for name, actual_value in actual_arrays.items():
         assert actual_value.dtype == expected_arrays[name].dtype, name
         np.testing.assert_array_equal(actual_value, expected_arrays[name])
-    assert _observation_digest(actual_arrays) == _observation_digest(expected_arrays)
+    actual_digest = _observation_digest(actual_arrays)
+    assert actual_digest == _observation_digest(expected_arrays)
+    assert actual_digest == (
+        "bde5a61ba47169737182a32bb75b383ea0fcf50f7143caabe409b15758c24e36"
+    )
     assert collector.metadata.entity_projection_profile == (
         "python-semantic-entity-order-v1"
     )
