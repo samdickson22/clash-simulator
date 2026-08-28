@@ -1718,6 +1718,11 @@ def parse_args() -> argparse.Namespace:
         help="fresh Simple Gym persistent-effect capacity; persisted in checkpoints",
     )
     parser.add_argument(
+        "--simple-learner-deck-name",
+        default="Hog 2.6 Cycle",
+        help="exact supported-deck name assigned to every stationary learner row",
+    )
+    parser.add_argument(
         "--card-semantics-version",
         type=int,
         choices=(1, 2, 3),
@@ -2286,8 +2291,6 @@ def _validate_simple_initial_policy_contract(
     config = PolicyConfig.from_dict(payload["model_config"])
     if config.num_tokens != len(token_names):
         raise ValueError("initial policy token count does not match its vocabulary")
-    if config.max_entities != max_entities:
-        raise ValueError("initial policy entity capacity does not match Simple Gym")
     if not config.canonical_lane_globals:
         raise ValueError("initial policy must use canonical lane globals")
     if config.public_history_slots or config.public_seen_card_slots:
@@ -2296,9 +2299,15 @@ def _validate_simple_initial_policy_contract(
         raise ValueError(
             "Simple Gym initialization does not support deterministic resource state"
         )
-    if config.play_hazard_enabled:
-        raise ValueError("Simple Gym initialization does not support play-hazard gating")
-    return config
+    # Entity count is a padding/validation bound, not a learned tensor axis in
+    # the set-attention policy. Rebinding it preserves every parameter; the
+    # runtime admission gate independently proves whether the requested bound
+    # is large enough for the configured deck pool.
+    return (
+        config
+        if config.max_entities == max_entities
+        else replace(config, max_entities=max_entities)
+    )
 
 
 def restore_optimizer_state(
@@ -2342,8 +2351,41 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
         raise ValueError("simple-pytorch requires --simple-max-effects >= 1")
     if args.resume_latest or args.resume_from:
         raise ValueError("simple-pytorch is fresh-only until exact resume is gated")
-    if args.opponent_mode != "selfplay":
-        raise ValueError("simple-pytorch currently requires selfplay")
+    if args.opponent_mode not in {
+        "selfplay",
+        "noop",
+        "random",
+        "strategy",
+        "league",
+        "checkpoint",
+    }:
+        raise ValueError(
+            "simple-pytorch supports selfplay, noop, random, strategy, league, "
+            "or checkpoint"
+        )
+    if args.opponent_mode != "selfplay" and args.mirror_match:
+        raise ValueError(
+            "simple-pytorch stationary opponents require asymmetric deck rows"
+        )
+    if args.opponent_mode == "checkpoint" and len(args.opponent_checkpoint) != 1:
+        raise ValueError(
+            "simple-pytorch checkpoint mode requires exactly one frozen checkpoint"
+        )
+    if args.opponent_mode == "league":
+        simple_league = tuple(args.league_opponent)
+        if not args.pfsp_report and (
+            len(set(simple_league)) < 2
+            or any(not value.startswith("strategy:") for value in simple_league)
+        ):
+            raise ValueError(
+                "simple-pytorch league currently requires at least two explicit "
+                "strategy opponents or a PFSP report"
+            )
+        if args.pfsp_report and simple_league:
+            raise ValueError(
+                "simple-pytorch league accepts either explicit strategies or PFSP, "
+                "not both"
+            )
     if args.actor_observation_domain != "simulator-exact":
         raise ValueError(
             "simple-pytorch owns an exact public projection actor domain"
@@ -2523,7 +2565,11 @@ def main() -> None:
         raise ValueError("league/PFSP options require --opponent-mode league")
     if args.pfsp_strategy_workers is not None and not args.pfsp_report:
         raise ValueError("--pfsp-strategy-workers requires --pfsp-report")
-    if args.opponent_mode in {"checkpoint", "league"} and args.actor_workers == 1:
+    if (
+        args.simulation_backend != "simple-pytorch"
+        and args.opponent_mode in {"checkpoint", "league"}
+        and args.actor_workers == 1
+    ):
         raise ValueError(
             "checkpoint and league opponents currently require parallel actors"
         )
@@ -2611,11 +2657,15 @@ def main() -> None:
         strategy_workers = (
             args.pfsp_strategy_workers
             if args.pfsp_strategy_workers is not None
-            else args.actor_workers - len(league_opponents)
+            else (
+                args.num_envs
+                if args.simulation_backend == "simple-pytorch"
+                else args.actor_workers - len(league_opponents)
+            )
         )
         strategy_names = allocate_pfsp_slots(report_weights, strategy_workers)
         league_opponents += tuple(("strategy", name) for name in strategy_names)
-    if args.opponent_mode == "league":
+    if args.opponent_mode == "league" and args.simulation_backend != "simple-pytorch":
         if len(league_opponents) > args.actor_workers:
             raise ValueError("league opponent slots cannot exceed actor workers")
         kinds = {kind for kind, _ in league_opponents}
@@ -2953,7 +3003,10 @@ def main() -> None:
         anchor = torch.load(
             anchor_path, map_location=learner_device, weights_only=False
         )
-        anchor_config = PolicyConfig.from_dict(anchor["model_config"])
+        anchor_config = replace(
+            PolicyConfig.from_dict(anchor["model_config"]),
+            max_entities=config.max_entities,
+        )
         compatible_zero_prior = (
             config.placement_prior_enabled
             and not anchor_config.placement_prior_enabled
@@ -3126,6 +3179,21 @@ def main() -> None:
     if args.simulation_backend == "simple-pytorch":
         from .simple_pytorch_backend import SimplePytorchTrainingCollector
 
+        simple_opponent_model: ClasherPolicy | None = None
+        simple_opponent_sha256: str | None = None
+        if args.opponent_mode == "checkpoint":
+            from .parallel_rollout import load_checkpoint_opponent
+
+            opponent_path = Path(opponent_checkpoints[0])
+            simple_opponent_model = load_checkpoint_opponent(
+                opponent_path,
+                device=actor_device,
+                builder=builder,
+                learner_config=config,
+                token_names=tuple(builder.token_names),
+            )
+            simple_opponent_sha256 = _sha256(opponent_path)
+
         simple_collector = SimplePytorchTrainingCollector(
             model=actor_model,
             builder=builder,
@@ -3140,6 +3208,24 @@ def main() -> None:
                 args.simple_token_vocabulary_path, must_exist=True
             ),
             mirror_match=args.mirror_match,
+            opponent_mode=args.opponent_mode,
+            opponent_model=simple_opponent_model,
+            opponent_checkpoint_sha256=simple_opponent_sha256,
+            opponent_strategy=(
+                args.opponent_strategy
+                if args.opponent_mode == "strategy"
+                else None
+            ),
+            opponent_strategy_schedule=(
+                tuple(
+                    str(path)
+                    for kind, path in league_opponents
+                    if kind == "strategy" and path is not None
+                )
+                if args.opponent_mode == "league"
+                else ()
+            ),
+            learner_deck_name=args.simple_learner_deck_name,
             max_effects=args.simple_max_effects,
         )
         simulation_backend_metadata = simple_collector.checkpoint_metadata()
@@ -3150,10 +3236,19 @@ def main() -> None:
             model.config.actor_observation_domain
         )
         if initial_policy_path is not None:
+            assert initial_policy is not None
+            source_policy_config = PolicyConfig.from_dict(
+                initial_policy["model_config"]
+            )
             simulation_backend_metadata["initial_policy"] = {
                 "path": str(initial_policy_path),
                 "sha256": _sha256(initial_policy_path),
                 "weights_only": True,
+                "source_max_entities": source_policy_config.max_entities,
+                "runtime_max_entities": config.max_entities,
+                "entity_capacity_rebound": (
+                    source_policy_config.max_entities != config.max_entities
+                ),
                 "optimizer_reset": True,
                 "update_reset": True,
                 "simulator_state_reset": True,

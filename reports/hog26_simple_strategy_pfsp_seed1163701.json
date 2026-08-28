@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "path": "/Users/sam/Desktop/code/clasher/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt",
+    "sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372"
+  },
+  "source": {
+    "paired_audit_path": "/Users/sam/Desktop/code/clasher/reports/hog26_paired_asymmetric_evaluation_20260828.md",
+    "paired_audit_sha256": "25e09e64384b0e474d053317295f0e2c70ff31ab339c9428cf6d63bb9ede2134",
+    "games_per_strategy": 12,
+    "paired_seats": true,
+    "opponent_decks_identical_across_seats": true
+  },
+  "score_rates": {
+    "balanced": 0.08333333333333333,
+    "bridge-pressure": 0.0,
+    "reactive-defense": 0.16666666666666666,
+    "slow-push": 0.08333333333333333,
+    "spell-control": 0.25,
+    "split-lane": 0.25
+  },
+  "pfsp": {
+    "floor": 0.02,
+    "power": 1.5,
+    "weights": {
+      "balanced": 0.1822706053934663,
+      "bridge-pressure": 0.20768229645722566,
+      "reactive-defense": 0.1579892757834691,
+      "slow-push": 0.1822706053934663,
+      "spell-control": 0.13489360848618628,
+      "split-lane": 0.13489360848618628
+    },
+    "expected_slots_at_64_rows": {
+      "balanced": 12,
+      "bridge-pressure": 13,
+      "reactive-defense": 10,
+      "slow-push": 12,
+      "spell-control": 9,
+      "split-lane": 8
+    }
+  }
+}
