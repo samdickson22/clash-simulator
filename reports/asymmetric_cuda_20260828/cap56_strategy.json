@@ -1,0 +1,15 @@
+{
+  "all_admitted": true,
+  "all_committed": true,
+  "decisions": 8,
+  "deck_assignment_digest": "449d85425ceaeab5f2b29dc5b9cf5751ae33ce6aa02225b326f6ce83fd40dd77",
+  "digest": "65bfdd984aa6949ada9c2c48149066cac74e88e151b533ff9ad9567a3d9753ec",
+  "learner_seat_profile": "alternating-row-parity-v1",
+  "learner_transitions": 264,
+  "max_effects": 64,
+  "max_entities": 56,
+  "opponent_contract": "simple-opponent/public-strategy-v1",
+  "rows": 33,
+  "source_sha": "37c70b03cb426e4e7532e4a5c649d54e11b9c931",
+  "zero_fallback": true
+}\n

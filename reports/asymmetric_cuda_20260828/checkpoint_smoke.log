@@ -1,0 +1,13 @@
+learner_device=cuda actor_device=cuda
+simulation_backend=simple-pytorch
+decks_path=/home/ubuntu/clasher-asym-37c/decks.json
+sampling_decks_path=/home/ubuntu/clasher-asym-37c/decks.json
+learner_sampling_decks_path=/home/ubuntu/clasher-asym-37c/decks.json
+opponent_sampling_decks_path=/home/ubuntu/clasher-asym-37c/decks.json
+matchups_path=None matchup_probability=0.0
+checkpoint_dir=/home/ubuntu/clasher-asym-37c/reports/asymmetric_cuda_20260828/checkpoint_smoke
+model=entity_spatial_recurrent params=119,095 tokens=494 max_entities=128 d_model=32 memory=32
+envs=8 agents=8 opponent=checkpoint actor_workers=1 actor_threads=2 rollout_steps=1 transitions_per_update=8 reward_profile=objective-v1 reward_shaping_gamma=None elixir_leak_penalty_scale=0.0
+saved_initial_checkpoint=/home/ubuntu/clasher-asym-37c/reports/asymmetric_cuda_20260828/checkpoint_smoke/policy_v2_update_000000.pt
+update=00001 transitions=8 reward=+0.00000 abs_reward=0.00000 loss=-0.0427 policy=0.0000 value=0.0001 entropy=5.927 type_ent=1.604 loc_ent=4.324 slot_ent=1.379 anchor_l2=0.000 anchor_loss=0.0000 anchor_policy_kl=0.00000 anchor_policy_kl_loss=0.0000 rehearsal=0.000 rehearsal_loss=0.0000 causal_rehearsal=0.000 causal_rehearsal_loss=0.0000 anchor_rehearsal_kl=0.00000 anchor_rehearsal_loss=0.0000 hand=0.802 elixir=0.0091 kl=0.00000 clip=0.000 opt_steps=1 kl_stop=0 ev=+0.380 play=0.750 noop=0.250 noop_when_playable=0.250 ability=0.0000 episodes=0 wld=0/0/0 collect_s=0.49 learn_s=0.27 sync_s=0.00 tps=10.5 lr=2.50e-04
+saved_checkpoint=/home/ubuntu/clasher-asym-37c/reports/asymmetric_cuda_20260828/checkpoint_smoke/policy_v2_update_000001.pt

@@ -1,0 +1,15 @@
+{
+  "deck_assignment_digest": "f63ce227c4cecce896d1aa57a606daa5faee53717ecd7b3687ba15a2864469ac",
+  "entity_projection_profile": "python-semantic-entity-order-v1",
+  "execution_mode": "cuda-graph",
+  "learner_seat_profile": "alternating-row-parity-v1",
+  "max_effects": 64,
+  "max_entities": 56,
+  "opponent_contract_digest": "d75e5722350fc01d5d9f88f571c9f3028dafc376efa25ca5df12abc14be0bcff",
+  "opponent_contract_id": "simple-opponent/frozen-checkpoint-v1",
+  "public_action_mask_semantics_digest": "269eaba783a8c8ef7b11488cd1c1bf7d9ec15b7ab9b91aefeb5ba565565cfd05",
+  "rollout_ownership_profile": "learner-only-stationary-v1",
+  "total_transitions": 8,
+  "typed_vocabulary_sha256": "960c1c1d68dea56786b0e196c5fc772b298fa16db168a81ca6c6d36c60c54704",
+  "update": 1
+}\n

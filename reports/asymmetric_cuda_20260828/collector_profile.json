@@ -1,0 +1,25 @@
+{
+  "batch_size": 64,
+  "decision_interval": 8,
+  "decision_steps": 8,
+  "device": "NVIDIA RTX A6000",
+  "execution_mode": "cuda-graph",
+  "learner_decisions_per_second": [
+    175.01014055583173,
+    174.7477583771391,
+    174.85306197323746
+  ],
+  "max_effects": 64,
+  "max_entities": 56,
+  "median_learner_decisions_per_second": 174.85306197323746,
+  "median_native_row_ticks_per_second": 1398.8244957858997,
+  "opponent_contract": "simple-opponent/public-strategy-v1",
+  "peak_allocated_bytes": 220589568,
+  "peak_reserved_bytes": 819986432,
+  "source_sha": "37c70b03cb426e4e7532e4a5c649d54e11b9c931",
+  "trial_seconds": [
+    2.9255447620000155,
+    2.9299374409999928,
+    2.9281729140000152
+  ]
+}\n

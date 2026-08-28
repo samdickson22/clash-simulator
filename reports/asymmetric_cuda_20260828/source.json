@@ -1,0 +1,8 @@
+{
+  "cuda": "12.8",
+  "gpu": "NVIDIA RTX A6000",
+  "pod_id": "b961425832ed4332894427b0deef1307",
+  "source_archive_sha256": "748688c8d6ff546bb0caf5d430410ed0d4845153731b41e85f5a6731b7af9f3e",
+  "source_commit": "37c70b03cb426e4e7532e4a5c649d54e11b9c931",
+  "torch": "2.10.0+cu128"
+}\n
