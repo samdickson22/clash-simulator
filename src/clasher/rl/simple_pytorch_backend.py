@@ -13,7 +13,7 @@ import json
 import math
 from collections import defaultdict
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Any, Final, Literal, cast
 
@@ -1465,6 +1465,7 @@ class SimplePytorchBackendMetadata:
     opponent_strategy_schedule: tuple[str, ...]
     opponent_league_schedule: tuple[str, ...]
     opponent_schedule_unit: str | None
+    learner_teacher_strategy: str | None
     fresh_only: bool
     canonical_lane_globals: bool
     public_action_mask_contract_version: int
@@ -1506,6 +1507,7 @@ class SimplePytorchTrainingCollector:
         opponent_league_schedule: tuple[SimpleLeagueSpec, ...] = (),
         learner_deck_name: str = "Hog 2.6 Cycle",
         checkpoint_opponent_deck_name: str | None = None,
+        learner_teacher_strategy: str | None = None,
         max_effects: int = 128,
         _execution_mode_override: str | None = None,
     ) -> None:
@@ -1608,6 +1610,15 @@ class SimplePytorchTrainingCollector:
             raise SimplePytorchBackendError(
                 "checkpoint opponent deck requires a checkpoint policy"
             )
+        if learner_teacher_strategy is not None:
+            if learner_teacher_strategy not in STRATEGY_NAMES:
+                raise SimplePytorchBackendError(
+                    "learner teacher requires a known tensor strategy"
+                )
+            if opponent_mode == "selfplay":
+                raise SimplePytorchBackendError(
+                    "learner teacher requires learner-only stationary rows"
+                )
         row_league_schedule = (
             tuple(
                 normalized_league[(index // 2) % len(normalized_league)]
@@ -1727,6 +1738,15 @@ class SimplePytorchTrainingCollector:
         )
         self.learner_only = learner_only
         self.opponent_model = opponent_model
+        self.learner_teacher = (
+            SimpleTensorStrategyOpponent(
+                builder,
+                strategy_name=learner_teacher_strategy,
+                device=device,
+            )
+            if learner_teacher_strategy is not None
+            else None
+        )
         self.policy: SimpleClasherPolicyAdapter
         if learner_only:
             row_strategy_schedule = tuple(
@@ -1819,6 +1839,7 @@ class SimplePytorchTrainingCollector:
             opponent_schedule_unit=(
                 "logical-matchup-pair" if opponent_mode == "league" else None
             ),
+            learner_teacher_strategy=learner_teacher_strategy,
             fresh_only=True,
             canonical_lane_globals=True,
             public_action_mask_contract_version=PUBLIC_ACTION_MASK_CONTRACT_V2,
@@ -1980,6 +2001,41 @@ class SimplePytorchTrainingCollector:
         global_features = torch.ones_like(batch.actor.global_features)
         return entity, entity_features, hand, global_features
 
+    @staticmethod
+    def _decision_public_slice(value: Any, step: int) -> Any:
+        return type(value)(
+            **{
+                descriptor.name: getattr(value, descriptor.name)[step]
+                for descriptor in fields(value)
+            }
+        )
+
+    def _learner_teacher_actions(
+        self,
+        decision: SimpleTensorDecisionBatch,
+    ) -> torch.Tensor | None:
+        if self.learner_teacher is None:
+            return None
+        actions = []
+        for step in range(decision.decision_steps):
+            boundary = SimpleTensorPolicyBoundary(
+                actor=self._decision_public_slice(decision.actor, step),
+                critic=(
+                    None
+                    if decision.critic is None
+                    else self._decision_public_slice(decision.critic, step)
+                ),
+                legal_mask=decision.legal_masks[step],
+                public_action_masks=decision.public_action_masks[step],
+                previous_actions=decision.previous_actions[step],
+                previous_rewards=decision.previous_rewards[step],
+                episode_starts=decision.episode_starts[step],
+                recurrent_inputs=None,
+                decision_index=step,
+            )
+            actions.append(self.learner_teacher(boundary))
+        return torch.stack(actions)
+
     @torch.no_grad()
     def collect(
         self,
@@ -2073,6 +2129,9 @@ class SimplePytorchTrainingCollector:
                 else decision.bootstrap.episode_starts.reshape(-1)
             ),
         }
+        teacher_actions = self._learner_teacher_actions(decision)
+        if teacher_actions is not None:
+            device_exports["strategy_teacher_actions"] = project(teacher_actions)
         staged = _CoalescedCpuStaging(device_exports).finish()
         done = staged.pop("_done_rows")
         winner = staged.pop("_winner_rows")

@@ -11,7 +11,7 @@ import torch
 
 import clasher.rl.simple_pytorch_backend as simple_backend
 from clasher.arena import Position
-from clasher.rl.model import ClasherPolicy, PolicyConfig
+from clasher.rl.model import ClasherPolicy, PolicyConfig, PolicyOutput
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.simple_pytorch_backend import (
     SIMPLE_PYTORCH_BACKEND,
@@ -35,6 +35,7 @@ from clasher.rl.train_recurrent import (
     _load_initial_policy_state,
     _validate_simple_initial_policy_contract,
     _validate_simple_pytorch_args,
+    online_strategy_teacher_loss,
 )
 from clasher.torch_sim.actions import ABILITY_ACTION, NO_OP_ACTION
 from clasher.torch_sim.resident_outputs import TensorPublicStructuredObservation
@@ -74,6 +75,12 @@ def _simple_args(**overrides: object) -> Namespace:
         "simple_max_entities": 128,
         "simple_max_effects": 128,
         "simple_checkpoint_opponent_deck_name": None,
+        "online_strategy_teacher": None,
+        "online_strategy_teacher_coef": 0.0,
+        "online_strategy_teacher_decision_coef": 1.0,
+        "online_strategy_teacher_card_coef": 1.0,
+        "online_strategy_teacher_tile_coef": 1.0,
+        "online_strategy_teacher_play_weight": 4.0,
     }
     values.update(overrides)
     return Namespace(**values)
@@ -187,6 +194,7 @@ def _training_collector(
     opponent_mode: str = "selfplay",
     opponent_league_schedule: tuple[tuple[str, str | None], ...] = (),
     checkpoint_opponent_deck_name: str | None = None,
+    learner_teacher_strategy: str | None = None,
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -249,6 +257,7 @@ def _training_collector(
         opponent_league_schedule=opponent_league_schedule,
         learner_deck_name="Hog 2.6 Cycle",
         checkpoint_opponent_deck_name=checkpoint_opponent_deck_name,
+        learner_teacher_strategy=learner_teacher_strategy,
         max_effects=max_effects,
         _execution_mode_override=execution_mode,
     )
@@ -510,6 +519,72 @@ def test_simple_argument_gate_accepts_stationary_modes_fail_closed() -> None:
                 simple_checkpoint_opponent_deck_name="Hog 2.6 Cycle",
             )
         )
+    _validate_simple_pytorch_args(
+        _simple_args(
+            opponent_mode="random",
+            online_strategy_teacher="balanced",
+            online_strategy_teacher_coef=1.0,
+        )
+    )
+    with pytest.raises(ValueError, match="required together"):
+        _validate_simple_pytorch_args(
+            _simple_args(
+                opponent_mode="random",
+                online_strategy_teacher="balanced",
+            )
+        )
+
+
+def test_online_strategy_teacher_labels_are_public_legal_and_learner_only() -> None:
+    collector = _training_collector(
+        batch_size=4,
+        max_entities=48,
+        max_effects=64,
+        opponent_mode="random",
+        learner_teacher_strategy="balanced",
+    )
+    arrays, _state, *_boundary = collector.collect(
+        3, collector.policy.model.initial_state(4, device="cpu")
+    )
+    teacher = arrays["strategy_teacher_actions"]
+    assert teacher.shape == (4, 3)
+    assert arrays["action_masks"][
+        np.arange(4)[:, None], np.arange(3)[None, :], teacher
+    ].all()
+    assert collector.checkpoint_metadata()["learner_teacher_strategy"] == "balanced"
+
+
+def test_online_strategy_teacher_loss_has_independent_play_card_tile_gradients() -> None:
+    type_logits = torch.zeros((1, 3, 6), requires_grad=True)
+    tile_logits = torch.zeros((1, 3, 4, 576), requires_grad=True)
+    output = PolicyOutput(
+        joint_logits=torch.zeros((1, 3, 2306)),
+        values=torch.zeros((1, 3)),
+        opponent_hand_logits=torch.zeros((1, 3, 494)),
+        opponent_elixir=torch.zeros((1, 3)),
+        next_state=(torch.zeros((1, 1)), torch.zeros((1, 1))),
+        action_type_logits=type_logits,
+        location_logits=tile_logits,
+    )
+    action_mask = torch.ones((1, 3, 2306), dtype=torch.bool)
+    teacher_actions = torch.tensor([[2 * 576 + 17, 2304, 2305]])
+    result = online_strategy_teacher_loss(
+        output,
+        action_mask,
+        teacher_actions,
+        decision_coef=1.0,
+        card_coef=1.0,
+        tile_coef=1.0,
+        play_weight=4.0,
+    )
+    assert bool(torch.isfinite(result["loss"]))
+    assert result["play_rate"].item() == pytest.approx(1.0 / 3.0)
+    result["loss"].backward()
+    assert type_logits.grad is not None
+    assert tile_logits.grad is not None
+    assert bool((type_logits.grad != 0).any())
+    assert bool((tile_logits.grad[:, 0, 2] != 0).any())
+    assert not bool((tile_logits.grad[:, 1:] != 0).any())
 
 
 def test_mixed_simple_league_is_exactly_replayable_and_state_is_row_scoped() -> None:

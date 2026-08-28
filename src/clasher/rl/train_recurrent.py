@@ -27,6 +27,7 @@ from clasher.paths import (
 )
 
 from .causal_rehearsal import CausalDecisionRehearsal
+from .common import NUM_HAND_SLOTS, NUM_TILES
 from .imitation_objective import (
     PLACEMENT_ACTIONS,
     SpatialImitationConfig,
@@ -122,6 +123,7 @@ class RolloutBatch:
     wins: int
     losses: int
     draws: int
+    strategy_teacher_actions: np.ndarray | None = None
 
     @property
     def num_sequences(self) -> int:
@@ -1318,6 +1320,142 @@ def factorized_policy_anchor_kl(
     return per_decision[valid].mean()
 
 
+def online_strategy_teacher_loss(
+    output: PolicyOutput,
+    action_mask: Tensor,
+    teacher_actions: Tensor,
+    *,
+    decision_coef: float,
+    card_coef: float,
+    tile_coef: float,
+    play_weight: float,
+) -> dict[str, Tensor]:
+    """Supervise timing, card, and tile independently on learner states."""
+
+    expected_actions = PLACEMENT_ACTIONS + 2
+    if action_mask.shape != (*teacher_actions.shape, expected_actions):
+        raise ValueError("online teacher action-mask shape differs")
+    if action_mask.dtype != torch.bool or teacher_actions.dtype != torch.long:
+        raise ValueError("online teacher mask/actions have invalid dtypes")
+    flat_actions = teacher_actions.reshape(-1)
+    flat_mask = action_mask.reshape(-1, expected_actions)
+    if bool(
+        ((flat_actions < 0) | (flat_actions >= expected_actions)).any()
+    ):
+        raise ValueError("online teacher action is outside the action space")
+    if not bool(flat_mask.gather(1, flat_actions[:, None]).all()):
+        raise ValueError("online teacher emitted a non-public-legal action")
+
+    type_logits = output.action_type_logits.reshape(-1, NUM_HAND_SLOTS + 2)
+    tile_logits = output.location_logits.reshape(
+        -1, NUM_HAND_SLOTS, NUM_TILES
+    )
+    placement_mask = flat_mask[:, :PLACEMENT_ACTIONS].reshape(
+        -1, NUM_HAND_SLOTS, NUM_TILES
+    )
+    card_mask = placement_mask.any(dim=-1)
+    decision_mask = torch.stack(
+        (
+            card_mask.any(dim=-1),
+            flat_mask[:, PLACEMENT_ACTIONS],
+            flat_mask[:, PLACEMENT_ACTIONS + 1],
+        ),
+        dim=-1,
+    )
+    masked_card_logits = type_logits[:, :NUM_HAND_SLOTS].masked_fill(
+        ~card_mask, -1e9
+    )
+    decision_logits = torch.stack(
+        (
+            torch.logsumexp(masked_card_logits, dim=-1),
+            type_logits[:, NUM_HAND_SLOTS],
+            type_logits[:, NUM_HAND_SLOTS + 1],
+        ),
+        dim=-1,
+    ).masked_fill(~decision_mask, -1e9)
+    placement = flat_actions < PLACEMENT_ACTIONS
+    decision_targets = torch.where(
+        placement,
+        torch.zeros_like(flat_actions),
+        torch.where(
+            flat_actions == PLACEMENT_ACTIONS,
+            torch.ones_like(flat_actions),
+            torch.full_like(flat_actions, 2),
+        ),
+    )
+    decision_weights = torch.where(
+        placement,
+        torch.full_like(flat_actions, play_weight, dtype=torch.float32),
+        torch.ones_like(flat_actions, dtype=torch.float32),
+    )
+    decision_per_row = F.cross_entropy(
+        decision_logits, decision_targets, reduction="none"
+    )
+    decision_loss = (decision_per_row * decision_weights).sum() / (
+        decision_weights.sum().clamp_min(1.0)
+    )
+
+    placement_rows = torch.nonzero(placement, as_tuple=False).flatten()
+    if placement_rows.numel():
+        placement_actions = flat_actions.index_select(0, placement_rows)
+        card_targets = torch.div(
+            placement_actions, NUM_TILES, rounding_mode="floor"
+        )
+        tile_targets = placement_actions.remainder(NUM_TILES)
+        selected_card_logits = masked_card_logits.index_select(0, placement_rows)
+        card_loss = F.cross_entropy(selected_card_logits, card_targets)
+        row_indices = torch.arange(
+            placement_rows.numel(), device=flat_actions.device
+        )
+        selected_tile_logits = tile_logits.index_select(0, placement_rows)[
+            row_indices, card_targets
+        ]
+        selected_tile_mask = placement_mask.index_select(0, placement_rows)[
+            row_indices, card_targets
+        ]
+        tile_loss = F.cross_entropy(
+            selected_tile_logits.masked_fill(~selected_tile_mask, -1e9),
+            tile_targets,
+        )
+        card_accuracy = (
+            selected_card_logits.argmax(dim=-1) == card_targets
+        ).float().mean()
+        tile_accuracy = (
+            selected_tile_logits.masked_fill(~selected_tile_mask, -1e9).argmax(
+                dim=-1
+            )
+            == tile_targets
+        ).float().mean()
+    else:
+        card_loss = masked_card_logits.sum() * 0.0
+        tile_loss = tile_logits.sum() * 0.0
+        card_accuracy = card_loss.detach()
+        tile_accuracy = tile_loss.detach()
+    decision_predictions = decision_logits.argmax(dim=-1)
+    decision_accuracy = (decision_predictions == decision_targets).float().mean()
+    play_recall = (
+        (decision_predictions[placement] == 0).float().mean()
+        if placement_rows.numel()
+        else decision_accuracy.detach() * 0.0
+    )
+    total = (
+        decision_coef * decision_loss
+        + card_coef * card_loss
+        + tile_coef * tile_loss
+    )
+    return {
+        "loss": total,
+        "decision_loss": decision_loss,
+        "card_loss": card_loss,
+        "tile_loss": tile_loss,
+        "decision_accuracy": decision_accuracy,
+        "play_recall": play_recall,
+        "card_accuracy": card_accuracy,
+        "tile_accuracy": tile_accuracy,
+        "play_rate": placement.float().mean(),
+    }
+
+
 def ppo_update(
     *,
     model: ClasherPolicy,
@@ -1337,6 +1475,11 @@ def ppo_update(
     action_type_entropy_coef: float | None = None,
     location_entropy_coef: float | None = None,
     conditional_slot_entropy_coef: float = 0.0,
+    online_strategy_teacher_coef: float = 0.0,
+    online_strategy_teacher_decision_coef: float = 1.0,
+    online_strategy_teacher_card_coef: float = 1.0,
+    online_strategy_teacher_tile_coef: float = 1.0,
+    online_strategy_teacher_play_weight: float = 4.0,
     anchor_parameters: tuple[Tensor | None, ...] | None = None,
     anchor_l2_coef: float = 0.0,
     anchor_model: ClasherPolicy | None = None,
@@ -1377,6 +1520,16 @@ def ppo_update(
         "causal_rehearsal_weighted_loss": 0.0,
         "anchor_rehearsal_kl": 0.0,
         "anchor_rehearsal_loss": 0.0,
+        "online_teacher_loss": 0.0,
+        "online_teacher_weighted_loss": 0.0,
+        "online_teacher_decision_loss": 0.0,
+        "online_teacher_card_loss": 0.0,
+        "online_teacher_tile_loss": 0.0,
+        "online_teacher_decision_accuracy": 0.0,
+        "online_teacher_play_recall": 0.0,
+        "online_teacher_card_accuracy": 0.0,
+        "online_teacher_tile_accuracy": 0.0,
+        "online_teacher_play_rate": 0.0,
         "hand_loss": 0.0,
         "elixir_loss": 0.0,
         "approx_kl": 0.0,
@@ -1410,6 +1563,20 @@ def ppo_update(
         normalized_advantages, dtype=torch.float32, device=device
     )
     all_returns = torch.as_tensor(returns, dtype=torch.float32, device=device)
+    all_teacher_actions = (
+        None
+        if rollout.strategy_teacher_actions is None
+        else torch.as_tensor(
+            rollout.strategy_teacher_actions,
+            dtype=torch.long,
+            device=device,
+        )
+    )
+    if (all_teacher_actions is None) != (online_strategy_teacher_coef == 0.0):
+        raise ValueError(
+            "online teacher rollout labels and a positive coefficient are "
+            "required together"
+        )
 
     for _epoch in range(epochs):
         order = np.random.permutation(rollout.num_sequences)
@@ -1542,6 +1709,36 @@ def ppo_update(
                     batch_sequences=anchor_rehearsal_batch_sequences,
                 )
             anchor_rehearsal_loss = anchor_rehearsal_coef * anchor_rehearsal_kl
+            if all_teacher_actions is None:
+                online_teacher = {
+                    name: torch.zeros(
+                        (), dtype=output.values.dtype, device=device
+                    )
+                    for name in (
+                        "loss",
+                        "decision_loss",
+                        "card_loss",
+                        "tile_loss",
+                        "decision_accuracy",
+                        "play_recall",
+                        "card_accuracy",
+                        "tile_accuracy",
+                        "play_rate",
+                    )
+                }
+            else:
+                online_teacher = online_strategy_teacher_loss(
+                    output,
+                    inputs.action_mask,
+                    all_teacher_actions.index_select(0, index_tensor),
+                    decision_coef=online_strategy_teacher_decision_coef,
+                    card_coef=online_strategy_teacher_card_coef,
+                    tile_coef=online_strategy_teacher_tile_coef,
+                    play_weight=online_strategy_teacher_play_weight,
+                )
+            online_teacher_weighted_loss = (
+                online_strategy_teacher_coef * online_teacher["loss"]
+            )
             loss = (
                 policy_loss
                 + value_coef * value_loss
@@ -1551,6 +1748,7 @@ def ppo_update(
                 + rehearsal_weighted_loss
                 + causal_rehearsal_weighted_loss
                 + anchor_rehearsal_loss
+                + online_teacher_weighted_loss
                 + hand_aux_coef * hand_loss
                 + elixir_aux_coef * elixir_loss
             )
@@ -1568,6 +1766,8 @@ def ppo_update(
                     f"{float(causal_rehearsal_loss.detach()):.9g} "
                     "anchor_rehearsal_kl="
                     f"{float(anchor_rehearsal_kl.detach()):.9g}"
+                    " online_teacher="
+                    f"{float(online_teacher['loss'].detach()):.9g}"
                 )
 
             optimizer.zero_grad(set_to_none=True)
@@ -1620,6 +1820,18 @@ def ppo_update(
                 "causal_rehearsal_weighted_loss": causal_rehearsal_weighted_loss,
                 "anchor_rehearsal_kl": anchor_rehearsal_kl,
                 "anchor_rehearsal_loss": anchor_rehearsal_loss,
+                "online_teacher_loss": online_teacher["loss"],
+                "online_teacher_weighted_loss": online_teacher_weighted_loss,
+                "online_teacher_decision_loss": online_teacher["decision_loss"],
+                "online_teacher_card_loss": online_teacher["card_loss"],
+                "online_teacher_tile_loss": online_teacher["tile_loss"],
+                "online_teacher_decision_accuracy": online_teacher[
+                    "decision_accuracy"
+                ],
+                "online_teacher_play_recall": online_teacher["play_recall"],
+                "online_teacher_card_accuracy": online_teacher["card_accuracy"],
+                "online_teacher_tile_accuracy": online_teacher["tile_accuracy"],
+                "online_teacher_play_rate": online_teacher["play_rate"],
                 "hand_loss": hand_loss,
                 "elixir_loss": elixir_loss,
                 "approx_kl": approx_kl,
@@ -1861,6 +2073,28 @@ def parse_args() -> argparse.Namespace:
         choices=STRATEGY_NAMES,
         default=None,
         help="public-information strategy used by --opponent-mode strategy",
+    )
+    parser.add_argument(
+        "--online-strategy-teacher",
+        choices=STRATEGY_NAMES,
+        default=None,
+        help=(
+            "optional public-information teacher evaluated on the learner's "
+            "own resident rollout states"
+        ),
+    )
+    parser.add_argument("--online-strategy-teacher-coef", type=float, default=0.0)
+    parser.add_argument(
+        "--online-strategy-teacher-decision-coef", type=float, default=1.0
+    )
+    parser.add_argument(
+        "--online-strategy-teacher-card-coef", type=float, default=1.0
+    )
+    parser.add_argument(
+        "--online-strategy-teacher-tile-coef", type=float, default=1.0
+    )
+    parser.add_argument(
+        "--online-strategy-teacher-play-weight", type=float, default=4.0
     )
     parser.add_argument(
         "--opponent-checkpoint",
@@ -2360,6 +2594,24 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
         raise ValueError("simple-pytorch requires --simple-max-entities >= 16")
     if args.simple_max_effects < 1:
         raise ValueError("simple-pytorch requires --simple-max-effects >= 1")
+    if (args.online_strategy_teacher is None) != (
+        args.online_strategy_teacher_coef == 0.0
+    ):
+        raise ValueError(
+            "online strategy teacher and a positive teacher coefficient are "
+            "required together"
+        )
+    if args.online_strategy_teacher_coef < 0.0:
+        raise ValueError("online strategy teacher coefficient cannot be negative")
+    for name in (
+        "online_strategy_teacher_decision_coef",
+        "online_strategy_teacher_card_coef",
+        "online_strategy_teacher_tile_coef",
+    ):
+        if getattr(args, name) < 0.0:
+            raise ValueError(f"{name} cannot be negative")
+    if args.online_strategy_teacher_play_weight < 1.0:
+        raise ValueError("online strategy teacher play weight must be at least one")
     if args.resume_latest or args.resume_from:
         raise ValueError("simple-pytorch is fresh-only until exact resume is gated")
     if args.opponent_mode not in {
@@ -2453,6 +2705,11 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
 def main() -> None:
     global _USE_TRIMMED_ROLLOUT_ENTITY_PADDING
     args = parse_args()
+    if args.simulation_backend != "simple-pytorch" and (
+        args.online_strategy_teacher is not None
+        or args.online_strategy_teacher_coef != 0.0
+    ):
+        raise ValueError("online strategy teacher requires simple-pytorch")
     _validate_simple_pytorch_args(args)
     _USE_TRIMMED_ROLLOUT_ENTITY_PADDING = bool(args.trim_rollout_entity_padding)
     if args.num_envs <= 0 or args.rollout_steps <= 0:
@@ -3312,6 +3569,7 @@ def main() -> None:
             checkpoint_opponent_deck_name=(
                 args.simple_checkpoint_opponent_deck_name
             ),
+            learner_teacher_strategy=args.online_strategy_teacher,
             max_effects=args.simple_max_effects,
         )
         simulation_backend_metadata = simple_collector.checkpoint_metadata()
@@ -3684,6 +3942,19 @@ def main() -> None:
             action_type_entropy_coef=args.action_type_entropy_coef,
             location_entropy_coef=args.location_entropy_coef,
             conditional_slot_entropy_coef=args.conditional_slot_entropy_coef,
+            online_strategy_teacher_coef=args.online_strategy_teacher_coef,
+            online_strategy_teacher_decision_coef=(
+                args.online_strategy_teacher_decision_coef
+            ),
+            online_strategy_teacher_card_coef=(
+                args.online_strategy_teacher_card_coef
+            ),
+            online_strategy_teacher_tile_coef=(
+                args.online_strategy_teacher_tile_coef
+            ),
+            online_strategy_teacher_play_weight=(
+                args.online_strategy_teacher_play_weight
+            ),
             anchor_parameters=anchor_parameters,
             anchor_l2_coef=args.anchor_l2_coef,
             anchor_model=anchor_model,
@@ -3756,6 +4027,15 @@ def main() -> None:
                 f"{stats['causal_rehearsal_weighted_loss']:.4f} "
                 f"anchor_rehearsal_kl={stats['anchor_rehearsal_kl']:.5f} "
                 f"anchor_rehearsal_loss={stats['anchor_rehearsal_loss']:.4f} "
+                f"teacher={stats['online_teacher_loss']:.3f} "
+                f"teacher_loss={stats['online_teacher_weighted_loss']:.4f} "
+                f"teacher_dct={stats['online_teacher_decision_loss']:.3f}/"
+                f"{stats['online_teacher_card_loss']:.3f}/"
+                f"{stats['online_teacher_tile_loss']:.3f} "
+                f"teacher_acc={stats['online_teacher_decision_accuracy']:.3f}/"
+                f"{stats['online_teacher_play_recall']:.3f}/"
+                f"{stats['online_teacher_card_accuracy']:.3f}/"
+                f"{stats['online_teacher_tile_accuracy']:.3f} "
                 f"hand={stats['hand_loss']:.3f} elixir={stats['elixir_loss']:.4f} "
                 f"kl={stats['approx_kl']:.5f} clip={stats['clip_fraction']:.3f} "
                 f"opt_steps={int(stats['optimizer_steps'])} "
