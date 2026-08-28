@@ -9,6 +9,14 @@ by contrast, scored 19-9 in the existing Hog teacher matrix across all six
 strategy opponents plus random, with a 0.679 mean score and no matchup below
 0.5.
 
+That matrix used the tuned Candidate-17 `BalancedStrategyConfig`, not the
+default balanced configuration. The first seed-1164501 pilot did not persist
+or load Candidate-17 and therefore distilled the weaker default controller.
+Every saved checkpoint from that run lost a 12-game balanced/bridge/random
+screen 0-12, so the entire seed-1164501 lineage is rejected. It is evidence
+against the default teacher at learning rate `5e-5`, not evidence against the
+tuned teacher.
+
 Prior offline StrategyBot imitation reached high aggregate exact accuracy by
 predicting abundant no-ops, but recalled only about 42% of teacher plays and
 had weak spatial accuracy. The new route changes both the data distribution and
@@ -23,7 +31,9 @@ does not drive the trajectory and receives no critic/private state.
 
 Every teacher label is checked against public-mask-v2 before use. The PPO batch
 stores only the learner-seat label. Checkpoint metadata persists the teacher
-name.
+name and, when balanced, every exact configuration weight. A supplied balanced
+configuration is rejected for any other teacher name, preventing silent
+fallback to defaults.
 
 The auxiliary loss factors the flat action into independently normalized
 components:
@@ -44,7 +54,10 @@ anchor-KL, and teacher terms remain separately reported.
 - Resident teacher labels are public-legal and have exact learner-only shape.
 - Real CPU PPO+teacher update passed.
 - Real MPS learner+actor PPO+teacher update passed.
-- Broad Simple Gym gate: 457 passed, 261 skipped.
+- Candidate-17 tensor actions exactly match the Python StrategyBot on initial
+  and pressured public states.
+- CPU and MPS checkpoint metadata exactly preserve all 13 Candidate-17 values.
+- Broad Simple Gym gate after tuned-config integration: 459 passed, 260 skipped.
 - Focused backend gate: 39 passed, 5 skipped.
 - Ruff and isolated Simple backend mypy: clean.
 
@@ -56,11 +69,11 @@ as the useful signal for the first production pilot.
 
 ## Pilot
 
-`scripts/run_hog26_simple_balanced_teacher_seed1164501.sh` uses the paired
-heterogeneous league, the balanced learner-state teacher, independently
-normalized decision/card/tile losses, play weight 4, learning rate `5e-5`, and
-anchor-policy KL coefficient `0.1`. It runs through one terminal horizon and
-saves every five updates.
+`scripts/run_hog26_simple_tuned_teacher_pilot_seed1164521.sh` uses the paired
+heterogeneous league, the exact versioned Candidate-17 learner-state teacher,
+independently normalized decision/card/tile losses, play weight 4, learning
+rate `1e-5`, and anchor-policy KL coefficient `0.1`. It deliberately runs only
+20 updates and saves every two updates for early free-running rejection.
 
 No promotion is implied by teacher loss or teacher agreement. Every checkpoint
 must still be screened in free-running paired gameplay against strategy,

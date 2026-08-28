@@ -16,9 +16,13 @@ num_envs=${NUM_ENVS:-64}
 rollout_steps=${ROLLOUT_STEPS:-8}
 device=${DEVICE:-cuda}
 actor_device=${ACTOR_DEVICE:-$device}
+learning_rate=${LEARNING_RATE:-0.00005}
+save_every=${SAVE_EVERY:-5}
+require_terminal_boundary=${REQUIRE_TERMINAL_BOUNDARY:-1}
+complete_marker=${COMPLETE_MARKER:-hog26_simple_balanced_teacher_seed1164501_complete_v1}
 
 minimum_terminal_updates=$(((6000 + 8 * rollout_steps - 1) / (8 * rollout_steps)))
-if ((updates < minimum_terminal_updates)); then
+if ((require_terminal_boundary == 1 && updates < minimum_terminal_updates)); then
   echo "UPDATES=$updates cannot cross the 6000-tick terminal boundary; need >=$minimum_terminal_updates" >&2
   exit 1
 fi
@@ -29,6 +33,7 @@ fi
 for required in \
   "$initializer" \
   "$frozen_parent" \
+  configs/hog26_balanced_teacher_candidate17_seed1075201.json \
   training_decks/simple_gym_supported_v1.json \
   reports/current_client_youtube_stable_vocabulary_v1.json; do
   [[ -f "$required" ]] || { echo "missing required input: $required" >&2; exit 1; }
@@ -96,6 +101,8 @@ env PYTHONPATH=src:. OMP_NUM_THREADS=2 "$python_bin" \
   --rollout-steps "$rollout_steps" --decision-interval 8 --max-ticks 6000 \
   --opponent-mode league "${league_args[@]}" \
   --online-strategy-teacher balanced \
+  --online-strategy-teacher-balanced-config \
+    configs/hog26_balanced_teacher_candidate17_seed1075201.json \
   --online-strategy-teacher-coef 1 \
   --online-strategy-teacher-decision-coef 1 \
   --online-strategy-teacher-card-coef 1 \
@@ -104,17 +111,17 @@ env PYTHONPATH=src:. OMP_NUM_THREADS=2 "$python_bin" \
   --device "$device" --actor-device "$actor_device" \
   --reward-profile objective-v1 --elixir-leak-penalty-scale 0 \
   --engine-fast-path off \
-  --learning-rate 0.00005 --gamma 0.995 --gae-lambda 0.95 \
+  --learning-rate "$learning_rate" --gamma 0.995 --gae-lambda 0.95 \
   --clip-ratio 0.2 --value-coef 0.5 --entropy-coef 0.005 \
   --action-type-entropy-coef 0.005 --location-entropy-coef 0.005 \
   --conditional-slot-entropy-coef 0.005 \
   --hand-aux-coef 0 --elixir-aux-coef 0 \
   --epochs 2 --sequence-batch-size 64 --target-kl 0.03 \
   --anchor-checkpoint "$initializer" --anchor-policy-kl-coef 0.1 \
-  --save-every 5 --log-every 1 --no-lr-anneal --quiet-engine \
+  --save-every "$save_every" --log-every 1 --no-lr-anneal --quiet-engine \
   2>&1 | tee "$report_root/train.log"
 
 endpoint="$output_root/policy_v2_update_$(printf '%06d' "$updates").pt"
 [[ -f "$endpoint" ]] || { echo "missing terminal checkpoint: $endpoint" >&2; exit 1; }
-printf '%s\n' 'hog26_simple_balanced_teacher_seed1164501_complete_v1' \
+printf '%s\n' "$complete_marker" \
   > "$report_root/COMPLETE"

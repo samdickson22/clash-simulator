@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import inspect
+import json
 from argparse import Namespace
 from dataclasses import fields, replace
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -28,7 +30,11 @@ from clasher.rl.simple_tensor_collector import (
     SimpleTensorMaskRequest,
     SimpleTensorPolicyBoundary,
 )
-from clasher.rl.strategy_bots import STRATEGY_NAMES, StrategyBot
+from clasher.rl.strategy_bots import (
+    STRATEGY_NAMES,
+    BalancedStrategyConfig,
+    StrategyBot,
+)
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rl.train_recurrent import (
     RolloutBatch,
@@ -76,6 +82,7 @@ def _simple_args(**overrides: object) -> Namespace:
         "simple_max_effects": 128,
         "simple_checkpoint_opponent_deck_name": None,
         "online_strategy_teacher": None,
+        "online_strategy_teacher_balanced_config": None,
         "online_strategy_teacher_coef": 0.0,
         "online_strategy_teacher_decision_coef": 1.0,
         "online_strategy_teacher_card_coef": 1.0,
@@ -195,6 +202,7 @@ def _training_collector(
     opponent_league_schedule: tuple[tuple[str, str | None], ...] = (),
     checkpoint_opponent_deck_name: str | None = None,
     learner_teacher_strategy: str | None = None,
+    learner_teacher_balanced_config: BalancedStrategyConfig | None = None,
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -258,6 +266,7 @@ def _training_collector(
         learner_deck_name="Hog 2.6 Cycle",
         checkpoint_opponent_deck_name=checkpoint_opponent_deck_name,
         learner_teacher_strategy=learner_teacher_strategy,
+        learner_teacher_balanced_config=learner_teacher_balanced_config,
         max_effects=max_effects,
         _execution_mode_override=execution_mode,
     )
@@ -533,15 +542,35 @@ def test_simple_argument_gate_accepts_stationary_modes_fail_closed() -> None:
                 online_strategy_teacher="balanced",
             )
         )
+    with pytest.raises(ValueError, match="requires the balanced teacher"):
+        _validate_simple_pytorch_args(
+            _simple_args(
+                opponent_mode="random",
+                online_strategy_teacher="reactive-defense",
+                online_strategy_teacher_balanced_config="teacher.json",
+                online_strategy_teacher_coef=1.0,
+            )
+        )
+
+
+def _candidate17_balanced_config() -> BalancedStrategyConfig:
+    payload = json.loads(
+        Path("configs/hog26_balanced_teacher_candidate17_seed1075201.json")
+        .read_text(encoding="utf-8")
+    )
+    assert isinstance(payload, dict)
+    return BalancedStrategyConfig(**payload)
 
 
 def test_online_strategy_teacher_labels_are_public_legal_and_learner_only() -> None:
+    teacher_config = _candidate17_balanced_config()
     collector = _training_collector(
         batch_size=4,
         max_entities=48,
         max_effects=64,
         opponent_mode="random",
         learner_teacher_strategy="balanced",
+        learner_teacher_balanced_config=teacher_config,
     )
     arrays, _state, *_boundary = collector.collect(
         3, collector.policy.model.initial_state(4, device="cpu")
@@ -552,6 +581,10 @@ def test_online_strategy_teacher_labels_are_public_legal_and_learner_only() -> N
         np.arange(4)[:, None], np.arange(3)[None, :], teacher
     ].all()
     assert collector.checkpoint_metadata()["learner_teacher_strategy"] == "balanced"
+    assert collector.checkpoint_metadata()["learner_teacher_balanced_config"] == {
+        field.name: getattr(teacher_config, field.name)
+        for field in fields(BalancedStrategyConfig)
+    }
 
 
 def test_online_strategy_teacher_loss_has_independent_play_card_tile_gradients() -> None:
@@ -857,6 +890,24 @@ def test_tensor_strategy_matches_python_with_visible_pressure(
             action_mask=masks[0, seat].numpy(),
         )
         assert int(actual[0, seat]) == expected
+
+    if strategy_name == "balanced":
+        teacher_config = _candidate17_balanced_config()
+        tuned_actual = SimpleTensorStrategyOpponent(
+            builder,
+            strategy_name="balanced",
+            device=torch.device("cpu"),
+            balanced_config=teacher_config,
+        )(boundary)
+        for seat in (0, 1):
+            tuned_expected = StrategyBot(
+                "balanced", balanced_config=teacher_config
+            ).select_action(
+                env,
+                seat,
+                action_mask=masks[0, seat].numpy(),
+            )
+            assert int(tuned_actual[0, seat]) == tuned_expected
 
 
 def test_cpu_coalesced_handoff_preserves_shapes_dtypes_and_values() -> None:

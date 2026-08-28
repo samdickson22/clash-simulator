@@ -38,7 +38,12 @@ from .imitation_objective import (
 from .model import ClasherPolicy, PolicyConfig, PolicyInputs, PolicyOutput
 from .reward_model import OBJECTIVE_V1, REWARD_PROFILES
 from .selfplay_env import SelfPlayBattleEnv
-from .strategy_bots import STRATEGY_NAMES, StrategyBot, allocate_pfsp_slots
+from .strategy_bots import (
+    STRATEGY_NAMES,
+    BalancedStrategyConfig,
+    StrategyBot,
+    allocate_pfsp_slots,
+)
 from .structured_obs import StructuredObservation, StructuredObservationBuilder
 
 
@@ -2083,6 +2088,11 @@ def parse_args() -> argparse.Namespace:
             "own resident rollout states"
         ),
     )
+    parser.add_argument(
+        "--online-strategy-teacher-balanced-config",
+        default=None,
+        help="optional JSON BalancedStrategyConfig for the balanced learner teacher",
+    )
     parser.add_argument("--online-strategy-teacher-coef", type=float, default=0.0)
     parser.add_argument(
         "--online-strategy-teacher-decision-coef", type=float, default=1.0
@@ -2612,6 +2622,13 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
             raise ValueError(f"{name} cannot be negative")
     if args.online_strategy_teacher_play_weight < 1.0:
         raise ValueError("online strategy teacher play weight must be at least one")
+    if (
+        args.online_strategy_teacher_balanced_config is not None
+        and args.online_strategy_teacher != "balanced"
+    ):
+        raise ValueError(
+            "online balanced teacher config requires the balanced teacher"
+        )
     if args.resume_latest or args.resume_from:
         raise ValueError("simple-pytorch is fresh-only until exact resume is gated")
     if args.opponent_mode not in {
@@ -3495,6 +3512,20 @@ def main() -> None:
     if args.simulation_backend == "simple-pytorch":
         from .simple_pytorch_backend import SimplePytorchTrainingCollector
 
+        learner_teacher_balanced_config: BalancedStrategyConfig | None = None
+        if args.online_strategy_teacher_balanced_config is not None:
+            teacher_config_path = resolve_path(
+                args.online_strategy_teacher_balanced_config,
+                must_exist=True,
+            )
+            teacher_config_payload = json.loads(
+                teacher_config_path.read_text(encoding="utf-8")
+            )
+            if not isinstance(teacher_config_payload, dict):
+                raise TypeError("online balanced teacher config must be an object")
+            learner_teacher_balanced_config = BalancedStrategyConfig(
+                **teacher_config_payload
+            )
         simple_opponent_model: ClasherPolicy | None = None
         simple_opponent_sha256: str | None = None
         simple_checkpoint_path: Path | None = None
@@ -3570,6 +3601,9 @@ def main() -> None:
                 args.simple_checkpoint_opponent_deck_name
             ),
             learner_teacher_strategy=args.online_strategy_teacher,
+            learner_teacher_balanced_config=(
+                learner_teacher_balanced_config
+            ),
             max_effects=args.simple_max_effects,
         )
         simulation_backend_metadata = simple_collector.checkpoint_metadata()

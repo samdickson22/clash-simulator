@@ -13,7 +13,7 @@ import json
 import math
 from collections import defaultdict
 from collections.abc import Mapping
-from dataclasses import dataclass, fields
+from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 from typing import Any, Final, Literal, cast
 
@@ -1466,6 +1466,7 @@ class SimplePytorchBackendMetadata:
     opponent_league_schedule: tuple[str, ...]
     opponent_schedule_unit: str | None
     learner_teacher_strategy: str | None
+    learner_teacher_balanced_config: Mapping[str, float] | None
     fresh_only: bool
     canonical_lane_globals: bool
     public_action_mask_contract_version: int
@@ -1508,6 +1509,7 @@ class SimplePytorchTrainingCollector:
         learner_deck_name: str = "Hog 2.6 Cycle",
         checkpoint_opponent_deck_name: str | None = None,
         learner_teacher_strategy: str | None = None,
+        learner_teacher_balanced_config: BalancedStrategyConfig | None = None,
         max_effects: int = 128,
         _execution_mode_override: str | None = None,
     ) -> None:
@@ -1619,6 +1621,13 @@ class SimplePytorchTrainingCollector:
                 raise SimplePytorchBackendError(
                     "learner teacher requires learner-only stationary rows"
                 )
+        if (
+            learner_teacher_balanced_config is not None
+            and learner_teacher_strategy != "balanced"
+        ):
+            raise SimplePytorchBackendError(
+                "balanced teacher config requires the balanced learner teacher"
+            )
         row_league_schedule = (
             tuple(
                 normalized_league[(index // 2) % len(normalized_league)]
@@ -1743,6 +1752,7 @@ class SimplePytorchTrainingCollector:
                 builder,
                 strategy_name=learner_teacher_strategy,
                 device=device,
+                balanced_config=learner_teacher_balanced_config,
             )
             if learner_teacher_strategy is not None
             else None
@@ -1840,6 +1850,14 @@ class SimplePytorchTrainingCollector:
                 "logical-matchup-pair" if opponent_mode == "league" else None
             ),
             learner_teacher_strategy=learner_teacher_strategy,
+            learner_teacher_balanced_config=(
+                cast(
+                    dict[str, float],
+                    asdict(learner_teacher_balanced_config),
+                )
+                if learner_teacher_balanced_config is not None
+                else None
+            ),
             fresh_only=True,
             canonical_lane_globals=True,
             public_action_mask_contract_version=PUBLIC_ACTION_MASK_CONTRACT_V2,
