@@ -90,6 +90,7 @@ def _training_collector(
     opponent_mode: str = "selfplay",
     opponent_checkpoint: str | None = None,
     opponent_strategy: str | None = None,
+    opponent_deterministic: bool = False,
     learner_decks_path: str | None = None,
     opponent_decks_path: str | None = None,
     max_entities: int | None = None,
@@ -135,6 +136,7 @@ def _training_collector(
         opponent_mode=opponent_mode,
         opponent_checkpoint=opponent_checkpoint,
         opponent_strategy=opponent_strategy,
+        opponent_deterministic=opponent_deterministic,
         learner_decks_path=learner_decks_path,
         opponent_decks_path=opponent_decks_path,
         max_entities=max_entities,
@@ -847,6 +849,73 @@ def test_cuda_graph_collector_matches_eager_real_recurrent_boundaries() -> None:
             getattr(eager_batch.bootstrap, name),
         ), name
     assert graph_batch.metadata == eager_batch.metadata
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA unavailable")
+def test_cuda_graph_checkpoint_opponent_matches_eager_learner_only_rollout(
+    tmp_path: Path,
+) -> None:
+    source = _training_collector()
+    checkpoint = tmp_path / "frozen-opponent.pt"
+    torch.save(
+        {
+            "format_version": 2,
+            "token_names": list(load_current_client_typed_vocabulary().token_names),
+            "model_config": source.policy.model.config.to_dict(),
+            "model_state_dict": source.policy.model.state_dict(),
+        },
+        checkpoint,
+    )
+    graph = _training_collector(
+        "cuda",
+        batch_size=2,
+        execution_mode=SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH,
+        opponent_mode="checkpoint",
+        opponent_checkpoint=str(checkpoint),
+        opponent_deterministic=True,
+        max_entities=56,
+        max_effects=64,
+    )
+    eager = _training_collector(
+        "cuda",
+        batch_size=2,
+        execution_mode=SIMPLE_PYTORCH_EXECUTION_EAGER,
+        opponent_mode="checkpoint",
+        opponent_checkpoint=str(checkpoint),
+        opponent_deterministic=True,
+        max_entities=56,
+        max_effects=64,
+    )
+    eager.policy.model.load_state_dict(graph.policy.model.state_dict())
+    initial = graph.policy.model.initial_state(2, device="cuda")
+    eager_initial = (initial[0].clone(), initial[1].clone())
+
+    torch.manual_seed(517)
+    graph_result = graph.collect(3, initial)
+    torch.manual_seed(517)
+    eager_result = eager.collect(3, eager_initial)
+    torch.cuda.synchronize()
+
+    graph_arrays, graph_state, graph_actions, graph_rewards, graph_starts = graph_result
+    eager_arrays, eager_state, eager_actions, eager_rewards, eager_starts = eager_result
+    assert set(graph_arrays) == set(eager_arrays)
+    for name, graph_value in graph_arrays.items():
+        np.testing.assert_array_equal(graph_value, eager_arrays[name])
+    for graph_value, eager_value in zip(graph_state, eager_state):
+        assert torch.equal(graph_value, eager_value)
+    np.testing.assert_array_equal(graph_actions, eager_actions)
+    np.testing.assert_array_equal(graph_rewards, eager_rewards)
+    np.testing.assert_array_equal(graph_starts, eager_starts)
+    assert graph._opponent_recurrent_inputs is not None
+    assert eager._opponent_recurrent_inputs is not None
+    for name in ("hidden", "cell"):
+        assert torch.equal(
+            graph._opponent_recurrent_inputs[name],
+            eager._opponent_recurrent_inputs[name],
+        )
+    assert graph.metadata.rollout_ownership_profile == "learner-only-stationary-v1"
+    assert graph.metadata.max_entities == 56
+    assert graph.metadata.max_effects == 64
 
 
 def test_integrated_actor_v2_mask_exposes_archer_queen_ability() -> None:
