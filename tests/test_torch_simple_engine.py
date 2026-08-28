@@ -9,7 +9,11 @@ from clasher.battle import BattleState
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.simple_catalog import FastCardCatalog
 from clasher.torch_sim.simple_engine import FastDeploymentRequest, FastTensorGym
-from clasher.torch_sim.simple_state import FAST_KIND_TROOP, FastGymState
+from clasher.torch_sim.simple_state import (
+    FAST_KIND_BUILDING,
+    FAST_KIND_TROOP,
+    FastGymState,
+)
 
 
 def _seed_catalog_entity(
@@ -167,6 +171,168 @@ def test_simple_target_tie_uses_stable_id_not_reused_physical_slot() -> None:
     FastTensorGym(state).step_tick()
 
     assert int(state.target_id[0, 0]) == 2
+
+
+def _full_matrix_navigation_reference(
+    state: FastGymState,
+    can_act: torch.Tensor,
+    *,
+    reserved_slot_floor: int,
+    target_unavailable: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Former [B, E, E] implementation retained as a test oracle."""
+
+    slots = torch.arange(state.max_entities, device=state.device).view(1, -1)
+    delta_x = state.x_units[:, :, None].to(torch.int64) - state.x_units[:, None, :].to(
+        torch.int64
+    )
+    delta_y = state.y_units[:, :, None].to(torch.int64) - state.y_units[:, None, :].to(
+        torch.int64
+    )
+    distance_sq = delta_x.square() + delta_y.square()
+    reserved_building = (
+        (slots < reserved_slot_floor)
+        & state.active
+        & (state.hp > 0)
+        & (state.kind == FAST_KIND_BUILDING)
+        & (state.stable_id > 0)
+        & ~target_unavailable
+    )
+    candidate = (
+        can_act[:, :, None]
+        & (state.kind[:, :, None] == FAST_KIND_TROOP)
+        & reserved_building[:, None, :]
+        & (state.owner[:, :, None] != state.owner[:, None, :])
+    )
+    maximum = torch.iinfo(torch.int64).max
+    nearest_distance = torch.where(
+        candidate,
+        distance_sq,
+        torch.full_like(distance_sq, maximum),
+    ).amin(dim=2)
+    distance_tie = candidate & (distance_sq == nearest_distance[:, :, None])
+    candidate_id = state.stable_id[:, None, :].expand_as(distance_sq)
+    selected_id = torch.where(
+        distance_tie,
+        candidate_id,
+        torch.full_like(candidate_id, maximum),
+    ).amin(dim=2)
+    found = distance_tie.any(dim=2)
+    selected = distance_tie & (candidate_id == selected_id[:, :, None])
+    slot = selected.to(torch.int64).argmax(dim=2)
+    distance = torch.sqrt(
+        distance_sq.gather(2, slot[:, :, None]).squeeze(2).to(torch.float32)
+    )
+    return (
+        found,
+        slot,
+        torch.where(found, selected_id, 0),
+        torch.where(found, distance, torch.inf),
+    )
+
+
+@pytest.mark.parametrize("device", ("cpu", "cuda"))
+@pytest.mark.parametrize("reserved_slot_floor", (0, 4))
+def test_reserved_navigation_slice_matches_full_matrix_reference(
+    device: str,
+    reserved_slot_floor: int,
+) -> None:
+    if device == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA unavailable")
+    generator = torch.Generator().manual_seed(20260827)
+    batch_size = 64
+    entities = 13
+    state = FastGymState.empty(batch_size, max_entities=entities, device=device)
+    active = torch.rand((batch_size, entities), generator=generator) > 0.2
+    hp = torch.randint(
+        0, 2_000, (batch_size, entities), generator=generator, dtype=torch.int32
+    ).to(torch.float32)
+    kind = torch.randint(
+        0, 2, (batch_size, entities), generator=generator, dtype=torch.int8
+    )
+    owner = torch.randint(
+        0, 2, (batch_size, entities), generator=generator, dtype=torch.int8
+    )
+    x_units = torch.randint(
+        0, 18_001, (batch_size, entities), generator=generator, dtype=torch.int32
+    )
+    y_units = torch.randint(
+        0, 32_001, (batch_size, entities), generator=generator, dtype=torch.int32
+    )
+    stable_id = torch.stack(
+        tuple(
+            torch.randperm(entities, generator=generator, dtype=torch.int64)
+            + 1
+            + row * entities
+            for row in range(batch_size)
+        )
+    )
+    unavailable = torch.rand((batch_size, entities), generator=generator) < 0.2
+    can_act = torch.rand((batch_size, entities), generator=generator) > 0.35
+    state.active.copy_(active.to(device))
+    state.hp.copy_(hp.to(device))
+    state.kind.copy_(kind.to(device))
+    state.owner.copy_(owner.to(device))
+    state.x_units.copy_(x_units.to(device))
+    state.y_units.copy_(y_units.to(device))
+    state.stable_id.copy_(stable_id.to(device))
+
+    if reserved_slot_floor:
+        # Exact-distance tie resolved by stable ID, not physical slot.
+        state.active[0, :2] = True
+        state.hp[0, :2] = 1_000
+        state.kind[0, :2] = FAST_KIND_BUILDING
+        state.owner[0, :2] = 1
+        state.stable_id[0, :2] = torch.tensor([99, 2], device=device)
+        state.x_units[0, :2] = torch.tensor([4_000, 6_000], device=device)
+        state.y_units[0, :2] = 5_000
+        state.active[0, 6] = True
+        state.kind[0, 6] = FAST_KIND_TROOP
+        state.owner[0, 6] = 0
+        state.x_units[0, 6] = 5_000
+        state.y_units[0, 6] = 5_000
+        can_act[0, 6] = True
+        unavailable[0, :2] = False
+        # A dead nearer tower, hidden nearer tower, and nonreserved building
+        # exercise every exclusion that used to be applied after E-wide work.
+        state.active[1:4, :2] = True
+        state.hp[1:4, :2] = 1_000
+        state.kind[1:4, :2] = FAST_KIND_BUILDING
+        state.owner[1:4, :2] = 1
+        state.x_units[1:4, 0] = 4_900
+        state.x_units[1:4, 1] = 8_000
+        state.y_units[1:4, :2] = 5_000
+        state.active[1:4, 6] = True
+        state.kind[1:4, 6] = FAST_KIND_TROOP
+        state.owner[1:4, 6] = 0
+        state.x_units[1:4, 6] = 5_000
+        state.y_units[1:4, 6] = 5_000
+        can_act[1:4, 6] = True
+        unavailable[1:4, :2] = False
+        state.hp[1, 0] = 0
+        unavailable[2, 0] = True
+        state.active[3, 8] = True
+        state.hp[3, 8] = 1_000
+        state.kind[3, 8] = FAST_KIND_BUILDING
+        state.owner[3, 8] = 1
+        state.x_units[3, 8] = 5_001
+        state.y_units[3, 8] = 5_000
+
+    can_act = can_act.to(device)
+    unavailable = unavailable.to(device)
+    gym = FastTensorGym(state, reserved_slot_floor=reserved_slot_floor)
+    gym._target_unavailable.copy_(unavailable)
+
+    expected = _full_matrix_navigation_reference(
+        state,
+        can_act,
+        reserved_slot_floor=reserved_slot_floor,
+        target_unavailable=unavailable,
+    )
+    actual = gym._navigation_targets(can_act)
+
+    for observed, reference in zip(actual, expected):
+        assert torch.equal(observed, reference)
 
 
 @pytest.mark.parametrize("device", ("cpu", "cuda"))
