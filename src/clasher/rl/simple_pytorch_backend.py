@@ -701,7 +701,7 @@ class SimpleTensorStrategyOpponent:
     def __call__(self, boundary: SimpleTensorPolicyBoundary) -> torch.Tensor:
         batch = boundary.actor.entity_ids.shape[0]
         situation = self._situation(boundary)
-        count = batch * 2
+        count = batch * boundary.actor.entity_ids.shape[1]
         x = self.action_x[None, :].expand(count, -1)
         y = self.action_y[None, :].expand(count, -1)
         hand = boundary.actor.hand_ids[..., :4].reshape(count, 4)
@@ -876,7 +876,9 @@ class SimpleTensorStrategyOpponent:
         )
         legal = boundary.public_action_masks.reshape(count, -1)
         scores = scores.masked_fill(~legal, -1e9)
-        return scores.argmax(dim=1).reshape(batch, 2)
+        return scores.argmax(dim=1).reshape(
+            batch, boundary.actor.entity_ids.shape[1]
+        )
 
 
 class SimpleTensorStrategyLeagueOpponent:
@@ -1011,9 +1013,61 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         return mask.reshape(*mask.shape, *(1 for _ in range(trailing)))
 
     @staticmethod
+    def _select_seat_tensor(
+        value: torch.Tensor,
+        seats: torch.Tensor,
+    ) -> torch.Tensor:
+        index = seats.reshape(seats.shape[0], 1, *((1,) * (value.ndim - 2)))
+        return value.gather(1, index.expand(value.shape[0], 1, *value.shape[2:]))
+
+    @classmethod
+    def _select_seat_value(cls, value: Any, seats: torch.Tensor) -> Any:
+        return type(value)(
+            **{
+                field_name: cls._select_seat_tensor(
+                    getattr(value, field_name), seats
+                )
+                for field_name in value.__dataclass_fields__
+            }
+        )
+
+    @classmethod
+    def _select_boundary(
+        cls,
+        boundary: SimpleTensorPolicyBoundary,
+        seats: torch.Tensor,
+        *,
+        include_critic: bool,
+    ) -> SimpleTensorPolicyBoundary:
+        return SimpleTensorPolicyBoundary(
+            actor=cls._select_seat_value(boundary.actor, seats),
+            critic=(
+                cls._select_seat_value(boundary.critic, seats)
+                if include_critic and boundary.critic is not None
+                else None
+            ),
+            legal_mask=cls._select_seat_tensor(boundary.legal_mask, seats),
+            public_action_masks=cls._select_seat_tensor(
+                boundary.public_action_masks, seats
+            ),
+            previous_actions=cls._select_seat_tensor(
+                boundary.previous_actions, seats
+            ),
+            previous_rewards=cls._select_seat_tensor(
+                boundary.previous_rewards, seats
+            ),
+            episode_starts=cls._select_seat_tensor(
+                boundary.episode_starts, seats
+            ),
+            recurrent_inputs=boundary.recurrent_inputs,
+            decision_index=boundary.decision_index,
+        )
+
+    @staticmethod
     def _state_from_prefixed_mapping(
         values: Mapping[str, torch.Tensor] | None,
         prefix: str,
+        seats: torch.Tensor | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor] | None:
         if values is None:
             return None
@@ -1022,6 +1076,13 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         if hidden is None or cell is None:
             raise SimplePytorchBackendError(
                 f"recurrent state must contain {prefix}_hidden/{prefix}_cell"
+            )
+        if seats is not None:
+            hidden = SimpleAsymmetricClasherPolicyAdapter._select_seat_tensor(
+                hidden, seats
+            )
+            cell = SimpleAsymmetricClasherPolicyAdapter._select_seat_tensor(
+                cell, seats
             )
         return (
             SimpleClasherPolicyAdapter._flatten_state(hidden),
@@ -1033,7 +1094,24 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         prefix: str,
         state: tuple[torch.Tensor, torch.Tensor],
         batch_size: int,
+        seats: torch.Tensor | None = None,
     ) -> dict[str, torch.Tensor]:
+        if seats is not None:
+            result: dict[str, torch.Tensor] = {}
+            for name, value in zip(("hidden", "cell"), state, strict=True):
+                selected = value.reshape(batch_size, 1, -1)
+                joint = torch.zeros(
+                    (batch_size, 2, selected.shape[2]),
+                    dtype=value.dtype,
+                    device=value.device,
+                )
+                joint.scatter_(
+                    1,
+                    seats[:, None, None].expand_as(selected),
+                    selected,
+                )
+                result[f"{prefix}_{name}"] = joint
+            return result
         return {
             f"{prefix}_hidden": state[0].reshape(batch_size, 2, -1),
             f"{prefix}_cell": state[1].reshape(batch_size, 2, -1),
@@ -1050,7 +1128,7 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         if self.opponent_mode == "noop":
             return (
                 torch.full(
-                    (batch, 2),
+                    (batch,),
                     NO_OP_ACTION,
                     dtype=torch.int64,
                     device=self.learner_players.device,
@@ -1058,80 +1136,168 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
                 None,
             )
         if self.opponent_mode == "random":
-            weights = boundary.public_action_masks.to(torch.float32).reshape(
-                batch * 2, -1
-            )
-            sampled = torch.multinomial(weights, 1).reshape(batch, 2)
+            weights = boundary.public_action_masks.to(torch.float32).reshape(batch, -1)
+            sampled = torch.multinomial(weights, 1).reshape(batch)
             return sampled, None
         if self.opponent_mode == "strategy":
             assert self.opponent_strategy is not None
-            return self.opponent_strategy(boundary), None
+            return self.opponent_strategy(boundary)[:, 0], None
         assert self.opponent_model is not None
         assert self.opponent_adapter is not None
         self.opponent_model.eval()
         state = self._state_from_prefixed_mapping(
-            boundary.recurrent_inputs, "opponent"
+            boundary.recurrent_inputs,
+            "opponent",
+            1 - self.learner_players,
         )
         actions, _log_prob, _values, next_state, _ = self.opponent_model.act(
             self.opponent_adapter.inputs(boundary),
             state,
             deterministic=True,
         )
-        return actions[:, 0].reshape(batch, 2), next_state
+        return actions[:, 0], next_state
+
+    def _learner_step(
+        self,
+        full_boundary: SimpleTensorPolicyBoundary,
+        learner_boundary: SimpleTensorPolicyBoundary,
+    ) -> tuple[
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        tuple[torch.Tensor, torch.Tensor],
+    ]:
+        """Evaluate one learner seat while preserving the full-batch RNG stream."""
+
+        batch = full_boundary.actor.entity_ids.shape[0]
+        flat_rows = (
+            torch.arange(batch, device=self.learner_players.device) * 2
+            + self.learner_players
+        )
+        if self.model.config.play_hazard_enabled:
+            # The hazard owner mutates recurrent state during action selection;
+            # retain the existing full-seat path until that lineage is profiled.
+            state = self._state_from_prefixed_mapping(
+                full_boundary.recurrent_inputs, "learner"
+            )
+            actions, log_prob, values, next_state, _ = self.model.act(
+                self.inputs(full_boundary), state, deterministic=False
+            )
+            return (
+                actions.index_select(0, flat_rows),
+                log_prob.index_select(0, flat_rows),
+                values.index_select(0, flat_rows),
+                (
+                    next_state[0].index_select(0, flat_rows),
+                    next_state[1].index_select(0, flat_rows),
+                ),
+            )
+
+        state = self._state_from_prefixed_mapping(
+            full_boundary.recurrent_inputs,
+            "learner",
+            self.learner_players,
+        )
+        output = self.model.forward(self.inputs(learner_boundary), state)
+        full_logits = torch.zeros(
+            (batch * 2, *output.joint_logits.shape[1:]),
+            dtype=output.joint_logits.dtype,
+            device=output.joint_logits.device,
+        )
+        full_logits.index_copy_(0, flat_rows, output.joint_logits)
+        full_actions = torch.distributions.Categorical(logits=full_logits).sample()
+        actions = full_actions.index_select(0, flat_rows)
+        return (
+            actions,
+            output.distribution().log_prob(actions),
+            output.values,
+            output.next_state,
+        )
 
     def __call__(
         self, boundary: SimpleTensorPolicyBoundary
     ) -> SimpleTensorPolicyDecision:
         self.model.eval()
         batch = boundary.actor.entity_ids.shape[0]
-        learner_state = self._state_from_prefixed_mapping(
-            boundary.recurrent_inputs, "learner"
+        opponent_players = 1 - self.learner_players
+        learner_boundary = self._select_boundary(
+            boundary,
+            self.learner_players,
+            include_critic=True,
         )
-        actions, log_prob, values, learner_next, _ = self.model.act(
-            self.inputs(boundary), learner_state, deterministic=False
+        opponent_boundary = self._select_boundary(
+            boundary,
+            opponent_players,
+            include_critic=False,
         )
-        learner_actions = actions[:, 0].reshape(batch, 2)
-        opponent_actions, opponent_next = self._opponent_actions(boundary)
-        seat_mask = self._seat_mask()
-        joint_actions = torch.where(seat_mask, learner_actions, opponent_actions)
+        actions, log_prob, values, learner_next = self._learner_step(
+            boundary,
+            learner_boundary,
+        )
+        learner_actions = actions[:, 0]
+        opponent_actions, opponent_next = self._opponent_actions(opponent_boundary)
+        joint_actions = torch.empty(
+            (batch, 2),
+            dtype=torch.int64,
+            device=self.learner_players.device,
+        )
+        joint_actions.scatter_(1, self.learner_players[:, None], learner_actions[:, None])
+        joint_actions.scatter_(1, opponent_players[:, None], opponent_actions[:, None])
 
         next_mapping = self._prefixed_state_mapping(
-            "learner", learner_next, batch
+            "learner",
+            learner_next,
+            batch,
+            self.learner_players,
         )
-        learner_state_mask = self._seat_mask(trailing=1)
-        for name in ("learner_hidden", "learner_cell"):
-            next_mapping[name] = torch.where(
-                learner_state_mask,
-                next_mapping[name],
-                torch.zeros_like(next_mapping[name]),
-            )
         if opponent_next is not None:
             next_mapping.update(
-                self._prefixed_state_mapping("opponent", opponent_next, batch)
-            )
-            for name in ("opponent_hidden", "opponent_cell"):
-                next_mapping[name] = torch.where(
-                    ~learner_state_mask,
-                    next_mapping[name],
-                    torch.zeros_like(next_mapping[name]),
+                self._prefixed_state_mapping(
+                    "opponent",
+                    opponent_next,
+                    batch,
+                    opponent_players,
                 )
+            )
+        learner_log_prob = torch.zeros(
+            (batch, 2), dtype=log_prob.dtype, device=log_prob.device
+        )
+        learner_value = torch.zeros(
+            (batch, 2), dtype=values.dtype, device=values.device
+        )
+        learner_log_prob.scatter_(
+            1, self.learner_players[:, None], log_prob[:, :1]
+        )
+        learner_value.scatter_(1, self.learner_players[:, None], values[:, :1])
         return SimpleTensorPolicyDecision(
             actions=joint_actions,
             next_recurrent_inputs=next_mapping,
             storage={
-                "log_prob": log_prob[:, 0].reshape(batch, 2),
-                "value": values[:, 0].reshape(batch, 2),
+                "log_prob": learner_log_prob,
+                "value": learner_value,
             },
         )
 
     def bootstrap_values(self, boundary: SimpleTensorPolicyBoundary) -> torch.Tensor:
+        batch = boundary.actor.entity_ids.shape[0]
+        learner_boundary = self._select_boundary(
+            boundary,
+            self.learner_players,
+            include_critic=True,
+        )
         output = self.model.forward(
-            self.inputs(boundary),
+            self.inputs(learner_boundary),
             self._state_from_prefixed_mapping(
-                boundary.recurrent_inputs, "learner"
+                boundary.recurrent_inputs,
+                "learner",
+                self.learner_players,
             ),
         )
-        return output.values[:, 0]
+        values = torch.zeros(
+            (batch, 2), dtype=output.values.dtype, device=output.values.device
+        )
+        values.scatter_(1, self.learner_players[:, None], output.values[:, :1])
+        return values.reshape(-1)
 
 
 def _primary_body_name(loader: CardDataLoader, root_name: str) -> str | None:
