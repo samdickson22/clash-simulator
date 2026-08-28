@@ -51,6 +51,8 @@ def _simple_args(**overrides: object) -> Namespace:
         "opponent_sampling_decks_path": None,
         "matchups_path": None,
         "defense_scenario_probability": 0.0,
+        "simple_max_entities": 128,
+        "simple_max_effects": 128,
     }
     values.update(overrides)
     return Namespace(**values)
@@ -74,11 +76,27 @@ def test_simple_backend_contract_and_typed_variants_fail_closed() -> None:
     _validate_simple_pytorch_args(_simple_args())
 
 
+@pytest.mark.parametrize(
+    ("overrides", "message"),
+    (
+        ({"simple_max_entities": 15}, "simple-max-entities"),
+        ({"simple_max_effects": 0}, "simple-max-effects"),
+    ),
+)
+def test_simple_backend_capacity_arguments_fail_closed(
+    overrides: dict[str, int], message: str
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        _validate_simple_pytorch_args(_simple_args(**overrides))
+
+
 def _training_collector(
     device_name: str = "cpu",
     *,
     batch_size: int = 1,
     execution_mode: str | None = None,
+    max_entities: int = 128,
+    max_effects: int = 128,
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -90,7 +108,7 @@ def _training_collector(
     builder = StructuredObservationBuilder(
         decks_path="decks.json",
         token_names=vocabulary.token_names,
-        max_entities=128,
+        max_entities=max_entities,
         canonical_lane_globals=True,
     )
     config = PolicyConfig(
@@ -117,8 +135,25 @@ def _training_collector(
             "reports/current_client_youtube_stable_vocabulary_v1.json"
         ),
         mirror_match=False,
+        max_effects=max_effects,
         _execution_mode_override=execution_mode,
     )
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "mps", "cuda"))
+def test_capacity_is_explicit_in_shapes_and_checkpoint_contract(
+    device_name: str,
+) -> None:
+    collector = _training_collector(device_name, max_entities=48, max_effects=64)
+    model = collector.policy.model
+    arrays, _next_state, _previous_actions, _previous_rewards, _episode_starts = (
+        collector.collect(1, model.initial_state(2, device=device_name))
+    )
+    assert arrays["entity_ids"].shape == (2, 1, 48)
+    assert arrays["critic_entity_ids"].shape == (2, 1, 48)
+    metadata = collector.checkpoint_metadata()
+    assert metadata["max_entities"] == 48
+    assert metadata["max_effects"] == 64
 
 
 def test_one_decision_collects_existing_ppo_rollout_shape() -> None:

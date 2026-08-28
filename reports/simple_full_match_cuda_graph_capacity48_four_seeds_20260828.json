@@ -1,0 +1,91 @@
+{
+  "acceptance": {
+    "all_row_ticks_native": true,
+    "all_rows_committed": true,
+    "deterministic_replay": true,
+    "noop_regulation_ot_tiebreak": true,
+    "python_parity_evaluated": false,
+    "terminal_boundary_reached": true,
+    "zero_fallback": true
+  },
+  "device": "cuda",
+  "engine": "SimpleGymRuntime",
+  "episodes": [
+    {
+      "committed_rows": 3363,
+      "cumulative_rewards": [
+        1.4992374757421203,
+        -1.4992374757421203
+      ],
+      "digest": "9d31a160acfff0fb06971aee17f7e7a986eded5720da93033c5604b13f07cdfa",
+      "done": true,
+      "entered_overtime": false,
+      "final_tick": 3363,
+      "native_ticks": 3363,
+      "policy": "first-legal",
+      "row_ticks": 3363,
+      "seed": 202608282,
+      "terminal_reason": "regulation_crown",
+      "winner": 0
+    },
+    {
+      "committed_rows": 3600,
+      "cumulative_rewards": [
+        -1.179660812485963,
+        1.179660812485963
+      ],
+      "digest": "30d555f85e8736560ab9aa93bceb96b51384b72b7a1b55eac91304a116cff873",
+      "done": true,
+      "entered_overtime": false,
+      "final_tick": 3600,
+      "native_ticks": 3600,
+      "policy": "first-legal",
+      "row_ticks": 3600,
+      "seed": 202608283,
+      "terminal_reason": "regulation_crown",
+      "winner": 1
+    },
+    {
+      "committed_rows": 3600,
+      "cumulative_rewards": [
+        -1.1620683958753943,
+        1.1620683958753943
+      ],
+      "digest": "24d6849db38c7beda7e692c34149417aa93f4556ae2a6cadc76ec5fe0872c379",
+      "done": true,
+      "entered_overtime": false,
+      "final_tick": 3600,
+      "native_ticks": 3600,
+      "policy": "first-legal",
+      "row_ticks": 3600,
+      "seed": 202608284,
+      "terminal_reason": "regulation_crown",
+      "winner": 1
+    },
+    {
+      "committed_rows": 3600,
+      "cumulative_rewards": [
+        1.1867298188153654,
+        -1.1867298188153654
+      ],
+      "digest": "ba128dd115c5a0264fc25b921ef3b200357811ddb3c29509c183b5a9ef398237",
+      "done": true,
+      "entered_overtime": false,
+      "final_tick": 3600,
+      "native_ticks": 3600,
+      "policy": "first-legal",
+      "row_ticks": 3600,
+      "seed": 202608285,
+      "terminal_reason": "regulation_crown",
+      "winner": 0
+    }
+  ],
+  "execution_mode": "cuda-graph",
+  "replays": 2,
+  "schema_version": 1,
+  "timeline": {
+    "exact_3600_6000": true,
+    "regulation_ticks": 3600,
+    "tiebreak_ticks": 6000
+  }
+}

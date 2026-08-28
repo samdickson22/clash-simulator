@@ -1705,6 +1705,18 @@ def parse_args() -> argparse.Namespace:
         help="typed current-client actor vocabulary for the simple PyTorch backend",
     )
     parser.add_argument(
+        "--simple-max-entities",
+        type=int,
+        default=128,
+        help="fresh Simple Gym entity/observation capacity; persisted in checkpoints",
+    )
+    parser.add_argument(
+        "--simple-max-effects",
+        type=int,
+        default=128,
+        help="fresh Simple Gym persistent-effect capacity; persisted in checkpoints",
+    )
+    parser.add_argument(
         "--card-semantics-version",
         type=int,
         choices=(1, 2, 3),
@@ -2248,6 +2260,10 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
         return
     if args.actor_workers != 1:
         raise ValueError("simple-pytorch requires --actor-workers 1")
+    if args.simple_max_entities < 16:
+        raise ValueError("simple-pytorch requires --simple-max-entities >= 16")
+    if args.simple_max_effects < 1:
+        raise ValueError("simple-pytorch requires --simple-max-effects >= 1")
     if args.resume_latest or args.resume_from:
         raise ValueError("simple-pytorch is fresh-only until exact resume is gated")
     if args.opponent_mode != "selfplay":
@@ -2572,7 +2588,15 @@ def main() -> None:
     )
     builder = StructuredObservationBuilder(
         decks_path=decks_path,
-        max_entities=(resume_config.max_entities if resume_config else 128),
+        max_entities=(
+            resume_config.max_entities
+            if resume_config is not None
+            else (
+                args.simple_max_entities
+                if args.simulation_backend == "simple-pytorch"
+                else 128
+            )
+        ),
         token_names=token_names,
         card_semantics_version=(
             resume_config.card_semantics_version
@@ -3025,6 +3049,7 @@ def main() -> None:
                 args.simple_token_vocabulary_path, must_exist=True
             ),
             mirror_match=args.mirror_match,
+            max_effects=args.simple_max_effects,
         )
         simulation_backend_metadata = simple_collector.checkpoint_metadata()
     elif args.actor_workers == 1:

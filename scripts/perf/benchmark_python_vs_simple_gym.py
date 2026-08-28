@@ -23,7 +23,7 @@ import sys
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import torch
@@ -196,7 +196,7 @@ def _simple_decks(args: argparse.Namespace) -> list[list[str]]:
     decks = supported_simple_decks(candidates, device=args.simple_device)
     if len(decks) != len(candidates):
         raise RuntimeError("matched benchmark deck pool is not fully Simple-supported")
-    return decks
+    return cast(list[list[str]], decks)
 
 
 def _simple_digest(args: argparse.Namespace, decks: list[list[str]]) -> str:

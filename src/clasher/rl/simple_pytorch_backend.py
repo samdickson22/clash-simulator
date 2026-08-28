@@ -614,6 +614,8 @@ class SimplePytorchBackendMetadata:
     reward_contract_id: str
     reward_contract_digest: str
     reward_contract_metadata: Mapping[str, Any]
+    max_entities: int
+    max_effects: int
 
 
 class SimplePytorchTrainingCollector:
@@ -631,10 +633,15 @@ class SimplePytorchTrainingCollector:
         supported_decks_path: str | Path,
         typed_vocabulary_path: str | Path,
         mirror_match: bool,
+        max_effects: int = 128,
         _execution_mode_override: str | None = None,
     ) -> None:
         if batch_size < 1:
             raise SimplePytorchBackendError("simple backend needs at least one row")
+        if max_effects < 1:
+            raise SimplePytorchBackendError(
+                "simple backend effect capacity must be positive"
+            )
         if (
             not builder.canonical_lane_globals
             or not model.config.canonical_lane_globals
@@ -670,6 +677,7 @@ class SimplePytorchTrainingCollector:
             hand_token_lookup=hand_lookup,
             canonical_lane_globals=True,
             max_entities=builder.max_entities,
+            max_effects=max_effects,
             include_privileged_critic=True,
         )
         execution_mode = self._resolve_execution_mode(
@@ -727,6 +735,8 @@ class SimplePytorchTrainingCollector:
             reward_contract_id=SIMPLE_REWARD_V2_CONTRACT_ID,
             reward_contract_digest=str(reward_metadata["reward_contract_digest"]),
             reward_contract_metadata=reward_metadata,
+            max_entities=builder.max_entities,
+            max_effects=max_effects,
         )
 
     @staticmethod
