@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "purpose": "preserve the initial coalesced-handoff fail-fast diagnostic",
+  "exact_archive_sha256": "85161addda30a29b7a06dc53c7b5264a42077dce6fc3f6ebf7e8ebda359e55a5",
+  "initial_profiler_harness_sha256": "8c5d087d92d38c8cccaaece8e31ee51b8dce0d28fbdcddab7478e2460ed79c55",
+  "initial_exit_code": 1,
+  "initial_error": "RuntimeError: coalesced wrapper expected 4 DtoH copies, observed 6",
+  "initial_traceback_tail": [
+    "File /tmp/clasher_cuda_final_profile.py, line 196, in main: batch6 = collector_profile(args.out_dir, 6)",
+    "File /tmp/clasher_cuda_final_profile.py, line 124, in collector_profile: raise RuntimeError(f coalesced wrapper expected 4 DtoH copies, observed {d2h})"
+  ],
+  "diagnosis": {
+    "initial_assertion_error": "The first harness compared the complete wrapper total against the incremental staging-handoff target.",
+    "raw_recurrent_boundary_device_to_host_copies": 2,
+    "complete_wrapper_device_to_host_copies": 6,
+    "incremental_coalesced_staging_device_to_host_copies": 4,
+    "coalesced_staging_synchronize_helper_calls": 1,
+    "complete_wrapper_marked_cuda_runtime_synchronizations": 3,
+    "isolated_owner_of_residual_two_copies_and_syncs": "recurrent_policy"
+  },
+  "corrected_profiler_harness_sha256": "d6f063e8bb946586698d827bf67f2977c3f4faa6cdc71be66c19f0bdad2a70e1",
+  "corrected_result": "The exact rerun passed the incremental 4-copy/1-helper-sync handoff target at batch 6 and batch 128 while retaining the complete 6-copy/3-sync totals.",
+  "raw_trace_note": "The successful exact rerun reused the same output names and replaced the incomplete first-run traces. The traceback and both harness identities are preserved here; the final traces contain the corrected raw-versus-wrapper attribution."
+}

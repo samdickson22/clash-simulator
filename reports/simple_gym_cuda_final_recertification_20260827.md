@@ -130,6 +130,14 @@ misreported as 4/1: isolated phase evidence attributes the remaining two DtoH
 events and two synchronizations to recurrent policy inference. Removing those
 would be a separate policy-sampling optimization.
 
+The first profiler pass intentionally failed fast because its initial audit
+compared the complete wrapper total (6) directly to the staging-only target
+(4). `initial_fail_fast_diagnostic.json` preserves that traceback and harness
+hash. The corrected evidence gate subtracts the separately profiled raw
+boundary (2) and therefore asserts the actual staging increment (4), while
+continuing to report the complete total (6). No simulator source changed
+between the failed diagnostic and the successful exact rerun.
+
 Wrapper host-launch count changes only from 3,405 to 3,408 at batch 6 and from
 3,397 to 3,400 at batch 128; coalescing transfers is not kernel fusion. Actual
 raw decision nodes fall from 120,011 to 119,921 at batch 6 and from 120,008 to
