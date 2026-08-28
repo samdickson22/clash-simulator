@@ -48,6 +48,26 @@ precision, and is therefore the first meaningful fresh candidate in this line.
 Placement is still the weakest head. More supervised epochs alone should not be
 assumed to solve gameplay; free-running rollout evidence remains mandatory.
 
+## Free-running rejection gate
+
+The original fresh-fit configuration enabled the hierarchical mode head but
+left deterministic decoding on the legacy per-slot hierarchy. That produced a
+clear failure: six deterministic games against `balanced` selected no action at
+all (`noop_rate = 1.0`) and lost 0-6. Fresh hierarchical fits now select the
+aggregate `play-gate` hierarchy by construction. A weights-identical transform
+of epoch 3 changed zero tensors and left the stochastic distribution unchanged.
+
+The aggregate play gate fixed the decoding deadlock (`placement_rate = 0.106`),
+but it did not make the imitation policy competent:
+
+- versus balanced strategy: 0-6, crown differential -1.833
+- versus random: 0-6, crown differential -1.500
+
+The stochastic legacy decoder also played cards (`placement_rate = 0.107`) but
+lost 0-6 to balanced. Therefore offline imitation metrics are useful only as an
+initializer gate. The fresh policy is explicitly rejected as a gameplay
+candidate before RL.
+
 ## MPS Simple-Gym PPO ingress
 
 The epoch-3 policy was loaded through the weights-only initialization gate into
@@ -75,7 +95,7 @@ gameplay.
 
 ## Decision
 
-Promote epoch 3 as the initializer for matched CUDA batch-8 versus batch-64
-learning-quality pilots. Keep the existing Hog champion as the gameplay safety
-anchor. Neither the imitation candidate nor its single PPO update is promoted
-as a gameplay champion yet.
+Use the weights-identical epoch-3 `play-gate` checkpoint only as the initializer
+for matched CUDA batch-8 versus batch-64 learning-quality pilots. Keep the
+existing Hog champion as the gameplay safety anchor. Neither the imitation
+candidate nor its single PPO update is promoted as a gameplay champion.
