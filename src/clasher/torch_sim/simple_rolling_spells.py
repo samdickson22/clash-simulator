@@ -419,6 +419,62 @@ def _clamp_int32(value: torch.Tensor) -> torch.Tensor:
     return value.clamp(min=bounds.min, max=bounds.max).to(torch.int32)
 
 
+def _record_fast_rolling_hits_(
+    hit_candidate: torch.Tensor,
+    entity_stable_id: torch.Tensor,
+    hit_stable_ids: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Record new hit identities without an entity-by-entity ordering plane.
+
+    Every roller owns one record slot per entity.  Valid runtime state contains
+    unique positive live entity identities, and candidates already present in
+    the ledger have been removed.  Consequently the number of new candidates
+    cannot exceed the number of free records.  Physical entity order is enough
+    to assign those records: later membership checks reduce across the record
+    axis and cannot observe its internal ordering.
+
+    The prefix ranks and inverse free-slot map stay ``[batch, rollers,
+    entities]``.  In particular, this avoids the former pair of
+    ``[batch, rollers, entities, entities]`` boolean tensors used to stable-sort
+    candidates and match them to free records.
+    """
+
+    batch, rollers, entities = hit_candidate.shape
+    free_record = hit_stable_ids == 0
+    candidate_rank = hit_candidate.to(torch.int64).cumsum(dim=2) - 1
+    free_count = free_record.sum(dim=2, dtype=torch.int64)
+    hit = hit_candidate & (candidate_rank < free_count[:, :, None])
+
+    free_rank = free_record.to(torch.int64).cumsum(dim=2) - 1
+    entity_slot = torch.arange(
+        entities, dtype=torch.int64, device=hit_candidate.device
+    ).view(1, 1, entities)
+    free_slot_by_rank = torch.full_like(free_rank, entities)
+    free_slot_by_rank.scatter_reduce_(
+        2,
+        free_rank.clamp(min=0, max=entities - 1),
+        torch.where(free_record, entity_slot.expand(batch, rollers, -1), entities),
+        reduce="amin",
+        include_self=True,
+    )
+    destination_slot = free_slot_by_rank.gather(
+        2, candidate_rank.clamp(min=0, max=entities - 1)
+    ).clamp(max=entities - 1)
+    ledger_value = torch.where(
+        hit,
+        entity_stable_id[:, None, :].expand(batch, rollers, entities),
+        0,
+    )
+    hit_stable_ids.scatter_reduce_(
+        2,
+        destination_slot,
+        ledger_value,
+        reduce="amax",
+        include_self=True,
+    )
+    return hit, hit_candidate & ~hit
+
+
 def step_fast_rolling_spells_(
     gym: FastGymState,
     rolling: FastRollingSpellState,
@@ -528,48 +584,10 @@ def step_fast_rolling_spells_(
     ).any(dim=3)
     hit_candidate = eligible & within_capsule & ~already_hit
 
-    # Rank this tick's candidates by stable identity, using physical slot only
-    # as an impossible-duplicate tie break.  Fixed ledger capacity fails closed
-    # instead of admitting an unrecorded hit that could repeat next tick.
-    maximum_id = torch.iinfo(torch.int64).max
-    candidate_id = torch.where(
+    hit, hit_capacity_rejected = _record_fast_rolling_hits_(
         hit_candidate,
-        gym.stable_id[:, None, :],
-        torch.full(
-            (batch, rollers, entities),
-            maximum_id,
-            dtype=torch.int64,
-            device=gym.device,
-        ),
-    )
-    entity_slot = torch.arange(entities, dtype=torch.int64, device=gym.device).view(
-        1, 1, entities
-    )
-    other_before = hit_candidate[:, :, None, :] & (
-        (candidate_id[:, :, None, :] < candidate_id[:, :, :, None])
-        | (
-            (candidate_id[:, :, None, :] == candidate_id[:, :, :, None])
-            & (entity_slot[:, :, None, :] < entity_slot[:, :, :, None])
-        )
-    )
-    hit_rank = other_before.sum(dim=3, dtype=torch.int64)
-    free_record = rolling.hit_stable_ids == 0
-    free_record_rank = free_record.to(torch.int64).cumsum(dim=2) - 1
-    free_record_count = free_record.sum(dim=2, dtype=torch.int64)
-    hit = hit_candidate & (hit_rank < free_record_count[:, :, None])
-    ledger_destination = (
-        hit[:, :, :, None]
-        & free_record[:, :, None, :]
-        & (hit_rank[:, :, :, None] == free_record_rank[:, :, None, :])
-    )
-    ledger_written = ledger_destination.any(dim=2)
-    ledger_value = torch.where(
-        ledger_destination,
-        gym.stable_id[:, None, :, None],
-        0,
-    ).sum(dim=2, dtype=torch.int64)
-    rolling.hit_stable_ids.copy_(
-        torch.where(ledger_written, ledger_value, rolling.hit_stable_ids)
+        gym.stable_id,
+        rolling.hit_stable_ids,
     )
 
     tower_scale = torch.where(
@@ -667,7 +685,7 @@ def step_fast_rolling_spells_(
     return FastRollingStepResult(
         hit=hit,
         hit_count=hit.sum(dim=2, dtype=torch.int64),
-        hit_capacity_rejected=hit_candidate & ~hit,
+        hit_capacity_rejected=hit_capacity_rejected,
         damage_by_entity=damage_by_entity,
         impulse_dx_units=impulse_dx,
         impulse_dy_units=impulse_dy,
