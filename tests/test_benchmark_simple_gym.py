@@ -6,12 +6,14 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import torch
 
 from clasher.torch_sim.simple_standard import STANDARD_TIEBREAK_TICK
 from scripts.perf.benchmark_simple_gym import (
     _has_marker_ancestor,
     _is_cuda_launch_api_event,
     _resolve_preset,
+    _synchronize,
     benchmark,
 )
 
@@ -108,6 +110,20 @@ def test_simple_benchmark_enforces_absolute_throughput_gate(tmp_path: Path) -> N
 def test_simple_benchmark_rejects_cuda_graph_on_cpu(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="requires --device cuda"):
         benchmark(_args(tmp_path, cuda_graph=True))
+
+
+def test_simple_benchmark_synchronizes_mps(monkeypatch: pytest.MonkeyPatch) -> None:
+    synchronized = 0
+
+    def synchronize() -> None:
+        nonlocal synchronized
+        synchronized += 1
+
+    monkeypatch.setattr("torch.mps.synchronize", synchronize)
+
+    _synchronize(torch.device("mps"))
+
+    assert synchronized == 1
 
 
 def test_simple_benchmark_uses_standard_tiebreak_window_gate(tmp_path: Path) -> None:

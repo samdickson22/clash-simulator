@@ -68,6 +68,8 @@ class CudaProfileEvidence:
 def _synchronize(device: torch.device) -> None:
     if device.type == "cuda":
         torch.cuda.synchronize(device)
+    elif device.type == "mps":
+        torch.mps.synchronize()
 
 
 def _run_trial(
@@ -392,7 +394,7 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--preset", choices=("smoke", "profile"), default="smoke")
     parser.add_argument("--decks-path", default="decks.json")
-    parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
+    parser.add_argument("--device", choices=("cpu", "mps", "cuda"), default="cpu")
     parser.add_argument("--seed", type=int, default=202_608_264)
     parser.add_argument("--policy", choices=("noop", "first-legal"), default="first-legal")
     parser.add_argument("--batch-size", type=int)
