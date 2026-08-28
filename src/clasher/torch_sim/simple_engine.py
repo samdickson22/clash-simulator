@@ -325,26 +325,40 @@ class FastTensorGym:
         """Choose an enemy reserved building when ordinary sight is empty."""
 
         state = self.state
-        delta_x = state.x_units[:, :, None].to(torch.int64) - state.x_units[
-            :, None, :
-        ].to(torch.int64)
-        delta_y = state.y_units[:, :, None].to(torch.int64) - state.y_units[
-            :, None, :
-        ].to(torch.int64)
+        reserved = self.reserved_slot_floor
+        if reserved == 0:
+            found = torch.zeros_like(can_act)
+            slot = torch.zeros_like(state.stable_id)
+            return (
+                found,
+                slot,
+                slot,
+                torch.full_like(state.hp, torch.inf),
+            )
+        # Only the reserved prefix can satisfy the target predicate below.
+        # Restricting the candidate axis here preserves the former full-matrix
+        # result while changing its geometry from [B, E, E] to [B, E, R].
+        target_x = state.x_units[:, :reserved]
+        target_y = state.y_units[:, :reserved]
+        delta_x = state.x_units[:, :, None].to(torch.int64) - target_x[:, None, :].to(
+            torch.int64
+        )
+        delta_y = state.y_units[:, :, None].to(torch.int64) - target_y[:, None, :].to(
+            torch.int64
+        )
         distance_sq = delta_x.square() + delta_y.square()
         reserved_building = (
-            (self._slots < self.reserved_slot_floor)
-            & state.active
-            & (state.hp > 0)
-            & (state.kind == FAST_KIND_BUILDING)
-            & (state.stable_id > 0)
-            & ~self._target_unavailable
+            state.active[:, :reserved]
+            & (state.hp[:, :reserved] > 0)
+            & (state.kind[:, :reserved] == FAST_KIND_BUILDING)
+            & (state.stable_id[:, :reserved] > 0)
+            & ~self._target_unavailable[:, :reserved]
         )
         candidate = (
             can_act[:, :, None]
-            & (state.kind[:, :, None] == 0)
+            & (state.kind[:, :, None] == FAST_KIND_TROOP)
             & reserved_building[:, None, :]
-            & (state.owner[:, :, None] != state.owner[:, None, :])
+            & (state.owner[:, :, None] != state.owner[:, None, :reserved])
         )
         maximum = torch.iinfo(torch.int64).max
         nearest_distance = torch.where(
@@ -353,7 +367,7 @@ class FastTensorGym:
             torch.full_like(distance_sq, maximum),
         ).amin(dim=2)
         distance_tie = candidate & (distance_sq == nearest_distance[:, :, None])
-        candidate_id = state.stable_id[:, None, :].expand_as(distance_sq)
+        candidate_id = state.stable_id[:, None, :reserved].expand_as(distance_sq)
         selected_id = torch.where(
             distance_tie,
             candidate_id,
