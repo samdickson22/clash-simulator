@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "contract": {
+    "name": "clasher.simple_gym_supported_decks",
+    "version": 1,
+    "deck_size": 8,
+    "canonical_lane_globals": true,
+    "public_action_mask_contract_version": 2
+  },
+  "source": {
+    "path": "training_decks/simple_gym_hog26_source_v1.json",
+    "sha256": "ecd4ce62bd9f77b6160ffdee4728a9083511a65301d9e204c5bfea2f7dfd5959"
+  },
+  "counts": {
+    "candidate_decks": 1,
+    "supported_decks": 1,
+    "rejected_decks": 0,
+    "public_cards": 8,
+    "supported_public_cards": 8,
+    "unsupported_public_cards": 0
+  },
+  "support_profile": {
+    "version": 1,
+    "sha256": "68209cf11e137e75a6026f3e126a7cf44c87decc2e029c3a369c50161ca46464",
+    "supported_public_cards": [
+      "Cannon",
+      "Fireball",
+      "HogRider",
+      "IceGolem",
+      "IceSpirit",
+      "Log",
+      "Musketeer",
+      "Skeletons"
+    ],
+    "unsupported_public_cards": []
+  },
+  "decks": [
+    {
+      "name": "Hog 2.6 Cycle",
+      "cards": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceGolem",
+        "IceSpirit",
+        "Musketeer",
+        "Skeletons",
+        "Log"
+      ]
+    }
+  ]
+}

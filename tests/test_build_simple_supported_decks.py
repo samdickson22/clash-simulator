@@ -57,6 +57,33 @@ def test_committed_artifact_is_exactly_current() -> None:
     ]
 
 
+def test_hog26_mirror_artifact_is_exact_and_single_deck() -> None:
+    source = "training_decks/simple_gym_hog26_source_v1.json"
+    output = "training_decks/simple_gym_hog26_supported_v1.json"
+    expected = build_artifact(source)
+    check_artifact(output, expected)
+    assert expected["counts"] == {
+        "candidate_decks": 1,
+        "supported_decks": 1,
+        "rejected_decks": 0,
+        "public_cards": 8,
+        "supported_public_cards": 8,
+        "unsupported_public_cards": 0,
+    }
+    assert load_deck_pool(output) == [
+        [
+            "Cannon",
+            "Fireball",
+            "HogRider",
+            "IceGolem",
+            "IceSpirit",
+            "Musketeer",
+            "Skeletons",
+            "Log",
+        ]
+    ]
+
+
 def test_input_rejects_non_eight_card_or_duplicate_decks(tmp_path: Path) -> None:
     bad_size = tmp_path / "bad-size.json"
     bad_size.write_text(
