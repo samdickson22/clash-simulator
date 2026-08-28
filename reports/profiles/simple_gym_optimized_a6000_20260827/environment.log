@@ -1,0 +1,9 @@
+Fri Aug 28 01:37:47 UTC 2026
+0139-ict-prxmx50107
+3bd83979db91405d4ce572e58b3518e55252915fb04b90caab15e04bc0eec745  /tmp/clasher-main-final-integration-36cd5ec9-c91ca56d.tar
+11a84abade6e76b008198cc8df7e9647bbf90d6290a0dc10bf324f40daf19fc4  /tmp/clasher_cuda_after_profile.py
+10ed5fb058cabaca72fdc514311dccb6cdda242dfeb9f4187659c530c77f5621  uv.lock
+d032869aa5c1b4808f933a81cfbf4de9dd8b348d67d02ebd163d4946a86b7f4e  pyproject.toml
+Python 3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]
+2.10.0+cu128 12.8 NVIDIA RTX A6000 (8, 6)
+NVIDIA RTX A6000, GPU-c813c4f4-5323-343e-9df9-82d0a1189abf, 49140 MiB, 580.126.09

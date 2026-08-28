@@ -1,0 +1,3 @@
+/tmp/clasher-after/.venv/lib/python3.12/site-packages/torch/profiler/profiler.py:217: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+{"after": "/tmp/clasher-after-evidence/after.json", "elapsed": 245.27160954475403, "manifest": "/tmp/clasher-after-evidence/manifest.json"}
