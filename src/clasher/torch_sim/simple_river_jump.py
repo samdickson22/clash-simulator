@@ -273,22 +273,22 @@ def _trunc_div(numerator: torch.Tensor, denominator: torch.Tensor) -> torch.Tens
 
 
 def _integer_sqrt(value: torch.Tensor) -> torch.Tensor:
-    """Exact fixed-iteration integer square root with no device synchronization."""
+    """Return exact arena-scale integer roots without a tensor iteration loop.
 
-    remainder = torch.clamp(value.to(torch.int64), min=0)
-    result = torch.zeros_like(remainder)
-    bit = 1 << 62
-    for _ in range(32):
-        trial = result + bit
-        accepted = remainder >= trial
-        remainder = torch.where(accepted, remainder - trial, remainder)
-        result = torch.where(
-            accepted,
-            torch.bitwise_right_shift(result, 1) + bit,
-            torch.bitwise_right_shift(result, 1),
-        )
-        bit >>= 2
-    return result
+    River geometry is bounded by int32 arena coordinates, so its nonnegative
+    squared distances are exactly representable as float64.  The hardware
+    square root supplies the candidate and two integer comparisons correct a
+    possible one-ULP rounding error on either side of a perfect square.  This
+    retains ``math.isqrt`` semantics while avoiding the former 32 unrolled
+    tensor iterations in every captured tick.
+    """
+
+    bounded = torch.clamp(value.to(torch.int64), min=0)
+    root = torch.sqrt(bounded.to(torch.float64)).to(torch.int64)
+    root -= (root.square() > bounded).to(torch.int64)
+    successor = root + 1
+    root += (successor.square() <= bounded).to(torch.int64)
+    return root
 
 
 def _line_x_at_y(

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import inspect
+import math
 from typing import Any
 
 import pytest
@@ -13,6 +14,7 @@ from clasher.torch_sim.simple_river_jump import (
     FAST_RIVER_JUMP_TICK_MS,
     FastRiverJumpCatalog,
     FastRiverJumpState,
+    _integer_sqrt,
     fast_river_jump_target_eligible,
     step_fast_river_jump_,
 )
@@ -74,6 +76,34 @@ def _planes(
         ),
     }
     return catalog, state, ids, planes
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda"))
+def test_integer_sqrt_is_exact_at_every_arena_discontinuity(
+    device_name: str,
+) -> None:
+    device = _device(device_name)
+    # The standard 18x32-tile arena uses 1,000 logic units per tile.  An
+    # arena-contained displacement therefore cannot exceed this diagonal.
+    maximum_squared_distance = 18_000**2 + 32_000**2
+    maximum_root = math.isqrt(maximum_squared_distance)
+    roots = torch.arange(maximum_root + 1, dtype=torch.int64)
+    squares = roots.square()
+    values = torch.cat(
+        (
+            (squares - 1).clamp_min(0),
+            squares,
+            (squares + 1).clamp_max(maximum_squared_distance),
+            torch.tensor([maximum_squared_distance], dtype=torch.int64),
+        )
+    )
+    expected = torch.tensor(
+        [math.isqrt(int(value)) for value in values], dtype=torch.int64
+    )
+
+    actual = _integer_sqrt(values.to(device)).cpu()
+
+    assert torch.equal(actual, expected)
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda"))
