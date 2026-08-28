@@ -596,6 +596,36 @@ def test_device_resident_stationary_opponents_export_legal_learner_rollouts(
     assert collector.metadata.opponent_contract_digest is not None
 
 
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
+def test_stationary_noop_route_preserves_accelerator_contract(
+    device_name: str,
+) -> None:
+    collector = _training_collector(
+        device_name,
+        batch_size=2,
+        opponent_mode="noop",
+        max_entities=48,
+        max_effects=64,
+    )
+    model = collector.policy.model
+
+    arrays, next_state, *_ = collector.collect(
+        1,
+        model.initial_state(2, device=device_name),
+    )
+
+    assert arrays["actions"].shape == (2, 1)
+    assert arrays["action_masks"][np.arange(2), 0, arrays["actions"][:, 0]].all()
+    assert next_state[0].device.type == device_name
+    assert next_state[1].device.type == device_name
+    expected_mode = (
+        SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH
+        if device_name == "cuda"
+        else SIMPLE_PYTORCH_EXECUTION_EAGER
+    )
+    assert collector.metadata.execution_mode == expected_mode
+
+
 def test_frozen_checkpoint_opponent_keeps_independent_recurrent_state(
     tmp_path: Path,
 ) -> None:
