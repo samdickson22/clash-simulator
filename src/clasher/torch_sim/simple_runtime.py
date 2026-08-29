@@ -807,15 +807,93 @@ class SimpleGymRuntime:
     def batch_size(self) -> int:
         return int(self.state.batch_size)
 
-    @staticmethod
-    def _tensor_fields(value: Any) -> dict[str, torch.Tensor]:
-        """Clone batch-leading tensor fields without retaining object graphs."""
+    def _row_state_objects(self) -> dict[str, Any]:
+        """Return every retained owner whose tensor rows define a battle.
+
+        Catalogs, arena constants, and projection lookup tables are immutable
+        setup authority and are deliberately absent.  Keeping this registry in
+        one place makes reset and speculative battle forks share the exact same
+        state boundary.
+        """
+
+        objects: dict[str, Any] = {
+            "state": self.state,
+            "action": self.action_state,
+            "effects": self.effects,
+            "travel": self.travel,
+            "travel_effects": self.travel_effects,
+            "death_effects": self.death_effects,
+            "triggered_events": self.triggered_events,
+            "triggered_effects": self.triggered_effects,
+            "death_bursts": self.death_bursts,
+            "payload_containers": self.payload_containers,
+            "positive_buff_areas": self.positive_buff_areas,
+            "positive_buffs": self.positive_buffs,
+            "lifecycle": self.lifecycle,
+            "modifiers": self.modifiers,
+            "damage_ramp": self.damage_ramp,
+            "rolling_spells": self.rolling_spells,
+            "navigation": self.combat.navigation.state,
+            "policy_mechanics": self.policy_mechanics,
+            "abilities": self.abilities,
+        }
+        if self.attack_locks is not None:
+            objects["attack_locks"] = self.attack_locks
+        if self.river_jumps is not None:
+            objects["river_jumps"] = self.river_jumps
+        if self.periodic_spawns is not None:
+            objects["periodic_spawns"] = self.periodic_spawns
+        if self.scheduled_casts is not None:
+            objects["scheduled_casts"] = self.scheduled_casts
+        return objects
+
+    def _runtime_row_tensors(self) -> dict[str, torch.Tensor]:
+        """Return retained runtime tensors which do not belong to a dataclass."""
 
         return {
-            descriptor.name: tensor.clone()
-            for descriptor in fields(value)
-            if isinstance((tensor := getattr(value, descriptor.name)), torch.Tensor)
+            "entity_status_kind": self.entity_status_kind,
+            "entity_status_ticks": self.entity_status_ticks,
+            "entity_slow_ticks": self.entity_slow_ticks,
+            "entity_attack_clock_fraction": self.entity_attack_clock_fraction,
+            "entity_kamikaze_ticks": self.entity_kamikaze_ticks,
+            "entity_kamikaze_windup_ticks": self.entity_kamikaze_windup_ticks,
+            "effect_consume_source_id": self.effect_consume_source_id,
+            "death_effect_consume_source_id": self.death_effect_consume_source_id,
+            "travel_effect_consume_source_id": self.travel_effect_consume_source_id,
+            "travel_spawned": self._travel_spawned,
+            "travel_interrupted": self._travel_interrupted,
+            "triggered_death_stable_id": self._triggered_death_stable_id,
+            "projection_hand_ids": self._projection_hand_ids,
+            "double_elixir": self._double_elixir,
+            "triple_elixir": self._triple_elixir,
+            "ability_cooldown": self._ability_cooldown,
+            "ability_duration": self._ability_duration,
+            "refill_cooldown_ms": self._refill_cooldown_ms,
+            "public_visibility": self.projector.inputs.public_visibility,
+            "combat_spawned_mask": self.combat.spawned_mask,
+            "combat_target_unavailable": self.combat._target_unavailable,
+            "entity_special": self._entity_special,
+            "entity_invisible": self._entity_invisible,
+            "entity_hidden": self._entity_hidden,
         }
+
+    def _row_state_tensor_groups(self) -> dict[str, dict[str, torch.Tensor]]:
+        groups = {
+            group: {
+                descriptor.name: tensor
+                for descriptor in fields(owner)
+                if isinstance((tensor := getattr(owner, descriptor.name)), torch.Tensor)
+            }
+            for group, owner in self._row_state_objects().items()
+        }
+        groups["outcomes"] = {
+            "initial_tower_hp": self.outcomes.initial_tower_hp,
+            "previous_tower_hp": self.outcomes.previous_tower_hp,
+            "previous_crowns": self.outcomes.previous_crowns,
+            "overtime": self.outcomes.overtime,
+        }
+        groups["runtime"] = self._runtime_row_tensors()
+        return groups
 
     def _capture_initial_templates(self) -> dict[str, dict[str, torch.Tensor]]:
         """Capture the constructed episode state as device-resident tensors.
@@ -825,76 +903,84 @@ class SimpleGymRuntime:
         tensor mutations and do not rebuild the runtime, catalog, or projector.
         """
 
-        templates = {
-            "state": self._tensor_fields(self.state),
-            "action": self._tensor_fields(self.action_state),
-            "effects": self._tensor_fields(self.effects),
-            "travel": self._tensor_fields(self.travel),
-            "travel_effects": self._tensor_fields(self.travel_effects),
-            "death_effects": self._tensor_fields(self.death_effects),
-            "triggered_events": self._tensor_fields(self.triggered_events),
-            "triggered_effects": self._tensor_fields(self.triggered_effects),
-            "death_bursts": self._tensor_fields(self.death_bursts),
-            "payload_containers": self._tensor_fields(self.payload_containers),
-            "positive_buff_areas": self._tensor_fields(self.positive_buff_areas),
-            "positive_buffs": self._tensor_fields(self.positive_buffs),
-            "lifecycle": self._tensor_fields(self.lifecycle),
-            "modifiers": self._tensor_fields(self.modifiers),
-            "damage_ramp": self._tensor_fields(self.damage_ramp),
-            "rolling_spells": self._tensor_fields(self.rolling_spells),
-            "navigation": self._tensor_fields(self.combat.navigation.state),
-            "policy_mechanics": self._tensor_fields(self.policy_mechanics),
-            "abilities": self._tensor_fields(self.abilities),
-            "outcomes": {
-                "initial_tower_hp": self.outcomes.initial_tower_hp.clone(),
-                "previous_tower_hp": self.outcomes.previous_tower_hp.clone(),
-                "previous_crowns": self.outcomes.previous_crowns.clone(),
-                "overtime": self.outcomes.overtime.clone(),
-            },
-            "runtime": {
-                "entity_status_kind": self.entity_status_kind.clone(),
-                "entity_status_ticks": self.entity_status_ticks.clone(),
-                "entity_slow_ticks": self.entity_slow_ticks.clone(),
-                "entity_attack_clock_fraction": (
-                    self.entity_attack_clock_fraction.clone()
-                ),
-                "entity_kamikaze_ticks": self.entity_kamikaze_ticks.clone(),
-                "entity_kamikaze_windup_ticks": (
-                    self.entity_kamikaze_windup_ticks.clone()
-                ),
-                "effect_consume_source_id": self.effect_consume_source_id.clone(),
-                "death_effect_consume_source_id": (
-                    self.death_effect_consume_source_id.clone()
-                ),
-                "travel_effect_consume_source_id": (
-                    self.travel_effect_consume_source_id.clone()
-                ),
-                "travel_spawned": self._travel_spawned.clone(),
-                "travel_interrupted": self._travel_interrupted.clone(),
-                "triggered_death_stable_id": (self._triggered_death_stable_id.clone()),
-                "projection_hand_ids": self._projection_hand_ids.clone(),
-                "double_elixir": self._double_elixir.clone(),
-                "triple_elixir": self._triple_elixir.clone(),
-                "ability_cooldown": self._ability_cooldown.clone(),
-                "ability_duration": self._ability_duration.clone(),
-                "refill_cooldown_ms": self._refill_cooldown_ms.clone(),
-                "public_visibility": self.projector.inputs.public_visibility.clone(),
-                "combat_spawned_mask": self.combat.spawned_mask.clone(),
-                "combat_target_unavailable": self.combat._target_unavailable.clone(),
-                "entity_special": self._entity_special.clone(),
-                "entity_invisible": self._entity_invisible.clone(),
-                "entity_hidden": self._entity_hidden.clone(),
-            },
+        return {
+            group: {name: tensor.clone() for name, tensor in tensors.items()}
+            for group, tensors in self._row_state_tensor_groups().items()
         }
-        if self.attack_locks is not None:
-            templates["attack_locks"] = self._tensor_fields(self.attack_locks)
-        if self.river_jumps is not None:
-            templates["river_jumps"] = self._tensor_fields(self.river_jumps)
-        if self.periodic_spawns is not None:
-            templates["periodic_spawns"] = self._tensor_fields(self.periodic_spawns)
-        if self.scheduled_casts is not None:
-            templates["scheduled_casts"] = self._tensor_fields(self.scheduled_casts)
-        return templates
+
+    def copy_rows_from_(
+        self,
+        source: SimpleGymRuntime,
+        source_rows: torch.Tensor,
+    ) -> None:
+        """Replace this runtime with exact selected rows from ``source``.
+
+        The destination runtime is a preallocated speculative arena.  It may
+        have a different batch size, but it must have been constructed from the
+        same immutable setup authority and with identical capacities.  Rows may
+        repeat, which expands one live battle into many independent candidate
+        continuations without materializing scalar simulators.
+
+        This copies only retained episode state.  Policy recurrence and rollout
+        history remain collector-owned and must be forked by their owner.
+        """
+
+        if source_rows.shape != (self.batch_size,):
+            raise ValueError("source_rows must have shape [destination batch]")
+        if source_rows.device != self.device or source.device != self.device:
+            raise ValueError("fork runtimes and source_rows must share a device")
+        if source_rows.dtype != torch.int64:
+            raise ValueError("source_rows must be int64")
+        if bool(((source_rows < 0) | (source_rows >= source.batch_size)).any()):
+            raise IndexError("source row is outside the source runtime")
+        immutable_pairs = (
+            (self.action_kernel.catalog, source.action_kernel.catalog),
+            (self.spawn_blueprints, source.spawn_blueprints),
+            (self.policy_catalog, source.policy_catalog),
+            (self.ability_catalog, source.ability_catalog),
+            (self.travel_catalog, source.travel_catalog),
+            (self.river_jump_catalog, source.river_jump_catalog),
+            (self.triggered_impact_catalog, source.triggered_impact_catalog),
+            (self.attack_timings, source.attack_timings),
+            (
+                self.projector.inputs.entity_token_lookup,
+                source.projector.inputs.entity_token_lookup,
+            ),
+            (
+                self.projector.inputs.hand_token_lookup,
+                source.projector.inputs.hand_token_lookup,
+            ),
+        )
+        if any(destination is not origin for destination, origin in immutable_pairs):
+            raise ValueError("fork runtimes must share immutable setup authority")
+        if (
+            self.tick_seconds != source.tick_seconds
+            or self.double_elixir_tick != source.double_elixir_tick
+            or self.triple_elixir_tick != source.triple_elixir_tick
+            or self.outcomes.rules is not source.outcomes.rules
+        ):
+            raise ValueError("fork runtimes must share match timing and rules")
+
+        destination_groups = self._row_state_tensor_groups()
+        source_groups = source._row_state_tensor_groups()
+        if destination_groups.keys() != source_groups.keys():
+            raise ValueError("fork runtimes have different retained state owners")
+        for group, destination_tensors in destination_groups.items():
+            source_tensors = source_groups[group]
+            if destination_tensors.keys() != source_tensors.keys():
+                raise ValueError(f"fork runtime state differs for {group}")
+            for name, destination in destination_tensors.items():
+                origin = source_tensors[name]
+                if (
+                    destination.shape[1:] != origin.shape[1:]
+                    or destination.dtype != origin.dtype
+                ):
+                    raise ValueError(f"fork runtime tensor differs for {group}.{name}")
+
+        for group, destination_tensors in destination_groups.items():
+            source_tensors = source_groups[group]
+            for name, destination in destination_tensors.items():
+                destination.copy_(source_tensors[name].index_select(0, source_rows))
 
     @staticmethod
     def _restore_rows_(
@@ -945,70 +1031,13 @@ class SimpleGymRuntime:
                 if not bool(public_deck.all()):
                     raise ValueError("deck_ids may contain only public catalog rows")
 
-        objects = {
-            "state": self.state,
-            "action": self.action_state,
-            "effects": self.effects,
-            "travel": self.travel,
-            "travel_effects": self.travel_effects,
-            "death_effects": self.death_effects,
-            "triggered_events": self.triggered_events,
-            "triggered_effects": self.triggered_effects,
-            "death_bursts": self.death_bursts,
-            "payload_containers": self.payload_containers,
-            "positive_buff_areas": self.positive_buff_areas,
-            "positive_buffs": self.positive_buffs,
-            "lifecycle": self.lifecycle,
-            "modifiers": self.modifiers,
-            "damage_ramp": self.damage_ramp,
-            "rolling_spells": self.rolling_spells,
-            "navigation": self.combat.navigation.state,
-            "policy_mechanics": self.policy_mechanics,
-            "abilities": self.abilities,
-            "outcomes": self.outcomes,
-        }
-        if self.attack_locks is not None:
-            objects["attack_locks"] = self.attack_locks
-        if self.river_jumps is not None:
-            objects["river_jumps"] = self.river_jumps
-        if self.periodic_spawns is not None:
-            objects["periodic_spawns"] = self.periodic_spawns
-        if self.scheduled_casts is not None:
-            objects["scheduled_casts"] = self.scheduled_casts
-        for group, owner in objects.items():
-            for name, template in self._initial_templates[group].items():
-                self._restore_rows_(getattr(owner, name), template, reset_mask)
-
-        runtime_tensors = {
-            "entity_status_kind": self.entity_status_kind,
-            "entity_status_ticks": self.entity_status_ticks,
-            "entity_slow_ticks": self.entity_slow_ticks,
-            "entity_attack_clock_fraction": self.entity_attack_clock_fraction,
-            "entity_kamikaze_ticks": self.entity_kamikaze_ticks,
-            "entity_kamikaze_windup_ticks": self.entity_kamikaze_windup_ticks,
-            "effect_consume_source_id": self.effect_consume_source_id,
-            "death_effect_consume_source_id": self.death_effect_consume_source_id,
-            "travel_effect_consume_source_id": self.travel_effect_consume_source_id,
-            "travel_spawned": self._travel_spawned,
-            "travel_interrupted": self._travel_interrupted,
-            "triggered_death_stable_id": self._triggered_death_stable_id,
-            "projection_hand_ids": self._projection_hand_ids,
-            "double_elixir": self._double_elixir,
-            "triple_elixir": self._triple_elixir,
-            "ability_cooldown": self._ability_cooldown,
-            "ability_duration": self._ability_duration,
-            "refill_cooldown_ms": self._refill_cooldown_ms,
-            "public_visibility": self.projector.inputs.public_visibility,
-            "combat_spawned_mask": self.combat.spawned_mask,
-            "combat_target_unavailable": self.combat._target_unavailable,
-            "entity_special": self._entity_special,
-            "entity_invisible": self._entity_invisible,
-            "entity_hidden": self._entity_hidden,
-        }
-        for name, destination in runtime_tensors.items():
-            self._restore_rows_(
-                destination, self._initial_templates["runtime"][name], reset_mask
-            )
+        for group, destinations in self._row_state_tensor_groups().items():
+            for name, destination in destinations.items():
+                self._restore_rows_(
+                    destination,
+                    self._initial_templates[group][name],
+                    reset_mask,
+                )
 
         if deck_ids is not None:
             hand = deck_ids[:, :, :NUM_HAND_SLOTS]
