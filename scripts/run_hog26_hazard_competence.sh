@@ -8,6 +8,10 @@ desktop_root=${DESKTOP_ROOT:-/Users/sam/Desktop/code/clasher}
 python_bin=${PYTHON_BIN:-$desktop_root/.venv/bin/python}
 parent=${PARENT:-$desktop_root/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt}
 checkpoint_dir=${CHECKPOINT_DIR:-$simple_root/checkpoints/hog26_simple_hazard_competence_seed${seed}}
+league_profile=${LEAGUE_PROFILE:-competence}
+learning_rate=${LEARNING_RATE:-1e-5}
+anchor_policy_kl_coef=${ANCHOR_POLICY_KL_COEF:-0.1}
+updates=${UPDATES:-15}
 
 for required in "$python_bin" "$parent"; do
   [[ -e "$required" ]] || { echo "missing training input: $required" >&2; exit 1; }
@@ -17,16 +21,36 @@ done
   exit 1
 }
 
-league=(
-  random "$parent" random strategy:balanced
-  random "$parent" random strategy:slow-push
-  "$parent" random strategy:reactive-defense random
-  "$parent" random strategy:spell-control "$parent"
-  random strategy:bridge-pressure random "$parent"
-  random strategy:split-lane "$parent" random
-  strategy:balanced random "$parent" random
-  strategy:slow-push "$parent" random "$parent"
-)
+case "$league_profile" in
+  competence)
+    league=(
+      random "$parent" random strategy:balanced
+      random "$parent" random strategy:slow-push
+      "$parent" random strategy:reactive-defense random
+      "$parent" random strategy:spell-control "$parent"
+      random strategy:bridge-pressure random "$parent"
+      random strategy:split-lane "$parent" random
+      strategy:balanced random "$parent" random
+      strategy:slow-push "$parent" random "$parent"
+    )
+    ;;
+  hardening)
+    league=(
+      strategy:bridge-pressure "$parent" strategy:spell-control strategy:balanced
+      strategy:bridge-pressure "$parent" strategy:spell-control random
+      strategy:bridge-pressure "$parent" strategy:spell-control strategy:split-lane
+      strategy:bridge-pressure "$parent" strategy:spell-control strategy:balanced
+      strategy:bridge-pressure "$parent" strategy:spell-control random
+      strategy:bridge-pressure "$parent" strategy:spell-control strategy:reactive-defense
+      strategy:balanced "$parent" strategy:split-lane random
+      strategy:balanced "$parent" strategy:slow-push random
+    )
+    ;;
+  *)
+    echo "unknown LEAGUE_PROFILE: $league_profile" >&2
+    exit 1
+    ;;
+esac
 
 command=(
   "$python_bin" -m clasher.rl.train_recurrent
@@ -42,7 +66,7 @@ command=(
   --checkpoint-dir "$checkpoint_dir"
   --initialize-policy-from "$parent"
   --seed "$seed"
-  --updates 15
+  --updates "$updates"
   --num-envs 64
   --actor-workers 1
   --actor-threads 2
@@ -55,7 +79,7 @@ command=(
   --engine-fast-path off
   --device mps
   --actor-device mps
-  --learning-rate 1e-5
+  --learning-rate "$learning_rate"
   --gamma 0.995
   --gae-lambda 0.95
   --clip-ratio 0.2
@@ -65,7 +89,7 @@ command=(
   --location-entropy-coef 0.005
   --conditional-slot-entropy-coef 0.005
   --anchor-checkpoint "$parent"
-  --anchor-policy-kl-coef 0.1
+  --anchor-policy-kl-coef "$anchor_policy_kl_coef"
   --hand-aux-coef 0
   --elixir-aux-coef 0
   --epochs 2
