@@ -2,16 +2,18 @@
 
 ## Decision
 
-Accept the exact resident fork and terminal-continuation API for structured
-action-value corpus production. The retained source tip is `aa65ad65` on
+Accept the exact resident fork, explicit phase-scheduled root bank, and
+terminal-continuation API for offline structured action-value corpus
+production. The retained source tip is `d03a8f7e` on
 `codex/pytorch-terminal-counterfactual`, descended from the safe integrated
 authority `41d13fed`.
 
-Do not claim that dense terminal supervision is cheap yet. The implementation
-is exact and production-shaped, but a single source root expanded to six full
-terminal branches still takes about 144 seconds on an H100 from tick 128. The
-next optimization target is the real recurrent policy/public-mask decision
-path, not simulator state cloning or VRAM.
+Do not claim online or end-to-end dense-root readiness. A full 16-root
+phase-balanced H200 run completed correctly, but including root construction it
+produced only 0.309 candidate slots/s (0.180 unique candidates/s). The next
+production design should microbatch phase roots and/or use shorter tactical
+horizons while retaining terminal calibration samples. First-N early roots are
+not an acceptable benchmark.
 
 ## Retained implementation
 
@@ -33,6 +35,13 @@ path, not simulator state cloning or VRAM.
 - `aa65ad65`: speculative continuation projection is actor-only. The source PPO
   collector retains its privileged critic; candidates expose no critic or
   opponent-private state.
+- `24a3631b`: fixed-capacity resident root banks accept explicit target ticks,
+  preserve the actual tick/phase/overtime flags and recurrent hidden/cell state,
+  and copy heterogeneous live rows into a preallocated evaluator.
+- `32bbd96d`: root copying accepts eager or CUDA-Graph-backed source bridges.
+- `d03a8f7e`: phase collection advances from the live row assigned to the next
+  target. A regression test covers an early source terminating while its paired
+  no-op source continues into late regulation and overtime.
 
 The production training adapter constructs a resident `batch * candidates`
 arena with the same serialized setup, capacities, reward contract, recurrent
@@ -41,7 +50,8 @@ The tested workload is base plus five alternatives.
 
 ## Behavior gates
 
-- Full local Simple/RL surface: `434 passed, 263 skipped`.
+- Full local Simple/RL surface after phase-root integration:
+  `439 passed, 263 skipped`.
 - Focused H100 CUDA fork/evaluator/backend/mask/rollout/Graph surface:
   `65 passed, 8 platform skips`.
 - CPU and Apple MPS exact repeated-row continuation tests pass. The real
@@ -90,6 +100,43 @@ The four-decision actor-only profiler recorded 8,958 host launch APIs, nine
 explicit synchronizations, nine D2H events, and 504,203 CUDA device events.
 Peak memory is modest. Tiny policy/mask kernels and synchronization dominate.
 
+### Full phase-balanced gate
+
+The production benchmark now defaults to the frozen 16-root schedule rather
+than first-N eligible roots. On an H200 with Torch `2.10.0+cu128`, it captured
+and evaluated roots at exactly:
+
+`256, 608, 968, 1328, 1688, 2048, 2400, 2760, 3120, 3480, 3600, 4192, 4552, 4912, 5272, 5632`.
+
+This covers early, mid, late regulation, overtime, and triple elixir. Actual
+ticks matched every target. Roots through 3480 came from the dynamic source;
+3600 onward came from the paired no-op source, preserving logical state after
+the dynamic source's terminal boundary.
+
+| Full-mix measure | Result |
+| --- | ---: |
+| Root slots x candidates | 16 x 6 = 96 |
+| Unique candidates | 56 |
+| Continuation-only time | 159.786 s |
+| Terminal candidate slots/s | 0.6008 |
+| Continuation decisions/s | 111.881 |
+| Native ticks/s | 894.754 |
+| End-to-end wall time, including root construction | 310.46 s |
+| End-to-end candidate slots/s | 0.3092 |
+| End-to-end unique candidates/s | 0.1804 |
+| Peak allocated/reserved | 333.97 MB / 1.65 GB |
+
+The result digest is
+`76fdefc74cbe22959bf6058ddc0c45e985892cd779e5f322efd406583ffb1c42`.
+The evaluator's fail-closed contract requires every branch to reach terminal,
+remain admitted/committed, and use zero fallback before emitting this result.
+
+Eight roots had only no-op as a unique legal candidate; the remaining eight
+had six unique candidates. Accordingly, the 96-slot number is useful for
+resident execution throughput, while 56 is the honest number of distinct
+labels. This is a successful correctness gate and a failed online-throughput
+gate, not an end-to-end readiness claim.
+
 ## Rejected optimizations
 
 Two experiments were removed completely:
@@ -110,9 +157,10 @@ candidates/s with the same digest, while peak allocation fell from about
 ## Evidence files
 
 Machine-readable evidence is under
-`reports/profiles/simple_terminal_counterfactual_20260828/`. The final archive
-is `/private/tmp/clasher-terminal-counterfactual-aa65ad65.tar.gz`, SHA-256
-`42f65e23bc237d0ca5afb05e401ef9cc4321c2b0079cd28c640f90bdaafe6e57`.
+`reports/profiles/simple_terminal_counterfactual_20260828/`. The phase-balanced
+archive is `/private/tmp/clasher-phase-root-bank-d03a8f7e.tar.gz`, SHA-256
+`d3854e4d599ce378e2f07cf1ca28d20d6967d9ecb692a022703a6668634583ee`.
 
-The task-owned H100 pod `8192a69653854f9f98dc4622cfa2da50` was terminated.
-An unrelated external CPU pod remained active and was not touched.
+The task-owned H100 pod `8192a69653854f9f98dc4622cfa2da50` and phase-gate
+H200 pod `a3b733d10e324e78869fbc033fc8b125` were terminated. Active paid GPU
+pod count was verified as zero. An unrelated external CPU pod was not touched.

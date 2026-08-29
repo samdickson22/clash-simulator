@@ -1,0 +1,19 @@
+{
+  "archive_sha256": "d3854e4d599ce378e2f07cf1ca28d20d6967d9ecb692a022703a6668634583ee",
+  "command": ".venv/bin/python scripts/perf/benchmark_simple_terminal_counterfactual.py --query-schedule phase-balanced --device cuda --batch-size 2 --candidate-count 6 --decision-interval 8 --repetitions 1 --terminal-check-interval 16 --max-entities 56 --out /tmp/counterfactual_phase_balanced_b16k6_d03a8f7e.json",
+  "device": "NVIDIA H200",
+  "device_uuid": "GPU-e0a16368-fe6b-d88a-8d86-cef3ddbbeacf",
+  "driver": "550.163.01",
+  "end_to_end_candidate_slots_per_second": 0.3092185788829479,
+  "end_to_end_unique_candidates_per_second": 0.18037750434838629,
+  "end_to_end_wall_seconds": 310.46,
+  "python": "3.12.14",
+  "result_sha256": "9958ebbdefd54458b251d85db8f0a008df9f93e97ae53631b39ead6adf426f50",
+  "root_bank_and_setup_seconds": 150.67425514899963,
+  "schema_version": 1,
+  "source_commit": "d03a8f7e",
+  "stderr_sha256": "b73d214f1e402e9558658c202a3a01995e7785b5955727d1f9e46299b8266bba",
+  "torch": "2.10.0+cu128",
+  "total_candidate_slots": 96,
+  "total_unique_candidates": 56
+}
