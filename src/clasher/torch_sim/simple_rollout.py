@@ -204,27 +204,6 @@ class SimpleGymRolloutBridge:
         observation = self.adapter.observe()
         return self._boundary(observation, self.adapter.history, None, None)
 
-    def boundary_after(
-        self,
-        step: SimpleGymRolloutStep,
-    ) -> SimpleGymRolloutObservation:
-        """Reuse a step's exact post-action public boundary without re-projecting."""
-
-        return SimpleGymRolloutObservation(
-            actor=step.next_actor,
-            critic=step.next_critic,
-            legal_mask=step.next_legal_mask,
-            public_action_masks=None,
-            public_action_mask_contract_version=None,
-            simulator_action_mask_profile=step.simulator_action_mask_profile,
-            reward_contract_id=self.reward_contract_id,
-            reward_contract_digest=self.reward_contract_digest,
-            reward_contract_metadata=self.reward_contract_metadata,
-            previous_actions=self.adapter.history.previous_actions,
-            previous_rewards=self.adapter.history.previous_rewards,
-            episode_starts=self.adapter.history.episode_starts,
-        )
-
     @property
     def initial_tower_hp(self) -> torch.Tensor:
         """Episode-start Crown Tower hitpoints used by the reward contract."""

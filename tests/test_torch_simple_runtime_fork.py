@@ -232,15 +232,9 @@ def test_rollout_bridge_fork_preserves_history_rewards_and_continuation(
         device=source.device,
     )
     fork_noop = source_noop.index_select(0, rows)
-    for decision_index in range(5):
+    for _ in range(5):
         source_step = source.step(source_noop)
         fork_step = speculative.step(fork_noop)
-        if decision_index == 0:
-            _assert_repeated_tensors(
-                source.boundary_after(source_step),
-                source.observe(),
-                torch.arange(source.batch_size, device=source.device),
-            )
         _assert_repeated_runtime_rows(fork_runtime, source_runtime, rows)
         _assert_repeated_tensors(fork_step, source_step, rows)
 
