@@ -42,6 +42,80 @@ class CounterfactualTrial:
     digest: str
 
 
+def _has_marker_ancestor(event: Any, marker_name: str) -> bool:
+    current = event
+    while current is not None:
+        if getattr(current, "name", None) == marker_name:
+            return True
+        current = getattr(current, "cpu_parent", None)
+    return False
+
+
+def _cuda_profile(
+    args: argparse.Namespace,
+    collector: SimplePytorchTrainingCollector,
+    evaluator: Any,
+    candidates: torch.Tensor,
+    recurrent: dict[str, torch.Tensor],
+    *,
+    max_decisions: int,
+) -> dict[str, Any]:
+    if collector.collector.device.type != "cuda":
+        raise ValueError("CUDA profiling requires --device cuda")
+    marker = "simple_terminal_counterfactual"
+    torch.manual_seed(args.seed + 10_000)
+    torch.cuda.manual_seed_all(args.seed + 10_000)
+    _synchronize(collector.collector.device)
+    with (
+        torch.profiler.profile(
+            activities=(
+                torch.profiler.ProfilerActivity.CPU,
+                torch.profiler.ProfilerActivity.CUDA,
+            ),
+            record_shapes=False,
+            profile_memory=True,
+            with_stack=False,
+        ) as profile,
+        torch.profiler.record_function(marker),
+    ):
+        result = evaluator.evaluate(
+            collector.collector.bridge,
+            candidates,
+            learner_players=torch.zeros(
+                args.batch_size,
+                dtype=torch.int64,
+                device=collector.collector.device,
+            ),
+            recurrent_inputs=recurrent,
+            max_decisions=max_decisions,
+        )
+    events = list(profile.events())
+    marked_cpu = [event for event in events if _has_marker_ancestor(event, marker)]
+    names = [str(getattr(event, "name", "")).lower() for event in marked_cpu]
+    launches = sum(
+        "cudalaunchkernel" in name
+        or "cudalaunchcooperativekernel" in name
+        or "cudagraphlaunch" in name
+        for name in names
+    )
+    synchronizations = sum(
+        "cudastreamsynchronize" in name or "cudadevicesynchronize" in name
+        for name in names
+    )
+    dtoh = sum("dtoh" in str(getattr(event, "name", "")).lower() for event in events)
+    cuda_device_events = sum(
+        getattr(event, "device_type", None) == torch.autograd.DeviceType.CUDA
+        for event in events
+    )
+    return {
+        "host_launch_apis": launches,
+        "explicit_synchronizations": synchronizations,
+        "device_events": cuda_device_events,
+        "dtoh_events": dtoh,
+        "digest": _result_digest(result),
+    }
+
+
 def _synchronize(device: torch.device) -> None:
     if device.type == "cuda":
         torch.cuda.synchronize(device)
@@ -237,6 +311,7 @@ def main() -> None:
         default="reports/current_client_youtube_stable_vocabulary_v1.json",
     )
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--profile-cuda", action="store_true")
     args = parser.parse_args()
     if args.batch_size < 1 or args.candidate_count < 2:
         raise ValueError(
@@ -318,6 +393,15 @@ def main() -> None:
         },
         "trials": [asdict(trial) for trial in trials],
     }
+    if args.profile_cuda:
+        report["cuda_profile"] = _cuda_profile(
+            args,
+            collector,
+            evaluator,
+            candidates,
+            recurrent,
+            max_decisions=max_decisions,
+        )
     encoded = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.out is not None:
         args.out.parent.mkdir(parents=True, exist_ok=True)
