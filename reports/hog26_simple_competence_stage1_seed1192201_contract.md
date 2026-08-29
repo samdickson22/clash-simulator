@@ -2,8 +2,11 @@
 
 Date: 2026-08-29
 
-Status: prepared, not launched.  Launch only if the seed-1192101 long-sequence
-update-15 gameplay screen fails to beat the retained parent.
+Status: authorized after the seed-1192101 horizon-only run was rejected early.
+That run reached 0-46 across terminal training episodes and its added paired
+update-8 diagnostic regressed from parent 9-3 to challenger 7-5, including a
+balanced regression from 4-0 to 2-2.  This evidence superseded waiting for the
+original update-15 stop gate; no acceptance threshold was relaxed.
 
 ## Rationale
 
