@@ -18,6 +18,7 @@ sequence_batch_size=${SEQUENCE_BATCH_SIZE:-64}
 save_every=${SAVE_EVERY:-5}
 device=${DEVICE:-cuda}
 actor_device=${ACTOR_DEVICE:-$device}
+league_specs_file=${LEAGUE_SPECS_FILE:-}
 
 minimum_terminal_updates=$(((6000 + 8 * rollout_steps - 1) / (8 * rollout_steps)))
 if ((updates < minimum_terminal_updates)); then
@@ -44,40 +45,53 @@ done
 # One item per logical deck matchup. The collector duplicates every item onto
 # both physical seats, so opponent kind, opponent deck, and learner seat are
 # not confounded. Checkpoint rows are overridden to exact Hog 2.6 mirrors.
-league_specs=(
-  strategy:bridge-pressure
-  strategy:slow-push
-  random
-  strategy:spell-control
-  strategy:reactive-defense
-  "$frozen_parent"
-  strategy:balanced
-  strategy:split-lane
-  strategy:bridge-pressure
-  "$frozen_parent"
-  random
-  strategy:slow-push
-  strategy:balanced
-  strategy:spell-control
-  "$frozen_parent"
-  strategy:reactive-defense
-  strategy:split-lane
-  strategy:balanced
-  random
-  strategy:bridge-pressure
-  strategy:slow-push
-  strategy:balanced
-  strategy:spell-control
-  strategy:reactive-defense
-  strategy:split-lane
-  "$frozen_parent"
-  strategy:balanced
-  strategy:bridge-pressure
-  strategy:balanced
-  random
-  strategy:balanced
-  strategy:balanced
-)
+if [[ -n "$league_specs_file" ]]; then
+  [[ -f "$league_specs_file" ]] || {
+    echo "missing league schedule: $league_specs_file" >&2
+    exit 1
+  }
+  league_specs=()
+  while IFS= read -r spec; do
+    [[ -z "$spec" || "$spec" == \#* ]] && continue
+    [[ "$spec" == __FROZEN_PARENT__ ]] && spec=$frozen_parent
+    league_specs+=("$spec")
+  done < "$league_specs_file"
+else
+  league_specs=(
+    strategy:bridge-pressure
+    strategy:slow-push
+    random
+    strategy:spell-control
+    strategy:reactive-defense
+    "$frozen_parent"
+    strategy:balanced
+    strategy:split-lane
+    strategy:bridge-pressure
+    "$frozen_parent"
+    random
+    strategy:slow-push
+    strategy:balanced
+    strategy:spell-control
+    "$frozen_parent"
+    strategy:reactive-defense
+    strategy:split-lane
+    strategy:balanced
+    random
+    strategy:bridge-pressure
+    strategy:slow-push
+    strategy:balanced
+    strategy:spell-control
+    strategy:reactive-defense
+    strategy:split-lane
+    "$frozen_parent"
+    strategy:balanced
+    strategy:bridge-pressure
+    strategy:balanced
+    random
+    strategy:balanced
+    strategy:balanced
+  )
+fi
 if ((${#league_specs[@]} != num_envs / 2)); then
   echo "league schedule must contain one item per logical matchup" >&2
   exit 1
