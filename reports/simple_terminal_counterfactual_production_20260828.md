@@ -50,8 +50,8 @@ The tested workload is base plus five alternatives.
 
 ## Behavior gates
 
-- Full local Simple/RL surface after phase-root integration:
-  `439 passed, 263 skipped`.
+- Full exact-tip local Simple/RL surface after phase-root integration:
+  `441 passed, 263 skipped` in 537.05 seconds.
 - Focused H100 CUDA fork/evaluator/backend/mask/rollout/Graph surface:
   `65 passed, 8 platform skips`.
 - CPU and Apple MPS exact repeated-row continuation tests pass. The real
