@@ -6,6 +6,9 @@ simple_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 desktop_root=${DESKTOP_ROOT:-/Users/sam/Desktop/code/clasher}
 run_root=${RUN_ROOT:-$simple_root/checkpoints/hog26_simple_heterogeneous_long_seed1192001}
 report_root=${REPORT_ROOT:-$simple_root/reports/hog26_simple_heterogeneous_long_seed1192001/development_screens}
+failure_marker=${FAILURE_MARKER:-$simple_root/reports/hog26_simple_heterogeneous_long_seed1192001/FAILED}
+screen_seed_base=${SCREEN_SEED_BASE:-1192001}
+boundaries=${BOUNDARIES:-"65 130 255 385 512"}
 parent=${PARENT:-$desktop_root/checkpoints/hog26_u46x2_reactive_slow_spatial_seed1154001/candidate.pt}
 candidate_decks=${CANDIDATE_DECKS:-$desktop_root/training_decks/katacr_hog26_only.json}
 opponent_decks=${OPPONENT_DECKS:-$desktop_root/datasets/deck_curriculum_v3_seed1056101/heldout_action_value_screen_clean_seed1164811.json}
@@ -101,14 +104,13 @@ encoded = json.dumps(summary, indent=2, sort_keys=True) + "\n"
 PY
 }
 
-# The frozen trainer saves every five updates plus its final endpoint.  Use
-# exact persisted boundaries rather than waiting for nonexistent powers of two.
-for update in 65 130 255 385 512; do
+# Use exact persisted boundaries supplied by the frozen run contract.
+for update in $boundaries; do
   padded=$(printf '%06d' "$update")
   checkpoint="$run_root/policy_v2_update_${padded}.pt"
   out="$report_root/update_${padded}"
   while [[ ! -f "$checkpoint" ]]; do
-    if [[ -f "$simple_root/reports/hog26_simple_heterogeneous_long_seed1192001/FAILED" ]]; then
+    if [[ -f "$failure_marker" ]]; then
       echo "training failed before update $update" >&2
       exit 1
     fi
@@ -121,9 +123,9 @@ for update in 65 130 255 385 512; do
   for arm in parent candidate; do
     arm_checkpoint=$parent
     [[ "$arm" == candidate ]] && arm_checkpoint=$checkpoint
-    run_one "$arm_checkpoint" "$arm" balanced "$((1192001 + update * 10 + 1))" "$out"
-    run_one "$arm_checkpoint" "$arm" bridge-pressure "$((1192001 + update * 10 + 2))" "$out"
-    run_one "$arm_checkpoint" "$arm" random "$((1192001 + update * 10 + 3))" "$out"
+    run_one "$arm_checkpoint" "$arm" balanced "$((screen_seed_base + update * 10 + 1))" "$out"
+    run_one "$arm_checkpoint" "$arm" bridge-pressure "$((screen_seed_base + update * 10 + 2))" "$out"
+    run_one "$arm_checkpoint" "$arm" random "$((screen_seed_base + update * 10 + 3))" "$out"
   done
   summarize "$update" "$out"
   printf '%s\n' "hog26_simple_long_development_screen_update_${padded}_complete_v1" > "$out/COMPLETE"
