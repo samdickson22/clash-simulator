@@ -14,6 +14,7 @@ updates=${UPDATES:-120}
 seed=${SEED:-1164301}
 num_envs=${NUM_ENVS:-64}
 rollout_steps=${ROLLOUT_STEPS:-8}
+sequence_batch_size=${SEQUENCE_BATCH_SIZE:-64}
 device=${DEVICE:-cuda}
 actor_device=${ACTOR_DEVICE:-$device}
 
@@ -107,7 +108,7 @@ env PYTHONPATH=src:. OMP_NUM_THREADS=2 "$python_bin" \
   --action-type-entropy-coef 0.005 --location-entropy-coef 0.005 \
   --conditional-slot-entropy-coef 0.005 \
   --hand-aux-coef 0 --elixir-aux-coef 0 \
-  --epochs 2 --sequence-batch-size 64 --target-kl 0.03 \
+  --epochs 2 --sequence-batch-size "$sequence_batch_size" --target-kl 0.03 \
   --anchor-checkpoint "$initializer" --anchor-policy-kl-coef 0.1 \
   --save-every 5 --log-every 1 --no-lr-anneal --quiet-engine \
   2>&1 | tee "$report_root/train.log"
