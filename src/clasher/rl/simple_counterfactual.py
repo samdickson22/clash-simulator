@@ -319,6 +319,7 @@ class SimpleTerminalCounterfactualEvaluator:
         decision_count = torch.ones(
             self.bridge.batch_size, dtype=torch.int32, device=self.bridge.device
         )
+        observation = self.bridge.boundary_after(step)
 
         for decision_index in range(1, max_decisions):
             if (
@@ -327,7 +328,6 @@ class SimpleTerminalCounterfactualEvaluator:
                 and bool(done.all().item())
             ):
                 break
-            observation = self.bridge.observe()
             packet, mask_semantics = self._mask(
                 observation,
                 decision_index=decision_index,
@@ -368,6 +368,7 @@ class SimpleTerminalCounterfactualEvaluator:
             all_rows_admitted &= (~live) | step.all_rows_admitted
             winner = torch.where(live & step.done, step.winner, winner)
             done |= live & step.done
+            observation = self.bridge.boundary_after(step)
 
         invalid = torch.stack(
             (
