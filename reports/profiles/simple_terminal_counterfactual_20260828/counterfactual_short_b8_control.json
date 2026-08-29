@@ -1,0 +1,77 @@
+{
+  "batch_size": 8,
+  "candidate_count": 6,
+  "device": "cuda:0",
+  "execution_mode": "cuda-graph",
+  "max_decisions": 4,
+  "public_action_mask_contract_version": 2,
+  "public_action_mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+  "root_decisions": 0,
+  "schema_version": 1,
+  "scope": "real recurrent public-mask-v2 terminal counterfactuals",
+  "source_tick": 5968,
+  "summary": {
+    "digest": "65170ea8423cefca4a53539e1c4c54a8e8e6d09e4165f0072d485f04cf8e72e8",
+    "maximum_terminal_candidates_per_second": 29.037388291928988,
+    "median_terminal_candidates_per_second": 29.025246454455694,
+    "minimum_terminal_candidates_per_second": 24.0329713982351
+  },
+  "terminal_check_interval": 0,
+  "trials": [
+    {
+      "candidates_per_source": 6,
+      "continuation_decisions": 192,
+      "continuation_decisions_per_second": 96.1318855929404,
+      "digest": "65170ea8423cefca4a53539e1c4c54a8e8e6d09e4165f0072d485f04cf8e72e8",
+      "elapsed_seconds": 1.9972561530000803,
+      "native_ticks": 1536,
+      "native_ticks_per_second": 769.0550847435233,
+      "peak_allocated_bytes": 191027200,
+      "peak_reserved_bytes": 1065353216,
+      "repetition": 0,
+      "source_rows": 8,
+      "terminal_candidates": 48,
+      "terminal_candidates_per_second": 24.0329713982351
+    },
+    {
+      "candidates_per_source": 6,
+      "continuation_decisions": 192,
+      "continuation_decisions_per_second": 116.10098581782277,
+      "digest": "65170ea8423cefca4a53539e1c4c54a8e8e6d09e4165f0072d485f04cf8e72e8",
+      "elapsed_seconds": 1.6537327280000227,
+      "native_ticks": 1536,
+      "native_ticks_per_second": 928.8078865425822,
+      "peak_allocated_bytes": 191027200,
+      "peak_reserved_bytes": 1065353216,
+      "repetition": 1,
+      "source_rows": 8,
+      "terminal_candidates": 48,
+      "terminal_candidates_per_second": 29.025246454455694
+    },
+    {
+      "candidates_per_source": 6,
+      "continuation_decisions": 192,
+      "continuation_decisions_per_second": 116.14955316771595,
+      "digest": "65170ea8423cefca4a53539e1c4c54a8e8e6d09e4165f0072d485f04cf8e72e8",
+      "elapsed_seconds": 1.6530412279998927,
+      "native_ticks": 1536,
+      "native_ticks_per_second": 929.1964253417276,
+      "peak_allocated_bytes": 191027200,
+      "peak_reserved_bytes": 1067450368,
+      "repetition": 2,
+      "source_rows": 8,
+      "terminal_candidates": 48,
+      "terminal_candidates_per_second": 29.037388291928988
+    }
+  ],
+  "unique_candidate_counts": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6
+  ]
+}

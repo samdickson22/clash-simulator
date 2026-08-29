@@ -1,0 +1,40 @@
+{
+  "batch_size": 1,
+  "candidate_count": 6,
+  "device": "cuda:0",
+  "execution_mode": "cuda-graph",
+  "max_decisions": 734,
+  "public_action_mask_contract_version": 2,
+  "public_action_mask_semantics_id": "public-action-mask-v2/tensor-actor-projection-v2",
+  "root_decisions": 16,
+  "schema_version": 1,
+  "scope": "real recurrent public-mask-v2 terminal counterfactuals",
+  "source_tick": 128,
+  "summary": {
+    "digest": "37ce278fe8fc175f5b0670275c8ae4c48c09e0a1354c083a8a5ef806b4be50e9",
+    "maximum_terminal_candidates_per_second": 0.041597675019264736,
+    "median_terminal_candidates_per_second": 0.041597675019264736,
+    "minimum_terminal_candidates_per_second": 0.041597675019264736
+  },
+  "terminal_check_interval": 16,
+  "trials": [
+    {
+      "candidates_per_source": 6,
+      "continuation_decisions": 2604,
+      "continuation_decisions_per_second": 18.053390958360897,
+      "digest": "37ce278fe8fc175f5b0670275c8ae4c48c09e0a1354c083a8a5ef806b4be50e9",
+      "elapsed_seconds": 144.23883058899992,
+      "native_ticks": 20832,
+      "native_ticks_per_second": 144.42712766688717,
+      "peak_allocated_bytes": 55527424,
+      "peak_reserved_bytes": 197132288,
+      "repetition": 0,
+      "source_rows": 1,
+      "terminal_candidates": 6,
+      "terminal_candidates_per_second": 0.041597675019264736
+    }
+  ],
+  "unique_candidate_counts": [
+    1
+  ]
+}
