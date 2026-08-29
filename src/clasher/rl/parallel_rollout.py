@@ -85,6 +85,12 @@ def concatenate_rollouts(rollouts: Iterable[RolloutBatch]) -> RolloutBatch:
         values = [getattr(batch, field.name) for batch in batches]
         if isinstance(values[0], np.ndarray):
             payload[field.name] = np.concatenate(values, axis=0)
+        elif values[0] is None:
+            if any(value is not None for value in values):
+                raise ValueError(
+                    f"parallel rollout field {field.name} mixes absent and present data"
+                )
+            payload[field.name] = None
         else:
             payload[field.name] = sum(int(value) for value in values)
     return RolloutBatch(**payload)
