@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import fields, is_dataclass
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -165,6 +166,21 @@ def test_runtime_row_fork_fails_before_mutation_for_incompatible_authority() -> 
         incompatible.copy_rows_from_(source, torch.zeros(1, dtype=torch.int64))
 
     assert torch.equal(incompatible.state.tick, before)
+
+
+def test_runtime_row_fork_accepts_structural_graph_wrapper_source() -> None:
+    setup = _setup("cpu")
+    entity_lookup, hand_lookup = _typed_lookups(setup)
+    source = _runtime(setup, entity_lookup, hand_lookup, batch_size=1)
+    destination = _runtime(setup, entity_lookup, hand_lookup, batch_size=1)
+    source.state.tick.fill_(123)
+
+    destination.copy_rows_from_(
+        SimpleNamespace(runtime=source),
+        torch.zeros(1, dtype=torch.int64),
+    )
+
+    assert destination.state.tick.tolist() == [123]
 
 
 @pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))

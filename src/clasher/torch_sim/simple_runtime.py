@@ -928,7 +928,9 @@ class SimpleGymRuntime:
         """
 
         if not isinstance(source, SimpleGymRuntime):
-            raise TypeError("source must be a SimpleGymRuntime")
+            source = getattr(source, "runtime", None)
+        if not isinstance(source, SimpleGymRuntime):
+            raise TypeError("source must expose a SimpleGymRuntime")
         if source_rows.ndim != 1:
             raise ValueError("source_rows shape must be one-dimensional")
         if destination_rows is None:
