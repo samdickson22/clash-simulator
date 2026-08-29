@@ -6,7 +6,14 @@ import pytest
 import torch
 
 from clasher.data import CardDataLoader
-from clasher.rl.simple_counterfactual import SimpleTerminalCounterfactualEvaluator
+from clasher.rl.simple_counterfactual import (
+    COUNTERFACTUAL_PHASE_EARLY,
+    COUNTERFACTUAL_PHASE_LATE_REGULATION,
+    COUNTERFACTUAL_PHASE_OVERTIME,
+    COUNTERFACTUAL_PHASE_TRIPLE_ELIXIR,
+    SimpleCounterfactualRootBank,
+    SimpleTerminalCounterfactualEvaluator,
+)
 from clasher.rl.simple_tensor_collector import (
     SimplePublicActionMaskV2,
     SimpleTensorMaskRequest,
@@ -153,6 +160,9 @@ def test_six_way_counterfactual_fork_preserves_public_root_and_terminal_metrics(
     assert result.source_rows.tolist() == [0] * 6
     assert result.candidate_index.tolist() == list(range(6))
     assert torch.equal(result.first_actions, candidates.reshape(6, 2))
+    assert result.root_ticks.eq(0).all()
+    assert result.root_phase.eq(COUNTERFACTUAL_PHASE_EARLY).all()
+    assert not result.root_overtime.any()
     assert result.first_action_success.all()
     for descriptor in fields(result.root_actor):
         actual = getattr(result.root_actor, descriptor.name)
@@ -228,3 +238,60 @@ def test_counterfactual_continuation_freezes_early_terminal_rows() -> None:
     assert result.recurrent_inputs is not None
     assert result.recurrent_inputs["hidden"][first].eq(2.0).all()
     assert result.recurrent_inputs["hidden"][second].eq(3.0).all()
+
+
+def test_phase_scheduled_root_bank_preserves_late_match_state_and_recurrence() -> None:
+    source, bank_bridge = _runtimes("cpu", source_batch=1, candidate_count=5)
+    targets = torch.tensor((256, 2400, 3600, 4800, 5632), dtype=torch.int64)
+    bank = SimpleCounterfactualRootBank(
+        bank_bridge,
+        target_ticks=targets,
+        example_recurrent_inputs={
+            "hidden": torch.empty((5, 2, 2)),
+            "cell": torch.empty((5, 2, 2)),
+        },
+    )
+
+    for index, tick in enumerate(targets.tolist()):
+        source.runtime.state.tick.fill_(tick)
+        source.runtime.outcomes.overtime.fill_(tick >= 3600)
+        source.runtime._double_elixir.fill_(tick >= 2400)
+        source.runtime._triple_elixir.fill_(tick >= 4800)
+        recurrence = {
+            "hidden": torch.full((1, 2, 2), float(index)),
+            "cell": torch.full((1, 2, 2), float(index + 10)),
+        }
+        bank.capture_(
+            source,
+            source_rows=torch.zeros(1, dtype=torch.int64),
+            bank_rows=torch.tensor((index,), dtype=torch.int64),
+            recurrent_inputs=recurrence,
+        )
+
+    bank.require_complete()
+    assert torch.equal(bank.actual_ticks, targets)
+    assert bank.phase.tolist() == [
+        COUNTERFACTUAL_PHASE_EARLY,
+        COUNTERFACTUAL_PHASE_LATE_REGULATION,
+        COUNTERFACTUAL_PHASE_OVERTIME,
+        COUNTERFACTUAL_PHASE_TRIPLE_ELIXIR,
+        COUNTERFACTUAL_PHASE_TRIPLE_ELIXIR,
+    ]
+    assert bank.overtime.tolist() == [False, False, True, True, True]
+    assert torch.equal(bank.bridge.runtime.state.tick, targets)
+    assert bank.bridge.runtime._double_elixir.tolist() == [
+        False,
+        True,
+        True,
+        True,
+        True,
+    ]
+    assert bank.bridge.runtime._triple_elixir.tolist() == [
+        False,
+        False,
+        False,
+        True,
+        True,
+    ]
+    assert bank.recurrent_inputs["hidden"][:, 0, 0].tolist() == [0, 1, 2, 3, 4]
+    assert bank.recurrent_inputs["cell"][:, 0, 0].tolist() == [10, 11, 12, 13, 14]

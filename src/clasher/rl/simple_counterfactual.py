@@ -35,6 +35,141 @@ class SimpleCounterfactualError(RuntimeError):
     """Raised when a candidate batch cannot produce exact terminal labels."""
 
 
+COUNTERFACTUAL_PHASE_EARLY = 0
+COUNTERFACTUAL_PHASE_MID = 1
+COUNTERFACTUAL_PHASE_LATE_REGULATION = 2
+COUNTERFACTUAL_PHASE_OVERTIME = 3
+COUNTERFACTUAL_PHASE_TRIPLE_ELIXIR = 4
+
+
+def counterfactual_phase(
+    ticks: torch.Tensor,
+    overtime: torch.Tensor,
+) -> torch.Tensor:
+    """Return fixed public phase codes for exact decision-boundary states."""
+
+    if ticks.shape != overtime.shape or overtime.dtype != torch.bool:
+        raise ValueError("counterfactual phase inputs must share shape and be bool")
+    phase = torch.full_like(ticks, COUNTERFACTUAL_PHASE_EARLY, dtype=torch.int8)
+    phase = torch.where(
+        ticks >= 1_200,
+        torch.full_like(phase, COUNTERFACTUAL_PHASE_MID),
+        phase,
+    )
+    phase = torch.where(
+        ticks >= 2_400,
+        torch.full_like(phase, COUNTERFACTUAL_PHASE_LATE_REGULATION),
+        phase,
+    )
+    phase = torch.where(
+        overtime,
+        torch.full_like(phase, COUNTERFACTUAL_PHASE_OVERTIME),
+        phase,
+    )
+    return torch.where(
+        ticks >= 4_800,
+        torch.full_like(phase, COUNTERFACTUAL_PHASE_TRIPLE_ELIXIR),
+        phase,
+    )
+
+
+class SimpleCounterfactualRootBank:
+    """Resident heterogeneous roots captured against an explicit tick schedule."""
+
+    def __init__(
+        self,
+        bridge: SimpleGymRolloutBridge,
+        *,
+        target_ticks: torch.Tensor,
+        example_recurrent_inputs: Mapping[str, torch.Tensor],
+    ) -> None:
+        if target_ticks.shape != (bridge.batch_size,):
+            raise ValueError("target_ticks must have shape [root bank]")
+        if target_ticks.device != bridge.device or target_ticks.dtype != torch.int64:
+            raise ValueError("target_ticks must be int64 on the Gym device")
+        if bool(((target_ticks < 0) | (target_ticks >= 6_000)).any()):
+            raise ValueError("target ticks must be in [0, 6000)")
+        self.bridge = bridge
+        self.target_ticks = target_ticks.clone()
+        self.actual_ticks = torch.full_like(target_ticks, -1)
+        self.phase = torch.full_like(target_ticks, -1, dtype=torch.int8)
+        self.overtime = torch.zeros_like(target_ticks, dtype=torch.bool)
+        self.populated = torch.zeros_like(target_ticks, dtype=torch.bool)
+        self.recurrent_inputs: dict[str, torch.Tensor] = {}
+        for name, value in example_recurrent_inputs.items():
+            if value.ndim < 2 or value.shape[:2] != (bridge.batch_size, 2):
+                raise ValueError(
+                    f"root-bank recurrent input {name!r} must begin with [bank, 2]"
+                )
+            if value.device != bridge.device:
+                raise ValueError(
+                    f"root-bank recurrent input {name!r} must use the Gym device"
+                )
+            self.recurrent_inputs[name] = torch.empty_like(value)
+
+    def capture_(
+        self,
+        source: SimpleGymRolloutBridge,
+        *,
+        source_rows: torch.Tensor,
+        bank_rows: torch.Tensor,
+        recurrent_inputs: Mapping[str, torch.Tensor],
+    ) -> None:
+        """Capture selected live rows into distinct preallocated bank rows."""
+
+        if source_rows.shape != bank_rows.shape or source_rows.ndim != 1:
+            raise ValueError("source_rows and bank_rows must be matching vectors")
+        if (
+            source_rows.device != self.bridge.device
+            or bank_rows.device != self.bridge.device
+            or source_rows.dtype != torch.int64
+            or bank_rows.dtype != torch.int64
+        ):
+            raise ValueError("root-bank row selections must be int64 on the Gym device")
+        actual = source.runtime.state.tick.index_select(0, source_rows)
+        targets = self.target_ticks.index_select(0, bank_rows)
+        if bool((actual < targets).any().item()):
+            raise ValueError("source row has not reached its scheduled root tick")
+        if bool(
+            source.runtime.state.game_over.index_select(0, source_rows).any().item()
+        ):
+            raise ValueError("terminal source rows cannot populate a root bank")
+        if tuple(recurrent_inputs) != tuple(self.recurrent_inputs):
+            raise ValueError("root-bank recurrent state structure changed")
+
+        self.bridge.copy_rows_from_(
+            source,
+            source_rows,
+            destination_rows=bank_rows,
+        )
+        for name, destination in self.recurrent_inputs.items():
+            source_value = recurrent_inputs[name]
+            if source_value.shape[:2] != (source.batch_size, 2):
+                raise ValueError(
+                    f"source recurrent input {name!r} must begin with [source, 2]"
+                )
+            destination.index_copy_(
+                0,
+                bank_rows,
+                source_value.index_select(0, source_rows),
+            )
+        captured_overtime = source.runtime.outcomes.overtime.index_select(
+            0, source_rows
+        )
+        self.actual_ticks.index_copy_(0, bank_rows, actual)
+        self.overtime.index_copy_(0, bank_rows, captured_overtime)
+        self.phase.index_copy_(
+            0,
+            bank_rows,
+            counterfactual_phase(actual, captured_overtime),
+        )
+        self.populated.index_fill_(0, bank_rows, True)
+
+    def require_complete(self) -> None:
+        if not bool(self.populated.all().item()):
+            raise SimpleCounterfactualError("counterfactual root bank is incomplete")
+
+
 @dataclass(frozen=True)
 class SimpleTerminalCounterfactualBatch:
     """Terminal labels and exact public roots for a flattened candidate batch."""
@@ -42,6 +177,9 @@ class SimpleTerminalCounterfactualBatch:
     source_rows: torch.Tensor
     candidate_index: torch.Tensor
     learner_players: torch.Tensor
+    root_ticks: torch.Tensor
+    root_phase: torch.Tensor
+    root_overtime: torch.Tensor
     first_actions: torch.Tensor
     first_action_success: torch.Tensor
     root_actor: TensorPublicStructuredObservation
@@ -269,6 +407,8 @@ class SimpleTerminalCounterfactualEvaluator:
         ).repeat(source_batch)
         flat_actions = candidate_actions.reshape(self.bridge.batch_size, 2)
         flat_learner = learner_players.index_select(0, source_rows)
+        root_ticks = source.runtime.state.tick.index_select(0, source_rows)
+        root_overtime = source.runtime.outcomes.overtime.index_select(0, source_rows)
         current_recurrent: Mapping[str, torch.Tensor] | None = _fork_mapping(
             recurrent_inputs,
             source_rows,
@@ -407,6 +547,9 @@ class SimpleTerminalCounterfactualEvaluator:
             source_rows=source_rows,
             candidate_index=candidate_index,
             learner_players=flat_learner,
+            root_ticks=root_ticks,
+            root_phase=counterfactual_phase(root_ticks, root_overtime),
+            root_overtime=root_overtime,
             first_actions=flat_actions.clone(),
             first_action_success=first_action_success,
             root_actor=root_actor,
@@ -427,7 +570,14 @@ class SimpleTerminalCounterfactualEvaluator:
 
 
 __all__ = [
+    "COUNTERFACTUAL_PHASE_EARLY",
+    "COUNTERFACTUAL_PHASE_LATE_REGULATION",
+    "COUNTERFACTUAL_PHASE_MID",
+    "COUNTERFACTUAL_PHASE_OVERTIME",
+    "COUNTERFACTUAL_PHASE_TRIPLE_ELIXIR",
     "SimpleCounterfactualError",
+    "SimpleCounterfactualRootBank",
     "SimpleTerminalCounterfactualBatch",
     "SimpleTerminalCounterfactualEvaluator",
+    "counterfactual_phase",
 ]

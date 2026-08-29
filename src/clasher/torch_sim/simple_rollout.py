@@ -65,6 +65,7 @@ class SimpleGymRolloutRuntime(SimpleGymEngine, Protocol):
         self,
         source: Any,
         source_rows: torch.Tensor,
+        destination_rows: torch.Tensor | None = None,
     ) -> None: ...
 
 
@@ -214,11 +215,17 @@ class SimpleGymRolloutBridge:
         self,
         source: SimpleGymRolloutBridge,
         source_rows: torch.Tensor,
+        destination_rows: torch.Tensor | None = None,
     ) -> None:
         """Fork runtime state and recurrent-visible history from another bridge."""
 
-        if source_rows.shape != (self.batch_size,):
-            raise ValueError("source_rows must have shape [destination batch]")
+        if source_rows.ndim != 1:
+            raise ValueError("source_rows shape must be one-dimensional")
+        if destination_rows is None:
+            if source_rows.shape != (self.batch_size,):
+                raise ValueError("source_rows must have shape [destination batch]")
+        elif destination_rows.shape != source_rows.shape:
+            raise ValueError("source and destination row selections must match")
         if source_rows.device != self.device or source.device != self.device:
             raise ValueError("fork bridges and source_rows must share a device")
         if source_rows.dtype != torch.int64:
@@ -231,9 +238,13 @@ class SimpleGymRolloutBridge:
         ):
             raise ValueError("fork bridges must share rollout semantics")
 
-        self.runtime.copy_rows_from_(source.runtime, source_rows)
+        self.runtime.copy_rows_from_(
+            source.runtime,
+            source_rows,
+            destination_rows,
+        )
         source_history = source.adapter.history
-        self.adapter.history = SimpleGymHistory(
+        selected_history = SimpleGymHistory(
             previous_actions=source_history.previous_actions.index_select(
                 0, source_rows
             ),
@@ -242,10 +253,24 @@ class SimpleGymRolloutBridge:
             ),
             episode_starts=source_history.episode_starts.index_select(0, source_rows),
         )
-        self._initial_tower_hp.copy_(
-            source._initial_tower_hp.index_select(0, source_rows)
-        )
-        self.needs_reset.copy_(source.needs_reset.index_select(0, source_rows))
+        selected_hp = source._initial_tower_hp.index_select(0, source_rows)
+        selected_reset = source.needs_reset.index_select(0, source_rows)
+        if destination_rows is None:
+            self.adapter.history = selected_history
+            self._initial_tower_hp.copy_(selected_hp)
+            self.needs_reset.copy_(selected_reset)
+        else:
+            self.adapter.history.previous_actions.index_copy_(
+                0, destination_rows, selected_history.previous_actions
+            )
+            self.adapter.history.previous_rewards.index_copy_(
+                0, destination_rows, selected_history.previous_rewards
+            )
+            self.adapter.history.episode_starts.index_copy_(
+                0, destination_rows, selected_history.episode_starts
+            )
+            self._initial_tower_hp.index_copy_(0, destination_rows, selected_hp)
+            self.needs_reset.index_copy_(0, destination_rows, selected_reset)
 
     @staticmethod
     def _select_rows(

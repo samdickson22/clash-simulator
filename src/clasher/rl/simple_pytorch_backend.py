@@ -47,7 +47,10 @@ from clasher.torch_sim.simple_standard import (
 )
 
 from .model import ClasherPolicy, PolicyInputs
-from .simple_counterfactual import SimpleTerminalCounterfactualEvaluator
+from .simple_counterfactual import (
+    SimpleCounterfactualRootBank,
+    SimpleTerminalCounterfactualEvaluator,
+)
 from .simple_tensor_collector import (
     SIMPLE_TENSOR_ACTOR_SEMANTICS_ID,
     SIMPLE_TENSOR_BACKEND_ID,
@@ -785,6 +788,7 @@ class SimplePytorchTrainingCollector:
         self,
         candidate_count: int,
         *,
+        source_batch_size: int | None = None,
         terminal_check_interval: int = 0,
         strict_host_validation: bool = False,
     ) -> SimpleTerminalCounterfactualEvaluator:
@@ -792,8 +796,19 @@ class SimplePytorchTrainingCollector:
 
         if candidate_count < 1:
             raise ValueError("candidate_count must be positive")
+        source_batch = (
+            self.batch_size if source_batch_size is None else source_batch_size
+        )
+        if source_batch < 1 or source_batch % self.batch_size:
+            raise ValueError(
+                "counterfactual source batch must be a positive multiple of training batch"
+            )
+        roots_per_training_row = source_batch // self.batch_size
+        source_decks = tuple(
+            row for row in self._deck_rows for _ in range(roots_per_training_row)
+        )
         expanded_decks = tuple(
-            row for row in self._deck_rows for _ in range(candidate_count)
+            row for row in source_decks for _ in range(candidate_count)
         )
         runtime = self._setup.create_runtime(
             expanded_decks,
@@ -835,6 +850,59 @@ class SimplePytorchTrainingCollector:
             policy=self.policy,
             terminal_check_interval=terminal_check_interval,
             strict_host_validation=strict_host_validation,
+        )
+
+    def create_counterfactual_root_bank(
+        self,
+        target_ticks: tuple[int, ...],
+        *,
+        recurrent_inputs: Mapping[str, torch.Tensor],
+    ) -> SimpleCounterfactualRootBank:
+        """Create an actor-only resident bank for an explicit root schedule."""
+
+        if not target_ticks:
+            raise ValueError("counterfactual root schedule cannot be empty")
+        bank_batch = len(target_ticks)
+        if bank_batch % self.batch_size:
+            raise ValueError(
+                "root schedule size must be a multiple of the training batch"
+            )
+        roots_per_training_row = bank_batch // self.batch_size
+        deck_rows = tuple(
+            row for row in self._deck_rows for _ in range(roots_per_training_row)
+        )
+        runtime = self._setup.create_runtime(
+            deck_rows,
+            entity_token_lookup=self._entity_token_lookup,
+            hand_token_lookup=self._hand_token_lookup,
+            canonical_lane_globals=True,
+            max_entities=self._max_entities,
+            max_effects=self._max_effects,
+            include_privileged_critic=False,
+        )
+        reward = self.collector.bridge.reward_v2_config
+        if reward is None:
+            raise SimplePytorchBackendError(
+                "counterfactual root banks require the production reward contract"
+            )
+        bridge = SimpleGymRolloutBridge(
+            runtime,
+            decision_interval=self.collector.bridge.decision_interval,
+            reward_v2_config=reward,
+            strict_reset_check=False,
+        )
+        example_recurrent = {
+            name: value.repeat_interleave(roots_per_training_row, dim=0)
+            for name, value in recurrent_inputs.items()
+        }
+        return SimpleCounterfactualRootBank(
+            bridge,
+            target_ticks=torch.tensor(
+                target_ticks,
+                dtype=torch.int64,
+                device=bridge.device,
+            ),
+            example_recurrent_inputs=example_recurrent,
         )
 
     @property

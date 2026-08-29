@@ -190,13 +190,14 @@ class SimpleCudaGraphRunner:
         self,
         source: Any,
         source_rows: torch.Tensor,
+        destination_rows: torch.Tensor | None = None,
     ) -> None:
         """Load exact speculative rows without invalidating captured graphs."""
 
         origin = source.runtime if isinstance(source, SimpleCudaGraphRunner) else source
         if not isinstance(origin, SimpleGymRuntime):
             raise TypeError("source must be a Simple Gym runtime")
-        self.runtime.copy_rows_from_(origin, source_rows)
+        self.runtime.copy_rows_from_(origin, source_rows, destination_rows)
 
     def observe(self) -> SimpleProjectedObservation:
         """Project current state outside the graph without advancing it."""

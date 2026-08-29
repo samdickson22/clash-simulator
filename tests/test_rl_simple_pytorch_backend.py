@@ -231,6 +231,30 @@ def test_training_backend_builds_six_way_public_terminal_counterfactuals() -> No
     assert not result.fallback_rows.any()
 
 
+def test_training_backend_builds_explicit_phase_root_bank_and_scaled_evaluator() -> None:
+    collector = _training_collector()
+    hidden, cell = collector.policy.model.initial_state(2, device="cpu")
+    recurrent = {
+        "hidden": hidden.reshape(1, 2, -1),
+        "cell": cell.reshape(1, 2, -1),
+    }
+
+    bank = collector.create_counterfactual_root_bank(
+        (256, 3600),
+        recurrent_inputs=recurrent,
+    )
+    evaluator = collector.create_terminal_counterfactual_evaluator(
+        6,
+        source_batch_size=2,
+    )
+
+    assert bank.bridge.batch_size == 2
+    assert bank.target_ticks.tolist() == [256, 3600]
+    assert bank.bridge.observe().critic is None
+    assert evaluator.bridge.batch_size == 12
+    assert evaluator.bridge.observe().critic is None
+
+
 def test_cpu_coalesced_handoff_preserves_shapes_dtypes_and_values() -> None:
     source = {
         "float": torch.arange(24, dtype=torch.float32).reshape(2, 3, 4).transpose(0, 1),

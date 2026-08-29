@@ -912,14 +912,16 @@ class SimpleGymRuntime:
         self,
         source: Any,
         source_rows: torch.Tensor,
+        destination_rows: torch.Tensor | None = None,
     ) -> None:
         """Replace this runtime with exact selected rows from ``source``.
 
-        The destination runtime is a preallocated speculative arena.  It may
-        have a different batch size, but it must have been constructed from the
-        same immutable setup authority and with identical capacities.  Rows may
-        repeat, which expands one live battle into many independent candidate
-        continuations without materializing scalar simulators.
+        The destination runtime is a preallocated speculative arena. It must
+        have been constructed from the same immutable setup authority and with
+        identical capacities. With no ``destination_rows``, rows may repeat to
+        fill the complete destination batch. Explicit destination rows instead
+        populate a subset, allowing one resident bank to accumulate
+        heterogeneous roots captured at different match phases.
 
         This copies only retained episode state.  Policy recurrence and rollout
         history remain collector-owned and must be forked by their owner.
@@ -927,14 +929,30 @@ class SimpleGymRuntime:
 
         if not isinstance(source, SimpleGymRuntime):
             raise TypeError("source must be a SimpleGymRuntime")
-        if source_rows.shape != (self.batch_size,):
-            raise ValueError("source_rows must have shape [destination batch]")
+        if source_rows.ndim != 1:
+            raise ValueError("source_rows shape must be one-dimensional")
+        if destination_rows is None:
+            if source_rows.shape != (self.batch_size,):
+                raise ValueError("source_rows must have shape [destination batch]")
+        elif destination_rows.shape != source_rows.shape:
+            raise ValueError("source and destination row selections must match")
         if source_rows.device != self.device or source.device != self.device:
             raise ValueError("fork runtimes and source_rows must share a device")
         if source_rows.dtype != torch.int64:
             raise ValueError("source_rows must be int64")
         if bool(((source_rows < 0) | (source_rows >= source.batch_size)).any()):
             raise IndexError("source row is outside the source runtime")
+        if destination_rows is not None:
+            if destination_rows.device != self.device:
+                raise ValueError("destination_rows must use the runtime device")
+            if destination_rows.dtype != torch.int64:
+                raise ValueError("destination_rows must be int64")
+            if bool(
+                ((destination_rows < 0) | (destination_rows >= self.batch_size)).any()
+            ):
+                raise IndexError("destination row is outside the destination runtime")
+            if int(destination_rows.unique().numel()) != int(destination_rows.numel()):
+                raise ValueError("destination rows must be unique")
         immutable_pairs = (
             (self.action_kernel.catalog, source.action_kernel.catalog),
             (self.spawn_blueprints, source.spawn_blueprints),
@@ -982,7 +1000,11 @@ class SimpleGymRuntime:
         for group, destination_tensors in destination_groups.items():
             source_tensors = source_groups[group]
             for name, destination in destination_tensors.items():
-                destination.copy_(source_tensors[name].index_select(0, source_rows))
+                selected = source_tensors[name].index_select(0, source_rows)
+                if destination_rows is None:
+                    destination.copy_(selected)
+                else:
+                    destination.index_copy_(0, destination_rows, selected)
 
     @staticmethod
     def _restore_rows_(

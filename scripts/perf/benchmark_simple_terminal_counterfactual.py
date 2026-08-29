@@ -15,12 +15,16 @@ from typing import Any
 
 import torch
 
+from clasher.rl.counterfactual_schedule import phase_balanced_query_ticks
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.simple_pytorch_backend import (
     SimplePytorchTrainingCollector,
     load_current_client_typed_vocabulary,
 )
-from clasher.rl.simple_tensor_collector import SimpleTensorMaskRequest
+from clasher.rl.simple_tensor_collector import (
+    SimpleTensorMaskRequest,
+    SimpleTensorPolicyBoundary,
+)
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.torch_sim.actions import NO_OP_ACTION
 
@@ -58,6 +62,7 @@ def _cuda_profile(
     candidates: torch.Tensor,
     recurrent: dict[str, torch.Tensor],
     *,
+    source_bridge: Any,
     max_decisions: int,
 ) -> dict[str, Any]:
     if collector.collector.device.type != "cuda":
@@ -79,10 +84,10 @@ def _cuda_profile(
         torch.profiler.record_function(marker),
     ):
         result = evaluator.evaluate(
-            collector.collector.bridge,
+            source_bridge,
             candidates,
             learner_players=torch.zeros(
-                args.batch_size,
+                source_bridge.batch_size,
                 dtype=torch.int64,
                 device=collector.collector.device,
             ),
@@ -136,6 +141,9 @@ def _result_digest(result: Any) -> str:
         "source_rows",
         "candidate_index",
         "learner_players",
+        "root_ticks",
+        "root_phase",
+        "root_overtime",
         "first_actions",
         "first_action_success",
         "root_legal_masks",
@@ -197,12 +205,12 @@ def _collector(args: argparse.Namespace) -> SimplePytorchTrainingCollector:
 
 
 def _candidate_actions(
-    collector: SimplePytorchTrainingCollector,
+    bridge: Any,
+    public_mask_provider: Any,
     candidate_count: int,
 ) -> tuple[torch.Tensor, list[int]]:
-    bridge = collector.collector.bridge
     observation = bridge.observe()
-    packet = collector.collector.public_mask_provider(
+    packet = public_mask_provider(
         SimpleTensorMaskRequest(
             observation=observation,
             decision_index=0,
@@ -228,6 +236,89 @@ def _candidate_actions(
     return candidates, unique_counts
 
 
+def _phase_balanced_roots(
+    args: argparse.Namespace,
+    collector: SimplePytorchTrainingCollector,
+    recurrent: dict[str, torch.Tensor],
+) -> tuple[Any, dict[str, torch.Tensor], list[int]]:
+    if args.batch_size != 2:
+        raise ValueError("phase-balanced benchmark requires batch-size 2")
+    targets = phase_balanced_query_ticks(
+        minimum_tick=256,
+        max_ticks=6_000,
+        states_per_game=16,
+        decision_interval=args.decision_interval,
+        phase_boundaries=(3_600,),
+    )
+    bank = collector.create_counterfactual_root_bank(
+        targets,
+        recurrent_inputs=recurrent,
+    )
+    bridge = collector.collector.bridge
+    source_by_root: list[int] = []
+    current_recurrent: dict[str, torch.Tensor] = recurrent
+    target_index = 0
+    decision_index = 0
+    while target_index < len(targets):
+        tick = int(bridge.runtime.state.tick[0].item())
+        if tick >= targets[target_index]:
+            preferred = 0 if targets[target_index] < 3_600 else 1
+            source_row = (
+                1
+                if bool(bridge.runtime.state.game_over[preferred].item())
+                else preferred
+            )
+            bank.capture_(
+                bridge,
+                source_rows=torch.tensor(
+                    (source_row,), dtype=torch.int64, device=bridge.device
+                ),
+                bank_rows=torch.tensor(
+                    (target_index,), dtype=torch.int64, device=bridge.device
+                ),
+                recurrent_inputs=current_recurrent,
+            )
+            source_by_root.append(source_row)
+            target_index += 1
+            continue
+
+        observation = bridge.observe()
+        packet = collector.collector.public_mask_provider(
+            SimpleTensorMaskRequest(
+                observation=observation,
+                decision_index=decision_index,
+                bootstrap=False,
+            )
+        )
+        boundary = SimpleTensorPolicyBoundary(
+            actor=observation.actor,
+            critic=observation.critic,
+            legal_mask=observation.legal_mask,
+            public_action_masks=packet.masks,
+            previous_actions=observation.previous_actions,
+            previous_rewards=observation.previous_rewards,
+            episode_starts=observation.episode_starts,
+            recurrent_inputs=current_recurrent,
+            decision_index=decision_index,
+        )
+        policy_decision = collector.policy(boundary)
+        actions = policy_decision.actions.clone()
+        actions[1].fill_(NO_OP_ACTION)
+        bridge.step(
+            actions,
+            recurrent_inputs=current_recurrent,
+            public_action_masks=packet.masks,
+            public_action_mask_contract_version=packet.contract_version,
+            pre_action_boundary=observation,
+        )
+        if policy_decision.next_recurrent_inputs is None:
+            raise RuntimeError("phase-balanced source lost recurrent state")
+        current_recurrent = dict(policy_decision.next_recurrent_inputs)
+        decision_index += 1
+    bank.require_complete()
+    return bank, bank.recurrent_inputs, source_by_root
+
+
 def _trial(
     args: argparse.Namespace,
     collector: SimplePytorchTrainingCollector,
@@ -235,6 +326,7 @@ def _trial(
     candidates: torch.Tensor,
     recurrent: dict[str, torch.Tensor],
     *,
+    source_bridge: Any,
     repetition: int,
     max_decisions: int,
 ) -> CounterfactualTrial:
@@ -246,21 +338,23 @@ def _trial(
     _synchronize(device)
     started = time.perf_counter()
     result = evaluator.evaluate(
-        collector.collector.bridge,
+        source_bridge,
         candidates,
-        learner_players=torch.zeros(args.batch_size, dtype=torch.int64, device=device),
+        learner_players=torch.zeros(
+            source_bridge.batch_size, dtype=torch.int64, device=device
+        ),
         recurrent_inputs=recurrent,
         max_decisions=max_decisions,
     )
     _synchronize(device)
     elapsed = time.perf_counter() - started
-    terminal_candidates = args.batch_size * args.candidate_count
+    terminal_candidates = source_bridge.batch_size * args.candidate_count
     continuation_decisions = int(result.decision_count.sum().item())
     native_ticks = int(result.native_ticks.sum().item())
     return CounterfactualTrial(
         repetition=repetition,
         elapsed_seconds=elapsed,
-        source_rows=args.batch_size,
+        source_rows=source_bridge.batch_size,
         candidates_per_source=args.candidate_count,
         terminal_candidates=terminal_candidates,
         continuation_decisions=continuation_decisions,
@@ -285,8 +379,13 @@ def _trial(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", choices=("cpu", "cuda", "mps"), default="cpu")
-    parser.add_argument("--batch-size", type=int, default=1)
+    parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--candidate-count", type=int, default=6)
+    parser.add_argument(
+        "--query-schedule",
+        choices=("single-root", "phase-balanced"),
+        default="phase-balanced",
+    )
     parser.add_argument("--root-decisions", type=int, default=16)
     parser.add_argument(
         "--source-tick",
@@ -329,26 +428,47 @@ def main() -> None:
         "hidden": initial_hidden.reshape(args.batch_size, 2, -1),
         "cell": initial_cell.reshape(args.batch_size, 2, -1),
     }
-    if args.root_decisions:
-        root_batch = collector.collector.collect(
-            args.root_decisions,
-            recurrent_inputs=recurrent,
+    root_targets: list[int] = []
+    root_actual_ticks: list[int] = []
+    root_phases: list[int] = []
+    root_source_rows: list[int] = []
+    if args.query_schedule == "phase-balanced":
+        if args.source_tick is not None:
+            raise ValueError("phase-balanced schedule cannot override source tick")
+        bank, recurrent, root_source_rows = _phase_balanced_roots(
+            args,
+            collector,
+            recurrent,
         )
-        if root_batch.bootstrap.recurrent_inputs is None:
-            raise RuntimeError("root collection lost recurrent state")
-        recurrent = dict(root_batch.bootstrap.recurrent_inputs)
-    if args.source_tick is not None:
-        if not 0 <= args.source_tick < 6_000:
-            raise ValueError("source tick override must be in [0, 6000)")
-        collector.collector.bridge.runtime.state.tick.fill_(args.source_tick)
-    source_tick = int(collector.collector.bridge.runtime.state.tick.amin().item())
+        source_bridge = bank.bridge
+        root_targets = bank.target_ticks.tolist()
+        root_actual_ticks = bank.actual_ticks.tolist()
+        root_phases = bank.phase.tolist()
+    else:
+        if args.root_decisions:
+            root_batch = collector.collector.collect(
+                args.root_decisions,
+                recurrent_inputs=recurrent,
+            )
+            if root_batch.bootstrap.recurrent_inputs is None:
+                raise RuntimeError("root collection lost recurrent state")
+            recurrent = dict(root_batch.bootstrap.recurrent_inputs)
+        if args.source_tick is not None:
+            if not 0 <= args.source_tick < 6_000:
+                raise ValueError("source tick override must be in [0, 6000)")
+            collector.collector.bridge.runtime.state.tick.fill_(args.source_tick)
+        source_bridge = collector.collector.bridge
+    source_tick = int(source_bridge.runtime.state.tick.amin().item())
     remaining_ticks = max(1, 6_000 - source_tick)
     max_decisions = math.ceil(remaining_ticks / args.decision_interval)
     candidates, unique_candidate_counts = _candidate_actions(
-        collector, args.candidate_count
+        source_bridge,
+        collector.collector.public_mask_provider,
+        args.candidate_count,
     )
     evaluator = collector.create_terminal_counterfactual_evaluator(
         args.candidate_count,
+        source_batch_size=source_bridge.batch_size,
         terminal_check_interval=args.terminal_check_interval,
     )
 
@@ -359,6 +479,7 @@ def main() -> None:
             evaluator,
             candidates,
             recurrent,
+            source_bridge=source_bridge,
             repetition=repetition,
             max_decisions=max_decisions,
         )
@@ -379,9 +500,15 @@ def main() -> None:
         ],
         "public_action_mask_semantics_id": metadata["public_action_mask_semantics_id"],
         "batch_size": args.batch_size,
+        "root_count": source_bridge.batch_size,
         "candidate_count": args.candidate_count,
         "unique_candidate_counts": unique_candidate_counts,
         "root_decisions": args.root_decisions,
+        "query_schedule": args.query_schedule,
+        "root_target_ticks": root_targets,
+        "root_actual_ticks": root_actual_ticks,
+        "root_phases": root_phases,
+        "root_source_rows": root_source_rows,
         "source_tick": source_tick,
         "max_decisions": max_decisions,
         "terminal_check_interval": args.terminal_check_interval,
@@ -400,6 +527,7 @@ def main() -> None:
             evaluator,
             candidates,
             recurrent,
+            source_bridge=source_bridge,
             max_decisions=max_decisions,
         )
     encoded = json.dumps(report, indent=2, sort_keys=True) + "\n"
