@@ -319,6 +319,51 @@ def test_sampling_temperature_is_persisted_and_owned_by_learner_policy() -> None
         _training_collector(learner_sampling_temperature=0.0)
 
 
+def test_runtime_row_fanout_copies_every_mutable_group_and_stays_exact() -> None:
+    collector = _training_collector(batch_size=4, max_entities=48, max_effects=64)
+    runtime = collector.collector.bridge.runtime
+    runtime.state.tick.copy_(torch.tensor([7, 11, 13, 17], dtype=torch.int64))
+    runtime.action_state.elixir.copy_(
+        torch.tensor(
+            [[3.0, 4.0], [5.0, 6.0], [7.0, 8.0], [9.0, 10.0]],
+            dtype=runtime.action_state.elixir.dtype,
+        )
+    )
+
+    runtime.fanout_row_(2)
+    snapshot = runtime._capture_initial_templates()
+    for group in snapshot.values():
+        for tensor in group.values():
+            if tensor.shape and tensor.shape[0] == runtime.batch_size:
+                torch.testing.assert_close(
+                    tensor,
+                    tensor[:1].expand_as(tensor),
+                    rtol=0,
+                    atol=0,
+                )
+
+    actions = torch.full((4, 2), NO_OP_ACTION, dtype=torch.int64)
+    for _ in range(8):
+        step = runtime.step_tick(actions)
+        torch.testing.assert_close(
+            step.observation.actor.entity_features,
+            step.observation.actor.entity_features[:1].expand_as(
+                step.observation.actor.entity_features
+            ),
+            rtol=0,
+            atol=0,
+        )
+        torch.testing.assert_close(
+            step.reward,
+            step.reward[:1].expand_as(step.reward),
+            rtol=0,
+            atol=0,
+        )
+
+    with pytest.raises(IndexError, match="outside"):
+        runtime.fanout_row_(4)
+
+
 def test_tempered_rollout_log_probs_match_the_learner_distribution() -> None:
     temperature = 0.25
     collector = _training_collector(learner_sampling_temperature=temperature)

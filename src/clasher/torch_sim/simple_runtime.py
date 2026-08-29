@@ -907,6 +907,90 @@ class SimpleGymRuntime:
         )
         destination.copy_(torch.where(row_mask, template, destination))
 
+    def fanout_row_(self, source_row: int) -> None:
+        """Replace every live row with one exact mutable runtime snapshot.
+
+        Catalogs and other immutable authorities remain shared.  The mutable
+        tensor inventory is deliberately identical to selective reset's owned
+        groups, so counterfactual batches cannot silently omit a mechanic
+        sidecar or cached projection field.
+        """
+
+        if (
+            not isinstance(source_row, int)
+            or isinstance(source_row, bool)
+            or not 0 <= source_row < self.batch_size
+        ):
+            raise IndexError("source_row is outside the runtime batch")
+        objects = {
+            "state": self.state,
+            "action": self.action_state,
+            "effects": self.effects,
+            "travel": self.travel,
+            "travel_effects": self.travel_effects,
+            "death_effects": self.death_effects,
+            "triggered_events": self.triggered_events,
+            "triggered_effects": self.triggered_effects,
+            "death_bursts": self.death_bursts,
+            "payload_containers": self.payload_containers,
+            "positive_buff_areas": self.positive_buff_areas,
+            "positive_buffs": self.positive_buffs,
+            "lifecycle": self.lifecycle,
+            "modifiers": self.modifiers,
+            "damage_ramp": self.damage_ramp,
+            "rolling_spells": self.rolling_spells,
+            "navigation": self.combat.navigation.state,
+            "policy_mechanics": self.policy_mechanics,
+            "abilities": self.abilities,
+            "outcomes": self.outcomes,
+        }
+        if self.attack_locks is not None:
+            objects["attack_locks"] = self.attack_locks
+        if self.river_jumps is not None:
+            objects["river_jumps"] = self.river_jumps
+        if self.periodic_spawns is not None:
+            objects["periodic_spawns"] = self.periodic_spawns
+        if self.scheduled_casts is not None:
+            objects["scheduled_casts"] = self.scheduled_casts
+        for group, owner in objects.items():
+            for name in self._initial_templates[group]:
+                destination = getattr(owner, name)
+                destination.copy_(
+                    destination[source_row : source_row + 1].expand_as(destination)
+                )
+
+        runtime_destinations = {
+            "entity_status_kind": self.entity_status_kind,
+            "entity_status_ticks": self.entity_status_ticks,
+            "entity_slow_ticks": self.entity_slow_ticks,
+            "entity_attack_clock_fraction": self.entity_attack_clock_fraction,
+            "entity_kamikaze_ticks": self.entity_kamikaze_ticks,
+            "entity_kamikaze_windup_ticks": self.entity_kamikaze_windup_ticks,
+            "effect_consume_source_id": self.effect_consume_source_id,
+            "death_effect_consume_source_id": self.death_effect_consume_source_id,
+            "travel_effect_consume_source_id": self.travel_effect_consume_source_id,
+            "travel_spawned": self._travel_spawned,
+            "travel_interrupted": self._travel_interrupted,
+            "triggered_death_stable_id": self._triggered_death_stable_id,
+            "projection_hand_ids": self._projection_hand_ids,
+            "double_elixir": self._double_elixir,
+            "triple_elixir": self._triple_elixir,
+            "ability_cooldown": self._ability_cooldown,
+            "ability_duration": self._ability_duration,
+            "refill_cooldown_ms": self._refill_cooldown_ms,
+            "public_visibility": self.projector.inputs.public_visibility,
+            "combat_spawned_mask": self.combat.spawned_mask,
+            "combat_target_unavailable": self.combat._target_unavailable,
+            "entity_special": self._entity_special,
+            "entity_invisible": self._entity_invisible,
+            "entity_hidden": self._entity_hidden,
+        }
+        for name in self._initial_templates["runtime"]:
+            destination = runtime_destinations[name]
+            destination.copy_(
+                destination[source_row : source_row + 1].expand_as(destination)
+            )
+
     def reset_rows(
         self,
         reset_mask: torch.Tensor,
