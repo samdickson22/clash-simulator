@@ -236,6 +236,18 @@ def _candidate_actions(
     return candidates, unique_counts
 
 
+def _phase_source_row(bridge: Any, target_tick: int) -> int:
+    """Select the live source row whose clock can reach ``target_tick``."""
+    preferred = 0 if target_tick < 3_600 else 1
+    alternate = 1 - preferred
+    game_over = bridge.runtime.state.game_over
+    if not bool(game_over[preferred].item()):
+        return preferred
+    if not bool(game_over[alternate].item()):
+        return alternate
+    raise RuntimeError("phase-balanced source has no live row")
+
+
 def _phase_balanced_roots(
     args: argparse.Namespace,
     collector: SimplePytorchTrainingCollector,
@@ -260,14 +272,9 @@ def _phase_balanced_roots(
     target_index = 0
     decision_index = 0
     while target_index < len(targets):
-        tick = int(bridge.runtime.state.tick[0].item())
+        source_row = _phase_source_row(bridge, targets[target_index])
+        tick = int(bridge.runtime.state.tick[source_row].item())
         if tick >= targets[target_index]:
-            preferred = 0 if targets[target_index] < 3_600 else 1
-            source_row = (
-                1
-                if bool(bridge.runtime.state.game_over[preferred].item())
-                else preferred
-            )
             bank.capture_(
                 bridge,
                 source_rows=torch.tensor(

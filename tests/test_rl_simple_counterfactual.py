@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import fields, replace
+from types import SimpleNamespace
 
 import pytest
 import torch
@@ -25,6 +26,7 @@ from clasher.torch_sim.simple_outcomes import FastMatchRules
 from clasher.torch_sim.simple_reward_v2 import SimpleRewardV2Config
 from clasher.torch_sim.simple_rollout import SimpleGymRolloutBridge
 from clasher.torch_sim.simple_standard import compile_standard_simple_setup
+from scripts.perf.benchmark_simple_terminal_counterfactual import _phase_source_row
 
 
 class _ExactMaskProvider:
@@ -295,3 +297,21 @@ def test_phase_scheduled_root_bank_preserves_late_match_state_and_recurrence() -
     ]
     assert bank.recurrent_inputs["hidden"][:, 0, 0].tolist() == [0, 1, 2, 3, 4]
     assert bank.recurrent_inputs["cell"][:, 0, 0].tolist() == [10, 11, 12, 13, 14]
+
+
+def test_phase_source_row_uses_a_live_clock_after_early_terminal() -> None:
+    bridge = SimpleNamespace(
+        runtime=SimpleNamespace(
+            state=SimpleNamespace(
+                game_over=torch.tensor((True, False)),
+                tick=torch.tensor((2_360, 4_192)),
+            )
+        )
+    )
+
+    assert _phase_source_row(bridge, 3_120) == 1
+    assert _phase_source_row(bridge, 4_192) == 1
+
+    bridge.runtime.state.game_over[1] = True
+    with pytest.raises(RuntimeError, match="no live row"):
+        _phase_source_row(bridge, 4_552)
