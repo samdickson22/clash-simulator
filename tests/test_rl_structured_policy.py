@@ -1,11 +1,12 @@
 from collections import deque
 
 import numpy as np
+import pytest
 import torch
 
 from clasher.arena import Position
 from clasher.battle import BattleState
-from clasher.rl.model import ClasherPolicy, PolicyConfig, PolicyInputs
+from clasher.rl.model import ClasherPolicy, PolicyConfig, PolicyInputs, PolicyOutput
 from clasher.rl.parallel_rollout import concatenate_rollouts
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
 from clasher.rl.structured_obs import StructuredObservationBuilder
@@ -90,6 +91,56 @@ def test_hierarchical_joint_distribution_is_legal_and_not_tile_count_biased():
     no_op = probabilities[..., 2304]
     torch.testing.assert_close(slot_zero, slot_one)
     torch.testing.assert_close(slot_zero, no_op)
+
+
+def test_policy_temperature_concentrates_behavior_and_preserves_default() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    model = _tiny_model(builder)
+    type_logits = torch.tensor([[[0.0, 0.0, 0.0, 0.0, 0.5, -2.0]]])
+    location_logits = torch.zeros((1, 1, 4, 576))
+    mask = torch.zeros((1, 1, 2306), dtype=torch.bool)
+    mask[..., 0] = True
+    mask[..., 576] = True
+    mask[..., 1152] = True
+    mask[..., 1728] = True
+    mask[..., 2304] = True
+    output = PolicyOutput(
+        joint_logits=model._joint_action_logits(type_logits, location_logits, mask),
+        values=torch.zeros((1, 1)),
+        opponent_hand_logits=torch.zeros((1, 1, builder.spec.num_tokens)),
+        opponent_elixir=torch.zeros((1, 1)),
+        next_state=(torch.zeros((1, 1)), torch.zeros((1, 1))),
+        action_type_logits=type_logits,
+        location_logits=location_logits,
+        deterministic_timing_logits=torch.tensor(
+            [[[2.0, 2.0, 2.0, 2.0, 0.5, -2.0]]]
+        ),
+    )
+
+    default = output.distribution()
+    unit = output.distribution(temperature=1.0)
+    cold = output.distribution(temperature=0.25)
+    forced_play = output.distribution(
+        temperature=0.25,
+        force_play=torch.ones((1, 1), dtype=torch.bool),
+    )
+    forced_wait = output.distribution(
+        temperature=0.25,
+        force_play=torch.zeros((1, 1), dtype=torch.bool),
+    )
+    torch.testing.assert_close(default.probs, unit.probs)
+    assert cold.probs[..., :2304].sum().item() > unit.probs[..., :2304].sum().item()
+    assert cold.probs[..., 2304].item() < unit.probs[..., 2304].item()
+    torch.testing.assert_close(
+        forced_play.probs[..., :2304].sum(), torch.tensor(1.0)
+    )
+    torch.testing.assert_close(
+        forced_wait.probs[..., 2304:].sum(), torch.tensor(1.0)
+    )
+    assert forced_play.probs[..., 2304:].count_nonzero().item() == 0
+    assert forced_wait.probs[..., :2304].count_nonzero().item() == 0
+    with pytest.raises(ValueError, match="finite and positive"):
+        output.distribution(temperature=0.0)
 
 
 def test_recurrent_state_resets_inside_a_sequence():

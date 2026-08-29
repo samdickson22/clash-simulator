@@ -4,6 +4,7 @@ import argparse
 import atexit
 import hashlib
 import json
+import math
 import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
@@ -1260,13 +1261,18 @@ def parameter_anchor_l2(
 
 
 def policy_anchor_kl(
-    current_joint_logits: Tensor, anchor_joint_logits: Tensor
+    current_joint_logits: Tensor,
+    anchor_joint_logits: Tensor,
+    *,
+    temperature: float = 1.0,
 ) -> Tensor:
     """Mean forward KL from a frozen anchor policy to the current policy."""
     if current_joint_logits.shape != anchor_joint_logits.shape:
         raise ValueError("anchor and current policy logits must have matching shapes")
-    current_log_prob = torch.log_softmax(current_joint_logits, dim=-1)
-    anchor_log_prob = torch.log_softmax(anchor_joint_logits, dim=-1)
+    if not math.isfinite(temperature) or temperature <= 0.0:
+        raise ValueError("policy temperature must be finite and positive")
+    current_log_prob = torch.log_softmax(current_joint_logits / temperature, dim=-1)
+    anchor_log_prob = torch.log_softmax(anchor_joint_logits / temperature, dim=-1)
     anchor_prob = anchor_log_prob.exp()
     return (anchor_prob * (anchor_log_prob - current_log_prob)).sum(dim=-1).mean()
 
@@ -1477,6 +1483,7 @@ def ppo_update(
     hand_aux_coef: float,
     elixir_aux_coef: float,
     target_kl: float,
+    sampling_temperature: float = 1.0,
     action_type_entropy_coef: float | None = None,
     location_entropy_coef: float | None = None,
     conditional_slot_entropy_coef: float = 0.0,
@@ -1503,6 +1510,8 @@ def ppo_update(
     anchor_rehearsal_coef: float = 0.0,
     anchor_rehearsal_batch_sequences: int = 1,
 ) -> dict[str, float]:
+    if not math.isfinite(sampling_temperature) or sampling_temperature <= 0.0:
+        raise ValueError("sampling temperature must be finite and positive")
     model.train()
     normalized_advantages = (advantages - float(advantages.mean())) / (
         float(advantages.std()) + 1e-8
@@ -1594,7 +1603,17 @@ def ppo_update(
                 all_initial_cell.index_select(0, index_tensor),
             )
             output = model(inputs, initial_state)
-            distribution = output.distribution()
+            force_play: Tensor | None = None
+            if model.config.play_hazard_enabled:
+                force_play, _stored_hazard = model._play_hazard_force_gate(
+                    output,
+                    inputs.action_mask,
+                    initial_state[0][:, -1],
+                )
+            distribution = output.distribution(
+                temperature=sampling_temperature,
+                force_play=force_play,
+            )
             actions = all_actions.index_select(0, index_tensor)
             old_log_prob = all_old_log_prob.index_select(0, index_tensor)
             old_values = all_old_values.index_select(0, index_tensor)
@@ -1616,10 +1635,16 @@ def ppo_update(
                 0.5 * torch.maximum(value_loss_unclipped, value_loss_clipped).mean()
             )
             entropy = distribution.entropy().mean()
-            action_type_entropy, location_entropy = output.entropy_components()
+            action_type_entropy, location_entropy = output.entropy_components(
+                temperature=sampling_temperature,
+                force_play=force_play,
+            )
             action_type_entropy = action_type_entropy.mean()
             location_entropy = location_entropy.mean()
-            conditional_slot_entropy = output.conditional_slot_entropy().mean()
+            conditional_slot_entropy = output.conditional_slot_entropy(
+                temperature=sampling_temperature,
+                force_play=force_play,
+            ).mean()
 
             assert inputs.critic_card_ids is not None
             assert inputs.critic_global_features is not None
@@ -1666,8 +1691,22 @@ def ppo_update(
             else:
                 with torch.no_grad():
                     anchor_output = anchor_model(inputs, initial_state)
+                    anchor_force_play: Tensor | None = None
+                    if anchor_model.config.play_hazard_enabled:
+                        anchor_force_play, _anchor_stored_hazard = (
+                            anchor_model._play_hazard_force_gate(
+                                anchor_output,
+                                inputs.action_mask,
+                                initial_state[0][:, -1],
+                            )
+                        )
+                    anchor_distribution = anchor_output.distribution(
+                        temperature=sampling_temperature,
+                        force_play=anchor_force_play,
+                    )
                 anchor_policy_kl = policy_anchor_kl(
-                    output.joint_logits, anchor_output.joint_logits
+                    distribution.logits,
+                    anchor_distribution.logits,
                 )
             anchor_policy_kl_loss = anchor_policy_kl_coef * anchor_policy_kl
             if rehearsal is None:
@@ -1933,6 +1972,15 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=128,
         help="fresh Simple Gym persistent-effect capacity; persisted in checkpoints",
+    )
+    parser.add_argument(
+        "--simple-learner-sampling-temperature",
+        type=float,
+        default=1.0,
+        help=(
+            "stochastic learner-policy temperature for Simple Gym collection and "
+            "the matching PPO behavior distribution"
+        ),
     )
     parser.add_argument(
         "--simple-learner-deck-name",
@@ -2597,7 +2645,18 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
     """Fail before side effects unless the fresh dense-Gym contract is exact."""
 
     if args.simulation_backend != "simple-pytorch":
+        if args.simple_learner_sampling_temperature != 1.0:
+            raise ValueError(
+                "--simple-learner-sampling-temperature requires simple-pytorch"
+            )
         return
+    if (
+        not math.isfinite(args.simple_learner_sampling_temperature)
+        or args.simple_learner_sampling_temperature <= 0.0
+    ):
+        raise ValueError(
+            "--simple-learner-sampling-temperature must be finite and positive"
+        )
     if args.actor_workers != 1:
         raise ValueError("simple-pytorch requires --actor-workers 1")
     if args.simple_max_entities < 16:
@@ -3604,6 +3663,9 @@ def main() -> None:
             learner_teacher_balanced_config=(
                 learner_teacher_balanced_config
             ),
+            learner_sampling_temperature=(
+                args.simple_learner_sampling_temperature
+            ),
             max_effects=args.simple_max_effects,
         )
         simulation_backend_metadata = simple_collector.checkpoint_metadata()
@@ -4015,6 +4077,9 @@ def main() -> None:
             hand_aux_coef=args.hand_aux_coef,
             elixir_aux_coef=args.elixir_aux_coef,
             target_kl=args.target_kl,
+            sampling_temperature=(
+                args.simple_learner_sampling_temperature
+            ),
         )
         update_seconds = time.perf_counter() - update_start
         sync_start = time.perf_counter()

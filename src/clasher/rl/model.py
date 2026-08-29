@@ -281,17 +281,166 @@ class PolicyOutput:
     deterministic_timing_logits: Tensor | None = None
     play_hazard_logits: Tensor | None = None
 
-    def distribution(self) -> Categorical:
-        return Categorical(logits=self.joint_logits)
+    def distribution(
+        self,
+        *,
+        temperature: float = 1.0,
+        force_play: Tensor | None = None,
+    ) -> Categorical:
+        if not math.isfinite(temperature) or temperature <= 0.0:
+            raise ValueError("policy temperature must be finite and positive")
+        if force_play is not None:
+            if force_play.shape != self.joint_logits.shape[:-1]:
+                raise ValueError("play gate must match policy batch and sequence")
+            placement_mask = self.joint_logits[
+                ..., : NUM_HAND_SLOTS * NUM_TILES
+            ].reshape(
+                *self.joint_logits.shape[:-1], NUM_HAND_SLOTS, NUM_TILES
+            ) > -1e8
+            slot_mask = placement_mask.any(dim=-1)
+            special_mask = self.joint_logits[
+                ..., NUM_HAND_SLOTS * NUM_TILES :
+            ] > -1e8
+            timing_logits = (
+                self.action_type_logits
+                if self.deterministic_timing_logits is None
+                else self.deterministic_timing_logits
+            )
+            slot_log_prob = torch.log_softmax(
+                (
+                    self.action_type_logits[..., :NUM_HAND_SLOTS] / temperature
+                ).masked_fill(~slot_mask, -1e9),
+                dim=-1,
+            ).masked_fill(~slot_mask, -1e9)
+            location_log_prob = torch.log_softmax(
+                (self.location_logits / temperature).masked_fill(
+                    ~placement_mask, -1e9
+                ),
+                dim=-1,
+            ).masked_fill(~placement_mask, -1e9)
+            special_log_prob = torch.log_softmax(
+                (timing_logits[..., NUM_HAND_SLOTS:] / temperature).masked_fill(
+                    ~special_mask, -1e9
+                ),
+                dim=-1,
+            ).masked_fill(~special_mask, -1e9)
+            placement_log_prob = slot_log_prob.unsqueeze(-1) + location_log_prob
+            gated_logits = torch.cat(
+                [
+                    placement_log_prob.reshape(
+                        *self.joint_logits.shape[:-1], -1
+                    ),
+                    special_log_prob,
+                ],
+                dim=-1,
+            )
+            gated_mask = torch.where(
+                force_play.unsqueeze(-1),
+                torch.cat(
+                    [
+                        placement_mask.reshape(
+                            *self.joint_logits.shape[:-1], -1
+                        ),
+                        torch.zeros_like(special_mask),
+                    ],
+                    dim=-1,
+                ),
+                torch.cat(
+                    [
+                        torch.zeros_like(
+                            placement_mask.reshape(
+                                *self.joint_logits.shape[:-1], -1
+                            )
+                        ),
+                        special_mask,
+                    ],
+                    dim=-1,
+                ),
+            )
+            return Categorical(logits=gated_logits.masked_fill(~gated_mask, -1e9))
+        if temperature == 1.0:
+            return Categorical(logits=self.joint_logits)
 
-    def entropy_components(self) -> tuple[Tensor, Tensor]:
+        # The joint policy is factorized as mode (play/wait/ability), card slot
+        # conditional on play, and tile conditional on the slot.  Cooling the
+        # already-flattened logits biases play probability by the number and
+        # entropy of legal tiles.  Temper each factor independently instead so
+        # temperature 1 preserves the exact historical distribution and the
+        # zero-temperature limit agrees with hierarchical deterministic decode.
+        placement_mask = self.joint_logits[
+            ..., : NUM_HAND_SLOTS * NUM_TILES
+        ].reshape(*self.joint_logits.shape[:-1], NUM_HAND_SLOTS, NUM_TILES) > -1e8
+        slot_mask = placement_mask.any(dim=-1)
+        special_mask = self.joint_logits[
+            ..., NUM_HAND_SLOTS * NUM_TILES :
+        ] > -1e8
+        type_mask = torch.cat([slot_mask, special_mask], dim=-1)
+        timing_logits = (
+            self.action_type_logits
+            if self.deterministic_timing_logits is None
+            else self.deterministic_timing_logits
+        )
+        masked_timing_logits = timing_logits.masked_fill(~type_mask, -1e9)
+        play_logit = torch.logsumexp(
+            masked_timing_logits[..., :NUM_HAND_SLOTS], dim=-1, keepdim=True
+        )
+        mode_logits = torch.cat(
+            [play_logit, masked_timing_logits[..., NUM_HAND_SLOTS:]], dim=-1
+        )
+        mode_mask = torch.cat(
+            [slot_mask.any(dim=-1, keepdim=True), special_mask], dim=-1
+        )
+        mode_log_prob = torch.log_softmax(
+            (mode_logits / temperature).masked_fill(~mode_mask, -1e9), dim=-1
+        ).masked_fill(~mode_mask, -1e9)
+        slot_log_prob = torch.log_softmax(
+            (
+                self.action_type_logits[..., :NUM_HAND_SLOTS] / temperature
+            ).masked_fill(~slot_mask, -1e9),
+            dim=-1,
+        ).masked_fill(~slot_mask, -1e9)
+        location_log_prob = torch.log_softmax(
+            (self.location_logits / temperature).masked_fill(
+                ~placement_mask, -1e9
+            ),
+            dim=-1,
+        ).masked_fill(~placement_mask, -1e9)
+        placement_log_prob = (
+            mode_log_prob[..., :1].unsqueeze(-1)
+            + slot_log_prob.unsqueeze(-1)
+            + location_log_prob
+        )
+        joint_log_prob = torch.cat(
+            [
+                placement_log_prob.reshape(*self.joint_logits.shape[:-1], -1),
+                mode_log_prob[..., 1:],
+            ],
+            dim=-1,
+        )
+        joint_mask = torch.cat(
+            [
+                placement_mask.reshape(*self.joint_logits.shape[:-1], -1),
+                special_mask,
+            ],
+            dim=-1,
+        )
+        return Categorical(logits=joint_log_prob.masked_fill(~joint_mask, -1e9))
+
+    def entropy_components(
+        self,
+        *,
+        temperature: float = 1.0,
+        force_play: Tensor | None = None,
+    ) -> tuple[Tensor, Tensor]:
         """Return action-type and conditional-placement entropy separately.
 
         The two components sum to the entropy of the flattened joint action
         distribution.  Keeping them separate lets training encourage choosing
         among cards/wait/ability without necessarily making placement noisier.
         """
-        distribution = self.distribution()
+        distribution = self.distribution(
+            temperature=temperature, force_play=force_play
+        )
         joint_probabilities = distribution.probs
         joint_log_probabilities = distribution.logits
         placement_probabilities = joint_probabilities[
@@ -310,7 +459,12 @@ class PolicyOutput:
         location_entropy = joint_entropy - type_entropy
         return type_entropy, location_entropy
 
-    def conditional_slot_entropy(self) -> Tensor:
+    def conditional_slot_entropy(
+        self,
+        *,
+        temperature: float = 1.0,
+        force_play: Tensor | None = None,
+    ) -> Tensor:
         """Return card-slot entropy conditional on choosing a placement action.
 
         Normalizing away total placement probability makes this independent of
@@ -318,7 +472,9 @@ class PolicyOutput:
         the joint action mask; states with fewer than two playable slots return
         zero without producing NaNs.
         """
-        joint_probabilities = self.distribution().probs
+        joint_probabilities = self.distribution(
+            temperature=temperature, force_play=force_play
+        ).probs
         placement_probabilities = joint_probabilities[
             ..., : NUM_HAND_SLOTS * NUM_TILES
         ].reshape(*joint_probabilities.shape[:-1], NUM_HAND_SLOTS, NUM_TILES)
@@ -2455,9 +2611,9 @@ class ClasherPolicy(nn.Module):
         state: tuple[Tensor, Tensor] | None = None,
         *,
         deterministic: bool = False,
+        sampling_temperature: float = 1.0,
     ) -> tuple[Tensor, Tensor, Tensor, tuple[Tensor, Tensor], PolicyOutput]:
         output = self.forward(inputs, state)
-        distribution = output.distribution()
         hazard_gate: Tensor | None = None
         stored_hazard: Tensor | None = None
         if self.config.play_hazard_enabled:
@@ -2467,6 +2623,10 @@ class ClasherPolicy(nn.Module):
                 inputs.action_mask,
                 previous_hazard,
             )
+        distribution = output.distribution(
+            temperature=sampling_temperature,
+            force_play=hazard_gate,
+        )
         if deterministic:
             actions = self._deterministic_actions(
                 output,

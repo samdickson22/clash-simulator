@@ -39,9 +39,12 @@ from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rl.train_recurrent import (
     RolloutBatch,
     _load_initial_policy_state,
+    _sequence_inputs,
     _validate_simple_initial_policy_contract,
     _validate_simple_pytorch_args,
+    compute_gae,
     online_strategy_teacher_loss,
+    ppo_update,
 )
 from clasher.torch_sim.actions import ABILITY_ACTION, NO_OP_ACTION
 from clasher.torch_sim.resident_outputs import TensorPublicStructuredObservation
@@ -80,6 +83,7 @@ def _simple_args(**overrides: object) -> Namespace:
         "defense_scenario_probability": 0.0,
         "simple_max_entities": 128,
         "simple_max_effects": 128,
+        "simple_learner_sampling_temperature": 1.0,
         "simple_checkpoint_opponent_deck_name": None,
         "online_strategy_teacher": None,
         "online_strategy_teacher_balanced_config": None,
@@ -203,6 +207,8 @@ def _training_collector(
     checkpoint_opponent_deck_name: str | None = None,
     learner_teacher_strategy: str | None = None,
     learner_teacher_balanced_config: BalancedStrategyConfig | None = None,
+    learner_sampling_temperature: float = 1.0,
+    play_hazard_enabled: bool = False,
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -227,6 +233,10 @@ def _training_collector(
         critic_layers=1,
         memory_size=32,
         dropout=0.0,
+        memory_kind=("structured" if play_hazard_enabled else "lstm"),
+        hierarchical_mode_gate_enabled=play_hazard_enabled,
+        play_hazard_enabled=play_hazard_enabled,
+        deterministic_hierarchy=("hazard" if play_hazard_enabled else "slot"),
         actor_observation_domain=actor_observation_domain,
         public_observation_confidence=(
             actor_observation_domain in {"causal-frame-v1", "causal-vision-v1"}
@@ -267,6 +277,7 @@ def _training_collector(
         checkpoint_opponent_deck_name=checkpoint_opponent_deck_name,
         learner_teacher_strategy=learner_teacher_strategy,
         learner_teacher_balanced_config=learner_teacher_balanced_config,
+        learner_sampling_temperature=learner_sampling_temperature,
         max_effects=max_effects,
         _execution_mode_override=execution_mode,
     )
@@ -293,6 +304,121 @@ def test_capacity_is_explicit_in_shapes_and_checkpoint_contract(
     metadata = collector.checkpoint_metadata()
     assert metadata["max_entities"] == 48
     assert metadata["max_effects"] == 64
+
+
+def test_sampling_temperature_is_persisted_and_owned_by_learner_policy() -> None:
+    collector = _training_collector(learner_sampling_temperature=0.25)
+
+    assert collector.policy.sampling_temperature == pytest.approx(0.25)
+    assert collector.checkpoint_metadata()[
+        "learner_sampling_temperature"
+    ] == pytest.approx(0.25)
+
+    with pytest.raises(SimplePytorchBackendError, match="finite and positive"):
+        _training_collector(learner_sampling_temperature=0.0)
+
+
+def test_tempered_rollout_log_probs_match_the_learner_distribution() -> None:
+    temperature = 0.25
+    collector = _training_collector(learner_sampling_temperature=temperature)
+    model = collector.policy.model.eval()
+    arrays, *_rest = collector.collect(
+        2, model.initial_state(2, device="cpu")
+    )
+    rollout = RolloutBatch(**arrays)
+    inputs = _sequence_inputs(rollout, slice(None), torch.device("cpu"))
+    state = (
+        torch.as_tensor(rollout.initial_hidden),
+        torch.as_tensor(rollout.initial_cell),
+    )
+
+    with torch.no_grad():
+        output = model(inputs, state)
+        expected = output.distribution(temperature=temperature).log_prob(
+            torch.as_tensor(rollout.actions)
+        )
+
+    torch.testing.assert_close(
+        expected,
+        torch.as_tensor(rollout.old_log_probs),
+        rtol=1e-6,
+        atol=1e-6,
+    )
+    advantages, returns = compute_gae(rollout, gamma=0.995, gae_lambda=0.95)
+    stats = ppo_update(
+        model=model,
+        optimizer=torch.optim.Adam(model.parameters(), lr=0.0),
+        rollout=rollout,
+        advantages=advantages,
+        returns=returns,
+        device=torch.device("cpu"),
+        epochs=1,
+        sequence_batch_size=2,
+        clip_ratio=0.2,
+        value_coef=0.5,
+        entropy_coef=0.0,
+        hand_aux_coef=0.0,
+        elixir_aux_coef=0.0,
+        target_kl=1.0,
+        sampling_temperature=temperature,
+    )
+    assert stats["approx_kl"] == pytest.approx(0.0, abs=1e-7)
+
+
+def test_hazard_gated_rollout_log_probs_match_ppo_recomputation() -> None:
+    temperature = 0.1
+    collector = _training_collector(
+        learner_sampling_temperature=temperature,
+        play_hazard_enabled=True,
+    )
+    model = collector.policy.model.eval()
+    arrays, *_rest = collector.collect(
+        2, model.initial_state(2, device="cpu")
+    )
+    rollout = RolloutBatch(**arrays)
+    inputs = _sequence_inputs(rollout, slice(None), torch.device("cpu"))
+    state = (
+        torch.as_tensor(rollout.initial_hidden),
+        torch.as_tensor(rollout.initial_cell),
+    )
+
+    with torch.no_grad():
+        output = model(inputs, state)
+        force_play, _stored_hazard = model._play_hazard_force_gate(
+            output,
+            inputs.action_mask,
+            state[0][:, -1],
+        )
+        expected = output.distribution(
+            temperature=temperature,
+            force_play=force_play,
+        ).log_prob(torch.as_tensor(rollout.actions))
+
+    torch.testing.assert_close(
+        expected,
+        torch.as_tensor(rollout.old_log_probs),
+        rtol=1e-6,
+        atol=1e-6,
+    )
+    advantages, returns = compute_gae(rollout, gamma=0.995, gae_lambda=0.95)
+    stats = ppo_update(
+        model=model,
+        optimizer=torch.optim.Adam(model.parameters(), lr=0.0),
+        rollout=rollout,
+        advantages=advantages,
+        returns=returns,
+        device=torch.device("cpu"),
+        epochs=1,
+        sequence_batch_size=2,
+        clip_ratio=0.2,
+        value_coef=0.5,
+        entropy_coef=0.0,
+        hand_aux_coef=0.0,
+        elixir_aux_coef=0.0,
+        target_kl=1.0,
+        sampling_temperature=temperature,
+    )
+    assert stats["approx_kl"] == pytest.approx(0.0, abs=1e-7)
 
 
 def test_policy_outputs_are_entity_capacity_metadata_invariant() -> None:
@@ -469,6 +595,20 @@ def test_stationary_simple_backend_exports_only_learner_rows(
 
 
 def test_simple_argument_gate_accepts_stationary_modes_fail_closed() -> None:
+    _validate_simple_pytorch_args(
+        _simple_args(simple_learner_sampling_temperature=0.25)
+    )
+    with pytest.raises(ValueError, match="finite and positive"):
+        _validate_simple_pytorch_args(
+            _simple_args(simple_learner_sampling_temperature=0.0)
+        )
+    with pytest.raises(ValueError, match="requires simple-pytorch"):
+        _validate_simple_pytorch_args(
+            _simple_args(
+                simulation_backend="python",
+                simple_learner_sampling_temperature=0.25,
+            )
+        )
     _validate_simple_pytorch_args(_simple_args(opponent_mode="noop"))
     _validate_simple_pytorch_args(_simple_args(opponent_mode="random"))
     _validate_simple_pytorch_args(

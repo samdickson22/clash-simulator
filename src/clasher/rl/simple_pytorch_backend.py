@@ -455,8 +455,15 @@ def _compile_public_mask_v2_tables(
 class SimpleClasherPolicyAdapter:
     """Adapt two-seat simple-Gym boundaries to ``ClasherPolicy``."""
 
-    def __init__(self, model: ClasherPolicy) -> None:
+    def __init__(
+        self, model: ClasherPolicy, *, sampling_temperature: float = 1.0
+    ) -> None:
+        if not math.isfinite(sampling_temperature) or sampling_temperature <= 0.0:
+            raise SimplePytorchBackendError(
+                "sampling temperature must be finite and positive"
+            )
         self.model = model
+        self.sampling_temperature = float(sampling_temperature)
 
     @staticmethod
     def _flatten(value: torch.Tensor) -> torch.Tensor:
@@ -527,7 +534,10 @@ class SimpleClasherPolicyAdapter:
         self.model.eval()
         state = self.state_from_mapping(boundary.recurrent_inputs)
         actions, log_prob, values, next_state, _ = self.model.act(
-            self.inputs(boundary), state, deterministic=False
+            self.inputs(boundary),
+            state,
+            deterministic=False,
+            sampling_temperature=self.sampling_temperature,
         )
         batch = boundary.actor.entity_ids.shape[0]
         return SimpleTensorPolicyDecision(
@@ -979,8 +989,9 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
             | None
         ) = None,
         opponent_league_kinds: torch.Tensor | None = None,
+        sampling_temperature: float = 1.0,
     ) -> None:
-        super().__init__(model)
+        super().__init__(model, sampling_temperature=sampling_temperature)
         if learner_players.ndim != 1 or learner_players.dtype != torch.int64:
             raise SimplePytorchBackendError(
                 "learner players must be one int64 seat per battle row"
@@ -1253,7 +1264,10 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
             boundary.recurrent_inputs, "learner"
         )
         actions, log_prob, values, learner_next, _ = self.model.act(
-            self.inputs(boundary), learner_state, deterministic=False
+            self.inputs(boundary),
+            learner_state,
+            deterministic=False,
+            sampling_temperature=self.sampling_temperature,
         )
         learner_actions = actions[:, 0].reshape(batch, 2)
         opponent_actions, opponent_next = self._opponent_actions(boundary)
@@ -1467,6 +1481,7 @@ class SimplePytorchBackendMetadata:
     opponent_schedule_unit: str | None
     learner_teacher_strategy: str | None
     learner_teacher_balanced_config: Mapping[str, float] | None
+    learner_sampling_temperature: float
     fresh_only: bool
     canonical_lane_globals: bool
     public_action_mask_contract_version: int
@@ -1510,11 +1525,19 @@ class SimplePytorchTrainingCollector:
         checkpoint_opponent_deck_name: str | None = None,
         learner_teacher_strategy: str | None = None,
         learner_teacher_balanced_config: BalancedStrategyConfig | None = None,
+        learner_sampling_temperature: float = 1.0,
         max_effects: int = 128,
         _execution_mode_override: str | None = None,
     ) -> None:
         if batch_size < 1:
             raise SimplePytorchBackendError("simple backend needs at least one row")
+        if (
+            not math.isfinite(learner_sampling_temperature)
+            or learner_sampling_temperature <= 0.0
+        ):
+            raise SimplePytorchBackendError(
+                "learner sampling temperature must be finite and positive"
+            )
         if max_effects < 1:
             raise SimplePytorchBackendError(
                 "simple backend effect capacity must be positive"
@@ -1806,9 +1829,13 @@ class SimplePytorchTrainingCollector:
                     if opponent_mode == "league"
                     else None
                 ),
+                sampling_temperature=learner_sampling_temperature,
             )
         else:
-            self.policy = SimpleClasherPolicyAdapter(model)
+            self.policy = SimpleClasherPolicyAdapter(
+                model,
+                sampling_temperature=learner_sampling_temperature,
+            )
         self.collector = SimpleTensorCollector(
             bridge,
             public_mask_provider=public_mask_provider,
@@ -1858,6 +1885,7 @@ class SimplePytorchTrainingCollector:
                 if learner_teacher_balanced_config is not None
                 else None
             ),
+            learner_sampling_temperature=float(learner_sampling_temperature),
             fresh_only=True,
             canonical_lane_globals=True,
             public_action_mask_contract_version=PUBLIC_ACTION_MASK_CONTRACT_V2,
