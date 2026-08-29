@@ -45,7 +45,7 @@ run_eval() {
     "${opponent_args[@]}" > "$out/$arm-$opponent.log" 2>&1
 }
 
-jobs=0
+pids=()
 for index in "${!opponents[@]}"; do
   opponent=${opponents[$index]}
   seed=$((seed_base + index))
@@ -53,14 +53,16 @@ for index in "${!opponents[@]}"; do
     checkpoint=$parent
     [[ "$arm" == candidate ]] && checkpoint=$candidate
     run_eval "$checkpoint" "$arm" "$opponent" "$seed" &
-    jobs=$((jobs + 1))
-    if (( jobs >= max_jobs )); then
-      wait -n
-      jobs=$((jobs - 1))
+    pids+=("$!")
+    if (( ${#pids[@]} >= max_jobs )); then
+      wait "${pids[0]}"
+      pids=("${pids[@]:1}")
     fi
   done
 done
-wait
+for pid in "${pids[@]}"; do
+  wait "$pid"
+done
 
 env PYTHONPATH="$desktop_root/src:$desktop_root" "$python_bin" - \
   "$out" "$games" "$seed_base" "${opponents[@]}" <<'PY'
