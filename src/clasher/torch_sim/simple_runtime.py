@@ -910,7 +910,7 @@ class SimpleGymRuntime:
 
     def copy_rows_from_(
         self,
-        source: SimpleGymRuntime,
+        source: Any,
         source_rows: torch.Tensor,
     ) -> None:
         """Replace this runtime with exact selected rows from ``source``.
@@ -925,6 +925,8 @@ class SimpleGymRuntime:
         history remain collector-owned and must be forked by their owner.
         """
 
+        if not isinstance(source, SimpleGymRuntime):
+            raise TypeError("source must be a SimpleGymRuntime")
         if source_rows.shape != (self.batch_size,):
             raise ValueError("source_rows must have shape [destination batch]")
         if source_rows.device != self.device or source.device != self.device:

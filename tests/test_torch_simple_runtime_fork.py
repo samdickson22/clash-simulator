@@ -8,6 +8,8 @@ import torch
 
 from clasher.data import CardDataLoader
 from clasher.torch_sim.actions import NO_OP_ACTION
+from clasher.torch_sim.simple_reward_v2 import SimpleRewardV2Config
+from clasher.torch_sim.simple_rollout import SimpleGymRolloutBridge
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 from clasher.torch_sim.simple_standard import (
     SimpleStandardSetup,
@@ -163,6 +165,78 @@ def test_runtime_row_fork_fails_before_mutation_for_incompatible_authority() -> 
         incompatible.copy_rows_from_(source, torch.zeros(1, dtype=torch.int64))
 
     assert torch.equal(incompatible.state.tick, before)
+
+
+@pytest.mark.parametrize("device_name", ("cpu", "cuda", "mps"))
+def test_rollout_bridge_fork_preserves_history_rewards_and_continuation(
+    device_name: str,
+) -> None:
+    setup = _setup(device_name)
+    entity_lookup, hand_lookup = _typed_lookups(setup)
+    source_runtime = _runtime(
+        setup,
+        entity_lookup,
+        hand_lookup,
+        batch_size=2,
+    )
+    fork_runtime = _runtime(
+        setup,
+        entity_lookup,
+        hand_lookup,
+        batch_size=4,
+    )
+    reward = SimpleRewardV2Config(gamma=0.99)
+    source = SimpleGymRolloutBridge(
+        source_runtime,
+        decision_interval=4,
+        reward_v2_config=reward,
+        strict_reset_check=False,
+    )
+    speculative = SimpleGymRolloutBridge(
+        fork_runtime,
+        decision_interval=4,
+        reward_v2_config=reward,
+        strict_reset_check=False,
+    )
+
+    first = source.observe().legal_mask[:, :, :-1].to(torch.int64).argmax(dim=2)
+    source.step(first)
+    rows = torch.tensor((1, 0, 1, 0), dtype=torch.int64, device=source.device)
+    speculative.copy_rows_from_(source, rows)
+
+    assert torch.equal(
+        speculative.adapter.history.previous_actions,
+        source.adapter.history.previous_actions.index_select(0, rows),
+    )
+    assert torch.equal(
+        speculative.adapter.history.previous_rewards,
+        source.adapter.history.previous_rewards.index_select(0, rows),
+    )
+    assert torch.equal(
+        speculative.adapter.history.episode_starts,
+        source.adapter.history.episode_starts.index_select(0, rows),
+    )
+    assert torch.equal(
+        speculative._initial_tower_hp,
+        source._initial_tower_hp.index_select(0, rows),
+    )
+    assert torch.equal(
+        speculative.needs_reset,
+        source.needs_reset.index_select(0, rows),
+    )
+
+    source_noop = torch.full(
+        (source.batch_size, 2),
+        NO_OP_ACTION,
+        dtype=torch.int64,
+        device=source.device,
+    )
+    fork_noop = source_noop.index_select(0, rows)
+    for _ in range(5):
+        source_step = source.step(source_noop)
+        fork_step = speculative.step(fork_noop)
+        _assert_repeated_runtime_rows(fork_runtime, source_runtime, rows)
+        _assert_repeated_tensors(fork_step, source_step, rows)
 
 
 @pytest.mark.parametrize(

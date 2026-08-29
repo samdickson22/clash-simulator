@@ -8,6 +8,8 @@ submissions to one graph submission without duplicating game mechanics.
 
 from __future__ import annotations
 
+from typing import Any
+
 import torch
 
 from clasher.rl.common import NUM_HAND_SLOTS
@@ -183,6 +185,18 @@ class SimpleCudaGraphRunner:
         self._action_ids.copy_(action_ids)
         self._graph.replay()
         return self._step
+
+    def copy_rows_from_(
+        self,
+        source: Any,
+        source_rows: torch.Tensor,
+    ) -> None:
+        """Load exact speculative rows without invalidating captured graphs."""
+
+        origin = source.runtime if isinstance(source, SimpleCudaGraphRunner) else source
+        if not isinstance(origin, SimpleGymRuntime):
+            raise TypeError("source must be a Simple Gym runtime")
+        self.runtime.copy_rows_from_(origin, source_rows)
 
     def observe(self) -> SimpleProjectedObservation:
         """Project current state outside the graph without advancing it."""

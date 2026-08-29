@@ -61,6 +61,12 @@ class SimpleGymRolloutRuntime(SimpleGymEngine, Protocol):
         deck_ids: torch.Tensor | None = None,
     ) -> SimpleProjectedObservation: ...
 
+    def copy_rows_from_(
+        self,
+        source: Any,
+        source_rows: torch.Tensor,
+    ) -> None: ...
+
 
 @dataclass(frozen=True)
 class SimpleGymRolloutObservation:
@@ -197,6 +203,43 @@ class SimpleGymRolloutBridge:
 
         observation = self.adapter.observe()
         return self._boundary(observation, self.adapter.history, None, None)
+
+    def copy_rows_from_(
+        self,
+        source: SimpleGymRolloutBridge,
+        source_rows: torch.Tensor,
+    ) -> None:
+        """Fork runtime state and recurrent-visible history from another bridge."""
+
+        if source_rows.shape != (self.batch_size,):
+            raise ValueError("source_rows must have shape [destination batch]")
+        if source_rows.device != self.device or source.device != self.device:
+            raise ValueError("fork bridges and source_rows must share a device")
+        if source_rows.dtype != torch.int64:
+            raise ValueError("source_rows must be int64")
+        if (
+            self.decision_interval != source.decision_interval
+            or self.adapter.no_op_action != source.adapter.no_op_action
+            or self.reward_contract_id != source.reward_contract_id
+            or self.reward_contract_digest != source.reward_contract_digest
+        ):
+            raise ValueError("fork bridges must share rollout semantics")
+
+        self.runtime.copy_rows_from_(source.runtime, source_rows)
+        source_history = source.adapter.history
+        self.adapter.history = SimpleGymHistory(
+            previous_actions=source_history.previous_actions.index_select(
+                0, source_rows
+            ),
+            previous_rewards=source_history.previous_rewards.index_select(
+                0, source_rows
+            ),
+            episode_starts=source_history.episode_starts.index_select(0, source_rows),
+        )
+        self._initial_tower_hp.copy_(
+            source._initial_tower_hp.index_select(0, source_rows)
+        )
+        self.needs_reset.copy_(source.needs_reset.index_select(0, source_rows))
 
     @staticmethod
     def _select_rows(
