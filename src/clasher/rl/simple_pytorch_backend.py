@@ -37,13 +37,17 @@ from clasher.torch_sim.simple_reward_v2 import (
     SimpleRewardV2Config,
     simple_reward_v2_metadata,
 )
-from clasher.torch_sim.simple_rollout import SimpleGymRolloutBridge
+from clasher.torch_sim.simple_rollout import (
+    SimpleGymRolloutBridge,
+    SimpleGymRolloutRuntime,
+)
 from clasher.torch_sim.simple_standard import (
     STANDARD_TIEBREAK_TICK,
     compile_standard_simple_setup,
 )
 
 from .model import ClasherPolicy, PolicyInputs
+from .simple_counterfactual import SimpleTerminalCounterfactualEvaluator
 from .simple_tensor_collector import (
     SIMPLE_TENSOR_ACTOR_SEMANTICS_ID,
     SIMPLE_TENSOR_BACKEND_ID,
@@ -664,8 +668,13 @@ class SimplePytorchTrainingCollector:
                 "supported-deck artifact drifted from the current compiler"
             )
         entity_lookup, hand_lookup = _typed_lookups(setup, loader, vocabulary)
+        deck_rows = _deck_rows(
+            artifact,
+            batch_size=batch_size,
+            mirror_match=mirror_match,
+        )
         runtime = setup.create_runtime(
-            _deck_rows(artifact, batch_size=batch_size, mirror_match=mirror_match),
+            deck_rows,
             entity_token_lookup=entity_lookup,
             hand_token_lookup=hand_lookup,
             canonical_lane_globals=True,
@@ -676,7 +685,7 @@ class SimplePytorchTrainingCollector:
             runtime.device,
             override=_execution_mode_override,
         )
-        rollout_runtime = runtime
+        rollout_runtime: SimpleGymRolloutRuntime = runtime
         if execution_mode == SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH:
             example_actions = torch.full(
                 (batch_size, 2),
@@ -708,6 +717,12 @@ class SimplePytorchTrainingCollector:
             policy=self.policy,
             strict_host_validation=False,
         )
+        self._setup = setup
+        self._deck_rows = deck_rows
+        self._entity_token_lookup = entity_lookup
+        self._hand_token_lookup = hand_lookup
+        self._max_entities = runtime.state.max_entities
+        self._max_effects = int(runtime.effects.active.shape[1])
         reward_metadata = simple_reward_v2_metadata(reward)
         self.metadata = SimplePytorchBackendMetadata(
             backend_id=SIMPLE_TENSOR_BACKEND_ID,
@@ -765,6 +780,62 @@ class SimplePytorchTrainingCollector:
             raise SimplePytorchBackendError(
                 "simple-pytorch execution mode metadata does not match the runtime"
             )
+
+    def create_terminal_counterfactual_evaluator(
+        self,
+        candidate_count: int,
+        *,
+        terminal_check_interval: int = 0,
+        strict_host_validation: bool = False,
+    ) -> SimpleTerminalCounterfactualEvaluator:
+        """Create a resident ``batch*candidates`` continuation arena."""
+
+        if candidate_count < 1:
+            raise ValueError("candidate_count must be positive")
+        expanded_decks = tuple(
+            row for row in self._deck_rows for _ in range(candidate_count)
+        )
+        runtime = self._setup.create_runtime(
+            expanded_decks,
+            entity_token_lookup=self._entity_token_lookup,
+            hand_token_lookup=self._hand_token_lookup,
+            canonical_lane_globals=True,
+            max_entities=self._max_entities,
+            max_effects=self._max_effects,
+            include_privileged_critic=True,
+        )
+        rollout_runtime: SimpleGymRolloutRuntime = runtime
+        if self.metadata.execution_mode == SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH:
+            rollout_runtime = SimpleCudaGraphRunner(
+                runtime,
+                torch.full(
+                    (runtime.batch_size, 2),
+                    NO_OP_ACTION,
+                    dtype=torch.int64,
+                    device=runtime.device,
+                ),
+            )
+        reward = self.collector.bridge.reward_v2_config
+        if reward is None:
+            raise SimplePytorchBackendError(
+                "terminal counterfactuals require the production reward contract"
+            )
+        bridge = SimpleGymRolloutBridge(
+            rollout_runtime,
+            decision_interval=self.collector.bridge.decision_interval,
+            reward_v2_config=reward,
+            strict_reset_check=False,
+        )
+        public_mask_provider = SimpleCollectorPublicMaskV2Provider(
+            SimplePublicMaskV2Provider(self.public_mask_tables)
+        )
+        return SimpleTerminalCounterfactualEvaluator(
+            bridge,
+            public_mask_provider=public_mask_provider,
+            policy=self.policy,
+            terminal_check_interval=terminal_check_interval,
+            strict_host_validation=strict_host_validation,
+        )
 
     @property
     def batch_size(self) -> int:

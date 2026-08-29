@@ -182,6 +182,53 @@ def test_one_decision_collects_existing_ppo_rollout_shape() -> None:
     assert metadata["fresh_only"] is True
 
 
+def test_training_backend_builds_six_way_public_terminal_counterfactuals() -> None:
+    collector = _training_collector()
+    evaluator = collector.create_terminal_counterfactual_evaluator(
+        6,
+        terminal_check_interval=1,
+        strict_host_validation=True,
+    )
+    source = collector.collector.bridge
+    source.runtime.state.tick.fill_(5_996)
+    candidates = torch.full(
+        (1, 6, 2),
+        NO_OP_ACTION,
+        dtype=torch.int64,
+        device=source.device,
+    )
+    hidden, cell = collector.policy.model.initial_state(2, device=source.device)
+    recurrent = {
+        "hidden": hidden.reshape(1, 2, -1),
+        "cell": cell.reshape(1, 2, -1),
+    }
+
+    result = evaluator.evaluate(
+        source,
+        candidates,
+        learner_players=torch.zeros(1, dtype=torch.int64, device=source.device),
+        recurrent_inputs=recurrent,
+        max_decisions=2,
+    )
+
+    assert result.flat_candidates == 6
+    assert result.root_actor.entity_ids.shape == (6, 2, 128)
+    assert result.root_actor.entity_features.shape == (6, 2, 128, 32)
+    assert result.root_actor.hand_ids.shape == (6, 2, 5)
+    assert result.root_actor.global_features.shape == (6, 2, 18)
+    assert result.root_public_action_masks.shape == (
+        6,
+        2,
+        collector.policy.model.num_actions,
+    )
+    assert result.terminal_winner.lt(0).all()
+    assert result.terminal_value.eq(0.0).all()
+    assert result.native_ticks.eq(4).all()
+    assert result.committed.all()
+    assert result.all_rows_admitted.all()
+    assert not result.fallback_rows.any()
+
+
 def test_cpu_coalesced_handoff_preserves_shapes_dtypes_and_values() -> None:
     source = {
         "float": torch.arange(24, dtype=torch.float32).reshape(2, 3, 4).transpose(0, 1),

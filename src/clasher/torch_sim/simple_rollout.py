@@ -204,6 +204,12 @@ class SimpleGymRolloutBridge:
         observation = self.adapter.observe()
         return self._boundary(observation, self.adapter.history, None, None)
 
+    @property
+    def initial_tower_hp(self) -> torch.Tensor:
+        """Episode-start Crown Tower hitpoints used by the reward contract."""
+
+        return self._initial_tower_hp
+
     def copy_rows_from_(
         self,
         source: SimpleGymRolloutBridge,
