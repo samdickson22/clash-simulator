@@ -15,6 +15,7 @@ seed=${SEED:-1164301}
 num_envs=${NUM_ENVS:-64}
 rollout_steps=${ROLLOUT_STEPS:-8}
 sequence_batch_size=${SEQUENCE_BATCH_SIZE:-64}
+save_every=${SAVE_EVERY:-5}
 device=${DEVICE:-cuda}
 actor_device=${ACTOR_DEVICE:-$device}
 
@@ -87,7 +88,7 @@ for spec in "${league_specs[@]}"; do
 done
 
 mkdir -p "$output_root" "$report_root"
-env PYTHONPATH=src:. OMP_NUM_THREADS=2 "$python_bin" \
+env PYTHONUNBUFFERED=1 PYTHONPATH=src:. OMP_NUM_THREADS=2 "$python_bin" \
   -m clasher.rl.train_recurrent \
   --simulation-backend simple-pytorch \
   --simple-supported-decks-path training_decks/simple_gym_supported_v1.json \
@@ -110,7 +111,7 @@ env PYTHONPATH=src:. OMP_NUM_THREADS=2 "$python_bin" \
   --hand-aux-coef 0 --elixir-aux-coef 0 \
   --epochs 2 --sequence-batch-size "$sequence_batch_size" --target-kl 0.03 \
   --anchor-checkpoint "$initializer" --anchor-policy-kl-coef 0.1 \
-  --save-every 5 --log-every 1 --no-lr-anneal --quiet-engine \
+  --save-every "$save_every" --log-every 1 --no-lr-anneal --quiet-engine \
   2>&1 | tee "$report_root/train.log"
 
 endpoint="$output_root/policy_v2_update_$(printf '%06d' "$updates").pt"
