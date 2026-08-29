@@ -1603,18 +1603,20 @@ def ppo_update(
                 all_initial_cell.index_select(0, index_tensor),
             )
             output = model(inputs, initial_state)
+            actions = all_actions.index_select(0, index_tensor)
             force_play: Tensor | None = None
             if model.config.play_hazard_enabled:
-                force_play, _stored_hazard = model._play_hazard_force_gate(
-                    output,
-                    inputs.action_mask,
-                    initial_state[0][:, -1],
-                )
+                # The hard recurrent hazard gate is part of the behavior state
+                # that generated this rollout.  Recomputing it after an optimizer
+                # step can flip support and make a stored legal action have
+                # probability zero.  Gated collection guarantees placement iff
+                # the behavior gate fired, so the stored action exactly recovers
+                # that discrete conditioning variable for PPO ratio evaluation.
+                force_play = actions < PLACEMENT_ACTIONS
             distribution = output.distribution(
                 temperature=sampling_temperature,
                 force_play=force_play,
             )
-            actions = all_actions.index_select(0, index_tensor)
             old_log_prob = all_old_log_prob.index_select(0, index_tensor)
             old_values = all_old_values.index_select(0, index_tensor)
             advantage = all_advantages.index_select(0, index_tensor)
@@ -1691,23 +1693,43 @@ def ppo_update(
             else:
                 with torch.no_grad():
                     anchor_output = anchor_model(inputs, initial_state)
-                    anchor_force_play: Tensor | None = None
-                    if anchor_model.config.play_hazard_enabled:
-                        anchor_force_play, _anchor_stored_hazard = (
-                            anchor_model._play_hazard_force_gate(
-                                anchor_output,
-                                inputs.action_mask,
-                                initial_state[0][:, -1],
-                            )
-                        )
                     anchor_distribution = anchor_output.distribution(
                         temperature=sampling_temperature,
-                        force_play=anchor_force_play,
+                        force_play=force_play,
                     )
                 anchor_policy_kl = policy_anchor_kl(
                     distribution.logits,
                     anchor_distribution.logits,
                 )
+                if model.config.play_hazard_enabled:
+                    if (
+                        output.play_hazard_logits is None
+                        or anchor_output.play_hazard_logits is None
+                    ):
+                        raise ValueError(
+                            "hazard-enabled anchor policies must emit hazard logits"
+                        )
+                    anchor_hazard_prob = torch.sigmoid(
+                        anchor_output.play_hazard_logits
+                        - math.log(anchor_model.config.play_hazard_positive_weight)
+                    )
+                    current_hazard_logits = (
+                        output.play_hazard_logits
+                        - math.log(model.config.play_hazard_positive_weight)
+                    )
+                    hazard_cross_entropy = F.binary_cross_entropy_with_logits(
+                        current_hazard_logits,
+                        anchor_hazard_prob,
+                    )
+                    hazard_entropy = F.binary_cross_entropy(
+                        anchor_hazard_prob,
+                        anchor_hazard_prob,
+                    )
+                    anchor_policy_kl = (
+                        anchor_policy_kl
+                        + hazard_cross_entropy
+                        - hazard_entropy
+                    )
             anchor_policy_kl_loss = anchor_policy_kl_coef * anchor_policy_kl
             if rehearsal is None:
                 rehearsal_loss = torch.zeros(

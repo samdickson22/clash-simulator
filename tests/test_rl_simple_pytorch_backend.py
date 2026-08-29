@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import inspect
 import json
 from argparse import Namespace
@@ -400,6 +401,12 @@ def test_hazard_gated_rollout_log_probs_match_ppo_recomputation() -> None:
         rtol=1e-6,
         atol=1e-6,
     )
+    anchor_model = copy.deepcopy(model).eval()
+    assert model.play_hazard_head is not None
+    hazard_output = model.play_hazard_head[-1]
+    assert isinstance(hazard_output, torch.nn.Linear)
+    with torch.no_grad():
+        hazard_output.bias.fill_(-100.0)
     advantages, returns = compute_gae(rollout, gamma=0.995, gae_lambda=0.95)
     stats = ppo_update(
         model=model,
@@ -417,8 +424,11 @@ def test_hazard_gated_rollout_log_probs_match_ppo_recomputation() -> None:
         elixir_aux_coef=0.0,
         target_kl=1.0,
         sampling_temperature=temperature,
+        anchor_model=anchor_model,
+        anchor_policy_kl_coef=0.1,
     )
     assert stats["approx_kl"] == pytest.approx(0.0, abs=1e-7)
+    assert stats["anchor_policy_kl"] > 0.0
 
 
 def test_policy_outputs_are_entity_capacity_metadata_invariant() -> None:
