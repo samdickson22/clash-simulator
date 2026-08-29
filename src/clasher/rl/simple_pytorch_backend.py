@@ -802,7 +802,7 @@ class SimplePytorchTrainingCollector:
             canonical_lane_globals=True,
             max_entities=self._max_entities,
             max_effects=self._max_effects,
-            include_privileged_critic=True,
+            include_privileged_critic=False,
         )
         rollout_runtime: SimpleGymRolloutRuntime = runtime
         if self.metadata.execution_mode == SIMPLE_PYTORCH_EXECUTION_CUDA_GRAPH:

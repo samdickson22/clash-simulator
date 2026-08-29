@@ -189,6 +189,8 @@ def test_training_backend_builds_six_way_public_terminal_counterfactuals() -> No
         terminal_check_interval=1,
         strict_host_validation=True,
     )
+    assert collector.collector.bridge.observe().critic is not None
+    assert evaluator.bridge.observe().critic is None
     source = collector.collector.bridge
     source.runtime.state.tick.fill_(5_996)
     candidates = torch.full(
