@@ -101,7 +101,9 @@ encoded = json.dumps(summary, indent=2, sort_keys=True) + "\n"
 PY
 }
 
-for update in 64 128 256 384 512; do
+# The frozen trainer saves every five updates plus its final endpoint.  Use
+# exact persisted boundaries rather than waiting for nonexistent powers of two.
+for update in 65 130 255 385 512; do
   padded=$(printf '%06d' "$update")
   checkpoint="$run_root/policy_v2_update_${padded}.pt"
   out="$report_root/update_${padded}"

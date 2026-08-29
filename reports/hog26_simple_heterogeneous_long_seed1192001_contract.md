@@ -60,8 +60,12 @@ Reject the run if any of the following occurs:
 
 ## Gameplay evaluation gates
 
-Training completion is not promotion.  Evaluate parent plus updates 64, 128,
-256, 384, and 512 using identical seeds and both seats.
+Training completion is not promotion.  Evaluate parent plus updates 65, 130,
+255, 385, and 512 using identical seeds and both seats.  These are the nearest
+persisted boundaries to the originally intended 64/128/256/384/512 cadence:
+the already launched trainer saves every five updates plus its final endpoint.
+This correction was made before the first screen result existed and changes no
+metric threshold or acceptance rule.
 
 1. Development screen: the frozen 48-game gameplay screen.
 2. Quarantine: the frozen 96-game gameplay quarantine.
