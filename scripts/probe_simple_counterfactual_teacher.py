@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Bounded feasibility probe for value-ranked Simple Gym root actions."""
 
+# mypy: disable-error-code="import-untyped"
+
 from __future__ import annotations
 
 import argparse
@@ -14,8 +16,8 @@ from typing import Any
 import numpy as np
 import torch
 
+from clasher.rl.common import BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 from clasher.rl.model import ClasherPolicy, PolicyConfig
-from clasher.rl.oracle_sampling import sample_action_subset
 from clasher.rl.simple_pytorch_backend import (
     SimplePytorchTrainingCollector,
     load_current_client_typed_vocabulary,
@@ -69,6 +71,165 @@ class ForcedLearnerRootPolicy:
         return decision
 
 
+def select_stratified_action_subset(
+    legal_actions: np.ndarray,
+    joint_logits: np.ndarray,
+    *,
+    sample_limit: int,
+    no_op_action: int,
+    parent_action: int,
+    random_fraction: float,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """Select legal root actions across cards and arena regions.
+
+    Uniformly sampling a flat 4x18x32 action space almost never compares the
+    useful tile for each card.  This selector reserves the observed parent and
+    wait actions, round-robins high-logit actions across all playable hand
+    slots and coarse spatial buckets, then spends a bounded fraction on
+    uniform exploration.  It is a proposal mechanism only: the exact rollout
+    return remains the teacher authority.
+    """
+
+    legal = np.asarray(legal_actions, dtype=np.int64)
+    logits = np.asarray(joint_logits, dtype=np.float64)
+    if legal.ndim != 1 or logits.ndim != 1:
+        raise ValueError("legal actions and joint logits must be rank one")
+    if sample_limit < 2 or sample_limit > legal.size:
+        raise ValueError("sample limit must be between two and the legal count")
+    if not 0.0 <= random_fraction < 1.0:
+        raise ValueError("random fraction must be in [0, 1)")
+    legal_set = set(legal.tolist())
+    for required in (no_op_action, parent_action):
+        if required not in legal_set:
+            raise ValueError(f"required action {required} is not legal")
+    if int(legal.max()) >= logits.size:
+        raise ValueError("joint logits do not cover every legal action")
+
+    selected: list[int] = []
+    selected_set: set[int] = set()
+
+    def add(action: int) -> None:
+        if action not in selected_set and len(selected) < sample_limit:
+            selected.append(action)
+            selected_set.add(action)
+
+    add(no_op_action)
+    add(parent_action)
+    remaining_budget = sample_limit - len(selected)
+    random_budget = min(
+        remaining_budget,
+        round(remaining_budget * random_fraction),
+    )
+    structured_budget = remaining_budget - random_budget
+
+    # Build one ranked list per hand slot.  The first item is the best legal
+    # action for that card; subsequent items are the best action in each
+    # canonical lane/depth bucket, followed by the remaining policy ranking.
+    by_slot: list[list[int]] = []
+    for slot in range(NUM_HAND_SLOTS):
+        start = slot * NUM_TILES
+        stop = start + NUM_TILES
+        slot_actions = legal[(legal >= start) & (legal < stop)]
+        if not slot_actions.size:
+            by_slot.append([])
+            continue
+        ordered = slot_actions[np.argsort(-logits[slot_actions], kind="stable")]
+        candidates: list[int] = [int(ordered[0])]
+        for depth_start, depth_stop in ((0, 8), (8, 16), (16, 24), (24, 32)):
+            for lane_start, lane_stop in ((0, 9), (9, 18)):
+                tile = slot_actions - start
+                x = tile % BOARD_WIDTH
+                y = tile // BOARD_WIDTH
+                in_bucket = (
+                    (x >= lane_start)
+                    & (x < lane_stop)
+                    & (y >= depth_start)
+                    & (y < depth_stop)
+                )
+                bucket = slot_actions[in_bucket]
+                if bucket.size:
+                    candidates.append(int(bucket[np.argmax(logits[bucket])]))
+        candidates.extend(int(action) for action in ordered.tolist())
+        by_slot.append(list(dict.fromkeys(candidates)))
+
+    cursors = [0] * NUM_HAND_SLOTS
+    while structured_budget > 0:
+        progressed = False
+        for slot in range(NUM_HAND_SLOTS):
+            options = by_slot[slot]
+            while cursors[slot] < len(options):
+                action = options[cursors[slot]]
+                cursors[slot] += 1
+                if action not in selected_set:
+                    add(action)
+                    structured_budget -= 1
+                    progressed = True
+                    break
+            if structured_budget == 0:
+                break
+        if not progressed:
+            break
+
+    unexplored = np.asarray(
+        [action for action in legal.tolist() if action not in selected_set],
+        dtype=np.int64,
+    )
+    random_count = min(random_budget, int(unexplored.size))
+    if random_count:
+        for action in rng.choice(unexplored, size=random_count, replace=False):
+            add(int(action))
+
+    # If rounding, missing hand slots, or a tiny legal set left capacity, fill
+    # it with the strongest remaining legal actions without changing the RNG.
+    if len(selected) < sample_limit:
+        remainder = np.asarray(
+            [action for action in legal.tolist() if action not in selected_set],
+            dtype=np.int64,
+        )
+        ordered = remainder[np.argsort(-logits[remainder], kind="stable")]
+        for action in ordered.tolist():
+            add(int(action))
+            if len(selected) == sample_limit:
+                break
+    if len(selected) != sample_limit:
+        raise RuntimeError("stratified candidate selection changed batch size")
+    return np.sort(np.asarray(selected, dtype=np.int64))
+
+
+def truncated_n_step_returns(
+    rewards: np.ndarray,
+    dones: np.ndarray,
+    bootstrap_values: np.ndarray,
+    *,
+    gamma: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Return per-branch n-step values without crossing episode boundaries."""
+
+    reward_rows = np.asarray(rewards, dtype=np.float64)
+    done_rows = np.asarray(dones, dtype=np.bool_)
+    bootstrap = np.asarray(bootstrap_values, dtype=np.float64).reshape(-1)
+    if reward_rows.ndim != 2 or done_rows.shape != reward_rows.shape:
+        raise ValueError("rewards and dones must have equal [batch, time] shape")
+    if bootstrap.shape != (reward_rows.shape[0],):
+        raise ValueError("bootstrap values must have one value per branch")
+    if not 0.0 < gamma <= 1.0:
+        raise ValueError("gamma must be in (0, 1]")
+
+    horizon = reward_rows.shape[1]
+    discounts = np.power(gamma, np.arange(horizon, dtype=np.float64))
+    terminal = done_rows.any(axis=1)
+    first_terminal = np.where(terminal, done_rows.argmax(axis=1), horizon)
+    valid = np.arange(horizon)[None, :] <= first_terminal[:, None]
+    reward_return = (reward_rows * discounts[None, :] * valid).sum(axis=1)
+    bootstrap_return = np.where(
+        terminal,
+        0.0,
+        np.power(gamma, horizon) * bootstrap,
+    )
+    return reward_return + bootstrap_return, reward_return, bootstrap_return
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", type=Path, required=True)
@@ -78,6 +239,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--warmup-steps", type=int, default=20)
     parser.add_argument("--horizon-steps", type=int, default=24)
     parser.add_argument("--action-samples", type=int, default=8)
+    parser.add_argument("--random-candidate-fraction", type=float, default=0.25)
     parser.add_argument("--opponent-strategy", default="balanced")
     parser.add_argument("--device", choices=("cpu", "mps", "cuda"), default="cpu")
     parser.add_argument("--state-output", type=Path, default=None)
@@ -185,7 +347,7 @@ def main() -> None:
     )
     rows = torch.arange(args.batch_size, device=collector.learner_players.device)
     with torch.no_grad():
-        parent_actions, *_parent_tail = model.act(
+        parent_actions, *_parent_tail, parent_output = model.act(
             collector.policy.inputs(boundary),
             learner_state,
             deterministic=True,
@@ -200,21 +362,15 @@ def main() -> None:
     legal = np.flatnonzero(common_legal).astype(np.int64, copy=False)
     if legal.size < 2:
         raise RuntimeError("probe state has fewer than two common legal actions")
-    candidates = sample_action_subset(
+    candidates = select_stratified_action_subset(
         legal,
+        parent_output.joint_logits[0, 0].detach().cpu().numpy(),
         sample_limit=args.action_samples,
         no_op_action=model.num_actions - 2,
+        parent_action=parent_action,
+        random_fraction=args.random_candidate_fraction,
         rng=np.random.default_rng(args.seed),
     )
-    if parent_action not in candidates:
-        replaceable = np.flatnonzero(candidates != model.num_actions - 2)
-        if replaceable.size == 0:
-            raise RuntimeError("candidate sample has no slot for the parent action")
-        candidates[replaceable[-1]] = parent_action
-        candidates = np.unique(candidates)
-
-    if candidates.size != args.batch_size:
-        raise RuntimeError("vectorized probe candidate count changed")
     root_actions = torch.as_tensor(
         candidates,
         dtype=torch.int64,
@@ -230,9 +386,11 @@ def main() -> None:
         args.horizon_steps,
         (state[0].clone(), state[1].clone()),
     )
-    discounts = np.power(0.995, np.arange(args.horizon_steps, dtype=np.float64))
-    discounted = (arrays["rewards"].astype(np.float64) * discounts[None, :]).sum(
-        axis=1
+    discounted, reward_return, bootstrap_return = truncated_n_step_returns(
+        arrays["rewards"],
+        arrays["dones"],
+        arrays["bootstrap_values"],
+        gamma=0.995,
     )
     done = arrays["dones"].any(axis=1)
     rows_out: list[dict[str, Any]] = []
@@ -241,13 +399,15 @@ def main() -> None:
             {
                 "action": int(action),
                 "discounted_return_mean": float(discounted[index]),
+                "discounted_reward_return": float(reward_return[index]),
+                "discounted_bootstrap_return": float(bootstrap_return[index]),
                 "terminal": bool(done[index]),
             }
         )
     rows_out.sort(key=lambda row: float(row["discounted_return_mean"]), reverse=True)
     elapsed = time.perf_counter() - started
     payload = {
-        "schema": "clasher.simple-counterfactual-teacher-probe.v2",
+        "schema": "clasher.simple-counterfactual-teacher-probe.v3",
         "checkpoint": str(args.checkpoint.resolve()),
         "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
         "seed": args.seed,
@@ -255,6 +415,9 @@ def main() -> None:
         "warmup_steps": args.warmup_steps,
         "horizon_steps": args.horizon_steps,
         "action_samples": len(rows_out),
+        "candidate_selector": "hand-slot-spatial-stratified-v1",
+        "return_estimator": "truncated-n-step-bootstrap-v1",
+        "random_candidate_fraction": args.random_candidate_fraction,
         "opponent_strategy": args.opponent_strategy,
         "device": args.device,
         "parent_action": parent_action,
