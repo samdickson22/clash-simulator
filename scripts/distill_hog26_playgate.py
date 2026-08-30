@@ -244,11 +244,16 @@ def main() -> None:
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--device", choices=("cpu", "mps"), default="cpu")
     parser.add_argument("--seed", type=int, default=1196001)
-    parser.add_argument("--epochs", type=int, default=20)
+    parser.add_argument("--epochs", type=int, default=32)
     parser.add_argument("--sequence-length", type=int, default=64)
     parser.add_argument("--learning-rate", type=float, default=3e-4)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
-    parser.add_argument("--play-weight", type=float, default=4.0)
+    parser.add_argument(
+        "--play-weight",
+        type=float,
+        default=16.0,
+        help="bounded rare-play weight selected by the held-out 4/16/32 screen",
+    )
     parser.add_argument("--minimum-exact-accuracy", type=float, default=0.85)
     parser.add_argument("--minimum-play-recall", type=float, default=0.60)
     parser.add_argument("--minimum-wait-accuracy", type=float, default=0.90)
