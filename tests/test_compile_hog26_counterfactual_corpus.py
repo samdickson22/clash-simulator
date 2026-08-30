@@ -1,0 +1,138 @@
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+import numpy as np
+import torch
+
+from scripts.compile_hog26_counterfactual_corpus import compile_corpus
+
+
+def _write_probe(
+    root: Path,
+    *,
+    stem: str,
+    checkpoint_sha256: str,
+    seed: int,
+    parent_action: int,
+    best_action: int,
+    best_margin: float,
+) -> None:
+    rows = [
+        {
+            "action": best_action,
+            "discounted_return_mean": best_margin,
+            "discounted_reward_return": 0.0,
+            "discounted_bootstrap_return": best_margin,
+            "terminal": False,
+        },
+        {
+            "action": parent_action,
+            "discounted_return_mean": 0.0,
+            "discounted_reward_return": 0.0,
+            "discounted_bootstrap_return": 0.0,
+            "terminal": False,
+        },
+    ]
+    if parent_action != 2304:
+        rows.append(
+            {
+                "action": 2304,
+                "discounted_return_mean": 0.0,
+                "discounted_reward_return": 0.0,
+                "discounted_bootstrap_return": 0.0,
+                "terminal": False,
+            }
+        )
+    payload = {
+        "schema": "clasher.simple-counterfactual-teacher-probe.v3",
+        "checkpoint_sha256": checkpoint_sha256,
+        "candidate_selector": "hand-slot-spatial-stratified-v1",
+        "return_estimator": "truncated-n-step-bootstrap-v1",
+        "seed": seed,
+        "warmup_steps": 1,
+        "horizon_steps": 24,
+        "action_samples": len(rows),
+        "random_candidate_fraction": 0.25,
+        "opponent_strategy": "balanced",
+        "parent_action": parent_action,
+        "rows": rows,
+    }
+    json_path = root / f"{stem}.json"
+    json_path.write_text(json.dumps(payload, sort_keys=True))
+    action_masks = np.zeros((2, 2306), dtype=np.bool_)
+    action_masks[:, [best_action, parent_action, 2304]] = True
+    entity_mask = np.asarray([[True, False, True], [True, True, False]])
+    expert_actions = np.asarray([12, best_action], dtype=np.int64)
+    valid = np.asarray([False, True])
+    np.savez_compressed(
+        json_path.with_suffix(".npz"),
+        entity_ids=np.asarray([[1, 0, 2], [3, 4, 0]], dtype=np.int64),
+        entity_features=np.zeros((2, 3, 32), dtype=np.float32),
+        entity_mask=entity_mask,
+        hand_ids=np.ones((2, 5), dtype=np.int64),
+        global_features=np.zeros((2, 18), dtype=np.float32),
+        action_masks=action_masks,
+        previous_actions=np.asarray([2304, 12], dtype=np.int64),
+        previous_rewards=np.zeros(2, dtype=np.float64),
+        episode_starts=np.asarray([True, False]),
+        expert_actions=expert_actions,
+        expert_action_supervision_valid=valid,
+        expert_card_supervision_valid=valid,
+        expert_tile_supervision_valid=valid,
+        episode_ids=np.full(2, seed, dtype=np.int64),
+        source_frames=np.arange(2, dtype=np.int64),
+    )
+
+
+def test_compiler_retains_all_behavior_but_only_accepted_roots(tmp_path: Path) -> None:
+    checkpoint = tmp_path / "parent.pt"
+    torch.save({"token_names": ["<padding>", "Knight"]}, checkpoint)
+    checkpoint_sha256 = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+    probes = tmp_path / "probes"
+    probes.mkdir()
+    _write_probe(
+        probes,
+        stem="accepted",
+        checkpoint_sha256=checkpoint_sha256,
+        seed=10,
+        parent_action=2304,
+        best_action=22,
+        best_margin=0.03,
+    )
+    _write_probe(
+        probes,
+        stem="rejected",
+        checkpoint_sha256=checkpoint_sha256,
+        seed=11,
+        parent_action=2304,
+        best_action=23,
+        best_margin=0.01,
+    )
+    output = tmp_path / "corpus"
+
+    manifest = compile_corpus(
+        probe_root=probes,
+        output_root=output,
+        checkpoint=checkpoint,
+        minimum_margin=0.02,
+        seed=99,
+        workers=2,
+        created_at="2026-08-30T00:00:00+00:00",
+    )
+
+    assert manifest["probes"] == 2
+    assert manifest["accepted_probes"] == 1
+    assert manifest["rows"] == 4
+    with np.load(output / "corpus.npz", allow_pickle=False) as archive:
+        assert archive["counterfactual_root_rows"].tolist() == [1]
+        assert archive["root_base_actions"].tolist() == [2304]
+        assert archive["expert_actions"].tolist() == [12, 2304, 12, 2304]
+        assert archive["entity_mask"].tolist() == [
+            [True, True, False],
+            [True, True, False],
+            [True, True, False],
+            [True, True, False],
+        ]
