@@ -143,6 +143,54 @@ def test_policy_temperature_concentrates_behavior_and_preserves_default() -> Non
         output.distribution(temperature=0.0)
 
 
+def test_play_gate_does_not_aggregate_prepooled_timing_logit_twice() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    model = ClasherPolicy(
+        PolicyConfig(
+            num_tokens=builder.spec.num_tokens,
+            max_entities=builder.spec.max_entities,
+            d_model=32,
+            num_heads=4,
+            actor_layers=1,
+            critic_layers=1,
+            memory_size=48,
+            deterministic_hierarchy="play-gate",
+        ),
+        builder.card_stat_features,
+    )
+    type_logits = torch.tensor([[[-1.0, -1.0, -1.0, -1.0, 0.0, -5.0]]])
+    location_logits = torch.zeros((1, 1, 4, 576))
+    mask = torch.zeros((1, 1, 2306), dtype=torch.bool)
+    mask[..., 0] = True
+    mask[..., 576] = True
+    mask[..., 1152] = True
+    mask[..., 1728] = True
+    mask[..., 2304] = True
+    joint = model._joint_action_logits(type_logits, location_logits, mask)
+    common = {
+        "joint_logits": joint,
+        "values": torch.zeros((1, 1)),
+        "opponent_hand_logits": torch.zeros((1, 1, builder.spec.num_tokens)),
+        "opponent_elixir": torch.zeros((1, 1)),
+        "next_state": (torch.zeros((1, 1)), torch.zeros((1, 1))),
+        "action_type_logits": type_logits,
+        "location_logits": location_logits,
+    }
+
+    raw = PolicyOutput(**common)
+    prepooled = PolicyOutput(
+        **common,
+        deterministic_timing_logits=type_logits.clone(),
+    )
+
+    # Four distinct slot logits represent four mutually exclusive ways to
+    # play, so their raw probability mass beats wait after one aggregation.
+    assert int(model._deterministic_actions(raw, mask).item()) < 2304
+    # The prepooled head represents one play-mode logit copied four times; it
+    # must be compared once, so wait (0.0) beats play (-1.0).
+    assert int(model._deterministic_actions(prepooled, mask).item()) == 2304
+
+
 def test_recurrent_state_resets_inside_a_sequence():
     env = SelfPlayBattleEnv(seed=11, max_ticks=128)
     env.reset()

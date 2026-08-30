@@ -1811,9 +1811,20 @@ class ClasherPolicy(nn.Module):
             # stochastic joint distribution; it changes only deterministic
             # decoding, avoiding a four-way probability-splitting bias against
             # playing any card.
-            play_logit = torch.logsumexp(
-                masked_timing_logits[..., :NUM_HAND_SLOTS], dim=-1
-            )
+            if output.deterministic_timing_logits is None:
+                play_logit = torch.logsumexp(
+                    masked_timing_logits[..., :NUM_HAND_SLOTS], dim=-1
+                )
+            else:
+                # A hierarchical/equivariant timing head has already reduced
+                # the mutually exclusive slots to one play-mode logit and
+                # broadcasts it back across legal slots for the shared output
+                # contract. Summing those copies again adds an artificial
+                # log(number of legal slots) bonus and can force continuous
+                # play. Max recovers the single pre-aggregated mode value.
+                play_logit = masked_timing_logits[
+                    ..., :NUM_HAND_SLOTS
+                ].amax(dim=-1)
             top_level_logits = torch.stack(
                 [
                     play_logit,
