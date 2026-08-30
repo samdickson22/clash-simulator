@@ -157,10 +157,13 @@ def evaluate(
     model.eval()
     confusion = np.zeros((3, 3), dtype=np.int64)
     exact_correct = 0
+    non_root_exact_correct = 0
+    non_root_rows = 0
     nll_sum = 0.0
     rows_seen = 0
     all_margins: list[np.ndarray] = []
     all_corrective: list[np.ndarray] = []
+    intervention_root_rows = np.unique(preferences.root_rows)
     for episode in sequences:
         state = model.initial_state(1, device=device)
         for offset in range(0, len(episode), sequence_length):
@@ -175,6 +178,16 @@ def evaluate(
             nll_sum += float(F.cross_entropy(logits, actions, reduction="sum"))
             predicted_actions = model._deterministic_actions(output, inputs.action_mask)[0]
             exact_correct += int((predicted_actions == actions).sum())
+            intervention_rows = torch.as_tensor(
+                np.isin(chunk, intervention_root_rows),
+                dtype=torch.bool,
+                device=device,
+            )
+            preserved = ~intervention_rows
+            non_root_exact_correct += int(
+                ((predicted_actions == actions) & preserved).sum()
+            )
+            non_root_rows += int(preserved.sum())
             targets = action_modes(actions)
             predictions = mode_logits(output)[0].argmax(dim=-1)
             np.add.at(confusion, (targets.cpu().numpy(), predictions.cpu().numpy()), 1)
@@ -205,6 +218,10 @@ def evaluate(
     behavior = metrics_from_confusion(confusion)
     behavior["nll"] = nll_sum / rows_seen
     behavior["exact_action_accuracy"] = exact_correct / rows_seen
+    behavior["non_root_exact_action_accuracy"] = (
+        non_root_exact_correct / max(1, non_root_rows)
+    )
+    behavior["non_root_rows"] = non_root_rows
     return {
         "behavior": behavior,
         "preferences": {
@@ -345,8 +362,9 @@ def main() -> None:
             sequence_length=args.sequence_length,
         )
         eligible = bool(
-            validation["behavior"]["exact_action_accuracy"]
-            >= initial["behavior"]["exact_action_accuracy"] - args.maximum_exact_regression
+            validation["behavior"]["non_root_exact_action_accuracy"]
+            >= initial["behavior"]["non_root_exact_action_accuracy"]
+            - args.maximum_exact_regression
             and validation["preferences"]["safety"]["accuracy"]
             >= initial["preferences"]["safety"]["accuracy"] - args.maximum_safety_regression
             and validation["preferences"]["corrective"]["accuracy"]
@@ -402,6 +420,7 @@ def main() -> None:
         "validation_preferences": validation_preferences.count,
         "selection_gate": {
             "maximum_exact_regression": args.maximum_exact_regression,
+            "exact_behavior_scope": "non_counterfactual_root_rows",
             "maximum_safety_regression": args.maximum_safety_regression,
             "minimum_corrective_improvement": args.minimum_corrective_improvement,
         },
