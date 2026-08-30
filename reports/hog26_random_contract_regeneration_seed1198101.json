@@ -1,0 +1,150 @@
+{
+  "rows": [
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/024_w008_random_1194025.json",
+      "json_sha256": "b2c546021b3346584c0c4036994612b5a669cb535c9d611b0df708f0fb3e3317",
+      "new_json_sha256": "5caa71df21810e8ff26273954a8396a0b0314a7a20d145ff4227ded6cbf4e4d5",
+      "new_npz_sha256": "a7b94325720140768437545a6de6df1c8e54010736b39609747a872e2dc847e5",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/024_w008_random_1194025.npz",
+      "npz_sha256": "650ea2893a24a251c6880230665dd8c5153fcce880aae479017c1d60e79903da",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1194025,
+      "warmup_batch_size": 1,
+      "warmup_steps": 8
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/025_w008_random_1194026.json",
+      "json_sha256": "b25050f05512d0ca1d6dac825f8abcb78dd97c9bc696731522caf58e7ae71092",
+      "new_json_sha256": "dafd66e6ea7a78f2bddfe2bcccdd0bf615d676d34893ffe95996b3a940f356e7",
+      "new_npz_sha256": "ca24ac6d9c1fc03c76b6f9c213d545cb0b034df0635cd6f5c651a6d7665ba8f6",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/025_w008_random_1194026.npz",
+      "npz_sha256": "57db9b2c87f8358c48889072ab620f64d1b7dab76bcb2477d85bfcfdeb92c53e",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1194026,
+      "warmup_batch_size": 1,
+      "warmup_steps": 8
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/026_w008_random_1194027.json",
+      "json_sha256": "c12fa58a1b6f69ce677471445a1b5b6a1372ff1e35b6a621b0100bf7b015866d",
+      "new_json_sha256": "d2cff05e527bb6ec67cda5e486b13689398eb4fa028b89c43e6712cb6bc51555",
+      "new_npz_sha256": "d25424148c9c04a592f8fcba7b34edc691de42c1771debffe5d5cf071dd2dc9b",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/026_w008_random_1194027.npz",
+      "npz_sha256": "74ff65a2840f55c1795fb1856048f5df2c9d9057d6fc6735d4fe082268f3fc6b",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1194027,
+      "warmup_batch_size": 1,
+      "warmup_steps": 8
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/027_w008_random_1194028.json",
+      "json_sha256": "148738a2541f41023a0689c386dd017b854797aa7015a5c5fbe658ffe3c06480",
+      "new_json_sha256": "b5f93944a77026f2832c1c5c8b5bb1e41c4a8570db480204f816ee7b110a6f60",
+      "new_npz_sha256": "438ac0517a7e27c0842e25949648bab89a3926d9c33e0a94a63027fe7872fc9a",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/027_w008_random_1194028.npz",
+      "npz_sha256": "064ea22a062e6a35368897c5c3894aa64093429cc72da885dd5fe2540ea18b35",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1194028,
+      "warmup_batch_size": 1,
+      "warmup_steps": 8
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/052_w020_random_1194053.json",
+      "json_sha256": "35b3f7ad30064ac1d885db716ee1e0b371fc9fff0fe2badd6d97892fbc7a6851",
+      "new_json_sha256": "bb280320568840814806657d46f08dab92d303220383140cba3d4c76f4a604c9",
+      "new_npz_sha256": "c36ff00a12cd2d90dae992e8a36773272a4295930664cb8fbcc996c23779f52b",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/052_w020_random_1194053.npz",
+      "npz_sha256": "4877353e7d25f7c9d7638bd2614785d33649c4a197b9522a42a9a31cda7afa00",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1194053,
+      "warmup_batch_size": 1,
+      "warmup_steps": 20
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/053_w020_random_1194054.json",
+      "json_sha256": "844109492570eac1431b47a44efe24f1c818faec53a08716b4524b9de1f390e1",
+      "new_json_sha256": "1f289161c150053f6f97b2796b76254555cc1dc00fc956200ff56ed3764a87ae",
+      "new_npz_sha256": "86f920ca64ea67ca2617d477d13942b7c15148105b1816340835aed7946fd19f",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/053_w020_random_1194054.npz",
+      "npz_sha256": "e3645fac50012e5420286849c98972fdcb1fb49b140720afdfe20fa0918b68b7",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1194054,
+      "warmup_batch_size": 1,
+      "warmup_steps": 20
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/054_w020_random_1194055.json",
+      "json_sha256": "650aec6eebf3b6703cfc8d585c16d3a95d3b2b9d8c0267c5df22b4fca1e9e306",
+      "new_json_sha256": "4e930c921100dc7a01f415849113961fa432b7d19887536e92ce1896e60288d5",
+      "new_npz_sha256": "34e1874a36f935a4a2b080cf94288bfb4aec65f71908d047079957c62ea5a38a",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/054_w020_random_1194055.npz",
+      "npz_sha256": "a29ead2c65a07665c86b31ec719983a7e447b2b3e9bc0ac37798c58a2d093d19",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1194055,
+      "warmup_batch_size": 1,
+      "warmup_steps": 20
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/055_w020_random_1194056.json",
+      "json_sha256": "c797f9b5822b177c83737ae334a9d3dd40159718c10867e254d210fc3670bd41",
+      "new_json_sha256": "b21cd9a9761eaf77ecfdec16f45e4900daf408bb4790f82e7aab896676be7a88",
+      "new_npz_sha256": "cc6027d15311ea6c46bf88f45129fedf401b07d9aa5cede3f34a49d3cefdf305",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_train_seed1194001/probes/055_w020_random_1194056.npz",
+      "npz_sha256": "4906430e985e185dbbbdc9a257e4feb99e7cfad1df1d9b90e0d99c3c3a69079a",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1194056,
+      "warmup_batch_size": 1,
+      "warmup_steps": 20
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_validation_seed1195001/probes/012_w008_random_1195013.json",
+      "json_sha256": "9db6b29d40c07483d821f6d9b62eb9cee0020aff92c9df222a478ed5e04dbabc",
+      "new_json_sha256": "4534c51261de4def9bff9f2bc52a18f10e7f45b83d5183532215d3a7eb73b377",
+      "new_npz_sha256": "4964d747f5a2b22bbf83aa8d82d5a6ff1ca6b4a39889da5d72cf82d8daaacb11",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_validation_seed1195001/probes/012_w008_random_1195013.npz",
+      "npz_sha256": "64cd4435ef0b7adbb03e937aa4750914fd59b986c2195c9c64b4cfb5867232e1",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1195013,
+      "warmup_batch_size": 1,
+      "warmup_steps": 8
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_validation_seed1195001/probes/013_w008_random_1195014.json",
+      "json_sha256": "57eca332601be0a5cd03e865812107f1d90122cbe795a5f44f440ed3db1e427f",
+      "new_json_sha256": "06926e559eea8a48e4a7eb77cf2db2cf23e609b9f76ecf57f5db1794be0f944b",
+      "new_npz_sha256": "a4f6cdd28396b43bd024c118ca7eba3e237d21fdc56c25b56c1e4c7238e4b4c3",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_validation_seed1195001/probes/013_w008_random_1195014.npz",
+      "npz_sha256": "c3bd20218a7c8e7f01fe31fd1c66dd767d4b3feaf63dd59fa98418894fdbce23",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1195014,
+      "warmup_batch_size": 1,
+      "warmup_steps": 8
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_validation_seed1195001/probes/026_w020_random_1195027.json",
+      "json_sha256": "c27f68c838f76db98ec1fee74240f655d192e20f8f784064b23e3e3237b6a5ea",
+      "new_json_sha256": "fee7d8bbfa5e1a4fc0053b23e53d1d9208c4700b94784ad82532f1c8e8010399",
+      "new_npz_sha256": "7ad209693e2deabe9067f4c54deeeb1c65e4165688c1c5dcd519136d63a3c3bf",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_validation_seed1195001/probes/026_w020_random_1195027.npz",
+      "npz_sha256": "68a624e6d504c0b4ff129a4470ee9d681ed51d208da75e2b6d71e69beb738d79",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1195027,
+      "warmup_batch_size": 1,
+      "warmup_steps": 20
+    },
+    {
+      "json": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_validation_seed1195001/probes/027_w020_random_1195028.json",
+      "json_sha256": "b5d410f9203311fdc500431277f11817efc727a2889d201239924c2ea073edbe",
+      "new_json_sha256": "a8539b3c9f97d44a5900ded6e4370e61304cd5c2d5bffd46b5099ef5f865ae7f",
+      "new_npz_sha256": "698a1c7fcc51acefc52059251c482a570de17042fbb0ff1b4ec96e91e02ad6a8",
+      "npz": "/Users/sam/.codex/worktrees/clasher-simple-mps-bench/datasets/derived/hog26_simple_counterfactual_stratified_validation_seed1195001/probes/027_w020_random_1195028.npz",
+      "npz_sha256": "fc15d2e50ba7fdf12ac4e7019b3bdb4dca24b1475bf03ff3e7f5a7a20dad7bf5",
+      "opponent_randomness": "common-quantile-v1",
+      "seed": 1195028,
+      "warmup_batch_size": 1,
+      "warmup_steps": 20
+    }
+  ],
+  "schema": "clasher.random-probe-contract-regeneration.v1",
+  "status": "complete"
+}

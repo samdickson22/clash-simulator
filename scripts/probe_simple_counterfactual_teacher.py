@@ -11,7 +11,7 @@ import json
 import time
 from dataclasses import fields, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, cast
 
 import numpy as np
 import torch
@@ -28,6 +28,8 @@ from clasher.rl.simple_tensor_collector import (
     SimpleTensorPolicyDecision,
 )
 from clasher.rl.structured_obs import StructuredObservationBuilder
+from clasher.torch_sim.simple_adapter import SimpleGymHistory
+from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 
 
 class ForcedLearnerRootPolicy:
@@ -39,10 +41,12 @@ class ForcedLearnerRootPolicy:
         *,
         learner_players: torch.Tensor,
         root_actions: torch.Tensor | None,
+        common_random_opponent: bool = False,
     ) -> None:
         self.base = base
         self.learner_players = learner_players
         self.root_actions = root_actions
+        self.common_random_opponent = common_random_opponent
         self.calls = 0
 
     def __call__(
@@ -66,9 +70,22 @@ class ForcedLearnerRootPolicy:
             actions[rows, self.learner_players] = learner_actions[
                 rows, self.learner_players
             ]
+        if self.common_random_opponent:
+            opponent_players = 1 - self.learner_players
+            opponent_masks = boundary.public_action_masks[rows, opponent_players]
+            legal_counts = opponent_masks.sum(dim=-1)
+            if bool((legal_counts == 0).any()):
+                raise RuntimeError("random opponent has no legal action")
+            quantile = torch.rand((), device=opponent_masks.device)
+            ranks = torch.floor(quantile * legal_counts).to(torch.long)
+            cumulative = opponent_masks.to(torch.int64).cumsum(dim=-1)
+            opponent_actions = (cumulative > ranks[:, None]).to(torch.int64).argmax(
+                dim=-1
+            )
+            actions[rows, opponent_players] = opponent_actions
         decision = replace(decision, actions=actions)
         self.calls += 1
-        return decision
+        return cast(SimpleTensorPolicyDecision, decision)
 
 
 def select_stratified_action_subset(
@@ -246,7 +263,9 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_collector(args: argparse.Namespace) -> SimplePytorchTrainingCollector:
+def load_collector(
+    args: argparse.Namespace, *, batch_size: int | None = None
+) -> SimplePytorchTrainingCollector:
     payload = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
     config = PolicyConfig.from_dict(payload["model_config"])
     vocabulary = load_current_client_typed_vocabulary()
@@ -262,11 +281,13 @@ def load_collector(args: argparse.Namespace) -> SimplePytorchTrainingCollector:
     device = torch.device(args.device)
     model = ClasherPolicy(config, builder.card_stat_features).to(device).eval()
     model.load_state_dict(payload["model_state_dict"], strict=True)
-    opponent_mode = "random" if args.opponent_strategy == "random" else "strategy"
+    opponent_mode: Literal["random", "strategy"] = (
+        "random" if args.opponent_strategy == "random" else "strategy"
+    )
     return SimplePytorchTrainingCollector(
         model=model,
         builder=builder,
-        batch_size=args.batch_size,
+        batch_size=args.batch_size if batch_size is None else batch_size,
         device=device,
         decision_interval=8,
         gamma=0.995,
@@ -294,24 +315,83 @@ def main() -> None:
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     args.batch_size = args.action_samples
-    collector = load_collector(args)
+    warmup_collector = None
+    warmup_state = None
+    warmup_arrays: dict[str, Any] | None = None
+    if args.warmup_steps:
+        warmup_collector = load_collector(args, batch_size=1)
+        warmup_model = warmup_collector.policy.model
+        warmup_state = warmup_model.initial_state(1, device=args.device)
+        warmup_base_policy = warmup_collector.collector.policy
+        warmup_collector.collector.policy = ForcedLearnerRootPolicy(
+            warmup_base_policy,
+            learner_players=warmup_collector.learner_players,
+            root_actions=None,
+        )
+        warmup_arrays, warmup_state, *_history = warmup_collector.collect(
+            args.warmup_steps, warmup_state
+        )
+
+    collector = load_collector(args, batch_size=args.action_samples)
     model = collector.policy.model
     state = model.initial_state(args.batch_size, device=args.device)
     base_policy = collector.collector.policy
-    warmup_arrays: dict[str, Any] | None = None
-    if args.warmup_steps:
-        collector.collector.policy = ForcedLearnerRootPolicy(
-            base_policy,
-            learner_players=collector.learner_players,
-            root_actions=None,
+    candidate_runtime = cast(SimpleGymRuntime, collector.collector.bridge.runtime)
+    if warmup_collector is not None:
+        assert warmup_state is not None
+        source_observation = warmup_collector.collector.bridge.observe()
+        candidate_runtime.fanout_from_(
+            cast(SimpleGymRuntime, warmup_collector.collector.bridge.runtime)
         )
-        warmup_arrays, state, *_history = collector.collect(
-            args.warmup_steps, state
+        source_history = warmup_collector.collector.bridge.adapter.history
+        collector.collector.bridge.adapter.history = SimpleGymHistory(
+            previous_actions=source_history.previous_actions.expand(
+                args.batch_size, -1
+            ).clone(),
+            previous_rewards=source_history.previous_rewards.expand(
+                args.batch_size, -1
+            ).clone(),
+            episode_starts=source_history.episode_starts.expand(
+                args.batch_size, -1
+            ).clone(),
         )
-        collector.collector.policy = base_policy
+        collector.collector.bridge.needs_reset.copy_(
+            warmup_collector.collector.bridge.needs_reset.expand(args.batch_size)
+        )
+        state = (
+            warmup_state[0].expand(args.batch_size, -1).clone(),
+            warmup_state[1].expand(args.batch_size, -1).clone(),
+        )
+        learner = int(warmup_collector.learner_players[0].item())
+        collector.learner_players.fill_(learner)
+        collector.policy.learner_players.fill_(learner)  # type: ignore[attr-defined]
+        copied_observation = collector.collector.bridge.observe()
+        for descriptor in fields(source_observation.actor):
+            source_value = getattr(source_observation.actor, descriptor.name)
+            copied_value = getattr(copied_observation.actor, descriptor.name)
+            if not torch.equal(source_value.expand_as(copied_value), copied_value):
+                raise RuntimeError(
+                    f"cross-runtime actor field {descriptor.name} is not exact"
+                )
+        if source_observation.critic is None or copied_observation.critic is None:
+            if source_observation.critic is not copied_observation.critic:
+                raise RuntimeError("cross-runtime critic presence changed")
+        else:
+            for descriptor in fields(source_observation.critic):
+                source_value = getattr(source_observation.critic, descriptor.name)
+                copied_value = getattr(copied_observation.critic, descriptor.name)
+                if not torch.equal(source_value.expand_as(copied_value), copied_value):
+                    raise RuntimeError(
+                        f"cross-runtime critic field {descriptor.name} is not exact"
+                    )
+        if not torch.equal(
+            source_observation.legal_mask.expand_as(copied_observation.legal_mask),
+            copied_observation.legal_mask,
+        ):
+            raise RuntimeError("cross-runtime legal mask is not exact")
 
     # Turn one real public state into an exact candidate-leading tensor batch.
-    collector.collector.bridge.runtime.fanout_row_(0)
+    candidate_runtime.fanout_row_(0)
     history = collector.collector.bridge.adapter.history
     for tensor in (
         history.previous_actions,
@@ -319,9 +399,12 @@ def main() -> None:
         history.episode_starts,
     ):
         tensor.copy_(tensor[:1].expand_as(tensor))
-    state = tuple(value[:1].expand_as(value).clone() for value in state)
+    state = (
+        state[0][:1].expand_as(state[0]).clone(),
+        state[1][:1].expand_as(state[1]).clone(),
+    )
     collector.learner_players.fill_(0)
-    collector.policy.learner_players.fill_(0)
+    collector.policy.learner_players.fill_(0)  # type: ignore[attr-defined]
 
     observation = collector.collector.bridge.observe()
     packet = collector.collector.public_mask_provider(
@@ -342,7 +425,7 @@ def main() -> None:
         recurrent_inputs,
         args.warmup_steps,
     )
-    learner_state = collector.policy._state_from_prefixed_mapping(
+    learner_state = collector.policy._state_from_prefixed_mapping(  # type: ignore[attr-defined]
         recurrent_inputs, "learner"
     )
     rows = torch.arange(args.batch_size, device=collector.learner_players.device)
@@ -380,6 +463,7 @@ def main() -> None:
         base_policy,
         learner_players=collector.learner_players,
         root_actions=root_actions,
+        common_random_opponent=args.opponent_strategy == "random",
     )
     started = time.perf_counter()
     arrays, *_tail = collector.collect(
@@ -418,6 +502,12 @@ def main() -> None:
         "candidate_selector": "hand-slot-spatial-stratified-v1",
         "return_estimator": "truncated-n-step-bootstrap-v1",
         "random_candidate_fraction": args.random_candidate_fraction,
+        "warmup_batch_size": 1 if args.warmup_steps else args.action_samples,
+        "opponent_randomness": (
+            "common-quantile-v1"
+            if args.opponent_strategy == "random"
+            else "deterministic-strategy"
+        ),
         "opponent_strategy": args.opponent_strategy,
         "device": args.device,
         "parent_action": parent_action,

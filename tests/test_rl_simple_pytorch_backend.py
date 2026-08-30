@@ -364,6 +364,55 @@ def test_runtime_row_fanout_copies_every_mutable_group_and_stays_exact() -> None
         runtime.fanout_row_(4)
 
 
+def test_runtime_cross_batch_fanout_stays_tick_exact() -> None:
+    source_collector = _training_collector(
+        batch_size=1, max_entities=48, max_effects=64
+    )
+    destination_collector = _training_collector(
+        batch_size=4, max_entities=48, max_effects=64
+    )
+    source = source_collector.collector.bridge.runtime
+    destination = destination_collector.collector.bridge.runtime
+    no_op_source = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64)
+    for _ in range(11):
+        source.step_tick(no_op_source)
+
+    destination.fanout_from_(source)
+    source_snapshot = source._capture_initial_templates()
+    destination_snapshot = destination._capture_initial_templates()
+    for group, group_fields in source_snapshot.items():
+        for name, tensor in group_fields.items():
+            copied = destination_snapshot[group][name]
+            torch.testing.assert_close(
+                copied,
+                tensor.expand_as(copied),
+                rtol=0,
+                atol=0,
+            )
+
+    no_op_destination = torch.full((4, 2), NO_OP_ACTION, dtype=torch.int64)
+    for _ in range(8):
+        source_step = source.step_tick(no_op_source)
+        destination_step = destination.step_tick(no_op_destination)
+        torch.testing.assert_close(
+            destination_step.observation.actor.entity_features,
+            source_step.observation.actor.entity_features.expand_as(
+                destination_step.observation.actor.entity_features
+            ),
+            rtol=0,
+            atol=0,
+        )
+        torch.testing.assert_close(
+            destination_step.reward,
+            source_step.reward.expand_as(destination_step.reward),
+            rtol=0,
+            atol=0,
+        )
+
+    with pytest.raises(IndexError, match="source runtime"):
+        destination.fanout_from_(source, source_row=1)
+
+
 def test_tempered_rollout_log_probs_match_the_learner_distribution() -> None:
     temperature = 0.25
     collector = _training_collector(learner_sampling_temperature=temperature)

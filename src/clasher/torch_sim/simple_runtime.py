@@ -907,22 +907,8 @@ class SimpleGymRuntime:
         )
         destination.copy_(torch.where(row_mask, template, destination))
 
-    def fanout_row_(self, source_row: int) -> None:
-        """Replace every live row with one exact mutable runtime snapshot.
-
-        Catalogs and other immutable authorities remain shared.  The mutable
-        tensor inventory is deliberately identical to selective reset's owned
-        groups, so counterfactual batches cannot silently omit a mechanic
-        sidecar or cached projection field.
-        """
-
-        if (
-            not isinstance(source_row, int)
-            or isinstance(source_row, bool)
-            or not 0 <= source_row < self.batch_size
-        ):
-            raise IndexError("source_row is outside the runtime batch")
-        objects = {
+    def _mutable_owners(self) -> dict[str, object]:
+        owners: dict[str, object] = {
             "state": self.state,
             "action": self.action_state,
             "effects": self.effects,
@@ -945,21 +931,17 @@ class SimpleGymRuntime:
             "outcomes": self.outcomes,
         }
         if self.attack_locks is not None:
-            objects["attack_locks"] = self.attack_locks
+            owners["attack_locks"] = self.attack_locks
         if self.river_jumps is not None:
-            objects["river_jumps"] = self.river_jumps
+            owners["river_jumps"] = self.river_jumps
         if self.periodic_spawns is not None:
-            objects["periodic_spawns"] = self.periodic_spawns
+            owners["periodic_spawns"] = self.periodic_spawns
         if self.scheduled_casts is not None:
-            objects["scheduled_casts"] = self.scheduled_casts
-        for group, owner in objects.items():
-            for name in self._initial_templates[group]:
-                destination = getattr(owner, name)
-                destination.copy_(
-                    destination[source_row : source_row + 1].expand_as(destination)
-                )
+            owners["scheduled_casts"] = self.scheduled_casts
+        return owners
 
-        runtime_destinations = {
+    def _mutable_runtime_tensors(self) -> dict[str, torch.Tensor]:
+        return {
             "entity_status_kind": self.entity_status_kind,
             "entity_status_ticks": self.entity_status_ticks,
             "entity_slow_ticks": self.entity_slow_ticks,
@@ -985,11 +967,83 @@ class SimpleGymRuntime:
             "entity_invisible": self._entity_invisible,
             "entity_hidden": self._entity_hidden,
         }
+
+    def fanout_row_(self, source_row: int) -> None:
+        """Replace every live row with one exact mutable runtime snapshot.
+
+        Catalogs and other immutable authorities remain shared.  The mutable
+        tensor inventory is deliberately identical to selective reset's owned
+        groups, so counterfactual batches cannot silently omit a mechanic
+        sidecar or cached projection field.
+        """
+
+        if (
+            not isinstance(source_row, int)
+            or isinstance(source_row, bool)
+            or not 0 <= source_row < self.batch_size
+        ):
+            raise IndexError("source_row is outside the runtime batch")
+        objects = self._mutable_owners()
+        for group, owner in objects.items():
+            for name in self._initial_templates[group]:
+                destination = getattr(owner, name)
+                destination.copy_(
+                    destination[source_row : source_row + 1].expand_as(destination)
+                )
+
+        runtime_destinations = self._mutable_runtime_tensors()
         for name in self._initial_templates["runtime"]:
             destination = runtime_destinations[name]
             destination.copy_(
                 destination[source_row : source_row + 1].expand_as(destination)
             )
+
+    def fanout_from_(self, source: SimpleGymRuntime, source_row: int = 0) -> None:
+        """Load one exact mutable row from a compatible runtime into all rows."""
+
+        if not isinstance(source, SimpleGymRuntime):
+            raise TypeError("source must be a SimpleGymRuntime")
+        if (
+            not isinstance(source_row, int)
+            or isinstance(source_row, bool)
+            or not 0 <= source_row < source.batch_size
+        ):
+            raise IndexError("source_row is outside the source runtime batch")
+        if source.device != self.device:
+            raise ValueError("source and destination runtime devices differ")
+        source_owners = source._mutable_owners()
+        destination_owners = self._mutable_owners()
+        if tuple(source_owners) != tuple(destination_owners):
+            raise ValueError("source and destination mechanic groups differ")
+
+        def copy_tensor(destination: torch.Tensor, value: torch.Tensor) -> None:
+            if (
+                destination.shape[1:] != value.shape[1:]
+                or destination.dtype != value.dtype
+                or destination.device != value.device
+            ):
+                raise ValueError("source and destination mutable tensor layouts differ")
+            destination.copy_(
+                value[source_row : source_row + 1].expand_as(destination)
+            )
+
+        for group, destination_owner in destination_owners.items():
+            source_owner = source_owners[group]
+            destination_fields = tuple(self._initial_templates[group])
+            source_fields = tuple(source._initial_templates[group])
+            if destination_fields != source_fields:
+                raise ValueError(f"source and destination {group} fields differ")
+            for name in destination_fields:
+                copy_tensor(
+                    getattr(destination_owner, name),
+                    getattr(source_owner, name),
+                )
+        destination_runtime = self._mutable_runtime_tensors()
+        source_runtime = source._mutable_runtime_tensors()
+        if tuple(destination_runtime) != tuple(source_runtime):
+            raise ValueError("source and destination runtime fields differ")
+        for name, destination in destination_runtime.items():
+            copy_tensor(destination, source_runtime[name])
 
     def reset_rows(
         self,

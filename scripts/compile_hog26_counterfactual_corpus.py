@@ -77,6 +77,15 @@ def _audit_probe(
         raise ValueError(f"probe has unsupported candidate selector: {path}")
     if payload.get("return_estimator") != RETURN_ESTIMATOR:
         raise ValueError(f"probe has unsupported return estimator: {path}")
+    opponent = str(payload["opponent_strategy"])
+    opponent_randomness = payload.get("opponent_randomness")
+    if opponent == "random" and opponent_randomness != "common-quantile-v1":
+        raise ValueError(f"random probe has no common-random contract: {path}")
+    if opponent != "random" and opponent_randomness not in {
+        None,
+        "deterministic-strategy",
+    }:
+        raise ValueError(f"strategy probe has unknown randomness contract: {path}")
     if payload.get("checkpoint_sha256") != checkpoint_sha256:
         raise ValueError(f"probe checkpoint differs from corpus checkpoint: {path}")
     rows = payload.get("rows")
@@ -128,7 +137,8 @@ def _audit_probe(
         "probe_sha256": file_sha256(path),
         "state_sha256": file_sha256(path.with_suffix(".npz")),
         "seed": int(payload["seed"]),
-        "opponent": str(payload["opponent_strategy"]),
+        "opponent": opponent,
+        "opponent_randomness": opponent_randomness,
         "warmup_steps": int(payload["warmup_steps"]),
         "best_action": int(actions[best]),
         "parent_action": parent_action,
