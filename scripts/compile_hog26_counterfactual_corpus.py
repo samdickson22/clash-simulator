@@ -83,27 +83,45 @@ def _audit_probe(
     if not isinstance(rows, list) or len(rows) < 2:
         raise ValueError(f"probe has no candidate rows: {path}")
     actions = np.asarray([int(row["action"]) for row in rows], dtype=np.int64)
-    scores = np.asarray(
+    total_scores = np.asarray(
         [float(row["discounted_return_mean"]) for row in rows],
         dtype=np.float64,
     )
-    if len(np.unique(actions)) != len(actions) or not np.isfinite(scores).all():
+    reward_scores = np.asarray(
+        [float(row["discounted_reward_return"]) for row in rows],
+        dtype=np.float64,
+    )
+    if (
+        len(np.unique(actions)) != len(actions)
+        or not np.isfinite(total_scores).all()
+        or not np.isfinite(reward_scores).all()
+    ):
         raise ValueError(f"probe candidates are duplicated or non-finite: {path}")
     parent_action = int(payload["parent_action"])
     parent_matches = np.flatnonzero(actions == parent_action)
     noop_matches = np.flatnonzero(actions == 2304)
     if parent_matches.size != 1 or noop_matches.size != 1:
         raise ValueError(f"probe must contain parent and no-op exactly once: {path}")
-    best = int(np.argmax(scores))
-    parent_return = float(scores[int(parent_matches[0])])
-    noop_return = float(scores[int(noop_matches[0])])
-    best_return = float(scores[best])
+    # The simulator's observed discounted reward is the label authority. The
+    # checkpoint critic breaks exact reward ties only and must agree that the
+    # selected intervention is not worse than the retained parent/no-op.
+    best = int(np.lexsort((total_scores, reward_scores))[-1])
+    parent_return = float(total_scores[int(parent_matches[0])])
+    noop_return = float(total_scores[int(noop_matches[0])])
+    best_return = float(total_scores[best])
     parent_margin = best_return - parent_return
     noop_margin = best_return - noop_return
+    parent_reward = float(reward_scores[int(parent_matches[0])])
+    noop_reward = float(reward_scores[int(noop_matches[0])])
+    best_reward = float(reward_scores[best])
+    parent_reward_margin = best_reward - parent_reward
+    noop_reward_margin = best_reward - noop_reward
     accepted = bool(
         int(actions[best]) != parent_action
-        and parent_margin >= minimum_margin
-        and noop_margin >= minimum_margin
+        and parent_reward_margin >= minimum_margin
+        and noop_reward_margin >= minimum_margin
+        and parent_margin >= 0.0
+        and noop_margin >= 0.0
     )
     audit = {
         "probe": path.name,
@@ -119,11 +137,17 @@ def _audit_probe(
         "noop_return": noop_return,
         "parent_margin": parent_margin,
         "noop_margin": noop_margin,
+        "best_reward_return": best_reward,
+        "parent_reward_return": parent_reward,
+        "noop_reward_return": noop_reward,
+        "parent_reward_margin": parent_reward_margin,
+        "noop_reward_margin": noop_reward_margin,
         "accepted": accepted,
     }
     candidates = {
         "actions": actions,
-        "scores": scores,
+        "scores": reward_scores,
+        "total_scores": total_scores,
         "parent_action": parent_action,
         "best_action": int(actions[best]),
     }
@@ -260,7 +284,7 @@ def compile_corpus(
         "expert_probability": float(len(root_rows) / len(paths)),
         "stable_root_candidates": True,
         "behavior_opponent": "mixed-strategy-and-random",
-        "label_source": "counterfactual-simple-nstep-value",
+        "label_source": "counterfactual-simple-truncated-reward",
         "label_strategy": None,
         "label_checkpoint": str(checkpoint),
         "label_checkpoint_sha256": checkpoint_sha256,
@@ -288,6 +312,8 @@ def compile_corpus(
         "minimum_return_margin": minimum_margin,
         "candidate_selector": SELECTOR,
         "return_estimator": RETURN_ESTIMATOR,
+        "preference_score": "discounted_reward_return",
+        "bootstrap_role": "tie-break-and-nonnegative-consistency-only",
         "all_probe_trajectories_retained_for_behavior": True,
         "root_behavior_action_is_parent": True,
         "probes": len(audits),

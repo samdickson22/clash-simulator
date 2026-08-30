@@ -24,8 +24,8 @@ def _write_probe(
         {
             "action": best_action,
             "discounted_return_mean": best_margin,
-            "discounted_reward_return": 0.0,
-            "discounted_bootstrap_return": best_margin,
+            "discounted_reward_return": best_margin,
+            "discounted_bootstrap_return": 0.0,
             "terminal": False,
         },
         {
@@ -126,6 +126,7 @@ def test_compiler_retains_all_behavior_but_only_accepted_roots(tmp_path: Path) -
     assert manifest["probes"] == 2
     assert manifest["accepted_probes"] == 1
     assert manifest["rows"] == 4
+    assert manifest["preference_score"] == "discounted_reward_return"
     with np.load(output / "corpus.npz", allow_pickle=False) as archive:
         assert archive["counterfactual_root_rows"].tolist() == [1]
         assert archive["root_base_actions"].tolist() == [2304]
