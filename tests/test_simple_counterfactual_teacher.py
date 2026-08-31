@@ -2,12 +2,41 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+import torch
 
 from clasher.rl.common import NUM_TILES
 from scripts.probe_simple_counterfactual_teacher import (
+    collect_counterfactual_branches,
     select_stratified_action_subset,
     truncated_n_step_returns,
 )
+
+
+class _FakeCollector:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    def collect(
+        self,
+        count: int,
+        state: tuple[torch.Tensor, torch.Tensor],
+    ) -> tuple[
+        dict[str, np.ndarray],
+        tuple[torch.Tensor, torch.Tensor],
+        None,
+        None,
+        None,
+    ]:
+        self.calls += 1
+        done = np.zeros((2, count), dtype=np.bool_)
+        done[self.calls - 1, -1] = True
+        arrays = {
+            "rewards": np.full((2, count), self.calls, dtype=np.float64),
+            "dones": done,
+            "bootstrap_values": np.zeros(2, dtype=np.float64),
+        }
+        next_state = (state[0] + 1.0, state[1] + 1.0)
+        return arrays, next_state, None, None, None
 
 
 def test_stratified_candidates_cover_every_playable_slot_and_required_actions() -> None:
@@ -94,3 +123,21 @@ def test_truncated_returns_stop_at_terminal_and_bootstrap_only_nonterminal() -> 
     assert rewards.tolist() == pytest.approx([2.0, 2.75])
     assert bootstrap.tolist() == pytest.approx([0.0, 1.25])
     assert values.tolist() == pytest.approx([2.0, 4.0])
+
+
+def test_chunked_counterfactual_collection_stops_after_all_first_terminals() -> None:
+    collector = _FakeCollector()
+    state = (torch.zeros((2, 3)), torch.zeros((2, 3)))
+
+    arrays, next_state = collect_counterfactual_branches(
+        collector,  # type: ignore[arg-type]
+        state,
+        horizon_steps=12,
+        stop_when_all_terminal=True,
+        chunk_steps=3,
+    )
+
+    assert collector.calls == 2
+    assert arrays["rewards"].shape == (2, 6)
+    assert arrays["dones"].sum(axis=1).tolist() == [1, 1]
+    torch.testing.assert_close(next_state[0], torch.full((2, 3), 2.0))

@@ -264,6 +264,58 @@ def truncated_n_step_returns(
     return reward_return + bootstrap_return, reward_return, bootstrap_return
 
 
+def collect_counterfactual_branches(
+    collector: SimplePytorchTrainingCollector,
+    state: tuple[torch.Tensor, torch.Tensor],
+    *,
+    horizon_steps: int,
+    stop_when_all_terminal: bool,
+    chunk_steps: int,
+) -> tuple[
+    dict[str, Any],
+    tuple[torch.Tensor, torch.Tensor],
+]:
+    """Collect exact branches, optionally stopping after every first terminal."""
+
+    if horizon_steps < 1 or chunk_steps < 1:
+        raise ValueError("counterfactual horizon and chunk size must be positive")
+    if not stop_when_all_terminal:
+        arrays, next_state, *_tail = collector.collect(horizon_steps, state)
+        return arrays, next_state
+
+    remaining = horizon_steps
+    next_state = state
+    rewards: list[np.ndarray] = []
+    dones: list[np.ndarray] = []
+    seen_terminal: np.ndarray | None = None
+    last_arrays: dict[str, Any] | None = None
+    while remaining:
+        count = min(chunk_steps, remaining)
+        arrays, next_state, *_tail = collector.collect(count, next_state)
+        reward_chunk = np.asarray(arrays["rewards"])
+        done_chunk = np.asarray(arrays["dones"], dtype=np.bool_)
+        if reward_chunk.ndim != 2 or done_chunk.shape != reward_chunk.shape:
+            raise RuntimeError("counterfactual collector changed reward/done shape")
+        rewards.append(reward_chunk)
+        dones.append(done_chunk)
+        terminal_now = np.asarray(done_chunk.any(axis=1), dtype=np.bool_)
+        if seen_terminal is None:
+            seen_terminal = terminal_now.copy()
+        else:
+            seen_terminal = np.logical_or(seen_terminal, terminal_now)
+        last_arrays = arrays
+        remaining -= count
+        assert seen_terminal is not None
+        if bool(seen_terminal.all()):
+            break
+    if last_arrays is None:
+        raise RuntimeError("counterfactual collection produced no chunks")
+    combined = dict(last_arrays)
+    combined["rewards"] = np.concatenate(rewards, axis=1)
+    combined["dones"] = np.concatenate(dones, axis=1)
+    return combined, next_state
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", type=Path, required=True)
@@ -283,6 +335,8 @@ def parse_args() -> argparse.Namespace:
         help="include this tensor strategy's learner action in every root batch",
     )
     parser.add_argument("--device", choices=("cpu", "mps", "cuda"), default="cpu")
+    parser.add_argument("--stop-when-all-terminal", action="store_true")
+    parser.add_argument("--collection-chunk-steps", type=int, default=32)
     parser.add_argument("--state-output", type=Path, default=None)
     return parser.parse_args()
 
@@ -334,6 +388,8 @@ def main() -> None:
     args = parse_args()
     if args.batch_size < 1 or args.warmup_steps < 0 or args.horizon_steps < 1:
         raise ValueError("batch/warmup/horizon arguments are invalid")
+    if args.collection_chunk_steps < 1:
+        raise ValueError("collection chunk steps must be positive")
     if args.action_samples < 2:
         raise ValueError("action-samples must be at least two")
     unknown_proposals = set(args.proposal_strategies) - set(STRATEGY_NAMES)
@@ -517,10 +573,28 @@ def main() -> None:
         common_random_opponent=args.opponent_strategy == "random",
     )
     started = time.perf_counter()
-    arrays, *_tail = collector.collect(
-        args.horizon_steps,
+    arrays, _branch_state = collect_counterfactual_branches(
+        collector,
         (state[0].clone(), state[1].clone()),
+        horizon_steps=args.horizon_steps,
+        stop_when_all_terminal=args.stop_when_all_terminal,
+        chunk_steps=args.collection_chunk_steps,
     )
+    realized_horizon_steps = int(arrays["rewards"].shape[1])
+    if realized_horizon_steps < args.horizon_steps:
+        padding = args.horizon_steps - realized_horizon_steps
+        arrays["rewards"] = np.pad(
+            arrays["rewards"],
+            ((0, 0), (0, padding)),
+            mode="constant",
+            constant_values=0.0,
+        )
+        arrays["dones"] = np.pad(
+            arrays["dones"],
+            ((0, 0), (0, padding)),
+            mode="constant",
+            constant_values=False,
+        )
     discounted, reward_return, bootstrap_return = truncated_n_step_returns(
         arrays["rewards"],
         arrays["dones"],
@@ -549,6 +623,9 @@ def main() -> None:
         "batch_size": args.batch_size,
         "warmup_steps": args.warmup_steps,
         "horizon_steps": args.horizon_steps,
+        "realized_horizon_steps": realized_horizon_steps,
+        "stop_when_all_terminal": bool(args.stop_when_all_terminal),
+        "collection_chunk_steps": args.collection_chunk_steps,
         "action_samples": len(rows_out),
         "candidate_selector": "hand-slot-spatial-stratified-v1",
         "strategy_proposals": proposal_by_strategy,
