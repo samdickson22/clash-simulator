@@ -213,3 +213,40 @@ def test_compiler_rejects_terminal_label_with_critic_bootstrap(tmp_path: Path) -
             workers=2,
             created_at="2026-08-30T00:00:00+00:00",
         )
+
+
+def test_compiler_prefers_winning_outcome_over_higher_dense_return(
+    tmp_path: Path,
+) -> None:
+    checkpoint = tmp_path / "parent.pt"
+    torch.save({"token_names": ["<padding>", "Knight"]}, checkpoint)
+    checkpoint_sha256 = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+    probes = tmp_path / "probes"
+    probes.mkdir()
+    _write_probe(
+        probes,
+        stem="winning",
+        checkpoint_sha256=checkpoint_sha256,
+        seed=10,
+        parent_action=2304,
+        best_action=22,
+        best_margin=-0.5,
+        best_outcome=1,
+    )
+
+    output = tmp_path / "corpus"
+    manifest = compile_corpus(
+        probe_root=probes,
+        output_root=output,
+        checkpoint=checkpoint,
+        minimum_margin=0.02,
+        seed=99,
+        workers=2,
+        created_at="2026-08-30T00:00:00+00:00",
+    )
+
+    assert manifest["accepted_probes"] == 1
+    assert manifest["audits"][0]["best_action"] == 22
+    assert manifest["audits"][0]["best_terminal_outcome"] == 1
+    with np.load(output / "corpus.npz", allow_pickle=False) as archive:
+        assert archive["root_candidate_outcomes"].tolist() == [[1, 0]]
