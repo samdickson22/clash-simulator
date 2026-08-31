@@ -19,6 +19,7 @@ def _write_probe(
     parent_action: int,
     best_action: int,
     best_margin: float,
+    all_terminal: bool = True,
 ) -> None:
     rows = [
         {
@@ -26,14 +27,14 @@ def _write_probe(
             "discounted_return_mean": best_margin,
             "discounted_reward_return": best_margin,
             "discounted_bootstrap_return": 0.0,
-            "terminal": False,
+            "terminal": all_terminal,
         },
         {
             "action": parent_action,
             "discounted_return_mean": 0.0,
             "discounted_reward_return": 0.0,
             "discounted_bootstrap_return": 0.0,
-            "terminal": False,
+            "terminal": all_terminal,
         },
     ]
     if parent_action != 2304:
@@ -43,7 +44,7 @@ def _write_probe(
                 "discounted_return_mean": 0.0,
                 "discounted_reward_return": 0.0,
                 "discounted_bootstrap_return": 0.0,
-                "terminal": False,
+                "terminal": all_terminal,
             }
         )
     payload = {
@@ -54,6 +55,8 @@ def _write_probe(
         "seed": seed,
         "warmup_steps": 1,
         "horizon_steps": 24,
+        "realized_horizon_steps": 16,
+        "stop_when_all_terminal": True,
         "action_samples": len(rows),
         "random_candidate_fraction": 0.25,
         "opponent_strategy": "balanced",
@@ -127,6 +130,7 @@ def test_compiler_retains_all_behavior_but_only_accepted_roots(tmp_path: Path) -
     assert manifest["accepted_probes"] == 1
     assert manifest["rows"] == 4
     assert manifest["preference_score"] == "discounted_reward_return"
+    assert manifest["label_horizon_contract"] == "all-candidates-terminal"
     with np.load(output / "corpus.npz", allow_pickle=False) as archive:
         assert archive["counterfactual_root_rows"].tolist() == [1]
         assert archive["root_base_actions"].tolist() == [2304]
@@ -137,3 +141,36 @@ def test_compiler_retains_all_behavior_but_only_accepted_roots(tmp_path: Path) -
             [True, True, False],
             [True, True, False],
         ]
+
+
+def test_compiler_rejects_any_nonterminal_candidate_label(tmp_path: Path) -> None:
+    checkpoint = tmp_path / "parent.pt"
+    torch.save({"token_names": ["<padding>", "Knight"]}, checkpoint)
+    checkpoint_sha256 = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+    probes = tmp_path / "probes"
+    probes.mkdir()
+    _write_probe(
+        probes,
+        stem="truncated",
+        checkpoint_sha256=checkpoint_sha256,
+        seed=10,
+        parent_action=2304,
+        best_action=22,
+        best_margin=0.03,
+        all_terminal=False,
+    )
+
+    try:
+        compile_corpus(
+            probe_root=probes,
+            output_root=tmp_path / "corpus",
+            checkpoint=checkpoint,
+            minimum_margin=0.02,
+            seed=99,
+            workers=2,
+            created_at="2026-08-30T00:00:00+00:00",
+        )
+    except ValueError as error:
+        assert "nonterminal candidate labels" in str(error)
+    else:
+        raise AssertionError("nonterminal counterfactual labels were accepted")

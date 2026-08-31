@@ -91,6 +91,18 @@ def _audit_probe(
     rows = payload.get("rows")
     if not isinstance(rows, list) or len(rows) < 2:
         raise ValueError(f"probe has no candidate rows: {path}")
+    terminals = np.asarray(
+        [row.get("terminal") is True for row in rows],
+        dtype=np.bool_,
+    )
+    if not bool(terminals.all()):
+        raise ValueError(f"probe has nonterminal candidate labels: {path}")
+    if payload.get("stop_when_all_terminal") is not True:
+        raise ValueError(f"probe lacks terminal-stop collection contract: {path}")
+    realized_horizon = int(payload.get("realized_horizon_steps", -1))
+    declared_horizon = int(payload["horizon_steps"])
+    if not 0 < realized_horizon <= declared_horizon:
+        raise ValueError(f"probe has invalid realized terminal horizon: {path}")
     actions = np.asarray([int(row["action"]) for row in rows], dtype=np.int64)
     total_scores = np.asarray(
         [float(row["discounted_return_mean"]) for row in rows],
@@ -140,6 +152,9 @@ def _audit_probe(
         "opponent": opponent,
         "opponent_randomness": opponent_randomness,
         "warmup_steps": int(payload["warmup_steps"]),
+        "declared_horizon_steps": declared_horizon,
+        "realized_horizon_steps": realized_horizon,
+        "terminal_candidates": int(terminals.sum()),
         "best_action": int(actions[best]),
         "parent_action": parent_action,
         "best_return": best_return,
@@ -323,6 +338,7 @@ def compile_corpus(
         "candidate_selector": SELECTOR,
         "return_estimator": RETURN_ESTIMATOR,
         "preference_score": "discounted_reward_return",
+        "label_horizon_contract": "all-candidates-terminal",
         "bootstrap_role": "tie-break-and-nonnegative-consistency-only",
         "all_probe_trajectories_retained_for_behavior": True,
         "root_behavior_action_is_parent": True,
