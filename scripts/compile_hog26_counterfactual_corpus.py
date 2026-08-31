@@ -287,7 +287,7 @@ def compile_corpus(
             for path in paths
         }
     )
-    if len(action_samples) != 1 or len(horizons) != 1 or len(random_fractions) != 1:
+    if len(action_samples) != 1 or len(random_fractions) != 1:
         raise ValueError("probe generation settings are not homogeneous")
 
     corpus_metadata = {
@@ -298,7 +298,7 @@ def compile_corpus(
         "samples": int(combined["expert_actions"].size),
         "decision_interval": 8,
         "max_ticks": 6000,
-        "planner_depth": horizons[0],
+        "planner_depth": max(horizons),
         "planner_simulations": 1,
         "planner_action_samples": action_samples[0],
         "max_entities": int(combined["entity_ids"].shape[1]),
@@ -348,7 +348,8 @@ def compile_corpus(
         "supervised_rows": int(combined["expert_action_supervision_valid"].sum()),
         "warmup_steps": sorted({int(audit["warmup_steps"]) for audit in audits}),
         "action_samples": action_samples[0],
-        "horizon_steps": horizons[0],
+        "horizon_steps": horizons,
+        "maximum_horizon_steps": max(horizons),
         "random_candidate_fraction": random_fractions[0],
         "coverage": dict(sorted(coverage.items())),
         "corpus": str(corpus_path.resolve()),

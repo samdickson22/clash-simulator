@@ -131,6 +131,8 @@ def test_compiler_retains_all_behavior_but_only_accepted_roots(tmp_path: Path) -
     assert manifest["rows"] == 4
     assert manifest["preference_score"] == "discounted_reward_return"
     assert manifest["label_horizon_contract"] == "all-candidates-terminal"
+    assert manifest["horizon_steps"] == [24]
+    assert manifest["maximum_horizon_steps"] == 24
     with np.load(output / "corpus.npz", allow_pickle=False) as archive:
         assert archive["counterfactual_root_rows"].tolist() == [1]
         assert archive["root_base_actions"].tolist() == [2304]

@@ -5,7 +5,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from scripts.train_hog26_factorized_counterfactual import load_preferences
+from scripts.train_hog26_factorized_counterfactual import (
+    ROOT_POLICY_INPUT_KEYS,
+    load_preferences,
+    root_policy_input_fingerprints,
+)
 
 
 def test_preference_table_keeps_corrective_and_safety_pairs(tmp_path: Path) -> None:
@@ -58,3 +62,31 @@ def test_preference_table_can_preserve_the_behavior_play_gate(tmp_path: Path) ->
     assert table.positive_actions.tolist() == [20]
     assert table.negative_actions.tolist() == [100]
     assert table.corrective.tolist() == [True]
+
+
+def _policy_arrays() -> dict[str, np.ndarray]:
+    arrays: dict[str, np.ndarray] = {}
+    for index, key in enumerate(ROOT_POLICY_INPUT_KEYS):
+        arrays[key] = np.asarray([[index], [index + 1]], dtype=np.float32)
+    return arrays
+
+
+def test_root_fingerprints_ignore_provenance_but_detect_exact_input_overlap() -> None:
+    train = _policy_arrays()
+    validation = {key: value.copy() for key, value in train.items()}
+    train["episode_ids"] = np.asarray([10, 10])
+    validation["episode_ids"] = np.asarray([20, 20])
+
+    train_hashes = root_policy_input_fingerprints(train, np.asarray([0]))
+    validation_hashes = root_policy_input_fingerprints(validation, np.asarray([0]))
+
+    assert train_hashes == validation_hashes
+    validation["global_features"][0, 0] += 1.0
+    assert train_hashes.isdisjoint(
+        root_policy_input_fingerprints(validation, np.asarray([0]))
+    )
+
+
+def test_root_fingerprints_reject_out_of_range_rows() -> None:
+    with pytest.raises(ValueError, match="outside the corpus"):
+        root_policy_input_fingerprints(_policy_arrays(), np.asarray([2]))

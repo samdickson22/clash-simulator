@@ -39,6 +39,17 @@ DEFAULT_TRAINABLE_PREFIXES = (
     "tile_key.",
     "location_bias.",
 )
+ROOT_POLICY_INPUT_KEYS = (
+    "entity_ids",
+    "entity_features",
+    "entity_mask",
+    "hand_ids",
+    "global_features",
+    "action_masks",
+    "previous_actions",
+    "previous_rewards",
+    "episode_starts",
+)
 
 
 @dataclass(frozen=True)
@@ -60,6 +71,29 @@ def file_sha256(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def root_policy_input_fingerprints(
+    arrays: dict[str, np.ndarray], root_rows: np.ndarray
+) -> set[str]:
+    missing = sorted(set(ROOT_POLICY_INPUT_KEYS).difference(arrays))
+    if missing:
+        raise ValueError(f"corpus is missing policy-input arrays: {missing}")
+    rows = np.unique(np.asarray(root_rows, dtype=np.int64))
+    row_count = int(arrays[ROOT_POLICY_INPUT_KEYS[0]].shape[0])
+    if bool(((rows < 0) | (rows >= row_count)).any()):
+        raise ValueError("counterfactual root row is outside the corpus")
+    fingerprints: set[str] = set()
+    for row in rows.tolist():
+        digest = hashlib.sha256()
+        for key in ROOT_POLICY_INPUT_KEYS:
+            value = np.ascontiguousarray(arrays[key][row])
+            digest.update(key.encode())
+            digest.update(value.dtype.str.encode())
+            digest.update(np.asarray(value.shape, dtype=np.int64).tobytes())
+            digest.update(value.tobytes())
+        fingerprints.add(digest.hexdigest())
+    return fingerprints
 
 
 def load_preferences(
@@ -328,6 +362,20 @@ def main() -> None:
         args.validation_corpus,
         preserve_behavior_gate=args.preserve_behavior_gate,
     )
+    train_root_fingerprints = root_policy_input_fingerprints(
+        train_arrays, train_preferences.root_rows
+    )
+    validation_root_fingerprints = root_policy_input_fingerprints(
+        validation_arrays, validation_preferences.root_rows
+    )
+    overlapping_root_fingerprints = sorted(
+        train_root_fingerprints.intersection(validation_root_fingerprints)
+    )
+    if overlapping_root_fingerprints:
+        raise ValueError(
+            "train and validation share exact policy-input roots: "
+            f"{len(overlapping_root_fingerprints)}"
+        )
     prefixes = tuple(args.trainable_prefix or DEFAULT_TRAINABLE_PREFIXES)
     trainable: list[nn.Parameter] = []
     trainable_names: list[str] = []
