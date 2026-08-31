@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+import pytest
 import torch
 
 from scripts.compile_hog26_counterfactual_corpus import compile_corpus
@@ -20,13 +21,14 @@ def _write_probe(
     best_action: int,
     best_margin: float,
     all_terminal: bool = True,
+    bootstrap_return: float = 0.0,
 ) -> None:
     rows = [
         {
             "action": best_action,
-            "discounted_return_mean": best_margin,
+            "discounted_return_mean": best_margin + bootstrap_return,
             "discounted_reward_return": best_margin,
-            "discounted_bootstrap_return": 0.0,
+            "discounted_bootstrap_return": bootstrap_return,
             "terminal": all_terminal,
         },
         {
@@ -176,3 +178,32 @@ def test_compiler_rejects_any_nonterminal_candidate_label(tmp_path: Path) -> Non
         assert "nonterminal candidate labels" in str(error)
     else:
         raise AssertionError("nonterminal counterfactual labels were accepted")
+
+
+def test_compiler_rejects_terminal_label_with_critic_bootstrap(tmp_path: Path) -> None:
+    checkpoint = tmp_path / "parent.pt"
+    torch.save({"token_names": ["<padding>", "Knight"]}, checkpoint)
+    checkpoint_sha256 = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+    probes = tmp_path / "probes"
+    probes.mkdir()
+    _write_probe(
+        probes,
+        stem="bootstrapped",
+        checkpoint_sha256=checkpoint_sha256,
+        seed=10,
+        parent_action=2304,
+        best_action=22,
+        best_margin=0.03,
+        bootstrap_return=0.01,
+    )
+
+    with pytest.raises(ValueError, match="critic bootstrap"):
+        compile_corpus(
+            probe_root=probes,
+            output_root=tmp_path / "corpus",
+            checkpoint=checkpoint,
+            minimum_margin=0.02,
+            seed=99,
+            workers=2,
+            created_at="2026-08-30T00:00:00+00:00",
+        )

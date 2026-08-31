@@ -112,6 +112,14 @@ def _audit_probe(
         [float(row["discounted_reward_return"]) for row in rows],
         dtype=np.float64,
     )
+    bootstrap_scores = np.asarray(
+        [float(row["discounted_bootstrap_return"]) for row in rows],
+        dtype=np.float64,
+    )
+    if not bool((bootstrap_scores == 0.0).all()) or not np.array_equal(
+        total_scores, reward_scores
+    ):
+        raise ValueError(f"terminal probe still depends on critic bootstrap: {path}")
     if (
         len(np.unique(actions)) != len(actions)
         or not np.isfinite(total_scores).all()
@@ -339,7 +347,7 @@ def compile_corpus(
         "return_estimator": RETURN_ESTIMATOR,
         "preference_score": "discounted_reward_return",
         "label_horizon_contract": "all-candidates-terminal",
-        "bootstrap_role": "tie-break-and-nonnegative-consistency-only",
+        "bootstrap_role": "forbidden-for-terminal-labels",
         "all_probe_trajectories_retained_for_behavior": True,
         "root_behavior_action_is_parent": True,
         "probes": len(audits),
