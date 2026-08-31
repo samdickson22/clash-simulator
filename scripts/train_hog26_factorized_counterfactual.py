@@ -18,11 +18,12 @@ import torch
 from torch import Tensor, nn
 from torch.nn import functional as F
 
+from clasher.rl.common import NUM_HAND_SLOTS, NUM_TILES
+from clasher.rl.model import ClasherPolicy, PolicyConfig
 from scripts.distill_hog26_playgate import (
     action_modes,
     episode_sequences,
     load_corpus,
-    load_model,
     metrics_from_confusion,
     mode_logits,
     sequence_inputs,
@@ -61,7 +62,11 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def load_preferences(path: Path) -> PreferenceTable:
+def load_preferences(
+    path: Path,
+    *,
+    preserve_behavior_gate: bool = False,
+) -> PreferenceTable:
     with np.load(path, allow_pickle=False) as archive:
         required = {
             "counterfactual_root_rows",
@@ -98,6 +103,11 @@ def load_preferences(path: Path) -> PreferenceTable:
         for candidate_index in selected.tolist():
             action = int(candidates[root_index, candidate_index])
             if action == int(base_actions[root_index]):
+                continue
+            if preserve_behavior_gate and (
+                (action < NUM_HAND_SLOTS * NUM_TILES)
+                != (int(base_actions[root_index]) < NUM_HAND_SLOTS * NUM_TILES)
+            ):
                 continue
             gap = float(scores[root_index, candidate_index]) - base_score
             if gap == 0.0:
@@ -153,6 +163,7 @@ def evaluate(
     *,
     device: torch.device,
     sequence_length: int,
+    preserve_behavior_gate: bool = False,
 ) -> dict[str, Any]:
     model.eval()
     confusion = np.zeros((3, 3), dtype=np.int64)
@@ -176,7 +187,16 @@ def evaluate(
             )
             logits = output.joint_logits[0]
             nll_sum += float(F.cross_entropy(logits, actions, reduction="sum"))
-            predicted_actions = model._deterministic_actions(output, inputs.action_mask)[0]
+            force_play = (
+                (actions < NUM_HAND_SLOTS * NUM_TILES).unsqueeze(0)
+                if preserve_behavior_gate
+                else None
+            )
+            predicted_actions = model._deterministic_actions(
+                output,
+                inputs.action_mask,
+                force_play=force_play,
+            )[0]
             exact_correct += int((predicted_actions == actions).sum())
             intervention_rows = torch.as_tensor(
                 np.isin(chunk, intervention_root_rows),
@@ -189,7 +209,11 @@ def evaluate(
             )
             non_root_rows += int(preserved.sum())
             targets = action_modes(actions)
-            predictions = mode_logits(output)[0].argmax(dim=-1)
+            predictions = (
+                action_modes(predicted_actions)
+                if preserve_behavior_gate
+                else mode_logits(output)[0].argmax(dim=-1)
+            )
             np.add.at(confusion, (targets.cpu().numpy(), predictions.cpu().numpy()), 1)
             selected = np.flatnonzero(
                 (preferences.root_rows >= int(chunk[0]))
@@ -252,6 +276,14 @@ def main() -> None:
     parser.add_argument("--maximum-safety-regression", type=float, default=0.01)
     parser.add_argument("--minimum-corrective-improvement", type=float, default=0.05)
     parser.add_argument("--trainable-prefix", action="append", default=[])
+    parser.add_argument(
+        "--preserve-behavior-gate",
+        action="store_true",
+        help=(
+            "keep the source hazard play/wait gate fixed and train only "
+            "same-mode complete-action preferences"
+        ),
+    )
     args = parser.parse_args()
     if args.output_checkpoint.exists() or args.report.exists():
         raise SystemExit("refusing to overwrite factorized repair output")
@@ -266,7 +298,19 @@ def main() -> None:
     torch.set_num_threads(1)
     device = torch.device(args.device)
     payload = torch.load(args.initial_checkpoint, map_location=device, weights_only=False)
-    model = load_model(payload, device)
+    config = PolicyConfig.from_dict(payload["model_config"])
+    if args.preserve_behavior_gate:
+        if not config.play_hazard_enabled:
+            raise ValueError("behavior-gate preservation requires a hazard policy")
+    elif config.deterministic_hierarchy != "play-gate" or config.play_hazard_enabled:
+        raise ValueError("factorized repair requires a hazard-free play gate")
+    state = payload["model_state_dict"]
+    card_stats = torch.as_tensor(state["actor_encoder.card_stat_features"])
+    semantic = state.get("actor_encoder.semantic_card_features")
+    if semantic is not None:
+        card_stats = torch.cat([card_stats, torch.as_tensor(semantic)], dim=-1)
+    model = ClasherPolicy(config, card_stats).to(device)
+    model.load_state_dict(state, strict=True)
     train_metadata, train_arrays = load_corpus(args.train_corpus)
     validation_metadata, validation_arrays = load_corpus(args.validation_corpus)
     expected_tokens = tuple(payload["token_names"])
@@ -276,8 +320,14 @@ def main() -> None:
         raise ValueError("counterfactual corpus vocabulary differs from checkpoint")
     train_sequences = episode_sequences(train_arrays["episode_ids"])
     validation_sequences = episode_sequences(validation_arrays["episode_ids"])
-    train_preferences = load_preferences(args.train_corpus)
-    validation_preferences = load_preferences(args.validation_corpus)
+    train_preferences = load_preferences(
+        args.train_corpus,
+        preserve_behavior_gate=args.preserve_behavior_gate,
+    )
+    validation_preferences = load_preferences(
+        args.validation_corpus,
+        preserve_behavior_gate=args.preserve_behavior_gate,
+    )
     prefixes = tuple(args.trainable_prefix or DEFAULT_TRAINABLE_PREFIXES)
     trainable: list[nn.Parameter] = []
     trainable_names: list[str] = []
@@ -297,6 +347,7 @@ def main() -> None:
         validation_preferences,
         device=device,
         sequence_length=args.sequence_length,
+        preserve_behavior_gate=args.preserve_behavior_gate,
     )
     history: list[dict[str, Any]] = [{"epoch": 0, "validation": initial}]
     best_epoch = 0
@@ -360,6 +411,7 @@ def main() -> None:
             validation_preferences,
             device=device,
             sequence_length=args.sequence_length,
+            preserve_behavior_gate=args.preserve_behavior_gate,
         )
         eligible = bool(
             validation["behavior"]["non_root_exact_action_accuracy"]
@@ -413,6 +465,7 @@ def main() -> None:
         "behavior_coef": args.behavior_coef,
         "counterfactual_coef": args.counterfactual_coef,
         "root_behavior_weight": args.root_behavior_weight,
+        "preserve_behavior_gate": args.preserve_behavior_gate,
         "trainable_prefixes": list(prefixes),
         "trainable_parameter_names": trainable_names,
         "trainable_parameter_count": sum(value.numel() for value in trainable),

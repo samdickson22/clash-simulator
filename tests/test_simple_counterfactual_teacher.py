@@ -18,6 +18,7 @@ def test_stratified_candidates_cover_every_playable_slot_and_required_actions() 
     )
     logits = np.linspace(-3.0, 3.0, no_op + 2, dtype=np.float64)
     parent = 2 * NUM_TILES + 17
+    proposals = np.asarray([3 * NUM_TILES + 29, NUM_TILES + 31])
 
     first = select_stratified_action_subset(
         legal,
@@ -25,6 +26,7 @@ def test_stratified_candidates_cover_every_playable_slot_and_required_actions() 
         sample_limit=16,
         no_op_action=no_op,
         parent_action=parent,
+        proposal_actions=proposals,
         random_fraction=0.25,
         rng=np.random.default_rng(2301),
     )
@@ -34,6 +36,7 @@ def test_stratified_candidates_cover_every_playable_slot_and_required_actions() 
         sample_limit=16,
         no_op_action=no_op,
         parent_action=parent,
+        proposal_actions=proposals,
         random_fraction=0.25,
         rng=np.random.default_rng(2301),
     )
@@ -42,6 +45,7 @@ def test_stratified_candidates_cover_every_playable_slot_and_required_actions() 
     assert len(first) == len(np.unique(first)) == 16
     assert no_op in first
     assert parent in first
+    assert np.isin(proposals, first).all()
     assert set((first[first < no_op] // NUM_TILES).tolist()) == {0, 1, 2, 3}
     assert np.isin(first, legal).all()
 
@@ -58,6 +62,23 @@ def test_stratified_candidates_reject_illegal_required_action() -> None:
             no_op_action=no_op,
             parent_action=99,
             random_fraction=0.25,
+            rng=np.random.default_rng(1),
+        )
+
+
+def test_stratified_candidates_reject_proposals_over_capacity() -> None:
+    no_op = 4 * NUM_TILES
+    legal = np.asarray([0, 1, 2, 3, no_op], dtype=np.int64)
+    logits = np.zeros(no_op + 2, dtype=np.float64)
+    with pytest.raises(ValueError, match="exceed the sample limit"):
+        select_stratified_action_subset(
+            legal,
+            logits,
+            sample_limit=3,
+            no_op_action=no_op,
+            parent_action=0,
+            proposal_actions=np.asarray([1, 2]),
+            random_fraction=0.0,
             rng=np.random.default_rng(1),
         )
 

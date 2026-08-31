@@ -20,6 +20,7 @@ from clasher.rl.common import BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.simple_pytorch_backend import (
     SimplePytorchTrainingCollector,
+    SimpleTensorStrategyOpponent,
     load_current_client_typed_vocabulary,
 )
 from clasher.rl.simple_tensor_collector import (
@@ -27,6 +28,7 @@ from clasher.rl.simple_tensor_collector import (
     SimpleTensorPolicyBoundary,
     SimpleTensorPolicyDecision,
 )
+from clasher.rl.strategy_bots import STRATEGY_NAMES
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.torch_sim.simple_adapter import SimpleGymHistory
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
@@ -95,6 +97,7 @@ def select_stratified_action_subset(
     sample_limit: int,
     no_op_action: int,
     parent_action: int,
+    proposal_actions: np.ndarray | None = None,
     random_fraction: float,
     rng: np.random.Generator,
 ) -> np.ndarray:
@@ -117,7 +120,19 @@ def select_stratified_action_subset(
     if not 0.0 <= random_fraction < 1.0:
         raise ValueError("random fraction must be in [0, 1)")
     legal_set = set(legal.tolist())
-    for required in (no_op_action, parent_action):
+    proposed = (
+        np.empty((0,), dtype=np.int64)
+        if proposal_actions is None
+        else np.asarray(proposal_actions, dtype=np.int64)
+    )
+    if proposed.ndim != 1:
+        raise ValueError("proposal actions must be rank one")
+    required_actions = tuple(
+        dict.fromkeys((no_op_action, parent_action, *proposed.tolist()))
+    )
+    if len(required_actions) > sample_limit:
+        raise ValueError("required and proposed actions exceed the sample limit")
+    for required in required_actions:
         if required not in legal_set:
             raise ValueError(f"required action {required} is not legal")
     if int(legal.max()) >= logits.size:
@@ -133,6 +148,8 @@ def select_stratified_action_subset(
 
     add(no_op_action)
     add(parent_action)
+    for action in proposed.tolist():
+        add(int(action))
     remaining_budget = sample_limit - len(selected)
     random_budget = min(
         remaining_budget,
@@ -258,6 +275,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--action-samples", type=int, default=8)
     parser.add_argument("--random-candidate-fraction", type=float, default=0.25)
     parser.add_argument("--opponent-strategy", default="balanced")
+    parser.add_argument(
+        "--proposal-strategy",
+        action="append",
+        default=[],
+        dest="proposal_strategies",
+        help="include this tensor strategy's learner action in every root batch",
+    )
     parser.add_argument("--device", choices=("cpu", "mps", "cuda"), default="cpu")
     parser.add_argument("--state-output", type=Path, default=None)
     return parser.parse_args()
@@ -312,6 +336,11 @@ def main() -> None:
         raise ValueError("batch/warmup/horizon arguments are invalid")
     if args.action_samples < 2:
         raise ValueError("action-samples must be at least two")
+    unknown_proposals = set(args.proposal_strategies) - set(STRATEGY_NAMES)
+    if unknown_proposals:
+        raise ValueError(f"unknown proposal strategies: {sorted(unknown_proposals)}")
+    if len(set(args.proposal_strategies)) != len(args.proposal_strategies):
+        raise ValueError("proposal strategies must be unique")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     args.batch_size = args.action_samples
@@ -445,12 +474,34 @@ def main() -> None:
     legal = np.flatnonzero(common_legal).astype(np.int64, copy=False)
     if legal.size < 2:
         raise RuntimeError("probe state has fewer than two common legal actions")
+    proposal_vocabulary = load_current_client_typed_vocabulary()
+    proposal_builder = StructuredObservationBuilder(
+        decks_path="decks.json",
+        token_names=proposal_vocabulary.token_names,
+        max_entities=model.config.max_entities,
+        card_semantics_version=model.config.card_semantics_version,
+        canonical_lane_globals=True,
+    )
+    proposal_by_strategy: dict[str, int] = {}
+    for strategy_name in args.proposal_strategies:
+        proposed = SimpleTensorStrategyOpponent(
+            proposal_builder,
+            strategy_name=strategy_name,
+            device=torch.device(args.device),
+        )(boundary)
+        action = int(proposed[0, int(collector.learner_players[0].item())].item())
+        if action not in set(legal.tolist()):
+            raise RuntimeError(f"strategy proposal {strategy_name} is not legal")
+        proposal_by_strategy[strategy_name] = action
     candidates = select_stratified_action_subset(
         legal,
         parent_output.joint_logits[0, 0].detach().cpu().numpy(),
         sample_limit=args.action_samples,
         no_op_action=model.num_actions - 2,
         parent_action=parent_action,
+        proposal_actions=np.asarray(
+            list(proposal_by_strategy.values()), dtype=np.int64
+        ),
         random_fraction=args.random_candidate_fraction,
         rng=np.random.default_rng(args.seed),
     )
@@ -500,6 +551,7 @@ def main() -> None:
         "horizon_steps": args.horizon_steps,
         "action_samples": len(rows_out),
         "candidate_selector": "hand-slot-spatial-stratified-v1",
+        "strategy_proposals": proposal_by_strategy,
         "return_estimator": "truncated-n-step-bootstrap-v1",
         "random_candidate_fraction": args.random_candidate_fraction,
         "warmup_batch_size": 1 if args.warmup_steps else args.action_samples,
