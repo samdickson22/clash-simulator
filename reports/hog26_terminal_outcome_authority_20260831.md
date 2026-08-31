@@ -46,3 +46,13 @@ tie-break evidence, not substitutes for match result.
 
 No v3 corpus or checkpoint is eligible for the outcome-first repair. Training
 and held-out probes must be regenerated under v4.
+
+## Rejected export optimization
+
+An opt-in outcome-only collector export removed actor, critic, confidence,
+action-mask, and PPO-storage copies while preserving rewards, dones, terminal
+winners, bootstrap values, and continuation state. A matched MPS screen used
+seed 1220001, warmup 13, 12 identical candidates, and 32 decisions. All v4
+rows were exact, but full export took 54.9111 seconds and outcome-only export
+took 55.6053 seconds (`0.9875x`). Simulation dominates this workload; the
+extra branch added complexity without throughput. It was removed completely.
