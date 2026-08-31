@@ -628,6 +628,26 @@ def test_one_decision_collects_existing_ppo_rollout_shape() -> None:
     assert metadata["fresh_only"] is True
 
 
+def test_terminal_winner_export_is_counterfactual_opt_in() -> None:
+    ordinary = _training_collector()
+    model = ordinary.policy.model
+    ordinary_arrays, *_ = ordinary.collect(
+        1, model.initial_state(2, device="cpu")
+    )
+    assert "terminal_winners" not in ordinary_arrays
+
+    counterfactual = _training_collector()
+    model = counterfactual.policy.model
+    counterfactual_arrays, *_ = counterfactual.collect(
+        1,
+        model.initial_state(2, device="cpu"),
+        include_terminal_winners=True,
+    )
+    assert counterfactual_arrays["terminal_winners"].shape == (
+        counterfactual_arrays["dones"].shape
+    )
+
+
 @pytest.mark.parametrize(
     "opponent_mode", ("noop", "random", "strategy", "league", "checkpoint")
 )

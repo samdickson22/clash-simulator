@@ -108,6 +108,7 @@ def load_preferences(
             "root_candidate_actions",
             "root_candidate_valid",
             "root_candidate_scores",
+            "root_candidate_outcomes",
         }
         missing = sorted(required.difference(archive.files))
         if missing:
@@ -117,7 +118,12 @@ def load_preferences(
         candidates = archive["root_candidate_actions"].copy()
         valid = archive["root_candidate_valid"].copy()
         scores = archive["root_candidate_scores"].copy()
-    if candidates.shape != valid.shape or candidates.shape != scores.shape:
+        outcomes = archive["root_candidate_outcomes"].copy()
+    if (
+        candidates.shape != valid.shape
+        or candidates.shape != scores.shape
+        or candidates.shape != outcomes.shape
+    ):
         raise ValueError("counterfactual candidate arrays have inconsistent shapes")
     if root_rows.shape != base_actions.shape or len(root_rows) != len(candidates):
         raise ValueError("counterfactual root table has inconsistent shapes")
@@ -134,6 +140,7 @@ def load_preferences(
             raise ValueError("each counterfactual root must contain its base action once")
         base_index = int(base_matches[0])
         base_score = float(scores[root_index, base_index])
+        base_outcome = int(outcomes[root_index, base_index])
         for candidate_index in selected.tolist():
             action = int(candidates[root_index, candidate_index])
             if action == int(base_actions[root_index]):
@@ -144,13 +151,16 @@ def load_preferences(
             ):
                 continue
             gap = float(scores[root_index, candidate_index]) - base_score
-            if gap == 0.0:
+            outcome_gap = int(outcomes[root_index, candidate_index]) - base_outcome
+            if outcome_gap == 0 and gap == 0.0:
                 continue
-            candidate_better = gap > 0.0
+            candidate_better = outcome_gap > 0 or (outcome_gap == 0 and gap > 0.0)
             rows_out.append(int(root_row))
             positive.append(action if candidate_better else int(base_actions[root_index]))
             negative.append(int(base_actions[root_index]) if candidate_better else action)
-            weights.append(1.0 + min(3.0, abs(gap) * 10.0))
+            weights.append(
+                4.0 if outcome_gap != 0 else 1.0 + min(3.0, abs(gap) * 10.0)
+            )
             corrective.append(candidate_better)
     if not rows_out:
         raise ValueError("counterfactual corpus produces no strict preferences")

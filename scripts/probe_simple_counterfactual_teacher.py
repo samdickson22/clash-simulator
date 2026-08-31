@@ -280,24 +280,35 @@ def collect_counterfactual_branches(
     if horizon_steps < 1 or chunk_steps < 1:
         raise ValueError("counterfactual horizon and chunk size must be positive")
     if not stop_when_all_terminal:
-        arrays, next_state, *_tail = collector.collect(horizon_steps, state)
+        arrays, next_state, *_tail = collector.collect(
+            horizon_steps, state, include_terminal_winners=True
+        )
         return arrays, next_state
 
     remaining = horizon_steps
     next_state = state
     rewards: list[np.ndarray] = []
     dones: list[np.ndarray] = []
+    winners: list[np.ndarray] = []
     seen_terminal: np.ndarray | None = None
     last_arrays: dict[str, Any] | None = None
     while remaining:
         count = min(chunk_steps, remaining)
-        arrays, next_state, *_tail = collector.collect(count, next_state)
+        arrays, next_state, *_tail = collector.collect(
+            count, next_state, include_terminal_winners=True
+        )
         reward_chunk = np.asarray(arrays["rewards"])
         done_chunk = np.asarray(arrays["dones"], dtype=np.bool_)
-        if reward_chunk.ndim != 2 or done_chunk.shape != reward_chunk.shape:
+        winner_chunk = np.asarray(arrays["terminal_winners"], dtype=np.int64)
+        if (
+            reward_chunk.ndim != 2
+            or done_chunk.shape != reward_chunk.shape
+            or winner_chunk.shape != done_chunk.shape
+        ):
             raise RuntimeError("counterfactual collector changed reward/done shape")
         rewards.append(reward_chunk)
         dones.append(done_chunk)
+        winners.append(winner_chunk)
         terminal_now = np.asarray(done_chunk.any(axis=1), dtype=np.bool_)
         if seen_terminal is None:
             seen_terminal = terminal_now.copy()
@@ -313,7 +324,38 @@ def collect_counterfactual_branches(
     combined = dict(last_arrays)
     combined["rewards"] = np.concatenate(rewards, axis=1)
     combined["dones"] = np.concatenate(dones, axis=1)
+    combined["terminal_winners"] = np.concatenate(winners, axis=1)
     return combined, next_state
+
+
+def first_terminal_outcomes(
+    dones: np.ndarray,
+    winners: np.ndarray,
+    learner_players: np.ndarray,
+) -> np.ndarray:
+    done_rows = np.asarray(dones, dtype=np.bool_)
+    winner_rows = np.asarray(winners, dtype=np.int64)
+    learners = np.asarray(learner_players, dtype=np.int64).reshape(-1)
+    if done_rows.ndim != 2 or winner_rows.shape != done_rows.shape:
+        raise ValueError("terminal done/winner arrays must have equal [batch, time] shape")
+    if learners.shape != (done_rows.shape[0],):
+        raise ValueError("learner player array must have one entry per branch")
+    terminal = done_rows.any(axis=1)
+    first_terminal = np.where(
+        terminal,
+        done_rows.argmax(axis=1),
+        done_rows.shape[1] - 1,
+    )
+    terminal_winners = winner_rows[np.arange(done_rows.shape[0]), first_terminal]
+    return np.where(
+        ~terminal,
+        0,
+        np.where(
+            terminal_winners == learners,
+            1,
+            np.where(terminal_winners < 0, 0, -1),
+        ),
+    ).astype(np.int8, copy=False)
 
 
 def parse_args() -> argparse.Namespace:
@@ -581,6 +623,14 @@ def main() -> None:
         chunk_steps=args.collection_chunk_steps,
     )
     realized_horizon_steps = int(arrays["rewards"].shape[1])
+    unpadded_dones = np.asarray(arrays["dones"], dtype=np.bool_)
+    unpadded_winners = np.asarray(arrays["terminal_winners"], dtype=np.int64)
+    learner_players = collector.learner_players.detach().cpu().numpy()
+    terminal_outcomes = first_terminal_outcomes(
+        unpadded_dones,
+        unpadded_winners,
+        learner_players,
+    )
     if realized_horizon_steps < args.horizon_steps:
         padding = args.horizon_steps - realized_horizon_steps
         arrays["rewards"] = np.pad(
@@ -611,12 +661,20 @@ def main() -> None:
                 "discounted_reward_return": float(reward_return[index]),
                 "discounted_bootstrap_return": float(bootstrap_return[index]),
                 "terminal": bool(done[index]),
+                "terminal_outcome": int(terminal_outcomes[index]),
             }
         )
-    rows_out.sort(key=lambda row: float(row["discounted_return_mean"]), reverse=True)
+    rows_out.sort(
+        key=lambda row: (
+            int(row["terminal_outcome"]),
+            float(row["discounted_reward_return"]),
+            float(row["discounted_return_mean"]),
+        ),
+        reverse=True,
+    )
     elapsed = time.perf_counter() - started
     payload = {
-        "schema": "clasher.simple-counterfactual-teacher-probe.v3",
+        "schema": "clasher.simple-counterfactual-teacher-probe.v4",
         "checkpoint": str(args.checkpoint.resolve()),
         "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
         "seed": args.seed,
@@ -630,6 +688,7 @@ def main() -> None:
         "candidate_selector": "hand-slot-spatial-stratified-v1",
         "strategy_proposals": proposal_by_strategy,
         "return_estimator": "truncated-n-step-bootstrap-v1",
+        "label_authority": "terminal-outcome-then-discounted-reward-v1",
         "random_candidate_fraction": args.random_candidate_fraction,
         "warmup_batch_size": 1 if args.warmup_steps else args.action_samples,
         "opponent_randomness": (

@@ -22,6 +22,7 @@ def _write_probe(
     best_margin: float,
     all_terminal: bool = True,
     bootstrap_return: float = 0.0,
+    best_outcome: int = 0,
 ) -> None:
     rows = [
         {
@@ -30,6 +31,7 @@ def _write_probe(
             "discounted_reward_return": best_margin,
             "discounted_bootstrap_return": bootstrap_return,
             "terminal": all_terminal,
+            "terminal_outcome": best_outcome,
         },
         {
             "action": parent_action,
@@ -37,6 +39,7 @@ def _write_probe(
             "discounted_reward_return": 0.0,
             "discounted_bootstrap_return": 0.0,
             "terminal": all_terminal,
+            "terminal_outcome": 0,
         },
     ]
     if parent_action != 2304:
@@ -47,10 +50,11 @@ def _write_probe(
                 "discounted_reward_return": 0.0,
                 "discounted_bootstrap_return": 0.0,
                 "terminal": all_terminal,
+                "terminal_outcome": 0,
             }
         )
     payload = {
-        "schema": "clasher.simple-counterfactual-teacher-probe.v3",
+        "schema": "clasher.simple-counterfactual-teacher-probe.v4",
         "checkpoint_sha256": checkpoint_sha256,
         "candidate_selector": "hand-slot-spatial-stratified-v1",
         "return_estimator": "truncated-n-step-bootstrap-v1",
@@ -59,6 +63,7 @@ def _write_probe(
         "horizon_steps": 24,
         "realized_horizon_steps": 16,
         "stop_when_all_terminal": True,
+        "label_authority": "terminal-outcome-then-discounted-reward-v1",
         "action_samples": len(rows),
         "random_candidate_fraction": 0.25,
         "opponent_strategy": "balanced",
@@ -131,13 +136,14 @@ def test_compiler_retains_all_behavior_but_only_accepted_roots(tmp_path: Path) -
     assert manifest["probes"] == 2
     assert manifest["accepted_probes"] == 1
     assert manifest["rows"] == 4
-    assert manifest["preference_score"] == "discounted_reward_return"
+    assert manifest["preference_score"] == "terminal_outcome_then_discounted_reward"
     assert manifest["label_horizon_contract"] == "all-candidates-terminal"
     assert manifest["horizon_steps"] == [24]
     assert manifest["maximum_horizon_steps"] == 24
     with np.load(output / "corpus.npz", allow_pickle=False) as archive:
         assert archive["counterfactual_root_rows"].tolist() == [1]
         assert archive["root_base_actions"].tolist() == [2304]
+        assert archive["root_candidate_outcomes"].tolist() == [[0, 0]]
         assert archive["expert_actions"].tolist() == [12, 2304, 12, 2304]
         assert archive["entity_mask"].tolist() == [
             [True, True, False],

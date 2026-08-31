@@ -2087,6 +2087,8 @@ class SimplePytorchTrainingCollector:
         self,
         rollout_steps: int,
         recurrent_state: tuple[torch.Tensor, torch.Tensor],
+        *,
+        include_terminal_winners: bool = False,
     ) -> tuple[
         dict[str, Any],
         tuple[torch.Tensor, torch.Tensor],
@@ -2175,6 +2177,10 @@ class SimplePytorchTrainingCollector:
                 else decision.bootstrap.episode_starts.reshape(-1)
             ),
         }
+        if include_terminal_winners:
+            device_exports["terminal_winners"] = project(
+                decision.winner[..., None].expand(-1, -1, 2)
+            )
         teacher_actions = self._learner_teacher_actions(decision)
         if teacher_actions is not None:
             device_exports["strategy_teacher_actions"] = project(teacher_actions)

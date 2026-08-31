@@ -7,6 +7,7 @@ import torch
 from clasher.rl.common import NUM_TILES
 from scripts.probe_simple_counterfactual_teacher import (
     collect_counterfactual_branches,
+    first_terminal_outcomes,
     select_stratified_action_subset,
     truncated_n_step_returns,
 )
@@ -20,6 +21,8 @@ class _FakeCollector:
         self,
         count: int,
         state: tuple[torch.Tensor, torch.Tensor],
+        *,
+        include_terminal_winners: bool = False,
     ) -> tuple[
         dict[str, np.ndarray],
         tuple[torch.Tensor, torch.Tensor],
@@ -33,6 +36,7 @@ class _FakeCollector:
         arrays = {
             "rewards": np.full((2, count), self.calls, dtype=np.float64),
             "dones": done,
+            "terminal_winners": np.where(done, self.calls - 1, -1),
             "bootstrap_values": np.zeros(2, dtype=np.float64),
         }
         next_state = (state[0] + 1.0, state[1] + 1.0)
@@ -140,4 +144,29 @@ def test_chunked_counterfactual_collection_stops_after_all_first_terminals() -> 
     assert collector.calls == 2
     assert arrays["rewards"].shape == (2, 6)
     assert arrays["dones"].sum(axis=1).tolist() == [1, 1]
+    assert arrays["terminal_winners"].shape == (2, 6)
     torch.testing.assert_close(next_state[0], torch.full((2, 3), 2.0))
+
+
+def test_first_terminal_outcomes_are_learner_relative_and_ignore_later_games() -> None:
+    outcomes = first_terminal_outcomes(
+        np.asarray(
+            [
+                [False, True, False, True],
+                [True, False, False, False],
+                [False, False, True, False],
+                [False, False, False, False],
+            ]
+        ),
+        np.asarray(
+            [
+                [-1, 0, -1, 1],
+                [0, -1, -1, -1],
+                [-1, -1, -1, -1],
+                [-1, -1, -1, -1],
+            ]
+        ),
+        np.asarray([0, 1, 0, 1]),
+    )
+
+    assert outcomes.tolist() == [1, -1, 0, 0]

@@ -15,10 +15,10 @@ from typing import Any
 import numpy as np
 import torch
 
-PROBE_SCHEMA = "clasher.simple-counterfactual-teacher-probe.v3"
+PROBE_SCHEMA = "clasher.simple-counterfactual-teacher-probe.v4"
 SELECTOR = "hand-slot-spatial-stratified-v1"
 RETURN_ESTIMATOR = "truncated-n-step-bootstrap-v1"
-CORPUS_SCHEMA = "clasher.hog26.simple-counterfactual-corpus.v2"
+CORPUS_SCHEMA = "clasher.hog26.simple-counterfactual-corpus.v3"
 ARRAY_KEYS = (
     "entity_ids",
     "entity_features",
@@ -103,6 +103,8 @@ def _audit_probe(
     declared_horizon = int(payload["horizon_steps"])
     if not 0 < realized_horizon <= declared_horizon:
         raise ValueError(f"probe has invalid realized terminal horizon: {path}")
+    if payload.get("label_authority") != "terminal-outcome-then-discounted-reward-v1":
+        raise ValueError(f"probe lacks terminal outcome label authority: {path}")
     actions = np.asarray([int(row["action"]) for row in rows], dtype=np.int64)
     total_scores = np.asarray(
         [float(row["discounted_return_mean"]) for row in rows],
@@ -120,6 +122,9 @@ def _audit_probe(
         total_scores, reward_scores
     ):
         raise ValueError(f"terminal probe still depends on critic bootstrap: {path}")
+    outcomes = np.asarray([int(row["terminal_outcome"]) for row in rows], dtype=np.int8)
+    if not bool(np.isin(outcomes, (-1, 0, 1)).all()):
+        raise ValueError(f"probe has invalid terminal outcomes: {path}")
     if (
         len(np.unique(actions)) != len(actions)
         or not np.isfinite(total_scores).all()
@@ -134,7 +139,7 @@ def _audit_probe(
     # The simulator's observed discounted reward is the label authority. The
     # checkpoint critic breaks exact reward ties only and must agree that the
     # selected intervention is not worse than the retained parent/no-op.
-    best = int(np.lexsort((total_scores, reward_scores))[-1])
+    best = int(np.lexsort((total_scores, reward_scores, outcomes))[-1])
     parent_return = float(total_scores[int(parent_matches[0])])
     noop_return = float(total_scores[int(noop_matches[0])])
     best_return = float(total_scores[best])
@@ -143,14 +148,22 @@ def _audit_probe(
     parent_reward = float(reward_scores[int(parent_matches[0])])
     noop_reward = float(reward_scores[int(noop_matches[0])])
     best_reward = float(reward_scores[best])
+    parent_outcome = int(outcomes[int(parent_matches[0])])
+    noop_outcome = int(outcomes[int(noop_matches[0])])
+    best_outcome = int(outcomes[best])
     parent_reward_margin = best_reward - parent_reward
     noop_reward_margin = best_reward - noop_reward
+    def better_than(base_outcome: int, reward_margin: float, margin: float) -> bool:
+        return best_outcome > base_outcome or (
+            best_outcome == base_outcome
+            and reward_margin >= minimum_margin
+            and margin >= 0.0
+        )
+
     accepted = bool(
         int(actions[best]) != parent_action
-        and parent_reward_margin >= minimum_margin
-        and noop_reward_margin >= minimum_margin
-        and parent_margin >= 0.0
-        and noop_margin >= 0.0
+        and better_than(parent_outcome, parent_reward_margin, parent_margin)
+        and better_than(noop_outcome, noop_reward_margin, noop_margin)
     )
     audit = {
         "probe": path.name,
@@ -164,7 +177,10 @@ def _audit_probe(
         "realized_horizon_steps": realized_horizon,
         "terminal_candidates": int(terminals.sum()),
         "best_action": int(actions[best]),
+        "best_terminal_outcome": best_outcome,
         "parent_action": parent_action,
+        "parent_terminal_outcome": parent_outcome,
+        "noop_terminal_outcome": noop_outcome,
         "best_return": best_return,
         "parent_return": parent_return,
         "noop_return": noop_return,
@@ -180,6 +196,7 @@ def _audit_probe(
     candidates = {
         "actions": actions,
         "scores": reward_scores,
+        "outcomes": outcomes,
         "total_scores": total_scores,
         "parent_action": parent_action,
         "best_action": int(actions[best]),
@@ -228,6 +245,7 @@ def compile_corpus(
     root_base_actions: list[int] = []
     root_candidate_actions: list[np.ndarray] = []
     root_candidate_scores: list[np.ndarray] = []
+    root_candidate_outcomes: list[np.ndarray] = []
     offset = 0
     for path, audit in zip(paths, audits, strict=True):
         with np.load(path.with_suffix(".npz"), allow_pickle=False) as archive:
@@ -256,6 +274,7 @@ def compile_corpus(
             root_base_actions.append(int(candidates["parent_action"]))
             root_candidate_actions.append(candidates["actions"])
             root_candidate_scores.append(candidates["scores"])
+            root_candidate_outcomes.append(candidates["outcomes"])
         offset += row_count
 
     if not root_rows:
@@ -274,6 +293,7 @@ def compile_corpus(
     )
     candidate_actions = np.stack(root_candidate_actions)
     candidate_scores = np.stack(root_candidate_scores)
+    candidate_outcomes = np.stack(root_candidate_outcomes)
     candidate_valid = np.ones(candidate_actions.shape, dtype=np.bool_)
     zero_crowns = np.zeros(candidate_actions.shape, dtype=np.int16)
     zero_damage = np.zeros(candidate_actions.shape, dtype=np.float64)
@@ -333,6 +353,7 @@ def compile_corpus(
         root_candidate_actions=candidate_actions,
         root_candidate_valid=candidate_valid,
         root_candidate_scores=candidate_scores,
+        root_candidate_outcomes=candidate_outcomes,
         root_candidate_crown_differences=zero_crowns,
         root_candidate_tower_damage_differences=zero_damage,
         metadata_json=np.asarray(json.dumps(corpus_metadata, sort_keys=True)),
@@ -345,7 +366,7 @@ def compile_corpus(
         "minimum_return_margin": minimum_margin,
         "candidate_selector": SELECTOR,
         "return_estimator": RETURN_ESTIMATOR,
-        "preference_score": "discounted_reward_return",
+        "preference_score": "terminal_outcome_then_discounted_reward",
         "label_horizon_contract": "all-candidates-terminal",
         "bootstrap_role": "forbidden-for-terminal-labels",
         "all_probe_trajectories_retained_for_behavior": True,

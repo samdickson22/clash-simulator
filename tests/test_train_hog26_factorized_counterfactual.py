@@ -21,6 +21,7 @@ def test_preference_table_keeps_corrective_and_safety_pairs(tmp_path: Path) -> N
         root_candidate_actions=np.asarray([[20, 21, 2304]]),
         root_candidate_valid=np.asarray([[True, True, True]]),
         root_candidate_scores=np.asarray([[0.3, -0.2, 0.0]]),
+        root_candidate_outcomes=np.asarray([[0, 0, 0]]),
     )
 
     table = load_preferences(corpus)
@@ -41,6 +42,7 @@ def test_preference_table_rejects_missing_base_action(tmp_path: Path) -> None:
         root_candidate_actions=np.asarray([[20, 21]]),
         root_candidate_valid=np.asarray([[True, True]]),
         root_candidate_scores=np.asarray([[0.3, -0.2]]),
+        root_candidate_outcomes=np.asarray([[0, 0]]),
     )
     with pytest.raises(ValueError, match="base action"):
         load_preferences(corpus)
@@ -55,6 +57,7 @@ def test_preference_table_can_preserve_the_behavior_play_gate(tmp_path: Path) ->
         root_candidate_actions=np.asarray([[20, 100, 2304]]),
         root_candidate_valid=np.asarray([[True, True, True]]),
         root_candidate_scores=np.asarray([[0.3, 0.0, 0.5]]),
+        root_candidate_outcomes=np.asarray([[0, 0, 0]]),
     )
 
     table = load_preferences(corpus, preserve_behavior_gate=True)
@@ -62,6 +65,26 @@ def test_preference_table_can_preserve_the_behavior_play_gate(tmp_path: Path) ->
     assert table.positive_actions.tolist() == [20]
     assert table.negative_actions.tolist() == [100]
     assert table.corrective.tolist() == [True]
+
+
+def test_terminal_outcome_dominates_dense_reward_preference(tmp_path: Path) -> None:
+    corpus = tmp_path / "corpus.npz"
+    np.savez_compressed(
+        corpus,
+        counterfactual_root_rows=np.asarray([10]),
+        root_base_actions=np.asarray([2304]),
+        root_candidate_actions=np.asarray([[20, 2304]]),
+        root_candidate_valid=np.asarray([[True, True]]),
+        root_candidate_scores=np.asarray([[-0.5, 0.5]]),
+        root_candidate_outcomes=np.asarray([[1, 0]]),
+    )
+
+    table = load_preferences(corpus)
+
+    assert table.positive_actions.tolist() == [20]
+    assert table.negative_actions.tolist() == [2304]
+    assert table.corrective.tolist() == [True]
+    assert table.weights.tolist() == [4.0]
 
 
 def _policy_arrays() -> dict[str, np.ndarray]:
