@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 import torch
 
-from scripts.compile_hog26_counterfactual_corpus import compile_corpus
+from scripts.compile_hog26_counterfactual_corpus import _audit_probe, compile_corpus
 
 
 def _write_probe(
@@ -248,5 +248,34 @@ def test_compiler_prefers_winning_outcome_over_higher_dense_return(
     assert manifest["accepted_probes"] == 1
     assert manifest["audits"][0]["best_action"] == 22
     assert manifest["audits"][0]["best_terminal_outcome"] == 1
+    assert manifest["audits"][0]["timing_preference"] == "play"
     with np.load(output / "corpus.npz", allow_pickle=False) as archive:
         assert archive["root_candidate_outcomes"].tolist() == [[1, 0]]
+
+
+def test_probe_audit_records_terminal_wait_preference(tmp_path: Path) -> None:
+    checkpoint = tmp_path / "parent.pt"
+    torch.save({"token_names": ["<padding>", "Knight"]}, checkpoint)
+    checkpoint_sha256 = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+    probes = tmp_path / "probes"
+    probes.mkdir()
+    _write_probe(
+        probes,
+        stem="wait",
+        checkpoint_sha256=checkpoint_sha256,
+        seed=10,
+        parent_action=2304,
+        best_action=22,
+        best_margin=-0.5,
+        best_outcome=-1,
+    )
+
+    audit, _ = _audit_probe(
+        probes / "wait.json",
+        checkpoint_sha256=checkpoint_sha256,
+        minimum_margin=0.02,
+    )
+
+    assert audit["timing_preference"] == "wait"
+    assert audit["timing_best_play_action"] == 22
+    assert audit["timing_best_play_terminal_outcome"] == -1

@@ -153,6 +153,32 @@ def _audit_probe(
     best_outcome = int(outcomes[best])
     parent_reward_margin = best_reward - parent_reward
     noop_reward_margin = best_reward - noop_reward
+    play_indices = np.flatnonzero(actions != 2304)
+    if play_indices.size == 0:
+        raise ValueError(f"probe has no play candidate: {path}")
+    play_order = np.lexsort(
+        (
+            total_scores[play_indices],
+            reward_scores[play_indices],
+            outcomes[play_indices],
+        )
+    )
+    best_play = int(play_indices[int(play_order[-1])])
+    best_play_outcome = int(outcomes[best_play])
+    best_play_reward = float(reward_scores[best_play])
+    play_minus_wait_reward = best_play_reward - noop_reward
+    if best_play_outcome > noop_outcome or (
+        best_play_outcome == noop_outcome
+        and play_minus_wait_reward >= minimum_margin
+    ):
+        timing_preference = "play"
+    elif best_play_outcome < noop_outcome or (
+        best_play_outcome == noop_outcome
+        and play_minus_wait_reward <= -minimum_margin
+    ):
+        timing_preference = "wait"
+    else:
+        timing_preference = "inconclusive"
     def better_than(base_outcome: int, reward_margin: float, margin: float) -> bool:
         return best_outcome > base_outcome or (
             best_outcome == base_outcome
@@ -181,6 +207,10 @@ def _audit_probe(
         "parent_action": parent_action,
         "parent_terminal_outcome": parent_outcome,
         "noop_terminal_outcome": noop_outcome,
+        "timing_preference": timing_preference,
+        "timing_best_play_action": int(actions[best_play]),
+        "timing_best_play_terminal_outcome": best_play_outcome,
+        "timing_play_minus_wait_reward": play_minus_wait_reward,
         "best_return": best_return,
         "parent_return": parent_return,
         "noop_return": noop_return,
