@@ -4,15 +4,13 @@ Date: 2026-09-01
 
 ## Immutable package
 
-- source commit: `e8fdda06`
-- archive: `/private/tmp/clasher-hog26-joint-q-cuda-e8fdda06.tar.gz`
-- archive SHA-256:
-  `60814599e29528c97e786bd5115e41abf5eb9c30f486af02ad7ab5d52d08b880`
-- size: 79 MiB
-
-The archive contains the exact committed tree plus the three untracked selected
-initializer checkpoints.  It excludes the dirty desktop checkout and historical
-untracked datasets/reports.
+The transfer archive contains the exact committed tree, a root-level
+`PACKAGE_SOURCE_COMMIT` file, and the three selected initializer checkpoints.
+Its filename and SHA-256 are supplied alongside the archive rather than embedded
+here; embedding an archive hash in its own source would be circular.  Verify the
+transferred archive against that supplied hash and inspect
+`PACKAGE_SOURCE_COMMIT` after extraction.  The package excludes the dirty desktop
+checkout and historical untracked datasets/reports.
 
 ## Pod setup
 
@@ -22,8 +20,9 @@ for the campaign.  CUDA Graph execution is default and fail-closed on CUDA.
 
 ```bash
 mkdir -p ~/clasher-joint-q
-tar -xzf ~/clasher-hog26-joint-q-cuda-e8fdda06.tar.gz -C ~/clasher-joint-q
+tar -xzf ~/clasher-hog26-joint-q-cuda.tar.gz -C ~/clasher-joint-q
 cd ~/clasher-joint-q
+cat PACKAGE_SOURCE_COMMIT
 uv sync --frozen --python 3.12
 nvidia-smi
 uv run python - <<'PY'
