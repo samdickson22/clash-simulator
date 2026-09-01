@@ -59,6 +59,119 @@ def load_model(
     return model, builder
 
 
+def batched_row_opponents(
+    opponents: tuple[str, ...], games: int
+) -> tuple[str, ...]:
+    if len(opponents) < 2:
+        raise ValueError("batched evaluation requires at least two opponents")
+    if games < 2 or games % 2:
+        raise ValueError("batched evaluation games must be a positive even count")
+    return tuple(
+        opponents[(row // 2) % len(opponents)]
+        for row in range(games * len(opponents))
+    )
+
+
+def _collect_terminal_rows(
+    model: ClasherPolicy,
+    collector: SimplePytorchTrainingCollector,
+    *,
+    row_opponents: tuple[str, ...],
+    device: torch.device,
+    chunk_steps: int,
+) -> tuple[list[dict[str, Any]], NDArray[np.int64], NDArray[np.int64]]:
+    row_count = len(row_opponents)
+    learner_players = collector.learner_players.detach().cpu().numpy()
+    if learner_players.shape != (row_count,):
+        raise ValueError("collector learner-seat projection changed")
+    records: list[dict[str, Any] | None] = [None] * row_count
+    row_placements: NDArray[np.int64] = np.zeros(row_count, dtype=np.int64)
+    row_decisions: NDArray[np.int64] = np.zeros(row_count, dtype=np.int64)
+    state = model.initial_state(row_count, device=device)
+    decision_offset = 0
+    while decision_offset < 760 and any(record is None for record in records):
+        steps = min(chunk_steps, 760 - decision_offset)
+        arrays, state, *_rest = collector.collect(
+            steps,
+            state,
+            include_terminal_winners=True,
+        )
+        dones = np.asarray(arrays["dones"], dtype=np.bool_)
+        winners = np.asarray(arrays["terminal_winners"], dtype=np.int64)
+        actions = np.asarray(arrays["actions"], dtype=np.int64)
+        if dones.shape != winners.shape or dones.shape != actions.shape:
+            raise ValueError("simple evaluation rollout projections changed")
+        for row in range(row_count):
+            if records[row] is not None:
+                continue
+            terminal = np.flatnonzero(dones[row])
+            used = steps if terminal.size == 0 else int(terminal[0]) + 1
+            row_actions = actions[row, :used]
+            row_placements[row] += int(np.count_nonzero(row_actions < 2304))
+            row_decisions[row] += used
+            if terminal.size:
+                end = int(terminal[0])
+                winner = int(winners[row, end])
+                learner = int(learner_players[row])
+                outcome = (
+                    "win" if winner == learner else "draw" if winner < 0 else "loss"
+                )
+                records[row] = {
+                    "row": row,
+                    "opponent": row_opponents[row],
+                    "learner_player": learner,
+                    "terminal_decision": decision_offset + end,
+                    "winner": winner,
+                    "outcome": outcome,
+                    "placements": int(row_placements[row]),
+                    "decisions": int(row_decisions[row]),
+                }
+        decision_offset += steps
+    if any(record is None for record in records):
+        missing = [index for index, record in enumerate(records) if record is None]
+        raise ValueError(f"evaluation rows did not terminate: {missing}")
+    return (
+        [record for record in records if record is not None],
+        row_placements,
+        row_decisions,
+    )
+
+
+def _summarize_opponent(
+    *,
+    opponent: str,
+    seed: int,
+    row_opponents: tuple[str, ...],
+    records: list[dict[str, Any]],
+    row_placements: NDArray[np.int64],
+    row_decisions: NDArray[np.int64],
+    metadata: dict[str, Any],
+) -> dict[str, Any]:
+    indices = [
+        index for index, row_opponent in enumerate(row_opponents)
+        if row_opponent == opponent
+    ]
+    completed = [records[index] for index in indices]
+    games = len(completed)
+    wins = sum(record["outcome"] == "win" for record in completed)
+    losses = sum(record["outcome"] == "loss" for record in completed)
+    draws = sum(record["outcome"] == "draw" for record in completed)
+    placements = int(row_placements[indices].sum())
+    decisions = int(row_decisions[indices].sum())
+    return {
+        "opponent": opponent,
+        "seed": seed,
+        "games": games,
+        "wins": wins,
+        "losses": losses,
+        "draws": draws,
+        "win_rate": wins / games,
+        "placement_rate": placements / max(1, decisions),
+        "simulation_backend_metadata": metadata,
+        "records": completed,
+    }
+
+
 def evaluate_opponent(
     model: ClasherPolicy,
     builder: StructuredObservationBuilder,
@@ -89,75 +202,87 @@ def evaluate_opponent(
         learner_deck_name="Hog 2.6 Cycle",
     )
     collector.policy.deterministic = True
-    learner_players = collector.learner_players.detach().cpu().numpy()
-    records: list[dict[str, Any] | None] = [None] * games
-    row_placements: NDArray[np.int64] = np.zeros(games, dtype=np.int64)
-    row_decisions: NDArray[np.int64] = np.zeros(games, dtype=np.int64)
-    state = model.initial_state(games, device=device)
-    decision_offset = 0
-    while decision_offset < 760 and any(record is None for record in records):
-        steps = min(chunk_steps, 760 - decision_offset)
-        arrays, state, *_rest = collector.collect(
-            steps,
-            state,
-            include_terminal_winners=True,
-        )
-        dones = np.asarray(arrays["dones"], dtype=np.bool_)
-        winners = np.asarray(arrays["terminal_winners"], dtype=np.int64)
-        actions = np.asarray(arrays["actions"], dtype=np.int64)
-        if dones.shape != winners.shape or dones.shape != actions.shape:
-            raise ValueError("simple evaluation rollout projections changed")
-        for row in range(games):
-            if records[row] is not None:
-                continue
-            terminal = np.flatnonzero(dones[row])
-            used = steps if terminal.size == 0 else int(terminal[0]) + 1
-            row_actions = actions[row, :used]
-            row_placements[row] += int(np.count_nonzero(row_actions < 2304))
-            row_decisions[row] += used
-            if terminal.size:
-                end = int(terminal[0])
-                winner = int(winners[row, end])
-                learner = int(learner_players[row])
-                outcome = (
-                    "win" if winner == learner else "draw" if winner < 0 else "loss"
-                )
-                records[row] = {
-                    "row": row,
-                    "learner_player": learner,
-                    "terminal_decision": decision_offset + end,
-                    "winner": winner,
-                    "outcome": outcome,
-                    "placements": int(row_placements[row]),
-                    "decisions": int(row_decisions[row]),
-                }
-        decision_offset += steps
-    if any(record is None for record in records):
-        missing = [index for index, record in enumerate(records) if record is None]
-        raise ValueError(f"evaluation rows did not terminate: {missing}")
-    completed = [record for record in records if record is not None]
-    wins = sum(record["outcome"] == "win" for record in completed)
-    losses = sum(record["outcome"] == "loss" for record in completed)
-    draws = sum(record["outcome"] == "draw" for record in completed)
-    placements = int(row_placements.sum())
-    decisions = int(row_decisions.sum())
-    result = {
-        "opponent": opponent,
-        "seed": seed,
-        "games": games,
-        "wins": wins,
-        "losses": losses,
-        "draws": draws,
-        "win_rate": wins / games,
-        "placement_rate": placements / max(1, decisions),
-        "simulation_backend_metadata": collector.checkpoint_metadata(),
-        "records": completed,
-    }
+    row_opponents = (opponent,) * games
+    records, row_placements, row_decisions = _collect_terminal_rows(
+        model,
+        collector,
+        row_opponents=row_opponents,
+        device=device,
+        chunk_steps=chunk_steps,
+    )
+    result = _summarize_opponent(
+        opponent=opponent,
+        seed=seed,
+        row_opponents=row_opponents,
+        records=records,
+        row_placements=row_placements,
+        row_decisions=row_decisions,
+        metadata=collector.checkpoint_metadata(),
+    )
     del collector
     gc.collect()
     if device.type == "mps":
         torch.mps.empty_cache()
     return result
+
+
+def evaluate_opponents_batched(
+    model: ClasherPolicy,
+    builder: StructuredObservationBuilder,
+    *,
+    opponents: tuple[str, ...],
+    games: int,
+    device: torch.device,
+    chunk_steps: int,
+    seed: int,
+) -> list[dict[str, Any]]:
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    row_opponents = batched_row_opponents(opponents, games)
+    schedule = tuple(
+        ("random", None) if opponent == "random" else ("strategy", opponent)
+        for opponent in opponents
+    )
+    collector = SimplePytorchTrainingCollector(
+        model=model,
+        builder=builder,
+        batch_size=len(row_opponents),
+        device=device,
+        decision_interval=8,
+        gamma=0.995,
+        supported_decks_path=DEFAULT_SIMPLE_SUPPORTED_DECKS,
+        typed_vocabulary_path=DEFAULT_SIMPLE_TOKEN_VOCABULARY,
+        mirror_match=False,
+        opponent_mode="league",
+        opponent_league_schedule=schedule,
+        learner_deck_name="Hog 2.6 Cycle",
+    )
+    collector.policy.deterministic = True
+    records, row_placements, row_decisions = _collect_terminal_rows(
+        model,
+        collector,
+        row_opponents=row_opponents,
+        device=device,
+        chunk_steps=chunk_steps,
+    )
+    metadata = collector.checkpoint_metadata()
+    rows = [
+        _summarize_opponent(
+            opponent=opponent,
+            seed=seed,
+            row_opponents=row_opponents,
+            records=records,
+            row_placements=row_placements,
+            row_decisions=row_decisions,
+            metadata=metadata,
+        )
+        for opponent in opponents
+    ]
+    del collector
+    gc.collect()
+    if device.type == "mps":
+        torch.mps.empty_cache()
+    return rows
 
 
 def main() -> None:
@@ -169,6 +294,11 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=1247001)
     parser.add_argument("--chunk-steps", type=int, default=32)
     parser.add_argument("--opponent", action="append", dest="opponents")
+    parser.add_argument(
+        "--sequential-opponents",
+        action="store_true",
+        help="diagnostic fallback; default batches all requested opponents",
+    )
     args = parser.parse_args()
     if args.output.exists():
         raise SystemExit("refusing to overwrite simple policy evaluation")
@@ -183,18 +313,30 @@ def main() -> None:
         raise ValueError("evaluation opponents must be unique")
     device = torch.device(args.device)
     model, builder = load_model(args.checkpoint, device)
-    rows = [
-        evaluate_opponent(
+    rows = (
+        [
+            evaluate_opponent(
+                model,
+                builder,
+                opponent=opponent,
+                games=args.games,
+                device=device,
+                chunk_steps=args.chunk_steps,
+                seed=evaluation_seed(args.seed, opponent),
+            )
+            for opponent in opponents
+        ]
+        if args.sequential_opponents or len(opponents) == 1
+        else evaluate_opponents_batched(
             model,
             builder,
-            opponent=opponent,
+            opponents=tuple(opponents),
             games=args.games,
             device=device,
             chunk_steps=args.chunk_steps,
-            seed=evaluation_seed(args.seed, opponent),
+            seed=args.seed,
         )
-        for opponent in opponents
-    ]
+    )
     payload = {
         "schema": SCHEMA,
         "checkpoint": str(args.checkpoint.resolve()),
@@ -205,6 +347,9 @@ def main() -> None:
         "base_seed": args.seed,
         "games_per_opponent": args.games,
         "chunk_steps": args.chunk_steps,
+        "opponent_execution": (
+            "sequential" if args.sequential_opponents or len(opponents) == 1 else "batched-league"
+        ),
         "rows": rows,
         "total": {
             "games": sum(row["games"] for row in rows),

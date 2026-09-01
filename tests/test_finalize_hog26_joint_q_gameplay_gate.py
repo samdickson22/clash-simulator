@@ -4,7 +4,10 @@ import json
 from pathlib import Path
 
 from clasher.rl.strategy_bots import STRATEGY_NAMES
-from scripts.evaluate_hog26_simple_policy import evaluation_seed
+from scripts.evaluate_hog26_simple_policy import (
+    batched_row_opponents,
+    evaluation_seed,
+)
 from scripts.finalize_hog26_joint_q_gameplay_gate import RUN_SEEDS, finalize_gate
 
 
@@ -13,6 +16,25 @@ def test_opponent_evaluation_seeds_are_stable_and_distinct() -> None:
     seeds = [evaluation_seed(1247001, opponent) for opponent in opponents]
     assert seeds[0] == 1247001
     assert len(set(seeds)) == len(opponents)
+
+
+def test_batched_opponents_preserve_paired_seats_and_game_counts() -> None:
+    opponents = ("balanced", "random", "slow-push")
+    rows = batched_row_opponents(opponents, games=4)
+    assert rows == (
+        "balanced",
+        "balanced",
+        "random",
+        "random",
+        "slow-push",
+        "slow-push",
+        "balanced",
+        "balanced",
+        "random",
+        "random",
+        "slow-push",
+        "slow-push",
+    )
 
 
 def _write_evaluation(
