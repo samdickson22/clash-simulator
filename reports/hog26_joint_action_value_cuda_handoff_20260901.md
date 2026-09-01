@@ -4,10 +4,10 @@ Date: 2026-09-01
 
 ## Immutable package
 
-- source commit: `48221ee1`
-- archive: `/private/tmp/clasher-hog26-joint-q-cuda-48221ee1.tar.gz`
+- source commit: `e8fdda06`
+- archive: `/private/tmp/clasher-hog26-joint-q-cuda-e8fdda06.tar.gz`
 - archive SHA-256:
-  `46991ff9905b5c3c22e83011a2155fd29ae1d6991118e6dc77d10966bac3cb0a`
+  `60814599e29528c97e786bd5115e41abf5eb9c30f486af02ad7ab5d52d08b880`
 - size: 79 MiB
 
 The archive contains the exact committed tree plus the three untracked selected
@@ -22,7 +22,7 @@ for the campaign.  CUDA Graph execution is default and fail-closed on CUDA.
 
 ```bash
 mkdir -p ~/clasher-joint-q
-tar -xzf ~/clasher-hog26-joint-q-cuda-48221ee1.tar.gz -C ~/clasher-joint-q
+tar -xzf ~/clasher-hog26-joint-q-cuda-e8fdda06.tar.gz -C ~/clasher-joint-q
 cd ~/clasher-joint-q
 uv sync --frozen --python 3.12
 nvidia-smi
@@ -79,8 +79,20 @@ scripts/run_hog26_joint_action_value_cuda_three_seed.sh
 ```
 
 Copy both report roots and all final checkpoints off the pod with SHA-256 hashes
-before terminating compute.  The five-update result is a development pilot only;
-it still requires deterministic collapse and seven-opponent breadth screens.
+before terminating compute.  Then run the frozen 168-game matched breadth gate:
+
+```bash
+cd ~/clasher-joint-q
+PILOT_ROOT=$PWD/reports/hog26_joint_q_cuda_u5 \
+OUTPUT_ROOT=$PWD/reports/hog26_joint_q_gameplay_gate \
+PYTHON_BIN=$PWD/.venv/bin/python \
+scripts/run_hog26_joint_q_gameplay_gate.sh
+```
+
+The candidate advances only if it improves at least two initializer seeds and
+two opponent buckets, regresses neither any seed nor opponent bucket, improves
+aggregate outcome score, and retains noncollapsed placement cadence.  A pass is
+still only permission for expanded evaluation, not promotion to champion.
 
 ## Current external state
 
@@ -89,4 +101,4 @@ The authorized school host timed out on SSH.  No CUDA smoke has run on this sour
 commit, and no historical CUDA rate is attributed to it.  The archive was
 independently extracted into a clean directory, installed with `uv sync
 --frozen --python 3.12`, verified against all three checkpoint hashes, and passed
-the focused `57 passed, 5 skipped` gate.
+the focused `62 passed, 5 skipped` gate.
