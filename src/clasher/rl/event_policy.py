@@ -47,6 +47,30 @@ def _log_event_probability(interval_hazard: Tensor) -> Tensor:
     return torch.log(-torch.expm1(-interval_hazard))
 
 
+def raw_rate_from_interval_probability(
+    probability: Tensor, delta_seconds: Tensor
+) -> Tensor:
+    """Convert a calibrated Bernoulli event probability into a raw rate.
+
+    This is the exact bridge for the retained hazard policy.  Its accumulator
+    stores event probability over fixed decision intervals; the new policy
+    stores the equivalent cumulative hazard in game-time units.
+    """
+
+    if probability.shape != delta_seconds.shape:
+        raise ValueError("probability and elapsed seconds must share a shape")
+    if bool((delta_seconds <= 0.0).any()) or not bool(
+        torch.isfinite(delta_seconds).all()
+    ):
+        raise ValueError("elapsed seconds must be finite and positive")
+    if bool(((probability < 0.0) | (probability >= 1.0)).any()) or not bool(
+        torch.isfinite(probability).all()
+    ):
+        raise ValueError("event probability must be finite and in [0, 1)")
+    rate = -torch.log1p(-probability) / delta_seconds
+    return rate + torch.log(-torch.expm1(-rate))
+
+
 @dataclass(frozen=True)
 class ContinuousTimeActionDistribution:
     """Exact flattened action probabilities plus their event-rate factors."""
@@ -257,4 +281,5 @@ __all__ = [
     "continuous_time_action_distribution",
     "continuous_time_action_nll",
     "deterministic_event_actions",
+    "raw_rate_from_interval_probability",
 ]

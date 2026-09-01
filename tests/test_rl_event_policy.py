@@ -11,6 +11,7 @@ from clasher.rl.event_policy import (
     continuous_time_action_distribution,
     continuous_time_action_nll,
     deterministic_event_actions,
+    raw_rate_from_interval_probability,
 )
 
 
@@ -141,3 +142,40 @@ def test_empty_supervision_has_finite_differentiable_zero() -> None:
     )
     assert loss.item() == 0.0
     loss.backward()
+
+
+def test_retained_probability_accumulator_maps_exactly_to_cumulative_hazard() -> None:
+    probabilities = torch.tensor([[0.10, 0.20, 0.30, 0.40, 0.05, 0.45]])
+    elapsed = torch.full_like(probabilities, 0.4)
+    raw_play = raw_rate_from_interval_probability(probabilities, elapsed)
+    raw_ability = torch.full_like(raw_play, -torch.inf)
+    cards = torch.zeros(1, probabilities.shape[1], 4)
+    locations = torch.zeros(1, probabilities.shape[1], 4, 576)
+    mask = torch.zeros(1, probabilities.shape[1], NUM_ACTIONS, dtype=torch.bool)
+    mask[..., 0] = True
+    mask[..., WAIT_ACTION] = True
+    distribution = continuous_time_action_distribution(
+        raw_play, raw_ability, cards, locations, mask, elapsed
+    )
+    actions, final_hazard = deterministic_event_actions(
+        distribution, torch.zeros(1), threshold=math.log(2.0)
+    )
+
+    retained_accumulator = torch.zeros(1)
+    retained_actions = []
+    for probability in probabilities[0]:
+        retained_accumulator = 1.0 - (1.0 - retained_accumulator) * (
+            1.0 - probability
+        )
+        fire = retained_accumulator >= 0.5
+        retained_actions.append(0 if bool(fire) else WAIT_ACTION)
+        retained_accumulator = torch.where(
+            fire, torch.zeros_like(retained_accumulator), retained_accumulator
+        )
+    assert actions.tolist() == [retained_actions]
+    torch.testing.assert_close(
+        retained_accumulator,
+        1.0 - torch.exp(-final_hazard),
+        rtol=1e-6,
+        atol=1e-7,
+    )
