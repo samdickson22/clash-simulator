@@ -3328,6 +3328,13 @@ def main() -> None:
         actor_current_hand_slot_invariant=args.fresh_factorized_action_head,
         equivariant_slot_choice=args.fresh_factorized_action_head,
     )
+    added_action_value_to_initial = bool(
+        initial_policy is not None
+        and args.action_value_head
+        and not config.action_value_head_enabled
+    )
+    if added_action_value_to_initial:
+        config = replace(config, action_value_head_enabled=True)
     if config.action_value_head_enabled != (args.action_value_coef > 0.0):
         raise ValueError(
             "fresh action-value head and a positive action-value coefficient "
@@ -3471,7 +3478,22 @@ def main() -> None:
         start_update = int(resume.get("update", 0)) + 1
         total_transitions = int(resume.get("total_transitions", 0))
     elif initial_policy is not None:
-        model.load_state_dict(initial_policy["model_state_dict"], strict=True)
+        incompatible = model.load_state_dict(
+            initial_policy["model_state_dict"],
+            strict=not added_action_value_to_initial,
+        )
+        if added_action_value_to_initial and (
+            incompatible.unexpected_keys
+            or not incompatible.missing_keys
+            or not all(
+                name == "action_value_policy_gate"
+                or name.startswith("action_value_head.")
+                for name in incompatible.missing_keys
+            )
+        ):
+            raise ValueError(
+                "only action-value parameters may be absent from the initializer"
+            )
     if args.trainable_prefix:
         prefixes = tuple(args.trainable_prefix)
         for name, parameter in model.named_parameters():

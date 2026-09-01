@@ -44,6 +44,8 @@ def load_policy_checkpoint(
         decks_path=decks_path,
         max_entities=config.max_entities,
         token_names=state["token_names"],
+        card_semantics_version=config.card_semantics_version,
+        canonical_lane_globals=config.canonical_lane_globals,
     )
     model = ClasherPolicy(config, builder.card_stat_features).to(device)
     model.load_state_dict(state["model_state_dict"])

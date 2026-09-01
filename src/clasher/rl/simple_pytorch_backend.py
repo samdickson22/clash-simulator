@@ -456,7 +456,11 @@ class SimpleClasherPolicyAdapter:
     """Adapt two-seat simple-Gym boundaries to ``ClasherPolicy``."""
 
     def __init__(
-        self, model: ClasherPolicy, *, sampling_temperature: float = 1.0
+        self,
+        model: ClasherPolicy,
+        *,
+        sampling_temperature: float = 1.0,
+        deterministic: bool = False,
     ) -> None:
         if not math.isfinite(sampling_temperature) or sampling_temperature <= 0.0:
             raise SimplePytorchBackendError(
@@ -464,6 +468,7 @@ class SimpleClasherPolicyAdapter:
             )
         self.model = model
         self.sampling_temperature = float(sampling_temperature)
+        self.deterministic = bool(deterministic)
 
     @staticmethod
     def _flatten(value: torch.Tensor) -> torch.Tensor:
@@ -536,7 +541,7 @@ class SimpleClasherPolicyAdapter:
         actions, log_prob, values, next_state, _ = self.model.act(
             self.inputs(boundary),
             state,
-            deterministic=False,
+            deterministic=self.deterministic,
             sampling_temperature=self.sampling_temperature,
         )
         batch = boundary.actor.entity_ids.shape[0]
@@ -1266,7 +1271,7 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         actions, log_prob, values, learner_next, _ = self.model.act(
             self.inputs(boundary),
             learner_state,
-            deterministic=False,
+            deterministic=self.deterministic,
             sampling_temperature=self.sampling_temperature,
         )
         learner_actions = actions[:, 0].reshape(batch, 2)
