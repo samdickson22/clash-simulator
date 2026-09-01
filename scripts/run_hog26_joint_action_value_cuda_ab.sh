@@ -5,6 +5,7 @@ set -euo pipefail
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 python_bin=${PYTHON_BIN:-$root/.venv/bin/python}
 initializer=${INITIAL_CHECKPOINT:-$root/checkpoints/hog26_factorized_executed_strategy_e3_seed1244001/candidate.pt}
+expected_initializer_sha256=${EXPECTED_INITIALIZER_SHA256:-3b651bce56b036b8948eefa0f0b85611c19ac558cbd86e64bece399f23ae3cc5}
 output_root=${OUTPUT_ROOT:-$root/reports/hog26_joint_action_value_cuda_ab_seed1246001}
 seed=${SEED:-1246001}
 updates=${UPDATES:-1}
@@ -18,6 +19,18 @@ rollout_steps=${ROLLOUT_STEPS:-64}
 [[ "$num_envs" =~ ^[1-9][0-9]*$ ]] || { echo "NUM_ENVS must be positive" >&2; exit 1; }
 (( num_envs % 2 == 0 )) || { echo "NUM_ENVS must be even" >&2; exit 1; }
 [[ "$rollout_steps" =~ ^[1-9][0-9]*$ ]] || { echo "ROLLOUT_STEPS must be positive" >&2; exit 1; }
+actual_initializer_sha256=$("$python_bin" - "$initializer" <<'PY'
+import hashlib
+import sys
+from pathlib import Path
+
+print(hashlib.sha256(Path(sys.argv[1]).read_bytes()).hexdigest())
+PY
+)
+[[ "$actual_initializer_sha256" == "$expected_initializer_sha256" ]] || {
+  echo "initializer SHA-256 mismatch: expected $expected_initializer_sha256, got $actual_initializer_sha256" >&2
+  exit 1
+}
 
 mkdir -p "$output_root"
 
@@ -62,12 +75,14 @@ for arm in control candidate; do
   env PYTHONPATH="$root/src:$root" OMP_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 \
     "$python_bin" -m clasher.rl.train_recurrent \
     --checkpoint-dir "$checkpoint_dir" \
+    --first-rollout-audit-json "$output_root/$arm.rollout.json" \
     "${common[@]}" "${extra[@]}" \
     > "$output_root/$arm.log" 2>&1
 done
 
 env PYTHONPATH="$root/src:$root" "$python_bin" - \
-  "$output_root" "$initializer" "$seed" "$updates" "$num_envs" "$rollout_steps" <<'PY'
+  "$output_root" "$initializer" "$seed" "$updates" "$num_envs" "$rollout_steps" \
+  "$expected_initializer_sha256" <<'PY'
 from __future__ import annotations
 
 import hashlib
@@ -84,6 +99,7 @@ seed = int(sys.argv[3])
 updates = int(sys.argv[4])
 num_envs = int(sys.argv[5])
 rollout_steps = int(sys.argv[6])
+expected_initializer_sha256 = sys.argv[7]
 
 
 def digest(path: Path) -> str:
@@ -110,6 +126,7 @@ def update_rows(path: Path) -> list[dict[str, float]]:
 initial: dict[str, dict] = {}
 final: dict[str, dict] = {}
 logs: dict[str, list[dict[str, float]]] = {}
+rollout_audits: dict[str, dict] = {}
 for arm in ("control", "candidate"):
     initial_path = root / arm / "policy_v2_update_000000.pt"
     final_path = root / arm / f"policy_v2_update_{updates:06d}.pt"
@@ -118,6 +135,21 @@ for arm in ("control", "candidate"):
     initial[arm] = torch.load(initial_path, map_location="cpu", weights_only=False)
     final[arm] = torch.load(final_path, map_location="cpu", weights_only=False)
     logs[arm] = update_rows(root / f"{arm}.log")
+    rollout_audits[arm] = json.loads((root / f"{arm}.rollout.json").read_text())
+
+for arm, audit in rollout_audits.items():
+    if audit.get("schema") != "clasher.pre-optimization-rollout-audit.v1":
+        raise ValueError(f"{arm} rollout audit has an unexpected schema")
+    if audit.get("update") != 1 or audit.get("seed") != seed:
+        raise ValueError(f"{arm} rollout audit has the wrong update or seed")
+if rollout_audits["control"]["rollout_sha256"] != rollout_audits["candidate"]["rollout_sha256"]:
+    differing_fields = sorted(
+        name
+        for name in set(rollout_audits["control"]["fields"]) | set(rollout_audits["candidate"]["fields"])
+        if rollout_audits["control"]["fields"].get(name)
+        != rollout_audits["candidate"]["fields"].get(name)
+    )
+    raise ValueError(f"pre-optimization rollout mismatch: {differing_fields}")
 
 control_state = initial["control"]["model_state_dict"]
 candidate_state = initial["candidate"]["model_state_dict"]
@@ -151,6 +183,7 @@ payload = {
     "status": status,
     "initializer": str(initializer),
     "initializer_sha256": digest(initializer),
+    "expected_initializer_sha256": expected_initializer_sha256,
     "seed": seed,
     "updates": updates,
     "num_envs": num_envs,
@@ -158,6 +191,8 @@ payload = {
     "shared_initial_state_entries": len(shared),
     "shared_initial_mismatches": mismatches,
     "candidate_only_state_entries": candidate_only,
+    "pre_optimization_rollout_sha256": rollout_audits["control"]["rollout_sha256"],
+    "pre_optimization_rollout_fields": rollout_audits["control"]["fields"],
     "control_initial_sha256": digest(root / "control" / "policy_v2_update_000000.pt"),
     "candidate_initial_sha256": digest(root / "candidate" / "policy_v2_update_000000.pt"),
     "control_final_sha256": digest(root / "control" / f"policy_v2_update_{updates:06d}.pt"),

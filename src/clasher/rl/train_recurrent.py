@@ -38,6 +38,7 @@ from .imitation_objective import (
 )
 from .model import ClasherPolicy, PolicyConfig, PolicyInputs, PolicyOutput
 from .reward_model import OBJECTIVE_V1, REWARD_PROFILES
+from .rollout_audit import write_rollout_audit
 from .selfplay_env import SelfPlayBattleEnv
 from .strategy_bots import (
     STRATEGY_NAMES,
@@ -2128,6 +2129,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--rollout-steps", type=int, default=48)
+    parser.add_argument(
+        "--first-rollout-audit-json",
+        default=None,
+        help=(
+            "optional fail-closed exact digest of the first collected rollout, "
+            "published before GAE or optimization"
+        ),
+    )
     parser.add_argument("--decision-interval", type=int, default=8)
     parser.add_argument("--max-ticks", type=int, default=STANDARD_MATCH_TICKS)
     parser.add_argument("--mirror-match", action="store_true")
@@ -2861,6 +2870,15 @@ def main() -> None:
     _USE_TRIMMED_ROLLOUT_ENTITY_PADDING = bool(args.trim_rollout_entity_padding)
     if args.num_envs <= 0 or args.rollout_steps <= 0:
         raise ValueError("num_envs and rollout_steps must be positive")
+    first_rollout_audit_path = (
+        Path(args.first_rollout_audit_json).expanduser().resolve()
+        if args.first_rollout_audit_json is not None
+        else None
+    )
+    if first_rollout_audit_path is not None and first_rollout_audit_path.exists():
+        raise FileExistsError(
+            f"refusing to overwrite rollout audit: {first_rollout_audit_path}"
+        )
     if args.actor_workers <= 0 or args.actor_workers > args.num_envs:
         raise ValueError("actor_workers must be between 1 and num_envs")
     if args.actor_threads <= 0:
@@ -4141,6 +4159,17 @@ def main() -> None:
                 policy_version=update - 1,
             )
         collect_seconds = time.perf_counter() - collect_start
+        if update == start_update and first_rollout_audit_path is not None:
+            audit = write_rollout_audit(
+                first_rollout_audit_path,
+                rollout,
+                update=update,
+                seed=args.seed,
+            )
+            print(
+                f"first_rollout_audit={first_rollout_audit_path} "
+                f"sha256={audit['rollout_sha256']}"
+            )
         advantages, returns = compute_gae(
             rollout, gamma=args.gamma, gae_lambda=args.gae_lambda
         )

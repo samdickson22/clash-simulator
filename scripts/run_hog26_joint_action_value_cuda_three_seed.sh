@@ -11,10 +11,16 @@ mkdir -p "$output_root"
 
 initializer_seeds=(1244001 1244002 1244003)
 run_seeds=(1246001 1246002 1246003)
+initializer_sha256=(
+  3b651bce56b036b8948eefa0f0b85611c19ac558cbd86e64bece399f23ae3cc5
+  6be554863e9cf2254e7503e3cebccdc25fb8b29682825142e0bcfd4c948788e6
+  1c8323ce6fef49ef8d6420aeb4c2c400b896223a69568e4d86a137f628235776
+)
 for index in 0 1 2; do
   initializer_seed=${initializer_seeds[$index]}
   run_seed=${run_seeds[$index]}
   INITIAL_CHECKPOINT="$root/checkpoints/hog26_factorized_executed_strategy_e3_seed${initializer_seed}/candidate.pt" \
+  EXPECTED_INITIALIZER_SHA256="${initializer_sha256[$index]}" \
   OUTPUT_ROOT="$output_root/seed_${run_seed}" \
   SEED="$run_seed" \
   UPDATES="$updates" \
