@@ -2,6 +2,13 @@
 
 Date: 2026-09-01
 
+> Superseded as the implementation plan by
+> `reports/hog26_architecture_research_20260901.md`.  The failure accounting and
+> stop decision remain valid.  The later audit also proves an omitted 8x
+> play-class prior correction and severe direct-Simple learner-state/card-support
+> failure; it keeps the reference encoder but replaces the data, replay,
+> calibration, outcome-value, and conservative-improvement contracts.
+
 ## Decision
 
 Stop the fresh factorized/StrategyBot-imitation lineage.  Do not run the

@@ -1,0 +1,89 @@
+{
+  "schema": "clasher.hog26.factorized-failure-audit.v1",
+  "seed": 1257001,
+  "student_checkpoint_sha256": "3b651bce56b036b8948eefa0f0b85611c19ac558cbd86e64bece399f23ae3cc5",
+  "teacher_checkpoint_sha256": "28f575c95bf5d00478aac7a74b5614016019cb00a3ffd6e17be7c5d2437b4372",
+  "generated_dagger_corpus_sha256": "43ea1c28450ec7f2f97e4f5a04e4f6557b1413562f3e841e9d22d4bd1217a0b4",
+  "episodes": 14,
+  "rows": 896,
+  "steps_per_episode": 64,
+  "opponents": [
+    "balanced",
+    "bridge-pressure",
+    "reactive-defense",
+    "spell-control",
+    "slow-push",
+    "split-lane",
+    "random"
+  ],
+  "student_play_rate": 0.11383928571428571,
+  "teacher_play_rate": 0.04352678571428571,
+  "comparable_rows": 882,
+  "comparable_exact_action_accuracy": 0.8650793650793651,
+  "comparable_student_plays": 102,
+  "comparable_teacher_plays": 39,
+  "comparable_play_overlap": 21,
+  "comparable_play_precision": 0.20588235294117646,
+  "comparable_play_recall": 0.5384615384615384,
+  "student_card_counts": {
+    "card_action:Cannon": 21,
+    "card_action:Fireball": 7,
+    "card_action:IceGolemite": 18,
+    "card_action:IceSpirits": 28,
+    "card_action:Log": 14,
+    "card_action:Skeletons": 14
+  },
+  "teacher_card_counts": {
+    "card_action:Cannon": 8,
+    "card_action:HogRider": 6,
+    "card_action:IceGolemite": 25
+  },
+  "diagnostics": [
+    {
+      "opponent": "balanced",
+      "student_play_rate": 0.109375,
+      "teacher_play_rate": 0.046875,
+      "teacher_student_disagreement": 0.125
+    },
+    {
+      "opponent": "bridge-pressure",
+      "student_play_rate": 0.125,
+      "teacher_play_rate": 0.046875,
+      "teacher_student_disagreement": 0.140625
+    },
+    {
+      "opponent": "reactive-defense",
+      "student_play_rate": 0.109375,
+      "teacher_play_rate": 0.046875,
+      "teacher_student_disagreement": 0.140625
+    },
+    {
+      "opponent": "spell-control",
+      "student_play_rate": 0.109375,
+      "teacher_play_rate": 0.0390625,
+      "teacher_student_disagreement": 0.1171875
+    },
+    {
+      "opponent": "slow-push",
+      "student_play_rate": 0.109375,
+      "teacher_play_rate": 0.046875,
+      "teacher_student_disagreement": 0.140625
+    },
+    {
+      "opponent": "split-lane",
+      "student_play_rate": 0.109375,
+      "teacher_play_rate": 0.03125,
+      "teacher_student_disagreement": 0.125
+    },
+    {
+      "opponent": "random",
+      "student_play_rate": 0.125,
+      "teacher_play_rate": 0.046875,
+      "teacher_student_disagreement": 0.140625
+    }
+  ],
+  "notes": [
+    "Student actions are reconstructed from the next row's preserved previous_actions within each episode, so the last action of each episode is excluded from comparable metrics.",
+    "This is a bounded behavior audit, not a policy promotion or skill estimate."
+  ]
+}
