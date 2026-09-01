@@ -4,10 +4,10 @@ Date: 2026-09-01
 
 ## Immutable package
 
-- source commit: `68fa36af7dc198da6561a4c9266f1ccb13e5bae2`
-- archive: `/private/tmp/clasher-hog26-spatial-u20-cuda-68fa36af.tar.gz`
+- source commit: `e8c7adbb537d8fec0179382841db8a9c95c2422f`
+- archive: `/private/tmp/clasher-hog26-spatial-u20-cuda-e8c7adbb.tar.gz`
 - archive SHA-256:
-  `1b6c4f2426ffe9c8c1e81e56f226e68b77a9bc90c8528dd2ecab43a901f6587c`
+  `b4545aafc82e0f9031b646d1278dbdfdab1582f82d26444f3c0d3a3014473da2`
 - size: 84 MiB
 
 The root-level `PACKAGE_SOURCE_COMMIT` identifies the extracted source.  The
@@ -18,7 +18,7 @@ spatial-teacher update-20 checkpoints.
 
 ```bash
 mkdir -p ~/clasher-spatial-gate
-tar -xzf ~/clasher-hog26-spatial-u20-cuda-68fa36af.tar.gz \
+tar -xzf ~/clasher-hog26-spatial-u20-cuda-e8c7adbb.tar.gz \
   -C ~/clasher-spatial-gate
 cd ~/clasher-spatial-gate
 cat PACKAGE_SOURCE_COMMIT
@@ -38,7 +38,8 @@ scripts/run_hog26_spatial_teacher_cuda_gate.sh
 ```
 
 This evaluates initializer versus candidate against all six strategy bots plus
-random, four games per opponent and arm: 56 games.  It fails closed unless:
+random in one resident mixed-league batch per arm, four games per opponent and
+arm: 56 games.  It fails closed unless:
 
 - both checkpoint SHA-256 values match the predeclared identities;
 - every evaluation row reports CUDA Graph execution;
