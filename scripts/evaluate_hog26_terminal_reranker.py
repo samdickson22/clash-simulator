@@ -18,6 +18,7 @@ from scripts.train_hog26_terminal_reranker import (
     REPORT_SCHEMA,
     _load_policy,
     evaluate_reranker,
+    fixed_threshold_root_details,
     load_probe_examples,
 )
 
@@ -123,6 +124,12 @@ def main() -> None:
     metrics = evaluate_reranker(reranker, splits["holdout"], device=device)
     threshold = float(reranker_payload["override_probability_margin"])
     selected = fixed_threshold_row(metrics, threshold)
+    root_details = fixed_threshold_root_details(
+        reranker,
+        splits["holdout"],
+        device=device,
+        threshold=threshold,
+    )
     passed = bool(
         selected["worse_outcomes"] == 0
         and selected["improved_outcomes"] >= args.minimum_improvements
@@ -147,6 +154,7 @@ def main() -> None:
         "minimum_outcome_improvements": args.minimum_improvements,
         "metrics": metrics,
         "selected_threshold_metrics": selected,
+        "root_details": root_details,
         "promotion_scope": (
             "offline architecture gate only; passing does not promote gameplay policy"
         ),

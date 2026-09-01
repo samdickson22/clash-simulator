@@ -7,6 +7,7 @@ from clasher.rl.common import NUM_TILES
 from clasher.rl.terminal_action_reranker import (
     TerminalActionReranker,
     candidate_action_features,
+    guarded_reranker_actions,
 )
 
 
@@ -45,3 +46,14 @@ def test_reranker_rejects_mismatched_batches() -> None:
     model = TerminalActionReranker(3, 4)
     with pytest.raises(ValueError, match="batch dimensions"):
         model(torch.zeros(2, 3), torch.zeros(3, 4))
+
+
+def test_guarded_actions_preserve_parent_below_margin() -> None:
+    logits = torch.tensor([[0.0, 0.2], [0.0, 2.0]])
+    ties = torch.zeros_like(logits)
+    selected, improvements = guarded_reranker_actions(
+        logits, ties, torch.tensor([0, 0]), probability_margin=0.2
+    )
+    assert selected.tolist() == [0, 1]
+    assert improvements[0] < 0.2
+    assert improvements[1] >= 0.2

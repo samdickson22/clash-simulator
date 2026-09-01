@@ -112,3 +112,27 @@ class TerminalActionReranker(nn.Module):
             dim=-1
         ) / scale + self.tie_action_bias(actions).squeeze(-1)
         return outcome, tie
+
+
+def guarded_reranker_actions(
+    outcome_logits: Tensor,
+    tie_scores: Tensor,
+    parent_indices: Tensor,
+    *,
+    probability_margin: float,
+) -> tuple[Tensor, Tensor]:
+    """Select reranked actions only when they clear the frozen parent margin."""
+
+    if outcome_logits.shape != tie_scores.shape or outcome_logits.ndim != 2:
+        raise ValueError("reranker scores must be matching root-by-candidate tensors")
+    if parent_indices.shape != outcome_logits.shape[:1]:
+        raise ValueError("parent indices must contain one entry per root")
+    if not 0.0 <= probability_margin <= 1.0:
+        raise ValueError("probability margin must be in [0, 1]")
+    rows = torch.arange(outcome_logits.shape[0], device=outcome_logits.device)
+    probabilities = outcome_logits.sigmoid()
+    selection_score = outcome_logits + 0.05 * tie_scores.tanh()
+    proposed = selection_score.argmax(dim=1)
+    improvement = probabilities[rows, proposed] - probabilities[rows, parent_indices]
+    selected = torch.where(improvement >= probability_margin, proposed, parent_indices)
+    return selected, improvement

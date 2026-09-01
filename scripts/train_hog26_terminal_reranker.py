@@ -25,6 +25,7 @@ from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.terminal_action_reranker import (
     TerminalActionReranker,
     candidate_action_features,
+    guarded_reranker_actions,
 )
 from scripts.distill_hog26_playgate import sequence_inputs
 from scripts.train_hog26_factorized_counterfactual import (
@@ -257,19 +258,17 @@ def evaluate_reranker(
     expanded = state[:, None, :].expand(-1, examples.candidates, -1)
     outcome_logits, tie_scores = model(expanded, actions)
     probabilities = outcome_logits.sigmoid().cpu()
-    tie_scores = tie_scores.cpu()
-    # The terminal class is primary.  The bounded tie term can only decide
-    # near-equal predicted outcome scores.
-    selection_score = outcome_logits.cpu() + 0.05 * tie_scores.tanh()
     parent = examples.parent_indices
     rows = torch.arange(examples.roots)
-    parent_probability = probabilities[rows, parent]
     correctable = examples.outcomes.max(dim=1).values > examples.outcomes[rows, parent]
     curves: list[dict[str, Any]] = []
     for threshold in THRESHOLDS:
-        proposed = selection_score.argmax(dim=1)
-        improvement = probabilities[rows, proposed] - parent_probability
-        selected = torch.where(improvement >= threshold, proposed, parent)
+        selected, _improvement = guarded_reranker_actions(
+            outcome_logits.cpu(),
+            tie_scores.cpu(),
+            parent,
+            probability_margin=threshold,
+        )
         selected_outcome = examples.outcomes[rows, selected]
         parent_outcome = examples.outcomes[rows, parent]
         selected_return = examples.returns[rows, selected]
@@ -308,6 +307,53 @@ def evaluate_reranker(
         ),
         "threshold_curve": curves,
     }
+
+
+@torch.no_grad()
+def fixed_threshold_root_details(
+    model: TerminalActionReranker,
+    examples: RootExamples,
+    *,
+    device: torch.device,
+    threshold: float,
+) -> list[dict[str, Any]]:
+    """Return auditable per-root choices at one already-frozen threshold."""
+
+    model.eval()
+    state = examples.state_features.to(device)
+    action_features = examples.action_features.to(device)
+    expanded = state[:, None, :].expand(-1, examples.candidates, -1)
+    outcome_logits, tie_scores = model(expanded, action_features)
+    selected, proposed_margin = guarded_reranker_actions(
+        outcome_logits,
+        tie_scores,
+        examples.parent_indices.to(device),
+        probability_margin=threshold,
+    )
+    selected = selected.cpu()
+    proposed_margin = proposed_margin.cpu()
+    parent = examples.parent_indices
+    details: list[dict[str, Any]] = []
+    for index, name in enumerate(examples.names):
+        chosen = int(selected[index])
+        parent_index = int(parent[index])
+        details.append(
+            {
+                "root": name,
+                "strategy": examples.strategies[index],
+                "warmup_steps": int(examples.warmups[index]),
+                "parent_action": int(examples.actions[index, parent_index]),
+                "selected_action": int(examples.actions[index, chosen]),
+                "override": chosen != parent_index,
+                "proposed_probability_margin": float(proposed_margin[index]),
+                "parent_outcome": int(examples.outcomes[index, parent_index]),
+                "selected_outcome": int(examples.outcomes[index, chosen]),
+                "best_available_outcome": int(examples.outcomes[index].max()),
+                "parent_dense_return": float(examples.returns[index, parent_index]),
+                "selected_dense_return": float(examples.returns[index, chosen]),
+            }
+        )
+    return details
 
 
 def main() -> None:
