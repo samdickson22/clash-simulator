@@ -1483,6 +1483,7 @@ def ppo_update(
     hand_aux_coef: float,
     elixir_aux_coef: float,
     target_kl: float,
+    action_value_coef: float = 0.0,
     sampling_temperature: float = 1.0,
     action_type_entropy_coef: float | None = None,
     location_entropy_coef: float | None = None,
@@ -1512,6 +1513,8 @@ def ppo_update(
 ) -> dict[str, float]:
     if not math.isfinite(sampling_temperature) or sampling_temperature <= 0.0:
         raise ValueError("sampling temperature must be finite and positive")
+    if not math.isfinite(action_value_coef) or action_value_coef < 0.0:
+        raise ValueError("action value coefficient must be finite and nonnegative")
     model.train()
     normalized_advantages = (advantages - float(advantages.mean())) / (
         float(advantages.std()) + 1e-8
@@ -1520,6 +1523,8 @@ def ppo_update(
         "loss": 0.0,
         "policy_loss": 0.0,
         "value_loss": 0.0,
+        "action_value_loss": 0.0,
+        "action_value_policy_gate": 0.0,
         "entropy": 0.0,
         "action_type_entropy": 0.0,
         "location_entropy": 0.0,
@@ -1636,6 +1641,25 @@ def ppo_update(
             value_loss = (
                 0.5 * torch.maximum(value_loss_unclipped, value_loss_clipped).mean()
             )
+            if output.action_values is None:
+                if action_value_coef > 0.0:
+                    raise ValueError(
+                        "positive action-value coefficient requires the action-value head"
+                    )
+                action_value_loss = output.values.sum() * 0.0
+                action_value_policy_gate = output.values.sum() * 0.0
+            else:
+                selected_action_values = output.action_values.gather(
+                    -1, actions.unsqueeze(-1)
+                ).squeeze(-1)
+                action_value_loss = F.smooth_l1_loss(
+                    selected_action_values,
+                    return_target.detach(),
+                )
+                assert model.action_value_policy_gate is not None
+                action_value_policy_gate = torch.tanh(
+                    model.action_value_policy_gate
+                )
             entropy = distribution.entropy().mean()
             action_type_entropy, location_entropy = output.entropy_components(
                 temperature=sampling_temperature,
@@ -1808,6 +1832,7 @@ def ppo_update(
             loss = (
                 policy_loss
                 + value_coef * value_loss
+                + action_value_coef * action_value_loss
                 - entropy_bonus
                 + anchor_loss
                 + anchor_policy_kl_loss
@@ -1872,6 +1897,8 @@ def ppo_update(
                 "loss": loss,
                 "policy_loss": policy_loss,
                 "value_loss": value_loss,
+                "action_value_loss": action_value_loss,
+                "action_value_policy_gate": action_value_policy_gate,
                 "entropy": entropy,
                 "action_type_entropy": action_type_entropy,
                 "location_entropy": location_entropy,
@@ -2230,6 +2257,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--critic-layers", type=int, default=2)
     parser.add_argument("--memory-size", type=int, default=256)
     parser.add_argument(
+        "--action-value-head",
+        action="store_true",
+        help=(
+            "fresh-lineage actor-visible factorized action-value head; starts "
+            "behavior-closed and must be paired with --action-value-coef"
+        ),
+    )
+    parser.add_argument(
         "--encoder-kind",
         choices=("attention", "deepsets"),
         default="attention",
@@ -2358,6 +2393,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gae-lambda", type=float, default=0.95)
     parser.add_argument("--clip-ratio", type=float, default=0.2)
     parser.add_argument("--value-coef", type=float, default=0.5)
+    parser.add_argument(
+        "--action-value-coef",
+        type=float,
+        default=0.0,
+        help="Huber coefficient for selected actor-visible action returns",
+    )
     parser.add_argument("--entropy-coef", type=float, default=0.01)
     parser.add_argument(
         "--action-type-entropy-coef",
@@ -3254,7 +3295,13 @@ def main() -> None:
         decoder_kind=args.decoder_kind,
         memory_kind=args.memory_kind,
         card_input_mode=args.card_input_mode,
+        action_value_head_enabled=args.action_value_head,
     )
+    if config.action_value_head_enabled != (args.action_value_coef > 0.0):
+        raise ValueError(
+            "fresh action-value head and a positive action-value coefficient "
+            "must be enabled together"
+        )
     if args.add_repair_adapter_size:
         config = replace(config, repair_adapter_size=args.add_repair_adapter_size)
     if args.add_play_hazard_adapter_size:
@@ -4056,6 +4103,7 @@ def main() -> None:
             sequence_batch_size=args.sequence_batch_size,
             clip_ratio=args.clip_ratio,
             value_coef=args.value_coef,
+            action_value_coef=args.action_value_coef,
             entropy_coef=args.entropy_coef,
             action_type_entropy_coef=args.action_type_entropy_coef,
             location_entropy_coef=args.location_entropy_coef,
@@ -4134,6 +4182,8 @@ def main() -> None:
                 f"abs_reward={float(np.abs(rollout.rewards).mean()):.5f} "
                 f"loss={stats['loss']:.4f} policy={stats['policy_loss']:.4f} "
                 f"value={stats['value_loss']:.4f} entropy={stats['entropy']:.3f} "
+                f"action_q={stats['action_value_loss']:.4f} "
+                f"q_gate={stats['action_value_policy_gate']:+.4f} "
                 f"type_ent={stats['action_type_entropy']:.3f} "
                 f"loc_ent={stats['location_entropy']:.3f} "
                 f"slot_ent={stats['conditional_slot_entropy']:.3f} "

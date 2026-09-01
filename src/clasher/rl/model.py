@@ -11,6 +11,7 @@ from torch.distributions import Categorical
 from torch.nn import functional as F
 
 from .common import NUM_HAND_SLOTS, NUM_TILES
+from .joint_action_value import FactorizedActionValueHead
 from .structured_memory import StructuredBeliefCell, StructuredPublicStateTracker
 from .structured_obs import (
     ACTOR_GLOBAL_SIZE,
@@ -89,6 +90,7 @@ class PolicyConfig:
     repair_stage_prototype_guard_thresholds: tuple[float, ...] = ()
     repair_stage_prototype_hard_guards: tuple[bool, ...] = ()
     repair_stage_yield_to_prior: tuple[bool, ...] = ()
+    action_value_head_enabled: bool = False
 
     def __post_init__(self) -> None:
         if self.actor_observation_domain not in {
@@ -280,6 +282,7 @@ class PolicyOutput:
     repair_features: Tensor | None = None
     deterministic_timing_logits: Tensor | None = None
     play_hazard_logits: Tensor | None = None
+    action_values: Tensor | None = None
 
     def distribution(
         self,
@@ -1283,6 +1286,17 @@ class ClasherPolicy(nn.Module):
             nn.init.zeros_(self.equivariant_timing_query.weight)
             nn.init.zeros_(self.equivariant_timing_query.bias)
         repair_input_size = d_model + config.memory_size
+        self.action_value_head: FactorizedActionValueHead | None = None
+        self.action_value_policy_gate: nn.Parameter | None = None
+        if config.action_value_head_enabled:
+            self.action_value_head = FactorizedActionValueHead(
+                repair_input_size,
+                d_model,
+            )
+            # Start as an exact behavior-preserving auxiliary head. PPO may
+            # learn to use its centered action advantages only after the
+            # return-regression objective has trained useful values.
+            self.action_value_policy_gate = nn.Parameter(torch.zeros(()))
         self.action_type_adapter: nn.Linear | None = None
         if config.action_type_adapter_enabled:
             self.action_type_adapter = nn.Linear(
@@ -2539,6 +2553,39 @@ class ClasherPolicy(nn.Module):
         joint_logits = self._joint_action_logits(
             action_type_logits, location_logits, inputs.action_mask
         )
+        action_values: Tensor | None = None
+        if self.action_value_head is not None:
+            flat_action_mask = flatten(inputs.action_mask)
+            flat_action_values = self.action_value_head(
+                repair_features,
+                card_context,
+                tile_context,
+                flat_action_mask,
+            )
+            action_values = flat_action_values.reshape(
+                batch_size,
+                sequence_length,
+                -1,
+            )
+            assert self.action_value_policy_gate is not None
+            legal_values = torch.where(
+                inputs.action_mask,
+                action_values,
+                torch.zeros_like(action_values),
+            )
+            legal_count = inputs.action_mask.sum(dim=-1, keepdim=True).clamp_min(1)
+            centered_values = action_values - (
+                legal_values.sum(dim=-1, keepdim=True)
+                / legal_count.to(action_values.dtype)
+            )
+            policy_value_delta = torch.where(
+                inputs.action_mask,
+                centered_values,
+                torch.zeros_like(centered_values),
+            )
+            joint_logits = joint_logits + torch.tanh(
+                self.action_value_policy_gate
+            ) * policy_value_delta
 
         if inputs.critic_entity_ids is not None:
             assert inputs.critic_entity_features is not None
@@ -2613,6 +2660,7 @@ class ClasherPolicy(nn.Module):
             ),
             deterministic_timing_logits=deterministic_timing_logits,
             play_hazard_logits=play_hazard_logits,
+            action_values=action_values,
         )
 
     @torch.no_grad()

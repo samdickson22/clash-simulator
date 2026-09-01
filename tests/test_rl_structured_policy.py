@@ -235,6 +235,49 @@ def test_recurrent_state_resets_inside_a_sequence():
     torch.testing.assert_close(sequence[1], standalone[1])
 
 
+def test_action_value_head_starts_behavior_closed() -> None:
+    env = SelfPlayBattleEnv(seed=13, max_ticks=128)
+    env.reset()
+    builder = StructuredObservationBuilder(decks_path="decks.json", max_entities=128)
+    env._structured_obs_builder = builder
+    model = ClasherPolicy(
+        PolicyConfig(
+            num_tokens=builder.spec.num_tokens,
+            max_entities=builder.spec.max_entities,
+            d_model=32,
+            num_heads=4,
+            actor_layers=1,
+            critic_layers=1,
+            memory_size=48,
+            action_value_head_enabled=True,
+        ),
+        builder.card_stat_features,
+    ).eval()
+    observation = builder.build(env.battle, 0)
+    inputs = _stack_step_inputs(
+        [observation],
+        env.get_action_mask(0)[None, :],
+        np.asarray([env.action_space.no_op_action]),
+        np.asarray([0.0], dtype=np.float32),
+        np.asarray([True]),
+        torch.device("cpu"),
+    )
+    with torch.no_grad():
+        before = model(inputs)
+        assert before.action_values is not None
+        assert model.action_value_head is not None
+        for parameter in model.action_value_head.parameters():
+            parameter.add_(torch.randn_like(parameter) * 5.0)
+        closed = model(inputs)
+        assert closed.action_values is not None
+        torch.testing.assert_close(before.joint_logits, closed.joint_logits)
+        assert not torch.equal(before.action_values, closed.action_values)
+        assert model.action_value_policy_gate is not None
+        model.action_value_policy_gate.fill_(0.5)
+        opened = model(inputs)
+        assert not torch.equal(closed.joint_logits, opened.joint_logits)
+
+
 def test_recurrent_rollout_and_ppo_update_smoke():
     env = SelfPlayBattleEnv(seed=17, max_ticks=128)
     env.reset()

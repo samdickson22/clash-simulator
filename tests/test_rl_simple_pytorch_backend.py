@@ -210,6 +210,7 @@ def _training_collector(
     learner_teacher_balanced_config: BalancedStrategyConfig | None = None,
     learner_sampling_temperature: float = 1.0,
     play_hazard_enabled: bool = False,
+    action_value_head_enabled: bool = False,
 ) -> SimplePytorchTrainingCollector:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
@@ -242,6 +243,7 @@ def _training_collector(
         public_observation_confidence=(
             actor_observation_domain in {"causal-frame-v1", "causal-vision-v1"}
         ),
+        action_value_head_enabled=action_value_head_enabled,
     )
     model = ClasherPolicy(config, builder.card_stat_features).to(device)
     opponent_model = None
@@ -523,6 +525,74 @@ def test_hazard_gated_rollout_log_probs_match_ppo_recomputation() -> None:
     )
     assert stats["approx_kl"] == pytest.approx(0.0, abs=1e-7)
     assert stats["anchor_policy_kl"] > 0.0
+
+
+def test_simple_rollout_trains_joint_action_values() -> None:
+    collector = _training_collector(action_value_head_enabled=True)
+    model = collector.policy.model
+    assert model.action_value_head is not None
+    before = {
+        name: parameter.detach().clone()
+        for name, parameter in model.action_value_head.named_parameters()
+    }
+    arrays, *_rest = collector.collect(2, model.initial_state(2, device="cpu"))
+    rollout = RolloutBatch(**arrays)
+    advantages, returns = compute_gae(rollout, gamma=0.995, gae_lambda=0.95)
+    stats = ppo_update(
+        model=model,
+        optimizer=torch.optim.Adam(model.parameters(), lr=1e-3),
+        rollout=rollout,
+        advantages=advantages,
+        returns=returns,
+        device=torch.device("cpu"),
+        epochs=1,
+        sequence_batch_size=2,
+        clip_ratio=0.2,
+        value_coef=0.5,
+        action_value_coef=0.5,
+        entropy_coef=0.0,
+        hand_aux_coef=0.0,
+        elixir_aux_coef=0.0,
+        target_kl=1.0,
+    )
+    assert stats["action_value_loss"] > 0.0
+    assert any(
+        not torch.equal(before[name], parameter)
+        for name, parameter in model.action_value_head.named_parameters()
+    )
+    assert np.isfinite(stats["action_value_policy_gate"])
+
+
+@pytest.mark.skipif(
+    not torch.backends.mps.is_available(), reason="Apple MPS is unavailable"
+)
+def test_simple_rollout_trains_joint_action_values_on_mps() -> None:
+    collector = _training_collector(
+        "mps", batch_size=2, action_value_head_enabled=True
+    )
+    model = collector.policy.model
+    arrays, *_rest = collector.collect(2, model.initial_state(4, device="mps"))
+    rollout = RolloutBatch(**arrays)
+    advantages, returns = compute_gae(rollout, gamma=0.995, gae_lambda=0.95)
+    stats = ppo_update(
+        model=model,
+        optimizer=torch.optim.Adam(model.parameters(), lr=1e-3),
+        rollout=rollout,
+        advantages=advantages,
+        returns=returns,
+        device=torch.device("mps"),
+        epochs=1,
+        sequence_batch_size=2,
+        clip_ratio=0.2,
+        value_coef=0.5,
+        action_value_coef=0.5,
+        entropy_coef=0.0,
+        hand_aux_coef=0.0,
+        elixir_aux_coef=0.0,
+        target_kl=1.0,
+    )
+    assert stats["action_value_loss"] > 0.0
+    assert np.isfinite(stats["action_value_policy_gate"])
 
 
 def test_policy_outputs_are_entity_capacity_metadata_invariant() -> None:
