@@ -86,6 +86,21 @@ Corrected initial checkpoint SHA-256 values:
 - control: `6f76247fdd048fda0e1342cf754370bfebf16144907335262f4825b55622fab4`;
 - candidate: `adc801880f1ff60c3cdc05f4619fb41392746c79e8664c9420e09e99291d7257`.
 
+The production-target head structure was then exercised through
+`--fresh-factorized-action-head`.  Both arms use an explicit three-way mode
+gate, shared slot-equivariant semantic+mechanics card pointer, and the unchanged
+card-conditioned heatmap.  At seed 1240003, all 133 shared initial state entries
+were bit-identical and only `action_value_head_enabled` differed in their model
+configs.  Their four-transition pre-update MPS rollout evidence again matched:
+reward, policy/value loss, entropy components, auxiliary losses, KL, explained
+variance, play/no-op rate, and episode counts were equal in printed precision.
+The candidate alone recorded action-value loss 0.2289.
+
+Factorized initial checkpoint SHA-256 values:
+
+- control: `33ad2b2ecda499a3a8583c773066f7b123a29df8291844bb5c84efd171c17b08`;
+- candidate: `ec79de0126d10aec0b8a06bfe7a69ae23cc7a936c65847e853556cbf104aca74`.
+
 Focused validation: 58 CPU tests plus the real MPS collector/GAE/PPO test passed;
 Ruff is clean.  Existing whole-file `train_recurrent.py` mypy still reports its
 11 pre-existing ndarray annotation diagnostics; the new isolated module is

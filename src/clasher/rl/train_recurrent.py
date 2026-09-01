@@ -2265,6 +2265,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--fresh-factorized-action-head",
+        action="store_true",
+        help=(
+            "fresh-lineage explicit play/wait/ability gate, shared slot-equivariant "
+            "mechanics-aware card pointer, and unchanged exact placement heatmap"
+        ),
+    )
+    parser.add_argument(
         "--encoder-kind",
         choices=("attention", "deepsets"),
         default="attention",
@@ -3152,6 +3160,19 @@ def main() -> None:
             max_entities=args.simple_max_entities,
         )
     base_config = resume_config or initial_policy_config
+    if args.fresh_factorized_action_head:
+        if base_config is not None:
+            raise ValueError(
+                "--fresh-factorized-action-head cannot modify an existing policy"
+            )
+        if args.card_semantics_version != 3:
+            raise ValueError(
+                "--fresh-factorized-action-head requires card semantics v3"
+            )
+        if args.memory_kind != "structured":
+            raise ValueError(
+                "--fresh-factorized-action-head requires structured memory"
+            )
     canonical_lane_globals = _canonical_lane_globals_for_run(
         actor_observation_domain=args.actor_observation_domain,
         resume_config=base_config,
@@ -3296,6 +3317,16 @@ def main() -> None:
         memory_kind=args.memory_kind,
         card_input_mode=args.card_input_mode,
         action_value_head_enabled=args.action_value_head,
+        deterministic_hierarchy=(
+            "play-gate" if args.fresh_factorized_action_head else "slot"
+        ),
+        hierarchical_mode_gate_enabled=args.fresh_factorized_action_head,
+        semantic_slot_choice_adapter_enabled=args.fresh_factorized_action_head,
+        semantic_slot_choice_replace_base=args.fresh_factorized_action_head,
+        mechanics_slot_choice_adapter_enabled=args.fresh_factorized_action_head,
+        mechanics_slot_choice_replace_base=args.fresh_factorized_action_head,
+        actor_current_hand_slot_invariant=args.fresh_factorized_action_head,
+        equivariant_slot_choice=args.fresh_factorized_action_head,
     )
     if config.action_value_head_enabled != (args.action_value_coef > 0.0):
         raise ValueError(
