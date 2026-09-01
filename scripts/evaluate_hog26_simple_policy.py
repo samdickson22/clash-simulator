@@ -6,10 +6,11 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 import torch
@@ -70,7 +71,9 @@ def evaluate_opponent(
 ) -> dict[str, Any]:
     np.random.seed(seed)
     torch.manual_seed(seed)
-    mode = "random" if opponent == "random" else "strategy"
+    mode: Literal["random", "strategy"] = (
+        "random" if opponent == "random" else "strategy"
+    )
     collector = SimplePytorchTrainingCollector(
         model=model,
         builder=builder,
@@ -138,7 +141,7 @@ def evaluate_opponent(
     draws = sum(record["outcome"] == "draw" for record in completed)
     placements = int(row_placements.sum())
     decisions = int(row_decisions.sum())
-    return {
+    result = {
         "opponent": opponent,
         "seed": seed,
         "games": games,
@@ -149,6 +152,11 @@ def evaluate_opponent(
         "placement_rate": placements / max(1, decisions),
         "records": completed,
     }
+    del collector
+    gc.collect()
+    if device.type == "mps":
+        torch.mps.empty_cache()
+    return result
 
 
 def main() -> None:

@@ -69,3 +69,18 @@ def test_resume_restores_optimizer_moments_but_honors_requested_learning_rate():
 
     assert resumed.param_groups[0]["lr"] == pytest.approx(1e-4)
     assert resumed.state[resumed_parameter]["step"].item() == 1
+
+
+def test_parallel_worker_config_carries_public_teacher_contract():
+    config = _config("random", (OpponentSpec(kind="random"),))
+    configured = ActorWorkerConfig(
+        **{
+            **config.__dict__,
+            "learner_teacher_strategy": "balanced",
+            "learner_teacher_balanced_config": {"minimum_elixir_to_play": 3.0},
+        }
+    )
+    assert configured.learner_teacher_strategy == "balanced"
+    assert configured.learner_teacher_balanced_config == {
+        "minimum_elixir_to_play": 3.0
+    }

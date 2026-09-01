@@ -8,7 +8,7 @@ import math
 import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 from functools import wraps
 from pathlib import Path
 from typing import Any, Literal, ParamSpec, TypeVar, cast
@@ -855,6 +855,7 @@ def collect_rollout_stationary_opponents(
     opponent_episode_starts: np.ndarray,
     quiet_engine: bool,
     opponent_bot: StrategyBot | None = None,
+    learner_teacher_bot: StrategyBot | None = None,
     opponent_noop: bool = False,
 ) -> tuple[
     RolloutBatch,
@@ -905,6 +906,11 @@ def collect_rollout_stationary_opponents(
     initial_hidden = recurrent_state[0].detach().cpu().numpy().copy()
     initial_cell = recurrent_state[1].detach().cpu().numpy().copy()
     episodes_finished = wins = losses = draws = 0
+    strategy_teacher_actions = (
+        np.empty((agents, rollout_steps), dtype=np.int64)
+        if learner_teacher_bot is not None
+        else None
+    )
 
     for step in range(rollout_steps):
         with maybe_silence_stdio(quiet_engine):
@@ -922,6 +928,23 @@ def collect_rollout_stationary_opponents(
             episode_starts,
             step,
         )
+        if learner_teacher_bot is not None:
+            assert strategy_teacher_actions is not None
+            strategy_teacher_actions[:, step] = np.asarray(
+                [
+                    learner_teacher_bot.select_action(
+                        env,
+                        player_id,
+                        action_mask=mask,
+                    )
+                    for env, player_id, mask in zip(
+                        envs,
+                        learner_players,
+                        action_masks,
+                    )
+                ],
+                dtype=np.int64,
+            )
         inputs = _stack_step_inputs(
             observations,
             action_masks,
@@ -1110,6 +1133,7 @@ def collect_rollout_stationary_opponents(
         wins=wins,
         losses=losses,
         draws=draws,
+        strategy_teacher_actions=strategy_teacher_actions,
     )
     return (
         rollout,
@@ -2724,25 +2748,6 @@ def _canonical_lane_globals_for_run(
 def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
     """Fail before side effects unless the fresh dense-Gym contract is exact."""
 
-    if args.simulation_backend != "simple-pytorch":
-        if args.simple_learner_sampling_temperature != 1.0:
-            raise ValueError(
-                "--simple-learner-sampling-temperature requires simple-pytorch"
-            )
-        return
-    if (
-        not math.isfinite(args.simple_learner_sampling_temperature)
-        or args.simple_learner_sampling_temperature <= 0.0
-    ):
-        raise ValueError(
-            "--simple-learner-sampling-temperature must be finite and positive"
-        )
-    if args.actor_workers != 1:
-        raise ValueError("simple-pytorch requires --actor-workers 1")
-    if args.simple_max_entities < 16:
-        raise ValueError("simple-pytorch requires --simple-max-entities >= 16")
-    if args.simple_max_effects < 1:
-        raise ValueError("simple-pytorch requires --simple-max-effects >= 1")
     if (args.online_strategy_teacher is None) != (
         args.online_strategy_teacher_coef == 0.0
     ):
@@ -2768,6 +2773,28 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
         raise ValueError(
             "online balanced teacher config requires the balanced teacher"
         )
+    if args.online_strategy_teacher is not None and args.opponent_mode == "selfplay":
+        raise ValueError("online strategy teacher requires a learner-only opponent")
+
+    if args.simulation_backend != "simple-pytorch":
+        if args.simple_learner_sampling_temperature != 1.0:
+            raise ValueError(
+                "--simple-learner-sampling-temperature requires simple-pytorch"
+            )
+        return
+    if (
+        not math.isfinite(args.simple_learner_sampling_temperature)
+        or args.simple_learner_sampling_temperature <= 0.0
+    ):
+        raise ValueError(
+            "--simple-learner-sampling-temperature must be finite and positive"
+        )
+    if args.actor_workers != 1:
+        raise ValueError("simple-pytorch requires --actor-workers 1")
+    if args.simple_max_entities < 16:
+        raise ValueError("simple-pytorch requires --simple-max-entities >= 16")
+    if args.simple_max_effects < 1:
+        raise ValueError("simple-pytorch requires --simple-max-effects >= 1")
     if args.resume_latest or args.resume_from:
         raise ValueError("simple-pytorch is fresh-only until exact resume is gated")
     if args.opponent_mode not in {
@@ -2861,11 +2888,6 @@ def _validate_simple_pytorch_args(args: argparse.Namespace) -> None:
 def main() -> None:
     global _USE_TRIMMED_ROLLOUT_ENTITY_PADDING
     args = parse_args()
-    if args.simulation_backend != "simple-pytorch" and (
-        args.online_strategy_teacher is not None
-        or args.online_strategy_teacher_coef != 0.0
-    ):
-        raise ValueError("online strategy teacher requires simple-pytorch")
     _validate_simple_pytorch_args(args)
     _USE_TRIMMED_ROLLOUT_ENTITY_PADDING = bool(args.trim_rollout_entity_padding)
     if args.num_envs <= 0 or args.rollout_steps <= 0:
@@ -3708,23 +3730,32 @@ def main() -> None:
     parallel_collector: Any = None
     simple_collector: Any = None
     simulation_backend_metadata: dict[str, Any] | None = None
+    learner_teacher_balanced_config: BalancedStrategyConfig | None = None
+    if args.online_strategy_teacher_balanced_config is not None:
+        teacher_config_path = resolve_path(
+            args.online_strategy_teacher_balanced_config,
+            must_exist=True,
+        )
+        teacher_config_payload = json.loads(
+            teacher_config_path.read_text(encoding="utf-8")
+        )
+        if not isinstance(teacher_config_payload, dict):
+            raise TypeError("online balanced teacher config must be an object")
+        learner_teacher_balanced_config = BalancedStrategyConfig(
+            **teacher_config_payload
+        )
+    learner_teacher_bot = (
+        StrategyBot(
+            args.online_strategy_teacher,
+            balanced_config=(
+                learner_teacher_balanced_config or BalancedStrategyConfig()
+            ),
+        )
+        if args.online_strategy_teacher is not None
+        else None
+    )
     if args.simulation_backend == "simple-pytorch":
         from .simple_pytorch_backend import SimplePytorchTrainingCollector
-
-        learner_teacher_balanced_config: BalancedStrategyConfig | None = None
-        if args.online_strategy_teacher_balanced_config is not None:
-            teacher_config_path = resolve_path(
-                args.online_strategy_teacher_balanced_config,
-                must_exist=True,
-            )
-            teacher_config_payload = json.loads(
-                teacher_config_path.read_text(encoding="utf-8")
-            )
-            if not isinstance(teacher_config_payload, dict):
-                raise TypeError("online balanced teacher config must be an object")
-            learner_teacher_balanced_config = BalancedStrategyConfig(
-                **teacher_config_payload
-            )
         simple_opponent_model: ClasherPolicy | None = None
         simple_opponent_sha256: str | None = None
         simple_checkpoint_path: Path | None = None
@@ -3942,6 +3973,12 @@ def main() -> None:
                 matchups_path=str(matchups_path) if matchups_path is not None else None,
                 matchup_probability=args.matchup_probability,
                 trim_rollout_entity_padding=args.trim_rollout_entity_padding,
+                learner_teacher_strategy=args.online_strategy_teacher,
+                learner_teacher_balanced_config=(
+                    asdict(learner_teacher_balanced_config)
+                    if learner_teacher_balanced_config is not None
+                    else None
+                ),
             ),
         )
         atexit.register(parallel_collector.close)
@@ -4130,6 +4167,7 @@ def main() -> None:
                         if args.opponent_mode == "strategy"
                         else None
                     ),
+                    learner_teacher_bot=learner_teacher_bot,
                     opponent_noop=args.opponent_mode == "noop",
                 )
                 if args.opponent_mode in {"noop", "random", "strategy"}

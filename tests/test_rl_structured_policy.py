@@ -9,6 +9,7 @@ from clasher.battle import BattleState
 from clasher.rl.model import ClasherPolicy, PolicyConfig, PolicyInputs, PolicyOutput
 from clasher.rl.parallel_rollout import concatenate_rollouts
 from clasher.rl.selfplay_env import SelfPlayBattleEnv
+from clasher.rl.strategy_bots import StrategyBot
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.rl.train_recurrent import (
     _stack_step_inputs,
@@ -385,6 +386,7 @@ def test_random_opponent_rollout_only_trains_balanced_learner_seats():
             opponent_previous_rewards=np.zeros((2,), dtype=np.float32),
             opponent_episode_starts=np.ones((2,), dtype=np.bool_),
             quiet_engine=True,
+            learner_teacher_bot=StrategyBot("balanced"),
         )
     )
 
@@ -392,6 +394,13 @@ def test_random_opponent_rollout_only_trains_balanced_learner_seats():
     assert rollout.transitions == 4
     assert rollout.actions.shape == (2, 2)
     assert rollout.bootstrap_values.shape == (2,)
+    assert rollout.strategy_teacher_actions is not None
+    assert rollout.strategy_teacher_actions.shape == (2, 2)
+    assert np.take_along_axis(
+        rollout.action_masks,
+        rollout.strategy_teacher_actions[..., None],
+        axis=-1,
+    ).all()
     assert next_state[0].shape == (2, model.config.memory_size)
     assert previous_actions.shape == previous_rewards.shape == starts.shape == (2,)
     assert np.all(
