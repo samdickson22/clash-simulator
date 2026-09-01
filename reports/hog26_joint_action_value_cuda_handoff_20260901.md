@@ -4,10 +4,10 @@ Date: 2026-09-01
 
 ## Immutable package
 
-- source commit: `7a3aee4c`
-- archive: `/private/tmp/clasher-hog26-joint-q-cuda-7a3aee4c.tar.gz`
+- source commit: `48221ee1`
+- archive: `/private/tmp/clasher-hog26-joint-q-cuda-48221ee1.tar.gz`
 - archive SHA-256:
-  `f73206f90f6ece015597146e3411db0008c376f7b909cf5799619e37cb65b166`
+  `46991ff9905b5c3c22e83011a2155fd29ae1d6991118e6dc77d10966bac3cb0a`
 - size: 79 MiB
 
 The archive contains the exact committed tree plus the three untracked selected
@@ -22,7 +22,7 @@ for the campaign.  CUDA Graph execution is default and fail-closed on CUDA.
 
 ```bash
 mkdir -p ~/clasher-joint-q
-tar -xzf ~/clasher-hog26-joint-q-cuda-7a3aee4c.tar.gz -C ~/clasher-joint-q
+tar -xzf ~/clasher-hog26-joint-q-cuda-48221ee1.tar.gz -C ~/clasher-joint-q
 cd ~/clasher-joint-q
 uv sync --frozen --python 3.12
 nvidia-smi
@@ -48,8 +48,10 @@ scripts/run_hog26_joint_action_value_cuda_three_seed.sh
 The driver fails closed unless every child:
 
 - uses `execution_mode=cuda-graph`;
+- matches its predeclared initializer SHA-256 before GPU work begins;
 - has zero shared-initializer tensor mismatches;
 - has exactly 14 candidate-only action-value entries;
+- produces the exact same pre-optimization rollout in control and candidate;
 - produces finite positive candidate Q loss;
 - keeps the control Q loss/gate exactly zero;
 - retains candidate/control throughput ratio at least 0.95.
@@ -84,4 +86,7 @@ it still requires deterministic collapse and seven-opponent breadth screens.
 
 At package time Prime Intellect had no running pod and wallet balance -$17.23.
 The authorized school host timed out on SSH.  No CUDA smoke has run on this source
-commit, and no historical CUDA rate is attributed to it.
+commit, and no historical CUDA rate is attributed to it.  The archive was
+independently extracted into a clean directory, installed with `uv sync
+--frozen --python 3.12`, verified against all three checkpoint hashes, and passed
+the focused `57 passed, 5 skipped` gate.
