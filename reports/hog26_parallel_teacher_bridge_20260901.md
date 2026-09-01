@@ -41,6 +41,8 @@ control found zero differences in every non-teacher rollout field.
 Checkpoint:
 
 - path: `/private/tmp/hog26-legacy-spatial-teacher010-u20-seed1248201/checkpoints/policy_v2_update_000020.pt`
+- preserved path:
+  `checkpoints/hog26_factorized_spatial_teacher_u20_seed1248201/candidate.pt`
 - SHA-256:
   `4ec5585f63fd65c30ed977b78a87cc66208ab64d7e125116f1dd32f7d120d8f4`
 - transitions: 35,840
@@ -73,6 +75,25 @@ Therefore the Python result is promising development evidence but not verified
 cross-backend skill.  It cannot replace the retained initializer or champion.
 Further spatial training is allowed only with staged rollback checkpoints, and
 promotion still requires a CUDA Simple-Gym breadth gate.
+
+## Longer continuation rejected
+
+The spatial-0.10 checkpoint was continued with a new environment seed through
+updates 40, 60, 80, and 100.  Offline teacher tile accuracy rose into the
+50-63% range, but the same fixed Python breadth seed deteriorated:
+
+| checkpoint | breadth W-L | decision |
+|---|---:|---|
+| update 20 | 9-5 | retain development candidate |
+| update 40 | 4-10 | reject |
+| update 60 | 7-7 | reject |
+| update 80 | 5-9 | reject |
+| update 100 | 3-11 | reject |
+
+The loss therefore overfits the teacher's placement labels after update 20;
+more imitation accuracy is not more gameplay skill.  Stop the continuation and
+freeze update 20.  This is a concrete rollback, not selection of the final
+checkpoint by default.
 
 ## Performance finding
 

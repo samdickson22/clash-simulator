@@ -150,6 +150,7 @@ def evaluate_opponent(
         "draws": draws,
         "win_rate": wins / games,
         "placement_rate": placements / max(1, decisions),
+        "simulation_backend_metadata": collector.checkpoint_metadata(),
         "records": completed,
     }
     del collector
