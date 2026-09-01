@@ -26,10 +26,15 @@ from clasher.rl.strategy_bots import STRATEGY_NAMES
 from clasher.rl.structured_obs import StructuredObservationBuilder
 
 SCHEMA = "clasher.hog26.simple-policy-evaluation.v1"
+OPPONENTS = (*STRATEGY_NAMES, "random")
 
 
 def file_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def evaluation_seed(base_seed: int, opponent: str) -> int:
+    return base_seed + 1009 * OPPONENTS.index(opponent)
 
 
 def load_model(
@@ -61,7 +66,10 @@ def evaluate_opponent(
     games: int,
     device: torch.device,
     chunk_steps: int,
+    seed: int,
 ) -> dict[str, Any]:
+    np.random.seed(seed)
+    torch.manual_seed(seed)
     mode = "random" if opponent == "random" else "strategy"
     collector = SimplePytorchTrainingCollector(
         model=model,
@@ -132,6 +140,7 @@ def evaluate_opponent(
     decisions = int(row_decisions.sum())
     return {
         "opponent": opponent,
+        "seed": seed,
         "games": games,
         "wins": wins,
         "losses": losses,
@@ -147,7 +156,8 @@ def main() -> None:
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--games", type=int, default=4)
-    parser.add_argument("--device", choices=("cpu", "mps"), default="cpu")
+    parser.add_argument("--device", choices=("cpu", "mps", "cuda"), default="cpu")
+    parser.add_argument("--seed", type=int, default=1247001)
     parser.add_argument("--chunk-steps", type=int, default=32)
     parser.add_argument("--opponent", action="append", dest="opponents")
     args = parser.parse_args()
@@ -157,9 +167,11 @@ def main() -> None:
         raise ValueError("evaluation games must be a positive even count")
     if args.chunk_steps < 1 or args.chunk_steps > 128:
         raise ValueError("chunk steps must be in [1, 128]")
-    opponents = args.opponents or [*STRATEGY_NAMES, "random"]
+    opponents = args.opponents or list(OPPONENTS)
     if any(value != "random" and value not in STRATEGY_NAMES for value in opponents):
         raise ValueError("evaluation contains an unknown opponent")
+    if len(set(opponents)) != len(opponents):
+        raise ValueError("evaluation opponents must be unique")
     device = torch.device(args.device)
     model, builder = load_model(args.checkpoint, device)
     rows = [
@@ -170,6 +182,7 @@ def main() -> None:
             games=args.games,
             device=device,
             chunk_steps=args.chunk_steps,
+            seed=evaluation_seed(args.seed, opponent),
         )
         for opponent in opponents
     ]
@@ -178,7 +191,9 @@ def main() -> None:
         "checkpoint": str(args.checkpoint.resolve()),
         "checkpoint_sha256": file_sha256(args.checkpoint),
         "device": str(device),
-        "deterministic": True,
+        "deterministic_policy": True,
+        "seeded_environment": True,
+        "base_seed": args.seed,
         "games_per_opponent": args.games,
         "chunk_steps": args.chunk_steps,
         "rows": rows,
