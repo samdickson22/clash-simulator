@@ -1289,10 +1289,13 @@ class ClasherPolicy(nn.Module):
         self.action_value_head: FactorizedActionValueHead | None = None
         self.action_value_policy_gate: nn.Parameter | None = None
         if config.action_value_head_enabled:
-            self.action_value_head = FactorizedActionValueHead(
-                repair_input_size,
-                d_model,
-            )
+            # Optional-module construction must not advance the global RNG and
+            # silently change every later shared layer in a same-seed A/B.
+            with torch.random.fork_rng(devices=[]):
+                self.action_value_head = FactorizedActionValueHead(
+                    repair_input_size,
+                    d_model,
+                )
             # Start as an exact behavior-preserving auxiliary head. PPO may
             # learn to use its centered action advantages only after the
             # return-regression objective has trained useful values.

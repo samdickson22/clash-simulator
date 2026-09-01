@@ -64,6 +64,28 @@ The actual training CLI ran one fresh Simple Gym update on MPS:
 - checkpoint persisted the enabled config, 14 action-value state entries, update
   counter 1, and four transitions.
 
+The first smoke then exposed and fixed a matched-experiment confound: constructing
+the optional head advanced the global initialization RNG.  The head is now built
+inside a forked RNG context.  A same-seed control/candidate rerun proved all 126
+shared initial state entries bit-identical; the candidate has only the 14 declared
+action-value entries, and its policy gate is exactly zero.
+
+The corrected MPS A/B used seed 1240002 and identical four-transition rollouts:
+
+- reward/absolute reward: 0/0 in both;
+- play/no-op: 0.75/0.25 in both;
+- entropy/type/location/slot entropy: exactly equal in printed precision;
+- value loss, auxiliary hand/elixir losses, KL, explained variance, and episode
+  counts: exactly equal in printed precision;
+- control action-value loss: 0; candidate: 0.9221;
+- control learn wall 0.68 s; candidate 0.72 s (single smoke only, not a throughput
+  claim).
+
+Corrected initial checkpoint SHA-256 values:
+
+- control: `6f76247fdd048fda0e1342cf754370bfebf16144907335262f4825b55622fab4`;
+- candidate: `adc801880f1ff60c3cdc05f4619fb41392746c79e8664c9420e09e99291d7257`.
+
 Focused validation: 58 CPU tests plus the real MPS collector/GAE/PPO test passed;
 Ruff is clean.  Existing whole-file `train_recurrent.py` mypy still reports its
 11 pre-existing ndarray annotation diagnostics; the new isolated module is

@@ -278,6 +278,32 @@ def test_action_value_head_starts_behavior_closed() -> None:
         assert not torch.equal(closed.joint_logits, opened.joint_logits)
 
 
+def test_action_value_option_preserves_same_seed_shared_initialization() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    common = {
+        "num_tokens": builder.spec.num_tokens,
+        "max_entities": builder.spec.max_entities,
+        "d_model": 32,
+        "num_heads": 4,
+        "actor_layers": 1,
+        "critic_layers": 1,
+        "memory_size": 48,
+    }
+    torch.manual_seed(29)
+    control = ClasherPolicy(PolicyConfig(**common), builder.card_stat_features)
+    torch.manual_seed(29)
+    candidate = ClasherPolicy(
+        PolicyConfig(**common, action_value_head_enabled=True),
+        builder.card_stat_features,
+    )
+    control_state = control.state_dict()
+    candidate_state = candidate.state_dict()
+    shared = sorted(set(control_state).intersection(candidate_state))
+    assert shared
+    for name in shared:
+        torch.testing.assert_close(control_state[name], candidate_state[name], rtol=0, atol=0)
+
+
 def test_recurrent_rollout_and_ppo_update_smoke():
     env = SelfPlayBattleEnv(seed=17, max_ticks=128)
     env.reset()
