@@ -167,6 +167,7 @@ def _audit_probe(
     best_play_outcome = int(outcomes[best_play])
     best_play_reward = float(reward_scores[best_play])
     play_minus_wait_reward = best_play_reward - noop_reward
+    timing_outcome_gap = best_play_outcome - noop_outcome
     if best_play_outcome > noop_outcome or (
         best_play_outcome == noop_outcome
         and play_minus_wait_reward >= minimum_margin
@@ -179,6 +180,11 @@ def _audit_probe(
         timing_preference = "wait"
     else:
         timing_preference = "inconclusive"
+    timing_weight = (
+        4.0
+        if timing_outcome_gap != 0
+        else 1.0 + min(3.0, abs(play_minus_wait_reward) * 10.0)
+    )
     def better_than(base_outcome: int, reward_margin: float, margin: float) -> bool:
         return best_outcome > base_outcome or (
             best_outcome == base_outcome
@@ -211,6 +217,8 @@ def _audit_probe(
         "timing_best_play_action": int(actions[best_play]),
         "timing_best_play_terminal_outcome": best_play_outcome,
         "timing_play_minus_wait_reward": play_minus_wait_reward,
+        "timing_outcome_gap": timing_outcome_gap,
+        "timing_weight": timing_weight,
         "best_return": best_return,
         "parent_return": parent_return,
         "noop_return": noop_return,
@@ -276,6 +284,10 @@ def compile_corpus(
     root_candidate_actions: list[np.ndarray] = []
     root_candidate_scores: list[np.ndarray] = []
     root_candidate_outcomes: list[np.ndarray] = []
+    timing_root_rows: list[int] = []
+    timing_targets_play: list[bool] = []
+    timing_parent_play: list[bool] = []
+    timing_weights: list[float] = []
     offset = 0
     for path, audit in zip(paths, audits, strict=True):
         with np.load(path.with_suffix(".npz"), allow_pickle=False) as archive:
@@ -305,6 +317,12 @@ def compile_corpus(
             root_candidate_actions.append(candidates["actions"])
             root_candidate_scores.append(candidates["scores"])
             root_candidate_outcomes.append(candidates["outcomes"])
+        timing_preference = str(audit["timing_preference"])
+        if timing_preference != "inconclusive":
+            timing_root_rows.append(offset + row_count - 1)
+            timing_targets_play.append(timing_preference == "play")
+            timing_parent_play.append(int(candidates["parent_action"]) < 2304)
+            timing_weights.append(float(audit["timing_weight"]))
         offset += row_count
 
     if not root_rows:
@@ -384,6 +402,12 @@ def compile_corpus(
         root_candidate_valid=candidate_valid,
         root_candidate_scores=candidate_scores,
         root_candidate_outcomes=candidate_outcomes,
+        terminal_timing_root_rows=np.asarray(timing_root_rows, dtype=np.int64),
+        terminal_timing_targets_play=np.asarray(
+            timing_targets_play, dtype=np.bool_
+        ),
+        terminal_timing_parent_play=np.asarray(timing_parent_play, dtype=np.bool_),
+        terminal_timing_weights=np.asarray(timing_weights, dtype=np.float32),
         root_candidate_crown_differences=zero_crowns,
         root_candidate_tower_damage_differences=zero_damage,
         metadata_json=np.asarray(json.dumps(corpus_metadata, sort_keys=True)),
@@ -403,6 +427,13 @@ def compile_corpus(
         "root_behavior_action_is_parent": True,
         "probes": len(audits),
         "accepted_probes": len(root_rows),
+        "terminal_timing_roots": len(timing_root_rows),
+        "terminal_timing_corrective_roots": int(
+            np.count_nonzero(
+                np.asarray(timing_targets_play, dtype=np.bool_)
+                != np.asarray(timing_parent_play, dtype=np.bool_)
+            )
+        ),
         "rows": int(combined["expert_actions"].size),
         "supervised_rows": int(combined["expert_action_supervision_valid"].sum()),
         "warmup_steps": sorted({int(audit["warmup_steps"]) for audit in audits}),

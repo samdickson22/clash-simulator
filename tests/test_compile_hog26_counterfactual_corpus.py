@@ -144,6 +144,10 @@ def test_compiler_retains_all_behavior_but_only_accepted_roots(tmp_path: Path) -
         assert archive["counterfactual_root_rows"].tolist() == [1]
         assert archive["root_base_actions"].tolist() == [2304]
         assert archive["root_candidate_outcomes"].tolist() == [[0, 0]]
+        assert archive["terminal_timing_root_rows"].tolist() == [1]
+        assert archive["terminal_timing_targets_play"].tolist() == [True]
+        assert archive["terminal_timing_parent_play"].tolist() == [False]
+        assert archive["terminal_timing_weights"].tolist() == pytest.approx([1.3])
         assert archive["expert_actions"].tolist() == [12, 2304, 12, 2304]
         assert archive["entity_mask"].tolist() == [
             [True, True, False],
