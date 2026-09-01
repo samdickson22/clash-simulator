@@ -1,19 +1,20 @@
 from __future__ import annotations
 
 import argparse
+import time
 from dataclasses import dataclass
 from pathlib import Path
-import time
-from typing import Optional
 
 import numpy as np
 import torch
 
 from clasher.battle import STANDARD_MATCH_TICKS
-from clasher.paths import decks_path as resolve_decks_path, resolve_path
+from clasher.paths import decks_path as resolve_decks_path
+from clasher.paths import resolve_path
 
 from .model import ClasherPolicy, PolicyConfig
 from .selfplay_env import SelfPlayBattleEnv
+from .strategy_bots import STRATEGY_NAMES, StrategyBot
 from .structured_obs import StructuredObservationBuilder
 from .train_recurrent import (
     _stack_step_inputs,
@@ -92,13 +93,20 @@ def evaluate(
     decision_interval: int,
     max_ticks: int,
     opponent_mode: str,
-    opponent: Optional[LoadedPolicy],
+    opponent: LoadedPolicy | None,
     deterministic: bool,
     quiet_engine: bool,
     device: torch.device,
+    opponent_bot: StrategyBot | None = None,
 ) -> dict[str, float]:
     if games <= 0:
         raise ValueError("games must be positive")
+    if opponent_mode not in {"noop", "random", "policy", "strategy"}:
+        raise ValueError(f"unknown evaluation opponent mode: {opponent_mode}")
+    if (opponent_mode == "policy") != (opponent is not None):
+        raise ValueError("policy opponent mode and checkpoint must accompany each other")
+    if (opponent_mode == "strategy") != (opponent_bot is not None):
+        raise ValueError("strategy opponent mode and bot must accompany each other")
     torch.manual_seed(seed)
     np.random.seed(seed)
     env = SelfPlayBattleEnv(
@@ -164,6 +172,14 @@ def evaluate(
                     int(rng.choice(legal))
                     if legal.size
                     else env.action_space.no_op_action
+                )
+            elif opponent_mode == "strategy":
+                assert opponent_bot is not None
+                other_mask = env.get_action_mask(other_player)
+                other_action = opponent_bot.select_action(
+                    env,
+                    other_player,
+                    action_mask=other_mask,
                 )
             else:
                 if opponent is None or opponent_state is None:
@@ -248,8 +264,13 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluate a V2 recurrent Clasher policy")
     parser.add_argument("--checkpoint", default=None)
     parser.add_argument("--checkpoint-dir", default="checkpoints/entity_selfplay")
-    parser.add_argument("--opponent", choices=["random", "noop", "policy"], default="random")
+    parser.add_argument(
+        "--opponent",
+        choices=["random", "noop", "policy", "strategy"],
+        default="random",
+    )
     parser.add_argument("--opponent-checkpoint", default=None)
+    parser.add_argument("--opponent-strategy", choices=STRATEGY_NAMES, default=None)
     parser.add_argument("--decks-path", default="decks.json")
     parser.add_argument("--games", type=int, default=40)
     parser.add_argument("--seed", type=int, default=41)
@@ -278,7 +299,7 @@ def main() -> None:
     candidate = load_policy_checkpoint(
         checkpoint_path, device=device, decks_path=decks_path
     )
-    opponent: Optional[LoadedPolicy] = None
+    opponent: LoadedPolicy | None = None
     if args.opponent == "policy":
         if not args.opponent_checkpoint:
             raise ValueError("--opponent-checkpoint is required for a policy opponent")
@@ -287,6 +308,13 @@ def main() -> None:
             opponent_path, device=device, decks_path=decks_path
         )
         print(f"opponent_checkpoint={opponent_path}")
+    opponent_bot: StrategyBot | None = None
+    if args.opponent == "strategy":
+        if args.opponent_strategy is None:
+            raise ValueError("--opponent-strategy is required for a strategy opponent")
+        opponent_bot = StrategyBot(args.opponent_strategy)
+    elif args.opponent_strategy is not None:
+        raise ValueError("--opponent-strategy requires --opponent strategy")
     print(f"device={device}")
     print(f"checkpoint={checkpoint_path}")
     print(f"checkpoint_update={candidate.checkpoint.get('update', 0)}")
@@ -303,6 +331,7 @@ def main() -> None:
         deterministic=args.deterministic,
         quiet_engine=args.quiet_engine,
         device=device,
+        opponent_bot=opponent_bot,
     )
     print(
         f"games={int(metrics['games'])} wins={int(metrics['wins'])} "
