@@ -110,6 +110,7 @@ class CompleteEpisodeBuilder:
         episodes_per_stream: int,
         reset_hidden: np.ndarray,
         reset_cell: np.ndarray,
+        extra_transition_keys: tuple[str, ...] = (),
     ) -> None:
         if stream_count < 1 or episodes_per_stream < 1:
             raise ValueError("stream and episode counts must be positive")
@@ -122,6 +123,11 @@ class CompleteEpisodeBuilder:
         self.episodes_per_stream = int(episodes_per_stream)
         self.reset_hidden = np.asarray(reset_hidden).copy()
         self.reset_cell = np.asarray(reset_cell).copy()
+        if len(set(extra_transition_keys)) != len(extra_transition_keys) or set(
+            extra_transition_keys
+        ).intersection(TRANSITION_KEYS):
+            raise ValueError("extra transition keys must be unique and new")
+        self.transition_keys = (*TRANSITION_KEYS, *extra_transition_keys)
         self._active: list[dict[str, list[np.ndarray]] | None] = [
             None for _ in range(stream_count)
         ]
@@ -137,13 +143,13 @@ class CompleteEpisodeBuilder:
         return self._completed_by_stream.astype(np.int64, copy=True)
 
     def add_rollout(self, arrays: dict[str, np.ndarray]) -> None:
-        missing = sorted(set(TRANSITION_KEYS).difference(arrays))
+        missing = sorted(set(self.transition_keys).difference(arrays))
         if missing:
             raise ValueError(f"rollout is missing behavior arrays: {missing}")
         shape = arrays["actions"].shape
         if len(shape) != 2 or shape[0] != self.stream_count:
             raise ValueError("rollout actions must be [streams, steps]")
-        for key in TRANSITION_KEYS:
+        for key in self.transition_keys:
             value = np.asarray(arrays[key])
             if value.shape[:2] != shape:
                 raise ValueError(f"rollout {key} does not share [streams, steps]")
@@ -159,11 +165,11 @@ class CompleteEpisodeBuilder:
                         raise ValueError(
                             "new episode started before the prior one terminated"
                         )
-                    self._active[stream] = {key: [] for key in TRANSITION_KEYS}
+                    self._active[stream] = {key: [] for key in self.transition_keys}
                 active = self._active[stream]
                 if active is None:
                     raise ValueError("rollout began without an episode-start boundary")
-                for key in TRANSITION_KEYS:
+                for key in self.transition_keys:
                     active[key].append(np.asarray(arrays[key][stream, step]).copy())
                 if bool(dones[stream, step]):
                     ordinal = int(self._completed_by_stream[stream])
@@ -194,7 +200,7 @@ class CompleteEpisodeBuilder:
             key: np.concatenate(
                 [episode[key] for _stream, _ordinal, episode in ordered], axis=0
             )
-            for key in TRANSITION_KEYS
+            for key in self.transition_keys
         }
         hidden = self.reset_hidden[streams].copy()
         cell = self.reset_cell[streams].copy()
@@ -236,8 +242,8 @@ def validate_direct_simple_behavior_corpus(
     missing = sorted(set(TRANSITION_KEYS).difference(corpus.arrays))
     if missing:
         raise ValueError(f"corpus is missing behavior arrays: {missing}")
-    for key in TRANSITION_KEYS:
-        if np.asarray(corpus.arrays[key]).shape[:1] != (row_count,):
+    for key, value in corpus.arrays.items():
+        if np.asarray(value).shape[:1] != (row_count,):
             raise ValueError(f"corpus {key} row count differs from offsets")
 
     starts = np.asarray(corpus.arrays["episode_starts"], dtype=np.bool_)
@@ -302,8 +308,20 @@ def load_direct_simple_behavior_corpus(
         metadata = json.loads(str(archive["metadata_json"].item()))
         if not isinstance(metadata, dict):
             raise TypeError("behavior metadata must be a JSON object")
+        structural = {
+            "episode_offsets",
+            "episode_stream_rows",
+            "episode_ordinals",
+            "initial_hidden",
+            "initial_cell",
+            "metadata_json",
+        }
         corpus = DirectSimpleBehaviorCorpus(
-            arrays={key: archive[key].copy() for key in TRANSITION_KEYS},
+            arrays={
+                key: archive[key].copy()
+                for key in archive.files
+                if key not in structural
+            },
             episode_offsets=archive["episode_offsets"].astype(np.int64, copy=True),
             episode_stream_rows=archive["episode_stream_rows"].astype(
                 np.int64, copy=True

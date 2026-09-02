@@ -117,6 +117,31 @@ def test_builder_publishes_only_complete_episodes_in_stable_stream_order() -> No
     ]
 
 
+def test_builder_preserves_opt_in_teacher_factors() -> None:
+    builder = CompleteEpisodeBuilder(
+        stream_count=1,
+        episodes_per_stream=1,
+        reset_hidden=np.zeros((1, 2), dtype=np.float32),
+        reset_cell=np.zeros((1, 2), dtype=np.float32),
+        extra_transition_keys=("play_hazard_probabilities",),
+    )
+    rollout = _rollout(
+        actions=[[0, 1]],
+        previous_actions=[[11, 0]],
+        rewards=[[0.1, 0.2]],
+        previous_rewards=[[0.0, 0.1]],
+        starts=[[True, False]],
+        dones=[[False, True]],
+    )
+    rollout["play_hazard_probabilities"] = np.asarray([[0.125, 0.75]], dtype=np.float32)
+    builder.add_rollout(rollout)
+    corpus = builder.finalize()
+    np.testing.assert_array_equal(
+        corpus.arrays["play_hazard_probabilities"],
+        np.asarray([0.125, 0.75], dtype=np.float32),
+    )
+
+
 @pytest.mark.parametrize(
     ("mutation", "message"),
     (

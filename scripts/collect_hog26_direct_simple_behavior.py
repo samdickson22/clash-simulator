@@ -29,7 +29,7 @@ from clasher.rl.simple_pytorch_backend import (
 from clasher.rl.strategy_bots import STRATEGY_NAMES
 from scripts.evaluate_hog26_simple_policy import load_model
 
-SCHEMA = "clasher.hog26.direct-simple-behavior.v1"
+SCHEMA = "clasher.hog26.direct-simple-behavior.v2"
 PLACEMENT_ACTIONS = NUM_HAND_SLOTS * NUM_TILES
 
 
@@ -155,6 +155,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         episodes_per_stream=args.episodes_per_seat,
         reset_hidden=reset_hidden,
         reset_cell=reset_cell,
+        extra_transition_keys=("play_hazard_probabilities",),
     )
     max_chunks = args.episodes_per_seat * 16 + 16
     chunks = 0
@@ -166,6 +167,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
             args.chunk_steps,
             state,
             include_terminal_winners=True,
+            include_policy_factors=True,
         )
         episode_builder.add_rollout(arrays)
         chunks += 1
@@ -205,6 +207,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         "row_count": corpus.row_count,
         "complete_episodes_only": True,
         "initial_recurrent_state": "exact-model-reset-state-per-episode",
+        "teacher_factor_authority": "original-one-step-policy-boundary",
         "simulation_backend_metadata": collector.checkpoint_metadata(),
     }
     archive = {
@@ -220,6 +223,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
     }
     _atomic_npz(args.output, archive)
     actions = corpus.arrays["actions"]
+    play_probabilities = corpus.arrays["play_hazard_probabilities"]
     report = {
         **metadata,
         "output": str(args.output.resolve()),
@@ -228,6 +232,11 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         "chunks": chunks,
         "placements": int(np.count_nonzero(actions < PLACEMENT_ACTIONS)),
         "placement_rate": float(np.mean(actions < PLACEMENT_ACTIONS)),
+        "play_hazard_probability": {
+            "minimum": float(np.min(play_probabilities)),
+            "mean": float(np.mean(play_probabilities)),
+            "maximum": float(np.max(play_probabilities)),
+        },
         "card_counts": _card_counts(actions, corpus.arrays["hand_ids"], token_names),
         "episode_lengths": {
             "minimum": int(np.diff(corpus.episode_offsets).min()),

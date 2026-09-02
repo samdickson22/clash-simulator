@@ -538,20 +538,26 @@ class SimpleClasherPolicyAdapter:
     ) -> SimpleTensorPolicyDecision:
         self.model.eval()
         state = self.state_from_mapping(boundary.recurrent_inputs)
-        actions, log_prob, values, next_state, _ = self.model.act(
+        actions, log_prob, values, next_state, output = self.model.act(
             self.inputs(boundary),
             state,
             deterministic=self.deterministic,
             sampling_temperature=self.sampling_temperature,
         )
         batch = boundary.actor.entity_ids.shape[0]
+        storage = {
+            "log_prob": log_prob[:, 0].reshape(batch, 2),
+            "value": values[:, 0].reshape(batch, 2),
+        }
+        if output.play_hazard_logits is not None:
+            storage["play_hazard_probability"] = torch.sigmoid(
+                output.play_hazard_logits
+                - math.log(self.model.config.play_hazard_positive_weight)
+            )[:, 0].reshape(batch, 2)
         return SimpleTensorPolicyDecision(
             actions=actions[:, 0].reshape(batch, 2),
             next_recurrent_inputs=self.state_to_mapping(next_state, batch),
-            storage={
-                "log_prob": log_prob[:, 0].reshape(batch, 2),
-                "value": values[:, 0].reshape(batch, 2),
-            },
+            storage=storage,
         )
 
     def bootstrap_values(self, boundary: SimpleTensorPolicyBoundary) -> torch.Tensor:
@@ -598,9 +604,7 @@ class SimpleTensorStrategyOpponent:
         ]
         self.is_tower = torch.as_tensor(tower, dtype=torch.bool, device=device)
         pressure = torch.zeros(len(builder.token_names), dtype=torch.float32)
-        entity_max_hp = torch.zeros(
-            len(builder.token_names), dtype=torch.float32
-        )
+        entity_max_hp = torch.zeros(len(builder.token_names), dtype=torch.float32)
         for token in range(len(builder.token_names)):
             token_name = builder.token_names[token]
             typed = builder._typed_token_parts(token_name)
@@ -612,9 +616,7 @@ class SimpleTensorStrategyOpponent:
                     stats.scaled_hitpoints or stats.hitpoints or 0.0
                 )
         self.entity_max_hp = entity_max_hp.to(device)
-        self.tower_pressure = (
-            torch.log1p(pressure.to(device)) / math.log1p(400.0)
-        )
+        self.tower_pressure = torch.log1p(pressure.to(device)) / math.log1p(400.0)
         tiles = torch.arange(NUM_TILES, device=device, dtype=torch.float32)
         tile_x = torch.remainder(tiles, BOARD_WIDTH) + 0.5
         tile_y = torch.floor(tiles / BOARD_WIDTH) + 0.5
@@ -636,9 +638,7 @@ class SimpleTensorStrategyOpponent:
         self,
         boundary: SimpleTensorPolicyBoundary,
     ) -> dict[str, torch.Tensor]:
-        ids = boundary.actor.entity_ids.reshape(
-            -1, boundary.actor.entity_ids.shape[-1]
-        )
+        ids = boundary.actor.entity_ids.reshape(-1, boundary.actor.entity_ids.shape[-1])
         features = boundary.actor.entity_features.reshape(
             -1,
             boundary.actor.entity_features.shape[-2],
@@ -665,8 +665,10 @@ class SimpleTensorStrategyOpponent:
         allied_mask = combat & own
         enemy_strength = strength * enemy_mask
         allied_strength = strength * allied_mask
-        incoming_weight = enemy_strength * (y < 16.5) * torch.exp(
-            -torch.clamp_min(y - 5.5, 0.0) / 6.0
+        incoming_weight = (
+            enemy_strength
+            * (y < 16.5)
+            * torch.exp(-torch.clamp_min(y - 5.5, 0.0) / 6.0)
         )
         incoming_strength = incoming_weight.sum(dim=1)
         incoming_denominator = incoming_strength.clamp_min(1e-9)
@@ -758,9 +760,7 @@ class SimpleTensorStrategyOpponent:
             3.0,
         )
         incoming_strength = situation["incoming_strength"][:, None]
-        elixir = (
-            boundary.actor.global_features[..., 5].reshape(count, 1) * 10.0
-        )
+        elixir = boundary.actor.global_features[..., 5].reshape(count, 1) * 10.0
 
         if self.strategy_name == BRIDGE_PRESSURE:
             placement = (
@@ -773,13 +773,16 @@ class SimpleTensorStrategyOpponent:
             )
             noop = torch.where(elixir[:, 0] < 4.0, 1.5, -1.0)
         elif self.strategy_name == SLOW_PUSH:
-            support = self._gaussian(
-                x,
-                y,
-                situation["tank_x"][:, None],
-                torch.clamp_min(situation["tank_y"][:, None] - 2.5, 2.0),
-                3.5,
-            ) * situation["tank_valid"][:, None]
+            support = (
+                self._gaussian(
+                    x,
+                    y,
+                    situation["tank_x"][:, None],
+                    torch.clamp_min(situation["tank_y"][:, None] - 2.5, 2.0),
+                    3.5,
+                )
+                * situation["tank_valid"][:, None]
+            )
             placement = (
                 4.5 * torch.exp(-torch.abs(y - 4.5) / 2.7)
                 + 0.0025 * hp
@@ -789,8 +792,7 @@ class SimpleTensorStrategyOpponent:
                 - 1.5 * (elixir < 7.0)
             )
             noop = torch.where(
-                (elixir[:, 0] < 7.0)
-                & (situation["incoming_strength"] < 0.08),
+                (elixir[:, 0] < 7.0) & (situation["incoming_strength"] < 0.08),
                 5.0,
                 -0.5,
             )
@@ -830,8 +832,7 @@ class SimpleTensorStrategyOpponent:
             )
             placement = torch.where(pressured, defense, quiet)
             noop = torch.where(
-                (situation["incoming_strength"] <= 0.08)
-                & (elixir[:, 0] < 9.0),
+                (situation["incoming_strength"] <= 0.08) & (elixir[:, 0] < 9.0),
                 4.0,
                 -1.0,
             )
@@ -860,9 +861,7 @@ class SimpleTensorStrategyOpponent:
             )
             offense = (
                 config.offense_position_weight
-                * torch.exp(
-                    -torch.abs(y - config.offense_y) / config.offense_y_scale
-                )
+                * torch.exp(-torch.abs(y - config.offense_y) / config.offense_y_scale)
                 + config.efficiency_weight * efficiency
                 + config.tower_pressure_weight * self.tower_pressure[card_ids]
             )
@@ -963,9 +962,7 @@ class SimpleTensorStrategyLeagueOpponent:
                     else self._slice_public(boundary.critic, rows)
                 ),
                 legal_mask=boundary.legal_mask.index_select(0, rows),
-                public_action_masks=boundary.public_action_masks.index_select(
-                    0, rows
-                ),
+                public_action_masks=boundary.public_action_masks.index_select(0, rows),
                 previous_actions=boundary.previous_actions.index_select(0, rows),
                 previous_rewards=boundary.previous_rewards.index_select(0, rows),
                 episode_starts=boundary.episode_starts.index_select(0, rows),
@@ -984,14 +981,10 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         model: ClasherPolicy,
         *,
         learner_players: torch.Tensor,
-        opponent_mode: Literal[
-            "noop", "random", "strategy", "checkpoint", "league"
-        ],
+        opponent_mode: Literal["noop", "random", "strategy", "checkpoint", "league"],
         opponent_model: ClasherPolicy | None = None,
         opponent_strategy: (
-            SimpleTensorStrategyOpponent
-            | SimpleTensorStrategyLeagueOpponent
-            | None
+            SimpleTensorStrategyOpponent | SimpleTensorStrategyLeagueOpponent | None
         ) = None,
         opponent_league_kinds: torch.Tensor | None = None,
         sampling_temperature: float = 1.0,
@@ -1191,9 +1184,7 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
                 result.index_copy_(0, random_rows, random_actions)
             if self.opponent_strategy is not None:
                 strategy_rows = self._league_rows[SIMPLE_LEAGUE_STRATEGY]
-                strategy_boundary = self._slice_boundary(
-                    boundary, strategy_rows
-                )
+                strategy_boundary = self._slice_boundary(boundary, strategy_rows)
                 strategy_actions = self.opponent_strategy(strategy_boundary)
                 result.index_copy_(0, strategy_rows, strategy_actions)
             checkpoint_next: tuple[torch.Tensor, torch.Tensor] | None = None
@@ -1201,9 +1192,7 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
                 assert self.opponent_adapter is not None
                 self.opponent_model.eval()
                 checkpoint_rows = self._league_rows[SIMPLE_LEAGUE_CHECKPOINT]
-                checkpoint_boundary = self._slice_boundary(
-                    boundary, checkpoint_rows
-                )
+                checkpoint_boundary = self._slice_boundary(boundary, checkpoint_rows)
                 state = self._state_from_prefixed_mapping(
                     checkpoint_boundary.recurrent_inputs, "opponent"
                 )
@@ -1221,9 +1210,7 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
                 result.index_copy_(
                     0,
                     checkpoint_rows,
-                    checkpoint_actions[:, 0].reshape(
-                        checkpoint_rows.numel(), 2
-                    ),
+                    checkpoint_actions[:, 0].reshape(checkpoint_rows.numel(), 2),
                 )
                 checkpoint_hidden, checkpoint_cell = checkpoint_next
 
@@ -1250,9 +1237,7 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         assert self.opponent_model is not None
         assert self.opponent_adapter is not None
         self.opponent_model.eval()
-        state = self._state_from_prefixed_mapping(
-            boundary.recurrent_inputs, "opponent"
-        )
+        state = self._state_from_prefixed_mapping(boundary.recurrent_inputs, "opponent")
         actions, _log_prob, _values, next_state, _ = self.opponent_model.act(
             self.opponent_adapter.inputs(boundary),
             state,
@@ -1268,7 +1253,7 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         learner_state = self._state_from_prefixed_mapping(
             boundary.recurrent_inputs, "learner"
         )
-        actions, log_prob, values, learner_next, _ = self.model.act(
+        actions, log_prob, values, learner_next, output = self.model.act(
             self.inputs(boundary),
             learner_state,
             deterministic=self.deterministic,
@@ -1279,9 +1264,7 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
         seat_mask = self._seat_mask()
         joint_actions = torch.where(seat_mask, learner_actions, opponent_actions)
 
-        next_mapping = self._prefixed_state_mapping(
-            "learner", learner_next, batch
-        )
+        next_mapping = self._prefixed_state_mapping("learner", learner_next, batch)
         learner_state_mask = self._seat_mask(trailing=1)
         for name in ("learner_hidden", "learner_cell"):
             next_mapping[name] = torch.where(
@@ -1309,21 +1292,25 @@ class SimpleAsymmetricClasherPolicyAdapter(SimpleClasherPolicyAdapter):
                         next_mapping[name],
                         torch.zeros_like(next_mapping[name]),
                     )
+        storage = {
+            "log_prob": log_prob[:, 0].reshape(batch, 2),
+            "value": values[:, 0].reshape(batch, 2),
+        }
+        if output.play_hazard_logits is not None:
+            storage["play_hazard_probability"] = torch.sigmoid(
+                output.play_hazard_logits
+                - math.log(self.model.config.play_hazard_positive_weight)
+            )[:, 0].reshape(batch, 2)
         return SimpleTensorPolicyDecision(
             actions=joint_actions,
             next_recurrent_inputs=next_mapping,
-            storage={
-                "log_prob": log_prob[:, 0].reshape(batch, 2),
-                "value": values[:, 0].reshape(batch, 2),
-            },
+            storage=storage,
         )
 
     def bootstrap_values(self, boundary: SimpleTensorPolicyBoundary) -> torch.Tensor:
         output = self.model.forward(
             self.inputs(boundary),
-            self._state_from_prefixed_mapping(
-                boundary.recurrent_inputs, "learner"
-            ),
+            self._state_from_prefixed_mapping(boundary.recurrent_inputs, "learner"),
         )
         return output.values[:, 0]
 
@@ -1443,9 +1430,7 @@ def _learner_deck_rows(
     for row in range(batch_size):
         learner_player = row % 2
         override_name = (
-            opponent_deck_name_by_row[row]
-            if opponent_deck_name_by_row
-            else None
+            opponent_deck_name_by_row[row] if opponent_deck_name_by_row else None
         )
         if override_name is None:
             opponent_name, opponent_deck = opponents[(row // 2) % len(opponents)]
@@ -1698,29 +1683,24 @@ class SimplePytorchTrainingCollector:
         entity_lookup, hand_lookup = _typed_lookups(setup, loader, vocabulary)
         learner_only = opponent_mode != "selfplay"
         if learner_only:
-            deck_rows, learner_players_tuple, opponent_deck_names = (
-                _learner_deck_rows(
-                    artifact,
-                    batch_size=batch_size,
-                    learner_deck_name=learner_deck_name,
-                    opponent_deck_name_by_row=(
-                        tuple(
-                            checkpoint_opponent_deck_name
-                            if kind == "checkpoint"
-                            else None
-                            for kind, _value in row_league_schedule
-                        )
-                        if opponent_mode == "league"
-                        and checkpoint_opponent_deck_name is not None
-                        else tuple(
-                            checkpoint_opponent_deck_name
-                            for _index in range(batch_size)
-                        )
-                        if opponent_mode == "checkpoint"
-                        and checkpoint_opponent_deck_name is not None
-                        else ()
-                    ),
-                )
+            deck_rows, learner_players_tuple, opponent_deck_names = _learner_deck_rows(
+                artifact,
+                batch_size=batch_size,
+                learner_deck_name=learner_deck_name,
+                opponent_deck_name_by_row=(
+                    tuple(
+                        checkpoint_opponent_deck_name if kind == "checkpoint" else None
+                        for kind, _value in row_league_schedule
+                    )
+                    if opponent_mode == "league"
+                    and checkpoint_opponent_deck_name is not None
+                    else tuple(
+                        checkpoint_opponent_deck_name for _index in range(batch_size)
+                    )
+                    if opponent_mode == "checkpoint"
+                    and checkpoint_opponent_deck_name is not None
+                    else ()
+                ),
             )
         else:
             deck_rows = _deck_rows(
@@ -1811,9 +1791,7 @@ class SimplePytorchTrainingCollector:
                 model,
                 learner_players=self.learner_players,
                 opponent_mode=cast(
-                    Literal[
-                        "noop", "random", "strategy", "checkpoint", "league"
-                    ],
+                    Literal["noop", "random", "strategy", "checkpoint", "league"],
                     opponent_mode,
                 ),
                 opponent_model=opponent_model,
@@ -2094,6 +2072,7 @@ class SimplePytorchTrainingCollector:
         recurrent_state: tuple[torch.Tensor, torch.Tensor],
         *,
         include_terminal_winners: bool = False,
+        include_policy_factors: bool = False,
     ) -> tuple[
         dict[str, Any],
         tuple[torch.Tensor, torch.Tensor],
@@ -2128,8 +2107,15 @@ class SimplePytorchTrainingCollector:
         bootstrap_values = self.policy.bootstrap_values(decision.bootstrap)
         storage = decision.policy_storage
         required_storage = {"log_prob", "value"}
-        if set(storage) != required_storage:
+        allowed_storage = required_storage | {"play_hazard_probability"}
+        if not required_storage.issubset(storage) or not set(storage).issubset(
+            allowed_storage
+        ):
             raise SimplePytorchBackendError("policy storage contract changed")
+        if include_policy_factors and "play_hazard_probability" not in storage:
+            raise SimplePytorchBackendError(
+                "requested policy factors are unavailable for this policy"
+            )
         project = self._learner_major if self.learner_only else self._agent_major
         bootstrap_values_full = bootstrap_values.reshape(batch, 2)
         device_exports = {
@@ -2182,6 +2168,10 @@ class SimplePytorchTrainingCollector:
                 else decision.bootstrap.episode_starts.reshape(-1)
             ),
         }
+        if include_policy_factors:
+            device_exports["play_hazard_probabilities"] = project(
+                storage["play_hazard_probability"]
+            )
         if include_terminal_winners:
             device_exports["terminal_winners"] = project(
                 decision.winner[..., None].expand(-1, -1, 2)

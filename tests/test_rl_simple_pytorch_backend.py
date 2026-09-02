@@ -163,11 +163,14 @@ def test_simple_initial_policy_is_weights_only_and_capacity_exact(
     )
     assert payload is not None
     assert loaded_path == path.resolve()
-    assert _validate_simple_initial_policy_contract(
-        payload,
-        token_names=vocabulary.token_names,
-        max_entities=48,
-    ) == config
+    assert (
+        _validate_simple_initial_policy_contract(
+            payload,
+            token_names=vocabulary.token_names,
+            max_entities=48,
+        )
+        == config
+    )
     lifted = _validate_simple_initial_policy_contract(
         payload,
         token_names=vocabulary.token_names,
@@ -419,9 +422,7 @@ def test_tempered_rollout_log_probs_match_the_learner_distribution() -> None:
     temperature = 0.25
     collector = _training_collector(learner_sampling_temperature=temperature)
     model = collector.policy.model.eval()
-    arrays, *_rest = collector.collect(
-        2, model.initial_state(2, device="cpu")
-    )
+    arrays, *_rest = collector.collect(2, model.initial_state(2, device="cpu"))
     rollout = RolloutBatch(**arrays)
     inputs = _sequence_inputs(rollout, slice(None), torch.device("cpu"))
     state = (
@@ -469,9 +470,7 @@ def test_hazard_gated_rollout_log_probs_match_ppo_recomputation() -> None:
         play_hazard_enabled=True,
     )
     model = collector.policy.model.eval()
-    arrays, *_rest = collector.collect(
-        2, model.initial_state(2, device="cpu")
-    )
+    arrays, *_rest = collector.collect(2, model.initial_state(2, device="cpu"))
     rollout = RolloutBatch(**arrays)
     inputs = _sequence_inputs(rollout, slice(None), torch.device("cpu"))
     state = (
@@ -527,6 +526,25 @@ def test_hazard_gated_rollout_log_probs_match_ppo_recomputation() -> None:
     assert stats["anchor_policy_kl"] > 0.0
 
 
+def test_hazard_factor_export_is_opt_in_and_finite() -> None:
+    ordinary = _training_collector(play_hazard_enabled=True)
+    ordinary_arrays, *_rest = ordinary.collect(
+        2, ordinary.policy.model.initial_state(2, device="cpu")
+    )
+    assert "play_hazard_probabilities" not in ordinary_arrays
+
+    factored = _training_collector(play_hazard_enabled=True)
+    arrays, *_rest = factored.collect(
+        2,
+        factored.policy.model.initial_state(2, device="cpu"),
+        include_policy_factors=True,
+    )
+    probabilities = arrays["play_hazard_probabilities"]
+    assert probabilities.shape == arrays["actions"].shape
+    assert np.isfinite(probabilities).all()
+    assert bool(((probabilities >= 0.0) & (probabilities < 1.0)).all())
+
+
 def test_simple_rollout_trains_joint_action_values() -> None:
     collector = _training_collector(action_value_head_enabled=True)
     model = collector.policy.model
@@ -567,9 +585,7 @@ def test_simple_rollout_trains_joint_action_values() -> None:
     not torch.backends.mps.is_available(), reason="Apple MPS is unavailable"
 )
 def test_simple_rollout_trains_joint_action_values_on_mps() -> None:
-    collector = _training_collector(
-        "mps", batch_size=2, action_value_head_enabled=True
-    )
+    collector = _training_collector("mps", batch_size=2, action_value_head_enabled=True)
     model = collector.policy.model
     arrays, *_rest = collector.collect(2, model.initial_state(4, device="mps"))
     rollout = RolloutBatch(**arrays)
@@ -701,9 +717,7 @@ def test_one_decision_collects_existing_ppo_rollout_shape() -> None:
 def test_terminal_winner_export_is_counterfactual_opt_in() -> None:
     ordinary = _training_collector()
     model = ordinary.policy.model
-    ordinary_arrays, *_ = ordinary.collect(
-        1, model.initial_state(2, device="cpu")
-    )
+    ordinary_arrays, *_ = ordinary.collect(1, model.initial_state(2, device="cpu"))
     assert "terminal_winners" not in ordinary_arrays
 
     counterfactual = _training_collector()
@@ -744,10 +758,7 @@ def test_stationary_simple_backend_exports_only_learner_rows(
     ].all()
     assert next_state[0].shape == next_state[1].shape == (4, 32)
     assert (
-        previous_actions.shape
-        == previous_rewards.shape
-        == episode_starts.shape
-        == (4,)
+        previous_actions.shape == previous_rewards.shape == episode_starts.shape == (4,)
     )
     metadata = collector.checkpoint_metadata()
     assert metadata["learner_only"] is True
@@ -763,9 +774,7 @@ def test_stationary_simple_backend_exports_only_learner_rows(
     assert metadata["opponent_strategy"] == (
         "balanced" if opponent_mode == "strategy" else None
     )
-    assert bool(metadata["opponent_strategy_schedule"]) == (
-        opponent_mode == "league"
-    )
+    assert bool(metadata["opponent_strategy_schedule"]) == (opponent_mode == "league")
     if opponent_mode == "league":
         assert metadata["opponent_strategy_schedule"] == (
             "bridge-pressure",
@@ -889,8 +898,9 @@ def test_simple_argument_gate_accepts_stationary_modes_fail_closed() -> None:
 
 def _candidate17_balanced_config() -> BalancedStrategyConfig:
     payload = json.loads(
-        Path("configs/hog26_balanced_teacher_candidate17_seed1075201.json")
-        .read_text(encoding="utf-8")
+        Path("configs/hog26_balanced_teacher_candidate17_seed1075201.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert isinstance(payload, dict)
     return BalancedStrategyConfig(**payload)
@@ -921,7 +931,9 @@ def test_online_strategy_teacher_labels_are_public_legal_and_learner_only() -> N
     }
 
 
-def test_online_strategy_teacher_loss_has_independent_play_card_tile_gradients() -> None:
+def test_online_strategy_teacher_loss_has_independent_play_card_tile_gradients() -> (
+    None
+):
     type_logits = torch.zeros((1, 3, 6), requires_grad=True)
     tile_logits = torch.zeros((1, 3, 4, 576), requires_grad=True)
     output = PolicyOutput(
@@ -995,9 +1007,7 @@ def test_mixed_simple_league_is_exactly_replayable_and_state_is_row_scoped() -> 
             assert first_value == second_value, name
     assert torch.equal(first_state[0], second_state[0])
     assert torch.equal(first_state[1], second_state[1])
-    for first_value, second_value in zip(
-        first_boundary, second_boundary, strict=True
-    ):
+    for first_value, second_value in zip(first_boundary, second_boundary, strict=True):
         assert np.array_equal(first_value, second_value)
 
     metadata = first.checkpoint_metadata()
@@ -1028,9 +1038,7 @@ def test_mixed_simple_league_is_exactly_replayable_and_state_is_row_scoped() -> 
             value.index_select(0, noncheckpoint_rows),
             torch.zeros_like(value.index_select(0, noncheckpoint_rows)),
         )
-        assert bool(
-            (value.index_select(0, checkpoint_rows).abs().sum(dim=1) > 0).all()
-        )
+        assert bool((value.index_select(0, checkpoint_rows).abs().sum(dim=1) > 0).all())
 
 
 def test_strategy_league_rollout_is_exactly_replayable() -> None:
@@ -1065,9 +1073,7 @@ def test_strategy_league_rollout_is_exactly_replayable() -> None:
             assert first_value == second_value, name
     assert torch.equal(first_state[0], second_state[0])
     assert torch.equal(first_state[1], second_state[1])
-    for first_value, second_value in zip(
-        first_boundary, second_boundary, strict=True
-    ):
+    for first_value, second_value in zip(first_boundary, second_boundary, strict=True):
         assert np.array_equal(first_value, second_value)
 
 
