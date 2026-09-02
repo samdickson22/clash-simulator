@@ -1,6 +1,6 @@
 # Hog 2.6 direct-Simple behavior reproduction
 
-Status: 14-game closed-loop smoke passed exactly; 56-game action-hashed gate in progress
+Status: passed; 56-game action-hashed closed-loop gate is exact
 
 ## Decision
 
@@ -96,21 +96,36 @@ per-game action sequence.
 
 The first scaled seed, 1265001, is complete. Both arms scored 9–19. All 28/28
 per-game action hashes match, as do every game duration, opponent outcome,
-placement count, and per-card count. The second independent 28-game seed is in
-progress; the architecture remains blocked until it also passes.
+placement count, and per-card count. The second independent seed, 1266001, also
+matches exactly: both arms scored 10–18 and all 28/28 action hashes match.
+
+Across the predeclared scaled gate:
+
+- 56 games per arm completed across two independent seeds;
+- 56/56 complete-game action hashes match;
+- teacher and student both scored 19–37;
+- every opponent-bucket score, game duration, placement rate, and card count
+  matches;
+- aggregate cadence ratio is 1.0; and
+- aggregate card-usage total-variation distance is 0.0.
+
+The behavior-reproduction architecture gate therefore passes. This result does
+not upgrade the policy's skill: the identical 19–37 record quantifies that the
+frozen control itself remains weak.
 
 ## Gates and next action
 
-Source validation currently passes 90 focused tests with five device skips, plus
-Ruff and mypy on the touched modules. The architecture remains rejected for value
-learning, search, PPO, or self-play until:
+Source validation passes 90 focused tests with five device skips, plus Ruff and
+mypy on the touched modules. The reproduction stage's four gates are now met:
 
-1. 56 matched games per arm complete;
-2. action hashes, outcomes, duration, cadence, and card support remain matched;
-3. no opponent bucket regresses by more than one game; and
-4. a student-state DAgger probe shows the replacement remains stable after any
-   later policy update.
+1. 56 matched games per arm completed;
+2. action hashes, outcomes, duration, cadence, and card support matched exactly;
+3. no opponent bucket regressed; and
+4. the exact replacement establishes the frozen pre-update student-state baseline
+   for later DAgger checks.
 
-Even if all four pass, the reproduced policy is only the prior low-level control.
-The next skill-improvement stage must address its 6–8 smoke record and absent
-Fireball support with outcome/value evidence rather than dense reward shaping.
+The reproduced policy is only the prior low-level control. The next
+skill-improvement stage must address its 19–37 scaled record and absent Fireball
+support with complete-outcome value evidence and conservative candidate
+improvement rather than dense reward shaping. Any update must retain the current
+56-game suite as a regression anchor and add student-state DAgger before promotion.
