@@ -40,6 +40,11 @@ and all 5,590 validation decisions' play/wait gates with zero mismatches. This
 shows that the old timing behavior is nearly a constant clock; the important
 state-dependent behavior lives in card and tile selection.
 
+The exact probability band that fires on decision 14 but not decision 13 is
+0.0158125–0.0170184. Every exported teacher probability in both corpora lies
+strictly inside that band. The fitted constant 0.0165383 therefore preserves the
+teacher's 14-decision cadence with margin; it is not a lucky rounded threshold.
+
 Fireball appears zero times in both small corpora. That is a teacher-support
 limitation, not silently repaired by class weighting. It blocks any claim that
 the teacher demonstrates complete Hog 2.6 play, but it does not block the narrow
@@ -87,7 +92,12 @@ identical in every reported field:
 
 This clears the bounded smoke but not promotion. The predeclared scale floor is
 56 games per arm. The scaled evaluator now additionally hashes every complete
-per-game action sequence; the first 28-game seed is in progress.
+per-game action sequence.
+
+The first scaled seed, 1265001, is complete. Both arms scored 9–19. All 28/28
+per-game action hashes match, as do every game duration, opponent outcome,
+placement count, and per-card count. The second independent 28-game seed is in
+progress; the architecture remains blocked until it also passes.
 
 ## Gates and next action
 
