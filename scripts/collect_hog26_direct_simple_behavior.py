@@ -12,6 +12,7 @@ import os
 import tempfile
 import time
 from collections import Counter
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -113,6 +114,53 @@ def _card_counts(
             raise ValueError("behavior hand token is outside the checkpoint vocabulary")
         counts[token_names[token]] += 1
     return dict(sorted(counts.items()))
+
+
+def _validate_play_probabilities(
+    actions: np.ndarray, probabilities: np.ndarray
+) -> None:
+    if probabilities.shape != actions.shape:
+        raise ValueError("teacher hazard factors do not align with behavior actions")
+    if not np.isfinite(probabilities).all() or bool(
+        ((probabilities < 0.0) | (probabilities >= 1.0)).any()
+    ):
+        raise ValueError("teacher hazard factors must be finite probabilities")
+
+
+def _audit_hazard_reproduction(
+    *,
+    actions: np.ndarray,
+    probabilities: np.ndarray,
+    action_masks: np.ndarray,
+    episode_offsets: np.ndarray,
+    initial_hidden: np.ndarray,
+    threshold: float,
+) -> dict[str, int]:
+    """Reproduce every frozen-teacher play from its exported accumulator input."""
+
+    if not 0.0 < threshold < 1.0:
+        raise ValueError("teacher hazard threshold must be in (0, 1)")
+    _validate_play_probabilities(actions, probabilities)
+    if initial_hidden.ndim != 2 or initial_hidden.shape[0] + 1 != len(episode_offsets):
+        raise ValueError("initial hidden states do not align with episodes")
+    mismatches = 0
+    rows = 0
+    for episode, (begin, end) in enumerate(pairwise(episode_offsets)):
+        accumulator = float(initial_hidden[episode, -1])
+        for row in range(int(begin), int(end)):
+            accumulator = 1.0 - (1.0 - accumulator) * (1.0 - float(probabilities[row]))
+            can_play = bool(action_masks[row, :PLACEMENT_ACTIONS].any())
+            predicted = accumulator >= threshold and can_play
+            actual = bool(actions[row] < PLACEMENT_ACTIONS)
+            mismatches += int(predicted != actual)
+            rows += 1
+            if predicted:
+                accumulator = 0.0
+    if mismatches:
+        raise ValueError(
+            f"teacher hazard factors fail exact action reproduction: {mismatches}/{rows}"
+        )
+    return {"rows": rows, "mismatches": mismatches}
 
 
 def collect(args: argparse.Namespace) -> dict[str, Any]:
@@ -224,6 +272,15 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
     _atomic_npz(args.output, archive)
     actions = corpus.arrays["actions"]
     play_probabilities = corpus.arrays["play_hazard_probabilities"]
+    _validate_play_probabilities(actions, play_probabilities)
+    hazard_audit = _audit_hazard_reproduction(
+        actions=actions,
+        probabilities=play_probabilities,
+        action_masks=corpus.arrays["action_masks"],
+        episode_offsets=corpus.episode_offsets,
+        initial_hidden=corpus.initial_hidden,
+        threshold=model.config.play_hazard_threshold,
+    )
     report = {
         **metadata,
         "output": str(args.output.resolve()),
@@ -237,6 +294,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
             "mean": float(np.mean(play_probabilities)),
             "maximum": float(np.max(play_probabilities)),
         },
+        "teacher_hazard_reproduction": hazard_audit,
         "card_counts": _card_counts(actions, corpus.arrays["hand_ids"], token_names),
         "episode_lengths": {
             "minimum": int(np.diff(corpus.episode_offsets).min()),

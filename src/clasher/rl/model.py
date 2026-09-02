@@ -182,6 +182,17 @@ class PolicyConfig:
             raise ValueError(
                 "hazard deterministic hierarchy and play hazard must be enabled together"
             )
+        if self.deterministic_hierarchy == "event":
+            if self.memory_kind != "structured":
+                raise ValueError("event accumulation requires structured memory")
+            if not self.hierarchical_mode_gate_enabled:
+                raise ValueError("event accumulation requires a hierarchical mode gate")
+            if self.structured_deterministic_resource_enabled:
+                raise ValueError(
+                    "event accumulation and deterministic resource cannot share hidden state"
+                )
+            if not 0.0 < self.play_hazard_threshold < 1.0:
+                raise ValueError("event accumulation threshold must be in (0, 1)")
 
     def to_dict(
         self,
@@ -282,6 +293,7 @@ class PolicyOutput:
     repair_features: Tensor | None = None
     deterministic_timing_logits: Tensor | None = None
     play_hazard_logits: Tensor | None = None
+    hierarchical_mode_logits: Tensor | None = None
     action_values: Tensor | None = None
 
     def distribution(
@@ -1016,9 +1028,15 @@ class ClasherPolicy(nn.Module):
     ) -> None:
         super().__init__()
         self.config = config
-        if config.deterministic_hierarchy not in {"slot", "play-gate", "hazard"}:
+        if config.deterministic_hierarchy not in {
+            "slot",
+            "play-gate",
+            "hazard",
+            "event",
+        }:
             raise ValueError(
-                "deterministic hierarchy must be 'slot', 'play-gate', or 'hazard'"
+                "deterministic hierarchy must be 'slot', 'play-gate', 'hazard', "
+                "or 'event'"
             )
         if config.equivariant_slot_choice:
             if not config.actor_current_hand_slot_invariant:
@@ -1729,7 +1747,9 @@ class ClasherPolicy(nn.Module):
                 else:
                     previous_hazard = hidden[:, -1:].clone()
                     cell = self.memory(recurrent_inputs[:, index], cell)
-                    if self.config.play_hazard_enabled:
+                    if self.config.play_hazard_enabled or (
+                        self.config.deterministic_hierarchy == "event"
+                    ):
                         hidden = torch.cat([cell[:, :-1], previous_hazard], dim=-1)
                         output = cell
                     else:
@@ -1856,9 +1876,9 @@ class ClasherPolicy(nn.Module):
                 best_slot,
                 NUM_HAND_SLOTS + top_level - 1,
             )
-        elif self.config.deterministic_hierarchy == "hazard":
+        elif self.config.deterministic_hierarchy in {"hazard", "event"}:
             if force_play is None or force_play.shape != action_types.shape:
-                raise ValueError("hazard hierarchy requires a shaped force-play gate")
+                raise ValueError("event hierarchy requires a shaped force-play gate")
             can_play = slot_mask.any(dim=-1)
             play_now = force_play & can_play
             special_types = (
@@ -1901,6 +1921,46 @@ class ClasherPolicy(nn.Module):
             - math.log(self.config.play_hazard_positive_weight)
         )
         can_play = action_mask[..., : NUM_HAND_SLOTS * NUM_TILES].any(dim=-1)
+        accumulator = initial_hazard
+        gates: list[Tensor] = []
+        for index in range(action_mask.shape[1]):
+            probability = probabilities[:, index]
+            accumulator = 1.0 - (1.0 - accumulator) * (1.0 - probability)
+            play_now = (
+                accumulator >= self.config.play_hazard_threshold
+            ) & can_play[:, index]
+            gates.append(play_now)
+            accumulator = torch.where(
+                play_now,
+                torch.zeros_like(accumulator),
+                accumulator,
+            )
+        return torch.stack(gates, dim=1), accumulator
+
+    def _event_mode_force_gate(
+        self,
+        output: PolicyOutput,
+        action_mask: Tensor,
+        initial_hazard: Tensor,
+    ) -> tuple[Tensor, Tensor]:
+        """Accumulate the factorized play-mode probability in model state."""
+
+        if output.hierarchical_mode_logits is None:
+            raise ValueError("event hierarchy did not expose raw mode logits")
+        if output.hierarchical_mode_logits.shape != (*action_mask.shape[:2], 3):
+            raise ValueError("event-mode logits do not match action sequence")
+        if initial_hazard.shape != (action_mask.shape[0],):
+            raise ValueError("initial event accumulator does not match batch")
+        if bool(action_mask[..., NUM_HAND_SLOTS * NUM_TILES + 1].any()):
+            raise ValueError("event accumulation does not yet support abilities")
+        placement_mask = action_mask[..., : NUM_HAND_SLOTS * NUM_TILES].reshape(
+            *action_mask.shape[:2], NUM_HAND_SLOTS, NUM_TILES
+        )
+        slot_mask = placement_mask.any(dim=-1)
+        probabilities = torch.softmax(
+            output.hierarchical_mode_logits[..., :2], dim=-1
+        )[..., 0]
+        can_play = slot_mask.any(dim=-1)
         accumulator = initial_hazard
         gates: list[Tensor] = []
         for index in range(action_mask.shape[1]):
@@ -2510,8 +2570,11 @@ class ClasherPolicy(nn.Module):
                 ],
                 dim=-1,
             )
+        hierarchical_mode_logits: Tensor | None = None
         if self.hierarchical_mode_gate is not None:
-            mode_logits = self.hierarchical_mode_gate(repair_features).reshape(
+            hierarchical_mode_logits = self.hierarchical_mode_gate(
+                repair_features
+            ).reshape(
                 batch_size,
                 sequence_length,
                 3,
@@ -2530,7 +2593,7 @@ class ClasherPolicy(nn.Module):
                 [legal_slots.any(dim=-1, keepdim=True), special_mask], dim=-1
             )
             mode_log_prob = self._masked_log_softmax(
-                mode_logits,
+                hierarchical_mode_logits,
                 mode_mask,
                 dim=-1,
             )
@@ -2663,6 +2726,7 @@ class ClasherPolicy(nn.Module):
             ),
             deterministic_timing_logits=deterministic_timing_logits,
             play_hazard_logits=play_hazard_logits,
+            hierarchical_mode_logits=hierarchical_mode_logits,
             action_values=action_values,
         )
 
@@ -2681,6 +2745,13 @@ class ClasherPolicy(nn.Module):
         if self.config.play_hazard_enabled:
             previous_hazard = output.next_state[0][:, -1]
             hazard_gate, stored_hazard = self._play_hazard_force_gate(
+                output,
+                inputs.action_mask,
+                previous_hazard,
+            )
+        elif self.config.deterministic_hierarchy == "event":
+            previous_hazard = output.next_state[0][:, -1]
+            hazard_gate, stored_hazard = self._event_mode_force_gate(
                 output,
                 inputs.action_mask,
                 previous_hazard,

@@ -312,6 +312,8 @@ def load_direct_simple_behavior_corpus(
             "episode_offsets",
             "episode_stream_rows",
             "episode_ordinals",
+            "episode_opponent_indices",
+            "episode_learner_players",
             "initial_hidden",
             "initial_cell",
             "metadata_json",

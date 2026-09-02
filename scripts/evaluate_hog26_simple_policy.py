@@ -9,6 +9,7 @@ import argparse
 import gc
 import hashlib
 import json
+from collections import Counter
 from pathlib import Path
 from typing import Any, Literal
 
@@ -20,6 +21,7 @@ from clasher.rl.model import ClasherPolicy, PolicyConfig
 from clasher.rl.simple_pytorch_backend import (
     DEFAULT_SIMPLE_SUPPORTED_DECKS,
     DEFAULT_SIMPLE_TOKEN_VOCABULARY,
+    SimpleLeagueSpec,
     SimplePytorchTrainingCollector,
     load_current_client_typed_vocabulary,
 )
@@ -79,6 +81,7 @@ def _collect_terminal_rows(
     row_opponents: tuple[str, ...],
     device: torch.device,
     chunk_steps: int,
+    token_names: tuple[str, ...],
 ) -> tuple[list[dict[str, Any]], NDArray[np.int64], NDArray[np.int64]]:
     row_count = len(row_opponents)
     learner_players = collector.learner_players.detach().cpu().numpy()
@@ -87,6 +90,8 @@ def _collect_terminal_rows(
     records: list[dict[str, Any] | None] = [None] * row_count
     row_placements: NDArray[np.int64] = np.zeros(row_count, dtype=np.int64)
     row_decisions: NDArray[np.int64] = np.zeros(row_count, dtype=np.int64)
+    row_card_counts: list[Counter[str]] = [Counter() for _row in range(row_count)]
+    row_action_digests = [hashlib.sha256() for _row in range(row_count)]
     state = model.initial_state(row_count, device=device)
     decision_offset = 0
     while decision_offset < 760 and any(record is None for record in records):
@@ -99,6 +104,7 @@ def _collect_terminal_rows(
         dones = np.asarray(arrays["dones"], dtype=np.bool_)
         winners = np.asarray(arrays["terminal_winners"], dtype=np.int64)
         actions = np.asarray(arrays["actions"], dtype=np.int64)
+        hand_ids = np.asarray(arrays["hand_ids"], dtype=np.int64)
         if dones.shape != winners.shape or dones.shape != actions.shape:
             raise ValueError("simple evaluation rollout projections changed")
         for row in range(row_count):
@@ -109,6 +115,15 @@ def _collect_terminal_rows(
             row_actions = actions[row, :used]
             row_placements[row] += int(np.count_nonzero(row_actions < 2304))
             row_decisions[row] += used
+            row_action_digests[row].update(
+                row_actions.astype("<i8", copy=False).tobytes()
+            )
+            for step in np.flatnonzero(row_actions < 2304).tolist():
+                slot = int(row_actions[step]) // 576
+                token = int(hand_ids[row, step, slot])
+                if not 0 <= token < len(token_names):
+                    raise ValueError("evaluation action references an unknown hand token")
+                row_card_counts[row][token_names[token]] += 1
             if terminal.size:
                 end = int(terminal[0])
                 winner = int(winners[row, end])
@@ -125,8 +140,21 @@ def _collect_terminal_rows(
                     "outcome": outcome,
                     "placements": int(row_placements[row]),
                     "decisions": int(row_decisions[row]),
+                    "card_counts": dict(sorted(row_card_counts[row].items())),
+                    "action_sha256": row_action_digests[row].hexdigest(),
                 }
         decision_offset += steps
+        print(
+            json.dumps(
+                {
+                    "decision_offset": decision_offset,
+                    "completed_rows": sum(record is not None for record in records),
+                    "total_rows": row_count,
+                },
+                sort_keys=True,
+            ),
+            flush=True,
+        )
     if any(record is None for record in records):
         missing = [index for index, record in enumerate(records) if record is None]
         raise ValueError(f"evaluation rows did not terminate: {missing}")
@@ -158,6 +186,9 @@ def _summarize_opponent(
     draws = sum(record["outcome"] == "draw" for record in completed)
     placements = int(row_placements[indices].sum())
     decisions = int(row_decisions[indices].sum())
+    card_counts: Counter[str] = Counter()
+    for record in completed:
+        card_counts.update(record["card_counts"])
     return {
         "opponent": opponent,
         "seed": seed,
@@ -167,6 +198,7 @@ def _summarize_opponent(
         "draws": draws,
         "win_rate": wins / games,
         "placement_rate": placements / max(1, decisions),
+        "card_counts": dict(sorted(card_counts.items())),
         "simulation_backend_metadata": metadata,
         "records": completed,
     }
@@ -209,6 +241,7 @@ def evaluate_opponent(
         row_opponents=row_opponents,
         device=device,
         chunk_steps=chunk_steps,
+        token_names=tuple(builder.token_names),
     )
     result = _summarize_opponent(
         opponent=opponent,
@@ -239,7 +272,7 @@ def evaluate_opponents_batched(
     np.random.seed(seed)
     torch.manual_seed(seed)
     row_opponents = batched_row_opponents(opponents, games)
-    schedule = tuple(
+    schedule: tuple[SimpleLeagueSpec, ...] = tuple(
         ("random", None) if opponent == "random" else ("strategy", opponent)
         for opponent in opponents
     )
@@ -264,6 +297,7 @@ def evaluate_opponents_batched(
         row_opponents=row_opponents,
         device=device,
         chunk_steps=chunk_steps,
+        token_names=tuple(builder.token_names),
     )
     metadata = collector.checkpoint_metadata()
     rows = [

@@ -1,4 +1,5 @@
 from collections import deque
+from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -190,6 +191,116 @@ def test_play_gate_does_not_aggregate_prepooled_timing_logit_twice() -> None:
     # The prepooled head represents one play-mode logit copied four times; it
     # must be compared once, so wait (0.0) beats play (-1.0).
     assert int(model._deterministic_actions(prepooled, mask).item()) == 2304
+
+
+def test_internal_event_mode_accumulates_factorized_play_probability() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    model = ClasherPolicy(
+        PolicyConfig(
+            num_tokens=builder.spec.num_tokens,
+            max_entities=builder.spec.max_entities,
+            d_model=32,
+            num_heads=4,
+            actor_layers=1,
+            critic_layers=1,
+            memory_size=48,
+            memory_kind="structured",
+            hierarchical_mode_gate_enabled=True,
+            deterministic_hierarchy="event",
+            play_hazard_threshold=0.2,
+        ),
+        builder.card_stat_features,
+    )
+    type_logits = torch.full((1, 3, 6), -torch.inf)
+    type_logits[..., 0] = torch.log(torch.tensor(0.1))
+    type_logits[..., 4] = torch.log(torch.tensor(0.9))
+    location_logits = torch.zeros((1, 3, 4, 576))
+    mask = torch.zeros((1, 3, 2306), dtype=torch.bool)
+    mask[..., 0] = True
+    mask[..., 2304] = True
+    output = PolicyOutput(
+        joint_logits=torch.zeros((1, 3, 2306)),
+        values=torch.zeros((1, 3)),
+        opponent_hand_logits=torch.zeros((1, 3, builder.spec.num_tokens)),
+        opponent_elixir=torch.zeros((1, 3)),
+        next_state=(torch.zeros((1, 48)), torch.zeros((1, 48))),
+        action_type_logits=type_logits,
+        location_logits=location_logits,
+        hierarchical_mode_logits=type_logits[..., (0, 4, 5)],
+    )
+
+    gates, accumulator = model._event_mode_force_gate(
+        output, mask, torch.zeros(1)
+    )
+    assert gates.tolist() == [[False, False, True]]
+    torch.testing.assert_close(accumulator, torch.zeros(1))
+
+    inputs = PolicyInputs(
+        entity_ids=torch.zeros((1, 3, 1), dtype=torch.long),
+        entity_features=torch.zeros((1, 3, 1, 32)),
+        entity_mask=torch.zeros((1, 3, 1), dtype=torch.bool),
+        hand_ids=torch.ones((1, 3, 5), dtype=torch.long),
+        global_features=torch.zeros((1, 3, 18)),
+        action_mask=mask,
+        previous_actions=torch.full((1, 3), 2304, dtype=torch.long),
+        previous_rewards=torch.zeros((1, 3)),
+        episode_starts=torch.tensor([[True, False, False]]),
+    )
+    with patch.object(model, "forward", return_value=output):
+        actions, _log_prob, _values, next_state, _result = model.act(
+            inputs, deterministic=True
+        )
+    assert actions.tolist() == [[2304, 2304, 0]]
+    torch.testing.assert_close(next_state[0][:, -1], torch.zeros(1))
+
+
+def test_internal_event_accumulator_persists_across_policy_calls() -> None:
+    builder = StructuredObservationBuilder(card_vocab=["Knight"], max_entities=16)
+    model = ClasherPolicy(
+        PolicyConfig(
+            num_tokens=builder.spec.num_tokens,
+            max_entities=builder.spec.max_entities,
+            d_model=32,
+            num_heads=4,
+            actor_layers=1,
+            critic_layers=1,
+            memory_size=48,
+            memory_kind="structured",
+            hierarchical_mode_gate_enabled=True,
+            deterministic_hierarchy="event",
+            play_hazard_threshold=0.2,
+        ),
+        builder.card_stat_features,
+    ).eval()
+    assert model.hierarchical_mode_gate is not None
+    output = model.hierarchical_mode_gate[-1]
+    assert isinstance(output, torch.nn.Linear)
+    with torch.no_grad():
+        output.weight.zero_()
+        output.bias.copy_(torch.tensor([np.log(0.1), np.log(0.9), 0.0]))
+    mask = torch.zeros((1, 1, 2306), dtype=torch.bool)
+    mask[..., 0] = True
+    mask[..., 2304] = True
+    state = model.initial_state(1, device="cpu")
+    actions = []
+    for step in range(3):
+        inputs = PolicyInputs(
+            entity_ids=torch.zeros((1, 1, 1), dtype=torch.long),
+            entity_features=torch.zeros((1, 1, 1, 32)),
+            entity_mask=torch.zeros((1, 1, 1), dtype=torch.bool),
+            hand_ids=torch.ones((1, 1, 5), dtype=torch.long),
+            global_features=torch.zeros((1, 1, 18)),
+            action_mask=mask,
+            previous_actions=torch.full((1, 1), 2304, dtype=torch.long),
+            previous_rewards=torch.zeros((1, 1)),
+            episode_starts=torch.tensor([[step == 0]]),
+        )
+        action, _log_prob, _value, state, _output = model.act(
+            inputs, state, deterministic=True
+        )
+        actions.append(int(action.item()))
+    assert actions == [2304, 2304, 0]
+    torch.testing.assert_close(state[0][:, -1], torch.zeros(1), atol=1e-6, rtol=0.0)
 
 
 def test_recurrent_state_resets_inside_a_sequence():

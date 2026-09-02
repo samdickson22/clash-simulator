@@ -59,3 +59,26 @@ def test_conversion_rejects_non_hazard_checkpoint() -> None:
             source=Path("parent.pt"),
             source_sha256="abc",
         )
+
+
+def test_conversion_can_target_internal_event_accumulation() -> None:
+    payload = {
+        "model_config": {
+            "deterministic_hierarchy": "hazard",
+            "hierarchical_mode_gate_enabled": True,
+            "play_hazard_enabled": True,
+            "play_hazard_adapter_size": 0,
+        },
+        "model_state_dict": {
+            "actor.weight": torch.ones(2),
+            "play_hazard_head.0.weight": torch.ones(1),
+        },
+    }
+    converted = convert_payload(
+        payload,
+        source=Path("parent.pt"),
+        source_sha256="abc",
+        target_hierarchy="event",
+    )
+    assert converted["model_config"]["deterministic_hierarchy"] == "event"
+    assert converted["model_config"]["play_hazard_enabled"] is False

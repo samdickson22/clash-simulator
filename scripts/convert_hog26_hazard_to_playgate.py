@@ -31,6 +31,7 @@ def convert_payload(
     *,
     source: Path,
     source_sha256: str,
+    target_hierarchy: str = "play-gate",
 ) -> dict[str, Any]:
     config = dict(payload["model_config"])
     if config.get("deterministic_hierarchy") != "hazard" or not bool(
@@ -39,9 +40,12 @@ def convert_payload(
         raise ValueError("source checkpoint is not hazard-gated")
     if not bool(config.get("hierarchical_mode_gate_enabled")):
         raise ValueError("source checkpoint has no factorized mode gate")
+    if target_hierarchy not in {"play-gate", "event"}:
+        raise ValueError("target hierarchy must be play-gate or event")
     config.update(
-        deterministic_hierarchy="play-gate",
+        deterministic_hierarchy=target_hierarchy,
         play_hazard_enabled=False,
+        play_hazard_positive_weight=1.0,
         play_hazard_adapter_size=0,
         play_hazard_adapter_enemy_y_gate=1.0,
         play_hazard_adapter_gain=1.0,
@@ -63,7 +67,7 @@ def convert_payload(
             "play_hazard_head.",
             "play_hazard_adapter.",
         ],
-        "deterministic_hierarchy": "play-gate",
+        "deterministic_hierarchy": target_hierarchy,
         "requires_behavior_distillation_before_gameplay": True,
     }
     return converted
@@ -86,6 +90,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--target-hierarchy",
+        choices=("play-gate", "event"),
+        default="play-gate",
+    )
     args = parser.parse_args()
     if args.output.exists():
         raise SystemExit(f"refusing to overwrite checkpoint: {args.output}")
@@ -95,6 +104,7 @@ def main() -> None:
         payload,
         source=args.input,
         source_sha256=source_sha256,
+        target_hierarchy=args.target_hierarchy,
     )
     validate_payload(converted)
     args.output.parent.mkdir(parents=True, exist_ok=True)

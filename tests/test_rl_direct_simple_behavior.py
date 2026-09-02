@@ -208,6 +208,8 @@ def test_loader_round_trips_and_requires_complete_episode_metadata(
             episode_offsets=corpus.episode_offsets,
             episode_stream_rows=corpus.episode_stream_rows,
             episode_ordinals=corpus.episode_ordinals,
+            episode_opponent_indices=np.zeros(corpus.episode_count, dtype=np.int64),
+            episode_learner_players=np.zeros(corpus.episode_count, dtype=np.int64),
             initial_hidden=corpus.initial_hidden,
             initial_cell=corpus.initial_cell,
             metadata_json=np.asarray(
@@ -226,6 +228,8 @@ def test_loader_round_trips_and_requires_complete_episode_metadata(
     assert metadata["complete_episodes_only"] is True
     assert loaded.episode_offsets.tolist() == corpus.episode_offsets.tolist()
     assert loaded.arrays["actions"].tolist() == corpus.arrays["actions"].tolist()
+    assert "episode_opponent_indices" not in loaded.arrays
+    assert "episode_learner_players" not in loaded.arrays
 
     write(False)
     with pytest.raises(ValueError, match="complete episodes"):
