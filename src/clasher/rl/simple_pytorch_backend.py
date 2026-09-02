@@ -1391,6 +1391,21 @@ def _deck_rows(
     return tuple(result)
 
 
+def _named_mirror_deck_rows(
+    artifact: SimpleSupportedDeckArtifact,
+    *,
+    batch_size: int,
+    deck_name: str,
+) -> tuple[tuple[tuple[str, ...], tuple[str, ...]], ...]:
+    try:
+        deck = artifact.decks[artifact.deck_names.index(deck_name)]
+    except ValueError as error:
+        raise SimplePytorchBackendError(
+            f"unknown self-play deck {deck_name!r}"
+        ) from error
+    return tuple((deck, deck) for _row in range(batch_size))
+
+
 def _learner_deck_rows(
     artifact: SimpleSupportedDeckArtifact,
     *,
@@ -1512,6 +1527,8 @@ class SimplePytorchTrainingCollector:
         opponent_strategy_schedule: tuple[str, ...] = (),
         opponent_league_schedule: tuple[SimpleLeagueSpec, ...] = (),
         learner_deck_name: str = "Hog 2.6 Cycle",
+        selfplay_deck_name: str | None = None,
+        opponent_deck_name_schedule: tuple[str, ...] = (),
         checkpoint_opponent_deck_name: str | None = None,
         learner_teacher_strategy: str | None = None,
         learner_teacher_balanced_config: BalancedStrategyConfig | None = None,
@@ -1546,6 +1563,18 @@ class SimplePytorchTrainingCollector:
         if opponent_mode != "selfplay" and mirror_match:
             raise SimplePytorchBackendError(
                 "stationary simple opponents require asymmetric deck rows"
+            )
+        if selfplay_deck_name is not None and opponent_mode != "selfplay":
+            raise SimplePytorchBackendError(
+                "self-play deck override requires selfplay opponent mode"
+            )
+        if opponent_deck_name_schedule and opponent_mode == "selfplay":
+            raise SimplePytorchBackendError(
+                "opponent deck schedule requires learner-only opponent mode"
+            )
+        if opponent_deck_name_schedule and len(opponent_deck_name_schedule) != batch_size:
+            raise SimplePytorchBackendError(
+                "opponent deck schedule must contain one name per battle row"
             )
         normalized_league = (
             opponent_league_schedule
@@ -1683,30 +1712,47 @@ class SimplePytorchTrainingCollector:
         entity_lookup, hand_lookup = _typed_lookups(setup, loader, vocabulary)
         learner_only = opponent_mode != "selfplay"
         if learner_only:
+            resolved_opponent_decks: tuple[str | None, ...]
+            if opponent_deck_name_schedule:
+                resolved_opponent_decks = tuple(opponent_deck_name_schedule)
+            elif (
+                opponent_mode == "league"
+                and checkpoint_opponent_deck_name is not None
+            ):
+                resolved_opponent_decks = tuple(
+                    checkpoint_opponent_deck_name
+                    if kind == "checkpoint"
+                    else None
+                    for kind, _value in row_league_schedule
+                )
+            elif (
+                opponent_mode == "checkpoint"
+                and checkpoint_opponent_deck_name is not None
+            ):
+                resolved_opponent_decks = tuple(
+                    checkpoint_opponent_deck_name for _index in range(batch_size)
+                )
+            else:
+                resolved_opponent_decks = ()
             deck_rows, learner_players_tuple, opponent_deck_names = _learner_deck_rows(
                 artifact,
                 batch_size=batch_size,
                 learner_deck_name=learner_deck_name,
-                opponent_deck_name_by_row=(
-                    tuple(
-                        checkpoint_opponent_deck_name if kind == "checkpoint" else None
-                        for kind, _value in row_league_schedule
-                    )
-                    if opponent_mode == "league"
-                    and checkpoint_opponent_deck_name is not None
-                    else tuple(
-                        checkpoint_opponent_deck_name for _index in range(batch_size)
-                    )
-                    if opponent_mode == "checkpoint"
-                    and checkpoint_opponent_deck_name is not None
-                    else ()
-                ),
+                opponent_deck_name_by_row=resolved_opponent_decks,
             )
         else:
-            deck_rows = _deck_rows(
-                artifact,
-                batch_size=batch_size,
-                mirror_match=mirror_match,
+            deck_rows = (
+                _named_mirror_deck_rows(
+                    artifact,
+                    batch_size=batch_size,
+                    deck_name=selfplay_deck_name,
+                )
+                if selfplay_deck_name is not None
+                else _deck_rows(
+                    artifact,
+                    batch_size=batch_size,
+                    mirror_match=mirror_match,
+                )
             )
             learner_players_tuple = ()
             opponent_deck_names = ()
@@ -1832,7 +1878,9 @@ class SimplePytorchTrainingCollector:
             actor_semantics_id=SIMPLE_TENSOR_ACTOR_SEMANTICS_ID,
             opponent_mode=opponent_mode,
             learner_only=learner_only,
-            learner_deck_name=learner_deck_name if learner_only else None,
+            learner_deck_name=(
+                learner_deck_name if learner_only else selfplay_deck_name
+            ),
             learner_players=learner_players_tuple,
             opponent_deck_names=opponent_deck_names,
             opponent_checkpoint_sha256=opponent_checkpoint_sha256,
@@ -2073,6 +2121,7 @@ class SimplePytorchTrainingCollector:
         *,
         include_terminal_winners: bool = False,
         include_policy_factors: bool = False,
+        include_outcome_labels: bool = False,
     ) -> tuple[
         dict[str, Any],
         tuple[torch.Tensor, torch.Tensor],
@@ -2173,6 +2222,13 @@ class SimplePytorchTrainingCollector:
                 storage["play_hazard_probability"]
             )
         if include_terminal_winners:
+            device_exports["terminal_winners"] = project(
+                decision.winner[..., None].expand(-1, -1, 2)
+            )
+        if include_outcome_labels:
+            device_exports["next_global_features"] = project(
+                decision.next_global_features
+            )
             device_exports["terminal_winners"] = project(
                 decision.winner[..., None].expand(-1, -1, 2)
             )

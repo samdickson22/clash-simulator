@@ -230,6 +230,8 @@ def test_loader_round_trips_and_requires_complete_episode_metadata(
     assert loaded.arrays["actions"].tolist() == corpus.arrays["actions"].tolist()
     assert "episode_opponent_indices" not in loaded.arrays
     assert "episode_learner_players" not in loaded.arrays
+    assert loaded.episode_arrays["episode_opponent_indices"].tolist() == [0, 0, 0, 0]
+    assert loaded.episode_arrays["episode_learner_players"].tolist() == [0, 0, 0, 0]
 
     write(False)
     with pytest.raises(ValueError, match="complete episodes"):

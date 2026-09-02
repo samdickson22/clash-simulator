@@ -8,6 +8,7 @@ from clasher.rl.common import NUM_TILES
 from scripts.probe_simple_counterfactual_teacher import (
     collect_counterfactual_branches,
     first_terminal_outcomes,
+    first_terminal_tower_margins,
     select_stratified_action_subset,
     truncated_n_step_returns,
 )
@@ -170,3 +171,13 @@ def test_first_terminal_outcomes_are_learner_relative_and_ignore_later_games() -
     )
 
     assert outcomes.tolist() == [1, -1, 0, 0]
+
+
+def test_first_terminal_tower_margins_use_post_action_public_state() -> None:
+    dones = np.asarray([[False, True, False], [False, False, False]])
+    globals_rows = np.zeros((2, 3, 18), dtype=np.float32)
+    globals_rows[0, 1, 8:11] = [1.0, 0.8, 1.0]
+    globals_rows[0, 1, 11:14] = [0.5, 0.7, 1.0]
+    margins = first_terminal_tower_margins(dones, globals_rows)
+    assert margins[0] == pytest.approx(0.2)
+    assert np.isnan(margins[1])

@@ -212,6 +212,8 @@ def _training_collector(
     learner_teacher_strategy: str | None = None,
     learner_teacher_balanced_config: BalancedStrategyConfig | None = None,
     learner_sampling_temperature: float = 1.0,
+    selfplay_deck_name: str | None = None,
+    opponent_deck_name_schedule: tuple[str, ...] = (),
     play_hazard_enabled: bool = False,
     action_value_head_enabled: bool = False,
 ) -> SimplePytorchTrainingCollector:
@@ -284,6 +286,8 @@ def _training_collector(
         learner_teacher_strategy=learner_teacher_strategy,
         learner_teacher_balanced_config=learner_teacher_balanced_config,
         learner_sampling_temperature=learner_sampling_temperature,
+        selfplay_deck_name=selfplay_deck_name,
+        opponent_deck_name_schedule=opponent_deck_name_schedule,
         max_effects=max_effects,
         _execution_mode_override=execution_mode,
     )
@@ -714,6 +718,27 @@ def test_one_decision_collects_existing_ppo_rollout_shape() -> None:
     assert metadata["fresh_only"] is True
 
 
+def test_selfplay_can_be_scoped_to_one_named_mirror_deck() -> None:
+    collector = _training_collector(selfplay_deck_name="Hog 2.6 Cycle")
+    metadata = collector.checkpoint_metadata()
+    assert metadata["opponent_mode"] == "selfplay"
+    assert metadata["learner_deck_name"] == "Hog 2.6 Cycle"
+
+
+def test_stationary_opponent_decks_can_cross_strategy_schedule() -> None:
+    schedule = ("Log Bait", "Log Bait", "Valk Log Bait", "Valk Log Bait")
+    collector = _training_collector(
+        batch_size=4,
+        opponent_mode="league",
+        opponent_league_schedule=(
+            ("strategy", "balanced"),
+            ("strategy", "slow-push"),
+        ),
+        opponent_deck_name_schedule=schedule,
+    )
+    assert collector.checkpoint_metadata()["opponent_deck_names"] == schedule
+
+
 def test_terminal_winner_export_is_counterfactual_opt_in() -> None:
     ordinary = _training_collector()
     model = ordinary.policy.model
@@ -730,6 +755,23 @@ def test_terminal_winner_export_is_counterfactual_opt_in() -> None:
     assert counterfactual_arrays["terminal_winners"].shape == (
         counterfactual_arrays["dones"].shape
     )
+
+
+def test_complete_outcome_export_is_opt_in_and_public() -> None:
+    ordinary = _training_collector()
+    model = ordinary.policy.model
+    ordinary_arrays, *_ = ordinary.collect(1, model.initial_state(2, device="cpu"))
+    assert "next_global_features" not in ordinary_arrays
+
+    outcome = _training_collector()
+    model = outcome.policy.model
+    arrays, *_ = outcome.collect(
+        1,
+        model.initial_state(2, device="cpu"),
+        include_outcome_labels=True,
+    )
+    assert arrays["next_global_features"].shape == arrays["global_features"].shape
+    assert arrays["terminal_winners"].shape == arrays["dones"].shape
 
 
 @pytest.mark.parametrize(

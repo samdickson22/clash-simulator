@@ -139,6 +139,7 @@ class SimpleTensorDecisionBatch:
     """Fixed-length decisions with leading shape ``[steps, batch, seats]``."""
 
     actor: TensorPublicStructuredObservation
+    next_global_features: torch.Tensor
     critic: TensorPrivilegedCriticObservation | None
     legal_masks: torch.Tensor
     public_action_masks: torch.Tensor
@@ -441,6 +442,7 @@ class SimpleTensorCollector:
         self._validate_mapping("recurrent input", recurrent_inputs)
 
         actors: list[TensorPublicStructuredObservation] = []
+        next_global_features: list[torch.Tensor] = []
         critics: list[TensorPrivilegedCriticObservation | None] = []
         legal_masks: list[torch.Tensor] = []
         public_masks: list[torch.Tensor] = []
@@ -493,6 +495,7 @@ class SimpleTensorCollector:
             # A graph-backed bridge reuses output addresses on its next
             # replay. Snapshot every policy input before collection advances.
             actors.append(_clone_public(step.actor))
+            next_global_features.append(step.next_actor.global_features.clone())
             critics.append(_clone_critic(step.critic))
             legal_masks.append(step.legal_mask.clone())
             assert step.public_action_masks is not None
@@ -572,6 +575,7 @@ class SimpleTensorCollector:
         stacked_policy = _stack_mappings(policy_storage, label="policy storage")
         return SimpleTensorDecisionBatch(
             actor=_stack_public(actors),
+            next_global_features=torch.stack(next_global_features),
             critic=_stack_critic(critics),
             legal_masks=torch.stack(legal_masks),
             public_action_masks=torch.stack(public_masks),

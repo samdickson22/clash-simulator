@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
 
@@ -41,6 +41,7 @@ class DirectSimpleBehaviorCorpus:
     episode_ordinals: NDArray[np.int64]
     initial_hidden: np.ndarray
     initial_cell: np.ndarray
+    episode_arrays: dict[str, np.ndarray] = field(default_factory=dict)
 
     @property
     def episode_count(self) -> int:
@@ -238,6 +239,9 @@ def validate_direct_simple_behavior_corpus(
         raise ValueError("initial hidden states do not match episodes")
     if corpus.initial_cell.shape != corpus.initial_hidden.shape:
         raise ValueError("initial recurrent state shapes differ")
+    for key, value in corpus.episode_arrays.items():
+        if np.asarray(value).shape[:1] != (episode_count,):
+            raise ValueError(f"corpus {key} episode count differs from offsets")
     row_count = int(offsets[-1])
     missing = sorted(set(TRANSITION_KEYS).difference(corpus.arrays))
     if missing:
@@ -312,17 +316,23 @@ def load_direct_simple_behavior_corpus(
             "episode_offsets",
             "episode_stream_rows",
             "episode_ordinals",
-            "episode_opponent_indices",
-            "episode_learner_players",
             "initial_hidden",
             "initial_cell",
             "metadata_json",
         }
+        episode_names = {
+            "episode_opponent_indices",
+            "episode_learner_players",
+            "episode_final_outcomes",
+            "episode_terminal_tower_margins",
+            "episode_battle_indices",
+            "episode_opponent_deck_indices",
+        }.intersection(archive.files)
         corpus = DirectSimpleBehaviorCorpus(
             arrays={
                 key: archive[key].copy()
                 for key in archive.files
-                if key not in structural
+                if key not in structural and key not in episode_names
             },
             episode_offsets=archive["episode_offsets"].astype(np.int64, copy=True),
             episode_stream_rows=archive["episode_stream_rows"].astype(
@@ -331,6 +341,7 @@ def load_direct_simple_behavior_corpus(
             episode_ordinals=archive["episode_ordinals"].astype(np.int64, copy=True),
             initial_hidden=archive["initial_hidden"].copy(),
             initial_cell=archive["initial_cell"].copy(),
+            episode_arrays={key: archive[key].copy() for key in episode_names},
         )
     validate_direct_simple_behavior_corpus(corpus)
     if metadata.get("complete_episodes_only") is not True:

@@ -219,6 +219,7 @@ def test_deterministic_mixed_done_reset_stays_device_resident(
     _assert_equal(actual, expected)
     assert actual.actions.shape == (3, 2, 2)
     assert actual.actor.entity_ids.shape[:3] == (3, 2, 2)
+    assert actual.next_global_features.shape == (3, 2, 2, 18)
     assert actual.critic is not None
     assert actual.critic.entity_ids.shape[:3] == (3, 2, 2)
     assert actual.done.tolist() == [[True, False], [False, False], [False, False]]
@@ -302,6 +303,9 @@ def test_collector_snapshots_reused_graph_style_observation_buffers(
 
     assert batch.actor.global_features[:, 1, 0, 0].tolist() == pytest.approx(
         [0.0, 0.1, 0.2]
+    )
+    assert batch.next_global_features[:, 1, 0, 0].tolist() == pytest.approx(
+        [0.1, 0.2, 0.3]
     )
     assert batch.critic is not None
     assert batch.critic.global_features[:, 1, 0, 0].tolist() == pytest.approx(

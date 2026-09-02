@@ -18,6 +18,7 @@ import torch
 
 from clasher.rl.common import BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 from clasher.rl.model import ClasherPolicy, PolicyConfig
+from clasher.rl.outcome_model import ActorOutcomeHead
 from clasher.rl.simple_pytorch_backend import (
     SimplePytorchTrainingCollector,
     SimpleTensorStrategyOpponent,
@@ -271,6 +272,7 @@ def collect_counterfactual_branches(
     horizon_steps: int,
     stop_when_all_terminal: bool,
     chunk_steps: int,
+    include_outcome_labels: bool = False,
 ) -> tuple[
     dict[str, Any],
     tuple[torch.Tensor, torch.Tensor],
@@ -279,9 +281,16 @@ def collect_counterfactual_branches(
 
     if horizon_steps < 1 or chunk_steps < 1:
         raise ValueError("counterfactual horizon and chunk size must be positive")
+    outcome_kwargs = (
+        {"include_outcome_labels": True}
+        if include_outcome_labels
+        else {"include_terminal_winners": True}
+    )
     if not stop_when_all_terminal:
         arrays, next_state, *_tail = collector.collect(
-            horizon_steps, state, include_terminal_winners=True
+            horizon_steps,
+            state,
+            **outcome_kwargs,
         )
         return arrays, next_state
 
@@ -290,12 +299,15 @@ def collect_counterfactual_branches(
     rewards: list[np.ndarray] = []
     dones: list[np.ndarray] = []
     winners: list[np.ndarray] = []
+    next_globals: list[np.ndarray] = []
     seen_terminal: np.ndarray | None = None
     last_arrays: dict[str, Any] | None = None
     while remaining:
         count = min(chunk_steps, remaining)
         arrays, next_state, *_tail = collector.collect(
-            count, next_state, include_terminal_winners=True
+            count,
+            next_state,
+            **outcome_kwargs,
         )
         reward_chunk = np.asarray(arrays["rewards"])
         done_chunk = np.asarray(arrays["dones"], dtype=np.bool_)
@@ -309,6 +321,8 @@ def collect_counterfactual_branches(
         rewards.append(reward_chunk)
         dones.append(done_chunk)
         winners.append(winner_chunk)
+        if include_outcome_labels:
+            next_globals.append(np.asarray(arrays["next_global_features"]))
         terminal_now = np.asarray(done_chunk.any(axis=1), dtype=np.bool_)
         if seen_terminal is None:
             seen_terminal = terminal_now.copy()
@@ -325,6 +339,8 @@ def collect_counterfactual_branches(
     combined["rewards"] = np.concatenate(rewards, axis=1)
     combined["dones"] = np.concatenate(dones, axis=1)
     combined["terminal_winners"] = np.concatenate(winners, axis=1)
+    if include_outcome_labels:
+        combined["next_global_features"] = np.concatenate(next_globals, axis=1)
     return combined, next_state
 
 
@@ -358,6 +374,23 @@ def first_terminal_outcomes(
     ).astype(np.int8, copy=False)
 
 
+def first_terminal_tower_margins(
+    dones: np.ndarray,
+    next_global_features: np.ndarray,
+) -> np.ndarray:
+    done_rows = np.asarray(dones, dtype=np.bool_)
+    globals_rows = np.asarray(next_global_features, dtype=np.float32)
+    if done_rows.ndim != 2 or globals_rows.shape != (*done_rows.shape, 18):
+        raise ValueError("terminal globals must align as [batch, time, 18]")
+    terminal = done_rows.any(axis=1)
+    first_terminal = np.where(
+        terminal, done_rows.argmax(axis=1), done_rows.shape[1] - 1
+    )
+    selected = globals_rows[np.arange(done_rows.shape[0]), first_terminal]
+    margins = (selected[:, 8:11].sum(axis=1) - selected[:, 11:14].sum(axis=1)) / 3.0
+    return np.where(terminal, margins, np.nan).astype(np.float32, copy=False)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", type=Path, required=True)
@@ -365,10 +398,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=1193401)
     parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--warmup-steps", type=int, default=20)
+    parser.add_argument("--root-search-steps", type=int, default=64)
+    parser.add_argument("--minimum-root-progress", type=float, default=0.0)
+    parser.add_argument("--maximum-root-progress", type=float, default=1.0)
     parser.add_argument("--horizon-steps", type=int, default=24)
     parser.add_argument("--action-samples", type=int, default=8)
     parser.add_argument("--random-candidate-fraction", type=float, default=0.25)
     parser.add_argument("--opponent-strategy", default="balanced")
+    parser.add_argument("--opponent-deck", default="")
+    parser.add_argument("--learner-seat", type=int, choices=(0, 1), default=0)
     parser.add_argument(
         "--proposal-strategy",
         action="append",
@@ -380,7 +418,68 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--stop-when-all-terminal", action="store_true")
     parser.add_argument("--collection-chunk-steps", type=int, default=32)
     parser.add_argument("--state-output", type=Path, default=None)
+    parser.add_argument(
+        "--outcome-checkpoint",
+        type=Path,
+        action="append",
+        default=[],
+        dest="outcome_checkpoints",
+    )
     return parser.parse_args()
+
+
+def load_outcome_ensemble(
+    paths: list[Path],
+    *,
+    base_checkpoint_sha256: str,
+    device: torch.device,
+) -> list[ActorOutcomeHead]:
+    heads: list[ActorOutcomeHead] = []
+    for path in paths:
+        payload = torch.load(path, map_location="cpu", weights_only=False)
+        if payload.get("schema") != "clasher.hog26.actor-outcome-training.v1":
+            raise ValueError("outcome checkpoint schema changed")
+        if payload.get("base_checkpoint_sha256") != base_checkpoint_sha256:
+            raise ValueError("outcome checkpoint belongs to a different policy")
+        report = payload.get("training_report")
+        if not isinstance(report, dict) or report.get("status") != "accepted-development":
+            raise ValueError("outcome checkpoint did not pass development gates")
+        if report.get("actor_feature_contract") != "public-globals":
+            raise ValueError("counterfactual probe supports public-global heads only")
+        head = ActorOutcomeHead(
+            int(payload["state_size"]), int(payload["hidden_size"])
+        ).to(device)
+        head.load_state_dict(payload["outcome_head_state_dict"], strict=True)
+        head.eval()
+        heads.append(head)
+    return heads
+
+
+@torch.no_grad()
+def outcome_ensemble_predictions(
+    heads: list[ActorOutcomeHead], actor_globals: torch.Tensor
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    if not heads:
+        count = actor_globals.shape[0]
+        missing = np.full(count, np.nan, dtype=np.float32)
+        return missing, missing.copy(), missing.copy()
+    probabilities = []
+    margins = []
+    for head in heads:
+        prediction = head(actor_globals)
+        probabilities.append(prediction.outcome_logits.softmax(dim=-1))
+        margins.append(prediction.terminal_tower_margin)
+    probability = torch.stack(probabilities).mean(dim=0)
+    margin = torch.stack(margins).mean(dim=0)
+    utility = probability[:, 2] - probability[:, 0]
+    disagreement = torch.stack(probabilities)[:, :, (0, 2)].std(
+        dim=0, unbiased=False
+    ).amax(dim=1)
+    return (
+        utility.cpu().numpy(),
+        margin.cpu().numpy(),
+        disagreement.cpu().numpy(),
+    )
 
 
 def load_collector(
@@ -420,6 +519,11 @@ def load_collector(
         opponent_strategy=(
             None if opponent_mode == "random" else args.opponent_strategy
         ),
+        opponent_deck_name_schedule=(
+            tuple(args.opponent_deck for _row in range(batch_size or args.batch_size))
+            if args.opponent_deck
+            else ()
+        ),
         learner_deck_name="Hog 2.6 Cycle",
         learner_sampling_temperature=0.1,
         max_effects=64,
@@ -430,6 +534,12 @@ def main() -> None:
     args = parse_args()
     if args.batch_size < 1 or args.warmup_steps < 0 or args.horizon_steps < 1:
         raise ValueError("batch/warmup/horizon arguments are invalid")
+    if args.root_search_steps < 0:
+        raise ValueError("root-search-steps must be nonnegative")
+    if not 0.0 <= args.minimum_root_progress <= args.maximum_root_progress <= 1.0:
+        raise ValueError("root progress bounds must lie in [0, 1]")
+    if args.learner_seat == 1 and args.warmup_steps == 0:
+        raise ValueError("learner seat one requires a positive warmup")
     if args.collection_chunk_steps < 1:
         raise ValueError("collection chunk steps must be positive")
     if args.action_samples < 2:
@@ -441,14 +551,21 @@ def main() -> None:
         raise ValueError("proposal strategies must be unique")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
+    checkpoint_sha256 = hashlib.sha256(args.checkpoint.read_bytes()).hexdigest()
+    outcome_heads = load_outcome_ensemble(
+        args.outcome_checkpoints,
+        base_checkpoint_sha256=checkpoint_sha256,
+        device=torch.device(args.device),
+    )
     args.batch_size = args.action_samples
     warmup_collector = None
     warmup_state = None
     warmup_arrays: dict[str, Any] | None = None
+    root_step = args.warmup_steps
     if args.warmup_steps:
-        warmup_collector = load_collector(args, batch_size=1)
+        warmup_collector = load_collector(args, batch_size=2)
         warmup_model = warmup_collector.policy.model
-        warmup_state = warmup_model.initial_state(1, device=args.device)
+        warmup_state = warmup_model.initial_state(2, device=args.device)
         warmup_base_policy = warmup_collector.collector.policy
         warmup_collector.collector.policy = ForcedLearnerRootPolicy(
             warmup_base_policy,
@@ -458,6 +575,30 @@ def main() -> None:
         warmup_arrays, warmup_state, *_history = warmup_collector.collect(
             args.warmup_steps, warmup_state
         )
+        source_row = args.learner_seat
+        searched = 0
+        while True:
+            current_observation = warmup_collector.collector.bridge.observe()
+            current_packet = warmup_collector.collector.public_mask_provider(
+                SimpleTensorMaskRequest(current_observation, root_step, False)
+            )
+            learner = int(warmup_collector.learner_players[source_row].item())
+            legal_count = int(current_packet.masks[source_row, learner].sum().item())
+            if legal_count >= args.action_samples:
+                break
+            if searched >= args.root_search_steps:
+                raise RuntimeError(
+                    "root search did not find enough public legal candidates"
+                )
+            _extra, warmup_state, *_history = warmup_collector.collect(
+                1, warmup_state
+            )
+            searched += 1
+            root_step += 1
+        if searched and args.state_output is not None:
+            raise RuntimeError(
+                "state-output does not support event-aware root search history"
+            )
 
     collector = load_collector(args, batch_size=args.action_samples)
     model = collector.policy.model
@@ -468,35 +609,53 @@ def main() -> None:
         assert warmup_state is not None
         source_observation = warmup_collector.collector.bridge.observe()
         candidate_runtime.fanout_from_(
-            cast(SimpleGymRuntime, warmup_collector.collector.bridge.runtime)
+            cast(SimpleGymRuntime, warmup_collector.collector.bridge.runtime),
+            source_row=source_row,
         )
         source_history = warmup_collector.collector.bridge.adapter.history
         collector.collector.bridge.adapter.history = SimpleGymHistory(
-            previous_actions=source_history.previous_actions.expand(
+            previous_actions=source_history.previous_actions[
+                source_row : source_row + 1
+            ].expand(
                 args.batch_size, -1
             ).clone(),
-            previous_rewards=source_history.previous_rewards.expand(
+            previous_rewards=source_history.previous_rewards[
+                source_row : source_row + 1
+            ].expand(
                 args.batch_size, -1
             ).clone(),
-            episode_starts=source_history.episode_starts.expand(
+            episode_starts=source_history.episode_starts[
+                source_row : source_row + 1
+            ].expand(
                 args.batch_size, -1
             ).clone(),
         )
         collector.collector.bridge.needs_reset.copy_(
-            warmup_collector.collector.bridge.needs_reset.expand(args.batch_size)
+            warmup_collector.collector.bridge.needs_reset[
+                source_row : source_row + 1
+            ].expand(args.batch_size)
         )
         state = (
-            warmup_state[0].expand(args.batch_size, -1).clone(),
-            warmup_state[1].expand(args.batch_size, -1).clone(),
+            warmup_state[0][source_row : source_row + 1]
+            .expand(args.batch_size, -1)
+            .clone(),
+            warmup_state[1][source_row : source_row + 1]
+            .expand(args.batch_size, -1)
+            .clone(),
         )
-        learner = int(warmup_collector.learner_players[0].item())
+        learner = int(warmup_collector.learner_players[source_row].item())
+        if learner != args.learner_seat:
+            raise RuntimeError("source row does not match requested learner seat")
         collector.learner_players.fill_(learner)
         collector.policy.learner_players.fill_(learner)  # type: ignore[attr-defined]
         copied_observation = collector.collector.bridge.observe()
         for descriptor in fields(source_observation.actor):
             source_value = getattr(source_observation.actor, descriptor.name)
             copied_value = getattr(copied_observation.actor, descriptor.name)
-            if not torch.equal(source_value.expand_as(copied_value), copied_value):
+            if not torch.equal(
+                source_value[source_row : source_row + 1].expand_as(copied_value),
+                copied_value,
+            ):
                 raise RuntimeError(
                     f"cross-runtime actor field {descriptor.name} is not exact"
                 )
@@ -507,12 +666,17 @@ def main() -> None:
             for descriptor in fields(source_observation.critic):
                 source_value = getattr(source_observation.critic, descriptor.name)
                 copied_value = getattr(copied_observation.critic, descriptor.name)
-                if not torch.equal(source_value.expand_as(copied_value), copied_value):
+                if not torch.equal(
+                    source_value[source_row : source_row + 1].expand_as(copied_value),
+                    copied_value,
+                ):
                     raise RuntimeError(
                         f"cross-runtime critic field {descriptor.name} is not exact"
                     )
         if not torch.equal(
-            source_observation.legal_mask.expand_as(copied_observation.legal_mask),
+            source_observation.legal_mask[
+                source_row : source_row + 1
+            ].expand_as(copied_observation.legal_mask),
             copied_observation.legal_mask,
         ):
             raise RuntimeError("cross-runtime legal mask is not exact")
@@ -530,12 +694,21 @@ def main() -> None:
         state[0][:1].expand_as(state[0]).clone(),
         state[1][:1].expand_as(state[1]).clone(),
     )
-    collector.learner_players.fill_(0)
-    collector.policy.learner_players.fill_(0)  # type: ignore[attr-defined]
+    selected_learner = args.learner_seat if warmup_collector is not None else 0
+    collector.learner_players.fill_(selected_learner)
+    collector.policy.learner_players.fill_(  # type: ignore[attr-defined]
+        selected_learner
+    )
 
     observation = collector.collector.bridge.observe()
+    root_actor_globals = observation.actor.global_features[
+        0, selected_learner
+    ].detach().cpu().numpy()
+    root_progress = float(root_actor_globals[0])
+    if not args.minimum_root_progress <= root_progress <= args.maximum_root_progress:
+        raise RuntimeError("selected root is outside requested public phase bounds")
     packet = collector.collector.public_mask_provider(
-        SimpleTensorMaskRequest(observation, args.warmup_steps, False)
+        SimpleTensorMaskRequest(observation, root_step, False)
     )
     for descriptor in fields(observation.actor):
         tensor = getattr(observation.actor, descriptor.name)
@@ -550,7 +723,7 @@ def main() -> None:
         observation,
         packet,
         recurrent_inputs,
-        args.warmup_steps,
+        root_step,
     )
     learner_state = collector.policy._state_from_prefixed_mapping(  # type: ignore[attr-defined]
         recurrent_inputs, "learner"
@@ -621,6 +794,7 @@ def main() -> None:
         horizon_steps=args.horizon_steps,
         stop_when_all_terminal=args.stop_when_all_terminal,
         chunk_steps=args.collection_chunk_steps,
+        include_outcome_labels=True,
     )
     realized_horizon_steps = int(arrays["rewards"].shape[1])
     unpadded_dones = np.asarray(arrays["dones"], dtype=np.bool_)
@@ -630,6 +804,17 @@ def main() -> None:
         unpadded_dones,
         unpadded_winners,
         learner_players,
+    )
+    terminal_margins = first_terminal_tower_margins(
+        unpadded_dones,
+        np.asarray(arrays["next_global_features"]),
+    )
+    post_branch_observation = collector.collector.bridge.observe()
+    post_branch_globals = post_branch_observation.actor.global_features[
+        rows, collector.learner_players
+    ]
+    bootstrap_utility, bootstrap_margin, bootstrap_disagreement = (
+        outcome_ensemble_predictions(outcome_heads, post_branch_globals)
     )
     if realized_horizon_steps < args.horizon_steps:
         padding = args.horizon_steps - realized_horizon_steps
@@ -662,6 +847,33 @@ def main() -> None:
                 "discounted_bootstrap_return": float(bootstrap_return[index]),
                 "terminal": bool(done[index]),
                 "terminal_outcome": int(terminal_outcomes[index]),
+                "terminal_tower_margin": (
+                    float(terminal_margins[index]) if bool(done[index]) else None
+                ),
+                "outcome_bootstrap_utility": (
+                    None
+                    if not outcome_heads or bool(done[index])
+                    else float(bootstrap_utility[index])
+                ),
+                "outcome_bootstrap_margin": (
+                    None
+                    if not outcome_heads or bool(done[index])
+                    else float(bootstrap_margin[index])
+                ),
+                "outcome_ensemble_disagreement": (
+                    None
+                    if not outcome_heads or bool(done[index])
+                    else float(bootstrap_disagreement[index])
+                ),
+                "actor_visible_branch_utility": (
+                    float(terminal_outcomes[index])
+                    if bool(done[index])
+                    else (
+                        None
+                        if not outcome_heads
+                        else float(bootstrap_utility[index])
+                    )
+                ),
             }
         )
     rows_out.sort(
@@ -676,10 +888,23 @@ def main() -> None:
     payload = {
         "schema": "clasher.simple-counterfactual-teacher-probe.v4",
         "checkpoint": str(args.checkpoint.resolve()),
-        "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
+        "checkpoint_sha256": checkpoint_sha256,
+        "outcome_checkpoints": [str(path.resolve()) for path in args.outcome_checkpoints],
+        "outcome_checkpoint_sha256": [
+            hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in args.outcome_checkpoints
+        ],
         "seed": args.seed,
         "batch_size": args.batch_size,
-        "warmup_steps": args.warmup_steps,
+        "requested_warmup_steps": args.warmup_steps,
+        "root_search_steps": root_step - args.warmup_steps,
+        "warmup_steps": root_step,
+        "root_progress": root_progress,
+        "root_global_features": root_actor_globals.tolist(),
+        "root_progress_bounds": [
+            args.minimum_root_progress,
+            args.maximum_root_progress,
+        ],
         "horizon_steps": args.horizon_steps,
         "realized_horizon_steps": realized_horizon_steps,
         "stop_when_all_terminal": bool(args.stop_when_all_terminal),
@@ -687,16 +912,26 @@ def main() -> None:
         "action_samples": len(rows_out),
         "candidate_selector": "hand-slot-spatial-stratified-v1",
         "strategy_proposals": proposal_by_strategy,
-        "return_estimator": "truncated-n-step-bootstrap-v1",
-        "label_authority": "terminal-outcome-then-discounted-reward-v1",
+        "return_estimator": (
+            "terminal-outcome-else-actor-visible-outcome-ensemble-v1"
+            if outcome_heads
+            else "truncated-n-step-bootstrap-v1"
+        ),
+        "label_authority": (
+            "terminal-outcome-and-public-terminal-margin-else-actor-visible-v1"
+            if outcome_heads
+            else "terminal-outcome-then-discounted-reward-v1"
+        ),
         "random_candidate_fraction": args.random_candidate_fraction,
-        "warmup_batch_size": 1 if args.warmup_steps else args.action_samples,
+        "warmup_batch_size": 2 if args.warmup_steps else args.action_samples,
         "opponent_randomness": (
             "common-quantile-v1"
             if args.opponent_strategy == "random"
             else "deterministic-strategy"
         ),
         "opponent_strategy": args.opponent_strategy,
+        "opponent_deck": args.opponent_deck or None,
+        "learner_seat": args.learner_seat,
         "device": args.device,
         "parent_action": parent_action,
         "elapsed_seconds": elapsed,
@@ -714,7 +949,7 @@ def main() -> None:
             prefix = (
                 np.empty((0, *root.shape), dtype=root.dtype)
                 if warmup_arrays is None
-                else np.asarray(warmup_arrays[name][0])
+                else np.asarray(warmup_arrays[name][args.learner_seat])
             )
             combined: np.ndarray = np.concatenate((prefix, root[None]), axis=0)
             return combined
@@ -755,7 +990,9 @@ def main() -> None:
         warmup_actions = (
             np.empty((0,), dtype=np.int64)
             if warmup_arrays is None
-            else np.asarray(warmup_arrays["actions"][0], dtype=np.int64)
+            else np.asarray(
+                warmup_arrays["actions"][args.learner_seat], dtype=np.int64
+            )
         )
         expert_actions = np.concatenate(
             (warmup_actions, np.asarray([best_action], dtype=np.int64))
