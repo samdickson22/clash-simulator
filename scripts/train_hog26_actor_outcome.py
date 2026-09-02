@@ -531,7 +531,12 @@ def main() -> None:
         dim=0,
     )
     state_size = int(train_features.shape[1])
-    head = ActorOutcomeHead(state_size, args.hidden_size).to(device)
+    separate_draw_trunk = args.feature_set == "structured-summary"
+    head = ActorOutcomeHead(
+        state_size,
+        args.hidden_size,
+        separate_draw_trunk=separate_draw_trunk,
+    ).to(device)
     optimizer = torch.optim.AdamW(
         head.parameters(), lr=args.learning_rate, weight_decay=1e-4
     )
@@ -770,6 +775,7 @@ def main() -> None:
         "device": str(device),
         "state_size": state_size,
         "hidden_size": args.hidden_size,
+        "separate_draw_trunk": separate_draw_trunk,
         "epochs": args.epochs,
         "batch_size": args.batch_size,
         "learning_rate": args.learning_rate,
@@ -867,6 +873,7 @@ def main() -> None:
         "token_names": payload["token_names"],
         "state_size": state_size,
         "hidden_size": args.hidden_size,
+        "separate_draw_trunk": separate_draw_trunk,
         "outcome_head_state_dict": best_state,
         "training_report": report,
     }

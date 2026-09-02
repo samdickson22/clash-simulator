@@ -25,12 +25,19 @@ class ActorOutcomeLoss:
 class ActorOutcomeHead(nn.Module):
     """Predict terminal results from frozen actor-visible policy state."""
 
-    def __init__(self, state_size: int, hidden_size: int = 128) -> None:
+    def __init__(
+        self,
+        state_size: int,
+        hidden_size: int = 128,
+        *,
+        separate_draw_trunk: bool = False,
+    ) -> None:
         super().__init__()
         if state_size < 18 or hidden_size < 1:
             raise ValueError("outcome head dimensions must be positive")
         self.state_size = int(state_size)
         self.hidden_size = int(hidden_size)
+        self.separate_draw_trunk = bool(separate_draw_trunk)
         self.trunk = nn.Sequential(
             nn.LayerNorm(state_size),
             nn.Linear(state_size, hidden_size),
@@ -40,13 +47,27 @@ class ActorOutcomeHead(nn.Module):
         )
         self.draw = nn.Linear(hidden_size, 1)
         self.decisive_win = nn.Linear(hidden_size, 1)
+        self.draw_trunk = (
+            nn.Sequential(
+                nn.LayerNorm(18),
+                nn.Linear(18, hidden_size),
+                nn.GELU(),
+                nn.Linear(hidden_size, hidden_size),
+                nn.GELU(),
+            )
+            if self.separate_draw_trunk
+            else None
+        )
         nn.init.constant_(self.draw.bias, -2.1972245773362196)
 
     def forward(self, state: Tensor) -> ActorOutcomePrediction:
         if state.shape[-1] != self.state_size:
             raise ValueError("actor outcome state width changed")
         hidden = self.trunk(state)
-        draw_logit = self.draw(hidden).squeeze(-1)
+        draw_hidden = (
+            hidden if self.draw_trunk is None else self.draw_trunk(state[..., -18:])
+        )
+        draw_logit = self.draw(draw_hidden).squeeze(-1)
         decisive_win_logit = self.decisive_win(hidden).squeeze(-1)
         log_draw = -F.softplus(-draw_logit)
         log_decisive = -F.softplus(draw_logit)
@@ -120,9 +141,8 @@ def actor_outcome_loss(
             device=prediction.outcome_logits.device,
             dtype=prediction.outcome_logits.dtype,
         )
-        weights = weights / weights.sum()
-        outcome_nll = (outcome_rows * weights).sum()
-        margin = (margin_rows * weights).sum()
+        outcome_nll = (outcome_rows * weights).mean()
+        margin = (margin_rows * weights).mean()
     return ActorOutcomeLoss(
         total=outcome_nll + margin_coefficient * margin,
         outcome_nll=outcome_nll,

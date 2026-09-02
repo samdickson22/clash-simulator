@@ -447,7 +447,9 @@ def load_outcome_ensemble(
         if report.get("actor_feature_contract") != "public-globals":
             raise ValueError("counterfactual probe supports public-global heads only")
         head = ActorOutcomeHead(
-            int(payload["state_size"]), int(payload["hidden_size"])
+            int(payload["state_size"]),
+            int(payload["hidden_size"]),
+            separate_draw_trunk=bool(payload.get("separate_draw_trunk", False)),
         ).to(device)
         head.load_state_dict(payload["outcome_head_state_dict"], strict=True)
         head.eval()

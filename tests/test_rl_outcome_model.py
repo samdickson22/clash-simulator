@@ -52,3 +52,13 @@ def test_actor_outcome_loss_honors_sample_weights() -> None:
         sample_weights=torch.tensor([1.0, 0.0]),
     )
     assert float(weighted.total) < 0.1
+
+
+def test_separate_draw_trunk_does_not_use_tactical_prefix() -> None:
+    head = ActorOutcomeHead(32, hidden_size=8, separate_draw_trunk=True)
+    first = torch.randn(2, 32)
+    second = first.clone()
+    second[:, :-18] = torch.randn_like(second[:, :-18])
+    first_draw = head(first).outcome_logits[:, 1]
+    second_draw = head(second).outcome_logits[:, 1]
+    torch.testing.assert_close(first_draw, second_draw)
