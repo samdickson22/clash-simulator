@@ -32,6 +32,7 @@ class ActorOutcomeHead(nn.Module):
         *,
         separate_draw_trunk: bool = False,
         structured_residual_scale: float = 0.0,
+        margin_residual_scale: float = 0.0,
     ) -> None:
         super().__init__()
         if state_size < 18 or hidden_size < 1:
@@ -40,10 +41,13 @@ class ActorOutcomeHead(nn.Module):
             raise ValueError("structured residual scale must be nonnegative")
         if structured_residual_scale > 0.0 and state_size == 18:
             raise ValueError("structured residual needs context before public globals")
+        if margin_residual_scale < 0.0:
+            raise ValueError("margin residual scale must be nonnegative")
         self.state_size = int(state_size)
         self.hidden_size = int(hidden_size)
         self.separate_draw_trunk = bool(separate_draw_trunk)
         self.structured_residual_scale = float(structured_residual_scale)
+        self.margin_residual_scale = float(margin_residual_scale)
         trunk_size = 18 if self.structured_residual_scale > 0.0 else state_size
         self.trunk = nn.Sequential(
             nn.LayerNorm(trunk_size),
@@ -83,6 +87,20 @@ class ActorOutcomeHead(nn.Module):
         if self.structured_decisive is not None:
             nn.init.zeros_(self.structured_decisive.weight)
             nn.init.zeros_(self.structured_decisive.bias)
+        self.margin_trunk = (
+            nn.Sequential(
+                nn.Linear(18, hidden_size),
+                nn.GELU(),
+                nn.Linear(hidden_size, 1),
+            )
+            if self.margin_residual_scale > 0.0
+            else None
+        )
+        if self.margin_trunk is not None:
+            final_margin = self.margin_trunk[-1]
+            assert isinstance(final_margin, nn.Linear)
+            nn.init.zeros_(final_margin.weight)
+            nn.init.zeros_(final_margin.bias)
         nn.init.constant_(self.draw.bias, -2.1972245773362196)
 
     def forward(self, state: Tensor) -> ActorOutcomePrediction:
@@ -108,6 +126,17 @@ class ActorOutcomeHead(nn.Module):
         log_decisive = -F.softplus(draw_logit)
         log_win_given_decisive = -F.softplus(-decisive_win_logit)
         log_loss_given_decisive = -F.softplus(decisive_win_logit)
+        current_margin = (
+            public_globals[..., 8:11].sum(dim=-1)
+            - public_globals[..., 11:14].sum(dim=-1)
+        ) / 3.0
+        terminal_margin = current_margin
+        if self.margin_trunk is not None:
+            terminal_margin = (
+                current_margin
+                + self.margin_residual_scale
+                * self.margin_trunk(public_globals).squeeze(-1).tanh()
+            ).clamp(-1.0, 1.0)
         return ActorOutcomePrediction(
             outcome_logits=torch.stack(
                 (
@@ -117,10 +146,7 @@ class ActorOutcomeHead(nn.Module):
                 ),
                 dim=-1,
             ),
-            terminal_tower_margin=(
-                state[..., -10:-7].sum(dim=-1) - state[..., -7:-4].sum(dim=-1)
-            )
-            / 3.0,
+            terminal_tower_margin=terminal_margin,
         )
 
 
@@ -131,6 +157,7 @@ def actor_outcome_loss(
     *,
     margin_coefficient: float = 0.25,
     sample_weights: Tensor | None = None,
+    margin_sample_weights: Tensor | None = None,
 ) -> ActorOutcomeLoss:
     """Train undiscounted W/D/L first, with public terminal margin auxiliary."""
 
@@ -159,6 +186,15 @@ def actor_outcome_loss(
             raise ValueError("sample weights must be finite and nonnegative")
         if not bool(sample_weights.sum() > 0):
             raise ValueError("sample weights must have positive mass")
+    if margin_sample_weights is not None:
+        if margin_sample_weights.shape != final_outcomes.shape:
+            raise ValueError("margin sample weights do not match outcome rows")
+        if not bool(torch.isfinite(margin_sample_weights).all()) or bool(
+            (margin_sample_weights < 0).any()
+        ):
+            raise ValueError("margin sample weights must be finite and nonnegative")
+        if not bool(margin_sample_weights.sum() > 0):
+            raise ValueError("margin sample weights must have positive mass")
     targets = final_outcomes.to(torch.long) + 1
     outcome_rows = F.cross_entropy(
         prediction.outcome_logits, targets, reduction="none"
@@ -170,14 +206,23 @@ def actor_outcome_loss(
     )
     if sample_weights is None:
         outcome_nll = outcome_rows.mean()
-        margin = margin_rows.mean()
     else:
         weights = sample_weights.to(
             device=prediction.outcome_logits.device,
             dtype=prediction.outcome_logits.dtype,
         )
         outcome_nll = (outcome_rows * weights).mean()
-        margin = (margin_rows * weights).mean()
+    effective_margin_weights = (
+        margin_sample_weights if margin_sample_weights is not None else sample_weights
+    )
+    if effective_margin_weights is None:
+        margin = margin_rows.mean()
+    else:
+        margin_weights = effective_margin_weights.to(
+            device=prediction.outcome_logits.device,
+            dtype=prediction.outcome_logits.dtype,
+        )
+        margin = (margin_rows * margin_weights).mean()
     return ActorOutcomeLoss(
         total=outcome_nll + margin_coefficient * margin,
         outcome_nll=outcome_nll,

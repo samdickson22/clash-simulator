@@ -97,11 +97,7 @@ def episode_class_balanced_row_weights(
             for _metadata, corpus in loaded
         ]
     )
-    base_parts: list[np.ndarray] = []
-    for _metadata, corpus in loaded:
-        lengths = np.diff(corpus.episode_offsets).astype(np.float64)
-        base_parts.append(np.repeat(1.0 / lengths, lengths.astype(np.int64)))
-    weights = np.concatenate(base_parts)
+    weights = episode_balanced_row_weights(loaded).numpy().astype(np.float64)
     for class_index, outcome in enumerate((-1, 0, 1)):
         selected = outcomes == outcome
         current = float(weights[selected].sum())
@@ -109,6 +105,20 @@ def episode_class_balanced_row_weights(
         if target > 0.0 and current <= 0.0:
             raise ValueError("target class mass is positive for an absent class")
         weights[selected] *= 0.0 if target == 0.0 else target / current
+    weights *= len(weights) / weights.sum()
+    return torch.as_tensor(weights, dtype=torch.float32)
+
+
+def episode_balanced_row_weights(
+    loaded: list[tuple[dict[str, Any], DirectSimpleBehaviorCorpus]],
+) -> Tensor:
+    """Give every complete game equal regression mass without class rebalance."""
+
+    parts: list[np.ndarray] = []
+    for _metadata, corpus in loaded:
+        lengths = np.diff(corpus.episode_offsets).astype(np.float64)
+        parts.append(np.repeat(1.0 / lengths, lengths.astype(np.int64)))
+    weights = np.concatenate(parts)
     weights *= len(weights) / weights.sum()
     return torch.as_tensor(weights, dtype=torch.float32)
 
@@ -499,6 +509,17 @@ def all_phase_decisive_auc_passed(
     )
 
 
+def all_phase_margin_nonregression_passed(
+    by_phase: dict[str, dict[str, Any]], maximum_regression: float
+) -> bool:
+    return all(
+        phase in by_phase
+        and float(by_phase[phase]["tower_margin_mae_improvement"])
+        >= -maximum_regression
+        for phase in ("early", "middle", "late")
+    )
+
+
 @torch.no_grad()
 def metrics(
     head: ActorOutcomeHead,
@@ -516,6 +537,13 @@ def metrics(
     one_hot = F.one_hot(target_cpu, num_classes=3).to(probabilities.dtype)
     selected = probabilities.gather(1, target_cpu[:, None]).squeeze(1)
     predicted_margin = prediction.terminal_tower_margin.cpu()
+    public_globals = features[..., -18:]
+    baseline_margin = (
+        public_globals[..., 8:11].sum(dim=-1)
+        - public_globals[..., 11:14].sum(dim=-1)
+    ) / 3.0
+    baseline_margin_mae = float((baseline_margin - margins).abs().mean())
+    predicted_margin_mae = float((predicted_margin - margins).abs().mean())
     labels = ("loss", "draw", "win")
     decisive = target_cpu != 1
     decisive_auc = (
@@ -545,8 +573,10 @@ def metrics(
             label: float(probabilities[:, index].mean())
             for index, label in enumerate(labels)
         },
-        "tower_margin_mae": float((predicted_margin - margins).abs().mean()),
+        "tower_margin_mae": predicted_margin_mae,
         "tower_margin_rmse": float((predicted_margin - margins).square().mean().sqrt()),
+        "tower_margin_baseline_mae": baseline_margin_mae,
+        "tower_margin_mae_improvement": baseline_margin_mae - predicted_margin_mae,
     }
 
 
@@ -813,6 +843,7 @@ def main() -> None:
     parser.add_argument("--sequence-steps", type=int, default=128)
     parser.add_argument("--hidden-size", type=int, default=64)
     parser.add_argument("--structured-residual-scale", type=float, default=0.25)
+    parser.add_argument("--margin-residual-scale", type=float, default=0.0)
     parser.add_argument("--initialize-public-checkpoint", type=Path, default=None)
     parser.add_argument("--minimum-structured-residual-auc-gain", type=float, default=0.0)
     parser.add_argument(
@@ -834,6 +865,8 @@ def main() -> None:
     parser.add_argument("--minimum-nll-improvement", type=float, default=0.02)
     parser.add_argument("--maximum-ece", type=float, default=0.20)
     parser.add_argument("--maximum-margin-mae", type=float, default=0.25)
+    parser.add_argument("--minimum-margin-mae-improvement", type=float, default=0.005)
+    parser.add_argument("--maximum-phase-margin-mae-regression", type=float, default=0.01)
     parser.add_argument("--minimum-natural-auc", type=float, default=0.60)
     parser.add_argument("--minimum-natural-phase-auc", type=float, default=0.55)
     parser.add_argument("--minimum-phase-auc-lower-bound", type=float, default=0.50)
@@ -854,8 +887,14 @@ def main() -> None:
         raise ValueError("actor-outcome training sizes must be positive")
     if args.structured_residual_scale < 0.0:
         raise ValueError("structured residual scale must be nonnegative")
+    if args.margin_residual_scale < 0.0:
+        raise ValueError("margin residual scale must be nonnegative")
     if args.minimum_structured_residual_auc_gain < 0.0:
         raise ValueError("structured residual AUC gain must be nonnegative")
+    if args.minimum_margin_mae_improvement < 0.0:
+        raise ValueError("margin MAE improvement must be nonnegative")
+    if args.maximum_phase_margin_mae_regression < 0.0:
+        raise ValueError("phase margin MAE regression must be nonnegative")
     if args.phase_auc_bootstrap_replicates < 100:
         raise ValueError("phase AUC bootstrap needs at least 100 replicates")
     torch.manual_seed(args.seed)
@@ -978,6 +1017,7 @@ def main() -> None:
         args.hidden_size,
         separate_draw_trunk=separate_draw_trunk,
         structured_residual_scale=structured_residual_scale,
+        margin_residual_scale=args.margin_residual_scale,
     ).to(device)
     public_initialization_sha256: str | None = None
     if args.initialize_public_checkpoint is not None:
@@ -1008,7 +1048,12 @@ def main() -> None:
             raise ValueError("public initialization checkpoint is not accepted/compatible")
         initialized_state = initialized["outcome_head_state_dict"]
         current_state = head.state_dict()
-        global_prefixes = ("trunk.", "draw.", "decisive_win.")
+        global_prefixes = (
+            "trunk.",
+            "draw.",
+            "decisive_win.",
+            "margin_trunk.",
+        )
         for name, value in initialized_state.items():
             if name.startswith(global_prefixes):
                 if name not in current_state or current_state[name].shape != value.shape:
@@ -1045,6 +1090,7 @@ def main() -> None:
         train_loaded,
         target_class_mass=target_class_mass,
     )
+    margin_train_weights = episode_balanced_row_weights(train_loaded)
     validation_outcomes = torch.cat(
         [
             torch.as_tensor(corpus.arrays["final_outcomes"])
@@ -1119,6 +1165,8 @@ def main() -> None:
             "training_loss": None,
             "validation": initial_validation,
             "all_row_validation": initial_breakdowns["overall"],
+            "outcome_gate_passed": False,
+            "margin_gate_passed": False,
             "development_gate_passed": False,
         }
     ]
@@ -1130,6 +1178,13 @@ def main() -> None:
         name: value.detach().cpu().clone() for name, value in head.state_dict().items()
     }
     best_metrics: dict[str, Any] | None = initial_validation
+    best_margin_epoch = 0
+    best_margin_mae = float(initial_validation["tower_margin_mae"])
+    best_margin_state = {
+        name: value.detach().cpu().clone()
+        for name, value in head.state_dict().items()
+        if name.startswith("margin_trunk.")
+    }
     for epoch in range(1, args.epochs + 1):
         head.train()
         order = rng.permutation(train_outcomes.numel())
@@ -1143,6 +1198,9 @@ def main() -> None:
                 train_margins.index_select(0, rows).to(device),
                 margin_coefficient=args.margin_coefficient,
                 sample_weights=train_weights.index_select(0, rows).to(device),
+                margin_sample_weights=margin_train_weights.index_select(0, rows).to(
+                    device
+                ),
             )
             if not bool(torch.isfinite(loss.total)):
                 raise RuntimeError("actor outcome loss became non-finite")
@@ -1190,11 +1248,10 @@ def main() -> None:
             - float(epoch_natural_endpoint["mean_outcome_probability"]["draw"])
             >= args.minimum_controlled_draw_endpoint_probability_lift
         )
-        epoch_development_passed = bool(
+        epoch_outcome_passed = bool(
             prior_nll - float(validation["nll"])
             >= args.minimum_nll_improvement
             and float(validation["ece_10"]) <= args.maximum_ece
-            and float(validation["tower_margin_mae"]) <= args.maximum_margin_mae
             and all(value > 0 for value in validation["class_counts"].values())
             and epoch_natural_auc_passed
             and epoch_natural_phase_auc_passed
@@ -1208,18 +1265,28 @@ def main() -> None:
                 + args.minimum_structured_residual_auc_gain
             )
         )
+        epoch_margin_passed = bool(
+            float(validation["tower_margin_mae"]) <= args.maximum_margin_mae
+            and float(validation["tower_margin_mae_improvement"])
+            >= args.minimum_margin_mae_improvement
+            and all_phase_margin_nonregression_passed(
+                epoch_phases, args.maximum_phase_margin_mae_regression
+            )
+        )
         row = {
             "epoch": epoch,
             "training_loss": float(np.mean(losses)),
             "validation": validation,
             "all_row_validation": epoch_breakdowns["overall"],
-            "development_gate_passed": epoch_development_passed,
+            "outcome_gate_passed": epoch_outcome_passed,
+            "margin_gate_passed": epoch_margin_passed,
+            "development_gate_passed": epoch_outcome_passed and epoch_margin_passed,
         }
         history.append(row)
         print(json.dumps(row, sort_keys=True), flush=True)
         selection_key = outcome_epoch_selection_key(
             validation,
-            acceptance_passed=epoch_development_passed,
+            acceptance_passed=epoch_outcome_passed,
         )
         if selection_key > best_key:
             best_key = selection_key
@@ -1229,10 +1296,22 @@ def main() -> None:
                 name: value.detach().cpu().clone()
                 for name, value in head.state_dict().items()
             }
+        if float(validation["tower_margin_mae"]) < best_margin_mae:
+            best_margin_mae = float(validation["tower_margin_mae"])
+            best_margin_epoch = epoch
+            best_margin_state = {
+                name: value.detach().cpu().clone()
+                for name, value in head.state_dict().items()
+                if name.startswith("margin_trunk.")
+            }
     assert (
         best_state is not None and best_metrics is not None and best_epoch is not None
     )
     head.load_state_dict(best_state)
+    if best_margin_state:
+        combined_state = head.state_dict()
+        combined_state.update(best_margin_state)
+        head.load_state_dict(combined_state, strict=True)
     phase_fraction = np.concatenate(
         [
             np.asarray(corpus.arrays["global_features"][:, 0])
@@ -1355,6 +1434,10 @@ def main() -> None:
         phase_balanced_groups,
         device=device,
     )
+    best_metrics = phase_balanced_metrics
+    best_state = {
+        name: value.detach().cpu().clone() for name, value in head.state_dict().items()
+    }
     validation_phase_auc_confidence = phase_auc_confidence_intervals(
         head,
         phase_balanced_features,
@@ -1419,6 +1502,11 @@ def main() -> None:
         prior_nll - float(best_metrics["nll"]) >= args.minimum_nll_improvement
         and float(best_metrics["ece_10"]) <= args.maximum_ece
         and float(best_metrics["tower_margin_mae"]) <= args.maximum_margin_mae
+        and float(best_metrics["tower_margin_mae_improvement"])
+        >= args.minimum_margin_mae_improvement
+        and all_phase_margin_nonregression_passed(
+            phase_balanced_phase_metrics, args.maximum_phase_margin_mae_regression
+        )
         and all(value > 0 for value in best_metrics["class_counts"].values())
         and natural_auc_passed
         and natural_phase_auc_passed
@@ -1500,6 +1588,11 @@ def main() -> None:
             and float(holdout_overall["ece_10"]) <= args.maximum_ece
             and float(holdout_overall["tower_margin_mae"])
             <= args.maximum_margin_mae
+            and float(holdout_overall["tower_margin_mae_improvement"])
+            >= args.minimum_margin_mae_improvement
+            and all_phase_margin_nonregression_passed(
+                holdout_phases, args.maximum_phase_margin_mae_regression
+            )
             and all(value > 0 for value in holdout_overall["class_counts"].values())
             and holdout_natural is not None
             and holdout_natural["decisive_win_loss_auc"] is not None
@@ -1548,6 +1641,7 @@ def main() -> None:
         "hidden_size": args.hidden_size,
         "separate_draw_trunk": separate_draw_trunk,
         "structured_residual_scale": structured_residual_scale,
+        "margin_residual_scale": args.margin_residual_scale,
         "public_initialization_checkpoint": (
             str(args.initialize_public_checkpoint.resolve())
             if args.initialize_public_checkpoint is not None
@@ -1580,6 +1674,8 @@ def main() -> None:
         "train_class_prior": prior.tolist(),
         "validation_prior_nll": prior_nll,
         "best_epoch": best_epoch,
+        "best_outcome_epoch": best_epoch,
+        "best_margin_epoch": best_margin_epoch,
         "best_validation": best_metrics,
         "validation_all_rows": metrics(
             head,
@@ -1632,6 +1728,12 @@ def main() -> None:
             "minimum_nll_improvement_over_train_prior": args.minimum_nll_improvement,
             "maximum_ece_10": args.maximum_ece,
             "maximum_tower_margin_mae": args.maximum_margin_mae,
+            "minimum_tower_margin_mae_improvement": (
+                args.minimum_margin_mae_improvement
+            ),
+            "maximum_phase_tower_margin_mae_regression": (
+                args.maximum_phase_margin_mae_regression
+            ),
             "all_three_outcome_classes_required": True,
             "minimum_natural_decisive_auc": args.minimum_natural_auc,
             "minimum_natural_phase_decisive_auc": args.minimum_natural_phase_auc,
@@ -1687,6 +1789,7 @@ def main() -> None:
         "hidden_size": args.hidden_size,
         "separate_draw_trunk": separate_draw_trunk,
         "structured_residual_scale": structured_residual_scale,
+        "margin_residual_scale": args.margin_residual_scale,
         "public_initialization_sha256": public_initialization_sha256,
         "outcome_head_state_dict": best_state,
         "training_report": report,

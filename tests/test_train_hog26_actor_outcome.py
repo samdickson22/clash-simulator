@@ -11,7 +11,9 @@ from scripts.train_hog26_actor_outcome import (
     _natural_metadata_values,
     _outcome_source,
     all_phase_decisive_auc_passed,
+    all_phase_margin_nonregression_passed,
     bootstrap_binary_auc,
+    episode_balanced_row_weights,
     episode_class_balanced_row_weights,
     metrics,
     outcome_epoch_selection_key,
@@ -89,6 +91,9 @@ def test_episode_class_balanced_weights_equalize_episodes_and_class_mass() -> No
     assert weights[:2].sum() == pytest.approx(weights[2:].sum())
     assert weights[0] == pytest.approx(weights[1])
     assert weights[2] == pytest.approx(weights[5])
+    regression = episode_balanced_row_weights([({}, corpus)]).numpy()
+    assert regression[:2].sum() == pytest.approx(regression[2:].sum())
+    assert regression.mean() == pytest.approx(1.0)
 
 
 def test_epoch_selection_prefers_ranking_after_calibration_gate() -> None:
@@ -126,6 +131,16 @@ def test_all_phase_auc_rejects_missing_or_below_chance_phase() -> None:
     assert not all_phase_decisive_auc_passed(passing, 0.55)
     passing.pop("late")
     assert not all_phase_decisive_auc_passed(passing, 0.55)
+
+
+def test_phase_margin_gate_rejects_material_regression() -> None:
+    phases = {
+        phase: {"tower_margin_mae_improvement": value}
+        for phase, value in (("early", 0.02), ("middle", 0.0), ("late", -0.009))
+    }
+    assert all_phase_margin_nonregression_passed(phases, 0.01)
+    phases["late"]["tower_margin_mae_improvement"] = -0.011
+    assert not all_phase_margin_nonregression_passed(phases, 0.01)
 
 
 def test_phase_balanced_rows_select_one_nearest_midpoint_per_episode_phase() -> None:

@@ -113,3 +113,15 @@ rejected—the early lower 95% bound was 0.4615, below the required 0.50. Unlike
 the original four-deck structured failure (AUC 0.4683), this is direct evidence
 that independent deck diversity is repairing contextual generalization rather
 than merely improving calibration.
+
+The margin audit then exposed that the prior `terminal_tower_margin` output was
+only the current public tower margin and had no trainable regression path.
+A bounded, zero-initialized residual was added, but sharing the classification
+trunk and classification class weights both caused held-out regression drift.
+The corrected design uses a separate public-global margin branch, equal mass per
+complete game (without 45/10/45 class rebalance), and independent outcome/margin
+epoch selection. On the interim split it selected outcome epoch 11 and margin
+epoch 1, improving phase-balanced margin MAE from 0.12079 to 0.11649. Every
+phase improved (early +0.00359, middle +0.00459, late +0.00631), but the overall
+gain 0.00431 remains below the current 0.005 promotion floor. This candidate is
+therefore still rejected pending the broader fold.

@@ -54,6 +54,23 @@ def test_actor_outcome_loss_honors_sample_weights() -> None:
     assert float(weighted.total) < 0.1
 
 
+def test_margin_loss_can_use_independent_episode_weights() -> None:
+    prediction = ActorOutcomePrediction(
+        outcome_logits=torch.tensor([[4.0, 0.0, 0.0], [4.0, 0.0, 0.0]]),
+        terminal_tower_margin=torch.tensor([-0.5, 0.5]),
+    )
+    weighted = actor_outcome_loss(
+        prediction,
+        torch.tensor([-1, -1]),
+        torch.tensor([-0.5, -0.5]),
+        margin_coefficient=1.0,
+        sample_weights=torch.tensor([1.0, 0.0]),
+        margin_sample_weights=torch.tensor([0.0, 1.0]),
+    )
+    assert float(weighted.outcome_nll) < 0.1
+    assert float(weighted.tower_margin_huber) == pytest.approx(0.25)
+
+
 def test_separate_draw_trunk_does_not_use_tactical_prefix() -> None:
     head = ActorOutcomeHead(32, hidden_size=8, separate_draw_trunk=True)
     first = torch.randn(2, 32)
@@ -79,3 +96,22 @@ def test_structured_residual_starts_context_invariant_and_stays_bounded() -> Non
     second = head(second_state).outcome_logits
     # Conditional decisive logits differ by at most twice the configured scale.
     assert float((first[..., 2] - second[..., 2]).abs().max().detach()) <= 0.5 + 1e-6
+
+
+def test_margin_residual_starts_at_public_baseline_and_is_trainable() -> None:
+    head = ActorOutcomeHead(18, hidden_size=8, margin_residual_scale=0.5)
+    state = torch.rand(4, 18)
+    baseline = (state[:, 8:11].sum(dim=-1) - state[:, 11:14].sum(dim=-1)) / 3.0
+    prediction = head(state)
+    torch.testing.assert_close(prediction.terminal_tower_margin, baseline)
+    loss = actor_outcome_loss(
+        prediction,
+        torch.tensor([-1, -1, 1, 1]),
+        torch.tensor([-0.8, -0.4, 0.4, 0.8]),
+    )
+    loss.total.backward()
+    assert head.margin_trunk is not None
+    final_margin = head.margin_trunk[-1]
+    assert isinstance(final_margin, torch.nn.Linear)
+    assert final_margin.weight.grad is not None
+    assert bool(torch.isfinite(final_margin.weight.grad).all())
