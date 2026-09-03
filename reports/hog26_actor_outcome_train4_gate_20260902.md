@@ -152,3 +152,15 @@ development margin was the zero-update epoch, while every learned update was
 worse. The code experiment was discarded. This rules out simply feeding the
 current pooled entity summary into terminal-margin regression; it does not rule
 out a future explicitly spatial or temporal damage model.
+
+The same audit exposed a train/evaluation mismatch: acceptance gives one equal
+vote to every reached early/middle/late phase, while the loss previously gave
+every timestep within an episode equal weight. A bounded A/B equalized reached
+phase mass inside each game for outcome classification only, retaining the
+equal-game regression weights. With identical data, initialization seed, and
+hyperparameters, early decisive AUC rose from 0.6071 to 0.6786, overall
+phase-balanced AUC rose from 0.7481 to 0.7519, NLL fell from 0.5920 to 0.4922,
+and ECE fell from 0.1752 to 0.1440. Middle/late AUC stayed at 0.8750/1.0000;
+margin metrics were bit-identical to the control. The early bootstrap lower
+bound is still only 0.3750 on the small interim validation set, so this is a
+retained training correction, not an accepted model.

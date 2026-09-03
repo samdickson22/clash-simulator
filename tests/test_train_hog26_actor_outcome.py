@@ -96,6 +96,33 @@ def test_episode_class_balanced_weights_equalize_episodes_and_class_mass() -> No
     assert regression.mean() == pytest.approx(1.0)
 
 
+def test_phase_balanced_training_weights_equalize_reached_phases() -> None:
+    from clasher.rl.direct_simple_behavior import DirectSimpleBehaviorCorpus
+
+    progress = np.asarray(
+        [0.01, 0.10, 0.20, 0.40, 0.60, 0.70, 0.80, 0.90], dtype=np.float32
+    )
+    globals_ = np.zeros((progress.size, 18), dtype=np.float32)
+    globals_[:, 0] = progress
+    corpus = DirectSimpleBehaviorCorpus(
+        arrays={
+            "final_outcomes": np.ones(progress.size, dtype=np.int8),
+            "global_features": globals_,
+        },
+        episode_offsets=np.asarray([0, progress.size], dtype=np.int64),
+        episode_stream_rows=np.asarray([0], dtype=np.int64),
+        episode_ordinals=np.asarray([0], dtype=np.int64),
+        initial_hidden=np.zeros((1, 1), dtype=np.float32),
+        initial_cell=np.zeros((1, 1), dtype=np.float32),
+    )
+    weights = episode_balanced_row_weights(
+        [({}, corpus)], phase_balanced=True
+    ).numpy()
+    assert weights[:3].sum() == pytest.approx(weights[3:5].sum())
+    assert weights[3:5].sum() == pytest.approx(weights[5:].sum())
+    assert weights.mean() == pytest.approx(1.0)
+
+
 def test_epoch_selection_prefers_ranking_after_calibration_gate() -> None:
     def row(auc: float, nll: float, ece: float, draw_auc: float) -> dict[str, object]:
         return {

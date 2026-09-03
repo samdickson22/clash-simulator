@@ -79,6 +79,7 @@ def episode_class_balanced_row_weights(
     loaded: list[tuple[dict[str, Any], DirectSimpleBehaviorCorpus]],
     *,
     target_class_mass: tuple[float, float, float],
+    phase_balanced: bool = False,
 ) -> Tensor:
     """Give episodes equal mass, then set declared loss/draw/win training mass."""
 
@@ -97,7 +98,9 @@ def episode_class_balanced_row_weights(
             for _metadata, corpus in loaded
         ]
     )
-    weights = episode_balanced_row_weights(loaded).numpy().astype(np.float64)
+    weights = episode_balanced_row_weights(
+        loaded, phase_balanced=phase_balanced
+    ).numpy().astype(np.float64)
     for class_index, outcome in enumerate((-1, 0, 1)):
         selected = outcomes == outcome
         current = float(weights[selected].sum())
@@ -111,13 +114,31 @@ def episode_class_balanced_row_weights(
 
 def episode_balanced_row_weights(
     loaded: list[tuple[dict[str, Any], DirectSimpleBehaviorCorpus]],
+    *,
+    phase_balanced: bool = False,
 ) -> Tensor:
-    """Give every complete game equal regression mass without class rebalance."""
+    """Give every game equal mass, optionally equalizing its reached phases."""
 
     parts: list[np.ndarray] = []
     for _metadata, corpus in loaded:
-        lengths = np.diff(corpus.episode_offsets).astype(np.float64)
-        parts.append(np.repeat(1.0 / lengths, lengths.astype(np.int64)))
+        if not phase_balanced:
+            lengths = np.diff(corpus.episode_offsets).astype(np.float64)
+            parts.append(np.repeat(1.0 / lengths, lengths.astype(np.int64)))
+            continue
+        progress = np.asarray(corpus.arrays["global_features"][:, 0])
+        corpus_weights = np.zeros(corpus.row_count, dtype=np.float64)
+        for begin, end in zip(
+            corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True
+        ):
+            episode_progress = progress[begin:end]
+            phase_ids = np.minimum((episode_progress * 3.0).astype(np.int64), 2)
+            reached = np.unique(phase_ids)
+            for phase in reached:
+                rows = np.flatnonzero(phase_ids == phase)
+                corpus_weights[int(begin) + rows] = 1.0 / (
+                    float(reached.size) * float(rows.size)
+                )
+        parts.append(corpus_weights)
     weights = np.concatenate(parts)
     weights *= len(weights) / weights.sum()
     return torch.as_tensor(weights, dtype=torch.float32)
@@ -859,6 +880,8 @@ def main() -> None:
     )
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--margin-coefficient", type=float, default=0.25)
+    parser.add_argument("--phase-balanced-outcome-training", action="store_true")
+    parser.add_argument("--phase-balanced-margin-training", action="store_true")
     parser.add_argument("--loss-class-mass", type=float, default=0.45)
     parser.add_argument("--draw-class-mass", type=float, default=0.10)
     parser.add_argument("--win-class-mass", type=float, default=0.45)
@@ -1089,8 +1112,11 @@ def main() -> None:
     train_weights = episode_class_balanced_row_weights(
         train_loaded,
         target_class_mass=target_class_mass,
+        phase_balanced=args.phase_balanced_outcome_training,
     )
-    margin_train_weights = episode_balanced_row_weights(train_loaded)
+    margin_train_weights = episode_balanced_row_weights(
+        train_loaded, phase_balanced=args.phase_balanced_margin_training
+    )
     validation_outcomes = torch.cat(
         [
             torch.as_tensor(corpus.arrays["final_outcomes"])
@@ -1659,7 +1685,16 @@ def main() -> None:
         "batch_size": args.batch_size,
         "learning_rate": args.learning_rate,
         "margin_coefficient": args.margin_coefficient,
-        "training_weighting": "equal-episode-then-declared-class-mass-v1",
+        "outcome_training_weighting": (
+            "equal-episode-equal-reached-phase-then-declared-class-mass-v1"
+            if args.phase_balanced_outcome_training
+            else "equal-episode-then-declared-class-mass-v1"
+        ),
+        "margin_training_weighting": (
+            "equal-episode-equal-reached-phase-v1"
+            if args.phase_balanced_margin_training
+            else "equal-episode-v1"
+        ),
         "target_class_mass": {
             "loss": args.loss_class_mass,
             "draw": args.draw_class_mass,
