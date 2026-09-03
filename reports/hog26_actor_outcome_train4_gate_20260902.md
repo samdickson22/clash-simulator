@@ -310,6 +310,12 @@ SHA-256 is
 Its serialization-independent outcome tensor-state SHA-256 is
 `914cf54d36a399378e650b80528f6109119af10a6780ed4a21dd906ac771d624`;
 the holdout run must reproduce this exact state before its metrics count.
+An independent rerun under the frozen Python 3.12 CPU environment reproduced
+every outcome-head tensor bit-for-bit, the same tensor-state digest, and the
+same selected epochs, calibration scalar, development metrics, phase metrics,
+and bootstrap intervals. Checkpoint serialization bytes differ because the
+embedded report contains different output paths and elapsed time; tensor
+identity, not container bytes, is the model authority.
 
 This is an accepted-development result, not a promoted value function. The
 four remaining unseen decks are now being collected exactly once as the
