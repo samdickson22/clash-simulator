@@ -1,0 +1,91 @@
+{
+  "schema": "clasher.hog26.procedural-outcome-protocol.v1",
+  "base_policy": {
+    "path": "checkpoints/hog26_direct_constant_event_seed1263001/candidate.pt",
+    "sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336"
+  },
+  "procedural_decks": {
+    "path": "training_decks/hog26_procedural_supported_seed1278401.json",
+    "sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8"
+  },
+  "original_decks": {
+    "path": "training_decks/simple_gym_supported_v1.json",
+    "sha256": "c93de9989841743b535fe5fde182abe19e1983c8f67a0a27d0c191ea9ccd212f"
+  },
+  "training": [
+    {
+      "seed": 1278501,
+      "split": "train",
+      "family_ids": ["family-000", "family-001", "family-002", "family-003", "family-004", "family-005", "family-006", "family-007"],
+      "opponents": ["balanced", "random"],
+      "episodes_per_seat": 1,
+      "expected_games": 128
+    },
+    {
+      "seed": 1278502,
+      "split": "train",
+      "family_ids": ["family-000", "family-001", "family-002", "family-003", "family-004", "family-005", "family-006", "family-007"],
+      "opponents": ["bridge-pressure", "reactive-defense"],
+      "episodes_per_seat": 1,
+      "expected_games": 128
+    },
+    {
+      "seed": 1278503,
+      "split": "train",
+      "family_ids": ["family-000", "family-001", "family-002", "family-003", "family-004", "family-005", "family-006", "family-007"],
+      "opponents": ["slow-push", "spell-control"],
+      "episodes_per_seat": 1,
+      "expected_games": 128
+    }
+  ],
+  "development_selection": {
+    "seed": 1278601,
+    "split": "development",
+    "family_ids": ["family-009", "family-010"],
+    "opponents": ["balanced", "reactive-defense"],
+    "episodes_per_seat": 2,
+    "expected_games": 64
+  },
+  "probability_calibration": {
+    "seed": 1278602,
+    "split": "development",
+    "family_ids": ["family-013", "family-014"],
+    "opponents": ["balanced", "reactive-defense"],
+    "episodes_per_seat": 2,
+    "expected_games": 64
+  },
+  "final_holdout": {
+    "generated": {
+      "seed": 1278701,
+      "split": "holdout",
+      "family_ids": ["family-008", "family-011", "family-012", "family-015"],
+      "opponents": ["split-lane"],
+      "episodes_per_seat": 3,
+      "expected_games": 96
+    },
+    "reserved_original": {
+      "seed": 1278702,
+      "deck": "RHogs AQ 2.9 Cycle",
+      "opponents": ["split-lane"],
+      "episodes_per_seat": 3,
+      "expected_games": 6
+    }
+  },
+  "gates": {
+    "complete_episodes_only": true,
+    "actor_input_excludes_outcome_labels": true,
+    "critic_inputs_absent": true,
+    "seeds_and_bytes_disjoint": true,
+    "whole_family_split_isolation": true,
+    "phase_balanced_metrics": true,
+    "cluster_bootstrap_replicates": 2000,
+    "minimum_clusters_per_phase": 8,
+    "minimum_phase_auc_lower_95": 0.5,
+    "minimum_nll_improvement": 0.02,
+    "maximum_ece": 0.2,
+    "minimum_margin_mae_improvement": 0.005,
+    "maximum_phase_margin_mae_regression": 0.01,
+    "counterfactual_ranking_required_before_search": true,
+    "policy_updates_forbidden_before_all_gates": true
+  }
+}
