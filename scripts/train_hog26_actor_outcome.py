@@ -312,9 +312,13 @@ def extract_actor_features(
     sequence_steps: int,
     feature_set: str,
 ) -> Tensor:
-    """Replay actor state with simulator reward feedback explicitly unavailable."""
+    """Extract current public summaries or replay the frozen recurrent policy."""
 
     model.eval()
+    if feature_set == "public-globals":
+        return torch.as_tensor(
+            np.asarray(corpus.arrays["global_features"], dtype=np.float32)
+        ).clone()
     features: list[Tensor] = []
     for episode in range(corpus.episode_count):
         state = model.initial_state(1, device=device)
@@ -343,12 +347,7 @@ def extract_actor_features(
                 inputs,
                 previous_rewards=torch.zeros_like(inputs.previous_rewards),
             )
-            output = model(inputs, state)
-            if output.repair_features is None:
-                raise ValueError("base policy does not expose actor-visible state")
-            if feature_set == "public-globals":
-                selected_features = inputs.global_features[0]
-            elif feature_set in {"structured-summary", "structured-residual"}:
+            if feature_set in {"structured-summary", "structured-residual"}:
                 selected_features = structured_actor_summary(model, inputs)[0]
             elif feature_set == "robust-residual":
                 robust = compact_tactical_summary(model, inputs)
@@ -356,13 +355,16 @@ def extract_actor_features(
                     (robust, inputs.global_features[0]), dim=-1
                 )
             elif feature_set == "policy-plus-public-globals":
+                output = model(inputs, state)
+                if output.repair_features is None:
+                    raise ValueError("base policy does not expose actor-visible state")
                 selected_features = torch.cat(
                     (output.repair_features[0], inputs.global_features[0]), dim=-1
                 )
+                state = (output.next_state[0].detach(), output.next_state[1].detach())
             else:
                 raise ValueError("unknown actor outcome feature set")
             features.append(selected_features.detach().cpu())
-            state = (output.next_state[0].detach(), output.next_state[1].detach())
     result = torch.cat(features, dim=0)
     if result.shape[0] != corpus.row_count:
         raise ValueError("actor feature extraction lost outcome rows")
