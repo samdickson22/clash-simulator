@@ -111,7 +111,9 @@
     "outcome_and_margin_epoch_selection_independent": true,
     "selection_uses_only_development_selection": true,
     "probability_shrinkage_uses_only_probability_calibration": true,
-    "final_holdout_forbidden_until_state_sha_frozen": true
+    "final_holdout_forbidden_until_state_sha_frozen": true,
+    "output_checkpoint": "checkpoints/hog26_procedural_outcome_primary_seed1278801/candidate.pt",
+    "output_report": "reports/hog26_procedural_outcome_primary_seed1278801.json"
   },
   "primary_candidate_data": {
     "legacy_training_corpora": [
