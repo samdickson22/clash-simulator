@@ -334,3 +334,8 @@ all three pass.
 development decks, not training alone. Accepted holdout checkpoints record an
 empty `holdout_selection_deck_overlap`, and the counterfactual loader requires
 that exact gate in addition to corpus seed/hash disjointness.
+
+Counterfactual roots will be the first deterministic public state satisfying
+both a predeclared early/middle/late progress interval and the minimum public
+legal-action count. Root search does not inspect branch outcomes, and a state
+outside the requested phase cannot silently enter the ranking aggregate.

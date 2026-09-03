@@ -11,9 +11,22 @@ from scripts.probe_simple_counterfactual_teacher import (
     first_terminal_outcomes,
     first_terminal_tower_margins,
     load_outcome_ensemble,
+    root_is_eligible,
     select_stratified_action_subset,
     truncated_n_step_returns,
 )
+
+
+def test_root_eligibility_requires_phase_and_public_action_support() -> None:
+    arguments = {
+        "action_samples": 8,
+        "minimum_progress": 1.0 / 3.0,
+        "maximum_progress": 2.0 / 3.0,
+    }
+    assert root_is_eligible(progress=0.5, legal_count=8, **arguments)
+    assert not root_is_eligible(progress=0.2, legal_count=8, **arguments)
+    assert not root_is_eligible(progress=0.8, legal_count=8, **arguments)
+    assert not root_is_eligible(progress=0.5, legal_count=7, **arguments)
 
 
 class _FakeCollector:

@@ -438,6 +438,22 @@ class LoadedOutcomeHead:
     feature_contract: str
 
 
+def root_is_eligible(
+    *,
+    progress: float,
+    legal_count: int,
+    action_samples: int,
+    minimum_progress: float,
+    maximum_progress: float,
+) -> bool:
+    """Return whether a public root meets the predeclared phase/action gate."""
+
+    return (
+        minimum_progress <= progress <= maximum_progress
+        and legal_count >= action_samples
+    )
+
+
 def load_outcome_ensemble(
     paths: list[Path],
     *,
@@ -657,11 +673,23 @@ def main() -> None:
             )
             learner = int(warmup_collector.learner_players[source_row].item())
             legal_count = int(current_packet.masks[source_row, learner].sum().item())
-            if legal_count >= args.action_samples:
+            root_progress = float(
+                current_observation.actor.global_features[
+                    source_row, learner, 0, 0
+                ].item()
+            )
+            if root_is_eligible(
+                progress=root_progress,
+                legal_count=legal_count,
+                action_samples=args.action_samples,
+                minimum_progress=args.minimum_root_progress,
+                maximum_progress=args.maximum_root_progress,
+            ):
                 break
             if searched >= args.root_search_steps:
                 raise RuntimeError(
-                    "root search did not find enough public legal candidates"
+                    "root search did not find a phase-valid public state with enough "
+                    "legal candidates"
                 )
             _extra, warmup_state, *_history = warmup_collector.collect(
                 1, warmup_state
