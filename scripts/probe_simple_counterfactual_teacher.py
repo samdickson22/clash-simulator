@@ -460,6 +460,8 @@ def load_outcome_ensemble(
             or gates.get("natural_phase_auc_passed") is not True
             or gates.get("phase_auc_confidence_passed") is not True
             or gates.get("holdout_passed") is not True
+            or gates.get("phase_auc_bootstrap_unit")
+            != "seed-style-deck-ordinal-cluster-v1"
         ):
             raise ValueError("outcome checkpoint predates current phase/confidence gates")
         feature_contract = str(report.get("actor_feature_contract"))

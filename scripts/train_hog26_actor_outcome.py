@@ -1849,6 +1849,7 @@ def main() -> None:
             "minimum_natural_phase_decisive_auc": args.minimum_natural_phase_auc,
             "minimum_phase_auc_lower_95": args.minimum_phase_auc_lower_bound,
             "phase_auc_bootstrap_replicates": args.phase_auc_bootstrap_replicates,
+            "phase_auc_bootstrap_unit": "seed-style-deck-ordinal-cluster-v1",
             "minimum_controlled_draw_auc": args.minimum_controlled_draw_auc,
             "minimum_controlled_draw_endpoint_probability_lift": (
                 args.minimum_controlled_draw_endpoint_probability_lift
