@@ -87,6 +87,14 @@ matchups would strengthen the shortcut rather than solve it.
 No search, policy update, PPO, or self-play improvement is authorized by this
 gate.
 
+The exact-terminal counterfactual evaluator now rejects every historical
+development-only outcome checkpoint and any checkpoint that predates the
+phase/bootstrap/untouched-holdout gates. It can consume public-global,
+mechanics-primary structured, bounded structured-residual, and compact tactical
+heads from the current joint actor inputs, selecting the correct learner seat
+without critic state. A two-branch real-runtime smoke passed, as did a mixed
+public/structured prediction smoke over joint actor inputs.
+
 ## Broad-collection interim result
 
 After adding the first four new training decks, a globals-only diagnostic on

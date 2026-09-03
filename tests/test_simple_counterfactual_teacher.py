@@ -5,10 +5,12 @@ import pytest
 import torch
 
 from clasher.rl.common import NUM_TILES
+from clasher.rl.outcome_model import ActorOutcomeHead
 from scripts.probe_simple_counterfactual_teacher import (
     collect_counterfactual_branches,
     first_terminal_outcomes,
     first_terminal_tower_margins,
+    load_outcome_ensemble,
     select_stratified_action_subset,
     truncated_n_step_returns,
 )
@@ -42,6 +44,43 @@ class _FakeCollector:
         }
         next_state = (state[0] + 1.0, state[1] + 1.0)
         return arrays, next_state, None, None, None
+
+
+def test_outcome_loader_requires_current_untouched_holdout_authority(tmp_path) -> None:
+    path = tmp_path / "outcome.pt"
+    head = ActorOutcomeHead(18, hidden_size=4)
+    report = {
+        "status": "accepted-development",
+        "actor_feature_contract": "public-globals",
+        "selection_gates": {
+            "natural_phase_auc_passed": True,
+            "phase_auc_confidence_passed": True,
+            "holdout_passed": True,
+        },
+    }
+    payload = {
+        "schema": "clasher.hog26.actor-outcome-training.v1",
+        "base_checkpoint_sha256": "base",
+        "state_size": 18,
+        "hidden_size": 4,
+        "separate_draw_trunk": False,
+        "structured_residual_scale": 0.0,
+        "outcome_head_state_dict": head.state_dict(),
+        "training_report": report,
+    }
+    torch.save(payload, path)
+    with pytest.raises(ValueError, match="untouched holdout"):
+        load_outcome_ensemble(
+            [path], base_checkpoint_sha256="base", device=torch.device("cpu")
+        )
+
+    report["status"] = "accepted-holdout"
+    torch.save(payload, path)
+    loaded = load_outcome_ensemble(
+        [path], base_checkpoint_sha256="base", device=torch.device("cpu")
+    )
+    assert len(loaded) == 1
+    assert loaded[0].feature_contract == "public-globals"
 
 
 def test_stratified_candidates_cover_every_playable_slot_and_required_actions() -> None:

@@ -9,7 +9,7 @@ import argparse
 import hashlib
 import json
 import time
-from dataclasses import fields, replace
+from dataclasses import dataclass, fields, replace
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -17,7 +17,7 @@ import numpy as np
 import torch
 
 from clasher.rl.common import BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
-from clasher.rl.model import ClasherPolicy, PolicyConfig
+from clasher.rl.model import ClasherPolicy, PolicyConfig, PolicyInputs
 from clasher.rl.outcome_model import ActorOutcomeHead
 from clasher.rl.simple_pytorch_backend import (
     SimplePytorchTrainingCollector,
@@ -33,6 +33,10 @@ from clasher.rl.strategy_bots import STRATEGY_NAMES
 from clasher.rl.structured_obs import StructuredObservationBuilder
 from clasher.torch_sim.simple_adapter import SimpleGymHistory
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
+from scripts.train_hog26_actor_outcome import (
+    compact_tactical_summary,
+    structured_actor_summary,
+)
 
 
 class ForcedLearnerRootPolicy:
@@ -428,13 +432,19 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+@dataclass(frozen=True)
+class LoadedOutcomeHead:
+    head: ActorOutcomeHead
+    feature_contract: str
+
+
 def load_outcome_ensemble(
     paths: list[Path],
     *,
     base_checkpoint_sha256: str,
     device: torch.device,
-) -> list[ActorOutcomeHead]:
-    heads: list[ActorOutcomeHead] = []
+) -> list[LoadedOutcomeHead]:
+    heads: list[LoadedOutcomeHead] = []
     for path in paths:
         payload = torch.load(path, map_location="cpu", weights_only=False)
         if payload.get("schema") != "clasher.hog26.actor-outcome-training.v1":
@@ -442,13 +452,24 @@ def load_outcome_ensemble(
         if payload.get("base_checkpoint_sha256") != base_checkpoint_sha256:
             raise ValueError("outcome checkpoint belongs to a different policy")
         report = payload.get("training_report")
-        if not isinstance(report, dict) or report.get("status") not in {
-            "accepted-development",
-            "accepted-holdout",
+        if not isinstance(report, dict) or report.get("status") != "accepted-holdout":
+            raise ValueError("outcome checkpoint did not pass untouched holdout gates")
+        gates = report.get("selection_gates")
+        if (
+            not isinstance(gates, dict)
+            or gates.get("natural_phase_auc_passed") is not True
+            or gates.get("phase_auc_confidence_passed") is not True
+            or gates.get("holdout_passed") is not True
+        ):
+            raise ValueError("outcome checkpoint predates current phase/confidence gates")
+        feature_contract = str(report.get("actor_feature_contract"))
+        if feature_contract not in {
+            "public-globals",
+            "structured-summary",
+            "structured-residual",
+            "robust-residual",
         }:
-            raise ValueError("outcome checkpoint did not pass development gates")
-        if report.get("actor_feature_contract") != "public-globals":
-            raise ValueError("counterfactual probe supports public-global heads only")
+            raise ValueError("counterfactual probe does not support outcome feature contract")
         head = ActorOutcomeHead(
             int(payload["state_size"]),
             int(payload["hidden_size"]),
@@ -459,22 +480,51 @@ def load_outcome_ensemble(
         ).to(device)
         head.load_state_dict(payload["outcome_head_state_dict"], strict=True)
         head.eval()
-        heads.append(head)
+        heads.append(LoadedOutcomeHead(head=head, feature_contract=feature_contract))
     return heads
 
 
 @torch.no_grad()
 def outcome_ensemble_predictions(
-    heads: list[ActorOutcomeHead], actor_globals: torch.Tensor
+    heads: list[LoadedOutcomeHead],
+    actor_inputs: PolicyInputs,
+    learner_players: torch.Tensor,
+    model: ClasherPolicy,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    flat_count = actor_inputs.global_features.shape[0]
+    if flat_count % 2 != 0 or learner_players.shape != (flat_count // 2,):
+        raise ValueError("joint actor inputs do not align with learner players")
+    branch_count = flat_count // 2
+    rows = torch.arange(branch_count, device=learner_players.device)
+
+    def learner_rows(features: torch.Tensor) -> torch.Tensor:
+        shaped = features.reshape(branch_count, 2, *features.shape[1:])
+        selected = shaped[rows, learner_players]
+        if selected.shape[1] != 1:
+            raise ValueError("counterfactual outcome input must have one current step")
+        return selected[:, 0]
+
     if not heads:
-        count = actor_globals.shape[0]
-        missing = np.full(count, np.nan, dtype=np.float32)
+        missing = np.full(branch_count, np.nan, dtype=np.float32)
         return missing, missing.copy(), missing.copy()
     probabilities = []
     margins = []
-    for head in heads:
-        prediction = head(actor_globals)
+    for loaded in heads:
+        if loaded.feature_contract == "public-globals":
+            features = learner_rows(actor_inputs.global_features)
+        elif loaded.feature_contract in {"structured-summary", "structured-residual"}:
+            features = learner_rows(structured_actor_summary(model, actor_inputs))
+        elif loaded.feature_contract == "robust-residual":
+            robust = compact_tactical_summary(model, actor_inputs).reshape(
+                flat_count, 1, -1
+            )
+            features = torch.cat(
+                (learner_rows(robust), learner_rows(actor_inputs.global_features)),
+                dim=-1,
+            )
+        else:
+            raise RuntimeError("unsupported loaded outcome feature contract")
+        prediction = loaded.head(features)
         probabilities.append(prediction.outcome_logits.softmax(dim=-1))
         margins.append(prediction.terminal_tower_margin)
     probability = torch.stack(probabilities).mean(dim=0)
@@ -796,7 +846,7 @@ def main() -> None:
         common_random_opponent=args.opponent_strategy == "random",
     )
     started = time.perf_counter()
-    arrays, _branch_state = collect_counterfactual_branches(
+    arrays, branch_state = collect_counterfactual_branches(
         collector,
         (state[0].clone(), state[1].clone()),
         horizon_steps=args.horizon_steps,
@@ -818,11 +868,27 @@ def main() -> None:
         np.asarray(arrays["next_global_features"]),
     )
     post_branch_observation = collector.collector.bridge.observe()
-    post_branch_globals = post_branch_observation.actor.global_features[
-        rows, collector.learner_players
-    ]
+    post_branch_packet = collector.collector.public_mask_provider(
+        SimpleTensorMaskRequest(
+            post_branch_observation,
+            root_step + realized_horizon_steps,
+            False,
+        )
+    )
+    post_branch_boundary = collector.collector._policy_boundary(
+        post_branch_observation,
+        post_branch_packet,
+        collector._joint_recurrent_inputs(branch_state),
+        root_step + realized_horizon_steps,
+    )
+    post_branch_inputs = base_policy.inputs(post_branch_boundary)  # type: ignore[attr-defined]
     bootstrap_utility, bootstrap_margin, bootstrap_disagreement = (
-        outcome_ensemble_predictions(outcome_heads, post_branch_globals)
+        outcome_ensemble_predictions(
+            outcome_heads,
+            post_branch_inputs,
+            collector.learner_players,
+            model,
+        )
     )
     if realized_horizon_steps < args.horizon_steps:
         padding = args.horizon_steps - realized_horizon_steps
