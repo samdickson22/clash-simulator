@@ -408,3 +408,19 @@ well (AUC 0.7986, lower 95% 0.6349), but late confidence failed (AUC 0.75,
 lower 95% 0.40), reinforcing the predeclared multi-seed requirement. The next
 screen is a small model-owned causal recurrent state over actor-visible
 mechanics summaries, with the exact progress gate retained for margin output.
+
+That temporal screen is also rejected. A 15,981-parameter projection plus
+16-state GRU was trained only on ordered actor-visible mechanics summaries,
+with exact reset state per complete game, phase-balanced loss, and a power-6
+terminal progress gate. Development selected epoch 19 at +0.01061 overall MAE
+improvement (+0.02035 early, +0.00175 middle, approximately zero late). On the
+opened holdout, the same frozen state reversed to -0.00078 overall
+(-0.00128 early, -0.00049 middle, approximately zero late).
+
+This rejects both static-context and small-recurrence explanations for the
+margin failure. All tested learned corrections fit the 12 training decks and
+generalize to the 15 development decks, then reverse on four further decks.
+The next bottleneck is deck-distribution coverage: expand training and
+development with procedurally generated, support-validated decks, retain the
+opened holdout only as development evidence, and reserve newly generated deck
+families plus `RHogs AQ 2.9 Cycle` for a new final holdout.
