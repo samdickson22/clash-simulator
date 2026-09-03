@@ -205,6 +205,7 @@ def main() -> None:
     parser.add_argument("--minimum-roots", type=int, default=6)
     parser.add_argument("--minimum-roots-per-phase", type=int, default=2)
     parser.add_argument("--minimum-roots-per-seat", type=int, default=3)
+    parser.add_argument("--minimum-roots-per-opponent", type=int, default=2)
     parser.add_argument("--minimum-pairwise-concordance", type=float, default=0.65)
     parser.add_argument("--maximum-mean-margin-regret", type=float, default=0.10)
     args = parser.parse_args()
@@ -217,6 +218,7 @@ def main() -> None:
         or args.minimum_roots < 1
         or args.minimum_roots_per_phase < 1
         or args.minimum_roots_per_seat < 1
+        or args.minimum_roots_per_opponent < 1
     ):
         raise ValueError("ranking gate sizes are invalid")
     roots = [
@@ -240,7 +242,8 @@ def main() -> None:
     ]
     seat_roots = [int(root["learner_seat"]) for root in roots]
     seats = sorted(set(seat_roots))
-    opponents = sorted({str(root["opponent_strategy"]) for root in roots})
+    opponent_roots = [str(root["opponent_strategy"]) for root in roots]
+    opponents = sorted(set(opponent_roots))
     phase_roots = [
         root_phase(float(root["root_progress"]))
         for root in roots
@@ -250,6 +253,9 @@ def main() -> None:
         phase: phase_roots.count(phase) for phase in ("early", "middle", "late")
     }
     roots_per_seat = {str(seat): seat_roots.count(seat) for seat in (0, 1)}
+    roots_per_opponent = {
+        opponent: opponent_roots.count(opponent) for opponent in opponents
+    }
     aggregate = {
         "root_count": len(roots),
         "worse_terminal_outcomes": sum(bool(row["worse_terminal_outcome"]) for row in selected),
@@ -264,11 +270,16 @@ def main() -> None:
         "phase_count": sum(count > 0 for count in roots_per_phase.values()),
         "roots_per_phase": roots_per_phase,
         "roots_per_seat": roots_per_seat,
+        "roots_per_opponent": roots_per_opponent,
     }
     passed = bool(
         len(roots) >= args.minimum_roots
         and seats == [0, 1]
         and len(opponents) >= 3
+        and all(
+            count >= args.minimum_roots_per_opponent
+            for count in roots_per_opponent.values()
+        )
         and all(
             count >= args.minimum_roots_per_phase
             for count in roots_per_phase.values()
@@ -292,6 +303,7 @@ def main() -> None:
             "minimum_roots": args.minimum_roots,
             "minimum_roots_per_phase": args.minimum_roots_per_phase,
             "minimum_roots_per_seat": args.minimum_roots_per_seat,
+            "minimum_roots_per_opponent": args.minimum_roots_per_opponent,
             "both_seats_required": True,
             "minimum_opponents": 3,
             "all_three_phases_required": True,

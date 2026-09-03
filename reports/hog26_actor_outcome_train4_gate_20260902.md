@@ -341,4 +341,5 @@ legal-action count. Root search does not inspect branch outcomes, and a state
 outside the requested phase cannot silently enter the ranking aggregate.
 The aggregate additionally requires at least two independent roots in each
 phase and at least three roots from each learner seat; merely touching every
-phase and seat once is insufficient.
+phase and seat once is insufficient. At least three opponent strategies and
+two roots per included strategy are required as well.
