@@ -459,3 +459,12 @@ development families and already-seen opponent modes. `split-lane` is excluded
 from both training and development and reserved as the final opponent-style
 shift. The collector now supports a single opponent mode so the final gate does
 not need to contaminate that shift with a previously seen league member.
+
+Development is also family-disjoint internally. Families `009` and `010` are
+the selection set (`seed=1278601`), while families `013` and `014` are reserved
+for post-selection probability calibration (`seed=1278602`); each is collected
+against `balanced+reactive-defense` for two episodes per seat. Final generated
+families `008`, `011`, `012`, and `015` stay sealed. Their final test uses only
+the unseen `split-lane` opponent mode for three episodes per seat, plus the
+separately reserved `RHogs AQ 2.9 Cycle` under the same opponent and seed
+authority. No best-family or best-style selection is permitted.
