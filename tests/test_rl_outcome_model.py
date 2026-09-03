@@ -118,6 +118,42 @@ def test_margin_residual_starts_at_public_baseline_and_is_trainable() -> None:
     assert bool(torch.isfinite(final_margin.weight.grad).all())
 
 
+def test_full_state_margin_uses_context_but_progress_gate_is_exact_terminal() -> None:
+    head = ActorOutcomeHead(
+        32,
+        hidden_size=4,
+        margin_residual_scale=0.5,
+        margin_feature_set="full-state",
+        margin_progress_power=2.0,
+    )
+    assert head.margin_trunk is not None
+    first = head.margin_trunk[0]
+    final = head.margin_trunk[-1]
+    assert isinstance(first, torch.nn.Linear)
+    assert isinstance(final, torch.nn.Linear)
+    with torch.no_grad():
+        first.weight.zero_()
+        first.bias.zero_()
+        first.weight[0, 0] = 1.0
+        final.weight.zero_()
+        final.bias.zero_()
+        final.weight[0, 0] = 1.0
+    state = torch.zeros(3, 32)
+    state[1:, 0] = 1.0
+    state[2, -18] = 1.0
+    prediction = head(state).terminal_tower_margin
+    assert prediction[0] == 0.0
+    assert prediction[1] > 0.0
+    assert prediction[2] == 0.0
+
+
+def test_margin_feature_and_progress_contracts_fail_closed() -> None:
+    with pytest.raises(ValueError, match="feature set"):
+        ActorOutcomeHead(18, margin_feature_set="unknown")
+    with pytest.raises(ValueError, match="progress power"):
+        ActorOutcomeHead(18, margin_progress_power=-1.0)
+
+
 def test_factorized_prior_calibration_recovers_empirical_constant_prior() -> None:
     head = ActorOutcomeHead(18, hidden_size=4)
     with torch.no_grad():

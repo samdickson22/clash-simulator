@@ -1014,6 +1014,12 @@ def main() -> None:
     parser.add_argument("--hidden-size", type=int, default=64)
     parser.add_argument("--structured-residual-scale", type=float, default=0.25)
     parser.add_argument("--margin-residual-scale", type=float, default=0.0)
+    parser.add_argument(
+        "--margin-feature-set",
+        choices=("public-globals", "full-state"),
+        default="public-globals",
+    )
+    parser.add_argument("--margin-progress-power", type=float, default=0.0)
     parser.add_argument("--initialize-public-checkpoint", type=Path, default=None)
     parser.add_argument("--expected-outcome-state-sha256", default="")
     parser.add_argument(
@@ -1067,6 +1073,8 @@ def main() -> None:
         raise ValueError("structured residual scale must be nonnegative")
     if args.margin_residual_scale < 0.0:
         raise ValueError("margin residual scale must be nonnegative")
+    if not math.isfinite(args.margin_progress_power) or args.margin_progress_power < 0.0:
+        raise ValueError("margin progress power must be finite and nonnegative")
     if args.minimum_structured_residual_auc_gain < 0.0:
         raise ValueError("structured residual AUC gain must be nonnegative")
     if args.minimum_margin_mae_improvement < 0.0:
@@ -1263,6 +1271,8 @@ def main() -> None:
         separate_draw_trunk=separate_draw_trunk,
         structured_residual_scale=structured_residual_scale,
         margin_residual_scale=args.margin_residual_scale,
+        margin_feature_set=args.margin_feature_set,
+        margin_progress_power=args.margin_progress_power,
     ).to(device)
     public_initialization_sha256: str | None = None
     if args.initialize_public_checkpoint is not None:
@@ -1940,6 +1950,8 @@ def main() -> None:
         "separate_draw_trunk": separate_draw_trunk,
         "structured_residual_scale": structured_residual_scale,
         "margin_residual_scale": args.margin_residual_scale,
+        "margin_feature_set": args.margin_feature_set,
+        "margin_progress_power": args.margin_progress_power,
         "outcome_head_state_sha256": selected_state_sha256,
         "expected_outcome_head_state_sha256": (
             args.expected_outcome_state_sha256 or None
@@ -2115,6 +2127,8 @@ def main() -> None:
         "separate_draw_trunk": separate_draw_trunk,
         "structured_residual_scale": structured_residual_scale,
         "margin_residual_scale": args.margin_residual_scale,
+        "margin_feature_set": args.margin_feature_set,
+        "margin_progress_power": args.margin_progress_power,
         "public_initialization_sha256": public_initialization_sha256,
         "outcome_head_state_dict": best_state,
         "training_report": report,

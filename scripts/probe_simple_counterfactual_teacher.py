@@ -508,6 +508,8 @@ def load_outcome_ensemble(
                 payload.get("structured_residual_scale", 0.0)
             ),
             margin_residual_scale=float(payload.get("margin_residual_scale", 0.0)),
+            margin_feature_set=str(payload.get("margin_feature_set", "public-globals")),
+            margin_progress_power=float(payload.get("margin_progress_power", 0.0)),
         ).to(device)
         head.load_state_dict(state, strict=True)
         head.eval()

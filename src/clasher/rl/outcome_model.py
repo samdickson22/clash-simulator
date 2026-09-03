@@ -54,6 +54,8 @@ class ActorOutcomeHead(nn.Module):
         separate_draw_trunk: bool = False,
         structured_residual_scale: float = 0.0,
         margin_residual_scale: float = 0.0,
+        margin_feature_set: str = "public-globals",
+        margin_progress_power: float = 0.0,
     ) -> None:
         super().__init__()
         if state_size < 18 or hidden_size < 1:
@@ -64,11 +66,17 @@ class ActorOutcomeHead(nn.Module):
             raise ValueError("structured residual needs context before public globals")
         if margin_residual_scale < 0.0:
             raise ValueError("margin residual scale must be nonnegative")
+        if margin_feature_set not in {"public-globals", "full-state"}:
+            raise ValueError("unknown margin feature set")
+        if not math.isfinite(margin_progress_power) or margin_progress_power < 0.0:
+            raise ValueError("margin progress power must be finite and nonnegative")
         self.state_size = int(state_size)
         self.hidden_size = int(hidden_size)
         self.separate_draw_trunk = bool(separate_draw_trunk)
         self.structured_residual_scale = float(structured_residual_scale)
         self.margin_residual_scale = float(margin_residual_scale)
+        self.margin_feature_set = margin_feature_set
+        self.margin_progress_power = float(margin_progress_power)
         self.register_buffer("draw_logit_calibration", torch.zeros(()))
         self.register_buffer("decisive_logit_calibration", torch.zeros(()))
         self.register_buffer("outcome_probability_prior", torch.full((3,), 1.0 / 3.0))
@@ -112,7 +120,10 @@ class ActorOutcomeHead(nn.Module):
             nn.init.zeros_(self.structured_decisive.bias)
         self.margin_trunk = (
             nn.Sequential(
-                nn.Linear(18, hidden_size),
+                nn.Linear(
+                    18 if self.margin_feature_set == "public-globals" else state_size,
+                    hidden_size,
+                ),
                 nn.GELU(),
                 nn.Linear(hidden_size, 1),
             )
@@ -201,10 +212,21 @@ class ActorOutcomeHead(nn.Module):
         ) / 3.0
         terminal_margin = current_margin
         if self.margin_trunk is not None:
+            margin_features = (
+                public_globals if self.margin_feature_set == "public-globals" else state
+            )
+            progress_gate = (
+                (1.0 - public_globals[..., 0]).clamp(0.0, 1.0).pow(
+                    self.margin_progress_power
+                )
+                if self.margin_progress_power > 0.0
+                else 1.0
+            )
             terminal_margin = (
                 current_margin
                 + self.margin_residual_scale
-                * self.margin_trunk(public_globals).squeeze(-1).tanh()
+                * progress_gate
+                * self.margin_trunk(margin_features).squeeze(-1).tanh()
             ).clamp(-1.0, 1.0)
         outcome_logits = torch.stack(
             (
