@@ -57,22 +57,33 @@ def crossed_opponent_rows(
     return tuple(row[0] for row in rows), tuple(row[1] for row in rows)
 
 
-def opponent_decks_for_split(path: Path, split: str) -> tuple[str, ...]:
+def opponent_decks_for_split(
+    path: Path, split: str, family_ids: tuple[str, ...] = ()
+) -> tuple[str, ...]:
     if split not in {"train", "development", "holdout"}:
         raise ValueError("unknown procedural opponent-deck split")
     payload = json.loads(path.read_text())
     rows = payload.get("decks")
     if not isinstance(rows, list):
         raise TypeError("supported-deck artifact has no deck rows")
+    requested_families = set(family_ids)
     names = tuple(
         row["name"]
         for row in rows
         if isinstance(row, dict)
         and row.get("split") == split
+        and (not requested_families or row.get("family_id") in requested_families)
         and isinstance(row.get("name"), str)
     )
     if not names:
         raise ValueError("supported-deck artifact has no rows for requested split")
+    actual_families = {
+        str(row["family_id"])
+        for row in rows
+        if isinstance(row, dict) and row.get("name") in names
+    }
+    if requested_families and actual_families != requested_families:
+        raise ValueError("supported-deck artifact lacks a requested family")
     return names
 
 
@@ -88,10 +99,15 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
     supported_decks_path = Path(args.supported_decks_path)
     artifact = load_simple_supported_decks(supported_decks_path)
     opponent_deck_split = getattr(args, "opponent_deck_split", "")
+    opponent_family_ids = tuple(getattr(args, "opponent_family_id", ()))
     if explicit_decks and opponent_deck_split:
         raise ValueError("choose explicit opponent decks or a deck split, not both")
+    if opponent_family_ids and not opponent_deck_split:
+        raise ValueError("opponent families require a deck split")
     requested_decks = (
-        opponent_decks_for_split(supported_decks_path, opponent_deck_split)
+        opponent_decks_for_split(
+            supported_decks_path, opponent_deck_split, opponent_family_ids
+        )
         if opponent_deck_split
         else explicit_decks
     )
@@ -203,6 +219,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         "opponent_decks": list(opponent_decks),
         "row_opponent_decks": list(actual_decks),
         "opponent_deck_split": opponent_deck_split or None,
+        "opponent_family_ids": list(opponent_family_ids),
         "strategy_deck_cross_product": bool(requested_decks),
         "episodes_per_seat": args.episodes_per_seat,
         "chunk_steps": args.chunk_steps,
@@ -285,6 +302,12 @@ def main() -> None:
         choices=("train", "development", "holdout"),
         default="",
         help="select every deck in a procedural manifest split",
+    )
+    parser.add_argument(
+        "--opponent-family-id",
+        action="append",
+        default=[],
+        help="optionally restrict a procedural split to whole named families",
     )
     result = collect(parser.parse_args())
     print(json.dumps(result, indent=2, sort_keys=True))

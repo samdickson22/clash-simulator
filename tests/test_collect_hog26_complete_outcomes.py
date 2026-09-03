@@ -66,3 +66,8 @@ def test_procedural_split_selection_keeps_holdout_sealed() -> None:
     assert not (set(train) & set(holdout))
     assert not (set(development) & set(holdout))
     assert "Hog 2.6 Cycle" not in set(train) | set(development) | set(holdout)
+    selected = opponent_decks_for_split(
+        PROCEDURAL, "development", ("family-009", "family-010")
+    )
+    assert len(selected) == 8
+    assert all(name.startswith("Procedural development") for name in selected)
