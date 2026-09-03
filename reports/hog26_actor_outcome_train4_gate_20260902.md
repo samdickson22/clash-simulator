@@ -65,6 +65,11 @@ function under the corrected across-phase gate.
 5. Aggregate AUC is no longer sufficient: early, middle, and late held-out
    decisive AUC must each clear 0.55. This rejects the globals-only shortcut
    that looked strong mostly because tower state makes late outcomes obvious.
+6. Model selection and acceptance now use one representative midpoint row per
+   episode per reached phase. Full row-weighted metrics remain diagnostic only;
+   long games can no longer contribute hundreds of correlated copies of one
+   terminal label. The training prior is likewise computed from episodes, not
+   decision-row counts.
 
 ## Interpretation
 

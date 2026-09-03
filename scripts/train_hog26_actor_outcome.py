@@ -500,6 +500,39 @@ def _bucket_metrics(
     return result
 
 
+def phase_balanced_row_indices(
+    loaded: list[tuple[dict[str, Any], DirectSimpleBehaviorCorpus]],
+) -> Tensor:
+    """Select at most one representative row per episode and game phase."""
+
+    selected: list[int] = []
+    row_offset = 0
+    bins = (
+        (0.0, 1.0 / 3.0, 1.0 / 6.0),
+        (1.0 / 3.0, 2.0 / 3.0, 0.5),
+        (2.0 / 3.0, math.inf, 5.0 / 6.0),
+    )
+    for _metadata, corpus in loaded:
+        progress = np.asarray(corpus.arrays["global_features"][:, 0])
+        for begin, end in zip(
+            corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True
+        ):
+            episode_progress = progress[begin:end]
+            for lower, upper, center in bins:
+                candidates = np.flatnonzero(
+                    (episode_progress >= lower) & (episode_progress < upper)
+                )
+                if candidates.size:
+                    nearest = candidates[
+                        np.argmin(np.abs(episode_progress[candidates] - center))
+                    ]
+                    selected.append(row_offset + int(begin) + int(nearest))
+        row_offset += corpus.row_count
+    if not selected:
+        raise ValueError("validation corpora contain no phase-balanced rows")
+    return torch.as_tensor(selected, dtype=torch.long)
+
+
 def _evaluation_breakdowns(
     head: ActorOutcomeHead,
     features: Tensor,
@@ -580,6 +613,12 @@ def _evaluation_breakdowns(
     endpoint_features = features.index_select(0, endpoint_rows)
     endpoint_outcomes = outcomes.index_select(0, endpoint_rows)
     endpoint_margins = margins.index_select(0, endpoint_rows)
+    phase_rows = phase_balanced_row_indices(loaded)
+    phase_features = features.index_select(0, phase_rows)
+    phase_outcomes = outcomes.index_select(0, phase_rows)
+    phase_margins = margins.index_select(0, phase_rows)
+    phase_groups = phases[phase_rows.numpy()]
+    phase_sources = sources[phase_rows.numpy()]
     return {
         "overall": metrics(head, features, outcomes, margins, device=device),
         "by_phase": _bucket_metrics(
@@ -603,6 +642,29 @@ def _evaluation_breakdowns(
             outcomes,
             margins,
             np.char.add(np.char.add(opponents, "|"), opponent_decks),
+            device=device,
+        ),
+        "phase_balanced": metrics(
+            head,
+            phase_features,
+            phase_outcomes,
+            phase_margins,
+            device=device,
+        ),
+        "phase_balanced_by_phase": _bucket_metrics(
+            head,
+            phase_features,
+            phase_outcomes,
+            phase_margins,
+            phase_groups,
+            device=device,
+        ),
+        "phase_balanced_by_source": _bucket_metrics(
+            head,
+            phase_features,
+            phase_outcomes,
+            phase_margins,
+            phase_sources,
             device=device,
         ),
         "episode_endpoints": metrics(
@@ -935,19 +997,36 @@ def main() -> None:
         if holdout_loaded
         else None
     )
-    counts = torch.bincount(train_outcomes.to(torch.long) + 1, minlength=3).float()
+    train_episode_outcomes = torch.cat(
+        [
+            torch.as_tensor(corpus.episode_arrays["episode_final_outcomes"])
+            for _metadata, corpus in train_loaded
+        ]
+    )
+    counts = torch.bincount(
+        train_episode_outcomes.to(torch.long) + 1, minlength=3
+    ).float()
     prior = counts / counts.sum()
+    validation_phase_rows = phase_balanced_row_indices(validation_loaded)
+    validation_phase_outcomes = validation_outcomes.index_select(
+        0, validation_phase_rows
+    )
     prior_nll = float(
-        -prior[(validation_outcomes.to(torch.long) + 1)].clamp_min(1e-12).log().mean()
+        -prior[(validation_phase_outcomes.to(torch.long) + 1)]
+        .clamp_min(1e-12)
+        .log()
+        .mean()
     )
     rng = np.random.default_rng(args.seed)
-    initial_validation = metrics(
+    initial_breakdowns = _evaluation_breakdowns(
         head,
         validation_features,
         validation_outcomes,
         validation_margins,
+        validation_loaded,
         device=device,
     )
+    initial_validation = initial_breakdowns["phase_balanced"]
     structured_baseline_auc = (
         float(initial_validation["decisive_win_loss_auc"])
         if args.feature_set in {"structured-residual", "robust-residual"}
@@ -959,6 +1038,7 @@ def main() -> None:
             "epoch": 0,
             "training_loss": None,
             "validation": initial_validation,
+            "all_row_validation": initial_breakdowns["overall"],
             "development_gate_passed": False,
         }
     ]
@@ -993,13 +1073,6 @@ def main() -> None:
             )
             optimizer.step()
             losses.append(float(loss.total.detach()))
-        validation = metrics(
-            head,
-            validation_features,
-            validation_outcomes,
-            validation_margins,
-            device=device,
-        )
         epoch_breakdowns = _evaluation_breakdowns(
             head,
             validation_features,
@@ -1008,8 +1081,9 @@ def main() -> None:
             validation_loaded,
             device=device,
         )
-        epoch_sources = epoch_breakdowns["by_source"]
-        epoch_phases = epoch_breakdowns["by_phase"]
+        validation = epoch_breakdowns["phase_balanced"]
+        epoch_sources = epoch_breakdowns["phase_balanced_by_source"]
+        epoch_phases = epoch_breakdowns["phase_balanced_by_phase"]
         epoch_endpoints = epoch_breakdowns["episode_endpoints_by_source"]
         epoch_natural = epoch_sources.get("natural-strategy-games")
         epoch_natural_endpoint = epoch_endpoints.get("natural-strategy-games")
@@ -1058,6 +1132,7 @@ def main() -> None:
             "epoch": epoch,
             "training_loss": float(np.mean(losses)),
             "validation": validation,
+            "all_row_validation": epoch_breakdowns["overall"],
             "development_gate_passed": epoch_development_passed,
         }
         history.append(row)
@@ -1166,6 +1241,40 @@ def main() -> None:
         phases,
         device=device,
     )
+    phase_balanced_features = validation_features.index_select(
+        0, validation_phase_rows
+    )
+    phase_balanced_outcomes = validation_outcomes.index_select(
+        0, validation_phase_rows
+    )
+    phase_balanced_margins = validation_margins.index_select(
+        0, validation_phase_rows
+    )
+    phase_balanced_sources = sources[validation_phase_rows.numpy()]
+    phase_balanced_groups = phases[validation_phase_rows.numpy()]
+    phase_balanced_metrics = metrics(
+        head,
+        phase_balanced_features,
+        phase_balanced_outcomes,
+        phase_balanced_margins,
+        device=device,
+    )
+    phase_balanced_source_metrics = _bucket_metrics(
+        head,
+        phase_balanced_features,
+        phase_balanced_outcomes,
+        phase_balanced_margins,
+        phase_balanced_sources,
+        device=device,
+    )
+    phase_balanced_phase_metrics = _bucket_metrics(
+        head,
+        phase_balanced_features,
+        phase_balanced_outcomes,
+        phase_balanced_margins,
+        phase_balanced_groups,
+        device=device,
+    )
     endpoint_sources = sources[endpoint_rows.numpy()]
     endpoint_metrics = metrics(
         head,
@@ -1182,7 +1291,7 @@ def main() -> None:
         endpoint_sources,
         device=device,
     )
-    natural_metrics = source_metrics.get("natural-strategy-games")
+    natural_metrics = phase_balanced_source_metrics.get("natural-strategy-games")
     natural_endpoint_metrics = endpoint_source_metrics.get("natural-strategy-games")
     controlled_draw_endpoint_metrics = endpoint_source_metrics.get(
         "controlled-symmetric-draws"
@@ -1194,7 +1303,7 @@ def main() -> None:
         >= args.minimum_natural_auc
     )
     natural_phase_auc_passed = all_phase_decisive_auc_passed(
-        phase_metrics, args.minimum_natural_phase_auc
+        phase_balanced_phase_metrics, args.minimum_natural_phase_auc
     )
     controlled_draw_passed = bool(
         best_metrics["auc_one_vs_rest"]["draw"] is not None
@@ -1244,15 +1353,18 @@ def main() -> None:
             holdout_loaded,
             device=device,
         )
+        holdout_phase_outcomes = holdout_outcomes.index_select(
+            0, phase_balanced_row_indices(holdout_loaded)
+        )
         holdout_prior_nll = float(
-            -prior[(holdout_outcomes.to(torch.long) + 1)]
+            -prior[(holdout_phase_outcomes.to(torch.long) + 1)]
             .clamp_min(1e-12)
             .log()
             .mean()
         )
-        holdout_overall = holdout_evaluation["overall"]
-        holdout_phases = holdout_evaluation["by_phase"]
-        holdout_sources = holdout_evaluation["by_source"]
+        holdout_overall = holdout_evaluation["phase_balanced"]
+        holdout_phases = holdout_evaluation["phase_balanced_by_phase"]
+        holdout_sources = holdout_evaluation["phase_balanced_by_source"]
         holdout_endpoints = holdout_evaluation["episode_endpoints_by_source"]
         holdout_natural = holdout_sources.get("natural-strategy-games")
         holdout_draw_endpoint = holdout_endpoints.get("controlled-symmetric-draws")
@@ -1343,6 +1455,16 @@ def main() -> None:
         "validation_prior_nll": prior_nll,
         "best_epoch": best_epoch,
         "best_validation": best_metrics,
+        "validation_all_rows": metrics(
+            head,
+            validation_features,
+            validation_outcomes,
+            validation_margins,
+            device=device,
+        ),
+        "validation_phase_balanced": phase_balanced_metrics,
+        "validation_phase_balanced_by_phase": phase_balanced_phase_metrics,
+        "validation_phase_balanced_by_source": phase_balanced_source_metrics,
         "validation_by_phase": phase_metrics,
         "validation_by_opponent": _bucket_metrics(
             head,

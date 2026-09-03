@@ -14,6 +14,7 @@ from scripts.train_hog26_actor_outcome import (
     episode_class_balanced_row_weights,
     metrics,
     outcome_epoch_selection_key,
+    phase_balanced_row_indices,
 )
 
 
@@ -124,3 +125,20 @@ def test_all_phase_auc_rejects_missing_or_below_chance_phase() -> None:
     assert not all_phase_decisive_auc_passed(passing, 0.55)
     passing.pop("late")
     assert not all_phase_decisive_auc_passed(passing, 0.55)
+
+
+def test_phase_balanced_rows_select_one_nearest_midpoint_per_episode_phase() -> None:
+    from clasher.rl.direct_simple_behavior import DirectSimpleBehaviorCorpus
+
+    progress = np.asarray([0.01, 0.16, 0.31, 0.40, 0.51, 0.80, 0.90], dtype=np.float32)
+    globals_ = np.zeros((progress.size, 18), dtype=np.float32)
+    globals_[:, 0] = progress
+    corpus = DirectSimpleBehaviorCorpus(
+        arrays={"global_features": globals_},
+        episode_offsets=np.asarray([0, 5, 7], dtype=np.int64),
+        episode_stream_rows=np.asarray([0, 1], dtype=np.int64),
+        episode_ordinals=np.asarray([0, 0], dtype=np.int64),
+        initial_hidden=np.zeros((2, 1), dtype=np.float32),
+        initial_cell=np.zeros((2, 1), dtype=np.float32),
+    )
+    assert phase_balanced_row_indices([({}, corpus)]).tolist() == [1, 4, 5]
