@@ -316,6 +316,10 @@ same selected epochs, calibration scalar, development metrics, phase metrics,
 and bootstrap intervals. Checkpoint serialization bytes differ because the
 embedded report contains different output paths and elapsed time; tensor
 identity, not container bytes, is the model authority.
+The primary holdout invocation must pass this digest through
+`--expected-outcome-state-sha256`; the trainer compares it immediately after
+development epoch selection and aborts before computing any holdout metric on
+a mismatch.
 
 This is an accepted-development result, not a promoted value function. The
 four remaining unseen decks are now being collected exactly once as the

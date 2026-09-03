@@ -1015,6 +1015,7 @@ def main() -> None:
     parser.add_argument("--structured-residual-scale", type=float, default=0.25)
     parser.add_argument("--margin-residual-scale", type=float, default=0.0)
     parser.add_argument("--initialize-public-checkpoint", type=Path, default=None)
+    parser.add_argument("--expected-outcome-state-sha256", default="")
     parser.add_argument(
         "--minimum-structured-residual-auc-gain", type=float, default=0.0
     )
@@ -1076,6 +1077,14 @@ def main() -> None:
         raise ValueError("phase AUC bootstrap needs at least 100 replicates")
     if args.minimum_phase_bootstrap_clusters < 2:
         raise ValueError("phase AUC bootstrap needs at least two clusters")
+    if args.expected_outcome_state_sha256 and (
+        len(args.expected_outcome_state_sha256) != 64
+        or any(
+            character not in "0123456789abcdef"
+            for character in args.expected_outcome_state_sha256
+        )
+    ):
+        raise ValueError("expected outcome state SHA-256 must be lowercase hex")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     device = torch.device(args.device)
@@ -1799,6 +1808,12 @@ def main() -> None:
             >= structured_baseline_auc + args.minimum_structured_residual_auc_gain
         )
     )
+    selected_state_sha256 = outcome_state_sha256(best_state)
+    if (
+        args.expected_outcome_state_sha256
+        and selected_state_sha256 != args.expected_outcome_state_sha256
+    ):
+        raise RuntimeError("selected outcome tensors differ from frozen authority")
     holdout_evaluation: dict[str, Any] | None = None
     holdout_prior_nll: float | None = None
     holdout_passed: bool | None = None
@@ -1925,7 +1940,10 @@ def main() -> None:
         "separate_draw_trunk": separate_draw_trunk,
         "structured_residual_scale": structured_residual_scale,
         "margin_residual_scale": args.margin_residual_scale,
-        "outcome_head_state_sha256": outcome_state_sha256(best_state),
+        "outcome_head_state_sha256": selected_state_sha256,
+        "expected_outcome_head_state_sha256": (
+            args.expected_outcome_state_sha256 or None
+        ),
         "public_initialization_checkpoint": (
             str(args.initialize_public_checkpoint.resolve())
             if args.initialize_public_checkpoint is not None
