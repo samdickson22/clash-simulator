@@ -70,3 +70,10 @@ def test_procedural_outcome_protocol_is_split_safe_and_pinned() -> None:
     assert protocol["final_holdout"]["reserved_original"]["opponents"] == [
         "split-lane"
     ]
+    candidate = protocol["primary_candidate"]
+    assert candidate["feature_set"] == "structured-summary"
+    assert candidate["margin_progress_power"] == 6.0
+    assert candidate["selection_uses_only_development_selection"] is True
+    assert candidate["probability_shrinkage_uses_only_probability_calibration"] is True
+    assert candidate["final_holdout_forbidden_until_state_sha_frozen"] is True
+    assert sum(candidate["target_class_mass_loss_draw_win"]) == 1.0

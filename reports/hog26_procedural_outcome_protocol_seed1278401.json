@@ -80,6 +80,27 @@
       "expected_games": 6
     }
   },
+  "primary_candidate": {
+    "seed": 1278801,
+    "feature_set": "structured-summary",
+    "hidden_size": 16,
+    "structured_residual_scale": 0.0,
+    "margin_residual_scale": 0.5,
+    "margin_feature_set": "public-globals",
+    "margin_progress_power": 6.0,
+    "epochs": 30,
+    "batch_size": 512,
+    "sequence_steps": 128,
+    "learning_rate": 0.0001,
+    "margin_coefficient": 1.0,
+    "phase_balanced_outcome_training": true,
+    "phase_balanced_margin_training": true,
+    "target_class_mass_loss_draw_win": [0.45, 0.10, 0.45],
+    "outcome_and_margin_epoch_selection_independent": true,
+    "selection_uses_only_development_selection": true,
+    "probability_shrinkage_uses_only_probability_calibration": true,
+    "final_holdout_forbidden_until_state_sha_frozen": true
+  },
   "gates": {
     "complete_episodes_only": true,
     "actor_input_excludes_outcome_labels": true,
