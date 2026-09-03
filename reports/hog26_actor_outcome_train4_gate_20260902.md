@@ -250,3 +250,10 @@ same 66 games: overall/early/middle AUC 0.7326/0.6484/0.8183 versus the control'
 shard over four remaining control/cycle decks is collecting to add independent
 late games; the frozen structured architecture will not change based on that
 shard.
+
+Epoch selection is now maximin across early/middle/late point AUC before using
+aggregate AUC and NLL as tie-breakers, and still considers only epochs that pass
+the point/calibration/draw gates. This aligns model selection with the eventual
+all-phase acceptance rule instead of allowing aggregate AUC to sacrifice a weak
+phase. Replaying the 66-game structured run selected the same epoch 29, so this
+correctness tightening does not change the reported candidate or metrics.

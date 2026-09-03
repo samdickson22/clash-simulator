@@ -547,12 +547,27 @@ def outcome_epoch_selection_key(
     validation: dict[str, Any],
     *,
     acceptance_passed: bool,
-) -> tuple[int, float, float]:
-    """Prefer decisive ranking among epochs that pass the complete dev gate."""
+    by_phase: dict[str, dict[str, Any]] | None = None,
+) -> tuple[int, float, float, float]:
+    """Prefer the strongest worst phase before aggregate ranking/calibration."""
 
     decisive_auc = validation["decisive_win_loss_auc"]
+    phase_aucs = (
+        [
+            by_phase.get(phase, {}).get("decisive_win_loss_auc")
+            for phase in ("early", "middle", "late")
+        ]
+        if by_phase is not None
+        else []
+    )
+    minimum_phase_auc = (
+        min(float(value) for value in phase_aucs if value is not None)
+        if len(phase_aucs) == 3 and all(value is not None for value in phase_aucs)
+        else -math.inf
+    )
     return (
         int(acceptance_passed),
+        minimum_phase_auc,
         float(decisive_auc) if decisive_auc is not None else -math.inf,
         -float(validation["nll"]),
     )
@@ -1297,7 +1312,11 @@ def main() -> None:
             "development_gate_passed": False,
         }
     ]
-    best_key = outcome_epoch_selection_key(initial_validation, acceptance_passed=False)
+    best_key = outcome_epoch_selection_key(
+        initial_validation,
+        acceptance_passed=False,
+        by_phase=initial_breakdowns["phase_balanced_by_phase"],
+    )
     best_epoch: int | None = 0
     best_state: dict[str, Tensor] | None = {
         name: value.detach().cpu().clone() for name, value in head.state_dict().items()
@@ -1410,6 +1429,7 @@ def main() -> None:
         selection_key = outcome_epoch_selection_key(
             validation,
             acceptance_passed=epoch_outcome_passed,
+            by_phase=epoch_phases,
         )
         if selection_key > best_key:
             best_key = selection_key
@@ -1761,9 +1781,7 @@ def main() -> None:
         "minimum_structured_residual_auc_gain": (
             args.minimum_structured_residual_auc_gain
         ),
-        "epoch_selection": (
-            "maximum-decisive-auc-among-complete-development-gate-passes-v1"
-        ),
+        "epoch_selection": "maximin-phase-then-decisive-auc-among-point-gate-passes-v1",
         "epochs": args.epochs,
         "batch_size": args.batch_size,
         "learning_rate": args.learning_rate,

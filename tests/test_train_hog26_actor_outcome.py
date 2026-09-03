@@ -133,11 +133,18 @@ def test_epoch_selection_prefers_ranking_after_calibration_gate() -> None:
         }
 
     def key(
-        values: dict[str, object], *, acceptance_passed: bool
-    ) -> tuple[int, float, float]:
+        values: dict[str, object],
+        *,
+        acceptance_passed: bool,
+        phases: tuple[float, float, float] = (0.7, 0.7, 0.7),
+    ) -> tuple[int, float, float, float]:
         return outcome_epoch_selection_key(
             values,
             acceptance_passed=acceptance_passed,
+            by_phase={
+                phase: {"decisive_win_loss_auc": auc}
+                for phase, auc in zip(("early", "middle", "late"), phases, strict=True)
+            },
         )
 
     assert key(row(0.70, 0.95, 0.15, 0.85), acceptance_passed=True) > key(
@@ -145,6 +152,15 @@ def test_epoch_selection_prefers_ranking_after_calibration_gate() -> None:
     )
     assert key(row(0.61, 0.78, 0.12, 0.95), acceptance_passed=True) > key(
         row(0.90, 0.70, 0.30, 0.99), acceptance_passed=False
+    )
+    assert key(
+        row(0.72, 0.8, 0.1, 0.9),
+        acceptance_passed=True,
+        phases=(0.68, 0.7, 0.95),
+    ) > key(
+        row(0.80, 0.7, 0.1, 0.9),
+        acceptance_passed=True,
+        phases=(0.56, 0.95, 1.0),
     )
 
 
