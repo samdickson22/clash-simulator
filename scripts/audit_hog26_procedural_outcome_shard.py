@@ -35,25 +35,33 @@ def shard_expectations(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--protocol", type=Path, required=True)
-    parser.add_argument("--training-shard", type=int, choices=(0, 1, 2), required=True)
+    stage = parser.add_mutually_exclusive_group(required=True)
+    stage.add_argument("--training-shard", type=int, choices=(0, 1, 2))
+    stage.add_argument("--development-selection", action="store_true")
+    stage.add_argument("--probability-calibration", action="store_true")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     protocol = load_protocol(args.protocol, root)
-    rows = protocol.get("training")
-    if not isinstance(rows, list) or len(rows) != 3:
-        raise TypeError("protocol training rows are malformed")
-    row = rows[args.training_shard]
+    if args.training_shard is not None:
+        rows = protocol.get("training")
+        if not isinstance(rows, list) or len(rows) != 3:
+            raise TypeError("protocol training rows are malformed")
+        row = rows[args.training_shard]
+    elif args.development_selection:
+        row = protocol.get("development_selection")
+    else:
+        row = protocol.get("probability_calibration")
     if not isinstance(row, dict):
-        raise TypeError("protocol training shard is malformed")
+        raise TypeError("protocol collection stage is malformed")
     output = root / str(row["audit_report"])
     if output.exists():
-        raise SystemExit("refusing to overwrite procedural shard audit")
+        raise SystemExit("refusing to overwrite procedural stage audit")
     report = audit(
         [root / str(row["output_corpus"])],
         **shard_expectations(protocol, row, root=root),
     )
     if int(report["episodes"]) != int(row["expected_games"]):
-        raise RuntimeError("audited shard does not match frozen game budget")
+        raise RuntimeError("audited stage does not match frozen game budget")
     _atomic_json(output, report)
     print(json.dumps(report, indent=2, sort_keys=True))
 

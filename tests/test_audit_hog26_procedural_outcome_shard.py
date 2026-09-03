@@ -19,3 +19,12 @@ def test_training_shard_audit_expectations_are_protocol_exact() -> None:
     assert expected["expected_supported_decks_sha256"] == (
         protocol["procedural_decks"]["sha256"]
     )
+
+
+def test_development_audit_expectations_select_only_declared_families() -> None:
+    protocol = load_protocol(PROTOCOL, ROOT)
+    row = protocol["development_selection"]
+    expected = shard_expectations(protocol, row, root=ROOT)
+    assert len(expected["expected_decks"]) == 8
+    assert expected["expected_opponents"] == {"balanced", "reactive-defense"}
+    assert expected["expected_split"] == "development"
