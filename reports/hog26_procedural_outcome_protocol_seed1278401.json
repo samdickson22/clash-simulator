@@ -19,7 +19,9 @@
       "family_ids": ["family-000", "family-001", "family-002", "family-003", "family-004", "family-005", "family-006", "family-007"],
       "opponents": ["balanced", "random"],
       "episodes_per_seat": 1,
-      "expected_games": 128
+      "expected_games": 128,
+      "output_corpus": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+      "output_report": "reports/hog26_procedural_train_balanced_random_seed1278501.json"
     },
     {
       "seed": 1278502,
@@ -27,7 +29,9 @@
       "family_ids": ["family-000", "family-001", "family-002", "family-003", "family-004", "family-005", "family-006", "family-007"],
       "opponents": ["bridge-pressure", "reactive-defense"],
       "episodes_per_seat": 1,
-      "expected_games": 128
+      "expected_games": 128,
+      "output_corpus": "datasets/derived/hog26_procedural_train_bridge_reactive_seed1278502/corpus.npz",
+      "output_report": "reports/hog26_procedural_train_bridge_reactive_seed1278502.json"
     },
     {
       "seed": 1278503,
@@ -35,7 +39,9 @@
       "family_ids": ["family-000", "family-001", "family-002", "family-003", "family-004", "family-005", "family-006", "family-007"],
       "opponents": ["slow-push", "spell-control"],
       "episodes_per_seat": 1,
-      "expected_games": 128
+      "expected_games": 128,
+      "output_corpus": "datasets/derived/hog26_procedural_train_slow_spell_seed1278503/corpus.npz",
+      "output_report": "reports/hog26_procedural_train_slow_spell_seed1278503.json"
     }
   ],
   "development_selection": {
