@@ -313,3 +313,10 @@ four remaining unseen decks are now being collected exactly once as the
 untouched natural holdout; a separately seeded symmetric-draw holdout follows.
 Only a frozen pass on both permits additional model seeds and the exact-terminal
 counterfactual ranking gate.
+
+The seed replication rule is fixed before opening holdout labels. If primary
+seed `1277501` passes, train seeds `1278101` and `1278102` with the identical
+architecture, corpora, calibration method, thresholds, and epoch budget. Both
+must independently pass the same untouched holdout; there is no best-seed
+selection. Counterfactual ranking may use the three-member ensemble only after
+all three pass.
