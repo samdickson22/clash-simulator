@@ -449,3 +449,13 @@ No outcomes from the new development or holdout families have been opened.
 The next step is complete-game collection for the procedural training families,
 followed by candidate selection on procedural development families. The final
 holdout remains sealed until a single candidate and thresholds are frozen.
+
+The collection schedule is fixed before observing the broad labels. Training
+crosses all 32 train decks and both learner seats with six opponent modes in
+three 128-game shards: `balanced+random` (`seed=1278501`),
+`bridge-pressure+reactive-defense` (`seed=1278502`), and
+`slow-push+spell-control` (`seed=1278503`). Development uses only generated
+development families and already-seen opponent modes. `split-lane` is excluded
+from both training and development and reserved as the final opponent-style
+shift. The collector now supports a single opponent mode so the final gate does
+not need to contaminate that shift with a previously seen league member.
