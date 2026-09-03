@@ -4,7 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
+import os
+import tempfile
+import zipfile
 from pathlib import Path
 from typing import Any
 
@@ -13,7 +17,6 @@ import numpy as np
 from clasher.rl.direct_simple_behavior import load_direct_simple_behavior_corpus
 from scripts.collect_hog26_direct_simple_behavior import (
     _atomic_json,
-    _atomic_npz,
     file_sha256,
 )
 from scripts.train_hog26_actor_outcome import validate_outcome_corpus
@@ -24,6 +27,37 @@ def _requested(raw: str, *, label: str) -> tuple[str, ...]:
     if not values or len(values) != len(set(values)):
         raise ValueError(f"{label} selection must be nonempty and unique")
     return values
+
+
+def _atomic_deterministic_npz(path: Path, arrays: dict[str, np.ndarray]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        dir=path.parent,
+        prefix=f".{path.name}.",
+        suffix=".npz",
+        delete=False,
+    ) as stream:
+        temporary = Path(stream.name)
+    try:
+        with temporary.open("wb") as raw:
+            with zipfile.ZipFile(
+                raw, mode="w", compression=zipfile.ZIP_DEFLATED, compresslevel=6
+            ) as archive:
+                for name in sorted(arrays):
+                    payload = io.BytesIO()
+                    np.lib.format.write_array(
+                        payload, np.asanyarray(arrays[name]), allow_pickle=False
+                    )
+                    member = zipfile.ZipInfo(f"{name}.npy", (1980, 1, 1, 0, 0, 0))
+                    member.compress_type = zipfile.ZIP_DEFLATED
+                    member.external_attr = 0o600 << 16
+                    archive.writestr(member, payload.getvalue(), compresslevel=6)
+            raw.flush()
+            os.fsync(raw.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
 
 
 def subset(
@@ -141,7 +175,7 @@ def subset(
         **episode_arrays,
         "metadata_json": np.asarray(json.dumps(new_metadata, sort_keys=True)),
     }
-    _atomic_npz(output_path, archive)
+    _atomic_deterministic_npz(output_path, archive)
     report = {
         "schema": "clasher.hog26.outcome-corpus-subset.v1",
         "input": str(input_path.resolve()),
