@@ -442,7 +442,10 @@ def load_outcome_ensemble(
         if payload.get("base_checkpoint_sha256") != base_checkpoint_sha256:
             raise ValueError("outcome checkpoint belongs to a different policy")
         report = payload.get("training_report")
-        if not isinstance(report, dict) or report.get("status") != "accepted-development":
+        if not isinstance(report, dict) or report.get("status") not in {
+            "accepted-development",
+            "accepted-holdout",
+        }:
             raise ValueError("outcome checkpoint did not pass development gates")
         if report.get("actor_feature_contract") != "public-globals":
             raise ValueError("counterfactual probe supports public-global heads only")

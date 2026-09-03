@@ -379,6 +379,129 @@ def _bucket_metrics(
     return result
 
 
+def _evaluation_breakdowns(
+    head: ActorOutcomeHead,
+    features: Tensor,
+    outcomes: Tensor,
+    margins: Tensor,
+    loaded: list[tuple[dict[str, Any], DirectSimpleBehaviorCorpus]],
+    *,
+    device: torch.device,
+) -> dict[str, Any]:
+    phase_fraction = np.concatenate(
+        [
+            np.asarray(corpus.arrays["global_features"][:, 0])
+            for _metadata, corpus in loaded
+        ]
+    )
+    phases = np.where(
+        phase_fraction < 1.0 / 3.0,
+        "early",
+        np.where(phase_fraction < 2.0 / 3.0, "middle", "late"),
+    )
+    opponents = np.concatenate(
+        [
+            np.asarray(metadata["opponents"], dtype=np.str_)[
+                _episode_rows(
+                    corpus,
+                    corpus.episode_arrays["episode_opponent_indices"],
+                )
+            ]
+            for metadata, corpus in loaded
+        ]
+    )
+    seats = np.concatenate(
+        [
+            _episode_rows(
+                corpus,
+                corpus.episode_arrays["episode_learner_players"],
+            ).astype(str)
+            for _metadata, corpus in loaded
+        ]
+    )
+    sources = np.concatenate(
+        [
+            np.full(corpus.row_count, _outcome_source(metadata), dtype="<U32")
+            for metadata, corpus in loaded
+        ]
+    )
+    row_offsets = np.cumsum(
+        [0] + [corpus.row_count for _metadata, corpus in loaded[:-1]]
+    )
+    endpoint_rows = torch.as_tensor(
+        np.concatenate(
+            [
+                corpus.episode_offsets[1:] - 1 + row_offset
+                for row_offset, (_metadata, corpus) in zip(
+                    row_offsets, loaded, strict=True
+                )
+            ]
+        ),
+        dtype=torch.long,
+    )
+    opponent_decks = np.concatenate(
+        [
+            (
+                np.asarray(metadata["opponent_decks"], dtype=np.str_)[
+                    _episode_rows(
+                        corpus,
+                        corpus.episode_arrays["episode_opponent_deck_indices"],
+                    )
+                ]
+                if "episode_opponent_deck_indices" in corpus.episode_arrays
+                and "opponent_decks" in metadata
+                else np.full(corpus.row_count, "<controlled-draw>", dtype="<U32")
+            )
+            for metadata, corpus in loaded
+        ]
+    )
+    endpoint_sources = sources[endpoint_rows.numpy()]
+    endpoint_features = features.index_select(0, endpoint_rows)
+    endpoint_outcomes = outcomes.index_select(0, endpoint_rows)
+    endpoint_margins = margins.index_select(0, endpoint_rows)
+    return {
+        "overall": metrics(head, features, outcomes, margins, device=device),
+        "by_phase": _bucket_metrics(
+            head, features, outcomes, margins, phases, device=device
+        ),
+        "by_opponent": _bucket_metrics(
+            head, features, outcomes, margins, opponents, device=device
+        ),
+        "by_seat": _bucket_metrics(
+            head, features, outcomes, margins, seats, device=device
+        ),
+        "by_source": _bucket_metrics(
+            head, features, outcomes, margins, sources, device=device
+        ),
+        "by_opponent_deck": _bucket_metrics(
+            head, features, outcomes, margins, opponent_decks, device=device
+        ),
+        "by_opponent_and_deck": _bucket_metrics(
+            head,
+            features,
+            outcomes,
+            margins,
+            np.char.add(np.char.add(opponents, "|"), opponent_decks),
+            device=device,
+        ),
+        "episode_endpoints": metrics(
+            head,
+            endpoint_features,
+            endpoint_outcomes,
+            endpoint_margins,
+            device=device,
+        ),
+        "episode_endpoints_by_source": _bucket_metrics(
+            head,
+            endpoint_features,
+            endpoint_outcomes,
+            endpoint_margins,
+            endpoint_sources,
+            device=device,
+        ),
+    }
+
+
 def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
@@ -425,6 +548,7 @@ def main() -> None:
     parser.add_argument(
         "--validation-corpus", type=Path, action="append", required=True
     )
+    parser.add_argument("--holdout-corpus", type=Path, action="append", default=[])
     parser.add_argument("--output-checkpoint", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--seed", type=int, required=True)
@@ -475,7 +599,10 @@ def main() -> None:
     validation_loaded = [
         load_direct_simple_behavior_corpus(path) for path in args.validation_corpus
     ]
-    for metadata, corpus in (*train_loaded, *validation_loaded):
+    holdout_loaded = [
+        load_direct_simple_behavior_corpus(path) for path in args.holdout_corpus
+    ]
+    for metadata, corpus in (*train_loaded, *validation_loaded, *holdout_loaded):
         validate_outcome_corpus(metadata, corpus)
         if metadata.get("checkpoint_sha256") != file_sha256(args.base_checkpoint):
             raise ValueError("outcome corpus was collected by a different policy")
@@ -483,12 +610,20 @@ def main() -> None:
     validation_seeds = {
         int(metadata["seed"]) for metadata, _corpus in validation_loaded
     }
+    holdout_seeds = {int(metadata["seed"]) for metadata, _corpus in holdout_loaded}
     if train_seeds.intersection(validation_seeds):
         raise ValueError("outcome train and validation seeds must be disjoint")
+    if train_seeds.intersection(holdout_seeds) or validation_seeds.intersection(
+        holdout_seeds
+    ):
+        raise ValueError("outcome holdout seeds must be disjoint from train/development")
     train_hashes = {file_sha256(path) for path in args.train_corpus}
     validation_hashes = {file_sha256(path) for path in args.validation_corpus}
+    holdout_hashes = {file_sha256(path) for path in args.holdout_corpus}
     if train_hashes.intersection(validation_hashes):
         raise ValueError("outcome train and validation corpora must be disjoint")
+    if holdout_hashes.intersection(train_hashes | validation_hashes):
+        raise ValueError("outcome holdout corpora must be physically disjoint")
     train_natural_opponents = _natural_metadata_values(train_loaded, "opponents")
     validation_natural_opponents = _natural_metadata_values(
         validation_loaded, "opponents"
@@ -497,12 +632,20 @@ def main() -> None:
     validation_natural_decks = _natural_metadata_values(
         validation_loaded, "opponent_decks"
     )
+    holdout_natural_opponents = _natural_metadata_values(holdout_loaded, "opponents")
+    holdout_natural_decks = _natural_metadata_values(holdout_loaded, "opponent_decks")
     opponent_overlap = train_natural_opponents & validation_natural_opponents
     deck_overlap = train_natural_decks & validation_natural_decks
     if args.require_disjoint_natural_opponents and opponent_overlap:
         raise ValueError("natural outcome train/validation opponents overlap")
     if args.require_disjoint_natural_decks and deck_overlap:
         raise ValueError("natural outcome train/validation decks overlap")
+    holdout_opponent_overlap = train_natural_opponents & holdout_natural_opponents
+    holdout_deck_overlap = train_natural_decks & holdout_natural_decks
+    if args.require_disjoint_natural_opponents and holdout_opponent_overlap:
+        raise ValueError("natural outcome train/holdout opponents overlap")
+    if args.require_disjoint_natural_decks and holdout_deck_overlap:
+        raise ValueError("natural outcome train/holdout decks overlap")
     started = time.monotonic()
     train_features = torch.cat(
         [
@@ -529,6 +672,23 @@ def main() -> None:
             for _metadata, corpus in validation_loaded
         ],
         dim=0,
+    )
+    holdout_features = (
+        torch.cat(
+            [
+                extract_actor_features(
+                    model,
+                    corpus,
+                    device=device,
+                    sequence_steps=args.sequence_steps,
+                    feature_set=args.feature_set,
+                )
+                for _metadata, corpus in holdout_loaded
+            ],
+            dim=0,
+        )
+        if holdout_loaded
+        else None
     )
     state_size = int(train_features.shape[1])
     separate_draw_trunk = args.feature_set == "structured-summary"
@@ -572,6 +732,26 @@ def main() -> None:
             torch.as_tensor(corpus.arrays["terminal_tower_margins"])
             for _metadata, corpus in validation_loaded
         ]
+    )
+    holdout_outcomes = (
+        torch.cat(
+            [
+                torch.as_tensor(corpus.arrays["final_outcomes"])
+                for _metadata, corpus in holdout_loaded
+            ]
+        )
+        if holdout_loaded
+        else None
+    )
+    holdout_margins = (
+        torch.cat(
+            [
+                torch.as_tensor(corpus.arrays["terminal_tower_margins"])
+                for _metadata, corpus in holdout_loaded
+            ]
+        )
+        if holdout_loaded
+        else None
     )
     counts = torch.bincount(train_outcomes.to(torch.long) + 1, minlength=3).float()
     prior = counts / counts.sum()
@@ -751,7 +931,7 @@ def main() -> None:
         - float(natural_endpoint_metrics["mean_outcome_probability"]["draw"])
         >= args.minimum_controlled_draw_endpoint_probability_lift
     )
-    passed = bool(
+    development_passed = bool(
         prior_nll - float(best_metrics["nll"]) >= args.minimum_nll_improvement
         and float(best_metrics["ece_10"]) <= args.maximum_ece
         and float(best_metrics["tower_margin_mae"]) <= args.maximum_margin_mae
@@ -760,6 +940,67 @@ def main() -> None:
         and controlled_draw_passed
         and (not args.require_disjoint_natural_opponents or not opponent_overlap)
         and (not args.require_disjoint_natural_decks or not deck_overlap)
+    )
+    holdout_evaluation: dict[str, Any] | None = None
+    holdout_prior_nll: float | None = None
+    holdout_passed: bool | None = None
+    if holdout_loaded:
+        assert (
+            holdout_features is not None
+            and holdout_outcomes is not None
+            and holdout_margins is not None
+        )
+        holdout_evaluation = _evaluation_breakdowns(
+            head,
+            holdout_features,
+            holdout_outcomes,
+            holdout_margins,
+            holdout_loaded,
+            device=device,
+        )
+        holdout_prior_nll = float(
+            -prior[(holdout_outcomes.to(torch.long) + 1)]
+            .clamp_min(1e-12)
+            .log()
+            .mean()
+        )
+        holdout_overall = holdout_evaluation["overall"]
+        holdout_sources = holdout_evaluation["by_source"]
+        holdout_endpoints = holdout_evaluation["episode_endpoints_by_source"]
+        holdout_natural = holdout_sources.get("natural-strategy-games")
+        holdout_draw_endpoint = holdout_endpoints.get("controlled-symmetric-draws")
+        holdout_natural_endpoint = holdout_endpoints.get("natural-strategy-games")
+        holdout_passed = bool(
+            holdout_prior_nll - float(holdout_overall["nll"])
+            >= args.minimum_nll_improvement
+            and float(holdout_overall["ece_10"]) <= args.maximum_ece
+            and float(holdout_overall["tower_margin_mae"])
+            <= args.maximum_margin_mae
+            and all(value > 0 for value in holdout_overall["class_counts"].values())
+            and holdout_natural is not None
+            and holdout_natural["decisive_win_loss_auc"] is not None
+            and float(holdout_natural["decisive_win_loss_auc"])
+            >= args.minimum_natural_auc
+            and holdout_overall["auc_one_vs_rest"]["draw"] is not None
+            and float(holdout_overall["auc_one_vs_rest"]["draw"])
+            >= args.minimum_controlled_draw_auc
+            and float(holdout_natural["mean_outcome_probability"]["draw"])
+            <= args.maximum_natural_draw_probability
+            and holdout_draw_endpoint is not None
+            and holdout_natural_endpoint is not None
+            and float(holdout_draw_endpoint["mean_outcome_probability"]["draw"])
+            - float(holdout_natural_endpoint["mean_outcome_probability"]["draw"])
+            >= args.minimum_controlled_draw_endpoint_probability_lift
+            and (
+                not args.require_disjoint_natural_opponents
+                or not holdout_opponent_overlap
+            )
+            and (
+                not args.require_disjoint_natural_decks or not holdout_deck_overlap
+            )
+        )
+    final_passed = development_passed and (
+        holdout_passed if holdout_passed is not None else True
     )
     report = {
         "schema": SCHEMA,
@@ -771,6 +1012,8 @@ def main() -> None:
         "validation_corpus_sha256": [
             file_sha256(path) for path in args.validation_corpus
         ],
+        "holdout_corpora": [str(path.resolve()) for path in args.holdout_corpus],
+        "holdout_corpus_sha256": [file_sha256(path) for path in args.holdout_corpus],
         "seed": args.seed,
         "device": str(device),
         "state_size": state_size,
@@ -856,15 +1099,31 @@ def main() -> None:
             "natural_deck_overlap": sorted(deck_overlap),
             "natural_auc_passed": natural_auc_passed,
             "controlled_draw_passed": controlled_draw_passed,
+            "development_passed": development_passed,
+            "holdout_passed": holdout_passed,
+            "holdout_natural_opponent_overlap": sorted(holdout_opponent_overlap),
+            "holdout_natural_deck_overlap": sorted(holdout_deck_overlap),
         },
+        "holdout_prior_nll": holdout_prior_nll,
+        "holdout_evaluation": holdout_evaluation,
         "history": history,
         "elapsed_seconds": time.monotonic() - started,
-        "status": "accepted-development" if passed else "rejected-development",
-        "counterfactual_ranking_gate_pending": passed,
-        "output_checkpoint": str(args.output_checkpoint.resolve()) if passed else None,
+        "status": (
+            ("accepted-holdout" if final_passed else "rejected-holdout")
+            if holdout_loaded
+            else (
+                "accepted-development"
+                if development_passed
+                else "rejected-development"
+            )
+        ),
+        "counterfactual_ranking_gate_pending": final_passed,
+        "output_checkpoint": (
+            str(args.output_checkpoint.resolve()) if final_passed else None
+        ),
     }
     _atomic_json(args.report, report)
-    if not passed:
+    if not final_passed:
         raise SystemExit("actor-visible outcome head failed development gates")
     result = {
         "schema": SCHEMA,
