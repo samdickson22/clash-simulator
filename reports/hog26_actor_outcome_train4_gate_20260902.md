@@ -97,3 +97,11 @@ was correctly rejected because the early bootstrap lower 95% bound was only
 0.3846. This is encouraging evidence that matchup diversity helps, while also
 confirming that the development set needs more independent games before any
 acceptance claim.
+
+The matching 398-feature mechanics-primary structured head was materially
+stronger on the same interim split: selected epoch 27, phase-balanced decisive
+AUC 0.8148 overall, with early 0.7143, middle 0.8542, and late 1.0. It too was
+rejected—the early lower 95% bound was 0.4615, below the required 0.50. Unlike
+the original four-deck structured failure (AUC 0.4683), this is direct evidence
+that independent deck diversity is repairing contextual generalization rather
+than merely improving calibration.
