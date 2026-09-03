@@ -34,6 +34,24 @@ def test_procedural_outcome_protocol_is_split_safe_and_pinned() -> None:
     assert not train_families & (selection | calibration | holdout)
     assert not (selection | calibration) & holdout
 
+    for row in [
+        *train_rows,
+        protocol["development_selection"],
+        protocol["probability_calibration"],
+        protocol["final_holdout"]["generated"],
+    ]:
+        assert row["expected_games"] == (
+            len(row["family_ids"])
+            * 4
+            * len(row["opponents"])
+            * 2
+            * row["episodes_per_seat"]
+        )
+    reserved = protocol["final_holdout"]["reserved_original"]
+    assert reserved["expected_games"] == (
+        len(reserved["opponents"]) * 2 * reserved["episodes_per_seat"]
+    )
+
     seeds = [row["seed"] for row in train_rows]
     seeds.extend(
         [
@@ -45,6 +63,8 @@ def test_procedural_outcome_protocol_is_split_safe_and_pinned() -> None:
     )
     assert len(seeds) == len(set(seeds))
     train_opponents = {opponent for row in train_rows for opponent in row["opponents"]}
+    assert set(protocol["development_selection"]["opponents"]) <= train_opponents
+    assert set(protocol["probability_calibration"]["opponents"]) <= train_opponents
     assert "split-lane" not in train_opponents
     assert protocol["final_holdout"]["generated"]["opponents"] == ["split-lane"]
     assert protocol["final_holdout"]["reserved_original"]["opponents"] == [
