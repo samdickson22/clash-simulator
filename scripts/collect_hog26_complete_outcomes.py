@@ -57,17 +57,44 @@ def crossed_opponent_rows(
     return tuple(row[0] for row in rows), tuple(row[1] for row in rows)
 
 
+def opponent_decks_for_split(path: Path, split: str) -> tuple[str, ...]:
+    if split not in {"train", "development", "holdout"}:
+        raise ValueError("unknown procedural opponent-deck split")
+    payload = json.loads(path.read_text())
+    rows = payload.get("decks")
+    if not isinstance(rows, list):
+        raise TypeError("supported-deck artifact has no deck rows")
+    names = tuple(
+        row["name"]
+        for row in rows
+        if isinstance(row, dict)
+        and row.get("split") == split
+        and isinstance(row.get("name"), str)
+    )
+    if not names:
+        raise ValueError("supported-deck artifact has no rows for requested split")
+    return names
+
+
 def collect(args: argparse.Namespace) -> dict[str, Any]:
     if args.output.exists() or args.report.exists():
         raise SystemExit("refusing to overwrite complete-outcome artifacts")
     if args.episodes_per_seat < 1 or not 1 <= args.chunk_steps <= 128:
         raise ValueError("invalid complete-outcome collection size")
     opponents = tuple(value.strip() for value in args.opponents.split(",") if value)
-    requested_decks = tuple(
+    explicit_decks = tuple(
         value.strip() for value in args.opponent_decks.split(",") if value.strip()
     )
     supported_decks_path = Path(args.supported_decks_path)
     artifact = load_simple_supported_decks(supported_decks_path)
+    opponent_deck_split = getattr(args, "opponent_deck_split", "")
+    if explicit_decks and opponent_deck_split:
+        raise ValueError("choose explicit opponent decks or a deck split, not both")
+    requested_decks = (
+        opponent_decks_for_split(supported_decks_path, opponent_deck_split)
+        if opponent_deck_split
+        else explicit_decks
+    )
     if requested_decks:
         if any(deck not in artifact.deck_names for deck in requested_decks):
             raise ValueError("crossed outcome collection contains an unknown deck")
@@ -166,6 +193,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         "row_opponents": list(row_opponents),
         "opponent_decks": list(opponent_decks),
         "row_opponent_decks": list(actual_decks),
+        "opponent_deck_split": opponent_deck_split or None,
         "strategy_deck_cross_product": bool(requested_decks),
         "episodes_per_seat": args.episodes_per_seat,
         "chunk_steps": args.chunk_steps,
@@ -242,6 +270,12 @@ def main() -> None:
         "--opponent-decks",
         default="",
         help="comma-separated explicit decks crossed with every opponent style",
+    )
+    parser.add_argument(
+        "--opponent-deck-split",
+        choices=("train", "development", "holdout"),
+        default="",
+        help="select every deck in a procedural manifest split",
     )
     result = collect(parser.parse_args())
     print(json.dumps(result, indent=2, sort_keys=True))
