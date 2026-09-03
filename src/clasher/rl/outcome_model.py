@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 import torch
@@ -21,6 +24,23 @@ class ActorOutcomeLoss:
     total: Tensor
     outcome_nll: Tensor
     tower_margin_huber: Tensor
+
+
+def outcome_state_sha256(state: Mapping[str, Tensor]) -> str:
+    """Hash an outcome head state independently of checkpoint serialization."""
+
+    digest = hashlib.sha256()
+    for name in sorted(state):
+        tensor = state[name].detach().cpu().contiguous()
+        descriptor = json.dumps(
+            (name, str(tensor.dtype), list(tensor.shape)), separators=(",", ":")
+        ).encode()
+        digest.update(len(descriptor).to_bytes(8, "big"))
+        digest.update(descriptor)
+        payload = tensor.numpy().tobytes(order="C")
+        digest.update(len(payload).to_bytes(8, "big"))
+        digest.update(payload)
+    return digest.hexdigest()
 
 
 class ActorOutcomeHead(nn.Module):

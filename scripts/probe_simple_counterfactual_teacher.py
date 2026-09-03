@@ -18,7 +18,7 @@ import torch
 
 from clasher.rl.common import BOARD_WIDTH, NUM_HAND_SLOTS, NUM_TILES
 from clasher.rl.model import ClasherPolicy, PolicyConfig, PolicyInputs
-from clasher.rl.outcome_model import ActorOutcomeHead
+from clasher.rl.outcome_model import ActorOutcomeHead, outcome_state_sha256
 from clasher.rl.simple_pytorch_backend import (
     SimplePytorchTrainingCollector,
     SimpleTensorStrategyOpponent,
@@ -454,6 +454,11 @@ def load_outcome_ensemble(
         report = payload.get("training_report")
         if not isinstance(report, dict) or report.get("status") != "accepted-holdout":
             raise ValueError("outcome checkpoint did not pass untouched holdout gates")
+        state = payload.get("outcome_head_state_dict")
+        if not isinstance(state, dict) or report.get(
+            "outcome_head_state_sha256"
+        ) != outcome_state_sha256(state):
+            raise ValueError("outcome checkpoint tensor digest is absent or invalid")
         gates = report.get("selection_gates")
         if (
             not isinstance(gates, dict)
@@ -486,7 +491,7 @@ def load_outcome_ensemble(
             ),
             margin_residual_scale=float(payload.get("margin_residual_scale", 0.0)),
         ).to(device)
-        head.load_state_dict(payload["outcome_head_state_dict"], strict=True)
+        head.load_state_dict(state, strict=True)
         head.eval()
         heads.append(LoadedOutcomeHead(head=head, feature_contract=feature_contract))
     return heads

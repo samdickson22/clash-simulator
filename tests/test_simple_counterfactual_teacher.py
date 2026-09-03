@@ -5,7 +5,7 @@ import pytest
 import torch
 
 from clasher.rl.common import NUM_TILES
-from clasher.rl.outcome_model import ActorOutcomeHead
+from clasher.rl.outcome_model import ActorOutcomeHead, outcome_state_sha256
 from scripts.probe_simple_counterfactual_teacher import (
     collect_counterfactual_branches,
     first_terminal_outcomes,
@@ -52,6 +52,7 @@ def test_outcome_loader_requires_current_untouched_holdout_authority(tmp_path) -
     report = {
         "status": "accepted-development",
         "actor_feature_contract": "public-globals",
+        "outcome_head_state_sha256": outcome_state_sha256(head.state_dict()),
         "probability_calibration": (
             "factorized-training-mass-prior-plus-rank-preserving-shrinkage-v1"
         ),
@@ -110,6 +111,16 @@ def test_outcome_loader_requires_current_untouched_holdout_authority(tmp_path) -
     )
     torch.save(payload, path)
     with pytest.raises(ValueError, match="calibration"):
+        load_outcome_ensemble(
+            [path], base_checkpoint_sha256="base", device=torch.device("cpu")
+        )
+
+    report["probability_calibration"] = (
+        "factorized-training-mass-prior-plus-rank-preserving-shrinkage-v1"
+    )
+    report["outcome_head_state_sha256"] = "0" * 64
+    torch.save(payload, path)
+    with pytest.raises(ValueError, match="tensor digest"):
         load_outcome_ensemble(
             [path], base_checkpoint_sha256="base", device=torch.device("cpu")
         )

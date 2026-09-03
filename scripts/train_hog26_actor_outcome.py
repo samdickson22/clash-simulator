@@ -28,7 +28,11 @@ from clasher.rl.direct_simple_behavior import (
     load_direct_simple_behavior_corpus,
 )
 from clasher.rl.model import ClasherPolicy, PolicyInputs
-from clasher.rl.outcome_model import ActorOutcomeHead, actor_outcome_loss
+from clasher.rl.outcome_model import (
+    ActorOutcomeHead,
+    actor_outcome_loss,
+    outcome_state_sha256,
+)
 from scripts.pretrain_hog26_direct_simple_behavior import load_model
 from scripts.pretrain_hog26_factorized_policy import batch_inputs
 
@@ -1915,6 +1919,7 @@ def main() -> None:
         "separate_draw_trunk": separate_draw_trunk,
         "structured_residual_scale": structured_residual_scale,
         "margin_residual_scale": args.margin_residual_scale,
+        "outcome_head_state_sha256": outcome_state_sha256(best_state),
         "public_initialization_checkpoint": (
             str(args.initialize_public_checkpoint.resolve())
             if args.initialize_public_checkpoint is not None

@@ -7,6 +7,7 @@ from clasher.rl.outcome_model import (
     ActorOutcomeHead,
     ActorOutcomePrediction,
     actor_outcome_loss,
+    outcome_state_sha256,
 )
 
 
@@ -164,3 +165,11 @@ def test_probability_shrinkage_preserves_expected_utility_ranking() -> None:
     shrunk_utility = shrunk[:, 2] - shrunk[:, 0]
     torch.testing.assert_close(shrunk_utility, 0.25 * original_utility)
     assert torch.equal(torch.argsort(original_utility), torch.argsort(shrunk_utility))
+
+
+def test_outcome_state_digest_is_order_independent_and_value_sensitive() -> None:
+    left = {"b": torch.tensor([2.0]), "a": torch.tensor([1.0])}
+    right = {"a": torch.tensor([1.0]), "b": torch.tensor([2.0])}
+    assert outcome_state_sha256(left) == outcome_state_sha256(right)
+    right["b"][0] = 3.0
+    assert outcome_state_sha256(left) != outcome_state_sha256(right)
