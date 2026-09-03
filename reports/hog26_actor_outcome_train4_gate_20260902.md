@@ -184,3 +184,69 @@ required even more strongly. All future development and untouched-holdout
 acceptance uses this clustered interval and requires at least eight independent
 clusters in every phase. This also closes the prior false-pass edge case where
 late AUC was perfect on only three clusters.
+
+## Seven-deck development expansion and representation screen
+
+Broad shard C completed 56/56 games and passed the independent audit: 24,449
+rows, 35 losses, 21 wins, maximum 706 decisions, corpus SHA-256
+`13bf058c01831c191cec897448301f7481c16783443b70484c9fe010c4eb603f`.
+Its held-out-style fold contains 24 games and 11,124 rows across four new decks,
+with SHA-256
+`17b99b3c43ccb2fc5d5c6c1c85bee3d3015595307988dc18df323d18a05a1a7f`.
+Combined natural development now has 42 games, seven unseen decks, three unseen
+styles, both seats, 20 losses, and 22 wins. It supplies 21 early and 20 middle
+matchup clusters but only five late clusters, so no model can yet pass the
+frozen eight-cluster-per-phase gate.
+
+The frozen 398-feature structured candidate on this larger development set
+selected outcome epoch 30 and margin epoch 1. It achieved phase-balanced AUC
+0.7317 (early 0.6091, middle 0.8500, late 1.0000). The clustered early lower
+95% bound remained only 0.3454. In contrast, the independent margin branch now
+clearly passed its point gates: MAE improved by 0.01168 overall, with early,
+middle, and late improvements of 0.01124, 0.01325, and 0.00558. The remaining
+blocker is outcome representation/confidence, not terminal-margin learning.
+
+Three bounded representation alternatives were screened at matched authority:
+
+- Frozen policy recurrent features were worse than the mechanics summary in
+  every phase: early/middle/late AUC 0.5818/0.7950/0.6250. Reusing the weak
+  policy memory is rejected.
+- A 12-bin team/lane/zone mechanics pool greatly improved middle AUC to 0.9700
+  but reduced early AUC to 0.5727.
+- Concatenating the global and spatial summaries at hidden width 16 improved
+  overall AUC to 0.8014 and middle AUC to 0.9250, but early AUC remained 0.6455
+  versus 0.6864 for its matched global-summary control. Width 32 and an explicit
+  smooth phase mixture both made early ranking worse and are rejected.
+
+The corpus also contains no opponent play-event or seen-card arrays; the simple
+backend exports zero-width history for this checkpoint. This explains an
+important irreducible-looking early ambiguity: a current snapshot cannot retain
+publicly revealed opponent cards after their entities leave the arena. A
+deterministic 494-bit model-owned seen-enemy-token memory was therefore tested
+causally over the existing ordered trajectories. On the larger development
+fold below it failed to improve ranking and was removed; no recurrent or
+spatial experiment code remains in the accepted source path.
+
+## Eleven-deck development expansion
+
+Development shard D completed 24/24 games and passed audit: 10,067 rows, exactly
+12 wins/12 losses, maximum 750 decisions, SHA-256
+`6e71d22506ab60eb1f8857aaf4e5b53cabcc977159c571311c4852cc61b4037d`.
+The combined natural development pool now has 66 games, 30,112 rows, 11 unseen
+decks, three unseen styles, and both seats. It supplies 33 early, 31 middle,
+and six late independent matchup clusters.
+
+The plain 398-feature structured control is now the clear winner. It achieves
+phase-balanced AUC 0.7409: early 0.6935 (clustered lower 95% 0.5110), middle
+0.8452 (lower 0.6917), and late 0.8800 (lower 0.2857). Overall ECE is 0.1956.
+Terminal-margin MAE improves by 0.01556 overall and improves early/middle/late
+by 0.01687/0.01624/0.00185. Thus early and middle confidence, calibration, and
+margin gates now pass. Acceptance remains impossible only because late has six
+clusters rather than eight and its interval crosses chance.
+
+The model-owned seen-token candidate with 0.1 label smoothing was worse on the
+same 66 games: overall/early/middle AUC 0.7326/0.6484/0.8183 versus the control's
+0.7409/0.6935/0.8452. It is rejected and removed. A final development-only
+shard over four remaining control/cycle decks is collecting to add independent
+late games; the frozen structured architecture will not change based on that
+shard.
