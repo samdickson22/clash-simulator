@@ -38,6 +38,28 @@ def _reached_phases(progress: np.ndarray) -> tuple[str, ...]:
     )
 
 
+def _validate_actor_contract(metadata: dict[str, Any]) -> None:
+    backend = metadata.get("simulation_backend_metadata")
+    if not isinstance(backend, dict):
+        raise TypeError("outcome corpus lacks simulator contract metadata")
+    mask = backend.get("public_action_mask_semantics")
+    if not isinstance(mask, dict):
+        raise TypeError("outcome corpus lacks public mask semantics")
+    expected = {
+        "canonical_lane_globals": True,
+        "fresh_only": True,
+        "public_action_mask_contract_version": 2,
+    }
+    if any(backend.get(key) != value for key, value in expected.items()):
+        raise ValueError("outcome corpus actor contract is not current and causal")
+    if mask.get("uses_critic") is not False:
+        raise ValueError("outcome corpus public mask consumes critic state")
+    if mask.get("uses_labels") is not False:
+        raise ValueError("outcome corpus public mask consumes target labels")
+    if mask.get("uses_simulator_legal_mask") is not False:
+        raise ValueError("outcome corpus public mask consumes simulator truth")
+
+
 def audit(
     paths: list[Path],
     *,
@@ -68,6 +90,7 @@ def audit(
     for path, digest in zip(paths, hashes, strict=True):
         metadata, corpus = load_direct_simple_behavior_corpus(path)
         validate_outcome_corpus(metadata, corpus)
+        _validate_actor_contract(metadata)
         if (
             expected_supported_decks_sha256 is not None
             and metadata.get("supported_decks_sha256")
@@ -230,6 +253,8 @@ def audit(
             "exact_actor_relative_terminal_labels": True,
             "finite_outcomes_and_margins": True,
             "critic_inputs_absent": True,
+            "current_causal_actor_contract": True,
+            "label_independent_public_mask_v2": True,
             "expected_decks_exact": expected_decks is None
             or natural_decks == expected_decks,
             "expected_opponents_exact": expected_opponents is None
