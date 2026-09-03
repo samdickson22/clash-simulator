@@ -468,11 +468,13 @@ def load_outcome_ensemble(
             or gates.get("phase_auc_bootstrap_unit")
             != "seed-style-deck-ordinal-cluster-v1"
             or int(gates.get("minimum_phase_bootstrap_clusters", 0)) < 8
+            or gates.get("holdout_selection_deck_overlap") != []
             or report.get("probability_calibration")
             != "factorized-training-mass-prior-plus-rank-preserving-shrinkage-v1"
         ):
             raise ValueError(
-                "outcome checkpoint predates current phase/confidence/calibration gates"
+                "outcome checkpoint predates current holdout/phase/confidence/"
+                "calibration gates"
             )
         feature_contract = str(report.get("actor_feature_contract"))
         if feature_contract not in {

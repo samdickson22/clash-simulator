@@ -62,6 +62,7 @@ def test_outcome_loader_requires_current_untouched_holdout_authority(tmp_path) -
             "holdout_passed": True,
             "phase_auc_bootstrap_unit": "seed-style-deck-ordinal-cluster-v1",
             "minimum_phase_bootstrap_clusters": 8,
+            "holdout_selection_deck_overlap": [],
         },
     }
     payload = {
@@ -121,6 +122,14 @@ def test_outcome_loader_requires_current_untouched_holdout_authority(tmp_path) -
     report["outcome_head_state_sha256"] = "0" * 64
     torch.save(payload, path)
     with pytest.raises(ValueError, match="tensor digest"):
+        load_outcome_ensemble(
+            [path], base_checkpoint_sha256="base", device=torch.device("cpu")
+        )
+
+    report["outcome_head_state_sha256"] = outcome_state_sha256(head.state_dict())
+    report["selection_gates"]["holdout_selection_deck_overlap"] = ["seen-deck"]
+    torch.save(payload, path)
+    with pytest.raises(ValueError, match="holdout"):
         load_outcome_ensemble(
             [path], base_checkpoint_sha256="base", device=torch.device("cpu")
         )

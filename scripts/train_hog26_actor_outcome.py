@@ -1165,10 +1165,13 @@ def main() -> None:
         raise ValueError("natural outcome train/calibration decks overlap")
     holdout_opponent_overlap = train_natural_opponents & holdout_natural_opponents
     holdout_deck_overlap = train_natural_decks & holdout_natural_decks
+    holdout_selection_deck_overlap = holdout_natural_decks & (
+        train_natural_decks | validation_natural_decks | calibration_natural_decks
+    )
     if args.require_disjoint_natural_opponents and holdout_opponent_overlap:
         raise ValueError("natural outcome train/holdout opponents overlap")
-    if args.require_disjoint_natural_decks and holdout_deck_overlap:
-        raise ValueError("natural outcome train/holdout decks overlap")
+    if args.require_disjoint_natural_decks and holdout_selection_deck_overlap:
+        raise ValueError("natural outcome selection/holdout decks overlap")
     started = time.monotonic()
     train_features = torch.cat(
         [
@@ -1889,7 +1892,10 @@ def main() -> None:
                 not args.require_disjoint_natural_opponents
                 or not holdout_opponent_overlap
             )
-            and (not args.require_disjoint_natural_decks or not holdout_deck_overlap)
+            and (
+                not args.require_disjoint_natural_decks
+                or not holdout_selection_deck_overlap
+            )
         )
     final_passed = development_passed and (
         holdout_passed if holdout_passed is not None else True
@@ -2056,6 +2062,9 @@ def main() -> None:
             "holdout_passed": holdout_passed,
             "holdout_natural_opponent_overlap": sorted(holdout_opponent_overlap),
             "holdout_natural_deck_overlap": sorted(holdout_deck_overlap),
+            "holdout_selection_deck_overlap": sorted(
+                holdout_selection_deck_overlap
+            ),
         },
         "holdout_prior_nll": holdout_prior_nll,
         "holdout_evaluation": holdout_evaluation,

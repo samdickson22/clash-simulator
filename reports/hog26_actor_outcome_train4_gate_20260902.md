@@ -329,3 +329,8 @@ architecture, corpora, calibration method, thresholds, and epoch budget. Both
 must independently pass the same untouched holdout; there is no best-seed
 selection. Counterfactual ranking may use the three-member ensemble only after
 all three pass.
+
+“Untouched deck” is enforced against the union of training, calibration, and
+development decks, not training alone. Accepted holdout checkpoints record an
+empty `holdout_selection_deck_overlap`, and the counterfactual loader requires
+that exact gate in addition to corpus seed/hash disjointness.
