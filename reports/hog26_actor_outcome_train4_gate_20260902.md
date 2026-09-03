@@ -125,3 +125,30 @@ epoch 1, improving phase-balanced margin MAE from 0.12079 to 0.11649. Every
 phase improved (early +0.00359, middle +0.00459, late +0.00631), but the overall
 gain 0.00431 remains below the current 0.005 promotion floor. This candidate is
 therefore still rejected pending the broader fold.
+
+## Broad-collection train-fold A+B result
+
+The second 56-game shard passed the same complete-stream, terminal-label,
+finite-value, seed/hash-uniqueness, and critic-absence audit. Its full outcome
+mix is 34 losses and 22 wins across four additional decks, seven behavior
+styles, and both seats. The deterministic primary fold retains the four
+training styles only: 32 games, 14,439 rows, 20 losses, and 12 wins; output
+SHA-256 `c5cfbd0ae70736788ae702fa98064eaebcf0cd944b07fc158517157de3d6d95c`.
+
+Combined with the original corpus and fold A, the primary pool now contains
+192 complete natural games, 88,965 rows, 12 decks, four training styles, both
+seats, 127 losses, and 65 wins. The combined independent audit passes and finds
+no seed/hash collision or private critic input.
+
+A predeclared interim structured-summary run on this 192-game pool selected
+outcome epoch 26 and margin epoch 1. Phase-balanced decisive AUC was 0.7481:
+early 0.6071, middle 0.8750, late 1.0000. It remains rejected because the early
+bootstrap lower 95% bound is only 0.3248. The independent public-global margin
+branch improved phase-balanced MAE by only 0.00226, below the 0.005 floor.
+
+A bounded alternative giving an otherwise independent margin trunk the full
+398-feature structured summary was also tested and rejected: its best
+development margin was the zero-update epoch, while every learned update was
+worse. The code experiment was discarded. This rules out simply feeding the
+current pooled entity summary into terminal-margin regression; it does not rule
+out a future explicitly spatial or temporal damage model.
