@@ -77,3 +77,18 @@ def test_procedural_outcome_protocol_is_split_safe_and_pinned() -> None:
     assert candidate["probability_shrinkage_uses_only_probability_calibration"] is True
     assert candidate["final_holdout_forbidden_until_state_sha_frozen"] is True
     assert sum(candidate["target_class_mass_loss_draw_win"]) == 1.0
+    candidate_data = protocol["primary_candidate_data"]
+    assert all(
+        (ROOT / path).is_file() for path in candidate_data["legacy_training_corpora"]
+    )
+    assert candidate_data["new_training_corpora"] == (
+        "all three training rows in this protocol"
+    )
+    assert candidate_data["validation_corpora"][0] == (
+        "development_selection.output_corpus"
+    )
+    assert candidate_data["calibration_corpora"] == [
+        "probability_calibration.output_corpus"
+    ]
+    assert candidate_data["holdout_corpora"] == []
+    assert candidate_data["opened_historical_holdout_forbidden"] is True
