@@ -102,6 +102,21 @@ def subset(
     )
 
     new_metadata = dict(metadata)
+    source_backend = metadata.get("simulation_backend_metadata")
+    if not isinstance(source_backend, dict):
+        raise TypeError("outcome corpus lacks simulator backend metadata")
+    subset_backend = dict(source_backend)
+    source_backend_digest = subset_backend.pop("metadata_digest", None)
+    for key in (
+        "learner_players",
+        "opponent_deck_names",
+        "opponent_league_schedule",
+    ):
+        values = source_backend.get(key)
+        if not isinstance(values, list) or len(values) != len(old_row_opponents):
+            raise ValueError("simulator backend row schedule does not match corpus")
+        subset_backend[key] = [values[int(stream)] for stream in selected_streams]
+    subset_backend["subset_source_metadata_digest"] = source_backend_digest
     new_metadata.update(
         {
             "source_corpus": str(input_path.resolve()),
@@ -111,6 +126,7 @@ def subset(
             "opponent_decks": list(decks),
             "row_opponents": row_opponents,
             "row_opponent_decks": row_decks,
+            "simulation_backend_metadata": subset_backend,
             "episode_count": int(selected_episodes.size),
             "row_count": int(selected_rows.size),
         }
