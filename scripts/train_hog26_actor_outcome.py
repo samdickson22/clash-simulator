@@ -414,6 +414,19 @@ def outcome_epoch_selection_key(
     )
 
 
+def all_phase_decisive_auc_passed(
+    by_phase: dict[str, dict[str, Any]], minimum_auc: float
+) -> bool:
+    """Require evidence above chance in every decision-relevant game phase."""
+
+    return all(
+        phase in by_phase
+        and by_phase[phase]["decisive_win_loss_auc"] is not None
+        and float(by_phase[phase]["decisive_win_loss_auc"]) >= minimum_auc
+        for phase in ("early", "middle", "late")
+    )
+
+
 @torch.no_grad()
 def metrics(
     head: ActorOutcomeHead,
@@ -688,6 +701,7 @@ def main() -> None:
     parser.add_argument("--maximum-ece", type=float, default=0.20)
     parser.add_argument("--maximum-margin-mae", type=float, default=0.25)
     parser.add_argument("--minimum-natural-auc", type=float, default=0.60)
+    parser.add_argument("--minimum-natural-phase-auc", type=float, default=0.55)
     parser.add_argument("--minimum-controlled-draw-auc", type=float, default=0.80)
     parser.add_argument(
         "--minimum-controlled-draw-endpoint-probability-lift",
@@ -844,6 +858,10 @@ def main() -> None:
             or initialized_report.get("status")
             not in {"accepted-development", "accepted-holdout"}
             or initialized_report.get("actor_feature_contract") != "public-globals"
+            or initialized_report.get("selection_gates", {}).get(
+                "natural_phase_auc_passed"
+            )
+            is not True
         ):
             raise ValueError("public initialization checkpoint is not accepted/compatible")
         initialized_state = initialized["outcome_head_state_dict"]
@@ -991,6 +1009,7 @@ def main() -> None:
             device=device,
         )
         epoch_sources = epoch_breakdowns["by_source"]
+        epoch_phases = epoch_breakdowns["by_phase"]
         epoch_endpoints = epoch_breakdowns["episode_endpoints_by_source"]
         epoch_natural = epoch_sources.get("natural-strategy-games")
         epoch_natural_endpoint = epoch_endpoints.get("natural-strategy-games")
@@ -1000,6 +1019,9 @@ def main() -> None:
             and epoch_natural["decisive_win_loss_auc"] is not None
             and float(epoch_natural["decisive_win_loss_auc"])
             >= args.minimum_natural_auc
+        )
+        epoch_natural_phase_auc_passed = all_phase_decisive_auc_passed(
+            epoch_phases, args.minimum_natural_phase_auc
         )
         epoch_controlled_draw_passed = bool(
             validation["auc_one_vs_rest"]["draw"] is not None
@@ -1021,6 +1043,7 @@ def main() -> None:
             and float(validation["tower_margin_mae"]) <= args.maximum_margin_mae
             and all(value > 0 for value in validation["class_counts"].values())
             and epoch_natural_auc_passed
+            and epoch_natural_phase_auc_passed
             and epoch_controlled_draw_passed
             and (not args.require_disjoint_natural_opponents or not opponent_overlap)
             and (not args.require_disjoint_natural_decks or not deck_overlap)
@@ -1135,6 +1158,14 @@ def main() -> None:
         sources,
         device=device,
     )
+    phase_metrics = _bucket_metrics(
+        head,
+        validation_features,
+        validation_outcomes,
+        validation_margins,
+        phases,
+        device=device,
+    )
     endpoint_sources = sources[endpoint_rows.numpy()]
     endpoint_metrics = metrics(
         head,
@@ -1162,6 +1193,9 @@ def main() -> None:
         and float(natural_metrics["decisive_win_loss_auc"])
         >= args.minimum_natural_auc
     )
+    natural_phase_auc_passed = all_phase_decisive_auc_passed(
+        phase_metrics, args.minimum_natural_phase_auc
+    )
     controlled_draw_passed = bool(
         best_metrics["auc_one_vs_rest"]["draw"] is not None
         and float(best_metrics["auc_one_vs_rest"]["draw"])
@@ -1183,6 +1217,7 @@ def main() -> None:
         and float(best_metrics["tower_margin_mae"]) <= args.maximum_margin_mae
         and all(value > 0 for value in best_metrics["class_counts"].values())
         and natural_auc_passed
+        and natural_phase_auc_passed
         and controlled_draw_passed
         and (not args.require_disjoint_natural_opponents or not opponent_overlap)
         and (not args.require_disjoint_natural_decks or not deck_overlap)
@@ -1216,6 +1251,7 @@ def main() -> None:
             .mean()
         )
         holdout_overall = holdout_evaluation["overall"]
+        holdout_phases = holdout_evaluation["by_phase"]
         holdout_sources = holdout_evaluation["by_source"]
         holdout_endpoints = holdout_evaluation["episode_endpoints_by_source"]
         holdout_natural = holdout_sources.get("natural-strategy-games")
@@ -1232,6 +1268,9 @@ def main() -> None:
             and holdout_natural["decisive_win_loss_auc"] is not None
             and float(holdout_natural["decisive_win_loss_auc"])
             >= args.minimum_natural_auc
+            and all_phase_decisive_auc_passed(
+                holdout_phases, args.minimum_natural_phase_auc
+            )
             and holdout_overall["auc_one_vs_rest"]["draw"] is not None
             and float(holdout_overall["auc_one_vs_rest"]["draw"])
             >= args.minimum_controlled_draw_auc
@@ -1304,14 +1343,7 @@ def main() -> None:
         "validation_prior_nll": prior_nll,
         "best_epoch": best_epoch,
         "best_validation": best_metrics,
-        "validation_by_phase": _bucket_metrics(
-            head,
-            validation_features,
-            validation_outcomes,
-            validation_margins,
-            phases,
-            device=device,
-        ),
+        "validation_by_phase": phase_metrics,
         "validation_by_opponent": _bucket_metrics(
             head,
             validation_features,
@@ -1353,6 +1385,7 @@ def main() -> None:
             "maximum_tower_margin_mae": args.maximum_margin_mae,
             "all_three_outcome_classes_required": True,
             "minimum_natural_decisive_auc": args.minimum_natural_auc,
+            "minimum_natural_phase_decisive_auc": args.minimum_natural_phase_auc,
             "minimum_controlled_draw_auc": args.minimum_controlled_draw_auc,
             "minimum_controlled_draw_endpoint_probability_lift": (
                 args.minimum_controlled_draw_endpoint_probability_lift
@@ -1363,6 +1396,7 @@ def main() -> None:
             "natural_opponent_overlap": sorted(opponent_overlap),
             "natural_deck_overlap": sorted(deck_overlap),
             "natural_auc_passed": natural_auc_passed,
+            "natural_phase_auc_passed": natural_phase_auc_passed,
             "controlled_draw_passed": controlled_draw_passed,
             "development_passed": development_passed,
             "holdout_passed": holdout_passed,

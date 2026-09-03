@@ -4,9 +4,9 @@
 
 The 128-game crossed corpus is accepted as complete-game training evidence. The
 free structured-summary head and both bounded structured residual candidates are
-rejected. The public-global control remains the development champion, but it is
-not authorized for search or policy updates because the earlier exact-terminal
-counterfactual ranking gate failed.
+rejected. The public-global control has the best aggregate development score,
+but a larger-window audit rejects it too: held-out early-game decisive AUC is
+0.4808. It is not authorized for search or policy updates.
 
 The next evidence step is broader matchup diversity, not more epochs on the
 same 32 streams: collect additional current supported decks across every
@@ -37,7 +37,7 @@ candidate beats the public-global baseline.
 |---|---:|---:|---:|---:|---:|---|
 | Free structured summary | 398 | 8,098 | 18 | 0.4683 | 0.2126 | reject |
 | Public globals, old NLL selection | 18 | 646 | 29 | 0.6087 | 0.1282 | selection policy superseded |
-| Public globals, full-gate ranking selection | 18 | 646 | 14 | 0.6733 | 0.1214 | development control only |
+| Public globals, old aggregate gate | 18 | 646 | 14 | 0.6733 | 0.1214 | reject; early AUC 0.4808 |
 | Frozen-global + bounded full structured residual | 398 | 7,145 | 0 | 0.6733 | 0.1214 | reject; no positive gain |
 | Frozen-global + compact tactical residual | 118 | 1,905 | 0 | 0.6733 | 0.1214 | reject; no positive gain |
 
@@ -45,7 +45,8 @@ The public-global checkpoint is
 `checkpoints/hog26_actor_outcome_public_globals_fullgate_seed1276201/candidate.pt`
 with SHA-256
 `1fad639704256691fd4fa696a0ad548397d8c3884e9b0d1e83848f52bee4d750`.
-It is a control, not a promoted search value function.
+It is a historical control, not an accepted warm-start or promoted search value
+function under the corrected across-phase gate.
 
 ## Correctness changes
 
@@ -61,6 +62,9 @@ It is a control, not a promoted search value function.
    non-finite values. This was added after an MPS zero-upstream LayerNorm
    gradient produced NaNs; the context branch no longer uses that unsafe
    normalization pattern.
+5. Aggregate AUC is no longer sufficient: early, middle, and late held-out
+   decisive AUC must each clear 0.55. This rejects the globals-only shortcut
+   that looked strong mostly because tower state makes late outcomes obvious.
 
 ## Interpretation
 

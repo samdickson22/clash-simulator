@@ -10,6 +10,7 @@ from scripts.train_hog26_actor_outcome import (
     _ece,
     _natural_metadata_values,
     _outcome_source,
+    all_phase_decisive_auc_passed,
     episode_class_balanced_row_weights,
     metrics,
     outcome_epoch_selection_key,
@@ -111,3 +112,15 @@ def test_epoch_selection_prefers_ranking_after_calibration_gate() -> None:
     assert key(row(0.61, 0.78, 0.12, 0.95), acceptance_passed=True) > key(
         row(0.90, 0.70, 0.30, 0.99), acceptance_passed=False
     )
+
+
+def test_all_phase_auc_rejects_missing_or_below_chance_phase() -> None:
+    passing = {
+        phase: {"decisive_win_loss_auc": value}
+        for phase, value in (("early", 0.56), ("middle", 0.7), ("late", 0.9))
+    }
+    assert all_phase_decisive_auc_passed(passing, 0.55)
+    passing["early"]["decisive_win_loss_auc"] = 0.54
+    assert not all_phase_decisive_auc_passed(passing, 0.55)
+    passing.pop("late")
+    assert not all_phase_decisive_auc_passed(passing, 0.55)
