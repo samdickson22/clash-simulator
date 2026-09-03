@@ -383,3 +383,28 @@ memory or an equivalent model-owned public-history state, and its margin path
 must make residual uncertainty vanish near terminal state. It must be selected
 without the remaining unseen `RHogs AQ 2.9 Cycle` opponent or newly generated
 held-out decks; those are reserved for a fresh final holdout.
+
+### Static margin-repair screen
+
+Three matched `seed=1278201` diagnostics tested whether phase-balanced margin
+training plus an exact remaining-progress gate could repair the failure: a
+public-global branch with power 6, a full mechanics-summary branch with power
+4, and the same full branch with power 6. Epoch selection remained development
+only; the opened holdout was read only after selection.
+
+All three are rejected. The progress gate successfully removed the catastrophic
+late error (opened-holdout late improvements were approximately zero), but the
+development gains reversed overall on the opened holdout:
+
+| Margin branch | Development improvement | Opened-holdout improvement |
+|---|---:|---:|
+| public globals, power 6 | +0.01075 | -0.00098 |
+| full structured state, power 4 | +0.01460 | -0.00380 |
+| full structured state, power 6 | +0.01001 | -0.00049 |
+
+The full-state branch overfit most strongly, so adding more static context is
+not the next move. The matched outcome seed did rank early holdout outcomes
+well (AUC 0.7986, lower 95% 0.6349), but late confidence failed (AUC 0.75,
+lower 95% 0.40), reinforcing the predeclared multi-seed requirement. The next
+screen is a small model-owned causal recurrent state over actor-visible
+mechanics summaries, with the exact progress gate retained for margin output.

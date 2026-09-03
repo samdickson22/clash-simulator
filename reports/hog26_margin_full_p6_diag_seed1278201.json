@@ -1,0 +1,5461 @@
+{
+  "actor_feature_contract": "structured-summary",
+  "actor_input_critic_fields": false,
+  "actor_input_previous_reward": "forced-zero-unavailable-at-live-inference",
+  "base_checkpoint": "/Users/sam/.codex/worktrees/clasher-event-policy/checkpoints/hog26_direct_constant_event_seed1263001/candidate.pt",
+  "base_checkpoint_sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336",
+  "batch_size": 512,
+  "best_epoch": 30,
+  "best_margin_epoch": 2,
+  "best_outcome_epoch": 30,
+  "best_validation": {
+    "accuracy": 0.6185566782951355,
+    "auc_one_vs_rest": {
+      "draw": 0.9677419066429138,
+      "loss": 0.7506746053695679,
+      "win": 0.6894217133522034
+    },
+    "brier": 0.45770248770713806,
+    "class_counts": {
+      "draw": 8,
+      "loss": 109,
+      "win": 77
+    },
+    "decisive_win_loss_auc": 0.7227451205253601,
+    "ece_10": 0.10041198134422302,
+    "mean_outcome_probability": {
+      "draw": 0.022226711735129356,
+      "loss": 0.5612499713897705,
+      "win": 0.41652342677116394
+    },
+    "nll": 0.7010806202888489,
+    "rows": 194,
+    "tower_margin_baseline_mae": 0.20412425696849823,
+    "tower_margin_mae": 0.19411103427410126,
+    "tower_margin_mae_improvement": 0.010013222694396973,
+    "tower_margin_rmse": 0.25110718607902527
+  },
+  "calibration_corpora": [
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_calibration_shard_f_seed1277007/corpus.npz"
+  ],
+  "calibration_corpus_sha256": [
+    "882276d04646cf9c7c00146b342a55d502452522accac29fd77f25b748ee82e1"
+  ],
+  "counterfactual_ranking_gate_pending": false,
+  "device": "cpu",
+  "elapsed_seconds": 977.5771949999616,
+  "epoch_selection": "maximin-phase-then-decisive-auc-among-point-gate-passes-v1",
+  "epochs": 30,
+  "expected_outcome_head_state_sha256": null,
+  "hidden_size": 16,
+  "history": [
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.4026460349559784,
+          "loss": 0.4358753561973572,
+          "win": 0.43970534205436707
+        },
+        "brier": 0.525532066822052,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.43817222118377686,
+        "ece_10": 0.04926943778991699,
+        "mean_outcome_probability": {
+          "draw": 0.019452013075351715,
+          "loss": 0.6030729413032532,
+          "win": 0.3774750530719757
+        },
+        "nll": 0.8223282694816589,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21401062607765198,
+        "tower_margin_mae_improvement": 0.0,
+        "tower_margin_rmse": 0.2804683744907379
+      },
+      "development_gate_passed": false,
+      "epoch": 0,
+      "margin_gate_passed": false,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 1.0,
+      "training_loss": null,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.23118279874324799,
+          "loss": 0.3894765377044678,
+          "win": 0.42884892225265503
+        },
+        "brier": 0.528632402420044,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.4033718705177307,
+        "ece_10": 0.06395967304706573,
+        "mean_outcome_probability": {
+          "draw": 0.019632786512374878,
+          "loss": 0.6044196486473083,
+          "win": 0.3759475350379944
+        },
+        "nll": 0.835423469543457,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.20412425696849823,
+        "tower_margin_mae_improvement": 0.0,
+        "tower_margin_rmse": 0.2767723798751831
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.5,
+          "loss": 0.5,
+          "win": 0.4999999701976776
+        },
+        "brier": 0.5344461798667908,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.4999999701976776,
+        "ece_10": 0.08582526445388794,
+        "mean_outcome_probability": {
+          "draw": 0.020408155396580696,
+          "loss": 0.6479591131210327,
+          "win": 0.3316326439380646
+        },
+        "nll": 0.8306779265403748,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21116475760936737,
+        "tower_margin_mae_improvement": 0.002845868468284607,
+        "tower_margin_rmse": 0.2734413146972656
+      },
+      "development_gate_passed": false,
+      "epoch": 1,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.0,
+      "training_loss": 0.9781111633710269,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.5,
+          "loss": 0.5,
+          "win": 0.5
+        },
+        "brier": 0.5371907949447632,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.5,
+        "ece_10": 0.08610355854034424,
+        "mean_outcome_probability": {
+          "draw": 0.020408159121870995,
+          "loss": 0.6479591131210327,
+          "win": 0.3316326439380646
+        },
+        "nll": 0.8423694968223572,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19636531174182892,
+        "tower_margin_mae_improvement": 0.0077589452266693115,
+        "tower_margin_rmse": 0.2579456865787506
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.5,
+          "loss": 0.5,
+          "win": 0.4999999701976776
+        },
+        "brier": 0.5344461798667908,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.4999999701976776,
+        "ece_10": 0.08582526445388794,
+        "mean_outcome_probability": {
+          "draw": 0.020408155396580696,
+          "loss": 0.6479591131210327,
+          "win": 0.3316326439380646
+        },
+        "nll": 0.8306779265403748,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21255280077457428,
+        "tower_margin_mae_improvement": 0.0014578253030776978,
+        "tower_margin_rmse": 0.27496546506881714
+      },
+      "development_gate_passed": false,
+      "epoch": 2,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.0,
+      "training_loss": 0.9199062478070879,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.5,
+          "loss": 0.5,
+          "win": 0.5
+        },
+        "brier": 0.5371907949447632,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.5,
+        "ece_10": 0.08610355854034424,
+        "mean_outcome_probability": {
+          "draw": 0.020408159121870995,
+          "loss": 0.6479591131210327,
+          "win": 0.3316326439380646
+        },
+        "nll": 0.8423694968223572,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19411103427410126,
+        "tower_margin_mae_improvement": 0.010013222694396973,
+        "tower_margin_rmse": 0.25110718607902527
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.5,
+          "loss": 0.5,
+          "win": 0.4999999701976776
+        },
+        "brier": 0.5344461798667908,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.4999999701976776,
+        "ece_10": 0.08582526445388794,
+        "mean_outcome_probability": {
+          "draw": 0.020408155396580696,
+          "loss": 0.6479591131210327,
+          "win": 0.3316326439380646
+        },
+        "nll": 0.8306779265403748,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21174773573875427,
+        "tower_margin_mae_improvement": 0.002262890338897705,
+        "tower_margin_rmse": 0.2734658122062683
+      },
+      "development_gate_passed": false,
+      "epoch": 3,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.0,
+      "training_loss": 0.8598213721129854,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.5,
+          "loss": 0.5,
+          "win": 0.5
+        },
+        "brier": 0.5371907949447632,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.5,
+        "ece_10": 0.08610355854034424,
+        "mean_outcome_probability": {
+          "draw": 0.020408159121870995,
+          "loss": 0.6479591131210327,
+          "win": 0.3316326439380646
+        },
+        "nll": 0.8423694968223572,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.1948893815279007,
+        "tower_margin_mae_improvement": 0.009234875440597534,
+        "tower_margin_rmse": 0.25144386291503906
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.5,
+          "loss": 0.5,
+          "win": 0.4999999701976776
+        },
+        "brier": 0.5344461798667908,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.4999999701976776,
+        "ece_10": 0.08582526445388794,
+        "mean_outcome_probability": {
+          "draw": 0.020408155396580696,
+          "loss": 0.6479591131210327,
+          "win": 0.3316326439380646
+        },
+        "nll": 0.8306779265403748,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21204257011413574,
+        "tower_margin_mae_improvement": 0.0019680559635162354,
+        "tower_margin_rmse": 0.2733646333217621
+      },
+      "development_gate_passed": false,
+      "epoch": 4,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.0,
+      "training_loss": 0.8033637421279304,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.5,
+          "loss": 0.5,
+          "win": 0.5
+        },
+        "brier": 0.5371907949447632,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.5,
+        "ece_10": 0.08610355854034424,
+        "mean_outcome_probability": {
+          "draw": 0.020408159121870995,
+          "loss": 0.6479591131210327,
+          "win": 0.3316326439380646
+        },
+        "nll": 0.8423694968223572,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.195160910487175,
+        "tower_margin_mae_improvement": 0.008963346481323242,
+        "tower_margin_rmse": 0.25109827518463135
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.8947486877441406,
+          "loss": 0.6148725748062134,
+          "win": 0.6162681579589844
+        },
+        "brier": 0.5319892764091492,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6184291243553162,
+        "ece_10": 0.0836935043334961,
+        "mean_outcome_probability": {
+          "draw": 0.020333603024482727,
+          "loss": 0.6458273530006409,
+          "win": 0.3338390290737152
+        },
+        "nll": 0.8271793723106384,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.2120959460735321,
+        "tower_margin_mae_improvement": 0.001914680004119873,
+        "tower_margin_rmse": 0.2731165587902069
+      },
+      "development_gate_passed": false,
+      "epoch": 5,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.017500000074505806,
+      "training_loss": 0.7568266816058401,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.9059139490127563,
+          "loss": 0.6150566935539246,
+          "win": 0.5834720730781555
+        },
+        "brier": 0.53498375415802,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.594840943813324,
+        "ece_10": 0.08393824100494385,
+        "mean_outcome_probability": {
+          "draw": 0.020346056669950485,
+          "loss": 0.6457939147949219,
+          "win": 0.3338600695133209
+        },
+        "nll": 0.83916836977005,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19554966688156128,
+        "tower_margin_mae_improvement": 0.00857459008693695,
+        "tower_margin_rmse": 0.2511906325817108
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.9012523293495178,
+          "loss": 0.623683512210846,
+          "win": 0.6211029887199402
+        },
+        "brier": 0.5228003859519958,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6245939135551453,
+        "ece_10": 0.07685544341802597,
+        "mean_outcome_probability": {
+          "draw": 0.019959136843681335,
+          "loss": 0.6389893293380737,
+          "win": 0.34105154871940613
+        },
+        "nll": 0.8132293224334717,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21204493939876556,
+        "tower_margin_mae_improvement": 0.0019656866788864136,
+        "tower_margin_rmse": 0.27280235290527344
+      },
+      "development_gate_passed": false,
+      "epoch": 6,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.08249999582767487,
+      "training_loss": 0.7204528663118007,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.9193548560142517,
+          "loss": 0.6309228539466858,
+          "win": 0.5924630761146545
+        },
+        "brier": 0.5265231728553772,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6074705123901367,
+        "ece_10": 0.07701271027326584,
+        "mean_outcome_probability": {
+          "draw": 0.020113781094551086,
+          "loss": 0.6388683915138245,
+          "win": 0.34101784229278564
+        },
+        "nll": 0.82570481300354,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19647173583507538,
+        "tower_margin_mae_improvement": 0.0076525211334228516,
+        "tower_margin_rmse": 0.25221097469329834
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.9100703597068787,
+          "loss": 0.6323767304420471,
+          "win": 0.6264446973800659
+        },
+        "brier": 0.5124207735061646,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6309845447540283,
+        "ece_10": 0.06753194332122803,
+        "mean_outcome_probability": {
+          "draw": 0.019698644056916237,
+          "loss": 0.6290783882141113,
+          "win": 0.351222962141037
+        },
+        "nll": 0.7964350581169128,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.2117452323436737,
+        "tower_margin_mae_improvement": 0.0022653937339782715,
+        "tower_margin_rmse": 0.2723768353462219
+      },
+      "development_gate_passed": false,
+      "epoch": 7,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.1574999988079071,
+      "training_loss": 0.696571725236494,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.9193548560142517,
+          "loss": 0.6402050852775574,
+          "win": 0.5992341041564941
+        },
+        "brier": 0.516713559627533,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6166447997093201,
+        "ece_10": 0.06737428903579712,
+        "mean_outcome_probability": {
+          "draw": 0.02019907720386982,
+          "loss": 0.6292300224304199,
+          "win": 0.3505709171295166
+        },
+        "nll": 0.8081691861152649,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19686977565288544,
+        "tower_margin_mae_improvement": 0.007254481315612793,
+        "tower_margin_rmse": 0.2525080144405365
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.9171691536903381,
+          "loss": 0.6354303956031799,
+          "win": 0.6290541887283325
+        },
+        "brier": 0.5057568550109863,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6336829662322998,
+        "ece_10": 0.05930759385228157,
+        "mean_outcome_probability": {
+          "draw": 0.019331716001033783,
+          "loss": 0.6209816932678223,
+          "win": 0.35968664288520813
+        },
+        "nll": 0.78602534532547,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21130219101905823,
+        "tower_margin_mae_improvement": 0.00270843505859375,
+        "tower_margin_rmse": 0.2717684209346771
+      },
+      "development_gate_passed": false,
+      "epoch": 8,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.21249999105930328,
+      "training_loss": 0.6765901520427338,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.9193548560142517,
+          "loss": 0.6423637270927429,
+          "win": 0.6053391098976135
+        },
+        "brier": 0.5103158950805664,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6196234822273254,
+        "ece_10": 0.09494728595018387,
+        "mean_outcome_probability": {
+          "draw": 0.020177869126200676,
+          "loss": 0.6203364133834839,
+          "win": 0.3594857156276703
+        },
+        "nll": 0.796688437461853,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19644416868686676,
+        "tower_margin_mae_improvement": 0.00768008828163147,
+        "tower_margin_rmse": 0.2515334486961365
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5621338486671448,
+        "auc_one_vs_rest": {
+          "draw": 0.9223921298980713,
+          "loss": 0.6420702934265137,
+          "win": 0.6345801949501038
+        },
+        "brier": 0.5051790475845337,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6399030089378357,
+        "ece_10": 0.0666123777627945,
+        "mean_outcome_probability": {
+          "draw": 0.019102169200778008,
+          "loss": 0.6262838244438171,
+          "win": 0.3546140193939209
+        },
+        "nll": 0.7857103943824768,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21108916401863098,
+        "tower_margin_mae_improvement": 0.002921462059020996,
+        "tower_margin_rmse": 0.27154889702796936
+      },
+      "development_gate_passed": false,
+      "epoch": 9,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.20749999582767487,
+      "training_loss": 0.6582090477485442,
+      "validation": {
+        "accuracy": 0.561855673789978,
+        "auc_one_vs_rest": {
+          "draw": 0.9274193644523621,
+          "loss": 0.6604964733123779,
+          "win": 0.6112220883369446
+        },
+        "brier": 0.5093706250190735,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6353508830070496,
+        "ece_10": 0.1033051386475563,
+        "mean_outcome_probability": {
+          "draw": 0.020007697865366936,
+          "loss": 0.6258243322372437,
+          "win": 0.3541679382324219
+        },
+        "nll": 0.795436441898346,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19735822081565857,
+        "tower_margin_mae_improvement": 0.006766036152839661,
+        "tower_margin_rmse": 0.2527373731136322
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.5995074510574341,
+        "auc_one_vs_rest": {
+          "draw": 0.9271418452262878,
+          "loss": 0.6488649249076843,
+          "win": 0.6406331658363342
+        },
+        "brier": 0.49804186820983887,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6464154720306396,
+        "ece_10": 0.02123946323990822,
+        "mean_outcome_probability": {
+          "draw": 0.019115768373012543,
+          "loss": 0.6156803369522095,
+          "win": 0.365203857421875
+        },
+        "nll": 0.7742118835449219,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21063461899757385,
+        "tower_margin_mae_improvement": 0.003376007080078125,
+        "tower_margin_rmse": 0.2709629535675049
+      },
+      "development_gate_passed": false,
+      "epoch": 10,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.25999999046325684,
+      "training_loss": 0.6437566339296136,
+      "validation": {
+        "accuracy": 0.5824742317199707,
+        "auc_one_vs_rest": {
+          "draw": 0.9301075339317322,
+          "loss": 0.6674042344093323,
+          "win": 0.6198801398277283
+        },
+        "brier": 0.5022134184837341,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.646193265914917,
+        "ece_10": 0.10104058682918549,
+        "mean_outcome_probability": {
+          "draw": 0.020442966371774673,
+          "loss": 0.6149698495864868,
+          "win": 0.3645872175693512
+        },
+        "nll": 0.7824733257293701,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19697023928165436,
+        "tower_margin_mae_improvement": 0.007154017686843872,
+        "tower_margin_rmse": 0.25190600752830505
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6442456841468811,
+        "auc_one_vs_rest": {
+          "draw": 0.9311527013778687,
+          "loss": 0.6551152467727661,
+          "win": 0.6484598517417908
+        },
+        "brier": 0.49066245555877686,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6538025140762329,
+        "ece_10": 0.05008866637945175,
+        "mean_outcome_probability": {
+          "draw": 0.01882227323949337,
+          "loss": 0.601073145866394,
+          "win": 0.3801046311855316
+        },
+        "nll": 0.763053297996521,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21053193509578705,
+        "tower_margin_mae_improvement": 0.003478690981864929,
+        "tower_margin_rmse": 0.27091607451438904
+      },
+      "development_gate_passed": false,
+      "epoch": 11,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.32749998569488525,
+      "training_loss": 0.6307257828065904,
+      "validation": {
+        "accuracy": 0.6134020686149597,
+        "auc_one_vs_rest": {
+          "draw": 0.9354838728904724,
+          "loss": 0.6754992008209229,
+          "win": 0.6275390982627869
+        },
+        "brier": 0.4946121871471405,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.654056966304779,
+        "ece_10": 0.08606287837028503,
+        "mean_outcome_probability": {
+          "draw": 0.02063542604446411,
+          "loss": 0.6010019779205322,
+          "win": 0.37836259603500366
+        },
+        "nll": 0.7692548632621765,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.1975245177745819,
+        "tower_margin_mae_improvement": 0.006599739193916321,
+        "tower_margin_rmse": 0.2526025176048279
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6473541855812073,
+        "auc_one_vs_rest": {
+          "draw": 0.9343032836914062,
+          "loss": 0.6619803309440613,
+          "win": 0.6538866758346558
+        },
+        "brier": 0.48687002062797546,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6600638031959534,
+        "ece_10": 0.053189173340797424,
+        "mean_outcome_probability": {
+          "draw": 0.018945449963212013,
+          "loss": 0.6005253195762634,
+          "win": 0.3805292248725891
+        },
+        "nll": 0.75689297914505,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21002109348773956,
+        "tower_margin_mae_improvement": 0.0039895325899124146,
+        "tower_margin_rmse": 0.27027082443237305
+      },
+      "development_gate_passed": false,
+      "epoch": 12,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.3499999940395355,
+      "training_loss": 0.6197963670148687,
+      "validation": {
+        "accuracy": 0.623711347579956,
+        "auc_one_vs_rest": {
+          "draw": 0.9408602118492126,
+          "loss": 0.6800323724746704,
+          "win": 0.6309801340103149
+        },
+        "brier": 0.4910106360912323,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6572739481925964,
+        "ece_10": 0.052843354642391205,
+        "mean_outcome_probability": {
+          "draw": 0.021055718883872032,
+          "loss": 0.599662721157074,
+          "win": 0.37928155064582825
+        },
+        "nll": 0.7623192071914673,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19661913812160492,
+        "tower_margin_mae_improvement": 0.0075051188468933105,
+        "tower_margin_rmse": 0.25106391310691833
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6469476819038391,
+        "auc_one_vs_rest": {
+          "draw": 0.9366971254348755,
+          "loss": 0.6661581993103027,
+          "win": 0.6577209830284119
+        },
+        "brier": 0.4862593412399292,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6643869280815125,
+        "ece_10": 0.05850833281874657,
+        "mean_outcome_probability": {
+          "draw": 0.018624011427164078,
+          "loss": 0.608912467956543,
+          "win": 0.37246355414390564
+        },
+        "nll": 0.7570999264717102,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21013492345809937,
+        "tower_margin_mae_improvement": 0.0038757026195526123,
+        "tower_margin_rmse": 0.270513653755188
+      },
+      "development_gate_passed": false,
+      "epoch": 13,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": false,
+      "probability_shrinkage": 0.3400000035762787,
+      "training_loss": 0.610625488273168,
+      "validation": {
+        "accuracy": 0.6134020686149597,
+        "auc_one_vs_rest": {
+          "draw": 0.9408602118492126,
+          "loss": 0.6864004135131836,
+          "win": 0.6364191174507141
+        },
+        "brier": 0.49110421538352966,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6634695529937744,
+        "ece_10": 0.06183284521102905,
+        "mean_outcome_probability": {
+          "draw": 0.020642314106225967,
+          "loss": 0.6085177063941956,
+          "win": 0.3708399832248688
+        },
+        "nll": 0.7629601359367371,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.1973627656698227,
+        "tower_margin_mae_improvement": 0.006761491298675537,
+        "tower_margin_rmse": 0.2520766854286194
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6513952612876892,
+        "auc_one_vs_rest": {
+          "draw": 0.9388644695281982,
+          "loss": 0.6701191663742065,
+          "win": 0.6619063019752502
+        },
+        "brier": 0.48253265023231506,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6687141060829163,
+        "ece_10": 0.06245945021510124,
+        "mean_outcome_probability": {
+          "draw": 0.018763458356261253,
+          "loss": 0.6011096835136414,
+          "win": 0.38012686371803284
+        },
+        "nll": 0.7506318092346191,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.2097618728876114,
+        "tower_margin_mae_improvement": 0.004248753190040588,
+        "tower_margin_rmse": 0.2700764238834381
+      },
+      "development_gate_passed": true,
+      "epoch": 14,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.3700000047683716,
+      "training_loss": 0.602127475421981,
+      "validation": {
+        "accuracy": 0.623711347579956,
+        "auc_one_vs_rest": {
+          "draw": 0.9408602118492126,
+          "loss": 0.691689133644104,
+          "win": 0.6394161581993103
+        },
+        "brier": 0.48706817626953125,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6684737205505371,
+        "ece_10": 0.06943579763174057,
+        "mean_outcome_probability": {
+          "draw": 0.02108020894229412,
+          "loss": 0.598642110824585,
+          "win": 0.38027772307395935
+        },
+        "nll": 0.7554751634597778,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19698329269886017,
+        "tower_margin_mae_improvement": 0.0071409642696380615,
+        "tower_margin_rmse": 0.25142064690589905
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.647186815738678,
+        "auc_one_vs_rest": {
+          "draw": 0.9402980804443359,
+          "loss": 0.6703094840049744,
+          "win": 0.6643370985984802
+        },
+        "brier": 0.48058465123176575,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6702989339828491,
+        "ece_10": 0.052241481840610504,
+        "mean_outcome_probability": {
+          "draw": 0.018110953271389008,
+          "loss": 0.5904445052146912,
+          "win": 0.3914445638656616
+        },
+        "nll": 0.7479325532913208,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.20973660051822662,
+        "tower_margin_mae_improvement": 0.004274025559425354,
+        "tower_margin_rmse": 0.2701314091682434
+      },
+      "development_gate_passed": true,
+      "epoch": 15,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.4050000011920929,
+      "training_loss": 0.5943611707054289,
+      "validation": {
+        "accuracy": 0.5979381203651428,
+        "auc_one_vs_rest": {
+          "draw": 0.9408602118492126,
+          "loss": 0.6919050216674805,
+          "win": 0.6405261158943176
+        },
+        "brier": 0.48592114448547363,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6669248342514038,
+        "ece_10": 0.04590408504009247,
+        "mean_outcome_probability": {
+          "draw": 0.02057873271405697,
+          "loss": 0.5861375331878662,
+          "win": 0.3932836949825287
+        },
+        "nll": 0.7530360221862793,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.1971452385187149,
+        "tower_margin_mae_improvement": 0.006979018449783325,
+        "tower_margin_rmse": 0.25158125162124634
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6531168818473816,
+        "auc_one_vs_rest": {
+          "draw": 0.942793607711792,
+          "loss": 0.6807155013084412,
+          "win": 0.6703958511352539
+        },
+        "brier": 0.4796259105205536,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6785169243812561,
+        "ece_10": 0.061118125915527344,
+        "mean_outcome_probability": {
+          "draw": 0.0189568642526865,
+          "loss": 0.6121132373809814,
+          "win": 0.36892983317375183
+        },
+        "nll": 0.7461187243461609,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.20960181951522827,
+        "tower_margin_mae_improvement": 0.004408806562423706,
+        "tower_margin_rmse": 0.27004000544548035
+      },
+      "development_gate_passed": true,
+      "epoch": 16,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.35999998450279236,
+      "training_loss": 0.5872291730622113,
+      "validation": {
+        "accuracy": 0.623711347579956,
+        "auc_one_vs_rest": {
+          "draw": 0.9462365508079529,
+          "loss": 0.7005396485328674,
+          "win": 0.6429681181907654
+        },
+        "brier": 0.48515355587005615,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6776480674743652,
+        "ece_10": 0.0733933374285698,
+        "mean_outcome_probability": {
+          "draw": 0.02133641205728054,
+          "loss": 0.6076812148094177,
+          "win": 0.37098246812820435
+        },
+        "nll": 0.7516231536865234,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19702863693237305,
+        "tower_margin_mae_improvement": 0.007095620036125183,
+        "tower_margin_rmse": 0.25136277079582214
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6485258340835571,
+        "auc_one_vs_rest": {
+          "draw": 0.9446275234222412,
+          "loss": 0.6818140745162964,
+          "win": 0.673875629901886
+        },
+        "brier": 0.4751812815666199,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6808953881263733,
+        "ece_10": 0.04467594251036644,
+        "mean_outcome_probability": {
+          "draw": 0.018963491544127464,
+          "loss": 0.5939667820930481,
+          "win": 0.3870697021484375
+        },
+        "nll": 0.7382460236549377,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.20993442833423615,
+        "tower_margin_mae_improvement": 0.0040761977434158325,
+        "tower_margin_rmse": 0.27061542868614197
+      },
+      "development_gate_passed": true,
+      "epoch": 17,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.4124999940395355,
+      "training_loss": 0.5804144297279207,
+      "validation": {
+        "accuracy": 0.6030927896499634,
+        "auc_one_vs_rest": {
+          "draw": 0.9462365508079529,
+          "loss": 0.7017269134521484,
+          "win": 0.6457431316375732
+        },
+        "brier": 0.48085737228393555,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6788395047187805,
+        "ece_10": 0.05500168353319168,
+        "mean_outcome_probability": {
+          "draw": 0.02182566002011299,
+          "loss": 0.5896109938621521,
+          "win": 0.388563334941864
+        },
+        "nll": 0.7428617477416992,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.1977105438709259,
+        "tower_margin_mae_improvement": 0.006413713097572327,
+        "tower_margin_rmse": 0.25235283374786377
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6520169377326965,
+        "auc_one_vs_rest": {
+          "draw": 0.9462943077087402,
+          "loss": 0.6875026226043701,
+          "win": 0.6790028214454651
+        },
+        "brier": 0.47311335802078247,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6863706111907959,
+        "ece_10": 0.04253523051738739,
+        "mean_outcome_probability": {
+          "draw": 0.019172511994838715,
+          "loss": 0.5970479249954224,
+          "win": 0.3837795853614807
+        },
+        "nll": 0.7349175810813904,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21008732914924622,
+        "tower_margin_mae_improvement": 0.003923296928405762,
+        "tower_margin_rmse": 0.2708866000175476
+      },
+      "development_gate_passed": true,
+      "epoch": 18,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.4074999988079071,
+      "training_loss": 0.574347868645932,
+      "validation": {
+        "accuracy": 0.6134020686149597,
+        "auc_one_vs_rest": {
+          "draw": 0.9462365508079529,
+          "loss": 0.7075552940368652,
+          "win": 0.6552891731262207
+        },
+        "brier": 0.47854849696159363,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.6872989535331726,
+        "ece_10": 0.037660643458366394,
+        "mean_outcome_probability": {
+          "draw": 0.022177893668413162,
+          "loss": 0.5919755101203918,
+          "win": 0.3858465552330017
+        },
+        "nll": 0.7388916015625,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.197793111205101,
+        "tower_margin_mae_improvement": 0.006331145763397217,
+        "tower_margin_rmse": 0.25244998931884766
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6482149958610535,
+        "auc_one_vs_rest": {
+          "draw": 0.9479767084121704,
+          "loss": 0.6912999153137207,
+          "win": 0.684843122959137
+        },
+        "brier": 0.4678799510002136,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6916141510009766,
+        "ece_10": 0.03847440332174301,
+        "mean_outcome_probability": {
+          "draw": 0.018283162266016006,
+          "loss": 0.5834556818008423,
+          "win": 0.398261159658432
+        },
+        "nll": 0.7275038957595825,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.2096988707780838,
+        "tower_margin_mae_improvement": 0.004311755299568176,
+        "tower_margin_rmse": 0.2703472077846527
+      },
+      "development_gate_passed": true,
+      "epoch": 19,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.47749999165534973,
+      "training_loss": 0.5685396352730229,
+      "validation": {
+        "accuracy": 0.592783510684967,
+        "auc_one_vs_rest": {
+          "draw": 0.9462365508079529,
+          "loss": 0.7141392230987549,
+          "win": 0.6583971381187439
+        },
+        "brier": 0.4748903214931488,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.690396785736084,
+        "ece_10": 0.08697406202554703,
+        "mean_outcome_probability": {
+          "draw": 0.02159966714680195,
+          "loss": 0.5776443481445312,
+          "win": 0.40075597167015076
+        },
+        "nll": 0.7322412729263306,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19722795486450195,
+        "tower_margin_mae_improvement": 0.006896302103996277,
+        "tower_margin_rmse": 0.25158560276031494
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6491475701332092,
+        "auc_one_vs_rest": {
+          "draw": 0.9504191875457764,
+          "loss": 0.6951134204864502,
+          "win": 0.6869281530380249
+        },
+        "brier": 0.46601390838623047,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6944106221199036,
+        "ece_10": 0.04041317105293274,
+        "mean_outcome_probability": {
+          "draw": 0.01911991462111473,
+          "loss": 0.5845720171928406,
+          "win": 0.396308034658432
+        },
+        "nll": 0.7230436205863953,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.21005718410015106,
+        "tower_margin_mae_improvement": 0.0039534419775009155,
+        "tower_margin_rmse": 0.2709352672100067
+      },
+      "development_gate_passed": true,
+      "epoch": 20,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.47749999165534973,
+      "training_loss": 0.5634274337924806,
+      "validation": {
+        "accuracy": 0.5824742317199707,
+        "auc_one_vs_rest": {
+          "draw": 0.9516128897666931,
+          "loss": 0.7241770029067993,
+          "win": 0.6628371477127075
+        },
+        "brier": 0.472001314163208,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.69694983959198,
+        "ece_10": 0.10971946269273758,
+        "mean_outcome_probability": {
+          "draw": 0.022747917100787163,
+          "loss": 0.5752787590026855,
+          "win": 0.40197327733039856
+        },
+        "nll": 0.7266864776611328,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19752028584480286,
+        "tower_margin_mae_improvement": 0.0066039711236953735,
+        "tower_margin_rmse": 0.2520054578781128
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.649219274520874,
+        "auc_one_vs_rest": {
+          "draw": 0.9519032835960388,
+          "loss": 0.6989803314208984,
+          "win": 0.6922570466995239
+        },
+        "brier": 0.4631204605102539,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.6991782188415527,
+        "ece_10": 0.03828171268105507,
+        "mean_outcome_probability": {
+          "draw": 0.01860588975250721,
+          "loss": 0.5731715559959412,
+          "win": 0.40822258591651917
+        },
+        "nll": 0.7183999419212341,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.20938900113105774,
+        "tower_margin_mae_improvement": 0.004621624946594238,
+        "tower_margin_rmse": 0.26998209953308105
+      },
+      "development_gate_passed": true,
+      "epoch": 21,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.5199999809265137,
+      "training_loss": 0.5577647527732418,
+      "validation": {
+        "accuracy": 0.592783510684967,
+        "auc_one_vs_rest": {
+          "draw": 0.9543010592460632,
+          "loss": 0.7276308536529541,
+          "win": 0.6668331623077393
+        },
+        "brier": 0.4708545207977295,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.7005242705345154,
+        "ece_10": 0.08669637888669968,
+        "mean_outcome_probability": {
+          "draw": 0.02247144840657711,
+          "loss": 0.5648003220558167,
+          "win": 0.4127281904220581
+        },
+        "nll": 0.72322016954422,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.1964869201183319,
+        "tower_margin_mae_improvement": 0.007637336850166321,
+        "tower_margin_rmse": 0.2504870891571045
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6526147127151489,
+        "auc_one_vs_rest": {
+          "draw": 0.9534611701965332,
+          "loss": 0.7033097743988037,
+          "win": 0.6947017312049866
+        },
+        "brier": 0.4604649245738983,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.7026324272155762,
+        "ece_10": 0.043562643229961395,
+        "mean_outcome_probability": {
+          "draw": 0.01882244274020195,
+          "loss": 0.5861155986785889,
+          "win": 0.3950619101524353
+        },
+        "nll": 0.7150992751121521,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.2097746729850769,
+        "tower_margin_mae_improvement": 0.004235953092575073,
+        "tower_margin_rmse": 0.27059096097946167
+      },
+      "development_gate_passed": true,
+      "epoch": 22,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.5074999928474426,
+      "training_loss": 0.5524187601555539,
+      "validation": {
+        "accuracy": 0.5876288414001465,
+        "auc_one_vs_rest": {
+          "draw": 0.9543010592460632,
+          "loss": 0.7360496520996094,
+          "win": 0.6693861484527588
+        },
+        "brier": 0.4681685268878937,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.704813539981842,
+        "ece_10": 0.08556234836578369,
+        "mean_outcome_probability": {
+          "draw": 0.022672070190310478,
+          "loss": 0.5759799480438232,
+          "win": 0.4013479948043823
+        },
+        "nll": 0.719819188117981,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19693347811698914,
+        "tower_margin_mae_improvement": 0.007190778851509094,
+        "tower_margin_rmse": 0.2511368691921234
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6529734134674072,
+        "auc_one_vs_rest": {
+          "draw": 0.9541721343994141,
+          "loss": 0.7040892839431763,
+          "win": 0.6978979110717773
+        },
+        "brier": 0.4590979218482971,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.7051810026168823,
+        "ece_10": 0.03654840216040611,
+        "mean_outcome_probability": {
+          "draw": 0.01729273982346058,
+          "loss": 0.5824214816093445,
+          "win": 0.4002857804298401
+        },
+        "nll": 0.7147900462150574,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.209600567817688,
+        "tower_margin_mae_improvement": 0.004410058259963989,
+        "tower_margin_rmse": 0.27035436034202576
+      },
+      "development_gate_passed": true,
+      "epoch": 23,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.5375000238418579,
+      "training_loss": 0.5476401763110511,
+      "validation": {
+        "accuracy": 0.5979381203651428,
+        "auc_one_vs_rest": {
+          "draw": 0.9543010592460632,
+          "loss": 0.7372369170188904,
+          "win": 0.6711066961288452
+        },
+        "brier": 0.46813756227493286,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.70809006690979,
+        "ece_10": 0.08572457730770111,
+        "mean_outcome_probability": {
+          "draw": 0.020791517570614815,
+          "loss": 0.5724291801452637,
+          "win": 0.40677934885025024
+        },
+        "nll": 0.7208222150802612,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.1964893937110901,
+        "tower_margin_mae_improvement": 0.007634863257408142,
+        "tower_margin_rmse": 0.25050637125968933
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6558905839920044,
+        "auc_one_vs_rest": {
+          "draw": 0.955971360206604,
+          "loss": 0.7098676562309265,
+          "win": 0.7017323970794678
+        },
+        "brier": 0.45546954870224,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.7095828056335449,
+        "ece_10": 0.03171003609895706,
+        "mean_outcome_probability": {
+          "draw": 0.018922725692391396,
+          "loss": 0.5819658637046814,
+          "win": 0.39911141991615295
+        },
+        "nll": 0.7069942355155945,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.2095090001821518,
+        "tower_margin_mae_improvement": 0.004501625895500183,
+        "tower_margin_rmse": 0.2702423632144928
+      },
+      "development_gate_passed": true,
+      "epoch": 24,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.5400000214576721,
+      "training_loss": 0.5429165218509523,
+      "validation": {
+        "accuracy": 0.6082473993301392,
+        "auc_one_vs_rest": {
+          "draw": 0.9569892287254333,
+          "loss": 0.7423097491264343,
+          "win": 0.6768231987953186
+        },
+        "brier": 0.46455973386764526,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.7132729887962341,
+        "ece_10": 0.10612549632787704,
+        "mean_outcome_probability": {
+          "draw": 0.023082025349140167,
+          "loss": 0.5693467259407043,
+          "win": 0.40757131576538086
+        },
+        "nll": 0.7130100131034851,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19617725908756256,
+        "tower_margin_mae_improvement": 0.007946997880935669,
+        "tower_margin_rmse": 0.25006788969039917
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6504387855529785,
+        "auc_one_vs_rest": {
+          "draw": 0.956994354724884,
+          "loss": 0.7078733444213867,
+          "win": 0.7002376914024353
+        },
+        "brier": 0.45707663893699646,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.7077103853225708,
+        "ece_10": 0.032680679112672806,
+        "mean_outcome_probability": {
+          "draw": 0.01894751936197281,
+          "loss": 0.5746234059333801,
+          "win": 0.4064290225505829
+        },
+        "nll": 0.707897961139679,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.20924733579158783,
+        "tower_margin_mae_improvement": 0.004763290286064148,
+        "tower_margin_rmse": 0.26987966895103455
+      },
+      "development_gate_passed": true,
+      "epoch": 25,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.5475000143051147,
+      "training_loss": 0.5383274598983722,
+      "validation": {
+        "accuracy": 0.6030927896499634,
+        "auc_one_vs_rest": {
+          "draw": 0.9569892287254333,
+          "loss": 0.7420939207077026,
+          "win": 0.6740481853485107
+        },
+        "brier": 0.464711457490921,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.7087453603744507,
+        "ece_10": 0.08025357127189636,
+        "mean_outcome_probability": {
+          "draw": 0.023083684965968132,
+          "loss": 0.5617495775222778,
+          "win": 0.4151667654514313
+        },
+        "nll": 0.7121099233627319,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.195622056722641,
+        "tower_margin_mae_improvement": 0.008502200245857239,
+        "tower_margin_rmse": 0.24931219220161438
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6515387296676636,
+        "auc_one_vs_rest": {
+          "draw": 0.9569880962371826,
+          "loss": 0.7087537050247192,
+          "win": 0.7050871849060059
+        },
+        "brier": 0.45649904012680054,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.7111502289772034,
+        "ece_10": 0.024276666343212128,
+        "mean_outcome_probability": {
+          "draw": 0.01743612438440323,
+          "loss": 0.5641564130783081,
+          "win": 0.41840746998786926
+        },
+        "nll": 0.7080727219581604,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.20941807329654694,
+        "tower_margin_mae_improvement": 0.0045925527811050415,
+        "tower_margin_rmse": 0.2701541781425476
+      },
+      "development_gate_passed": true,
+      "epoch": 26,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.5774999856948853,
+      "training_loss": 0.5338127443009177,
+      "validation": {
+        "accuracy": 0.5876288414001465,
+        "auc_one_vs_rest": {
+          "draw": 0.9569892287254333,
+          "loss": 0.7339988946914673,
+          "win": 0.6789321899414062
+        },
+        "brier": 0.46562862396240234,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.7098177075386047,
+        "ece_10": 0.12491640448570251,
+        "mean_outcome_probability": {
+          "draw": 0.02146185003221035,
+          "loss": 0.5526439547538757,
+          "win": 0.42589420080184937
+        },
+        "nll": 0.7134174704551697,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19588971138000488,
+        "tower_margin_mae_improvement": 0.008234545588493347,
+        "tower_margin_rmse": 0.24969016015529633
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6547906398773193,
+        "auc_one_vs_rest": {
+          "draw": 0.9577751755714417,
+          "loss": 0.7120227813720703,
+          "win": 0.7060222029685974
+        },
+        "brier": 0.4535941779613495,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.713154137134552,
+        "ece_10": 0.01312054879963398,
+        "mean_outcome_probability": {
+          "draw": 0.01783842220902443,
+          "loss": 0.5807198882102966,
+          "win": 0.40144169330596924
+        },
+        "nll": 0.7045959234237671,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.20939554274082184,
+        "tower_margin_mae_improvement": 0.004615083336830139,
+        "tower_margin_rmse": 0.27015382051467896
+      },
+      "development_gate_passed": true,
+      "epoch": 27,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.5575000047683716,
+      "training_loss": 0.5292268158015558,
+      "validation": {
+        "accuracy": 0.6134020686149597,
+        "auc_one_vs_rest": {
+          "draw": 0.9596773982048035,
+          "loss": 0.742957353591919,
+          "win": 0.6817072033882141
+        },
+        "brier": 0.46132683753967285,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.7163707613945007,
+        "ece_10": 0.08469558507204056,
+        "mean_outcome_probability": {
+          "draw": 0.021829571574926376,
+          "loss": 0.5684295892715454,
+          "win": 0.4097408950328827
+        },
+        "nll": 0.7083277702331543,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19568030536174774,
+        "tower_margin_mae_improvement": 0.008443951606750488,
+        "tower_margin_rmse": 0.24940602481365204
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6538102626800537,
+        "auc_one_vs_rest": {
+          "draw": 0.9586448669433594,
+          "loss": 0.7128098607063293,
+          "win": 0.7073031067848206
+        },
+        "brier": 0.45354393124580383,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.7139395475387573,
+        "ece_10": 0.020531201735138893,
+        "mean_outcome_probability": {
+          "draw": 0.01842612586915493,
+          "loss": 0.5689038634300232,
+          "win": 0.4126700460910797
+        },
+        "nll": 0.702446699142456,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.2097359001636505,
+        "tower_margin_mae_improvement": 0.004274725914001465,
+        "tower_margin_rmse": 0.2706517279148102
+      },
+      "development_gate_passed": true,
+      "epoch": 28,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.5699999928474426,
+      "training_loss": 0.5247869040332945,
+      "validation": {
+        "accuracy": 0.6134020686149597,
+        "auc_one_vs_rest": {
+          "draw": 0.9650537371635437,
+          "loss": 0.7432271838188171,
+          "win": 0.6828727126121521
+        },
+        "brier": 0.46201619505882263,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.7153580188751221,
+        "ece_10": 0.10886675864458084,
+        "mean_outcome_probability": {
+          "draw": 0.022786106914281845,
+          "loss": 0.5548113584518433,
+          "win": 0.4224025309085846
+        },
+        "nll": 0.7069206833839417,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.1960395872592926,
+        "tower_margin_mae_improvement": 0.008084669709205627,
+        "tower_margin_rmse": 0.2498907446861267
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6544319987297058,
+        "auc_one_vs_rest": {
+          "draw": 0.9591893553733826,
+          "loss": 0.7149084806442261,
+          "win": 0.7099376320838928
+        },
+        "brier": 0.45180296897888184,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.7164116501808167,
+        "ece_10": 0.030440131202340126,
+        "mean_outcome_probability": {
+          "draw": 0.018258746713399887,
+          "loss": 0.5641893148422241,
+          "win": 0.41755199432373047
+        },
+        "nll": 0.6991674304008484,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.20972460508346558,
+        "tower_margin_mae_improvement": 0.004286020994186401,
+        "tower_margin_rmse": 0.2706705927848816
+      },
+      "development_gate_passed": true,
+      "epoch": 29,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.6000000238418579,
+      "training_loss": 0.5204821934471022,
+      "validation": {
+        "accuracy": 0.6185566782951355,
+        "auc_one_vs_rest": {
+          "draw": 0.9677419066429138,
+          "loss": 0.7445763349533081,
+          "win": 0.6871461868286133
+        },
+        "brier": 0.46042537689208984,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.7170856595039368,
+        "ece_10": 0.1319429874420166,
+        "mean_outcome_probability": {
+          "draw": 0.022775473073124886,
+          "loss": 0.5474228262901306,
+          "win": 0.42980170249938965
+        },
+        "nll": 0.7037861347198486,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19602753221988678,
+        "tower_margin_mae_improvement": 0.00809672474861145,
+        "tower_margin_rmse": 0.2498857080936432
+      }
+    },
+    {
+      "all_row_validation": {
+        "accuracy": 0.6566557288169861,
+        "auc_one_vs_rest": {
+          "draw": 0.9595943689346313,
+          "loss": 0.71662437915802,
+          "win": 0.7109503149986267
+        },
+        "brier": 0.44991442561149597,
+        "class_counts": {
+          "draw": 1552,
+          "loss": 23509,
+          "win": 16760
+        },
+        "decisive_win_loss_auc": 0.717814564704895,
+        "ece_10": 0.02878691628575325,
+        "mean_outcome_probability": {
+          "draw": 0.018022138625383377,
+          "loss": 0.5760577917098999,
+          "win": 0.4059200584888458
+        },
+        "nll": 0.6977285742759705,
+        "rows": 41821,
+        "tower_margin_baseline_mae": 0.21401062607765198,
+        "tower_margin_mae": 0.209951251745224,
+        "tower_margin_mae_improvement": 0.0040593743324279785,
+        "tower_margin_rmse": 0.27101415395736694
+      },
+      "development_gate_passed": true,
+      "epoch": 30,
+      "margin_gate_passed": true,
+      "outcome_gate_passed": true,
+      "probability_shrinkage": 0.5875000357627869,
+      "training_loss": 0.5161730071245614,
+      "validation": {
+        "accuracy": 0.6185566782951355,
+        "auc_one_vs_rest": {
+          "draw": 0.9677419066429138,
+          "loss": 0.7506746053695679,
+          "win": 0.6894217133522034
+        },
+        "brier": 0.45770248770713806,
+        "class_counts": {
+          "draw": 8,
+          "loss": 109,
+          "win": 77
+        },
+        "decisive_win_loss_auc": 0.7227451205253601,
+        "ece_10": 0.10041198134422302,
+        "mean_outcome_probability": {
+          "draw": 0.022226711735129356,
+          "loss": 0.5612499713897705,
+          "win": 0.41652342677116394
+        },
+        "nll": 0.7010806202888489,
+        "rows": 194,
+        "tower_margin_baseline_mae": 0.20412425696849823,
+        "tower_margin_mae": 0.19627997279167175,
+        "tower_margin_mae_improvement": 0.007844284176826477,
+        "tower_margin_rmse": 0.25026029348373413
+      }
+    }
+  ],
+  "holdout_corpora": [
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_untouched_holdout_seed1278001/corpus.npz",
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_symmetric_draw_holdout_seed1278002/corpus.npz"
+  ],
+  "holdout_corpus_sha256": [
+    "48bd09fd472267325e90893d20f535c8fb66e41b504e1b5f83e128ea52b131e4",
+    "2b4f55133ae6b84e91bbca0c08cc811cf704257e07f7b7e592e5f94c25b7fe57"
+  ],
+  "holdout_evaluation": {
+    "by_opponent": {
+      "bridge-pressure": {
+        "accuracy": 0.5513263940811157,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.9130620956420898,
+          "win": 0.9460539817810059
+        },
+        "brier": 0.5271707773208618,
+        "class_counts": {
+          "draw": 0,
+          "loss": 1188,
+          "win": 9216
+        },
+        "decisive_win_loss_auc": 0.9383113384246826,
+        "ece_10": 0.1189514696598053,
+        "mean_outcome_probability": {
+          "draw": 0.021132348105311394,
+          "loss": 0.528496265411377,
+          "win": 0.4503714144229889
+        },
+        "nll": 0.7512611746788025,
+        "rows": 10404,
+        "tower_margin_baseline_mae": 0.1130235344171524,
+        "tower_margin_mae": 0.15355509519577026,
+        "tower_margin_mae_improvement": -0.04053156077861786,
+        "tower_margin_rmse": 0.22241456806659698
+      },
+      "reactive-defense": {
+        "accuracy": 0.6196743249893188,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.6701933145523071,
+          "win": 0.6734691858291626
+        },
+        "brier": 0.4533247649669647,
+        "class_counts": {
+          "draw": 0,
+          "loss": 8949,
+          "win": 4500
+        },
+        "decisive_win_loss_auc": 0.6719033718109131,
+        "ece_10": 0.10156194865703583,
+        "mean_outcome_probability": {
+          "draw": 0.010730885900557041,
+          "loss": 0.5087919235229492,
+          "win": 0.4804771840572357
+        },
+        "nll": 0.6503830552101135,
+        "rows": 13449,
+        "tower_margin_baseline_mae": 0.2262556552886963,
+        "tower_margin_mae": 0.19893726706504822,
+        "tower_margin_mae_improvement": 0.02731838822364807,
+        "tower_margin_rmse": 0.25770747661590576
+      },
+      "spell-control": {
+        "accuracy": 0.7743180394172668,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.8816516995429993,
+          "win": 0.8800103664398193
+        },
+        "brier": 0.336528480052948,
+        "class_counts": {
+          "draw": 0,
+          "loss": 6258,
+          "win": 5400
+        },
+        "decisive_win_loss_auc": 0.8808721899986267,
+        "ece_10": 0.13060951232910156,
+        "mean_outcome_probability": {
+          "draw": 0.009745225310325623,
+          "loss": 0.490578830242157,
+          "win": 0.4996759593486786
+        },
+        "nll": 0.5273770093917847,
+        "rows": 11658,
+        "tower_margin_baseline_mae": 0.21422621607780457,
+        "tower_margin_mae": 0.21488423645496368,
+        "tower_margin_mae_improvement": -0.0006580203771591187,
+        "tower_margin_rmse": 0.27643126249313354
+      },
+      "symmetric-selfplay": {
+        "accuracy": 0.0,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 1.3313932418823242,
+        "class_counts": {
+          "draw": 6208,
+          "loss": 0,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.6349711418151855,
+        "mean_outcome_probability": {
+          "draw": 0.08527848869562149,
+          "loss": 0.5451950430870056,
+          "win": 0.3695265054702759
+        },
+        "nll": 2.6451940536499023,
+        "rows": 6208,
+        "tower_margin_baseline_mae": 0.0,
+        "tower_margin_mae": 0.07839235663414001,
+        "tower_margin_mae_improvement": -0.07839235663414001,
+        "tower_margin_rmse": 0.10735417157411575
+      }
+    },
+    "by_opponent_and_deck": {
+      "bridge-pressure|Golem Hog Fireball 3.4": {
+        "accuracy": 0.4806666672229767,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.6053056716918945,
+        "class_counts": {
+          "draw": 0,
+          "loss": 0,
+          "win": 4500
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.19868803024291992,
+        "mean_outcome_probability": {
+          "draw": 0.011217623949050903,
+          "loss": 0.5060171484947205,
+          "win": 0.48276519775390625
+        },
+        "nll": 0.8367114663124084,
+        "rows": 4500,
+        "tower_margin_baseline_mae": 0.11891300231218338,
+        "tower_margin_mae": 0.16023141145706177,
+        "tower_margin_mae_improvement": -0.04131840914487839,
+        "tower_margin_rmse": 0.23514343798160553
+      },
+      "bridge-pressure|Hog 2.6 (Barbarian Barrel)": {
+        "accuracy": 0.6666666865348816,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.4311603903770447,
+        "class_counts": {
+          "draw": 0,
+          "loss": 0,
+          "win": 2700
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.06136506795883179,
+        "mean_outcome_probability": {
+          "draw": 0.01177133247256279,
+          "loss": 0.4348463714122772,
+          "win": 0.5533822774887085
+        },
+        "nll": 0.6356157660484314,
+        "rows": 2700,
+        "tower_margin_baseline_mae": 0.11704514920711517,
+        "tower_margin_mae": 0.18277642130851746,
+        "tower_margin_mae_improvement": -0.06573127210140228,
+        "tower_margin_rmse": 0.23184943199157715
+      },
+      "bridge-pressure|Hog FC 2.6 Cycle": {
+        "accuracy": 0.2901785671710968,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.73319011926651,
+        "class_counts": {
+          "draw": 0,
+          "loss": 0,
+          "win": 2016
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.35929325222969055,
+        "mean_outcome_probability": {
+          "draw": 0.038463857024908066,
+          "loss": 0.5655772686004639,
+          "win": 0.3959588408470154
+        },
+        "nll": 0.9980441331863403,
+        "rows": 2016,
+        "tower_margin_baseline_mae": 0.10332213342189789,
+        "tower_margin_mae": 0.13779807090759277,
+        "tower_margin_mae_improvement": -0.034475937485694885,
+        "tower_margin_rmse": 0.2308383285999298
+      },
+      "bridge-pressure|WB Valk Log Bait 2.8": {
+        "accuracy": 1.0,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.09980185329914093,
+        "class_counts": {
+          "draw": 0,
+          "loss": 1188,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.23644062876701355,
+        "mean_outcome_probability": {
+          "draw": 0.05055209994316101,
+          "loss": 0.7635593414306641,
+          "win": 0.18588855862617493
+        },
+        "nll": 0.27163296937942505,
+        "rows": 1188,
+        "tower_margin_baseline_mae": 0.09803787618875504,
+        "tower_margin_mae": 0.0885930210351944,
+        "tower_margin_mae_improvement": 0.009444855153560638,
+        "tower_margin_rmse": 0.10576831549406052
+      },
+      "reactive-defense|Golem Hog Fireball 3.4": {
+        "accuracy": 0.6740000247955322,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.4043465554714203,
+        "class_counts": {
+          "draw": 0,
+          "loss": 0,
+          "win": 4500
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.1009819507598877,
+        "mean_outcome_probability": {
+          "draw": 0.009832603856921196,
+          "loss": 0.42760345339775085,
+          "win": 0.5625640153884888
+        },
+        "nll": 0.6018353700637817,
+        "rows": 4500,
+        "tower_margin_baseline_mae": 0.07525891810655594,
+        "tower_margin_mae": 0.10295337438583374,
+        "tower_margin_mae_improvement": -0.0276944562792778,
+        "tower_margin_rmse": 0.15941493213176727
+      },
+      "reactive-defense|Hog 2.6 (Barbarian Barrel)": {
+        "accuracy": 0.19337016344070435,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.8244603872299194,
+        "class_counts": {
+          "draw": 0,
+          "loss": 2715,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.5229395627975464,
+        "mean_outcome_probability": {
+          "draw": 0.011457215994596481,
+          "loss": 0.36633938550949097,
+          "win": 0.6222034096717834
+        },
+        "nll": 1.0553112030029297,
+        "rows": 2715,
+        "tower_margin_baseline_mae": 0.38559624552726746,
+        "tower_margin_mae": 0.3232758045196533,
+        "tower_margin_mae_improvement": 0.062320441007614136,
+        "tower_margin_rmse": 0.338911235332489
+      },
+      "reactive-defense|Hog FC 2.6 Cycle": {
+        "accuracy": 0.5959252715110779,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.46878647804260254,
+        "class_counts": {
+          "draw": 0,
+          "loss": 3534,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.17141443490982056,
+        "mean_outcome_probability": {
+          "draw": 0.011211489327251911,
+          "loss": 0.5391025543212891,
+          "win": 0.4496859908103943
+        },
+        "nll": 0.6682471036911011,
+        "rows": 3534,
+        "tower_margin_baseline_mae": 0.1466885209083557,
+        "tower_margin_mae": 0.10177689790725708,
+        "tower_margin_mae_improvement": 0.04491162300109863,
+        "tower_margin_rmse": 0.1175888255238533
+      },
+      "reactive-defense|WB Valk Log Bait 2.8": {
+        "accuracy": 0.9888888597488403,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.14152002334594727,
+        "class_counts": {
+          "draw": 0,
+          "loss": 2700,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.24073733389377594,
+        "mean_outcome_probability": {
+          "draw": 0.010868602432310581,
+          "loss": 0.7476766109466553,
+          "win": 0.24145478010177612
+        },
+        "nll": 0.30073609948158264,
+        "rows": 2700,
+        "tower_margin_baseline_mae": 0.4218355417251587,
+        "tower_margin_mae": 0.36105331778526306,
+        "tower_margin_mae_improvement": 0.06078222393989563,
+        "tower_margin_rmse": 0.39352118968963623
+      },
+      "spell-control|Golem Hog Fireball 3.4": {
+        "accuracy": 0.7377777695655823,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.37194904685020447,
+        "class_counts": {
+          "draw": 0,
+          "loss": 0,
+          "win": 2700
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.14029178023338318,
+        "mean_outcome_probability": {
+          "draw": 0.009972899220883846,
+          "loss": 0.40534621477127075,
+          "win": 0.5846808552742004
+        },
+        "nll": 0.5695773959159851,
+        "rows": 2700,
+        "tower_margin_baseline_mae": 0.2684290111064911,
+        "tower_margin_mae": 0.3334474563598633,
+        "tower_margin_mae_improvement": -0.06501844525337219,
+        "tower_margin_rmse": 0.40493783354759216
+      },
+      "spell-control|Hog 2.6 (Barbarian Barrel)": {
+        "accuracy": 0.8744444251060486,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.2512001395225525,
+        "class_counts": {
+          "draw": 0,
+          "loss": 0,
+          "win": 2700
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.23468723893165588,
+        "mean_outcome_probability": {
+          "draw": 0.009786602109670639,
+          "loss": 0.33412232995033264,
+          "win": 0.656091034412384
+        },
+        "nll": 0.43703508377075195,
+        "rows": 2700,
+        "tower_margin_baseline_mae": 0.05507778748869896,
+        "tower_margin_mae": 0.10429566353559494,
+        "tower_margin_mae_improvement": -0.04921787604689598,
+        "tower_margin_rmse": 0.17898036539554596
+      },
+      "spell-control|Hog FC 2.6 Cycle": {
+        "accuracy": 0.8943089246749878,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.23847097158432007,
+        "class_counts": {
+          "draw": 0,
+          "loss": 2952,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.22991561889648438,
+        "mean_outcome_probability": {
+          "draw": 0.009702224284410477,
+          "loss": 0.6690546274185181,
+          "win": 0.3212431073188782
+        },
+        "nll": 0.41750237345695496,
+        "rows": 2952,
+        "tower_margin_baseline_mae": 0.23684810101985931,
+        "tower_margin_mae": 0.18373365700244904,
+        "tower_margin_mae_improvement": 0.05311444401741028,
+        "tower_margin_rmse": 0.2015608549118042
+      },
+      "spell-control|WB Valk Log Bait 2.8": {
+        "accuracy": 0.61524498462677,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.4648457467556,
+        "class_counts": {
+          "draw": 0,
+          "loss": 3306,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.05363127961754799,
+        "mean_outcome_probability": {
+          "draw": 0.009563885629177094,
+          "loss": 0.5286005735397339,
+          "win": 0.4618355333805084
+        },
+        "nll": 0.6648033857345581,
+        "rows": 3306,
+        "tower_margin_baseline_mae": 0.27973535656929016,
+        "tower_margin_mae": 0.23618640005588531,
+        "tower_margin_mae_improvement": 0.043548956513404846,
+        "tower_margin_rmse": 0.27037858963012695
+      },
+      "symmetric-selfplay|<controlled-draw>": {
+        "accuracy": 0.0,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 1.3313932418823242,
+        "class_counts": {
+          "draw": 6208,
+          "loss": 0,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.6349711418151855,
+        "mean_outcome_probability": {
+          "draw": 0.08527848869562149,
+          "loss": 0.5451950430870056,
+          "win": 0.3695265054702759
+        },
+        "nll": 2.6451940536499023,
+        "rows": 6208,
+        "tower_margin_baseline_mae": 0.0,
+        "tower_margin_mae": 0.07839235663414001,
+        "tower_margin_mae_improvement": -0.07839235663414001,
+        "tower_margin_rmse": 0.10735417157411575
+      }
+    },
+    "by_opponent_deck": {
+      "<controlled-draw>": {
+        "accuracy": 0.0,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 1.3313932418823242,
+        "class_counts": {
+          "draw": 6208,
+          "loss": 0,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.6349711418151855,
+        "mean_outcome_probability": {
+          "draw": 0.08527848869562149,
+          "loss": 0.5451950430870056,
+          "win": 0.3695265054702759
+        },
+        "nll": 2.6451940536499023,
+        "rows": 6208,
+        "tower_margin_baseline_mae": 0.0,
+        "tower_margin_mae": 0.07839235663414001,
+        "tower_margin_mae_improvement": -0.07839235663414001,
+        "tower_margin_rmse": 0.10735417157411575
+      },
+      "Golem Hog Fireball 3.4": {
+        "accuracy": 0.6143589615821838,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.47416216135025024,
+        "class_counts": {
+          "draw": 0,
+          "loss": 0,
+          "win": 11700
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.07736998796463013,
+        "mean_outcome_probability": {
+          "draw": 0.010397680103778839,
+          "loss": 0.4526262879371643,
+          "win": 0.5369760394096375
+        },
+        "nll": 0.68472820520401,
+        "rows": 11700,
+        "tower_margin_baseline_mae": 0.13662667572498322,
+        "tower_margin_mae": 0.17817433178424835,
+        "tower_margin_mae_improvement": -0.04154765605926514,
+        "tower_margin_rmse": 0.26245173811912537
+      },
+      "Hog 2.6 (Barbarian Barrel)": {
+        "accuracy": 0.5774491429328918,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.5123030543327332,
+          "win": 0.5139746069908142
+        },
+        "brier": 0.5028691291809082,
+        "class_counts": {
+          "draw": 0,
+          "loss": 2715,
+          "win": 5400
+        },
+        "decisive_win_loss_auc": 0.5132895708084106,
+        "ece_10": 0.08334656804800034,
+        "mean_outcome_probability": {
+          "draw": 0.0110058868303895,
+          "loss": 0.37841370701789856,
+          "win": 0.6105804443359375
+        },
+        "nll": 0.7099602222442627,
+        "rows": 8115,
+        "tower_margin_baseline_mae": 0.18627551198005676,
+        "tower_margin_mae": 0.20367079973220825,
+        "tower_margin_mae_improvement": -0.01739528775215149,
+        "tower_margin_rmse": 0.2587888538837433
+      },
+      "Hog FC 2.6 Cycle": {
+        "accuracy": 0.6270289421081543,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.5642262697219849,
+          "win": 0.5112756490707397
+        },
+        "brier": 0.4515136480331421,
+        "class_counts": {
+          "draw": 0,
+          "loss": 6486,
+          "win": 2016
+        },
+        "decisive_win_loss_auc": 0.5387606620788574,
+        "ece_10": 0.062474507838487625,
+        "mean_outcome_probability": {
+          "draw": 0.017149554565548897,
+          "loss": 0.5905012488365173,
+          "win": 0.3923492133617401
+        },
+        "nll": 0.6593871116638184,
+        "rows": 8502,
+        "tower_margin_baseline_mae": 0.16770997643470764,
+        "tower_margin_mae": 0.13877467811107635,
+        "tower_margin_mae_improvement": 0.028935298323631287,
+        "tower_margin_rmse": 0.1802467703819275
+      },
+      "WB Valk Log Bait 2.8": {
+        "accuracy": 0.8190158605575562,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 0.2832149863243103,
+        "class_counts": {
+          "draw": 0,
+          "loss": 7194,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.1378379613161087,
+        "mean_outcome_probability": {
+          "draw": 0.01682225987315178,
+          "loss": 0.6496231555938721,
+          "win": 0.33355459570884705
+        },
+        "nll": 0.46323707699775696,
+        "rows": 7194,
+        "tower_margin_baseline_mae": 0.3030622601509094,
+        "tower_margin_mae": 0.25867733359336853,
+        "tower_margin_mae_improvement": 0.044384926557540894,
+        "tower_margin_rmse": 0.3058808743953705
+      }
+    },
+    "by_phase": {
+      "early": {
+        "accuracy": 0.49063998460769653,
+        "auc_one_vs_rest": {
+          "draw": 0.9243476986885071,
+          "loss": 0.6333659291267395,
+          "win": 0.6370143890380859
+        },
+        "brier": 0.6500272750854492,
+        "class_counts": {
+          "draw": 4000,
+          "loss": 8688,
+          "win": 9000
+        },
+        "decisive_win_loss_auc": 0.6534007787704468,
+        "ece_10": 0.15510930120944977,
+        "mean_outcome_probability": {
+          "draw": 0.025398138910531998,
+          "loss": 0.558860719203949,
+          "win": 0.4157411456108093
+        },
+        "nll": 1.108373999595642,
+        "rows": 21688,
+        "tower_margin_baseline_mae": 0.2027544379234314,
+        "tower_margin_mae": 0.22786173224449158,
+        "tower_margin_mae_improvement": -0.02510729432106018,
+        "tower_margin_rmse": 0.28830814361572266
+      },
+      "late": {
+        "accuracy": 0.8414062261581421,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.8047106862068176,
+          "win": 0.8046892881393433
+        },
+        "brier": 0.29019081592559814,
+        "class_counts": {
+          "draw": 0,
+          "loss": 840,
+          "win": 3000
+        },
+        "decisive_win_loss_auc": 0.8046964406967163,
+        "ece_10": 0.16144676506519318,
+        "mean_outcome_probability": {
+          "draw": 0.008419165387749672,
+          "loss": 0.33706599473953247,
+          "win": 0.6545149087905884
+        },
+        "nll": 0.47812557220458984,
+        "rows": 3840,
+        "tower_margin_baseline_mae": 0.03253583982586861,
+        "tower_margin_mae": 0.032544899731874466,
+        "tower_margin_mae_improvement": -9.059906005859375e-06,
+        "tower_margin_rmse": 0.0462249331176281
+      },
+      "middle": {
+        "accuracy": 0.5697609782218933,
+        "auc_one_vs_rest": {
+          "draw": 0.996646523475647,
+          "loss": 0.6893216371536255,
+          "win": 0.7692145109176636
+        },
+        "brier": 0.528556764125824,
+        "class_counts": {
+          "draw": 2208,
+          "loss": 6867,
+          "win": 7116
+        },
+        "decisive_win_loss_auc": 0.7337785959243774,
+        "ece_10": 0.11469870060682297,
+        "mean_outcome_probability": {
+          "draw": 0.026189543306827545,
+          "loss": 0.49595770239830017,
+          "win": 0.47785279154777527
+        },
+        "nll": 0.8188643455505371,
+        "rows": 16191,
+        "tower_margin_baseline_mae": 0.1355063021183014,
+        "tower_margin_mae": 0.135756716132164,
+        "tower_margin_mae_improvement": -0.00025041401386260986,
+        "tower_margin_rmse": 0.18585915863513947
+      }
+    },
+    "by_seat": {
+      "0": {
+        "accuracy": 0.5547061562538147,
+        "auc_one_vs_rest": {
+          "draw": 0.9696946144104004,
+          "loss": 0.6860272288322449,
+          "win": 0.733246922492981
+        },
+        "brier": 0.5662791728973389,
+        "class_counts": {
+          "draw": 3104,
+          "loss": 8268,
+          "win": 9558
+        },
+        "decisive_win_loss_auc": 0.7216495871543884,
+        "ece_10": 0.10308106243610382,
+        "mean_outcome_probability": {
+          "draw": 0.024151841178536415,
+          "loss": 0.5152267813682556,
+          "win": 0.46062132716178894
+        },
+        "nll": 0.9337811470031738,
+        "rows": 20930,
+        "tower_margin_baseline_mae": 0.16900959610939026,
+        "tower_margin_mae": 0.1807965189218521,
+        "tower_margin_mae_improvement": -0.011786922812461853,
+        "tower_margin_rmse": 0.24901150166988373
+      },
+      "1": {
+        "accuracy": 0.552551805973053,
+        "auc_one_vs_rest": {
+          "draw": 0.9697449207305908,
+          "loss": 0.6716047525405884,
+          "win": 0.7252776026725769
+        },
+        "brier": 0.5732725858688354,
+        "class_counts": {
+          "draw": 3104,
+          "loss": 8127,
+          "win": 9558
+        },
+        "decisive_win_loss_auc": 0.7090492248535156,
+        "ece_10": 0.10385897755622864,
+        "mean_outcome_probability": {
+          "draw": 0.024133017286658287,
+          "loss": 0.5128317475318909,
+          "win": 0.4630352556705475
+        },
+        "nll": 0.9422584772109985,
+        "rows": 20789,
+        "tower_margin_baseline_mae": 0.152911975979805,
+        "tower_margin_mae": 0.16743488609790802,
+        "tower_margin_mae_improvement": -0.014522910118103027,
+        "tower_margin_rmse": 0.22712761163711548
+      }
+    },
+    "by_source": {
+      "controlled-symmetric-draws": {
+        "accuracy": 0.0,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 1.3313932418823242,
+        "class_counts": {
+          "draw": 6208,
+          "loss": 0,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.6349711418151855,
+        "mean_outcome_probability": {
+          "draw": 0.08527848869562149,
+          "loss": 0.5451950430870056,
+          "win": 0.3695265054702759
+        },
+        "nll": 2.6451940536499023,
+        "rows": 6208,
+        "tower_margin_baseline_mae": 0.0,
+        "tower_margin_mae": 0.07839235663414001,
+        "tower_margin_mae_improvement": -0.07839235663414001,
+        "tower_margin_rmse": 0.10735417157411575
+      },
+      "natural-strategy-games": {
+        "accuracy": 0.6504181623458862,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.7167907357215881,
+          "win": 0.7132863998413086
+        },
+        "brier": 0.4366167485713959,
+        "class_counts": {
+          "draw": 0,
+          "loss": 16395,
+          "win": 19116
+        },
+        "decisive_win_loss_auc": 0.7154058218002319,
+        "ece_10": 0.027798393741250038,
+        "mean_outcome_probability": {
+          "draw": 0.01345471665263176,
+          "loss": 0.5085856914520264,
+          "win": 0.47795963287353516
+        },
+        "nll": 0.639556348323822,
+        "rows": 35511,
+        "tower_margin_baseline_mae": 0.18913176655769348,
+        "tower_margin_mae": 0.19087648391723633,
+        "tower_margin_mae_improvement": -0.0017447173595428467,
+        "tower_margin_rmse": 0.25442469120025635
+      }
+    },
+    "episode_endpoints": {
+      "accuracy": 0.6818181872367859,
+      "auc_one_vs_rest": {
+        "draw": 1.0,
+        "loss": 0.9230769276618958,
+        "win": 0.8525640964508057
+      },
+      "brier": 0.47874128818511963,
+      "class_counts": {
+        "draw": 16,
+        "loss": 36,
+        "win": 36
+      },
+      "decisive_win_loss_auc": 0.8611111044883728,
+      "ece_10": 0.2532291114330292,
+      "mean_outcome_probability": {
+        "draw": 0.03917308896780014,
+        "loss": 0.40656420588493347,
+        "win": 0.5542627573013306
+      },
+      "nll": 0.7946609258651733,
+      "rows": 88,
+      "tower_margin_baseline_mae": 0.00813955720514059,
+      "tower_margin_mae": 0.012752699665725231,
+      "tower_margin_mae_improvement": -0.0046131424605846405,
+      "tower_margin_rmse": 0.020201552659273148
+    },
+    "episode_endpoints_by_source": {
+      "controlled-symmetric-draws": {
+        "accuracy": 0.0,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 1.2012341022491455,
+        "class_counts": {
+          "draw": 16,
+          "loss": 0,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.6026024222373962,
+        "mean_outcome_probability": {
+          "draw": 0.12575456500053406,
+          "loss": 0.2716430127620697,
+          "win": 0.6026024222373962
+        },
+        "nll": 2.073423147201538,
+        "rows": 16,
+        "tower_margin_baseline_mae": 0.0,
+        "tower_margin_mae": 0.004089296795427799,
+        "tower_margin_mae_improvement": -0.004089296795427799,
+        "tower_margin_rmse": 0.0040893168188631535
+      },
+      "natural-strategy-games": {
+        "accuracy": 0.8333333134651184,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.8888888955116272,
+          "win": 0.8611111044883728
+        },
+        "brier": 0.3181873559951782,
+        "class_counts": {
+          "draw": 0,
+          "loss": 36,
+          "win": 36
+        },
+        "decisive_win_loss_auc": 0.8611111044883728,
+        "ece_10": 0.1755906045436859,
+        "mean_outcome_probability": {
+          "draw": 0.019932759925723076,
+          "loss": 0.4365466833114624,
+          "win": 0.5435205698013306
+        },
+        "nll": 0.5104916095733643,
+        "rows": 72,
+        "tower_margin_baseline_mae": 0.009948347695171833,
+        "tower_margin_mae": 0.014677900820970535,
+        "tower_margin_mae_improvement": -0.004729553125798702,
+        "tower_margin_rmse": 0.022250305861234665
+      }
+    },
+    "overall": {
+      "accuracy": 0.5536326169967651,
+      "auc_one_vs_rest": {
+        "draw": 0.9697198271751404,
+        "loss": 0.6788681745529175,
+        "win": 0.7292988896369934
+      },
+      "brier": 0.5697640776634216,
+      "class_counts": {
+        "draw": 6208,
+        "loss": 16395,
+        "win": 19116
+      },
+      "decisive_win_loss_auc": 0.7154058218002319,
+      "ece_10": 0.10346868634223938,
+      "mean_outcome_probability": {
+        "draw": 0.024142460897564888,
+        "loss": 0.514033317565918,
+        "win": 0.4618242383003235
+      },
+      "nll": 0.9380054473876953,
+      "rows": 41719,
+      "tower_margin_baseline_mae": 0.160987988114357,
+      "tower_margin_mae": 0.17413827776908875,
+      "tower_margin_mae_improvement": -0.01315028965473175,
+      "tower_margin_rmse": 0.238357812166214
+    },
+    "phase_balanced": {
+      "accuracy": 0.6494845151901245,
+      "auc_one_vs_rest": {
+        "draw": 0.9351851940155029,
+        "loss": 0.7486737370491028,
+        "win": 0.7279220819473267
+      },
+      "brier": 0.531353771686554,
+      "class_counts": {
+        "draw": 32,
+        "loss": 78,
+        "win": 84
+      },
+      "decisive_win_loss_auc": 0.7554945349693298,
+      "ece_10": 0.14580751955509186,
+      "mean_outcome_probability": {
+        "draw": 0.03558027744293213,
+        "loss": 0.4586195945739746,
+        "win": 0.5058001279830933
+      },
+      "nll": 0.8627986311912537,
+      "rows": 194,
+      "tower_margin_baseline_mae": 0.14302082359790802,
+      "tower_margin_mae": 0.14351019263267517,
+      "tower_margin_mae_improvement": -0.0004893690347671509,
+      "tower_margin_rmse": 0.19710229337215424
+    },
+    "phase_balanced_by_phase": {
+      "early": {
+        "accuracy": 0.6477272510528564,
+        "auc_one_vs_rest": {
+          "draw": 0.9166666865348816,
+          "loss": 0.8141025900840759,
+          "win": 0.5945512652397156
+        },
+        "brier": 0.5538859963417053,
+        "class_counts": {
+          "draw": 16,
+          "loss": 36,
+          "win": 36
+        },
+        "decisive_win_loss_auc": 0.7986111044883728,
+        "ece_10": 0.11641472578048706,
+        "mean_outcome_probability": {
+          "draw": 0.04188801348209381,
+          "loss": 0.49322786927223206,
+          "win": 0.46488410234451294
+        },
+        "nll": 0.9014233946800232,
+        "rows": 88,
+        "tower_margin_baseline_mae": 0.20578068494796753,
+        "tower_margin_mae": 0.20626410841941833,
+        "tower_margin_mae_improvement": -0.00048342347145080566,
+        "tower_margin_rmse": 0.25173401832580566
+      },
+      "late": {
+        "accuracy": 0.75,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.75,
+          "win": 0.75
+        },
+        "brier": 0.4333859384059906,
+        "class_counts": {
+          "draw": 0,
+          "loss": 12,
+          "win": 12
+        },
+        "decisive_win_loss_auc": 0.75,
+        "ece_10": 0.23098662495613098,
+        "mean_outcome_probability": {
+          "draw": 0.00842021033167839,
+          "loss": 0.3897034227848053,
+          "win": 0.6018763184547424
+        },
+        "nll": 0.6330044865608215,
+        "rows": 24,
+        "tower_margin_baseline_mae": 0.02049093507230282,
+        "tower_margin_mae": 0.02045271173119545,
+        "tower_margin_mae_improvement": 3.822334110736847e-05,
+        "tower_margin_rmse": 0.026859518140554428
+      },
+      "middle": {
+        "accuracy": 0.6219512224197388,
+        "auc_one_vs_rest": {
+          "draw": 0.9545454382896423,
+          "loss": 0.7038461565971375,
+          "win": 0.83152174949646
+        },
+        "brier": 0.5358461737632751,
+        "class_counts": {
+          "draw": 16,
+          "loss": 30,
+          "win": 36
+        },
+        "decisive_win_loss_auc": 0.75,
+        "ece_10": 0.2598129212856293,
+        "mean_outcome_probability": {
+          "draw": 0.03676028922200203,
+          "loss": 0.4416496455669403,
+          "win": 0.5215900540351868
+        },
+        "nll": 0.8886045217514038,
+        "rows": 82,
+        "tower_margin_baseline_mae": 0.11153115332126617,
+        "tower_margin_mae": 0.11218133568763733,
+        "tower_margin_mae_improvement": -0.0006501823663711548,
+        "tower_margin_rmse": 0.15392790734767914
+      }
+    },
+    "phase_balanced_by_source": {
+      "controlled-symmetric-draws": {
+        "accuracy": 0.0,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": null,
+          "win": null
+        },
+        "brier": 1.2030553817749023,
+        "class_counts": {
+          "draw": 32,
+          "loss": 0,
+          "win": 0
+        },
+        "decisive_win_loss_auc": null,
+        "ece_10": 0.5240256190299988,
+        "mean_outcome_probability": {
+          "draw": 0.1108824610710144,
+          "loss": 0.36509186029434204,
+          "win": 0.5240256190299988
+        },
+        "nll": 2.1995105743408203,
+        "rows": 32,
+        "tower_margin_baseline_mae": 0.0,
+        "tower_margin_mae": 0.053929202258586884,
+        "tower_margin_mae_improvement": -0.053929202258586884,
+        "tower_margin_rmse": 0.07277001440525055
+      },
+      "natural-strategy-games": {
+        "accuracy": 0.7777777910232544,
+        "auc_one_vs_rest": {
+          "draw": null,
+          "loss": 0.7554945349693298,
+          "win": 0.7554945349693298
+        },
+        "brier": 0.3986718952655792,
+        "class_counts": {
+          "draw": 0,
+          "loss": 78,
+          "win": 84
+        },
+        "decisive_win_loss_auc": 0.7554945349693298,
+        "ece_10": 0.20352239906787872,
+        "mean_outcome_probability": {
+          "draw": 0.020705772563815117,
+          "loss": 0.47709420323371887,
+          "win": 0.5022000074386597
+        },
+        "nll": 0.5987567901611328,
+        "rows": 162,
+        "tower_margin_baseline_mae": 0.17127184569835663,
+        "tower_margin_mae": 0.1612052023410797,
+        "tower_margin_mae_improvement": 0.010066643357276917,
+        "tower_margin_rmse": 0.2132539302110672
+      }
+    }
+  },
+  "holdout_phase_auc_confidence": {
+    "early": {
+      "independent_clusters": 36,
+      "lower_95": 0.6348564425770308,
+      "point": 0.7986111111111112,
+      "requested_replicates": 2000,
+      "upper_95": 0.9414351851851848,
+      "valid_replicates": 2000
+    },
+    "late": {
+      "independent_clusters": 12,
+      "lower_95": 0.4,
+      "point": 0.75,
+      "requested_replicates": 2000,
+      "upper_95": 1.0,
+      "valid_replicates": 2000
+    },
+    "middle": {
+      "independent_clusters": 33,
+      "lower_95": 0.5544946500867554,
+      "point": 0.75,
+      "requested_replicates": 2000,
+      "upper_95": 0.9117647058823529,
+      "valid_replicates": 2000
+    }
+  },
+  "holdout_phase_confidence_passed": false,
+  "holdout_prior_nll": 1.2943180799484253,
+  "learning_rate": 0.0001,
+  "margin_coefficient": 1.0,
+  "margin_epoch_selection": "maximum-mae-improvement-among-all-phase-gate-passes-v1",
+  "margin_feature_set": "full-state",
+  "margin_progress_power": 6.0,
+  "margin_residual_scale": 0.5,
+  "margin_training_weighting": "equal-episode-equal-reached-phase-v1",
+  "minimum_structured_residual_auc_gain": 0.0,
+  "outcome_head_state_sha256": "29daf5e4e983dadfea6ff36513f9d14a35a5ca32efe65520ce594414a261611e",
+  "outcome_training_weighting": "equal-episode-equal-reached-phase-then-declared-class-mass-v1",
+  "output_checkpoint": null,
+  "probability_calibration": "factorized-training-mass-prior-plus-rank-preserving-shrinkage-v1",
+  "probability_shrinkage": 0.5875000357627869,
+  "public_initialization_checkpoint": null,
+  "public_initialization_sha256": null,
+  "schema": "clasher.hog26.actor-outcome-training.v1",
+  "seed": 1278201,
+  "selection_gates": {
+    "all_three_outcome_classes_required": true,
+    "calibration_natural_deck_overlap": [],
+    "calibration_natural_opponent_overlap": [],
+    "controlled_draw_passed": true,
+    "development_passed": false,
+    "holdout_natural_deck_overlap": [],
+    "holdout_natural_opponent_overlap": [],
+    "holdout_passed": false,
+    "holdout_selection_deck_overlap": [],
+    "maximum_ece_10": 0.2,
+    "maximum_natural_draw_probability": 0.1,
+    "maximum_phase_tower_margin_mae_regression": 0.01,
+    "maximum_tower_margin_mae": 0.25,
+    "minimum_controlled_draw_auc": 0.8,
+    "minimum_controlled_draw_endpoint_probability_lift": 0.03,
+    "minimum_natural_decisive_auc": 0.6,
+    "minimum_natural_phase_decisive_auc": 0.55,
+    "minimum_nll_improvement_over_train_prior": 0.02,
+    "minimum_phase_auc_lower_95": 0.5,
+    "minimum_phase_bootstrap_clusters": 8,
+    "minimum_tower_margin_mae_improvement": 0.005,
+    "natural_auc_passed": true,
+    "natural_deck_overlap": [],
+    "natural_opponent_overlap": [],
+    "natural_phase_auc_passed": true,
+    "phase_auc_bootstrap_replicates": 2000,
+    "phase_auc_bootstrap_unit": "seed-style-deck-ordinal-cluster-v1",
+    "phase_auc_confidence_passed": false,
+    "require_disjoint_natural_decks": true,
+    "require_disjoint_natural_opponents": true
+  },
+  "separate_draw_trunk": true,
+  "state_size": 398,
+  "status": "rejected-holdout",
+  "structured_baseline_decisive_auc": null,
+  "structured_residual_scale": 0.0,
+  "target_class_mass": {
+    "draw": 0.1,
+    "loss": 0.45,
+    "win": 0.45
+  },
+  "train_class_prior": [
+    0.6479591727256775,
+    0.020408162847161293,
+    0.3316326439380646
+  ],
+  "train_corpora": [
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_crossed_train4_seed1276001/corpus.npz",
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_broad_train_fold_a_seed1277001/corpus.npz",
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_broad_train_fold_b_seed1277002/corpus.npz",
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_symmetric_draw_outcomes_seed1270001/corpus.npz"
+  ],
+  "train_corpus_sha256": [
+    "62aa1bbf6ff59dc020992a9f4c3e3dd030797389a842e73ed528cd9ff21ffa1a",
+    "87d1e6544c78a82acb0d3e751071ee3cca8356ee0b752a15b94cf107f25b7834",
+    "c5cfbd0ae70736788ae702fa98064eaebcf0cd944b07fc158517157de3d6d95c",
+    "2230641594fd97f17080bee06399034bde0bd77d9dc88799633759ee032b0804"
+  ],
+  "trainable_parameter_count": 14499,
+  "validation_all_rows": {
+    "accuracy": 0.6566557288169861,
+    "auc_one_vs_rest": {
+      "draw": 0.9595943689346313,
+      "loss": 0.71662437915802,
+      "win": 0.7109503149986267
+    },
+    "brier": 0.44991442561149597,
+    "class_counts": {
+      "draw": 1552,
+      "loss": 23509,
+      "win": 16760
+    },
+    "decisive_win_loss_auc": 0.717814564704895,
+    "ece_10": 0.02878691628575325,
+    "mean_outcome_probability": {
+      "draw": 0.018022138625383377,
+      "loss": 0.5760577917098999,
+      "win": 0.4059200584888458
+    },
+    "nll": 0.6977285742759705,
+    "rows": 41821,
+    "tower_margin_baseline_mae": 0.21401062607765198,
+    "tower_margin_mae": 0.21255280077457428,
+    "tower_margin_mae_improvement": 0.0014578253030776978,
+    "tower_margin_rmse": 0.27496546506881714
+  },
+  "validation_by_opponent": {
+    "bridge-pressure": {
+      "accuracy": 0.5592760443687439,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.6398749947547913,
+        "win": 0.6582011580467224
+      },
+      "brier": 0.5674120187759399,
+      "class_counts": {
+        "draw": 0,
+        "loss": 3740,
+        "win": 7310
+      },
+      "decisive_win_loss_auc": 0.6483921408653259,
+      "ece_10": 0.1275656819343567,
+      "mean_outcome_probability": {
+        "draw": 0.02915670908987522,
+        "loss": 0.5911332368850708,
+        "win": 0.37970998883247375
+      },
+      "nll": 0.8210375308990479,
+      "rows": 11050,
+      "tower_margin_baseline_mae": 0.16575008630752563,
+      "tower_margin_mae": 0.20075468719005585,
+      "tower_margin_mae_improvement": -0.03500460088253021,
+      "tower_margin_rmse": 0.2729882597923279
+    },
+    "reactive-defense": {
+      "accuracy": 0.7861942648887634,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.8699873089790344,
+        "win": 0.8695945143699646
+      },
+      "brier": 0.3125527501106262,
+      "class_counts": {
+        "draw": 0,
+        "loss": 10683,
+        "win": 4050
+      },
+      "decisive_win_loss_auc": 0.8698091506958008,
+      "ece_10": 0.11234689503908157,
+      "mean_outcome_probability": {
+        "draw": 0.010348139330744743,
+        "loss": 0.5801607370376587,
+        "win": 0.4094911813735962
+      },
+      "nll": 0.4966094195842743,
+      "rows": 14733,
+      "tower_margin_baseline_mae": 0.2282494306564331,
+      "tower_margin_mae": 0.20282602310180664,
+      "tower_margin_mae_improvement": 0.025423407554626465,
+      "tower_margin_rmse": 0.26129502058029175
+    },
+    "spell-control": {
+      "accuracy": 0.6695430278778076,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.7304831743240356,
+        "win": 0.7306212186813354
+      },
+      "brier": 0.40555065870285034,
+      "class_counts": {
+        "draw": 0,
+        "loss": 9086,
+        "win": 5400
+      },
+      "decisive_win_loss_auc": 0.7305442094802856,
+      "ece_10": 0.05925726145505905,
+      "mean_outcome_probability": {
+        "draw": 0.010127765126526356,
+        "loss": 0.5636918544769287,
+        "win": 0.42618027329444885
+      },
+      "nll": 0.5995688438415527,
+      "rows": 14486,
+      "tower_margin_baseline_mae": 0.25927114486694336,
+      "tower_margin_mae": 0.2458188384771347,
+      "tower_margin_mae_improvement": 0.013452306389808655,
+      "tower_margin_rmse": 0.3012538254261017
+    },
+    "symmetric-selfplay": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.3313932418823242,
+      "class_counts": {
+        "draw": 1552,
+        "loss": 0,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.6349712014198303,
+      "mean_outcome_probability": {
+        "draw": 0.08527850359678268,
+        "loss": 0.5451950430870056,
+        "win": 0.3695265054702759
+      },
+      "nll": 2.6451945304870605,
+      "rows": 1552,
+      "tower_margin_baseline_mae": 0.0,
+      "tower_margin_mae": 0.07839235663414001,
+      "tower_margin_mae_improvement": -0.07839235663414001,
+      "tower_margin_rmse": 0.10735417157411575
+    }
+  },
+  "validation_by_opponent_and_deck": {
+    "bridge-pressure|GY IWiz BBD Nado": {
+      "accuracy": 0.6975806355476379,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.37869367003440857,
+      "class_counts": {
+        "draw": 0,
+        "loss": 992,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.08468016982078552,
+      "mean_outcome_probability": {
+        "draw": 0.03678593412041664,
+        "loss": 0.57266765832901,
+        "win": 0.3905465304851532
+      },
+      "nll": 0.5895694494247437,
+      "rows": 992,
+      "tower_margin_baseline_mae": 0.12784022092819214,
+      "tower_margin_mae": 0.10046993941068649,
+      "tower_margin_mae_improvement": 0.027370281517505646,
+      "tower_margin_rmse": 0.11331181228160858
+    },
+    "bridge-pressure|Giant Double Prince": {
+      "accuracy": 0.8012499809265137,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.36613404750823975,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 800
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.18489761650562286,
+      "mean_outcome_probability": {
+        "draw": 0.011749308556318283,
+        "loss": 0.40219447016716003,
+        "win": 0.5860562324523926
+      },
+      "nll": 0.5669533014297485,
+      "rows": 800,
+      "tower_margin_baseline_mae": 0.16671039164066315,
+      "tower_margin_mae": 0.17198432981967926,
+      "tower_margin_mae_improvement": -0.005273938179016113,
+      "tower_margin_rmse": 0.22795642912387848
+    },
+    "bridge-pressure|Golem Night Witch Beatdown": {
+      "accuracy": 0.5933333039283752,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.5255833268165588,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 900
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.08342599868774414,
+      "mean_outcome_probability": {
+        "draw": 0.010517929680645466,
+        "loss": 0.479480117559433,
+        "win": 0.5100019574165344
+      },
+      "nll": 0.7413990497589111,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.2953144907951355,
+      "tower_margin_mae": 0.36289888620376587,
+      "tower_margin_mae_improvement": -0.06758439540863037,
+      "tower_margin_rmse": 0.4493556022644043
+    },
+    "bridge-pressure|Hog 2.6 (Zap)": {
+      "accuracy": 0.8613333106040955,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.26248836517333984,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 1500
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.1920081228017807,
+      "mean_outcome_probability": {
+        "draw": 0.012431750074028969,
+        "loss": 0.33568090200424194,
+        "win": 0.6518873572349548
+      },
+      "nll": 0.4518848955631256,
+      "rows": 1500,
+      "tower_margin_baseline_mae": 0.061923034489154816,
+      "tower_margin_mae": 0.08455533534288406,
+      "tower_margin_mae_improvement": -0.022632300853729248,
+      "tower_margin_rmse": 0.17245160043239594
+    },
+    "bridge-pressure|Hog 2.8 Cycle": {
+      "accuracy": 0.9439592361450195,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.1609661877155304,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1374,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.22489571571350098,
+      "mean_outcome_probability": {
+        "draw": 0.04287577420473099,
+        "loss": 0.7189313173294067,
+        "win": 0.2381928712129593
+      },
+      "nll": 0.34119123220443726,
+      "rows": 1374,
+      "tower_margin_baseline_mae": 0.3371961712837219,
+      "tower_margin_mae": 0.2922348082065582,
+      "tower_margin_mae_improvement": 0.044961363077163696,
+      "tower_margin_rmse": 0.31519070267677307
+    },
+    "bridge-pressure|LavaLoon Miner": {
+      "accuracy": 0.15234822034835815,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.914376974105835,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 873
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.5213675498962402,
+      "mean_outcome_probability": {
+        "draw": 0.02100265957415104,
+        "loss": 0.6503008604049683,
+        "win": 0.32869651913642883
+      },
+      "nll": 1.2067314386367798,
+      "rows": 873,
+      "tower_margin_baseline_mae": 0.07971629500389099,
+      "tower_margin_mae": 0.11776251345872879,
+      "tower_margin_mae_improvement": -0.0380462184548378,
+      "tower_margin_rmse": 0.18027015030384064
+    },
+    "bridge-pressure|Log Bait (Tesla)": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.3075141906738281,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 396
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.7775863409042358,
+      "mean_outcome_probability": {
+        "draw": 0.05583867058157921,
+        "loss": 0.7775863409042358,
+        "win": 0.16657494008541107
+      },
+      "nll": 1.8184484243392944,
+      "rows": 396,
+      "tower_margin_baseline_mae": 0.09597465395927429,
+      "tower_margin_mae": 0.20510081946849823,
+      "tower_margin_mae_improvement": -0.10912616550922394,
+      "tower_margin_rmse": 0.26199865341186523
+    },
+    "bridge-pressure|Log Bait 2.6 Cycle": {
+      "accuracy": 1.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.1131378635764122,
+      "class_counts": {
+        "draw": 0,
+        "loss": 325,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.2409750521183014,
+      "mean_outcome_probability": {
+        "draw": 0.033642712980508804,
+        "loss": 0.759024977684021,
+        "win": 0.2073323130607605
+      },
+      "nll": 0.2801125645637512,
+      "rows": 325,
+      "tower_margin_baseline_mae": 0.050951551645994186,
+      "tower_margin_mae": 0.17864876985549927,
+      "tower_margin_mae_improvement": -0.12769721820950508,
+      "tower_margin_rmse": 0.1905600130558014
+    },
+    "bridge-pressure|Log Bait 2.9 Cycle": {
+      "accuracy": 0.3676767647266388,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.8473984003067017,
+        "win": 0.889128565788269
+      },
+      "brier": 0.6456911563873291,
+      "class_counts": {
+        "draw": 0,
+        "loss": 161,
+        "win": 334
+      },
+      "decisive_win_loss_auc": 0.8773570656776428,
+      "ece_10": 0.3332996666431427,
+      "mean_outcome_probability": {
+        "draw": 0.024730389937758446,
+        "loss": 0.6948635578155518,
+        "win": 0.28040608763694763
+      },
+      "nll": 0.8802012801170349,
+      "rows": 495,
+      "tower_margin_baseline_mae": 0.10060279816389084,
+      "tower_margin_mae": 0.19259028136730194,
+      "tower_margin_mae_improvement": -0.0919874832034111,
+      "tower_margin_rmse": 0.23853695392608643
+    },
+    "bridge-pressure|Log Bait 3.0 (Rocket)": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.3075141906738281,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 396
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.7775863409042358,
+      "mean_outcome_probability": {
+        "draw": 0.05583867058157921,
+        "loss": 0.7775863409042358,
+        "win": 0.16657494008541107
+      },
+      "nll": 1.8184484243392944,
+      "rows": 396,
+      "tower_margin_baseline_mae": 0.09597465395927429,
+      "tower_margin_mae": 0.20510081946849823,
+      "tower_margin_mae_improvement": -0.10912616550922394,
+      "tower_margin_rmse": 0.26199865341186523
+    },
+    "bridge-pressure|Log Bait 3.0 Cycle": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.3075141906738281,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 396
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.7775863409042358,
+      "mean_outcome_probability": {
+        "draw": 0.05583867058157921,
+        "loss": 0.7775863409042358,
+        "win": 0.16657494008541107
+      },
+      "nll": 1.8184484243392944,
+      "rows": 396,
+      "tower_margin_baseline_mae": 0.09597465395927429,
+      "tower_margin_mae": 0.20510081946849823,
+      "tower_margin_mae_improvement": -0.10912616550922394,
+      "tower_margin_rmse": 0.26199865341186523
+    },
+    "bridge-pressure|LumberLoon Double Dragon Bowler Freeze": {
+      "accuracy": 0.8175675868988037,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.31384217739105225,
+      "class_counts": {
+        "draw": 0,
+        "loss": 888,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.1735067516565323,
+      "mean_outcome_probability": {
+        "draw": 0.044524624943733215,
+        "loss": 0.6093322038650513,
+        "win": 0.3461431562900543
+      },
+      "nll": 0.5206672549247742,
+      "rows": 888,
+      "tower_margin_baseline_mae": 0.20317885279655457,
+      "tower_margin_mae": 0.15182176232337952,
+      "tower_margin_mae_improvement": 0.05135709047317505,
+      "tower_margin_rmse": 0.19995662569999695
+    },
+    "bridge-pressure|Pekka Loon IWiz EDrag": {
+      "accuracy": 0.4744744598865509,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.6522327661514282,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 666
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.24883180856704712,
+      "mean_outcome_probability": {
+        "draw": 0.02899838425219059,
+        "loss": 0.5352477431297302,
+        "win": 0.43575382232666016
+      },
+      "nll": 0.9112533926963806,
+      "rows": 666,
+      "tower_margin_baseline_mae": 0.15122520923614502,
+      "tower_margin_mae": 0.238296240568161,
+      "tower_margin_mae_improvement": -0.08707103133201599,
+      "tower_margin_rmse": 0.34480300545692444
+    },
+    "bridge-pressure|Valk Log Bait (Tesla)": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.1473127603530884,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 355
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.7387770414352417,
+      "mean_outcome_probability": {
+        "draw": 0.03158413618803024,
+        "loss": 0.7387769818305969,
+        "win": 0.22963881492614746
+      },
+      "nll": 1.5009022951126099,
+      "rows": 355,
+      "tower_margin_baseline_mae": 0.21166637539863586,
+      "tower_margin_mae": 0.36158034205436707,
+      "tower_margin_mae_improvement": -0.1499139666557312,
+      "tower_margin_rmse": 0.4198378026485443
+    },
+    "bridge-pressure|X-Bow IWiz Nado": {
+      "accuracy": 0.06051873043179512,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.9871279001235962,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 694
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.6501210331916809,
+      "mean_outcome_probability": {
+        "draw": 0.016361987218260765,
+        "loss": 0.687841534614563,
+        "win": 0.2957964539527893
+      },
+      "nll": 1.2645089626312256,
+      "rows": 694,
+      "tower_margin_baseline_mae": 0.20623824000358582,
+      "tower_margin_mae": 0.29448065161705017,
+      "tower_margin_mae_improvement": -0.08824241161346436,
+      "tower_margin_rmse": 0.3377850353717804
+    },
+    "reactive-defense|GY IWiz BBD Nado": {
+      "accuracy": 0.7543668150901794,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.31569328904151917,
+      "class_counts": {
+        "draw": 0,
+        "loss": 916,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.125423863530159,
+      "mean_outcome_probability": {
+        "draw": 0.009884553030133247,
+        "loss": 0.6306315660476685,
+        "win": 0.35948389768600464
+      },
+      "nll": 0.4979075789451599,
+      "rows": 916,
+      "tower_margin_baseline_mae": 0.5277542471885681,
+      "tower_margin_mae": 0.4651438295841217,
+      "tower_margin_mae_improvement": 0.06261041760444641,
+      "tower_margin_rmse": 0.49409618973731995
+    },
+    "reactive-defense|Giant Double Prince": {
+      "accuracy": 0.753333330154419,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.3564549684524536,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 900
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.1512225866317749,
+      "mean_outcome_probability": {
+        "draw": 0.009928424842655659,
+        "loss": 0.39293158054351807,
+        "win": 0.5971400141716003
+      },
+      "nll": 0.5516238808631897,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.23390841484069824,
+      "tower_margin_mae": 0.28773653507232666,
+      "tower_margin_mae_improvement": -0.05382812023162842,
+      "tower_margin_rmse": 0.39027222990989685
+    },
+    "reactive-defense|Golem Night Witch Beatdown": {
+      "accuracy": 1.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.09227104485034943,
+      "class_counts": {
+        "draw": 0,
+        "loss": 900,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.2075875997543335,
+      "mean_outcome_probability": {
+        "draw": 0.01001336332410574,
+        "loss": 0.7924124598503113,
+        "win": 0.19757422804832458
+      },
+      "nll": 0.23732927441596985,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.07986906170845032,
+      "tower_margin_mae": 0.11158684641122818,
+      "tower_margin_mae_improvement": -0.03171778470277786,
+      "tower_margin_rmse": 0.1247299388051033
+    },
+    "reactive-defense|Hog 2.6 (Zap)": {
+      "accuracy": 0.9079999923706055,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.2367124855518341,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 1500
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.22954773902893066,
+      "mean_outcome_probability": {
+        "draw": 0.010077395476400852,
+        "loss": 0.32535502314567566,
+        "win": 0.6645676493644714
+      },
+      "nll": 0.42177364230155945,
+      "rows": 1500,
+      "tower_margin_baseline_mae": 0.10300487279891968,
+      "tower_margin_mae": 0.13365672528743744,
+      "tower_margin_mae_improvement": -0.03065185248851776,
+      "tower_margin_rmse": 0.19834090769290924
+    },
+    "reactive-defense|Hog 2.8 Cycle": {
+      "accuracy": 0.38989168405532837,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.5838164687156677,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1108,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.20703257620334625,
+      "mean_outcome_probability": {
+        "draw": 0.010316905565559864,
+        "loss": 0.4668366611003876,
+        "win": 0.5228464603424072
+      },
+      "nll": 0.7913951873779297,
+      "rows": 1108,
+      "tower_margin_baseline_mae": 0.14940670132637024,
+      "tower_margin_mae": 0.16077059507369995,
+      "tower_margin_mae_improvement": -0.011363893747329712,
+      "tower_margin_rmse": 0.1744033247232437
+    },
+    "reactive-defense|LavaLoon Miner": {
+      "accuracy": 0.5822222232818604,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.5072116851806641,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 900
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.06199178099632263,
+      "mean_outcome_probability": {
+        "draw": 0.009954716078937054,
+        "loss": 0.484286904335022,
+        "win": 0.5057583451271057
+      },
+      "nll": 0.7160104513168335,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.10359783470630646,
+      "tower_margin_mae": 0.10511810332536697,
+      "tower_margin_mae_improvement": -0.0015202686190605164,
+      "tower_margin_rmse": 0.12465605139732361
+    },
+    "reactive-defense|Log Bait (Tesla)": {
+      "accuracy": 0.9800000190734863,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.15487542748451233,
+      "class_counts": {
+        "draw": 0,
+        "loss": 900,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.24770793318748474,
+      "mean_outcome_probability": {
+        "draw": 0.009969997219741344,
+        "loss": 0.7312284111976624,
+        "win": 0.25880157947540283
+      },
+      "nll": 0.32122424244880676,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.18144890666007996,
+      "tower_margin_mae": 0.11969847977161407,
+      "tower_margin_mae_improvement": 0.06175042688846588,
+      "tower_margin_rmse": 0.13547268509864807
+    },
+    "reactive-defense|Log Bait 2.6 Cycle": {
+      "accuracy": 0.9788888692855835,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.156108096241951,
+      "class_counts": {
+        "draw": 0,
+        "loss": 900,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.24707844853401184,
+      "mean_outcome_probability": {
+        "draw": 0.01026064157485962,
+        "loss": 0.7307322025299072,
+        "win": 0.25900718569755554
+      },
+      "nll": 0.3224765956401825,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.25134479999542236,
+      "tower_margin_mae": 0.18985247611999512,
+      "tower_margin_mae_improvement": 0.061492323875427246,
+      "tower_margin_rmse": 0.20257191359996796
+    },
+    "reactive-defense|Log Bait 2.9 Cycle": {
+      "accuracy": 1.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.11181613802909851,
+      "class_counts": {
+        "draw": 0,
+        "loss": 900,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.23009362816810608,
+      "mean_outcome_probability": {
+        "draw": 0.009970320388674736,
+        "loss": 0.7699063420295715,
+        "win": 0.2201232761144638
+      },
+      "nll": 0.26645174622535706,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.3558577001094818,
+      "tower_margin_mae": 0.29384854435920715,
+      "tower_margin_mae_improvement": 0.06200915575027466,
+      "tower_margin_rmse": 0.33342838287353516
+    },
+    "reactive-defense|Log Bait 3.0 (Rocket)": {
+      "accuracy": 0.9788888692855835,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.156108096241951,
+      "class_counts": {
+        "draw": 0,
+        "loss": 900,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.24707844853401184,
+      "mean_outcome_probability": {
+        "draw": 0.01026064157485962,
+        "loss": 0.7307322025299072,
+        "win": 0.25900718569755554
+      },
+      "nll": 0.3224765956401825,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.25134479999542236,
+      "tower_margin_mae": 0.18985247611999512,
+      "tower_margin_mae_improvement": 0.061492323875427246,
+      "tower_margin_rmse": 0.20257191359996796
+    },
+    "reactive-defense|Log Bait 3.0 Cycle": {
+      "accuracy": 0.992222249507904,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.16190043091773987,
+      "class_counts": {
+        "draw": 0,
+        "loss": 900,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.26365333795547485,
+      "mean_outcome_probability": {
+        "draw": 0.01129733957350254,
+        "loss": 0.7281889319419861,
+        "win": 0.2605137526988983
+      },
+      "nll": 0.3276684582233429,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.32823455333709717,
+      "tower_margin_mae": 0.2826589047908783,
+      "tower_margin_mae_improvement": 0.04557564854621887,
+      "tower_margin_rmse": 0.37979504466056824
+    },
+    "reactive-defense|LumberLoon Double Dragon Bowler Freeze": {
+      "accuracy": 0.9724409580230713,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.2488017976284027,
+      "class_counts": {
+        "draw": 0,
+        "loss": 508,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.3196369409561157,
+      "mean_outcome_probability": {
+        "draw": 0.011515355668962002,
+        "loss": 0.6512500047683716,
+        "win": 0.33723464608192444
+      },
+      "nll": 0.4368970990180969,
+      "rows": 508,
+      "tower_margin_baseline_mae": 0.41388779878616333,
+      "tower_margin_mae": 0.30709490180015564,
+      "tower_margin_mae_improvement": 0.10679289698600769,
+      "tower_margin_rmse": 0.3545651435852051
+    },
+    "reactive-defense|Pekka Loon IWiz EDrag": {
+      "accuracy": 0.5059999823570251,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.5354355573654175,
+        "win": 0.5351938009262085
+      },
+      "brier": 0.5260670781135559,
+      "class_counts": {
+        "draw": 0,
+        "loss": 750,
+        "win": 750
+      },
+      "decisive_win_loss_auc": 0.5353013277053833,
+      "ece_10": 0.11867082118988037,
+      "mean_outcome_probability": {
+        "draw": 0.010371103882789612,
+        "loss": 0.48081260919570923,
+        "win": 0.5088163018226624
+      },
+      "nll": 0.73257976770401,
+      "rows": 1500,
+      "tower_margin_baseline_mae": 0.14953362941741943,
+      "tower_margin_mae": 0.12656079232692719,
+      "tower_margin_mae_improvement": 0.02297283709049225,
+      "tower_margin_rmse": 0.1428099423646927
+    },
+    "reactive-defense|Valk Log Bait (Tesla)": {
+      "accuracy": 0.4928639531135559,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.5312812328338623,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1051,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.09518250077962875,
+      "mean_outcome_probability": {
+        "draw": 0.010917638428509235,
+        "loss": 0.4899202585220337,
+        "win": 0.49916210770606995
+      },
+      "nll": 0.7369426488876343,
+      "rows": 1051,
+      "tower_margin_baseline_mae": 0.2535063326358795,
+      "tower_margin_mae": 0.20892935991287231,
+      "tower_margin_mae_improvement": 0.0445769727230072,
+      "tower_margin_rmse": 0.23942603170871735
+    },
+    "reactive-defense|X-Bow IWiz Nado": {
+      "accuracy": 0.8294736742973328,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.3292502760887146,
+      "class_counts": {
+        "draw": 0,
+        "loss": 950,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.20300066471099854,
+      "mean_outcome_probability": {
+        "draw": 0.01103881374001503,
+        "loss": 0.6033936142921448,
+        "win": 0.3855675756931305
+      },
+      "nll": 0.5230123400688171,
+      "rows": 950,
+      "tower_margin_baseline_mae": 0.26451560854911804,
+      "tower_margin_mae": 0.20610278844833374,
+      "tower_margin_mae_improvement": 0.0584128201007843,
+      "tower_margin_rmse": 0.22833950817584991
+    },
+    "spell-control|GY IWiz BBD Nado": {
+      "accuracy": 0.5344444513320923,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.46624070405960083,
+      "class_counts": {
+        "draw": 0,
+        "loss": 900,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.18178486824035645,
+      "mean_outcome_probability": {
+        "draw": 0.00998190138489008,
+        "loss": 0.5436159372329712,
+        "win": 0.4464022219181061
+      },
+      "nll": 0.6620292067527771,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.4965539872646332,
+      "tower_margin_mae": 0.43105408549308777,
+      "tower_margin_mae_improvement": 0.06549990177154541,
+      "tower_margin_rmse": 0.49529963731765747
+    },
+    "spell-control|Giant Double Prince": {
+      "accuracy": 0.4422222077846527,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.535092830657959,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 900
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.16839346289634705,
+      "mean_outcome_probability": {
+        "draw": 0.010418900288641453,
+        "loss": 0.4944150149822235,
+        "win": 0.4951660633087158
+      },
+      "nll": 0.7414318919181824,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.06687366217374802,
+      "tower_margin_mae": 0.11930922418832779,
+      "tower_margin_mae_improvement": -0.05243556201457977,
+      "tower_margin_rmse": 0.1762179732322693
+    },
+    "spell-control|Golem Night Witch Beatdown": {
+      "accuracy": 0.7328519821166992,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.3475160002708435,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1108,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.08697962015867233,
+      "mean_outcome_probability": {
+        "draw": 0.011203449219465256,
+        "loss": 0.6060938835144043,
+        "win": 0.38270264863967896
+      },
+      "nll": 0.5355172157287598,
+      "rows": 1108,
+      "tower_margin_baseline_mae": 0.23876327276229858,
+      "tower_margin_mae": 0.20094728469848633,
+      "tower_margin_mae_improvement": 0.037815988063812256,
+      "tower_margin_rmse": 0.22236710786819458
+    },
+    "spell-control|Hog 2.6 (Zap)": {
+      "accuracy": 0.9177777767181396,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.25285112857818604,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 900
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.2495960295200348,
+      "mean_outcome_probability": {
+        "draw": 0.009706296026706696,
+        "loss": 0.335263192653656,
+        "win": 0.6550304889678955
+      },
+      "nll": 0.4391571283340454,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.10875780880451202,
+      "tower_margin_mae": 0.17576470971107483,
+      "tower_margin_mae_improvement": -0.0670069009065628,
+      "tower_margin_rmse": 0.24280725419521332
+    },
+    "spell-control|Hog 2.8 Cycle": {
+      "accuracy": 0.9897750616073608,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.17287951707839966,
+      "class_counts": {
+        "draw": 0,
+        "loss": 978,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.2756677269935608,
+      "mean_outcome_probability": {
+        "draw": 0.010326816700398922,
+        "loss": 0.7138474583625793,
+        "win": 0.27582573890686035
+      },
+      "nll": 0.3450073003768921,
+      "rows": 978,
+      "tower_margin_baseline_mae": 0.30438101291656494,
+      "tower_margin_mae": 0.24296894669532776,
+      "tower_margin_mae_improvement": 0.06141206622123718,
+      "tower_margin_rmse": 0.26524797081947327
+    },
+    "spell-control|LavaLoon Miner": {
+      "accuracy": 0.800000011920929,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.3452531397342682,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 900
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.16793854534626007,
+      "mean_outcome_probability": {
+        "draw": 0.009809144772589207,
+        "loss": 0.39519429206848145,
+        "win": 0.5949965119361877
+      },
+      "nll": 0.5408796072006226,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.14527292549610138,
+      "tower_margin_mae": 0.15430162847042084,
+      "tower_margin_mae_improvement": -0.009028702974319458,
+      "tower_margin_rmse": 0.17547565698623657
+    },
+    "spell-control|Log Bait (Tesla)": {
+      "accuracy": 0.996602475643158,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.14746183156967163,
+      "class_counts": {
+        "draw": 0,
+        "loss": 883,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.2610643208026886,
+      "mean_outcome_probability": {
+        "draw": 0.010900832712650299,
+        "loss": 0.7354827523231506,
+        "win": 0.25361642241477966
+      },
+      "nll": 0.3138350248336792,
+      "rows": 883,
+      "tower_margin_baseline_mae": 0.5114441514015198,
+      "tower_margin_mae": 0.44287917017936707,
+      "tower_margin_mae_improvement": 0.06856498122215271,
+      "tower_margin_rmse": 0.4662785530090332
+    },
+    "spell-control|Log Bait 2.6 Cycle": {
+      "accuracy": 0.4848484992980957,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.4490123391151428,
+        "win": 0.44879013299942017
+      },
+      "brier": 0.5521782636642456,
+      "class_counts": {
+        "draw": 0,
+        "loss": 540,
+        "win": 450
+      },
+      "decisive_win_loss_auc": 0.4488559663295746,
+      "ece_10": 0.13682380318641663,
+      "mean_outcome_probability": {
+        "draw": 0.010054809972643852,
+        "loss": 0.5758675336837769,
+        "win": 0.4140776991844177
+      },
+      "nll": 0.7616556882858276,
+      "rows": 990,
+      "tower_margin_baseline_mae": 0.12290290743112564,
+      "tower_margin_mae": 0.13942131400108337,
+      "tower_margin_mae_improvement": -0.016518406569957733,
+      "tower_margin_rmse": 0.16999636590480804
+    },
+    "spell-control|Log Bait 2.9 Cycle": {
+      "accuracy": 0.996602475643158,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.14746183156967163,
+      "class_counts": {
+        "draw": 0,
+        "loss": 883,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.2610643208026886,
+      "mean_outcome_probability": {
+        "draw": 0.010900832712650299,
+        "loss": 0.7354827523231506,
+        "win": 0.25361642241477966
+      },
+      "nll": 0.3138350248336792,
+      "rows": 883,
+      "tower_margin_baseline_mae": 0.5114441514015198,
+      "tower_margin_mae": 0.44287917017936707,
+      "tower_margin_mae_improvement": 0.06856498122215271,
+      "tower_margin_rmse": 0.4662785530090332
+    },
+    "spell-control|Log Bait 3.0 (Rocket)": {
+      "accuracy": 0.4848484992980957,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.4490123391151428,
+        "win": 0.44879013299942017
+      },
+      "brier": 0.5521782636642456,
+      "class_counts": {
+        "draw": 0,
+        "loss": 540,
+        "win": 450
+      },
+      "decisive_win_loss_auc": 0.4488559663295746,
+      "ece_10": 0.13682380318641663,
+      "mean_outcome_probability": {
+        "draw": 0.010054809972643852,
+        "loss": 0.5758675336837769,
+        "win": 0.4140776991844177
+      },
+      "nll": 0.7616556882858276,
+      "rows": 990,
+      "tower_margin_baseline_mae": 0.12290290743112564,
+      "tower_margin_mae": 0.13942131400108337,
+      "tower_margin_mae_improvement": -0.016518406569957733,
+      "tower_margin_rmse": 0.16999636590480804
+    },
+    "spell-control|Log Bait 3.0 Cycle": {
+      "accuracy": 0.7099999785423279,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.3324001133441925,
+      "class_counts": {
+        "draw": 0,
+        "loss": 900,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.1654728651046753,
+      "mean_outcome_probability": {
+        "draw": 0.009617981500923634,
+        "loss": 0.6157328486442566,
+        "win": 0.37464913725852966
+      },
+      "nll": 0.5158769488334656,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.14682015776634216,
+      "tower_margin_mae": 0.1339217871427536,
+      "tower_margin_mae_improvement": 0.012898370623588562,
+      "tower_margin_rmse": 0.16790565848350525
+    },
+    "spell-control|LumberLoon Double Dragon Bowler Freeze": {
+      "accuracy": 0.3895184099674225,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.5920791029930115,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1412,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.22419539093971252,
+      "mean_outcome_probability": {
+        "draw": 0.009312334470450878,
+        "loss": 0.46758532524108887,
+        "win": 0.523102343082428
+      },
+      "nll": 0.7997702956199646,
+      "rows": 1412,
+      "tower_margin_baseline_mae": 0.3227769136428833,
+      "tower_margin_mae": 0.2999533414840698,
+      "tower_margin_mae_improvement": 0.022823572158813477,
+      "tower_margin_rmse": 0.32908880710601807
+    },
+    "spell-control|Pekka Loon IWiz EDrag": {
+      "accuracy": 0.4355555474758148,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.610870361328125,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 900
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.17947161197662354,
+      "mean_outcome_probability": {
+        "draw": 0.010181060992181301,
+        "loss": 0.5305358171463013,
+        "win": 0.45928311347961426
+      },
+      "nll": 0.8285320997238159,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.1659243106842041,
+      "tower_margin_mae": 0.23235435783863068,
+      "tower_margin_mae_improvement": -0.06643004715442657,
+      "tower_margin_rmse": 0.2993004024028778
+    },
+    "spell-control|Valk Log Bait (Tesla)": {
+      "accuracy": 0.8269639015197754,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.30698421597480774,
+      "class_counts": {
+        "draw": 0,
+        "loss": 942,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.1892070323228836,
+      "mean_outcome_probability": {
+        "draw": 0.010138475336134434,
+        "loss": 0.62570720911026,
+        "win": 0.36415424942970276
+      },
+      "nll": 0.4912654757499695,
+      "rows": 942,
+      "tower_margin_baseline_mae": 0.3732198178768158,
+      "tower_margin_mae": 0.3143184185028076,
+      "tower_margin_mae_improvement": 0.05890139937400818,
+      "tower_margin_rmse": 0.3461380898952484
+    },
+    "spell-control|X-Bow IWiz Nado": {
+      "accuracy": 0.46000000834465027,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.6147997379302979,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 900
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.23450124263763428,
+      "mean_outcome_probability": {
+        "draw": 0.009550170972943306,
+        "loss": 0.5377091765403748,
+        "win": 0.4527406394481659
+      },
+      "nll": 0.8278986215591431,
+      "rows": 900,
+      "tower_margin_baseline_mae": 0.2472141534090042,
+      "tower_margin_mae": 0.22313614189624786,
+      "tower_margin_mae_improvement": 0.024078011512756348,
+      "tower_margin_rmse": 0.23238463699817657
+    },
+    "symmetric-selfplay|<controlled-draw>": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.3313932418823242,
+      "class_counts": {
+        "draw": 1552,
+        "loss": 0,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.6349712014198303,
+      "mean_outcome_probability": {
+        "draw": 0.08527850359678268,
+        "loss": 0.5451950430870056,
+        "win": 0.3695265054702759
+      },
+      "nll": 2.6451945304870605,
+      "rows": 1552,
+      "tower_margin_baseline_mae": 0.0,
+      "tower_margin_mae": 0.07839235663414001,
+      "tower_margin_mae_improvement": -0.07839235663414001,
+      "tower_margin_rmse": 0.10735417157411575
+    }
+  },
+  "validation_by_opponent_deck": {
+    "<controlled-draw>": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.3313932418823242,
+      "class_counts": {
+        "draw": 1552,
+        "loss": 0,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.6349712014198303,
+      "mean_outcome_probability": {
+        "draw": 0.08527850359678268,
+        "loss": 0.5451950430870056,
+        "win": 0.3695265054702759
+      },
+      "nll": 2.6451945304870605,
+      "rows": 1552,
+      "tower_margin_baseline_mae": 0.0,
+      "tower_margin_mae": 0.07839235663414001,
+      "tower_margin_mae_improvement": -0.07839235663414001,
+      "tower_margin_rmse": 0.10735417157411575
+    },
+    "GY IWiz BBD Nado": {
+      "accuracy": 0.6638176441192627,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.38620221614837646,
+      "class_counts": {
+        "draw": 0,
+        "loss": 2808,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.10581957548856735,
+      "mean_outcome_probability": {
+        "draw": 0.01941937580704689,
+        "loss": 0.5822646021842957,
+        "win": 0.39831602573394775
+      },
+      "nll": 0.5828927159309387,
+      "rows": 2808,
+      "tower_margin_baseline_mae": 0.3764740228652954,
+      "tower_margin_mae": 0.32538697123527527,
+      "tower_margin_mae_improvement": 0.05108705163002014,
+      "tower_margin_rmse": 0.4034883677959442
+    },
+    "Giant Double Prince": {
+      "accuracy": 0.6603845953941345,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.42126935720443726,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 2600
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.08713927119970322,
+      "mean_outcome_probability": {
+        "draw": 0.010658476501703262,
+        "loss": 0.430910587310791,
+        "win": 0.5584309101104736
+      },
+      "nll": 0.6220434308052063,
+      "rows": 2600,
+      "tower_margin_baseline_mae": 0.15541239082813263,
+      "tower_margin_mae": 0.19381871819496155,
+      "tower_margin_mae_improvement": -0.03840632736682892,
+      "tower_margin_rmse": 0.2818892300128937
+    },
+    "Golem Night Witch Beatdown": {
+      "accuracy": 0.7723521590232849,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.8253287076950073,
+        "win": 0.8231169581413269
+      },
+      "brier": 0.3236302137374878,
+      "class_counts": {
+        "draw": 0,
+        "loss": 2008,
+        "win": 900
+      },
+      "decisive_win_loss_auc": 0.8242884278297424,
+      "ece_10": 0.07807081937789917,
+      "mean_outcome_probability": {
+        "draw": 0.010622966103255749,
+        "loss": 0.6245719790458679,
+        "win": 0.36480504274368286
+      },
+      "nll": 0.5069493651390076,
+      "rows": 2908,
+      "tower_margin_baseline_mae": 0.20708905160427094,
+      "tower_margin_mae": 0.2234136015176773,
+      "tower_margin_mae_improvement": -0.016324549913406372,
+      "tower_margin_rmse": 0.2935093641281128
+    },
+    "Hog 2.6 (Zap)": {
+      "accuracy": 0.892307698726654,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.25035059452056885,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 3900
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.21414130926132202,
+      "mean_outcome_probability": {
+        "draw": 0.010897279717028141,
+        "loss": 0.3316130042076111,
+        "win": 0.6574897170066833
+      },
+      "nll": 0.4373665153980255,
+      "rows": 3900,
+      "tower_margin_baseline_mae": 0.08853177726268768,
+      "tower_margin_mae": 0.12448880076408386,
+      "tower_margin_mae_improvement": -0.03595702350139618,
+      "tower_margin_rmse": 0.20043402910232544
+    },
+    "Hog 2.8 Cycle": {
+      "accuracy": 0.7794797420501709,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.2997434437274933,
+      "class_counts": {
+        "draw": 0,
+        "loss": 3460,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.11373402923345566,
+      "mean_outcome_probability": {
+        "draw": 0.023249153047800064,
+        "loss": 0.6367656588554382,
+        "win": 0.33998507261276245
+      },
+      "nll": 0.48643922805786133,
+      "rows": 3460,
+      "tower_margin_baseline_mae": 0.26778462529182434,
+      "tower_margin_mae": 0.236210435628891,
+      "tower_margin_mae_improvement": 0.03157418966293335,
+      "tower_margin_rmse": 0.2628272473812103
+    },
+    "LavaLoon Miner": {
+      "accuracy": 0.5151515007019043,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.5856600999832153,
+      "class_counts": {
+        "draw": 0,
+        "loss": 0,
+        "win": 2673
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.1340278685092926,
+      "mean_outcome_probability": {
+        "draw": 0.013513952493667603,
+        "loss": 0.5085094571113586,
+        "win": 0.47797662019729614
+      },
+      "nll": 0.8173129558563232,
+      "rows": 2673,
+      "tower_margin_baseline_mae": 0.10983014851808548,
+      "tower_margin_mae": 0.12580786645412445,
+      "tower_margin_mae_improvement": -0.01597771793603897,
+      "tower_margin_rmse": 0.1619049459695816
+    },
+    "Log Bait (Tesla)": {
+      "accuracy": 0.8086277842521667,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.3521162271499634,
+        "win": 0.12476135790348053
+      },
+      "brier": 0.36134570837020874,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1783,
+        "win": 396
+      },
+      "decisive_win_loss_auc": 0.23748987913131714,
+      "ece_10": 0.11265244334936142,
+      "mean_outcome_probability": {
+        "draw": 0.018683133646845818,
+        "loss": 0.7413772940635681,
+        "win": 0.2399396151304245
+      },
+      "nll": 0.5903275609016418,
+      "rows": 2179,
+      "tower_margin_baseline_mae": 0.29963982105255127,
+      "tower_margin_mae": 0.2661820948123932,
+      "tower_margin_mae_improvement": 0.03345772624015808,
+      "tower_margin_rmse": 0.3288753032684326
+    },
+    "Log Bait 2.6 Cycle": {
+      "accuracy": 0.7611738443374634,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.7257702350616455,
+        "win": 0.7316663265228271
+      },
+      "brier": 0.3268277943134308,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1765,
+        "win": 450
+      },
+      "decisive_win_loss_auc": 0.7293459177017212,
+      "ece_10": 0.07658115029335022,
+      "mean_outcome_probability": {
+        "draw": 0.013599424622952938,
+        "loss": 0.6656663417816162,
+        "win": 0.3207342326641083
+      },
+      "nll": 0.5125528573989868,
+      "rows": 2215,
+      "tower_margin_baseline_mae": 0.1645342856645584,
+      "tower_margin_mae": 0.16566824913024902,
+      "tower_margin_mae_improvement": -0.0011339634656906128,
+      "tower_margin_rmse": 0.18686360120773315
+    },
+    "Log Bait 2.9 Cycle": {
+      "accuracy": 0.8612818121910095,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.7766889333724976,
+        "win": 0.7588018178939819
+      },
+      "brier": 0.24164196848869324,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1944,
+        "win": 334
+      },
+      "decisive_win_loss_auc": 0.7688234448432922,
+      "ece_10": 0.12138085067272186,
+      "mean_outcome_probability": {
+        "draw": 0.013538308441638947,
+        "loss": 0.7402565479278564,
+        "win": 0.246205136179924
+      },
+      "nll": 0.4181838035583496,
+      "rows": 2278,
+      "tower_margin_baseline_mae": 0.360700398683548,
+      "tower_margin_mae": 0.3296128809452057,
+      "tower_margin_mae_improvement": 0.031087517738342285,
+      "tower_margin_rmse": 0.3749161958694458
+    },
+    "Log Bait 3.0 (Rocket)": {
+      "accuracy": 0.5953630805015564,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.4807698130607605,
+        "win": 0.4014397859573364
+      },
+      "brier": 0.5270907282829285,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1440,
+        "win": 846
+      },
+      "decisive_win_loss_auc": 0.43758538365364075,
+      "ece_10": 0.0966794565320015,
+      "mean_outcome_probability": {
+        "draw": 0.018066909164190292,
+        "loss": 0.6717813611030579,
+        "win": 0.3101517856121063
+      },
+      "nll": 0.7718169689178467,
+      "rows": 2286,
+      "tower_margin_baseline_mae": 0.16880585253238678,
+      "tower_margin_mae": 0.17065365612506866,
+      "tower_margin_mae_improvement": -0.0018478035926818848,
+      "tower_margin_rmse": 0.20139969885349274
+    },
+    "Log Bait 3.0 Cycle": {
+      "accuracy": 0.6976320743560791,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.29036054015159607,
+        "win": 0.13212262094020844
+      },
+      "brier": 0.4383634328842163,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1800,
+        "win": 396
+      },
+      "decisive_win_loss_auc": 0.21639589965343475,
+      "ece_10": 0.08364050090312958,
+      "mean_outcome_probability": {
+        "draw": 0.018641123548150063,
+        "loss": 0.6910081505775452,
+        "win": 0.2903507351875305
+      },
+      "nll": 0.6736322641372681,
+      "rows": 2196,
+      "tower_margin_baseline_mae": 0.21200144290924072,
+      "tower_margin_mae": 0.20771516859531403,
+      "tower_margin_mae_improvement": 0.004286274313926697,
+      "tower_margin_rmse": 0.28818225860595703
+    },
+    "LumberLoon Double Dragon Bowler Freeze": {
+      "accuracy": 0.6303418874740601,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 0.4419867694377899,
+      "class_counts": {
+        "draw": 0,
+        "loss": 2808,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.05313359946012497,
+      "mean_outcome_probability": {
+        "draw": 0.020846396684646606,
+        "loss": 0.5456383228302002,
+        "win": 0.4335152804851532
+      },
+      "nll": 0.645858883857727,
+      "rows": 2808,
+      "tower_margin_baseline_mae": 0.3014383316040039,
+      "tower_margin_mae": 0.2544003129005432,
+      "tower_margin_mae_improvement": 0.04703801870346069,
+      "tower_margin_rmse": 0.299743115901947
+    },
+    "Pekka Loon IWiz EDrag": {
+      "accuracy": 0.47847357392311096,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.45030713081359863,
+        "win": 0.444278359413147
+      },
+      "brier": 0.5783662796020508,
+      "class_counts": {
+        "draw": 0,
+        "loss": 750,
+        "win": 2316
+      },
+      "decisive_win_loss_auc": 0.44692227244377136,
+      "ece_10": 0.14459411799907684,
+      "mean_outcome_probability": {
+        "draw": 0.014361556619405746,
+        "loss": 0.5072329044342041,
+        "win": 0.47840550541877747
+      },
+      "nll": 0.7995575070381165,
+      "rows": 3066,
+      "tower_margin_baseline_mae": 0.15471243858337402,
+      "tower_margin_mae": 0.1818869560956955,
+      "tower_margin_mae_improvement": -0.027174517512321472,
+      "tower_margin_rmse": 0.24919624626636505
+    },
+    "Valk Log Bait (Tesla)": {
+      "accuracy": 0.5523850321769714,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.13008911907672882,
+        "win": 0.10827615112066269
+      },
+      "brier": 0.5344343185424805,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1993,
+        "win": 355
+      },
+      "decisive_win_loss_auc": 0.11912256479263306,
+      "ece_10": 0.11869817972183228,
+      "mean_outcome_probability": {
+        "draw": 0.013729664497077465,
+        "loss": 0.5820222496986389,
+        "win": 0.40424811840057373
+      },
+      "nll": 0.7538837790489197,
+      "rows": 2348,
+      "tower_margin_baseline_mae": 0.29520854353904724,
+      "tower_margin_mae": 0.2742903530597687,
+      "tower_margin_mae_improvement": 0.020918190479278564,
+      "tower_margin_rmse": 0.3168228566646576
+    },
+    "X-Bow IWiz Nado": {
+      "accuracy": 0.48899370431900024,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.4892181158065796,
+        "win": 0.4864855110645294
+      },
+      "brier": 0.609738290309906,
+      "class_counts": {
+        "draw": 0,
+        "loss": 950,
+        "win": 1594
+      },
+      "decisive_win_loss_auc": 0.4879752993583679,
+      "ece_10": 0.19024910032749176,
+      "mean_outcome_probability": {
+        "draw": 0.011964326724410057,
+        "loss": 0.6031935214996338,
+        "win": 0.3848421573638916
+      },
+      "nll": 0.8331523537635803,
+      "rows": 2544,
+      "tower_margin_baseline_mae": 0.2424968034029007,
+      "tower_margin_mae": 0.23623810708522797,
+      "tower_margin_mae_improvement": 0.0062586963176727295,
+      "tower_margin_rmse": 0.26400911808013916
+    }
+  },
+  "validation_by_phase": {
+    "early": {
+      "accuracy": 0.6002019643783569,
+      "auc_one_vs_rest": {
+        "draw": 0.9190753698348999,
+        "loss": 0.6197977662086487,
+        "win": 0.5942904353141785
+      },
+      "brier": 0.5210755467414856,
+      "class_counts": {
+        "draw": 1000,
+        "loss": 12236,
+        "win": 9543
+      },
+      "decisive_win_loss_auc": 0.6075729131698608,
+      "ece_10": 0.06068320572376251,
+      "mean_outcome_probability": {
+        "draw": 0.02002471126616001,
+        "loss": 0.6060062050819397,
+        "win": 0.37396910786628723
+      },
+      "nll": 0.8019112348556519,
+      "rows": 22779,
+      "tower_margin_baseline_mae": 0.25452926754951477,
+      "tower_margin_mae": 0.25470587611198425,
+      "tower_margin_mae_improvement": -0.00017660856246948242,
+      "tower_margin_rmse": 0.31492477655410767
+    },
+    "late": {
+      "accuracy": 0.6826568245887756,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.952949047088623,
+        "win": 0.9529271125793457
+      },
+      "brier": 0.3790772259235382,
+      "class_counts": {
+        "draw": 0,
+        "loss": 1460,
+        "win": 1250
+      },
+      "decisive_win_loss_auc": 0.9529364109039307,
+      "ece_10": 0.197597473859787,
+      "mean_outcome_probability": {
+        "draw": 0.008456297218799591,
+        "loss": 0.4000237286090851,
+        "win": 0.5915199518203735
+      },
+      "nll": 0.5687751770019531,
+      "rows": 2710,
+      "tower_margin_baseline_mae": 0.12050803750753403,
+      "tower_margin_mae": 0.12043412774801254,
+      "tower_margin_mae_improvement": 7.390975952148438e-05,
+      "tower_margin_rmse": 0.16541573405265808
+    },
+    "middle": {
+      "accuracy": 0.7310801148414612,
+      "auc_one_vs_rest": {
+        "draw": 0.9896828532218933,
+        "loss": 0.830305814743042,
+        "win": 0.8487824201583862
+      },
+      "brier": 0.3624168634414673,
+      "class_counts": {
+        "draw": 552,
+        "loss": 9813,
+        "win": 5967
+      },
+      "decisive_win_loss_auc": 0.8454184532165527,
+      "ece_10": 0.07933223992586136,
+      "mean_outcome_probability": {
+        "draw": 0.016816332936286926,
+        "loss": 0.5634971261024475,
+        "win": 0.41968652606010437
+      },
+      "nll": 0.5738177299499512,
+      "rows": 16332,
+      "tower_margin_baseline_mae": 0.17301249504089355,
+      "tower_margin_mae": 0.16904543340206146,
+      "tower_margin_mae_improvement": 0.003967061638832092,
+      "tower_margin_rmse": 0.22524374723434448
+    }
+  },
+  "validation_by_seat": {
+    "0": {
+      "accuracy": 0.6522369384765625,
+      "auc_one_vs_rest": {
+        "draw": 0.9604779481887817,
+        "loss": 0.7319229245185852,
+        "win": 0.7249934077262878
+      },
+      "brier": 0.45573654770851135,
+      "class_counts": {
+        "draw": 776,
+        "loss": 10596,
+        "win": 9326
+      },
+      "decisive_win_loss_auc": 0.7325371503829956,
+      "ece_10": 0.025318844243884087,
+      "mean_outcome_probability": {
+        "draw": 0.017955301329493523,
+        "loss": 0.5779505968093872,
+        "win": 0.4040940999984741
+      },
+      "nll": 0.704947829246521,
+      "rows": 20698,
+      "tower_margin_baseline_mae": 0.21352404356002808,
+      "tower_margin_mae": 0.21478576958179474,
+      "tower_margin_mae_improvement": -0.0012617260217666626,
+      "tower_margin_rmse": 0.27848803997039795
+    },
+    "1": {
+      "accuracy": 0.6609856486320496,
+      "auc_one_vs_rest": {
+        "draw": 0.9587290287017822,
+        "loss": 0.7069112062454224,
+        "win": 0.7021727561950684
+      },
+      "brier": 0.444209486246109,
+      "class_counts": {
+        "draw": 776,
+        "loss": 12913,
+        "win": 7434
+      },
+      "decisive_win_loss_auc": 0.7091159820556641,
+      "ece_10": 0.03470243886113167,
+      "mean_outcome_probability": {
+        "draw": 0.018087629228830338,
+        "loss": 0.5742030739784241,
+        "win": 0.4077092707157135
+      },
+      "nll": 0.6906545162200928,
+      "rows": 21123,
+      "tower_margin_baseline_mae": 0.2144874632358551,
+      "tower_margin_mae": 0.21036481857299805,
+      "tower_margin_mae_improvement": 0.004122644662857056,
+      "tower_margin_rmse": 0.27146944403648376
+    }
+  },
+  "validation_by_source": {
+    "controlled-symmetric-draws": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.3313932418823242,
+      "class_counts": {
+        "draw": 1552,
+        "loss": 0,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.6349712014198303,
+      "mean_outcome_probability": {
+        "draw": 0.08527850359678268,
+        "loss": 0.5451950430870056,
+        "win": 0.3695265054702759
+      },
+      "nll": 2.6451945304870605,
+      "rows": 1552,
+      "tower_margin_baseline_mae": 0.0,
+      "tower_margin_mae": 0.07839235663414001,
+      "tower_margin_mae_improvement": -0.07839235663414001,
+      "tower_margin_rmse": 0.10735417157411575
+    },
+    "natural-strategy-games": {
+      "accuracy": 0.6819638013839722,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.7221766114234924,
+        "win": 0.7127016186714172
+      },
+      "brier": 0.4159415662288666,
+      "class_counts": {
+        "draw": 0,
+        "loss": 23509,
+        "win": 16760
+      },
+      "decisive_win_loss_auc": 0.717814564704895,
+      "ece_10": 0.01782825030386448,
+      "mean_outcome_probability": {
+        "draw": 0.015430023893713951,
+        "loss": 0.5772473216056824,
+        "win": 0.4073227047920227
+      },
+      "nll": 0.6226716637611389,
+      "rows": 40269,
+      "tower_margin_baseline_mae": 0.2222587764263153,
+      "tower_margin_mae": 0.21772347390651703,
+      "tower_margin_mae_improvement": 0.004535302519798279,
+      "tower_margin_rmse": 0.2794203758239746
+    }
+  },
+  "validation_corpora": [
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_crossed_validation_seed1274001/corpus.npz",
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_broad_development_fold_c_seed1277003/corpus.npz",
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_development_shard_d_seed1277004/corpus.npz",
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_development_shard_e_seed1277005/corpus.npz",
+    "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_symmetric_draw_outcomes_seed1271001/corpus.npz"
+  ],
+  "validation_corpus_sha256": [
+    "9f6e4ea3c7158a76a71bd3a3450c787b7f5997cfddff3918e060725b02de43f2",
+    "17b99b3c43ccb2fc5d5c6c1c85bee3d3015595307988dc18df323d18a05a1a7f",
+    "6e71d22506ab60eb1f8857aaf4e5b53cabcc977159c571311c4852cc61b4037d",
+    "0043d08296807b4f9d6ac7d467bb14cfd12ca0862d7ac80719e3fc2c20f94250",
+    "4ea450e91596565aec65e4b71e73421890ff75b4570ac53625d9d6e6d351ebab"
+  ],
+  "validation_episode_endpoints": {
+    "accuracy": 0.6702127456665039,
+    "auc_one_vs_rest": {
+      "draw": 1.0,
+      "loss": 0.8399999737739563,
+      "win": 0.7435185313224792
+    },
+    "brier": 0.4092440605163574,
+    "class_counts": {
+      "draw": 4,
+      "loss": 50,
+      "win": 40
+    },
+    "decisive_win_loss_auc": 0.8149999976158142,
+    "ece_10": 0.10902369022369385,
+    "mean_outcome_probability": {
+      "draw": 0.016255900263786316,
+      "loss": 0.6133650541305542,
+      "win": 0.37037909030914307
+    },
+    "nll": 0.6371749043464661,
+    "rows": 94,
+    "tower_margin_baseline_mae": 0.005863660015165806,
+    "tower_margin_mae": 0.01318198163062334,
+    "tower_margin_mae_improvement": -0.007318321615457535,
+    "tower_margin_rmse": 0.023256558924913406
+  },
+  "validation_episode_endpoints_by_source": {
+    "controlled-symmetric-draws": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.2012341022491455,
+      "class_counts": {
+        "draw": 4,
+        "loss": 0,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.6026024222373962,
+      "mean_outcome_probability": {
+        "draw": 0.12575456500053406,
+        "loss": 0.2716430127620697,
+        "win": 0.6026024222373962
+      },
+      "nll": 2.073423147201538,
+      "rows": 4,
+      "tower_margin_baseline_mae": 0.0,
+      "tower_margin_mae": 0.004089297726750374,
+      "tower_margin_mae_improvement": -0.004089297726750374,
+      "tower_margin_rmse": 0.004089317750185728
+    },
+    "natural-strategy-games": {
+      "accuracy": 0.699999988079071,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.8240000009536743,
+        "win": 0.7649999856948853
+      },
+      "brier": 0.3740445077419281,
+      "class_counts": {
+        "draw": 0,
+        "loss": 50,
+        "win": 40
+      },
+      "decisive_win_loss_auc": 0.8149999976158142,
+      "ece_10": 0.08728667348623276,
+      "mean_outcome_probability": {
+        "draw": 0.0113892937079072,
+        "loss": 0.6285526752471924,
+        "win": 0.36005809903144836
+      },
+      "nll": 0.5733416080474854,
+      "rows": 90,
+      "tower_margin_baseline_mae": 0.0061242664232850075,
+      "tower_margin_mae": 0.013586101122200489,
+      "tower_margin_mae_improvement": -0.007461834698915482,
+      "tower_margin_rmse": 0.023752111941576004
+    }
+  },
+  "validation_phase_auc_confidence": {
+    "early": {
+      "independent_clusters": 45,
+      "lower_95": 0.44710602766798424,
+      "point": 0.6245,
+      "requested_replicates": 2000,
+      "upper_95": 0.7817764550264549,
+      "valid_replicates": 2000
+    },
+    "late": {
+      "independent_clusters": 11,
+      "lower_95": 0.5761904761904763,
+      "point": 0.9333333333333333,
+      "requested_replicates": 2000,
+      "upper_95": 1.0,
+      "valid_replicates": 1937
+    },
+    "middle": {
+      "independent_clusters": 40,
+      "lower_95": 0.723500855908958,
+      "point": 0.8597074468085106,
+      "requested_replicates": 2000,
+      "upper_95": 0.9539181397306398,
+      "valid_replicates": 2000
+    }
+  },
+  "validation_phase_balanced": {
+    "accuracy": 0.6185566782951355,
+    "auc_one_vs_rest": {
+      "draw": 0.9677419066429138,
+      "loss": 0.7506746053695679,
+      "win": 0.6894217133522034
+    },
+    "brier": 0.45770248770713806,
+    "class_counts": {
+      "draw": 8,
+      "loss": 109,
+      "win": 77
+    },
+    "decisive_win_loss_auc": 0.7227451205253601,
+    "ece_10": 0.10041198134422302,
+    "mean_outcome_probability": {
+      "draw": 0.022226711735129356,
+      "loss": 0.5612499713897705,
+      "win": 0.41652342677116394
+    },
+    "nll": 0.7010806202888489,
+    "rows": 194,
+    "tower_margin_baseline_mae": 0.20412425696849823,
+    "tower_margin_mae": 0.19411103427410126,
+    "tower_margin_mae_improvement": 0.010013222694396973,
+    "tower_margin_rmse": 0.25110718607902527
+  },
+  "validation_phase_balanced_by_phase": {
+    "early": {
+      "accuracy": 0.5744680762290955,
+      "auc_one_vs_rest": {
+        "draw": 0.9333333373069763,
+        "loss": 0.6768181920051575,
+        "win": 0.5583333373069763
+      },
+      "brier": 0.5305283069610596,
+      "class_counts": {
+        "draw": 4,
+        "loss": 50,
+        "win": 40
+      },
+      "decisive_win_loss_auc": 0.6244999766349792,
+      "ece_10": 0.12319032102823257,
+      "mean_outcome_probability": {
+        "draw": 0.029700523242354393,
+        "loss": 0.6068345308303833,
+        "win": 0.36346492171287537
+      },
+      "nll": 0.7992140650749207,
+      "rows": 94,
+      "tower_margin_baseline_mae": 0.2671627998352051,
+      "tower_margin_mae": 0.24790668487548828,
+      "tower_margin_mae_improvement": 0.019256114959716797,
+      "tower_margin_rmse": 0.2978139817714691
+    },
+    "late": {
+      "accuracy": 0.529411792755127,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.9333333373069763,
+        "win": 0.9333333373069763
+      },
+      "brier": 0.48217251896858215,
+      "class_counts": {
+        "draw": 0,
+        "loss": 12,
+        "win": 5
+      },
+      "decisive_win_loss_auc": 0.9333333373069763,
+      "ece_10": 0.23778729140758514,
+      "mean_outcome_probability": {
+        "draw": 0.00847676582634449,
+        "loss": 0.423961877822876,
+        "win": 0.5675613880157471
+      },
+      "nll": 0.6761054992675781,
+      "rows": 17,
+      "tower_margin_baseline_mae": 0.09000249207019806,
+      "tower_margin_mae": 0.08995793759822845,
+      "tower_margin_mae_improvement": 4.455447196960449e-05,
+      "tower_margin_rmse": 0.1450505554676056
+    },
+    "middle": {
+      "accuracy": 0.6867470145225525,
+      "auc_one_vs_rest": {
+        "draw": 1.0,
+        "loss": 0.8587470650672913,
+        "win": 0.8523284196853638
+      },
+      "brier": 0.3702130913734436,
+      "class_counts": {
+        "draw": 4,
+        "loss": 47,
+        "win": 32
+      },
+      "decisive_win_loss_auc": 0.8597074747085571,
+      "ece_10": 0.15448537468910217,
+      "mean_outcome_probability": {
+        "draw": 0.01657864637672901,
+        "loss": 0.5377431511878967,
+        "win": 0.4456782042980194
+      },
+      "nll": 0.5950570702552795,
+      "rows": 83,
+      "tower_margin_baseline_mae": 0.15610556304454803,
+      "tower_margin_mae": 0.15451841056346893,
+      "tower_margin_mae_improvement": 0.0015871524810791016,
+      "tower_margin_rmse": 0.20645610988140106
+    }
+  },
+  "validation_phase_balanced_by_source": {
+    "controlled-symmetric-draws": {
+      "accuracy": 0.0,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": null,
+        "win": null
+      },
+      "brier": 1.2030552625656128,
+      "class_counts": {
+        "draw": 8,
+        "loss": 0,
+        "win": 0
+      },
+      "decisive_win_loss_auc": null,
+      "ece_10": 0.5240256190299988,
+      "mean_outcome_probability": {
+        "draw": 0.11088249087333679,
+        "loss": 0.36509189009666443,
+        "win": 0.5240256190299988
+      },
+      "nll": 2.199510097503662,
+      "rows": 8,
+      "tower_margin_baseline_mae": 0.0,
+      "tower_margin_mae": 0.053929202258586884,
+      "tower_margin_mae_improvement": -0.053929202258586884,
+      "tower_margin_rmse": 0.07277001440525055
+    },
+    "natural-strategy-games": {
+      "accuracy": 0.6451612710952759,
+      "auc_one_vs_rest": {
+        "draw": null,
+        "loss": 0.7371619343757629,
+        "win": 0.7028475999832153
+      },
+      "brier": 0.42564427852630615,
+      "class_counts": {
+        "draw": 0,
+        "loss": 109,
+        "win": 77
+      },
+      "decisive_win_loss_auc": 0.7227451205253601,
+      "ece_10": 0.08253330737352371,
+      "mean_outcome_probability": {
+        "draw": 0.018413562327623367,
+        "loss": 0.5696868300437927,
+        "win": 0.4118996858596802
+      },
+      "nll": 0.6366320252418518,
+      "rows": 186,
+      "tower_margin_baseline_mae": 0.21290379762649536,
+      "tower_margin_mae": 0.20014037191867828,
+      "tower_margin_mae_improvement": 0.012763425707817078,
+      "tower_margin_rmse": 0.25600603222846985
+    }
+  },
+  "validation_prior_nll": 0.8423694968223572
+}
