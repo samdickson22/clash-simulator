@@ -8,11 +8,14 @@ rejected. The public-global control has the best aggregate development score,
 but a larger-window audit rejects it too: held-out early-game decisive AUC is
 0.4808. It is not authorized for search or policy updates.
 
-The next evidence step is broader matchup diversity, not more epochs on the
-same 32 streams: collect additional current supported decks across every
-strategy style and both seats, then repeat the frozen-baseline residual screen.
-An untouched holdout and additional seeds remain deferred until a contextual
-candidate beats the public-global baseline.
+That rejection triggered a broader, predeclared data and architecture screen.
+The resulting mechanics-primary structured candidate now passes the expanded
+90-game development gate, including calibration, all-phase clustered ranking,
+controlled draws, and terminal-margin regression. It is accepted for untouched
+holdout evaluation only; it is not yet authorized for counterfactual search or
+policy updates. A 72-game holdout over four never-trained decks, three held-out
+opponent styles, both seats, and three independent episodes per seat is now the
+next frozen gate.
 
 ## Corpus authority and audit
 
@@ -280,9 +283,11 @@ Two correctness changes followed without altering an acceptance threshold:
    despite a late MAE regression of 0.0296; epoch 1 passed the full margin gate.
 2. The factorized outcome head now corrects its draw-vs-decisive and
    win-vs-loss logit offsets from declared training class mass to the empirical
-   complete-game training prior. A single bounded decisive temperature may be
-   fit on a physically separate calibration corpus; training uses uncalibrated
-   logits, and validation labels never fit the temperature.
+   complete-game training prior. A single bounded convex shrinkage toward that
+   prior is fit on a physically separate calibration corpus. Training uses
+   uncalibrated logits, validation labels never fit the shrinkage, and expected
+   win-minus-loss utility is transformed only by a positive scale plus a
+   state-independent constant, so action ranking is preserved exactly.
 
 Prior correction alone improves development NLL to 0.8569 while retaining all
 three ranking-confidence passes, but remains short of the required 0.02 gain
@@ -292,7 +297,19 @@ early/middle/late AUC is 0.7030/0.8611/1.0000, but the early clustered lower
 bound is 0.4897, narrowly below 0.50 because removing D leaves fewer validation
 matchups. That split is rejected rather than relaxed.
 
-A new-seed 24-game calibration-only shard is therefore collecting on already
-known development decks. It will fit the scalar temperature while leaving the
-entire 90-game development pool label-independent. The four remaining unseen
-decks stay reserved for untouched holdout.
+A new-seed 24-game calibration-only shard completed with 12 wins and 12 losses.
+Using it to fit the rank-preserving shrinkage selected alpha 0.71. The final
+known-good initialization (`seed=1277501`) then passed the complete 90-game
+development gate at outcome epoch 30 and independent margin epoch 1. Its
+phase-balanced decisive AUC is 0.7506; early/middle/late AUC is
+0.6833/0.8318/0.9500 with clustered lower 95% bounds
+0.5104/0.6884/0.6429. NLL is 0.6789 versus the empirical-prior NLL 0.8424,
+ECE is 0.1233, and tower-margin MAE improves by 0.01598 overall. The checkpoint
+SHA-256 is
+`4ce454dc1d0ccb022dd196da1251389fc655c933ed9271c9e440d5a44d81330f`.
+
+This is an accepted-development result, not a promoted value function. The
+four remaining unseen decks are now being collected exactly once as the
+untouched natural holdout; a separately seeded symmetric-draw holdout follows.
+Only a frozen pass on both permits additional model seeds and the exact-terminal
+counterfactual ranking gate.

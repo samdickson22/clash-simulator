@@ -16,7 +16,7 @@ from scripts.train_hog26_actor_outcome import (
     bootstrap_binary_auc,
     episode_balanced_row_weights,
     episode_class_balanced_row_weights,
-    fit_decisive_temperature,
+    fit_probability_shrinkage,
     margin_epoch_selection_key,
     metrics,
     outcome_epoch_selection_key,
@@ -180,19 +180,23 @@ def test_margin_epoch_selection_rejects_better_aggregate_with_phase_failure() ->
     ) > margin_epoch_selection_key(invalid, acceptance_passed=False)
 
 
-def test_decisive_temperature_fit_softens_overconfident_constant_scores() -> None:
+def test_probability_shrinkage_fit_repairs_overconfident_constant_scores() -> None:
     head = ActorOutcomeHead(18, hidden_size=2)
     with torch.no_grad():
         for parameter in head.parameters():
             parameter.zero_()
         head.decisive_win.bias.fill_(4.0)
-    temperature = fit_decisive_temperature(
+    head.set_prior_calibration(
+        torch.tensor([0.45, 0.1, 0.45]),
+        torch.tensor([0.45, 0.1, 0.45]),
+    )
+    shrinkage = fit_probability_shrinkage(
         head,
         torch.zeros(4, 18),
         torch.tensor([-1, -1, 1, 1]),
         device=torch.device("cpu"),
     )
-    assert temperature == pytest.approx(8.0)
+    assert shrinkage == pytest.approx(0.0)
 
 
 def test_all_phase_auc_rejects_missing_or_below_chance_phase() -> None:

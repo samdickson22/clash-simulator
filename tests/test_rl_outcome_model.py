@@ -146,19 +146,21 @@ def test_factorized_prior_calibration_rejects_zero_or_wrong_shape() -> None:
         head.set_prior_calibration(torch.ones(2), torch.ones(3))
     with pytest.raises(ValueError, match="positive"):
         head.set_prior_calibration(torch.tensor([0.5, 0.0, 0.5]), torch.ones(3))
-    with pytest.raises(ValueError, match="temperature"):
-        head.set_decisive_temperature(0.0)
+    with pytest.raises(ValueError, match="shrinkage"):
+        head.set_probability_shrinkage(2.0)
 
 
-def test_decisive_temperature_softens_only_calibrated_outcome_logits() -> None:
+def test_probability_shrinkage_preserves_expected_utility_ranking() -> None:
     head = ActorOutcomeHead(18, hidden_size=4)
-    with torch.no_grad():
-        for parameter in head.parameters():
-            parameter.zero_()
-        head.decisive_win.bias.fill_(4.0)
-    state = torch.zeros(1, 18)
-    raw = head(state, calibrated=False).outcome_logits
-    head.set_decisive_temperature(2.0)
-    calibrated = head(state).outcome_logits
-    assert float((raw[0, 2] - raw[0, 0]).detach()) == pytest.approx(4.0)
-    assert float((calibrated[0, 2] - calibrated[0, 0]).detach()) == pytest.approx(2.0)
+    head.set_prior_calibration(
+        torch.tensor([0.4, 0.2, 0.4]),
+        torch.tensor([0.4, 0.2, 0.4]),
+    )
+    state = torch.randn(5, 18)
+    original = head(state).outcome_logits.exp()
+    head.set_probability_shrinkage(0.25)
+    shrunk = head(state).outcome_logits.exp()
+    original_utility = original[:, 2] - original[:, 0]
+    shrunk_utility = shrunk[:, 2] - shrunk[:, 0]
+    torch.testing.assert_close(shrunk_utility, 0.25 * original_utility)
+    assert torch.equal(torch.argsort(original_utility), torch.argsort(shrunk_utility))

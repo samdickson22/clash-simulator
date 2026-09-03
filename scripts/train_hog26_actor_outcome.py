@@ -588,43 +588,33 @@ def margin_epoch_selection_key(
 
 
 @torch.no_grad()
-def fit_decisive_temperature(
+def fit_probability_shrinkage(
     head: ActorOutcomeHead,
     features: Tensor,
     outcomes: Tensor,
     *,
     device: torch.device,
 ) -> float:
-    """Fit one bounded scalar on separate decisive calibration games."""
+    """Fit rank-preserving shrinkage on a physically separate calibration set."""
 
-    selected = outcomes != 0
-    selected_rows = selected.nonzero().flatten()
-    selected_outcomes = outcomes.index_select(0, selected_rows)
-    if (
-        int(selected.sum()) < 2
-        or not bool((selected_outcomes == 1).any())
-        or not bool((selected_outcomes == -1).any())
+    if outcomes.numel() < 2 or not bool(
+        torch.isin(outcomes, torch.tensor([-1, 0, 1])).all()
     ):
-        raise ValueError("decisive calibration needs both wins and losses")
-    head.set_decisive_temperature(1.0)
-    prediction = head(features.index_select(0, selected_rows).to(device))
-    scores = prediction.outcome_logits[:, 2] - prediction.outcome_logits[:, 0]
-    labels = (selected_outcomes.to(device) == 1).to(scores.dtype)
-    temperatures = torch.logspace(
-        math.log10(0.25),
-        math.log10(8.0),
-        401,
-        device=device,
-        dtype=scores.dtype,
+        raise ValueError("probability calibration outcomes are invalid")
+    head.set_probability_shrinkage(1.0)
+    probabilities = head(features.to(device)).outcome_logits.exp()
+    prior = head.outcome_probability_prior.to(device=device, dtype=probabilities.dtype)
+    shrinkages = torch.linspace(0.0, 1.0, 401, device=device, dtype=probabilities.dtype)
+    candidates = (
+        shrinkages[:, None, None] * probabilities.unsqueeze(0)
+        + (1.0 - shrinkages[:, None, None]) * prior[None, None, :]
     )
-    losses = F.binary_cross_entropy_with_logits(
-        scores.unsqueeze(0) / temperatures.unsqueeze(1),
-        labels.unsqueeze(0).expand(temperatures.numel(), -1),
-        reduction="none",
-    ).mean(dim=1)
-    temperature = float(temperatures[int(losses.argmin())].cpu())
-    head.set_decisive_temperature(temperature)
-    return temperature
+    targets = (outcomes.to(device=device, dtype=torch.long) + 1)[None, :, None]
+    selected = candidates.gather(2, targets.expand(shrinkages.numel(), -1, 1))
+    losses = -selected.squeeze(-1).clamp_min(1e-12).log().mean(dim=1)
+    shrinkage = float(shrinkages[int(losses.argmin())].cpu())
+    head.set_probability_shrinkage(shrinkage)
+    return shrinkage
 
 
 def all_phase_decisive_auc_passed(
@@ -1400,19 +1390,19 @@ def main() -> None:
         phase_balanced_row_indices(calibration_loaded) if calibration_loaded else None
     )
 
-    def recalibrate_decisive() -> float:
+    def recalibrate_probabilities() -> float:
         if calibration_rows is None:
-            head.set_decisive_temperature(1.0)
+            head.set_probability_shrinkage(1.0)
             return 1.0
         assert calibration_features is not None and calibration_outcomes is not None
-        return fit_decisive_temperature(
+        return fit_probability_shrinkage(
             head,
             calibration_features.index_select(0, calibration_rows),
             calibration_outcomes.index_select(0, calibration_rows),
             device=device,
         )
 
-    current_temperature = recalibrate_decisive()
+    current_shrinkage = recalibrate_probabilities()
     validation_phase_rows = phase_balanced_row_indices(validation_loaded)
     validation_phase_outcomes = validation_outcomes.index_select(
         0, validation_phase_rows
@@ -1448,7 +1438,7 @@ def main() -> None:
             "outcome_gate_passed": False,
             "margin_gate_passed": False,
             "development_gate_passed": False,
-            "decisive_temperature": current_temperature,
+            "probability_shrinkage": current_shrinkage,
         }
     ]
     best_key = outcome_epoch_selection_key(
@@ -1498,7 +1488,7 @@ def main() -> None:
             )
             optimizer.step()
             losses.append(float(loss.total.detach()))
-        current_temperature = recalibrate_decisive()
+        current_shrinkage = recalibrate_probabilities()
         epoch_breakdowns = _evaluation_breakdowns(
             head,
             validation_features,
@@ -1567,7 +1557,7 @@ def main() -> None:
             "outcome_gate_passed": epoch_outcome_passed,
             "margin_gate_passed": epoch_margin_passed,
             "development_gate_passed": epoch_outcome_passed and epoch_margin_passed,
-            "decisive_temperature": current_temperature,
+            "probability_shrinkage": current_shrinkage,
         }
         history.append(row)
         print(json.dumps(row, sort_keys=True), flush=True)
@@ -1957,11 +1947,11 @@ def main() -> None:
             "win": args.win_class_mass,
         },
         "probability_calibration": (
-            "factorized-training-mass-prior-plus-separate-decisive-temperature-v1"
+            "factorized-training-mass-prior-plus-rank-preserving-shrinkage-v1"
             if calibration_loaded
             else "factorized-training-mass-to-empirical-episode-prior-v1"
         ),
-        "decisive_logit_temperature": float(head.decisive_logit_temperature.cpu()),
+        "probability_shrinkage": float(head.probability_shrinkage.cpu()),
         "actor_input_previous_reward": "forced-zero-unavailable-at-live-inference",
         "actor_input_critic_fields": False,
         "actor_feature_contract": args.feature_set,

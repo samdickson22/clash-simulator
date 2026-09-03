@@ -51,7 +51,8 @@ class ActorOutcomeHead(nn.Module):
         self.margin_residual_scale = float(margin_residual_scale)
         self.register_buffer("draw_logit_calibration", torch.zeros(()))
         self.register_buffer("decisive_logit_calibration", torch.zeros(()))
-        self.register_buffer("decisive_logit_temperature", torch.ones(()))
+        self.register_buffer("outcome_probability_prior", torch.full((3,), 1.0 / 3.0))
+        self.register_buffer("probability_shrinkage", torch.ones(()))
         trunk_size = 18 if self.structured_residual_scale > 0.0 else state_size
         self.trunk = nn.Sequential(
             nn.LayerNorm(trunk_size),
@@ -126,6 +127,7 @@ class ActorOutcomeHead(nn.Module):
             raise ValueError("outcome calibration masses must be positive")
         empirical = empirical / empirical.sum()
         target = target / target.sum()
+        self.outcome_probability_prior.copy_(empirical)
 
         def log_odds(probability: Tensor) -> Tensor:
             return probability.log() - (1.0 - probability).log()
@@ -138,12 +140,12 @@ class ActorOutcomeHead(nn.Module):
         )
 
     @torch.no_grad()
-    def set_decisive_temperature(self, temperature: float) -> None:
-        """Set a positive held-out calibration temperature."""
+    def set_probability_shrinkage(self, shrinkage: float) -> None:
+        """Set held-out shrinkage toward the empirical complete-game prior."""
 
-        if not math.isfinite(temperature) or temperature <= 0.0:
-            raise ValueError("decisive calibration temperature must be positive")
-        self.decisive_logit_temperature.fill_(temperature)
+        if not math.isfinite(shrinkage) or not 0.0 <= shrinkage <= 1.0:
+            raise ValueError("probability shrinkage must be in [0, 1]")
+        self.probability_shrinkage.fill_(shrinkage)
 
     def forward(
         self, state: Tensor, *, calibrated: bool = True
@@ -169,7 +171,6 @@ class ActorOutcomeHead(nn.Module):
         if calibrated:
             draw_logit = draw_logit + self.draw_logit_calibration
             decisive_win_logit = decisive_win_logit + self.decisive_logit_calibration
-            decisive_win_logit = decisive_win_logit / self.decisive_logit_temperature
         log_draw = -F.softplus(-draw_logit)
         log_decisive = -F.softplus(draw_logit)
         log_win_given_decisive = -F.softplus(-decisive_win_logit)
@@ -185,15 +186,22 @@ class ActorOutcomeHead(nn.Module):
                 + self.margin_residual_scale
                 * self.margin_trunk(public_globals).squeeze(-1).tanh()
             ).clamp(-1.0, 1.0)
-        return ActorOutcomePrediction(
-            outcome_logits=torch.stack(
-                (
-                    log_decisive + log_loss_given_decisive,
-                    log_draw,
-                    log_decisive + log_win_given_decisive,
-                ),
-                dim=-1,
+        outcome_logits = torch.stack(
+            (
+                log_decisive + log_loss_given_decisive,
+                log_draw,
+                log_decisive + log_win_given_decisive,
             ),
+            dim=-1,
+        )
+        if calibrated:
+            probabilities = (
+                self.probability_shrinkage * outcome_logits.exp()
+                + (1.0 - self.probability_shrinkage) * self.outcome_probability_prior
+            )
+            outcome_logits = probabilities.log()
+        return ActorOutcomePrediction(
+            outcome_logits=outcome_logits,
             terminal_tower_margin=terminal_margin,
         )
 
