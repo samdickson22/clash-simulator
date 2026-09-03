@@ -51,6 +51,12 @@ def test_crossed_opponent_rows_pair_every_style_deck_and_seat() -> None:
     )
 
 
+def test_crossed_opponent_rows_accept_one_heldout_style() -> None:
+    opponents, decks = crossed_opponent_rows(("split-lane",), ("Log Bait",))
+    assert opponents == ("split-lane", "split-lane")
+    assert decks == ("Log Bait", "Log Bait")
+
+
 def test_procedural_split_selection_keeps_holdout_sealed() -> None:
     train = opponent_decks_for_split(PROCEDURAL, "train")
     development = opponent_decks_for_split(PROCEDURAL, "development")

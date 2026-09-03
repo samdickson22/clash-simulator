@@ -46,7 +46,7 @@ def _outcome_counts(values: np.ndarray) -> dict[str, int]:
 def crossed_opponent_rows(
     opponents: tuple[str, ...], opponent_decks: tuple[str, ...]
 ) -> tuple[tuple[str, ...], tuple[str, ...]]:
-    if len(opponents) < 2 or not opponent_decks:
+    if not opponents or not opponent_decks:
         raise ValueError("crossed outcome collection needs opponents and decks")
     rows = tuple(
         (opponent, deck)
@@ -104,6 +104,14 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
     else:
         row_opponents = paired_row_opponents(opponents)
         row_decks = ()
+    if len(opponents) == 1:
+        opponent_mode = "random" if opponents[0] == "random" else "strategy"
+        opponent_strategy = None if opponent_mode == "random" else opponents[0]
+        opponent_league_schedule: tuple[tuple[str, str | None], ...] = ()
+    else:
+        opponent_mode = "league"
+        opponent_strategy = None
+        opponent_league_schedule = _league_schedule(opponents)
     device = torch.device(args.device)
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
@@ -118,8 +126,9 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         supported_decks_path=supported_decks_path,
         typed_vocabulary_path=DEFAULT_SIMPLE_TOKEN_VOCABULARY,
         mirror_match=False,
-        opponent_mode="league",
-        opponent_league_schedule=_league_schedule(opponents),
+        opponent_mode=opponent_mode,
+        opponent_strategy=opponent_strategy,
+        opponent_league_schedule=opponent_league_schedule,
         learner_deck_name="Hog 2.6 Cycle",
         opponent_deck_name_schedule=row_decks,
     )
