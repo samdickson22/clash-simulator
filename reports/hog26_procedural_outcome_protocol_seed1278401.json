@@ -21,7 +21,8 @@
       "episodes_per_seat": 1,
       "expected_games": 128,
       "output_corpus": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
-      "output_report": "reports/hog26_procedural_train_balanced_random_seed1278501.json"
+      "output_report": "reports/hog26_procedural_train_balanced_random_seed1278501.json",
+      "audit_report": "reports/hog26_procedural_train_balanced_random_seed1278501_audit.json"
     },
     {
       "seed": 1278502,
@@ -31,7 +32,8 @@
       "episodes_per_seat": 1,
       "expected_games": 128,
       "output_corpus": "datasets/derived/hog26_procedural_train_bridge_reactive_seed1278502/corpus.npz",
-      "output_report": "reports/hog26_procedural_train_bridge_reactive_seed1278502.json"
+      "output_report": "reports/hog26_procedural_train_bridge_reactive_seed1278502.json",
+      "audit_report": "reports/hog26_procedural_train_bridge_reactive_seed1278502_audit.json"
     },
     {
       "seed": 1278503,
@@ -41,7 +43,8 @@
       "episodes_per_seat": 1,
       "expected_games": 128,
       "output_corpus": "datasets/derived/hog26_procedural_train_slow_spell_seed1278503/corpus.npz",
-      "output_report": "reports/hog26_procedural_train_slow_spell_seed1278503.json"
+      "output_report": "reports/hog26_procedural_train_slow_spell_seed1278503.json",
+      "audit_report": "reports/hog26_procedural_train_slow_spell_seed1278503_audit.json"
     }
   ],
   "development_selection": {
