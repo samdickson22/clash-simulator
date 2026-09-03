@@ -438,13 +438,17 @@ def bootstrap_binary_auc(
     *,
     seed: int,
     replicates: int,
+    clusters: np.ndarray | None = None,
 ) -> dict[str, float | int] | None:
-    """Return a deterministic nonparametric AUC interval over independent rows."""
+    """Return a deterministic AUC interval over rows or independent clusters."""
 
     binary = np.asarray(labels, dtype=np.bool_)
     values = np.asarray(scores, dtype=np.float64)
     if binary.ndim != 1 or values.shape != binary.shape or replicates < 1:
         raise ValueError("bootstrap labels/scores/replicates are invalid")
+    cluster_values = None if clusters is None else np.asarray(clusters)
+    if cluster_values is not None and cluster_values.shape != binary.shape:
+        raise ValueError("bootstrap clusters do not match labels")
     if not np.isfinite(values).all() or not binary.any() or binary.all():
         return None
 
@@ -457,8 +461,24 @@ def bootstrap_binary_auc(
     point = auc(binary, values)
     rng = np.random.default_rng(seed)
     estimates: list[float] = []
+    unique_clusters = (
+        np.arange(binary.size)
+        if cluster_values is None
+        else np.unique(cluster_values)
+    )
+    cluster_rows = [
+        (
+            np.asarray([int(cluster)], dtype=np.int64)
+            if cluster_values is None
+            else np.flatnonzero(cluster_values == cluster)
+        )
+        for cluster in unique_clusters
+    ]
     for _ in range(replicates):
-        rows = rng.integers(0, binary.size, size=binary.size)
+        sampled_clusters = rng.integers(
+            0, len(cluster_rows), size=len(cluster_rows)
+        )
+        rows = np.concatenate([cluster_rows[index] for index in sampled_clusters])
         sampled_labels = binary[rows]
         if sampled_labels.any() and not sampled_labels.all():
             estimates.append(auc(sampled_labels, values[rows]))
@@ -471,6 +491,7 @@ def bootstrap_binary_auc(
         "upper_95": float(np.quantile(interval, 0.975)),
         "valid_replicates": len(estimates),
         "requested_replicates": replicates,
+        "independent_clusters": len(cluster_rows),
     }
 
 
@@ -484,12 +505,16 @@ def phase_auc_confidence_intervals(
     device: torch.device,
     seed: int,
     replicates: int,
+    clusters: np.ndarray | None = None,
 ) -> dict[str, dict[str, float | int] | None]:
-    """Bootstrap decisive AUC on one independent episode sample per phase."""
+    """Bootstrap decisive AUC on phase samples, optionally by matchup cluster."""
 
     probabilities = head(features.to(device)).outcome_logits.softmax(dim=-1).cpu()
     utility = (probabilities[:, 2] - probabilities[:, 0]).numpy()
     labels = outcomes.cpu().numpy()
+    cluster_values = None if clusters is None else np.asarray(clusters)
+    if cluster_values is not None and cluster_values.shape != labels.shape:
+        raise ValueError("phase AUC clusters do not match outcome rows")
     result: dict[str, dict[str, float | int] | None] = {}
     for index, phase in enumerate(("early", "middle", "late")):
         selected = (phases == phase) & (labels != 0)
@@ -498,6 +523,9 @@ def phase_auc_confidence_intervals(
             utility[selected],
             seed=seed + index,
             replicates=replicates,
+            clusters=(
+                None if cluster_values is None else cluster_values[selected]
+            ),
         )
     return result
 
@@ -654,6 +682,51 @@ def phase_balanced_row_indices(
     if not selected:
         raise ValueError("validation corpora contain no phase-balanced rows")
     return torch.as_tensor(selected, dtype=torch.long)
+
+
+def phase_balanced_matchup_clusters(
+    loaded: list[tuple[dict[str, Any], DirectSimpleBehaviorCorpus]],
+) -> np.ndarray:
+    """Name the seed/style/deck/ordinal cluster for every selected phase row."""
+
+    clusters: list[str] = []
+    for metadata, corpus in loaded:
+        source = _outcome_source(metadata)
+        seed = int(metadata["seed"])
+        progress = np.asarray(corpus.arrays["global_features"][:, 0])
+        opponents = [str(value) for value in metadata.get("opponents", [])]
+        decks = [str(value) for value in metadata.get("opponent_decks", [])]
+        for episode, (begin, end) in enumerate(
+            zip(corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True)
+        ):
+            if source == "natural-strategy-games":
+                opponent_index = int(
+                    corpus.episode_arrays["episode_opponent_indices"][episode]
+                )
+                deck_index = int(
+                    corpus.episode_arrays["episode_opponent_deck_indices"][episode]
+                )
+                opponent = opponents[opponent_index]
+                deck = decks[deck_index]
+            else:
+                opponent = "<controlled-draw>"
+                deck = "<controlled-draw>"
+            ordinal = int(corpus.episode_ordinals[episode])
+            cluster = f"{source}|{seed}|{opponent}|{deck}|{ordinal}"
+            episode_progress = progress[begin:end]
+            for lower, upper in (
+                (0.0, 1.0 / 3.0),
+                (1.0 / 3.0, 2.0 / 3.0),
+                (2.0 / 3.0, math.inf),
+            ):
+                if bool(
+                    ((episode_progress >= lower) & (episode_progress < upper)).any()
+                ):
+                    clusters.append(cluster)
+    result = np.asarray(clusters, dtype=np.str_)
+    if result.shape != (phase_balanced_row_indices(loaded).numel(),):
+        raise ValueError("phase-balanced matchup clusters lost rows")
+    return result
 
 
 def _evaluation_breakdowns(
@@ -1472,6 +1545,7 @@ def main() -> None:
         device=device,
         seed=args.seed + 10_000,
         replicates=args.phase_auc_bootstrap_replicates,
+        clusters=phase_balanced_matchup_clusters(validation_loaded),
     )
     phase_auc_confidence_passed = all(
         validation_phase_auc_confidence[phase] is not None
@@ -1588,6 +1662,7 @@ def main() -> None:
             device=device,
             seed=args.seed + 20_000,
             replicates=args.phase_auc_bootstrap_replicates,
+            clusters=phase_balanced_matchup_clusters(holdout_loaded),
         )
         holdout_phase_confidence_passed = all(
             holdout_phase_auc_confidence[phase] is not None

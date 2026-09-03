@@ -1,4 +1,4 @@
-# Hog 2.6 actor-visible outcome gate: 128-game crossed training set
+# Hog 2.6 actor-visible outcome gate
 
 ## Decision
 
@@ -173,3 +173,12 @@ gain in the first seed is not stable. Phase balancing remains justified by its
 consistent whole-phase ranking/calibration benefit and contract alignment, but
 additional independent early-game outcomes remain the only accepted route to
 narrowing early uncertainty.
+
+Confidence intervals are now cluster-bootstrapped by complete
+`seed/style/deck/episode-ordinal` matchup, so the two mirrored learner seats are
+resampled together rather than miscounted as independent evidence. On the
+current 18-game natural development set this reduces the early effective sample
+to nine matchup clusters and widens the lower 95% bound from 0.3750 to 0.2825;
+the point AUC remains 0.6786. The broader development shard is therefore
+required even more strongly. All future development and untouched-holdout
+acceptance uses this clustered interval.

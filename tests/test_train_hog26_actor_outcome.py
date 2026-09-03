@@ -17,6 +17,7 @@ from scripts.train_hog26_actor_outcome import (
     episode_class_balanced_row_weights,
     metrics,
     outcome_epoch_selection_key,
+    phase_balanced_matchup_clusters,
     phase_balanced_row_indices,
 )
 
@@ -115,9 +116,7 @@ def test_phase_balanced_training_weights_equalize_reached_phases() -> None:
         initial_hidden=np.zeros((1, 1), dtype=np.float32),
         initial_cell=np.zeros((1, 1), dtype=np.float32),
     )
-    weights = episode_balanced_row_weights(
-        [({}, corpus)], phase_balanced=True
-    ).numpy()
+    weights = episode_balanced_row_weights([({}, corpus)], phase_balanced=True).numpy()
     assert weights[:3].sum() == pytest.approx(weights[3:5].sum())
     assert weights[3:5].sum() == pytest.approx(weights[5:].sum())
     assert weights.mean() == pytest.approx(1.0)
@@ -196,6 +195,54 @@ def test_bootstrap_auc_interval_is_deterministic_and_rejects_one_class() -> None
     assert first is not None
     assert first["point"] == 1.0
     assert first["lower_95"] == 1.0
-    assert bootstrap_binary_auc(
-        np.ones(4, dtype=np.bool_), np.arange(4), seed=1, replicates=100
-    ) is None
+    assert (
+        bootstrap_binary_auc(
+            np.ones(4, dtype=np.bool_), np.arange(4), seed=1, replicates=100
+        )
+        is None
+    )
+
+
+def test_cluster_bootstrap_resamples_matchups_instead_of_mirrored_seats() -> None:
+    labels = np.asarray([False, False, False, False, True, True, True, True])
+    scores = np.asarray([0.1, 0.2, 0.15, 0.25, 0.8, 0.9, 0.85, 0.95])
+    result = bootstrap_binary_auc(
+        labels,
+        scores,
+        seed=17,
+        replicates=500,
+        clusters=np.asarray(
+            ["loss-a", "loss-a", "loss-b", "loss-b", "win-a", "win-a", "win-b", "win-b"]
+        ),
+    )
+    assert result is not None
+    assert result["point"] == 1.0
+    assert result["independent_clusters"] == 4
+
+
+def test_phase_clusters_pair_mirrored_seats_within_matchup() -> None:
+    from clasher.rl.direct_simple_behavior import DirectSimpleBehaviorCorpus
+
+    globals_ = np.zeros((6, 18), dtype=np.float32)
+    globals_[:, 0] = np.asarray([0.1, 0.5, 0.8, 0.1, 0.5, 0.8])
+    corpus = DirectSimpleBehaviorCorpus(
+        arrays={"global_features": globals_},
+        episode_offsets=np.asarray([0, 3, 6], dtype=np.int64),
+        episode_stream_rows=np.asarray([0, 1], dtype=np.int64),
+        episode_ordinals=np.asarray([0, 0], dtype=np.int64),
+        initial_hidden=np.zeros((2, 1), dtype=np.float32),
+        initial_cell=np.zeros((2, 1), dtype=np.float32),
+        episode_arrays={
+            "episode_opponent_indices": np.asarray([0, 0]),
+            "episode_opponent_deck_indices": np.asarray([0, 0]),
+        },
+    )
+    metadata = {
+        "seed": 9,
+        "outcome_source": "natural-strategy-games",
+        "opponents": ["balanced"],
+        "opponent_decks": ["Giant"],
+    }
+    clusters = phase_balanced_matchup_clusters([(metadata, corpus)])
+    assert clusters.shape == (6,)
+    assert len(set(clusters.tolist())) == 1
