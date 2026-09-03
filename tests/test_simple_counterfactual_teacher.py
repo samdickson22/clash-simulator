@@ -52,6 +52,9 @@ def test_outcome_loader_requires_current_untouched_holdout_authority(tmp_path) -
     report = {
         "status": "accepted-development",
         "actor_feature_contract": "public-globals",
+        "probability_calibration": (
+            "factorized-training-mass-prior-plus-rank-preserving-shrinkage-v1"
+        ),
         "selection_gates": {
             "natural_phase_auc_passed": True,
             "phase_auc_confidence_passed": True,
@@ -97,6 +100,16 @@ def test_outcome_loader_requires_current_untouched_holdout_authority(tmp_path) -
     report["selection_gates"]["minimum_phase_bootstrap_clusters"] = 7
     torch.save(payload, path)
     with pytest.raises(ValueError, match="predates"):
+        load_outcome_ensemble(
+            [path], base_checkpoint_sha256="base", device=torch.device("cpu")
+        )
+
+    report["selection_gates"]["minimum_phase_bootstrap_clusters"] = 8
+    report["probability_calibration"] = (
+        "factorized-training-mass-prior-plus-separate-decisive-temperature-v1"
+    )
+    torch.save(payload, path)
+    with pytest.raises(ValueError, match="calibration"):
         load_outcome_ensemble(
             [path], base_checkpoint_sha256="base", device=torch.device("cpu")
         )
