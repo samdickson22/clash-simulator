@@ -57,6 +57,7 @@ def test_outcome_loader_requires_current_untouched_holdout_authority(tmp_path) -
             "phase_auc_confidence_passed": True,
             "holdout_passed": True,
             "phase_auc_bootstrap_unit": "seed-style-deck-ordinal-cluster-v1",
+            "minimum_phase_bootstrap_clusters": 8,
         },
     }
     payload = {
@@ -84,6 +85,16 @@ def test_outcome_loader_requires_current_untouched_holdout_authority(tmp_path) -
     assert loaded[0].feature_contract == "public-globals"
 
     del report["selection_gates"]["phase_auc_bootstrap_unit"]
+    torch.save(payload, path)
+    with pytest.raises(ValueError, match="predates"):
+        load_outcome_ensemble(
+            [path], base_checkpoint_sha256="base", device=torch.device("cpu")
+        )
+
+    report["selection_gates"]["phase_auc_bootstrap_unit"] = (
+        "seed-style-deck-ordinal-cluster-v1"
+    )
+    report["selection_gates"]["minimum_phase_bootstrap_clusters"] = 7
     torch.save(payload, path)
     with pytest.raises(ValueError, match="predates"):
         load_outcome_ensemble(
