@@ -20,6 +20,9 @@ def test_primary_training_command_is_exact_and_has_no_holdout() -> None:
     assert _values(command, "--seed") == ["1278801"]
     assert _values(command, "--feature-set") == ["structured-summary"]
     assert _values(command, "--margin-progress-power") == ["6.0"]
+    assert _values(command, "--minimum-natural-phase-auc") == ["0.55"]
+    assert _values(command, "--minimum-controlled-draw-auc") == ["0.8"]
+    assert _values(command, "--maximum-natural-draw-probability") == ["0.1"]
     assert len(_values(command, "--train-corpus")) == 7
     assert len(_values(command, "--validation-corpus")) == 2
     assert len(_values(command, "--calibration-corpus")) == 1
