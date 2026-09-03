@@ -164,3 +164,12 @@ and ECE fell from 0.1752 to 0.1440. Middle/late AUC stayed at 0.8750/1.0000;
 margin metrics were bit-identical to the control. The early bootstrap lower
 bound is still only 0.3750 on the small interim validation set, so this is a
 retained training correction, not an accepted model.
+
+Two additional paired initialization seeds refined that conclusion. Across all
+three pairs, phase-balanced training changed overall phase-balanced AUC by
+`+0.0037`, `+0.0148`, and `+0.0222`, and reduced NLL in every pair. Early AUC
+changed by `+0.0714`, `-0.0714`, and `0.0000`; therefore the apparent early
+gain in the first seed is not stable. Phase balancing remains justified by its
+consistent whole-phase ranking/calibration benefit and contract alignment, but
+additional independent early-game outcomes remain the only accepted route to
+narrowing early uncertainty.
