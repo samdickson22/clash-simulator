@@ -399,6 +399,76 @@ def _binary_auc(labels: Tensor, scores: Tensor) -> float | None:
     return float(((comparisons > 0).float() + 0.5 * (comparisons == 0)).mean())
 
 
+def bootstrap_binary_auc(
+    labels: np.ndarray,
+    scores: np.ndarray,
+    *,
+    seed: int,
+    replicates: int,
+) -> dict[str, float | int] | None:
+    """Return a deterministic nonparametric AUC interval over independent rows."""
+
+    binary = np.asarray(labels, dtype=np.bool_)
+    values = np.asarray(scores, dtype=np.float64)
+    if binary.ndim != 1 or values.shape != binary.shape or replicates < 1:
+        raise ValueError("bootstrap labels/scores/replicates are invalid")
+    if not np.isfinite(values).all() or not binary.any() or binary.all():
+        return None
+
+    def auc(sample_labels: np.ndarray, sample_scores: np.ndarray) -> float:
+        positive = sample_scores[sample_labels]
+        negative = sample_scores[~sample_labels]
+        differences = positive[:, None] - negative[None, :]
+        return float(((differences > 0) + 0.5 * (differences == 0)).mean())
+
+    point = auc(binary, values)
+    rng = np.random.default_rng(seed)
+    estimates: list[float] = []
+    for _ in range(replicates):
+        rows = rng.integers(0, binary.size, size=binary.size)
+        sampled_labels = binary[rows]
+        if sampled_labels.any() and not sampled_labels.all():
+            estimates.append(auc(sampled_labels, values[rows]))
+    if len(estimates) < max(1, replicates // 2):
+        return None
+    interval = np.asarray(estimates, dtype=np.float64)
+    return {
+        "point": point,
+        "lower_95": float(np.quantile(interval, 0.025)),
+        "upper_95": float(np.quantile(interval, 0.975)),
+        "valid_replicates": len(estimates),
+        "requested_replicates": replicates,
+    }
+
+
+@torch.no_grad()
+def phase_auc_confidence_intervals(
+    head: ActorOutcomeHead,
+    features: Tensor,
+    outcomes: Tensor,
+    phases: np.ndarray,
+    *,
+    device: torch.device,
+    seed: int,
+    replicates: int,
+) -> dict[str, dict[str, float | int] | None]:
+    """Bootstrap decisive AUC on one independent episode sample per phase."""
+
+    probabilities = head(features.to(device)).outcome_logits.softmax(dim=-1).cpu()
+    utility = (probabilities[:, 2] - probabilities[:, 0]).numpy()
+    labels = outcomes.cpu().numpy()
+    result: dict[str, dict[str, float | int] | None] = {}
+    for index, phase in enumerate(("early", "middle", "late")):
+        selected = (phases == phase) & (labels != 0)
+        result[phase] = bootstrap_binary_auc(
+            labels[selected] == 1,
+            utility[selected],
+            seed=seed + index,
+            replicates=replicates,
+        )
+    return result
+
+
 def outcome_epoch_selection_key(
     validation: dict[str, Any],
     *,
@@ -764,6 +834,8 @@ def main() -> None:
     parser.add_argument("--maximum-margin-mae", type=float, default=0.25)
     parser.add_argument("--minimum-natural-auc", type=float, default=0.60)
     parser.add_argument("--minimum-natural-phase-auc", type=float, default=0.55)
+    parser.add_argument("--minimum-phase-auc-lower-bound", type=float, default=0.50)
+    parser.add_argument("--phase-auc-bootstrap-replicates", type=int, default=2000)
     parser.add_argument("--minimum-controlled-draw-auc", type=float, default=0.80)
     parser.add_argument(
         "--minimum-controlled-draw-endpoint-probability-lift",
@@ -782,6 +854,8 @@ def main() -> None:
         raise ValueError("structured residual scale must be nonnegative")
     if args.minimum_structured_residual_auc_gain < 0.0:
         raise ValueError("structured residual AUC gain must be nonnegative")
+    if args.phase_auc_bootstrap_replicates < 100:
+        raise ValueError("phase AUC bootstrap needs at least 100 replicates")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     device = torch.device(args.device)
@@ -922,6 +996,10 @@ def main() -> None:
             or initialized_report.get("actor_feature_contract") != "public-globals"
             or initialized_report.get("selection_gates", {}).get(
                 "natural_phase_auc_passed"
+            )
+            is not True
+            or initialized_report.get("selection_gates", {}).get(
+                "phase_auc_confidence_passed"
             )
             is not True
         ):
@@ -1275,6 +1353,21 @@ def main() -> None:
         phase_balanced_groups,
         device=device,
     )
+    validation_phase_auc_confidence = phase_auc_confidence_intervals(
+        head,
+        phase_balanced_features,
+        phase_balanced_outcomes,
+        phase_balanced_groups,
+        device=device,
+        seed=args.seed + 10_000,
+        replicates=args.phase_auc_bootstrap_replicates,
+    )
+    phase_auc_confidence_passed = all(
+        validation_phase_auc_confidence[phase] is not None
+        and float(validation_phase_auc_confidence[phase]["lower_95"])
+        > args.minimum_phase_auc_lower_bound
+        for phase in ("early", "middle", "late")
+    )
     endpoint_sources = sources[endpoint_rows.numpy()]
     endpoint_metrics = metrics(
         head,
@@ -1327,6 +1420,7 @@ def main() -> None:
         and all(value > 0 for value in best_metrics["class_counts"].values())
         and natural_auc_passed
         and natural_phase_auc_passed
+        and phase_auc_confidence_passed
         and controlled_draw_passed
         and (not args.require_disjoint_natural_opponents or not opponent_overlap)
         and (not args.require_disjoint_natural_decks or not deck_overlap)
@@ -1339,6 +1433,10 @@ def main() -> None:
     holdout_evaluation: dict[str, Any] | None = None
     holdout_prior_nll: float | None = None
     holdout_passed: bool | None = None
+    holdout_phase_auc_confidence: dict[
+        str, dict[str, float | int] | None
+    ] | None = None
+    holdout_phase_confidence_passed: bool | None = None
     if holdout_loaded:
         assert (
             holdout_features is not None
@@ -1353,8 +1451,33 @@ def main() -> None:
             holdout_loaded,
             device=device,
         )
-        holdout_phase_outcomes = holdout_outcomes.index_select(
-            0, phase_balanced_row_indices(holdout_loaded)
+        holdout_phase_rows = phase_balanced_row_indices(holdout_loaded)
+        holdout_phase_outcomes = holdout_outcomes.index_select(0, holdout_phase_rows)
+        holdout_phase_progress = np.concatenate(
+            [
+                np.asarray(corpus.arrays["global_features"][:, 0])
+                for _metadata, corpus in holdout_loaded
+            ]
+        )[holdout_phase_rows.numpy()]
+        holdout_phase_groups = np.where(
+            holdout_phase_progress < 1.0 / 3.0,
+            "early",
+            np.where(holdout_phase_progress < 2.0 / 3.0, "middle", "late"),
+        )
+        holdout_phase_auc_confidence = phase_auc_confidence_intervals(
+            head,
+            holdout_features.index_select(0, holdout_phase_rows),
+            holdout_phase_outcomes,
+            holdout_phase_groups,
+            device=device,
+            seed=args.seed + 20_000,
+            replicates=args.phase_auc_bootstrap_replicates,
+        )
+        holdout_phase_confidence_passed = all(
+            holdout_phase_auc_confidence[phase] is not None
+            and float(holdout_phase_auc_confidence[phase]["lower_95"])
+            > args.minimum_phase_auc_lower_bound
+            for phase in ("early", "middle", "late")
         )
         holdout_prior_nll = float(
             -prior[(holdout_phase_outcomes.to(torch.long) + 1)]
@@ -1383,6 +1506,7 @@ def main() -> None:
             and all_phase_decisive_auc_passed(
                 holdout_phases, args.minimum_natural_phase_auc
             )
+            and holdout_phase_confidence_passed
             and holdout_overall["auc_one_vs_rest"]["draw"] is not None
             and float(holdout_overall["auc_one_vs_rest"]["draw"])
             >= args.minimum_controlled_draw_auc
@@ -1465,6 +1589,7 @@ def main() -> None:
         "validation_phase_balanced": phase_balanced_metrics,
         "validation_phase_balanced_by_phase": phase_balanced_phase_metrics,
         "validation_phase_balanced_by_source": phase_balanced_source_metrics,
+        "validation_phase_auc_confidence": validation_phase_auc_confidence,
         "validation_by_phase": phase_metrics,
         "validation_by_opponent": _bucket_metrics(
             head,
@@ -1508,6 +1633,8 @@ def main() -> None:
             "all_three_outcome_classes_required": True,
             "minimum_natural_decisive_auc": args.minimum_natural_auc,
             "minimum_natural_phase_decisive_auc": args.minimum_natural_phase_auc,
+            "minimum_phase_auc_lower_95": args.minimum_phase_auc_lower_bound,
+            "phase_auc_bootstrap_replicates": args.phase_auc_bootstrap_replicates,
             "minimum_controlled_draw_auc": args.minimum_controlled_draw_auc,
             "minimum_controlled_draw_endpoint_probability_lift": (
                 args.minimum_controlled_draw_endpoint_probability_lift
@@ -1519,6 +1646,7 @@ def main() -> None:
             "natural_deck_overlap": sorted(deck_overlap),
             "natural_auc_passed": natural_auc_passed,
             "natural_phase_auc_passed": natural_phase_auc_passed,
+            "phase_auc_confidence_passed": phase_auc_confidence_passed,
             "controlled_draw_passed": controlled_draw_passed,
             "development_passed": development_passed,
             "holdout_passed": holdout_passed,
@@ -1527,6 +1655,8 @@ def main() -> None:
         },
         "holdout_prior_nll": holdout_prior_nll,
         "holdout_evaluation": holdout_evaluation,
+        "holdout_phase_auc_confidence": holdout_phase_auc_confidence,
+        "holdout_phase_confidence_passed": holdout_phase_confidence_passed,
         "history": history,
         "elapsed_seconds": time.monotonic() - started,
         "status": (

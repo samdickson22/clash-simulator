@@ -70,6 +70,10 @@ function under the corrected across-phase gate.
    long games can no longer contribute hundreds of correlated copies of one
    terminal label. The training prior is likewise computed from episodes, not
    decision-row counts.
+7. Final development and holdout acceptance require a deterministic 2,000-draw
+   nonparametric bootstrap lower 95% bound above 0.50 for decisive AUC in each
+   phase. Point estimates alone are not treated as evidence of above-chance
+   generalization.
 
 ## Interpretation
 

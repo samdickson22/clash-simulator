@@ -11,6 +11,7 @@ from scripts.train_hog26_actor_outcome import (
     _natural_metadata_values,
     _outcome_source,
     all_phase_decisive_auc_passed,
+    bootstrap_binary_auc,
     episode_class_balanced_row_weights,
     metrics,
     outcome_epoch_selection_key,
@@ -142,3 +143,17 @@ def test_phase_balanced_rows_select_one_nearest_midpoint_per_episode_phase() -> 
         initial_cell=np.zeros((2, 1), dtype=np.float32),
     )
     assert phase_balanced_row_indices([({}, corpus)]).tolist() == [1, 4, 5]
+
+
+def test_bootstrap_auc_interval_is_deterministic_and_rejects_one_class() -> None:
+    labels = np.asarray([False, False, False, True, True, True])
+    scores = np.asarray([0.0, 0.1, 0.2, 0.8, 0.9, 1.0])
+    first = bootstrap_binary_auc(labels, scores, seed=91, replicates=500)
+    second = bootstrap_binary_auc(labels, scores, seed=91, replicates=500)
+    assert first == second
+    assert first is not None
+    assert first["point"] == 1.0
+    assert first["lower_95"] == 1.0
+    assert bootstrap_binary_auc(
+        np.ones(4, dtype=np.bool_), np.arange(4), seed=1, replicates=100
+    ) is None
