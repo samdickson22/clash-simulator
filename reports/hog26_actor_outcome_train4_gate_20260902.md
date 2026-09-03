@@ -86,3 +86,14 @@ matchups would strengthen the shortcut rather than solve it.
 
 No search, policy update, PPO, or self-play improvement is authorized by this
 gate.
+
+## Broad-collection interim result
+
+After adding the first four new training decks, a globals-only diagnostic on
+the still-small 18-game natural development split selected epoch 12. Its
+episode/phase-balanced decisive AUC was 0.6704 overall: early 0.6429, middle
+0.8542, and late 1.0. It passed every point-estimate/calibration/draw gate, but
+was correctly rejected because the early bootstrap lower 95% bound was only
+0.3846. This is encouraging evidence that matchup diversity helps, while also
+confirming that the development set needs more independent games before any
+acceptance claim.
