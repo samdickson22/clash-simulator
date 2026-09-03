@@ -23,6 +23,21 @@ def _counts(values: np.ndarray) -> dict[str, int]:
     return {names[value]: counted[value] for value in (-1, 0, 1)}
 
 
+def _reached_phases(progress: np.ndarray) -> tuple[str, ...]:
+    values = np.asarray(progress, dtype=np.float64)
+    if values.ndim != 1 or not np.isfinite(values).all():
+        raise ValueError("episode progress must be a finite vector")
+    return tuple(
+        phase
+        for phase, lower, upper in (
+            ("early", 0.0, 1.0 / 3.0),
+            ("middle", 1.0 / 3.0, 2.0 / 3.0),
+            ("late", 2.0 / 3.0, np.inf),
+        )
+        if bool(((values >= lower) & (values < upper)).any())
+    )
+
+
 def audit(paths: list[Path]) -> dict[str, Any]:
     if not paths:
         raise ValueError("at least one outcome corpus is required")
@@ -39,6 +54,9 @@ def audit(paths: list[Path]) -> dict[str, Any]:
     corpus_reports: list[dict[str, Any]] = []
     natural_styles: set[str] = set()
     natural_decks: set[str] = set()
+    phase_clusters: dict[str, defaultdict[str, set[int]]] = {
+        phase: defaultdict(set) for phase in ("early", "middle", "late")
+    }
 
     for path, digest in zip(paths, hashes, strict=True):
         metadata, corpus = load_direct_simple_behavior_corpus(path)
@@ -114,6 +132,12 @@ def audit(paths: list[Path]) -> dict[str, Any]:
                 natural_styles.add(style)
                 natural_decks.add(deck)
                 cells[(style, deck, int(seat))][int(outcome)] += 1
+            for episode, (begin, end) in enumerate(pairwise(offsets)):
+                style = opponents[int(episode_opponents[episode])]
+                deck = decks[int(episode_decks[episode])]
+                cluster = f"{seed}|{style}|{deck}|{int(ordinals[episode])}"
+                for phase in _reached_phases(progress[begin:end]):
+                    phase_clusters[phase][cluster].add(int(outcomes[episode]))
 
         rows += corpus.row_count
         episodes += corpus.episode_count
@@ -148,6 +172,22 @@ def audit(paths: list[Path]) -> dict[str, Any]:
             "cells_with_both_decisive_outcomes": sum(
                 counter[-1] > 0 and counter[1] > 0 for counter in cells.values()
             ),
+            "phase_matchup_clusters": {
+                phase: {
+                    "clusters": len(cluster_outcomes),
+                    "with_loss": sum(
+                        -1 in values for values in cluster_outcomes.values()
+                    ),
+                    "with_win": sum(
+                        1 in values for values in cluster_outcomes.values()
+                    ),
+                    "with_both": sum(
+                        {-1, 1}.issubset(values)
+                        for values in cluster_outcomes.values()
+                    ),
+                }
+                for phase, cluster_outcomes in phase_clusters.items()
+            },
         },
         "cell_outcomes": {
             f"{style}|{deck}|seat{seat}": _counts(
