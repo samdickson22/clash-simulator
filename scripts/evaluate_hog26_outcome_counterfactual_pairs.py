@@ -64,6 +64,12 @@ def _reference_preference(
     return 1 if margin_delta > 0 else -1
 
 
+def root_phase(progress: float) -> str:
+    if not 0.0 <= progress <= 1.0:
+        raise ValueError("root progress must be in [0, 1]")
+    return "early" if progress < 1 / 3 else "middle" if progress < 2 / 3 else "late"
+
+
 def _variant_scores(rows: list[dict[str, Any]]) -> dict[str, np.ndarray]:
     outcome = np.asarray(
         [float(row["actor_visible_branch_utility"]) for row in rows],
@@ -197,6 +203,8 @@ def main() -> None:
     parser.add_argument("--frozen-variant", default="outcome")
     parser.add_argument("--margin-threshold", type=float, default=0.02)
     parser.add_argument("--minimum-roots", type=int, default=6)
+    parser.add_argument("--minimum-roots-per-phase", type=int, default=2)
+    parser.add_argument("--minimum-roots-per-seat", type=int, default=3)
     parser.add_argument("--minimum-pairwise-concordance", type=float, default=0.65)
     parser.add_argument("--maximum-mean-margin-regret", type=float, default=0.10)
     args = parser.parse_args()
@@ -204,7 +212,12 @@ def main() -> None:
         raise SystemExit("refusing to overwrite ranking report")
     if len(args.short_probe) != len(args.terminal_probe):
         raise ValueError("short and terminal probe counts differ")
-    if args.margin_threshold < 0.0 or args.minimum_roots < 1:
+    if (
+        args.margin_threshold < 0.0
+        or args.minimum_roots < 1
+        or args.minimum_roots_per_phase < 1
+        or args.minimum_roots_per_seat < 1
+    ):
         raise ValueError("ranking gate sizes are invalid")
     roots = [
         compare_pair(_load(short), _load(terminal), margin_threshold=args.margin_threshold)
@@ -225,15 +238,18 @@ def main() -> None:
         for row in selected
         if row["same_outcome_margin_regret"] is not None
     ]
-    seats = sorted({int(root["learner_seat"]) for root in roots})
+    seat_roots = [int(root["learner_seat"]) for root in roots]
+    seats = sorted(set(seat_roots))
     opponents = sorted({str(root["opponent_strategy"]) for root in roots})
-    progresses = [root["root_progress"] for root in roots if root["root_progress"] is not None]
-    phase_count = len(
-        {
-            "early" if value < 1 / 3 else "middle" if value < 2 / 3 else "late"
-            for value in progresses
-        }
-    )
+    phase_roots = [
+        root_phase(float(root["root_progress"]))
+        for root in roots
+        if root["root_progress"] is not None
+    ]
+    roots_per_phase = {
+        phase: phase_roots.count(phase) for phase in ("early", "middle", "late")
+    }
+    roots_per_seat = {str(seat): seat_roots.count(seat) for seat in (0, 1)}
     aggregate = {
         "root_count": len(roots),
         "worse_terminal_outcomes": sum(bool(row["worse_terminal_outcome"]) for row in selected),
@@ -245,13 +261,21 @@ def main() -> None:
         ),
         "seats": seats,
         "opponents": opponents,
-        "phase_count": phase_count,
+        "phase_count": sum(count > 0 for count in roots_per_phase.values()),
+        "roots_per_phase": roots_per_phase,
+        "roots_per_seat": roots_per_seat,
     }
     passed = bool(
         len(roots) >= args.minimum_roots
         and seats == [0, 1]
         and len(opponents) >= 3
-        and phase_count >= 3
+        and all(
+            count >= args.minimum_roots_per_phase
+            for count in roots_per_phase.values()
+        )
+        and all(
+            count >= args.minimum_roots_per_seat for count in roots_per_seat.values()
+        )
         and aggregate["worse_terminal_outcomes"] == 0
         and aggregate["mean_pairwise_concordance"] is not None
         and float(aggregate["mean_pairwise_concordance"])
@@ -266,6 +290,8 @@ def main() -> None:
         "frozen_variant": args.frozen_variant,
         "gates": {
             "minimum_roots": args.minimum_roots,
+            "minimum_roots_per_phase": args.minimum_roots_per_phase,
+            "minimum_roots_per_seat": args.minimum_roots_per_seat,
             "both_seats_required": True,
             "minimum_opponents": 3,
             "all_three_phases_required": True,

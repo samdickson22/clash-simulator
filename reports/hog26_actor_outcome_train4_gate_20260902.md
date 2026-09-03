@@ -339,3 +339,6 @@ Counterfactual roots will be the first deterministic public state satisfying
 both a predeclared early/middle/late progress interval and the minimum public
 legal-action count. Root search does not inspect branch outcomes, and a state
 outside the requested phase cannot silently enter the ranking aggregate.
+The aggregate additionally requires at least two independent roots in each
+phase and at least three roots from each learner seat; merely touching every
+phase and seat once is insufficient.

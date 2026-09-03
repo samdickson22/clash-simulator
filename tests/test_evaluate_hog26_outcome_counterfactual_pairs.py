@@ -1,6 +1,20 @@
 from __future__ import annotations
 
-from scripts.evaluate_hog26_outcome_counterfactual_pairs import compare_pair
+import pytest
+
+from scripts.evaluate_hog26_outcome_counterfactual_pairs import (
+    compare_pair,
+    root_phase,
+)
+
+
+def test_root_phase_uses_predeclared_thirds_and_rejects_invalid_progress() -> None:
+    assert root_phase(0.0) == "early"
+    assert root_phase(1 / 3) == "middle"
+    assert root_phase(2 / 3) == "late"
+    assert root_phase(1.0) == "late"
+    with pytest.raises(ValueError, match="progress"):
+        root_phase(1.01)
 
 
 def _probe(*, terminal: bool) -> dict[str, object]:
