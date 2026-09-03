@@ -307,6 +307,9 @@ phase-balanced decisive AUC is 0.7506; early/middle/late AUC is
 ECE is 0.1233, and tower-margin MAE improves by 0.01598 overall. The checkpoint
 SHA-256 is
 `4ce454dc1d0ccb022dd196da1251389fc655c933ed9271c9e440d5a44d81330f`.
+Its serialization-independent outcome tensor-state SHA-256 is
+`914cf54d36a399378e650b80528f6109119af10a6780ed4a21dd906ac771d624`;
+the holdout run must reproduce this exact state before its metrics count.
 
 This is an accepted-development result, not a promoted value function. The
 four remaining unseen decks are now being collected exactly once as the
