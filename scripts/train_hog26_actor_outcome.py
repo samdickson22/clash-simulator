@@ -98,9 +98,11 @@ def episode_class_balanced_row_weights(
             for _metadata, corpus in loaded
         ]
     )
-    weights = episode_balanced_row_weights(
-        loaded, phase_balanced=phase_balanced
-    ).numpy().astype(np.float64)
+    weights = (
+        episode_balanced_row_weights(loaded, phase_balanced=phase_balanced)
+        .numpy()
+        .astype(np.float64)
+    )
     for class_index, outcome in enumerate((-1, 0, 1)):
         selected = outcomes == outcome
         current = float(weights[selected].sum())
@@ -220,15 +222,15 @@ def structured_actor_summary(model: ClasherPolicy, inputs: PolicyInputs) -> Tens
     hand = descriptors[inputs.hand_ids]
     playable = inputs.hand_ids[..., :NUM_HAND_SLOTS] != 0
     playable_weights = playable.unsqueeze(-1).to(hand.dtype)
-    playable_mean = (
-        hand[..., :NUM_HAND_SLOTS, :] * playable_weights
-    ).sum(dim=-2) / playable_weights.sum(dim=-2).clamp_min(1.0)
-    playable_max = hand[..., :NUM_HAND_SLOTS, :].masked_fill(
-        ~playable.unsqueeze(-1), -torch.inf
-    ).amax(dim=-2)
-    playable_max = torch.where(
-        playable.any(dim=-1, keepdim=True), playable_max, 0.0
+    playable_mean = (hand[..., :NUM_HAND_SLOTS, :] * playable_weights).sum(
+        dim=-2
+    ) / playable_weights.sum(dim=-2).clamp_min(1.0)
+    playable_max = (
+        hand[..., :NUM_HAND_SLOTS, :]
+        .masked_fill(~playable.unsqueeze(-1), -torch.inf)
+        .amax(dim=-2)
     )
+    playable_max = torch.where(playable.any(dim=-1, keepdim=True), playable_max, 0.0)
     next_card = torch.where(
         (inputs.hand_ids[..., NUM_HAND_SLOTS] != 0).unsqueeze(-1),
         hand[..., NUM_HAND_SLOTS, :],
@@ -254,11 +256,11 @@ def compact_tactical_summary(model: ClasherPolicy, inputs: PolicyInputs) -> Tens
 
     flat_size = inputs.batch_size * inputs.sequence_length
     hand_ids = inputs.hand_ids.reshape(flat_size, -1)[:, :NUM_HAND_SLOTS]
-    hand_stats = model.actor_encoder.card_stat_features[hand_ids].reshape(
-        flat_size, -1
-    )
+    hand_stats = model.actor_encoder.card_stat_features[hand_ids].reshape(flat_size, -1)
     hand_known = (hand_ids != 0).to(hand_stats.dtype)
-    entity = inputs.entity_features.reshape(flat_size, inputs.entity_features.shape[-2], -1)
+    entity = inputs.entity_features.reshape(
+        flat_size, inputs.entity_features.shape[-2], -1
+    )
     valid = inputs.entity_mask.reshape(flat_size, -1)
     own_troop = valid & (entity[..., 2] > 0.5) & (entity[..., 4] > 0.5)
     enemy_troop = valid & (entity[..., 3] > 0.5) & (entity[..., 4] > 0.5)
@@ -319,9 +321,9 @@ def compact_tactical_summary(model: ClasherPolicy, inputs: PolicyInputs) -> Tens
         torch.div(previous_actions, NUM_TILES, rounding_mode="floor"),
         NUM_HAND_SLOTS + previous_actions - NUM_HAND_SLOTS * NUM_TILES,
     ).clamp(0, NUM_HAND_SLOTS + 1)
-    previous_one_hot = F.one_hot(
-        previous_types, num_classes=NUM_HAND_SLOTS + 2
-    ).to(hand_stats.dtype)
+    previous_one_hot = F.one_hot(previous_types, num_classes=NUM_HAND_SLOTS + 2).to(
+        hand_stats.dtype
+    )
     return torch.cat(
         (
             inputs.global_features.reshape(flat_size, -1)[:, :6],
@@ -462,9 +464,7 @@ def bootstrap_binary_auc(
     rng = np.random.default_rng(seed)
     estimates: list[float] = []
     unique_clusters = (
-        np.arange(binary.size)
-        if cluster_values is None
-        else np.unique(cluster_values)
+        np.arange(binary.size) if cluster_values is None else np.unique(cluster_values)
     )
     cluster_rows = [
         (
@@ -475,9 +475,7 @@ def bootstrap_binary_auc(
         for cluster in unique_clusters
     ]
     for _ in range(replicates):
-        sampled_clusters = rng.integers(
-            0, len(cluster_rows), size=len(cluster_rows)
-        )
+        sampled_clusters = rng.integers(0, len(cluster_rows), size=len(cluster_rows))
         rows = np.concatenate([cluster_rows[index] for index in sampled_clusters])
         sampled_labels = binary[rows]
         if sampled_labels.any() and not sampled_labels.all():
@@ -523,11 +521,26 @@ def phase_auc_confidence_intervals(
             utility[selected],
             seed=seed + index,
             replicates=replicates,
-            clusters=(
-                None if cluster_values is None else cluster_values[selected]
-            ),
+            clusters=(None if cluster_values is None else cluster_values[selected]),
         )
     return result
+
+
+def all_phase_auc_confidence_passed(
+    intervals: dict[str, dict[str, float | int] | None],
+    *,
+    minimum_lower_95: float,
+    minimum_clusters: int,
+) -> bool:
+    """Require both above-chance confidence and enough independent matchups."""
+
+    return all(
+        intervals.get(phase) is not None
+        and float(intervals[phase]["lower_95"]) > minimum_lower_95  # type: ignore[index]
+        and int(intervals[phase]["independent_clusters"])  # type: ignore[index]
+        >= minimum_clusters
+        for phase in ("early", "middle", "late")
+    )
 
 
 def outcome_epoch_selection_key(
@@ -588,8 +601,7 @@ def metrics(
     predicted_margin = prediction.terminal_tower_margin.cpu()
     public_globals = features[..., -18:]
     baseline_margin = (
-        public_globals[..., 8:11].sum(dim=-1)
-        - public_globals[..., 11:14].sum(dim=-1)
+        public_globals[..., 8:11].sum(dim=-1) - public_globals[..., 11:14].sum(dim=-1)
     ) / 3.0
     baseline_margin_mae = float((baseline_margin - margins).abs().mean())
     predicted_margin_mae = float((predicted_margin - margins).abs().mean())
@@ -939,7 +951,9 @@ def main() -> None:
     parser.add_argument("--structured-residual-scale", type=float, default=0.25)
     parser.add_argument("--margin-residual-scale", type=float, default=0.0)
     parser.add_argument("--initialize-public-checkpoint", type=Path, default=None)
-    parser.add_argument("--minimum-structured-residual-auc-gain", type=float, default=0.0)
+    parser.add_argument(
+        "--minimum-structured-residual-auc-gain", type=float, default=0.0
+    )
     parser.add_argument(
         "--feature-set",
         choices=(
@@ -962,11 +976,14 @@ def main() -> None:
     parser.add_argument("--maximum-ece", type=float, default=0.20)
     parser.add_argument("--maximum-margin-mae", type=float, default=0.25)
     parser.add_argument("--minimum-margin-mae-improvement", type=float, default=0.005)
-    parser.add_argument("--maximum-phase-margin-mae-regression", type=float, default=0.01)
+    parser.add_argument(
+        "--maximum-phase-margin-mae-regression", type=float, default=0.01
+    )
     parser.add_argument("--minimum-natural-auc", type=float, default=0.60)
     parser.add_argument("--minimum-natural-phase-auc", type=float, default=0.55)
     parser.add_argument("--minimum-phase-auc-lower-bound", type=float, default=0.50)
     parser.add_argument("--phase-auc-bootstrap-replicates", type=int, default=2000)
+    parser.add_argument("--minimum-phase-bootstrap-clusters", type=int, default=8)
     parser.add_argument("--minimum-controlled-draw-auc", type=float, default=0.80)
     parser.add_argument(
         "--minimum-controlled-draw-endpoint-probability-lift",
@@ -993,6 +1010,8 @@ def main() -> None:
         raise ValueError("phase margin MAE regression must be nonnegative")
     if args.phase_auc_bootstrap_replicates < 100:
         raise ValueError("phase AUC bootstrap needs at least 100 replicates")
+    if args.minimum_phase_bootstrap_clusters < 2:
+        raise ValueError("phase AUC bootstrap needs at least two clusters")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     device = torch.device(args.device)
@@ -1020,7 +1039,9 @@ def main() -> None:
     if train_seeds.intersection(holdout_seeds) or validation_seeds.intersection(
         holdout_seeds
     ):
-        raise ValueError("outcome holdout seeds must be disjoint from train/development")
+        raise ValueError(
+            "outcome holdout seeds must be disjoint from train/development"
+        )
     train_hashes = {file_sha256(path) for path in args.train_corpus}
     validation_hashes = {file_sha256(path) for path in args.validation_corpus}
     holdout_hashes = {file_sha256(path) for path in args.holdout_corpus}
@@ -1118,7 +1139,9 @@ def main() -> None:
     public_initialization_sha256: str | None = None
     if args.initialize_public_checkpoint is not None:
         if args.feature_set not in {"structured-residual", "robust-residual"}:
-            raise ValueError("public initialization is only valid for structured residual")
+            raise ValueError(
+                "public initialization is only valid for structured residual"
+            )
         initialized = torch.load(
             args.initialize_public_checkpoint, map_location="cpu", weights_only=False
         )
@@ -1141,7 +1164,9 @@ def main() -> None:
             )
             is not True
         ):
-            raise ValueError("public initialization checkpoint is not accepted/compatible")
+            raise ValueError(
+                "public initialization checkpoint is not accepted/compatible"
+            )
         initialized_state = initialized["outcome_head_state_dict"]
         current_state = head.state_dict()
         global_prefixes = (
@@ -1152,7 +1177,10 @@ def main() -> None:
         )
         for name, value in initialized_state.items():
             if name.startswith(global_prefixes):
-                if name not in current_state or current_state[name].shape != value.shape:
+                if (
+                    name not in current_state
+                    or current_state[name].shape != value.shape
+                ):
                     raise ValueError("public initialization architecture changed")
                 current_state[name] = value
         head.load_state_dict(current_state, strict=True)
@@ -1269,9 +1297,7 @@ def main() -> None:
             "development_gate_passed": False,
         }
     ]
-    best_key = outcome_epoch_selection_key(
-        initial_validation, acceptance_passed=False
-    )
+    best_key = outcome_epoch_selection_key(initial_validation, acceptance_passed=False)
     best_epoch: int | None = 0
     best_state: dict[str, Tensor] | None = {
         name: value.detach().cpu().clone() for name, value in head.state_dict().items()
@@ -1348,8 +1374,7 @@ def main() -> None:
             >= args.minimum_controlled_draw_endpoint_probability_lift
         )
         epoch_outcome_passed = bool(
-            prior_nll - float(validation["nll"])
-            >= args.minimum_nll_improvement
+            prior_nll - float(validation["nll"]) >= args.minimum_nll_improvement
             and float(validation["ece_10"]) <= args.maximum_ece
             and all(value > 0 for value in validation["class_counts"].values())
             and epoch_natural_auc_passed
@@ -1360,8 +1385,7 @@ def main() -> None:
             and (
                 structured_baseline_auc is None
                 or float(validation["decisive_win_loss_auc"])
-                >= structured_baseline_auc
-                + args.minimum_structured_residual_auc_gain
+                >= structured_baseline_auc + args.minimum_structured_residual_auc_gain
             )
         )
         epoch_margin_passed = bool(
@@ -1499,15 +1523,9 @@ def main() -> None:
         phases,
         device=device,
     )
-    phase_balanced_features = validation_features.index_select(
-        0, validation_phase_rows
-    )
-    phase_balanced_outcomes = validation_outcomes.index_select(
-        0, validation_phase_rows
-    )
-    phase_balanced_margins = validation_margins.index_select(
-        0, validation_phase_rows
-    )
+    phase_balanced_features = validation_features.index_select(0, validation_phase_rows)
+    phase_balanced_outcomes = validation_outcomes.index_select(0, validation_phase_rows)
+    phase_balanced_margins = validation_margins.index_select(0, validation_phase_rows)
     phase_balanced_sources = sources[validation_phase_rows.numpy()]
     phase_balanced_groups = phases[validation_phase_rows.numpy()]
     phase_balanced_metrics = metrics(
@@ -1547,11 +1565,10 @@ def main() -> None:
         replicates=args.phase_auc_bootstrap_replicates,
         clusters=phase_balanced_matchup_clusters(validation_loaded),
     )
-    phase_auc_confidence_passed = all(
-        validation_phase_auc_confidence[phase] is not None
-        and float(validation_phase_auc_confidence[phase]["lower_95"])
-        > args.minimum_phase_auc_lower_bound
-        for phase in ("early", "middle", "late")
+    phase_auc_confidence_passed = all_phase_auc_confidence_passed(
+        validation_phase_auc_confidence,
+        minimum_lower_95=args.minimum_phase_auc_lower_bound,
+        minimum_clusters=args.minimum_phase_bootstrap_clusters,
     )
     endpoint_sources = sources[endpoint_rows.numpy()]
     endpoint_metrics = metrics(
@@ -1577,8 +1594,7 @@ def main() -> None:
     natural_auc_passed = bool(
         natural_metrics is not None
         and natural_metrics["decisive_win_loss_auc"] is not None
-        and float(natural_metrics["decisive_win_loss_auc"])
-        >= args.minimum_natural_auc
+        and float(natural_metrics["decisive_win_loss_auc"]) >= args.minimum_natural_auc
     )
     natural_phase_auc_passed = all_phase_decisive_auc_passed(
         phase_balanced_phase_metrics, args.minimum_natural_phase_auc
@@ -1592,9 +1608,7 @@ def main() -> None:
         <= args.maximum_natural_draw_probability
         and natural_endpoint_metrics is not None
         and controlled_draw_endpoint_metrics is not None
-        and float(
-            controlled_draw_endpoint_metrics["mean_outcome_probability"]["draw"]
-        )
+        and float(controlled_draw_endpoint_metrics["mean_outcome_probability"]["draw"])
         - float(natural_endpoint_metrics["mean_outcome_probability"]["draw"])
         >= args.minimum_controlled_draw_endpoint_probability_lift
     )
@@ -1623,9 +1637,7 @@ def main() -> None:
     holdout_evaluation: dict[str, Any] | None = None
     holdout_prior_nll: float | None = None
     holdout_passed: bool | None = None
-    holdout_phase_auc_confidence: dict[
-        str, dict[str, float | int] | None
-    ] | None = None
+    holdout_phase_auc_confidence: dict[str, dict[str, float | int] | None] | None = None
     holdout_phase_confidence_passed: bool | None = None
     if holdout_loaded:
         assert (
@@ -1664,11 +1676,10 @@ def main() -> None:
             replicates=args.phase_auc_bootstrap_replicates,
             clusters=phase_balanced_matchup_clusters(holdout_loaded),
         )
-        holdout_phase_confidence_passed = all(
-            holdout_phase_auc_confidence[phase] is not None
-            and float(holdout_phase_auc_confidence[phase]["lower_95"])
-            > args.minimum_phase_auc_lower_bound
-            for phase in ("early", "middle", "late")
+        holdout_phase_confidence_passed = all_phase_auc_confidence_passed(
+            holdout_phase_auc_confidence,
+            minimum_lower_95=args.minimum_phase_auc_lower_bound,
+            minimum_clusters=args.minimum_phase_bootstrap_clusters,
         )
         holdout_prior_nll = float(
             -prior[(holdout_phase_outcomes.to(torch.long) + 1)]
@@ -1687,8 +1698,7 @@ def main() -> None:
             holdout_prior_nll - float(holdout_overall["nll"])
             >= args.minimum_nll_improvement
             and float(holdout_overall["ece_10"]) <= args.maximum_ece
-            and float(holdout_overall["tower_margin_mae"])
-            <= args.maximum_margin_mae
+            and float(holdout_overall["tower_margin_mae"]) <= args.maximum_margin_mae
             and float(holdout_overall["tower_margin_mae_improvement"])
             >= args.minimum_margin_mae_improvement
             and all_phase_margin_nonregression_passed(
@@ -1717,9 +1727,7 @@ def main() -> None:
                 not args.require_disjoint_natural_opponents
                 or not holdout_opponent_overlap
             )
-            and (
-                not args.require_disjoint_natural_decks or not holdout_deck_overlap
-            )
+            and (not args.require_disjoint_natural_decks or not holdout_deck_overlap)
         )
     final_passed = development_passed and (
         holdout_passed if holdout_passed is not None else True
@@ -1779,7 +1787,9 @@ def main() -> None:
         "actor_input_critic_fields": False,
         "actor_feature_contract": args.feature_set,
         "trainable_parameter_count": sum(
-            parameter.numel() for parameter in head.parameters() if parameter.requires_grad
+            parameter.numel()
+            for parameter in head.parameters()
+            if parameter.requires_grad
         ),
         "train_class_prior": prior.tolist(),
         "validation_prior_nll": prior_nll,
@@ -1849,6 +1859,7 @@ def main() -> None:
             "minimum_natural_phase_decisive_auc": args.minimum_natural_phase_auc,
             "minimum_phase_auc_lower_95": args.minimum_phase_auc_lower_bound,
             "phase_auc_bootstrap_replicates": args.phase_auc_bootstrap_replicates,
+            "minimum_phase_bootstrap_clusters": (args.minimum_phase_bootstrap_clusters),
             "phase_auc_bootstrap_unit": "seed-style-deck-ordinal-cluster-v1",
             "minimum_controlled_draw_auc": args.minimum_controlled_draw_auc,
             "minimum_controlled_draw_endpoint_probability_lift": (
@@ -1878,9 +1889,7 @@ def main() -> None:
             ("accepted-holdout" if final_passed else "rejected-holdout")
             if holdout_loaded
             else (
-                "accepted-development"
-                if development_passed
-                else "rejected-development"
+                "accepted-development" if development_passed else "rejected-development"
             )
         ),
         "counterfactual_ranking_gate_pending": final_passed,

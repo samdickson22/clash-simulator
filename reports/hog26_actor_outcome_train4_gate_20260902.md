@@ -181,4 +181,6 @@ current 18-game natural development set this reduces the early effective sample
 to nine matchup clusters and widens the lower 95% bound from 0.3750 to 0.2825;
 the point AUC remains 0.6786. The broader development shard is therefore
 required even more strongly. All future development and untouched-holdout
-acceptance uses this clustered interval.
+acceptance uses this clustered interval and requires at least eight independent
+clusters in every phase. This also closes the prior false-pass edge case where
+late AUC was perfect on only three clusters.

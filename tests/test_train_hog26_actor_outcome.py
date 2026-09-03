@@ -10,6 +10,7 @@ from scripts.train_hog26_actor_outcome import (
     _ece,
     _natural_metadata_values,
     _outcome_source,
+    all_phase_auc_confidence_passed,
     all_phase_decisive_auc_passed,
     all_phase_margin_nonregression_passed,
     bootstrap_binary_auc,
@@ -218,6 +219,23 @@ def test_cluster_bootstrap_resamples_matchups_instead_of_mirrored_seats() -> Non
     assert result is not None
     assert result["point"] == 1.0
     assert result["independent_clusters"] == 4
+
+
+def test_phase_confidence_requires_enough_independent_clusters() -> None:
+    intervals = {
+        phase: {
+            "lower_95": 0.6,
+            "independent_clusters": 8,
+        }
+        for phase in ("early", "middle", "late")
+    }
+    assert all_phase_auc_confidence_passed(
+        intervals, minimum_lower_95=0.5, minimum_clusters=8
+    )
+    intervals["late"]["independent_clusters"] = 7
+    assert not all_phase_auc_confidence_passed(
+        intervals, minimum_lower_95=0.5, minimum_clusters=8
+    )
 
 
 def test_phase_clusters_pair_mirrored_seats_within_matchup() -> None:
