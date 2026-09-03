@@ -62,3 +62,20 @@ def test_separate_draw_trunk_does_not_use_tactical_prefix() -> None:
     first_draw = head(first).outcome_logits[:, 1]
     second_draw = head(second).outcome_logits[:, 1]
     torch.testing.assert_close(first_draw, second_draw)
+
+
+def test_structured_residual_starts_context_invariant_and_stays_bounded() -> None:
+    torch.manual_seed(7)
+    head = ActorOutcomeHead(32, hidden_size=8, structured_residual_scale=0.25)
+    first_state = torch.randn(3, 32)
+    second_state = first_state.clone()
+    second_state[:, :-18] = torch.randn_like(second_state[:, :-18]) * 100.0
+    initial = head(first_state).outcome_logits
+    torch.testing.assert_close(initial, head(second_state).outcome_logits)
+
+    assert head.structured_decisive is not None
+    torch.nn.init.constant_(head.structured_decisive.weight, 10.0)
+    first = head(first_state).outcome_logits
+    second = head(second_state).outcome_logits
+    # Conditional decisive logits differ by at most twice the configured scale.
+    assert float((first[..., 2] - second[..., 2]).abs().max().detach()) <= 0.5 + 1e-6

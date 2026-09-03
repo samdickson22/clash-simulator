@@ -22,6 +22,7 @@ from numpy.typing import NDArray
 from torch import Tensor
 from torch.nn import functional as F
 
+from clasher.rl.common import NUM_HAND_SLOTS, NUM_TILES
 from clasher.rl.direct_simple_behavior import (
     DirectSimpleBehaviorCorpus,
     load_direct_simple_behavior_corpus,
@@ -186,19 +187,21 @@ def structured_actor_summary(model: ClasherPolicy, inputs: PolicyInputs) -> Tens
         visible & (inputs.entity_features[..., 3] > 0.5)
     )
     hand = descriptors[inputs.hand_ids]
-    playable = inputs.hand_ids[..., :4] != 0
+    playable = inputs.hand_ids[..., :NUM_HAND_SLOTS] != 0
     playable_weights = playable.unsqueeze(-1).to(hand.dtype)
-    playable_mean = (hand[..., :4, :] * playable_weights).sum(dim=-2) / (
-        playable_weights.sum(dim=-2).clamp_min(1.0)
-    )
-    playable_max = hand[..., :4, :].masked_fill(
+    playable_mean = (
+        hand[..., :NUM_HAND_SLOTS, :] * playable_weights
+    ).sum(dim=-2) / playable_weights.sum(dim=-2).clamp_min(1.0)
+    playable_max = hand[..., :NUM_HAND_SLOTS, :].masked_fill(
         ~playable.unsqueeze(-1), -torch.inf
     ).amax(dim=-2)
     playable_max = torch.where(
         playable.any(dim=-1, keepdim=True), playable_max, 0.0
     )
     next_card = torch.where(
-        (inputs.hand_ids[..., 4] != 0).unsqueeze(-1), hand[..., 4, :], 0.0
+        (inputs.hand_ids[..., NUM_HAND_SLOTS] != 0).unsqueeze(-1),
+        hand[..., NUM_HAND_SLOTS, :],
+        0.0,
     )
     return torch.cat(
         (
@@ -210,6 +213,91 @@ def structured_actor_summary(model: ClasherPolicy, inputs: PolicyInputs) -> Tens
             playable_max,
             next_card,
             inputs.global_features,
+        ),
+        dim=-1,
+    )
+
+
+def compact_tactical_summary(model: ClasherPolicy, inputs: PolicyInputs) -> Tensor:
+    """Summarize public geometry and hand mechanics without card identities."""
+
+    flat_size = inputs.batch_size * inputs.sequence_length
+    hand_ids = inputs.hand_ids.reshape(flat_size, -1)[:, :NUM_HAND_SLOTS]
+    hand_stats = model.actor_encoder.card_stat_features[hand_ids].reshape(
+        flat_size, -1
+    )
+    hand_known = (hand_ids != 0).to(hand_stats.dtype)
+    entity = inputs.entity_features.reshape(flat_size, inputs.entity_features.shape[-2], -1)
+    valid = inputs.entity_mask.reshape(flat_size, -1)
+    own_troop = valid & (entity[..., 2] > 0.5) & (entity[..., 4] > 0.5)
+    enemy_troop = valid & (entity[..., 3] > 0.5) & (entity[..., 4] > 0.5)
+    own_building = valid & (entity[..., 2] > 0.5) & (entity[..., 5] > 0.5)
+    enemy_building = valid & (entity[..., 3] > 0.5) & (entity[..., 5] > 0.5)
+    x = entity[..., 0]
+    y = entity[..., 1]
+    hp = entity[..., 9]
+    left = x < 0.5
+
+    def count(mask: Tensor, scale: float) -> Tensor:
+        return mask.sum(dim=-1, dtype=entity.dtype) / scale
+
+    def mean(value: Tensor, mask: Tensor) -> Tensor:
+        weights = mask.to(entity.dtype)
+        total = (value * weights).sum(dim=-1)
+        denominator = weights.sum(dim=-1)
+        return torch.where(
+            denominator > 0,
+            total / denominator.clamp_min(1.0),
+            torch.full_like(total, 0.5),
+        )
+
+    def front(mask: Tensor, *, enemy: bool) -> Tensor:
+        fill = 1.0 if enemy else 0.0
+        selected = y.masked_fill(~mask, fill)
+        extreme = selected.amin(dim=-1) if enemy else selected.amax(dim=-1)
+        return torch.where(mask.any(dim=-1), extreme, torch.full_like(extreme, 0.5))
+
+    entity_summary = torch.stack(
+        (
+            count(own_troop, 8.0),
+            count(enemy_troop, 8.0),
+            count(own_building, 4.0),
+            count(enemy_building, 4.0),
+            count(own_troop & left, 4.0),
+            count(own_troop & ~left, 4.0),
+            count(enemy_troop & left, 4.0),
+            count(enemy_troop & ~left, 4.0),
+            count(enemy_troop & (y < 0.5), 4.0),
+            count(own_troop & (y > 0.5), 4.0),
+            mean(x, own_troop),
+            mean(y, own_troop),
+            mean(hp, own_troop),
+            mean(x, enemy_troop),
+            mean(y, enemy_troop),
+            mean(hp, enemy_troop),
+            front(own_troop & left, enemy=False),
+            front(own_troop & ~left, enemy=False),
+            front(enemy_troop & left, enemy=True),
+            front(enemy_troop & ~left, enemy=True),
+        ),
+        dim=-1,
+    )
+    previous_actions = inputs.previous_actions.reshape(flat_size)
+    previous_types = torch.where(
+        previous_actions < NUM_HAND_SLOTS * NUM_TILES,
+        torch.div(previous_actions, NUM_TILES, rounding_mode="floor"),
+        NUM_HAND_SLOTS + previous_actions - NUM_HAND_SLOTS * NUM_TILES,
+    ).clamp(0, NUM_HAND_SLOTS + 1)
+    previous_one_hot = F.one_hot(
+        previous_types, num_classes=NUM_HAND_SLOTS + 2
+    ).to(hand_stats.dtype)
+    return torch.cat(
+        (
+            inputs.global_features.reshape(flat_size, -1)[:, :6],
+            hand_stats,
+            hand_known,
+            entity_summary,
+            previous_one_hot,
         ),
         dim=-1,
     )
@@ -260,8 +348,13 @@ def extract_actor_features(
                 raise ValueError("base policy does not expose actor-visible state")
             if feature_set == "public-globals":
                 selected_features = inputs.global_features[0]
-            elif feature_set == "structured-summary":
+            elif feature_set in {"structured-summary", "structured-residual"}:
                 selected_features = structured_actor_summary(model, inputs)[0]
+            elif feature_set == "robust-residual":
+                robust = compact_tactical_summary(model, inputs)
+                selected_features = torch.cat(
+                    (robust, inputs.global_features[0]), dim=-1
+                )
             elif feature_set == "policy-plus-public-globals":
                 selected_features = torch.cat(
                     (output.repair_features[0], inputs.global_features[0]), dim=-1
@@ -304,6 +397,21 @@ def _binary_auc(labels: Tensor, scores: Tensor) -> float | None:
         return None
     comparisons = scores[labels][:, None] - scores[~labels][None, :]
     return float(((comparisons > 0).float() + 0.5 * (comparisons == 0)).mean())
+
+
+def outcome_epoch_selection_key(
+    validation: dict[str, Any],
+    *,
+    acceptance_passed: bool,
+) -> tuple[int, float, float]:
+    """Prefer decisive ranking among epochs that pass the complete dev gate."""
+
+    decisive_auc = validation["decisive_win_loss_auc"]
+    return (
+        int(acceptance_passed),
+        float(decisive_auc) if decisive_auc is not None else -math.inf,
+        -float(validation["nll"]),
+    )
 
 
 @torch.no_grad()
@@ -557,11 +665,16 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--sequence-steps", type=int, default=128)
     parser.add_argument("--hidden-size", type=int, default=64)
+    parser.add_argument("--structured-residual-scale", type=float, default=0.25)
+    parser.add_argument("--initialize-public-checkpoint", type=Path, default=None)
+    parser.add_argument("--minimum-structured-residual-auc-gain", type=float, default=0.0)
     parser.add_argument(
         "--feature-set",
         choices=(
             "public-globals",
             "structured-summary",
+            "structured-residual",
+            "robust-residual",
             "policy-plus-public-globals",
         ),
         default="policy-plus-public-globals",
@@ -589,6 +702,10 @@ def main() -> None:
         raise SystemExit("refusing to overwrite actor-outcome artifacts")
     if min(args.epochs, args.batch_size, args.sequence_steps, args.hidden_size) < 1:
         raise ValueError("actor-outcome training sizes must be positive")
+    if args.structured_residual_scale < 0.0:
+        raise ValueError("structured residual scale must be nonnegative")
+    if args.minimum_structured_residual_auc_gain < 0.0:
+        raise ValueError("structured residual AUC gain must be nonnegative")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     device = torch.device(args.device)
@@ -690,15 +807,62 @@ def main() -> None:
         if holdout_loaded
         else None
     )
+    for name, feature_rows in (
+        ("train", train_features),
+        ("validation", validation_features),
+        ("holdout", holdout_features),
+    ):
+        if feature_rows is not None and not bool(torch.isfinite(feature_rows).all()):
+            raise ValueError(f"{name} actor features contain non-finite values")
     state_size = int(train_features.shape[1])
     separate_draw_trunk = args.feature_set == "structured-summary"
+    structured_residual_scale = (
+        args.structured_residual_scale
+        if args.feature_set in {"structured-residual", "robust-residual"}
+        else 0.0
+    )
     head = ActorOutcomeHead(
         state_size,
         args.hidden_size,
         separate_draw_trunk=separate_draw_trunk,
+        structured_residual_scale=structured_residual_scale,
     ).to(device)
+    public_initialization_sha256: str | None = None
+    if args.initialize_public_checkpoint is not None:
+        if args.feature_set not in {"structured-residual", "robust-residual"}:
+            raise ValueError("public initialization is only valid for structured residual")
+        initialized = torch.load(
+            args.initialize_public_checkpoint, map_location="cpu", weights_only=False
+        )
+        initialized_report = initialized.get("training_report")
+        if (
+            initialized.get("schema") != SCHEMA
+            or initialized.get("base_checkpoint_sha256")
+            != file_sha256(args.base_checkpoint)
+            or initialized.get("state_size") != 18
+            or not isinstance(initialized_report, dict)
+            or initialized_report.get("status")
+            not in {"accepted-development", "accepted-holdout"}
+            or initialized_report.get("actor_feature_contract") != "public-globals"
+        ):
+            raise ValueError("public initialization checkpoint is not accepted/compatible")
+        initialized_state = initialized["outcome_head_state_dict"]
+        current_state = head.state_dict()
+        global_prefixes = ("trunk.", "draw.", "decisive_win.")
+        for name, value in initialized_state.items():
+            if name.startswith(global_prefixes):
+                if name not in current_state or current_state[name].shape != value.shape:
+                    raise ValueError("public initialization architecture changed")
+                current_state[name] = value
+        head.load_state_dict(current_state, strict=True)
+        for name, parameter in head.named_parameters():
+            if name.startswith(global_prefixes):
+                parameter.requires_grad_(False)
+        public_initialization_sha256 = file_sha256(args.initialize_public_checkpoint)
     optimizer = torch.optim.AdamW(
-        head.parameters(), lr=args.learning_rate, weight_decay=1e-4
+        [parameter for parameter in head.parameters() if parameter.requires_grad],
+        lr=args.learning_rate,
+        weight_decay=1e-4,
     )
     train_outcomes = torch.cat(
         [
@@ -759,11 +923,35 @@ def main() -> None:
         -prior[(validation_outcomes.to(torch.long) + 1)].clamp_min(1e-12).log().mean()
     )
     rng = np.random.default_rng(args.seed)
-    history: list[dict[str, Any]] = []
-    best_nll = math.inf
-    best_epoch: int | None = None
-    best_state: dict[str, Tensor] | None = None
-    best_metrics: dict[str, Any] | None = None
+    initial_validation = metrics(
+        head,
+        validation_features,
+        validation_outcomes,
+        validation_margins,
+        device=device,
+    )
+    structured_baseline_auc = (
+        float(initial_validation["decisive_win_loss_auc"])
+        if args.feature_set in {"structured-residual", "robust-residual"}
+        and args.initialize_public_checkpoint is not None
+        else None
+    )
+    history: list[dict[str, Any]] = [
+        {
+            "epoch": 0,
+            "training_loss": None,
+            "validation": initial_validation,
+            "development_gate_passed": False,
+        }
+    ]
+    best_key = outcome_epoch_selection_key(
+        initial_validation, acceptance_passed=False
+    )
+    best_epoch: int | None = 0
+    best_state: dict[str, Tensor] | None = {
+        name: value.detach().cpu().clone() for name, value in head.state_dict().items()
+    }
+    best_metrics: dict[str, Any] | None = initial_validation
     for epoch in range(1, args.epochs + 1):
         head.train()
         order = rng.permutation(train_outcomes.numel())
@@ -778,9 +966,13 @@ def main() -> None:
                 margin_coefficient=args.margin_coefficient,
                 sample_weights=train_weights.index_select(0, rows).to(device),
             )
+            if not bool(torch.isfinite(loss.total)):
+                raise RuntimeError("actor outcome loss became non-finite")
             optimizer.zero_grad(set_to_none=True)
             loss.total.backward()
-            torch.nn.utils.clip_grad_norm_(head.parameters(), 1.0)
+            torch.nn.utils.clip_grad_norm_(
+                head.parameters(), 1.0, error_if_nonfinite=True
+            )
             optimizer.step()
             losses.append(float(loss.total.detach()))
         validation = metrics(
@@ -790,15 +982,69 @@ def main() -> None:
             validation_margins,
             device=device,
         )
+        epoch_breakdowns = _evaluation_breakdowns(
+            head,
+            validation_features,
+            validation_outcomes,
+            validation_margins,
+            validation_loaded,
+            device=device,
+        )
+        epoch_sources = epoch_breakdowns["by_source"]
+        epoch_endpoints = epoch_breakdowns["episode_endpoints_by_source"]
+        epoch_natural = epoch_sources.get("natural-strategy-games")
+        epoch_natural_endpoint = epoch_endpoints.get("natural-strategy-games")
+        epoch_draw_endpoint = epoch_endpoints.get("controlled-symmetric-draws")
+        epoch_natural_auc_passed = bool(
+            epoch_natural is not None
+            and epoch_natural["decisive_win_loss_auc"] is not None
+            and float(epoch_natural["decisive_win_loss_auc"])
+            >= args.minimum_natural_auc
+        )
+        epoch_controlled_draw_passed = bool(
+            validation["auc_one_vs_rest"]["draw"] is not None
+            and float(validation["auc_one_vs_rest"]["draw"])
+            >= args.minimum_controlled_draw_auc
+            and epoch_natural is not None
+            and float(epoch_natural["mean_outcome_probability"]["draw"])
+            <= args.maximum_natural_draw_probability
+            and epoch_natural_endpoint is not None
+            and epoch_draw_endpoint is not None
+            and float(epoch_draw_endpoint["mean_outcome_probability"]["draw"])
+            - float(epoch_natural_endpoint["mean_outcome_probability"]["draw"])
+            >= args.minimum_controlled_draw_endpoint_probability_lift
+        )
+        epoch_development_passed = bool(
+            prior_nll - float(validation["nll"])
+            >= args.minimum_nll_improvement
+            and float(validation["ece_10"]) <= args.maximum_ece
+            and float(validation["tower_margin_mae"]) <= args.maximum_margin_mae
+            and all(value > 0 for value in validation["class_counts"].values())
+            and epoch_natural_auc_passed
+            and epoch_controlled_draw_passed
+            and (not args.require_disjoint_natural_opponents or not opponent_overlap)
+            and (not args.require_disjoint_natural_decks or not deck_overlap)
+            and (
+                structured_baseline_auc is None
+                or float(validation["decisive_win_loss_auc"])
+                >= structured_baseline_auc
+                + args.minimum_structured_residual_auc_gain
+            )
+        )
         row = {
             "epoch": epoch,
             "training_loss": float(np.mean(losses)),
             "validation": validation,
+            "development_gate_passed": epoch_development_passed,
         }
         history.append(row)
         print(json.dumps(row, sort_keys=True), flush=True)
-        if float(validation["nll"]) < best_nll:
-            best_nll = float(validation["nll"])
+        selection_key = outcome_epoch_selection_key(
+            validation,
+            acceptance_passed=epoch_development_passed,
+        )
+        if selection_key > best_key:
+            best_key = selection_key
             best_epoch = epoch
             best_metrics = validation
             best_state = {
@@ -940,6 +1186,11 @@ def main() -> None:
         and controlled_draw_passed
         and (not args.require_disjoint_natural_opponents or not opponent_overlap)
         and (not args.require_disjoint_natural_decks or not deck_overlap)
+        and (
+            structured_baseline_auc is None
+            or float(best_metrics["decisive_win_loss_auc"])
+            >= structured_baseline_auc + args.minimum_structured_residual_auc_gain
+        )
     )
     holdout_evaluation: dict[str, Any] | None = None
     holdout_prior_nll: float | None = None
@@ -1019,6 +1270,20 @@ def main() -> None:
         "state_size": state_size,
         "hidden_size": args.hidden_size,
         "separate_draw_trunk": separate_draw_trunk,
+        "structured_residual_scale": structured_residual_scale,
+        "public_initialization_checkpoint": (
+            str(args.initialize_public_checkpoint.resolve())
+            if args.initialize_public_checkpoint is not None
+            else None
+        ),
+        "public_initialization_sha256": public_initialization_sha256,
+        "structured_baseline_decisive_auc": structured_baseline_auc,
+        "minimum_structured_residual_auc_gain": (
+            args.minimum_structured_residual_auc_gain
+        ),
+        "epoch_selection": (
+            "maximum-decisive-auc-among-complete-development-gate-passes-v1"
+        ),
         "epochs": args.epochs,
         "batch_size": args.batch_size,
         "learning_rate": args.learning_rate,
@@ -1033,7 +1298,7 @@ def main() -> None:
         "actor_input_critic_fields": False,
         "actor_feature_contract": args.feature_set,
         "trainable_parameter_count": sum(
-            parameter.numel() for parameter in head.parameters()
+            parameter.numel() for parameter in head.parameters() if parameter.requires_grad
         ),
         "train_class_prior": prior.tolist(),
         "validation_prior_nll": prior_nll,
@@ -1133,6 +1398,8 @@ def main() -> None:
         "state_size": state_size,
         "hidden_size": args.hidden_size,
         "separate_draw_trunk": separate_draw_trunk,
+        "structured_residual_scale": structured_residual_scale,
+        "public_initialization_sha256": public_initialization_sha256,
         "outcome_head_state_dict": best_state,
         "training_report": report,
     }

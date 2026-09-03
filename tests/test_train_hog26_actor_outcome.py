@@ -12,6 +12,7 @@ from scripts.train_hog26_actor_outcome import (
     _outcome_source,
     episode_class_balanced_row_weights,
     metrics,
+    outcome_epoch_selection_key,
 )
 
 
@@ -85,3 +86,28 @@ def test_episode_class_balanced_weights_equalize_episodes_and_class_mass() -> No
     assert weights[:2].sum() == pytest.approx(weights[2:].sum())
     assert weights[0] == pytest.approx(weights[1])
     assert weights[2] == pytest.approx(weights[5])
+
+
+def test_epoch_selection_prefers_ranking_after_calibration_gate() -> None:
+    def row(auc: float, nll: float, ece: float, draw_auc: float) -> dict[str, object]:
+        return {
+            "decisive_win_loss_auc": auc,
+            "nll": nll,
+            "ece_10": ece,
+            "auc_one_vs_rest": {"draw": draw_auc},
+        }
+
+    def key(
+        values: dict[str, object], *, acceptance_passed: bool
+    ) -> tuple[int, float, float]:
+        return outcome_epoch_selection_key(
+            values,
+            acceptance_passed=acceptance_passed,
+        )
+
+    assert key(row(0.70, 0.95, 0.15, 0.85), acceptance_passed=True) > key(
+        row(0.61, 0.78, 0.12, 0.95), acceptance_passed=True
+    )
+    assert key(row(0.61, 0.78, 0.12, 0.95), acceptance_passed=True) > key(
+        row(0.90, 0.70, 0.30, 0.99), acceptance_passed=False
+    )

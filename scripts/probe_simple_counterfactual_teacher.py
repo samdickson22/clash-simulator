@@ -453,6 +453,9 @@ def load_outcome_ensemble(
             int(payload["state_size"]),
             int(payload["hidden_size"]),
             separate_draw_trunk=bool(payload.get("separate_draw_trunk", False)),
+            structured_residual_scale=float(
+                payload.get("structured_residual_scale", 0.0)
+            ),
         ).to(device)
         head.load_state_dict(payload["outcome_head_state_dict"], strict=True)
         head.eval()

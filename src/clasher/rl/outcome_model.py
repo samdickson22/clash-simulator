@@ -31,16 +31,23 @@ class ActorOutcomeHead(nn.Module):
         hidden_size: int = 128,
         *,
         separate_draw_trunk: bool = False,
+        structured_residual_scale: float = 0.0,
     ) -> None:
         super().__init__()
         if state_size < 18 or hidden_size < 1:
             raise ValueError("outcome head dimensions must be positive")
+        if structured_residual_scale < 0.0:
+            raise ValueError("structured residual scale must be nonnegative")
+        if structured_residual_scale > 0.0 and state_size == 18:
+            raise ValueError("structured residual needs context before public globals")
         self.state_size = int(state_size)
         self.hidden_size = int(hidden_size)
         self.separate_draw_trunk = bool(separate_draw_trunk)
+        self.structured_residual_scale = float(structured_residual_scale)
+        trunk_size = 18 if self.structured_residual_scale > 0.0 else state_size
         self.trunk = nn.Sequential(
-            nn.LayerNorm(state_size),
-            nn.Linear(state_size, hidden_size),
+            nn.LayerNorm(trunk_size),
+            nn.Linear(trunk_size, hidden_size),
             nn.GELU(),
             nn.Linear(hidden_size, hidden_size),
             nn.GELU(),
@@ -58,17 +65,45 @@ class ActorOutcomeHead(nn.Module):
             if self.separate_draw_trunk
             else None
         )
+        self.structured_trunk = (
+            nn.Sequential(
+                nn.Linear(state_size - 18, hidden_size),
+                nn.GELU(),
+                nn.Linear(hidden_size, hidden_size),
+                nn.GELU(),
+            )
+            if self.structured_residual_scale > 0.0
+            else None
+        )
+        self.structured_decisive = (
+            nn.Linear(hidden_size, 1)
+            if self.structured_residual_scale > 0.0
+            else None
+        )
+        if self.structured_decisive is not None:
+            nn.init.zeros_(self.structured_decisive.weight)
+            nn.init.zeros_(self.structured_decisive.bias)
         nn.init.constant_(self.draw.bias, -2.1972245773362196)
 
     def forward(self, state: Tensor) -> ActorOutcomePrediction:
         if state.shape[-1] != self.state_size:
             raise ValueError("actor outcome state width changed")
-        hidden = self.trunk(state)
+        public_globals = state[..., -18:]
+        hidden = self.trunk(
+            public_globals if self.structured_trunk is not None else state
+        )
         draw_hidden = (
-            hidden if self.draw_trunk is None else self.draw_trunk(state[..., -18:])
+            hidden if self.draw_trunk is None else self.draw_trunk(public_globals)
         )
         draw_logit = self.draw(draw_hidden).squeeze(-1)
         decisive_win_logit = self.decisive_win(hidden).squeeze(-1)
+        if self.structured_trunk is not None:
+            assert self.structured_decisive is not None
+            structured = self.structured_trunk(state[..., :-18])
+            decisive_win_logit = decisive_win_logit + (
+                self.structured_residual_scale
+                * self.structured_decisive(structured).squeeze(-1).tanh()
+            )
         log_draw = -F.softplus(-draw_logit)
         log_decisive = -F.softplus(draw_logit)
         log_win_given_decisive = -F.softplus(-decisive_win_logit)
