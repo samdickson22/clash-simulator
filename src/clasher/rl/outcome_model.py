@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 import torch
@@ -48,6 +49,9 @@ class ActorOutcomeHead(nn.Module):
         self.separate_draw_trunk = bool(separate_draw_trunk)
         self.structured_residual_scale = float(structured_residual_scale)
         self.margin_residual_scale = float(margin_residual_scale)
+        self.register_buffer("draw_logit_calibration", torch.zeros(()))
+        self.register_buffer("decisive_logit_calibration", torch.zeros(()))
+        self.register_buffer("decisive_logit_temperature", torch.ones(()))
         trunk_size = 18 if self.structured_residual_scale > 0.0 else state_size
         self.trunk = nn.Sequential(
             nn.LayerNorm(trunk_size),
@@ -80,9 +84,7 @@ class ActorOutcomeHead(nn.Module):
             else None
         )
         self.structured_decisive = (
-            nn.Linear(hidden_size, 1)
-            if self.structured_residual_scale > 0.0
-            else None
+            nn.Linear(hidden_size, 1) if self.structured_residual_scale > 0.0 else None
         )
         if self.structured_decisive is not None:
             nn.init.zeros_(self.structured_decisive.weight)
@@ -103,7 +105,49 @@ class ActorOutcomeHead(nn.Module):
             nn.init.zeros_(final_margin.bias)
         nn.init.constant_(self.draw.bias, -2.1972245773362196)
 
-    def forward(self, state: Tensor) -> ActorOutcomePrediction:
+    @torch.no_grad()
+    def set_prior_calibration(
+        self, empirical_prior: Tensor, target_mass: Tensor
+    ) -> None:
+        """Correct factorized logits from training mass to empirical game prior."""
+
+        empirical = empirical_prior.to(
+            device=self.draw_logit_calibration.device,
+            dtype=self.draw_logit_calibration.dtype,
+        )
+        target = target_mass.to(device=empirical.device, dtype=empirical.dtype)
+        if empirical.shape != (3,) or target.shape != (3,):
+            raise ValueError("outcome calibration needs loss/draw/win vectors")
+        if not bool(torch.isfinite(empirical).all()) or not bool(
+            torch.isfinite(target).all()
+        ):
+            raise ValueError("outcome calibration masses must be finite")
+        if bool((empirical <= 0).any()) or bool((target <= 0).any()):
+            raise ValueError("outcome calibration masses must be positive")
+        empirical = empirical / empirical.sum()
+        target = target / target.sum()
+
+        def log_odds(probability: Tensor) -> Tensor:
+            return probability.log() - (1.0 - probability).log()
+
+        self.draw_logit_calibration.copy_(log_odds(empirical[1]) - log_odds(target[1]))
+        empirical_win_given_decisive = empirical[2] / (empirical[0] + empirical[2])
+        target_win_given_decisive = target[2] / (target[0] + target[2])
+        self.decisive_logit_calibration.copy_(
+            log_odds(empirical_win_given_decisive) - log_odds(target_win_given_decisive)
+        )
+
+    @torch.no_grad()
+    def set_decisive_temperature(self, temperature: float) -> None:
+        """Set a positive held-out calibration temperature."""
+
+        if not math.isfinite(temperature) or temperature <= 0.0:
+            raise ValueError("decisive calibration temperature must be positive")
+        self.decisive_logit_temperature.fill_(temperature)
+
+    def forward(
+        self, state: Tensor, *, calibrated: bool = True
+    ) -> ActorOutcomePrediction:
         if state.shape[-1] != self.state_size:
             raise ValueError("actor outcome state width changed")
         public_globals = state[..., -18:]
@@ -122,6 +166,10 @@ class ActorOutcomeHead(nn.Module):
                 self.structured_residual_scale
                 * self.structured_decisive(structured).squeeze(-1).tanh()
             )
+        if calibrated:
+            draw_logit = draw_logit + self.draw_logit_calibration
+            decisive_win_logit = decisive_win_logit + self.decisive_logit_calibration
+            decisive_win_logit = decisive_win_logit / self.decisive_logit_temperature
         log_draw = -F.softplus(-draw_logit)
         log_decisive = -F.softplus(draw_logit)
         log_win_given_decisive = -F.softplus(-decisive_win_logit)
@@ -196,9 +244,7 @@ def actor_outcome_loss(
         if not bool(margin_sample_weights.sum() > 0):
             raise ValueError("margin sample weights must have positive mass")
     targets = final_outcomes.to(torch.long) + 1
-    outcome_rows = F.cross_entropy(
-        prediction.outcome_logits, targets, reduction="none"
-    )
+    outcome_rows = F.cross_entropy(prediction.outcome_logits, targets, reduction="none")
     margin_rows = F.smooth_l1_loss(
         prediction.terminal_tower_margin,
         terminal_tower_margins.to(prediction.terminal_tower_margin.dtype),

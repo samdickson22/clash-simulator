@@ -257,3 +257,42 @@ the point/calibration/draw gates. This aligns model selection with the eventual
 all-phase acceptance rule instead of allowing aggregate AUC to sacrifice a weak
 phase. Replaying the 66-game structured run selected the same epoch 29, so this
 correctness tightening does not change the reported candidate or metrics.
+
+## Fifteen-deck development and probability calibration
+
+Development shard E completed 24/24 games and passed audit: 18 losses, six
+wins, maximum 687 decisions. The final natural development pool contains 90
+games, 40,269 rows, 15 unseen decks, three unseen styles, both seats, and 50
+losses/40 wins. It has 45 early, 40 middle, and 11 late independent matchup
+clusters, finally clearing the support floor in every phase.
+
+The frozen structured ranker clears every ranking-confidence gate on this pool:
+early/middle/late AUC is 0.6808/0.8358/0.9500, with clustered lower 95% bounds
+0.5093/0.6925/0.6429. Overall ECE is 0.1534. The first finalization attempt was
+still correctly rejected because its balanced 45/10/45 training objective
+produced ranking logits rather than calibrated probabilities: NLL 0.9616 was
+worse than the empirical train-prior NLL 0.8424.
+
+Two correctness changes followed without altering an acceptance threshold:
+
+1. Margin epoch selection now chooses maximum aggregate improvement only among
+   epochs that pass the all-phase margin gate. The prior selector chose epoch 2
+   despite a late MAE regression of 0.0296; epoch 1 passed the full margin gate.
+2. The factorized outcome head now corrects its draw-vs-decisive and
+   win-vs-loss logit offsets from declared training class mass to the empirical
+   complete-game training prior. A single bounded decisive temperature may be
+   fit on a physically separate calibration corpus; training uses uncalibrated
+   logits, and validation labels never fit the temperature.
+
+Prior correction alone improves development NLL to 0.8569 while retaining all
+three ranking-confidence passes, but remains short of the required 0.02 gain
+over the prior. A clean calibration split (balanced shard D calibrates;
+old+C+E+draw validates) reduces NLL to 0.6732 and ECE to 0.0912. Its
+early/middle/late AUC is 0.7030/0.8611/1.0000, but the early clustered lower
+bound is 0.4897, narrowly below 0.50 because removing D leaves fewer validation
+matchups. That split is rejected rather than relaxed.
+
+A new-seed 24-game calibration-only shard is therefore collecting on already
+known development decks. It will fit the scalar temperature while leaving the
+entire 90-game development pool label-independent. The four remaining unseen
+decks stay reserved for untouched holdout.

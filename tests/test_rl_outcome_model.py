@@ -115,3 +115,50 @@ def test_margin_residual_starts_at_public_baseline_and_is_trainable() -> None:
     assert isinstance(final_margin, torch.nn.Linear)
     assert final_margin.weight.grad is not None
     assert bool(torch.isfinite(final_margin.weight.grad).all())
+
+
+def test_factorized_prior_calibration_recovers_empirical_constant_prior() -> None:
+    head = ActorOutcomeHead(18, hidden_size=4)
+    with torch.no_grad():
+        for parameter in head.parameters():
+            parameter.zero_()
+        head.draw.bias.fill_(torch.logit(torch.tensor(0.1)))
+    head.set_prior_calibration(
+        torch.tensor([0.6, 0.1, 0.3]),
+        torch.tensor([0.45, 0.1, 0.45]),
+    )
+    probabilities = head(torch.zeros(2, 18)).outcome_logits.exp()
+    torch.testing.assert_close(
+        probabilities,
+        torch.tensor([[0.6, 0.1, 0.3], [0.6, 0.1, 0.3]]),
+        atol=1e-6,
+        rtol=1e-6,
+    )
+    uncalibrated = head(torch.zeros(1, 18), calibrated=False).outcome_logits.exp()
+    torch.testing.assert_close(
+        uncalibrated, torch.tensor([[0.45, 0.1, 0.45]]), atol=1e-6, rtol=1e-6
+    )
+
+
+def test_factorized_prior_calibration_rejects_zero_or_wrong_shape() -> None:
+    head = ActorOutcomeHead(18, hidden_size=4)
+    with pytest.raises(ValueError, match="vectors"):
+        head.set_prior_calibration(torch.ones(2), torch.ones(3))
+    with pytest.raises(ValueError, match="positive"):
+        head.set_prior_calibration(torch.tensor([0.5, 0.0, 0.5]), torch.ones(3))
+    with pytest.raises(ValueError, match="temperature"):
+        head.set_decisive_temperature(0.0)
+
+
+def test_decisive_temperature_softens_only_calibrated_outcome_logits() -> None:
+    head = ActorOutcomeHead(18, hidden_size=4)
+    with torch.no_grad():
+        for parameter in head.parameters():
+            parameter.zero_()
+        head.decisive_win.bias.fill_(4.0)
+    state = torch.zeros(1, 18)
+    raw = head(state, calibrated=False).outcome_logits
+    head.set_decisive_temperature(2.0)
+    calibrated = head(state).outcome_logits
+    assert float((raw[0, 2] - raw[0, 0]).detach()) == pytest.approx(4.0)
+    assert float((calibrated[0, 2] - calibrated[0, 0]).detach()) == pytest.approx(2.0)

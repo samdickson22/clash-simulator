@@ -573,6 +573,60 @@ def outcome_epoch_selection_key(
     )
 
 
+def margin_epoch_selection_key(
+    validation: dict[str, Any],
+    *,
+    acceptance_passed: bool,
+) -> tuple[int, float, float]:
+    """Prefer aggregate improvement only among all-phase-valid margin epochs."""
+
+    return (
+        int(acceptance_passed),
+        float(validation["tower_margin_mae_improvement"]),
+        -float(validation["tower_margin_mae"]),
+    )
+
+
+@torch.no_grad()
+def fit_decisive_temperature(
+    head: ActorOutcomeHead,
+    features: Tensor,
+    outcomes: Tensor,
+    *,
+    device: torch.device,
+) -> float:
+    """Fit one bounded scalar on separate decisive calibration games."""
+
+    selected = outcomes != 0
+    selected_rows = selected.nonzero().flatten()
+    selected_outcomes = outcomes.index_select(0, selected_rows)
+    if (
+        int(selected.sum()) < 2
+        or not bool((selected_outcomes == 1).any())
+        or not bool((selected_outcomes == -1).any())
+    ):
+        raise ValueError("decisive calibration needs both wins and losses")
+    head.set_decisive_temperature(1.0)
+    prediction = head(features.index_select(0, selected_rows).to(device))
+    scores = prediction.outcome_logits[:, 2] - prediction.outcome_logits[:, 0]
+    labels = (selected_outcomes.to(device) == 1).to(scores.dtype)
+    temperatures = torch.logspace(
+        math.log10(0.25),
+        math.log10(8.0),
+        401,
+        device=device,
+        dtype=scores.dtype,
+    )
+    losses = F.binary_cross_entropy_with_logits(
+        scores.unsqueeze(0) / temperatures.unsqueeze(1),
+        labels.unsqueeze(0).expand(temperatures.numel(), -1),
+        reduction="none",
+    ).mean(dim=1)
+    temperature = float(temperatures[int(losses.argmin())].cpu())
+    head.set_decisive_temperature(temperature)
+    return temperature
+
+
 def all_phase_decisive_auc_passed(
     by_phase: dict[str, dict[str, Any]], minimum_auc: float
 ) -> bool:
@@ -954,6 +1008,7 @@ def main() -> None:
     parser.add_argument(
         "--validation-corpus", type=Path, action="append", required=True
     )
+    parser.add_argument("--calibration-corpus", type=Path, action="append", default=[])
     parser.add_argument("--holdout-corpus", type=Path, action="append", default=[])
     parser.add_argument("--output-checkpoint", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
@@ -1037,10 +1092,18 @@ def main() -> None:
     validation_loaded = [
         load_direct_simple_behavior_corpus(path) for path in args.validation_corpus
     ]
+    calibration_loaded = [
+        load_direct_simple_behavior_corpus(path) for path in args.calibration_corpus
+    ]
     holdout_loaded = [
         load_direct_simple_behavior_corpus(path) for path in args.holdout_corpus
     ]
-    for metadata, corpus in (*train_loaded, *validation_loaded, *holdout_loaded):
+    for metadata, corpus in (
+        *train_loaded,
+        *calibration_loaded,
+        *validation_loaded,
+        *holdout_loaded,
+    ):
         validate_outcome_corpus(metadata, corpus)
         if metadata.get("checkpoint_sha256") != file_sha256(args.base_checkpoint):
             raise ValueError("outcome corpus was collected by a different policy")
@@ -1048,38 +1111,64 @@ def main() -> None:
     validation_seeds = {
         int(metadata["seed"]) for metadata, _corpus in validation_loaded
     }
+    calibration_seeds = {
+        int(metadata["seed"]) for metadata, _corpus in calibration_loaded
+    }
     holdout_seeds = {int(metadata["seed"]) for metadata, _corpus in holdout_loaded}
-    if train_seeds.intersection(validation_seeds):
+    if train_seeds.intersection(validation_seeds | calibration_seeds):
         raise ValueError("outcome train and validation seeds must be disjoint")
-    if train_seeds.intersection(holdout_seeds) or validation_seeds.intersection(
-        holdout_seeds
+    if validation_seeds.intersection(calibration_seeds):
+        raise ValueError("outcome calibration and validation seeds must be disjoint")
+    if (
+        train_seeds.intersection(holdout_seeds)
+        or validation_seeds.intersection(holdout_seeds)
+        or calibration_seeds.intersection(holdout_seeds)
     ):
         raise ValueError(
             "outcome holdout seeds must be disjoint from train/development"
         )
     train_hashes = {file_sha256(path) for path in args.train_corpus}
     validation_hashes = {file_sha256(path) for path in args.validation_corpus}
+    calibration_hashes = {file_sha256(path) for path in args.calibration_corpus}
     holdout_hashes = {file_sha256(path) for path in args.holdout_corpus}
-    if train_hashes.intersection(validation_hashes):
+    if train_hashes.intersection(validation_hashes | calibration_hashes):
         raise ValueError("outcome train and validation corpora must be disjoint")
-    if holdout_hashes.intersection(train_hashes | validation_hashes):
+    if validation_hashes.intersection(calibration_hashes):
+        raise ValueError("outcome calibration and validation corpora must be disjoint")
+    if holdout_hashes.intersection(
+        train_hashes | calibration_hashes | validation_hashes
+    ):
         raise ValueError("outcome holdout corpora must be physically disjoint")
     train_natural_opponents = _natural_metadata_values(train_loaded, "opponents")
     validation_natural_opponents = _natural_metadata_values(
         validation_loaded, "opponents"
     )
+    calibration_natural_opponents = _natural_metadata_values(
+        calibration_loaded, "opponents"
+    )
     train_natural_decks = _natural_metadata_values(train_loaded, "opponent_decks")
     validation_natural_decks = _natural_metadata_values(
         validation_loaded, "opponent_decks"
+    )
+    calibration_natural_decks = _natural_metadata_values(
+        calibration_loaded, "opponent_decks"
     )
     holdout_natural_opponents = _natural_metadata_values(holdout_loaded, "opponents")
     holdout_natural_decks = _natural_metadata_values(holdout_loaded, "opponent_decks")
     opponent_overlap = train_natural_opponents & validation_natural_opponents
     deck_overlap = train_natural_decks & validation_natural_decks
+    calibration_opponent_overlap = (
+        train_natural_opponents & calibration_natural_opponents
+    )
+    calibration_deck_overlap = train_natural_decks & calibration_natural_decks
     if args.require_disjoint_natural_opponents and opponent_overlap:
         raise ValueError("natural outcome train/validation opponents overlap")
     if args.require_disjoint_natural_decks and deck_overlap:
         raise ValueError("natural outcome train/validation decks overlap")
+    if args.require_disjoint_natural_opponents and calibration_opponent_overlap:
+        raise ValueError("natural outcome train/calibration opponents overlap")
+    if args.require_disjoint_natural_decks and calibration_deck_overlap:
+        raise ValueError("natural outcome train/calibration decks overlap")
     holdout_opponent_overlap = train_natural_opponents & holdout_natural_opponents
     holdout_deck_overlap = train_natural_decks & holdout_natural_decks
     if args.require_disjoint_natural_opponents and holdout_opponent_overlap:
@@ -1113,6 +1202,23 @@ def main() -> None:
         ],
         dim=0,
     )
+    calibration_features = (
+        torch.cat(
+            [
+                extract_actor_features(
+                    model,
+                    corpus,
+                    device=device,
+                    sequence_steps=args.sequence_steps,
+                    feature_set=args.feature_set,
+                )
+                for _metadata, corpus in calibration_loaded
+            ],
+            dim=0,
+        )
+        if calibration_loaded
+        else None
+    )
     holdout_features = (
         torch.cat(
             [
@@ -1132,6 +1238,7 @@ def main() -> None:
     )
     for name, feature_rows in (
         ("train", train_features),
+        ("calibration", calibration_features),
         ("validation", validation_features),
         ("holdout", holdout_features),
     ):
@@ -1245,6 +1352,16 @@ def main() -> None:
             for _metadata, corpus in validation_loaded
         ]
     )
+    calibration_outcomes = (
+        torch.cat(
+            [
+                torch.as_tensor(corpus.arrays["final_outcomes"])
+                for _metadata, corpus in calibration_loaded
+            ]
+        )
+        if calibration_loaded
+        else None
+    )
     holdout_outcomes = (
         torch.cat(
             [
@@ -1275,6 +1392,27 @@ def main() -> None:
         train_episode_outcomes.to(torch.long) + 1, minlength=3
     ).float()
     prior = counts / counts.sum()
+    head.set_prior_calibration(
+        prior.to(device),
+        torch.as_tensor(target_class_mass, dtype=prior.dtype, device=device),
+    )
+    calibration_rows = (
+        phase_balanced_row_indices(calibration_loaded) if calibration_loaded else None
+    )
+
+    def recalibrate_decisive() -> float:
+        if calibration_rows is None:
+            head.set_decisive_temperature(1.0)
+            return 1.0
+        assert calibration_features is not None and calibration_outcomes is not None
+        return fit_decisive_temperature(
+            head,
+            calibration_features.index_select(0, calibration_rows),
+            calibration_outcomes.index_select(0, calibration_rows),
+            device=device,
+        )
+
+    current_temperature = recalibrate_decisive()
     validation_phase_rows = phase_balanced_row_indices(validation_loaded)
     validation_phase_outcomes = validation_outcomes.index_select(
         0, validation_phase_rows
@@ -1310,6 +1448,7 @@ def main() -> None:
             "outcome_gate_passed": False,
             "margin_gate_passed": False,
             "development_gate_passed": False,
+            "decisive_temperature": current_temperature,
         }
     ]
     best_key = outcome_epoch_selection_key(
@@ -1323,7 +1462,9 @@ def main() -> None:
     }
     best_metrics: dict[str, Any] | None = initial_validation
     best_margin_epoch = 0
-    best_margin_mae = float(initial_validation["tower_margin_mae"])
+    best_margin_key = margin_epoch_selection_key(
+        initial_validation, acceptance_passed=False
+    )
     best_margin_state = {
         name: value.detach().cpu().clone()
         for name, value in head.state_dict().items()
@@ -1335,7 +1476,9 @@ def main() -> None:
         losses = []
         for start in range(0, len(order), args.batch_size):
             rows = torch.as_tensor(order[start : start + args.batch_size])
-            prediction = head(train_features.index_select(0, rows).to(device))
+            prediction = head(
+                train_features.index_select(0, rows).to(device), calibrated=False
+            )
             loss = actor_outcome_loss(
                 prediction,
                 train_outcomes.index_select(0, rows).to(device),
@@ -1355,6 +1498,7 @@ def main() -> None:
             )
             optimizer.step()
             losses.append(float(loss.total.detach()))
+        current_temperature = recalibrate_decisive()
         epoch_breakdowns = _evaluation_breakdowns(
             head,
             validation_features,
@@ -1423,6 +1567,7 @@ def main() -> None:
             "outcome_gate_passed": epoch_outcome_passed,
             "margin_gate_passed": epoch_margin_passed,
             "development_gate_passed": epoch_outcome_passed and epoch_margin_passed,
+            "decisive_temperature": current_temperature,
         }
         history.append(row)
         print(json.dumps(row, sort_keys=True), flush=True)
@@ -1439,8 +1584,11 @@ def main() -> None:
                 name: value.detach().cpu().clone()
                 for name, value in head.state_dict().items()
             }
-        if float(validation["tower_margin_mae"]) < best_margin_mae:
-            best_margin_mae = float(validation["tower_margin_mae"])
+        margin_selection_key = margin_epoch_selection_key(
+            validation, acceptance_passed=epoch_margin_passed
+        )
+        if margin_selection_key > best_margin_key:
+            best_margin_key = margin_selection_key
             best_margin_epoch = epoch
             best_margin_state = {
                 name: value.detach().cpu().clone()
@@ -1758,6 +1906,12 @@ def main() -> None:
         "base_checkpoint_sha256": file_sha256(args.base_checkpoint),
         "train_corpora": [str(path.resolve()) for path in args.train_corpus],
         "train_corpus_sha256": [file_sha256(path) for path in args.train_corpus],
+        "calibration_corpora": [
+            str(path.resolve()) for path in args.calibration_corpus
+        ],
+        "calibration_corpus_sha256": [
+            file_sha256(path) for path in args.calibration_corpus
+        ],
         "validation_corpora": [str(path.resolve()) for path in args.validation_corpus],
         "validation_corpus_sha256": [
             file_sha256(path) for path in args.validation_corpus
@@ -1782,6 +1936,7 @@ def main() -> None:
             args.minimum_structured_residual_auc_gain
         ),
         "epoch_selection": "maximin-phase-then-decisive-auc-among-point-gate-passes-v1",
+        "margin_epoch_selection": "maximum-mae-improvement-among-all-phase-gate-passes-v1",
         "epochs": args.epochs,
         "batch_size": args.batch_size,
         "learning_rate": args.learning_rate,
@@ -1801,6 +1956,12 @@ def main() -> None:
             "draw": args.draw_class_mass,
             "win": args.win_class_mass,
         },
+        "probability_calibration": (
+            "factorized-training-mass-prior-plus-separate-decisive-temperature-v1"
+            if calibration_loaded
+            else "factorized-training-mass-to-empirical-episode-prior-v1"
+        ),
+        "decisive_logit_temperature": float(head.decisive_logit_temperature.cpu()),
         "actor_input_previous_reward": "forced-zero-unavailable-at-live-inference",
         "actor_input_critic_fields": False,
         "actor_feature_contract": args.feature_set,
@@ -1888,6 +2049,10 @@ def main() -> None:
             "require_disjoint_natural_decks": args.require_disjoint_natural_decks,
             "natural_opponent_overlap": sorted(opponent_overlap),
             "natural_deck_overlap": sorted(deck_overlap),
+            "calibration_natural_opponent_overlap": sorted(
+                calibration_opponent_overlap
+            ),
+            "calibration_natural_deck_overlap": sorted(calibration_deck_overlap),
             "natural_auc_passed": natural_auc_passed,
             "natural_phase_auc_passed": natural_phase_auc_passed,
             "phase_auc_confidence_passed": phase_auc_confidence_passed,
