@@ -1,0 +1,70 @@
+{
+  "cell_outcomes": {},
+  "checks": {
+    "complete_stream_coverage": true,
+    "contiguous_stream_ordinals": true,
+    "critic_inputs_absent": true,
+    "exact_actor_relative_terminal_labels": true,
+    "exact_episode_boundaries": true,
+    "finite_outcomes_and_margins": true,
+    "unique_hashes": true,
+    "unique_seeds": true
+  },
+  "corpora": [
+    {
+      "episodes": 16,
+      "margin_maximum": 0.0,
+      "margin_minimum": 0.0,
+      "outcomes": {
+        "draw": 16,
+        "loss": 0,
+        "win": 0
+      },
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_symmetric_draw_holdout_seed1278002/corpus.npz",
+      "rows": 6208,
+      "seed": 1278002,
+      "sha256": "2b4f55133ae6b84e91bbca0c08cc811cf704257e07f7b7e592e5f94c25b7fe57"
+    }
+  ],
+  "corpus_count": 1,
+  "episodes": 16,
+  "natural_diversity": {
+    "cells_with_both_decisive_outcomes": 0,
+    "opponent_decks": [],
+    "opponent_styles": [],
+    "phase_matchup_clusters": {
+      "early": {
+        "clusters": 0,
+        "with_both": 0,
+        "with_loss": 0,
+        "with_win": 0
+      },
+      "late": {
+        "clusters": 0,
+        "with_both": 0,
+        "with_loss": 0,
+        "with_win": 0
+      },
+      "middle": {
+        "clusters": 0,
+        "with_both": 0,
+        "with_loss": 0,
+        "with_win": 0
+      }
+    },
+    "style_deck_seat_cells": 0
+  },
+  "outcomes": {
+    "draw": 16,
+    "loss": 0,
+    "win": 0
+  },
+  "phase_rows": {
+    "early": 4000,
+    "late": 0,
+    "middle": 2208
+  },
+  "rows": 6208,
+  "schema": "clasher.hog26.outcome-corpus-audit.v1",
+  "status": "passed"
+}
