@@ -1,0 +1,1794 @@
+{
+  "cards_by_split": {
+    "development": [
+      "Bandit",
+      "BarbarianBarrel",
+      "BattleRam",
+      "Cannon",
+      "DartGoblin",
+      "Earthquake",
+      "ElectroWizard",
+      "Fireball",
+      "Firecracker",
+      "GoblinBarrel",
+      "GoblinGang",
+      "HogRider",
+      "IceGolem",
+      "IceSpirit",
+      "IceWizard",
+      "InfernoTower",
+      "Knight",
+      "Log",
+      "MagicArcher",
+      "Musketeer",
+      "Pekka",
+      "Princess",
+      "Rocket",
+      "RoyalGhost",
+      "Skeletons",
+      "Tesla",
+      "Tornado",
+      "Valkyrie",
+      "Xbow",
+      "Zap"
+    ],
+    "holdout": [
+      "Archers",
+      "Arrows",
+      "Balloon",
+      "BombTower",
+      "Cannon",
+      "DartGoblin",
+      "ElectroDragon",
+      "Fireball",
+      "GoblinBarrel",
+      "GoblinGang",
+      "Golem",
+      "HogRider",
+      "IceSpirit",
+      "IceWizard",
+      "InfernoTower",
+      "Knight",
+      "Log",
+      "MagicArcher",
+      "Miner",
+      "Musketeer",
+      "Pekka",
+      "Princess",
+      "Rocket",
+      "Skeletons",
+      "SpearGoblins",
+      "Tesla",
+      "Tornado",
+      "Wallbreakers",
+      "Xbow"
+    ],
+    "train": [
+      "Archers",
+      "Arrows",
+      "BabyDragon",
+      "Balloon",
+      "Bandit",
+      "BarbarianBarrel",
+      "Bats",
+      "BattleRam",
+      "BombTower",
+      "Bomber",
+      "Bowler",
+      "Cannon",
+      "DarkPrince",
+      "DartGoblin",
+      "Earthquake",
+      "ElectroDragon",
+      "ElectroSpirit",
+      "ElectroWizard",
+      "Fireball",
+      "Firecracker",
+      "Freeze",
+      "Giant",
+      "GiantSnowball",
+      "GoblinBarrel",
+      "GoblinGang",
+      "Golem",
+      "Graveyard",
+      "Guards",
+      "HogRider",
+      "IceGolem",
+      "IceSpirit",
+      "IceWizard",
+      "InfernoDragon",
+      "InfernoTower",
+      "Knight",
+      "LavaHound",
+      "Log",
+      "Lumberjack",
+      "MagicArcher",
+      "MegaKnight",
+      "MegaMinion",
+      "Miner",
+      "MiniPekka",
+      "Minions",
+      "Musketeer",
+      "NightWitch",
+      "Pekka",
+      "Poison",
+      "Prince",
+      "Princess",
+      "Rocket",
+      "RoyalGhost",
+      "SkeletonBarrel",
+      "Skeletons",
+      "SpearGoblins",
+      "Tesla",
+      "Tombstone",
+      "Tornado",
+      "Valkyrie",
+      "Wallbreakers",
+      "Witch",
+      "Xbow",
+      "Zap"
+    ]
+  },
+  "counts": {
+    "decks": 65,
+    "development_decks": 16,
+    "development_families": 4,
+    "families": 16,
+    "holdout_decks": 16,
+    "holdout_families": 4,
+    "opponent_decks": 64,
+    "train_decks": 32,
+    "train_families": 8
+  },
+  "decks": [
+    {
+      "cards": [
+        "Cannon",
+        "Fireball",
+        "HogRider",
+        "IceGolem",
+        "IceSpirit",
+        "Musketeer",
+        "Skeletons",
+        "Log"
+      ],
+      "name": "Hog 2.6 Cycle",
+      "role": "fixed-policy-deck",
+      "split": "learner"
+    },
+    {
+      "average_elixir": 2.75,
+      "cards": [
+        "Valkyrie",
+        "Fireball",
+        "IceSpirit",
+        "GoblinBarrel",
+        "Princess",
+        "Log",
+        "HogRider",
+        "Skeletons"
+      ],
+      "family_id": "family-000",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural train 000-0",
+      "parent_decks": [
+        "Hog 2.6 Cycle",
+        "Valk Log Bait"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.5,
+      "cards": [
+        "Rocket",
+        "Musketeer",
+        "IceSpirit",
+        "Valkyrie",
+        "Cannon",
+        "GoblinGang",
+        "InfernoTower",
+        "IceGolem"
+      ],
+      "family_id": "family-000",
+      "kind_counts": {
+        "building": 2,
+        "spell": 1,
+        "troop": 5
+      },
+      "name": "Procedural train 000-1",
+      "parent_decks": [
+        "Hog 2.6 Cycle",
+        "Valk Log Bait"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.25,
+      "cards": [
+        "Princess",
+        "Musketeer",
+        "Rocket",
+        "IceSpirit",
+        "Log",
+        "GoblinGang",
+        "InfernoTower",
+        "IceGolem"
+      ],
+      "family_id": "family-000",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural train 000-2",
+      "parent_decks": [
+        "Hog 2.6 Cycle",
+        "Valk Log Bait"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.25,
+      "cards": [
+        "IceSpirit",
+        "Princess",
+        "InfernoTower",
+        "Fireball",
+        "Log",
+        "Skeletons",
+        "Rocket",
+        "HogRider"
+      ],
+      "family_id": "family-000",
+      "kind_counts": {
+        "building": 1,
+        "spell": 3,
+        "troop": 4
+      },
+      "name": "Procedural train 000-3",
+      "parent_decks": [
+        "Hog 2.6 Cycle",
+        "Valk Log Bait"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 2.875,
+      "cards": [
+        "GoblinBarrel",
+        "ElectroSpirit",
+        "Xbow",
+        "Princess",
+        "Archers",
+        "GoblinGang",
+        "Knight",
+        "IceSpirit"
+      ],
+      "family_id": "family-001",
+      "kind_counts": {
+        "building": 1,
+        "spell": 1,
+        "troop": 6
+      },
+      "name": "Procedural train 001-0",
+      "parent_decks": [
+        "X-Bow 3.0 Cycle (ESpirit)",
+        "Valk Log Bait (Tesla)"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.75,
+      "cards": [
+        "Xbow",
+        "Skeletons",
+        "Rocket",
+        "Tesla",
+        "Princess",
+        "Fireball",
+        "Log",
+        "Valkyrie"
+      ],
+      "family_id": "family-001",
+      "kind_counts": {
+        "building": 2,
+        "spell": 3,
+        "troop": 3
+      },
+      "name": "Procedural train 001-1",
+      "parent_decks": [
+        "X-Bow 3.0 Cycle (ESpirit)",
+        "Valk Log Bait (Tesla)"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.625,
+      "cards": [
+        "GoblinBarrel",
+        "GoblinGang",
+        "Fireball",
+        "Archers",
+        "Xbow",
+        "Princess",
+        "ElectroSpirit",
+        "Rocket"
+      ],
+      "family_id": "family-001",
+      "kind_counts": {
+        "building": 1,
+        "spell": 3,
+        "troop": 4
+      },
+      "name": "Procedural train 001-2",
+      "parent_decks": [
+        "X-Bow 3.0 Cycle (ESpirit)",
+        "Valk Log Bait (Tesla)"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.25,
+      "cards": [
+        "IceSpirit",
+        "ElectroSpirit",
+        "Princess",
+        "Log",
+        "Rocket",
+        "Xbow",
+        "GoblinGang",
+        "Tesla"
+      ],
+      "family_id": "family-001",
+      "kind_counts": {
+        "building": 2,
+        "spell": 2,
+        "troop": 4
+      },
+      "name": "Procedural train 001-3",
+      "parent_decks": [
+        "X-Bow 3.0 Cycle (ESpirit)",
+        "Valk Log Bait (Tesla)"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 2.875,
+      "cards": [
+        "GiantSnowball",
+        "Arrows",
+        "Firecracker",
+        "Guards",
+        "Tesla",
+        "Skeletons",
+        "Log",
+        "Giant"
+      ],
+      "family_id": "family-002",
+      "kind_counts": {
+        "building": 1,
+        "spell": 3,
+        "troop": 4
+      },
+      "name": "Procedural train 002-0",
+      "parent_decks": [
+        "Giant GY Bowler Witch",
+        "Hog FC 2.6 Cycle"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.625,
+      "cards": [
+        "Knight",
+        "Witch",
+        "Bowler",
+        "HogRider",
+        "Earthquake",
+        "Graveyard",
+        "IceSpirit",
+        "Minions"
+      ],
+      "family_id": "family-002",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural train 002-1",
+      "parent_decks": [
+        "Giant GY Bowler Witch",
+        "Hog FC 2.6 Cycle"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.375,
+      "cards": [
+        "Minions",
+        "Tesla",
+        "HogRider",
+        "Giant",
+        "Knight",
+        "Graveyard",
+        "GiantSnowball",
+        "Skeletons"
+      ],
+      "family_id": "family-002",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural train 002-2",
+      "parent_decks": [
+        "Giant GY Bowler Witch",
+        "Hog FC 2.6 Cycle"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.625,
+      "cards": [
+        "Graveyard",
+        "Arrows",
+        "Skeletons",
+        "Firecracker",
+        "Giant",
+        "Bowler",
+        "HogRider",
+        "Knight"
+      ],
+      "family_id": "family-002",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural train 002-3",
+      "parent_decks": [
+        "Giant GY Bowler Witch",
+        "Hog FC 2.6 Cycle"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.125,
+      "cards": [
+        "Balloon",
+        "Skeletons",
+        "SpearGoblins",
+        "GoblinGang",
+        "BarbarianBarrel",
+        "MegaKnight",
+        "GiantSnowball",
+        "SkeletonBarrel"
+      ],
+      "family_id": "family-003",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural train 003-0",
+      "parent_decks": [
+        "MK Miner ID Bats",
+        "Loon Miner 2.9 Cycle"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.5,
+      "cards": [
+        "Bats",
+        "IceGolem",
+        "Musketeer",
+        "MegaKnight",
+        "Miner",
+        "InfernoDragon",
+        "BombTower",
+        "Zap"
+      ],
+      "family_id": "family-003",
+      "kind_counts": {
+        "building": 1,
+        "spell": 1,
+        "troop": 6
+      },
+      "name": "Procedural train 003-1",
+      "parent_decks": [
+        "MK Miner ID Bats",
+        "Loon Miner 2.9 Cycle"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.75,
+      "cards": [
+        "InfernoDragon",
+        "Balloon",
+        "MegaKnight",
+        "GoblinGang",
+        "GiantSnowball",
+        "IceGolem",
+        "SkeletonBarrel",
+        "BombTower"
+      ],
+      "family_id": "family-003",
+      "kind_counts": {
+        "building": 1,
+        "spell": 1,
+        "troop": 6
+      },
+      "name": "Procedural train 003-2",
+      "parent_decks": [
+        "MK Miner ID Bats",
+        "Loon Miner 2.9 Cycle"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 2.625,
+      "cards": [
+        "Miner",
+        "Bats",
+        "SkeletonBarrel",
+        "Zap",
+        "Skeletons",
+        "Musketeer",
+        "InfernoDragon",
+        "BarbarianBarrel"
+      ],
+      "family_id": "family-003",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural train 003-3",
+      "parent_decks": [
+        "MK Miner ID Bats",
+        "Loon Miner 2.9 Cycle"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.375,
+      "cards": [
+        "Minions",
+        "Tombstone",
+        "Giant",
+        "Tornado",
+        "Knight",
+        "Archers",
+        "IceWizard",
+        "MiniPekka"
+      ],
+      "family_id": "family-004",
+      "kind_counts": {
+        "building": 1,
+        "spell": 1,
+        "troop": 6
+      },
+      "name": "Procedural train 004-0",
+      "parent_decks": [
+        "Giant",
+        "GY IWiz BBD Nado"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.5,
+      "cards": [
+        "Minions",
+        "Poison",
+        "Giant",
+        "Musketeer",
+        "BarbarianBarrel",
+        "BabyDragon",
+        "Arrows",
+        "Knight"
+      ],
+      "family_id": "family-004",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural train 004-1",
+      "parent_decks": [
+        "Giant",
+        "GY IWiz BBD Nado"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.875,
+      "cards": [
+        "Minions",
+        "Poison",
+        "Knight",
+        "Giant",
+        "Fireball",
+        "Graveyard",
+        "Archers",
+        "BabyDragon"
+      ],
+      "family_id": "family-004",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural train 004-2",
+      "parent_decks": [
+        "Giant",
+        "GY IWiz BBD Nado"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.375,
+      "cards": [
+        "Minions",
+        "Giant",
+        "BabyDragon",
+        "IceWizard",
+        "BarbarianBarrel",
+        "Archers",
+        "Musketeer",
+        "Knight"
+      ],
+      "family_id": "family-004",
+      "kind_counts": {
+        "building": 0,
+        "spell": 1,
+        "troop": 7
+      },
+      "name": "Procedural train 004-3",
+      "parent_decks": [
+        "Giant",
+        "GY IWiz BBD Nado"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.25,
+      "cards": [
+        "Wallbreakers",
+        "Pekka",
+        "MagicArcher",
+        "GoblinBarrel",
+        "RoyalGhost",
+        "IceSpirit",
+        "GoblinGang",
+        "Bandit"
+      ],
+      "family_id": "family-005",
+      "kind_counts": {
+        "building": 0,
+        "spell": 1,
+        "troop": 7
+      },
+      "name": "Procedural train 005-0",
+      "parent_decks": [
+        "WB Valk Log Bait 2.8",
+        "Pekka Bandit EWiz Poison"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.375,
+      "cards": [
+        "DartGoblin",
+        "Princess",
+        "BattleRam",
+        "Cannon",
+        "Poison",
+        "Valkyrie",
+        "Zap",
+        "ElectroWizard"
+      ],
+      "family_id": "family-005",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural train 005-1",
+      "parent_decks": [
+        "WB Valk Log Bait 2.8",
+        "Pekka Bandit EWiz Poison"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 2.875,
+      "cards": [
+        "Bandit",
+        "RoyalGhost",
+        "GoblinBarrel",
+        "IceSpirit",
+        "DartGoblin",
+        "Zap",
+        "BattleRam",
+        "Valkyrie"
+      ],
+      "family_id": "family-005",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural train 005-2",
+      "parent_decks": [
+        "WB Valk Log Bait 2.8",
+        "Pekka Bandit EWiz Poison"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 2.75,
+      "cards": [
+        "Poison",
+        "Zap",
+        "DartGoblin",
+        "Wallbreakers",
+        "Bandit",
+        "Cannon",
+        "IceSpirit",
+        "BattleRam"
+      ],
+      "family_id": "family-005",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural train 005-3",
+      "parent_decks": [
+        "WB Valk Log Bait 2.8",
+        "Pekka Bandit EWiz Poison"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 4.0,
+      "cards": [
+        "LavaHound",
+        "Balloon",
+        "Minions",
+        "Tornado",
+        "Arrows",
+        "InfernoDragon",
+        "Lumberjack",
+        "Miner"
+      ],
+      "family_id": "family-006",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural train 006-0",
+      "parent_decks": [
+        "LumberLoon Double Dragon Bowler Freeze",
+        "LavaLoon Miner"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.625,
+      "cards": [
+        "Miner",
+        "BarbarianBarrel",
+        "Tombstone",
+        "Fireball",
+        "Bowler",
+        "MegaMinion",
+        "Freeze",
+        "ElectroDragon"
+      ],
+      "family_id": "family-006",
+      "kind_counts": {
+        "building": 1,
+        "spell": 3,
+        "troop": 4
+      },
+      "name": "Procedural train 006-1",
+      "parent_decks": [
+        "LumberLoon Double Dragon Bowler Freeze",
+        "LavaLoon Miner"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 4.5,
+      "cards": [
+        "InfernoDragon",
+        "Minions",
+        "ElectroDragon",
+        "Fireball",
+        "LavaHound",
+        "Bowler",
+        "Miner",
+        "Balloon"
+      ],
+      "family_id": "family-006",
+      "kind_counts": {
+        "building": 0,
+        "spell": 1,
+        "troop": 7
+      },
+      "name": "Procedural train 006-2",
+      "parent_decks": [
+        "LumberLoon Double Dragon Bowler Freeze",
+        "LavaLoon Miner"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 4.125,
+      "cards": [
+        "Tombstone",
+        "Balloon",
+        "Tornado",
+        "LavaHound",
+        "MegaMinion",
+        "Bowler",
+        "Miner",
+        "Lumberjack"
+      ],
+      "family_id": "family-006",
+      "kind_counts": {
+        "building": 1,
+        "spell": 1,
+        "troop": 6
+      },
+      "name": "Procedural train 006-3",
+      "parent_decks": [
+        "LumberLoon Double Dragon Bowler Freeze",
+        "LavaLoon Miner"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.875,
+      "cards": [
+        "Zap",
+        "Fireball",
+        "NightWitch",
+        "BabyDragon",
+        "Tornado",
+        "Minions",
+        "Miner",
+        "Golem"
+      ],
+      "family_id": "family-007",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural train 007-0",
+      "parent_decks": [
+        "Giant Double Prince",
+        "Golem Night Witch Beatdown"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.5,
+      "cards": [
+        "Prince",
+        "DarkPrince",
+        "Lumberjack",
+        "Bomber",
+        "MegaMinion",
+        "BarbarianBarrel",
+        "Tornado",
+        "Giant"
+      ],
+      "family_id": "family-007",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural train 007-1",
+      "parent_decks": [
+        "Giant Double Prince",
+        "Golem Night Witch Beatdown"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 4.0,
+      "cards": [
+        "Fireball",
+        "Tornado",
+        "Golem",
+        "BabyDragon",
+        "Zap",
+        "Minions",
+        "MegaMinion",
+        "Giant"
+      ],
+      "family_id": "family-007",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural train 007-2",
+      "parent_decks": [
+        "Giant Double Prince",
+        "Golem Night Witch Beatdown"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 3.375,
+      "cards": [
+        "Giant",
+        "Lumberjack",
+        "Tornado",
+        "Zap",
+        "Minions",
+        "Fireball",
+        "DarkPrince",
+        "Bomber"
+      ],
+      "family_id": "family-007",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural train 007-3",
+      "parent_decks": [
+        "Giant Double Prince",
+        "Golem Night Witch Beatdown"
+      ],
+      "split": "train"
+    },
+    {
+      "average_elixir": 4.0,
+      "cards": [
+        "Archers",
+        "GoblinGang",
+        "GoblinBarrel",
+        "Rocket",
+        "Tesla",
+        "Princess",
+        "Xbow",
+        "Fireball"
+      ],
+      "family_id": "family-008",
+      "kind_counts": {
+        "building": 2,
+        "spell": 3,
+        "troop": 3
+      },
+      "name": "Procedural holdout 008-0",
+      "parent_decks": [
+        "Log Bait",
+        "X-Bow 3.0 Cycle (ISpirit)"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.0,
+      "cards": [
+        "Skeletons",
+        "Log",
+        "IceSpirit",
+        "GoblinGang",
+        "Archers",
+        "InfernoTower",
+        "Xbow",
+        "Knight"
+      ],
+      "family_id": "family-008",
+      "kind_counts": {
+        "building": 2,
+        "spell": 1,
+        "troop": 5
+      },
+      "name": "Procedural holdout 008-1",
+      "parent_decks": [
+        "Log Bait",
+        "X-Bow 3.0 Cycle (ISpirit)"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.125,
+      "cards": [
+        "Fireball",
+        "GoblinBarrel",
+        "Tesla",
+        "Skeletons",
+        "GoblinGang",
+        "IceSpirit",
+        "Xbow",
+        "Knight"
+      ],
+      "family_id": "family-008",
+      "kind_counts": {
+        "building": 2,
+        "spell": 2,
+        "troop": 4
+      },
+      "name": "Procedural holdout 008-2",
+      "parent_decks": [
+        "Log Bait",
+        "X-Bow 3.0 Cycle (ISpirit)"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.0,
+      "cards": [
+        "Tesla",
+        "IceSpirit",
+        "GoblinBarrel",
+        "Skeletons",
+        "Xbow",
+        "Fireball",
+        "Log",
+        "Knight"
+      ],
+      "family_id": "family-008",
+      "kind_counts": {
+        "building": 2,
+        "spell": 3,
+        "troop": 3
+      },
+      "name": "Procedural holdout 008-3",
+      "parent_decks": [
+        "Log Bait",
+        "X-Bow 3.0 Cycle (ISpirit)"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 2.625,
+      "cards": [
+        "Valkyrie",
+        "IceSpirit",
+        "Knight",
+        "Log",
+        "HogRider",
+        "Skeletons",
+        "Princess",
+        "GoblinBarrel"
+      ],
+      "family_id": "family-009",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural development 009-0",
+      "parent_decks": [
+        "Log Bait (Tesla)",
+        "Hog Valk FC 2.8 Cycle"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.375,
+      "cards": [
+        "Princess",
+        "HogRider",
+        "Rocket",
+        "Skeletons",
+        "Earthquake",
+        "Tesla",
+        "Firecracker",
+        "GoblinGang"
+      ],
+      "family_id": "family-009",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural development 009-1",
+      "parent_decks": [
+        "Log Bait (Tesla)",
+        "Hog Valk FC 2.8 Cycle"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 2.5,
+      "cards": [
+        "Knight",
+        "GoblinGang",
+        "Skeletons",
+        "GoblinBarrel",
+        "HogRider",
+        "Log",
+        "IceSpirit",
+        "Earthquake"
+      ],
+      "family_id": "family-009",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural development 009-2",
+      "parent_decks": [
+        "Log Bait (Tesla)",
+        "Hog Valk FC 2.8 Cycle"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.5,
+      "cards": [
+        "Firecracker",
+        "Valkyrie",
+        "Rocket",
+        "Tesla",
+        "HogRider",
+        "IceSpirit",
+        "GoblinBarrel",
+        "Knight"
+      ],
+      "family_id": "family-009",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural development 009-3",
+      "parent_decks": [
+        "Log Bait (Tesla)",
+        "Hog Valk FC 2.8 Cycle"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.125,
+      "cards": [
+        "InfernoTower",
+        "GoblinBarrel",
+        "IceSpirit",
+        "Zap",
+        "MagicArcher",
+        "RoyalGhost",
+        "DartGoblin",
+        "BattleRam"
+      ],
+      "family_id": "family-010",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural development 010-0",
+      "parent_decks": [
+        "Log Bait 2.9 Cycle",
+        "Pekka Bandit EWiz Bridge Spam"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.625,
+      "cards": [
+        "Pekka",
+        "Log",
+        "Knight",
+        "BattleRam",
+        "GoblinGang",
+        "Princess",
+        "Fireball",
+        "Bandit"
+      ],
+      "family_id": "family-010",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural development 010-1",
+      "parent_decks": [
+        "Log Bait 2.9 Cycle",
+        "Pekka Bandit EWiz Bridge Spam"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.25,
+      "cards": [
+        "Fireball",
+        "DartGoblin",
+        "Bandit",
+        "BattleRam",
+        "Log",
+        "ElectroWizard",
+        "Knight",
+        "GoblinBarrel"
+      ],
+      "family_id": "family-010",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural development 010-2",
+      "parent_decks": [
+        "Log Bait 2.9 Cycle",
+        "Pekka Bandit EWiz Bridge Spam"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.25,
+      "cards": [
+        "BattleRam",
+        "MagicArcher",
+        "Knight",
+        "IceSpirit",
+        "Zap",
+        "GoblinGang",
+        "InfernoTower",
+        "Fireball"
+      ],
+      "family_id": "family-010",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural development 010-3",
+      "parent_decks": [
+        "Log Bait 2.9 Cycle",
+        "Pekka Bandit EWiz Bridge Spam"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 2.75,
+      "cards": [
+        "Knight",
+        "GoblinBarrel",
+        "HogRider",
+        "Princess",
+        "IceSpirit",
+        "Cannon",
+        "GoblinGang",
+        "Log"
+      ],
+      "family_id": "family-011",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural holdout 011-0",
+      "parent_decks": [
+        "Hog 2.8 Cycle",
+        "Log Bait 3.0 Cycle"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.125,
+      "cards": [
+        "Cannon",
+        "Princess",
+        "IceSpirit",
+        "HogRider",
+        "Musketeer",
+        "Skeletons",
+        "Fireball",
+        "InfernoTower"
+      ],
+      "family_id": "family-011",
+      "kind_counts": {
+        "building": 2,
+        "spell": 1,
+        "troop": 5
+      },
+      "name": "Procedural holdout 011-1",
+      "parent_decks": [
+        "Hog 2.8 Cycle",
+        "Log Bait 3.0 Cycle"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.125,
+      "cards": [
+        "Fireball",
+        "GoblinBarrel",
+        "Skeletons",
+        "Knight",
+        "Cannon",
+        "HogRider",
+        "Musketeer",
+        "Princess"
+      ],
+      "family_id": "family-011",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural holdout 011-2",
+      "parent_decks": [
+        "Hog 2.8 Cycle",
+        "Log Bait 3.0 Cycle"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.25,
+      "cards": [
+        "Fireball",
+        "IceSpirit",
+        "GoblinBarrel",
+        "Log",
+        "Knight",
+        "Musketeer",
+        "HogRider",
+        "InfernoTower"
+      ],
+      "family_id": "family-011",
+      "kind_counts": {
+        "building": 1,
+        "spell": 3,
+        "troop": 4
+      },
+      "name": "Procedural holdout 011-3",
+      "parent_decks": [
+        "Hog 2.8 Cycle",
+        "Log Bait 3.0 Cycle"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 2.75,
+      "cards": [
+        "BombTower",
+        "Princess",
+        "GoblinBarrel",
+        "Log",
+        "Cannon",
+        "Tornado",
+        "SpearGoblins",
+        "Wallbreakers"
+      ],
+      "family_id": "family-012",
+      "kind_counts": {
+        "building": 2,
+        "spell": 3,
+        "troop": 3
+      },
+      "name": "Procedural holdout 012-0",
+      "parent_decks": [
+        "WB Miner MA Nado",
+        "Log Bait 2.6 Cycle"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 2.75,
+      "cards": [
+        "Knight",
+        "IceSpirit",
+        "Tornado",
+        "Log",
+        "Miner",
+        "MagicArcher",
+        "DartGoblin",
+        "GoblinGang"
+      ],
+      "family_id": "family-012",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural holdout 012-1",
+      "parent_decks": [
+        "WB Miner MA Nado",
+        "Log Bait 2.6 Cycle"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.0,
+      "cards": [
+        "Princess",
+        "Cannon",
+        "GoblinGang",
+        "Knight",
+        "Wallbreakers",
+        "Tornado",
+        "DartGoblin",
+        "BombTower"
+      ],
+      "family_id": "family-012",
+      "kind_counts": {
+        "building": 2,
+        "spell": 1,
+        "troop": 5
+      },
+      "name": "Procedural holdout 012-2",
+      "parent_decks": [
+        "WB Miner MA Nado",
+        "Log Bait 2.6 Cycle"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 2.75,
+      "cards": [
+        "SpearGoblins",
+        "Knight",
+        "Princess",
+        "Cannon",
+        "GoblinGang",
+        "Tornado",
+        "GoblinBarrel",
+        "Wallbreakers"
+      ],
+      "family_id": "family-012",
+      "kind_counts": {
+        "building": 1,
+        "spell": 2,
+        "troop": 5
+      },
+      "name": "Procedural holdout 012-3",
+      "parent_decks": [
+        "WB Miner MA Nado",
+        "Log Bait 2.6 Cycle"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.125,
+      "cards": [
+        "Rocket",
+        "Xbow",
+        "Princess",
+        "Log",
+        "GoblinGang",
+        "Cannon",
+        "IceSpirit",
+        "Skeletons"
+      ],
+      "family_id": "family-013",
+      "kind_counts": {
+        "building": 2,
+        "spell": 2,
+        "troop": 4
+      },
+      "name": "Procedural development 013-0",
+      "parent_decks": [
+        "Log Bait 3.0 (Rocket)",
+        "X-Bow IWiz Nado"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.875,
+      "cards": [
+        "GoblinBarrel",
+        "Tornado",
+        "IceWizard",
+        "Knight",
+        "Rocket",
+        "Xbow",
+        "Tesla",
+        "GoblinGang"
+      ],
+      "family_id": "family-013",
+      "kind_counts": {
+        "building": 2,
+        "spell": 3,
+        "troop": 3
+      },
+      "name": "Procedural development 013-1",
+      "parent_decks": [
+        "Log Bait 3.0 (Rocket)",
+        "X-Bow IWiz Nado"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.25,
+      "cards": [
+        "GoblinBarrel",
+        "GoblinGang",
+        "IceSpirit",
+        "IceWizard",
+        "Xbow",
+        "Princess",
+        "Tesla",
+        "Tornado"
+      ],
+      "family_id": "family-013",
+      "kind_counts": {
+        "building": 2,
+        "spell": 2,
+        "troop": 4
+      },
+      "name": "Procedural development 013-2",
+      "parent_decks": [
+        "Log Bait 3.0 (Rocket)",
+        "X-Bow IWiz Nado"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.375,
+      "cards": [
+        "Tesla",
+        "IceSpirit",
+        "Skeletons",
+        "Xbow",
+        "Rocket",
+        "Knight",
+        "Princess",
+        "GoblinBarrel"
+      ],
+      "family_id": "family-013",
+      "kind_counts": {
+        "building": 2,
+        "spell": 2,
+        "troop": 4
+      },
+      "name": "Procedural development 013-3",
+      "parent_decks": [
+        "Log Bait 3.0 (Rocket)",
+        "X-Bow IWiz Nado"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 2.625,
+      "cards": [
+        "Fireball",
+        "Musketeer",
+        "Skeletons",
+        "BarbarianBarrel",
+        "HogRider",
+        "IceSpirit",
+        "Cannon",
+        "Zap"
+      ],
+      "family_id": "family-014",
+      "kind_counts": {
+        "building": 1,
+        "spell": 3,
+        "troop": 4
+      },
+      "name": "Procedural development 014-0",
+      "parent_decks": [
+        "Hog 2.6 (Zap)",
+        "Hog 2.6 (Barbarian Barrel)"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 2.5,
+      "cards": [
+        "Fireball",
+        "BarbarianBarrel",
+        "IceGolem",
+        "IceSpirit",
+        "Musketeer",
+        "Skeletons",
+        "HogRider",
+        "Zap"
+      ],
+      "family_id": "family-014",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural development 014-1",
+      "parent_decks": [
+        "Hog 2.6 (Zap)",
+        "Hog 2.6 (Barbarian Barrel)"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 2.75,
+      "cards": [
+        "Fireball",
+        "IceGolem",
+        "Musketeer",
+        "HogRider",
+        "BarbarianBarrel",
+        "IceSpirit",
+        "Zap",
+        "Cannon"
+      ],
+      "family_id": "family-014",
+      "kind_counts": {
+        "building": 1,
+        "spell": 3,
+        "troop": 4
+      },
+      "name": "Procedural development 014-2",
+      "parent_decks": [
+        "Hog 2.6 (Zap)",
+        "Hog 2.6 (Barbarian Barrel)"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 2.75,
+      "cards": [
+        "BarbarianBarrel",
+        "Fireball",
+        "Cannon",
+        "Skeletons",
+        "Musketeer",
+        "HogRider",
+        "IceGolem",
+        "Zap"
+      ],
+      "family_id": "family-014",
+      "kind_counts": {
+        "building": 1,
+        "spell": 3,
+        "troop": 4
+      },
+      "name": "Procedural development 014-3",
+      "parent_decks": [
+        "Hog 2.6 (Zap)",
+        "Hog 2.6 (Barbarian Barrel)"
+      ],
+      "split": "development"
+    },
+    {
+      "average_elixir": 3.375,
+      "cards": [
+        "Tornado",
+        "Fireball",
+        "Musketeer",
+        "Arrows",
+        "HogRider",
+        "IceSpirit",
+        "IceWizard",
+        "ElectroDragon"
+      ],
+      "family_id": "family-015",
+      "kind_counts": {
+        "building": 0,
+        "spell": 3,
+        "troop": 5
+      },
+      "name": "Procedural holdout 015-0",
+      "parent_decks": [
+        "Pekka Loon IWiz EDrag",
+        "Golem Hog Fireball 3.4"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.75,
+      "cards": [
+        "Golem",
+        "Cannon",
+        "Balloon",
+        "Skeletons",
+        "Pekka",
+        "Log",
+        "IceSpirit",
+        "IceWizard"
+      ],
+      "family_id": "family-015",
+      "kind_counts": {
+        "building": 1,
+        "spell": 1,
+        "troop": 6
+      },
+      "name": "Procedural holdout 015-1",
+      "parent_decks": [
+        "Pekka Loon IWiz EDrag",
+        "Golem Hog Fireball 3.4"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 4.0,
+      "cards": [
+        "Golem",
+        "IceWizard",
+        "IceSpirit",
+        "Pekka",
+        "Arrows",
+        "Skeletons",
+        "Fireball",
+        "Balloon"
+      ],
+      "family_id": "family-015",
+      "kind_counts": {
+        "building": 0,
+        "spell": 2,
+        "troop": 6
+      },
+      "name": "Procedural holdout 015-2",
+      "parent_decks": [
+        "Pekka Loon IWiz EDrag",
+        "Golem Hog Fireball 3.4"
+      ],
+      "split": "holdout"
+    },
+    {
+      "average_elixir": 3.75,
+      "cards": [
+        "Musketeer",
+        "HogRider",
+        "Fireball",
+        "Cannon",
+        "ElectroDragon",
+        "Log",
+        "Balloon",
+        "Arrows"
+      ],
+      "family_id": "family-015",
+      "kind_counts": {
+        "building": 1,
+        "spell": 3,
+        "troop": 4
+      },
+      "name": "Procedural holdout 015-3",
+      "parent_decks": [
+        "Pekka Loon IWiz EDrag",
+        "Golem Hog Fireball 3.4"
+      ],
+      "split": "holdout"
+    }
+  ],
+  "generation_contract": {
+    "cards_per_parent": 4,
+    "constraints": {
+      "anti_air_card_required": true,
+      "average_elixir": [
+        2.5,
+        4.75
+      ],
+      "exact_existing_decks_forbidden": true,
+      "maximum_buildings": 2,
+      "minimum_troops": 3,
+      "pressure_card": "serialized anti-building, underground, or range>=8 building",
+      "spells": [
+        1,
+        3
+      ]
+    },
+    "each_parent_used_once": true,
+    "family_variants_cover_all_parent_cards": true,
+    "parents_per_family": 2,
+    "training_parents_cover_all_eligible_cards": true,
+    "variants_per_family": 4,
+    "whole_family_single_split": true
+  },
+  "learner_deck_name": "Hog 2.6 Cycle",
+  "reserved_decks": [
+    "RHogs AQ 2.9 Cycle"
+  ],
+  "schema": "clasher.hog26.procedural-deck-families.v1",
+  "seed": 1278401,
+  "source": {
+    "path": "training_decks/simple_gym_supported_v1.json",
+    "sha256": "c93de9989841743b535fe5fde182abe19e1983c8f67a0a27d0c191ea9ccd212f"
+  }
+}

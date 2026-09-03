@@ -424,3 +424,28 @@ The next bottleneck is deck-distribution coverage: expand training and
 development with procedurally generated, support-validated decks, retain the
 opened holdout only as development evidence, and reserve newly generated deck
 families plus `RHogs AQ 2.9 Cycle` for a new final holdout.
+
+### Procedural deck-family redesign
+
+The first naive random family draw was rejected before collection because its
+64 generated opponents covered only 47 of the 66 supported public cards. The
+replacement generator uses every eligible source deck exactly once across 16
+two-parent families. Each family contains four independently valid 4+4 card
+crosses whose union covers every card in both parents. Whole families, rather
+than individual decks, are assigned to train, development, or holdout.
+
+The frozen `seed=1278401` artifact contains the fixed Hog 2.6 learner plus 64
+generated opponents: 32 train decks from eight families, 16 development decks
+from four families, and 16 sealed holdout decks from four families. The train
+families cover all 63 cards available outside the separately sealed
+`RHogs AQ 2.9 Cycle`; that deck uniquely supplies Archer Queen, Royal Delivery,
+and Royal Hogs. All 65 rows compile under the exact simple-Gym support profile,
+with 63 supported public roots and zero rejected decks. The candidate manifest
+SHA-256 is `9359ace9b8cd7f7c95be65d150c44492d159d768b4384629b294ec64488f9b13`;
+the compiled supported artifact SHA-256 is
+`6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8`.
+
+No outcomes from the new development or holdout families have been opened.
+The next step is complete-game collection for the procedural training families,
+followed by candidate selection on procedural development families. The final
+holdout remains sealed until a single candidate and thresholds are frozen.

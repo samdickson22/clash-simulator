@@ -66,8 +66,9 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
     requested_decks = tuple(
         value.strip() for value in args.opponent_decks.split(",") if value.strip()
     )
+    supported_decks_path = Path(args.supported_decks_path)
+    artifact = load_simple_supported_decks(supported_decks_path)
     if requested_decks:
-        artifact = load_simple_supported_decks(DEFAULT_SIMPLE_SUPPORTED_DECKS)
         if any(deck not in artifact.deck_names for deck in requested_decks):
             raise ValueError("crossed outcome collection contains an unknown deck")
         if "Hog 2.6 Cycle" in requested_decks:
@@ -87,7 +88,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         device=device,
         decision_interval=8,
         gamma=0.995,
-        supported_decks_path=DEFAULT_SIMPLE_SUPPORTED_DECKS,
+        supported_decks_path=supported_decks_path,
         typed_vocabulary_path=DEFAULT_SIMPLE_TOKEN_VOCABULARY,
         mirror_match=False,
         opponent_mode="league",
@@ -157,6 +158,9 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         "seed": args.seed,
         "checkpoint": str(args.checkpoint.resolve()),
         "checkpoint_sha256": file_sha256(args.checkpoint),
+        "supported_decks_path": str(supported_decks_path.resolve()),
+        "supported_decks_sha256": artifact.sha256,
+        "supported_deck_profile_sha256": artifact.support_profile_sha256,
         "token_names": list(token_names),
         "opponents": list(opponents),
         "row_opponents": list(row_opponents),
@@ -222,6 +226,11 @@ def main() -> None:
     parser.add_argument("--episodes-per-seat", type=int, default=1)
     parser.add_argument("--chunk-steps", type=int, default=64)
     parser.add_argument("--device", choices=("cpu", "mps", "cuda"), default="mps")
+    parser.add_argument(
+        "--supported-decks-path",
+        type=Path,
+        default=DEFAULT_SIMPLE_SUPPORTED_DECKS,
+    )
     parser.add_argument(
         "--opponents",
         default=(
