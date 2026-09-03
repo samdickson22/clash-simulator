@@ -347,3 +347,39 @@ The aggregate additionally requires at least two independent roots in each
 phase and at least three roots from each learner seat; merely touching every
 phase and seat once is insufficient. At least three opponent strategies and
 two roots per included strategy are required as well.
+
+## Untouched holdout result
+
+The predeclared natural holdout completed 72/72 games (35,511 rows) across four
+previously unused decks, three held-out styles, both seats, and three episodes
+per stream. Outcomes were exactly balanced at 36 wins and 36 losses. The fresh
+draw holdout added eight physical symmetric games, 16 actor views, 6,208 rows,
+and 16/16 exact draws. The combined independent audit passed complete streams,
+contiguous ordinals, terminal-label reconstruction, finite targets, unique
+seeds/hashes, critic absence, and 36/33/12 natural matchup clusters in
+early/middle/late. Natural corpus SHA-256 is
+`48bd09fd472267325e90893d20f535c8fb66e41b504e1b5f83e128ea52b131e4`;
+draw corpus SHA-256 is
+`2b4f55133ae6b84e91bbca0c08cc811cf704257e07f7b7e592e5f94c25b7fe57`.
+
+The primary frozen tensor state reproduced its exact precommitted digest and
+was rejected on holdout without any threshold change. Outcome ranking remained
+useful: early/middle/late decisive AUC was 0.6667/0.7667/0.8750. The clustered
+lower 95% bounds were 0.4830/0.5776/0.6997, so early confidence narrowly missed
+the 0.50 floor. Phase-balanced NLL was 0.8032 versus prior NLL 1.2943, ECE was
+0.1182, natural decisive AUC was 0.7280, and draw AUC was 0.9537; those gates
+passed.
+
+Terminal-margin generalization failed materially. Phase-balanced MAE
+improvement was -0.00630 overall: +0.00085 early, -0.00412 middle, and -0.03995
+late. The learned residual therefore becomes actively harmful as the public
+current tower margin approaches terminal authority. This candidate is not an
+accepted value function, replication seeds are not run, and counterfactual
+search remains prohibited.
+
+This opened holdout is now diagnostic/development evidence and can never again
+serve as final proof. The next candidate must add causal actor-visible temporal
+memory or an equivalent model-owned public-history state, and its margin path
+must make residual uncertainty vanish near terminal state. It must be selected
+without the remaining unseen `RHogs AQ 2.9 Cycle` opponent or newly generated
+held-out decks; those are reserved for a fresh final holdout.
