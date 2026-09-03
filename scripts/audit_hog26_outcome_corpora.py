@@ -38,7 +38,14 @@ def _reached_phases(progress: np.ndarray) -> tuple[str, ...]:
     )
 
 
-def audit(paths: list[Path]) -> dict[str, Any]:
+def audit(
+    paths: list[Path],
+    *,
+    expected_decks: set[str] | None = None,
+    expected_opponents: set[str] | None = None,
+    expected_supported_decks_sha256: str | None = None,
+    expected_split: str | None = None,
+) -> dict[str, Any]:
     if not paths:
         raise ValueError("at least one outcome corpus is required")
     hashes = [file_sha256(path) for path in paths]
@@ -61,6 +68,16 @@ def audit(paths: list[Path]) -> dict[str, Any]:
     for path, digest in zip(paths, hashes, strict=True):
         metadata, corpus = load_direct_simple_behavior_corpus(path)
         validate_outcome_corpus(metadata, corpus)
+        if (
+            expected_supported_decks_sha256 is not None
+            and metadata.get("supported_decks_sha256")
+            != expected_supported_decks_sha256
+        ):
+            raise ValueError("outcome corpus supported-deck authority mismatch")
+        if expected_split is not None and metadata.get("opponent_deck_split") != (
+            expected_split
+        ):
+            raise ValueError("outcome corpus deck split mismatch")
         seed = int(metadata["seed"])
         if seed in seeds:
             raise ValueError("outcome corpora reuse a collection seed")
@@ -152,10 +169,16 @@ def audit(paths: list[Path]) -> dict[str, Any]:
                 "outcomes": _counts(outcomes),
                 "margin_minimum": float(margins.min()),
                 "margin_maximum": float(margins.max()),
+                "supported_decks_sha256": metadata.get("supported_decks_sha256"),
+                "opponent_deck_split": metadata.get("opponent_deck_split"),
             }
         )
 
     combined_outcomes = np.concatenate(episode_outcomes)
+    if expected_decks is not None and natural_decks != expected_decks:
+        raise ValueError("outcome corpus does not exactly cover expected decks")
+    if expected_opponents is not None and natural_styles != expected_opponents:
+        raise ValueError("outcome corpus does not exactly cover expected opponents")
     return {
         "schema": "clasher.hog26.outcome-corpus-audit.v1",
         "status": "passed",
@@ -207,6 +230,23 @@ def audit(paths: list[Path]) -> dict[str, Any]:
             "exact_actor_relative_terminal_labels": True,
             "finite_outcomes_and_margins": True,
             "critic_inputs_absent": True,
+            "expected_decks_exact": expected_decks is None
+            or natural_decks == expected_decks,
+            "expected_opponents_exact": expected_opponents is None
+            or natural_styles == expected_opponents,
+            "supported_deck_authority_exact": (
+                expected_supported_decks_sha256 is None
+                or all(
+                    report.get("supported_decks_sha256")
+                    == expected_supported_decks_sha256
+                    for report in corpus_reports
+                )
+            ),
+            "expected_split_exact": expected_split is None
+            or all(
+                report.get("opponent_deck_split") == expected_split
+                for report in corpus_reports
+            ),
         },
     }
 
@@ -215,10 +255,38 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--corpus", type=Path, action="append", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--supported-decks-path", type=Path)
+    parser.add_argument("--expected-deck-split")
+    parser.add_argument("--expected-opponent", action="append", default=[])
     args = parser.parse_args()
     if args.output.exists():
         raise SystemExit("refusing to overwrite outcome corpus audit")
-    report = audit(args.corpus)
+    expected_decks: set[str] | None = None
+    expected_supported_decks_sha256: str | None = None
+    if args.supported_decks_path is not None:
+        if args.expected_deck_split is None:
+            raise SystemExit("--supported-decks-path requires --expected-deck-split")
+        payload = json.loads(args.supported_decks_path.read_text())
+        rows = payload.get("decks")
+        if not isinstance(rows, list):
+            raise SystemExit("supported-deck artifact has no deck rows")
+        expected_decks = {
+            str(row["name"])
+            for row in rows
+            if isinstance(row, dict)
+            and row.get("split") == args.expected_deck_split
+            and isinstance(row.get("name"), str)
+        }
+        if not expected_decks:
+            raise SystemExit("supported-deck artifact has no expected split rows")
+        expected_supported_decks_sha256 = file_sha256(args.supported_decks_path)
+    report = audit(
+        args.corpus,
+        expected_decks=expected_decks,
+        expected_opponents=set(args.expected_opponent) or None,
+        expected_supported_decks_sha256=expected_supported_decks_sha256,
+        expected_split=args.expected_deck_split,
+    )
     _atomic_json(args.output, report)
     print(json.dumps(report, indent=2, sort_keys=True))
 
