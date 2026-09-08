@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import sys
+
 import numpy as np
 import pytest
 import torch
@@ -23,6 +25,33 @@ from scripts.train_hog26_actor_outcome import (
     phase_balanced_matchup_clusters,
     phase_balanced_row_indices,
 )
+
+
+def test_protocol_holdout_is_rejected_before_loading_model_or_corpora(
+    tmp_path, monkeypatch
+) -> None:
+    from scripts import train_hog26_actor_outcome as trainer
+
+    protocol = tmp_path / "protocol.json"
+    protocol.write_text("{}")
+    arguments = ["trainer", "--generalization-protocol", str(protocol)]
+    for option in (
+        "base-checkpoint", "train-corpus", "validation-corpus", "holdout-corpus",
+        "output-checkpoint", "report",
+    ):
+        arguments.extend([f"--{option}", str(tmp_path / option)])
+    arguments.extend(["--seed", "1", "--device", "cpu"])
+    monkeypatch.setattr(sys, "argv", arguments)
+
+    def forbidden_load(*args, **kwargs):
+        pytest.fail("protocol holdout guard ran after data/model loading")
+
+    monkeypatch.setattr(trainer, "load_model", forbidden_load)
+    monkeypatch.setattr(trainer, "load_direct_simple_behavior_corpus", forbidden_load)
+    with pytest.raises(ValueError, match="must load frozen outcome heads"):
+        trainer.main()
+    assert not (tmp_path / "output-checkpoint").exists()
+    assert not (tmp_path / "report").exists()
 
 
 def test_auc_and_ece_are_exact_on_separated_predictions() -> None:

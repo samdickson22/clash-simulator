@@ -1101,6 +1101,11 @@ def main() -> None:
         if args.generalization_protocol is not None
         else None
     )
+    if args.generalization_protocol is not None and args.holdout_corpus:
+        raise ValueError(
+            "protocol-bound final evaluation must load frozen outcome heads; "
+            "the training command cannot open holdout corpora"
+        )
     if args.output_checkpoint.exists() or args.report.exists():
         raise SystemExit("refusing to overwrite actor-outcome artifacts")
     if min(args.epochs, args.batch_size, args.sequence_steps, args.hidden_size) < 1:
@@ -2051,6 +2056,7 @@ def main() -> None:
         "margin_epoch_selection": "maximum-mae-improvement-among-all-phase-gate-passes-v1",
         "epochs": args.epochs,
         "batch_size": args.batch_size,
+        "sequence_steps": args.sequence_steps,
         "learning_rate": args.learning_rate,
         "margin_coefficient": args.margin_coefficient,
         "outcome_training_weighting": (
