@@ -102,6 +102,13 @@
     "controlled_draw_scope": "Eight physical paired-view controls measure symmetry recognition only; natural draw calibration remains a natural-game result with uncertainty reported.",
     "declared_before_new_development_or_final_labels": true,
     "development_scope": "Apply the same natural slice rules to development_selection opponents. Inadequate development evidence rejects the candidate before final collection.",
+    "full_phase_classification_gate": {
+      "combination": "Required in addition to all existing representative-point and full-phase margin gates.",
+      "declared_before_new_development_or_final_labels": true,
+      "reported": "Weighted NLL, Brier score, top-label and classwise ECE, decisive AUC, predicted and empirical class mass. Report zero observed natural draw mass without interpreting controlled draws as natural calibration data.",
+      "required": "Every natural generated phase independently meets the existing maximum ECE, minimum natural phase decisive AUC, and maximum natural draw probability. Require both top-label and each-class ECE under the same maximum.",
+      "weighting": "Same equal-game-within-phase-v1 state weights as the full-phase margin gate."
+    },
     "full_phase_margin_gate": {
       "combination": "Required in addition to every existing representative-point public slice; no existing gate removed or relaxed.",
       "declared_before_new_development_or_final_labels": true,

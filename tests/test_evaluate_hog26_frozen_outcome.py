@@ -205,6 +205,36 @@ def test_full_phase_weights_do_not_overweight_games_with_more_recorded_rows():
         assert b["mae"] == pytest.approx(a["mae"])
         assert b["independent_clusters"] == a["independent_clusters"]
         assert b["improvement_interval"]["point"] == pytest.approx(a["improvement_interval"]["point"])
+        assert b["classification"]["nll"] == pytest.approx(a["classification"]["nll"])
+        assert b["classification"]["ece_10"] == pytest.approx(a["classification"]["ece_10"])
+
+
+def test_full_phase_classifier_cannot_hide_bad_probabilities_between_landmarks():
+    from dataclasses import replace
+
+    protocol, loaded, _ = fixture()
+    protocol["generalization_evaluation"].pop("full_phase_classification_gate", None)
+    expanded = []
+    for metadata, corpus in loaded:
+        arrays = {key: np.repeat(value, 2, axis=0) for key, value in corpus.arrays.items()}
+        arrays["global_features"][:, 0] = np.tile([0.05, 0.15, 0.35, 0.5, 0.7, 0.85], corpus.episode_count)
+        arrays["global_features"][::2, 2] = 1
+        expanded.append((metadata, replace(corpus, arrays=arrays, episode_offsets=corpus.episode_offsets * 2)))
+    features = torch.tensor(np.concatenate([c.arrays["global_features"] for _, c in expanded]))
+    class BadProbabilities(SyntheticHead):
+        def forward(self, features):
+            result = super().forward(features)
+            logits = result.outcome_logits.clone()
+            bad = features[:, 2] == 1
+            logits[bad] = logits[bad].flip(-1)
+            return SimpleNamespace(outcome_logits=logits, terminal_tower_margin=result.terminal_tower_margin)
+    assert evaluate(protocol, expanded, features, BadProbabilities())["passed"]
+    protocol["generalization_evaluation"]["full_phase_classification_gate"] = True
+    result = evaluate(protocol, expanded, features, BadProbabilities())
+    assert not result["passed"]
+    full = result["public_slices"]["full_phase_margins"]
+    assert all(not phase["classification_passed"] for phase in full["phases"].values())
+    assert all(phase["improvement_interval"]["point"] > 0.1 for phase in full["phases"].values())
 
 
 def test_invalid_cohort_stops_before_final_corpus_loader(tmp_path, monkeypatch):

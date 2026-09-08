@@ -9,6 +9,25 @@ import pytest
 from scripts.hog26_public_slice_gates import clustered_mean_interval, evaluate_slices
 
 
+def test_weighted_auc_counts_ties_as_half_and_respects_game_weights():
+    from scripts.hog26_public_slice_gates import weighted_binary_auc
+
+    assert weighted_binary_auc([False, True, False, True],
+                               [0.1, 0.2, 0.2, 0.8], [1, 2, 3, 1]) == pytest.approx(0.75)
+    assert weighted_binary_auc([True, True], [0.2, 0.3], [1, 2]) is None
+
+
+def test_weighted_outcome_calibration_matches_hand_calculation():
+    from scripts.hog26_public_slice_gates import weighted_outcome_metrics
+
+    result = weighted_outcome_metrics([[0.8, 0.1, 0.1], [0.1, 0.1, 0.8]], [-1, 1], [1, 3])
+    assert result["nll"] == pytest.approx(-np.log(0.8))
+    assert result["ece_10"] == pytest.approx(0.2)
+    assert result["classwise_ece_10"] == pytest.approx({"loss": 0.125, "draw": 0.1, "win": 0.175})
+    assert result["decisive_auc"] == 1
+    assert result["empirical_class_mass"] == {"loss": 0.25, "draw": 0, "win": 0.75}
+
+
 def fixture():
     protocol = json.loads(
         (

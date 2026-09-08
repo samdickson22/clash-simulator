@@ -10,6 +10,55 @@ import numpy as np
 import torch
 
 
+def weighted_binary_auc(labels, scores, weights):
+    labels = np.asarray(labels, dtype=bool)
+    _, groups = np.unique(scores, return_inverse=True)
+    positive = np.bincount(groups, weights=np.asarray(weights) * labels)
+    negative = np.bincount(groups, weights=np.asarray(weights) * ~labels)
+    denominator = positive.sum() * negative.sum()
+    if denominator <= 0:
+        return None
+    below = np.cumsum(negative) - negative
+    return float((positive * (below + 0.5 * negative)).sum() / denominator)
+
+
+def weighted_outcome_metrics(probabilities, outcomes, weights):
+    p = np.asarray(probabilities, dtype=np.float64)
+    y = np.asarray(outcomes)
+    w = np.asarray(weights, dtype=np.float64)
+    if (
+        p.shape != (len(y), 3) or w.shape != y.shape or not len(y)
+        or not np.isfinite(p).all() or (p < 0).any()
+        or not np.allclose(p.sum(1), 1) or not np.isin(y, [-1, 0, 1]).all()
+        or not np.isfinite(w).all() or (w <= 0).any()
+    ):
+        raise ValueError("invalid weighted outcome rows")
+    w = w / w.sum()
+    target = y.astype(int) + 1
+    def calibration_error(probability, event):
+        value = 0.0
+        for index in range(10):
+            mask = (probability >= index / 10) & (
+                probability <= 1 if index == 9 else probability < (index + 1) / 10
+            )
+            value += abs(float((w[mask] * (probability[mask] - event[mask])).sum()))
+        return value
+    decisive = y != 0
+    return {
+        "nll": float(w @ -np.log(np.maximum(p[np.arange(len(y)), target], 1e-12))),
+        "brier": float(w @ ((p - np.eye(3)[target]) ** 2).sum(1)),
+        "ece_10": calibration_error(p.max(1), p.argmax(1) == target),
+        "classwise_ece_10": {name: calibration_error(p[:, index], target == index)
+                             for index, name in enumerate(("loss", "draw", "win"))},
+        "decisive_auc": weighted_binary_auc(
+            y[decisive] == 1, (p[:, 2] - p[:, 0])[decisive], w[decisive]
+        ),
+        "mean_probability": dict(zip(("loss", "draw", "win"), (w @ p).tolist(), strict=True)),
+        "empirical_class_mass": {name: float(w[target == index].sum())
+                                 for index, name in enumerate(("loss", "draw", "win"))},
+    }
+
+
 def clustered_mean_interval(values, clusters, *, replicates: int, seed: int):
     values = np.asarray(values, dtype=np.float64)
     _, ids = np.unique(clusters, return_inverse=True)
@@ -311,16 +360,19 @@ def evaluate_loaded_full_phase_margins(
     if design["full_phase_margin_gate"]["weighting"] != "equal-game-within-phase-v1":
         raise ValueError("unknown full-phase margin weighting")
     records = {name: [] for name in ("early", "middle", "late")}
+    classification_rows = {name: [] for name in records}
     offset = 0
     for metadata, corpus in loaded:
         selected = _outcome_source(metadata) == "natural-strategy-games"
         if stage == "holdout":
             selected = selected and metadata["seed"] == protocol["final_holdout"]["generated"]["seed"]
         if selected:
-            predicted = torch.cat([
-                head(batch.to(device)).terminal_tower_margin.cpu()
+            predictions = [
+                head(batch.to(device))
                 for batch in features[offset:offset + corpus.row_count].split(2048)
-            ]).numpy()
+            ]
+            predicted = torch.cat([p.terminal_tower_margin.cpu() for p in predictions]).numpy()
+            probabilities = torch.cat([p.outcome_logits.softmax(-1).cpu() for p in predictions]).numpy()
             public = np.asarray(corpus.arrays["global_features"])
             current = (public[:, 8:11].sum(1) - public[:, 11:14].sum(1)) / 3
             target = np.repeat(corpus.episode_arrays["episode_terminal_tower_margins"],
@@ -345,6 +397,11 @@ def evaluate_loaded_full_phase_margins(
                         "baseline_mae": baseline, "improvement": baseline - mae,
                         "outcome": int(corpus.episode_arrays["episode_final_outcomes"][episode]),
                     })
+                    classification_rows[name].append((
+                        probabilities[rows],
+                        np.full(len(rows), corpus.episode_arrays["episode_final_outcomes"][episode]),
+                        np.full(len(rows), 1 / len(rows)),
+                    ))
         offset += corpus.row_count
     if offset != len(features):
         raise ValueError("full-phase features are misaligned with corpora")
@@ -366,12 +423,30 @@ def evaluate_loaded_full_phase_margins(
             interval["point"] >= thresholds["minimum_mae_improvement"]
             and interval["lower_95"] >= thresholds["minimum_cluster_bootstrap_lower_95_improvement"]
         )
+        classification = None
+        classification_passed = False
+        if rows:
+            inputs = classification_rows[name]
+            classification = weighted_outcome_metrics(*[
+                np.concatenate([row[i] for row in inputs]) for i in range(3)
+            ])
+            classification_passed = (
+                classification["ece_10"] <= protocol["gates"]["maximum_ece"]
+                and max(classification["classwise_ece_10"].values()) <= protocol["gates"]["maximum_ece"]
+                and classification["decisive_auc"] is not None
+                and classification["decisive_auc"] >= protocol["gates"]["minimum_natural_phase_auc"]
+                and classification["mean_probability"]["draw"] <= protocol["gates"]["maximum_natural_draw_probability"]
+            )
+        if design.get("full_phase_classification_gate"):
+            passed = passed and classification_passed
         results[name] = {
             "games": len(rows), "rows": sum(r["rows"] for r in rows),
             "independent_clusters": len(set(clusters)), "clusters_by_outcome": counts,
             "mae": float(np.mean([r["mae"] for r in rows])) if rows else None,
             "baseline_mae": float(np.mean([r["baseline_mae"] for r in rows])) if rows else None,
             "improvement_interval": interval, "coverage_passed": coverage,
+            "classification": classification,
+            "classification_passed": classification_passed,
             "passed": bool(passed),
         }
     return {"weighting": "equal-game-within-phase-v1",
