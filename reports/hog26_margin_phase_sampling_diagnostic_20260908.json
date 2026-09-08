@@ -1,0 +1,108 @@
+{
+  "status": "training-only-sampling-diagnostic",
+  "scope": "Two completed audited procedural training shards only. No heldout labels, fitting, or threshold changes.",
+  "shards": [
+    {
+      "seed": 1278501,
+      "corpus_sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+      "phases": {
+        "early": {
+          "fitting_rows": 31884,
+          "representative_rows": 128,
+          "weighted_fitting_baseline_mae": 0.301854457424096,
+          "representative_baseline_mae": 0.3133988082408905,
+          "weighted_fitting_fraction_within_0_01_of_terminal_margin": 0.018066450755467426,
+          "representative_fraction_within_0_01_of_terminal_margin": 0.015625,
+          "representatives_at_episode_last_row": 0,
+          "representatives_with_at_most_5_decisions_remaining": 0,
+          "median_representative_remaining_decisions": 324.0,
+          "representative_progress_min": 0.1666666716337204,
+          "representative_progress_max": 0.1666666716337204,
+          "weighted_fitting_mean_progress": 0.1647659574712904,
+          "representative_mean_progress": 0.1666666716337204
+        },
+        "middle": {
+          "fitting_rows": 24833,
+          "representative_rows": 126,
+          "weighted_fitting_baseline_mae": 0.18954687313618018,
+          "representative_baseline_mae": 0.1705641895532608,
+          "weighted_fitting_fraction_within_0_01_of_terminal_margin": 0.060287594066811,
+          "representative_fraction_within_0_01_of_terminal_margin": 0.047619047619047616,
+          "representatives_at_episode_last_row": 5,
+          "representatives_with_at_most_5_decisions_remaining": 8,
+          "median_representative_remaining_decisions": 74.0,
+          "representative_progress_min": 0.437333345413208,
+          "representative_progress_max": 0.5,
+          "weighted_fitting_mean_progress": 0.4627014650301201,
+          "representative_mean_progress": 0.49844443798065186
+        },
+        "late": {
+          "fitting_rows": 1444,
+          "representative_rows": 14,
+          "weighted_fitting_baseline_mae": 0.12105466285116581,
+          "representative_baseline_mae": 0.07924902439117432,
+          "weighted_fitting_fraction_within_0_01_of_terminal_margin": 0.10647169614292169,
+          "representative_fraction_within_0_01_of_terminal_margin": 0.5,
+          "representatives_at_episode_last_row": 10,
+          "representatives_with_at_most_5_decisions_remaining": 10,
+          "median_representative_remaining_decisions": 0.0,
+          "representative_progress_min": 0.6826666593551636,
+          "representative_progress_max": 0.8333333134651184,
+          "weighted_fitting_mean_progress": 0.7347619046582394,
+          "representative_mean_progress": 0.760952353477478
+        }
+      }
+    },
+    {
+      "seed": 1278502,
+      "corpus_sha256": "af8ea0ba2e37c4a870af71ad2228cae713273a095a9d8da80a6f39b1d1ecc8f6",
+      "phases": {
+        "early": {
+          "fitting_rows": 30743,
+          "representative_rows": 128,
+          "weighted_fitting_baseline_mae": 0.255202849272629,
+          "representative_baseline_mae": 0.24213792383670807,
+          "weighted_fitting_fraction_within_0_01_of_terminal_margin": 0.025051465741030905,
+          "representative_fraction_within_0_01_of_terminal_margin": 0.0390625,
+          "representatives_at_episode_last_row": 4,
+          "representatives_with_at_most_5_decisions_remaining": 7,
+          "median_representative_remaining_decisions": 322.0,
+          "representative_progress_min": 0.15466666221618652,
+          "representative_progress_max": 0.1666666716337204,
+          "weighted_fitting_mean_progress": 0.15394244603177654,
+          "representative_mean_progress": 0.16641667485237122
+        },
+        "middle": {
+          "fitting_rows": 19652,
+          "representative_rows": 110,
+          "weighted_fitting_baseline_mae": 0.15802896377712494,
+          "representative_baseline_mae": 0.1483832150697708,
+          "weighted_fitting_fraction_within_0_01_of_terminal_margin": 0.11995175256858523,
+          "representative_fraction_within_0_01_of_terminal_margin": 0.20909090909090908,
+          "representatives_at_episode_last_row": 27,
+          "representatives_with_at_most_5_decisions_remaining": 27,
+          "median_representative_remaining_decisions": 74.0,
+          "representative_progress_min": 0.3720000088214874,
+          "representative_progress_max": 0.5,
+          "weighted_fitting_mean_progress": 0.44853721637733535,
+          "representative_mean_progress": 0.48769697546958923
+        },
+        "late": {
+          "fitting_rows": 2697,
+          "representative_rows": 21,
+          "weighted_fitting_baseline_mae": 0.14430672016922452,
+          "representative_baseline_mae": 0.08676006644964218,
+          "weighted_fitting_fraction_within_0_01_of_terminal_margin": 0.04484235010084548,
+          "representative_fraction_within_0_01_of_terminal_margin": 0.19047619047619047,
+          "representatives_at_episode_last_row": 11,
+          "representatives_with_at_most_5_decisions_remaining": 11,
+          "median_representative_remaining_decisions": 0.0,
+          "representative_progress_min": 0.6666666865348816,
+          "representative_progress_max": 0.8333333134651184,
+          "weighted_fitting_mean_progress": 0.751619048540445,
+          "representative_mean_progress": 0.7873016595840454
+        }
+      }
+    }
+  ]
+}

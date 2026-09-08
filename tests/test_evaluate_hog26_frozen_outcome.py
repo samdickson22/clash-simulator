@@ -133,6 +133,80 @@ def test_training_mode_rejected_before_evaluation():
         evaluate(protocol, loaded, features, head)
 
 
+def test_full_phase_gate_rejects_errors_hidden_by_good_representatives():
+    from dataclasses import replace
+
+    protocol, loaded, _ = fixture()
+    protocol["generalization_evaluation"].pop("full_phase_margin_gate", None)
+    expanded = []
+    for metadata, corpus in loaded:
+        arrays = {key: np.repeat(value, 2, axis=0) for key, value in corpus.arrays.items()}
+        arrays["global_features"][:, 0] = np.tile([0.05, 0.15, 0.35, 0.5, 0.7, 0.85], corpus.episode_count)
+        arrays["global_features"][::2, 1] *= -1
+        expanded.append((metadata, replace(corpus, arrays=arrays,
+                         episode_offsets=corpus.episode_offsets * 2)))
+    features = torch.tensor(np.concatenate([c.arrays["global_features"] for _, c in expanded]))
+    old = evaluate(protocol, expanded, features)
+    assert old["passed"]
+    protocol["generalization_evaluation"]["full_phase_margin_gate"] = {
+        "weighting": "equal-game-within-phase-v1",
+    }
+    result = evaluate(protocol, expanded, features)
+    assert not result["passed"]
+    full = result["public_slices"]["full_phase_margins"]
+    assert not full["passed"]
+    assert full["phases"]["late"]["games"] == 48
+    assert full["phases"]["late"]["rows"] == 96
+    assert full["phases"]["late"]["independent_clusters"] == 24
+    assert full["phases"]["late"]["improvement_interval"]["point"] == pytest.approx(0)
+
+
+def test_full_phase_gate_preserves_natural_control_separation():
+    protocol, loaded, features = fixture()
+    protocol["generalization_evaluation"]["full_phase_margin_gate"] = {
+        "weighting": "equal-game-within-phase-v1",
+    }
+    control = next(c for m, c in loaded if m["outcome_source"] == "controlled-symmetric-draws")
+    control.arrays["terminal_tower_margins"][:] = 1.0
+    control.episode_arrays["episode_terminal_tower_margins"][:] = 1.0
+    result = evaluate(protocol, loaded, features)
+    assert result["passed"]
+    assert result["public_slices"]["full_phase_margins"]["passed"]
+
+
+def test_full_phase_weights_do_not_overweight_games_with_more_recorded_rows():
+    from dataclasses import replace
+
+    from scripts.hog26_public_slice_gates import evaluate_loaded_full_phase_margins
+
+    protocol, loaded, _ = fixture()
+    protocol["generalization_evaluation"]["full_phase_margin_gate"] = {
+        "weighting": "equal-game-within-phase-v1",
+    }
+    index = next(i for i, (m, _) in enumerate(loaded)
+                 if m["seed"] == protocol["final_holdout"]["generated"]["seed"])
+    metadata, corpus = loaded[index]
+    end = int(corpus.episode_offsets[1])
+    corpus.arrays["global_features"][:end, 1] *= -1
+    def run():
+        features = torch.tensor(np.concatenate([c.arrays["global_features"] for _, c in loaded]))
+        return evaluate_loaded_full_phase_margins(SyntheticHead(), features, loaded,
+                protocol, stage="holdout", device="cpu", seed=23)
+    before = run()
+    arrays = {key: np.concatenate([np.repeat(value[:end], 7, axis=0), value[end:]])
+              for key, value in corpus.arrays.items()}
+    offsets = corpus.episode_offsets.copy()
+    offsets[1:] += end * 6
+    loaded[index] = (metadata, replace(corpus, arrays=arrays, episode_offsets=offsets))
+    after = run()
+    for phase in ("early", "middle", "late"):
+        a, b = before["phases"][phase], after["phases"][phase]
+        assert b["rows"] > a["rows"]
+        assert b["mae"] == pytest.approx(a["mae"])
+        assert b["independent_clusters"] == a["independent_clusters"]
+        assert b["improvement_interval"]["point"] == pytest.approx(a["improvement_interval"]["point"])
+
+
 def test_invalid_cohort_stops_before_final_corpus_loader(tmp_path, monkeypatch):
     from scripts import evaluate_hog26_frozen_outcome as evaluator
 

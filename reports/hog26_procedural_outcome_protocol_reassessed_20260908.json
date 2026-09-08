@@ -102,7 +102,15 @@
     "controlled_draw_scope": "Eight physical paired-view controls measure symmetry recognition only; natural draw calibration remains a natural-game result with uncertainty reported.",
     "declared_before_new_development_or_final_labels": true,
     "development_scope": "Apply the same natural slice rules to development_selection opponents. Inadequate development evidence rejects the candidate before final collection.",
-    "implementation_status": "implemented in scripts/hog26_public_slice_gates.py and enforced by the campaign trainer; final collection and frozen-state evaluation orchestration remain to be built before final labels",
+    "full_phase_margin_gate": {
+      "combination": "Required in addition to every existing representative-point public slice; no existing gate removed or relaxed.",
+      "declared_before_new_development_or_final_labels": true,
+      "reason": "Training-only audit found 21 of 35 late representatives at the last recorded decision. Full-phase forecasts require evidence across the recorded phase, not only the nearest-center or endpoint substitute.",
+      "scope": "All recorded natural generated states within each reached phase, in development and final evaluation; controlled draws and reserved-original challenge excluded from this additional gate.",
+      "thresholds": "Use unchanged phase_margin_learning_gate point and clustered lower-95 improvement floors plus existing per-slice independent/decisive cluster coverage.",
+      "weighting": "equal-game-within-phase-v1"
+    },
+    "implementation_status": "Public-slice and full-phase margin gates implemented; frozen-cohort collection and evaluation commands implemented with synthetic tests; real end-to-end acceptance remains pending a defensible candidate.",
     "insufficient_coverage_status": "inconclusive-reject; no acceptance and no outcome-dependent extra-seed collection",
     "minimum_clusters_with_each_decisive_outcome_per_slice": 2,
     "minimum_independent_matchup_clusters_per_slice": 8,

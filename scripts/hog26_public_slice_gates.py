@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from itertools import product
 from typing import Any
 
@@ -285,8 +286,93 @@ def evaluate_loaded_public_slices(
             seed=seed,
             include_joint=joint,
         )
+    full_phase = None
+    if protocol["generalization_evaluation"].get("full_phase_margin_gate"):
+        full_phase = evaluate_loaded_full_phase_margins(
+            head, features, loaded, protocol, stage=stage, device=device, seed=seed,
+        )
     return {
         "schema": "clasher.hog26.public-slice-acceptance.v1",
-        "passed": all(r["passed"] for r in results.values()),
+        "passed": all(r["passed"] for r in results.values())
+        and (full_phase is None or full_phase["passed"]),
         "groups": results,
+        "full_phase_margins": full_phase,
     }
+
+
+@torch.no_grad()
+def evaluate_loaded_full_phase_margins(
+    head, features, loaded, protocol, *, stage, device, seed,
+):
+    """Evaluate every recorded natural state, equally weighting games per phase."""
+    from scripts.train_hog26_actor_outcome import _outcome_source
+
+    design = protocol["generalization_evaluation"]
+    if design["full_phase_margin_gate"]["weighting"] != "equal-game-within-phase-v1":
+        raise ValueError("unknown full-phase margin weighting")
+    records = {name: [] for name in ("early", "middle", "late")}
+    offset = 0
+    for metadata, corpus in loaded:
+        selected = _outcome_source(metadata) == "natural-strategy-games"
+        if stage == "holdout":
+            selected = selected and metadata["seed"] == protocol["final_holdout"]["generated"]["seed"]
+        if selected:
+            predicted = torch.cat([
+                head(batch.to(device)).terminal_tower_margin.cpu()
+                for batch in features[offset:offset + corpus.row_count].split(2048)
+            ]).numpy()
+            public = np.asarray(corpus.arrays["global_features"])
+            current = (public[:, 8:11].sum(1) - public[:, 11:14].sum(1)) / 3
+            target = np.repeat(corpus.episode_arrays["episode_terminal_tower_margins"],
+                               np.diff(corpus.episode_offsets))
+            if not all(np.isfinite(a).all() for a in (predicted, current, target)):
+                raise ValueError("nonfinite full-phase margin prediction or label")
+            for episode, (begin, end) in enumerate(zip(
+                corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True
+            )):
+                style = metadata["opponents"][corpus.episode_arrays["episode_opponent_indices"][episode]]
+                deck = metadata["opponent_decks"][corpus.episode_arrays["episode_opponent_deck_indices"][episode]]
+                cluster = json.dumps([metadata["seed"], style, deck, int(corpus.episode_ordinals[episode])], separators=(",", ":"))
+                phase_ids = np.minimum((public[begin:end, 0] * 3).astype(int), 2)
+                for phase, name in enumerate(records):
+                    rows = np.flatnonzero(phase_ids == phase) + begin
+                    if not len(rows):
+                        continue
+                    mae = float(np.abs(predicted[rows] - target[rows]).mean())
+                    baseline = float(np.abs(current[rows] - target[rows]).mean())
+                    records[name].append({
+                        "cluster": cluster, "rows": len(rows), "mae": mae,
+                        "baseline_mae": baseline, "improvement": baseline - mae,
+                        "outcome": int(corpus.episode_arrays["episode_final_outcomes"][episode]),
+                    })
+        offset += corpus.row_count
+    if offset != len(features):
+        raise ValueError("full-phase features are misaligned with corpora")
+    results = {}
+    thresholds = design["phase_margin_learning_gate"]
+    for index, (name, rows) in enumerate(records.items()):
+        clusters = [r["cluster"] for r in rows]
+        interval = clustered_mean_interval(
+            [r["improvement"] for r in rows], clusters,
+            replicates=protocol["gates"]["cluster_bootstrap_replicates"], seed=seed + index,
+        )
+        counts = {str(label): len({r["cluster"] for r in rows if r["outcome"] == label})
+                  for label in (-1, 0, 1)}
+        coverage = len(set(clusters)) >= design["minimum_independent_matchup_clusters_per_slice"] and all(
+            counts[str(label)] >= design["minimum_clusters_with_each_decisive_outcome_per_slice"]
+            for label in (-1, 1)
+        )
+        passed = coverage and interval is not None and (
+            interval["point"] >= thresholds["minimum_mae_improvement"]
+            and interval["lower_95"] >= thresholds["minimum_cluster_bootstrap_lower_95_improvement"]
+        )
+        results[name] = {
+            "games": len(rows), "rows": sum(r["rows"] for r in rows),
+            "independent_clusters": len(set(clusters)), "clusters_by_outcome": counts,
+            "mae": float(np.mean([r["mae"] for r in rows])) if rows else None,
+            "baseline_mae": float(np.mean([r["baseline_mae"] for r in rows])) if rows else None,
+            "improvement_interval": interval, "coverage_passed": coverage,
+            "passed": bool(passed),
+        }
+    return {"weighting": "equal-game-within-phase-v1",
+            "passed": all(r["passed"] for r in results.values()), "phases": results}
