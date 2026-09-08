@@ -379,3 +379,181 @@ Final labels remain unopened, thresholds unchanged, and shard2 continues collect
 
 Current focused validation: 42 tests passed, including the real calibration
 isolation regression and public-slice gates; Ruff passed.
+
+## Combined training mixture and frozen actor-state screen
+
+Extended the family screen to consume multiple separately pinned corpora without
+writing a merged corpus or discarding provenance. Each source records its role,
+seed, SHA, row/episode offsets and counts. Only declared procedural training and
+legacy training inputs are permitted. Whole generated families are excluded
+across every procedural source; auxiliary games remain fitting-only. Source-role
+and family-exclusion tests pass, including rejection of a selection corpus even
+if an audit path is present for it.
+
+The combined static screen completed 32 fold fits on six audited sources totaling
+404 games and 180,091 rows. Each fold fits 340 games and evaluates the excluded
+64 procedural games. The 148 auxiliary games never contribute to withheld metrics.
+Public-global powers0/1 regress late by roughly 0.019–0.029. Full-state powers0/1
+regress late by roughly 0.011–0.036. Both seeds fail the old late non-regression
+gate for every configuration. No candidate is promoted. Artifact:
+`hog26_margin_combined_training_screen_20260908.json`.
+
+Inspected the existing frozen policy feature path. `repair_features` concatenate
+its public actor encoding with its actor recurrent memory, before any critic
+value is used. The replay uses recorded past actions, exact game resets and
+previous rewards forced to zero. One complete 450-row training episode produces
+210 features in 0.759 seconds on one CPU thread; perturbing future labels and
+unused action/reward arrays leaves them exactly unchanged. This is a causal
+extraction probe, not a full inference-parity or predictive acceptance result.
+Artifact: `hog26_policy_state_extraction_probe_20260908.json`.
+
+Started the predeclared combined-data screen using this existing
+`policy-plus-public-globals` representation, with the same families, seeds, absolute
+loss, aggregate phase weights and fixed epoch budget. Its plan and output prefix
+is `hog26_margin_combined_policy_state_screen`. Only new supervised outcome heads
+are fitted; behavior-policy weights remain frozen. No critic inputs, policy
+updates, new development/calibration labels, or final labels are used. This also
+avoids the separate learned-GRU minibatch-normalization confound in prior screens.
+
+The frozen-policy-state screen completed all 16 fold fits in 253.62 seconds.
+All four pooled configurations fail the old late non-regression screen.
+Power0 late MAE improvements are -0.02950/-0.03130; power1 gives
+-0.01332/-0.01560. Every configuration also regresses against bridge-pressure
+by 0.02731–0.03345, despite overall improvements of 0.02666–0.03546.
+No candidate is promoted. The 35 late representatives are limited diagnostic
+evidence, not independent acceptance. This result rejects the tested frozen
+representation/head combination, not public recurrence in general. Decision
+and fold fitting-versus-withheld errors are preserved in
+`hog26_margin_combined_policy_state_decision_20260908.json`.
+
+The next collection dependency is the existing live shard2, followed by its
+protocol-bound audit. Do not start another feature sweep or open development
+labels merely to find a passing variant of these repeatedly examined folds.
+
+Added an early refusal in the generic trainer for the combination of a
+generalization protocol and holdout corpora. The previous route loaded holdout
+labels before refitting; a post-fit digest comparison is not a frozen-head
+evaluation path. The refusal occurs before any model or corpus load. An actual
+CLI-main regression test replaces both loaders with failing sentinels and proves
+no artifact is written. All 18 trainer tests and Ruff pass. A separate frozen-head
+final evaluator remains required before final collection; this guard alone does
+not provide final evaluation or acceptance.
+
+Implemented `scripts/hog26_frozen_outcome.py` as the checkpoint-loading
+component for future direct final evaluation. It requires external file/state/
+policy/protocol SHA pins, validates development eligibility and absence of prior
+holdout inputs, checks architecture against the report, strictly loads the state,
+and disables gradients. Fitted calibration buffers are preserved. Eleven tests
+pass, including exact calibrated prediction round-trip and rejection of altered
+state, architecture, pins, or ineligible reports. Ruff passes. These synthetic
+tests prove loader behavior only; no real accepted checkpoint exists yet and
+the full final evaluator, freeze manifest, corpus preflight, and acceptance
+orchestration remain to be implemented. Collector PID33283 remains live at
+about one hour elapsed; no duplicate collection or training was started.
+
+Added `scripts/freeze_hog26_outcome_cohort.py` to pin the primary and both
+replicas before final collection. It requires current audited fitting inputs,
+accepted development checkpoints, exact declared seeds/design/weighting, and
+identical declared fitting, validation and calibration bytes. It refuses a
+missing or duplicate replica, changed prior, or any existing final corpus
+directory, report, or audit. The trainer now records sequence_steps so replay
+configuration can be bound. The current under-review protocol deliberately
+cannot publish a manifest. Eight cohort tests plus the loader/trainer tests
+pass, 37 total; Ruff passes. No manifest was created and no final labels opened.
+This records absence of declared final paths at freeze time, not proof that
+no external process has ever observed equivalent labels. Final collection must
+consume the manifest and enforce it before creating those paths.
+
+Implemented `evaluate_frozen_predictions` in
+`scripts/evaluate_hog26_frozen_outcome.py`. It requires an eval-mode head with
+gradients disabled, exactly one corpus for each declared final seed and episode
+budget, complete public label authority, and matching public-global feature
+suffixes. It computes existing natural public slices, decisive clustered phase
+confidence, natural draw probability, and separate controlled-draw recognition
+gates. Mixed natural/control aggregate metrics are diagnostic only. State
+digests before and after must agree; even a public-metric pass leaves ranking
+pending and policy updates forbidden. Five synthetic tests pass, including
+reserved-deck failure concealment, natural/control margin isolation, omitted
+corpora, and training-mode rejection. Ruff passes. No real final labels were
+used. The metric function is not yet a standalone final evaluator: cohort/audit
+preflight, public feature extraction, and report publication must be connected
+before use on final data.
+
+Connected cohort preflight, final-corpus audit and collection-authority checks,
+public feature replay, all-replica evaluation and report publication in the
+frozen evaluator CLI. The caller supplies the exact manifest SHA. Corpus
+loading occurs only after cohort validation and all stage audits; collection
+reports must bind both protocol and frozen cohort SHA. Metadata verifies
+generated families, reserved deck/styles, or paired controlled physical games.
+Every candidate is evaluated and any failure rejects the cohort. Nine evaluator
+tests pass, with synthetic metric tests and mocked orchestration tests covering
+early refusal, provenance, all-seed evaluation and no optimizer construction.
+The 19 loader/cohort tests also pass; CLI --help and Ruff pass. Code committed
+locally as 93bcf548. This is not a real final-data end-to-end acceptance run.
+Final collection orchestration still must produce the required provenance, and
+no accepted model or frozen manifest exists.
+
+Added the final collection command `scripts/collect_hog26_frozen_final.py`.
+It verifies the pinned cohort, uses exact declared generated/reserved/control
+arguments, writes an exclusive start receipt, and publishes cohort/protocol
+provenance after the exact game-budget audit. Failed attempts remain recorded
+and block automatic duplicate collection or refreezing. The stage runner now
+refuses development/calibration collection without explicit ready design status,
+including historical protocols lacking that status. Eighteen collection/cohort/
+stage tests pass and Ruff passes. Tests use synthetic files and mocked collectors;
+no real final collection was run. Shard2 remains live; its latest progress is
+chunk5 at3949.59 seconds with10 streams completed. Partial labels remain unused.
+
+## Phase-sampling mismatch
+
+A new descriptive audit of the two completed procedural training shards shows
+that 10/14 and 11/21 late phase representatives are the last recorded decision
+in their game. The nearest-center selector substitutes the final row when a
+game ends before the phase midpoint. Median remaining decisions is zero in
+both late representative sets. This changes the forecasting horizon represented
+by the score. Equal-game/reached-phase weighted late fitting baseline MAE is
+0.12105/0.14431, versus 0.07925/0.08676 on the selected representatives.
+The fraction already within0.01 of terminal margin rises from weighted
+0.10647/0.04484 to representative0.50000/0.19048.
+
+Artifact: `hog26_margin_phase_sampling_diagnostic_20260908.json`. These are
+audited training-only descriptive results, not new fits or final evaluation.
+The failed candidates remain rejected. This is a sampling/estimand mismatch,
+not evidence that any rejected model forecasts well. Do not fit only the
+endpoint-heavy representatives to manufacture a passing score. Before further
+candidate fitting, resolve how evaluation measures the full phase distribution
+and separately expose terminal-adjacent states. Preserve the historical scores
+and freeze any justified protocol amendment before selection/calibration/final
+labels. No thresholds or sampler implementation changed in this diagnostic.
+
+Added an additional full-phase margin gate to the still-under-review protocol.
+For each natural generated game and reached phase, calculate MAE over every
+recorded state, then weight game-phase means equally. Bootstrap seed/style/
+deck/ordinal clusters so paired seats remain together. Require the unchanged
+phase learning point/lower-95 floors and cluster coverage in every phase, in
+addition to all existing representative-point gates. Controlled draws and the
+reserved-original challenge remain separate. Both trainer and frozen evaluator
+use this through the shared public-slice adapter. No collected training shard
+arguments, model design, or existing thresholds changed.
+
+A synthetic model that is perfect at representatives but wrong between them
+passes the old gates and fails the new gate. Additional tests show that
+increasing row count in one game does not increase its phase weight or cluster
+count, and controlled-draw margin labels cannot change natural acceptance.
+Fifty focused tests pass; Ruff passes. No additional fit or final data was used.
+This resolves the margin sampling coverage omission by adding evidence, without
+retroactively accepting any rejected candidate. Full-phase classification
+calibration should also be assessed before claiming broad live-state coverage.
+
+Extended the additional full-phase gate to outcome probabilities using the
+same equal-game-within-phase weights. It reports weighted NLL, Brier, top-label
+and per-class ECE, decisive AUC, and predicted/empirical class mass. Every phase
+must meet the existing ECE, phase AUC and maximum natural draw probability
+thresholds. Representative gates and full-phase margin gates remain required.
+Zero natural draw mass is reported as such; controlled draws are excluded.
+Hand-calculated weighted AUC/tie and calibration tests pass. A head with accurate
+margins and landmark probabilities but wrong probabilities between landmarks
+is rejected. Fifty-three focused tests and Ruff pass. The still-under-review
+protocol includes this additional requirement before any new development or
+final labels. Selection/calibration/final corpus directories remain absent.
+Collector33283 remains live at1h25m; no additional training was launched.

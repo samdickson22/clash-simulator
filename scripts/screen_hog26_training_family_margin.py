@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from itertools import pairwise
 from pathlib import Path
 
 import numpy as np
@@ -26,6 +27,26 @@ from scripts.train_hog26_actor_outcome import (
     validate_outcome_corpus,
 )
 from scripts.train_hog26_procedural_outcome_candidate import require_current_audit
+
+
+def source_audit_path(spec, protocol):
+    if spec["role"] == "procedural":
+        matches = [
+            r for r in protocol["training"] if r["output_corpus"] == spec["path"]
+        ]
+        if len(matches) == 1:
+            return matches[0]["audit_report"]
+    elif spec["role"] == "auxiliary":
+        data = protocol["primary_candidate_data"]
+        if spec["path"] in data["legacy_training_corpora"]:
+            return data["legacy_audit_reports"][spec["path"]]
+    raise ValueError("screen source must have its declared training-only role")
+
+
+def family_fit_rows(episode_families, episode_offsets, withheld):
+    excluded = np.isin(episode_families, withheld)
+    row_excluded = np.repeat(excluded, np.diff(episode_offsets))
+    return np.flatnonzero(~row_excluded), np.flatnonzero(~excluded), row_excluded
 
 
 def margin_row_loss(prediction, target, kind):
@@ -53,7 +74,7 @@ def fitting_phase_weights(weights, phases, fit_rows, *, aggregate_balance):
 
 
 def fit_temporal_fold(
-    features, target, weights, corpus, selected_episodes, plan, power, rng
+    features, target, weights, episode_offsets, selected_episodes, plan, power, rng
 ):
     head = ActorTemporalMarginHead(
         features.shape[1],
@@ -65,12 +86,7 @@ def fit_temporal_fold(
     optimizer = torch.optim.AdamW(
         head.parameters(), lr=plan["learning_rate"], weight_decay=plan["weight_decay"]
     )
-    episodes = [
-        slice(int(a), int(b))
-        for a, b in zip(
-            corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True
-        )
-    ]
+    episodes = [slice(int(a), int(b)) for a, b in pairwise(episode_offsets)]
     for _epoch in range(plan["epochs"]):
         order = rng.permutation(selected_episodes)
         for begin in range(0, len(order), plan["episode_batch_size"]):
@@ -107,37 +123,99 @@ def main() -> None:
     if output.exists():
         raise SystemExit("refusing to overwrite margin screen")
     protocol = load_protocol(root / plan["protocol"], root)
-    source = root / plan["corpus"]
-    matching = [r for r in protocol["training"] if r["output_corpus"] == plan["corpus"]]
-    if len(matching) != 1 or file_sha256(source) != plan["corpus_sha256"]:
-        raise ValueError("screen source must be an exact declared training corpus")
-    require_current_audit(source, root / matching[0]["audit_report"])
-    metadata, corpus = load_direct_simple_behavior_corpus(source)
-    validate_outcome_corpus(metadata, corpus)
-    if metadata["checkpoint_sha256"] != protocol["base_policy"]["sha256"]:
-        raise ValueError("screen behavior policy drifted")
+    specs = plan.get("corpora")
+    if specs is None:
+        specs = [
+            {
+                "path": plan["corpus"],
+                "sha256": plan["corpus_sha256"],
+                "role": "procedural",
+            }
+        ]
+    loaded = []
+    source_records = []
+    seeds = set()
+    hashes = set()
+    episode_families_parts = []
+    episode_seats_parts = []
+    episode_styles_parts = []
+    lengths_parts = []
     manifest = json.loads((root / protocol["procedural_decks"]["path"]).read_text())
     family_by_deck = {d["name"]: d.get("family_id") for d in manifest["decks"]}
-    episode_decks = np.asarray(metadata["opponent_decks"])[
-        corpus.episode_arrays["episode_opponent_deck_indices"]
-    ]
-    episode_families = np.asarray([family_by_deck[d] for d in episode_decks])
+    row_cursor = episode_cursor = 0
+    for spec in specs:
+        source = root / spec["path"]
+        if file_sha256(source) != spec["sha256"] or spec["sha256"] in hashes:
+            raise ValueError("screen source bytes drifted or were duplicated")
+        require_current_audit(source, root / source_audit_path(spec, protocol))
+        metadata, corpus = load_direct_simple_behavior_corpus(source)
+        validate_outcome_corpus(metadata, corpus)
+        if (
+            metadata["checkpoint_sha256"] != protocol["base_policy"]["sha256"]
+            or metadata["seed"] in seeds
+        ):
+            raise ValueError("screen policy drifted or collection seed duplicated")
+        seeds.add(metadata["seed"])
+        hashes.add(spec["sha256"])
+        styles = np.asarray(metadata["opponents"])[
+            corpus.episode_arrays["episode_opponent_indices"]
+        ]
+        if set(styles) & set(
+            protocol.get("opponent_generalization", {}).get("head_held_out_styles", [])
+        ):
+            raise ValueError("held-out opponent appears in screen fitting data")
+        if spec["role"] == "procedural":
+            decks = np.asarray(metadata["opponent_decks"])[
+                corpus.episode_arrays["episode_opponent_deck_indices"]
+            ]
+            families = np.asarray([family_by_deck[d] for d in decks])
+        else:
+            families = np.full(corpus.episode_count, "<auxiliary>")
+        episode_families_parts.append(families)
+        episode_seats_parts.append(corpus.episode_arrays["episode_learner_players"])
+        episode_styles_parts.append(styles)
+        lengths_parts.append(np.diff(corpus.episode_offsets))
+        source_records.append(
+            {
+                **spec,
+                "seed": metadata["seed"],
+                "episodes": corpus.episode_count,
+                "rows": corpus.row_count,
+                "row_start": row_cursor,
+                "episode_start": episode_cursor,
+            }
+        )
+        row_cursor += corpus.row_count
+        episode_cursor += corpus.episode_count
+        loaded.append((metadata, corpus))
+    episode_families = np.concatenate(episode_families_parts)
+    lengths = np.concatenate(lengths_parts)
+    episode_offsets = np.concatenate(([0], np.cumsum(lengths)))
     folds = plan["held_out_training_families"]
     flat_families = [family for fold in folds for family in fold]
-    if len(set(flat_families)) != len(flat_families) or set(flat_families) != set(
-        episode_families
+    actual_families = set(episode_families) - {"<auxiliary>"}
+    if (
+        len(set(flat_families)) != len(flat_families)
+        or set(flat_families) != actual_families
     ):
-        raise ValueError("folds must partition the training families exactly once")
+        raise ValueError(
+            "folds must partition the generated training families exactly once"
+        )
     torch.set_num_threads(plan["torch_threads"])
     device = torch.device("cpu")
     _, model = load_model(root / protocol["base_policy"]["path"], device)
     started = time.monotonic()
-    features = extract_actor_features(
-        model,
-        corpus,
-        device=device,
-        sequence_steps=128,
-        feature_set=plan.get("actor_feature_set", "structured-summary"),
+    features = torch.cat(
+        [
+            extract_actor_features(
+                model,
+                c,
+                device=device,
+                sequence_steps=128,
+                feature_set=plan.get("actor_feature_set", "structured-summary"),
+            )
+            for _, c in loaded
+        ]
     )
     if plan.get("zero_spatial_mechanics", False):
         if plan.get("actor_feature_set") != "spatial-mechanics":
@@ -149,28 +227,30 @@ def main() -> None:
             + model.actor_encoder.semantic_card_features.shape[-1]
         )
         moment_width = 2 * (
-            3 * (corpus.arrays["entity_features"].shape[-1] + descriptor_width) + 1
+            3 * (loaded[0][1].arrays["entity_features"].shape[-1] + descriptor_width)
+            + 1
         )
         features[:, -18 - moment_width : -18] = 0.0
     del model
-    target = torch.from_numpy(corpus.arrays["terminal_tower_margins"].copy()).float()
+    target = torch.cat(
+        [
+            torch.from_numpy(c.arrays["terminal_tower_margins"].copy()).float()
+            for _, c in loaded
+        ]
+    )
     public = features[:, -18:]
     current = (public[:, 8:11].sum(1) - public[:, 11:14].sum(1)) / 3
-    weights = episode_balanced_row_weights([(metadata, corpus)], phase_balanced=True)
-    row_families = np.repeat(episode_families, np.diff(corpus.episode_offsets))
-    representatives = phase_balanced_row_indices([(metadata, corpus)]).numpy()
+    weights = episode_balanced_row_weights(loaded, phase_balanced=True)
+    row_families = np.repeat(episode_families, lengths)
+    all_representatives = phase_balanced_row_indices(loaded).numpy()
+    representatives = all_representatives[
+        row_families[all_representatives] != "<auxiliary>"
+    ]
     progress = public[:, 0].numpy()
     phases = np.minimum((progress * 3).astype(int), 2)
-    row_seats = np.repeat(
-        corpus.episode_arrays["episode_learner_players"],
-        np.diff(corpus.episode_offsets),
-    )
-    row_styles = np.repeat(
-        np.asarray(metadata["opponents"])[
-            corpus.episode_arrays["episode_opponent_indices"]
-        ],
-        np.diff(corpus.episode_offsets),
-    )
+    row_seats = np.repeat(np.concatenate(episode_seats_parts), lengths)
+    row_styles = np.repeat(np.concatenate(episode_styles_parts), lengths)
+    evaluated_styles = sorted(set(row_styles[representatives]))
 
     def summarize(prediction, rows):
         if not len(rows):
@@ -201,7 +281,7 @@ def main() -> None:
             },
             "by_style": {
                 str(style): summarize(prediction, rows[row_styles[rows] == style])
-                for style in metadata["opponents"]
+                for style in evaluated_styles
             },
         }
 
@@ -212,8 +292,9 @@ def main() -> None:
                 pooled = torch.full_like(target, torch.nan)
                 fold_results = []
                 for fold_index, families in enumerate(folds):
-                    validation_mask = np.isin(row_families, families)
-                    fit_rows = np.flatnonzero(~validation_mask)
+                    fit_rows, fitting_episodes, validation_mask = family_fit_rows(
+                        episode_families, episode_offsets, families
+                    )
                     test_rows = representatives[validation_mask[representatives]]
                     train_representatives = representatives[
                         ~validation_mask[representatives]
@@ -235,8 +316,8 @@ def main() -> None:
                             features,
                             target,
                             fit_weights,
-                            corpus,
-                            np.flatnonzero(~np.isin(episode_families, families)),
+                            episode_offsets,
+                            fitting_episodes,
                             plan,
                             power,
                             rng,
@@ -340,7 +421,9 @@ def main() -> None:
             "status": "diagnostic-only",
             "plan": plan,
             "plan_sha256": file_sha256(args.plan),
-            "source_sha256": file_sha256(source),
+            "source_sha256": specs[0]["sha256"] if len(specs) == 1 else None,
+            "source_corpora": source_records,
+            "evaluation_scope": "generated-family out-of-fold rows only; auxiliaries fit only",
             "feature_size": features.shape[1],
             "representative_rows": representatives.tolist(),
             "source_episode_families": episode_families.tolist(),

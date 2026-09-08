@@ -1,0 +1,131 @@
+{
+  "status": "rejected-training-only-diagnostic",
+  "source": "reports/hog26_margin_combined_policy_state_screen_20260908.json",
+  "source_sha256": "840eea783c52f1afbf1c2782f3043ae882d6c5438062422d45e7529e020221c3",
+  "feature_size": 210,
+  "elapsed_seconds": 253.6225418749964,
+  "results": [
+    {
+      "power": 0.0,
+      "seed": 1278901,
+      "overall_improvement": 0.026664555072784424,
+      "phase_improvement": {
+        "early": 0.034364253282547,
+        "late": -0.02950436621904373,
+        "middle": 0.02664247155189514
+      },
+      "style_improvement": {
+        "balanced": 0.0608958899974823,
+        "bridge-pressure": -0.03345227241516113,
+        "random": 0.04263794422149658,
+        "reactive-defense": 0.026454567909240723
+      },
+      "fold_late_fit_improvements": [
+        -0.007947564125061035,
+        0.0037014707922935486,
+        -0.012796662747859955,
+        -0.023792974650859833
+      ],
+      "fold_late_withheld_improvements": [
+        -0.02588314563035965,
+        -0.14388101175427437,
+        -0.03833529353141785,
+        0.011210843920707703
+      ],
+      "screen_point_gates_passed": false
+    },
+    {
+      "power": 0.0,
+      "seed": 1278902,
+      "overall_improvement": 0.029611915349960327,
+      "phase_improvement": {
+        "early": 0.03919437527656555,
+        "late": -0.03130335360765457,
+        "middle": 0.028251424431800842
+      },
+      "style_improvement": {
+        "balanced": 0.06461121141910553,
+        "bridge-pressure": -0.031195402145385742,
+        "random": 0.044448912143707275,
+        "reactive-defense": 0.030237972736358643
+      },
+      "fold_late_fit_improvements": [
+        -0.01162661612033844,
+        0.0076327696442604065,
+        -0.011715434491634369,
+        -0.01575467735528946
+      ],
+      "fold_late_withheld_improvements": [
+        -0.025175780057907104,
+        -0.1468726582825184,
+        -0.037581779062747955,
+        0.006269469857215881
+      ],
+      "screen_point_gates_passed": false
+    },
+    {
+      "power": 1.0,
+      "seed": 1278901,
+      "overall_improvement": 0.03546339273452759,
+      "phase_improvement": {
+        "early": 0.04750552773475647,
+        "late": -0.013322025537490845,
+        "middle": 0.029635846614837646
+      },
+      "style_improvement": {
+        "balanced": 0.06616520881652832,
+        "bridge-pressure": -0.02731373906135559,
+        "random": 0.048044100403785706,
+        "reactive-defense": 0.043592214584350586
+      },
+      "fold_late_fit_improvements": [
+        0.0015542060136795044,
+        2.4363398551940918e-05,
+        -0.000802062451839447,
+        -0.020092368125915527
+      ],
+      "fold_late_withheld_improvements": [
+        -0.013727568089962006,
+        -0.07049965485930443,
+        -0.011391304433345795,
+        0.002855755388736725
+      ],
+      "screen_point_gates_passed": false
+    },
+    {
+      "power": 1.0,
+      "seed": 1278902,
+      "overall_improvement": 0.03465940058231354,
+      "phase_improvement": {
+        "early": 0.046810418367385864,
+        "late": -0.015596210956573486,
+        "middle": 0.02893182635307312
+      },
+      "style_improvement": {
+        "balanced": 0.06757842004299164,
+        "bridge-pressure": -0.030861303210258484,
+        "random": 0.04860275983810425,
+        "reactive-defense": 0.0416036993265152
+      },
+      "fold_late_fit_improvements": [
+        0.0008176490664482117,
+        -0.002533629536628723,
+        -0.0009046569466590881,
+        -0.019826166331768036
+      ],
+      "fold_late_withheld_improvements": [
+        -0.011987641453742981,
+        -0.07378363981842995,
+        -0.012717202305793762,
+        -0.002071559429168701
+      ],
+      "screen_point_gates_passed": false
+    }
+  ],
+  "decision": "Do not promote frozen-policy-state representation. Complete and audit the last declared training shard before selecting a full-mixture candidate. No selection, calibration or final labels opened for this analysis.",
+  "limitations": [
+    "Only 35 late phase representative rows across 256 procedural games.",
+    "Repeated training-family diagnostics are design evidence, not independent acceptance.",
+    "This tests the frozen policy representation with the specified head and optimization budget, not all public recurrent representations."
+  ]
+}
