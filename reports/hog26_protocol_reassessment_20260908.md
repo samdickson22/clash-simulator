@@ -557,3 +557,26 @@ is rejected. Fifty-three focused tests and Ruff pass. The still-under-review
 protocol includes this additional requirement before any new development or
 final labels. Selection/calibration/final corpus directories remain absent.
 Collector33283 remains live at1h25m; no additional training was launched.
+
+## Coverage-budget reassessment
+
+The unopened development schedule previously had32 games per style/seat,
+which repeats the training sample size rather than solving late coverage.
+Balanced training produces5/3 late games and2/1 late wins across seats;
+reactive-defense produces10/9 late games and1/1 late wins. Required joint
+coverage is8 clusters with2 wins and2 losses. A descriptive multinomial
+planning calculation using these small observed rates gives the weakest
+balanced slice only0.00658 probability of meeting coverage at32 trials.
+At256 trials, a union bound across the four seen style/seat slices is0.99178
+under the plug-in assumptions. This is not a guarantee for new families or
+split-lane, nor evidence of predictive acceptance. Artifact:
+`hog26_late_coverage_budget_diagnostic_20260908.json`.
+
+Fixed the still-unopened budgets at256 games per generated style/seat:
+1024 selection games,1024 calibration games,1536 generated final games.
+Actual inadequate coverage still rejects; no adaptive top-ups are authorized.
+The controlled/reserved scopes and budgets remain unchanged. This implies
+a multi-day local evaluation workload. No collection was launched, candidate
+readiness remains under review, and all unopened-stage directories are absent.
+Eighteen collection/cohort/stage tests pass. The active128-game training shard
+and its arguments are unchanged.

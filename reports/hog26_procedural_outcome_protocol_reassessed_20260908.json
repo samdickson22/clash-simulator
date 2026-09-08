@@ -11,8 +11,8 @@
   },
   "development_selection": {
     "audit_report": "reports/hog26_procedural_development_selection_seed1278601_audit.json",
-    "episodes_per_seat": 4,
-    "expected_games": 128,
+    "episodes_per_seat": 32,
+    "expected_games": 1024,
     "family_ids": [
       "family-009",
       "family-010"
@@ -41,8 +41,8 @@
     },
     "generated": {
       "audit_report": "reports/hog26_procedural_final_holdout_seed1278701_audit.json",
-      "episodes_per_seat": 6,
-      "expected_games": 576,
+      "episodes_per_seat": 16,
+      "expected_games": 1536,
       "family_ids": [
         "family-008",
         "family-011",
@@ -100,6 +100,14 @@
   },
   "generalization_evaluation": {
     "controlled_draw_scope": "Eight physical paired-view controls measure symmetry recognition only; natural draw calibration remains a natural-game result with uncertainty reported.",
+    "coverage_budget_amendment": {
+      "fixed_before_labels": true,
+      "games_per_generated_style_per_seat": 256,
+      "planning_limit": "Plug-in rates from small training counts with independent future trials assumed only for arithmetic. Changed families and unseen split-lane style remain uncertain; inadequate actual coverage still rejects.",
+      "reason": "Observed completed training rates imply the prior 32-game development slices are very unlikely to satisfy eight late clusters and two late wins/losses. Choose a larger fixed unopened budget instead of outcome-dependent top-ups.",
+      "resource_note": "Multi-day local collection workload; no new collection until design readiness. Final controlled and reserved-original budgets unchanged because their declared precision scopes differ.",
+      "source": "reports/hog26_late_coverage_budget_diagnostic_20260908.json"
+    },
     "declared_before_new_development_or_final_labels": true,
     "development_scope": "Apply the same natural slice rules to development_selection opponents. Inadequate development evidence rejects the candidate before final collection.",
     "full_phase_classification_gate": {
@@ -223,8 +231,8 @@
   },
   "probability_calibration": {
     "audit_report": "reports/hog26_procedural_probability_calibration_seed1278602_audit.json",
-    "episodes_per_seat": 4,
-    "expected_games": 128,
+    "episodes_per_seat": 32,
+    "expected_games": 1024,
     "family_ids": [
       "family-013",
       "family-014"

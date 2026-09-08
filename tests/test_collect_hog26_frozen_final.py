@@ -15,7 +15,7 @@ def protocol():
 
 def test_final_arguments_preserve_declared_counts_and_authorities(protocol, tmp_path):
     generated = collector.final_collection_args(protocol, "generated", root=tmp_path, device="cpu")
-    assert generated.episodes_per_seat == 6
+    assert generated.episodes_per_seat == 16
     assert generated.opponent_family_id == tuple(protocol["final_holdout"]["generated"]["family_ids"])
     assert generated.opponent_deck_split == "holdout"
     reserved = collector.final_collection_args(protocol, "reserved_original", root=tmp_path, device="cpu")
