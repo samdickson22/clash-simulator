@@ -39,7 +39,25 @@ def test_temporal_margin_contracts_fail_closed() -> None:
     with pytest.raises(ValueError, match="dimensions"):
         ActorTemporalMarginHead(17)
     with pytest.raises(ValueError, match="progress power"):
-        ActorTemporalMarginHead(18, progress_power=0.0)
+        ActorTemporalMarginHead(18, progress_power=-1.0)
     head = ActorTemporalMarginHead(18)
     with pytest.raises(ValueError, match="batch, time"):
         head(torch.zeros(2, 18))
+
+
+def test_zero_power_learns_without_forced_late_suppression() -> None:
+    head = ActorTemporalMarginHead(
+        18, projection_size=4, memory_size=3, progress_power=0.0
+    )
+    with torch.no_grad():
+        head.residual.weight.zero_()
+        head.residual.bias.fill_(1.0)
+    state = torch.zeros(1, 3, 18)
+    state[0, :, 0] = torch.tensor([0.0, 0.85, 1.0])
+    prediction, _ = head(state)
+    torch.testing.assert_close(
+        prediction, torch.full_like(prediction, 0.5 * torch.tanh(torch.tensor(1.0)))
+    )
+    prediction.sum().backward()
+    assert torch.isfinite(head.residual.bias.grad).all()
+    assert head.residual.bias.grad.item() > 0.0

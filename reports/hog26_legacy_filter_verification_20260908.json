@@ -1,0 +1,32 @@
+{
+  "corpora": [
+    {
+      "audit_report": "reports/hog26_crossed_train4_seed1276001_no_split_lane_20260908_audit.json",
+      "episodes": 96,
+      "path": "datasets/derived/hog26_crossed_train4_seed1276001_no_split_lane_20260908/corpus.npz",
+      "retained_tensor_equality": true,
+      "rows": 45447,
+      "sha256": "fad0ca04d3932391a85bb5b22e8a2d48d4185c76fef4409175159594d35122b9",
+      "source": "datasets/derived/hog26_crossed_train4_seed1276001/corpus.npz"
+    },
+    {
+      "audit_report": "reports/hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908_audit.json",
+      "episodes": 24,
+      "path": "datasets/derived/hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908/corpus.npz",
+      "retained_tensor_equality": true,
+      "rows": 11167,
+      "sha256": "8f630d914bb465657e0d9b28e30bdb113cf1e8600ff8535c73616a71e3738fdd",
+      "source": "datasets/derived/hog26_broad_train_fold_a_seed1277001/corpus.npz"
+    },
+    {
+      "audit_report": "reports/hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908_audit.json",
+      "episodes": 24,
+      "path": "datasets/derived/hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908/corpus.npz",
+      "retained_tensor_equality": true,
+      "rows": 10672,
+      "sha256": "e337e7794ac32f6a18da85381e345e4d736b348294d43d194444ce64569112e6",
+      "source": "datasets/derived/hog26_broad_train_fold_b_seed1277002/corpus.npz"
+    }
+  ],
+  "status": "passed"
+}

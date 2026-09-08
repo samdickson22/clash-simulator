@@ -1003,6 +1003,7 @@ def main() -> None:
         "--validation-corpus", type=Path, action="append", required=True
     )
     parser.add_argument("--calibration-corpus", type=Path, action="append", default=[])
+    parser.add_argument("--generalization-protocol", type=Path, default=None)
     parser.add_argument("--holdout-corpus", type=Path, action="append", default=[])
     parser.add_argument("--output-checkpoint", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
@@ -1065,6 +1066,11 @@ def main() -> None:
     parser.add_argument("--require-disjoint-natural-opponents", action="store_true")
     parser.add_argument("--require-disjoint-natural-decks", action="store_true")
     args = parser.parse_args()
+    generalization_protocol = (
+        json.loads(args.generalization_protocol.read_text())
+        if args.generalization_protocol is not None
+        else None
+    )
     if args.output_checkpoint.exists() or args.report.exists():
         raise SystemExit("refusing to overwrite actor-outcome artifacts")
     if min(args.epochs, args.batch_size, args.sequence_steps, args.hidden_size) < 1:
@@ -1073,7 +1079,10 @@ def main() -> None:
         raise ValueError("structured residual scale must be nonnegative")
     if args.margin_residual_scale < 0.0:
         raise ValueError("margin residual scale must be nonnegative")
-    if not math.isfinite(args.margin_progress_power) or args.margin_progress_power < 0.0:
+    if (
+        not math.isfinite(args.margin_progress_power)
+        or args.margin_progress_power < 0.0
+    ):
         raise ValueError("margin progress power must be finite and nonnegative")
     if args.minimum_structured_residual_auc_gain < 0.0:
         raise ValueError("structured residual AUC gain must be nonnegative")
@@ -1428,7 +1437,10 @@ def main() -> None:
             device=device,
         )
 
-    current_shrinkage = recalibrate_probabilities()
+    # Selection may use the training-only prior correction, but must not depend
+    # on calibration labels. Fit shrinkage once after both epochs are frozen.
+    head.set_probability_shrinkage(1.0)
+    current_shrinkage = 1.0
     validation_phase_rows = phase_balanced_row_indices(validation_loaded)
     validation_phase_outcomes = validation_outcomes.index_select(
         0, validation_phase_rows
@@ -1514,7 +1526,6 @@ def main() -> None:
             )
             optimizer.step()
             losses.append(float(loss.total.detach()))
-        current_shrinkage = recalibrate_probabilities()
         epoch_breakdowns = _evaluation_breakdowns(
             head,
             validation_features,
@@ -1619,6 +1630,8 @@ def main() -> None:
         combined_state = head.state_dict()
         combined_state.update(best_margin_state)
         head.load_state_dict(combined_state, strict=True)
+    pre_calibration_selected_state_sha256 = outcome_state_sha256(head.state_dict())
+    current_shrinkage = recalibrate_probabilities()
     phase_fraction = np.concatenate(
         [
             np.asarray(corpus.arrays["global_features"][:, 0])
@@ -1818,6 +1831,21 @@ def main() -> None:
             >= structured_baseline_auc + args.minimum_structured_residual_auc_gain
         )
     )
+    validation_public_slices = None
+    if generalization_protocol is not None:
+        from scripts.hog26_public_slice_gates import evaluate_loaded_public_slices
+
+        validation_public_slices = evaluate_loaded_public_slices(
+            head,
+            validation_features,
+            validation_loaded,
+            prior,
+            generalization_protocol,
+            stage="development",
+            device=device,
+            seed=args.seed + 30_000,
+        )
+        development_passed = development_passed and validation_public_slices["passed"]
     selected_state_sha256 = outcome_state_sha256(best_state)
     if (
         args.expected_outcome_state_sha256
@@ -1827,6 +1855,7 @@ def main() -> None:
     holdout_evaluation: dict[str, Any] | None = None
     holdout_prior_nll: float | None = None
     holdout_passed: bool | None = None
+    holdout_public_slices = None
     holdout_phase_auc_confidence: dict[str, dict[str, float | int] | None] | None = None
     holdout_phase_confidence_passed: bool | None = None
     if holdout_loaded:
@@ -1922,11 +1951,30 @@ def main() -> None:
                 or not holdout_selection_deck_overlap
             )
         )
+        if generalization_protocol is not None:
+            holdout_public_slices = evaluate_loaded_public_slices(
+                head,
+                holdout_features,
+                holdout_loaded,
+                prior,
+                generalization_protocol,
+                stage="holdout",
+                device=device,
+                seed=args.seed + 40_000,
+            )
+            holdout_passed = holdout_passed and holdout_public_slices["passed"]
     final_passed = development_passed and (
         holdout_passed if holdout_passed is not None else True
     )
     report = {
         "schema": SCHEMA,
+        "generalization_protocol_sha256": (
+            file_sha256(args.generalization_protocol)
+            if args.generalization_protocol is not None
+            else None
+        ),
+        "validation_public_slices": validation_public_slices,
+        "holdout_public_slices": holdout_public_slices,
         "base_checkpoint": str(args.base_checkpoint.resolve()),
         "base_checkpoint_sha256": file_sha256(args.base_checkpoint),
         "train_corpora": [str(path.resolve()) for path in args.train_corpus],
@@ -1993,6 +2041,10 @@ def main() -> None:
             else "factorized-training-mass-to-empirical-episode-prior-v1"
         ),
         "probability_shrinkage": float(head.probability_shrinkage.cpu()),
+        "calibration_timing": "once-after-outcome-and-margin-epoch-selection-v1",
+        "pre_calibration_selected_state_sha256": (
+            pre_calibration_selected_state_sha256
+        ),
         "actor_input_previous_reward": "forced-zero-unavailable-at-live-inference",
         "actor_input_critic_fields": False,
         "actor_feature_contract": args.feature_set,
@@ -2092,9 +2144,7 @@ def main() -> None:
             "holdout_passed": holdout_passed,
             "holdout_natural_opponent_overlap": sorted(holdout_opponent_overlap),
             "holdout_natural_deck_overlap": sorted(holdout_deck_overlap),
-            "holdout_selection_deck_overlap": sorted(
-                holdout_selection_deck_overlap
-            ),
+            "holdout_selection_deck_overlap": sorted(holdout_selection_deck_overlap),
         },
         "holdout_prior_nll": holdout_prior_nll,
         "holdout_evaluation": holdout_evaluation,

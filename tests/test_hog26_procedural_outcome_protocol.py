@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import numpy as np
+
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT / "reports" / "hog26_procedural_outcome_protocol_seed1278401.json"
 
@@ -67,9 +69,7 @@ def test_procedural_outcome_protocol_is_split_safe_and_pinned() -> None:
     assert set(protocol["probability_calibration"]["opponents"]) <= train_opponents
     assert "split-lane" not in train_opponents
     assert protocol["final_holdout"]["generated"]["opponents"] == ["split-lane"]
-    assert protocol["final_holdout"]["reserved_original"]["opponents"] == [
-        "split-lane"
-    ]
+    assert protocol["final_holdout"]["reserved_original"]["opponents"] == ["split-lane"]
     candidate = protocol["primary_candidate"]
     assert candidate["feature_set"] == "structured-summary"
     assert candidate["margin_progress_power"] == 6.0
@@ -92,3 +92,40 @@ def test_procedural_outcome_protocol_is_split_safe_and_pinned() -> None:
     ]
     assert candidate_data["holdout_corpora"] == []
     assert candidate_data["opened_historical_holdout_forbidden"] is True
+
+
+def test_amended_protocol_filters_actual_legacy_episodes_and_scopes_exposure() -> None:
+    protocol = json.loads(
+        (
+            ROOT
+            / "reports"
+            / "hog26_procedural_outcome_protocol_reassessed_20260908.json"
+        ).read_text()
+    )
+    assert (
+        protocol["amendment"]["supersedes_sha256"]
+        == hashlib.sha256(PROTOCOL.read_bytes()).hexdigest()
+    )
+    data = protocol["primary_candidate_data"]
+    for path in data["legacy_training_corpora"]:
+        with np.load(ROOT / path, allow_pickle=False) as archive:
+            metadata = json.loads(str(archive["metadata_json"]))
+            episode_styles = np.asarray(metadata["opponents"])[
+                archive["episode_opponent_indices"]
+            ]
+            assert "split-lane" not in episode_styles
+            if not metadata.get("symmetric_draw_source"):
+                assert (
+                    metadata["source_corpus_sha256"]
+                    == hashlib.sha256(
+                        Path(metadata["source_corpus"]).read_bytes()
+                    ).hexdigest()
+                )
+                with np.load(metadata["source_corpus"], allow_pickle=False) as source:
+                    original = json.loads(str(source["metadata_json"]))
+                    assert "split-lane" in original["opponents"]
+    scope = protocol["opponent_generalization"]
+    assert scope["head_held_out_styles"] == ["split-lane"]
+    assert "split-lane" in scope["base_policy_training_exposure"]
+    assert protocol["final_holdout"]["controlled_draw"]["actor_views"] == 16
+    assert protocol["replication"]["seeds"] == [1278802, 1278803]

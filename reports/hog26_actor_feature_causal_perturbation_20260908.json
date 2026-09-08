@@ -1,0 +1,22 @@
+{
+  "episodes": 4,
+  "exact_feature_equality": true,
+  "feature_sha256": "10bc7a8773c9ae0292f7130e516580ba6d5f9906977d7b62aebd679d3efc6745",
+  "features": 398,
+  "perturbed_nonpublic_or_unused_fields": [
+    "final_outcomes",
+    "terminal_tower_margins",
+    "next_global_features",
+    "terminal_winners",
+    "rewards",
+    "previous_rewards",
+    "actions",
+    "old_log_probs",
+    "dones"
+  ],
+  "rows": 1897,
+  "scope": "Actual structured-summary extraction on four complete training games. Proves invariance to listed future/unused arrays, not simulator-to-vision equivalence or all observation causality.",
+  "source": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+  "source_sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+  "status": "passed"
+}

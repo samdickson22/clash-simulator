@@ -315,3 +315,143 @@ def test_phase_clusters_pair_mirrored_seats_within_matchup() -> None:
     clusters = phase_balanced_matchup_clusters([(metadata, corpus)])
     assert clusters.shape == (6,)
     assert len(set(clusters.tolist())) == 1
+
+
+def test_calibration_labels_cannot_change_epoch_selection(
+    tmp_path, monkeypatch
+) -> None:
+    """Exercise the real optimizer/selector twice with opposite calibration labels."""
+    import hashlib
+    import json
+    import sys
+
+    from clasher.rl.direct_simple_behavior import DirectSimpleBehaviorCorpus
+    from scripts import train_hog26_actor_outcome as trainer
+
+    def digest(path):
+        return hashlib.sha256(str(path).encode()).hexdigest()
+
+    def fixture(seed, episode_labels):
+        labels = np.asarray(episode_labels, dtype=np.int8)
+        n = len(labels)
+        public = np.zeros((n * 3, 18), dtype=np.float32)
+        public[:, 0] = np.tile([0.15, 0.5, 0.85], n)
+        public[:, 8:14] = 0.8
+        public[:, 1] = np.repeat(np.arange(n) / n, 3)
+        outcomes = np.repeat(labels, 3)
+        margins = outcomes.astype(np.float32) * 0.2
+        metadata = {
+            "schema": trainer.CORPUS_SCHEMA,
+            "label_authority": "undiscounted-terminal-winner-and-post-action-public-tower-fractions-v1",
+            "actor_input_excludes_outcome_labels": True,
+            "checkpoint_sha256": digest(tmp_path / "base.pt"),
+            "seed": seed,
+            "opponents": ["balanced"],
+            "opponent_decks": [f"deck-{seed}"],
+        }
+        corpus = DirectSimpleBehaviorCorpus(
+            arrays={
+                "global_features": public,
+                "next_global_features": public.copy(),
+                "terminal_winners": np.where(outcomes < 0, 1, 0),
+                "final_outcomes": outcomes,
+                "terminal_tower_margins": margins,
+            },
+            episode_offsets=np.arange(0, 3 * n + 1, 3),
+            episode_stream_rows=np.arange(n),
+            episode_ordinals=np.arange(n),
+            initial_hidden=np.zeros((n, 1), dtype=np.float32),
+            initial_cell=np.zeros((n, 1), dtype=np.float32),
+            episode_arrays={
+                "episode_opponent_indices": np.zeros(n, dtype=np.int64),
+                "episode_opponent_deck_indices": np.zeros(n, dtype=np.int64),
+                "episode_learner_players": np.zeros(n, dtype=np.int64),
+                "episode_final_outcomes": labels,
+                "episode_terminal_tower_margins": labels.astype(np.float32) * 0.2,
+            },
+        )
+        return metadata, corpus
+
+    corpora = {
+        "train.npz": fixture(1, [-1, 0, 1, -1, 0, 1]),
+        "validation.npz": fixture(2, [-1, 0, 1, 1, 0, -1]),
+    }
+    monkeypatch.setattr(trainer, "file_sha256", digest)
+    monkeypatch.setattr(trainer, "load_model", lambda *args: ({}, torch.nn.Identity()))
+    monkeypatch.setattr(
+        trainer, "load_direct_simple_behavior_corpus", lambda path: corpora[path.name]
+    )
+    calls = []
+    real_fit = trainer.fit_probability_shrinkage
+
+    def fit(head, features, labels, **kwargs):
+        calls.append(labels.clone())
+        return real_fit(head, features, labels, **kwargs)
+
+    monkeypatch.setattr(trainer, "fit_probability_shrinkage", fit)
+    from pathlib import Path
+
+    protocol = json.loads(
+        (
+            Path(__file__).resolve().parents[1]
+            / "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json"
+        ).read_text()
+    )
+    protocol["development_selection"]["opponents"] = ["balanced"]
+    protocol["gates"]["cluster_bootstrap_replicates"] = 100
+    protocol_path = tmp_path / "protocol.json"
+    protocol_path.write_text(json.dumps(protocol))
+    reports = []
+    for index, label in enumerate((-1, 1)):
+        corpora["calibration.npz"] = fixture(3, [label] * 6)
+        report = tmp_path / f"report-{index}.json"
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            [
+                "trainer",
+                "--base-checkpoint",
+                str(tmp_path / "base.pt"),
+                "--train-corpus",
+                "train.npz",
+                "--validation-corpus",
+                "validation.npz",
+                "--calibration-corpus",
+                "calibration.npz",
+                "--generalization-protocol",
+                str(protocol_path),
+                "--report",
+                str(report),
+                "--output-checkpoint",
+                str(tmp_path / f"unused-{index}.pt"),
+                "--seed",
+                "123",
+                "--device",
+                "cpu",
+                "--epochs",
+                "3",
+                "--feature-set",
+                "public-globals",
+                "--hidden-size",
+                "4",
+                "--batch-size",
+                "9",
+                "--phase-auc-bootstrap-replicates",
+                "100",
+            ],
+        )
+        with pytest.raises(SystemExit, match="failed development gates"):
+            trainer.main()
+        reports.append(json.loads(report.read_text()))
+        assert reports[-1]["validation_public_slices"]["passed"] is False
+        assert reports[-1]["generalization_protocol_sha256"] == digest(protocol_path)
+    assert len(calls) == 2  # exactly once per run, after selection
+    assert torch.all(calls[0] == -1) and torch.all(calls[1] == 1)
+    for key in (
+        "best_outcome_epoch",
+        "best_margin_epoch",
+        "history",
+        "pre_calibration_selected_state_sha256",
+    ):
+        assert reports[0][key] == reports[1][key]
+    assert all(row["probability_shrinkage"] == 1.0 for row in reports[0]["history"])

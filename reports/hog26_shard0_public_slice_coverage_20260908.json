@@ -1,0 +1,561 @@
+{
+  "gate_source_sha256": "512bef450d576b1993b320d98f229f986c85ce8608297de2f6d9d478a7b4d3d8",
+  "passed": false,
+  "scope": "Training shard0 coverage diagnostic with constant class probabilities and current-margin baseline. No candidate or holdout acceptance.",
+  "slices": {
+    "overall": {
+      "checks": {
+        "absolute_margin": true,
+        "auc": false,
+        "ece": true,
+        "margin": false,
+        "nll": false
+      },
+      "clusters_by_outcome": {
+        "-1": 46,
+        "0": 0,
+        "1": 33
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.1656716346740722,
+      "independent_clusters": 64,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.23401352763175964,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 268
+    },
+    "phase/early": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "learned_phase_margin": false,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 46,
+        "0": 0,
+        "1": 33
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.15156249999999988,
+      "independent_clusters": 64,
+      "margin_improvement_interval": {
+        "independent_clusters": 64,
+        "lower_95": 0.0,
+        "point": 0.0,
+        "replicates": 2000,
+        "upper_95": 0.0
+      },
+      "margin_mae": 0.3133988082408905,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177717,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177717,
+      "required": true,
+      "rows": 128
+    },
+    "phase/early/seat/0/style/balanced": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 20,
+        "0": 0,
+        "1": 12
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.175,
+      "independent_clusters": 32,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.2836124300956726,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 32
+    },
+    "phase/early/seat/0/style/random": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 17,
+        "0": 0,
+        "1": 15
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.08124999999999999,
+      "independent_clusters": 32,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.3449159860610962,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 32
+    },
+    "phase/early/seat/1/style/balanced": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 20,
+        "0": 0,
+        "1": 12
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.175,
+      "independent_clusters": 32,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.297363817691803,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 32
+    },
+    "phase/early/seat/1/style/random": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 20,
+        "0": 0,
+        "1": 12
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.175,
+      "independent_clusters": 32,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.327703058719635,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 32
+    },
+    "phase/late": {
+      "checks": {
+        "auc": false,
+        "ece": false,
+        "learned_phase_margin": false,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 9,
+        "0": 0,
+        "1": 2
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.33571426868438714,
+      "independent_clusters": 11,
+      "margin_improvement_interval": {
+        "independent_clusters": 11,
+        "lower_95": 0.0,
+        "point": 0.0,
+        "replicates": 2000,
+        "upper_95": 0.0
+      },
+      "margin_mae": 0.07924902439117432,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 14
+    },
+    "phase/late/seat/0/style/balanced": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 3,
+        "0": 0,
+        "1": 2
+      },
+      "coverage_passed": false,
+      "decisive_auc": 0.5,
+      "ece": 0.1500000238418579,
+      "independent_clusters": 5,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.09854649752378464,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 5
+    },
+    "phase/late/seat/0/style/random": {
+      "checks": {
+        "auc": false,
+        "ece": false,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 3,
+        "0": 0,
+        "1": 0
+      },
+      "coverage_passed": false,
+      "decisive_auc": null,
+      "ece": 0.55,
+      "independent_clusters": 3,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.004951603710651398,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 3
+    },
+    "phase/late/seat/1/style/balanced": {
+      "checks": {
+        "auc": false,
+        "ece": false,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 2,
+        "0": 0,
+        "1": 1
+      },
+      "coverage_passed": false,
+      "decisive_auc": 0.5,
+      "ece": 0.21666668653488158,
+      "independent_clusters": 3,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.19079141318798065,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 3
+    },
+    "phase/late/seat/1/style/random": {
+      "checks": {
+        "auc": false,
+        "ece": false,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 3,
+        "0": 0,
+        "1": 0
+      },
+      "coverage_passed": false,
+      "decisive_auc": null,
+      "ece": 0.55,
+      "independent_clusters": 3,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.009841589257121086,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 3
+    },
+    "phase/middle": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "learned_phase_margin": false,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 46,
+        "0": 0,
+        "1": 32
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.16111110448837268,
+      "independent_clusters": 64,
+      "margin_improvement_interval": {
+        "independent_clusters": 64,
+        "lower_95": 0.0,
+        "point": 0.0,
+        "replicates": 2000,
+        "upper_95": 0.0
+      },
+      "margin_mae": 0.1705641895532608,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177715,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177715,
+      "required": true,
+      "rows": 126
+    },
+    "phase/middle/seat/0/style/balanced": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 20,
+        "0": 0,
+        "1": 12
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.175,
+      "independent_clusters": 32,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.16882210969924927,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 32
+    },
+    "phase/middle/seat/0/style/random": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 17,
+        "0": 0,
+        "1": 14
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.09838711023330693,
+      "independent_clusters": 31,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.16901728510856628,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177717,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177717,
+      "required": true,
+      "rows": 31
+    },
+    "phase/middle/seat/1/style/balanced": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 20,
+        "0": 0,
+        "1": 12
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.175,
+      "independent_clusters": 32,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.19883877038955688,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177716,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177716,
+      "required": true,
+      "rows": 32
+    },
+    "phase/middle/seat/1/style/random": {
+      "checks": {
+        "auc": false,
+        "ece": true,
+        "margin": true
+      },
+      "clusters_by_outcome": {
+        "-1": 20,
+        "0": 0,
+        "1": 11
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.19516127109527592,
+      "independent_clusters": 31,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.14472275972366333,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177717,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177717,
+      "required": true,
+      "rows": 31
+    },
+    "seat/0": {
+      "checks": {
+        "absolute_margin": true,
+        "auc": false,
+        "ece": true,
+        "margin": false,
+        "nll": false
+      },
+      "clusters_by_outcome": {
+        "-1": 37,
+        "0": 0,
+        "1": 27
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.14259259700775134,
+      "independent_clusters": 64,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.23157291114330292,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177714,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177714,
+      "required": true,
+      "rows": 135
+    },
+    "seat/1": {
+      "checks": {
+        "absolute_margin": true,
+        "auc": false,
+        "ece": true,
+        "margin": false,
+        "nll": false
+      },
+      "clusters_by_outcome": {
+        "-1": 40,
+        "0": 0,
+        "1": 24
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.18909775018692,
+      "independent_clusters": 64,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.23649083077907562,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177714,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177714,
+      "required": true,
+      "rows": 133
+    },
+    "style/balanced": {
+      "checks": {
+        "absolute_margin": true,
+        "auc": false,
+        "ece": true,
+        "margin": false,
+        "nll": false
+      },
+      "clusters_by_outcome": {
+        "-1": 21,
+        "0": 0,
+        "1": 13
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.17499999999999988,
+      "independent_clusters": 32,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.23104038834571838,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177715,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177715,
+      "required": true,
+      "rows": 136
+    },
+    "style/random": {
+      "checks": {
+        "absolute_margin": true,
+        "auc": false,
+        "ece": true,
+        "margin": false,
+        "nll": false
+      },
+      "clusters_by_outcome": {
+        "-1": 25,
+        "0": 0,
+        "1": 20
+      },
+      "coverage_passed": true,
+      "decisive_auc": 0.5,
+      "ece": 0.15606062412261945,
+      "independent_clusters": 32,
+      "margin_improvement_interval": null,
+      "margin_mae": 0.23707672953605652,
+      "margin_mae_improvement": 0.0,
+      "metrics_passed": false,
+      "nll": 0.7985076962177714,
+      "nll_improvement": 0.0,
+      "passed": false,
+      "prior_nll": 0.7985076962177714,
+      "required": true,
+      "rows": 132
+    }
+  },
+  "source": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+  "source_sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+  "status": "inconclusive-reject"
+}

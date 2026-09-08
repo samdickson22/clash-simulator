@@ -1,0 +1,303 @@
+#!/usr/bin/env python3
+"""Fit a predeclared margin diagnostic on training-only, whole-family folds."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import time
+from pathlib import Path
+
+import numpy as np
+import torch
+from torch.nn import functional as F
+from torch.nn.utils.rnn import pad_sequence
+
+from clasher.rl.direct_simple_behavior import load_direct_simple_behavior_corpus
+from clasher.rl.outcome_model import ActorOutcomeHead
+from clasher.rl.temporal_margin import ActorTemporalMarginHead
+from scripts.collect_hog26_direct_simple_behavior import _atomic_json, file_sha256
+from scripts.pretrain_hog26_direct_simple_behavior import load_model
+from scripts.run_hog26_procedural_outcome_shard import load_protocol
+from scripts.train_hog26_actor_outcome import (
+    episode_balanced_row_weights,
+    extract_actor_features,
+    phase_balanced_row_indices,
+    validate_outcome_corpus,
+)
+from scripts.train_hog26_procedural_outcome_candidate import require_current_audit
+
+
+def fit_temporal_fold(
+    features, target, weights, corpus, selected_episodes, plan, power, rng
+):
+    head = ActorTemporalMarginHead(
+        features.shape[1],
+        projection_size=plan["projection_size"],
+        memory_size=plan["memory_size"],
+        residual_scale=plan["margin_residual_scale"],
+        progress_power=power,
+    )
+    optimizer = torch.optim.AdamW(
+        head.parameters(), lr=plan["learning_rate"], weight_decay=plan["weight_decay"]
+    )
+    episodes = [
+        slice(int(a), int(b))
+        for a, b in zip(
+            corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True
+        )
+    ]
+    for _epoch in range(plan["epochs"]):
+        order = rng.permutation(selected_episodes)
+        for begin in range(0, len(order), plan["episode_batch_size"]):
+            slices = [
+                episodes[e] for e in order[begin : begin + plan["episode_batch_size"]]
+            ]
+            inputs = pad_sequence([features[s] for s in slices], batch_first=True)
+            labels = pad_sequence([target[s] for s in slices], batch_first=True)
+            sample_weights = pad_sequence(
+                [weights[s] for s in slices], batch_first=True
+            )
+            prediction, _memory = head(inputs)  # exact zero reset for every full game
+            loss = (
+                F.smooth_l1_loss(prediction, labels, reduction="none") * sample_weights
+            ).sum() / sample_weights.sum()
+            optimizer.zero_grad(set_to_none=True)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(
+                head.parameters(), 1.0, error_if_nonfinite=True
+            )
+            optimizer.step()
+    with torch.no_grad():
+        return torch.cat([head(features[s].unsqueeze(0))[0][0] for s in episodes])
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--plan", type=Path, required=True)
+    args = parser.parse_args()
+    plan = json.loads(args.plan.read_text())
+    root = Path(__file__).resolve().parents[1]
+    output = root / plan["output"]
+    if output.exists():
+        raise SystemExit("refusing to overwrite margin screen")
+    protocol = load_protocol(root / plan["protocol"], root)
+    source = root / plan["corpus"]
+    matching = [r for r in protocol["training"] if r["output_corpus"] == plan["corpus"]]
+    if len(matching) != 1 or file_sha256(source) != plan["corpus_sha256"]:
+        raise ValueError("screen source must be an exact declared training corpus")
+    require_current_audit(source, root / matching[0]["audit_report"])
+    metadata, corpus = load_direct_simple_behavior_corpus(source)
+    validate_outcome_corpus(metadata, corpus)
+    if metadata["checkpoint_sha256"] != protocol["base_policy"]["sha256"]:
+        raise ValueError("screen behavior policy drifted")
+    manifest = json.loads((root / protocol["procedural_decks"]["path"]).read_text())
+    family_by_deck = {d["name"]: d.get("family_id") for d in manifest["decks"]}
+    episode_decks = np.asarray(metadata["opponent_decks"])[
+        corpus.episode_arrays["episode_opponent_deck_indices"]
+    ]
+    episode_families = np.asarray([family_by_deck[d] for d in episode_decks])
+    folds = plan["held_out_training_families"]
+    flat_families = [family for fold in folds for family in fold]
+    if len(set(flat_families)) != len(flat_families) or set(flat_families) != set(
+        episode_families
+    ):
+        raise ValueError("folds must partition the training families exactly once")
+    torch.set_num_threads(plan["torch_threads"])
+    device = torch.device("cpu")
+    _, model = load_model(root / protocol["base_policy"]["path"], device)
+    started = time.monotonic()
+    features = extract_actor_features(
+        model,
+        corpus,
+        device=device,
+        sequence_steps=128,
+        feature_set="structured-summary",
+    )
+    del model
+    target = torch.from_numpy(corpus.arrays["terminal_tower_margins"].copy()).float()
+    public = features[:, -18:]
+    current = (public[:, 8:11].sum(1) - public[:, 11:14].sum(1)) / 3
+    weights = episode_balanced_row_weights([(metadata, corpus)], phase_balanced=True)
+    row_families = np.repeat(episode_families, np.diff(corpus.episode_offsets))
+    representatives = phase_balanced_row_indices([(metadata, corpus)]).numpy()
+    progress = public[:, 0].numpy()
+    phases = np.minimum((progress * 3).astype(int), 2)
+    row_seats = np.repeat(
+        corpus.episode_arrays["episode_learner_players"],
+        np.diff(corpus.episode_offsets),
+    )
+    row_styles = np.repeat(
+        np.asarray(metadata["opponents"])[
+            corpus.episode_arrays["episode_opponent_indices"]
+        ],
+        np.diff(corpus.episode_offsets),
+    )
+
+    def summarize(prediction, rows):
+        if not len(rows):
+            return {"rows": 0, "mae_improvement": None}
+        pred = prediction[rows]
+        truth = target[rows]
+        baseline = current[rows]
+        mae = (pred - truth).abs().mean().item()
+        base_mae = (baseline - truth).abs().mean().item()
+        return {
+            "rows": len(rows),
+            "mae": mae,
+            "baseline_mae": base_mae,
+            "mae_improvement": base_mae - mae,
+            "mean_abs_correction": (pred - baseline).abs().mean().item(),
+        }
+
+    def breakdown(prediction, rows):
+        return {
+            "overall": summarize(prediction, rows),
+            "by_phase": {
+                name: summarize(prediction, rows[phases[rows] == i])
+                for i, name in enumerate(("early", "middle", "late"))
+            },
+            "by_seat": {
+                str(seat): summarize(prediction, rows[row_seats[rows] == seat])
+                for seat in (0, 1)
+            },
+            "by_style": {
+                str(style): summarize(prediction, rows[row_styles[rows] == style])
+                for style in metadata["opponents"]
+            },
+        }
+
+    results = []
+    for feature_set in plan["margin_feature_sets"]:
+        for power in plan["margin_progress_powers"]:
+            for seed in plan["seeds"]:
+                pooled = torch.full_like(target, torch.nan)
+                fold_results = []
+                for fold_index, families in enumerate(folds):
+                    validation_mask = np.isin(row_families, families)
+                    fit_rows = np.flatnonzero(~validation_mask)
+                    test_rows = representatives[validation_mask[representatives]]
+                    train_representatives = representatives[
+                        ~validation_mask[representatives]
+                    ]
+                    torch.manual_seed(seed + fold_index)
+                    rng = np.random.default_rng(seed + fold_index)
+                    if plan.get("model_type") == "temporal":
+                        if feature_set != "full-state":
+                            raise ValueError(
+                                "temporal screen requires full public summaries"
+                            )
+                        prediction = fit_temporal_fold(
+                            features,
+                            target,
+                            weights,
+                            corpus,
+                            np.flatnonzero(~np.isin(episode_families, families)),
+                            plan,
+                            power,
+                            rng,
+                        )
+                    else:
+                        head = ActorOutcomeHead(
+                            features.shape[1],
+                            plan["hidden_size"],
+                            margin_residual_scale=plan["margin_residual_scale"],
+                            margin_feature_set=feature_set,
+                            margin_progress_power=power,
+                        )
+                        for name, parameter in head.named_parameters():
+                            parameter.requires_grad_(name.startswith("margin_trunk."))
+                        parameters = [p for p in head.parameters() if p.requires_grad]
+                        optimizer = torch.optim.AdamW(
+                            parameters,
+                            lr=plan["learning_rate"],
+                            weight_decay=plan["weight_decay"],
+                        )
+                        fit_weights = weights / weights[fit_rows].mean()
+                        for _epoch in range(plan["epochs"]):
+                            order = rng.permutation(fit_rows)
+                            for begin in range(0, len(order), plan["batch_size"]):
+                                rows = order[begin : begin + plan["batch_size"]]
+                                prediction = head(
+                                    features[rows], calibrated=False
+                                ).terminal_tower_margin
+                                loss = (
+                                    F.smooth_l1_loss(
+                                        prediction, target[rows], reduction="none"
+                                    )
+                                    * fit_weights[rows]
+                                ).mean()
+                                optimizer.zero_grad(set_to_none=True)
+                                loss.backward()
+                                torch.nn.utils.clip_grad_norm_(
+                                    parameters, 1.0, error_if_nonfinite=True
+                                )
+                                optimizer.step()
+                        with torch.no_grad():
+                            prediction = torch.cat(
+                                [
+                                    head(x).terminal_tower_margin
+                                    for x in features.split(2048)
+                                ]
+                            )
+                    pooled[test_rows] = prediction[test_rows]
+                    fold_results.append(
+                        {
+                            "held_out_families": families,
+                            "fit": breakdown(prediction, train_representatives),
+                            "out_of_fold": breakdown(prediction, test_rows),
+                        }
+                    )
+                    print(
+                        json.dumps(
+                            {
+                                "feature_set": feature_set,
+                                "power": power,
+                                "seed": seed,
+                                "fold": fold_index,
+                                "out_of_fold": fold_results[-1]["out_of_fold"][
+                                    "overall"
+                                ],
+                                "elapsed_seconds": round(time.monotonic() - started, 2),
+                            }
+                        ),
+                        flush=True,
+                    )
+                if not torch.isfinite(pooled[representatives]).all():
+                    raise ValueError(
+                        "out-of-fold predictions do not cover all representatives"
+                    )
+                result = {
+                    "feature_set": feature_set,
+                    "power": power,
+                    "seed": seed,
+                    "folds": fold_results,
+                    "pooled": breakdown(pooled, representatives),
+                    "predictions": pooled[representatives].tolist(),
+                }
+                result["screen_point_gates_passed"] = result["pooled"]["overall"][
+                    "mae_improvement"
+                ] >= 0.005 and all(
+                    row["mae_improvement"] is not None
+                    and row["mae_improvement"] >= -0.01
+                    for row in result["pooled"]["by_phase"].values()
+                )
+                results.append(result)
+    _atomic_json(
+        output,
+        {
+            "status": "diagnostic-only",
+            "plan": plan,
+            "plan_sha256": file_sha256(args.plan),
+            "source_sha256": file_sha256(source),
+            "feature_size": features.shape[1],
+            "representative_rows": representatives.tolist(),
+            "source_episode_families": episode_families.tolist(),
+            "elapsed_seconds": time.monotonic() - started,
+            "results": results,
+        },
+    )
+
+
+if __name__ == "__main__":
+    main()

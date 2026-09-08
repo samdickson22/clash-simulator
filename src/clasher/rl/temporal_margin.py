@@ -25,8 +25,8 @@ class ActorTemporalMarginHead(nn.Module):
             raise ValueError("temporal margin dimensions must be positive")
         if not math.isfinite(residual_scale) or residual_scale < 0.0:
             raise ValueError("temporal margin residual scale must be nonnegative")
-        if not math.isfinite(progress_power) or progress_power <= 0.0:
-            raise ValueError("temporal margin progress power must be positive")
+        if not math.isfinite(progress_power) or progress_power < 0.0:
+            raise ValueError("temporal margin progress power must be nonnegative")
         self.input_size = int(input_size)
         self.projection_size = int(projection_size)
         self.memory_size = int(memory_size)
