@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
+
+import pytest
 
 from scripts.run_hog26_procedural_outcome_shard import (
     collection_args,
@@ -9,6 +12,23 @@ from scripts.run_hog26_procedural_outcome_shard import (
 
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT / "reports" / "hog26_procedural_outcome_protocol_seed1278401.json"
+
+
+@pytest.mark.parametrize("stage", ["--development-selection", "--probability-calibration"])
+@pytest.mark.parametrize("readiness", [None, {"status": "under-review", "blocking_issues": ["design"]}])
+def test_unready_design_prevents_new_development_collection(monkeypatch, stage, readiness):
+    from scripts import run_hog26_procedural_outcome_shard as runner
+
+    protocol = {"development_selection": {}, "probability_calibration": {}}
+    if readiness is not None:
+        protocol["training_readiness"] = readiness
+    monkeypatch.setattr(runner, "load_protocol", lambda *args: protocol)
+    monkeypatch.setattr(sys, "argv", ["runner", "--protocol", "unused", stage])
+    def forbidden(*args, **kwargs):
+        pytest.fail("collection began before design clearance")
+    monkeypatch.setattr(runner, "collect", forbidden)
+    with pytest.raises(ValueError, match="frozen candidate design"):
+        runner.main()
 
 
 def test_frozen_training_shard_builds_exact_collector_arguments() -> None:

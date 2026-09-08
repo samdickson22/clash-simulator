@@ -22,6 +22,7 @@ def require_unopened_final_paths(protocol, root):
         )]
         # Collectors may write shards before atomically publishing corpus.npz.
         paths.append((root / stage["output_corpus"]).parent)
+        paths.append((root / stage["output_report"]).with_suffix(".collection-start.json"))
         if any(path.exists() for path in paths):
             raise ValueError("final collection artifacts already exist; cannot freeze")
 

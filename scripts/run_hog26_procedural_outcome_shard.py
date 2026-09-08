@@ -73,6 +73,10 @@ def main() -> None:
         row = protocol.get("probability_calibration")
     if not isinstance(row, dict):
         raise TypeError("protocol collection stage is malformed")
+    if args.training_shard is None:
+        readiness = protocol.get("training_readiness", {})
+        if readiness.get("status") != "ready" or readiness.get("blocking_issues") != []:
+            raise ValueError("selection/calibration collection requires a frozen candidate design")
     result = collect(collection_args(protocol, row, root=root, device=args.device))
     if int(result["episode_count"]) != int(row["expected_games"]):
         raise RuntimeError("collection stage did not produce its frozen game budget")
