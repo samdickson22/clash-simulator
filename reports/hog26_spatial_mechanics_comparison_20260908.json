@@ -1,0 +1,88 @@
+{
+  "feature_size": 808,
+  "fits": 64,
+  "results": [
+    {
+      "ablated_late_gain": -0.012543044984340668,
+      "ablated_overall_gain": 0.056598156690597534,
+      "all_phase_point_learning_passed": false,
+      "full_late_gain": -0.018610596656799316,
+      "full_overall_gain": 0.056304410099983215,
+      "power": 0.0,
+      "seed": 1278901,
+      "shard": "balanced_random"
+    },
+    {
+      "ablated_late_gain": -0.010775573551654816,
+      "ablated_overall_gain": 0.05596013367176056,
+      "all_phase_point_learning_passed": false,
+      "full_late_gain": -0.02020304650068283,
+      "full_overall_gain": 0.05482111871242523,
+      "power": 0.0,
+      "seed": 1278902,
+      "shard": "balanced_random"
+    },
+    {
+      "ablated_late_gain": -0.013603463768959045,
+      "ablated_overall_gain": 0.06124985218048096,
+      "all_phase_point_learning_passed": false,
+      "full_late_gain": -0.016894064843654633,
+      "full_overall_gain": 0.06019937992095947,
+      "power": 1.0,
+      "seed": 1278901,
+      "shard": "balanced_random"
+    },
+    {
+      "ablated_late_gain": -0.01219893991947174,
+      "ablated_overall_gain": 0.05950671434402466,
+      "all_phase_point_learning_passed": false,
+      "full_late_gain": -0.015876509249210358,
+      "full_overall_gain": 0.05945467948913574,
+      "power": 1.0,
+      "seed": 1278902,
+      "shard": "balanced_random"
+    },
+    {
+      "ablated_late_gain": -0.03763769567012787,
+      "ablated_overall_gain": 0.005041435360908508,
+      "all_phase_point_learning_passed": false,
+      "full_late_gain": -0.04666396230459213,
+      "full_overall_gain": 0.0026542693376541138,
+      "power": 0.0,
+      "seed": 1278901,
+      "shard": "bridge_reactive"
+    },
+    {
+      "ablated_late_gain": -0.04193141311407089,
+      "ablated_overall_gain": 0.004391312599182129,
+      "all_phase_point_learning_passed": false,
+      "full_late_gain": -0.04462806135416031,
+      "full_overall_gain": 0.003468632698059082,
+      "power": 0.0,
+      "seed": 1278902,
+      "shard": "bridge_reactive"
+    },
+    {
+      "ablated_late_gain": -0.008217200636863708,
+      "ablated_overall_gain": 0.011050552129745483,
+      "all_phase_point_learning_passed": false,
+      "full_late_gain": -0.0094805508852005,
+      "full_overall_gain": 0.008109256625175476,
+      "power": 1.0,
+      "seed": 1278901,
+      "shard": "bridge_reactive"
+    },
+    {
+      "ablated_late_gain": -0.006995141506195068,
+      "ablated_overall_gain": 0.006761088967323303,
+      "all_phase_point_learning_passed": false,
+      "full_late_gain": -0.008573360741138458,
+      "full_overall_gain": 0.004583001136779785,
+      "power": 1.0,
+      "seed": 1278902,
+      "shard": "bridge_reactive"
+    }
+  ],
+  "same_parameter_count_ablation": true,
+  "status": "diagnostic-only"
+}

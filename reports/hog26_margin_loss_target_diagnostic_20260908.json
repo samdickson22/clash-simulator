@@ -1,0 +1,63 @@
+{
+  "scope": "Descriptive training-label statistics only; same-data optimal constants are not learned or held-out performance.",
+  "shards": {
+    "1278501": {
+      "early": {
+        "baseline_mae": 0.3133988082408905,
+        "mean_change": -0.24344448745250702,
+        "median_change": -0.266957551240921,
+        "rows": 128,
+        "same_data_constant_mean_mae_improvement": 0.07796864211559296,
+        "same_data_constant_median_mae_improvement": 0.07911273837089539,
+        "within_0_01_of_current": 0.015625
+      },
+      "late": {
+        "baseline_mae": 0.07924902439117432,
+        "mean_change": -0.07614411413669586,
+        "median_change": -0.00731818750500679,
+        "rows": 14,
+        "same_data_constant_mean_mae_improvement": -0.02144084870815277,
+        "same_data_constant_median_mae_improvement": 0.0027357488870620728,
+        "within_0_01_of_current": 0.5
+      },
+      "middle": {
+        "baseline_mae": 0.1705641895532608,
+        "mean_change": -0.1359231323003769,
+        "median_change": -0.11395981907844543,
+        "rows": 126,
+        "same_data_constant_mean_mae_improvement": 0.031240269541740417,
+        "same_data_constant_median_mae_improvement": 0.031497880816459656,
+        "within_0_01_of_current": 0.047619047619047616
+      }
+    },
+    "1278502": {
+      "early": {
+        "baseline_mae": 0.24213792383670807,
+        "mean_change": -0.16642223298549652,
+        "median_change": -0.10681749135255814,
+        "rows": 128,
+        "same_data_constant_mean_mae_improvement": 0.022155076265335083,
+        "same_data_constant_median_mae_improvement": 0.024841174483299255,
+        "within_0_01_of_current": 0.0390625
+      },
+      "late": {
+        "baseline_mae": 0.08676006644964218,
+        "mean_change": -0.08088309317827225,
+        "median_change": -0.014526009559631348,
+        "rows": 21,
+        "same_data_constant_mean_mae_improvement": -0.004279442131519318,
+        "same_data_constant_median_mae_improvement": 0.008749917149543762,
+        "within_0_01_of_current": 0.19047619047619047
+      },
+      "middle": {
+        "baseline_mae": 0.1483832150697708,
+        "mean_change": -0.11267907917499542,
+        "median_change": -0.057421207427978516,
+        "rows": 110,
+        "same_data_constant_mean_mae_improvement": 0.0036729127168655396,
+        "same_data_constant_median_mae_improvement": 0.00708538293838501,
+        "within_0_01_of_current": 0.20909090909090908
+      }
+    }
+  }
+}

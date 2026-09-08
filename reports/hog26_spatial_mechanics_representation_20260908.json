@@ -1,0 +1,12 @@
+{
+  "coordinate_swap_feature_difference": 0.04124999791383743,
+  "empty_entity_set_finite": true,
+  "features": 808,
+  "joint_entity_permutation_max_difference": 5.960464477539063e-08,
+  "public_globals_preserved": true,
+  "row": 13,
+  "scope": "Representation invariants on the recorded public observation; no claim of prediction quality.",
+  "source": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+  "source_sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+  "status": "passed"
+}

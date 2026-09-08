@@ -240,3 +240,142 @@ Candidate fitting remains blocked on a defensible margin design after inspecting
 broader training styles. Final collection and frozen-state evaluation orchestration
 still need implementation before any final labels are opened. No final evaluation
 or controller improvement has occurred.
+
+## Training shard 1 completed
+
+Seed1278502 finished all 128 games and its automatic audit passed. Recomputed
+corpus authority matches `af8ea0ba2e37c4a870af71ad2228cae713273a095a9d8da80a6f39b1d1ecc8f6`.
+It retained 53,092 rows in 9,556.634 seconds, or 5.56 useful rows/s. Outcomes were
+56 wins and 72 losses. Bridge-pressure produced 41/64 wins; reactive-defense
+produced 15/64. This describes performance against these scripted opponents,
+not human competence. The shard contains 14 late matchup clusters, only two
+containing a win.
+
+The union audit of shards0/1 passed on 256 complete games, 111,253 rows, 107 wins
+and 149 losses. There are 128 early, 119 middle and 25 late matchup clusters,
+with wins in only four late clusters. Audit artifact:
+`hog26_procedural_train_shards01_audit_20260908.json`.
+
+Started the remaining declared training shard, seed1278503, against slow-push
+and spell-control. Its supervisor will audit after successful collection.
+Process authority is `hog26_procedural_shard2_resume_20260908.json`; use that
+record and live process checks rather than the old shard1 PIDs.
+
+Predeclared repetitions of the static and temporal family screens on the new
+bridge/reactive training corpus retain the original hyperparameters, family
+folds and seeds. Plans and outputs use prefixes
+`hog26_margin_bridge_reactive_screen` and
+`hog26_margin_bridge_reactive_temporal_screen`. These supervised diagnostics
+use complete audited training games only. No new development, calibration or
+final labels have been opened, and no candidate fitting has been cleared.
+
+The bridge/reactive repetitions finished. Public-global power0 fails both seeds
+with late MAE regressions about 0.046 and negligible overall gains. Static full-state
+power6 meets the old pooled point screen, but its late gains are only about 0.00010.
+The GRU with power1 reaches late gains +0.00035/+0.00105 on this shard, compared
+with negative late gains on shard0. These outcomes do not establish a robust
+candidate under the stricter natural phase learning and coverage gates.
+
+A training-label diagnostic identifies a loss/metric mismatch hypothesis to test
+before another architecture change. The existing trainer uses SmoothL1 with its
+default quadratic region, while margin acceptance uses MAE. On late phase
+representatives, mean versus median remaining-margin change is -0.07614 versus
+-0.00732 on shard0 and -0.08088 versus -0.01453 on shard1. Even same-data mean
+constant corrections worsen MAE by 0.02144/0.00428, whereas same-data median
+constants improve it by 0.00274/0.00875. These descriptive constants are not
+held-out predictions or promotion evidence. Artifact:
+`hog26_margin_loss_target_diagnostic_20260908.json`.
+
+Next safe model experiment: predeclare an unchanged-family-fold comparison of
+absolute versus Huber margin loss on these completed training shards. Preserve
+all thresholds and test counterfactual ranking later; improved MAE alone does
+not establish calibrated expected action value. Do not infer that loss alignment
+will fix unseen families, rare late wins, or outcome calibration.
+
+## Absolute-loss comparison
+
+Completed 96 additional fold fits under four predeclared paired plans. Only the
+margin loss changed; source corpora, powers0/1, architectures, seeds, folds,
+optimizers, and fixed final epochs match their Huber comparators. No configuration
+clears the +0.001 per-phase point-learning floor across both training shards and
+both seeds. The linear-gated GRU improves late MAE by +0.00198/+0.00274 on the
+bridge/reactive shard, but still regresses late on the balanced/random shard.
+No candidate is promoted. Comparison artifact:
+`hog26_margin_absolute_loss_comparison_20260908.json`.
+
+This comparison does not establish calibrated expected utility: absolute-error
+regression estimates a conditional median. Exact-terminal action-ranking gates
+remain mandatory regardless of MAE gains.
+
+Measured current training weight totals from the actual corpus arrays. Late rows
+receive 3.65% of total weight in shard0 and 5.47% in shard1. The existing weighting
+balances each game's reached phases and gives games equal mass; it does not
+balance aggregate early/middle/late mass. Next bounded training-only diagnostic:
+compare this weighting with aggregate phase balance, normalizing using fitting
+folds only. Preserve the complete-game rows and held-out-family splits, and keep
+all acceptance thresholds unchanged. A successful weight test would still need
+independent development, calibration, replication and final evaluation.
+
+## Aggregate phase-weight comparison and spatial information loss
+
+Completed the 96 predeclared phase-weight fold fits. The fitting-weight helper
+uses fitting rows only, zeroes withheld rows, and verifies one-third full-fold
+weight mass for each phase. Three focused tests cover those invariants and the
+missing-fitting-phase rejection. No configuration clears the phase-learning
+point floor across both shards and both seeds; only one of 24 pooled model/seed
+results passes that point floor at all. The previous loss/weight settings remain
+unaccepted. Artifact: `hog26_margin_aggregate_phase_comparison_20260908.json`.
+
+The temporal minibatch implementation still divides by each selected batch's
+weight sum. Therefore one-third full-fold weight mass is not proof of exactly
+one-third averaged optimizer influence. The comparison report records this
+limitation. Correct that denominator before using aggregate weighting as an
+unbiased production objective; do not retroactively relabel these runs.
+
+Found an exact information-loss example in training shard0, row13. Swapping only
+the positions of a visible enemy Ice Spirit and Princess changes raw coordinates
+by up to 0.20625, but all 398 pooled actor features are bitwise identical. Independent
+column-wise mean/max pooling destroys the unit-stat/position association. A static
+head cannot distinguish these instantaneous inputs. A recurrent head might infer
+some associations from history; this experiment does not rule that out, prove an
+alternate reachable trajectory, or establish different terminal outcomes.
+Artifact: `hog26_actor_summary_spatial_collision_20260908.json`.
+
+Next representation experiment must preserve associations between visible unit
+mechanics and position, rather than changing only loss/power/width on this pooled
+summary. Use the same complete-game training-family folds, preserve actor-only
+inputs, and leave all development, calibration and final labels unopened until
+the candidate design is fixed. No model is promoted by the information-loss test.
+
+## Spatial-mechanics representation and matched control
+
+Implemented the experimental `spatial-mechanics` actor representation. It appends
+visible mechanics-position moments and visible entity counts before the public
+global suffix, producing 808 features for this policy. On the recorded collision,
+coordinate swapping now changes features by 0.04125. Joint entity permutation
+preserves the result within floating-point tolerance; empty sets are finite and
+the final 18 public globals are unchanged. Three tests cover these properties.
+The campaign primary remains unchanged and blocked; this new representation is
+an experimental option, not an accepted model.
+
+Completed 64 fold fits comparing the full 808-feature input with the added-feature
+block zeroed. Parameter count, initialization seeds, dimensions, loss, fitting
+weights, optimizer, epoch budget, and family folds were matched. All eight pooled
+full-feature model/seed results have worse late MAE than their ablated controls.
+No full-feature result clears the +0.001 phase point-learning floor for every phase.
+The information-loss demonstration therefore does not establish that these added
+moments improve forecasting. Artifact:
+`hog26_spatial_mechanics_comparison_20260908.json`.
+
+Inspected fitting versus withheld-family errors as well. Some late errors already
+fail on fitting-phase representatives, especially for the recurrent model and
+bridge/reactive shard; other cases improve in fit then reverse out of fold.
+Do not describe every failure as pure overfitting or pure information loss.
+The next data-scale comparison should fit the combined audited training corpora,
+with all episodes from each withheld generated family excluded together. Separate
+per-shard fits each used only 96 fitting games. Do not continue feature-only tuning
+on these small separate folds as if it were the declared full training mixture.
+Final labels remain unopened, thresholds unchanged, and shard2 continues collecting.
+
+Current focused validation: 42 tests passed, including the real calibration
+isolation regression and public-slice gates; Ruff passed.

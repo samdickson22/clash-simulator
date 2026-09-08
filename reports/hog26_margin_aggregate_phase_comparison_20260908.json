@@ -1,0 +1,247 @@
+{
+  "comparison_rows": [
+    {
+      "aggregate_phase_late_gain": -0.005990214645862579,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.004314251244068146,
+      "experiment": "hog26_margin_family_screen",
+      "feature_set": "public-globals",
+      "overall_gain": 0.044971272349357605,
+      "power": 0.0,
+      "seed": 1278901
+    },
+    {
+      "aggregate_phase_late_gain": -0.005740247666835785,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": 0.00011057406663894653,
+      "experiment": "hog26_margin_family_screen",
+      "feature_set": "public-globals",
+      "overall_gain": 0.04691937565803528,
+      "power": 0.0,
+      "seed": 1278902
+    },
+    {
+      "aggregate_phase_late_gain": -0.00990302860736847,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.009459905326366425,
+      "experiment": "hog26_margin_family_screen",
+      "feature_set": "public-globals",
+      "overall_gain": 0.041883185505867004,
+      "power": 1.0,
+      "seed": 1278901
+    },
+    {
+      "aggregate_phase_late_gain": -0.00973723828792572,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.009792521595954895,
+      "experiment": "hog26_margin_family_screen",
+      "feature_set": "public-globals",
+      "overall_gain": 0.0442732572555542,
+      "power": 1.0,
+      "seed": 1278902
+    },
+    {
+      "aggregate_phase_late_gain": -0.016872502863407135,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.026906035840511322,
+      "experiment": "hog26_margin_family_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.05567517876625061,
+      "power": 0.0,
+      "seed": 1278901
+    },
+    {
+      "aggregate_phase_late_gain": -0.014329075813293457,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.02465524524450302,
+      "experiment": "hog26_margin_family_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.05636531114578247,
+      "power": 0.0,
+      "seed": 1278902
+    },
+    {
+      "aggregate_phase_late_gain": -0.014815650880336761,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.02525825798511505,
+      "experiment": "hog26_margin_family_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.062327414751052856,
+      "power": 1.0,
+      "seed": 1278901
+    },
+    {
+      "aggregate_phase_late_gain": -0.013313181698322296,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.023241214454174042,
+      "experiment": "hog26_margin_family_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.060662657022476196,
+      "power": 1.0,
+      "seed": 1278902
+    },
+    {
+      "aggregate_phase_late_gain": -0.025090590119361877,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.05315971374511719,
+      "experiment": "hog26_margin_temporal_family_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.03470708429813385,
+      "power": 0.0,
+      "seed": 1278911
+    },
+    {
+      "aggregate_phase_late_gain": -0.0280877947807312,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.052923426032066345,
+      "experiment": "hog26_margin_temporal_family_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.033780306577682495,
+      "power": 0.0,
+      "seed": 1278912
+    },
+    {
+      "aggregate_phase_late_gain": -0.01577085256576538,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.017386794090270996,
+      "experiment": "hog26_margin_temporal_family_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.03614228963851929,
+      "power": 1.0,
+      "seed": 1278911
+    },
+    {
+      "aggregate_phase_late_gain": -0.016400769352912903,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.01796923577785492,
+      "experiment": "hog26_margin_temporal_family_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.03522123396396637,
+      "power": 1.0,
+      "seed": 1278912
+    },
+    {
+      "aggregate_phase_late_gain": -0.02981947362422943,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.04363469034433365,
+      "experiment": "hog26_margin_bridge_reactive_screen",
+      "feature_set": "public-globals",
+      "overall_gain": 0.008998826146125793,
+      "power": 0.0,
+      "seed": 1278901
+    },
+    {
+      "aggregate_phase_late_gain": -0.035534389317035675,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.046566568315029144,
+      "experiment": "hog26_margin_bridge_reactive_screen",
+      "feature_set": "public-globals",
+      "overall_gain": 0.008568108081817627,
+      "power": 0.0,
+      "seed": 1278902
+    },
+    {
+      "aggregate_phase_late_gain": -0.011441364884376526,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.01390492171049118,
+      "experiment": "hog26_margin_bridge_reactive_screen",
+      "feature_set": "public-globals",
+      "overall_gain": 0.007180541753768921,
+      "power": 1.0,
+      "seed": 1278901
+    },
+    {
+      "aggregate_phase_late_gain": -0.01197195053100586,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.013958856463432312,
+      "experiment": "hog26_margin_bridge_reactive_screen",
+      "feature_set": "public-globals",
+      "overall_gain": 0.006751015782356262,
+      "power": 1.0,
+      "seed": 1278902
+    },
+    {
+      "aggregate_phase_late_gain": -0.03994219750165939,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.036590173840522766,
+      "experiment": "hog26_margin_bridge_reactive_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.005216971039772034,
+      "power": 0.0,
+      "seed": 1278901
+    },
+    {
+      "aggregate_phase_late_gain": -0.043132491409778595,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.04041502624750137,
+      "experiment": "hog26_margin_bridge_reactive_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.003349006175994873,
+      "power": 0.0,
+      "seed": 1278902
+    },
+    {
+      "aggregate_phase_late_gain": -0.008367642760276794,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.009052135050296783,
+      "experiment": "hog26_margin_bridge_reactive_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.01129843294620514,
+      "power": 1.0,
+      "seed": 1278901
+    },
+    {
+      "aggregate_phase_late_gain": -0.007901839911937714,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.008124053478240967,
+      "experiment": "hog26_margin_bridge_reactive_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.0077072978019714355,
+      "power": 1.0,
+      "seed": 1278902
+    },
+    {
+      "aggregate_phase_late_gain": -0.009660311043262482,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.01607288420200348,
+      "experiment": "hog26_margin_bridge_reactive_temporal_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.007352575659751892,
+      "power": 0.0,
+      "seed": 1278911
+    },
+    {
+      "aggregate_phase_late_gain": -0.008595362305641174,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": -0.013034433126449585,
+      "experiment": "hog26_margin_bridge_reactive_temporal_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.008969277143478394,
+      "power": 0.0,
+      "seed": 1278912
+    },
+    {
+      "aggregate_phase_late_gain": 0.00021269917488098145,
+      "all_phase_point_learning_passed": false,
+      "equal_episode_late_gain": 0.001980997622013092,
+      "experiment": "hog26_margin_bridge_reactive_temporal_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.01122257113456726,
+      "power": 1.0,
+      "seed": 1278911
+    },
+    {
+      "aggregate_phase_late_gain": 0.0016967281699180603,
+      "all_phase_point_learning_passed": true,
+      "equal_episode_late_gain": 0.0027402862906455994,
+      "experiment": "hog26_margin_bridge_reactive_temporal_screen",
+      "feature_set": "full-state",
+      "overall_gain": 0.01029755175113678,
+      "power": 1.0,
+      "seed": 1278912
+    }
+  ],
+  "fits": 96,
+  "status": "diagnostic-only",
+  "temporal_minibatch_limitation": "Temporal loss still divides by each selected episode batch weight sum. One-third full-fold weight mass does not imply exactly one-third averaged optimizer influence when batch weight sums vary. Do not interpret this as exact unbiased aggregate-phase optimization."
+}

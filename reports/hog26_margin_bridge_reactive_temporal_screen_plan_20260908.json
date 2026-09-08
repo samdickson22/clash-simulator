@@ -1,0 +1,56 @@
+{
+  "schema": "clasher.hog26.training-family-margin-screen.v1",
+  "purpose": "Training-only causal-memory diagnostic, without the previously confounding power-6 gate. No model promotion. Complete ordered games and exact zero memory resets.",
+  "corpus": "datasets/derived/hog26_procedural_train_bridge_reactive_seed1278502/corpus.npz",
+  "corpus_sha256": "af8ea0ba2e37c4a870af71ad2228cae713273a095a9d8da80a6f39b1d1ecc8f6",
+  "protocol": "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json",
+  "held_out_training_families": [
+    [
+      "family-000",
+      "family-001"
+    ],
+    [
+      "family-002",
+      "family-003"
+    ],
+    [
+      "family-004",
+      "family-005"
+    ],
+    [
+      "family-006",
+      "family-007"
+    ]
+  ],
+  "margin_feature_sets": [
+    "full-state"
+  ],
+  "margin_progress_powers": [
+    0.0,
+    1.0
+  ],
+  "seeds": [
+    1278911,
+    1278912
+  ],
+  "hidden_size": 16,
+  "epochs": 30,
+  "batch_size": 512,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.0001,
+  "margin_residual_scale": 0.5,
+  "loss": "smooth-l1, equal episode and equal reached-phase weights, same as campaign trainer",
+  "epoch_selection": "Fixed final epoch; no tuning to held-out training-fold labels.",
+  "evaluation": "All out-of-fold phase representative predictions retained. Report pooled and per-fold/phase/seat/style gains, training fit and correction magnitude. Do not choose a model from an aggregate concealing late regressions.",
+  "decision_rule": "A candidate is plausible only if both seeds improve pooled out-of-fold MAE by at least 0.005 and each phase has no more than 0.01 regression. Any failing fold is reported. This screen cannot establish final acceptance, recurrence sufficiency or late coverage. If no variant qualifies, do not select the least-bad variant.",
+  "output": "reports/hog26_margin_bridge_reactive_temporal_screen_20260908.json",
+  "device": "cpu",
+  "torch_threads": 1,
+  "model_type": "temporal",
+  "projection_size": 32,
+  "memory_size": 16,
+  "episode_batch_size": 24,
+  "comparability": "Same fold and evaluation samples as the static screen. Different sequence optimizer batching and learning rate; this is not a compute-matched architecture comparison.",
+  "repetition": "Unchanged hyperparameters, seeds and family folds on the new bridge-pressure/reactive-defense training shard. No selection/calibration/holdout labels used.",
+  "screen_source_sha256": "ae54a20c0f2ff157246203b26f438ee0505563ce2b9d7791535e1ebf6780a214"
+}

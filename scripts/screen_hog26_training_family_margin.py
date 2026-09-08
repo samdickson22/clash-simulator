@@ -28,6 +28,30 @@ from scripts.train_hog26_actor_outcome import (
 from scripts.train_hog26_procedural_outcome_candidate import require_current_audit
 
 
+def margin_row_loss(prediction, target, kind):
+    if kind == "absolute":
+        return F.l1_loss(prediction, target, reduction="none")
+    if kind == "huber":
+        return F.smooth_l1_loss(prediction, target, reduction="none")
+    raise ValueError("unknown diagnostic margin loss")
+
+
+def fitting_phase_weights(weights, phases, fit_rows, *, aggregate_balance):
+    """Normalize fitting rows only; withheld rows have zero training mass."""
+    result = torch.zeros_like(weights)
+    selected = weights[fit_rows].clone()
+    selected_phases = np.asarray(phases)[fit_rows]
+    if aggregate_balance:
+        for phase in range(3):
+            mask = selected_phases == phase
+            if not mask.any() or selected[mask].sum() <= 0:
+                raise ValueError("fitting fold lacks a positive-weight game phase")
+            selected[mask] /= selected[mask].sum()
+    selected /= selected.mean()
+    result[fit_rows] = selected
+    return result
+
+
 def fit_temporal_fold(
     features, target, weights, corpus, selected_episodes, plan, power, rng
 ):
@@ -60,7 +84,8 @@ def fit_temporal_fold(
             )
             prediction, _memory = head(inputs)  # exact zero reset for every full game
             loss = (
-                F.smooth_l1_loss(prediction, labels, reduction="none") * sample_weights
+                margin_row_loss(prediction, labels, plan.get("margin_loss", "huber"))
+                * sample_weights
             ).sum() / sample_weights.sum()
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
@@ -112,8 +137,21 @@ def main() -> None:
         corpus,
         device=device,
         sequence_steps=128,
-        feature_set="structured-summary",
+        feature_set=plan.get("actor_feature_set", "structured-summary"),
     )
+    if plan.get("zero_spatial_mechanics", False):
+        if plan.get("actor_feature_set") != "spatial-mechanics":
+            raise ValueError(
+                "spatial ablation requires the spatial-mechanics representation"
+            )
+        descriptor_width = (
+            model.actor_encoder.card_stat_features.shape[-1]
+            + model.actor_encoder.semantic_card_features.shape[-1]
+        )
+        moment_width = 2 * (
+            3 * (corpus.arrays["entity_features"].shape[-1] + descriptor_width) + 1
+        )
+        features[:, -18 - moment_width : -18] = 0.0
     del model
     target = torch.from_numpy(corpus.arrays["terminal_tower_margins"].copy()).float()
     public = features[:, -18:]
@@ -182,6 +220,12 @@ def main() -> None:
                     ]
                     torch.manual_seed(seed + fold_index)
                     rng = np.random.default_rng(seed + fold_index)
+                    fit_weights = fitting_phase_weights(
+                        weights,
+                        phases,
+                        fit_rows,
+                        aggregate_balance=plan.get("aggregate_phase_balance", False),
+                    )
                     if plan.get("model_type") == "temporal":
                         if feature_set != "full-state":
                             raise ValueError(
@@ -190,7 +234,7 @@ def main() -> None:
                         prediction = fit_temporal_fold(
                             features,
                             target,
-                            weights,
+                            fit_weights,
                             corpus,
                             np.flatnonzero(~np.isin(episode_families, families)),
                             plan,
@@ -213,7 +257,6 @@ def main() -> None:
                             lr=plan["learning_rate"],
                             weight_decay=plan["weight_decay"],
                         )
-                        fit_weights = weights / weights[fit_rows].mean()
                         for _epoch in range(plan["epochs"]):
                             order = rng.permutation(fit_rows)
                             for begin in range(0, len(order), plan["batch_size"]):
@@ -222,8 +265,10 @@ def main() -> None:
                                     features[rows], calibrated=False
                                 ).terminal_tower_margin
                                 loss = (
-                                    F.smooth_l1_loss(
-                                        prediction, target[rows], reduction="none"
+                                    margin_row_loss(
+                                        prediction,
+                                        target[rows],
+                                        plan.get("margin_loss", "huber"),
                                     )
                                     * fit_weights[rows]
                                 ).mean()
@@ -244,6 +289,12 @@ def main() -> None:
                     fold_results.append(
                         {
                             "held_out_families": families,
+                            "training_phase_weight_fraction": {
+                                name: float(
+                                    fit_weights[phases == i].sum() / fit_weights.sum()
+                                )
+                                for i, name in enumerate(("early", "middle", "late"))
+                            },
                             "fit": breakdown(prediction, train_representatives),
                             "out_of_fold": breakdown(prediction, test_rows),
                         }

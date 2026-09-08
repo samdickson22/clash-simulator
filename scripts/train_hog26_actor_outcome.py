@@ -255,6 +255,33 @@ def structured_actor_summary(model: ClasherPolicy, inputs: PolicyInputs) -> Tens
     )
 
 
+def spatial_mechanics_summary(model: ClasherPolicy, inputs: PolicyInputs) -> Tensor:
+    """Retain public mechanics-position associations and visible entity counts."""
+    baseline = structured_actor_summary(model, inputs)
+    descriptors = torch.cat(
+        (
+            model.actor_encoder.card_stat_features,
+            model.actor_encoder.semantic_card_features,
+        ),
+        dim=-1,
+    )
+    entities = torch.cat(
+        (inputs.entity_features, descriptors[inputs.entity_ids]), dim=-1
+    )
+    x = inputs.entity_features[..., 0] - 0.5
+    y = inputs.entity_features[..., 1] - 0.5
+    basis = torch.stack((x, y, x * y), dim=-1)
+    moments = []
+    for owner_column in (2, 3):
+        visible = inputs.entity_mask & (inputs.entity_features[..., owner_column] > 0.5)
+        weights = visible.to(entities.dtype)
+        count = weights.sum(-1, keepdim=True)
+        joint = entities.unsqueeze(-1) * basis.unsqueeze(-2) * weights[..., None, None]
+        pooled = joint.sum(-3) / count.clamp_min(1.0).unsqueeze(-1)
+        moments.extend((pooled.flatten(-2), count / inputs.entity_ids.shape[-1]))
+    return torch.cat((baseline[..., :-18], *moments, baseline[..., -18:]), dim=-1)
+
+
 def compact_tactical_summary(model: ClasherPolicy, inputs: PolicyInputs) -> Tensor:
     """Summarize public geometry and hand mechanics without card identities."""
 
@@ -384,7 +411,9 @@ def extract_actor_features(
                 inputs,
                 previous_rewards=torch.zeros_like(inputs.previous_rewards),
             )
-            if feature_set in {"structured-summary", "structured-residual"}:
+            if feature_set == "spatial-mechanics":
+                selected_features = spatial_mechanics_summary(model, inputs)[0]
+            elif feature_set in {"structured-summary", "structured-residual"}:
                 selected_features = structured_actor_summary(model, inputs)[0]
             elif feature_set == "robust-residual":
                 robust = compact_tactical_summary(model, inputs)
@@ -1031,6 +1060,7 @@ def main() -> None:
         choices=(
             "public-globals",
             "structured-summary",
+            "spatial-mechanics",
             "structured-residual",
             "robust-residual",
             "policy-plus-public-globals",
@@ -1268,7 +1298,10 @@ def main() -> None:
         if feature_rows is not None and not bool(torch.isfinite(feature_rows).all()):
             raise ValueError(f"{name} actor features contain non-finite values")
     state_size = int(train_features.shape[1])
-    separate_draw_trunk = args.feature_set == "structured-summary"
+    separate_draw_trunk = args.feature_set in {
+        "structured-summary",
+        "spatial-mechanics",
+    }
     structured_residual_scale = (
         args.structured_residual_scale
         if args.feature_set in {"structured-residual", "robust-residual"}
