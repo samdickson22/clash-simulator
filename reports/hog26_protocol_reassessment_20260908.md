@@ -1094,3 +1094,32 @@ relative to the earliest terminal on either device. Do not attribute changed
 first-game length to device numerics alone. The common-input policy replay
 still establishes zero learner-action discrepancies on the781 CPU observations.
 No new run or simulator change was made for this caveat.
+
+
+MPS seeded opening probe completed; new device-mechanics discrepancy:
+- Session75744/PID69455 exited0 normally. Eight complete games,3608 retained
+  decisions,31chunks,2893.572seconds,7losses/1win/0draws. Full corpus audit passed
+  including seeded reconstruction and all8 recorded initial hands.
+- Each seat has4distinct complete public/action transcripts. Four shared
+  paired-seat deal identities reconstructed exactly. This resolves the narrow
+  repeated-opening mechanics defect in the probe, not broad model acceptance
+  or adequate randomized-opening fitting coverage.
+- Compared both completed ordinal0 games to the CPU replica. First public
+  differences occur at decision15 in both seats, before earliest terminal348.
+  Companion reset differences cannot explain the first divergence.
+- IceSpirits token420 is absent and tower HP is0.963958 on CPU at decision15,
+  but the spirit remains present and tower HP is1.0 on MPS. Public trajectories
+  are exact through decision14. Learner actions match until265 in seat0 and
+  throughout the common prefix in seat1. CPU/MPS lengths432/450 and349/352;
+  both devices lose both first games, but seat0 terminal margins differ.
+- Common-input learner replay already matched all781CPU actions on both
+  devices. Investigate the IceSpirits impact/timer mechanics and opponent
+  actions at the first differing event; do not attribute this to learner
+  sampling or companion resets without evidence.
+- New complete reports: hog26_seeded_opening_diagnostic_seed1278951{,_audit,
+  _diversity}.json and hog26_seeded_opening_device_comparison_20260908.json.
+  Exact executed comparison source preserved with hashes.
+- No collection jobs remain running. Readiness still under review; replace
+  the resolved repeated-opening issue with randomized fitting support and
+  the concrete device-mechanics discrepancy. No model fitting, calibration,
+  holdout evaluation, or policy updates were launched.

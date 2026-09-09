@@ -1,0 +1,79 @@
+{
+  "all_streams_have_distinct_public_transcripts": true,
+  "corpus": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_seeded_opening_diagnostic_seed1278951/corpus.npz",
+  "corpus_sha256": "d714c907dafbb4c82e89ffb1515754d0ab571e3357afbbe3a7fb380d889bcdcf",
+  "episodes": [
+    {
+      "decisions": 450,
+      "ordinal": 0,
+      "public_transcript_sha256": "de952d954b87b50a745a3004e9d01f6bc2d670321d0f5d16726fee7749f9cc97",
+      "stream": 0
+    },
+    {
+      "decisions": 481,
+      "ordinal": 1,
+      "public_transcript_sha256": "fbb66b82f9bd8422584e28e483f1660b86fae3864bf0710e556c225f4a2956ff",
+      "stream": 0
+    },
+    {
+      "decisions": 543,
+      "ordinal": 2,
+      "public_transcript_sha256": "1ecde9a5add615cd88be0de0704d68134636e37bf272a6291b4b8870b62cba5e",
+      "stream": 0
+    },
+    {
+      "decisions": 471,
+      "ordinal": 3,
+      "public_transcript_sha256": "74deccaed959ee21393599d31ad14247dd89429280c14d01968d4fe6fab04a58",
+      "stream": 0
+    },
+    {
+      "decisions": 352,
+      "ordinal": 0,
+      "public_transcript_sha256": "aaba9aa0db308180438ed100ede75ed5a86769ae82fc4a65670064f0824c0e8d",
+      "stream": 1
+    },
+    {
+      "decisions": 556,
+      "ordinal": 1,
+      "public_transcript_sha256": "04232e48d6a939fb70350903c893caf32cd67647bc7395d29005dcbe81b41f5f",
+      "stream": 1
+    },
+    {
+      "decisions": 426,
+      "ordinal": 2,
+      "public_transcript_sha256": "1fe1502a174c325622eae1c1b3047aeedf5565da5eb81ed26abf78d652911b82",
+      "stream": 1
+    },
+    {
+      "decisions": 329,
+      "ordinal": 3,
+      "public_transcript_sha256": "d74fce8dd34b58995c3f5682a0662a5f73cf03bd1399d13a9a56e644dab88ff9",
+      "stream": 1
+    }
+  ],
+  "fields": [
+    "entity_ids",
+    "entity_features",
+    "entity_mask",
+    "hand_ids",
+    "global_features",
+    "actions"
+  ],
+  "role": "training-only-opening-diversity-diagnostic",
+  "schema": "clasher.public-episode-diversity.v1",
+  "scope": "exact public trajectory diversity; not a statistical independence or model acceptance certificate",
+  "streams": [
+    {
+      "distinct_public_transcripts": 4,
+      "episodes": 4,
+      "stream": 0
+    },
+    {
+      "distinct_public_transcripts": 4,
+      "episodes": 4,
+      "stream": 1
+    }
+  ],
+  "within_stream_opening_diversity_assessable": true
+}

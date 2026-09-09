@@ -383,7 +383,8 @@
   ],
   "training_readiness": {
     "blocking_issues": [
-      "Repeated deterministic-strategy episodes can reproduce identical public/action transcripts. Establish genuinely varying seeded initial scenarios and audit their independence before expanded development/calibration collection; episode ordinals alone do not justify the coverage budget."
+      "Seeded opening reconstruction and four distinct complete trajectories per seat passed the eight-game mechanics probe. Broader randomized-opening fitting support remains uncollected and untested.",
+      "CPU and MPS first diverge at decision15 on an IceSpirits impact before any reset; resolve or explicitly establish simulator authority before further collection and fitting."
     ],
     "collection_allowed": "Existing training-shard schedule only; candidate fitting and selection/calibration collection wait for design freeze.",
     "status": "under-review"

@@ -1,0 +1,236 @@
+{
+  "companion_reset_confound_excluded_for_first_difference": true,
+  "comparisons": [
+    {
+      "fields": {
+        "actions": {
+          "differing_decisions": 4,
+          "first_exact_difference": 265,
+          "first_examples": [
+            {
+              "cpu": 1956,
+              "mps": 1871
+            }
+          ]
+        },
+        "entity_features": {
+          "differing_decisions": 417,
+          "first_difference_above_1e-6": 15,
+          "first_exact_difference": 15,
+          "first_examples": [
+            {
+              "coordinate": [
+                1,
+                9
+              ],
+              "cpu": 0.9639580845832825,
+              "mps": 1.0
+            },
+            {
+              "coordinate": [
+                6,
+                0
+              ],
+              "cpu": 0.0,
+              "mps": 0.8055555820465088
+            },
+            {
+              "coordinate": [
+                6,
+                1
+              ],
+              "cpu": 0.0,
+              "mps": 0.3125
+            },
+            {
+              "coordinate": [
+                6,
+                3
+              ],
+              "cpu": 0.0,
+              "mps": 1.0
+            }
+          ]
+        },
+        "entity_ids": {
+          "differing_decisions": 289,
+          "first_exact_difference": 15,
+          "first_examples": [
+            {
+              "coordinate": [
+                6
+              ],
+              "cpu": 0,
+              "mps": 420
+            }
+          ]
+        },
+        "entity_mask": {
+          "differing_decisions": 268,
+          "first_exact_difference": 15,
+          "first_examples": [
+            {
+              "coordinate": [
+                6
+              ],
+              "cpu": false,
+              "mps": true
+            }
+          ]
+        },
+        "global_features": {
+          "differing_decisions": 414,
+          "first_difference_above_1e-6": 15,
+          "first_exact_difference": 15,
+          "first_examples": [
+            {
+              "coordinate": [
+                9
+              ],
+              "cpu": 0.9639580845832825,
+              "mps": 1.0
+            }
+          ]
+        },
+        "hand_ids": {
+          "differing_decisions": 0,
+          "first_exact_difference": null
+        }
+      },
+      "lengths": {
+        "cpu": 432,
+        "mps": 450
+      },
+      "outcomes": {
+        "cpu": -1,
+        "mps": -1
+      },
+      "stream": 0,
+      "terminal_margins": {
+        "cpu": -0.0800125002861023,
+        "mps": 0.0021047592163085938
+      }
+    },
+    {
+      "fields": {
+        "actions": {
+          "differing_decisions": 0,
+          "first_exact_difference": null
+        },
+        "entity_features": {
+          "differing_decisions": 334,
+          "first_difference_above_1e-6": 15,
+          "first_exact_difference": 15,
+          "first_examples": [
+            {
+              "coordinate": [
+                3,
+                9
+              ],
+              "cpu": 0.9639580845832825,
+              "mps": 1.0
+            },
+            {
+              "coordinate": [
+                6,
+                0
+              ],
+              "cpu": 0.0,
+              "mps": 0.8055555820465088
+            },
+            {
+              "coordinate": [
+                6,
+                1
+              ],
+              "cpu": 0.0,
+              "mps": 0.3125
+            },
+            {
+              "coordinate": [
+                6,
+                3
+              ],
+              "cpu": 0.0,
+              "mps": 1.0
+            }
+          ]
+        },
+        "entity_ids": {
+          "differing_decisions": 16,
+          "first_exact_difference": 15,
+          "first_examples": [
+            {
+              "coordinate": [
+                6
+              ],
+              "cpu": 0,
+              "mps": 420
+            }
+          ]
+        },
+        "entity_mask": {
+          "differing_decisions": 16,
+          "first_exact_difference": 15,
+          "first_examples": [
+            {
+              "coordinate": [
+                6
+              ],
+              "cpu": false,
+              "mps": true
+            }
+          ]
+        },
+        "global_features": {
+          "differing_decisions": 332,
+          "first_difference_above_1e-6": 15,
+          "first_exact_difference": 15,
+          "first_examples": [
+            {
+              "coordinate": [
+                9
+              ],
+              "cpu": 0.9639580845832825,
+              "mps": 1.0
+            }
+          ]
+        },
+        "hand_ids": {
+          "differing_decisions": 0,
+          "first_exact_difference": null
+        }
+      },
+      "lengths": {
+        "cpu": 349,
+        "mps": 352
+      },
+      "outcomes": {
+        "cpu": -1,
+        "mps": -1
+      },
+      "stream": 1,
+      "terminal_margins": {
+        "cpu": -0.35975179076194763,
+        "mps": -0.35975179076194763
+      }
+    }
+  ],
+  "corpora": {
+    "cpu": {
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_seeded_opening_cpu_probe_seed1278951/corpus.npz",
+      "sha256": "d8c1bfc2727251037e2337bd08c58dd24356815116e8b7ee15ed974fec9000f8"
+    },
+    "mps": {
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_seeded_opening_diagnostic_seed1278951/corpus.npz",
+      "sha256": "d714c907dafbb4c82e89ffb1515754d0ab571e3357afbbe3a7fb380d889bcdcf"
+    }
+  },
+  "earliest_first_terminal_decision": 348,
+  "first_event": "IceSpirits disappears and damages a tower on CPU at decision15 but remains present without that damage on MPS",
+  "limitation": "different companion openings after first terminal; divergence before first terminal excludes that confound",
+  "role": "training-only-device-diagnostic",
+  "schema": "clasher.hog26.complete-opening-device-comparison.v1",
+  "source_path": "scripts/probe_hog26_completed_opening_comparison.py",
+  "source_sha256": "b384f703053eca00338343ba2dbac63d8b06b2c351a98ae5e692f4b62339d1b9"
+}
