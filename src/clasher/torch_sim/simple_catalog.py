@@ -114,6 +114,8 @@ class FastCardCatalog:
     initial_damage_delay_ticks: torch.Tensor
     damage_on_spawn: torch.Tensor
     max_damage_hits: torch.Tensor
+    target_local_damage: torch.Tensor
+    periodic_buff_duration_ticks: torch.Tensor
     status_interval_ticks: torch.Tensor
     initial_status_delay_ticks: torch.Tensor
     max_status_scans: torch.Tensor
@@ -279,6 +281,8 @@ class FastCardCatalog:
         initial_damage_delay_ticks = torch.zeros_like(catalog.range_units)
         damage_on_spawn_table = torch.ones_like(catalog.kind, dtype=torch.bool)
         max_damage_hits = torch.ones_like(catalog.range_units)
+        target_local_damage = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        periodic_buff_duration_ticks = torch.zeros_like(catalog.range_units)
         status_interval_ticks = torch.ones_like(catalog.range_units)
         initial_status_delay_ticks = torch.zeros_like(catalog.range_units)
         max_status_scans = torch.ones_like(catalog.range_units)
@@ -815,6 +819,15 @@ class FastCardCatalog:
                         initial_damage_delay_ticks[card_id] = max(0, delay - 1)
                         damage_on_spawn_table[card_id] = damage_on_spawn
                         max_damage_hits[card_id] = hits
+                        local_damage = bool(getattr(spell, "target_local_damage", False))
+                        target_local_damage[card_id] = local_damage
+                        if local_damage:
+                            # Damage belongs to each attached target buff, not
+                            # the source area's global damage clock.
+                            max_damage_hits[card_id] = 0
+                            periodic_buff_duration_ticks[card_id] = max(
+                                1, round(spell.periodic_damage_buff_duration / 0.05)
+                            )
                         compile_status_buff_(card_id, buff, buff_ms)
                         status_interval_ticks[card_id] = max(
                             1, (effect_interval_ms + 49) // 50
@@ -837,6 +850,11 @@ class FastCardCatalog:
                                 else 0
                             )
                         )
+                        if local_damage:
+                            # Scalar target scans exclude the exact expiry boundary.
+                            max_status_scans[card_id] = max(
+                                0, (duration_ticks - 1) // int(status_interval_ticks[card_id])
+                            )
                         effect_hits_air[card_id] = bool(
                             getattr(spell, "hits_air", True)
                         )
@@ -1055,6 +1073,8 @@ class FastCardCatalog:
             initial_damage_delay_ticks=initial_damage_delay_ticks,
             damage_on_spawn=damage_on_spawn_table,
             max_damage_hits=max_damage_hits,
+            target_local_damage=target_local_damage,
+            periodic_buff_duration_ticks=periodic_buff_duration_ticks,
             status_interval_ticks=status_interval_ticks,
             initial_status_delay_ticks=initial_status_delay_ticks,
             max_status_scans=max_status_scans,

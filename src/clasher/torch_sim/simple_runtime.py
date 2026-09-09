@@ -86,6 +86,7 @@ from .simple_payload_containers import (
     allocate_fast_payload_effects_,
     step_fast_payload_containers_,
 )
+from .simple_periodic_damage import advance_periodic_damage_
 from .simple_periodic_spawn import (
     FastPeriodicSpawnCatalog,
     FastPeriodicSpawnCommands,
@@ -528,16 +529,19 @@ class SimpleGymRuntime:
         self.effects = FastEffectState.empty(
             self.state.batch_size,
             max_effects=max_effects,
+            max_entities=self.state.max_entities,
             device=self.state.device,
         )
         self.travel_effects = FastEffectState.empty(
             self.state.batch_size,
             max_effects=max_entities,
+            max_entities=self.state.max_entities,
             device=self.state.device,
         )
         self.death_effects = FastEffectState.empty(
             self.state.batch_size,
             max_effects=max_entities,
+            max_entities=self.state.max_entities,
             device=self.state.device,
         )
         self.triggered_events = FastTriggeredImpactEvents.empty(
@@ -548,6 +552,7 @@ class SimpleGymRuntime:
         self.triggered_effects = FastEffectState.empty(
             self.state.batch_size,
             max_effects=max_triggered_effects,
+            max_entities=self.state.max_entities,
             device=self.state.device,
         )
         self._triggered_death_stable_id = torch.zeros_like(self.state.stable_id)
@@ -2031,6 +2036,11 @@ class SimpleGymRuntime:
             if descriptor.name == "device":
                 continue
             target = getattr(destination, descriptor.name)
+            if target.ndim == 3:
+                # Triggered numeric payloads cannot create attached buffs.
+                # Their incoming temporary pool has no target-shaped ledger.
+                target.masked_fill_(written[:, :, None], 0)
+                continue
             source = getattr(incoming, descriptor.name)
             neutral = torch.zeros((), dtype=source.dtype, device=source.device)
             value = torch.where(
@@ -2383,7 +2393,7 @@ class SimpleGymRuntime:
             ability_legal=None if ability is None else ability.legal,
         )
         free_deploy_slots = (~self.state.active[:, FAST_TOWER_SLOT_COUNT:]).sum(dim=1)
-        has_effect_slot = (~self.effects.active).any(dim=1)
+        has_effect_slot = self.effects.free_slots.any(dim=1)
         hand = self.action_state.hand_ids
         safe_card = hand.clamp(0, self.action_kernel.catalog.size - 1)
         spell = (self.action_kernel.catalog.kind[safe_card] < 0) & (
@@ -3048,6 +3058,16 @@ class SimpleGymRuntime:
         effect_visibility = self._policy_visibility_view()
         effect_travel_view = self._travel_view()
         effect_receivable = ~effect_travel_view.immune
+        # BattleState's CharacterBuff component runs after combat/movement,
+        # before object-phase projectiles and source area scans. A lethal buff
+        # must preserve attacks already committed during this same frame.
+        # Only primary catalog allocation can create attached periodic buffs;
+        # other numeric effect allocators clear the target-local metadata.
+        periodic_hits = advance_periodic_damage_(
+            self.state, self.effects, self.modifiers,
+            effect_visibility.area_receivable & effect_receivable,
+            effect_visibility.effect_receivable_affects_hidden & effect_receivable,
+        )
         effect_result = step_fast_effects(
             self.state,
             self.effects,
@@ -3056,6 +3076,7 @@ class SimpleGymRuntime:
             consume_source_id=self.effect_consume_source_id,
             cleanup_dead=False,
             modifiers=self.modifiers,
+            preadvanced_periodic_hits=periodic_hits,
             entity_is_air=self._entity_airborne_target(),
             entity_collision_radius_units=self._entity_collision_radius_units(),
             entity_slow_ticks=self.entity_slow_ticks,

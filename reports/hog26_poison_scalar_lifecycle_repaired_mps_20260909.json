@@ -1,0 +1,4229 @@
+{
+  "status": "scoped_fixture_agreement_only",
+  "device": "mps:0",
+  "torch_version": "2.10.0",
+  "scope": "Native full runtime ticks versus isolated scalar target-buff and area updates; synthetic stationary targets, no scalar battle movement or attacks. Not a full-game parity test, acceptance gate, corpus, or authority refresh.",
+  "source_sha256": {
+    "scripts/probe_hog26_poison_scalar_lifecycle_20260909.py": "fa6b5c3e9463619ee14e9db146bf4a751ea38c0bd4ecb50ffc33e829691f8716",
+    "src/clasher/battle.py": "e0bd8c1d4581953a58f45a42a386a254ceec16eb2f29954be411a7eccf2f01f9",
+    "src/clasher/dynamic_spells.py": "963dacbacf563c031211dbf55120d9e9ab0bc230c46c8bb4068ee9e5e813ab95",
+    "src/clasher/entities.py": "5df49b70a7491b9bb5e26571f4531f20070417c15e14cb8d7c5cb33624ff9233",
+    "src/clasher/torch_sim/simple_catalog.py": "9174edddbac106aa5a5afde3324d09f1c2985d92e525db68a62e8a551b223ea2",
+    "src/clasher/torch_sim/simple_effects.py": "9c7437a80a5b4280ea8755b92fdaaccd79c01f615eb07275cd7681c90cb05822",
+    "src/clasher/torch_sim/simple_periodic_damage.py": "223ecd0fc79237359b1587be6660d219477d3b97c3e22579a06fa089428f2f0e",
+    "src/clasher/torch_sim/simple_attack_effects.py": "232b101142c1cb0b80077f9b807bcf9f4927b6a0513f894bb5a49fedfef15666",
+    "src/clasher/torch_sim/simple_runtime.py": "6e3d7716fcfbe7ba391790c05ecb740b593b6d3674a4b0934929287c44b7d28d"
+  },
+  "cases": [
+    {
+      "case": "stationary",
+      "exit_after_tick": null,
+      "scalar_payload": {
+        "damage": 92.0,
+        "crown_damage": 21.0,
+        "target_local_damage": true,
+        "buff_duration": 1.0,
+        "scan_interval": 0.25
+      },
+      "parity_passed": true,
+      "mismatch_ticks": [],
+      "damage_events": {
+        "scalar_troop_loss": [
+          {
+            "tick": 25,
+            "damage": 92.0
+          },
+          {
+            "tick": 45,
+            "damage": 92.0
+          },
+          {
+            "tick": 65,
+            "damage": 92.0
+          },
+          {
+            "tick": 85,
+            "damage": 92.0
+          },
+          {
+            "tick": 105,
+            "damage": 92.0
+          },
+          {
+            "tick": 125,
+            "damage": 92.0
+          },
+          {
+            "tick": 145,
+            "damage": 92.0
+          },
+          {
+            "tick": 165,
+            "damage": 92.0
+          }
+        ],
+        "scalar_tower_loss": [
+          {
+            "tick": 25,
+            "damage": 21.0
+          },
+          {
+            "tick": 45,
+            "damage": 21.0
+          },
+          {
+            "tick": 65,
+            "damage": 21.0
+          },
+          {
+            "tick": 85,
+            "damage": 21.0
+          },
+          {
+            "tick": 105,
+            "damage": 21.0
+          },
+          {
+            "tick": 125,
+            "damage": 21.0
+          },
+          {
+            "tick": 145,
+            "damage": 21.0
+          },
+          {
+            "tick": 165,
+            "damage": 21.0
+          }
+        ],
+        "native_troop_loss": [
+          {
+            "tick": 25,
+            "damage": 92.0
+          },
+          {
+            "tick": 45,
+            "damage": 92.0
+          },
+          {
+            "tick": 65,
+            "damage": 92.0
+          },
+          {
+            "tick": 85,
+            "damage": 92.0
+          },
+          {
+            "tick": 105,
+            "damage": 92.0
+          },
+          {
+            "tick": 125,
+            "damage": 92.0
+          },
+          {
+            "tick": 145,
+            "damage": 92.0
+          },
+          {
+            "tick": 165,
+            "damage": 92.0
+          }
+        ],
+        "native_tower_loss": [
+          {
+            "tick": 25,
+            "damage": 21.0
+          },
+          {
+            "tick": 45,
+            "damage": 21.0
+          },
+          {
+            "tick": 65,
+            "damage": 21.0
+          },
+          {
+            "tick": 85,
+            "damage": 21.0
+          },
+          {
+            "tick": 105,
+            "damage": 21.0
+          },
+          {
+            "tick": 125,
+            "damage": 21.0
+          },
+          {
+            "tick": 145,
+            "damage": 21.0
+          },
+          {
+            "tick": 165,
+            "damage": 21.0
+          }
+        ]
+      },
+      "trace": [
+        {
+          "tick": 1,
+          "seconds": 0.05,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 2,
+          "seconds": 0.1,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 3,
+          "seconds": 0.15000000000000002,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 4,
+          "seconds": 0.2,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 5,
+          "seconds": 0.25,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 6,
+          "seconds": 0.30000000000000004,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 7,
+          "seconds": 0.35000000000000003,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 8,
+          "seconds": 0.4,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 9,
+          "seconds": 0.45,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 10,
+          "seconds": 0.5,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 11,
+          "seconds": 0.55,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 12,
+          "seconds": 0.6000000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 13,
+          "seconds": 0.65,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 14,
+          "seconds": 0.7000000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 15,
+          "seconds": 0.75,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 16,
+          "seconds": 0.8,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 17,
+          "seconds": 0.8500000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 18,
+          "seconds": 0.9,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 19,
+          "seconds": 0.9500000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 20,
+          "seconds": 1.0,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 21,
+          "seconds": 1.05,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 22,
+          "seconds": 1.1,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 23,
+          "seconds": 1.1500000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 24,
+          "seconds": 1.2000000000000002,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 25,
+          "seconds": 1.25,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 26,
+          "seconds": 1.3,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 27,
+          "seconds": 1.35,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 28,
+          "seconds": 1.4000000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 29,
+          "seconds": 1.4500000000000002,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 30,
+          "seconds": 1.5,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 31,
+          "seconds": 1.55,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 32,
+          "seconds": 1.6,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 33,
+          "seconds": 1.6500000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 34,
+          "seconds": 1.7000000000000002,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 35,
+          "seconds": 1.75,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 36,
+          "seconds": 1.8,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 37,
+          "seconds": 1.85,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 38,
+          "seconds": 1.9000000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 39,
+          "seconds": 1.9500000000000002,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 40,
+          "seconds": 2.0,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 41,
+          "seconds": 2.0500000000000003,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 42,
+          "seconds": 2.1,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 43,
+          "seconds": 2.15,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 44,
+          "seconds": 2.2,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 45,
+          "seconds": 2.25,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 46,
+          "seconds": 2.3000000000000003,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 47,
+          "seconds": 2.35,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 48,
+          "seconds": 2.4000000000000004,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 49,
+          "seconds": 2.45,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 50,
+          "seconds": 2.5,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 51,
+          "seconds": 2.5500000000000003,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 52,
+          "seconds": 2.6,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 53,
+          "seconds": 2.6500000000000004,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 54,
+          "seconds": 2.7,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 55,
+          "seconds": 2.75,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 56,
+          "seconds": 2.8000000000000003,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 57,
+          "seconds": 2.85,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 58,
+          "seconds": 2.9000000000000004,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 59,
+          "seconds": 2.95,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 60,
+          "seconds": 3.0,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 61,
+          "seconds": 3.0500000000000003,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 62,
+          "seconds": 3.1,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 63,
+          "seconds": 3.1500000000000004,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 64,
+          "seconds": 3.2,
+          "scalar_troop_loss": 184.0,
+          "native_troop_loss": 184.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 65,
+          "seconds": 3.25,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 66,
+          "seconds": 3.3000000000000003,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 67,
+          "seconds": 3.35,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 68,
+          "seconds": 3.4000000000000004,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 69,
+          "seconds": 3.45,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 70,
+          "seconds": 3.5,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 71,
+          "seconds": 3.5500000000000003,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 72,
+          "seconds": 3.6,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 73,
+          "seconds": 3.6500000000000004,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 74,
+          "seconds": 3.7,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 75,
+          "seconds": 3.75,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 76,
+          "seconds": 3.8000000000000003,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 77,
+          "seconds": 3.85,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 78,
+          "seconds": 3.9000000000000004,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 79,
+          "seconds": 3.95,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 80,
+          "seconds": 4.0,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 81,
+          "seconds": 4.05,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 82,
+          "seconds": 4.1000000000000005,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 83,
+          "seconds": 4.15,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 84,
+          "seconds": 4.2,
+          "scalar_troop_loss": 276.0,
+          "native_troop_loss": 276.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 85,
+          "seconds": 4.25,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 86,
+          "seconds": 4.3,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 87,
+          "seconds": 4.3500000000000005,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 88,
+          "seconds": 4.4,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 89,
+          "seconds": 4.45,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 90,
+          "seconds": 4.5,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 91,
+          "seconds": 4.55,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 92,
+          "seconds": 4.6000000000000005,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 93,
+          "seconds": 4.65,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 94,
+          "seconds": 4.7,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 95,
+          "seconds": 4.75,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 96,
+          "seconds": 4.800000000000001,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 97,
+          "seconds": 4.8500000000000005,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 98,
+          "seconds": 4.9,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 99,
+          "seconds": 4.95,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 100,
+          "seconds": 5.0,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 101,
+          "seconds": 5.050000000000001,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 102,
+          "seconds": 5.1000000000000005,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 103,
+          "seconds": 5.15,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 104,
+          "seconds": 5.2,
+          "scalar_troop_loss": 368.0,
+          "native_troop_loss": 368.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 105,
+          "seconds": 5.25,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 106,
+          "seconds": 5.300000000000001,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 107,
+          "seconds": 5.3500000000000005,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 108,
+          "seconds": 5.4,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 109,
+          "seconds": 5.45,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 110,
+          "seconds": 5.5,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 111,
+          "seconds": 5.550000000000001,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 112,
+          "seconds": 5.6000000000000005,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 113,
+          "seconds": 5.65,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 114,
+          "seconds": 5.7,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 115,
+          "seconds": 5.75,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 116,
+          "seconds": 5.800000000000001,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 117,
+          "seconds": 5.8500000000000005,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 118,
+          "seconds": 5.9,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 119,
+          "seconds": 5.95,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 120,
+          "seconds": 6.0,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 121,
+          "seconds": 6.050000000000001,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 122,
+          "seconds": 6.1000000000000005,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 123,
+          "seconds": 6.15,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 124,
+          "seconds": 6.2,
+          "scalar_troop_loss": 460.0,
+          "native_troop_loss": 460.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 125,
+          "seconds": 6.25,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 126,
+          "seconds": 6.300000000000001,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 127,
+          "seconds": 6.3500000000000005,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 128,
+          "seconds": 6.4,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 129,
+          "seconds": 6.45,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 130,
+          "seconds": 6.5,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 131,
+          "seconds": 6.550000000000001,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 132,
+          "seconds": 6.6000000000000005,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 133,
+          "seconds": 6.65,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 134,
+          "seconds": 6.7,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 135,
+          "seconds": 6.75,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 136,
+          "seconds": 6.800000000000001,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 137,
+          "seconds": 6.8500000000000005,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 138,
+          "seconds": 6.9,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 139,
+          "seconds": 6.95,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 140,
+          "seconds": 7.0,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 141,
+          "seconds": 7.050000000000001,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 142,
+          "seconds": 7.1000000000000005,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 143,
+          "seconds": 7.15,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 144,
+          "seconds": 7.2,
+          "scalar_troop_loss": 552.0,
+          "native_troop_loss": 552.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 145,
+          "seconds": 7.25,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 146,
+          "seconds": 7.300000000000001,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 147,
+          "seconds": 7.3500000000000005,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 148,
+          "seconds": 7.4,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 149,
+          "seconds": 7.45,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 150,
+          "seconds": 7.5,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 151,
+          "seconds": 7.550000000000001,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 152,
+          "seconds": 7.6000000000000005,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 153,
+          "seconds": 7.65,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 154,
+          "seconds": 7.7,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 155,
+          "seconds": 7.75,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 156,
+          "seconds": 7.800000000000001,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 157,
+          "seconds": 7.8500000000000005,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 158,
+          "seconds": 7.9,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 159,
+          "seconds": 7.95,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 160,
+          "seconds": 8.0,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 161,
+          "seconds": 8.05,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 162,
+          "seconds": 8.1,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 163,
+          "seconds": 8.15,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 164,
+          "seconds": 8.200000000000001,
+          "scalar_troop_loss": 644.0,
+          "native_troop_loss": 644.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 165,
+          "seconds": 8.25,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 166,
+          "seconds": 8.3,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 167,
+          "seconds": 8.35,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 168,
+          "seconds": 8.4,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 169,
+          "seconds": 8.450000000000001,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 170,
+          "seconds": 8.5,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 171,
+          "seconds": 8.55,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 172,
+          "seconds": 8.6,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 173,
+          "seconds": 8.65,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 174,
+          "seconds": 8.700000000000001,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 175,
+          "seconds": 8.75,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 176,
+          "seconds": 8.8,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 177,
+          "seconds": 8.85,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 178,
+          "seconds": 8.9,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 179,
+          "seconds": 8.950000000000001,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 180,
+          "seconds": 9.0,
+          "scalar_troop_loss": 736.0,
+          "native_troop_loss": 736.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        }
+      ]
+    },
+    {
+      "case": "exit_after_first_scan",
+      "exit_after_tick": 5,
+      "scalar_payload": {
+        "damage": 92.0,
+        "crown_damage": 21.0,
+        "target_local_damage": true,
+        "buff_duration": 1.0,
+        "scan_interval": 0.25
+      },
+      "parity_passed": true,
+      "mismatch_ticks": [],
+      "damage_events": {
+        "scalar_troop_loss": [
+          {
+            "tick": 25,
+            "damage": 92.0
+          }
+        ],
+        "scalar_tower_loss": [
+          {
+            "tick": 25,
+            "damage": 21.0
+          },
+          {
+            "tick": 45,
+            "damage": 21.0
+          },
+          {
+            "tick": 65,
+            "damage": 21.0
+          },
+          {
+            "tick": 85,
+            "damage": 21.0
+          },
+          {
+            "tick": 105,
+            "damage": 21.0
+          },
+          {
+            "tick": 125,
+            "damage": 21.0
+          },
+          {
+            "tick": 145,
+            "damage": 21.0
+          },
+          {
+            "tick": 165,
+            "damage": 21.0
+          }
+        ],
+        "native_troop_loss": [
+          {
+            "tick": 25,
+            "damage": 92.0
+          }
+        ],
+        "native_tower_loss": [
+          {
+            "tick": 25,
+            "damage": 21.0
+          },
+          {
+            "tick": 45,
+            "damage": 21.0
+          },
+          {
+            "tick": 65,
+            "damage": 21.0
+          },
+          {
+            "tick": 85,
+            "damage": 21.0
+          },
+          {
+            "tick": 105,
+            "damage": 21.0
+          },
+          {
+            "tick": 125,
+            "damage": 21.0
+          },
+          {
+            "tick": 145,
+            "damage": 21.0
+          },
+          {
+            "tick": 165,
+            "damage": 21.0
+          }
+        ]
+      },
+      "trace": [
+        {
+          "tick": 1,
+          "seconds": 0.05,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 2,
+          "seconds": 0.1,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 3,
+          "seconds": 0.15000000000000002,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 4,
+          "seconds": 0.2,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 5,
+          "seconds": 0.25,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 6,
+          "seconds": 0.30000000000000004,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 7,
+          "seconds": 0.35000000000000003,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 8,
+          "seconds": 0.4,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 9,
+          "seconds": 0.45,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 10,
+          "seconds": 0.5,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 11,
+          "seconds": 0.55,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 12,
+          "seconds": 0.6000000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 13,
+          "seconds": 0.65,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 14,
+          "seconds": 0.7000000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 15,
+          "seconds": 0.75,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 16,
+          "seconds": 0.8,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 17,
+          "seconds": 0.8500000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 18,
+          "seconds": 0.9,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 19,
+          "seconds": 0.9500000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 20,
+          "seconds": 1.0,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 21,
+          "seconds": 1.05,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 22,
+          "seconds": 1.1,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 23,
+          "seconds": 1.1500000000000001,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 24,
+          "seconds": 1.2000000000000002,
+          "scalar_troop_loss": 0.0,
+          "native_troop_loss": 0.0,
+          "scalar_tower_loss": 0.0,
+          "native_tower_loss": 0.0,
+          "scalar_troop_buff_count": 1,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 25,
+          "seconds": 1.25,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 26,
+          "seconds": 1.3,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 27,
+          "seconds": 1.35,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 28,
+          "seconds": 1.4000000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 29,
+          "seconds": 1.4500000000000002,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 30,
+          "seconds": 1.5,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 31,
+          "seconds": 1.55,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 32,
+          "seconds": 1.6,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 33,
+          "seconds": 1.6500000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 34,
+          "seconds": 1.7000000000000002,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 35,
+          "seconds": 1.75,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 36,
+          "seconds": 1.8,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 37,
+          "seconds": 1.85,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 38,
+          "seconds": 1.9000000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 39,
+          "seconds": 1.9500000000000002,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 40,
+          "seconds": 2.0,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 41,
+          "seconds": 2.0500000000000003,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 42,
+          "seconds": 2.1,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 43,
+          "seconds": 2.15,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 44,
+          "seconds": 2.2,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 21.0,
+          "native_tower_loss": 21.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 45,
+          "seconds": 2.25,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 46,
+          "seconds": 2.3000000000000003,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 47,
+          "seconds": 2.35,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 48,
+          "seconds": 2.4000000000000004,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 49,
+          "seconds": 2.45,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 50,
+          "seconds": 2.5,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 51,
+          "seconds": 2.5500000000000003,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 52,
+          "seconds": 2.6,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 53,
+          "seconds": 2.6500000000000004,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 54,
+          "seconds": 2.7,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 55,
+          "seconds": 2.75,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 56,
+          "seconds": 2.8000000000000003,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 57,
+          "seconds": 2.85,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 58,
+          "seconds": 2.9000000000000004,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 59,
+          "seconds": 2.95,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 60,
+          "seconds": 3.0,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 61,
+          "seconds": 3.0500000000000003,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 62,
+          "seconds": 3.1,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 63,
+          "seconds": 3.1500000000000004,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 64,
+          "seconds": 3.2,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 42.0,
+          "native_tower_loss": 42.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 65,
+          "seconds": 3.25,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 66,
+          "seconds": 3.3000000000000003,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 67,
+          "seconds": 3.35,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 68,
+          "seconds": 3.4000000000000004,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 69,
+          "seconds": 3.45,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 70,
+          "seconds": 3.5,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 71,
+          "seconds": 3.5500000000000003,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 72,
+          "seconds": 3.6,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 73,
+          "seconds": 3.6500000000000004,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 74,
+          "seconds": 3.7,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 75,
+          "seconds": 3.75,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 76,
+          "seconds": 3.8000000000000003,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 77,
+          "seconds": 3.85,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 78,
+          "seconds": 3.9000000000000004,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 79,
+          "seconds": 3.95,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 80,
+          "seconds": 4.0,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 81,
+          "seconds": 4.05,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 82,
+          "seconds": 4.1000000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 83,
+          "seconds": 4.15,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 84,
+          "seconds": 4.2,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 63.0,
+          "native_tower_loss": 63.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 85,
+          "seconds": 4.25,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 86,
+          "seconds": 4.3,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 87,
+          "seconds": 4.3500000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 88,
+          "seconds": 4.4,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 89,
+          "seconds": 4.45,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 90,
+          "seconds": 4.5,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 91,
+          "seconds": 4.55,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 92,
+          "seconds": 4.6000000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 93,
+          "seconds": 4.65,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 94,
+          "seconds": 4.7,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 95,
+          "seconds": 4.75,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 96,
+          "seconds": 4.800000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 97,
+          "seconds": 4.8500000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 98,
+          "seconds": 4.9,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 99,
+          "seconds": 4.95,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 100,
+          "seconds": 5.0,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 101,
+          "seconds": 5.050000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 102,
+          "seconds": 5.1000000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 103,
+          "seconds": 5.15,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 104,
+          "seconds": 5.2,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 84.0,
+          "native_tower_loss": 84.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 105,
+          "seconds": 5.25,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 106,
+          "seconds": 5.300000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 107,
+          "seconds": 5.3500000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 108,
+          "seconds": 5.4,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 109,
+          "seconds": 5.45,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 110,
+          "seconds": 5.5,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 111,
+          "seconds": 5.550000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 112,
+          "seconds": 5.6000000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 113,
+          "seconds": 5.65,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 114,
+          "seconds": 5.7,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 115,
+          "seconds": 5.75,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 116,
+          "seconds": 5.800000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 117,
+          "seconds": 5.8500000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 118,
+          "seconds": 5.9,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 119,
+          "seconds": 5.95,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 120,
+          "seconds": 6.0,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 121,
+          "seconds": 6.050000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 122,
+          "seconds": 6.1000000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 123,
+          "seconds": 6.15,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 124,
+          "seconds": 6.2,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 105.0,
+          "native_tower_loss": 105.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 125,
+          "seconds": 6.25,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 126,
+          "seconds": 6.300000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 127,
+          "seconds": 6.3500000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 128,
+          "seconds": 6.4,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 129,
+          "seconds": 6.45,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 130,
+          "seconds": 6.5,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 131,
+          "seconds": 6.550000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 132,
+          "seconds": 6.6000000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 133,
+          "seconds": 6.65,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 134,
+          "seconds": 6.7,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 135,
+          "seconds": 6.75,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 136,
+          "seconds": 6.800000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 137,
+          "seconds": 6.8500000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 138,
+          "seconds": 6.9,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 139,
+          "seconds": 6.95,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 140,
+          "seconds": 7.0,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 141,
+          "seconds": 7.050000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 142,
+          "seconds": 7.1000000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 143,
+          "seconds": 7.15,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 144,
+          "seconds": 7.2,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 126.0,
+          "native_tower_loss": 126.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 145,
+          "seconds": 7.25,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 146,
+          "seconds": 7.300000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 147,
+          "seconds": 7.3500000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 148,
+          "seconds": 7.4,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 149,
+          "seconds": 7.45,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 150,
+          "seconds": 7.5,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 151,
+          "seconds": 7.550000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 152,
+          "seconds": 7.6000000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 153,
+          "seconds": 7.65,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 154,
+          "seconds": 7.7,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 155,
+          "seconds": 7.75,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 156,
+          "seconds": 7.800000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 157,
+          "seconds": 7.8500000000000005,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 158,
+          "seconds": 7.9,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 159,
+          "seconds": 7.95,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": true,
+          "native_area_alive": true
+        },
+        {
+          "tick": 160,
+          "seconds": 8.0,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 161,
+          "seconds": 8.05,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 162,
+          "seconds": 8.1,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 163,
+          "seconds": 8.15,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 164,
+          "seconds": 8.200000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 147.0,
+          "native_tower_loss": 147.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 165,
+          "seconds": 8.25,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 166,
+          "seconds": 8.3,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 167,
+          "seconds": 8.35,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 168,
+          "seconds": 8.4,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 169,
+          "seconds": 8.450000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 170,
+          "seconds": 8.5,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 171,
+          "seconds": 8.55,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 172,
+          "seconds": 8.6,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 173,
+          "seconds": 8.65,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 174,
+          "seconds": 8.700000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 175,
+          "seconds": 8.75,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 176,
+          "seconds": 8.8,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 177,
+          "seconds": 8.85,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 178,
+          "seconds": 8.9,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 179,
+          "seconds": 8.950000000000001,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        },
+        {
+          "tick": 180,
+          "seconds": 9.0,
+          "scalar_troop_loss": 92.0,
+          "native_troop_loss": 92.0,
+          "scalar_tower_loss": 168.0,
+          "native_tower_loss": 168.0,
+          "scalar_troop_buff_count": 0,
+          "scalar_area_alive": false,
+          "native_area_alive": false
+        }
+      ]
+    }
+  ]
+}

@@ -188,7 +188,9 @@ def test_periodic_area_catalog_admits_only_truthful_primitives() -> None:
     freeze = full.name_to_id["Freeze"]
     poison = full.name_to_id["Poison"]
     tornado = full.name_to_id["Tornado"]
-    assert catalog.max_damage_hits[[earthquake, poison]].tolist() == [3, 8]
+    assert catalog.max_damage_hits[[earthquake, poison]].tolist() == [3, 0]
+    assert bool(catalog.target_local_damage[poison])
+    assert int(catalog.periodic_buff_duration_ticks[poison]) == 20
     assert int(catalog.status_kind[earthquake]) == FAST_STATUS_SLOW
     assert int(catalog.status_kind[freeze]) == FAST_STATUS_STUN
     assert int(catalog.max_status_scans[freeze]) == 1
@@ -219,7 +221,7 @@ def test_poison_uses_serialized_periodic_cadence_and_tower_scale(
     tower_before = 2_000.0
     troop_before = 2_000.0
 
-    for _ in range(18):
+    for _ in range(23):
         runtime.step_tick(noop)
     assert float(runtime.state.hp[0, 3]) == tower_before
     assert float(runtime.state.hp[0, 6]) == troop_before

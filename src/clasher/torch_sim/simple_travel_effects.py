@@ -120,7 +120,7 @@ def allocate_fast_travel_effects_(
         & (~area | (commands.radius_units > 0))
         & ~state.game_over[:, None]
     )
-    free = ~effects.active
+    free = effects.free_slots
     command_rank = valid.to(torch.int64).cumsum(dim=1) - 1
     free_rank = free.to(torch.int64).cumsum(dim=1) - 1
     available = free.sum(dim=1, dtype=torch.int64)
@@ -156,6 +156,7 @@ def allocate_fast_travel_effects_(
     tower_multiplier = gather(commands.tower_damage) / gather(
         commands.damage
     ).clamp_min(torch.finfo(torch.float32).tiny)
+    effects.clear_periodic_slots_(allocated)
     write(effects.active, torch.ones_like(allocated))
     write(effects.kind, torch.full_like(free_rank, FAST_EFFECT_AREA))
     write(effects.source_owner, gather(commands.source_owner))

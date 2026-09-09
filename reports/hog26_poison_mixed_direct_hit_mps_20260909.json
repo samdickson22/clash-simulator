@@ -1,0 +1,37 @@
+{
+  "device": "mps:0",
+  "full_scalar_battle_step_used": true,
+  "full_native_runtime_step_used": true,
+  "fixture": "Synthetic shield1, stationary Knight targetHP2000, ready opposing Knight direct attack, and attached Poison buff due on its final frame. Source area has expired; equivalent attached-buff snapshots are supplied.",
+  "direct_damage": 202.0,
+  "poison_damage": 92.0,
+  "initial_target_hp": 2000.0,
+  "initial_shield": 1.0,
+  "scalar": {
+    "target_hp": 1908.0,
+    "hp_loss": 92.0,
+    "shield": 0.0,
+    "attacker_cooldown_seconds": 1.2
+  },
+  "native": {
+    "target_hp": 1798.0,
+    "hp_loss": 202.0,
+    "shield": 0.0,
+    "attacker_cooldown_ticks": 24,
+    "direct_attack_allocated": true
+  },
+  "parity_passed": false,
+  "status": "known_mixed_effect_mismatch",
+  "interpretation": "Scalar direct damage resolves in combat before CharacterBuff damage. Native direct hits remain queued until step_fast_effects, after its attached-buff advance. Whichever hit breaks the shield is absorbed in full. Standalone Poison lifecycle agreement does not establish whole-frame acceptance.",
+  "source_sha256": {
+    "scripts/probe_hog26_poison_mixed_direct_hit_20260909.py": "1ec6d42d54952e2cb34941b4f2a9d04e35f30fc5e829c3d48fcb3503f4ffc82b",
+    "scripts/probe_hog26_poison_scalar_lifecycle_20260909.py": "fa6b5c3e9463619ee14e9db146bf4a751ea38c0bd4ecb50ffc33e829691f8716",
+    "src/clasher/battle.py": "e0bd8c1d4581953a58f45a42a386a254ceec16eb2f29954be411a7eccf2f01f9",
+    "src/clasher/entities.py": "5df49b70a7491b9bb5e26571f4531f20070417c15e14cb8d7c5cb33624ff9233",
+    "src/clasher/mechanics/shared/shield.py": "446eb79e84b484db73004ba60a8a7b3a0794dfe03e28c438d7fbb44eed790143",
+    "src/clasher/torch_sim/simple_runtime.py": "6e3d7716fcfbe7ba391790c05ecb740b593b6d3674a4b0934929287c44b7d28d",
+    "src/clasher/torch_sim/simple_effects.py": "9c7437a80a5b4280ea8755b92fdaaccd79c01f615eb07275cd7681c90cb05822",
+    "src/clasher/torch_sim/simple_periodic_damage.py": "223ecd0fc79237359b1587be6660d219477d3b97c3e22579a06fa089428f2f0e",
+    "src/clasher/torch_sim/simple_attack_effects.py": "232b101142c1cb0b80077f9b807bcf9f4927b6a0513f894bb5a49fedfef15666"
+  }
+}

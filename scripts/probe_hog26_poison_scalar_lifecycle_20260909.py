@@ -19,7 +19,7 @@ from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
 
 
-def native_fixture(device):
+def native_fixture(device, *, max_effects=64, batch_size=1):
     battle = BattleState()
     # Float64 setup authority stays on CPU; the runtime catalog uses float32.
     full = TensorCardCatalog.compile(battle.card_loader, ["Poison", "Knight"], device="cpu")
@@ -32,7 +32,7 @@ def native_fixture(device):
         for field in fields(catalog)
     })
     poison, knight = full.name_to_id["Poison"], full.name_to_id["Knight"]
-    decks = torch.tensor([[[poison] * 8, [knight] * 8]], device=device)
+    decks = torch.tensor([[[poison] * 8, [knight] * 8]] * batch_size, device=device)
     towers = FastTowerSpec(
         card_id=torch.full((2, 3), knight, dtype=torch.int64, device=device),
         x_units=torch.tensor([[3500, 14500, 9000]] * 2, device=device),
@@ -47,17 +47,17 @@ def native_fixture(device):
         decks, catalog, towers, FastMatchRules(regulation_ticks=400, tiebreak_ticks=600),
         entity_token_lookup=torch.zeros((2, catalog.size), dtype=torch.int64, device=device),
         hand_token_lookup=torch.arange(catalog.size, dtype=torch.int64, device=device),
-        max_entities=12, starting_elixir=10.0,
+        max_entities=12, max_effects=max_effects, starting_elixir=10.0,
     )
     state = runtime.state
-    state.active[0, 6] = True
-    state.stable_id[0, 6] = 7
-    state.next_stable_id[0] = 8
-    state.kind[0, 6] = catalog.kind[knight]
-    state.owner[0, 6] = 1
-    state.card_id[0, 6] = knight
-    state.x_units[0, 6], state.y_units[0, 6] = 4000, 25000
-    state.hp[0, 6] = state.max_hp[0, 6] = 2000.0
+    state.active[:, 6] = True
+    state.stable_id[:, 6] = 7
+    state.next_stable_id[:] = 8
+    state.kind[:, 6] = catalog.kind[knight]
+    state.owner[:, 6] = 1
+    state.card_id[:, 6] = knight
+    state.x_units[:, 6], state.y_units[:, 6] = 4000, 25000
+    state.hp[:, 6] = state.max_hp[:, 6] = 2000.0
     # The synthetic target intentionally has no attack or movement components.
     return runtime
 
@@ -110,7 +110,7 @@ def run_case(device, exit_after_tick):
         records.append(record)
         if tick == exit_after_tick:
             troop.position = Position(17.0, 25.0)
-            runtime.state.x_units[0, 6] = 17000
+            runtime.state.x_units[:, 6] = 17000
     damage_ticks = {}
     for engine in ("scalar", "native"):
         for target in ("troop", "tower"):
@@ -150,9 +150,12 @@ def main():
     cases = [run_case(args.device, None), run_case(args.device, 5)]
     root = Path(__file__).resolve().parents[1]
     sources = [Path(__file__).relative_to(root).as_posix(),
+               "src/clasher/battle.py",
                "src/clasher/dynamic_spells.py", "src/clasher/entities.py",
                "src/clasher/torch_sim/simple_catalog.py",
                "src/clasher/torch_sim/simple_effects.py",
+               "src/clasher/torch_sim/simple_periodic_damage.py",
+               "src/clasher/torch_sim/simple_attack_effects.py",
                "src/clasher/torch_sim/simple_runtime.py"]
     report = {
         "status": "diagnostic_mismatch" if any(not c["parity_passed"] for c in cases)

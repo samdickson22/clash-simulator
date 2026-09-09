@@ -1844,3 +1844,31 @@ Live scalar scheduler correction, 2026-09-09:
   and grouped projectiles. A bulk shared pre-damage collection contract would
   be incorrect. Cast RNG/geometry and standalone pool commits remain bounded
   component evidence, not full-battle acceptance.
+
+Poison lifecycle repair and cross-phase rejection, 2026-09-09:
+- Attached Poison damage now has independent source/target clocks, captured
+  damage, duration refresh, lingering hits, stable-ID protection, and reserved
+  source slots. Reset/fanout and every relevant allocation path preserve or
+  clear the new ledger. Scans use scalar hitbox overlap.
+- Final validation: 23 new CPU/MPS lifecycle/ownership tests passed; 57 affected
+  regression tests passed with 29 CUDA skips. Both repaired stationary/exit
+  reports agree on all 360 trace rows; root verified source hashes. Additional
+  storage is 1,067,456 bytes per battle plus equal reset templates at standard
+  128-entity capacities. No collector throughput claim follows.
+- Whole-frame parity still fails. Actual scalar and native steps with a
+  one-point shield, direct Knight damage 202, and attached Poison damage 92
+  leave target HP 1908 versus 1798. Scalar direct damage breaks the shield
+  before the buff; native queues the direct hit until after the buff. Both
+  shields end at zero. This is a required cross-phase repair, not a tolerated
+  acceptance exception. Paired mixed-hit reports explicitly reject parity.
+- Added repaired lifecycle reports and the reproducible
+  probe_hog26_poison_mixed_direct_hit_20260909.py with CPU/MPS reports. The old
+  mismatch reports remain historical evidence. Source authority now includes
+  the changed mechanic modules and scalar scheduler references; stored protocol
+  hashes remain deliberately stale and collection/fitting remain closed.
+- The alternative scalar collection route is feasible but not ready. A root
+  actor-only probe using the frozen checkpoint builder exposes all 30 Arrows
+  members before stepping, including 20 delayed launches, and encodes all as
+  token 1 (<unknown>). See hog26_scalar_actor_ingress_audit_20260909.json.
+  Existing scalar collectors also require reviewed public-mask and observation
+  handling. Do not substitute them merely because their physics is canonical.

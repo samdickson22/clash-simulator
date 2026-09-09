@@ -1,0 +1,19 @@
+{
+  "status": "scalar public builder requires correction before collection",
+  "scope": "Direct Arrows cast, before first step; frozen checkpoint builder, actor-only build; no corpus collection",
+  "projectiles_in_actor": 30,
+  "projectiles_with_unknown_token": 30,
+  "scalar_pending_launch_members": 20,
+  "finding": "Builder includes delayed members before launch; source-name fallback does not resolve serialized projectile appearance correctly.",
+  "projectile_token_names": [
+    "<unknown>"
+  ],
+  "unknown_token_id": 1,
+  "source_sha256": {
+    "src/clasher/rl/structured_obs.py": "089db674c16dd2bfeb7a08f28ac5629befd095e604024f1f37e4a950a6f6b1ab",
+    "scripts/evaluate_hog26_simple_policy.py": "9aba3dc20eec9ab5f593495b1ac7cac5825c9b6d25bfb10762cf349b9583ef0a",
+    "src/clasher/entities.py": "5df49b70a7491b9bb5e26571f4531f20070417c15e14cb8d7c5cb33624ff9233",
+    "src/clasher/spells.py": "249bbe215209a9bca48daf6ae9c4c8916a6a153ff979ddd376359f2d319a8f40"
+  },
+  "checkpoint_sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336"
+}

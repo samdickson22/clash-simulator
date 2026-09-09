@@ -538,7 +538,7 @@ def allocate_fast_payload_effects_(
         & ((commands.damage > 0) | (commands.status_kind > 0))
         & ~state.game_over[:, None]
     )
-    free = ~effects.active
+    free = effects.free_slots
     command_rank = valid.to(torch.int64).cumsum(dim=1) - 1
     free_rank = free.to(torch.int64).cumsum(dim=1) - 1
     available = free.sum(dim=1, dtype=torch.int64)
@@ -568,6 +568,7 @@ def allocate_fast_payload_effects_(
     zeros_f32 = torch.zeros_like(free_rank, dtype=torch.float32)
     ones_i32 = torch.ones_like(free_rank, dtype=torch.int32)
     ones_i16 = torch.ones_like(free_rank, dtype=torch.int16)
+    effects.clear_periodic_slots_(allocated)
     write(effects.active, torch.ones_like(allocated))
     write(effects.kind, torch.full_like(free_rank, FAST_EFFECT_AREA))
     write(effects.source_owner, gather(commands.owner))

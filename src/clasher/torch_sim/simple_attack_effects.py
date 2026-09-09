@@ -259,7 +259,7 @@ def allocate_fast_attack_effects_(
         & (commands.owner < 2)
         & ~state.game_over[:, None]
     )
-    free = ~effects.active
+    free = effects.free_slots
     slots = torch.arange(max_effects, dtype=torch.int64, device=state.device)
     free_slots = (
         torch.where(
@@ -289,6 +289,7 @@ def allocate_fast_attack_effects_(
         & accepted[:, :, None]
     )
     written = destination.any(dim=1)
+    effects.clear_periodic_slots_(written)
 
     def write(field: torch.Tensor, value: torch.Tensor) -> None:
         expanded = value[:, :, None].expand(-1, -1, max_effects)
@@ -481,6 +482,10 @@ def allocate_fast_attack_effects_(
         effects.damage_hits_remaining,
         torch.where(numeric_enabled, one_i32, catalog.max_damage_hits[safe_card]),
     )
+    write(effects.target_local_damage,
+          ~numeric_enabled & catalog.target_local_damage[safe_card])
+    write(effects.periodic_buff_duration_ticks,
+          torch.where(numeric_enabled, zero_i32, catalog.periodic_buff_duration_ticks[safe_card]))
     write(
         effects.status_interval_ticks,
         torch.where(numeric_enabled, one_i32, catalog.status_interval_ticks[safe_card]),

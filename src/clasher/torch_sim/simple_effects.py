@@ -17,6 +17,7 @@ from .simple_chain_topology import FastChainTopologyInputs, fast_chain_hit_count
 from .simple_fan_topology import resolve_fast_fan_topology
 from .simple_line_topology import select_line_capsule_hits
 from .simple_modifiers import FastModifierState, intercept_fast_shield_hits_
+from .simple_periodic_damage import advance_periodic_damage_, refresh_periodic_damage_
 from .simple_state import FAST_KIND_BUILDING, FastGymState
 
 FAST_EFFECT_PROJECTILE = 0
@@ -76,6 +77,26 @@ class FastEffectState:
     fan_range_units: torch.Tensor
     fan_radius_units: torch.Tensor
     fan_spread_degrees: torch.Tensor
+    target_local_damage: torch.Tensor
+    periodic_buff_duration_ticks: torch.Tensor
+    periodic_target_id: torch.Tensor
+    periodic_remaining_ticks: torch.Tensor
+    periodic_next_hit_ticks: torch.Tensor
+    periodic_damage: torch.Tensor
+    periodic_pending_hits: torch.Tensor
+
+    @property
+    def free_slots(self) -> torch.Tensor:
+        """An expired area retains its source slot until attached buffs expire."""
+        return ~self.active & ~self.periodic_remaining_ticks.any(dim=2) & ~self.periodic_pending_hits
+
+    def clear_periodic_slots_(self, written: torch.Tensor) -> None:
+        self.target_local_damage.masked_fill_(written, False)
+        self.periodic_buff_duration_ticks.masked_fill_(written, 0)
+        self.periodic_pending_hits.masked_fill_(written, False)
+        for ledger in (self.periodic_target_id, self.periodic_remaining_ticks,
+                       self.periodic_next_hit_ticks, self.periodic_damage):
+            ledger.masked_fill_(written[:, :, None], 0)
 
     @property
     def batch_size(self) -> int:
@@ -91,12 +112,15 @@ class FastEffectState:
         batch_size: int,
         *,
         max_effects: int = 64,
+        max_entities: int = 64,
         device: str | torch.device = "cpu",
     ) -> FastEffectState:
         if batch_size < 1:
             raise ValueError("batch_size must be positive")
         if max_effects < 1:
             raise ValueError("max_effects must be positive")
+        if max_entities < 1:
+            raise ValueError("max_entities must be positive")
         tensor_device = torch.device(device)
         if tensor_device.type == "cuda" and tensor_device.index is None:
             tensor_device = torch.device("cuda", torch.cuda.current_device())
@@ -162,6 +186,13 @@ class FastEffectState:
             fan_range_units=zeros(torch.int32),
             fan_radius_units=zeros(torch.int32),
             fan_spread_degrees=zeros(torch.float32),
+            target_local_damage=zeros(torch.bool),
+            periodic_buff_duration_ticks=zeros(torch.int32),
+            periodic_target_id=torch.zeros((*shape, max_entities), dtype=torch.int64, device=tensor_device),
+            periodic_remaining_ticks=torch.zeros((*shape, max_entities), dtype=torch.int32, device=tensor_device),
+            periodic_next_hit_ticks=torch.zeros((*shape, max_entities), dtype=torch.int32, device=tensor_device),
+            periodic_damage=torch.zeros((*shape, max_entities), dtype=torch.float32, device=tensor_device),
+            periodic_pending_hits=zeros(torch.bool),
         )
 
     def clone(self) -> FastEffectState:
@@ -255,6 +286,14 @@ def _validate_inputs(
         if descriptor.name == "device":
             continue
         value = getattr(effects, descriptor.name)
+        if descriptor.name in {
+            "periodic_target_id", "periodic_remaining_ticks", "periodic_next_hit_ticks", "periodic_damage"
+        }:
+            if value.ndim != 3 or value.shape[:2] != effect_shape or value.shape[2] < state.max_entities:
+                raise ValueError(f"{descriptor.name} must cover [batch, effects, entities]")
+            if value.device != state.device:
+                raise ValueError(f"{descriptor.name} is on a different device")
+            continue
         if value.shape != effect_shape:
             raise ValueError(f"{descriptor.name} must have shape [batch, effects]")
         if value.device != state.device:
@@ -322,6 +361,7 @@ def step_fast_effects(
     entity_secondary_targetable: torch.Tensor | None = None,
     entity_area_receivable: torch.Tensor | None = None,
     entity_effect_receivable_affects_hidden: torch.Tensor | None = None,
+    preadvanced_periodic_hits: torch.Tensor | None = None,
 ) -> FastEffectStepResult:
     """Advance homing effects, resolve splash, install statuses, and clean up.
 
@@ -427,7 +467,7 @@ def step_fast_effects(
         valid_area
         & (effects.status_scans_remaining > 0)
         & (effects.next_status_tick <= 0)
-        & (effects.status_kind != FAST_STATUS_NONE)
+        & ((effects.status_kind != FAST_STATUS_NONE) | effects.target_local_damage)
     )
     damage_due = projectile_impact | area_damage_due
     status_due = projectile_impact | area_status_due
@@ -456,6 +496,17 @@ def step_fast_effects(
         entity_area_receivable = default_receivable
     if entity_effect_receivable_affects_hidden is None:
         entity_effect_receivable_affects_hidden = default_receivable
+    if preadvanced_periodic_hits is None:
+        periodic_hits = advance_periodic_damage_(
+            state, effects, modifiers, entity_area_receivable,
+            entity_effect_receivable_affects_hidden,
+        )
+    else:
+        if (preadvanced_periodic_hits.shape != (batch, max_effects, max_entities)
+                or preadvanced_periodic_hits.device != state.device
+                or preadvanced_periodic_hits.dtype != torch.bool):
+            raise ValueError("preadvanced_periodic_hits must match the effect/target ledger")
+        periodic_hits = preadvanced_periodic_hits
     target_plane = torch.where(
         entity_is_air[:, None, :],
         effects.hits_air[:, :, None],
@@ -477,6 +528,21 @@ def step_fast_effects(
     circle_candidates = area_candidates & (
         dx.square() + dy.square() <= radius_sq[:, :, None]
     )
+    # Target-local area buffs use scalar native hitboxes: circular characters,
+    # square physical buildings, and an excluded exactly tangent perimeter.
+    target_radius = entity_collision_radius_units[:, None, :].to(torch.int64).clamp_min(0)
+    local_building_hit = (
+        (dx.abs() - target_radius).clamp_min(0).square()
+        + (dy.abs() - target_radius).clamp_min(0).square()
+        < radius_sq[:, :, None]
+    )
+    local_character_hit = dx.square() + dy.square() < (
+        effects.radius_units[:, :, None].to(torch.int64).clamp_min(0) + target_radius
+    ).square()
+    local_hit = torch.where(state.kind[:, None, :] == FAST_KIND_BUILDING,
+                            local_building_hit, local_character_hit)
+    circle_candidates = torch.where(effects.target_local_damage[:, :, None],
+                                     area_candidates & local_hit, circle_candidates)
 
     # Direct and projectile attacks retain their committed primary identity.
     # This makes zero-radius ordinary hits robust to target movement while
@@ -647,6 +713,7 @@ def step_fast_effects(
         )
         grouped_damage = shield_result.hp_damage
     state.hp.sub_(grouped_damage).clamp_(min=0.0)
+    refresh_periodic_damage_(state, effects, area_status_due, circle_candidates)
 
     duration = effects.status_duration_ticks.clamp(min=0)[:, :, None]
     stun_duration = torch.where(
@@ -791,9 +858,10 @@ def step_fast_effects(
     effects.status_duration_ticks.masked_fill_(cleaned, 0)
     effects.lifetime_ticks.masked_fill_(cleaned, 0)
 
+    effects.periodic_pending_hits.zero_()
     return FastEffectStepResult(
-        impacted=impacted,
-        targets_hit=targets_hit,
+        impacted=impacted | periodic_hits.any(dim=2),
+        targets_hit=targets_hit | periodic_hits,
         sources_consumed=sources_consumed,
         cleaned=cleaned,
     )
