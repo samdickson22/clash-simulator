@@ -95,10 +95,15 @@ def test_architecture_mismatch_rejected(tmp_path):
 
 
 def test_frozen_loader_reconstructs_explicit_dynamics_contract(tmp_path):
+    from pathlib import Path
+
+    from scripts.hog26_inference_authority import capture_inference_authority
+
     _, payload = fixture_payload()
     for record in (payload, payload["training_report"]):
         record["state_size"] = 19
         record["margin_dynamics"] = "overtime-damage-race-v1"
+        record["inference_authority"] = capture_inference_authority(Path(__file__).parents[1])
     payload["training_report"]["actor_feature_contract"] = "public-global-dynamics"
     head, _ = save_and_load(tmp_path, payload)
     assert head.margin_dynamics == "overtime-damage-race-v1"

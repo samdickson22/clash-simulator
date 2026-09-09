@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from scripts.collect_hog26_complete_outcomes import collect
+from scripts.hog26_inference_authority import validate_inference_authority
 
 SCHEMA = "clasher.hog26.procedural-outcome-protocol.v1"
 
@@ -22,6 +23,8 @@ def load_protocol(path: Path, root: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text())
     if payload.get("schema") != SCHEMA:
         raise ValueError("unknown procedural outcome protocol")
+    if "inference_authority" in payload:
+        validate_inference_authority(payload["inference_authority"], root)
     for key in ("base_policy", "procedural_decks", "original_decks"):
         row = payload.get(key)
         if not isinstance(row, dict):

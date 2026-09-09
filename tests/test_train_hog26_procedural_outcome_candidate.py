@@ -66,8 +66,27 @@ def test_training_rejects_unresolved_margin_design() -> None:
         ROOT / "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json",
         ROOT,
     )
+    protocol["training_readiness"] = {"status": "under-review", "blocking_issues": ["design"]}
     with pytest.raises(ValueError, match="not cleared"):
         validate_training_inputs(protocol, root=ROOT)
+
+
+def test_replica_selection_changes_only_declared_seed_and_artifacts():
+    from scripts.train_hog26_procedural_outcome_candidate import select_candidate
+
+    protocol = load_protocol(PROTOCOL, ROOT)
+    original = dict(protocol["primary_candidate"])
+    protocol["replication"] = {"seeds": [1278802, 1278803]}
+    protocol["replication"]["candidates"] = [
+        {"seed": seed, "output_checkpoint": f"checkpoint-{seed}", "output_report": f"report-{seed}"}
+        for seed in protocol["replication"]["seeds"]
+    ]
+    selected = select_candidate(protocol, protocol["replication"]["seeds"][0])
+    assert protocol["primary_candidate"] == original
+    for key in set(original) - {"seed", "output_checkpoint", "output_report"}:
+        assert selected["primary_candidate"][key] == original[key]
+    with pytest.raises(ValueError, match="unknown"):
+        select_candidate(protocol, 1)
 
 
 def test_audit_must_pass_and_match_current_corpus_bytes(tmp_path: Path) -> None:

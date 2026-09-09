@@ -37,6 +37,13 @@ def reports_for(protocol, root):
         epoch_selection="maximin-phase-then-decisive-auc-among-point-gate-passes-v1",
         margin_epoch_selection="maximum-mae-improvement-among-all-phase-gate-passes-v1",
     )
+    report.update(margin_dynamics=p.get("margin_dynamics", "none"),
+                  margin_loss=p.get("margin_loss", "huber"),
+                  inference_authority=protocol.get("inference_authority"))
+    if p.get("aggregate_phase_margin_training"):
+        report["margin_training_weighting"] = "equal-aggregate-phase-within-game-phase-v1"
+    if p["feature_set"] == "public-global-dynamics":
+        report.update(state_size=19, separate_draw_trunk=False)
     roles = {
         "train": [*data["legacy_training_corpora"],
                   *(row["output_corpus"] for row in protocol["training"])],
@@ -71,7 +78,7 @@ def test_cohort_cannot_select_best_seed_or_mix_designs(protocol, tmp_path, chang
     elif change == "duplicate":
         reports[1]["seed"] = reports[0]["seed"]
     elif change == "design":
-        reports[1]["margin_progress_power"] = 0
+        reports[1]["margin_progress_power"] += 1
     else:
         reports[1]["train_class_prior"] = [0.3, 0.1, 0.6]
     with pytest.raises(ValueError):
@@ -94,7 +101,8 @@ def test_matching_but_undeclared_weighting_is_rejected(protocol, tmp_path):
         validate_cohort_reports(protocol, reports, tmp_path)
 
 
-def test_current_under_review_protocol_cannot_publish_freeze(protocol, tmp_path):
+def test_under_review_protocol_cannot_publish_freeze(protocol, tmp_path):
+    protocol["training_readiness"] = {"status": "under-review", "blocking_issues": ["design"]}
     path = tmp_path / "protocol.json"
     path.write_text(json.dumps(protocol))
     output = tmp_path / "freeze.json"

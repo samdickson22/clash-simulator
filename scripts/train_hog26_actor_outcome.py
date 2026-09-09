@@ -34,6 +34,7 @@ from clasher.rl.outcome_model import (
     outcome_state_sha256,
 )
 from clasher.rl.public_margin_dynamics import overtime_damage_race
+from scripts.hog26_inference_authority import validate_inference_authority
 from scripts.hog26_public_outcome_projection import (
     load_public_outcome_projection,
     protocol_audit_path,
@@ -1127,6 +1128,8 @@ def main() -> None:
         if args.generalization_protocol is not None
         else None
     )
+    if generalization_protocol is not None and "inference_authority" in generalization_protocol:
+        validate_inference_authority(generalization_protocol["inference_authority"], Path(__file__).resolve().parents[1])
     if args.generalization_protocol is not None and args.holdout_corpus:
         raise ValueError(
             "protocol-bound final evaluation must load frozen outcome heads; "
@@ -2042,6 +2045,7 @@ def main() -> None:
     )
     report = {
         "schema": SCHEMA,
+        "inference_authority": generalization_protocol.get("inference_authority") if generalization_protocol else None,
         "generalization_protocol_sha256": (
             file_sha256(args.generalization_protocol)
             if args.generalization_protocol is not None
@@ -2248,6 +2252,7 @@ def main() -> None:
         raise SystemExit("actor-visible outcome head failed development gates")
     result = {
         "schema": SCHEMA,
+        "inference_authority": report["inference_authority"],
         "base_checkpoint_sha256": file_sha256(args.base_checkpoint),
         "base_model_config": payload["model_config"],
         "token_names": payload["token_names"],

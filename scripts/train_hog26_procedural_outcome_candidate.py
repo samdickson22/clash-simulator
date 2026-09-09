@@ -7,12 +7,14 @@ import argparse
 import json
 import subprocess
 import sys
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
 from scripts.collect_hog26_direct_simple_behavior import file_sha256
+from scripts.hog26_inference_authority import validate_inference_authority
 from scripts.run_hog26_procedural_outcome_shard import load_protocol
 
 
@@ -44,6 +46,8 @@ def validate_training_inputs(protocol: dict[str, Any], *, root: Path) -> None:
             "candidate training is not cleared by the reassessed protocol: "
             f"{readiness.get('blocking_issues', ['protocol reassessment missing'])}"
         )
+    if "inference_authority" in protocol:
+        validate_inference_authority(protocol["inference_authority"], root)
     stages = [
         *protocol["training"],
         protocol["development_selection"],
@@ -226,13 +230,28 @@ def training_command(
     return command
 
 
+def select_candidate(protocol, seed):
+    if seed is None or seed == protocol["primary_candidate"]["seed"]:
+        return protocol
+    rows = protocol["replication"].get("candidates", [])
+    if sorted(row["seed"] for row in rows) != sorted(protocol["replication"]["seeds"]):
+        raise ValueError("replica artifacts must cover exactly the declared seeds")
+    matches = [row for row in rows if row["seed"] == seed]
+    if len(matches) != 1 or set(matches[0]) != {"seed", "output_checkpoint", "output_report"}:
+        raise ValueError("unknown or malformed declared replica")
+    selected = deepcopy(protocol)
+    selected["primary_candidate"].update(matches[0])
+    return selected
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--device", choices=("cpu", "mps", "cuda"), default="mps")
+    parser.add_argument("--candidate-seed", type=int, default=None)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    protocol = load_protocol(args.protocol, root)
+    protocol = select_candidate(load_protocol(args.protocol, root), args.candidate_seed)
     command = training_command(
         protocol, root=root, device=args.device, protocol_path=args.protocol
     )

@@ -870,3 +870,34 @@ same report as its existing eager audit. Artifact:
 collector and audit tests plus Ruff pass. No validation checks were removed.
 Collection/audit memory storage is now addressed; inference code authority
 and primary configuration replacement remain before development launch.
+
+## Inference authority and scenario-independence reassessment
+
+Bound candidate inference/evaluation sources and NumPy/PyTorch versions to
+exact hashes. Collection protocol loading, training, frozen head loading and
+cohort loading validate this authority. Replaced the guarded primary design
+with public-global-dynamics, absolute margin loss, aggregate phase weighting
+and power0. Declared concrete replica artifacts and added candidate-seed
+selection that changes only the declared seed and output paths. Fifty-three
+authority, loader, cohort, trainer and command tests pass; Ruff passes.
+
+Before clearing readiness, checked the independence assumption behind the
+expanded budgets. In the existing96-game crossed training subset, balanced
+and slow-push streams each repeat one public/action transcript across all
+four episodes. Random streams have four distinct transcripts each. Across
+all streams there are only6 distinct balanced and7 distinct slow-push
+transcripts among32 episodes per style, partly because paired seats also
+match. This hash covers public globals and actions, not every simulator field.
+No cross-seed matching deck/style/seat cases were available in the three
+inspected legacy corpora, so cross-seed diversity was not empirically proved.
+Artifact: `hog26_episode_diversity_reassessment_20260908.json`.
+
+Runtime reset_rows restores initial templates unless ordered deck_ids are
+supplied; the generic collector currently does not supply a reset-deck
+provider. Repeating episode ordinals therefore does not establish independent
+new scenarios for deterministic strategies. The earlier coverage-probability
+calculation is conditional on an unverified independence assumption and must
+not justify launch by itself. Readiness remains under review. Next work must
+verify genuinely varying seeded initial scenarios, with paired-seat consistency
+and an audit of scenario identity, before collecting enlarged development or
+calibration data. No new evaluation games were launched.

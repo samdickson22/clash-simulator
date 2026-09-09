@@ -68,6 +68,12 @@ def validate_cohort_reports(protocol, reports, root):
         "calibration": [protocol["probability_calibration"]["output_corpus"]],
     }
     for report in reports:
+        if candidate["feature_set"] == "public-global-dynamics" and (
+            report.get("state_size") != 19 or report.get("separate_draw_trunk") is not False
+        ):
+            raise ValueError("dynamic candidate architecture differs from its public contract")
+        if candidate.get("margin_dynamics", "none") != "none" and report.get("inference_authority") != protocol.get("inference_authority"):
+            raise ValueError("candidate inference authority differs from protocol")
         if (
             any(report.get(key) != candidate[key] for key in fields)
             or report.get("margin_dynamics", "none") != candidate.get("margin_dynamics", "none")
@@ -131,6 +137,7 @@ def freeze_cohort(protocol_path, checkpoint_paths, output, *, root):
         "schema": "clasher.hog26.frozen-outcome-cohort.v1",
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "protocol": str(protocol_path.resolve()), "protocol_sha256": protocol_sha,
+        "inference_authority": protocol.get("inference_authority"),
         "base_policy_sha256": policy_sha,
         "candidates": sorted(records, key=lambda row: row["seed"]),
         "final_artifacts_absent_at_freeze": True,
@@ -159,6 +166,8 @@ def load_frozen_cohort(manifest_path, expected_sha256, *, root):
     if file_sha256(protocol_path) != manifest["protocol_sha256"]:
         raise ValueError("frozen cohort protocol changed")
     protocol = load_protocol(protocol_path, root)
+    if manifest.get("inference_authority") != protocol.get("inference_authority"):
+        raise ValueError("frozen cohort inference authority changed")
     if manifest["base_policy_sha256"] != protocol["base_policy"]["sha256"]:
         raise ValueError("frozen cohort base policy changed")
     validate_training_inputs(protocol, root=root)

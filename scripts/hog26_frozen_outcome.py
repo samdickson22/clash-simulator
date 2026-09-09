@@ -10,6 +10,7 @@ from typing import Any
 import torch
 
 from clasher.rl.outcome_model import ActorOutcomeHead, outcome_state_sha256
+from scripts.hog26_inference_authority import validate_inference_authority
 
 
 def load_frozen_outcome_head(
@@ -68,6 +69,10 @@ def load_frozen_outcome_head(
         raise ValueError("frozen dynamics disagree with training report")
     if dynamics != "none" and report.get("actor_feature_contract") != "public-global-dynamics":
         raise ValueError("frozen dynamics require the causal public feature contract")
+    if dynamics != "none":
+        if payload.get("inference_authority") != report.get("inference_authority"):
+            raise ValueError("checkpoint inference authority disagrees with report")
+        validate_inference_authority(payload.get("inference_authority"), Path(__file__).resolve().parents[1])
     head = ActorOutcomeHead(**{key: payload[key] for key in fields}, margin_dynamics=dynamics)
     head.load_state_dict(state, strict=True)
     head.eval()
