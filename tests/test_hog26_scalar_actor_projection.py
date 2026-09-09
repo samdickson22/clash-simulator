@@ -103,3 +103,12 @@ def test_other_seat_visible_effect_count_cannot_change_hidden_seat_padding():
     assert int(after[1].entity_mask.sum()) == 36
     for field in fields(before[0]):
         np.testing.assert_array_equal(getattr(before[0], field.name), getattr(after[0], field.name))
+
+
+def test_summoning_card_uses_serialized_body_identity():
+    battle, builder, _, bindings = fixture()
+    battle._spawn_troop(Position(9, 7), 0, battle.card_loader.get_card("Skeletons"))
+    actor = project(battle, builder, bindings)[0]
+    skeleton = builder.token_id("Skeleton", namespace="troop_body")
+    assert skeleton != builder.token_id(None)
+    assert int((actor.entity_ids == skeleton).sum()) == 3

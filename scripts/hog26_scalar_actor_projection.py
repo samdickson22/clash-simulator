@@ -38,6 +38,10 @@ def build_scalar_reference_actors(battle, builder, *, appearances, visible_to):
             name = getattr(stats, "name", "")
             namespace = "tower" if name in {"Tower", "KingTower"} else (
                 "building_body" if isinstance(entity, Building) else "troop_body")
+            if namespace != "tower":
+                # Summoning cards can have a different public body identity
+                # (Skeletons summons Skeleton). Use serialized body metadata.
+                name = (getattr(stats, "summon_character_data", None) or {}).get("name") or name
             token = builder.token_id(name, namespace=namespace)
             if token <= 0 or token == unknown:
                 raise ValueError(f"visible body has no typed appearance: {name}")

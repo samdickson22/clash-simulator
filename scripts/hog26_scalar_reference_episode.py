@@ -3,6 +3,7 @@
 import hashlib
 import random
 from collections import deque
+from contextlib import nullcontext
 from dataclasses import dataclass
 
 import numpy as np
@@ -51,7 +52,7 @@ class ScalarReferenceEpisode:
         return cls(battle, DiscreteTileActionSpace(canonical_perspective=True), random.Random(order_seed),
                    learner_seat, decision_interval_ticks)
 
-    def step(self, actions, public_masks, *, before_tick=None, after_tick=None):
+    def step(self, actions, public_masks, *, before_tick=None, after_tick=None, tick_context=None):
         """Apply public-mask-authorized requests, then real scalar frames.
 
         Success is diagnostic output only. No simulator legality mask is read,
@@ -78,11 +79,12 @@ class ScalarReferenceEpisode:
         for _ in range(self.decision_interval_ticks):
             if self.battle.game_over:
                 break
-            if before_tick is not None:
-                before_tick(self.battle)
-            self.battle.step()
-            ticks += 1
-            if after_tick is not None:
-                after_tick(self.battle)
+            with nullcontext() if tick_context is None else tick_context(self.battle):
+                if before_tick is not None:
+                    before_tick(self.battle)
+                self.battle.step()
+                ticks += 1
+                if after_tick is not None:
+                    after_tick(self.battle)
         return {"action_order": tuple(order), "action_success": tuple(success),
                 "ticks": ticks, "done": self.battle.game_over}

@@ -1951,3 +1951,22 @@ Scalar creation receipts and episode control, 2026-09-09:
 - 40 combined receipt, tower, spell, policy-boundary and episode-control tests
   passed. Complete-game replay assembly is next; these component checks do not
   certify full actor-view coverage or authorize a training corpus.
+
+Complete scalar replay baseline, 2026-09-09:
+- Assembled the real queued-cast/tower/ordinary receipt paths, explicit openings,
+  public-mask-v2, frozen recurrent policy, and existing public balanced strategy.
+  Two seat-specific games for one paired diagnostic seed were each repeated;
+  actor/input/action/recurrent traces, final RNG states and terminal results
+  match exactly. Repeats are not independent games or acceptance evidence.
+- Assembly caught Skeletons' distinct serialized body name Skeleton, now used
+  by the projection. Ordinary source discovery now excludes projectile objects
+  that retain their source card's stats. Receipt contexts clean up on failures.
+- Before the resource precision repair, games ended naturally at ticks 5787
+  and 5537 with learner losses. Learner attempts were 51/49 with zero rejects;
+  opponents had 38 rejects each. All rejected attempts reconstruct as floating
+  elixir deficits of 1.33e-15 through 9.18e-14, rather than placement failures.
+  Example: Fireball at tick 280 had 3.9999999999999942 elixir for cost 4.
+- Artifact: hog26_scalar_complete_replay_audited_20260909.json, with broad
+  Python source fingerprints, card/vocabulary/checkpoint hashes, action-card
+  diagnostics, exact W/D/L and normalized terminal tower margins. No training
+  corpus or independent evaluation cohort was opened or written.

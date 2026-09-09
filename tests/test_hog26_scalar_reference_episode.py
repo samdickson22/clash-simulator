@@ -50,3 +50,27 @@ def test_terminal_has_no_automatic_reset_and_order_is_learner_relative():
     with pytest.raises(RuntimeError, match="already terminal"):
         first.step([2304, 2304], masks)
     assert first.battle.tick == 8
+
+
+def test_tick_observer_context_exits_when_frame_hook_raises():
+    from contextlib import contextmanager
+
+    episode = create()
+    events = []
+
+    @contextmanager
+    def observer(battle):
+        events.append("enter")
+        try:
+            yield
+        finally:
+            events.append("exit")
+
+    def fail(battle):
+        raise RuntimeError("diagnostic failure")
+
+    with pytest.raises(RuntimeError, match="diagnostic failure"):
+        episode.step([2304, 2304], np.ones((2, 2306), dtype=bool),
+                     before_tick=fail, tick_context=observer)
+    assert events == ["enter", "exit"]
+    assert episode.battle.tick == 0
