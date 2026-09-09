@@ -1463,3 +1463,33 @@ Mixed-loss tree comparison complete, 2026-09-09:
   mixed loss and family folds; preserve both evaluation distributions. Do not
   add style/family-specific exceptions or tune a mixture sweep. No jobs remain
   active. All independent evaluation data and policy updates remain gated.
+
+
+Public relational geometry audit and diagnostic launch, 2026-09-09:
+- Collector source review found simple_projection._entity_features populates
+  positions/team/kind/HP and selected status flags, leaving entity range/radius/
+  damage/motion columns zero. _typed_lookups maps all crown towers toKingTower.
+  These are existing projection limits, not changes to the physical game labels.
+- New diagnostic features therefore use public card metadata from the frozen
+  actor encoder and explicit public standard-arena fixtures, not those zero
+  columns or a guessed tower identity. Six towers times8features capture HP,
+  minimum opposing attacker gap, public damage magnitudes, geometric reach and
+  nearby ground-attacker pressure. No attack-lock, cooldown or readiness claim;
+  no projectile-coverage claim and no prediction override.
+- Initial run session86439/PID98727 was intentionally stopped, exit130, after
+  source inspection caught attacker radius incorrectly added to attack reach.
+  Preserved original source/plan and exclusion reason in
+  hog26_tree_geometry_reach_correction_20260909.json. Do not use that run.
+- Corrected reach uses integer reconstructed public positions and ranges, squared
+  distance versus attack range plus target radius. Tests cover exact boundary,
+  attacker-radius independence, masked entities, permutation, empty/dead towers,
+  units/opponent selection and immunity to unconsumed entity fields. Prior
+  history/mixed-weight suite passed17tests, then all5geometry tests passed after
+  adding the unconsumed-field test. Ruff and diff checks pass.
+- Frozen v2plan retains tree configuration, seed, family folds and50/50loss,
+  adding48public relational features for912total inputs. Current live run:
+  session6910/PID796, verified100percentCPU and about9.3GiB RSS. Log:
+  reports/hog26_corrected_tree_geometry_v2_margin_screen_20260909.log.
+- Preserve that job and inspect full fitting/withheld phase and style results
+  after completion. Candidate fitting and independent evaluation data remain
+  gated; no policy updates. No production inference source was changed.

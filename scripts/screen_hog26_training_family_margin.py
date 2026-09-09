@@ -285,6 +285,17 @@ def main() -> None:
             + 1
         )
         features[:, -18 - moment_width : -18] = 0.0
+    if plan.get("public_tower_geometry", False):
+        from scripts.hog26_public_tower_geometry import corpus_tower_geometry
+
+        source = root / "scripts/hog26_public_tower_geometry.py"
+        if file_sha256(source) != plan.get("tower_geometry_source_sha256"):
+            raise ValueError("public tower geometry source drifted")
+        geometry = corpus_tower_geometry(
+            loaded, model.actor_encoder.card_stat_features.numpy(),
+            plan["public_tower_fixture"],
+        )
+        features = torch.cat((features[:, :-18], torch.from_numpy(geometry), features[:, -18:]), dim=1)
     del model
     if plan.get("public_history_windows") is not None:
         from scripts.hog26_public_history_features import public_history_features
