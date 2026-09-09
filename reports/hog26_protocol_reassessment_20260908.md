@@ -1604,3 +1604,33 @@ Ordinary projectile sidecar and native allocation probe, 2026-09-09:
   Keep fail-closed coverage reporting and unchanged frozen-policy outputs.
   No corpus enrichment, further fitting, independent evaluation or policy update
   is authorized by the narrow probe. No jobs remain active.
+
+
+Actual runtime cast-route audit completed, 2026-09-09:
+- Exercised7scripted single-cast/deployment cases for160native ticks onCPU and
+  MPS0: Fireball, Arrows, Poison, Zap, GoblinBarrel, Log andMusketeer. Every
+  initial action succeeded. This is a bounded fixture, not complete policy games.
+- A control runtime received identical actions without sidecar reads. Actor
+  observations/legal masks remained byte-identical on every tick; full mutable
+  native state checkpoints matched at ticks1/40/80/160. CPU/MPS actor trace hashes
+  and complete case records are identical. No production policy path changed.
+- Fireball produced39sidecar frames without rejection. Poison caused159rejected
+  frames; GoblinBarrel69. Musketeer produced4frames but55rejections when unmapped
+  tower projectiles were also active. Log occupied its separate rolling pool
+  for50frames and never entered the primary effect sidecar.
+- Crucial gap: Arrows and Zap each allocated an area effect but had zero active
+  effect frames at the boundary. Their allocation and consumption happen in one
+  tick. An active-pool-only rejection rule silently misses these public events.
+- Added a complementary primary transition guard rejecting area births even
+  after consumption, invalid projectile receipts, and newly born projectiles
+  consumed before the boundary. Direct hit queues are not area sprites.14unit
+  tests pass across guard/sidecar/projection; Ruff passes. Guard passing is not
+  an all-pool certificate and no enrichment path is yet authorized by it.
+- Reports: hog26_public_effect_runtime_routes_cpu_20260909.json,
+  hog26_public_effect_runtime_routes_mps_20260909.json and route_comparison.
+  CPU session75168 andMPS87697 exited0. No jobs remain active.
+- Next: integrate transition-time public event emission/coverage, then implement
+  tower, area/instant spell and separate rolling/delivery lifecycle rules. Do not
+  publish partial enriched corpora based on surviving effects alone. Full-game
+  frozen-policy action/label preservation remains required. Head fitting and all
+  independent evaluation data remain gated; no policy updates occurred.

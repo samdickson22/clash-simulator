@@ -1,0 +1,13 @@
+{
+  "status": "Bounded runtime audit passed; event coverage remains incomplete",
+  "actor_trace_identical": true,
+  "case_records_identical": true,
+  "known_unhandled_routes": [
+    "Arrows and Zap births consumed before boundary observation",
+    "Poison persistent area",
+    "shared tower projectiles",
+    "Log rolling pool",
+    "GoblinBarrel delivery and subsequent tower combat"
+  ],
+  "guard_scope": "New primary transition guard rejects area births and transient projectile births. Passing this guard alone is not an all-pool or rendering certificate; it is not yet a complete corpus-enrichment path."
+}
