@@ -31,12 +31,14 @@ def test_withheld_draw_cannot_supply_missing_fit_class():
         fit_outcome_weights(torch.ones(3), labels, labels, np.arange(2), np.arange(2), [0.45, 0.1, 0.45])
 
 
-def test_small_real_fit_reports_disjoint_family_predictions(tmp_path):
+@pytest.mark.parametrize("transfer", [False, True])
+def test_small_real_fit_reports_disjoint_family_predictions(tmp_path, transfer):
     labels = np.array([-1, 1, -1, 1, 0])
     public = np.zeros((15, 18), dtype=np.float32)
     public[:, 0] = np.tile([0.15, 0.5, 0.85], 5)
     corpus = SimpleNamespace(
-        arrays={"global_features": public, "final_outcomes": np.repeat(labels, 3)},
+        arrays={"global_features": public, "final_outcomes": np.repeat(labels, 3),
+                "terminal_tower_margins": np.repeat(labels * 0.2, 3)},
         episode_arrays={"episode_final_outcomes": labels},
         episode_offsets=np.arange(0, 16, 3), row_count=15, episode_count=5,
     )
@@ -46,6 +48,12 @@ def test_small_real_fit_reports_disjoint_family_predictions(tmp_path):
         "target_class_mass": [0.45, 0.1, 0.45], "hidden_size": 2,
         "learning_rate": 0.001, "weight_decay": 0.0001,
     }
+    if transfer:
+        plan["margin_transfer"] = {
+            "loss": "absolute", "aggregate_phase_balance": True, "hidden_size": 2,
+            "residual_scale": 0.5, "progress_power": 0.0, "learning_rate": 0.001,
+            "weight_decay": 0.0001, "epochs": 1, "batch_size": 8,
+        }
     plan_path = tmp_path / "plan.json"
     plan_path.write_text(json.dumps(plan))
     output = tmp_path / "report.json"
@@ -60,3 +68,6 @@ def test_small_real_fit_reports_disjoint_family_predictions(tmp_path):
     assert all(f["fitting_games"] == 3 for f in result["folds"])
     assert all(f["out_of_fold_representatives"]["rows"] == 6 for f in result["folds"])
     assert all(p["rows"] == 4 for p in result["full_phase"].values())
+    if transfer:
+        assert set(result["margin_transfer"]) == {"trained", "random"}
+        assert all(len(f["frozen_outcome_state_sha256"]) == 64 for f in result["folds"])

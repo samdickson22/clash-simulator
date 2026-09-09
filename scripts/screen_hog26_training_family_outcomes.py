@@ -4,13 +4,18 @@ from __future__ import annotations
 
 import json
 import time
+from copy import deepcopy
 from itertools import pairwise
 
 import numpy as np
 import torch
 from torch.nn import functional as F
 
-from clasher.rl.outcome_model import ActorOutcomeHead
+from clasher.rl.outcome_model import ActorOutcomeHead, outcome_state_sha256
+from scripts.hog26_outcome_margin_transfer import (
+    fit_transferred_margin,
+    margin_transfer_summary,
+)
 from scripts.hog26_public_slice_gates import weighted_outcome_metrics
 from scripts.screen_hog26_training_family_margin import family_fit_rows
 from scripts.train_hog26_actor_outcome import (
@@ -45,6 +50,9 @@ def fit_outcome_weights(base_weights, row_outcomes, episode_outcomes, fit_rows,
 
 def run_outcome_screen(*, plan, features, loaded, episode_families, episode_offsets,
                        source_records, plan_path, output, started):
+    transfer = plan.get("margin_transfer")
+    if transfer and plan["actor_feature_set"] != "public-globals":
+        raise ValueError("transfer comparison requires public globals")
     outcomes = torch.from_numpy(np.concatenate([c.arrays["final_outcomes"] for _, c in loaded])).long()
     episode_outcomes = torch.from_numpy(np.concatenate([
         c.episode_arrays["episode_final_outcomes"] for _, c in loaded
@@ -74,10 +82,15 @@ def run_outcome_screen(*, plan, features, loaded, episode_families, episode_offs
                 "nll_improvement_over_fit_prior": prior_nll - result["nll"]}
 
     results = []
+    margin_targets = torch.from_numpy(np.concatenate([
+        c.arrays["terminal_tower_margins"] for _, c in loaded
+    ])).float() if transfer else None
     for seed in plan["seeds"]:
         pooled = torch.full((len(outcomes), 3), torch.nan)
         pooled_prior = torch.full_like(pooled, torch.nan)
         folds = []
+        transfer_pooled = {name: torch.full((len(outcomes),), torch.nan)
+                           for name in ("trained", "random")} if transfer else {}
         for index, families in enumerate(plan["held_out_training_families"]):
             fit_rows, fit_episodes, withheld = family_fit_rows(episode_families, episode_offsets, families)
             weights, prior = fit_outcome_weights(base_weights, outcomes, episode_outcomes,
@@ -86,6 +99,7 @@ def run_outcome_screen(*, plan, features, loaded, episode_families, episode_offs
             rng = np.random.default_rng(seed + index)
             head = ActorOutcomeHead(features.shape[1], hidden_size=plan["hidden_size"],
                                     separate_draw_trunk=plan["actor_feature_set"] != "public-globals")
+            initial_encoder = deepcopy(head.trunk) if transfer else None
             optimizer = torch.optim.AdamW(head.parameters(), lr=plan["learning_rate"],
                                           weight_decay=plan["weight_decay"])
             for _ in range(plan["epochs"]):
@@ -113,6 +127,22 @@ def run_outcome_screen(*, plan, features, loaded, episode_families, episode_offs
                 "out_of_fold_representatives": measure(probabilities, prior.expand(len(outcomes), -1), rows, np.ones(len(rows))),
                 "fitting_representatives": measure(probabilities, prior.expand(len(outcomes), -1), fit_reps, np.ones(len(fit_reps))),
             }
+            if transfer:
+                frozen_sha = outcome_state_sha256(head.state_dict())
+                fold["margin_transfer"] = {}
+                for name, encoder in (("trained", head.trunk), ("random", initial_encoder)):
+                    predicted = fit_transferred_margin(
+                        encoder, features, margin_targets, base_weights, phases, fit_rows,
+                        transfer, seed + index + 100_000,
+                    )
+                    transfer_pooled[name][withheld] = predicted[withheld]
+                    fold["margin_transfer"][name] = margin_transfer_summary(
+                        predicted, margin_targets, features, episode_offsets, phases,
+                        np.flatnonzero(withheld[episode_offsets[:-1]]), rows,
+                    )
+                if outcome_state_sha256(head.state_dict()) != frozen_sha:
+                    raise ValueError("margin transfer changed the frozen outcome encoder")
+                fold["frozen_outcome_state_sha256"] = frozen_sha
             folds.append(fold)
             print(json.dumps({"seed": seed, "fold": index,
                               "out_of_fold": fold["out_of_fold_representatives"],
@@ -129,6 +159,12 @@ def run_outcome_screen(*, plan, features, loaded, episode_families, episode_offs
                 name: measure(pooled, pooled_prior, natural_rows[phases[natural_rows] == i],
                               phase_weights[natural_rows[phases[natural_rows] == i]])
                 for i, name in enumerate(("early", "middle", "late"))
+            },
+            "margin_transfer": {
+                name: margin_transfer_summary(
+                    predicted, margin_targets, features, episode_offsets, phases,
+                    np.flatnonzero(episode_families != "<auxiliary>"), representatives,
+                ) for name, predicted in transfer_pooled.items()
             },
         })
     _atomic_json(output, {

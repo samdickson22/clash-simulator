@@ -696,3 +696,33 @@ the bottleneck is not uniformly missing public outcome information. A bounded
 next hypothesis is to test the fitting-only outcome encoder as margin features,
 with a matched frozen-random-encoder control. Preserve WDL head calibration and
 all family exclusions; do not use withheld outcomes to build transferred features.
+
+## Matched outcome-encoder margin transfer
+
+Added a bounded transfer comparison to the training-family WDL screen.
+Each fitting-fold WDL head supplies its16-dimensional public-global trunk
+embedding; the matched control uses an exact copy of that trunk before fitting.
+Both append the unchanged18 public globals and fit the same hidden16 margin
+head, with identical initialization seed, row order, fixed30 epochs, absolute
+loss, aggregate phase weights, and constant0.5 residual bound. The outcome
+encoder stays frozen; its state digest is checked after margin fitting.
+Tests verify detached features and unchanged public suffixes, invariance to
+withheld margin targets, and encoder immutability. Six focused tests pass and
+Ruff passes.
+
+Started `hog26_outcome_margin_transfer_screen_plan_20260908.json`:8 WDL fits
+and16 matched margin fits over the same completed training-family folds. No
+new data roles or actor-policy updates are introduced. This tests whether
+learned outcome features help the unresolved margin problem; it is not a new
+independent acceptance run or a promoted deployment architecture.
+
+The matched transfer screen completed in94.63 seconds. Learned-encoder
+representative late gains are +0.00244/-0.00338, versus random-control
+-0.00351/+0.00225. Learned full-phase late gains are +0.03399/+0.02802,
+versus random +0.02583/+0.03025. Overall and middle-phase transfer improve,
+but neither late measurement consistently beats the control across seeds.
+WDL representative and full-phase metrics exactly reproduce the prior run,
+confirming the margin experiment did not alter those predictions. No candidate
+is promoted. Decision: `hog26_outcome_margin_transfer_decision_20260908.json`.
+This does not resolve the margin bottleneck and does not justify another
+small transfer variation as independent evidence.
