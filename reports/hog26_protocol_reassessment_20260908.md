@@ -1578,3 +1578,29 @@ Public effect identity and lifecycle inventory, 2026-09-09:
   handling tower overrides, direct-hit exclusion and Arrows/Zap lifecycle cases.
   Keep the original frozen-policy observations/actions unchanged while validating
   sidecar traces. No new collection, fitting or evaluation labels opened.
+
+
+Ordinary projectile sidecar and native allocation probe, 2026-09-09:
+- Added an experimental primary-attack/cast-pool adapter. Rules bind exact
+  runtime names/primitives to serialized projectile identities. Exclude
+  consuming, rolling, multi-target, chain, line, fan and non-damaging delivery
+  carriers from ordinary-flight rules. Final registry contains18identities.
+- Direct-hit area queues produce no public object. An unresolved active entry,
+  area spell, shared tower/card0override, or primitive mismatch raises and stops
+  enrichment rather than silently disappearing or exposing an internal queue.
+  The adapter must not be applied to death/travel/triggered pools.
+- Public output is typed appearance, current canonical position, observed
+  affiliation and visibility only. No target, damage, lifetime or impact schedule
+  is emitted. Altering those private combat values leaves projection unchanged.
+-10interface/sidecar tests pass, including fail-closed unsupported events and
+  direct-hit exclusion. Native allocation accepts all18ordinary identities;
+  birth plus3motion steps produce identicalCPU/MPS0public frames. Full native
+  state/effect digests are unchanged by projection. No frozen-policy path changed.
+- Artifact: hog26_ordinary_projectile_allocation_probe_20260909.json. Rules and
+  probe source hashes are recorded. This is allocation-level evidence, not an
+  actual complete-game cast-route, renderer, capacity or all-effect certificate.
+- Next: exercise the sidecar at the actual native runtime boundary, audit all
+  effect pools/cast routes and handle tower/area/special lifecycles explicitly.
+  Keep fail-closed coverage reporting and unchanged frozen-policy outputs.
+  No corpus enrichment, further fitting, independent evaluation or policy update
+  is authorized by the narrow probe. No jobs remain active.
