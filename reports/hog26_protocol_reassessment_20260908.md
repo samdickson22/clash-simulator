@@ -619,3 +619,42 @@ fold phase comparisons. The correct diagnosis is now useful full-phase learning
 with a terminal-heavy representative failure, not no late forecasting at all.
 Resolve the previously documented temporal minibatch normalization confound
 before drawing conclusions from a further recurrent full-mixture comparison.
+
+## Corrected temporal weighting and public-global history
+
+Fixed the temporal diagnostic loss denominator. Uniformly shuffled episode
+minibatches now divide by their expected fitting-weight mass, using the fitting
+fold mean episode weight, rather than renormalizing by each batch actual mass.
+A gradient counterexample verifies that averaged minibatch gradients match the
+full weighted objective; the old formula does not. Padding has zero loss and
+gradient. Eight focused tests and Ruff pass. Old temporal plans must explicitly
+declare the corrected normalization before rerunning, preserving the distinction
+from historical reports.
+
+Actual complete-mixture weighting arithmetic over1000 random batchings per
+fold gives old late effective mass0.31806–0.31998 versus the0.33333 target.
+The corrected mean is0.33322–0.33389. This is a measurable but modest bias;
+it is not evidence that normalization alone explains the predictive failure.
+Artifact: `hog26_temporal_batch_weight_bias_20260908.json`.
+
+Started a bounded16-fit public-global history diagnostic on the complete
+532-game training mixture, using the existing temporal projection32/memory16,
+fixed30 epochs, powers0/1 and seeds1278911/1278912. Inputs are only the18
+public globals in complete causal game order. The normalization fix is explicit
+in the plan. Comparison with static public globals is not compute-matched
+because optimizer batching and learning rate differ. Plan/output prefix:
+`hog26_margin_complete_public_history_screen`. No behavior policy updates or
+new development/calibration/final labels are involved.
+
+The corrected public-global-history comparison completed16 fold fits in
+289.33 seconds. Power0 representative late gains are +0.000071/+0.003169;
+full-phase late gains are +0.02192/+0.02300. One seed misses the representative
+learning floor, and individual family-fold late regressions reach0.04174.
+Power1 representative late gains remain negative, -0.01051/-0.01310. No
+candidate is promoted and recurrence is not declared sufficient. The result
+is recorded in `hog26_margin_complete_public_history_decision_20260908.json`.
+Before another margin architecture trial, assess WDL learnability on this
+completed training mixture with the same family isolation and fit-only prior
+correction. The primary objective needs both calibrated outcome probabilities
+and margin forecasting; margin-only diagnostics cannot establish either final
+acceptance or readiness for policy learning.

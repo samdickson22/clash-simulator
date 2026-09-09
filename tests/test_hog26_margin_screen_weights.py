@@ -94,3 +94,31 @@ def test_full_phase_margin_summary_weights_games_not_rows():
     assert result["late"]["mae"] == pytest.approx(0.5)
     assert result["late"]["mae_improvement"] == pytest.approx(0.3)
     assert result["early"]["mae"] is None
+
+
+def test_episode_minibatches_preserve_full_weighted_objective_gradient():
+    from scripts.screen_hog26_training_family_margin import weighted_episode_batch_loss
+
+    parameter = torch.tensor(2.0, requires_grad=True)
+    losses = torch.stack([parameter, 3 * parameter]).reshape(2, 1)
+    weights = torch.tensor([[1.0], [9.0]])
+    mean_mass = torch.tensor(5.0)
+    full = weighted_episode_batch_loss(losses, weights, mean_mass)
+    separate = sum(weighted_episode_batch_loss(losses[i:i+1], weights[i:i+1], mean_mass)
+                   for i in range(2)) / 2
+    full_gradient = torch.autograd.grad(full, parameter, retain_graph=True)[0]
+    separate_gradient = torch.autograd.grad(separate, parameter, retain_graph=True)[0]
+    assert full_gradient.item() == pytest.approx(2.8)
+    assert separate_gradient.item() == pytest.approx(full_gradient.item())
+    old = sum((losses[i] * weights[i]).sum() / weights[i].sum() for i in range(2)) / 2
+    assert torch.autograd.grad(old, parameter)[0].item() == pytest.approx(2.0)
+
+
+def test_episode_batch_padding_has_zero_loss_and_gradient():
+    from scripts.screen_hog26_training_family_margin import weighted_episode_batch_loss
+
+    losses = torch.tensor([[1.0, 999.0], [2.0, 3.0]], requires_grad=True)
+    result = weighted_episode_batch_loss(losses, torch.tensor([[1.0, 0.0], [2.0, 1.0]]), torch.tensor(2.0))
+    result.backward()
+    assert result.item() == pytest.approx(2.0)
+    assert losses.grad[0, 1].item() == 0

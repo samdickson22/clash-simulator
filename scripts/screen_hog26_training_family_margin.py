@@ -97,6 +97,8 @@ def fitting_phase_weights(weights, phases, fit_rows, *, aggregate_balance):
 def fit_temporal_fold(
     features, target, weights, episode_offsets, selected_episodes, plan, power, rng
 ):
+    if plan.get("temporal_loss_normalization") != "expected-batch-weight-from-fitting-episodes-v1":
+        raise ValueError("temporal screen must explicitly declare corrected loss normalization")
     head = ActorTemporalMarginHead(
         features.shape[1],
         projection_size=plan["projection_size"],
@@ -108,6 +110,9 @@ def fit_temporal_fold(
         head.parameters(), lr=plan["learning_rate"], weight_decay=plan["weight_decay"]
     )
     episodes = [slice(int(a), int(b)) for a, b in pairwise(episode_offsets)]
+    mean_episode_weight = torch.stack([
+        weights[episodes[e]].sum() for e in selected_episodes
+    ]).mean()
     for _epoch in range(plan["epochs"]):
         order = rng.permutation(selected_episodes)
         for begin in range(0, len(order), plan["episode_batch_size"]):
@@ -120,10 +125,10 @@ def fit_temporal_fold(
                 [weights[s] for s in slices], batch_first=True
             )
             prediction, _memory = head(inputs)  # exact zero reset for every full game
-            loss = (
-                margin_row_loss(prediction, labels, plan.get("margin_loss", "huber"))
-                * sample_weights
-            ).sum() / sample_weights.sum()
+            loss = weighted_episode_batch_loss(
+                margin_row_loss(prediction, labels, plan.get("margin_loss", "huber")),
+                sample_weights, mean_episode_weight,
+            )
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(
@@ -132,6 +137,15 @@ def fit_temporal_fold(
             optimizer.step()
     with torch.no_grad():
         return torch.cat([head(features[s].unsqueeze(0))[0][0] for s in episodes])
+
+
+def weighted_episode_batch_loss(losses, weights, mean_episode_weight):
+    """Use expected batch mass, so randomly grouped episodes keep their weights."""
+    if losses.shape != weights.shape or weights.ndim != 2 or not len(weights):
+        raise ValueError("episode batch loss requires aligned nonempty padded rows")
+    if not torch.isfinite(mean_episode_weight) or mean_episode_weight <= 0:
+        raise ValueError("fitting episode weight must be finite and positive")
+    return (losses * weights).sum() / (len(weights) * mean_episode_weight)
 
 
 def main() -> None:
