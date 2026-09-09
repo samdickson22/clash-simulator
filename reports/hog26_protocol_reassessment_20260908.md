@@ -580,3 +580,42 @@ a multi-day local evaluation workload. No collection was launched, candidate
 readiness remains under review, and all unopened-stage directories are absent.
 Eighteen collection/cohort/stage tests pass. The active128-game training shard
 and its arguments are unchanged.
+
+## Completed declared training collection
+
+Shard2 finished normally in9442.77 seconds and passed its protocol audit:
+128 complete games,56347 retained rows,47 wins/81 losses/0 draws. Corpus SHA
+`611699015ae3a506454aa8a9f11ae009213ae773d4213266b2f9f120f39314e1`.
+Both collector and supervisor exited. Reverified all three corpus hashes and
+audited their union:384 games,167600 rows,154 wins/230 losses/0 draws; every
+check passed. The union report is
+`hog26_procedural_train_complete_audit_20260908.json`.
+
+Shard2 contributes17 late episodes with2 wins, both against spell-control.
+Its weighted late baseline MAE is0.07483 versus0.05023 on representatives.
+Detailed training-only counts are in
+`hog26_shard2_completed_training_diagnostic_20260908.json`.
+
+Started the predeclared complete-mixture static margin comparison, retaining
+the existing feature/power/seed grid and fixed30-epoch budget. It now uses all
+three audited training shards plus the four permitted auxiliary corpora,
+532 games/236438 rows. Each whole-family fold excludes96 procedural games
+across all shards and fits436 games. Added full-phase equal-game margin
+reporting alongside unchanged historical representative metrics. Six focused
+screen tests and Ruff pass. Plan/output prefix:
+`hog26_margin_complete_training_screen`. This is supervised training-family
+diagnostic work only; no development/calibration/final labels are opened and
+no behavior-policy parameters are updated. The candidate remains under review.
+
+The complete-mixture screen finished32 fold fits in183.45 seconds. All8
+configurations still regress on late representatives. Public-global power0
+gives representative late gains -0.00493/-0.00178 while full-phase late gains
+are +0.02546/+0.02764. Both pass the historical -0.01 non-regression screen,
+but neither meets the amended +0.001 representative learning gate. No candidate
+is promoted. Full-state power0 late full-phase gains are only +0.00014/+0.00229;
+power1 gives +0.00717/+0.00595 while representative errors still regress.
+`hog26_margin_complete_training_decision_20260908.json` preserves pooled and
+fold phase comparisons. The correct diagnosis is now useful full-phase learning
+with a terminal-heavy representative failure, not no late forecasting at all.
+Resolve the previously documented temporal minibatch normalization confound
+before drawing conclusions from a further recurrent full-mixture comparison.

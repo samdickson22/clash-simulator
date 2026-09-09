@@ -1,0 +1,62 @@
+{
+  "scope": "Completed audited training shard2 only; descriptive, not model acceptance.",
+  "seed": 1278503,
+  "style_seat": [
+    {
+      "style": "slow-push",
+      "seat": 0,
+      "games": 32,
+      "wins": 11,
+      "late_games": 1,
+      "late_wins": 0,
+      "late_losses": 1
+    },
+    {
+      "style": "slow-push",
+      "seat": 1,
+      "games": 32,
+      "wins": 11,
+      "late_games": 4,
+      "late_wins": 0,
+      "late_losses": 4
+    },
+    {
+      "style": "spell-control",
+      "seat": 0,
+      "games": 32,
+      "wins": 13,
+      "late_games": 5,
+      "late_wins": 1,
+      "late_losses": 4
+    },
+    {
+      "style": "spell-control",
+      "seat": 1,
+      "games": 32,
+      "wins": 12,
+      "late_games": 7,
+      "late_wins": 1,
+      "late_losses": 6
+    }
+  ],
+  "phases": {
+    "early": {
+      "rows": 31715,
+      "representatives": 128,
+      "weighted_all_phase_baseline_mae": 0.3162398338317871,
+      "representative_baseline_mae": 0.34838390350341797
+    },
+    "middle": {
+      "rows": 22984,
+      "representatives": 125,
+      "weighted_all_phase_baseline_mae": 0.18070633709430695,
+      "representative_baseline_mae": 0.1662241816520691
+    },
+    "late": {
+      "rows": 1648,
+      "representatives": 17,
+      "weighted_all_phase_baseline_mae": 0.07483253628015518,
+      "representative_baseline_mae": 0.050233304500579834
+    }
+  }
+}

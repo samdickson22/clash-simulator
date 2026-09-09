@@ -49,6 +49,27 @@ def family_fit_rows(episode_families, episode_offsets, withheld):
     return np.flatnonzero(~row_excluded), np.flatnonzero(~excluded), row_excluded
 
 
+def full_phase_margin_summary(prediction, target, current, offsets, phases, episodes):
+    """Average state errors within each game/phase, then weight games equally."""
+    records = {name: [] for name in ("early", "middle", "late")}
+    for episode in episodes:
+        begin, end = offsets[episode:episode + 2]
+        for phase, name in enumerate(records):
+            rows = np.flatnonzero(phases[begin:end] == phase) + begin
+            if len(rows):
+                mae = float((prediction[rows] - target[rows]).abs().mean())
+                baseline = float((current[rows] - target[rows]).abs().mean())
+                records[name].append((len(rows), mae, baseline))
+    return {
+        name: {
+            "games": len(rows), "rows": sum(r[0] for r in rows),
+            "mae": float(np.mean([r[1] for r in rows])) if rows else None,
+            "baseline_mae": float(np.mean([r[2] for r in rows])) if rows else None,
+            "mae_improvement": float(np.mean([r[2] - r[1] for r in rows])) if rows else None,
+        } for name, rows in records.items()
+    }
+
+
 def margin_row_loss(prediction, target, kind):
     if kind == "absolute":
         return F.l1_loss(prediction, target, reduction="none")
@@ -366,7 +387,7 @@ def main() -> None:
                                     for x in features.split(2048)
                                 ]
                             )
-                    pooled[test_rows] = prediction[test_rows]
+                    pooled[validation_mask] = prediction[validation_mask]
                     fold_results.append(
                         {
                             "held_out_families": families,
@@ -378,6 +399,10 @@ def main() -> None:
                             },
                             "fit": breakdown(prediction, train_representatives),
                             "out_of_fold": breakdown(prediction, test_rows),
+                            "full_phase_out_of_fold": full_phase_margin_summary(
+                                prediction, target, current, episode_offsets, phases,
+                                np.flatnonzero(validation_mask[episode_offsets[:-1]]),
+                            ),
                         }
                     )
                     print(
@@ -405,6 +430,10 @@ def main() -> None:
                     "seed": seed,
                     "folds": fold_results,
                     "pooled": breakdown(pooled, representatives),
+                    "full_phase_out_of_fold": full_phase_margin_summary(
+                        pooled, target, current, episode_offsets, phases,
+                        np.flatnonzero(episode_families != "<auxiliary>"),
+                    ),
                     "predictions": pooled[representatives].tolist(),
                 }
                 result["screen_point_gates_passed"] = result["pooled"]["overall"][

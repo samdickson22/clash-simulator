@@ -78,3 +78,19 @@ def test_source_roles_cannot_import_selection_or_calibration_into_fitting():
     ]:
         with pytest.raises(ValueError, match="training-only role"):
             source_audit_path({"path": path, "role": role}, p)
+
+
+def test_full_phase_margin_summary_weights_games_not_rows():
+    from scripts.screen_hog26_training_family_margin import full_phase_margin_summary
+
+    prediction = torch.tensor([0.0, 1.0, 1.0, 1.0, 99.0])
+    target = torch.zeros(5)
+    result = full_phase_margin_summary(
+        prediction, target, torch.full((5,), 0.8),
+        np.array([0, 1, 4, 5]), np.full(5, 2), [0, 1],
+    )
+    assert result["late"]["games"] == 2
+    assert result["late"]["rows"] == 4
+    assert result["late"]["mae"] == pytest.approx(0.5)
+    assert result["late"]["mae_improvement"] == pytest.approx(0.3)
+    assert result["early"]["mae"] is None

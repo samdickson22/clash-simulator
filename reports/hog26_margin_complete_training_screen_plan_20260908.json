@@ -1,0 +1,94 @@
+{
+  "schema": "clasher.hog26.training-family-margin-screen.v1",
+  "purpose": "Diagnose output suppression versus public representation using complete training games only. No candidate promotion or policy learning.",
+  "protocol": "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json",
+  "held_out_training_families": [
+    [
+      "family-000",
+      "family-001"
+    ],
+    [
+      "family-002",
+      "family-003"
+    ],
+    [
+      "family-004",
+      "family-005"
+    ],
+    [
+      "family-006",
+      "family-007"
+    ]
+  ],
+  "margin_feature_sets": [
+    "public-globals",
+    "full-state"
+  ],
+  "margin_progress_powers": [
+    0.0,
+    1.0
+  ],
+  "seeds": [
+    1278901,
+    1278902
+  ],
+  "hidden_size": 16,
+  "epochs": 30,
+  "batch_size": 512,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "margin_residual_scale": 0.5,
+  "loss": "Absolute error with unchanged episode/reached-phase weights",
+  "epoch_selection": "Fixed final epoch; no tuning to held-out training-fold labels.",
+  "evaluation": "All out-of-fold phase representative predictions retained. Report pooled and per-fold/phase/seat/style gains, training fit and correction magnitude. Do not choose a model from an aggregate concealing late regressions.",
+  "decision_rule": "A candidate is plausible only if both seeds improve pooled out-of-fold MAE by at least 0.005 and each phase has no more than 0.01 regression. Any failing fold is reported. This screen cannot establish final acceptance, recurrence sufficiency or late coverage. If no variant qualifies, do not select the least-bad variant.",
+  "output": "reports/hog26_margin_complete_training_screen_20260908.json",
+  "device": "cpu",
+  "torch_threads": 1,
+  "margin_loss": "absolute",
+  "screen_source_sha256": "850234b042f19d2463cecfdd0fb90cedbace8a417a53cc608dc9dd146ea63206",
+  "paired_huber_report": "reports/hog26_margin_family_screen_20260908.json",
+  "comparison": "Combined audited procedural shards0/1 and declared legacy training auxiliaries. Whole generated families excluded across every procedural source. Auxiliaries are fitting only and do not enter held-out metrics. This tests the larger declared training mixture, not unseen original parent decks. Static models only; no temporal minibatch denominator confound. No development, calibration or final labels.",
+  "aggregate_phase_balance": true,
+  "paired_equal_episode_report": "reports/hog26_margin_family_screen_absolute_20260908.json",
+  "corpora": [
+    {
+      "path": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+      "sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+      "role": "procedural"
+    },
+    {
+      "path": "datasets/derived/hog26_procedural_train_bridge_reactive_seed1278502/corpus.npz",
+      "sha256": "af8ea0ba2e37c4a870af71ad2228cae713273a095a9d8da80a6f39b1d1ecc8f6",
+      "role": "procedural"
+    },
+    {
+      "path": "datasets/derived/hog26_procedural_train_slow_spell_seed1278503/corpus.npz",
+      "sha256": "611699015ae3a506454aa8a9f11ae009213ae773d4213266b2f9f120f39314e1",
+      "role": "procedural"
+    },
+    {
+      "path": "datasets/derived/hog26_crossed_train4_seed1276001_no_split_lane_20260908/corpus.npz",
+      "sha256": "fad0ca04d3932391a85bb5b22e8a2d48d4185c76fef4409175159594d35122b9",
+      "role": "auxiliary"
+    },
+    {
+      "path": "datasets/derived/hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908/corpus.npz",
+      "sha256": "8f630d914bb465657e0d9b28e30bdb113cf1e8600ff8535c73616a71e3738fdd",
+      "role": "auxiliary"
+    },
+    {
+      "path": "datasets/derived/hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908/corpus.npz",
+      "sha256": "e337e7794ac32f6a18da85381e345e4d736b348294d43d194444ce64569112e6",
+      "role": "auxiliary"
+    },
+    {
+      "path": "datasets/derived/hog26_symmetric_draw_outcomes_seed1270001/corpus.npz",
+      "sha256": "2230641594fd97f17080bee06399034bde0bd77d9dc88799633759ee032b0804",
+      "role": "auxiliary"
+    }
+  ],
+  "scope": "Complete declared training mixture only; repeat existing fixed model grid across withheld training families. Both representative and full-phase margins reported; no candidate promotion or independent acceptance.",
+  "protocol_sha256_at_plan": "25488d515d5fbff4381c268c3dd89b02bdae2a0b7aac6e60dd37f8aabb5f0257",
+  "screen_script_sha256_at_plan": "b0d445ac785601df450fa6d7a44e66d51c55ab599c857bef9567fa8a153db6a0"
+}
