@@ -1,0 +1,4 @@
+{
+  "window_decisions": 20,
+  "scope": "Fixed public-history overtime diagnostic on completed training corpora only. No fitting, parameter sweep, or candidate promotion. Assumes recent tower damage rates persist until first tower loss or clock expiry."
+}

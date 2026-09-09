@@ -726,3 +726,30 @@ confirming the margin experiment did not alter those predictions. No candidate
 is promoted. Decision: `hog26_outcome_margin_transfer_decision_20260908.json`.
 This does not resolve the margin bottleneck and does not justify another
 small transfer variation as independent evidence.
+
+## Overtime stopping mechanics
+
+Case analysis of complete-mixture public-global power0 predictions separates
+32 terminal-row late samples from20 nonterminal late samples. Mean error
+across the two neural seeds regresses by0.04192 on terminal rows but improves
+by0.05835 on nonterminal rows. Thirty terminal rows end through an overtime
+crown change, two through king destruction. This rejects the initial guess
+that the pattern is mostly a near-dead-king issue. Case artifact:
+`hog26_late_margin_failure_cases_20260908.json`.
+
+Predeclared and evaluated one fixed public-history diagnostic: estimate tower
+damage rates from the preceding20 observed decisions, then project damage
+until the first surviving tower falls or the public remaining clock expires.
+Apply only in overtime. No labels are inputs and no parameters are fitted.
+Prefix-causality, reset isolation and a hand-calculated race test pass; Ruff
+passes. This is a constant-rate approximation, not exact future simulation.
+
+The diagnostic improves late representative MAE by0.02238 and equal-game
+full-phase late MAE by0.01755. Terminal-row MAE falls from0.01162 to0.00391;
+nonterminal late MAE falls from0.17067 to0.12482. It makes no early-game
+forecast and is not a complete candidate. Plan/result prefixes are
+`hog26_overtime_damage_race`. The next bounded test should combine the
+existing neural regulation forecast with this explicit overtime stopping
+calculation, preserving public causality and validating full-phase as well
+as representative errors before changing the production candidate. No
+new development/calibration/final labels have been used.
