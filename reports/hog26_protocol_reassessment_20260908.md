@@ -1387,3 +1387,31 @@ Tree fitting-capacity diagnostic launched, 2026-09-09:
  scores after completion before drawing conclusions or launching further work.
 - Candidate fitting, selection/calibration/final labels, validation draw control,
  and policy updates remain gated. This diagnostic cannot establish acceptance.
+
+
+Tree diagnostic complete and phase-sampling mismatch measured, 2026-09-09:
+- All8tree fits completed; session81357/PID72962 exited0. Two seed runs have
+  identical representative predictions, so they are reproducibility evidence,
+  not distinct independently trained models. Summary script records this.
+- Pooled MAE improves0.03030 and full-phase late MAE improves0.01278. However,
+  late representative MAE regresses0.02459 and every excluded-family late fold
+  regresses. Families006/007 pooled gain remains -0.02103. Candidate rejected.
+- Trees improve fitting late representatives in3/4folds, with gains
+  +0.00120/-0.00305/+0.00715/+0.01119. This improves fitting relative to the
+  small neural heads but does not prove public representation sufficiency or
+  family generalization. Bridge-pressure pooled gain is -0.00603.
+- Natural-data sampling audit:51/60late representatives are final-decision
+  states, hence85percent of representative metric mass. Final decisions carry
+  only4.780percent of equal-game full-phase late mass. Middle fractions are
+ 15.634percent versus0.997percent; early1.823percent versus0.0723percent.
+  These are different existing metric distributions, not new acceptance rules.
+- Artifacts: hog26_corrected_tree_margin_screen_20260909.json,
+  hog26_corrected_tree_margin_diagnosis_20260909.json, and
+  hog26_corrected_phase_sampling_distribution_20260909.json.
+- Next: predeclare a fitting-weight comparison covering both existing all-state
+  and representative distributions, using fitting games only. Preserve both
+  evaluation checks and all thresholds. A distribution mismatch is a hypothesis
+  for the endpoint errors, not proof of their sole cause. Do not select a model
+  using held-out evaluation labels or add family/style-specific exceptions.
+- No jobs remain active. Candidate fitting and all selection/calibration/final
+  evaluation data and validation draw control remain gated; no policy updates.
