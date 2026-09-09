@@ -94,6 +94,25 @@ def fitting_phase_weights(weights, phases, fit_rows, *, aggregate_balance):
     return result
 
 
+def mix_representative_weights(weights, phases, offsets, fit_episodes, representatives, mass):
+    """Move fitting game-phase mass to its representative without changing totals."""
+    if not 0 <= mass <= 1:
+        raise ValueError("representative mass must be between zero and one")
+    result = weights.clone()
+    for episode in fit_episodes:
+        begin, end = offsets[episode:episode + 2]
+        episode_reps = representatives[(representatives >= begin) & (representatives < end)]
+        for phase in np.unique(phases[begin:end]):
+            rows = np.flatnonzero(phases[begin:end] == phase) + begin
+            selected = episode_reps[phases[episode_reps] == phase]
+            if len(selected) != 1:
+                raise ValueError("each fitting game-phase needs exactly one representative")
+            original_mass = weights[rows].sum()
+            result[rows] *= 1 - mass
+            result[selected[0]] += mass * original_mass
+    return result
+
+
 def fit_temporal_fold(
     features, target, weights, episode_offsets, selected_episodes, plan, power, rng
 ):
@@ -376,6 +395,11 @@ def main() -> None:
                         fit_rows,
                         aggregate_balance=plan.get("aggregate_phase_balance", False),
                     )
+                    if "representative_training_mass" in plan:
+                        fit_weights = mix_representative_weights(
+                            fit_weights, phases, episode_offsets, fitting_episodes,
+                            all_representatives, plan["representative_training_mass"],
+                        )
                     if plan.get("model_type") == "histogram-tree":
                         from scripts.hog26_tree_margin_diagnostic import fit_tree_margin
 

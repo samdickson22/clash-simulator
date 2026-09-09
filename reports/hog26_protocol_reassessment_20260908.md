@@ -1415,3 +1415,25 @@ Tree diagnostic complete and phase-sampling mismatch measured, 2026-09-09:
   using held-out evaluation labels or add family/style-specific exceptions.
 - No jobs remain active. Candidate fitting and all selection/calibration/final
   evaluation data and validation draw control remain gated; no policy updates.
+
+
+Fixed mixed-distribution fitting comparison launched, 2026-09-09:
+- Predeclared50percent of each fitting game-phase loss mass on uniform states
+  and50percent on its existing representative. Original game-phase total mass
+  remains unchanged; excluded-family weights remain zero. No inference feature
+  uses the representative position, future endpoint, labels or new privileged data.
+-21weight/causal tests passed: exact zero-mass control, per-game-phase mass,
+  excluded-representative invariance, invalid mixture values and prior checks.
+  Ruff and diff checks passed. Both acceptance distributions stay unchanged.
+- Neural history comparison completed8fits, session69555 exited0. Late
+  representative gains improve from -0.05849/-0.05586 to -0.03694/-0.04049,
+  still failing. Full-phase late gains become +0.00221/+0.00175. All fitting
+  late representatives still regress. Weighting helps but is not sufficient.
+- Neural comparison saved in hog26_corrected_neural_weight_comparison_20260909.json.
+- Tree mixed-weight comparison running: session42230/PID86554 verified live.
+  Same fixed tree configuration and corrected864public features, only weights
+  changed. One seed and4family folds because prior tree seed runs were identical.
+  Log reports/hog26_corrected_tree_mixed_margin_screen_20260909.log.
+  Preserve the job; inspect both distributions and all slices after completion.
+- Candidate fitting, selection/calibration/final data, validation draw control
+  and policy updates remain gated.
