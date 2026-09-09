@@ -1,0 +1,864 @@
+{
+  "status": "identity inventory only; visibility certification pending",
+  "scope": "Effect primitive does not prove rendered visibility. Direct-hit queue entries are excluded. Serialized identity candidates require scalar/native appearance traces before actor exposure. No target, damage, lifetime or future impact metadata is an actor input.",
+  "manifest_sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8",
+  "script_sha256": "19ac5adf57f809ba2dd1fb12d99ff7993faf3d330fd7bcb3cc439e28b71664cd",
+  "status_counts": {
+    "tower_numeric_override_requires_separate_mapping": 1,
+    "internal_direct_hit_not_an_area_sprite": 33,
+    "unresolved_or_ambiguous_identity": 3,
+    "serialized_identity_candidate": 32,
+    "non_effect_or_unsupported": 4
+  },
+  "entries": [
+    {
+      "runtime_card_id": 0,
+      "runtime_card_name": "",
+      "effect_primitive": -1,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "tower_numeric_override_requires_separate_mapping",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 1,
+      "runtime_card_name": "@child/Barbarian/d51b08a8f9ba",
+      "effect_primitive": 0,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 2,
+      "runtime_card_name": "@child/Bat/93d65f70160a",
+      "effect_primitive": 0,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 3,
+      "runtime_card_name": "@child/Goblin/5b99589e07a1",
+      "effect_primitive": 0,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 4,
+      "runtime_card_name": "@child/Goblin_Stab/d8b5e028f306",
+      "effect_primitive": 0,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 5,
+      "runtime_card_name": "@child/Golemite/b157a063c612",
+      "effect_primitive": 0,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 6,
+      "runtime_card_name": "@child/LavaPups/5ae1ef033a7d",
+      "effect_primitive": 1,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "unresolved_or_ambiguous_identity",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 7,
+      "runtime_card_name": "@child/Skeleton/be80b5997f2e",
+      "effect_primitive": 0,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 8,
+      "runtime_card_name": "@child/SpearGoblin/dbfe2e3f160c",
+      "effect_primitive": 1,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "unresolved_or_ambiguous_identity",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 9,
+      "runtime_card_name": "Archers",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "ArcherArrow",
+          "namespace": "projectile",
+          "token": 264
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 10,
+      "runtime_card_name": "Arrows",
+      "effect_primitive": 2,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "unresolved_or_ambiguous_identity",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 11,
+      "runtime_card_name": "BabyDragon",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "BabyDragonProjectile",
+          "namespace": "projectile",
+          "token": 270
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 12,
+      "runtime_card_name": "Balloon",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 13,
+      "runtime_card_name": "Bandit",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 14,
+      "runtime_card_name": "BarbarianBarrel",
+      "effect_primitive": -1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "non_effect_or_unsupported",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 15,
+      "runtime_card_name": "Bats",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 16,
+      "runtime_card_name": "BattleRam",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 17,
+      "runtime_card_name": "BombTower",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "BombTowerProjectile",
+          "namespace": "projectile",
+          "token": 279
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 18,
+      "runtime_card_name": "Bomber",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "BombSkeletonProjectile",
+          "namespace": "projectile",
+          "token": 276
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 19,
+      "runtime_card_name": "Bowler",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "BowlerProjectile",
+          "namespace": "projectile",
+          "token": 280
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 20,
+      "runtime_card_name": "Cannon",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "TowerCannonball",
+          "namespace": "projectile",
+          "token": 342
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 21,
+      "runtime_card_name": "DarkPrince",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 22,
+      "runtime_card_name": "DartGoblin",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "BlowdartGoblinProjectile",
+          "namespace": "projectile",
+          "token": 274
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 23,
+      "runtime_card_name": "Earthquake",
+      "effect_primitive": 2,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "Earthquake",
+          "namespace": "area_effect",
+          "token": 16
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 24,
+      "runtime_card_name": "ElectroDragon",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "ElectroDragonProjectile",
+          "namespace": "projectile",
+          "token": 283
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 25,
+      "runtime_card_name": "ElectroSpirit",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "ElectroSpiritProjectile",
+          "namespace": "projectile",
+          "token": 284
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 26,
+      "runtime_card_name": "ElectroWizard",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 27,
+      "runtime_card_name": "Fireball",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "FireballSpell",
+          "namespace": "projectile",
+          "token": 289
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 28,
+      "runtime_card_name": "Firecracker",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "FirecrackerProjectile",
+          "namespace": "projectile",
+          "token": 292
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 29,
+      "runtime_card_name": "Freeze",
+      "effect_primitive": 2,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "Freeze",
+          "namespace": "area_effect",
+          "token": 24
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 30,
+      "runtime_card_name": "Giant",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 31,
+      "runtime_card_name": "GiantSnowball",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "SnowballSpell",
+          "namespace": "projectile",
+          "token": 336
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 32,
+      "runtime_card_name": "GoblinBarrel",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "GoblinBarrelSpell",
+          "namespace": "projectile",
+          "token": 297
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 33,
+      "runtime_card_name": "GoblinGang",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 34,
+      "runtime_card_name": "Golem",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 35,
+      "runtime_card_name": "Graveyard",
+      "effect_primitive": 2,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "Graveyard_rework",
+          "namespace": "area_effect",
+          "token": 34
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 36,
+      "runtime_card_name": "Guards",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 37,
+      "runtime_card_name": "HogRider",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 38,
+      "runtime_card_name": "IceGolem",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 39,
+      "runtime_card_name": "IceSpirit",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "IceSpiritsProjectile",
+          "namespace": "projectile",
+          "token": 308
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 40,
+      "runtime_card_name": "IceWizard",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "Ice_wizardProjectile",
+          "namespace": "projectile",
+          "token": 310
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 41,
+      "runtime_card_name": "InfernoDragon",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 42,
+      "runtime_card_name": "InfernoTower",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 43,
+      "runtime_card_name": "Knight",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 44,
+      "runtime_card_name": "LavaHound",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "LavaHoundProjectile",
+          "namespace": "projectile",
+          "token": 311
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 45,
+      "runtime_card_name": "Log",
+      "effect_primitive": -1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "non_effect_or_unsupported",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 46,
+      "runtime_card_name": "Lumberjack",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 47,
+      "runtime_card_name": "MagicArcher",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "EliteArcherArrow",
+          "namespace": "projectile",
+          "token": 285
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 48,
+      "runtime_card_name": "MegaKnight",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 49,
+      "runtime_card_name": "MegaMinion",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "MegaMinionSpit",
+          "namespace": "projectile",
+          "token": 318
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 50,
+      "runtime_card_name": "Miner",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 51,
+      "runtime_card_name": "MiniPekka",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 52,
+      "runtime_card_name": "Minions",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "MinionSpit",
+          "namespace": "projectile",
+          "token": 320
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 53,
+      "runtime_card_name": "Musketeer",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "MusketeerProjectile",
+          "namespace": "projectile",
+          "token": 324
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 54,
+      "runtime_card_name": "NightWitch",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 55,
+      "runtime_card_name": "Pekka",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 56,
+      "runtime_card_name": "Poison",
+      "effect_primitive": 2,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "Poison",
+          "namespace": "area_effect",
+          "token": 40
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 57,
+      "runtime_card_name": "Prince",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 58,
+      "runtime_card_name": "Princess",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "PrincessProjectileDeco",
+          "namespace": "projectile",
+          "token": 327
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 59,
+      "runtime_card_name": "Rocket",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "RocketSpell",
+          "namespace": "projectile",
+          "token": 331
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 60,
+      "runtime_card_name": "RoyalGhost",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 61,
+      "runtime_card_name": "Skeleton",
+      "effect_primitive": 0,
+      "public_root": false,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 62,
+      "runtime_card_name": "SkeletonBarrel",
+      "effect_primitive": -1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "non_effect_or_unsupported",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 63,
+      "runtime_card_name": "Skeletons",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 64,
+      "runtime_card_name": "SpearGoblins",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "SpearGoblinProjectile",
+          "namespace": "projectile",
+          "token": 338
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 65,
+      "runtime_card_name": "Tesla",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 66,
+      "runtime_card_name": "Tombstone",
+      "effect_primitive": -1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "non_effect_or_unsupported",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 67,
+      "runtime_card_name": "Tornado",
+      "effect_primitive": 2,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "Tornado",
+          "namespace": "area_effect",
+          "token": 51
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 68,
+      "runtime_card_name": "Valkyrie",
+      "effect_primitive": 0,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "internal_direct_hit_not_an_area_sprite",
+      "candidates": []
+    },
+    {
+      "runtime_card_id": 69,
+      "runtime_card_name": "Wallbreakers",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "WallbreakerProjectile",
+          "namespace": "projectile",
+          "token": 345
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 70,
+      "runtime_card_name": "Witch",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "WitchProjectile",
+          "namespace": "projectile",
+          "token": 347
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 71,
+      "runtime_card_name": "Xbow",
+      "effect_primitive": 1,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "Xbow_projectile",
+          "namespace": "projectile",
+          "token": 349
+        }
+      ]
+    },
+    {
+      "runtime_card_id": 72,
+      "runtime_card_name": "Zap",
+      "effect_primitive": 2,
+      "public_root": true,
+      "production_visibility_authorized": false,
+      "status": "serialized_identity_candidate",
+      "candidates": [
+        {
+          "name": "Zap",
+          "namespace": "area_effect",
+          "token": 57
+        }
+      ]
+    }
+  ]
+}

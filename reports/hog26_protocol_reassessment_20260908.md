@@ -1549,3 +1549,32 @@ Bounded public-effect projection probe completed, 2026-09-09:
   exact frozen-policy replay enrichment route, retaining all original corpus
   action/terminal-label digests. Current corpora have not been enriched. Further
   head tuning, candidate fitting and independent evaluation remain gated.
+
+
+Public effect identity and lifecycle inventory, 2026-09-09:
+- Compiled all73runtime card rows from the pinned supported-deck manifest.
+  Found32serialized identity candidates,33internal direct-hit primitives,
+  3unresolved identities,4non-effect/unsupported rows and1shared tower override.
+  All production_visibility_authorized flags remain false. Inventory is not
+  a visibility certificate and does not grant permission to expose native queues.
+- Unresolved rows are internal LavaPups, internal SpearGoblin andArrows. Public
+  visible-name lookup recovers SpearGoblinProjectile, but LavaPups lacks the
+  direct serialized reference used by this first-pass inventory. Towers require
+  a separate public fixture/appearance mapping because card_id0is shared.
+- Executable scalar factory comparison exposes lifecycle mismatches: Fireball
+  is ProjectileSpell and native projectile; Poison is AreaEffectSpell and native
+  area. Arrows is a scalar ProjectileSpell with10projectiles across3waves spaced
+ 0.2seconds, yet its native primitive is area. Zap is scalar DirectDamageSpell,
+  also native area. These native primitive labels cannot be used as visible
+  object classes or spawn timings without a dedicated emission contract.
+- Debug visualizer draws projectile bodies but also privileged target guides
+  and source labels. Do not treat the whole debug-render frame as public actor
+  evidence or feed target markers/labels into the outcome model.
+- Artifacts: hog26_public_effect_registry_audit_20260909.json and
+  hog26_public_effect_lifecycle_audit_20260909.json. Registry audit script passes
+  Ruff and completes on the pinned supported catalog. No production path changed.
+- Next: implement/verify a native public-event emission contract separately from
+  combat queues, starting with serialized ordinary projectiles and explicitly
+  handling tower overrides, direct-hit exclusion and Arrows/Zap lifecycle cases.
+  Keep the original frozen-policy observations/actions unchanged while validating
+  sidecar traces. No new collection, fitting or evaluation labels opened.
