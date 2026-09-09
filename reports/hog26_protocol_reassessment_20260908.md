@@ -1922,3 +1922,32 @@ Scalar availability and spell appearance coverage, 2026-09-09:
 - Ordinary attack and tower projectile receipt binding is the next coverage
   requirement. No complete-game corpus or optimizer work has started. A new
   scalar source/data protocol still must be frozen before collection or fitting.
+
+Scalar creation receipts and episode control, 2026-09-09:
+- Musketeer/Cannon ordinary shot descriptors now bind actual creation receipts
+  at the pre-call next entity ID. Scoped per-source wrappers preserve 80 real
+  instrumented/control frames and RNG state; unknown synchronous children do
+  not inherit a binding. Methods restore on normal/error exit.
+- Initial tower receipts use a separate outcome vocabulary: serialized
+  projectile:TowerPrincessProjectile at 494 and public_tower_shot:king at 495.
+  The latter explicitly identifies a publicly observed launch origin, not a
+  guessed asset. Source instance, location, owner, slot, payload and visibility
+  are revalidated. 140-frame controls exercise all six towers without changing
+  physics or RNG. The original policy vocabulary and weights remain unchanged.
+- scalar_policy_inputs accepts only declared extra effect categories. It keeps
+  outcome actor arrays intact, maps extra identities to policy <unknown>, and
+  assigns zero identity confidence while retaining observed position/type.
+  Actual tower projection tests cover that boundary; unknown raw identities
+  outside the declared combined vocabulary still reject.
+- ScalarSpellReceiptRecorder wraps actual registered spell instance calls from
+  the original pending scheduler. It does not manually advance casting or copy
+  scheduler logic. Eight spell rules, both seats and 90 frames each match
+  control snapshots, pending queues and RNG. Unrelated battles delegate through
+  unchanged; overlapping instrumentation rejects and methods restore on errors.
+- ScalarReferenceEpisode preserves explicitly supplied canonical opening decks,
+  separates battle RNG from learner-relative action-order RNG, requires a
+  supplied public action mask, computes no reward, and never auto-resets.
+  This is a new declared diagnostic scenario contract, not native seed parity.
+- 40 combined receipt, tower, spell, policy-boundary and episode-control tests
+  passed. Complete-game replay assembly is next; these component checks do not
+  certify full actor-view coverage or authorize a training corpus.
