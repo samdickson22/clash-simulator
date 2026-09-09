@@ -5,6 +5,7 @@ import hashlib
 import json
 from dataclasses import fields, replace
 from pathlib import Path
+from unittest.mock import patch
 
 import torch
 
@@ -55,10 +56,19 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--tower-shots", action="store_true")
     parser.add_argument("--transition-guard", action="store_true")
+    parser.add_argument("--exact-muzzle-probe", action="store_true")
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError("refusing to overwrite runtime probe")
     torch.set_num_threads(1)
+    import clasher.torch_sim.simple_runtime as runtime_module
+
+    allocator = runtime_module.allocate_fast_attack_effects_
+    allocator_variant_sha256 = None
+    if args.exact_muzzle_probe:
+        from scripts.hog26_exact_allocator_variant import exact_allocator_variant
+
+        allocator, allocator_variant_sha256 = exact_allocator_variant()
     root = Path(__file__).resolve().parents[1]
     protocol = json.loads((root / "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json").read_text())
     artifact = load_simple_supported_decks(root / protocol["procedural_decks"]["path"])
@@ -94,14 +104,16 @@ def main():
                 "first_sidecar_frame": None}
                for card in cases]
     observation_digest = hashlib.sha256()
+    sidecar_digest = hashlib.sha256()
     for tick in range(160):
         actions = torch.full((len(cases), 2), NO_OP_ACTION, dtype=torch.int64, device=args.device)
         if tick == 0:
             for index, card in enumerate(cases):
                 y = 14 if card in {"Log", "Musketeer"} else 25
                 actions[index, 0] = y * 18 + 3
-        result = runtime.step_tick(actions)
-        reference = control.step_tick(actions)
+        with patch.object(runtime_module, "allocate_fast_attack_effects_", allocator):
+            result = runtime.step_tick(actions)
+            reference = control.step_tick(actions)
         assert torch.equal(result.action_success, reference.action_success)
         if tick == 0:
             assert result.action_success[:, 0].all(), result.action_success
@@ -131,7 +143,9 @@ def main():
                 tokens, features, mask = project_primary_effect_pool(effects, rules)
             except ValueError:
                 record["rejected_frames"] += 1
+                sidecar_digest.update(f"{tick}:{index}:rejected".encode())
             else:
+                sidecar_digest.update(tensor_hash({"tokens": tokens, "features": features, "mask": mask}).encode())
                 if mask.any():
                     record["sidecar_frames"] += 1
                     if record["first_sidecar_frame"] is None:
@@ -148,6 +162,10 @@ def main():
                    "device": args.device, "ticks": 160, "cases": records,
                    "tower_shots_enabled": args.tower_shots,
                    "transition_guard_audited": args.transition_guard,
+                   "exact_muzzle_probe": args.exact_muzzle_probe,
+                   "allocator_variant_sha256": allocator_variant_sha256,
+                   "sidecar_trace_sha256": sidecar_digest.hexdigest(),
+                   "final_native_state_sha256": runtime_hash(runtime),
                    "sidecar_token_names": list(sidecar_token_names),
                    "unchanged_native_control_checkpoints": [1, 40, 80, 160],
                    "actor_observation_trace_sha256": observation_digest.hexdigest(),

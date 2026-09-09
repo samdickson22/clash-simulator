@@ -1688,3 +1688,27 @@ Tower projectile precision isolated; exact offset prototype verified, 2026-09-09
   comparisons and hot-path validation; existing corpora cannot be relabelled as
   collected under a changed runtime. Continue public effect lifecycle coverage
   with the same provenance boundary. No fitting/evaluation/policy updates.
+
+
+Isolated exact-muzzle native differential checks, 2026-09-09:
+- Built an explicit diagnostic allocator variant from inspected local source and
+  one literal muzzle-offset replacement. Scoped process-local patching restores
+  the original runtime binding after each test step. No production file changed.
+- Seven160tick runtime fixtures completed for legacyCPU, exactCPU andexactMPS0.
+  LegacyCPU versus exactCPU actor traces, all recorded sidecar trace hashes,
+  final mutable native-state hashes and case records are identical. ExactCPU
+  versus exactMPS agrees on the same measures, resolving the observed tower
+  launch discrepancy within this tested scope.
+- Existing attack-effect/runtime-spell semantic suites under the variant:
+ 5passed,2CUDA-skipped,1source/hot-path test deselected because this is a
+  dynamically constructed diagnostic function. No hot-path or CUDA claim.
+- The prototype includes host-synchronizing domain validation. It is not ready
+  for production capture/performance use, and these8secondfixtures do not
+  recertify complete-game outcomes or all geometry under changed physics.
+- Reports: hog26_exact_muzzle_runtime_cpu/mps_20260909.json,
+  hog26_legacy_muzzle_runtime_cpu_20260909.json and
+  hog26_exact_muzzle_native_comparison_20260909.json. All runs exited0.
+- Preserve production authority and existing corpora until full-game replay
+  and hot-path requirements justify a physics change. Continue event-lifecycle
+  coverage under the unchanged runtime meanwhile; delivery, area/instant and
+  rolling routes remain unresolved. No training or independent labels opened.
