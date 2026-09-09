@@ -46,6 +46,21 @@ def test_training_rejects_original_protocol_without_reassessment() -> None:
         validate_training_inputs(protocol, root=ROOT)
 
 
+def test_dynamic_candidate_command_carries_loss_and_phase_weighting():
+    protocol = load_protocol(PROTOCOL, ROOT)
+    protocol["primary_candidate"].update(
+        feature_set="public-global-dynamics", margin_dynamics="overtime-damage-race-v1",
+        margin_loss="absolute", aggregate_phase_margin_training=True,
+        margin_progress_power=0.0,
+    )
+    command = training_command(protocol, root=ROOT, device="cpu")
+    assert _values(command, "--feature-set") == ["public-global-dynamics"]
+    assert _values(command, "--margin-loss") == ["absolute"]
+    assert _values(command, "--margin-progress-power") == ["0.0"]
+    assert "--aggregate-phase-margin-training" in command
+    assert "--holdout-corpus" not in command
+
+
 def test_training_rejects_unresolved_margin_design() -> None:
     protocol = load_protocol(
         ROOT / "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json",

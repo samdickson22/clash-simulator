@@ -209,11 +209,20 @@ def training_command(
             str(gates["cluster_bootstrap_replicates"]),
             "--minimum-phase-bootstrap-clusters",
             str(gates["minimum_clusters_per_phase"]),
-            "--phase-balanced-outcome-training",
-            "--phase-balanced-margin-training",
             "--require-disjoint-natural-decks",
         )
     )
+    command.extend(("--margin-loss", candidate.get("margin_loss", "huber")))
+    for key, flag in (
+        ("phase_balanced_outcome_training", "--phase-balanced-outcome-training"),
+        ("phase_balanced_margin_training", "--phase-balanced-margin-training"),
+        ("aggregate_phase_margin_training", "--aggregate-phase-margin-training"),
+    ):
+        if candidate.get(key, False):
+            command.append(flag)
+    inferred_dynamics = "overtime-damage-race-v1" if candidate["feature_set"] == "public-global-dynamics" else "none"
+    if candidate.get("margin_dynamics", "none") != inferred_dynamics:
+        raise ValueError("candidate dynamics disagree with its public feature contract")
     return command
 
 

@@ -45,6 +45,8 @@ def validate_cohort_reports(protocol, reports, root):
             else "equal-episode-then-declared-class-mass-v1"
         ),
         "margin_training_weighting": (
+            "equal-aggregate-phase-within-game-phase-v1"
+            if candidate.get("aggregate_phase_margin_training", False) else
             "equal-episode-equal-reached-phase-v1"
             if candidate["phase_balanced_margin_training"]
             else "equal-episode-v1"

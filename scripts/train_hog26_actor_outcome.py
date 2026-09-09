@@ -123,9 +123,12 @@ def episode_balanced_row_weights(
     loaded: list[tuple[dict[str, Any], DirectSimpleBehaviorCorpus]],
     *,
     phase_balanced: bool = False,
+    aggregate_phase_balanced: bool = False,
 ) -> Tensor:
     """Give every game equal mass, optionally equalizing its reached phases."""
 
+    if aggregate_phase_balanced and not phase_balanced:
+        raise ValueError("aggregate phase weighting requires within-game phase balancing")
     parts: list[np.ndarray] = []
     for _metadata, corpus in loaded:
         if not phase_balanced:
@@ -147,6 +150,17 @@ def episode_balanced_row_weights(
                 )
         parts.append(corpus_weights)
     weights = np.concatenate(parts)
+    if aggregate_phase_balanced:
+        phases = np.concatenate([
+            np.minimum((corpus.arrays["global_features"][:, 0] * 3).astype(int), 2)
+            for _, corpus in loaded
+        ])
+        for phase in range(3):
+            mask = phases == phase
+            mass = weights[mask].sum()
+            if mass <= 0:
+                raise ValueError("training corpus lacks an aggregate-weighted phase")
+            weights[mask] /= mass
     weights *= len(weights) / weights.sum()
     return torch.as_tensor(weights, dtype=torch.float32)
 
@@ -1078,6 +1092,7 @@ def main() -> None:
     parser.add_argument("--margin-loss", choices=("huber", "absolute"), default="huber")
     parser.add_argument("--phase-balanced-outcome-training", action="store_true")
     parser.add_argument("--phase-balanced-margin-training", action="store_true")
+    parser.add_argument("--aggregate-phase-margin-training", action="store_true")
     parser.add_argument("--loss-class-mass", type=float, default=0.45)
     parser.add_argument("--draw-class-mass", type=float, default=0.10)
     parser.add_argument("--win-class-mass", type=float, default=0.45)
@@ -1409,7 +1424,8 @@ def main() -> None:
         phase_balanced=args.phase_balanced_outcome_training,
     )
     margin_train_weights = episode_balanced_row_weights(
-        train_loaded, phase_balanced=args.phase_balanced_margin_training
+        train_loaded, phase_balanced=args.phase_balanced_margin_training,
+        aggregate_phase_balanced=args.aggregate_phase_margin_training,
     )
     validation_outcomes = torch.cat(
         [
@@ -2077,6 +2093,8 @@ def main() -> None:
             else "equal-episode-then-declared-class-mass-v1"
         ),
         "margin_training_weighting": (
+            "equal-aggregate-phase-within-game-phase-v1"
+            if args.aggregate_phase_margin_training else
             "equal-episode-equal-reached-phase-v1"
             if args.phase_balanced_margin_training
             else "equal-episode-v1"

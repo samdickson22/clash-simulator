@@ -346,8 +346,9 @@ def test_phase_clusters_pair_mirrored_seats_within_matchup() -> None:
     assert len(set(clusters.tolist())) == 1
 
 
+@pytest.mark.parametrize("feature_set", ["public-globals", "public-global-dynamics"])
 def test_calibration_labels_cannot_change_epoch_selection(
-    tmp_path, monkeypatch
+    tmp_path, monkeypatch, feature_set
 ) -> None:
     """Exercise the real optimizer/selector twice with opposite calibration labels."""
     import hashlib
@@ -366,6 +367,7 @@ def test_calibration_labels_cannot_change_epoch_selection(
         public = np.zeros((n * 3, 18), dtype=np.float32)
         public[:, 0] = np.tile([0.15, 0.5, 0.85], n)
         public[:, 8:14] = 0.8
+        public[:, 4] = public[:, 0] > 0.6
         public[:, 1] = np.repeat(np.arange(n) / n, 3)
         outcomes = np.repeat(labels, 3)
         margins = outcomes.astype(np.float32) * 0.2
@@ -460,7 +462,13 @@ def test_calibration_labels_cannot_change_epoch_selection(
                 "--epochs",
                 "3",
                 "--feature-set",
-                "public-globals",
+                feature_set,
+                "--margin-residual-scale",
+                "0.5",
+                "--margin-loss",
+                "absolute",
+                "--phase-balanced-margin-training",
+                "--aggregate-phase-margin-training",
                 "--hidden-size",
                 "4",
                 "--batch-size",
@@ -474,6 +482,9 @@ def test_calibration_labels_cannot_change_epoch_selection(
         reports.append(json.loads(report.read_text()))
         assert reports[-1]["validation_public_slices"]["passed"] is False
         assert reports[-1]["generalization_protocol_sha256"] == digest(protocol_path)
+        assert reports[-1]["margin_loss"] == "absolute"
+        assert reports[-1]["margin_training_weighting"] == "equal-aggregate-phase-within-game-phase-v1"
+        assert reports[-1]["state_size"] == (19 if feature_set == "public-global-dynamics" else 18)
     assert len(calls) == 2  # exactly once per run, after selection
     assert torch.all(calls[0] == -1) and torch.all(calls[1] == 1)
     for key in (

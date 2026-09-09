@@ -799,3 +799,28 @@ passes. This is not yet complete candidate integration: aggregate phase-loss
 options, campaign arguments/design replacement and full trainer verification
 remain before any development collection. Candidate readiness stays under
 review and no new labels were opened.
+
+## Candidate loss wiring and memory boundary
+
+Wired absolute margin loss and optional aggregate phase balancing through
+the trainer and campaign command. Cohort checks bind the declared weighting.
+The real optimizer/selector regression now runs with both18-feature globals
+and19-feature dynamics, absolute loss and aggregate phase weights; reversing
+calibration labels cannot change selected epochs or pre-calibration state.
+Thirty-three trainer/campaign/cohort tests and Ruff pass.
+
+A contract probe on all236438 completed training-mixture rows shows exact
+agreement between production dynamics features and the causal diagnostic,
+with unchanged global suffixes. Production aggregate weights agree with the
+screen within floating-point tolerance; maximum absolute difference0.000061
+on large weights and phase mass is1/3 each. Artifact:
+`hog26_dynamic_candidate_contract_probe_20260908.json`.
+
+Measured the actual archive expansion before launching enlarged stages.
+The128-game shard2 expands to1.94448GiB, implying15.55582GiB for1024 games
+at similar lengths before temporary copies. Selection plus calibration plus
+training cannot all be loaded as full observation corpora on this24GiB Mac.
+The required global/label arrays are only0.00782GiB per128-game shard.
+Next work must bound collection memory and load the declared public-global
+projection for this candidate, preserving full corpus audits and provenance.
+No enlarged collection was started; readiness remains under review.
