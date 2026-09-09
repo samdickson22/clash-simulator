@@ -1665,3 +1665,26 @@ Tower-shot sidecar extension and transition audit, 2026-09-09:
   still-unhandled delivery, area/instant and rolling event lifecycles. Preserve
   transition receipts and frozen-policy behavior. No enrichment or fitting yet;
   independent evaluation and policy updates remain gated.
+
+
+Tower projectile precision isolated; exact offset prototype verified, 2026-09-09:
+- Reproduced first tower shot at tick85 in a native Musketeer fixture onCPU/MPS.
+  Both have source(3500,25500), target(3500,18460), and speed600logic units/tick.
+  CPU sqrt distance is7040.0; MPS7040.00048828125. Muzzle y offsets before
+  truncation are -300.0 versus -299.9999694824219, truncating to -300/-299.
+  The resulting first observed projectile y is24600/24601. Cause is launch
+  normalization/truncation, not the public projection or differing target state.
+- Added an integer muzzle-offset prototype. For the declared coordinate domain,
+  floor(abs(delta)*radius/sqrt(distance_squared)) is computed via integer quotient
+  and integer-corrected square root. No epsilon or nearest-integer reinterpretation.
+- Exact Python isqrt reference matches4101cases on each ofCPU/MPS0, including
+  axes, the observed7040case, zero displacement, full reach and board extremes.
+  Three tests pass; Ruff passes. Diagnostic code includes explicit domain checks
+  and is not wired into the native hot path or certified for throughput.
+- Artifacts: hog26_tower_launch_precision_probe_20260909.json and
+  hog26_integer_muzzle_reference_20260909.json. Reproducer and reference test
+  sources are retained. No production physics, policy, or corpus bytes changed.
+- Next: integrate the exact calculation only after native trajectory/outcome
+  comparisons and hot-path validation; existing corpora cannot be relabelled as
+  collected under a changed runtime. Continue public effect lifecycle coverage
+  with the same provenance boundary. No fitting/evaluation/policy updates.

@@ -1,0 +1,33 @@
+{
+  "scope": "Diagnostic native launch geometry; source/target values are audit-only and never actor inputs.",
+  "records": [
+    {
+      "device": "cpu",
+      "tick": 85,
+      "source_x_units": 3500,
+      "source_y_units": 25500,
+      "target_x_units": 3500,
+      "target_y_units": 18460,
+      "x_units": 3500,
+      "y_units": 24600,
+      "speed_units_per_tick": 600,
+      "distance": 7040.0,
+      "muzzle_y_offset_before_trunc": -300.0,
+      "muzzle_y_offset_after_trunc": -300
+    },
+    {
+      "device": "mps:0",
+      "tick": 85,
+      "source_x_units": 3500,
+      "source_y_units": 25500,
+      "target_x_units": 3500,
+      "target_y_units": 18460,
+      "x_units": 3500,
+      "y_units": 24601,
+      "speed_units_per_tick": 600,
+      "distance": 7040.00048828125,
+      "muzzle_y_offset_before_trunc": -299.9999694824219,
+      "muzzle_y_offset_after_trunc": -299
+    }
+  ]
+}
