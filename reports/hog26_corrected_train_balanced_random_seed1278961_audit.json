@@ -1,0 +1,762 @@
+{
+  "cell_outcomes": {
+    "balanced|Procedural train 000-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 000-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 000-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 000-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 000-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 000-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 000-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 000-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 001-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 001-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 001-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 001-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 001-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 001-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 001-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 001-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 002-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 002-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 002-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 002-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 002-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 002-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 002-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 002-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 003-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 003-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 003-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 003-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 003-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 003-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 003-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 003-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 004-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 004-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 004-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 004-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 004-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 004-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 004-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 004-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 005-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 005-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 005-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 005-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 005-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 005-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 005-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 005-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 006-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 006-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 006-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 006-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 006-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 006-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 006-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 006-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 007-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 007-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 007-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 007-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 007-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 007-2|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 007-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "balanced|Procedural train 007-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 000-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 000-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 000-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 000-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 000-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 000-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 000-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 000-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 001-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 001-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 001-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 001-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 001-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 001-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 001-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 001-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 002-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 002-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 002-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 002-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 002-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 002-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 002-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 002-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 003-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 003-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 003-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 003-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 003-2|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 003-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 003-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 003-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 004-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 004-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 004-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 004-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 004-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 004-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 004-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 004-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 005-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 005-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 005-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 005-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 005-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 005-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 005-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 005-3|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 006-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 006-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 006-1|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 006-1|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 006-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 006-2|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 006-3|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 006-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 007-0|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 007-0|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 007-1|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 007-1|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "random|Procedural train 007-2|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 007-2|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 007-3|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    },
+    "random|Procedural train 007-3|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 1
+    }
+  },
+  "checks": {
+    "complete_stream_coverage": true,
+    "contiguous_stream_ordinals": true,
+    "critic_inputs_absent": true,
+    "current_causal_actor_contract": true,
+    "exact_actor_relative_terminal_labels": true,
+    "exact_episode_boundaries": true,
+    "expected_decks_exact": true,
+    "expected_opponents_exact": true,
+    "expected_split_exact": true,
+    "finite_outcomes_and_margins": true,
+    "label_independent_public_mask_v2": true,
+    "supported_deck_authority_exact": true,
+    "unique_hashes": true,
+    "unique_seeds": true
+  },
+  "corpora": [
+    {
+      "episodes": 128,
+      "margin_maximum": 0.797919750213623,
+      "margin_minimum": -0.8374836444854736,
+      "opening_audit": {
+        "distinct_planned_matchup_deals": 64,
+        "opening_schedule": "seeded-ordered-decks-v1",
+        "scope": "schedule reconstruction and recorded learner opening; full-game diversity audited separately",
+        "seeded_openings_verified": true,
+        "verified_initial_actor_hands": 128
+      },
+      "opponent_deck_split": "train",
+      "outcomes": {
+        "draw": 0,
+        "loss": 80,
+        "win": 48
+      },
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_corrected_train_balanced_random_seed1278961/corpus.npz",
+      "rows": 56223,
+      "seed": 1278961,
+      "sha256": "38135e48f49b5aa3200ad1ab575b31da179e71e5efc6bd2010a027d03604bea5",
+      "supported_decks_sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8"
+    }
+  ],
+  "corpus_count": 1,
+  "episodes": 128,
+  "natural_diversity": {
+    "cells_with_both_decisive_outcomes": 0,
+    "opponent_decks": [
+      "Procedural train 000-0",
+      "Procedural train 000-1",
+      "Procedural train 000-2",
+      "Procedural train 000-3",
+      "Procedural train 001-0",
+      "Procedural train 001-1",
+      "Procedural train 001-2",
+      "Procedural train 001-3",
+      "Procedural train 002-0",
+      "Procedural train 002-1",
+      "Procedural train 002-2",
+      "Procedural train 002-3",
+      "Procedural train 003-0",
+      "Procedural train 003-1",
+      "Procedural train 003-2",
+      "Procedural train 003-3",
+      "Procedural train 004-0",
+      "Procedural train 004-1",
+      "Procedural train 004-2",
+      "Procedural train 004-3",
+      "Procedural train 005-0",
+      "Procedural train 005-1",
+      "Procedural train 005-2",
+      "Procedural train 005-3",
+      "Procedural train 006-0",
+      "Procedural train 006-1",
+      "Procedural train 006-2",
+      "Procedural train 006-3",
+      "Procedural train 007-0",
+      "Procedural train 007-1",
+      "Procedural train 007-2",
+      "Procedural train 007-3"
+    ],
+    "opponent_styles": [
+      "balanced",
+      "random"
+    ],
+    "phase_matchup_clusters": {
+      "early": {
+        "clusters": 64,
+        "with_both": 10,
+        "with_loss": 45,
+        "with_win": 29
+      },
+      "late": {
+        "clusters": 16,
+        "with_both": 1,
+        "with_loss": 11,
+        "with_win": 6
+      },
+      "middle": {
+        "clusters": 62,
+        "with_both": 8,
+        "with_loss": 44,
+        "with_win": 26
+      }
+    },
+    "style_deck_seat_cells": 128
+  },
+  "outcomes": {
+    "draw": 0,
+    "loss": 80,
+    "win": 48
+  },
+  "phase_rows": {
+    "early": 31188,
+    "late": 1849,
+    "middle": 23186
+  },
+  "rows": 56223,
+  "schema": "clasher.hog26.outcome-corpus-audit.v1",
+  "status": "passed"
+}

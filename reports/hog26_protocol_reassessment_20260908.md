@@ -1187,3 +1187,28 @@ Corrected full games agree; fitting refresh frozen:
 - Next collection: shard0 balanced/random,128complete games onMPS, seed1278961.
   Subsequent shards and training draw control follow after audited completion;
   no partial shard fitting or model/policy updates.
+
+
+First corrected fitting shard complete and audited:
+- Seed1278961 balanced/random:128complete games,56223decisions,48wins/80losses/
+  0draws,11chunks,8796.449seconds. Corpus SHA256
+  38135e48f49b5aa3200ad1ab575b31da179e71e5efc6bd2010a027d03604bea5.
+- Full protocol-bound audit passed all checks: exact deck/family/style budget,
+  complete boundaries and terminal labels, absent critic arrays, public mask
+  v2, seeded schedule reconstruction, all128initial public hands.64paired
+  scenario identities, with64early/62middle/16late reached-phase groups.
+  Late groups include11withloss/6withwin/1withboth; no acceptance claim.
+- Complete public trajectory hashing finds64distinct balanced and64distinct
+  random transcripts. With one game per stream this does not itself measure
+  repeated-opening diversity; prior four-opening probe supplies that scoped
+  evidence, and paired scenario grouping remains mandatory.
+- Reports: hog26_corrected_train_balanced_random_seed1278961{,_audit,
+  _diversity}.json. No partial data was opened before complete publication.
+- First collector session21571/PID29039 exited0; full audit process also exited0.
+- Started the frozen next shard: seed1278962, bridge-pressure/reactive-defense,
+  128games, MPS, OMP/MKL threads1. Active session20798/PID34414 verified live.
+  Log reports/hog26_corrected_train_bridge_reactive_seed1278962.log; output
+  datasets/derived/hog26_corrected_train_bridge_reactive_seed1278962/corpus.npz.
+  Preserve this process, audit after full publication, then collect shard2
+  seed1278963 and training draw control1278964. Candidate fitting, validation
+  control1278965, selection/calibration, holdout, and policy updates stay gated.
