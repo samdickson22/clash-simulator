@@ -1,0 +1,54 @@
+{
+  "checkpoint_sha256": "f609b60b3e7b7b574e084b15255e0fc247447e3c18d8552714213ccd0c709336",
+  "corpus_sha256": "d8c1bfc2727251037e2337bd08c58dd24356815116e8b7ee15ed974fec9000f8",
+  "episodes": [
+    {
+      "comparisons": {
+        "cpu_vs_mps": {
+          "first_examples": [],
+          "first_mismatch": null,
+          "mismatches": 0
+        },
+        "cpu_vs_recorded": {
+          "first_examples": [],
+          "first_mismatch": null,
+          "mismatches": 0
+        },
+        "mps_vs_recorded": {
+          "first_examples": [],
+          "first_mismatch": null,
+          "mismatches": 0
+        }
+      },
+      "decisions": 432,
+      "episode": 0
+    },
+    {
+      "comparisons": {
+        "cpu_vs_mps": {
+          "first_examples": [],
+          "first_mismatch": null,
+          "mismatches": 0
+        },
+        "cpu_vs_recorded": {
+          "first_examples": [],
+          "first_mismatch": null,
+          "mismatches": 0
+        },
+        "mps_vs_recorded": {
+          "first_examples": [],
+          "first_mismatch": null,
+          "mismatches": 0
+        }
+      },
+      "decisions": 349,
+      "episode": 1
+    }
+  ],
+  "input_route": "full retained public tensors, exact previous reward/action, recurrent episode reset; batch4 repeated actor inputs",
+  "limitation": "isolates learner policy numerics on CPU-recorded observations; not simulator or opponent parity",
+  "replay_source": "scripts/probe_hog26_completed_policy_device_replay.py",
+  "replay_source_sha256": "59b6e1f45cd2f2f37fef6a06b13115ea99945618d8bd9c1ef042f8312b6997c8",
+  "role": "training-only-device-diagnostic",
+  "schema": "clasher.hog26.completed-public-policy-device-replay.v1"
+}

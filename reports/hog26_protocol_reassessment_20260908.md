@@ -1061,3 +1061,23 @@ CPU probe completed and audited:
   Compare full trajectories only after MPS complete publication; do not inspect
   partial spool files. MPS session75744/PID69455 remains live at18m39s, latest
   chunk11 at1060.496seconds, completed_by_stream=[1,1].
+
+
+Completed-observation device-policy replay:
+- Code inspection: this balanced strategy route uses scores.argmax, not the
+  random-opponent multinomial sampler. The learner is deterministic/eval mode.
+- Replayed all781 completed CPU actor observations through the frozen base
+  policy on CPU and MPS, with exact previous actions/rewards, full retained
+  public entity arrays, exact recurrent episode resets, and batch4 replicated
+  actor inputs to preserve the production inference batch shape. No optimizer.
+- Both devices reproduced every stored learner action: zero mismatches in
+ 432- and349-decision games, also zero CPU-vs-MPS action mismatches. CPU agreement
+  with the corpus checks the replay route for these games.
+- This is common-input learner-policy evidence, not full simulator/strategy
+  parity or general floating-point equivalence. It does not explain why MPS
+  completed the first pair in a different chunk. Full MPS publication remains
+  necessary to locate the first trajectory divergence. No partial MPS games
+  were opened.
+- Reproducible executed source preserved as
+  scripts/probe_hog26_completed_policy_device_replay.py; source and input hashes
+  recorded in hog26_completed_cpu_policy_device_replay_20260908.json.
