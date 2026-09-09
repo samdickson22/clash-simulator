@@ -1940,6 +1940,16 @@ class SimpleGymRuntime:
         source_x = self.state.x_units.index_select(1, self._spell_source_slots)
         source_y = self.state.y_units.index_select(1, self._spell_source_slots)
         shape = ingress.selected_card_ids.shape
+        placement_x = ingress.selection.world_x_units.to(torch.int32)
+        placement_y = ingress.selection.world_y_units.to(torch.int32)
+        distance_squared = (placement_x.long() - source_x.long()).square() + (placement_y.long() - source_y.long()).square()
+        distance_squared = torch.maximum(distance_squared, catalog.rolling_cast_min_distance_units[safe_card].long().square())
+        cast_speed_squared = catalog.rolling_cast_speed_units_per_tick[safe_card].long().clamp_min(1).square()
+        quotient = torch.div(distance_squared, cast_speed_squared, rounding_mode="floor")
+        delay = torch.sqrt(quotient.float()).long()
+        delay -= (delay.square() > quotient).long()
+        delay += ((delay + 1).square() <= quotient).long()
+        delay += (delay.square() * cast_speed_squared < distance_squared).long()
         no_spawn = torch.full(
             shape,
             FAST_ROLLING_NO_SPAWN,
@@ -1969,13 +1979,15 @@ class SimpleGymRuntime:
             ready=selected,
             owner=self._effect_owners,
             source_card_id=ingress.selected_card_ids,
-            origin_x_units=source_x,
-            origin_y_units=source_y,
-            target_x_units=ingress.selection.world_x_units.to(torch.int32),
-            target_y_units=ingress.selection.world_y_units.to(torch.int32),
+            origin_x_units=placement_x,
+            origin_y_units=placement_y,
+            target_x_units=placement_x,
+            target_y_units=placement_y + torch.where(self._effect_owners == 0, 1000, -1000).to(torch.int32),
+            spawn_delay_ticks=delay.to(torch.int32),
             travel_range_units=catalog.rolling_travel_range_units[safe_card],
             speed_units_per_tick=catalog.rolling_speed_units_per_tick[safe_card],
             half_width_units=catalog.rolling_half_width_units[safe_card],
+            half_length_units=catalog.rolling_half_length_units[safe_card],
             damage=catalog.rolling_damage[safe_card],
             ground_only=catalog.rolling_ground_only[safe_card],
             tower_damage_multiplier=(

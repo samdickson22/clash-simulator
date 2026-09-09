@@ -92,9 +92,12 @@ class FastCardCatalog:
     fan_spread_degrees: torch.Tensor
     projectile_speed_units_per_tick: torch.Tensor
     rolling_enabled: torch.Tensor
+    rolling_cast_speed_units_per_tick: torch.Tensor
+    rolling_cast_min_distance_units: torch.Tensor
     rolling_travel_range_units: torch.Tensor
     rolling_speed_units_per_tick: torch.Tensor
     rolling_half_width_units: torch.Tensor
+    rolling_half_length_units: torch.Tensor
     rolling_damage: torch.Tensor
     rolling_ground_only: torch.Tensor
     rolling_tower_damage_multiplier: torch.Tensor
@@ -253,10 +256,13 @@ class FastCardCatalog:
         valid_fan = torch.zeros_like(catalog.kind, dtype=torch.bool)
         projectile_speed = torch.zeros_like(catalog.range_units)
         rolling_enabled = torch.zeros_like(catalog.kind, dtype=torch.bool)
+        rolling_cast_speed = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        rolling_cast_min_distance = torch.zeros_like(catalog.range_units, dtype=torch.int32)
         rolling_requires_spawn = torch.zeros_like(catalog.kind, dtype=torch.bool)
         rolling_travel_range = torch.zeros_like(catalog.range_units, dtype=torch.int32)
         rolling_speed = torch.zeros_like(catalog.range_units, dtype=torch.int32)
         rolling_half_width = torch.zeros_like(catalog.range_units, dtype=torch.int32)
+        rolling_half_length = torch.zeros_like(catalog.range_units, dtype=torch.int32)
         rolling_damage = torch.zeros_like(catalog.damage, dtype=torch.float32)
         rolling_ground_only = torch.zeros_like(catalog.kind, dtype=torch.bool)
         rolling_tower_multiplier = torch.ones_like(catalog.damage, dtype=torch.float32)
@@ -530,6 +536,10 @@ class FastCardCatalog:
                         and "GROUND" in rolling_target
                     )
                     if rolling_shape:
+                        rolling_spell = create_spell_from_json(raw)
+                        rolling_cast_speed[card_id] = round(rolling_spell.casting_speed * 50)
+                        rolling_cast_min_distance[card_id] = round(rolling_spell.casting_min_distance * 1000)
+                        rolling_half_length[card_id] = round(rolling_spell.radius_y * 1000)
                         rolling_enabled[card_id] = True
                         rolling_requires_spawn[card_id] = bool(
                             rolling_projectile.get("spawnCharacterData")
@@ -1017,9 +1027,12 @@ class FastCardCatalog:
             fan_spread_degrees=fan_spread_degrees,
             projectile_speed_units_per_tick=projectile_speed,
             rolling_enabled=rolling_enabled,
+            rolling_cast_speed_units_per_tick=rolling_cast_speed,
+            rolling_cast_min_distance_units=rolling_cast_min_distance,
             rolling_travel_range_units=rolling_travel_range,
             rolling_speed_units_per_tick=rolling_speed,
             rolling_half_width_units=rolling_half_width,
+            rolling_half_length_units=rolling_half_length,
             rolling_damage=rolling_damage,
             rolling_ground_only=rolling_ground_only,
             rolling_tower_damage_multiplier=rolling_tower_multiplier,

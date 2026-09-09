@@ -549,9 +549,9 @@
       "Corrected margin diagnostics regress on families 006/007 and bridge-pressure. Public spatial-mechanics features reduce but do not remove those regressions. Neither design is ready for candidate freeze.",
       "Fixed overtime damage extrapolation has uncertain late improvement and large wrong-direction errors. Reassess the hard override and public temporal representation before selecting a replacement model.",
       "Coverage audit found no projectile or area-effect observations in any corrected natural training decision. Pause further head tuning for a bounded public-event projection audit; do not infer causation or acceptance from this omission alone.",
-      "Native Log rolling origin/delay differs from instantiated scalar RollingProjectileSpell at the same cast target. Adjudicate and repair lifecycle semantics before certifying rolling public observations or launching further corpus/model work."
+      "Native rolling origin, casting delay, rectangle footprint and percentage damage are repaired and pass bounded scalar CPU/MPS tests. Full-game and broader spell recertification remain pending. Existing corpora are pre-rolling-repair and the old inference authority intentionally fails current validation."
     ],
-    "collection_allowed": "Corrected training refresh and training draw control only; selection, calibration, and validation draw control await candidate-design freeze.",
+    "collection_allowed": "No collection or fitting under this stale authority. Finish native lifecycle audit and freeze a new source/data protocol before resuming.",
     "reassessment_reports": [
       "reports/hog26_corrected_wdl_complete_globals_screen_20260909.json",
       "reports/hog26_corrected_margin_reassessment_20260909.json",
@@ -560,7 +560,8 @@
       "reports/hog26_corrected_late_margin_errors_20260909.json",
       "reports/hog26_corrected_tree_geometry_comparison_20260909.json",
       "reports/hog26_corrected_public_event_coverage_20260909.json",
-      "reports/hog26_log_origin_lifecycle_mismatch_20260909.json"
+      "reports/hog26_log_origin_lifecycle_mismatch_20260909.json",
+      "reports/hog26_native_rolling_repair_20260909.json"
     ],
     "status": "under-review"
   }

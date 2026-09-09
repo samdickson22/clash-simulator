@@ -29,7 +29,7 @@ def project_public_rollers(rollers, appearance_tokens):
     token = appearance_tokens[card.clamp(0, len(appearance_tokens) - 1)]
     if (rollers.active & (~known | (token <= 0))).any():
         raise ValueError("active rolling body has no public appearance rule")
-    visible = rollers.active[:, None].expand(-1, 2, -1)
+    visible = (rollers.active & (rollers.spawn_delay_ticks == 0))[:, None].expand(-1, 2, -1)
     features, mask = project_visible_effects(
         torch.stack((rollers.x_units, rollers.y_units), dim=-1), rollers.owner,
         torch.ones_like(card), visible,

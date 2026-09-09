@@ -6,6 +6,9 @@ import numpy as np
 import torch
 
 SOURCES = (
+    "src/clasher/torch_sim/simple_catalog.py",
+    "src/clasher/torch_sim/simple_runtime.py",
+    "src/clasher/torch_sim/simple_rolling_spells.py",
     "src/clasher/torch_sim/simple_targeting.py",
     "src/clasher/torch_sim/simple_attack_locks.py",
     "src/clasher/torch_sim/simple_engine.py",

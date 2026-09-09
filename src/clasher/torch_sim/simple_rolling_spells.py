@@ -55,6 +55,8 @@ class FastRollingSpellCommands:
     impact_spawn_blueprint_id: torch.Tensor
     impact_spawn_count: torch.Tensor
     impact_spawn_deploy_ticks: torch.Tensor
+    spawn_delay_ticks: torch.Tensor | None = None
+    half_length_units: torch.Tensor | None = None
 
     @property
     def batch_size(self) -> int:
@@ -76,6 +78,8 @@ class FastRollingSpellState:
 
     device: torch.device
     active: torch.Tensor
+    spawn_delay_ticks: torch.Tensor
+    half_length_units: torch.Tensor
     owner: torch.Tensor
     source_card_id: torch.Tensor
     origin_x_units: torch.Tensor
@@ -134,6 +138,8 @@ class FastRollingSpellState:
         return cls(
             device=tensor_device,
             active=zeros(torch.bool),
+            spawn_delay_ticks=zeros(torch.int32),
+            half_length_units=torch.full(shape, -1, dtype=torch.int32, device=tensor_device),
             owner=zeros(torch.int8),
             source_card_id=zeros(torch.int64),
             origin_x_units=zeros(torch.int32),
@@ -216,6 +222,8 @@ class FastRollingStepResult:
 
 
 _COMMAND_DTYPES = {
+    "spawn_delay_ticks": torch.int32,
+    "half_length_units": torch.int32,
     "ready": torch.bool,
     "owner": torch.int8,
     "source_card_id": torch.int64,
@@ -246,6 +254,8 @@ def _validate_commands(
     shape = tuple(commands.ready.shape)
     for descriptor in fields(commands):
         value = getattr(commands, descriptor.name)
+        if descriptor.name in {"spawn_delay_ticks", "half_length_units"} and value is None:
+            continue
         if tuple(value.shape) != shape:
             raise ValueError(f"{descriptor.name} must have shape [batch, commands]")
         if value.device != state.device:
@@ -348,6 +358,10 @@ def allocate_fast_rolling_spells_(
         field.copy_(torch.where(written, selected.to(field.dtype), field))
 
     write(state.owner, commands.owner)
+    write(state.spawn_delay_ticks, commands.spawn_delay_ticks.clamp_min(0)
+          if commands.spawn_delay_ticks is not None else torch.zeros_like(commands.owner))
+    write(state.half_length_units, commands.half_length_units
+          if commands.half_length_units is not None else torch.full_like(commands.owner, -1))
     write(state.source_card_id, commands.source_card_id)
     write(state.origin_x_units, commands.origin_x_units)
     write(state.origin_y_units, commands.origin_y_units)
@@ -524,7 +538,8 @@ def step_fast_rolling_spells_(
     if entity_area_receivable is None:
         entity_area_receivable = gym.active & (gym.hp > 0)
 
-    active = rolling.active
+    rolling.spawn_delay_ticks.sub_(rolling.active.to(torch.int32)).clamp_(min=0)
+    active = rolling.active & (rolling.spawn_delay_ticks == 0)
     previous_x = rolling.x_units.clone()
     previous_y = rolling.y_units.clone()
     remaining = (rolling.travel_range_units - rolling.distance_travelled_units).clamp(
@@ -595,6 +610,15 @@ def step_fast_rolling_spells_(
         & entity_area_receivable[:, None, :]
     )
     within_capsule = distance_sq <= reach.square()
+    radius = entity_collision_radius_units.clamp_min(0).long()[:, None, :]
+    rectangle = (
+        (gym.x_units.long()[:, None, :] - rolling.x_units.long()[:, :, None]).abs()
+        <= rolling.half_width_units.long()[:, :, None] + radius
+    ) & (
+        (gym.y_units.long()[:, None, :] - rolling.y_units.long()[:, :, None]).abs()
+        <= rolling.half_length_units.long()[:, :, None] + radius
+    )
+    within_capsule = torch.where(rolling.half_length_units[:, :, None] >= 0, rectangle, within_capsule)
     already_hit = (
         (gym.stable_id[:, None, :, None] == rolling.hit_stable_ids[:, :, None, :])
         & (gym.stable_id[:, None, :, None] > 0)
@@ -612,9 +636,14 @@ def step_fast_rolling_spells_(
         rolling.tower_damage_multiplier.clamp(min=0.0)[:, :, None],
         1.0,
     )
-    weighted_damage = (
-        hit.to(torch.float32) * rolling.damage.clamp(min=0.0)[:, :, None] * tower_scale
-    )
+    base_damage = rolling.damage.clamp(min=0.0)[:, :, None]
+    scaled_damage = base_damage * tower_scale
+    native_damage = torch.div(
+        torch.round(base_damage).long() * torch.round(tower_scale * 100).long() + 99,
+        100, rounding_mode="floor",
+    ).float()
+    scaled_damage = torch.where(rolling.half_length_units[:, :, None] >= 0, native_damage, scaled_damage)
+    weighted_damage = hit.to(torch.float32) * scaled_damage
     if modifiers is None:
         damage_by_entity = weighted_damage.sum(dim=1)
     else:

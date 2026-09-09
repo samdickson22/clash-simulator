@@ -1753,3 +1753,26 @@ Rolling-body prototype exposed a native/scalar lifecycle mismatch, 2026-09-09:
   work remains an explicit diagnostic. Native Log origin/delay and earlier
   Arrows timing differences need adjudication before model/corpus work resumes.
   No policy updates or independent evaluation data were opened.
+
+
+Native rolling lifecycle repaired and bounded scalar parity tested, 2026-09-09:
+- Changed rolling commands to use selected placement as origin and owner-relative
+  forward direction. Compiled casting speed/minimum distance from shared scalar
+  spell metadata, with integer-corrected ceiling arithmetic for delay ticks.
+- Added delay state to the rolling pool/reset templates. Pending rollers neither
+  move nor hit; public projection masks their queued position until activation.
+- Added the scalar Log-family rectangular footprint, preserving capsule defaults
+  for generic lower-level callers. Paired damage checks exposed fractional Crown
+  damage; rectangular spells now use native integer percentage ceiling arithmetic.
+-22focused tests passed,7CUDAcases skipped. Paired Log/BarbLog tests onCPU/MPS0
+  match both seats' positions, activity and tower HP every tick, plus terminal
+  payload count/owner/position. Existing rolling, runtime spell and reset tests
+  pass. Ruff and diff checks pass. This is not all-spell or full-game acceptance.
+- Expanded inference authority to cover changed catalog/runtime/rolling sources.
+  Verified that the old protocol now rejects current physics. Its stored source
+  authority was deliberately not recaptured. Existing corpus bytes remain intact
+  and must not be called collected under this repaired runtime.
+- Artifact: hog26_native_rolling_repair_20260909.json. Test run43044 exited0.
+  Next address remaining spell lifecycle differences, especially Arrows timing,
+  then perform full-game recertification and freeze a fresh data/source protocol.
+  No collection, fitting, independent evaluation labels or policy updates opened.

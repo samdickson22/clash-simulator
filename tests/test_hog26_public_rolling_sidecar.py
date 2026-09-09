@@ -28,3 +28,14 @@ def test_unregistered_active_roller_is_rejected():
     rollers.active[:] = True
     with pytest.raises(ValueError, match="appearance rule"):
         project_public_rollers(rollers, torch.tensor([0, 9]))
+
+
+def test_pending_body_does_not_reveal_queued_placement():
+    rollers = FastRollingSpellState.empty(1, max_rollers=1)
+    rollers.active[:] = True
+    rollers.source_card_id[:] = 1
+    rollers.spawn_delay_ticks[:] = 5
+    rollers.x_units[:] = 14500
+    rollers.y_units[:] = 17500
+    tokens, features, mask = project_public_rollers(rollers, torch.tensor([0, 9]))
+    assert not tokens.any() and not features.any() and not mask.any()
