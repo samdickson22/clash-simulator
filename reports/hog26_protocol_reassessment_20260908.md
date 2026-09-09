@@ -1634,3 +1634,34 @@ Actual runtime cast-route audit completed, 2026-09-09:
   publish partial enriched corpora based on surviving effects alone. Full-game
   frozen-policy action/label preservation remains required. Head fitting and all
   independent evaluation data remain gated; no policy updates occurred.
+
+
+Tower-shot sidecar extension and transition audit, 2026-09-09:
+- Frozen policy vocabulary lacks TowerPrincessProjectile. Added a separate
+  outcome-sidecar extension preserving every existing policy token ID. Princess
+  identity comes from serialized standard tower data. King uses an explicit
+  public_tower_shot:king source category; no unverified asset name was guessed.
+- Card0tower shots require exact fixed public launch coordinates and affiliation.
+  Unknown origins/owners remain rejected. Current position and public source
+  class are exposed, never target coordinates, future damage or hit schedule.
+  Public-origin classification assumes the fixed visible arena towers; no
+  real-camera source-tracking certificate is claimed.
+-18tower/sidecar/transition/projection tests pass. Runtime CPU andMPS0probes
+  each complete160ticks with tower rules and transition-gap accounting enabled.
+  Legacy actor observation hashes remain identical to the pre-extension control.
+- Musketeer now has59sidecar frames and0rejections, versus4frames/55rejections.
+  GoblinBarrel has10mapped tower frames and59unhandled delivery-flight frames.
+  Arrows andZap each register1transition gap despite0surviving effect frames;
+  Poison registers1birth gap and159active-frame rejections. Log remains in its
+  separate rolling pool. Scalar factory confirms GoblinBarrel is SpawnProjectileSpell.
+- CPU/MPS case counts match, but first recorded Musketeer-fixture tower-shot y
+  differs by1logic unit: CPU0.7687500119 versusMPS0.7687812448 normalized board y.
+  Do not claim sidecar bit identity or a bound over unrecorded frames. Investigate
+  launch/step rounding before deciding any conformance tolerance or physics fix.
+- Reports: hog26_public_effect_runtime_towers_cpu/mps_20260909.json and
+  hog26_public_tower_sidecar_comparison_20260909.json. CPU29461 andMPS57190
+  exited0. No jobs remain active. No production policy or physics source changed.
+- Next: isolate the tower projectile precision discrepancy and implement the
+  still-unhandled delivery, area/instant and rolling event lifecycles. Preserve
+  transition receipts and frozen-policy behavior. No enrichment or fitting yet;
+  independent evaluation and policy updates remain gated.

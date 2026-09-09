@@ -1,0 +1,62 @@
+{
+  "status": "Tower route improved; new public-frame precision discrepancy remains",
+  "legacy_actor_trace_preserved": true,
+  "case_records_identical": false,
+  "differences": [
+    {
+      "card": "Musketeer",
+      "field": "first_sidecar_frame",
+      "cpu": {
+        "tick": 85,
+        "tokens": [
+          494,
+          494
+        ],
+        "features": [
+          [
+            0.1944444477558136,
+            0.768750011920929,
+            0.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.8055555820465088,
+            0.23124998807907104,
+            1.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "mps": {
+        "tick": 85,
+        "tokens": [
+          494,
+          494
+        ],
+        "features": [
+          [
+            0.1944444477558136,
+            0.7687812447547913,
+            0.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.8055555820465088,
+            0.23121875524520874,
+            1.0,
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      }
+    }
+  ],
+  "scope": "Seven160tick scripted fixtures only. The recorded first tower frame differs by one logic unit in y; this does not bound all unrecorded projectile frames. No physics changes or complete-game acceptance claim."
+}

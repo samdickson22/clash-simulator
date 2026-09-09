@@ -17,6 +17,9 @@ class OrdinaryProjectileRules:
     primitive: torch.Tensor
     appearance_token: torch.Tensor
     exclusions: tuple[str, ...]
+    tower_source_xy: torch.Tensor | None = None
+    tower_owners: torch.Tensor | None = None
+    tower_tokens: torch.Tensor | None = None
 
 
 def compile_ordinary_rules(catalog, runtime_names, inventory):
@@ -59,6 +62,14 @@ def project_primary_effect_pool(effects, rules):
     safe = card.clamp(0, len(rules.primitive) - 1)
     token = rules.appearance_token[safe]
     flight = known & (token > 0) & (effects.kind == FAST_EFFECT_PROJECTILE)
+    if rules.tower_source_xy is not None:
+        origin = torch.stack((effects.source_x_units, effects.source_y_units), dim=-1)
+        matches = (origin[..., None, :] == rules.tower_source_xy).all(dim=-1)
+        matches &= effects.source_owner[..., None] == rules.tower_owners
+        tower = (card == 0) & (effects.kind == FAST_EFFECT_PROJECTILE) & (matches.sum(-1) == 1)
+        tower_token = (matches * rules.tower_tokens).sum(-1)
+        token = torch.where(tower, tower_token, token)
+        flight |= tower
     direct_queue = known & (rules.primitive[safe] == FAST_CARD_EFFECT_DIRECT) & (effects.kind == FAST_EFFECT_AREA)
     unresolved = effects.active & ~flight & ~direct_queue
     if unresolved.any():
