@@ -40,7 +40,9 @@ def _physics(battle):
 
 
 @pytest.mark.parametrize("card,count", [("Fireball", 1), ("Log", 1), ("Arrows", 30),
-    ("GiantSnowball", 1), ("Rocket", 1), ("BarbLog", 1), ("GoblinBarrel", 1), ("Poison", 1)])
+    ("GiantSnowball", 1), ("Rocket", 1), ("BarbLog", 1), ("GoblinBarrel", 1), ("Poison", 1),
+    ("BarbarianBarrel", 1), ("Earthquake", 1), ("Freeze", 1), ("Tornado", 1),
+    ("Graveyard", 1), ("Zap", 0)])
 @pytest.mark.parametrize("owner", [0, 1])
 def test_actual_queued_execution_preserves_physics_rng_and_unrelated_battle(card, count, owner):
     instrumented = _battle(card, owner)
@@ -104,3 +106,23 @@ def test_exception_during_actual_cast_restores_wrapper():
     finally:
         del spell.cast
     assert spell.cast == original
+
+
+@pytest.mark.parametrize("owner", [0, 1])
+def test_zap_hits_visible_tower_but_emits_no_persistent_entity(owner):
+    battle = _battle("Zap", owner)
+    control = _battle("Zap", owner)
+    target = next(e for e in battle.entities.values() if e.player_id != owner)
+    control_target = control.entities[target.id]
+    hp_before = target.hitpoints
+    with _recorder(battle, ["Zap"]) as recorder:
+        assert battle.deploy_card(owner, "Zap", target.position)
+        assert control.deploy_card(owner, "Zap", control_target.position)
+        for _ in range(25):
+            battle.step()
+            control.step()
+            assert _physics(battle) == _physics(control)
+        assert target.hitpoints < hp_before
+        assert len(recorder.receipts) == 1
+        assert recorder.receipts[0].appearances == ()
+        assert recorder.appearances == ()

@@ -218,3 +218,146 @@ def test_changed_source_descriptor_rejected_before_physics():
         assert _physics_hash(battle) == before
         assert recorder.appearances == ()
         sources[0].card_stats = original_stats
+
+
+COMMON_CASES = (
+    ("Archers", 264),
+    ("BabyDragon", 270),
+    ("DartGoblin", 274),
+    ("BombTower", 279),
+    ("Bomber", 276),
+    ("IceWizard", 310),
+    ("LavaHound", 311),
+    ("MegaMinion", 318),
+    ("Minions", 320),
+    ("SpearGoblins", 338),
+    ("Witch", 347),
+    ("Xbow", 349),
+)
+
+
+@pytest.mark.parametrize("card,token", COMMON_CASES)
+@pytest.mark.parametrize("owner", [0, 1])
+def test_common_root_actual_emission_both_seats(card, token, owner):
+    loader = CardDataLoader()
+    vocabulary = load_current_client_typed_vocabulary()
+    descriptor = ScalarOrdinaryProjectileDescriptor.compile(card, loader, vocabulary)
+    battle = BattleState(rng=random.Random(8273))
+    source = battle._spawn_entity(
+        descriptor.source_type, Position(5, 14), owner, loader.get_card(card)
+    )
+    target = battle._spawn_entity(
+        Troop, Position(5, 18), 1 - owner, loader.get_card("Knight")
+    )
+    expected_id = battle.next_entity_id
+    with ScalarProjectileReceiptRecorder(battle, [(source, descriptor)]) as recorder:
+        source._create_projectile(target, battle)
+        assert len(recorder.receipts) == 1
+        receipt = recorder.receipts[0]
+        assert (
+            receipt.projectile_id == expected_id and receipt.appearance.token == token
+        )
+        assert type(receipt.appearance.entity) is Projectile
+        assert receipt.appearance.entity.source_entity is source
+    assert "_create_projectile" not in source.__dict__
+
+
+SPAWN_CASES = (
+    ("LavaHound", ("summonCharacterData", "deathSpawnCharacterData"), "LavaPups", 312),
+    ("GoblinGang", ("summonCharacterSecondData",), "SpearGoblin", 338),
+    ("SpearGoblins", ("summonCharacterData",), "SpearGoblin", 338),
+    ("Archers", ("summonCharacterData",), "Archer", 264),
+    ("Minions", ("summonCharacterData",), "Minion", 320),
+    ("DartGoblin", ("summonCharacterData",), "BlowdartGoblin", 274),
+    (
+        "IceWizard",
+        ("areaEffectObjectData", "onStartingActionData", "spawnDataData"),
+        "IceWizard",
+        310,
+    ),
+)
+
+
+@pytest.mark.parametrize("parent,path,body_name,token", SPAWN_CASES)
+@pytest.mark.parametrize("owner", [0, 1])
+def test_serialized_spawn_body_actual_emission(parent, path, body_name, token, owner):
+    from clasher.factory.dynamic_factory import troop_from_character_data
+
+    loader = CardDataLoader()
+    vocabulary = load_current_client_typed_vocabulary()
+    descriptor = ScalarOrdinaryProjectileDescriptor.compile_spawn_body(
+        parent, path, loader, vocabulary
+    )
+    body = loader.get_card(parent)._raw_entry
+    for key in path:
+        body = body[key]
+    # Parent rarity is metadata and does not change the serialized projectile
+    # identity/body authority. Dynamic source names come from that body receipt.
+    stats = troop_from_character_data(
+        body_name, body, rarity=loader.get_card(parent).rarity
+    )
+    battle = BattleState(rng=random.Random(8273))
+    source = battle._spawn_entity(Troop, Position(5, 14), owner, stats)
+    target = battle._spawn_entity(
+        Troop, Position(5, 18), 1 - owner, loader.get_card("Knight")
+    )
+    with ScalarProjectileReceiptRecorder(battle, [(source, descriptor)]) as recorder:
+        source._create_projectile(target, battle)
+        assert len(recorder.receipts) == 1
+        assert recorder.appearances[0].token == token
+        assert descriptor.source_authority.startswith("spawn:" + parent + "/")
+
+
+@pytest.mark.parametrize(
+    "card",
+    [
+        "IceSpirit",
+        "ElectroSpirit",
+        "ElectroDragon",
+        "Princess",
+        "Firecracker",
+        "MagicArcher",
+        "Bowler",
+        "Wallbreakers",
+        "LavaPups",
+    ],
+)
+def test_special_and_unproven_sources_remain_rejected(card):
+    loader = CardDataLoader()
+    vocabulary = load_current_client_typed_vocabulary()
+    with pytest.raises(ValueError, match="not audited"):
+        ScalarOrdinaryProjectileDescriptor.compile(card, loader, vocabulary)
+    with pytest.raises(ValueError, match="not audited"):
+        ScalarOrdinaryProjectileDescriptor.compile_spawn_body(
+            card, ("summonCharacterData",), loader, vocabulary
+        )
+
+
+@pytest.mark.parametrize("card", ["BabyDragon", "BombTower", "Witch"])
+def test_extended_common_full_steps_preserve_physics_and_rng(card):
+    def fixture():
+        loader = CardDataLoader()
+        descriptor = ScalarOrdinaryProjectileDescriptor.compile(
+            card, loader, load_current_client_typed_vocabulary()
+        )
+        battle = BattleState(rng=random.Random(8273))
+        source = battle._spawn_entity(
+            descriptor.source_type, Position(5, 14), 0, loader.get_card(card)
+        )
+        source.deploy_delay_remaining = 0
+        source.placement_pending = False
+        source.attack_cooldown = 0
+        battle._spawn_entity(Troop, Position(5, 18), 1, loader.get_card("Knight"))
+        return battle, source, descriptor
+
+    instrumented, source, descriptor = fixture()
+    control, _, _ = fixture()
+    with ScalarProjectileReceiptRecorder(
+        instrumented, [(source, descriptor)]
+    ) as recorder:
+        for _ in range(80):
+            instrumented.step()
+            control.step()
+            assert _physics_hash(instrumented) == _physics_hash(control)
+            assert instrumented.rng.getstate() == control.rng.getstate()
+        assert recorder.receipts

@@ -5,14 +5,23 @@ from dataclasses import dataclass
 
 import torch
 
-from clasher.dynamic_spells import create_spell_from_json
-from clasher.entities import AreaEffect, Projectile, RollingProjectile, SpawnProjectile
+from clasher.dynamic_spells import create_spell_from_json, load_dynamic_spells
+from clasher.entities import (
+    AreaEffect,
+    Graveyard,
+    Projectile,
+    RollingProjectile,
+    SpawnProjectile,
+)
 from clasher.kinematics import tiles_to_logic_units
 from clasher.spells import (
     AreaEffectSpell,
+    DirectDamageSpell,
+    GraveyardSpell,
     ProjectileSpell,
     RollingProjectileSpell,
     SpawnProjectileSpell,
+    TornadoSpell,
 )
 from scripts.hog26_public_effect_probe import project_visible_effects
 
@@ -52,26 +61,37 @@ class ScalarSpellAppearance:
     """A bounded factory-checked appearance rule, separate from combat data."""
 
     token: int
-    entity_type: type
+    entity_type: type | None
     appearance_kind: int
 
     @classmethod
     def compile(cls, card_name, loader, vocabulary):
         if card_name not in {"Fireball", "GiantSnowball", "Rocket", "Log", "BarbLog",
-                             "GoblinBarrel", "Poison"}:
+                             "GoblinBarrel", "Poison", "BarbarianBarrel", "Earthquake", "Freeze",
+                             "Tornado", "Graveyard", "Zap"}:
             raise ValueError("spell family has no audited scalar appearance rule")
         raw = loader.get_card(card_name)._raw_entry
         spell = create_spell_from_json(raw, loader.load_card_definitions())
+        if card_name == "Graveyard":
+            spell = load_dynamic_spells(loader.data_file)[raw["name"]]
+        if card_name == "Zap":
+            if type(spell) is not DirectDamageSpell:
+                raise ValueError("Zap no longer uses audited zero-entity direct damage")
+            # Serialized area data describe damage, not a persistent scalar sprite.
+            return cls(0, None, 0)
         projectile = raw.get("projectileData", {})
         namespace, kind = "projectile", 1
-        if card_name in {"Log", "BarbLog"}:
+        if card_name in {"Log", "BarbLog", "BarbarianBarrel"}:
             factory, entity_type = RollingProjectileSpell, RollingProjectile
             identity = projectile.get("spawnProjectileData", {}).get("name")
         elif card_name == "GoblinBarrel":
             factory, entity_type = SpawnProjectileSpell, SpawnProjectile
             identity = projectile.get("name")
-        elif card_name == "Poison":
-            factory, entity_type = AreaEffectSpell, AreaEffect
+        elif card_name in {"Poison", "Earthquake", "Freeze", "Tornado", "Graveyard"}:
+            factory, entity_type = {
+                "Tornado": (TornadoSpell, AreaEffect),
+                "Graveyard": (GraveyardSpell, Graveyard),
+            }.get(card_name, (AreaEffectSpell, AreaEffect))
             identity = raw.get("areaEffectObjectData", {}).get("name")
             namespace, kind = "area_effect", 2
         else:
@@ -87,6 +107,10 @@ class ScalarSpellAppearance:
     def bind_cast(self, created_entities):
         """Bind an exact known cast receipt; never inspect source labels."""
         entities = tuple(created_entities)
+        if self.entity_type is None:
+            if entities:
+                raise ValueError("zero-entity spell cast created unresolved child objects")
+            return ()
         if len(entities) != 1 or type(entities[0]) is not self.entity_type:
             raise ValueError("spell cast receipt differs from audited entity lifecycle")
         return (ScalarEffectAppearance(entities[0], self.token, self.entity_type,
@@ -95,7 +119,7 @@ class ScalarSpellAppearance:
 
 @dataclass(frozen=True)
 class ScalarEffectAppearance:
-    entity: Projectile | RollingProjectile | AreaEffect
+    entity: Projectile | RollingProjectile | AreaEffect | Graveyard
     token: int
     entity_type: type = Projectile
     appearance_kind: int = 1

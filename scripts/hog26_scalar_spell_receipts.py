@@ -3,7 +3,7 @@
 from dataclasses import dataclass, fields
 
 from clasher.card_aliases import resolve_card_name
-from clasher.dynamic_spells import create_spell_from_json
+from clasher.dynamic_spells import load_dynamic_spells
 from clasher.spells import SPELL_REGISTRY
 from scripts.hog26_scalar_public_effect_adapter import (
     ScalarArrowsAppearance,
@@ -32,10 +32,11 @@ class ScalarSpellReceiptRecorder:
         self._saved = []
         self._registrations = []
         definitions = loader.load_card_definitions()
+        serialized_spells = load_dynamic_spells(loader.data_file)
         for card_name in card_names:
             name = resolve_card_name(card_name, definitions)
             spell = SPELL_REGISTRY.get(name)
-            expected = create_spell_from_json(loader.get_card(card_name)._raw_entry, definitions)
+            expected = serialized_spells[name]
             if (spell is None or type(spell) is not type(expected)
                     or any(getattr(spell, f.name) != getattr(expected, f.name)
                            for f in fields(expected))):
@@ -74,7 +75,7 @@ class ScalarSpellReceiptRecorder:
             result = original(battle_state, player_id, target_pos)
             created = tuple(entity for key, entity in battle_state.entities.items()
                             if key not in before)
-            if not result:
+            if not result and getattr(rule, "entity_type", object) is not None:
                 raise ValueError("registered queued spell cast failed")
             appearances = rule.bind_cast(created)
             self.receipts.append(ScalarSpellBirthReceipt(len(self.receipts), appearances))

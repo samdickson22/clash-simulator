@@ -14,6 +14,22 @@ from clasher.rl.structured_obs import ActorObservation, EntityCapacityError
 from scripts.hog26_scalar_public_effect_adapter import project_scalar_public_effects
 
 
+def scalar_body_token(entity, builder):
+    """Resolve public body identity from its serialized character metadata."""
+    if not isinstance(entity, (Troop, Building)):
+        raise TypeError("body appearance requires a troop or building")
+    stats = entity.card_stats
+    name = getattr(stats, "name", "")
+    namespace = "tower" if name in {"Tower", "KingTower"} else (
+        "building_body" if isinstance(entity, Building) else "troop_body")
+    if namespace != "tower":
+        name = (getattr(stats, "summon_character_data", None) or {}).get("name") or name
+    token = builder.token_id(name, namespace=namespace)
+    if token <= 0 or token == builder.token_id(None):
+        raise ValueError(f"visible body has no typed appearance: {name}")
+    return token
+
+
 def build_scalar_reference_actors(battle, builder, *, appearances, visible_to):
     """Return two fixed-capacity actor views; reject unresolved visible effects.
 
@@ -28,23 +44,13 @@ def build_scalar_reference_actors(battle, builder, *, appearances, visible_to):
         effects, appearances, visible_to=visible_to,
     )
     actors = []
-    unknown = builder.token_id(None)
     for seat in (0, 1):
         rows = []
         for entity in bodies:
             if not entity.is_alive or not visible_to(entity, seat):
                 continue
             stats = entity.card_stats
-            name = getattr(stats, "name", "")
-            namespace = "tower" if name in {"Tower", "KingTower"} else (
-                "building_body" if isinstance(entity, Building) else "troop_body")
-            if namespace != "tower":
-                # Summoning cards can have a different public body identity
-                # (Skeletons summons Skeleton). Use serialized body metadata.
-                name = (getattr(stats, "summon_character_data", None) or {}).get("name") or name
-            token = builder.token_id(name, namespace=namespace)
-            if token <= 0 or token == unknown:
-                raise ValueError(f"visible body has no typed appearance: {name}")
+            token = scalar_body_token(entity, builder)
             row = np.zeros(32, dtype=np.float32)
             x, y = builder._canonical_position(entity.position.x, entity.position.y, seat)
             row[:4] = [np.clip(x / 18, 0, 1), np.clip(y / 32, 0, 1),

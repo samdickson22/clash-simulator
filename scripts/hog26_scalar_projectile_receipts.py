@@ -1,4 +1,4 @@
-"""Diagnostic birth receipts for scalar Musketeer/Cannon projectiles only.
+"""Diagnostic birth receipts for setup-audited ordinary scalar projectiles.
 
 Registration establishes creation provenance, never visibility. Unknown child
 objects and tower projectiles remain unbound. No global class is patched.
@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from types import MethodType
 
 from clasher.entities import Building, Projectile, Troop
+from clasher.factory.dynamic_factory import troop_from_character_data
 from scripts.hog26_scalar_public_effect_adapter import ScalarEffectAppearance
 
 
@@ -21,31 +22,102 @@ def _payload_digest(payload) -> str:
     ).hexdigest()
 
 
+_COMMON_ROOTS = frozenset(
+    {
+        "Musketeer",
+        "Cannon",
+        "Archers",
+        "BabyDragon",
+        "DartGoblin",
+        "BombTower",
+        "Bomber",
+        "IceWizard",
+        "LavaHound",
+        "MegaMinion",
+        "Minions",
+        "SpearGoblins",
+        "Witch",
+        "Xbow",
+    }
+)
+_EXTRA_SPAWN_ROUTES = (
+    ("LavaHound", ("summonCharacterData", "deathSpawnCharacterData")),
+    ("GoblinGang", ("summonCharacterSecondData",)),
+    ("IceWizard", ("areaEffectObjectData", "onStartingActionData", "spawnDataData")),
+)
+
+
 @dataclass(frozen=True)
 class ScalarOrdinaryProjectileDescriptor:
     source_card: str
     source_type: type
     token: int
     projectile_payload_sha256: str
+    source_body_sha256: str
+    source_authority: str
 
     @classmethod
     def compile(cls, card_name, loader, vocabulary):
-        if card_name not in {"Musketeer", "Cannon"}:
+        if card_name not in _COMMON_ROOTS:
             raise ValueError("ordinary appearance source is not audited")
         stats = loader.get_card(card_name)
+        source_type = (
+            Building if card_name in {"Cannon", "BombTower", "Xbow"} else Troop
+        )
+        return cls._from_stats(stats, source_type, vocabulary, f"card:{card_name}")
+
+    @classmethod
+    def compile_spawn_body(cls, parent_card, path, loader, vocabulary):
+        """Compile a named serialized body path, never a runtime name guess.
+
+        The caller must bind the actual source receipt created from this body.
+        Root troop bodies are supported in addition to the explicit secondary,
+        death-spawn and spawn-action routes audited in the training graph.
+        """
+        path = tuple(path)
+        ordinary_root_body = (
+            parent_card in _COMMON_ROOTS
+            and parent_card not in {"Cannon", "BombTower", "Xbow"}
+            and path == ("summonCharacterData",)
+        )
+        if not ordinary_root_body and (parent_card, path) not in _EXTRA_SPAWN_ROUTES:
+            raise ValueError("serialized spawn-body route is not audited")
+        body = loader.get_card(parent_card)._raw_entry
+        for key in path:
+            if not isinstance(body, dict) or not isinstance(body.get(key), dict):
+                raise TypeError("serialized spawn-body authority is missing")
+            body = body[key]
+        if body.get("source") != "characters" or not isinstance(body.get("name"), str):
+            raise ValueError("spawn body is not a serialized ordinary character")
+        stats = troop_from_character_data(body["name"], body)
+        return cls._from_stats(
+            stats, Troop, vocabulary, "spawn:" + parent_card + "/" + "/".join(path)
+        )
+
+    @classmethod
+    def _from_stats(cls, stats, source_type, vocabulary, authority):
         payload = stats.projectile_data
+        body = stats._raw_entry.get("summonCharacterData") or {}
         if not isinstance(payload, dict) or not payload.get("name"):
             raise ValueError("source has no serialized projectile identity")
-        if payload.get("spawnProjectileData") or payload.get("projectileRange"):
+        if (
+            payload.get("spawnProjectileData")
+            or payload.get("projectileRange")
+            or payload.get("chainedHitCount", 1) > 1
+            or body.get("customFirstProjectileData")
+            or body.get("kamikaze")
+        ):
             raise ValueError("source is no longer a single ordinary projectile route")
         token = vocabulary.resolve(payload["name"], "projectile")
         if token <= 1:
             raise ValueError("serialized projectile identity has no actor token")
         return cls(
-            card_name,
-            Troop if card_name == "Musketeer" else Building,
+            stats.name,
+            source_type,
             token,
             _payload_digest(payload),
+            _payload_digest(body),
+            authority,
         )
 
     def validate_source(self, source):
@@ -56,6 +128,11 @@ class ScalarOrdinaryProjectileDescriptor:
             or source.card_stats.name != self.source_card
             or _payload_digest(source.card_stats.projectile_data)
             != self.projectile_payload_sha256
+            or _payload_digest(
+                source.card_stats._raw_entry.get("summonCharacterData") or {}
+            )
+            != self.source_body_sha256
+            or bool(getattr(source, "_force_melee_attack", False))
         ):
             raise ValueError(
                 "source differs from compiled ordinary projectile descriptor"

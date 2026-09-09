@@ -1992,3 +1992,28 @@ Scalar elixir roundoff repair and fresh replays, 2026-09-09:
   Next expand and audit the declared training-family appearance coverage, then
   freeze the distinct scalar collection authority before any fitting. Public
   calibration and counterfactual ranking remain entirely unaccepted.
+
+Declared training-family coverage expansion, 2026-09-09:
+- Audited only the 32 training decks in families 000--007 plus the fixed learner.
+  Their union contains 63 card types. Actual deployments, 200 scalar ticks and
+  synthetic parent deaths exercised 57 body types with zero unresolved body
+  tokens. This one-seat mechanism probe is not full-match/visibility coverage.
+- Added all 13 additional common ordinary projectile identities, including
+  setup-compiled LavaPups/SpearGoblin spawn-body routes. Live source body and
+  projectile authority are revalidated; special routes remain rejected.
+- Spell receipts now cover all 13 unique spell objects in the training manifest,
+  including BarbarianBarrel aliasing, Earthquake, Freeze, Tornado and Graveyard.
+  Zap has an explicitly verified zero-persistent-entity path; no sprite is
+  invented. Synchronous children remain unresolved rather than inheriting Zap.
+- Corrected two API assumptions: Graveyard requires the serialized object
+  registry used by load_dynamic_spells, not CardDefinition objects passed as its
+  second factory argument. Zap's False result can mean a valid cast hit nothing;
+  queue execution ignores that return and receipt recording must preserve it.
+- 136 combined body/spell/ordinary/tower tests passed; Ruff and diff checks pass.
+  Artifacts: hog26_scalar_train_body_coverage_verified_20260909.json and the
+  earlier candidate inventory hog26_scalar_train_projectile_coverage_20260909.json.
+  The inventory's candidate labels precede the newly completed receipt tests.
+- Remaining special creation coverage includes Princess decoration/combat
+  selection, Firecracker children, rolling/piercing shots and chain lightning.
+  Their presence will not be bypassed or used to shrink the declared families.
+  No training corpus, calibration cohort or final evaluation data was opened.

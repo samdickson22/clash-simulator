@@ -6,7 +6,7 @@ import torch
 from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.data import CardDataLoader
-from clasher.dynamic_spells import create_spell_from_json
+from clasher.dynamic_spells import create_spell_from_json, load_dynamic_spells
 from clasher.entities import RollingProjectile
 from clasher.rl.simple_pytorch_backend import load_current_client_typed_vocabulary
 from scripts.hog26_scalar_public_effect_adapter import (
@@ -109,7 +109,9 @@ def test_queued_roller_is_not_an_observed_effect_then_fails_unresolved():
 @pytest.mark.parametrize("card,token,kind", [
     ("Fireball", 289, 1), ("GiantSnowball", 336, 1), ("Rocket", 331, 1),
     ("Log", 316, 1), ("BarbLog", 272, 1), ("GoblinBarrel", 297, 1),
-    ("Poison", 40, 2),
+    ("Poison", 40, 2), ("BarbarianBarrel", 272, 1),
+    ("Earthquake", 16, 2), ("Freeze", 24, 2),
+    ("Tornado", 51, 2), ("Graveyard", 34, 2),
 ])
 def test_serialized_spell_lifecycle_and_no_private_payload(card, token, kind, owner):
     from scripts.hog26_scalar_public_effect_adapter import ScalarSpellAppearance
@@ -123,6 +125,8 @@ def test_serialized_spell_lifecycle_and_no_private_payload(card, token, kind, ow
     before = set(battle.entities)
     spell = create_spell_from_json(loader.get_card(card)._raw_entry,
                                    loader.load_card_definitions())
+    if card == "Graveyard":
+        spell = load_dynamic_spells(loader.data_file)["Graveyard"]
     target = Position(9, 16)
     assert spell.cast(battle, owner, target)
     born = [e for key, e in battle.entities.items() if key not in before]
@@ -142,13 +146,19 @@ def test_serialized_spell_lifecycle_and_no_private_payload(card, token, kind, ow
             # Mutations of labels and combat payload do not affect this frame.
             saved = {key: getattr(entity, key, None) for key in
                      ("damage", "source_name", "spell_name", "spawn_character_data",
-                      "target_position", "crown_tower_damage")}
+                      "target_position", "crown_tower_damage", "spawn_offsets", "spawn_deadlines",
+                      "skeleton_data", "attract_percentage", "push_speed_factor")}
             entity.damage = 999999
             entity.source_name = "unobservable source"
             entity.spell_name = "unobservable cast name"
             entity.spawn_character_data = {"secret": "future unit"}
             entity.target_position = Position(-999, 999)
             entity.crown_tower_damage = 999
+            entity.spawn_offsets = ((999, 999),)
+            entity.spawn_deadlines = (999,)
+            entity.skeleton_data = {"secret": "future skeleton"}
+            entity.attract_percentage = 999
+            entity.push_speed_factor = 999
             changed = _project(born, bindings)
             for a, b in zip((ids, features, mask), changed):
                 assert torch.equal(a, b)
@@ -169,11 +179,23 @@ def test_unknown_registry_identity_and_wrong_cast_receipts_fail_closed():
     loader = CardDataLoader()
     vocab = load_current_client_typed_vocabulary()
     with pytest.raises(ValueError, match="no audited"):
-        ScalarSpellAppearance.compile("Zap", loader, vocab)
+        ScalarSpellAppearance.compile("Lightning", loader, vocab)
     with pytest.raises(ValueError, match="no audited"):
         ScalarSpellAppearance.compile("Poison", loader,
                                       SimpleNamespace(resolve=lambda *_: 1))
     _, born, _, _, _ = _cast(0)
     rule = ScalarSpellAppearance.compile("Poison", loader, vocab)
     with pytest.raises(ValueError, match="lifecycle"):
+        rule.bind_cast(born[:1])
+
+
+def test_zap_has_no_persistent_appearance_and_rejects_unresolved_children():
+    from scripts.hog26_scalar_public_effect_adapter import ScalarSpellAppearance
+
+    loader = CardDataLoader()
+    rule = ScalarSpellAppearance.compile("Zap", loader, load_current_client_typed_vocabulary())
+    assert rule.token == 0 and rule.entity_type is None and rule.appearance_kind == 0
+    assert rule.bind_cast(()) == ()
+    _, born, _, _, _ = _cast(0)
+    with pytest.raises(ValueError, match="unresolved child"):
         rule.bind_cast(born[:1])
