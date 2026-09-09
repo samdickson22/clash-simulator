@@ -547,7 +547,8 @@
     "blocking_issues": [
       "All three corrected natural fitting shards and corrected training draw control are complete and audited. Corrected WDL training-family diagnostics support continued outcome-head development, not final acceptance.",
       "Corrected margin diagnostics regress on families 006/007 and bridge-pressure. Public spatial-mechanics features reduce but do not remove those regressions. Neither design is ready for candidate freeze.",
-      "Fixed overtime damage extrapolation has uncertain late improvement and large wrong-direction errors. Reassess the hard override and public temporal representation before selecting a replacement model."
+      "Fixed overtime damage extrapolation has uncertain late improvement and large wrong-direction errors. Reassess the hard override and public temporal representation before selecting a replacement model.",
+      "Coverage audit found no projectile or area-effect observations in any corrected natural training decision. Pause further head tuning for a bounded public-event projection audit; do not infer causation or acceptance from this omission alone."
     ],
     "collection_allowed": "Corrected training refresh and training draw control only; selection, calibration, and validation draw control await candidate-design freeze.",
     "reassessment_reports": [
@@ -555,7 +556,9 @@
       "reports/hog26_corrected_margin_reassessment_20260909.json",
       "reports/hog26_corrected_margin_representation_comparison_20260909.json",
       "reports/hog26_corrected_margin_signed_errors_20260909.json",
-      "reports/hog26_corrected_late_margin_errors_20260909.json"
+      "reports/hog26_corrected_late_margin_errors_20260909.json",
+      "reports/hog26_corrected_tree_geometry_comparison_20260909.json",
+      "reports/hog26_corrected_public_event_coverage_20260909.json"
     ],
     "status": "under-review"
   }

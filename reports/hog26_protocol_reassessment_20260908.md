@@ -1493,3 +1493,30 @@ Public relational geometry audit and diagnostic launch, 2026-09-09:
 - Preserve that job and inspect full fitting/withheld phase and style results
   after completion. Candidate fitting and independent evaluation data remain
   gated; no policy updates. No production inference source was changed.
+
+
+Geometry comparison complete; public event coverage omission found, 2026-09-09:
+- Corrected v2geometry run session6910/PID796 exited0 after4folds. Overall MAE
+  gain0.03579 is below mixed-tree baseline0.03709. Late representative gain
+ -0.00780 is slightly worse than -0.00691; full-phase late gain is+0.01435.
+  All fitting late folds improve, but all excluded late folds regress.
+  Geometry addition does not justify a candidate freeze.
+- Saved full report and hog26_corrected_tree_geometry_comparison_20260909.json.
+- Audited all159,499natural training decision observations. Every corpus has
+  zero projectile-kind rows, area-effect-kind rows, projectile tokens, nonzero
+  motion fields and nonzero direct entity-damage fields. Public card metadata
+  remains separately available; these counts concern the recorded entity view.
+- Source confirms simple_projection projects only FastGymState entity slots,
+  while runtime projectile/area objects live in FastEffectState and resolve in
+  step_fast_effects. The typed lookup only binds troop/building bodies and the
+  shared crown token. Relevant source: simple_projection.py, simple_effects.py,
+  simple_runtime.py and rl/simple_pytorch_backend.py.
+- This is a concrete observation coverage limitation, not proof of causation
+  or of a successful replacement. The existing public-mask audit checks allowed
+  inputs; it does not establish completeness of visible event coverage.
+- Next: pause further head tuning and build a bounded public-event projection
+  probe. Expose only publicly observable typed effect appearance/position and
+  permitted motion, never hidden target locks, future hit damage or impact time.
+  Verify against native effect traces and preserve frozen-policy behavior before
+  deciding on audited replay enrichment or any fresh collection. No independent
+  evaluation data were opened and no policy updates occurred. No jobs remain.
