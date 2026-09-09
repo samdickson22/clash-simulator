@@ -1,0 +1,85 @@
+{
+  "schema": "clasher.hog26.training-family-margin-screen.v1",
+  "purpose": "Diagnose output suppression versus public representation using complete training games only. No candidate promotion or policy learning.",
+  "protocol": "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json",
+  "held_out_training_families": [
+    [
+      "family-000",
+      "family-001"
+    ],
+    [
+      "family-002",
+      "family-003"
+    ],
+    [
+      "family-004",
+      "family-005"
+    ],
+    [
+      "family-006",
+      "family-007"
+    ]
+  ],
+  "margin_feature_sets": [
+    "full-state"
+  ],
+  "margin_progress_powers": [
+    0.0
+  ],
+  "seeds": [
+    1278901,
+    1278902
+  ],
+  "hidden_size": 16,
+  "epochs": 30,
+  "batch_size": 512,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "margin_residual_scale": 0.5,
+  "loss": "Absolute error with unchanged episode/reached-phase weights",
+  "epoch_selection": "Fixed final epoch; no tuning to held-out training-fold labels.",
+  "evaluation": "All out-of-fold phase representative predictions retained. Report pooled and per-fold/phase/seat/style gains, training fit and correction magnitude. Do not choose a model from an aggregate concealing late regressions.",
+  "decision_rule": "Report fitting and out-of-fold late scores for every fold and all-phase/style results. Test whether phase separation solves fitting failure beyond equivalent shared capacity. Neither isolated late improvement nor pooled gains can establish final acceptance.",
+  "output": "reports/hog26_corrected_phase_history_margin_screen_20260909.json",
+  "device": "cpu",
+  "torch_threads": 1,
+  "margin_loss": "absolute",
+  "screen_source_sha256": "a2a4bcb0646bb8d5dc57feb5d2a17548e4171b67a4522377e7a46c63b6338899",
+  "aggregate_phase_balance": true,
+  "corpora": [
+    {
+      "path": "datasets/derived/hog26_corrected_train_balanced_random_seed1278961/corpus.npz",
+      "role": "procedural",
+      "sha256": "38135e48f49b5aa3200ad1ab575b31da179e71e5efc6bd2010a027d03604bea5"
+    },
+    {
+      "path": "datasets/derived/hog26_corrected_train_bridge_reactive_seed1278962/corpus.npz",
+      "role": "procedural",
+      "sha256": "691b19b7bc5e6d2caa9a2d112c260ef200e1396cb904e0917e41dc19aac450b0"
+    },
+    {
+      "path": "datasets/derived/hog26_corrected_train_slow_spell_seed1278963/corpus.npz",
+      "role": "procedural",
+      "sha256": "57eae5b1521f0eed473aa1037bdd15ade5f99bc570baad2804c955691289e286"
+    },
+    {
+      "path": "datasets/derived/hog26_corrected_draw_training_seed1278964/corpus.npz",
+      "role": "auxiliary",
+      "sha256": "42bd17fdf53af8eee43c2b42249e269c2432b13bc1e8403e18f8410adcf7d8f8"
+    }
+  ],
+  "scope": "Training-only fitting diagnosis. Compare three independent phase margin heads of width16 with one shared width48 head, giving almost identical trainable margin parameter counts. Same causal public spatial/history inputs, sources, whole-family folds, minibatches, weighting, optimizer, epochs and seeds. Phase routing uses only public elapsed progress. No overtime override, no candidate promotion.",
+  "protocol_sha256_at_plan": "ffb8dd777586cca9a1445e653175c3af6fa87565f052ece0e9b86a092fb332db",
+  "prior_plan": "reports/hog26_hybrid_margin_screen_plan_20260908.json",
+  "actor_feature_set": "spatial-mechanics",
+  "comparison_report": "reports/hog26_corrected_hybrid_margin_screen_20260909.json",
+  "public_history_windows": [
+    1,
+    5,
+    20
+  ],
+  "zero_public_history": false,
+  "history_source_sha256": "094fd9b65179b22873a4dc8f0ca83dfce31e2d17f54fd7dc5875412a338edb7b",
+  "phase_specific_margin": true,
+  "phase_head_source_sha256": "519f35dc66178d5e15d9340dbc4fc9d6aa913740a7373069c584cfefdc190b8e"
+}

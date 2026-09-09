@@ -1342,3 +1342,24 @@ Causal public-history diagnostic completed, 2026-09-09:
   interference before another generalization attempt. Preserve causal inputs,
   complete-game/family separation and all independent acceptance requirements.
   Selection/calibration/final data and validation draw control remain unopened.
+
+
+Phase separation versus shared capacity diagnostic, 2026-09-09:
+- Added diagnostic-only independent phase margin heads routed by public progress.
+  A phase loss cannot update other heads; boundary routing and the prior causal
+  history/weight tests pass.17tests total, Ruff and diff checks pass.
+- Compared three width16heads with one shared width48head:41,571 versus41,569
+  trainable margin parameters. Same864public spatial/history inputs, seeds,
+  folds, minibatches, loss weights, optimizer and30epochs.16fits completed,
+  sessions86378/37192 exited0. No runtime inference model was changed.
+- Phase-specific pooled MAE gains improve to0.02908/0.02690, but late gains
+  remain -0.04534/-0.04419 and bridge-pressure worsens -0.04968/-0.04986.
+  Every phase-specific fit still regresses on fitting late representatives.
+  Neither phase splitting nor a wider shared head yields an acceptable design.
+- Preserved both plans and full reports, plus
+  hog26_corrected_phase_capacity_comparison_20260909.json. These are diagnostics
+  only. Do not promote pooled improvements or relax phase/opponent requirements.
+- Next: test whether a materially different supervised regressor can fit the
+  public late-state targets before further small neural architecture adjustments.
+  Keep fitting and family-generalization evidence separate. Selection/calibration/
+  final labels and validation draw control remain unopened; no policy updates.

@@ -392,13 +392,29 @@ def main() -> None:
                             rng,
                         )
                     else:
-                        head = ActorOutcomeHead(
-                            features.shape[1],
-                            plan["hidden_size"],
-                            margin_residual_scale=plan["margin_residual_scale"],
-                            margin_feature_set=feature_set,
-                            margin_progress_power=power,
-                        )
+                        if plan.get("phase_specific_margin", False):
+                            from scripts.hog26_phase_margin_diagnostic import (
+                                PhaseMarginDiagnostic,
+                            )
+
+                            source = root / "scripts/hog26_phase_margin_diagnostic.py"
+                            if file_sha256(source) != plan.get("phase_head_source_sha256"):
+                                raise ValueError("phase diagnostic source drifted")
+                            if feature_set != "full-state":
+                                raise ValueError("phase diagnostic requires full-state features")
+                            head = PhaseMarginDiagnostic(
+                                features.shape[1], plan["hidden_size"],
+                                residual_scale=plan["margin_residual_scale"],
+                                progress_power=power,
+                            )
+                        else:
+                            head = ActorOutcomeHead(
+                                features.shape[1],
+                                plan["hidden_size"],
+                                margin_residual_scale=plan["margin_residual_scale"],
+                                margin_feature_set=feature_set,
+                                margin_progress_power=power,
+                            )
                         for name, parameter in head.named_parameters():
                             parameter.requires_grad_(name.startswith("margin_trunk."))
                         parameters = [p for p in head.parameters() if p.requires_grad]
