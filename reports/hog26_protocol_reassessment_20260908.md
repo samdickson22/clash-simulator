@@ -1081,3 +1081,16 @@ Completed-observation device-policy replay:
 - Reproducible executed source preserved as
   scripts/probe_hog26_completed_policy_device_replay.py; source and input hashes
   recorded in hog26_completed_cpu_policy_device_replay_20260908.json.
+
+
+Device comparison confound to check before attribution:
+The CPU probe retained one episode per stream and therefore clamps surplus
+resets to its ordinal0 opening. The MPS probe advances completed rows to later
+openings. Their first-game initial conditions match, but the companion row
+can differ after the first terminal. A correct row-isolated simulator should
+preserve the remaining live game; this has not been established across these
+full production trajectories. When MPS publishes, locate the first divergence
+relative to the earliest terminal on either device. Do not attribute changed
+first-game length to device numerics alone. The common-input policy replay
+still establishes zero learner-action discrepancies on the781 CPU observations.
+No new run or simulator change was made for this caveat.
