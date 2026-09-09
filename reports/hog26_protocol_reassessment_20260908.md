@@ -1147,3 +1147,18 @@ Ice Spirit range boundary repaired:
   predate the correction and cannot establish corrected-simulator acceptance.
   Next: matched complete games with identical quotas and schedules, then a
   fitting-corpus refresh and randomized-opening learnability reassessment.
+
+
+Corrected complete-game probe progress:
+- CPU session23695/PID17758 exited0. Two games,781 decisions,7chunks,
+  559.708seconds; both losses. Full audit and seeded opening verification pass.
+- Corrected CPU corpus is byte-for-byte identical to the pre-repair CPU probe
+  (SHA256d8c1bfc2727251037e2337bd08c58dd24356815116e8b7ee15ed974fec9000f8).
+  Explicit public tensor/trajectory/label comparisons also all pass. This
+  establishes CPU non-regression for these two games, not all prior corpora.
+- Reports: hog26_corrected_cpu_probe_seed1278951{,_audit}.json and
+  hog26_corrected_cpu_regression_probe_20260908.json. Do not combine identical
+  before/after corpora as independent evidence.
+- MPS session62160/PID17896 remains live at9m55s; latest chunk5 at547.625seconds,
+  completed_by_stream=[0,0]. Same retained/surplus quota as CPU. Wait for complete
+  publication, audit, then compare full public trajectories and terminal labels.
