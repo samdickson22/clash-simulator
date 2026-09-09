@@ -2017,3 +2017,28 @@ Declared training-family coverage expansion, 2026-09-09:
   selection, Firecracker children, rolling/piercing shots and chain lightning.
   Their presence will not be bypassed or used to shrink the declared families.
   No training corpus, calibration cohort or final evaluation data was opened.
+
+Scalar special effects and death appearance review, 2026-09-09:
+- Real lifecycle receipts now cover Bowler/MagicArcher/Wallbreakers, Princess
+  combat shots, Firecracker carrier/children, Electro Dragon/Spirit chains and
+  the five declared death-effect families. Their component controls preserve
+  scalar physics/RNG; they do not establish complete-family collector coverage.
+- A chain receives only an explicit current chain-bolt category, not a guessed
+  asset or private source-family identity. Timed bombs keep current serialized
+  body identities in the noncombat effect group. Only exact registered internal
+  Lumberjack container references are excluded; bottle rendering is uncertified.
+- Review reproduced stale death authority after registration: changing an
+  IceGolem death payload to Poison could publish the old IceGolem appearance.
+  Emission and delayed-container guards now reject changed payloads before
+  creating mislabeled effects. No rollback of prior source damage is claimed.
+- Policy input accepts only the exact new chain/SkeletonContainer category
+  exceptions. Extra identities remain outcome-only and map to unknown identity
+  with zero identity confidence for the frozen policy; body/effect conflicts
+  reject. A shared diagnostic extension registry is being integrated next.
+- 206 combined actor, policy-input, common/tower/spell and special/death tests
+  passed. Changed component files pass Ruff and diff checks. The new birth/death
+  inventory records effect labels as diagnostic provenance only; its 63-card,
+  57-body, zero-unresolved-body result remains a synthetic mechanism fixture.
+- Full-game integration across the unchanged training families remains open.
+  Collection authority is not frozen, and fitting/calibration/ranking remain
+  closed. No holdout outcome data was read or new training corpus collected.

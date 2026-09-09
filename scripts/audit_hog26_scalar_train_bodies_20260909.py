@@ -41,10 +41,18 @@ def main():
         battle.players[0].hand = [name, None, None, None]
         battle.players[0].elixir = 10
         accepted = battle.deploy_card(0, name, Position(3.5, 10.5))
-        bodies, unresolved, root_ids = {}, {}, set()
+        bodies, unresolved, root_ids, effect_types = {}, {}, set(), set()
         for tick in range(201):
             for key, entity in tuple(battle.entities.items()):
-                if key in initial or not isinstance(entity, (Troop, Building)):
+                if key in initial:
+                    continue
+                if not isinstance(entity, (Troop, Building)):
+                    source = getattr(entity, "source_entity", None)
+                    if entity.is_alive and getattr(source, "id", None) not in initial:
+                        effect_types.add((type(entity).__name__,
+                                          getattr(getattr(entity, "card_stats", None), "name", "") or "",
+                                          getattr(entity, "spell_name", "") or "",
+                                          getattr(entity, "source_name", "") or ""))
                     continue
                 if tick <= 20:
                     root_ids.add(key)
@@ -70,14 +78,18 @@ def main():
                "bodies": [{"class": k[0], "stats_name": k[1], "token": v}
                           for k, v in sorted(bodies.items())],
                "unresolved": [{"class": k[0], "stats_name": k[1], "reason": v}
-                              for k, v in sorted(unresolved.items())]}
+                              for k, v in sorted(unresolved.items())],
+               "diagnostic_effect_types": [{"class": k[0], "stats_name": k[1],
+                                            "spell_name": k[2], "source_name": k[3]}
+                                           for k in sorted(effect_types)]}
         rows.append(row)
         print(json.dumps({"card": card, "accepted": accepted, "body_types": len(bodies),
                           "unresolved": row["unresolved"]}), flush=True)
     sources = [Path(__file__).relative_to(root).as_posix(), "scripts/hog26_scalar_actor_projection.py",
                "src/clasher/battle.py", "src/clasher/entities.py"]
     report = {"scope": "Training/learner manifest cards only. One seat, 200 real ticks plus "
-                       "synthetic forced parent deaths. Not complete-game coverage or actor-view acceptance.",
+                       "synthetic forced parent deaths. Not complete-game coverage or actor-view acceptance. "
+                       "Effect source/spell names are diagnostic provenance, not authorized actor identities.",
               "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
               "source_sha256": {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in sources},
               "cards": rows}

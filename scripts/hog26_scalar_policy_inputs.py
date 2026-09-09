@@ -9,8 +9,14 @@ from clasher.rl.model import PolicyInputs
 from clasher.torch_sim.resident_outputs import TensorPublicStructuredObservation
 
 
-def scalar_policy_inputs(actors, mask_provider, *, previous_actions, episode_starts,
-                         extra_public_effect_tokens=()):
+def scalar_policy_inputs(
+    actors,
+    mask_provider,
+    *,
+    previous_actions,
+    episode_starts,
+    extra_public_effect_tokens=(),
+):
     """Build public-mask-v2 inputs for both seats, without reward/critic access.
 
     Body features absent from the current reference projection remain unknown,
@@ -19,34 +25,58 @@ def scalar_policy_inputs(actors, mask_provider, *, previous_actions, episode_sta
     """
     if len(actors) != 2:
         raise ValueError("one battle requires two actor views")
-    public = TensorPublicStructuredObservation(**{
-        field.name: torch.from_numpy(np.stack([getattr(a, field.name) for a in actors]))[None]
-        for field in fields(TensorPublicStructuredObservation)
-    })
+    public = TensorPublicStructuredObservation(
+        **{
+            field.name: torch.from_numpy(
+                np.stack([getattr(a, field.name) for a in actors])
+            )[None]
+            for field in fields(TensorPublicStructuredObservation)
+        }
+    )
     # A separate outcome view may register additional public appearances.
     # Preserve those actor arrays; the frozen policy receives unknown identity
     # with zero identity confidence, never a fabricated existing projectile ID.
     base_tokens = mask_provider.tables.token_keys
     extra = tuple(extra_public_effect_tokens)
-    if (len(set(extra)) != len(extra) or set(extra) & set(base_tokens)
-            or any(not name.startswith(("projectile:", "area_effect:", "public_tower_shot:"))
-                   for name in extra)):
-        raise ValueError("extra tokens must be distinct declared public effect categories")
+    if (
+        len(set(extra)) != len(extra)
+        or set(extra) & set(base_tokens)
+        or any(
+            not isinstance(name, str)
+            or not (
+                name.startswith(("projectile:", "area_effect:", "public_tower_shot:"))
+                or name
+                in ("public_effect:chain_bolt", "building_body:SkeletonContainerNew")
+            )
+            for name in extra
+        )
+    ):
+        raise ValueError(
+            "extra tokens must be distinct declared public effect categories"
+        )
     ids = public.entity_ids
     if bool(((ids < 0) | (ids >= len(base_tokens) + len(extra))).any()):
         raise ValueError("actor identity outside declared public vocabulary")
     extended = ids >= len(base_tokens)
-    effect = (public.entity_features[..., 6] == 1) | (public.entity_features[..., 7] == 1)
+    effect = (
+        (public.entity_features[..., 6] == 1) | (public.entity_features[..., 7] == 1)
+    ) & ~((public.entity_features[..., 4] == 1) | (public.entity_features[..., 5] == 1))
     if bool((extended & ~effect).any()):
         raise ValueError("only effect appearances may extend the policy vocabulary")
     public = TensorPublicStructuredObservation(
-        entity_ids=torch.where(extended, 1, ids), entity_features=public.entity_features,
-        entity_mask=public.entity_mask, hand_ids=public.hand_ids,
+        entity_ids=torch.where(extended, 1, ids),
+        entity_features=public.entity_features,
+        entity_mask=public.entity_mask,
+        hand_ids=public.hand_ids,
         global_features=public.global_features,
     )
     masks = mask_provider.build(public)
-    inputs = {field.name: getattr(public, field.name).reshape(
-        2, 1, *getattr(public, field.name).shape[2:]) for field in fields(public)}
+    inputs = {
+        field.name: getattr(public, field.name).reshape(
+            2, 1, *getattr(public, field.name).shape[2:]
+        )
+        for field in fields(public)
+    }
     features = inputs["entity_features"]
     present = inputs["entity_mask"]
     bodies = present & ((features[..., 4] == 1) | (features[..., 5] == 1))
