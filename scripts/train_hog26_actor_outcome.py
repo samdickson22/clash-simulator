@@ -39,6 +39,7 @@ from scripts.hog26_public_outcome_projection import (
     load_public_outcome_projection,
     protocol_audit_path,
 )
+from scripts.hog26_scenario_clusters import episode_matchup_cluster
 from scripts.pretrain_hog26_direct_simple_behavior import load_model
 from scripts.pretrain_hog26_factorized_policy import batch_inputs
 
@@ -815,32 +816,15 @@ def phase_balanced_row_indices(
 def phase_balanced_matchup_clusters(
     loaded: list[tuple[dict[str, Any], DirectSimpleBehaviorCorpus]],
 ) -> np.ndarray:
-    """Name the seed/style/deck/ordinal cluster for every selected phase row."""
+    """Group selected phase rows without assuming ordinal independence."""
 
     clusters: list[str] = []
     for metadata, corpus in loaded:
-        source = _outcome_source(metadata)
-        seed = int(metadata["seed"])
         progress = np.asarray(corpus.arrays["global_features"][:, 0])
-        opponents = [str(value) for value in metadata.get("opponents", [])]
-        decks = [str(value) for value in metadata.get("opponent_decks", [])]
         for episode, (begin, end) in enumerate(
             zip(corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True)
         ):
-            if source == "natural-strategy-games":
-                opponent_index = int(
-                    corpus.episode_arrays["episode_opponent_indices"][episode]
-                )
-                deck_index = int(
-                    corpus.episode_arrays["episode_opponent_deck_indices"][episode]
-                )
-                opponent = opponents[opponent_index]
-                deck = decks[deck_index]
-            else:
-                opponent = "<controlled-draw>"
-                deck = "<controlled-draw>"
-            ordinal = int(corpus.episode_ordinals[episode])
-            cluster = f"{source}|{seed}|{opponent}|{deck}|{ordinal}"
+            cluster = episode_matchup_cluster(metadata, corpus, episode)
             episode_progress = progress[begin:end]
             for lower, upper in (
                 (0.0, 1.0 / 3.0),

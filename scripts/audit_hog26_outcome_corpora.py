@@ -15,6 +15,7 @@ import numpy as np
 
 from clasher.rl.direct_simple_behavior import load_direct_simple_behavior_corpus
 from scripts.collect_hog26_direct_simple_behavior import _atomic_json, file_sha256
+from scripts.hog26_scenario_clusters import episode_matchup_cluster
 from scripts.train_hog26_actor_outcome import validate_outcome_corpus
 
 
@@ -186,7 +187,7 @@ def audit(
             for episode, (begin, end) in enumerate(pairwise(offsets)):
                 style = opponents[int(episode_opponents[episode])]
                 deck = decks[int(episode_decks[episode])]
-                cluster = f"{seed}|{style}|{deck}|{int(ordinals[episode])}"
+                cluster = episode_matchup_cluster(metadata, corpus, episode)
                 for phase in _reached_phases(progress[begin:end]):
                     phase_clusters[phase][cluster].add(int(outcomes[episode]))
 

@@ -32,6 +32,10 @@ def fixture():
     loaded = []
     for role, stage in protocol["final_holdout"].items():
         control = role == "controlled_draw"
+        # Metric fixture needs distinct fixed-opening matchups. Repeated
+        # ordinals on one reserved deck no longer supply independent groups.
+        if role == "reserved_original":
+            stage["opponents"] = [f"synthetic-style-{index}" for index in range(8)]
         styles = ["control"] if control else stage["opponents"]
         records = [(style, cluster, seat) for style in range(len(styles))
                    for cluster in range(8) for seat in (0, 1)]
@@ -63,7 +67,7 @@ def fixture():
                 "episode_terminal_tower_margins": margins,
                 "episode_learner_players": np.array([seat for _, _, seat in records]),
                 "episode_opponent_indices": np.array([style for style, _, _ in records]),
-                "episode_opponent_deck_indices": np.zeros(n, dtype=np.int64),
+                "episode_opponent_deck_indices": np.array([cluster for _, cluster, _ in records]) if role == "generated" else np.zeros(n, dtype=np.int64),
             },
         )
         metadata = {
@@ -71,7 +75,7 @@ def fixture():
             "label_authority": "undiscounted-terminal-winner-and-post-action-public-tower-fractions-v1",
             "actor_input_excludes_outcome_labels": True,
             "seed": stage["seed"], "opponents": styles,
-            "opponent_decks": [stage["deck"] if role == "reserved_original" else role],
+            "opponent_decks": [f"generated-{index}" for index in range(8)] if role == "generated" else [stage["deck"] if role == "reserved_original" else role],
             "outcome_source": "controlled-symmetric-draws" if control else "natural-strategy-games",
         }
         loaded.append((metadata, corpus))
@@ -332,3 +336,15 @@ def test_cohort_orchestration_evaluates_all_seeds_and_requires_every_pass(
     assert not result["public_state_gates_passed"]
     assert len(result["candidates"]) == 3
     assert not result["policy_updates_allowed"]
+
+
+def test_repeated_fixed_openings_fail_coverage_even_with_perfect_predictions():
+    protocol, loaded, features = fixture()
+    for metadata, corpus in loaded:
+        if metadata["seed"] == protocol["final_holdout"]["generated"]["seed"]:
+            metadata["opponent_decks"] = ["one-fixed-deck"]
+            corpus.episode_arrays["episode_opponent_deck_indices"][:] = 0
+    result = evaluate(protocol, loaded, features)
+    assert not result["passed"]
+    generated = result["public_slices"]["groups"]["generated"]
+    assert not generated["slices"]["overall"]["coverage_passed"]

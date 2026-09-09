@@ -6,6 +6,7 @@ import numpy as np
 import torch
 
 SOURCES = (
+    "scripts/hog26_scenario_clusters.py",
     "src/clasher/rl/outcome_model.py",
     "src/clasher/rl/public_margin_dynamics.py",
     "src/clasher/rl/direct_simple_behavior.py",

@@ -924,3 +924,28 @@ Seeded opening implementation checkpoint:
   test actual complete-game diversity and randomized-opening training support;
   bind the final collection protocol and authority before evaluation launch.
   No new corpus, training, or evaluation was launched in this checkpoint.
+
+
+Conservative independence correction:
+- The corpus audit, representative-phase intervals, and full-phase margin
+  gate now share episode_matchup_cluster. Deterministic natural games with
+  the same style/deck are grouped across ordinals, seeds, and paired seats.
+  Random-opponent games retain seed/ordinal groups with paired seats together.
+- Seeded-opening declarations alone do not grant extra groups. Until opening
+  reconstruction and audit are implemented, these also retain conservative
+  style/deck grouping. Distinct schedule hashes are not an independence proof.
+- Re-audited the completed legacy 96-game crossed training corpus. Early and
+  middle groups fell from 48 to 24; late groups fell from 21 to 9. Outcomes,
+  episode integrity, and public actor contracts still pass. New report:
+  hog26_crossed_train4_conservative_cluster_audit_20260908.json.
+- Three fixed-opening reserved-deck strategies cannot supply the required
+  eight groups merely by repeating games. No acceptance threshold changed.
+- Updated synthetic metric fixtures to use distinct matchups rather than
+  ordinals as their coverage evidence. Added a perfect-prediction regression
+  demonstrating that duplicated fixed openings still fail coverage.
+- Validation: 70 focused trainer/audit/gate/protocol/frozen-evaluator tests
+  passed; Ruff passed. Recaptured the protocol source authority including
+  the shared cluster helper. Historical reports are preserved as historical;
+  their ordinal-based interval/coverage claims are superseded by this rule.
+- No collection or training launched. Opening reconstruction, complete-game
+  diversity, and randomized-start training support remain outstanding.

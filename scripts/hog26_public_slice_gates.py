@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-import json
 from itertools import product
 from typing import Any
 
 import numpy as np
 import torch
+
+from scripts.hog26_scenario_clusters import episode_matchup_cluster
 
 
 def weighted_binary_auc(labels, scores, weights):
@@ -382,9 +383,7 @@ def evaluate_loaded_full_phase_margins(
             for episode, (begin, end) in enumerate(zip(
                 corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True
             )):
-                style = metadata["opponents"][corpus.episode_arrays["episode_opponent_indices"][episode]]
-                deck = metadata["opponent_decks"][corpus.episode_arrays["episode_opponent_deck_indices"][episode]]
-                cluster = json.dumps([metadata["seed"], style, deck, int(corpus.episode_ordinals[episode])], separators=(",", ":"))
+                cluster = episode_matchup_cluster(metadata, corpus, episode)
                 phase_ids = np.minimum((public[begin:end, 0] * 3).astype(int), 2)
                 for phase, name in enumerate(records):
                     rows = np.flatnonzero(phase_ids == phase) + begin

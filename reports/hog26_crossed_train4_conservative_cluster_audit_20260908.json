@@ -1,0 +1,208 @@
+{
+  "cell_outcomes": {
+    "balanced|Giant|seat0": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "balanced|Giant|seat1": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "balanced|Log Bait|seat0": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "balanced|Log Bait|seat1": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "balanced|Pekka Bandit EWiz Bridge Spam|seat0": {
+      "draw": 0,
+      "loss": 0,
+      "win": 4
+    },
+    "balanced|Pekka Bandit EWiz Bridge Spam|seat1": {
+      "draw": 0,
+      "loss": 0,
+      "win": 4
+    },
+    "balanced|X-Bow 3.0 Cycle (ESpirit)|seat0": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "balanced|X-Bow 3.0 Cycle (ESpirit)|seat1": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "random|Giant|seat0": {
+      "draw": 0,
+      "loss": 3,
+      "win": 1
+    },
+    "random|Giant|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 3
+    },
+    "random|Log Bait|seat0": {
+      "draw": 0,
+      "loss": 2,
+      "win": 2
+    },
+    "random|Log Bait|seat1": {
+      "draw": 0,
+      "loss": 2,
+      "win": 2
+    },
+    "random|Pekka Bandit EWiz Bridge Spam|seat0": {
+      "draw": 0,
+      "loss": 3,
+      "win": 1
+    },
+    "random|Pekka Bandit EWiz Bridge Spam|seat1": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "random|X-Bow 3.0 Cycle (ESpirit)|seat0": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "random|X-Bow 3.0 Cycle (ESpirit)|seat1": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "slow-push|Giant|seat0": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "slow-push|Giant|seat1": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "slow-push|Log Bait|seat0": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "slow-push|Log Bait|seat1": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "slow-push|Pekka Bandit EWiz Bridge Spam|seat0": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "slow-push|Pekka Bandit EWiz Bridge Spam|seat1": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "slow-push|X-Bow 3.0 Cycle (ESpirit)|seat0": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    },
+    "slow-push|X-Bow 3.0 Cycle (ESpirit)|seat1": {
+      "draw": 0,
+      "loss": 4,
+      "win": 0
+    }
+  },
+  "checks": {
+    "complete_stream_coverage": true,
+    "contiguous_stream_ordinals": true,
+    "critic_inputs_absent": true,
+    "current_causal_actor_contract": true,
+    "exact_actor_relative_terminal_labels": true,
+    "exact_episode_boundaries": true,
+    "expected_decks_exact": true,
+    "expected_opponents_exact": true,
+    "expected_split_exact": true,
+    "finite_outcomes_and_margins": true,
+    "label_independent_public_mask_v2": true,
+    "supported_deck_authority_exact": true,
+    "unique_hashes": true,
+    "unique_seeds": true
+  },
+  "corpora": [
+    {
+      "episodes": 96,
+      "margin_maximum": 0.47553515434265137,
+      "margin_minimum": -0.6066887974739075,
+      "opponent_deck_split": null,
+      "outcomes": {
+        "draw": 0,
+        "loss": 79,
+        "win": 17
+      },
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_crossed_train4_seed1276001_no_split_lane_20260908/corpus.npz",
+      "rows": 45447,
+      "seed": 1276001,
+      "sha256": "fad0ca04d3932391a85bb5b22e8a2d48d4185c76fef4409175159594d35122b9",
+      "supported_decks_sha256": null
+    }
+  ],
+  "corpus_count": 1,
+  "episodes": 96,
+  "natural_diversity": {
+    "cells_with_both_decisive_outcomes": 5,
+    "opponent_decks": [
+      "Giant",
+      "Log Bait",
+      "Pekka Bandit EWiz Bridge Spam",
+      "X-Bow 3.0 Cycle (ESpirit)"
+    ],
+    "opponent_styles": [
+      "balanced",
+      "random",
+      "slow-push"
+    ],
+    "phase_matchup_clusters": {
+      "early": {
+        "clusters": 24,
+        "with_both": 3,
+        "with_loss": 20,
+        "with_win": 7
+      },
+      "late": {
+        "clusters": 9,
+        "with_both": 0,
+        "with_loss": 6,
+        "with_win": 3
+      },
+      "middle": {
+        "clusters": 24,
+        "with_both": 2,
+        "with_loss": 20,
+        "with_win": 6
+      }
+    },
+    "style_deck_seat_cells": 24
+  },
+  "outcomes": {
+    "draw": 0,
+    "loss": 79,
+    "win": 17
+  },
+  "phase_rows": {
+    "early": 23891,
+    "late": 1923,
+    "middle": 19633
+  },
+  "rows": 45447,
+  "schema": "clasher.hog26.outcome-corpus-audit.v1",
+  "status": "passed"
+}

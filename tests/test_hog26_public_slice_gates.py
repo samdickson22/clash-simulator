@@ -152,7 +152,7 @@ def test_loaded_adapter_excludes_controlled_draws_from_natural_metrics():
         "episode_terminal_tower_margins": data["target_margin"][::3],
         "episode_learner_players": data["seats"][::3],
         "episode_opponent_indices": np.repeat(np.arange(3), 16),
-        "episode_opponent_deck_indices": np.zeros(n // 3, dtype=np.int64),
+        "episode_opponent_deck_indices": np.tile(np.repeat(np.arange(8), 2), 3),
     }
     corpus = DirectSimpleBehaviorCorpus(
         arrays={"global_features": public},
@@ -166,7 +166,7 @@ def test_loaded_adapter_excludes_controlled_draws_from_natural_metrics():
     metadata = {
         "seed": 1,
         "opponents": ["a", "b", "c"],
-        "opponent_decks": ["generated"],
+        "opponent_decks": [f"generated-{index}" for index in range(8)],
     }
     # A duplicate corpus with absurd margin labels must not improve or spoil natural scores.
     from dataclasses import replace
