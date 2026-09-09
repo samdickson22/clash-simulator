@@ -1317,3 +1317,28 @@ Corrected margin error diagnosis and public-feature comparison, 2026-09-09:
   together, rather than promoting the best pooled score or adding slice-specific
   exceptions. No selection/calibration/final labels or validation draw control
   were opened. Spatial screen session11035 and error analysis sessions exited0.
+
+
+Causal public-history diagnostic completed, 2026-09-09:
+- Added diagnostic-only public changes over1/5/20 prior decisions, recent public
+  damage-race delta and horizon, preserving the current18-global suffix.
+  Only public arrays and complete game boundaries enter feature construction.
+  No fixed overtime override is allowed in this diagnostic mode.
+- Matched control zeros all56 added history fields with identical dimensions,
+  parameter count, seeds, family folds, optimizer, weights and epoch budget.
+  Both variants use the corrected spatial-mechanics features. Sixteen fits
+  completed, sessions71176/93521 exited0. No candidate was produced.
+- Future-row perturbations leave prior features bitwise unchanged; separate-game
+  extraction matches combined extraction exactly. Reset, lag and invalid-boundary
+  checks passed.15focused causal/weight tests passed; Ruff passed all3code files.
+- History late representative MAE gains are -0.05849/-0.05586, and full-phase
+  late gains are -0.00212/-0.00201. Every fold also regresses on its own fitting
+  late representatives, ranging roughly -0.030 to -0.046. Thus the late failure
+  is not explained by excluded-family generalization alone.
+- Results and the zero-history comparison are preserved as
+  hog26_corrected_history_margin_comparison_20260909.json and the two pinned
+  plans/full screen reports. This design is rejected for candidate freeze.
+- Next diagnostic should distinguish fitting capacity and cross-phase loss
+  interference before another generalization attempt. Preserve causal inputs,
+  complete-game/family separation and all independent acceptance requirements.
+  Selection/calibration/final data and validation draw control remain unopened.

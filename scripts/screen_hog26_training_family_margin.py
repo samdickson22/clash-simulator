@@ -267,6 +267,21 @@ def main() -> None:
         )
         features[:, -18 - moment_width : -18] = 0.0
     del model
+    if plan.get("public_history_windows") is not None:
+        from scripts.hog26_public_history_features import public_history_features
+
+        history_source = root / "scripts/hog26_public_history_features.py"
+        if file_sha256(history_source) != plan.get("history_source_sha256"):
+            raise ValueError("diagnostic history source drifted")
+        if plan.get("overtime_damage_race_window") is not None:
+            raise ValueError("learned history diagnostic must not hard-override overtime")
+        history = public_history_features(
+            features[:, -18:].numpy(), episode_offsets,
+            windows=tuple(plan["public_history_windows"]),
+        )
+        if plan.get("zero_public_history", False):
+            history[:, :-18] = 0
+        features = torch.cat((features[:, :-18], torch.from_numpy(history)), dim=1)
     target = torch.cat(
         [
             torch.from_numpy(c.arrays["terminal_tower_margins"].copy()).float()
