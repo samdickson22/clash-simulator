@@ -753,3 +753,26 @@ existing neural regulation forecast with this explicit overtime stopping
 calculation, preserving public causality and validating full-phase as well
 as representative errors before changing the production candidate. No
 new development/calibration/final labels have been used.
+
+## Complete neural-regulation/overtime diagnostic
+
+The matched hybrid screen completed8 fits in44.96 seconds. Raw neural
+representative metrics exactly reproduce the earlier complete-mixture
+public-global power0 runs. Replacing only overtime predictions yields
+representative overall MAE gains0.03808/0.03560 across seeds. Both seeds
+improve every representative and full-phase metric: late representative
+gain0.02238 and full-phase gain0.01755. All four late family folds improve,
+by0.05276/0.00752/0.00621/0.02752. Full-phase middle gains remain positive,
+0.02631/0.02332. Artifact: `hog26_hybrid_margin_screen_20260908.json`.
+
+Training-only paired-matchup bootstrap over36 late clusters gives lower95
+improvement bounds0.00084 for representatives and0.00079 for full-phase
+means. These narrow, design-selected training intervals are not independent
+acceptance evidence. Artifact: `hog26_hybrid_margin_training_uncertainty_20260908.json`.
+
+The design is now plausible for integration and independent development
+evaluation. Candidate readiness remains under review until the causal history
+calculation is bound into training, checkpoint configuration, feature replay
+and frozen evaluation. The old primary configuration remains guarded and must
+be replaced before use. No development/calibration/final data has been opened,
+and no search or policy updates are authorized by this diagnostic result.

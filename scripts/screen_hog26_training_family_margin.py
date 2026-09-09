@@ -331,10 +331,19 @@ def main() -> None:
         }
 
     results = []
+    overtime_delta = None
+    if plan.get("overtime_damage_race_window") is not None:
+        from scripts.hog26_public_margin_dynamics import overtime_damage_race
+
+        delta, _ = overtime_damage_race(
+            public.numpy(), episode_offsets, window=plan["overtime_damage_race_window"],
+        )
+        overtime_delta = torch.from_numpy(delta)
     for feature_set in plan["margin_feature_sets"]:
         for power in plan["margin_progress_powers"]:
             for seed in plan["seeds"]:
                 pooled = torch.full_like(target, torch.nan)
+                pooled_neural = torch.full_like(target, torch.nan)
                 fold_results = []
                 for fold_index, families in enumerate(folds):
                     fit_rows, fitting_episodes, validation_mask = family_fit_rows(
@@ -411,6 +420,10 @@ def main() -> None:
                                     for x in features.split(2048)
                                 ]
                             )
+                    pooled_neural[validation_mask] = prediction[validation_mask]
+                    neural_breakdown = breakdown(prediction, test_rows)
+                    if overtime_delta is not None:
+                        prediction = torch.where(public[:, 4] > 0, current + overtime_delta, prediction)
                     pooled[validation_mask] = prediction[validation_mask]
                     fold_results.append(
                         {
@@ -423,6 +436,7 @@ def main() -> None:
                             },
                             "fit": breakdown(prediction, train_representatives),
                             "out_of_fold": breakdown(prediction, test_rows),
+                            "neural_out_of_fold": neural_breakdown,
                             "full_phase_out_of_fold": full_phase_margin_summary(
                                 prediction, target, current, episode_offsets, phases,
                                 np.flatnonzero(validation_mask[episode_offsets[:-1]]),
@@ -454,6 +468,7 @@ def main() -> None:
                     "seed": seed,
                     "folds": fold_results,
                     "pooled": breakdown(pooled, representatives),
+                    "neural_pooled": breakdown(pooled_neural, representatives),
                     "full_phase_out_of_fold": full_phase_margin_summary(
                         pooled, target, current, episode_offsets, phases,
                         np.flatnonzero(episode_families != "<auxiliary>"),
