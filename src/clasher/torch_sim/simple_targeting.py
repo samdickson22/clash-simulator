@@ -15,6 +15,21 @@ import torch
 from .simple_state import FastGymState
 
 
+def within_edge_range(distance_squared, target_radius, reach):
+    """Compare integer-unit geometry without a rounded square root.
+
+    Integer radii/reach use int64 throughout. Fractional trait fixtures retain
+    their floating-point radius contract through a squared comparison.
+    """
+    if not target_radius.is_floating_point() and not reach.is_floating_point():
+        limit = target_radius.to(torch.int64).clamp_min(0) + reach.to(
+            torch.int64
+        ).clamp_min(0)
+    else:
+        limit = target_radius.clamp_min(0) + reach.clamp_min(0)
+    return distance_squared <= limit.square()
+
+
 @dataclass(frozen=True)
 class FastTargetTraits:
     """Targeting capabilities and collision geometry with shape ``[B, E]``."""
@@ -131,7 +146,11 @@ def select_nearest_targets(
         & (state.owner[:, :, None] != state.owner[:, None, :])
         & target_plane_allowed
         & target_category_allowed
-        & (edge_distance <= state.sight_range_units[:, :, None].clamp(min=0))
+        & within_edge_range(
+            center_distance_sq,
+            traits.collision_radius[:, None, :],
+            state.sight_range_units[:, :, None],
+        )
     )
 
     infinity = torch.full_like(edge_distance, torch.inf)
@@ -153,8 +172,12 @@ def select_nearest_targets(
     selected_edge = edge_distance.gather(2, selected_slot[:, :, None]).squeeze(2)
     selected_center = torch.where(found, selected_center, torch.inf)
     selected_edge = torch.where(found, selected_edge, torch.inf)
-    within_attack_range = found & (
-        selected_edge <= state.range_units.clamp(min=0).to(torch.float32)
+    selected_squared = center_distance_sq.gather(2, selected_slot[:, :, None]).squeeze(
+        2
+    )
+    selected_radius = traits.collision_radius.gather(1, selected_slot)
+    within_attack_range = found & within_edge_range(
+        selected_squared, selected_radius, state.range_units
     )
     return FastTargetSelection(
         found=found,

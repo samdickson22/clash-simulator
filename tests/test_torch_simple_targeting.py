@@ -13,7 +13,7 @@ from clasher.torch_sim.simple_targeting import (
 def _device(name: str) -> torch.device:
     if name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
-    return torch.device(name)
+    return torch.empty(0, device=name).device
 
 
 def _state_and_traits(
@@ -206,3 +206,26 @@ def test_pending_deployment_is_targetable_but_cannot_act(device_name: str) -> No
 
     assert selected.target_id[0, 0].item() == 2
     assert not selected.found[0, 2]
+
+
+@pytest.mark.parametrize("device_name", ["cpu", "mps"])
+@pytest.mark.parametrize(
+    "distance,expected", [(3499, True), (3500, True), (3501, False)]
+)
+def test_exact_range_boundary_does_not_depend_on_device_sqrt(
+    device_name, distance, expected
+):
+    if device_name == "mps" and not torch.backends.mps.is_available():
+        pytest.skip("MPS unavailable")
+    state, traits, disabled, unavailable = _state_and_traits(device_name, entities=2)
+    state.owner[0] = torch.tensor([0, 1], device=state.device)
+    state.x_units[0] = torch.tensor([0, distance], device=state.device)
+    state.y_units.zero_()
+    state.range_units.fill_(2000)
+    state.sight_range_units.fill_(2000)
+    traits.collision_radius[0, 1] = 1500
+    result = select_nearest_targets(
+        state, traits, source_disabled=disabled, target_unavailable=unavailable
+    )
+    assert bool(result.found[0, 0]) is expected
+    assert bool(result.within_attack_range[0, 0]) is expected

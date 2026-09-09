@@ -6,6 +6,9 @@ import numpy as np
 import torch
 
 SOURCES = (
+    "src/clasher/torch_sim/simple_targeting.py",
+    "src/clasher/torch_sim/simple_attack_locks.py",
+    "src/clasher/torch_sim/simple_engine.py",
     "scripts/run_hog26_procedural_outcome_shard.py",
     "scripts/collect_hog26_frozen_final.py",
     "scripts/audit_hog26_procedural_outcome_shard.py",

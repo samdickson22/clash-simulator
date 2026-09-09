@@ -1123,3 +1123,27 @@ MPS seeded opening probe completed; new device-mechanics discrepancy:
   the resolved repeated-opening issue with randomized fitting support and
   the concrete device-mechanics discrepancy. No model fitting, calibration,
   holdout evaluation, or policy updates were launched.
+
+
+Ice Spirit range boundary repaired:
+- Reproduced with matching four-opening schedules and128 native ticks on both
+  devices. Joint actions and positions matched; first difference at native
+  index106 was attack range and cooldown, followed by damage at117.
+- Exact axial distance3500: CPU float32sqrt gives3500.0, MPS gives
+  3500.000244140625. Subtracting1500 tower radius makes MPS miss the exact2000
+  attack range. This is a geometric threshold defect, not a timer RNG issue.
+- Replaced acquisition, retained-target, and post-movement attack/contact
+  boundary comparisons with squared distances. Integer-unit geometry uses
+  int64, without an epsilon or changed range. Fractional trait fixtures retain
+  their floating radius contract. Target ranking/movement still use distances.
+- Corrected production prefix traces now match in every recorded field across
+  all128 ticks, including joint actions, HP, positions, target IDs, cooldowns,
+  contact/attack flags, and spirit timers. Full games are not yet certified.
+- Tests: targeting/locks/engine39passed24CUDA-skipped; runtime/reset/spells/
+  standard25passed9CUDA-skipped. CPU/MPS exact-boundary and one-unit-outside
+  regressions passed. Ruff and diff checks passed. Source authority now pins
+  the three changed simulator modules.
+- Readiness remains under review. Existing MPS corpora and model screens
+  predate the correction and cannot establish corrected-simulator acceptance.
+  Next: matched complete games with identical quotas and schedules, then a
+  fitting-corpus refresh and randomized-opening learnability reassessment.

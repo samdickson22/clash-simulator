@@ -169,7 +169,7 @@
       "scripts/evaluate_hog26_frozen_outcome.py": "c0cf83e2833bd1c5fa3c30a017900fce815e9d486103e01260c713740322f904",
       "scripts/freeze_hog26_outcome_cohort.py": "9e0c1dd9b28dd63318fe232a2ca2692d3b469ed4c444be171a5c934f58de8305",
       "scripts/hog26_frozen_outcome.py": "7d2f3f3bb0a70b775eb215d6306820f8ece2134fb60ee3d75403593bedc54192",
-      "scripts/hog26_inference_authority.py": "1ced2bacba277004386b5bd58e5bae3ebd822d9ff1fcf7f4f10ed6f8cabb9c6d",
+      "scripts/hog26_inference_authority.py": "73364bcf08c896b8c9b469e3284341bc4545e52caadb608e2fa4955a064e2640",
       "scripts/hog26_public_outcome_projection.py": "c110af897cb109850f2fe26feb9d62f91362c324d1a70745097998521c2bc540",
       "scripts/hog26_public_slice_gates.py": "63557cee1c0c548b518049f6cb1aa43aede1b42edc38ccde5e8dcc5458bd2bec",
       "scripts/hog26_scenario_clusters.py": "fa911b5ab98d347e702178df2814803a77018652515634c22bb1e1d9f0602347",
@@ -180,7 +180,10 @@
       "src/clasher/rl/direct_simple_behavior.py": "3864b6290980cd1b1b72ff01deca2a41c7357c1fc339e7b0a1cc021d0229b27b",
       "src/clasher/rl/outcome_model.py": "5dd1fd8f9f651324518c5d71e2ae04fd395cff48a13cdf49147f12279dc47377",
       "src/clasher/rl/public_margin_dynamics.py": "76f5519789b9c5f7f0486f5222dde0ee70aaf78a046631137caadc85417977e6",
-      "src/clasher/rl/seeded_deals.py": "8dc9067cfd005c965eb63ac0f7cc6d63f0add3a4a01910759b8fc7042725847d"
+      "src/clasher/rl/seeded_deals.py": "8dc9067cfd005c965eb63ac0f7cc6d63f0add3a4a01910759b8fc7042725847d",
+      "src/clasher/torch_sim/simple_attack_locks.py": "b47a5dc78780d8194590b2306bdc86e2b593352050dc57baebbe005f6092a3d0",
+      "src/clasher/torch_sim/simple_engine.py": "baea02fc062a05837788e98e514b0e0d628a50c90cd6da6c9a35409a0ecd08a6",
+      "src/clasher/torch_sim/simple_targeting.py": "c437770401bb97bde0e64041e459e2fae6ad656c6cd4ea6e574ed10757b7e7b9"
     }
   },
   "opponent_generalization": {
@@ -383,10 +386,10 @@
   ],
   "training_readiness": {
     "blocking_issues": [
-      "Seeded opening reconstruction and four distinct complete trajectories per seat passed the eight-game mechanics probe. Broader randomized-opening fitting support remains uncollected and untested.",
-      "CPU and MPS first diverge at decision15 on an IceSpirits impact before any reset; resolve or explicitly establish simulator authority before further collection and fitting."
+      "Squared range comparisons repaired the reproduced CPU/MPS Ice Spirit divergence and the128-tick trace now matches. Matched complete-game verification remains required.",
+      "Prior MPS corpora predate the mechanics correction. Refresh fitting data under corrected simulator authority and assess randomized-opening learnability before selection/calibration collection."
     ],
-    "collection_allowed": "Existing training-shard schedule only; candidate fitting and selection/calibration collection wait for design freeze.",
+    "collection_allowed": "Mechanics diagnostics only until corrected full-game verification; fitting and selection/calibration remain under review.",
     "status": "under-review"
   }
 }

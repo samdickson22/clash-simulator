@@ -25,7 +25,11 @@ from .simple_river_jump import (
     step_fast_river_jump_,
 )
 from .simple_state import FAST_KIND_BUILDING, FAST_KIND_TROOP, FastGymState
-from .simple_targeting import FastTargetTraits, select_nearest_targets
+from .simple_targeting import (
+    FastTargetTraits,
+    select_nearest_targets,
+    within_edge_range,
+)
 
 
 @dataclass(frozen=True)
@@ -853,24 +857,31 @@ class FastTensorGym:
         state.y_units.copy_(collision.y_units)
         moved_distance = collision.moved_distance_units
 
-        target_x = state.x_units.gather(1, nearest_slot).to(torch.float32)
-        target_y = state.y_units.gather(1, nearest_slot).to(torch.float32)
-        post_dx = target_x - state.x_units.to(torch.float32)
-        post_dy = target_y - state.y_units.to(torch.float32)
-        target_radius = traits.collision_radius.gather(1, nearest_slot).clamp(min=0)
-        post_edge_distance = (
-            torch.sqrt(post_dx.square() + post_dy.square()) - target_radius
-        ).clamp_min(0.0)
+        post_dx = state.x_units.gather(1, nearest_slot).to(
+            torch.int64
+        ) - state.x_units.to(torch.int64)
+        post_dy = state.y_units.gather(1, nearest_slot).to(
+            torch.int64
+        ) - state.y_units.to(torch.int64)
+        post_distance_squared = post_dx.square() + post_dy.square()
+        target_radius = traits.collision_radius.gather(1, nearest_slot)
         selected_in_contact_range = (
             found
             & can_act
-            & (
-                post_edge_distance
-                <= body_traits.collision_radius_units.to(torch.float32).clamp_min(0)
+            & within_edge_range(
+                post_distance_squared,
+                target_radius,
+                body_traits.collision_radius_units,
             )
         )
         selected_in_attack_range = (
-            found & can_act & (post_edge_distance <= attack_range)
+            found
+            & can_act
+            & within_edge_range(
+                post_distance_squared,
+                target_radius,
+                state.range_units,
+            )
         )
         if river_jump is not None:
             target_jump_airborne = river_jump.airborne_target.gather(1, nearest_slot)

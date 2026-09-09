@@ -28,7 +28,11 @@ from clasher.data import CardDataLoader
 
 from .catalog import CardKindOpcode, TensorCardCatalog
 from .simple_state import FastGymState
-from .simple_targeting import FastTargetTraits, select_nearest_targets
+from .simple_targeting import (
+    FastTargetTraits,
+    select_nearest_targets,
+    within_edge_range,
+)
 
 
 def _same_device(left: torch.device, right: torch.device) -> bool:
@@ -374,18 +378,6 @@ def step_fast_attack_locks_(
         traits.attacks_ground,
     )
     retained_category_allowed = ~traits.buildings_only | retained_target_building
-    retained_dx = state.x_units.gather(1, retained_slot).to(
-        torch.float32
-    ) - state.x_units.to(torch.float32)
-    retained_dy = state.y_units.gather(1, retained_slot).to(
-        torch.float32
-    ) - state.y_units.to(torch.float32)
-    retained_edge_distance = (
-        torch.sqrt(retained_dx.square() + retained_dy.square())
-        - traits.collision_radius.gather(1, retained_slot)
-        .clamp(min=0)
-        .to(torch.float32)
-    ).clamp_min(0.0)
     retained_valid = (
         source_present
         & (previous_target_id > 0)
@@ -395,7 +387,18 @@ def step_fast_attack_locks_(
         & (state.owner != state.owner.gather(1, retained_slot))
         & retained_plane_allowed
         & retained_category_allowed
-        & (retained_edge_distance <= state.sight_range_units.clamp(min=0))
+        & within_edge_range(
+            (
+                state.x_units.gather(1, retained_slot).to(torch.int64)
+                - state.x_units.to(torch.int64)
+            ).square()
+            + (
+                state.y_units.gather(1, retained_slot).to(torch.int64)
+                - state.y_units.to(torch.int64)
+            ).square(),
+            traits.collision_radius.gather(1, retained_slot),
+            state.sight_range_units,
+        )
     )
 
     acquisition = select_nearest_targets(
@@ -431,13 +434,18 @@ def step_fast_attack_locks_(
         cooldown,
     )
 
-    selected_edge_distance = torch.where(
-        use_retained,
-        retained_edge_distance,
-        acquisition.edge_distance,
-    )
-    target_in_attack_range = target_found & (
-        selected_edge_distance <= state.range_units.clamp(min=0).to(torch.float32)
+    safe_target_slot = target_slot.clamp_min(0)
+    target_distance_squared = (
+        state.x_units.gather(1, safe_target_slot).to(torch.int64)
+        - state.x_units.to(torch.int64)
+    ).square() + (
+        state.y_units.gather(1, safe_target_slot).to(torch.int64)
+        - state.y_units.to(torch.int64)
+    ).square()
+    target_in_attack_range = target_found & within_edge_range(
+        target_distance_squared,
+        traits.collision_radius.gather(1, safe_target_slot),
+        state.range_units,
     )
     can_advance = source_present & ~source_disabled & ~clear_source_lock
     decrement = cooldown_decrement.clamp(min=0)
