@@ -545,10 +545,18 @@
   ],
   "training_readiness": {
     "blocking_issues": [
-      "Matched corrected complete games now agree exactly on781 decisions and terminal labels. Collect and audit the corrected randomized-opening training refresh and fresh draw controls.",
-      "Reassess outcome learnability and phase-margin performance with whole training-family exclusions before freezing a candidate for unopened selection/calibration."
+      "All three corrected natural fitting shards and corrected training draw control are complete and audited. Corrected WDL training-family diagnostics support continued outcome-head development, not final acceptance.",
+      "Corrected margin diagnostics regress on families 006/007 and bridge-pressure. Public spatial-mechanics features reduce but do not remove those regressions. Neither design is ready for candidate freeze.",
+      "Fixed overtime damage extrapolation has uncertain late improvement and large wrong-direction errors. Reassess the hard override and public temporal representation before selecting a replacement model."
     ],
     "collection_allowed": "Corrected training refresh and training draw control only; selection, calibration, and validation draw control await candidate-design freeze.",
+    "reassessment_reports": [
+      "reports/hog26_corrected_wdl_complete_globals_screen_20260909.json",
+      "reports/hog26_corrected_margin_reassessment_20260909.json",
+      "reports/hog26_corrected_margin_representation_comparison_20260909.json",
+      "reports/hog26_corrected_margin_signed_errors_20260909.json",
+      "reports/hog26_corrected_late_margin_errors_20260909.json"
+    ],
     "status": "under-review"
   }
 }

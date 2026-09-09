@@ -1290,3 +1290,30 @@ Corrected-data training-family reassessment completed on 2026-09-09:
   validation draw control remain unopened. No policy updates occurred.
 - All three diagnostic/summary processes exited 0. Ruff passed for the new
   summary script. No training or collector process remains active.
+
+
+Corrected margin error diagnosis and public-feature comparison, 2026-09-09:
+- Signed errors locate the largest regulation failure in family007. Early
+  terminal-minus-current margin averages +0.01760, while the globals heads
+  predict about -0.162. Bridge-pressure early targets need -0.00427 on average,
+  while the heads predict -0.10907/-0.10636. This establishes systematic bias,
+  not a causal proof of missing representation or optimizer failure.
+- A fixed-budget public spatial-mechanics comparison completed eight fits with
+  the same corrected sources, folds, seeds, hidden width, optimizer and epochs.
+  It adds public mechanics-position inputs and parameters, so it is not a
+  parameter-matched ablation. Overall MAE gains rise to 0.02141/0.02116.
+  Families006/007 still regress 0.01969/0.02353; bridge-pressure still regresses
+  0.01724/0.01745. Neither the globals nor spatial model is ready to freeze.
+- The overtime hard override produces identical late predictions in both models.
+  Late training inspection finds a final-decision reactive-defense state with
+  projected delta +0.14767 versus actual -0.00808, and a paired scenario with
+  projected +0.16022 versus actual -0.27720. Recent damage extrapolation is not
+  a reliable forecast of future direction or stopping time in these cases.
+  Remaining-decision counts and terminal labels are diagnostics only.
+- Saved signed-error, late-error, spatial-screen and representation-comparison
+  reports under hog26_corrected_*_20260909.json. Updated protocol readiness to
+  replace the completed collection blocker with these observed model defects.
+- Next: reassess the fixed overtime override and causal public temporal features
+  together, rather than promoting the best pooled score or adding slice-specific
+  exceptions. No selection/calibration/final labels or validation draw control
+  were opened. Spatial screen session11035 and error analysis sessions exited0.
