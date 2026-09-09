@@ -6,6 +6,9 @@ import numpy as np
 import torch
 
 SOURCES = (
+    "scripts/hog26_seeded_opening_audit.py",
+    "src/clasher/rl/seeded_deals.py",
+    "scripts/collect_hog26_complete_outcomes.py",
     "scripts/hog26_scenario_clusters.py",
     "src/clasher/rl/outcome_model.py",
     "src/clasher/rl/public_margin_dynamics.py",

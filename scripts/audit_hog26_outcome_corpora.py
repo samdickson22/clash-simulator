@@ -16,6 +16,7 @@ import numpy as np
 from clasher.rl.direct_simple_behavior import load_direct_simple_behavior_corpus
 from scripts.collect_hog26_direct_simple_behavior import _atomic_json, file_sha256
 from scripts.hog26_scenario_clusters import episode_matchup_cluster
+from scripts.hog26_seeded_opening_audit import audit_seeded_openings
 from scripts.train_hog26_actor_outcome import validate_outcome_corpus
 
 
@@ -142,6 +143,8 @@ def audit(
             ):
                 raise ValueError("corpus stream ordinals are not contiguous")
 
+        opening_audit = audit_seeded_openings(metadata, corpus)
+
         starts = np.asarray(corpus.arrays["episode_starts"], dtype=np.bool_)
         dones = np.asarray(corpus.arrays["dones"], dtype=np.bool_)
         winners = np.asarray(corpus.arrays["terminal_winners"], dtype=np.int64)
@@ -196,6 +199,7 @@ def audit(
         episode_outcomes.append(outcomes)
         corpus_reports.append(
             {
+                "opening_audit": opening_audit,
                 "path": str(path.resolve()),
                 "sha256": digest,
                 "seed": seed,

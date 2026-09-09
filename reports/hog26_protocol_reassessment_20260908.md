@@ -949,3 +949,34 @@ Conservative independence correction:
   their ordinal-based interval/coverage claims are superseded by this rule.
 - No collection or training launched. Opening reconstruction, complete-game
   diversity, and randomized-start training support remain outstanding.
+
+
+Seeded opening reconstruction and live collection probe:
+- Added an opening audit that reconstructs the exact schedule from the pinned
+  supported-deck manifest, current public catalog compiler, token vocabulary,
+  collection seed, matchup rows, and episode quota. It compares every declared
+  scenario ID and public opening hand, then verifies recorded initial hands,
+  learner seats, episode indices, and matchup identity.
+- Integrated this check into the full corpus audit. Fixed-template corpora
+  remain marked as lacking verified seeded openings. Reconstruction does not
+  itself certify full-game diversity or statistical independence; clustering
+  remains conservative pending complete-game evidence and pipeline integration.
+- Added public_episode_diversity, which hashes complete actor entity IDs,
+  features/masks, hands, globals, and actions. Labels and episode ordinals cannot
+  make duplicate transcripts appear different.
+- Tests: 91 passed, 2 CUDA skips in the combined audit, trainer, frozen-evaluator,
+  protocol, collection and CPU/MPS reset suite; the additional trajectory
+  diversity regression passed. Source authority updated for opening audit,
+  scheduler, and collection entry point.
+- Frozen training-only probe plan before collection:
+  hog26_seeded_opening_diagnostic_plan_20260908.json. Seed1278951, balanced,
+  Procedural train 000-0, four openings per seat, eight retained games. No
+  outcome-model fitting, selection/calibration, or holdout data involved.
+- Live command started with exec session75744, PID69455. First chunk completed
+  after88.966seconds with zero completed games. Log:
+  reports/hog26_seeded_opening_diagnostic_seed1278951.log. Output will be
+  datasets/derived/hog26_seeded_opening_diagnostic_seed1278951/corpus.npz.
+  Keep polling this process; do not restart because an observation yields.
+- Next: wait for complete publication, full audit plus trajectory diversity,
+  then decide whether verified scenario IDs can support finer grouping. Do not
+  use partial shards or this mechanics probe as independent model acceptance.
