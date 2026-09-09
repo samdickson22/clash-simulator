@@ -63,7 +63,12 @@ def load_frozen_outcome_head(
     )
     if any(payload[key] != report.get(key) for key in fields):
         raise ValueError("frozen architecture disagrees with training report")
-    head = ActorOutcomeHead(**{key: payload[key] for key in fields})
+    dynamics = payload.get("margin_dynamics", "none")
+    if dynamics != report.get("margin_dynamics", "none"):
+        raise ValueError("frozen dynamics disagree with training report")
+    if dynamics != "none" and report.get("actor_feature_contract") != "public-global-dynamics":
+        raise ValueError("frozen dynamics require the causal public feature contract")
+    head = ActorOutcomeHead(**{key: payload[key] for key in fields}, margin_dynamics=dynamics)
     head.load_state_dict(state, strict=True)
     head.eval()
     head.requires_grad_(False)

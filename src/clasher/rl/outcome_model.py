@@ -23,7 +23,12 @@ class ActorOutcomePrediction:
 class ActorOutcomeLoss:
     total: Tensor
     outcome_nll: Tensor
-    tower_margin_huber: Tensor
+    tower_margin_loss: Tensor
+
+    @property
+    def tower_margin_huber(self) -> Tensor:
+        """Legacy accessor retained for callers using the default Huber loss."""
+        return self.tower_margin_loss
 
 
 def outcome_state_sha256(state: Mapping[str, Tensor]) -> str:
@@ -56,6 +61,7 @@ class ActorOutcomeHead(nn.Module):
         margin_residual_scale: float = 0.0,
         margin_feature_set: str = "public-globals",
         margin_progress_power: float = 0.0,
+        margin_dynamics: str = "none",
     ) -> None:
         super().__init__()
         if state_size < 18 or hidden_size < 1:
@@ -70,6 +76,13 @@ class ActorOutcomeHead(nn.Module):
             raise ValueError("unknown margin feature set")
         if not math.isfinite(margin_progress_power) or margin_progress_power < 0.0:
             raise ValueError("margin progress power must be finite and nonnegative")
+        if margin_dynamics not in {"none", "overtime-damage-race-v1"}:
+            raise ValueError("unknown public margin dynamics")
+        if margin_dynamics != "none" and (
+            state_size != 19 or margin_feature_set != "public-globals"
+            or structured_residual_scale != 0.0
+        ):
+            raise ValueError("overtime dynamics require one causal feature plus 18 public globals")
         self.state_size = int(state_size)
         self.hidden_size = int(hidden_size)
         self.separate_draw_trunk = bool(separate_draw_trunk)
@@ -77,11 +90,12 @@ class ActorOutcomeHead(nn.Module):
         self.margin_residual_scale = float(margin_residual_scale)
         self.margin_feature_set = margin_feature_set
         self.margin_progress_power = float(margin_progress_power)
+        self.margin_dynamics = margin_dynamics
         self.register_buffer("draw_logit_calibration", torch.zeros(()))
         self.register_buffer("decisive_logit_calibration", torch.zeros(()))
         self.register_buffer("outcome_probability_prior", torch.full((3,), 1.0 / 3.0))
         self.register_buffer("probability_shrinkage", torch.ones(()))
-        trunk_size = 18 if self.structured_residual_scale > 0.0 else state_size
+        trunk_size = 18 if self.structured_residual_scale > 0.0 or margin_dynamics != "none" else state_size
         self.trunk = nn.Sequential(
             nn.LayerNorm(trunk_size),
             nn.Linear(trunk_size, hidden_size),
@@ -179,13 +193,13 @@ class ActorOutcomeHead(nn.Module):
         self.probability_shrinkage.fill_(shrinkage)
 
     def forward(
-        self, state: Tensor, *, calibrated: bool = True
+        self, state: Tensor, *, calibrated: bool = True, apply_margin_dynamics: bool = True
     ) -> ActorOutcomePrediction:
         if state.shape[-1] != self.state_size:
             raise ValueError("actor outcome state width changed")
         public_globals = state[..., -18:]
         hidden = self.trunk(
-            public_globals if self.structured_trunk is not None else state
+            public_globals if self.structured_trunk is not None or self.margin_dynamics != "none" else state
         )
         draw_hidden = (
             hidden if self.draw_trunk is None else self.draw_trunk(public_globals)
@@ -236,6 +250,12 @@ class ActorOutcomeHead(nn.Module):
             ),
             dim=-1,
         )
+        if apply_margin_dynamics and self.margin_dynamics == "overtime-damage-race-v1":
+            terminal_margin = torch.where(
+                public_globals[..., 4] > 0,
+                (current_margin + state[..., 0]).clamp(-1.0, 1.0),
+                terminal_margin,
+            )
         if calibrated:
             probabilities = (
                 self.probability_shrinkage * outcome_logits.exp()
@@ -256,6 +276,7 @@ def actor_outcome_loss(
     margin_coefficient: float = 0.25,
     sample_weights: Tensor | None = None,
     margin_sample_weights: Tensor | None = None,
+    margin_loss: str = "huber",
 ) -> ActorOutcomeLoss:
     """Train undiscounted W/D/L first, with public terminal margin auxiliary."""
 
@@ -295,7 +316,10 @@ def actor_outcome_loss(
             raise ValueError("margin sample weights must have positive mass")
     targets = final_outcomes.to(torch.long) + 1
     outcome_rows = F.cross_entropy(prediction.outcome_logits, targets, reduction="none")
-    margin_rows = F.smooth_l1_loss(
+    if margin_loss not in {"huber", "absolute"}:
+        raise ValueError("unknown tower margin loss")
+    margin_loss_function = F.smooth_l1_loss if margin_loss == "huber" else F.l1_loss
+    margin_rows = margin_loss_function(
         prediction.terminal_tower_margin,
         terminal_tower_margins.to(prediction.terminal_tower_margin.dtype),
         reduction="none",
@@ -322,7 +346,7 @@ def actor_outcome_loss(
     return ActorOutcomeLoss(
         total=outcome_nll + margin_coefficient * margin,
         outcome_nll=outcome_nll,
-        tower_margin_huber=margin,
+        tower_margin_loss=margin,
     )
 
 

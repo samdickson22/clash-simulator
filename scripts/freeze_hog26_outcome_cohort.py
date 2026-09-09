@@ -68,6 +68,8 @@ def validate_cohort_reports(protocol, reports, root):
     for report in reports:
         if (
             any(report.get(key) != candidate[key] for key in fields)
+            or report.get("margin_dynamics", "none") != candidate.get("margin_dynamics", "none")
+            or report.get("margin_loss", "huber") != candidate.get("margin_loss", "huber")
             or any(report.get(key) != value for key, value in expected_weighting.items())
             or report.get("actor_feature_contract") != candidate["feature_set"]
             or report.get("actor_input_critic_fields") is not False

@@ -33,6 +33,7 @@ from clasher.rl.outcome_model import (
     actor_outcome_loss,
     outcome_state_sha256,
 )
+from clasher.rl.public_margin_dynamics import overtime_damage_race
 from scripts.pretrain_hog26_direct_simple_behavior import load_model
 from scripts.pretrain_hog26_factorized_policy import batch_inputs
 
@@ -379,10 +380,14 @@ def extract_actor_features(
     """Extract current public summaries or replay the frozen recurrent policy."""
 
     model.eval()
-    if feature_set == "public-globals":
-        return torch.as_tensor(
+    if feature_set in {"public-globals", "public-global-dynamics"}:
+        public = torch.as_tensor(
             np.asarray(corpus.arrays["global_features"], dtype=np.float32)
         ).clone()
+        if feature_set == "public-global-dynamics":
+            delta, _ = overtime_damage_race(public.numpy(), corpus.episode_offsets, window=20)
+            return torch.cat([torch.from_numpy(delta).unsqueeze(-1), public], dim=-1)
+        return public
     features: list[Tensor] = []
     for episode in range(corpus.episode_count):
         state = model.initial_state(1, device=device)
@@ -1059,6 +1064,7 @@ def main() -> None:
         "--feature-set",
         choices=(
             "public-globals",
+            "public-global-dynamics",
             "structured-summary",
             "spatial-mechanics",
             "structured-residual",
@@ -1069,6 +1075,7 @@ def main() -> None:
     )
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--margin-coefficient", type=float, default=0.25)
+    parser.add_argument("--margin-loss", choices=("huber", "absolute"), default="huber")
     parser.add_argument("--phase-balanced-outcome-training", action="store_true")
     parser.add_argument("--phase-balanced-margin-training", action="store_true")
     parser.add_argument("--loss-class-mass", type=float, default=0.45)
@@ -1320,6 +1327,7 @@ def main() -> None:
         margin_residual_scale=args.margin_residual_scale,
         margin_feature_set=args.margin_feature_set,
         margin_progress_power=args.margin_progress_power,
+        margin_dynamics=("overtime-damage-race-v1" if args.feature_set == "public-global-dynamics" else "none"),
     ).to(device)
     public_initialization_sha256: str | None = None
     if args.initialize_public_checkpoint is not None:
@@ -1543,13 +1551,15 @@ def main() -> None:
         for start in range(0, len(order), args.batch_size):
             rows = torch.as_tensor(order[start : start + args.batch_size])
             prediction = head(
-                train_features.index_select(0, rows).to(device), calibrated=False
+                train_features.index_select(0, rows).to(device), calibrated=False,
+                apply_margin_dynamics=False,
             )
             loss = actor_outcome_loss(
                 prediction,
                 train_outcomes.index_select(0, rows).to(device),
                 train_margins.index_select(0, rows).to(device),
                 margin_coefficient=args.margin_coefficient,
+                margin_loss=args.margin_loss,
                 sample_weights=train_weights.index_select(0, rows).to(device),
                 margin_sample_weights=margin_train_weights.index_select(0, rows).to(
                     device
@@ -2038,6 +2048,8 @@ def main() -> None:
         "margin_residual_scale": args.margin_residual_scale,
         "margin_feature_set": args.margin_feature_set,
         "margin_progress_power": args.margin_progress_power,
+        "margin_dynamics": head.margin_dynamics,
+        "margin_loss": args.margin_loss,
         "outcome_head_state_sha256": selected_state_sha256,
         "expected_outcome_head_state_sha256": (
             args.expected_outcome_state_sha256 or None
@@ -2218,6 +2230,7 @@ def main() -> None:
         "margin_residual_scale": args.margin_residual_scale,
         "margin_feature_set": args.margin_feature_set,
         "margin_progress_power": args.margin_progress_power,
+        "margin_dynamics": head.margin_dynamics,
         "public_initialization_sha256": public_initialization_sha256,
         "outcome_head_state_dict": best_state,
         "training_report": report,

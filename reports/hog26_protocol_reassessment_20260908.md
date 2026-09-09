@@ -776,3 +776,26 @@ calculation is bound into training, checkpoint configuration, feature replay
 and frozen evaluation. The old primary configuration remains guarded and must
 be replaced before use. No development/calibration/final data has been opened,
 and no search or policy updates are authorized by this diagnostic result.
+
+## Core candidate integration
+
+Moved causal overtime dynamics into `clasher.rl.public_margin_dynamics` with
+a compatibility import for the original diagnostic. Added the explicit
+`public-global-dynamics` feature contract: one fixed-window20 causal margin
+feature followed by the unchanged18 public globals. ActorOutcomeHead supports
+`overtime-damage-race-v1`, uses only the18 globals for WDL, and applies the
+causal margin correction only in overtime. Neural fitting explicitly disables
+the override so the regulation head retains the tested fitting objective.
+The trainer records dynamics and supports an explicit absolute margin loss;
+Huber remains the default for historical callers.
+
+Frozen checkpoint loading reconstructs the dynamics mode and rejects feature
+contract/report mismatches. Cohort design checks include dynamics and loss.
+Tests verify unchanged WDL probabilities, unchanged raw neural/regulation
+margins, causal label-independent feature replay, correct absolute loss, and
+dynamics checkpoint reconstruction. The existing47-test core/trainer/loader
+set passes, with an additional focused11-test dynamics/cohort pass; Ruff
+passes. This is not yet complete candidate integration: aggregate phase-loss
+options, campaign arguments/design replacement and full trainer verification
+remain before any development collection. Candidate readiness stays under
+review and no new labels were opened.
