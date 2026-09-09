@@ -1437,3 +1437,29 @@ Fixed mixed-distribution fitting comparison launched, 2026-09-09:
   Preserve the job; inspect both distributions and all slices after completion.
 - Candidate fitting, selection/calibration/final data, validation draw control
   and policy updates remain gated.
+
+
+Mixed-loss tree comparison complete, 2026-09-09:
+- Session42230/PID86554 exited0; all4family folds complete. Overall MAE gain
+  improves from0.03030 to0.03709. Late representative gain improves from
+ -0.02459 to -0.00691 but remains negative. Full-phase late gain is+0.01363.
+- Fitting late gains are positive in all4folds:0.02600/0.01155/0.02802/0.02789.
+  Excluded-family late gains are -0.02255/+0.00374/-0.00720/-0.00851.
+  Families006/007 pooled gain remains -0.01767; bridge-pressure -0.00774.
+  The tree now fits its late representatives well but does not generalize
+  reliably. Candidate freeze remains unjustified.
+- Saved full screen, tree_weight_comparison and tree_mixed_late_errors reports
+  under hog26_corrected_*_20260909.json. The worst residual errors are still
+  final-decision states, including forecast -0.25520 versus current -0.13055 and
+  terminal -0.13196 on balanced family001-3. Its live own tower has0.00426HP
+  fraction. Other errors also overshoot near low surviving tower health.
+- Public input review: current spatial summaries use pooled moments, not explicit
+  attacker-to-tower distances. Public sensor contract permits position, HP,
+  range, radius, damage and motion, but excludes attack-windup/cooldown fields.
+  This leaves a concrete representation hypothesis: encode visible per-tower
+  threat geometry as features, rather than assuming recent damage persists or
+  hard-clamping predictions by progress. No causation claim from these examples.
+- Next predeclare and test that public relational representation, with the fixed
+  mixed loss and family folds; preserve both evaluation distributions. Do not
+  add style/family-specific exceptions or tune a mixture sweep. No jobs remain
+  active. All independent evaluation data and policy updates remain gated.
