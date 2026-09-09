@@ -1799,3 +1799,26 @@ Single-projectile payload correction and Arrows differential, 2026-09-09:
 - Existing corpora remain historical data under old physics. Source authority
   remains stale by design; collection, fitting, and independent evaluation stay
   closed pending lifecycle repair and fresh protocol certification.
+
+Parallel lifecycle and RNG audits, 2026-09-09:
+- Poison differential reports reproduce shared native ticks at 20, 40, ...,
+  160 versus scalar target-local ticks at 25, 45, ..., 165. A target leaving
+  immediately after the first scan takes 92 lingering scalar damage and zero
+  native damage. CPU/MPS reports match across all 360 recorded rows and source
+  hashes were verified. Existing scalar and native tests encode contradictory
+  contracts; passing the native periodic-area test does not resolve this defect.
+- Artifacts: probe_hog26_poison_scalar_lifecycle_20260909.py and paired
+  hog26_poison_scalar_lifecycle_{cpu,mps}_20260909.json. These isolate scalar
+  target-buff/area updates and synthetic native stationary targets.
+- Stock TensorPythonRandom construction fails on MPS float64 Gaussian storage.
+  A diagnostic-only uncached Gaussian placeholder exposes a separate first
+  twist divergence in 623 of 624 words. Initial copied words match. CPU matches
+  30 scalar randrange(359) draws and final Python state. The underlying MPS
+  expression defect remains undiagnosed. Root reproduced the independent audit.
+- Artifact: hog26_arrows_rng_integration_audit_20260909.json. Use supplied
+  CPU exact RNG state for the initial Arrows correctness integration, with
+  explicit per-row reset/fanout ownership and measured cast-time transfers.
+  Opening-deal generation remains separate. Shared state ingress and consumer
+  ordering still require proof before claiming whole-game scalar RNG parity.
+- Single-projectile payload correction and Arrows traces committed as 46ec189e.
+  Arrows and Poison repairs remain required. No training or evaluation resumed.
