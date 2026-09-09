@@ -1,29 +1,43 @@
 from __future__ import annotations
 
-from dataclasses import fields
+from dataclasses import fields, replace
+from types import SimpleNamespace
 
 import pytest
 import torch
 
 from clasher.battle import BattleState
 from clasher.rl.common import BOARD_WIDTH
+from clasher.rl.seeded_deals import SeededDealSchedule
 from clasher.torch_sim.actions import NO_OP_ACTION
 from clasher.torch_sim.catalog import TensorCardCatalog
 from clasher.torch_sim.simple_adapter import SimpleGymAdapter, SimpleGymHistory
 from clasher.torch_sim.simple_catalog import FastCardCatalog
 from clasher.torch_sim.simple_effects import FAST_STATUS_STUN
 from clasher.torch_sim.simple_outcomes import FastMatchRules, FastTowerSpec
+from clasher.torch_sim.simple_rollout import SimpleGymRolloutBridge
 from clasher.torch_sim.simple_runtime import SimpleGymRuntime
+from scripts.collect_hog26_complete_outcomes import install_seeded_deals
 
 
 def _runtime(device_name: str) -> tuple[SimpleGymRuntime, dict[str, int]]:
     if device_name == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA unavailable")
-    device = torch.device(device_name)
+    device = torch.empty(0, device=device_name).device
     full = TensorCardCatalog.compile(
-        BattleState().card_loader, ["Knight", "Archers"], device=device
+        BattleState().card_loader, ["Knight", "Archers"], device="cpu"
     )
+
     catalog = FastCardCatalog.from_tensor_catalog(full)
+    catalog = replace(
+        catalog,
+        device=device,
+        **{
+            field.name: getattr(catalog, field.name).to(device)
+            for field in fields(catalog)
+            if isinstance(getattr(catalog, field.name), torch.Tensor)
+        },
+    )
     ids = {name: full.name_to_id[name] for name in ("Knight", "Archers")}
     decks = torch.full((2, 2, 8), ids["Knight"], dtype=torch.int64, device=device)
     tower_spec = FastTowerSpec(
@@ -61,6 +75,39 @@ def _runtime(device_name: str) -> tuple[SimpleGymRuntime, dict[str, int]]:
         ),
         ids,
     )
+
+
+@pytest.mark.parametrize("device_name", ["cpu", "mps"])
+def test_seeded_deals_are_applied_to_public_hand_and_cycle(device_name):
+    if device_name == "mps" and not torch.backends.mps.is_available():
+        pytest.skip("MPS unavailable")
+    runtime, ids = _runtime(device_name)
+    own = torch.tensor(
+        [ids["Knight"]] * 4 + [ids["Archers"]] * 4,
+        dtype=torch.int64,
+        device=runtime.device,
+    )
+    opponent = own.flip(0)
+    base = torch.stack([torch.stack([own, opponent]), torch.stack([opponent, own])])
+    schedule = SeededDealSchedule(
+        base,
+        torch.tensor([0, 1], device=runtime.device),
+        ["paired", "paired"],
+        seed=71,
+        episodes=4,
+    )
+    first = schedule.initial_decks()
+    observation = runtime.reset_rows(
+        torch.ones(2, dtype=torch.bool, device=runtime.device), deck_ids=first
+    )
+    assert torch.equal(runtime.action_state.hand_ids, first[:, :, :4])
+    assert torch.equal(runtime.action_state.cycle_ids, first[:, :, 4:])
+    assert torch.equal(observation.actor.hand_ids, first[:, :, :5] + 100)
+    mask = torch.tensor([True, False], device=runtime.device)
+    next_decks = schedule(0, mask, None)
+    observation = runtime.reset_rows(mask, deck_ids=next_decks)
+    assert torch.equal(observation.actor.hand_ids[0], next_decks[0, :, :5] + 100)
+    assert torch.equal(observation.actor.hand_ids[1], first[1, :, :5] + 100)
 
 
 def _placement_actions(runtime: SimpleGymRuntime) -> torch.Tensor:
@@ -262,3 +309,48 @@ def test_reset_rows_rejects_malformed_batch_contract() -> None:
             torch.ones(2, dtype=torch.bool),
             torch.ones((2, 2, 8), dtype=torch.int32),
         )
+
+
+@pytest.mark.parametrize("device_name", ["cpu", "mps"])
+def test_collection_deal_installation_resets_history_and_records_own_hand(device_name):
+    if device_name == "mps" and not torch.backends.mps.is_available():
+        pytest.skip("MPS unavailable")
+    runtime, ids = _runtime(device_name)
+    base = (
+        torch.tensor([ids["Knight"]] * 4 + [ids["Archers"]] * 4, device=runtime.device)
+        .expand(2, 2, 8)
+        .clone()
+    )
+    runtime.reset_rows(
+        torch.ones(2, dtype=torch.bool, device=runtime.device), deck_ids=base
+    )
+    bridge = SimpleGymRolloutBridge(runtime)
+    bridge.adapter.history.previous_rewards.fill_(3)
+    bridge.adapter.history.episode_starts.fill_(False)
+    collector = SimpleNamespace(
+        collector=SimpleNamespace(bridge=bridge),
+        metadata=SimpleNamespace(opponent_deck_names=("toy", "toy")),
+        learner_players=torch.tensor([0, 1], device=runtime.device),
+    )
+    metadata = install_seeded_deals(
+        collector, ["balanced", "balanced"], seed=72, episodes=4
+    )
+    boundary = bridge.observe()
+    assert boundary.episode_starts.all()
+    assert not boundary.previous_rewards.any()
+    for row, seat in enumerate([0, 1]):
+        assert (
+            boundary.actor.hand_ids[row, seat].tolist()
+            == metadata["initial_actor_hand_tokens_by_stream"][row][0]
+        )
+    schedule = collector.collector.reset_deck_provider
+    mask = torch.tensor([False, True], device=runtime.device)
+    boundary = bridge.reset_done(mask, deck_ids=schedule(0, mask, None))
+    assert (
+        boundary.actor.hand_ids[1, 1].tolist()
+        == metadata["initial_actor_hand_tokens_by_stream"][1][1]
+    )
+    assert (
+        boundary.actor.hand_ids[0, 0].tolist()
+        == metadata["initial_actor_hand_tokens_by_stream"][0][0]
+    )

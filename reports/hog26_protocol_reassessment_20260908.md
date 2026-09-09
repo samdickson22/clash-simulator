@@ -901,3 +901,26 @@ not justify launch by itself. Readiness remains under review. Next work must
 verify genuinely varying seeded initial scenarios, with paired-seat consistency
 and an audit of scenario identity, before collecting enlarged development or
 calibration data. No new evaluation games were launched.
+
+
+Seeded opening implementation checkpoint:
+- Added SeededDealSchedule with local NumPy RNG, precomputed ordered decks,
+  distinct deals within each matchup, paired-seat relative-deal equality,
+  and per-row advancement only at episode resets. Surplus unretained games
+  reuse the last planned opening.
+- Complete-game collection now accepts an explicit seeded-ordered-decks-v1
+  opening schedule. It installs the existing reset-provider hook before the
+  first policy observation, records scenario IDs and learner-visible opening
+  hand tokens, and rejects publication if a retained initial hand disagrees.
+  Legacy fixed-template collection remains explicit and unchanged by default.
+- Repaired the misplaced reset test and built the test fast catalog on CPU
+  before moving its tensors to the requested device. No production catalog
+  floating-point semantics changed.
+- Verification: seeded schedule, runtime reset, and collection tests: 14 passed,
+  2 skipped (CUDA unavailable). Seeded reset and bridge integration ran on both
+  CPU and MPS. These are functional reset tests, not full-game acceptance.
+- Still required: independently reconstruct and audit scenario metadata;
+  replace ordinal-only bootstrap groups with verified scenario groups;
+  test actual complete-game diversity and randomized-opening training support;
+  bind the final collection protocol and authority before evaluation launch.
+  No new corpus, training, or evaluation was launched in this checkpoint.

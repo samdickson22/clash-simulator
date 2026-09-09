@@ -18,6 +18,7 @@ import torch
 
 from clasher.rl.complete_outcomes import attach_complete_outcomes
 from clasher.rl.direct_simple_behavior import CompleteEpisodeBuilder
+from clasher.rl.seeded_deals import SeededDealSchedule
 from clasher.rl.simple_pytorch_backend import (
     DEFAULT_SIMPLE_SUPPORTED_DECKS,
     DEFAULT_SIMPLE_TOKEN_VOCABULARY,
@@ -87,6 +88,37 @@ def opponent_decks_for_split(
     return names
 
 
+def install_seeded_deals(collector, row_opponents, *, seed, episodes):
+    """Install opening variation before the first policy observation."""
+    bridge = collector.collector.bridge
+    runtime = bridge.runtime
+    base = torch.cat(
+        (runtime.action_state.hand_ids, runtime.action_state.cycle_ids), dim=-1
+    )
+    decks = collector.metadata.opponent_deck_names
+    keys = [
+        json.dumps([style, deck], separators=(",", ":"))
+        for style, deck in zip(row_opponents, decks, strict=True)
+    ]
+    schedule = SeededDealSchedule(
+        base, collector.learner_players, keys, seed=seed, episodes=episodes
+    )
+    collector.collector.reset_deck_provider = schedule
+    bridge.reset_done(
+        torch.ones(len(keys), dtype=torch.bool, device=base.device),
+        deck_ids=schedule.initial_decks(),
+    )
+    seats = collector.learner_players
+    rows = torch.arange(len(keys), device=base.device)
+    own_cards = schedule.table[:, rows, seats, :5]
+    own_tokens = runtime.projector.inputs.hand_token_lookup[own_cards]
+    metadata = schedule.metadata()
+    metadata["initial_actor_hand_tokens_by_stream"] = (
+        own_tokens.permute(1, 0, 2).cpu().tolist()
+    )
+    return metadata
+
+
 def collect(args: argparse.Namespace) -> dict[str, Any]:
     if args.output.exists() or args.report.exists():
         raise SystemExit("refusing to overwrite complete-outcome artifacts")
@@ -149,6 +181,17 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         opponent_deck_name_schedule=row_decks,
     )
     collector.policy.deterministic = True
+    opening_schedule = getattr(args, "opening_schedule", "fixed-template")
+    if opening_schedule not in {"fixed-template", "seeded-ordered-decks-v1"}:
+        raise ValueError("unknown opening schedule")
+    deal_metadata = None
+    if opening_schedule == "seeded-ordered-decks-v1":
+        deal_metadata = install_seeded_deals(
+            collector,
+            row_opponents,
+            seed=args.seed,
+            episodes=args.episodes_per_seat,
+        )
     state = model.initial_state(len(row_opponents), device=device)
     builder = CompleteEpisodeBuilder(
         stream_count=len(row_opponents),
@@ -156,7 +199,9 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         reset_hidden=state[0].detach().cpu().numpy(),
         reset_cell=state[1].detach().cpu().numpy(),
         extra_transition_keys=("terminal_winners", "next_global_features"),
-        spool_directory=args.output.with_suffix(".spool") if args.episodes_per_seat > 1 else None,
+        spool_directory=args.output.with_suffix(".spool")
+        if args.episodes_per_seat > 1
+        else None,
     )
     chunks = 0
     started = time.monotonic()
@@ -182,6 +227,16 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
             flush=True,
         )
     corpus = builder.finalize()
+    if deal_metadata is not None:
+        expected_hands = np.asarray(
+            deal_metadata["initial_actor_hand_tokens_by_stream"]
+        )[corpus.episode_stream_rows, corpus.episode_ordinals]
+        if not np.array_equal(
+            corpus.arrays["hand_ids"][corpus.episode_offsets[:-1]], expected_hands
+        ):
+            raise ValueError(
+                "retained game opening differs from the seeded deal schedule"
+            )
     learner_players = collector.learner_players.detach().cpu().numpy()
     opponent_index_by_stream = np.asarray(
         [opponents.index(value) for value in row_opponents], dtype=np.int64
@@ -208,6 +263,8 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
     metadata = {
         "schema": SCHEMA,
         "outcome_source": "natural-strategy-games",
+        "opening_schedule": opening_schedule,
+        "seeded_deals": deal_metadata,
         "seed": args.seed,
         "checkpoint": str(args.checkpoint.resolve()),
         "checkpoint_sha256": file_sha256(args.checkpoint),
@@ -280,6 +337,11 @@ def main() -> None:
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--seed", type=int, required=True)
     parser.add_argument("--episodes-per-seat", type=int, default=1)
+    parser.add_argument(
+        "--opening-schedule",
+        choices=("fixed-template", "seeded-ordered-decks-v1"),
+        default="fixed-template",
+    )
     parser.add_argument("--chunk-steps", type=int, default=64)
     parser.add_argument("--device", choices=("cpu", "mps", "cuda"), default="mps")
     parser.add_argument(
