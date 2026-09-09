@@ -1899,3 +1899,26 @@ Scalar reference route selected for further verification, 2026-09-09:
   full public appearance registry and observation confidence, then deterministic
   paired complete-game scalar replay under a distinct source/data authority.
   Old training/evaluation data are unchanged; collection/fitting stay closed.
+
+Scalar availability and spell appearance coverage, 2026-09-09:
+- Added scalar_policy_inputs: only provided position/type/body-stat features
+  receive confidence. Omitted body state and projectile combat fields remain
+  unknown. Reward feedback is fixed at zero; no critic inputs are accepted.
+  Public-mask-v2 is computed from the five public actor tensors only.
+- Added an executable frozen-policy boundary probe. Two independently
+  initialized calls match actions and recurrent tensors exactly, with all
+  critic fields absent. Input, recurrent, checkpoint, and source hashes are
+  recorded in hog26_scalar_policy_availability_boundary_20260909.json. This
+  supersedes the old all-features-exact smoke for interface confidence only;
+  it is not full-game replay or actor-view acceptance.
+- Expanded explicit cast appearance rules to Fireball, Giant Snowball, Rocket,
+  Log, Barbarian Barrel, Goblin Barrel and Poison. All identities exist in the
+  unchanged 494-token vocabulary. Pending carriers/rollers stay excluded, and
+  unresolved visible effects still fail closed. Actual cast lifecycles were
+  tested from both seats.
+- 26 focused tests passed across appearance, core projection and confidence,
+  including invariance of one seat's fixed rows/padding when only the other
+  seat's visible effect count changes. Ruff/diff checks pass.
+- Ordinary attack and tower projectile receipt binding is the next coverage
+  requirement. No complete-game corpus or optimizer work has started. A new
+  scalar source/data protocol still must be frozen before collection or fitting.

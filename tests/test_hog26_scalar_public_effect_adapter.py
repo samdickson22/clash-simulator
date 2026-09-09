@@ -103,3 +103,77 @@ def test_queued_roller_is_not_an_observed_effect_then_fails_unresolved():
     roller.time_alive = .65
     with pytest.raises(ValueError, match="no audited appearance"):
         _project([roller], ())
+
+
+@pytest.mark.parametrize("owner", [0, 1])
+@pytest.mark.parametrize("card,token,kind", [
+    ("Fireball", 289, 1), ("GiantSnowball", 336, 1), ("Rocket", 331, 1),
+    ("Log", 316, 1), ("BarbLog", 272, 1), ("GoblinBarrel", 297, 1),
+    ("Poison", 40, 2),
+])
+def test_serialized_spell_lifecycle_and_no_private_payload(card, token, kind, owner):
+    from scripts.hog26_scalar_public_effect_adapter import ScalarSpellAppearance
+
+    loader = CardDataLoader()
+    vocabulary = load_current_client_typed_vocabulary()
+    assert len(vocabulary.token_names) == 494
+    rule = ScalarSpellAppearance.compile(card, loader, vocabulary)
+    assert rule.token == token
+    battle = BattleState(rng=random.Random(19))
+    before = set(battle.entities)
+    spell = create_spell_from_json(loader.get_card(card)._raw_entry,
+                                   loader.load_card_definitions())
+    target = Position(9, 16)
+    assert spell.cast(battle, owner, target)
+    born = [e for key, e in battle.entities.items() if key not in before]
+    bindings = rule.bind_cast(born)
+    entity = born[0]
+    seen_visible = False
+    for tick in range(260):
+        ids, features, mask = _project(born, bindings)
+        pending = (isinstance(entity, RollingProjectile)
+                   and entity.time_alive + 1e-9 < entity.spawn_delay)
+        expected = int(entity.is_alive and not pending)
+        assert ids.shape == (1, 2, expected)
+        if expected:
+            seen_visible = True
+            assert (ids == token).all() and mask.all()
+            assert (features[..., 3 + kind] == 1).all()
+            # Mutations of labels and combat payload do not affect this frame.
+            saved = {key: getattr(entity, key, None) for key in
+                     ("damage", "source_name", "spell_name", "spawn_character_data",
+                      "target_position", "crown_tower_damage")}
+            entity.damage = 999999
+            entity.source_name = "unobservable source"
+            entity.spell_name = "unobservable cast name"
+            entity.spawn_character_data = {"secret": "future unit"}
+            entity.target_position = Position(-999, 999)
+            entity.crown_tower_damage = 999
+            changed = _project(born, bindings)
+            for a, b in zip((ids, features, mask), changed):
+                assert torch.equal(a, b)
+            for key, value in saved.items():
+                setattr(entity, key, value)
+        if not entity.is_alive:
+            break
+        entity.update(.05, battle)
+    assert seen_visible and not entity.is_alive
+    assert tick < 259
+
+
+def test_unknown_registry_identity_and_wrong_cast_receipts_fail_closed():
+    from types import SimpleNamespace
+
+    from scripts.hog26_scalar_public_effect_adapter import ScalarSpellAppearance
+
+    loader = CardDataLoader()
+    vocab = load_current_client_typed_vocabulary()
+    with pytest.raises(ValueError, match="no audited"):
+        ScalarSpellAppearance.compile("Zap", loader, vocab)
+    with pytest.raises(ValueError, match="no audited"):
+        ScalarSpellAppearance.compile("Poison", loader,
+                                      SimpleNamespace(resolve=lambda *_: 1))
+    _, born, _, _, _ = _cast(0)
+    rule = ScalarSpellAppearance.compile("Poison", loader, vocab)
+    with pytest.raises(ValueError, match="lifecycle"):
+        rule.bind_cast(born[:1])

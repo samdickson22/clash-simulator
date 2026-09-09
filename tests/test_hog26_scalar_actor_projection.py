@@ -83,3 +83,23 @@ def test_unresolved_effects_and_visible_capacity_overflow_reject():
     battle, builder, _, bindings = fixture(capacity=8)
     with pytest.raises(EntityCapacityError):
         project(battle, builder, bindings)
+
+
+def test_other_seat_visible_effect_count_cannot_change_hidden_seat_padding():
+    battle, builder, born, bindings = fixture()
+    identities = {id(entity) for entity in born}
+
+    def views():
+        return build_scalar_reference_actors(
+            battle, builder, appearances=bindings,
+            visible_to=lambda entity, seat: id(entity) not in identities or seat == 1,
+        )
+
+    before = views()
+    for entity in born:
+        entity.launch_delay = 0
+    after = views()
+    assert int(before[1].entity_mask.sum()) == 16
+    assert int(after[1].entity_mask.sum()) == 36
+    for field in fields(before[0]):
+        np.testing.assert_array_equal(getattr(before[0], field.name), getattr(after[0], field.name))
