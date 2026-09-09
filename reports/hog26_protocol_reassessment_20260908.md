@@ -1023,3 +1023,23 @@ Opening schedule bound to protocol collection:
 - The same diagnostic collector remains live (session75744/PID69455); latest
   observed chunk4 at357.36seconds, completed_by_stream=[0,0]. No restart,
   new collection, fitting, or holdout access occurred in this checkpoint.
+
+
+Complete-collector CPU comparison started without restarting MPS:
+- Frozen plan: hog26_seeded_opening_cpu_probe_plan_20260908.json. Same seed
+  1278951, balanced, Procedural train 000-0, ordinal0 in both seats, CPU with
+  OMP_NUM_THREADS=1 and MKL_NUM_THREADS=1. Two retained complete games.
+- This duplicates the first MPS opening pair for a device comparison and must
+  not enter the fitting mixture as independent extra games. No model updates.
+- CPU exec session28903/PID76314 remains live. Log:
+  reports/hog26_seeded_opening_cpu_probe_seed1278951.log. Output target:
+  datasets/derived/hog26_seeded_opening_cpu_probe_seed1278951/corpus.npz.
+- At the latest live check CPU had completed2chunks at156.537seconds with
+  completed_by_stream=[0,0]; MPS had completed7chunks at644.262seconds with
+  completed_by_stream=[0,1]. Initial chunk timing is not an end-to-end speed
+  result. Both processes survived user interruptions and were not restarted.
+- Next: after each complete publication, full corpus/opening audit. After both
+  publish, compare CPU complete games to MPS ordinal0 per seat using public
+  trajectories and terminal outcomes. Audit all8 MPS games for within-stream
+  transcript diversity. Keep the two corpora separate and do not read partial
+  spooled games to accelerate the comparison.

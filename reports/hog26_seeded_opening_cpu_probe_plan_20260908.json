@@ -1,0 +1,54 @@
+{
+  "acceptance_evidence": false,
+  "candidate_fitting": false,
+  "checks": [
+    "complete corpus audit",
+    "opening reconstruction",
+    "wall time through complete collection and publication",
+    "paired first-game public trajectories and outcome comparison after both runs finish"
+  ],
+  "device": "cpu",
+  "episodes_per_seat": 1,
+  "expected_games": 2,
+  "inference_authority": {
+    "runtime": {
+      "numpy": "2.3.5",
+      "torch": "2.10.0"
+    },
+    "schema": "clasher.hog26.inference-authority.v1",
+    "sources": {
+      "scripts/audit_hog26_outcome_corpora.py": "8a3e4639b866ecfa7e7ee1b7117b8ff12423bbc7ca17ff27218bf409b7f67311",
+      "scripts/audit_hog26_procedural_outcome_shard.py": "b547b41a620bc07938dda44afe042f5aacf628e594ddfa0670b81fdd35ff6900",
+      "scripts/collect_hog26_complete_outcomes.py": "d46ade82546e983db247ebba35b337600a570ff6efb072ddbf6a0170a8ae497f",
+      "scripts/collect_hog26_frozen_final.py": "a2fd794190e45503a8757226e1a313f880a9a090a744f1e387f0955aa817ce9d",
+      "scripts/evaluate_hog26_frozen_outcome.py": "c0cf83e2833bd1c5fa3c30a017900fce815e9d486103e01260c713740322f904",
+      "scripts/freeze_hog26_outcome_cohort.py": "9e0c1dd9b28dd63318fe232a2ca2692d3b469ed4c444be171a5c934f58de8305",
+      "scripts/hog26_frozen_outcome.py": "7d2f3f3bb0a70b775eb215d6306820f8ece2134fb60ee3d75403593bedc54192",
+      "scripts/hog26_inference_authority.py": "1ced2bacba277004386b5bd58e5bae3ebd822d9ff1fcf7f4f10ed6f8cabb9c6d",
+      "scripts/hog26_public_outcome_projection.py": "c110af897cb109850f2fe26feb9d62f91362c324d1a70745097998521c2bc540",
+      "scripts/hog26_public_slice_gates.py": "63557cee1c0c548b518049f6cb1aa43aede1b42edc38ccde5e8dcc5458bd2bec",
+      "scripts/hog26_scenario_clusters.py": "fa911b5ab98d347e702178df2814803a77018652515634c22bb1e1d9f0602347",
+      "scripts/hog26_seeded_opening_audit.py": "2a20f90759d5a692793df934a993fa13c25e34add95151bf53face9d33ec9330",
+      "scripts/run_hog26_procedural_outcome_shard.py": "8b162dbefae269be3e01793fe213837db12af58ca7a9d4f9d7c8b026bc62f1ec",
+      "scripts/train_hog26_actor_outcome.py": "b8e7ddb3a677f2a2dfb3df2cf63efba4f99ac693858fb2d705feb1497f0d112f",
+      "scripts/train_hog26_procedural_outcome_candidate.py": "8e8401412330351122c5ed51566f428191b3bb17d26ee88e87441f88ecceb635",
+      "src/clasher/rl/direct_simple_behavior.py": "3864b6290980cd1b1b72ff01deca2a41c7357c1fc339e7b0a1cc021d0229b27b",
+      "src/clasher/rl/outcome_model.py": "5dd1fd8f9f651324518c5d71e2ae04fd395cff48a13cdf49147f12279dc47377",
+      "src/clasher/rl/public_margin_dynamics.py": "76f5519789b9c5f7f0486f5222dde0ee70aaf78a046631137caadc85417977e6",
+      "src/clasher/rl/seeded_deals.py": "8dc9067cfd005c965eb63ac0f7cc6d63f0add3a4a01910759b8fc7042725847d"
+    }
+  },
+  "intraop_threads": 1,
+  "not_independent_of_reference": true,
+  "opening_schedule": "seeded-ordered-decks-v1",
+  "opponent_decks": [
+    "Procedural train 000-0"
+  ],
+  "opponents": [
+    "balanced"
+  ],
+  "reference": "hog26_seeded_opening_diagnostic_seed1278951 MPS ordinal0 only after complete publication",
+  "role": "training-only-throughput-and-device-parity-diagnostic",
+  "schema": "clasher.hog26.complete-collector-device-probe.v1",
+  "seed": 1278951
+}
