@@ -1043,3 +1043,21 @@ Complete-collector CPU comparison started without restarting MPS:
   trajectories and terminal outcomes. Audit all8 MPS games for within-stream
   transcript diversity. Keep the two corpora separate and do not read partial
   spooled games to accelerate the comparison.
+
+
+CPU probe completed and audited:
+- Session28903/PID76314 exited0 normally. Two complete games,781 retained
+  decisions,7chunks,549.172seconds. Episode lengths432/349, both learner losses,
+  no draws. These are device diagnostics, not model selection or acceptance.
+- Full corpus audit passed, including exact initial hands and seeded schedule
+  reconstruction: one shared relative deal across two physical seats.
+  Reports: hog26_seeded_opening_cpu_probe_seed1278951{,_audit,_diversity}.json.
+- Stored complete public transcript digests for the later device comparison.
+  One game per stream cannot establish within-stream opening diversity; the
+  report explicitly marks this limitation. Do not count the CPU replica as
+  additional independent data alongside the matching MPS opening pair.
+- CPU completed its pair in7chunks, whereas MPS first reached[1,1] in8chunks.
+  No claim of exact device parity or equivalent-work speedup is supported.
+  Compare full trajectories only after MPS complete publication; do not inspect
+  partial spool files. MPS session75744/PID69455 remains live at18m39s, latest
+  chunk11 at1060.496seconds, completed_by_stream=[1,1].

@@ -1,0 +1,100 @@
+{
+  "cell_outcomes": {
+    "balanced|Procedural train 000-0|seat0": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    },
+    "balanced|Procedural train 000-0|seat1": {
+      "draw": 0,
+      "loss": 1,
+      "win": 0
+    }
+  },
+  "checks": {
+    "complete_stream_coverage": true,
+    "contiguous_stream_ordinals": true,
+    "critic_inputs_absent": true,
+    "current_causal_actor_contract": true,
+    "exact_actor_relative_terminal_labels": true,
+    "exact_episode_boundaries": true,
+    "expected_decks_exact": true,
+    "expected_opponents_exact": true,
+    "expected_split_exact": true,
+    "finite_outcomes_and_margins": true,
+    "label_independent_public_mask_v2": true,
+    "supported_deck_authority_exact": true,
+    "unique_hashes": true,
+    "unique_seeds": true
+  },
+  "corpora": [
+    {
+      "episodes": 2,
+      "margin_maximum": -0.0800125002861023,
+      "margin_minimum": -0.35975179076194763,
+      "opening_audit": {
+        "distinct_planned_matchup_deals": 1,
+        "opening_schedule": "seeded-ordered-decks-v1",
+        "scope": "schedule reconstruction and recorded learner opening; full-game diversity audited separately",
+        "seeded_openings_verified": true,
+        "verified_initial_actor_hands": 2
+      },
+      "opponent_deck_split": null,
+      "outcomes": {
+        "draw": 0,
+        "loss": 2,
+        "win": 0
+      },
+      "path": "/Users/sam/.codex/worktrees/clasher-event-policy/datasets/derived/hog26_seeded_opening_cpu_probe_seed1278951/corpus.npz",
+      "rows": 781,
+      "seed": 1278951,
+      "sha256": "d8c1bfc2727251037e2337bd08c58dd24356815116e8b7ee15ed974fec9000f8",
+      "supported_decks_sha256": "6cb22eed1111ce2a21e240eaa5e6adcdd0357fdb04b97127c58ff6600b535ac8"
+    }
+  ],
+  "corpus_count": 1,
+  "episodes": 2,
+  "natural_diversity": {
+    "cells_with_both_decisive_outcomes": 0,
+    "opponent_decks": [
+      "Procedural train 000-0"
+    ],
+    "opponent_styles": [
+      "balanced"
+    ],
+    "phase_matchup_clusters": {
+      "early": {
+        "clusters": 1,
+        "with_both": 0,
+        "with_loss": 1,
+        "with_win": 0
+      },
+      "late": {
+        "clusters": 0,
+        "with_both": 0,
+        "with_loss": 0,
+        "with_win": 0
+      },
+      "middle": {
+        "clusters": 1,
+        "with_both": 0,
+        "with_loss": 1,
+        "with_win": 0
+      }
+    },
+    "style_deck_seat_cells": 2
+  },
+  "outcomes": {
+    "draw": 0,
+    "loss": 2,
+    "win": 0
+  },
+  "phase_rows": {
+    "early": 500,
+    "late": 0,
+    "middle": 281
+  },
+  "rows": 781,
+  "schema": "clasher.hog26.outcome-corpus-audit.v1",
+  "status": "passed"
+}
