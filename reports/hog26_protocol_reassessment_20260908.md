@@ -1520,3 +1520,32 @@ Geometry comparison complete; public event coverage omission found, 2026-09-09:
   Verify against native effect traces and preserve frozen-policy behavior before
   deciding on audited replay enrichment or any fresh collection. No independent
   evaluation data were opened and no policy updates occurred. No jobs remain.
+
+
+Bounded public-effect projection probe completed, 2026-09-09:
+- Built a separate diagnostic interface accepting only observed positions,
+  affiliation, generic appearance class and an explicit per-seat visibility
+  mask. No source-card identity, target lock/coordinates, future damage,
+  lifetime, status schedule or impact time is accepted by the projection API.
+- Important audit constraint: native FAST_EFFECT_AREA also represents delayed
+  direct/melee hits. Native active effects are not automatically visible sprites.
+  A production appearance registry must distinguish public effects from those
+  internal combat queues before any corpus enrichment. No blanket active mask.
+- Four unit tests pass for visibility masking, canonical seats/appearance,
+  unknown appearance masking and required boolean visibility. A known visible
+  projectile fixture traverses x=0/400/800logic units, then disappears on impact.
+- Native CPU and indexedMPS0probe frames are identical. Projection is read-only;
+  stepping with and without it preserves identical full native state/effect
+  digests and statuses. Perturbing all non-public effect fields changes no current
+  projected feature or mask. The native control receives expected impact damage.
+- Initial unindexedMPSfixture failed the existing strict device comparison;
+  rerun with mps:0matches the actual tensor device and passes. This is functional
+  fixture evidence, not complete simulator/device acceptance or a speed claim.
+- Artifact: hog26_native_public_effect_probe_20260909.json. Probe scripts:
+  hog26_public_effect_probe.py and probe_hog26_native_public_effects_20260909.py.
+  No policy input path or production inference source was modified.
+- Next: bind a public appearance registry to actual supported projectile/area
+  definitions and verify native-to-public event traces. Only then assess an
+  exact frozen-policy replay enrichment route, retaining all original corpus
+  action/terminal-label digests. Current corpora have not been enriched. Further
+  head tuning, candidate fitting and independent evaluation remain gated.
