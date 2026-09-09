@@ -1729,3 +1729,27 @@ Public delivery-flight route verified, 2026-09-09:
   was applied and no sidecar bit-identity or complete-game acceptance is claimed.
 - Rolling and area/instant routes still require separate handling. No enrichment,
   model fitting, independent labels or policy updates.
+
+
+Rolling-body prototype exposed a native/scalar lifecycle mismatch, 2026-09-09:
+- Added a diagnostic rolling-pool projector using serialized rolling-body token,
+  current position, affiliation and activity. Two tests pass for private hit-
+  ledger/target/payload invariance and unregistered-body rejection. No policy
+  inputs or physics were changed.
+- CPU native160tick probe captures50LogProjectileRolling frames. However its
+  first frame is near the king launch point, approximately(8.917,2.682), at tick1.
+  Runtime _rolling_commands supplies king-source coordinates as the rolling
+  origin and the selected placement as its direction target.
+- Instantiating scalar Log at the same player0target(3.5,14.5) creates a
+  RollingProjectile at(3.5,14.5), with1.833385942seconds spawn delay and10.1tiles
+  rolling range. Scalar RollingProjectileSpell.cast explicitly uses placement
+  as rolling origin after casting delay. Thus the native trajectory/lifecycle
+  is not merely missing a public projection; its rolling command semantics differ.
+- Saved hog26_public_effect_rolling_cpu_20260909.json and
+  hog26_log_origin_lifecycle_mismatch_20260909.json. Do not certify this rolling
+  view or enrich training corpora with it as a scalar-equivalent public event.
+  Additional MPSrolling validation was not launched after this mismatch surfaced.
+- Delivery flight work is committed separately asd55982fd. The current rolling
+  work remains an explicit diagnostic. Native Log origin/delay and earlier
+  Arrows timing differences need adjudication before model/corpus work resumes.
+  No policy updates or independent evaluation data were opened.

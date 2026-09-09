@@ -26,6 +26,10 @@ from scripts.hog26_primary_effect_transition_guard import (
     require_supported_primary_births,
 )
 from scripts.hog26_public_delivery_flight_rules import with_public_delivery_flights
+from scripts.hog26_public_rolling_sidecar import (
+    compile_public_rolling_tokens,
+    project_public_rollers,
+)
 from scripts.hog26_public_tower_shot_rules import with_public_tower_shots
 
 
@@ -59,6 +63,7 @@ def main():
     parser.add_argument("--transition-guard", action="store_true")
     parser.add_argument("--exact-muzzle-probe", action="store_true")
     parser.add_argument("--delivery-flights", action="store_true")
+    parser.add_argument("--rolling-bodies", action="store_true")
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError("refusing to overwrite runtime probe")
@@ -98,6 +103,8 @@ def main():
             rules, setup.spawn_blueprints.fast_cards, loader, inventory,
         )
     sidecar_token_names = vocabulary.token_names
+    rolling_tokens = (compile_public_rolling_tokens(setup.spawn_blueprints.fast_cards,
+                      setup.cards.names, loader, vocabulary) if args.rolling_bodies else None)
     if args.tower_shots:
         princess = load_princess_tower_character_data(loader.data_file)
         rules, sidecar_token_names = with_public_tower_shots(
@@ -149,6 +156,16 @@ def main():
                     record["transition_gap_frames"] += 1
             try:
                 tokens, features, mask = project_primary_effect_pool(effects, rules)
+                if rolling_tokens is not None:
+                    rollers = replace(runtime.rolling_spells, **{
+                        field.name: getattr(runtime.rolling_spells, field.name)[index:index + 1]
+                        for field in fields(runtime.rolling_spells)
+                        if isinstance(getattr(runtime.rolling_spells, field.name), torch.Tensor)
+                    })
+                    rolling_ids, rolling_features, rolling_mask = project_public_rollers(rollers, rolling_tokens)
+                    tokens = torch.cat((tokens, rolling_ids), dim=2)
+                    features = torch.cat((features, rolling_features), dim=2)
+                    mask = torch.cat((mask, rolling_mask), dim=2)
             except ValueError:
                 record["rejected_frames"] += 1
                 sidecar_digest.update(f"{tick}:{index}:rejected".encode())
@@ -176,6 +193,7 @@ def main():
                    "transition_guard_audited": args.transition_guard,
                    "exact_muzzle_probe": args.exact_muzzle_probe,
                    "delivery_flights": delivery_names,
+                   "rolling_bodies": args.rolling_bodies,
                    "allocator_variant_sha256": allocator_variant_sha256,
                    "sidecar_trace_sha256": sidecar_digest.hexdigest(),
                    "final_native_state_sha256": runtime_hash(runtime),
