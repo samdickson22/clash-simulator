@@ -71,7 +71,9 @@ def _spell_runtime(spell_name: str) -> tuple[SimpleGymRuntime, int, int]:
 @pytest.mark.parametrize(
     ("spell_name", "damage", "tower_multiplier", "travels"),
     (
-        ("Fireball", 269.0, 0.25, True),
+        ("Fireball", 688.0, 0.25, True),
+        ("GiantSnowball", 179.0, 45.0 / 179.0, True),
+        ("Rocket", 1484.0, 342.0 / 1484.0, True),
         ("Arrows", 144.0, 0.20, False),
     ),
 )
@@ -95,7 +97,7 @@ def test_simple_spell_action_uses_one_effect_path_and_per_hit_tower_scale(
         assert bool(runtime.effects.active[0, 0])
         assert runtime.state.hp[0, troop_slot] == troop_before
         noop = torch.full((1, 2), NO_OP_ACTION, dtype=torch.int64)
-        for _ in range(50):
+        for _ in range(160):
             runtime.step_tick(noop)
             if not bool(runtime.effects.active[0, 0]):
                 break
@@ -103,7 +105,7 @@ def test_simple_spell_action_uses_one_effect_path_and_per_hit_tower_scale(
         assert not bool(runtime.effects.active[0, 0])
 
     torch.testing.assert_close(
-        runtime.state.hp[0, troop_slot], troop_before - damage
+        runtime.state.hp[0, troop_slot], (troop_before - damage).clamp_min(0)
     )
     torch.testing.assert_close(
         runtime.state.hp[0, 3],

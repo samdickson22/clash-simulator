@@ -1776,3 +1776,26 @@ Native rolling lifecycle repaired and bounded scalar parity tested, 2026-09-09:
   Next address remaining spell lifecycle differences, especially Arrows timing,
   then perform full-game recertification and freeze a fresh data/source protocol.
   No collection, fitting, independent evaluation labels or policy updates opened.
+
+Single-projectile payload correction and Arrows differential, 2026-09-09:
+- Single-wave projectile spells now use normalized scalar payload damage and
+  explicit crown damage ratios. Fireball changes from 269 to 688 troop damage,
+  Giant Snowball from 70 to 179, and Rocket from 580 to 1484. Focused runtime
+  tests cover troop and crown hits. This does not certify flight trajectories.
+- The paired Arrows probe records both seats over 60 ticks on CPU and MPS.
+  Reports match exactly across devices. Native applies approximately 28.8 crown
+  damage on tick 1 with no surviving projectile; scalar creates 30 projectiles
+  in three groups of ten and applies 25 damage on ticks 20, 24, and 29 in this
+  fixture. Scalar total is 75. Arrows remains defective and is not repaired by
+  the single-projectile payload change.
+- Artifacts: hog26_arrows_scalar_lifecycle_cpu_20260909.json and
+  hog26_arrows_scalar_lifecycle_mps_20260909.json. The probe freezes other scalar
+  entities and updates only spell projectiles; it is an isolated lifecycle
+  comparison, not a complete-game simulator certificate.
+- Independent source audit identifies required cast-time RNG consumption,
+  per-wave shared stable-entity hit ledgers, delayed launches, and integer flight
+  geometry. The simple runtime has no existing RNG owner. A locally seeded
+  substitute would not establish scalar RNG-stream parity.
+- Existing corpora remain historical data under old physics. Source authority
+  remains stale by design; collection, fitting, and independent evaluation stay
+  closed pending lifecycle repair and fresh protocol certification.

@@ -726,6 +726,12 @@ class FastCardCatalog:
                         spell_projectile_data.get("crownTowerDamagePercent", 0) or 0
                     )
                     tower_multiplier[card_id] = max(0.0, 1.0 + crown_percent / 100.0)
+                    if waves == 1 and not grouped:
+                        spell_payload = create_spell_from_json(raw)
+                        effect_damage[card_id] = float(spell_payload.damage)
+                        crown_damage = getattr(spell_payload, "crown_tower_damage", None)
+                        if crown_damage is not None and spell_payload.damage > 0:
+                            tower_multiplier[card_id] = float(crown_damage) / float(spell_payload.damage)
                     buff = spell_projectile_data.get("targetBuffData") or {}
                     compile_status_buff_(
                         card_id,
