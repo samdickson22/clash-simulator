@@ -1002,3 +1002,24 @@ Verified opening groups wired into evaluation:
   support under shuffled openings remain pending.
 - Probe session75744/PID69455 verified live after4m34s; chunk3 completed at
   267.281seconds, completed_by_stream=[0,0]. Continue the same process.
+
+
+Opening schedule bound to protocol collection:
+- Found and fixed a silent fallback: procedural/final wrappers did not pass
+  opening_schedule, which would have collected fixed templates even after
+  schedule verification existed. Both generated and reserved natural stages
+  now carry the declared schedule through collection.
+- Marked completed training stages fixed-template; proposed unopened selection,
+  calibration, generated final, and reserved final stages seeded-ordered-decks-v1.
+  Readiness remains under review; these declarations do not authorize launch.
+- Stage full audits require the expected opening schedule. Candidate input
+  preflight requires seeded stages to have verified opening-audit evidence.
+  Final metadata validation rejects a silent fixed-template fallback.
+- Bound wrapper/audit source files in inference authority and recaptured the
+  protocol hashes. Historical original protocol retains its legacy defaults.
+- Validation: 50 focused command/audit/protocol/candidate/final-evaluation tests
+  passed; Ruff passed. Explicit tests cover both natural final argument paths,
+  fixed training declarations, and rejection of a mismatched final schedule.
+- The same diagnostic collector remains live (session75744/PID69455); latest
+  observed chunk4 at357.36seconds, completed_by_stream=[0,0]. No restart,
+  new collection, fitting, or holdout access occurred in this checkpoint.

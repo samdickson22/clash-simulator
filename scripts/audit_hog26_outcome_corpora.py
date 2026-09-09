@@ -70,6 +70,7 @@ def audit(
     expected_opponents: set[str] | None = None,
     expected_supported_decks_sha256: str | None = None,
     expected_split: str | None = None,
+    expected_opening_schedule: str | None = None,
     mmap_directory: Path | None = None,
 ) -> dict[str, Any]:
     if mmap_directory is None:
@@ -77,7 +78,8 @@ def audit(
             return audit(
                 paths, expected_decks=expected_decks, expected_opponents=expected_opponents,
                 expected_supported_decks_sha256=expected_supported_decks_sha256,
-                expected_split=expected_split, mmap_directory=Path(directory),
+                expected_split=expected_split, expected_opening_schedule=expected_opening_schedule,
+                mmap_directory=Path(directory),
             )
     if not paths:
         raise ValueError("at least one outcome corpus is required")
@@ -143,6 +145,9 @@ def audit(
             ):
                 raise ValueError("corpus stream ordinals are not contiguous")
 
+        if (expected_opening_schedule is not None
+                and metadata.get("opening_schedule", "fixed-template") != expected_opening_schedule):
+            raise ValueError("corpus opening schedule differs from protocol")
         opening_audit = audit_seeded_openings(metadata, corpus)
         episode_clusters = corpus_matchup_clusters(metadata, corpus)
 

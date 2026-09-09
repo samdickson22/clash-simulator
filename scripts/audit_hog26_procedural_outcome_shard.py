@@ -29,6 +29,7 @@ def shard_expectations(
         "expected_opponents": {str(value) for value in row["opponents"]},
         "expected_supported_decks_sha256": file_sha256(supported_path),
         "expected_split": str(row["split"]),
+        "expected_opening_schedule": row.get("opening_schedule", "fixed-template"),
     }
 
 

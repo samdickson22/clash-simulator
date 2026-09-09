@@ -60,6 +60,9 @@ def validate_final_metadata(protocol, role, metadata, *, root):
         or metadata.get("checkpoint_sha256") != protocol["base_policy"]["sha256"]
     ):
         raise ValueError("final corpus policy/seed authority differs")
+    if (role != "controlled_draw" and metadata.get("opening_schedule", "fixed-template")
+            != stage.get("opening_schedule", "fixed-template")):
+        raise ValueError("final corpus opening schedule differs from protocol")
     if role == "generated":
         expected = shard_expectations(protocol, stage, root=root)
         if (

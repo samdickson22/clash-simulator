@@ -61,3 +61,12 @@ def test_development_and_calibration_use_disjoint_whole_families() -> None:
     )
     assert development.seed != calibration.seed
     assert development.episodes_per_seat == calibration.episodes_per_seat == 2
+
+
+
+def test_reassessed_protocol_requests_seeded_unopened_stages():
+    protocol = load_protocol(ROOT / "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json", ROOT)
+    for stage in [protocol["development_selection"], protocol["probability_calibration"]]:
+        assert collection_args(protocol, stage, root=ROOT, device="cpu").opening_schedule == "seeded-ordered-decks-v1"
+    for stage in protocol["training"]:
+        assert collection_args(protocol, stage, root=ROOT, device="cpu").opening_schedule == "fixed-template"

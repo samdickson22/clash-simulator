@@ -15,10 +15,12 @@ def protocol():
 
 def test_final_arguments_preserve_declared_counts_and_authorities(protocol, tmp_path):
     generated = collector.final_collection_args(protocol, "generated", root=tmp_path, device="cpu")
+    assert generated.opening_schedule == "seeded-ordered-decks-v1"
     assert generated.episodes_per_seat == 16
     assert generated.opponent_family_id == tuple(protocol["final_holdout"]["generated"]["family_ids"])
     assert generated.opponent_deck_split == "holdout"
     reserved = collector.final_collection_args(protocol, "reserved_original", root=tmp_path, device="cpu")
+    assert reserved.opening_schedule == "seeded-ordered-decks-v1"
     assert reserved.opponent_decks == "RHogs AQ 2.9 Cycle"
     assert reserved.opponent_deck_split == ""
     assert reserved.supported_decks_path == tmp_path / protocol["original_decks"]["path"]
@@ -65,6 +67,7 @@ def test_collection_publishes_authority_only_after_audit(protocol, tmp_path, mon
         args.output.parent.mkdir(parents=True)
         args.output.write_text("synthetic test bytes")
         report = {
+            "opening_schedule": args.opening_schedule,
             "seed": stage["seed"], "checkpoint_sha256": protocol["base_policy"]["sha256"],
             "opponents": stage["opponents"], "opponent_decks": [stage["deck"]],
             "supported_decks_sha256": protocol["original_decks"]["sha256"],

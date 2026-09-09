@@ -34,6 +34,7 @@ def final_collection_args(protocol, role, *, root, device):
         raise ValueError("unknown final stage")
     return argparse.Namespace(
         **common, episodes_per_seat=stage["episodes_per_seat"],
+        opening_schedule=stage.get("opening_schedule", "fixed-template"),
         opponents=",".join(stage["opponents"]), opponent_decks=stage["deck"],
         opponent_deck_split="", opponent_family_id=(),
         supported_decks_path=root / protocol["original_decks"]["path"],
@@ -66,6 +67,7 @@ def collect_final_stage(manifest_path, manifest_sha256, role, *, root, device):
         expected = shard_expectations(protocol, stage, root=root)
     elif role == "reserved_original":
         expected = {
+            "expected_opening_schedule": stage.get("opening_schedule", "fixed-template"),
             "expected_decks": {stage["deck"]},
             "expected_opponents": set(stage["opponents"]),
             "expected_supported_decks_sha256": protocol["original_decks"]["sha256"],

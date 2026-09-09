@@ -80,7 +80,10 @@ def validate_training_inputs(protocol: dict[str, Any], *, root: Path) -> None:
         with np.load(corpus, allow_pickle=False) as archive:
             metadata = json.loads(str(archive["metadata_json"]))
         if (
-            set(metadata["opponents"]) != expected["expected_opponents"]
+            metadata.get("opening_schedule", "fixed-template") != expected["expected_opening_schedule"]
+            or (expected["expected_opening_schedule"] == "seeded-ordered-decks-v1"
+                and audited.get("opening_audit", {}).get("seeded_openings_verified") is not True)
+            or set(metadata["opponents"]) != expected["expected_opponents"]
             or set(metadata["opponent_decks"]) != expected["expected_decks"]
             or metadata["supported_decks_sha256"]
             != expected["expected_supported_decks_sha256"]

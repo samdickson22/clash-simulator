@@ -281,7 +281,8 @@ def test_reserved_metadata_cannot_substitute_another_deck(tmp_path):
     protocol, loaded, _ = fixture()
     stage = protocol["final_holdout"]["reserved_original"]
     metadata = next(m for m, _ in loaded if m["seed"] == stage["seed"])
-    metadata.update(checkpoint_sha256=protocol["base_policy"]["sha256"],
+    metadata.update(opening_schedule=stage["opening_schedule"],
+                    checkpoint_sha256=protocol["base_policy"]["sha256"],
                     supported_decks_sha256=protocol["original_decks"]["sha256"])
     validate_final_metadata(protocol, "reserved_original", metadata, root=tmp_path)
     metadata["opponent_decks"] = ["wrong-deck"]
@@ -348,3 +349,15 @@ def test_repeated_fixed_openings_fail_coverage_even_with_perfect_predictions():
     assert not result["passed"]
     generated = result["public_slices"]["groups"]["generated"]
     assert not generated["slices"]["overall"]["coverage_passed"]
+
+
+
+def test_final_metadata_rejects_silent_fixed_opening_fallback(tmp_path):
+    from scripts.evaluate_hog26_frozen_outcome import validate_final_metadata
+
+    protocol, _, _ = fixture()
+    stage = protocol["final_holdout"]["reserved_original"]
+    metadata = {"seed": stage["seed"], "checkpoint_sha256": protocol["base_policy"]["sha256"],
+                "opening_schedule": "fixed-template"}
+    with pytest.raises(ValueError, match="opening schedule"):
+        validate_final_metadata(protocol, "reserved_original", metadata, root=tmp_path)

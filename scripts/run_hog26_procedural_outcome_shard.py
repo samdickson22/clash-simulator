@@ -44,6 +44,7 @@ def collection_args(
         report=root / row["output_report"],
         seed=int(row["seed"]),
         episodes_per_seat=int(row["episodes_per_seat"]),
+        opening_schedule=row.get("opening_schedule", "fixed-template"),
         chunk_steps=64,
         device=device,
         opponents=",".join(row["opponents"]),

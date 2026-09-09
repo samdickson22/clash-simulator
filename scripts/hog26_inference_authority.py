@@ -6,6 +6,9 @@ import numpy as np
 import torch
 
 SOURCES = (
+    "scripts/run_hog26_procedural_outcome_shard.py",
+    "scripts/collect_hog26_frozen_final.py",
+    "scripts/audit_hog26_procedural_outcome_shard.py",
     "scripts/hog26_seeded_opening_audit.py",
     "src/clasher/rl/seeded_deals.py",
     "scripts/collect_hog26_complete_outcomes.py",
