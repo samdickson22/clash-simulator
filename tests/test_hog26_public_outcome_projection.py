@@ -64,3 +64,14 @@ def test_projection_cannot_hide_critic_fields(tmp_path):
     path, audit, _ = fixture(tmp_path, critic_entities=np.ones(3))
     with pytest.raises(ValueError, match="privileged critic"):
         load_public_outcome_projection(path, audit_path=audit)
+
+
+def test_seeded_projection_retains_public_hands_for_opening_audit(tmp_path):
+    metadata = {"complete_episodes_only": True, "row_count": 6, "episode_count": 2,
+                "opening_schedule": "seeded-ordered-decks-v1"}
+    hands = np.arange(30, dtype=np.int64).reshape(6, 5)
+    path, audit, _ = fixture(tmp_path, metadata_json=np.asarray(json.dumps(metadata)),
+                             hand_ids=hands)
+    _, corpus = load_public_outcome_projection(path, audit_path=audit)
+    np.testing.assert_array_equal(corpus.arrays["hand_ids"], hands)
+    assert "entity_features" not in corpus.arrays

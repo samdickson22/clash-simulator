@@ -8,7 +8,7 @@ from typing import Any
 import numpy as np
 import torch
 
-from scripts.hog26_scenario_clusters import episode_matchup_cluster
+from scripts.hog26_scenario_clusters import corpus_matchup_clusters
 
 
 def weighted_binary_auc(labels, scores, weights):
@@ -368,6 +368,7 @@ def evaluate_loaded_full_phase_margins(
         if stage == "holdout":
             selected = selected and metadata["seed"] == protocol["final_holdout"]["generated"]["seed"]
         if selected:
+            episode_clusters = corpus_matchup_clusters(metadata, corpus)
             predictions = [
                 head(batch.to(device))
                 for batch in features[offset:offset + corpus.row_count].split(2048)
@@ -383,7 +384,7 @@ def evaluate_loaded_full_phase_margins(
             for episode, (begin, end) in enumerate(zip(
                 corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True
             )):
-                cluster = episode_matchup_cluster(metadata, corpus, episode)
+                cluster = episode_clusters[episode]
                 phase_ids = np.minimum((public[begin:end, 0] * 3).astype(int), 2)
                 for phase, name in enumerate(records):
                     rows = np.flatnonzero(phase_ids == phase) + begin

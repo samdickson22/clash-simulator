@@ -980,3 +980,25 @@ Seeded opening reconstruction and live collection probe:
 - Next: wait for complete publication, full audit plus trajectory diversity,
   then decide whether verified scenario IDs can support finer grouping. Do not
   use partial shards or this mechanics probe as independent model acceptance.
+
+
+Verified opening groups wired into evaluation:
+- Added corpus_matchup_clusters. It runs opening reconstruction and compares
+  recorded initial public hands before returning seeded-deal groups. The IDs
+  omit seed/ordinal and pair physical seats by the relative ordered deal.
+  Fixed deterministic openings retain conservative style/deck groups.
+- The full corpus audit, representative-phase metrics, and full-phase margin
+  metrics now use this corpus-level path. A fabricated recorded hand rejects
+  evaluation rather than receiving a distinct group.
+- The public projection retains hand_ids only for seeded-opening corpora so
+  downstream metrics can repeat the opening check without loading entities.
+  Hands remain public provenance; public-global model inputs are unchanged.
+- Tests: 79 focused audit/trainer/gate/protocol/frozen-evaluator tests passed.
+  Follow-up projection/opening tests passed14 including new projection and
+  representative-phase integration cases. Ruff passed. Protocol source hashes
+  recaptured; no collection-runtime source was modified during the live probe.
+- This enables verified scenario grouping, not model acceptance or clearance
+  to collect evaluation data. Actual complete-game probe diversity and fitting
+  support under shuffled openings remain pending.
+- Probe session75744/PID69455 verified live after4m34s; chunk3 completed at
+  267.281seconds, completed_by_stream=[0,0]. Continue the same process.

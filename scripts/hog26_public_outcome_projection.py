@@ -38,6 +38,8 @@ def load_public_outcome_projection(path, *, audit_path):
         if any(name.startswith("critic_") for name in archive.files):
             raise ValueError("public outcome archive contains privileged critic fields")
         metadata = json.loads(str(archive["metadata_json"].item()))
+        if metadata.get("opening_schedule") == "seeded-ordered-decks-v1":
+            row_names = (*row_names, "hand_ids")
         corpus = DirectSimpleBehaviorCorpus(
             arrays={name: archive[name] for name in row_names},
             episode_offsets=archive["episode_offsets"],

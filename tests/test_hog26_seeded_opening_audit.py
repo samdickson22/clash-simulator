@@ -83,3 +83,36 @@ def test_rejects_opening_provenance_corruption(opening_fixture, corruption):
         corpus.episode_arrays["episode_learner_players"][0] = 1
     with pytest.raises(ValueError):
         audit_seeded_openings(metadata, corpus)
+
+
+def test_verified_deals_create_four_clusters_and_keep_paired_seats_together(opening_fixture):
+    from scripts.hog26_scenario_clusters import corpus_matchup_clusters
+
+    metadata, corpus = opening_fixture
+    clusters = corpus_matchup_clusters(metadata, corpus)
+    assert len(set(clusters)) == 4
+    assert clusters[:4] == clusters[4:]
+
+
+def test_cluster_path_rejects_a_forged_recorded_opening(opening_fixture):
+    from scripts.hog26_scenario_clusters import corpus_matchup_clusters
+
+    metadata, corpus = deepcopy(opening_fixture)
+    corpus.arrays["hand_ids"][0, 0] = 0
+    with pytest.raises(ValueError, match="recorded public opening"):
+        corpus_matchup_clusters(metadata, corpus)
+
+
+def test_phase_gate_uses_verified_opening_groups(opening_fixture):
+    from scripts.train_hog26_actor_outcome import phase_balanced_matchup_clusters
+
+    metadata, corpus = deepcopy(opening_fixture)
+    corpus.arrays["hand_ids"] = np.repeat(corpus.arrays["hand_ids"], 3, axis=0)
+    corpus.arrays["global_features"] = np.zeros((24, 18), np.float32)
+    corpus.arrays["global_features"][:, 0] = np.tile([0.1, 0.5, 0.8], 8)
+    corpus.episode_offsets *= 3
+    corpus.row_count = 24
+    clusters = phase_balanced_matchup_clusters([(metadata, corpus)])
+    assert clusters.shape == (24,)
+    assert len(set(clusters)) == 4
+    np.testing.assert_array_equal(clusters[:12], clusters[12:])

@@ -24,3 +24,27 @@ def episode_matchup_cluster(metadata, corpus, episode):
     else:
         identity = ["uncertified-opening-matchup"]
     return json.dumps([source, style, deck, identity], separators=(",", ":"))
+
+
+def corpus_matchup_clusters(metadata, corpus):
+    """Use seeded deal identities only after reconstructing recorded openings."""
+    from scripts.hog26_seeded_opening_audit import audit_seeded_openings
+
+    verified = audit_seeded_openings(metadata, corpus)
+    if not verified["seeded_openings_verified"]:
+        return [
+            episode_matchup_cluster(metadata, corpus, episode)
+            for episode in range(len(corpus.episode_ordinals))
+        ]
+    ids = metadata["seeded_deals"]["scenario_ids_by_stream"]
+    # ID includes the relative ordered deal and matchup, not seed or ordinal.
+    # Paired seats and repeated deals across seeds therefore stay together.
+    return [
+        json.dumps(
+            ["verified-seeded-deal", ids[int(stream)][int(ordinal)]],
+            separators=(",", ":"),
+        )
+        for stream, ordinal in zip(
+            corpus.episode_stream_rows, corpus.episode_ordinals, strict=True
+        )
+    ]

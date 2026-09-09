@@ -39,7 +39,7 @@ from scripts.hog26_public_outcome_projection import (
     load_public_outcome_projection,
     protocol_audit_path,
 )
-from scripts.hog26_scenario_clusters import episode_matchup_cluster
+from scripts.hog26_scenario_clusters import corpus_matchup_clusters
 from scripts.pretrain_hog26_direct_simple_behavior import load_model
 from scripts.pretrain_hog26_factorized_policy import batch_inputs
 
@@ -820,11 +820,12 @@ def phase_balanced_matchup_clusters(
 
     clusters: list[str] = []
     for metadata, corpus in loaded:
+        episode_clusters = corpus_matchup_clusters(metadata, corpus)
         progress = np.asarray(corpus.arrays["global_features"][:, 0])
         for episode, (begin, end) in enumerate(
             zip(corpus.episode_offsets[:-1], corpus.episode_offsets[1:], strict=True)
         ):
-            cluster = episode_matchup_cluster(metadata, corpus, episode)
+            cluster = episode_clusters[episode]
             episode_progress = progress[begin:end]
             for lower, upper in (
                 (0.0, 1.0 / 3.0),
