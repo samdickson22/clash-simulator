@@ -1872,3 +1872,30 @@ Poison lifecycle repair and cross-phase rejection, 2026-09-09:
   token 1 (<unknown>). See hog26_scalar_actor_ingress_audit_20260909.json.
   Existing scalar collectors also require reviewed public-mask and observation
   handling. Do not substitute them merely because their physics is canonical.
+
+Scalar reference route selected for further verification, 2026-09-09:
+- Independent review confirms native ordinary_troop_phase moves before testing
+  attack reach at post-movement positions. Scalar combat is sequential at
+  starting positions and exposes damage/status/death to later actors. A late
+  DIRECT-only effect pass would repair one shield example while retaining the
+  wrong frame graph. Further local native phase patches are paused; its lineage
+  remains unaccepted. The original model objective, split roles and gates stand.
+- Added scalar appearance receipt bindings for serialized Arrows projectiles,
+  delayed-member exclusion, explicit visibility, and unresolved-effect rejection.
+  Added a separate fixed-capacity body/effect actor projection with positions,
+  HP/shield and static body metadata; no general entity-row builder, critic,
+  runtime source-name inference, targets, damage clocks or future payloads.
+- Nine tests passed, including both seats, launch eligibility, typed identities,
+  private-state perturbation invariance, unresolved effects and capacity failure.
+  This is Arrows-only effect coverage and a partial body feature contract; full
+  visible status/animation coverage and presentation-boundary verification remain.
+- A single scripted boundary successfully ran through the frozen policy using
+  public-mask-v2 with all critic inputs absent and zero previous reward. Both
+  seats saw 16 entities (six towers plus ten eligible arrows) and selected NO_OP.
+  This proves interface compatibility only. The smoke used existing exact actor
+  confidence; confidence for omitted features must be finalized with the new
+  observation contract before accepting a collector. No game corpus was built.
+- Artifact: hog26_scalar_public_policy_boundary_20260909.json. Next verify the
+  full public appearance registry and observation confidence, then deterministic
+  paired complete-game scalar replay under a distinct source/data authority.
+  Old training/evaluation data are unchanged; collection/fitting stay closed.
