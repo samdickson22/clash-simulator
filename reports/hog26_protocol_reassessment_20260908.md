@@ -844,3 +844,29 @@ process peak memory. Artifact: `hog26_public_projection_memory_probe_20260908.js
 The loading memory issue is addressed for this candidate; collector-side
 accumulation still needs bounding before larger development stages launch.
 No new development/calibration/final labels were collected.
+
+## Disk-backed collection and full auditing
+
+CompleteEpisodeBuilder can now spill each completed episode to owned disk
+scratch and assemble final arrays with memory maps in the original stable
+stream/ordinal order. Natural collection enables this for multiple episodes
+per stream. Final archive and report publication happen before scratch is
+released. Incomplete spools cannot be published or discarded through the
+release method. Completed data are retained as paths rather than NumPy arrays;
+active games, live rollout batches and OS mapping caches still consume memory.
+
+A replay of the existing128-game/56347-row shard preserved every transition
+array, episode array, reset state and recomputed terminal label exactly, then
+published an archive that passed the full audit. Artifact:
+`hog26_disk_episode_builder_probe_20260908.json`. The probe initially used
+uncompressed episode scratch; scratch compression was then enabled and the
+round-trip tests rerun to reduce disk use. No new games were generated.
+
+Full audits now stream archive members to temporary NPY files and map their
+arrays, retaining the same validation code instead of materializing all large
+entity tensors in heap memory. A real-shard mapped audit produces exactly the
+same report as its existing eager audit. Artifact:
+`hog26_mapped_full_audit_probe_20260908.json`. Twenty-five builder, outcome,
+collector and audit tests plus Ruff pass. No validation checks were removed.
+Collection/audit memory storage is now addressed; inference code authority
+and primary configuration replacement remain before development launch.

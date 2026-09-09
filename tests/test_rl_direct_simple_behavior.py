@@ -117,6 +117,55 @@ def test_builder_publishes_only_complete_episodes_in_stable_stream_order() -> No
     ]
 
 
+def test_disk_builder_matches_eager_arrays_and_published_archive(tmp_path):
+    rollout = _rollout(
+        actions=[[0, 1, 2, 3], [4, 5, 6, 7]],
+        previous_actions=[[11, 0, 11, 2], [11, 4, 11, 6]],
+        rewards=[[0.0] * 4] * 2, previous_rewards=[[0.0] * 4] * 2,
+        starts=[[True, False, True, False]] * 2,
+        dones=[[False, True, False, True]] * 2,
+    )
+    options = {"stream_count": 2, "episodes_per_stream": 2,
+               "reset_hidden": np.zeros((2, 3)), "reset_cell": np.zeros((2, 3))}
+    eager = CompleteEpisodeBuilder(**options)
+    disk = CompleteEpisodeBuilder(**options, spool_directory=tmp_path / "spool")
+    for builder in (eager, disk):
+        builder.add_rollout(rollout)
+    expected, actual = eager.finalize(), disk.finalize()
+    for key in expected.arrays:
+        assert isinstance(actual.arrays[key], np.memmap)
+        np.testing.assert_array_equal(expected.arrays[key], actual.arrays[key])
+    for key in ("episode_offsets", "episode_stream_rows", "episode_ordinals", "initial_hidden", "initial_cell"):
+        np.testing.assert_array_equal(getattr(expected, key), getattr(actual, key))
+    assert all(isinstance(item[2], Path) for item in disk._episodes)
+    archive = {**actual.arrays, **{key: getattr(actual, key) for key in (
+        "episode_offsets", "episode_stream_rows", "episode_ordinals", "initial_hidden", "initial_cell")},
+        "metadata_json": np.asarray(json.dumps({"complete_episodes_only": True,
+            "row_count": actual.row_count, "episode_count": actual.episode_count}))}
+    path = tmp_path / "published.npz"
+    np.savez_compressed(path, **archive)
+    disk.release_spool()
+    assert not (tmp_path / "spool").exists()
+    _, restored = load_direct_simple_behavior_corpus(path)
+    for key in expected.arrays:
+        np.testing.assert_array_equal(expected.arrays[key], restored.arrays[key])
+    _, mapped = load_direct_simple_behavior_corpus(path, mmap_directory=tmp_path / "audit-maps")
+    for key in expected.arrays:
+        assert isinstance(mapped.arrays[key], np.memmap)
+        np.testing.assert_array_equal(expected.arrays[key], mapped.arrays[key])
+
+
+def test_disk_builder_cannot_publish_or_discard_incomplete_spool(tmp_path):
+    builder = CompleteEpisodeBuilder(stream_count=1, episodes_per_stream=1,
+        reset_hidden=np.zeros((1, 1)), reset_cell=np.zeros((1, 1)),
+        spool_directory=tmp_path / "spool")
+    with pytest.raises(ValueError, match="incomplete"):
+        builder.finalize()
+    with pytest.raises(ValueError, match="incomplete"):
+        builder.release_spool()
+    assert (tmp_path / "spool").exists()
+
+
 def test_builder_preserves_opt_in_teacher_factors() -> None:
     builder = CompleteEpisodeBuilder(
         stream_count=1,

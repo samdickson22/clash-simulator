@@ -332,7 +332,7 @@
   ],
   "training_readiness": {
     "blocking_issues": [
-      "Candidate loss/feature contracts are verified. Bound collection and loading memory for the expanded evaluation stages, pin inference source authority, and replace the guarded primary configuration before development collection."
+      "Candidate loss/feature contracts and disk-backed collection/auditing are verified. Pin inference source authority and replace the guarded primary configuration before development collection."
     ],
     "collection_allowed": "Existing training-shard schedule only; candidate fitting and selection/calibration collection wait for design freeze.",
     "status": "under-review"

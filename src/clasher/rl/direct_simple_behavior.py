@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Final
@@ -112,6 +113,7 @@ class CompleteEpisodeBuilder:
         reset_hidden: np.ndarray,
         reset_cell: np.ndarray,
         extra_transition_keys: tuple[str, ...] = (),
+        spool_directory: Path | None = None,
     ) -> None:
         if stream_count < 1 or episodes_per_stream < 1:
             raise ValueError("stream and episode counts must be positive")
@@ -133,7 +135,12 @@ class CompleteEpisodeBuilder:
             None for _ in range(stream_count)
         ]
         self._completed_by_stream = np.zeros(stream_count, dtype=np.int64)
-        self._episodes: list[tuple[int, int, dict[str, np.ndarray]]] = []
+        self._episodes: list[tuple[int, int, dict[str, np.ndarray] | Path]] = []
+        self._episode_lengths: dict[tuple[int, int], int] = {}
+        self._spool_directory = Path(spool_directory) if spool_directory is not None else None
+        self._mapped_arrays: list[np.memmap] = []
+        if self._spool_directory is not None:
+            self._spool_directory.mkdir(parents=True, exist_ok=False)
 
     @property
     def complete(self) -> bool:
@@ -177,7 +184,14 @@ class CompleteEpisodeBuilder:
                     episode = {
                         key: np.stack(values, axis=0) for key, values in active.items()
                     }
-                    self._episodes.append((stream, ordinal, episode))
+                    self._episode_lengths[stream, ordinal] = len(episode["actions"])
+                    if self._spool_directory is None:
+                        self._episodes.append((stream, ordinal, episode))
+                    else:
+                        path = self._spool_directory / f"episode-{stream:04d}-{ordinal:06d}.npz"
+                        with path.open("xb") as handle:
+                            np.savez_compressed(handle, **episode)
+                        self._episodes.append((stream, ordinal, path))
                     self._completed_by_stream[stream] += 1
                     self._active[stream] = None
 
@@ -189,7 +203,7 @@ class CompleteEpisodeBuilder:
         if len(ordered) != expected_count:
             raise ValueError("completed episode count differs from the requested grid")
         lengths = np.asarray(
-            [episode["actions"].shape[0] for _stream, _ordinal, episode in ordered],
+            [self._episode_lengths[stream, ordinal] for stream, ordinal, _ in ordered],
             dtype=np.int64,
         )
         offsets = np.concatenate(
@@ -197,12 +211,33 @@ class CompleteEpisodeBuilder:
         )
         streams = np.asarray([stream for stream, _ordinal, _episode in ordered])
         ordinals = np.asarray([ordinal for _stream, ordinal, _episode in ordered])
-        arrays = {
-            key: np.concatenate(
-                [episode[key] for _stream, _ordinal, episode in ordered], axis=0
-            )
-            for key in self.transition_keys
-        }
+        if self._spool_directory is None:
+            arrays = {
+                key: np.concatenate(
+                    [episode[key] for _stream, _ordinal, episode in ordered], axis=0
+                )
+                for key in self.transition_keys
+            }
+        else:
+            destination = self._spool_directory / "assembled"
+            destination.mkdir(exist_ok=False)
+            arrays = {}
+            for key in self.transition_keys:
+                with np.load(ordered[0][2], allow_pickle=False) as first:
+                    sample = first[key]
+                    mapped = np.lib.format.open_memmap(
+                        destination / f"{key}.npy", mode="w+", dtype=sample.dtype,
+                        shape=(int(offsets[-1]), *sample.shape[1:]),
+                    )
+                for index, (_, _, path) in enumerate(ordered):
+                    with np.load(path, allow_pickle=False) as stored:
+                        values = stored[key]
+                        if values.dtype != mapped.dtype or values.shape[1:] != mapped.shape[1:]:
+                            raise ValueError("spooled episode tensor contract changed")
+                        mapped[offsets[index]:offsets[index + 1]] = values
+                mapped.flush()
+                arrays[key] = mapped
+                self._mapped_arrays.append(mapped)
         hidden = self.reset_hidden[streams].copy()
         cell = self.reset_cell[streams].copy()
         corpus = DirectSimpleBehaviorCorpus(
@@ -215,6 +250,17 @@ class CompleteEpisodeBuilder:
         )
         validate_direct_simple_behavior_corpus(corpus)
         return corpus
+
+    def release_spool(self) -> None:
+        """Release owned scratch only after the caller publishes the final archive."""
+        if self._spool_directory is not None and not self.complete:
+            raise ValueError("cannot release an incomplete episode spool")
+        for array in self._mapped_arrays:
+            array._mmap.close()
+        self._mapped_arrays.clear()
+        if self._spool_directory is not None:
+            shutil.rmtree(self._spool_directory)
+            self._spool_directory = None
 
 
 def validate_direct_simple_behavior_corpus(
@@ -293,10 +339,24 @@ def validate_direct_simple_behavior_corpus(
 
 def load_direct_simple_behavior_corpus(
     path: str | Path,
+    *,
+    mmap_directory: Path | None = None,
 ) -> tuple[dict[str, Any], DirectSimpleBehaviorCorpus]:
     """Load and fully validate a published direct-Simple behavior archive."""
 
+    if mmap_directory is not None:
+        mmap_directory = Path(mmap_directory)
+        mmap_directory.mkdir(parents=True, exist_ok=False)
     with np.load(Path(path), allow_pickle=False) as archive:
+        def read_array(key):
+            if mmap_directory is None:
+                return archive[key].copy()
+            if Path(key).name != key:
+                raise ValueError("archive array names must be flat")
+            destination = mmap_directory / f"{key}.npy"
+            with archive.zip.open(f"{key}.npy") as source, destination.open("xb") as output:
+                shutil.copyfileobj(source, output, length=1024 * 1024)
+            return np.load(destination, allow_pickle=False, mmap_mode="r")
         required = {
             *TRANSITION_KEYS,
             "episode_offsets",
@@ -330,7 +390,7 @@ def load_direct_simple_behavior_corpus(
         }.intersection(archive.files)
         corpus = DirectSimpleBehaviorCorpus(
             arrays={
-                key: archive[key].copy()
+                key: read_array(key)
                 for key in archive.files
                 if key not in structural and key not in episode_names
             },
@@ -341,7 +401,7 @@ def load_direct_simple_behavior_corpus(
             episode_ordinals=archive["episode_ordinals"].astype(np.int64, copy=True),
             initial_hidden=archive["initial_hidden"].copy(),
             initial_cell=archive["initial_cell"].copy(),
-            episode_arrays={key: archive[key].copy() for key in episode_names},
+            episode_arrays={key: read_array(key) for key in episode_names},
         )
     validate_direct_simple_behavior_corpus(corpus)
     if metadata.get("complete_episodes_only") is not True:

@@ -1,0 +1,7 @@
+{
+  "scope": "Existing audited training shard; no new collection or labels.",
+  "rows": 56347,
+  "games": 128,
+  "transition_arrays_memory_mapped": true,
+  "full_audit_report_identical_to_eager_audit": true
+}

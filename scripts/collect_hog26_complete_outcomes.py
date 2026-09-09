@@ -156,6 +156,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         reset_hidden=state[0].detach().cpu().numpy(),
         reset_cell=state[1].detach().cpu().numpy(),
         extra_transition_keys=("terminal_winners", "next_global_features"),
+        spool_directory=args.output.with_suffix(".spool") if args.episodes_per_seat > 1 else None,
     )
     chunks = 0
     started = time.monotonic()
@@ -268,6 +269,7 @@ def collect(args: argparse.Namespace) -> dict[str, Any]:
         },
     }
     _atomic_json(args.report, report)
+    builder.release_spool()
     return report
 
 

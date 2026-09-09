@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import tempfile
 from collections import Counter, defaultdict
 from itertools import pairwise
 from pathlib import Path
@@ -67,7 +68,15 @@ def audit(
     expected_opponents: set[str] | None = None,
     expected_supported_decks_sha256: str | None = None,
     expected_split: str | None = None,
+    mmap_directory: Path | None = None,
 ) -> dict[str, Any]:
+    if mmap_directory is None:
+        with tempfile.TemporaryDirectory(prefix="hog26-full-audit-") as directory:
+            return audit(
+                paths, expected_decks=expected_decks, expected_opponents=expected_opponents,
+                expected_supported_decks_sha256=expected_supported_decks_sha256,
+                expected_split=expected_split, mmap_directory=Path(directory),
+            )
     if not paths:
         raise ValueError("at least one outcome corpus is required")
     hashes = [file_sha256(path) for path in paths]
@@ -87,8 +96,10 @@ def audit(
         phase: defaultdict(set) for phase in ("early", "middle", "late")
     }
 
-    for path, digest in zip(paths, hashes, strict=True):
-        metadata, corpus = load_direct_simple_behavior_corpus(path)
+    for index, (path, digest) in enumerate(zip(paths, hashes, strict=True)):
+        metadata, corpus = load_direct_simple_behavior_corpus(
+            path, mmap_directory=mmap_directory / f"corpus-{index}",
+        )
         validate_outcome_corpus(metadata, corpus)
         _validate_actor_contract(metadata)
         if (
