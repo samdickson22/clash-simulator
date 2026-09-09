@@ -69,4 +69,4 @@ def test_reassessed_protocol_requests_seeded_unopened_stages():
     for stage in [protocol["development_selection"], protocol["probability_calibration"]]:
         assert collection_args(protocol, stage, root=ROOT, device="cpu").opening_schedule == "seeded-ordered-decks-v1"
     for stage in protocol["training"]:
-        assert collection_args(protocol, stage, root=ROOT, device="cpu").opening_schedule == "fixed-template"
+        assert collection_args(protocol, stage, root=ROOT, device="cpu").opening_schedule == "seeded-ordered-decks-v1"

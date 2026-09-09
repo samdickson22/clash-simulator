@@ -1162,3 +1162,28 @@ Corrected complete-game probe progress:
 - MPS session62160/PID17896 remains live at9m55s; latest chunk5 at547.625seconds,
   completed_by_stream=[0,0]. Same retained/surplus quota as CPU. Wait for complete
   publication, audit, then compare full public trajectories and terminal labels.
+
+
+Corrected full games agree; fitting refresh frozen:
+- Corrected MPS session62160/PID17896 exited0: two games,781 decisions,
+  734.326seconds,7chunks, both losses. Full corpus/opening audit passed.
+- CPU/MPS exact agreement on every checked complete public trajectory field,
+  actions, masks, previous actions/rewards, next globals, terminal winners,
+  W/D/L, terminal margins, and episode boundaries. Both lengths432/349.
+  The reproduced full-game discrepancy is resolved for this paired matchup.
+  This is scoped mechanics verification, not global simulator/model acceptance.
+- Full comparison: hog26_corrected_complete_device_comparison_20260908.json.
+- Active protocol now declares corrected seeded training shards1278961/2/3,
+  128games each across the original8training families and6styles. Preserved
+  old training rows and candidate-data declarations under historical keys;
+  none of those pre-fix fitting corpora are eligible for the refreshed fit.
+- Fresh draw controls planned: training1278964 and validation1278965,4actor
+  views each. Validation control remains unopened with development/calibration.
+  Existing list-field names are preserved, but their paths now name only the
+  fresh training/validation controls. No old MPS auxiliary fitting data remains.
+- Readiness remains under review: corrected training collection is allowed,
+  candidate fitting and evaluation collection await training-family learnability
+  reassessment and design freeze.33protocol/command/trainer/loader tests pass.
+- Next collection: shard0 balanced/random,128complete games onMPS, seed1278961.
+  Subsequent shards and training draw control follow after audited completion;
+  no partial shard fitting or model/policy updates.

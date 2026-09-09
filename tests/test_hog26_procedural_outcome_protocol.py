@@ -106,7 +106,7 @@ def test_amended_protocol_filters_actual_legacy_episodes_and_scopes_exposure() -
         protocol["amendment"]["supersedes_sha256"]
         == hashlib.sha256(PROTOCOL.read_bytes()).hexdigest()
     )
-    data = protocol["primary_candidate_data"]
+    data = protocol["historical_pre_range_fix_candidate_data"]
     for path in data["legacy_training_corpora"]:
         with np.load(ROOT / path, allow_pickle=False) as archive:
             metadata = json.loads(str(archive["metadata_json"]))
@@ -129,3 +129,18 @@ def test_amended_protocol_filters_actual_legacy_episodes_and_scopes_exposure() -
     assert "split-lane" in scope["base_policy_training_exposure"]
     assert protocol["final_holdout"]["controlled_draw"]["actor_views"] == 16
     assert protocol["replication"]["seeds"] == [1278802, 1278803]
+
+
+
+def test_corrected_refresh_excludes_pre_fix_fitting_data():
+    protocol = json.loads((ROOT / "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json").read_text())
+    old = {row["output_corpus"] for row in protocol["historical_pre_range_fix_training"]}
+    old.update(protocol["historical_pre_range_fix_candidate_data"]["legacy_training_corpora"])
+    current = {row["output_corpus"] for row in protocol["training"]}
+    current.update(protocol["primary_candidate_data"]["legacy_training_corpora"])
+    assert not old & current
+    assert sum(row["expected_games"] for row in protocol["training"]) == 384
+    assert all(row["opening_schedule"] == "seeded-ordered-decks-v1" for row in protocol["training"])
+    assert protocol["training_readiness"]["status"] == "under-review"
+    controls = protocol["corrected_draw_controls"]
+    assert controls["training"]["seed"] != controls["validation"]["seed"]
