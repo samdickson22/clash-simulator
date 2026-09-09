@@ -1822,3 +1822,25 @@ Parallel lifecycle and RNG audits, 2026-09-09:
   ordering still require proof before claiming whole-game scalar RNG parity.
 - Single-projectile payload correction and Arrows traces committed as 46ec189e.
   Arrows and Poison repairs remain required. No training or evaluation resumed.
+
+Live scalar scheduler correction, 2026-09-09:
+- Inspecting BattleState.step and running an instrumented full step corrected
+  two assumptions drawn from isolated component fixtures. Live scalar projectile
+  updates resolve immediately in object-ID order; the old Arrows diagnostic
+  explicitly enabled deferred impact mode. Its stationary damage trace remains
+  useful, but it does not prove the live scheduler's simultaneous-hit contract.
+- Scalar periodic target damage runs in update_buff_component after combat and
+  movement, before area-object scans. A proposed native pre-combat damage hook
+  and its synthetic lethal-hit test encoded the wrong ordering. That change
+  was caught during review before commit and must not be treated as accepted.
+- The new probe calls actual BattleState.step without replacing its scheduler
+  or enabling deferred mode. Arrows tower hits occur on ticks 20, 24, and 29
+  with deferred mode false; Poison damage occurs inside update_buff_component
+  on tick 25. The trace records component dispatch and source hashes.
+- Artifacts: probe_hog26_scalar_frame_contract_20260909.py and
+  hog26_scalar_frame_contract_20260909.json. Direct spell.cast is used before
+  stepping, so this does not establish queued action-ingress timing parity.
+- Arrows runtime integration must preserve live object ordering across ordinary
+  and grouped projectiles. A bulk shared pre-damage collection contract would
+  be incorrect. Cast RNG/geometry and standalone pool commits remain bounded
+  component evidence, not full-battle acceptance.
