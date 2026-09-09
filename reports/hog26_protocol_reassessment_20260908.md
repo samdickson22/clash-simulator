@@ -1970,3 +1970,25 @@ Complete scalar replay baseline, 2026-09-09:
   Python source fingerprints, card/vocabulary/checkpoint hashes, action-card
   diagnostics, exact W/D/L and normalized terminal tower margins. No training
   corpus or independent evaluation cohort was opened or written.
+
+Scalar elixir roundoff repair and fresh replays, 2026-09-09:
+- Card affordability now admits only roundoff deficits up to 1e-9 elixir;
+  spending clamps negative roundoff balances to zero. A real 1e-7 deficit still
+  rejects. Six focused tests cover exact/adjacent-float balances and 6000 ticks
+  of rational-reference regeneration/spending across all three rate phases.
+  Twelve resource/episode regression tests passed; nine projection/episode
+  checks also passed. Player.py's eight legacy import/typing lint findings
+  were verified identical in HEAD; changed/new diagnostic files pass Ruff.
+- Fresh paired/repeated complete games terminate at ticks 4135 and 4569, with
+  exact trace/RNG/terminal agreement between repeats and zero rejected attempts
+  for either player. These two diagnostic trajectories are learner wins with
+  normalized margins 0.2093704245973646 and 0.41242679355783307. Outcome reversal
+  after the numeric fix is not a skill estimate or a tuning criterion.
+- Artifact: hog26_scalar_complete_replay_elixir_fixed_20260909.json. Root
+  verified its recorded source hashes against current bytes. Baseline resource
+  behavior and audited loss traces are preserved separately at commit 7ff139f9.
+- In-memory runs took roughly six seconds per sparse Hog matchup. This is not
+  broad-deck collector throughput evidence; no training corpus was serialized.
+  Next expand and audit the declared training-family appearance coverage, then
+  freeze the distinct scalar collection authority before any fitting. Public
+  calibration and counterfactual ranking remain entirely unaccepted.
