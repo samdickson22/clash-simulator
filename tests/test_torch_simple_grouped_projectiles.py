@@ -9,7 +9,11 @@ from clasher.arena import Position
 from clasher.battle import BattleState
 from clasher.data import CardDataLoader
 from clasher.dynamic_spells import create_spell_from_json
-from clasher.kinematics import tiles_per_second_to_logic_speed, tiles_to_logic_units
+from clasher.kinematics import (
+    logic_speed_to_tiles_per_second,
+    tiles_per_second_to_logic_speed,
+    tiles_to_logic_units,
+)
 from clasher.torch_sim.simple_cast_rng import CPUExactCastRNG
 from clasher.torch_sim.simple_grouped_geometry import FastGroupedGeometry
 from clasher.torch_sim.simple_grouped_projectiles import (
@@ -17,6 +21,8 @@ from clasher.torch_sim.simple_grouped_projectiles import (
     FastGroupedProjectileState,
     admit_fast_grouped_casts,
     allocate_fast_grouped_casts_,
+    collect_fast_grouped_impacts_diagnostic_,
+    resolve_fast_grouped_impacts_,
     step_fast_grouped_projectiles_,
 )
 from clasher.torch_sim.simple_modifiers import FastModifierState
@@ -169,10 +175,8 @@ def test_actual_arrows_every_tick_matches_scalar(device, owner):
         device=device,
     )
     for tick in range(1, 61):
-        battle._defer_projectile_impacts = True
         for projectile in projectiles:
             projectile.update(0.05, battle)
-        battle._resolve_pending_projectile_impacts()
         step_fast_grouped_projectiles_(
             gym,
             pool,
@@ -338,3 +342,169 @@ def test_invalid_cast_does_not_mutate_pool(device):
         allocate_fast_grouped_casts_(pool, commands)
     for name, value in before.items():
         assert torch.equal(getattr(pool, name), value)
+
+
+def _collect(gym, pool):
+    b, e = gym.hp.shape
+    return collect_fast_grouped_impacts_diagnostic_(
+        gym,
+        pool,
+        entity_collision_radius_units=torch.full(
+            (b, e), 100, dtype=torch.int64, device=pool.device
+        ),
+        entity_is_air=torch.zeros((b, e), dtype=torch.bool, device=pool.device),
+        entity_is_crown_tower=torch.zeros((b, e), dtype=torch.bool, device=pool.device),
+        entity_area_receivable=torch.ones(
+            (b, pool.active.shape[1], e), dtype=torch.bool, device=pool.device
+        ),
+    )
+
+
+@pytest.mark.parametrize("device", ["cpu", "mps"])
+def test_shared_pre_damage_collection_preserves_group_commitment_after_lethal_hit(
+    device,
+):
+    device = _device(device)
+    pool = FastGroupedProjectileState.empty(
+        1, max_casts=1, waves=1, members=10, max_hit_records=2, device=device
+    )
+    gym = _gym(device)
+    allocate_fast_grouped_casts_(pool, _commands(pool, delays=False))
+    modifiers = FastModifierState.empty(1, max_entities=2, device=pool.device)
+    modifiers.shield[:] = modifiers.max_shield[:] = 15
+    hp_before, shield_before = gym.hp.clone(), modifiers.shield.clone()
+    # An ordinary-like event snapshots the same live targets. This fixture
+    # tests an explicit deferred seam, not the current scalar object-phase
+    # scheduling (which resolves objects immediately in object-ID order).
+    ordinary_targets = gym.active & (gym.hp > 0)
+    ordinary_damage = ordinary_targets.float() * 2000
+    pending = _collect(gym, pool)
+    assert torch.equal(gym.hp, hp_before)
+    assert torch.equal(modifiers.shield, shield_before)
+    assert pending.hit.sum((1, 2, 3)).cpu().tolist() == [[1, 1]]
+    assert pool.hit_stable_ids[0, 0, 0].sort().values.cpu().tolist() == [1, 2]
+    # Earlier ordinary event kills the targets before grouped resolution.
+    gym.hp.sub_(ordinary_damage).clamp_min_(0)
+    result = resolve_fast_grouped_impacts_(gym, pending)
+    assert result.hit.sum((1, 2, 3)).cpu().tolist() == [[1, 1]]
+    assert result.damage_by_entity.cpu().tolist() == [[10, 10]]
+    assert gym.hp.cpu().tolist() == [[0, 0]]
+    # Re-querying live HP at this point would have discarded committed hits.
+    assert not (gym.active & (gym.hp > 0)).any()
+
+
+@pytest.mark.parametrize("device", ["cpu", "mps"])
+def test_pending_impacts_snapshot_reused_cast_and_reject_replaced_target(device):
+    device = _device(device)
+    pool = FastGroupedProjectileState.empty(
+        1, max_casts=1, waves=1, members=1, max_hit_records=2, device=device
+    )
+    gym = _gym(device)
+    allocate_fast_grouped_casts_(pool, _commands(pool, delays=False))
+    pending = _collect(gym, pool)
+    replacement = _commands(pool, delays=False)
+    replacement.damage[:] = 99
+    allocate_fast_grouped_casts_(pool, replacement)
+    assert pending.cast_id.cpu().tolist() == [[1]]
+    assert pool.cast_id.cpu().tolist() == [[2]]
+    assert pending.damage.flatten().cpu().tolist() == [10, 10]
+    gym.stable_id[0, 0] = 100
+    hp_before = gym.hp.clone()
+    with pytest.raises(ValueError, match="identity changed"):
+        resolve_fast_grouped_impacts_(gym, pending)
+    assert torch.equal(gym.hp, hp_before)
+
+
+@pytest.mark.parametrize("device", ["cpu", "mps"])
+@pytest.mark.parametrize("owner", [0, 1])
+def test_lethal_first_member_excludes_later_waves_in_live_scalar_object_phase(
+    device, owner
+):
+    device = _device(device)
+    loader = CardDataLoader()
+    template = create_spell_from_json(
+        loader.get_card("Arrows")._raw_entry, loader.load_card_definitions()
+    )
+    # Force all real grouped members to arrive this tick, exposing the live
+    # object's immediate HP/ledger ordering without a full-battle claim.
+    spell = replace(
+        template,
+        damage_wave_interval=0,
+        travel_speed=logic_speed_to_tiles_per_second(50000),
+    )
+    battle = BattleState()
+    battle.rng.seed(1279011)
+    towers = list(battle.entities.values())
+    target = next(t for t in towers if t.player_id != owner)
+    target.hitpoints = 10
+    gym = FastGymState.empty(1, max_entities=6, device=device)
+    for slot, tower in enumerate(towers):
+        gym.active[0, slot] = True
+        gym.stable_id[0, slot] = tower.id
+        gym.owner[0, slot] = tower.player_id
+        gym.kind[0, slot] = tower.entity_kind
+        gym.hp[0, slot] = gym.max_hp[0, slot] = tower.hitpoints
+        gym.x_units[0, slot] = tiles_to_logic_units(tower.position.x)
+        gym.y_units[0, slot] = tiles_to_logic_units(tower.position.y)
+    initial = set(battle.entities)
+    spell.cast(battle, owner, target.position)
+    projectiles = [p for key, p in battle.entities.items() if key not in initial]
+    pool = FastGroupedProjectileState.empty(
+        1, max_casts=1, max_hit_records=6, device=device
+    )
+    destinations = torch.tensor(
+        [
+            [
+                [
+                    [
+                        tiles_to_logic_units(p.target_position.x),
+                        tiles_to_logic_units(p.target_position.y),
+                    ]
+                    for p in projectiles
+                ]
+            ]
+        ],
+        device=device,
+    ).reshape(1, 1, 3, 10, 2)
+    origin = projectiles[0].position
+    commands = replace(
+        _commands(pool, delays=False),
+        owner=torch.tensor([[owner]], device=device),
+        damage=torch.tensor([[spell.damage]], dtype=torch.float32, device=device),
+        crown_damage=torch.tensor(
+            [[spell.crown_tower_damage]], dtype=torch.float32, device=device
+        ),
+        speed_units_per_tick=torch.tensor([[50000]], device=device),
+        radius_units=torch.tensor(
+            [[tiles_to_logic_units(spell.radius)]], device=device
+        ),
+        origin_units=torch.tensor(
+            [[[tiles_to_logic_units(origin.x), tiles_to_logic_units(origin.y)]]],
+            device=device,
+        ),
+        destination_units=destinations,
+    )
+    allocate_fast_grouped_casts_(pool, commands)
+    all_ids = set(battle.entities)
+    assert not battle._defer_projectile_impacts
+    battle._run_object_phase(0.05, all_ids, all_ids)
+    result = step_fast_grouped_projectiles_(
+        gym,
+        pool,
+        entity_collision_radius_units=torch.tensor(
+            [[tiles_to_logic_units(t.get_collision_radius()) for t in towers]],
+            device=device,
+        ),
+        entity_is_air=torch.zeros((1, 6), dtype=torch.bool, device=device),
+        entity_is_crown_tower=torch.ones((1, 6), dtype=torch.bool, device=device),
+        entity_area_receivable=torch.ones((1, 1, 6), dtype=torch.bool, device=device),
+    )
+    assert gym.hp[0].cpu().tolist() == [t.hitpoints for t in towers]
+    assert result.hit.sum() == 1
+    for wave in range(3):
+        scalar_ids = projectiles[wave * 10].damage_group_hit_entity_ids
+        native_ids = set(pool.hit_stable_ids[0, 0, wave].cpu().tolist()) - {0}
+        assert native_ids == scalar_ids
+    assert projectiles[0].damage_group_hit_entity_ids == {target.id}
+    assert projectiles[10].damage_group_hit_entity_ids == set()
+    assert projectiles[20].damage_group_hit_entity_ids == set()

@@ -4,6 +4,9 @@ A cast reserves every wave/member atomically. Destinations are supplied after
 admission by the caller's geometry/RNG owners. Eligibility is supplied per cast
 from the scalar-compatible area-effect guard, including source-specific immunity.
 This primitive does not implement status, displacement, payload, or death hooks.
+Its bulk collection is not the current scalar object-phase schedule: scalar
+objects resolve immediately in object-ID order and can append live children.
+The separate seam exposes pending events for a future correctly ordered owner.
 """
 
 from __future__ import annotations
@@ -241,24 +244,38 @@ class FastGroupedStepResult:
     damage_by_entity: torch.Tensor
 
 
-def step_fast_grouped_projectiles_(
+@dataclass(frozen=True)
+class FastGroupedPendingImpacts:
+    """Committed targets and amounts detached from reusable projectile slots.
+
+    ``hit``/``damage`` are [B,C,W,M,E], ``impact`` is [B,C,W,M]. Cast IDs
+    order this pool only. A future mixed queue must attach a shared projectile
+    creation identity to each [C,W,M] event; cast-local IDs cannot establish
+    ordering against ordinary projectile pools. Target IDs [B,E] snapshot the
+    recipient objects rather than re-querying live eligibility at resolution.
+    """
+
+    impact: torch.Tensor
+    hit: torch.Tensor
+    hit_capacity_rejected: torch.Tensor
+    damage: torch.Tensor
+    cast_id: torch.Tensor
+    target_stable_id: torch.Tensor
+    source_card_id: torch.Tensor
+    source_owner: torch.Tensor
+    destination_units: torch.Tensor
+
+
+def _validate_grouped_step_inputs(
     gym: FastGymState,
     pool: FastGroupedProjectileState,
     *,
     entity_collision_radius_units: torch.Tensor,
     entity_is_air: torch.Tensor,
     entity_is_crown_tower: torch.Tensor,
-    entity_area_receivable: torch.Tensor,  # [B,C,E], source-specific scalar guard
-    modifiers: FastModifierState | None = None,
-) -> FastGroupedStepResult:
-    """Advance one 50ms frame and resolve damage-only committed impacts.
-
-    The caller supplies live hitboxes and source-specific area eligibility.
-    Stable IDs must be unique positive identities; dead/reused slots cannot
-    inherit a previous victim's group membership. Death callbacks remain the
-    owning runtime's responsibility after the returned HP change.
-    """
-    b, c, w, m = pool.member_active.shape
+    entity_area_receivable: torch.Tensor,
+) -> None:
+    b, c = pool.active.shape
     e = gym.max_entities
     if pool.hit_stable_ids.shape[-1] != e:
         raise ValueError("hit ledger records must match gym entity capacity")
@@ -272,6 +289,12 @@ def step_fast_grouped_projectiles_(
     ):
         if value.shape != shape or value.dtype != dtype or value.device != pool.device:
             raise ValueError(f"invalid {name} shape/dtype/device")
+
+
+def _advance_fast_grouped_flight_(
+    gym: FastGymState, pool: FastGroupedProjectileState
+) -> torch.Tensor:
+    """Advance damage-only members once; return arrived event lanes."""
     alive = pool.member_active & ~gym.game_over[:, None, None, None]
     waiting = alive & (pool.launch_delay_ticks > 0)
     pool.launch_delay_ticks.sub_(waiting.long())
@@ -287,6 +310,28 @@ def step_fast_grouped_projectiles_(
     pool.position_units.add_(
         torch.where((moving & ~impact)[..., None], displacement, 0)
     )
+    return impact
+
+
+def _collect_fast_grouped_impacts_(
+    gym: FastGymState,
+    pool: FastGroupedProjectileState,
+    *,
+    entity_collision_radius_units: torch.Tensor,
+    entity_is_air: torch.Tensor,
+    entity_is_crown_tower: torch.Tensor,
+    entity_area_receivable: torch.Tensor,  # [B,C,E], source-specific scalar guard
+    impact: torch.Tensor,
+) -> FastGroupedPendingImpacts:
+    """Advance flight and snapshot committed hits without HP/shield mutation.
+
+    The caller supplies live hitboxes and source-specific area eligibility.
+    Stable IDs must be unique positive identities; dead/reused slots cannot
+    inherit a previous victim's group membership. Death callbacks remain the
+    owning runtime's responsibility after separate resolution.
+    """
+    b, c, w, m = pool.member_active.shape
+    e = gym.max_entities
     dx = (
         gym.x_units.long()[:, None, None, None, :]
         - pool.destination_units[..., 0, None]
@@ -335,15 +380,50 @@ def step_fast_grouped_projectiles_(
         pool.damage[:, :, None],
     )
     weighted = hit.float() * damage[:, :, None, None, :]
+    pool.member_active &= ~impact
+    pool.active.copy_(pool.member_active.any(dim=(2, 3)))
+    return FastGroupedPendingImpacts(
+        impact=impact,
+        hit=hit,
+        hit_capacity_rejected=overflow,
+        damage=weighted,
+        cast_id=pool.cast_id.clone(),
+        target_stable_id=gym.stable_id.clone(),
+        source_card_id=pool.source_card_id.clone(),
+        source_owner=pool.owner.clone(),
+        destination_units=pool.destination_units.clone(),
+    )
+
+
+def resolve_fast_grouped_impacts_(
+    gym: FastGymState,
+    pending: FastGroupedPendingImpacts,
+    *,
+    modifiers: FastModifierState | None = None,
+) -> FastGroupedStepResult:
+    """Apply one collected batch once, without re-querying HP or geometry.
+
+    No entity cleanup/slot replacement may intervene between collection and
+    resolution. The caller owns single-use queue semantics and any merging with
+    ordinary projectile events; this resolver only orders grouped casts.
+    """
+    b, c, w, m, e = pending.hit.shape
+    if gym.hp.shape != (b, e) or gym.hp.device != pending.hit.device:
+        raise ValueError("pending impacts and gym must share shape/device")
+    hit_targets = pending.hit.any(dim=(1, 2, 3))
+    if bool((hit_targets & (gym.stable_id != pending.target_stable_id)).any().item()):
+        raise ValueError("committed grouped target identity changed before resolution")
+    weighted = pending.damage
     if modifiers is None:
         damage_by_entity = weighted.sum((1, 2, 3))
     else:
-        # Slot reuse must not reorder separate casts' committed shield hits.
-        order = pool.cast_id.argsort(dim=1)
-        hit = hit.gather(1, order[:, :, None, None, None].expand_as(hit))
+        order = pending.cast_id.argsort(dim=1)
+        hit = pending.hit.gather(
+            1, order[:, :, None, None, None].expand_as(pending.hit)
+        )
         weighted = weighted.gather(1, order[:, :, None, None, None].expand_as(weighted))
         slots = (
-            torch.arange(e, device=pool.device)
+            torch.arange(e, device=gym.hp.device)
             .view(1, 1, 1, 1, e)
             .expand(b, c, w, m, e)
         )
@@ -354,9 +434,84 @@ def step_fast_grouped_projectiles_(
             damage=weighted.reshape(b, -1),
         )
         damage_by_entity = shield.hp_damage
-        # Return physical pool-slot order for telemetry.
-        hit = hit.gather(1, order.argsort(1)[:, :, None, None, None].expand_as(hit))
     gym.hp.sub_(damage_by_entity).clamp_min_(0)
-    pool.member_active &= ~impact
-    pool.active.copy_(pool.member_active.any(dim=(2, 3)))
-    return FastGroupedStepResult(impact, hit, overflow, damage_by_entity)
+    return FastGroupedStepResult(
+        pending.impact, pending.hit, pending.hit_capacity_rejected, damage_by_entity
+    )
+
+
+def step_fast_grouped_projectiles_(
+    gym: FastGymState,
+    pool: FastGroupedProjectileState,
+    *,
+    entity_collision_radius_units: torch.Tensor,
+    entity_is_air: torch.Tensor,
+    entity_is_crown_tower: torch.Tensor,
+    entity_area_receivable: torch.Tensor,
+    modifiers: FastModifierState | None = None,
+) -> FastGroupedStepResult:
+    """Resolve grouped objects sequentially in cast/wave/member creation order.
+
+    Later members query HP after earlier damage, matching the live scalar
+    object phase for this damage-only pool. This is not a global object queue:
+    ordinary projectiles and death-spawn callbacks still require integration.
+    The bounded correctness path synchronizes to skip absent impact lanes.
+    """
+    # Validate before advancing even on frames with no arriving members.
+    b, c, w, m = pool.member_active.shape
+    inputs = {
+        "entity_collision_radius_units": entity_collision_radius_units,
+        "entity_is_air": entity_is_air,
+        "entity_is_crown_tower": entity_is_crown_tower,
+        "entity_area_receivable": entity_area_receivable,
+    }
+    _validate_grouped_step_inputs(gym, pool, **inputs)
+    impact = _advance_fast_grouped_flight_(gym, pool)
+    hit = torch.zeros(
+        (*impact.shape, gym.max_entities), dtype=torch.bool, device=pool.device
+    )
+    overflow = torch.zeros_like(hit)
+    damage = torch.zeros_like(gym.hp)
+    if not bool(impact.any().item()):
+        return FastGroupedStepResult(impact, hit, overflow, damage)
+    order = pool.cast_id.argsort(dim=1)
+    rows = torch.arange(b, device=pool.device)
+    for rank in range(c):
+        slots = order[:, rank]
+        for wave in range(w):
+            for member in range(m):
+                selected = torch.zeros_like(impact)
+                selected[rows, slots, wave, member] = impact[rows, slots, wave, member]
+                if not bool(selected.any().item()):
+                    continue
+                pending = _collect_fast_grouped_impacts_(
+                    gym, pool, impact=selected, **inputs
+                )
+                result = resolve_fast_grouped_impacts_(
+                    gym, pending, modifiers=modifiers
+                )
+                hit |= result.hit
+                overflow |= result.hit_capacity_rejected
+                damage += result.damage_by_entity
+    return FastGroupedStepResult(impact, hit, overflow, damage)
+
+
+def collect_fast_grouped_impacts_diagnostic_(
+    gym: FastGymState,
+    pool: FastGroupedProjectileState,
+    *,
+    entity_collision_radius_units: torch.Tensor,
+    entity_is_air: torch.Tensor,
+    entity_is_crown_tower: torch.Tensor,
+    entity_area_receivable: torch.Tensor,
+) -> FastGroupedPendingImpacts:
+    """Explicit deferred diagnostic; NOT live scalar object-phase scheduling."""
+    inputs = {
+        "entity_collision_radius_units": entity_collision_radius_units,
+        "entity_is_air": entity_is_air,
+        "entity_is_crown_tower": entity_is_crown_tower,
+        "entity_area_receivable": entity_area_receivable,
+    }
+    _validate_grouped_step_inputs(gym, pool, **inputs)
+    impact = _advance_fast_grouped_flight_(gym, pool)
+    return _collect_fast_grouped_impacts_(gym, pool, impact=impact, **inputs)
