@@ -376,7 +376,19 @@ def main() -> None:
                         fit_rows,
                         aggregate_balance=plan.get("aggregate_phase_balance", False),
                     )
-                    if plan.get("model_type") == "temporal":
+                    if plan.get("model_type") == "histogram-tree":
+                        from scripts.hog26_tree_margin_diagnostic import fit_tree_margin
+
+                        source = root / "scripts/hog26_tree_margin_diagnostic.py"
+                        if file_sha256(source) != plan.get("tree_source_sha256"):
+                            raise ValueError("tree diagnostic source drifted")
+                        if feature_set != "full-state" or power != 0 or overtime_delta is not None:
+                            raise ValueError("tree diagnostic requires unconstrained public features")
+                        prediction = torch.from_numpy(fit_tree_margin(
+                            features.numpy(), target.numpy(), fit_weights.numpy(), fit_rows,
+                            seed=seed + fold_index, config=plan["tree_config"],
+                        ))
+                    elif plan.get("model_type") == "temporal":
                         if feature_set != "full-state":
                             raise ValueError(
                                 "temporal screen requires full public summaries"

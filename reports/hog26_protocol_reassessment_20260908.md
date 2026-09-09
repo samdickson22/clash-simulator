@@ -1363,3 +1363,27 @@ Phase separation versus shared capacity diagnostic, 2026-09-09:
   public late-state targets before further small neural architecture adjustments.
   Keep fitting and family-generalization evidence separate. Selection/calibration/
   final labels and validation draw control remain unopened; no policy updates.
+
+
+Tree fitting-capacity diagnostic launched, 2026-09-09:
+- Added training-only histogram gradient boosting with absolute-error loss,
+ 100fixed iterations,15leaves, min20decision rows per leaf, learning rate0.05,
+ L2=1,255bins, and early_stopping=False. Fit features, targets and weights are
+ sliced to fitting rows before sklearn.fit. No neural residual cap or overtime
+ override. Same864causal public spatial/history features and family exclusions.
+- Scikit-learn1.7.2, joblib1.5.2 and threadpoolctl3.6.0 installed with --no-deps
+ into /Users/sam/.cache/clasher-margin-tree-diagnostic. Existing NumPy/Torch
+ versions and pinned production inference authority verified unchanged.
+-16causal/history/weight/label-isolation tests passed. Changing excluded-family
+ targets and sample weights leaves all predictions bitwise unchanged. Ruff and
+ diff checks passed. No production inference implementation was changed.
+- Frozen plan: hog26_corrected_tree_margin_screen_plan_20260909.json. Tree config
+ governs this branch; inherited neural optimizer/epoch fields are unused. Two
+ inherited seeds are reproducibility runs, not necessarily distinct models:
+ the tree algorithm may be deterministic at this data size with early stopping off.
+- Active session81357/PID72962, verified consuming CPU with about9GiB RSS.
+ Log reports/hog26_corrected_tree_margin_screen_20260909.log. Preserve the live
+ job; an observation yield is not a failure. Inspect full fitting/withheld phase
+ scores after completion before drawing conclusions or launching further work.
+- Candidate fitting, selection/calibration/final labels, validation draw control,
+ and policy updates remain gated. This diagnostic cannot establish acceptance.
