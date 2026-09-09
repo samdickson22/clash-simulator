@@ -1712,3 +1712,20 @@ Isolated exact-muzzle native differential checks, 2026-09-09:
   and hot-path requirements justify a physics change. Continue event-lifecycle
   coverage under the unchanged runtime meanwhile; delivery, area/instant and
   rolling routes remain unresolved. No training or independent labels opened.
+
+
+Public delivery-flight route verified, 2026-09-09:
+- Added an explicit SpawnProjectileSpell rule matching serialized carrier name,
+  runtime primitive and public token. The supported registry admits GoblinBarrel
+  without reclassifying all non-damaging carriers as ordinary attacks.
+- CPU/MPS160tick route probes each capture59GoblinBarrelSpell frames plus10tower
+  frames, with0active-pool rejections. Legacy actor traces remain unchanged.
+  Payload count, target and future timing never enter sidecar features.
+-12delivery/ordinary/transition tests passed, including appearance mismatch
+  rejection, unchanged ordinary rules, and private-field perturbation. Ruff passed.
+- Artifacts: hog26_public_effect_delivery_cpu/mps_20260909.json and
+  hog26_public_delivery_comparison_20260909.json. CPU94028/MPS75502 exited0.
+  Known legacy tower-launch CPU/MPSposition difference remains; no physics fix
+  was applied and no sidecar bit-identity or complete-game acceptance is claimed.
+- Rolling and area/instant routes still require separate handling. No enrichment,
+  model fitting, independent labels or policy updates.

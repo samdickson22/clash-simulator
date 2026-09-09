@@ -25,6 +25,7 @@ from scripts.hog26_ordinary_projectile_sidecar import (
 from scripts.hog26_primary_effect_transition_guard import (
     require_supported_primary_births,
 )
+from scripts.hog26_public_delivery_flight_rules import with_public_delivery_flights
 from scripts.hog26_public_tower_shot_rules import with_public_tower_shots
 
 
@@ -57,6 +58,7 @@ def main():
     parser.add_argument("--tower-shots", action="store_true")
     parser.add_argument("--transition-guard", action="store_true")
     parser.add_argument("--exact-muzzle-probe", action="store_true")
+    parser.add_argument("--delivery-flights", action="store_true")
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError("refusing to overwrite runtime probe")
@@ -90,6 +92,11 @@ def main():
     assert runtime_hash(runtime) == runtime_hash(control)
     inventory = json.loads((root / "reports/hog26_public_effect_registry_audit_20260909.json").read_text())
     rules = compile_ordinary_rules(setup.spawn_blueprints.fast_cards, setup.cards.names, inventory)
+    delivery_names = []
+    if args.delivery_flights:
+        rules, delivery_names = with_public_delivery_flights(
+            rules, setup.spawn_blueprints.fast_cards, loader, inventory,
+        )
     sidecar_token_names = vocabulary.token_names
     if args.tower_shots:
         princess = load_princess_tower_character_data(loader.data_file)
@@ -101,6 +108,7 @@ def main():
     records = [{"card": card, "pool_active_frame_counts": {name: 0 for name in pool_names},
                 "primary_allocations": {"projectile": 0, "area": 0, "direct": 0},
                 "sidecar_frames": 0, "rejected_frames": 0, "transition_gap_frames": 0,
+                "visible_token_frame_counts": {}, "last_sidecar_frame_tick": None,
                 "first_sidecar_frame": None}
                for card in cases]
     observation_digest = hashlib.sha256()
@@ -148,6 +156,10 @@ def main():
                 sidecar_digest.update(tensor_hash({"tokens": tokens, "features": features, "mask": mask}).encode())
                 if mask.any():
                     record["sidecar_frames"] += 1
+                    record["last_sidecar_frame_tick"] = tick + 1
+                    for token in tokens[:, 0][mask[:, 0]].unique().cpu().tolist():
+                        counts = record["visible_token_frame_counts"]
+                        counts[str(token)] = counts.get(str(token), 0) + 1
                     if record["first_sidecar_frame"] is None:
                         record["first_sidecar_frame"] = {
                             "tick": tick + 1, "tokens": tokens[mask].cpu().tolist(),
@@ -163,6 +175,7 @@ def main():
                    "tower_shots_enabled": args.tower_shots,
                    "transition_guard_audited": args.transition_guard,
                    "exact_muzzle_probe": args.exact_muzzle_probe,
+                   "delivery_flights": delivery_names,
                    "allocator_variant_sha256": allocator_variant_sha256,
                    "sidecar_trace_sha256": sidecar_digest.hexdigest(),
                    "final_native_state_sha256": runtime_hash(runtime),
