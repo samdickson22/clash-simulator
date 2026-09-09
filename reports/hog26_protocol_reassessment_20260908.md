@@ -824,3 +824,23 @@ The required global/label arrays are only0.00782GiB per128-game shard.
 Next work must bound collection memory and load the declared public-global
 projection for this candidate, preserving full corpus audits and provenance.
 No enlarged collection was started; readiness remains under review.
+
+## Audited public-global projection loader
+
+Added a projection loader for the dynamic public-global candidate. It requires
+a current full-corpus audit and retains original globals, terminal labels,
+episode boundaries, ordinals, stream identities and reset states. It rejects
+critic fields by inspecting every archive key before selecting arrays. It
+does not load entity tensors or replace the full audit. Trainer and frozen
+evaluator use this path only for the explicit public-global-dynamics contract.
+Tests verify skipped entity reads, exact selected-array preservation, unchanged
+archive bytes, stale-audit rejection, and critic-field rejection. Thirty-five
+projection/trainer/evaluator tests and Ruff pass.
+
+A real128-game shard comparison confirms every projected array and metadata
+field equals the full reader. Retained array bytes fall from2087728678 to
+8637072, a241.72-fold reduction. This measures retained NumPy arrays, not total
+process peak memory. Artifact: `hog26_public_projection_memory_probe_20260908.json`.
+The loading memory issue is addressed for this candidate; collector-side
+accumulation still needs bounding before larger development stages launch.
+No new development/calibration/final labels were collected.

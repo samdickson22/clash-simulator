@@ -34,6 +34,10 @@ from clasher.rl.outcome_model import (
     outcome_state_sha256,
 )
 from clasher.rl.public_margin_dynamics import overtime_damage_race
+from scripts.hog26_public_outcome_projection import (
+    load_public_outcome_projection,
+    protocol_audit_path,
+)
 from scripts.pretrain_hog26_direct_simple_behavior import load_model
 from scripts.pretrain_hog26_factorized_policy import batch_inputs
 
@@ -1163,17 +1167,23 @@ def main() -> None:
     np.random.seed(args.seed)
     device = torch.device(args.device)
     payload, model = load_model(args.base_checkpoint, device)
+    def load_corpus(path):
+        if args.feature_set == "public-global-dynamics" and generalization_protocol is not None:
+            return load_public_outcome_projection(
+                path, audit_path=protocol_audit_path(path, generalization_protocol, Path(__file__).resolve().parents[1]),
+            )
+        return load_direct_simple_behavior_corpus(path)
     train_loaded = [
-        load_direct_simple_behavior_corpus(path) for path in args.train_corpus
+        load_corpus(path) for path in args.train_corpus
     ]
     validation_loaded = [
-        load_direct_simple_behavior_corpus(path) for path in args.validation_corpus
+        load_corpus(path) for path in args.validation_corpus
     ]
     calibration_loaded = [
-        load_direct_simple_behavior_corpus(path) for path in args.calibration_corpus
+        load_corpus(path) for path in args.calibration_corpus
     ]
     holdout_loaded = [
-        load_direct_simple_behavior_corpus(path) for path in args.holdout_corpus
+        load_corpus(path) for path in args.holdout_corpus
     ]
     for metadata, corpus in (
         *train_loaded,

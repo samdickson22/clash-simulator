@@ -13,6 +13,10 @@ from clasher.rl.direct_simple_behavior import load_direct_simple_behavior_corpus
 from clasher.rl.outcome_model import outcome_state_sha256
 from scripts.audit_hog26_procedural_outcome_shard import shard_expectations
 from scripts.freeze_hog26_outcome_cohort import load_frozen_cohort
+from scripts.hog26_public_outcome_projection import (
+    load_public_outcome_projection,
+    protocol_audit_path,
+)
 from scripts.hog26_public_slice_gates import evaluate_loaded_public_slices
 from scripts.pretrain_hog26_direct_simple_behavior import load_model
 from scripts.train_hog26_actor_outcome import (
@@ -90,7 +94,12 @@ def evaluate_cohort(manifest_path, manifest_sha256, output, *, root, device):
     loaded = []
     for record in records:
         path = Path(record["path"])
-        metadata, corpus = load_direct_simple_behavior_corpus(path)
+        if candidates[0][2]["actor_feature_contract"] == "public-global-dynamics":
+            metadata, corpus = load_public_outcome_projection(
+                path, audit_path=protocol_audit_path(path, protocol, root),
+            )
+        else:
+            metadata, corpus = load_direct_simple_behavior_corpus(path)
         validate_final_metadata(protocol, record["role"], metadata, root=root)
         validate_outcome_corpus(metadata, corpus)
         if file_sha256(path) != record["sha256"]:

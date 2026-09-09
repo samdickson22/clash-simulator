@@ -1,0 +1,10 @@
+{
+  "scope": "Real audited shard loading comparison; no training or acceptance claim.",
+  "rows": 56347,
+  "games": 128,
+  "all_projected_arrays_equal_full_reader": true,
+  "metadata_equal": true,
+  "full_retained_array_bytes": 2087728678,
+  "projected_retained_array_bytes": 8637072,
+  "array_memory_reduction_factor": 241.71717892359817
+}

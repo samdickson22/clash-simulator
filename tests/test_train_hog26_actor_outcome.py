@@ -412,6 +412,8 @@ def test_calibration_labels_cannot_change_epoch_selection(
     monkeypatch.setattr(
         trainer, "load_direct_simple_behavior_corpus", lambda path: corpora[path.name]
     )
+    monkeypatch.setattr(trainer, "protocol_audit_path", lambda *args: tmp_path / "mock-audit.json")
+    monkeypatch.setattr(trainer, "load_public_outcome_projection", lambda path, **kwargs: corpora[path.name])
     calls = []
     real_fit = trainer.fit_probability_shrinkage
 
