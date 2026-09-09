@@ -1212,3 +1212,81 @@ First corrected fitting shard complete and audited:
   Preserve this process, audit after full publication, then collect shard2
   seed1278963 and training draw control1278964. Candidate fitting, validation
   control1278965, selection/calibration, holdout, and policy updates stay gated.
+
+
+Second corrected fitting shard complete and audited:
+- Seed 1278962, bridge-pressure/reactive-defense: 128 complete games,
+  51,227 decisions, 58 wins, 70 losses, zero draws. Twelve chunks completed;
+  collector session 20798/PID 34414 exited 0. Audit session 16876 exited 0.
+- All protocol-bound checks passed, including complete boundaries, terminal
+  labels, absent critic inputs, public mask v2, exact decks/styles/split,
+  reconstructed seeded openings, and all 128 initial actor hands.
+- Corpus SHA256: 691b19b7bc5e6d2caa9a2d112c260ef200e1396cb904e0917e41dc19aac450b0.
+- Paired scenario groups: early 64, middle 57, late 15. Late groups include
+  10 with losses and 5 with wins. This is corpus evidence, not model acceptance.
+- Started frozen shard 2 (third natural shard), seed 1278963, slow-push/spell-control,
+  MPS, OMP/MKL threads 1. Session 31123/PID 26475 verified live.
+  Log: reports/hog26_corrected_train_slow_spell_seed1278963.log.
+- Next: preserve this collector, audit after full publication, then collect
+  training draw control 1278964. Candidate fitting, validation control,
+  selection/calibration, holdout, and policy updates remain gated.
+
+
+Third corrected fitting shard complete and audited:
+- Seed 1278963, slow-push/spell-control: 128 complete games, 52,049 decisions,
+  46 wins, 82 losses, zero draws. Collector session 31123 exited 0;
+  protocol-bound audit session 8680 exited 0 with all checks passed.
+- Corpus SHA256: 57eae5b1521f0eed473aa1037bdd15ade5f99bc570baad2804c955691289e286.
+- Opening reconstruction verified all 128 initial hands and 64 paired deals.
+  Reached phase groups: early 64, middle 58, late 6. Late coverage is sparse:
+  five groups with losses and one with a win. No model acceptance claim.
+- All three corrected natural shards now total 384 games, 159,499 decisions,
+  152 wins, 232 losses, zero draws. Candidate fitting remains gated.
+- Started predeclared training draw control seed 1278964, two frozen-policy
+  battles and four actor views, MPS, session 33985. Preserve this process.
+  Log: reports/hog26_corrected_draw_training_seed1278964.log.
+- Next: audit the complete draw control, then reassess learnability using only
+  training-family exclusions. Validation draw control 1278965 and all
+  selection/calibration/final corpora remain unopened; no policy updates.
+
+
+Corrected training draw control complete and audited:
+- Seed 1278964 collector session 33985/PID 31840 exited 0.
+- Four actor views, 1,552 decisions, four draws, exactly zero terminal margin.
+  Corpus audit passed all configured checks. Fixed-template symmetric openings
+  are explicitly not verified as independent seeded natural-game scenarios.
+- Corpus SHA256: 42bd17fdf53af8eee43c2b42249e269c2432b13bc1e8403e18f8410adcf7d8f8.
+- All declared corrected fitting data are complete: 384 natural games plus four
+  controlled actor views, 161,051 total decisions. No collector remains active.
+- Next required action is training-family learnability reassessment using the
+  complete corrected corpora. Candidate fitting/selection/calibration/final
+  evaluation remain gated; validation draw control 1278965 remains unopened.
+
+
+Corrected-data training-family reassessment completed on 2026-09-09:
+- Both fixed diagnostic plans use only the three corrected natural corpora and
+  corrected training draw control. Prior folds, seeds, epochs, and architecture
+  were preserved. Source hashes and current audits passed before fitting.
+- WDL screen completed eight fits, exit 0. Representative AUC 0.83233/0.83080,
+  ECE 0.03087/0.03001, and NLL gain 0.23457/0.23390. Every phase improves NLL,
+  including full-phase early gains 0.09960/0.10061. These are training-family
+  diagnostics, not independent public-state acceptance or natural draw proof.
+- Hybrid margin screen completed eight fits, exit 0. Pooled MAE gains
+  0.01618/0.01593 pass its narrow point screen, but conceal material failures.
+  Families 006/007 regress 0.03937/0.03555; bridge-pressure regresses
+  0.02595/0.02360. Do not freeze the candidate from the pooled result.
+- Late representative gain is 0.001925 on 60 games in 37 verified paired
+  scenarios. A fixed-prediction paired-scenario bootstrap gives 95 percent
+  interval [-0.01193, 0.01305]. Overall family-cluster intervals also cross zero.
+  This bootstrap does not refit the heads and has only eight family clusters.
+- Artifacts: hog26_corrected_wdl_complete_globals_screen_20260909.json,
+  hog26_corrected_hybrid_margin_screen_20260909.json, their frozen plans, and
+  hog26_corrected_margin_reassessment_20260909.json. The standalone summary
+  script reconstructs opening clusters and verifies input corpus hashes.
+- Decision: outcome learnability survives the corrections; the proposed margin
+  design is not ready to freeze. Next inspect family/style error structure and
+  public representation sufficiency before prescribing a replacement diagnostic.
+  Do not tune against selection/calibration/final labels. All those corpora and
+  validation draw control remain unopened. No policy updates occurred.
+- All three diagnostic/summary processes exited 0. Ruff passed for the new
+  summary script. No training or collector process remains active.
