@@ -658,3 +658,41 @@ completed training mixture with the same family isolation and fit-only prior
 correction. The primary objective needs both calibrated outcome probabilities
 and margin forecasting; margin-only diagnostics cannot establish either final
 acceptance or readiness for policy learning.
+
+## WDL learnability on the completed training mixture
+
+Added an outcome-classification mode to the audited family screen, reusing
+its exact source roles, corpus hashes and whole-family exclusions. The new
+classification implementation trains only ActorOutcomeHead weights at a fixed
+epoch budget. Class weights and empirical episode prior use fitting labels
+only; no withheld shrinkage or epoch selection is allowed. It reports natural
+representative and full-phase weighted NLL, Brier, ECE, classwise ECE, decisive
+AUC, and probability/class mass, with fold-specific fitting-prior baselines.
+Controlled training draws remain auxiliary fitting inputs, never withheld
+natural examples. A label-flip test proves withheld outcomes cannot change
+class weights or prior. A small real fit checks fold coverage. Eleven focused
+tests and Ruff pass.
+
+Started the two predeclared complete-mixture WDL diagnostics using public
+globals and the existing structured summary, each hidden16, fixed30 epochs,
+seeds1278921/1278922 and four family folds. Plans/output prefixes are
+`hog26_wdl_complete_globals_screen` and `hog26_wdl_complete_summary_screen`.
+Runs are sequential on one CPU thread. These are learnability diagnostics,
+not acceptance or permission for search/policy updates. No new development,
+calibration, or final data is opened.
+
+Both WDL diagnostics completed,35.59s for globals and76.01s for summary.
+Public-global representative overall decisive AUC is0.84458/0.83227 with
+ECE0.02109/0.01833 and NLL improvement0.23201/0.22353 over each fold fitting
+prior. Full-phase early AUC is0.67165/0.68487, middle0.89709/0.88786, and
+late0.80538/0.85648. Structured summaries give overall AUC0.80582/0.81881
+and ECE0.09980/0.08251; full-phase late AUC falls to0.72462/0.65915.
+These are repeatedly examined training-family diagnostics, not independent
+acceptance. Natural draw labels are absent, so natural draw calibration is
+not established. Decision artifact: `hog26_wdl_complete_training_decision_20260908.json`.
+
+Outcome discrimination is now demonstrably learnable in this training mixture;
+the bottleneck is not uniformly missing public outcome information. A bounded
+next hypothesis is to test the fitting-only outcome encoder as margin features,
+with a matched frozen-random-encoder control. Preserve WDL head calibration and
+all family exclusions; do not use withheld outcomes to build transferred features.

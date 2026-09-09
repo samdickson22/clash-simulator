@@ -286,6 +286,16 @@ def main() -> None:
     row_seats = np.repeat(np.concatenate(episode_seats_parts), lengths)
     row_styles = np.repeat(np.concatenate(episode_styles_parts), lengths)
     evaluated_styles = sorted(set(row_styles[representatives]))
+    if plan.get("task") == "outcome-classification":
+        from scripts.screen_hog26_training_family_outcomes import run_outcome_screen
+
+        run_outcome_screen(
+            plan=plan, features=features, loaded=loaded,
+            episode_families=episode_families, episode_offsets=episode_offsets,
+            source_records=source_records, plan_path=args.plan, output=output,
+            started=started,
+        )
+        return
 
     def summarize(prediction, rows):
         if not len(rows):

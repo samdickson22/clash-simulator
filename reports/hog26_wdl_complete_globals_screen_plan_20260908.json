@@ -1,0 +1,80 @@
+{
+  "protocol": "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json",
+  "corpora": [
+    {
+      "path": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+      "sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f",
+      "role": "procedural"
+    },
+    {
+      "path": "datasets/derived/hog26_procedural_train_bridge_reactive_seed1278502/corpus.npz",
+      "sha256": "af8ea0ba2e37c4a870af71ad2228cae713273a095a9d8da80a6f39b1d1ecc8f6",
+      "role": "procedural"
+    },
+    {
+      "path": "datasets/derived/hog26_procedural_train_slow_spell_seed1278503/corpus.npz",
+      "sha256": "611699015ae3a506454aa8a9f11ae009213ae773d4213266b2f9f120f39314e1",
+      "role": "procedural"
+    },
+    {
+      "path": "datasets/derived/hog26_crossed_train4_seed1276001_no_split_lane_20260908/corpus.npz",
+      "sha256": "fad0ca04d3932391a85bb5b22e8a2d48d4185c76fef4409175159594d35122b9",
+      "role": "auxiliary"
+    },
+    {
+      "path": "datasets/derived/hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908/corpus.npz",
+      "sha256": "8f630d914bb465657e0d9b28e30bdb113cf1e8600ff8535c73616a71e3738fdd",
+      "role": "auxiliary"
+    },
+    {
+      "path": "datasets/derived/hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908/corpus.npz",
+      "sha256": "e337e7794ac32f6a18da85381e345e4d736b348294d43d194444ce64569112e6",
+      "role": "auxiliary"
+    },
+    {
+      "path": "datasets/derived/hog26_symmetric_draw_outcomes_seed1270001/corpus.npz",
+      "sha256": "2230641594fd97f17080bee06399034bde0bd77d9dc88799633759ee032b0804",
+      "role": "auxiliary"
+    }
+  ],
+  "held_out_training_families": [
+    [
+      "family-000",
+      "family-001"
+    ],
+    [
+      "family-002",
+      "family-003"
+    ],
+    [
+      "family-004",
+      "family-005"
+    ],
+    [
+      "family-006",
+      "family-007"
+    ]
+  ],
+  "hidden_size": 16,
+  "epochs": 30,
+  "batch_size": 512,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "torch_threads": 1,
+  "schema": "clasher.hog26.training-family-outcome-screen.v1",
+  "task": "outcome-classification",
+  "actor_feature_set": "public-globals",
+  "seeds": [
+    1278921,
+    1278922
+  ],
+  "target_class_mass": [
+    0.45,
+    0.1,
+    0.45
+  ],
+  "output": "reports/hog26_wdl_complete_globals_screen_20260908.json",
+  "scope": "Audited training-only complete mixture. Fixed epochs; whole-family exclusion across all procedural sources; auxiliary training games fitting only. Fit-only empirical prior correction, no heldout shrinkage. No candidate promotion or final acceptance.",
+  "protocol_sha256_at_plan": "25488d515d5fbff4381c268c3dd89b02bdae2a0b7aac6e60dd37f8aabb5f0257",
+  "outcome_screen_sha256_at_plan": "8b7ab128abcb2d58a0b3f6f9c8c1f10f8ccf72b0329bfd6d18bf36d7cbc45ad0"
+}

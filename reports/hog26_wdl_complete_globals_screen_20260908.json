@@ -1,0 +1,995 @@
+{
+  "calibration": "fitting-episode prior correction only; no heldout shrinkage or epoch selection",
+  "elapsed_seconds": 35.59096162498463,
+  "feature_size": 18,
+  "plan": {
+    "actor_feature_set": "public-globals",
+    "batch_size": 512,
+    "corpora": [
+      {
+        "path": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+        "role": "procedural",
+        "sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f"
+      },
+      {
+        "path": "datasets/derived/hog26_procedural_train_bridge_reactive_seed1278502/corpus.npz",
+        "role": "procedural",
+        "sha256": "af8ea0ba2e37c4a870af71ad2228cae713273a095a9d8da80a6f39b1d1ecc8f6"
+      },
+      {
+        "path": "datasets/derived/hog26_procedural_train_slow_spell_seed1278503/corpus.npz",
+        "role": "procedural",
+        "sha256": "611699015ae3a506454aa8a9f11ae009213ae773d4213266b2f9f120f39314e1"
+      },
+      {
+        "path": "datasets/derived/hog26_crossed_train4_seed1276001_no_split_lane_20260908/corpus.npz",
+        "role": "auxiliary",
+        "sha256": "fad0ca04d3932391a85bb5b22e8a2d48d4185c76fef4409175159594d35122b9"
+      },
+      {
+        "path": "datasets/derived/hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908/corpus.npz",
+        "role": "auxiliary",
+        "sha256": "8f630d914bb465657e0d9b28e30bdb113cf1e8600ff8535c73616a71e3738fdd"
+      },
+      {
+        "path": "datasets/derived/hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908/corpus.npz",
+        "role": "auxiliary",
+        "sha256": "e337e7794ac32f6a18da85381e345e4d736b348294d43d194444ce64569112e6"
+      },
+      {
+        "path": "datasets/derived/hog26_symmetric_draw_outcomes_seed1270001/corpus.npz",
+        "role": "auxiliary",
+        "sha256": "2230641594fd97f17080bee06399034bde0bd77d9dc88799633759ee032b0804"
+      }
+    ],
+    "epochs": 30,
+    "held_out_training_families": [
+      [
+        "family-000",
+        "family-001"
+      ],
+      [
+        "family-002",
+        "family-003"
+      ],
+      [
+        "family-004",
+        "family-005"
+      ],
+      [
+        "family-006",
+        "family-007"
+      ]
+    ],
+    "hidden_size": 16,
+    "learning_rate": 0.0001,
+    "outcome_screen_sha256_at_plan": "8b7ab128abcb2d58a0b3f6f9c8c1f10f8ccf72b0329bfd6d18bf36d7cbc45ad0",
+    "output": "reports/hog26_wdl_complete_globals_screen_20260908.json",
+    "protocol": "reports/hog26_procedural_outcome_protocol_reassessed_20260908.json",
+    "protocol_sha256_at_plan": "25488d515d5fbff4381c268c3dd89b02bdae2a0b7aac6e60dd37f8aabb5f0257",
+    "schema": "clasher.hog26.training-family-outcome-screen.v1",
+    "scope": "Audited training-only complete mixture. Fixed epochs; whole-family exclusion across all procedural sources; auxiliary training games fitting only. Fit-only empirical prior correction, no heldout shrinkage. No candidate promotion or final acceptance.",
+    "seeds": [
+      1278921,
+      1278922
+    ],
+    "target_class_mass": [
+      0.45,
+      0.1,
+      0.45
+    ],
+    "task": "outcome-classification",
+    "torch_threads": 1,
+    "weight_decay": 0.0001
+  },
+  "plan_sha256": "f0a839249044cb9f69627b061ad0971f09221a85a76518e3d362c6242416fe60",
+  "results": [
+    {
+      "folds": [
+        {
+          "families": [
+            "family-000",
+            "family-001"
+          ],
+          "fit_prior": [
+            0.6100917458534241,
+            0.00917431153357029,
+            0.3807339370250702
+          ],
+          "fitting_games": 436,
+          "fitting_representatives": {
+            "brier": 0.28385197622326347,
+            "classwise_ece_10": {
+              "draw": 0.0041670926344541575,
+              "loss": 0.06892971788533032,
+              "win": 0.06636521979506749
+            },
+            "decisive_auc": 0.8786170591001372,
+            "ece_10": 0.04421091924111049,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.5883333333333334,
+              "win": 0.41166666666666674
+            },
+            "fit_prior_nll": 0.6882502880692487,
+            "mean_probability": {
+              "draw": 0.004167092634454153,
+              "loss": 0.5425704043327523,
+              "win": 0.4532624983224859
+            },
+            "nll": 0.43324161370481656,
+            "nll_improvement_over_fit_prior": 0.25500867436443214,
+            "rows": 600
+          },
+          "out_of_fold_representatives": {
+            "brier": 0.31134192589803866,
+            "classwise_ece_10": {
+              "draw": 0.007196924002576731,
+              "loss": 0.1069358302667964,
+              "win": 0.09946163702959449
+            },
+            "decisive_auc": 0.8131972789115653,
+            "ece_10": 0.09712119967804342,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.7461928934010154,
+              "win": 0.25380710659898476
+            },
+            "fit_prior_nll": 0.6138181538146157,
+            "mean_probability": {
+              "draw": 0.0071969240025767335,
+              "loss": 0.6460369931070631,
+              "win": 0.346766080810135
+            },
+            "nll": 0.46927622705269467,
+            "nll_improvement_over_fit_prior": 0.144541926761921,
+            "rows": 197
+          }
+        },
+        {
+          "families": [
+            "family-002",
+            "family-003"
+          ],
+          "fit_prior": [
+            0.6582568883895874,
+            0.00917431153357029,
+            0.33256879448890686
+          ],
+          "fitting_games": 436,
+          "fitting_representatives": {
+            "brier": 0.2701962557723796,
+            "classwise_ece_10": {
+              "draw": 0.003273307271500515,
+              "loss": 0.061101012139891595,
+              "win": 0.05474023002325945
+            },
+            "decisive_auc": 0.8812658227848106,
+            "ece_10": 0.05670261800289155,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.6583333333333334,
+              "win": 0.34166666666666673
+            },
+            "fit_prior_nll": 0.6514324242870009,
+            "mean_probability": {
+              "draw": 0.0032733072715005096,
+              "loss": 0.6369196253114695,
+              "win": 0.3598070679064642
+            },
+            "nll": 0.417442713450543,
+            "nll_improvement_over_fit_prior": 0.23398971083645786,
+            "rows": 600
+          },
+          "out_of_fold_representatives": {
+            "brier": 0.2923032106052845,
+            "classwise_ece_10": {
+              "draw": 0.002556720475162419,
+              "loss": 0.08850163333401613,
+              "win": 0.09059288498032825
+            },
+            "decisive_auc": 0.8742753623188403,
+            "ece_10": 0.052735944387271326,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.5329949238578681,
+              "win": 0.4670050761421321
+            },
+            "fit_prior_nll": 0.7370070349141429,
+            "mean_probability": {
+              "draw": 0.002556720475162419,
+              "loss": 0.5832996812275596,
+              "win": 0.4141436024282516
+            },
+            "nll": 0.45884640758059736,
+            "nll_improvement_over_fit_prior": 0.2781606273335455,
+            "rows": 197
+          }
+        },
+        {
+          "families": [
+            "family-004",
+            "family-005"
+          ],
+          "fit_prior": [
+            0.5940366983413696,
+            0.00917431153357029,
+            0.39678898453712463
+          ],
+          "fitting_games": 436,
+          "fitting_representatives": {
+            "brier": 0.27087877633957747,
+            "classwise_ece_10": {
+              "draw": 0.0023055555501472597,
+              "loss": 0.028749133717193946,
+              "win": 0.02663050850629059
+            },
+            "decisive_auc": 0.8870417587398717,
+            "ece_10": 0.028030844536114697,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.55685618729097,
+              "win": 0.4431438127090301
+            },
+            "fit_prior_nll": 0.6996388829073373,
+            "mean_probability": {
+              "draw": 0.0023055555501472614,
+              "loss": 0.5519352118814835,
+              "win": 0.44575923446559595
+            },
+            "nll": 0.42097614794159044,
+            "nll_improvement_over_fit_prior": 0.2786627349657469,
+            "rows": 598
+          },
+          "out_of_fold_representatives": {
+            "brier": 0.2926537113772768,
+            "classwise_ece_10": {
+              "draw": 0.0044697247353529795,
+              "loss": 0.14608440888886476,
+              "win": 0.13991280788925461
+            },
+            "decisive_auc": 0.7680576347305399,
+            "ece_10": 0.04375327891440847,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.8391959798994977,
+              "win": 0.16080402010050251
+            },
+            "fit_prior_nll": 0.5857044715977192,
+            "mean_probability": {
+              "draw": 0.004469724735352982,
+              "loss": 0.7112188157274494,
+              "win": 0.2843114605124328
+            },
+            "nll": 0.45027662739245367,
+            "nll_improvement_over_fit_prior": 0.13542784420526555,
+            "rows": 199
+          }
+        },
+        {
+          "families": [
+            "family-006",
+            "family-007"
+          ],
+          "fit_prior": [
+            0.6926605701446533,
+            0.00917431153357029,
+            0.29816514253616333
+          ],
+          "fitting_games": 436,
+          "fitting_representatives": {
+            "brier": 0.27532626814700983,
+            "classwise_ece_10": {
+              "draw": 0.0046869807302843194,
+              "loss": 0.05555684722545376,
+              "win": 0.049286716362163245
+            },
+            "decisive_auc": 0.851246810962063,
+            "ece_10": 0.04363962289253736,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.7065767284991568,
+              "win": 0.29342327150084313
+            },
+            "fit_prior_nll": 0.614539495557797,
+            "mean_probability": {
+              "draw": 0.0046869807302843125,
+              "loss": 0.6807499646160485,
+              "win": 0.3145630543186607
+            },
+            "nll": 0.42207741504718416,
+            "nll_improvement_over_fit_prior": 0.1924620805106128,
+            "rows": 593
+          },
+          "out_of_fold_representatives": {
+            "brier": 0.33619085516904773,
+            "classwise_ece_10": {
+              "draw": 0.001955998613919027,
+              "loss": 0.09805862328001094,
+              "win": 0.09729428743879656
+            },
+            "decisive_auc": 0.8411121148248516,
+            "ece_10": 0.048756789635209484,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.3970588235294117,
+              "win": 0.602941176470588
+            },
+            "fit_prior_nll": 0.8754298524821509,
+            "mean_probability": {
+              "draw": 0.0019559986139190263,
+              "loss": 0.49239711536496283,
+              "win": 0.5056468890317913
+            },
+            "nll": 0.5093245449988463,
+            "nll_improvement_over_fit_prior": 0.3661053074833046,
+            "rows": 204
+          }
+        }
+      ],
+      "full_phase": {
+        "early": {
+          "brier": 0.4369507035985724,
+          "classwise_ece_10": {
+            "draw": 0.005490186668910367,
+            "loss": 0.05011735044795746,
+            "win": 0.052554214706288176
+          },
+          "decisive_auc": 0.6716505728944503,
+          "ece_10": 0.037170507477797356,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.598958333333333,
+            "win": 0.4010416666666665
+          },
+          "fit_prior_nll": 0.7216331463617577,
+          "mean_probability": {
+            "draw": 0.005490186668910369,
+            "loss": 0.6022096394469861,
+            "win": 0.3923001735610526
+          },
+          "nll": 0.634971531404329,
+          "nll_improvement_over_fit_prior": 0.08666161495742863,
+          "rows": 94342
+        },
+        "late": {
+          "brier": 0.18498381275587067,
+          "classwise_ece_10": {
+            "draw": 4.674602878171145e-05,
+            "loss": 0.08520490541483153,
+            "win": 0.08515819116529144
+          },
+          "decisive_auc": 0.8053820274682282,
+          "ece_10": 0.05294844060768651,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.8653846153846153,
+            "win": 0.13461538461538464
+          },
+          "fit_prior_nll": 0.549956660431165,
+          "mean_probability": {
+            "draw": 4.674602878171143e-05,
+            "loss": 0.7979234927960552,
+            "win": 0.20202976507060266
+          },
+          "nll": 0.32883444761053243,
+          "nll_improvement_over_fit_prior": 0.22112221282063255,
+          "rows": 5789
+        },
+        "middle": {
+          "brier": 0.25048727229319284,
+          "classwise_ece_10": {
+            "draw": 0.0037468343302169077,
+            "loss": 0.03986805656795506,
+            "win": 0.039282212550250536
+          },
+          "decisive_auc": 0.897090738971622,
+          "ece_10": 0.029417682292689266,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.6232686980609419,
+            "win": 0.3767313019390582
+          },
+          "fit_prior_nll": 0.7078963085554972,
+          "mean_probability": {
+            "draw": 0.0037468343302169077,
+            "loss": 0.6396909933726665,
+            "win": 0.35656217328487505
+          },
+          "nll": 0.3988794355706596,
+          "nll_improvement_over_fit_prior": 0.30901687298483765,
+          "rows": 67469
+        }
+      },
+      "representative_by_phase": {
+        "early": {
+          "brier": 0.41147675907933023,
+          "classwise_ece_10": {
+            "draw": 0.0052620765076873376,
+            "loss": 0.047714629520972565,
+            "win": 0.04417340592772235
+          },
+          "decisive_auc": 0.7272021456804066,
+          "ece_10": 0.03889703843742609,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.5989583333333334,
+            "win": 0.40104166666666663
+          },
+          "fit_prior_nll": 0.7216331463617583,
+          "mean_probability": {
+            "draw": 0.005262076507687343,
+            "loss": 0.5769990642244609,
+            "win": 0.41773886179726066
+          },
+          "nll": 0.6117563052507972,
+          "nll_improvement_over_fit_prior": 0.10987684111096119,
+          "rows": 384
+        },
+        "late": {
+          "brier": 0.14579224268731772,
+          "classwise_ece_10": {
+            "draw": 4.32265823745563e-05,
+            "loss": 0.0928443091420027,
+            "win": 0.0928042933452301
+          },
+          "decisive_auc": 0.8412698412698415,
+          "ece_10": 0.09216565810717069,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.8653846153846156,
+            "win": 0.13461538461538464
+          },
+          "fit_prior_nll": 0.549956660431165,
+          "mean_probability": {
+            "draw": 4.3226582374556304e-05,
+            "loss": 0.8106721290029014,
+            "win": 0.1892846457194538
+          },
+          "nll": 0.28098057301211965,
+          "nll_improvement_over_fit_prior": 0.26897608741904533,
+          "rows": 52
+        },
+        "middle": {
+          "brier": 0.22202449530059604,
+          "classwise_ece_10": {
+            "draw": 0.00328831507050948,
+            "loss": 0.035880331994857316,
+            "win": 0.02959544494469331
+          },
+          "decisive_auc": 0.9203104575163367,
+          "ece_10": 0.017590251160460493,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.623268698060942,
+            "win": 0.37673130193905824
+          },
+          "fit_prior_nll": 0.7078963085554973,
+          "mean_probability": {
+            "draw": 0.0032883150705094845,
+            "loss": 0.6106323804370954,
+            "win": 0.3860793049719167
+          },
+          "nll": 0.3513074904174103,
+          "nll_improvement_over_fit_prior": 0.35658881813808707,
+          "rows": 361
+        }
+      },
+      "representative_overall": {
+        "brier": 0.3083301316307635,
+        "classwise_ece_10": {
+          "draw": 0.004027561984553748,
+          "loss": 0.03487555291082994,
+          "win": 0.03346509095603804
+        },
+        "decisive_auc": 0.8445791245791258,
+        "ece_10": 0.021090201855902393,
+        "empirical_class_mass": {
+          "draw": 0.0,
+          "loss": 0.6273525721455457,
+          "win": 0.37264742785445415
+        },
+        "fit_prior_nll": 0.7042100902557975,
+        "mean_probability": {
+          "draw": 0.00402756198455374,
+          "loss": 0.6074791476890031,
+          "win": 0.3884932918474558
+        },
+        "nll": 0.47220503770843336,
+        "nll_improvement_over_fit_prior": 0.23200505254736414,
+        "rows": 797
+      },
+      "seed": 1278921
+    },
+    {
+      "folds": [
+        {
+          "families": [
+            "family-000",
+            "family-001"
+          ],
+          "fit_prior": [
+            0.6100917458534241,
+            0.00917431153357029,
+            0.3807339370250702
+          ],
+          "fitting_games": 436,
+          "fitting_representatives": {
+            "brier": 0.26953974414931436,
+            "classwise_ece_10": {
+              "draw": 0.002891693480859477,
+              "loss": 0.04560550115769729,
+              "win": 0.041218655355429894
+            },
+            "decisive_auc": 0.8870238900803987,
+            "ece_10": 0.024830084542433427,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.5883333333333334,
+              "win": 0.41166666666666674
+            },
+            "fit_prior_nll": 0.6882502880692487,
+            "mean_probability": {
+              "draw": 0.002891693480859479,
+              "loss": 0.5683028008765535,
+              "win": 0.4288055092569755
+            },
+            "nll": 0.414699334324356,
+            "nll_improvement_over_fit_prior": 0.2735509537448927,
+            "rows": 600
+          },
+          "out_of_fold_representatives": {
+            "brier": 0.3081073944205426,
+            "classwise_ece_10": {
+              "draw": 0.005347633531262678,
+              "loss": 0.09973304024732052,
+              "win": 0.10512472444265929
+            },
+            "decisive_auc": 0.8040816326530618,
+            "ece_10": 0.04798599608658533,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.7461928934010154,
+              "win": 0.25380710659898476
+            },
+            "fit_prior_nll": 0.6138181538146157,
+            "mean_probability": {
+              "draw": 0.005347633531262676,
+              "loss": 0.6800692148582279,
+              "win": 0.3145831497811576
+            },
+            "nll": 0.4643293582844508,
+            "nll_improvement_over_fit_prior": 0.14948879553016486,
+            "rows": 197
+          }
+        },
+        {
+          "families": [
+            "family-002",
+            "family-003"
+          ],
+          "fit_prior": [
+            0.6582568883895874,
+            0.00917431153357029,
+            0.33256879448890686
+          ],
+          "fitting_games": 436,
+          "fitting_representatives": {
+            "brier": 0.2807695667136467,
+            "classwise_ece_10": {
+              "draw": 0.0032655153105965165,
+              "loss": 0.05048455394804477,
+              "win": 0.04657769654353615
+            },
+            "decisive_auc": 0.8688916332201301,
+            "ece_10": 0.03626300424337387,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.6583333333333334,
+              "win": 0.34166666666666673
+            },
+            "fit_prior_nll": 0.6514324242870009,
+            "mean_probability": {
+              "draw": 0.003265515310596521,
+              "loss": 0.6322770599524182,
+              "win": 0.3644574246638999
+            },
+            "nll": 0.43538557666243516,
+            "nll_improvement_over_fit_prior": 0.21604684762456572,
+            "rows": 600
+          },
+          "out_of_fold_representatives": {
+            "brier": 0.31114617039137304,
+            "classwise_ece_10": {
+              "draw": 0.0026444143321609458,
+              "loss": 0.0903386216809226,
+              "win": 0.09453517763738326
+            },
+            "decisive_auc": 0.8542960662525879,
+            "ece_10": 0.06555938962752443,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.5329949238578681,
+              "win": 0.4670050761421321
+            },
+            "fit_prior_nll": 0.7370070349141429,
+            "mean_probability": {
+              "draw": 0.002644414332160947,
+              "loss": 0.5813357840968191,
+              "win": 0.41601980165791147
+            },
+            "nll": 0.4761303393303633,
+            "nll_improvement_over_fit_prior": 0.26087669558377957,
+            "rows": 197
+          }
+        },
+        {
+          "families": [
+            "family-004",
+            "family-005"
+          ],
+          "fit_prior": [
+            0.5940366983413696,
+            0.00917431153357029,
+            0.39678898453712463
+          ],
+          "fitting_games": 436,
+          "fitting_representatives": {
+            "brier": 0.2641438365610889,
+            "classwise_ece_10": {
+              "draw": 0.003605639794806568,
+              "loss": 0.056919059574442064,
+              "win": 0.05529556920882166
+            },
+            "decisive_auc": 0.8962547453113486,
+            "ece_10": 0.05532256825313121,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.55685618729097,
+              "win": 0.4431438127090301
+            },
+            "fit_prior_nll": 0.6996388829073373,
+            "mean_probability": {
+              "draw": 0.003605639794806571,
+              "loss": 0.546956017213161,
+              "win": 0.44943834545633327
+            },
+            "nll": 0.4159006191445642,
+            "nll_improvement_over_fit_prior": 0.2837382637627731,
+            "rows": 598
+          },
+          "out_of_fold_representatives": {
+            "brier": 0.3198875874735413,
+            "classwise_ece_10": {
+              "draw": 0.0060569724108693055,
+              "loss": 0.16816992391293972,
+              "win": 0.16385305319484508
+            },
+            "decisive_auc": 0.7360591317365278,
+            "ece_10": 0.09677402952208591,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.8391959798994977,
+              "win": 0.16080402010050251
+            },
+            "fit_prior_nll": 0.5857044715977192,
+            "mean_probability": {
+              "draw": 0.006056972410869302,
+              "loss": 0.704122682162864,
+              "win": 0.28982034604937945
+            },
+            "nll": 0.4699000477797053,
+            "nll_improvement_over_fit_prior": 0.11580442381801392,
+            "rows": 199
+          }
+        },
+        {
+          "families": [
+            "family-006",
+            "family-007"
+          ],
+          "fit_prior": [
+            0.6926605701446533,
+            0.00917431153357029,
+            0.29816514253616333
+          ],
+          "fitting_games": 436,
+          "fitting_representatives": {
+            "brier": 0.28171608789980485,
+            "classwise_ece_10": {
+              "draw": 0.0065140567068637184,
+              "loss": 0.05573288371400125,
+              "win": 0.05032654325136189
+            },
+            "decisive_auc": 0.8450881957589246,
+            "ece_10": 0.045316767933798886,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.7065767284991568,
+              "win": 0.29342327150084313
+            },
+            "fit_prior_nll": 0.614539495557797,
+            "mean_probability": {
+              "draw": 0.006514056706863705,
+              "loss": 0.6704674747726967,
+              "win": 0.3230184683500449
+            },
+            "nll": 0.4338774039447755,
+            "nll_improvement_over_fit_prior": 0.1806620916130215,
+            "rows": 593
+          },
+          "out_of_fold_representatives": {
+            "brier": 0.33507394721097217,
+            "classwise_ece_10": {
+              "draw": 0.0023339280905340294,
+              "loss": 0.10310461109175402,
+              "win": 0.11513532385887469
+            },
+            "decisive_auc": 0.8452273411623002,
+            "ece_10": 0.04548373263256223,
+            "empirical_class_mass": {
+              "draw": 0.0,
+              "loss": 0.3970588235294117,
+              "win": 0.602941176470588
+            },
+            "fit_prior_nll": 0.8754298524821509,
+            "mean_probability": {
+              "draw": 0.002333928090534028,
+              "loss": 0.48478090923790823,
+              "win": 0.5128851666425663
+            },
+            "nll": 0.5113802718751224,
+            "nll_improvement_over_fit_prior": 0.3640495806070285,
+            "rows": 204
+          }
+        }
+      ],
+      "full_phase": {
+        "early": {
+          "brier": 0.4275371560348533,
+          "classwise_ece_10": {
+            "draw": 0.005562661163180514,
+            "loss": 0.04411184937594469,
+            "win": 0.047074920995862204
+          },
+          "decisive_auc": 0.6848661367510432,
+          "ece_10": 0.03460220655007569,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.598958333333333,
+            "win": 0.4010416666666665
+          },
+          "fit_prior_nll": 0.7216331463617577,
+          "mean_probability": {
+            "draw": 0.005562661163180509,
+            "loss": 0.6014749499651294,
+            "win": 0.3929623885032523
+          },
+          "nll": 0.623708895877683,
+          "nll_improvement_over_fit_prior": 0.09792425048407472,
+          "rows": 94342
+        },
+        "late": {
+          "brier": 0.18224416724870846,
+          "classwise_ece_10": {
+            "draw": 0.00016111475107371393,
+            "loss": 0.1108684791147542,
+            "win": 0.11066673086723328
+          },
+          "decisive_auc": 0.8564802478406515,
+          "ece_10": 0.08136444359802576,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.8653846153846153,
+            "win": 0.13461538461538464
+          },
+          "fit_prior_nll": 0.549956660431165,
+          "mean_probability": {
+            "draw": 0.00016111475107371387,
+            "loss": 0.7713787995377615,
+            "win": 0.22846008989587568
+          },
+          "nll": 0.31215071348437234,
+          "nll_improvement_over_fit_prior": 0.23780594694679263,
+          "rows": 5789
+        },
+        "middle": {
+          "brier": 0.26402900373484806,
+          "classwise_ece_10": {
+            "draw": 0.003857296422084239,
+            "loss": 0.03526723013783203,
+            "win": 0.039043793917751445
+          },
+          "decisive_auc": 0.8878636683737794,
+          "ece_10": 0.013881164864100827,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.6232686980609419,
+            "win": 0.3767313019390582
+          },
+          "fit_prior_nll": 0.7078963085554972,
+          "mean_probability": {
+            "draw": 0.003857296422084241,
+            "loss": 0.649908254216322,
+            "win": 0.3462344502052777
+          },
+          "nll": 0.4139391442946389,
+          "nll_improvement_over_fit_prior": 0.29395716426085833,
+          "rows": 67469
+        }
+      },
+      "representative_by_phase": {
+        "early": {
+          "brier": 0.4104967582912129,
+          "classwise_ece_10": {
+            "draw": 0.005969598527791146,
+            "loss": 0.05903708084952085,
+            "win": 0.06965585718717195
+          },
+          "decisive_auc": 0.7301948051948051,
+          "ece_10": 0.02506669432235261,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.5989583333333334,
+            "win": 0.40104166666666663
+          },
+          "fit_prior_nll": 0.7216331463617583,
+          "mean_probability": {
+            "draw": 0.005969598527791138,
+            "loss": 0.5670997934648774,
+            "win": 0.4269306102626921
+          },
+          "nll": 0.6098523608307237,
+          "nll_improvement_over_fit_prior": 0.11178078553103465,
+          "rows": 384
+        },
+        "late": {
+          "brier": 0.1457831529320807,
+          "classwise_ece_10": {
+            "draw": 6.304017811304121e-05,
+            "loss": 0.12393002613232687,
+            "win": 0.12388549831051093
+          },
+          "decisive_auc": 0.8888888888888892,
+          "ece_10": 0.12393562495708468,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.8653846153846156,
+            "win": 0.13461538461538464
+          },
+          "fit_prior_nll": 0.549956660431165,
+          "mean_probability": {
+            "draw": 6.304017811304118e-05,
+            "loss": 0.7910287500574039,
+            "win": 0.20890819883117304
+          },
+          "nll": 0.2711855443397916,
+          "nll_improvement_over_fit_prior": 0.2787711160913734,
+          "rows": 52
+        },
+        "middle": {
+          "brier": 0.24596728052611214,
+          "classwise_ece_10": {
+            "draw": 0.0026600785190933787,
+            "loss": 0.05598938721812581,
+            "win": 0.05926389841671125
+          },
+          "decisive_auc": 0.9061601307189513,
+          "ece_10": 0.04508028746972123,
+          "empirical_class_mass": {
+            "draw": 0.0,
+            "loss": 0.623268698060942,
+            "win": 0.37673130193905824
+          },
+          "fit_prior_nll": 0.7078963085554973,
+          "mean_probability": {
+            "draw": 0.0026600785190933765,
+            "loss": 0.6332761449739335,
+            "win": 0.3640637773194239
+          },
+          "nll": 0.37345509843805436,
+          "nll_improvement_over_fit_prior": 0.334441210117443,
+          "rows": 361
+        }
+      },
+      "representative_overall": {
+        "brier": 0.31870221757367684,
+        "classwise_ece_10": {
+          "draw": 0.004085184779581415,
+          "loss": 0.03844460551808102,
+          "win": 0.047645392184557066
+        },
+        "decisive_auc": 0.8322693602693617,
+        "ece_10": 0.0183284446092292,
+        "empirical_class_mass": {
+          "draw": 0.0,
+          "loss": 0.6273525721455457,
+          "win": 0.37264742785445415
+        },
+        "fit_prior_nll": 0.7042100902557975,
+        "mean_probability": {
+          "draw": 0.0040851847795814146,
+          "loss": 0.6116844467115282,
+          "win": 0.3842303692501966
+        },
+        "nll": 0.4806803580938578,
+        "nll_improvement_over_fit_prior": 0.22352973216193972,
+        "rows": 797
+      },
+      "seed": 1278922
+    }
+  ],
+  "source_corpora": [
+    {
+      "episode_start": 0,
+      "episodes": 128,
+      "path": "datasets/derived/hog26_procedural_train_balanced_random_seed1278501/corpus.npz",
+      "role": "procedural",
+      "row_start": 0,
+      "rows": 58161,
+      "seed": 1278501,
+      "sha256": "7edd615cfe63400bd64644b6be7d26dbd9532fca00f05bebfb3e29d7e7849a3f"
+    },
+    {
+      "episode_start": 128,
+      "episodes": 128,
+      "path": "datasets/derived/hog26_procedural_train_bridge_reactive_seed1278502/corpus.npz",
+      "role": "procedural",
+      "row_start": 58161,
+      "rows": 53092,
+      "seed": 1278502,
+      "sha256": "af8ea0ba2e37c4a870af71ad2228cae713273a095a9d8da80a6f39b1d1ecc8f6"
+    },
+    {
+      "episode_start": 256,
+      "episodes": 128,
+      "path": "datasets/derived/hog26_procedural_train_slow_spell_seed1278503/corpus.npz",
+      "role": "procedural",
+      "row_start": 111253,
+      "rows": 56347,
+      "seed": 1278503,
+      "sha256": "611699015ae3a506454aa8a9f11ae009213ae773d4213266b2f9f120f39314e1"
+    },
+    {
+      "episode_start": 384,
+      "episodes": 96,
+      "path": "datasets/derived/hog26_crossed_train4_seed1276001_no_split_lane_20260908/corpus.npz",
+      "role": "auxiliary",
+      "row_start": 167600,
+      "rows": 45447,
+      "seed": 1276001,
+      "sha256": "fad0ca04d3932391a85bb5b22e8a2d48d4185c76fef4409175159594d35122b9"
+    },
+    {
+      "episode_start": 480,
+      "episodes": 24,
+      "path": "datasets/derived/hog26_broad_train_fold_a_seed1277001_no_split_lane_20260908/corpus.npz",
+      "role": "auxiliary",
+      "row_start": 213047,
+      "rows": 11167,
+      "seed": 1277001,
+      "sha256": "8f630d914bb465657e0d9b28e30bdb113cf1e8600ff8535c73616a71e3738fdd"
+    },
+    {
+      "episode_start": 504,
+      "episodes": 24,
+      "path": "datasets/derived/hog26_broad_train_fold_b_seed1277002_no_split_lane_20260908/corpus.npz",
+      "role": "auxiliary",
+      "row_start": 224214,
+      "rows": 10672,
+      "seed": 1277002,
+      "sha256": "e337e7794ac32f6a18da85381e345e4d736b348294d43d194444ce64569112e6"
+    },
+    {
+      "episode_start": 528,
+      "episodes": 4,
+      "path": "datasets/derived/hog26_symmetric_draw_outcomes_seed1270001/corpus.npz",
+      "role": "auxiliary",
+      "row_start": 234886,
+      "rows": 1552,
+      "seed": 1270001,
+      "sha256": "2230641594fd97f17080bee06399034bde0bd77d9dc88799633759ee032b0804"
+    }
+  ],
+  "status": "training-only-diagnostic; no model promotion"
+}
