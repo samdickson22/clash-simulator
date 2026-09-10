@@ -82,6 +82,11 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
     with ExitStack() as stack:
         if expanded_receipts:
             from scripts.hog26_scalar_death_actor_adapter import ScalarDeathActorAdapter
+            from scripts.hog26_scalar_public_payload_mask import (
+                ScalarPublicPayloadMaskProvider,
+                ScalarPublicPayloadMaskRules,
+                scalar_policy_inputs_with_payload_mask,
+            )
             from scripts.hog26_scalar_receipt_session import ScalarReceiptSession
 
             visible = lambda entity, player: entity.is_visible_to(player)
@@ -98,6 +103,12 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
                 battle, outcome_builder, session, visible_to=visible,
             )
             extra_tokens = session.extra_public_effect_tokens
+            reference_provider = ScalarPublicPayloadMaskProvider(
+                provider, ScalarPublicPayloadMaskRules.compile(
+                    builder.loader, policy_token_names=provider.tables.token_keys,
+                    outcome_token_names=session.token_names,
+                ),
+            )
 
             @contextmanager
             def expanded_frame(current):
@@ -127,10 +138,15 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
                     (actor.entity_features[:, 6] == 1) | (actor.entity_features[:, 7] == 1)
                 )
                 observed_effect_tokens.update(int(token) for token in actor.entity_ids[effect_rows])
-            inputs, masks = scalar_policy_inputs(
-                actors, provider, previous_actions=previous, episode_starts=starts,
-                extra_public_effect_tokens=extra_tokens,
-            )
+            if expanded_receipts:
+                inputs, masks = scalar_policy_inputs_with_payload_mask(
+                    actors, reference_provider, previous_actions=previous, episode_starts=starts,
+                )
+            else:
+                inputs, masks = scalar_policy_inputs(
+                    actors, provider, previous_actions=previous, episode_starts=starts,
+                    extra_public_effect_tokens=extra_tokens,
+                )
             policy_public = TensorPublicStructuredObservation(**{
                 f.name: getattr(inputs, f.name).reshape(1, 2, *getattr(inputs, f.name).shape[2:])
                 for f in fields(TensorPublicStructuredObservation)
@@ -161,6 +177,8 @@ def run(model, builder, vocabulary, provider, opponent, *, seat, seed,
                     for player in battle.players]
         return {"seat": seat, "seed": seed, "complete": True, "ticks": battle.tick,
                 "expanded_receipts": expanded_receipts,
+                "mask_semantics_digest": masks.semantics_digest,
+                "mask_semantics": masks.semantics,
                 "extra_public_effect_tokens": list(extra_tokens),
                 "decision_visible_effect_token_ids": sorted(observed_effect_tokens),
                 "winner": battle.winner, "remaining_tower_hp": terminal,

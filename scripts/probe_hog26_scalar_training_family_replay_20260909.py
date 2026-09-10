@@ -62,7 +62,7 @@ def main():
         "checkpoint_sha256": hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
         "vocabulary_sha256": vocabulary.sha256,
         "card_data_sha256": hashlib.sha256(Path(builder.loader.data_file).read_bytes()).hexdigest(),
-        "mask_semantics_digest": provider.tables.semantics_digest, "scenarios": [],
+        "base_mask_semantics_digest": provider.tables.semantics_digest, "scenarios": [],
     }
     for index in indices:
         for seat in (0, 1):
@@ -90,10 +90,21 @@ def main():
             row["runs"] = pair
             report["scenarios"].append(row)
             print(json.dumps({k: v for k, v in row.items() if k not in {"runs", "traceback"}}), flush=True)
-    report["source_unchanged"] = all(
+    final_paths = {p for p in subprocess.check_output(
+        ["rg", "--files", "src/clasher", "scripts"], cwd=root, text=True,
+    ).splitlines() if p.endswith(".py") and (
+        p.startswith("src/clasher/") or "scalar_" in p
+        or p == "scripts/evaluate_hog26_simple_policy.py")}
+    report["source_unchanged"] = final_paths == set(hashes) and all(
         hashlib.sha256((root / p).read_bytes()).hexdigest() == digest for p, digest in hashes.items()
     )
-    report["status"] = ("diagnostic_pass" if report["source_unchanged"] and all(
+    report["resources_unchanged"] = all((
+        hashlib.sha256(manifest_path.read_bytes()).hexdigest() == report["manifest_sha256"],
+        hashlib.sha256(checkpoint.read_bytes()).hexdigest() == report["checkpoint_sha256"],
+        hashlib.sha256(Path(builder.loader.data_file).read_bytes()).hexdigest() == report["card_data_sha256"],
+        load_current_client_typed_vocabulary().sha256 == report["vocabulary_sha256"],
+    ))
+    report["status"] = ("diagnostic_pass" if report["source_unchanged"] and report["resources_unchanged"] and all(
         row["status"] == "complete_exact_repeat" for row in report["scenarios"])
         else "diagnostic_failed")
     with args.output.open("x") as stream:

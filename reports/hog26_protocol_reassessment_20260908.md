@@ -2072,3 +2072,28 @@ Integrated scalar training-family diagnostic, 2026-09-09:
   openings, role-local RNG streams, all existing family roles/budgets and gates.
   Do not silently relabel the native int64-ID seeded-opening protocol or count
   repeat executions as independent training games. No new corpus or fitting.
+
+Scalar public timed-body placement correction, 2026-09-09:
+- Independent replay reproduced all six deck13 failures with exact original
+  actor/input/recurrent/action/terminal/RNG traces. Each had an affordable card,
+  valid arena position, no ordinary building occupancy, and positive deployment
+  payload occupancy: live TimedExplosive83 lay exactly at the requested center.
+  This was not another elixir failure. The diagnosis is preserved separately in
+  hog26_scalar_rejected_action_diagnosis_20260909.json; its internal fields are
+  diagnostic evidence only, never actor or mask inputs.
+- Added scalar-only public placement refinement from registered current bomb
+  token/center/visibility and setup-frozen serialized radii. It uses inclusive
+  scalar circle/circle and circle/placement-square geometry and removes only
+  non-spell placement actions. Bombs keep effect feature7, not combat-building
+  features. SkeletonContainer497 remains available to the public mask before
+  the frozen policy receives unknown identity with zero identity confidence.
+- The refinement has its own semantics digest, distinct from base public-mask
+  tables. Replay outputs now record that actual digest, and the diagnostic
+  driver rechecks both source file set and resource digests at completion.
+- 45 focused payload-mask/policy/session/death-adapter tests pass. Targeted
+  deck13 both-seat replays terminate at tick3600, repeat exactly, and now have
+  zero rejected actions with unchanged source/resources. Refined digest:
+  e65ad67bc3360c29775dcded7c07a508da48c55acd1065fcefe74cd2ec5e8e70.
+- Full 32-deck recertification under this source is running separately; no
+  training, opening-protocol approval or calibrated-model acceptance follows
+  from the targeted repair. The preceding baseline remains preserved.
