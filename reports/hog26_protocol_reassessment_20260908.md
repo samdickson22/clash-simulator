@@ -2097,3 +2097,33 @@ Scalar public timed-body placement correction, 2026-09-09:
 - Full 32-deck recertification under this source is running separately; no
   training, opening-protocol approval or calibrated-model acceptance follows
   from the targeted repair. The preceding baseline remains preserved.
+
+Completed timed-body mask recertification, 2026-09-09:
+- All 32 training decks, both seats, completed and reproduced exactly under
+  bc28e9c3: 64 distinct scenarios, 128 executions, 32 paired deck clusters.
+  Rejected plays fell from six to zero. Only deck13 learner-seat1 changed its
+  action sequence relative to the baseline; the other 63 sequences match.
+- Independent completion audit verified source contents and file inventory,
+  manifest, checkpoint, card-data and vocabulary digests. All runs recorded
+  refined mask digest e65ad67bc3360c29775dcded7c07a508da48c55acd1065fcefe74cd2ec5e8e70.
+  Compact artifact: hog26_scalar_training_family_payload_mask_all_decks_audit_20260909.json.
+  Raw local report is 45,659,311 bytes, SHA-256
+  37ef45b575c5e9f6f77149ff63c156520e60d9ae5504958eaef153646a3a6543.
+- This is fixed-opening, balanced-style diagnostic coverage. Zero observed
+  rejects is not a universal gate: simultaneous requests can change occupancy
+  before the second action, without either actor seeing the other request.
+  Future corpus audit must distinguish that concurrency from mask defects.
+- Canonicalizing all 65 predefined manifest decks found 65 distinct card sets,
+  with no duplicate alias groups. No held-out outcome data was accessed.
+- Next authority proposals remain isolated, not active collection code:
+  /tmp/hog26_scalar_opening_proposal/ contains canonical-name schedules and
+  independent reconstruction tests (15 passed). Four SHA-derived streams cover
+  opening, battle, action order and opponent; paired seats/repeats share identity.
+  /tmp/hog26_scalar_rng_proposal/ contains an owned-RNG public random-opponent
+  sampler and optional explicit action-order seed patch (13 tests passed).
+  Neither proposal changes current controller behavior or authorizes collection.
+- Next: integrate/review these proposals, freeze role-specific canonical
+  scenario manifests and source/data/runtime authority, independently audit
+  openings and RNG consumption, and build/audit complete-game retention before
+  collecting the unchanged training quotas. Existing selection/calibration/final
+  family roles and every acceptance gate remain unchanged. No new model fitted.

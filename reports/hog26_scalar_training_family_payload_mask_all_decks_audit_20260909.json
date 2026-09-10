@@ -1,0 +1,1520 @@
+{
+  "status": "diagnostic_only_no_collection_acceptance",
+  "raw_report_path": "reports/hog26_scalar_training_family_payload_mask_all_decks_20260909.json",
+  "raw_report_sha256": "37ef45b575c5e9f6f77149ff63c156520e60d9ae5504958eaef153646a3a6543",
+  "raw_report_bytes": 45659311,
+  "source_content_changes": [],
+  "source_file_set_matches": true,
+  "resource_hashes_match": {
+    "manifest_sha256": true,
+    "checkpoint_sha256": true,
+    "card_data_sha256": true,
+    "vocabulary_sha256": true
+  },
+  "reported_source_unchanged": true,
+  "reported_resources_unchanged": true,
+  "runtime": {
+    "python": "3.12.13",
+    "numpy": "2.3.5",
+    "torch": "2.10.0"
+  },
+  "unique_scenarios": 64,
+  "exact_repeat_executions": 128,
+  "paired_deck_clusters": 32,
+  "failed_scenarios": 0,
+  "rejected_action_count": 0,
+  "baseline_rejected_action_count": 6,
+  "mask_semantics_digests": [
+    "e65ad67bc3360c29775dcded7c07a508da48c55acd1065fcefe74cd2ec5e8e70"
+  ],
+  "extra_public_effect_tokens": [
+    "projectile:TowerPrincessProjectile",
+    "public_tower_shot:king",
+    "public_effect:chain_bolt",
+    "building_body:SkeletonContainerNew"
+  ],
+  "observed_effects": [
+    {
+      "id": 16,
+      "name": "area_effect:Earthquake"
+    },
+    {
+      "id": 24,
+      "name": "area_effect:Freeze"
+    },
+    {
+      "id": 34,
+      "name": "area_effect:Graveyard_rework"
+    },
+    {
+      "id": 40,
+      "name": "area_effect:Poison"
+    },
+    {
+      "id": 51,
+      "name": "area_effect:Tornado"
+    },
+    {
+      "id": 60,
+      "name": "building_body:BalloonBomb"
+    },
+    {
+      "id": 64,
+      "name": "building_body:BombTowerBomb"
+    },
+    {
+      "id": 268,
+      "name": "projectile:ArrowsSpell"
+    },
+    {
+      "id": 270,
+      "name": "projectile:BabyDragonProjectile"
+    },
+    {
+      "id": 276,
+      "name": "projectile:BombSkeletonProjectile"
+    },
+    {
+      "id": 279,
+      "name": "projectile:BombTowerProjectile"
+    },
+    {
+      "id": 280,
+      "name": "projectile:BowlerProjectile"
+    },
+    {
+      "id": 289,
+      "name": "projectile:FireballSpell"
+    },
+    {
+      "id": 290,
+      "name": "projectile:FirecrackerExplosion"
+    },
+    {
+      "id": 292,
+      "name": "projectile:FirecrackerProjectile"
+    },
+    {
+      "id": 297,
+      "name": "projectile:GoblinBarrelSpell"
+    },
+    {
+      "id": 310,
+      "name": "projectile:Ice_wizardProjectile"
+    },
+    {
+      "id": 316,
+      "name": "projectile:LogProjectileRolling"
+    },
+    {
+      "id": 318,
+      "name": "projectile:MegaMinionSpit"
+    },
+    {
+      "id": 320,
+      "name": "projectile:MinionSpit"
+    },
+    {
+      "id": 324,
+      "name": "projectile:MusketeerProjectile"
+    },
+    {
+      "id": 326,
+      "name": "projectile:PrincessProjectile"
+    },
+    {
+      "id": 338,
+      "name": "projectile:SpearGoblinProjectile"
+    },
+    {
+      "id": 342,
+      "name": "projectile:TowerCannonball"
+    },
+    {
+      "id": 494,
+      "name": "projectile:TowerPrincessProjectile"
+    },
+    {
+      "id": 495,
+      "name": "public_tower_shot:king"
+    },
+    {
+      "id": 496,
+      "name": "public_effect:chain_bolt"
+    }
+  ],
+  "limitations": [
+    "Fixed opening order and balanced style only; repeated executions are not independent games.",
+    "Zero rejection observed here is not universal public-mask parity, especially simultaneous action conflicts.",
+    "Decision-boundary coverage is not every transient effect or real-client rendering certification.",
+    "No training corpus, fitting, calibration, ranking or holdout scoring."
+  ],
+  "scenarios": [
+    {
+      "deck_index": 0,
+      "family_id": "family-000",
+      "learner_seat": 0,
+      "seed": 1279061,
+      "ticks": 3790,
+      "decisions": 474,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.41242679355783307,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        289,
+        297,
+        316,
+        324,
+        326,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 0,
+      "family_id": "family-000",
+      "learner_seat": 1,
+      "seed": 1279061,
+      "ticks": 4026,
+      "decisions": 504,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.325402635431918,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        289,
+        297,
+        316,
+        324,
+        326,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 1,
+      "family_id": "family-000",
+      "learner_seat": 0,
+      "seed": 1279062,
+      "ticks": 3691,
+      "decisions": 462,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.26930819912152276,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        324,
+        338,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 1,
+      "family_id": "family-000",
+      "learner_seat": 1,
+      "seed": 1279062,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.3280563689604685,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        324,
+        338,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 2,
+      "family_id": "family-000",
+      "learner_seat": 0,
+      "seed": 1279063,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.35752196193265,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        324,
+        326,
+        338,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 2,
+      "family_id": "family-000",
+      "learner_seat": 1,
+      "seed": 1279063,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.38030746705710106,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        324,
+        326,
+        338,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 3,
+      "family_id": "family-000",
+      "learner_seat": 0,
+      "seed": 1279064,
+      "ticks": 4741,
+      "decisions": 593,
+      "outcome": "win",
+      "terminal_tower_margin": 0.04200219619326501,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        289,
+        316,
+        324,
+        326,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 3,
+      "family_id": "family-000",
+      "learner_seat": 1,
+      "seed": 1279064,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.1023060029282577,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        289,
+        316,
+        324,
+        326,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 4,
+      "family_id": "family-001",
+      "learner_seat": 0,
+      "seed": 1279065,
+      "ticks": 3222,
+      "decisions": 403,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.40611273792093705,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        297,
+        316,
+        324,
+        326,
+        338,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 4,
+      "family_id": "family-001",
+      "learner_seat": 1,
+      "seed": 1279065,
+      "ticks": 3238,
+      "decisions": 405,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.3771046852122987,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        297,
+        316,
+        324,
+        326,
+        338,
+        494,
+        495,
+        496
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 5,
+      "family_id": "family-001",
+      "learner_seat": 0,
+      "seed": 1279066,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.48407759882869694,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        289,
+        316,
+        324,
+        326,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 5,
+      "family_id": "family-001",
+      "learner_seat": 1,
+      "seed": 1279066,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.4169106881405563,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        289,
+        316,
+        324,
+        326,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 6,
+      "family_id": "family-001",
+      "learner_seat": 0,
+      "seed": 1279067,
+      "ticks": 3851,
+      "decisions": 482,
+      "outcome": "win",
+      "terminal_tower_margin": 0.01619692532942899,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        289,
+        297,
+        316,
+        324,
+        326,
+        338,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 6,
+      "family_id": "family-001",
+      "learner_seat": 1,
+      "seed": 1279067,
+      "ticks": 3849,
+      "decisions": 482,
+      "outcome": "win",
+      "terminal_tower_margin": 0.1641654465592972,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        289,
+        297,
+        316,
+        324,
+        326,
+        338,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 7,
+      "family_id": "family-001",
+      "learner_seat": 0,
+      "seed": 1279068,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.2736090775988287,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        324,
+        326,
+        338,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 7,
+      "family_id": "family-001",
+      "learner_seat": 1,
+      "seed": 1279068,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.08363836017569543,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        324,
+        326,
+        338,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 8,
+      "family_id": "family-002",
+      "learner_seat": 0,
+      "seed": 1279069,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.37417642752562225,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        268,
+        290,
+        292,
+        316,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 8,
+      "family_id": "family-002",
+      "learner_seat": 1,
+      "seed": 1279069,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.4088579795021962,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        268,
+        290,
+        292,
+        316,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 9,
+      "family_id": "family-002",
+      "learner_seat": 0,
+      "seed": 1279070,
+      "ticks": 4466,
+      "decisions": 559,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.09333821376281112,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        16,
+        34,
+        280,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 9,
+      "family_id": "family-002",
+      "learner_seat": 1,
+      "seed": 1279070,
+      "ticks": 3425,
+      "decisions": 429,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.325402635431918,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        16,
+        34,
+        280,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 10,
+      "family_id": "family-002",
+      "learner_seat": 0,
+      "seed": 1279071,
+      "ticks": 3283,
+      "decisions": 411,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.6336932650073206,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 10,
+      "family_id": "family-002",
+      "learner_seat": 1,
+      "seed": 1279071,
+      "ticks": 3252,
+      "decisions": 407,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.6336932650073206,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 11,
+      "family_id": "family-002",
+      "learner_seat": 0,
+      "seed": 1279072,
+      "ticks": 2629,
+      "decisions": 329,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.487097364568082,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        268,
+        290,
+        292,
+        316,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 11,
+      "family_id": "family-002",
+      "learner_seat": 1,
+      "seed": 1279072,
+      "ticks": 3115,
+      "decisions": 390,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.4489385065885798,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        268,
+        290,
+        292,
+        316,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 12,
+      "family_id": "family-003",
+      "learner_seat": 0,
+      "seed": 1279073,
+      "ticks": 1502,
+      "decisions": 188,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.6197840409956076,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        60,
+        316,
+        324,
+        338,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 12,
+      "family_id": "family-003",
+      "learner_seat": 1,
+      "seed": 1279073,
+      "ticks": 1499,
+      "decisions": 188,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.6197840409956076,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        60,
+        316,
+        324,
+        338,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 13,
+      "family_id": "family-003",
+      "learner_seat": 0,
+      "seed": 1279074,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.06945461200585656,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        64,
+        279,
+        316,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 13,
+      "family_id": "family-003",
+      "learner_seat": 1,
+      "seed": 1279074,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.2379209370424597,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        64,
+        279,
+        316,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": true
+    },
+    {
+      "deck_index": 14,
+      "family_id": "family-003",
+      "learner_seat": 0,
+      "seed": 1279075,
+      "ticks": 1699,
+      "decisions": 213,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.5435578330893118,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        60,
+        64,
+        279,
+        316,
+        324,
+        338,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 14,
+      "family_id": "family-003",
+      "learner_seat": 1,
+      "seed": 1279075,
+      "ticks": 1700,
+      "decisions": 213,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.5435578330893118,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        60,
+        64,
+        279,
+        316,
+        324,
+        338,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 15,
+      "family_id": "family-003",
+      "learner_seat": 0,
+      "seed": 1279076,
+      "ticks": 4121,
+      "decisions": 516,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.12353587115666176,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 15,
+      "family_id": "family-003",
+      "learner_seat": 1,
+      "seed": 1279076,
+      "ticks": 4564,
+      "decisions": 571,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.1126464128843338,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        316,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 16,
+      "family_id": "family-004",
+      "learner_seat": 0,
+      "seed": 1279077,
+      "ticks": 2082,
+      "decisions": 261,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.5435578330893118,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        310,
+        316,
+        320,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 16,
+      "family_id": "family-004",
+      "learner_seat": 1,
+      "seed": 1279077,
+      "ticks": 3158,
+      "decisions": 395,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.42752562225475843,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        310,
+        316,
+        320,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 17,
+      "family_id": "family-004",
+      "learner_seat": 0,
+      "seed": 1279078,
+      "ticks": 3427,
+      "decisions": 429,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.3421486090775988,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        40,
+        268,
+        270,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 17,
+      "family_id": "family-004",
+      "learner_seat": 1,
+      "seed": 1279078,
+      "ticks": 3391,
+      "decisions": 424,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.2832174231332357,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        40,
+        268,
+        270,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 18,
+      "family_id": "family-004",
+      "learner_seat": 0,
+      "seed": 1279079,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.36218887262079064,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        40,
+        270,
+        289,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 18,
+      "family_id": "family-004",
+      "learner_seat": 1,
+      "seed": 1279079,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.37225475841874084,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        40,
+        270,
+        289,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 19,
+      "family_id": "family-004",
+      "learner_seat": 0,
+      "seed": 1279080,
+      "ticks": 933,
+      "decisions": 117,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.7875183016105417,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        270,
+        310,
+        316,
+        320,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 19,
+      "family_id": "family-004",
+      "learner_seat": 1,
+      "seed": 1279080,
+      "ticks": 928,
+      "decisions": 116,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.7956625183016105,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        270,
+        310,
+        320,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 20,
+      "family_id": "family-005",
+      "learner_seat": 0,
+      "seed": 1279081,
+      "ticks": 2944,
+      "decisions": 368,
+      "outcome": "win",
+      "terminal_tower_margin": 0.2761713030746706,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        297,
+        316,
+        324,
+        338,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 20,
+      "family_id": "family-005",
+      "learner_seat": 1,
+      "seed": 1279081,
+      "ticks": 2942,
+      "decisions": 368,
+      "outcome": "win",
+      "terminal_tower_margin": 0.28358345534407026,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        297,
+        316,
+        324,
+        338,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 21,
+      "family_id": "family-005",
+      "learner_seat": 0,
+      "seed": 1279082,
+      "ticks": 3306,
+      "decisions": 414,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.5526171303074671,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        40,
+        316,
+        324,
+        326,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 21,
+      "family_id": "family-005",
+      "learner_seat": 1,
+      "seed": 1279082,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.2912701317715959,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        40,
+        316,
+        324,
+        326,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 22,
+      "family_id": "family-005",
+      "learner_seat": 0,
+      "seed": 1279083,
+      "ticks": 2418,
+      "decisions": 303,
+      "outcome": "win",
+      "terminal_tower_margin": 0.9890190336749634,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        297,
+        316,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 22,
+      "family_id": "family-005",
+      "learner_seat": 1,
+      "seed": 1279083,
+      "ticks": 2417,
+      "decisions": 303,
+      "outcome": "win",
+      "terminal_tower_margin": 1.0,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        297,
+        316,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 23,
+      "family_id": "family-005",
+      "learner_seat": 0,
+      "seed": 1279084,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.33766471449487556,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        40,
+        316,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 23,
+      "family_id": "family-005",
+      "learner_seat": 1,
+      "seed": 1279084,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.26994875549048314,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        40,
+        316,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 24,
+      "family_id": "family-006",
+      "learner_seat": 0,
+      "seed": 1279085,
+      "ticks": 3344,
+      "decisions": 418,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.11767935578330893,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        60,
+        268,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 24,
+      "family_id": "family-006",
+      "learner_seat": 1,
+      "seed": 1279085,
+      "ticks": 4466,
+      "decisions": 559,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.20937042459736457,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        60,
+        268,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 25,
+      "family_id": "family-006",
+      "learner_seat": 0,
+      "seed": 1279086,
+      "ticks": 4603,
+      "decisions": 576,
+      "outcome": "win",
+      "terminal_tower_margin": 0.25503294289897516,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        24,
+        289,
+        316,
+        318,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 25,
+      "family_id": "family-006",
+      "learner_seat": 1,
+      "seed": 1279086,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.5826317715959004,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        24,
+        289,
+        316,
+        318,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 26,
+      "family_id": "family-006",
+      "learner_seat": 0,
+      "seed": 1279087,
+      "ticks": 3407,
+      "decisions": 426,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.45653367496339675,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        60,
+        280,
+        289,
+        316,
+        320,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 26,
+      "family_id": "family-006",
+      "learner_seat": 1,
+      "seed": 1279087,
+      "ticks": 2541,
+      "decisions": 318,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.5435578330893118,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        60,
+        289,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 27,
+      "family_id": "family-006",
+      "learner_seat": 0,
+      "seed": 1279088,
+      "ticks": 2918,
+      "decisions": 365,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.3544106881405564,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        60,
+        316,
+        318,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 27,
+      "family_id": "family-006",
+      "learner_seat": 1,
+      "seed": 1279088,
+      "ticks": 2389,
+      "decisions": 299,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.38341874084919475,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        60,
+        316,
+        318,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 28,
+      "family_id": "family-007",
+      "learner_seat": 0,
+      "seed": 1279089,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.2239202049780381,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        270,
+        289,
+        316,
+        320,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 28,
+      "family_id": "family-007",
+      "learner_seat": 1,
+      "seed": 1279089,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.17953879941434847,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        289,
+        316,
+        320,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 29,
+      "family_id": "family-007",
+      "learner_seat": 0,
+      "seed": 1279090,
+      "ticks": 2260,
+      "decisions": 283,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.5725658857979502,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        276,
+        316,
+        318,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 29,
+      "family_id": "family-007",
+      "learner_seat": 1,
+      "seed": 1279090,
+      "ticks": 2156,
+      "decisions": 270,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.6576683748169839,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        276,
+        316,
+        318,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 30,
+      "family_id": "family-007",
+      "learner_seat": 0,
+      "seed": 1279091,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.43329062957540265,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        270,
+        289,
+        316,
+        318,
+        320,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 30,
+      "family_id": "family-007",
+      "learner_seat": 1,
+      "seed": 1279091,
+      "ticks": 3600,
+      "decisions": 450,
+      "outcome": "win",
+      "terminal_tower_margin": 0.44308199121522696,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        270,
+        289,
+        316,
+        318,
+        320,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 31,
+      "family_id": "family-007",
+      "learner_seat": 0,
+      "seed": 1279092,
+      "ticks": 3498,
+      "decisions": 438,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.325402635431918,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        276,
+        289,
+        316,
+        320,
+        324,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    },
+    {
+      "deck_index": 31,
+      "family_id": "family-007",
+      "learner_seat": 1,
+      "seed": 1279092,
+      "ticks": 3604,
+      "decisions": 451,
+      "outcome": "loss",
+      "terminal_tower_margin": -0.09269765739385061,
+      "rejected_actions": [],
+      "observed_effect_ids": [
+        51,
+        276,
+        289,
+        316,
+        320,
+        324,
+        342,
+        494,
+        495
+      ],
+      "actions_changed_from_baseline": false
+    }
+  ]
+}
